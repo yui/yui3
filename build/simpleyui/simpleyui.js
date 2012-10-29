@@ -1929,6 +1929,30 @@ overwriting other scripts configs.
  */
 
 /**
+ * Leverage native JSON stringify if the browser has a native
+ * implementation.  In general, this is a good idea.  See the Known Issues
+ * section in the JSON user guide for caveats.  The default value is true
+ * for browsers with native JSON support.
+ *
+ * @property useNativeJSONStringify
+ * @type Boolean
+ * @default true
+ * @since 3.8.0
+ */
+
+ /**
+ * Leverage native JSON parse if the browser has a native implementation.
+ * In general, this is a good idea.  See the Known Issues section in the
+ * JSON user guide for caveats.  The default value is true for browsers with
+ * native JSON support.
+ *
+ * @property useNativeJSONParse
+ * @type Boolean
+ * @default true
+ * @since 3.8.0
+ */
+
+/**
 Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
 @property delayUntil
 @type String|Object
@@ -5244,7 +5268,8 @@ add('load', '0', {
     }
 
     return false;
-},
+}
+,
     "trigger": "app-transitions"
 });
 // autocomplete-list-keys
@@ -5263,7 +5288,8 @@ add('load', '1', {
     // no point loading the -keys module even when a bluetooth keyboard may be
     // available.
     return !(Y.UA.ios || Y.UA.android);
-},
+}
+,
     "trigger": "autocomplete-list"
 });
 // dd-gestures
@@ -5300,7 +5326,9 @@ add('load', '3', {
             !testFeature('style', 'computedStyle'));
 
     return ret;
-},
+}
+
+,
     "trigger": "dom-style"
 });
 // editor-para-ie
@@ -5316,7 +5344,8 @@ add('load', '5', {
     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
     return (imp && (!imp.hasFeature('Events', '2.0')));
-},
+}
+,
     "trigger": "node-base"
 });
 // graphics-canvas
@@ -5328,7 +5357,8 @@ add('load', '6', {
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-canvas-default
@@ -5340,7 +5370,8 @@ add('load', '7', {
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-svg
@@ -5353,7 +5384,8 @@ add('load', '8', {
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-svg-default
@@ -5366,7 +5398,8 @@ add('load', '9', {
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-vml
@@ -5376,7 +5409,8 @@ add('load', '10', {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-vml-default
@@ -5386,7 +5420,8 @@ add('load', '11', {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-},
+}
+,
     "trigger": "graphics"
 });
 // history-hash-ie
@@ -5397,7 +5432,8 @@ add('load', '12', {
 
     return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
             !docMode || docMode < 8);
-},
+}
+,
     "trigger": "history-hash"
 });
 // io-nodejs
@@ -5406,25 +5442,77 @@ add('load', '13', {
     "trigger": "io-base",
     "ua": "nodejs"
 });
-// scrollview-base-ie
+// json-parse-shim
 add('load', '14', {
+    "name": "json-parse-shim",
+    "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONParse !== false && !!Native;
+
+    function workingNative( k, v ) {
+        return k === "ok" ? true : v;
+    }
+    
+    // Double check basic functionality.  This is mainly to catch early broken
+    // implementations of the JSON API in Firefox 3.1 beta1 and beta2
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
+        }
+        catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+    return !nativeSupport;
+},
+    "trigger": "json-parse"
+});
+// json-stringify-shim
+add('load', '15', {
+    "name": "json-stringify-shim",
+    "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONStringify !== false && !!Native;
+
+    // Double check basic native functionality.  This is primarily to catch broken
+    // early JSON API implementations in Firefox 3.1 beta1 and beta2.
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( '0' === Native.stringify(0) );
+        } catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+
+    return !nativeSupport;
+},
+    "trigger": "json-stringify"
+});
+// scrollview-base-ie
+add('load', '16', {
     "name": "scrollview-base-ie",
     "trigger": "scrollview-base",
     "ua": "ie"
 });
 // selector-css2
-add('load', '15', {
+add('load', '17', {
     "name": "selector-css2",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
         ret = DOCUMENT && !('querySelectorAll' in DOCUMENT);
 
     return ret;
-},
+}
+
+,
     "trigger": "selector"
 });
 // transition-timer
-add('load', '16', {
+add('load', '18', {
     "name": "transition-timer",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5436,24 +5524,26 @@ add('load', '16', {
     }
 
     return ret;
-},
+}
+
+,
     "trigger": "transition"
 });
 // widget-base-ie
-add('load', '17', {
+add('load', '19', {
     "name": "widget-base-ie",
     "trigger": "widget-base",
     "ua": "ie"
 });
 // yql-nodejs
-add('load', '18', {
+add('load', '20', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '19', {
+add('load', '21', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
@@ -6266,7 +6356,8 @@ add('load', '0', {
     }
 
     return false;
-},
+}
+,
     "trigger": "app-transitions"
 });
 // autocomplete-list-keys
@@ -6285,7 +6376,8 @@ add('load', '1', {
     // no point loading the -keys module even when a bluetooth keyboard may be
     // available.
     return !(Y.UA.ios || Y.UA.android);
-},
+}
+,
     "trigger": "autocomplete-list"
 });
 // dd-gestures
@@ -6322,7 +6414,9 @@ add('load', '3', {
             !testFeature('style', 'computedStyle'));
 
     return ret;
-},
+}
+
+,
     "trigger": "dom-style"
 });
 // editor-para-ie
@@ -6338,7 +6432,8 @@ add('load', '5', {
     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
     return (imp && (!imp.hasFeature('Events', '2.0')));
-},
+}
+,
     "trigger": "node-base"
 });
 // graphics-canvas
@@ -6350,7 +6445,8 @@ add('load', '6', {
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-canvas-default
@@ -6362,7 +6458,8 @@ add('load', '7', {
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-svg
@@ -6375,7 +6472,8 @@ add('load', '8', {
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-svg-default
@@ -6388,7 +6486,8 @@ add('load', '9', {
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-vml
@@ -6398,7 +6497,8 @@ add('load', '10', {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-vml-default
@@ -6408,7 +6508,8 @@ add('load', '11', {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-},
+}
+,
     "trigger": "graphics"
 });
 // history-hash-ie
@@ -6419,7 +6520,8 @@ add('load', '12', {
 
     return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
             !docMode || docMode < 8);
-},
+}
+,
     "trigger": "history-hash"
 });
 // io-nodejs
@@ -6428,25 +6530,77 @@ add('load', '13', {
     "trigger": "io-base",
     "ua": "nodejs"
 });
-// scrollview-base-ie
+// json-parse-shim
 add('load', '14', {
+    "name": "json-parse-shim",
+    "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONParse !== false && !!Native;
+
+    function workingNative( k, v ) {
+        return k === "ok" ? true : v;
+    }
+    
+    // Double check basic functionality.  This is mainly to catch early broken
+    // implementations of the JSON API in Firefox 3.1 beta1 and beta2
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
+        }
+        catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+    return !nativeSupport;
+},
+    "trigger": "json-parse"
+});
+// json-stringify-shim
+add('load', '15', {
+    "name": "json-stringify-shim",
+    "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONStringify !== false && !!Native;
+
+    // Double check basic native functionality.  This is primarily to catch broken
+    // early JSON API implementations in Firefox 3.1 beta1 and beta2.
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( '0' === Native.stringify(0) );
+        } catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+
+    return !nativeSupport;
+},
+    "trigger": "json-stringify"
+});
+// scrollview-base-ie
+add('load', '16', {
     "name": "scrollview-base-ie",
     "trigger": "scrollview-base",
     "ua": "ie"
 });
 // selector-css2
-add('load', '15', {
+add('load', '17', {
     "name": "selector-css2",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
         ret = DOCUMENT && !('querySelectorAll' in DOCUMENT);
 
     return ret;
-},
+}
+
+,
     "trigger": "selector"
 });
 // transition-timer
-add('load', '16', {
+add('load', '18', {
     "name": "transition-timer",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -6458,24 +6612,26 @@ add('load', '16', {
     }
 
     return ret;
-},
+}
+
+,
     "trigger": "transition"
 });
 // widget-base-ie
-add('load', '17', {
+add('load', '19', {
     "name": "widget-base-ie",
     "trigger": "widget-base",
     "ua": "ie"
 });
 // yql-nodejs
-add('load', '18', {
+add('load', '20', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '19', {
+add('load', '21', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
@@ -17235,29 +17391,12 @@ YUI.add('querystring-stringify-simple', function (Y, NAME) {
  *
  * @module querystring
  * @submodule querystring-stringify-simple
- * @for QueryString
- * @static
  */
 
 var QueryString = Y.namespace("QueryString"),
     EUC = encodeURIComponent;
 
-/**
- * <p>Converts a simple object to a Query String representation.</p>
- * <p>Nested objects, Arrays, and so on, are not supported.</p>
- *
- * @method stringify
- * @for QueryString
- * @public
- * @submodule querystring-stringify-simple
- * @param obj {Object} A single-level object to convert to a querystring.
- * @param cfg {Object} (optional) Configuration object.  In the simple
- *                                module, only the arrayKey setting is
- *                                supported.  When set to true, the key of an
- *                                array will have the '[]' notation appended
- *                                to the key;.
- * @static
- */
+
 QueryString.stringify = function (obj, c) {
     var qs = [],
         // Default behavior is false; standard key notation.
@@ -18283,233 +18422,11 @@ Y.mix(Y.IO.prototype, {
 }, '@VERSION@', {"requires": ["event-custom-base", "querystring-stringify-simple"]});
 YUI.add('json-parse', function (Y, NAME) {
 
-/**
- * <p>The JSON module adds support for serializing JavaScript objects into
- * JSON strings and parsing JavaScript objects from strings in JSON format.</p>
- *
- * <p>The JSON namespace is added to your YUI instance including static methods
- * Y.JSON.parse(..) and Y.JSON.stringify(..).</p>
- *
- * <p>The functionality and method signatures follow the ECMAScript 5
- * specification.  In browsers with native JSON support, the native
- * implementation is used.</p>
- *
- * <p>The <code>json</code> module is a rollup of <code>json-parse</code> and
- * <code>json-stringify</code>.</p>
- *
- * <p>As their names suggest, <code>json-parse</code> adds support for parsing
- * JSON data (Y.JSON.parse) and <code>json-stringify</code> for serializing
- * JavaScript data into JSON strings (Y.JSON.stringify).  You may choose to
- * include either of the submodules individually if you don't need the
- * complementary functionality, or include the rollup for both.</p>
- *
- * @module json
- * @main json
- * @class JSON
- * @static
- */
+var _JSON = Y.config.global.JSON;
 
-/**
- * Provides Y.JSON.parse method to accept JSON strings and return native
- * JavaScript objects.
- *
- * @module json
- * @submodule json-parse
- * @for JSON
- * @static
- */
-
-
-// All internals kept private for security reasons
-function fromGlobal(ref) {
-    var g = ((typeof global === 'object') ? global : undefined);
-    return ((Y.UA.nodejs && g) ? g : (Y.config.win || {}))[ref];
-}
-
-
-    /**
-     * Alias to native browser implementation of the JSON object if available.
-     *
-     * @property Native
-     * @type {Object}
-     * @private
-     */
-var _JSON  = fromGlobal('JSON'),
-
-    Native = (Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON),
-    useNative = !!Native,
-
-    /**
-     * Replace certain Unicode characters that JavaScript may handle incorrectly
-     * during eval--either by deleting them or treating them as line
-     * endings--with escape sequences.
-     * IMPORTANT NOTE: This regex will be used to modify the input if a match is
-     * found.
-     *
-     * @property _UNICODE_EXCEPTIONS
-     * @type {RegExp}
-     * @private
-     */
-    _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-
-
-    /**
-     * First step in the safety evaluation.  Regex used to replace all escape
-     * sequences (i.e. "\\", etc) with '@' characters (a non-JSON character).
-     *
-     * @property _ESCAPES
-     * @type {RegExp}
-     * @private
-     */
-    _ESCAPES = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,
-
-    /**
-     * Second step in the safety evaluation.  Regex used to replace all simple
-     * values with ']' characters.
-     *
-     * @property _VALUES
-     * @type {RegExp}
-     * @private
-     */
-    _VALUES  = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
-
-    /**
-     * Third step in the safety evaluation.  Regex used to remove all open
-     * square brackets following a colon, comma, or at the beginning of the
-     * string.
-     *
-     * @property _BRACKETS
-     * @type {RegExp}
-     * @private
-     */
-    _BRACKETS = /(?:^|:|,)(?:\s*\[)+/g,
-
-    /**
-     * Final step in the safety evaluation.  Regex used to test the string left
-     * after all previous replacements for invalid characters.
-     *
-     * @property _UNSAFE
-     * @type {RegExp}
-     * @private
-     */
-    _UNSAFE = /[^\],:{}\s]/,
-
-    /**
-     * Replaces specific unicode characters with their appropriate \unnnn
-     * format. Some browsers ignore certain characters during eval.
-     *
-     * @method escapeException
-     * @param c {String} Unicode character
-     * @return {String} the \unnnn escapement of the character
-     * @private
-     */
-    _escapeException = function (c) {
-        return '\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
-    },
-
-    /**
-     * Traverses nested objects, applying a reviver function to each (key,value)
-     * from the scope if the key:value's containing object.  The value returned
-     * from the function will replace the original value in the key:value pair.
-     * If the value returned is undefined, the key will be omitted from the
-     * returned object.
-     *
-     * @method _revive
-     * @param data {MIXED} Any JavaScript data
-     * @param reviver {Function} filter or mutation function
-     * @return {MIXED} The results of the filtered data
-     * @private
-     */
-    _revive = function (data, reviver) {
-        var walk = function (o,key) {
-            var k,v,value = o[key];
-            if (value && typeof value === 'object') {
-                for (k in value) {
-                    if (value.hasOwnProperty(k)) {
-                        v = walk(value, k);
-                        if (v === undefined) {
-                            delete value[k];
-                        } else {
-                            value[k] = v;
-                        }
-                    }
-                }
-            }
-            return reviver.call(o,key,value);
-        };
-
-        return typeof reviver === 'function' ? walk({'':data},'') : data;
-    },
-
-    /**
-     * Parse a JSON string, returning the native JavaScript representation.
-     *
-     * @param s {string} JSON string data
-     * @param reviver {function} (optional) function(k,v) passed each key value
-     *          pair of object literals, allowing pruning or altering values
-     * @return {MIXED} the native JavaScript representation of the JSON string
-     * @throws SyntaxError
-     * @method parse
-     * @static
-     */
-    // JavaScript implementation in lieu of native browser support.  Based on
-    // the json2.js library from http://json.org
-    _parse = function (s,reviver) {
-        // Replace certain Unicode characters that are otherwise handled
-        // incorrectly by some browser implementations.
-        // NOTE: This modifies the input if such characters are found!
-        s = s.replace(_UNICODE_EXCEPTIONS, _escapeException);
-
-        // Test for any remaining invalid characters
-        if (!_UNSAFE.test(s.replace(_ESCAPES,'@').
-                            replace(_VALUES,']').
-                            replace(_BRACKETS,''))) {
-
-            // Eval the text into a JavaScript data structure, apply any
-            // reviver function, and return
-            return _revive( eval('(' + s + ')'), reviver );
-        }
-
-        throw new SyntaxError('JSON.parse');
-    };
-
-Y.namespace('JSON').parse = function (s,reviver) {
-        if (typeof s !== 'string') {
-            s += '';
-        }
-
-        return Native && Y.JSON.useNativeParse ?
-            Native.parse(s,reviver) : _parse(s,reviver);
+Y.namespace('JSON').parse = function () {
+    return _JSON.parse.apply(_JSON, arguments);
 };
-
-function workingNative( k, v ) {
-    return k === "ok" ? true : v;
-}
-
-// Double check basic functionality.  This is mainly to catch early broken
-// implementations of the JSON API in Firefox 3.1 beta1 and beta2
-if ( Native ) {
-    try {
-        useNative = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
-    }
-    catch ( e ) {
-        useNative = false;
-    }
-}
-
-/**
- * Leverage native JSON parse if the browser has a native implementation.
- * In general, this is a good idea.  See the Known Issues section in the
- * JSON user guide for caveats.  The default value is true for browsers with
- * native JSON support.
- *
- * @property useNativeParse
- * @type Boolean
- * @default true
- * @static
- */
-Y.JSON.useNativeParse = useNative;
-
 
 }, '@VERSION@', {"requires": ["yui-base"]});
 YUI.add('transition', function (Y, NAME) {

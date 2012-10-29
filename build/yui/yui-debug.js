@@ -1948,6 +1948,30 @@ overwriting other scripts configs.
  */
 
 /**
+ * Leverage native JSON stringify if the browser has a native
+ * implementation.  In general, this is a good idea.  See the Known Issues
+ * section in the JSON user guide for caveats.  The default value is true
+ * for browsers with native JSON support.
+ *
+ * @property useNativeJSONStringify
+ * @type Boolean
+ * @default true
+ * @since 3.8.0
+ */
+
+ /**
+ * Leverage native JSON parse if the browser has a native implementation.
+ * In general, this is a good idea.  See the Known Issues section in the
+ * JSON user guide for caveats.  The default value is true for browsers with
+ * native JSON support.
+ *
+ * @property useNativeJSONParse
+ * @type Boolean
+ * @default true
+ * @since 3.8.0
+ */
+
+/**
 Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
 @property delayUntil
 @type String|Object
@@ -5281,7 +5305,8 @@ add('load', '0', {
     }
 
     return false;
-},
+}
+,
     "trigger": "app-transitions"
 });
 // autocomplete-list-keys
@@ -5300,7 +5325,8 @@ add('load', '1', {
     // no point loading the -keys module even when a bluetooth keyboard may be
     // available.
     return !(Y.UA.ios || Y.UA.android);
-},
+}
+,
     "trigger": "autocomplete-list"
 });
 // dd-gestures
@@ -5337,7 +5363,9 @@ add('load', '3', {
             !testFeature('style', 'computedStyle'));
 
     return ret;
-},
+}
+
+,
     "trigger": "dom-style"
 });
 // editor-para-ie
@@ -5353,7 +5381,8 @@ add('load', '5', {
     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
     return (imp && (!imp.hasFeature('Events', '2.0')));
-},
+}
+,
     "trigger": "node-base"
 });
 // graphics-canvas
@@ -5365,7 +5394,8 @@ add('load', '6', {
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-canvas-default
@@ -5377,7 +5407,8 @@ add('load', '7', {
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-svg
@@ -5390,7 +5421,8 @@ add('load', '8', {
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-svg-default
@@ -5403,7 +5435,8 @@ add('load', '9', {
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-vml
@@ -5413,7 +5446,8 @@ add('load', '10', {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-},
+}
+,
     "trigger": "graphics"
 });
 // graphics-vml-default
@@ -5423,7 +5457,8 @@ add('load', '11', {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-},
+}
+,
     "trigger": "graphics"
 });
 // history-hash-ie
@@ -5434,7 +5469,8 @@ add('load', '12', {
 
     return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
             !docMode || docMode < 8);
-},
+}
+,
     "trigger": "history-hash"
 });
 // io-nodejs
@@ -5443,25 +5479,77 @@ add('load', '13', {
     "trigger": "io-base",
     "ua": "nodejs"
 });
-// scrollview-base-ie
+// json-parse-shim
 add('load', '14', {
+    "name": "json-parse-shim",
+    "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONParse !== false && !!Native;
+
+    function workingNative( k, v ) {
+        return k === "ok" ? true : v;
+    }
+    
+    // Double check basic functionality.  This is mainly to catch early broken
+    // implementations of the JSON API in Firefox 3.1 beta1 and beta2
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
+        }
+        catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+    return !nativeSupport;
+},
+    "trigger": "json-parse"
+});
+// json-stringify-shim
+add('load', '15', {
+    "name": "json-stringify-shim",
+    "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONStringify !== false && !!Native;
+
+    // Double check basic native functionality.  This is primarily to catch broken
+    // early JSON API implementations in Firefox 3.1 beta1 and beta2.
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( '0' === Native.stringify(0) );
+        } catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+
+    return !nativeSupport;
+},
+    "trigger": "json-stringify"
+});
+// scrollview-base-ie
+add('load', '16', {
     "name": "scrollview-base-ie",
     "trigger": "scrollview-base",
     "ua": "ie"
 });
 // selector-css2
-add('load', '15', {
+add('load', '17', {
     "name": "selector-css2",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
         ret = DOCUMENT && !('querySelectorAll' in DOCUMENT);
 
     return ret;
-},
+}
+
+,
     "trigger": "selector"
 });
 // transition-timer
-add('load', '16', {
+add('load', '18', {
     "name": "transition-timer",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5473,24 +5561,26 @@ add('load', '16', {
     }
 
     return ret;
-},
+}
+
+,
     "trigger": "transition"
 });
 // widget-base-ie
-add('load', '17', {
+add('load', '19', {
     "name": "widget-base-ie",
     "trigger": "widget-base",
     "ua": "ie"
 });
 // yql-nodejs
-add('load', '18', {
+add('load', '20', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '19', {
+add('load', '21', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
@@ -8812,7 +8902,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }
 
     return false;
-},
+}
+,
             "trigger": "app-transitions"
         },
         "requires": [
@@ -8970,7 +9061,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     // no point loading the -keys module even when a bluetooth keyboard may be
     // available.
     return !(Y.UA.ios || Y.UA.android);
-},
+}
+,
             "trigger": "autocomplete-list"
         },
         "requires": [
@@ -9813,7 +9905,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             !testFeature('style', 'computedStyle'));
 
     return ret;
-},
+}
+
+,
             "trigger": "dom-style"
         },
         "requires": [
@@ -9937,7 +10031,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
     return (imp && (!imp.hasFeature('Events', '2.0')));
-},
+}
+,
             "trigger": "node-base"
         },
         "requires": [
@@ -10121,7 +10216,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-},
+}
+,
             "trigger": "graphics"
         },
         "requires": [
@@ -10137,7 +10233,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-},
+}
+,
             "trigger": "graphics"
         }
     },
@@ -10151,7 +10248,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
-},
+}
+,
             "trigger": "graphics"
         },
         "requires": [
@@ -10168,7 +10266,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
-},
+}
+,
             "trigger": "graphics"
         }
     },
@@ -10179,7 +10278,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-},
+}
+,
             "trigger": "graphics"
         },
         "requires": [
@@ -10193,7 +10293,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-},
+}
+,
             "trigger": "graphics"
         }
     },
@@ -10263,7 +10364,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 
     return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
             !docMode || docMode < 8);
-},
+}
+,
             "trigger": "history-hash"
         },
         "requires": [
@@ -10359,9 +10461,67 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     },
+    "json-parse-shim": {
+        "condition": {
+            "name": "json-parse-shim",
+            "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONParse !== false && !!Native;
+
+    function workingNative( k, v ) {
+        return k === "ok" ? true : v;
+    }
+    
+    // Double check basic functionality.  This is mainly to catch early broken
+    // implementations of the JSON API in Firefox 3.1 beta1 and beta2
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
+        }
+        catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+    return !nativeSupport;
+},
+            "trigger": "json-parse"
+        },
+        "requires": [
+            "json-parse"
+        ]
+    },
     "json-stringify": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "json-stringify-shim": {
+        "condition": {
+            "name": "json-stringify-shim",
+            "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONStringify !== false && !!Native;
+
+    // Double check basic native functionality.  This is primarily to catch broken
+    // early JSON API implementations in Firefox 3.1 beta1 and beta2.
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( '0' === Native.stringify(0) );
+        } catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+
+    return !nativeSupport;
+},
+            "trigger": "json-stringify"
+        },
+        "requires": [
+            "json-stringify"
         ]
     },
     "jsonp": {
@@ -10809,7 +10969,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ret = DOCUMENT && !('querySelectorAll' in DOCUMENT);
 
     return ret;
-},
+}
+
+,
             "trigger": "selector"
         },
         "requires": [
@@ -10977,7 +11139,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }
 
     return ret;
-},
+}
+
+,
             "trigger": "transition"
         },
         "requires": [
@@ -11200,7 +11364,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8f987f232a73a9c8d5d249cc5962d425';
+YUI.Env[Y.version].md5 = 'f1663d2ba9fbe9956addf8c41f0781f1';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

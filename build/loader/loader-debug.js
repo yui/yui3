@@ -3037,7 +3037,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }
 
     return false;
-},
+}
+,
             "trigger": "app-transitions"
         },
         "requires": [
@@ -3195,7 +3196,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     // no point loading the -keys module even when a bluetooth keyboard may be
     // available.
     return !(Y.UA.ios || Y.UA.android);
-},
+}
+,
             "trigger": "autocomplete-list"
         },
         "requires": [
@@ -4038,7 +4040,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             !testFeature('style', 'computedStyle'));
 
     return ret;
-},
+}
+
+,
             "trigger": "dom-style"
         },
         "requires": [
@@ -4162,7 +4166,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
     return (imp && (!imp.hasFeature('Events', '2.0')));
-},
+}
+,
             "trigger": "node-base"
         },
         "requires": [
@@ -4346,7 +4351,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-},
+}
+,
             "trigger": "graphics"
         },
         "requires": [
@@ -4362,7 +4368,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-},
+}
+,
             "trigger": "graphics"
         }
     },
@@ -4376,7 +4383,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
-},
+}
+,
             "trigger": "graphics"
         },
         "requires": [
@@ -4393,7 +4401,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
-},
+}
+,
             "trigger": "graphics"
         }
     },
@@ -4404,7 +4413,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-},
+}
+,
             "trigger": "graphics"
         },
         "requires": [
@@ -4418,7 +4428,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-},
+}
+,
             "trigger": "graphics"
         }
     },
@@ -4488,7 +4499,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 
     return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
             !docMode || docMode < 8);
-},
+}
+,
             "trigger": "history-hash"
         },
         "requires": [
@@ -4584,9 +4596,67 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     },
+    "json-parse-shim": {
+        "condition": {
+            "name": "json-parse-shim",
+            "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONParse !== false && !!Native;
+
+    function workingNative( k, v ) {
+        return k === "ok" ? true : v;
+    }
+    
+    // Double check basic functionality.  This is mainly to catch early broken
+    // implementations of the JSON API in Firefox 3.1 beta1 and beta2
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
+        }
+        catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+    return !nativeSupport;
+},
+            "trigger": "json-parse"
+        },
+        "requires": [
+            "json-parse"
+        ]
+    },
     "json-stringify": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "json-stringify-shim": {
+        "condition": {
+            "name": "json-stringify-shim",
+            "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONStringify !== false && !!Native;
+
+    // Double check basic native functionality.  This is primarily to catch broken
+    // early JSON API implementations in Firefox 3.1 beta1 and beta2.
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( '0' === Native.stringify(0) );
+        } catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+
+    return !nativeSupport;
+},
+            "trigger": "json-stringify"
+        },
+        "requires": [
+            "json-stringify"
         ]
     },
     "jsonp": {
@@ -5034,7 +5104,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ret = DOCUMENT && !('querySelectorAll' in DOCUMENT);
 
     return ret;
-},
+}
+
+,
             "trigger": "selector"
         },
         "requires": [
@@ -5202,7 +5274,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }
 
     return ret;
-},
+}
+
+,
             "trigger": "transition"
         },
         "requires": [
@@ -5425,7 +5499,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8f987f232a73a9c8d5d249cc5962d425';
+YUI.Env[Y.version].md5 = 'f1663d2ba9fbe9956addf8c41f0781f1';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
