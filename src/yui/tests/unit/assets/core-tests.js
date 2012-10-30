@@ -751,6 +751,10 @@ YUI.add('core-tests', function(Y) {
             Y.Assert.areEqual('yui_3_5_0_2pre__' + idx + '_' + time, myY.Env._guidp);
             Y.Assert.areEqual('yui_3_5_0_2pre__' + idx + '_' + time + '_2', myY.guid());
             Y.Assert.areEqual('yui_3_5_0_2pre__' + idx + '_' + time + '_3', myY.guid());
+        },
+        'test Y.config.global': function() {
+            var global = Function('return this')();
+            Y.Assert.areEqual(global, Y.config.global);
         }
     });
 
