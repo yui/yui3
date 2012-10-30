@@ -458,7 +458,8 @@ proto = {
             throwFail: true,
             useBrowserConsole: true,
             useNativeES5: true,
-            win: win
+            win: win,
+            global: Function('return this')()
         };
 
         //Register the CSS stamp element
@@ -1492,6 +1493,15 @@ overwriting other scripts configs.
  * @property throwFail
  * @type boolean
  * @default true
+ */
+
+/**
+ * The global object. In Node.js it's an object called "global". In the
+ * browser is the current window object.
+ *
+ * @property global
+ * @type Object
+ * @default the global object
  */
 
 /**
@@ -4772,7 +4782,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.10.17-20-00',
+            GALLERY_VERSION = 'gallery-2012.10.24-20-01',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
