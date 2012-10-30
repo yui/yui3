@@ -179,6 +179,7 @@
 
 // end Axis setters
 
+
 // Scroll{X/Y} setters
 				"set('scrollX') to a positive distance should move it that distance": function() {
 					var Test = this,
@@ -189,29 +190,7 @@
 					Y.Assert.areEqual(0, scrollview.get('scrollX'));
 					scrollview.set('scrollX', distance);
 					Y.Assert.areEqual(distance, scrollview.get('scrollX'));
-				},
-				
-				"set('scrollX') above the max distance should move it the max X": function() {
-					var Test = this,
-						scrollview = renderNewScrollview(false),
-						max = scrollview._maxScrollX;
-
-					// Assume it starts @ 0
-					Y.Assert.areEqual(0, scrollview.get('scrollX'));
-					scrollview.set('scrollX', max+1);
-					Y.Assert.areEqual(max, scrollview.get('scrollX'));
-				},
-
-				"set('scrollX') to a negative distance should not move it": function() {
-					var Test = this,
-						scrollview = renderNewScrollview(false),
-						distance = -20;
-
-					// Assume it starts @ 0
-					Y.Assert.areEqual(0, scrollview.get('scrollX'));
-					scrollview.set('scrollX', distance);
-					Y.Assert.areEqual(0, scrollview.get('scrollX'));
-				},				
+				},	
 
 				"set('scrollY') to a positive distance should move it that distance": function() {
 					var Test = this,
@@ -222,28 +201,6 @@
 					Y.Assert.areEqual(0, scrollview.get('scrollY'));
 					scrollview.set('scrollY', distance);
 					Y.Assert.areEqual(distance, scrollview.get('scrollY'));
-				},
-				
-				"set('scrollY') above the max distance should move it the max X": function() {
-					var Test = this,
-						scrollview = renderNewScrollview(true),
-						max = scrollview._maxScrollY;
-
-					// Assume it starts @ 0
-					Y.Assert.areEqual(0, scrollview.get('scrollY'));
-					scrollview.set('scrollY', max+1);
-					Y.Assert.areEqual(max, scrollview.get('scrollY'));
-				},
-
-				"set('scrollY') to a negative distance should not move it": function() {
-					var Test = this,
-						scrollview = renderNewScrollview(true),
-						distance = -20;
-
-					// Assume it starts @ 0
-					Y.Assert.areEqual(0, scrollview.get('scrollY'));
-					scrollview.set('scrollY', distance);
-					Y.Assert.areEqual(0, scrollview.get('scrollY'));
 				},
 // end Scroll{X/Y} setters
 
@@ -266,6 +223,46 @@
 					Test.wait(2000);
 				},
 
+				
+				"scrollTo above the max width should move it max X": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						max = scrollview._maxScrollX;
+						
+					scrollview.on('scrollEnd', function(){
+						console.log('scrollEnd');
+						Test.resume(function () {
+							Y.Assert.areEqual(max, scrollview.get('scrollX'));
+						})
+					});
+
+					// Assume it starts @ 0
+					Y.Assert.areEqual(0, scrollview.get('scrollX'));
+
+					scrollview.scrollTo(max+1, null, DURATION);
+					
+					Test.wait(2000);
+				},
+				
+				"scrollTo above the max height should move it max Y": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						max = scrollview._maxScrollY;
+						
+					scrollview.on('scrollEnd', function(){
+						console.log('scrollEnd');
+						Test.resume(function () {
+							Y.Assert.areEqual(max, scrollview.get('scrollX'));
+						})
+					});
+
+					// Assume it starts @ 0
+					Y.Assert.areEqual(0, scrollview.get('scrollY'));
+
+					scrollview.scrollTo(null, max+1, DURATION);
+					
+					Test.wait(2000);
+				},
 
 // end scrollTo
 
