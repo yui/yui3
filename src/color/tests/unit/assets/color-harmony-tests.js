@@ -21,6 +21,12 @@ YUI.add('color-harmony-tests', function(Y) {
                 Y.Assert.areSame(3, c.length, 'length is greater than 1');
             },
 
+            'split complementary of "blue" with 45 degree offsets': function() {
+                var c = Y.Color.getSplit('blue', 45);
+
+                Y.Assert.areSame(3, c.length, 'length is greater than 1');
+            },
+
             'analogous of "red"': function() {
                 var c = Y.Color.getAnalogous('red');
 

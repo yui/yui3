@@ -40,6 +40,13 @@ YUI.add('color-harmony-tests', function(Y) {
                 addOutput('split complementary of "blue"', "blue", c);
             },
 
+            'split complementary of "blue" with 45 degree offset': function() {
+                var c = Y.Color.getSplit('blue', 45);
+
+                Y.Assert.areSame(3, c.length, 'length is greater than 1');
+                addOutput('split complementary of "blue" with 45 degree offset', "blue", c);
+            },
+
             'analogous of "red"': function() {
                 var c = Y.Color.getAnalogous('red');
 

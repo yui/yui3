@@ -56,23 +56,26 @@ var HSL = 'hsl',
         @public
         @method getSplit
         @param {String} str
+        @param {Number} [offset]
         @param {String} [to]
         @returns {String}
         **/
-        getSplit: function(str, to) {
+        getSplit: function(str, offset, to) {
             var c = Harmony._start(str),
                 c1,
                 c2;
+
+            offset = offset || SPLIT_OFFSET;
 
             to = to || Color.findType(str);
 
             c = Harmony.getOffset(c, {h: 180});
 
             c1 = c.concat();
-            c1 = Harmony.getOffset(c1, {h: SPLIT_OFFSET});
+            c1 = Harmony.getOffset(c1, {h: offset});
 
             c2 = c.concat();
-            c2 = Harmony.getOffset(c2, {h: -SPLIT_OFFSET});
+            c2 = Harmony.getOffset(c2, {h: -offset});
 
             // set base color back to original value
             c = Harmony.getOffset(c, {h: 180});
