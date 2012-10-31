@@ -13,6 +13,7 @@
 </style>
 <div class="intro">
 <p> The Color Utility will give you the ability to convert colors to and from RGB, HSL, and Hex. Color also has several methods that receive one color and return other colors that are harmonious, or adjusted, in a variety of useful ways.</p>
+<p>`Y.Color` also provides a very useful way to find colors that work together. `color-harmony` provies the ability to get harmony colors such as complementary, triads, analogous, and more! You can even match a color to the perceived brightness of another color.</p>
 </div>
 
 {{>getting-started}}
@@ -57,11 +58,11 @@ Y.Color.toArray('hsla(0, 100%, 50%, 1)'); // [0, 100, 50, 1]
 <p>Color also provides an easy way to convert from an array to a color string value with `fromArray`. `fromArray` takes an Array as the first param and template string as the second param.</p>
 <p>There are default templates defined in Color for you to use.</p>
 <pre class="code prettyprint">
-Y.Color.toString(['ff', '00', '00'], Y.Color.STR_HEX); // #ff0000
-Y.Color.toString([255, 0, 0], Y.Color.STR_RGB); // rgb(255, 0, 0)
-Y.Color.toString([255, 0, 0, 1], Y.Color.STR_RGBA); // rgb(255, 0, 0, 1)
-Y.Color.toString([0, 100, 50], Y.Color.STR_HSL); // hsl(0, 100%, 50%)
-Y.Color.toString([0, 100, 50, 1], Y.Color.STR_HSLA); // hsl(0, 100%, 50%, 1)
+Y.Color.fromArray(['ff', '00', '00'], Y.Color.STR_HEX); // #ff0000
+Y.Color.fromArray([255, 0, 0], Y.Color.STR_RGB); // rgb(255, 0, 0)
+Y.Color.fromArray([255, 0, 0, 1], Y.Color.STR_RGBA); // rgb(255, 0, 0, 1)
+Y.Color.fromArray([0, 100, 50], Y.Color.STR_HSL); // hsl(0, 100%, 50%)
+Y.Color.fromArray([0, 100, 50, 1], Y.Color.STR_HSLA); // hsl(0, 100%, 50%, 1)
 </pre>
 
 <h2 id="harmony">Harmony Colors</h2>
