@@ -1,9 +1,9 @@
 /**
 Color provides static methods for color conversion hsv values.
 
-    Y.Color.toHsv('f00'); // hsv(0, 100%, 50%)
+    Y.Color.toHsv('f00'); // hsv(0, 100%, 100%)
 
-    Y.Color.toHsva('rgb(255, 255, 0'); // hsva(60, 100%, 50%, 1)
+    Y.Color.toHsva('rgb(255, 255, 0'); // hsva(60, 100%, 100%, 1)
 
 
 @module color
