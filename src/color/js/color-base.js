@@ -337,17 +337,20 @@ Y.Color = {
             alpha = Y.Color._getAlpha(clr);
         }
 
+        ucTo = to[0].toUpperCase() + to.substr(1).toLowerCase();
+        method = Y.Color['_' + from + 'To' + ucTo ];
+
         // check to see if need conversion to rgb first
+        // check to see if there is a direct conversion method
         // convertions are: hex <-> rgb <-> hsl
-        if (from !== 'rgb' && to !== 'rgb') {
-            clr = Y.Color['_' + from + 'ToRgb'](clr);
-            from = 'rgb';
+        if (!method) {
+            if (from !== 'rgb' && to !== 'rgb') {
+                clr = Y.Color['_' + from + 'ToRgb'](clr);
+                from = 'rgb';
+                method = Y.Color['_' + from + 'To' + ucTo ];
+            }
         }
 
-        ucTo = to.toLowerCase();
-        ucTo = ucTo[0].toUpperCase() + ucTo.substr(1);
-
-        method = Y.Color['_' + from + 'To' + ucTo ];
         if (method) {
             clr = ((method)(clr, needsAlpha));
         }
