@@ -207,7 +207,7 @@
 
 // scrollTo
 
-				"scrollTo() on X should scroll": function() {
+				"scrollTo on X should scroll": function() {
 					var Test = this,
 						scrollview = renderNewScrollview(false),
 						distance = 500;
@@ -223,14 +223,29 @@
 					Test.wait(2000);
 				},
 
+				"scrollTo on Y should scroll": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						distance = 500;
+						
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							Y.Assert.areEqual(distance, scrollview.get('scrollY'));
+						})
+					});
+
+					scrollview.scrollTo(null, distance, DURATION);
+
+					Test.wait(2000);
+				},
+
 				
-				"scrollTo above the max width should move it max X": function() {
+				"scrollTo above the max width should move it to max X": function() {
 					var Test = this,
 						scrollview = renderNewScrollview(false),
 						max = scrollview._maxScrollX;
 						
 					scrollview.on('scrollEnd', function(){
-						console.log('scrollEnd');
 						Test.resume(function () {
 							Y.Assert.areEqual(max, scrollview.get('scrollX'));
 						})
@@ -244,13 +259,12 @@
 					Test.wait(2000);
 				},
 				
-				"scrollTo above the max height should move it max Y": function() {
+				"scrollTo above the max height should move it to max Y": function() {
 					var Test = this,
 						scrollview = renderNewScrollview(false),
 						max = scrollview._maxScrollY;
 						
 					scrollview.on('scrollEnd', function(){
-						console.log('scrollEnd');
 						Test.resume(function () {
 							Y.Assert.areEqual(max, scrollview.get('scrollX'));
 						})
