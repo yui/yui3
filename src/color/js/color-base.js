@@ -1,7 +1,7 @@
 /**
 Color provides static methods for color conversion.
 
-    Y.Color.toRgb('f00'); // rgb(255, 0, 0)
+    Y.Color.toRGB('f00'); // rgb(255, 0, 0)
 
     Y.Color.toHex('rgb(255, 255, 0)'); // #ffff00
 
@@ -111,8 +111,9 @@ Y.Color = {
     @since 3.x
     **/
     convert: function (str, to) {
-        to = to.toLowerCase();
-        to = to[0].toUpperCase() + to.substr(1);
+        // check for a toXXX conversion method first
+        // if it doesn't exist, use the toXxx conversion method
+        to = (Y.Color['to' + to.toUpperCase()]) ? to.toUpperCase() : to[0].toUpperCase() + to.substr(1).toLowerCase();
         var clr = Y.Color['to' + to](str);
         return clr.toLowerCase();
     },
@@ -131,53 +132,27 @@ Y.Color = {
     },
 
     /**
-    Alias for toRgb
+    Converts provided color value to an RGB value string
     @public
     @method toRGB
     @param {String} str Hex or RGB value string
     @returns {String}
-    @see toRgb
     @since 3.x
     **/
     toRGB: function (str) {
-        return Y.Color.toRgb(str);
-    },
-
-    /**
-    Converts provided color value to an RGB value string
-    @public
-    @method toRgb
-    @param {String} str Hex or RGB value string
-    @returns {String}
-    @since 3.x
-    **/
-    toRgb: function (str) {
         var clr = Y.Color._convertTo(str, 'rgb');
         return clr.toLowerCase();
     },
 
     /**
-    Alias for toRgba
+    Converts provided color value to an RGB value string
     @public
     @method toRGBA
     @param {String} str Hex or RGB value string
     @returns {String}
-    @see toRgba
     @since 3.x
     **/
     toRGBA: function (str) {
-        return Y.Color.toRgba(str);
-    },
-
-    /**
-    Converts provided color value to an RGB value string
-    @public
-    @method toRgba
-    @param {String} str Hex or RGB value string
-    @returns {String}
-    @since 3.x
-    **/
-    toRgba: function (str) {
         var clr = Y.Color._convertTo(str, 'rgba' );
         return clr.toLowerCase();
     },

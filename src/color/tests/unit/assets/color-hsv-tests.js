@@ -5,7 +5,7 @@ YUI.add('color-hsv-tests', function(Y) {
             name: "Color Convertion Tests",
 
             'convert hex to hsv': function() {
-                var c = Y.Color.toHsv('#ff00ff'),
+                var c = Y.Color.toHSV('#ff00ff'),
                     C = Y.Color.toHSV('#ff00ff');
 
                 areSame('hsv(300, 100%, 100%)', c);
@@ -13,7 +13,7 @@ YUI.add('color-hsv-tests', function(Y) {
             },
 
             'convert hex to hsva': function() {
-                var c = Y.Color.toHsva('#ff00ff'),
+                var c = Y.Color.toHSVA('#ff00ff'),
                     C = Y.Color.toHSVA('#ff00ff');
 
                 areSame('hsva(300, 100%, 100%, 1)', c);
@@ -21,27 +21,27 @@ YUI.add('color-hsv-tests', function(Y) {
             },
 
             'convert rgb to hsv': function() {
-                var c = Y.Color.toHsv('rgb(255, 0, 255)');
+                var c = Y.Color.toHSV('rgb(255, 0, 255)');
 
                 areSame('hsv(300, 100%, 100%)', c);
             },
 
             'convert rgb to hsva': function() {
-                var c = Y.Color.toHsva('rgb(255, 0, 255)');
+                var c = Y.Color.toHSVA('rgb(255, 0, 255)');
 
                 areSame('hsva(300, 100%, 100%, 1)', c);
             },
 
             'convert rgba to hsv': function() {
-                var c = Y.Color.toHsv('rgba(255, 0, 255, 0.5)');
+                var c = Y.Color.toHSV('rgba(255, 0, 255, 0.5)');
 
                 areSame('hsv(300, 100%, 100%)', c);
             },
 
             'convert rgba to hsva': function() {
-                var c = Y.Color.toHsva('rgba(255, 0, 255, 0.5)'),
-                    g = Y.Color.toHsva('rgba(0, 255, 0, 0.5)'),
-                    b = Y.Color.toHsva('#2345ff');
+                var c = Y.Color.toHSVA('rgba(255, 0, 255, 0.5)'),
+                    g = Y.Color.toHSVA('rgba(0, 255, 0, 0.5)'),
+                    b = Y.Color.toHSVA('#2345ff');
 
                 areSame('hsva(300, 100%, 100%, 0.5)', c, 'magenta is not preserved');
                 areSame('hsva(120, 100%, 100%, 0.5)', g, 'lime is not preserved');
@@ -61,25 +61,25 @@ YUI.add('color-hsv-tests', function(Y) {
             },
 
             'convert hsv to rgb': function() {
-                var c = Y.Color.toRgb('hsv(340, 100%, 50%)');
+                var c = Y.Color.toRGB('hsv(340, 100%, 50%)');
 
                 areSame('rgb(128, 0, 43)', c);
             },
 
             'convert hsva to rgb': function() {
-                var c = Y.Color.toRgb('hsva(70, 100%, 50%, 0.5)');
+                var c = Y.Color.toRGB('hsva(70, 100%, 50%, 0.5)');
 
                 areSame('rgb(107, 128, 0)', c);
             },
 
             'convert hsv to rgba': function() {
-                var c = Y.Color.toRgba('hsv(15, 100%, 50%)');
+                var c = Y.Color.toRGBA('hsv(15, 100%, 50%)');
 
                 areSame('rgba(128, 32, 0, 1)', c);
             },
 
             'convert hsva to rgba': function() {
-                var c = Y.Color.toRgba('hsva(240, 100%, 50%, 0.4)');
+                var c = Y.Color.toRGBA('hsva(240, 100%, 50%, 0.4)');
 
                 areSame('rgba(0, 0, 128, 0.4)', c);
             },
@@ -90,22 +90,22 @@ YUI.add('color-hsv-tests', function(Y) {
                 areSame('hsv(0, 0%, 60%)', c);
             },
 
-            'test varying saturation toHsv conversions': function() {
-                var low = Y.Color.toHsv('#679883'),
-                    med = Y.Color.toHsv('#3CC389'),
-                    high = Y.Color.toHsv('#11EE8E');
+            'test varying saturation toHSV conversions': function() {
+                var low = Y.Color.toHSV('#679883'),
+                    med = Y.Color.toHSV('#3CC389'),
+                    high = Y.Color.toHSV('#11EE8E');
 
                 areSame('hsv(154, 32%, 60%)', low, 'low saturation is not preserved');
                 areSame('hsv(154, 69%, 76%)', med, 'med saturation is not preserved');
                 areSame('hsv(154, 93%, 93%)', high, 'high saturation is not preserved');
             },
 
-            'test varying luminance toHsv conversions': function() {
-                var no = Y.Color.toHsv('#000000'),
-                    low = Y.Color.toHsv('#1B143D'),
-                    med = Y.Color.toHsv('#5D4BC3'),
-                    high = Y.Color.toHsv('#CBC6EC'),
-                    full = Y.Color.toHsv('#ffffff');
+            'test varying luminance toHSV conversions': function() {
+                var no = Y.Color.toHSV('#000000'),
+                    low = Y.Color.toHSV('#1B143D'),
+                    med = Y.Color.toHSV('#5D4BC3'),
+                    high = Y.Color.toHSV('#CBC6EC'),
+                    full = Y.Color.toHSV('#ffffff');
 
                 areSame('hsv(0, 0%, 0%)', no, 'no luminance is not preserved');
                 areSame('hsv(250, 67%, 24%)', low, 'low luminance is not preserved');

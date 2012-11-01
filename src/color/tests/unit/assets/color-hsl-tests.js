@@ -5,7 +5,7 @@ YUI.add('color-hsl-tests', function(Y) {
             name: "Color Convertion Tests",
 
             'convert hex to hsl': function() {
-                var c = Y.Color.toHsl('#ff00ff'),
+                var c = Y.Color.toHSL('#ff00ff'),
                     C = Y.Color.toHSL('#ff00ff');
 
                 areSame('hsl(300, 100%, 50%)', c);
@@ -13,7 +13,7 @@ YUI.add('color-hsl-tests', function(Y) {
             },
 
             'convert hex to hsla': function() {
-                var c = Y.Color.toHsla('#ff00ff'),
+                var c = Y.Color.toHSLA('#ff00ff'),
                     C = Y.Color.toHSLA('#ff00ff');
 
                 areSame('hsla(300, 100%, 50%, 1)', c);
@@ -21,27 +21,27 @@ YUI.add('color-hsl-tests', function(Y) {
             },
 
             'convert rgb to hsl': function() {
-                var c = Y.Color.toHsl('rgb(255, 0, 255)');
+                var c = Y.Color.toHSL('rgb(255, 0, 255)');
 
                 areSame('hsl(300, 100%, 50%)', c);
             },
 
             'convert rgb to hsla': function() {
-                var c = Y.Color.toHsla('rgb(255, 0, 255)');
+                var c = Y.Color.toHSLA('rgb(255, 0, 255)');
 
                 areSame('hsla(300, 100%, 50%, 1)', c);
             },
 
             'convert rgba to hsl': function() {
-                var c = Y.Color.toHsl('rgba(255, 0, 255, 0.5)');
+                var c = Y.Color.toHSL('rgba(255, 0, 255, 0.5)');
 
                 areSame('hsl(300, 100%, 50%)', c);
             },
 
             'convert rgba to hsla': function() {
-                var c = Y.Color.toHsla('rgba(255, 0, 255, 0.5)'),
-                    g = Y.Color.toHsla('rgba(0, 255, 0, 0.5)'),
-                    b = Y.Color.toHsla('#2345ff');
+                var c = Y.Color.toHSLA('rgba(255, 0, 255, 0.5)'),
+                    g = Y.Color.toHSLA('rgba(0, 255, 0, 0.5)'),
+                    b = Y.Color.toHSLA('#2345ff');
 
                 areSame('hsla(300, 100%, 50%, 0.5)', c, 'magenta is not preserved');
                 areSame('hsla(120, 100%, 50%, 0.5)', g, 'lime is not preserved');
@@ -61,25 +61,25 @@ YUI.add('color-hsl-tests', function(Y) {
             },
 
             'convert hsl to rgb': function() {
-                var c = Y.Color.toRgb('hsl(120, 100%, 50%)');
+                var c = Y.Color.toRGB('hsl(120, 100%, 50%)');
 
                 areSame('rgb(0, 255, 0)', c);
             },
 
             'convert hsla to rgb': function() {
-                var c = Y.Color.toRgb('hsla(120, 100%, 50%)');
+                var c = Y.Color.toRGB('hsla(120, 100%, 50%)');
 
                 areSame('rgb(0, 255, 0)', c);
             },
 
             'convert hsl to rgba': function() {
-                var c = Y.Color.toRgba('hsl(15, 100%, 50%)');
+                var c = Y.Color.toRGBA('hsl(15, 100%, 50%)');
 
                 areSame('rgba(255, 64, 0, 1)', c);
             },
 
             'convert hsla to rgba': function() {
-                var c = Y.Color.toRgba('hsla(240, 100%, 50%, 0.4)');
+                var c = Y.Color.toRGBA('hsla(240, 100%, 50%, 0.4)');
 
                 areSame('rgba(0, 0, 255, 0.4)', c);
             },
@@ -90,22 +90,22 @@ YUI.add('color-hsl-tests', function(Y) {
                 areSame('hsl(0, 0%, 60%)', c);
             },
 
-            'test varying saturation toHsl conversions': function() {
-                var low = Y.Color.toHsl('#679883'),
-                    med = Y.Color.toHsl('#3CC389'),
-                    high = Y.Color.toHsl('#11EE8E');
+            'test varying saturation toHSL conversions': function() {
+                var low = Y.Color.toHSL('#679883'),
+                    med = Y.Color.toHSL('#3CC389'),
+                    high = Y.Color.toHSL('#11EE8E');
 
                 areSame('hsl(154, 19%, 50%)', low, 'low saturation is not preserved');
                 areSame('hsl(154, 53%, 50%)', med, 'med saturation is not preserved');
                 areSame('hsl(154, 87%, 50%)', high, 'high saturation is not preserved');
             },
 
-            'test varying luminance toHsl conversions': function() {
-                var no = Y.Color.toHsl('#000000'),
-                    low = Y.Color.toHsl('#1B143D'),
-                    med = Y.Color.toHsl('#5D4BC3'),
-                    high = Y.Color.toHsl('#CBC6EC'),
-                    full = Y.Color.toHsl('#ffffff');
+            'test varying luminance toHSL conversions': function() {
+                var no = Y.Color.toHSL('#000000'),
+                    low = Y.Color.toHSL('#1B143D'),
+                    med = Y.Color.toHSL('#5D4BC3'),
+                    high = Y.Color.toHSL('#CBC6EC'),
+                    full = Y.Color.toHSL('#ffffff');
 
                 areSame('hsl(0, 0%, 0%)', no, 'no luminance is not preserved');
                 areSame('hsl(250, 51%, 16%)', low, 'low luminance is not preserved');

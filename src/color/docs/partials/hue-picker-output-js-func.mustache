@@ -3,7 +3,7 @@ function updateOutput(hslString) {
         hexOutput.set('value', Y.Color.toHex(hslString));
     }
     if (rgbOutput !== focused) {
-        rgbOutput.set('value', Y.Color.toRgb(hslString));
+        rgbOutput.set('value', Y.Color.toRGB(hslString));
     }
     if (hslOutput !== focused) {
         hslOutput.set('value', hslString);
@@ -15,7 +15,7 @@ function updatePickerFromValue(e) {
         hsl = [];
 
     if (Y.Color.toArray(val)) {
-        hsl = Y.Color.toArray(Y.Color.toHsl(val));
+        hsl = Y.Color.toArray(Y.Color.toHSL(val));
         setPickerUI({
             h: hsl[0],
             s: hsl[1],

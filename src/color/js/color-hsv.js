@@ -1,9 +1,9 @@
 /**
 Color provides static methods for color conversion hsv values.
 
-    Y.Color.toHsv('f00'); // hsv(0, 100%, 100%)
+    Y.Color.toHSV('f00'); // hsv(0, 100%, 100%)
 
-    Y.Color.toHsva('rgb(255, 255, 0'); // hsva(60, 100%, 100%, 1)
+    Y.Color.toHSVA('rgb(255, 255, 0'); // hsva(60, 100%, 100%, 1)
 
 
 @module color
@@ -43,53 +43,27 @@ Color = {
     STR_HSVA: 'hsva({*}, {*}%, {*}%, {*})',
 
     /**
-    Alias for toHsv
+    Converts provided color value to an HSV string.
     @public
     @method toHSV
     @param {String} str
     @returns {String}
-    @see toHsv
     @since 3.x
     **/
     toHSV: function (str) {
-        return Y.Color.toHsv(str);
-    },
-
-    /**
-    Converts provided color value to an HSV string.
-    @public
-    @method toHsv
-    @param {String} str
-    @returns {String}
-    @since 3.x
-    **/
-    toHsv: function (str) {
         var clr = Y.Color._convertTo(str, 'hsv');
         return clr.toLowerCase();
     },
 
     /**
-    Alias for toHsva
+    Converts provided color value to an HSVA string.
     @public
     @method toHSVA
     @param {String} str
     @returns {String}
-    @see toHsva
     @since 3.x
     **/
     toHSVA: function (str) {
-        return Y.Color.toHsva(str);
-    },
-
-    /**
-    Converts provided color value to an HSVA string.
-    @public
-    @method toHsva
-    @param {String} str
-    @returns {String}
-    @since 3.x
-    **/
-    toHsva: function (str) {
         var clr = Y.Color._convertTo(str, 'hsva');
         return clr.toLowerCase();
     },

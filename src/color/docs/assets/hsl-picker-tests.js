@@ -74,7 +74,7 @@ YUI.add('hsl-picker-tests', function(Y) {
                 var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.STR_HSL);
 
                 Y.Assert.areSame(Y.Color.toHex(hsl), hexVal.get('value'), 'hexVal is not correct');
-                Y.Assert.areSame(Y.Color.toRgb(hsl), rgbVal.get('value'), 'rgbVal is not correct');
+                Y.Assert.areSame(Y.Color.toRGB(hsl), rgbVal.get('value'), 'rgbVal is not correct');
                 Y.Assert.areSame(hsl, hslVal.get('value'), 'hslVal is not correct');
             }, 500);
         },
@@ -87,7 +87,7 @@ YUI.add('hsl-picker-tests', function(Y) {
                 var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.STR_HSL);
 
                 Y.Assert.areSame(Y.Color.toHex(hsl), hexVal.get('value'), 'hexVal is not correct');
-                Y.Assert.areSame(Y.Color.toRgb(hsl), rgbVal.get('value'), 'rgbVal is not correct');
+                Y.Assert.areSame(Y.Color.toRGB(hsl), rgbVal.get('value'), 'rgbVal is not correct');
                 Y.Assert.areSame(hsl, hslVal.get('value'), 'hslVal is not correct');
             }, 500);
         },
@@ -100,7 +100,7 @@ YUI.add('hsl-picker-tests', function(Y) {
                 var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.STR_HSL);
 
                 Y.Assert.areSame(Y.Color.toHex(hsl), hexVal.get('value'), 'hexVal is not correct');
-                Y.Assert.areSame(Y.Color.toRgb(hsl), rgbVal.get('value'), 'rgbVal is not correct');
+                Y.Assert.areSame(Y.Color.toRGB(hsl), rgbVal.get('value'), 'rgbVal is not correct');
                 Y.Assert.areSame(hsl, hslVal.get('value'), 'hslVal is not correct');
             }, 500);
         },
@@ -115,7 +115,7 @@ YUI.add('hsl-picker-tests', function(Y) {
                 var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.STR_HSL);
 
                 Y.Assert.areSame(Y.Color.toHex(hsl), hexVal.get('value'), 'hexVal is not correct');
-                Y.Assert.areSame(Y.Color.toRgb(hsl), rgbVal.get('value'), 'rgbVal is not correct');
+                Y.Assert.areSame(Y.Color.toRGB(hsl), rgbVal.get('value'), 'rgbVal is not correct');
                 Y.Assert.areSame(hsl, hslVal.get('value'), 'hslVal is not correct');
             }, 500);
         }

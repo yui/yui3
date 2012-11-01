@@ -51,7 +51,7 @@ YUI().use('slider', 'color', function (Y) {
 <h3>Binding Events</h3>
 <p>After we have our UI built and ready, we need to bind events to the `slider` instances for R, G, and B values.</p>
 <p>In each event callback we update the text value in the UI, then call `updateColors()` to update the color strings.</p>
-<p>In `updateColors()` we get to see the use of `Y.Color`. We create `rgbStr` from an array of color values. We can then create the hex and hsl value strings with `toHex()` and `toHsl()` respectively.</p>
+<p>In `updateColors()` we get to see the use of `Y.Color`. We create `rgbStr` from an array of color values. We can then create the hex and hsl value strings with `toHex()` and `toHSL()` respectively.</p>
 ```
 {{>rgb-slider-bind-js}}
 ```

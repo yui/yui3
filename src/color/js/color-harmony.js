@@ -293,6 +293,7 @@ var HSL = 'hsl',
                 slOffset,
                 i = 0,
                 l,
+                o,
                 _c = c.concat();
 
             to = to || Color.findType(str);
@@ -301,12 +302,11 @@ var HSL = 'hsl',
             slOffset = (offset > 100) ? 100 : offset;
 
             for (; i < count; i++) {
-                var o = {
+                o = {
                     h: ( Math.random() * (offset * 2)) - offset,
                     s: ( Math.random() * (slOffset * 2)),
                     l: ( Math.random() * (slOffset * 2))
                 };
-                console.log(o.s);
                 _c = Harmony.getOffset(_c, o);
                 colors.push(_c.concat());
             }

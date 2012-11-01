@@ -1,9 +1,9 @@
 /**
 Color provides static methods for color conversion to hsl values.
 
-    Y.Color.toHsl('f00'); // hsl(0, 100%, 50%)
+    Y.Color.toHSL('f00'); // hsl(0, 100%, 50%)
 
-    Y.Color.toHsla('rgb(255, 255, 0'); // hsla(60, 100%, 50%, 1)
+    Y.Color.toHSLA('rgb(255, 255, 0'); // hsla(60, 100%, 50%, 1)
 
 @module color
 @submodule color-hsl
@@ -41,53 +41,27 @@ Color = {
     STR_HSLA: 'hsla({*}, {*}%, {*}%, {*})',
 
     /**
-    Alias for toHsl
+    Converts provided color value to an HSL string.
     @public
     @method toHSL
     @param {String} str
     @returns {String}
-    @see toHsl
     @since 3.x
     **/
     toHSL: function (str) {
-        return Y.Color.toHsl(str);
-    },
-
-    /**
-    Converts provided color value to an HSL string.
-    @public
-    @method toHsl
-    @param {String} str
-    @returns {String}
-    @since 3.x
-    **/
-    toHsl: function (str) {
         var clr = Y.Color._convertTo(str, 'hsl');
         return clr.toLowerCase();
     },
 
     /**
-    Alias for toHsla
+    Converts provided color value to an HSLA string.
     @public
     @method toHSLA
     @param {String} str
     @returns {String}
-    @see toHsla
     @since 3.x
     **/
     toHSLA: function (str) {
-        return Y.Color.toHsla(str);
-    },
-
-    /**
-    Converts provided color value to an HSLA string.
-    @public
-    @method toHsla
-    @param {String} str
-    @returns {String}
-    @since 3.x
-    **/
-    toHsla: function (str) {
         var clr = Y.Color._convertTo(str, 'hsla');
         return clr.toLowerCase();
     },
