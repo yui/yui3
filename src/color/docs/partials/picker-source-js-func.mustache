@@ -16,7 +16,7 @@ function updatePickerUI() {
     var h = hue.get('value'),
         s = sat.get('value'),
         l = lum.get('value'),
-        hslString = Y.Color.fromArray([h, s, l], Y.Color.STR_HSL);
+        hslString = Y.Color.fromArray([h, s, l], Y.Color.TYPES.HSL);
 
     satValue.set('text', s + '%');
     lumValue.set('text', l + '%');

@@ -1,31 +1,32 @@
 YUI.add('color-tests', function(Y) {
 
     var Assert = Y.Assert,
+        Types = Y.Color.TYPES,
         testBasic = new Y.Test.Case({
             name: "Color Convertion Tests",
 
             'test conversion': function() {
-                Assert.areEqual('#ffffff', Y.Color.convert('fff', 'hex'), 'Hex to Hex');
+                Assert.areEqual('#ffffff', Y.Color.convert('fff', Types.HEX), 'Hex to Hex');
 
-                Assert.areEqual('rgb(255, 2, 5)', Y.Color.convert('rgb(255, 2, 5)', 'rgb'), 'RGB to RGB');
+                Assert.areEqual('rgb(255, 2, 5)', Y.Color.convert('rgb(255, 2, 5)', Types.RGB), 'RGB to RGB');
 
-                Assert.areEqual('rgba(255, 2, 5, 1)', Y.Color.convert('rgba(255, 2, 5, 1)', 'rgba'), 'RGBa to RGBa');
+                Assert.areEqual('rgba(255, 2, 5, 1)', Y.Color.convert('rgba(255, 2, 5, 1)', Types.RGBA), 'RGBa to RGBa');
 
-                Assert.areEqual('rgba(255, 2, 5, 1)', Y.Color.convert('rgb(255, 2, 5)', 'rgba'), 'RGB to RGBa');
+                Assert.areEqual('rgba(255, 2, 5, 1)', Y.Color.convert('rgb(255, 2, 5)', Types.RGBA), 'RGB to RGBa');
 
-                Assert.areEqual('rgb(0, 0, 0)', Y.Color.convert('000', 'rgb'), 'Hex to RGB');
+                Assert.areEqual('rgb(0, 0, 0)', Y.Color.convert('000', Types.RGB), 'Hex to RGB');
 
-                Assert.areEqual('rgba(0, 0, 0, 1)', Y.Color.convert('000', 'rgba'), 'Hex to RGBa');
+                Assert.areEqual('rgba(0, 0, 0, 1)', Y.Color.convert('000', Types.RGBA), 'Hex to RGBa');
 
-                Assert.areEqual('#ff0000', Y.Color.convert('rgb(255, 0, 0)', 'hex'), 'RGB to Hex');
+                Assert.areEqual('#ff0000', Y.Color.convert('rgb(255, 0, 0)', Types.HEX), 'RGB to Hex');
 
-                Assert.areEqual('#0000ff', Y.Color.convert('rgba(0, 0, 255, 1)', 'hex'), 'RGBa to Hex');
+                Assert.areEqual('#0000ff', Y.Color.convert('rgba(0, 0, 255, 1)', Types.HEX), 'RGBa to Hex');
 
-                Assert.areEqual('#00ff00', Y.Color.convert('lime', 'hex'), 'Keyword to Hex');
+                Assert.areEqual('#00ff00', Y.Color.convert('lime', Types.HEX), 'Keyword to Hex');
 
-                Assert.areEqual('rgb(0, 255, 0)', Y.Color.convert('lime', 'rgb'), 'Keyword to RGB');
+                Assert.areEqual('rgb(0, 255, 0)', Y.Color.convert('lime', Types.RGB), 'Keyword to RGB');
 
-                Assert.areEqual('rgba(0, 255, 0, 1)', Y.Color.convert('lime', 'rgba'), 'Keyword to RGBa');
+                Assert.areEqual('rgba(0, 255, 0, 1)', Y.Color.convert('lime', Types.RGBA), 'Keyword to RGBa');
             },
 
             'test original Y.DOM color conversons': function() {
@@ -50,9 +51,9 @@ YUI.add('color-tests', function(Y) {
             'test fromArray conversions': function() {
                 Assert.areEqual('0, 0, 0', Y.Color.fromArray([0,0,0]), 'template undefined');
 
-                Assert.areEqual('rgba(255, 255, 255, 1)', Y.Color.fromArray([255,255,255], Y.Color.STR_RGBA), 'template rgba with three values');
+                Assert.areEqual('rgba(255, 255, 255, 1)', Y.Color.fromArray([255,255,255], Types.RGBA), 'template rgba with three values');
 
-                Assert.areEqual('rgba(255, 255, 255, 0)', Y.Color.fromArray([255,255,255,0], Y.Color.STR_RGBA), 'template rgba with four values');
+                Assert.areEqual('rgba(255, 255, 255, 0)', Y.Color.fromArray([255,255,255,0], Types.RGBA), 'template rgba with four values');
             },
 
             'test direct toArray conversions': function() {

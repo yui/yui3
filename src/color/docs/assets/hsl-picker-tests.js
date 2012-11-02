@@ -71,7 +71,7 @@ YUI.add('hsl-picker-tests', function(Y) {
 
                 lSlider.simulate('mouseup');
 
-                var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.STR_HSL);
+                var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.TYPES.HSL);
 
                 Y.Assert.areSame(Y.Color.toHex(hsl), hexVal.get('value'), 'hexVal is not correct');
                 Y.Assert.areSame(Y.Color.toRGB(hsl), rgbVal.get('value'), 'rgbVal is not correct');
@@ -84,7 +84,7 @@ YUI.add('hsl-picker-tests', function(Y) {
             hexVal.set('value', '#ff00ff');
 
             this.wait(function() {
-                var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.STR_HSL);
+                var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.TYPES.HSL);
 
                 Y.Assert.areSame(Y.Color.toHex(hsl), hexVal.get('value'), 'hexVal is not correct');
                 Y.Assert.areSame(Y.Color.toRGB(hsl), rgbVal.get('value'), 'rgbVal is not correct');
@@ -97,7 +97,7 @@ YUI.add('hsl-picker-tests', function(Y) {
             rgbVal.set('value', 'rgb(50, 50, 50)');
 
             this.wait(function() {
-                var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.STR_HSL);
+                var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.TYPES.HSL);
 
                 Y.Assert.areSame(Y.Color.toHex(hsl), hexVal.get('value'), 'hexVal is not correct');
                 Y.Assert.areSame(Y.Color.toRGB(hsl), rgbVal.get('value'), 'rgbVal is not correct');
@@ -112,7 +112,7 @@ YUI.add('hsl-picker-tests', function(Y) {
             hslVal.set('value', 'hsl(200, 75%, 50%)');
 
             this.wait(function() {
-                var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.STR_HSL);
+                var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.TYPES.HSL);
 
                 Y.Assert.areSame(Y.Color.toHex(hsl), hexVal.get('value'), 'hexVal is not correct');
                 Y.Assert.areSame(Y.Color.toRGB(hsl), rgbVal.get('value'), 'rgbVal is not correct');
