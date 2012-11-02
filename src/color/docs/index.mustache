@@ -12,17 +12,17 @@
 }
 </style>
 <div class="intro">
-<p> The Color Utility will give you the ability to convert colors to and from RGB, HSL, and Hex. Color also has several methods that receive one color and return other colors that are harmonious, or adjusted, in a variety of useful ways.</p>
-<p>`Y.Color` also provides a very useful way to find colors that work together. `color-harmony` provies the ability to get harmony colors such as complementary, triads, analogous, and more! You can even match a color to the perceived brightness of another color.</p>
+<p> The {{displayName}} Utility will give you the ability to convert colors to and from RGB and Hex. {{displayName}} also provides submodules to convert to and from HSL with `color-hsl` and HSV with `color-hsv`.</p>
+<p>`Y.Color` also provides a very useful way to find colors that work together. `color-harmony` provides the ability to get harmony colors such as complementary, triads, analogous, and more! You can even match a color to the perceived brightness of another color.</p>
 </div>
 
 {{>getting-started}}
 
 <h2 id="using">Using {{displayName}}</h2>
-<p>Color allows you to convert a color from and to hexadecimal, RGB, and HSL. Color conversion methods take a string value and return a string value.</p>
+<p>{{displayName}} allows you to convert a color from and to hexadecimal and RGB. {{displayName}} conversion methods take a string value and return a string value.</p>
 
 <h3 id="basic">Basic Conversion</h3>
-<p>{{displayName}} takes color values as strings. Color values may consist of hexadecimal `"#ff00ff"`, RGB `"rgb(255, 0, 255)"`, RGBA `"rgba(255, 0, 255, 1)"`, HSL `"hsl(300, 100%, 50%)"`, or HSLA `"hsla(300, 100%, 50%, 1)"`.</p>
+<p>{{displayName}} takes color values as strings. {{displayName}} values may consist of hexadecimal `"#ff00ff"`, RGB `"rgb(255, 0, 255)"`, or RGBA `"rgba(255, 0, 255, 1)"`.</p>
 <p>As with taking in these values, you can also convert to any of these values.</p>
 <pre class="code prettyprint">
 var color = 'f00';{{>color-s}}#ff0000{{>color-e}}
@@ -30,19 +30,15 @@ var color = 'f00';{{>color-s}}#ff0000{{>color-e}}
 Y.Color.toHex(color); // #ff0000
 Y.Color.toRGB(color); // rgb(255, 0, 0)
 Y.Color.toRGBA(color); // rgba(255, 0, 0, 1)
-Y.Color.toHSL(color); // hsl(0, 100%, 50%)
-Y.Color.toHSLA(color); // hsla(0, 100%, 50%, 1)
 </pre>
 
-<p>Color also provides a sugar method, `convert()`. It takes color value as the first param and the `to` type as the second value.</p>
+<p>{{displayName}} also provides a sugar method, `convert()`. It takes color value as the first param and the `to` type as the second value.</p>
 <pre class="code prettyprint">
 var color = 'f00';{{>color-s}}#ff0000{{>color-e}}
 
-Y.Color.convert(color, 'hex'); // #ff0000
-Y.Color.convert(color, 'rgb'); // rgb(255, 0, 0)
-Y.Color.convert(color, 'rgba'); // rgba(255, 0, 0, 1)
-Y.Color.convert(color, 'hsl'); // hsl(0, 100%, 50%)
-Y.Color.convert(color, 'hsla'); // hsla(0, 100%, 50%, 1)
+Y.Color.convert(color, Y.Color.TYPES.HEX); // #ff0000
+Y.Color.convert(color, Y.Color.TYPES.RGB); // rgb(255, 0, 0)
+Y.Color.convert(color, Y.Color.TYPES.RGBA); // rgba(255, 0, 0, 1)
 </pre>
 
 <h3 id="arrays">Working with Arrays</h3>
@@ -51,19 +47,63 @@ Y.Color.convert(color, 'hsla'); // hsla(0, 100%, 50%, 1)
 Y.Color.toArray('f00'); // ['ff', '00', '00']
 Y.Color.toArray('rgb(255, 0, 0)'); // [255, 0, 0]
 Y.Color.toArray('rgba(255, 0, 0, 1)'); // [255, 0, 0, 1]
-Y.Color.toArray('hsl(0, 100%, 50%)'); // [0, 100, 50]
-Y.Color.toArray('hsla(0, 100%, 50%, 1)'); // [0, 100, 50, 1]
 </pre>
 
-<p>Color also provides an easy way to convert from an array to a color string value with `fromArray`. `fromArray` takes an Array as the first param and template string as the second param.</p>
-<p>There are default templates defined in Color for you to use.</p>
+<p>{{displayName}} also provides an easy way to convert from an array to a color string value with `fromArray`. `fromArray` takes an Array as the first param and template string as the second param.</p>
+<p>There are default templates defined in {{displayName}} for you to use.</p>
 <pre class="code prettyprint">
-Y.Color.fromArray(['ff', '00', '00'], Y.Color.STR_HEX); // #ff0000
-Y.Color.fromArray([255, 0, 0], Y.Color.STR_RGB); // rgb(255, 0, 0)
-Y.Color.fromArray([255, 0, 0, 1], Y.Color.STR_RGBA); // rgb(255, 0, 0, 1)
-Y.Color.fromArray([0, 100, 50], Y.Color.STR_HSL); // hsl(0, 100%, 50%)
-Y.Color.fromArray([0, 100, 50, 1], Y.Color.STR_HSLA); // hsl(0, 100%, 50%, 1)
+Y.Color.fromArray(['ff', '00', '00'], Y.Color.TYPES.HEX); // #ff0000
+Y.Color.fromArray([255, 0, 0], Y.Color.TYPES.RGB); // rgb(255, 0, 0)
+Y.Color.fromArray([255, 0, 0, 1], Y.Color.TYPES.RGBA); // rgb(255, 0, 0, 1)
 </pre>
+
+<h2 id="hsl">HSL Color</h2>
+<p>You can get access to HSL color values and conversion methods by using the `color-hsl` submodule.</p>
+<pre class="code prettyprint">
+var color = 'f00';{{>color-s}}#ff0000{{>color-e}}
+
+// direct conversion methods
+Y.Color.toHSL(color); // hsl(0, 100%, 50%)
+Y.Color.toHSLA(color); // hsla(0, 100%, 50%, 1)
+
+// convertion sugar with `convert()` and `to` specification
+Y.Color.convert(color, Y.Color.TYPES.HSL); // hsl(0, 100%, 50%)
+Y.Color.convert(color, Y.Color.TYPES.HSLA); // hsla(0, 100%, 50%, 1)
+
+// convert string to an array
+Y.Color.toArray('hsl(0, 100%, 50%)'); // [0, 100, 50]
+Y.Color.toArray('hsla(0, 100%, 50%, 1)'); // [0, 100, 50, 1]
+
+// convert to string from an array
+Y.Color.fromArray([0, 100, 50], Y.Color.TYPES.HSL); // hsl(0, 100%, 50%)
+Y.Color.fromArray([0, 100, 50, 1], Y.Color.TYPES.HSLA); // hsl(0, 100%, 50%, 1)
+</pre>
+
+
+<h2 id="hsv">HSV Color</h2>
+<p>You can get access to HSV color values and conversion methods by using the `color-hsv` submodule.</p>
+<p>By default, hsv strings are represented as `hsv( hue, saturation%, value%)` even though these are not directly supported with CSS as hsl strings are.</p>
+<pre class="code prettyprint">
+var color = 'f00';{{>color-s}}#ff0000{{>color-e}}
+
+// direct conversion methods
+Y.Color.toHSV(color); // hsv(0, 100%, 100%)
+Y.Color.toHSVA(color); // hsva(0, 100%, 100%, 1)
+
+// convertion sugar with `convert()` and `to` specification
+Y.Color.convert(color, Y.Color.TYPES.HSV); // hsv(0, 100%, 100%)
+Y.Color.convert(color, Y.Color.TYPES.HSVA); // hsva(0, 100%, 100%, 1)
+
+// convert string to an array
+Y.Color.toArray('hsv(0, 100%, 100%)'); // [0, 100, 100]
+Y.Color.toArray('hsva(0, 100%, 100%, 1)'); // [0, 100, 100, 1]
+
+// convert to string from an array
+Y.Color.fromArray([0, 100, 100], Y.Color.TYPES.HSV); // hsv(0, 100%, 100%)
+Y.Color.fromArray([0, 100, 100, 1], Y.Color.TYPES.HSVA); // hsv(0, 100%, 100%, 1)
+</pre>
+
+
 
 <h2 id="harmony">Harmony Colors</h2>
 <p>Color also makes it easy to get complementary, triads, tetrads, or offsets of a color through `color-harmony`. Harmony methods that return colors, will return an Array with the color provided (converted, if requested) as the first index.</p>
@@ -103,9 +143,10 @@ Y.Color.getComplementary(red); // [ "#ff0000"{{>color-s}}#ff0000{{>color-e}}, "#
 <h3 id="split">Split Complementary</h3>
 <p>Split complementary is similar to complementary, with the exception of getting one color opposite the starting color, you get two colors adjacent to the complementary color.</p>
 <p>`getSplit` will return an Array of three color values. The first being the color provided. The second being a 30 degree offset from the complementary color. The third being a -30 degree offset from the complementary color.</p>
+<p>If you wish, you can provide a custom offset distance as the second parameter.</p>
 <img src="../assets/color/split-red-w.png">
 <pre class="code prettyprint">
-// getSplit(color, to)
+// getSplit(color, offset, to)
 
 Y.Color.getSplit(red); //["#ff0000"{{>color-s}}#ff0000{{>color-e}}, "#00ffff"{{>color-s}}#00ffff{{>color-e}}, "#55ff00"{{>color-s}}#55ff00{{>color-e}}]
 </pre>
