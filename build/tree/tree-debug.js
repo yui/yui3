@@ -747,8 +747,11 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
         var node   = e.node,
             parent = e.parent;
 
-        node.parent = parent;
+        // Remove the node from its existing parent if it has one.
+        this._removeNodeFromParent(node);
 
+        // Add the node to its new parent at the desired index.
+        node.parent = parent;
         parent.children.splice(e.index, 0, node);
 
         parent.canHaveChildren = true;
