@@ -483,7 +483,11 @@ Y.TimeZone.isValidTimestamp = function(timeStamp, rawOffset) {
     if(m31.indexOf(month) != -1) {
         maxDays = 31;
     } else if(month == 2) {
-        if(year%4 == 0) {
+        if(year % 400 == 0) {
+            maxDays = 29;
+        } else if(year % 100 == 0) {
+            maxDays = 28;
+        } else if(year % 4 == 0) {
             maxDays = 29;
         } else {
             maxDays = 28;
