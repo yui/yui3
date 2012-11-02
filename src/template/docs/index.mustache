@@ -15,16 +15,56 @@ A template engine takes a template&mdash;usually in the form of a string&mdash;a
 </p>
 
 <p>
-`Y.Template` provides a common API that can be used to compile and render templates with a variety of template engines. The two template engines included in YUI are <a href="../handlebars/">Handlebars</a> and [[#Using Template.Micro|Template.Micro]].
+`Y.Template` provides a common API that can be used to compile and render templates with a variety of template engines. The two template engines included in YUI are <a href="../handlebars/index.html">Handlebars</a> and [[#Using Template.Micro|Template.Micro]].
 </p>
 
-<p>[example of rendering a Template.Micro template]</p>
+<p>
+The quickest way to get started is using the `template` module which will load both the `template-base` and `template-micro` modules. The following example shows the most basic usage with the `Y.Template.Micro` engine (the default template engine):
+</p>
 
-<p>[example of rendering a Handlebars template]</p>
+```javascript
+YUI().use('template', function (Y) {
+    var micro = new Y.Template(),
+        html  = micro.render('<i><%= data.message %></i>', {message: 'hello!'});
+
+    Y.log(html); // => "<i>hello!</i>"
+});
+```
+
+<p>
+In the above example, `micro` is an instance of a template engine backed by Template.Micro. The `Y.Template()` constructor provides an abstraction over the backing engine, giving the engine instances a uniform API.
+</p>
+
+<p>
+Handlebars templates can be used instead of Micro templates by using the `template-base` and `handlebars` modules. The following example shows how to generate the same output as the above example with the Handlebars engine:
+</p>
+
+```javascript
+YUI().use('template', function (Y) {
+    var handlebars = new Y.Template(),
+        html       = handlebars.render('<i>{{message}}</i>', {message: 'hello!'});
+
+    Y.log(html); // => "<i>hello!</i>"
+});
+```
+
+<p>
+<strong>Note:</strong> Both examples are using the engine's <strong>`render()`</strong> method to compile and render the template dynamically on the client. Dynamic rendering of Micro templates is fine, but it should be <strong>avoided</strong> with <strong>Handlebars</strong> templates. It is recommended that Handlebars templates be <a href="../handlebars/index.html#precompiling-templates">precompiled</a>, enabling the client code to use the lighter and faster `handlebars-base` module.
+</p>
 
 <h3>Generic Template API</h3>
 
-<p>[overview of the purpose of Y.Template's generic API -- a widget's default templates can be Handlebars templates, but you can override with Micro templates, etc.]</p>
+<p>
+`Y.Template` exists to specifically to provide its API as a normalization layer on top of conceptually similar, but technically different template engines and syntaxes. This layer of abstraction allows components which work with templates to not be tied to a particular engine. Another huge benefit is allowing developers to override a component's default templates using an entirely different template engine.
+</p>
+
+<p>
+The two templates engines provided in YUI, Handlebars and Template.Micro, are conceptually similar. They both compile string-based templates into functions, which are invoked with a data context and return the rendered output as a string. Handlebars is really well suited for organizing and managing the templates of an entire app or complex widget because of its partials and helpers features. Template.Micro is great for small templates, or when you need more powerful templates and its compilation engine is <em>extremely</em> small.
+</p>
+
+<p>
+By making Template.Micro's public API very similar to Handlebars, we've made it possible to use the two template engines interchangeably via the `Y.Template` normalization API. When you need to compile templates on the client, it is <strong>strongly recommend</strong> that you use Micro templates, because Template.Micro's compile is <em>much</em> smaller than Handlebars' compiler &mdash; 0.5KB vs 9KB (minified and Gzipped) respectively.
+</p>
 
 <h3>Instantiating a Template Engine</h3>
 
