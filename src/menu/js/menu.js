@@ -303,8 +303,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     @chainable
     **/
     toggle: function () {
-        this.set('visible', !this.get('visible'));
-        return this;
+        return this[this.get('visible') ? 'hide' : 'show']();
     },
 
     // -- Protected Methods ----------------------------------------------------
