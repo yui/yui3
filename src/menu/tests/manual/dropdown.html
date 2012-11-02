@@ -18,9 +18,10 @@
 
 <p>
     <button class="has-dropdown">Click Me</button>
-    <button class="has-dropdown" style="position: absolute; bottom: 10px; left: 10px;">Or Me</button>
-    <button class="has-dropdown" style="position: absolute; right: 10px;">Or Me</button>
-    <button class="has-dropdown" style="position: absolute; bottom: 10px; right: 10px;">Or Me</button>
+    <button class="has-dropdown" style="position: absolute; bottom: 10px; left: 10px;">Click Me</button>
+    <button class="has-hover-dropdown" style="position: absolute; left: 50%;">Hover Me</button>
+    <button class="has-dropdown" style="position: absolute; right: 10px;">Click Me</button>
+    <button class="has-dropdown" style="position: absolute; bottom: 10px; right: 10px;">Click Me</button>
 </p>
 
 <script src="../../../../build/yui/yui.js"></script>
@@ -30,8 +31,7 @@ var Y = YUI({
     filter: 'raw'
 }).use('menu-plugin', function (Y) {
 
-Y.all('.has-dropdown').plug(Y.Plugin.Menu, {
-    items: [
+var menuItems = [
         {label: 'Test Menu', type: 'heading'},
         {label: 'Item 1', url: 'http://www.smugmug.com/'},
 
@@ -88,7 +88,15 @@ Y.all('.has-dropdown').plug(Y.Plugin.Menu, {
         {label: 'Item 6'},
         {label: 'Item 7'},
         {label: 'Item 8'}
-    ]
+    ];
+
+Y.all('.has-dropdown').plug(Y.Plugin.Menu, {
+    items: menuItems
+});
+
+Y.one('.has-hover-dropdown').plug(Y.Plugin.Menu, {
+    items      : menuItems,
+    showOnHover: true
 });
 
 });

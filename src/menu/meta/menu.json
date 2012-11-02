@@ -15,6 +15,7 @@
         "plugins": {
             "menu-plugin": {
                 "requires": [
+                    "event-focus",
                     "menu",
                     "node-pluginhost",
                     "plugin"
