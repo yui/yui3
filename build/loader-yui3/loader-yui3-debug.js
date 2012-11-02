@@ -497,6 +497,33 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "array-invoke"
         ]
     },
+    "color": {
+        "use": [
+            "color-base",
+            "color-hsl",
+            "color-harmony"
+        ]
+    },
+    "color-base": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "color-harmony": {
+        "requires": [
+            "color-hsl"
+        ]
+    },
+    "color-hsl": {
+        "requires": [
+            "color-base"
+        ]
+    },
+    "color-hsv": {
+        "requires": [
+            "color-base"
+        ]
+    },
     "console": {
         "lang": [
             "en",
@@ -2520,7 +2547,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '15473aa7b95ec20189d18ade46daa9d6';
+YUI.Env[Y.version].md5 = 'cdff03694483987fdf6e5750732d182e';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

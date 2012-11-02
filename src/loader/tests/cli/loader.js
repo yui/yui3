@@ -700,6 +700,58 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("arraylist-filter")) > -1, "Module (arraylist-filter) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("array-invoke")) > -1, "Module (array-invoke) not found in sorted array");
         },
+     "Testing color": function(data) {
+            var loader = new Y.Loader({
+                require: ["color"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("color-base")) > -1, "Module (color-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("color-hsl")) > -1, "Module (color-hsl) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("color-harmony")) > -1, "Module (color-harmony) not found in sorted array");
+        },
+     "Testing color-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["color-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("color-base")) > -1, "Module (color-base) not found in sorted array");
+        },
+     "Testing color-harmony": function(data) {
+            var loader = new Y.Loader({
+                require: ["color-harmony"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("color-harmony")) > -1, "Module (color-harmony) not found in sorted array");
+        },
+     "Testing color-hsl": function(data) {
+            var loader = new Y.Loader({
+                require: ["color-hsl"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("color-hsl")) > -1, "Module (color-hsl) not found in sorted array");
+        },
+     "Testing color-hsv": function(data) {
+            var loader = new Y.Loader({
+                require: ["color-hsv"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("color-hsv")) > -1, "Module (color-hsv) not found in sorted array");
+        },
      "Testing console": function(data) {
             var loader = new Y.Loader({
                 require: ["console"],
