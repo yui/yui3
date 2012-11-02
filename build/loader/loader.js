@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.10.03-20-02',
+            GALLERY_VERSION = 'gallery-2012.10.24-20-01',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -655,7 +655,8 @@ Y.Loader.prototype = {
     /**
     * Reset modules in the module cache to a pre-processed state so additional
     * computations with a different skin or language will work as expected.
-    * @private _resetModules
+    * @method _resetModules
+    * @private
     */
     _resetModules: function() {
         var self = this, i, o,
@@ -3046,7 +3047,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "attribute-base": {
         "requires": [
             "attribute-core",
-            "attribute-events",
+            "attribute-observable",
             "attribute-extras"
         ]
     },
@@ -3061,13 +3062,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     },
     "attribute-events": {
-        "requires": [
-            "event-custom"
+        "use": [
+            "attribute-observable"
         ]
     },
     "attribute-extras": {
         "requires": [
             "oop"
+        ]
+    },
+    "attribute-observable": {
+        "requires": [
+            "event-custom"
         ]
     },
     "autocomplete": {
@@ -3183,12 +3189,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     },
     "base-base": {
-        "after": [
-            "attribute-complex"
-        ],
         "requires": [
+            "attribute-base",
             "base-core",
-            "attribute-base"
+            "base-observable"
         ]
     },
     "base-build": {
@@ -3199,6 +3203,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "base-core": {
         "requires": [
             "attribute-core"
+        ]
+    },
+    "base-observable": {
+        "requires": [
+            "attribute-observable"
         ]
     },
     "base-pluginhost": {
@@ -3263,9 +3272,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "lang": [
             "de",
             "en",
+            "es",
+            "es-AR",
             "fr",
+            "it",
             "ja",
             "nb-NO",
+            "nl",
             "pt-BR",
             "ru",
             "zh-HANT-TW"
@@ -3280,9 +3293,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "lang": [
             "de",
             "en",
+            "es",
+            "es-AR",
             "fr",
+            "it",
             "ja",
             "nb-NO",
+            "nl",
             "pt-BR",
             "ru",
             "zh-HANT-TW"
@@ -5372,7 +5389,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '6437f8e9a390d202e24b01507ee63060';
+YUI.Env[Y.version].md5 = '15473aa7b95ec20189d18ade46daa9d6';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

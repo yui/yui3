@@ -425,7 +425,7 @@ proto = {
             if (G_ENV && Y !== YUI) {
                 Env._yidx = ++G_ENV._yidx;
                 Env._guidp = ('yui_' + VERSION + '_' +
-                             Env._yidx + '_' + time).replace(/\./g, '_').replace(/-/g, '_');
+                             Env._yidx + '_' + time).replace(/[^a-z0-9_]+/g, '_');
             } else if (YUI._YUI) {
 
                 G_ENV = YUI._YUI.Env;
@@ -458,7 +458,8 @@ proto = {
             throwFail: true,
             useBrowserConsole: true,
             useNativeES5: true,
-            win: win
+            win: win,
+            global: Function('return this')()
         };
 
         //Register the CSS stamp element
@@ -1473,6 +1474,15 @@ overwriting other scripts configs.
  * @property throwFail
  * @type boolean
  * @default true
+ */
+
+/**
+ * The global object. In Node.js it's an object called "global". In the
+ * browser is the current window object.
+ *
+ * @property global
+ * @type Object
+ * @default the global object
  */
 
 /**
@@ -3530,7 +3540,7 @@ YUI.Env.parseUA = function(subUA) {
          * @static
          */
         nodejs: 0,
-        /*
+        /**
         * Window8/IE10 Application host environment
         * @property winjs
         * @type Boolean
@@ -3596,7 +3606,7 @@ YUI.Env.parseUA = function(subUA) {
         if (m && m[1]) {
             o.webkit = numberify(m[1]);
             o.safari = o.webkit;
-            
+
             if (/PhantomJS/.test(ua)) {
                 m = ua.match(/PhantomJS\/([^\s]*)/);
                 if (m && m[1]) {
@@ -3714,10 +3724,11 @@ YUI.Env.parseUA = function(subUA) {
             }
         }
     }
-    
-    //Check for known properties to tell if touch/mspointer events are enabled on this device
+
+    //Check for known properties to tell if touch events are enabled on this device or if
+    //the number of MSPointer touchpoints on this device is greater than 0.
     if (win && nav && !(o.chrome && o.chrome < 6)) {
-        o.touchEnabled = (("ontouchstart" in win) || ("msPointerEnabled" in nav));
+        o.touchEnabled = (("ontouchstart" in win) || (("msMaxTouchPoints" in nav) && (nav.msMaxTouchPoints > 0)));
     }
 
     //It was a parsed UA, do not assign the global value.
@@ -3795,6 +3806,7 @@ YUI.Env.aliases = {
     "anim-shape-transform": ["anim-shape"],
     "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
+    "attribute-events": ["attribute-observable"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
@@ -17388,9 +17400,9 @@ IO.prototype = {
             use;
 
         if (alt === 'native') {
-            // Non-IE  can use XHR level 2 and not rely on an
+            // Non-IE and IE >= 10  can use XHR level 2 and not rely on an
             // external transport.
-            alt = Y.UA.ie ? 'xdr' : null;
+            alt = Y.UA.ie && !SUPPORTS_CORS ? 'xdr' : null;
 
             // Prevent "pre-flight" OPTIONS request by removing the
             // `X-Requested-With` HTTP header from CORS requests. This header
@@ -17979,10 +17991,8 @@ IO.prototype = {
 
             // Will work only in browsers that implement the
             // Cross-Origin Resource Sharing draft.
-            if (config.xdr && config.xdr.credentials) {
-                if (!Y.UA.ie) {
-                    transaction.c.withCredentials = true;
-                }
+            if (config.xdr && config.xdr.credentials && SUPPORTS_CORS) {
+                transaction.c.withCredentials = true;
             }
 
             // Using "null" with HTTP POST will result in a request
@@ -18179,7 +18189,11 @@ Y.IO = IO;
 Y.io._map = {};
 var XHR = win && win.XMLHttpRequest,
     XDR = win && win.XDomainRequest,
-    AX = win && win.ActiveXObject;
+    AX = win && win.ActiveXObject,
+
+    // Checks for the presence of the `withCredentials` in an XHR instance
+    // object, which will be present if the environment supports CORS.
+    SUPPORTS_CORS = XHR && 'withCredentials' in (new XMLHttpRequest());
 
 
 Y.mix(Y.IO, {
@@ -18283,7 +18297,7 @@ YUI.add('json-parse', function (Y, NAME) {
  *
  * <p>The <code>json</code> module is a rollup of <code>json-parse</code> and
  * <code>json-stringify</code>.</p>
- * 
+ *
  * <p>As their names suggest, <code>json-parse</code> adds support for parsing
  * JSON data (Y.JSON.parse) and <code>json-stringify</code> for serializing
  * JavaScript data into JSON strings (Y.JSON.stringify).  You may choose to
@@ -18309,7 +18323,8 @@ YUI.add('json-parse', function (Y, NAME) {
 
 // All internals kept private for security reasons
 function fromGlobal(ref) {
-    return (Y.config.win || this || {})[ref];
+    var g = ((typeof global === 'object') ? global : undefined);
+    return ((Y.UA.nodejs && g) ? g : (Y.config.win || {}))[ref];
 }
 
 
@@ -18379,7 +18394,7 @@ var _JSON  = fromGlobal('JSON'),
      * @private
      */
     _UNSAFE = /[^\],:{}\s]/,
-    
+
     /**
      * Replaces specific unicode characters with their appropriate \unnnn
      * format. Some browsers ignore certain characters during eval.
@@ -18445,7 +18460,7 @@ var _JSON  = fromGlobal('JSON'),
         // incorrectly by some browser implementations.
         // NOTE: This modifies the input if such characters are found!
         s = s.replace(_UNICODE_EXCEPTIONS, _escapeException);
-        
+
         // Test for any remaining invalid characters
         if (!_UNSAFE.test(s.replace(_ESCAPES,'@').
                             replace(_VALUES,']').
@@ -18458,7 +18473,7 @@ var _JSON  = fromGlobal('JSON'),
 
         throw new SyntaxError('JSON.parse');
     };
-    
+
 Y.namespace('JSON').parse = function (s,reviver) {
         if (typeof s !== 'string') {
             s += '';
@@ -18787,9 +18802,9 @@ Transition.prototype = {
     },
 
     _prepDur: function(dur) {
-        dur = parseFloat(dur);
+        dur = parseFloat(dur) * 1000;
 
-        return dur + 's';
+        return dur + 'ms';
     },
 
     _runNative: function(time) {

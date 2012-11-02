@@ -599,14 +599,24 @@ if (Y.config.win && Y.config.doc) {
     suite.add(new Y.Test.Case({
         name: "DOM based tests",
         setUp: function () {
-            Y.one("body").append('<form id="testbed" action="">' +
-                '<h3>Form used for field value extraction, stringification</h3>' +
+            // `action` is not allowed via innerHTML on Win8 apps.
+            // See: http://msdn.microsoft.com/en-us/library/windows/apps/hh465388.aspx
+
+            var f = Y.Node.one(Y.config.doc.createElement("form"));
+
+            f.set("id", "testbed");
+            f.setAttribute("action", "");
+
+            Y.one("body").append(f);
+
+            f.setHTML(
+                '<p>' +
                 '<input type="text" id="empty_text">' +
                 '<input type="text" id="text" value="text">' +
-                '<input type="radio" name="radio" id="unchecked_radio" value="unchecked">' +
-                '<input type="radio" name="radio" id="checked_radio" value="radio" checked="checked">' +
-                '<input type="checkbox" name="box" id="unchecked_box" value="unchecked">' +
-                '<input type="checkbox" name="box" id="checked_box" value="box" checked="checked">' +
+                '<input type="radio" id="unchecked_radio" value="unchecked">' +
+                '<input type="radio" id="checked_radio" value="radio" checked="checked">' +
+                '<input type="checkbox" id="unchecked_box" value="unchecked">' +
+                '<input type="checkbox" id="checked_box" value="box" checked="checked">' +
                 '<textarea id="empty_textarea"></textarea>' +
                 '<textarea id="textarea">textarea</textarea>' +
                 '<select id="select">' +
@@ -624,8 +634,15 @@ if (Y.config.win && Y.config.doc) {
                 '<button id="button_submit_with_value" type="submit" value="submit button value">content and value</button>' +
                 '<input type="button" id="input_button" value="input button">' +
                 '<input type="submit" id="input_submit" value="input submit">' +
-                '<!--input type="image" id="input_image" src="404.png" value="input image"-->' +
-            '</form>');
+                '</p>');
+
+            // For now, setting `name` outside of innerHTML so we don't fail in Win 8 Apps.
+            // TODO: Clean up based on final resolution of this: https://connect.microsoft.com/IE/feedback/details/765964/win8-app-msapphost-cannot-set-secure-valid-html-using-innerhtml-if-it-contains-form-fields-with-name-set
+
+            Y.one("#unchecked_radio").setAttribute("name", "radio");
+            Y.one("#checked_radio").setAttribute("name", "radio");
+            Y.one("#unchecked_box").setAttribute("name", "box");
+            Y.one("#checked_box").setAttribute("name", "box");
         },
 
         tearDown: function () {

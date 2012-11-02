@@ -425,7 +425,7 @@ proto = {
             if (G_ENV && Y !== YUI) {
                 Env._yidx = ++G_ENV._yidx;
                 Env._guidp = ('yui_' + VERSION + '_' +
-                             Env._yidx + '_' + time).replace(/\./g, '_').replace(/-/g, '_');
+                             Env._yidx + '_' + time).replace(/[^a-z0-9_]+/g, '_');
             } else if (YUI._YUI) {
 
                 G_ENV = YUI._YUI.Env;
@@ -458,7 +458,8 @@ proto = {
             throwFail: true,
             useBrowserConsole: true,
             useNativeES5: true,
-            win: win
+            win: win,
+            global: Function('return this')()
         };
 
         //Register the CSS stamp element
@@ -1473,6 +1474,15 @@ overwriting other scripts configs.
  * @property throwFail
  * @type boolean
  * @default true
+ */
+
+/**
+ * The global object. In Node.js it's an object called "global". In the
+ * browser is the current window object.
+ *
+ * @property global
+ * @type Object
+ * @default the global object
  */
 
 /**
@@ -3530,7 +3540,7 @@ YUI.Env.parseUA = function(subUA) {
          * @static
          */
         nodejs: 0,
-        /*
+        /**
         * Window8/IE10 Application host environment
         * @property winjs
         * @type Boolean
@@ -3596,7 +3606,7 @@ YUI.Env.parseUA = function(subUA) {
         if (m && m[1]) {
             o.webkit = numberify(m[1]);
             o.safari = o.webkit;
-            
+
             if (/PhantomJS/.test(ua)) {
                 m = ua.match(/PhantomJS\/([^\s]*)/);
                 if (m && m[1]) {
@@ -3714,10 +3724,11 @@ YUI.Env.parseUA = function(subUA) {
             }
         }
     }
-    
-    //Check for known properties to tell if touch/mspointer events are enabled on this device
+
+    //Check for known properties to tell if touch events are enabled on this device or if
+    //the number of MSPointer touchpoints on this device is greater than 0.
     if (win && nav && !(o.chrome && o.chrome < 6)) {
-        o.touchEnabled = (("ontouchstart" in win) || ("msPointerEnabled" in nav));
+        o.touchEnabled = (("ontouchstart" in win) || (("msMaxTouchPoints" in nav) && (nav.msMaxTouchPoints > 0)));
     }
 
     //It was a parsed UA, do not assign the global value.
@@ -3795,6 +3806,7 @@ YUI.Env.aliases = {
     "anim-shape-transform": ["anim-shape"],
     "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
+    "attribute-events": ["attribute-observable"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
@@ -4741,7 +4753,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.10.03-20-02',
+            GALLERY_VERSION = 'gallery-2012.10.24-20-01',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -5383,7 +5395,8 @@ Y.Loader.prototype = {
     /**
     * Reset modules in the module cache to a pre-processed state so additional
     * computations with a different skin or language will work as expected.
-    * @private _resetModules
+    * @method _resetModules
+    * @private
     */
     _resetModules: function() {
         var self = this, i, o,
@@ -7774,7 +7787,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "attribute-base": {
         "requires": [
             "attribute-core",
-            "attribute-events",
+            "attribute-observable",
             "attribute-extras"
         ]
     },
@@ -7789,13 +7802,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     },
     "attribute-events": {
-        "requires": [
-            "event-custom"
+        "use": [
+            "attribute-observable"
         ]
     },
     "attribute-extras": {
         "requires": [
             "oop"
+        ]
+    },
+    "attribute-observable": {
+        "requires": [
+            "event-custom"
         ]
     },
     "autocomplete": {
@@ -7911,12 +7929,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     },
     "base-base": {
-        "after": [
-            "attribute-complex"
-        ],
         "requires": [
+            "attribute-base",
             "base-core",
-            "attribute-base"
+            "base-observable"
         ]
     },
     "base-build": {
@@ -7927,6 +7943,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "base-core": {
         "requires": [
             "attribute-core"
+        ]
+    },
+    "base-observable": {
+        "requires": [
+            "attribute-observable"
         ]
     },
     "base-pluginhost": {
@@ -7991,9 +8012,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "lang": [
             "de",
             "en",
+            "es",
+            "es-AR",
             "fr",
+            "it",
             "ja",
             "nb-NO",
+            "nl",
             "pt-BR",
             "ru",
             "zh-HANT-TW"
@@ -8008,9 +8033,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "lang": [
             "de",
             "en",
+            "es",
+            "es-AR",
             "fr",
+            "it",
             "ja",
             "nb-NO",
+            "nl",
             "pt-BR",
             "ru",
             "zh-HANT-TW"
@@ -8280,6 +8309,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "datasource-local",
             "plugin",
+            "datatype-xml",
             "dataschema-xml"
         ]
     },
@@ -10099,7 +10129,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';
+YUI.Env[Y.version].md5 = '15473aa7b95ec20189d18ade46daa9d6';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

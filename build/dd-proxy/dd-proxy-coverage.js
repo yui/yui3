@@ -26,7 +26,7 @@ _yuitest_coverage["build/dd-proxy/dd-proxy.js"] = {
     path: "build/dd-proxy/dd-proxy.js",
     code: []
 };
-_yuitest_coverage["build/dd-proxy/dd-proxy.js"].code=["YUI.add('dd-proxy', function (Y, NAME) {","","","    /**","     * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.","     * @module dd","     * @submodule dd-proxy","     */","    /**","     * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.","     * @class DDProxy","     * @extends Base","     * @constructor","     * @namespace Plugin","     */","    var DDM = Y.DD.DDM,","        NODE = 'node',","        DRAG_NODE = 'dragNode',","        HOST = 'host',","        TRUE = true, proto,","        P = function() {","            P.superclass.constructor.apply(this, arguments);","        };","","    P.NAME = 'DDProxy';","    /**","    * @property NS","    * @default con","    * @readonly","    * @protected","    * @static","    * @description The Proxy instance will be placed on the Drag instance under the proxy namespace.","    * @type {String}","    */","    P.NS = 'proxy';","","    P.ATTRS = {","        host: {","        },","        /**","        * @attribute moveOnEnd","        * @description Move the original node at the end of the drag. Default: true","        * @type Boolean","        */","        moveOnEnd: {","            value: TRUE","        },","        /**","        * @attribute hideOnEnd","        * @description Hide the drag node at the end of the drag. Default: true","        * @type Boolean","        */","        hideOnEnd: {","            value: TRUE","        },","        /**","        * @attribute resizeFrame","        * @description Make the Proxy node assume the size of the original node. Default: true","        * @type Boolean","        */","        resizeFrame: {","            value: TRUE","        },","        /**","        * @attribute positionProxy","        * @description Make the Proxy node appear in the same place as the original node. Default: true","        * @type Boolean","        */","        positionProxy: {","            value: TRUE","        },","        /**","        * @attribute borderStyle","        * @description The default border style for the border of the proxy. Default: 1px solid #808080","        * @type Boolean","        */","        borderStyle: {","            value: '1px solid #808080'","        },","        /**","        * @attribute cloneNode","        * @description Should the node be cloned into the proxy for you. Default: false","        * @type Boolean","        */","        cloneNode: {","            value: false","        }","    };","","    proto = {","        /**","        * @private","        * @property _hands","        * @description Holds the event handles for setting the proxy","        */","        _hands: null,","        /**","        * @private","        * @method _init","        * @description Handler for the proxy config attribute","        */","        _init: function() {","            if (!DDM._proxy) {","                DDM._createFrame();","                Y.on('domready', Y.bind(this._init, this));","                return;","            }","            if (!this._hands) {","                this._hands = [];","            }","            var h, h1, host = this.get(HOST), dnode = host.get(DRAG_NODE);","            if (dnode.compareTo(host.get(NODE))) {","                if (DDM._proxy) {","                    host.set(DRAG_NODE, DDM._proxy);","                }","            }","            Y.each(this._hands, function(v) {","                v.detach();","            });","            h = DDM.on('ddm:start', Y.bind(function() {","                if (DDM.activeDrag === host) {","                    DDM._setFrame(host);","                }","            }, this));","            h1 = DDM.on('ddm:end', Y.bind(function() {","                if (host.get('dragging')) {","                    if (this.get('moveOnEnd')) {","                        host.get(NODE).setXY(host.lastXY);","                    }","                    if (this.get('hideOnEnd')) {","                        host.get(DRAG_NODE).setStyle('display', 'none');","                    }","                    if (this.get('cloneNode')) {","                        host.get(DRAG_NODE).remove();","                        host.set(DRAG_NODE, DDM._proxy);","                    }","                }","            }, this));","            this._hands = [h, h1];","        },","        initializer: function() {","            this._init();","        },","        destructor: function() {","            var host = this.get(HOST);","            Y.each(this._hands, function(v) {","                v.detach();","            });","            host.set(DRAG_NODE, host.get(NODE));","        },","        clone: function() {","            var host = this.get(HOST),","                n = host.get(NODE),","                c = n.cloneNode(true);","","            delete c._yuid;","            c.setAttribute('id', Y.guid());","            c.setStyle('position', 'absolute');","            n.get('parentNode').appendChild(c);","            host.set(DRAG_NODE, c);","            return c;","        }","    };","","    Y.namespace('Plugin');","    Y.extend(P, Y.Base, proto);","    Y.Plugin.DDProxy = P;","","    //Add a couple of methods to the DDM","    Y.mix(DDM, {","        /**","        * @private","        * @for DDM","        * @namespace DD","        * @method _createFrame","        * @description Create the proxy element if it doesn't already exist and set the DD.DDM._proxy value","        */","        _createFrame: function() {","            if (!DDM._proxy) {","                DDM._proxy = TRUE;","","                var p = Y.Node.create('<div></div>'),","                b = Y.one('body');","","                p.setStyles({","                    position: 'absolute',","                    display: 'none',","                    zIndex: '999',","                    top: '-999px',","                    left: '-999px'","                });","","                b.prepend(p);","                p.set('id', Y.guid());","                p.addClass(DDM.CSS_PREFIX + '-proxy');","                DDM._proxy = p;","            }","        },","        /**","        * @private","        * @for DDM","        * @namespace DD","        * @method _setFrame","        * @description If resizeProxy is set to true (default) it will resize the proxy element to match the size of the Drag Element.","        * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.","        */","        _setFrame: function(drag) {","            var n = drag.get(NODE), d = drag.get(DRAG_NODE), ah, cur = 'auto';","","            ah = DDM.activeDrag.get('activeHandle');","            if (ah) {","                cur = ah.getStyle('cursor');","            }","            if (cur === 'auto') {","                cur = DDM.get('dragCursor');","            }","","            d.setStyles({","                visibility: 'hidden',","                display: 'block',","                cursor: cur,","                border: drag.proxy.get('borderStyle')","            });","","            if (drag.proxy.get('cloneNode')) {","                d = drag.proxy.clone();","            }","","            if (drag.proxy.get('resizeFrame')) {","                d.setStyles({","                    height: n.get('offsetHeight') + 'px',","                    width: n.get('offsetWidth') + 'px'","                });","            }","","            if (drag.proxy.get('positionProxy')) {","                d.setXY(drag.nodeXY);","            }","            d.setStyle('visibility', 'visible');","        }","    });","","    //Create the frame when DOM is ready","    //Y.on('domready', Y.bind(DDM._createFrame, DDM));","","","","","}, '@VERSION@', {\"requires\": [\"dd-drag\"]});"];
+_yuitest_coverage["build/dd-proxy/dd-proxy.js"].code=["YUI.add('dd-proxy', function (Y, NAME) {","","","    /**","     * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.","     * @module dd","     * @submodule dd-proxy","     */","    /**","     * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.","     * @class DDProxy","     * @extends Base","     * @constructor","     * @namespace Plugin","     */","    var DDM = Y.DD.DDM,","        NODE = 'node',","        DRAG_NODE = 'dragNode',","        HOST = 'host',","        TRUE = true, proto,","        P = function() {","            P.superclass.constructor.apply(this, arguments);","        };","","    P.NAME = 'DDProxy';","    /**","    * The Proxy instance will be placed on the Drag instance under the proxy namespace.","    * @property NS","    * @default con","    * @readonly","    * @protected","    * @static","    * @type {String}","    */","    P.NS = 'proxy';","","    P.ATTRS = {","        host: {","        },","        /**","        * Move the original node at the end of the drag. Default: true","        * @attribute moveOnEnd","        * @type Boolean","        */","        moveOnEnd: {","            value: TRUE","        },","        /**","        * Hide the drag node at the end of the drag. Default: true","        * @attribute hideOnEnd","        * @type Boolean","        */","        hideOnEnd: {","            value: TRUE","        },","        /**","        * Make the Proxy node assume the size of the original node. Default: true","        * @attribute resizeFrame","        * @type Boolean","        */","        resizeFrame: {","            value: TRUE","        },","        /**","        * Make the Proxy node appear in the same place as the original node. Default: true","        * @attribute positionProxy","        * @type Boolean","        */","        positionProxy: {","            value: TRUE","        },","        /**","        * The default border style for the border of the proxy. Default: 1px solid #808080","        * @attribute borderStyle","        * @type Boolean","        */","        borderStyle: {","            value: '1px solid #808080'","        },","        /**","        * Should the node be cloned into the proxy for you. Default: false","        * @attribute cloneNode","        * @type Boolean","        */","        cloneNode: {","            value: false","        }","    };","","    proto = {","        /**","        * Holds the event handles for setting the proxy","        * @private","        * @property _hands","        */","        _hands: null,","        /**","        * Handler for the proxy config attribute","        * @private","        * @method _init","        */","        _init: function() {","            if (!DDM._proxy) {","                DDM._createFrame();","                Y.on('domready', Y.bind(this._init, this));","                return;","            }","            if (!this._hands) {","                this._hands = [];","            }","            var h, h1, host = this.get(HOST), dnode = host.get(DRAG_NODE);","            if (dnode.compareTo(host.get(NODE))) {","                if (DDM._proxy) {","                    host.set(DRAG_NODE, DDM._proxy);","                }","            }","            Y.Array.each(this._hands, function(v) {","                v.detach();","            });","            h = DDM.on('ddm:start', Y.bind(function() {","                if (DDM.activeDrag === host) {","                    DDM._setFrame(host);","                }","            }, this));","            h1 = DDM.on('ddm:end', Y.bind(function() {","                if (host.get('dragging')) {","                    if (this.get('moveOnEnd')) {","                        host.get(NODE).setXY(host.lastXY);","                    }","                    if (this.get('hideOnEnd')) {","                        host.get(DRAG_NODE).setStyle('display', 'none');","                    }","                    if (this.get('cloneNode')) {","                        host.get(DRAG_NODE).remove();","                        host.set(DRAG_NODE, DDM._proxy);","                    }","                }","            }, this));","            this._hands = [h, h1];","        },","        initializer: function() {","            this._init();","        },","        destructor: function() {","            var host = this.get(HOST);","            Y.Array.each(this._hands, function(v) {","                v.detach();","            });","            host.set(DRAG_NODE, host.get(NODE));","        },","        clone: function() {","            var host = this.get(HOST),","                n = host.get(NODE),","                c = n.cloneNode(true);","","            delete c._yuid;","            c.setAttribute('id', Y.guid());","            c.setStyle('position', 'absolute');","            n.get('parentNode').appendChild(c);","            host.set(DRAG_NODE, c);","            return c;","        }","    };","","    Y.namespace('Plugin');","    Y.extend(P, Y.Base, proto);","    Y.Plugin.DDProxy = P;","","    //Add a couple of methods to the DDM","    Y.mix(DDM, {","        /**","        * Create the proxy element if it doesn't already exist and set the DD.DDM._proxy value","        * @private","        * @for DDM","        * @namespace DD","        * @method _createFrame","        */","        _createFrame: function() {","            if (!DDM._proxy) {","                DDM._proxy = TRUE;","","                var p = Y.Node.create('<div></div>'),","                b = Y.one('body');","","                p.setStyles({","                    position: 'absolute',","                    display: 'none',","                    zIndex: '999',","                    top: '-999px',","                    left: '-999px'","                });","","                b.prepend(p);","                p.set('id', Y.guid());","                p.addClass(DDM.CSS_PREFIX + '-proxy');","                DDM._proxy = p;","            }","        },","        /**","        * If resizeProxy is set to true (default) it will resize the proxy element to match the size of the Drag Element.","        * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.","        * @private","        * @for DDM","        * @namespace DD","        * @method _setFrame","        */","        _setFrame: function(drag) {","            var n = drag.get(NODE), d = drag.get(DRAG_NODE), ah, cur = 'auto';","","            ah = DDM.activeDrag.get('activeHandle');","            if (ah) {","                cur = ah.getStyle('cursor');","            }","            if (cur === 'auto') {","                cur = DDM.get('dragCursor');","            }","","            d.setStyles({","                visibility: 'hidden',","                display: 'block',","                cursor: cur,","                border: drag.proxy.get('borderStyle')","            });","","            if (drag.proxy.get('cloneNode')) {","                d = drag.proxy.clone();","            }","","            if (drag.proxy.get('resizeFrame')) {","                d.setStyles({","                    height: n.get('offsetHeight') + 'px',","                    width: n.get('offsetWidth') + 'px'","                });","            }","","            if (drag.proxy.get('positionProxy')) {","                d.setXY(drag.nodeXY);","            }","            d.setStyle('visibility', 'visible');","        }","    });","","    //Create the frame when DOM is ready","    //Y.on('domready', Y.bind(DDM._createFrame, DDM));","","","","","}, '@VERSION@', {\"requires\": [\"dd-drag\"]});"];
 _yuitest_coverage["build/dd-proxy/dd-proxy.js"].lines = {"1":0,"16":0,"22":0,"25":0,"35":0,"37":0,"90":0,"103":0,"104":0,"105":0,"106":0,"108":0,"109":0,"111":0,"112":0,"113":0,"114":0,"117":0,"118":0,"120":0,"121":0,"122":0,"125":0,"126":0,"127":0,"128":0,"130":0,"131":0,"133":0,"134":0,"135":0,"139":0,"142":0,"145":0,"146":0,"147":0,"149":0,"152":0,"156":0,"157":0,"158":0,"159":0,"160":0,"161":0,"165":0,"166":0,"167":0,"170":0,"179":0,"180":0,"182":0,"185":0,"193":0,"194":0,"195":0,"196":0,"208":0,"210":0,"211":0,"212":0,"214":0,"215":0,"218":0,"225":0,"226":0,"229":0,"230":0,"236":0,"237":0,"239":0};
 _yuitest_coverage["build/dd-proxy/dd-proxy.js"].functions = {"P:21":0,"(anonymous 2):117":0,"(anonymous 3):120":0,"(anonymous 4):125":0,"_init:102":0,"initializer:141":0,"(anonymous 5):146":0,"destructor:144":0,"clone:151":0,"_createFrame:178":0,"_setFrame:207":0,"(anonymous 1):1":0};
 _yuitest_coverage["build/dd-proxy/dd-proxy.js"].coveredLines = 70;
@@ -63,12 +63,12 @@ P.superclass.constructor.apply(this, arguments);
     _yuitest_coverline("build/dd-proxy/dd-proxy.js", 25);
 P.NAME = 'DDProxy';
     /**
+    * The Proxy instance will be placed on the Drag instance under the proxy namespace.
     * @property NS
     * @default con
     * @readonly
     * @protected
     * @static
-    * @description The Proxy instance will be placed on the Drag instance under the proxy namespace.
     * @type {String}
     */
     _yuitest_coverline("build/dd-proxy/dd-proxy.js", 35);
@@ -79,48 +79,48 @@ P.ATTRS = {
         host: {
         },
         /**
+        * Move the original node at the end of the drag. Default: true
         * @attribute moveOnEnd
-        * @description Move the original node at the end of the drag. Default: true
         * @type Boolean
         */
         moveOnEnd: {
             value: TRUE
         },
         /**
+        * Hide the drag node at the end of the drag. Default: true
         * @attribute hideOnEnd
-        * @description Hide the drag node at the end of the drag. Default: true
         * @type Boolean
         */
         hideOnEnd: {
             value: TRUE
         },
         /**
+        * Make the Proxy node assume the size of the original node. Default: true
         * @attribute resizeFrame
-        * @description Make the Proxy node assume the size of the original node. Default: true
         * @type Boolean
         */
         resizeFrame: {
             value: TRUE
         },
         /**
+        * Make the Proxy node appear in the same place as the original node. Default: true
         * @attribute positionProxy
-        * @description Make the Proxy node appear in the same place as the original node. Default: true
         * @type Boolean
         */
         positionProxy: {
             value: TRUE
         },
         /**
+        * The default border style for the border of the proxy. Default: 1px solid #808080
         * @attribute borderStyle
-        * @description The default border style for the border of the proxy. Default: 1px solid #808080
         * @type Boolean
         */
         borderStyle: {
             value: '1px solid #808080'
         },
         /**
+        * Should the node be cloned into the proxy for you. Default: false
         * @attribute cloneNode
-        * @description Should the node be cloned into the proxy for you. Default: false
         * @type Boolean
         */
         cloneNode: {
@@ -131,15 +131,15 @@ P.ATTRS = {
     _yuitest_coverline("build/dd-proxy/dd-proxy.js", 90);
 proto = {
         /**
+        * Holds the event handles for setting the proxy
         * @private
         * @property _hands
-        * @description Holds the event handles for setting the proxy
         */
         _hands: null,
         /**
+        * Handler for the proxy config attribute
         * @private
         * @method _init
-        * @description Handler for the proxy config attribute
         */
         _init: function() {
             _yuitest_coverfunc("build/dd-proxy/dd-proxy.js", "_init", 102);
@@ -168,7 +168,7 @@ host.set(DRAG_NODE, DDM._proxy);
                 }
             }
             _yuitest_coverline("build/dd-proxy/dd-proxy.js", 117);
-Y.each(this._hands, function(v) {
+Y.Array.each(this._hands, function(v) {
                 _yuitest_coverfunc("build/dd-proxy/dd-proxy.js", "(anonymous 2)", 117);
 _yuitest_coverline("build/dd-proxy/dd-proxy.js", 118);
 v.detach();
@@ -219,7 +219,7 @@ this._init();
 _yuitest_coverline("build/dd-proxy/dd-proxy.js", 145);
 var host = this.get(HOST);
             _yuitest_coverline("build/dd-proxy/dd-proxy.js", 146);
-Y.each(this._hands, function(v) {
+Y.Array.each(this._hands, function(v) {
                 _yuitest_coverfunc("build/dd-proxy/dd-proxy.js", "(anonymous 5)", 146);
 _yuitest_coverline("build/dd-proxy/dd-proxy.js", 147);
 v.detach();
@@ -260,11 +260,11 @@ Y.Plugin.DDProxy = P;
     _yuitest_coverline("build/dd-proxy/dd-proxy.js", 170);
 Y.mix(DDM, {
         /**
+        * Create the proxy element if it doesn't already exist and set the DD.DDM._proxy value
         * @private
         * @for DDM
         * @namespace DD
         * @method _createFrame
-        * @description Create the proxy element if it doesn't already exist and set the DD.DDM._proxy value
         */
         _createFrame: function() {
             _yuitest_coverfunc("build/dd-proxy/dd-proxy.js", "_createFrame", 178);
@@ -297,12 +297,12 @@ DDM._proxy = p;
             }
         },
         /**
+        * If resizeProxy is set to true (default) it will resize the proxy element to match the size of the Drag Element.
+        * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.
         * @private
         * @for DDM
         * @namespace DD
         * @method _setFrame
-        * @description If resizeProxy is set to true (default) it will resize the proxy element to match the size of the Drag Element.
-        * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.
         */
         _setFrame: function(drag) {
             _yuitest_coverfunc("build/dd-proxy/dd-proxy.js", "_setFrame", 207);

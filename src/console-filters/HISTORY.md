@@ -1,6 +1,26 @@
 ConsoleFilters Plugin Change History
 ====================================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
 
@@ -28,7 +48,7 @@ ConsoleFilters Plugin Change History
 
 3.3.0
 -----
-    
+
   * No changes.
 
 3.2.0
@@ -54,5 +74,5 @@ ConsoleFilters Plugin Change History
 
 3.0.0beta1
 -----------
-    
+
   * Initial release.
