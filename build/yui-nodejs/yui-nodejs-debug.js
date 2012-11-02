@@ -3863,7 +3863,20 @@ YUI.Env.aliases = {
 };
 
 
-}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-log-nodejs", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
+}, '@VERSION@', {
+    "use": [
+        "yui-base",
+        "get",
+        "features",
+        "intl-base",
+        "yui-log",
+        "yui-log-nodejs",
+        "yui-later",
+        "loader-base",
+        "loader-rollup",
+        "loader-yui3"
+    ]
+});
 YUI.add('get', function (Y, NAME) {
 
     /**
@@ -10235,4 +10248,16 @@ YUI.Env[Y.version].md5 = 'cdff03694483987fdf6e5750732d182e';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
-YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["get", "features", "intl-base", "yui-log", "yui-log-nodejs", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
+YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {
+    "use": [
+        "get",
+        "features",
+        "intl-base",
+        "yui-log",
+        "yui-log-nodejs",
+        "yui-later",
+        "loader-base",
+        "loader-rollup",
+        "loader-yui3"
+    ]
+});

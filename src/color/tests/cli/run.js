@@ -18,18 +18,30 @@ YUI({useSync: true }).use('test', function(Y) {
 
     Y.applyConfig({
         modules: {
-            'color-tests': {
-                fullpath: path.join(__dirname, '../unit/assets/color-tests.js'),
-                requires: [ 'test', 'dump', 'color' ]
+            'color-base-tests': {
+                fullpath: path.join(__dirname, '../unit/assets/color-base-tests.js'),
+                requires: [ 'test', 'dump', 'color-base' ]
+            },
+            'color-harmony-tests': {
+                fullpath: path.join(__dirname, '../unit/assets/color-harmony-tests.js'),
+                requires: [ 'test', 'dump', 'color-harmony' ]
+            },
+            'color-hsl-tests': {
+                fullpath: path.join(__dirname, '../unit/assets/color-hsl-tests.js'),
+                requires: [ 'test', 'dump', 'color-hsl' ]
+            },
+            'color-hsv-tests': {
+                fullpath: path.join(__dirname, '../unit/assets/color-hsv-tests.js'),
+                requires: [ 'test', 'dump', 'color-hsv' ]
             }
         }
     });
 
-    Y.use('color-tests');
+    Y.use('color-base-tests', 'color-harmony-tests', 'color-hsl-tests', 'color-hsv-tests');
 
     Y.Test.Runner._ignoreEmpty = true; //ArrayAssert's don't count
-    
+
     Y.Test.Runner.setName('color cli tests');
-    
+
 });
 
