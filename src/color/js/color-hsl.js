@@ -209,4 +209,5 @@ Color = {
 
 Y.Color = Y.mix(Color, Y.Color);
 
-Y.Color.TYPES = Y.mix(Y.Color.TYPES, {'hsl':'hsl', 'hsla':'hsla'});
+Y.Color.TYPES = Y.mix(Y.Color.TYPES, {'HSL':'hsl', 'HSLA':'hsla'});
+Y.Color.CONVERTS = Y.mix(Y.Color.CONVERTS, {'hsl': 'toHSL', 'hsla': 'toHSLA'});

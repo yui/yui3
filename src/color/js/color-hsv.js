@@ -12,7 +12,6 @@ Color provides static methods for color conversion hsv values.
 @namespace Color
 @since 3.x
 **/
-console.log('loading color-hsv');
 Color = {
 
     /**
@@ -117,7 +116,7 @@ Color = {
             return [h, s, v];
         }
 
-        return Y.Color.fromArray([h, s, v], Y.Color.STR_HSV);
+        return Y.Color.fromArray([h, s, v], Y.Color.TYPES.HSV);
     },
 
     /**
@@ -167,11 +166,12 @@ Color = {
             return [r, g, b];
         }
 
-        return Y.Color.fromArray([r, g, b], Y.Color.STR_RGB);
+        return Y.Color.fromArray([r, g, b], Y.Color.TYPES.RGB);
     }
 
 };
 
 Y.Color = Y.mix(Color, Y.Color);
 
-Y.Color.TYPES = Y.mix(Y.Color.TYPES, {'hsv':'hsv', 'hsva':'hsva'});
+Y.Color.TYPES = Y.mix(Y.Color.TYPES, {'HSV':'hsv', 'HSVA':'hsva'});
+Y.Color.CONVERTS = Y.mix(Y.Color.CONVERTS, {'hsv': 'toHSV', 'hsva': 'toHSVA'});

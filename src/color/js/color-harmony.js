@@ -32,7 +32,7 @@ var HSL = 'hsl',
         @method getComplementary
         @param {String} str
         @param {String} [to]
-        @returns {String}
+        @returns {Array}
         **/
         getComplementary: function(str, to) {
             var c = Harmony._start(str),
@@ -46,7 +46,6 @@ var HSL = 'hsl',
                     Harmony._finish(c, to),
                     Harmony._finish(c1, to)
                 ];
-
         },
 
         /**
@@ -413,7 +412,7 @@ var HSL = 'hsl',
 
             c[2] = Harmony._searchLuminanceForBrightness(c, b, 0, 100);
 
-            str = Color.fromArray(c, Color.STR_HSLA);
+            str = Color.fromArray(c, Y.Color.TYPES.HSLA);
 
             return Color._convertTo(str, to);
         },
@@ -548,7 +547,7 @@ var HSL = 'hsl',
                 b;
 
             color[2] = luminance;
-            b = Harmony.getBrightness(Color.fromArray(color, Color.STR_HSL));
+            b = Harmony.getBrightness(Color.fromArray(color, Y.Color.TYPES.HSL));
 
             if (b + 0.01 > brightness && b - 0.01 < brightness) {
                 return luminance;

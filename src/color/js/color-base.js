@@ -16,7 +16,8 @@ Color provides static methods for color conversion.
 var REGEX_HEX = /^#?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/,
     REGEX_HEX3 = /^#?([\da-fA-F]{1})([\da-fA-F]{1})([\da-fA-F]{1})/,
     REGEX_RGB = /rgba?\(([\d]{1,3}), ?([\d]{1,3}), ?([\d]{1,3}),? ?([.\d]*)?\)/,
-    TYPES = { 'rgb': 'rgb', 'rgba': 'rgba'};
+    TYPES = { 'HEX': 'hex', 'RGB': 'rgb', 'RGBA': 'rgba' },
+    CONVERTS = { 'hex': 'toHex', 'rgb': 'toRGB', 'rgba': 'toRGBA' };
 
 
 Y.Color = {
@@ -103,6 +104,15 @@ Y.Color = {
     TYPES: TYPES,
 
     /**
+    @static
+    @property CONVERTS
+    @type Object
+    @default {}
+    @since 3.x
+    **/
+    CONVERTS: CONVERTS,
+
+    /**
     @public
     @method convert
     @param {String} str
@@ -113,8 +123,9 @@ Y.Color = {
     convert: function (str, to) {
         // check for a toXXX conversion method first
         // if it doesn't exist, use the toXxx conversion method
-        to = (Y.Color['to' + to.toUpperCase()]) ? to.toUpperCase() : to[0].toUpperCase() + to.substr(1).toLowerCase();
-        var clr = Y.Color['to' + to](str);
+        var convert = Y.Color.CONVERTS[to],
+            clr = Y.Color[convert](str);
+
         return clr.toLowerCase();
     },
 
@@ -199,23 +210,23 @@ Y.Color = {
 
     /**
     Converts the array of values to a string based on the provided template.
-        Replace is used to specify replace points in the template.
     @public
     @method fromArray
     @param {Array} arr
     @param {String} template
-    @param {String} [replace]
     @returns {String}
     @since 3.x
     **/
-    fromArray: function(arr, template, replace) {
+    fromArray: function(arr, template) {
         arr = arr.concat();
 
         if (typeof template === 'undefined') {
             return arr.join(', ');
         }
 
-        replace = replace || '{*}';
+        var replace = '{*}';
+
+        template = Y.Color['STR_' + template.toUpperCase()];
 
         if (arr.length === 3 && template.match(/\{\*\}/g).length === 4) {
             arr.push(1);
@@ -248,8 +259,8 @@ Y.Color = {
             key = str.substr(0, index);
         }
 
-        if (Y.Color.TYPES[key]) {
-            return Y.Color.TYPES[key];
+        if (key && Y.Color.TYPES[key.toUpperCase()]) {
+            return Y.Color.TYPES[key.toUpperCase()];
         }
 
         return 'hex';
@@ -307,7 +318,6 @@ Y.Color = {
             needsAlpha,
             alpha,
             method,
-            template,
             ucTo;
 
         if (from === 'keyword') {
@@ -356,13 +366,12 @@ Y.Color = {
         }
 
         // process clr from arrays to strings after conversions if alpha is needed
-        template = Y.Color['STR_' + originalTo.toUpperCase()];
-        if (needsAlpha && template) {
+        if (needsAlpha) {
             if (!Y.Lang.isArray(clr)) {
                 clr = Y.Color.toArray(clr);
             }
             clr.push(alpha);
-            clr = Y.Color.fromArray(clr, template);
+            clr = Y.Color.fromArray(clr, originalTo.toUpperCase());
         }
 
         return clr;
