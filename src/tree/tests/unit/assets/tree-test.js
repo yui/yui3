@@ -439,6 +439,21 @@ treeSuite.add(new Y.Test.Case({
         Assert.areSame(this.tree, node.tree, "node's tree reference should point to the new tree");
     },
 
+    'insertNode() should remove the inserted node from its current parent if necessary': function () {
+        var node      = this.tree.rootNode.children[0],
+            newParent = this.tree.rootNode.children[1];
+
+        Assert.areSame(this.tree.rootNode, node.parent, 'sanity check');
+        Assert.areSame(3, this.tree.rootNode.children.length, 'root node should have three children');
+
+        this.tree.insertNode(newParent, node);
+
+        Assert.areSame(newParent, node.parent, 'node should have a new parent');
+        Assert.areSame(0, newParent.indexOf(node), 'node should actually be a child of its new parent');
+        Assert.areSame(2, this.tree.rootNode.children.length, 'root node should have two children');
+        Assert.areSame(-1, this.tree.rootNode.indexOf(node), 'node should no longer be a child of the root node');
+    },
+
     'openNode() should open the specified node': function () {
         var node = this.tree.rootNode.children[0];
 
