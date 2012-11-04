@@ -225,5 +225,8 @@ Y.JSON.stringify = function _stringify(o,w,space) {
     return _serialize({'':o},'');
 };
 
+// Property available for testing if the implementation being used
+// is native or a shim
+Y.JSON.stringify.isShim = true;
 
 }, '@VERSION@', {"requires": ["json-stringify"]});

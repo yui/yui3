@@ -222,3 +222,7 @@ Y.JSON.stringify = function _stringify(o,w,space) {
     // process the input
     return _serialize({'':o},'');
 };
+
+// Property available for testing if the implementation being used
+// is native or a shim
+Y.JSON.stringify.isShim = true;

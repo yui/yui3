@@ -175,4 +175,8 @@ Y.JSON.parse = function (s,reviver) {
     throw new SyntaxError('JSON.parse');
 };
 
+// Property available for testing if the implementation being used
+// is native or a shim
+Y.JSON.parse.isShim = true;
+
 }, '@VERSION@', {"requires": ["json-parse"]});
