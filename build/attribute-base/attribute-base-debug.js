@@ -1,4 +1,4 @@
-YUI.add('attribute-base', function(Y) {
+YUI.add('attribute-base', function (Y, NAME) {
 
     /**
      * The attribute module provides an augmentable Attribute implementation, which 
@@ -48,9 +48,18 @@ YUI.add('attribute-base', function(Y) {
      * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
      * @uses AttributeCore
      * @uses AttributeEvents
+     * @uses EventTarget
      * @uses AttributeExtras
-     */    
+     */
     var Attribute = function() {
+
+        // Fix #2531929 
+        // Complete hack, to make sure the first clone of a node value in IE doesn't doesn't hurt state - maintains 3.4.1 behavior.
+        // Too late in the release cycle to do anything about the core problem.
+        // The root issue is that cloning a Y.Node instance results in an object which barfs in IE, when you access it's properties (since 3.3.0).
+        this._ATTR_E_FACADE = null;
+        this._yuievt = null;
+
         Y.AttributeCore.apply(this, arguments);
         Y.AttributeEvents.apply(this, arguments);
         Y.AttributeExtras.apply(this, arguments);
@@ -92,5 +101,4 @@ YUI.add('attribute-base', function(Y) {
 
     Y.Attribute = Attribute;
 
-
-}, '@VERSION@' ,{requires:['attribute-core', 'attribute-events', 'attribute-extras']});
+}, '@VERSION@', {"requires": ["attribute-core", "attribute-events", "attribute-extras"]});

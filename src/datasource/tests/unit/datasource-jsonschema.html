@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>DataSource Tests</title>
+<script src="../../../../build/yui/yui.js"></script>
+<script src="./assets/datasource-jsonschema-tests.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+<div id="log"></div>
+<script>
+YUI({
+    coverage: ['datasource-jsonschema'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+}).use("datasource-jsonschema-tests", "test-console", function (Y) {
+    (new Y.Test.Console()).render('#log');
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

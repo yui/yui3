@@ -129,17 +129,51 @@ SVGGraphic.ATTRS = {
     },
 
     /**
-     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
-     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *  Determines the sizing of the Graphic. 
+     *
+     *  <dl>
+     *      <dt>sizeContentToGraphic</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The content contained in the Graphic will be sized to fit with in the Graphic instance's 
+     *      dimensions. When using this setting, the <code>preserveAspectRatio</code> attribute will determine how the contents are sized.</dd>
+     *      <dt>sizeGraphicToContent</dt><dd>(Also accepts a value of true) The Graphic's width and height are determined by the size and positioning of the content.</dd>
+     *      <dt>false</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The contents of the Graphic instance are not affected by this setting.</dd>
+     *  </dl>
+     *
      *
      *  @config autoSize
-     *  @type Boolean
+     *  @type Boolean | String
      *  @default false
      */
     autoSize: {
         value: false
     },
-
+    
+    /**
+     * Determines how content is sized when <code>autoSize</code> is set to <code>sizeContentToGraphic</code>.
+     *
+     *  <dl>
+     *      <dt>none<dt><dd>Do not force uniform scaling. Scale the graphic content of the given element non-uniformly if necessary 
+     *      such that the element's bounding box exactly matches the viewport rectangle.</dd>
+     *      <dt>xMinYMin</dt><dd>Force uniform scaling position along the top left of the Graphic's node.</dd>
+     *      <dt>xMidYMin</dt><dd>Force uniform scaling horizontally centered and positioned at the top of the Graphic's node.<dd>
+     *      <dt>xMaxYMin</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the top.</dd>
+     *      <dt>xMinYMid</dt>Force uniform scaling positioned horizontally from the left and vertically centered.</dd>
+     *      <dt>xMidYMid (the default)</dt><dd>Force uniform scaling with the content centered.</dd>
+     *      <dt>xMaxYMid</dt><dd>Force uniform scaling positioned horizontally from the right and vertically centered.</dd>
+     *      <dt>xMinYMax</dt><dd>Force uniform scaling positioned horizontally from the left and vertically from the bottom.</dd>
+     *      <dt>xMidYMax</dt><dd>Force uniform scaling horizontally centered and position vertically from the bottom.</dd>
+     *      <dt>xMaxYMax</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the bottom.</dd>
+     *  </dl>
+     * 
+     * @config preserveAspectRatio
+     * @type String
+     * @default xMidYMid
+     */
+    preserveAspectRatio: {
+        value: "xMidYMid"
+    },
+    
     /**
      * The contentBounds will resize to greater values but not to smaller values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
@@ -148,20 +182,7 @@ SVGGraphic.ATTRS = {
      * @type Boolean
      */
     resizeDown: {
-        getter: function()
-        {
-            return this._resizeDown;
-        },
-
-        setter: function(val)
-        {
-            this._resizeDown = val;
-            if(this._contentNode)
-            {
-                this._redraw();
-            }
-            return val;
-        }
+        value: false
     },
 
 	/**
@@ -244,7 +265,52 @@ SVGGraphic.ATTRS = {
     }
 };
 
-Y.extend(SVGGraphic, Y.BaseGraphic, {
+Y.extend(SVGGraphic, Y.GraphicBase, {
+    /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
+	set: function(attr, value) 
+	{
+		var host = this,
+            redrawAttrs = {
+                autoDraw: true,
+                autoSize: true,
+                preserveAspectRatio: true,
+                resizeDown: true
+            },
+            key,
+            forceRedraw = false;
+		AttributeLite.prototype.set.apply(host, arguments);	
+        if(host._state.autoDraw === true && Y.Object.size(this._shapes) > 0)
+        {
+            if(Y_LANG.isString && redrawAttrs[attr])
+            {
+                forceRedraw = true;
+            }
+            else if(Y_LANG.isObject(attr))
+            {
+                for(key in redrawAttrs)
+                {
+                    if(redrawAttrs.hasOwnProperty(key) && attr[key])
+                    {
+                        forceRedraw = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if(forceRedraw)
+        {
+            host._redraw();
+        }
+	},
+
     /**
      * Storage for `x` attribute.
      *
@@ -281,20 +347,14 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * @private
-     * @property _resizeDown 
-     * @type Boolean
-     */
-    _resizeDown: false,
-
-    /**
      * Initializes the class.
      *
      * @method initializer
      * @private
      */
     initializer: function() {
-        var render = this.get("render");
+        var render = this.get("render"),
+            visibility = this.get("visible") ? "visible" : "hidden";
         this._shapes = {};
 		this._contentBounds = {
             left: 0,
@@ -307,7 +367,9 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         this._node.style.position = "absolute";
         this._node.style.left = this.get("x") + "px";
         this._node.style.top = this.get("y") + "px";
+        this._node.style.visibility = visibility;
         this._contentNode = this._createGraphics();
+        this._contentNode.style.visibility = visibility;
         this._contentNode.setAttribute("id", this.get("id"));
         this._node.appendChild(this._contentNode);
         if(render)
@@ -326,12 +388,11 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         var parentNode = Y.one(render),
             w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
             h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || DOCUMENT.body;
-        parentNode.appendChild(this._node);
+        parentNode = parentNode || Y.one(DOCUMENT.body);
+        parentNode.append(this._node);
         this.parentNode = parentNode;
         this.set("width", w);
         this.set("height", h);
-        this.parentNode = parentNode;
         return this;
     },
 
@@ -343,10 +404,20 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     destroy: function()
     {
         this.removeAllShapes();
-        this._removeChildren(this._node);
-        if(this._node && this._node.parentNode)
+        if(this._contentNode)
         {
-            this._node.parentNode.removeChild(this._node);
+            this._removeChildren(this._contentNode);
+            if(this._contentNode.parentNode)
+            {
+                this._contentNode.parentNode.removeChild(this._contentNode);
+            }
+            this._contentNode = null;
+        }
+        if(this._node)
+        {
+            this._removeChildren(this._node);
+            Y.one(this._node).remove(true);
+            this._node = null;
         }
     },
 
@@ -360,6 +431,10 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     addShape: function(cfg)
     {
         cfg.graphic = this;
+        if(!this.get("visible"))
+        {
+            cfg.visible = false;
+        }
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
         this._appendShape(shape);
@@ -404,7 +479,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         }
         if(shape && shape instanceof SVGShape)
         {
-            shape.destroy();
+            shape._destroy();
             delete this._shapes[shape.get("id")];
         }
         if(this.get("autoDraw")) 
@@ -427,7 +502,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         {
             if(shapes.hasOwnProperty(i))
             {
-                shapes[i].destroy();
+                shapes[i]._destroy();
             }
         }
         this._shapes = {};
@@ -485,8 +560,14 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
                 }
             }
         }
-        this._contentNode.style.visibility = visibility;
-        this._node.style.visibility = visibility;
+        if(this._contentNode)
+        {
+            this._contentNode.style.visibility = visibility;
+        }
+        if(this._node)
+        {
+            this._node.style.visibility = visibility;
+        }
     },
 
     /**
@@ -546,7 +627,6 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         var autoDraw = this.get("autoDraw");
         this.set("autoDraw", false);
         method();
-        this._redraw();
         this.set("autoDraw", autoDraw);
     },
     
@@ -574,26 +654,72 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      */
     _redraw: function()
     {
-        var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
-        this._contentNode.style.left = box.left + "px";
-        this._contentNode.style.top = box.top + "px";
-        this._contentNode.setAttribute("width", box.width);
-        this._contentNode.setAttribute("height", box.height);
-        this._contentNode.style.width = box.width + "px";
-        this._contentNode.style.height = box.height + "px";
-        this._contentNode.setAttribute("viewBox", "" + box.left + " " + box.top + " " + box.width + " " + box.height + "");
-        if(this.get("autoSize"))
+        var autoSize = this.get("autoSize"),
+            preserveAspectRatio = this.get("preserveAspectRatio"),
+            box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds,
+            left = box.left,
+            right = box.right,
+            top = box.top,
+            bottom = box.bottom,
+            width = right - left,
+            height = bottom - top,
+            computedWidth,
+            computedHeight,
+            computedLeft,
+            computedTop,
+            node;
+        if(autoSize)
         {
-            this.set("width", box.right);
-            this.set("height", box.bottom);
+            if(autoSize == "sizeContentToGraphic")
+            {
+                node = Y.one(this._node);
+                computedWidth = parseFloat(node.getComputedStyle("width"));
+                computedHeight = parseFloat(node.getComputedStyle("height"));
+                computedLeft = computedTop = 0;
+                this._contentNode.setAttribute("preserveAspectRatio", preserveAspectRatio);
+            }
+            else 
+            {
+                computedWidth = width;
+                computedHeight = height;
+                computedLeft = left;
+                computedTop = top;
+                this._state.width = width;
+                this._state.height = height;
+                if(this._node)
+                {
+                    this._node.style.width = width + "px";
+                    this._node.style.height = height + "px";
+                }
+            }
+        }
+        else
+        {
+                computedWidth = width;
+                computedHeight = height;
+                computedLeft = left;
+                computedTop = top;
+        }
+        if(this._contentNode)
+        {
+            this._contentNode.style.left = computedLeft + "px";
+            this._contentNode.style.top = computedTop + "px";
+            this._contentNode.setAttribute("width", computedWidth);
+            this._contentNode.setAttribute("height", computedHeight);
+            this._contentNode.style.width = computedWidth + "px";
+            this._contentNode.style.height = computedHeight + "px";
+            this._contentNode.setAttribute("viewBox", "" + left + " " + top + " " + width + " " + height + "");
         }
         if(this._frag)
         {
-            this._contentNode.appendChild(this._frag);
+            if(this._contentNode)
+            {
+                this._contentNode.appendChild(this._frag);
+            }
             this._frag = null;
-        }
+        } 
     },
-
+ 
     /**
      * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
      * by `Shape` instances.
@@ -624,7 +750,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
             this._redraw();
         }
     },
-    
+
     /**
      * Recalculates and returns the `contentBounds` for the `Graphic` instance.
      *
@@ -638,26 +764,23 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
             i,
             shape,
             queue = this._shapes,
-            box = {
-                left: 0,
-                top: 0,
-                right: 0,
-                bottom: 0
-            };
+            box = {};
         for(i in queue)
         {
             if(queue.hasOwnProperty(i))
             {
                 shape = queue[i];
                 bounds = shape.getBounds();
-                box.left = Math.min(box.left, bounds.left);
-                box.top = Math.min(box.top, bounds.top);
-                box.right = Math.max(box.right, bounds.right);
-                box.bottom = Math.max(box.bottom, bounds.bottom);
+                box.left = Y_LANG.isNumber(box.left) ? Math.min(box.left, bounds.left) : bounds.left;
+                box.top = Y_LANG.isNumber(box.top) ? Math.min(box.top, bounds.top) : bounds.top;
+                box.right = Y_LANG.isNumber(box.right) ? Math.max(box.right, bounds.right) : bounds.right;
+                box.bottom = Y_LANG.isNumber(box.bottom) ? Math.max(box.bottom, bounds.bottom) : bounds.bottom;
             }
         }
-        box.width = box.right - box.left;
-        box.height = box.bottom - box.top;
+        box.left = Y_LANG.isNumber(box.left) ? box.left : 0;
+        box.top = Y_LANG.isNumber(box.top) ? box.top : 0;
+        box.right = Y_LANG.isNumber(box.right) ? box.right : 0;
+        box.bottom = Y_LANG.isNumber(box.bottom) ? box.bottom : 0;
         this._contentBounds = box;
         return box;
     },
@@ -736,8 +859,56 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
             gradients[key] = gradient;
         }
         return gradient;
-    }
+    },
 
+    /**
+     * Inserts shape on the top of the tree.
+     *
+     * @method _toFront
+     * @param {SVGShape} Shape to add.
+     * @private
+     */
+    _toFront: function(shape)
+    {
+        var contentNode = this._contentNode;
+        if(shape instanceof Y.SVGShape)
+        {
+            shape = shape.get("node");
+        }
+        if(contentNode && shape)
+        {
+            contentNode.appendChild(shape);
+        }
+    },
+
+    /**
+     * Inserts shape as the first child of the content node.
+     *
+     * @method _toBack
+     * @param {SVGShape} Shape to add.
+     * @private
+     */
+    _toBack: function(shape)
+    {
+        var contentNode = this._contentNode,
+            targetNode;
+        if(shape instanceof Y.SVGShape)
+        {
+            shape = shape.get("node");
+        }
+        if(contentNode && shape)
+        {
+            targetNode = contentNode.firstChild;
+            if(targetNode)
+            {
+                contentNode.insertBefore(shape, targetNode);
+            }
+            else
+            {
+                contentNode.appendChild(shape);
+            }
+        }
+    }
 });
 
 Y.SVGGraphic = SVGGraphic;

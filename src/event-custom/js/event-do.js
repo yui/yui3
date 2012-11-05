@@ -22,8 +22,15 @@ DO = {
      * Cache of objects touched by the utility
      * @property objs
      * @static
+     * @deprecated Since 3.6.0. The `_yuiaop` property on the AOP'd object 
+     * replaces the role of this property, but is considered to be private, and 
+     * is only mentioned to provide a migration path.
+     * 
+     * If you have a use case which warrants migration to the _yuiaop property, 
+     * please file a ticket to let us know what it's used for and we can see if 
+     * we need to expose hooks for that functionality more formally.
      */
-    objs: {},
+    objs: null,
 
     /**
      * <p>Execute the supplied method before the specified function.  Wrapping
@@ -115,26 +122,24 @@ DO = {
      * @static
      */
     _inject: function(when, fn, obj, sFn) {
-
         // object id
         var id = Y.stamp(obj), o, sid;
 
-        if (! this.objs[id]) {
-            // create a map entry for the obj if it doesn't exist
-            this.objs[id] = {};
+        if (!obj._yuiaop) {
+            // create a map entry for the obj if it doesn't exist, to hold overridden methods
+            obj._yuiaop = {};
         }
 
-        o = this.objs[id];
+        o = obj._yuiaop;
 
-        if (! o[sFn]) {
+        if (!o[sFn]) {
             // create a map entry for the method if it doesn't exist
             o[sFn] = new Y.Do.Method(obj, sFn);
 
             // re-route the method to our wrapper
-            obj[sFn] =
-                function() {
-                    return o[sFn].exec.apply(o[sFn], arguments);
-                };
+            obj[sFn] = function() {
+                return o[sFn].exec.apply(o[sFn], arguments);
+            };
         }
 
         // subscriber id
@@ -144,7 +149,6 @@ DO = {
         o[sFn].register(sid, fn, when);
 
         return new Y.EventHandle(o[sFn], sid);
-
     },
 
     /**
@@ -155,15 +159,12 @@ DO = {
      * @static
      */
     detach: function(handle) {
-
         if (handle.detach) {
             handle.detach();
         }
-
     },
 
     _unload: function(e, me) {
-
     }
 };
 

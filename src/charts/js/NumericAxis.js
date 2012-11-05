@@ -2,6 +2,7 @@
  * NumericAxis manages numeric data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class NumericAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -27,8 +28,9 @@ NumericAxis.ATTRS = {
     
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
-     * will be rendered to the DOM using `innerHTML`. 
+     * to implement the arguments below and return a `String` or an `HTMLElement`. The default implementation of the method returns a `String`. The output of this method
+     * will be rendered to the DOM using `appendChild`. If you override the `labelFunction` method and return an html string, you will also need to override the Axis' 
+     * `appendLabelFunction` to accept html as a `String`.
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>Object containing properties used to format the label. (optional)</dd>
@@ -68,6 +70,23 @@ NumericAxis.ATTRS = {
 
 Y.extend(NumericAxis, Y.AxisType,
 {
+    /**
+     * Formats a label based on the axis type and optionally specified format.
+     *
+     * @method formatLabel
+     * @param {Object} value
+     * @param {Object} format Pattern used to format the value.
+     * @return String
+     */
+    formatLabel: function(val, format)
+    {
+        if(format)
+        {
+            return Y.DataType.Number.format(val, format);
+        }
+        return val;
+    },
+
     /**
      * Returns the sum of all values per key.
      *
@@ -378,12 +397,13 @@ Y.extend(NumericAxis, Y.AxisType,
                         {
                             max = 0;
                             roundingUnit = this._getMinimumUnit(max, min, units);
+                            min = max - (roundingUnit * units);
                         }
                         else
                         {
+                            min = this._roundDownToNearest(min, roundingUnit);
                             max = this._roundUpToNearest(max, roundingUnit);
                         }
-                        min = max - (roundingUnit * units);
                     }
                     else
                     {
@@ -455,12 +475,13 @@ Y.extend(NumericAxis, Y.AxisType,
                         {
                             Math.ceil(roundingUnit);
                         }
+                        min = max - (roundingUnit * units);
                     }
                     else
                     {
+                        min = this._roundDownToNearest(min, roundingUnit);
                         max = this._roundUpToNearest(max, roundingUnit);
                     }
-                    min = max - (roundingUnit * units);
 
                 }
             }
@@ -494,7 +515,7 @@ Y.extend(NumericAxis, Y.AxisType,
                 else if(maxGreaterThanZero && !minGreaterThanZero)
                 {
                     min = minRound;
-                    max = min + minimumRange;
+                    max = maxRound;
                 }
                 else
                 {
@@ -543,7 +564,7 @@ Y.extend(NumericAxis, Y.AxisType,
         else
         {
             label = (i * increm);
-            if(this.get("roundingMethod") == "niceNumber")
+            if(roundingMethod == "niceNumber")
             {
                 label = this._roundToNearest(label, increm);
             }

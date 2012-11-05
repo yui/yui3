@@ -1,10 +1,41 @@
 DOM Change History
 ==================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* Added `transformOrigin` and `msTransform` to `dom-style`.
+
+3.6.0
+-----
+
+  * No changes.
+
+3.5.1
+-----
+  * Bug fix: Fix multiple grouped queries for IE. [Ticket 2532155]
+
+
 3.5.0
 -----
   * Bug fix: Comments are now filtered from IE child queries. [Ticket 2530101]
   * Bug fix: Root node border correctly accounted for in IE. [Ticket 2531246]
+  * Added Y.DOM.getScrollbarWidth() to return the width of a scrollbar in the current user agent
 
 
 3.4.1

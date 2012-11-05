@@ -1,0 +1,2463 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Widget Test Suite</title>
+
+    <script src="../../../../build/yui/yui.js"></script>
+
+    <style type="text/css">
+        #testConsole .yui3-console-entry {
+            padding:2px;
+            margin:0px;
+            min-height:0;
+        }
+
+        #testConsole .yui3-console-entry-fail .yui3-console-entry-cat {
+            background-color:red;
+        }
+
+        #testConsole .yui3-console-entry-pass .yui3-console-entry-cat {
+            background-color:green;
+        }
+
+        #testConsole .yui3-console-entry-perf .yui3-console-entry-cat {
+            background-color:blue;
+        }
+        
+        #testConsole .yui3-console-entry-content {
+            font-family:monospace;
+        }
+
+        #testConsole .yui3-console-entry-cat {
+            padding:0;
+            height:10px;
+            width:10px;
+            line-height:10px;
+            overflow:hidden;
+            display:inline-block;
+            *display:inline;
+            *zoom:1;
+        }
+
+        #testConsole {
+            position:static;
+        }
+        
+        #automationmsg {
+            margin-left:2em;
+        }
+
+        .msg-hidden {
+            display:none;
+        }
+
+        html, body {
+            height:100%;
+        }
+    </style>
+
+    <style class="testcss">
+        /** Extended Core Tests Need This. Custom CSS **/
+        .yui3-mywidget-hidden {
+            display:none;
+        }
+        
+        /** SingleBox Core Tests Need This. Custom CSS **/
+        .yui3-mysingleboxwidget-hidden {
+            display:none;
+        }
+        
+        /** Custom Widget Tests Need This. Custom CSS **/
+        .yui3-mycustomwidget-hidden {
+            visibility:hidden;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+    <p><input type="button" value="Run Tests" id="btnRun" disabled="true"><span id="automationmsg" class="msg-hidden">Currently running tests, with logging disabled to speed up automation. Button will be enabled once complete.</span></p>
+
+    <div id="testbed" class="yui3-skin-foo"></div>
+
+    <div id="widgetRenderContainer" style="height:300px;width:300px"></div>
+    <div id="customWidgetRenderContainer"></div>
+
+    <script>
+    YUI({
+        coverage: ['widget'],
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    }).use('test', 'widget', 'node-event-simulate', 'console', function (Y) {
+
+        var yeti = Y.config.win && Y.config.win.$yetify,
+            testConsole;
+
+        // Extended Widget
+        function MyWidget() {
+            MyWidget.superclass.constructor.apply(this, arguments);
+        }
+        Y.extend(MyWidget, Y.Widget);
+
+        MyWidget.NAME = "myWidget";
+
+        // Single Box Widget
+        function MySingleBoxWidget() {
+            MySingleBoxWidget.superclass.constructor.apply(this, arguments);
+        };
+        MySingleBoxWidget.NAME = "mySingleBoxWidget";
+
+        Y.extend(MySingleBoxWidget, Y.Widget, {
+            CONTENT_TEMPLATE:null
+        });
+
+        var suite = new Y.Test.Suite("Widget");
+
+        var coreTests = {
+
+            name : "Widget Core Tests",
+
+            _should : {
+                ignore: {
+                    "testFocusOnChildFocus" : yeti && Y.UA.gecko,
+                    "testFocusOnBoundingBox" : yeti && Y.UA.gecko,
+                    "testMultiWidgetFocus" :  yeti && Y.UA.gecko,
+                    "testWidgetOnFocus" :  yeti && Y.UA.gecko
+                }
+            },
+
+            createWidget: function(cfg) {
+                return new Y.Widget(cfg);
+            },
+
+            "testInstantiation" : function() {
+                var w = this.createWidget();
+                Y.Assert.isTrue(w instanceof Y.Widget);
+
+                // Basic API
+                Y.Assert.isFunction(w.render);
+                Y.Assert.isFunction(w.renderUI);
+                Y.Assert.isFunction(w.bindUI);
+                Y.Assert.isFunction(w.syncUI);
+                Y.Assert.isFunction(w.init);
+                Y.Assert.isFunction(w.destroy);
+                Y.Assert.isFunction(w.get);
+                Y.Assert.isFunction(w.set);
+                Y.Assert.isFunction(w.show);
+                Y.Assert.isFunction(w.hide);
+                Y.Assert.isFunction(w.disable);
+                Y.Assert.isFunction(w.enable);
+                Y.Assert.isFunction(w.focus);
+                Y.Assert.isFunction(w.blur);
+
+                w.destroy();
+            },
+
+            "testInitState" : function() {
+                var w = this.createWidget();
+
+                Y.Assert.areEqual("div", w.get("boundingBox").get("tagName").toLowerCase());
+                Y.Assert.areEqual("div", w.get("contentBox").get("tagName").toLowerCase());
+
+                Y.Assert.isFalse(w.get("disabled"), "disabled should be false");
+                Y.Assert.isFalse(w.get("focused"), "focused should be false");
+                Y.Assert.areSame("", w.get("height"), "height should be empty string");
+                Y.Assert.areSame("", w.get("width"), "width should be empty string");
+                Y.Assert.isString(w.get("id"), "id should be a string");
+                Y.Assert.isTrue(w.get("initialized"), "initialized should be true");
+                Y.Assert.isFalse(w.get("destroyed"), "destroyed should be false");
+                Y.Assert.isFalse(w.get("rendered"), "rendered should be false");
+                Y.Assert.isTrue(w.get("visible"), "visible should be true");
+                Y.Assert.isNull(w.get("tabIndex"), "tabIndex should be null");
+    
+                w.destroy();
+            },
+
+            "testNonRenderedStateUpdate" : function() {
+                var w = this.createWidget({
+                    // WRITE ONCE
+                    id: "foobar",
+                    boundingBox: Y.Node.create("<span id='bb'></span>"),
+                    srcNode: Y.Node.create("<span id='cb'></span>")
+                });
+
+                w.set("disabled", true);
+                w.set("height", 100);
+                w.set("width", 200);
+                w.set("visible", false);
+                w.set("tabIndex", 5);
+
+                Y.Assert.areEqual("span", w.get("boundingBox").get("tagName").toLowerCase());
+                Y.Assert.areEqual("span", w.get("contentBox").get("tagName").toLowerCase());
+                Y.Assert.areEqual("bb", w.get("boundingBox").get("id"));
+                Y.Assert.areEqual("cb", w.get("contentBox").get("id"));
+
+                Y.Assert.isTrue(w.get("disabled"), "disabled should be true");
+                Y.Assert.isFalse(w.get("focused"), "focused should be false"); // focused is READONLY
+                Y.Assert.areEqual("100", w.get("height"), "height should be 100px");
+                Y.Assert.areEqual("200", w.get("width"), "width should be 200px");
+                Y.Assert.areEqual("foobar", w.get("id"), "id should be foobar");
+                Y.Assert.isFalse(w.get("visible"), "visible should be false");
+                Y.Assert.areEqual(5, w.get("tabIndex"), "tabIndex should be 5");
+
+                w.destroy();
+            },
+
+            "testValidationReadonlyWriteonce" : function() {
+
+                var w = this.createWidget();
+
+                // READONLY
+                w.set("focused", true);
+                w.set("rendered", true);
+
+                // WRITE ONCE
+                w.set("boundingBox", Y.Node.create("<span id='bb'></span>"));
+                w.set("contentBox", Y.Node.create("<span id='cb'></span>"));
+                w.set("render", true);
+
+                // INVALID
+                w.set("tabIndex", "foo");
+
+                // State should be the same as the initial state
+                Y.Assert.areEqual("div", w.get("boundingBox").get("tagName").toLowerCase());
+                Y.Assert.areEqual("div", w.get("contentBox").get("tagName").toLowerCase());
+
+                Y.Assert.isFalse(w.get("disabled"), "disabled should be false");
+                Y.Assert.isFalse(w.get("focused"), "focused should be false");
+                Y.Assert.areSame("", w.get("height"), "height should be empty string");
+                Y.Assert.areSame("", w.get("width"), "width should be empty string");
+                Y.Assert.isString(w.get("id"), "id should be a string");
+                Y.Assert.isTrue(w.get("initialized"), "initialized should be true");
+                Y.Assert.isFalse(w.get("destroyed"), "destroyed should be false");
+                Y.Assert.isFalse(w.get("rendered"), "rendered should be false");
+                Y.Assert.isTrue(w.get("visible"), "visible should be true");
+                Y.Assert.isNull(w.get("tabIndex"), "tabIndex should be null");
+
+                w.destroy();
+            },
+
+            "testStaticClassNameGeneration" : function() {
+                Y.Assert.areEqual("yui3-widget-foo-bar", Y.Widget.getClassName("foo", "bar"));
+            },
+
+            "testInstanceClassNameGeneration" : function() {
+                var w = this.createWidget();
+                Y.Assert.areEqual("yui3-widget-foo-bar", w.getClassName("foo", "bar"));
+                w.destroy();
+            },
+
+            "testCssPrefix" : function() {
+                var w = this.createWidget();
+                Y.Assert.areEqual("yui3-widget", w._cssPrefix, "Unexpected Prefix");
+                w.destroy();
+            },
+
+            "testRender" : function() {
+    
+                var w = this.createWidget({
+                    id: "widgetRender"
+                });
+                w.render();
+    
+                var bbFromDom = Y.Node.one("#widgetRender");
+    
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(bbFromDom), "boundingBox not found in DOM");
+                Y.Assert.isTrue(bbFromDom.get("firstChild").compareTo(w.get("contentBox")), "contentBox not first child of boundingBox");
+                Y.Assert.isTrue(bbFromDom.compareTo(Y.Node.one("body").get("firstChild")), "widget not inserted to body");
+                Y.Assert.isTrue(w.get("rendered"), "Rendered flag not set");
+    
+                w.destroy();
+            },
+    
+            "testRenderTo" : function() {
+    
+                var w = this.createWidget({
+                    id: "widgetRender"
+                });
+                w.render("#widgetRenderContainer");
+    
+                var bbFromDom = Y.Node.one("#widgetRender");
+    
+                Y.Assert.isTrue(bbFromDom.get("parentNode").compareTo(Y.Node.one("#widgetRenderContainer")), "widget not rendered to container passed to render()");
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(bbFromDom), "boundingBox not found in DOM");
+                Y.Assert.isTrue(bbFromDom.get("firstChild").compareTo(w.get("contentBox")), "contentBox not first child of boundingBox");
+                Y.Assert.isTrue(w.get("rendered"), "Rendered flag not set");
+                
+                w.destroy();
+            },
+    
+            "testBaseClassNames" : function() {
+    
+                var w = this.createWidget();
+                w.render();
+                
+                var bb = w.get("boundingBox");
+                var cb = w.get("contentBox");
+    
+                Y.Assert.isTrue(bb.hasClass("yui3-widget"), "bb missing yui3-widget marker");
+                Y.Assert.isTrue(cb.hasClass("yui3-widget-content"), "cb missing yui3-widget-content marker");
+    
+                w.destroy();
+            },
+    
+            "testHeight" : function() {
+    
+                var w = this.createWidget({
+                    height:100,
+                    render:"#widgetRenderContainer"
+                });
+    
+                var bb = w.get("boundingBox"),
+                    cb = w.get("contentBox");
+    
+                // Default CSS has no border/padding/margin on BB/CB so this should be fine in all browsers
+                Y.Assert.areEqual(100, bb.get("offsetHeight"), "100 height not set correctly in DOM");
+                Y.Assert.areEqual(100, cb.get("offsetHeight"), "100 height not set correctly in DOM");
+    
+                w.set("height", "200px");
+
+                Y.Assert.areEqual(200, bb.get("offsetHeight"), "200px height not set correctly in DOM");
+                Y.Assert.areEqual(200, cb.get("offsetHeight"), "200px height not set correctly in DOM");
+
+                w.set("height", "50%"); 
+
+                Y.Assert.areEqual(150, bb.get("offsetHeight"), "% height not set correctly in DOM");
+                Y.Assert.areEqual(150, cb.get("offsetHeight"), "% height not set correctly in DOM");
+
+                w.destroy();
+            },
+
+            "testWidth" : function() {
+                var w = this.createWidget({
+                    width:100,
+                    render:"#widgetRenderContainer"
+                });
+
+                var bb = w.get("boundingBox"),
+                    cb = w.get("contentBox");
+
+                // Default CSS has no border/padding/margin on BB/CB so this should be fine in all browsers
+                Y.Assert.areEqual(100, bb.get("offsetWidth"), "100 width not set correctly in DOM");
+                Y.Assert.areEqual(100, cb.get("offsetWidth"), "100 width not set correctly in DOM");
+
+                w.set("width", "200px");
+
+                Y.Assert.areEqual(200, bb.get("offsetWidth"), "200px width not set correctly in DOM");
+                Y.Assert.areEqual(200, cb.get("offsetWidth"), "200px width not set correctly in DOM");
+
+                w.set("width", "50%");
+
+                Y.Assert.areEqual(150, bb.get("offsetWidth"), "% width not set correctly in DOM");
+                Y.Assert.areEqual(150, cb.get("offsetWidth"), "% width not set correctly in DOM");
+
+                w.destroy();
+            },
+
+            "testDisabled" : function() {
+                var w = this.createWidget({render:true});
+                var bb = w.get("boundingBox");
+
+                var className = w._cssPrefix + "-disabled";
+
+                Y.Assert.isFalse(w.get("disabled"), "disabled should be false by default");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
+
+                w.set("disabled", true);
+
+                Y.Assert.isTrue(w.get("disabled"), "disabled should be true");
+                Y.Assert.isTrue(bb.hasClass(className), "bb should have a disabled marker");
+                
+                w.set("disabled", false);
+                
+                Y.Assert.isFalse(w.get("disabled"), "disabled should be false");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
+                
+                w.destroy();
+            },
+
+            "testDisableEnable" : function() {
+                var w = this.createWidget({render:true});
+                var bb = w.get("boundingBox");
+
+                var className = w._cssPrefix + "-disabled";
+
+                Y.Assert.isFalse(w.get("disabled"), "disabled should be false by default");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
+
+                w.disable();
+
+                Y.Assert.isTrue(w.get("disabled"), "disabled should be true");
+                Y.Assert.isTrue(bb.hasClass(className), "bb should have a disabled marker");
+                
+                w.enable();
+                
+                Y.Assert.isFalse(w.get("disabled"), "disabled should be false");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
+                
+                w.destroy();
+            },
+
+            "testFocusBlur" : function() {
+                
+                // The focused attribute is read-only, so we test through the public api
+                
+                var w = this.createWidget({render:true});
+                var bb = w.get("boundingBox");
+                
+                var className = w._cssPrefix + "-focused";
+
+                // TODO ENH REQUEST: This doesn't seem right. We should focus on render.
+                Y.Assert.isFalse(w.get("focused"), "focused should be false by default");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
+
+                w.focus();
+
+                Y.Assert.isTrue(w.get("focused"), "focused should be true");
+                Y.Assert.isTrue(bb.hasClass(className), "bb should have a focused marker");
+
+                w.blur();
+
+                Y.Assert.isFalse(w.get("focused"), "focused should be false");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a focused marker class");
+                
+                w.destroy();
+            },
+
+            "testTabIndex" : function() {
+                var w = this.createWidget({render:true});
+                var bb = w.get("boundingBox");
+
+                Y.Assert.isNull(w.get("tabIndex"), "tabIndex should be null by default");
+                Y.Assert.isTrue(bb.get("tabIndex") <= 0, "tabIndex should not be set by default"); // default varies across browsers 0 or -1
+
+                w.set("tabIndex", 6);
+
+                Y.Assert.areSame(6, w.get("tabIndex"), "tabIndex should be 6");
+
+                Y.Assert.areSame(6, bb.get("tabIndex"), "tabIndex should be 6");
+
+                w.destroy();
+            },
+    
+            "testId" : function() {
+                var w = this.createWidget({
+                    id: "testId",
+                    render:true
+                });
+                var bb = w.get("boundingBox");
+                
+                // ID is writeOnce. Cannot reset ID
+                w.set("id", "resetTestId");
+
+                Y.Assert.areSame("testId", w.get("id"), "id not set");
+                Y.Assert.areSame("testId", bb.get("id"), "id not reflected in DOM");
+
+                w.destroy();
+            },
+
+            "testVisible" : function() {
+                var w = this.createWidget({render:true});
+                var bb = w.get("boundingBox");
+
+                var className = w._cssPrefix + "-hidden";
+
+                Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a hidden marker class");
+                Y.Assert.areNotEqual("none", bb.getStyle("display"), "widget should not be display:none");
+
+                w.set("visible", false);
+
+                Y.Assert.isFalse(w.get("visible"), "visible should be false");
+                Y.Assert.isTrue(bb.hasClass(className), "bb should have an hidden marker");
+                Y.Assert.areEqual("none", bb.getStyle("display"), "Default CSS should hide widget using display:none");
+
+                w.set("visible", true);
+                
+                Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a hidden marker class");
+                Y.Assert.areNotEqual("none", bb.getStyle("display"), "widget should not be display:none");
+
+                w.destroy();
+            },
+            
+            "testShowHide" : function() {
+                var w = this.createWidget({render:true});
+                var bb = w.get("boundingBox");
+                
+                var className = w._cssPrefix + "-hidden";
+
+                Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a hidden marker class");
+                Y.Assert.areNotEqual("none", bb.getStyle("display"), "widget should not be display:none");
+
+                w.hide();
+
+                Y.Assert.isFalse(w.get("visible"), "visible should be false");
+                Y.Assert.isTrue(bb.hasClass(className), "bb should have an hidden marker");
+                Y.Assert.areEqual("none", bb.getStyle("display"), "Default CSS should hide widget using display:none");
+
+                w.show();
+
+                Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a hidden marker class");
+                Y.Assert.areNotEqual("none", bb.getStyle("display"), "widget should not be display:none");
+
+                w.destroy();
+            },
+
+            "testBoundingBox" : function() {
+
+                var container = Y.one("#widgetRenderContainer");
+                container.append("<div id='bbTest'></div>");
+
+                var bb = Y.one("#bbTest");
+
+                var w = this.createWidget({
+                    boundingBox: "#bbTest",
+                    render:true
+                });
+
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(bb), "bb passed to constructor, not used");
+                Y.Assert.isTrue(w.get("contentBox").compareTo(bb.get("firstChild")), "Missing contentBox");
+                Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "boundingBox moved from it's place in the DOM");
+
+                w.destroy();
+            },
+    
+            "testContentBox" : function() {
+
+                var container = Y.one("#widgetRenderContainer");
+                container.append("<div id='cbTest'></div>");
+
+                var cb = Y.one("#cbTest");
+
+                var w = this.createWidget({
+                    contentBox: "#cbTest",
+                    render:true
+                });
+
+                Y.Assert.isTrue(w.get("contentBox").compareTo(cb), "cb passed to constructor, not used");
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(cb.get("parentNode")), "Missing boundingBox");
+                Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "contentBox moved from it's place in the DOM");
+
+                w.destroy();
+            },
+
+            "testBoundingBoxContentBox" : function() {
+
+                var container = Y.one("#widgetRenderContainer");
+                container.append("<div id='bbTest'></div>");
+
+                var bb = Y.one("#bbTest");
+                bb.append("<div id='cbTest'></div>");
+                var cb = Y.one("#cbTest"); 
+
+                var w = this.createWidget({
+                    boundingBox: "#bbTest",
+                    contentBox: "#cbTest",
+                    render:true
+                });
+
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(bb), "bb passed to constructor, not used");
+                Y.Assert.isTrue(w.get("contentBox").compareTo(cb), "cb passed to constructor, not used");
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(cb.get("parentNode")), "bb not not cb's parent");
+                Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "bb moved from it's place in the DOM");
+                Y.Assert.isTrue(w.get("boundingBox").get("firstChild").compareTo(cb), "cb not bb's firstChild");
+
+                w.destroy();
+            },
+            
+            "testBoundingBoxRenderTo" : function() {
+
+                var container = Y.one("#widgetRenderContainer");
+
+                // NOTE: PE content sits in body, not container
+                Y.one("body").append("<div id='bbTest'></div>");
+
+                var bb = Y.one("#bbTest");
+
+                var w = this.createWidget({
+                    boundingBox: "#bbTest",
+                    render:container
+                });
+
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(bb), "bb passed to constructor, not used");
+                Y.Assert.isTrue(w.get("contentBox").compareTo(bb.get("firstChild")), "Missing contentBox");
+                Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "boundingBox moved from it's place in the DOM");
+
+                w.destroy();
+            },
+    
+            "testContentBoxRenderTo" : function() {
+
+                var container = Y.one("#widgetRenderContainer");
+                Y.one("body").append("<div id='cbTest'></div>");
+
+                var cb = Y.one("#cbTest");
+
+                var w = this.createWidget({
+                    contentBox: "#cbTest",
+                    render:container
+                });
+
+                Y.Assert.isTrue(w.get("contentBox").compareTo(cb), "cb passed to constructor, not used");
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(cb.get("parentNode")), "Missing boundingBox");
+                Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "contentBox moved from it's place in the DOM");
+
+                w.destroy();
+            },
+
+            "testBoundingBoxContentBoxRenderTo" : function() {
+
+                var container = Y.one("#widgetRenderContainer");
+                Y.one("body").append("<div id='bbTest'></div>");
+
+                var bb = Y.one("#bbTest");
+                bb.append("<div id='cbTest'></div>");
+                var cb = Y.one("#cbTest"); 
+
+                var w = this.createWidget({
+                    boundingBox: "#bbTest",
+                    contentBox: "#cbTest",
+                    render:container
+                });
+
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(bb), "bb passed to constructor, not used");
+                Y.Assert.isTrue(w.get("contentBox").compareTo(cb), "cb passed to constructor, not used");
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(cb.get("parentNode")), "bb not not cb's parent");
+                Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "bb moved from it's place in the DOM");
+                Y.Assert.isTrue(w.get("boundingBox").get("firstChild").compareTo(cb), "cb not bb's firstChild");
+
+                w.destroy();
+            },
+
+            "testSrcNode" : function() {
+
+                var container = Y.one("#widgetRenderContainer");
+                container.append("<div id='srcNode'><div id='foo'></div></div>");
+
+                var sn = Y.one("#srcNode");
+
+                var w = this.createWidget({
+                    srcNode: "#srcNode",
+                    render:true
+                });
+
+                Y.Assert.isTrue(w.get("contentBox").compareTo(sn), "srcNode should end up being cb");
+                Y.Assert.isTrue(w.get("srcNode").compareTo(sn), "srcNode should still be accessible from srcNode attribute");
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(sn.get("parentNode")), "Missing boundingBox");
+                Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "srcNode moved from it's place in the DOM");
+
+                Y.Assert.isNotNull(w.get("contentBox").one("#foo"), "contents of srcNode not maintained");
+
+                w.destroy(true);
+            },
+
+            "testGetByNode" : function() {
+
+                var o = this.createWidget({
+                    id:"outer"
+                });
+                o.render();
+
+                var ocb = o.get("contentBox");
+                ocb.append("<div><div id='outerContent'>Outer</div></div>");
+
+                var i = this.createWidget({
+                    id:"inner"
+                });
+                i.render();
+
+                var icb = i.get("contentBox");
+                icb.append("<div><div id='innerContent'>Inner</div></div>");
+
+                var outerContent = ocb.one("#outerContent");
+                var innerContent = icb.one("#innerContent");
+
+                Y.Assert.areSame(o, Y.Widget.getByNode(outerContent), "Couldn't find outer widget from content");
+                Y.Assert.areSame(i, Y.Widget.getByNode(innerContent), "Couldn't find inner widget from content");
+
+                Y.Assert.areSame(o, Y.Widget.getByNode(o.get("contentBox")), "Couldn't find outer widget from outer contentBox");
+                Y.Assert.areSame(o, Y.Widget.getByNode(o.get("boundingBox")), "Couldn't find outer widget from outer boundingBox");
+
+                Y.Assert.areSame(i, Y.Widget.getByNode(i.get("contentBox")), "Couldn't find inner widget from inner contentBox");
+                Y.Assert.areSame(i, Y.Widget.getByNode(i.get("boundingBox")), "Couldn't find inner widget from inner boundingBox");
+                
+                i.destroy(true);
+                o.destroy(true);
+            },
+
+            "testGetByNodeChangedId" : function() {
+
+                var o = this.createWidget({
+                    id:"oldid"
+                });
+                o.render();
+
+                o.get("contentBox").setHTML('<p id="content">FooBar</p>');
+
+                Y.Assert.areSame(o, Y.Widget.getByNode(o.get("contentBox")), "Couldn't find widget from contentBox even before changing IDs");
+
+                o.get("boundingBox").set("id", "newid");
+
+                Y.Assert.areSame("newid", o.get("boundingBox").get("id"), "Just making sure Node ID was updated. Doesn't seem to be");
+
+                Y.Assert.areSame(o, Y.Widget.getByNode(o.get("contentBox")), "Couldn't find widget from contentBox after changing IDs");
+                Y.Assert.areSame(o, Y.Widget.getByNode("#content"), "Couldn't find widget from content after changing IDs");
+
+                o.destroy(true);
+            },
+
+            "testStrings" : function() {
+                var w = this.createWidget();
+
+                Y.ObjectAssert.ownsNoKeys(w.get("strings"), "No strings should be available by default");
+
+                w.set("strings", {
+                    stringOne: "one",
+                    stringTwo: "two"
+                });
+
+                // Strings get merged, not overwritten
+                w.set("strings", {
+                    stringThree: "three",
+                    stringFour: "four"
+                });
+
+                Y.Assert.areEqual("one", w.get("strings").stringOne);
+                Y.Assert.areEqual("two", w.get("strings").stringTwo);
+                Y.Assert.areEqual("three", w.get("strings").stringThree);
+                Y.Assert.areEqual("four", w.get("strings").stringFour); 
+
+                w.destroy();
+            },
+
+            "testLoadingMarker" : function() {
+                var n = Y.Node.create('<div id="srcNode" class="yui3-widget-loading">Src Node Content</div>');
+                Y.one("body").append(n);
+
+                var w = this.createWidget({
+                    srcNode:"#srcNode"
+                });
+                
+                Y.Assert.isTrue(n.hasClass("yui3-widget-loading"), "yui3-widget-loading should not have been removed");
+                w.render();
+
+                Y.Assert.areSame(n, w.get("contentBox"), "srcNode not used as content box");
+                Y.Assert.isFalse(n.hasClass("yui3-widget-loading"), "yui3-widget-loading should have removed");
+                
+                w.destroy();
+            },
+
+            "testFocusOnChildFocus" : function() {
+
+                var w = this.createWidget({
+                    tabIndex:3,
+                    height:100,
+                    width:100
+                });
+                w.render();
+                w.blur();
+
+                Y.Assert.isFalse(w.get("focused"), "Widget should not be focused here");
+
+                var n = w.get("contentBox").appendChild('<a href="#" id="clickme">Click Me</a>');
+                n.focus();
+
+                Y.Assert.isTrue(w.get("focused"), "Widget should be focused here");
+
+                w.destroy();
+            },
+            
+            "testFocusOnBoundingBox" : function() {
+
+                var w = this.createWidget({
+                    tabIndex:3,
+                    height:100,
+                    width:100
+                });
+                w.render();
+                w.blur();
+
+                Y.Assert.isFalse(w.get("focused"), "Widget should not be focused here");
+
+                w.get("boundingBox").focus();
+
+                Y.Assert.isTrue(w.get("focused"), "Widget should be focused here");
+
+                w.destroy();
+            },
+
+            "testMultiWidgetFocus" : function() {
+
+                var w1 = this.createWidget({
+                    id:"one",
+                    tabIndex:3,
+                    height:100,
+                    width:100
+                });
+                
+                w1.render();
+                w1.blur();
+
+                var w2 = this.createWidget({
+                    id:"two",
+                    tabIndex:3,
+                    height:100,
+                    width:100
+                });
+
+                w2.render();
+                w2.blur();
+                
+                var n1 = w1.get("contentBox").appendChild('<a href="#" id="clickme1">Click Me (widget 1)</a>');
+                var n2 = w2.get("contentBox").appendChild('<a href="#" id="clickme2">Click Me (widget 2)</a>');
+                var n3 = Y.one("body").insertBefore('<a href="#" id="clickme3">Click Me (non widget)</a>', Y.one("body").get("firstChild"));
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+
+                n1.focus();
+
+                Y.Assert.isTrue(w1.get("focused"), "Widget 1 should be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+
+                n2.focus();
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isTrue(w2.get("focused"), "Widget 2 should be focused here");
+
+                n3.focus();
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+                
+                w1.focus();
+                
+                Y.Assert.isTrue(w1.get("focused"), "Widget 1 should be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+                
+                w2.focus();
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isTrue(w2.get("focused"), "Widget 2 should be focused here");
+                
+                w1.blur();
+                w2.blur();
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+               
+                w1.destroy();
+                w2.destroy();
+
+                n3.remove(true);
+            },
+
+            "testWidgetOnFocus" : function() {
+
+                var test = this,
+                    gotFocus = false;
+
+                var widget = this.createWidget({
+                    height:100,
+                    width:100,
+                    tabIndex:0,
+                    render:true
+                });
+
+                widget.on("focus", function() {
+                    gotFocus = true;
+                });
+
+                widget.focus();
+
+                widget.destroy(true);
+
+                Y.Assert.isTrue(gotFocus, "widget.on('focus') wasn't invoked");
+            },
+
+            "testDetachFocusOnLastWidgetDestroy" : function() {
+                var w1 = this.createWidget({
+                    id : "foo",
+                    render: true
+                });
+
+                var w2 = this.createWidget({
+                   id : "bar",
+                   render: true
+                });
+
+                Y.Assert.areEqual(2, Y.Widget._hDocFocus.listeners.count);
+                
+                w1.destroy();
+                
+                Y.Assert.areEqual(1, Y.Widget._hDocFocus.listeners.count);
+                
+                w2.destroy();
+
+                Y.Assert.isNull(Y.Widget._hDocFocus);
+            },
+
+            "testToString" : function() {
+                var w = this.createWidget({
+                    id: "foo"
+                });
+
+                Y.Assert.areEqual("widget[foo]", w.toString());
+                
+                w.destroy();
+            },
+
+            "testDeprecated" : function() {
+                var w = this.createWidget({
+                    strings: {
+                        a:"strA",
+                        b:"strB"
+                    }
+                });
+
+                Y.Assert.areEqual("strA", w.getString("a"));
+                Y.Assert.areEqual("strB", w.getString("b"));
+                
+                Y.ObjectAssert.areEqual({
+                    a:"strA",
+                    b:"strB"    
+                }, w.getStrings());
+                
+                w.destroy();
+            }
+        };
+
+        var extendedCoreTests = Y.Object(coreTests);
+        Y.mix(extendedCoreTests, {
+
+            name: "MyWidget Core Tests",
+
+            createWidget : function(cfg) {
+                return (new MyWidget(cfg));
+            },
+
+            "testLoadingMarker" : function() {
+                var n = Y.Node.create('<div id="srcNode" class="yui3-mywidget-loading">Src Node Content</div>');
+                Y.one("body").append(n);
+
+                var w = this.createWidget({
+                    srcNode:"#srcNode"
+                });
+                
+                Y.Assert.isTrue(n.hasClass("yui3-mywidget-loading"), "yui3-mywidget-loading should not have been removed");
+                w.render();
+
+                Y.Assert.areSame(n, w.get("contentBox"), "srcNode not used as content box");
+                Y.Assert.isFalse(n.hasClass("yui3-mywidget-loading"), "yui3-mywidget-loading should have removed");
+                
+                w.destroy();
+            },
+
+            "testBaseClassNames" : function() {
+                var myWidget = this.createWidget();
+                myWidget.render();
+    
+                var bb = myWidget.get("boundingBox");
+                var cb = myWidget.get("contentBox");
+    
+                Y.Assert.isTrue(bb.hasClass("yui3-widget"), "bb missing generic yui3-widget marker");
+                Y.Assert.isTrue(bb.hasClass("yui3-mywidget"), "bb missing yui3-mywidget marker");
+                Y.Assert.isTrue(cb.hasClass("yui3-mywidget-content"), "cb missing yui3-mywidget-content marker");
+                Y.Assert.isFalse(cb.hasClass("yui3-widget-content"), "cb shouldn't have yui3-widget-content marker");
+
+                myWidget.destroy();
+            },
+
+            "testCssPrefix" : function() {
+                var w = this.createWidget();
+                Y.Assert.areEqual("yui3-mywidget", w._cssPrefix, "Unexpected Prefix");
+                w.destroy();
+            },
+
+            "testInstanceClassNameGeneration" : function() {
+                var w = this.createWidget();
+                Y.Assert.areEqual("yui3-mywidget-foo-bar", w.getClassName("foo", "bar"));
+                w.destroy();
+            },
+
+            "testToString" : function() {
+                var w = this.createWidget({
+                    id: "foo"
+                });
+
+                Y.Assert.areEqual("myWidget[foo]", w.toString());
+                
+                w.destroy();
+            }
+        }, true);
+
+        var singleBoxCoreTests = Y.Object(extendedCoreTests);
+        Y.mix(singleBoxCoreTests, {
+
+            name: "MySingleBoxWidget Core Tests",
+
+            createWidget : function(cfg) {
+                return (new MySingleBoxWidget(cfg));
+            },
+            
+            "testNonRenderedStateUpdate" : function() {
+
+                var w = this.createWidget({
+                    // WRITE ONCE
+                    id: "foobar",
+                    boundingBox: Y.Node.create("<span id='bb'></span>")
+                    // Doesn't make sense to pass 2 boxes into a single box widget.
+                    // srcNode: Y.Node.create("<span id='cb'></span>")
+                });
+
+                w.set("disabled", true);
+                w.set("height", 100);
+                w.set("width", 200);
+                w.set("visible", false);
+                w.set("tabIndex", 5);
+    
+                Y.Assert.areEqual("span", w.get("boundingBox").get("tagName").toLowerCase());
+                Y.Assert.areEqual("span", w.get("contentBox").get("tagName").toLowerCase());                
+                Y.Assert.areEqual("bb", w.get("boundingBox").get("id"));
+
+                // Doesn't make sense to pass 2 boxes into a single box widget.
+                // Y.Assert.areEqual("cb", w.get("contentBox").get("id"));
+    
+                Y.Assert.isTrue(w.get("disabled"), "disabled should be true");
+                Y.Assert.isFalse(w.get("focused"), "focused should be false"); // focused is READONLY
+                Y.Assert.areEqual("100", w.get("height"), "height should be 100px");
+                Y.Assert.areEqual("200", w.get("width"), "width should be 200px");
+                Y.Assert.areEqual("foobar", w.get("id"), "id should be foobar");
+                Y.Assert.isFalse(w.get("visible"), "visible should be false");
+                Y.Assert.areEqual(5, w.get("tabIndex"), "tabIndex should be 5");
+    
+                w.destroy();
+            },
+
+            "testCssPrefix" : function() {
+                var w = this.createWidget();
+                Y.Assert.areEqual("yui3-mysingleboxwidget", w._cssPrefix, "Unexpected Prefix");
+                w.destroy();
+            },
+
+            "testInstanceClassNameGeneration" : function() {
+                var w = this.createWidget();
+                Y.Assert.areEqual("yui3-mysingleboxwidget-foo-bar", w.getClassName("foo", "bar"));
+                w.destroy();
+            },
+
+            "testLoadingMarker" : function() {
+                var n = Y.Node.create('<div id="srcNode" class="yui3-mysingleboxwidget-loading">Src Node Content</div>');
+                Y.one("body").append(n);
+
+                var w = this.createWidget({
+                    srcNode:"#srcNode"
+                });
+
+                Y.Assert.isTrue(n.hasClass("yui3-mysingleboxwidget-loading"), "yui3-mysingleboxwidget-loading should not have been removed");
+
+                w.render();
+
+                // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
+                // Y.Assert.areSame(n, w.get("contentBox"), "srcNode not used as content box");
+                Y.Assert.isFalse(w.get("boundingBox").hasClass("yui3-mysingleboxwidget-loading"), "yui3-mysingleboxwidget-loading should have removed");
+
+                w.destroy();
+            },
+
+            "testBoundingBoxContentBoxAreTheSame" : function() {
+                var w = this.createWidget({
+                    id:"singleBox"
+                });
+
+                Y.Assert.isTrue( w.get("boundingBox").compareTo(w.get("contentBox")));
+
+                w.render();
+
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(w.get("contentBox")));
+                Y.Assert.isTrue(Y.one("#singleBox").compareTo(w.get("contentBox")));
+                
+                w.destroy();
+            },
+
+            "testBaseClassNames" : function() {
+                var mySingleBoxWidget = this.createWidget();
+                mySingleBoxWidget.render();
+    
+                var bb = mySingleBoxWidget.get("boundingBox");
+    
+                Y.Assert.isTrue(bb.hasClass("yui3-widget"), "bb missing generic yui3-widget marker");
+                Y.Assert.isTrue(bb.hasClass("yui3-mysingleboxwidget"), "bb missing yui3-mysingleboxwidget marker");
+                Y.Assert.isTrue(bb.hasClass("yui3-mysingleboxwidget-content"), "cb missing yui3-mysingleboxwidget-content marker");
+                Y.Assert.isFalse(bb.hasClass("yui3-widget-content"), "cb shouldn't have yui3-widget-content marker");
+
+                mySingleBoxWidget.destroy();
+            },
+
+            "testRender" : function() {
+    
+                var w = this.createWidget({
+                    id: "widgetRender"
+                });
+                w.render();
+    
+                var bbFromDom = Y.Node.one("#widgetRender");
+    
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(bbFromDom), "boundingBox not found in DOM");
+                Y.Assert.isTrue(bbFromDom.compareTo(Y.Node.one("body").get("firstChild")), "widget not inserted to body");
+                Y.Assert.isTrue(w.get("rendered"), "Rendered flag not set");
+    
+                w.destroy();
+            },
+    
+            "testRenderTo" : function() {
+    
+                var w = this.createWidget({
+                    id: "widgetRender"
+                });
+                w.render("#widgetRenderContainer");
+    
+                var bbFromDom = Y.Node.one("#widgetRender");
+    
+                Y.Assert.isTrue(bbFromDom.get("parentNode").compareTo(Y.Node.one("#widgetRenderContainer")), "widget not rendered to container passed to render()");
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(bbFromDom), "boundingBox not found in DOM");
+                Y.Assert.isTrue(w.get("rendered"), "Rendered flag not set");
+                
+                w.destroy();
+            },
+            
+            "testBoundingBox" : function() {
+
+                var container = Y.one("#widgetRenderContainer");
+                container.append("<div id='bbTest'></div>");
+
+                var bb = Y.one("#bbTest");
+
+                var w = this.createWidget({
+                    boundingBox: "#bbTest",
+                    render:true
+                });
+
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(bb), "bb passed to constructor, not used");
+                Y.Assert.isTrue(w.get("contentBox").compareTo(bb), "bb !== cb");
+                Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "boundingBox moved from it's place in the DOM");
+
+                w.destroy();
+            },
+    
+            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311. 
+            "testContentBox" : null, 
+
+            /*
+            function() {
+                var container = Y.one("#widgetRenderContainer");
+                container.append("<div id='cbTest'></div>");
+
+                var cb = Y.one("#cbTest");
+
+                var w = this.createWidget({
+                    contentBox: "#cbTest",
+                    render:true
+                });
+
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(cb), "cb passed to constructor, not used");
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(w.get("contentBox")), "bb !== cb");
+                Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "contentBox moved from it's place in the DOM");
+
+                w.destroy();
+            },
+            */
+
+            "testBoundingBoxRenderTo" : function() {
+
+                var container = Y.one("#widgetRenderContainer");
+
+                // NOTE: PE content sits in body, not container
+                Y.one("body").append("<div id='bbTest'></div>");
+
+                var bb = Y.one("#bbTest");
+
+                var w = this.createWidget({
+                    boundingBox: "#bbTest",
+                    render:container
+                });
+
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(bb), "bb passed to constructor, not used");
+                Y.Assert.isTrue(w.get("contentBox").compareTo(bb), "bb !== cb");
+                Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "boundingBox moved from it's place in the DOM");
+
+                w.destroy();
+            },
+
+            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
+            "testContentBoxRenderTo" : null,
+             
+            /*
+                function() {
+
+                var container = Y.one("#widgetRenderContainer");
+                Y.one("body").append("<div id='cbTest'></div>");
+
+                var cb = Y.one("#cbTest");
+
+                var w = this.createWidget({
+                    contentBox: "#cbTest",
+                    render:container
+                });
+
+                Y.Assert.isTrue(w.get("contentBox").compareTo(cb), "cb passed to constructor, not used");
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(cb), "bb !== cb");
+                Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "contentBox moved from it's place in the DOM");
+
+                w.destroy();
+            },
+            */
+
+            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
+            "testSrcNode" : null,
+            
+            /*
+            function() {
+
+                var container = Y.one("#widgetRenderContainer");
+                container.append("<div id='srcNode'><div id='foo'></div></div>");
+
+                var sn = Y.one("#srcNode");
+
+                var w = this.createWidget({
+                    srcNode: "#srcNode",
+                    render:true
+                });
+
+                Y.Assert.isTrue(w.get("contentBox").compareTo(sn), "srcNode should end up being cb");
+                Y.Assert.isTrue(w.get("srcNode").compareTo(sn), "srcNode should still be accessible from srcNode attribute");
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(sn), "cb !== bb !== sn");
+                Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "srcNode moved from it's place in the DOM");
+
+                // Y.Assert.isNotNull(w.get("contentBox").one("#foo"), "contents of srcNode not maintained");
+
+                w.destroy(true);
+            }
+            */
+            
+            // CONSCIOUSLY NOT TESTED - CAN'T PASS 2 BOXES TO A SINGLE BOX WIDGET
+            "testBoundingBoxContentBox" : null,
+            "testBoundingBoxContentBoxRenderTo" : null,
+            
+            "testToString" : function() {
+                var w = this.createWidget({
+                    id: "foo"
+                });
+
+                Y.Assert.areEqual("mySingleBoxWidget[foo]", w.toString());
+                
+                w.destroy();
+            }
+
+        }, true);
+
+        suite.add(new Y.Test.Case(coreTests));
+        suite.add(new Y.Test.Case(extendedCoreTests));
+        suite.add(new Y.Test.Case(singleBoxCoreTests));
+
+        var coreEventTests = {
+
+            name : "Widget Events",
+
+            createWidget : function(cfg) {
+                return (new Y.Widget(cfg));
+            },
+
+            "testLifecycleEvents" : function() {
+
+                var actual = [],
+                    expected = ["onInit", "afterInit", "onRender", "afterRender", "onDestroy", "afterDestroy"];
+
+                var w = this.createWidget({
+                    on: {
+                        init: function() {
+                            actual.push("onInit");
+                        }
+                    },
+                    after: {
+                        init: function() {
+                            actual.push("afterInit");
+                        }
+                    }
+                });
+
+                w.on("render", function() {
+                    actual.push("onRender");
+                });
+                
+                w.after("render", function() {
+                    actual.push("afterRender");
+                });
+                
+                w.on("destroy", function() {
+                    actual.push("onDestroy");
+                });
+                
+                w.after("destroy", function() {
+                    actual.push("afterDestroy");
+                });
+
+                w.render();
+                w.render();
+
+                w.destroy();
+
+                Y.ArrayAssert.itemsAreEqual(expected, actual, "Unexpected Lifecycle Events");
+            },
+            
+            "testLifecycleFireOnceEvents" : function() {
+
+                var actual = [],
+                    expected = ["onInit", "afterInit", "onRender", "afterRender", "onDestroy", "afterDestroy"];
+
+                var w = this.createWidget();
+                w.render();
+
+                w.on("init", function() {
+                    actual.push("onInit");
+                });
+                
+                w.after("init", function() {
+                    actual.push("afterInit");
+                });
+
+                w.on("render", function() {
+                    actual.push("onRender");
+                });
+                
+                w.after("render", function() {
+                    actual.push("afterRender");
+                });
+
+                // Can't really test destroy, after w.destroy();
+                w.on("destroy", function() {
+                    actual.push("onDestroy");
+                });
+
+                w.after("destroy", function() {
+                    actual.push("afterDestroy");
+                });
+
+                w.render();
+                w.destroy();
+
+                Y.ArrayAssert.itemsAreEqual(expected, actual, "Unexpected Lifecycle FireOnce Events");
+            },
+
+            "testAttributeChangeEvents" : function() {
+
+                var attrs = [
+                 "initialized",
+                 "rendered",
+                 "boundingBox",
+                 "contentBox",
+                 "srcNode",
+                 "id",
+                 "visible",
+                 "disabled",
+                 "height",
+                 "width",
+                 "strings",
+                 "tabIndex",
+                 "focused",
+                 "destroyed"
+                ];
+
+                var expected = [
+                    "on:initializedChange", 
+                    "after:initializedChange",
+
+                    "on:renderedChange", 
+                    "after:renderedChange",
+                    
+                    "on:focusedChange",
+                    "after:focusedChange",
+
+                    "on:visibleChange",
+                    "after:visibleChange",
+                    
+                    "on:disabledChange",
+                    "after:disabledChange",
+                    
+                    "on:heightChange",
+                    "after:heightChange",
+                    
+                    "on:widthChange",
+                    "after:widthChange",
+                    
+                    "on:stringsChange",
+                    "after:stringsChange",
+                    
+                    "on:tabIndexChange",
+                    "after:tabIndexChange",
+
+                    "on:destroyedChange",
+                    "after:destroyedChange"
+                ];
+
+                var actual = []; 
+
+                var listeners = {on:{}, after:{}}; 
+
+                var onListener = function(e) {
+                    actual.push("on:" + e.attrName + "Change");                    
+                };
+
+                var afterListener = function(e) {
+                    actual.push("after:" + e.attrName + "Change");                    
+                };
+
+                for (var i = 0; i < attrs.length; i++) {
+                    listeners.on[attrs[i] + "Change"] = onListener;
+                    listeners.after[attrs[i] + "Change"] = afterListener;
+                }
+
+                var w = this.createWidget(listeners);
+
+                w.render();
+
+                // boundingBox, contentBox, srcNode, id, don't fire since they are writeOnce/readOnly
+                w.set("boundingBox", Y.Node.one("<span>"));
+                w.set("contentBox", Y.Node.one("<span>"));
+                w.set("srcNode", Y.Node.one("<span>"));
+                w.set("id", Y.Node.one("foo"));
+
+                // focused is readOnly, need to go through the focus/blur API
+                w.focus();
+
+                w.set("visible", false);
+                w.set("disabled", true);
+                w.set("height", "100px");
+                w.set("width", "100px");
+                w.set("strings", {newStrings: "foo"});
+                w.set("tabIndex", 7);
+
+                w.destroy();
+                
+                Y.ArrayAssert.itemsAreEqual(expected, actual, "Unexpected attribute change events");                
+            },
+
+            "testContentUpdateEvent" : function() {
+                var w = this.createWidget(),
+                    expected = ["onContentUpdate", "afterContentUpdate"],
+                    actual = [];
+
+                w.on("contentUpdate", function() {
+                    actual.push("onContentUpdate");
+                });
+
+                w.after("contentUpdate", function() {
+                    actual.push("afterContentUpdate");
+                });
+
+                w.fire("contentUpdate");
+
+                Y.ArrayAssert.itemsAreEqual(expected, actual, "Unexpected content update events");
+
+                w.destroy();
+            },
+            
+            "testHomogenousBubble" : function() {
+
+                var w1 = this.createWidget({
+                    height:100,
+                    render:"#widgetRenderContainer"
+                });
+
+                var w2 = this.createWidget({
+                    height:200,
+                    render: "#widgetRenderContainer"
+                });
+
+                // w1 bubbled to w2
+                w1.addTarget(w2);
+
+                var bb1 = w1.get("boundingBox"),
+                    bb2 = w2.get("boundingBox");
+    
+                // Default CSS has no border/padding/margin on BB/CB so this should be fine in all browsers
+                Y.Assert.areEqual(100, bb1.get("offsetHeight"), "100 height not set correctly in DOM");
+                Y.Assert.areEqual(200, bb2.get("offsetHeight"), "200 height not set correctly in DOM");
+    
+                w2.set("height", "300px");
+
+                Y.Assert.areEqual(100, bb1.get("offsetHeight"), "100px height not set correctly on bb1");
+                Y.Assert.areEqual(300, bb2.get("offsetHeight"), "300px height not set correctly on bb2");
+
+                w1.set("height", "400px"); 
+
+                Y.Assert.areEqual(400, bb1.get("offsetHeight"), "400px height not set correctly in bb1");
+                Y.Assert.areEqual(300, bb2.get("offsetHeight"), "300px height not set correctly in bb2");
+
+                w1.destroy(true);
+                w2.destroy(true);
+                
+            }
+            
+        };
+        
+        var extendedEventTests = Y.Object(coreEventTests);
+
+        Y.mix(extendedEventTests, {
+            name: "MyWidget Event Tests",
+            createWidget : function(cfg) {
+                return (new MyWidget(cfg));
+            }
+        }, true);
+
+        suite.add(new Y.Test.Case(coreEventTests));
+        suite.add(new Y.Test.Case(extendedEventTests));        
+
+        // Lifecycle Monitoring Widget   
+        function MyLifecycleWidget(cfg) {
+            this.__test = cfg.__test;
+            this.__test.push("preconstructor");
+
+            MyLifecycleWidget.superclass.constructor.apply(this, arguments);
+
+            this.__test.push("postconstructor");
+        }
+        Y.extend(MyLifecycleWidget, Y.Widget, {
+
+            renderUI: function() {
+                this.__test.push("renderUI");
+
+                Y.Assert.isTrue(this.get("boundingBox").inDoc());
+                Y.Assert.isTrue(this.get("contentBox").inDoc());
+                Y.Assert.isTrue(this.get("contentBox").compareTo(this.get("boundingBox").get("firstChild")));
+            },
+
+            bindUI: function() {
+                this.__test.push("bindUI");
+            },
+
+            syncUI : function() {
+                this.__test.push("syncUI");
+            },
+
+            initializer: function() {
+                this.__test.push("initializer");
+
+                // To trigger lazyAdd of attribute
+                var attr = this.get("lazyAttr");
+            },
+
+            destructor: function() {
+                this.__test.push("destructor");
+            }
+
+        }, {
+            ATTRS : {
+                "lazyAttr" : {
+                    value: "lazyAttrValue",
+                    setter: function(value) {
+                        this.__test.push("lazySetter");
+                        return value;
+                    }
+                },
+
+                "nonLazyAttr" : {
+                    value: "nonLazyAttrValue",
+                    setter: function(value) {
+                        this.__test.push("nonLazySetter");
+                        return value;
+                    },
+                    lazyAdd: false
+                }
+
+           }
+        });
+        
+        MyLifecycleWidget.NAME = "myLifecycleWidget";
+
+        suite.add(new Y.Test.Case({
+            name : "Widget Lifecycle",
+
+            "testNonRenderPhases" : function() {
+                var expected = [
+                    "preconstructor", 
+                        "onInit",
+                            "nonLazySetter",
+                            "initializer",
+                            "lazySetter",
+                        "afterInit", 
+                    "postconstructor",
+
+                    "onDestroy", 
+                        "destructor", 
+                    "afterDestroy"
+                ];
+
+                var w = new MyLifecycleWidget({
+                    on: {
+                        init: function() {
+                            this.__test.push("onInit");
+                        },
+                        destroy: function() {
+                            this.__test.push("onDestroy");
+                        },
+                        render: function() {
+                            this.__test.push("onRender");
+                        }
+                    },
+                    after: {
+                        init: function() {
+                            this.__test.push("afterInit");
+                        },
+                        destroy: function() {
+                            this.__test.push("afterDestroy");
+                        },
+                        render: function() {
+                            this.__test.push("afterRender");
+                        }
+                    },
+
+                    __test:[]
+                });
+
+                w.destroy();
+
+                Y.ArrayAssert.itemsAreEqual(expected, w.__test, "Unexpected phase order");
+            },
+
+            "testAllPhases" : function() {
+                var expected = [
+                    "preconstructor", 
+                        "onInit",
+                            "nonLazySetter",
+                            "initializer",
+                            "lazySetter",
+                        "afterInit", 
+                    "postconstructor",
+
+                    "onRender", 
+                        "renderUI", 
+                        "bindUI", 
+                        "syncUI", 
+                    "afterRender",
+
+                    "onDestroy", 
+                        "destructor", 
+                    "afterDestroy"
+                ];
+
+                var w = new MyLifecycleWidget({
+                    on: {
+                        init: function() {
+                            this.__test.push("onInit");
+                        },
+                        destroy: function() {
+                            this.__test.push("onDestroy");
+                        },
+                        render: function() {
+                            this.__test.push("onRender");
+                        }
+                    },
+                    after: {
+                        init: function() {
+                            this.__test.push("afterInit");
+                        },
+                        destroy: function() {
+                            this.__test.push("afterDestroy");
+                        },
+                        render: function() {
+                            this.__test.push("afterRender");
+                        }
+                    },
+
+                    __test:[]
+                });
+
+                w.render();
+                w.render(); // Only once
+
+                w.destroy();
+
+                Y.ArrayAssert.itemsAreEqual(expected, w.__test, "Unexpected phase order");
+            }
+        }));
+
+        // Custom Widget Tests    
+        function MyCustomWidget() {
+            MyCustomWidget.superclass.constructor.apply(this, arguments);
+        }
+        Y.extend(MyCustomWidget, Y.Widget, {
+
+            DEF_PARENT_NODE: "#customWidgetRenderContainer",
+            BOUNDING_TEMPLATE: "<p>",
+            CONTENT_TEMPLATE: "<ul>"
+
+        }, {
+            ATTRS: {
+                // New attr
+                custAttr: {
+                    value:"custAttrValue"
+                },
+                // Modify attr
+                visible: {
+                    value:false
+                },
+                // Modify attr
+                strings: {
+                    valueFn: function() {
+                        return {
+                            custStringOne:"one",
+                            custStringTwo:"two"
+                        }
+                    }
+                },
+
+                label : {
+                    value:"Default Label"
+                },
+
+                listNodes : {
+                    value: null
+                },
+                
+                titleNode: {
+                    valueFn: function() {
+                        return Y.Node.create("<span>");
+                    }
+                }
+            },
+
+            HTML_PARSER : {
+                label : function(srcNode) {
+                    // FIXME: Ideally we should be able to do a this.get("titleNode") here. However,
+                    // HTML_PARSER is called during widget initializer, when sub-class attrs aren't yet configured
+                    // Moving all attribute set up to before all initializers, should allow us to do this.
+                    return srcNode.one("> h1").get("text");
+                },
+                listNodes: ["> ul > li"],
+                titleNode: "> h1"
+            }
+        });
+        MyCustomWidget.NAME = "myCustomWidget";
+
+        suite.add(new Y.Test.Case({
+            name : "Custom Widget",
+
+            "testDefaultParentNode" : function() {
+
+                var w = new MyCustomWidget({
+                    id: "customWidget"
+                });
+                w.render();
+
+                var bbFromDom = Y.Node.one("#customWidget");
+    
+                Y.Assert.isTrue(bbFromDom.get("parentNode").compareTo(Y.Node.one("#customWidgetRenderContainer")), "Custom widget not rendered to container passed to render()");
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(bbFromDom), "boundingBox not found in DOM");
+                Y.Assert.isTrue(bbFromDom.get("firstChild").compareTo(w.get("contentBox")), "contentBox not first child of boundingBox");
+                Y.Assert.isTrue(w.get("rendered"), "Rendered flag not set");
+
+                w.destroy();
+            },
+
+            "testDefaultParentNodeUsingRenderAttr" : function() {
+
+                var w = new MyCustomWidget({
+                    id: "customWidget",
+                    render: true
+                });
+
+                var bbFromDom = Y.Node.one("#customWidget");
+    
+                Y.Assert.isTrue(bbFromDom.get("parentNode").compareTo(Y.Node.one("#customWidgetRenderContainer")), "Custom widget not rendered to container passed to render()");
+                Y.Assert.isTrue(w.get("boundingBox").compareTo(bbFromDom), "boundingBox not found in DOM");
+                Y.Assert.isTrue(bbFromDom.get("firstChild").compareTo(w.get("contentBox")), "contentBox not first child of boundingBox");
+                Y.Assert.isTrue(w.get("rendered"), "Rendered flag not set");
+
+                w.destroy();
+            },
+
+            "testBoundingBoxTemplate" : function() {
+
+                var w = new MyCustomWidget({
+                    render:true
+                });
+
+                var bb = w.get("boundingBox");
+                Y.Assert.areEqual("p", bb.get("tagName").toLowerCase());
+
+                w.destroy();
+            },
+            
+            "testContentBoxTemplate" : function() {
+
+                var w = new MyCustomWidget({
+                    render:true
+                });
+
+                var bb = w.get("contentBox");
+                Y.Assert.areEqual("ul", bb.get("tagName").toLowerCase());
+
+                w.destroy();
+            },
+
+            "testModifyAttr-Visible" : function() {
+
+                var w = new MyCustomWidget();
+
+                Y.Assert.isFalse(w.get("visible"), "Custom widget should be hidden by default");
+
+                w.render();
+
+                var bb = w.get("boundingBox");
+
+                Y.Assert.isTrue(bb.hasClass("yui3-mycustomwidget-hidden"), "custom bb should have a hidden marker class");
+                Y.Assert.areEqual("hidden", bb.getStyle("visibility"), "custom widget should not be visibility:hidden");
+                
+                w.destroy();
+            },
+
+            "testModifyAttr-Strings" : function() {
+
+                var w = new MyCustomWidget();
+                w.render();
+
+                var expected = {
+                    custStringOne:"one",
+                    custStringTwo:"two"
+                }
+                
+                var actual = w.get("strings");
+
+                Y.ObjectAssert.areEqual(expected, actual, "Unexpected strings");
+                Y.ObjectAssert.areEqual(actual, expected, "Unexpected strings");
+
+                w.destroy();
+            },
+
+            "testNewAttr" : function() {
+                var w = new MyCustomWidget();
+                
+                Y.Assert.areEqual("custAttrValue", w.get("custAttr"), "New attribute not added");
+                
+                w.destroy();
+            },
+
+            "testHTMLParser" : function() {
+
+                // HTML to Parse
+                var markup = Y.Node.create('<div id="customWidgetContent"><h1>My Label</h1><ul><li>Item1</li><li>Item2</li></ul></div>');
+                Y.Node.one("body").append(markup);
+
+                var w = new MyCustomWidget({
+                    srcNode: "#customWidgetContent"
+                });
+
+                Y.Assert.areEqual("My Label", w.get("label"), "label not picked up from markup");
+                Y.Assert.areEqual("h1", w.get("titleNode").get("tagName").toLowerCase(), "titleNode not picked up from markup");
+
+                Y.Assert.areEqual(2, w.get("listNodes").size(), "listNodes count does not match markup");
+
+                Y.Assert.areSame("li", w.get("listNodes").item(0).get("tagName").toLowerCase(), "listNode 0 not picked up from markup");
+                Y.Assert.areSame("li", w.get("listNodes").item(1).get("tagName").toLowerCase(), "listNode 1 not picked up from markup");
+
+                Y.Assert.areSame("Item1", w.get("listNodes").item(0).get("text"), "listNode 0 not picked up from markup");
+                Y.Assert.areSame("Item2", w.get("listNodes").item(1).get("text"), "listNode 1 not picked up from markup");
+
+                w.destroy();
+            },
+
+            "testHTMLParserWithContentBox" : function() {
+
+                // HTML to Parse
+                var markup = Y.Node.create('<div id="customWidgetContent"><h1>My Label</h1><ul><li>Item1</li><li>Item2</li></ul></div>');
+                Y.Node.one("body").append(markup);
+
+                var w = new MyCustomWidget({
+                    contentBox: "#customWidgetContent"
+                });
+
+                Y.Assert.areEqual("My Label", w.get("label"), "label not picked up from markup");
+                Y.Assert.areEqual("h1", w.get("titleNode").get("tagName").toLowerCase(), "titleNode not picked up from markup");
+
+                Y.Assert.areEqual(2, w.get("listNodes").size(), "listNodes count does not match markup");
+
+                Y.Assert.areSame("li", w.get("listNodes").item(0).get("tagName").toLowerCase(), "listNode 0 not picked up from markup");
+                Y.Assert.areSame("li", w.get("listNodes").item(1).get("tagName").toLowerCase(), "listNode 1 not picked up from markup");
+
+                Y.Assert.areSame("Item1", w.get("listNodes").item(0).get("text"), "listNode 0 not picked up from markup");
+                Y.Assert.areSame("Item2", w.get("listNodes").item(1).get("text"), "listNode 1 not picked up from markup");
+
+                w.destroy();
+            },
+
+            "testHTMLParserWithNoSrcNodeOrContentBox" : function() {
+                var w = new MyCustomWidget();
+                w.destroy();
+            },
+
+            "testHTMLParserWithEmptyConfig" : function() {
+
+                // See http://yuilibrary.com/projects/yui3/ticket/2531501
+                
+                // User wanted to have a Widget with a statically defined srcNode (a rare use case), 
+                // which meant there was no need to pass a config object to the widget constructor, 
+                // bringing out a logic issue, when using html parser and no config                
+
+                var markup = Y.Node.create('<div id="staticSrcNode"><h1>My Label</h1><ul><li>Item1</li><li>Item2</li></ul></div>');
+                Y.Node.one("body").append(markup);
+                
+                function StaticSrcNodeWidget() {
+                    StaticSrcNodeWidget.superclass.constructor.apply(this, arguments);
+                }
+
+                Y.extend(StaticSrcNodeWidget, MyCustomWidget, null, {
+                    ATTRS : {
+                        srcNode : {
+                            value: "#staticSrcNode"
+                        }
+                    },
+                    NAME : "staticSrcNodeWidget"
+                });
+
+                var w = new StaticSrcNodeWidget();
+
+                Y.Assert.areEqual("My Label", w.get("label"), "label not picked up from markup");
+                Y.Assert.areEqual("h1", w.get("titleNode").get("tagName").toLowerCase(), "titleNode not picked up from markup");
+
+                Y.Assert.areEqual(2, w.get("listNodes").size(), "listNodes count does not match markup");
+
+                Y.Assert.areSame("li", w.get("listNodes").item(0).get("tagName").toLowerCase(), "listNode 0 not picked up from markup");
+                Y.Assert.areSame("li", w.get("listNodes").item(1).get("tagName").toLowerCase(), "listNode 1 not picked up from markup");
+
+                Y.Assert.areSame("Item1", w.get("listNodes").item(0).get("text"), "listNode 0 not picked up from markup");
+                Y.Assert.areSame("Item2", w.get("listNodes").item(1).get("text"), "listNode 1 not picked up from markup");
+
+                w.destroy();
+            }, 
+            
+            "testValueFnNotCalledWhenHTMLParserValueFound" : function() {
+
+                var called = false;
+
+                function HTMLParserWidget() {
+                    HTMLParserWidget.superclass.constructor.apply(this, arguments);
+                }
+
+                Y.extend(HTMLParserWidget, Y.Widget, null, {
+                    ATTRS : {
+                        testMe : {
+                            valueFn : function() {
+                                called = true;
+                                return "dontuseme";
+                            }
+                        }
+                    },
+
+                    HTML_PARSER : {
+                        testMe : function() {
+                            return "useme";
+                        }
+                    },
+
+                    NAME : "htmlParserWidget"
+                });
+
+                var w = new HTMLParserWidget({
+                    srcNode : Y.Node.create("<div></div>") // to get HTML_PARSER to run
+                });
+
+                Y.Assert.isFalse(called, "valueFn should not have been called");
+                Y.Assert.areEqual("useme", w.get("testMe"));
+
+                w.destroy();
+            }
+
+        }));
+
+        suite.add(new Y.Test.Case({
+
+            name : "getSkinName",
+
+            "getSkinName should return null if not rendered" : function () {
+                var w = new Y.Widget();
+        
+                Y.Assert.isNull( w.getSkinName() );
+                
+                w.destroy();
+            },
+
+            "getSkinName should return name from BB if available": function () {
+                var bb = Y.Node.create( '<div class="yui3-skin-foo"><div></div></div>' ),
+                    cb = bb.one( 'div' ),
+                    w = new Y.Widget( {
+                        boundingBox: bb,
+                        contentBox:  cb
+                    } );
+
+                Y.Assert.areEqual( "foo", w.getSkinName() );
+                
+                w.destroy();                
+            },
+
+            "getSkinName should return name from body or null": function () {
+                var w = new Y.Widget().render(),
+                    body = Y.one( 'body' );
+        
+                Y.Assert.areEqual( "sam", w.getSkinName() );
+
+                body.removeClass( "yui3-skin-sam" );
+
+                Y.Assert.isNull( w.getSkinName() );
+
+                body.addClass( "yui3-skin-sam" );
+
+                w.destroy();
+            },
+
+            "getSkinName should return name from ancestor if both ancestor and body are classed": function () {
+                var w = new Y.Widget().render( '#testbed' ),
+                    body = Y.one( 'body' );
+        
+                body.addClass( "yui3-skin-sam" );
+        
+                Y.Assert.areEqual( "foo", w.getSkinName() );
+                
+                w.destroy();
+            }
+        }));
+    
+        suite.add(new Y.Test.Case({
+    
+            name:"destroy",
+        
+            testRenderedDestroy: function() {
+                var w = new Y.Widget({id:"foo"}).render();
+                try {
+                    w.destroy();
+                    Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
+                } catch(e) {
+                    Y.Assert.fail("w.destroy() on a rendered widget threw an exception" + e);
+                }
+            },
+            
+            testRenderedDeepDestroy: function() {
+                var w = new Y.Widget({id:"foo"}).render();
+                var nref = Y.Node.create('<div id="deep">Foo</div>');
+    
+                w.get("contentBox").appendChild(nref);
+    
+                try {
+                    w.destroy(true);
+    
+                    Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
+                    Y.Assert.isNull(Y.Node.one("#deep"), "Deep content box still in DOM");
+                    Y.Assert.isNull(Y.Node.getDOMNode(nref), "Deep content still in Node cache");
+    
+                } catch(e) {
+                    Y.Assert.fail("w.destroy(true) on a rendered widget threw an exception" + e);
+                }
+            },
+
+            testUnrenderedDestroy: function() {
+                var w = new Y.Widget();
+                try {
+                    w.destroy();
+                } catch(e) {
+                    Y.Assert.fail("w.destroy() on an unrendered widget threw an exception" + e);
+                }
+            },
+
+            testSingleBoxDestroy: function() {
+    
+                var w = new MySingleBoxWidget({
+                    id:"foo"
+                });
+                w.render();
+    
+                try {
+                    w.destroy();
+                    Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
+                } catch(e) {
+                    Y.Assert.fail("w.destroy() on a single box widget threw an exception" + e);
+                }
+            },
+    
+            testSingleBoxDeepDestroy: function() {
+    
+                var w = new MySingleBoxWidget({
+                    id:"foo"
+                });
+                w.render();
+    
+                var nref = Y.Node.create('<div id="deep_single">Foo</div>');
+                w.get("contentBox").appendChild(nref);
+    
+                try {
+                    w.destroy(true);
+                    Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
+                    Y.Assert.isNull(Y.Node.one("#deep_single"), "Deep content box still in DOM");
+                    Y.Assert.isNull(Y.Node.getDOMNode(nref), "Deep content still in Node cache");
+                } catch(e) {
+                    Y.Assert.fail("w.destroy(true) on a single box widget threw an exception" + e);
+                }
+            }        
+        }));
+
+        suite.add(new Y.Test.Case({
+    
+            name:"UI Events",
+    
+            testSingleSimple: function() {
+
+                var w, h, cb,
+                    actualEvents = [],
+                    expectedEvents = ["widget:click"];
+    
+                w = new Y.Widget();
+                cb = w.get("contentBox");
+    
+                cb.append("<p class='et'>Some Content For My Widget</p>");
+    
+                h = function(e) { actualEvents.push(e.type); };
+    
+                w.on("click", h);
+                w.render();
+    
+                cb.one(".et").simulate("click");
+    
+                Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+    
+                w.destroy();
+            },
+
+            testSingleComplex : function() {
+
+                var w, h, cb,
+                    actualEvents = [],
+                    expectedEvents = ["widget:render",
+                                      "widget:renderedChange",
+                                      "widget:render",
+                                      "widget:mousedown", 
+                                      "widget:mouseup",
+                                      "widget:mouseup",
+                                      "widget:mouseup",
+                                      "widget:mouseup",
+                                      "widget:mouseup",
+                                      "widget:mouseup",
+                                      "widget:click"];
+    
+                w = new Y.Widget();
+
+                cb = w.get("contentBox");
+    
+                cb.append("<p class='et'>Some Content For My Widget</p>");
+    
+                h = function(e) { actualEvents.push(e.type); };
+    
+                w.on({
+                    "click": h,
+                    "render": h,
+                    "renderedChange": h
+                });
+
+                w.on("widget:mouseup", h);
+                w.on("foo|widget:mouseup", h);
+                w.on("mouseup", h);
+
+                w.after("widget:mouseup", h);
+                w.after("foo|widget:mouseup", h);
+                w.after("mouseup", h);
+    
+                w.after({
+                    "mousedown" : h,
+                    "render" : h
+                });
+
+                w.render();
+                
+                cb.one(".et").simulate("mousedown");
+                cb.one(".et").simulate("mouseup");            
+                cb.one(".et").simulate("click");
+    
+                Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+
+                w.destroy();
+            },
+    
+            testNested: function() {
+
+                var outer = new Y.Widget();
+                var inner = new Y.Widget();
+                var ocb = outer.get('contentBox');
+                var icb = inner.get('contentBox');
+
+                var expectedEvents = ["outerClick", "innerClick", "outerClick"];
+                var actualEvents = [];
+
+                outer.render();
+                ocb.setContent("<span class='oet'>Outer Content</span>");
+
+                inner.render(ocb);
+                icb.setContent("<span class='iet'>Inner Content</span>");
+
+                inner.after('click', function() {actualEvents.push("innerClick");});
+                outer.after('click', function() {actualEvents.push("outerClick");});
+
+                // Only outer
+                ocb.one(".oet").simulate("click");
+
+                // One Inner, One Outer
+                ocb.one(".iet").simulate("click");
+
+                Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+
+                outer.destroy();
+                inner.destroy();
+            },
+
+            testMultipleInstances : function() {
+
+                var actualEvents = [],
+                    expectedEvents = ["clickOuter", "clickInner", "clickOuter"],
+                    Y1,
+                    Y2,
+                    w1,
+                    w2;
+
+                // Should be sync, because widget is already on the page
+                Y1 = YUI().use('widget', function (Y1) {
+
+                    w1 = new Y1.Widget({render:true});
+                    w1.get('contentBox').append('<div class="w2-container"></div><span class="miouter">Outer</span>');
+    
+                    w1.on('click', function (e) {
+                        actualEvents.push("clickOuter");
+                    });
+    
+                    // Should be sync, because widget is already on the page
+                    Y2 = YUI().use('widget', function (Y2) {
+    
+                        w2 = new Y2.Widget({render:".w2-container"});
+                        w2.get('contentBox').append('<span class="miinner">Inner</span>');
+    
+                        w2.on('click', function (e) {
+                            actualEvents.push("clickInner");
+                        });
+                    });
+                });
+    
+                Y.Node.one(".miouter").simulate("click"); // only outer, once.
+                Y.Node.one(".miinner").simulate("click"); // inner, bubbled to outer (once each, without JS errors)
+
+                Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+
+                w1.destroy();
+                w2.destroy();
+
+                // Destroying Y instances throws errors when re-using modules which have conditionally loaded parts.
+                // Looks like a setTimeout() is being introduced to the use. Need to look into, but it's not 
+                // related to this test. The lines below are effectively an async tearDown.
+                this.wait(function() {
+                    Y1.destroy();
+                    Y2.destroy();
+                }, 0);
+            },
+
+            testPublishDefaultFn : function() {
+                
+                var w = new Y.Widget({
+                        render:true
+                    }),
+                    called = false;
+
+                w.publish("click", {
+                    defaultFn : function(e) {
+                        called = true;
+                        Y.Assert.areEqual("click", e.domEvent.type);
+                    }
+                });
+
+                w.get("contentBox").simulate("click");
+
+                //this.wait(function() {
+                    Y.Assert.isTrue(called);
+                //}, 0);
+                
+                w.destroy();
+            }
+
+        }));
+
+        suite.add(new Y.Test.Case({
+    
+            name:"clone",
+            
+            testWidgetClone : function() {
+                var a = new Y.Widget();
+                var b = new Y.Widget();
+                var c = new Y.Widget();
+        
+                var a1 = Y.clone(a);
+                var a2 = Y.clone(a1);
+                var a3 = Y.clone(a2);
+        
+                Y.Assert.isTrue(a instanceof Y.Widget);
+                Y.Assert.isTrue(a1 instanceof Y.Widget);
+                Y.Assert.isTrue(a2 instanceof Y.Widget);
+                Y.Assert.isTrue(a3 instanceof Y.Widget);
+        
+                var b1 = Y.clone(b);
+                var b2 = Y.clone(b1);
+                var b3 = Y.clone(b2);
+        
+                Y.Assert.isTrue(b instanceof Y.Widget);
+                Y.Assert.isTrue(b1 instanceof Y.Widget);
+                Y.Assert.isTrue(b2 instanceof Y.Widget);
+                Y.Assert.isTrue(b3 instanceof Y.Widget);
+        
+                var c1 = Y.clone(c);
+                var c2 = Y.clone(c1);
+                var c3 = Y.clone(c2);
+        
+                Y.Assert.isTrue(c instanceof Y.Widget);
+                Y.Assert.isTrue(c1 instanceof Y.Widget);
+                Y.Assert.isTrue(c2 instanceof Y.Widget);
+                Y.Assert.isTrue(c3 instanceof Y.Widget);
+                
+                a.destroy();
+                b.destroy();
+                c.destroy();
+            },
+        
+            testWidgetHashClone : function() {
+    
+                // When Widget's are properties of an object it seems to break apart
+                // something not passed to the recursive call maybe?
+        
+                var a = new Y.Widget();
+                var b = new Y.Widget();
+                var c = new Y.Widget();
+        
+                var o = {
+                    a : a,
+                    b : b,
+                    c : c
+                };
+        
+                var o1 = Y.clone(o);
+                var o2 = Y.clone(o1);
+                var o3 = Y.clone(o2);
+        
+                Y.Assert.isTrue(o3.a instanceof Y.Widget);
+                Y.Assert.isTrue(o3.b instanceof Y.Widget);
+                Y.Assert.isTrue(o3.c instanceof Y.Widget);
+                
+                a.destroy();
+                b.destroy();
+                c.destroy();
+            },
+        
+            testBaseClone : function() {
+                var a = new Y.Base();
+                var b = new Y.Base();
+                var c = new Y.Base();
+        
+                // Base works fine
+        
+                var a1 = Y.clone(a);
+                var a2 = Y.clone(a1);
+                var a3 = Y.clone(a2);
+        
+                Y.Assert.isTrue(a instanceof Y.Base);
+                Y.Assert.isTrue(a1 instanceof Y.Base);
+                Y.Assert.isTrue(a2 instanceof Y.Base);
+                Y.Assert.isTrue(a3 instanceof Y.Base);
+        
+                var b1 = Y.clone(b);
+                var b2 = Y.clone(b1);
+                var b3 = Y.clone(b2);
+        
+                Y.Assert.isTrue(b instanceof Y.Base);
+                Y.Assert.isTrue(b1 instanceof Y.Base);
+                Y.Assert.isTrue(b2 instanceof Y.Base);
+                Y.Assert.isTrue(b3 instanceof Y.Base);
+        
+                var c1 = Y.clone(c);
+                var c2 = Y.clone(c1);
+                var c3 = Y.clone(c2);
+        
+                Y.Assert.isTrue(c instanceof Y.Base);
+                Y.Assert.isTrue(c1 instanceof Y.Base);
+                Y.Assert.isTrue(c2 instanceof Y.Base);
+                Y.Assert.isTrue(c3 instanceof Y.Base);
+            },
+        
+            testBaseHashClone : function() {
+                var a = new Y.Base();
+                var b = new Y.Base();
+                var c = new Y.Base();
+        
+                var o = {
+                    a : a,
+                    b : b,
+                    c : c
+                };
+        
+                var o1 = Y.clone(o);
+                var o2 = Y.clone(o1);
+                var o3 = Y.clone(o2);
+        
+                Y.Assert.isTrue(o3.a instanceof Y.Base);
+                Y.Assert.isTrue(o3.b instanceof Y.Base);
+                Y.Assert.isTrue(o3.c instanceof Y.Base);
+            }
+        }));
+
+        Y.Test.Runner.setName("Widget Tests");
+        Y.Test.Runner.add(suite);
+        Y.Test.Runner.disableLogging();
+
+        Y.Test.Runner.once("begin", function() {
+            Y.one("#automationmsg").removeClass("msg-hidden");
+        });
+
+        Y.Test.Runner.once("complete", function() {
+            Y.one("#automationmsg").addClass("msg-hidden");
+
+            var runButton = Y.one("#btnRun");
+
+            runButton.set("value", "Run Tests"); 
+            runButton.set("disabled", false).on("click", function() {
+                if (!testConsole) {
+
+                    // This test should be ignored if Console is instantiated.
+                    coreTests._should.ignore.testDetachFocusOnLastWidgetDestroy = true;
+
+                    testConsole = new Y.Console({
+                        id:"testConsole",
+                        width:"100%",
+                        height:"90%",
+                        verbose : false,
+                        printTimeout: 0,
+                        newestOnTop : false,
+                        entryTemplate: '<div class="{entry_class} {cat_class} {src_class}">'+
+                                '<span class="{entry_cat_class}">&nbsp;</span>'+
+                                '<span class="{entry_content_class}">{message}</span>'+
+                        '</div>'
+                    }).render();
+                }
+        
+                Y.Test.Runner.enableLogging();
+                Y.Test.Runner.run();
+            });
+
+        });
+
+        Y.Test.Runner.run();
+
+    });
+    </script>
+</body>
+</html>

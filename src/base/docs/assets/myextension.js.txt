@@ -1,4 +1,5 @@
-// START WRAPPER: The YUI.add wrapper is added by the build system, when you use YUI Builder to build your component from the raw source in this file
+// START WRAPPER: The YUI.add wrapper is added by the build system, when you
+// use shifter to build your component from the raw source in this file
 // YUI.add('myextension', function(Y) {
 
     /* Any frequently used shortcuts, strings and constants */
@@ -66,14 +67,14 @@
             // When naming, you need to be aware of over-writing methods on the main class, since these
             // methods get augmented onto the built class
         },
-        
+
         _myExtensionProtectedMethod : function() {
             // A new protected/private method the extension provides
             
             // When naming, you need to be aware of over-writing methods on the main class, since these
             // methods get augmented onto the built class
-        }
-    
+        },
+
         _doSomethingAfterMainClassMethod : function() {
             // Custom behavior
         },

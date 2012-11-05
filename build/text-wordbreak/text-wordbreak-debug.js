@@ -1,4 +1,4 @@
-YUI.add('text-wordbreak', function(Y) {
+YUI.add('text-wordbreak', function (Y, NAME) {
 
 /**
  * Provides utility methods for splitting strings on word breaks and determining
@@ -360,4 +360,4 @@ WordBreak = {
 Text.WordBreak = WordBreak;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'text-data-wordbreak']});
+}, '@VERSION@', {"requires": ["array-extras", "text-data-wordbreak"]});

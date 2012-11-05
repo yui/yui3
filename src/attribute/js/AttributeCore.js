@@ -373,7 +373,7 @@
          * the event facade passed to subscribers of the attribute's change event.
          * This is currently a hack. There's no real need for the AttributeCore implementation
          * to support this parameter, but breaking it out into AttributeEvents, results in
-         * additional function hops for the critical path. May change in 3.5.0 PR3.
+         * additional function hops for the critical path.
          * @param {boolean} force If true, allows the caller to set values for 
          * readOnly or writeOnce attributes which have already been set.
          *
@@ -572,6 +572,7 @@
                 validator = cfg.validator,
                 setter = cfg.setter,
                 initializing = cfg.initializing,
+                prevRawVal = this._getStateVal(attrName),
                 name = subAttrName || attrName,
                 retVal,
                 valid;
@@ -611,7 +612,7 @@
                 }
 
                 if (allowSet) {
-                    if(!subAttrName && (newVal === this._getStateVal(attrName)) && !Lang.isObject(newVal)) {
+                    if(!subAttrName && (newVal === prevRawVal) && !Lang.isObject(newVal)) {
                         Y.log('Attribute: ' + attrName + ', value unchanged:' + newVal, 'warn', 'attribute');
                         allowSet = false;
                     } else {
@@ -653,7 +654,8 @@
          * @chainable
          */
         _setAttrs : function(attrs) {
-            for (var attr in attrs) {
+            var attr;
+            for (attr in attrs) {
                 if ( attrs.hasOwnProperty(attr) ) {
                     this.set(attr, attrs[attr]);
                 }
@@ -683,25 +685,25 @@
          * @return {Object} An object with attribute name/value pairs.
          */
         _getAttrs : function(attrs) {
-            var host = this,
-                o = {}, 
-                i, l, attr, val,
+            var obj = {},
+                attr, i, len,
                 modifiedOnly = (attrs === true);
 
             // TODO - figure out how to get all "added"
-            attrs = (attrs && !modifiedOnly) ? attrs : O.keys(host._state.data);
+            if (!attrs || modifiedOnly) {
+                attrs = O.keys(this._state.data);
+            }
 
-            for (i = 0, l = attrs.length; i < l; i++) {
-                // Go through get, to honor cloning/normalization
+            for (i = 0, len = attrs.length; i < len; i++) {
                 attr = attrs[i];
-                val = host.get(attr);
 
-                if (!modifiedOnly || host._getStateVal(attr) != host._state.get(attr, INIT_VALUE)) {
-                    o[attr] = host.get(attr); 
+                if (!modifiedOnly || this._getStateVal(attr) != this._state.get(attr, INIT_VALUE)) {
+                    // Go through get, to honor cloning/normalization
+                    obj[attr] = this.get(attr);
                 }
             }
 
-            return o;
+            return obj;
         },
 
         /**
@@ -848,7 +850,7 @@
                         valFn = this[valFn];
                     }
                     if (valFn) {
-                        val = valFn.call(this);
+                        val = valFn.call(this, attr);
                     }
                 }
             }

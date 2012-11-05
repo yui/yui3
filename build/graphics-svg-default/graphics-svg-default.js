@@ -1,4 +1,4 @@
-YUI.add('graphics-svg-default', function(Y) {
+YUI.add('graphics-svg-default', function (Y, NAME) {
 
 Y.Graphic = Y.SVGGraphic;
 Y.Shape = Y.SVGShape;
@@ -9,4 +9,4 @@ Y.Path = Y.SVGPath;
 Y.Drawing = Y.SVGDrawing;
 
 
-}, '@VERSION@' ,{skinnable:false});
+}, '@VERSION@');

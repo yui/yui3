@@ -1,5 +1,4 @@
-
-YUI().use('datatable-base', 'panel', 'dd-plugin', function (Y) {
+YUI().use('datatable-mutable', 'panel', 'dd-plugin', function (Y) {
 
     // Create the datatable with some gadget information.
     var idField    = Y.one('#productId'),
@@ -19,7 +18,7 @@ YUI().use('datatable-base', 'panel', 'dd-plugin', function (Y) {
     // Define the addItem function - this will be called when 'Add Item' is
     // pressed on the modal form.
     function addItem() {
-        data.push({
+        dt.addRow({
             id   : idField.get('value'),
             name : nameField.get('value'),
             price: priceField.get('value')
@@ -29,7 +28,6 @@ YUI().use('datatable-base', 'panel', 'dd-plugin', function (Y) {
         nameField.set('value', '');
         priceField.set('value', '');
 
-        dt.set('recordset', data).render();
         panel.hide();
     }
 
@@ -37,9 +35,7 @@ YUI().use('datatable-base', 'panel', 'dd-plugin', function (Y) {
     // 'Remove All Items' is pressed on the modal form and is confirmed 'yes'
     // by the nested panel.
     function removeItems() {
-        data = [];
-
-        dt.set('recordset', data).render();
+        dt.data.reset();
         panel.hide();
     }
 
@@ -80,12 +76,12 @@ YUI().use('datatable-base', 'panel', 'dd-plugin', function (Y) {
     }
 
     // Create the DataTable.
-    dt = new Y.DataTable.Base({
-        columnset: cols,
-        recordset: data,
-        summary  : 'Price sheet for inventory parts',
-        caption  : 'Price sheet for inventory parts',
-        render   : '#dt'
+    dt = new Y.DataTable({
+        columns: cols,
+        data   : data,
+        summary: 'Price sheet for inventory parts',
+        caption: 'Price sheet for inventory parts',
+        render : '#dt'
     });
 
     // Create the main modal form.

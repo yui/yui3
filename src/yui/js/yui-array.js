@@ -167,17 +167,31 @@ This method wraps the native ES5 `Array.indexOf()` method if available.
 @method indexOf
 @param {Array} array Array to search.
 @param {Any} value Value to search for.
+@param {Number} [from=0] The index at which to begin the search.
 @return {Number} Index of the item strictly equal to _value_, or `-1` if not
-  found.
+    found.
 @static
 **/
-YArray.indexOf = Lang._isNative(Native.indexOf) ? function (array, value) {
-    // TODO: support fromIndex
-    return Native.indexOf.call(array, value);
-} : function (array, value) {
-    for (var i = 0, len = array.length; i < len; ++i) {
-        if (i in array && array[i] === value) {
-            return i;
+YArray.indexOf = Lang._isNative(Native.indexOf) ? function (array, value, from) {
+    return Native.indexOf.call(array, value, from);
+} : function (array, value, from) {
+    // http://es5.github.com/#x15.4.4.14
+    var len = array.length;
+
+    from = +from || 0;
+    from = (from > 0 || -1) * Math.floor(Math.abs(from));
+
+    if (from < 0) {
+        from += len;
+
+        if (from < 0) {
+            from = 0;
+        }
+    }
+
+    for (; from < len; ++from) {
+        if (from in array && array[from] === value) {
+            return from;
         }
     }
 
@@ -260,10 +274,10 @@ YArray.test = function (obj) {
         result = 1;
     } else if (Lang.isObject(obj)) {
         try {
-            // indexed, but no tagName (element) or alert (window),
+            // indexed, but no tagName (element) or scrollTo/document (window. From DOM.isWindow test which we can't use here),
             // or functions without apply/call (Safari
             // HTMLElementCollection bug).
-            if ('length' in obj && !obj.tagName && !obj.alert && !obj.apply) {
+            if ('length' in obj && !obj.tagName && !(obj.scrollTo && obj.document) && !obj.apply) {
                 result = 2;
             }
         } catch (ex) {}

@@ -20,7 +20,8 @@
 Y.Env.evt.dom_wrappers = {};
 Y.Env.evt.dom_map = {};
 
-var _eventenv = Y.Env.evt,
+var YDOM = Y.DOM,
+    _eventenv = Y.Env.evt,
     config = Y.config,
     win = config.win,
     add = YUI.Env.add,
@@ -42,13 +43,12 @@ var _eventenv = Y.Env.evt,
 
     shouldIterate = function(o) {
         try {
-            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) &&
-                    !o.tagName && !o.alert);
+            // TODO: See if there's a more performant way to return true early on this, for the common case
+            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !YDOM.isWindow(o));
         } catch(ex) {
             Y.log("collection check failure", "warn", "event");
             return false;
         }
-
     },
 
     // aliases to support DOM event subscription clean up when the last
@@ -58,7 +58,7 @@ var _eventenv = Y.Env.evt,
     _deleteAndClean = function(s) {
         var ret = _ceProtoDelete.apply(this, arguments);
 
-        if (!this.subCount && !this.afterCount) {
+        if (!this.hasSubs()) {
             Y.Event._clean(this);
         }
 
@@ -414,7 +414,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 // oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
 
                 if (compat) {
-                    oEl = Y.DOM.byId(el);
+                    oEl = YDOM.byId(el);
                 } else {
 
                     oEl = Y.Selector.query(el);
@@ -531,7 +531,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                 // el = (compat) ? Y.DOM.byId(el) : Y.all(el);
                 if (compat) {
-                    el = Y.DOM.byId(el);
+                    el = YDOM.byId(el);
                 } else {
                     el = Y.Selector.query(el);
                     l = el.length;
@@ -605,7 +605,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @static
          */
         generateId: function(el) {
-            return Y.DOM.generateID(el);
+            return YDOM.generateID(el);
         },
 
         /**
@@ -715,7 +715,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 if (item && !item.checkReady) {
 
                     // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
-                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
+                    el = (item.compat) ? YDOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         // Y.log('avail: ' + el);
@@ -734,7 +734,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 if (item && item.checkReady) {
 
                     // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
-                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
+                    el = (item.compat) ? YDOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         // The element is available, but not necessarily ready
@@ -785,9 +785,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             if (recurse && oEl) {
                 lis = lis || [];
                 children = Y.Selector.query('*', oEl);
-                i = 0;
                 len = children.length;
-                for (; i < len; ++i) {
+                for (i = 0; i < len; ++i) {
                     child = Event.getListeners(children[i], type);
                     if (child) {
                         lis = lis.concat(child);
@@ -932,7 +931,11 @@ if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll);
 }
 
-add(win, "unload", onUnload);
+try {
+    add(win, "unload", onUnload);
+} catch(e) {
+    Y.log("Registering unload listener failed. This is known to happen in Chrome Packaged Apps and Extensions, which don't support unload, and don't provide a way to test for support", "warn", "event-base");
+}
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;
@@ -942,4 +945,4 @@ Event.Facade = Y.EventFacade;
 
 Event._poll();
 
-})();
+}());

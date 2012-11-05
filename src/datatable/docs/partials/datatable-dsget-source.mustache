@@ -1,13 +1,13 @@
-<div id="pizza" class="yui3-skin-sam dt-example"></div>
+<div id="pizza"></div>
 
 <script>
-YUI().use("datasource-get", "datasource-jsonschema", "datatable-base", "datatable-datasource", function (Y) {
+YUI().use("datatable", "datasource-get", "datasource-jsonschema", "datatable-datasource", function (Y) {
 
     var url = "http://query.yahooapis.com/v1/public/yql?format=json" +
                   "&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys",
         query = "&q=" + encodeURIComponent(
-            'select * from local.search ' +
-            'where zip = "94089" and query = "pizza"'),
+                'select * from local.search ' +
+                'where zip = "94089" and query = "pizza"'),
         dataSource,
         table;
 
@@ -20,21 +20,29 @@ YUI().use("datasource-get", "datasource-jsonschema", "datatable-base", "datatabl
                 "Title",
                 "Phone",
                 {
-                    key: "Rating.AverageRating",
-                    // YQL is returning "NaN" for unrated restaurants
+                    key: "Rating",
+                    locator: "Rating.AverageRating",
                     parser: function (val) {
-                        return isNaN(val) ? '(none)' : val;
+                        // YQL is returning "NaN" for unrated restaurants
+                        return isNaN(val) ? -1 : +val;
                     }
                 }
             ]
         }
     });
 
-    table = new Y.DataTable.Base({
-        columnset: [
+    table = new Y.DataTable({
+        columns: [
             "Title",
             "Phone",
-            { key:"Rating.AverageRating", label:"Rating" }
+            {
+                key: "Rating",
+                formatter: function (o) {
+                    if (o.value === -1) {
+                        o.value = '(none)';
+                    }
+                }
+            }
         ],
         summary: "Pizza places near 98089",
         caption: "Table with JSON data from YQL"

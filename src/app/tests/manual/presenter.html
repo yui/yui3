@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Y.App Using a Presenter</title>
+</head>
+<body>
+    <h1>Y.App Using a Presenter</h1>
+
+    <script id="t-user" type="text/x-handlebars-template">
+    <ul>
+        <li><b>Fullname:</b> {{fullname}}</li>
+        <li><b>Username:</b> {{username}}</li>
+    </ul>
+
+    <p><a href="#/edit/">Edit User</a></p>
+    </script>
+
+    <script id="t-user-edit" type="text/x-handlebars-template">
+    <form action="" method="POST">
+        <fieldset>
+            <legend>User Info</legend>
+
+            <div>
+            <label for="f-fullname">Fullname:</label>
+            <input id="f-fullname" type="text" name="fullname" value="{{fullname}}" />
+            </div>
+
+            <div>
+            <label for="f-username">Username:</label>
+            <input id="f-username" type="text" name="username" value="{{username}}" />
+            </div>
+        </fieldset>
+
+        <a href="#/">Cancel</a>
+        <input type="submit" value="Save" />
+    </form>
+    </script>
+
+    <script src="../../../../build/yui/yui.js"></script>
+    <script>
+    YUI({filter: 'raw'}).use('app', 'handlebars', function (Y) {
+
+        // -- Presenter --------------------------------------------------------
+
+        Y.Presenter = Y.Base.create('presenter', Y.Base, [], {
+
+            viewType: Y.View,
+
+            initializer: function (config) {
+                config || (config = {});
+
+                if (Y.Lang.isString(config.viewType)) {
+                    this.viewType = Y.Object.getValue(Y, config.viewType.split('.'));
+                }
+
+                this.after('containerChange', this._afterContainerChange);
+                this.after('modelChange', this._afterModelChange);
+                this.after('viewChange', this._afterViewChange);
+
+                this.get('model').addTarget(this);
+                this.get('view').addTarget(this);
+            },
+
+            destroy: function () {
+                var model = this.get('model'),
+                    view  = this.get('view');
+
+                model.destroy.apply(model, arguments);
+                view.destroy.apply(view, arguments);
+
+                return Y.Presenter.superclass.destroy.apply(this, arguments);
+            },
+
+            remove: function () {
+                var view = this.get('view');
+                view.remove.apply(view, arguments);
+                return this;
+            },
+
+            render: function () {
+                var view = this.get('view');
+                view.render.apply(view, arguments);
+                return this;
+            },
+
+            _getContainer: function () {
+                return this.get('view').get('container');
+            },
+
+            _setModel: function (model) {
+                if (!(model && model._isYUIModel)) {
+                    model = new Y.Model(model);
+                }
+
+                return model;
+            },
+
+            _setView: function (view) {
+                if (!view instanceof Y.View) {
+                    view = new this.view(view);
+                }
+
+                return view;
+            },
+
+            _afterContainerChange: function (e) {
+                this.get('view').set('container', e.newVal);
+            },
+
+            _afterViewChange: function (e) {
+                e.prevVal && e.prevVal.removeTarget(this);
+                e.newVal && e.newVal.addTarget(this);
+            },
+
+            _afterModelChange: function (e) {
+                e.prevVal && e.prevVal.removeTarget(this);
+                e.newVal && e.newVal.addTarget(this);
+            }
+
+        }, {
+            ATTRS: {
+                container: {
+                    getter: '_getContainer',
+                    setter: '_setContainer'
+                },
+
+                model: {
+                    setter: '_setModel',
+                    value : null
+                },
+
+                view: {
+                    setter: '_setView',
+                    value : null
+                }
+            }
+        });
+
+        // -- User -------------------------------------------------------------
+
+        Y.namespace('MyApp').User = Y.Base.create('user', Y.Model, [], {
+            idAttribute: 'username'
+        }, {
+            ATTRS: {
+                fullname: {value: null},
+                username: {value: null}
+            }
+        });
+
+        // -- UserView -------------------------------------------------------------
+
+        Y.namespace('MyApp').UserView = Y.Base.create('userView', Y.View, [], {
+            template: Y.Handlebars.compile(Y.one('#t-user').getContent()),
+
+            render: function () {
+                var content = this.template(this.get('model').toJSON());
+                this.get('container').setContent(content);
+                return this;
+            }
+        });
+
+        // -- UserEditView ---------------------------------------------------------
+
+        Y.namespace('MyApp').UserEditView = Y.Base.create('userEditView', Y.View, [], {
+            template: Y.Handlebars.compile(Y.one('#t-user-edit').getContent()),
+            events: {
+                'form'                : {submit: 'saveUser'},
+                'input[name=fullname]': {change: 'updateFullname'},
+                'input[name=username]': {change: 'updateUsername'}
+            },
+
+            disableUsername: function () {
+                this.get('container').one('input[name=username]').set('disabled', true);
+            },
+
+            render: function () {
+                var content = this.template(this.get('model').toJSON());
+                this.get('container').setContent(content);
+                return this;
+            },
+
+            saveUser: function (e) {
+                e.preventDefault();
+                this.fire('saveUser', {user: this.get('model')});
+            },
+
+            updateFullname: function (e) {
+                this.fire('updateFullname', {fullname: e.target.get('value')});
+            },
+
+            updateUsername: function (e) {
+                this.fire('updateUsername', {username: e.target.get('value')});
+            }
+        });
+
+        // -- UserPresenter ----------------------------------------------------
+
+        Y.namespace('MyApp').UserPresenter = Y.Base.create('userPrsenter', Y.Presenter, [], {
+            initializer: function () {
+                this.on('userEditView:saveUser', this.saveUser);
+                this.on('userEditView:updateFullname', this.updateFullname);
+                this.on('userEditView:updateUsername', this.updateUsername);
+            },
+
+            render: function () {
+                Y.MyApp.UserPresenter.superclass.render.apply(this, arguments);
+
+                if (!this.get('model').get('allowEditUsername')) {
+                    this.get('view').disableUsername();
+                }
+            },
+
+            saveUser: function (e) {
+                var user  = e.user,
+                    model = this.get('model');
+
+                user.set('fullname', model.get('fullname'));
+
+                if (model.get('allowEditUsername')) {
+                    user.set('username', model.get('username'));
+                }
+
+                user.save();
+            },
+
+            updateFullname: function (e) {
+                this.get('model').set('fullname', e.fullname);
+            },
+
+            updateUsername: function (e) {
+                this.get('model').set('username', e.username);
+            }
+        });
+
+        // -- App --------------------------------------------------------------
+
+        var app;
+
+        app = new Y.App({
+            serverRouting: false,
+
+            views: {
+                show: {type: 'MyApp.UserView'},
+                edit: {type: 'MyApp.UserPresenter'}
+            },
+
+            routes: [
+                {path: '/',      callback: 'showUser'},
+                {path: '/edit/', callback: 'editUser'}
+            ]
+        });
+
+        app.showUser = function () {
+            this.showView('show', {
+                model: this.user
+            });
+        };
+
+        app.editUser = function () {
+            var user = this.user;
+
+            // Uses a Presenter!
+            this.showView('edit', {
+                view : new Y.MyApp.UserEditView({model: user}),
+                model: {
+                    allowEditUsername: user.isNew()
+                }
+            });
+        };
+
+        app.user = new Y.MyApp.User({
+            after: {
+                save: function () {
+                    app.replace('/');
+                }
+            }
+        });
+
+        app.render().replace('/');
+
+    });
+    </script>
+</body>
+</html>

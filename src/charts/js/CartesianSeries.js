@@ -2,6 +2,7 @@
  * The CartesianSeries class creates a chart with horizontal and vertical axes.
  *
  * @module charts
+ * @submodule charts-base
  * @class CartesianSeries
  * @extends Base
  * @uses Renderer
@@ -68,38 +69,38 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             yAxis = this.get("yAxis");
         if(xAxis)
         {
-            xAxis.after("dataReady", Y.bind(this._xDataChangeHandler, this));
-            xAxis.after("dataUpdate", Y.bind(this._xDataChangeHandler, this));
+            this._xDataReadyHandle = xAxis.after("dataReady", Y.bind(this._xDataChangeHandler, this));
+            this._xDataUpdateHandle = xAxis.after("dataUpdate", Y.bind(this._xDataChangeHandler, this));
         }
         if(yAxis)
         {
-            yAxis.after("dataReady", Y.bind(this._yDataChangeHandler, this));
-            yAxis.after("dataUpdate", Y.bind(this._yDataChangeHandler, this));
+            this._yDataReadyHandle = yAxis.after("dataReady", Y.bind(this._yDataChangeHandler, this));
+            this._yDataUpdateHandle = yAxis.after("dataUpdate", Y.bind(this._yDataChangeHandler, this));
         }
-        this.after("xAxisChange", this._xAxisChangeHandler);
-        this.after("yAxisChange", this._yAxisChangeHandler);
-        this.after("stylesChange", function(e) {
+        this._xAxisChangeHandle = this.after("xAxisChange", this._xAxisChangeHandler);
+        this._yAxisChangeHandle = this.after("yAxisChange", this._yAxisChangeHandler);
+        this._stylesChangeHandle = this.after("stylesChange", function(e) {
             var axesReady = this._updateAxisData();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this.after("widthChange", function(e) {
+        this._widthChangeHandle = this.after("widthChange", function(e) {
             var axesReady = this._updateAxisData();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this.after("heightChange", function(e) {
+        this._heightChangeHandle = this.after("heightChange", function(e) {
             var axesReady = this._updateAxisData();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this.after("visibleChange", this._handleVisibleChange);
+        this._visibleChangeHandle = this.after("visibleChange", this._handleVisibleChange);
     },
   
     /**
@@ -286,13 +287,17 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
         this._bottomOrigin = Math.round((dataHeight + topPadding + yOffset)); 
+        if(yMin < 0)
+        {
+            this._bottomOrigin = this._bottomOrigin - ((0 - yMin) * yScaleFactor);
+        }
         for (; i < dataLength; ++i) 
 		{
             xValue = parseFloat(xData[i]);
             yValue = parseFloat(yData[i]);
             if(isNumber(xValue))
             {
-                nextX = Math.round((((xValue - xMin) * xScaleFactor) + leftPadding + xOffset));
+                nextX = (((xValue - xMin) * xScaleFactor) + leftPadding + xOffset);
             }
             else
             {
@@ -300,7 +305,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             }
             if(isNumber(yValue))
             {
-			    nextY = Math.round(((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor));
+			    nextY = ((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor);
             }
             else
             {
@@ -315,6 +320,49 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 		this.set("ycoords", ycoords);
         this.set("xMarkerPlane", xMarkerPlane);
         this.set("yMarkerPlane", yMarkerPlane);
+        this._dataLength = dataLength;
+    },
+
+    /**
+     * Finds the first valid index of an array coordinates.
+     *
+     * @method _getFirstValidIndex
+     * @param {Array} coords An array of x or y coordinates.
+     * @return Number
+     * @private
+     */
+    _getFirstValidIndex: function(coords)
+    {
+        var coord,
+            i = -1,
+            limit = coords.length;
+        while(!Y_Lang.isNumber(coord) && i < limit)
+        {
+            i += 1;
+            coord = coords[i];
+        }
+        return i;
+    },
+
+    /**
+     * Finds the last valid index of an array coordinates.
+     *
+     * @method _getLastValidIndex
+     * @param {Array} coords An array of x or y coordinates.
+     * @return Number
+     * @private
+     */
+    _getLastValidIndex: function(coords)
+    {
+        var coord,
+            i = coords.length,
+            limit = -1;
+        while(!Y_Lang.isNumber(coord) && i > limit)
+        {
+            i -= 1;
+            coord = coords[i];
+        }
+        return i;
     },
 
     /**
@@ -471,7 +519,139 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     {
         var total = this.get("valueAxis").getTotalByKey(this.get("valueKey"));
         return total;
+    },
+
+    /**
+     * Destructor implementation for the CartesianSeries class. Calls destroy on all Graphic instances.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        var marker,
+            markers = this.get("markers");
+        if(this.get("rendered"))
+        {
+            if(this._xDataReadyHandle)
+            {
+                this._xDataReadyHandle.detach();
+            }
+            if(this._xDataUpdateHandle)
+            {
+                this._xDataUpdateHandle.detach();
+            }
+            if(this._yDataReadyHandle)
+            {
+                this._yDataReadyHandle.detach();
+            }
+            if(this._yDataUpdateHandle)
+            {
+                this._yDataUpdateHandle.detach();
+            }
+            this._xAxisChangeHandle.detach();
+            this._yAxisChangeHandle.detach();
+            this._stylesChangeHandle.detach();
+            this._widthChangeHandle.detach();
+            this._heightChangeHandle.detach();
+            this._visibleChangeHandle.detach();
+        }
+        while(markers && markers.length > 0)
+        {
+            marker = markers.shift();
+            if(marker && marker instanceof Y.Shape)
+            {
+                marker.destroy();
+            }
+        }
+        if(this._path)
+        {
+            this._path.destroy();
+            this._path = null;
+        }
+        if(this._lineGraphic)
+        {
+            this._lineGraphic.destroy();
+            this._lineGraphic = null;
+        }
+        if(this._groupMarker)
+        {
+            this._groupMarker.destroy();
+            this._groupMarker = null;
+        }
     }
+        /**
+         * Event handle for the x-axis' dataReady event.
+         * 
+         * @property _xDataReadyHandle
+         * @type {EventHandle}
+         * @private
+         */
+        
+        /**
+         * Event handle for the x-axis dataUpdate event.
+         *
+         * @property _xDataUpdateHandle
+         * @type {EventHandle}
+         * @private
+         */
+        
+        /**
+         * Event handle for the y-axis dataReady event.
+         *
+         * @property _yDataReadyHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the y-axis dataUpdate event.
+         * @property _yDataUpdateHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the xAxisChange event.
+         * @property _xAxisChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the yAxisChange event.
+         * @property _yAxisChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the stylesChange event.
+         * @property _stylesChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the widthChange event.
+         * @property _widthChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the heightChange event.
+         * @property _heightChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the visibleChange event.
+         * @property _visibleChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
 }, {
     ATTRS: {
         /**
@@ -488,7 +668,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._xDisplayName = Y.Escape.html(val);
+                this._xDisplayName = val.toString();
                 return val;
             }
         },
@@ -507,7 +687,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._yDisplayName = Y.Escape.html(val);
+                this._yDisplayName = val.toString();
                 return val;
             }
         },
@@ -520,11 +700,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @readOnly
          */
         categoryDisplayName: {
-            readOnly: true,
+            lazyAdd: false,
 
             getter: function()
             {
                 return this.get("direction") == "vertical" ? this.get("yDisplayName") : this.get("xDisplayName");
+           },
+
+            setter: function(val)
+            {
+                if(this.get("direction") == "vertical")
+                {
+                    this._yDisplayName = val;
+                }
+                else
+                {
+                    this._xDisplayName = val;
+                }
+                return val;
             }
         },
 
@@ -536,11 +729,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @readOnly
          */
         valueDisplayName: {
-            readOnly: true,
+            lazyAdd: false,
 
             getter: function()
             {
                 return this.get("direction") == "vertical" ? this.get("xDisplayName") : this.get("yDisplayName");
+            },
+
+            setter: function(val)
+            {
+                if(this.get("direction") == "vertical")
+                {
+                    this._xDisplayName = val;
+                }
+                else
+                {
+                    this._yDisplayName = val;
+                }
+                return val;
             }
         },
         
@@ -639,7 +845,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         xKey: {
             setter: function(val)
             {
-                return Y.Escape.html(val);
+                return val.toString();
             }
         },
 
@@ -653,7 +859,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         yKey: {
             setter: function(val)
             {
-                return Y.Escape.html(val);
+                return val.toString();
             }
         },
 
@@ -784,6 +990,32 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          */
         direction: {
             value: "horizontal"
+        },
+
+        /**
+         * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+         *
+         * @attribute groupMarkers
+         * @type Boolean
+         */
+        groupMarkers: {
+            getter: function()
+            {
+                if(this._groupMarkers === undefined)
+                {
+                    return this.get("graph").get("groupMarkers");
+                }
+                else
+                {
+                    return this._groupMarkers;
+                }
+            },
+
+            setter: function(val)
+            {
+                this._groupMarkers = val;
+                return val;
+            }
         }
     }
 });

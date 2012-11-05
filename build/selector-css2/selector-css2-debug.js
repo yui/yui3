@@ -1,4 +1,4 @@
-YUI.add('selector-css2', function(Y) {
+YUI.add('selector-css2', function (Y, NAME) {
 
 /**
  * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.
@@ -20,43 +20,14 @@ var PARENT_NODE = 'parentNode',
     Selector = Y.Selector,
 
     SelectorCSS2 = {
-        _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/, // TODO: move?
+        _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/,
         SORT_RESULTS: true,
-        _children: function(node, tag) {
-                var i = 0,
-                children = node.children,
-                childNodes,
-                hasComments,
-                child;
 
-            if (children && children.tags) { // use tags filter when possible
-                if (tag) {
-                    children = node.children.tags(tag);
-                } else { // IE leaks comments into children
-                    hasComments = children.tags('!').length;
-                }
-            }
-            
-            if (!children || (!children.tag && tag) || hasComments) {
-                childNodes = children || node.childNodes;
-                children = [];
-                while ((child = childNodes[i++])) {
-                    if (child.nodeType === 1) {
-                        if (!tag || tag === child.tagName) {
-                            children.push(child);
-                        }
-                    }
-                }
-            }
-
-            return children || [];
-        },
-
-        _re: {
-            attr: /(\[[^\]]*\])/g,
-            esc: /\\[:\[\]\(\)#\.\'\>+~"]/gi,
-            pseudos: /(\([^\)]*\))/g
-        },
+        // TODO: better detection, document specific
+        _isXML: (function() {
+            var isXML = (Y.config.doc.createElement('div').tagName !== 'DIV');
+            return isXML;
+        }()),
 
         /**
          * Mapping of shorthand tokens to corresponding attribute selector 
@@ -76,15 +47,13 @@ var PARENT_NODE = 'parentNode',
          */
         operators: {
             '': function(node, attr) { return Y.DOM.getAttribute(node, attr) !== ''; }, // Just test for existence of attribute
-            //'': '.+',
-            //'=': '^{val}$', // equality
             '~=': '(?:^|\\s+){val}(?:\\s+|$)', // space-delimited
             '|=': '^{val}-?' // optional hyphen-delimited
         },
 
         pseudos: {
            'first-child': function(node) { 
-                return Y.Selector._children(node[PARENT_NODE])[0] === node; 
+                return Y.DOM._children(node[PARENT_NODE])[0] === node; 
             } 
         },
 
@@ -99,16 +68,6 @@ var PARENT_NODE = 'parentNode',
                 className,
                 tagName;
 
-
-            // if we have an initial ID, set to root when in document
-            /*
-            if (tokens[0] && rootDoc === root &&  
-                    (id = tokens[0].id) &&
-                    rootDoc.getElementById(id)) {
-                root = rootDoc.getElementById(id);
-            }
-            */
-
             if (token) {
                 // prefilter nodes
                 id = token.id;
@@ -118,7 +77,6 @@ var PARENT_NODE = 'parentNode',
                 if (root.getElementsByTagName) { // non-IE lacks DOM api on doc frags
                     // try ID first, unless no root.all && root not in document
                     // (root.all works off document, but not getElementById)
-                    // TODO: move to allById?
                     if (id && (root.all || (root.nodeType === 9 || Y.DOM.inDoc(root)))) {
                         nodes = Y.DOM.allById(id, root);
                     // try className
@@ -128,13 +86,15 @@ var PARENT_NODE = 'parentNode',
                         nodes = root.getElementsByTagName(tagName);
                     }
 
-                } else { // brute getElementsByTagName('*')
+                } else { // brute getElementsByTagName()
                     child = root.firstChild;
                     while (child) {
-                        if (child.tagName) { // only collect HTMLElements
+                        // only collect HTMLElements
+                        // match tag to supplement missing getElementsByTagName
+                        if (child.tagName && (tagName === '*' || child.tagName === tagName)) {
                             nodes.push(child);
                         }
-                        child = child.nextSilbing || child.firstChild;
+                        child = child.nextSibling || child.firstChild;
                     }
                 }
                 if (nodes.length) {
@@ -159,12 +119,10 @@ var PARENT_NODE = 'parentNode',
                 token,
                 path,
                 pass,
-                //FUNCTION = 'function',
                 value,
                 tests,
                 test;
 
-            //do {
             for (i = 0; (tmpNode = node = nodes[i++]);) {
                 n = len - 1;
                 path = null;
@@ -181,9 +139,14 @@ var PARENT_NODE = 'parentNode',
                                 value = getters[test[0]](tmpNode, test[0]);
                             } else {
                                 value = tmpNode[test[0]];
-                                // use getAttribute for non-standard attributes
-                                if (value === undefined && tmpNode.getAttribute) {
-                                    value = tmpNode.getAttribute(test[0]);
+                                if (test[0] === 'tagName' && !Selector._isXML) {
+                                    value = value.toUpperCase();    
+                                }
+                                if (typeof value != 'string' && value !== undefined && value.toString) {
+                                    value = value.toString(); // coerce for comparison
+                                } else if (value === undefined && tmpNode.getAttribute) {
+                                    // use getAttribute for non-standard attributes
+                                    value = tmpNode.getAttribute(test[0], 2); // 2 === force string for IE
                                 }
                             }
 
@@ -230,7 +193,7 @@ var PARENT_NODE = 'parentNode',
                         break;
                     }
                 }
-            }// while (tmpNode = node = nodes[++i]);
+            }
             node = tmpNode = null;
             return result;
         },
@@ -295,7 +258,12 @@ var PARENT_NODE = 'parentNode',
                 name: TAG_NAME,
                 re: /^((?:-?[_a-z]+[\w-]*)|\*)/i,
                 fn: function(match, token) {
-                    var tag = match[1].toUpperCase();
+                    var tag = match[1];
+
+                    if (!Selector._isXML) {
+                        tag = tag.toUpperCase();
+                    }
+
                     token.tagName = tag;
 
                     if (tag !== '*' && (!token.last || token.prefilter)) {
@@ -346,7 +314,7 @@ var PARENT_NODE = 'parentNode',
          */
         _tokenize: function(selector) {
             selector = selector || '';
-            selector = Selector._replaceShorthand(Y.Lang.trim(selector)); 
+            selector = Selector._parseSelector(Y.Lang.trim(selector)); 
             var token = Selector._getToken(),     // one token per simple selector (left selector holds combinator)
                 query = selector, // original query for debug report
                 tokens = [],    // array of tokens
@@ -407,28 +375,18 @@ var PARENT_NODE = 'parentNode',
             return tokens;
         },
 
+        _replaceMarkers: function(selector) {
+            selector = selector.replace(/\[/g, '\uE003');
+            selector = selector.replace(/\]/g, '\uE004');
+
+            selector = selector.replace(/\(/g, '\uE005');
+            selector = selector.replace(/\)/g, '\uE006');
+            return selector;
+        },
+
         _replaceShorthand: function(selector) {
-            var shorthand = Selector.shorthand,
-                esc = selector.match(Selector._re.esc), // pull escaped colon, brackets, etc. 
-                attrs,
-                pseudos,
-                re, i, len;
-
-            if (esc) {
-                selector = selector.replace(Selector._re.esc, '\uE000');
-            }
-
-            attrs = selector.match(Selector._re.attr);
-            pseudos = selector.match(Selector._re.pseudos);
-
-            if (attrs) {
-                selector = selector.replace(Selector._re.attr, '\uE001');
-            }
-
-            if (pseudos) {
-                selector = selector.replace(Selector._re.pseudos, '\uE002');
-            }
-
+            var shorthand = Y.Selector.shorthand,
+                re;
 
             for (re in shorthand) {
                 if (shorthand.hasOwnProperty(re)) {
@@ -436,29 +394,24 @@ var PARENT_NODE = 'parentNode',
                 }
             }
 
-            if (attrs) {
-                for (i = 0, len = attrs.length; i < len; ++i) {
-                    selector = selector.replace(/\uE001/, attrs[i]);
-                }
-            }
+            return selector;
+        },
 
-            if (pseudos) {
-                for (i = 0, len = pseudos.length; i < len; ++i) {
-                    selector = selector.replace(/\uE002/, pseudos[i]);
-                }
-            }
+        _parseSelector: function(selector) {
+            var replaced = Y.Selector._replaceSelector(selector),
+                selector = replaced.selector;
 
-            selector = selector.replace(/\[/g, '\uE003');
-            selector = selector.replace(/\]/g, '\uE004');
+            // replace shorthand (".foo, #bar") after pseudos and attrs
+            // to avoid replacing unescaped chars
+            selector = Y.Selector._replaceShorthand(selector);
 
-            selector = selector.replace(/\(/g, '\uE005');
-            selector = selector.replace(/\)/g, '\uE006');
+            selector = Y.Selector._restore('attr', selector, replaced.attrs);
+            selector = Y.Selector._restore('pseudo', selector, replaced.pseudos);
 
-            if (esc) {
-                for (i = 0, len = esc.length; i < len; ++i) {
-                    selector = selector.replace('\uE000', esc[i]);
-                }
-            }
+            // replace braces and parens before restoring escaped chars
+            // to avoid replacing ecaped markers
+            selector = Y.Selector._replaceMarkers(selector);
+            selector = Y.Selector._restore('esc', selector, replaced.esc);
 
             return selector;
         },
@@ -471,6 +424,10 @@ var PARENT_NODE = 'parentNode',
         getters: {
             href: function(node, attr) {
                 return Y.DOM.getAttribute(node, attr);
+            },
+
+            id: function(node, attr) {
+                return Y.DOM.getId(node);
             }
         }
     };
@@ -485,4 +442,4 @@ if (Y.Selector.useNative && Y.config.doc.querySelector) {
 
 
 
-}, '@VERSION@' ,{requires:['selector-native']});
+}, '@VERSION@', {"requires": ["selector-native"]});

@@ -1,11 +1,22 @@
-YUI.add('yui-throttle', function(Y) {
+YUI.add('yui-throttle', function (Y, NAME) {
 
 /**
- * Throttles a call to a method based on the time between calls. This method is attached
- * to the `Y` object and is <a href="../classes/YUI.html#method_throttle">documented there</a>.
- * @module yui
- * @submodule yui-throttle
- */
+Throttles a call to a method based on the time between calls. This method is attached
+to the `Y` object and is <a href="../classes/YUI.html#method_throttle">documented there</a>.
+
+    var fn = Y.throttle(function() {
+        counter++;
+    });
+
+    for (i; i< 35000; i++) {
+        out++;
+        fn();
+    }
+
+
+@module yui
+@submodule yui-throttle
+*/
 
 /*! Based on work by Simon Willison: http://gist.github.com/292562 */
 /**
@@ -23,21 +34,21 @@ Y.throttle = function(fn, ms) {
     ms = (ms) ? ms : (Y.config.throttleTime || 150);
 
     if (ms === -1) {
-        return (function() {
+        return function() {
             fn.apply(null, arguments);
-        });
+        };
     }
 
     var last = Y.Lang.now();
 
-    return (function() {
+    return function() {
         var now = Y.Lang.now();
         if (now - last > ms) {
             last = now;
             fn.apply(null, arguments);
         }
-    });
+    };
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

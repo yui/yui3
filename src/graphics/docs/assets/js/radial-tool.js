@@ -151,7 +151,6 @@ YUI({
         panel.show();
         textArea.focus();
         textArea.select();
-        textArea.scrollTop();
     });
     Y.one('#center-color').on('change', function(){
         centerColor = this.get('value');

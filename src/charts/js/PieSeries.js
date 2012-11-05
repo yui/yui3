@@ -3,6 +3,7 @@
  * percentage of a whole.
  *
  * @module charts
+ * @submodule charts-base
  * @class PieSeries
  * @constructor
  * @extends MarkerSeries
@@ -289,7 +290,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             {
                 angle = 360 * (value / totalValue);
             }
-            angle = Math.round(angle);
             if(tfc && tfc.length < 1)
             {
                 tfc = fillColors.concat();

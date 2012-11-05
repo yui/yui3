@@ -1,0 +1,28 @@
+#logger {
+    z-index: 999;
+    position:absolute;
+    top: 10px;
+    right: 10px;
+    width: 300px;
+    text-align: left;
+}
+#logger .yui3-testconsole-hidden {
+    display: none;
+}
+#logger .yui3-testconsole-content {
+    background-color: #fff;
+}
+#logger h4 {
+    border: none;
+}
+
+#logger.failed .yui3-console-hd {
+    background-color: #ffc5c4;
+}
+#logger.passed .yui3-console-hd {
+    background-color: green;
+}
+#logger.passed .yui3-console-hd h4 {
+    color: #fff;
+}
+

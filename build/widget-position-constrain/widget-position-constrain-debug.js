@@ -1,4 +1,4 @@
-YUI.add('widget-position-constrain', function(Y) {
+YUI.add('widget-position-constrain', function (Y, NAME) {
 
 /**
  * Provides constrained xy positioning support for Widgets, through an extension.
@@ -343,4 +343,4 @@ PositionConstrain.prototype = {
 Y.WidgetPositionConstrain = PositionConstrain;
 
 
-}, '@VERSION@' ,{requires:['widget-position']});
+}, '@VERSION@', {"requires": ["widget-position"]});

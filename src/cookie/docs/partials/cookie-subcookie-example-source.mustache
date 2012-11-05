@@ -1,8 +1,12 @@
-<script>
-YUI().use('cookie', 'console', 'node', function (Y) {
+<pre id="results"></pre>
 
-    //used just to show logging output
-    (new Y.Console({style: 'block'})).render('.example');
+<script>
+YUI().use('cookie', 'node', function (Y) {
+
+    var results = Y.one('#results'),
+        log = function(str) {
+            results.append(str + '<br>');
+        };
     
     //get subcookie values
     var name = Y.Cookie.getSub("example", "name");
@@ -11,14 +15,16 @@ YUI().use('cookie', 'console', 'node', function (Y) {
     });
     var count = Y.Cookie.getSub("example", "count", Number);
 
-    Y.log("The subcookie 'name' is '" + name + "' (" + (typeof name) + ")");
-    Y.log("The subcookie 'today' is '" + today + "' (" + (typeof today) + ")");
-    Y.log("The subcookie 'count' is '" + count + "' (" + (typeof count) + ")");
-       
     //set subcookie values
     Y.Cookie.setSub("example", "name", "Yahoo!");
     Y.Cookie.setSub("example", "today", (new Date()).toString());
     Y.Cookie.setSub("example", "count", Math.round(Math.random() * 30));
+    
+    
+    log("The subcookie 'name' is '" + name + "' (" + (typeof name) + ")");
+    log("The subcookie 'today' is '" + today + "' (" + (typeof today) + ")");
+    log("The subcookie 'count' is '" + count + "' (" + (typeof count) + ")");
+       
 
 });
 </script>

@@ -32,7 +32,7 @@ var MyApp = {
     },
 
     setStatus : function (message,working) {
-        MyApp.nodes.status.setContent(message);
+        MyApp.nodes.status.setHTML(message);
 
         MyApp.nodes.foot[working?'addClass':'removeClass']('working');
     },
@@ -40,7 +40,7 @@ var MyApp = {
     _renderFramework : function (container) {
         var root = MyApp.nodes.root = Y.one(container);
 
-        root.setContent(
+        root.setHTML(
         '<div class="yui3-module">'+
             '<div class="yui3-hd">'+
                 '<h4>'+MyApp.NAME+'</h4>'+
@@ -84,13 +84,13 @@ var MyApp = {
         nav.delegate('click', function (e) {
             e.preventDefault();
             MyApp.nodes.content
-                .setContent('<p>Clicked on ' + this.get('text') + '</p>');
+                .setHTML('<p>Clicked on ' + this.get('text') + '</p>');
         }, 'a');
     },
 
     _renderContent : function () {
         MyApp.nodes.content
-            .setContent('<p>[ App content here ]</p>')
+            .setHTML('<p>[ App content here ]</p>')
             .transition({
                 opacity: 1,
                 duration: .8

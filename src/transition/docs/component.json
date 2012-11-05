@@ -32,7 +32,7 @@
             "name"       : "transition-view",
             "displayName": "Showing and Hiding with Transitions",
             "description": "Demonstrates how to animate Node's show and hide methods.",
-            "modules"    : ["transition", "node-event-delegate"],
+            "modules"    : ["transition", "node-event-delegate", "cssbutton"],
             "tags"       : ["transition"],
 
             "hideTableOfContents": true

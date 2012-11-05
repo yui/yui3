@@ -1,6 +1,8 @@
 CSS Grids Utility
 ===============
 
+Note: The file "grids.css" is deprecated, use "cssgrids.css" instead.
+
 The foundational CSS Grids provides a simple system for layout out content. The
 basic components are "grids" and "units". A "grid" (yui3-g) contains one or
 more "units" (yui3-u). The type of "unit" chosen describes how it should be

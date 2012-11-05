@@ -1,0 +1,243 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style type="text/css">
+    body {
+        xbackground: #000;
+        font-family: arial, sans-serif;
+        font-size: 13px;
+    }
+    #log {
+        background: #fff;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 300px;
+        border: 2px ridge;
+        padding: 10px;
+    }
+    #log p {
+        margin: 1em 0;
+    }
+    </style>
+</head>
+<body>
+    <button id="add">Add a row</button>
+    <button id="remove">Remove a row</button>
+    <button id="modify">Modify a row</button>
+    <button id="addcol">Add a column</button>
+    <button id="removecol">Remove a column</button>
+    <button id="modifycol">Modify a column</button>
+    <button id="modifywidth">Modify width</button>
+    <button id="sort">Sort</button>
+    <button id="showmessage">Show Message</button>
+    <button id="hidemessage">Hide Message</button>
+    <button id="sync">syncUI</button>
+    <button id="scrollable">Toggle scrollable</button>
+
+    <!--div id="log"></div-->
+
+    <div class="wrapper yui3-skin-sam">
+        <div id="x"></div>
+    </div>
+
+    <p>
+        This is some content below the table.
+    </p>
+
+    <!--script src="http://yui.yahooapis.com/3.4.1/build/yui/yui.js"></script-->
+    <!--script src="http://yui.yahooapis.com/3.5.0pr4/build/yui/yui.js"></script-->
+    <script src="../../../../build/yui/yui.js"></script>
+    <!--script src="/dev/yui3/src/datatable/js/mutable.js"></script-->
+    <script>
+    YUI({
+        filters: {
+            'datatable-scroll': 'debug'
+        },
+        filter: 'raw'
+    }).use(
+        'datatable-scroll', 'datatable-sort', 'datatable-mutable',
+        'datatable-message',
+        'datasource-io', 'datatable-datasource', 'datasource-jsonschema', 
+        function (Y) {
+
+        function makeData(size) {
+            var data = [], i;
+
+            for (i = 0; i < size; ++i) {
+                data.push({
+                    apples   : 'Apple '  + Math.round(Math.random() * 100),
+                    bananas  : 'Banana ' + Math.round(Math.random() * 100),
+                    carrots  : 'Carrot ' + Math.round(Math.random() * 100),
+                    daikon   : 'Daikon ' + Math.round(Math.random() * 100),
+                    eggs     : 'Egg '    + Math.round(Math.random() * 100),
+                    fennel   : 'Fennel ' + Math.round(Math.random() * 100),
+                    guacamole: 'Guac '   + Math.round(Math.random() * 100)
+                });
+            }
+
+            i = Math.min(Math.round(Math.random() * size), size - 1);
+            data[i].eggs = data[i].fennel = data[i].guacamole = '';
+
+            i = Math.min(Math.round(Math.random() * size), size - 1);
+            data[i].eggs = data[i].fennel = data[i].guacamole = '';
+
+            return data;
+        }
+
+        var table = new Y.DataTable({
+            data: makeData(10),
+            recordType: ['apples', 'carrots', 'daikon', 'eggs', 'guacamole'],
+            //scrollable: 'xy',
+            //width: '100%',
+            //width: '750px',
+            //width: '500px',
+            //height: '250px',
+            //autoSync: true,
+            //sortable: true,
+            //sortable: ['carrots'],
+            //caption: 'Can you hear the caption?',
+            //sortBy: [{ apples: 'desc' }],
+            columns: [
+                {
+                    key: 'apples',
+                    label: 'Apples',
+                    //headerTemplate: '<th class="{className}" rowspan="{_rowspan}" colspan="{_colspan}" scope="col"><strong>{content}</strong></th>',
+                    //cellTemplate: '<th class="{className}" scope="row">{content}</th>',
+                    allowHTML: true,
+                    width: '150px',
+                    sortFn: function (a, b, desc) {
+                        a = +a.get('apples').replace(/\D/g, ''),
+                        b = +b.get('apples').replace(/\D/g, ''),
+                        order = (a > b) ? 1 : (a < b) ? -1 : 0;
+
+                        return desc ? -order : order;
+                    },
+                    sortDir: -1
+                },
+                { label: "Parent of B and C", children: [
+                    { key: 'bananas' },
+                    { key: 'carrots' }
+                ]},
+                { label: "Parent of D through G", children: [
+                    { label: 'Parent of D and E', children: [
+                        { key: 'daikon' },
+                        { key: 'eggs', xwidth: '200px' }
+                    ]},
+                    { label: 'Parent of F and G', children: [
+                        'fennel', 'guacamole'
+                    ]}
+                ]}
+            ]
+        });
+
+        table.set('data', makeData(15));
+
+        table.delegate('click', function (e) {
+            console.log(table.getRecord(this).toJSON());
+            //console.log(table.data.getByClientId(this.get('id')).toJSON());
+        }, '.yui3-datatable-data tr');
+
+/*
+        table.plug(Y.Plugin.DataTableDataSource, {
+            datasource: new Y.DataSource.IO({
+                source: "data.php?fields=author,title"
+            }).plug(Y.Plugin.DataSourceJSONSchema, {
+                schema: {
+                    resultListLocator: 'records',
+                    resultFields: ['author', 'title']
+                }
+            })
+        });
+*/
+
+        /*
+        var log = Y.one('#log');
+        Y.on('yui:log', function (e) {
+            log.append('<p>' + e.msg + '</p>');
+        });
+        */
+
+        table.render('#x');
+
+
+        //table.datasource.load();
+
+        Y.one('#add').on('click', function () {
+            table.addRow({
+                apples: 'Jan Comstock',
+                bananas: '1234',
+                carrots: 'The Diaries of Phil Collins',
+                daikon: 'What?',
+                eggs: 'scrambled',
+                fennel: 'raw, 2tbsp',
+                guacamole: 'For the chips!'
+            });
+        });
+
+        Y.one('#remove').on('click', function () {
+            table.removeRow(0);
+        });
+
+        Y.one('#modify').on('click', function () {
+            table.modifyRow(0, { daikon: 'MOAR DAIKON!' });
+        });
+
+        Y.one('#addcol').on('click', function () {
+            table.addColumn({
+                key: 'apples',
+                formatter: function (o) {
+                    return ('' + o.value).toUpperCase();
+                }
+            });
+        });
+
+        Y.one('#removecol').on('click', function () {
+            table.removeColumn([1,1]);
+        });
+
+        Y.one('#modifycol').on('click', function () {
+            table.modifyColumn(0, { formatter: function (o) {
+                return ('<strong>' + o.value).toLowerCase() + '</strong>';
+            }});
+        });
+
+        Y.one('#modifywidth').on('click', function () {
+            var width = table.get('width') || '500px',
+                unit  = (''+width).replace(/[0-9]/g, '');
+
+            table.set('width', Math.round(parseInt(width, 10) * 1.1) + unit);
+            //console.log('width is ', table.get('width'));
+        });
+
+        Y.one('#sort').on('click', function () {
+            table.sort([{ daikon: -1 }, { bananas: -1 }]);
+        });
+
+        Y.one('#showmessage').on('click', function () {
+            table.showMessage('loadingMessage');
+        });
+
+        Y.one('#hidemessage').on('click', function () {
+            table.hideMessage();
+        });
+
+        Y.one('#sync').on('click', function () {
+            table.syncUI();
+        });
+
+        Y.one('#scrollable').on('click', function () {
+            var scrollable = {
+                    x: 'xy',
+                    y: 'x',
+                    xy: false
+                },
+                current = table.get('scrollable');
+
+            table.set('scrollable', current ? scrollable[current] : 'y');
+        });
+    });
+    </script>
+</body>
+</html>

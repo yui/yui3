@@ -17,9 +17,25 @@ SVGShape = function(cfg)
     SVGShape.superclass.constructor.apply(this, arguments);
 };
 
-SVGShape.NAME = "svgShape";
+SVGShape.NAME = "shape";
 
-Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
+Y.extend(SVGShape, Y.GraphicBase, Y.mix({
+    /**
+     * Storage for x attribute.
+     *
+     * @property _x
+     * @protected
+     */
+    _x: 0,
+
+    /**
+     * Storage for y attribute.
+     *
+     * @property _y
+     * @protected
+     */
+    _y: 0,
+    
     /**
      * Init method, invoked during construction.
      * Calls `initializer` method.
@@ -40,12 +56,47 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	initializer: function(cfg)
 	{
-		var host = this;
+		var host = this,
+            graphic = cfg.graphic,
+            data = this.get("data");
 		host.createNode(); 
-		host._graphic = cfg.graphic;
-		host._updateHandler();
+		if(graphic)
+        {
+            host._setGraphic(graphic);
+        }
+        if(data)
+        {
+            host._parsePathData(data);
+        }
+        host._updateHandler();
 	},
-   
+ 
+    /**
+     * Set the Graphic instance for the shape.
+     *
+     * @method _setGraphic
+     * @param {Graphic | Node | HTMLElement | String} render This param is used to determine the graphic instance. If it is a `Graphic` instance, it will be assigned
+     * to the `graphic` attribute. Otherwise, a new Graphic instance will be created and rendered into the dom element that the render represents.
+     * @private
+     */
+    _setGraphic: function(render)
+    {
+        var graphic;
+        if(render instanceof Y.SVGGraphic)
+        {
+		    this._graphic = render;
+        }
+        else
+        {
+            render = Y.one(render);
+            graphic = new Y.SVGGraphic({
+                render: render
+            });
+            graphic._appendShape(this);
+            this._graphic = graphic;
+        }
+    },
+
 	/**
 	 * Add a class name to each node.
 	 *
@@ -82,8 +133,8 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	{
 		var graphic = this._graphic,
 			parentXY = graphic.getXY(),
-			x = this.get("x"),
-			y = this.get("y");
+			x = this._x,
+			y = this._y;
 		return [parentXY[0] + x, parentXY[1] + y];
 	},
 
@@ -97,8 +148,9 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	{
 		var graphic = this._graphic,
 			parentXY = graphic.getXY();
-		this.set("x", xy[0] - parentXY[0]);
-		this.set("y", xy[1] - parentXY[1]);
+		this._x = xy[0] - parentXY[0];
+		this._y = xy[1] - parentXY[1];
+        this.set("transform", this.get("transform"));
 	},
 
 	/**
@@ -183,12 +235,15 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	createNode: function()
 	{
-		var node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
-			id = this.get("id"),
-			pointerEvents = this.get("pointerEvents");
-		this.node = node;
-		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
-		if(id)
+		var host = this,
+            node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
+			id = host.get("id"),
+            name = host.name,
+            concat = host._camelCaseConcat,
+			pointerEvents = host.get("pointerEvents");
+		host.node = node;
+		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name))); 
+        if(id)
 		{
 			node.setAttribute("id", id);
 		}
@@ -196,7 +251,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		{
 			node.setAttribute("pointer-events", pointerEvents);
 		}
-        if(!this.get("visible"))
+        if(!host.get("visible"))
         {
             Y.one(node).setStyle("visibility", "hidden");
         }
@@ -320,6 +375,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			opacity,
 			color,
 			stopNode,
+            newStop,
 			isNumber = Y_LANG.isNumber,
 			graphic = this._graphic,
 			type = fill.type, 
@@ -327,7 +383,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			stops = fill.stops,
 			w = this.get("width"),
 			h = this.get("height"),
-			rotation = fill.rotation,
+			rotation = fill.rotation || 0,
 			radCon = Math.PI/180,
             tanRadians = parseFloat(parseFloat(Math.tan(rotation * radCon)).toFixed(8)),
             i,
@@ -378,13 +434,25 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
                 y1 = ((tanRadians * (cx - x1)) - cy) * -1;
                 y2 = ((tanRadians * (cx - x2)) - cy) * -1;
             }
+
+            x1 = Math.round(100 * x1/w);
+            x2 = Math.round(100 * x2/w);
+            y1 = Math.round(100 * y1/h);
+            y2 = Math.round(100 * y2/h);
+            
+            //Set default value if not valid 
+            x1 = isNumber(x1) ? x1 : 0;
+            x2 = isNumber(x2) ? x2 : 100;
+            y1 = isNumber(y1) ? y1 : 0;
+            y2 = isNumber(y2) ? y2 : 0;
+            
             gradientNode.setAttribute("spreadMethod", "pad");
 			gradientNode.setAttribute("width", w);
 			gradientNode.setAttribute("height", h);
-            gradientNode.setAttribute("x1", Math.round(100 * x1/w) + "%");
-            gradientNode.setAttribute("y1", Math.round(100 * y1/h) + "%");
-            gradientNode.setAttribute("x2", Math.round(100 * x2/w) + "%");
-            gradientNode.setAttribute("y2", Math.round(100 * y2/h) + "%");
+            gradientNode.setAttribute("x1", x1 + "%");
+            gradientNode.setAttribute("x2", x2 + "%");
+            gradientNode.setAttribute("y1", y1 + "%");
+            gradientNode.setAttribute("y2", y2 + "%");
 		}
 		else
 		{
@@ -585,13 +653,13 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
             ty,
             matrix = this.matrix,
             normalizedMatrix = this._normalizedMatrix,
-            i = 0,
+            i,
             len = this._transforms.length;
 
         if(isPath || (this._transforms && this._transforms.length > 0))
 		{
-            x = this.get("x");
-            y = this.get("y");
+            x = this._x;
+            y = this._y;
             transformOrigin = this.get("transformOrigin");
             tx = x + (transformOrigin[0] * this.get("width"));
             ty = y + (transformOrigin[1] * this.get("height")); 
@@ -607,7 +675,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
                 normalizedMatrix.init({dx: x + this._left, dy: y + this._top});
             }
             normalizedMatrix.translate(tx, ty);
-            for(; i < len; ++i)
+            for(i = 0; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
@@ -650,10 +718,10 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		var node = this.node;
 		node.setAttribute("width", this.get("width"));
 		node.setAttribute("height", this.get("height"));
-		node.setAttribute("x", this.get("x"));
-		node.setAttribute("y", this.get("y"));
-		node.style.left = this.get("x") + "px";
-		node.style.top = this.get("y") + "px";
+		node.setAttribute("x", this._x);
+		node.setAttribute("y", this._y);
+		node.style.left = this._x + "px";
+		node.style.top = this._y + "px";
 		this._fillChangeHandler();
 		this._strokeChangeHandler();
 		this._updateTransform();
@@ -690,99 +758,132 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	getBounds: function()
 	{
-	    var type = this._type,
-            wt,
-            bounds = {},
-            matrix = this._normalizedMatrix,
-            a = matrix.a,
-            b = matrix.b,
-            c = matrix.c,
-            d = matrix.d,
-            dx = matrix.dx,
-            dy = matrix.dy,
-            w = this.get("width"),
-            h = this.get("height"),
-            //The svg path element does not have x and y coordinates. Shapes based on path use translate to "fake" x and y. As a
-            //result, these values will show up in the transform matrix and should not be used in any conversion formula.
-            left = type == "path" ? 0 : this.get("x"), 
-            top = type == "path" ? 0 : this.get("y"), 
-            right = left + w,
-            bottom = top + h,
+		var type = this._type,
 			stroke = this.get("stroke"),
-            //[x1, y1]
-            x1 = (a * left + c * top + dx), 
-            y1 = (b * left + d * top + dy),
-            //[x2, y2]
-            x2 = (a * right + c * top + dx),
-            y2 = (b * right + d * top + dy),
-            //[x3, y3]
-            x3 = (a * left + c * bottom + dx),
-            y3 = (b * left + d * bottom + dy),
-            //[x4, y4]
-            x4 = (a * right + c * bottom + dx),
-            y4 = (b * right + d * bottom + dy);
-        bounds.left = Math.min(x3, Math.min(x1, Math.min(x2, x4)));
-        bounds.right = Math.max(x3, Math.max(x1, Math.max(x2, x4)));
-        bounds.top = Math.min(y2, Math.min(y4, Math.min(y3, y1)));
-        bounds.bottom = Math.max(y2, Math.max(y4, Math.max(y3, y1)));
-        //if there is a stroke, extend the bounds to accomodate
-        if(stroke && stroke.weight)
-		{
-			wt = stroke.weight;
-            bounds.left -= wt;
-            bounds.right += wt;
-            bounds.top -= wt;
-            bounds.bottom += wt;
-		}
-        return bounds;
+            w = this.get("width"),
+			h = this.get("height"),
+			x = type == "path" ? 0 : this._x,
+			y = type == "path" ? 0 : this._y,
+            wt = 0;
+        if(type != "path")
+        {
+            if(stroke && stroke.weight)
+            {
+                wt = stroke.weight;
+            }
+            w = (x + w + wt) - (x - wt); 
+            h = (y + h + wt) - (y - wt);
+            x -= wt;
+            y -= wt;
+        }
+		return this._normalizedMatrix.getContentRect(w, h, x, y);
 	},
 
     /**
-     * Returns the x coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
+     * Places the shape above all other shapes.
      *
-     * @method _getRotatedCornerX
-     * @param {Number} x original x-coordinate of corner
-     * @param {Number} y original y-coordinate of corner
-     * @param {Number} tox transform origin x-coordinate of rotation
-     * @param {Number} toy transform origin y-coordinate of rotation
-     * @param {Number} cosRadians cosine (in radians) of rotation
-     * @param {Number} sinRadians sin (in radians) or rotation
-     * @return Number
-     * @private
+     * @method toFront
      */
-    _getRotatedCornerX: function(x, y, tox, toy, cosRadians, sinRadians)
+    toFront: function()
     {
-        return (tox + (x - tox) * cosRadians + (y - toy) * sinRadians);
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toFront(this);
+        }
     },
 
     /**
-     * Returns the y coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
+     * Places the shape underneath all other shapes.
      *
-     * @method _getRotatedCornerY
-     * @param {Number} x original x-coordinate of corner
-     * @param {Number} y original y-coordinate of corner
-     * @param {Number} tox transform origin x-coordinate of rotation
-     * @param {Number} toy transform origin y-coordinate of rotation
-     * @param {Number} cosRadians cosine (in radians) of rotation
-     * @param {Number} sinRadians sin (in radians) or rotation
-     * @return Number
-     * @private
+     * @method toFront
      */
-    _getRotatedCornerY: function(x, y, tox, toy, cosRadians, sinRadians)
+    toBack: function()
     {
-        return (toy - (x - tox) * sinRadians + (y - toy) * cosRadians);
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toBack(this);
+        }
     },
 
     /**
-     * Destroys the instance.
+     * Parses path data string and call mapped methods.
+     *
+     * @method _parsePathData
+     * @param {String} val The path data
+     * @private
+     */
+    _parsePathData: function(val)
+    {
+        var method,
+            methodSymbol,
+            args,
+            commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
+            i,
+            len, 
+            str,
+            symbolToMethod = this._pathSymbolToMethod;
+        if(commandArray)
+        {
+            this.clear();
+            len = commandArray.length || 0;
+            for(i = 0; i < len; i = i + 1)
+            {
+                str = commandArray[i];
+                methodSymbol = str.substr(0, 1);
+                args = str.substr(1).match(SPLITARGSPATTERN);
+                method = symbolToMethod[methodSymbol];
+                if(method)
+                {
+                    if(args)
+                    {
+                        this[method].apply(this, args);
+                    }
+                    else
+                    {
+                        this[method].apply(this);
+                    }
+                }
+            }
+            this.end();
+        }
+    },
+
+    /**
+     * Destroys the shape instance.
      *
      * @method destroy
      */
     destroy: function()
     {
-        if(this._graphic && this._graphic._contentNode)
+        var graphic = this.get("graphic");
+        if(graphic)
         {
-            this._graphic._contentNode.removeChild(this.node);
+            graphic.removeShape(this);
+        }
+        else
+        {
+            this._destroy();
+        }
+    },
+
+    /**
+     *  Implementation for shape destruction
+     *
+     *  @method destroy
+     *  @protected
+     */
+    _destroy: function()
+    {
+        if(this.node)
+        {
+            Y.Event.purgeElement(this.node, true);
+            if(this.node.parentNode)
+            {
+                this.node.parentNode.removeChild(this.node);
+            }
+            this.node = null;
         }
     }
  }, Y.SVGDrawing.prototype));
@@ -838,10 +939,6 @@ SVGShape.ATTRS = {
             this._normalizedMatrix.init();
 		    this._transforms = this.matrix.getTransformArray(val);
             this._transform = val;
-            if(this.initialized)
-            {
-                this._updateTransform();
-            }
             return val;
 		},
 
@@ -881,7 +978,20 @@ SVGShape.ATTRS = {
 	 * @type Number
 	 */
 	x: {
-		value: 0
+	    getter: function()
+        {
+            return this._x;
+        },
+
+        setter: function(val)
+        {
+            var transform = this.get("transform");
+            this._x = val;
+            if(transform) 
+            {
+                this.set("transform", transform);
+            }
+        }
 	},
 
 	/**
@@ -891,7 +1001,20 @@ SVGShape.ATTRS = {
 	 * @type Number
 	 */
 	y: {
-		value: 0
+	    getter: function()
+        {
+            return this._y;
+        },
+
+        setter: function(val)
+        {
+            var transform = this.get("transform");
+            this._y = val;
+            if(transform) 
+            {
+                this.set("transform", transform);
+            }
+        }
 	},
 
 	/**
@@ -1040,11 +1163,6 @@ SVGShape.ATTRS = {
 		}
 	},
 	
-	//Not used. Remove in future.
-    autoSize: {
-		value: false
-	},
-
 	// Only implemented in SVG
 	// Determines whether the instance will receive mouse events.
 	// 
@@ -1075,32 +1193,6 @@ SVGShape.ATTRS = {
 	},
 
 	/**
-	 * The node used for gradient fills.
-	 *
-	 * @config gradientNode
-	 * @type HTMLElement
-     * @private
-	 */
-	gradientNode: {
-		setter: function(val)
-		{
-			if(Y_LANG.isString(val))
-			{
-				val = this._graphic.getGradientNode("linear", val);
-			}
-			return val;
-		}
-	},
-
-	//Not used. Remove in future.
-    autoDraw: {
-		getter: function()
-		{
-			return this._graphic.autoDraw;
-		}
-	},
-
-	/**
 	 * Dom node for the shape.
 	 *
 	 * @config node
@@ -1115,6 +1207,25 @@ SVGShape.ATTRS = {
 			return this.node;
 		}
 	},
+
+    /**
+     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG 
+     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need 
+     * to ensure that no malicious code is included in that content. 
+     *
+     * @config data
+     * @type String
+     */
+    data: {
+        setter: function(val)
+        {
+            if(this.get("node"))
+            {
+                this._parsePathData(val);
+            }
+            return val;
+        }
+    },
 
 	/**
 	 * Reference to the parent graphic instance

@@ -8,7 +8,7 @@ YUI().use('node', 'yql', function(Y) {
 
         el.set('innerHTML', '<h2>Weather for ' + zip + '</h2>' + r.query.results.channel.item.description);
 
-        res.setContent(el);
+        res.setHTML(el);
     
     });
 });

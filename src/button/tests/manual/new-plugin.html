@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+    <body class='yui3-skin-sam'>
+        <button id="my-button">my button</button>
+
+        <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+        <script type="text/javascript">
+        
+        YUI({
+            filter: 'raw'
+        }).use('button-plugin', function(Y) {
+            var ButtonFactory = Y.Plugin.Button.createNode;
+            
+            var button = ButtonFactory('#my-button', {
+                disabled: false
+            });
+            Y.log(button.get('label'));
+            Y.log(button.get('disabled'));
+            button.on('click', function(){
+                button.set('disabled', true);
+                button.set('label', 'disabled');
+                Y.log(button.get('disabled'));
+            });
+            
+            
+            /*-----*/
+            
+            
+            var button2 = ButtonFactory({label: 'foo'});
+            Y.augment(button2, Y.AttributeCore);
+
+            button2.on('disabledChange', function(e) {
+                
+            });
+
+            button2.appendTo('body');
+            
+            button2.on('click', function(){
+                Y.log('b');
+            });
+
+        });
+        </script>
+    </body>
+</html>

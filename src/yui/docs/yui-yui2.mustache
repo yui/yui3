@@ -6,6 +6,23 @@
     {{>yui-yui2}}
 </div>
 
+<style>
+div.hidden {
+    display: none;
+}
+</style>
+<script>
+YUI().use('node', function(Y) {
+    if (Y.UA.mobile) {
+        Y.one('#note').removeClass('hidden');
+    }
+});
+</script>
+
+<div id="note" class="intro hidden">
+<p>This example does not work on touch based devices since it uses the old YUI 2 based Image Cropper.</p>
+</div>
+
 <h3>Using YUI 2 inside of YUI 3</h3>
 <p>In this example, we are using the new YUI 3 support for loading and sandboxing YUI 2. 
 From the `YUI().use()` statement, you will be able to load any module/utility/widget from

@@ -1,4 +1,4 @@
-YUI.add('widget-htmlparser', function(Y) {
+YUI.add('widget-htmlparser', function (Y, NAME) {
 
 /**
  * Adds HTML Parser support to the base Widget class
@@ -7,7 +7,6 @@ YUI.add('widget-htmlparser', function(Y) {
  * @submodule widget-htmlparser
  * @for Widget
  */
-
 
 var Widget = Y.Widget,
     Node = Y.Node,
@@ -93,7 +92,7 @@ Y.mix(Widget.prototype, {
     },
 
     /**
-     * Utilitity method used to apply the <code>HTML_PARSER</code> configuration for the 
+     * Utility method used to apply the <code>HTML_PARSER</code> configuration for the 
      * instance, to retrieve config data values.
      *
      * @method _applyParser
@@ -103,7 +102,7 @@ Y.mix(Widget.prototype, {
     _applyParser : function(config) {
 
         var widget = this,
-            srcNode = widget.get(SRC_NODE),
+            srcNode = this._getNodeToParse(),
             schema = widget._getHtmlParser(),
             parsedConfig,
             val;
@@ -135,6 +134,21 @@ Y.mix(Widget.prototype, {
     },
 
     /**
+     * Determines whether we have a node reference which we should try and parse.
+     * 
+     * The current implementation does not parse nodes generated from CONTENT_TEMPLATE,
+     * only explicitly set srcNode, or contentBox attributes.
+     * 
+     * @method _getNodeToParse
+     * @return {Node} The node reference to apply HTML_PARSER to.
+     * @private
+     */
+    _getNodeToParse : function() {
+        var srcNode = this.get("srcNode");
+        return (!this._cbFromTemplate) ? srcNode : null;
+    },
+
+    /**
      * Gets the HTML_PARSER definition for this instance, by merging HTML_PARSER
      * definitions across the class hierarchy.
      *
@@ -160,4 +174,4 @@ Y.mix(Widget.prototype, {
 });
 
 
-}, '@VERSION@' ,{requires:['widget-base']});
+}, '@VERSION@', {"requires": ["widget-base"]});

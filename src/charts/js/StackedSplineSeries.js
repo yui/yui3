@@ -3,6 +3,7 @@
  * to indicate their contribution to a cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedSplineSeries
  * @constructor
  * @extends SplineSeries

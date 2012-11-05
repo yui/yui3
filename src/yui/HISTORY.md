@@ -1,6 +1,55 @@
 YUI Core Change History
 =======================
 
+
+3.7.3
+-----
+
+* Adding Y.UA.touchEnabled boolean to use in conditional modules
+* 2532797 - Added IE10 ua fixing for Windows8 WinJS
+* 2532675 - Remove the second air property
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* Improved the performance of `Y.merge()` by 10 to 40% (depending on the
+  browser). [Ryan Grove]
+
+
+3.6.0
+-----
+
+* Changed the default `throwFail` behavior to act like it sounds, see ticket #2531679
+    If `throwFail` is `true` (default) we will not wrap modules or the use callback in
+    a try catch. If it's `false`, they will be wrapped (the old behavior).
+
+* 2528334 YUI configuration to delay use() callback until domready or window load
+* 2529742 Y[UI()].use() callback's 2nd parameter: 2 issues
+* 2531647 div is appended precedent to <head> node
+* 2531679 Module/use callback load errors do not provide useful stacktrace
+* 2532215 Y.Parallel should push arguments if fn is not specified
+* 2532344 Missing requirements sometimes return in wrong order
+* 2532397 Automate Testing for OOP examples
+
+
+
+3.5.1
+-----
+
+* Added a `Y.UA.compareVersions()` function for performing simple version number
+  comparisons using version-safe logic rather than numerical logic.
+
+
 3.5.0
 -----
 
@@ -11,11 +60,22 @@ YUI Core Change History
   libraries and falls back to its own internal shims rather than relying on the
   potentially broken code from the other library.
 
-* `Y.Object.isEmpty()` now casts the given value to an object if it isn't one
-  already, which prevents exceptions when it's given a non-object.
-
 * Added static YUI.applyConfig to apply config settings to YUI.GlobalConfig in
   parts instead of in whole. [Ticket #2530970]
+
+* Added `Y.getLocation()` which returns the `location` object from the
+  window/frame in which a YUI instance operates. [Ticket #2531608]
+
+* Added a `useNativeES5` YUI config option, which is `true` by default. If
+  `false`, certain YUI features that check for native ES5 functionality will
+  always fall back to non-native implementations even in ES5 browsers (useful
+  for testing).
+
+* `Y.Array.indexOf()` now supports a `fromIndex` argument for full ES5
+  compatibility. [Based on a patch from Ryuichi Okumura]
+
+* `Y.Object.isEmpty()` now casts the given value to an object if it isn't one
+  already, which prevents exceptions when it's given a non-object.
 
 * Fixed issue #2531247: Namespace function behaves wrong with multiple
   arguments.
@@ -23,8 +83,13 @@ YUI Core Change History
 * Fixed issue #2531512: 'debug' parameter missing from the YUI Config object
   documentation.
 
-* Added `Y.getLocation()` which returns the `location` object from the
-  window/frame in which a YUI instance operates. [Ticket #2531608]
+* 2530970 Should we provide a YUI.applyConfig(), to avoid clobbering of YUI_config in 'mashup' use cases
+* 2531164 Natively use YUI Gallery Modules form does not submit on [enter]
+* 2531247 namespace function behaves wrong with multiple arguments
+* 2531512 'debug' parameter missing from the YUI Config object documentation; the Config object documentation ...
+* 2531550 Prepare npm package for 3.5.0
+* 2531551 Add support for Silk in Y.UA
+* 2531612 Wrong module name in YUI Global Object documentation
 
 
 3.4.1

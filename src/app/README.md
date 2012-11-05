@@ -24,6 +24,8 @@ Modules
 
 * [`app-base`][app-base]: Provides the `Y.App` class.
 
+* [`app-transitions`][app-transitions]: Provides the `Y.App.Transitions` class.
+
 * [`model`][model]: Provides the `Y.Model` class.
 
 * [`model-list`][model-list]: Provides the `Y.ModelList` class.
@@ -32,9 +34,10 @@ Modules
 
 * [`view`][view]: Provides the `Y.View` class.
 
-[app]:        http://yuilibrary.com/yui/docs/app/
-[app-base]:   http://yuilibrary.com/yui/docs/app/#app-component
-[model]:      http://yuilibrary.com/yui/docs/model/
-[model-list]: http://yuilibrary.com/yui/docs/model-list/
-[router]:     http://yuilibrary.com/yui/docs/router/
-[view]:       http://yuilibrary.com/yui/docs/view/
+[app]:             http://yuilibrary.com/yui/docs/app/
+[app-base]:        http://yuilibrary.com/yui/docs/app/#app-component
+[app-transitions]: http://yuilibrary.com/yui/docs/app/#yapptransitions
+[model]:           http://yuilibrary.com/yui/docs/model/
+[model-list]:      http://yuilibrary.com/yui/docs/model-list/
+[router]:          http://yuilibrary.com/yui/docs/router/
+[view]:            http://yuilibrary.com/yui/docs/view/

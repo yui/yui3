@@ -83,6 +83,10 @@ YUI().use("io-base", function(Y) {
             <td><code>io-queue</code></td>
             <td>This module extends io-base, to provide a basic queue interface for io.</td>
         </tr>
+        <tr>
+            <td><code>io-nodejs</code></td>
+            <td>Conditional module that provides a transport for Node.js.</td>
+        </tr>
     </tbody>
 </table>
 
@@ -757,9 +761,9 @@ As of 3.4.0, IO is instantiatiable.  An IO instance avails its public and privat
 
 ```
 // Create a new instance of IO.
-var io = new IO();
+var io = new Y.IO();
 
-// Send a request using the new IO instance.
+// Send a request using the new Y.IO instance.
 // This is analogous to the static method
 // Y.io()
 io.send(uri, configuration);
@@ -772,9 +776,9 @@ In addition to being instantiable, IO is now an EventTarget, and IO's global eve
 ```
 // This simple example creates a new instance of IO and passes
 // Custom Event configurations that instructs IO to emit
-// Event Facades for all its events, and allow the events to 
+// Event Facades for all its events, and allow the events to
 // bubble to other registered event targets, if any.
-var io = new IO({
+var io = new Y.IO({
     emitFacade: true, // Event handlers will receive an Event Facade.
     bubbles: true, // Events will bubble to registered event targets.
 });
@@ -802,7 +806,7 @@ var configuration = {
     }
 };
 
-// For comparison, this is the regular event handler, when 
+// For comparison, this is the regular event handler, when
 // not emitting Event Facades as described in the previous
 // sections on "The Response Object" and "Events."
 var configuration = {
@@ -815,6 +819,51 @@ var configuration = {
     }
 };
 ```
+
+<h3>Using IO in Node.js</h3>
+
+<p>
+    YUI uses Mikeal Roger's <a href="https://github.com/mikeal/request">Request</a> library under the hood
+    to provide our IO transport layer in Node.js.
+</p>
+
+<p>
+    The `io-base` module works out of the box and mimic's it's browser counterpart as much as it can.
+</p>
+
+<p><strong>Note:</strong> You can not use the `io` module on the server, the `io` module
+contains the `io-form` and the `io-upload-frame` modules which both rely on a working DOM
+to be available. The `io-base` module, however, has no requirement on a DOM.
+</p>
+
+<h4>Simple Example</h4>
+```
+var Y = require('yui/io-base');
+
+Y.io('https://github.com/api/v2/json/user/show/yui', {
+    on: {
+        complete: function(id, e) {
+            var json = JSON.parse(e.responseText);
+            console.log(json);
+        }
+    }
+});
+```
+
+<p>Since the `request` module is bundled with YUI, we expose that inside YUI so you can also use it.</p>
+
+<p>We alias request on the `IO` object as `Y.IO.request`, so now you can use it like this:</p>
+
+```
+fs.createReadStream('file.json').pipe(Y.IO.request.put('http://mysite.com/obj.json'));
+
+Y.IO.request.get('http://google.com/img.png').pipe(Y.IO.request.put('http://mysite.com/img.png'));
+```
+
+<p>In future versions of YUI, we will support file uploads via our File API that will use this under the hood as well.</p>
+
+<p>See the <a href="../yui/nodejs-io.html">YUI on Node.js example for IO</a> for more information about
+using `IO` on Node.js.</p>
 
 <h2>Security Bulletin</h2>
 <p>A security vulnerability exists in the XDR transport <code>io.swf</code> when using the <code>io-xdr</code> sub-module to make cross-domain requests.  This vulnerability allows third-party sites to load <code>io.swf</code> from a remote domain and issue HTTP requests with the SWF's domain credentials.  Please examine the following use cases, and, if applicable to you, please follow the recommended actions to close this exploit.

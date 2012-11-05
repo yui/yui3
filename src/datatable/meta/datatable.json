@@ -1,20 +1,75 @@
 {
     "datatable": {
         "use": [
+            "datatable-core",
+            "datatable-table",
+            "datatable-head",
+            "datatable-body",
             "datatable-base",
-            "datatable-datasource",
+            "datatable-column-widths",
+            "datatable-message",
+            "datatable-mutable",
             "datatable-sort",
-            "datatable-scroll"
+            "datatable-datasource"
         ],
         "submodules": {
+            "datatable-core": {
+                "requires": [
+                    "escape",
+                    "model-list",
+                    "node-event-delegate"
+                ]
+            },
+            "datatable-table": {
+                "requires": [
+                    "datatable-core",
+                    "datatable-head",
+                    "datatable-body",
+                    "view",
+                    "classnamemanager"
+                ]
+            },
+            "datatable-head": {
+                "requires": [
+                    "datatable-core",
+                    "view",
+                    "classnamemanager"
+                ]
+            },
+            "datatable-body": {
+                "requires": [
+                    "datatable-core",
+                    "view",
+                    "classnamemanager"
+                ]
+            },
             "datatable-base": {
                 "requires": [
-                    "recordset-base",
-                    "widget",
-                    "substitute",
-                    "event-mouseenter"
+                    "datatable-core",
+                    "datatable-table",
+                    "datatable-head",
+                    "datatable-body",
+                    "base-build",
+                    "widget"
                 ],
                 "skinnable": true
+            },
+            "datatable-column-widths": {
+                "requires": [
+                    "datatable-base"
+                ]
+            },
+            "datatable-message": {
+                "requires": [
+                    "datatable-base"
+                ],
+                "lang": ["en"],
+                "skinnable": true
+            },
+            "datatable-mutable": {
+                "requires": [
+                    "datatable-base"
+                ]
             },
             "datatable-datasource": {
                 "requires": [
@@ -25,17 +80,18 @@
             },
             "datatable-sort": {
                 "requires": [
-                    "datatable-base",
-                    "plugin",
-                    "recordset-sort"
+                    "datatable-base"
                 ],
-                "lang": ["en"]
+                "lang": ["en"],
+                "skinnable": true
             },
 			"datatable-scroll": {
 				"requires": [
 					"datatable-base",
-					"plugin"
-				]
+					"datatable-column-widths",
+					"dom-screen"
+				],
+                "skinnable": true
 			}
         }
     }

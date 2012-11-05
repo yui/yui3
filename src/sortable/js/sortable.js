@@ -2,7 +2,7 @@
     /**
      * The class allows you to create a Drag & Drop reordered list.
      * @module sortable
-     */     
+     */
     /**
      * The class allows you to create a Drag & Drop reordered list.
      * @class Sortable
@@ -11,7 +11,7 @@
      */
 
 
-    var Sortable = function(o) {
+    var Sortable = function() {
         Sortable.superclass.constructor.apply(this, arguments);
     },
     CURRENT_NODE = 'currentNode',
@@ -32,8 +32,14 @@
         * @description A reference to the DD.Delegate instance.
         */
         delegate: null,
+        /**
+        * @property drop
+        * @type DD.Drop
+        * @description A reference to the DD.Drop instance
+        */
+        drop: null,
         initializer: function() {
-            var id = 'sortable-' + Y.guid(), c,
+            var id = 'sortable-' + Y.guid(),
                 delConfig = {
                     container: this.get(CONT),
                     nodes: this.get(NODES),
@@ -56,11 +62,12 @@
                 cloneNode: true
             });
 
-            c = new Y.DD.Drop({
+            this.drop =  new Y.DD.Drop({
                 node: this.get(CONT),
                 bubbleTarget: del,
                 groups: del.dd.get('groups')
-            }).on('drop:over', Y.bind(this._onDropOver, this));
+            });
+            this.drop.on('drop:enter', Y.bind(this._onDropEnter, this));
             
             del.on({
                 'drag:start': Y.bind(this._onDragStart, this),
@@ -70,31 +77,32 @@
             });
 
             this.delegate = del;
-            Sortable.reg(this);
+            Sortable.reg(this, id);
         },
         _up: null,
         _y: null,
         _onDrag: function(e) {
             if (e.pageY < this._y) {
-                this._up = true; 
-            } else if (e.pageY > this._y) { 
-                this._up = false; 
-            } 
+                this._up = true;
+            } else if (e.pageY > this._y) {
+                this._up = false;
+            }
 
             this._y = e.pageY;
         },
         /**
         * @private
-        * @method _onDropOver
+        * @method _onDropEnter
         * @param Event e The Event Object
-        * @description Handles the DropOver event to append a drop node to an empty target
+        * @description Handles the DropEnter event to append a new node to a target.
         */
-        _onDropOver: function(e) {
-            if (!e.drop.get(NODE).test(this.get(NODES))) {
-                var nodes = e.drop.get(NODE).all(this.get(NODES));
-                if (nodes.size() === 0) {
-                    e.drop.get(NODE).append(e.drag.get(NODE));
-                }
+        _onDropEnter: function(e) {
+            var dropNode = e.drop.get(NODE),
+                dragNode = e.drag.get(NODE);
+
+            if (!dropNode.test(this.get(NODES)) &&
+                !dragNode.get(PARENT_NODE).compareTo(dropNode)) {
+                dropNode.append(dragNode);
             }
         },
         /**
@@ -107,7 +115,7 @@
             if (!e.drop.get(NODE).test(this.get(NODES))) {
                 return;
             }
-            if (e.drag.get(NODE) == e.drop.get(NODE)) {
+            if (e.drag.get(NODE) === e.drop.get(NODE)) {
                 return;
             }
             // is drop a child of drag?
@@ -120,7 +128,7 @@
             if (e.drag.get(NODE).get(PARENT_NODE).contains(e.drop.get(NODE))) {
                 same = true;
             }
-            if (same && moveType == 'move') {
+            if (same && moveType === 'move') {
                 moveType = 'insert';
             }
             switch (moveType) {
@@ -151,7 +159,7 @@
                     if (same) {
                         Y.DD.DDM.swapNode(e.drag, e.drop);
                     } else {
-                        if (this.get('moveType') == 'copy') {
+                        if (this.get('moveType') === 'copy') {
                             //New List
                             oldNode = e.drag.get(NODE);
                             newNode = oldNode.cloneNode(true);
@@ -178,10 +186,14 @@
         * @param Event e The Event Object
         * @description Handles the DragStart event and initializes some settings.
         */
-        _onDragStart: function(e) {
-            this.delegate.get('lastNode').setStyle(ZINDEX, '');
-            this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, this.get(OPACITY));
-            this.delegate.get(CURRENT_NODE).setStyle(ZINDEX, '999');
+        _onDragStart: function() {
+            var del = this.delegate,
+                lastNode = del.get('lastNode');
+            if (lastNode && lastNode.getDOMNode()) {
+                lastNode.setStyle(ZINDEX, '');
+            }
+            del.get(this.get(OPACITY_NODE)).setStyle(OPACITY, this.get(OPACITY));
+            del.get(CURRENT_NODE).setStyle(ZINDEX, '999');
         },
         /**
         * @private
@@ -189,7 +201,7 @@
         * @param Event e The Event Object
         * @description Handles the DragEnd event that cleans up the settings in the drag:start event.
         */
-        _onDragEnd: function(e) {
+        _onDragEnd: function() {
             this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, 1);
             this.delegate.get(CURRENT_NODE).setStyles({
                 top: '',
@@ -223,8 +235,9 @@
             return this;
         },
         destructor: function() {
+            this.drop.destroy();
             this.delegate.destroy();
-            Sortable.unreg(this);
+            Sortable.unreg(this, this.get(ID));
         },
         /**
         * @method join
@@ -295,9 +308,10 @@
             sel.delegate.dd.addToGroup(this.get(ID));
         },
         /**
-        * A custom callback to allow a user to extract some sort of id or any other data from the node to use in the "ordering list" and then that data should be returned from the callback.
+        * A custom callback to allow a user to extract some sort of id or any other data
+        * from the node to use in the "ordering list" and then that data should be returned from the callback.
         * @method getOrdering
-        * @param Function callback 
+        * @param Function callback
         * @return Array
         */
         getOrdering: function(callback) {
@@ -321,7 +335,7 @@
             * @attribute handles
             * @description Drag handles to pass on to the internal DD.Delegate instance.
             * @type Array
-            */    
+            */
             handles: {
                 value: false
             },
@@ -329,7 +343,7 @@
             * @attribute container
             * @description A selector query to get the container to listen for mousedown events on. All "nodes" should be a child of this container.
             * @type String
-            */    
+            */
             container: {
                 value: 'body'
             },
@@ -337,7 +351,7 @@
             * @attribute nodes
             * @description A selector query to get the children of the "container" to make draggable elements from.
             * @type String
-            */        
+            */
             nodes: {
                 value: '.dd-draggable'
             },
@@ -345,7 +359,7 @@
             * @attribute opacity
             * @description The opacity to change the proxy item to when dragging.
             * @type String
-            */        
+            */
             opacity: {
                 value: '.75'
             },
@@ -353,7 +367,7 @@
             * @attribute opacityNode
             * @description The node to set opacity on when dragging (dragNode or currentNode). Default: currentNode.
             * @type String
-            */        
+            */
             opacityNode: {
                 value: 'currentNode'
             },
@@ -361,7 +375,7 @@
             * @attribute id
             * @description The id of this Sortable, used to get a reference to this Sortable list from another list.
             * @type String
-            */        
+            */
             id: {
                 value: null
             },
@@ -369,7 +383,7 @@
             * @attribute moveType
             * @description How should an item move to another list: insert, swap, move, copy. Default: insert
             * @type String
-            */        
+            */
             moveType: {
                 value: 'insert'
             },
@@ -377,7 +391,7 @@
             * @attribute invalid
             * @description A selector string to test if a list item is invalid and not sortable
             * @type String
-            */        
+            */
             invalid: {
                 value: ''
             }
@@ -386,10 +400,10 @@
         * @static
         * @property _sortables
         * @private
-        * @type Array
+        * @type Object
         * @description Hash map of all Sortables on the page.
         */
-        _sortables: [],
+        _sortables: {},
         /**
         * @static
         * @method _test
@@ -398,11 +412,13 @@
         * @description Test a Node or a selector for the container
         */
         _test: function(node, test) {
+            var ret;
             if (test instanceof Y.Node) {
-                return (test === node);
+                ret = (test === node);
             } else {
-                return node.test(test);
+                ret = node.test(test);
             }
+            return ret;
         },
         /**
         * @static
@@ -411,9 +427,14 @@
         * @description Get a Sortable instance back from a node reference or a selector string.
         */
         getSortable: function(node) {
-            var s = null;
+            var s = null,
+                id = null;
             node = Y.one(node);
-            Y.each(Y.Sortable._sortables, function(v) {
+            id = node.get(ID);
+            if(id && Y.Sortable._sortables[id]) {
+                return Y.Sortable._sortables[id];
+            }
+            Y.Object.each(Y.Sortable._sortables, function(v) {
                 if (Y.Sortable._test(node, v.get(CONT))) {
                     s = v;
                 }
@@ -424,21 +445,32 @@
         * @static
         * @method reg
         * @param Sortable s A Sortable instance.
+        * @param String id (optional) The id of the sortable instance.
         * @description Register a Sortable instance with the singleton to allow lookups later.
         */
-        reg: function(s) {
-            Y.Sortable._sortables.push(s);
+        reg: function(s, id) {
+            if (!id) {
+                id = s.get(ID);
+            }
+            Y.Sortable._sortables[id] = s;
         },
         /**
         * @static
         * @method unreg
         * @param Sortable s A Sortable instance.
+        * @param String id (optional) The id of the sortable instance.
         * @description Unregister a Sortable instance with the singleton.
         */
-        unreg: function(s) {
-            Y.each(Y.Sortable._sortables, function(v, k) {
+        unreg: function(s, id) {
+            if (!id) {
+                id = s.get(ID);
+            }
+            if (id && Y.Sortable._sortables[id]) {
+                delete Y.Sortable._sortables[id];
+                return;
+            }
+            Y.Object.each(Y.Sortable._sortables, function(v, k) {
                 if (v === s) {
-                    Y.Sortable._sortables[k] = null;
                     delete Sortable._sortables[k];
                 }
             });
@@ -449,57 +481,47 @@
 
     /**
     * @event copy
-    * @description A Sortable node was moved.
-    * @param {Event.Facade} event An Event Facade object with the following specific property added:
-    * <dl>
-    * <dt>same</dt><dd>Moved to the same list.</dd>
-    * <dt>drag</dt><dd>The Drag Object</dd>
-    * <dt>drop</dt><dd>The Drop Object</dd>
-    * </dl>
+    * @description A Sortable node was moved with a copy.
+    * @param {Event.Facade} event An Event Facade object
+    * @param {Boolean} event.same Moved to the same list.
+    * @param {DD.Drag} event.drag The drag instance.
+    * @param {DD.Drop} event.drop The drop instance.
     * @type {Event.Custom}
-    *
-    *
+    */
+    /**
     * @event move
-    * @description A Sortable node was moved.
+    * @description A Sortable node was moved with a move.
     * @param {Event.Facade} event An Event Facade object with the following specific property added:
-    * <dl>
-    * <dt>same</dt><dd>Moved to the same list.</dd>
-    * <dt>drag</dt><dd>The Drag Object</dd>
-    * <dt>drop</dt><dd>The Drop Object</dd>
-    * </dl>
+    * @param {Boolean} event.same Moved to the same list.
+    * @param {DD.Drag} event.drag The drag instance.
+    * @param {DD.Drop} event.drop The drop instance.
     * @type {Event.Custom}
-    *
-    *
+    */
+    /**
     * @event insert
-    * @description A Sortable node was moved.
+    * @description A Sortable node was moved with an insert.
     * @param {Event.Facade} event An Event Facade object with the following specific property added:
-    * <dl>
-    * <dt>same</dt><dd>Moved to the same list.</dd>
-    * <dt>drag</dt><dd>The Drag Object</dd>
-    * <dt>drop</dt><dd>The Drop Object</dd>
-    * </dl>
+    * @param {Boolean} event.same Moved to the same list.
+    * @param {DD.Drag} event.drag The drag instance.
+    * @param {DD.Drop} event.drop The drop instance.
     * @type {Event.Custom}
-    *
-    *
+    */
+    /**
     * @event swap
-    * @description A Sortable node was moved.
+    * @description A Sortable node was moved with a swap.
     * @param {Event.Facade} event An Event Facade object with the following specific property added:
-    * <dl>
-    * <dt>same</dt><dd>Moved to the same list.</dd>
-    * <dt>drag</dt><dd>The Drag Object</dd>
-    * <dt>drop</dt><dd>The Drop Object</dd>
-    * </dl>
+    * @param {Boolean} event.same Moved to the same list.
+    * @param {DD.Drag} event.drag The drag instance.
+    * @param {DD.Drop} event.drop The drop instance.
     * @type {Event.Custom}
-    *
-    *
+    */
+    /**
     * @event moved
     * @description A Sortable node was moved.
     * @param {Event.Facade} event An Event Facade object with the following specific property added:
-    * <dl>
-    * <dt>same</dt><dd>Moved to the same list.</dd>
-    * <dt>drag</dt><dd>The Drag Object</dd>
-    * <dt>drop</dt><dd>The Drop Object</dd>
-    * </dl>
+    * @param {Boolean} event.same Moved to the same list.
+    * @param {DD.Drag} event.drag The drag instance.
+    * @param {DD.Drop} event.drop The drop instance.
     * @type {Event.Custom}
     */
 

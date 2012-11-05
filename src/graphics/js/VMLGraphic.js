@@ -127,15 +127,49 @@ VMLGraphic.ATTRS = {
     },
 
     /**
-     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
-     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *  Determines the sizing of the Graphic. 
+     *
+     *  <dl>
+     *      <dt>sizeContentToGraphic</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The content contained in the Graphic will be sized to fit with in the Graphic instance's 
+     *      dimensions. When using this setting, the <code>preserveAspectRatio</code> attribute will determine how the contents are sized.</dd>
+     *      <dt>sizeGraphicToContent</dt><dd>(Also accepts a value of true) The Graphic's width and height are determined by the size and positioning of the content.</dd>
+     *      <dt>false</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The contents of the Graphic instance are not affected by this setting.</dd>
+     *  </dl>
+     *
      *
      *  @config autoSize
-     *  @type Boolean
+     *  @type Boolean | String
      *  @default false
      */
     autoSize: {
         value: false
+    },
+
+    /**
+     * Determines how content is sized when <code>autoSize</code> is set to <code>sizeContentToGraphic</code>.
+     *
+     *  <dl>
+     *      <dt>none<dt><dd>Do not force uniform scaling. Scale the graphic content of the given element non-uniformly if necessary 
+     *      such that the element's bounding box exactly matches the viewport rectangle.</dd>
+     *      <dt>xMinYMin</dt><dd>Force uniform scaling position along the top left of the Graphic's node.</dd>
+     *      <dt>xMidYMin</dt><dd>Force uniform scaling horizontally centered and positioned at the top of the Graphic's node.<dd>
+     *      <dt>xMaxYMin</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the top.</dd>
+     *      <dt>xMinYMid</dt>Force uniform scaling positioned horizontally from the left and vertically centered.</dd>
+     *      <dt>xMidYMid (the default)</dt><dd>Force uniform scaling with the content centered.</dd>
+     *      <dt>xMaxYMid</dt><dd>Force uniform scaling positioned horizontally from the right and vertically centered.</dd>
+     *      <dt>xMinYMax</dt><dd>Force uniform scaling positioned horizontally from the left and vertically from the bottom.</dd>
+     *      <dt>xMidYMax</dt><dd>Force uniform scaling horizontally centered and position vertically from the bottom.</dd>
+     *      <dt>xMaxYMax</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the bottom.</dd>
+     *  </dl>
+     * 
+     * @config preserveAspectRatio
+     * @type String
+     * @default xMidYMid
+     */
+    preserveAspectRatio: {
+        value: "xMidYMid"
     },
 
     /**
@@ -146,20 +180,7 @@ VMLGraphic.ATTRS = {
      * @type Boolean
      */
     resizeDown: {
-        getter: function()
-        {
-            return this._resizeDown;
-        },
-
-        setter: function(val)
-        {
-            this._resizeDown = val;
-            if(this._node)
-            {
-                this._redraw();
-            }
-            return val;
-        }
+        resizeDown: false
     },
 
 	/**
@@ -232,7 +253,52 @@ VMLGraphic.ATTRS = {
     }
 };
 
-Y.extend(VMLGraphic, Y.BaseGraphic, {
+Y.extend(VMLGraphic, Y.GraphicBase, {
+    /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
+	set: function(attr, value) 
+	{
+		var host = this,
+            redrawAttrs = {
+                autoDraw: true,
+                autoSize: true,
+                preserveAspectRatio: true,
+                resizeDown: true
+            },
+            key,
+            forceRedraw = false;
+		AttributeLite.prototype.set.apply(host, arguments);	
+        if(host._state.autoDraw === true && Y.Object.size(this._shapes) > 0)
+        {
+            if(Y_LANG.isString && redrawAttrs[attr])
+            {
+                forceRedraw = true;
+            }
+            else if(Y_LANG.isObject(attr))
+            {
+                for(key in redrawAttrs)
+                {
+                    if(redrawAttrs.hasOwnProperty(key) && attr[key])
+                    {
+                        forceRedraw = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if(forceRedraw)
+        {
+            host._redraw();
+        }
+	},
+
     /**
      * Storage for `x` attribute.
      *
@@ -259,21 +325,22 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      */
     getXY: function()
     {
-        var node = Y.one(this._node),
+        var node = this.parentNode,
+            x = this.get("x"),
+            y = this.get("y"),
             xy;
         if(node)
         {
-            xy = node.getXY();
+            xy = Y.one(node).getXY();
+            xy[0] += x;
+            xy[1] += y;
+        }
+        else
+        {
+            xy = Y.DOM._getOffset(this._node);
         }
         return xy;
     },
-
-    /**
-     * @private
-     * @property _resizeDown 
-     * @type Boolean
-     */
-    _resizeDown: false,
 
     /**
      * Initializes the class.
@@ -282,7 +349,8 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      * @private
      */
     initializer: function(config) {
-        var render = this.get("render");
+        var render = this.get("render"),
+            visibility = this.get("visible") ? "visible" : "hidden";
         this._shapes = {};
 		this._contentBounds = {
             left: 0,
@@ -291,6 +359,9 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
             bottom: 0
         };
         this._node = this._createGraphic();
+        this._node.style.left = this.get("x") + "px";
+        this._node.style.top = this.get("y") + "px";
+        this._node.style.visibility = visibility;
         this._node.setAttribute("id", this.get("id"));
         if(render)
         {
@@ -310,7 +381,6 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
             h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
         parentNode = parentNode || DOCUMENT.body;
         parentNode.appendChild(this._node);
-        this.setSize(w, h);
         this.parentNode = parentNode;
         this.set("width", w);
         this.set("height", h);
@@ -325,7 +395,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     destroy: function()
     {
         this.clear();
-        this._node.parentNode.removeChild(this._node);
+        Y.one(this._node).remove(true);
     },
 
     /**
@@ -338,9 +408,14 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     addShape: function(cfg)
     {
         cfg.graphic = this;
+        if(!this.get("visible"))
+        {
+            cfg.visible = false;
+        }
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
         this._appendShape(shape);
+        shape._appendStrokeAndFill();
         return shape;
     },
 
@@ -355,7 +430,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     {
         var node = shape.node,
             parentNode = this._frag || this._node;
-        if(this.get("autoDraw")) 
+        if(this.get("autoDraw") || this.get("autoSize") == "sizeContentToGraphic") 
         {
             parentNode.appendChild(node);
         }
@@ -373,16 +448,17 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      */
     removeShape: function(shape)
     {
-        if(!shape instanceof VMLShape)
+        if(!(shape instanceof VMLShape))
         {
             if(Y_LANG.isString(shape))
             {
                 shape = this._shapes[shape];
             }
         }
-        if(shape && shape instanceof VMLShape)
+        if(shape && (shape instanceof VMLShape))
         {
-            shape.destroy();
+            shape._destroy();
+            this._shapes[shape.get("id")] = null;
             delete this._shapes[shape.get("id")];
         }
         if(this.get("autoDraw"))
@@ -463,7 +539,14 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
                 }
             }
         }
-        this._node.style.visibility = visibility;
+        if(this._node)
+        {
+            this._node.style.visibility = visibility;
+        }
+        if(this._node)
+        {
+            this._node.style.visibility = visibility;
+        }
     },
 
     /**
@@ -478,7 +561,6 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
         h = Math.round(h);
         this._node.style.width = w + 'px';
         this._node.style.height = h + 'px';
-        this._node.coordSize = w + ' ' + h;
     },
 
     /**
@@ -503,9 +585,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      * @private
      */
     _createGraphic: function() {
-        var group = DOCUMENT.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:block;zoom:1;" />');
-		group.style.display = "block";
-        group.style.position = 'absolute';
+        var group = DOCUMENT.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);padding:0px 0px 0px 0px;display:block;position:absolute;top:0px;left:0px;zoom:1;" />');
         return group;
     },
 
@@ -580,7 +660,6 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
         var autoDraw = this.get("autoDraw");
         this.set("autoDraw", false);
         method.apply();
-        this._redraw();
         this.set("autoDraw", autoDraw);
     },
     
@@ -638,18 +717,123 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      */
     _redraw: function()
     {
-        var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
-        if(this.get("autoSize"))
+        var autoSize = this.get("autoSize"),
+            preserveAspectRatio,
+            node = this.parentNode,
+            nodeWidth = parseFloat(node.getComputedStyle("width")),
+            nodeHeight = parseFloat(node.getComputedStyle("height")),
+            xCoordOrigin = 0,
+            yCoordOrigin = 0,
+            box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds,
+            left = box.left,
+            right = box.right,
+            top = box.top,
+            bottom = box.bottom,
+            contentWidth = right - left,
+            contentHeight = bottom - top,
+            aspectRatio,
+            xCoordSize,
+            yCoordSize,
+            scaledWidth,
+            scaledHeight,
+            visible = this.get("visible");
+        this._node.style.visibility = "hidden";
+        if(autoSize)
         {
-            this.setSize(box.right, box.bottom);
+            if(autoSize == "sizeContentToGraphic")
+            {
+                preserveAspectRatio = this.get("preserveAspectRatio");
+                if(preserveAspectRatio == "none" || contentWidth/contentHeight === nodeWidth/nodeHeight)
+                {
+                    xCoordOrigin = left;
+                    yCoordOrigin = top;
+                    xCoordSize = contentWidth;
+                    yCoordSize = contentHeight;
+                }
+                else 
+                {
+                    if(contentWidth * nodeHeight/contentHeight > nodeWidth)
+                    {
+                        aspectRatio = nodeHeight/nodeWidth;
+                        xCoordSize = contentWidth;
+                        yCoordSize = contentWidth * aspectRatio;
+                        scaledHeight = (nodeWidth * (contentHeight/contentWidth)) * (yCoordSize/nodeHeight);
+                        yCoordOrigin = this._calculateCoordOrigin(preserveAspectRatio.slice(5).toLowerCase(), scaledHeight, yCoordSize);
+                        yCoordOrigin = top + yCoordOrigin;
+                        xCoordOrigin = left;
+                    }
+                    else
+                    {
+                        aspectRatio = nodeWidth/nodeHeight;
+                        xCoordSize = contentHeight * aspectRatio;
+                        yCoordSize = contentHeight;
+                        scaledWidth = (nodeHeight * (contentWidth/contentHeight)) * (xCoordSize/nodeWidth);
+                        xCoordOrigin = this._calculateCoordOrigin(preserveAspectRatio.slice(1, 4).toLowerCase(), scaledWidth, xCoordSize);
+                        xCoordOrigin = xCoordOrigin + left;
+                        yCoordOrigin = top;
+                    }
+                }
+                this._node.style.width = nodeWidth + "px";
+                this._node.style.height = nodeHeight + "px";
+                this._node.coordOrigin = xCoordOrigin + ", " + yCoordOrigin;
+            }
+            else 
+            {
+                xCoordSize = contentWidth;
+                yCoordSize = contentHeight;
+                this._node.style.width = contentWidth + "px";
+                this._node.style.height = contentHeight + "px";
+                this._state.width = contentWidth;
+                this._state.height =  contentHeight;
+
+            }
+            this._node.coordSize = xCoordSize + ", " + yCoordSize;
+        }
+        else
+        {
+            this._node.style.width = nodeWidth + "px";
+            this._node.style.height = nodeHeight + "px";
+            this._node.coordSize = nodeWidth + ", " + nodeHeight;
         }
         if(this._frag)
         {
             this._node.appendChild(this._frag);
             this._frag = null;
         }
+        if(visible)
+        {
+            this._node.style.visibility = "visible";
+        }
     },
     
+    /**
+     * Determines the value for either an x or y coordinate to be used for the <code>coordOrigin</code> of the Graphic.
+     *
+     * @method _calculateCoordOrigin
+     * @param {String} position The position for placement. Possible values are min, mid and max.
+     * @param {Number} size The total scaled size of the content.
+     * @param {Number} coordsSize The coordsSize for the Graphic.
+     * @return Number
+     * @private
+     */
+    _calculateCoordOrigin: function(position, size, coordsSize)
+    {
+        var coord;
+        switch(position)
+        {
+            case "min" :
+                coord = 0;
+            break;
+            case "mid" :
+                coord = (size - coordsSize)/2;
+            break;
+            case "max" :
+                coord = (size - coordsSize);
+            break;
+        }
+        return coord;
+    },
+
     /**
      * Recalculates and returns the `contentBounds` for the `Graphic` instance.
      *
@@ -663,28 +847,74 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
             i,
             shape,
             queue = this._shapes,
-            box = {
-                left: 0,
-                top: 0,
-                right: 0,
-                bottom: 0
-            };
+            box = {};
         for(i in queue)
         {
             if(queue.hasOwnProperty(i))
             {
                 shape = queue[i];
                 bounds = shape.getBounds();
-                box.left = Math.min(box.left, bounds.left);
-                box.top = Math.min(box.top, bounds.top);
-                box.right = Math.max(box.right, bounds.right);
-                box.bottom = Math.max(box.bottom, bounds.bottom);
+                box.left = Y_LANG.isNumber(box.left) ? Math.min(box.left, bounds.left) : bounds.left;
+                box.top = Y_LANG.isNumber(box.top) ? Math.min(box.top, bounds.top) : bounds.top;
+                box.right = Y_LANG.isNumber(box.right) ? Math.max(box.right, bounds.right) : bounds.right;
+                box.bottom = Y_LANG.isNumber(box.bottom) ? Math.max(box.bottom, bounds.bottom) : bounds.bottom;
             }
         }
-        box.width = box.right - box.left;
-        box.height = box.bottom - box.top;
+        box.left = Y_LANG.isNumber(box.left) ? box.left : 0;
+        box.top = Y_LANG.isNumber(box.top) ? box.top : 0;
+        box.right = Y_LANG.isNumber(box.right) ? box.right : 0;
+        box.bottom = Y_LANG.isNumber(box.bottom) ? box.bottom : 0;
         this._contentBounds = box;
         return box;
+    },
+
+    /**
+     * Inserts shape on the top of the tree.
+     *
+     * @method _toFront
+     * @param {VMLShape} Shape to add.
+     * @private
+     */
+    _toFront: function(shape)
+    {
+        var contentNode = this._node;
+        if(shape instanceof Y.VMLShape)
+        {
+            shape = shape.get("node");
+        }
+        if(contentNode && shape)
+        {
+            contentNode.appendChild(shape);
+        }
+    },
+
+    /**
+     * Inserts shape as the first child of the content node.
+     *
+     * @method _toBack
+     * @param {VMLShape} Shape to add.
+     * @private
+     */
+    _toBack: function(shape)
+    {
+        var contentNode = this._node,
+            targetNode;
+        if(shape instanceof Y.VMLShape)
+        {
+            shape = shape.get("node");
+        }
+        if(contentNode && shape)
+        {
+            targetNode = contentNode.firstChild;
+            if(targetNode)
+            {
+                contentNode.insertBefore(shape, targetNode);
+            }
+            else
+            {
+                contentNode.appendChild(shape);
+            }
+        }
     }
 });
 Y.VMLGraphic = VMLGraphic;

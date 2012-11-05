@@ -1,1703 +1,683 @@
-YUI.add('datatable-base', function(Y) {
-
-var YLang = Y.Lang,
-    YisValue = YLang.isValue,
-    fromTemplate = Y.Lang.sub,
-    YNode = Y.Node,
-    Ycreate = YNode.create,
-    YgetClassName = Y.ClassNameManager.getClassName,
-
-    DATATABLE = "datatable",
-    COLUMN = "column",
-    
-    FOCUS = "focus",
-    KEYDOWN = "keydown",
-    MOUSEENTER = "mouseenter",
-    MOUSELEAVE = "mouseleave",
-    MOUSEUP = "mouseup",
-    MOUSEDOWN = "mousedown",
-    CLICK = "click",
-    DBLCLICK = "dblclick",
-
-    CLASS_COLUMNS = YgetClassName(DATATABLE, "columns"),
-    CLASS_DATA = YgetClassName(DATATABLE, "data"),
-    CLASS_MSG = YgetClassName(DATATABLE, "msg"),
-    CLASS_LINER = YgetClassName(DATATABLE, "liner"),
-    CLASS_FIRST = YgetClassName(DATATABLE, "first"),
-    CLASS_LAST = YgetClassName(DATATABLE, "last"),
-    CLASS_EVEN = YgetClassName(DATATABLE, "even"),
-    CLASS_ODD = YgetClassName(DATATABLE, "odd"),
-
-    TEMPLATE_TABLE = '<table></table>',
-    TEMPLATE_COL = '<col></col>',
-    TEMPLATE_THEAD = '<thead class="'+CLASS_COLUMNS+'"></thead>',
-    TEMPLATE_TBODY = '<tbody class="'+CLASS_DATA+'"></tbody>',
-    TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}" abbr="{abbr}"><div class="'+CLASS_LINER+'">{value}</div></th>',
-    TEMPLATE_TR = '<tr id="{id}"></tr>',
-    TEMPLATE_TD = '<td headers="{headers}" class="{classnames}"><div class="'+CLASS_LINER+'">{value}</div></td>',
-    TEMPLATE_VALUE = '{value}',
-    TEMPLATE_MSG = '<tbody class="'+CLASS_MSG+'"></tbody>';
-    
-
+YUI.add('datatable-base', function (Y, NAME) {
 
 /**
- * The Column class defines and manages attributes of Columns for DataTable.
- *
- * @class Column
- * @extends Widget
- * @constructor
- */
-function Column(config) {
-    Column.superclass.constructor.apply(this, arguments);
-}
+A Widget for displaying tabular data.  The base implementation of DataTable
+provides the ability to dynamically generate an HTML table from a set of column
+configurations and row data.
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// STATIC PROPERTIES
-//
-/////////////////////////////////////////////////////////////////////////////
-Y.mix(Column, {
-    /**
-     * Class name.
-     *
-     * @property NAME
-     * @type {String}
-     * @static
-     * @final
-     * @value "column"
-     */
-    NAME: "column",
+Two classes are included in the `datatable-base` module: `Y.DataTable` and
+`Y.DataTable.Base`.
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// ATTRIBUTES
-//
-/////////////////////////////////////////////////////////////////////////////
-    ATTRS: {
-        /**
-        Unique internal identifier, used to stamp ID on TH element.
-        
-        @attribute id
-        @type {String}
-        @readOnly
-        **/
-        id: {
-            valueFn: "_defaultId",
-            readOnly: true
-        },
-        
-        /**
-        User-supplied identifier. Defaults to id.
-        @attribute key
-        @type {String}
-        **/
-        key: {
-            valueFn: "_defaultKey"
-        },
+@module datatable
+@submodule datatable-base
+@main datatable
+@since 3.5.0
+**/
 
-        /**
-        Points to underlying data field (for sorting or formatting, for
-        example). Useful when column doesn't hold any data itself, but is just
-        a visual representation of data from another column or record field.
-        Defaults to key.
-
-        @attribute field
-        @type {String}
-        @default (column key)
-        **/
-        field: {
-            valueFn: "_defaultField"
-        },
-
-        /**
-        Display label for column header. Defaults to key.
-
-        @attribute label
-        @type {String}
-        **/
-        label: {
-            valueFn: "_defaultLabel"
-        },
-        
-        /**
-        Array of child column definitions (for nested headers).
-
-        @attribute children
-        @type {String}
-        @default null
-        **/
-        children: {
-            value: null
-        },
-        
-        /**
-        TH abbr attribute.
-
-        @attribute abbr
-        @type {String}
-        @default ""
-        **/
-        abbr: {
-            value: ""
-        },
-
-        //TODO: support custom classnames
-        // TH CSS classnames
-        classnames: {
-            readOnly: true,
-            getter: "_getClassnames"
-        },
-        
-        /**
-        Formating template string or function for cells in this column.
-
-        Function formatters receive a single object (described below) and are
-        expected to output the `innerHTML` of the cell.
-
-        String templates can include markup and {placeholder} tokens to be
-        filled in from the object passed to function formatters.
-
-        @attribute formatter
-        @type {String|Function}
-        @param {Object} data Data relevant to the rendering of this cell
-            @param {String} data.classnames CSS classes to add to the cell
-            @param {Column} data.column This Column instance
-            @param {Object} data.data The raw object data from the Record
-            @param {String} data.field This Column's "field" attribute value
-            @param {String} data.headers TH ids to reference in the cell's
-                            "headers" attribute
-            @param {Record} data.record The Record instance for this row
-            @param {Number} data.rowindex The index for this row
-            @param {Node}   data.tbody The TBODY Node that will house the cell
-            @param {Node}   data.tr The row TR Node that will house the cell
-            @param {Any}    data.value The raw Record data for this cell
-        **/
-        formatter: {},
-
-        /**
-        The default markup to display in cells that have no corresponding record
-        data or content from formatters.
-
-        @attribute emptyCellValue
-        @type {String}
-        @default ''
-        **/
-        emptyCellValue: {
-            value: '',
-            validator: Y.Lang.isString
-        },
-
-        //requires datatable-sort
-        sortable: {
-            value: false
-        },
-        //sortOptions:defaultDir, sortFn, field
-
-        //TODO: support editable columns
-        // Column editor
-        editor: {},
-
-        //TODO: support resizeable columns
-        //TODO: support setting widths
-        // requires datatable-colresize
-        width: {},
-        resizeable: {},
-        minimized: {},
-        minWidth: {},
-        maxAutoWidth: {}
-    }
-});
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// PROTOTYPE
-//
-/////////////////////////////////////////////////////////////////////////////
-Y.extend(Column, Y.Widget, {
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // ATTRIBUTE HELPERS
-    //
-    /////////////////////////////////////////////////////////////////////////////
-    /**
-    * Return ID for instance.
-    *
-    * @method _defaultId
-    * @return {String}
-    * @private
-    */
-    _defaultId: function() {
-        return Y.guid();
-    },
-
-    /**
-    * Return key for instance. Defaults to ID if one was not provided.
-    *
-    * @method _defaultKey
-    * @return {String}
-    * @private
-    */
-    _defaultKey: function(key) {
-        return key || Y.guid();
-    },
-
-    /**
-    * Return field for instance. Defaults to key if one was not provided.
-    *
-    * @method _defaultField
-    * @return {String}
-    * @private
-    */
-    _defaultField: function(field) {
-        return field || this.get("key");
-    },
-
-    /**
-    * Return label for instance. Defaults to key if one was not provided.
-    *
-    * @method _defaultLabel
-    * @return {String}
-    * @private
-    */
-    _defaultLabel: function(label) {
-        return label || this.get("key");
-    },
-
-    /**
-     * Updates the UI if changes are made to abbr.
-     *
-     * @method _afterAbbrChange
-     * @param e {Event} Custom event for the attribute change.
-     * @private
-     */
-    _afterAbbrChange: function (e) {
-        this._uiSetAbbr(e.newVal);
-    },
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // PROPERTIES
-    //
-    /////////////////////////////////////////////////////////////////////////////
-    /**
-     * Reference to Column's current position index within its Columnset's keys
-     * array, if applicable. This property only applies to non-nested and bottom-
-     * level child Columns. Value is set by Columnset code.
-     *
-     * @property keyIndex
-     * @type {Number}
-     */
-    keyIndex: null,
-    
-    /**
-    * Array of TH IDs associated with this column, for TD "headers" attribute.
-    * Value is set by Columnset code
-    *
-    * @property headers
-    * @type {String[]}
-    */
-    headers: null,
-
-    /**
-     * Number of cells the header spans. Value is set by Columnset code.
-     *
-     * @property colSpan
-     * @type {Number}
-     * @default 1
-     */
-    colSpan: 1,
-    
-    /**
-     * Number of rows the header spans. Value is set by Columnset code.
-     *
-     * @property rowSpan
-     * @type {Number}
-     * @default 1
-     */
-    rowSpan: 1,
-
-    /**
-     * Column's parent Column instance, if applicable. Value is set by Columnset
-     * code.
-     *
-     * @property parent
-     * @type {Column}
-     */
-    parent: null,
-
-    /**
-     * The Node reference to the associated TH element.
-     *
-     * @property thNode
-     * @type {Node}
-     */
-     
-    thNode: null,
-
-    /*TODO
-     * The Node reference to the associated liner element.
-     *
-     * @property thLinerNode
-     * @type {Node}
-     
-    thLinerNode: null,*/
-    
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // METHODS
-    //
-    /////////////////////////////////////////////////////////////////////////////
-    /**
-    * Initializer.
-    *
-    * @method initializer
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function(config) {
-    },
-
-    /**
-    * Destructor.
-    *
-    * @method destructor
-    * @private
-    */
-    destructor: function() {
-    },
-
-    /**
-     * Returns classnames for Column.
-     *
-     * @method _getClassnames
-     * @private
-     */
-    _getClassnames: function () {
-        return Y.ClassNameManager.getClassName(COLUMN, this.get("key").replace(/[^\w\-]/g,""));
-    },
-
-    ////////////////////////////////////////////////////////////////////////////
-    //
-    // SYNC
-    //
-    ////////////////////////////////////////////////////////////////////////////
-    /**
-    * Syncs UI to intial state.
-    *
-    * @method syncUI
-    * @private
-    */
-    syncUI: function() {
-        this._uiSetAbbr(this.get("abbr"));
-    },
-
-    /**
-     * Updates abbr.
-     *
-     * @method _uiSetAbbr
-     * @param val {String} New abbr.
-     * @protected
-     */
-    _uiSetAbbr: function(val) {
-        this.thNode.set("abbr", val);
-    }
-});
-
-Y.Column = Column;
+// DataTable API docs included before DataTable.Base to make yuidoc work
 /**
- * The Columnset class defines and manages a collection of Columns.
- *
- * @class Columnset
- * @extends Base
- * @constructor
- */
-function Columnset(config) {
-    Columnset.superclass.constructor.apply(this, arguments);
-}
+A Widget for displaying tabular data.  Before feature modules are `use()`d,
+this class is functionally equivalent to DataTable.Base.  However, feature
+modules can modify this class in non-destructive ways, expanding the API and
+functionality.
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// STATIC PROPERTIES
-//
-/////////////////////////////////////////////////////////////////////////////
-Y.mix(Columnset, {
-    /**
-     * Class name.
-     *
-     * @property NAME
-     * @type String
-     * @static
-     * @final
-     * @value "columnset"
-     */
-    NAME: "columnset",
+This is the primary DataTable class.  Out of the box, it provides the ability
+to dynamically generate an HTML table from a set of column configurations and
+row data.  But feature module inclusion can add table sorting, pagintaion,
+highlighting, selection, and more.
 
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // ATTRIBUTES
-    //
-    /////////////////////////////////////////////////////////////////////////////
-    ATTRS: {
-        /**
-        * @attribute definitions
-        * @description Array of column definitions that will populate this Columnset.
-        * @type Array
-        */
-        definitions: {
-            setter: "_setDefinitions"
+<pre><code>
+// The functionality of this table would require additional modules be use()d,
+// but the feature APIs are aggregated onto Y.DataTable.
+// (Snippet is for illustration. Not all features are available today.)
+var table = new Y.DataTable({
+    columns: [
+        { type: 'checkbox', defaultChecked: true },
+        { key: 'firstName', sortable: true, resizable: true },
+        { key: 'lastName', sortable: true },
+        { key: 'role', formatter: toRoleName }
+    ],
+    data: {
+        source: 'http://myserver.com/service/json',
+        type: 'json',
+        schema: {
+            resultListLocator: 'results.users',
+            fields: [
+                'username',
+                'firstName',
+                'lastName',
+                { key: 'role', type: 'number' }
+            ]
         }
+    },
+    recordType: UserModel,
+    pagedData: {
+        location: 'footer',
+        pageSizes: [20, 50, 'all'],
+        rowsPerPage: 20,
+        pageLinks: 5
+    },
+    editable: true
+});
+</code></pre>
 
-    }
+### Column Configuration
+
+The column configurations are set in the form of an array of objects, where
+each object corresponds to a column.  For columns populated directly from the
+row data, a 'key' property is required to bind the column to that property or
+attribute in the row data.
+
+Not all columns need to relate to row data, nor do all properties or attributes
+of the row data need to have a corresponding column.  However, only those
+columns included in the `columns` configuration attribute will be rendered.
+
+Other column configuration properties are supported by the configured
+`view`, class as well as any features added by plugins or class extensions.
+See the description of DataTable.TableView and its subviews
+DataTable.HeaderView, DataTable.BodyView, and DataTable.FooterView (and other
+DataTable feature classes) to see what column properties they support.
+
+Some examples of column configurations would be:
+
+<pre><code>
+// Basic
+var columns = [{ key: 'firstName' }, { key: 'lastName' }, { key: 'age' }];
+
+// For columns without any additional configuration, strings can be used
+var columns = ['firstName', 'lastName', 'age'];
+
+// Multi-row column headers (see DataTable.HeaderView for details)
+var columns = [
+    {
+        label: 'Name',
+        children: [
+            { key: 'firstName' },
+            { key: 'lastName' }
+        ]
+    },
+    'age' // mixing and matching objects and strings is ok
+];
+
+// Including columns that are not related 1:1 to row data fields/attributes
+// (See DataTable.BodyView for details)
+var columns = [
+    {
+        label: 'Name', // Needed for the column header
+        formatter: function (o) {
+            // Fill the column cells with data from firstName and lastName
+            if (o.data.age > 55) {
+                o.className += ' senior';
+            }
+            return o.data.lastName + ', ' + o.data.firstName;
+        }
+    },
+    'age'
+];
+
+// Columns that include feature configurations (for illustration; not all
+// features are available today).
+var columns = [
+    { type: 'checkbox', defaultChecked: true },
+    { key: 'firstName', sortable: true, resizable: true, min-width: '300px' },
+    { key: 'lastName', sortable: true, resizable: true, min-width: '300px' },
+    { key: 'age', emptyCellValue: '<em>unknown</em>' }
+];
+</code></pre>
+
+### Row Data Configuration
+
+The `data` configuration attribute is responsible for housing the data objects that will be rendered as rows.  You can provide this information in two ways by default:
+
+1. An array of simple objects with key:value pairs
+2. A ModelList of Base-based class instances (presumably Model subclass
+   instances)
+
+If an array of objects is passed, it will be translated into a ModelList filled
+with instances of the class provided to the `recordType` attribute.  This
+attribute can also create a custom Model subclass from an array of field names
+or an object of attribute configurations.  If no `recordType` is provided, one
+will be created for you from available information (see `_initRecordType`).
+Providing either your own ModelList instance for `data`, or at least Model
+class for `recordType`, is the best way to control client-server
+synchronization when modifying data on the client side.
+
+The ModelList instance that manages the table's data is available in the `data`
+property on the DataTable instance.
+
+
+### Rendering
+
+Table rendering is a collaborative process between the DataTable and its
+configured `view`. The DataTable creates an instance of the configured `view`
+(DataTable.TableView by default), and calls its `render()` method.
+DataTable.TableView, for instance, then creates the `<table>` and `<caption>`,
+then delegates the rendering of the specific sections of the table to subviews,
+which can be configured as `headerView`, `bodyView`, and `footerView`.
+DataTable.TableView defaults the `headerView` to DataTable.HeaderView and the
+`bodyView` to DataTable.BodyView, but leaves the `footerView` unassigned.
+Setting any subview to `null` will result in that table section not being
+rendered.
+
+@class DataTable
+@extends DataTable.Base
+@since 3.5.0
+**/
+
+// DataTable API docs included before DataTable.Base to make yuidoc work
+/**
+The baseline implementation of a DataTable.  This class should be used
+primarily as a superclass for a custom DataTable with a specific set of
+features.  Because features can be composed onto `Y.DataTable`, custom
+subclasses of DataTable.Base will remain unmodified when new feature modules
+are loaded.
+
+Example usage might look like this:
+
+<pre><code>
+// Custom subclass with only sorting and mutability added.  If other datatable
+// feature modules are loaded, this class will not be affected.
+var MyTableClass = Y.Base.create('table', Y.DataTable.Base,
+                       [ Y.DataTable.Sortable, Y.DataTable.Mutable ]);
+
+var table = new MyTableClass({
+    columns: ['firstName', 'lastName', 'age'],
+    data: [
+        { firstName: 'Frank', lastName: 'Zappa', age: 71 },
+        { firstName: 'Frank', lastName: 'Lloyd Wright', age: 144 },
+        { firstName: 'Albert', lastName: 'Einstein', age: 132 },
+        ...
+    ]
 });
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// PROTOTYPE
-//
-/////////////////////////////////////////////////////////////////////////////
-Y.extend(Columnset, Y.Base, {
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // ATTRIBUTE HELPERS
-    //
-    /////////////////////////////////////////////////////////////////////////////
-    /**
-    * @method _setDefinitions
-    * @description Clones definitions before setting.
-    * @param definitions {Array} Array of column definitions.
-    * @return Array
-    * @private
-    */
-    _setDefinitions: function(definitions) {
-            return Y.clone(definitions);
-    },
-    
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // PROPERTIES
-    //
-    /////////////////////////////////////////////////////////////////////////////
-    /**
-     * Top-down tree representation of Column hierarchy. Used to create DOM
-     * elements.
-     *
-     * @property tree
-     * @type {Column[]}
-     */
-    tree: null,
+table.render('#over-there');
+
+// DataTable.Base can be instantiated if a featureless table is needed.
+var table = new Y.DataTable.Base({
+    columns: ['firstName', 'lastName', 'age'],
+    data: [
+        { firstName: 'Frank', lastName: 'Zappa', age: 71 },
+        { firstName: 'Frank', lastName: 'Lloyd Wright', age: 144 },
+        { firstName: 'Albert', lastName: 'Einstein', age: 132 },
+        ...
+    ]
+});
+
+table.render('#in-here');
+</code></pre>
+
+DataTable.Base is built from DataTable.Core, and sets the default `view`
+to `Y.DataTable.TableView`.
+
+@class Base
+@extends Widget
+@uses DataTable.Core
+@namespace DataTable
+@since 3.5.0
+**/
+Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
 
     /**
-     * Hash of all Columns by ID.
-     *
-     * @property idHash
-     * @type Object
-     */
-    idHash: null,
+    Pass through to `delegate()` called from the `contentBox`.
 
-    /**
-     * Hash of all Columns by key.
-     *
-     * @property keyHash
-     * @type Object
-     */
-    keyHash: null,
+    @method delegate
+    @param type {String} the event type to delegate
+    @param fn {Function} the callback function to execute.  This function
+                 will be provided the event object for the delegated event.
+    @param spec {String|Function} a selector that must match the target of the
+                 event or a function to test target and its parents for a match
+    @param context {Object} optional argument that specifies what 'this' refers to
+    @param args* {any} 0..n additional arguments to pass on to the callback
+                 function.  These arguments will be added after the event object.
+    @return {EventHandle} the detach handle
+    @since 3.5.0
+    **/
+    delegate: function () {
+        var contentBox = this.get('contentBox');
 
-    /**
-     * Array of only Columns that are meant to be displayed in DOM.
-     *
-     * @property keys
-     * @type {Column[]}
-     */
-    keys: null,
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // METHODS
-    //
-    /////////////////////////////////////////////////////////////////////////////
-    /**
-    * Initializer. Generates all internal representations of the collection of
-    * Columns.
-    *
-    * @method initializer
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function() {
-
-        // DOM tree representation of all Columns
-        var tree = [],
-        // Hash of all Columns by ID
-        idHash = {},
-        // Hash of all Columns by key
-        keyHash = {},
-        // Flat representation of only Columns that are meant to display data
-        keys = [],
-        // Original definitions
-        definitions = this.get("definitions"),
-
-        self = this;
-
-        // Internal recursive function to define Column instances
-        function parseColumns(depth, currentDefinitions, parent) {
-            var i=0,
-                len = currentDefinitions.length,
-                currentDefinition,
-                column,
-                currentChildren;
-
-            // One level down
-            depth++;
-
-            // Create corresponding dom node if not already there for this depth
-            if(!tree[depth]) {
-                tree[depth] = [];
-            }
-
-            // Parse each node at this depth for attributes and any children
-            for(; i<len; ++i) {
-                currentDefinition = currentDefinitions[i];
-
-                currentDefinition = YLang.isString(currentDefinition) ? {key:currentDefinition} : currentDefinition;
-
-                // Instantiate a new Column for each node
-                column = new Y.Column(currentDefinition);
-
-                // Cross-reference Column ID back to the original object literal definition
-                currentDefinition.yuiColumnId = column.get("id");
-
-                // Add the new Column to the hash
-                idHash[column.get("id")] = column;
-                keyHash[column.get("key")] = column;
-
-                // Assign its parent as an attribute, if applicable
-                if(parent) {
-                    column.parent = parent;
-                }
-
-                // The Column has descendants
-                if(YLang.isArray(currentDefinition.children)) {
-                    currentChildren = currentDefinition.children;
-                    column._set("children", currentChildren);
-
-                    self._setColSpans(column, currentDefinition);
-
-                    self._cascadePropertiesToChildren(column, currentChildren);
-
-                    // The children themselves must also be parsed for Column instances
-                    if(!tree[depth+1]) {
-                        tree[depth+1] = [];
-                    }
-                    parseColumns(depth, currentChildren, column);
-                }
-                // This Column does not have any children
-                else {
-                    column.keyIndex = keys.length;
-                    // Default is already 1
-                    //column.colSpan = 1;
-                    keys.push(column);
-                }
-
-                // Add the Column to the top-down dom tree
-                tree[depth].push(column);
-            }
-            depth--;
-        }
-
-        // Parse out Column instances from the array of object literals
-        parseColumns(-1, definitions);
-
-
-        // Save to the Columnset instance
-        this.tree = tree;
-        this.idHash = idHash;
-        this.keyHash = keyHash;
-        this.keys = keys;
-
-        this._setRowSpans();
-        this._setHeaders();
+        return contentBox.delegate.apply(contentBox, arguments);
     },
 
     /**
-    * Destructor.
-    *
-    * @method destructor
-    * @private
-    */
-    destructor: function() {
-    },
+    Destroys the table `View` if it's been created.
 
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // COLUMN HELPERS
-    //
-    /////////////////////////////////////////////////////////////////////////////
-    /**
-    * Cascade certain properties to children if not defined on their own.
-    *
-    * @method _cascadePropertiesToChildren
-    * @private
-    */
-    _cascadePropertiesToChildren: function(column, currentChildren) {
-        //TODO: this is all a giant todo
-        var i = 0,
-            len = currentChildren.length,
-            child;
-
-        // Cascade certain properties to children if not defined on their own
-        for(; i<len; ++i) {
-            child = currentChildren[i];
-            if(column.get("className") && (child.className === undefined)) {
-                child.className = column.get("className");
-            }
-            if(column.get("editor") && (child.editor === undefined)) {
-                child.editor = column.get("editor");
-            }
-            if(column.get("formatter") && (child.formatter === undefined)) {
-                child.formatter = column.get("formatter");
-            }
-            if(column.get("resizeable") && (child.resizeable === undefined)) {
-                child.resizeable = column.get("resizeable");
-            }
-            if(column.get("sortable") && (child.sortable === undefined)) {
-                child.sortable = column.get("sortable");
-            }
-            if(column.get("hidden")) {
-                child.hidden = true;
-            }
-            if(column.get("width") && (child.width === undefined)) {
-                child.width = column.get("width");
-            }
-            if(column.get("minWidth") && (child.minWidth === undefined)) {
-                child.minWidth = column.get("minWidth");
-            }
-            if(column.get("maxAutoWidth") && (child.maxAutoWidth === undefined)) {
-                child.maxAutoWidth = column.get("maxAutoWidth");
-            }
+    @method destructor
+    @protected
+    @since 3.6.0
+    **/
+    destructor: function () {
+        if (this.view) {
+            this.view.destroy();
         }
     },
 
     /**
-    * @method _setColSpans
-    * @description Calculates and sets colSpan attribute on given Column.
-    * @param column {Array} Column instance.
-    * @param definition {Object} Column definition.
-    * @private
-    */
-    _setColSpans: function(column, definition) {
-        // Determine COLSPAN value for this Column
-        var terminalChildNodes = 0;
+    Returns the `<td>` Node from the given row and column index.  Alternately,
+    the `seed` can be a Node.  If so, the nearest ancestor cell is returned.
+    If the `seed` is a cell, it is returned.  If there is no cell at the given
+    coordinates, `null` is returned.
 
-        function countTerminalChildNodes(ancestor) {
-            var descendants = ancestor.children,
-                i = 0,
-                len = descendants.length;
+    Optionally, include an offset array or string to return a cell near the
+    cell identified by the `seed`.  The offset can be an array containing the
+    number of rows to shift followed by the number of columns to shift, or one
+    of "above", "below", "next", or "previous".
 
-            // Drill down each branch and count terminal nodes
-            for(; i<len; ++i) {
-                // Keep drilling down
-                if(YLang.isArray(descendants[i].children)) {
-                    countTerminalChildNodes(descendants[i]);
-                }
-                // Reached branch terminus
-                else {
-                    terminalChildNodes++;
-                }
-            }
-        }
-        countTerminalChildNodes(definition);
-        column.colSpan = terminalChildNodes;
+    <pre><code>// Previous cell in the previous row
+    var cell = table.getCell(e.target, [-1, -1]);
+
+    // Next cell
+    var cell = table.getCell(e.target, 'next');
+    var cell = table.getCell(e.taregt, [0, 1];</pre></code>
+
+    This is actually just a pass through to the `view` instance's method
+    by the same name.
+
+    @method getCell
+    @param {Number[]|Node} seed Array of row and column indexes, or a Node that
+        is either the cell itself or a descendant of one.
+    @param {Number[]|String} [shift] Offset by which to identify the returned
+        cell Node
+    @return {Node}
+    @since 3.5.0
+    **/
+    getCell: function (seed, shift) {
+        return this.view && this.view.getCell &&
+            this.view.getCell.apply(this.view, arguments);
     },
 
     /**
-    * @method _setRowSpans
-    * @description Calculates and sets rowSpan attribute on all Columns.
-    * @private
-    */
-    _setRowSpans: function() {
-        // Determine ROWSPAN value for each Column in the DOM tree
-        function parseDomTreeForRowSpan(tree) {
-            var maxRowDepth = 1,
-                currentRow,
-                currentColumn,
-                m,p;
+    Returns the `<tr>` Node from the given row index, Model, or Model's
+    `clientId`.  If the rows haven't been rendered yet, or if the row can't be
+    found by the input, `null` is returned.
 
-            // Calculate the max depth of descendants for this row
-            function countMaxRowDepth(row, tmpRowDepth) {
-                tmpRowDepth = tmpRowDepth || 1;
+    This is actually just a pass through to the `view` instance's method
+    by the same name.
 
-                var i = 0,
-                    len = row.length,
-                    col;
+    @method getRow
+    @param {Number|String|Model} id Row index, Model instance, or clientId
+    @return {Node}
+    @since 3.5.0
+    **/
+    getRow: function (id) {
+        return this.view && this.view.getRow &&
+            this.view.getRow.apply(this.view, arguments);
+    },
 
-                for(; i<len; ++i) {
-                    col = row[i];
-                    // Column has children, so keep counting
-                    if(YLang.isArray(col.children)) {
-                        tmpRowDepth++;
-                        countMaxRowDepth(col.children, tmpRowDepth);
-                        tmpRowDepth--;
-                    }
-                    // Column has children, so keep counting
-                    else if(col.get && YLang.isArray(col.get("children"))) {
-                        tmpRowDepth++;
-                        countMaxRowDepth(col.get("children"), tmpRowDepth);
-                        tmpRowDepth--;
-                    }
-                    // No children, is it the max depth?
-                    else {
-                        if(tmpRowDepth > maxRowDepth) {
-                            maxRowDepth = tmpRowDepth;
+    /**
+    Updates the `_displayColumns` property.
+
+    @method _afterDisplayColumnsChange
+    @param {EventFacade} e The `columnsChange` event
+    @protected
+    @since 3.6.0
+    **/
+    // FIXME: This is a kludge for back compat with features that reference
+    // _displayColumns.  They should be updated to TableView plugins.
+    _afterDisplayColumnsChange: function (e) {
+        this._extractDisplayColumns(e.newVal || []);
+    },
+
+    /**
+    Attaches subscriptions to relay core change events to the view.
+
+    @method bindUI
+    @protected
+    @since 3.6.0
+    **/
+    bindUI: function () {
+        this._eventHandles.relayCoreChanges = this.after(
+            ['columnsChange',
+             'dataChange',
+             'summaryChange',
+             'captionChange',
+             'widthChange'],
+            Y.bind('_relayCoreAttrChange', this));
+    },
+
+    /**
+    The default behavior of the `renderView` event.  Calls `render()` on the
+    `View` instance on the event.
+
+    @method _defRenderViewFn
+    @param {EventFacade} e The `renderView` event
+    @protected
+    **/
+    _defRenderViewFn: function (e) {
+        e.view.render();
+    },
+
+    /**
+    Processes the full column array, distilling the columns down to those that
+    correspond to cell data columns.
+
+    @method _extractDisplayColumns
+    @param {Object[]} columns The full set of table columns
+    @protected
+    **/
+    // FIXME: this is a kludge for back compat, duplicating logic in the
+    // tableView
+    _extractDisplayColumns: function (columns) {
+        var displayColumns = [];
+
+        function process(cols) {
+            var i, len, col;
+
+            for (i = 0, len = cols.length; i < len; ++i) {
+                col = cols[i];
+
+                if (Y.Lang.isArray(col.children)) {
+                    process(col.children);
+                } else {
+                    displayColumns.push(col);
+                }
+            }
+        }
+
+        process(columns);
+
+        /**
+        Array of the columns that correspond to those with value cells in the
+        data rows. Excludes colspan header columns (configured with `children`).
+
+        @property _displayColumns
+        @type {Object[]}
+        @since 3.5.0
+        **/
+        this._displayColumns = displayColumns;
+    },
+
+    /**
+    Sets up the instance's events.
+
+    @method initializer
+    @param {Object} [config] Configuration object passed at construction
+    @protected
+    @since 3.6.0
+    **/
+    initializer: function () {
+        this.publish('renderView', {
+            defaultFn: Y.bind('_defRenderViewFn', this)
+        });
+
+        // Have to use get('columns'), not config.columns because the setter
+        // needs to transform string columns to objects.
+        this._extractDisplayColumns(this.get('columns') || []);
+
+        // FIXME: kludge for back compat of features that reference
+        // _displayColumns on the instance.  They need to be updated to
+        // TableView plugins, most likely.
+        this.after('columnsChange', Y.bind('_afterDisplayColumnsChange', this));
+    },
+
+    /**
+    Relays attribute changes to the instance's `view`.
+
+    @method _relayCoreAttrChange
+    @param {EventFacade} e The change event
+    @protected
+    @since 3.6.0
+    **/
+    _relayCoreAttrChange: function (e) {
+        var attr = (e.attrName === 'data') ? 'modelList' : e.attrName;
+
+        this.view.set(attr, e.newVal);
+    },
+
+    /**
+    Instantiates the configured `view` class that will be responsible for
+    setting up the View class.
+
+    @method @renderUI
+    @protected
+    @since 3.6.0
+    **/
+    renderUI: function () {
+        var self = this,
+            View = this.get('view');
+
+        if (View) {
+            this.view = new View(
+                Y.merge(
+                    this.getAttrs(),
+                    {
+                        host     : this,
+                        container: this.get('contentBox'),
+                        modelList: this.data
+                    },
+                    this.get('viewConfig')));
+
+            // For back compat, share the view instances and primary nodes
+            // on this instance.
+            // TODO: Remove this?
+            if (!this._eventHandles.legacyFeatureProps) {
+                this._eventHandles.legacyFeatureProps = this.view.after({
+                    renderHeader: function (e) {
+                        self.head = e.view;
+                        self._theadNode = e.view.theadNode;
+                        // TODO: clean up the repetition.
+                        // This is here so that subscribers to renderHeader etc
+                        // have access to this._tableNode from the DT instance
+                        self._tableNode = e.view.get('container');
+                    },
+                    renderFooter: function (e) {
+                        self.foot = e.view;
+                        self._tfootNode = e.view.tfootNode;
+                        self._tableNode = e.view.get('container');
+                    },
+                    renderBody: function (e) {
+                        self.body = e.view;
+                        self._tbodyNode = e.view.tbodyNode;
+                        self._tableNode = e.view.get('container');
+                    },
+                    // FIXME: guarantee that the properties are available, even
+                    // if the configured (or omitted) views don't create them
+                    renderTable: function (e) {
+                        var contentBox = this.get('container');
+
+                        self._tableNode = this.tableNode ||
+                            contentBox.one('.' + this.getClassName('table') +
+                                           ', table');
+
+                        // FIXME: _captionNode isn't available until after
+                        // renderTable unless in the renderX subs I look for
+                        // it under the container's parentNode (to account for
+                        // scroll breaking out the caption table).
+                        self._captionNode = this.captionNode ||
+                            contentBox.one('caption');
+
+                        if (!self._theadNode) {
+                            self._theadNode = contentBox.one(
+                                '.' + this.getClassName('columns') + ', thead');
+                        }
+
+                        if (!self._tbodyNode) {
+                            self._tbodyNode = contentBox.one(
+                                '.' + this.getClassName('data') + ', tbody');
+                        }
+
+                        if (!self._tfootNode) {
+                            self._tfootNode = contentBox.one(
+                                '.' + this.getClassName('footer') + ', tfoot');
                         }
                     }
-                }
+                });
             }
 
-            // Count max row depth for each row
-            for(m=0; m<tree.length; m++) {
-                currentRow = tree[m];
-                countMaxRowDepth(currentRow);
-
-                // Assign the right ROWSPAN values to each Column in the row
-                for(p=0; p<currentRow.length; p++) {
-                    currentColumn = currentRow[p];
-                    if(!YLang.isArray(currentColumn.get("children"))) {
-                        currentColumn.rowSpan = maxRowDepth;
-                    }
-                    // Default is already 1
-                    // else currentColumn.rowSpan =1;
-                }
-
-                // Reset counter for next row
-                maxRowDepth = 1;
-            }
+            // To *somewhat* preserve table.on('renderHeader', fn) in the
+            // form of table.on('table:renderHeader', fn), because I couldn't
+            // figure out another option.
+            this.view.addTarget(this);
         }
-        parseDomTreeForRowSpan(this.tree);
     },
 
     /**
-    * @method _setHeaders
-    * @description Calculates and sets headers attribute on all Columns.
-    * @private
-    */
-    _setHeaders: function() {
-        var headers, column,
-            allKeys = this.keys,
-            i=0, len = allKeys.length;
+    Fires the `renderView` event, delegating UI updates to the configured View.
 
-        function recurseAncestorsForHeaders(headers, column) {
-            headers.push(column.get("id"));
-            if(column.parent) {
-                recurseAncestorsForHeaders(headers, column.parent);
-            }
-        }
-        for(; i<len; ++i) {
-            headers = [];
-            column = allKeys[i];
-            recurseAncestorsForHeaders(headers, column);
-            column.headers = headers.reverse().join(" ");
+    @method syncUI
+    @since 3.5.0
+    **/
+    syncUI: function () {
+        if (this.view) {
+            this.fire('renderView', { view: this.view });
         }
     },
 
-    //TODO
-    getColumn: function() {
+    /**
+    Verifies the input value is a function with a `render` method on its
+    prototype.  `null` is also accepted to remove the default View.
+
+    @method _validateView
+    @protected
+    @since 3.5.0
+    **/
+    _validateView: function (val) {
+        // TODO support View instances?
+        return val === null || (Y.Lang.isFunction(val) && val.prototype.render);
     }
-});
-
-Y.Columnset = Columnset;
-/**
- * The DataTable widget provides a progressively enhanced DHTML control for
- * displaying tabular data across A-grade browsers.
- *
- * @module datatable
- * @main datatable
- */
-
-/**
- * Provides the base DataTable implementation, which can be extended to add
- * additional functionality, such as sorting or scrolling.
- *
- * @module datatable
- * @submodule datatable-base
- */
-
-/**
- * Base class for the DataTable widget.
- * @class DataTable.Base
- * @extends Widget
- * @constructor
- */
-function DTBase(config) {
-    DTBase.superclass.constructor.apply(this, arguments);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// STATIC PROPERTIES
-//
-/////////////////////////////////////////////////////////////////////////////
-Y.mix(DTBase, {
-
-    /**
-     * Class name.
-     *
-     * @property NAME
-     * @type String
-     * @static
-     * @final
-     * @value "dataTable"
-     */
-    NAME:  "dataTable",
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// ATTRIBUTES
-//
-/////////////////////////////////////////////////////////////////////////////
+}, {
     ATTRS: {
         /**
-        * @attribute columnset
-        * @description Pointer to Columnset instance.
-        * @type Array | Y.Columnset
-        */
-        columnset: {
-            setter: "_setColumnset"
+        The View class used to render the `<table>` into the Widget's
+        `contentBox`.  This View can handle the entire table rendering itself
+        or delegate to other Views.
+
+        It is not strictly necessary that the class function assigned here be
+        a View subclass.  It must however have a `render()` method.
+
+        When the DataTable is rendered, an instance of this View will be
+        created and its `render()` method called.  The View instance will be
+        assigned to the DataTable instance's `view` property.
+
+        @attribute view
+        @type {Function}
+        @default Y.DataTable.TableView
+        @since 3.6.0
+        **/
+        view: {
+            value: Y.DataTable.TableView,
+            validator: '_validateView'
         },
 
         /**
-        * @attribute recordset
-        * @description Pointer to Recordset instance.
-        * @type Array | Y.Recordset
-        */
-        recordset: {
-            valueFn: '_initRecordset',
-            setter: "_setRecordset"
-        },
+        Configuration object passed to the class constructor in `view`
+        during render.
 
-        /*TODO
-        * @attribute state
-        * @description Internal state.
-        * @readonly
-        * @type
-        */
-        /*state: {
-            value: new Y.State(),
-            readOnly: true
-
-        },*/
+        @attribute viewConfig
+        @type {Object}
+        @default undefined (initially unset)
+        @protected
+        @since 3.6.0
+        **/
+        viewConfig: {}
 
         /**
-        * @attribute summary
-        * @description Summary.
-        * @type String
-        */
-        summary: {
+        If the View class assigned to the DataTable's `view` attribute supports
+        it, this class will be used for rendering the contents of the
+        `<thead>`&mdash;the column headers for the table.
+        
+        Similar to `view`, the instance of this View will be assigned to the
+        DataTable instance's `head` property.
+
+        It is not strictly necessary that the class function assigned here be
+        a View subclass.  It must however have a `render()` method.
+
+        @attribute headerView
+        @type {Function|Object}
+        @default Y.DataTable.HeaderView
+        @since 3.5.0
+        **/
+        /*
+        headerView: {
+            value: Y.DataTable.HeaderView,
+            validator: '_validateView'
         },
+        */
 
         /**
-        * @attribute caption
-        * @description Caption
-        * @type String
-        */
-        caption: {
-        },
+        Configuration object passed to the class constructor in `headerView`
+        during render.
+
+        @attribute headerConfig
+        @type {Object}
+        @default undefined (initially unset)
+        @protected
+        @since 3.6.0
+        **/
+        //headConfig: {},
 
         /**
-        * @attribute thValueTemplate
-        * @description Tokenized markup template for TH value.
-        * @type String
-        * @default '{value}'
-        */
-        thValueTemplate: {
-            value: TEMPLATE_VALUE
+        If the View class assigned to the DataTable's `view` attribute supports
+        it, this class will be used for rendering the contents of the `<tfoot>`.
+        
+        Similar to `view`, the instance of this View will be assigned to the
+        DataTable instance's `foot` property.
+
+        It is not strictly necessary that the class function assigned here be
+        a View subclass.  It must however have a `render()` method.
+
+        @attribute footerView
+        @type {Function|Object}
+        @since 3.5.0
+        **/
+        /*
+        footerView: {
+            validator: '_validateView'
         },
+        */
 
         /**
-        * @attribute tdValueTemplate
-        * @description Tokenized markup template for TD value.
-        * @type String
-        * @default '{value}'
-        */
-        tdValueTemplate: {
-            value: TEMPLATE_VALUE
-        },
+        Configuration object passed to the class constructor in `footerView`
+        during render.
+
+        @attribute footerConfig
+        @type {Object}
+        @default undefined (initially unset)
+        @protected
+        @since 3.6.0
+        **/
+        //footerConfig: {},
 
         /**
-        * @attribute trTemplate
-        * @description Tokenized markup template for TR node creation.
-        * @type String
-        * @default '<tr id="{id}"></tr>'
-        */
-        trTemplate: {
-            value: TEMPLATE_TR
-        }
-    },
+        If the View class assigned to the DataTable's `view` attribute supports
+        it, this class will be used for rendering the contents of the `<tbody>`
+        including all data rows.
+        
+        Similar to `view`, the instance of this View will be assigned to the
+        DataTable instance's `body` property.
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// TODO: HTML_PARSER
-//
-/////////////////////////////////////////////////////////////////////////////
-    HTML_PARSER: {
-        /*caption: function (srcNode) {
-            
-        }*/
+        It is not strictly necessary that the class function assigned here be
+        a View subclass.  It must however have a `render()` method.
+
+        @attribute bodyView
+        @type {Function}
+        @default Y.DataTable.BodyView
+        @since 3.5.0
+        **/
+        /*
+        bodyView: {
+            value: Y.DataTable.BodyView,
+            validator: '_validateView'
+        },
+        */
+
+        /**
+        Configuration object passed to the class constructor in `bodyView`
+        during render.
+
+        @attribute bodyConfig
+        @type {Object}
+        @default undefined (initially unset)
+        @protected
+        @since 3.6.0
+        **/
+        //bodyConfig: {}
     }
 });
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// PROTOTYPE
-//
-/////////////////////////////////////////////////////////////////////////////
-Y.extend(DTBase, Y.Widget, {
-    /**
-    * @property thTemplate
-    * @description Tokenized markup template for TH node creation.
-    * @type String
-    * @default '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}" abbr="{abbr}"><div class="'+CLASS_LINER+'">{value}</div></th>'
-    */
-    thTemplate: TEMPLATE_TH,
+// The DataTable API docs are above DataTable.Base docs.
+Y.DataTable = Y.mix(
+    Y.Base.create('datatable', Y.DataTable.Base, []), // Create the class
+    Y.DataTable); // Migrate static and namespaced classes
 
-    /**
-    * @property tdTemplate
-    * @description Tokenized markup template for TD node creation.
-    * @type String
-    * @default '<td headers="{headers}" class="{classnames}"><div class="yui3-datatable-liner">{value}</div></td>'
-    */
-    tdTemplate: TEMPLATE_TD,
-    
-    /**
-    * @property _theadNode
-    * @description Pointer to THEAD node.
-    * @type {Node}
-    * @private
-    */
-    _theadNode: null,
-    
-    /**
-    * @property _tbodyNode
-    * @description Pointer to TBODY node.
-    * @type {Node}
-    * @private
-    */
-    _tbodyNode: null,
-    
-    /**
-    * @property _msgNode
-    * @description Pointer to message display node.
-    * @type {Node}
-    * @private
-    */
-    _msgNode: null,
 
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // ATTRIBUTE HELPERS
-    //
-    /////////////////////////////////////////////////////////////////////////////
-    /**
-    * @method _setColumnset
-    * @description Converts Array to Y.Columnset.
-    * @param columns {Array | Y.Columnset}
-    * @return {Columnset}
-    * @private
-    */
-    _setColumnset: function(columns) {
-        return YLang.isArray(columns) ? new Y.Columnset({definitions:columns}) : columns;
-    },
-
-    /**
-     * Updates the UI if Columnset is changed.
-     *
-     * @method _afterColumnsetChange
-     * @param e {Event} Custom event for the attribute change.
-     * @protected
-     */
-    _afterColumnsetChange: function (e) {
-        this._uiSetColumnset(e.newVal);
-    },
-
-    /**
-    * @method _setRecordset
-    * @description Converts Array to Y.Recordset.
-    * @param records {Array | Recordset}
-    * @return {Recordset}
-    * @private
-    */
-    _setRecordset: function(rs) {
-        if(YLang.isArray(rs)) {
-            rs = new Y.Recordset({records:rs});
-        }
-
-        rs.addTarget(this);
-        return rs;
-    },
-    
-    /**
-    * Updates the UI if Recordset is changed.
-    *
-    * @method _afterRecordsetChange
-    * @param e {Event} Custom event for the attribute change.
-    * @protected
-    */
-    _afterRecordsetChange: function (e) {
-        this._uiSetRecordset(e.newVal);
-    },
-
-    /**
-    * Updates the UI if Recordset records are changed.
-    *
-    * @method _afterRecordsChange
-    * @param e {Event} Custom event for the attribute change.
-    * @protected
-    */
-    _afterRecordsChange: function (e) {
-        this._uiSetRecordset(this.get('recordset'));
-    },
-
-    /**
-     * Updates the UI if summary is changed.
-     *
-     * @method _afterSummaryChange
-     * @param e {Event} Custom event for the attribute change.
-     * @protected
-     */
-    _afterSummaryChange: function (e) {
-        this._uiSetSummary(e.newVal);
-    },
-
-    /**
-     * Updates the UI if caption is changed.
-     *
-     * @method _afterCaptionChange
-     * @param e {Event} Custom event for the attribute change.
-     * @protected
-     */
-    _afterCaptionChange: function (e) {
-        this._uiSetCaption(e.newVal);
-    },
-
-    ////////////////////////////////////////////////////////////////////////////
-    //
-    // METHODS
-    //
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-    * Destructor.
-    *
-    * @method destructor
-    * @private
-    */
-    destructor: function() {
-         this.get("recordset").removeTarget(this);
-    },
-    
-    ////////////////////////////////////////////////////////////////////////////
-    //
-    // RENDER
-    //
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-    * Renders UI.
-    *
-    * @method renderUI
-    * @private
-    */
-    renderUI: function() {
-        // TABLE
-        this._addTableNode(this.get("contentBox"));
-
-        // COLGROUP
-        this._addColgroupNode(this._tableNode);
-
-        // THEAD
-        this._addTheadNode(this._tableNode);
-
-        // Primary TBODY
-        this._addTbodyNode(this._tableNode);
-
-        // Message TBODY
-        this._addMessageNode(this._tableNode);
-
-        // CAPTION
-        this._addCaptionNode(this._tableNode);
-   },
-
-    /**
-    * Creates and attaches TABLE element to given container.
-    *
-    * @method _addTableNode
-    * @param containerNode {Node} Parent node.
-    * @protected
-    * @return {Node}
-    */
-    _addTableNode: function(containerNode) {
-        if (!this._tableNode) {
-            this._tableNode = containerNode.appendChild(Ycreate(TEMPLATE_TABLE));
-        }
-        return this._tableNode;
-    },
-
-    /**
-    * Creates and attaches COLGROUP element to given TABLE.
-    *
-    * @method _addColgroupNode
-    * @param tableNode {Node} Parent node.
-    * @protected
-    * @return {Node}
-    */
-    _addColgroupNode: function(tableNode) {
-        // Add COLs to DOCUMENT FRAGMENT
-        var len = this.get("columnset").keys.length,
-            i = 0,
-            allCols = ["<colgroup>"];
-
-        for(; i<len; ++i) {
-            allCols.push(TEMPLATE_COL);
-        }
-
-        allCols.push("</colgroup>");
-
-        // Create COLGROUP
-        this._colgroupNode = tableNode.insertBefore(Ycreate(allCols.join("")), tableNode.get("firstChild"));
-
-        return this._colgroupNode;
-    },
-
-    /**
-    * Creates and attaches THEAD element to given container.
-    *
-    * @method _addTheadNode
-    * @param tableNode {Node} Parent node.
-    * @protected
-    * @return {Node}
-    */
-    _addTheadNode: function(tableNode) {
-        if(tableNode) {
-            this._theadNode = tableNode.insertBefore(Ycreate(TEMPLATE_THEAD), this._colgroupNode.next());
-            return this._theadNode;
-        }
-    },
-
-    /**
-    * Creates and attaches TBODY element to given container.
-    *
-    * @method _addTbodyNode
-    * @param tableNode {Node} Parent node.
-    * @protected
-    * @return {Node}
-    */
-    _addTbodyNode: function(tableNode) {
-        this._tbodyNode = tableNode.appendChild(Ycreate(TEMPLATE_TBODY));
-        return this._tbodyNode;
-    },
-
-    /**
-    * Creates and attaches message display element to given container.
-    *
-    * @method _addMessageNode
-    * @param tableNode {Node} Parent node.
-    * @protected
-    * @return {Node}
-    */
-    _addMessageNode: function(tableNode) {
-        this._msgNode = tableNode.insertBefore(Ycreate(TEMPLATE_MSG), this._tbodyNode);
-        return this._msgNode;
-    },
-
-    /**
-    * Creates and attaches CAPTION element to given container.
-    *
-    * @method _addCaptionNode
-    * @param tableNode {Node} Parent node.
-    * @protected
-    * @return {Node}
-    */
-    _addCaptionNode: function(tableNode) {
-        this._captionNode = Y.Node.create('<caption></caption>');
-    },
-
-    ////////////////////////////////////////////////////////////////////////////
-    //
-    // BIND
-    //
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-    * Binds events.
-    *
-    * @method bindUI
-    * @private
-    */
-    bindUI: function() {
-        this.after({
-            columnsetChange: this._afterColumnsetChange,
-            summaryChange  : this._afterSummaryChange,
-            captionChange  : this._afterCaptionChange,
-            recordsetChange: this._afterRecordsChange,
-            "recordset:tableChange": this._afterRecordsChange
-        });
-    },
-    
-    delegate: function(type) {
-        //TODO: is this necessary?
-        if(type==="dblclick") {
-            this.get("boundingBox").delegate.apply(this.get("boundingBox"), arguments);
-        }
-        else {
-            this.get("contentBox").delegate.apply(this.get("contentBox"), arguments);
-        }
-    },
-    
-
-    ////////////////////////////////////////////////////////////////////////////
-    //
-    // SYNC
-    //
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-    * Syncs UI to intial state.
-    *
-    * @method syncUI
-    * @private
-    */
-    syncUI: function() {
-        // THEAD ROWS
-        this._uiSetColumnset(this.get("columnset"));
-        // DATA ROWS
-        this._uiSetRecordset(this.get("recordset"));
-        // SUMMARY
-        this._uiSetSummary(this.get("summary"));
-        // CAPTION
-        this._uiSetCaption(this.get("caption"));
-    },
-
-    /**
-     * Updates summary.
-     *
-     * @method _uiSetSummary
-     * @param val {String} New summary.
-     * @protected
-     */
-    _uiSetSummary: function(val) {
-        val = YisValue(val) ? val : "";
-        this._tableNode.set("summary", val);
-    },
-
-    /**
-     * Updates caption.
-     *
-     * @method _uiSetCaption
-     * @param val {String} New caption.
-     * @protected
-     */
-    _uiSetCaption: function(val) {
-        var caption = this._captionNode,
-            inDoc   = caption.inDoc(),
-            method  = val ? (!inDoc && 'prepend') : (inDoc && 'removeChild');
-
-        caption.setContent(val || '');
-
-        if (method) {
-            // prepend of remove necessary
-            this._tableNode[method](caption);
-        }
-    },
-
-
-    ////////////////////////////////////////////////////////////////////////////
-    //
-    // THEAD/COLUMNSET FUNCTIONALITY
-    //
-    ////////////////////////////////////////////////////////////////////////////
-    /**
-     * Updates THEAD.
-     *
-     * @method _uiSetColumnset
-     * @param cs {Columnset} New Columnset.
-     * @protected
-     */
-    _uiSetColumnset: function(cs) {
-        var tree = cs.tree,
-            thead = this._theadNode,
-            i = 0,
-            len = tree.length,
-            parent = thead.get("parentNode"),
-            nextSibling = thead.next();
-            
-        // Move THEAD off DOM
-        thead.remove();
-        
-        thead.get("children").remove(true);
-
-        // Iterate tree of columns to add THEAD rows
-        for(; i<len; ++i) {
-            this._addTheadTrNode({
-                thead:   thead,
-                columns: tree[i],
-                id     : '' // to avoid {id} leftovers from the trTemplate
-            }, (i === 0), (i === len - 1));
-        }
-
-        // Column helpers needs _theadNode to exist
-        //this._createColumnHelpers();
-
-        
-        // Re-attach THEAD to DOM
-        parent.insert(thead, nextSibling);
-
-     },
-     
-    /**
-    * Creates and attaches header row element.
-    *
-    * @method _addTheadTrNode
-    * @param o {Object} {thead, columns}.
-    * @param isFirst {Boolean} Is first row.
-    * @param isFirst {Boolean} Is last row.
-    * @protected
-    */
-     _addTheadTrNode: function(o, isFirst, isLast) {
-        o.tr = this._createTheadTrNode(o, isFirst, isLast);
-        this._attachTheadTrNode(o);
-     },
-     
-
-    /**
-    * Creates header row element.
-    *
-    * @method _createTheadTrNode
-    * @param o {Object} {thead, columns}.
-    * @param isFirst {Boolean} Is first row.
-    * @param isLast {Boolean} Is last row.
-    * @protected
-    * @return {Node}
-    */
-    _createTheadTrNode: function(o, isFirst, isLast) {
-        //TODO: custom classnames
-        var tr = Ycreate(fromTemplate(this.get("trTemplate"), o)),
-            i = 0,
-            columns = o.columns,
-            len = columns.length,
-            column;
-
-         // Set FIRST/LAST class
-        if(isFirst) {
-            tr.addClass(CLASS_FIRST);
-        }
-        if(isLast) {
-            tr.addClass(CLASS_LAST);
-        }
-
-        for(; i<len; ++i) {
-            column = columns[i];
-            this._addTheadThNode({value:column.get("label"), column: column, tr:tr});
-        }
-
-        return tr;
-    },
-
-    /**
-    * Attaches header row element.
-    *
-    * @method _attachTheadTrNode
-    * @param o {Object} {thead, columns, tr}.
-    * @protected
-    */
-    _attachTheadTrNode: function(o) {
-        o.thead.appendChild(o.tr);
-    },
-
-    /**
-    * Creates and attaches header cell element.
-    *
-    * @method _addTheadThNode
-    * @param o {Object} {value, column, tr}.
-    * @protected
-    */
-    _addTheadThNode: function(o) {
-        o.th = this._createTheadThNode(o);
-        this._attachTheadThNode(o);
-        //TODO: assign all node pointers: thNode, thLinerNode, thLabelNode
-        o.column.thNode = o.th;
-    },
-
-    /**
-    * Creates header cell element.
-    *
-    * @method _createTheadThNode
-    * @param o {Object} {value, column, tr}.
-    * @protected
-    * @return {Node}
-    */
-    _createTheadThNode: function(o) {
-        var column = o.column;
-        
-        // Populate template object
-        o.id = column.get("id");//TODO: validate 1 column ID per document
-        o.colspan = column.colSpan;
-        o.rowspan = column.rowSpan;
-        o.abbr = column.get("abbr");
-        o.classnames = column.get("classnames");
-        o.value = fromTemplate(this.get("thValueTemplate"), o);
-
-        /*TODO
-        // Clear minWidth on hidden Columns
-        if(column.get("hidden")) {
-            //this._clearMinWidth(column);
-        }
-        */
-        
-        return Ycreate(fromTemplate(this.thTemplate, o));
-    },
-
-    /**
-    * Attaches header cell element.
-    *
-    * @method _attachTheadThNode
-    * @param o {Object} {value, column, tr}.
-    * @protected
-    */
-    _attachTheadThNode: function(o) {
-        o.tr.appendChild(o.th);
-    },
-
-    ////////////////////////////////////////////////////////////////////////////
-    //
-    // TBODY/RECORDSET FUNCTIONALITY
-    //
-    ////////////////////////////////////////////////////////////////////////////
-    /**
-     * Updates TBODY.
-     *
-     * @method _uiSetRecordset
-     * @param rs {Recordset} New Recordset.
-     * @protected
-     */
-    _uiSetRecordset: function(rs) {
-        var self = this,
-            oldTbody = this._tbodyNode,
-            parent = oldTbody.get("parentNode"),
-            nextSibling = oldTbody.next(),
-            columns = this.get('columnset').keys,
-            cellValueTemplate = this.get('tdValueTemplate'),
-            o = {},
-            newTbody, i, len, column, formatter;
-
-        // Replace TBODY with a new one
-        //TODO: split _addTbodyNode into create/attach
-        oldTbody.remove();
-        oldTbody = null;
-        newTbody = this._addTbodyNode(this._tableNode);
-        newTbody.remove();
-        this._tbodyNode = newTbody;
-        o.tbody = newTbody;
-
-        o.rowTemplate = this.get('trTemplate');
-        o.columns = [];
-
-        // Build up column data to avoid passing through Attribute APIs inside
-        // render loops for rows and cells
-        for (i = columns.length - 1; i >= 0; --i) {
-            column = columns[i];
-            o.columns[i] = {
-                column        : column,
-                fields        : column.get('field'),
-                classnames    : column.get('classnames'),
-                emptyCellValue: column.get('emptyCellValue')
-            }
-
-            formatter = column.get('formatter');
-
-            if (YLang.isFunction(formatter)) {
-                // function formatters need to run before checking if the value
-                // needs defaulting from column.emptyCellValue
-                formatter = Y.bind(this._functionFormatter, this, formatter);
-            } else {
-                if (!YLang.isString(formatter)) {
-                    formatter = cellValueTemplate;
-                }
-
-                // string formatters need the value defaulted before processing
-                formatter = Y.bind(this._templateFormatter, this, formatter);
-            }
-
-            o.columns[i].formatter = formatter;
-        }
-
-
-        // Iterate Recordset to use existing TR when possible or add new TR
-        // TODO i = this.get("state.offsetIndex")
-        // TODO len =this.get("state.pageLength")
-        for (i = 0, len = rs.size(); i < len; ++i) {
-            o.record = rs.item(i);
-            o.data   = o.record.get("data");
-            o.rowindex = i;
-            this._addTbodyTrNode(o); //TODO: sometimes rowindex != recordindex
-        }
-        
-        // TBODY to DOM
-        parent.insert(this._tbodyNode, nextSibling);
-    },
-
-    _functionFormatter: function (formatter, o) {
-        var value = formatter.call(this, o);
-
-        return (value !== undefined) ? value : o.emptyCellValue;
-    },
-
-    _templateFormatter: function (template, o) {
-        if (o.value === undefined) {
-            o.value = o.emptyCellValue;
-        }
-
-        return fromTemplate(template, o);
-    },
-
-    /**
-    * Creates and attaches data row element.
-    *
-    * @method _addTbodyTrNode
-    * @param o {Object} {tbody, record}
-    * @protected
-    */
-    _addTbodyTrNode: function(o) {
-        var row = o.tbody.one("#" + o.record.get("id"));
-
-        o.tr = row || this._createTbodyTrNode(o);
-
-        this._attachTbodyTrNode(o);
-    },
-
-    /**
-    * Creates data row element.
-    *
-    * @method _createTbodyTrNode
-    * @param o {Object} {tbody, record}
-    * @protected
-    * @return {Node}
-    */
-    _createTbodyTrNode: function(o) {
-        var columns = o.columns,
-            i, len, columnInfo;
-
-        o.tr = Ycreate(fromTemplate(o.rowTemplate, { id: o.record.get('id') }));
-        
-        for (i = 0, len = columns.length; i < len; ++i) {
-            columnInfo      = columns[i];
-            o.column        = columnInfo.column;
-            o.field         = columnInfo.fields;
-            o.classnames    = columnInfo.classnames;
-            o.formatter     = columnInfo.formatter;
-            o.emptyCellValue= columnInfo.emptyCellValue;
-
-            this._addTbodyTdNode(o);
-        }
-        
-        return o.tr;
-    },
-
-    /**
-    * Attaches data row element.
-    *
-    * @method _attachTbodyTrNode
-    * @param o {Object} {tbody, record, tr}.
-    * @protected
-    */
-    _attachTbodyTrNode: function(o) {
-        var tbody = o.tbody,
-            tr = o.tr,
-            index = o.rowindex,
-            nextSibling = tbody.get("children").item(index) || null,
-            isOdd = (index % 2);
-            
-        if(isOdd) {
-            tr.replaceClass(CLASS_EVEN, CLASS_ODD);
-        } else {
-            tr.replaceClass(CLASS_ODD, CLASS_EVEN);
-        }
-        
-        tbody.insertBefore(tr, nextSibling);
-    },
-
-    /**
-    * Creates and attaches data cell element.
-    *
-    * @method _addTbodyTdNode
-    * @param o {Object} {record, column, tr}.
-    * @protected
-    */
-    _addTbodyTdNode: function(o) {
-        o.td = this._createTbodyTdNode(o);
-        this._attachTbodyTdNode(o);
-        delete o.td;
-    },
-    
-    /**
-    Creates a TD Node from the tdTemplate property using the input object as
-    template {placeholder} values.  The created Node is also assigned to the
-    `td` property on the input object.
-
-    If the input object already has a `td` property, it is returned an no new
-    Node is created.
-
-    @method createCell
-    @param {Object} data Template values
-    @return {Node}
-    **/
-    createCell: function (data) {
-        return data && (data.td ||
-            (data.td = Ycreate(fromTemplate(this.tdTemplate, data))));
-    },
-
-    /**
-    * Creates data cell element.
-    *
-    * @method _createTbodyTdNode
-    * @param o {Object} {record, column, tr}.
-    * @protected
-    * @return {Node}
-    */
-    _createTbodyTdNode: function(o) {
-        o.headers = o.column.headers;
-        o.value   = this.formatDataCell(o);
-
-        return o.td || this.createCell(o);
-    },
-    
-    /**
-    * Attaches data cell element.
-    *
-    * @method _attachTbodyTdNode
-    * @param o {Object} {record, column, tr, headers, classnames, value}.
-    * @protected
-    */
-    _attachTbodyTdNode: function(o) {
-        o.tr.appendChild(o.td);
-    },
-
-    /**
-     * Returns markup to insert into data cell element.
-     *
-     * @method formatDataCell
-     * @param @param o {Object} {record, column, tr, headers, classnames}.
-     */
-    formatDataCell: function (o) {
-        o.value = o.data[o.field];
-
-        return o.formatter.call(this, o);
-    },
-
-    _initRecordset: function () {
-        return new Y.Recordset({ records: [] });
-    }
-});
-
-Y.namespace("DataTable").Base = DTBase;
-
-
-}, '@VERSION@' ,{requires:['recordset-base','widget','substitute','event-mouseenter']});
+}, '@VERSION@', {"requires": ["datatable-core", "datatable-table", "datatable-head", "datatable-body", "base-build", "widget"], "skinnable": true});

@@ -19,7 +19,16 @@
                     "io-base", 
                     "node-base"
                 ]
-            }, 
+            },
+            "io-nodejs": {
+                "condition": {
+                    "trigger": "io-base",
+                    "ua": "nodejs"
+                },
+                "requires": [
+                    "io-base"
+                ]
+            },
             "io-queue": {
                 "requires": [
                     "io-base", 

@@ -1,0 +1,7 @@
+{
+    "uploader-queue": {
+        "requires": [
+          "base"
+        ] 
+    }
+}

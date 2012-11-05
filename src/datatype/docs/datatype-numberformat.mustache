@@ -15,11 +15,11 @@
     {{>datatype-numberformat-source}}
 </div>
 
-<p>To output a number as a string, simply call the <code>format()</code> function of the DataType.Number class:</p>
+<p>To output a number as a string, simply call the <code>format()</code> function of the Y.Number class:</p>
 
 ```
 YUI().use("datatype-number", function(Y) {
-    alert(Y.DataType.Number.format(123123123));
+    alert(Y.Number.format(123123123));
 
     // This alerts the string "123123123"
 });
@@ -29,7 +29,7 @@ The `format()` function also takes a variety of configuration parameters that ma
 
 ```
 YUI().use("datatype-number", function(Y) {
-    alert(Y.DataType.Number.format(123123123.176,{
+    alert(Y.Number.format(123123123.176,{
         prefix: "&#165;",
         thousandsSeparator: ".",
         decimalSeparator: ",",

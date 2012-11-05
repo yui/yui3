@@ -1,0 +1,123 @@
+<div class="intro">
+    <p>
+        YUI uses Mikeal Roger's <a href="https://github.com/mikeal/request">Request</a> library under the hood
+        to provide our IO transport layer in Node.js.
+    </p>
+</div>
+
+<h2>Out of the box</h2>
+<p>
+    Our `io-base` module works out of the box and mimic's it's browser counterpart as much as it can.
+</p>
+
+<p><strong>Note:</strong> You can not use the `io` module on the server, the `io` module
+contains the `io-form` and the `io-upload-frame` modules which both rely on a working DOM
+to be available. The `io-base` module, however, has no requirement on a DOM.
+</p>
+
+<h2>Simple Example</h2>
+
+```
+var Y = require('yui/io-base');
+
+Y.io('https://github.com/api/v2/json/user/show/yui', {
+    on: {
+        complete: function(id, e) {
+            var json = JSON.parse(e.responseText);
+            console.log(json);
+        }
+    }
+});
+```
+
+<p>That will output this:</p>
+
+```
+{
+    user: {
+        gravatar_id: 'af34a0de54b2b7a34cc6d7196ef12fc0',
+        company: null,
+        name: 'YUI Library',
+        created_at: '2008-12-03T17:46:11-08:00',
+        location: 'Sunnyvale, CA',
+        public_repo_count: 15,
+        public_gist_count: 0,
+        blog: 'http://yuilibrary.com/',
+        following_count: 0,
+        id: 38181,
+        type: 'Organization',
+        permission: null,
+        followers_count: 1301,
+        login: 'yui',
+        email: null
+    }
+}
+```
+
+<h2>Using Request's options</h2>
+
+<p>One of the additions our Node.js transport comes with is the ability to add
+<a href="https://github.com/mikeal/request">Request</a> options to the request as we are making
+it. This example is how you can `PUT` data with `Y.io`.</p>
+<p>More configuration information can be found in the <a href="https://github.com/mikeal/request#readme">request readme</a>
+over on Github.</p>
+
+```
+var Y = require('yui/io-base'),
+    rand = Math.floor(Math.random()*100000000).toString();
+
+Y.io('http://mikeal.iriscouch.com/testjs/' + rand, {
+    method: 'PUT',
+    request: {
+        multipart: [
+            {
+                'content-type': 'application/json', 
+                body: JSON.stringify({
+                    foo: 'bar',
+                    _attachments: {
+                        'message.txt': {
+                            follows: true,
+                            length: 18,
+                            'content_type': 'text/plain'
+                        }
+                    }
+                })
+            }, 
+            {
+                body: 'I am an attachment'
+            }
+        ] 
+    },
+    on: {
+        success: function(id, e) {
+            Y.log('document saved as: http://mikeal.iriscouch.com/testjs/'+ rand);
+            var json = JSON.parse(e.responseText);
+            Y.log(json);
+        }
+    }
+});
+```
+
+```
+info: document saved as: http://mikeal.iriscouch.com/testjs/9595449
+info: 
+{
+    ok: true,
+    id: '9595449',
+    rev: '1-b40bbeb0ba183941cc666251c556910a'
+}
+```
+
+<h2>Using Request</h2>
+
+<p>Since the `request` module is bundled with YUI, we expose that inside YUI so you can also use it.</p>
+
+<p>We alias request on the `IO` object as `Y.IO.request`, so now you can use it like this:</p>
+
+```
+fs.createReadStream('file.json').pipe(Y.IO.request.put('http://mysite.com/obj.json'));
+
+Y.IO.request.get('http://google.com/img.png').pipe(Y.IO.request.put('http://mysite.com/img.png'));
+```
+
+<p>In future versions of YUI, we will support file uploads via our File API that will use this under the hood as well.</p>

@@ -1,0 +1,10 @@
+{
+    "console-filters": {
+        "requires": [
+            "plugin", 
+            "console"
+        ], 
+        "skinnable": true
+    }
+}
+

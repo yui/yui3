@@ -1,0 +1,10 @@
+{
+    "name": "widget-position-constrain",
+    "builds": {
+        "widget-position-constrain": {
+            "jsfiles": [
+                "Widget-PositionConstrain.js"
+            ]
+        }
+    }
+}

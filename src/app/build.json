@@ -1,0 +1,65 @@
+{
+    "name": "app",
+    "builds": {
+        "view": {
+            "jsfiles": [
+                "view.js"
+            ]
+        },
+        "view-node-map": {
+            "jsfiles": [
+                "view-extensions/view-node-map.js"
+            ]
+        },
+        "router": {
+            "jsfiles": [
+                "router.js"
+            ]
+        },
+        "model": {
+            "jsfiles": [
+                "model.js"
+            ]
+        },
+        "model-sync-rest": {
+            "jsfiles": [
+                "model-extensions/model-sync-rest.js"
+            ]
+        },
+        "model-list": {
+            "jsfiles": [
+                "model-list.js"
+            ]
+        },
+        "lazy-model-list": {
+            "jsfiles": [
+                "lazy-model-list.js"
+            ]
+        },
+        "app-transitions": {
+            "jsfiles": [
+                "app-extensions/app-transitions.js"
+            ]
+        },
+        "app-transitions-native": {
+            "jsfiles": [
+                "app-extensions/app-transitions-native.js"
+            ]
+        },
+        "app-transitions-css": {
+            "cssfiles": [
+                "app-transitions.css"
+            ]
+        },
+        "app-content": {
+            "jsfiles": [
+                "app-extensions/app-content.js"
+            ]
+        },
+        "app-base": {
+            "jsfiles": [
+                "app-base.js"
+            ]
+        }
+    }
+}

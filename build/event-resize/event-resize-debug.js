@@ -1,4 +1,4 @@
-YUI.add('event-resize', function(Y) {
+YUI.add('event-resize', function (Y, NAME) {
 
 /**
  * Adds a window resize event that has its behavior normalized to fire at the
@@ -50,4 +50,4 @@ Y.Event.define('windowresize', {
 });
 
 
-}, '@VERSION@' ,{requires:['event-synthetic']});
+}, '@VERSION@', {"requires": ["node-base", "event-synthetic"]});

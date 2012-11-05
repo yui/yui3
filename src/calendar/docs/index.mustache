@@ -21,12 +21,14 @@ Calendar is highly modular and easy to extend so that it can be modified or used
 Here's an easy way to create an instance of a Calendar with just a few lines of code.
 </p>
 
+<h4>HTML</h4>
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+```
+<h4>JavaScript</h4>
 ```
 YUI().use('calendar', function (Y) {
-
-  // Add the yui3-skin-sam class to the body so the default
-  // Calendar widget skin will be applied.
-  Y.one('body').addClass('yui3-skin-sam');
 
   // Create a new instance of Calendar, setting its width 
   // and height, allowing the dates from the previous
@@ -50,7 +52,7 @@ For a more complete discussion of how to use, configure, and customize Calendar,
 <h3>Configuring Calendar</h3>
 
 <p>
-Except for `contentBox`, all configuration attributes are optional. This list only contain the most interesting attributes. For a complete list of all attributes, please refer to the <a href="/yui/3/api/module_calendar.html">API docs</a>.
+Except for `contentBox`, all configuration attributes are optional. This list only contains the most interesting attributes. For a complete list of all attributes, please refer to the <a href="{{apiDocs}}/Calendar.html">API docs</a>.
 </p>
 
 <h4>CalendarBase Config Attributes</h4>
@@ -111,7 +113,7 @@ These attributes are provided by `CalendarBase`, which is the core foundation fo
       </td>
     </tr>
     <tr>
-      <td>`headerFormat`</td>
+      <td>`headerRenderer`</td>
       <td>`"%B %Y"`</td>
       <td>
         The formatting for the header of the Calendar. This attribute can be either a String with the formatting tokens used by the `strftime` specification, or a callback function that will receive a `Date` object as an argument and output a `String`.
@@ -143,14 +145,14 @@ These attributes are provided by `Calendar`, which is the complete implementatio
       </td>
     </tr>
     <tr>
-      <td>`startDate`</td>
+      <td>`minimumDate`</td>
       <td>`null`</td>
       <td>
         Specification for the earliest month which the Calendar will display. In a multi-pane calendar, this is the earliest month that will appear in the first pane.
       </td>
     </tr>
     <tr>
-      <td>`endDate`</td>
+      <td>`maximumDate`</td>
       <td>`null`</td>
       <td>
         Specification for the latest month which the Calendar will display. In a multi-pane calendar, this is the latest month that will appear in the last pane.

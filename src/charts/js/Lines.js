@@ -2,6 +2,7 @@
  * Utility class used for drawing lines.
  *
  * @module charts
+ * @submodule charts-base
  * @class Lines
  * @constructor
  */
@@ -61,10 +62,10 @@ Lines.prototype = {
             return;
         }
         var isNumber = Y_Lang.isNumber,
-            xcoords = this.get("xcoords").concat(),
-            ycoords = this.get("ycoords").concat(),
+            xcoords,
+            ycoords,
             direction = this.get("direction"),
-            len = direction === "vertical" ? ycoords.length : xcoords.length,
+            len,
             lastPointValid,
             pointValid,
             noPointsRendered = true,
@@ -84,6 +85,17 @@ Lines.prototype = {
             discontinuousDashLength = styles.discontinuousDashLength,
             discontinuousGapSpace = styles.discontinuousGapSpace,
             path = this._getGraphic();
+        if(this._stacked)
+        {
+            xcoords = this.get("stackedXCoords");
+            ycoords = this.get("stackedYCoords");
+        }
+        else
+        {
+            xcoords = this.get("xcoords");
+            ycoords = this.get("ycoords");
+        }
+        len = direction === "vertical" ? ycoords.length : xcoords.length;
         path.set("stroke", {
             weight: styles.weight, 
             color: lc, 
@@ -112,7 +124,7 @@ Lines.prototype = {
                 }
                 else
                 {
-                    this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
+                    this.drawDashedLine(path, lastValidX, lastValidY, nextX, nextY, 
                                                 dashLength, 
                                                 gapSpace);
                 }
@@ -125,7 +137,7 @@ Lines.prototype = {
             {
                 if(discontinuousType != "solid")
                 {
-                    this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
+                    this.drawDashedLine(path, lastValidX, lastValidY, nextX, nextY, 
                                                 discontinuousDashLength, 
                                                 discontinuousGapSpace);
                 }
@@ -199,7 +211,7 @@ Lines.prototype = {
      * @param {Number} gapSize	the size of gaps between dashes, in pixels
      * @private
      */
-    drawDashedLine: function(xStart, yStart, xEnd, yEnd, dashSize, gapSize)
+    drawDashedLine: function(path, xStart, yStart, xEnd, yEnd, dashSize, gapSize)
     {
         dashSize = dashSize || 10;
         gapSize = gapSize || 10;
@@ -211,8 +223,7 @@ Lines.prototype = {
             radians = Math.atan2(yDelta, xDelta),
             xCurrent = xStart,
             yCurrent = yStart,
-            i,
-            path = this._getGraphic();
+            i;
         xDelta = Math.cos(radians) * segmentLength;
         yDelta = Math.sin(radians) * segmentLength;
         

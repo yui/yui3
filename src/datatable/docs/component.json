@@ -1,12 +1,18 @@
 {
     "name": "datatable",
     "displayName": "DataTable",
-    "description": "The DataTable widget displays screen-reader accessible tabular data on a web page. Plugins add functionality such as sorting and scrolling.",
+    "description": "The DataTable widget displays screen-reader accessible tabular data on a web page. Class extensions add functionality such as sorting and scrolling.",
 
-    "author": ["jenny","lsmith"],
+    "author": ["lsmith"],
 
     "use": ["datatable"],
     "tags": ["beta", "widget", "datatable"],
+
+    "pages": {
+        "migration": {
+            "displayName": "3.5.0+ Migration Guide"
+        }
+    },
 
     "examples": [
 
@@ -45,9 +51,7 @@
             "displayName": "Formatting Row Data for Display",
             "modules": ["datatable"],
             "description": "Custom format data for display.",
-	        "useModules": ["datatype-date", "datatable-base"],
-
-            "hideTableOfContents": true
+	        "useModules": ["datatype-date", "datatable-base"]
         },
 
         {
@@ -78,6 +82,36 @@
 	        "useModules": ["datatable-scroll"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-recordtype",
+            "displayName": "Sortable generated columns",
+            "modules": ["datatable", "datatype"],
+            "description": "Using DataTable's recordType attribute to create calculated, sortable columns.",
+            "useModules": ["datatable-base"],
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-masterdetail",
+            "displayName": "Master and detail tables",
+            "modules": ["datatable"],
+            "description": "Populating one DataTable from details in the data of another.",
+            "useModules": ["datatable"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-chkboxselect",
+            "displayName": "Checkbox select column",
+            "modules": ["datatable"],
+            "description": "Checkbox column that retains checked state when sorting.",
+            "useModules": ["datatable"],
+
+            "hideTableOfContents": true
         }
+
     ]
 }

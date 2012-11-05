@@ -1,6 +1,36 @@
 Widget Child Change History
 ===========================
 
+3.7.3
+-----
+
+  * No changes.
+
+3.7.2
+-----
+
+  * No changes.
+
+3.7.1
+-----
+
+  * No changes.
+
+3.7.0
+-----
+
+  * No changes.
+
+3.6.0
+-----
+
+  * No changes.
+
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -34,8 +64,8 @@ Widget Child Change History
 3.1.0
 -----
 
-  * Add new ROOT_TYPE property to constrain the behavior of the "root" attribute 
+  * Add new ROOT_TYPE property to constrain the behavior of the "root" attribute
     to instances of a specified type
-    
-  * Fixes to remove method so that it always returns a reference to the 
+
+  * Fixes to remove method so that it always returns a reference to the
     child removed

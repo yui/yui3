@@ -8,9 +8,18 @@
                     "cssgrids"
             	],
                 "lang" : [
-                    "en", 
+                    "de",
+                    "en",
+                    "es",
+                    "es-AR",
+                    "fr",
+                    "it",
                     "ja",
-                    "ru"
+                    "nb-NO",
+                    "nl",
+                    "pt-BR",
+                    "ru",
+                    "zh-HANT-TW"
                 ],
                 "skinnable": true
 			}

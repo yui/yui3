@@ -1,11 +1,6 @@
-YUI.add('transition-timer', function(Y) {
+YUI.add('transition-timer', function (Y, NAME) {
 
-/*
-* The Transition Utility provides an API for creating advanced transitions.
-* @module transition
-*/
-
-/*
+/**
 * Provides the base Transition class, for animating numeric properties.
 *
 * @module transition
@@ -336,4 +331,4 @@ Transition.behaviors.top = Transition.behaviors.bottom = Transition.behaviors.ri
 Y.Transition = Transition;
 
 
-}, '@VERSION@' ,{requires:['transition']});
+}, '@VERSION@', {"requires": ["transition"]});

@@ -11,27 +11,49 @@ YUI().use("datatable-sort", function (Y) {
         {key:"Phone", label:"Not Sortable Column B"},
         {key:"Contact", label:"Click to Sort Column C", sortable:true}
     ],
+    /*
     dblclickCols = [
         {key:"Company", label:"Dblclick to Sort A", sortable:true},
         {key:"Phone", label:"Not Sortable Column B"},
         {key:"Contact", label:"Dblclick to Sort C", sortable:true}
     ],
+    */
     data = [
         {Company:"Company Bee", Phone:"415-555-1234", Contact:"Sally Spencer"},
         {Company:"Acme Company", Phone:"650-555-4444", Contact:"John Jones"},
         {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
     ],
+    /*
     presortedData = [
         {Company:"Acme Company", Phone:"415-555-1234", Contact:"John Jones"},
         {Company:"Company Bee", Phone:"650-555-4444", Contact:"Sally Spencer"},
         {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
     ],
+    */
 
-    dt1 = new Y.DataTable.Base({columnset:cols, recordset:data, summary:"Contacts list", caption:"Table with simple column sorting"}).plug(Y.Plugin.DataTableSort).render("#sort"),
+    dt1 = new Y.DataTable({
+        columns:cols,
+        data:data,
+        summary:"Contacts list",
+        caption:"Table with simple column sorting"
+    }).render("#sort");
     
-    dt2 = new Y.DataTable.Base({columnset:cols, recordset:presortedData, summary:"Contacts list", caption:"This table loads with presorted data"}).plug(Y.Plugin.DataTableSort, {lastSortedBy:{key:"Company",dir:"asc"}}).render("#presorted"),
+    /*
+    dt2 = new Y.DataTable({
+        columns:cols,
+        data:presortedData,
+        sortBy: "Company",
+        summary:"Contacts list",
+        caption:"This table loads with presorted data"
+    }).render("#presorted"),
 
-    dt3 = new Y.DataTable.Base({columnset:dblclickCols, recordset:data, summary:"Contacts list", caption:"This table sorts on doubleclick"}).plug(Y.Plugin.DataTableSort, {trigger:{selector:"th",event:"dblclick"}, template:"{value}"}).render("#dblclick");
+    dt3 = new Y.DataTable({
+        columns:dblclickCols,
+        data:data,
+        summary:"Contacts list",
+        caption:"This table sorts on doubleclick"
+    }).render("#dblclick");
+    */
 
 });
 

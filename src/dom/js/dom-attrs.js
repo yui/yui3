@@ -1,3 +1,7 @@
+/**
+* @for DOM
+* @module dom
+*/
 var documentElement = Y.config.doc.documentElement,
     Y_DOM = Y.DOM,
     TAG_NAME = 'tagName',
@@ -73,7 +77,7 @@ Y.mix(Y_DOM, {
 
     /**
      * Provides a normalized attribute interface. 
-     * @method getAttibute
+     * @method getAttribute
      * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to get.
      * @return {String} The current value of the attribute. 
@@ -156,7 +160,7 @@ if (!testFeature('value-set', 'select')) {
                 break;
             }
         }
-    }
+    };
 }
 
 Y.mix(Y_DOM.VALUE_GETTERS, {
@@ -193,7 +197,7 @@ Y.mix(Y_DOM.VALUE_GETTERS, {
             // TODO: implement multipe select
             if (node.multiple) {
                 Y.log('multiple select normalization not implemented', 'warn', 'DOM');
-            } else {
+            } else if (node.selectedIndex > -1) {
                 val = Y_DOM.getValue(options[node.selectedIndex]);
             }
         }

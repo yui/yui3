@@ -1,14 +1,23 @@
-YUI.add('event-touch', function(Y) {
+YUI.add('event-touch', function (Y, NAME) {
 
 /**
- * Adds touch event facade normalization properties (touches, changedTouches, targetTouches etc.) to the DOM event facade
- *
- * @module event-touch
- */
+Adds touch event facade normalization properties (touches, changedTouches, targetTouches etc.) to the DOM event facade. Adds
+touch events to the DOM events whitelist. 
 
+@example
+    YUI().use('event-touch', function (Y) {
+        Y.one('#myDiv').on('touchstart', function(e) {
+            ...
+        });
+    });
+@module event
+@submodule event-touch
+ */
 var SCALE = "scale",
     ROTATION = "rotation",
-    IDENTIFIER = "identifier";
+    IDENTIFIER = "identifier",
+    win = Y.config.win,
+    GESTURE_MAP = {};
 
 /**
  * Adds touch event facade normalization properties to the DOM event facade
@@ -24,7 +33,7 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
 
     var i,l, etCached, et,touchCache;
 
-    Y.log("Calling facade._touch() with e = " + e);
+    Y.log("Calling facade._touch() with e = " + e, "info", "event-touch");
 
     if (e.touches) {
         Y.log("Found e.touches. Replicating on facade");
@@ -46,7 +55,7 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
     }
 
     if (e.targetTouches) {
-        Y.log("Found e.targetTouches. Replicating on facade");
+        Y.log("Found e.targetTouches. Replicating on facade", "info", "event-touch");
 
         /**
          * Array of individual touch events still in contact with the touch
@@ -64,12 +73,12 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
 
             this.targetTouches[i] = etCached || new Y.DOMEventFacade(et, currentTarget, wrapper);
             
-            if (etCached) { Y.log("Found native event in touches. Using same facade in targetTouches"); }
+            if (etCached) { Y.log("Found native event in touches. Using same facade in targetTouches", "info", "event-touch"); }
         }
     }
 
     if (e.changedTouches) {
-        Y.log("Found e.changedTouches. Replicating on facade");        
+        Y.log("Found e.changedTouches. Replicating on facade", "info", "event-touch");
 
         /**
         An array of event-specific touch events.
@@ -94,7 +103,7 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
 
             this.changedTouches[i] = etCached || new Y.DOMEventFacade(et, currentTarget, wrapper);
             
-            if (etCached) { Y.log("Found native event in touches. Using same facade in changedTouches"); }
+            if (etCached) { Y.log("Found native event in touches. Using same facade in changedTouches", "info", "event-touch"); }
         }
     }
 
@@ -111,6 +120,8 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
     }
 };
 
+//Adding MSPointer events to whitelisted DOM Events. MSPointer event payloads
+//have the same properties as mouse events.
 if (Y.Node.DOM_EVENTS) {
     Y.mix(Y.Node.DOM_EVENTS, {
         touchstart:1,
@@ -119,9 +130,45 @@ if (Y.Node.DOM_EVENTS) {
         touchcancel:1,
         gesturestart:1,
         gesturechange:1,
-        gestureend:1
+        gestureend:1,
+        MSPointerDown:1, 
+        MSPointerUp:1,
+        MSPointerMove:1
     });
 }
 
+//Add properties to Y.EVENT.GESTURE_MAP based on feature detection.
+if ((win && ("ontouchstart" in win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+    GESTURE_MAP.start = "touchstart";
+    GESTURE_MAP.end = "touchend";
+    GESTURE_MAP.move = "touchmove";
+}
 
-}, '@VERSION@' ,{requires:['node-base']});
+
+
+else if (win && ("msPointerEnabled" in win.navigator)) {
+    GESTURE_MAP.start = "MSPointerDown";
+    GESTURE_MAP.end = "MSPointerUp";
+    GESTURE_MAP.move = "MSPointerMove";
+}
+
+else {
+    GESTURE_MAP.start = "mousedown";
+    GESTURE_MAP.end = "mouseup";
+    GESTURE_MAP.move = "mousemove";
+}
+
+/**
+ * A object literal with keys "start", "end", and "move". The value for each key is a
+ * string representing the event for that environment. For touch environments, the respective
+ * values are "touchstart", "touchend" and "touchmove". Mouse and MSPointer environments are also
+ * supported via feature detection.
+ *
+ * @property _GESTURE_MAP
+ * @type Object
+ * @static
+ */
+Y.Event._GESTURE_MAP = GESTURE_MAP;
+
+
+}, '@VERSION@', {"requires": ["node-base"]});

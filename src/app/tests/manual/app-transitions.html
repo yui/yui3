@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Foo App</title>
+</head>
+<body>
+    <script src="../../../../build/yui/yui.js"></script>
+    <script>
+    YUI({
+        combine: false,
+        filter: 'RAW'
+    }).use('app', 'app-transitions', function (Y) {
+        Y.HappyView = Y.Base.create('SadView', Y.View, [], {
+            render: function () {
+                this.get('container').setContent('<p>I\'m a happy view :)</p>');
+            }
+        });
+
+        Y.SadView = Y.Base.create('SadView', Y.View, [], {
+            render: function () {
+                this.get('container').setContent('<p>I\'m a sad view :(</p>');
+            }
+        });
+
+        var MyAppClass = Y.Base.create('MyApp', Y.App, [], {
+                views: {
+                    happy: {
+                        type: Y.HappyView
+                    },
+                    sad: {
+                        type: Y.SadView
+                    }
+                }
+            }),
+            myAppInstance = new MyAppClass({transitions: true}).render(),
+            transition = function (counter) {
+                counter = counter || 0;
+
+                if (counter >= 21) {
+                    return;
+                }
+
+                Y.later(100, null, function () {
+                    myAppInstance.showView((counter % 2) ? 'happy' : 'sad');
+                    transition(counter + 1);
+                });
+            };
+
+        transition();
+    });
+    </script>
+</body>
+</html>

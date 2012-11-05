@@ -1,0 +1,1946 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Node Test Suite</title>
+
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="./assets/node-data-test.js"></script>
+<script type="text/javascript" src="./assets/node-attrs-test.js"></script>
+<script type="text/javascript" src="./assets/node-traversal-test.js"></script>
+<script type="text/javascript" src="./assets/nodelist-test.js"></script>
+
+<style type="text/css">
+body {
+    font:13px/1.22 arial;
+}
+
+#doc {
+    min-height:200px;
+    width:1000px;
+    border:10px solid red;
+    padding:1em;
+}
+
+#get-style {
+    background:#ccc;
+    float:left;
+    font-size:10px;
+    height:10em;
+    padding:15px 0;
+    width:200px;
+}
+
+.mask {
+    background:#ccc;
+    position:absolute;
+    top:0;
+    left:0;
+    overflow:hidden;
+}
+
+#test-xy {
+    background:green;
+    position:absolute;
+    height:10px;
+    width:10px;
+}
+
+#test-computed {
+    border: medium solid #000;
+    position:relative;
+    width:50%;
+    margin:auto;
+    padding:10px;
+    z-index: 2;
+    zoom:1;
+}
+
+#test-scroll {
+    height: 100px;
+    width: 100px;
+    overflow:auto;
+}
+
+#test-scroll p {
+    height:1000px;
+    width:1000px;
+}
+
+button {
+    display:block;
+}
+
+.yui3-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+    background: #070;
+    color: #fff;
+}
+.yui3-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+    background: #700;
+    color: #fff;
+}
+
+#yui-log {
+    background: #fff;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30em;
+    z-index:10;
+}
+</style>
+
+</head>
+<body class="yui3-skin-sam">
+    <div id="test-append"></div>
+    <div id="test-xy"></div>
+    <div id="test-remove"></div>
+    <div id="test-replace"><p>replace me</p></div>
+    <div id="test-scroll">
+        <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+    </div>
+    <div id="test-frag">
+        <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+        <p>Lorem ipsum dolor <em>sit</em>.</p>
+    </div>
+    <div id="doc" class="doc-wrap">
+        <a href="http://www.yahoo.com/foo" id="link-1">Yahoo!</a>
+        <a href="foo.html" id="link-2" tabIndex="-1">foo</a>
+        <form id="test-form" class="test-class" action="#">
+            <label for="test-text-value"><em>label</em></label>
+            <input name="test-text-value" id="test-text-value" readonly="read" value="text value">
+            <input name="test-text-novalue">
+    
+            <textarea name="test-textarea-value" value="textarea value"></textarea>
+            <textarea name="test-textarea-novalue"></textarea>
+            <textarea name="test-textarea-textvalue">textarea text</textarea>
+
+            <button name="test-button-value" value="button value">button</button>
+            <button name="test-button-novalue"></button>
+            <button name="test-button-textvalue">button text</button>
+
+        </form><div id="test-class">test class</div>
+        <div id="test-prop" tabindex="4">text<em id="test-contains">test<span></span></em><strong>node</strong></div>
+        <div id="set-style"><div class="bar" id="bar">setStyle</div>foo<div>blah</div></div>
+        <div id="get-style">getStyle</div>
+        <div id="baz">baz</div>
+        text
+        <div id="test-extras">extras</div>
+        <div id="test-children">foo <span>bar</span> <strong>baz</strong> </div>
+        <div id="test-empty-children"></div>
+    </div>
+    <div id="inline-style" style="color: green">inline style</div>
+    <div id="foo" aria-checked="true"></div>
+    <div id="test-computed">test computed style</div>
+    <form id="form.foo@bar:baz">
+        <select id="test-select" name="test-select">
+            <option value="0">foo</option>
+            <option value="1">bar</option>
+            <option>baz</option>
+        </select>
+    </form>
+    <div id="test-nodes">
+        <ul>
+            <li>item 1</li>
+            <li>item 2</li>
+            <li>item 3</li>
+            <li>item 4</li>
+        </ul>
+        <ol>
+            <li class="bar">item 1</li>
+            <li>item 2</li>
+            <li>item 3</li>
+            <li class="bar">item 4</li>
+        </ol>
+    </div>
+
+    <table id="test-table">
+        <tr><td id="test-td"><div><div>grandchild of td</div></div></td></tr>
+    </table>
+
+    <ol>
+        <li>item 1</li>
+        <li>item 2</li>
+        <li>item 3</li>
+        <li>item 4</li>
+    </ol>
+<iframe src="./assets/test-frame.html"></iframe>
+<div id="test-insert-html">foo</div>
+<div id="test:colon">
+    <h2>test</h2>
+</div>
+
+<ol id="test-swap">
+    <li>item 1</li>
+    <li>item 2</li>
+    <li>item 3</li>
+    <li>item 4</li>
+</ol>
+
+<div id="_funky:id{$400}">
+    <h2>test</h2>
+</div>
+
+<div id="test-ancestor-stop">
+    <div>
+        <div id="test-element-by-axis">foo<div></div>bar<span></span>baz<em></em></div>
+    </div>
+</div>
+
+<div id="yui-log"></div>
+<script type="text/javascript">
+YUI({
+    coverage: ['node', 'node-load', 'node-deprecated'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+
+}).use('selector-css3', 'node-deprecated', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-data-test', 'nodelist-test', 'node-attrs-test', 'node-traversal-test', function(Y) {
+    var Assert = Y.Assert,
+        ArrayAssert = Y.ArrayAssert,
+        ObjectAssert = Y.ObjectAssert,
+        suite = new Y.Test.Suite("Node");
+
+    Y.Test.Runner.setName('Node');
+    new Y.Test.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
+
+    var byId = function(id) {
+        return document.getElementById(id);
+    };
+
+    var $ = Y.Selector.query;
+
+    suite.add( new Y.Test.Case({
+        name: 'Y.one',
+
+        _should : {
+            ignore: {
+                test_prependLinkFrag : Y.UA.winjs // Win 8 App env doesn't allow `link` as innerHTML
+            }
+        },
+
+        'should cache node': function() {
+            var node = Y.Node.create('<div id="test-caching" />');
+            node.appendTo('body');
+            Assert.areEqual(node, Y.Node._instances[node._yuid]);
+            Assert.areEqual(Y.one('#test-caching'), node);
+            node.remove(true);
+        },
+
+        'should get fresh node after destroy': function() {
+            var node = Y.Node.create('<div id="test-caching2" />');
+            node.appendTo('body');
+            node.destroy();
+            Assert.areNotEqual(Y.one('#test-caching2'), node);
+        },
+
+        'should return null from empty string input': function() {
+            Assert.isNull(Y.one(''));
+        },
+
+        'should return null from null input': function() {
+            Assert.isNull(Y.one(null));
+        },
+
+        'should return null for non-existant id': function() {
+            Assert.isNull(Y.one('#fake-id'));
+        },
+
+        'should return null for element descendant of non-existant id': function() {
+            Assert.isNull(Y.one('#fake-id li'));
+        },
+
+        'should find matching element by id': function() {
+            Assert.areEqual('test-nodes', Y.one('#test-nodes')._node.id);
+
+        },
+
+        'should return the correct element from the iframe document': function() {
+            var frameDoc = Y.one('iframe').get('contentWindow.document');
+            Assert.areEqual('iframe foo', Y.Lang.trim(frameDoc.one('#demo li')._node.innerHTML));
+        },
+
+
+        'should find id descendant of class selector': function() {
+            Assert.areEqual(document.getElementById('test-text-value'),
+                    Y.one('doc').one('.test-class #test-text-value')._node);
+        },
+
+        'should find element by selector': function() {
+            Assert.areEqual(document.getElementById('test-nodes').getElementsByTagName('li')[0],
+                    Y.Node.getDOMNode(Y.one('#test-nodes li:first-child')), 'Y.one("#test-nodes")');
+
+            Assert.areEqual(document.getElementById('test-nodes').getElementsByTagName('li')[1],
+                    Y.Node.getDOMNode(Y.one('#test-nodes li:nth-child(2)')), 'Y.one("#test-nodes:nth-child(2)")');
+
+            Assert.areEqual(document.getElementById('test-nodes').getElementsByTagName('li')[1],
+                    Y.Node.getDOMNode(Y.one('#test-nodes li:nth-child(2)')), 'Y.one("#test-nodes:nth-child(2)")');
+            Assert.areEqual(document.getElementById('form.foo@bar:baz'), Y.Node.getDOMNode(Y.one('[id="form.foo@bar:baz"]')), "[id=form.foo@bar:baz]");
+
+            var firstChild = Y.one('body :first-child');
+            Y.one('body').insertBefore(Y.Node.create('<div>foo</div>'), firstChild);
+            Assert.isFalse(firstChild._node === Y.one('body :first-child')._node, "wrong node: Y.one('body :first-child')");
+
+            Y.one('body').removeChild(Y.one('body :first-child'));
+            Assert.areEqual(Y.Selector.query('body :first-child', null, true), Y.one('body :first-child')._node, "body :first-child === #test-append");
+        },
+
+        test_create: function() {
+            var id = 'test-nodes',
+                element = byId(id),
+                node = Y.one('#' + id);
+
+            Assert.areEqual('fresh', node.create('<div id="fresh">fresh</div>').get('id'), 'node.create from string)');
+
+            node = Y.Node.create('<select><option>foo</option></select>');
+            var option = Y.Node.create('<option>bar</option>').set('selected', 'selected');
+            node.appendChild(option);
+            Assert.isTrue(Y.Node.getDOMNode(option).selected, "Y.Node.create('<option>test</option>').set('selected', 'selected'))");
+
+            var html = '<li><a href=""></a></li>';
+            node = Y.Node.create(html);
+            Assert.areEqual('A', node.get('firstChild.tagName'), html);
+
+            html = 'baz';
+            node = Y.Node.create(html);
+            Assert.areEqual('3', node.get('nodeType'), "node.get('nodeType')");
+            Assert.areEqual('3', Y.Node.getDOMNode(node).nodeType, "Y.Node.getDOMNode(node).nodeType");
+
+            html = '<div>bar</div>';
+            node = Y.Node.create(html);
+            Assert.areEqual('3', node.get('firstChild.nodeType'), "node.get('firstChild.nodeType')");
+            Assert.areEqual('3', node.get('firstChild').get('nodeType'), "node.get('firstChild').get('nodeType')");
+            Assert.areEqual('3', Y.Node.getDOMNode(node.get('firstChild')).nodeType, "Y.Node.getDOMNode(node.get('firstChild')).nodeType");
+            node.insertBefore(Y.Node.create('foo'), node.get('firstChild'));
+            Assert.areEqual('foobar', node.get('innerHTML'), "node.get('innerHTML')");
+            Assert.areEqual('foobar', node.get('text'), "node.get('text')");
+
+            // test setContent with NodeList
+            html = '<div>foo</div>';
+            node.setContent(Y.all(Y.Node.create(html)));
+            Assert.areEqual(html, node.get('innerHTML').toLowerCase(), "node.setContent(Y.all(Y.Node.create(html)))");
+
+        },
+
+        test_setter: function() {
+            var id = 'test-prop',
+                element = byId(id),
+                node = Y.one('#' + id),
+                nodes = Y.all('#test-nodes *');
+
+            var childNodes = Y.one('body').get('childNodes');
+            childNodes.set('title', 'foo bar');
+            Assert.isTrue(byId('test-nodes').title == 'foo bar', 'Y.one("body").get("childNodes").set("title")');
+
+            node.set('foo', 'foo');
+            Assert.isUndefined(node.get('foo'), 'node.get("foo")');
+            
+            node.set('title', 'my title');
+            Assert.areEqual('my title', Y.Node.getDOMNode(node).title, 'node.title)');
+            Assert.areEqual('my title', node.get('title'), 'node.set("title")');
+
+            nodes.set('className', 'foo');
+            Assert.areEqual('foo', Y.NodeList.getDOMNodes(nodes)[0].className, 'node.className');
+            Assert.areEqual('foo', nodes.get('className')[2], 'node.get("className")');
+            Assert.areEqual('foo', nodes.item(nodes.size() - 2).get('className'),
+                    'nodes.item(nodes.size - 2).get("className")');
+
+            var attrMap = {
+                className: 'fooclass',
+                title: 'new title'
+            };
+            node.setAttrs(attrMap);
+            var getAttrs = node.getAttrs(['className', 'title']);
+            Assert.areEqual(attrMap.className, getAttrs.className, 'node.setAttrs(attrMap) (get className)'); 
+            Assert.areEqual(attrMap.title, getAttrs.title, 'node.setAttrs(attrMap) (get title)'); 
+
+            Y.one('#test-select').set('selectedIndex', 2);
+            Assert.areEqual(2, Y.one('#test-select')._node.selectedIndex,
+                    "Y.one('#test-select').set('selectedIndex', 2)");
+
+            Y.one('body > form').set('test-select.selectedIndex', 2);
+            Assert.areEqual(2, byId('test-select').selectedIndex,
+                    'Y.one("body > form").set("test-select.selectedIndex", 2)');
+
+            var index = Y.one('#test-select').one('option[value=1]').set('selected', true);
+
+            Assert.areEqual(1, Y.one('#test-select')._node.selectedIndex,
+                    "Y.one('#test-select').set('selectedIndex', 1)");
+
+            Y.one('#test-select').set('value', 1);
+            Assert.areEqual(1, Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 1)");
+            Y.one('#test-select').set('value', 'baz');
+            Assert.areEqual('baz', Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 'baz')");
+        },
+
+        test_dom_methods: function() {
+            var id = 'test-prop';
+            var element = byId(id);
+            var parent = Y.one(element.parentNode);
+            var node = Y.one('#test-prop');
+
+            Assert.isTrue(node.hasMethod('appendChild'), "node.hasMethod('appendChild')");
+            var xmlNode = Y.one(document.createElement('xml'));
+            Assert.isFalse(xmlNode.hasMethod('onreadystatechange')," xmlNode.hasMethod('onreadystatechange')");
+
+            //Assert.isTrue(element === Y.one(node), 'element === Y.one(node)');
+            Assert.areEqual(element.getElementsByTagName('em')[0].nodeName, node.getElementsByTagName('em').item(0).get('nodeName'), 'getElementsByTagName'); 
+            var insertNode = document.createElement('div');
+            Y.stamp(insertNode);
+            insertNode.innerHTML = 'inserted node';
+            Y.one('body').appendChild(Y.one('#test-append'));
+
+            Assert.isTrue(Y.one('body').get('lastChild').compareTo(Y.one('#test-append')), 'get("body").appendChild(Y.one("#test-append"))');
+
+            Assert.areEqual(byId('test-append'), Y.Node.getDOMNode(Y.one('body').get('lastChild')), 'get("body").appendChild(Y.one([0]"#test-append"))');
+            Assert.areEqual('inserted node', node.appendChild(insertNode).get('innerHTML'), 'appendChild(element input)');
+            Assert.areEqual('inserted node', node.removeChild(insertNode).get('innerHTML'), 'removeChild(element input)');
+
+            Assert.areEqual('inserted node', node.appendChild(Y.one(insertNode)).get('innerHTML'), 'appendChild(Node input)');
+            Assert.areEqual('inserted node', node.removeChild(Y.one(insertNode)).get('innerHTML'), 'removeChild(Node input)');
+
+            var clone = node.cloneNode();
+            Assert.isFalse(node === clone, 'node === node.cloneNode()');
+            Assert.areEqual(1, clone.get('nodeType'), 'cloneNode()');
+
+            // TODO: test deep clone with bound descendant
+            Assert.isTrue(node.get('childNodes').size() === node.cloneNode(true).get('childNodes').size(), 'node.get("childNodes").size() === node.cloneNode(true).get("childNodes").size()');
+
+            Assert.isTrue(Y.one('.bar').test('.bar'), "Y.one('.bar').test('.bar')");
+            clone = Y.one('.bar').cloneNode(true);
+            Assert.isTrue(clone.hasClass('bar'), "clone.hasClass('bar') (before appending)");
+            Y.one('body').appendChild(clone);
+            clone.set('id', 'new-bar');
+            Assert.isTrue(clone.test('.bar'), "clone.test('.bar') (after appending)");
+
+            Assert.isTrue(
+                Y.Node.create('<div id="foo" class="bar"></div>').test('.bar'),
+                "Y.Node.create('<div id=\"foo\" class=\"bar\"></div>').test('.bar')");
+
+            Assert.isTrue(
+                Y.Node.create('<div id="foo" class="bar"></div>').test('#foo.bar'),
+                "Y.Node.create('<div id=\"foo\" class=\"bar\"></div>').test('#foo.bar')");
+
+            Assert.isTrue(node.hasChildNodes(), 'hasChildNodes()');
+
+            Assert.isTrue(node.compareTo(node), 'compareTo(node)');
+            Assert.isTrue(node.compareTo(Y.one(node)), 'compareTo(new Y.Node)');
+            Assert.isFalse(node.compareTo(null), 'compareTo(null)');
+
+            Assert.isFalse(node.create('<p>foo</p>').inDoc(), 'node.inDoc()');
+
+            Assert.isTrue(node.contains(byId('test-contains')), 'contains()');
+            Assert.isTrue(node.contains(node), 'contains() self');
+            Assert.isTrue(node.contains(element), 'contains() self');
+        
+            Assert.isFalse(node.contains(document.getElementsByTagName('div')), 'contains() false positive for collection');
+
+            Assert.areEqual('doc', node.ancestor(function(el) {
+                return el.get('id') === 'doc';
+            }).get('id'), 'ancestor');
+
+            Assert.areEqual(node.ancestor(), node.get('parentNode'), "node.ancestor()");
+
+            Assert.isNull(node.ancestor(function(el) {
+                return el.getAttribute('foo') !== '';
+            }), 'ancestor');
+
+            Assert.areEqual(node.get('parentNode'), node.ancestor('div'));
+            Assert.areEqual(node, node.ancestor('div', true));
+
+            Assert.isTrue(Y.one(document.body).inDoc(document));
+            Assert.isTrue(node.inDoc(), 'node.inDoc()');
+            Assert.isTrue(node.inDoc(document), 'node.inDoc(document)');
+            Assert.isTrue(node.inDoc(Y.one(document)), 'node.inDoc(Y.one(document))');
+
+            Assert.areEqual(byId('test-contains'), Y.Node.getDOMNode(node.getById('test-contains')), 'node.getById("test-contains")');
+            Assert.isTrue(node.hasAttribute('id'), 'node.hasAttribute("id")');
+            Assert.isTrue(node.hasAttribute('title'), 'node.hasAttribute("title")');
+            Assert.isFalse(node.hasAttribute('foo'), 'node.hasAttribute("foo")');
+            Assert.isTrue(node.hasAttribute('tabIndex'), 'node.hasAttribute("tabIndex")');
+            node.removeAttribute('tabIndex');
+            Assert.isFalse(node.hasAttribute('tabIndex'), 'node.hasAttribute("tabIndex") (false)');
+            /*
+            Assert.areEqual(node.getAttribute('tabIndex'), node.get('tabIndex'),
+                "node.getAttribute('tabIndex') === node.get('tabIndex')");
+                */
+            
+            Assert.isFalse(Y.one('body').hasAttribute('title'), 'body.hasAttribute("title")');
+            Assert.areEqual('0', Y.one('select[name=test-select] option:nth-child(1)').getAttribute('value'), 'option1.getAttribute("value") (from innerText)');
+            Assert.areEqual('1', Y.one('select[name=test-select] option:nth-child(2)').getAttribute('value'), 'option2.getAttribute("value") (from innerText)');
+            Assert.areEqual('', Y.one('select[name=test-select] option:nth-child(3)').getAttribute('value'), 'option3.getAttribute("value") (from innerText)');
+
+            Assert.areEqual('http://www.yahoo.com/foo', Y.one('#link-1').getAttribute('href'), "Y.one('#link1').getAttribute('href')");
+            Assert.areEqual('foo.html', Y.one('#link-2').getAttribute('href'), "Y.one('#link1').getAttribute('href')");
+        },
+
+        test_fragment: function() {
+            var frag = Y.one('document').invoke('createDocumentFragment'),
+                element = byId('test-append');
+
+            frag.appendChild(element);
+            Assert.areEqual(element, Y.Node.getDOMNode(frag.get('firstChild')), 'frag.appendChild()');
+            Y.one('body').appendChild(frag);
+        },
+
+        test_screen: function() {
+            var id = 'test-prop';
+            var element = byId(id);
+            var parent = Y.one(element.parentNode);
+            var node = Y.one(element);
+
+            var newNode = Y.Node.create('<div id="brand-new-foo">foo</div>');
+            Assert.areEqual(0, newNode.get('docScrollX'), 'newNode.get("docScrollX")');
+            Assert.areEqual(0, node.get('docScrollY'), 'node.get("docScrollY")');
+
+            node = Y.one('#test-xy');
+            node.setXY([100, 100]);
+            var xy = node.getXY();
+            var x = Math.round(xy[0]);
+            var y = Math.round(xy[1]);
+            ArrayAssert.itemsAreEqual([100, 100], [x, y], 'Node.getXY("foo", "bar")');
+        },
+
+        test_region: function() {
+            Assert.isTrue(Y.DOM.inRegion(byId('baz'), byId('doc')), 'DOM.inRegion(domNode, domNode)');
+            Assert.isTrue(Y.one('#get-style').inRegion(byId('doc')), 'node.inRegion(domNode)');
+            Assert.isTrue(Y.one('#get-style').inRegion(Y.one('#doc')), 'node.inRegion(Node)');
+            ObjectAssert.areEqual(Y.DOM.region(Y.DOM.byId('doc')), Y.one('#doc').get('region'), 'node.get("region")');
+        },
+
+        test_classes: function() {
+            var id = 'test-class';
+            var element = byId(id);
+            var parent = Y.one(element.parentNode);
+            var node = Y.one(element);
+
+            Assert.isTrue(node.get('previousSibling').hasClass('test-class'), 'node.get("previousSibling").hasClass("test-class")');
+
+            node.addClass('foo');
+            Assert.areEqual('foo', element.className, 'node.addClass("foo")');
+            node.removeClass('foo');
+            Assert.areEqual('', element.className, 'node.removeClass("foo")');
+
+            node.addClass('foo');
+            Y.one('body').get('childNodes').addClass('foo');
+            Assert.isTrue(byId('test-class').className == 'foo', 'NodeList.addClass');
+            node.replaceClass('foo', 'bar');
+            Assert.areEqual('bar', element.className, 'Node.replaceClass("foo", "bar")');
+
+            var nodes = Y.all('#test-nodes li');
+            nodes.addClass('foo').addClass('bar');
+            nodes.each(function(n) {
+                Assert.isTrue(n.hasClass('foo'));
+                Assert.isTrue(n.hasClass('bar'));
+            });
+
+            nodes.removeClass('bar');
+            nodes.each(function(n) {
+                Assert.isFalse(n.hasClass('bar'));
+            });
+
+            node = Y.DOM.create('<div></div>');
+            Y.DOM.addClass(node, 'foo');
+            Y.DOM.replaceClass('foo', 'foo');
+            Assert.isTrue(Y.DOM.hasClass(node, 'foo'));
+
+            node = Y.Node.create('<div></div>');
+            node.addClass('foo bar baz');
+            Assert.areEqual('foo bar baz', node._node.className);
+        },
+
+        test_toggle: function() {
+            var node = Y.one('#test-class');
+
+            node.toggleClass('foo');
+            Assert.isTrue(node.hasClass('foo'), "node.toggleClass('foo')");
+
+            node.toggleClass('foo');
+            Assert.isFalse(node.hasClass('foo'), "node.toggleClass('foo')");
+
+            node.toggleClass('foo', false);
+            Assert.isFalse(node.hasClass('foo'), "node.toggleClass('foo', false)");
+
+            node.toggleClass('foo');
+            Assert.isTrue(node.hasClass('foo'), "node.toggleClass('foo')");
+
+            node.toggleClass('foo', true);
+            Assert.isTrue(node.hasClass('foo'), "node.toggleClass('foo', true)");
+        },
+
+        test_setStyle: function() {
+            var element = byId('set-style'),
+                node = Y.one(element),
+                nodes = node.get('childNodes');
+
+            node.setStyle('width', '20em');
+            Assert.areEqual('20em', element.style.width, "setStyle('width' '20em')");
+
+            node.setStyle('marginTop', '1em');
+            Assert.areEqual('1em', element.style.marginTop, "setStyle('marginTop','1em')");
+
+            node.setStyle('opacity', 0.5);
+            Assert.areEqual(0.5, node.getStyle('opacity'), "setStyle('opacity', 0.5)");
+
+            node.setStyle('float', 'left');
+            Assert.areEqual('left', node.getStyle('float'), "setStyle('float', 'left')");
+            
+            nodes.setStyle('marginTop', '1em');
+            Assert.areEqual('1em', nodes.getStyle('marginTop')[2], "setStyle('marginTop', '1em'");
+        },            
+
+        test_getStyle: function() {
+            var node = Y.one('#get-style');
+
+            node.setStyle('opacity', 0.5);
+            Assert.areEqual(0.5, node.getStyle('opacity'), "node.getStyle('opacity')");
+            Assert.areEqual('left', node.getStyle('float'), "node.getStyle('float')");
+
+            Assert.areEqual('100px', node.getStyle('height'), "getStyle('height')");
+            Assert.areEqual('200px', node.getStyle('width'), "getStyle('width)'");
+            Assert.areEqual('visible', node.getStyle('visibility'), "visibility");
+            node.setStyle('visibility', 'hidden');
+            Assert.areEqual('hidden', node.getStyle('visibility'), "visibility");
+            node.setStyle('visibility', 'visible');
+        },
+
+        test_getComputedStyle: function() {
+            var node = Y.one('#test-computed'),
+                domNode = byId('test-computed'),
+                w = node.get('offsetWidth'),
+                h = node.get('offsetHeight'),
+                bt = parseFloat(node.getComputedStyle('borderTopWidth')),
+                bb = parseFloat(node.getComputedStyle('borderBottomWidth')),
+                bl = parseFloat(node.getComputedStyle('borderLeftWidth')),
+                br = parseFloat(node.getComputedStyle('borderRightWidth')),
+                pt = parseFloat(node.getComputedStyle('paddingTop')),
+                pb = parseFloat(node.getComputedStyle('paddingBottom')),
+                pl = parseFloat(node.getComputedStyle('paddingLeft')),
+                pr = parseFloat(node.getComputedStyle('paddingRight'));
+
+            if (!Y.UA.ie || document.compatMode !== 'BackCompat') {
+                w = w - (pl + pr) - (bl + br);
+                h = h - (pt + pb) - (bt + bb);
+            }
+
+            Assert.areEqual(parseInt(bt), parseInt(node.getComputedStyle('borderTopWidth')), "borderTopWidth: medium");
+            Assert.areEqual(parseInt(h), Math.round(parseFloat(node.getComputedStyle('height'))), "height: auto (offset minus padding and border)");
+            domNode.style.padding = '1em';
+            Assert.areEqual('13px', node.getComputedStyle('paddingTop'), "padding 13px");
+            Assert.areEqual('visible', node.getComputedStyle('visibility'), "visibility");
+            domNode.parentNode.style.visibility = 'hidden';
+            Assert.areEqual('hidden', node.getComputedStyle('visibility'), "visibility:hidden");
+            domNode.parentNode.style.visibility = 'visible';
+            Assert.areEqual(2, node.getComputedStyle('zIndex'), 'node.getComputedStyle("zIndex")');
+            domNode.style.margin = 'auto';
+            Assert.areEqual('0px', node.getComputedStyle('marginTop'), "margin auto");
+
+            Assert.areEqual(parseInt(w), Math.round(parseFloat(node.getComputedStyle('width'))), "percent width (from CSS)");
+
+            node = document.createElement('div');
+            node.style.height = '100px';
+            document.body.appendChild(node);
+            Assert.areEqual('100px', Y.one(node).getComputedStyle('height'), "node.getComputedStyle('height'), style set off-dom");
+            document.body.removeChild(node);
+
+            var frame = Y.one('iframe');
+            var frameDoc = frame.get('contentWindow.document');
+            frame.setStyle('visibility', 'hidden');
+            Assert.areEqual('100px', frameDoc.one('#demo').getComputedStyle('height'));
+        },
+
+        test_setStyles: function() {
+            var node = byId('set-style');
+            var element = Y.one(node);
+            element.setStyles({
+                'top': '5px',
+                'right': '10em'
+            });
+            Assert.isTrue( (node.style.top == '5px' && node.style.right == '10em'), "setStyles()");
+        },
+
+        test_selector: function() {
+            var id = 'test-prop',
+                element = byId(id),
+                node = Y.one('#' + id),
+                parent = Y.one(element.parentNode),
+                nodes = Y.all('#test-nodes *');
+
+            // Selector methods
+            Assert.isNull(Y.one(document.body).one("#fake-id"), 'body.one("#fake-id")');
+            Assert.isTrue(Y.one(node).test('#' + id), 'node.test( "#id")');
+            Assert.isNull(parent.one("#fake-id"), 'parent.one("#fake-id")');
+            Assert.areEqual(id, parent.one('#' + id).get('id'), 'parent.one("#id")');
+            Assert.areEqual(id, parent.one('#' + id).get('id'), 'parent.one("#id")');
+            Assert.isNull(parent.one('#text-xy'), 'parent.one("test-xy")');
+
+            Assert.areEqual(id, parent.all('#' + id).item(0).get('id'), 'parent.all(node, "#id")');
+            Assert.areEqual(id, parent.all('#' + id).item(0).get('id'), 'parent.all(node, "#id")');
+        },
+
+        test_window: function() {
+            var win = Y.one(window);
+            Assert.areEqual(window, Y.Node.getDOMNode(win), 'Y.one(window)');
+            Assert.areEqual(document, Y.Node.getDOMNode(win.get('document')), 'win.get(document)');
+            //Assert.areEqual(window, Y.Node.getDOMNode(Y.one('document').get('defaultView')), 'win.get(document)');
+        },
+
+
+        test_windowSize: function() {
+            Assert.isNotNull(Y.one('body').get('winHeight'), 'body.get("winHeight")');
+        },
+
+        test_scroll: function() {
+            Y.one('#test-scroll').set('scrollTop', 100);
+            Y.one('#test-scroll').set('scrollLeft', 200);
+            Assert.areEqual(100, byId('test-scroll').scrollTop, 'test-scroll.set("scrollTop", 100)');
+            Assert.areEqual(200, byId('test-scroll').scrollLeft, 'test-scroll.set("scrollLeft", 200)');
+            document.body.style.height = '5000px';
+            document.body.style.width = '5000px';
+/*
+            Y.one(window).set('scrollTop', 100);
+            Y.one(window).set('scrollLeft', 200);
+            Assert.areEqual(100, Y.DOM.docScrollY(window), 'window.set("scrollTop", 100)');
+            Assert.areEqual(200, Y.DOM.docScrollX(window), 'window.set("scrollLeft", 200)');
+*/
+
+            Y.one(document).set('scrollTop', 200);
+            Y.one(document).set('scrollLeft', 100);
+            Assert.areEqual(200, Y.DOM.docScrollY(document), 'document.set("scrollTop", 200)');
+            Assert.areEqual(100, Y.DOM.docScrollX(document), 'document.set("scrollLeft", 100)');
+
+            document.body.style.height = '';
+            document.body.style.width = '';
+
+            window.scrollTo(0, 0);
+        },
+
+        test_setContent: function() {
+            var content = '<strong>foo</strong>';
+            Y.one('#test-insert-html').setContent(content);
+            Assert.areEqual(content,
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
+                "Y.one('#test-insert-html').setContent(" + content + ")");
+
+            Y.one('#test-insert-html').setContent(Y.Node.create(content));
+            Assert.areEqual(content,
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
+                "Y.one('#test-insert-html').setContent(Y.Node.create(" + content + "))");
+
+            content = '<strong>foo</strong><em>bar</em>';
+            Y.one('#test-insert-html').setContent(Y.Node.create(content));
+            Assert.areEqual(content,
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
+                "Y.one('#test-insert-html').setContent(Y.Node.create(" + content + "))");
+
+            var element = document.createElement('strong');
+            element.innerHTML = 'bar';
+            content = '<strong>bar</strong>';
+            Y.one('#test-insert-html').setContent(element);
+            Assert.areEqual(content,
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
+                "Y.one('#test-insert-html').setContent(element)");
+
+            content = '';
+            Y.one('#test-insert-html').setContent(content);
+            Assert.areEqual(content,
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
+                "Y.one('#test-insert-html').setContent(" + content + ")");
+
+            content = null;
+            Y.one('#test-insert-html').setContent(content);
+            Assert.areEqual('',
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
+                "Y.one('#test-insert-html').setContent(" + content + ")");
+
+            content = 0;
+            Y.one('#test-insert-html').setContent(content);
+            Assert.areEqual('0',
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
+                "Y.one('#test-insert-html').setContent(" + content + ")");
+
+        },
+
+        test_insert: function() {
+            var node = Y.one('#test-insert-html'),
+                html = '<strong>foo</strong>',
+                content;
+
+            node.setContent('foo');
+            content = node.get('innerHTML').toLowerCase();
+            node.insert(html);
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
+                content + html,
+                "node.insert('" + html + "')");
+
+            html = '<em>bar</em>';
+            content = node.get('innerHTML').toLowerCase();
+
+            node.insert(html, 0);
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
+                html + content,
+                "node.insert(" + html + ", 0)");
+
+            html = '<span>baz</span>';
+            node.insert(html, 1);
+            Assert.areEqual(node.all('> *').item(1).get('tagName'),
+                'SPAN',
+                "node.insert(" + html + ", 1)");
+
+            html = '';
+            content = node.get('innerHTML').toLowerCase();
+
+            node.insert(html);
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
+                content,
+                "node.insert(" + html + ")");
+
+            html = null;
+            content = node.get('innerHTML').toLowerCase();
+
+            node.insert(html);
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
+                content,
+                "node.insert(" + html + ")");
+
+            // test fragment insertion
+
+            var childCount = node.get('childNodes').size();
+            html = '<q>bar</q><h2>foo</h2>';
+            content = node.get('innerHTML').toLowerCase();
+
+            node.insert(html);
+            Assert.areEqual(childCount + 2,
+                node.get('childNodes').size(),
+                "node.insert(" + html + ")");
+
+            Assert.areEqual('Q',
+                node.get('childNodes').item(childCount).get('tagName'),
+                "node.insert(" + html + ")");
+
+            Assert.areEqual('H2',
+                node.get('childNodes').item(childCount + 1).get('tagName'),
+                "node.insert(" + html + ")");
+
+            html = '<label>foo</label><input>';
+            content = node.get('innerHTML').toLowerCase();
+
+            node.insert(html);
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
+                Y.Lang.trim(content + html).toLowerCase(),
+                "node.insert(" + html + ")");
+
+            node.setContent('<em>foo</em><span>bar</span>');
+
+            node.insert('<strong>baz</strong>', node.one('span'));
+            Assert.areEqual(node._node.childNodes[1].tagName, 'STRONG',
+                "node.insert('<strong>bar</strong>', node.one('span')");
+
+            node.insert('<code>var lorem</code>', node.one('em')._node);
+            Assert.areEqual(node._node.childNodes[0].tagName, 'CODE',
+                "node.insert('<code>var lorem</code>', node.one('em')._node)");
+
+            // insert Node instance
+            html = Y.Node.create('<div>foo</div>');
+            node.insert(html, 2);
+            Assert.areEqual(node._node.childNodes[2], html._node,
+                "node.insert(Y.Node.create('<div>foo</div>'))");
+
+            // insert DOM node
+            html = document.createElement('div');
+            Y.one('#test-insert-html').insert(html, 2);
+            Assert.areEqual(Y.one('#test-insert-html')._node.childNodes[2], html, 'node.insert(someDOMNode, 2)');
+
+        },
+
+        test_inject: function() {
+            var node = Y.one('#test-insert-html'),
+                html = '<strong>foo</strong>',
+                content = node.get('innerHTML').toLowerCase();
+
+            node.prepend(html);
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
+                html + content,
+                "node.prepend('" + html + "')");
+
+            html = '<em>bar</em>';
+            content = node.get('innerHTML').toLowerCase();
+
+            node.append(html);
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
+                content + html,
+                "node.append('" + html + "')");
+        },
+
+        test_getValue: function() {
+            // text
+            Assert.isTrue(Y.one('input[name=test-text-value]').hasAttribute('value'),
+                'input[name=test-text-value].hasAttribute("value")');
+
+            Assert.isFalse(Y.one('input[name=test-text-novalue]').hasAttribute('value'),
+                'input[name=test-text-novalue].hasAttribute("value")');
+
+            Assert.areEqual('text value',
+                Y.one('input[name=test-text-value]').get('value'),
+                "Y.one('input[name=test-text-value]').get('value')");
+
+            Assert.areEqual('', // TODO: normalize to null?
+                Y.one('input[name=test-text-novalue]').get('value'),
+                "Y.one('input[name=test-text-novalue]').get('value')");
+
+            // textarea
+            // textarea doesn't use value attribute
+            //Assert.isTrue(Y.one('textarea[name=test-textarea-value]').hasAttribute('value'),
+            //    'textarea[name=test-textarea-value].hasAttribute("value")');
+
+            Assert.isFalse(Y.one('textarea[name=test-textarea-novalue]').hasAttribute('value'),
+                'textarea[name=test-textarea-value].hasAttribute("value")');
+
+            Assert.areEqual('textarea text',
+                Y.one('textarea[name=test-textarea-textvalue]').get('value'),
+                'textarea[name=test-textarea-textvalue].get("value")');
+
+            Assert.areEqual('',
+                Y.one('textarea[name=test-textarea-novalue]').get('value'),
+                'textarea[name=test-textarea-novalue].get("value")');
+
+            Assert.areEqual('',
+                Y.one('textarea[name=test-textarea-value]').get('value'),
+                'textarea[name=test-textarea-value].get("value")');
+
+            // button
+            Assert.isTrue(Y.one('button[name=test-button-value]').hasAttribute('value'),
+                'textarea[name=test-button-value].hasAttribute("value")');
+
+            Assert.isFalse(Y.one('button[name=test-button-novalue]').hasAttribute('value'),
+                'textarea[name=test-button-value].hasAttribute("value")');
+
+            Assert.areEqual('button value',
+                Y.one('button[name=test-button-value]').get('value'),
+                'button[name=test-button-value].get("value")');
+
+            Assert.areEqual('',
+                Y.one('button[name=test-button-novalue]').get('value'),
+                'button[name=test-button-novalue].get("value")');
+
+            Assert.areEqual('',
+                Y.one('button[name=test-button-textvalue]').get('value'),
+                'button[name=test-button-textvalue].get("value")');
+        },
+
+        test_remove: function() {
+            var node = Y.one('#test-remove'),
+                domNode = Y.DOM.byId('test-remove'),
+                parent = domNode.parentNode;
+
+            node.remove();
+            Assert.isTrue(parent !== domNode.parentNode, 'node.remove()');
+
+            // ensure remove doesnt fail when no parent
+            node = Y.Node.create('<div/>');
+            node.remove();
+
+            // or after destroy
+            node = Y.Node.create('<div/>');
+            node.appendTo('body');
+            node.destroy();
+            node.remove();
+        },
+
+        test_replace: function() {
+            var node = Y.one('#test-replace').get('firstChild'),
+                newNode = document.createElement('div');
+
+            node.replace(newNode);
+            Assert.areEqual(newNode, Y.one('#test-replace').get('firstChild')._node, 'node.replace(domNode)');
+
+            node = Y.one('#test-replace').get('firstChild');
+            newNode = Y.Node.create('<div/>');
+            node.replace(newNode);
+            Assert.areEqual(newNode, Y.one('#test-replace').get('firstChild'), 'node.replace()');
+            Assert.areEqual(newNode._node, Y.one('#test-replace').get('firstChild')._node, 'node.replace()');
+        },
+
+        test_elements: function() {
+            var elements = Y.one('#test-form').get('elements');
+            Assert.areEqual(Y.DOM.byId('test-form').elements.length, elements.size());
+        },
+
+        test_toFrag: function() {
+            var frag = Y.all('#test-frag p').toFrag();
+            Assert.areEqual(11, frag.get('nodeType'), "Y.all('#test-frag p').toFrag();");
+        },
+
+        test_aria: function() {
+            Y.one('body').set('role', 'menu');
+            Assert.isTrue(document.body.getAttribute('role') === 'menu', "Y.one('body').set('role', 'menu')")
+
+            Y.one('body').set('aria-checked', true);
+            Assert.areEqual('true', document.body.getAttribute('aria-checked', 2), "Y.one('body').set('aria-checked', true)")
+            Assert.areEqual('true', Y.one('body').getAttribute('aria-checked'), "Y.one('body').set('aria-checked', true)")
+            Assert.areEqual('true', Y.one('#foo').get('aria-checked'), "Y.one('#foo').get('aria-checked')");
+
+            Y.one('body').set('aria-checked', false);
+            Assert.areEqual('false', Y.one('body').get('aria-checked'), "Y.one('body').set('aria-checked', false)");
+        },
+
+        test_plugin: function() {
+            Y.Node.plug(Y.Plugin.NodeFX);
+            Assert.isTrue(!!Y.Node.create('<div></div>').fx, 'Node.plug()');
+            Y.Node.unplug(Y.Plugin.NodeFX);
+            Assert.isFalse(!!Y.Node.create('<div></div>').fx, 'Node.unplug()');
+
+            Y.all('input').plug(Y.Plugin.NodeFX);
+
+            Y.all('input').each(function(n) {
+                Assert.isObject(n.fx, "Y.all('input').plug(Y.Plugin.NodeFX)");
+            });
+
+            Y.all('input').unplug(Y.Plugin.NodeFX);
+            Y.all('input').each(function(n) {
+                Assert.areEqual(undefined, n.fx, "Y.all('input').unplug(Y.Plugin.NodeFX)");
+            });
+        },
+
+        test_props: function() {
+            var mask = document.createElement('div');
+            mask.className = 'mask';
+            document.body.appendChild(mask);
+            var doc = Y.one('document');
+            window.scrollTo(0,0);
+            mask.style.height = doc.get('docHeight') + 'px';
+            mask.style.width = doc.get('docWidth') + 'px';
+            Y.DOM.setStyle(mask, 'opacity', 0.4); 
+            Assert.areEqual('DIV', Y.one('#test-prop').get('nodeName'), 'one("test-prop")');
+
+            Assert.areEqual('test-xy', doc.one('#test-xy').get('id'), 'doc.one("#test-xy")');
+            Assert.isNull(doc.one('fake-id'), 'doc.one("#fake-id")');
+
+            Assert.areEqual(mask.offsetHeight, doc.get('docHeight'), 'get("docHeight")');
+            Assert.areEqual(mask.offsetWidth, doc.get('docWidth'), 'get("docWidth")');
+            mask.className = '';
+        },
+
+        test_one: function() {
+            var node = Y.DOM.byId('test:colon');
+            Assert.areEqual(node.getElementsByTagName('h2')[0], Y.one(node).one('h2')._node,
+                "Y.one(Y.DOM.byId('test:colon')).one(h2)");
+
+            node = Y.DOM.byId('_funky:id{$400}');
+            Assert.areEqual(node.getElementsByTagName('h2')[0], Y.one(node).one('h2')._node,
+                "Y.one(Y.DOM.byId('_funky:id{$400}')).one(h2)");
+
+            node = Y.one(1);
+            Assert.isNull(node, "Y.one(1)");
+
+            node = Y.one(true);
+            Assert.isNull(node, "Y.one(true)");
+
+            node = Y.one(false);
+            Assert.isNull(node, "Y.one(false)");
+
+            node = Y.one(0);
+            Assert.isNull(node, "Y.one(0)");
+
+        },
+        test_all: function() {
+            var node = Y.DOM.byId('test:colon');
+            ArrayAssert.itemsAreEqual(node.getElementsByTagName('h2'),
+                Y.one(node).all('h2')._nodes,
+                "Y.one(Y.DOM.byId('test:colon')).all(h2)");
+
+            node = Y.DOM.byId('_funky:id{$400}');
+            ArrayAssert.itemsAreEqual(node.getElementsByTagName('h2'),
+                Y.one(node).all('h2')._nodes,
+                "Y.one(Y.DOM.byId('_funky:id{$400}')).all(h2)");
+
+            node = Y.one('body');
+            ArrayAssert.itemsAreEqual([node._node], Y.all(node)._nodes, 
+                "Y.all(Y.one('body'))");
+
+            node = Y.one('win');
+            ArrayAssert.itemsAreEqual([node._node], Y.all(node)._nodes, 
+                "Y.all(Y.one('win'))");
+
+/* comparision fails in webkit, so using alert test below
+            Assert.areEqual(window, Y.all(window)._nodes[0], 
+                "Y.all(window)");
+*/
+
+            Assert.isTrue(Y.DOM.isWindow(Y.all(window)._nodes[0], "Y.all(window)"));
+        },
+
+        test_isEmpty: function() {
+            Assert.isFalse(Y.all('input').isEmpty());
+            Assert.isTrue(Y.all('.nomatch').isEmpty());
+        },
+
+        test_swap: function() {
+            var elements = Y.DOM.byId('test-swap').getElementsByTagName('li'),
+                nodes = Y.all('#test-swap li');
+
+            Assert.areEqual(elements[0], nodes.item(0)._node);
+
+            nodes.item(0).swap(nodes.item(3));
+            Assert.areEqual(elements[0], nodes.item(3)._node, "nodes.item(0).swap(nodes.item(3))");
+
+            nodes.item(0).swap(nodes.item(3));
+            Assert.areEqual(elements[0], nodes.item(0)._node);
+            Assert.areEqual(elements[3], nodes.item(3)._node);
+
+            nodes.item(1).swap(nodes.item(2));
+            Assert.areEqual(elements[1], nodes.item(2)._node);
+            nodes.item(1).swap(nodes.item(2));
+            Assert.areEqual(elements[1], nodes.item(1)._node);
+            Assert.areEqual(elements[2], nodes.item(2)._node);
+        },
+
+        test_data: function() {
+            var node = Y.one('body');
+
+            // deprecated usage
+            node.set('data', 'foo');
+            Assert.areEqual('foo', node.get('data'),
+                "node.set('data', 'foo')");
+
+            node.setData('foo', 'foo');
+            Assert.areEqual('foo', node.getData('foo'),
+                "node.setData('foo', 'foo')");
+
+            node.clearData();
+            Assert.areEqual(undefined, node.getData('baz'),
+                "node.clearData()");
+
+            node.setData({'bar': 'bar', 'baz': 'baz'});
+            Assert.areEqual('bar', node.getData('bar'),
+                "node.setData({'bar': 'bar', 'baz': 'baz'})");
+
+            Assert.areEqual('baz', node.getData('baz'),
+                "node.setData({'bar': 'bar', 'baz': 'baz'})");
+
+            node.clearData('bar');
+            Assert.areEqual(undefined, node.getData('bar'),
+                "node.clearData('bar')");
+
+            Assert.areEqual('baz', node.getData('baz'),
+                "node.clearData('bar')");
+
+            node.clearData();
+            Assert.areEqual(undefined, node.getData('baz'),
+                "node.clearData()");
+
+            node.clearData();
+            Assert.areEqual(undefined, node.getData('baz'),
+                "node.clearData() after cleared");
+        },
+
+        test_appendStyle: function() {
+            var html = '<style>body {height:100px}</style>';
+            Y.one('head').append(html);
+            Assert.areEqual('100px', Y.one('body').getStyle('height'),
+                "Y.one('head').append(" + html + ")");
+        },
+
+        test_nodelistEvent: function() {
+            var nodelist = Y.all('div'),
+                item = nodelist.item(0),
+                evtObj = {
+                mousedown: function(e, foo, bar) {
+                    Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+                    Assert.areEqual('foo', foo, "foo === 'foo'");
+                    Assert.areEqual('bar', bar, "bar === 'bar'");
+                }
+            };
+
+            nodelist.on('click', function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            Y.on(evtObj, null, nodelist, null, 'foo', 'bar');
+            nodelist.on(evtObj, null, null, 'foo', 'bar');
+
+            nodelist.on({mouseup: true}, function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            nodelist.on({mouseup: function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }});
+
+            nodelist.on({keydown: true}, function(e) {
+                Assert.areEqual(this, nodelist.item(0));
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }, item);
+
+            nodelist.on({keydown: true}, function(e) {
+                Assert.areEqual(this, nodelist.item(0));
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }, item);
+
+
+            nodelist.after('click', function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            Y.after(evtObj, null, nodelist, null, 'foo', 'bar');
+            nodelist.after(evtObj, null, null, 'foo', 'bar');
+
+            nodelist.after({mouseup: true}, function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            nodelist.after({keydown: true}, function(e) {
+                Assert.areEqual(this, nodelist.item(0));
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }, item);
+
+            item.simulate('mousedown');
+            item.simulate('click');
+            item.simulate('mouseup');
+            item.simulate('keydown');
+        },
+
+        test_size: function() {
+            var node = Y.one('#doc'),
+                height = node._node.offsetHeight,
+                width = node._node.offsetWidth;
+
+            node.set('offsetHeight', 1000);
+            node.set('offsetWidth', 800);
+
+            Assert.areEqual(1000, node.get('offsetHeight'),
+                "node.set('offsetHeight')");
+
+            Assert.areEqual(800, node.get('offsetWidth'),
+                "node.set('offsetWidth')");
+
+            node.set('offsetWidth', -100);
+            node.set('offsetHeight', -100);
+
+            Assert.areEqual('0px', node.getStyle('height'),
+                "node.get('offsetHeight')");
+
+            Assert.areEqual('0px', node.getStyle('width'),
+                "node.get('offsetWidth')");
+
+            node.setStyle('height', '');
+            node.setStyle('width', '');
+
+            Assert.areEqual(height, node.get('offsetHeight'),
+                "node.get('offsetHeight')");
+
+            Assert.areEqual(width, node.get('offsetWidth'),
+                "node.get('offsetWidth')");
+
+        },
+
+        test_select: function() {
+            var select = Y.Node.create('<select>');
+            Assert.areEqual('', select.get('value'));
+        },
+
+        test_label_for: function() {
+            var label = Y.Node.create('<label for="foo">');
+            Assert.areEqual('foo', label.get('for'));
+        },
+
+        test_destroy: function() {
+            var node = Y.Node.create('<div><em>foo</em><strong>bar</strong></div>');
+                nodes = node.all('em, strong');
+
+            node.destroy();
+            Assert.isNull(node._node);
+
+        },
+
+        test_prependLinkFrag: function() {
+            // Using link explicitly as the prepended fragment, because older IEs have edge case issues.
+            var html = '<link id="dyn-link-1" href="#" rel="stylesheet"><link id="dyn-link-2" href="#" rel="stylesheet">';
+            Y.one('head').prepend(html);
+            //Y.one('head').prepend(Y.Node.create(html));
+            Assert.isNotNull(document.getElementById('dyn-link-1'));
+            Assert.isNotNull(document.getElementById('dyn-link-2'));
+
+            html = '<link id="dyn-link-3" href="#" rel="stylesheet">'
+            Y.one('head').prepend(html);
+            Assert.isNotNull(document.getElementById('dyn-link-3'));
+        },
+
+        test_prependDivFrag: function() {
+            var html = '<div id="dyn-divfrag-1"></div><div id="dyn-divfrag-2"></div>',
+                nodeOne,
+                nodeTwo,
+                nodeThree;
+
+            Y.one('body').prepend(html);
+
+            nodeOne = Y.Node.one('#dyn-divfrag-1');
+            nodeTwo = Y.Node.one('#dyn-divfrag-2');
+
+            Assert.isNotNull(nodeOne);
+            Assert.isNotNull(nodeTwo);
+
+            Assert.areSame(nodeOne, Y.one('body').get('firstChild'), 'divfrag-1 is in the DOM but not prepended');
+            Assert.areSame(nodeTwo, Y.one('body').get('firstChild').get('nextSibling'), 'divfrag-2 is in the DOM but not prepended');
+
+            html = '<div id="dyn-divfrag-3"></div>'
+
+            Y.one('body').prepend(html);
+
+            nodeThree = Y.Node.one('#dyn-divfrag-3');
+
+            Assert.isNotNull(nodeThree);
+
+            Assert.areSame(nodeThree, Y.one('body').get('firstChild'), 'divfrag-1 is in the DOM but not prepended');
+
+            nodeOne.remove(true);
+            nodeTwo.remove(true);
+            nodeThree.remove(true);
+        },
+
+        test_focus: function () {
+            var button = document.createElement('button');
+            button.style.visibility = 'hidden';
+            document.body.appendChild(button);
+
+            // This will throw in IE, but the focus() wrapper should catch the
+            // exception.
+            Y.one(button).focus();
+        },
+
+        'should hide the node': function() {
+            var node = Y.one('body');
+            node.hide();
+            Assert.areEqual('none', node.getStyle('display'));
+            node.setStyle('display', 'block');
+        },
+
+        'should show the node': function() {
+            var node = Y.one('body');
+            node.setStyle('display', 'none');
+            node.show(1);
+            Assert.areEqual('block', node.getStyle('display'));
+            node.setStyle('display', 'block');
+        },
+
+        'should show the node and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.setStyle('display', 'none');
+
+            node.show(function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            node.setStyle('display', 'block');
+        },
+
+        'should show the node and treat function as callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.setStyle('display', 'none');
+
+            node.show(null, function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            node.setStyle('display', 'block');
+        },
+
+        'should hide the node and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.hide(function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            node.setStyle('display', 'block');
+        },
+
+        'should hide the node and treat function as callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.hide(null, function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            node.setStyle('display', 'block');
+        },
+
+        'should toggle the node view on': function() {
+            var node = Y.one('body');
+
+            node.setStyle('display', 'none');
+            node.toggleView();
+
+            Assert.areEqual('block', node.getStyle('display'));
+        },
+
+        'should toggle the node view on and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.setStyle('display', 'none');
+
+            node.toggleView('foo', function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            Assert.areEqual('block', node.getStyle('display'));
+        },
+
+        'should force toggle the node view on': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.toggleView(true);
+
+            Assert.areEqual('block', node.getStyle('display'));
+        },
+
+        'should force toggle the node view on and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.toggleView(true, function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            Assert.areEqual('block', node.getStyle('display'));
+        },
+
+        'should force toggle the node view off': function() {
+            var node = Y.one('body');
+
+            node.toggleView(false);
+
+            Assert.areEqual('none', node.getStyle('display'));
+            node.setStyle('display', 'block');
+        },
+
+        'should force toggle the node view off and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.toggleView(false, function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            Assert.areEqual('none', node.getStyle('display'));
+            node.setStyle('display', 'block');
+        },
+
+        'should set text for textNode': function() {
+            var node = Y.one(document.createElement('text'));
+            node.set('text', 'foo');
+            Assert.areEqual('foo', node.get('text'));
+        },
+
+        'should append to the given node': function() {
+            var node = Y.Node.create('<div/>');
+            node.appendTo(Y.one('body'));
+        },
+
+        'should append to the given DOM node': function() {
+            var node = Y.Node.create('<div/>');
+            node.appendTo(document.body);
+        },
+
+        'should wrap the node with the given html': function() {
+            var node = Y.Node.create('<span/>');
+            node.wrap('<div/>');
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should wrap the node with the given DOM node': function() {
+            var node = Y.Node.create('<span/>');
+            node.wrap(document.createElement('div'));
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should wrap the node with the given node instance': function() {
+            var node = Y.Node.create('<span/>');
+            node.wrap(Y.Node.create('<div/>'));
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should wrap the paragraph with a div': function() {
+            var node = Y.Node.create('<p>Hello World</p>');
+            node.wrap('<div></div>');
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should remove the node from its parent': function() {
+            var node = Y.Node.create('<div/>').append('<span><em>foo</em></span>').one('em');
+            node.unwrap();
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should return true for fragment': function() {
+            var node = Y.Node.create('<span>foo</span><em>bar</em>');
+            Assert.isTrue(node.isFragment());
+        },
+
+        'should create a caption element': function() {
+            var node = Y.Node.create('<table/>');
+            node.createCaption();
+            Assert.areEqual('CAPTION', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace(Y.Node.create('<em>bar</em>'));
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given dom node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace(Y.Node.create('<em>bar</em>')._node);
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given html': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node.one('span').replace('<em>bar</em>');
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should replace node with the given html and return the replaced node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>');
+            node = node.replaceChild('<em>bar</em>', node.one('span'));
+            Assert.areEqual('SPAN', node.get('tagName'));
+        },
+
+        'should append the given html and return the new node': function() {
+            var node = Y.Node.create('<div></div>').appendChild('<em>foo</em>');
+            Assert.areEqual('EM', node.get('tagName'));
+        },
+
+        'should append the given nodelist': function() {
+            var nodelist = Y.Node.create('<div><em>foo</em><strong>bar</strong></div>').all('*'),
+                node = Y.Node.create('<div/>');
+
+            node.append(nodelist);
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should append the given nodelist and return a NodeList instance': function() {
+            var nodelist = Y.Node.create('<div><em>foo</em><strong>bar</strong></div>').all('*'),
+                node = Y.Node.create('<div/>'),
+                nodelist2 = node.appendChild(nodelist);
+
+            Assert.areEqual('EM', nodelist.item(0).get('tagName'));
+            Assert.areEqual('STRONG', nodelist.item(nodelist.size() - 1).get('tagName'));
+        },
+
+        'should insert the given html and return the new node': function() {
+            var node = Y.Node.create('<div><span>foo</span></div>'),
+                newNode = node.insertBefore('<em>bar</em>', node.one('*'));
+
+            Assert.areEqual('EM', node.get('firstChild.tagName'));
+        },
+
+        'should insert the given nodelist before the given node and return the nodelist': function() {
+            var nodelist = Y.Node.create('<div><em>foo</em><strong>bar</strong></div>').all('*'),
+                node = Y.Node.create('<div><span>baz</span><b>foobar</b></div>'),
+                nodelist2 = node.insertBefore(nodelist, node.one('b')),
+                childNodes = node.get('childNodes');
+
+            Assert.areEqual(4, childNodes.size());
+            Assert.areEqual('EM', childNodes.item(1).get('tagName'));
+            Assert.areEqual('B', childNodes.item(childNodes.size() - 1).get('tagName'));
+            Assert.areEqual('SPAN', childNodes.item(0).get('tagName'));
+        },
+
+        'should insert the node before the given node and return the new node': function() {
+            var node = Y.Node.create('<div><span>baz</span><b>foobar</b></div>'),
+                node2 = node.insertBefore(Y.Node.create('<em>foo</em>'), node.one('b')),
+                childNodes = node.get('childNodes');
+
+            Assert.areEqual('EM', childNodes.item(1).get('tagName'));
+            Assert.areEqual('B', childNodes.item(childNodes.size() - 1).get('tagName'));
+            Assert.areEqual('EM', node2.get('tagName'));
+        },
+
+        'should insert the given node before the given dom node and return the new node': function() {
+            var node = Y.Node.create('<div><span>baz</span><b>foobar</b></div>'),
+                node2 = node.insertBefore(document.createElement('em'), node.one('b')),
+                childNodes = node.get('childNodes');
+
+            Assert.areEqual('EM', node.get('childNodes').item(1).get('tagName'));
+            Assert.areEqual('B', childNodes.item(childNodes.size() - 1).get('tagName'));
+            Assert.areEqual('EM', node2.get('tagName'));
+        },
+
+        'should empty the node': function() {
+            var node = Y.Node.create('<div><span><em>foo</em></span><strong>bar</strong></div>');
+            node.empty();
+            Assert.areEqual(0, node.get('childNodes').size());
+        },
+
+        'should empty the node and recursively destroy': function() {
+            var node = Y.Node.create('<div><span><em>foo</em></span><strong>bar</strong></div>'),
+                node2 = node.one('em');
+
+            Assert.areEqual(node2, node.one('em'));
+            node.empty(true);
+            Assert.areNotEqual(node2, node.one('em'));
+        },
+
+        'should empty the nodelist': function() {
+            var node = Y.Node.create('<div><span><em>foo</em></span><span>strong>bar</strong></span></div>');
+            node.all('span').empty();
+            Assert.areEqual(0, node.get('childNodes').item(0).get('childNodes').size());
+            Assert.areEqual(0, node.get('childNodes').item(1).get('childNodes').size());
+        },
+
+        'should load the content from the given url into the node': function() {
+            var node = Y.Node.create('<div></div>'),
+                test = this;
+            node.set('id', 'test-loading');
+            node.appendTo('body');
+            node.load('./assets/test-frame.html', function(code, response) {
+                test.resume(function() {
+                    Assert.areEqual(1, node.all('div').size());
+                    node.remove();
+                });
+            });
+            test.wait(1000);
+        },
+
+        'should load the query result from the given url into the node': function() {
+            var node = Y.Node.create('<div></div>'),
+                test = this;
+            node.set('id', 'test-loading');
+            node.appendTo('body');
+            node.load('./assets/test-frame.html', 'ul', function(code, response) {
+                test.resume(function() {
+                    Assert.areEqual(1, node.all('ul').size());
+                    node.remove();
+                });
+            });
+            test.wait(1000);
+        },
+
+        'should call method with node context': function() {
+           Y.Node.addMethod('testThis', function() {
+                return this.get('id');
+            });
+
+            var node1 = Y.Node.create('<div id="foo"/>');
+            var node2 = Y.Node.create('<div id="bar"/>');
+            Assert.areEqual('foo', node1.testThis());
+            Assert.areEqual('bar', node2.testThis());
+        },
+
+        'should clear inline styles': function() {
+            var node = Y.Node.create('<div/>');
+            document.body.appendChild(node._node);
+            node.setStyle('paddingTop', '10px');
+            Assert.areEqual('10px', node.getStyle('paddingTop'));
+            node.setStyle('');
+            Assert.areEqual('0px', node.getStyle('paddingTop'));
+            document.body.removeChild(node._node);
+        },
+
+        'should apply inline opacity': function() {
+            var node = Y.Node.create('<div/>');
+            document.body.appendChild(node._node);
+            node.setStyle('opacity', '0.5');
+            Assert.areEqual('0.5', node.getStyle('opacity'));
+            node.setStyle('');
+            Assert.areEqual('1', node.getStyle('opacity'));
+            document.body.removeChild(node._node);
+        },
+
+        'should accept document Node instance': function() {
+            Y.DOM._fragClones = {};
+            var node = Y.Node.create('<div/>', Y.one(document));
+            Assert.areEqual('DIV', node.get('tagName'));
+        },
+
+        'should destroy recursively': function() {
+            var node = Y.one('#test-nodes');
+            node.one('ul')._bar = 'bar';
+            node.destroy(true);
+
+            Assert.isUndefined(Y.one('#test-nodes ul')._bar);
+        },
+
+        'should return the DOM node': function() {
+            var node = document.getElementById('test-nodes');
+
+            Assert.areEqual(node, Y.one('#test-nodes').getDOMNode());
+        },
+
+        'should return the DOM nodes': function() {
+            var nodes = document.getElementsByTagName('input');
+
+            ArrayAssert.itemsAreEqual(nodes, Y.all(nodes).getDOMNodes());
+        },
+
+        'should not cache document fragment': function() {
+            var node = Y.Node.create('<div>foo</div><div>bar</div>');
+            Assert.isUndefined(Y.Node._instances[node._yuid]);
+        }
+    })); 
+
+    suite.add( new Y.Test.Case({
+        name: 'generateID',
+
+        'should generate a unique ID': function() {
+            var node = Y.Node.create('<div/>'),
+                id = node.generateID();
+            Assert.isTrue(node.get('id') !== '');
+            Assert.areEqual(node.get('id'), id);
+        },
+        
+        'should return exising ID': function() {
+            var node = Y.Node.create('<div id="foo"/>'),
+                id = node.generateID();
+
+            Assert.areEqual('foo', node.get('id'));
+            Assert.areEqual('foo', id);
+        }
+        
+    })); 
+
+    suite.add( new Y.Test.Case({
+        name: 'new Y.Node()',
+
+        'should generate a fresh instance': function() {
+            Assert.areNotEqual(Y.one('body'), Y.Node('body'));
+        },
+
+        'compareTo should pass': function() {
+            Assert.isTrue(Y.one('body').compareTo(Y.Node('body')));
+        }
+    })); 
+
+    suite.add( new Y.Test.Case({
+        name: 'NodeList API',
+
+        'should have the create API': function() {
+            Assert.isTrue(typeof Y.all('body').append == 'function');
+            Assert.isTrue(typeof Y.all('body').prepend == 'function');
+            Assert.isTrue(typeof Y.all('body').insert == 'function');
+            Assert.isTrue(typeof Y.all('body').setContent == 'function');
+            Assert.isTrue(typeof Y.all('body').appendChild == 'function');
+        },
+
+        'should have the view API': function() {
+            Assert.isTrue(typeof Y.all('body').hide == 'function');
+            Assert.isTrue(typeof Y.all('body').show == 'function');
+            Assert.isTrue(typeof Y.all('body').toggleView == 'function');
+        },
+
+        'should have the event API': function() {
+            Assert.isTrue(typeof Y.all('body').on == 'function');
+            Assert.isTrue(typeof Y.all('body').after == 'function');
+            Assert.isTrue(typeof Y.all('body').detach == 'function');
+            Assert.isTrue(typeof Y.all('body').detachAll == 'function');
+        },
+
+        'should create empty NodeList from empty arguments': function() {
+            ArrayAssert.itemsAreEqual([], new Y.NodeList()._nodes);
+        },
+
+        'should create empty NodeList from empty string': function() {
+            ArrayAssert.itemsAreEqual([], new Y.NodeList('')._nodes);
+        },
+
+        'should create empty NodeList from empty arguments via Y.all': function() {
+            ArrayAssert.itemsAreEqual([], Y.all()._nodes);
+        },
+
+        'should create empty NodeList from empty string via Y.all': function() {
+            ArrayAssert.itemsAreEqual([], Y.all('')._nodes);
+        }
+    })); 
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.insert',
+
+        'insert should fail silently given null input': function() {
+            Assert.areEqual(document.body, Y.one('body').insert(null)._node);
+        },
+
+        'insert should work with 0 (falsy number input)': function() {
+            var node = document.createElement('div');
+            Assert.isTrue(Y.one(node).insert(0)._node.innerHTML === '0');
+        },
+
+        'insert should replace content when given null input and replace where string': function() {
+            var node = document.createElement('div');
+            node.innerHTML = '<strong>foo</strong><em>bar</em>';
+
+            Assert.areEqual('', Y.one(node).insert(null, 'replace')._node.innerHTML);
+        },
+
+        'prepend should fail silently given null input': function() {
+            Assert.areEqual(document.body, Y.one('body').prepend(null)._node);
+        }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.removeAttribute',
+
+        'should remove the given attribute': function() {
+            var node = document.createElement('div');
+
+            node.innerHTML = '<div id="foo">foo</div>';
+            node = node.getElementsByTagName('div')[0];
+
+            Y.one(node).removeAttribute('id');
+            Assert.areEqual('', Y.one(node).get('id'));
+
+        },
+
+        'should be chainable': function() {
+            var node = document.createElement('div');
+
+            node.innerHTML = '<div id="foo">foo</div>';
+            node = Y.one(node.getElementsByTagName('div')[0]);
+
+            Assert.areEqual(node, node.removeAttribute('id'));
+        },
+
+        'should remove readonly': function() {
+            var node = Y.one('#test-text-value');
+            node.removeAttribute('readonly');
+
+            Assert.isTrue(!node._node.readonly, 'readonly');
+            Assert.isTrue(!node._node.readOnly, 'readOnly'); // IE
+        }
+    }));
+
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.ATTRS.children',
+
+        'should return children from document fragment': function() {
+            var node = document.createDocumentFragment();
+            node.appendChild(document.createElement('div'));
+
+            Assert.areEqual('DIV', Y.one(node).get('children').item(0).get('tagName'));
+        }
+
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.setHTML',
+
+        'should insert html into div': function() {
+            var html = '<p>foo</p>',
+                node = Y.Node.create('<div/>');
+
+            node.setHTML(html);
+            Assert.areEqual(html, node._node.innerHTML.toLowerCase());
+        },
+
+        'should insert html into nodelist': function() {
+            var html = 'baz',
+                node = Y.Node.create('<div><p>foo</p><p>bar</p></div>'),
+                nodes = node.all('p');
+
+            nodes.setHTML(html);
+            Assert.areEqual('baz', nodes._nodes[0].innerHTML.toLowerCase());
+            Assert.areEqual('baz', nodes._nodes[1].innerHTML.toLowerCase());
+        },
+
+        'should get html from div': function() {
+            var html = '<p>foo</p>',
+                node = Y.Node.create('<div/>');
+
+            node.setHTML(html);
+            Assert.areEqual(html, node.getHTML().toLowerCase());
+        },
+
+        'should get html from nodelist': function() {
+            var html = 'baz',
+                node = Y.Node.create('<div><p>foo</p><p>bar</p></div>'),
+                nodes = node.all('p');
+
+            nodes.setHTML(html);
+            ArrayAssert.itemsAreEqual(['baz', 'baz'], nodes.getHTML());
+        }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.getStyle',
+
+        'should return undefined when given invalid property': function() {
+            var node = Y.Node.create('<div/>'),
+                val = node.getStyle('foo');
+
+            Assert.isUndefined(val);
+        }
+
+    }));
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.getComputedStyle',
+
+        'should return undefined when given invalid property': function() {
+            var node = Y.Node.create('<div/>'),
+                val = node.getComputedStyle('foo');
+
+            Assert.isUndefined(val);
+        }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.NodeList.getStyle',
+
+        'should return array of undefined when given invalid property': function() {
+            var nodes = Y.all('div'),
+                val = nodes.getStyle('foo');
+
+            Assert.isUndefined(val[0]);
+            Assert.isUndefined(val[1]);
+        }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.NodeList.getComputedStyle',
+
+        'should return array of undefined when given invalid property': function() {
+            var nodes = Y.all('div'),
+                val = nodes.getComputedStyle('foo');
+
+            Assert.isUndefined(val[0]);
+            Assert.isUndefined(val[1]);
+        }
+    }));
+
+    Y.Test.Runner.add(suite);
+
+    // TODO: Temp, so we can collect test results for Win8 packaged apps.
+    //
+    // Need to:
+    // - Expose Y.UA.winjsapp or something similar (http://yuilibrary.com/projects/yui3/ticket/2532797).
+    // - Look into why Y.on(load) is not firing in Win8 packaged apps.
+    // - Look into whether or not we really need onload for this test to begin with.
+    if ((typeof Windows !== "undefined") && Windows.System) {
+        Y.Test.Runner.run();
+    } else {
+        Y.on('load', function() {
+            Y.Test.Runner.run();
+        }, window);
+    }
+});
+</script>
+</body>
+</html>

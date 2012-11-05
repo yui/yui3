@@ -1,0 +1,15 @@
+{
+    "name": "pluginhost",
+    "builds": {
+        "pluginhost-base": {
+            "jsfiles": [
+                "PluginHost.js"
+            ]
+        },
+        "pluginhost-config": {
+            "jsfiles": [
+                "PluginHostConfig.js"
+            ]
+        }
+    }
+}

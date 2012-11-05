@@ -1,0 +1,148 @@
+<script>
+YUI().use('node', 'cssbutton', 'transition', 'UA', function (Y) {
+    var demo = Y.one('.demo'),
+        btnList = Y.all('.buttons-list .yui3-button'),
+        i = 0,
+        objList,
+        myZIndex,
+        imgPath = '{{{componentAssets}}}/images/';
+
+    if (Y.UA.ie && Y.UA.ie < 7) {
+
+        // Add a prefix to the image file name in the imgPath.
+        // This is needed to work around IE6 non-support of alpha pngs
+        imgPath = imgPath + '8bit_';
+        Y.one('.example .demo .bun-top img').setAttribute('src', imgPath + 'burg_bun_top.png');
+        Y.one('.example .demo .bun-bottom img').setAttribute('src', imgPath + 'burg_bun_bottom.png');
+    }
+
+    // This smoothes out the visual experience of adding
+    // an element to the burger
+    var transitionObject = function (obj) {
+        obj.transition({
+            duration: 0.8,
+
+            // height grows from initial 0, to height of contained image
+            height: obj.one('img').getStyle('height'),
+            marginLeft: '0px', // transition into place from offscreen left.
+            opacity: {
+                delay: 0.2,
+                duration: 0.5,
+                value: 1
+            }
+        });
+    }
+
+    // This removes an element of the burger
+    // the height transitions to 0, it moves left, and fades out
+    var removeObject = function(e) {
+        e.currentTarget.transition({
+            duration: 0.8,
+            height: 0,
+            marginLeft: '-400px',
+            opacity: {
+                delay: 0.2,
+                duration: 0.5,
+                value: 0
+            }
+        },
+            // after the transition finishes...
+            function(){
+                e.currentTarget.remove(); // remove the clicked item from the DOM
+
+                // If there's no patty in the burger
+                if (Y.one('.example .demo').getHTML().indexOf('patty') === -1) {
+                    // Disable the cheese button
+                    // Cheese is inserted before first patty.
+                    // The cheese button will be enabled when there's a patty
+                    Y.one('.buttons-list .cheese')._node.disabled = true;
+                }
+        });
+    }
+
+    // This inserts burger parts and manages the display of buttons
+    var buttonClicks = function (e) {
+        var obj;
+        if (this.hasClass('patty')) {
+            // Create a node with an image of the burger part
+            obj = Y.Node.create('<li class="patty"><img src="' + imgPath + 'burg_patty.png" width="268" height="75" alt="Burger patty"/></li>');
+
+            // Insert it before the bottom bun
+            demo.insert(obj, Y.one('.bun-bottom'));
+
+            // Smooth out insert with transition
+            transitionObject(obj);
+            
+            // Cheese button becomes available 
+            // only when there's a patty to insert before
+            Y.one('.buttons-list .cheese')._node.disabled = false; 
+        } else if (this.hasClass('lettuce')) {
+            obj = Y.Node.create('<li class="lettuce"><img src="' + imgPath + 'burg_lettuce.png" width="302" height="87" alt="Lettuce"/></li>');
+            demo.insert(obj, Y.one('.bun-bottom'));
+            transitionObject(obj);        
+        } else if (this.hasClass('cheese')) {
+            obj = Y.Node.create('<li class="cheese"><img src="' + imgPath + 'burg_cheese.png" width="274" height="89" alt="Cheese"/></li>');
+            demo.insert(obj, Y.one('.patty'));
+            transitionObject(obj);
+        } else if (this.hasClass('ketchup')) {
+            obj = Y.Node.create('<li class="ketchup"><img src="' + imgPath + 'burg_ketchup.png" width="208" height="66" alt="Ketchup"/></li>');
+            Y.one('.bun-top').insert(obj, 'after');
+            transitionObject(obj);
+        } else if (this.hasClass('pickles')) {
+            obj = Y.Node.create('<li class="pickles"><img src="' + imgPath + 'burg_pickles.png" width="236" height="61" alt="Pickles"/></li>');
+            Y.one('.bun-top').insert(obj, 'after');
+            transitionObject(obj);
+        } else if (this.hasClass('onions')) {
+            obj = Y.Node.create('<li class="onions"><img src="' + imgPath + 'burg_onions.png" width="248" height="77" alt="Onions"/></li>');
+            Y.one('.bun-top').insert(obj, 'after');
+            transitionObject(obj);
+        } else if (this.hasClass('tomato')) {
+            obj = Y.Node.create('<li class="tomato"><img src="' + imgPath + 'burg_tomato.png" width="225" height="68" alt="Tomato slice"/></li>');
+            Y.one('.bun-top').insert(obj, 'after');
+            transitionObject(obj);
+        } else if (this.hasClass('done')) {
+            objList = Y.all('.demo li');
+            myZIndex = objList.size();  // for resetting z-index of burger parts
+            
+            // Hide all the buttons when done
+            btnList.setStyle('display', 'none');
+            
+            // Show the "Another Please" button
+            Y.one('.buttons-list .another').setStyle('display', 'block');
+
+            // The normal z-index of <li>s in a <ul> results in the
+            // bottom of the bun picture being on top
+            // The z-index of the burger elements must be reversed.
+            for (i = 0; i < objList.size(); i += 1) {
+                objList.item(i).setStyle('zIndex', myZIndex);
+                myZIndex -= 1;
+                objList.item(i).setStyle('position', 'relative');
+                // transition the height of the elements proportionally smaller
+                // so you could get your mouth around it
+                objList.item(i).transition({
+                    duration: 0.5,
+                    height: parseInt(objList.item(i).one('img').getStyle('height'), 10) * 0.15 + 'px'
+                });
+            }    
+        } else if (this.hasClass('another')) {
+            // Empty out the content of the burger image
+            demo.setContent('');
+
+            // Insert just the buns
+            demo.append('<li class="bun-top"><img src="' + imgPath + 'burg_bun_top.png" width="271" height="106" alt="Burger bun top"/></li>');
+            demo.append('<li class="bun-bottom"><img src="' + imgPath + 'burg_bun_bottom.png" width="291" height="115" alt="Burger bun bottom"/></li>');
+
+            // Disable the cheese button
+            // Cheese is inserted before first patty.
+            // The cheese button will be enabled when there's a patty
+            Y.one('.buttons-list .cheese')._node.disabled = true;
+
+            // Display all the buttons except the "Another Please"
+            btnList.setStyle('display', 'block');
+            Y.one('.buttons-list .another').setStyle('display', 'none');
+        }
+    }
+    Y.on('click', buttonClicks, '.example .buttons-list .yui3-button');
+    Y.one('.example .demo').delegate('click', removeObject, 'li');
+});
+</script>

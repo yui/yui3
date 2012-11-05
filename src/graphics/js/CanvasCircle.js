@@ -14,7 +14,7 @@ CanvasCircle = function(cfg)
 	CanvasCircle.superclass.constructor.apply(this, arguments);
 };
     
-CanvasCircle.NAME = "canvasCircle";
+CanvasCircle.NAME = "circle";
 
 Y.extend(CanvasCircle, Y.CanvasShape, {
 	/**
@@ -39,7 +39,7 @@ Y.extend(CanvasCircle, Y.CanvasShape, {
 		{
             this.clear();
             this.drawCircle(0, 0, radius);
-			this._paint();
+			this._closePath();
 		}
 	}
 });

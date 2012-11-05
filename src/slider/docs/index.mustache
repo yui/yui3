@@ -38,7 +38,12 @@
 <p>
     The complete markup of a Slider is as follows:
 </p>
-                
+
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+```
+
 ```
 <!-- boundingBox -->
 <span class="yui3-widget yui3-sliderbase yui-slider">
@@ -103,7 +108,7 @@
 <table>
 <thead>
     <tr>
-        <th>Property</th>
+        <th>Attribute</th>
         <th>Description</th>
         <th>Default</th>
     </tr>
@@ -156,14 +161,14 @@ YUI({...}).use('slider',function (Y) {
 
     // Default everything
     var slider = new Y.Slider();
-    slider.render("#slider_parent");
+    slider.render("#slider-parent");
 
     // Use a custom thumb and width
     var slider = new Y.Slider({
         length : '200px',
-        thumbImage : '/path/to/local/thumb-image.png'
+        thumbUrl : '/path/to/local/thumb-image.png'
     });
-    slider.render('#slider_parent');
+    slider.render('#slider-parent');
 
     // Vertical slider with values that increase from bottom to top and
     // initialize the thumb in the middle.
@@ -173,7 +178,7 @@ YUI({...}).use('slider',function (Y) {
         max         : 0,
         value       : 50
     });
-    slider.render('#slider_parent');
+    slider.render('#slider-parent');
 });
 ```
 
@@ -329,15 +334,9 @@ slider.syncUI();
 
 <h3 id="skinning">Skinning</h3>
 
-<p>
-    Like all widgets in YUI, Slider is skinnable and ships by default with the
-    Sam skin.  To apply the skin CSS, assign the skin's class name to a parent
-    element of the Slider.  Typically it's adequate to just add the class to
-    the <code>&lt;body&gt;</code> tag.
-</p>
-
+{{>need-skin-note}}
 ```
-<body class="yui3-skin-sam">
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
 ```
 
 <h4 id="skin_thumbUrl">Using custom thumb or rail images</h4>
@@ -349,10 +348,11 @@ slider.syncUI();
 
 ```
 <style type="text/css">
-// The rail and end cap images are shared in a sprite
-.yui3-skin-sam .yui3-slider-x .yui3-slider-rail,
-.yui3-skin-sam .yui3-slider-x .yui3-slider-rail-cap-left,
-.yui3-skin-sam .yui3-slider-x .yui3-slider-rail-cap-right {
+/* The rail and end cap images are shared in a sprite.
+ * Include the id of the slider container to increase css specificity */
+.yui3-skin-sam #slider-parent .yui3-slider-x .yui3-slider-rail,
+.yui3-skin-sam #slider-parent .yui3-slider-x .yui3-slider-rail-cap-left,
+.yui3-skin-sam #slider-parent .yui3-slider-x .yui3-slider-rail-cap-right {
     background-image: url(/path/to/new/rail.png);
 }
 </style>
@@ -364,7 +364,7 @@ YUI().use( "slider", function (Y) {
         thumbUrl: '/path/to/new/thumb.png'
     });
 
-    slider.render("#slider_parent");
+    slider.render("#slider-parent");
 
 });
 </script>
@@ -497,7 +497,7 @@ YUI({ skin: { overrides: { slider: [ 'capsule' ] } } })
         thumbUrl: Y.config.base + '/slider-base/assets/skins/capsule/thumb-x-line.png'
     });
 
-    slider.render("#slider_parent");
+    slider.render("#slider-parent");
 
 });
 </script>
@@ -599,7 +599,7 @@ YUI().use( "slider-base", function (Y) {
     // Instantiate and use the new Slider class as you would Y.Slider
     var slider = new Y.MySlider({ /* config */ });
 
-    slider.render( "#slider_parent" );
+    slider.render( "#slider-parent" );
 
 });
 ```

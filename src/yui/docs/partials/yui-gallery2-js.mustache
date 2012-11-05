@@ -5,7 +5,7 @@ YUI().use('node', 'event-delegate', 'yui2-editor', 'gallery-storage-lite', funct
     write = function(str) {
         var d = new Date();
         str += ' :: ' + d.toTimeString();
-        res.setContent(str);
+        res.setHTML(str);
     },
     save = function() {
         Y.StorageLite.on('storage-lite:ready', function () {

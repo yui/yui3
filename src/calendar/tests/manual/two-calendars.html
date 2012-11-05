@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+    <title>Calendar Example</title>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<style>
+.yui3-skin-sam .redtext {
+	color:#ff0000;
+}
+</style>
+</head>
+<body class="yui3-skin-sam">
+<div id="firstcalendar"></div>
+<div id="secondcalendar"></div>
+<div id="currentDate"></div>
+
+<script>
+YUI({
+base: '../../../../build/',
+lang: 'ru',
+    filter: "raw"
+}).use('calendar',  function(Y) {
+
+
+        var calendarone = new Y.Calendar({
+	        showNextMonth: true,
+	        showPrevMonth: true,
+	        selectionMode: "multiple",
+	        date: new Date(2011,10,1),
+			width:'300px'});
+			
+		calendarone.render("#firstcalendar");
+
+        var calendartwo = new Y.Calendar({
+	        showNextMonth: true,
+	        showPrevMonth: true,
+	        selectionMode: "multiple",
+	        date: new Date(2015,10,1),
+			width:'300px'});
+			
+		calendartwo.render("#secondcalendar");
+
+
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+    "name": "transition",
+    "builds": {
+        "transition": {
+            "jsfiles": [
+                "transition-native.js"
+            ]
+        },
+        "transition-timer": {
+            "jsfiles": [
+                "transition-timer.js"
+            ]
+        }
+    }
+}

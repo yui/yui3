@@ -158,6 +158,29 @@ Y.extend(Spinner, Widget, {
 <p>Note that these steps are the same for any class which is derived from <a href="../base/index.html">`Base`</a>, nothing Widget-specific is involved yet. 
 Widget adds the concept of a rendered UI to the existing Base lifecycle (viz. init, destroy and attribute state configuration), which we'll see show up in Widget-specific areas below.</p>
 
+<h4>A Note On Externalizing Strings and Internationalization</h4>
+
+<p>For the scope of this example we won't get into packaging your custom widget code as a YUI module, but when you do, you can leverage the <a href="../intl/index.html">Internationalization</a> infrastructure 
+to bundle the strings for your widget separately from the code, and avoid hard-coding them into the widget's code base as we're doing above.</p>
+
+<p>When packaged separately from the code, the `strings` attribute can be changed to be:</p>
+
+```
+Spinner.ATTRS = {
+    ...
+    strings : {
+        valueFn : function() {
+            return Y.Intl.get("myspinner"); // Assuming "myspinner" is the name of your widget's module. 
+        }        
+    } 
+    ...
+}
+```
+
+<p>Loader will deliver the language specific bundle for your widget along with the code when someone uses your `myspinner` module. The language specific strings can be retrieved through the `Y.Intl.get(modulename)` call.</p>
+
+<p>The <a href="../intl/intl-basic.html">Language Resource Bundles</a> example goes into more detail about the structure of the langauge bundles, how they are built and how to configure your YUI instance to deliver them. <a href="https://github.com/yui/yui3/tree/master/build/calendar-base">Calendar's source code</a> is also a good example of how this infrastructure is used.</p>
+
 <h3>The HTML_PARSER Property</h3>
 
 <p>

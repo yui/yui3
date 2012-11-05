@@ -1,4 +1,4 @@
-YUI.add('graphics-vml-default', function(Y) {
+YUI.add('graphics-vml-default', function (Y, NAME) {
 
 Y.Graphic = Y.VMLGraphic;
 Y.Shape = Y.VMLShape;
@@ -9,4 +9,4 @@ Y.Path = Y.VMLPath;
 Y.Drawing = Y.VMLDrawing;
 
 
-}, '@VERSION@' ,{skinnable:false});
+}, '@VERSION@');

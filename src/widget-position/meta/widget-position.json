@@ -1,0 +1,9 @@
+{
+    "widget-position": {
+        "requires": [
+            "base-build",
+            "node-screen",
+            "widget"
+        ]
+    }
+}

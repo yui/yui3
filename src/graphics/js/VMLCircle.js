@@ -13,7 +13,7 @@ VMLCircle = function(cfg)
 	VMLCircle.superclass.constructor.apply(this, arguments);
 };
 
-VMLCircle.NAME = "vmlCircle";
+VMLCircle.NAME = "circle";
 
 Y.extend(VMLCircle, VMLShape, {
 	/**

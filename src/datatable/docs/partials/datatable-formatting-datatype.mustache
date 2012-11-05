@@ -1,0 +1,22 @@
+YUI().use("datatype-date", "datatable-base", function (Y) {
+
+    function formatDates(o) {
+        return o.value &&
+            Y.DataType.Date.format(o.value, { format: "%m/%d/%Y" });
+    }
+
+    var table = new Y.DataTable({
+        columns: [
+            "id",
+            "name",
+            { key: "date", formatter: formatDates, emptyCellValue: "(unknown)" }
+        ],
+        data: [
+            { id: "ga-3475", name: "gadget", date: new Date(2006, 5, 1) },
+            { id: "sp-9980", name: "sprocket", date: new Date(2004, 8, 16) },
+            { id: "wi-0650", name: "widget" } // No date, uses emptyCellValue
+        ],
+        caption: "Data formatting with DataType.Date"
+    }).render("#dates");
+
+});

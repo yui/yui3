@@ -1,6 +1,40 @@
 AutoComplete Change History
 ===========================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
+3.6.0
+-----
+
+* Fixed an issue that prevented events from being detached when the AutoComplete
+  widget was destroyed. [Ticket #2532419]
+
+
+3.5.1
+-----
+
+* Fixed a potential XSS issue involving the ARIA live region and text results
+  that contain HTML markup.
+
+
 3.5.0
 -----
 
@@ -11,6 +45,29 @@ AutoComplete Change History
   `{request}` placeholder, which works just like the `{query}` placeholder. Use
   this when you need to customize the query value (such as double-escaping it)
   used in the YQL query. [Ticket #2531285]
+
+* Changing the value of the `value` attribute programmatically will now also
+  update the value of the `query` attribute and will fire a `clear` event when
+  the value is cleared (thus clearing results), but still will not fire a
+  `query` event. Use the `sendRequest()` method to trigger a query
+  programmatically.
+
+* Added a workaround for an IE7 bug that would cause the result list to appear
+  empty when it first becomes visible.
+
+* Fixed a bug that caused a scrollable result list to be hidden when the user
+  clicked and dragged on the scrollbar and then released the mouse button while
+  the cursor was outside the list region.
+
+* Fixed a bug that caused the list to disappear on mouseover if the input field
+  received focus before the AutoComplete widget was initialized
+  [Ticket #2531651]
+
+* Fixed a bug that could prevent results from being selected via mouse click
+  after a result was selected via the tab key. [Ticket #2531684]
+
+* Fixed a bug that prevented the list from being re-aligned when the window was
+  resized.
 
 
 3.4.1

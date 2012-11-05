@@ -1,0 +1,117 @@
+<style>
+.example ul#demo, .example ul#demo2 {
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+    vertical-align: top;
+    list-style: none;
+    padding: 0;
+}
+.example ul#demo{
+    width: 300px;
+    border: 1px solid #eee;
+    padding: 0.5em;
+}
+.example ul#demo li{
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+    width: 70px;
+}
+.example a {
+    position: relative;
+    display: block;
+    height: 100%;
+    width: 100%;
+    color: #555;
+}
+.example .price {
+    color: #555;
+    font-size: 120%;
+}
+.example .price .cents{
+    font-size: 70%;
+}
+.example .dollars {
+    font-size: 144%;
+}
+/********* store side styles ***********/
+.example ul#demo li {
+    margin: 2px 0 2px 1px;    
+}
+.example ul#demo img {
+    width: 70px;
+    height: 125px;
+    vertical-align: bottom;
+    border: none;
+}
+.example ul#demo .description, .example ul#demo .price {
+    display: none;
+}
+.example ul#demo a:hover {
+    box-shadow: 0 0 5px rgba(255, 187, 71, 0.9);
+    text-decoration: none;
+}
+.example ul#demo a:hover .price {
+    background: -ms-linear-gradient(top, rgba(255,200,100,0.5) 0%,rgba(255,200,100,0.5) 100%); /* IE10+ */
+    background: linear-gradient(top, rgba(255,200,100,0.5) 0%,rgba(255,200,100,0.5) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80ffc864', endColorstr='#80ffc864',GradientType=0 ); /* IE6-8 */
+    background-color: rgba(250, 200, 100, 0.50);
+    display: block;
+    left: -8px;
+    position: absolute;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+    top: -8px;
+    border-radius: 3px;
+    padding: 0 0.3em;
+}
+/*********** cart side styles ************/
+.example ul#demo2 {
+    margin-left: 1em;
+    margin-top: -9px;
+    width: 295px;
+}
+.example ul#demo2 a:hover{
+    background: -ms-linear-gradient(top, rgba(255,33,33,0.1) 0%,rgba(255,33,33,0.1) 100%); /* IE10+ */
+    background: linear-gradient(top, rgba(255,33,33,0.1) 0%,rgba(255,33,33,0.1) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1aff2121', endColorstr='#1aff2121',GradientType=0 ); /* IE6-8 */
+    background-color: rgba(255, 33, 33, 0.10);
+    text-decoration: none;
+}
+.example ul#demo2 li a{
+    margin-bottom: 0.3em;
+    cursor: no-drop;
+}
+.example ul#demo2 img {
+    width: 25px;
+    height: 41.5px;
+    vertical-align: bottom;
+    border: none;
+}
+.example ul#demo2 .cart-head{
+    border-bottom: solid 1px #eee;
+    width: 100%;
+    cursor: default;
+}
+.example ul#demo2 .cart-head img{
+    width: 35px;
+    height: 38px;
+    vertical-align: baseline;
+}
+.example ul#demo2 .cart-head span{
+    font-size: 411%;
+    font-family: 'Maven Pro',Helvetica,sans-serif;
+    font-weight: bold;
+    vertical-align: baseline;
+    color: #E5E7EA;
+}
+.example ul#demo2 .description {
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+    width: 225px;
+    border-bottom: dotted 1px #ccc;
+    vertical-align: bottom;
+}
+
+</style>

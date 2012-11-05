@@ -133,7 +133,7 @@ YUI().use("dump", "node", "dataschema-json", function (Y) {
                 resultListLocator: "results",
                 resultFields: [{key:"n"}, {key:"fname"}, {key:"lname"}] // Or simply: ["n", "fname", "lname"]
             };
-        Y.one("#demo_output_basic").setContent(Y.dump(Y.DataSchema.JSON.apply(schema, data_in)));
+        Y.one("#demo_output_basic").setHTML(Y.dump(Y.DataSchema.JSON.apply(schema, data_in)));
     }, "#demo_apply_basic");
 
     Y.on("click", function(e){
@@ -194,7 +194,7 @@ YUI().use("dump", "node", "dataschema-json", function (Y) {
                 resultListLocator: "program[0]['weekly schedule']",
                 resultFields: [{key:"day"}, {key:"activity"}] // Or simply: ["day", "activity"]
             };
-        Y.one("#demo_output_complex").setContent(Y.dump(Y.DataSchema.JSON.apply(schema, data_in)));
+        Y.one("#demo_output_complex").setHTML(Y.dump(Y.DataSchema.JSON.apply(schema, data_in)));
     }, "#demo_apply_complex");
 });
 </script>

@@ -1,9 +1,9 @@
 {
     "graphics": {
-        "requires": ["node", "event-custom", "pluginhost", "matrix"],
+        "requires": ["node", "event-custom", "pluginhost", "matrix", "classnamemanager"],
         "plugins": {
             "graphics-svg": {
-                "requires": ["graphics"],
+                "requires": ["graphics" ],
 				"condition": {
 				"trigger": "graphics",
                     "test": "graphics-svg.js"

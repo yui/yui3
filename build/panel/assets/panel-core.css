@@ -10,12 +10,12 @@
 .yui3-panel .yui3-widget-hd {
     position: relative;
 }
-.yui3-panel .yui3-widget-hd .yui3-widget-button-wrapper {
+.yui3-panel .yui3-widget-hd .yui3-widget-buttons {
     position: absolute;
     top: 0;
     right: 0;
 }
-.yui3-panel .yui3-widget-ft .yui3-widget-button-wrapper {
+.yui3-panel .yui3-widget-ft .yui3-widget-buttons {
     display: inline-block;
     *display: inline;
     zoom: 1;

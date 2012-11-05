@@ -1,4 +1,4 @@
-YUI.add('datasource-polling', function(Y) {
+YUI.add('datasource-polling', function (Y, NAME) {
 
 /**
  * Extends DataSource with polling functionality.
@@ -32,7 +32,7 @@ Pollable.prototype = {
      *
      * @method setInterval
      * @param msec {Number} Length of interval in milliseconds.
-     * @param request {Object} An object literal with the following properties:
+     * @param [request] {Object} An object literal with the following properties:
      *     <dl>
      *     <dt><code>request</code></dt>
      *     <dd>The request to send to the live data source, if any.</dd>
@@ -90,4 +90,4 @@ Pollable.prototype = {
 Y.augment(Y.DataSource.Local, Pollable);
 
 
-}, '@VERSION@' ,{requires:['datasource-local']});
+}, '@VERSION@', {"requires": ["datasource-local"]});

@@ -1,0 +1,28 @@
+YUI().use('button-group', function(Y){
+
+    // A group of checkbox-like buttons
+    var buttonGroupCB = new Y.ButtonGroup({
+        srcNode: '#checkboxContainer',
+        type: 'checkbox',
+        on: {
+            'selectionChange': function(e){
+                var selection = buttonGroupCB.getSelectedButtons();
+                Y.log('buttonGroup2 selected count = ' + selection.length);
+            }
+        }
+    }).render();
+
+
+    // A group of radio-like buttons
+    var buttonGroupRadio = new Y.ButtonGroup({
+        srcNode: '#radioContainer',
+        type: 'radio'
+    })
+    
+    buttonGroupRadio.render();
+
+    buttonGroupRadio.on('selectionChange', function(e){
+        Y.log('buttonGroup selection changed');
+    });
+
+});

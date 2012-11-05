@@ -1,9 +1,68 @@
 Charts Change History
 =====================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+  * #2532713 Addressed issue in which updating the dataProvider on a chart with a legend threw an error.
+
+3.6.0
+-----
+
+  * #2532336 Addressed issue in which tooltip was referenced before it was set. 
+  * #2532078 Addressed issue in which setting a dataProvider with a different structure failed to update a chart.
+  * #2532103 Addressed issues with null values in stacked area charts.
+  * #2532115 Addressed issue in which stacked area charts did not close correctly when a series had null values at the beginning or end.
+  * #2531796 Addressed issue in which a combo series with discontinuous data and discontinuousType set to dashed broke the chart.
+  * #2532102 Addressed issue in which Area Charts with null values at the start or beginning do not close accurately.
+  * #2532186 Addressed issue in which categoryDisplayName and valueDisplayName in seriesCollection were not accepted on init.
+  * #2532234 Addressed issue in which axis appendTitleFunction and appendLabelFunction attributes were not being set properly.
+  * #2532284 Addressed issue in which legend item text with spaces wrapped.
+  * #2532285 Cleaned up legend destructor method.
+  * #2532327 Addressed issue in which negative values in a column series displayed incorrectly.
+  * #2532348 Addressed issue in which AreaSpline style object returned null.
+  * #2532353 Addressed issue in which vertical attribute was not being set properly on non-histogram cartesian series.
+  * #2532292 Filled out testing coverage
+  * #2531688 Fixed rounding bug in pie chart. 
+
+3.5.1
+-----
+
+  * #2532138 Fixed min/max issues with NumericAxis.
+  * #2532195 Fixed issues with tooltip when numeric values are used in a CategoryAxis.
+
 3.5.0
 -----
 
+  * #2531748 Added aria keyboard navigation. 
+  * #2530195 Tooltip display toggles on touchend event for mobile implementations. 
+  * #2531410 Fixed issue in which specifying color arrays for marker borders of some series type broke in canvas implementation.
+  * #2528814 Added charts-legend submodule to allow chart legends.
+  * #2531456 Fixed issue in which loading a chart with an empty data provider throw an error and not load. 
+  * #2530559 Added ability to explicitly set the width/height for vertical/horizontal axes
+  * #2531003 Fixed issue in which axis labels flowed outside the chart's bounding box. Added allowContentOverflow attribute to allow for the overflow if desired.
+  * #2531390 Addressed performance issues with IE
+  * #2530151 Fixed issue in which charts will load large data sets loaded slowly. Added the notion of group markers to limit the number of dom nodes.
+  * #2531468 Changed axis title attribute to use appendChild. NOTE: This may break backward compatibility if the value for your title attribute was dependent on innerHTML to format text.
+  * #2531469 Changed axis label to use appendChild. NOTE: This may break backward compatibility with custom label functions if they were dependent on innerHTML to format text.
+  * #2531472 Changed tooltip to use appendChild.  NOTE: This may break backward compatibility with custom tooltip functions if they were dependent on innerHTML to format text.
+  * Removed memory leaks caused by orphaned dom elements.
+  * Axes performance enhancements.
   * #2529859 Fixed issue in which Chart with timeAxis was not correctly initialized when setting dataProvider.
   * #2529922 Fixed issue in which updates to axes config after chart render did not take affect.  
   * #2530032 Fixed issue in which changing dataProvider after instantiation but pre-render resulted in the original dataProvider being used by the chart.

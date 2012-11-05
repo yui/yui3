@@ -2,6 +2,7 @@
  * AxisType is an abstract class that manages the data for an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class AxisType
  * @constructor
  * @extends Axis
@@ -34,6 +35,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         this.after("positionChange", this._positionChangeHandler);
         this.after("widthChange", this._handleSizeChange);
         this.after("heightChange", this._handleSizeChange);
+        this.after("calculatedWidthChange", this._handleSizeChange);
+        this.after("calculatedHeightChange", this._handleSizeChange);
     },
 
     /**
@@ -415,6 +418,30 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             return true;
         }
         return false;
+    },
+
+    /**
+     * Returns a string corresponding to the first label on an 
+     * axis.
+     *
+     * @method getMinimumValue
+     * @return String
+     */
+    getMinimumValue: function()
+    {
+        return this.get("minimum");
+    },
+
+    /**
+     * Returns a string corresponding to the last label on an 
+     * axis.
+     *
+     * @method getMaximumValue
+     * @return String
+     */
+    getMaximumValue: function()
+    {
+        return this.get("maximum");
     }
 }, {
     ATTRS: {

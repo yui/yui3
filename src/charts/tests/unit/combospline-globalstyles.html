@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+    <title>Combo Spline Global Styles Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+<script src="../../../../build/yui/yui.js"></script>
+<script src="./assets/combospline-globalstyles-tests.js"></script>
+<script>
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    coverage: ['charts-base', 'charts']
+}).use('test-console', 'combospline-globalstyles-tests', function (Y) {
+
+    (new Y.Test.Console()).render('#log');
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

@@ -196,16 +196,34 @@ var Y = YUI().use('node', 'event', function (Y) {
 
 <h3>Module States</h3>
 
+<p>
 Within any given YUI instance, there are three possible states for a module:
 </p>
 
 <ol>
-<li><p><strong>Not loaded</strong>: The module code has not been downloaded yet and is not available to any YUI instance.</p></li>
+    <li><p><strong>Not loaded</strong>: The module code has not been downloaded yet and is not available to any YUI instance.</p></li>
 
-<li><p><strong>Loaded</strong>: The module code has been downloaded, but has not been attached to this specific YUI instance. Other instances may be using it, but this instance isn't using it yet.</p></li>
+    <li><p><strong>Loaded</strong>: The module code has been downloaded, but has not been attached to this specific YUI instance. Other instances may be using it, but this instance isn't using it yet.</p></li>
 
-<li><p><strong>Attached</strong>: The module code has been downloaded and is attached to this YUI instance. The module is ready to use.</p></li>
+    <li><p><strong>Attached</strong>: The module code has been downloaded and is attached to this YUI instance. The module is ready to use.</p></li>
 </ol>
+
+```
+/*
+    Since we haven't created an instance yet, all YUI modules are
+    in the 'Not loaded' state until they are requested.
+*/
+
+YUI().use('calendar', function(Y) {
+    //Now calender and all if it's dependencies are 'Loaded' and 'Attached' on this instance
+});
+
+YUI().use('node', function(Y) {
+    //Now node and all of it's dependencies are 'Loaded' and 'Attached' on this instance
+    //Calender and it's un-used dependencies are in the 'Loaded' state on this instance
+});
+
+```
 
 <h3>Static Loading</h3>
 
@@ -331,58 +349,9 @@ The global `YUI.applyConfig()` method allows you to configure every YUI instance
 
 <h2 id="yuiadd">Creating Custom Modules with `YUI.add()`</h2>
 
-<p>
-`YUI.add()` is a static method that registers a reusable module&mdash;essentially, it adds a module to the set of modules available to be attached to a YUI instance via the `use()` method.
-</p>
+{{>add}}
 
-<p>
-Defining a reusable YUI module is as simple as providing a name and a callback function to `YUI.add()`.
-</p>
-
-```
-YUI.add('my-module', function (Y) {
-   // Write your module code here, and make your module available on the Y
-   // object if desired.
-   Y.MyModule = {
-       sayHello: function () {
-           console.log('Hello!');
-       }
-   };
-});
-```
-
-<p>
-Note that there are no parentheses after `YUI` when calling `YUI.add()` as there are when calling `YUI().use()`. This is because `add()` is a static method of the global `YUI` object, not a method on a specific YUI instance. Modules are registered globally via `add()` and are later attached to a specific YUI instance via `use()`.
-</p>
-
-<p>
-The `add()` method accepts two optional arguments after the callback function: a module version string and a config object. The most useful option in the config object is `requires`, which allows you to specify an array of other YUI modules that your module requires. YUI will then be sure to load these dependencies before executing your module.
-</p>
-
-```
-YUI.add('my-module', function (Y) {
-   // ...
-}, '0.0.1', {
-    requires: ['node', 'event']
-});
-```
-
-<p>
-After your module has been added via `YUI.add()`, you can specify its name in a `use()` call to attach it to a YUI instance.
-</p>
-
-```
-YUI().use('my-module', function (Y) {
-    // The Y instance here is the same Y instance that was passed into
-    // my-module's add() callback, so the Y.MyModule object that was created
-    // there is now available here as well.
-    Y.MyModule.sayHello();
-});
-```
-
-<p>
-A module's `add()` callback isn't executed until that module is attached to a YUI instance via `use()`. Each time a module is attached via `use()`, the module's `add()` callback will be executed, and will receive as an argument the same YUI instance that will later be passed to the `use()` callback.
-</p>
+<p>For more information on creating your custom modules, see our <a href="create.html">Creating YUI Modules</a> example.</p>
 
 <h2 id="nodejs">Using YUI on Node.js</h2>
 
@@ -399,6 +368,37 @@ YUI instance.</p>
 
 <p>You can find <a href="loader.html">more information about Loader here</a>.</p>
 
+<h3 id="async">New Async Loading in 3.5.0</h3>
+
+<p>In `3.5.0`, we introduced asnychronous loading in Loader by default. This means that any script
+`Loader` injects into the page will be loaded asnychronously. This will decrease load time and
+improve performance by allowing the browser to fetch as many scripts at once as it can.
+</p>
+
+<p>If your custom modules are properly wrapped in a `YUI.add` callback, you will see no difference at all.
+However, if you are loading custom modules that require ordered script loading 
+(depends on another dynamic, unwrapped module), you will need to change your module config to tell
+`Loader` to <strong>not</strong> load these modules with the `async` flag. You can do this by adding
+an `async: false` config to it's module definition and `Y.Get.script` will not load it asynchronously.
+</p>
+
+```
+YUI({
+    modules: {
+        one: {
+            async: false,
+            fullpath: './one.js'
+        },
+        two: {
+            async: false,
+            fullpath: './two.js',
+            requires: [ 'one' ]
+        }
+    }
+}).use('two'), function(Y) {
+    //Module one &amp; two are loaded now.
+});
+```
 
 <h2 id="Lang">Y.Lang</h2>
 <p>`Y.Lang` contains JavaScript language utilities and extensions that are used in the YUI library.

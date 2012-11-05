@@ -29,6 +29,16 @@
         },
 
         {
+            "name"       : "store",
+            "displayName": "DOM Methods - Store",
+            "description": "Building a simple store and shopping cart.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node", "shopping", "cart"],
+
+            "hideTableOfContents": true
+        },
+
+        {
             "name"       : "events",
             "displayName": "Handling DOM Events",
             "description": "Listening for DOM events with Node instances.",
@@ -40,10 +50,20 @@
 
         {
             "name"       : "nodelist",
-            "displayName": "NodeList",
-            "description": "NodeList provides Node functionality for multiple nodes.",
-            "modules"    : ["node"],
+            "displayName": "Using NodeList - Simple",
+            "description": "NodeList provides Node functionality for manipulating multiple nodes at once.",
+            "modules"    : ["node", "transition"],
             "tags"       : ["dom", "node", "nodelist"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "ducks",
+            "displayName": "Using NodeList - Ducks Game",
+            "description": "How to use multiple NodeList features to build a simple game.",
+            "modules"    : ["node", "transition"],
+            "tags"       : ["dom", "node", "nodelist", "duck", "ducks", "shoot", "shooting", "move"],
 
             "hideTableOfContents": true
         },
@@ -80,10 +100,10 @@
 
         {
             "name"       : "node-insert",
-            "displayName": "Adding Node Content",
+            "displayName": "Adding Node Content - Burger Builder",
             "description": "This example demonstrates how to insert content into a Node.",
-            "modules"    : ["node"],
-            "tags"       : ["dom", "node"],
+            "modules"    : ["node", "transition"],
+            "tags"       : ["dom", "node", "burger"],
 
             "hideTableOfContents": true
         },

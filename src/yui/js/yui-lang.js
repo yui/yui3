@@ -37,13 +37,15 @@ NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
 // -- Protected Methods --------------------------------------------------------
 
 /**
-Returns _true_ if the given function appears to be implemented in native code,
-_false_ otherwise. This isn't guaranteed to be 100% accurate and won't work for
-anything other than functions, but it can be useful for determining whether
-a function like `Array.prototype.forEach` is native or a JS shim provided by
-another library.
+Returns `true` if the given function appears to be implemented in native code,
+`false` otherwise. Will always return `false` -- even in ES5-capable browsers --
+if the `useNativeES5` YUI config option is set to `false`.
 
-There's a great article by @kangax discussing the flaws with this technique:
+This isn't guaranteed to be 100% accurate and won't work for anything other than
+functions, but it can be useful for determining whether a function like
+`Array.prototype.forEach` is native or a JS shim provided by another library.
+
+There's a great article by @kangax discussing certain flaws with this technique:
 <http://perfectionkills.com/detecting-built-in-host-methods/>
 
 While his points are valid, it's still possible to benefit from this function
@@ -54,13 +56,13 @@ other libraries.
 
 @method _isNative
 @param {Function} fn Function to test.
-@return {Boolean} _true_ if _fn_ appears to be native, _false_ otherwise.
+@return {Boolean} `true` if _fn_ appears to be native, `false` otherwise.
 @static
 @protected
 @since 3.5.0
 **/
 L._isNative = function (fn) {
-    return !!(fn && NATIVE_FN_REGEX.test(fn));
+    return !!(Y.config.useNativeES5 && fn && NATIVE_FN_REGEX.test(fn));
 };
 
 // -- Public Methods -----------------------------------------------------------
@@ -291,27 +293,32 @@ L.trimRight = STRING_PROTO.trimRight ? function (s) {
 };
 
 /**
- * <p>
- * Returns a string representing the type of the item passed in.
- * </p>
- *
- * <p>
- * Known issues:
- * </p>
- *
- * <ul>
- *   <li>
- *     <code>typeof HTMLElementCollection</code> returns function in Safari, but
- *     <code>Y.type()</code> reports object, which could be a good thing --
- *     but it actually caused the logic in <code>Y.Lang.isObject</code> to fail.
- *   </li>
- * </ul>
- *
- * @method type
- * @param o the item to test.
- * @return {string} the detected type.
- * @static
- */
+Returns one of the following strings, representing the type of the item passed
+in:
+
+ * "array"
+ * "boolean"
+ * "date"
+ * "error"
+ * "function"
+ * "null"
+ * "number"
+ * "object"
+ * "regexp"
+ * "string"
+ * "undefined"
+
+Known issues:
+
+ * `typeof HTMLElementCollection` returns function in Safari, but
+    `Y.Lang.type()` reports "object", which could be a good thing --
+    but it actually caused the logic in <code>Y.Lang.isObject</code> to fail.
+
+@method type
+@param o the item to test.
+@return {string} the detected type.
+@static
+**/
 L.type = function(o) {
     return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
 };

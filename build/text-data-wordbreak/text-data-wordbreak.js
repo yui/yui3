@@ -1,4 +1,4 @@
-YUI.add('text-data-wordbreak', function(Y) {
+YUI.add('text-data-wordbreak', function (Y, NAME) {
 
 Y.namespace('Text.Data').WordBreak = {
     // The UnicodeSet utility is helpful for enumerating the specific code
@@ -26,4 +26,4 @@ Y.namespace('Text.Data').WordBreak = {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

@@ -1,0 +1,109 @@
+<style>
+.gallery{
+    position: relative;
+    background: url({{{componentAssets}}}/images/background.png);
+    width: 638px;
+    height: 180px;
+    overflow: hidden;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+    -moz-box-shadow: 0 0 45px #000 inset, 3px 0 6px rgba(0,0,0,0.8);
+    -webkit-box-shadow: 0 0 45px #000 inset, 3px 0 6px rgba(0,0,0,0.8);
+    border: 4px solid #637073;
+    cursor: crosshair;
+    margin: 0.5em 0 0.8em;
+}
+
+.water{
+    position: absolute;
+    top: 114px;
+    left: 0;
+    width: 677px;
+    height: 50px;
+}
+
+.water img{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.water .shadow {
+    left: 8px;
+    opacity: 0.5;
+    filter: alpha(opacity=30);
+}
+
+.duck-row {
+    position: absolute;
+    left: 10px;
+    top: 57px;
+    width: 1340px;
+    padding: 0;
+    margin: 0;
+}
+
+.duck-row li{
+    position: relative;
+    display: inline-block;
+    zoom: 1; *display: inline; /* IE < 8: fake inline-block */
+    width: 133px;
+    height: 70px;
+    margin: 0 -4px 0 0;
+    vertical-align: bottom;
+}
+
+.duck-row li img{
+    position: absolute;
+    bottom: 7px;
+    left: 0;
+}
+
+/* the voice bubble of the ducks */
+.duck-row .squawk {
+    position: absolute;
+    top: -400px;
+    left: 50px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    background-color: #ffe;
+    line-height: 1.2em;
+    border: solid 1px #cc8;
+    -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+    -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+}
+
+.duck-row .squawk .text{
+    padding: 0.2em 0.4em 0.2em 0em;
+    text-indent: 0.2em;
+    overflow: hidden;
+}
+
+.small-squawk-bubble{
+    position: absolute;
+    bottom: -4px;
+    left: -8px;
+    width: 4px;
+    height: 4px;
+    border: solid 1px #cc8;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    background-color: #ffe;
+    font-size: 2px;
+}
+
+#button-reset{
+    margin-right: 2em;
+}
+
+.ducks-remain{
+    font-size: 150%;
+}
+
+#show-attitude{
+    margin-left: 8em;
+}
+</style>

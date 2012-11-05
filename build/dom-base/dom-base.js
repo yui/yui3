@@ -1,5 +1,9 @@
-YUI.add('dom-base', function(Y) {
+YUI.add('dom-base', function (Y, NAME) {
 
+/**
+* @for DOM
+* @module dom
+*/
 var documentElement = Y.config.doc.documentElement,
     Y_DOM = Y.DOM,
     TAG_NAME = 'tagName',
@@ -74,7 +78,7 @@ Y.mix(Y_DOM, {
 
     /**
      * Provides a normalized attribute interface. 
-     * @method getAttibute
+     * @method getAttribute
      * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to get.
      * @return {String} The current value of the attribute. 
@@ -156,7 +160,7 @@ if (!testFeature('value-set', 'select')) {
                 break;
             }
         }
-    }
+    };
 }
 
 Y.mix(Y_DOM.VALUE_GETTERS, {
@@ -192,7 +196,7 @@ Y.mix(Y_DOM.VALUE_GETTERS, {
         if (options && options.length) {
             // TODO: implement multipe select
             if (node.multiple) {
-            } else {
+            } else if (node.selectedIndex > -1) {
                 val = Y_DOM.getValue(options[node.selectedIndex]);
             }
         }
@@ -328,6 +332,36 @@ Y.mix(Y.DOM, {
         return frag;
     },
 
+    _children: function(node, tag) {
+            var i = 0,
+            children = node.children,
+            childNodes,
+            hasComments,
+            child;
+
+        if (children && children.tags) { // use tags filter when possible
+            if (tag) {
+                children = node.children.tags(tag);
+            } else { // IE leaks comments into children
+                hasComments = children.tags('!').length;
+            }
+        }
+        
+        if (!children || (!children.tags && tag) || hasComments) {
+            childNodes = children || node.childNodes;
+            children = [];
+            while ((child = childNodes[i++])) {
+                if (child.nodeType === 1) {
+                    if (!tag || tag === child.tagName) {
+                        children.push(child);
+                    }
+                }
+            }
+        }
+
+        return children || [];
+    },
+
     /**
      * Creates a new dom node using the provided markup string. 
      * @method create
@@ -370,11 +404,12 @@ Y.mix(Y.DOM, {
                     ret = nodes[0].nextSibling;
                 } else {
                     nodes[0].parentNode.removeChild(nodes[0]); 
-                     ret = Y_DOM._nl2frag(nodes, doc);
+                    ret = Y_DOM._nl2frag(nodes, doc);
                 }
             } else { // return multiple nodes as a fragment
                  ret = Y_DOM._nl2frag(nodes, doc);
             }
+
         }
 
         return ret;
@@ -547,7 +582,7 @@ if (!testFeature('innerhtml', 'table')) {
         // IE adds TBODY when creating TABLE elements (which may share this impl)
     creators.tbody = function(html, doc) {
         var frag = Y_DOM.create(TABLE_OPEN + html + TABLE_CLOSE, doc),
-            tb = frag.children.tags('tbody')[0];
+            tb = Y.DOM._children(frag, 'tbody')[0];
 
         if (frag.children.length > 1 && tb && !re_tbody.test(html)) {
             tb.parentNode.removeChild(tb); // strip extraneous tbody
@@ -563,7 +598,7 @@ if (!testFeature('innerhtml-div', 'script')) {
         frag.innerHTML = '-' + html;
         frag.removeChild(frag.firstChild);
         return frag;
-    }
+    };
 
     creators.link = creators.style = creators.script;
 }
@@ -607,7 +642,7 @@ Y.mix(Y.DOM, {
      * of box model, border, padding, etc.
      * @method setWidth
      * @param {HTMLElement} element The DOM element. 
-     * @param {String|Int} size The pixel height to size to
+     * @param {String|Number} size The pixel height to size to
      */
 
     setWidth: function(node, size) {
@@ -619,7 +654,7 @@ Y.mix(Y.DOM, {
      * of box model, border, padding, etc.
      * @method setHeight
      * @param {HTMLElement} element The DOM element. 
-     * @param {String|Int} size The pixel height to size to
+     * @param {String|Number} size The pixel height to size to
      */
 
     setHeight: function(node, size) {
@@ -646,4 +681,4 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{requires:['dom-core']});
+}, '@VERSION@', {"requires": ["dom-core"]});

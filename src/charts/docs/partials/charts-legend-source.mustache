@@ -1,0 +1,44 @@
+<div id="mychart"></div>
+<script type="text/javascript">
+(function() {
+    YUI().use('charts-legend', function (Y) 
+    { 
+        var myDataValues = [ 
+            {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+            {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
+            {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+            {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+            {date:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
+        ];
+    
+        var myChart = new Y.Chart({
+                            legend: {
+                                position: "right",
+                                width: 300,
+                                height: 300,
+                                styles: {
+                                    hAlign: "center",
+                                    hSpacing: 4
+                                }
+                            },
+                            axes: {
+                                category: {
+                                    keys: ["date"],
+                                    type: "category",
+                                    styles: {
+                                        label: {
+                                            rotation: -90
+                                        }
+                                    }
+                                }
+                            },
+                            categoryKey: "date",
+                            dataProvider:myDataValues, 
+                            horizontalGridlines: true,
+                            verticalGridlines: true,
+                            render:"#mychart"
+                        });
+        
+    });
+})();
+</script>

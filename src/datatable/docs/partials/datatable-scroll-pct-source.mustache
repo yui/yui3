@@ -1,0 +1,13 @@
+    table = new Y.DataTable({
+        caption: "100% width scrolling table",
+        columns: [
+            { key: "STATE",     label: "State" },
+            { key: "TOTAL_POP", label: "Total Population" }
+        ],
+        data: state_census_data,
+        scrollable: "y",
+        height:"200px",
+        width: "100%"
+    });
+
+    table.render('#scrolling-100pct');

@@ -1,0 +1,24 @@
+TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
+    // This tells the list that it will hold instances of the TodoModel class.
+    model: TodoModel,
+
+    // This tells the list to use a localStorage sync provider (which we'll
+    // create below) to load the list of todo items.
+    sync: LocalStorageSync('todo'),
+
+    // Returns an array of all models in this list with the `done` attribute
+    // set to `true`.
+    done: function () {
+        return this.filter(function (model) {
+            return model.get('done');
+        });
+    },
+
+    // Returns an array of all models in this list with the `done` attribute
+    // set to `false`.
+    remaining: function () {
+        return this.filter(function (model) {
+            return !model.get('done');
+        });
+    }
+});

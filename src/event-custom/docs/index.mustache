@@ -1,3 +1,4 @@
+<link type="text/css" rel="stylesheet" href="{{yuiBuildUrl}}/cssbutton/cssbutton-min.css">
 <div class="intro">
     <p>
         The YUI Custom Event System enables you to define and use events beyond
@@ -12,6 +13,20 @@
         `EventTarget` class.  All other infrastructure classes extend
         `EventTarget`, but if you just need the custom event APIs, you can
         `extend` or `augment` your classes with `EventTarget` directly.
+    </p>
+
+    <p><strong>DEPRECATION NOTE:</strong> The `subscribers` and `afters` properties which
+       used to sit on `CustomEvent` object instances have been deprecated and 
+       removed for performance reasons as of the 3.7.0 release.
+    </p>
+
+    <p>If you're referring to the `subscribers` or `afters` properties directly just
+       to access the set of subscribers,  consider switching to the public `getSubs()` 
+       method instead which hides you from the implementation details.</p>
+
+    <p>If you have a use case which requires you to access the above properties 
+       directly you can set `Y.CustomEvent.keepDeprecatedSubs` to true, to restore 
+       them, but you will incur a performance hit if you enable this flag.
     </p>
 
     <!--p>
@@ -665,14 +680,14 @@ instance.fire("song", { which: "Bohemian Rhapsody", whom: "Wayne" });
 YUI().use('node', 'event-custom', function (Y) {
     var id = "Alpha Beta Base"; // probably Y.guid() would be safer
 
-    // Stamp outgoing messages with this instance's id
-    Y.on('*:message', function (e) {
-        e.originInstance = id;
-    });
-
-    Y.Global.on('*:message', function (e) {
+    Y.Global.on('message', function (e) {
         if (e.origin !== id) {
             alert("message received from " + e.origin + ": " + e.message);
+
+            murdock.fire("message", {
+                message: "We'll get you down.  And down safe.",
+                origin: id
+            });
         }
     });
 
@@ -682,33 +697,109 @@ YUI().use('node', 'event-custom', function (Y) {
     }
 
     Y.augment(Character, Y.EventTarget, true, null, {
-        emitFacade: true,
-        prefix: ''
+        emitFacade: true
     });
     
     var murdock = new Character();
 
     Y.one('#status').on('click', function () {
         murdock.fire("message", {
-            message: "You're coming in too fast!"
+            message: "You're coming in too fast!",
+            origin: id
         });
     });
 });
 
-YUI().use('event-custom', function (OtherY) {
+YUI().use('node', 'event-custom', function (OtherY) {
     var id = "Lunar Shuttle";
 
-    // ...(the same setup as above)...
+    OtherY.Global.on('message', function (e) {
+        if (e.origin !== id) {
+            alert("message received from " + e.origin + ": " + e.message);
+        }
+    });
 
+    function Character() {
+        this.publish('message', { broadcast: 2 });
+    }
+
+    OtherY.augment(Character, OtherY.EventTarget, true, null, {
+        emitFacade: true
+    });
+    
     var striker = new Character()
 
-    Y.one('#status').on('click', function () {
+    OtherY.one('#report').on('click', function () {
         striker.fire("message", {
-            message: "She's beginning to crack up"
+            message: "She's beginning to crack up",
+            origin: id
         });
     });
 });
 ```
+<button id="status" class="yui3-button">Come in, Lunar Shuttle</button>
+<button id="report" class="yui3-button">Can you read me, Alpha Beta?</button>
+
+<script>
+YUI().use('node', 'event-custom', function (Y) {
+    var id = "Alpha Beta Base"; // probably Y.guid() would be safer
+
+    Y.Global.on('message', function (e) {
+        if (e.origin !== id) {
+            alert("message received from " + e.origin + ": " + e.message);
+
+            murdock.fire("message", {
+                message: "We'll get you down.  And down safe.",
+                origin: id
+            });
+        }
+    });
+
+    function Character() {
+        this.publish('message', { broadcast: 2 });
+    }
+
+    Y.augment(Character, Y.EventTarget, true, null, {
+        emitFacade: true
+    });
+    
+    var murdock = new Character();
+
+    Y.one('#status').on('click', function () {
+        murdock.fire("message", {
+            message: "You're coming in too fast!",
+            origin: id
+        });
+    });
+});
+
+YUI().use('node', 'event-custom', function (OtherY) {
+    var id = "Lunar Shuttle";
+
+    OtherY.Global.on('message', function (e) {
+        if (e.origin !== id) {
+            alert("message received from " + e.origin + ": " + e.message);
+        }
+    });
+
+    function Character() {
+        this.publish('message', { broadcast: 2 });
+    }
+
+    OtherY.augment(Character, OtherY.EventTarget, true, null, {
+        emitFacade: true
+    });
+    
+    var striker = new Character()
+
+    OtherY.one('#report').on('click', function () {
+        striker.fire("message", {
+            message: "She's beginning to crack up",
+            origin: id
+        });
+    });
+});
+</script>
 
 <!--h3>Monitoring Events</h3>
 

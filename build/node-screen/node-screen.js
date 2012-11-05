@@ -1,4 +1,4 @@
-YUI.add('node-screen', function(Y) {
+YUI.add('node-screen', function (Y, NAME) {
 
 /**
  * Extended Node interface for managing regions and screen positioning.
@@ -26,7 +26,7 @@ Y.each([
 
     /**
      * Document width 
-     * @config winHeight
+     * @config docWidth
      * @type {Int}
      */
     'docWidth',
@@ -235,4 +235,4 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'dom-screen']});
+}, '@VERSION@', {"requires": ["dom-screen", "node-base"]});

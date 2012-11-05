@@ -2,6 +2,7 @@
  * TimeAxis manages time data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class TimeAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -100,8 +101,9 @@ TimeAxis.ATTRS =
 
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
-     * will be rendered to the DOM using `innerHTML`. 
+     * to implement the arguments below and return a `String` or an `HTMLElement`. The default implementation of the method returns a `String`. The output of this method
+     * will be rendered to the DOM using `appendChild`. If you override the `labelFunction` method and return an html string, you will also need to override the Axis' 
+     * `appendLabelFunction` to accept html as a `String`.
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>STRFTime string used to format the label. (optional)</dd>
@@ -118,7 +120,7 @@ TimeAxis.ATTRS =
             {
                 return Y.DataType.Date.format(val, {format:format});
             }
-            return Y.Escape.html(val.toString());
+            return val;
         }
     },
 
@@ -134,6 +136,24 @@ TimeAxis.ATTRS =
 };
 
 Y.extend(TimeAxis, Y.AxisType, {
+    /**
+     * Formats a label based on the axis type and optionally specified format.
+     *
+     * @method formatLabel
+     * @param {Object} value
+     * @param {Object} format Pattern used to format the value.
+     * @return String
+     */
+    formatLabel: function(val, format)
+    {
+        val = Y.DataType.Date.parse(val);
+        if(format)
+        {
+            return Y.DataType.Date.format(val, {format:format});
+        }
+        return val;
+    },
+
     /**
      * Constant used to generate unique id.
      *
@@ -221,7 +241,7 @@ Y.extend(TimeAxis, Y.AxisType, {
                     {
                         if(typeof obj != "string")
                         {
-                            obj = obj.toString();
+                            obj = obj;
                         }
                         val = new Date(obj).valueOf();
                     }

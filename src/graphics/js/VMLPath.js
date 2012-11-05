@@ -13,22 +13,8 @@ VMLPath = function()
 	VMLPath.superclass.constructor.apply(this, arguments);
 };
 
-VMLPath.NAME = "vmlPath";
-Y.extend(VMLPath, Y.VMLShape, {
-	/**
-     * Updates `Shape` based on attribute changes.
-     *
-     * @method _updateHandler
-	 * @private
-	 */
-    _updateHandler: function()
-    {   
-        var host = this;
-            host._fillChangeHandler();
-            host._strokeChangeHandler();
-        host._updateTransform();
-    }
-});
+VMLPath.NAME = "path";
+Y.extend(VMLPath, Y.VMLShape);
 VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape

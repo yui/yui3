@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>ScrollView Example</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+        <!--<script src=".http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js" type="text/javascript" charset="utf-8"></script> 
+        -->
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script> 
+        
+        <style>
+            #horizontal, #vertical{
+                margin:10px;
+            }
+            
+            #horizontal {
+                width:300px;
+                height:200px;
+                overflow:hidden;
+            }
+            
+            #horizontal .scrollview-content{
+                white-space: nowrap;
+            }
+            
+            #horizontal li { 
+                width:300px;
+                height:200px;
+                display: inline-block;
+                background-image: -webkit-linear-gradient(left, red, white, blue);
+            }
+            
+            #vertical {
+                overflow:hidden;
+                width:200px;
+                height:300px;
+            }
+            
+            #vertical li { 
+                width:200px;
+                height:300px;
+                background-image: -webkit-linear-gradient(top, red, white, blue);
+            }
+            
+            .scrollview-content li{
+                color:black;
+                font-size:5em;
+                opacity: 0.4;
+                text-align:center;
+            }
+            
+            h2{
+                font-size:3em;
+                background-color:#30418C;
+                color:white;
+                text-align:center;
+            }
+        </style>
+        
+        <script type="text/javascript" charset="utf-8">
+        
+        YUI({
+            debug: true,
+            filter:"raw"
+        }).use('arraylist', 'array-extras', 'array-invoke', 'scrollview-base', 'scrollview-paginator', 'cssbutton', function(Y) {
+
+            for (var j=0; j<20; j++){
+                Y.all(".scrollview-content ul").append("<li>" + j + "</li>");
+            }
+
+            svh = new Y.ScrollView({
+                id: "scrollview",
+                srcNode : '#horizontal .scrollview-content',
+                width: "300px"
+            }).plug(Y.Plugin.ScrollViewPaginator, {
+                selector: 'li',
+                // optimizeMemory: true,
+                padding:2
+            })
+            
+            svh.render();
+            // svh.pages.set('index',7);
+            
+            Y.one('#scrollview-next').on('click', Y.bind(svh.pages.next, svh.pages));
+            Y.one('#scrollview-prev').on('click', Y.bind(svh.pages.prev, svh.pages));
+             //return false
+            
+            svv = new Y.ScrollView({
+                id: "scrollview",
+                srcNode : '#vertical .scrollview-content',
+                height: "300px"
+            }).plug(Y.Plugin.ScrollViewPaginator, {
+                selector: 'li',
+                // optimizeMemory: true,
+                padding:2
+            });
+            
+            svv.render();
+            
+            Y.one('#scrollview-next').on('click', Y.bind(svv.pages.next, svv.pages));
+            Y.one('#scrollview-prev').on('click', Y.bind(svv.pages.prev, svv.pages));
+            
+        });
+        </script>
+    </head>
+
+    <body class="yui3-skin-sam">
+        
+    
+        <div id="scrollview-pager">
+            <button class='yui3-button' id="scrollview-prev">Prev</button>
+            <button class='yui3-button' id="scrollview-next">Next</button>
+        </div>
+        
+        <div id="horizontal">
+            <h2>Horizontal</h2>
+            <div class='scrollview-content'>
+                <ul></ul>
+            </div>    
+        </div>
+        
+        <div id="vertical">
+            <h2>Vertical</h2>
+            <div class='scrollview-content'>
+                <ul></ul>
+            </div>
+        </div>
+
+    </body>
+</html>

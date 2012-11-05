@@ -1,10 +1,43 @@
 Plugin Host Change History
 ==========================
 
-3.5.0
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
+3.6.0
+-----
+
+  * Allow for non-base/non-attribute based plugins, by not assuming setAttrs or destroy exist
+    on the plugin.
+
+3.5.1
 -----
 
   * No changes.
+
+3.5.0
+-----
+
+  * API corrected for hasPlugin. It returns the plugin if available, otherwise undefined.
+    It has always done this, and since they're truthy/falsey, figured it was better than
+    changing the behavior, in case folks are using the plugin instance returned by hasPlugin.
 
 3.4.1
 -----

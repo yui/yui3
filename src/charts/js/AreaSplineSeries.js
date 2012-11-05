@@ -2,13 +2,14 @@
  * AreaSplineSeries renders an area graph with data points connected by a curve.
  *
  * @module charts
+ * @submodule charts-base
  * @class AreaSplineSeries
  * @constructor
  * @extends CartesianSeries
  * @uses Fills
  * @uses CurveUtil
  */
-Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.CartesianSeries, [Y.Fills, Y.CurveUtil], {
+Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.AreaSeries, [Y.CurveUtil], {
     /**
      * @protected
      *

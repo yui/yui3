@@ -1,0 +1,16 @@
+var results = Y.one('#demo'), ua = '';
+
+Y.each(Y.UA, function(v, k) {
+    if (!Y.Lang.isFunction(v)) {
+        var info = k + ': ' + v;
+        results.append('<p>' + info + '</p>');
+
+        if (v) {
+            if (Y.Lang.isNumber(v)) {
+                ua = info;
+            }
+        }
+    }
+});
+
+results.append('<p>Your browser is ' + ua + '</p>');

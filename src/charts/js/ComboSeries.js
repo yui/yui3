@@ -4,6 +4,7 @@
  * are rendered and area is not. 
  *
  * @module charts
+ * @submodule charts-base
  * @class ComboSeries
  * @extends CartesianSeries 
  * @uses Fills
@@ -52,7 +53,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
         {
             this._path.set("visible", visible);
         }
-        if(this.get("showLines"))
+        if(this.get("showLines") && this._lineGraphic)
         {
             this._lineGraphic.set("visible", visible);
         }

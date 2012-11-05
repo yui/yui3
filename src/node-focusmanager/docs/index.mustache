@@ -1,23 +1,10 @@
-<div class="intro">
+<div class='intro'>
     <p>
-        When designing widgets that manage a set of descendant controls (i.e. buttons
-        in a toolbar, tabs in a tablist, menuitems in a menu, etc.) it is important to
-        limit the number of descendants in the browser's default tab flow.  The fewer
-        number of descendants in the default tab flow, the easier it is for keyboard
-        users to navigate between widgets by pressing the tab key.  When a widget has
-        focus it should provide a set of shortcut keys (typically the arrow keys)
-        to move focus among its descendants.
+        When designing widgets that manage a set of descendant controls (i.e. buttons in a toolbar, tabs in a tablist, menuitems in a menu, etc.) it is important to limit the number of descendants in the browser's default tab flow.  The fewer number of descendants in the default tab flow, the easier it is for keyboard users to navigate between widgets by pressing the tab key.  When a widget has focus it should provide a set of shortcut keys (typically the arrow keys) to move focus among its descendants.
     </p>
 
     <p>
-        To this end, the Focus Manager Node Plugin makes it easy to define a Node's
-        focusable descendants, define which descendant should be in the default tab
-        flow, and define the keys that move focus among each descendant.
-        Additionally, as the CSS
-        <a href="http://www.w3.org/TR/CSS21/selector.html#x38"><code>:focus</code></a>
-        pseudo class is not supported on all elements in all browsers,
-        the Focus Manager Node Plugin provides an easy, cross-browser means of
-        styling focus.
+        To this end, the Focus Manager Node Plugin makes it easy to define a Node's focusable descendants, define which descendant should be in the default tab flow, and define the keys that move focus among each descendant. Additionally, as the CSS <a href='http://www.w3.org/TR/CSS21/selector.html#x38'>`:focus`</a> pseudo class is not supported on all elements in all browsers, the Focus Manager Node Plugin provides an easy, cross-browser means of styling focus.
     </p>
 </div>
 
@@ -26,428 +13,209 @@
 <h2>Using the Focus Manager Node Plugin</h2>
 
 <p>
-To use the Focus Manager Node Plugin, start by identifying the parent element
-of the elements whose focus is to be managed.  For example, consider the
-following toolbar HTML:
+    To use the Focus Manager Node Plugin, start by identifying the parent element of the elements whose focus is to be managed.  For example, consider the following toolbar HTML:
 </p>
 
 ```
-<div id="toolbar-1">
-    <input type="button" name="btn-add" value="Add">
-    <input type="button" name="btn-edit" value="Edit">
-    <input type="button" name="btn-print" value="Print">
-    <input type="button" name="btn-delete" value="Delete">
-    <input type="button" name="btn-open" value="Open">
-    <input type="button" name="btn-save" value="Save">
+<div id='toolbar'>
+    <input type='button' name='btn-add' value='Add'>
+    <input type='button' name='btn-edit' value='Edit'>
+    <input type='button' name='btn-print' value='Print'>
+    <input type='button' name='btn-delete' value='Delete'>
+    <input type='button' name='btn-open' value='Open'>
+    <input type='button' name='btn-save' value='Save'>
 </div>
 ```
 
 <p>
-To manage the focus of each button in the toolbar, start by retrieving a
-<a href="../node">Node</a> instance representing the toolbar's root element
-(<code>&#60;div id="toolbar-1"&#62;</code>).
-Next, call the Node's
-<a href="{{apiDocs}}/classes/Node.html#method_plug"><code>plug</code></a>
-method, passing in a reference to the Focus Manager Node Plugin
-(<code>Y.Plugin.NodeFocusManager</code>) as the first argument, followed by an
-object literal of configuration attributes as the second.
+    To manage the focus of each button in the toolbar, start by retrieving a <a href='../node'>Node</a> instance representing the toolbar's root element (`<div id='toolbar'>`). Next, call the Node's <a href='{{apiDocs}}/classes/Node.html#method_plug'>`plug`</a> method, passing in a reference to the Focus Manager Node Plugin (`Y.Plugin.NodeFocusManager`) as the first argument, followed by an object literal of configuration attributes as the second.
 </p>
-<p>Use the
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_descendants"><code>descendants</code></a>
-configuration attribute to specify the child nodes of the root node whose
-focus is to be managed.  The
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_descendants"><code>descendants</code></a>
-configuration attribute accepts a string representing a CSS selector, making it
-very easy to identify the elements whose focus should be managed.  For the
-toolbar, a value of "input" will be passed as the value of the
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_descendants"><code>descendants</code></a>
-configuration attribute.
-</p>
+
 <p>
-Use the
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_keys"><code>keys</code></a>
-configuration attribute to identify which keys move focus between each of the
-specified descendant Nodes.  The
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_keys"><code>keys</code></a>
-configuration attribute accepts an object literal, the format of which is
-<code>{ next: "down:40", previous: "down:38" }</code>.  The value for the
-<code>next</code> and <code>previous</code> sub attributes are used to attach
-<a href="../event/index.html#keylistener"><code>key</code></a> event listeners.  Each
-value represents the type of event
-("down" for <code>mousedown</code>, "up" for <code>mouseup</code>, and
-"press" for <code>keypress</code>) and key codes ("40" for the down arrow key)
-to use to navigate to the next/previous descendant.  For the
-toolbar the
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_keys"><code>keys</code></a>
-configuration attribute will be set to a value of
-<code>{ next: "down:39", previous: "down:37" }</code>, enabling the user to
-move focus among each button using the left and right arrows keys.
-(See
-the <a href="../event/key.html">Using the key Event</a> section of
-the Event documentation for more information on "key" event listeners.)
+    Use the <a href='{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_descendants'>`descendants`</a> configuration attribute to specify the child nodes of the root node whose focus is to be managed.  The `descendants` configuration attribute accepts a string representing a CSS selector, making it very easy to identify the elements whose focus should be managed.  For the toolbar, a value of 'input' will be passed as the value of the `descendants` configuration attribute.
+</p>
+
+<p>
+    Use the <a href='{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_keys'>`keys`</a> configuration attribute to identify which keys move focus between each of the specified descendant Nodes.  The `keys` configuration attribute accepts an object literal, the format of which is `{ next: 'down:40', previous: 'down:38' }`.  The value for the `next` and `previous` sub attributes are used to attach `keys` event listeners.  Each value represents the type of event ('down' for `mousedown`, 'up' for `mouseup`, and 'press' for `keypress`) and key codes ('40' for the down arrow key) to use to navigate to the next/previous descendant.  For the toolbar the `keys` configuration attribute will be set to a value of `{ next: 'down:39', previous: 'down:37' }`, enabling the user to move focus among each button using the left and right arrows keys. (See the <a href='../event/key.html'>Using the key Event</a> section of the Event documentation for more information on 'key' event listeners.)
 </p>
 
 ```
-YUI().use("node-focusmanager", function(Y) {
-
 //  Retrieve the Node instance representing the toolbar
-//  (<div id="toolbar">) and call the "plug" method
+//  (<div id='toolbar'>) and call the 'plug' method
 //  passing in a reference to the Focus Manager Node Plugin.
 
-var toolbar = Y.one("#toolbar-1");
+var toolbar = Y.one('#toolbar');
 
 toolbar.plug(Y.Plugin.NodeFocusManager, {
-
     // CSS Selector indicating the descendant Nodes whose focus to manage
-
-    descendants: "input",
+    descendants: 'input',
 
     //  Move focus the buttons in the toolbar by pressing the left and
     //  right arrow keys
-
-    keys: { next: "down:39", previous: "down:37" }
-
-});
-
+    keys: { 
+        next: 'down:39', 
+        previous: 'down:37' 
+    }
 });
 ```
 
 <p>
-Use the
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_circular"><code>circular</code></a>
-configuration attribute to indicate that focus should be directed to the first
-or last descendant when the user has navigated to the first or last descendant.
+    Use the <a href='{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_circular'>`circular`</a> configuration attribute to indicate that focus should be directed to the first or last descendant when the user has navigated to the first or last descendant.
 </p>
 
 ```
-YUI().use("node-focusmanager", function(Y) {
-
-//  Retrieve the Node instance representing the toolbar
-//  (<div id="toolbar">) and call the "plug" method
-//  passing in a reference to the Focus Manager Node Plugin.
-
-var toolbar = Y.one("#toolbar-1");
+var toolbar = Y.one('#toolbar');
 
 toolbar.plug(Y.Plugin.NodeFocusManager, {
-
-    // CSS Selector indicating the descendant Nodes whose focus to manage
-
-    descendants: "input",
-
-    //  Move focus the buttons in the toolbar by pressing the left and
-    //  right arrow keys
-
-    keys: { next: "down:39", previous: "down:37" },
+    descendants: 'input',
+    keys: { next: 'down:39', previous: 'down:37' },
 
     circular: true
-
-});
-
 });
 ```
 
-<h3 id="activedescendant-attribute">The <code>activeDescendant</code> Attribute</h3>
+<h3 id='activedescendant-attribute'>The `activeDescendant` Attribute</h3>
 
 <p>
-The <a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_activeDescendant"><code>activeDescendant</code></a>
-attribute represents which of the Focus Manager's
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_descendants"><code>descendants</code></a> is either
-currently focused or is focusable (<code>tabIndex</code> attribute is set to 0).
-As the user moves focus among the Focus Manager's defined descendants, the <a href="../api/plugin.NodeFocusManager.html#config_activeDescendant"><code>activeDescendant</code></a>
-configuration attribute is updated to remain in sync with the currently
-focused descendant.
+    The <a href='{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_activeDescendant'>`activeDescendant`</a> attribute represents which of the Focus Manager's <a href='{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_descendants'>`descendants`</a> is either currently focused or is focusable (`tabIndex` attribute is set to 0). As the user moves focus among the Focus Manager's defined descendants, the `activeDescendant` configuration attribute is updated to remain in sync with the currently focused descendant.
 </p>
+
 <p>
-The
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_activeDescendant"><code>activeDescendant</code></a>
-configuration attribute can be set two different ways: via markup or via
-script.  To set the
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_activeDescendant"><code>activeDescendant</code></a>
-configuration attribute via markup, simply set the <code>tabIndex</code>
-attribute to 0 for the element that should be considered the active descendant.
-If the <code>tabIndex</code> attribute isn't set on any of the descendants
-the active descendant will be set to 0, or the index of the first
-enabled descendant. The following example shows how to make the second button
-in the toolbar the active descendant.
+    The `activeDescendant` configuration attribute can be set two different ways: via markup or via script.  To set the `activeDescendant` configuration attribute via markup, simply set the `tabIndex` attribute to 0 for the element that should be considered the active descendant. If the `tabIndex` attribute isn't set on any of the descendants the active descendant will be set to 0, or the index of the first enabled descendant. The following example shows how to make the second button in the toolbar the active descendant.
 </p>
 
 ```
-<div id="toolbar-1">
-    <input type="button" name="btn-add" value="Add">
-    <input type="button" tabindex="0" name="btn-edit" value="Edit">
-    <input type="button" name="btn-print" value="Print">
-    <input type="button" name="btn-delete" value="Delete">
-    <input type="button" name="btn-open" value="Open">
-    <input type="button" name="btn-save" value="Save">
+<div id='toolbar'>
+    <input type='button' name='btn-add' value='Add'>
+    <input type='button' tabindex='0' name='btn-edit' value='Edit'>
+    <input type='button' name='btn-print' value='Print'>
+    <input type='button' name='btn-delete' value='Delete'>
+    <input type='button' name='btn-open' value='Open'>
+    <input type='button' name='btn-save' value='Save'>
 </div>
 ```
 
 <p>
-The
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_activeDescendant"><code>activeDescendant</code></a>
-configuration attribute can also be set via the object literal of configuration
-attributes passed to the
-<a href="{{apiDocs}}/classes/Node.html#method_plug"><code>plug</code></a>
-method.
+    The `activeDescendant` configuration attribute can also be set via the object literal of configuration attributes passed to the <a href='{{apiDocs}}/classes/Node.html#method_plug'>`plug`</a> method.
 </p>
 
 ```
-YUI().use("node-focusmanager", function(Y) {
-
-//  Retrieve the Node instance representing the toolbar
-//  (<div id="toolbar">) and call the "plug" method
-//  passing in a reference to the Focus Manager Node Plugin.
-
-var toolbar = Y.one("#toolbar-1");
+var toolbar = Y.one('#toolbar');
 
 toolbar.plug(Y.Plugin.NodeFocusManager, {
-
-    // CSS Selector indicating the descendant Nodes whose focus to manage
-
-    descendants: "input",
-
-    //  Move focus the buttons in the toolbar by pressing the left and
-    //  right arrow keys
-
-    keys: { next: "down:39", previous: "down:37" },
+    descendants: 'input',
+    keys: { next: 'down:39', previous: 'down:37' },
 
     //  Make the second button in the toolbar the active descendant
     activeDescendant: 1
-
-});
-
-});
-```
-
-<p>The
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_activeDescendant"><code>activeDescendant</code></a>
-configuration attribute can also be set at runtime via the
-<a href="{{apiDocs}}/classes/Attribute.html#method_set"><code>set</code></a>
-method.
-</p>
-
-```
-YUI().use("node-focusmanager", function(Y) {
-
-//  Retrieve the Node instance representing the toolbar
-//  (<div id="toolbar">) and call the "plug" method
-//  passing in a reference to the Focus Manager Node Plugin.
-
-var toolbar = Y.one("#toolbar-1");
-
-toolbar.plug(Y.Plugin.NodeFocusManager, {
-
-    // CSS Selector indicating the descendant Nodes whose focus to manage
-
-    descendants: "input",
-
-    //  Move focus the buttons in the toolbar by pressing the left and
-    //  right arrow keys
-
-    keys: { next: "down:39", previous: "down:37" }
-
-});
-
-//  Make the second button in the toolbar the active descendant
-toolbar.focusManager.set("activeDescendant", 1);
-
-});
-```
-
-<h3 id="styling-focus">Styling Focus</h3>
-
-<p>
-One of the challenges to styling the focus state of HTML elements is that
-support for the CSS
-<a href="http://www.w3.org/TR/CSS21/selector.html#x38"><code>:focus</code></a>
-pseudo class is limited to the <code>a</code> element in Internet Explorer.
-To fix this problem, the Focus Manager Node Plugin provides a
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_focusClass"><code>focusClass</code></a>
-configuration attribute that makes it easy to style focus across <em>all</em>
-elements in <em>all</em> browsers</a>.
-</p>
-<p>
-The
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_focusClass"><code>focusClass</code></a>
-configuration attribute can be used one of two ways.  The first way is to
-simply pass a string representing the class name to be applied to the currently
-focused descendant Node instance.  For example, to apply a class of "focus" to
-each button in the toolbar, set the the
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_focusClass"><code>focusClass</code></a>
-configuration attribute to a value of "focus":
-</p>
-
-```
-YUI().use("node-focusmanager", function(Y) {
-
-//  Retrieve the Node instance representing the toolbar
-//  (<div id="toolbar">) and call the "plug" method
-//  passing in a reference to the Focus Manager Node Plugin.
-
-var toolbar = Y.one("#toolbar-1");
-
-toolbar.plug(Y.Plugin.NodeFocusManager, {
-
-    // CSS Selector indicating the descendant Nodes whose focus to manage
-
-    descendants: "input",
-
-    //  Move focus the buttons in the toolbar by pressing the left and
-    //  right arrow keys
-
-    keys: { next: "down:39", previous: "down:37" },
-
-    focusClass: "focus"
-
-});
-
 });
 ```
 
 <p>
-Often styling focusable elements such as <code>&#60;input&#62;</code>s
-requires wrapping them in decorator elements, since <code>&#60;input&#62;</code>
-elements cannot have children.  In such cases, it is likely the class name used
-to style focus would be applied to the element decorating the focused
-descendant, rather than the descendant itself.  For this reason, it is also
-possible to pass an object literal as the value of the
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_focusClass"><code>focusClass</code></a>
-configuration attribute that defines not only the class name to be used to
-indicate focus, but a function used to retrieve the Node instance to which
-the class name should be applied.  For example, if each button in the toolbar
-where decorated by a <code>&#60;span&#62;</code>, the "focus" class could be
-applied to the parent <code>&#60;span&#62;</code> of the focused
-<code>&#60;input&#62;</code> using the following code:
+    The `activeDescendant` configuration attribute can also be set at runtime via the <a href='{{apiDocs}}/classes/Attribute.html#method_set'>`set`</a> method.
 </p>
 
 ```
-YUI().use("node-focusmanager", function(Y) {
-
-//  Retrieve the Node instance representing the toolbar
-//  (<div id="toolbar">) and call the "plug" method
-//  passing in a reference to the Focus Manager Node Plugin.
-
-var toolbar = Y.one("#toolbar-1");
+var toolbar = Y.one('#toolbar');
 
 toolbar.plug(Y.Plugin.NodeFocusManager, {
+    descendants: 'input',
+    keys: { next: 'down:39', previous: 'down:37' }
 
-    // CSS Selector indicating the descendant Nodes whose focus to manage
+});
 
-    descendants: "input",
+toolbar.focusManager.set('activeDescendant', 1);
+```
 
-    //  Move focus the buttons in the toolbar by pressing the left and
-    //  right arrow keys
+<h3 id='styling-focus'>Styling Focus</h3>
+<p>
+    One of the challenges to styling the focus state of HTML elements is that support for the CSS <a href='http://www.w3.org/TR/CSS21/selector.html#x38'>`:focus`</a> pseudo class is limited to the `a` element in Internet Explorer. To fix this problem, the Focus Manager Node Plugin provides a <a href='{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_focusClass'>`focusClass`</a> configuration attribute that makes it easy to style focus across <em>all</em> elements in <em>all</em> browsers</a>.
+</p>
+<p>
+    The `focusClass` configuration attribute can be used one of two ways.  The first way is to simply pass a string representing the class name to be applied to the currently focused descendant Node instance.  For example, to apply a class of 'focus' to each button in the toolbar, set the the `focusClass` configuration attribute to a value of 'focus':
+</p>
 
-    keys: { next: "down:39", previous: "down:37" },
+```
+var toolbar = Y.one('#toolbar');
 
+toolbar.plug(Y.Plugin.NodeFocusManager, {
+    descendants: 'input',
+    keys: { next: 'down:39', previous: 'down:37' },
+    focusClass: 'focus'
+});
+```
+
+<p>
+    Often styling focusable elements such as `<input>`s requires wrapping them in decorator elements, since `<input>` elements cannot have children.  In such cases, it is likely the class name used to style focus would be applied to the element decorating the focused descendant, rather than the descendant itself.  For this reason, it is also possible to pass an object literal as the value of the <a href='{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_focusClass'>`focusClass`</a> configuration attribute that defines not only the class name to be used to indicate focus, but a function used to retrieve the Node instance to which the class name should be applied.  For example, if each button in the toolbar where decorated by a `<span>`, the 'focus' class could be applied to the parent `<span>` of the focused `<input>` using the following code:
+</p>
+
+```
+var toolbar = Y.one('#toolbar');
+
+toolbar.plug(Y.Plugin.NodeFocusManager, {
+    descendants: 'input',
+    keys: { next: 'down:39', previous: 'down:37' },
     focusClass: {
-        className: "focus", //  The class name to use
+        className: 'focus', //  The class name to use
         fn: function (node) {
             //  The Node instance to which the class should be applied
-            return node.get("parentNode");
+            return node.get('parentNode');
         }
     }
-
-});
-
 });
 ```
 
 <p>
-As demonstrated in the example, the function passed as the value of the
-<code>fn</code> property is passed a reference to the currently focused
-descendant.  That Node reference is then used to return the Node to which the
-class name is to be applied.
+    As demonstrated in the example, the function passed as the value of the `fn` property is passed a reference to the currently focused descendant.  That Node reference is then used to return the Node to which the class name is to be applied.
 </p>
 
-<h3 id="managing-focus">Managing Focus</h3>
+
+<h3 id='managing-focus'>Managing Focus</h3>
 
 <p>
-The Focus Manager Node Plugin manages focus among its defined descendants as an
-atomic operation: the Focus Manager's
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_focused"><code>focused</code></a>
-configuration attribute is set to
-<code>true</code> the first time any descendant is focused, and is set to
-<code>false</code> the first time no descendant is focused.  The
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_focused"><code>focused</code></a>
-configuration attribute is read only, and is set either via user interaction
-(the user focuses one of the defined descendant elements using either the
-keyboard or the mouse), or programmatically via the
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#method_focus"><code>focus</code></a>
-and
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#method_blur"><code>blur</code></a>
-methods, as illustrated in the following example:
+    The Focus Manager Node Plugin manages focus among its defined descendants as an atomic operation: the Focus Manager's <a href='{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_focused'>`focused`</a> configuration attribute is set to `true` the first time any descendant is focused, and is set to `false` the first time no descendant is focused.  The `focused` configuration attribute is read only, and is set either via user interaction (the user focuses one of the defined descendant elements using either the keyboard or the mouse), or programmatically via the <a href='{{apiDocs}}/classes/plugin.NodeFocusManager.html#method_focus'>`focus`</a> and <a href='{{apiDocs}}/classes/plugin.NodeFocusManager.html#method_blur'>`blur`</a> methods, as illustrated in the following example:
 </p>
 
 ```
-YUI().use("node-focusmanager", function(Y) {
-
-//  Retrieve the Node instance representing the toolbar
-//  (<div id="toolbar">) and call the "plug" method
-//  passing in a reference to the Focus Manager Node Plugin.
-
-var toolbar = Y.one("#toolbar-1");
+var toolbar = Y.one('#toolbar');
 
 toolbar.plug(Y.Plugin.NodeFocusManager, {
-
-    // CSS Selector indicating the descendant Nodes whose focus to manage
-
-    descendants: "input",
-
-    //  Move focus the buttons in the toolbar by pressing the left and
-    //  right arrow keys
-
-    keys: { next: "down:39", previous: "down:37" }
-
+    descendants: 'input',
+    keys: { next: 'down:39', previous: 'down:37' }
 });
 
 
-//  Listen for when the "focused" attribute changes
+//  Listen for when the 'focused' attribute changes
 
-toolbar.focusManager.after("focusedChange", function (event) {
-
+toolbar.focusManager.after('focusedChange', function (event) {
     if (event.newVal) {
-        Y.log("The toolbar has focus");
+        Y.log('The toolbar has focus');
     }
     else {
-        Y.log("The toolbar has lost focus");
+        Y.log('The toolbar has lost focus');
     }
-
 });
 
-//  Focus the current active descendant, setting the "focused" attribute to true
-
+//  Focus the current active descendant, setting the 'focused' attribute to true
 toolbar.focusManager.focus();
 
 //  Focus the second descendant in the toolbar, making it the active descendant
-//  (this won't change the "focused" attribute, meaning the "focusedChange"
+//  (this won't change the 'focused' attribute, meaning the 'focusedChange'
 //  event handler won't be called.)
-
 toolbar.focusManager.focus(1);
 
 
-//  Blur the current active descendant, setting the "focused" attribute to false
-//  and causing the "focusedChange" event handler to be called.
-
+//  Blur the current active descendant, setting the 'focused' attribute to false
+//  and causing the 'focusedChange' event handler to be called.
 toolbar.focusManager.blur();
-
-});
 ```
 
-<h3 id="best-practices">Best Practices</h3>
+<h3 id='best-practices'>Best Practices</h3>
 
 <p>
-While it is possible to use the Focus Manager Node Plugin to manage focus
-among descendants of any type, it is recommended to use it with elements that
-are natively in the the browser's default tab flow. Doing so provides two primary
-benefits:  The first is that your code will work in all popular browsers, since some browsers don't support
-the
-<a href="http://www.w3.org/TR/html401/interact/forms.html#adef-tabindex" title="Forms in HTML documents"><code>tabIndex</code></a>
-attribute on all elements.  Sticking with the elements that natively support <a href="http://www.w3.org/TR/html401/interact/forms.html#adef-tabindex" title="Forms in HTML documents"><code>tabIndex</code></a>
-as defined in the HTML 4.01 specification will ensure better cross-browser
-keyboard support.
+    While it is possible to use the Focus Manager Node Plugin to manage focus among descendants of any type, it is recommended to use it with elements that are natively in the the browser's default tab flow. Doing so provides two primary benefits:  The first is that your code will work in all popular browsers, since some browsers don't support the <a href='http://www.w3.org/TR/html401/interact/forms.html#adef-tabindex' title='Forms in HTML documents'>`tabIndex`</a> attribute on all elements.  Sticking with the elements that natively support `tabIndex` as defined in the HTML 4.01 specification will ensure better cross-browser keyboard support.
 </p>
 
-<p>The second benefit is that by using the set of natively
-focusable HTML elements, users of screen readers will still perceive the
-Focus Manager's defined descendants as actionable/clickable elements.</p>
+<p>
+    The second benefit is that by using the set of natively focusable HTML elements, users of screen readers will still perceive the Focus Manager's defined descendants as actionable/clickable elements.
+</p>

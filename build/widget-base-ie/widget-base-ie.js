@@ -1,4 +1,4 @@
-YUI.add('widget-base-ie', function(Y) {
+YUI.add('widget-base-ie', function (Y, NAME) {
 
 /**
  * IE specific support for the widget-base module.
@@ -22,8 +22,8 @@ Y.Widget.prototype._uiSizeCB = function(expand) {
         cb = this.get(CONTENT_BOX),
         borderBoxSupported = this._bbs;
 
-    if(borderBoxSupported === undefined) {
-        this._bbs = borderBoxSupported = !(IE < 8 && bb.get("ownerDocument").get("compatMode") != "BackCompat"); 
+    if (borderBoxSupported === undefined) {
+        this._bbs = borderBoxSupported = !(IE && IE < 8 && bb.get("ownerDocument").get("compatMode") != "BackCompat"); 
     }
 
     if (borderBoxSupported) {
@@ -46,4 +46,4 @@ Y.Widget.prototype._uiSizeCB = function(expand) {
 };
 
 
-}, '@VERSION@' ,{requires:['widget-base']});
+}, '@VERSION@', {"requires": ["widget-base"]});

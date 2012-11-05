@@ -1,9 +1,14 @@
 
-    /*
-    * This module is the conditional loaded DD file to support gesture events.
-    * In the event that DD is loaded onto a device that support touch based events
-    * This module is loaded and over rides 2 key methods on DD.Drag and DD.DDM to
-    * attach the gesture events.
+    /**
+    * This module is the conditional loaded `dd` module to support gesture events
+    * in the event that `dd` is loaded onto a device that support touch based events.
+    *
+    * This module is loaded and over rides 2 key methods on `DD.Drag` and `DD.DDM` to
+    * attach the gesture events. Overrides `DD.Drag._prep` and `DD.DDM._setupListeners`
+    * methods as well as set's the property `DD.Drag.START_EVENT` to `gesturemovestart`
+    * to enable gesture movement instead of mouse based movement.
+    * @module dd
+    * @submodule dd-gestures
     */
     Y.log('Drag gesture support loaded', 'info', 'drag-gestures');
 
@@ -17,13 +22,21 @@
         node.addClass(DDM.CSS_PREFIX + '-draggable');
 
         node.on(Y.DD.Drag.START_EVENT, Y.bind(this._handleMouseDownEvent, this), {
-            minDistance: 0,
-            minTime: 0
+            minDistance: this.get('clickPixelThresh'),
+            minTime: this.get('clickTimeThresh')
         });
 
         node.on('gesturemoveend', Y.bind(this._handleMouseUp, this), { standAlone: true });
         node.on('dragstart', Y.bind(this._fixDragStart, this));
 
+    };
+
+    var _unprep = Y.DD.Drag.prototype._unprep;
+
+    Y.DD.Drag.prototype._unprep = function() {
+        var node = this.get('node');
+        _unprep.call(this);
+        node.detachAll('gesturemoveend');
     };
 
     Y.DD.DDM._setupListeners = function() {

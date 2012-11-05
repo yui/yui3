@@ -2,7 +2,6 @@
 
 /* Jison generated parser */
 var handlebars = (function(){
-
 var parser = {trace: function trace() { },
 yy: {},
 symbols_: {"error":2,"root":3,"program":4,"EOF":5,"statements":6,"simpleInverse":7,"statement":8,"openInverse":9,"closeBlock":10,"openBlock":11,"mustache":12,"partial":13,"CONTENT":14,"COMMENT":15,"OPEN_BLOCK":16,"inMustache":17,"CLOSE":18,"OPEN_INVERSE":19,"OPEN_ENDBLOCK":20,"path":21,"OPEN":22,"OPEN_UNESCAPED":23,"OPEN_PARTIAL":24,"params":25,"hash":26,"param":27,"STRING":28,"INTEGER":29,"BOOLEAN":30,"hashSegments":31,"hashSegment":32,"ID":33,"EQUALS":34,"pathSegments":35,"SEP":36,"$accept":0,"$end":1},
@@ -12,85 +11,85 @@ performAction: function anonymous(yytext,yyleng,yylineno,yy,yystate,$$,_$) {
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1: return $$[$0-1] 
+case 1: return $$[$0-1]; 
 break;
-case 2: this.$ = new yy.ProgramNode($$[$0-2], $$[$0]) 
+case 2: this.$ = new yy.ProgramNode($$[$0-2], $$[$0]); 
 break;
-case 3: this.$ = new yy.ProgramNode($$[$0]) 
+case 3: this.$ = new yy.ProgramNode($$[$0]); 
 break;
-case 4: this.$ = new yy.ProgramNode([]) 
+case 4: this.$ = new yy.ProgramNode([]); 
 break;
-case 5: this.$ = [$$[$0]] 
+case 5: this.$ = [$$[$0]]; 
 break;
-case 6: $$[$0-1].push($$[$0]); this.$ = $$[$0-1] 
+case 6: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
 break;
-case 7: this.$ = new yy.InverseNode($$[$0-2], $$[$0-1], $$[$0]) 
+case 7: this.$ = new yy.BlockNode($$[$0-2], $$[$0-1].inverse, $$[$0-1], $$[$0]); 
 break;
-case 8: this.$ = new yy.BlockNode($$[$0-2], $$[$0-1], $$[$0]) 
+case 8: this.$ = new yy.BlockNode($$[$0-2], $$[$0-1], $$[$0-1].inverse, $$[$0]); 
 break;
-case 9: this.$ = $$[$0] 
+case 9: this.$ = $$[$0]; 
 break;
-case 10: this.$ = $$[$0] 
+case 10: this.$ = $$[$0]; 
 break;
-case 11: this.$ = new yy.ContentNode($$[$0]) 
+case 11: this.$ = new yy.ContentNode($$[$0]); 
 break;
-case 12: this.$ = new yy.CommentNode($$[$0]) 
+case 12: this.$ = new yy.CommentNode($$[$0]); 
 break;
-case 13: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]) 
+case 13: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
 break;
-case 14: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]) 
+case 14: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
 break;
-case 15: this.$ = $$[$0-1] 
+case 15: this.$ = $$[$0-1]; 
 break;
-case 16: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]) 
+case 16: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
 break;
-case 17: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1], true) 
+case 17: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1], true); 
 break;
-case 18: this.$ = new yy.PartialNode($$[$0-1]) 
+case 18: this.$ = new yy.PartialNode($$[$0-1]); 
 break;
-case 19: this.$ = new yy.PartialNode($$[$0-2], $$[$0-1]) 
+case 19: this.$ = new yy.PartialNode($$[$0-2], $$[$0-1]); 
 break;
 case 20: 
 break;
-case 21: this.$ = [[$$[$0-2]].concat($$[$0-1]), $$[$0]] 
+case 21: this.$ = [[$$[$0-2]].concat($$[$0-1]), $$[$0]]; 
 break;
-case 22: this.$ = [[$$[$0-1]].concat($$[$0]), null] 
+case 22: this.$ = [[$$[$0-1]].concat($$[$0]), null]; 
 break;
-case 23: this.$ = [[$$[$0-1]], $$[$0]] 
+case 23: this.$ = [[$$[$0-1]], $$[$0]]; 
 break;
-case 24: this.$ = [[$$[$0]], null] 
+case 24: this.$ = [[$$[$0]], null]; 
 break;
 case 25: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
 break;
-case 26: this.$ = [$$[$0]] 
+case 26: this.$ = [$$[$0]]; 
 break;
-case 27: this.$ = $$[$0] 
+case 27: this.$ = $$[$0]; 
 break;
-case 28: this.$ = new yy.StringNode($$[$0]) 
+case 28: this.$ = new yy.StringNode($$[$0]); 
 break;
-case 29: this.$ = new yy.IntegerNode($$[$0]) 
+case 29: this.$ = new yy.IntegerNode($$[$0]); 
 break;
-case 30: this.$ = new yy.BooleanNode($$[$0]) 
+case 30: this.$ = new yy.BooleanNode($$[$0]); 
 break;
-case 31: this.$ = new yy.HashNode($$[$0]) 
+case 31: this.$ = new yy.HashNode($$[$0]); 
 break;
-case 32: $$[$0-1].push($$[$0]); this.$ = $$[$0-1] 
+case 32: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
 break;
-case 33: this.$ = [$$[$0]] 
+case 33: this.$ = [$$[$0]]; 
 break;
-case 34: this.$ = [$$[$0-2], $$[$0]] 
+case 34: this.$ = [$$[$0-2], $$[$0]]; 
 break;
-case 35: this.$ = [$$[$0-2], new yy.StringNode($$[$0])] 
+case 35: this.$ = [$$[$0-2], new yy.StringNode($$[$0])]; 
 break;
-case 36: this.$ = [$$[$0-2], new yy.IntegerNode($$[$0])] 
+case 36: this.$ = [$$[$0-2], new yy.IntegerNode($$[$0])]; 
 break;
-case 37: this.$ = [$$[$0-2], new yy.BooleanNode($$[$0])] 
+case 37: this.$ = [$$[$0-2], new yy.BooleanNode($$[$0])]; 
 break;
-case 38: this.$ = new yy.IdNode($$[$0]) 
+case 38: this.$ = new yy.IdNode($$[$0]); 
 break;
 case 39: $$[$0-2].push($$[$0]); this.$ = $$[$0-2]; 
 break;
-case 40: this.$ = [$$[$0]] 
+case 40: this.$ = [$$[$0]]; 
 break;
 }
 },
@@ -117,6 +116,7 @@ parse: function parse(input) {
     this.lexer.setInput(input);
     this.lexer.yy = this.yy;
     this.yy.lexer = this.lexer;
+    this.yy.parser = this;
     if (typeof this.lexer.yylloc == 'undefined')
         this.lexer.yylloc = {};
     var yyloc = this.lexer.yylloc;
@@ -150,8 +150,9 @@ parse: function parse(input) {
         if (this.defaultActions[state]) {
             action = this.defaultActions[state];
         } else {
-            if (symbol == null)
+            if (symbol === null || typeof symbol == 'undefined') {
                 symbol = lex();
+            }
             // read action for current state and first input
             action = table[state] && table[state][symbol];
         }
@@ -160,15 +161,15 @@ parse: function parse(input) {
         _handle_error:
         if (typeof action === 'undefined' || !action.length || !action[0]) {
 
+            var errStr = '';
             if (!recovering) {
                 // Report error
                 expected = [];
                 for (p in table[state]) if (this.terminals_[p] && p > 2) {
                     expected.push("'"+this.terminals_[p]+"'");
                 }
-                var errStr = '';
                 if (this.lexer.showPosition) {
-                    errStr = 'Parse error on line '+(yylineno+1)+":\n"+this.lexer.showPosition()+"\nExpecting "+expected.join(', ') + ", got '" + this.terminals_[symbol]+ "'";
+                    errStr = 'Parse error on line '+(yylineno+1)+":\n"+this.lexer.showPosition()+"\nExpecting "+expected.join(', ') + ", got '" + (this.terminals_[symbol] || symbol)+ "'";
                 } else {
                     errStr = 'Parse error on line '+(yylineno+1)+": Unexpected " +
                                   (symbol == 1 /*EOF*/ ? "end of input" :
@@ -198,14 +199,14 @@ parse: function parse(input) {
                 if ((TERROR.toString()) in table[state]) {
                     break;
                 }
-                if (state == 0) {
+                if (state === 0) {
                     throw new Error(errStr || 'Parsing halted.');
                 }
                 popStack(1);
                 state = stack[stack.length-1];
             }
 
-            preErrorSymbol = symbol; // save the lookahead token
+            preErrorSymbol = symbol == 2 ? null : symbol; // save the lookahead token
             symbol = TERROR;         // insert generic error symbol as new lookahead
             state = stack[stack.length-1];
             action = table[state] && table[state][TERROR];
@@ -282,13 +283,13 @@ parse: function parse(input) {
     }
 
     return true;
-}};/* Jison generated lexer */
+}};
+/* Jison generated lexer */
 var lexer = (function(){
-
 var lexer = ({EOF:1,
 parseError:function parseError(str, hash) {
-        if (this.yy.parseError) {
-            this.yy.parseError(str, hash);
+        if (this.yy.parser) {
+            this.yy.parser.parseError(str, hash);
         } else {
             throw new Error(str);
         }
@@ -321,6 +322,9 @@ more:function () {
         this._more = true;
         return this;
     },
+less:function (n) {
+        this._input = this.match.slice(n) + this._input;
+    },
 pastInput:function () {
         var past = this.matched.substr(0, this.matched.length - this.match.length);
         return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "");
@@ -345,6 +349,8 @@ next:function () {
 
         var token,
             match,
+            tempMatch,
+            index,
             col,
             lines;
         if (!this._more) {
@@ -353,30 +359,35 @@ next:function () {
         }
         var rules = this._currentRules();
         for (var i=0;i < rules.length; i++) {
-            match = this._input.match(this.rules[rules[i]]);
-            if (match) {
-                lines = match[0].match(/\n.*/g);
-                if (lines) this.yylineno += lines.length;
-                this.yylloc = {first_line: this.yylloc.last_line,
-                               last_line: this.yylineno+1,
-                               first_column: this.yylloc.last_column,
-                               last_column: lines ? lines[lines.length-1].length-1 : this.yylloc.last_column + match[0].length}
-                this.yytext += match[0];
-                this.match += match[0];
-                this.matches = match;
-                this.yyleng = this.yytext.length;
-                this._more = false;
-                this._input = this._input.slice(match[0].length);
-                this.matched += match[0];
-                token = this.performAction.call(this, this.yy, this, rules[i],this.conditionStack[this.conditionStack.length-1]);
-                if (token) return token;
-                else return;
+            tempMatch = this._input.match(this.rules[rules[i]]);
+            if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
+                match = tempMatch;
+                index = i;
+                if (!this.options.flex) break;
             }
+        }
+        if (match) {
+            lines = match[0].match(/\n.*/g);
+            if (lines) this.yylineno += lines.length;
+            this.yylloc = {first_line: this.yylloc.last_line,
+                           last_line: this.yylineno+1,
+                           first_column: this.yylloc.last_column,
+                           last_column: lines ? lines[lines.length-1].length-1 : this.yylloc.last_column + match[0].length};
+            this.yytext += match[0];
+            this.match += match[0];
+            this.yyleng = this.yytext.length;
+            this._more = false;
+            this._input = this._input.slice(match[0].length);
+            this.matched += match[0];
+            token = this.performAction.call(this, this.yy, this, rules[index],this.conditionStack[this.conditionStack.length-1]);
+            if (this.done && this._input) this.done = false;
+            if (token) return token;
+            else return;
         }
         if (this._input === "") {
             return this.EOF;
         } else {
-            this.parseError('Lexical error on line '+(this.yylineno+1)+'. Unrecognized text.\n'+this.showPosition(), 
+            return this.parseError('Lexical error on line '+(this.yylineno+1)+'. Unrecognized text.\n'+this.showPosition(),
                     {text: "", token: null, line: this.yylineno});
         }
     },
@@ -403,6 +414,7 @@ topState:function () {
 pushState:function begin(condition) {
         this.begin(condition);
     }});
+lexer.options = {};
 lexer.performAction = function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 
 var YYSTATE=YY_START
@@ -467,22 +479,24 @@ case 26: return 5;
 break;
 }
 };
-lexer.rules = [/^[^\x00]*?(?=(\{\{))/,/^[^\x00]+/,/^[^\x00]{2,}?(?=(\{\{))/,/^\{\{>/,/^\{\{#/,/^\{\{\//,/^\{\{\^/,/^\{\{\s*else\b/,/^\{\{\{/,/^\{\{&/,/^\{\{![\s\S]*?\}\}/,/^\{\{/,/^=/,/^\.(?=[} ])/,/^\.\./,/^[\/.]/,/^\s+/,/^\}\}\}/,/^\}\}/,/^"(\\["]|[^"])*"/,/^true(?=[}\s])/,/^false(?=[}\s])/,/^[0-9]+(?=[}\s])/,/^[a-zA-Z0-9_$-]+(?=[=}\s\/.])/,/^\[[^\]]*\]/,/^./,/^$/];
-lexer.conditions = {"mu":{"rules":[3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26],"inclusive":false},"emu":{"rules":[2],"inclusive":false},"INITIAL":{"rules":[0,1,26],"inclusive":true}};return lexer;})()
-parser.lexer = lexer;
-return parser;
+lexer.rules = [/^(?:[^\x00]*?(?=(\{\{)))/,/^(?:[^\x00]+)/,/^(?:[^\x00]{2,}?(?=(\{\{)))/,/^(?:\{\{>)/,/^(?:\{\{#)/,/^(?:\{\{\/)/,/^(?:\{\{\^)/,/^(?:\{\{\s*else\b)/,/^(?:\{\{\{)/,/^(?:\{\{&)/,/^(?:\{\{![\s\S]*?\}\})/,/^(?:\{\{)/,/^(?:=)/,/^(?:\.(?=[} ]))/,/^(?:\.\.)/,/^(?:[\/.])/,/^(?:\s+)/,/^(?:\}\}\})/,/^(?:\}\})/,/^(?:"(\\["]|[^"])*")/,/^(?:true(?=[}\s]))/,/^(?:false(?=[}\s]))/,/^(?:[0-9]+(?=[}\s]))/,/^(?:[a-zA-Z0-9_$-]+(?=[=}\s\/.]))/,/^(?:\[[^\]]*\])/,/^(?:.)/,/^(?:$)/];
+lexer.conditions = {"mu":{"rules":[3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26],"inclusive":false},"emu":{"rules":[2],"inclusive":false},"INITIAL":{"rules":[0,1,26],"inclusive":true}};
+return lexer;})()
+parser.lexer = lexer;function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Parser;
+return new Parser;
 })();
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 exports.parser = handlebars;
+exports.Parser = handlebars.Parser;
 exports.parse = function () { return handlebars.parse.apply(handlebars, arguments); }
 exports.main = function commonjsMain(args) {
     if (!args[1])
         throw new Error('Usage: '+args[0]+' FILE');
+    var source, cwd;
     if (typeof process !== 'undefined') {
-        var source = require('fs').readFileSync(require('path').join(process.cwd(), args[1]), "utf8");
+        source = require('fs').readFileSync(require('path').resolve(args[1]), "utf8");
     } else {
-        var cwd = require("file").path(require("file").cwd());
-        var source = cwd.join(args[1]).read({charset: "utf-8"});
+        source = require("file").path(require("file").cwd()).join(args[1]).read({charset: "utf-8"});
     }
     return exports.parser.parse(source);
 }

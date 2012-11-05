@@ -13,7 +13,7 @@
 </div>
 
 <script>
-YUI().use('node', 'event-synthetic', 'transition', function (Y) {
+YUI({ filter: 'raw' }).use('node', 'event-synthetic', 'transition', function (Y) {
     Y.Event.define("arrow", {
         // Webkit and IE repeat keydown when you hold down arrow keys.
         // Opera links keypress to page scroll; others keydown.
@@ -134,6 +134,9 @@ YUI().use('node', 'event-synthetic', 'transition', function (Y) {
         }, function(){
             moving = false; // now that move is done, allow arrow keys to move again
         });
+
+        this.setData('x', xy.x);
+        this.setData('y', xy.y);
     }
 
     function detachSubs() {

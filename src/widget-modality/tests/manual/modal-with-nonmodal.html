@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Modal with Non-Modal Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="pnlModal">
+    <div class="yui3-widget-bd">Modal Panel</div>
+</div>
+
+<div id="pnlRegular">
+    <div class="yui3-widget-bd">Regular Panel</div>
+</div>
+
+<button type="button" id="btnModal">Show Modal</button>
+<button type="button" id="btnRegular">Show Regular</button>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+YUI({filter: 'raw'}).use('panel', function (Y) {
+
+    var pnlModal = new Y.Panel({
+        srcNode : '#pnlModal',
+        visible : false,
+        modal   : true,
+        centered: true,
+        render  : true,
+        zIndex  : 10
+    });
+
+    var pnlRegular = new Y.Panel({
+        srcNode : '#pnlRegular',
+        render  : true,
+        visible : false,
+        centered: true,
+        modal   : false
+    });
+
+    Y.one("#btnModal").on("click", function () {
+        pnlModal.show();
+    });
+
+    Y.one("#btnRegular").on("click", function () {
+        pnlRegular.show();
+    });
+
+});
+</script>
+
+</body>
+</html>

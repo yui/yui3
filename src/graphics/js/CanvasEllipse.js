@@ -14,7 +14,7 @@ CanvasEllipse = function(cfg)
 	CanvasEllipse.superclass.constructor.apply(this, arguments);
 };
 
-CanvasEllipse.NAME = "canvasEllipse";
+CanvasEllipse.NAME = "ellipse";
 
 Y.extend(CanvasEllipse, CanvasShape, {
 	/**
@@ -38,8 +38,55 @@ Y.extend(CanvasEllipse, CanvasShape, {
 			h = this.get("height");
 		this.clear();
         this.drawEllipse(0, 0, w, h);
-		this._paint();
+		this._closePath();
 	}
 });
-CanvasEllipse.ATTRS = CanvasShape.ATTRS;
+CanvasEllipse.ATTRS = Y.merge(CanvasShape.ATTRS, {
+	/**
+	 * Horizontal radius for the ellipse. 
+	 *
+	 * @config xRadius
+	 * @type Number
+	 */
+	xRadius: {
+		setter: function(val)
+		{
+			this.set("width", val * 2);
+		},
+
+		getter: function()
+		{
+			var val = this.get("width");
+			if(val) 
+			{
+				val *= 0.5;
+			}
+			return val;
+		}
+	},
+
+	/**
+	 * Vertical radius for the ellipse. 
+	 *
+	 * @config yRadius
+	 * @type Number
+	 * @readOnly
+	 */
+	yRadius: {
+		setter: function(val)
+		{
+			this.set("height", val * 2);
+		},
+
+		getter: function()
+		{
+			var val = this.get("height");
+			if(val) 
+			{
+				val *= 0.5;
+			}
+			return val;
+		}
+	}
+});
 Y.CanvasEllipse = CanvasEllipse;

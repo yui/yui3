@@ -30,8 +30,7 @@ YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
             }
             var drag = new Y.DD.Drag({
                 node: v,
-                groups: groups,
-                dragMode: 'intersect'
+                groups: groups
             }).plug(Y.Plugin.DDProxy, {
                 moveOnEnd: false
             }).plug(Y.Plugin.DDConstrained, {

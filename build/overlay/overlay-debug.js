@@ -1,4 +1,4 @@
-YUI.add('overlay', function(Y) {
+YUI.add('overlay', function (Y, NAME) {
 
 /**
  * Provides a basic Overlay widget, with Standard Module content support. The Overlay widget
@@ -26,4 +26,4 @@ YUI.add('overlay', function(Y) {
 Y.Overlay = Y.Base.create("overlay", Y.Widget, [Y.WidgetStdMod, Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionAlign, Y.WidgetPositionConstrain]);
 
 
-}, '@VERSION@' ,{requires:['widget', 'widget-stdmod', 'widget-position', 'widget-stack', 'widget-position-align', 'widget-position-constrain']});
+}, '@VERSION@', {"requires": ["widget", "widget-stdmod", "widget-position", "widget-position-align", "widget-stack", "widget-position-constrain"], "skinnable": true});

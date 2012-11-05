@@ -2,6 +2,7 @@
  * Utility class used for calculating curve points.
  *
  * @module charts
+ * @submodule charts-base
  * @class CurveUtil
  * @constructor
  */

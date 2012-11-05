@@ -5,26 +5,7 @@
  * @submodule node-style
  */
 
-var methods = [
-    /**
-     * Returns the style's current value.
-     * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
-     * @method getStyle
-     * @for Node
-     * @param {String} attr The style attribute to retrieve. 
-     * @return {String} The current value of the style property for the element.
-     */
-    'getStyle',
-
-    /**
-     * Returns the computed value for the given style property.
-     * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
-     * @method getComputedStyle
-     * @param {String} attr The style attribute to retrieve. 
-     * @return {String} The computed value of the style property for the element.
-     */
-    'getComputedStyle',
-
+Y.mix(Y.Node.prototype, {
     /**
      * Sets a style property of the node.
      * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
@@ -33,7 +14,10 @@ var methods = [
      * @param {String|Number} val The value. 
      * @chainable
      */
-    'setStyle',
+    setStyle: function(attr, val) {
+        Y.DOM.setStyle(this._node, attr, val);
+        return this;
+    },
 
     /**
      * Sets multiple style properties on the node.
@@ -42,9 +26,36 @@ var methods = [
      * @param {Object} hash An object literal of property:value pairs. 
      * @chainable
      */
-    'setStyles'
-];
-Y.Node.importMethod(Y.DOM, methods);
+    setStyles: function(hash) {
+        Y.DOM.setStyles(this._node, hash);
+        return this;
+    },
+
+    /**
+     * Returns the style's current value.
+     * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
+     * @method getStyle
+     * @for Node
+     * @param {String} attr The style attribute to retrieve. 
+     * @return {String} The current value of the style property for the element.
+     */
+
+     getStyle: function(attr) {
+        return Y.DOM.getStyle(this._node, attr);
+     },
+
+    /**
+     * Returns the computed value for the given style property.
+     * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
+     * @method getComputedStyle
+     * @param {String} attr The style attribute to retrieve. 
+     * @return {String} The computed value of the style property for the element.
+     */
+     getComputedStyle: function(attr) {
+        return Y.DOM.getComputedStyle(this._node, attr);
+     }
+});
+
 /**
  * Returns an array of values for each node.
  * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
@@ -82,5 +93,9 @@ Y.Node.importMethod(Y.DOM, methods);
  * @param {Object} hash An object literal of property:value pairs. 
  * @chainable
  */
-Y.NodeList.importMethod(Y.Node.prototype, methods);
+
+// These are broken out to handle undefined return (avoid false positive for
+// chainable)
+
+Y.NodeList.importMethod(Y.Node.prototype, ['getStyle', 'getComputedStyle', 'setStyle', 'setStyles']);
 })(Y);

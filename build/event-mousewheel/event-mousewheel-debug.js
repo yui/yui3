@@ -1,4 +1,4 @@
-YUI.add('event-mousewheel', function(Y) {
+YUI.add('event-mousewheel', function (Y, NAME) {
 
 /**
  * Adds mousewheel event support
@@ -47,4 +47,4 @@ Y.Env.evt.plugins.mousewheel = {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base']});
+}, '@VERSION@', {"requires": ["node-base"]});

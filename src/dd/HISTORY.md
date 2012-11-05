@@ -1,15 +1,60 @@
 Drag and Drop Change History
 ============================
 
-### 3.5.0
+3.7.3
+-----
+
+* 2532718 don't stop gesture start, but prevent gesture move to allow clicks
+* 2532837 Unreg gesturemoveend on _unprep
+* Switched DD over to Y.UA.touchEnabled
+* DD should completely pass lint now
+
+3.7.2
+-----
 
 * No changes.
 
-### 3.4.1
+3.7.1
+-----
 
 * No changes.
 
-### 3.4.0
+3.7.0
+-----
+
+* No changes.
+
+3.6.0
+-----
+
+* 2531340 DDConstrained broken when using DDNodeScroll plugin
+* 2532009 Drag examples could use some Jeff polish
+* 2532106 Drag handles aren't well explained in the example.
+* 2532216 DDConstrained does not remove event listeners on destroy properly
+* 2532291 DD Delegate ignores dragNode configuration option
+* 2532500 Y.Plugin.Drag interferes with browser's native handling of dragged links, even when those links aren...
+
+
+3.5.1
+-----
+
+  * No changes.
+
+3.5.0
+-----
+
+* 2530257 Avoid interference of Drag and Nodes Event Handles
+* 2531377 shim is not created if dd-ddm is loaded after the first drag is activated
+* 2531674 Issue with drag and drop and drop:hit event
+
+
+3.4.1
+-----
+
+* No changes.
+
+3.4.0
+-----
 
 * #2529889 Example for Delegate Drag and Drop has wrong parameters
 * #2529905 Using DDNodeScroll with DDDelegate causes JS error in Safari
@@ -18,7 +63,8 @@ Drag and Drop Change History
 * #2530576 change notest needed in history file
 
 
-### 3.3.0
+3.3.0
+-----
 
 * #2529382 DD Delegate breaks when a draggable is nested and uses a handle
 * #2529407 Add tickAlignX and tickAlignY events to Y.Plugin.DDConstrained
@@ -30,7 +76,8 @@ Drag and Drop Change History
 * #2529577 Slider thumb frozen on mousedown+mousemove in IE9
 
 
-### 3.2.0
+3.2.0
+-----
 
 **IMPORTANT** dd-plugin and dd-plugin-drop are no longer bundled with the dd module. They are
 now official plugins and need to be "used" on their own.
@@ -46,27 +93,29 @@ the "drag-gestures" plugin that is conditionally loaded when touch events are fo
 * #2529094 DD hard codes CSS prefix
 
 
-### 3.1.0
+3.1.0
+-----
 
 * #2527964 DD constrain2node cached position causes misalignment when that node is moved
 * #2528229 Configuration to override region caching in Constrain plugin
 * #2528395 Add a DD.Drag delegate class
 * #2528457 Add invalid selector check to Delegate
 * #2528488 Delegate errors without Drop plugin
-* #2528509 Drag and drop slow on linux ff3.5.6 
+* #2528509 Drag and drop slow on linux ff3.5.6
 * #2528539 drag:start should fire before drag:enter
 * #2528540 DDConstrained using cacheRegion set to false throws js errors when drag starts
 * #2528560 drag:over event is not firing when useShim is false
 * #2528578 DDConstrained has no default constraining config
 * #2528585 drag:dropmiss being fired on simple click
 * #2528592 Add throttle support to DD mousemove
-* #2528596 Support Node instances as handles in Drag 
+* #2528596 Support Node instances as handles in Drag
 * #2528607 Drop events not firing when attached to a Drag target
 * #2528608 Default Drag throttleTime should be -1
 * #2528613 dragNode XY not sync with the mouse if it has its dimensions changed on drag:start
 
 
-### 3.0.0
+3.0.0
+-----
 
 * #2528096 Updated initialization routine so plugins load before DD attachs to the node.
 * #2528119 Added SELECT selector to invalidHandles.
@@ -74,7 +123,8 @@ the "drag-gestures" plugin that is conditionally loaded when touch events are fo
 * #2528149 Fixed _noShim use case
 
 
-### 3.0.0 Beta1
+3.0.0 Beta1
+-----------
 
 Added a plugin to support Window and Node based scrolling
 
@@ -124,12 +174,14 @@ Current - Constrained:
 Converted Everything to use setXY now that FF2 is not supported.
 Performance tweaks to dragging over a target.
 
-### 3.0.0 PR2
+3.0.0 PR2
+---------
 
 Added bubbles config option to help with extending later.
 Updated _checkRegion to perform Bottom, Top, Left, Right validation instead of Top, Bottom, Left, Right
 
-### 3.0.0 PR1
+3.0.0 PR1
+---------
 
 Known Issues:
 

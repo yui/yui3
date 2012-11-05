@@ -1,7 +1,10 @@
-YUI.add('graphics-svg', function(Y) {
+YUI.add('graphics-svg', function (Y, NAME) {
 
-var SHAPE = "svgShape",
-	Y_LANG = Y.Lang,
+var IMPLEMENTATION = "svg",
+    SHAPE = "shape",
+	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
+    SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
+    Y_LANG = Y.Lang,
 	AttributeLite = Y.AttributeLite,
 	SVGGraphic,
     SVGShape,
@@ -10,7 +13,8 @@ var SHAPE = "svgShape",
 	SVGPath,
 	SVGEllipse,
     SVGPieSlice,
-    DOCUMENT = Y.config.doc;
+    DOCUMENT = Y.config.doc,
+    _getClassName = Y.ClassNameManager.getClassName;
 
 function SVGDrawing(){}
 
@@ -25,6 +29,44 @@ function SVGDrawing(){}
  * @constructor
  */
 SVGDrawing.prototype = {
+    /**
+     * Maps path to methods
+     *
+     * @property _pathSymbolToMethod
+     * @type Object
+     * @private
+     */
+    _pathSymbolToMethod: {
+        M: "moveTo",
+        m: "relativeMoveTo",
+        L: "lineTo",
+        l: "relativeLineTo",
+        C: "curveTo",
+        c: "relativeCurveTo",
+        Q: "quadraticCurveTo",
+        q: "relativeQuadraticCurveTo",
+        z: "closePath",
+        Z: "closePath"
+    },
+
+    /**
+     * Current x position of the drawing.
+     *
+     * @property _currentX
+     * @type Number
+     * @private
+     */
+    _currentX: 0,
+
+    /**
+     * Current y position of the drqwing.
+     *
+     * @property _currentY
+     * @type Number
+     * @private
+     */
+    _currentY: 0,
+    
     /**
      * Indicates the type of shape
      *
@@ -46,17 +88,59 @@ SVGDrawing.prototype = {
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
      */
-    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-        var pathArrayLen,
+    curveTo: function() {
+        this._curveTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Draws a bezier curve relative to the current coordinates.
+     *
+     * @method relativeCurveTo
+     * @param {Number} cp1x x-coordinate for the first control point.
+     * @param {Number} cp1y y-coordinate for the first control point.
+     * @param {Number} cp2x x-coordinate for the second control point.
+     * @param {Number} cp2y y-coordinate for the second control point.
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     */
+    relativeCurveTo: function() {
+        this._curveTo.apply(this, [Y.Array(arguments), true]);
+    },
+
+    /**
+     * Implements curveTo methods.
+     *
+     * @method _curveTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _curveTo: function(args, relative) {
+        var w,
+            h,
+            pts,
+            cp1x,
+            cp1y,
+            cp2x,
+            cp2y,
+            x,
+            y,
+            right,
+            left,
+            bottom,
+            top,
+            i,
+            len,
+            pathArrayLen,
             currentArray,
-            hiX,
-            loX,
-            hiY,
-            loY;
-        if(this._pathType !== "C")
+            command = relative ? "c" : "C",
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
+        this._pathArray = this._pathArray || [];
+        if(this._pathType !== command)
         {
-            this._pathType = "C";
-            currentArray = ["C"];
+            this._pathType = command;
+            currentArray = [command];
             this._pathArray.push(currentArray);
         }
         else
@@ -69,13 +153,27 @@ SVGDrawing.prototype = {
             }
         }
         pathArrayLen = this._pathArray.length - 1;
-        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([Math.round(cp1x), Math.round(cp1y), Math.round(cp2x) , Math.round(cp2y), x, y]);
-        hiX = Math.max(x, Math.max(cp1x, cp2x));
-        hiY = Math.max(y, Math.max(cp1y, cp2y));
-        loX = Math.min(x, Math.min(cp1x, cp2x));
-        loY = Math.min(y, Math.min(cp1y, cp2y));
-        this._trackSize(hiX, hiY);
-        this._trackSize(loX, loY);
+        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat(args);
+        len = args.length - 5;
+        for(i = 0; i < len; i = i + 6)
+        {
+            cp1x = parseFloat(args[i]) + relativeX;
+            cp1y = parseFloat(args[i + 1]) + relativeY;
+            cp2x = parseFloat(args[i + 2]) + relativeX;
+            cp2y = parseFloat(args[i + 3]) + relativeY;
+            x = parseFloat(args[i + 4]) + relativeX;
+            y = parseFloat(args[i + 5]) + relativeY;
+            right = Math.max(x, Math.max(cp1x, cp2x));
+            bottom = Math.max(y, Math.max(cp1y, cp2y));
+            left = Math.min(x, Math.min(cp1x, cp2x));
+            top = Math.min(y, Math.min(cp1y, cp2y));
+            w = Math.abs(right - left);
+            h = Math.abs(bottom - top);
+            pts = [[this._currentX, this._currentY] , [cp1x, cp1y], [cp2x, cp2y], [x, y]]; 
+            this._setCurveBoundingBox(pts, w, h);
+            this._currentX = x;
+            this._currentY = y;
+        }
     },
 
     /**
@@ -87,17 +185,54 @@ SVGDrawing.prototype = {
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
      */
-    quadraticCurveTo: function(cpx, cpy, x, y) {
-        var pathArrayLen,
+    quadraticCurveTo: function() {
+        this._quadraticCurveTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Draws a quadratic bezier curve relative to the current position.
+     *
+     * @method quadraticCurveTo
+     * @param {Number} cpx x-coordinate for the control point.
+     * @param {Number} cpy y-coordinate for the control point.
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     */
+    relativeQuadraticCurveTo: function() {
+        this._quadraticCurveTo.apply(this, [Y.Array(arguments), true]);
+    },
+   
+    /**
+     * Implements quadraticCurveTo methods.
+     *
+     * @method _quadraticCurveTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _quadraticCurveTo: function(args, relative) {
+        var cpx, 
+            cpy, 
+            x, 
+            y,
+            pathArrayLen,
             currentArray,
-            hiX,
-            loX,
-            hiY,
-            loY;
-        if(this._pathType !== "Q")
+            w,
+            h,
+            pts,
+            right,
+            left,
+            bottom,
+            top,
+            i,
+            len,
+            command = relative ? "q" : "Q",
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
+        if(this._pathType !== command)
         {
-            this._pathType = "Q";
-            currentArray = ["Q"];
+            this._pathType = command;
+            currentArray = [command];
             this._pathArray.push(currentArray);
         }
         else
@@ -110,13 +245,25 @@ SVGDrawing.prototype = {
             }
         }
         pathArrayLen = this._pathArray.length - 1;
-        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([Math.round(cpx), Math.round(cpy), Math.round(x), Math.round(y)]);
-        hiX = Math.max(x, cpx);
-        hiY = Math.max(y, cpy);
-        loX = Math.min(x, cpx);
-        loY = Math.min(y, cpy);
-        this._trackSize(hiX, hiY);
-        this._trackSize(loX, loY);
+        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat(args);
+        len = args.length - 3;
+        for(i = 0; i < len; i = i + 4)
+        {
+            cpx = parseFloat(args[i]) + relativeX;
+            cpy = parseFloat(args[i + 1]) + relativeY;
+            x = parseFloat(args[i + 2]) + relativeX;
+            y = parseFloat(args[i + 3]) + relativeY;
+            right = Math.max(x, cpx);
+            bottom = Math.max(y, cpy);
+            left = Math.min(x, cpx);
+            top = Math.min(y, cpy);
+            w = Math.abs(right - left);
+            h = Math.abs(bottom - top);
+            pts = [[this._currentX, this._currentY] , [cpx, cpy], [x, y]]; 
+            this._setCurveBoundingBox(pts, w, h);
+            this._currentX = x;
+            this._currentY = y;
+        }
     },
 
     /**
@@ -160,6 +307,76 @@ SVGDrawing.prototype = {
 	},
 
     /**
+     * Draws a circle.     
+     * 
+     * @method drawCircle
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} r radius
+     * @protected
+     */
+	drawCircle: function(x, y, radius) {
+        var circum = radius * 2;
+        this._drawingComplete = false;
+        this._trackSize(x, y);
+        this._trackSize(x + circum, y + circum);
+        this._pathArray = this._pathArray || [];
+        this._pathArray.push(["M", x + radius, y]);
+        this._pathArray.push(["A",  radius, radius, 0, 1, 0, x + radius, y + circum]);
+        this._pathArray.push(["A",  radius, radius, 0, 1, 0, x + radius, y]);
+        this._currentX = x;
+        this._currentY = y;
+        return this;
+    },
+   
+    /**
+     * Draws an ellipse.
+     *
+     * @method drawEllipse
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
+     * @param {Number} w width
+     * @param {Number} h height
+     * @protected
+     */
+	drawEllipse: function(x, y, w, h) {
+        var radius = w * 0.5,
+            yRadius = h * 0.5;
+        this._drawingComplete = false;
+        this._trackSize(x, y);
+        this._trackSize(x + w, y + h);
+        this._pathArray = this._pathArray || [];
+        this._pathArray.push(["M", x + radius, y]);
+        this._pathArray.push(["A",  radius, yRadius, 0, 1, 0, x + radius, y + h]);
+        this._pathArray.push(["A",  radius, yRadius, 0, 1, 0, x + radius, y]);
+        this._currentX = x;
+        this._currentY = y;
+        return this;
+    },
+
+    /**
+     * Draws a diamond.     
+     * 
+     * @method drawDiamond
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} width width
+     * @param {Number} height height
+     * @protected
+     */
+    drawDiamond: function(x, y, width, height)
+    {
+        var midWidth = width * 0.5,
+            midHeight = height * 0.5;
+        this.moveTo(x + midWidth, y);
+        this.lineTo(x + width, y + midHeight);
+        this.lineTo(x + midWidth, y + height);
+        this.lineTo(x, y + midHeight);
+        this.lineTo(x + midWidth, y);
+        return this;
+    },
+
+    /**
      * Draws a wedge.
      *
      * @method drawWedge
@@ -184,7 +401,7 @@ SVGDrawing.prototype = {
             by,
             cx,
             cy,
-            i = 0,
+            i,
             diameter = radius * 2,
             currentArray,
             pathArrayLen;
@@ -235,7 +452,7 @@ SVGDrawing.prototype = {
             pathArrayLen++; 
             this._pathType = "Q";
             this._pathArray[pathArrayLen] = ["Q"];
-            for(; i < segs; ++i)
+            for(i = 0; i < segs; ++i)
             {
                 angle += theta;
                 angleMid = angle - (theta / 2);
@@ -249,10 +466,12 @@ SVGDrawing.prototype = {
                 this._pathArray[pathArrayLen].push(Math.round(by));
             }
         }
+        this._currentX = x;
+        this._currentY = y;
         this._trackSize(diameter, diameter); 
         return this;
     },
-    
+
     /**
      * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
      * 
@@ -260,22 +479,49 @@ SVGDrawing.prototype = {
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
      */
-    lineTo: function(point1, point2, etc) {
-        var args = arguments,
+    lineTo: function()
+    {
+        this._lineTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Draws a line segment using the current line style from the current drawing position to the relative x and y coordinates.
+     * 
+     * @method relativeLineTo
+     * @param {Number} point1 x-coordinate for the end point.
+     * @param {Number} point2 y-coordinate for the end point.
+     */
+    relativeLineTo: function()
+    {
+        this._lineTo.apply(this, [Y.Array(arguments), true]);
+    },
+
+    /**
+     * Implements lineTo methods.
+     *
+     * @method _lineTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _lineTo: function(args, relative) {
+        var point1 = args[0],
             i,
             len,
             pathArrayLen,
-            currentArray;
+            currentArray,
+            x,
+            y,
+            command = relative ? "l" : "L",
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
         this._pathArray = this._pathArray || [];
-        if (typeof point1 === 'string' || typeof point1 === 'number') {
-            args = [[point1, point2]];
-        }
-        len = args.length;
         this._shapeType = "path";
-        if(this._pathType !== "L")
+        len = args.length;
+        if(this._pathType !== command)
         {
-            this._pathType = "L";
-            currentArray = ['L'];
+            this._pathType = command;
+            currentArray = [command];
             this._pathArray.push(currentArray);
         }
         else
@@ -283,22 +529,33 @@ SVGDrawing.prototype = {
             currentArray = this._getCurrentArray();
         }
         pathArrayLen = this._pathArray.length - 1;
-        for (i = 0; i < len; ++i) {
-            this._pathArray[pathArrayLen].push(args[i][0]);
-            this._pathArray[pathArrayLen].push(args[i][1]);
-            this._trackSize.apply(this, args[i]);
+        if (typeof point1 === 'string' || typeof point1 === 'number') {
+            for (i = 0; i < len; i = i + 2) {
+                x = parseFloat(args[i]);
+                y = parseFloat(args[i + 1]);
+                this._pathArray[pathArrayLen].push(x);
+                this._pathArray[pathArrayLen].push(y);
+                x = x + relativeX;
+                y = y + relativeY;
+                this._currentX = x;
+                this._currentY = y;
+                this._trackSize.apply(this, [x, y]);
+            }
         }
-    },
-
-    _getCurrentArray: function()
-    {
-        var currentArray = this._pathArray[Math.max(0, this._pathArray.length - 1)];
-        if(!currentArray)
+        else
         {
-            currentArray = [];
-            this._pathArray.push(currentArray);
+            for (i = 0; i < len; ++i) {
+                x = parseFloat(args[i][0]);
+                y = parseFloat(args[i][1]);
+                this._pathArray[pathArrayLen].push(x);
+                this._pathArray[pathArrayLen].push(y);
+                this._currentX = x;
+                this._currentY = y;
+                x = x + relativeX;
+                y = y + relativeY;
+                this._trackSize.apply(this, [x, y]);
+            }
         }
-        return currentArray;
     },
 
     /**
@@ -308,22 +565,49 @@ SVGDrawing.prototype = {
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
      */
-    moveTo: function(x, y) {
+    moveTo: function()
+    {
+        this._moveTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Moves the current drawing position relative to specified x and y coordinates.
+     *
+     * @method relativeMoveTo
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     */
+    relativeMoveTo: function()
+    {
+        this._moveTo.apply(this, [Y.Array(arguments), true]);
+    },
+
+    /**
+     * Implements moveTo methods.
+     *
+     * @method _moveTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _moveTo: function(args, relative) {
         var pathArrayLen,
-            currentArray;
+            currentArray,
+            x = parseFloat(args[0]),
+            y = parseFloat(args[1]),
+            command = relative ? "m" : "M",
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
         this._pathArray = this._pathArray || [];
-        if(this._pathType != "M")
-        {
-            this._pathType = "M";
-            currentArray = ["M"];
-            this._pathArray.push(currentArray);
-        }
-        else
-        {
-            currentArray = this._getCurrentArray(); 
-        }
+        this._pathType = command;
+        currentArray = [command];
+        this._pathArray.push(currentArray);
         pathArrayLen = this._pathArray.length - 1;
         this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([x, y]);
+        x = x + relativeX;
+        y = y + relativeY;
+        this._currentX = x;
+        this._currentY = y;
         this._trackSize(x, y);
     },
  
@@ -335,7 +619,6 @@ SVGDrawing.prototype = {
     end: function()
     {
         this._closePath();
-        this._graphic.addToRedrawQueue(this);    
     },
 
     /**
@@ -345,6 +628,8 @@ SVGDrawing.prototype = {
      */
     clear: function()
     {
+        this._currentX = 0;
+        this._currentY = 0;
         this._width = 0;
         this._height = 0;
         this._left = 0;
@@ -372,8 +657,8 @@ SVGDrawing.prototype = {
             i,
             path = "",
             node = this.node,
-            left = this._left,
-            top = this._top,
+            left = parseFloat(this._left),
+            top = parseFloat(this._top),
             fill = this.get("fill");
         if(this._pathArray)
         {
@@ -383,35 +668,59 @@ SVGDrawing.prototype = {
                 segmentArray = pathArray.shift();
                 len = segmentArray.length;
                 pathType = segmentArray[0];
-                path += " " + pathType + (segmentArray[1] - left);
+                if(pathType === "A")
+                {
+                    path += pathType + segmentArray[1] + "," + segmentArray[2];
+                }
+                else if(pathType == "z" || pathType == "Z")
+                {
+                    path += " z ";
+                }
+                else if(pathType == "C" || pathType == "c")
+                {
+                    path += pathType + (segmentArray[1] - left)+ "," + (segmentArray[2] - top);
+                }
+                else
+                {
+                    path += " " + pathType + parseFloat(segmentArray[1] - left);
+                }
                 switch(pathType)
                 {
                     case "L" :
+                    case "l" :
                     case "M" :
                     case "Q" :
+                    case "q" :
                         for(i = 2; i < len; ++i)
                         {
                             val = (i % 2 === 0) ? top : left;
                             val = segmentArray[i] - val;
-                            path += ", " + val;
+                            path += ", " + parseFloat(val);
                         }
+                    break;
+                    case "A" :
+                        val = " " + parseFloat(segmentArray[3]) + " " + parseFloat(segmentArray[4]);
+                        val += "," + parseFloat(segmentArray[5]) + " " + parseFloat(segmentArray[6] - left);
+                        val += "," + parseFloat(segmentArray[7] - top);
+                        path += " " + val;
                     break;
                     case "C" :
-                        for(i = 2; i < len; ++i)
+                    case "c" :
+                        for(i = 3; i < len - 1; i = i + 2)
                         {
-                            val = (i % 2 === 0) ? top : left;
-                            val2 = segmentArray[i];
-                            val2 -= val;
-                            path += " " + val2;
+                            val = parseFloat(segmentArray[i] - left);
+                            val = val + ", ";
+                            val = val + parseFloat(segmentArray[i + 1] - top);
+                            path += " " + val;
                         }
                     break;
-
                 }
             }
             if(fill && fill.color)
             {
                 path += 'z';
             }
+            Y.Lang.trim(path);
             if(path)
             {
                 node.setAttribute("d", path);
@@ -424,6 +733,97 @@ SVGDrawing.prototype = {
         }
     },
 
+    /**
+     * Ends a fill and stroke
+     *
+     * @method closePath
+     */
+    closePath: function()
+    {
+        this._pathArray.push(["z"]);
+    },
+
+    /**
+     * Returns the current array of drawing commands.
+     *
+     * @method _getCurrentArray
+     * @return Array
+     * @private
+     */
+    _getCurrentArray: function()
+    {
+        var currentArray = this._pathArray[Math.max(0, this._pathArray.length - 1)];
+        if(!currentArray)
+        {
+            currentArray = [];
+            this._pathArray.push(currentArray);
+        }
+        return currentArray;
+    },
+    
+    /**
+     * Returns the points on a curve
+     *
+     * @method getBezierData
+     * @param Array points Array containing the begin, end and control points of a curve.
+     * @param Number t The value for incrementing the next set of points.
+     * @return Array
+     * @private
+     */
+    getBezierData: function(points, t) {  
+        var n = points.length,
+            tmp = [],
+            i,
+            j;
+
+        for (i = 0; i < n; ++i){
+            tmp[i] = [points[i][0], points[i][1]]; // save input
+        }
+        
+        for (j = 1; j < n; ++j) {
+            for (i = 0; i < n - j; ++i) {
+                tmp[i][0] = (1 - t) * tmp[i][0] + t * tmp[parseInt(i + 1, 10)][0];
+                tmp[i][1] = (1 - t) * tmp[i][1] + t * tmp[parseInt(i + 1, 10)][1]; 
+            }
+        }
+        return [ tmp[0][0], tmp[0][1] ]; 
+    },
+  
+    /**
+     * Calculates the bounding box for a curve
+     *
+     * @method _setCurveBoundingBox
+     * @param Array pts Array containing points for start, end and control points of a curve.
+     * @param Number w Width used to calculate the number of points to describe the curve.
+     * @param Number h Height used to calculate the number of points to describe the curve.
+     * @private
+     */
+    _setCurveBoundingBox: function(pts, w, h)
+    {
+        var i,
+            left = this._currentX,
+            right = left,
+            top = this._currentY,
+            bottom = top,
+            len = Math.round(Math.sqrt((w * w) + (h * h))),
+            t = 1/len,
+            xy;
+        for(i = 0; i < len; ++i)
+        {
+            xy = this.getBezierData(pts, t * i);
+            left = isNaN(left) ? xy[0] : Math.min(xy[0], left);
+            right = isNaN(right) ? xy[0] : Math.max(xy[0], right);
+            top = isNaN(top) ? xy[1] : Math.min(xy[1], top);
+            bottom = isNaN(bottom) ? xy[1] : Math.max(xy[1], bottom);
+        }
+        left = Math.round(left * 10)/10;
+        right = Math.round(right * 10)/10;
+        top = Math.round(top * 10)/10;
+        bottom = Math.round(bottom * 10)/10;
+        this._trackSize(right, bottom);
+        this._trackSize(left, top);
+    },
+    
     /**
      * Updates the size of the graphics object
      *
@@ -472,9 +872,25 @@ SVGShape = function(cfg)
     SVGShape.superclass.constructor.apply(this, arguments);
 };
 
-SVGShape.NAME = "svgShape";
+SVGShape.NAME = "shape";
 
-Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
+Y.extend(SVGShape, Y.GraphicBase, Y.mix({
+    /**
+     * Storage for x attribute.
+     *
+     * @property _x
+     * @protected
+     */
+    _x: 0,
+
+    /**
+     * Storage for y attribute.
+     *
+     * @property _y
+     * @protected
+     */
+    _y: 0,
+    
     /**
      * Init method, invoked during construction.
      * Calls `initializer` method.
@@ -495,12 +911,47 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	initializer: function(cfg)
 	{
-		var host = this;
+		var host = this,
+            graphic = cfg.graphic,
+            data = this.get("data");
 		host.createNode(); 
-		host._graphic = cfg.graphic;
-		host._updateHandler();
+		if(graphic)
+        {
+            host._setGraphic(graphic);
+        }
+        if(data)
+        {
+            host._parsePathData(data);
+        }
+        host._updateHandler();
 	},
-   
+ 
+    /**
+     * Set the Graphic instance for the shape.
+     *
+     * @method _setGraphic
+     * @param {Graphic | Node | HTMLElement | String} render This param is used to determine the graphic instance. If it is a `Graphic` instance, it will be assigned
+     * to the `graphic` attribute. Otherwise, a new Graphic instance will be created and rendered into the dom element that the render represents.
+     * @private
+     */
+    _setGraphic: function(render)
+    {
+        var graphic;
+        if(render instanceof Y.SVGGraphic)
+        {
+		    this._graphic = render;
+        }
+        else
+        {
+            render = Y.one(render);
+            graphic = new Y.SVGGraphic({
+                render: render
+            });
+            graphic._appendShape(this);
+            this._graphic = graphic;
+        }
+    },
+
 	/**
 	 * Add a class name to each node.
 	 *
@@ -537,8 +988,8 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	{
 		var graphic = this._graphic,
 			parentXY = graphic.getXY(),
-			x = this.get("x"),
-			y = this.get("y");
+			x = this._x,
+			y = this._y;
 		return [parentXY[0] + x, parentXY[1] + y];
 	},
 
@@ -552,8 +1003,9 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	{
 		var graphic = this._graphic,
 			parentXY = graphic.getXY();
-		this.set("x", xy[0] - parentXY[0]);
-		this.set("y", xy[1] - parentXY[1]);
+		this._x = xy[0] - parentXY[0];
+		this._y = xy[1] - parentXY[1];
+        this.set("transform", this.get("transform"));
 	},
 
 	/**
@@ -638,12 +1090,15 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	createNode: function()
 	{
-		var node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
-			id = this.get("id"),
-			pointerEvents = this.get("pointerEvents");
-		this.node = node;
-		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
-		if(id)
+		var host = this,
+            node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
+			id = host.get("id"),
+            name = host.name,
+            concat = host._camelCaseConcat,
+			pointerEvents = host.get("pointerEvents");
+		host.node = node;
+		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name))); 
+        if(id)
 		{
 			node.setAttribute("id", id);
 		}
@@ -651,7 +1106,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		{
 			node.setAttribute("pointer-events", pointerEvents);
 		}
-        if(!this.get("visible"))
+        if(!host.get("visible"))
         {
             Y.one(node).setStyle("visibility", "hidden");
         }
@@ -775,6 +1230,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			opacity,
 			color,
 			stopNode,
+            newStop,
 			isNumber = Y_LANG.isNumber,
 			graphic = this._graphic,
 			type = fill.type, 
@@ -782,7 +1238,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			stops = fill.stops,
 			w = this.get("width"),
 			h = this.get("height"),
-			rotation = fill.rotation,
+			rotation = fill.rotation || 0,
 			radCon = Math.PI/180,
             tanRadians = parseFloat(parseFloat(Math.tan(rotation * radCon)).toFixed(8)),
             i,
@@ -833,13 +1289,25 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
                 y1 = ((tanRadians * (cx - x1)) - cy) * -1;
                 y2 = ((tanRadians * (cx - x2)) - cy) * -1;
             }
+
+            x1 = Math.round(100 * x1/w);
+            x2 = Math.round(100 * x2/w);
+            y1 = Math.round(100 * y1/h);
+            y2 = Math.round(100 * y2/h);
+            
+            //Set default value if not valid 
+            x1 = isNumber(x1) ? x1 : 0;
+            x2 = isNumber(x2) ? x2 : 100;
+            y1 = isNumber(y1) ? y1 : 0;
+            y2 = isNumber(y2) ? y2 : 0;
+            
             gradientNode.setAttribute("spreadMethod", "pad");
 			gradientNode.setAttribute("width", w);
 			gradientNode.setAttribute("height", h);
-            gradientNode.setAttribute("x1", Math.round(100 * x1/w) + "%");
-            gradientNode.setAttribute("y1", Math.round(100 * y1/h) + "%");
-            gradientNode.setAttribute("x2", Math.round(100 * x2/w) + "%");
-            gradientNode.setAttribute("y2", Math.round(100 * y2/h) + "%");
+            gradientNode.setAttribute("x1", x1 + "%");
+            gradientNode.setAttribute("x2", x2 + "%");
+            gradientNode.setAttribute("y1", y1 + "%");
+            gradientNode.setAttribute("y2", y2 + "%");
 		}
 		else
 		{
@@ -1040,13 +1508,13 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
             ty,
             matrix = this.matrix,
             normalizedMatrix = this._normalizedMatrix,
-            i = 0,
+            i,
             len = this._transforms.length;
 
         if(isPath || (this._transforms && this._transforms.length > 0))
 		{
-            x = this.get("x");
-            y = this.get("y");
+            x = this._x;
+            y = this._y;
             transformOrigin = this.get("transformOrigin");
             tx = x + (transformOrigin[0] * this.get("width"));
             ty = y + (transformOrigin[1] * this.get("height")); 
@@ -1062,7 +1530,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
                 normalizedMatrix.init({dx: x + this._left, dy: y + this._top});
             }
             normalizedMatrix.translate(tx, ty);
-            for(; i < len; ++i)
+            for(i = 0; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
@@ -1105,10 +1573,10 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		var node = this.node;
 		node.setAttribute("width", this.get("width"));
 		node.setAttribute("height", this.get("height"));
-		node.setAttribute("x", this.get("x"));
-		node.setAttribute("y", this.get("y"));
-		node.style.left = this.get("x") + "px";
-		node.style.top = this.get("y") + "px";
+		node.setAttribute("x", this._x);
+		node.setAttribute("y", this._y);
+		node.style.left = this._x + "px";
+		node.style.top = this._y + "px";
 		this._fillChangeHandler();
 		this._strokeChangeHandler();
 		this._updateTransform();
@@ -1145,99 +1613,132 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	getBounds: function()
 	{
-	    var type = this._type,
-            wt,
-            bounds = {},
-            matrix = this._normalizedMatrix,
-            a = matrix.a,
-            b = matrix.b,
-            c = matrix.c,
-            d = matrix.d,
-            dx = matrix.dx,
-            dy = matrix.dy,
-            w = this.get("width"),
-            h = this.get("height"),
-            //The svg path element does not have x and y coordinates. Shapes based on path use translate to "fake" x and y. As a
-            //result, these values will show up in the transform matrix and should not be used in any conversion formula.
-            left = type == "path" ? 0 : this.get("x"), 
-            top = type == "path" ? 0 : this.get("y"), 
-            right = left + w,
-            bottom = top + h,
+		var type = this._type,
 			stroke = this.get("stroke"),
-            //[x1, y1]
-            x1 = (a * left + c * top + dx), 
-            y1 = (b * left + d * top + dy),
-            //[x2, y2]
-            x2 = (a * right + c * top + dx),
-            y2 = (b * right + d * top + dy),
-            //[x3, y3]
-            x3 = (a * left + c * bottom + dx),
-            y3 = (b * left + d * bottom + dy),
-            //[x4, y4]
-            x4 = (a * right + c * bottom + dx),
-            y4 = (b * right + d * bottom + dy);
-        bounds.left = Math.min(x3, Math.min(x1, Math.min(x2, x4)));
-        bounds.right = Math.max(x3, Math.max(x1, Math.max(x2, x4)));
-        bounds.top = Math.min(y2, Math.min(y4, Math.min(y3, y1)));
-        bounds.bottom = Math.max(y2, Math.max(y4, Math.max(y3, y1)));
-        //if there is a stroke, extend the bounds to accomodate
-        if(stroke && stroke.weight)
-		{
-			wt = stroke.weight;
-            bounds.left -= wt;
-            bounds.right += wt;
-            bounds.top -= wt;
-            bounds.bottom += wt;
-		}
-        return bounds;
+            w = this.get("width"),
+			h = this.get("height"),
+			x = type == "path" ? 0 : this._x,
+			y = type == "path" ? 0 : this._y,
+            wt = 0;
+        if(type != "path")
+        {
+            if(stroke && stroke.weight)
+            {
+                wt = stroke.weight;
+            }
+            w = (x + w + wt) - (x - wt); 
+            h = (y + h + wt) - (y - wt);
+            x -= wt;
+            y -= wt;
+        }
+		return this._normalizedMatrix.getContentRect(w, h, x, y);
 	},
 
     /**
-     * Returns the x coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
+     * Places the shape above all other shapes.
      *
-     * @method _getRotatedCornerX
-     * @param {Number} x original x-coordinate of corner
-     * @param {Number} y original y-coordinate of corner
-     * @param {Number} tox transform origin x-coordinate of rotation
-     * @param {Number} toy transform origin y-coordinate of rotation
-     * @param {Number} cosRadians cosine (in radians) of rotation
-     * @param {Number} sinRadians sin (in radians) or rotation
-     * @return Number
-     * @private
+     * @method toFront
      */
-    _getRotatedCornerX: function(x, y, tox, toy, cosRadians, sinRadians)
+    toFront: function()
     {
-        return (tox + (x - tox) * cosRadians + (y - toy) * sinRadians);
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toFront(this);
+        }
     },
 
     /**
-     * Returns the y coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
+     * Places the shape underneath all other shapes.
      *
-     * @method _getRotatedCornerY
-     * @param {Number} x original x-coordinate of corner
-     * @param {Number} y original y-coordinate of corner
-     * @param {Number} tox transform origin x-coordinate of rotation
-     * @param {Number} toy transform origin y-coordinate of rotation
-     * @param {Number} cosRadians cosine (in radians) of rotation
-     * @param {Number} sinRadians sin (in radians) or rotation
-     * @return Number
-     * @private
+     * @method toFront
      */
-    _getRotatedCornerY: function(x, y, tox, toy, cosRadians, sinRadians)
+    toBack: function()
     {
-        return (toy - (x - tox) * sinRadians + (y - toy) * cosRadians);
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toBack(this);
+        }
     },
 
     /**
-     * Destroys the instance.
+     * Parses path data string and call mapped methods.
+     *
+     * @method _parsePathData
+     * @param {String} val The path data
+     * @private
+     */
+    _parsePathData: function(val)
+    {
+        var method,
+            methodSymbol,
+            args,
+            commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
+            i,
+            len, 
+            str,
+            symbolToMethod = this._pathSymbolToMethod;
+        if(commandArray)
+        {
+            this.clear();
+            len = commandArray.length || 0;
+            for(i = 0; i < len; i = i + 1)
+            {
+                str = commandArray[i];
+                methodSymbol = str.substr(0, 1);
+                args = str.substr(1).match(SPLITARGSPATTERN);
+                method = symbolToMethod[methodSymbol];
+                if(method)
+                {
+                    if(args)
+                    {
+                        this[method].apply(this, args);
+                    }
+                    else
+                    {
+                        this[method].apply(this);
+                    }
+                }
+            }
+            this.end();
+        }
+    },
+
+    /**
+     * Destroys the shape instance.
      *
      * @method destroy
      */
     destroy: function()
     {
-        if(this._graphic && this._graphic._contentNode)
+        var graphic = this.get("graphic");
+        if(graphic)
         {
-            this._graphic._contentNode.removeChild(this.node);
+            graphic.removeShape(this);
+        }
+        else
+        {
+            this._destroy();
+        }
+    },
+
+    /**
+     *  Implementation for shape destruction
+     *
+     *  @method destroy
+     *  @protected
+     */
+    _destroy: function()
+    {
+        if(this.node)
+        {
+            Y.Event.purgeElement(this.node, true);
+            if(this.node.parentNode)
+            {
+                this.node.parentNode.removeChild(this.node);
+            }
+            this.node = null;
         }
     }
  }, Y.SVGDrawing.prototype));
@@ -1293,10 +1794,6 @@ SVGShape.ATTRS = {
             this._normalizedMatrix.init();
 		    this._transforms = this.matrix.getTransformArray(val);
             this._transform = val;
-            if(this.initialized)
-            {
-                this._updateTransform();
-            }
             return val;
 		},
 
@@ -1336,7 +1833,20 @@ SVGShape.ATTRS = {
 	 * @type Number
 	 */
 	x: {
-		value: 0
+	    getter: function()
+        {
+            return this._x;
+        },
+
+        setter: function(val)
+        {
+            var transform = this.get("transform");
+            this._x = val;
+            if(transform) 
+            {
+                this.set("transform", transform);
+            }
+        }
 	},
 
 	/**
@@ -1346,7 +1856,20 @@ SVGShape.ATTRS = {
 	 * @type Number
 	 */
 	y: {
-		value: 0
+	    getter: function()
+        {
+            return this._y;
+        },
+
+        setter: function(val)
+        {
+            var transform = this.get("transform");
+            this._y = val;
+            if(transform) 
+            {
+                this.set("transform", transform);
+            }
+        }
 	},
 
 	/**
@@ -1495,11 +2018,6 @@ SVGShape.ATTRS = {
 		}
 	},
 	
-	//Not used. Remove in future.
-    autoSize: {
-		value: false
-	},
-
 	// Only implemented in SVG
 	// Determines whether the instance will receive mouse events.
 	// 
@@ -1530,32 +2048,6 @@ SVGShape.ATTRS = {
 	},
 
 	/**
-	 * The node used for gradient fills.
-	 *
-	 * @config gradientNode
-	 * @type HTMLElement
-     * @private
-	 */
-	gradientNode: {
-		setter: function(val)
-		{
-			if(Y_LANG.isString(val))
-			{
-				val = this._graphic.getGradientNode("linear", val);
-			}
-			return val;
-		}
-	},
-
-	//Not used. Remove in future.
-    autoDraw: {
-		getter: function()
-		{
-			return this._graphic.autoDraw;
-		}
-	},
-
-	/**
 	 * Dom node for the shape.
 	 *
 	 * @config node
@@ -1570,6 +2062,25 @@ SVGShape.ATTRS = {
 			return this.node;
 		}
 	},
+
+    /**
+     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG 
+     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need 
+     * to ensure that no malicious code is included in that content. 
+     *
+     * @config data
+     * @type String
+     */
+    data: {
+        setter: function(val)
+        {
+            if(this.get("node"))
+            {
+                this._parsePathData(val);
+            }
+            return val;
+        }
+    },
 
 	/**
 	 * Reference to the parent graphic instance
@@ -1604,7 +2115,7 @@ SVGPath = function(cfg)
 {
 	SVGPath.superclass.constructor.apply(this, arguments);
 };
-SVGPath.NAME = "svgPath";
+SVGPath.NAME = "path";
 Y.extend(SVGPath, Y.SVGShape, {
     /**
      * Left edge of the path
@@ -1721,7 +2232,7 @@ SVGRect = function()
 {
 	SVGRect.superclass.constructor.apply(this, arguments);
 };
-SVGRect.NAME = "svgRect";
+SVGRect.NAME = "rect";
 Y.extend(SVGRect, Y.SVGShape, {
     /**
      * Indicates the type of shape
@@ -1749,7 +2260,7 @@ SVGEllipse = function(cfg)
 	SVGEllipse.superclass.constructor.apply(this, arguments);
 };
 
-SVGEllipse.NAME = "svgEllipse";
+SVGEllipse.NAME = "ellipse";
 
 Y.extend(SVGEllipse, SVGShape, {
 	/**
@@ -1789,18 +2300,16 @@ Y.extend(SVGEllipse, SVGShape, {
 });
 
 SVGEllipse.ATTRS = Y.merge(SVGShape.ATTRS, {
-	//
-	// Horizontal radius for the ellipse. This attribute is not implemented in Canvas.
-    // Will add in 3.4.1.
-	//
-	// @config xRadius
-	// @type Number
-	// @readOnly
-	//
+	/**
+	 * Horizontal radius for the ellipse. 
+	 *
+	 * @config xRadius
+	 * @type Number
+	 */
 	xRadius: {
 		setter: function(val)
 		{
-			this.set("width", val/2);
+			this.set("width", val * 2);
 		},
 
 		getter: function()
@@ -1814,18 +2323,17 @@ SVGEllipse.ATTRS = Y.merge(SVGShape.ATTRS, {
 		}
 	},
 
-	//
-	// Vertical radius for the ellipse. This attribute is not implemented in Canvas. 
-    // Will add in 3.4.1.
-	//
-	// @config yRadius
-	// @type Number
-	// @readOnly
-	//
+	/**
+	 * Vertical radius for the ellipse. 
+	 *
+	 * @config yRadius
+	 * @type Number
+	 * @readOnly
+	 */
 	yRadius: {
 		setter: function(val)
 		{
-			this.set("height", val/2);
+			this.set("height", val * 2);
 		},
 
 		getter: function()
@@ -1855,7 +2363,7 @@ Y.SVGEllipse = SVGEllipse;
     SVGCircle.superclass.constructor.apply(this, arguments);
  };
     
- SVGCircle.NAME = "svgCircle";
+ SVGCircle.NAME = "circle";
 
  Y.extend(SVGCircle, Y.SVGShape, {    
     
@@ -2151,17 +2659,51 @@ SVGGraphic.ATTRS = {
     },
 
     /**
-     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
-     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *  Determines the sizing of the Graphic. 
+     *
+     *  <dl>
+     *      <dt>sizeContentToGraphic</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The content contained in the Graphic will be sized to fit with in the Graphic instance's 
+     *      dimensions. When using this setting, the <code>preserveAspectRatio</code> attribute will determine how the contents are sized.</dd>
+     *      <dt>sizeGraphicToContent</dt><dd>(Also accepts a value of true) The Graphic's width and height are determined by the size and positioning of the content.</dd>
+     *      <dt>false</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The contents of the Graphic instance are not affected by this setting.</dd>
+     *  </dl>
+     *
      *
      *  @config autoSize
-     *  @type Boolean
+     *  @type Boolean | String
      *  @default false
      */
     autoSize: {
         value: false
     },
-
+    
+    /**
+     * Determines how content is sized when <code>autoSize</code> is set to <code>sizeContentToGraphic</code>.
+     *
+     *  <dl>
+     *      <dt>none<dt><dd>Do not force uniform scaling. Scale the graphic content of the given element non-uniformly if necessary 
+     *      such that the element's bounding box exactly matches the viewport rectangle.</dd>
+     *      <dt>xMinYMin</dt><dd>Force uniform scaling position along the top left of the Graphic's node.</dd>
+     *      <dt>xMidYMin</dt><dd>Force uniform scaling horizontally centered and positioned at the top of the Graphic's node.<dd>
+     *      <dt>xMaxYMin</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the top.</dd>
+     *      <dt>xMinYMid</dt>Force uniform scaling positioned horizontally from the left and vertically centered.</dd>
+     *      <dt>xMidYMid (the default)</dt><dd>Force uniform scaling with the content centered.</dd>
+     *      <dt>xMaxYMid</dt><dd>Force uniform scaling positioned horizontally from the right and vertically centered.</dd>
+     *      <dt>xMinYMax</dt><dd>Force uniform scaling positioned horizontally from the left and vertically from the bottom.</dd>
+     *      <dt>xMidYMax</dt><dd>Force uniform scaling horizontally centered and position vertically from the bottom.</dd>
+     *      <dt>xMaxYMax</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the bottom.</dd>
+     *  </dl>
+     * 
+     * @config preserveAspectRatio
+     * @type String
+     * @default xMidYMid
+     */
+    preserveAspectRatio: {
+        value: "xMidYMid"
+    },
+    
     /**
      * The contentBounds will resize to greater values but not to smaller values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
@@ -2170,20 +2712,7 @@ SVGGraphic.ATTRS = {
      * @type Boolean
      */
     resizeDown: {
-        getter: function()
-        {
-            return this._resizeDown;
-        },
-
-        setter: function(val)
-        {
-            this._resizeDown = val;
-            if(this._contentNode)
-            {
-                this._redraw();
-            }
-            return val;
-        }
+        value: false
     },
 
 	/**
@@ -2266,7 +2795,52 @@ SVGGraphic.ATTRS = {
     }
 };
 
-Y.extend(SVGGraphic, Y.BaseGraphic, {
+Y.extend(SVGGraphic, Y.GraphicBase, {
+    /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
+	set: function(attr, value) 
+	{
+		var host = this,
+            redrawAttrs = {
+                autoDraw: true,
+                autoSize: true,
+                preserveAspectRatio: true,
+                resizeDown: true
+            },
+            key,
+            forceRedraw = false;
+		AttributeLite.prototype.set.apply(host, arguments);	
+        if(host._state.autoDraw === true && Y.Object.size(this._shapes) > 0)
+        {
+            if(Y_LANG.isString && redrawAttrs[attr])
+            {
+                forceRedraw = true;
+            }
+            else if(Y_LANG.isObject(attr))
+            {
+                for(key in redrawAttrs)
+                {
+                    if(redrawAttrs.hasOwnProperty(key) && attr[key])
+                    {
+                        forceRedraw = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if(forceRedraw)
+        {
+            host._redraw();
+        }
+	},
+
     /**
      * Storage for `x` attribute.
      *
@@ -2303,20 +2877,14 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * @private
-     * @property _resizeDown 
-     * @type Boolean
-     */
-    _resizeDown: false,
-
-    /**
      * Initializes the class.
      *
      * @method initializer
      * @private
      */
     initializer: function() {
-        var render = this.get("render");
+        var render = this.get("render"),
+            visibility = this.get("visible") ? "visible" : "hidden";
         this._shapes = {};
 		this._contentBounds = {
             left: 0,
@@ -2329,7 +2897,9 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         this._node.style.position = "absolute";
         this._node.style.left = this.get("x") + "px";
         this._node.style.top = this.get("y") + "px";
+        this._node.style.visibility = visibility;
         this._contentNode = this._createGraphics();
+        this._contentNode.style.visibility = visibility;
         this._contentNode.setAttribute("id", this.get("id"));
         this._node.appendChild(this._contentNode);
         if(render)
@@ -2348,12 +2918,11 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         var parentNode = Y.one(render),
             w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
             h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || DOCUMENT.body;
-        parentNode.appendChild(this._node);
+        parentNode = parentNode || Y.one(DOCUMENT.body);
+        parentNode.append(this._node);
         this.parentNode = parentNode;
         this.set("width", w);
         this.set("height", h);
-        this.parentNode = parentNode;
         return this;
     },
 
@@ -2365,10 +2934,20 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     destroy: function()
     {
         this.removeAllShapes();
-        this._removeChildren(this._node);
-        if(this._node && this._node.parentNode)
+        if(this._contentNode)
         {
-            this._node.parentNode.removeChild(this._node);
+            this._removeChildren(this._contentNode);
+            if(this._contentNode.parentNode)
+            {
+                this._contentNode.parentNode.removeChild(this._contentNode);
+            }
+            this._contentNode = null;
+        }
+        if(this._node)
+        {
+            this._removeChildren(this._node);
+            Y.one(this._node).remove(true);
+            this._node = null;
         }
     },
 
@@ -2382,6 +2961,10 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     addShape: function(cfg)
     {
         cfg.graphic = this;
+        if(!this.get("visible"))
+        {
+            cfg.visible = false;
+        }
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
         this._appendShape(shape);
@@ -2426,7 +3009,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         }
         if(shape && shape instanceof SVGShape)
         {
-            shape.destroy();
+            shape._destroy();
             delete this._shapes[shape.get("id")];
         }
         if(this.get("autoDraw")) 
@@ -2449,7 +3032,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         {
             if(shapes.hasOwnProperty(i))
             {
-                shapes[i].destroy();
+                shapes[i]._destroy();
             }
         }
         this._shapes = {};
@@ -2507,8 +3090,14 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
                 }
             }
         }
-        this._contentNode.style.visibility = visibility;
-        this._node.style.visibility = visibility;
+        if(this._contentNode)
+        {
+            this._contentNode.style.visibility = visibility;
+        }
+        if(this._node)
+        {
+            this._node.style.visibility = visibility;
+        }
     },
 
     /**
@@ -2568,7 +3157,6 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         var autoDraw = this.get("autoDraw");
         this.set("autoDraw", false);
         method();
-        this._redraw();
         this.set("autoDraw", autoDraw);
     },
     
@@ -2596,26 +3184,72 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      */
     _redraw: function()
     {
-        var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
-        this._contentNode.style.left = box.left + "px";
-        this._contentNode.style.top = box.top + "px";
-        this._contentNode.setAttribute("width", box.width);
-        this._contentNode.setAttribute("height", box.height);
-        this._contentNode.style.width = box.width + "px";
-        this._contentNode.style.height = box.height + "px";
-        this._contentNode.setAttribute("viewBox", "" + box.left + " " + box.top + " " + box.width + " " + box.height + "");
-        if(this.get("autoSize"))
+        var autoSize = this.get("autoSize"),
+            preserveAspectRatio = this.get("preserveAspectRatio"),
+            box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds,
+            left = box.left,
+            right = box.right,
+            top = box.top,
+            bottom = box.bottom,
+            width = right - left,
+            height = bottom - top,
+            computedWidth,
+            computedHeight,
+            computedLeft,
+            computedTop,
+            node;
+        if(autoSize)
         {
-            this.set("width", box.right);
-            this.set("height", box.bottom);
+            if(autoSize == "sizeContentToGraphic")
+            {
+                node = Y.one(this._node);
+                computedWidth = parseFloat(node.getComputedStyle("width"));
+                computedHeight = parseFloat(node.getComputedStyle("height"));
+                computedLeft = computedTop = 0;
+                this._contentNode.setAttribute("preserveAspectRatio", preserveAspectRatio);
+            }
+            else 
+            {
+                computedWidth = width;
+                computedHeight = height;
+                computedLeft = left;
+                computedTop = top;
+                this._state.width = width;
+                this._state.height = height;
+                if(this._node)
+                {
+                    this._node.style.width = width + "px";
+                    this._node.style.height = height + "px";
+                }
+            }
+        }
+        else
+        {
+                computedWidth = width;
+                computedHeight = height;
+                computedLeft = left;
+                computedTop = top;
+        }
+        if(this._contentNode)
+        {
+            this._contentNode.style.left = computedLeft + "px";
+            this._contentNode.style.top = computedTop + "px";
+            this._contentNode.setAttribute("width", computedWidth);
+            this._contentNode.setAttribute("height", computedHeight);
+            this._contentNode.style.width = computedWidth + "px";
+            this._contentNode.style.height = computedHeight + "px";
+            this._contentNode.setAttribute("viewBox", "" + left + " " + top + " " + width + " " + height + "");
         }
         if(this._frag)
         {
-            this._contentNode.appendChild(this._frag);
+            if(this._contentNode)
+            {
+                this._contentNode.appendChild(this._frag);
+            }
             this._frag = null;
-        }
+        } 
     },
-
+ 
     /**
      * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
      * by `Shape` instances.
@@ -2646,7 +3280,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
             this._redraw();
         }
     },
-    
+
     /**
      * Recalculates and returns the `contentBounds` for the `Graphic` instance.
      *
@@ -2660,26 +3294,23 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
             i,
             shape,
             queue = this._shapes,
-            box = {
-                left: 0,
-                top: 0,
-                right: 0,
-                bottom: 0
-            };
+            box = {};
         for(i in queue)
         {
             if(queue.hasOwnProperty(i))
             {
                 shape = queue[i];
                 bounds = shape.getBounds();
-                box.left = Math.min(box.left, bounds.left);
-                box.top = Math.min(box.top, bounds.top);
-                box.right = Math.max(box.right, bounds.right);
-                box.bottom = Math.max(box.bottom, bounds.bottom);
+                box.left = Y_LANG.isNumber(box.left) ? Math.min(box.left, bounds.left) : bounds.left;
+                box.top = Y_LANG.isNumber(box.top) ? Math.min(box.top, bounds.top) : bounds.top;
+                box.right = Y_LANG.isNumber(box.right) ? Math.max(box.right, bounds.right) : bounds.right;
+                box.bottom = Y_LANG.isNumber(box.bottom) ? Math.max(box.bottom, bounds.bottom) : bounds.bottom;
             }
         }
-        box.width = box.right - box.left;
-        box.height = box.bottom - box.top;
+        box.left = Y_LANG.isNumber(box.left) ? box.left : 0;
+        box.top = Y_LANG.isNumber(box.top) ? box.top : 0;
+        box.right = Y_LANG.isNumber(box.right) ? box.right : 0;
+        box.bottom = Y_LANG.isNumber(box.bottom) ? box.bottom : 0;
         this._contentBounds = box;
         return box;
     },
@@ -2758,12 +3389,60 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
             gradients[key] = gradient;
         }
         return gradient;
-    }
+    },
 
+    /**
+     * Inserts shape on the top of the tree.
+     *
+     * @method _toFront
+     * @param {SVGShape} Shape to add.
+     * @private
+     */
+    _toFront: function(shape)
+    {
+        var contentNode = this._contentNode;
+        if(shape instanceof Y.SVGShape)
+        {
+            shape = shape.get("node");
+        }
+        if(contentNode && shape)
+        {
+            contentNode.appendChild(shape);
+        }
+    },
+
+    /**
+     * Inserts shape as the first child of the content node.
+     *
+     * @method _toBack
+     * @param {SVGShape} Shape to add.
+     * @private
+     */
+    _toBack: function(shape)
+    {
+        var contentNode = this._contentNode,
+            targetNode;
+        if(shape instanceof Y.SVGShape)
+        {
+            shape = shape.get("node");
+        }
+        if(contentNode && shape)
+        {
+            targetNode = contentNode.firstChild;
+            if(targetNode)
+            {
+                contentNode.insertBefore(shape, targetNode);
+            }
+            else
+            {
+                contentNode.appendChild(shape);
+            }
+        }
+    }
 });
 
 Y.SVGGraphic = SVGGraphic;
 
 
 
-}, '@VERSION@' ,{requires:['graphics'], skinnable:false});
+}, '@VERSION@', {"requires": ["graphics"]});

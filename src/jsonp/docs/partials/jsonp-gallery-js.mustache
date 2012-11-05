@@ -22,7 +22,7 @@ YUI().use("jsonp", "transition",function (Y) {
                 // ('this' refers to the JSONPRequest object by default)
                 module.authorHTML = Y.Lang.sub(this.authorTemplate, author);
 
-                outputDiv.setContent(Y.Lang.sub(this.moduleTemplate, module));
+                outputDiv.setHTML(Y.Lang.sub(this.moduleTemplate, module));
 
                 // Add some flare to the poll interval by showing a "time left"
                 // indicator via the header's border
@@ -40,7 +40,7 @@ YUI().use("jsonp", "transition",function (Y) {
 
             failure: function () {
                 gallery.polling = false;
-                outputDiv.setContent(this.failureTemplate);
+                outputDiv.setHTML(this.failureTemplate);
 
                 // Wire up the Try again button
                 outputDiv.one("button").on("click", function () {

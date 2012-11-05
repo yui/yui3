@@ -1,3 +1,5 @@
+<div id="results" class="example"></div>
+
 <script>
 YUI().use('event', 'profiler', function (Y) {
 
@@ -28,11 +30,11 @@ YUI().use('event', 'profiler', function (Y) {
 
         Y.Profiler.unregisterFunction("Y.example.profiler.MathHelper.factorial");
 
-        var msg = "Method Y.example.profiler.MathHelper was run " + calls + "times.\n" +
+        var msg = "<pre>Method Y.example.profiler.MathHelper was run " + calls + " times.\n" +
                 "The average time was " + avg + "ms.\n" +
-                "The max time was " + max + " ms.\n" +
-                "The min time was " + min + " ms.";
-        alert(msg);
+                "The max time was " + max + "ms.\n" +
+                "The min time was " + min + "ms.</pre>";
+        Y.one('#results').setHTML(msg);
     });
 });
 </script>

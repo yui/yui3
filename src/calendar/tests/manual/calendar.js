@@ -11,6 +11,7 @@ YUI({
 			showPrevMonth: false,
 			showNextMonth: false,
 			selectionMode: 'multiple',
+			enabledDatesRule: "all_weekends",
 			date: new Date(2011, 6)}).render();
 
 		 var rules = {

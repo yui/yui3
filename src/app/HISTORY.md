@@ -1,6 +1,158 @@
 App Framework Change History
 ============================
 
+3.7.3
+-----
+
+### App
+
+* Add support for App Transitions in browsers which support native CSS3
+  transitions without using vendor prefixes. This change means IE10 and Opera
+  get view transitions.
+
+
+3.7.2
+-----
+
+* No changes.
+
+
+3.7.1
+-----
+
+* No changes.
+
+
+3.7.0
+-----
+
+### App
+
+* Added App.Content, an App extension that provides pjax-style content fetching
+  and handling, making it seamless to use a mixture of server and client
+  rendered views.
+
+### Model
+
+* Added custom response parsing to ModelSync.REST to make it easy for developers
+  to gain access to the full `Y.io()` response object. Developers using
+  ModelSync.REST can either assign the `parseIOResponse` property to `false` to
+  gain access to the full `Y.io()` response object in their `parse()` method,
+  or provide a custom implementation of the `parseIOResponse()` method.
+
+* ModelSync.REST's `serialize()` method now receives the `action` which the
+  `sync()` method was invoked with. [Ticket #2532625]
+
+### ModelList
+
+* You may now add models to a ModelList at instantiation time by providing an
+  Object, array of Objects, Model instance, array of Model instances, or another
+  ModelList instance in the `items` property of the config object passed to
+  ModelList's constructor. This change also applies to LazyModelList.
+
+### Router
+
+* Added support for route-based middleware to Router. The `route()` method now
+  accepts an arbitrary number of callbacks enabling more reuse of routing code.
+  For people familiar with Express.js' route middleware, this behaves the same.
+  [Ticket #2532620]
+
+### View
+
+* Log a warning when a handler function is not present when a view's `events`
+  are being attached. [Ticket #2532326] [Jay Shirley, Jeff Pihach]
+
+
+3.6.0
+-----
+
+### App
+
+* Added static property: `Y.App.serverRouting`, which serves as the default
+  value for the `serverRouting` attribute of all apps. [Ticket #2532319]
+
+* Fixed issue with non-collapsing white space between views while transitioning.
+  White space is now fully collapsed and prevents views from jumping after a
+  cross-fade transition. [Ticket #2532298]
+
+* Organized all CSS classes `Y.App` uses under a static `CLASS_NAMES` property.
+
+* Moved `transitioning` CSS classname under `Y.App.CLASS_NAMES`.
+
+### Model
+
+* Added ModelSync.REST, an extension which provides a RESTful XHR `sync()`
+  implementation that can be mixed into a Model or ModelList subclass.
+
+### ModelList
+
+* Added LazyModelList, a subclass of ModelList that manages a list of plain
+  objects rather than a list of Model instances. This can be more efficient when
+  working with large numbers of items. [Ryan Grove]
+
+* The `add()` method now accepts an `index` option, which can be used to insert
+  the specified model(s) at a specific index in the list. [Greg Hinch]
+
+* The `each()` and `some()` methods now iterate over a copy of the list, so it's
+  safe to remove a model during iteration. [Ticket #2531910]
+
+* The `remove()` method now optionally accepts the index of a model to remove
+  (or an array of indices). You no longer need to specify the actual model
+  instance(s), although that's still supported as well.
+
+* The `filter()` method now returns an instance of the subclass rather than
+  ModelList itself when called with `options.asList` set to `true` on a subclass
+  of ModelList. [Ryan Grove]
+
+* Fixed an issue where a list that received bubbled events from a model would
+  assume the model was in the list if its `id` changed, even if the model
+  actually wasn't in the list and was merely bubbling events to the list.
+  [Ticket #2532240]
+
+### Router
+
+* [!] Changed how hash-based paths interact with the URL's real path. The
+  path-like hash fragments are now treated as a continuation of the URL's path
+  when the router has been configured with a `root`. [Ticket #2532318]
+
+* Fixed issue when multiple routers are on the page and one router is destroyed
+  the remaining routers would stop dispatching. [Ticket #2532317]
+
+* Fixed a multi-router issue where creating a router instance after a previous
+  router's `save()`/`replace()` method was called would cause in infinite
+  History replace loop. [Ticket #2532340]
+
+* The `req` object passed to routes now has a `pendingRoutes` property that
+  indicates the number of matching routes after the current route in the
+  dispatch chain. [Steven Olmsted]
+
+* Added a static `Y.Router.dispatch()` method which provides a mechanism to
+  cause all active router instances to dispatch to their route handlers without
+  needing to change the URL or fire the `history:change` or `hashchange` event.
+
+
+3.5.1
+-----
+
+### App
+
+* Added `render` and `update` options to the `showView()` method.
+  [PR #100 Pat Cavit]
+
+### Router
+
+* Added a `removeQuery()` function that accepts a URL and returns it without a
+  query string (if it had one). [Pat Cavit]
+
+* Fixed `hasRoute()` failing to match routes with query params. [Pat Cavit]
+
+* Fixed bad route regex generation if a placeholder was the last thing in the
+  route. [Pat Cavit]
+
+* Fixed generated route regexes matching hash/query params when they shouldn't
+  have. [Pat Cavit]
+
+
 3.5.0
 -----
 
@@ -14,6 +166,13 @@ App Framework Change History
   callback function on success or failure. Old-style synchronous `validate()`
   methods will still work, but are deprecated. [Ticket #2531218]
 
+* Model now supports ad-hoc attributes, which means it's no longer necessary to
+  subclass `Y.Model` and declare attributes ahead of time. The following is now
+  perfectly valid, and will result in a model instance with "foo" and "bar"
+  attributes:
+
+          var model = new Y.Model({foo: 'foo', bar: 'bar'});
+
 * `load()` now fires a `load` event after the operation completes successfully,
   or an `error` event on failure. The `load()` callback (if provided) will still
   be called in both cases. [Ticket #2531207]
@@ -25,10 +184,25 @@ App Framework Change History
 * Options passed to `set()` and `setAttrs()` are now correctly merged into the
   event facade of the `change` event. [Ticket #2531492]
 
+* Model's `destroy` event is now fully preventable (previously it was possible
+  for the model to be deleted even if the `destroy` event was prevented by a
+  subscriber in the `on` phase).
+
 ### ModelList
 
-* Added a `filter()` method that returns a filtered array of models. [Ticket
-  #2531250]
+* ModelList's `model` property is now set to `Y.Model` by default. Since
+  `Y.Model` now supports ad-hoc attributes, this makes it much easier to create
+  and populate a ModelList without doing any subclassing:
+
+          var list = new Y.ModelList();
+
+          list.add([
+              {foo: 'bar'},
+              {baz: 'quux'}
+          ]);
+
+* Added a `filter()` method that returns a filtered array of models or,
+  optionally, a new ModelList containing the filtered models. [Ticket #2531250]
 
 * Added a `create` event that fires when a model is created/updated via the
   `create()` method, but before that model has actually been saved and added to
@@ -53,6 +227,10 @@ App Framework Change History
   customize the low-level comparison logic used for sorting. This makes it easy
   to do things like descending sort, multi-field sorting, etc. See the API docs
   for details.
+
+* The `reset()` method now allows the caller-provided options object to override
+  the `src` property that's passed on the event facade of the `reset` event.
+  [Ticket #2531888]
 
 ### Router (formerly Controller)
 
@@ -111,6 +289,25 @@ App Framework Change History
   Previously, it assumed string values represented raw HTML. To get the same
   functionality as the old behavior, pass your HTML string through
   `Y.Node.create()` before passing it to `container`.
+
+* [!] Destroying a view no longer also destroys the view's container node by
+  default. To destroy a view's container node when destroying the view, pass
+  `{remove: true}` to the view's `destroy()` method. [Ticket #2531689]
+
+* View now supports ad-hoc attributes, which means it's no longer necessary to
+  subclass `Y.View` and declare attributes ahead of time. The following is now
+  perfectly valid, and will result in a view instance with "foo" and "bar"
+  attributes:
+
+          var view = new Y.View({foo: 'foo', bar: 'bar'});
+
+* Added a `containerTemplate` property that contains an HTML template used to
+  create a container node when one isn't specified. Defaults to "<div/>".
+
+* When no `container` node is specified at instantiation time, the container
+  won't be created until it's needed. `create()` is now only used to create a
+  default container; it's never called when a custom container node is
+  specified.
 
 * Added a View extension, `Y.View.NodeMap`, that can be mixed into a `View`
   subclass to provide a static `getByNode()` method that returns the nearest

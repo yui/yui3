@@ -11,7 +11,7 @@
             background-color: #ccc;
         }
         iframe {
-            width: 575px;
+            width: 650px;
             height: 85px;
             border: 1px dashed black;
         }
@@ -90,43 +90,23 @@ var _yui_result = function(d) {
     results[d.name] = d;
     //setTimeout(function() {
         runTest();
-    //}, 200);
+    //}, 100);
 };
 
 var startStamp = (new Date()).getTime();
 
-/*
-YUI().use('test', function(Y) {
-    YUITest = Y.Test;
-    Assert = Y.Assert;
-    runTest();
-});
-*/
-
 var YUI_config = {
     gconfig: true,
-    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 };
 
 
 YUI({
     allowRollup: false,
     logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
-    filter: YUI_config.gfilter,
-    modules: {
-        'test-console': {
-            fullpath : '/src/common/tests/assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '/src/common/tests/assets/test-console.css',
-            type    : 'css'
-        }
-        
-    }
+    filter: YUI_config.gfilter
 }).use('test-console', 'test', function(Y) {
+    (new Y.Test.Console()).render('#log');
     YUITest = Y.Test;
     Assert = Y.Assert;
     runTest();

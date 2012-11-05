@@ -1,4 +1,4 @@
-YUI.add('pjax-base', function(Y) {
+YUI.add('pjax-base', function (Y, NAME) {
 
 /**
 `Y.Router` extension that provides the core plumbing for enhanced navigation
@@ -10,8 +10,6 @@ implemented using the pjax technique (HTML5 pushState + Ajax).
 **/
 
 var win = Y.config.win,
-
-    Lang = Y.Lang,
 
     // The CSS class name used to filter link clicks from only the links which
     // the pjax enhanced navigation should be used.
@@ -30,13 +28,17 @@ var win = Y.config.win,
     @event navigate
     @param {String} url The URL that the router will dispatch to its route
       handlers in order to fulfill the enhanced navigation "request".
+    @param {Boolean} [force=false] Whether the enhanced navigation should occur
+      even in browsers without HTML5 history.
+    @param {String} [hash] The hash-fragment (including "#") of the `url`. This
+      will be present when the `url` differs from the current URL only by its
+      hash and `navigateOnHash` has been set to `true`.
     @param {Event} [originEvent] The event that caused the navigation. Usually
       this would be a click event from a "pjax" anchor element.
     @param {Boolean} [replace] Whether or not the current history entry will be
       replaced, or a new entry will be created. Will default to `true` if the
       specified `url` is the same as the current URL.
-    @param {Boolean} [force=false] Whether the enhanced navigation should occur
-      even in browsers without HTML5 history.
+    @since 3.5.0
     **/
     EVT_NAVIGATE = 'navigate';
 
@@ -72,6 +74,7 @@ PjaxBase.prototype = {
     @property _pjaxEvents
     @type EventHandle
     @protected
+    @since 3.5.0
     **/
 
     /**
@@ -86,8 +89,9 @@ PjaxBase.prototype = {
     @property _regexURL
     @type RegExp
     @protected
+    @since 3.5.0
     **/
-    _regexURL: /^((?:[^\/#?:]+:\/\/|\/\/)[^\/]*)?([^?#]*)(.*)$/,
+    _regexURL: /^((?:[^\/#?:]+:\/\/|\/\/)[^\/]*)?([^?#]*)(\?[^#]*)?(#.*)?$/,
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
@@ -135,6 +139,7 @@ PjaxBase.prototype = {
         @param {Boolean} [options.force=false] Whether the enhanced navigation
           should occur even in browsers without HTML5 history.
     @return {Boolean} `true` if the URL was navigated to, `false` otherwise.
+    @since 3.5.0
     **/
     navigate: function (url, options) {
         // The `_navigate()` method expects fully-resolved URLs.
@@ -154,28 +159,52 @@ PjaxBase.prototype = {
     // -- Protected Methods ----------------------------------------------------
 
     /**
-    Returns the current path root after popping off the last path segment,
-    making it useful for resolving other URL paths against.
+    Utility method to test whether a specified link/anchor node's `href` is of
+    the same origin as the page's current location.
 
-    The path root will always begin and end with a '/'.
+    This normalize browser inconsistencies with how the `port` is reported for
+    anchor elements (IE reports a value for the default port, e.g. "80").
 
-    @method _getRoot
-    @return {String} The URL's path root.
+    @method _isLinkSameOrigin
+    @param {Node} link The anchor element to test whether its `href` is of the
+        same origin as the page's current location.
+    @return {Boolean} Whether or not the link's `href` is of the same origin as
+        the page's current location.
     @protected
+    @since 3.6.0
     **/
-    _getRoot: function () {
-        var slash = '/',
-            path  = Y.getLocation().pathname,
-            segments;
+    _isLinkSameOrigin: function (link) {
+        var location = Y.getLocation(),
+            protocol = location.protocol,
+            hostname = location.hostname,
+            port     = parseInt(location.port, 10) || null,
+            linkPort;
 
-        if (path.charAt(path.length - 1) === slash) {
-            return path;
+        // Link must have the same `protocol` and `hostname` as the page's
+        // currrent location.
+        if (link.get('protocol') !== protocol ||
+                link.get('hostname') !== hostname) {
+
+            return false;
         }
 
-        segments = path.split(slash);
-        segments.pop();
+        linkPort = parseInt(link.get('port'), 10) || null;
 
-        return segments.join(slash) + slash;
+        // Normalize ports. In most cases browsers use an empty string when the
+        // port is the default port, but IE does weird things with anchor
+        // elements, so to be sure, this will re-assign the default ports before
+        // they are compared.
+        if (protocol === 'http:') {
+            port     || (port     = 80);
+            linkPort || (linkPort = 80);
+        } else if (protocol === 'https:') {
+            port     || (port     = 443);
+            linkPort || (linkPort = 443);
+        }
+
+        // Finally, to be from the same origin, the link's `port` must match the
+        // page's current `port`.
+        return linkPort === port;
     },
 
     /**
@@ -192,20 +221,43 @@ PjaxBase.prototype = {
           to `true` if the specified `url` is the same as the current URL.
         @param {Boolean} [options.force=false] Whether the enhanced navigation
           should occur even in browsers without HTML5 history.
+    @return {Boolean} `true` if the URL was navigated to, `false` otherwise.
     @protected
+    @since 3.5.0
     **/
     _navigate: function (url, options) {
+        url = this._upgradeURL(url);
+
         // Navigation can only be enhanced if there is a route-handler.
         if (!this.hasRoute(url)) {
             return false;
         }
 
-        options || (options = {});
-        options.url = url;
+        // Make a copy of `options` before modifying it.
+        options = Y.merge(options, {url: url});
+
+        var currentURL = this._getURL(),
+            hash, hashlessURL;
+
+        // Captures the `url`'s hash and returns a URL without that hash.
+        hashlessURL = url.replace(/(#.*)$/, function (u, h, i) {
+            hash = h;
+            return u.substring(i);
+        });
+
+        if (hash && hashlessURL === currentURL.replace(/#.*$/, '')) {
+            // When the specified `url` and current URL only differ by the hash,
+            // the browser should handle this in-page navigation normally.
+            if (!this.get('navigateOnHash')) {
+                return false;
+            }
+
+            options.hash = hash;
+        }
 
         // When navigating to the same URL as the current URL, behave like a
         // browser and replace the history entry instead of creating a new one.
-        Lang.isValue(options.replace) || (options.replace = url === this._getURL());
+        'replace' in options || (options.replace = url === currentURL);
 
         // The `navigate` event will only fire and therefore enhance the
         // navigation to the new URL in HTML5 history enabled browsers or when
@@ -225,47 +277,6 @@ PjaxBase.prototype = {
     },
 
     /**
-    Returns a normalized path, ridding it of any '..' segments and properly
-    handling leading and trailing slashes.
-
-    @method _normalizePath
-    @param {String} path URL path to normalize.
-    @return {String} Normalized path.
-    @protected
-    **/
-    _normalizePath: function (path) {
-        var dots  = '..',
-            slash = '/',
-            i, len, normalized, segments, segment, stack;
-
-        if (!path) {
-            return slash;
-        }
-
-        segments = path.split(slash);
-        stack    = [];
-
-        for (i = 0, len = segments.length; i < len; ++i) {
-            segment = segments[i];
-
-            if (segment === dots) {
-                stack.pop();
-            } else if (segment) {
-                stack.push(segment);
-            }
-        }
-
-        normalized = slash + stack.join(slash);
-
-        // Append trailing slash if necessary.
-        if (normalized !== slash && path.charAt(path.length - 1) === slash) {
-            normalized += slash;
-        }
-
-        return normalized;
-    },
-
-    /**
     Binds the delegation of link-click events that match the `linkSelector` to
     the `_onLinkClick()` handler.
 
@@ -274,6 +285,7 @@ PjaxBase.prototype = {
 
     @method _pjaxBindUI
     @protected
+    @since 3.5.0
     **/
     _pjaxBindUI: function () {
         // Only bind link if we haven't already.
@@ -281,72 +293,6 @@ PjaxBase.prototype = {
             this._pjaxEvents = Y.one('body').delegate('click',
                 this._onLinkClick, this.get('linkSelector'), this);
         }
-    },
-
-    /**
-    Returns the normalized result of resolving the `path` against the current
-    path.
-
-    A host-relative `path` (one that begins with '/') is assumed to be resolved
-    and is returned as is. Falsy values for `path` will return just the current
-    path.
-
-    @method _resolvePath
-    @param {String} path URL path to resolve.
-    @return {String} Resolved path.
-    @protected
-    **/
-    _resolvePath: function (path) {
-        if (!path) {
-            return this._getPath();
-        }
-
-        // Path is host-relative and assumed to be resolved and normalized,
-        // meaning silly paths like: '/foo/../bar/' will be returned as-is.
-        if (path.charAt(0) === '/') {
-            return path;
-        }
-
-        return this._normalizePath(this._getRoot() + path);
-    },
-
-    /**
-    Resolves the specified URL against the current URL.
-
-    This method resolves URLs like a browser does and will always return an
-    absolute URL. When the specified URL is already absolute, it is assumed to
-    be fully resolved and is simply returned as is. Scheme-relative URLs are
-    prefixed with the current protocol. Relative URLs are giving the current
-    URL's origin and are resolved and normalized against the current path root.
-
-    @method _resolveURL
-    @param {String} url URL to resolve.
-    @return {String} Resolved URL.
-    @protected
-    **/
-    _resolveURL: function (url) {
-        var parts = url && url.match(this._regexURL),
-            origin, path, suffix;
-
-        if (!parts) {
-            return this._getURL();
-        }
-
-        origin = parts[1];
-        path   = parts[2];
-        suffix = parts[3];
-
-        // Absolute and scheme-relative URLs are assumed to be fully-resolved.
-        if (origin) {
-            // Prepend the current scheme for scheme-relative URLs.
-            if (origin.indexOf('//') === 0) {
-                origin = Y.getLocation().protocol + origin;
-            }
-
-            return origin + (path || '/') + (suffix + '');
-        }
-
-        return this._getOrigin() + this._resolvePath(path) + (suffix || '');
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -360,6 +306,7 @@ PjaxBase.prototype = {
     @method _defNavigateFn
     @param {EventFacade} e
     @protected
+    @since 3.5.0
     **/
     _defNavigateFn: function (e) {
         this[e.replace ? 'replace' : 'save'](e.url);
@@ -391,16 +338,31 @@ PjaxBase.prototype = {
     @method _onLinkClick
     @param {EventFacade} e
     @protected
+    @since 3.5.0
     **/
     _onLinkClick: function (e) {
-        var url;
+        var link, url;
 
         // Allow the native behavior on middle/right-click, or when Ctrl or
         // Command are pressed.
         if (e.button !== 1 || e.ctrlKey || e.metaKey) { return; }
 
+        link = e.currentTarget;
+
+        // Only allow anchor elements because we need access to its `protocol`,
+        // `host`, and `href` attributes.
+        if (link.get('tagName').toUpperCase() !== 'A') {
+            return;
+        }
+
+        // Same origin check to prevent trying to navigate to URLs from other
+        // sites or things like mailto links.
+        if (!this._isLinkSameOrigin(link)) {
+            return;
+        }
+
         // All browsers fully resolve an anchor's `href` property.
-        url = e.currentTarget.get('href');
+        url = link.get('href');
 
         // Try and navigate to the URL via the router, and prevent the default
         // link-click action if we do.
@@ -420,12 +382,31 @@ PjaxBase.ATTRS = {
 
     @attribute linkSelector
     @type String|Function
-    @default "a.pjax"
+    @default "a.yui3-pjax"
     @initOnly
+    @since 3.5.0
     **/
     linkSelector: {
         value    : 'a.' + CLASS_PJAX,
         writeOnce: 'initOnly'
+    },
+
+    /**
+    Whether navigating to a hash-fragment identifier on the current page should
+    be enhanced and cause the `navigate` event to fire.
+
+    By default Pjax allows the browser to perform its default action when a user
+    is navigating within a page by clicking in-page links
+    (e.g. `<a href="#top">Top of page</a>`) and does not attempt to interfere or
+    enhance in-page navigation.
+
+    @attribute navigateOnHash
+    @type Boolean
+    @default false
+    @since 3.5.0
+    **/
+    navigateOnHash: {
+        value: false
     },
 
     /**
@@ -437,6 +418,7 @@ PjaxBase.ATTRS = {
     @attribute scrollToTop
     @type Boolean
     @default true
+    @since 3.5.0
     **/
     scrollToTop: {
         value: true
@@ -446,4 +428,4 @@ PjaxBase.ATTRS = {
 Y.PjaxBase = PjaxBase;
 
 
-}, '@VERSION@' ,{requires:['classnamemanager', 'node-event-delegate', 'router']});
+}, '@VERSION@', {"requires": ["classnamemanager", "node-event-delegate", "router"]});

@@ -2,11 +2,11 @@
     "name"       : "overlay",
     "displayName": "Overlay",
     "description": "Overlay is a positionable and stackable widget, which also provides support for the standard module format layout, with a header, body and footer section.",
-    "author"     : "sdesai",
+    "author"     : ["ericf", "sdesai"],
 
     "tags": ["overlay", "widget", "beta"],
     "use" : ["overlay"],
-    
+
     "examples" : [
         {
             "name"       : "overlay-xy",
@@ -14,6 +14,15 @@
             "description": "Shows how to instantiate a basic Overlay instance, and use the Overlay's basic XY positioning support.",
             "modules"    : ["overlay"],
             "tags"       : ["overlay"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "overlay-tooltip",
+            "displayName": "Simple Tooltip",
+            "description": "Shows how to create a simple tooltip incorporating the overlay shim feature.",
+            "modules"    : ["overlay"],
+            "tags"       : ["overlay", "tooltip", "shim"],
 
             "hideTableOfContents": true
         },

@@ -11,6 +11,7 @@
  *
  * @class NodeList
  * @constructor
+ * @param nodes {String|element|Node|Array} A selector, DOM element, Node, list of DOM elements, or list of Nodes with which to populate this NodeList.
  */
 
 var NodeList = function(nodes) {
@@ -121,6 +122,19 @@ NodeList._getTempNode = function(node) {
 };
 
 Y.mix(NodeList.prototype, {
+    _invoke: function(method, args, getter) {
+        var ret = (getter) ? [] : this;
+
+        this.each(function(node) {
+            var val = node[method].apply(node, args);
+            if (getter) {
+                ret.push(val);
+            }
+        });
+
+        return ret;
+    },
+
     /**
      * Retrieves the Node instance at the given index.
      * @method item
@@ -282,68 +296,6 @@ Y.mix(NodeList.prototype, {
         return this;
     },
 
-    _prepEvtArgs: function(type, fn, context) {
-        // map to Y.on/after signature (type, fn, nodes, context, arg1, arg2, etc)
-        var args = Y.Array(arguments, 0, true);
-
-        if (args.length < 2) { // type only (event hash) just add nodes
-            args[2] = this._nodes;
-        } else {
-            args.splice(2, 0, this._nodes);
-        }
-
-        args[3] = context || this; // default to NodeList instance as context
-
-        return args;
-    },
-
-    /**
-     * Applies an event listener to each Node bound to the NodeList.
-     * @method on
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @param {Object} context The context to call the handler with.
-     * param {mixed} arg* 0..n additional arguments to supply to the subscriber
-     * when the event fires.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     */
-    on: function(type, fn, context) {
-        return Y.on.apply(Y, this._prepEvtArgs.apply(this, arguments));
-    },
-
-    /**
-     * Applies an one-time event listener to each Node bound to the NodeList.
-     * @method once
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     */
-    once: function(type, fn, context) {
-        return Y.once.apply(Y, this._prepEvtArgs.apply(this, arguments));
-    },
-
-    /**
-     * Applies an event listener to each Node bound to the NodeList.
-     * The handler is called only after all on() handlers are called
-     * and the event is not prevented.
-     * @method after
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     */
-    after: function(type, fn, context) {
-        return Y.after.apply(Y, this._prepEvtArgs.apply(this, arguments));
-    },
-
     /**
      * Returns the current number of items in the NodeList.
      * @method size
@@ -397,26 +349,46 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-    /** Called on each Node instance
+     /** 
+      * Called on each Node instance. Nulls internal node references, 
+      * removes any plugins and event listeners
       * @method destroy
+      * @param {Boolean} recursivePurge (optional) Whether or not to 
+      * remove listeners from the node's subtree (default is false)
       * @see Node.destroy
       */
     'destroy',
 
-    /** Called on each Node instance
+     /** 
+      * Called on each Node instance. Removes and destroys all of the nodes 
+      * within the node
       * @method empty
+      * @chainable
       * @see Node.empty
       */
     'empty',
 
-    /** Called on each Node instance
+     /** 
+      * Called on each Node instance. Removes the node from its parent.
+      * Shortcut for myNode.get('parentNode').removeChild(myNode);
       * @method remove
+      * @param {Boolean} destroy whether or not to call destroy() on the node
+      * after removal.
+      * @chainable
       * @see Node.remove
       */
     'remove',
 
-    /** Called on each Node instance
+     /** 
+      * Called on each Node instance. Sets an attribute on the Node instance.
+      * Unless pre-configured (via Node.ATTRS), set hands
+      * off to the underlying DOM node.  Only valid
+      * attributes/properties for the node will be set.
+      * To set custom attributes use setAttribute.
       * @method set
+      * @param {String} attr The attribute to be set.
+      * @param {any} val The value to set the attribute to.
+      * @chainable
       * @see Node.set
       */
     'set'

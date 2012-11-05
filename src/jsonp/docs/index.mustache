@@ -68,7 +68,7 @@ var url = "http://example.com/service.php?callback={callback}";
 
 function handleJSONP(response) {
     // response is a JavaScript object. No parsing necessary
-    Y.one("#output").setContent(response.outputHTML);
+    Y.one("#output").setHTML(response.outputHTML);
 }
 
 Y.jsonp(url, handleJSONP);
@@ -253,7 +253,7 @@ Y.jsonp(url, {
 
 ```
 Y.MyApp.handleJSONP = function (data) {
-    Y.one("#output").setContent(data.outputHTML);
+    Y.one("#output").setHTML(data.outputHTML);
 };
 
 Y.jsonp("http://example.com/service.php?callback=Y.MyApp.handleJSONP");
@@ -321,5 +321,13 @@ service.send("razass");
         that the requests were sent. On the other hand, some browsers
         <em>do</em> enforce execution order, so in these browsers a slow
         request may block the execution of subsequent JSONP callbacks.
+    </li>
+    <li>
+        In WinJS (Windows 8 application mode), JSONP is not supported
+        due to the security measures enforced in that environment. Making 
+        a JSONP request requires a remote script tag which is prohibited.
+        An alternative is to use the YQL module to query a YQL table that
+        can return the data that you need. The YQL module is supported in
+        this environment because it uses native `XMLHttpRequest` to fetch it's data.
     </li>
 </ul>

@@ -2,6 +2,7 @@
  * The PieChart class creates a pie chart
  *
  * @module charts
+ * @submodule charts-base
  * @class PieChart
  * @extends ChartBase
  * @constructor
@@ -96,7 +97,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
                 config.position = pos;
                 config.styles = dh.styles;
                 axis = new axisClass(config);
-                axis.on("axisRendered", Y.bind(this._axisRendered, this));
+                axis.on("axisRendered", Y.bind(this._itemRendered, this));
                 this._axes[i] = axis;
             }
         }
@@ -216,24 +217,8 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     _getDefaultAxes: function()
     {
         var catKey = this.get("categoryKey"),
-            seriesKeys = this.get("seriesKeys") || [], 
-            seriesAxis = "numeric",
-            i, 
-            dv = this.get("dataProvider")[0];
-        if(seriesKeys.length < 1)
-        {
-            for(i in dv)
-            {
-                if(i != catKey)
-                {
-                    seriesKeys.push(i);
-                }
-            }
-            if(seriesKeys.length > 0)
-            {
-                this.set("seriesKeys", seriesKeys);
-            }
-        }
+            seriesKeys = this.get("seriesKeys").concat(), 
+            seriesAxis = "numeric";
         return {
             values:{
                 keys:seriesKeys,
@@ -280,11 +265,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      */
     _sizeChanged: function(e)
     {
-        var graph = this.get("graph");
-        if(graph)
-        {
-            graph.set(e.attrName, e.newVal);
-        }
+        this._redraw();
     },
 
     /**
@@ -295,11 +276,15 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      */
     _redraw: function()
     {
-        var graph = this.get("graph");
+        var graph = this.get("graph"),
+            w = this.get("width"),
+            h = this.get("height"),
+            dimension;
         if(graph)
         {
-            graph.set("width", this.get("width"));
-            graph.set("height", this.get("height"));
+            dimension = Math.min(w, h);
+            graph.set("width", dimension);
+            graph.set("height", dimension);
         }
     },
     
@@ -324,23 +309,97 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      * @param {Number} itemIndex The index of the item within the series.
      * @param {CartesianSeries} series The `PieSeries` instance of the item.
      * @param {Number} seriesIndex The index of the series in the `seriesCollection`.
-     * @return {String | HTML}
+     * @return {HTML}
      * @private
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
     {
-        var msg,
+        var msg = DOCUMENT.createElement("div"),
             total = series.getTotalValues(),
             pct = Math.round((valueItem.value / total) * 10000)/100;
-        msg = categoryItem.displayName +
-        ":&nbsp;" + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + 
-        "<br/>" + valueItem.displayName + 
-        ":&nbsp;" + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + 
-        "<br/>" + pct + "%";
+        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName +
+        ": " + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]))); 
+        msg.appendChild(DOCUMENT.createElement("br"));
+        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + 
+        ": " + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")])));
+        msg.appendChild(DOCUMENT.createElement("br"));
+        msg.appendChild(DOCUMENT.createTextNode(pct + "%")); 
         return msg; 
+    },
+
+    /**
+     * Returns the appropriate message based on the key press.
+     *
+     * @method _getAriaMessage
+     * @param {Number} key The keycode that was pressed.
+     * @return String
+     */
+    _getAriaMessage: function(key)
+    {
+        var msg = "",
+            categoryItem,
+            items,
+            series,
+            valueItem,
+            seriesIndex = 0,
+            itemIndex = this._itemIndex,
+            seriesCollection = this.get("seriesCollection"),
+            len,
+            total,
+            pct,
+            markers;
+        series = this.getSeries(parseInt(seriesIndex, 10));
+        markers = series.get("markers");
+        len = markers && markers.length ? markers.length : 0;
+        if(key === 37)
+        {
+            itemIndex = itemIndex > 0 ? itemIndex - 1 : len - 1;
+        }
+        else if(key === 39)
+        {
+            itemIndex = itemIndex >= len - 1 ? 0 : itemIndex + 1;
+        }
+        this._itemIndex = itemIndex;
+        items = this.getSeriesItems(series, itemIndex);
+        categoryItem = items.category;
+        valueItem = items.value;
+        total = series.getTotalValues();
+        pct = Math.round((valueItem.value / total) * 10000)/100;
+        if(categoryItem && valueItem)
+        {
+            msg += categoryItem.displayName + ": " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + ", ";
+            msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", "; 
+            msg += "Percent of total " + valueItem.displayName + ": " + pct + "%,"; 
+        }
+        else
+        {
+            msg += "No data available,";
+        }
+        msg += (itemIndex + 1) + " of " + len + ". ";
+        return msg;
     }
 }, {
     ATTRS: {
+        /**
+         * Sets the aria description for the chart.
+         *
+         * @attribute ariaDescription
+         * @type String
+         */
+        ariaDescription: {
+            value: "Use the left and right keys to navigate through items.",
+
+            setter: function(val)
+            {
+                if(this._description)
+                {
+                    this._description.setContent("");
+                    this._description.appendChild(DOCUMENT.createTextNode(val));
+                }
+                return val;
+            }
+        },
+        
         /**
          * Axes to appear in the chart. 
          *

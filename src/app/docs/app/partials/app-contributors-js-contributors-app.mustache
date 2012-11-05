@@ -1,0 +1,230 @@
+ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
+    // This is where we can declare our page-level views and define the
+    // relationship between the "pages" of our application. We can later use the
+    // `showView()` method to create and display these views.
+    views: {
+        homePage: {
+            type: HomePageView
+        },
+
+        userPage: {
+            type: UserPageView
+        },
+
+        repoPage: {
+            type  : RepoPageView,
+            parent: 'userPage'
+        }
+    },
+
+    initializer: function () {
+        // Here we register a listener for the `HomePageView`'s `changeUser`
+        // event. When the `HomePageView` is the `activeView`, its events will
+        // bubble up to this app instance.
+        this.on('*:changeUser', this.navigateToUser);
+
+        // Here we register a listener for the `RepoListView`'s `selectRepo`
+        // event. The `RepoListView`'s events bubble up to the `UserPageView`,
+        // so when it is the `activeView`, its events will bubble up to this
+        // app instance.
+        this.on('*:selectRepo', this.navigateToRepo);
+
+        // Once our app is ready, we'll either dispatch to our route handlers if
+        // the current URL matches one of our routes, or we'll simply show the
+        // `HomePageView`.
+        this.once('ready', function (e) {
+            if (this.hasRoute(this.getPath())) {
+                this.dispatch();
+            } else {
+                this.showHomePage();
+            }
+        });
+    },
+
+    // -- Event Handlers -------------------------------------------------------
+
+    // When called, this will navigate the application to the user-page for the
+    // GitHub username specified on the event facade. This will cause our app to
+    // dispatch to its route handlers along with updating the URL.
+    navigateToUser: function (e) {
+        var activeView = this.get('activeView');
+
+        // We want to add a history entry for "/" when we're showing the home
+        // page, but the app's current path isn't already "/". This provides
+        // proper back button support and helps get around a side effect of
+        // using hash based URLs in this example.
+        if (activeView instanceof HomePageView && this.getPath() !== '/') {
+            // Adds history entry for "/" so we can get back to the home page
+            // via the back button.
+            this.save('/');
+        }
+
+        this.navigate('/github/' + e.user + '/');
+    },
+
+    // When called, this will navigate the application to the repo-page for the
+    // GitHub repository specified on the event facade. This will cause our app
+    // to dispatch to its route handlers along with updating the URL.
+    navigateToRepo: function (e) {
+        var repo = e.repo;
+        this.navigate('/github/' + repo.get('owner.login') + '/' + repo.get('name') + '/');
+    },
+
+    // -- Route Handlers -------------------------------------------------------
+
+    // Route middleware whose job is to make sure a `User` model for the
+    // specified GitHub username is fully-loaded and placed on the request
+    // object for other route handlers.
+    handleUser: function (req, res, next) {
+        var username = req.params.user,
+            user     = this.get('user'),
+            self     = this;
+
+        // When the current `User` model set on the app is new or the specified
+        // GitHub username from the URL is different, a new user model instance
+        // is created, loaded, and set on this app before adding it to the
+        // request object.
+        if (username === user.get('login') && !user.isNew()) {
+            // Places a reference to the user model on the request object before
+            // continuing.
+            req.user = user;
+            next();
+        } else {
+            // Create a new `User` model instance using the specified GitHub
+            // username from the URL.
+            user = new User({login: username});
+
+            // Load the user's data from the GitHub API, then sent the user
+            // model on both this app and the request object before continuing.
+            user.load(function () {
+                self.set('user', user);
+                req.user = user;
+                next();
+            });
+        }
+    },
+
+    // Route middleware whose job is to make sure a fully-loaded `RepoList`
+    // instance is placed on the request object. It is assumed that
+    // `handleUser()` middleware has already placed the `User` model on the
+    // request object.
+    handleRepos: function (req, res, next) {
+        var user  = req.user,
+            repos = this.get('repos');
+
+        // Adds a reference to this app's `RepoList` to the request object.
+        req.repos = repos;
+
+        // This makes sure the `RepoList` is loaded for the current user.
+        if (user === repos.get('user')) {
+            next();
+        } else {
+            // A fade transition is preferred when we've switched users, so it
+            // is added to the response object.
+            res.transition = 'fade';
+
+            // Sets the current user model on the `RepoList` instance and loads
+            // the repos for the given user before continuing.
+            repos.set('user', user).load(function () {
+                next();
+            });
+        }
+    },
+
+    // Route middleware whose job is to make sure a fully-loaded
+    // `ContributorList` instance is placed on the request object. It is assumed
+    // that the `handleUser()` and `handleRepos()` middleware have already
+    // placed the `User` model and `RepoList` model-list on the request object.
+    handleRepo: function (req, res, next) {
+        // This uses data from the request object to look for a `Repo` model
+        // instance in the `RepoList`.
+        var repoId       = req.params.repo,
+            repos        = req.repos,
+            repo         = repos.getById(repoId),
+            contributors = this.get('contributors');
+
+        // We error-out when the specified repo name does not exist in the list
+        // of repos for the current GitHub user.
+        if (!repo) {
+            return next('GitHub repository was not found.');
+        }
+
+        // Adds a reference to the `Repo` model and `ContributorList` to the
+        // request object.
+        req.repo         = repo;
+        req.contributors = contributors;
+
+        // This makes sure the `ContributorList` is loaded for the current repo.
+        if (repo === contributors.get('repo')) {
+            next();
+        } else {
+            // Sets the current repo model on the `ContributorList` instance and
+            // loads the contributors before continuing.
+            contributors.set('repo', repo).load(function () {
+                next();
+            });
+        }
+    },
+
+    // This is called when the URL is "/" and will show our app's home page.
+    showHomePage: function (req) {
+        this.showView('homePage', {
+            model: this.get('user')
+        });
+    },
+
+    // This is the route for "/github/:user/" URLs and will show our app's user
+    // page which lists the user's repos.
+    showUserPage: function (req, res) {
+        this.showView('userPage', {
+            model    : req.user,
+            modelList: req.repos
+        }, {
+            // Overrides the default transition with the preferred one, if set.
+            transition: res.transition
+        });
+    },
+
+    // This is the route for "/github/:user/:repo/" URLs and will show our app's
+    // repo page which lists the contributors to the repo/project.
+    showRepoPage: function (req, res) {
+        this.showView('repoPage', {
+            model    : req.repo,
+            modelList: req.contributors
+        }, {
+            // Overrides the default transition with the preferred one, if set.
+            transition: res.transition
+        });
+    }
+}, {
+    ATTRS: {
+        // These attributes will be used by the app to hold its current state,
+        // and they will be accessed and modified by our route handlers.
+        user        : {value: new User()},
+        repos       : {value: new RepoList()},
+        contributors: {value: new ContributorList()},
+
+        // Our app will use more advanced routes where multiple callbacks
+        // (or middleware) will be used to fulfill a "request", allowing us to
+        // encapsulate and reuse our data processing logic. Note: the order in
+        // which the routes and their middleware are defined is significant.
+        routes: {
+            value: [
+                {path: '/', callbacks: 'showHomePage'},
+
+                {path: '/github/:user/', callbacks: [
+                    'handleUser',
+                    'handleRepos',
+                    'showUserPage'
+                ]},
+
+                {path: '/github/:user/:repo/', callbacks: [
+                    'handleUser',
+                    'handleRepos',
+                    'handleRepo',
+                    'showRepoPage'
+                ]}
+            ]
+        }
+    }
+});

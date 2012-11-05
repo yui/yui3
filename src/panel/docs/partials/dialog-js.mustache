@@ -1,0 +1,44 @@
+    var dialog = new Y.Panel({
+        contentBox : Y.Node.create('<div id="dialog" />'),
+        bodyContent: '<div class="message icon-warn">Are you sure you want to [take some action]?</div>',
+        width      : 410,
+        zIndex     : 6,
+        centered   : true,
+        modal      : false, // modal behavior
+        render     : '.example',
+        visible    : false, // make visible explicitly with .show()
+        buttons    : {
+            footer: [
+                {
+                    name  : 'cancel',
+                    label : 'Cancel',
+                    action: 'onCancel'
+                },
+
+                {
+                    name     : 'proceed',
+                    label    : 'OK',
+                    action   : 'onOK'
+                }
+            ]
+        }
+    });
+
+    dialog.onCancel = function (e) {
+        e.preventDefault();
+        this.hide();
+        // the callback is not executed, and is
+        // callback reference removed, so it won't persist
+        this.callback = false;
+    }
+
+    dialog.onOK = function (e) {
+        e.preventDefault();
+        this.hide();
+        // code that executes the user confirmed action goes here
+        if(this.callback){
+           this.callback();
+        }
+        // callback reference removed, so it won't persist
+        this.callback = false;
+    }

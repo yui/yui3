@@ -9,11 +9,10 @@
                 debug: true,
                 combo: false,
                 filter: 'raw'
-            }).use('button', function(Y){
-                new Y.Button({
-                    srcNode: '#image-button',
-                    type: 'toggle'
-                })
+            }).use('button-plugin', function(Y){
+                
+                Y.one("#image-button").plug(Y.Plugin.Button);
+                
             });
         </script>
         

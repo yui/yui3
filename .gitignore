@@ -1,3 +1,4 @@
+build-npm/
 build_docs/
 build_rollup_tmp*/
 build_tmp*/
@@ -13,11 +14,3 @@ src/build.log
 src/out
 node_modules
 api-js/
-build/autocomplete-base/assets/autocomplete-list-core.css
-build/autocomplete-filters-accentfold/assets/autocomplete-list-core.css
-build/autocomplete-filters/assets/autocomplete-list-core.css
-build/autocomplete-highlighters-accentfold/assets/autocomplete-list-core.css
-build/autocomplete-highlighters/assets/autocomplete-list-core.css
-build/autocomplete-list-keys/assets/autocomplete-list-core.css
-build/autocomplete-plugin/assets/autocomplete-list-core.css
-build/autocomplete-sources/assets/autocomplete-list-core.css

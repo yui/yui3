@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ImageLoader Unit Tests</title>
+
+<style>
+.everything { position:relative; height:420px; }
+.everything div { border:1px solid #888; }
+.topmain { position:absolute; top:10px; left:120px; height:75px; width:100px; }
+.duo1 { position:absolute; top:130px; left:20px; height:67px; width:100px; }
+#duo1 { background-image:url('http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/uluru.jpg'); }
+.duo2 { position:absolute; top:130px; left:220px; height:53px; width:100px; }
+.src { position:absolute; top:220px; left:120px; height:72px; width:100px; }
+.trigger { position:absolute; top:330px; left:120px; height:75px; width:100px; }
+.sizer { position:absolute; top:450px; left:20px; height:150px; width:200px; }
+.sharedTrigger1 { position:absolute; top:10px; left:420px; height:72px; width:100px; }
+.sharedTrigger2 { position:absolute; top:10px; left:550px; height:67px; width:100px; }
+#everything .fold-bottom-visual-indicator {
+    position: absolute;
+    border: none;
+    border-top: solid 1px #f00;
+    width: 800px;
+    left: 0;
+    top: 0;
+    background-color: rgba(255, 0, 0, 0.1);
+}
+#everything .fold-bottom-visual-indicator .label{
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 50%;
+    font-family: verdana;
+    border: none;
+}
+.fold-top { position:absolute; top:130px; left:420px; height:75px; width:100px; }
+.fold-middle { position:absolute; top:350px; left:420px; height:75px; width:100px; }
+.fold-bottom { position:absolute; top:500px; left:420px; height:75px; width:100px; }
+.img-label {
+    font-size: 70%;
+    position: absolute;
+    top: 0;
+    left: -75px;
+    text-align: right;
+    border: none !important;
+    width: 70px;
+}
+.customTrigger { position:absolute; top:250px; left:420px; height:67px; width:100px; }
+.customTrigger2 { position:absolute; top:250px; left:550px; height:67px; width:100px; }
+.time { position:absolute; top:130px; left:550px; height:75px; width:100px; }
+
+.yui-imgload { background:none !important; }
+
+#log {
+    position: absolute;
+    right: 5px;
+    width: 300px;
+}
+
+</style>
+
+</head>
+
+<body class='yui3-skin-sam'>
+    <div id="log"></div>
+
+<div class='everything' id='everything'>
+	<div class='topmain' id='topmain'></div>
+	<div class='duo1 yui-imgload' id='duo1'></div>
+	<div class='duo2'>
+		<img class='yui-imgload' id='duo2' style='background-image:url("http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/katatjuta.jpg");' width='100' height='53' />
+	</div>
+	<div class='duo3'>
+		<img class='yui-newimgload' id='duo3' style='background-image:url("http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/katatjuta.jpg");' width='100' height='53' />
+	</div>
+	<div class='src' id='srcImgCont'>
+		<img id='srcImg' />
+	</div>
+	<div class='trigger' id='addlTrigger'></div>
+	<div class='sizer'>
+		<img id='sizerImg' style='visibility:hidden;' />
+	</div>
+	<div class='sharedTrigger1' id='sharedTrigger1'></div>
+	<div class='sharedTrigger2' id='sharedTrigger2'></div>
+
+	<div class='fold-top'>
+		<img id='foldImgTop' />
+        <div class="img-label">foldImgTop</div>
+	</div>
+	<div class='fold-middle'>
+		<img id='foldImgMiddle' />
+        <div class="img-label">foldImgMiddle</div>
+	</div>
+	<div class='fold-bottom'>
+		<img id='foldImgBottom' />
+        <div class="img-label">foldImgBottom</div>
+	</div>
+    <div class='fold-bottom-visual-indicator'><div class="label">Red is "fold". pink is within "foldDistance" of the fold</div></div>
+
+	<div class='customTrigger' id='customTrigger'></div>
+	<div class='customTrigger2' id='customTrigger2'></div>
+	<div class='time'>
+		<img id='timeImg' />
+	</div>
+</div>
+
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+
+<script type="text/javascript">
+/* window.resizeTo(500, 500); */
+YUI({
+    coverage: ['imageloader'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'imageloader-tests': {
+            fullpath: './assets/imageloader-tests.js',
+            requires: [ 'imageloader', 'test', 'node-event-simulate' ]
+        }
+    }
+}).use('imageloader-tests', 'test-console', function (Y) {
+
+    (new Y.Test.Console()).render('#log');
+
+    // note, image group onload tasks, such as starting the time limit timer, are set up at domready time, meaning the timeLimit test can be affected by when the TestRunner starts
+    Y.on('domready', function() {
+        Y.Test.Runner.run();
+    });
+
+
+});
+
+</script>
+
+
+</body>
+</html>

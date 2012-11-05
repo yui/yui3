@@ -1,0 +1,8 @@
+{
+    "file": {
+        "requires": [
+          "file-flash",
+          "file-html5"
+        ] 
+    }
+}

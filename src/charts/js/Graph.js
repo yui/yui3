@@ -3,6 +3,7 @@
  * instance.
  *
  * @module charts
+ * @submodule charts-base
  * @class Graph
  * @constructor
  * @extends Widget
@@ -20,6 +21,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         this.after("widthChange", this._sizeChangeHandler);
         this.after("heightChange", this._sizeChangeHandler);
         this.after("stylesChange", this._updateStyles);
+        this.after("groupMarkersChange", this._drawSeries);
     },
 
     /**
@@ -34,7 +36,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             sc = this.get("seriesCollection"),
             series,
             i = 0,
-            len = sc.length,
+            len = sc ? sc.length : 0,
             hgl = this.get("horizontalGridlines"),
             vgl = this.get("verticalGridlines");
         if(this.get("showBackground"))
@@ -165,18 +167,9 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             i = 0,
             series,
             seriesKey;
-        if(!this.get("seriesCollection"))
-        {
-            this._seriesCollection = [];
-        }
-        if(!this._seriesDictionary)
-        {
-            this._seriesDictionary = {};
-        }
-        if(!this.seriesTypes)
-        {
-            this.seriesTypes = [];
-        }
+        this._seriesCollection = [];
+        this._seriesDictionary = {};
+        this.seriesTypes = [];
         for(; i < len; ++i)
         {	
             series = val[i];
@@ -187,7 +180,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             }
             this._addSeries(series);
         }
-        len = this.get("seriesCollection").length;
+        len = this._seriesCollection.length;
         for(i = 0; i < len; ++i)
         {
             series = this.get("seriesCollection")[i];
@@ -259,6 +252,10 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         series.after("drawingComplete", Y.bind(this._drawingCompleteHandler, this));
         typeSeriesCollection.push(series);
         seriesCollection.push(series);
+        if(this.get("rendered"))
+        {
+            series.render();
+        }
     },
     
     /**
@@ -449,7 +446,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         this._drawing = true;
         sc = this.get("seriesCollection");
         i = 0;
-        len = sc.length;
+        len = sc ? sc.length : 0;
         for(; i < len; ++i)
         {
             sc[i].draw();
@@ -516,9 +513,64 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             }
         };
         return defs;
+    },
+
+    /**
+     * Destructor implementation Graph class. Removes all Graphic instances from the widget.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        if(this._graphic)
+        {
+            this._graphic.destroy();
+            this._graphic = null;
+        }
+        if(this._background)
+        {
+            this._background.get("graphic").destroy();
+            this._background = null;
+        }
+        if(this._gridlines)
+        {
+            this._gridlines.get("graphic").destroy();
+            this._gridlines = null;
+        }
     }
 }, {
     ATTRS: {
+        /**
+         * The x-coordinate for the graph.
+         *
+         * @attribute x
+         * @type Number
+         * @protected
+         */
+        x: {
+            setter: function(val)
+            {
+                this.get("boundingBox").setStyle("left", val + "px");
+                return val;
+            }
+        },
+
+        /**
+         * The y-coordinate for the graph.
+         *
+         * @attribute y
+         * @type Number
+         * @protected
+         */
+        y: {
+            setter: function(val)
+            {
+                this.get("boundingBox").setStyle("top", val + "px");
+                return val;
+            }
+        },
+
         /**
          * Reference to the chart instance using the graph.
          *
@@ -650,7 +702,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._background)
                 {
                     this._backgroundGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    Y.one(this._backgroundGraphic.get("node")).setStyle("zIndex", 0); 
+                    this._backgroundGraphic.get("node").style.zIndex = 0; 
                     this._background = this._backgroundGraphic.addShape({type: "rect"});
                 }
                 return this._background;
@@ -672,7 +724,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._gridlines)
                 {
                     this._gridlinesGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    Y.one(this._gridlinesGraphic.get("node")).setStyle("zIndex", 1); 
+                    this._gridlinesGraphic.get("node").style.zIndex = 1; 
                     this._gridlines = this._gridlinesGraphic.addShape({type: "path"});
                 }
                 return this._gridlines;
@@ -694,11 +746,21 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._graphic)
                 {
                     this._graphic = new Y.Graphic({render:this.get("contentBox")});
-                    Y.one(this._graphic.get("node")).setStyle("zIndex", 2); 
+                    this._graphic.get("node").style.zIndex = 2; 
                     this._graphic.set("autoDraw", false);
                 }
                 return this._graphic;
             }
+        },
+
+        /**
+         * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+         *
+         * @attribute groupMarkers
+         * @type Boolean
+         */
+        groupMarkers: {
+            value: false
         }
 
         /**

@@ -1,14 +1,47 @@
 YUI Throttle Change History
 ===========================
 
-## 3.5.0
+3.7.3
+-----
 
-No Changes.
+* No changes.
 
-## 3.4.1
+3.7.2
+-----
 
-No changes.
+* No changes.
 
-## 3.4.0
+3.7.1
+-----
 
-Removed from yui-core and bumped to a stand alone module.
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
+3.6.0
+-----
+
+  * No changes.
+
+3.5.1
+-----
+
+  * No changes.
+
+3.5.0
+-----
+
+  * No Changes.
+
+3.4.1
+-----
+
+  * No changes.
+
+3.4.0
+-----
+
+  * Removed from yui-core and bumped to a stand alone module.

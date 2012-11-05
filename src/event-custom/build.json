@@ -1,0 +1,22 @@
+{
+    "name": "event-custom",
+    "builds": {
+        "event-custom-base": {
+            "regex": "^.*?(?:logger|Y.log|this.log\\().*?(?:;|\\).*;|(?:\\r?\\n.*?)*?\\).*;).*;?.*?\\r?\\n",
+            "jsfiles": [
+                "event.js",
+                "event-do.js",
+                "event-custom.js",
+                "subscriber.js",
+                "handle.js",
+                "event-target.js"
+            ]
+        },
+        "event-custom-complex": {
+            "regex": "^.*?(?:logger|Y.log|self.log).*?(?:;|\\).*;|(?:\\r?\\n.*?)*?\\).*;).*;?.*?\\r?\\n",
+            "jsfiles": [
+                "event-facade.js"
+            ]
+        }
+    }
+}

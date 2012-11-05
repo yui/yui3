@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    coverage: ['autocomplete', 'autocomplete-filters',
+                'autocomplete-filters-accentfold', 'autocomplete-highlighters',
+                'autocomplete-highlighters-accentfold', 'autocomplete-test-data'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'autocomplete-test': {
+            fullpath: './assets/autocomplete-test.js',
+            requires: [
+                'autocomplete', 'autocomplete-filters',
+                'autocomplete-filters-accentfold', 'autocomplete-highlighters',
+                'autocomplete-highlighters-accentfold', 'autocomplete-test-data',
+                'datasource-local', 'node', 'node-event-simulate', 'jsonp', 'test', 'yql'
+            ]
+        },
+
+        'autocomplete-test-data': {
+            fullpath: './assets/autocomplete-test-data.js'
+        }
+    }
+}).use('autocomplete-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

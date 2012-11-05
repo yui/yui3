@@ -2,7 +2,7 @@
 <button type="button" id="hide">Hide Overlay</button>
 
 <script type="text/javascript">
-YUI().use("overlay", "substitute", "json", "gallery-widget-io", "escape", function(Y) {
+YUI().use("overlay", "json", "gallery-widget-io", "escape", function(Y) {
 
     /* Setup local variable for Y.WidgetStdMod, since we use it multiple times */
     var StdMod = Y.WidgetStdMod,
@@ -25,7 +25,7 @@ YUI().use("overlay", "substitute", "json", "gallery-widget-io", "escape", functi
             });
         },
 
-        setContent: function(content) {
+        setHTML: function(content) {
             var overlay = this.get('host');
             overlay.setStdModContent(this.get('section'), content);
         }
@@ -88,12 +88,12 @@ YUI().use("overlay", "substitute", "json", "gallery-widget-io", "escape", functi
                 if (json && json.count) {
                     var html = ['<ul class="yui3-feed-data">'];
                     var linkTemplate = '<li><a href="{link}" target="_blank">{title}</a></li>';
-    
+
                     Y.each(json.value.items, function(v, i) {
                         if (i < 10) {
                             v.title = Y.Escape.html(v.title);
                             v.link = Y.Escape.html(v.link);
-                            html.push(Y.substitute(linkTemplate, v));
+                            html.push(Y.Lang.sub(linkTemplate, v));
                         }
                     });
                     html.push("</ul>");
@@ -114,7 +114,7 @@ YUI().use("overlay", "substitute", "json", "gallery-widget-io", "escape", functi
             html = ['<select id="feedSelector" class="yui3-feed-selector"><option value="-1" class="yui3-prompt">Select a Feed...</option>'];
 
         Y.Object.each(pipes.feeds, function(v, k, o) {
-            html.push(Y.substitute(optTemplate, {id:k, title:v.title}));
+            html.push(Y.Lang.sub(optTemplate, {id:k, title:v.title}));
         });
         html.push('</select>');
 
@@ -135,7 +135,7 @@ YUI().use("overlay", "substitute", "json", "gallery-widget-io", "escape", functi
     });
 
     overlay.render();
-    /* 
+    /*
      * Add the Standard Module IO Plugin, and configure it to use flash, and a formatter specific
      * to the pipes response we're expecting from the uri request we'll send out.
      */
@@ -158,7 +158,7 @@ YUI().use("overlay", "substitute", "json", "gallery-widget-io", "escape", functi
                 overlay.io.refresh();
             }
         } else {
-            overlay.io.setContent("Flash doesn't appear to be available. Cross-domain requests to pipes cannot be made without it.");
+            overlay.io.setHTML("Flash doesn't appear to be available. Cross-domain requests to pipes cannot be made without it.");
         }
     }, "#feedSelector");
 

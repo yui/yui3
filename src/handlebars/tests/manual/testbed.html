@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Y.Handlebars Manual Testbed</title>
+<link rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
+
+<style>
+html {
+    background: #fff;
+    color: #333;
+    font: 14px Helvetica, sans-serif;
+}
+
+body {
+    padding: 1em 1.5em 1em 1em;
+}
+
+textarea {
+    font: 13px Menlo, Consolas, monospace;
+    width: 100%;
+}
+
+.col { padding-left: 15px; }
+div:first-child > .col { padding-left: 0; }
+
+.toolbar {
+    margin: 1em 0;
+    text-align: center;
+}
+
+#output { background: #fbfbfb; }
+
+#render {
+    font-size: 22px;
+    font-weight: bold;
+    padding: 4px 20px;
+}
+</style>
+
+<body>
+
+<div class="yui3-g">
+    <div class="yui3-u-1-3">
+        <div class="col">
+            <label for="template">Template</label><br>
+            <textarea id="template" rows="10" wrap="off"></textarea>
+        </div>
+    </div>
+
+    <div class="yui3-u-1-3">
+        <div class="col">
+            <label for="context">Context (JavaScript literal or JSON)</label><br>
+            <textarea id="context" rows="10" wrap="off"></textarea>
+        </div>
+    </div>
+
+    <div class="yui3-u-1-3">
+        <div class="col">
+            <label for="code">Helpers/Partials (raw JavaScript)</label><br>
+            <textarea id="code" rows="10" wrap="off"></textarea>
+        </div>
+    </div>
+</div>
+
+<div class="toolbar">
+    <button id="render">Render</button>
+</div>
+
+<div class="output">
+    <label for="output">Output</label>
+    <textarea id="output" rows="30" readonly></textarea>
+</div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({filter: 'raw'}).use('handlebars', 'node', function (Y) {
+    var codeNode     = Y.one('#code'),
+        contextNode  = Y.one('#context'),
+        outputNode   = Y.one('#output'),
+        templateNode = Y.one('#template');
+
+    Y.one('#render').on('click', function () {
+        var code    = Y.Lang.trim(codeNode.get('value')),
+            context = Y.Lang.trim(contextNode.get('value')) || '{}',
+            source  = Y.Lang.trim(templateNode.get('value')),
+            template;
+
+        if (code) {
+            eval(code);
+        }
+
+        eval('Y.handlebarsContext=' + context);
+
+        if (/^function \(Handlebars,/.test(source)) {
+            eval('Y.handlebarsTemplate=' + source);
+            template = Y.Handlebars.template(Y.handlebarsTemplate);
+        } else {
+            template = Y.Handlebars.compile(source);
+        }
+
+        outputNode.set('value', template(Y.handlebarsContext));
+    });
+});
+</script>
+
+</body>

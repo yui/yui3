@@ -39,12 +39,16 @@
           <td>Adds support for the <code>scroll</code> property in <code>to</code></td>
       </tr>
       <tr>
+          <td>`anim-shape-transform`</td>
+          <td>Adds support for the <code>transform</code> attribute of <code>Graphic</code></td>
+      </tr>
+      <tr>
           <td>`anim-xy`</td>
           <td>Adds support for the <code>xy</code> property in <code>from</code> and </td>
       </tr>
       <tr>
           <td>`app`</td>
-          <td>Alias module for: `app-base, model, model-list, router, view`</td>
+          <td>Alias module for: `app-base, app-content, app-transitions, lazy-model-list, model, model-list, model-sync-rest, router, view, view-node-map`</td>
       </tr>
       <tr>
           <td>`app-base`</td>
@@ -52,7 +56,11 @@
       </tr>
       <tr>
           <td>`app-transitions`</td>
-          <td>Provides view transitions for `Y.App`.</td>
+          <td>Provides view transitions for `Y.App` in browsers which support native CSS3</td>
+      </tr>
+      <tr>
+          <td>`app-transitions-native`</td>
+          <td>Provides the implementation of view transitions for `Y.App.Transitions` in</td>
       </tr>
       <tr>
           <td>`array-extras`</td>
@@ -112,7 +120,7 @@
       </tr>
       <tr>
           <td>`autocomplete-base`</td>
-          <td><code>Y.Base</code> extension that provides core autocomplete logic (but no</td>
+          <td>`Y.Base` extension that provides core autocomplete logic (but no UI</td>
       </tr>
       <tr>
           <td>`autocomplete-filters`</td>
@@ -120,7 +128,7 @@
       </tr>
       <tr>
           <td>`autocomplete-filters-accentfold`</td>
-          <td></td>
+          <td>Provides pre-built accent-folding result matching filters for AutoComplete.</td>
       </tr>
       <tr>
           <td>`autocomplete-highlighters`</td>
@@ -128,7 +136,7 @@
       </tr>
       <tr>
           <td>`autocomplete-highlighters-accentfold`</td>
-          <td></td>
+          <td>Provides pre-built accent-folding result highlighters for AutoComplete.</td>
       </tr>
       <tr>
           <td>`autocomplete-list`</td>
@@ -168,7 +176,19 @@
       </tr>
       <tr>
           <td>`button`</td>
-          <td>Alias module for: `button-base, button-group, cssbutton`</td>
+          <td>A Button Widget</td>
+      </tr>
+      <tr>
+          <td>`button-core`</td>
+          <td>Provides an interface for working with button-like DOM nodes</td>
+      </tr>
+      <tr>
+          <td>`button-group`</td>
+          <td>A Widget to create groups of buttons</td>
+      </tr>
+      <tr>
+          <td>`button-plugin`</td>
+          <td>A Button Plugin</td>
       </tr>
       <tr>
           <td>`cache`</td>
@@ -201,6 +221,14 @@
       <tr>
           <td>`charts`</td>
           <td>The Charts widget provides an api for displaying data</td>
+      </tr>
+      <tr>
+          <td>`charts-base`</td>
+          <td>The AreaSeries class renders quantitative data on a graph by creating a fill between 0</td>
+      </tr>
+      <tr>
+          <td>`charts-legend`</td>
+          <td>Adds legend functionality to charts.</td>
       </tr>
       <tr>
           <td>`classnamemanager`</td>
@@ -268,7 +296,7 @@
       </tr>
       <tr>
           <td>`datasource-function`</td>
-          <td>Provides a DataSource implementation which can be used to retrieve data from a custom function.</td>
+          <td>Provides a DataSource implementation which can be used to retrieve data from</td>
       </tr>
       <tr>
           <td>`datasource-get`</td>
@@ -300,23 +328,71 @@
       </tr>
       <tr>
           <td>`datatable`</td>
-          <td>Alias module for: `datatable-base, datatable-datasource, datatable-sort, datatable-scroll`</td>
+          <td>Alias module for: `datatable-core, datatable-table, datatable-head, datatable-body, datatable-base, datatable-column-widths, datatable-message, datatable-mutable, datatable-sort, datatable-datasource`</td>
       </tr>
       <tr>
           <td>`datatable-base`</td>
+          <td>A Widget for displaying tabular data.  The base implementation of DataTable</td>
+      </tr>
+      <tr>
+          <td>`datatable-base-deprecated`</td>
           <td>Provides the base DataTable implementation, which can be extended to add</td>
+      </tr>
+      <tr>
+          <td>`datatable-body`</td>
+          <td>View class responsible for rendering the `<tbody>` section of a table. Used as</td>
+      </tr>
+      <tr>
+          <td>`datatable-column-widths`</td>
+          <td>Adds basic, programmatic column width support to DataTable via column</td>
+      </tr>
+      <tr>
+          <td>`datatable-core`</td>
+          <td>The core implementation of the `DataTable` and `DataTable.Base` Widgets.</td>
       </tr>
       <tr>
           <td>`datatable-datasource`</td>
           <td>Plugs DataTable with DataSource integration.</td>
       </tr>
       <tr>
+          <td>`datatable-datasource-deprecated`</td>
+          <td>Plugs DataTable with DataSource integration.</td>
+      </tr>
+      <tr>
+          <td>`datatable-deprecated`</td>
+          <td>Alias module for: `datatable-base-deprecated, datatable-datasource-deprecated, datatable-sort-deprecated, datatable-scroll-deprecated`</td>
+      </tr>
+      <tr>
+          <td>`datatable-head`</td>
+          <td>View class responsible for rendering the `<thead>` section of a table. Used as</td>
+      </tr>
+      <tr>
+          <td>`datatable-message`</td>
+          <td>Adds support for a message container to appear in the table.  This can be used</td>
+      </tr>
+      <tr>
+          <td>`datatable-mutable`</td>
+          <td>Adds mutation convenience methods such as `table.addRow(data)` to `Y.DataTable`. (or other built class).</td>
+      </tr>
+      <tr>
           <td>`datatable-scroll`</td>
+          <td>Adds the ability to make the table rows scrollable while preserving the header</td>
+      </tr>
+      <tr>
+          <td>`datatable-scroll-deprecated`</td>
           <td>Extends DataTable base to enable x,y, and xy scrolling.</td>
       </tr>
       <tr>
           <td>`datatable-sort`</td>
+          <td>Adds support for sorting the table data by API methods `table.sort(...)` or</td>
+      </tr>
+      <tr>
+          <td>`datatable-sort-deprecated`</td>
           <td>Plugs DataTable with sorting functionality.</td>
+      </tr>
+      <tr>
+          <td>`datatable-table`</td>
+          <td>View class responsible for rendering a `<table>` from provided data.  Used as</td>
       </tr>
       <tr>
           <td>`datatype`</td>
@@ -399,6 +475,10 @@
           <td>Simple Drop plugin that can be attached to a Node via the plug method.</td>
       </tr>
       <tr>
+          <td>`dd-gestures`</td>
+          <td>This module is the conditional loaded `dd` module to support gesture events</td>
+      </tr>
+      <tr>
           <td>`dd-plugin`</td>
           <td>Simple Drag plugin that can be attached to a Node or Widget via the plug method.</td>
       </tr>
@@ -459,6 +539,14 @@
           <td>Plugin for Editor to paragraph auto wrapping and correction.</td>
       </tr>
       <tr>
+          <td>`editor-para-base`</td>
+          <td>Base Plugin for Editor to paragraph auto wrapping and correction.</td>
+      </tr>
+      <tr>
+          <td>`editor-para-ie`</td>
+          <td>Extends EditorParaBase with IE support</td>
+      </tr>
+      <tr>
           <td>`editor-tab`</td>
           <td>Handles tab and shift-tab indent/outdent support.</td>
       </tr>
@@ -473,6 +561,10 @@
       <tr>
           <td>`event-base`</td>
           <td>DOM event listener abstraction layer</td>
+      </tr>
+      <tr>
+          <td>`event-contextmenu`</td>
+          <td>Provides extended keyboard support for the "contextmenu" event such that:</td>
       </tr>
       <tr>
           <td>`event-custom`</td>
@@ -544,7 +636,7 @@
       </tr>
       <tr>
           <td>`event-valuechange`</td>
-          <td>Adds a synthetic <code>valueChange</code> event that fires when the</td>
+          <td>Adds a synthetic `valuechange` event that fires when the `value` property of an</td>
       </tr>
       <tr>
           <td>`exec-command`</td>
@@ -553,6 +645,18 @@
       <tr>
           <td>`features`</td>
           <td>Contains the core of YUI's feature test architecture.</td>
+      </tr>
+      <tr>
+          <td>`file`</td>
+          <td>The File class provides a wrapper for a file pointer, either through an HTML5 </td>
+      </tr>
+      <tr>
+          <td>`file-flash`</td>
+          <td>The FileFlash class provides a wrapper for a file pointer stored in Flash. The File wrapper </td>
+      </tr>
+      <tr>
+          <td>`file-html5`</td>
+          <td>The FileHTML5 class provides a wrapper for a file pointer in an HTML5 The File wrapper </td>
       </tr>
       <tr>
           <td>`frame`</td>
@@ -623,12 +727,20 @@
           <td>Provides utilities to support the management of localized resources (strings and formatting patterns).</td>
       </tr>
       <tr>
+          <td>`io`</td>
+          <td>Alias module for: `io-base, io-xdr, io-form, io-upload-iframe, io-queue`</td>
+      </tr>
+      <tr>
           <td>`io-base`</td>
           <td>Base IO functionality. Provides basic XHR transport support.</td>
       </tr>
       <tr>
           <td>`io-form`</td>
           <td>Extends IO to enable HTML form data serialization, when specified</td>
+      </tr>
+      <tr>
+          <td>`io-nodejs`</td>
+          <td>Node.js override for IO, methods are mixed into `Y.IO`</td>
       </tr>
       <tr>
           <td>`io-queue`</td>
@@ -663,6 +775,10 @@
           <td>Adds support for parsing complex callback identifiers from the jsonp url.</td>
       </tr>
       <tr>
+          <td>`lazy-model-list`</td>
+          <td>Provides the LazyModelList class, which is a ModelList subclass that manages</td>
+      </tr>
+      <tr>
           <td>`loader`</td>
           <td>Alias module for: `loader-base, loader-rollup, loader-yui3`</td>
       </tr>
@@ -671,12 +787,20 @@
           <td>Loader dynamically loads script and css files.  It includes the dependency</td>
       </tr>
       <tr>
+          <td>`matrix`</td>
+          <td>Matrix is a class that allows for the manipulation of a transform matrix.</td>
+      </tr>
+      <tr>
           <td>`model`</td>
           <td>Attribute-based data model with APIs for getting, setting, validating, and</td>
       </tr>
       <tr>
           <td>`model-list`</td>
           <td>Provides an API for managing an ordered list of Model instances.</td>
+      </tr>
+      <tr>
+          <td>`model-sync-rest`</td>
+          <td>An extension which provides a RESTful XHR sync implementation that can be mixed</td>
       </tr>
       <tr>
           <td>`node`</td>
@@ -689,6 +813,10 @@
       <tr>
           <td>`node-core`</td>
           <td>The Node Utility provides a DOM-like interface for interacting with DOM nodes.</td>
+      </tr>
+      <tr>
+          <td>`node-data`</td>
+          <td>Provides methods for managing custom Node data.</td>
       </tr>
       <tr>
           <td>`node-deprecated`</td>
@@ -744,7 +872,7 @@
       </tr>
       <tr>
           <td>`panel`</td>
-          <td>Provides a Panel widget, a widget that mimics the functionality of a regular OS window.</td>
+          <td>Provides a Panel widget, a widget that mimics the functionality of a regular OS</td>
       </tr>
       <tr>
           <td>`parallel`</td>
@@ -928,7 +1056,7 @@
       </tr>
       <tr>
           <td>`swf`</td>
-          <td>The SWF utility is a tool for embedding Flash applications in HTML pages.</td>
+          <td>Embed a Flash applications in a standard manner and communicate with it</td>
       </tr>
       <tr>
           <td>`swfdetect`</td>
@@ -940,7 +1068,7 @@
       </tr>
       <tr>
           <td>`test`</td>
-          <td>YUI JavaScript Testing Framework</td>
+          <td>YUI Test Framework</td>
       </tr>
       <tr>
           <td>`test-console`</td>
@@ -963,8 +1091,28 @@
           <td>Provides the transition method for Node.</td>
       </tr>
       <tr>
+          <td>`transition-timer`</td>
+          <td>Provides the base Transition class, for animating numeric properties.</td>
+      </tr>
+      <tr>
           <td>`uploader`</td>
-          <td>The Uploader widget is a tool for uploading files to the server.</td>
+          <td>Provides UI for selecting multiple files and functionality for </td>
+      </tr>
+      <tr>
+          <td>`uploader-deprecated`</td>
+          <td>Attention: this is the 3.4.1 `uploader` module has been deprecated in favor of a new </td>
+      </tr>
+      <tr>
+          <td>`uploader-flash`</td>
+          <td>This module provides a UI for file selection and multiple file upload capability using</td>
+      </tr>
+      <tr>
+          <td>`uploader-html5`</td>
+          <td>This module provides a UI for file selection and multiple file upload capability using</td>
+      </tr>
+      <tr>
+          <td>`uploader-queue`</td>
+          <td>The class manages a queue of files that should be uploaded to the server.</td>
       </tr>
       <tr>
           <td>`view`</td>
@@ -976,7 +1124,7 @@
       </tr>
       <tr>
           <td>`widget`</td>
-          <td>Alias module for: `widget-base, widget-htmlparser, widget-uievents, widget-skin`</td>
+          <td>Alias module for: `widget-base, widget-htmlparser, widget-skin, widget-uievents`</td>
       </tr>
       <tr>
           <td>`widget-anim`</td>
@@ -996,7 +1144,7 @@
       </tr>
       <tr>
           <td>`widget-buttons`</td>
-          <td>Provides header/footer button support for Widgets that implement the WidgetStdMod extension</td>
+          <td>Provides header/body/footer button support for Widgets that use the</td>
       </tr>
       <tr>
           <td>`widget-child`</td>
@@ -1052,7 +1200,7 @@
       </tr>
       <tr>
           <td>`yui`</td>
-          <td>Throttles a call to a method based on the time between calls. This method is attached</td>
+          <td>The YUI module contains the components required for building the YUI seed</td>
       </tr>
       <tr>
           <td>`yui-base`</td>

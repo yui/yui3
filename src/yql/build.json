@@ -1,0 +1,20 @@
+{
+    "name": "yql",
+    "builds": {
+        "yql": {
+            "jsfiles": [
+                "yql.js"
+            ]
+        },
+        "yql-winjs": {
+            "jsfiles": [
+                "yql-winjs.js"
+            ]
+        },
+        "yql-nodejs": {
+            "jsfiles": [
+                "yql-nodejs.js"
+            ]
+        }
+    }
+}

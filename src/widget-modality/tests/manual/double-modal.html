@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Double Modal Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+YUI({filter: 'raw'}).use('panel', function (Y) {
+
+    var panel1 = new Y.Panel({
+        headerContent: 'Dialog 1',
+        bodyContent  : 'Continue to destroy this and open Dialog 2',
+        modal        : true,
+        centered     : true,
+        visible      : false,
+
+        hideOn: [
+            { eventName: 'clickoutside' }
+        ],
+
+        buttons: [
+            {
+                value     : 'Cancel',
+                classNames: [ 'low' ],
+                section   : Y.WidgetStdMod.FOOTER
+            },
+            {
+                value  : 'Save',
+                section: Y.WidgetStdMod.FOOTER,
+                action : function(e) {
+                    this.destroy();
+                    openPanel2();
+                }
+            }
+        ]
+    });
+
+    panel1.render().show();
+
+    function openPanel2() {
+        var panel = new Y.Panel({
+            headerContent: 'Dialog 2',
+            bodyContent  : 'Victory!',
+            modal        : true,
+            centered     : true,
+            visible      : false,
+
+            hideOn: [
+                { eventName: 'clickoutside' }
+            ],
+
+            buttons: [
+                {
+                    value     : 'Cancel',
+                    classNames: [ 'low' ],
+                    section   : Y.WidgetStdMod.FOOTER
+                },
+                {
+                    value  : 'Save',
+                    section: Y.WidgetStdMod.FOOTER,
+                    action : function(e) {
+                        this.destroy();
+                    }
+                }
+            ]
+        });
+
+        panel.render().show();
+    }
+
+});
+</script>
+
+</body>
+</html>

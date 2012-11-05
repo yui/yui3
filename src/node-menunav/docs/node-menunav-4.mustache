@@ -16,9 +16,12 @@
 Begin by including the <a href="../cssgrids/index.html#dependencies">CSS Grids dependencies</a> and grid
 markup (this example uses a 2 column version of the
 <a href="../cssgrids/cssgrids-fluid.html">Fluid Page Template</a> with a 160px left column).
-Add the markup for the menu to the left column of the grid, and the class <code>yui3-skin-sam</code>
-to the <code>&#60;body&#62;</code>.
+Add the markup for the menu to the left column of the grid.
 </p>
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+```
 
 <p>
 The root menu of menus built using the MenuNav Node Plugin can have a verical or horizontal
@@ -105,8 +108,8 @@ passing in a reference to the MenuNav Node Plugin.
 
 <p>
 Use the
-<a href="{{apiDocs}}/classes/plugin.NodeMenuNav.html#config_autoSubmenuDisplay"><code>autoSubmenuDisplay</code></a>
-and <a href="{{apiDocs}}/classes/plugin.NodeMenuNav.html#config_mouseOutHideDelay"><code>mouseOutHideDelay</code></a>
+<a href="{{apiDocs}}/classes/plugin.NodeMenuNav.html#attr_autoSubmenuDisplay"><code>autoSubmenuDisplay</code></a>
+and <a href="{{apiDocs}}/classes/plugin.NodeMenuNav.html#attr_mouseOutHideDelay"><code>mouseOutHideDelay</code></a>
 configuration attributes to configure the menu labels to behave like split buttons.  Set the
 <code>autoSubmenuDisplay</code> to <code>false</code>, so that each menu label's submenu isn't
 made visible until the menu trigger is clicked.  Set the <code>mouseOutHideDelay</code> to

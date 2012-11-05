@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Prep</title>
+</head>
+<body>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script>
+
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+}).use('test', function(Y) {
+    
+    var suite = new Y.Test.Suite('Test Prep Suite');
+
+    suite.add(new Y.Test.Case({
+        name: 'Test Prep',
+        'test: prep': function() {
+            /*
+            This hack is for Selenium to resize the window to a
+            larger size and focus it. Then it will start executing tests.
+            */
+            window.moveTo(10, 10);
+            window.resizeTo(1000, 1000);
+            window.focus();
+            Y.Assert.isTrue(true, 'Test passed');
+        }
+    }));
+    Y.Test.Runner.add(suite);
+
+    Y.Test.Runner.setName('Test Prep Suite');
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

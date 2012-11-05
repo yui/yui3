@@ -1,0 +1,238 @@
+{
+    "name": "yui",
+    "prebuilds": [
+        "get",
+        "loader"
+    ],
+    "postbuilds": [
+        "simpleyui"
+    ],
+    "exec": [
+        "./scripts/build.js"
+    ],
+    "postexec": [
+        "shifter --config build-npm.json"
+    ],
+    "builds": {
+        "features": {
+            "jsfiles": [
+                "features.js",
+                "load-tests.js"
+            ]
+        },
+        "yui-log-nodejs": {
+            "jsfiles": [
+                "yui-log-nodejs.js"
+            ]
+        },
+        "yui-log": {
+            "jsfiles": [
+                "yui-log.js"
+            ]
+        },
+        "intl-base": {
+            "jsfiles": [
+                "intl-base.js"
+            ]
+        },
+        "yui-later": {
+            "jsfiles": [
+                "yui-later.js"
+            ]
+        },
+        "yui-core": {
+            "name": "yui-base",
+            "replace": {
+                "@YUI_CORE@": "['intl-base']"
+            },
+            "prependfiles": [
+                "js/yui.js"
+            ],
+            "jsfiles": [
+                "yui-base.js",
+                "yui-lang.js",
+                "yui-array.js",
+                "queue-base.js",
+                "yui-core.js",
+                "yui-object.js",
+                "yui-ua.js",
+                "alias.js"
+            ]
+        },
+        "yui-base": {
+            "basefilename": "yui-base",
+            "name": "yui-base",
+            "replace": {
+                "@YUI_CORE@": "['get', 'features', 'intl-base', 'yui-log', 'yui-later']"
+            },
+            "config": {
+                "use": [
+                    "get",
+                    "features",
+                    "intl-base",
+                    "yui-log",
+                    "yui-later"
+                ]   
+            },
+            "prependfiles": [
+                "js/yui.js"
+            ],
+            "jsfiles": [
+                "yui-base.js",
+                "yui-lang.js",
+                "yui-array.js",
+                "queue-base.js",
+                "yui-core.js",
+                "yui-object.js",
+                "yui-ua.js",
+                "alias.js"
+            ]
+        },
+        "yui-nodejs": {
+            "basefilename": "yui-nodejs",
+            "name": "yui-base",
+            "replace": {
+                "@YUI_CORE@": "['get', 'features', 'intl-base', 'yui-log', 'yui-log-nodejs', 'yui-later', 'loader-base', 'loader-rollup', 'loader-yui3']"
+            },
+            "config": {
+                "use": [
+                    "yui-base",
+                    "get",
+                    "features",
+                    "intl-base",
+                    "yui-log",
+                    "yui-log-nodejs",
+                    "yui-later",
+                    "loader-base",
+                    "loader-rollup",
+                    "loader-yui3"
+                ]   
+            },
+            "prependfiles": [
+                "js/yui.js"
+            ],
+            "jsfiles": [
+                "yui-base.js",
+                "yui-lang.js",
+                "yui-array.js",
+                "queue-base.js",
+                "yui-core.js",
+                "yui-object.js",
+                "yui-ua.js",
+                "alias.js"
+            ]
+        },
+        "yui": {
+            "basefilename": "yui",
+            "name": "yui-base",
+            "replace": {
+                "@YUI_CORE@": "['get', 'features', 'intl-base', 'yui-log', 'yui-later', 'loader-base', 'loader-rollup', 'loader-yui3']"
+            },
+            "config": {
+                "use": [
+                    "yui-base",
+                    "get",
+                    "features",
+                    "intl-base",
+                    "yui-log",
+                    "yui-later",
+                    "loader-base",
+                    "loader-rollup",
+                    "loader-yui3"
+                ]
+            },
+            "prependfiles": [
+                "js/yui.js"
+            ],
+            "jsfiles": [
+                "yui-base.js",
+                "yui-lang.js",
+                "yui-array.js",
+                "queue-base.js",
+                "yui-core.js",
+                "yui-object.js",
+                "yui-ua.js",
+                "alias.js"
+            ]
+        }
+    },
+    "rollups": {
+        "yui-base": {
+            "basefilename": "yui-base",
+            "name": "yui",
+            "config": {
+                "use": [
+                    "get",
+                    "features",
+                    "intl-base",
+                    "yui-log",
+                    "yui-later"
+                ]   
+            },
+            "files": [
+                "yui-base",
+                "get",
+                "features",
+                "intl-base",
+                "yui-log",
+                "yui-later"
+            ]
+        },
+        "yui-nodejs": {
+            "basefilename": "yui-nodejs",
+            "name": "yui",
+            "config": {
+                "use": [
+                    "get",
+                    "features",
+                    "intl-base",
+                    "yui-log",
+                    "yui-log-nodejs",
+                    "yui-later",
+                    "loader-base",
+                    "loader-rollup",
+                    "loader-yui3"
+                ]
+            },
+            "files": [
+                "yui-nodejs",
+                "get-nodejs",
+                "features",
+                "intl-base",
+                "yui-log",
+                "yui-log-nodejs",
+                "yui-later",
+                "loader-base",
+                "loader-rollup",
+                "loader-yui3"
+            ]
+        },
+        "yui": {
+            "basefilename": "yui",
+            "files": [
+                "yui",
+                "get",
+                "features",
+                "intl-base",
+                "yui-log",
+                "yui-later",
+                "loader-base",
+                "loader-rollup",
+                "loader-yui3"
+            ],
+            "config": {
+                "use": [
+                    "yui-base",
+                    "get",
+                    "features",
+                    "intl-base",
+                    "yui-log",
+                    "yui-later",
+                    "loader-base",
+                    "loader-rollup",
+                    "loader-yui3"
+                ]
+            }
+        }
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "name": "substitute",
+    "builds": {
+        "substitute": {
+            "jsfiles": [
+                "substitute.js"
+            ]
+        }
+    }
+}

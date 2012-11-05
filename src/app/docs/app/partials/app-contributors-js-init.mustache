@@ -1,0 +1,16 @@
+// Create and render a new instance of our `ContributorsApp`!
+new ContributorsApp({
+    // We force this to false for this example app because there is no server.
+    serverRouting: false,
+
+    // Here we set our app's rendering container, and restrict which links on
+    // the page should cause the app to navigate.
+    container   : '#github-app',
+    linkSelector: '#github-app a',
+
+    // Enable view transitions when users are navigating around the app.
+    transitions: true,
+
+    // We'll define the default GitHub user to be "yui".
+    user: new User({login: 'yui'})
+}).render();

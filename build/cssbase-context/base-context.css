@@ -71,3 +71,5 @@
 /* setting a consistent width, 160px; 
    control of type=file still not possible */
 .yui3-cssbase input[type=text],.yui3-cssbase input[type=password],.yui3-cssbase textarea{width:12.25em;*width:11.9em;}
+/* YUI CSS Detection Stamp */
+#yui3-css-stamp.cssbase-context { display: none; }

@@ -61,7 +61,7 @@
             debug: true,
             combo: false,
             filter: 'raw'
-        }).use('button', 'cssreset', 'cssfonts', function(Y){
+        }).use('button-group', 'cssreset', 'cssfonts', function(Y){
 
             var caps, alt, i, textarea, keys, altKeys;
 
@@ -103,10 +103,8 @@
             ];
 
             Y.Array.each(keys, function(key){
-                var button = new Y.Button({
-                    label: key
-                });
-                var node = button.getNode();
+                node = Y.Node.create('<button>' + key + '</button>');
+                
                 node.set('name', key);
                 if (key[0] === "[" && key.length > 1) {
                     node.addClass('wide');
@@ -121,13 +119,18 @@
                 if (i === 13 || i === 27 || i ===40 || i ===51) {
                     Y.one("#keyboard").append("<br>");
                 }
-
                 if (key === '[caps]' || key === '[shift]') {
-                    button.set('type', 'toggle');
+                    node.on('click', function(e){
+                        e.target.toggleClass('yui3-button-selected', !e.target.hasClass('yui3-button-selected'));
+                    });
                 }
                 i+=1;
             });
-
+            
+            new Y.ButtonGroup({
+                srcNode: "#keyboard",
+                type: 'push'
+            }).render();
 
             function goAlt() {
                 var x, y, nodeList;
@@ -168,7 +171,8 @@
                     }
                 });
             }
-
+            
+            
             Y.one("#keyboard").delegate("click", function(e){
                 var key, content, newContent;
 

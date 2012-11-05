@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Panel Manual Test</title>
+
+    <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" />
+    <link rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css" />
+    <link rel="stylesheet" href="../../../../build/cssbase/base-min.css" />
+</head>
+<body class="yui3-skin-sam">
+
+    <h1>Panel Manual Test</h1>
+
+    <script src="../../../../build/yui/yui.js"></script>
+    <script>
+    YUI({
+        skin  : 'sam',
+        filter: 'raw'
+    }).use('panel', function (Y) {
+
+        var panel = new Y.Panel({
+            headerContent: 'Foo Panel',
+            bodyContent  : '<p>Looks like you want to save something.</p>',
+            centered     : true,
+            width        : 250,
+
+            buttons: {
+                header: ['close'],
+                footer: [
+                    {
+                        label : 'Cancel',
+                        action: 'hide'
+                    },
+
+                    {
+                        label    : 'Save',
+                        action   : 'onSave',
+                        isDefault: true
+                    }
+                ]
+            }
+        });
+
+        panel.onSave = function (e) {
+            Y.all(panel.get('buttons.footer')).set('disabled', true);
+            panel.set('headerContent', 'Saving…');
+
+            setTimeout(function () {
+                panel.hide();
+            }, 750);
+        }
+
+        panel.render().align();
+
+    });
+    </script>
+</body>
+</html>

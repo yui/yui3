@@ -115,7 +115,7 @@ Y.Array.each([
 Y.Node.prototype.removeAttribute = function(attr) {
     var node = this._node;
     if (node) {
-        node.removeAttribute(attr);
+        node.removeAttribute(attr, 0); // comma zero for IE < 8 to force case-insensitive
     }
 
     return this;
@@ -134,7 +134,6 @@ Y.Node.importMethod(Y.DOM, [
      * This passes through to the DOM node, allowing for custom attributes.
      * @method setAttribute
      * @for Node
-     * @for NodeList
      * @chainable
      * @param {string} name The attribute name
      * @param {string} value The value to set
@@ -145,7 +144,6 @@ Y.Node.importMethod(Y.DOM, [
      * This passes through to the DOM node, allowing for custom attributes.
      * @method getAttribute
      * @for Node
-     * @for NodeList
      * @param {string} name The attribute name
      * @return {string} The attribute value
      */

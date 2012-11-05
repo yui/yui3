@@ -1,4 +1,4 @@
-YUI.add('datasource-cache', function(Y) {
+YUI.add('datasource-cache', function (Y, NAME) {
 
 /**
  * Plugs DataSource with caching functionality.
@@ -163,4 +163,4 @@ Y.mix(DataSourceCache, {
 Y.namespace("Plugin").DataSourceCache = DataSourceCache;
 
 
-}, '@VERSION@' ,{requires:['datasource-local', 'cache-base', 'plugin']});
+}, '@VERSION@', {"requires": ["datasource-local", "plugin", "cache-base"]});

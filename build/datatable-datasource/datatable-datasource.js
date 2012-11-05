@@ -1,4 +1,4 @@
-YUI.add('datatable-datasource', function(Y) {
+YUI.add('datatable-datasource', function (Y, NAME) {
 
 /**
  * Plugs DataTable with DataSource integration.
@@ -9,7 +9,7 @@ YUI.add('datatable-datasource', function(Y) {
 
 /**
  * Adds DataSource integration to DataTable.
- * @class DataTableDataSource
+ * @class Plugin.DataTableDataSource
  * @extends Plugin.Base
  */
 function DataTableDataSource() {
@@ -170,14 +170,11 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     onDataReturnInitializeTable : function(e) {
         var records = (e.response && e.response.results) || [];
 
-        this.get("host").get("recordset").set("records", records);
+        this.get("host").set("data", records);
     }
 });
 
 Y.namespace("Plugin").DataTableDataSource = DataTableDataSource;
 
 
-
-
-
-}, '@VERSION@' ,{requires:['datatable-base','plugin','datasource-local']});
+}, '@VERSION@', {"requires": ["datatable-base", "plugin", "datasource-local"]});

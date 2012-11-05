@@ -1,0 +1,7 @@
+{
+    "widget-position-align": {
+        "requires": [
+            "widget-position"
+        ]
+    }
+}

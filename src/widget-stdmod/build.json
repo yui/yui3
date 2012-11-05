@@ -1,0 +1,10 @@
+{
+    "name": "widget-stdmod",
+    "builds": {
+        "widget-stdmod": {
+            "jsfiles": [
+                "Widget-StdMod.js"
+            ]
+        }
+    }
+}

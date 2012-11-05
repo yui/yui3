@@ -36,7 +36,7 @@ YUI.Env.parseUA = function(subUA) {
     var numberify = function(s) {
             var c = 0;
             return parseFloat(s.replace(/\./g, function() {
-                return (c++ == 1) ? '' : '.';
+                return (c++ === 1) ? '' : '.';
             }));
         },
 
@@ -144,6 +144,13 @@ YUI.Env.parseUA = function(subUA) {
          */
         air: 0,
         /**
+         * PhantomJS version number or 0.  Only populated if webkit is detected.
+         * Example: 1.0
+         * @property phantomjs
+         * @type float
+         */
+        phantomjs: 0,
+        /**
          * Detects Apple iPad's OS version
          * @property ipad
          * @type float
@@ -167,7 +174,7 @@ YUI.Env.parseUA = function(subUA) {
         /**
          * General truthy check for iPad, iPhone or iPod
          * @property ios
-         * @type float
+         * @type Boolean
          * @default null
          * @static
          */
@@ -232,7 +239,21 @@ YUI.Env.parseUA = function(subUA) {
          * @default 0
          * @static
          */
-        nodejs: 0
+        nodejs: 0,
+        /**
+        * Window8/IE10 Application host environment
+        * @property winjs
+        * @type Boolean
+        * @static
+        */
+        winjs: !!((typeof Windows !== "undefined") && Windows.System),
+        /**
+        * Are touch/msPointer events available on this device
+        * @property touchEnabled
+        * @type Boolean
+        * @static
+        */
+        touchEnabled: false
     },
 
     ua = subUA || nav && nav.userAgent,
@@ -258,8 +279,14 @@ YUI.Env.parseUA = function(subUA) {
 
         if ((/windows|win32/i).test(ua)) {
             o.os = 'windows';
-        } else if ((/macintosh/i).test(ua)) {
+        } else if ((/macintosh|mac_powerpc/i).test(ua)) {
             o.os = 'macintosh';
+        } else if ((/android/i).test(ua)) {
+            o.os = 'android';
+        } else if ((/symbos/i).test(ua)) {
+            o.os = 'symbos';
+        } else if ((/linux/i).test(ua)) {
+            o.os = 'linux';
         } else if ((/rhino/i).test(ua)) {
             o.os = 'rhino';
         }
@@ -268,14 +295,27 @@ YUI.Env.parseUA = function(subUA) {
         if ((/KHTML/).test(ua)) {
             o.webkit = 1;
         }
+        if ((/IEMobile|XBLWP7/).test(ua)) {
+            o.mobile = 'windows';
+        }
+        if ((/Fennec/).test(ua)) {
+            o.mobile = 'gecko';
+        }
         // Modern WebKit browsers are at least X-Grade
         m = ua.match(/AppleWebKit\/([^\s]*)/);
         if (m && m[1]) {
             o.webkit = numberify(m[1]);
             o.safari = o.webkit;
 
+            if (/PhantomJS/.test(ua)) {
+                m = ua.match(/PhantomJS\/([^\s]*)/);
+                if (m && m[1]) {
+                    o.phantomjs = numberify(m[1]);
+                }
+            }
+
             // Mobile browser check
-            if (/ Mobile\//.test(ua)) {
+            if (/ Mobile\//.test(ua) || (/iPad|iPod|iPhone/).test(ua)) {
                 o.mobile = 'Apple'; // iPhone or iPod Touch
 
                 m = ua.match(/OS ([^\s]*)/);
@@ -283,6 +323,7 @@ YUI.Env.parseUA = function(subUA) {
                     m = numberify(m[1].replace('_', '.'));
                 }
                 o.ios = m;
+                o.os = 'ios';
                 o.ipad = o.ipod = o.iphone = 0;
 
                 m = ua.match(/iPad|iPod|iPhone/);
@@ -327,10 +368,13 @@ YUI.Env.parseUA = function(subUA) {
                 }
             }
 
-            m = ua.match(/Chrome\/([^\s]*)/);
-            if (m && m[1]) {
-                o.chrome = numberify(m[1]); // Chrome
+            m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
+            if (m && m[1] && m[2]) {
+                o.chrome = numberify(m[2]); // Chrome
                 o.safari = 0; //Reset safari back to 0
+                if (m[1] === 'CrMo') {
+                    o.mobile = 'chrome';
+                }
             } else {
                 m = ua.match(/AdobeAIR\/([^\s]*)/);
                 if (m) {
@@ -341,14 +385,23 @@ YUI.Env.parseUA = function(subUA) {
 
         if (!o.webkit) { // not webkit
 // @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)
-            m = ua.match(/Opera[\s\/]([^\s]*)/);
-            if (m && m[1]) {
-                o.opera = numberify(m[1]);
+            if (/Opera/.test(ua)) {
+                m = ua.match(/Opera[\s\/]([^\s]*)/);
+                if (m && m[1]) {
+                    o.opera = numberify(m[1]);
+                }
                 m = ua.match(/Version\/([^\s]*)/);
                 if (m && m[1]) {
                     o.opera = numberify(m[1]); // opera 10+
                 }
 
+                if (/Opera Mobi/.test(ua)) {
+                    o.mobile = 'opera';
+                    m = ua.replace('Opera Mobi', '').match(/Opera ([^\s]*)/);
+                    if (m && m[1]) {
+                        o.opera = numberify(m[1]);
+                    }
+                }
                 m = ua.match(/Opera Mini[^;]*/);
 
                 if (m) {
@@ -372,15 +425,21 @@ YUI.Env.parseUA = function(subUA) {
         }
     }
 
+    //Check for known properties to tell if touch events are enabled on this device or if
+    //the number of MSPointer touchpoints on this device is greater than 0.
+    if (win && nav && !(o.chrome && o.chrome < 6)) {
+        o.touchEnabled = (("ontouchstart" in win) || (("msMaxTouchPoints" in nav) && (nav.msMaxTouchPoints > 0)));
+    }
+
     //It was a parsed UA, do not assign the global value.
     if (!subUA) {
 
-        if (typeof process == 'object') {
+        if (typeof process === 'object') {
 
             if (process.versions && process.versions.node) {
                 //NodeJS
                 o.os = process.platform;
-                o.nodejs = process.versions.node;
+                o.nodejs = numberify(process.versions.node);
             }
         }
 
@@ -393,3 +452,52 @@ YUI.Env.parseUA = function(subUA) {
 
 
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
+
+/**
+Performs a simple comparison between two version numbers, accounting for
+standard versioning logic such as the fact that "535.8" is a lower version than
+"535.24", even though a simple numerical comparison would indicate that it's
+greater. Also accounts for cases such as "1.1" vs. "1.1.0", which are
+considered equivalent.
+
+Returns -1 if version _a_ is lower than version _b_, 0 if they're equivalent,
+1 if _a_ is higher than _b_.
+
+Versions may be numbers or strings containing numbers and dots. For example,
+both `535` and `"535.8.10"` are acceptable. A version string containing
+non-numeric characters, like `"535.8.beta"`, may produce unexpected results.
+
+@method compareVersions
+@param {Number|String} a First version number to compare.
+@param {Number|String} b Second version number to compare.
+@return -1 if _a_ is lower than _b_, 0 if they're equivalent, 1 if _a_ is
+    higher than _b_.
+**/
+Y.UA.compareVersions = function (a, b) {
+    var aPart, aParts, bPart, bParts, i, len;
+
+    if (a === b) {
+        return 0;
+    }
+
+    aParts = (a + '').split('.');
+    bParts = (b + '').split('.');
+
+    for (i = 0, len = Math.max(aParts.length, bParts.length); i < len; ++i) {
+        aPart = parseInt(aParts[i], 10);
+        bPart = parseInt(bParts[i], 10);
+
+        isNaN(aPart) && (aPart = 0);
+        isNaN(bPart) && (bPart = 0);
+
+        if (aPart < bPart) {
+            return -1;
+        }
+
+        if (aPart > bPart) {
+            return 1;
+        }
+    }
+
+    return 0;
+};

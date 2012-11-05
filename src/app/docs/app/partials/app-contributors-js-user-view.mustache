@@ -1,0 +1,21 @@
+UserView = Y.Base.create('userView', Y.View, [], {
+    // Compiles the User Template into a reusable Handlebars template.
+    template: Y.Handlebars.compile(Y.one('#t-user').getHTML()),
+
+    render: function () {
+        // Retrieves all of the model instance's data as a simple JSON struct.
+        var user = this.get('model').toJSON(),
+            content;
+
+        // Add proper pluralized labels for numerical data fields.
+        addLabel(user, 'public_repos', 'Public Repo');
+        addLabel(user, 'followers', 'Follower');
+
+        // Applies the `User` model data to the User Template and sets the
+        // resulting HTML as the contents of this view's container.
+        content = this.template(user);
+        this.get('container').setHTML(content);
+
+        return this;
+    }
+});

@@ -138,10 +138,10 @@ YUI().use("dump", "node", "datasource-local", "datasource-arrayschema", "datasou
         myDataSourceArray = new Y.DataSource.Local({source:myDataArray}),
         myCallbackArray = {
             success: function(e){
-                Y.one("#demo_output_array").setContent(Y.dump(e.response));
+                Y.one("#demo_output_array").setHTML(Y.dump(e.response));
             },
             failure: function(e){
-                Y.one("#demo_output_array").setContent("Could not retrieve data: " + e.error.message);
+                Y.one("#demo_output_array").setHTML("Could not retrieve data: " + e.error.message);
             }
         };
 
@@ -159,10 +159,10 @@ YUI().use("dump", "node", "datasource-local", "datasource-arrayschema", "datasou
         myDataSourceJSON = new Y.DataSource.Local({source:myDataJSON}),
         myCallbackJSON = {
             success: function(e){
-                Y.one("#demo_output_json").setContent(Y.dump(e.response));
+                Y.one("#demo_output_json").setHTML(Y.dump(e.response));
             },
             failure: function(e){
-                Y.one("#demo_output_json").setContent("Could not retrieve data: " + e.error.message);
+                Y.one("#demo_output_json").setHTML("Could not retrieve data: " + e.error.message);
             }
         };
 
@@ -182,10 +182,10 @@ YUI().use("dump", "node", "datasource-local", "datasource-arrayschema", "datasou
         myDataSourceTable = new Y.DataSource.Local({source:myTable}),
         myCallbackTable = {
             success: function(e){
-                Y.one("#demo_output_table").setContent(Y.dump(e.response));
+                Y.one("#demo_output_table").setHTML(Y.dump(e.response));
             },
             failure: function(e){
-                Y.one("#demo_output_table").setContent("Could not retrieve data: " + e.error.message);
+                Y.one("#demo_output_table").setHTML("Could not retrieve data: " + e.error.message);
             }
         };
 

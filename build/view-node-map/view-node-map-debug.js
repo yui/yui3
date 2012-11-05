@@ -1,4 +1,4 @@
-YUI.add('view-node-map', function(Y) {
+YUI.add('view-node-map', function (Y, NAME) {
 
 /**
 View extension that adds a static `getByNode()` method that returns the nearest
@@ -48,6 +48,7 @@ a mapping of Nodes to View instances.
     HTMLElement.
 @return {View} Closest View instance associated with the given Node, or `null`
     if no associated View instance was found.
+@static
 @since 3.5.0
 **/
 NodeMap.getByNode = function (node) {
@@ -80,4 +81,4 @@ NodeMap.prototype = {
 Y.View.NodeMap = NodeMap;
 
 
-}, '@VERSION@' ,{requires:['view']});
+}, '@VERSION@', {"requires": ["view"]});

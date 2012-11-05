@@ -9,29 +9,28 @@
                 debug: true,
                 combo: false,
                 filter: 'raw'
-            }).use('button', 'console', function(Y){
+            }).use('button-group', 'console', function(Y){
                 
                 new Y.Console().render();
                 
                 Y.one("#generator").on("click", function(){
                     
-                    var count, button, buttons = [], type, group;
+                    var count, type, group;
                     
                     count = Y.one('#count').get('value');
                     type = Y.one('input[name=type]:checked').get('value');
                     
                     Y.one("#container").empty(true);
                     
-                    for(var i=0; i < count; i++) {
-                        button = new Y.Button( {label: i} );
-                        Y.one("#container").append(button.getNode());
-                        buttons.push(button);
+                    for(var i=1; i < count; i++) {
+                        node = Y.Plugin.Button.createNode({label: i});
+                        Y.one("#container").append(node);
                     }
-
+                    
                     group = new Y.ButtonGroup({
-                        buttons: buttons,
+                        srcNode: '#container',
                         type: type
-                    });
+                    }).render();
                     
                     group.on('selectionChange', function(e){
                         Y.log('Changed');

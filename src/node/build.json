@@ -1,0 +1,76 @@
+{
+    "name": "node",
+    "builds": {
+        "node-style": {
+            "jsfiles": [
+                "node-style.js"
+            ]
+        },
+        "node-event-simulate": {
+            "jsfiles": [
+                "node-event-simulate.js"
+            ]
+        },
+        "shim-plugin": {
+            "jsfiles": [
+                "shim-plugin.js"
+            ]
+        },
+        "node-screen": {
+            "jsfiles": [
+                "node-screen.js",
+                "node-region.js"
+            ]
+        },
+        "node-pluginhost": {
+            "jsfiles": [
+                "node-pluginhost.js"
+            ]
+        },
+        "node-load": {
+            "jsfiles": [
+                "node-load.js"
+            ]
+        },
+        "node-event-delegate": {
+            "jsfiles": [
+                "node-event-delegate.js"
+            ]
+        },
+        "node-deprecated": {
+            "jsfiles": [
+                "node-deprecated.js"
+            ]
+        },
+        "node-core": {
+            "jsfiles": [
+                "node-core.js",
+                "nodelist.js",
+                "nodelist-array.js",
+                "node-imports.js"
+            ]
+        },
+        "node-base": {
+            "jsfiles": [
+                "node-class.js",
+                "node-create.js",
+                "node-attrs.js",
+                "node-event.js",
+                "node-size.js",
+                "node-view.js",
+                "node-ie.js",
+                "node-data.js"
+            ]
+        },
+        "node-event-html5": {
+            "jsfiles": [
+                "node-event-html5.js"
+            ]
+        },
+        "align-plugin": {
+            "jsfiles": [
+                "align-plugin.js"
+            ]
+        }
+    }
+}

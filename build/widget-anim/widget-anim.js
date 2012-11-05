@@ -1,4 +1,4 @@
-YUI.add('widget-anim', function(Y) {
+YUI.add('widget-anim', function (Y, NAME) {
 
 /**
  * Provides a plugin which can be used to animate widget visibility changes.
@@ -254,4 +254,4 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
 Y.namespace("Plugin").WidgetAnim = WidgetAnim;
 
 
-}, '@VERSION@' ,{requires:['plugin', 'anim-base', 'widget']});
+}, '@VERSION@', {"requires": ["anim-base", "plugin", "widget"]});

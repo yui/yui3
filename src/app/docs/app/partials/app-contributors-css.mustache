@@ -1,13 +1,14 @@
 <style scoped>
-/*-- Common Styles ----------------------------------------------------------*/
+/*-- Override Styles ---------------------------------------------------------*/
+
+.example {
+    padding: 0 !important;
+}
+
+/*-- Common Styles -----------------------------------------------------------*/
 
 #github-app h1 {
     padding: 0;
-}
-
-#github-app .loading {
-    opacity: 0.5;
-    -webkit-transition: opacity 0.15s;
 }
 
 #github-app .avatar,
@@ -75,8 +76,11 @@
     line-height: 44px;
 }
 
-/*-- HomePage Styles --------------------------------------------------------*/
+/*-- HomePage Styles ---------------------------------------------------------*/
 
+#github-app .home-page {
+    padding: 1em;
+}
 #github-app .home-page h1,
 #github-app .home-page p {
     display: block;
@@ -101,8 +105,11 @@
     text-align: left;
 }
 
-/*-- UserPage Styles --------------------------------------------------------*/
+/*-- UserPage Styles ---------------------------------------------------------*/
 
+#github-app .user-page {
+    padding: 1em;
+}
 #github-app .repos {
     padding-left: 0;
     list-style: none;
@@ -157,8 +164,11 @@
     color: rgba(48, 65, 140, 0.40);
 }
 
-/*-- RepoPage Styles --------------------------------------------------------*/
+/*-- RepoPage Styles ---------------------------------------------------------*/
 
+#github-app .repo-page {
+    padding: 1em;
+}
 #github-app .contributors {
     margin-left: -5px;
     margin-right: -5px;

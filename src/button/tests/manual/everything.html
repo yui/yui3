@@ -9,21 +9,24 @@
                 base: '../../../../build/',
                 debug: true,
                 combo: false,
-                filter: 'raw'
-            }).use('button', 'cssfonts', 'console', function(Y){
+                filter: 'raw',
+            }).use('button-base', 'button-group', 'cssbutton', 'cssfonts', 'console', function(Y){
                 
                 new Y.Console().render();
                 
-                Y.log('A ninja button called ' + new Y.Button({label:'Bruce Lee'}).getNode().getContent());
-
+                var ButtonFactory = Y.Plugin.Button.factory;
+                var ToggleFactory = Y.ToggleButton;
+                
+                Y.log('A ninja button called ' + new ButtonFactory({label:'Bruce Lee'}).getContent());
+                
                 /*
                     Just a basic test with a listener
                 */
-                var button = new Y.Button({
+                var button = new ButtonFactory({
                     srcNode: Y.one('#event')
                 });
                 
-                button.getNode().on("click", function(e){
+                button.on("click", function(e){
                     Y.log("click");
                 });
                 
@@ -31,21 +34,20 @@
                 /*
                     A 'toggle' button listening for the selectedChange event
                 */
-                var button2 = new Y.Button({
+                var button2 = new ToggleFactory({
                     srcNode: Y.one('#toggle'),
-                    type: 'toggle',
                     on: {
                         selectedChange:function(){
                            Y.log('selectedChange');
                         }
                     }
-                });
+                }).render();
 
                 /*
                     A 'link' button
                     Preferably, the user would just apply a yui3-button style to an <a> element and not use JS
                 */
-                var button3 = new Y.Button({
+                var button3 = new ButtonFactory({
                     srcNode: Y.one('#link')
                 });
 
@@ -58,7 +60,7 @@
                 /*
                     A disabled button
                 */
-                var button4 = new Y.Button({
+                var button4 = new ButtonFactory({
                     srcNode: Y.one('#disabled'),
                     disabled: true
                 });
@@ -66,6 +68,21 @@
 
 
 
+
+
+
+                /*
+                    A group of checkbox-like buttons
+                */
+                var buttonGroup2 = new Y.ButtonGroup({
+                    srcNodes: Y.all('.multigroup'),
+                    type: 'checkbox'
+                });
+
+                buttonGroup2.after('selectionChange', function(e){
+                    var selection = buttonGroup2.getSelectedButtons();
+                    Y.log('buttonGroup2 selected count = ' + selection.length);
+                });
 
 
 
@@ -87,23 +104,6 @@
 
 
 
-                /*
-                    A group of checkbox-like buttons
-                */
-                var buttonGroup2 = new Y.ButtonGroup({
-                    srcNodes: Y.all('.multigroup'),
-                    type: 'checkbox'
-                });
-
-                buttonGroup2.after('selectionChange', function(e){
-                    var selection = buttonGroup2.get('selection');
-                    Y.log('buttonGroup2 selected count = ' + selection.length);
-                });
-
-
-
-
-
 
 
 
@@ -114,27 +114,32 @@
                     Y.Buttons adds nothing useful for the gernator buttons, so just add the class and a listener.
                 */
                 Y.all('.generator').addClass('yui3-button').on('click', function(e){
-                    var button, type, config;
+                    var button, type, config, Factory;
                     
                     type = e.target.getAttribute('data-type');
+                    srcNode = Y.Node.create('<button>' + type + '</button>');
+                    Y.one('#generated').append(srcNode);
                     
                     config = {
-                        label: type
+                        label: type,
+                        disabled: false,
+                        srcNode: srcNode
                     };
                     
                     if (type === 'disabled') {
-                        config.type = 'push';
+                        Factory = Y.Button;
                         config.disabled = true;
                     }
-                    else {
-                        config.type = type;
+                    else if (type === 'push') {
+                        Factory = Y.Button;
+                    }
+                    else if (type === 'toggle') {
+                        Factory = Y.ToggleButton;
                     }
                     
-                    config.srcNode = Y.Node.create('<button>' + config.label + '</button>');
-                    button = new Y.Button(config);
-                    
-                    Y.one('#generated').append(button.getNode());
-                })
+                    button = new Factory(config);
+                    button.render();
+                });
                 
             });
         </script>
@@ -149,7 +154,7 @@
         <hr />
         
         <h2>Event</h2>
-        <button id='event' tabindex='3'>Log a message</button>
+        <button id='event' tabindex='3'>Log  <br /> a message</button>
         
         
         <br>
@@ -173,19 +178,19 @@
         <br>
         
         
-        <h2>Group (radio)</h2>
-        <button class='group' id='btn1'>Button 13</button>
-        <button class='group' id='btn2'>Button 27</button>
-        <button class='group' id='btn3'>Button 40</button>
+        <h2>Multi-Group (checkbox)</h2>
+        <button class='multigroup' id='btn4'>Button 4</button>
+        <button class='multigroup' id='btn5'>Button <br /> 5</button>
+        <button class='multigroup' id='btn6'>Button <br /> <br /> 6</button>
         
         
         <br>
         
         
-        <h2>Multi-Group (checkbox)</h2>
-        <button class='multigroup' id='btn4'>Button 4</button>
-        <button class='multigroup' id='btn5'>Button 5</button>
-        <button type='button' class='multigroup' id='btn6'>Button 6</button>
+        <h2>Group (radio)</h2>
+        <button class='group' id='btn1'>Button 13</button>
+        <button class='group' id='btn2'>Button 27</button>
+        <button class='group' id='btn3'>Button 40</button>
         
         
         <br>
