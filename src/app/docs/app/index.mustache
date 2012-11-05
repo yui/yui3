@@ -1255,7 +1255,7 @@ The following example uses both the `Y.App.Content.route` for the `"/about/"` pa
 ```javascript
 Y.PeopleView = Y.Base.create('people', Y.View, [], {
     events: {
-        '.person': {click: showPersonOverlay}
+        '.person': {click: 'showPersonOverlay'}
     },
 
     showPersonOverlay: function (e) {
