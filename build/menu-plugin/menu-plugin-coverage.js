@@ -26,10 +26,10 @@ _yuitest_coverage["build/menu-plugin/menu-plugin.js"] = {
     path: "build/menu-plugin/menu-plugin.js",
     code: []
 };
-_yuitest_coverage["build/menu-plugin/menu-plugin.js"].code=["YUI.add('menu-plugin', function (Y, NAME) {","","/**","Provides the `Y.Plugin.Menu` Node plugin.","","@module menu","@submodule menu-plugin","**/","","/**","Node plugin that toggles a dropdown menu when the host node is clicked.","","### Example","","    YUI().use('menu-plugin', function (Y) {","        var button = Y.one('#button');","","        // Plug a dropdown menu into the button.","        button.plug(Y.Plugin.Menu, {","            items: [","                {label: 'Item One'},","                {label: 'Item Two'},","                {label: 'Item Three'}","            ]","        });","","        // The menu will automatically be displayed whenever the button is","        // clicked, but you can also toggle it manually.","        button.menu.toggle();","    });","","@class Plugin.Menu","@constructor","@extends Menu","@uses Plugin.Base","**/","","Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base], {","    // -- Lifecycle Methods ----------------------------------------------------","    initializer: function (config) {","        this._host = config.host;","","        this._published = {};","        this._attachMenuPluginEvents();","    },","","    destructor: function () {","        clearTimeout(this._pluginHideTimeout);","    },","","    // -- Public Methods -------------------------------------------------------","","    /**","    Repositions this dropdown menu so that it is anchored to its host node at","    the most advantageous position to ensure that as much of the menu as","    possible is visible within the viewport.","","    @method reposition","    @chainable","    **/","    reposition: function () {","        var container = this.get('container'),","","            menuRegion = this._getSortedAnchorRegions(","                ['tl-bl', 'tr-br', 'bl-tl', 'br-tr'],","                container.get('region'),","                this._host.get('region')","            )[0].region;","","        container.setXY([menuRegion.left, menuRegion.top]);","","        return this;","    },","","    show: function () {","        this.reposition();","        return Y.Menu.prototype.show.call(this);","    },","","    // -- Protected Methods ----------------------------------------------------","    _attachMenuPluginEvents: function () {","        // These events will be cleaned up by Y.Menu.","        this._menuEvents.push(","            Y.one('doc').after('click', this._afterDocClick, this)","        );","","        this.afterHostEvent('click', this._afterAnchorClick);","","        if (this.get('showOnHover')) {","            this.afterHostEvent({","                blur      : this._afterAnchorBlur,","                focus     : this._afterAnchorFocus,","                mouseenter: this._afterAnchorMouseEnter,","                mouseleave: this._afterAnchorMouseLeave","            });","","            this._menuEvents.push(this.get('container').after({","                mouseenter: Y.bind(this._afterContainerMouseEnter, this),","                mouseleave: Y.bind(this._afterContainerMouseLeave, this)","            }));","        }","    },","","    // -- Protected Event Handlers ---------------------------------------------","    _afterAnchorClick: function () {","        if (!this.rendered) {","            this.render();","        }","","        this.toggle();","    },","","    _afterAnchorBlur: function () {","        this.hide();","    },","","    _afterAnchorFocus: function () {","        clearTimeout(this._pluginHideTimeout);","","        if (!this.rendered) {","            this.render();","        }","","        this.show();","    },","","    _afterAnchorMouseEnter: function () {","        clearTimeout(this._pluginHideTimeout);","","        if (!this.rendered) {","            this.render();","        }","","        this.show();","    },","","    _afterAnchorMouseLeave: function () {","        var self = this;","","        this._pluginHideTimeout = setTimeout(function () {","            console.log('anchorTimeout');","            self.hide();","        }, 300);","    },","","    _afterContainerMouseEnter: function () {","        clearTimeout(this._pluginHideTimeout);","    },","","    _afterContainerMouseLeave: function () {","        var self = this;","","        this._pluginHideTimeout = setTimeout(function () {","            self.hide();","        }, 300);","    },","","    _afterDocClick: function (e) {","        if (!this.get('visible')) {","            return;","        }","","        var container = this.get('container'),","            host      = this._host;","","        if (!e.target.ancestor(function (node) {","            return node === container || node === host;","        }, true)) {","            this.hide();","        }","    }","}, {","    NS: 'menu',","","    ATTRS: {","        /**","        If `true`, this menu will be shown when the host node is hovered or","        receives focus instead of only being shown when it's clicked.","","        @attribute {Boolean} showOnHover","        @default false","        @initOnly","        **/","        showOnHover: {","            value: false,","            writeOnce: 'initOnly'","        }","    }","});","","","}, '@VERSION@', {\"requires\": [\"event-focus\", \"menu\", \"node-pluginhost\", \"plugin\"]});"];
-_yuitest_coverage["build/menu-plugin/menu-plugin.js"].lines = {"1":0,"38":0,"41":0,"43":0,"44":0,"48":0,"62":0,"70":0,"72":0,"76":0,"77":0,"83":0,"87":0,"89":0,"90":0,"97":0,"106":0,"107":0,"110":0,"114":0,"118":0,"120":0,"121":0,"124":0,"128":0,"130":0,"131":0,"134":0,"138":0,"140":0,"141":0,"142":0,"147":0,"151":0,"153":0,"154":0,"159":0,"160":0,"163":0,"166":0,"167":0,"169":0};
-_yuitest_coverage["build/menu-plugin/menu-plugin.js"].functions = {"initializer:40":0,"destructor:47":0,"reposition:61":0,"show:75":0,"_attachMenuPluginEvents:81":0,"_afterAnchorClick:105":0,"_afterAnchorBlur:113":0,"_afterAnchorFocus:117":0,"_afterAnchorMouseEnter:127":0,"(anonymous 2):140":0,"_afterAnchorMouseLeave:137":0,"_afterContainerMouseEnter:146":0,"(anonymous 3):153":0,"_afterContainerMouseLeave:150":0,"(anonymous 4):166":0,"_afterDocClick:158":0,"(anonymous 1):1":0};
-_yuitest_coverage["build/menu-plugin/menu-plugin.js"].coveredLines = 42;
+_yuitest_coverage["build/menu-plugin/menu-plugin.js"].code=["YUI.add('menu-plugin', function (Y, NAME) {","","/**","Provides the `Y.Plugin.Menu` Node plugin.","","@module menu","@submodule menu-plugin","**/","","/**","Node plugin that toggles a dropdown menu when the host node is clicked.","","### Example","","    YUI().use('menu-plugin', function (Y) {","        var button = Y.one('#button');","","        // Plug a dropdown menu into the button.","        button.plug(Y.Plugin.Menu, {","            items: [","                {label: 'Item One'},","                {label: 'Item Two'},","                {label: 'Item Three'}","            ]","        });","","        // The menu will automatically be displayed whenever the button is","        // clicked, but you can also toggle it manually.","        button.menu.toggle();","    });","","@class Plugin.Menu","@constructor","@extends Menu","@uses Plugin.Base","**/","","Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base], {","    // -- Lifecycle Methods ----------------------------------------------------","    initializer: function (config) {","        this._host = config.host;","","        this._published = {};","        this._attachMenuPluginEvents();","    },","","    destructor: function () {","        clearTimeout(this._pluginHideTimeout);","    },","","    // -- Public Methods -------------------------------------------------------","","    /**","    Repositions this dropdown menu so that it is anchored to its host node at","    the most advantageous position to ensure that as much of the menu as","    possible is visible within the viewport.","","    @method reposition","    @chainable","    **/","    reposition: function () {","        var container = this.get('container'),","","            menuRegion = this._getSortedAnchorRegions(","                ['tl-bl', 'tr-br', 'bl-tl', 'br-tr'],","                container.get('region'),","                this._host.get('region')","            )[0].region;","","        container.setXY([menuRegion.left, menuRegion.top]);","","        return this;","    },","","    show: function () {","        this.reposition();","        return Y.Menu.prototype.show.call(this);","    },","","    // -- Protected Methods ----------------------------------------------------","    _attachMenuPluginEvents: function () {","        // These events will be cleaned up by Y.Menu.","        this._menuEvents.push(","            Y.one('doc').after('click', this._afterDocClick, this)","        );","","        this.afterHostEvent('click', this._afterAnchorClick);","","        if (this.get('showOnHover')) {","            this.afterHostEvent({","                blur      : this._afterAnchorBlur,","                focus     : this._afterAnchorFocus,","                mouseenter: this._afterAnchorMouseEnter,","                mouseleave: this._afterAnchorMouseLeave","            });","","            this._menuEvents.push(this.get('container').after({","                mouseenter: Y.bind(this._afterContainerMouseEnter, this),","                mouseleave: Y.bind(this._afterContainerMouseLeave, this)","            }));","        }","    },","","    // -- Protected Event Handlers ---------------------------------------------","    _afterAnchorClick: function () {","        if (!this.rendered) {","            this.render();","        }","","        this.toggle();","    },","","    _afterAnchorBlur: function () {","        this.hide();","    },","","    _afterAnchorFocus: function () {","        clearTimeout(this._pluginHideTimeout);","","        if (!this.rendered) {","            this.render();","        }","","        this.show();","    },","","    _afterAnchorMouseEnter: function () {","        clearTimeout(this._pluginHideTimeout);","","        if (!this.rendered) {","            this.render();","        }","","        this.show();","    },","","    _afterAnchorMouseLeave: function () {","        var self = this;","","        this._pluginHideTimeout = setTimeout(function () {","            self.hide();","        }, 300);","    },","","    _afterContainerMouseEnter: function () {","        clearTimeout(this._pluginHideTimeout);","    },","","    _afterContainerMouseLeave: function () {","        var self = this;","","        this._pluginHideTimeout = setTimeout(function () {","            self.hide();","        }, 300);","    },","","    _afterDocClick: function (e) {","        if (!this.get('visible')) {","            return;","        }","","        var container = this.get('container'),","            host      = this._host;","","        if (!e.target.ancestor(function (node) {","            return node === container || node === host;","        }, true)) {","            this.hide();","        }","    }","}, {","    NS: 'menu',","","    ATTRS: {","        /**","        If `true`, this menu will be shown when the host node is hovered or","        receives focus instead of only being shown when it's clicked.","","        @attribute {Boolean} showOnHover","        @default false","        @initOnly","        **/","        showOnHover: {","            value: false,","            writeOnce: 'initOnly'","        }","    }","});","","","}, '@VERSION@', {\"requires\": [\"event-focus\", \"menu\", \"node-pluginhost\", \"plugin\"]});"];
+_yuitest_coverage["build/menu-plugin/menu-plugin.js"].lines = {"1":0,"38":0,"41":0,"43":0,"44":0,"48":0,"62":0,"70":0,"72":0,"76":0,"77":0,"83":0,"87":0,"89":0,"90":0,"97":0,"106":0,"107":0,"110":0,"114":0,"118":0,"120":0,"121":0,"124":0,"128":0,"130":0,"131":0,"134":0,"138":0,"140":0,"141":0,"146":0,"150":0,"152":0,"153":0,"158":0,"159":0,"162":0,"165":0,"166":0,"168":0};
+_yuitest_coverage["build/menu-plugin/menu-plugin.js"].functions = {"initializer:40":0,"destructor:47":0,"reposition:61":0,"show:75":0,"_attachMenuPluginEvents:81":0,"_afterAnchorClick:105":0,"_afterAnchorBlur:113":0,"_afterAnchorFocus:117":0,"_afterAnchorMouseEnter:127":0,"(anonymous 2):140":0,"_afterAnchorMouseLeave:137":0,"_afterContainerMouseEnter:145":0,"(anonymous 3):152":0,"_afterContainerMouseLeave:149":0,"(anonymous 4):165":0,"_afterDocClick:157":0,"(anonymous 1):1":0};
+_yuitest_coverage["build/menu-plugin/menu-plugin.js"].coveredLines = 41;
 _yuitest_coverage["build/menu-plugin/menu-plugin.js"].coveredFunctions = 17;
 _yuitest_coverline("build/menu-plugin/menu-plugin.js", 1);
 YUI.add('menu-plugin', function (Y, NAME) {
@@ -214,50 +214,48 @@ var self = this;
 this._pluginHideTimeout = setTimeout(function () {
             _yuitest_coverfunc("build/menu-plugin/menu-plugin.js", "(anonymous 2)", 140);
 _yuitest_coverline("build/menu-plugin/menu-plugin.js", 141);
-console.log('anchorTimeout');
-            _yuitest_coverline("build/menu-plugin/menu-plugin.js", 142);
 self.hide();
         }, 300);
     },
 
     _afterContainerMouseEnter: function () {
-        _yuitest_coverfunc("build/menu-plugin/menu-plugin.js", "_afterContainerMouseEnter", 146);
-_yuitest_coverline("build/menu-plugin/menu-plugin.js", 147);
+        _yuitest_coverfunc("build/menu-plugin/menu-plugin.js", "_afterContainerMouseEnter", 145);
+_yuitest_coverline("build/menu-plugin/menu-plugin.js", 146);
 clearTimeout(this._pluginHideTimeout);
     },
 
     _afterContainerMouseLeave: function () {
-        _yuitest_coverfunc("build/menu-plugin/menu-plugin.js", "_afterContainerMouseLeave", 150);
-_yuitest_coverline("build/menu-plugin/menu-plugin.js", 151);
+        _yuitest_coverfunc("build/menu-plugin/menu-plugin.js", "_afterContainerMouseLeave", 149);
+_yuitest_coverline("build/menu-plugin/menu-plugin.js", 150);
 var self = this;
 
-        _yuitest_coverline("build/menu-plugin/menu-plugin.js", 153);
+        _yuitest_coverline("build/menu-plugin/menu-plugin.js", 152);
 this._pluginHideTimeout = setTimeout(function () {
-            _yuitest_coverfunc("build/menu-plugin/menu-plugin.js", "(anonymous 3)", 153);
-_yuitest_coverline("build/menu-plugin/menu-plugin.js", 154);
+            _yuitest_coverfunc("build/menu-plugin/menu-plugin.js", "(anonymous 3)", 152);
+_yuitest_coverline("build/menu-plugin/menu-plugin.js", 153);
 self.hide();
         }, 300);
     },
 
     _afterDocClick: function (e) {
-        _yuitest_coverfunc("build/menu-plugin/menu-plugin.js", "_afterDocClick", 158);
-_yuitest_coverline("build/menu-plugin/menu-plugin.js", 159);
+        _yuitest_coverfunc("build/menu-plugin/menu-plugin.js", "_afterDocClick", 157);
+_yuitest_coverline("build/menu-plugin/menu-plugin.js", 158);
 if (!this.get('visible')) {
-            _yuitest_coverline("build/menu-plugin/menu-plugin.js", 160);
+            _yuitest_coverline("build/menu-plugin/menu-plugin.js", 159);
 return;
         }
 
-        _yuitest_coverline("build/menu-plugin/menu-plugin.js", 163);
+        _yuitest_coverline("build/menu-plugin/menu-plugin.js", 162);
 var container = this.get('container'),
             host      = this._host;
 
-        _yuitest_coverline("build/menu-plugin/menu-plugin.js", 166);
+        _yuitest_coverline("build/menu-plugin/menu-plugin.js", 165);
 if (!e.target.ancestor(function (node) {
-            _yuitest_coverfunc("build/menu-plugin/menu-plugin.js", "(anonymous 4)", 166);
-_yuitest_coverline("build/menu-plugin/menu-plugin.js", 167);
+            _yuitest_coverfunc("build/menu-plugin/menu-plugin.js", "(anonymous 4)", 165);
+_yuitest_coverline("build/menu-plugin/menu-plugin.js", 166);
 return node === container || node === host;
         }, true)) {
-            _yuitest_coverline("build/menu-plugin/menu-plugin.js", 169);
+            _yuitest_coverline("build/menu-plugin/menu-plugin.js", 168);
 this.hide();
         }
     }
