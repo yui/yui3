@@ -13,7 +13,7 @@ var MatrixUtil = {
          * @private
          */
         _rounder: 100000,
-        
+
         /**
          * Rounds values
          *
@@ -66,7 +66,7 @@ var MatrixUtil = {
         },
 
         /**
-         * Converts a transform object to an array of column vectors. 
+         * Converts a transform object to an array of column vectors.
          *
          * /                                             \
          * | matrix[0][0]   matrix[1][0]    matrix[2][0] |
@@ -88,7 +88,7 @@ var MatrixUtil = {
         },
 
         /**
-         * Returns the determinant of a given matrix. 
+         * Returns the determinant of a given matrix.
          *
          * /                                             \
          * | matrix[0][0]   matrix[1][0]    matrix[2][0] |
@@ -117,7 +117,7 @@ var MatrixUtil = {
                 multiplier = matrix[i][0];
                 if(i % 2 === 0 || i === 0)
                 {
-                    determinant += multiplier * MatrixUtil.getDeterminant(MatrixUtil.getMinors(matrix, i, 0));  
+                    determinant += multiplier * MatrixUtil.getDeterminant(MatrixUtil.getMinors(matrix, i, 0));
                 }
                 else
                 {
@@ -151,13 +151,13 @@ var MatrixUtil = {
                 adjunct = [],
                 //vector representing 2x2 matrix
                 minor = [];
-            if(len === 2) 
+            if(len === 2)
             {
                 determinant = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
                 inverse = [
                     [matrix[1][1] * determinant, -matrix[1][0] * determinant],
                     [-matrix[0][1] * determinant, matrix[0][0] * determinant]
-                ]; 
+                ];
             }
             else
             {
@@ -299,7 +299,7 @@ var MatrixUtil = {
             }
             return product;
         },
-        
+
         /**
          * Breaks up a 2d transform matrix into a series of transform operations.
          *
@@ -351,7 +351,7 @@ var MatrixUtil = {
         /**
          * Parses a transform string and returns an array of transform arrays.
          *
-         * @method getTransformArray 
+         * @method getTransformArray
          * @param {String} val A transform string
          * @return Array
          */
@@ -362,9 +362,9 @@ var MatrixUtil = {
                 m,
                 decomp,
                 methods = MatrixUtil.transformMethods;
-            
+
             while ((m = re.exec(transform))) {
-                if (methods.hasOwnProperty(m[1])) 
+                if (methods.hasOwnProperty(m[1]))
                 {
                     args = m[2].split(',');
                     args.unshift(m[1]);
@@ -386,7 +386,7 @@ var MatrixUtil = {
             }
             return transforms;
         },
-        
+
         /**
          * Returns an array of transform arrays representing transform functions and arguments.
          *
@@ -420,7 +420,7 @@ var MatrixUtil = {
         },
 
         /**
-         * Compares to arrays or transform functions to ensure both contain the same functions in the same 
+         * Compares to arrays or transform functions to ensure both contain the same functions in the same
          * order.
          *
          * @method compareTransformSequence

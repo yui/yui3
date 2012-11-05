@@ -1,7 +1,7 @@
 /**
- * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Circle.html">`Circle`</a> class. 
- * `SVGCircle` is not intended to be used directly. Instead, use the <a href="Circle.html">`Circle`</a> class. 
- * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Circle.html">`Circle`</a> 
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Circle.html">`Circle`</a> class.
+ * `SVGCircle` is not intended to be used directly. Instead, use the <a href="Circle.html">`Circle`</a> class.
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Circle.html">`Circle`</a>
  * class will point to the `SVGCircle` class.
  *
  * @module graphics
@@ -12,11 +12,11 @@
  {
     SVGCircle.superclass.constructor.apply(this, arguments);
  };
-    
+
  SVGCircle.NAME = "circle";
 
- Y.extend(SVGCircle, Y.SVGShape, {    
-    
+ Y.extend(SVGCircle, Y.SVGShape, {
+
     /**
      * Indicates the type of shape
      *
@@ -48,7 +48,7 @@
         this._updateTransform();
     }
  });
-    
+
 SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
