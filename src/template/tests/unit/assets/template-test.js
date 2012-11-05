@@ -30,14 +30,14 @@ microSuite.add(new Y.Test.Case({
 
     'precompile() should return precompiled template code': function () {
         Assert.areSame(
-            "function (Y, $e, data) {\nvar $t='test';\nreturn $t;\n}",
+            "function (Y, $e, data) {\nvar $b='',$t='test';\nreturn $t;\n}",
             Micro.precompile('test')
         );
     },
 
     'precompile() should respect compile options': function () {
         Assert.areSame(
-            "function (Y, $e, data) {\nvar $t=''+\n$e(data.test)+\n'';\nreturn $t;\n}",
+            "function (Y, $e, data) {\nvar $b='',$t=''+\n$e((data.test)||$b)+\n'';\nreturn $t;\n}",
 
             Micro.precompile('{{data.test}}', {
                 escapedOutput: /\{\{([\s\S]+?)\}\}/g
@@ -112,8 +112,16 @@ microSuite.add(new Y.Test.Case({
         Assert.areSame('at&amp;t', Micro.render('<%= data.name %>', {name: 'at&t'}));
     },
 
+    '<%= ... %> should print an empty string if given a falsy value': function () {
+        Assert.areSame('foobar', Micro.render('foo<%= data.bogus %>bar'));
+    },
+
     '<%== ... %> should be rendered as raw output': function () {
         Assert.areSame('at&t', Micro.render('<%== data.name %>', {name: 'at&t'}));
+    },
+
+    '<%== ... %> should print an empty string if given a falsy value': function () {
+        Assert.areSame('foobar', Micro.render('foo<%== data.bogus %>bar'));
     }
 }));
 
@@ -174,14 +182,14 @@ templateSuite.add(new Y.Test.Case({
 
     'precompile() should precompile a template using the selected engine': function () {
         Assert.areSame(
-            "function (Y, $e, data) {\nvar $t='test';\nreturn $t;\n}",
+            "function (Y, $e, data) {\nvar $b='',$t='test';\nreturn $t;\n}",
             (new Y.Template()).precompile('test')
         );
     },
 
     'precompile() should pass options to the selected engine': function () {
         Assert.areSame(
-            "function (Y, $e, data) {\nvar $t=''+\n$e(data.test)+\n'';\nreturn $t;\n}",
+            "function (Y, $e, data) {\nvar $b='',$t=''+\n$e((data.test)||$b)+\n'';\nreturn $t;\n}",
 
             (new Y.Template()).precompile('{{data.test}}', {
                 escapedOutput: /\{\{([\s\S]+?)\}\}/g
