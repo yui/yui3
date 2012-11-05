@@ -40,16 +40,16 @@ Handlebars templates can be used instead of Micro templates by using the `templa
 </p>
 
 ```javascript
-YUI().use('template', function (Y) {
-    var handlebars = new Y.Template(),
-        html       = handlebars.render('<i>{{message}}</i>', {message: 'hello!'});
+YUI().use('template-base', 'handlebars', function (Y) {
+    var handlebars = new Y.Template(Y.Handlebars),
+        html       = handlebars.render('<i>\{{message}}</i>', {message: 'hello!'});
 
     Y.log(html); // => "<i>hello!</i>"
 });
 ```
 
 <p>
-<strong>Note:</strong> Both examples are using the engine's <strong>`render()`</strong> method to compile and render the template dynamically on the client. Dynamic rendering of Micro templates is fine, but it should be <strong>avoided</strong> with <strong>Handlebars</strong> templates. It is recommended that Handlebars templates be <a href="../handlebars/index.html#precompiling-templates">precompiled</a>, enabling the client code to use the lighter and faster `handlebars-base` module.
+<strong>Note:</strong> Both examples are using the engine's <strong>`render()`</strong> method to compile and render the template dynamically on the <strong>client</strong>, doing this with Micro templates is fine, but it should be <strong>avoided with Handlebars</strong> templates. It is recommended that Handlebars templates be <a href="../handlebars/index.html#precompiling-templates">precompiled</a>, enabling the client code to use the lighter and faster `handlebars-base` module.
 </p>
 
 <h3>Generic Template API</h3>
@@ -67,6 +67,143 @@ By making Template.Micro's public API very similar to Handlebars, we've made it 
 </p>
 
 <h3>Instantiating a Template Engine</h3>
+
+<p>
+While you can use a specific template engine directly, it is recommended that you create an instance of the generic `Y.Template` engine wrapper. Doing so allows for greater flexility and interoperability as described in the previous section.
+</p>
+
+<p>
+To create a template engine instance, you must first determine which underlying engine you want to use. The two template engines included in YUI are <a href="../handlebars/index.html">Handlebars</a> and [[#Using Template.Micro|Template.Micro]]. If you're looking to use a different engine, refer to [[#Creating a Custom Template Engine]] section below.
+</p>
+
+<p>
+Once you've determined the underlying template engine, you'll need to load the appropriate YUI module to fulfill how you plan to use templates. Refer to the following table of YUI modules to understand what each module proivdes:
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Module</th>
+            <th>Compiler</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="white-space: nowrap;">`template-base`</td>
+            <td>No</td>
+            <td>
+                <p>
+                Provides a generic API for using template engines such as `Handlebars` and `Y.Template.Micro`.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="white-space: nowrap;">`template-micro`</td>
+            <td>Yes</td>
+            <td>
+                <p>
+                Adds the `Y.Template.Micro` template engine, which provides fast, simple string-based micro-templating similar to ERB or Underscore templates.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="white-space: nowrap;">`template`</td>
+            <td>Yes</td>
+            <td>
+                <p>
+                Virtual rollup of the `template-base` and `template-micro` modules.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="white-space: nowrap;">`handlebars-base`</td>
+            <td>No</td>
+            <td>
+                <p>
+                Provides basic Handlebars template rendering functionality. Use this module when you only need to render pre-compiled templates.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="white-space: nowrap;">`handlebars-compiler`</td>
+            <td>Yes</td>
+            <td>
+                <p>
+                Handlebars parser and compiler. Use this module when you need to compile Handlebars templates.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="white-space: nowrap;">`handlebars`</td>
+            <td>Yes</td>
+            <td>
+                <p>
+                Virtual rollup of the `handlebars-base` and `handlebars-compiler` modules.
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>Using Micro Templates</h4>
+
+<p>
+When working with Micro templates, it's easiest to use the `template` virtual rollup module. The `Y.Template.Micro` compiler is small enough that it is included with the runtime functionality.
+</p>
+
+<p>
+The following example creates two template engine instances with are functionally equivalent and both backed by Template.Micro:
+</p>
+
+```javascript
+YUI().use('template', function (Y) {
+    var microExplicit, microDefault;
+
+    // Creates a template engine instance and explicitly specifies the
+    // underlying engine.
+    microExplicit = new Y.Template(Y.Template.Micro);
+
+    // Creates another template engine instance with the same functionality,
+    // but relies on `Y.Template.Micro` being defined as the underlying engine
+    // by default.
+    microDefault = new Y.Template();
+});
+```
+
+<h4>Using Handlebars Templates</h4>
+
+<p>
+When working with Handlebars templates, you'll need to determine if the need the Handlebars compiler functionality provided by the `handlebars-compiler` module. It is recommended that Handlebars templates be <a href="../handlebars/index.html#precompiling-templates">precompiled</a>, enabling the client code to use the lighter and faster `handlebars-base` module.
+</p>
+
+<p>
+The following example loads only the Handlebars runtime and generic `Y.Template()` wrapper API. It assumes that all templates have previously been precompiled on the server or during a build step:
+</p>
+
+```javascript
+YUI().use('template-base', 'handlebars-base', function (Y) {
+    // Creates a limited template engine instance using Handlebars as the
+    // underlaying engine, but with only the runtime functionality.
+    var handlebars = new Y.Template(Y.Handlebars);
+});
+```
+
+<p>
+<strong>Note:</strong> In the above example, the `handlebars` engine does <strong>not</strong> have the ability to `render()`, `compile()`, or `precompile()` template. It only has the ability to `revive()` and execute precompiled templates.
+</p>
+
+<p>
+The following example, uses the `handlebars` virtual rollup module which includes the `handlebars-compiler`. This enables the Handlebars-backed template engine instances to use the <a href="{{apiDocs}}/classes/Template.html">full API</a>:
+</p>
+
+```javascript
+YUI().use('template-base', 'handlebars', function (Y) {
+    // Creates a template engine instance using Handlebars as the underlaying
+    // engine, with both the runtime and compiler functionality.
+    var handlebars = new Y.Template(Y.Handlebars);
+});
+```
 
 <h3>Compiling and Rendering Templates</h3>
 
