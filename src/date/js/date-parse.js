@@ -5,8 +5,6 @@
  * @submodule datatype-date-parse
  * @for Date
  */
-var LANG = Y.Lang;
-
 Y.mix(Y.namespace("Date"), {
     /**
      * Converts data to type Date.
@@ -17,12 +15,10 @@ Y.mix(Y.namespace("Date"), {
      */
     parse: function(data) {
         var val = new Date(+data || data);
-        // Validate
-        if(LANG.isDate(date) && (date != "Invalid Date") && !isNaN(date)) { // Workaround for bug 2527965
-            return date;
-        }
-        else {
-            Y.log("Could not convert data to type Date", "warn", "date");
+        if (Y.Lang.isDate(val)) {
+            return val;
+        } else {
+            Y.log("Could not convert data " + Y.dump(val) + " to type Date", "warn", "date");
             return null;
         }
     }
