@@ -136,7 +136,6 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
         var self = this;
 
         this._pluginHideTimeout = setTimeout(function () {
-            console.log('anchorTimeout');
             self.hide();
         }, 300);
     },
