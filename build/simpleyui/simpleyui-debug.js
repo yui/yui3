@@ -3858,6 +3858,7 @@ YUI.Env.aliases = {
     "recordset": ["recordset-base","recordset-sort","recordset-filter","recordset-indexer"],
     "resize": ["resize-base","resize-proxy","resize-constrain"],
     "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
+    "template": ["template-base","template-micro"],
     "text": ["text-accentfold","text-wordbreak"],
     "widget": ["widget-base","widget-htmlparser","widget-skin","widget-uievents"]
 };
@@ -20456,22 +20457,5 @@ YUI.add('yui', function (Y, NAME) {
 
 
 
-}, '@VERSION@', {
-    "use": [
-        "yui",
-        "oop",
-        "dom",
-        "event-custom-base",
-        "event-base",
-        "pluginhost",
-        "node",
-        "event-delegate",
-        "io-base",
-        "json-parse",
-        "transition",
-        "selector-css3",
-        "dom-style-ie",
-        "querystring-stringify-simple"
-    ]
-});
+}, '@VERSION@', {"use": ["yui", "oop", "dom", "event-custom-base", "event-base", "pluginhost", "node", "event-delegate", "io-base", "json-parse", "transition", "selector-css3", "dom-style-ie", "querystring-stringify-simple"]});
 var Y = YUI().use('*');
