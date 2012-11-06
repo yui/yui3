@@ -141,16 +141,20 @@
                 }
 
                 button.on('click', function(e) {
-                    YUI({lang: locale.get("value"), filter: "raw" }).use("format-date", function(Y) {
+                    YUI({lang: locale.get("value"), filter: "raw" }).use("datatype-date-advanced-format", function(Y) {
                         var dateFormat = Y.DateFormat.DATE_FORMATS[dateFormatNode.get("value")];
                         if(relativeDateNode.get("checked")) {
                             dateFormat = dateFormat | Y.DateFormat.DATE_FORMATS.RELATIVE_DATE;
                         }
                         var timeFormat = Y.DateFormat.TIME_FORMATS[timeFormatNode.get("value")];
                         var timeZoneFormat = Y.DateFormat.TIMEZONE_FORMATS[timeZoneFormatNode.get("value")];
-                        var formatter = new Y.DateFormat(tzoneNode.get("value"), dateFormat, timeFormat, timeZoneFormat);
                         var date = new Date(dateNode.get('value'));
-                        var result = formatter.format(date);
+                        var result = Y.Date.format(date, {
+                            timezone: tzoneNode.get("value"),
+                            dateFormat: dateFormat,
+                            timeFormat: timeFormat,
+                            timezoneFormat: timeZoneFormat
+                        });
                         resultNode.set('value', result);
                     });
                 });

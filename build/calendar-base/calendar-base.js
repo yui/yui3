@@ -1636,4 +1636,27 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 });
 
 
-}, '@VERSION@', {"requires": ["widget", "substitute", "datatype-date", "datatype-date-math", "cssgrids"], "lang": ["de", "en", "es", "es-AR", "fr", "it", "ja", "nb-NO", "nl", "pt-BR", "ru", "zh-HANT-TW"], "skinnable": true});
+}, '@VERSION@', {
+    "requires": [
+        "widget",
+        "substitute",
+        "datatype-date",
+        "datatype-date-math",
+        "cssgrids"
+    ],
+    "lang": [
+        "de",
+        "en",
+        "es",
+        "es-AR",
+        "fr",
+        "it",
+        "ja",
+        "nb-NO",
+        "nl",
+        "pt-BR",
+        "ru",
+        "zh-HANT-TW"
+    ],
+    "skinnable": true
+});

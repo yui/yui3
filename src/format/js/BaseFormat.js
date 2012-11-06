@@ -26,27 +26,29 @@ Format.prototype._pattern = null;
 Format.prototype._segments = null;
 
 //Exceptions
-    
-Format.ParsingException = function(message) {
-    this.message = message;
-}
-Format.ParsingException.prototype.toString = function() {
-    return "ParsingException: " + this.message;
-}
 
-Format.IllegalArgumentsException = function(message) {
-    this.message = message;
-}
-Format.IllegalArgumentsException.prototype.toString = function() {
-    return "IllegalArgumentsException: " + this.message;
-}
-    
-Format.FormatException = function(message) {
-    this.message = message;
-}
-Format.FormatException.prototype.toString = function() {
-    return "FormatException: " + this.message;
-}    
+Y.mix(Format, {
+    Exception: function(name, message) {
+        this.name = name;
+        this.message = message;
+        this.toString = function() {
+            return this.name + ": " + this.message;
+        }
+    },
+    ParsingException: function(message) {
+        ParsingException.superclass.constructor.call(this, "ParsingException", message);
+    },
+    IllegalArgumentsException: function(message) {
+        IllegalArgumentsException.superclass.constructor.call(this, "IllegalArgumentsException", message);
+    },
+    FormatException: function(message) {
+        FormatException.superclass.constructor.call(this, "FormatException", message);
+    }
+});
+
+Y.extend(Format.ParsingException, Format.Exception);
+Y.extend(Format.IllegalArgumentsException, Format.Exception);
+Y.extend(Format.FormatException, Format.Exception);
 
 // Public methods
 
@@ -100,11 +102,11 @@ Format.prototype.parse = function(s, pp) {
 };
     
 /**
-     * Creates the object that is initialized by parsing
-     * <p>
-     * <strong>Note:</strong>
-     * This must be implemented by sub-classes.
-     */
+ * Creates the object that is initialized by parsing
+ * <p>
+ * <strong>Note:</strong>
+ * This must be implemented by sub-classes.
+ */
 Format.prototype._createParseObject = function(s) {
     throw new Format.ParsingException("Not implemented");
 };
@@ -119,11 +121,6 @@ Format.Segment = function(format, s) {
     this._s = s;
 };
     
-// Data
-
-Format.Segment.prototype._parent = null;
-Format.Segment.prototype._s = null;
-
 // Public methods
 
 Format.Segment.prototype.format = function(o) { 
@@ -215,10 +212,10 @@ Format.Segment._parseInt = function(o, f, adjust, s, index, fixedlen, radix) {
 
 Format.TextSegment = function(format, s) {
     if (arguments.length == 0) return;
-    Format.Segment.call(this, format, s);
+    Format.TextSegment.superclass.constructor.call(this, format, s);
 };
-Format.TextSegment.prototype = new Format.Segment;
-Format.TextSegment.prototype.constructor = Format.TextSegment;
+
+Y.extend(Format.TextSegment, Format.Segment);
 
 Format.TextSegment.prototype.toString = function() { 
     return "text: \""+this._s+'"'; 

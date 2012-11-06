@@ -1,9 +1,10 @@
 {
     "name": "format",
     "builds": {
-        "format-date": {
+        "datatype-date-advanced-format": {
             "jsfiles": [
 		"BaseFormat.js",
+                "DateFormat.js",
                 "format-date.js"
             ]
         },

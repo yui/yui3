@@ -3825,6 +3825,7 @@ YUI.Env.aliases = {
     "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside","event-touch","event-move","event-flick","event-valuechange","event-tap"],
     "event-custom": ["event-custom-base","event-custom-complex"],
     "event-gestures": ["event-flick","event-move"],
+    "format": ["datatype-date-advanced-format","format-relative","format-duration","format-numbers","format-message"],
     "handlebars": ["handlebars-compiler"],
     "highlight": ["highlight-base","highlight-accentfold"],
     "history": ["history-base","history-hash","history-hash-ie","history-html5"],
@@ -20355,5 +20356,22 @@ YUI.add('yui', function (Y, NAME) {
 
 
 
-}, '@VERSION@', {"use": ["yui", "oop", "dom", "event-custom-base", "event-base", "pluginhost", "node", "event-delegate", "io-base", "json-parse", "transition", "selector-css3", "dom-style-ie", "querystring-stringify-simple"]});
+}, '@VERSION@', {
+    "use": [
+        "yui",
+        "oop",
+        "dom",
+        "event-custom-base",
+        "event-base",
+        "pluginhost",
+        "node",
+        "event-delegate",
+        "io-base",
+        "json-parse",
+        "transition",
+        "selector-css3",
+        "dom-style-ie",
+        "querystring-stringify-simple"
+    ]
+});
 var Y = YUI().use('*');

@@ -1,1 +1,1 @@
-YUI.add("lang/format-duration_zh-Hans-MO",function(e){e.Intl.add("format-duration","zh-Hans-MO",{HMS_long:"{0}{1}{2}",HMS_short:"{0}:{1}:{2}",day:"",days:"",hour:"时",hours:"时",minute:"",minutes:"",month:"",months:"",second:"",seconds:"",year:"",years:""})},"@VERSION@");
+YUI.add("lang/format-duration_zh-Hans-MO",function(e){e.Intl.add("format-duration","zh-Hans-MO",{HMS_long:"{0}{1}{2}",HMS_short:"{0}:{1}:{2}",day:"",days:"",hour:"\u65f6",hours:"\u65f6",minute:"",minutes:"",month:"",months:"",second:"",seconds:"",year:"",years:""})},"@VERSION@");

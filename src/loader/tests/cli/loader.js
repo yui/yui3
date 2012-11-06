@@ -1126,6 +1126,16 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("datatype-date-format")) > -1, "Module (datatype-date-format) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatype-date-math")) > -1, "Module (datatype-date-math) not found in sorted array");
         },
+     "Testing datatype-date-advanced-format": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-date-advanced-format"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-advanced-format")) > -1, "Module (datatype-date-advanced-format) not found in sorted array");
+        },
      "Testing datatype-date-format": function(data) {
             var loader = new Y.Loader({
                 require: ["datatype-date-format"],
@@ -1862,21 +1872,11 @@ suite.add(new YUITest.TestCase({
             });
             loader.calculate();
             //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("format-date")) > -1, "Module (format-date) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-advanced-format")) > -1, "Module (datatype-date-advanced-format) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("format-relative")) > -1, "Module (format-relative) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("format-duration")) > -1, "Module (format-duration) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("format-numbers")) > -1, "Module (format-numbers) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("format-message")) > -1, "Module (format-message) not found in sorted array");
-        },
-     "Testing format-date": function(data) {
-            var loader = new Y.Loader({
-                require: ["format-date"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("format-date")) > -1, "Module (format-date) not found in sorted array");
         },
      "Testing format-duration": function(data) {
             var loader = new Y.Loader({

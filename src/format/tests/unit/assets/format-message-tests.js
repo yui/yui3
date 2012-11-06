@@ -7,7 +7,7 @@ YUI.add('format-message-tests', function(Y) {
         setUp: function() {
 
             Y.Intl.add(
-                "format-date",
+                "datatype-date-advanced-format",
                 "en",
                 {
                     "YMD_short" : "M/d/yy",

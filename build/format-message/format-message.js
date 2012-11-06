@@ -108,10 +108,10 @@ StringFormatter.prototype.format = function(str) {
 DateFormatter = function(values) {
     Formatter.call(this, values);
     this.styles = {
-        "short":  [ Y.DateFormat.DATE_FORMATS.YMD_SHORT, 0, 0 ],
-        "medium": [ Y.DateFormat.DATE_FORMATS.YMD_ABBREVIATED,0, 0 ],
-        "long":   [ Y.DateFormat.DATE_FORMATS.YMD_LONG, 0, 0 ],
-        "full":   [ Y.DateFormat.DATE_FORMATS.WYMD_LONG, 0, 0 ]
+        "short":  [ Y.Date.DATE_FORMATS.YMD_SHORT, 0, 0 ],
+        "medium": [ Y.Date.DATE_FORMATS.YMD_ABBREVIATED,0, 0 ],
+        "long":   [ Y.Date.DATE_FORMATS.YMD_LONG, 0, 0 ],
+        "full":   [ Y.Date.DATE_FORMATS.WYMD_LONG, 0, 0 ]
     };
     this.regex = "{\\s*([a-zA-Z0-9_]+)\\s*,\\s*date\\s*(,\\s*(\\w+)\\s*)?}";
 }
@@ -157,8 +157,13 @@ DateFormatter.prototype.format = function(str) {
         if(this.getParams(params, matches)) {
             //Got a match
             var style = this.styles[params.style];
-            var format = new Y.DateFormat(Formatter.getTimeZone(), style[0], style[1], style[2]);
-            str = str.replace(matches[0], format.format(new Date(params.value)));
+            var result = Y.Date.format(new Date(params.value), {
+                timezone: Formatter.getTimeZone(),
+                dateFormat: style[0],
+                timeFormat: style[1],
+                timezoneFormat: style[2]
+            })
+            str = str.replace(matches[0], result);
         }
 
     }
@@ -168,10 +173,10 @@ DateFormatter.prototype.format = function(str) {
 TimeFormatter = function(values) {
     DateFormatter.call(this, values);
     this.styles = {
-        "short": [ 0, Y.DateFormat.TIME_FORMATS.HM_SHORT, Y.DateFormat.TIMEZONE_FORMATS.NONE ],
-        "medium": [ 0, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.NONE ],
-        "long": [ 0, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.Z_SHORT ],
-        "full": [ 0, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.Z_ABBREVIATED ]
+        "short": [ 0, Y.Date.TIME_FORMATS.HM_SHORT, Y.Date.TIMEZONE_FORMATS.NONE ],
+        "medium": [ 0, Y.Date.TIME_FORMATS.HM_ABBREVIATED, Y.Date.TIMEZONE_FORMATS.NONE ],
+        "long": [ 0, Y.Date.TIME_FORMATS.HM_ABBREVIATED, Y.Date.TIMEZONE_FORMATS.Z_SHORT ],
+        "full": [ 0, Y.Date.TIME_FORMATS.HM_ABBREVIATED, Y.Date.TIMEZONE_FORMATS.Z_ABBREVIATED ]
     };
     this.regex = "{\\s*([a-zA-Z0-9_]+)\\s*,\\s*time\\s*(,\\s*(\\w+)\\s*)?}";
 }
@@ -469,4 +474,4 @@ Y.MessageFormat = {
 }
 
 
-}, '@VERSION@', {"requires": ["format-date", "format-numbers"]});
+}, '@VERSION@', {"requires": ["datatype-date-advanced-format", "format-numbers"]});
