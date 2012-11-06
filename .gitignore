@@ -14,3 +14,4 @@ src/build.log
 src/out
 node_modules
 api-js/
+/*.project
