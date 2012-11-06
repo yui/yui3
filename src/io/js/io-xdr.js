@@ -142,13 +142,11 @@ Y.mix(Y.IO.prototype, {
             _rS[i] = 4;
             io.xdrResponse('failure', o, c);
         };
-        if (c[t]) {
-            o.c.ontimeout = function() {
-                _rS[i] = 4;
-                io.xdrResponse(t, o, c);
-            };
-            o.c[t] = c[t];
-        }
+        o.c.ontimeout = function() {
+            _rS[i] = 4;
+            io.xdrResponse(t, o, c);
+        };
+        o.c[t] = c[t] || 0;
     },
 
     /**
@@ -184,7 +182,9 @@ Y.mix(Y.IO.prototype, {
         else if (xdr) {
             io._ieEvt(o, c);
             o.c.open(c.method || 'GET', uri);
-            o.c.send(c.data);
+            setTimeout(function() {
+                o.c.send(c.data);
+            }, 0);
         }
         else {
             o.c.send(uri, o, c);
