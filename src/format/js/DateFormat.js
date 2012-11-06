@@ -697,6 +697,10 @@ Y.mix(Y.Date, {
  */
 YDateFormat.prototype._generateDatePattern = function() {
     var format = this._dateFormat;
+    if(format && Y.Lang.isString(format)) {
+        format = Y.Date.DATE_FORMATS[format];
+    }
+    
     if(format == null) return "";
     if(format & Y.Date.DATE_FORMATS.RELATIVE_DATE) {
         this._relative = true;
@@ -759,6 +763,10 @@ YDateFormat.prototype._generateDatePattern = function() {
  */
 YDateFormat.prototype._generateTimePattern = function() {
     var format = this._timeFormat;
+    if(format && Y.Lang.isString(format)) {
+        format = Y.Date.TIME_FORMATS[format];
+    }
+    
     if(format == null) return "";
     switch(format) {
         case Y.Date.TIME_FORMATS.NONE:
@@ -780,6 +788,10 @@ YDateFormat.prototype._generateTimePattern = function() {
  */
 YDateFormat.prototype._generateTimeZonePattern = function() {
     var format = this._timeZoneFormat;
+    if(format && Y.Lang.isString(format)) {
+        format = Y.Date.TIMEZONE_FORMATS[format];
+    }
+    
     if(format == null) return "";
     switch(format) {
         case Y.Date.TIMEZONE_FORMATS.NONE:
