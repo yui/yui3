@@ -1,3 +1,22 @@
+<style scoped>
+.micro-code {
+    margin-bottom: 0.5em;
+}
+.micro-code pre.code {
+    height: 100%;
+    margin: 0;
+}
+
+.micro-code td,
+.micro-code th {
+    background: #fff;
+    padding: 0 0 0 12px;
+}
+
+.micro-code td:first-child,
+.micro-code th:first-child { padding-left: 0; }
+</style>
+
 <div class="intro">
 <p>
 The Template component provides `Y.Template`, a generic template engine API, and `Y.Template.Micro`, a string-based micro-templating language similar to <a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html">ERB</a> and <a href="http://underscorejs.org/#template">Underscore</a> templates.
@@ -25,7 +44,7 @@ The quickest way to get started is using the `template` module which will load b
 ```javascript
 YUI().use('template', function (Y) {
     var micro = new Y.Template(),
-        html  = micro.render('<i><%= data.message %></i>', {message: 'hello!'});
+        html  = micro.render('<i><%= this.message %></i>', {message: 'hello!'});
 
     Y.log(html); // => "<i>hello!</i>"
 });
@@ -222,7 +241,7 @@ var engine, template;
 engine = new Y.Template();
 
 // Compile a template into a reusable function.
-template = engine.compile('My favorite animal is a <%= data.animal %>.');
+template = engine.compile('My favorite animal is a <%= this.animal %>.');
 ```
 
 <p>
@@ -251,12 +270,12 @@ If you don't plan to use a template more than once, you can compile and render i
 
 ```javascript
 // Compile and render a template in a single step.
-output = engine.render('My favorite animal is a <%= data.animal %>.', {animal: 'Rhino'});
+output = engine.render('My favorite animal is a <%= this.animal %>.', {animal: 'Rhino'});
 Y.log(output); // => "My favorite animal is a Rhino."
 ```
 
 <p>
-<strong> Note:</strong> The above examples are using Micro templates. If these examples used Handlebars templates, the `engine` instance would have been created using `Y.Handlebars`, and template syntax would have used `\{{animal}}` instead of `<%= data.animal %>`.
+<strong> Note:</strong> The above examples are using Micro templates. If these examples used Handlebars templates, the `engine` instance would have been created using `Y.Handlebars`, and template syntax would have used `\{{animal}}` instead of `<%= this.animal %>`.
 </p>
 
 <h3>Precompiling and Reviving Templates</h3>
@@ -348,15 +367,147 @@ The generic `Y.Template` interface is [[#Generic Template API|designed]] to work
 
 <h2>Using `Template.Micro`</h2>
 
-<p>[Overview of what Template.Micro is and what kinds of use cases it's suited for -- when you'd use it vs. Handlebars, etc.]</p>
+<p>
+`Y.Template.Micro` is a string-based micro-templating language similar to <a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html">ERB</a> and <a href="http://underscorejs.org/#template">Underscore</a> templates. Template.Micro is great for small, powerful templates, and its compilation engine is <em>extremely</em> fast with a small footprint.
+</p>
+
+<p>
+Compared with the features of Handlebars, Template.Micro is much simpler. Using the [[#Generic Template API|generic engine API]] provided by `Y.Template`, Micro and Handlebars templates can be used interchangeably. This gives you a powerful way to customize a component's Handlebars templates by overriding them with Micro templates, and not incur the cost of loading the `handlebars-compiler` module.
+</p>
 
 <h3>Template Syntax</h3>
 
 <h4>Basic Expressions</h4>
 
+<p>
+Within a Micro template, use `<%= ... %>` to output the value of an expression (where `...` is the JavaScript expression or data variable to evaluate). The output will be <strong>HTML-escaped by default.</strong>
+</p>
+
+<p>
+A simple Template.Micro expression looks like this:
+</p>
+
+```
+<h1><%= this.title %></h1>
+```
+
+<p>
+This tells Template.Micro:
+</p>
+
+<ol>
+    <li>
+        <p>
+        if there exists a `title` property in the current context in which the template function was executed, and that property is not falsy or an empty array, insert its value here.
+        </p>
+    </li>
+    <li>
+        <p>
+        Otherwise, insert an empty string.
+        </p>
+    </li>
+</ol>
+
+<p>
+The following example shows how the data context is defined when executing a Micro template function:
+</p>
+
+```javascript
+var micro   = new Y.Template(),
+    heading = micro.compile('<h1><%= this.title %></h1>'),
+    output;
+
+// The object passed to the template function becomes the context in which the
+// template is executed. This object is also available through the `data`
+// variable within the template's expressions.
+output = heading({title: 'The Adventures of the Spotted Cuscus'});
+Y.log(output); // => "<h1>The Adventures of the Spotted Cuscus</h1>"
+```
+
+<p>
+<strong>Note:</strong> The template functions are `call()`-ed with the context of the object which is passed to the template function. This object is also available through the `data` variable. Therefore, `data === this`, within the template expressions. The previous template could have been written as:
+</p>
+
+```
+<h1><%= data.title %></h1>
+```
+
 <h4>HTML Escaping</h4>
 
+<p>
+By default, content rendered using a percent-equals expression like `<%= foo %>` will automatically be HTML-escaped for safety. To render unescaped HTML output, use a percent-double-equals expression like `<%== foo %>`. <strong>Only use a percent-double-equals expression for content you trust!</strong> Never use it to render unfiltered user input.
+</p>
+
 <h4>Inline Code &amp; Code Blocks</h4>
+
+<p>
+To execute arbitrary JavaScript code within the template without rendering its output, use `<% ... %>` (where `...` is the code to be executed). This allows the use of if/else blocks, loops, function calls, etc., although it's recommended that you avoid embedding anything beyond basic flow control logic in your templates.
+</p>
+
+<table class="micro-code">
+    <thead>
+        <tr>
+            <th>Template Source</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td width="100%">
+                ```html
+                <h1>Animals</h1>
+
+                <ul class="<%= this.classNames.list %>">
+                  <% Y.Array.each(this.animals, function (animal, i) { %>
+                    <li class="<% i % 2 ? 'odd' : 'even' %>">
+                        <%= animal %>
+                    </li>
+                  <% }); %>
+                </ul>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="micro-code">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td width="50%">
+                ```javascript
+                {
+                    classNames: {list: 'animals'},
+
+                    animals: [
+                        'Rhino',
+                        'Plain Tiger butterfly',
+                        'Spotted Cuscus'
+                    ]
+                }
+                ```
+            </td>
+
+            <td width="50%">
+                ```html
+                <h1>Animals</h1>
+
+                <ul class="animals">
+                    <li class="even">Rhino</li>
+                    <li class="odd">Plain Tiger butterfly</li>
+                    <li class="even">Spotted Cuscus</li>
+                </ul>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 <h3>Precompiling and Reviving Micro Templates</h3>
 
@@ -385,7 +536,7 @@ Next, in your application code, call the <a href="{{apiDocs}}/classes/Template.M
 var Micro = require('yui/template-micro').Template.Micro;
 
 // Precompile a template string (pass any string you like here).
-var precompiled = Micro.precompile('My favorite animal is a <%= data.animal %>.');
+var precompiled = Micro.precompile('My favorite animal is a <%= this.animal %>.');
 ```
 
 <p>
@@ -393,7 +544,12 @@ The `precompiled` variable will contain a string of JavaScript code that looks s
 </p>
 
 ```javascript
-function (Y, $e, data) {\nvar $b=\'\',$t=\'My favorite animal is a \'+\n$e(( data.animal )||$b)+\n\'.\';\nreturn $t;\n}
+function (Y, $e, data) {
+var $b='',$t='My favorite animal is a '+
+$e(( this.animal )||$b)+
+'.';
+return $t;
+}
 ```
 
 <p>
@@ -410,7 +566,7 @@ var Micro   = require('yui/template-micro').Template.Micro,
     express = require('express'),
     app     = express(),
 
-    precompiled = Micro.precompile('My favorite animal is a <%= data.animal %>.');
+    precompiled = Micro.precompile('My favorite animal is a <%= this.animal %>.');
 
 app.get('/', function (req, res) {
     res.send(
