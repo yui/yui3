@@ -26,7 +26,7 @@ _yuitest_coverage["build/color-hsl/color-hsl.js"] = {
     path: "build/color-hsl/color-hsl.js",
     code: []
 };
-_yuitest_coverage["build/color-hsl/color-hsl.js"].code=["YUI.add('color-hsl', function (Y, NAME) {","","/**","Color provides static methods for color conversion to hsl values.","","    Y.Color.toHSL('f00'); // hsl(0, 100%, 50%)","","    Y.Color.toHSLA('rgb(255, 255, 0'); // hsla(60, 100%, 50%, 1)","","@module color","@submodule color-hsl","@class HSL","@namespace Color","@since 3.x","**/","Color = {","","    /**","    @static","    @property REGEX_HSL","    @type RegExp","    @default /hsla?\\(([.\\d]*), ?([.\\d]*)%, ?([.\\d]*)%,? ?([.\\d]*)?\\)/","    @since 3.x","    **/","    REGEX_HSL: /hsla?\\(([.\\d]*), ?([.\\d]*)%, ?([.\\d]*)%,? ?([.\\d]*)?\\)/,","","    /**","    @static","    @property STR_HSL","    @type String","    @default hsl({*}, {*}%, {*}%)","    @since 3.x","    **/","    STR_HSL: 'hsl({*}, {*}%, {*}%)',","","    /**","    @static","    @property STR_HSLA","    @type String","    @default hsla({*}, {*}%, {*}%, {*})","    @since 3.x","    **/","    STR_HSLA: 'hsla({*}, {*}%, {*}%, {*})',","","    /**","    Converts provided color value to an HSL string.","    @public","    @method toHSL","    @param {String} str","    @returns {String}","    @since 3.x","    **/","    toHSL: function (str) {","        var clr = Y.Color._convertTo(str, 'hsl');","        return clr.toLowerCase();","    },","","    /**","    Converts provided color value to an HSLA string.","    @public","    @method toHSLA","    @param {String} str","    @returns {String}","    @since 3.x","    **/","    toHSLA: function (str) {","        var clr = Y.Color._convertTo(str, 'hsla');","        return clr.toLowerCase();","    },","","    /**","    Parses the RGB string into h, s, l values. Will return an Array","        of values or an HSL string.","    @protected","    @method _rgbToHsl","    @param {String} str","    @param {Boolean} [toArray]","    @returns {String|Array}","    @since 3.x","    **/","    _rgbToHsl: function (str, toArray) {","        var h, s, l,","            rgb = Y.Color.REGEX_RGB.exec(str),","            r = rgb[1] / 255,","            g = rgb[2] / 255,","            b = rgb[3] / 255,","            max = Math.max(r, g, b),","            min = Math.min(r, g, b),","            isGrayScale = false,","            sub = max - min,","            sum = max + min;","","","        if (r === g && g === b) {","            isGrayScale = true;","        }","","        // hue","        if (sub === 0) {","            h = 0;","        } else if (r === max) {","            h = ((60 * (g - b) / sub) + 360) % 360;","        } else if (g === max) {","            h = (60 * (b - r) / sub) + 120;","        } else {","            h = (60 * (r - g) / sub) + 240;","        }","","        // lightness","        l = sum / 2;","","        // saturation","        if (l === 0 || l === 1) {","            s = l;","        } else if (l <= 0.5) {","            s = sub / sum;","        } else {","            s = sub / (2 - sum);","        }","","        if (isGrayScale) {","            s = 0;","        }","","        // clean up hsl","        h = Math.round(h);","        s = Math.round(s * 100);","        l = Math.round(l * 100);","","        if (toArray) {","            return [h, s, l];","        }","","        return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';","    },","","    /**","    Parses the HSL string into r, b, g values. Will return an Array","        of values or an RGB string.","    @protected","    @method _hslToRgb","    @param {String} str","    @param {Boolean} [toArray]","    @returns {String|Array}","    @since 3.x","    **/","    _hslToRgb: function (str, toArray) {","        // assume input is [h, s, l]","        // TODO: Find legals for use of formula","        var hsl = Y.Color.REGEX_HSL.exec(str),","            h = parseInt(hsl[1], 10) / 360,","            s = parseInt(hsl[2], 10) / 100,","            l = parseInt(hsl[3], 10) / 100,","            r,","            g,","            b,","            p,","            q;","","        if (l <= 0.5) {","            q = l * (s + 1);","        } else {","            q = (l + s) - (l * s);","        }","","        p = 2 * l - q;","","        r = Math.round(Color._hueToRGB(p, q, h + 1/3) * 255);","        g = Math.round(Color._hueToRGB(p, q, h) * 255);","        b = Math.round(Color._hueToRGB(p, q, h - 1/3) * 255);","","        if (toArray) {","            return [r, g, b];","        }","","        return 'rgb(' + r + ', ' + g + ', ' + b + ')';","    },","","    /**","    Converts the HSL hue to the different channels for RGB","","    @protected","    @method _hueToRGB","    @param {Number} p","    @param {Number} q","    @param {Number} hue","    @return {Number} value for requested channel","    @since 3.x","    **/","    _hueToRGB: function(p, q, hue) {","        // TODO: Find legals for use of formula","        if (hue < 0) {","            hue += 1;","        } else if (hue > 1) {","            hue -= 1;","        }","","        if (hue * 6 < 1) {","            return p + (q - p) * 6 * hue;","        }","        if (hue * 2 < 1) {","            return q;","        }","        if (hue * 3 < 2) {","            return p + (q - p) * (2/3 - hue) * 6;","        }","        return p;","    }","","};","","Y.Color = Y.mix(Color, Y.Color);","","Y.Color.TYPES = Y.mix(Y.Color.TYPES, {'HSL':'hsl', 'HSLA':'hsla'});","Y.Color.CONVERTS = Y.mix(Y.Color.CONVERTS, {'hsl': 'toHSL', 'hsla': 'toHSLA'});","","","}, '@VERSION@', {\"requires\": [\"color-base\"]});"];
+_yuitest_coverage["build/color-hsl/color-hsl.js"].code=["YUI.add('color-hsl', function (Y, NAME) {","","/**","Color provides static methods for color conversion to hsl values.","","    Y.Color.toHSL('f00'); // hsl(0, 100%, 50%)","","    Y.Color.toHSLA('rgb(255, 255, 0'); // hsla(60, 100%, 50%, 1)","","@module color","@submodule color-hsl","@class HSL","@namespace Color","@since 3.8.0","**/","Color = {","","    /**","    @static","    @property REGEX_HSL","    @type RegExp","    @default /hsla?\\(([.\\d]*), ?([.\\d]*)%, ?([.\\d]*)%,? ?([.\\d]*)?\\)/","    @since 3.8.0","    **/","    REGEX_HSL: /hsla?\\(([.\\d]*), ?([.\\d]*)%, ?([.\\d]*)%,? ?([.\\d]*)?\\)/,","","    /**","    @static","    @property STR_HSL","    @type String","    @default hsl({*}, {*}%, {*}%)","    @since 3.8.0","    **/","    STR_HSL: 'hsl({*}, {*}%, {*}%)',","","    /**","    @static","    @property STR_HSLA","    @type String","    @default hsla({*}, {*}%, {*}%, {*})","    @since 3.8.0","    **/","    STR_HSLA: 'hsla({*}, {*}%, {*}%, {*})',","","    /**","    Converts provided color value to an HSL string.","    @public","    @method toHSL","    @param {String} str","    @return {String}","    @since 3.8.0","    **/","    toHSL: function (str) {","        var clr = Y.Color._convertTo(str, 'hsl');","        return clr.toLowerCase();","    },","","    /**","    Converts provided color value to an HSLA string.","    @public","    @method toHSLA","    @param {String} str","    @return {String}","    @since 3.8.0","    **/","    toHSLA: function (str) {","        var clr = Y.Color._convertTo(str, 'hsla');","        return clr.toLowerCase();","    },","","    /**","    Parses the RGB string into h, s, l values. Will return an Array","        of values or an HSL string.","    @protected","    @method _rgbToHsl","    @param {String} str","    @param {Boolean} [toArray]","    @return {String|Array}","    @since 3.8.0","    **/","    _rgbToHsl: function (str, toArray) {","        var h, s, l,","            rgb = Y.Color.REGEX_RGB.exec(str),","            r = rgb[1] / 255,","            g = rgb[2] / 255,","            b = rgb[3] / 255,","            max = Math.max(r, g, b),","            min = Math.min(r, g, b),","            isGrayScale = false,","            sub = max - min,","            sum = max + min;","","","        if (r === g && g === b) {","            isGrayScale = true;","        }","","        // hue","        if (sub === 0) {","            h = 0;","        } else if (r === max) {","            h = ((60 * (g - b) / sub) + 360) % 360;","        } else if (g === max) {","            h = (60 * (b - r) / sub) + 120;","        } else {","            h = (60 * (r - g) / sub) + 240;","        }","","        // lightness","        l = sum / 2;","","        // saturation","        if (l === 0 || l === 1) {","            s = l;","        } else if (l <= 0.5) {","            s = sub / sum;","        } else {","            s = sub / (2 - sum);","        }","","        if (isGrayScale) {","            s = 0;","        }","","        // clean up hsl","        h = Math.round(h);","        s = Math.round(s * 100);","        l = Math.round(l * 100);","","        if (toArray) {","            return [h, s, l];","        }","","        return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';","    },","","    /**","    Parses the HSL string into r, b, g values. Will return an Array","        of values or an RGB string.","    @protected","    @method _hslToRgb","    @param {String} str","    @param {Boolean} [toArray]","    @return {String|Array}","    @since 3.8.0","    **/","    _hslToRgb: function (str, toArray) {","        // assume input is [h, s, l]","        // TODO: Find legals for use of formula","        var hsl = Y.Color.REGEX_HSL.exec(str),","            h = parseInt(hsl[1], 10) / 360,","            s = parseInt(hsl[2], 10) / 100,","            l = parseInt(hsl[3], 10) / 100,","            r,","            g,","            b,","            p,","            q;","","        if (l <= 0.5) {","            q = l * (s + 1);","        } else {","            q = (l + s) - (l * s);","        }","","        p = 2 * l - q;","","        r = Math.round(Color._hueToRGB(p, q, h + 1/3) * 255);","        g = Math.round(Color._hueToRGB(p, q, h) * 255);","        b = Math.round(Color._hueToRGB(p, q, h - 1/3) * 255);","","        if (toArray) {","            return [r, g, b];","        }","","        return 'rgb(' + r + ', ' + g + ', ' + b + ')';","    },","","    /**","    Converts the HSL hue to the different channels for RGB","","    @protected","    @method _hueToRGB","    @param {Number} p","    @param {Number} q","    @param {Number} hue","    @return {Number} value for requested channel","    @since 3.8.0","    **/","    _hueToRGB: function(p, q, hue) {","        // TODO: Find legals for use of formula","        if (hue < 0) {","            hue += 1;","        } else if (hue > 1) {","            hue -= 1;","        }","","        if (hue * 6 < 1) {","            return p + (q - p) * 6 * hue;","        }","        if (hue * 2 < 1) {","            return q;","        }","        if (hue * 3 < 2) {","            return p + (q - p) * (2/3 - hue) * 6;","        }","        return p;","    }","","};","","Y.Color = Y.mix(Color, Y.Color);","","Y.Color.TYPES = Y.mix(Y.Color.TYPES, {'HSL':'hsl', 'HSLA':'hsla'});","Y.Color.CONVERTS = Y.mix(Y.Color.CONVERTS, {'hsl': 'toHSL', 'hsla': 'toHSLA'});","","","}, '@VERSION@', {\"requires\": [\"color-base\"]});"];
 _yuitest_coverage["build/color-hsl/color-hsl.js"].lines = {"1":0,"16":0,"54":0,"55":0,"67":0,"68":0,"82":0,"94":0,"95":0,"99":0,"100":0,"101":0,"102":0,"103":0,"104":0,"106":0,"110":0,"113":0,"114":0,"115":0,"116":0,"118":0,"121":0,"122":0,"126":0,"127":0,"128":0,"130":0,"131":0,"134":0,"150":0,"160":0,"161":0,"163":0,"166":0,"168":0,"169":0,"170":0,"172":0,"173":0,"176":0,"192":0,"193":0,"194":0,"195":0,"198":0,"199":0,"201":0,"202":0,"204":0,"205":0,"207":0,"212":0,"214":0,"215":0};
 _yuitest_coverage["build/color-hsl/color-hsl.js"].functions = {"toHSL:53":0,"toHSLA:66":0,"_rgbToHsl:81":0,"_hslToRgb:147":0,"_hueToRGB:190":0,"(anonymous 1):1":0};
 _yuitest_coverage["build/color-hsl/color-hsl.js"].coveredLines = 55;
@@ -45,7 +45,7 @@ Color provides static methods for color conversion to hsl values.
 @submodule color-hsl
 @class HSL
 @namespace Color
-@since 3.x
+@since 3.8.0
 **/
 _yuitest_coverfunc("build/color-hsl/color-hsl.js", "(anonymous 1)", 1);
 _yuitest_coverline("build/color-hsl/color-hsl.js", 16);
@@ -56,7 +56,7 @@ Color = {
     @property REGEX_HSL
     @type RegExp
     @default /hsla?\(([.\d]*), ?([.\d]*)%, ?([.\d]*)%,? ?([.\d]*)?\)/
-    @since 3.x
+    @since 3.8.0
     **/
     REGEX_HSL: /hsla?\(([.\d]*), ?([.\d]*)%, ?([.\d]*)%,? ?([.\d]*)?\)/,
 
@@ -65,7 +65,7 @@ Color = {
     @property STR_HSL
     @type String
     @default hsl({*}, {*}%, {*}%)
-    @since 3.x
+    @since 3.8.0
     **/
     STR_HSL: 'hsl({*}, {*}%, {*}%)',
 
@@ -74,7 +74,7 @@ Color = {
     @property STR_HSLA
     @type String
     @default hsla({*}, {*}%, {*}%, {*})
-    @since 3.x
+    @since 3.8.0
     **/
     STR_HSLA: 'hsla({*}, {*}%, {*}%, {*})',
 
@@ -83,8 +83,8 @@ Color = {
     @public
     @method toHSL
     @param {String} str
-    @returns {String}
-    @since 3.x
+    @return {String}
+    @since 3.8.0
     **/
     toHSL: function (str) {
         _yuitest_coverfunc("build/color-hsl/color-hsl.js", "toHSL", 53);
@@ -99,8 +99,8 @@ return clr.toLowerCase();
     @public
     @method toHSLA
     @param {String} str
-    @returns {String}
-    @since 3.x
+    @return {String}
+    @since 3.8.0
     **/
     toHSLA: function (str) {
         _yuitest_coverfunc("build/color-hsl/color-hsl.js", "toHSLA", 66);
@@ -117,8 +117,8 @@ return clr.toLowerCase();
     @method _rgbToHsl
     @param {String} str
     @param {Boolean} [toArray]
-    @returns {String|Array}
-    @since 3.x
+    @return {String|Array}
+    @since 3.8.0
     **/
     _rgbToHsl: function (str, toArray) {
         _yuitest_coverfunc("build/color-hsl/color-hsl.js", "_rgbToHsl", 81);
@@ -208,8 +208,8 @@ return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
     @method _hslToRgb
     @param {String} str
     @param {Boolean} [toArray]
-    @returns {String|Array}
-    @since 3.x
+    @return {String|Array}
+    @since 3.8.0
     **/
     _hslToRgb: function (str, toArray) {
         // assume input is [h, s, l]
@@ -264,7 +264,7 @@ return 'rgb(' + r + ', ' + g + ', ' + b + ')';
     @param {Number} q
     @param {Number} hue
     @return {Number} value for requested channel
-    @since 3.x
+    @since 3.8.0
     **/
     _hueToRGB: function(p, q, hue) {
         // TODO: Find legals for use of formula

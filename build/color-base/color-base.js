@@ -12,7 +12,7 @@ Color provides static methods for color conversion.
 @submodule color-base
 @class Base
 @namespace Color
-@since 3.x
+@since 3.8.0
 **/
 
 var REGEX_HEX = /^#?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/,
@@ -27,7 +27,7 @@ Y.Color = {
     @static
     @property KEYWORDS
     @type Object
-    @since 3.x
+    @since 3.8.0
     **/
     KEYWORDS: {
         'black': '000', 'silver': 'c0c0c0', 'gray': '808080', 'white': 'fff',
@@ -41,7 +41,7 @@ Y.Color = {
     @property REGEX_HEX
     @type RegExp
     @default /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/
-    @since 3.x
+    @since 3.8.0
     **/
     REGEX_HEX: REGEX_HEX,
 
@@ -50,7 +50,7 @@ Y.Color = {
     @property REGEX_HEX3
     @type RegExp
     @default /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})/
-    @since 3.x
+    @since 3.8.0
     **/
     REGEX_HEX3: REGEX_HEX3,
 
@@ -59,7 +59,7 @@ Y.Color = {
     @property REGEX_RGB
     @type RegExp
     @default /rgba?\(([0-9]{1,3}), ?([0-9]{1,3}), ?([0-9]{1,3}),? ?([.0-9]{1,3})?\)/
-    @since 3.x
+    @since 3.8.0
     **/
     REGEX_RGB: REGEX_RGB,
 
@@ -74,7 +74,7 @@ Y.Color = {
     @property STR_HEX
     @type String
     @default #{*}{*}{*}
-    @since 3.x
+    @since 3.8.0
     **/
     STR_HEX: '#{*}{*}{*}',
 
@@ -83,7 +83,7 @@ Y.Color = {
     @property STR_RGB
     @type String
     @default rgb({*}, {*}, {*})
-    @since 3.x
+    @since 3.8.0
     **/
     STR_RGB: 'rgb({*}, {*}, {*})',
 
@@ -92,7 +92,7 @@ Y.Color = {
     @property STR_RGBA
     @type String
     @default rgba({*}, {*}, {*}, {*})
-    @since 3.x
+    @since 3.8.0
     **/
     STR_RGBA: 'rgba({*}, {*}, {*}, {*})',
 
@@ -101,7 +101,7 @@ Y.Color = {
     @property TYPES
     @type Object
     @default {'rgb':'rgb', 'rgba':'rgba'}
-    @since 3.x
+    @since 3.8.0
     **/
     TYPES: TYPES,
 
@@ -110,7 +110,7 @@ Y.Color = {
     @property CONVERTS
     @type Object
     @default {}
-    @since 3.x
+    @since 3.8.0
     **/
     CONVERTS: CONVERTS,
 
@@ -119,8 +119,8 @@ Y.Color = {
     @method convert
     @param {String} str
     @param {String} to
-    @returns {String}
-    @since 3.x
+    @return {String}
+    @since 3.8.0
     **/
     convert: function (str, to) {
         // check for a toXXX conversion method first
@@ -136,8 +136,8 @@ Y.Color = {
     @public
     @method toHex
     @param {String} str Hex or RGB value string
-    @returns {String} returns array of values or CSS string if options.css is true
-    @since 3.x
+    @return {String} returns array of values or CSS string if options.css is true
+    @since 3.8.0
     **/
     toHex: function (str) {
         var clr = Y.Color._convertTo(str, 'hex');
@@ -149,8 +149,8 @@ Y.Color = {
     @public
     @method toRGB
     @param {String} str Hex or RGB value string
-    @returns {String}
-    @since 3.x
+    @return {String}
+    @since 3.8.0
     **/
     toRGB: function (str) {
         var clr = Y.Color._convertTo(str, 'rgb');
@@ -162,8 +162,8 @@ Y.Color = {
     @public
     @method toRGBA
     @param {String} str Hex or RGB value string
-    @returns {String}
-    @since 3.x
+    @return {String}
+    @since 3.8.0
     **/
     toRGBA: function (str) {
         var clr = Y.Color._convertTo(str, 'rgba' );
@@ -177,8 +177,8 @@ Y.Color = {
     @public
     @method toArray
     @param {String} str
-    @returns {Array}
-    @since 3.x
+    @return {Array}
+    @since 3.8.0
     **/
     toArray: function(str) {
         // parse with regex and return "matches" array
@@ -216,8 +216,8 @@ Y.Color = {
     @method fromArray
     @param {Array} arr
     @param {String} template
-    @returns {String}
-    @since 3.x
+    @return {String}
+    @since 3.8.0
     **/
     fromArray: function(arr, template) {
         arr = arr.concat();
@@ -246,8 +246,8 @@ Y.Color = {
     @public
     @method findType
     @param {String} str
-    @returns {String}
-    @since 3.x
+    @return {String}
+    @since 3.8.0
     **/
     findType: function (str) {
         if (Y.Color.KEYWORDS[str]) {
@@ -276,7 +276,7 @@ Y.Color = {
     @method _getAlpha
     @param {String} clr
     @return {Number}
-    @since 3.x
+    @since 3.8.0
     **/
     _getAlpha: function (clr) {
         var alpha,
@@ -295,7 +295,7 @@ Y.Color = {
     @method _keywordToHex
     @param {String} clr
     @return {String}
-    @since 3.x
+    @since 3.8.0
     **/
     _keywordToHex: function (clr) {
         var keyword = Y.Color.KEYWORDS[clr];
@@ -312,7 +312,7 @@ Y.Color = {
     @param {String} clr
     @param {String} to
     @return {String}
-    @since 3.x
+    @since 3.8.0
     **/
     _convertTo: function(clr, to) {
         var from = Y.Color.findType(clr),
@@ -387,7 +387,7 @@ Y.Color = {
     @param {String} str
     @param {Boolean} [toArray]
     @return {String|Array}
-    @since 3.x
+    @since 3.8.0
     **/
     _hexToRgb: function (str, toArray) {
         var r, g, b;
@@ -418,7 +418,7 @@ Y.Color = {
     @param {String} str
     @param {Boolean} [toArray]
     @return {String|Array}
-    @since 3.x
+    @since 3.8.0
     **/
     _rgbToHex: function (str) {
         /*jshint bitwise:false*/

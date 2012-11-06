@@ -11,7 +11,7 @@ Color provides static methods for color conversion to hsl values.
 @submodule color-hsl
 @class HSL
 @namespace Color
-@since 3.x
+@since 3.8.0
 **/
 Color = {
 
@@ -20,7 +20,7 @@ Color = {
     @property REGEX_HSL
     @type RegExp
     @default /hsla?\(([.\d]*), ?([.\d]*)%, ?([.\d]*)%,? ?([.\d]*)?\)/
-    @since 3.x
+    @since 3.8.0
     **/
     REGEX_HSL: /hsla?\(([.\d]*), ?([.\d]*)%, ?([.\d]*)%,? ?([.\d]*)?\)/,
 
@@ -29,7 +29,7 @@ Color = {
     @property STR_HSL
     @type String
     @default hsl({*}, {*}%, {*}%)
-    @since 3.x
+    @since 3.8.0
     **/
     STR_HSL: 'hsl({*}, {*}%, {*}%)',
 
@@ -38,7 +38,7 @@ Color = {
     @property STR_HSLA
     @type String
     @default hsla({*}, {*}%, {*}%, {*})
-    @since 3.x
+    @since 3.8.0
     **/
     STR_HSLA: 'hsla({*}, {*}%, {*}%, {*})',
 
@@ -47,8 +47,8 @@ Color = {
     @public
     @method toHSL
     @param {String} str
-    @returns {String}
-    @since 3.x
+    @return {String}
+    @since 3.8.0
     **/
     toHSL: function (str) {
         var clr = Y.Color._convertTo(str, 'hsl');
@@ -60,8 +60,8 @@ Color = {
     @public
     @method toHSLA
     @param {String} str
-    @returns {String}
-    @since 3.x
+    @return {String}
+    @since 3.8.0
     **/
     toHSLA: function (str) {
         var clr = Y.Color._convertTo(str, 'hsla');
@@ -75,8 +75,8 @@ Color = {
     @method _rgbToHsl
     @param {String} str
     @param {Boolean} [toArray]
-    @returns {String|Array}
-    @since 3.x
+    @return {String|Array}
+    @since 3.8.0
     **/
     _rgbToHsl: function (str, toArray) {
         var h, s, l,
@@ -141,8 +141,8 @@ Color = {
     @method _hslToRgb
     @param {String} str
     @param {Boolean} [toArray]
-    @returns {String|Array}
-    @since 3.x
+    @return {String|Array}
+    @since 3.8.0
     **/
     _hslToRgb: function (str, toArray) {
         // assume input is [h, s, l]
@@ -185,7 +185,7 @@ Color = {
     @param {Number} q
     @param {Number} hue
     @return {Number} value for requested channel
-    @since 3.x
+    @since 3.8.0
     **/
     _hueToRGB: function(p, q, hue) {
         // TODO: Find legals for use of formula

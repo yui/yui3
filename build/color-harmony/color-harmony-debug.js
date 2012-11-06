@@ -7,7 +7,7 @@ Color Harmony provides methods useful for color combination discovery.
 @submodule color-harmony
 @class Harmony
 @namespace Color
-@since 3.6.1
+@since 3.8.0
 */
 var HSL = 'hsl',
     RGB = 'rgb',
@@ -34,7 +34,8 @@ var HSL = 'hsl',
         @method getComplementary
         @param {String} str
         @param {String} [to]
-        @returns {Array}
+        @return {Array}
+        @since 3.8.0
         **/
         getComplementary: function(str, to) {
             var c = Harmony._start(str),
@@ -59,7 +60,8 @@ var HSL = 'hsl',
         @param {String} str
         @param {Number} [offset]
         @param {String} [to]
-        @returns {String}
+        @return {String}
+        @since 3.8.0
         **/
         getSplit: function(str, offset, to) {
             var c = Harmony._start(str),
@@ -98,7 +100,8 @@ var HSL = 'hsl',
         @param {String} str
         @param {Number} [offset]
         @param {String} [to]
-        @returns {String}
+        @return {String}
+        @since 3.8.0
         **/
         getAnalogous: function(str, offset, to) {
             var c = Harmony._start(str),
@@ -139,7 +142,8 @@ var HSL = 'hsl',
         @method getTriad
         @param {String} str
         @param {String} [to]
-        @returns {String}
+        @return {String}
+        @since 3.8.0
         **/
         getTriad: function(str, to) {
             var c = Harmony._start(str),
@@ -170,7 +174,8 @@ var HSL = 'hsl',
         @param {String} str
         @param {Number} [offset]
         @param {String} [to]
-        @returns {String}
+        @return {String}
+        @since 3.8.0
         **/
         getTetrad: function(str, offset, to) {
             var c = Harmony._start(str),
@@ -206,7 +211,8 @@ var HSL = 'hsl',
         @method getSquare
         @param {String} str
         @param {String} [to]
-        @returns {String}
+        @return {String}
+        @since 3.8.0
         **/
         getSquare: function(str, to) {
             var c = Harmony._start(str),
@@ -241,7 +247,8 @@ var HSL = 'hsl',
         @param {String} str
         @param {Number} [count]
         @param {String} [to]
-        @returns {String}
+        @return {String}
+        @since 3.8.0
         **/
         getMonochrome: function(str, count, to) {
             var c = Harmony._start(str),
@@ -286,7 +293,8 @@ var HSL = 'hsl',
         @param {Number} [offset]
         @param {Number} [count]
         @param {String} [to]
-        @returns {String}
+        @return {String}
+        @since 3.8.0
         **/
         getSimilar: function(str, offset, count, to) {
             var c = Harmony._start(str),
@@ -332,7 +340,8 @@ var HSL = 'hsl',
           @param {Number} [adjust.s]
           @param {Number} [adjust.l]
         @param {String} [to]
-        @returns {String}
+        @return {String}
+        @since 3.8.0
         **/
         getOffset: function(str, adjust, to) {
             var started = Y.Lang.isArray(str),
@@ -374,7 +383,8 @@ var HSL = 'hsl',
         @public
         @method getBrightness
         @param {String} str
-        @returns {Number}
+        @return {Number}
+        @since 3.8.0
         **/
         getBrightness: function(str) {
             var c = Color.toArray(Color._convertTo(str, RGB)),
@@ -400,7 +410,8 @@ var HSL = 'hsl',
         @param {String} str
         @param {String} match
         @param {String} [to]
-        @returns {String}
+        @return {String}
+        @since 3.8.0
         **/
         getSimilarBrightness: function(str, match, to){
             var c = Color.toArray(Color._convertTo(str, HSL)),
@@ -428,7 +439,8 @@ var HSL = 'hsl',
         @private
         @method _start
         @param {String} str
-        @returns {Array}
+        @return {Array}
+        @since 3.8.0
         */
         _start: function(str) {
             var hsla = Color.toArray(Color._convertTo(str, HSL));
@@ -444,7 +456,8 @@ var HSL = 'hsl',
         @method _finish
         @param {Array} hsla
         @param {String} [to]
-        @returns {String}
+        @return {String}
+        @since 3.8.0
         */
         _finish: function(hsla, to) {
             hsla[0] = Harmony._toAdditive(hsla[0]);
@@ -463,6 +476,7 @@ var HSL = 'hsl',
         @method _toAdditive
         @param {Number} hue
         @return {Number} Converted additive hue
+        @since 3.8.0
         */
         _toAdditive: function(hue) {
             hue = Y.Color._constrainHue(hue);
@@ -482,6 +496,7 @@ var HSL = 'hsl',
         @method _toSubtractive
         @param {Number} hue
         @return {Number} Converted subtractive hue
+        @since 3.8.0
         */
         _toSubtractive: function(hue) {
             hue = Y.Color._constrainHue(hue);
@@ -503,7 +518,8 @@ var HSL = 'hsl',
         @method _constrainHue
         @param {Number} hue
         @param {Number} [precision]
-        @returns {Number} Constrained hue value
+        @return {Number} Constrained hue value
+        @since 3.8.0
         **/
         _constrainHue: function(hue, precision) {
             while (hue < 0) {
@@ -526,6 +542,7 @@ var HSL = 'hsl',
           to new hsl where brightness is said to be within plus or minus 0.01.
         @private
         @property _brightnessWeights
+        @since 3.8.0
         */
         _brightnessWeights: {
             r: 0.221,
@@ -542,7 +559,8 @@ var HSL = 'hsl',
         @param {Number} brightness Brightness to be matched
         @param {Number} min Minimum range for luminance
         @param {Number} max Maximum range for luminance
-        @returns {Number} Found luminance to achieve requested brightness
+        @return {Number} Found luminance to achieve requested brightness
+        @since 3.8.0
         **/
         _searchLuminanceForBrightness: function(color, brightness, min, max) {
             var luminance = (max + min) / 2,
@@ -559,6 +577,7 @@ var HSL = 'hsl',
                 return Harmony._searchLuminanceForBrightness(color, brightness, luminance, max);
             }
         }
+
     };
 
 Y.Color = Y.mix(Y.Color, Harmony);
