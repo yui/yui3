@@ -63,13 +63,13 @@ The two templates engines provided in YUI, Handlebars and Template.Micro, are co
 </p>
 
 <p>
-By making Template.Micro's public API very similar to Handlebars, we've made it possible to use the two template engines interchangeably via the `Y.Template` normalization API. When you need to compile templates on the client, it is <strong>strongly recommend</strong> that you use Micro templates, because Template.Micro's compile is <em>much</em> smaller than Handlebars' compiler &mdash; 0.5KB vs 9KB (minified and Gzipped) respectively.
+By making Template.Micro's public API very similar to Handlebars, we've made it possible to use the two template engines interchangeably via the `Y.Template` normalization API. When you need to compile templates on the client, it is <strong>strongly recommend</strong> that you use Micro templates, because Template.Micro's compile is <em>much</em> smaller than Handlebars' compiler &mdash; 0.5KB vs 9KB (minified and gzipped) respectively.
 </p>
 
 <h3>Instantiating a Template Engine</h3>
 
 <p>
-While you can use a specific template engine directly, it is recommended that you create an instance of the generic `Y.Template` engine wrapper. Doing so allows for greater flexility and interoperability as described in the previous section.
+While you can use a specific template engine directly, it is recommended that you create an instance of the generic `Y.Template` engine wrapper. Doing so allows for greater flexibility and interoperability as described in the previous section.
 </p>
 
 <p>
@@ -77,7 +77,7 @@ To create a template engine instance, you must first determine which underlying 
 </p>
 
 <p>
-Once you've determined the underlying template engine, you'll need to load the appropriate YUI module to fulfill how you plan to use templates. Refer to the following table of YUI modules to understand what each module proivdes:
+Once you've determined the underlying template engine, you'll need to load the appropriate YUI module to fulfill how you plan to use templates. Refer to the following table of YUI modules to understand what each module provides:
 </p>
 
 <table>
@@ -207,7 +207,92 @@ YUI().use('template-base', 'handlebars', function (Y) {
 
 <h3>Compiling and Rendering Templates</h3>
 
+<p>
+Both Handlebars and Micro templates must be compiled before they can be rendered. One benefit of this is that a template only needs to be compiled once, and it can then be rendered multiple times without being recompiled. Templates can even be [[#Precompiling and Reviving Templates|precompiled]] on the server or at build time and then rendered on the client for optimal performance.
+</p>
+
+<p>
+Before compiling a template string, a template engine needs to be created. Once the engine instance has been created, the template string can be passed to its <a href="{{apiDocs}}/classes/Template.html#method_compile">`compile()`</a> method. What's returned is a reusable function.
+</p>
+
+```javascript
+var engine, template;
+
+// Create a Template.Micro engine instance.
+engine = new Y.Template();
+
+// Compile a template into a reusable function.
+template = engine.compile('My favorite animal is a <%= animal %>.');
+```
+
+<p>
+When you're ready to render the template, execute the function and pass in some data. You'll get back a rendered string.
+</p>
+
+```javascript
+// Render a previously compiled template.
+var output = template({animal: 'Rhino'});
+Y.log(output); // => "My favorite animal is a Rhino."
+```
+
+<p>
+You can re-render the template at any time just by calling the function again. You can even pass in completely different data.
+</p>
+
+```javascript
+// Re-render a previously compiled template.
+output = template({animal: 'Spotted Cuscus'});
+Y.log(output); // => "My favorite animal is a Spotted Cuscus."
+```
+
+<p>
+If you don't plan to use a template more than once, you can compile and render it in a single step with the template engine's <a href="{{apiDocs}}/classes/Template.html#method_render">`render()`</a> method.
+</p>
+
+```javascript
+// Compile and render a template in a single step.
+output = engine.render('My favorite animal is a <%= animal %>.', {animal: 'Rhino'});
+Y.log(output); // => "My favorite animal is a Rhino."
+```
+
+<p>
+<strong> Note:</strong> The above examples are using Micro templates. If these examples used Handlebars templates, the `engine` instance would have been created using `Y.Handlebars`, and template syntax would have used `\{{animal}}` instead of `<%= animal %>`.
+</p>
+
 <h3>Precompiling and Reviving Templates</h3>
+
+<p>
+Since Micro and Handlebars templates can be compiled and rendered in separate steps, it's possible to precompile a template for use later. You can precompile a template into raw JavaScript on the server (or even on the command line in the case of Handlebars), serve this precompiled JavaScript template to the client, and then render it on the client using any data the client has at its disposal.
+</p>
+
+<p>
+The main benefit of precompilation is performance. Not only does the client not need to go through the compile step, but if your using a template engine like Handlebars, you don't even have to load the compiler on the client! All the client needs in order to render a precompiled template is the engine's runtime.
+</p>
+
+<p>
+`Y.Template` engine instances have a <a href="{{apiDocs}}/classes/Template.html#method_precompile">`precompile()` method</a> which uses the underlaying `engine` to convert the specified `text` into a string of JavaScript source code. This string of code which represents the template, can later be revived using the engine instance's <a href="{{apiDocs}}/classes/Template.html#method_revive">`revive()` method</a> which turns it into a JavaScript function.
+</p>
+
+<p>
+The `precompile()` method differs from the `compile()` method in a couple of important ways:
+</p>
+
+<ul>
+<li>
+    <p>
+    The `precompile()` method returns a string of JavaScript code that's meant to be parsed and executed later, whereas `compile()` returns a live JavaScript function.
+    </p>
+</li>
+<li>
+    <p>
+    The code returned by the `precompile()` method contains no references to any outside objects. Once it's evaluated, the resulting precompiled function must be passed to `Y.Template` engine instance's `revive()` method, which will "rehydrate" it into an executable template function using the current template engine.
+    </p>
+</li>
+</ul>
+
+<p>
+For more details, refer to the Precompiling and Reviving Templates sections of the [[#Precompiling and Reviving Templates2|Template.Micro]] and <a href="../handlebars/index.html#precompiling-templates">Handlebars</a> user guides.
+</p>
 
 <h3>Creating a Custom Template Engine</h3>
 
