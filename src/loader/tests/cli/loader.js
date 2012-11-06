@@ -3009,6 +3009,37 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("tabview-plugin")) > -1, "Module (tabview-plugin) not found in sorted array");
         },
+     "Testing template": function(data) {
+            var loader = new Y.Loader({
+                require: ["template"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("template-base")) > -1, "Module (template-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("template-micro")) > -1, "Module (template-micro) not found in sorted array");
+        },
+     "Testing template-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["template-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("template-base")) > -1, "Module (template-base) not found in sorted array");
+        },
+     "Testing template-micro": function(data) {
+            var loader = new Y.Loader({
+                require: ["template-micro"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("template-micro")) > -1, "Module (template-micro) not found in sorted array");
+        },
      "Testing test": function(data) {
             var loader = new Y.Loader({
                 require: ["test"],

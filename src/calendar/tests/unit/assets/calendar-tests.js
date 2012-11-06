@@ -8,7 +8,6 @@ YUI.add('calendar-tests', function(Y) {
             name: "Basic Calendar Tests",
 
             setUp : function () {
-                
                 var firstcontainer = "<div id='firstcontainer'></div>";
                 var secondcontainer = "<div id='secondcontainer'></div>";
                 Y.one('#container').appendChild(Y.Node.create(firstcontainer));
@@ -19,13 +18,12 @@ YUI.add('calendar-tests', function(Y) {
             },
 
             tearDown : function () {
-               delete this.firstcalendar;
-               delete this.secondcalendar;
-               Y.one('#firstcontainer').remove();
-               Y.one('#secondcontainer').remove();
-               Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.ONE_PANE_TEMPLATE;
+                delete this.firstcalendar;
+                delete this.secondcalendar;
+                Y.one('#firstcontainer').remove();
+                Y.one('#secondcontainer').remove();
+                Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.ONE_PANE_TEMPLATE;
             },
-
 
             testCalendarBase : function() {
                 var cfg = {
@@ -38,7 +36,7 @@ YUI.add('calendar-tests', function(Y) {
 
                 //calendar is visible
                 Y.Assert.areEqual(this.firstcalendar.get('visible'), true);
-                
+
                 //calendar date is normalized correctly
                 var calendarDate = this.firstcalendar.get("date");
                 Y.Assert.areEqual(2011, calendarDate.getFullYear());
@@ -63,7 +61,7 @@ YUI.add('calendar-tests', function(Y) {
 
                 //calendar is visible
                 Y.Assert.areEqual(this.firstcalendar.get('visible'), true);
-                
+
                 //calendar date is normalized correctly
                 var calendarDate = this.firstcalendar.get("date");
                 Y.Assert.areEqual(2011, calendarDate.getFullYear());
@@ -77,7 +75,6 @@ YUI.add('calendar-tests', function(Y) {
                 Y.Assert.areEqual(false, this.firstcalendar.get("showNextMonth"));
             },
 
-
             testAddMonths : function() {
                 var cfg = {
                     contentBox: "#firstcontainer",
@@ -89,14 +86,14 @@ YUI.add('calendar-tests', function(Y) {
 
                 //calendar is visible
                 Y.Assert.areEqual(this.firstcalendar.get('visible'), true);
-                
+
                 //calendar date is normalized correctly
                 var calendarDate = this.firstcalendar.get("date");
                 Y.Assert.areEqual(2011, calendarDate.getFullYear());
                 Y.Assert.areEqual(11, calendarDate.getMonth());
                 Y.Assert.areEqual(1, calendarDate.getDate());
 
-                this.firstcalendar.subtractMonth();
+                Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.subtractMonth());   // check @chainable
                 this.firstcalendar.subtractMonth();
 
                 calendarDate = this.firstcalendar.get("date");
@@ -104,21 +101,21 @@ YUI.add('calendar-tests', function(Y) {
                 Y.Assert.areEqual(9, calendarDate.getMonth());
                 Y.Assert.areEqual(1, calendarDate.getDate());
 
-                this.firstcalendar.addMonth();
+                Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.addMonth());        // check @chainable
 
                 calendarDate = this.firstcalendar.get("date");
                 Y.Assert.areEqual(2011, calendarDate.getFullYear());
                 Y.Assert.areEqual(10, calendarDate.getMonth());
                 Y.Assert.areEqual(1, calendarDate.getDate());
 
-                this.firstcalendar.addYear();
+                Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.addYear());         // check @chainable
 
                 calendarDate = this.firstcalendar.get("date");
                 Y.Assert.areEqual(2012, calendarDate.getFullYear());
                 Y.Assert.areEqual(10, calendarDate.getMonth());
                 Y.Assert.areEqual(1, calendarDate.getDate());
 
-                this.firstcalendar.subtractYear();
+                Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.subtractYear());    // check @chainable
                 this.firstcalendar.subtractYear();
 
                 calendarDate = this.firstcalendar.get("date");
@@ -140,7 +137,7 @@ YUI.add('calendar-tests', function(Y) {
 
                 //calendar is visible
                 Y.Assert.areEqual(this.firstcalendar.get('visible'), true);
-                
+
                 //calendar date is reset correclty when minimum date is set
                 var calendarDate = this.firstcalendar.get("date");
                 Y.Assert.areEqual(2011, calendarDate.getFullYear());
@@ -149,7 +146,7 @@ YUI.add('calendar-tests', function(Y) {
 
                 this.firstcalendar.set("minimumDate", new Date (2011,2,1));
                 this.firstcalendar.set("maximumDate", new Date (2011,5,1));
-                
+
                 calendarDate = this.firstcalendar.get("date");
                 Y.Assert.areEqual(2011, calendarDate.getFullYear());
                 Y.Assert.areEqual(5, calendarDate.getMonth());
@@ -183,15 +180,15 @@ YUI.add('calendar-tests', function(Y) {
                 };
 
                 this.firstcalendar = new Y.Calendar(cfg);
-                this.firstcalendar.selectDates(new Date(2011,11,7));
+                Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.selectDates(new Date(2011,11,7)));    // check @chainable
                 this.firstcalendar.selectDates(new Date(2011,11,8));
-                this.firstcalendar.deselectDates(new Date(2011,11,8));
+                Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.deselectDates(new Date(2011,11,8)));  // check @chainable
                 this.firstcalendar.selectDates([new Date(2011,9,10), new Date(2011,11,13)]);
                 this.firstcalendar.render();
 
                 //calendar is visible
                 Y.Assert.areEqual(this.firstcalendar.get('visible'), true);
-                
+
                 //calendar date is normalized correctly
                 var calendarDate = this.firstcalendar.get("date");
                 Y.Assert.areEqual(2011, calendarDate.getFullYear());
@@ -216,14 +213,14 @@ YUI.add('calendar-tests', function(Y) {
                 Y.Assert.isFalse(secondSelectedDate.hasClass("yui3-calendar-day-selected"));
 
                 Y.one(".yui3-calendarnav-nextmonth").simulate("click");
-                Y.one(".yui3-calendarnav-nextmonth").simulate("click"); 
+                Y.one(".yui3-calendarnav-nextmonth").simulate("click");
                 Y.Assert.isTrue(firstSelectedDate.hasClass("yui3-calendar-day-selected"));
                 Y.Assert.isTrue(secondSelectedDate.hasClass("yui3-calendar-day-selected"));
 
                 // Deselect dates
 
 
-               this.firstcalendar.deselectDates([new Date(2011,11,7), new Date(2011,9,10)]);
+                this.firstcalendar.deselectDates([new Date(2011,11,7), new Date(2011,9,10)]);
 
                 this.firstcalendar.deselectDates(new Date(2011,11,13));
 
@@ -251,7 +248,6 @@ YUI.add('calendar-tests', function(Y) {
             },
 
             testRules : function () {
-
                 var myRules = {
                    "2011": "fullyear",
                    "2010-2011": {
@@ -267,11 +263,11 @@ YUI.add('calendar-tests', function(Y) {
                        }
                    }
                 };
-        
+
                function myFilter (oDate, oNode, rules) {
-               if (Y.Array.indexOf(rules, "theweekends") >= 0) {
-                   oNode.addClass('testclass');
-               }   
+                   if (Y.Array.indexOf(rules, "theweekends") >= 0) {
+                       oNode.addClass('testclass');
+                   }
                };
 
                var cfg = {
@@ -307,7 +303,6 @@ YUI.add('calendar-tests', function(Y) {
             },
 
             testPrevAndNextMonth : function () {
-
                 var cfg = {
                     contentBox: "#firstcontainer",
                     date: new Date(2011,11,5),
@@ -356,10 +351,9 @@ YUI.add('calendar-tests', function(Y) {
                     showNextMonth: true
                 };
 
-
                 this.firstcalendar = new Y.Calendar(cfg1);
-                this.firstcalendar.render();   
-                            
+                this.firstcalendar.render();
+
                 this.secondcalendar = new Y.Calendar(cfg2);
                 this.secondcalendar.render();
 
@@ -370,7 +364,7 @@ YUI.add('calendar-tests', function(Y) {
                 this.firstcalendar.set("showNextMonth", true);
 
                 Y.Assert.areNotEqual(this.firstcalendar.get("id"), this.secondcalendar.get("id"));
-                Y.Assert.areNotEqual(this.firstcalendar._calendarId, this.secondcalendar._calendarId);             
+                Y.Assert.areNotEqual(this.firstcalendar._calendarId, this.secondcalendar._calendarId);
             },
 
             testCalendarClick : function() {
@@ -386,34 +380,33 @@ YUI.add('calendar-tests', function(Y) {
                 var calendarid = this.firstcalendar._calendarId;
                 Y.one("#" + calendarid + "_pane_0_6_15").simulate("click");
 
-                var currentDate = this.firstcalendar.get("selectedDates")[0];              
+                var currentDate = this.firstcalendar.get("selectedDates")[0];
                 Y.Assert.areEqual(currentDate.getFullYear(), 2011);
                 Y.Assert.areEqual(currentDate.getMonth(), 11);
                 Y.Assert.areEqual(currentDate.getDate(), 15);
-                
+
                 // Click on a different calendar cell
 
-              Y.one("#" + calendarid + "_pane_0_8_31").simulate("click");
+                Y.one("#" + calendarid + "_pane_0_8_31").simulate("click");
 
                 currentDate = this.firstcalendar.get("selectedDates")[0];
                 Y.Assert.areEqual(currentDate.getFullYear(), 2011);
                 Y.Assert.areEqual(currentDate.getMonth(), 11);
                 Y.Assert.areEqual(currentDate.getDate(), 31);
-              
-               // Click to advance the month
-               Y.one(".yui3-calendarnav-nextmonth").simulate("click");
-               // Click on a date in the new month
-             Y.one("#" + calendarid + "_pane_0_8_17").simulate("click");  
 
-                currentDate = this.firstcalendar.get("selectedDates")[0];             
+                // Click to advance the month
+                Y.one(".yui3-calendarnav-nextmonth").simulate("click");
+                // Click on a date in the new month
+                Y.one("#" + calendarid + "_pane_0_8_17").simulate("click");
+
+                currentDate = this.firstcalendar.get("selectedDates")[0];
                 Y.Assert.areEqual(currentDate.getFullYear(), 2012);
                 Y.Assert.areEqual(currentDate.getMonth(), 0);
                 Y.Assert.areEqual(currentDate.getDate(), 17);
-                
+
             },
 
-
-           testFebruaries : function() {
+            testFebruaries : function() {
                 var cfg = {
                     contentBox: "#firstcontainer",
                     date: new Date(1990,1,1)
@@ -425,83 +418,82 @@ YUI.add('calendar-tests', function(Y) {
 
                 this.firstcalendar.set("date", new Date(1991, 1, 1));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
-                this.firstcalendar.set("date", new Date(1992, 1, 7));  
+                this.firstcalendar.set("date", new Date(1992, 1, 7));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
                 this.firstcalendar.set("date", new Date(1993, 1, 9));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
                 this.firstcalendar.set("date", new Date(1994, 1, 3));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
                 this.firstcalendar.set("date", new Date(1995, 1, 6));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
                 this.firstcalendar.set("date", new Date(1996, 1, 20));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
                 this.firstcalendar.set("date", new Date(1997, 1, 13));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
                 this.firstcalendar.set("date", new Date(1998, 1, 12));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
                 this.firstcalendar.set("date", new Date(1999, 1, 18));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
                 this.firstcalendar.set("date", new Date(2000, 1, 16));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
                 this.firstcalendar.set("date", new Date(2001, 1, 5));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
                 this.firstcalendar.set("date", new Date(2002, 1, 2));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
                 this.firstcalendar.set("date", new Date(2003, 1, 14));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
                 this.firstcalendar.set("date", new Date(2004, 1, 23));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
                 this.firstcalendar.set("showNextMonth", true);
-                this.firstcalendar.set("date", new Date(2005, 1, 25));   
+                this.firstcalendar.set("date", new Date(2005, 1, 25));
                 this.firstcalendar.set("showPrevMonth", false);
-                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showNextMonth", false);
                 this.firstcalendar.set("showPrevMonth", true);
-                this.firstcalendar.set("showNextMonth", true);                                    
-            },            
+                this.firstcalendar.set("showNextMonth", true);
+            },
 
-
-           testFocus : function () {
+            testFocus : function () {
                 window.focus();
 
                 var cfg = {
@@ -510,9 +502,9 @@ YUI.add('calendar-tests', function(Y) {
                 };
 
                 this.firstcalendar = new Y.Calendar(cfg);
-                this.firstcalendar.render(); 
+                this.firstcalendar.render();
 
-                var test = this;             
+                var test = this;
 
                 var calgrid = this.firstcalendar.get("contentBox").one(".yui3-calendar-grid");
 
@@ -537,7 +529,7 @@ YUI.add('calendar-tests', function(Y) {
                 test.wait();
            },
 
-           testSelectionModes : function () {
+            testSelectionModes : function () {
                 var cfg = {
                     contentBox: "#firstcontainer",
                     date: new Date(2011,11,1),
@@ -551,10 +543,10 @@ YUI.add('calendar-tests', function(Y) {
                 }
 
                 this.firstcalendar = new Y.Calendar(cfg);
-                this.firstcalendar.render();  
+                this.firstcalendar.render();
 
                 this.secondcalendar = new Y.Calendar(cfg2);
-                this.secondcalendar.render();            
+                this.secondcalendar.render();
 
                 var calgrid = this.firstcalendar.get("contentBox").one(".yui3-calendar-grid");
                 var calendarid = this.firstcalendar._calendarId;
@@ -563,7 +555,7 @@ YUI.add('calendar-tests', function(Y) {
                 var cell2 = calgrid.one("#" + calendarid + "_pane_0_5_21");
 
                 cell1.simulate("click");
-                cell2.simulate("click"); 
+                cell2.simulate("click");
                 cell1.simulate("click");
 
                 this.firstcalendar.set("selectionMode", "multiple");
@@ -668,7 +660,7 @@ YUI.add('calendar-tests', function(Y) {
                 test.wait();
            },
 
-           testCalendarNavigation : function() {
+            testCalendarNavigation : function() {
                 var cfg = {
                     contentBox: "#firstcontainer",
                     date: new Date(2011,11,5)
@@ -677,7 +669,7 @@ YUI.add('calendar-tests', function(Y) {
                 this.firstcalendar = new Y.Calendar(cfg);
 
                 this.firstcalendar.render();
-                
+
                 Y.one(".yui3-calendarnav-nextmonth").simulate("click");
                 var calendarDate = this.firstcalendar.get("date");
                 Y.Assert.areEqual(2012, calendarDate.getFullYear());
@@ -724,9 +716,8 @@ YUI.add('calendar-tests', function(Y) {
                 calendarDate = this.firstcalendar.get("date");
                 Y.Assert.areEqual(2010, calendarDate.getFullYear());
                 Y.Assert.areEqual(11, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());                
-            },            
-
+                Y.Assert.areEqual(1, calendarDate.getDate());
+            },
 
             testCustomHeader : function() {
                 var cfg = {
@@ -742,18 +733,18 @@ YUI.add('calendar-tests', function(Y) {
                        format: "%m %Y"
                        });
                    return output;
-                 }); 
+                 });
 
                 this.firstcalendar.render();
 
-                var currentHeaderString = this.firstcalendar.get("contentBox").one(".yui3-calendar-header-label").get("text");              
+                var currentHeaderString = this.firstcalendar.get("contentBox").one(".yui3-calendar-header-label").get("text");
                 Y.Assert.areEqual("12 2011", currentHeaderString);
-                
+
                 // Click to advance the month
                 Y.one(".yui3-calendarnav-nextmonth").simulate("click");
 
                 currentHeaderString = this.firstcalendar.get("contentBox").one(".yui3-calendar-header-label").get("text");
-                Y.Assert.areEqual("01 2012", currentHeaderString);  
+                Y.Assert.areEqual("01 2012", currentHeaderString);
 
                 this.firstcalendar.set("headerRenderer", function (curDate) {
                    var ydate = Y.DataType.Date,
@@ -764,8 +755,8 @@ YUI.add('calendar-tests', function(Y) {
                  });
 
                 currentHeaderString = this.firstcalendar.get("contentBox").one(".yui3-calendar-header-label").get("text");
-                Y.Assert.areEqual("01", currentHeaderString);                                 
-            },            
+                Y.Assert.areEqual("01", currentHeaderString);
+            },
 
             testMultiplePanes : function () {
                  var cfg = {
@@ -777,13 +768,13 @@ YUI.add('calendar-tests', function(Y) {
                 Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
                 this.firstcalendar = new Y.Calendar(cfg);
                 this.firstcalendar.render();
-                
+
                 // Click on a date
                 var calendarid = this.firstcalendar._calendarId;
-                Y.one("#" + calendarid + "_pane_0_6_29").simulate("click"); 
+                Y.one("#" + calendarid + "_pane_0_6_29").simulate("click");
 
                 // Shift-click another date
-                Y.one("#" + calendarid + "_pane_1_7_2").simulate("click", {shiftKey: true}); 
+                Y.one("#" + calendarid + "_pane_1_7_2").simulate("click", {shiftKey: true});
 
                var date0 = this.firstcalendar.get("selectedDates")[0];
                var date1 = this.firstcalendar.get("selectedDates")[1];
