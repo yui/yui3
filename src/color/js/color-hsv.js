@@ -10,7 +10,7 @@ Color provides static methods for color conversion hsv values.
 @submodule color-hsv
 @class HSV
 @namespace Color
-@since 3.x
+@since 3.8.0
 **/
 Color = {
 
@@ -19,7 +19,7 @@ Color = {
     @property REGEX_HSV
     @type RegExp
     @default /hsva?\(([.\d]*), ?([.\d]*)%, ?([.\d]*)%,? ?([.\d]*)?\)/
-    @since 3.x
+    @since 3.8.0
     **/
     REGEX_HSV: /hsva?\(([.\d]*), ?([.\d]*)%, ?([.\d]*)%,? ?([.\d]*)?\)/,
 
@@ -28,7 +28,7 @@ Color = {
     @property STR_HSV
     @type String
     @default hsv({*}, {*}%, {*}%)
-    @since 3.x
+    @since 3.8.0
     **/
     STR_HSV: 'hsv({*}, {*}%, {*}%)',
 
@@ -37,7 +37,7 @@ Color = {
     @property STR_HSVA
     @type String
     @default hsva({*}, {*}%, {*}%, {*})
-    @since 3.x
+    @since 3.8.0
     **/
     STR_HSVA: 'hsva({*}, {*}%, {*}%, {*})',
 
@@ -46,8 +46,8 @@ Color = {
     @public
     @method toHSV
     @param {String} str
-    @returns {String}
-    @since 3.x
+    @return {String}
+    @since 3.8.0
     **/
     toHSV: function (str) {
         var clr = Y.Color._convertTo(str, 'hsv');
@@ -59,8 +59,8 @@ Color = {
     @public
     @method toHSVA
     @param {String} str
-    @returns {String}
-    @since 3.x
+    @return {String}
+    @since 3.8.0
     **/
     toHSVA: function (str) {
         var clr = Y.Color._convertTo(str, 'hsva');
@@ -74,8 +74,8 @@ Color = {
     @method _rgbToHsv
     @param {String} str
     @param {Boolean} [toArray]
-    @returns {String|Array}
-    @since 3.x
+    @return {String|Array}
+    @since 3.8.0
     **/
     _rgbToHsv: function (str, toArray) {
         var h, s, v,
@@ -126,8 +126,8 @@ Color = {
     @method _hsvToRgb
     @param {String} str
     @param {Boolean} [toArray]
-    @returns {String|Array}
-    @since 3.x
+    @return {String|Array}
+    @since 3.8.0
     **/
     _hsvToRgb: function (str, toArray) {
         var hsv = Y.Color.REGEX_HSV.exec(str),
