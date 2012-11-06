@@ -3839,24 +3839,13 @@ YUI.Env.aliases = {
     "recordset": ["recordset-base","recordset-sort","recordset-filter","recordset-indexer"],
     "resize": ["resize-base","resize-proxy","resize-constrain"],
     "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
+    "template": ["template-base","template-micro"],
     "text": ["text-accentfold","text-wordbreak"],
     "widget": ["widget-base","widget-htmlparser","widget-skin","widget-uievents"]
 };
 
 
-}, '@VERSION@', {
-    "use": [
-        "yui-base",
-        "get",
-        "features",
-        "intl-base",
-        "yui-log",
-        "yui-later",
-        "loader-base",
-        "loader-rollup",
-        "loader-yui3"
-    ]
-});
+}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
 YUI.add('get', function (Y, NAME) {
 
 /*jslint boss:true, expr:true, laxbreak: true */
@@ -10884,6 +10873,22 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "tabview-base"
         ]
     },
+    "template": {
+        "use": [
+            "template-base",
+            "template-micro"
+        ]
+    },
+    "template-base": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "template-micro": {
+        "requires": [
+            "escape"
+        ]
+    },
     "test": {
         "requires": [
             "event-simulate",
@@ -11168,20 +11173,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'cdff03694483987fdf6e5750732d182e';
+YUI.Env[Y.version].md5 = 'd050a2294f84d3996bb46f592448f782';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
-YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {
-    "use": [
-        "yui-base",
-        "get",
-        "features",
-        "intl-base",
-        "yui-log",
-        "yui-later",
-        "loader-base",
-        "loader-rollup",
-        "loader-yui3"
-    ]
-});
+YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
