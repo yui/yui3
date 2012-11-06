@@ -222,7 +222,7 @@ var engine, template;
 engine = new Y.Template();
 
 // Compile a template into a reusable function.
-template = engine.compile('My favorite animal is a <%= animal %>.');
+template = engine.compile('My favorite animal is a <%= data.animal %>.');
 ```
 
 <p>
@@ -251,12 +251,12 @@ If you don't plan to use a template more than once, you can compile and render i
 
 ```javascript
 // Compile and render a template in a single step.
-output = engine.render('My favorite animal is a <%= animal %>.', {animal: 'Rhino'});
+output = engine.render('My favorite animal is a <%= data.animal %>.', {animal: 'Rhino'});
 Y.log(output); // => "My favorite animal is a Rhino."
 ```
 
 <p>
-<strong> Note:</strong> The above examples are using Micro templates. If these examples used Handlebars templates, the `engine` instance would have been created using `Y.Handlebars`, and template syntax would have used `\{{animal}}` instead of `<%= animal %>`.
+<strong> Note:</strong> The above examples are using Micro templates. If these examples used Handlebars templates, the `engine` instance would have been created using `Y.Handlebars`, and template syntax would have used `\{{animal}}` instead of `<%= data.animal %>`.
 </p>
 
 <h3>Precompiling and Reviving Templates</h3>
@@ -266,7 +266,7 @@ Since Micro and Handlebars templates can be compiled and rendered in separate st
 </p>
 
 <p>
-The main benefit of precompilation is performance. Not only does the client not need to go through the compile step, but if your using a template engine like Handlebars, you don't even have to load the compiler on the client! All the client needs in order to render a precompiled template is the engine's runtime.
+The main benefit of precompilation is performance. Not only does the client not need to go through the compile step, but if your using a template engine like Handlebars, you don't even have to load the compiler on the client! All the client needs in order to render a precompiled template is the engine's runtime. In the case of Handlebars this is a 9KB (minified and gzipped) savings.
 </p>
 
 <p>
@@ -291,12 +291,60 @@ The `precompile()` method differs from the `compile()` method in a couple of imp
 </ul>
 
 <p>
-For more details, refer to the Precompiling and Reviving Templates sections of the [[#Precompiling and Reviving Templates2|Template.Micro]] and <a href="../handlebars/index.html#precompiling-templates">Handlebars</a> user guides.
+For more details, refer to the Precompiling and Reviving Templates sections of the [[#Precompiling and Reviving Micro Templates|Template.Micro]] and <a href="../handlebars/index.html#precompiling-templates">Handlebars</a> user guides.
 </p>
 
 <h3>Creating a Custom Template Engine</h3>
 
-<p>[how to create a template engine that conforms to the `Y.Template` API interface]</p>
+<p>
+The generic `Y.Template` interface is [[#Generic Template API|designed]] to worked with for variety of string -> function template engines. To implement a custom underlaying template engine for `Y.Template`, refer to the following list of methods and their descriptions which need to be implemented:
+</p>
+
+<dl>
+    <dt>`compile( text , [options] )`</dt>
+    <dd>
+        <p>
+        Compiles a string template into a resuable function and returns that function to the caller.
+        </p>
+
+        <p>
+        The core concept of a string -> function template engine is its compilation method. A custom template engine <em>must</em> implement this method.
+        </p>
+    </dd>
+
+    <dt>`render( text , data , [options] )`</dt>
+    <dd>
+        <p>
+        Compiles and renders a template in a single step, and returns the rendered result.
+        </p>
+
+        <p>
+        A custom template engine does <em>not</em> have to implement this method. It is merely provided as a convenience to the user. If the underlying engine does not implement this method, the `compile()` method will be called and the resulting function will be invoked.
+        </p>
+    </dd>
+
+    <dt>`precompile( text , [options] )`</dt>
+    <dd>
+        <p>
+        Precompiles a string template into a new string containing JavaScript source code for the precompiled template and returns it to the caller. The `revive()` method this method's companion, it converts the precompiled template back into a renderable function.
+        </p>
+
+        <p>
+        A custom template engine does <em>not</em> have to implement this method. If precompilation is a feature of the underlying template engine, then the `revive()` method <em>must</em> also be implemented.
+        </p>
+    </dd>
+
+    <dt>`revive( precompiled , [options] )`</dt>
+    <dd>
+        <p>
+        Revives a precompiled template function into an executable template function and returns that function to the caller. The precompiled code must already have been evaluated; this method won't evaluate it for you.
+        </p>
+
+        <p>
+        This is a companion method to the `precompile()` method and it <em>must</em> be implemented if the underlying template engine supports precompilation.
+        </p>
+    </dd>
+</dl>
 
 <h2>Using `Template.Micro`</h2>
 
@@ -310,13 +358,81 @@ For more details, refer to the Precompiling and Reviving Templates sections of t
 
 <h4>Inline Code &amp; Code Blocks</h4>
 
-<h3>Compiling and Rendering Templates</h3>
+<h3>Precompiling and Reviving Micro Templates</h3>
 
-<p>[may be redundant; possibly just refer to the Y.Template section above?]</p>
+<p>
+Precompiling Micro templates [[#Precompiling and Reviving Templates|has advantages]], especially when an app uses many templates. The rest of this section will demonstrate how to precompile templates on the server.
+</p>
 
-<h3>Precompiling and Reviving Templates</h3>
+<p>
+To precompile Micro templates on the server using <a href="http://nodejs.org/">Node.js</a>, first install the YUI <a href="http://npmjs.org/">npm</a> module by running the following in a terminal from the directory that contains your server application (this assumes you already have Node and npm installed):
+</p>
 
-<p>[may be redundant; possibly just refer to the Y.Template section above?]</p>
+```terminal
+$ npm install yui
+```
+
+<p>
+This will install the `yui` npm module in the current directory and make it available to your application.
+</p>
+
+<p>
+Next, in your application code, call the <a href="{{apiDocs}}/classes/Template.Micro.html#method_precompile">`precompile()`</a> method to precompile a Micro template. It will return a string containing JavaScript code.
+</p>
+
+```javascript
+// Load the YUI Template.Micro module.
+var Micro = require('yui/template-micro').Template.Micro;
+
+// Precompile a template string (pass any string you like here).
+var precompiled = Micro.precompile('My favorite animal is a <%= data.animal %>.');
+```
+
+<p>
+The `precompiled` variable will contain a string of JavaScript code that looks something like this:
+</p>
+
+```javascript
+function (Y, $e, data) {\nvar $b=\'\',$t=\'My favorite animal is a \'+\n$e(( data.animal )||$b)+\n\'.\';\nreturn $t;\n}
+```
+
+<p>
+You can now serve this precompiled JS to the client in whatever way makes the most sense for your application. On the client, load the `template` YUI module, create a `Y.Template` engine instance, and pass the precompiled template to its <a href="{{apiDocs}}/classes/Template.html#method_revive">`revive()`</a> method to convert it into a renderable template function.
+</p>
+
+<p>
+Here's a simple <a href="http://expressjs.com/">Express</a> app that precompiles a template on the server and renders it on the client:
+</p>
+
+```javascript
+#!/usr/bin/env node
+var Micro   = require('yui/template-micro').Template.Micro,
+    express = require('express'),
+    app     = express(),
+
+    precompiled = Micro.precompile('My favorite animal is a <%= data.animal %>.');
+
+app.get('/', function (req, res) {
+    res.send(
+        '<html><body>' +
+            '<script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/yui/yui-min.js"></script>' +
+            '<script>' +
+                'YUI().use("template", function (Y) {' +
+                    'var micro    = new Y.Template(),' +
+                    '    template = micro.revive(' + precompiled + ');' +
+                    'Y.one("body").append(template({animal: "Plain Tiger butterfly"}));' +
+                '});' +
+            '</script>' +
+        '</body></html>'
+    );
+});
+
+app.listen(7000);
+```
+
+<p>
+To see this simple server in action, save it to a file, install Express and YUI by running `npm i express yui`, then execute the file with Node.js and browse to <a href="http://localhost:7000/" target="_blank">http://localhost:7000/</a>.
+</p>
 
 <h3>Customizing Template Syntax</h3>
 
