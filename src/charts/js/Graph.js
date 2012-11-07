@@ -69,7 +69,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             vgl.draw();
         }
     },
-   
+
     /**
      * Object of arrays containing series mapped to a series type.
      *
@@ -81,7 +81,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 
     /**
      * Returns a series instance based on an index.
-     * 
+     *
      * @method getSeriesByIndex
      * @param {Number} val index of the series
      * @return CartesianSeries
@@ -99,7 +99,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 
     /**
      * Returns a series instance based on a key value.
-     * 
+     *
      * @method getSeriesByKey
      * @param {String} val key value of the series
      * @return CartesianSeries
@@ -137,10 +137,10 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      *
      * @property _seriesCollection
      * @type Array
-     * @private 
+     * @private
      */
     _seriesCollection: null,
-    
+
     /**
      * Object containing key value pairs of `CartesianSeries` instances.
      *
@@ -162,7 +162,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         if(!val)
         {
             return;
-        }	
+        }
         var len = val.length,
             i = 0,
             series,
@@ -171,7 +171,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         this._seriesDictionary = {};
         this.seriesTypes = [];
         for(; i < len; ++i)
-        {	
+        {
             series = val[i];
             if(!(series instanceof Y.CartesianSeries) && !(series instanceof Y.PieSeries))
             {
@@ -202,8 +202,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             seriesCollection = this.get("seriesCollection"),
             graphSeriesLength = seriesCollection.length,
             seriesTypes = this.seriesTypes,
-            typeSeriesCollection;	
-        if(!series.get("graph")) 
+            typeSeriesCollection;
+        if(!series.get("graph"))
         {
             series.set("graph", this);
         }
@@ -222,8 +222,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs. The key value pairs include attributes for the specific series and a type value which defines the type of
-     * series to be used. 
+     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs. The key value pairs include
+     * attributes for the specific series and a type value which defines the type of series to be used.
      *
      * @method createSeries
      * @param {Object} seriesData Series attribute key value pairs.
@@ -257,7 +257,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             series.render();
         }
     },
-    
+
     /**
      * String reference for pre-defined `Series` classes.
      *
@@ -290,22 +290,22 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Returns a specific `CartesianSeries` class based on key value from a look up table of a direct reference to a class. When specifying a key value, the following options
-     * are available:
+     * Returns a specific `CartesianSeries` class based on key value from a look up table of a direct reference to a
+     * class. When specifying a key value, the following options are available:
      *
      *  <table>
      *      <tr><th>Key Value</th><th>Class</th></tr>
-     *      <tr><td>line</td><td>Y.LineSeries</td></tr>    
-     *      <tr><td>column</td><td>Y.ColumnSeries</td></tr>    
-     *      <tr><td>bar</td><td>Y.BarSeries</td></tr>    
-     *      <tr><td>area</td><td>Y.AreaSeries</td></tr>    
-     *      <tr><td>stackedarea</td><td>Y.StackedAreaSeries</td></tr>    
-     *      <tr><td>stackedline</td><td>Y.StackedLineSeries</td></tr>    
-     *      <tr><td>stackedcolumn</td><td>Y.StackedColumnSeries</td></tr>    
-     *      <tr><td>stackedbar</td><td>Y.StackedBarSeries</td></tr>    
-     *      <tr><td>markerseries</td><td>Y.MarkerSeries</td></tr>    
-     *      <tr><td>spline</td><td>Y.SplineSeries</td></tr>    
-     *      <tr><td>areaspline</td><td>Y.AreaSplineSeries</td></tr>    
+     *      <tr><td>line</td><td>Y.LineSeries</td></tr>
+     *      <tr><td>column</td><td>Y.ColumnSeries</td></tr>
+     *      <tr><td>bar</td><td>Y.BarSeries</td></tr>
+     *      <tr><td>area</td><td>Y.AreaSeries</td></tr>
+     *      <tr><td>stackedarea</td><td>Y.StackedAreaSeries</td></tr>
+     *      <tr><td>stackedline</td><td>Y.StackedLineSeries</td></tr>
+     *      <tr><td>stackedcolumn</td><td>Y.StackedColumnSeries</td></tr>
+     *      <tr><td>stackedbar</td><td>Y.StackedBarSeries</td></tr>
+     *      <tr><td>markerseries</td><td>Y.MarkerSeries</td></tr>
+     *      <tr><td>spline</td><td>Y.SplineSeries</td></tr>
+     *      <tr><td>areaspline</td><td>Y.AreaSplineSeries</td></tr>
      *      <tr><td>stackedspline</td><td>Y.StackedSplineSeries</td></tr>
      *      <tr><td>stackedareaspline</td><td>Y.StackedAreaSplineSeries</td></tr>
      *      <tr><td>stackedmarkerseries</td><td>Y.StackedMarkerSeries</td></tr>
@@ -315,8 +315,9 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      *      <tr><td>combospline</td><td>Y.ComboSplineSeries</td></tr>
      *      <tr><td>stackedcombospline</td><td>Y.StackedComboSplineSeries</td></tr>
      *  </table>
-     * 
-     * When referencing a class directly, you can specify any of the above classes or any custom class that extends `CartesianSeries` or `PieSeries`.
+     *
+     * When referencing a class directly, you can specify any of the above classes or any custom class that extends
+     * `CartesianSeries` or `PieSeries`.
      *
      * @method _getSeries
      * @param {String | Object} type Series type.
@@ -330,7 +331,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         {
             seriesClass = this._seriesMap[type];
         }
-        else 
+        else
         {
             seriesClass = type;
         }
@@ -461,7 +462,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         {
             this._drawSeries();
         }
-    },  
+    },
 
     /**
      * Event handler for series drawingComplete event.
@@ -599,7 +600,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 return this._seriesCollection;
             }
         },
-       
+
         /**
          * Indicates whether the `Graph` has a background.
          *
@@ -657,7 +658,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 }
             }
         },
-        
+
         /**
          * Reference to the vertical `Gridlines` instance.
          *
@@ -702,7 +703,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._background)
                 {
                     this._backgroundGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    this._backgroundGraphic.get("node").style.zIndex = 0; 
+                    this._backgroundGraphic.get("node").style.zIndex = 0;
                     this._background = this._backgroundGraphic.addShape({type: "rect"});
                 }
                 return this._background;
@@ -724,13 +725,13 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._gridlines)
                 {
                     this._gridlinesGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    this._gridlinesGraphic.get("node").style.zIndex = 1; 
+                    this._gridlinesGraphic.get("node").style.zIndex = 1;
                     this._gridlines = this._gridlinesGraphic.addShape({type: "path"});
                 }
                 return this._gridlines;
             }
         },
-        
+
         /**
          * Reference to graphic instance used for series.
          *
@@ -741,12 +742,12 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         graphic: {
             readOnly: true,
 
-            getter: function() 
+            getter: function()
             {
                 if(!this._graphic)
                 {
                     this._graphic = new Y.Graphic({render:this.get("contentBox")});
-                    this._graphic.get("node").style.zIndex = 2; 
+                    this._graphic.get("node").style.zIndex = 2;
                     this._graphic.set("autoDraw", false);
                 }
                 return this._graphic;
@@ -771,13 +772,15 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
          *              <dt>fill</dt><dd>Defines the style properties for the fill. Contains the following values:
          *                  <dl>
          *                      <dt>color</dt><dd>Color of the fill. The default value is #faf9f2.</dd>
-         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background fill. The default value is 1.</dd>
+         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background fill.
+         *                      The default value is 1.</dd>
          *                  </dl>
          *              </dd>
          *              <dt>border</dt><dd>Defines the style properties for the border. Contains the following values:
          *                  <dl>
          *                      <dt>color</dt><dd>Color of the border. The default value is #dad8c9.</dd>
-         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background border. The default value is 1.</dd>
+         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background border.
+         *                      The default value is 1.</dd>
          *                      <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
          *                  </dl>
          *              </dd>
