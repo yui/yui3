@@ -39,16 +39,14 @@ var HSL = 'hsl',
         **/
         getComplementary: function(str, to) {
             var c = Harmony._start(str),
-                c1 = c.concat();
+                offsets = [];
 
             to = to || Color.findType(str);
 
-            c1 = Harmony.getOffset(c1, {h: 180});
+            offsets.push({});
+            offsets.push({ h: 180 });
 
-            return [
-                    Harmony._finish(c, to),
-                    Harmony._finish(c1, to)
-                ];
+            return Harmony._adjustOffsetAndFinish(c, offsets, to);
         },
 
         /**
@@ -65,29 +63,17 @@ var HSL = 'hsl',
         **/
         getSplit: function(str, offset, to) {
             var c = Harmony._start(str),
-                c1,
-                c2;
+                offsets = [];
 
             offset = offset || SPLIT_OFFSET;
 
             to = to || Color.findType(str);
 
-            c = Harmony.getOffset(c, {h: 180});
+            offsets.push({});
+            offsets.push({ h: 180 + offset });
+            offsets.push({ h: 180 - offset });
 
-            c1 = c.concat();
-            c1 = Harmony.getOffset(c1, {h: offset});
-
-            c2 = c.concat();
-            c2 = Harmony.getOffset(c2, {h: -offset});
-
-            // set base color back to original value
-            c = Harmony.getOffset(c, {h: 180});
-
-            return [
-                Harmony._finish(c, to),
-                Harmony._finish(c1, to),
-                Harmony._finish(c2, to)
-            ];
+            return Harmony._adjustOffsetAndFinish(c, offsets, to);
         },
 
         /**
@@ -105,33 +91,18 @@ var HSL = 'hsl',
         **/
         getAnalogous: function(str, offset, to) {
             var c = Harmony._start(str),
-                c1,
-                c2,
-                c3,
-                c4;
+                offsets = [];
 
             offset = offset || ANALOGOUS_OFFSET;
             to = to || Color.findType(str);
 
-            c1 = c.concat();
-            c1 = Harmony.getOffset(c1, {h: offset});
+            offsets.push({});
+            offsets.push({ h: offset });
+            offsets.push({ h: offset * 2 });
+            offsets.push({ h: -offset });
+            offsets.push({ h: -offset * 2 });
 
-            c2 = c1.concat();
-            c2 = Harmony.getOffset(c2, {h: offset});
-
-            c3 = c.concat();
-            c3 = Harmony.getOffset(c3, {h: -offset});
-
-            c4 = c3.concat();
-            c4 = Harmony.getOffset(c4, {h: -offset});
-
-            return [
-                Harmony._finish(c, to),
-                Harmony._finish(c1, to),
-                Harmony._finish(c2, to),
-                Harmony._finish(c3, to),
-                Harmony._finish(c4, to)
-            ];
+            return Harmony._adjustOffsetAndFinish(c, offsets, to);
         },
 
         /**
@@ -147,22 +118,15 @@ var HSL = 'hsl',
         **/
         getTriad: function(str, to) {
             var c = Harmony._start(str),
-                c1,
-                c2;
+                offsets = [];
 
             to = to || Color.findType(str);
 
-            c1 = c.concat();
-            c1 = Harmony.getOffset(c1, {h: TRIAD_OFFSET});
+            offsets.push({});
+            offsets.push({ h: TRIAD_OFFSET });
+            offsets.push({ h: -TRIAD_OFFSET });
 
-            c2 = c1.concat();
-            c2 = Harmony.getOffset(c2, {h: TRIAD_OFFSET});
-
-            return [
-                Harmony._finish(c, to),
-                Harmony._finish(c1, to),
-                Harmony._finish(c2, to)
-            ];
+            return Harmony._adjustOffsetAndFinish(c, offsets, to);
         },
 
         /**
@@ -179,28 +143,17 @@ var HSL = 'hsl',
         **/
         getTetrad: function(str, offset, to) {
             var c = Harmony._start(str),
-                c1,
-                c2,
-                c3;
+                offsets = [];
 
             offset = offset || TETRAD_OFFSET;
             to = to || Color.findType(str);
 
-            c1 = c.concat();
-            c1 = Harmony.getOffset(c1, {h: offset});
+            offsets.push({});
+            offsets.push({ h: offset });
+            offsets.push({ h: 180 });
+            offsets.push({ h: 180 + offset });
 
-            c2 = c.concat();
-            c2 = Harmony.getOffset(c2, {h: 180});
-
-            c3 = c2.concat();
-            c3 = Harmony.getOffset(c3, {h: offset});
-
-            return [
-                Harmony._finish(c, to),
-                Harmony._finish(c1, to),
-                Harmony._finish(c2, to),
-                Harmony._finish(c3, to)
-            ];
+            return Harmony._adjustOffsetAndFinish(c, offsets, to);
         },
 
         /**
@@ -216,27 +169,16 @@ var HSL = 'hsl',
         **/
         getSquare: function(str, to) {
             var c = Harmony._start(str),
-                c1,
-                c2,
-                c3;
+                offsets = [];
 
             to = to || Color.findType(str);
 
-            c1 = c.concat();
-            c1 = Harmony.getOffset(c1, {h: SQUARE_OFFSET});
+            offsets.push({});
+            offsets.push({ h: SQUARE_OFFSET });
+            offsets.push({ h: SQUARE_OFFSET * 2 });
+            offsets.push({ h: SQUARE_OFFSET * 3 });
 
-            c2 = c1.concat();
-            c2 = Harmony.getOffset(c2, {h: SQUARE_OFFSET});
-
-            c3 = c2.concat();
-            c3 = Harmony.getOffset(c3, {h: SQUARE_OFFSET});
-
-            return [
-                Harmony._finish(c, to),
-                Harmony._finish(c1, to),
-                Harmony._finish(c2, to),
-                Harmony._finish(c3, to)
-            ];
+            return Harmony._adjustOffsetAndFinish(c, offsets, to);
         },
 
         /**
@@ -298,35 +240,28 @@ var HSL = 'hsl',
         **/
         getSimilar: function(str, offset, count, to) {
             var c = Harmony._start(str),
-                colors = [c],
-                slOffset,
-                i = 0,
-                l,
-                o,
-                _c = c.concat();
+                offsets = [],
+                slOffset;
 
             to = to || Color.findType(str);
             count = count || DEF_COUNT;
             offset = offset || DEF_OFFSET;
             slOffset = (offset > 100) ? 100 : offset;
 
-            for (; i < count; i++) {
-                o = {
+            offsets.push({});
+            for (i = 0; i < count; i++) {
+                offsets.push({
                     h: ( Math.random() * (offset * 2)) - offset,
-                    s: ( Math.random() * (slOffset * 2)),
-                    l: ( Math.random() * (slOffset * 2))
-                };
-                _c = Harmony.getOffset(_c, o);
-                colors.push(_c.concat());
+                    // because getOffset adjusts from the existing color, we
+                    // need to adjust it negatively to get a good number for
+                    // saturation and luminance, otherwise we get a lot of
+                    // white when using large offsets
+                    s: ( Math.random() * slOffset - c[1]),
+                    l: ( Math.random() * slOffset - c[2])
+                });
             }
 
-            l = colors.length;
-
-            for (i=0; i<l; i++) {
-                colors[i] = Harmony._finish(colors[i], to);
-            }
-
-            return colors;
+            return Harmony._adjustOffsetAndFinish(c, offsets, to);
         },
 
         /**
@@ -576,6 +511,39 @@ var HSL = 'hsl',
             } else {
                 return Harmony._searchLuminanceForBrightness(color, brightness, luminance, max);
             }
+        },
+
+        /**
+        Takes an HSL array, and an array of offsets and returns and array
+            of colors that have been adjusted. The returned colors will
+            match the array of offsets provided. If you wish you have the
+            same color value returned, you can provide null or an empty
+            object to the offsets. The returned array will contain color
+            value strings that have been adjusted from subtractive to
+            additive.
+        @private
+        @method _adjustOffsetAndFinish
+        @param {Array} color
+        @param {Array} offsets
+        @param {String} to
+        @return {Array}
+        @since 3.8.0
+        **/
+        _adjustOffsetAndFinish: function(color, offsets, to) {
+            var colors = [],
+                i,
+                l = offsets.length,
+                _c;
+
+            for (i = 0; i < l; i++ ) {
+                _c = color.concat();
+                if (offsets[i]) {
+                    _c = Harmony.getOffset(_c, offsets[i]);
+                }
+                colors.push(Harmony._finish(_c, to));
+            }
+
+            return colors;
         }
 
     };
