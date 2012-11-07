@@ -35,7 +35,7 @@
 
                 var locale = Y.QueryString.parse(window.location.search.substr(1)).locale;
                 if(!locale) { locale = "en-US"; }
-                var locales = Y.Intl.getAvailableLangs("format-date");
+                var locales = Y.Intl.getAvailableLangs("datatype-date-advanced-format");
                 (new Y.LanguagePicker()).install("languagePicker", locales, locale, window.location.pathname);
             });
         </script>
@@ -905,17 +905,30 @@
                 
                     //Update the current row with data. Used for tables showing data for all 4 timezones
                     function updateRow(date, row, dateFormat, timeFormat, timeZoneFormat) {
-                        var absoluteDateFormat = new Y.DateFormat(timeZones[0], dateFormat, timeFormat, timeZoneFormat);
-                        row.one("td + td").setContent(absoluteDateFormat.format(date));
-                            
-                        absoluteDateFormat = new Y.DateFormat(timeZones[1], dateFormat, timeFormat, timeZoneFormat);
-                        row.one("td + td + td").setContent(absoluteDateFormat.format(date));
-                            
-                        absoluteDateFormat = new Y.DateFormat(timeZones[2], dateFormat, timeFormat, timeZoneFormat);
-                        row.one("td + td + td + td").setContent(absoluteDateFormat.format(date));
-                            
-                        absoluteDateFormat = new Y.DateFormat(timeZones[3], dateFormat, timeFormat, timeZoneFormat);
-                        row.one("td + td + td + td + td").setContent(absoluteDateFormat.format(date));
+                        row.one("td + td").setContent(Y.Date.format(date, {
+                            timezone: timeZones[0],
+                            dateFormat: dateFormat,
+                            timeFormat: timeFormat,
+                            timezoneFormat: timeZoneFormat
+                        }));
+                        row.one("td + td + td").setContent(Y.Date.format(date, {
+                            timezone: timeZones[1],
+                            dateFormat: dateFormat,
+                            timeFormat: timeFormat,
+                            timezoneFormat: timeZoneFormat
+                        }));
+                        row.one("td + td + td + td").setContent(Y.Date.format(date, {
+                            timezone: timeZones[2],
+                            dateFormat: dateFormat,
+                            timeFormat: timeFormat,
+                            timezoneFormat: timeZoneFormat
+                        }));
+                        row.one("td + td + td + td + td").setContent(Y.Date.format(date, {
+                            timezone: timeZones[3],
+                            dateFormat: dateFormat,
+                            timeFormat: timeFormat,
+                            timezoneFormat: timeZoneFormat
+                        }));
                     }
                 
                     //Load data in all tables for the currently selected locale
@@ -929,8 +942,10 @@
                             var style = row.one("td").getContent(); 
                             style = style.replace(" ", "_").toUpperCase();
                        
-                            var absoluteDateFormat = new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS[style], 0, 0);
-                            row.one("td + td").setContent(absoluteDateFormat.format(date));
+                            row.one("td + td").setContent(Y.Date.format(date, {
+                                timezone: timeZones[0],
+                                dateFormat: style
+                            }));
                         });
                     
                         //Absolute Date format with Relative
@@ -938,7 +953,7 @@
                         table.all("tr").each(function(row) {
                             if(row.one("td") == null)    return; //Skip header 
                             var value = row.one("td").getContent();
-                            var style = Y.DateFormat.DATE_FORMATS.WMD_ABBREVIATED | Y.DateFormat.DATE_FORMATS.RELATIVE_DATE;
+                            var style = Y.Date.DATE_FORMATS.WMD_ABBREVIATED | Y.Date.DATE_FORMATS.RELATIVE_DATE;
                             //in d day(s)
                             var m = value.match(/in (\d+) day/);
                             if(m) {
@@ -977,7 +992,7 @@
                             var style = row.one("td").getContent(); 
                             style = style.replace(" ", "_").toUpperCase();
                        
-                            updateRow(date, row, 0, Y.DateFormat.TIME_FORMATS[style], 0);
+                            updateRow(date, row, 0, Y.Date.TIME_FORMATS[style], 0);
                         });
                     
                         //TimeZone Formats
@@ -987,7 +1002,7 @@
                             var style = row.one("td").getContent(); 
                             style = style.replace(" ", "_").toUpperCase();
                        
-                            updateRow(date, row, 0, 0, Y.DateFormat.TIMEZONE_FORMATS[style]);
+                            updateRow(date, row, 0, 0, Y.Date.TIMEZONE_FORMATS[style]);
                         });
                     
                         //Combinations
@@ -998,19 +1013,19 @@
                             var result = "";
                         
                             if(style == "WYMDHMZ abbreviated/abbreviated/short") {
-                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.WYMD_ABBREVIATED, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.Z_SHORT)).format(date);
+                                result = Y.Date.format(date, { timezone: timeZones[0], dateFormat: "WYMD_ABBREVIATED", timeFormat: "HM_ABBREVIATED", timezoneFormat: "Z_SHORT"});
                             } else if(style == "WYMDHM abbreviated/abbreviated") {
-                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.WYMD_ABBREVIATED, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.NONE)).format(date);
+                                result = Y.Date.format(date, { timezone: timeZones[0], dateFormat: "WYMD_ABBREVIATED", timeFormat: "HM_ABBREVIATED"});
                             } else if(style == "WMDHMZ abbreviated/abbreviated/short") {
-                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.WMD_ABBREVIATED, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.Z_SHORT)).format(date);
+                                result = Y.Date.format(date, { timezone: timeZones[0], dateFormat: "WMD_ABBREVIATED", timeFormat: "HM_ABBREVIATED", timezoneFormat: "Z_SHORT"});
                             } else if(style == "WMDHM abbreviated/abbreviated") {
-                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.WMD_ABBREVIATED, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.NONE)).format(date);
+                                result = Y.Date.format(date, { timezone: timeZones[0], dateFormat: "WMD_ABBREVIATED", timeFormat: "HM_ABBREVIATED"});
                             } else if(style == "MDHM abbreviated/abbreviated") {
-                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.MD_ABBREVIATED, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.NONE)).format(date);
+                                result = Y.Date.format(date, { timezone: timeZones[0], dateFormat: "MD_ABBREVIATED", timeFormat: "HM_ABBREVIATED"});
                             } else if(style == "HMZ abbreviated/abbreviated") {
-                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.NONE, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.Z_ABBREVIATED)).format(date);
+                                result = Y.Date.format(date, { timezone: timeZones[0], timeFormat: "HM_ABBREVIATED", timezoneFormat: "Z_ABBREVIATED"});
                             } else if(style == "MDZ abbreviated/abbreviated") {
-                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.MD_ABBREVIATED, Y.DateFormat.TIME_FORMATS.NONE, Y.DateFormat.TIMEZONE_FORMATS.Z_ABBREVIATED)).format(date);
+                                result = Y.Date.format(date, { timezone: timeZones[0], dateFormat: "MD_ABBREVIATED", timezoneFormat: "Z_ABBREVIATED"});
                             }
                        
                             row.one("td + td").setContent(result);
@@ -1021,19 +1036,18 @@
                         table.all("tr").each(function(row) {
                             if(row.one("td") == null) return;   //Skip header
                             var cells = row.all("td").getDOMNodes();
-                            var relativeTo = date.getTime() * 1000;
-                            var timeValue = relativeTo - parseInt(cells[0].innerHTML);
-                        
+                            var timeValue = new Date(date.getTime()- parseInt(cells[0].innerHTML) * 1000);
+                            Y.Date.currentDate = date;
+                            
                             var styles = [
-                                Y.RelativeTimeFormat.STYLES.ONE_UNIT_LONG,
-                                Y.RelativeTimeFormat.STYLES.ONE_OR_TWO_UNITS_LONG,
-                                Y.RelativeTimeFormat.STYLES.ONE_UNIT_ABBREVIATED,
-                                Y.RelativeTimeFormat.STYLES.ONE_OR_TWO_UNITS_ABBREVIATED
+                                "ONE_UNIT_LONG",
+                                "ONE_OR_TWO_UNITS_LONG",
+                                "ONE_UNIT_ABBREVIATED",
+                                "ONE_OR_TWO_UNITS_ABBREVIATED"
                             ];
                         
                             for(var i=1; i<cells.length; i++) {
-                                var formatter = new Y.RelativeTimeFormat(styles[i-1]);
-                                cells[i].innerHTML = formatter.format(timeValue, relativeTo);
+                                cells[i].innerHTML = Y.Date.format(timeValue, { relativeTimeFormat: styles[i-1] });
                             }
                         
                         });

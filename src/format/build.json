@@ -5,6 +5,7 @@
             "jsfiles": [
 		"BaseFormat.js",
                 "DateFormat.js",
+                "format-relative.js",
                 "format-date.js"
             ]
         },
@@ -12,11 +13,6 @@
             "jsfiles": [
 		"BaseFormat.js",
                 "format-numbers.js"
-            ]
-        },
-        "format-relative": {
-            "jsfiles": [
-                "format-relative.js"
             ]
         },
         "format-duration": {

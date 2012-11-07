@@ -12,11 +12,11 @@
 (function() {
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-        coverage: ['format-relative'],
+        coverage: ['datatype-date-advanced-format'],
         modules: {
             'format-relative-tests': {
                 fullpath: './assets/format-relative-tests.js',
-                requires: ['test', 'dump', 'format-relative']
+                requires: ['test', 'dump', 'datatype-date-advanced-format']
             }
         }
     }).use("test-console", "format-relative-tests" , function(Y) {

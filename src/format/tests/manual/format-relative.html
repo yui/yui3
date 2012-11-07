@@ -96,17 +96,20 @@
                     relativeTimeInDate.set("value", new Date());
                 }
                 relativeTimeSubmit.on("click", function(e) {
-                    YUI({lang: relativeTimeLocale.get("value"), filter: "raw"}).use("format-relative", function(Y) {
-                        var rtFormat = new Y.RelativeTimeFormat(Y.RelativeTimeFormat.STYLES[relativeTimeStyle.get("value")]);
+                    YUI({lang: relativeTimeLocale.get("value"), filter: "raw"}).use("datatype-date-advanced-format", function(Y) {
+                        
                         var inDate = new Date(relativeTimeInDate.get("value"));
                         var relativeTo = relativeToDate.get("value");
 
-                        var result;
                         if(relativeTo != "") {
-                            result = rtFormat.format(inDate.getTime()/1000, (new Date(relativeTo)).getTime()/1000);
+                            Y.Date.currentDate = new Date(relativeTo);
                         } else {
-                            result = rtFormat.format(inDate.getTime()/1000);
+                            Y.Date.currentDate = new Date();
                         }
+                        
+                        var result = Y.Date.format(inDate, {
+                            relativeTimeFormat: relativeTimeStyle.get("value")
+                        });
 
                         relativeTimeResult.set("value", result);
                     });

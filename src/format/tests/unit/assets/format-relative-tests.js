@@ -5,10 +5,10 @@ YUI.add('format-relative-tests', function(Y) {
         name: "Relative Time Format Tests",
                     
         setUp : function () {
-            this.delta = 60;
+            this.delta = 60 * 1000;
             this.timeValue = 1265078145;
             Y.Intl.add(
-                "format-relative",
+                "datatype-date-advanced-format",
                 "en-US",
 
                 {
@@ -24,6 +24,7 @@ YUI.add('format-relative-tests', function(Y) {
                     "seconds_abbr" : "secs"
                 }
                 );
+            Y.Date.currentDate = new Date(this.timeValue);
         },
         
         //---------------------------------------------------------------------
@@ -31,36 +32,41 @@ YUI.add('format-relative-tests', function(Y) {
         //---------------------------------------------------------------------
                     
         "One or Two Units Long" : function () {
-            var formatter = new Y.RelativeTimeFormat(Y.RelativeTimeFormat.STYLES.ONE_OR_TWO_UNITS_LONG);
-            var result = formatter.format(this.timeValue - this.delta, this.timeValue);
-                        
+            var result = Y.Date.format(new Date(this.timeValue - this.delta), {
+                relativeTimeFormat: "ONE_OR_TWO_UNITS_LONG"
+            });
+
             Y.Assert.areEqual("1 minute 0 seconds ago", result);
         },
         
         "One or Two Units Abbreviated" : function () {
-            var formatter = new Y.RelativeTimeFormat(Y.RelativeTimeFormat.STYLES.ONE_OR_TWO_UNITS_ABBREVIATED);
-            var result = formatter.format(this.timeValue - this.delta, this.timeValue);
+            var result = Y.Date.format(new Date(this.timeValue - this.delta), {
+                relativeTimeFormat: "ONE_OR_TWO_UNITS_ABBREVIATED"
+            });
                         
             Y.Assert.areEqual("1 min 0 secs ago", result);
         },
                     
         "One Unit Long" : function () {
-            var formatter = new Y.RelativeTimeFormat(Y.RelativeTimeFormat.STYLES.ONE_UNIT_LONG);
-            var result = formatter.format(this.timeValue - this.delta, this.timeValue);
+            var result = Y.Date.format(new Date(this.timeValue - this.delta), {
+                relativeTimeFormat: "ONE_UNIT_LONG"
+            });
                         
             Y.Assert.areEqual("1 minute ago", result);
         },
                     
         "One Unit Abbreviated" : function () {
-            var formatter = new Y.RelativeTimeFormat(Y.RelativeTimeFormat.STYLES.ONE_UNIT_ABBREVIATED);
-            var result = formatter.format(this.timeValue - this.delta, this.timeValue);
+            var result = Y.Date.format(new Date(this.timeValue - this.delta), {
+                relativeTimeFormat: "ONE_UNIT_ABBREVIATED"
+            });
                         
             Y.Assert.areEqual("1 min ago", result);
         },
                     
         "Test result when timeValue is equal to relativeTo Time" : function () {
-            var formatter = new Y.RelativeTimeFormat(Y.RelativeTimeFormat.STYLES.ONE_UNIT_ABBREVIATED);
-            var result = formatter.format(this.timeValue, this.timeValue);
+            var result = Y.Date.format(new Date(this.timeValue), {
+                relativeTimeFormat: "ONE_UNIT_ABBREVIATED"
+            });
                         
             Y.Assert.areEqual("0 secs ago", result);
         }

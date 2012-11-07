@@ -1908,16 +1908,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("format-numbers")) > -1, "Module (format-numbers) not found in sorted array");
         },
-     "Testing format-relative": function(data) {
-            var loader = new Y.Loader({
-                require: ["format-relative"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("format-relative")) > -1, "Module (format-relative) not found in sorted array");
-        },
      "Testing frame": function(data) {
             var loader = new Y.Loader({
                 require: ["frame"],
