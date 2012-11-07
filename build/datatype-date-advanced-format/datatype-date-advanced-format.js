@@ -289,7 +289,7 @@ DateFormat = function(pattern, formats, timeZoneId) {
         return;
     }
     DateFormat.superclass.constructor.call(this, pattern, formats);
-    this.timeZone = new Y.TimeZone(timeZoneId);
+    this.timeZone = new Y.Date.Timezone(timeZoneId);
         
     if (pattern == null) {
         return;
@@ -851,12 +851,12 @@ YDateFormat = function(timeZone, dateFormat, timeFormat, timeZoneFormat) {
     this._Formats = Y.Intl.get(MODULE_NAME);
         
     //If not valid time zone
-    if(!Y.TimeZone.isValidTimezoneId(timeZone)) {
-        throw new Y.TimeZone.UnknownTimeZoneException("Could not find timezone: " + timeZone);
+    if(!Y.Date.Timezone.isValidTimezoneId(timeZone)) {
+        throw new Y.Date.Timezone.UnknownTimeZoneException("Could not find timezone: " + timeZone);
     }
 
     this._timeZone = timeZone;
-    this._timeZoneInstance = new Y.TimeZone(this._timeZone);
+    this._timeZoneInstance = new Y.Date.Timezone(this._timeZone);
 
     this._dateFormat = dateFormat;
     this._timeFormat = timeFormat;
@@ -1871,7 +1871,7 @@ Y.Date.formatDuration = function(oDuration, oConfig) {
         "zu-ZA"
     ],
     "requires": [
-        "timezone",
+        "datatype-date-timezone",
         "datatype-date-format",
         "format-numbers"
     ]

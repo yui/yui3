@@ -1,11 +1,11 @@
 /**
- * Y.TimeZone performs operations on a given timezone string represented in Olson tz database 
+ * Timezone performs operations on a given timezone string represented in Olson tz database 
  * This module uses parts of zimbra AjxTimezone to handle time-zones
  * @module yTimezone
  * @requires tzoneData, tzoneLinks, yDateFormatData
  */
 
-var MODULE_NAME = "timezone";
+var MODULE_NAME = "datatype-date-timezone";
     
 AjxTimezone = function() {
     this.localeData = Y.Intl.get(MODULE_NAME);
@@ -367,15 +367,15 @@ function floatToInt(floatNum) {
 }
 
 /**
- * Y.TimeZone constructor. locale is optional, if not specified, defaults to root locale
- * @class Y.TimeZone
+ * Timezone constructor. locale is optional, if not specified, defaults to root locale
+ * @class Timezone
  * @constructor
  * @param {String} tzId TimeZone ID as in Olson tz database
  */
-Y.TimeZone = function(tzId) {
-    var normalizedId = Y.TimeZone.getNormalizedTimezoneId(tzId);
+Timezone = function(tzId) {
+    var normalizedId = Timezone.getNormalizedTimezoneId(tzId);
     if(normalizedId == "") {
-        throw new Y.TimeZone.UnknownTimeZoneException("Could not find timezone: " + tzId);
+        throw new Timezone.UnknownTimeZoneException("Could not find timezone: " + tzId);
     }
     this.tzId = normalizedId;
         
@@ -383,10 +383,10 @@ Y.TimeZone = function(tzId) {
 }
 
 //Exception Handling
-Y.TimeZone.UnknownTimeZoneException = function (message) {
+Timezone.UnknownTimeZoneException = function (message) {
     this.message = message;
 }
-Y.TimeZone.UnknownTimeZoneException.prototype.toString = function () {
+Timezone.UnknownTimeZoneException.prototype.toString = function () {
     return 'UnknownTimeZoneException: ' + this.message;
 }
 
@@ -397,7 +397,7 @@ Y.TimeZone.UnknownTimeZoneException.prototype.toString = function () {
  * @param {Number} rawOffset Raw offset (in seconds) from GMT.
  * @return {Array} array of timezone Id's that match rawOffset passed in to the API. 
  */
-Y.TimeZone.getCurrentTimezoneIds = function(rawOffset) {
+Timezone.getCurrentTimezoneIds = function(rawOffset) {
     return AjxTimezone.getCurrentTimezoneIds(rawOffset);
 }
 
@@ -408,7 +408,7 @@ Y.TimeZone.getCurrentTimezoneIds = function(rawOffset) {
  * @param {Number} rawOffset Offset from GMT in seconds
  * @return {String} timezone id
  */
-Y.TimeZone.getTimezoneIdForOffset = function(rawOffset) {
+Timezone.getTimezoneIdForOffset = function(rawOffset) {
     return AjxTimezone.getTimezoneIdForOffset(rawOffset);
 }
 
@@ -417,7 +417,7 @@ Y.TimeZone.getTimezoneIdForOffset = function(rawOffset) {
  * @param {Object} walltime Walltime that needs conversion. Missing properties will be treat as 0.
  * @return {Number} UNIX time - time in seconds since Epoch
  */
-Y.TimeZone.getUnixTimeFromWallTime = function(walltime) {
+Timezone.getUnixTimeFromWallTime = function(walltime) {
     /*
 	 * Initialize any missing properties.
 	 */
@@ -455,7 +455,7 @@ Y.TimeZone.getUnixTimeFromWallTime = function(walltime) {
  * @param {Number} rawOffset An offset from UTC in seconds. 
  * @return {Boolean} true if valid timestamp, false otherwise
  */
-Y.TimeZone.isValidTimestamp = function(timeStamp, rawOffset) {
+Timezone.isValidTimestamp = function(timeStamp, rawOffset) {
     var regex = /^(\d\d\d\d)-([0-1][0-9])-([0-3][0-9])([T ])([0-2][0-9]):([0-6][0-9]):([0-6][0-9])(Z|[+-][0-1][0-9]:[0-3][0-9])?$/
     var matches = (new RegExp(regex)).exec(timeStamp);
 
@@ -538,7 +538,7 @@ Y.TimeZone.isValidTimestamp = function(timeStamp, rawOffset) {
  * @param {String} tzId timezoneId to be checked for validity
  * @return {Boolean} true if tzId is a valid timezone id in tz database. tzId could be a "zone" id or a "link" id to be a valid tz Id. False otherwise
  */
-Y.TimeZone.isValidTimezoneId = function(tzId) {
+Timezone.isValidTimezoneId = function(tzId) {
     return AjxTimezone.isValidTimezoneId(tzId);
 }
 
@@ -548,8 +548,8 @@ Y.TimeZone.isValidTimezoneId = function(tzId) {
  * @param {String} tzId The timezone ID whose normalized form is requested.
  * @return {String} The normalized version of the timezone Id, or empty string if tzId is not a valid time zone Id.
  */
-Y.TimeZone.getNormalizedTimezoneId = function(tzId) {
-    if(!Y.TimeZone.isValidTimezoneId(tzId)) {
+Timezone.getNormalizedTimezoneId = function(tzId) {
+    if(!Timezone.isValidTimezoneId(tzId)) {
         return "";
     }
     var normalizedId;       
@@ -571,7 +571,7 @@ Y.TimeZone.getNormalizedTimezoneId = function(tzId) {
  * @param {String} dString The date string to be parsed
  * @return {Date} The date represented by dString
  */
-Y.TimeZone.prototype._parseRFC3339 = function(dString){
+Timezone.prototype._parseRFC3339 = function(dString){
     var regexp = /(\d+)(-)?(\d+)(-)?(\d+)(T)?(\d+)(:)?(\d+)(:)?(\d+)(\.\d+)?(Z|([+-])(\d+)(:)?(\d+))/; 
 
     var result = new Date();
@@ -605,7 +605,7 @@ Y.TimeZone.prototype._parseRFC3339 = function(dString){
  * @param {String} dString The date string to be parsed
  * @return {Date} The date represented by dString
  */
-Y.TimeZone.prototype._parseSQLFormat = function(dString) {
+Timezone.prototype._parseSQLFormat = function(dString) {
     var dateTime = dString.split(" ");
     var date = dateTime[0].split("-");
     var time = dateTime[1].split(":");
@@ -617,17 +617,17 @@ Y.TimeZone.prototype._parseSQLFormat = function(dString) {
 //Public methods
 
 //For use in Y.DateFormat.
-Y.TimeZone.prototype.getShortName = function() {
+Timezone.prototype.getShortName = function() {
     return this._ajxTimeZoneInstance.getShortName(this.tzId);
 }
 
 //For use in Y.DateFormat.
-Y.TimeZone.prototype.getMediumName = function() {
+Timezone.prototype.getMediumName = function() {
     return this._ajxTimeZoneInstance.getMediumName(this.tzId);
 }
 
 //For use in Y.DateFormat.
-Y.TimeZone.prototype.getLongName = function() {
+Timezone.prototype.getLongName = function() {
     return this._ajxTimeZoneInstance.getLongName(this.tzId);
 }
     
@@ -636,7 +636,7 @@ Y.TimeZone.prototype.getLongName = function() {
  * @param {String} timeValue TimeValue representation in RFC 3339 or SQL format.
  * @return {Number} UNIX time - time in seconds since Epoch
  */
-Y.TimeZone.prototype.convertToIncrementalUTC = function(timeValue) {
+Timezone.prototype.convertToIncrementalUTC = function(timeValue) {
     if(timeValue.indexOf("T") != -1) {
         //RFC3339
         return this._parseRFC3339(timeValue).getTime() / 1000;
@@ -651,7 +651,7 @@ Y.TimeZone.prototype.convertToIncrementalUTC = function(timeValue) {
  * @param {Number} timeValue time value in seconds since Epoch.
  * @return {String} RFC3339 format timevalue - "yyyy-mm-ddThh:mm:ssZ"
  */
-Y.TimeZone.prototype.convertUTCToRFC3339Format = function(timeValue) {
+Timezone.prototype.convertUTCToRFC3339Format = function(timeValue) {
     var uTime = new Date(timeValue * 1000);
     var offset = AjxTimezone.getOffset(this.tzId, uTime);
 
@@ -674,7 +674,7 @@ Y.TimeZone.prototype.convertUTCToRFC3339Format = function(timeValue) {
  * @param {Number} timeValue time value in seconds since Epoch.
  * @return {String} SQL Format timevalue - "yyyy-mm-dd hh:mm:ss"
  */
-Y.TimeZone.prototype.convertUTCToSQLFormat = function(timeValue) {
+Timezone.prototype.convertUTCToSQLFormat = function(timeValue) {
     var uTime = new Date(timeValue * 1000);
     var offset = AjxTimezone.getOffset(this.tzId, uTime);
     uTime.setTime(timeValue*1000 + offset*60*1000);
@@ -689,7 +689,7 @@ Y.TimeZone.prototype.convertUTCToSQLFormat = function(timeValue) {
  * Gets the offset of this timezone in seconds from UTC
  * @return {Number} offset of this timezone in seconds from UTC
  */
-Y.TimeZone.prototype.getRawOffset = function() {
+Timezone.prototype.getRawOffset = function() {
     return AjxTimezone.getOffset(this.tzId, new Date()) * 60;
 }
 
@@ -698,7 +698,7 @@ Y.TimeZone.prototype.getRawOffset = function() {
  * @param {Number} timeValue value in seconds from Epoch.
  * @return {Object} an object with the properties: sec, min, hour, mday, mon, year, wday, yday, isdst, gmtoff, zone. All of these are integers except for zone, which is a string. isdst is 1 if DST is active, and 0 if DST is inactive.
  */
-Y.TimeZone.prototype.getWallTimeFromUnixTime = function(timeValue) {
+Timezone.prototype.getWallTimeFromUnixTime = function(timeValue) {
     var offset = AjxTimezone.getOffset(this.tzId, new Date(timeValue*1000)) * 60;
     var localTimeValue = timeValue + offset;
     var date = new Date(localTimeValue*1000);
@@ -719,3 +719,5 @@ Y.TimeZone.prototype.getWallTimeFromUnixTime = function(timeValue) {
 
     return walltime;
 }
+
+Y.Date.Timezone = Timezone;

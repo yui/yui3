@@ -1166,6 +1166,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatype-date-parse")) > -1, "Module (datatype-date-parse) not found in sorted array");
         },
+     "Testing datatype-date-timezone": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-date-timezone"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-timezone")) > -1, "Module (datatype-date-timezone) not found in sorted array");
+        },
      "Testing datatype-number": function(data) {
             var loader = new Y.Loader({
                 require: ["datatype-number"],
@@ -3049,16 +3059,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("text-wordbreak")) > -1, "Module (text-wordbreak) not found in sorted array");
-        },
-     "Testing timezone": function(data) {
-            var loader = new Y.Loader({
-                require: ["timezone"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("timezone")) > -1, "Module (timezone) not found in sorted array");
         },
      "Testing transition": function(data) {
             var loader = new Y.Loader({

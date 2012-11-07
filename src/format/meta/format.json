@@ -36,8 +36,8 @@
                 "zh-Hans-CN", "zh-Hans-HK", "zh-Hans-MO", "zh-Hans-SG", "zh-Hans", "zh-Hant-HK", "zh-Hant-MO",
                 "zh-Hant-TW", "zh-Hant", "zh-HK", "zh-MO", "zh-SG", "zh-TW", "zh", "zu", "zu-ZA"
                 ],
-		"requires": [ "timezone", "datatype-date-format", "format-numbers" ],
-                "after": ["datatype-date-format"]
+		"requires": [ "datatype-date-timezone", "datatype-date-format", "format-numbers" ],
+                "after": ["datatype-date-timezone"]
             },
             "format-numbers": {
                 "lang": [ "af-NA", "af", "af-ZA", "am-ET", "am", "ar-AE", "ar-BH", "ar-DZ", "ar-EG", "ar-IQ", "ar-JO",

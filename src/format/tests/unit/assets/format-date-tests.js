@@ -20,7 +20,7 @@ YUI.add('format-date-tests', function(Y) {
                 );
                     
             Y.Intl.add(
-                "timezone",
+                "datatype-date-timezone",
                 "en",
                 {
                     "Asia/Kolkata_Z_short" : "IST"
@@ -42,7 +42,7 @@ YUI.add('format-date-tests', function(Y) {
                 );
             
             Y.Intl.add(
-                "timezone",
+                "datatype-date-timezone",
                 "th",
                 {
                     "Asia/Shanghai_Z_short" : "CST (CN)"
@@ -52,7 +52,7 @@ YUI.add('format-date-tests', function(Y) {
 
         testAbsoluteDateFormat : function () {
             Y.Intl.setLang("datatype-date-advanced-format", "en");
-            Y.Intl.setLang("timezone", "en");
+            Y.Intl.setLang("datatype-date-timezone", "en");
                         
             var date = new Date("2012/6/25 15:30 GMT+05:30");
             var result = Y.Date.format(date, {
@@ -68,7 +68,7 @@ YUI.add('format-date-tests', function(Y) {
         testBuddhistCalendar: function () {
             //Thai calendar
             Y.Intl.setLang("datatype-date-advanced-format", "th");    //Change language for this test only
-            Y.Intl.setLang("timezone", "th");
+            Y.Intl.setLang("datatype-date-timezone", "th");
                         
             var date = new Date("2012/6/25 15:30 GMT+05:30");
             var result = Y.Date.format(date, {

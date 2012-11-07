@@ -4,7 +4,7 @@ YUI.add('timezone-tests', function(Y) {
         name : "TimeZone Tests",
         
         setUp : function () {
-            this.tZone = new Y.TimeZone("Asia/Kolkata");
+            this.tZone = new Y.Date.Timezone("Asia/Kolkata");
         },
         
         //---------------------------------------------------------------------
@@ -29,7 +29,7 @@ YUI.add('timezone-tests', function(Y) {
         },        
         
         testGetCurrentTimeZoneIds : function () {
-            var tzIdsFor330 = Y.TimeZone.getCurrentTimezoneIds(330*60);
+            var tzIdsFor330 = Y.Date.Timezone.getCurrentTimezoneIds(330*60);
             var tzIdsFor330Set = {};    //Convert array to set to check existence of each expected value
             for(var i=0; i<tzIdsFor330.length; i++) {
                 tzIdsFor330Set[tzIdsFor330[i]] = true;
@@ -51,41 +51,41 @@ YUI.add('timezone-tests', function(Y) {
         },
                     
         testGetTimeZoneIdForOffset: function() {
-            var tzIdFor330 = Y.TimeZone.getTimezoneIdForOffset(330*60);
+            var tzIdFor330 = Y.Date.Timezone.getTimezoneIdForOffset(330*60);
             Y.assert(tzIdFor330 == "Asia/Kolkata" || tzIdFor330 == "Asia/Colombo", "Did not get expected time zone id for offset 330");
         },
                     
         "Test conversion between WallTime and UnixTime": function() {
             var now = new Date();
             var wallTime = this.tZone.getWallTimeFromUnixTime(now.getTime()/1000);
-            var unixTime = Y.TimeZone.getUnixTimeFromWallTime(wallTime);
+            var unixTime = Y.Date.Timezone.getUnixTimeFromWallTime(wallTime);
             var expectedUnixTime = ~~(now.getTime()/1000);
             Y.Assert.areEqual(expectedUnixTime, unixTime);
         },
                     
         testIsValidTimeZoneId: function() {
             var Assert = Y.Assert;
-            Assert.isFalse(Y.TimeZone.isValidTimezoneId("abc"), "abc is not a valid timezone");
-            Assert.isTrue(Y.TimeZone.isValidTimezoneId("Asia/Kolkata"), "Asia/Kolkata is a valid timezone");
-            Assert.isTrue(Y.TimeZone.isValidTimezoneId("Asia/Calcutta"), "Asia/Calcutta is a valid timezone");
+            Assert.isFalse(Y.Date.Timezone.isValidTimezoneId("abc"), "abc is not a valid timezone");
+            Assert.isTrue(Y.Date.Timezone.isValidTimezoneId("Asia/Kolkata"), "Asia/Kolkata is a valid timezone");
+            Assert.isTrue(Y.Date.Timezone.isValidTimezoneId("Asia/Calcutta"), "Asia/Calcutta is a valid timezone");
         },
                     
         testGetNormalizedTimezoneId: function() {
             var Assert = Y.Assert;
-            Assert.areEqual("", Y.TimeZone.getNormalizedTimezoneId("abc"), "abc is not a valid timezone");
-            Assert.areEqual("Asia/Kolkata", Y.TimeZone.getNormalizedTimezoneId("Asia/Kolkata"), "Asia/Kolkata is not a valid timezone");
-            Assert.areEqual("Asia/Kolkata", Y.TimeZone.getNormalizedTimezoneId("Asia/Calcutta"), "Asia/Kolkata is the normalized form of Asia/Calcutta");
+            Assert.areEqual("", Y.Date.Timezone.getNormalizedTimezoneId("abc"), "abc is not a valid timezone");
+            Assert.areEqual("Asia/Kolkata", Y.Date.Timezone.getNormalizedTimezoneId("Asia/Kolkata"), "Asia/Kolkata is not a valid timezone");
+            Assert.areEqual("Asia/Kolkata", Y.Date.Timezone.getNormalizedTimezoneId("Asia/Calcutta"), "Asia/Kolkata is the normalized form of Asia/Calcutta");
         },
                     
         testIsValidTimestamp: function() {
             var Assert = Y.Assert;
                         
-            Assert.isTrue(Y.TimeZone.isValidTimestamp("2012-05-29T15:23:00+05:30", (5*60+30)*60), "2012-05-29T15:23:00+05:30 is a valid timeStamp");
-            Assert.isTrue(Y.TimeZone.isValidTimestamp("2012-05-29 15:23:00", (5*60+30)*60), "2012-05-29 15:23:00 is a valid timeStamp");
+            Assert.isTrue(Y.Date.Timezone.isValidTimestamp("2012-05-29T15:23:00+05:30", (5*60+30)*60), "2012-05-29T15:23:00+05:30 is a valid timeStamp");
+            Assert.isTrue(Y.Date.Timezone.isValidTimestamp("2012-05-29 15:23:00", (5*60+30)*60), "2012-05-29 15:23:00 is a valid timeStamp");
                         
-            Assert.isFalse(Y.TimeZone.isValidTimestamp("2012-05-29 15:23:00+05:30", (5*60+30)*60), "2012-05-29 15:23:00+05:30 is not a valid timeStamp");
-            Assert.isFalse(Y.TimeZone.isValidTimestamp("2012-05-29T15:23:00", (5*60+30)*60), "2012-05-29T15:23:00 is not a valid timeStamp");
-            Assert.isFalse(Y.TimeZone.isValidTimestamp("2012-05-29T15:23:00+05:30", (5*60)*60), "2012-05-29 15:23:00+05:30 is not a valid timeStamp");
+            Assert.isFalse(Y.Date.Timezone.isValidTimestamp("2012-05-29 15:23:00+05:30", (5*60+30)*60), "2012-05-29 15:23:00+05:30 is not a valid timeStamp");
+            Assert.isFalse(Y.Date.Timezone.isValidTimestamp("2012-05-29T15:23:00", (5*60+30)*60), "2012-05-29T15:23:00 is not a valid timeStamp");
+            Assert.isFalse(Y.Date.Timezone.isValidTimestamp("2012-05-29T15:23:00+05:30", (5*60)*60), "2012-05-29 15:23:00+05:30 is not a valid timeStamp");
         }
     
     });

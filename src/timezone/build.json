@@ -1,7 +1,7 @@
 {
-    "name": "timezone",
+    "name": "datatype-date-timezone",
     "builds": {
-        "timezone": {
+        "datatype-date-timezone": {
             "jsfiles": [
 		"license.js",
 		"timezoneData.js",

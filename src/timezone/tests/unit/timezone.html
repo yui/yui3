@@ -13,11 +13,11 @@
 (function() {
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-        coverage: ['timezone'],
+        coverage: ['datatype-date-timezone'],
         modules: {
             'timezone-tests': {
                 fullpath: './assets/timezone-tests.js',
-                requires: ["test", "dump", "timezone"]
+                requires: ["test", "dump", "datatype-date-timezone"]
             }
         }
     }).use("test-console", 'timezone-tests' , function(Y) {
