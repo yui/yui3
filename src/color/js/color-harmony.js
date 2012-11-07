@@ -250,8 +250,12 @@ var HSL = 'hsl',
             for (i = 0; i < count; i++) {
                 offsets.push({
                     h: ( Math.random() * (offset * 2)) - offset,
-                    s: ( Math.random() * slOffset),
-                    l: ( Math.random() * slOffset)
+                    // because getOffset adjusts from the existing color, we
+                    // need to adjust it negatively to get a good number for
+                    // saturation and luminance, otherwise we get a lot of
+                    // white when using large offsets
+                    s: ( Math.random() * slOffset - c[1]),
+                    l: ( Math.random() * slOffset - c[2])
                 });
             }
 
