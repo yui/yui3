@@ -3,7 +3,7 @@ YUI.add('color-tests', function(Y) {
     var Assert = Y.Assert,
         Types = Y.Color.TYPES,
         testBasic = new Y.Test.Case({
-            name: "Color Convertion Tests",
+            name: "Color Base Convertion Tests",
 
             'test conversion': function() {
                 Assert.areEqual('#ffffff', Y.Color.convert('fff', Types.HEX), 'Hex to Hex');
@@ -123,7 +123,7 @@ YUI.add('color-tests', function(Y) {
 
     });
 
-    var suite = new Y.Test.Suite("Color");
+    var suite = new Y.Test.Suite("Color Base");
     suite.add(testBasic);
 
     Y.Test.Runner.add(suite);
