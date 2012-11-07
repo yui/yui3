@@ -272,6 +272,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             bb = sv._bb;
 
         // Unbind any previous 'mousewheel' listeners
+        // TODO: This doesn't actually appear to work properly. Fix. #2532743
         bb.detach(MOUSEWHEEL + '|*');
 
         // Only enable for vertical scrollviews

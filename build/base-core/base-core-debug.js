@@ -1,18 +1,18 @@
 YUI.add('base-core', function (Y, NAME) {
 
     /**
-     * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
-     * The module also provides two ways to reuse code - It augments Base with the Plugin.Host interface which provides 
+     * The base module provides the Base class, which objects requiring attribute and custom event support can extend.
+     * The module also provides two ways to reuse code - It augments Base with the Plugin.Host interface which provides
      * plugin support and also provides the BaseCore.build method which provides a way to build custom classes using extensions.
      *
      * @module base
      */
 
     /**
-     * <p>The base-core module provides the BaseCore class, the lightest version of Base, 
-     * which provides Base's basic lifecycle management and ATTRS construction support, 
-     * but doesn't fire init/destroy or attribute change events.</p> 
-     * 
+     * <p>The base-core module provides the BaseCore class, the lightest version of Base,
+     * which provides Base's basic lifecycle management and ATTRS construction support,
+     * but doesn't fire init/destroy or attribute change events.</p>
+     *
      * <p>It mixes in AttributeCore, which is the lightest version of Attribute</p>
      *
      * @module base
@@ -35,7 +35,7 @@ YUI.add('base-core', function (Y, NAME) {
         _wlmix = function(r, s, wlhash) {
             var p;
             for (p in s) {
-                if(wlhash[p]) { 
+                if(wlhash[p]) {
                     r[p] = s[p];
                 }
             }
@@ -43,24 +43,24 @@ YUI.add('base-core', function (Y, NAME) {
         };
 
     /**
-     * The BaseCore class, is the lightest version of Base, and provides Base's 
-     * basic lifecycle management and ATTRS construction support, but doesn't 
+     * The BaseCore class, is the lightest version of Base, and provides Base's
+     * basic lifecycle management and ATTRS construction support, but doesn't
      * fire init/destroy or attribute change events.
      *
-     * BaseCore also handles the chaining of initializer and destructor methods across 
-     * the hierarchy as part of object construction and destruction. Additionally, attributes 
-     * configured through the static <a href="#property_BaseCore.ATTRS">ATTRS</a> 
+     * BaseCore also handles the chaining of initializer and destructor methods across
+     * the hierarchy as part of object construction and destruction. Additionally, attributes
+     * configured through the static <a href="#property_BaseCore.ATTRS">ATTRS</a>
      * property for each class in the hierarchy will be initialized by BaseCore.
      *
-     * Classes which require attribute support, but don't intend to use/expose attribute 
-     * change events can extend BaseCore instead of Base for optimal kweight and 
+     * Classes which require attribute support, but don't intend to use/expose attribute
+     * change events can extend BaseCore instead of Base for optimal kweight and
      * runtime performance.
-     * 
+     *
      * @class BaseCore
      * @constructor
      * @uses AttributeCore
-     * @param {Object} cfg Object with configuration property name/value pairs. 
-     * The object can be used to provide initial values for the objects published 
+     * @param {Object} cfg Object with configuration property name/value pairs.
+     * The object can be used to provide initial values for the objects published
      * attributes.
      */
     function BaseCore(cfg) {
@@ -74,7 +74,7 @@ YUI.add('base-core', function (Y, NAME) {
     }
 
     /**
-     * The list of properties which can be configured for each attribute 
+     * The list of properties which can be configured for each attribute
      * (e.g. setter, getter, writeOnce, readOnly etc.)
      *
      * @property _ATTR_CFG
@@ -83,15 +83,14 @@ YUI.add('base-core', function (Y, NAME) {
      * @private
      */
     BaseCore._ATTR_CFG = AttributeCore._ATTR_CFG.concat("cloneDefaultValue");
-    BaseCore._ATTR_CFG_HASH = Y.Array.hash(BaseCore._ATTR_CFG);
 
     /**
-     * The array of non-attribute configuration properties supported by this class. 
-     * 
-     * For example `BaseCore` defines a "plugins" configuration property which 
-     * should not be set up as an attribute. This property is primarily required so 
-     * that when <a href="#property__allowAdHocAttrs">`_allowAdHocAttrs`</a> is enabled by a class, 
-     * non-attribute configuration properties don't get added as ad-hoc attributes.  
+     * The array of non-attribute configuration properties supported by this class.
+     *
+     * For example `BaseCore` defines a "plugins" configuration property which
+     * should not be set up as an attribute. This property is primarily required so
+     * that when <a href="#property__allowAdHocAttrs">`_allowAdHocAttrs`</a> is enabled by a class,
+     * non-attribute configuration properties don't get added as ad-hoc attributes.
      *
      * @property _NON_ATTRS_CFG
      * @type Array
@@ -102,12 +101,12 @@ YUI.add('base-core', function (Y, NAME) {
 
     /**
      * This property controls whether or not instances of this class should
-     * allow users to add ad-hoc attributes through the constructor configuration 
+     * allow users to add ad-hoc attributes through the constructor configuration
      * hash.
      *
-     * AdHoc attributes are attributes which are not defined by the class, and are 
-     * not handled by the MyClass._NON_ATTRS_CFG  
-     * 
+     * AdHoc attributes are attributes which are not defined by the class, and are
+     * not handled by the MyClass._NON_ATTRS_CFG
+     *
      * @property _allowAdHocAttrs
      * @type boolean
      * @default undefined (false)
@@ -116,7 +115,7 @@ YUI.add('base-core', function (Y, NAME) {
 
     /**
      * The string to be used to identify instances of this class.
-     * 
+     *
      * Classes extending BaseCore, should define their own
      * static NAME property, which should be camelCase by
      * convention (e.g. MyClass.NAME = "myClass";).
@@ -128,14 +127,14 @@ YUI.add('base-core', function (Y, NAME) {
     BaseCore.NAME = "baseCore";
 
     /**
-     * The default set of attributes which will be available for instances of this class, and 
-     * their configuration. In addition to the configuration properties listed by 
-     * AttributeCore's <a href="AttributeCore.html#method_addAttr">addAttr</a> method, 
-     * the attribute can also be configured with a "cloneDefaultValue" property, which 
-     * defines how the statically defined value field should be protected 
-     * ("shallow", "deep" and false are supported values). 
+     * The default set of attributes which will be available for instances of this class, and
+     * their configuration. In addition to the configuration properties listed by
+     * AttributeCore's <a href="AttributeCore.html#method_addAttr">addAttr</a> method,
+     * the attribute can also be configured with a "cloneDefaultValue" property, which
+     * defines how the statically defined value field should be protected
+     * ("shallow", "deep" and false are supported values).
      *
-     * By default if the value is an object literal or an array it will be "shallow" 
+     * By default if the value is an object literal or an array it will be "shallow"
      * cloned, to protect the default value.
      *
      * @property ATTRS
@@ -182,6 +181,7 @@ YUI.add('base-core', function (Y, NAME) {
          * @private
          */
         _initBase : function(config) {
+            Y.log('init called', 'life', 'base');
 
             Y.stamp(this);
 
@@ -204,22 +204,22 @@ YUI.add('base-core', function (Y, NAME) {
              * @type String
              */
             this.name = this.constructor.NAME;
-    
+
             this.init.apply(this, arguments);
         },
 
         /**
-         * Initializes AttributeCore 
-         * 
+         * Initializes AttributeCore
+         *
          * @method _initAttribute
          * @private
          */
         _initAttribute: function() {
-            AttributeCore.apply(this);
+            AttributeCore.call(this);
         },
 
         /**
-         * Init lifecycle method, invoked during construction. Sets up attributes 
+         * Init lifecycle method, invoked during construction. Sets up attributes
          * and invokes initializers for the class hierarchy.
          *
          * @method init
@@ -283,7 +283,7 @@ YUI.add('base-core', function (Y, NAME) {
          * @method _getClasses
          * @protected
          * @return {Function[]} An array of classes (constructor functions), making up the class hierarchy for this object.
-         * This value is cached the first time the method, or _getAttrCfgs, is invoked. Subsequent invocations return the 
+         * This value is cached the first time the method, or _getAttrCfgs, is invoked. Subsequent invocations return the
          * cached value.
          */
         _getClasses : function() {
@@ -294,7 +294,7 @@ YUI.add('base-core', function (Y, NAME) {
         },
 
         /**
-         * Returns an aggregated set of attribute configurations, by traversing 
+         * Returns an aggregated set of attribute configurations, by traversing
          * the class hierarchy.
          *
          * @method _getAttrCfgs
@@ -311,18 +311,18 @@ YUI.add('base-core', function (Y, NAME) {
         },
 
         /**
-         * A helper method used when processing ATTRS across the class hierarchy during 
-         * initialization. Returns a disposable object with the attributes defined for 
+         * A helper method used when processing ATTRS across the class hierarchy during
+         * initialization. Returns a disposable object with the attributes defined for
          * the provided class, extracted from the set of all attributes passed in.
          *
          * @method _filterAttrCfs
          * @private
          *
          * @param {Function} clazz The class for which the desired attributes are required.
-         * @param {Object} allCfgs The set of all attribute configurations for this instance. 
+         * @param {Object} allCfgs The set of all attribute configurations for this instance.
          * Attributes will be removed from this set, if they belong to the filtered class, so
          * that by the time all classes are processed, allCfgs will be empty.
-         * 
+         *
          * @return {Object} The set of attributes belonging to the class passed in, in the form
          * of an object with attribute name/configuration pairs.
          */
@@ -346,7 +346,7 @@ YUI.add('base-core', function (Y, NAME) {
          * @method _filterAdHocAttrs
          * @private
          *
-         * @param {Object} allAttrs The set of all attribute configurations for this instance. 
+         * @param {Object} allAttrs The set of all attribute configurations for this instance.
          * Attributes will be removed from this set, if they belong to the filtered class, so
          * that by the time all classes are processed, allCfgs will be empty.
          * @param {Object} userVals The config object passed in by the user, from which adhoc attrs are to be filtered.
@@ -381,13 +381,20 @@ YUI.add('base-core', function (Y, NAME) {
          * @private
          */
         _initHierarchyData : function() {
-            var c = this.constructor,
+            var ctor = this.constructor,
+                c,
                 i,
                 l,
+                attrCfg,
+                attrCfgHash,
+                needsAttrCfgHash = !ctor._ATTR_CFG_HASH,
                 nonAttrsCfg,
                 nonAttrs = (this._allowAdHocAttrs) ? {} : null,
                 classes = [],
                 attrs = [];
+
+            // Start with `this` instance's constructor.
+            c = ctor;
 
             while (c) {
                 // Add to classes
@@ -398,8 +405,20 @@ YUI.add('base-core', function (Y, NAME) {
                     attrs[attrs.length] = c.ATTRS;
                 }
 
+                // Aggregate ATTR cfg whitelist.
+                if (needsAttrCfgHash) {
+                    attrCfg     = c._ATTR_CFG;
+                    attrCfgHash = attrCfgHash || {};
+
+                    if (attrCfg) {
+                        for (i = 0, l = attrCfg.length; i < l; i += 1) {
+                            attrCfgHash[attrCfg[i]] = true;
+                        }
+                    }
+                }
+
                 if (this._allowAdHocAttrs) {
-                    nonAttrsCfg = c._NON_ATTRS_CFG; 
+                    nonAttrsCfg = c._NON_ATTRS_CFG;
                     if (nonAttrsCfg) {
                         for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
                             nonAttrs[nonAttrsCfg[i]] = true;
@@ -410,33 +429,38 @@ YUI.add('base-core', function (Y, NAME) {
                 c = c.superclass ? c.superclass.constructor : null;
             }
 
+            // Cache computed `_ATTR_CFG_HASH` on the constructor.
+            if (needsAttrCfgHash) {
+                ctor._ATTR_CFG_HASH = attrCfgHash;
+            }
+
             this._classes = classes;
             this._nonAttrs = nonAttrs;
             this._attrs = this._aggregateAttrs(attrs);
         },
 
         /**
-         * Utility method to define the attribute hash used to filter/whitelist property mixes for 
-         * this class. 
-         * 
+         * Utility method to define the attribute hash used to filter/whitelist property mixes for
+         * this class.
+         *
          * @method _attrCfgHash
          * @private
          */
         _attrCfgHash: function() {
-            return BaseCore._ATTR_CFG_HASH;
+            return this.constructor._ATTR_CFG_HASH;
         },
 
         /**
-         * A helper method, used by _initHierarchyData to aggregate 
+         * A helper method, used by _initHierarchyData to aggregate
          * attribute configuration across the instances class hierarchy.
          *
-         * The method will protect the attribute configuration value to protect the statically defined 
-         * default value in ATTRS if required (if the value is an object literal, array or the 
+         * The method will protect the attribute configuration value to protect the statically defined
+         * default value in ATTRS if required (if the value is an object literal, array or the
          * attribute configuration has cloneDefaultValue set to shallow or deep).
          *
          * @method _aggregateAttrs
          * @private
-         * @param {Array} allAttrs An array of ATTRS definitions across classes in the hierarchy 
+         * @param {Array} allAttrs An array of ATTRS definitions across classes in the hierarchy
          * (subclass first, Base last)
          * @return {Object} The aggregate set of ATTRS definitions for the instance
          */
@@ -473,7 +497,7 @@ YUI.add('base-core', function (Y, NAME) {
                                     Y.log('Merging default value for attribute:' + attr, 'info', 'base');
                                     cfg.value = Y.merge(val);
                                 }
-                                // else if (clone === false), don't clone the static default value. 
+                                // else if (clone === false), don't clone the static default value.
                                 // It's intended to be used by reference.
                             }
 
@@ -491,7 +515,7 @@ YUI.add('base-core', function (Y, NAME) {
                                     aggAttrs[attr] = cfg;
                                 } else {
                                     if (aggAttr.valueFn && VALUE in cfg) {
-                                        aggAttr.valueFn = null;    
+                                        aggAttr.valueFn = null;
                                     }
                                     _wlmix(aggAttr, cfg, cfgPropsHash);
                                 }
@@ -505,9 +529,9 @@ YUI.add('base-core', function (Y, NAME) {
         },
 
         /**
-         * Initializes the class hierarchy for the instance, which includes 
-         * initializing attributes for each class defined in the class's 
-         * static <a href="#property_BaseCore.ATTRS">ATTRS</a> property and 
+         * Initializes the class hierarchy for the instance, which includes
+         * initializing attributes for each class defined in the class's
+         * static <a href="#property_BaseCore.ATTRS">ATTRS</a> property and
          * invoking the initializer method on the prototype of each class in the hierarchy.
          *
          * @method _initHierarchy
@@ -531,7 +555,7 @@ YUI.add('base-core', function (Y, NAME) {
 
                 constr = classes[ci];
                 constrProto = constr.prototype;
-                exts = constr._yuibuild && constr._yuibuild.exts; 
+                exts = constr._yuibuild && constr._yuibuild.exts;
 
                 if (exts) {
                     for (ei = 0, el = exts.length; ei < el; ei++) {
@@ -541,12 +565,12 @@ YUI.add('base-core', function (Y, NAME) {
 
                 this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
 
-                if (this._allowAdHocAttrs && ci === cl) {                
+                if (this._allowAdHocAttrs && ci === cl) {
                     this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
                 }
 
                 // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
-                // referencing string literals). Not using it in apply, again, for performance "." is faster. 
+                // referencing string literals). Not using it in apply, again, for performance "." is faster.
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
                     constrProto.initializer.apply(this, arguments);
                 }
@@ -578,7 +602,7 @@ YUI.add('base-core', function (Y, NAME) {
             for (ci = 0, cl = classes.length; ci < cl; ci++) {
                 constr = classes[ci];
                 constrProto = constr.prototype;
-                exts = constr._yuibuild && constr._yuibuild.exts; 
+                exts = constr._yuibuild && constr._yuibuild.exts;
 
                 if (exts) {
                     for (ei = 0, el = exts.length; ei < el; ei++) {

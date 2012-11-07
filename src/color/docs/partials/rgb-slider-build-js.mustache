@@ -1,0 +1,23 @@
+    // sliders
+    var rSlider = new Y.Slider({ min: 0, max: 255, value: Math.round(Math.random()*255) }),
+        gSlider = new Y.Slider({ min: 0, max: 255, value: Math.round(Math.random()*255) }),
+        bSlider = new Y.Slider({ min: 0, max: 255, value: Math.round(Math.random()*255) }),
+
+        // slider values
+        rVal = Y.one('#r-val'),
+        gVal = Y.one('#g-val'),
+        bVal = Y.one('#b-val'),
+
+        // color strings
+        hex = Y.one('#hex'),
+        rgb = Y.one('#rgb'),
+        hsl = Y.one('#hsl'),
+
+        // color chip
+        color = Y.one('.color');
+
+    // render sliders
+    rSlider.render('#r-slider');
+    gSlider.render('#g-slider');
+    bSlider.render('#b-slider');
+

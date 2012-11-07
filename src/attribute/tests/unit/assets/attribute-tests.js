@@ -1,5 +1,5 @@
-YUI.add('attribute-tests', function(Y) {    
-    
+YUI.add('attribute-tests', function(Y) {
+
     function TestAugment(attrs, values) {}
     Y.augment(TestAugment, Y.Attribute);
 
@@ -67,12 +67,12 @@ YUI.add('attribute-tests', function(Y) {
             value : "foo",
             readOnly : true,
             getter : function(val) { return val; },
-            setter : function(val) { return val; }  
+            setter : function(val) { return val; }
         },
 
         initOnly : {
             writeOnce:"initOnly"
-        }    
+        }
     };
 
     Y.extend(AttrHost, Y.Base, {
@@ -164,7 +164,7 @@ YUI.add('attribute-tests', function(Y) {
                 this._passthrough = val;
             }
         },
-        
+
         Z : {
             value: "z",
             getter: function(val) {
@@ -182,7 +182,7 @@ YUI.add('attribute-tests', function(Y) {
                 }
                 return true;
         },
-        
+
         _getI : function(val, name) {
             if (name.indexOf(".") == -1) {
                 Y.Assert.areEqual("I", name);
@@ -337,7 +337,7 @@ YUI.add('attribute-tests', function(Y) {
 
             h.on("AChange", function(e) {
                Y.Assert.areEqual("MyAVal", e.prevVal);
-               e.newVal = e.newVal.toUpperCase(); 
+               e.newVal = e.newVal.toUpperCase();
             });
 
             h.after("AChange", function(e) {
@@ -351,14 +351,14 @@ YUI.add('attribute-tests', function(Y) {
         testEventSameValue : function() {
             var h = this.createHost({A:"MyAVal"});
 
-            var expectedEvents = ["BeforeAChange", 
-                                  "BeforeAChange", 
-                                  "BeforeAChange", "AfterAChange", 
-                                  "BeforeComplexChange", "AfterComplexChange", 
-                                  "BeforeComplexChange", "AfterComplexChange", 
-                                  "BeforeComplexChange", "AfterComplexChange", 
-                                  "BeforeComplexChange", "AfterComplexChange", 
-                                  "BeforeComplexChange", "AfterComplexChange", 
+            var expectedEvents = ["BeforeAChange",
+                                  "BeforeAChange",
+                                  "BeforeAChange", "AfterAChange",
+                                  "BeforeComplexChange", "AfterComplexChange",
+                                  "BeforeComplexChange", "AfterComplexChange",
+                                  "BeforeComplexChange", "AfterComplexChange",
+                                  "BeforeComplexChange", "AfterComplexChange",
+                                  "BeforeComplexChange", "AfterComplexChange",
                                   "BeforeComplexChange", "AfterComplexChange",
                                   "BeforePassThroughChange", "AfterPassThroughChange",
                                   "BeforePassThroughChange",
@@ -385,7 +385,7 @@ YUI.add('attribute-tests', function(Y) {
                     Y.Assert.areNotSame(e.newVal, e.preVal, "Should not fire after event if object values are same");
                 }
             });
-            
+
             h.on("PassThroughChange", function(e) {
                 actualEvents.push("BeforePassThroughChange");
             });
@@ -468,7 +468,7 @@ YUI.add('attribute-tests', function(Y) {
 
             Y.ArrayAssert.itemsAreEqual(["onAChange", "afterAChange"], actualEvents);
         },
-        
+
         testSetAttrsEventOptionalPayload : function() {
             var h = this.createHost(),
                 actualEvents = [];
@@ -504,7 +504,7 @@ YUI.add('attribute-tests', function(Y) {
             Y.ArrayAssert.itemsAreEqual(["onAChange", "afterAChange", "onBChange", "afterBChange"], actualEvents);
         }
     };
-            
+
     var augmentTemplate = {
 
         name: "Augment Tests",
@@ -552,7 +552,7 @@ YUI.add('attribute-tests', function(Y) {
             var o = {
                 methodOne: function() {}
             };
-            
+
             Y.augment(o, Y.Attribute);
 
             o.set("foo", "bar");
@@ -586,7 +586,7 @@ YUI.add('attribute-tests', function(Y) {
                 Y.Assert.areEqual("Test Me", e.prevVal, "Unexpected prevVal for titleChange");
                 Y.Assert.areEqual("bar", e.newVal, "Unexpected newVal for titleChange");
 
-                titleChangeCalled = true; 
+                titleChangeCalled = true;
             });
 
             node.set('value', 'foo');
@@ -752,7 +752,7 @@ YUI.add('attribute-tests', function(Y) {
             Y.Assert.areEqual(undefined, h.get("AdHoc"));
             h.set("AdHoc", "TestAdHoc");
             Y.Assert.areEqual("TestAdHoc", h.get("AdHoc"));
-            
+
             h.addAttr("AdHoc", {
                 setter: function(val) {
                     return val.toUpperCase();
@@ -781,20 +781,20 @@ YUI.add('attribute-tests', function(Y) {
 
             AttrHost.prototype._allowAdHocAttrs = false;
 
-            // Only add AdHoc Attrs       
-            Y.Assert.areEqual("foo", h.get("foo")); 
+            // Only add AdHoc Attrs
+            Y.Assert.areEqual("foo", h.get("foo"));
             Y.Assert.areEqual("bar", h.get("bar"));
-            
+
             // Configured Attrs
             Y.Assert.areEqual("DVal", h.get("D"));
             Y.Assert.areEqual("MyAVal", h.get("A"));
-            
+
             // Not _NON_ATTRS_CFG
             Y.Assert.isUndefined(h.get("plugins"));
             Y.Assert.isUndefined(h.get("on"));
             Y.Assert.isUndefined(h.get("after"));
         },
-        
+
         testAdHocConstructorDisabled : function() {
 
             var h = this.createHost({
@@ -810,10 +810,10 @@ YUI.add('attribute-tests', function(Y) {
                 }
             });
 
-            // Only add AdHoc Attrs       
-            Y.Assert.areEqual(undefined, h.get("foo")); 
+            // Only add AdHoc Attrs
+            Y.Assert.areEqual(undefined, h.get("foo"));
             Y.Assert.areEqual(undefined, h.get("bar"));
-            
+
             // Configured attributes
             Y.Assert.areEqual("DVal", h.get("D"));
             Y.Assert.areEqual("MyAVal", h.get("A"));
@@ -1027,7 +1027,7 @@ YUI.add('attribute-tests', function(Y) {
             h.set("complex.W.B", 113);
             Y.Assert.areEqual(undefined, h.get("complex.W"));
             Y.Assert.areEqual(undefined, h.get("complex.W.B"));
- 
+
             h.set("complex.Y", {B:222});
             Y.Assert.areEqual(222, h.get("complex.Y.B"));
             Y.Assert.areEqual(undefined, h.get("complex.Y.A"));
@@ -1198,7 +1198,7 @@ YUI.add('attribute-tests', function(Y) {
             }, attrCfg);
 
             var val = h.get("testGetCfg");
-            
+
             attrCfg = h._getAttrCfg("testGetCfg");
 
             Y.Assert.areEqual(8, Y.Object.keys(attrCfg).length, "getAttrCfg returned unexpected populated state");
@@ -1211,7 +1211,7 @@ YUI.add('attribute-tests', function(Y) {
                 isLazyAdd: true,
                 readOnly: true,
                 setter: function (val) { return val; },
-                value: "foo"                    
+                value: "foo"
             }, attrCfg);
         },
 
@@ -1248,7 +1248,7 @@ YUI.add('attribute-tests', function(Y) {
             h.set("C", "foo");
             h.set("C", "bar");
 
-            Y.Assert.areEqual("bar", h.get("C")); // not writeOnce anymore                            
+            Y.Assert.areEqual("bar", h.get("C")); // not writeOnce anymore
         },
 
         testModifyAttr : function() {
@@ -1297,7 +1297,7 @@ YUI.add('attribute-tests', function(Y) {
 
         testProtect : function() {
             var h = this.createHost();
-            var q = h._protectAttrs(AttrHost.ATTRS);
+            var q = Y.Attribute.protectAttrs(AttrHost.ATTRS);
 
             Y.Assert.areNotSame(AttrHost.ATTRS, q);
             Y.Assert.areEqual(Y.dump(AttrHost.ATTRS), Y.dump(q));
@@ -1314,7 +1314,7 @@ YUI.add('attribute-tests', function(Y) {
                 FooBar.superclass.constructor.apply(this, arguments);
             };
 
-            FooBar.NAME = "foobar"; 
+            FooBar.NAME = "foobar";
 
             FooBar.ATTRS = {
                 node : {
@@ -1343,7 +1343,7 @@ YUI.add('attribute-tests', function(Y) {
                 FooBar.superclass.constructor.apply(this, arguments);
             };
 
-            FooBar.NAME = "foobar"; 
+            FooBar.NAME = "foobar";
 
             FooBar.ATTRS = {
                 node : {
@@ -1369,14 +1369,14 @@ YUI.add('attribute-tests', function(Y) {
         testValueFnNotCalledIfUserValueProvided : function() {
 
             function MyClass() {
-                MyClass.superclass.constructor.apply(this, arguments);         
+                MyClass.superclass.constructor.apply(this, arguments);
             }
 
             Y.extend(MyClass, Y.Base, null, {
                 ATTRS : {
                     testValueFn : {
                         valueFn : function() {
-                            Y.Assert.fail();                            
+                            Y.Assert.fail();
                         }
                     }
                 }
@@ -1385,16 +1385,16 @@ YUI.add('attribute-tests', function(Y) {
             var o = new MyClass({
                 testValueFn : "foo"
             });
-            
+
             Y.Assert.areEqual("foo", o.get("testValueFn"));
         },
 
         testValueFnCalledIfUserValueNotProvided : function() {
-            
+
             var called = false;
 
             function MyClass() {
-                MyClass.superclass.constructor.apply(this, arguments);         
+                MyClass.superclass.constructor.apply(this, arguments);
             }
 
             Y.extend(MyClass, Y.Base, null, {
@@ -1402,7 +1402,7 @@ YUI.add('attribute-tests', function(Y) {
                     testValueFn : {
                         valueFn : function() {
                             called = true;
-                            return "bar";                            
+                            return "bar";
                         }
                     }
                 }
@@ -1505,8 +1505,8 @@ YUI.add('attribute-tests', function(Y) {
 
             AttrHost.prototype._allowAdHocAttrs = false;
 
-            // Only add AdHoc Attrs       
-            Y.Assert.areEqual("foo", h.get("foo")); 
+            // Only add AdHoc Attrs
+            Y.Assert.areEqual("foo", h.get("foo"));
             Y.Assert.areEqual("bar", h.get("bar"));
 
             // Configured Attrs
@@ -1518,7 +1518,7 @@ YUI.add('attribute-tests', function(Y) {
             Y.Assert.isUndefined(h.get("on"));
             Y.Assert.isUndefined(h.get("after"));
         },
-        
+
         testAdHocConstructorDisabled : function() {
 
             var h = this.createHost({
@@ -1534,10 +1534,10 @@ YUI.add('attribute-tests', function(Y) {
                 }
             });
 
-            // Only add AdHoc Attrs       
-            Y.Assert.areEqual(undefined, h.get("foo")); 
+            // Only add AdHoc Attrs
+            Y.Assert.areEqual(undefined, h.get("foo"));
             Y.Assert.areEqual(undefined, h.get("bar"));
-            
+
             // Configured attributes
             Y.Assert.areEqual("EXTDVAL", h.get("D"));
             Y.Assert.areEqual("MyAVal", h.get("A"));
@@ -1706,7 +1706,7 @@ YUI.add('attribute-tests', function(Y) {
         testPrivateSet : function() {
             var h = this.createHost();
 
-            var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "Aftertryeagain"  ]; // Last entry: e.newVal is not "get" normalized 
+            var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "Aftertryeagain"  ]; // Last entry: e.newVal is not "get" normalized
             var actualEvents = [];
 
             h.on("DChange", function(e) {
@@ -1798,7 +1798,7 @@ YUI.add('attribute-tests', function(Y) {
             h.set("complex.W.B", 113);
             Y.Assert.areEqual(undefined, h.get("complex.W"));
             Y.Assert.areEqual(undefined, h.get("complex.W.B"));
- 
+
                     h.set("complex.Y", {B:222});
             Y.Assert.areEqual(222, h.get("complex.Y.B"));
             Y.Assert.areEqual(undefined, h.get("complex.Y.A"));
@@ -1998,14 +1998,14 @@ YUI.add('attribute-tests', function(Y) {
             h.on("ZChange", function() {
                 actualEvents.push("BeforeZChange");
             });
-            
+
             h.after("ZChange", function() {
                 actualEvents.push("AfterZChange");
             });
-            
+
             h.set("Z", "MyZ");
             h.set("Z", "MYZ");
-            
+
             Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
         }
     };

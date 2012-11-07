@@ -29,9 +29,9 @@ Parallel Change History
 3.5.1
 -----
 
-  * No changes.
+* No changes.
 
 3.5.0
 -----
 
-  * Initial Release
+* Initial Release

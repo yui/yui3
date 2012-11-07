@@ -1,0 +1,13 @@
+{
+    "name"       : "template",
+    "displayName": "Template",
+    "description": "Provides a generic template engine API and a micro-templating language similar to ERB and Underscore templates.",
+    "author"     : ["rgrove", "ericf"],
+
+    "tags": [
+        "utility", "beta", "template", "templating", "micro", "handlebars",
+        "erb", "underscore", "view"
+    ],
+
+    "use": ["template"]
+}

@@ -1,0 +1,34 @@
+{
+    "name"       : "color",
+    "displayName": "Color",
+    "description": "The Color utility provides methods for converting hex, RGB, and HSL to hex, RGB, and HSL.",
+    "author"     : "apipkin",
+
+    "tags": ["utility", "beta", "color"],
+    "use" : ["color-base"],
+
+    "examples": [
+        {
+            "name"       : "rgb-slider",
+            "displayName": "RGB Slider",
+            "description": "Use three sliders to control RGB values and update Hex and HSL strings.",
+            "modules"    : ["color", "slider"],
+            "tags"       : ["color", "slider", "rgb"]
+        },
+        {
+            "name"       : "hsl-picker",
+            "displayName": "HSL Color Picker",
+            "description": "Use the HSL color picker to select a new color. Then chose the color type you like best.",
+            "modules"    : ["color", "slider", "dial"],
+            "tags"       : ["color", "picker", "hsl"]
+        },
+        {
+            "name"       : "hsl-harmony",
+            "displayName": "HSL Harmony",
+            "description": "Use the HSL color picker to create harmony colors.",
+            "modules"    : ["color", "slider"],
+            "tags"       : ["color", "slider", "hsl", "harmony"]
+        }
+    ]
+
+}
