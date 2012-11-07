@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <applet code="../../../common/tests/perf/nano.jar" archive="../../../common/tests/perf/nano.jar" style="display: none;"></applet>
+        <script type='text/javascript' src="../../../common/tests/perf/benchmark.js"></script>
+        <script src="../../../../build/yui/yui.js"></script>
+        <script src="../../../common/tests/perf/multi.js"></script>
+        <script src="ellipse-benchmark.js"></script>
+    </head>
+
+    <body class='yui3-skin-sam'>
+
+        <p><button id="start">Start Benchmarks against Local YUI</button></p>
+        <p><button id="iframe-start" disabled='true'>Start Benchmarks against YUI3.7.3</button></p>
+        <div id="log"></div>
+        <script>
+
+            YUI({
+                'multi': {
+                    fullpath: '../../../common/tests/perf/multi.js',
+                    requires: ['event-custom']
+                },
+                'ellipse-benchmark': {
+                    fullpath: 'ellipse-benchmark.js',
+                    requires: ['graphics']
+                },
+                'skin-sam-test-console': {
+                    fullpath: '../../../common/tests/assets/test-console.css',
+                    type    : 'css'
+                },
+
+                'test-console': {
+                    fullpath : '../../../common/tests/assets/test-console.js',
+                    requires : ['console-filters'],
+                    skinnable: true
+                },
+                defaultGraphicEngine: (window.location.search.match(/[?&]defaultGraphicEngine=([^&]+)/) || [])[1] || 'svg',
+				filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+                useBrowserConsole: false
+            }).use('graphics', 'multi', 'ellipse-benchmark', 'skin-sam-test-console', 'test-console', function (Y) {
+
+                new Y.Console().render('#log');
+
+
+                var suite = Y.BenchmarkSuite,
+                    start = Y.one('#start'),
+                    iframeStart = Y.one("#iframe-start"),
+                    iY;
+
+                var multi = new Y.Multi({
+                    seeds: {
+                        Y_373: {
+                            test: 'ellipse-benchmark',
+                            url: 'http://yui.yahooapis.com/3.7.3/build/yui/yui.js',
+                            use: ['graphics', 'ellipse-benchmark']
+                        }
+                    }
+                });
+
+                multi.on('ready', function () {
+                    iframeStart.set('disabled', false);
+                    iY = multi.Y_373;
+                });
+
+                suite.on('start', function () {
+                    Y.log('Starting benchmarks on local YUI.');
+                });
+
+                suite.on('cycle', function (ev) {
+                    Y.log(String(ev.target));
+                });
+
+                suite.on('complete', function () {
+                    start.set('disabled', false);
+                    Y.log('Finished benchmarks on local YUI.');
+                });
+
+                start.on('click', function () {
+                    suite.run({async:true});
+                });
+
+                iframeStart.on('click', function () {
+                    var suite = iY.BenchmarkSuite;
+                    suite.on('start', function () {
+                        Y.log('Starting benchmarks on old YUI.');
+                    });
+
+                    suite.on('cycle', function (ev) {
+                        Y.log(String(ev.target));
+                    });
+
+                    suite.on('complete', function () {
+                        Y.log('Finished benchmarks on old YUI.');
+                    });
+
+                    suite.run({async:true});
+
+                })
+            });
+
+
+        </script>
+    </body>
+</html>

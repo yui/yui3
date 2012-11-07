@@ -17,7 +17,7 @@ Histogram.prototype = {
      */
     drawSeries: function()
     {
-        if(this.get("xcoords").length < 1) 
+        if(this.get("xcoords").length < 1)
         {
             return;
         }
@@ -62,7 +62,7 @@ Histogram.prototype = {
             groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
-            fillColors = style.fill.color.concat(); 
+            fillColors = style.fill.color.concat();
         }
         if(Y_Lang.isArray(style.border.color))
         {
@@ -85,7 +85,7 @@ Histogram.prototype = {
         {
             renderer = seriesCollection[i];
             seriesSize += renderer.get("styles").marker[setSizeKey];
-            if(order > i) 
+            if(order > i)
             {
                 offset = seriesSize;
             }
@@ -169,7 +169,7 @@ Histogram.prototype = {
             this._clearMarkerCache();
         }
     },
-    
+
     /**
      * Collection of default colors used for marker fills in a series when not specified by user.
      *
@@ -178,7 +178,7 @@ Histogram.prototype = {
      * @protected
      */
     _defaultFillColors: ["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"],
-    
+
     /**
      * Gets the default style values for the markers.
      *

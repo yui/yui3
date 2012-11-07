@@ -1,7 +1,4 @@
 <style scoped>
-.micro-code {
-    margin-bottom: 0.5em;
-}
 .micro-code pre.code {
     height: 100%;
     margin: 0;
@@ -14,7 +11,9 @@
 }
 
 .micro-code td:first-child,
-.micro-code th:first-child { padding-left: 0; }
+.micro-code th:first-child {
+    padding-left: 0;
+}
 </style>
 
 <div class="intro">
@@ -445,15 +444,13 @@ To execute arbitrary JavaScript code within the template without rendering its o
 </p>
 
 <table class="micro-code">
-    <thead>
-        <tr>
-            <th>Template Source</th>
-        </tr>
-    </thead>
-
     <tbody>
         <tr>
-            <td width="100%">
+            <th colspan="2">Template Source</th>
+        </tr>
+
+        <tr>
+            <td colspan="2" width="100%">
                 ```html
                 <h1>Animals</h1>
 
@@ -467,18 +464,12 @@ To execute arbitrary JavaScript code within the template without rendering its o
                 ```
             </td>
         </tr>
-    </tbody>
-</table>
 
-<table class="micro-code">
-    <thead>
         <tr>
-            <th>Data</th>
-            <th>Output</th>
+            <th style="padding-top: 0.5em;">Data</th>
+            <th style="padding-top: 0.5em;">Output</th>
         </tr>
-    </thead>
 
-    <tbody>
         <tr>
             <td width="50%">
                 ```javascript
