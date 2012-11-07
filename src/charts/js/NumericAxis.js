@@ -23,14 +23,15 @@ NumericAxis.ATTRS = {
      * @type Boolean
      */
 	alwaysShowZero: {
-	    value: true	
+	    value: true
 	},
-    
+
     /**
-     * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String` or an `HTMLElement`. The default implementation of the method returns a `String`. The output of this method
-     * will be rendered to the DOM using `appendChild`. If you override the `labelFunction` method and return an html string, you will also need to override the Axis' 
-     * `appendLabelFunction` to accept html as a `String`.
+     * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
+     * The method use would need to implement the arguments below and return a `String` or an `HTMLElement`. The default
+     * implementation of the method returns a `String`. The output of this method will be rendered to the DOM using
+     * `appendChild`. If you override the `labelFunction` method and return an html string, you will also need to override
+     * the Axis' `appendLabelFunction` to accept html as a `String`.
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>Object containing properties used to format the label. (optional)</dd>
@@ -39,7 +40,7 @@ NumericAxis.ATTRS = {
      * @attribute labelFunction
      * @type Function
      */
-    labelFunction: { 
+    labelFunction: {
         value: function(val, format)
         {
             if(format)
@@ -151,12 +152,12 @@ Y.extend(NumericAxis, Y.AxisType,
             roundedMajorUnit = Math.pow(10, order),
             roundedDiff;
 
-        if (roundedMajorUnit / 2 >= tempMajorUnit) 
+        if (roundedMajorUnit / 2 >= tempMajorUnit)
         {
             roundedDiff = Math.floor((roundedMajorUnit / 2 - tempMajorUnit) / (Math.pow(10,order-1)/2));
             tempMajorUnit = roundedMajorUnit/2 - roundedDiff*Math.pow(10,order-1)/2;
         }
-        else 
+        else
         {
             tempMajorUnit = roundedMajorUnit;
         }
@@ -172,12 +173,12 @@ Y.extend(NumericAxis, Y.AxisType,
      * Calculates the maximum and minimum values for the `Axis`.
      *
      * @method _updateMinAndMax
-     * @private 
+     * @private
      */
     _updateMinAndMax: function()
     {
         var data = this.get("data"),
-            max, 
+            max,
             min,
             len,
             num,
@@ -191,7 +192,7 @@ Y.extend(NumericAxis, Y.AxisType,
             {
                 len = data.length;
                 for(; i < len; i++)
-                {	
+                {
                     num = data[i];
                     if(isNaN(num))
                     {
@@ -212,7 +213,7 @@ Y.extend(NumericAxis, Y.AxisType,
                         min = setMin ? this._setMinimum : min;
                         continue;
                     }
-                    
+
                     if(setMin)
                     {
                         min = this._setMinimum;
@@ -223,7 +224,7 @@ Y.extend(NumericAxis, Y.AxisType,
                     }
                     else
                     {
-                        min = Math.min(num, min); 
+                        min = Math.min(num, min);
                     }
                     if(setMax)
                     {
@@ -237,7 +238,7 @@ Y.extend(NumericAxis, Y.AxisType,
                     {
                         max = Math.max(num, max);
                     }
-                    
+
                     this._actualMaximum = max;
                     this._actualMinimum = min;
                 }
@@ -312,7 +313,7 @@ Y.extend(NumericAxis, Y.AxisType,
                         botTicks = units - topTicks;
                         tempMax = Math.ceil( max/topTicks );
                         tempMin = Math.floor( min/botTicks ) * -1;
-                        
+
                         if(setMin)
                         {
                             while(tempMin < tempMax && botTicks >= 0)
@@ -356,12 +357,12 @@ Y.extend(NumericAxis, Y.AxisType,
                         else
                         {
                             roundingUnit = Math.max(tempMax, tempMin);
-                            roundingUnit = this._getNiceNumber(roundingUnit);  
+                            roundingUnit = this._getNiceNumber(roundingUnit);
                             max = roundingUnit * topTicks;
                             min = roundingUnit * botTicks * -1;
                         }
                     }
-                    else 
+                    else
                     {
                         if(setMax)
                         {
@@ -411,7 +412,7 @@ Y.extend(NumericAxis, Y.AxisType,
                     }
                 }
             }
-            else if(roundingMethod == "auto") 
+            else if(roundingMethod == "auto")
             {
                 if(minGreaterThanZero && maxGreaterThanZero)
                 {
@@ -419,7 +420,7 @@ Y.extend(NumericAxis, Y.AxisType,
                     {
                         min = 0;
                     }
-                
+
                     roundingUnit = (max - min)/units;
                     if(useIntegers)
                     {
@@ -464,7 +465,7 @@ Y.extend(NumericAxis, Y.AxisType,
                 {
                     roundingUnit = (max - min)/units;
                     if(useIntegers)
-                    {   
+                    {
                         roundingUnit = Math.ceil(roundingUnit);
                     }
                     if(alwaysShowZero || max === 0 || max + roundingUnit > 0)
@@ -593,7 +594,7 @@ Y.extend(NumericAxis, Y.AxisType,
         var roundedNumber = Math.round(this._roundToPrecision(number / nearest, 10)) * nearest;
         return this._roundToPrecision(roundedNumber, 10);
     },
-	
+
     /**
      * Rounds a Number up to the nearest multiple of an input. For example, by rounding
      * 16 up to the nearest 10, you will receive 20. Similar to the built-in function Math.ceil().
@@ -613,7 +614,7 @@ Y.extend(NumericAxis, Y.AxisType,
         }
         return Math.ceil(this._roundToPrecision(number / nearest, 10)) * nearest;
     },
-	
+
     /**
      * Rounds a Number down to the nearest multiple of an input. For example, by rounding
      * 16 down to the nearest 10, you will receive 10. Similar to the built-in function Math.floor().
@@ -650,7 +651,7 @@ Y.extend(NumericAxis, Y.AxisType,
         var decimalPlaces = Math.pow(10, precision);
         return Math.round(decimalPlaces * number) / decimalPlaces;
     },
-    
+
     /**
      * Checks to see if data extends beyond the range of the axis. If so,
      * that data will need to be hidden. This method is internal, temporary and subject
@@ -681,4 +682,4 @@ Y.extend(NumericAxis, Y.AxisType,
 });
 
 Y.NumericAxis = NumericAxis;
-		
+
