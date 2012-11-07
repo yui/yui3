@@ -12,11 +12,11 @@
 (function() {
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-        coverage: ['format-duration'],
+        coverage: ['datatype-date-advanced-format'],
         modules: {
             'format-duration-tests': {
                 fullpath: './assets/format-duration-tests.js',
-                requires: ['test', 'dump', 'format-duration']
+                requires: ['test', 'dump', 'datatype-date-advanced-format']
             }
         }
     }).use("test-console", "format-duration-tests" , function(Y) {

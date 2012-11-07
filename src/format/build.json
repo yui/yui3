@@ -6,6 +6,7 @@
 		"BaseFormat.js",
                 "DateFormat.js",
                 "format-relative.js",
+                "format-duration.js",
                 "format-date.js"
             ]
         },
@@ -13,11 +14,6 @@
             "jsfiles": [
 		"BaseFormat.js",
                 "format-numbers.js"
-            ]
-        },
-        "format-duration": {
-            "jsfiles": [
-                "format-duration.js"
             ]
         },
         "format-message": {

@@ -25,3 +25,20 @@ Y.Date.format = function(oDate, oConfig) {
     
     throw new Format.FormatException("Unrecognized format options.");
 }
+
+Y.Date.formatDuration = function(oDuration, oConfig) {
+    oConfig = oConfig || {};
+    if(oDuration == null) {
+        oDuration = {};
+    }
+    if(Y.Lang.isNumber(oDuration) || Y.Lang.isString(oDuration)) {
+        return (new YDurationFormat(oConfig.style)).format(oDuration);
+    } else if(oDuration.hours != null || oDuration.minutes != null || oDuration.seconds != null) {
+        if(oDuration.hours == null) { oDuration.hours = -1; }
+        if(oDuration.minutes == null) { oDuration.minutes= -1; }
+        if(oDuration.seconds == null) { oDuration.seconds = -1; }
+        return (new YDurationFormat(oConfig.style)).format(oDuration.hours || -1, oDuration.minutes || -1, oDuration.seconds || -1);
+    }
+    
+    throw new Format.IllegalArgumentsException("Unrecognized duration values");
+}

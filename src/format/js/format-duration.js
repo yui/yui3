@@ -1,28 +1,44 @@
 /**
- * Y.DurationFormat class formats time in a language independent manner.
+ * YDurationFormat class formats time in a language independent manner.
  * The duration formats use appropriate singular/plural/paucal/etc. forms for all languages. 
  * @module format-duration
  * @requires format-numbers
  */
 
-var MODULE_NAME = "format-duration";
+var MODULE_NAME = "datatype-date-advanced-format";
 /**
- * Y.DurationFormat class formats time in a language independent manner.
- * @class Y.DurationFormat
+ * YDurationFormat class formats time in a language independent manner.
+ * @class YDurationFormat
  * @constructor
- * @param {Number} style selector for the desired duration format, from Y.DurationFormat.STYLES
+ * @param {Number} style selector for the desired duration format, from Y.Date.DURATION_FORMATS
  */
-Y.DurationFormat = function(style) {
+YDurationFormat = function(style) {
+    if(style && Y.Lang.isString(style)) {
+        style = Y.Date.DURATION_FORMATS[style];
+    }
     this.style = style;
     this.patterns = Y.Intl.get(MODULE_NAME);
     this._numberFormat = new Y.NumberFormat(Y.NumberFormat.STYLES.NUMBER_STYLE);
 }
     
+//Exceptions
+
+Y.mix(YDurationFormat, {
+    IllegalArgumentsException: function(message) {
+        this.message = message;
+        this.toString = function() {
+            return "IllegalArgumentsException: " + this.message;
+        }
+    }
+})
+
 //Static Data
-Y.DurationFormat.STYLES = {
-    HMS_LONG: 0,
-    HMS_SHORT: 1
-}
+Y.mix(Y.Date, {
+    DURATION_FORMATS: {
+        HMS_LONG: 0,
+        HMS_SHORT: 1
+    }
+});
     
 //Support methods
     
@@ -74,7 +90,7 @@ function getDuration_XML(xmlDuration) {
     var matches = xmlDuration.match(regex);
         
     if(matches == null) {
-        throw new Y.Format.IllegalArgumentsException("xmlDurationFormat should be in the format: 'PnYnMnDTnHnMnS'");
+        throw new YDurationFormat.IllegalArgumentsException("xmlDurationFormat should be in the format: 'PnYnMnDTnHnMnS'");
     }
         
     return {
@@ -93,7 +109,7 @@ function getDuration_XML(xmlDuration) {
 function getDuration_Seconds(timeValueInSeconds) {
     var duration = {};
     if(timeValueInSeconds < 0) {
-        throw new Y.Format.IllegalArgumentsException("TimeValue cannot be negative");
+        throw new YDurationFormat.IllegalArgumentsException("TimeValue cannot be negative");
     }
                 
     duration.hours = stripDecimals(timeValueInSeconds / 3600);
@@ -121,11 +137,11 @@ function getDuration_Seconds(timeValueInSeconds) {
  *      Formats the given duration into a duration format string. Negative values are ignored in HMS_long format, but treated as 0 in HMS_short format.
  * @return {String} The formatted string
  */
-Y.DurationFormat.prototype.format = function() {
+YDurationFormat.prototype.format = function() {
     var duration = {};
     if(arguments.length == 1) {
         if(arguments[0] == null) {
-            throw new Y.Format.IllegalArgumentsException("Argument is null");
+            throw new YDurationFormat.IllegalArgumentsException("Argument is null");
         }
         if(isNaN(arguments[0])) {                               //Non-numeric string. format(string xmlDurationFormat)
             duration = getDuration_XML(arguments[0].trim());
@@ -134,10 +150,10 @@ Y.DurationFormat.prototype.format = function() {
         }
     } else if(arguments.length == 3) {                          //format(int hour, int min, int second)
         if(arguments[2] == null || arguments[1] == null || arguments[0] == null) {
-            throw new Y.Format.IllegalArgumentsException("One or more arguments are null/undefined");
+            throw new YDurationFormat.IllegalArgumentsException("One or more arguments are null/undefined");
         }
         if(isNaN(arguments[2]) || isNaN(arguments[1]) || isNaN(arguments[0])) {              //Non-numeric string.
-            throw new Y.Format.IllegalArgumentsException("One or more arguments are not numeric");
+            throw new YDurationFormat.IllegalArgumentsException("One or more arguments are not numeric");
         }
             
         duration = {
@@ -146,17 +162,17 @@ Y.DurationFormat.prototype.format = function() {
             seconds: parseInt(arguments[2])
         }
     } else {
-        throw new Y.Format.IllegalArgumentsException("Unexpected number of arguments");
+        throw new YDurationFormat.IllegalArgumentsException("Unexpected number of arguments");
     }
         
     //Test minutes and seconds for invalid values
     if(duration.minutes > 59 || duration.seconds > 59) {
-        throw new Y.Format.IllegalArgumentsException("Minutes and Seconds should be less than 60");
+        throw new YDurationFormat.IllegalArgumentsException("Minutes and Seconds should be less than 60");
     }
         
     var result = "";
         
-    if(this.style == Y.DurationFormat.STYLES.HMS_LONG) {
+    if(this.style == Y.Date.DURATION_FORMATS.HMS_LONG) {
         result = this.patterns.HMS_long;
         if(duration.hours < 0) {
             duration.hours = "";

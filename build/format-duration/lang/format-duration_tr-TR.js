@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_tr-TR",function(e){e.Intl.add("format-duration","tr-TR",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"g\u00fcn",days:"g\u00fcn",hour:"saat",hours:"saat",minute:"dakika",minutes:"dakika",month:"ay",months:"ay",second:"saniye",seconds:"saniye",year:"y\u0131l",years:"y\u0131l"})},"@VERSION@");

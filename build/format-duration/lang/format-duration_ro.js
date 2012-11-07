@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_ro",function(e){e.Intl.add("format-duration","ro",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"zi",days:"zile",hour:"or\u0103",hours:"ore",minute:"minut",minutes:"minute",month:"lun\u0103",months:"luni",second:"secund\u0103",seconds:"secunde",year:"an",years:"ani"})},"@VERSION@");

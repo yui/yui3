@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_nn-NO",function(e){e.Intl.add("format-duration","nn-NO",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"dag",days:"dagar",hour:"time",hours:"timar",minute:"minutt",minutes:"minutt",month:"m\u00e5nad",months:"m\u00e5nader",second:"sekund",seconds:"sekund",year:"\u00e5r",years:"\u00e5r"})},"@VERSION@");

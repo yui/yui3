@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_zh-HK",function(e){e.Intl.add("format-duration","zh-HK",{HMS_long:"{0}{1}{2}",HMS_short:"{0}:{1}:{2}",day:"",days:"",hour:"",hours:"",minute:"",minutes:"",month:"",months:"",second:"",seconds:"",year:"",years:""})},"@VERSION@");

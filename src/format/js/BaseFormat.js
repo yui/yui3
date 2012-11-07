@@ -36,13 +36,13 @@ Y.mix(Format, {
         }
     },
     ParsingException: function(message) {
-        ParsingException.superclass.constructor.call(this, "ParsingException", message);
+        Format.ParsingException.superclass.constructor.call(this, "ParsingException", message);
     },
     IllegalArgumentsException: function(message) {
-        IllegalArgumentsException.superclass.constructor.call(this, "IllegalArgumentsException", message);
+        Format.IllegalArgumentsException.superclass.constructor.call(this, "IllegalArgumentsException", message);
     },
     FormatException: function(message) {
-        FormatException.superclass.constructor.call(this, "FormatException", message);
+        Format.FormatException.superclass.constructor.call(this, "FormatException", message);
     }
 });
 

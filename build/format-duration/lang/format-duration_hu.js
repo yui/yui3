@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_hu",function(e){e.Intl.add("format-duration","hu",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"nap",days:"nap",hour:"\u00f3ra",hours:"\u00f3ra",minute:"perc",minutes:"perc",month:"h\u00f3nap",months:"h\u00f3nap",second:"m\u00e1sodperc",seconds:"m\u00e1sodperc",year:"\u00e9v",years:"\u00e9v"})},"@VERSION@");

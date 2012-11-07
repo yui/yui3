@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_ja-JP",function(e){e.Intl.add("format-duration","ja-JP",{HMS_long:"{0}{1}{2}",HMS_short:"{0}:{1}:{2}",day:"\u65e5",days:"\u65e5",hour:"\u6642\u9593",hours:"\u6642\u9593",minute:"\u5206",minutes:"\u5206",month:"\u304b\u6708",months:"\u304b\u6708",second:"\u79d2",seconds:"\u79d2",year:"\u5e74",years:"\u5e74"})},"@VERSION@");

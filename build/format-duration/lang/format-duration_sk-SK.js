@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_sk-SK",function(e){e.Intl.add("format-duration","sk-SK",{HMS_long:"{0}, {1}, {2}",HMS_short:"{0}:{1}:{2}",day:"de\u0148",days:"dni",hour:"hodina",hours:"hodiny",minute:"min\u00fata",minutes:"min\u00faty",month:"mesiac",months:"mesiace",second:"sekunda",seconds:"sekundy",year:"rok",years:"roky"})},"@VERSION@");

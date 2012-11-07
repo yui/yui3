@@ -4,6 +4,8 @@
 	"DateTimeCombination" : "{1} {0}",
 	"DateTimeTimezoneCombination" : "{1} {0} {2}",
 	"DateTimezoneCombination" : "{1} {2}",
+	"HMS_long" : "{0} {1} {2}",
+	"HMS_short" : "{0}:{1}:{2}",
 	"HM_abbreviated" : "HH:mm",
 	"HM_short" : "hh:mm a",
 	"H_abbreviated" : "HH",

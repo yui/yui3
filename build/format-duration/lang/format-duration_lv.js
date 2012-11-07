@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_lv",function(e){e.Intl.add("format-duration","lv",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"diena",days:"dienas",hour:"stunda",hours:"stundas",minute:"min\u016bte",minutes:"min\u016btes",month:"m\u0113nesis",months:"m\u0113ne\u0161i",second:"sekunde",seconds:"sekundes",year:"gads",years:"gadi"})},"@VERSION@");

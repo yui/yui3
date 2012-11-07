@@ -24,6 +24,9 @@
         <p>Choose your language: <span id="languagePicker"></span></p>
 
         <script type="text/javascript">
+            YUI.GlobalConfig = {
+                filter: "raw"
+            }
             YUI({
                 modules: {
                     languagePicker: {
@@ -1057,11 +1060,8 @@
                             if(row.one("td") == null) return;   //Skip header
                             var timeValue = parseInt(row.one("td").getContent());
                         
-                            var formatter = new Y.DurationFormat(Y.DurationFormat.STYLES.HMS_LONG);
-                            row.one("td + td").setContent(formatter.format(timeValue));
-                        
-                            formatter = new Y.DurationFormat(Y.DurationFormat.STYLES.HMS_SHORT);
-                            row.one("td + td + td").setContent(formatter.format(timeValue));
+                            row.one("td + td").setContent(Y.Date.formatDuration(timeValue, {style: "HMS_LONG"}));
+                            row.one("td + td + td").setContent(Y.Date.formatDuration(timeValue, {style: "HMS_SHORT"}));
                         });
                     }
                 

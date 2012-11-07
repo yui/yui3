@@ -6,7 +6,7 @@ YUI.add('format-duration-tests', function(Y) {
                     
         setUp : function () {
             Y.Intl.add(
-                "format-duration",
+                "datatype-date-advanced-format",
                 "en-US",
                 {
                     "HMS_long" : "{0} {1} {2}",
@@ -33,8 +33,6 @@ YUI.add('format-duration-tests', function(Y) {
                     "numberZero" : "0"
                 }
                 );
-            this.durationLong = new Y.DurationFormat(Y.DurationFormat.STYLES.HMS_LONG);
-            this.durationShort = new Y.DurationFormat(Y.DurationFormat.STYLES.HMS_SHORT);
         },
         
         //---------------------------------------------------------------------
@@ -45,17 +43,25 @@ YUI.add('format-duration-tests', function(Y) {
             var Assert = Y.Assert;
                         
             //Test long format first
-            var result = this.durationLong.format(1), expect = "0 hours 0 minutes 1 second";
+            var result = Y.Date.formatDuration(1, {
+                style: "HMS_LONG"
+            }), expect = "0 hours 0 minutes 1 second";
             Assert.areEqual(expect, result);
                     
-            result = this.durationLong.format(3601), expect = "1 hour 0 minutes 1 second";
+            result = Y.Date.formatDuration(3601, {
+                style: "HMS_LONG"
+            }), expect = "1 hour 0 minutes 1 second";
             Assert.areEqual(expect, result);
                         
             //Test short format
-            result = this.durationShort.format(1), expect = "0:00:01";
+            result = Y.Date.formatDuration(1, {
+                style: "HMS_SHORT"
+            }), expect = "0:00:01";
             Assert.areEqual(expect, result);
                         
-            result = this.durationShort.format(3601), expect = "1:00:01";
+            result = Y.Date.formatDuration(3601, {
+                style: "HMS_SHORT"
+            }), expect = "1:00:01";
             Assert.areEqual(expect, result);
         },
         
@@ -63,35 +69,68 @@ YUI.add('format-duration-tests', function(Y) {
             var Assert = Y.Assert;
                         
             //Test long format first
-            var result = this.durationLong.format("PT1M2S"), expect = "1 minute 2 seconds";
+            var result = Y.Date.formatDuration("PT1M2S", {
+                style: "HMS_LONG"
+            }), expect = "1 minute 2 seconds";
             Assert.areEqual(expect, result);
                     
-            result = this.durationLong.format("P12Y23M34DT11H22M33S"), expect = "11 hours 22 minutes 33 seconds";
+            result = Y.Date.formatDuration("P12Y23M34DT11H22M33S", {
+                style: "HMS_LONG"
+            }), expect = "11 hours 22 minutes 33 seconds";
             Assert.areEqual(expect, result);
                         
             //Test short format
-            result = this.durationShort.format("PT1M2S"), expect = "0:01:02";
+            result = Y.Date.formatDuration("PT1M2S", {
+                style: "HMS_SHORT"
+            }), expect = "0:01:02";
             Assert.areEqual(expect, result);
                         
-            result = this.durationShort.format("P12Y23M34DT11H22M33S"), expect = "11:22:33";
+            result = Y.Date.formatDuration("P12Y23M34DT11H22M33S", {
+                style: "HMS_SHORT"
+            }), expect = "11:22:33";
             Assert.areEqual(expect, result);
         },
                     
-        "Test for format(int hour, int min, int second)" : function () {
+        "Test for format(hours, minutes, seconds)" : function () {
             var Assert = Y.Assert;
                         
             //Test long format first
-            var result = this.durationLong.format(-1, -1, 3), expect = "3 seconds";
+            var result = Y.Date.formatDuration({
+                seconds: 3
+            }, {
+                style: "HMS_LONG"
+            }), expect = "3 seconds";
             Assert.areEqual(expect, result);
                     
-            result = this.durationLong.format(-1, 41, -3), expect = "41 minutes";
+            result = Y.Date.formatDuration({
+                minutes: 41
+            }, {
+                style: "HMS_LONG"
+            }), expect = "41 minutes";
             Assert.areEqual(expect, result);
                         
             //Test short format
-            result = this.durationShort.format(-1, -1, 3), expect = "0:00:03";
+            result = Y.Date.formatDuration({
+                seconds: 3
+            }, {
+                style: "HMS_SHORT"
+            }), expect = "0:00:03";
             Assert.areEqual(expect, result);
                         
-            result = this.durationShort.format(-1, 41, -3), expect = "0:41:00";
+            result = Y.Date.formatDuration({
+                minutes: 41
+            }, {
+                style: "HMS_SHORT"
+            }), expect = "0:41:00";
+            Assert.areEqual(expect, result);
+            
+            result = Y.Date.formatDuration({
+                hours: 1, 
+                minutes: 41, 
+                seconds: 3
+            }, {
+                style: "HMS_SHORT"
+            }), expect = "1:41:03";
             Assert.areEqual(expect, result);
         }
     });

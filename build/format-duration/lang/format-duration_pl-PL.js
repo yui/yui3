@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_pl-PL",function(e){e.Intl.add("format-duration","pl-PL",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"dzie\u0144",days:"dni",hour:"{0} godzin\u0119",hours:"godziny",minute:"{0} minut\u0119",minutes:"minuty",month:"{0} miesi\u0105c",months:"miesi\u0105ce",second:"{0} sekund\u0119",seconds:"sekundy",year:"rok",years:"lata"})},"@VERSION@");

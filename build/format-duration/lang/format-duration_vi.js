@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_vi",function(e){e.Intl.add("format-duration","vi",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"ng\u00e0y",days:"ng\u00e0y",hour:"gi\u1edd",hours:"gi\u1edd",minute:"ph\u00fat",minutes:"ph\u00fat",month:"th\u00e1ng",months:"th\u00e1ng",second:"gi\u00e2y",seconds:"gi\u00e2y",year:"n\u0103m",years:"n\u0103m"})},"@VERSION@");

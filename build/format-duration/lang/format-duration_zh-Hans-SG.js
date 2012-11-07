@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_zh-Hans-SG",function(e){e.Intl.add("format-duration","zh-Hans-SG",{HMS_long:"{0}{1}{2}",HMS_short:"{0}:{1}:{2}",day:"",days:"",hour:"\u65f6",hours:"\u65f6",minute:"",minutes:"",month:"",months:"",second:"",seconds:"",year:"",years:""})},"@VERSION@");

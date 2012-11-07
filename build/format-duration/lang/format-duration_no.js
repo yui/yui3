@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_no",function(e){e.Intl.add("format-duration","no",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"dag",days:"dager",hour:"time",hours:"timer",minute:"minutt",minutes:"minutter",month:"m\u00e5ned",months:"m\u00e5neder",second:"sekund",seconds:"sekunder",year:"\u00e5r",years:"\u00e5r"})},"@VERSION@");

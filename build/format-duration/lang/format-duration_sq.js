@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_sq",function(e){e.Intl.add("format-duration","sq",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"dit\u00eb",days:"dit\u00eb",hour:"or\u00eb",hours:"h",minute:"minut\u00eb",minutes:"minuta",month:"muaj",months:"m",second:"sekond\u00eb",seconds:"sekonda",year:"vit",years:"vjet"})},"@VERSION@");

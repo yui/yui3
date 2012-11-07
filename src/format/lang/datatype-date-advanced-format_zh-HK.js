@@ -4,6 +4,8 @@
 	"DateTimeCombination" : "{1} {0}",
 	"DateTimeTimezoneCombination" : "{1} {2}{0}",
 	"DateTimezoneCombination" : "{1} {2}",
+	"HMS_long" : "{0}{1}{2}",
+	"HMS_short" : "{0}:{1}:{2}",
 	"HM_abbreviated" : "ah时mm分",
 	"HM_short" : "ah:mm",
 	"H_abbreviated" : "ah时",

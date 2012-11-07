@@ -4,6 +4,8 @@
 	"DateTimeCombination" : "{1} {0}",
 	"DateTimeTimezoneCombination" : "{1} {0} {2}",
 	"DateTimezoneCombination" : "{1} {2}",
+	"HMS_long" : "{0} {1} {2}",
+	"HMS_short" : "{0}:{1}:{2}",
 	"HM_abbreviated" : "a h시 m분",
 	"HM_short" : "a h:mm",
 	"H_abbreviated" : "a h시",

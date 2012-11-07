@@ -92,15 +92,15 @@
                 var durationSubmit = Y.one("#duration-submit");
                 
                 durationSubmit.on("click", function(e) {
-                    YUI({lang: durationLocale.get("value"), filter: "raw" }).use("format-duration",/* "format-numbers",*/ function(Y) {
+                    YUI({lang: durationLocale.get("value"), filter: "raw" }).use("datatype-date-advanced-format", function(Y) {
                         var values = duration.get("value").split(",");
-                        var durationFormat = new Y.DurationFormat(Y.DurationFormat.STYLES[durationStyle.get("value")]);
+                        //var durationFormat = new Y.DurationFormat(Y.DurationFormat.STYLES[durationStyle.get("value")]);
                         var result;
                         if(values.length == 1) {
-                            result = durationFormat.format(values[0]);
+                            result = Y.Date.formatDuration(values[0], {style: durationStyle.get("value")});
                             durationResult.set("value", result);
                         } else {
-                            result = durationFormat.format(values[0], values[1], values[2]);
+                            result = Y.Date.formatDuration({hours: values[0], minutes: values[1], seconds: values[2]}, {style: durationStyle.get("value")});
                             durationResult.set("value", result);
                         }
                     });

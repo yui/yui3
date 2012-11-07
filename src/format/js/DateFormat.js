@@ -848,7 +848,7 @@ YDateFormat.prototype._generatePattern = function() {
  */
 YDateFormat.prototype.format = function(date) {
     if(date == null || !Y.Lang.isDate(date)) {
-        throw new YDateFormat.IllegalArgumentsException("format called without a date.");
+        throw new Format.IllegalArgumentsException("format called without a date.");
     }
         
     var offset = this._timeZoneInstance.getRawOffset() * 1000;

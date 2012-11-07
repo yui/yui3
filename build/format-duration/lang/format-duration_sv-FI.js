@@ -1,1 +1,0 @@
-YUI.add("lang/format-duration_sv-FI",function(e){e.Intl.add("format-duration","sv-FI",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"dag",days:"dagar",hour:"timme",hours:"timmar",minute:"minut",minutes:"minuter",month:"m\u00e5nad",months:"m\u00e5nader",second:"sekund",seconds:"sekunder",year:"\u00e5r",years:"\u00e5r"})},"@VERSION@");
