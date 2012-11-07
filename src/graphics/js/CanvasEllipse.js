@@ -1,8 +1,8 @@
 /**
- * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Ellipse.html">`Ellipse`</a> class. 
- * `CanvasEllipse` is not intended to be used directly. Instead, use the <a href="Ellipse.html">`Ellipse`</a> class. 
- * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
- * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Ellipse.html">`Ellipse`</a> 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Ellipse.html">`Ellipse`</a> class.
+ * `CanvasEllipse` is not intended to be used directly. Instead, use the <a href="Ellipse.html">`Ellipse`</a> class.
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Ellipse.html">`Ellipse`</a>
  * class will point to the `CanvasEllipse` class.
  *
  * @module graphics
@@ -43,7 +43,7 @@ Y.extend(CanvasEllipse, CanvasShape, {
 });
 CanvasEllipse.ATTRS = Y.merge(CanvasShape.ATTRS, {
 	/**
-	 * Horizontal radius for the ellipse. 
+	 * Horizontal radius for the ellipse.
 	 *
 	 * @config xRadius
 	 * @type Number
@@ -57,7 +57,7 @@ CanvasEllipse.ATTRS = Y.merge(CanvasShape.ATTRS, {
 		getter: function()
 		{
 			var val = this.get("width");
-			if(val) 
+			if(val)
 			{
 				val *= 0.5;
 			}
@@ -66,7 +66,7 @@ CanvasEllipse.ATTRS = Y.merge(CanvasShape.ATTRS, {
 	},
 
 	/**
-	 * Vertical radius for the ellipse. 
+	 * Vertical radius for the ellipse.
 	 *
 	 * @config yRadius
 	 * @type Number
@@ -81,7 +81,7 @@ CanvasEllipse.ATTRS = Y.merge(CanvasShape.ATTRS, {
 		getter: function()
 		{
 			var val = this.get("height");
-			if(val) 
+			if(val)
 			{
 				val *= 0.5;
 			}

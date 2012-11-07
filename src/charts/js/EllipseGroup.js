@@ -10,10 +10,10 @@
  {
     EllipseGroup.superclass.constructor.apply(this, arguments);
  };
-    
+
  EllipseGroup.NAME = "diamondGroup";
 
- Y.extend(EllipseGroup, Y.ShapeGroup, {    
+ Y.extend(EllipseGroup, Y.ShapeGroup, {
     /**
      * Updates the diamond.
      *
@@ -25,6 +25,6 @@
         this.drawEllipse(cfg.x, cfg.y, cfg.width, cfg.height);
     }
  });
-    
+
 EllipseGroup.ATTRS = Y.ShapeGroup.ATTRS;
 Y.EllipseGroup = EllipseGroup;

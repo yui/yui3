@@ -3864,7 +3864,20 @@ YUI.Env.aliases = {
 };
 
 
-}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-log-nodejs", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
+}, '@VERSION@', {
+    "use": [
+        "yui-base",
+        "get",
+        "features",
+        "intl-base",
+        "yui-log",
+        "yui-log-nodejs",
+        "yui-later",
+        "loader-base",
+        "loader-rollup",
+        "loader-yui3"
+    ]
+});
 YUI.add('get', function (Y, NAME) {
 
     /**
@@ -4785,7 +4798,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.10.31-20-00',
+            GALLERY_VERSION = 'gallery-2012.11.07-21-32',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -10252,4 +10265,16 @@ YUI.Env[Y.version].md5 = 'd050a2294f84d3996bb46f592448f782';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
-YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["get", "features", "intl-base", "yui-log", "yui-log-nodejs", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
+YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {
+    "use": [
+        "get",
+        "features",
+        "intl-base",
+        "yui-log",
+        "yui-log-nodejs",
+        "yui-later",
+        "loader-base",
+        "loader-rollup",
+        "loader-yui3"
+    ]
+});
