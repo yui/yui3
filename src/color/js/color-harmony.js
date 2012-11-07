@@ -248,20 +248,11 @@ var HSL = 'hsl',
 
             offsets.push({});
             for (i = 0; i < count; i++) {
-                var o = {
-                    h: ( Math.random() * (offset * 2)) - offset,
-                    s: ( Math.random() * slOffset),
-                    l: ( Math.random() * slOffset)
-                };
-                offsets.push(o);
-                console.log(o.s + ' : ' + o.l);
-                /**
                 offsets.push({
                     h: ( Math.random() * (offset * 2)) - offset,
                     s: ( Math.random() * slOffset),
                     l: ( Math.random() * slOffset)
                 });
-                **/
             }
 
             return Harmony._adjustOffsetAndFinish(c, offsets, to);
