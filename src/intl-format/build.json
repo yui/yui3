@@ -1,0 +1,18 @@
+{
+    "name": "intl-format",
+    "builds": {
+        "intl-format": {
+            "jsfiles": [
+		"MsgBaseFormatter.js",
+		"MsgStringFormatter.js",
+		"MsgDateFormatter.js",
+		"MsgTimeFormatter.js",
+		"MsgNumberFormatter.js",
+		"MsgSelectFormatter.js",
+		"MsgPluralFormatter.js",
+		"MsgChoiceFormatter.js",
+                "format-message.js"
+            ]
+        }
+    }
+}

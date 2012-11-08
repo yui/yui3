@@ -1894,17 +1894,7 @@ suite.add(new YUITest.TestCase({
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("datatype-date-advanced-format")) > -1, "Module (datatype-date-advanced-format) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatype-number-advanced-format")) > -1, "Module (datatype-number-advanced-format) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("format-message")) > -1, "Module (format-message) not found in sorted array");
-        },
-     "Testing format-message": function(data) {
-            var loader = new Y.Loader({
-                require: ["format-message"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("format-message")) > -1, "Module (format-message) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("intl-format")) > -1, "Module (intl-format) not found in sorted array");
         },
      "Testing frame": function(data) {
             var loader = new Y.Loader({
@@ -2129,6 +2119,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("intl")) > -1, "Module (intl) not found in sorted array");
+        },
+     "Testing intl-format": function(data) {
+            var loader = new Y.Loader({
+                require: ["intl-format"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("intl-format")) > -1, "Module (intl-format) not found in sorted array");
         },
      "Testing io": function(data) {
             var loader = new Y.Loader({

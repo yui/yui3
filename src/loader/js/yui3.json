@@ -2375,13 +2375,7 @@
         "use": [
             "datatype-date-advanced-format",
             "datatype-number-advanced-format",
-            "format-message"
-        ]
-    },
-    "format-message": {
-        "requires": [
-            "datatype-date-advanced-format",
-            "datatype-number-advanced-format"
+            "intl-format"
         ]
     },
     "frame": {
@@ -2559,6 +2553,16 @@
     "intl-base": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "intl-format": {
+        "after": [
+            "intl"
+        ],
+        "requires": [
+            "datatype-date-advanced-format",
+            "datatype-number-advanced-format",
+            "intl"
         ]
     },
     "io": {

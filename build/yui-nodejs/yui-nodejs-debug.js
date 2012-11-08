@@ -3844,7 +3844,7 @@ YUI.Env.aliases = {
     "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside","event-touch","event-move","event-flick","event-valuechange","event-tap"],
     "event-custom": ["event-custom-base","event-custom-complex"],
     "event-gestures": ["event-flick","event-move"],
-    "format": ["datatype-date-advanced-format","datatype-number-advanced-format","format-message"],
+    "format": ["datatype-date-advanced-format","datatype-number-advanced-format","intl-format"],
     "handlebars": ["handlebars-compiler"],
     "highlight": ["highlight-base","highlight-accentfold"],
     "history": ["history-base","history-hash","history-hash-ie","history-html5"],
@@ -10130,13 +10130,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "use": [
             "datatype-date-advanced-format",
             "datatype-number-advanced-format",
-            "format-message"
-        ]
-    },
-    "format-message": {
-        "requires": [
-            "datatype-date-advanced-format",
-            "datatype-number-advanced-format"
+            "intl-format"
         ]
     },
     "frame": {
@@ -10353,6 +10347,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "intl-base": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "intl-format": {
+        "after": [
+            "intl"
+        ],
+        "requires": [
+            "datatype-date-advanced-format",
+            "datatype-number-advanced-format",
+            "intl"
         ]
     },
     "io": {
@@ -11256,7 +11260,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c2d31fc37c28c5555d1a6eff91f1562a';
+YUI.Env[Y.version].md5 = '8bb99f699c2c47f8a33ea7de0cf5bc6d';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

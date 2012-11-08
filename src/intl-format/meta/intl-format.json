@@ -1,0 +1,9 @@
+{
+    "intl-format": {
+ 
+        "requires": [ "datatype-date-advanced-format", "datatype-number-advanced-format", "intl" ],
+        "after": [ "intl" ]
+
+    }
+ 
+}

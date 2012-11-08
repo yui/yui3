@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>DateFormat Test</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+
+        <script src="../../../../build/yui/yui.js" charset="utf-8"></script>
+
+        <style type="text/css">
+            button {
+                clear: left;
+                float: left;
+                margin: 20px;                
+            }
+            label {
+                clear: both;
+                float: left;
+                width: 200px;
+                margin-top: 10px;
+            }
+            label.no-clear {
+                clear: none;
+            }
+            input, select {
+                margin-top: 10px;
+            }
+            input[type="text"], select {
+                float:left;
+                width: 200px;
+            }
+            input[type="checkbox"] {
+                clear: both;
+                float: left;
+            }
+            .options {
+                margin: 20px;
+            }
+            #demo {
+                border-color: black;
+                border-style: solid;
+                border-width: 1px;
+                width: 500px;
+                float: left;
+                margin: 0;
+                height: 24em;
+            }
+            h3 {
+                margin-left: 10px;
+            }
+        </style>
+
+    </head>
+    <body>
+
+        <div id='demo'>
+            <h3>DateFormat Test</h3>
+            <div id='value' class='options'>
+                <label for='in-date'>Date:</label>
+                <input id='in-date' type='text'/>
+
+                <label for='in-tzone'>Time Zone:</label>
+                <input id='in-tzone' type='text'/>
+            </div>
+            <div id='date-format-div' class='options'>
+                <label>Date Format:</label>
+                <select id='date-format'>
+                    <option value="NONE">NONE</option>
+                    <option value="WYMD_LONG">WYMD_LONG</option>
+                    <option value="WYMD_ABBREVIATED">WYMD_ABBREVIATED</option>
+                    <option value="WYMD_SHORT">WYMD_SHORT</option>
+                    <option value="WMD_LONG">WMD_LONG</option>
+                    <option value="WMD_ABBREVIATED">WMD_ABBREVIATED</option>
+                    <option value="WMD_SHORT">WMD_SHORT</option>
+                    <option value="YMD_LONG">YMD_LONG</option>
+                    <option value="YMD_ABBREVIATED">YMD_ABBREVIATED</option>
+                    <option value="YMD_SHORT">YMD_SHORT</option>
+                    <option value="YM_LONG">YM_LONG</option>
+                    <option value="MD_LONG">MD_LONG</option>
+                    <option value="MD_ABBREVIATED">MD_ABBREVIATED</option>
+                    <option value="MD_SHORT">MD_SHORT</option>
+                    <option value="W_LONG">W_LONG</option>
+                    <option value="W_ABBREVIATED">W_ABBREVIATED</option>
+                    <option value="M_LONG">M_LONG</option>
+                    <option value="M_ABBREVIATED">M_ABBREVIATED</option>
+                    <option value="YMD_FULL">YMD_FULL</option>
+                </select>
+                <br/>
+
+                <input id="use-relative-date" type="checkbox"/>
+                <label for="use-relative-date" class="no-clear">Use Relative Dates</label>
+            </div>
+            <div id='time-format-div' class='options'>
+                <label>Time Format:</label>
+                <select id='time-format'>
+                    <option value="NONE">NONE</option>
+                    <option value="HM_ABBREVIATED">HM_ABBREVIATED</option>
+                    <option value="HM_SHORT">HM_SHORT</option>
+                    <option value="H_ABBREVIATED">H_ABBREVIATED</option>
+                </select>
+            </div>
+            <div id='timeZone-format-div' class='options'>
+                <label>Time Zone Format:</label>
+                <select id='timeZone-format'>
+                    <option value="NONE">NONE</option>
+                    <option value="Z_ABBREVIATED">Z_ABBREVIATED</option>
+                    <option value="Z_SHORT">Z_SHORT</option>
+                </select>
+            </div>
+            <div id='locale' class='options'>
+                <label>Locale:</label>
+                <input id='in-locale' type='text' value="en"/>
+            </div>
+            <div id='result' class='options'>
+                <label>Result:</label>
+                <input type='text' id='out-result' readonly/>
+            </div>
+            <button id='done'>Done</button>
+        </div>
+
+        <script>
+            YUI().use("node", "datatype-date-timezone", function (Y) {
+                //DateFormat Demo
+                var dateNode = Y.one("#in-date"),
+                tzoneNode = Y.one("#in-tzone"),
+                dateFormatNode = Y.one("#date-format"),
+                relativeDateNode = Y.one("#use-relative-date"),
+                timeFormatNode = Y.one("#time-format"),
+                timeZoneFormatNode = Y.one("#timeZone-format"),
+                locale = Y.one("#in-locale"),
+                button = Y.one("#done"),
+                resultNode = Y.one("#out-result");
+
+                if(dateNode.get("value") == "") {
+                    dateNode.set("value", new Date());
+                }
+                if(tzoneNode.get("value") == "") {                    
+                    var systemTZoneOffset = (new Date()).getTimezoneOffset()*-60;
+                    var systemTimeZone = Y.Date.Timezone.getTimezoneIdForOffset(systemTZoneOffset);
+                    tzoneNode.set("value", systemTimeZone);
+                }
+
+                button.on('click', function(e) {
+                    YUI({lang: locale.get("value"), filter: "raw" }).use("datatype-date-advanced-format", function(Y) {
+                        var dateFormat = Y.Date.DATE_FORMATS[dateFormatNode.get("value")];
+                        if(relativeDateNode.get("checked")) {
+                            dateFormat = dateFormat | Y.Date.DATE_FORMATS.RELATIVE_DATE;
+                        }
+                        var timeFormat = Y.Date.TIME_FORMATS[timeFormatNode.get("value")];
+                        var timeZoneFormat = Y.Date.TIMEZONE_FORMATS[timeZoneFormatNode.get("value")];
+                        var date = new Date(dateNode.get('value'));
+                        var result = Y.Date.format(date, {
+                            timezone: tzoneNode.get("value"),
+                            dateFormat: dateFormat,
+                            timeFormat: timeFormat,
+                            timezoneFormat: timeZoneFormat
+                        });
+                        resultNode.set('value', result);
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

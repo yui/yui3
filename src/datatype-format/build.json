@@ -1,0 +1,21 @@
+{
+    "name": "format",
+    "builds": {
+        "datatype-date-advanced-format": {
+            "jsfiles": [
+		"BaseFormat.js",
+                "DateFormat.js",
+                "format-relative.js",
+                "format-duration.js",
+                "format-date.js"
+            ]
+        },
+        "datatype-number-advanced-format": {
+            "jsfiles": [
+		"BaseFormat.js",
+                "NumberFormat.js",
+                "format-numbers.js"
+            ]
+        }
+    }
+}

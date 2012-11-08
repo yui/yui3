@@ -5303,13 +5303,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "use": [
             "datatype-date-advanced-format",
             "datatype-number-advanced-format",
-            "format-message"
-        ]
-    },
-    "format-message": {
-        "requires": [
-            "datatype-date-advanced-format",
-            "datatype-number-advanced-format"
+            "intl-format"
         ]
     },
     "frame": {
@@ -5526,6 +5520,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "intl-base": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "intl-format": {
+        "after": [
+            "intl"
+        ],
+        "requires": [
+            "datatype-date-advanced-format",
+            "datatype-number-advanced-format",
+            "intl"
         ]
     },
     "io": {
@@ -6429,7 +6433,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c2d31fc37c28c5555d1a6eff91f1562a';
+YUI.Env[Y.version].md5 = '8bb99f699c2c47f8a33ea7de0cf5bc6d';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
