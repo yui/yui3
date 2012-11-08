@@ -12,10 +12,12 @@ wait
 if [ -n "$TRAVIS" ]; then
     echo "Installing Shifter.."
     npm -g install shifter -loglevel silent
+    echo "Installing Yogi"
+    npm -g install yogi -loglevel silent
     cd ../
     echo "building entire library";
     shifter --walk --no-lint --no-coverage --cache
     cd yui;
+else 
+    make npm
 fi
-
-make npm

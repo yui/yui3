@@ -5,7 +5,7 @@ root=`pwd`
 cd ./build-npm/
 
 npm_base=`pwd`
-yogi="${npm_base}/node_modules/.bin/yogi"
+yogi=`which yogi`
 
 echo "Build Root: ${root}"
 echo "NPM Base: ${npm_base}"
