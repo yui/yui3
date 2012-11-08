@@ -149,7 +149,7 @@ else if (win && ("msPointerEnabled" in win.navigator)) {
     GESTURE_MAP.start = "MSPointerDown";
     GESTURE_MAP.end = "MSPointerUp";
     GESTURE_MAP.move = "MSPointerMove";
-    GESTURE_MAP.cancel = "MSPointerCancel"
+    GESTURE_MAP.cancel = "MSPointerCancel";
 }
 
 else {
