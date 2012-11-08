@@ -20,17 +20,18 @@ con=""
 timeout=""
 cli=""
 extra=""
+
 if [ -n "$TRAVIS" ]; then
-    con="-c 5 "
-    timeout="-t 400 "
+    con="-c 8 "
+    timeout="-t 500 "
     if [ "${TRAVIS_NODE_VERSION}" = "0.8" ]; then
-        extra="-x editor -x yui-throttle -x scrollview --filter min"
+        extra="-x editor -x yui-throttle"
     else
         echo "Skipping Grover tests for this Node version (not needed)"
         extra="--cli "
     fi
 fi
 
-args="--coverage --istanbul ${timeout} ${con} ${extra}"
+args="${timeout} ${con} ${extra}"
 echo "yogi test ${args}"
 ${yogi} test ${args}
