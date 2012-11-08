@@ -12,10 +12,12 @@ var ArrayAssert  = Y.ArrayAssert,
     routerSuite;
 
 function resetURL() {
+    if (!win) { return; }
+
     if (html5) {
-        win && win.history.replaceState(null, null, originalURL);
+        win.history.replaceState(null, null, originalURL);
     } else {
-        win && (win.location.hash = '');
+        win.location.hash = '';
     }
 }
 
@@ -40,7 +42,10 @@ routerSuite.add(new Y.Test.Case({
     name: 'Lifecycle',
 
     tearDown: function () {
-        this.router && this.router.destroy();
+        if (this.router) {
+            this.router.destroy();
+        }
+
         delete this.router;
     },
 
@@ -96,7 +101,10 @@ routerSuite.add(new Y.Test.Case({
     name: 'Attributes',
 
     tearDown: function () {
-        this.router && this.router.destroy();
+        if (this.router) {
+            this.router.destroy();
+        }
+
         delete this.router;
     },
 
@@ -167,7 +175,10 @@ routerSuite.add(new Y.Test.Case({
     name: 'Events',
 
     tearDown: function () {
-        this.router && this.router.destroy();
+        if (this.router) {
+            this.router.destroy();
+        }
+
         delete this.router;
     },
 
@@ -218,7 +229,10 @@ routerSuite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
-        this.router && this.router.destroy();
+        if (this.router) {
+            this.router.destroy();
+        }
+
         delete this.router;
 
         Y.config.errorFn = this.errorFn;
@@ -732,8 +746,13 @@ routerSuite.add(new Y.Test.Case({
     name: 'Routes',
 
     tearDown: function () {
-        this.router && this.router.destroy();
-        this.router2 && this.router2.destroy();
+        if (this.router) {
+            this.router.destroy();
+        }
+
+        if (this.router2) {
+            this.router2.destroy();
+        }
 
         delete this.router;
         delete this.router2;
