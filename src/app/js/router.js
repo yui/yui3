@@ -619,6 +619,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _dispatch: function (path, url, src) {
         var self      = this,
+            decode    = self._decode,
             routes    = self.match(path),
             callbacks = [],
             matches, req, res;
@@ -657,9 +658,13 @@ Y.Router = Y.extend(Router, Y.Base, {
                 callback.call(self, req, res, req.next);
 
             } else if ((route = routes.shift())) {
-                // Make a copy of this route's `callbacks` and find its matches.
+                // Make a copy of this route's `callbacks` so the original array
+                // is preserved.
                 callbacks = route.callbacks.concat();
-                matches   = route.regex.exec(path);
+
+                // Decode each of the path matches so that the any URL-encoded
+                // path segments are decoded in the `req.params` object.
+                matches = YArray.map(route.regex.exec(path) || [], decode);
 
                 // Use named keys for parameter names if the route path contains
                 // named keys. Otherwise, use numerical match indices.
@@ -669,7 +674,7 @@ Y.Router = Y.extend(Router, Y.Base, {
                     req.params = matches.concat();
                 }
 
-                // Allow access tot he num of remaining routes for this request.
+                // Allow access to the num of remaining routes for this request.
                 req.pendingRoutes = routes.length;
 
                 // Execute this route's `callbacks`.

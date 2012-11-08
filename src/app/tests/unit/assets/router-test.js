@@ -952,6 +952,26 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame(3, calls);
     },
 
+    'route parameters should be decoded': function () {
+        var calls       = 0,
+            router      = this.router = new Y.Router(),
+            pathSegment = 'path with spaces';
+
+        router.route('/:foo', function (req) {
+            calls += 1;
+
+            ArrayAssert.itemsAreSame(['foo'], Y.Object.keys(req.params));
+            ArrayAssert.itemsAreSame([pathSegment], Y.Object.values(req.params));
+        });
+
+        Assert.areSame('path%20with%20spaces', encodeURIComponent(pathSegment));
+
+        router._dispatch('/' + pathSegment, {});
+        router._dispatch('/' + encodeURIComponent(pathSegment), {});
+
+        Assert.areSame(2, calls);
+    },
+
     'request object should contain a `pendingRoutes` property': function () {
         var calls  = 0,
             router = this.router = new Y.Router();
