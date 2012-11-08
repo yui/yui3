@@ -330,20 +330,16 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
                                shiftKey /*:Boolean*/,   metaKey /*:Boolean*/,
                                button /*:int*/,         relatedTarget /*:HTMLElement*/) /*:Void*/
 {
-    var lowerType;
-
     //check target
     if (!target){
         Y.error("simulateMouseEvent(): Invalid target.");
     }
 
-    //If the event type is a string and it's not in MSPointerEvents, lowercase it
+    
     if (isString(type)){
 
-        lowerType = type.toLowerCase();
-
-        //make sure it's a supported mouse event
-        if (!mouseEvents[lowerType] && !msPointerEvents[type]){
+        //make sure it's a supported mouse event or an msPointerEvent. 
+        if (!mouseEvents[type.toLowerCase()] && !msPointerEvents[type]){
             Y.error("simulateMouseEvent(): Event type '" + type + "' not supported.");
         }
     } 
