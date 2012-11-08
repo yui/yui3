@@ -10,9 +10,10 @@
                 "format-date.js"
             ]
         },
-        "format-numbers": {
+        "datatype-number-advanced-format": {
             "jsfiles": [
 		"BaseFormat.js",
+                "NumberFormat.js",
                 "format-numbers.js"
             ]
         },

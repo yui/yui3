@@ -892,7 +892,7 @@
             YUI().use("querystring", function(Y) {
                 var locale = Y.QueryString.parse(window.location.search.substr(1)).locale;
                 if(!locale) { locale = "en-US"; }
-                YUI( { lang: locale } ).use("format", "timezone", "node", function (Y) {
+                YUI( { lang: locale } ).use("format", "datatype-date-timezone", "node", function (Y) {
                     var timeZones = [
                         "Etc/GMT",
                         "Asia/Kolkata",

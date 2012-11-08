@@ -94,13 +94,14 @@
                 var numberSubmit = Y.one("#number-submit");
                 
                 numberSubmit.on("click", function(e) {
-                    YUI({lang: numberLocale.get("value"), filter: "raw"}).use("format-numbers", "node", "selector-css3", function(Y) {
+                    YUI({lang: numberLocale.get("value"), filter: "raw"}).use("datatype-number-advanced-format", "node", "selector-css3", function(Y) {
                         var operation = Y.one('#number-type-div input[type=radio]:checked').get('value');
-                        var style = Y.NumberFormat.STYLES[numberStyle.get("value")];
-                        var formatter = new Y.NumberFormat(style);
                         var value = number.get("value");
                         
-                        var result = (operation == "format") ? formatter.format(value) : formatter.parse(value);
+                        var style = numberStyle.get("value");
+                        var config = { style: style };
+                        
+                        var result = (operation == "format") ? Y.Number.format(value, config) : Y.Number.parse(value, config);
                         numberResult.set("value", result);
                     });
                 });

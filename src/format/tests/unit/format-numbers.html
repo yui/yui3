@@ -12,11 +12,11 @@
 (function() {
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-        coverage: ['format-numbers'],
+        coverage: ['datatype-number-advanced-format'],
         modules: {
             'format-numbers-tests': {
                 fullpath: './assets/format-numbers-tests.js',
-                requires: ['test', 'dump', 'format-numbers']
+                requires: ['test', 'dump', 'datatype-number-advanced-format']
             }
         }
     }).use("test-console", "format-numbers-tests" , function(Y) {

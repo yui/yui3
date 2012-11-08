@@ -5,7 +5,7 @@ YUI.add('format-numbers-tests', function(Y) {
                     
         setUp: function() {
             Y.Intl.add(
-                "format-numbers",
+                "datatype-number-advanced-format",
                 "en-US",
                 {
                     "USD_currencyISO" : "US Dollar",
@@ -30,80 +30,80 @@ YUI.add('format-numbers-tests', function(Y) {
         },
                     
         "Test Currency Style" : function() {
-            var format = new Y.NumberFormat(Y.NumberFormat.STYLES.CURRENCY_STYLE);
-                       
+            var config = { style: "CURRENCY_STYLE" };           
+            
             var value = 10000000;
-            var result1 = format.format(value);
+            var result1 = Y.Number.format(value, config);
             var expect1 = "$10,000,000.00";
                         
             Y.Assert.areEqual(expect1, result1, "Unexpected result on format");
                         
-            var result2 = format.parse(result1);
+            var result2 = Y.Number.parse(result1, config);
             Y.Assert.areEqual(value, result2, "Unexpected result on parse");
         },
                     
         "Test ISO Currency Style" : function() {
-            var format = new Y.NumberFormat(Y.NumberFormat.STYLES.ISO_CURRENCY_STYLE);
-                       
+            var config = { style:  "ISO_CURRENCY_STYLE" };
+
             var value = 10000000;
-            var result1 = format.format(value);
+            var result1 = Y.Number.format(value, config);
             var expect1 = "US Dollar10,000,000.00";
                         
             Y.Assert.areEqual(expect1, result1, "Unexpected result on format");
                         
-            var result2 = format.parse(result1);
+            var result2 = Y.Number.parse(result1, config);
             Y.Assert.areEqual(value, result2, "Unexpected result on parse");
         },
                     
         "Test Number Style" : function() {
-            var format = new Y.NumberFormat(Y.NumberFormat.STYLES.NUMBER_STYLE);
+            var config = { style: "NUMBER_STYLE" };
                        
             var value = -10000000;
-            var result1 = format.format(value);
+            var result1 = Y.Number.format(value, config);
             var expect1 = "-10,000,000";
                         
             Y.Assert.areEqual(expect1, result1, "Unexpected result on format");
                         
-            var result2 = format.parse(result1);
+            var result2 = Y.Number.parse(result1, config);
             Y.Assert.areEqual(value, result2, "Unexpected result on parse");
         },
                     
         "Test Percent Style" : function() {
-            var format = new Y.NumberFormat(Y.NumberFormat.STYLES.PERCENT_STYLE);
-                       
+            var config = { style: "PERCENT_STYLE" };
+            
             var value = 0.25;
-            var result1 = format.format(value);
+            var result1 = Y.Number.format(value, config);
             var expect1 = "25%";
                         
             Y.Assert.areEqual(expect1, result1, "Unexpected result on format");
                         
-            var result2 = format.parse(result1);
+            var result2 = Y.Number.parse(result1, config);
             Y.Assert.areEqual(value, result2, "Unexpected result on parse");
         },
                     
         "Test Plural Currency Style" : function() {
-            var format = new Y.NumberFormat(Y.NumberFormat.STYLES.PLURAL_CURRENCY_STYLE);
+            var config = { style: "PLURAL_CURRENCY_STYLE" };
                        
             var value = 10000000;
-            var result1 = format.format(value);
+            var result1 = Y.Number.format(value, config);
             var expect1 = "10,000,000 US dollars";
                         
             Y.Assert.areEqual(expect1, result1, "Unexpected result on format");
                         
-            var result2 = format.parse(result1);
+            var result2 = Y.Number.parse(result1, config);
             Y.Assert.areEqual(value, result2, "Unexpected result on parse");
         },
                     
         "Test Scientific Style" : function() {
-            var format = new Y.NumberFormat(Y.NumberFormat.STYLES.SCIENTIFIC_STYLE);
+            var config = { style: "SCIENTIFIC_STYLE" };
                        
             var value = 10000000;
-            var result1 = format.format(value);
+            var result1 = Y.Number.format(value, config);
             var expect1 = "1E7";
                         
             Y.Assert.areEqual(expect1, result1, "Unexpected result on format");
                         
-            var result2 = format.parse(result1);
+            var result2 = Y.Number.parse(result1, config);
             Y.Assert.areEqual(value, result2, "Unexpected result on parse");
         }
     });

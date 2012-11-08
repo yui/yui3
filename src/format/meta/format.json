@@ -1,6 +1,6 @@
 {
     "format": {
-        "use": [ "datatype-date-advanced-format", "format-numbers", "format-message" ],
+        "use": [ "datatype-date-advanced-format", "datatype-number-advanced-format", "format-message" ],
         "submodules": {
             "datatype-date-advanced-format": {
                 "lang": [ "af-NA", "af", "af-ZA", "am-ET", "am", "ar-AE", "ar-BH", "ar-DZ", "ar-EG", "ar-IQ", "ar-JO",
@@ -36,10 +36,10 @@
                 "zh-Hans-CN", "zh-Hans-HK", "zh-Hans-MO", "zh-Hans-SG", "zh-Hans", "zh-Hant-HK", "zh-Hant-MO",
                 "zh-Hant-TW", "zh-Hant", "zh-HK", "zh-MO", "zh-SG", "zh-TW", "zh", "zu", "zu-ZA"
                 ],
-		"requires": [ "datatype-date-timezone", "datatype-date-format", "format-numbers" ],
+		"requires": [ "datatype-date-timezone", "datatype-date-format", "datatype-number-advanced-format" ],
                 "after": ["datatype-date-timezone"]
             },
-            "format-numbers": {
+            "datatype-number-advanced-format": {
                 "lang": [ "af-NA", "af", "af-ZA", "am-ET", "am", "ar-AE", "ar-BH", "ar-DZ", "ar-EG", "ar-IQ", "ar-JO",
                 "ar-KW", "ar-LB", "ar-LY", "ar-MA", "ar-OM", "ar-QA", "ar-SA", "ar-SD", "ar-SY", "ar-TN",
                 "ar", "ar-YE", "as-IN", "as", "az-AZ", "az-Cyrl-AZ", "az-Cyrl", "az-Latn-AZ", "az-Latn",
@@ -72,10 +72,12 @@
                 "uz-Cyrl", "uz-Cyrl-UZ", "uz-Latn", "uz-Latn-UZ", "uz", "uz-UZ", "vi", "vi-VN", "zh-CN",
                 "zh-Hans-CN", "zh-Hans-HK", "zh-Hans-MO", "zh-Hans-SG", "zh-Hans", "zh-Hant-HK", "zh-Hant-MO",
                 "zh-Hant-TW", "zh-Hant", "zh-HK", "zh-MO", "zh-SG", "zh-TW", "zh", "zu", "zu-ZA"
-                ]
+                ],
+                "requires": [ "datatype-number-format", "datatype-number-parse" ],
+                "after": [ "datatype-number-format", "datatype-number-parse" ]
             },
             "format-message": {
-		"requires": [ "datatype-date-advanced-format", "format-numbers" ]
+		"requires": [ "datatype-date-advanced-format", "datatype-number-advanced-format" ]
 	    }
         }
     }

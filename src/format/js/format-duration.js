@@ -18,7 +18,6 @@ YDurationFormat = function(style) {
     }
     this.style = style;
     this.patterns = Y.Intl.get(MODULE_NAME);
-    this._numberFormat = new Y.NumberFormat(Y.NumberFormat.STYLES.NUMBER_STYLE);
 }
     
 //Exceptions
@@ -177,7 +176,7 @@ YDurationFormat.prototype.format = function() {
         if(duration.hours < 0) {
             duration.hours = "";
         } else {
-            duration.hours = this._numberFormat.format(duration.hours) + " " + (duration.hours == 1 ? this.patterns.hour : this.patterns.hours);
+            duration.hours = Y.Number.format(duration.hours) + " " + (duration.hours == 1 ? this.patterns.hour : this.patterns.hours);
         }
             
         if(duration.minutes < 0) {
@@ -194,7 +193,7 @@ YDurationFormat.prototype.format = function() {
     } else {                                            //HMS_SHORT
         result = this.patterns.HMS_short;
             
-        duration.hours = this._numberFormat.format(duration.hours < 0 ? 0: duration.hours);
+        duration.hours = Y.Number.format(duration.hours < 0 ? 0: duration.hours);
         duration.minutes = duration.minutes < 0 ? "00": zeroPad(duration.minutes, 2);
         duration.seconds = duration.seconds < 0 ? "00": zeroPad(duration.seconds, 2);
     }

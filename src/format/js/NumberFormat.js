@@ -1,237 +1,3 @@
-YUI.add('format-numbers', function (Y, NAME) {
-
-/*
- * Copyright 2012 Yahoo! Inc. All Rights Reserved. Based on code owned by VMWare, Inc. 
- */
-
-//
-// Format class
-//
-
-/**
- * Base class for all formats. To format an object, instantiate the
- * format of your choice and call the <code>format</code> method which
- * returns the formatted string.
- */
-Format = function(pattern, formats) {
-    if (arguments.length == 0) {
-        return;
-    }
-    this._pattern = pattern;
-    this._segments = []; 
-    this.Formats = formats; 
-}
-
-// Data
-
-Format.prototype._pattern = null;
-Format.prototype._segments = null;
-
-//Exceptions
-
-Y.mix(Format, {
-    Exception: function(name, message) {
-        this.name = name;
-        this.message = message;
-        this.toString = function() {
-            return this.name + ": " + this.message;
-        }
-    },
-    ParsingException: function(message) {
-        Format.ParsingException.superclass.constructor.call(this, "ParsingException", message);
-    },
-    IllegalArgumentsException: function(message) {
-        Format.IllegalArgumentsException.superclass.constructor.call(this, "IllegalArgumentsException", message);
-    },
-    FormatException: function(message) {
-        Format.FormatException.superclass.constructor.call(this, "FormatException", message);
-    }
-});
-
-Y.extend(Format.ParsingException, Format.Exception);
-Y.extend(Format.IllegalArgumentsException, Format.Exception);
-Y.extend(Format.FormatException, Format.Exception);
-
-// Public methods
-
-Format.prototype.format = function(object) { 
-    var s = [];
-        
-    for (var i = 0; i < this._segments.length; i++) {
-        s.push(this._segments[i].format(object));
-    }
-    return s.join("");
-};
-
-// Protected static methods
-
-function zeroPad (s, length, zeroChar, rightSide) {
-    s = typeof s == "string" ? s : String(s);
-
-    if (s.length >= length) return s;
-
-    zeroChar = zeroChar || '0';
-	
-    var a = [];
-    for (var i = s.length; i < length; i++) {
-        a.push(zeroChar);
-    }
-    a[rightSide ? "unshift" : "push"](s);
-
-    return a.join("");
-}
-    
-/** 
- * Parses the given string according to this format's pattern and returns
- * an object.
- * <p>
- * <strong>Note:</strong>
- * The default implementation of this method assumes that the sub-class
- * has implemented the <code>_createParseObject</code> method.
- */
-Format.prototype.parse = function(s, pp) {
-    var object = this._createParseObject();
-    var index = pp || 0;
-    for (var i = 0; i < this._segments.length; i++) {
-        var segment = this._segments[i];
-        index = segment.parse(object, s, index);
-    }
-        
-    if (index < s.length) {
-        throw new Format.ParsingException("Input too long");
-    }
-    return object;
-};
-    
-/**
- * Creates the object that is initialized by parsing
- * <p>
- * <strong>Note:</strong>
- * This must be implemented by sub-classes.
- */
-Format.prototype._createParseObject = function(s) {
-    throw new Format.ParsingException("Not implemented");
-};
-
-//
-// Segment class
-//
-
-Format.Segment = function(format, s) {
-    if (arguments.length == 0) return;
-    this._parent = format;
-    this._s = s;
-};
-    
-// Public methods
-
-Format.Segment.prototype.format = function(o) { 
-    return this._s; 
-};
-
-/**
- * Parses the string at the given index, initializes the parse object
- * (as appropriate), and returns the new index within the string for
- * the next parsing step.
- * <p>
- * <strong>Note:</strong>
- * This method must be implemented by sub-classes.
- *
- * @param o     [object] The parse object to be initialized.
- * @param s     [string] The input string to be parsed.
- * @param index [number] The index within the string to start parsing.
- */
-Format.Segment.prototype.parse = function(o, s, index) {
-    throw new Format.ParsingException("Not implemented");
-};
-
-Format.Segment.prototype.getFormat = function() {
-    return this._parent;
-};
-
-Format.Segment._parseLiteral = function(literal, s, index) {
-    if (s.length - index < literal.length) {
-        throw new Format.ParsingException("Input too short");
-    }
-    for (var i = 0; i < literal.length; i++) {
-        if (literal.charAt(i) != s.charAt(index + i)) {
-            throw new Format.ParsingException("Input doesn't match");
-        }
-    }
-    return index + literal.length;
-};
-    
-/**
- * Parses an integer at the offset of the given string and calls a
- * method on the specified object.
- *
- * @param o         [object]   The target object.
- * @param f         [function|string] The method to call on the target object.
- *                             If this parameter is a string, then it is used
- *                             as the name of the property to set on the
- *                             target object.
- * @param adjust    [number]   The numeric adjustment to make on the
- *                             value before calling the object method.
- * @param s         [string]   The string to parse.
- * @param index     [number]   The index within the string to start parsing.
- * @param fixedlen  [number]   If specified, specifies the required number
- *                             of digits to be parsed.
- * @param radix     [number]   Optional. Specifies the radix of the parse
- *                             string. Defaults to 10 if not specified.
- */
-Format.Segment._parseInt = function(o, f, adjust, s, index, fixedlen, radix) {
-    var len = fixedlen || s.length - index;
-    var head = index;
-    for (var i = 0; i < len; i++) {
-        if (!s.charAt(index++).match(/\d/)) {
-            index--;
-            break;
-        }
-    }
-    var tail = index;
-    if (head == tail) {
-        throw new Format.ParsingException("Number not present");
-    }
-    if (fixedlen && tail - head != fixedlen) {
-        throw new Format.ParsingException("Number too short");
-    }
-    var value = parseInt(s.substring(head, tail), radix || 10);
-    if (f) {
-        var target = o || window;
-        if (typeof f == "function") {
-            f.call(target, value + adjust);
-        }
-        else {
-            target[f] = value + adjust;
-        }
-    }
-    return tail;
-};
-
-//
-// Text segment class
-//
-
-Format.TextSegment = function(format, s) {
-    if (arguments.length == 0) return;
-    Format.TextSegment.superclass.constructor.call(this, format, s);
-};
-
-Y.extend(Format.TextSegment, Format.Segment);
-
-Format.TextSegment.prototype.toString = function() { 
-    return "text: \""+this._s+'"'; 
-};
-    
-Format.TextSegment.prototype.parse = function(o, s, index) {
-    return Format.Segment._parseLiteral(this._s, s, index);
-};
-
-if(String.prototype.trim == null) {
-    String.prototype.trim = function() {
-        return this.replace(/^\s+/, '').replace(/\s+$/, '');
-    };
-}
 /**
  * NumberFormat helps you to format and parse numbers for any locale.
  * Your code can be completely independent of the locale conventions for decimal points, thousands-separators,
@@ -255,14 +21,14 @@ if(String.prototype.trim == null) {
  *                      instantiating a custom number format.
  */
 
-var MODULE_NAME = "format-numbers";
+var MODULE_NAME = "datatype-number-advanced-format";
 
 NumberFormat = function(pattern, formats, skipNegFormat) {
     if (arguments.length == 0) {
         return;
     }
 
-    Format.call(this, pattern, formats);
+    NumberFormat.superclass.constructor.call(this, pattern, formats);
     if (!pattern) {
         return;
     }
@@ -270,7 +36,7 @@ NumberFormat = function(pattern, formats, skipNegFormat) {
     if(pattern == "{plural_style}") {
         pattern = this.Formats.decimalFormat;
         this._isPluralCurrency = true;
-	this._pattern = pattern;
+        this._pattern = pattern;
     }
 
     //Default currency
@@ -374,17 +140,19 @@ NumberFormat = function(pattern, formats, skipNegFormat) {
         this._negativeFormatter = formatter;
     }
 }
-NumberFormat.prototype = new Format;
-NumberFormat.prototype.constructor = NumberFormat;
+
+Y.extend(NumberFormat, Format);
     
 // Constants
 
-NumberFormat._NUMBER = "number";
-NumberFormat._INTEGER = "integer";
-NumberFormat._CURRENCY = "currency";
-NumberFormat._PERCENT = "percent";
+Y.mix(NumberFormat, {
+    _NUMBER: "number",
+    _INTEGER: "integer",
+    _CURRENCY: "currency",
+    _PERCENT: "percent",
 
-NumberFormat._META_CHARS = "0#.,E";
+    _META_CHARS: "0#.,E"
+});
 
 // Data
 
@@ -510,10 +278,9 @@ NumberFormat.prototype._createParseObject = function() {
 
 NumberFormat.NumberSegment = function(format, s) {
     if (arguments.length == 0) return;
-    Format.Segment.call(this, format, s);
+    NumberFormat.NumberSegment.superclass.constructor.call(this, format, s);
 };
-NumberFormat.NumberSegment.prototype = new Format.Segment;
-NumberFormat.NumberSegment.prototype.constructor = NumberFormat.NumberSegment;
+Y.extend(NumberFormat.NumberSegment, Format.Segment);
     
 // Public methods
 
@@ -693,34 +460,38 @@ NumberFormat.NumberSegment.prototype.parse = function(object, s, index) {
     
 /**
  * NumberFormat
- * @class Y.NumberFormat
+ * @class YNumberFormat
  * @constructor
  * @param {Number} style (Optional) the given style. Defaults to Number style
  */
-Y.NumberFormat = function(style) {
-    style = style || Y.NumberFormat.STYLES.NUMBER_STYLE;
-        
+YNumberFormat = function(style) {
+    style = style || Y.Number.STYLES.NUMBER_STYLE;
+    
+    if(Y.Lang.isString(style)) {
+        style = Y.Number.STYLES[style];
+    }
+    
     var pattern = "";
     var formats = Y.Intl.get(MODULE_NAME);
     switch(style) {
-        case Y.NumberFormat.STYLES.CURRENCY_STYLE:
+        case Y.Number.STYLES.CURRENCY_STYLE:
             pattern = formats.currencyFormat;
             break;
-        case Y.NumberFormat.STYLES.ISO_CURRENCY_STYLE:
+        case Y.Number.STYLES.ISO_CURRENCY_STYLE:
             pattern = formats.currencyFormat;
             pattern = pattern.replace("\u00a4", "\u00a4\u00a4");
             break;
-        case Y.NumberFormat.STYLES.NUMBER_STYLE:
+        case Y.Number.STYLES.NUMBER_STYLE:
             pattern = formats.decimalFormat;
             break;
-        case Y.NumberFormat.STYLES.PERCENT_STYLE:
+        case Y.Number.STYLES.PERCENT_STYLE:
             pattern = formats.percentFormat;
             break;
-        case Y.NumberFormat.STYLES.PLURAL_CURRENCY_STYLE:
+        case Y.Number.STYLES.PLURAL_CURRENCY_STYLE:
             //This is like <value> <currency>. This may be dependent on whether the value is singular or plural. Will be handled during formatting
             pattern = "{plural_style}";
             break;
-        case Y.NumberFormat.STYLES.SCIENTIFIC_STYLE:
+        case Y.Number.STYLES.SCIENTIFIC_STYLE:
             pattern = formats.scientificFormat;
             break;
     }
@@ -728,41 +499,38 @@ Y.NumberFormat = function(style) {
     this._numberFormatInstance = new NumberFormat(pattern, formats);
 }
     
-Y.NumberFormat.STYLES = {
-    CURRENCY_STYLE: 1,
-    ISO_CURRENCY_STYLE: 2,
-    NUMBER_STYLE: 4,
-    PERCENT_STYLE: 8,
-    PLURAL_CURRENCY_STYLE: 16,
-    SCIENTIFIC_STYLE: 32
-}
+Y.mix(Y.Number, {
+    STYLES: {
+        CURRENCY_STYLE: 1,
+        ISO_CURRENCY_STYLE: 2,
+        NUMBER_STYLE: 4,
+        PERCENT_STYLE: 8,
+        PLURAL_CURRENCY_STYLE: 16,
+        SCIENTIFIC_STYLE: 32
+    },
     
-//Exceptions
+    //Static methods
     
-Y.NumberFormat.UnknownStyleException = function(message) {
-    this.message = message;
-}
-Y.NumberFormat.UnknownStyleException.prototype.toString = function() {
-    return "UnknownStyleException: " + this.message;
-}
     
-//Static methods
+    /**
+     * Create an instance of NumberFormat 
+     * @param {Number} style (Optional) the given style
+     */    
+    createInstance: function(style) {
+        return new YNumberFormat(style);
+    },
     
-/**
- * Create an instance of NumberFormat 
- * @param {Number} style (Optional) the given style
- */    
-Y.NumberFormat.createInstance = function(style) {
-    return new Y.NumberFormat(style);
-}
+    /**
+     * Returns an array of BCP 47 language tags for the languages supported by this class
+     * @return {Array} an array of BCP 47 language tags for the languages supported by this class.
+     */
+    getAvailableLocales: function() {
+        return Y.Intl.getAvailableLangs(MODULE_NAME);
+    }
+});
 
-/**
- * Returns an array of BCP 47 language tags for the languages supported by this class
- * @return {Array} an array of BCP 47 language tags for the languages supported by this class.
- */
-Y.NumberFormat.getAvailableLocales = function() {
-    return Y.Intl.getAvailableLangs(MODULE_NAME);
-}
+
+
     
 //Public methods
     
@@ -770,7 +538,7 @@ Y.NumberFormat.getAvailableLocales = function() {
  * Format a number to product a String.
  * @param {Number} number the number to format
  */
-Y.NumberFormat.prototype.format = function(number) {
+YNumberFormat.prototype.format = function(number) {
     return this._numberFormatInstance.format(number);
 }
     
@@ -778,7 +546,7 @@ Y.NumberFormat.prototype.format = function(number) {
  * Gets the currency used to display currency amounts. This may be an empty string for some cases. 
  * @return {String} a 3-letter ISO code indicating the currency in use, or an empty string.
  */
-Y.NumberFormat.prototype.getCurrency = function() {
+YNumberFormat.prototype.getCurrency = function() {
     return this._numberFormatInstance.currency;
 }
     
@@ -786,7 +554,7 @@ Y.NumberFormat.prototype.getCurrency = function() {
  * Returns the maximum number of digits allowed in the fraction portion of a number. 
  * @return {Number} the maximum number of digits allowed in the fraction portion of a number.
  */
-Y.NumberFormat.prototype.getMaximumFractionDigits = function() {
+YNumberFormat.prototype.getMaximumFractionDigits = function() {
     return this._numberFormatInstance._maxFracDigits || 0;
 }
     
@@ -794,7 +562,7 @@ Y.NumberFormat.prototype.getMaximumFractionDigits = function() {
  * Returns the maximum number of digits allowed in the integer portion of a number. 
  * @return {Number} the maximum number of digits allowed in the integer portion of a number.
  */
-Y.NumberFormat.prototype.getMaximumIntegerDigits = function() {
+YNumberFormat.prototype.getMaximumIntegerDigits = function() {
     return this._numberFormatInstance._maxIntDigits || 0;
 }
     
@@ -802,7 +570,7 @@ Y.NumberFormat.prototype.getMaximumIntegerDigits = function() {
  * Returns the minimum number of digits allowed in the fraction portion of a number. 
  * @return {Number} the minimum number of digits allowed in the fraction portion of a number.
  */
-Y.NumberFormat.prototype.getMinimumFractionDigits = function() {
+YNumberFormat.prototype.getMinimumFractionDigits = function() {
     return this._numberFormatInstance._minFracDigits || 0;
 }
     
@@ -810,7 +578,7 @@ Y.NumberFormat.prototype.getMinimumFractionDigits = function() {
  * Returns the minimum number of digits allowed in the integer portion of a number.
  * @return {Number} the minimum number of digits allowed in the integer portion of a number.
  */
-Y.NumberFormat.prototype.getMinimumIntegerDigits = function() {
+YNumberFormat.prototype.getMinimumIntegerDigits = function() {
     return this._numberFormatInstance._minIntDigits || 0;
 }
     
@@ -820,7 +588,7 @@ Y.NumberFormat.prototype.getMinimumIntegerDigits = function() {
  * The grouping separator as well as the size of each group is locale dependant.
  * @return {Boolean}
  */
-Y.NumberFormat.prototype.isGroupingUsed = function() {
+YNumberFormat.prototype.isGroupingUsed = function() {
     return this._numberFormatInstance._useGrouping;
 }
     
@@ -830,7 +598,7 @@ Y.NumberFormat.prototype.isGroupingUsed = function() {
  * and parsing would stop at the "." character. Of course, the exact format accepted by the parse operation is locale dependant.
  * @return {Boolean}
  */
-Y.NumberFormat.prototype.isParseIntegerOnly = function() {
+YNumberFormat.prototype.isParseIntegerOnly = function() {
     return this._numberFormatInstance._parseIntegerOnly;
 }
     
@@ -839,7 +607,7 @@ Y.NumberFormat.prototype.isParseIntegerOnly = function() {
  * @param {String} txt The string to parse
  * @param {Number} pp (Optional) Parse position. The position to start parsing at. Defaults to 0
  */
-Y.NumberFormat.prototype.parse = function(txt, pp) {
+YNumberFormat.prototype.parse = function(txt, pp) {
     return this._numberFormatInstance.parse(txt, pp);
 }
     
@@ -849,7 +617,7 @@ Y.NumberFormat.prototype.parse = function(txt, pp) {
  * If this format is not a currency format, then the currency is used if and when this object becomes a currency format.
  * @param {String} currency a 3-letter ISO code indicating new currency to use. May be the empty string to indicate no currency.
  */
-Y.NumberFormat.prototype.setCurrency = function(currency) {
+YNumberFormat.prototype.setCurrency = function(currency) {
     this._numberFormatInstance.currency = currency;
 }
     
@@ -857,7 +625,7 @@ Y.NumberFormat.prototype.setCurrency = function(currency) {
  * Set whether or not grouping will be used in this format. 
  * @param {Boolean} value
  */
-Y.NumberFormat.prototype.setGroupingUsed = function(value) {
+YNumberFormat.prototype.setGroupingUsed = function(value) {
     this._numberFormatInstance._useGrouping = value;
 }
     
@@ -868,7 +636,7 @@ Y.NumberFormat.prototype.setGroupingUsed = function(value) {
  * then minimumFractionDigits will also be set to the new value. 
  * @param {Number} newValue the new value to be set.
  */
-Y.NumberFormat.prototype.setMaximumFractionDigits = function(newValue) {
+YNumberFormat.prototype.setMaximumFractionDigits = function(newValue) {
     this._numberFormatInstance._maxFracDigits = newValue;
         
     if(this.getMinimumFractionDigits() > newValue) {
@@ -883,7 +651,7 @@ Y.NumberFormat.prototype.setMaximumFractionDigits = function(newValue) {
  * then minimumIntegerDigits will also be set to the new value.
  * @param {Number} newValue the new value to be set.
  */
-Y.NumberFormat.prototype.setMaximumIntegerDigits = function(newValue) {
+YNumberFormat.prototype.setMaximumIntegerDigits = function(newValue) {
     this._numberFormatInstance._maxIntDigits = newValue;
         
     if(this.getMinimumIntegerDigits() > newValue) {
@@ -898,7 +666,7 @@ Y.NumberFormat.prototype.setMaximumIntegerDigits = function(newValue) {
  * then maximumIntegerDigits will also be set to the new value
  * @param {Number} newValue the new value to be set.
  */
-Y.NumberFormat.prototype.setMinimumFractionDigits = function(newValue) {
+YNumberFormat.prototype.setMinimumFractionDigits = function(newValue) {
     this._numberFormatInstance._minFracDigits = newValue;
         
     if(this.getMaximumFractionDigits() < newValue) {
@@ -913,7 +681,7 @@ Y.NumberFormat.prototype.setMinimumFractionDigits = function(newValue) {
  * then maximumIntegerDigits will also be set to the new value. 
  * @param {Number} newValue the new value to be set.
  */
-Y.NumberFormat.prototype.setMinimumIntegerDigits = function(newValue) {
+YNumberFormat.prototype.setMinimumIntegerDigits = function(newValue) {
     this._numberFormatInstance._minIntDigits = newValue;
         
     if(this.getMaximumIntegerDigits() < newValue) {
@@ -925,347 +693,6 @@ Y.NumberFormat.prototype.setMinimumIntegerDigits = function(newValue) {
  * Sets whether or not numbers should be parsed as integers only. 
  * @param {Boolean} newValue set True, this format will parse numbers as integers only.
  */
-Y.NumberFormat.prototype.setParseIntegerOnly = function(newValue) {
+YNumberFormat.prototype.setParseIntegerOnly = function(newValue) {
     this._numberFormatInstance._parseIntegerOnly = newValue;
 }
-
-
-}, '@VERSION@', {
-    "lang": [
-        "af-NA",
-        "af",
-        "af-ZA",
-        "am-ET",
-        "am",
-        "ar-AE",
-        "ar-BH",
-        "ar-DZ",
-        "ar-EG",
-        "ar-IQ",
-        "ar-JO",
-        "ar-KW",
-        "ar-LB",
-        "ar-LY",
-        "ar-MA",
-        "ar-OM",
-        "ar-QA",
-        "ar-SA",
-        "ar-SD",
-        "ar-SY",
-        "ar-TN",
-        "ar",
-        "ar-YE",
-        "as-IN",
-        "as",
-        "az-AZ",
-        "az-Cyrl-AZ",
-        "az-Cyrl",
-        "az-Latn-AZ",
-        "az-Latn",
-        "az",
-        "be-BY",
-        "be",
-        "bg-BG",
-        "bg",
-        "bn-BD",
-        "bn-IN",
-        "bn",
-        "bo-CN",
-        "bo-IN",
-        "bo",
-        "ca-ES",
-        "ca",
-        "cs-CZ",
-        "cs",
-        "cy-GB",
-        "cy",
-        "da-DK",
-        "da",
-        "de-AT",
-        "de-BE",
-        "de-CH",
-        "de-DE",
-        "de-LI",
-        "de-LU",
-        "de",
-        "el-CY",
-        "el-GR",
-        "el",
-        "en-AU",
-        "en-BE",
-        "en-BW",
-        "en-BZ",
-        "en-CA",
-        "en-GB",
-        "en-HK",
-        "en-IE",
-        "en-IN",
-        "en-JM",
-        "en-JO",
-        "en-MH",
-        "en-MT",
-        "en-MY",
-        "en-NA",
-        "en-NZ",
-        "en-PH",
-        "en-PK",
-        "en-RH",
-        "en-SG",
-        "en-TT",
-        "en",
-        "en-US-POSIX",
-        "en-US",
-        "en-VI",
-        "en-ZA",
-        "en-ZW",
-        "eo",
-        "es-AR",
-        "es-BO",
-        "es-CL",
-        "es-CO",
-        "es-CR",
-        "es-DO",
-        "es-EC",
-        "es-ES",
-        "es-GT",
-        "es-HN",
-        "es-MX",
-        "es-NI",
-        "es-PA",
-        "es-PE",
-        "es-PR",
-        "es-PY",
-        "es-SV",
-        "es",
-        "es-US",
-        "es-UY",
-        "es-VE",
-        "et-EE",
-        "et",
-        "eu-ES",
-        "eu",
-        "fa-AF",
-        "fa-IR",
-        "fa",
-        "fi-FI",
-        "fi",
-        "fil-PH",
-        "fil",
-        "fo-FO",
-        "fo",
-        "fr-BE",
-        "fr-CA",
-        "fr-CH",
-        "fr-FR",
-        "fr-LU",
-        "fr-MC",
-        "fr-SN",
-        "fr",
-        "ga-IE",
-        "ga",
-        "gl-ES",
-        "gl",
-        "gsw-CH",
-        "gsw",
-        "gu-IN",
-        "gu",
-        "gv-GB",
-        "gv",
-        "ha-GH",
-        "ha-Latn-GH",
-        "ha-Latn-NE",
-        "ha-Latn-NG",
-        "ha-Latn",
-        "ha-NE",
-        "ha-NG",
-        "ha",
-        "haw",
-        "haw-US",
-        "he-IL",
-        "he",
-        "hi-IN",
-        "hi",
-        "hr-HR",
-        "hr",
-        "hu-HU",
-        "hu",
-        "hy-AM-REVISED",
-        "hy-AM",
-        "hy",
-        "id-ID",
-        "id",
-        "ii-CN",
-        "ii",
-        "in-ID",
-        "in",
-        "is-IS",
-        "is",
-        "it-CH",
-        "it-IT",
-        "it",
-        "iw-IL",
-        "iw",
-        "ja-JP-TRADITIONAL",
-        "ja-JP",
-        "ja",
-        "ka-GE",
-        "ka",
-        "kk-Cyrl-KZ",
-        "kk-Cyrl",
-        "kk-KZ",
-        "kk",
-        "kl-GL",
-        "kl",
-        "km-KH",
-        "km",
-        "kn-IN",
-        "kn",
-        "kok-IN",
-        "kok",
-        "ko-KR",
-        "ko",
-        "kw-GB",
-        "kw",
-        "lt-LT",
-        "lt",
-        "lv-LV",
-        "lv",
-        "mk-MK",
-        "mk",
-        "ml-IN",
-        "ml",
-        "mr-IN",
-        "mr",
-        "ms-BN",
-        "ms-MY",
-        "ms",
-        "mt-MT",
-        "mt",
-        "nb-NO",
-        "nb",
-        "ne-IN",
-        "ne-NP",
-        "ne",
-        "nl-BE",
-        "nl-NL",
-        "nl",
-        "nn-NO",
-        "nn",
-        "no-NO-NY",
-        "no-NO",
-        "no",
-        "om-ET",
-        "om-KE",
-        "om",
-        "or-IN",
-        "or",
-        "pa-Arab-PK",
-        "pa-Arab",
-        "pa-Guru-IN",
-        "pa-Guru",
-        "pa-IN",
-        "pa-PK",
-        "pa",
-        "pl-PL",
-        "pl",
-        "ps-AF",
-        "ps",
-        "pt-BR",
-        "pt-PT",
-        "pt",
-        "ro-MD",
-        "ro-RO",
-        "ro",
-        "ru-RU",
-        "ru",
-        "ru-UA",
-        "sh-BA",
-        "sh-CS",
-        "sh",
-        "sh-YU",
-        "si-LK",
-        "si",
-        "sk-SK",
-        "sk",
-        "sl-SI",
-        "sl",
-        "so-DJ",
-        "so-ET",
-        "so-KE",
-        "so-SO",
-        "so",
-        "sq-AL",
-        "sq",
-        "sr-BA",
-        "sr-CS",
-        "sr-Cyrl-BA",
-        "sr-Cyrl-CS",
-        "sr-Cyrl-ME",
-        "sr-Cyrl-RS",
-        "sr-Cyrl",
-        "sr-Cyrl-YU",
-        "sr-Latn-BA",
-        "sr-Latn-CS",
-        "sr-Latn-ME",
-        "sr-Latn-RS",
-        "sr-Latn",
-        "sr-Latn-YU",
-        "sr-ME",
-        "sr-RS",
-        "sr",
-        "sr-YU",
-        "sv-FI",
-        "sv-SE",
-        "sv",
-        "sw-KE",
-        "sw",
-        "sw-TZ",
-        "ta-IN",
-        "ta",
-        "te-IN",
-        "te",
-        "th-TH-TRADITIONAL",
-        "th-TH",
-        "th",
-        "ti-ER",
-        "ti-ET",
-        "ti",
-        "tl-PH",
-        "tl",
-        "tr-TR",
-        "tr",
-        "uk",
-        "uk-UA",
-        "ur-IN",
-        "ur-PK",
-        "ur",
-        "uz-AF",
-        "uz-Arab-AF",
-        "uz-Arab",
-        "uz-Cyrl",
-        "uz-Cyrl-UZ",
-        "uz-Latn",
-        "uz-Latn-UZ",
-        "uz",
-        "uz-UZ",
-        "vi",
-        "vi-VN",
-        "zh-CN",
-        "zh-Hans-CN",
-        "zh-Hans-HK",
-        "zh-Hans-MO",
-        "zh-Hans-SG",
-        "zh-Hans",
-        "zh-Hant-HK",
-        "zh-Hant-MO",
-        "zh-Hant-TW",
-        "zh-Hant",
-        "zh-HK",
-        "zh-MO",
-        "zh-SG",
-        "zh-TW",
-        "zh",
-        "zu",
-        "zu-ZA"
-    ]
-});

@@ -190,9 +190,9 @@ TimeFormatter.createInstance = function(values) {
 NumberFormatter = function(values) {
     Formatter.call(this, values);
     this.styles = {
-        "integer": Y.NumberFormat.STYLES.NUMBER_STYLE,
-        "percent": Y.NumberFormat.STYLES.PERCENT_STYLE,
-        "currency": Y.NumberFormat.STYLES.CURRENCY_STYLE
+        "integer": Y.Number.STYLES.NUMBER_STYLE,
+        "percent": Y.Number.STYLES.PERCENT_STYLE,
+        "currency": Y.Number.STYLES.CURRENCY_STYLE
     };
     this.regex = "{\\s*([a-zA-Z0-9_]+)\\s*,\\s*number\\s*(,\\s*(\\w+)\\s*)?}";
 }
@@ -238,9 +238,11 @@ NumberFormatter.prototype.format = function(str) {
 
         if(this.getParams(params, matches)) {
             //Got a match
-            var format = new Y.NumberFormat(this.styles[params.style]);
-            if(params.style == "integer" && !params.showDecimal) { format.setParseIntegerOnly(true); }
-            str = str.replace(matches[0], format.format(params.value));
+            var config = {
+                style: this.styles[params.style]
+            }
+            if(params.style == "integer" && !params.showDecimal) { config.parseIntegerOnly = true; }
+            str = str.replace(matches[0], Y.Number.format(params.value, config));
         }
     }
 
@@ -474,4 +476,4 @@ Y.MessageFormat = {
 }
 
 
-}, '@VERSION@', {"requires": ["datatype-date-advanced-format", "format-numbers"]});
+}, '@VERSION@', {"requires": ["datatype-date-advanced-format", "datatype-number-advanced-format"]});

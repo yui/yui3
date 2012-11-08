@@ -1187,6 +1187,16 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("datatype-number-parse")) > -1, "Module (datatype-number-parse) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatype-number-format")) > -1, "Module (datatype-number-format) not found in sorted array");
         },
+     "Testing datatype-number-advanced-format": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-number-advanced-format"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-advanced-format")) > -1, "Module (datatype-number-advanced-format) not found in sorted array");
+        },
      "Testing datatype-number-format": function(data) {
             var loader = new Y.Loader({
                 require: ["datatype-number-format"],
@@ -1883,7 +1893,7 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("datatype-date-advanced-format")) > -1, "Module (datatype-date-advanced-format) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("format-numbers")) > -1, "Module (format-numbers) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-advanced-format")) > -1, "Module (datatype-number-advanced-format) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("format-message")) > -1, "Module (format-message) not found in sorted array");
         },
      "Testing format-message": function(data) {
@@ -1895,16 +1905,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("format-message")) > -1, "Module (format-message) not found in sorted array");
-        },
-     "Testing format-numbers": function(data) {
-            var loader = new Y.Loader({
-                require: ["format-numbers"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("format-numbers")) > -1, "Module (format-numbers) not found in sorted array");
         },
      "Testing frame": function(data) {
             var loader = new Y.Loader({
