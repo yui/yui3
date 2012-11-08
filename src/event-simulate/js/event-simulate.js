@@ -31,7 +31,7 @@ var L   = Y.Lang,
         MSPointerOut:   1,
         MSPointerDown:  1,
         MSPointerUp:    1,
-        MSPointerMove:  1,
+        MSPointerMove:  1
     },
 
     //key events supported
@@ -352,7 +352,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         bubbles = true; //all mouse events bubble
     }
     if (!isBoolean(cancelable)){
-        cancelable = (type != "mousemove"); //mousemove is the only one that can't be cancelled
+        cancelable = (type !== "mousemove"); //mousemove is the only one that can't be cancelled
     }
     if (!isObject(view)){
         view = Y.config.win; //view is typically window
@@ -433,9 +433,9 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
          * event.
          */
         if (relatedTarget && !customEvent.relatedTarget){
-            if (type == "mouseout"){
+            if (type === "mouseout"){
                 customEvent.toElement = relatedTarget;
-            } else if (type == "mouseover"){
+            } else if (type === "mouseover"){
                 customEvent.fromElement = relatedTarget;
             }
         }
@@ -549,7 +549,7 @@ function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
         bubbles = (type in bubbleEvents);  //not all events bubble
     }
     if (!isBoolean(cancelable)){
-        cancelable = (type == "submit"); //submit is the only one that can be cancelled
+        cancelable = (type === "submit"); //submit is the only one that can be cancelled
     }
     if (!isObject(view)){
         view = Y.config.win; //view is typically window
@@ -808,7 +808,7 @@ function simulateTouchEvent(target, type,
     // setup default values
     if (!Y.Lang.isBoolean(bubbles)) { bubbles = true; } // bubble by default.
     if (!Y.Lang.isBoolean(cancelable)) { 
-        cancelable = (type != "touchcancel"); // touchcancel is not cancelled 
+        cancelable = (type !== "touchcancel"); // touchcancel is not cancelled 
     } 
     if (!Y.Lang.isObject(view))     { view = Y.config.win; }
     if (!Y.Lang.isNumber(detail))   { detail = 1; } // usually not used. defaulted to # of touch objects.
