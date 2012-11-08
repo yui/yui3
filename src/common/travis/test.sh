@@ -31,6 +31,6 @@ if [ -n "$TRAVIS" ]; then
     fi
 fi
 
-args="${timeout} ${con} ${extra}"
+args="--coverage --istanbul ${timeout} ${con} ${extra}"
 echo "yogi test ${args}"
 ${yogi} test ${args}
