@@ -9,7 +9,6 @@ Provides URL-based routing using HTML5 `pushState()` or the location hash.
 var HistoryHash = Y.HistoryHash,
     QS          = Y.QueryString,
     YArray      = Y.Array,
-    YLang       = Y.Lang,
 
     win = Y.config.win,
 
@@ -197,7 +196,9 @@ Y.Router = Y.extend(Router, Y.Base, {
             instances.splice(instanceIndex, 1);
         }
 
-        this._historyEvents && this._historyEvents.detach();
+        if (this._historyEvents) {
+            this._historyEvents.detach();
+        }
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -1155,7 +1156,9 @@ Y.Router = Y.extend(Router, Y.Base, {
         }
 
         // Joins the `url` with the `root`.
-        urlIsString && (url = this._joinURL(url));
+        if (urlIsString) {
+            url = this._joinURL(url);
+        }
 
         // Force _ready to true to ensure that the history change is handled
         // even if _save is called before the `ready` event fires.
@@ -1239,11 +1242,13 @@ Y.Router = Y.extend(Router, Y.Base, {
             hash = hash.replace(hashPrefix, '');
         }
 
-        hash && (hashPath = this._getHashPath(hash));
-
         // If the hash looks like a URL path, assume it is, and upgrade it!
-        if (hashPath) {
-            return this._resolveURL(hashPath);
+        if (hash) {
+            hashPath = this._getHashPath(hash);
+
+            if (hashPath) {
+                return this._resolveURL(hashPath);
+            }
         }
 
         return url;
