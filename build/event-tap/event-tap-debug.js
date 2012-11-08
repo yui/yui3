@@ -24,11 +24,12 @@ but reverts to mouse events if touch is not supported.
 
 */
 var doc = Y.config.doc,
+    GESTURE_MAP = Y.Event._GESTURE_MAP,
     SUPPORTS_TOUCHES = !!(doc && doc.createTouch),
-    EVT_START = SUPPORTS_TOUCHES ? 'touchstart' : 'mousedown',
-    EVT_MOVE = SUPPORTS_TOUCHES ? 'touchmove' : 'mousemove',
-    EVT_END = SUPPORTS_TOUCHES ? 'touchend' : 'mouseup',
-    EVT_CANCEL = SUPPORTS_TOUCHES ? 'touchcancel' : 'mousecancel',
+    EVT_START = GESTURE_MAP.start,
+    EVT_MOVE = GESTURE_MAP.move,
+    EVT_END = GESTURE_MAP.end,
+    EVT_CANCEL = GESTURE_MAP.cancel,
     EVT_TAP = 'tap',
 
     HANDLES = {
