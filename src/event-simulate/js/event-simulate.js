@@ -26,6 +26,14 @@ var L   = Y.Lang,
         contextmenu:1
     },
 
+    msPointerEvents = {
+        MSPointerOver:  1,
+        MSPointerOut:   1,
+        MSPointerDown:  1,
+        MSPointerUp:    1,
+        MSPointerMove:  1,
+    },
+
     //key events supported
     keyEvents   = {
         keydown:    1,
@@ -322,21 +330,20 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
                                shiftKey /*:Boolean*/,   metaKey /*:Boolean*/,
                                button /*:int*/,         relatedTarget /*:HTMLElement*/) /*:Void*/
 {
-
     //check target
     if (!target){
         Y.error("simulateMouseEvent(): Invalid target.");
     }
 
-    //check event type
+    
     if (isString(type)){
-        type = type.toLowerCase();
 
-        //make sure it's a supported mouse event
-        if (!mouseEvents[type]){
+        //make sure it's a supported mouse event or an msPointerEvent. 
+        if (!mouseEvents[type.toLowerCase()] && !msPointerEvents[type]){
             Y.error("simulateMouseEvent(): Event type '" + type + "' not supported.");
         }
-    } else {
+    } 
+    else {
         Y.error("simulateMouseEvent(): Event type must be a string.");
     }
 
@@ -894,7 +901,7 @@ Y.Event.simulate = function(target, type, options){
 
     options = options || {};
 
-    if (mouseEvents[type]){
+    if (mouseEvents[type] || msPointerEvents[type]){
         simulateMouseEvent(target, type, options.bubbles,
             options.cancelable, options.view, options.detail, options.screenX,
             options.screenY, options.clientX, options.clientY, options.ctrlKey,
