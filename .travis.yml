@@ -5,7 +5,8 @@ node_js:
     - 0.9
 branches:
     only:
-        - travis
+        - master
+        - 3.x
 before_install:
     - ./src/common/travis/before.sh
 install:
