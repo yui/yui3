@@ -5,9 +5,7 @@ node_js:
     - 0.9
 branches:
     only:
-        - master
-        - 3.x
-        - ie10
+        - travis
 before_install:
     - ./src/common/travis/before.sh
 install:

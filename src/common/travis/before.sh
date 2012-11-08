@@ -12,6 +12,10 @@ wait
 if [ -n "$TRAVIS" ]; then
     echo "Installing Shifter.."
     npm -g install shifter -loglevel silent
+    cd ../
+    echo "building entire library";
+    shifter --walk --no-lint --no-coverage
+    cd yui;
 fi
 
 make npm
