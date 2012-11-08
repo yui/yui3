@@ -14,7 +14,7 @@ if [ -n "$TRAVIS" ]; then
     npm -g install shifter -loglevel silent
     cd ../
     echo "building entire library";
-    shifter --walk --no-lint --no-coverage
+    shifter --walk --no-lint --no-coverage --cache
     cd yui;
 fi
 
