@@ -1,6 +1,14 @@
 Pjax Change History
 ===================
 
+3.8.0
+-----
+
+* Fix issue where Pjax would throw an error because of calling methods on `null`
+  nodes when an IO request was aborted (which happens to pending requests when
+  a new request comes in.)
+
+
 3.7.3
 -----
 
