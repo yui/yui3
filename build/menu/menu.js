@@ -287,12 +287,63 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     },
 
     /**
+    Repositions this menu so that it is anchored to a specified node, region, or
+    set of pixel coordinates.
+
+    The menu will be displayed at the most advantageous position relative to the
+    anchor point to ensure that as much of the menu as possible is visible
+    within the viewport.
+
+    @method reposition
+    @param {Node|Number[]|Object} anchorPoint Anchor point at which this menu
+        should be positioned. The point may be specified as a `Y.Node`
+        reference, a region object, or an array of X and Y pixel coordinates.
+    @chainable
+    **/
+    reposition: function (anchorPoint) {
+        var container = this.get('container'),
+            anchorRegion, menuRegion;
+
+        if (Y.Lang.isArray(anchorPoint)) {
+            anchorRegion = {
+                bottom: anchorPoint[1],
+                left  : anchorPoint[0],
+                right : anchorPoint[0],
+                top   : anchorPoint[1]
+            };
+        } else if (anchorPoint._node) {
+            anchorRegion = anchorPoint.get('region');
+        } else {
+            anchorRegion = anchorPoint;
+        }
+
+        menuRegion = this._getSortedAnchorRegions(
+            ['tl-bl', 'tr-br', 'bl-tl', 'br-tr'],
+            container.get('region'),
+            anchorRegion
+        )[0].region;
+
+        container.setXY([menuRegion.left, menuRegion.top]);
+
+        return this;
+    },
+
+    /**
     Shows this menu.
 
     @method show
+    @param {Object} [options] Options.
+        @param {Node|Number[]|Object} [options.anchorPoint] Anchor point at
+            which this menu should be positioned when shown. The point may be
+            specified as a `Y.Node` reference, a region object, or an array of X
+            and Y pixel coordinates.
     @chainable
     **/
-    show: function () {
+    show: function (options) {
+        if (options && options.anchorPoint) {
+            this.reposition(options.anchorPoint);
+        }
+
         this.set('visible', true);
         return this;
     },
@@ -302,10 +353,15 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     hiding it if it's currently visible.
 
     @method toggle
+    @param {Object} [options] Options.
+        @param {Node|Number[]|Object} [options.anchorPoint] Anchor point at
+            which this menu should be positioned when shown. The point may be
+            specified as a `Y.Node` reference, a region object, or an array of X
+            and Y pixel coordinates.
     @chainable
     **/
-    toggle: function () {
-        return this[this.get('visible') ? 'hide' : 'show']();
+    toggle: function (options) {
+        return this[this.get('visible') ? 'hide' : 'show'](options);
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -788,7 +844,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         // Avoid navigating to '#' if this item is disabled or doesn't have a
         // custom URL.
         if (isDisabled || item.url === '#') {
-            e._event.preventDefault();
+            e.preventDefault();
         }
 
         if (isDisabled) {
@@ -937,4 +993,15 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
 Y.Menu = Y.mix(Menu, Y.Menu);
 
 
-}, '@VERSION@', {"requires": ["classnamemanager", "event-hover", "event-outside", "menu-base", "menu-templates", "node-screen", "view"], "skinnable": true});
+}, '@VERSION@', {
+    "requires": [
+        "classnamemanager",
+        "event-hover",
+        "event-outside",
+        "menu-base",
+        "menu-templates",
+        "node-screen",
+        "view"
+    ],
+    "skinnable": true
+});
