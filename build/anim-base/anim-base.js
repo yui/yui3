@@ -87,7 +87,7 @@ YUI.add('anim-base', function (Y, NAME) {
     };
 
     /**
-     * Time in milliseconds passed to setInterval for frame processing 
+     * Time in milliseconds passed to setInterval for frame processing
      *
      * @property intervalTime
      * @default 20
@@ -175,7 +175,7 @@ YUI.add('anim-base', function (Y, NAME) {
         node: {
             setter: function(node) {
                 if (node) {
-                    if (typeof node == 'string' || node.nodeType) {
+                    if (typeof node === 'string' || node.nodeType) {
                         node = Y.one(node);
                     }
                 }
@@ -197,7 +197,7 @@ YUI.add('anim-base', function (Y, NAME) {
         },
 
         /**
-         * The method that will provide values to the attribute(s) during the animation. 
+         * The method that will provide values to the attribute(s) during the animation.
          * Defaults to "Easing.easeNone".
          * @attribute easing
          * @type Function
@@ -250,7 +250,7 @@ YUI.add('anim-base', function (Y, NAME) {
          * Date stamp for the first frame of the animation.
          * @attribute startTime
          * @type Int
-         * @default 0 
+         * @default 0
          * @readOnly
          */
         startTime: {
@@ -262,7 +262,7 @@ YUI.add('anim-base', function (Y, NAME) {
          * Current time the animation has been running.
          * @attribute elapsedTime
          * @type Int
-         * @default 0 
+         * @default 0
          * @readOnly
          */
         elapsedTime: {
@@ -272,9 +272,9 @@ YUI.add('anim-base', function (Y, NAME) {
 
         /**
          * Whether or not the animation is currently running.
-         * @attribute running 
+         * @attribute running
          * @type Boolean
-         * @default false 
+         * @default false
          * @readOnly
          */
         running: {
@@ -286,10 +286,10 @@ YUI.add('anim-base', function (Y, NAME) {
         },
 
         /**
-         * The number of times the animation should run 
+         * The number of times the animation should run
          * @attribute iterations
          * @type Int
-         * @default 1 
+         * @default 1
          */
         iterations: {
             value: 1
@@ -297,7 +297,7 @@ YUI.add('anim-base', function (Y, NAME) {
 
         /**
          * The number of iterations that have occurred.
-         * Resets when an animation ends (reaches iteration count or stop() called). 
+         * Resets when an animation ends (reaches iteration count or stop() called).
          * @attribute iterationCount
          * @type Int
          * @default 0
@@ -309,7 +309,7 @@ YUI.add('anim-base', function (Y, NAME) {
         },
 
         /**
-         * How iterations of the animation should behave. 
+         * How iterations of the animation should behave.
          * Possible values are "normal" and "alternate".
          * Normal will repeat the animation, alternate will reverse on every other pass.
          *
@@ -323,9 +323,9 @@ YUI.add('anim-base', function (Y, NAME) {
 
         /**
          * Whether or not the animation is currently paused.
-         * @attribute paused 
+         * @attribute paused
          * @type Boolean
-         * @default false 
+         * @default false
          * @readOnly
          */
         paused: {
@@ -337,7 +337,7 @@ YUI.add('anim-base', function (Y, NAME) {
          * If true, animation begins from last frame
          * @attribute reverse
          * @type Boolean
-         * @default false 
+         * @default false
          */
         reverse: {
             value: false
@@ -350,10 +350,11 @@ YUI.add('anim-base', function (Y, NAME) {
      * Runs all animation instances.
      * @method run
      * @static
-     */    
+     */
     Y.Anim.run = function() {
-        var instances = Y.Anim._instances;
-        for (var i in instances) {
+        var instances = Y.Anim._instances,
+            i;
+        for (i in instances) {
             if (instances[i].run) {
                 instances[i].run();
             }
@@ -364,7 +365,7 @@ YUI.add('anim-base', function (Y, NAME) {
      * Pauses all animation instances.
      * @method pause
      * @static
-     */    
+     */
     Y.Anim.pause = function() {
         for (var i in _running) { // stop timer if nothing running
             if (_running[i].pause) {
@@ -379,7 +380,7 @@ YUI.add('anim-base', function (Y, NAME) {
      * Stops all animation instances.
      * @method stop
      * @static
-     */    
+     */
     Y.Anim.stop = function() {
         for (var i in _running) { // stop timer if nothing running
             if (_running[i].stop) {
@@ -388,7 +389,7 @@ YUI.add('anim-base', function (Y, NAME) {
         }
         Y.Anim._stopTimer();
     };
-    
+
     Y.Anim._startTimer = function() {
         if (!_timer) {
             _timer = setInterval(Y.Anim._runFrame, Y.Anim._intervalTime);
@@ -405,10 +406,11 @@ YUI.add('anim-base', function (Y, NAME) {
      * @method _runFrame
      * @private
      * @static
-     */    
+     */
     Y.Anim._runFrame = function() {
-        var done = true;
-        for (var anim in _running) {
+        var done = true,
+            anim;
+        for (anim in _running) {
             if (_running[anim]._runFrame) {
                 done = false;
                 _running[anim]._runFrame();
@@ -427,7 +429,7 @@ YUI.add('anim-base', function (Y, NAME) {
          * Starts or resumes an animation.
          * @method run
          * @chainable
-         */    
+         */
         run: function() {
             if (this.get(PAUSED)) {
                 this._resume();
@@ -443,7 +445,7 @@ YUI.add('anim-base', function (Y, NAME) {
          * Calling run() will continue where it left off.
          * @method pause
          * @chainable
-         */    
+         */
         pause: function() {
             if (this.get(RUNNING)) {
                 this._pause();
@@ -456,7 +458,7 @@ YUI.add('anim-base', function (Y, NAME) {
          * @method stop
          * @param {Boolean} finish If true, the animation will move to the last frame
          * @chainable
-         */    
+         */
         stop: function(finish) {
             if (this.get(RUNNING) || this.get(PAUSED)) {
                 this._end(finish);
@@ -525,10 +527,8 @@ YUI.add('anim-base', function (Y, NAME) {
             var d = this._runtimeAttr.duration,
                 t = new Date() - this.get(START_TIME),
                 reverse = this.get(REVERSE),
-                done = (t >= d),
-                attribute,
-                setter;
-                
+                done = (t >= d);
+
             this._runAttrs(t, d, reverse);
             this._actualFrames += 1;
             this._set(ELAPSED_TIME, t);
@@ -565,9 +565,9 @@ YUI.add('anim-base', function (Y, NAME) {
                             customAttr[i].set : Y.Anim.DEFAULT_SETTER;
 
                     if (!done) {
-                        setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit); 
+                        setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit);
                     } else {
-                        setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit); 
+                        setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit);
                     }
                 }
             }
@@ -624,8 +624,8 @@ YUI.add('anim-base', function (Y, NAME) {
                     begin = begin.call(this, node);
                 }
 
-                var mFrom = Y.Anim.RE_UNITS.exec(begin);
-                var mTo = Y.Anim.RE_UNITS.exec(val);
+                var mFrom = Y.Anim.RE_UNITS.exec(begin),
+                    mTo = Y.Anim.RE_UNITS.exec(val);
 
                 begin = mFrom ? mFrom[1] : begin;
                 end = mTo ? mTo[1] : val;
@@ -657,10 +657,11 @@ YUI.add('anim-base', function (Y, NAME) {
             var node = this._node,
                 val = node.getComputedStyle(attr),
                 get = (attr === 'left') ? 'getX': 'getY',
-                set = (attr === 'left') ? 'setX': 'setY';
+                set = (attr === 'left') ? 'setX': 'setY',
+                position;
 
             if (val === 'auto') {
-                var position = node.getStyle('position');
+                position = node.getStyle('position');
                 if (position === 'absolute' || position === 'fixed') {
                     val = node[get]();
                     node[set](val);
