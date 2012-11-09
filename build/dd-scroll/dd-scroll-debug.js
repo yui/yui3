@@ -235,11 +235,6 @@ YUI.add('dd-scroll', function (Y, NAME) {
             if (nl < 0) {
                 nl = xy[0];
             }
-            if (ho.con) {
-                if (!ho.con.inRegion([nl + sl, nt + st])) {
-                    move = false;
-                }
-            }
             if (move) {
                 ho.actXY = [nl, nt];
                 ho._alignNode([nl, nt], true); //We are srolling..
