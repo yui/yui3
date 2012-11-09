@@ -580,7 +580,8 @@ suite.add(new Y.Test.Case({
         ignore: {
             'Page title should be updated if the `titleSelector` matches an element': disableXHR || !Y.config.doc || !html5,
             'Host element content should be updated with page content when `contentSelector` is null': disableXHR || !html5,
-            'Host element content should be updated with partial content when `contentSelector` selects a node': disableXHR || !html5
+            'Host element content should be updated with partial content when `contentSelector` selects a node': disableXHR || !html5,
+            'Pending requests should be aborted in favor of new request': disableXHR || !html5
         }
     },
 
@@ -643,6 +644,23 @@ suite.add(new Y.Test.Case({
         });
 
         this.pjax.navigate('assets/page-partial.html');
+
+        this.wait(1000);
+    },
+
+    'Pending requests should be aborted in favor of new request': function () {
+        var test = this;
+
+        this.pjax.onceAfter('load', function (e) {
+            test.resume(function () {
+                Assert.areSame('Full Page', e.content.title);
+                Assert.areSame('Full Page', Y.config.doc.title);
+            });
+        });
+
+        // page-partial.html should be aborted.
+        this.pjax.navigate('assets/page-partial.html');
+        this.pjax.navigate('assets/page-full.html');
 
         this.wait(1000);
     }

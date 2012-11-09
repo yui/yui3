@@ -5,17 +5,12 @@ YUI.add('event-tap-tests', function(Y) {
     noop = function() {},
     body = Y.one('body'),
     doc = Y.config.doc,
-    supportsTouch = !!(doc && doc.createTouch);
+    supportsTouch = !!(doc && doc.createTouch),
+    GESTURE_MAP = Y.Event._GESTURE_MAP;
 
     Y.Node.prototype.tap = function (startOpts, endOpts) {
-        if (supportsTouch) {
-            Y.Event.simulate(this._node, 'touchstart', startOpts);
-            Y.Event.simulate(this._node, 'touchend', endOpts);
-        }
-        else {
-            Y.Event.simulate(this._node, 'mousedown', startOpts);
-            Y.Event.simulate(this._node, 'mouseup', endOpts);
-        }
+        Y.Event.simulate(this._node, GESTURE_MAP.start, startOpts);
+        Y.Event.simulate(this._node, GESTURE_MAP.end, endOpts);
     };
     Y.NodeList.importMethod(Y.Node.prototype, 'tap');
 
@@ -47,7 +42,7 @@ YUI.add('event-tap-tests', function(Y) {
 
             node.tap({
                     target: node,
-                    type: 'touchstart',
+                    type: GESTURE_MAP.start,
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
@@ -96,8 +91,8 @@ YUI.add('event-tap-tests', function(Y) {
                     ],      // TouchList
                     changedTouches: []     // TouchList
                 }, {
-                                        target: node,
-                    type: 'touchend',
+                    target: node,
+                    type: GESTURE_MAP.end,
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
@@ -179,7 +174,7 @@ YUI.add('event-tap-tests', function(Y) {
 
                 startOpts = {
                     target: node,
-                    type: 'touchstart',
+                    type: GESTURE_MAP.start,
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
@@ -229,7 +224,7 @@ YUI.add('event-tap-tests', function(Y) {
 
                 endOpts = {
                     target: node,
-                    type: 'touchend',
+                    type: GESTURE_MAP.end,
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
@@ -298,16 +293,8 @@ YUI.add('event-tap-tests', function(Y) {
                 clicked = true;
             });
 
-            if (supportsTouch) {
-                Y.Event.simulate(node.getDOMNode(), 'touchstart', startOpts);
-                Y.Event.simulate(node.getDOMNode(), 'touchend', endOpts);
-
-            }
-            else {
-                Y.Event.simulate(node.getDOMNode(), 'mousedown', startOpts);
-                Y.Event.simulate(node.getDOMNode(), 'mouseup', endOpts);
-            }
-
+            Y.Event.simulate(node.getDOMNode(), GESTURE_MAP.start, startOpts);
+            Y.Event.simulate(node.getDOMNode(), GESTURE_MAP.end, endOpts);
             Y.Assert.isFalse(clicked, "click handler was triggered when it shouldn't have been");
         },
 
@@ -322,7 +309,7 @@ YUI.add('event-tap-tests', function(Y) {
 
              node.tap({
                     target: container,
-                    type: 'touchstart',
+                    type: GESTURE_MAP.start,
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
@@ -370,7 +357,7 @@ YUI.add('event-tap-tests', function(Y) {
                     changedTouches: []     // TouchList
              }, {
                 target: container,
-                type: 'touchend',
+                type: GESTURE_MAP.end,
                 bubbles: true,            // boolean
                 cancelable: true,         // boolean
                 view: window,               // DOMWindow
@@ -445,7 +432,7 @@ YUI.add('event-tap-tests', function(Y) {
                 node = Y.one('#clicker1'),
                 startOpts = {
                     target: node,
-                    type: 'touchstart',
+                    type: GESTURE_MAP.start,
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
@@ -495,7 +482,7 @@ YUI.add('event-tap-tests', function(Y) {
 
                 endOpts = {
                     target: node,
-                    type: 'touchend',
+                    type: GESTURE_MAP.end,
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
@@ -564,15 +551,8 @@ YUI.add('event-tap-tests', function(Y) {
                 clicked = true;
             });
 
-            if (supportsTouch) {
-                Y.Event.simulate(node.getDOMNode(), 'touchstart', startOpts);
-                Y.Event.simulate(node.getDOMNode(), 'touchmove', endOpts);
-
-            }
-            else {
-                Y.Event.simulate(node.getDOMNode(), 'mousedown', startOpts);
-                Y.Event.simulate(node.getDOMNode(), 'mousemove', endOpts);
-            }            
+            Y.Event.simulate(node.getDOMNode(), GESTURE_MAP.start, startOpts);
+            Y.Event.simulate(node.getDOMNode(), GESTURE_MAP.end, endOpts);        
 
             Y.Assert.isFalse(clicked, "click handler didn't work");
 
