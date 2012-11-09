@@ -78,7 +78,19 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
             doc.after('mousedown', this._afterDocMouseDown, this)
         );
 
-        this.afterHostEvent('click', this._afterAnchorClick);
+        if (this.get('showOnClick')) {
+            this.afterHostEvent('click', this._afterHostClick);
+        }
+
+        if (this.get('showOnContext')) {
+            // If the host node is the <body> element, we need to listen on the
+            // document.
+            if (this._hostIsBody) {
+                this._menuEvents.push(doc.on('contextmenu', this._onHostContext, this));
+            } else {
+                this.onHostEvent('contextmenu', this._onHostContext);
+            }
+        }
 
         if (this.get('showOnHover')) {
             this.afterHostEvent({
@@ -161,11 +173,52 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
         }, true)) {
             this.hide();
         }
+    },
+
+    _onHostContext: function (e) {
+        e.preventDefault();
+
+        if (!this.rendered) {
+            this.render();
+        }
+
+        this.show({anchorPoint: [e.clientX, e.clientY]});
     }
 }, {
     NS: 'menu',
 
     ATTRS: {
+        /**
+        If `true`, this menu will be shown when the host node is clicked with
+        the left mouse button or (in the case of `<button>`, `<input>`, and
+        `<a>` elements) activated with the Return key.
+
+        @attribute {Boolean} showOnClick
+        @default true
+        @initOnly
+        **/
+        showOnClick: {
+            value: true,
+            writeOnce: 'initOnly'
+        },
+
+        /**
+        If `true`, this menu will be shown when the host node's `contextmenu`
+        event occurs, which happens when the user takes an action that would
+        normally display the browser's context menu (such as right-clicking).
+
+        When `true`, the browser's default context menu will be prevented from
+        appearing.
+
+        @attribute {Boolean} showOnContext
+        @default false
+        @initOnly
+        **/
+        showOnContext: {
+            value: false,
+            writeOnce: 'initOnly'
+        },
+
         /**
         If `true`, this menu will be shown when the host node is hovered or
         receives focus instead of only being shown when it's clicked.
