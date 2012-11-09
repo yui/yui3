@@ -14,7 +14,7 @@
     }
     </style>
 </head>
-<body class="yui3-skin-sam">
+<body class="yui3-skin-sam has-context-dropdown">
 
 <p>
     <button class="has-dropdown">Click Me</button>
@@ -22,6 +22,7 @@
     <button class="has-hover-dropdown" style="position: absolute; left: 50%;">Hover Me</button>
     <button class="has-dropdown" style="position: absolute; right: 10px;">Click Me</button>
     <button class="has-dropdown" style="position: absolute; bottom: 10px; right: 10px;">Click Me</button>
+    <div style="position: absolute; left: 50%; top: 50%;">Right-click anywhere for a context menu</div>
 </p>
 
 <script src="../../../../build/yui/yui.js"></script>
@@ -97,6 +98,12 @@ Y.all('.has-dropdown').plug(Y.Plugin.Menu, {
 Y.one('.has-hover-dropdown').plug(Y.Plugin.Menu, {
     items      : menuItems,
     showOnHover: true
+});
+
+Y.one('.has-context-dropdown').plug(Y.Plugin.Menu, {
+    items        : menuItems,
+    showOnClick  : false,
+    showOnContext: true
 });
 
 });

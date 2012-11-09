@@ -36,9 +36,9 @@ Node plugin that toggles a dropdown menu when the host node is clicked.
 Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base], {
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
-        this._host = config.host;
+        this._host       = config.host;
+        this._hostIsBody = this._host === Y.one('body');
 
-        this._published = {};
         this._attachMenuPluginEvents();
     },
 
@@ -49,47 +49,43 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
     // -- Public Methods -------------------------------------------------------
 
     /**
-    Repositions this dropdown menu so that it is anchored to its host node at
-    the most advantageous position to ensure that as much of the menu as
-    possible is visible within the viewport.
+    Repositions this menu so that it is anchored to a specified node, region, or
+    set of pixel coordinates.
+
+    The menu will be displayed at the most advantageous position relative to the
+    anchor point to ensure that as much of the menu as possible is visible
+    within the viewport.
+
+    If no anchor point is specified, the menu will be positioned relative to its
+    host node.
 
     @method reposition
+    @param {Node|Number[]|Object} [anchorPoint] Anchor point at which this menu
+        should be positioned. The point may be specified as a `Y.Node`
+        reference, a region object, or an array of X and Y pixel coordinates.
     @chainable
     **/
-    reposition: function () {
-        var container = this.get('container'),
-
-            menuRegion = this._getSortedAnchorRegions(
-                ['tl-bl', 'tr-br', 'bl-tl', 'br-tr'],
-                container.get('region'),
-                this._host.get('region')
-            )[0].region;
-
-        container.setXY([menuRegion.left, menuRegion.top]);
-
-        return this;
-    },
-
-    show: function () {
-        this.reposition();
-        return Y.Menu.prototype.show.call(this);
+    reposition: function (anchorPoint) {
+        return Y.Menu.prototype.reposition.call(this, anchorPoint || this._host);
     },
 
     // -- Protected Methods ----------------------------------------------------
     _attachMenuPluginEvents: function () {
-        // These events will be cleaned up by Y.Menu.
+        var doc = Y.one('doc');
+
+        // Events added to this._menuEvents will be cleaned up by Y.Menu.
         this._menuEvents.push(
-            Y.one('doc').after('click', this._afterDocClick, this)
+            doc.after('mousedown', this._afterDocMouseDown, this)
         );
 
         this.afterHostEvent('click', this._afterAnchorClick);
 
         if (this.get('showOnHover')) {
             this.afterHostEvent({
-                blur      : this._afterAnchorBlur,
-                focus     : this._afterAnchorFocus,
-                mouseenter: this._afterAnchorMouseEnter,
-                mouseleave: this._afterAnchorMouseLeave
+                blur      : this._afterHostBlur,
+                focus     : this._afterHostFocus,
+                mouseenter: this._afterHostMouseEnter,
+                mouseleave: this._afterHostMouseLeave
             });
 
             this._menuEvents.push(this.get('container').after({
@@ -100,39 +96,39 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
     },
 
     // -- Protected Event Handlers ---------------------------------------------
-    _afterAnchorClick: function () {
-        if (!this.rendered) {
-            this.render();
-        }
-
-        this.toggle();
-    },
-
-    _afterAnchorBlur: function () {
+    _afterHostBlur: function () {
         this.hide();
     },
 
-    _afterAnchorFocus: function () {
+    _afterHostClick: function () {
+        if (!this.rendered) {
+            this.render();
+        }
+
+        this.toggle({anchorPoint: this._host});
+    },
+
+    _afterHostFocus: function () {
         clearTimeout(this._pluginHideTimeout);
 
         if (!this.rendered) {
             this.render();
         }
 
-        this.show();
+        this.show({anchorPoint: this._host});
     },
 
-    _afterAnchorMouseEnter: function () {
+    _afterHostMouseEnter: function () {
         clearTimeout(this._pluginHideTimeout);
 
         if (!this.rendered) {
             this.render();
         }
 
-        this.show();
+        this.show({anchorPoint: this._host});
     },
 
-    _afterAnchorMouseLeave: function () {
+    _afterHostMouseLeave: function () {
         var self = this;
 
         this._pluginHideTimeout = setTimeout(function () {
@@ -152,13 +148,13 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
         }, 300);
     },
 
-    _afterDocClick: function (e) {
+    _afterDocMouseDown: function (e) {
         if (!this.get('visible')) {
             return;
         }
 
         var container = this.get('container'),
-            host      = this._host;
+            host      = this._hostIsBody ? null : this._host;
 
         if (!e.target.ancestor(function (node) {
             return node === container || node === host;
