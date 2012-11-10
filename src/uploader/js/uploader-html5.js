@@ -9,7 +9,7 @@
      */     
 
 // Shorthands for the external modules
-var  substitute  = Y.substitute,
+var  substitute  = Y.Lang.sub,
      UploaderQueue = Y.Uploader.Queue;
 
     /**

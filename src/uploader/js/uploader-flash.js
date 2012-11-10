@@ -9,7 +9,7 @@
      */     
 
 // Shorthands for external modules
-var  substitute            = Y.substitute,
+var  substitute            = Y.Lang.sub,
      UploaderQueue         = Y.Uploader.Queue,
      getCN                 = Y.ClassNameManager.getClassName,
      UPLOADER              = 'uploader',
