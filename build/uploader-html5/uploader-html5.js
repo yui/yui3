@@ -11,7 +11,7 @@ YUI.add('uploader-html5', function (Y, NAME) {
      */     
 
 // Shorthands for the external modules
-var  substitute  = Y.substitute,
+var  substitute  = Y.Lang.sub,
      UploaderQueue = Y.Uploader.Queue;
 
     /**
