@@ -7,6 +7,8 @@ branches:
     only:
         - master
         - 3.x
+        - dev-master
+        - dev-3.x
 before_install:
     - ./src/common/travis/before.sh
 install:
