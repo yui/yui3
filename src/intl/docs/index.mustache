@@ -232,7 +232,7 @@ German, and simplified Chinese:</p>
     <th></th>
     <th>English <span style="text-transform:none">(root)</span></th>
     <th>German<th>Simplified Chinese</th>
-</tr>    
+</tr>
 <tr>
     <th>File</th>
     <td>greetings.js</td>
@@ -310,17 +310,12 @@ Here are the same resource bundles as above in YRB format:</p>
 
 <h4 id="packaging">Packaging Resources</h4>
 
-<p>The YUI loader expects resource bundles in a specific format. If you use the YUI Builder
+<p>The YUI loader expects resource bundles in a specific format. If you use <a href="http://yui.github.com/shifter/">Shifter</a>
 to build your module, resource bundles in JSON or YRB format will be automatically
 converted into the format expected by the loader. All you have to do is provide the source
-files in the <code>src/<i>module</i>/lang/</code> directory, and specify the list of
-available languages as the `component.lang` property of the module's
-build.properties file:</p>
+files in the <code>src/<i>module</i>/lang/</code> directory and add the `lang` keys
+to the JSON file under <code>src/<i>module</i>/meta/</code>.
 
-```
-component.lang=de,zh-Hans
-```
-                
 <p>If you use some other build process, you have to produce JavaScript files in the
 following format:</p>
 
@@ -329,12 +324,12 @@ YUI.add("lang/greetings_zh-Hans", function(Y) {
 
     Y.Intl.add(
 
-        "greetings",     // associated module 
+        "greetings",     // associated module
         "zh-Hans",       // BCP 47 language tag
 
-        // key-value pairs for this module and language 
+        // key-value pairs for this module and language
         {
-            HELLO: "你好！",   
+            HELLO: "你好！",
             GOODBYE: "再见！"
         }
     );
@@ -367,7 +362,7 @@ function Greetings() {
     // Get localized strings in the current language
     this.resources = Y.Intl.get("greetings");
 }
- 
+
 Greetings.prototype = {
 
     hello: function() {
@@ -377,7 +372,7 @@ Greetings.prototype = {
     goodbye: function() {
         return this.resources.GOODBYE;
     }
-}               
+}
 ```
 
 <h3 id="yrb">Yahoo Resource Bundle Format</h3>

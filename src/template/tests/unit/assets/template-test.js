@@ -42,7 +42,7 @@ microSuite.add(new Y.Test.Case({
             Micro.precompile('{{data.test}}', {
                 escapedOutput: /\{\{([\s\S]+?)\}\}/g
             })
-        )
+        );
     },
 
     'render() should compile and render in a single step': function () {
@@ -132,12 +132,34 @@ templateSuite.add(microSuite);
 templateSuite.add(new Y.Test.Case({
     name: 'Lifecycle',
 
+    _should: {
+        error: {
+            'constructor should error if no engine is loaded or supplied': true
+        }
+    },
+
     'constructor should accept an engine class': function () {
         Assert.areSame(Y.Handlebars, (new Y.Template(Y.Handlebars)).engine);
     },
 
     'engine should default to Y.Template.Micro if available': function () {
         Assert.areSame(Y.Template.Micro, (new Y.Template()).engine);
+    },
+
+    'constructor should error if no engine is loaded or supplied': function () {
+        YUI().use('template-base', function (Y2) {
+            var template = new Y2.Template();
+        });
+    },
+
+    'An existing `Y.Template` namespace should be preserved': function () {
+        YUI().use('yui-base', function (Y2) {
+            Y2.Template = {foo: 'bar'};
+
+            Y2.use('template-base', function () {
+                Assert.areSame('bar', Y2.Template.foo);
+            });
+        });
     }
 }));
 
@@ -172,7 +194,7 @@ templateSuite.add(new Y.Test.Case({
             (new Y.Template()).precompile('{{data.test}}', {
                 escapedOutput: /\{\{([\s\S]+?)\}\}/g
             })
-        )
+        );
     },
 
     'render() should compile and render a template using the selected engine': function () {
@@ -209,7 +231,6 @@ templateSuite.add(new Y.Test.Case({
     "revive() should return the given template if the engine doesn't have a revive() method": function () {
         eval('var precompiled = ' + Micro.precompile('<%=data.a%>') + ';');
         Assert.areSame(precompiled, (new Y.Template({})).revive(precompiled));
-
     }
 }));
 

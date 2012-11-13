@@ -425,7 +425,7 @@ proto = {
             if (G_ENV && Y !== YUI) {
                 Env._yidx = ++G_ENV._yidx;
                 Env._guidp = ('yui_' + VERSION + '_' +
-                             Env._yidx + '_' + time).replace(/\./g, '_').replace(/-/g, '_');
+                             Env._yidx + '_' + time).replace(/[^a-z0-9_]+/g, '_');
             } else if (YUI._YUI) {
 
                 G_ENV = YUI._YUI.Env;
@@ -458,7 +458,8 @@ proto = {
             throwFail: true,
             useBrowserConsole: true,
             useNativeES5: true,
-            win: win
+            win: win,
+            global: Function('return this')()
         };
 
         //Register the CSS stamp element
@@ -1137,7 +1138,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
             loader.context = Y;
             loader.data = args;
             loader.ignoreRegistered = false;
-            loader.require(args);
+            loader.require(missing);
             loader.insert(null, (fetchCSS) ? null : 'js');
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
@@ -1492,6 +1493,15 @@ overwriting other scripts configs.
  * @property throwFail
  * @type boolean
  * @default true
+ */
+
+/**
+ * The global object. In Node.js it's an object called "global". In the
+ * browser is the current window object.
+ *
+ * @property global
+ * @type Object
+ * @default the global object
  */
 
 /**
@@ -3549,7 +3559,7 @@ YUI.Env.parseUA = function(subUA) {
          * @static
          */
         nodejs: 0,
-        /*
+        /**
         * Window8/IE10 Application host environment
         * @property winjs
         * @type Boolean
@@ -3815,10 +3825,12 @@ YUI.Env.aliases = {
     "anim-shape-transform": ["anim-shape"],
     "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
+    "attribute-events": ["attribute-observable"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
+    "color": ["color-base","color-hsl","color-harmony"],
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
@@ -12688,11 +12700,14 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Retrieves a Node instance of nodes based on the given CSS selector.
+     * Retrieves a single Node instance, the first element matching the given 
+     * CSS selector.
+     * Returns null if no match found.
      * @method one
      *
      * @param {string} selector The CSS selector to test against.
-     * @return {Node} A Node instance for the matching HTMLElement.
+     * @return {Node | null} A Node instance for the matching HTMLElement or null 
+     * if no match found.
      */
     one: function(selector) {
         return Y.one(Y.Selector.query(selector, this._node, true));
@@ -17344,29 +17359,12 @@ YUI.add('querystring-stringify-simple', function (Y, NAME) {
  *
  * @module querystring
  * @submodule querystring-stringify-simple
- * @for QueryString
- * @static
  */
 
 var QueryString = Y.namespace("QueryString"),
     EUC = encodeURIComponent;
 
-/**
- * <p>Converts a simple object to a Query String representation.</p>
- * <p>Nested objects, Arrays, and so on, are not supported.</p>
- *
- * @method stringify
- * @for QueryString
- * @public
- * @submodule querystring-stringify-simple
- * @param obj {Object} A single-level object to convert to a querystring.
- * @param cfg {Object} (optional) Configuration object.  In the simple
- *                                module, only the arrayKey setting is
- *                                supported.  When set to true, the key of an
- *                                array will have the '[]' notation appended
- *                                to the key;.
- * @static
- */
+
 QueryString.stringify = function (obj, c) {
     var qs = [],
         // Default behavior is false; standard key notation.
@@ -20485,5 +20483,22 @@ YUI.add('yui', function (Y, NAME) {
 
 
 
-}, '@VERSION@', {"use": ["yui", "oop", "dom", "event-custom-base", "event-base", "pluginhost", "node", "event-delegate", "io-base", "json-parse", "transition", "selector-css3", "dom-style-ie", "querystring-stringify-simple"]});
+}, '@VERSION@', {
+    "use": [
+        "yui",
+        "oop",
+        "dom",
+        "event-custom-base",
+        "event-base",
+        "pluginhost",
+        "node",
+        "event-delegate",
+        "io-base",
+        "json-parse",
+        "transition",
+        "selector-css3",
+        "dom-style-ie",
+        "querystring-stringify-simple"
+    ]
+});
 var Y = YUI().use('*');

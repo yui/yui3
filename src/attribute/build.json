@@ -22,9 +22,9 @@
                 "ComplexAttribute.js"
             ]
         },
-        "attribute-events": {
+        "attribute-observable": {
             "jsfiles": [
-                "AttributeEvents.js"
+                "AttributeObservable.js"
             ]
         }
     }

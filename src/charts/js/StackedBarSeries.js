@@ -19,7 +19,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
      */
     drawSeries: function()
 	{
-        if(this.get("xcoords").length < 1) 
+        if(this.get("xcoords").length < 1)
         {
             return;
         }
@@ -57,7 +57,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
-            fillColors = style.fill.color.concat(); 
+            fillColors = style.fill.color.concat();
         }
         if(Y_Lang.isArray(style.border.color))
         {
@@ -113,7 +113,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
                     left -= w;
                 }
                 else if(left < this._leftOrigin)
-                {   
+                {
                     positiveBaseValues[i] = this._leftOrigin;
                     negativeBaseValues[i] = left;
                 }
@@ -206,14 +206,14 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
                 marker = this._markers[i],
                 styles = this.get("styles").marker,
                 h = styles.height,
-                markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]), 
+                markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]),
                 fillColor,
-                borderColor;        
+                borderColor;
             markerStyles.y = (ycoords[i] - h/2);
             markerStyles.x = marker.get("x");
             markerStyles.width = marker.get("width");
             markerStyles.id = marker.get("id");
-            fillColor = markerStyles.fill.color; 
+            fillColor = markerStyles.fill.color;
             borderColor = markerStyles.border.color;
             if(Y_Lang.isArray(fillColor))
             {
@@ -234,12 +234,12 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             marker.set(markerStyles);
         }
     },
-	
+
     /**
      * @protected
      *
      * Returns default values for the `styles` attribute.
-     * 
+     *
      * @method _getPlotDefaults
      * @return Object
      */
@@ -317,7 +317,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
         positiveBaseValues: {
             value: null
         }
-        
+
         /**
          * Style properties used for drawing markers. This attribute is inherited from `BarSeries`. Below are the default values:
          *  <dl>
@@ -340,7 +340,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
          *          </dl>
          *      </dd>
          *      <dt>height</dt><dd>indicates the width of the marker. The default value is 24.</dd>
-         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default 
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default
          *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
          *      the default value for `marker.over.fill.color` is equivalent to `marker.fill.color`.</dd>
          *  </dl>

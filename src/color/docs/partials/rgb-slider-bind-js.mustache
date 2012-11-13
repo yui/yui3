@@ -1,0 +1,29 @@
+    // register update events
+    rSlider.after('thumbMove', function(e) {
+        rVal.set('text', rSlider.get('value'));
+        updateColors();
+    });
+    gSlider.after('thumbMove', function(e) {
+        gVal.set('text', gSlider.get('value'));
+        updateColors();
+    });
+    bSlider.after('thumbMove', function(e) {
+        bVal.set('text', bSlider.get('value'));
+        updateColors();
+    });
+
+    // update the colors strings
+    function updateColors() {
+        var r = rSlider.get('value'),
+            g = gSlider.get('value'),
+            b = bSlider.get('value'),
+            rgbStr = Y.Color.fromArray([r,g,b], Y.Color.TYPES.RGB);
+
+        color.setStyle('backgroundColor', rgbStr);
+
+        rgb.set('text', rgbStr);
+
+        hex.set('text', Y.Color.toHex(rgbStr));
+        hsl.set('text', Y.Color.toHSL(rgbStr));
+    }
+

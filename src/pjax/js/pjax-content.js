@@ -63,13 +63,13 @@ PjaxContent.prototype = {
             titleSelector   = this.get('titleSelector'),
             titleNode;
 
-        if (contentSelector) {
+        if (contentSelector && frag) {
             content.node = frag.all(contentSelector).toFrag();
         } else {
             content.node = frag;
         }
 
-        if (titleSelector) {
+        if (titleSelector && frag) {
             titleNode = frag.one(titleSelector);
 
             if (titleNode) {

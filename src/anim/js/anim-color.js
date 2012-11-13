@@ -25,9 +25,9 @@ Y.Anim.getUpdatedColorValue = function(fromColor, toColor, elapsed, duration,  f
 
 Y.Anim.behaviors.color = {
     set: function(anim, att, from, to, elapsed, duration, fn) {
-        anim._node.setStyle(att, Y.Anim.getUpdatedColorValue(from, to, elapsed, duration, fn)); 
+        anim._node.setStyle(att, Y.Anim.getUpdatedColorValue(from, to, elapsed, duration, fn));
     },
-    
+
     // TODO: default bgcolor const
     get: function(anim, att) {
         var val = anim._node.getComputedStyle(att);
@@ -39,10 +39,10 @@ Y.Anim.behaviors.color = {
 Y.each(['backgroundColor',
         'borderColor',
         'borderTopColor',
-        'borderRightColor', 
-        'borderBottomColor', 
+        'borderRightColor',
+        'borderBottomColor',
         'borderLeftColor'],
-        function(v, i) {
+        function(v) {
             Y.Anim.behaviors[v] = Y.Anim.behaviors.color;
         }
 );

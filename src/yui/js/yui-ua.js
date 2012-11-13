@@ -240,7 +240,7 @@ YUI.Env.parseUA = function(subUA) {
          * @static
          */
         nodejs: 0,
-        /*
+        /**
         * Window8/IE10 Application host environment
         * @property winjs
         * @type Boolean

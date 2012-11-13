@@ -371,45 +371,57 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
   /**
    * Subtracts one month from the current calendar view.
    * @method subtractMonth
+   * @return {Calendar} A reference to this object
+   * @chainable
    */   
   subtractMonth : function (e) {
     this.set("date", ydate.addMonths(this.get("date"), -1));
     if (e) {
       e.halt();
     }
+    return this;
   },
 
   /**
    * Subtracts one year from the current calendar view.
    * @method subtractYear
+   * @return {Calendar} A reference to this object
+   * @chainable
    */ 
   subtractYear : function (e) {
     this.set("date", ydate.addYears(this.get("date"), -1));
     if (e) {
       e.halt();
     }
+    return this;
   },
 
   /**
    * Adds one month to the current calendar view.
    * @method addMonth
+   * @return {Calendar} A reference to this object
+   * @chainable
    */   
   addMonth : function (e) {    
     this.set("date", ydate.addMonths(this.get("date"), 1));
     if (e) {
       e.halt();
     }
+    return this;
   },
 
   /**
    * Adds one year to the current calendar view.
    * @method addYear
+   * @return {Calendar} A reference to this object
+   * @chainable
    */   
   addYear : function (e) {
     this.set("date", ydate.addYears(this.get("date"), 1));
     if (e) {
       e.halt();
     }
+    return this;
   }
 },
 
@@ -544,4 +556,4 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
   }
 });
 
-}, '@VERSION@', {"requires": ["calendar-base", "calendarnavigator"], "lang": ["de", "en", "fr", "ja", "nb-NO", "pt-BR", "ru", "zh-HANT-TW"], "skinnable": true});
+}, '@VERSION@', {"requires": ["calendar-base", "calendarnavigator"], "lang": ["de", "en", "es", "es-AR", "fr", "it", "ja", "nb-NO", "nl", "pt-BR", "ru", "zh-HANT-TW"], "skinnable": true});

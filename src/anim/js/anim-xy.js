@@ -1,5 +1,5 @@
 /**
- * Adds support for the <code>xy</code> property in <code>from</code> and 
+ * Adds support for the <code>xy</code> property in <code>from</code> and
  * <code>to</code> attributes.
  * @module anim
  * @submodule anim-xy

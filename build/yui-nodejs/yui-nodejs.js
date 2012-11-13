@@ -425,7 +425,7 @@ proto = {
             if (G_ENV && Y !== YUI) {
                 Env._yidx = ++G_ENV._yidx;
                 Env._guidp = ('yui_' + VERSION + '_' +
-                             Env._yidx + '_' + time).replace(/\./g, '_').replace(/-/g, '_');
+                             Env._yidx + '_' + time).replace(/[^a-z0-9_]+/g, '_');
             } else if (YUI._YUI) {
 
                 G_ENV = YUI._YUI.Env;
@@ -458,7 +458,8 @@ proto = {
             throwFail: true,
             useBrowserConsole: true,
             useNativeES5: true,
-            win: win
+            win: win,
+            global: Function('return this')()
         };
 
         //Register the CSS stamp element
@@ -1121,7 +1122,7 @@ with any configuration info required for the module.
             loader.context = Y;
             loader.data = args;
             loader.ignoreRegistered = false;
-            loader.require(args);
+            loader.require(missing);
             loader.insert(null, (fetchCSS) ? null : 'js');
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
@@ -1473,6 +1474,15 @@ overwriting other scripts configs.
  * @property throwFail
  * @type boolean
  * @default true
+ */
+
+/**
+ * The global object. In Node.js it's an object called "global". In the
+ * browser is the current window object.
+ *
+ * @property global
+ * @type Object
+ * @default the global object
  */
 
 /**
@@ -3530,7 +3540,7 @@ YUI.Env.parseUA = function(subUA) {
          * @static
          */
         nodejs: 0,
-        /*
+        /**
         * Window8/IE10 Application host environment
         * @property winjs
         * @type Boolean
@@ -3796,10 +3806,12 @@ YUI.Env.aliases = {
     "anim-shape-transform": ["anim-shape"],
     "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
+    "attribute-events": ["attribute-observable"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
+    "color": ["color-base","color-hsl","color-harmony"],
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
@@ -3833,7 +3845,20 @@ YUI.Env.aliases = {
 };
 
 
-}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-log-nodejs", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
+}, '@VERSION@', {
+    "use": [
+        "yui-base",
+        "get",
+        "features",
+        "intl-base",
+        "yui-log",
+        "yui-log-nodejs",
+        "yui-later",
+        "loader-base",
+        "loader-rollup",
+        "loader-yui3"
+    ]
+});
 YUI.add('get', function (Y, NAME) {
 
     /**
@@ -7790,7 +7815,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "attribute-base": {
         "requires": [
             "attribute-core",
-            "attribute-events",
+            "attribute-observable",
             "attribute-extras"
         ]
     },
@@ -7805,13 +7830,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     },
     "attribute-events": {
-        "requires": [
-            "event-custom"
+        "use": [
+            "attribute-observable"
         ]
     },
     "attribute-extras": {
         "requires": [
             "oop"
+        ]
+    },
+    "attribute-observable": {
+        "requires": [
+            "event-custom"
         ]
     },
     "autocomplete": {
@@ -7927,12 +7957,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     },
     "base-base": {
-        "after": [
-            "attribute-complex"
-        ],
         "requires": [
+            "attribute-base",
             "base-core",
-            "attribute-base"
+            "base-observable"
         ]
     },
     "base-build": {
@@ -7943,6 +7971,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "base-core": {
         "requires": [
             "attribute-core"
+        ]
+    },
+    "base-observable": {
+        "requires": [
+            "attribute-observable"
         ]
     },
     "base-pluginhost": {
@@ -8007,9 +8040,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "lang": [
             "de",
             "en",
+            "es",
+            "es-AR",
             "fr",
+            "it",
             "ja",
             "nb-NO",
+            "nl",
             "pt-BR",
             "ru",
             "zh-HANT-TW"
@@ -8024,9 +8061,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "lang": [
             "de",
             "en",
+            "es",
+            "es-AR",
             "fr",
+            "it",
             "ja",
             "nb-NO",
+            "nl",
             "pt-BR",
             "ru",
             "zh-HANT-TW"
@@ -8091,6 +8132,33 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "arraylist-add",
             "arraylist-filter",
             "array-invoke"
+        ]
+    },
+    "color": {
+        "use": [
+            "color-base",
+            "color-hsl",
+            "color-harmony"
+        ]
+    },
+    "color-base": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "color-harmony": {
+        "requires": [
+            "color-hsl"
+        ]
+    },
+    "color-hsl": {
+        "requires": [
+            "color-base"
+        ]
+    },
+    "color-hsv": {
+        "requires": [
+            "color-base"
         ]
     },
     "console": {
@@ -10237,4 +10305,16 @@ YUI.Env[Y.version].md5 = '15ec4590bfa71dc7fd4e5e4163eaecd1';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
-YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["get", "features", "intl-base", "yui-log", "yui-log-nodejs", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
+YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {
+    "use": [
+        "get",
+        "features",
+        "intl-base",
+        "yui-log",
+        "yui-log-nodejs",
+        "yui-later",
+        "loader-base",
+        "loader-rollup",
+        "loader-yui3"
+    ]
+});

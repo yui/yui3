@@ -219,7 +219,7 @@ return false;
     "attribute-base": {
         "requires": [
             "attribute-core",
-            "attribute-events",
+            "attribute-observable",
             "attribute-extras"
         ]
     },
@@ -234,13 +234,18 @@ return false;
         ]
     },
     "attribute-events": {
-        "requires": [
-            "event-custom"
+        "use": [
+            "attribute-observable"
         ]
     },
     "attribute-extras": {
         "requires": [
             "oop"
+        ]
+    },
+    "attribute-observable": {
+        "requires": [
+            "event-custom"
         ]
     },
     "autocomplete": {
@@ -322,8 +327,8 @@ return false;
     // doesn't fire the keyboard events used by AutoCompleteList, so there's
     // no point loading the -keys module even when a bluetooth keyboard may be
     // available.
-    _yuitest_coverfunc("build/loader-yui3/loader-yui3.js", "\"test\"", 272);
-_yuitest_coverline("build/loader-yui3/loader-yui3.js", 284);
+    _yuitest_coverfunc("build/loader-yui3/loader-yui3.js", "\"test\"", 277);
+_yuitest_coverline("build/loader-yui3/loader-yui3.js", 289);
 return !(Y.UA.ios || Y.UA.android);
 },
             "trigger": "autocomplete-list"
@@ -358,12 +363,10 @@ return !(Y.UA.ios || Y.UA.android);
         ]
     },
     "base-base": {
-        "after": [
-            "attribute-complex"
-        ],
         "requires": [
+            "attribute-base",
             "base-core",
-            "attribute-base"
+            "base-observable"
         ]
     },
     "base-build": {
@@ -374,6 +377,11 @@ return !(Y.UA.ios || Y.UA.android);
     "base-core": {
         "requires": [
             "attribute-core"
+        ]
+    },
+    "base-observable": {
+        "requires": [
+            "attribute-observable"
         ]
     },
     "base-pluginhost": {
@@ -438,9 +446,13 @@ return !(Y.UA.ios || Y.UA.android);
         "lang": [
             "de",
             "en",
+            "es",
+            "es-AR",
             "fr",
+            "it",
             "ja",
             "nb-NO",
+            "nl",
             "pt-BR",
             "ru",
             "zh-HANT-TW"
@@ -455,9 +467,13 @@ return !(Y.UA.ios || Y.UA.android);
         "lang": [
             "de",
             "en",
+            "es",
+            "es-AR",
             "fr",
+            "it",
             "ja",
             "nb-NO",
+            "nl",
             "pt-BR",
             "ru",
             "zh-HANT-TW"
@@ -522,6 +538,33 @@ return !(Y.UA.ios || Y.UA.android);
             "arraylist-add",
             "arraylist-filter",
             "array-invoke"
+        ]
+    },
+    "color": {
+        "use": [
+            "color-base",
+            "color-hsl",
+            "color-harmony"
+        ]
+    },
+    "color-base": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "color-harmony": {
+        "requires": [
+            "color-hsl"
+        ]
+    },
+    "color-hsl": {
+        "requires": [
+            "color-base"
+        ]
+    },
+    "color-hsv": {
+        "requires": [
+            "color-base"
         ]
     },
     "console": {

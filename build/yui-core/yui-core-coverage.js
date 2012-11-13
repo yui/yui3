@@ -36,8 +36,8 @@ _yuitest_coverage["build/yui-core/yui-core.js"].code=["/**"," * The YUI module c
  * @submodule yui-base
  */
 
-_yuitest_coverage["build/yui-core/yui-core.js"].lines = {"10":0,"11":0,"54":0,"55":0,"60":0,"64":0,"65":0,"68":0,"96":0,"97":0,"126":0,"127":0,"131":0,"132":0,"136":0,"141":0,"142":0,"145":0,"148":0,"150":0,"153":0,"155":0,"179":0,"180":0,"181":0,"182":0,"186":0,"188":0,"189":0,"191":0,"192":0,"196":0,"197":0,"198":0,"199":0,"203":0,"208":0,"210":0,"211":0,"212":0,"213":0,"214":0,"216":0,"217":0,"219":0,"220":0,"222":0,"224":0,"228":0,"229":0,"230":0,"239":0,"240":0,"241":0,"243":0,"244":0,"247":0,"248":0,"251":0,"263":0,"265":0,"274":0,"275":0,"276":0,"277":0,"278":0,"279":0,"280":0,"281":0,"282":0,"283":0,"284":0,"285":0,"286":0,"289":0,"294":0,"295":0,"306":0,"315":0,"326":0,"328":0,"329":0,"375":0,"378":0,"379":0,"383":0,"387":0,"388":0,"390":0,"395":0,"399":0,"403":0,"404":0,"405":0,"406":0,"407":0,"408":0,"409":0,"410":0,"416":0,"421":0,"423":0,"425":0,"426":0,"427":0,"429":0,"431":0,"432":0,"433":0,"435":0,"436":0,"437":0,"441":0,"444":0,"445":0,"449":0,"452":0,"465":0,"466":0,"467":0,"468":0,"469":0,"470":0,"472":0,"476":0,"478":0,"480":0,"481":0,"483":0,"484":0,"495":0,"500":0,"501":0,"502":0,"506":0,"507":0,"509":0,"510":0,"526":0,"527":0,"528":0,"531":0,"532":0,"533":0,"534":0,"535":0,"536":0,"537":0,"538":0,"541":0,"544":0,"583":0,"584":0,"596":0,"597":0,"598":0,"600":0,"601":0,"602":0,"603":0,"604":0,"605":0,"606":0,"607":0,"608":0,"615":0,"627":0,"639":0,"640":0,"641":0,"642":0,"643":0,"644":0,"645":0,"646":0,"647":0,"648":0,"649":0,"655":0,"656":0,"658":0,"659":0,"660":0,"661":0,"663":0,"664":0,"665":0,"667":0,"668":0,"669":0,"670":0,"676":0,"677":0,"678":0,"679":0,"680":0,"684":0,"687":0,"688":0,"689":0,"690":0,"698":0,"699":0,"700":0,"701":0,"702":0,"703":0,"706":0,"709":0,"710":0,"711":0,"712":0,"714":0,"715":0,"716":0,"719":0,"720":0,"721":0,"722":0,"723":0,"725":0,"730":0,"731":0,"732":0,"733":0,"734":0,"736":0,"741":0,"742":0,"743":0,"745":0,"746":0,"748":0,"749":0,"754":0,"755":0,"756":0,"757":0,"758":0,"760":0,"771":0,"782":0,"785":0,"787":0,"788":0,"791":0,"792":0,"793":0,"794":0,"795":0,"796":0,"851":0,"861":0,"862":0,"863":0,"864":0,"867":0,"869":0,"870":0,"873":0,"874":0,"875":0,"876":0,"877":0,"881":0,"882":0,"884":0,"885":0,"889":0,"890":0,"891":0,"893":0,"894":0,"898":0,"909":0,"910":0,"911":0,"912":0,"913":0,"914":0,"916":0,"917":0,"919":0,"920":0,"922":0,"940":0,"941":0,"944":0,"963":0,"965":0,"966":0,"969":0,"970":0,"971":0,"972":0,"973":0,"975":0,"978":0,"981":0,"983":0,"984":0,"985":0,"986":0,"990":0,"991":0,"994":0,"995":0,"996":0,"998":0,"999":0,"1000":0,"1001":0,"1005":0,"1006":0,"1008":0,"1013":0,"1014":0,"1018":0,"1019":0,"1026":0,"1034":0,"1036":0,"1037":0,"1038":0,"1039":0,"1040":0,"1041":0,"1042":0,"1043":0,"1045":0,"1050":0,"1051":0,"1052":0,"1053":0,"1054":0,"1058":0,"1059":0,"1061":0,"1062":0,"1066":0,"1067":0,"1074":0,"1075":0,"1076":0,"1077":0,"1078":0,"1081":0,"1082":0,"1083":0,"1085":0,"1088":0,"1089":0,"1095":0,"1096":0,"1097":0,"1098":0,"1099":0,"1100":0,"1101":0,"1102":0,"1105":0,"1107":0,"1110":0,"1111":0,"1112":0,"1117":0,"1118":0,"1119":0,"1120":0,"1121":0,"1122":0,"1123":0,"1124":0,"1125":0,"1127":0,"1129":0,"1131":0,"1132":0,"1133":0,"1134":0,"1135":0,"1136":0,"1137":0,"1141":0,"1142":0,"1144":0,"1145":0,"1151":0,"1152":0,"1153":0,"1157":0,"1195":0,"1197":0,"1198":0,"1199":0,"1200":0,"1201":0,"1202":0,"1203":0,"1204":0,"1207":0,"1208":0,"1211":0,"1218":0,"1236":0,"1238":0,"1239":0,"1242":0,"1243":0,"1245":0,"1248":0,"1258":0,"1259":0,"1273":0,"1274":0,"1275":0,"1280":0,"1281":0,"1283":0,"1286":0,"1287":0,"1288":0,"1289":0,"1290":0,"1292":0,"1296":0,"1305":0,"1306":0,"1307":0,"1309":0,"1310":0,"1311":0,"1325":0,"1328":0,"1329":0,"1330":0,"1366":0,"1367":0,"1368":0,"1371":0,"1372":0,"1375":0,"1377":0,"1381":0,"1383":0,"1387":0,"1389":0,"1392":0,"1393":0,"1397":0,"1398":0,"1950":0,"1972":0,"2020":0,"2021":0,"2038":0,"2039":0,"2049":0,"2050":0,"2060":0,"2061":0,"2088":0,"2089":0,"2099":0,"2100":0,"2110":0,"2111":0,"2125":0,"2126":0,"2127":0,"2138":0,"2139":0,"2149":0,"2150":0,"2162":0,"2163":0,"2165":0,"2167":0,"2171":0,"2174":0,"2186":0,"2187":0,"2201":0,"2202":0,"2203":0,"2215":0,"2216":0,"2218":0,"2219":0,"2221":0,"2232":0,"2233":0,"2235":0,"2245":0,"2246":0,"2248":0,"2278":0,"2279":0,"2286":0,"2319":0,"2320":0,"2322":0,"2324":0,"2326":0,"2327":0,"2329":0,"2331":0,"2332":0,"2335":0,"2339":0,"2342":0,"2358":0,"2359":0,"2363":0,"2364":0,"2366":0,"2367":0,"2368":0,"2372":0,"2390":0,"2391":0,"2392":0,"2394":0,"2395":0,"2396":0,"2400":0,"2427":0,"2428":0,"2432":0,"2433":0,"2434":0,"2438":0,"2455":0,"2456":0,"2459":0,"2461":0,"2462":0,"2464":0,"2465":0,"2467":0,"2468":0,"2472":0,"2473":0,"2474":0,"2478":0,"2500":0,"2501":0,"2520":0,"2521":0,"2523":0,"2524":0,"2525":0,"2529":0,"2550":0,"2551":0,"2553":0,"2554":0,"2555":0,"2556":0,"2560":0,"2561":0,"2566":0,"2584":0,"2585":0,"2586":0,"2589":0,"2604":0,"2614":0,"2624":0,"2635":0,"2637":0,"2647":0,"2651":0,"2653":0,"2664":0,"2693":0,"2694":0,"2696":0,"2697":0,"2701":0,"2702":0,"2705":0,"2725":0,"2729":0,"2735":0,"2750":0,"2751":0,"2757":0,"2758":0,"2760":0,"2761":0,"2762":0,"2767":0,"2804":0,"2805":0,"2810":0,"2811":0,"2814":0,"2818":0,"2819":0,"2825":0,"2826":0,"2831":0,"2832":0,"2835":0,"2836":0,"2841":0,"2843":0,"2844":0,"2845":0,"2852":0,"2853":0,"2859":0,"2861":0,"2871":0,"2872":0,"2876":0,"2880":0,"2886":0,"2887":0,"2893":0,"2895":0,"2897":0,"2898":0,"2899":0,"2906":0,"2907":0,"2911":0,"2927":0,"2949":0,"2952":0,"2955":0,"2956":0,"2957":0,"3019":0,"3031":0,"3054":0,"3055":0,"3056":0,"3059":0,"3062":0,"3063":0,"3064":0,"3065":0,"3069":0,"3070":0,"3071":0,"3076":0,"3077":0,"3078":0,"3080":0,"3081":0,"3086":0,"3106":0,"3107":0,"3112":0,"3113":0,"3116":0,"3127":0,"3128":0,"3129":0,"3131":0,"3145":0,"3146":0,"3169":0,"3170":0,"3172":0,"3173":0,"3174":0,"3178":0,"3201":0,"3202":0,"3204":0,"3205":0,"3206":0,"3207":0,"3212":0,"3228":0,"3229":0,"3230":0,"3233":0,"3237":0,"3238":0,"3241":0,"3258":0,"3259":0,"3264":0,"3265":0,"3266":0,"3269":0,"3270":0,"3272":0,"3276":0,"3288":0,"3289":0,"3324":0,"3326":0,"3327":0,"3328":0,"3329":0,"3563":0,"3566":0,"3568":0,"3570":0,"3571":0,"3572":0,"3573":0,"3574":0,"3575":0,"3576":0,"3577":0,"3578":0,"3579":0,"3580":0,"3581":0,"3585":0,"3586":0,"3588":0,"3589":0,"3591":0,"3592":0,"3595":0,"3596":0,"3597":0,"3598":0,"3600":0,"3601":0,"3602":0,"3603":0,"3608":0,"3609":0,"3611":0,"3612":0,"3613":0,"3615":0,"3616":0,"3617":0,"3619":0,"3620":0,"3621":0,"3624":0,"3625":0,"3627":0,"3629":0,"3630":0,"3631":0,"3632":0,"3633":0,"3636":0,"3637":0,"3638":0,"3640":0,"3641":0,"3642":0,"3646":0,"3647":0,"3648":0,"3649":0,"3651":0,"3652":0,"3653":0,"3655":0,"3656":0,"3661":0,"3662":0,"3663":0,"3664":0,"3665":0,"3666":0,"3669":0,"3670":0,"3671":0,"3676":0,"3678":0,"3679":0,"3680":0,"3681":0,"3683":0,"3684":0,"3685":0,"3688":0,"3689":0,"3690":0,"3691":0,"3692":0,"3695":0,"3697":0,"3698":0,"3701":0,"3702":0,"3703":0,"3705":0,"3706":0,"3707":0,"3708":0,"3709":0,"3710":0,"3720":0,"3721":0,"3725":0,"3727":0,"3729":0,"3731":0,"3732":0,"3736":0,"3740":0,"3744":0,"3766":0,"3767":0,"3769":0,"3770":0,"3773":0,"3774":0,"3776":0,"3777":0,"3778":0,"3780":0,"3781":0,"3783":0,"3784":0,"3787":0,"3788":0,"3792":0,"3794":0};
-_yuitest_coverage["build/yui-core/yui-core.js"].functions = {"instanceOf:59":0,"YUI:54":0,"add:178":0,"remove:185":0,"handleLoad:195":0,"getLoader:202":0,"clobber:227":0,"applyConfig:261":0,"_config:305":0,"parseBasePath:374":0,"(anonymous 2):398":0,"_init:314":0,"_setup:494":0,"applyTo:525":0,"add:582":0,"_attach:626":0,"(anonymous 5):794":0,"(anonymous 4):793":0,"(anonymous 3):791":0,"_delayCallback:780":0,"(anonymous 6):893":0,"use:850":0,"_notify:908":0,"process:961":0,"(anonymous 7):1052":0,"handleLoader:1025":0,"handleBoot:1131":0,"_use:938":0,"namespace:1194":0,"dump:1218":0,"error:1233":0,"guid:1257":0,"stamp:1272":0,"destroy:1304":0,"applyConfig:1366":0,"(anonymous 1):153":0,"_isNative:2020":0,"isArray:2038":0,"isBoolean:2049":0,"isDate:2060":0,"isFunction:2088":0,"isNull:2099":0,"isNumber:2110":0,"isObject:2125":0,"isString:2138":0,"isUndefined:2149":0,"isValue:2162":0,"(anonymous 9):2186":0,"(anonymous 10):2202":0,"sub:2201":0,"(anonymous 11):2215":0,"}:2217":0,"(anonymous 12):2232":0,"}:2234":0,"(anonymous 13):2245":0,"}:2247":0,"type:2278":0,"YArray:2319":0,"dedupe:2358":0,"(anonymous 14):2390":0,"}:2393":0,"hash:2427":0,"(anonymous 15):2455":0,"}:2457":0,"numericSort:2500":0,"(anonymous 16):2520":0,"}:2522":0,"test:2550":0,"Queue:2584":0,"_init:2596":0,"next:2613":0,"last:2623":0,"add:2634":0,"size:2646":0,"(anonymous 17):2696":0,"cached:2693":0,"getLocation:2725":0,"merge:2750":0,"mix:2804":0,"(anonymous 18):2943":0,"F:2952":0,"(anonymous 20):2955":0,"(anonymous 19):2950":0,"owns:3018":0,"keys:3054":0,"values:3106":0,"size:3127":0,"hasValue:3145":0,"each:3169":0,"some:3201":0,"getValue:3228":0,"setValue:3258":0,"isEmpty:3288":0,"(anonymous 22):3328":0,"numberify:3326":0,"parseUA:3324":0,"compareVersions:3766":0,"(anonymous 8):1950":0};
+_yuitest_coverage["build/yui-core/yui-core.js"].lines = {"10":0,"11":0,"54":0,"55":0,"60":0,"64":0,"65":0,"68":0,"96":0,"97":0,"126":0,"127":0,"131":0,"132":0,"136":0,"141":0,"142":0,"145":0,"148":0,"150":0,"153":0,"155":0,"179":0,"180":0,"181":0,"182":0,"186":0,"188":0,"189":0,"191":0,"192":0,"196":0,"197":0,"198":0,"199":0,"203":0,"208":0,"210":0,"211":0,"212":0,"213":0,"214":0,"216":0,"217":0,"219":0,"220":0,"222":0,"224":0,"228":0,"229":0,"230":0,"239":0,"240":0,"241":0,"243":0,"244":0,"247":0,"248":0,"251":0,"263":0,"265":0,"274":0,"275":0,"276":0,"277":0,"278":0,"279":0,"280":0,"281":0,"282":0,"283":0,"284":0,"285":0,"286":0,"289":0,"294":0,"295":0,"306":0,"315":0,"326":0,"328":0,"329":0,"375":0,"378":0,"379":0,"383":0,"387":0,"388":0,"390":0,"395":0,"399":0,"403":0,"404":0,"405":0,"406":0,"407":0,"408":0,"409":0,"410":0,"416":0,"421":0,"423":0,"425":0,"426":0,"427":0,"429":0,"431":0,"432":0,"433":0,"435":0,"436":0,"437":0,"441":0,"444":0,"445":0,"449":0,"452":0,"466":0,"467":0,"468":0,"469":0,"470":0,"471":0,"473":0,"477":0,"479":0,"481":0,"482":0,"484":0,"485":0,"496":0,"501":0,"502":0,"503":0,"507":0,"508":0,"510":0,"511":0,"527":0,"528":0,"529":0,"532":0,"533":0,"534":0,"535":0,"536":0,"537":0,"538":0,"539":0,"542":0,"545":0,"584":0,"585":0,"597":0,"598":0,"599":0,"601":0,"602":0,"603":0,"604":0,"605":0,"606":0,"607":0,"608":0,"609":0,"616":0,"628":0,"640":0,"641":0,"642":0,"643":0,"644":0,"645":0,"646":0,"647":0,"648":0,"649":0,"650":0,"656":0,"657":0,"659":0,"660":0,"661":0,"662":0,"664":0,"665":0,"666":0,"668":0,"669":0,"670":0,"671":0,"677":0,"678":0,"679":0,"680":0,"681":0,"685":0,"688":0,"689":0,"690":0,"691":0,"699":0,"700":0,"701":0,"702":0,"703":0,"704":0,"707":0,"710":0,"711":0,"712":0,"713":0,"715":0,"716":0,"717":0,"720":0,"721":0,"722":0,"723":0,"724":0,"726":0,"731":0,"732":0,"733":0,"734":0,"735":0,"737":0,"742":0,"743":0,"744":0,"746":0,"747":0,"749":0,"750":0,"755":0,"756":0,"757":0,"758":0,"759":0,"761":0,"772":0,"783":0,"786":0,"788":0,"789":0,"792":0,"793":0,"794":0,"795":0,"796":0,"797":0,"852":0,"862":0,"863":0,"864":0,"865":0,"868":0,"870":0,"871":0,"874":0,"875":0,"876":0,"877":0,"878":0,"882":0,"883":0,"885":0,"886":0,"890":0,"891":0,"892":0,"894":0,"895":0,"899":0,"910":0,"911":0,"912":0,"913":0,"914":0,"915":0,"917":0,"918":0,"920":0,"921":0,"923":0,"941":0,"942":0,"945":0,"964":0,"966":0,"967":0,"970":0,"971":0,"972":0,"973":0,"974":0,"976":0,"979":0,"982":0,"984":0,"985":0,"986":0,"987":0,"991":0,"992":0,"995":0,"996":0,"997":0,"999":0,"1000":0,"1001":0,"1002":0,"1006":0,"1007":0,"1009":0,"1014":0,"1015":0,"1019":0,"1020":0,"1027":0,"1035":0,"1037":0,"1038":0,"1039":0,"1040":0,"1041":0,"1042":0,"1043":0,"1044":0,"1046":0,"1051":0,"1052":0,"1053":0,"1054":0,"1055":0,"1059":0,"1060":0,"1062":0,"1063":0,"1067":0,"1068":0,"1075":0,"1076":0,"1077":0,"1078":0,"1079":0,"1082":0,"1083":0,"1084":0,"1086":0,"1089":0,"1090":0,"1096":0,"1097":0,"1098":0,"1099":0,"1100":0,"1101":0,"1102":0,"1103":0,"1106":0,"1108":0,"1111":0,"1112":0,"1113":0,"1118":0,"1119":0,"1120":0,"1121":0,"1122":0,"1123":0,"1124":0,"1125":0,"1126":0,"1128":0,"1130":0,"1132":0,"1133":0,"1134":0,"1135":0,"1136":0,"1137":0,"1138":0,"1142":0,"1143":0,"1145":0,"1146":0,"1152":0,"1153":0,"1154":0,"1158":0,"1196":0,"1198":0,"1199":0,"1200":0,"1201":0,"1202":0,"1203":0,"1204":0,"1205":0,"1208":0,"1209":0,"1212":0,"1219":0,"1237":0,"1239":0,"1240":0,"1243":0,"1244":0,"1246":0,"1249":0,"1259":0,"1260":0,"1274":0,"1275":0,"1276":0,"1281":0,"1282":0,"1284":0,"1287":0,"1288":0,"1289":0,"1290":0,"1291":0,"1293":0,"1297":0,"1306":0,"1307":0,"1308":0,"1310":0,"1311":0,"1312":0,"1326":0,"1329":0,"1330":0,"1331":0,"1367":0,"1368":0,"1369":0,"1372":0,"1373":0,"1376":0,"1378":0,"1382":0,"1384":0,"1388":0,"1390":0,"1393":0,"1394":0,"1398":0,"1399":0,"1960":0,"1982":0,"2030":0,"2031":0,"2048":0,"2049":0,"2059":0,"2060":0,"2070":0,"2071":0,"2098":0,"2099":0,"2109":0,"2110":0,"2120":0,"2121":0,"2135":0,"2136":0,"2137":0,"2148":0,"2149":0,"2159":0,"2160":0,"2172":0,"2173":0,"2175":0,"2177":0,"2181":0,"2184":0,"2196":0,"2197":0,"2211":0,"2212":0,"2213":0,"2225":0,"2226":0,"2228":0,"2229":0,"2231":0,"2242":0,"2243":0,"2245":0,"2255":0,"2256":0,"2258":0,"2288":0,"2289":0,"2296":0,"2329":0,"2330":0,"2332":0,"2334":0,"2336":0,"2337":0,"2339":0,"2341":0,"2342":0,"2345":0,"2349":0,"2352":0,"2368":0,"2369":0,"2373":0,"2374":0,"2376":0,"2377":0,"2378":0,"2382":0,"2400":0,"2401":0,"2402":0,"2404":0,"2405":0,"2406":0,"2410":0,"2437":0,"2438":0,"2442":0,"2443":0,"2444":0,"2448":0,"2465":0,"2466":0,"2469":0,"2471":0,"2472":0,"2474":0,"2475":0,"2477":0,"2478":0,"2482":0,"2483":0,"2484":0,"2488":0,"2510":0,"2511":0,"2530":0,"2531":0,"2533":0,"2534":0,"2535":0,"2539":0,"2560":0,"2561":0,"2563":0,"2564":0,"2565":0,"2566":0,"2570":0,"2571":0,"2576":0,"2594":0,"2595":0,"2596":0,"2599":0,"2614":0,"2624":0,"2634":0,"2645":0,"2647":0,"2657":0,"2661":0,"2663":0,"2674":0,"2703":0,"2704":0,"2706":0,"2707":0,"2711":0,"2712":0,"2715":0,"2735":0,"2739":0,"2745":0,"2760":0,"2761":0,"2767":0,"2768":0,"2770":0,"2771":0,"2772":0,"2777":0,"2814":0,"2815":0,"2820":0,"2821":0,"2824":0,"2828":0,"2829":0,"2835":0,"2836":0,"2841":0,"2842":0,"2845":0,"2846":0,"2851":0,"2853":0,"2854":0,"2855":0,"2862":0,"2863":0,"2869":0,"2871":0,"2881":0,"2882":0,"2886":0,"2890":0,"2896":0,"2897":0,"2903":0,"2905":0,"2907":0,"2908":0,"2909":0,"2916":0,"2917":0,"2921":0,"2937":0,"2959":0,"2962":0,"2965":0,"2966":0,"2967":0,"3029":0,"3041":0,"3064":0,"3065":0,"3066":0,"3069":0,"3072":0,"3073":0,"3074":0,"3075":0,"3079":0,"3080":0,"3081":0,"3086":0,"3087":0,"3088":0,"3090":0,"3091":0,"3096":0,"3116":0,"3117":0,"3122":0,"3123":0,"3126":0,"3137":0,"3138":0,"3139":0,"3141":0,"3155":0,"3156":0,"3179":0,"3180":0,"3182":0,"3183":0,"3184":0,"3188":0,"3211":0,"3212":0,"3214":0,"3215":0,"3216":0,"3217":0,"3222":0,"3238":0,"3239":0,"3240":0,"3243":0,"3247":0,"3248":0,"3251":0,"3268":0,"3269":0,"3274":0,"3275":0,"3276":0,"3279":0,"3280":0,"3282":0,"3286":0,"3298":0,"3299":0,"3334":0,"3336":0,"3337":0,"3338":0,"3339":0,"3573":0,"3576":0,"3578":0,"3580":0,"3581":0,"3582":0,"3583":0,"3584":0,"3585":0,"3586":0,"3587":0,"3588":0,"3589":0,"3590":0,"3591":0,"3595":0,"3596":0,"3598":0,"3599":0,"3601":0,"3602":0,"3605":0,"3606":0,"3607":0,"3608":0,"3610":0,"3611":0,"3612":0,"3613":0,"3618":0,"3619":0,"3621":0,"3622":0,"3623":0,"3625":0,"3626":0,"3627":0,"3629":0,"3630":0,"3631":0,"3634":0,"3635":0,"3637":0,"3639":0,"3640":0,"3641":0,"3642":0,"3643":0,"3646":0,"3647":0,"3648":0,"3650":0,"3651":0,"3652":0,"3656":0,"3657":0,"3658":0,"3659":0,"3661":0,"3662":0,"3663":0,"3665":0,"3666":0,"3671":0,"3672":0,"3673":0,"3674":0,"3675":0,"3676":0,"3679":0,"3680":0,"3681":0,"3686":0,"3688":0,"3689":0,"3690":0,"3691":0,"3693":0,"3694":0,"3695":0,"3698":0,"3699":0,"3700":0,"3701":0,"3702":0,"3705":0,"3707":0,"3708":0,"3711":0,"3712":0,"3713":0,"3715":0,"3716":0,"3717":0,"3718":0,"3719":0,"3720":0,"3730":0,"3731":0,"3735":0,"3737":0,"3739":0,"3741":0,"3742":0,"3746":0,"3750":0,"3754":0,"3776":0,"3777":0,"3779":0,"3780":0,"3783":0,"3784":0,"3786":0,"3787":0,"3788":0,"3790":0,"3791":0,"3793":0,"3794":0,"3797":0,"3798":0,"3802":0,"3804":0};
+_yuitest_coverage["build/yui-core/yui-core.js"].functions = {"instanceOf:59":0,"YUI:54":0,"add:178":0,"remove:185":0,"handleLoad:195":0,"getLoader:202":0,"clobber:227":0,"applyConfig:261":0,"_config:305":0,"parseBasePath:374":0,"(anonymous 2):398":0,"_init:314":0,"_setup:495":0,"applyTo:526":0,"add:583":0,"_attach:627":0,"(anonymous 5):795":0,"(anonymous 4):794":0,"(anonymous 3):792":0,"_delayCallback:781":0,"(anonymous 6):894":0,"use:851":0,"_notify:909":0,"process:962":0,"(anonymous 7):1053":0,"handleLoader:1026":0,"handleBoot:1132":0,"_use:939":0,"namespace:1195":0,"dump:1219":0,"error:1234":0,"guid:1258":0,"stamp:1273":0,"destroy:1305":0,"applyConfig:1367":0,"(anonymous 1):153":0,"_isNative:2030":0,"isArray:2048":0,"isBoolean:2059":0,"isDate:2070":0,"isFunction:2098":0,"isNull:2109":0,"isNumber:2120":0,"isObject:2135":0,"isString:2148":0,"isUndefined:2159":0,"isValue:2172":0,"(anonymous 9):2196":0,"(anonymous 10):2212":0,"sub:2211":0,"(anonymous 11):2225":0,"}:2227":0,"(anonymous 12):2242":0,"}:2244":0,"(anonymous 13):2255":0,"}:2257":0,"type:2288":0,"YArray:2329":0,"dedupe:2368":0,"(anonymous 14):2400":0,"}:2403":0,"hash:2437":0,"(anonymous 15):2465":0,"}:2467":0,"numericSort:2510":0,"(anonymous 16):2530":0,"}:2532":0,"test:2560":0,"Queue:2594":0,"_init:2606":0,"next:2623":0,"last:2633":0,"add:2644":0,"size:2656":0,"(anonymous 17):2706":0,"cached:2703":0,"getLocation:2735":0,"merge:2760":0,"mix:2814":0,"(anonymous 18):2953":0,"F:2962":0,"(anonymous 20):2965":0,"(anonymous 19):2960":0,"owns:3028":0,"keys:3064":0,"values:3116":0,"size:3137":0,"hasValue:3155":0,"each:3179":0,"some:3211":0,"getValue:3238":0,"setValue:3268":0,"isEmpty:3298":0,"(anonymous 22):3338":0,"numberify:3336":0,"parseUA:3334":0,"compareVersions:3776":0,"(anonymous 8):1960":0};
 _yuitest_coverage["build/yui-core/yui-core.js"].coveredLines = 824;
 _yuitest_coverage["build/yui-core/yui-core.js"].coveredFunctions = 98;
 _yuitest_coverline("build/yui-core/yui-core.js", 10);
@@ -576,7 +576,7 @@ if (G_ENV && Y !== YUI) {
 Env._yidx = ++G_ENV._yidx;
                 _yuitest_coverline("build/yui-core/yui-core.js", 427);
 Env._guidp = ('yui_' + VERSION + '_' +
-                             Env._yidx + '_' + time).replace(/\./g, '_').replace(/-/g, '_');
+                             Env._yidx + '_' + time).replace(/[^a-z0-9_]+/g, '_');
             } else {_yuitest_coverline("build/yui-core/yui-core.js", 429);
 if (YUI._YUI) {
 
@@ -621,42 +621,43 @@ Y.config = Y.config || {
             throwFail: true,
             useBrowserConsole: true,
             useNativeES5: true,
-            win: win
+            win: win,
+            global: Function('return this')()
         };
 
         //Register the CSS stamp element
-        _yuitest_coverline("build/yui-core/yui-core.js", 465);
+        _yuitest_coverline("build/yui-core/yui-core.js", 466);
 if (doc && !doc.getElementById(CSS_STAMP_EL)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 466);
-el = doc.createElement('div');
             _yuitest_coverline("build/yui-core/yui-core.js", 467);
-el.innerHTML = '<div id="' + CSS_STAMP_EL + '" style="position: absolute !important; visibility: hidden !important"></div>';
+el = doc.createElement('div');
             _yuitest_coverline("build/yui-core/yui-core.js", 468);
-YUI.Env.cssStampEl = el.firstChild;
+el.innerHTML = '<div id="' + CSS_STAMP_EL + '" style="position: absolute !important; visibility: hidden !important"></div>';
             _yuitest_coverline("build/yui-core/yui-core.js", 469);
+YUI.Env.cssStampEl = el.firstChild;
+            _yuitest_coverline("build/yui-core/yui-core.js", 470);
 if (doc.body) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 470);
+                _yuitest_coverline("build/yui-core/yui-core.js", 471);
 doc.body.appendChild(YUI.Env.cssStampEl);
             } else {
-                _yuitest_coverline("build/yui-core/yui-core.js", 472);
+                _yuitest_coverline("build/yui-core/yui-core.js", 473);
 docEl.insertBefore(YUI.Env.cssStampEl, docEl.firstChild);
             }
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 476);
+        _yuitest_coverline("build/yui-core/yui-core.js", 477);
 Y.config.lang = Y.config.lang || 'en-US';
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 478);
+        _yuitest_coverline("build/yui-core/yui-core.js", 479);
 Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 480);
+        _yuitest_coverline("build/yui-core/yui-core.js", 481);
 if (!filter || (!('mindebug').indexOf(filter))) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 481);
+            _yuitest_coverline("build/yui-core/yui-core.js", 482);
 filter = 'min';
         }
-        _yuitest_coverline("build/yui-core/yui-core.js", 483);
-filter = (filter) ? '-' + filter : filter;
         _yuitest_coverline("build/yui-core/yui-core.js", 484);
+filter = (filter) ? '-' + filter : filter;
+        _yuitest_coverline("build/yui-core/yui-core.js", 485);
 Y.config.loaderPath = YUI.config.loaderPath || 'loader/loader' + filter + '.js';
 
     },
@@ -668,30 +669,30 @@ Y.config.loaderPath = YUI.config.loaderPath || 'loader/loader' + filter + '.js';
      * @private
      */
     _setup: function(o) {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "_setup", 494);
-_yuitest_coverline("build/yui-core/yui-core.js", 495);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "_setup", 495);
+_yuitest_coverline("build/yui-core/yui-core.js", 496);
 var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
             extras = Y.config.core || [].concat(YUI.Env.core); //Clone it..
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 500);
+        _yuitest_coverline("build/yui-core/yui-core.js", 501);
 for (i = 0; i < extras.length; i++) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 501);
+            _yuitest_coverline("build/yui-core/yui-core.js", 502);
 if (mods[extras[i]]) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 502);
+                _yuitest_coverline("build/yui-core/yui-core.js", 503);
 core.push(extras[i]);
             }
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 506);
-Y._attach(['yui-base']);
         _yuitest_coverline("build/yui-core/yui-core.js", 507);
+Y._attach(['yui-base']);
+        _yuitest_coverline("build/yui-core/yui-core.js", 508);
 Y._attach(core);
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 509);
+        _yuitest_coverline("build/yui-core/yui-core.js", 510);
 if (Y.Loader) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 510);
+            _yuitest_coverline("build/yui-core/yui-core.js", 511);
 getLoader(Y);
         }
 
@@ -708,38 +709,38 @@ getLoader(Y);
      * @return {Object} the return value from the applied method or null.
      */
     applyTo: function(id, method, args) {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "applyTo", 525);
-_yuitest_coverline("build/yui-core/yui-core.js", 526);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "applyTo", 526);
+_yuitest_coverline("build/yui-core/yui-core.js", 527);
 if (!(method in APPLY_TO_AUTH)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 527);
-this.log(method + ': applyTo not allowed', 'warn', 'yui');
             _yuitest_coverline("build/yui-core/yui-core.js", 528);
+this.log(method + ': applyTo not allowed', 'warn', 'yui');
+            _yuitest_coverline("build/yui-core/yui-core.js", 529);
 return null;
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 531);
-var instance = instances[id], nest, m, i;
         _yuitest_coverline("build/yui-core/yui-core.js", 532);
+var instance = instances[id], nest, m, i;
+        _yuitest_coverline("build/yui-core/yui-core.js", 533);
 if (instance) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 533);
-nest = method.split('.');
             _yuitest_coverline("build/yui-core/yui-core.js", 534);
-m = instance;
+nest = method.split('.');
             _yuitest_coverline("build/yui-core/yui-core.js", 535);
+m = instance;
+            _yuitest_coverline("build/yui-core/yui-core.js", 536);
 for (i = 0; i < nest.length; i = i + 1) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 536);
-m = m[nest[i]];
                 _yuitest_coverline("build/yui-core/yui-core.js", 537);
+m = m[nest[i]];
+                _yuitest_coverline("build/yui-core/yui-core.js", 538);
 if (!m) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 538);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 539);
 this.log('applyTo not found: ' + method, 'warn', 'yui');
                 }
             }
-            _yuitest_coverline("build/yui-core/yui-core.js", 541);
+            _yuitest_coverline("build/yui-core/yui-core.js", 542);
 return m && m.apply(instance, args);
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 544);
+        _yuitest_coverline("build/yui-core/yui-core.js", 545);
 return null;
     },
 
@@ -779,10 +780,10 @@ with any configuration info required for the module.
 
 */
     add: function(name, fn, version, details) {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "add", 582);
-_yuitest_coverline("build/yui-core/yui-core.js", 583);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "add", 583);
+_yuitest_coverline("build/yui-core/yui-core.js", 584);
 details = details || {};
-        _yuitest_coverline("build/yui-core/yui-core.js", 584);
+        _yuitest_coverline("build/yui-core/yui-core.js", 585);
 var env = YUI.Env,
             mod = {
                 name: name,
@@ -795,30 +796,30 @@ var env = YUI.Env,
             loader, inst,
             i, versions = env.versions;
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 596);
-env.mods[name] = mod;
         _yuitest_coverline("build/yui-core/yui-core.js", 597);
-versions[version] = versions[version] || {};
+env.mods[name] = mod;
         _yuitest_coverline("build/yui-core/yui-core.js", 598);
+versions[version] = versions[version] || {};
+        _yuitest_coverline("build/yui-core/yui-core.js", 599);
 versions[version][name] = mod;
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 600);
+        _yuitest_coverline("build/yui-core/yui-core.js", 601);
 for (i in instances) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 601);
+            _yuitest_coverline("build/yui-core/yui-core.js", 602);
 if (instances.hasOwnProperty(i)) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 602);
-inst = instances[i];
                 _yuitest_coverline("build/yui-core/yui-core.js", 603);
+inst = instances[i];
+                _yuitest_coverline("build/yui-core/yui-core.js", 604);
 if (!applied[inst.id]) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 604);
-applied[inst.id] = true;
                     _yuitest_coverline("build/yui-core/yui-core.js", 605);
-loader = inst.Env._loader;
+applied[inst.id] = true;
                     _yuitest_coverline("build/yui-core/yui-core.js", 606);
+loader = inst.Env._loader;
+                    _yuitest_coverline("build/yui-core/yui-core.js", 607);
 if (loader) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 607);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 608);
 if (!loader.moduleInfo[name] || loader.moduleInfo[name].temp) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 608);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 609);
 loader.addModule(details, name);
                         }
                     }
@@ -826,7 +827,7 @@ loader.addModule(details, name);
             }
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 615);
+        _yuitest_coverline("build/yui-core/yui-core.js", 616);
 return this;
     },
 
@@ -839,8 +840,8 @@ return this;
      * @private
      */
     _attach: function(r, moot) {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "_attach", 626);
-_yuitest_coverline("build/yui-core/yui-core.js", 627);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "_attach", 627);
+_yuitest_coverline("build/yui-core/yui-core.js", 628);
 var i, name, mod, details, req, use, after,
             mods = YUI.Env.mods,
             aliases = YUI.Env.aliases,
@@ -853,91 +854,91 @@ var i, name, mod, details, req, use, after,
 
         //Check for conditional modules (in a second+ instance) and add their requirements
         //TODO I hate this entire method, it needs to be fixed ASAP (3.5.0) ^davglass
-        _yuitest_coverline("build/yui-core/yui-core.js", 639);
+        _yuitest_coverline("build/yui-core/yui-core.js", 640);
 for (i = 0; i < len; i++) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 640);
-name = r[i];
             _yuitest_coverline("build/yui-core/yui-core.js", 641);
-mod = mods[name];
+name = r[i];
             _yuitest_coverline("build/yui-core/yui-core.js", 642);
-c.push(name);
+mod = mods[name];
             _yuitest_coverline("build/yui-core/yui-core.js", 643);
+c.push(name);
+            _yuitest_coverline("build/yui-core/yui-core.js", 644);
 if (loader && loader.conditions[name]) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 644);
+                _yuitest_coverline("build/yui-core/yui-core.js", 645);
 for (j in loader.conditions[name]) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 645);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 646);
 if (loader.conditions[name].hasOwnProperty(j)) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 646);
-def = loader.conditions[name][j];
                         _yuitest_coverline("build/yui-core/yui-core.js", 647);
-go = def && ((def.ua && Y.UA[def.ua]) || (def.test && def.test(Y)));
+def = loader.conditions[name][j];
                         _yuitest_coverline("build/yui-core/yui-core.js", 648);
+go = def && ((def.ua && Y.UA[def.ua]) || (def.test && def.test(Y)));
+                        _yuitest_coverline("build/yui-core/yui-core.js", 649);
 if (go) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 649);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 650);
 c.push(def.name);
                         }
                     }
                 }
             }
         }
-        _yuitest_coverline("build/yui-core/yui-core.js", 655);
-r = c;
         _yuitest_coverline("build/yui-core/yui-core.js", 656);
+r = c;
+        _yuitest_coverline("build/yui-core/yui-core.js", 657);
 len = r.length;
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 658);
+        _yuitest_coverline("build/yui-core/yui-core.js", 659);
 for (i = 0; i < len; i++) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 659);
+            _yuitest_coverline("build/yui-core/yui-core.js", 660);
 if (!done[r[i]]) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 660);
-name = r[i];
                 _yuitest_coverline("build/yui-core/yui-core.js", 661);
+name = r[i];
+                _yuitest_coverline("build/yui-core/yui-core.js", 662);
 mod = mods[name];
 
-                _yuitest_coverline("build/yui-core/yui-core.js", 663);
+                _yuitest_coverline("build/yui-core/yui-core.js", 664);
 if (aliases && aliases[name] && !mod) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 664);
-Y._attach(aliases[name]);
                     _yuitest_coverline("build/yui-core/yui-core.js", 665);
+Y._attach(aliases[name]);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 666);
 continue;
                 }
-                _yuitest_coverline("build/yui-core/yui-core.js", 667);
+                _yuitest_coverline("build/yui-core/yui-core.js", 668);
 if (!mod) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 668);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 669);
 if (loader && loader.moduleInfo[name]) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 669);
-mod = loader.moduleInfo[name];
                         _yuitest_coverline("build/yui-core/yui-core.js", 670);
+mod = loader.moduleInfo[name];
+                        _yuitest_coverline("build/yui-core/yui-core.js", 671);
 moot = true;
                     }
 
 
                     //if (!loader || !loader.moduleInfo[name]) {
                     //if ((!loader || !loader.moduleInfo[name]) && !moot) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 676);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 677);
 if (!moot && name) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 677);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 678);
 if ((name.indexOf('skin-') === -1) && (name.indexOf('css') === -1)) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 678);
-Y.Env._missed.push(name);
                             _yuitest_coverline("build/yui-core/yui-core.js", 679);
-Y.Env._missed = Y.Array.dedupe(Y.Env._missed);
+Y.Env._missed.push(name);
                             _yuitest_coverline("build/yui-core/yui-core.js", 680);
+Y.Env._missed = Y.Array.dedupe(Y.Env._missed);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 681);
 Y.message('NOT loaded: ' + name, 'warn', 'yui');
                         }
                     }
                 } else {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 684);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 685);
 done[name] = true;
                     //Don't like this, but in case a mod was asked for once, then we fetch it
                     //We need to remove it from the missed list ^davglass
-                    _yuitest_coverline("build/yui-core/yui-core.js", 687);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 688);
 for (j = 0; j < Y.Env._missed.length; j++) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 688);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 689);
 if (Y.Env._missed[j] === name) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 689);
-Y.message('Found: ' + name + ' (was reported as missing earlier)', 'warn', 'yui');
                             _yuitest_coverline("build/yui-core/yui-core.js", 690);
+Y.message('Found: ' + name + ' (was reported as missing earlier)', 'warn', 'yui');
+                            _yuitest_coverline("build/yui-core/yui-core.js", 691);
 Y.Env._missed.splice(j, 1);
                         }
                     }
@@ -946,107 +947,107 @@ Y.Env._missed.splice(j, 1);
                         since it may have been loaded by another instance and it's dependencies might
                         have been redefined inside the fetched file.
                     */
-                    _yuitest_coverline("build/yui-core/yui-core.js", 698);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 699);
 if (loader && cache && cache[name] && cache[name].temp) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 699);
-loader.getRequires(cache[name]);
                         _yuitest_coverline("build/yui-core/yui-core.js", 700);
-req = [];
+loader.getRequires(cache[name]);
                         _yuitest_coverline("build/yui-core/yui-core.js", 701);
+req = [];
+                        _yuitest_coverline("build/yui-core/yui-core.js", 702);
 for (j in loader.moduleInfo[name].expanded_map) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 702);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 703);
 if (loader.moduleInfo[name].expanded_map.hasOwnProperty(j)) {
-                                _yuitest_coverline("build/yui-core/yui-core.js", 703);
+                                _yuitest_coverline("build/yui-core/yui-core.js", 704);
 req.push(j);
                             }
                         }
-                        _yuitest_coverline("build/yui-core/yui-core.js", 706);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 707);
 Y._attach(req);
                     }
                     
-                    _yuitest_coverline("build/yui-core/yui-core.js", 709);
-details = mod.details;
                     _yuitest_coverline("build/yui-core/yui-core.js", 710);
-req = details.requires;
+details = mod.details;
                     _yuitest_coverline("build/yui-core/yui-core.js", 711);
-use = details.use;
+req = details.requires;
                     _yuitest_coverline("build/yui-core/yui-core.js", 712);
+use = details.use;
+                    _yuitest_coverline("build/yui-core/yui-core.js", 713);
 after = details.after;
                     //Force Intl load if there is a language (Loader logic) @todo fix this shit
-                    _yuitest_coverline("build/yui-core/yui-core.js", 714);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 715);
 if (details.lang) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 715);
-req = req || [];
                         _yuitest_coverline("build/yui-core/yui-core.js", 716);
+req = req || [];
+                        _yuitest_coverline("build/yui-core/yui-core.js", 717);
 req.unshift('intl');
                     }
 
-                    _yuitest_coverline("build/yui-core/yui-core.js", 719);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 720);
 if (req) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 720);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 721);
 for (j = 0; j < req.length; j++) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 721);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 722);
 if (!done[req[j]]) {
-                                _yuitest_coverline("build/yui-core/yui-core.js", 722);
+                                _yuitest_coverline("build/yui-core/yui-core.js", 723);
 if (!Y._attach(req)) {
-                                    _yuitest_coverline("build/yui-core/yui-core.js", 723);
+                                    _yuitest_coverline("build/yui-core/yui-core.js", 724);
 return false;
                                 }
-                                _yuitest_coverline("build/yui-core/yui-core.js", 725);
+                                _yuitest_coverline("build/yui-core/yui-core.js", 726);
 break;
                             }
                         }
                     }
 
-                    _yuitest_coverline("build/yui-core/yui-core.js", 730);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 731);
 if (after) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 731);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 732);
 for (j = 0; j < after.length; j++) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 732);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 733);
 if (!done[after[j]]) {
-                                _yuitest_coverline("build/yui-core/yui-core.js", 733);
+                                _yuitest_coverline("build/yui-core/yui-core.js", 734);
 if (!Y._attach(after, true)) {
-                                    _yuitest_coverline("build/yui-core/yui-core.js", 734);
+                                    _yuitest_coverline("build/yui-core/yui-core.js", 735);
 return false;
                                 }
-                                _yuitest_coverline("build/yui-core/yui-core.js", 736);
+                                _yuitest_coverline("build/yui-core/yui-core.js", 737);
 break;
                             }
                         }
                     }
 
-                    _yuitest_coverline("build/yui-core/yui-core.js", 741);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 742);
 if (mod.fn) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 742);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 743);
 if (Y.config.throwFail) {
-                                _yuitest_coverline("build/yui-core/yui-core.js", 743);
+                                _yuitest_coverline("build/yui-core/yui-core.js", 744);
 mod.fn(Y, name);
                             } else {
-                                _yuitest_coverline("build/yui-core/yui-core.js", 745);
+                                _yuitest_coverline("build/yui-core/yui-core.js", 746);
 try {
-                                    _yuitest_coverline("build/yui-core/yui-core.js", 746);
+                                    _yuitest_coverline("build/yui-core/yui-core.js", 747);
 mod.fn(Y, name);
                                 } catch (e) {
-                                    _yuitest_coverline("build/yui-core/yui-core.js", 748);
+                                    _yuitest_coverline("build/yui-core/yui-core.js", 749);
 Y.error('Attach error: ' + name, e, name);
-                                _yuitest_coverline("build/yui-core/yui-core.js", 749);
+                                _yuitest_coverline("build/yui-core/yui-core.js", 750);
 return false;
                             }
                         }
                     }
 
-                    _yuitest_coverline("build/yui-core/yui-core.js", 754);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 755);
 if (use) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 755);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 756);
 for (j = 0; j < use.length; j++) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 756);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 757);
 if (!done[use[j]]) {
-                                _yuitest_coverline("build/yui-core/yui-core.js", 757);
+                                _yuitest_coverline("build/yui-core/yui-core.js", 758);
 if (!Y._attach(use)) {
-                                    _yuitest_coverline("build/yui-core/yui-core.js", 758);
+                                    _yuitest_coverline("build/yui-core/yui-core.js", 759);
 return false;
                                 }
-                                _yuitest_coverline("build/yui-core/yui-core.js", 760);
+                                _yuitest_coverline("build/yui-core/yui-core.js", 761);
 break;
                             }
                         }
@@ -1058,7 +1059,7 @@ break;
             }
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 771);
+        _yuitest_coverline("build/yui-core/yui-core.js", 772);
 return true;
     },
     /**
@@ -1070,34 +1071,34 @@ return true;
     */
     _delayCallback: function(cb, until) {
 
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "_delayCallback", 780);
-_yuitest_coverline("build/yui-core/yui-core.js", 782);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "_delayCallback", 781);
+_yuitest_coverline("build/yui-core/yui-core.js", 783);
 var Y = this,
             mod = ['event-base'];
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 785);
+        _yuitest_coverline("build/yui-core/yui-core.js", 786);
 until = (Y.Lang.isObject(until) ? until : { event: until });
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 787);
+        _yuitest_coverline("build/yui-core/yui-core.js", 788);
 if (until.event === 'load') {
-            _yuitest_coverline("build/yui-core/yui-core.js", 788);
+            _yuitest_coverline("build/yui-core/yui-core.js", 789);
 mod.push('event-synthetic');
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 791);
+        _yuitest_coverline("build/yui-core/yui-core.js", 792);
 return function() {
-            _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 3)", 791);
-_yuitest_coverline("build/yui-core/yui-core.js", 792);
+            _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 3)", 792);
+_yuitest_coverline("build/yui-core/yui-core.js", 793);
 var args = arguments;
-            _yuitest_coverline("build/yui-core/yui-core.js", 793);
+            _yuitest_coverline("build/yui-core/yui-core.js", 794);
 Y._use(mod, function() {
-                _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 4)", 793);
-_yuitest_coverline("build/yui-core/yui-core.js", 794);
-Y.on(until.event, function() {
-                    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 5)", 794);
+                _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 4)", 794);
 _yuitest_coverline("build/yui-core/yui-core.js", 795);
+Y.on(until.event, function() {
+                    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 5)", 795);
+_yuitest_coverline("build/yui-core/yui-core.js", 796);
 args[1].delayUntil = until.event;
-                    _yuitest_coverline("build/yui-core/yui-core.js", 796);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 797);
 cb.apply(Y, args);
                 }, until.args);
             });
@@ -1153,8 +1154,8 @@ cb.apply(Y, args);
      * @return {YUI} the YUI instance.
      */
     use: function() {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "use", 850);
-_yuitest_coverline("build/yui-core/yui-core.js", 851);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "use", 851);
+_yuitest_coverline("build/yui-core/yui-core.js", 852);
 var args = SLICE.call(arguments, 0),
             callback = args[args.length - 1],
             Y = this,
@@ -1165,66 +1166,66 @@ var args = SLICE.call(arguments, 0),
             provisioned = true;
 
         // The last argument supplied to use can be a load complete callback
-        _yuitest_coverline("build/yui-core/yui-core.js", 861);
+        _yuitest_coverline("build/yui-core/yui-core.js", 862);
 if (Y.Lang.isFunction(callback)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 862);
-args.pop();
             _yuitest_coverline("build/yui-core/yui-core.js", 863);
+args.pop();
+            _yuitest_coverline("build/yui-core/yui-core.js", 864);
 if (Y.config.delayUntil) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 864);
+                _yuitest_coverline("build/yui-core/yui-core.js", 865);
 callback = Y._delayCallback(callback, Y.config.delayUntil);
             }
         } else {
-            _yuitest_coverline("build/yui-core/yui-core.js", 867);
+            _yuitest_coverline("build/yui-core/yui-core.js", 868);
 callback = null;
         }
-        _yuitest_coverline("build/yui-core/yui-core.js", 869);
+        _yuitest_coverline("build/yui-core/yui-core.js", 870);
 if (Y.Lang.isArray(args[0])) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 870);
+            _yuitest_coverline("build/yui-core/yui-core.js", 871);
 args = args[0];
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 873);
+        _yuitest_coverline("build/yui-core/yui-core.js", 874);
 if (Y.config.cacheUse) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 874);
+            _yuitest_coverline("build/yui-core/yui-core.js", 875);
 while ((name = args[i++])) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 875);
+                _yuitest_coverline("build/yui-core/yui-core.js", 876);
 if (!Env._attached[name]) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 876);
-provisioned = false;
                     _yuitest_coverline("build/yui-core/yui-core.js", 877);
+provisioned = false;
+                    _yuitest_coverline("build/yui-core/yui-core.js", 878);
 break;
                 }
             }
 
-            _yuitest_coverline("build/yui-core/yui-core.js", 881);
+            _yuitest_coverline("build/yui-core/yui-core.js", 882);
 if (provisioned) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 882);
+                _yuitest_coverline("build/yui-core/yui-core.js", 883);
 if (args.length) {
                 }
-                _yuitest_coverline("build/yui-core/yui-core.js", 884);
-Y._notify(callback, ALREADY_DONE, args);
                 _yuitest_coverline("build/yui-core/yui-core.js", 885);
+Y._notify(callback, ALREADY_DONE, args);
+                _yuitest_coverline("build/yui-core/yui-core.js", 886);
 return Y;
             }
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 889);
+        _yuitest_coverline("build/yui-core/yui-core.js", 890);
 if (Y._loading) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 890);
-Y._useQueue = Y._useQueue || new Y.Queue();
             _yuitest_coverline("build/yui-core/yui-core.js", 891);
+Y._useQueue = Y._useQueue || new Y.Queue();
+            _yuitest_coverline("build/yui-core/yui-core.js", 892);
 Y._useQueue.add([args, callback]);
         } else {
-            _yuitest_coverline("build/yui-core/yui-core.js", 893);
+            _yuitest_coverline("build/yui-core/yui-core.js", 894);
 Y._use(args, function(Y, response) {
-                _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 6)", 893);
-_yuitest_coverline("build/yui-core/yui-core.js", 894);
+                _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 6)", 894);
+_yuitest_coverline("build/yui-core/yui-core.js", 895);
 Y._notify(callback, response, args);
             });
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 898);
+        _yuitest_coverline("build/yui-core/yui-core.js", 899);
 return Y;
     },
     /**
@@ -1236,31 +1237,31 @@ return Y;
     * @private
     */
     _notify: function(callback, response, args) {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "_notify", 908);
-_yuitest_coverline("build/yui-core/yui-core.js", 909);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "_notify", 909);
+_yuitest_coverline("build/yui-core/yui-core.js", 910);
 if (!response.success && this.config.loadErrorFn) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 910);
+            _yuitest_coverline("build/yui-core/yui-core.js", 911);
 this.config.loadErrorFn.call(this, this, callback, response, args);
-        } else {_yuitest_coverline("build/yui-core/yui-core.js", 911);
+        } else {_yuitest_coverline("build/yui-core/yui-core.js", 912);
 if (callback) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 912);
+            _yuitest_coverline("build/yui-core/yui-core.js", 913);
 if (this.Env._missed && this.Env._missed.length) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 913);
-response.msg = 'Missing modules: ' + this.Env._missed.join();
                 _yuitest_coverline("build/yui-core/yui-core.js", 914);
+response.msg = 'Missing modules: ' + this.Env._missed.join();
+                _yuitest_coverline("build/yui-core/yui-core.js", 915);
 response.success = false;
             }
-            _yuitest_coverline("build/yui-core/yui-core.js", 916);
+            _yuitest_coverline("build/yui-core/yui-core.js", 917);
 if (this.config.throwFail) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 917);
+                _yuitest_coverline("build/yui-core/yui-core.js", 918);
 callback(this, response);
             } else {
-                _yuitest_coverline("build/yui-core/yui-core.js", 919);
+                _yuitest_coverline("build/yui-core/yui-core.js", 920);
 try {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 920);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 921);
 callback(this, response);
                 } catch (e) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 922);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 923);
 this.error('use callback error', e, args);
                 }
             }
@@ -1279,14 +1280,14 @@ this.error('use callback error', e, args);
     */
     _use: function(args, callback) {
 
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "_use", 938);
-_yuitest_coverline("build/yui-core/yui-core.js", 940);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "_use", 939);
+_yuitest_coverline("build/yui-core/yui-core.js", 941);
 if (!this.Array) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 941);
+            _yuitest_coverline("build/yui-core/yui-core.js", 942);
 this._attach(['yui-base']);
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 944);
+        _yuitest_coverline("build/yui-core/yui-core.js", 945);
 var len, loader, handleBoot, handleRLS,
             Y = this,
             G_ENV = YUI.Env,
@@ -1306,94 +1307,94 @@ var len, loader, handleBoot, handleRLS,
             fetchCSS = config.fetchCSS,
             process = function(names, skip) {
 
-                _yuitest_coverfunc("build/yui-core/yui-core.js", "process", 961);
-_yuitest_coverline("build/yui-core/yui-core.js", 963);
+                _yuitest_coverfunc("build/yui-core/yui-core.js", "process", 962);
+_yuitest_coverline("build/yui-core/yui-core.js", 964);
 var i = 0, a = [], name, len, m, req, use;
 
-                _yuitest_coverline("build/yui-core/yui-core.js", 965);
+                _yuitest_coverline("build/yui-core/yui-core.js", 966);
 if (!names.length) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 966);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 967);
 return;
                 }
 
-                _yuitest_coverline("build/yui-core/yui-core.js", 969);
+                _yuitest_coverline("build/yui-core/yui-core.js", 970);
 if (aliases) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 970);
-len = names.length;
                     _yuitest_coverline("build/yui-core/yui-core.js", 971);
+len = names.length;
+                    _yuitest_coverline("build/yui-core/yui-core.js", 972);
 for (i = 0; i < len; i++) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 972);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 973);
 if (aliases[names[i]] && !mods[names[i]]) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 973);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 974);
 a = [].concat(a, aliases[names[i]]);
                         } else {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 975);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 976);
 a.push(names[i]);
                         }
                     }
-                    _yuitest_coverline("build/yui-core/yui-core.js", 978);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 979);
 names = a;
                 }
                 
-                _yuitest_coverline("build/yui-core/yui-core.js", 981);
+                _yuitest_coverline("build/yui-core/yui-core.js", 982);
 len = names.length;
                 
-                _yuitest_coverline("build/yui-core/yui-core.js", 983);
+                _yuitest_coverline("build/yui-core/yui-core.js", 984);
 for (i = 0; i < len; i++) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 984);
-name = names[i];
                     _yuitest_coverline("build/yui-core/yui-core.js", 985);
+name = names[i];
+                    _yuitest_coverline("build/yui-core/yui-core.js", 986);
 if (!skip) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 986);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 987);
 r.push(name);
                     }
 
                     // only attach a module once
-                    _yuitest_coverline("build/yui-core/yui-core.js", 990);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 991);
 if (used[name]) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 991);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 992);
 continue;
                     }
                     
-                    _yuitest_coverline("build/yui-core/yui-core.js", 994);
-m = mods[name];
                     _yuitest_coverline("build/yui-core/yui-core.js", 995);
-req = null;
+m = mods[name];
                     _yuitest_coverline("build/yui-core/yui-core.js", 996);
+req = null;
+                    _yuitest_coverline("build/yui-core/yui-core.js", 997);
 use = null;
 
-                    _yuitest_coverline("build/yui-core/yui-core.js", 998);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 999);
 if (m) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 999);
-used[name] = true;
                         _yuitest_coverline("build/yui-core/yui-core.js", 1000);
-req = m.details.requires;
+used[name] = true;
                         _yuitest_coverline("build/yui-core/yui-core.js", 1001);
+req = m.details.requires;
+                        _yuitest_coverline("build/yui-core/yui-core.js", 1002);
 use = m.details.use;
                     } else {
                         // CSS files don't register themselves, see if it has
                         // been loaded
-                        _yuitest_coverline("build/yui-core/yui-core.js", 1005);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 1006);
 if (!G_ENV._loaded[VERSION][name]) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 1006);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 1007);
 missing.push(name);
                         } else {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 1008);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 1009);
 used[name] = true; // probably css
                         }
                     }
 
                     // make sure requirements are attached
-                    _yuitest_coverline("build/yui-core/yui-core.js", 1013);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 1014);
 if (req && req.length) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 1014);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 1015);
 process(req);
                     }
 
                     // make sure we grab the submodule dependencies too
-                    _yuitest_coverline("build/yui-core/yui-core.js", 1018);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 1019);
 if (use && use.length) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 1019);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 1020);
 process(use, 1);
                     }
                 }
@@ -1401,8 +1402,8 @@ process(use, 1);
             },
 
             handleLoader = function(fromLoader) {
-                _yuitest_coverfunc("build/yui-core/yui-core.js", "handleLoader", 1025);
-_yuitest_coverline("build/yui-core/yui-core.js", 1026);
+                _yuitest_coverfunc("build/yui-core/yui-core.js", "handleLoader", 1026);
+_yuitest_coverline("build/yui-core/yui-core.js", 1027);
 var response = fromLoader || {
                         success: true,
                         msg: 'not dynamic'
@@ -1411,61 +1412,61 @@ var response = fromLoader || {
                     ret = true,
                     data = response.data;
 
-                _yuitest_coverline("build/yui-core/yui-core.js", 1034);
+                _yuitest_coverline("build/yui-core/yui-core.js", 1035);
 Y._loading = false;
 
-                _yuitest_coverline("build/yui-core/yui-core.js", 1036);
+                _yuitest_coverline("build/yui-core/yui-core.js", 1037);
 if (data) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 1037);
-origMissing = missing;
                     _yuitest_coverline("build/yui-core/yui-core.js", 1038);
-missing = [];
+origMissing = missing;
                     _yuitest_coverline("build/yui-core/yui-core.js", 1039);
-r = [];
+missing = [];
                     _yuitest_coverline("build/yui-core/yui-core.js", 1040);
-process(data);
+r = [];
                     _yuitest_coverline("build/yui-core/yui-core.js", 1041);
-redo = missing.length;
+process(data);
                     _yuitest_coverline("build/yui-core/yui-core.js", 1042);
+redo = missing.length;
+                    _yuitest_coverline("build/yui-core/yui-core.js", 1043);
 if (redo) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 1043);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 1044);
 if ([].concat(missing).sort().join() ==
                                 origMissing.sort().join()) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 1045);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 1046);
 redo = false;
                         }
                     }
                 }
 
-                _yuitest_coverline("build/yui-core/yui-core.js", 1050);
+                _yuitest_coverline("build/yui-core/yui-core.js", 1051);
 if (redo && data) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 1051);
-Y._loading = true;
                     _yuitest_coverline("build/yui-core/yui-core.js", 1052);
+Y._loading = true;
+                    _yuitest_coverline("build/yui-core/yui-core.js", 1053);
 Y._use(missing, function() {
-                        _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 7)", 1052);
-_yuitest_coverline("build/yui-core/yui-core.js", 1053);
+                        _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 7)", 1053);
+_yuitest_coverline("build/yui-core/yui-core.js", 1054);
 if (Y._attach(data)) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 1054);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 1055);
 Y._notify(callback, response, data);
                         }
                     });
                 } else {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 1058);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 1059);
 if (data) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 1059);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 1060);
 ret = Y._attach(data);
                     }
-                    _yuitest_coverline("build/yui-core/yui-core.js", 1061);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 1062);
 if (ret) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 1062);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 1063);
 Y._notify(callback, response, args);
                     }
                 }
 
-                _yuitest_coverline("build/yui-core/yui-core.js", 1066);
+                _yuitest_coverline("build/yui-core/yui-core.js", 1067);
 if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 1067);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 1068);
 Y._use.apply(Y, Y._useQueue.next());
                 }
 
@@ -1473,140 +1474,140 @@ Y._use.apply(Y, Y._useQueue.next());
 
 
         // YUI().use('*'); // bind everything available
-        _yuitest_coverline("build/yui-core/yui-core.js", 1074);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1075);
 if (firstArg === '*') {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1075);
-args = [];
             _yuitest_coverline("build/yui-core/yui-core.js", 1076);
+args = [];
+            _yuitest_coverline("build/yui-core/yui-core.js", 1077);
 for (i in mods) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 1077);
+                _yuitest_coverline("build/yui-core/yui-core.js", 1078);
 if (mods.hasOwnProperty(i)) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 1078);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 1079);
 args.push(i);
                 }
             }
-            _yuitest_coverline("build/yui-core/yui-core.js", 1081);
-ret = Y._attach(args);
             _yuitest_coverline("build/yui-core/yui-core.js", 1082);
+ret = Y._attach(args);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1083);
 if (ret) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 1083);
+                _yuitest_coverline("build/yui-core/yui-core.js", 1084);
 handleLoader();
             }
-            _yuitest_coverline("build/yui-core/yui-core.js", 1085);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1086);
 return Y;
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 1088);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1089);
 if ((mods.loader || mods['loader-base']) && !Y.Loader) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1089);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1090);
 Y._attach(['loader' + ((!mods.loader) ? '-base' : '')]);
         }
 
 
         // use loader to expand dependencies and sort the
         // requirements if it is available.
-        _yuitest_coverline("build/yui-core/yui-core.js", 1095);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1096);
 if (boot && Y.Loader && args.length) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1096);
-loader = getLoader(Y);
             _yuitest_coverline("build/yui-core/yui-core.js", 1097);
-loader.require(args);
+loader = getLoader(Y);
             _yuitest_coverline("build/yui-core/yui-core.js", 1098);
-loader.ignoreRegistered = true;
+loader.require(args);
             _yuitest_coverline("build/yui-core/yui-core.js", 1099);
-loader._boot = true;
+loader.ignoreRegistered = true;
             _yuitest_coverline("build/yui-core/yui-core.js", 1100);
-loader.calculate(null, (fetchCSS) ? null : 'js');
+loader._boot = true;
             _yuitest_coverline("build/yui-core/yui-core.js", 1101);
-args = loader.sorted;
+loader.calculate(null, (fetchCSS) ? null : 'js');
             _yuitest_coverline("build/yui-core/yui-core.js", 1102);
+args = loader.sorted;
+            _yuitest_coverline("build/yui-core/yui-core.js", 1103);
 loader._boot = false;
         }
         
-        _yuitest_coverline("build/yui-core/yui-core.js", 1105);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1106);
 process(args);
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 1107);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1108);
 len = missing.length;
 
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 1110);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1111);
 if (len) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1111);
-missing = YArray.dedupe(missing);
             _yuitest_coverline("build/yui-core/yui-core.js", 1112);
+missing = YArray.dedupe(missing);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1113);
 len = missing.length;
         }
 
 
         // dynamic load
-        _yuitest_coverline("build/yui-core/yui-core.js", 1117);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1118);
 if (boot && len && Y.Loader) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1118);
-Y._loading = true;
             _yuitest_coverline("build/yui-core/yui-core.js", 1119);
-loader = getLoader(Y);
+Y._loading = true;
             _yuitest_coverline("build/yui-core/yui-core.js", 1120);
-loader.onEnd = handleLoader;
+loader = getLoader(Y);
             _yuitest_coverline("build/yui-core/yui-core.js", 1121);
-loader.context = Y;
+loader.onEnd = handleLoader;
             _yuitest_coverline("build/yui-core/yui-core.js", 1122);
-loader.data = args;
+loader.context = Y;
             _yuitest_coverline("build/yui-core/yui-core.js", 1123);
-loader.ignoreRegistered = false;
+loader.data = args;
             _yuitest_coverline("build/yui-core/yui-core.js", 1124);
-loader.require(args);
+loader.ignoreRegistered = false;
             _yuitest_coverline("build/yui-core/yui-core.js", 1125);
+loader.require(missing);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1126);
 loader.insert(null, (fetchCSS) ? null : 'js');
 
-        } else {_yuitest_coverline("build/yui-core/yui-core.js", 1127);
+        } else {_yuitest_coverline("build/yui-core/yui-core.js", 1128);
 if (boot && len && Y.Get && !Env.bootstrapped) {
 
-            _yuitest_coverline("build/yui-core/yui-core.js", 1129);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1130);
 Y._loading = true;
 
-            _yuitest_coverline("build/yui-core/yui-core.js", 1131);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1132);
 handleBoot = function() {
-                _yuitest_coverfunc("build/yui-core/yui-core.js", "handleBoot", 1131);
-_yuitest_coverline("build/yui-core/yui-core.js", 1132);
+                _yuitest_coverfunc("build/yui-core/yui-core.js", "handleBoot", 1132);
+_yuitest_coverline("build/yui-core/yui-core.js", 1133);
 Y._loading = false;
-                _yuitest_coverline("build/yui-core/yui-core.js", 1133);
-queue.running = false;
                 _yuitest_coverline("build/yui-core/yui-core.js", 1134);
-Env.bootstrapped = true;
+queue.running = false;
                 _yuitest_coverline("build/yui-core/yui-core.js", 1135);
-G_ENV._bootstrapping = false;
+Env.bootstrapped = true;
                 _yuitest_coverline("build/yui-core/yui-core.js", 1136);
+G_ENV._bootstrapping = false;
+                _yuitest_coverline("build/yui-core/yui-core.js", 1137);
 if (Y._attach(['loader'])) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 1137);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 1138);
 Y._use(args, callback);
                 }
             };
 
-            _yuitest_coverline("build/yui-core/yui-core.js", 1141);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1142);
 if (G_ENV._bootstrapping) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 1142);
+                _yuitest_coverline("build/yui-core/yui-core.js", 1143);
 queue.add(handleBoot);
             } else {
-                _yuitest_coverline("build/yui-core/yui-core.js", 1144);
-G_ENV._bootstrapping = true;
                 _yuitest_coverline("build/yui-core/yui-core.js", 1145);
+G_ENV._bootstrapping = true;
+                _yuitest_coverline("build/yui-core/yui-core.js", 1146);
 Y.Get.script(config.base + config.loaderPath, {
                     onEnd: handleBoot
                 });
             }
 
         } else {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1151);
-ret = Y._attach(args);
             _yuitest_coverline("build/yui-core/yui-core.js", 1152);
+ret = Y._attach(args);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1153);
 if (ret) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 1153);
+                _yuitest_coverline("build/yui-core/yui-core.js", 1154);
 handleLoader();
             }
         }}
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 1157);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1158);
 return Y;
     },
 
@@ -1645,35 +1646,35 @@ return Y;
     @return {Object}  A reference to the last namespace object created.
     **/
     namespace: function() {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "namespace", 1194);
-_yuitest_coverline("build/yui-core/yui-core.js", 1195);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "namespace", 1195);
+_yuitest_coverline("build/yui-core/yui-core.js", 1196);
 var a = arguments, o, i = 0, j, d, arg;
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 1197);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1198);
 for (; i < a.length; i++) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1198);
-o = this; //Reset base object per argument or it will get reused from the last
             _yuitest_coverline("build/yui-core/yui-core.js", 1199);
-arg = a[i];
+o = this; //Reset base object per argument or it will get reused from the last
             _yuitest_coverline("build/yui-core/yui-core.js", 1200);
+arg = a[i];
+            _yuitest_coverline("build/yui-core/yui-core.js", 1201);
 if (arg.indexOf(PERIOD) > -1) { //Skip this if no "." is present
-                _yuitest_coverline("build/yui-core/yui-core.js", 1201);
-d = arg.split(PERIOD);
                 _yuitest_coverline("build/yui-core/yui-core.js", 1202);
+d = arg.split(PERIOD);
+                _yuitest_coverline("build/yui-core/yui-core.js", 1203);
 for (j = (d[0] == 'YAHOO') ? 1 : 0; j < d.length; j++) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 1203);
-o[d[j]] = o[d[j]] || {};
                     _yuitest_coverline("build/yui-core/yui-core.js", 1204);
+o[d[j]] = o[d[j]] || {};
+                    _yuitest_coverline("build/yui-core/yui-core.js", 1205);
 o = o[d[j]];
                 }
             } else {
-                _yuitest_coverline("build/yui-core/yui-core.js", 1207);
-o[arg] = o[arg] || {};
                 _yuitest_coverline("build/yui-core/yui-core.js", 1208);
+o[arg] = o[arg] || {};
+                _yuitest_coverline("build/yui-core/yui-core.js", 1209);
 o = o[arg]; //Reset base object to the new object so it's returned
             }
         }
-        _yuitest_coverline("build/yui-core/yui-core.js", 1211);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1212);
 return o;
     },
 
@@ -1681,8 +1682,8 @@ return o;
     log: NOOP,
     message: NOOP,
     // this is replaced if the dump module is included
-    dump: function (o) { _yuitest_coverfunc("build/yui-core/yui-core.js", "dump", 1218);
-_yuitest_coverline("build/yui-core/yui-core.js", 1218);
+    dump: function (o) { _yuitest_coverfunc("build/yui-core/yui-core.js", "dump", 1219);
+_yuitest_coverline("build/yui-core/yui-core.js", 1219);
 return ''+o; },
 
     /**
@@ -1701,26 +1702,26 @@ return ''+o; },
     error: function(msg, e, src) {
         //TODO Add check for window.onerror here
 
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "error", 1233);
-_yuitest_coverline("build/yui-core/yui-core.js", 1236);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "error", 1234);
+_yuitest_coverline("build/yui-core/yui-core.js", 1237);
 var Y = this, ret;
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 1238);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1239);
 if (Y.config.errorFn) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1239);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1240);
 ret = Y.config.errorFn.apply(Y, arguments);
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 1242);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1243);
 if (!ret) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1243);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1244);
 throw (e || new Error(msg));
         } else {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1245);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1246);
 Y.message(msg, 'error', ''+src); // don't scrub this one
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 1248);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1249);
 return Y;
     },
 
@@ -1731,10 +1732,10 @@ return Y;
      * @return {String} the guid.
      */
     guid: function(pre) {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "guid", 1257);
-_yuitest_coverline("build/yui-core/yui-core.js", 1258);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "guid", 1258);
+_yuitest_coverline("build/yui-core/yui-core.js", 1259);
 var id = this.Env._guidp + '_' + (++this.Env._uidx);
-        _yuitest_coverline("build/yui-core/yui-core.js", 1259);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1260);
 return (pre) ? (pre + id) : id;
     },
 
@@ -1749,43 +1750,43 @@ return (pre) ? (pre + id) : id;
      * @return {String} The object's guid or null.
      */
     stamp: function(o, readOnly) {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "stamp", 1272);
-_yuitest_coverline("build/yui-core/yui-core.js", 1273);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "stamp", 1273);
+_yuitest_coverline("build/yui-core/yui-core.js", 1274);
 var uid;
-        _yuitest_coverline("build/yui-core/yui-core.js", 1274);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1275);
 if (!o) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1275);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1276);
 return o;
         }
 
         // IE generates its own unique ID for dom nodes
         // The uniqueID property of a document node returns a new ID
-        _yuitest_coverline("build/yui-core/yui-core.js", 1280);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1281);
 if (o.uniqueID && o.nodeType && o.nodeType !== 9) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1281);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1282);
 uid = o.uniqueID;
         } else {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1283);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1284);
 uid = (typeof o === 'string') ? o : o._yuid;
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 1286);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1287);
 if (!uid) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1287);
-uid = this.guid();
             _yuitest_coverline("build/yui-core/yui-core.js", 1288);
+uid = this.guid();
+            _yuitest_coverline("build/yui-core/yui-core.js", 1289);
 if (!readOnly) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 1289);
+                _yuitest_coverline("build/yui-core/yui-core.js", 1290);
 try {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 1290);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 1291);
 o._yuid = uid;
                 } catch (e) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 1292);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 1293);
 uid = null;
                 }
             }
         }
-        _yuitest_coverline("build/yui-core/yui-core.js", 1296);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1297);
 return uid;
     },
 
@@ -1795,19 +1796,19 @@ return uid;
      * @since 3.3.0
      */
     destroy: function() {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "destroy", 1304);
-_yuitest_coverline("build/yui-core/yui-core.js", 1305);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "destroy", 1305);
+_yuitest_coverline("build/yui-core/yui-core.js", 1306);
 var Y = this;
-        _yuitest_coverline("build/yui-core/yui-core.js", 1306);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1307);
 if (Y.Event) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1307);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1308);
 Y.Event._unload();
         }
-        _yuitest_coverline("build/yui-core/yui-core.js", 1309);
-delete instances[Y.id];
         _yuitest_coverline("build/yui-core/yui-core.js", 1310);
-delete Y.Env;
+delete instances[Y.id];
         _yuitest_coverline("build/yui-core/yui-core.js", 1311);
+delete Y.Env;
+        _yuitest_coverline("build/yui-core/yui-core.js", 1312);
 delete Y.config;
     }
 
@@ -1822,15 +1823,15 @@ delete Y.config;
      */
 };
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 1325);
+    _yuitest_coverline("build/yui-core/yui-core.js", 1326);
 YUI.prototype = proto;
 
     // inheritance utilities are not available yet
-    _yuitest_coverline("build/yui-core/yui-core.js", 1328);
+    _yuitest_coverline("build/yui-core/yui-core.js", 1329);
 for (prop in proto) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 1329);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1330);
 if (proto.hasOwnProperty(prop)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1330);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1331);
 YUI[prop] = proto[prop];
         }
     }
@@ -1867,54 +1868,54 @@ overwriting other scripts configs.
     });
 
     */
-    _yuitest_coverline("build/yui-core/yui-core.js", 1366);
+    _yuitest_coverline("build/yui-core/yui-core.js", 1367);
 YUI.applyConfig = function(o) {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "applyConfig", 1366);
-_yuitest_coverline("build/yui-core/yui-core.js", 1367);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "applyConfig", 1367);
+_yuitest_coverline("build/yui-core/yui-core.js", 1368);
 if (!o) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1368);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1369);
 return;
         }
         //If there is a GlobalConfig, apply it first to set the defaults
-        _yuitest_coverline("build/yui-core/yui-core.js", 1371);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1372);
 if (YUI.GlobalConfig) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 1372);
+            _yuitest_coverline("build/yui-core/yui-core.js", 1373);
 this.prototype.applyConfig.call(this, YUI.GlobalConfig);
         }
         //Apply this config to it
-        _yuitest_coverline("build/yui-core/yui-core.js", 1375);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1376);
 this.prototype.applyConfig.call(this, o);
         //Reset GlobalConfig to the combined config
-        _yuitest_coverline("build/yui-core/yui-core.js", 1377);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1378);
 YUI.GlobalConfig = this.config;
     };
 
     // set up the environment
-    _yuitest_coverline("build/yui-core/yui-core.js", 1381);
+    _yuitest_coverline("build/yui-core/yui-core.js", 1382);
 YUI._init();
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 1383);
+    _yuitest_coverline("build/yui-core/yui-core.js", 1384);
 if (hasWin) {
         // add a window load event at load time so we can capture
         // the case where it fires before dynamic loading is
         // complete.
-        _yuitest_coverline("build/yui-core/yui-core.js", 1387);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1388);
 add(window, 'load', handleLoad);
     } else {
-        _yuitest_coverline("build/yui-core/yui-core.js", 1389);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1390);
 handleLoad();
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 1392);
-YUI.Env.add = add;
     _yuitest_coverline("build/yui-core/yui-core.js", 1393);
+YUI.Env.add = add;
+    _yuitest_coverline("build/yui-core/yui-core.js", 1394);
 YUI.Env.remove = remove;
 
     /*global exports*/
     // Support the CommonJS method for exporting our single global
-    _yuitest_coverline("build/yui-core/yui-core.js", 1397);
+    _yuitest_coverline("build/yui-core/yui-core.js", 1398);
 if (typeof exports == 'object') {
-        _yuitest_coverline("build/yui-core/yui-core.js", 1398);
+        _yuitest_coverline("build/yui-core/yui-core.js", 1399);
 exports.YUI = YUI;
     }
 
@@ -1993,6 +1994,15 @@ exports.YUI = YUI;
  * @property throwFail
  * @type boolean
  * @default true
+ */
+
+/**
+ * The global object. In Node.js it's an object called "global". In the
+ * browser is the current window object.
+ *
+ * @property global
+ * @type Object
+ * @default the global object
  */
 
 /**
@@ -2467,7 +2477,7 @@ Or you can delay until a node is available (with `available` or `contentready`):
     
 
 */
-_yuitest_coverline("build/yui-core/yui-core.js", 1950);
+_yuitest_coverline("build/yui-core/yui-core.js", 1960);
 YUI.add('yui-base', function (Y, NAME) {
 
 /*
@@ -2490,8 +2500,8 @@ YUI.add('yui-base', function (Y, NAME) {
  * @static
  */
 
-_yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 8)", 1950);
-_yuitest_coverline("build/yui-core/yui-core.js", 1972);
+_yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 8)", 1960);
+_yuitest_coverline("build/yui-core/yui-core.js", 1982);
 var L = Y.Lang || (Y.Lang = {}),
 
 STRING_PROTO = String.prototype,
@@ -2540,10 +2550,10 @@ other libraries.
 @protected
 @since 3.5.0
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2020);
+_yuitest_coverline("build/yui-core/yui-core.js", 2030);
 L._isNative = function (fn) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "_isNative", 2020);
-_yuitest_coverline("build/yui-core/yui-core.js", 2021);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "_isNative", 2030);
+_yuitest_coverline("build/yui-core/yui-core.js", 2031);
 return !!(Y.config.useNativeES5 && fn && NATIVE_FN_REGEX.test(fn));
 };
 
@@ -2561,10 +2571,10 @@ return !!(Y.config.useNativeES5 && fn && NATIVE_FN_REGEX.test(fn));
  * @return {boolean} true if o is an array.
  * @static
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2038);
+_yuitest_coverline("build/yui-core/yui-core.js", 2048);
 L.isArray = L._isNative(Array.isArray) ? Array.isArray : function (o) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "isArray", 2038);
-_yuitest_coverline("build/yui-core/yui-core.js", 2039);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "isArray", 2048);
+_yuitest_coverline("build/yui-core/yui-core.js", 2049);
 return L.type(o) === 'array';
 };
 
@@ -2575,10 +2585,10 @@ return L.type(o) === 'array';
  * @param o The object to test.
  * @return {boolean} true if o is a boolean.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2049);
+_yuitest_coverline("build/yui-core/yui-core.js", 2059);
 L.isBoolean = function(o) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "isBoolean", 2049);
-_yuitest_coverline("build/yui-core/yui-core.js", 2050);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "isBoolean", 2059);
+_yuitest_coverline("build/yui-core/yui-core.js", 2060);
 return typeof o === 'boolean';
 };
 
@@ -2589,10 +2599,10 @@ return typeof o === 'boolean';
  * @param o The object to test.
  * @return {boolean} true if o is a date.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2060);
+_yuitest_coverline("build/yui-core/yui-core.js", 2070);
 L.isDate = function(o) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "isDate", 2060);
-_yuitest_coverline("build/yui-core/yui-core.js", 2061);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "isDate", 2070);
+_yuitest_coverline("build/yui-core/yui-core.js", 2071);
 return L.type(o) === 'date' && o.toString() !== 'Invalid Date' && !isNaN(o);
 };
 
@@ -2620,10 +2630,10 @@ return L.type(o) === 'date' && o.toString() !== 'Invalid Date' && !isNaN(o);
  * @param o The object to test.
  * @return {boolean} true if o is a function.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2088);
+_yuitest_coverline("build/yui-core/yui-core.js", 2098);
 L.isFunction = function(o) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "isFunction", 2088);
-_yuitest_coverline("build/yui-core/yui-core.js", 2089);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "isFunction", 2098);
+_yuitest_coverline("build/yui-core/yui-core.js", 2099);
 return L.type(o) === 'function';
 };
 
@@ -2634,10 +2644,10 @@ return L.type(o) === 'function';
  * @param o The object to test.
  * @return {boolean} true if o is null.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2099);
+_yuitest_coverline("build/yui-core/yui-core.js", 2109);
 L.isNull = function(o) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "isNull", 2099);
-_yuitest_coverline("build/yui-core/yui-core.js", 2100);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "isNull", 2109);
+_yuitest_coverline("build/yui-core/yui-core.js", 2110);
 return o === null;
 };
 
@@ -2648,10 +2658,10 @@ return o === null;
  * @param o The object to test.
  * @return {boolean} true if o is a number.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2110);
+_yuitest_coverline("build/yui-core/yui-core.js", 2120);
 L.isNumber = function(o) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "isNumber", 2110);
-_yuitest_coverline("build/yui-core/yui-core.js", 2111);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "isNumber", 2120);
+_yuitest_coverline("build/yui-core/yui-core.js", 2121);
 return typeof o === 'number' && isFinite(o);
 };
 
@@ -2666,12 +2676,12 @@ return typeof o === 'number' && isFinite(o);
  * @return {boolean} true if o is an object.
  * @see isPlainObject
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2125);
+_yuitest_coverline("build/yui-core/yui-core.js", 2135);
 L.isObject = function(o, failfn) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "isObject", 2125);
-_yuitest_coverline("build/yui-core/yui-core.js", 2126);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "isObject", 2135);
+_yuitest_coverline("build/yui-core/yui-core.js", 2136);
 var t = typeof o;
-    _yuitest_coverline("build/yui-core/yui-core.js", 2127);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2137);
 return (o && (t === 'object' ||
         (!failfn && (t === 'function' || L.isFunction(o))))) || false;
 };
@@ -2683,10 +2693,10 @@ return (o && (t === 'object' ||
  * @param o The object to test.
  * @return {boolean} true if o is a string.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2138);
+_yuitest_coverline("build/yui-core/yui-core.js", 2148);
 L.isString = function(o) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "isString", 2138);
-_yuitest_coverline("build/yui-core/yui-core.js", 2139);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "isString", 2148);
+_yuitest_coverline("build/yui-core/yui-core.js", 2149);
 return typeof o === 'string';
 };
 
@@ -2697,10 +2707,10 @@ return typeof o === 'string';
  * @param o The object to test.
  * @return {boolean} true if o is undefined.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2149);
+_yuitest_coverline("build/yui-core/yui-core.js", 2159);
 L.isUndefined = function(o) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "isUndefined", 2149);
-_yuitest_coverline("build/yui-core/yui-core.js", 2150);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "isUndefined", 2159);
+_yuitest_coverline("build/yui-core/yui-core.js", 2160);
 return typeof o === 'undefined';
 };
 
@@ -2713,25 +2723,25 @@ return typeof o === 'undefined';
  * @param o The item to test.
  * @return {boolean} true if it is not null/undefined/NaN || false.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2162);
+_yuitest_coverline("build/yui-core/yui-core.js", 2172);
 L.isValue = function(o) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "isValue", 2162);
-_yuitest_coverline("build/yui-core/yui-core.js", 2163);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "isValue", 2172);
+_yuitest_coverline("build/yui-core/yui-core.js", 2173);
 var t = L.type(o);
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2165);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2175);
 switch (t) {
         case 'number':
-            _yuitest_coverline("build/yui-core/yui-core.js", 2167);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2177);
 return isFinite(o);
 
         case 'null': // fallthru
         case 'undefined':
-            _yuitest_coverline("build/yui-core/yui-core.js", 2171);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2181);
 return false;
 
         default:
-            _yuitest_coverline("build/yui-core/yui-core.js", 2174);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2184);
 return !!t;
     }
 };
@@ -2744,10 +2754,10 @@ return !!t;
  * @static
  * @since 3.3.0
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2186);
+_yuitest_coverline("build/yui-core/yui-core.js", 2196);
 L.now = Date.now || function () {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 9)", 2186);
-_yuitest_coverline("build/yui-core/yui-core.js", 2187);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 9)", 2196);
+_yuitest_coverline("build/yui-core/yui-core.js", 2197);
 return new Date().getTime();
 };
 
@@ -2762,13 +2772,13 @@ return new Date().getTime();
  * @static
  * @since 3.2.0
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2201);
+_yuitest_coverline("build/yui-core/yui-core.js", 2211);
 L.sub = function(s, o) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "sub", 2201);
-_yuitest_coverline("build/yui-core/yui-core.js", 2202);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "sub", 2211);
+_yuitest_coverline("build/yui-core/yui-core.js", 2212);
 return s.replace ? s.replace(SUBREGEX, function (match, key) {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 10)", 2202);
-_yuitest_coverline("build/yui-core/yui-core.js", 2203);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 10)", 2212);
+_yuitest_coverline("build/yui-core/yui-core.js", 2213);
 return L.isUndefined(o[key]) ? match : o[key];
     }) : s;
 };
@@ -2781,19 +2791,19 @@ return L.isUndefined(o[key]) ? match : o[key];
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2215);
+_yuitest_coverline("build/yui-core/yui-core.js", 2225);
 L.trim = STRING_PROTO.trim ? function(s) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 11)", 2215);
-_yuitest_coverline("build/yui-core/yui-core.js", 2216);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 11)", 2225);
+_yuitest_coverline("build/yui-core/yui-core.js", 2226);
 return s && s.trim ? s.trim() : s;
 } : function (s) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "}", 2217);
-_yuitest_coverline("build/yui-core/yui-core.js", 2218);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "}", 2227);
+_yuitest_coverline("build/yui-core/yui-core.js", 2228);
 try {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2219);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2229);
 return s.replace(TRIMREGEX, '');
     } catch (e) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2221);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2231);
 return s;
     }
 };
@@ -2805,14 +2815,14 @@ return s;
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2232);
+_yuitest_coverline("build/yui-core/yui-core.js", 2242);
 L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 12)", 2232);
-_yuitest_coverline("build/yui-core/yui-core.js", 2233);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 12)", 2242);
+_yuitest_coverline("build/yui-core/yui-core.js", 2243);
 return s.trimLeft();
 } : function (s) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "}", 2234);
-_yuitest_coverline("build/yui-core/yui-core.js", 2235);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "}", 2244);
+_yuitest_coverline("build/yui-core/yui-core.js", 2245);
 return s.replace(/^\s+/, '');
 };
 
@@ -2823,14 +2833,14 @@ return s.replace(/^\s+/, '');
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2245);
+_yuitest_coverline("build/yui-core/yui-core.js", 2255);
 L.trimRight = STRING_PROTO.trimRight ? function (s) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 13)", 2245);
-_yuitest_coverline("build/yui-core/yui-core.js", 2246);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 13)", 2255);
+_yuitest_coverline("build/yui-core/yui-core.js", 2256);
 return s.trimRight();
 } : function (s) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "}", 2247);
-_yuitest_coverline("build/yui-core/yui-core.js", 2248);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "}", 2257);
+_yuitest_coverline("build/yui-core/yui-core.js", 2258);
 return s.replace(/\s+$/, '');
 };
 
@@ -2861,10 +2871,10 @@ Known issues:
 @return {string} the detected type.
 @static
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2278);
+_yuitest_coverline("build/yui-core/yui-core.js", 2288);
 L.type = function(o) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "type", 2278);
-_yuitest_coverline("build/yui-core/yui-core.js", 2279);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "type", 2288);
+_yuitest_coverline("build/yui-core/yui-core.js", 2289);
 return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
 };
 /**
@@ -2872,7 +2882,7 @@ return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
 @submodule yui-base
 */
 
-_yuitest_coverline("build/yui-core/yui-core.js", 2286);
+_yuitest_coverline("build/yui-core/yui-core.js", 2296);
 var Lang   = Y.Lang,
     Native = Array.prototype,
 
@@ -2906,42 +2916,42 @@ pass `true` as the value of the _force_ parameter.
 @return {Array} A native array created from _thing_, according to the rules
   described above.
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2319);
+_yuitest_coverline("build/yui-core/yui-core.js", 2329);
 function YArray(thing, startIndex, force) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "YArray", 2319);
-_yuitest_coverline("build/yui-core/yui-core.js", 2320);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "YArray", 2329);
+_yuitest_coverline("build/yui-core/yui-core.js", 2330);
 var len, result;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2322);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2332);
 startIndex || (startIndex = 0);
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2324);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2334);
 if (force || YArray.test(thing)) {
         // IE throws when trying to slice HTMLElement collections.
-        _yuitest_coverline("build/yui-core/yui-core.js", 2326);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2336);
 try {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2327);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2337);
 return Native.slice.call(thing, startIndex);
         } catch (ex) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2329);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2339);
 result = [];
 
-            _yuitest_coverline("build/yui-core/yui-core.js", 2331);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2341);
 for (len = thing.length; startIndex < len; ++startIndex) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 2332);
+                _yuitest_coverline("build/yui-core/yui-core.js", 2342);
 result.push(thing[startIndex]);
             }
 
-            _yuitest_coverline("build/yui-core/yui-core.js", 2335);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2345);
 return result;
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2339);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2349);
 return [thing];
 }
 
-_yuitest_coverline("build/yui-core/yui-core.js", 2342);
+_yuitest_coverline("build/yui-core/yui-core.js", 2352);
 Y.Array = YArray;
 
 /**
@@ -2958,29 +2968,29 @@ Using `dedupe()` with non-string values may result in unexpected behavior.
 @static
 @since 3.4.0
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2358);
+_yuitest_coverline("build/yui-core/yui-core.js", 2368);
 YArray.dedupe = function (array) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "dedupe", 2358);
-_yuitest_coverline("build/yui-core/yui-core.js", 2359);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "dedupe", 2368);
+_yuitest_coverline("build/yui-core/yui-core.js", 2369);
 var hash    = {},
         results = [],
         i, item, len;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2363);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2373);
 for (i = 0, len = array.length; i < len; ++i) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2364);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2374);
 item = array[i];
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 2366);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2376);
 if (!hasOwn.call(hash, item)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2367);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2377);
 hash[item] = 1;
-            _yuitest_coverline("build/yui-core/yui-core.js", 2368);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2378);
 results.push(item);
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2372);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2382);
 return results;
 };
 
@@ -2999,25 +3009,25 @@ the native ES5 `Array.forEach()` method if available.
 @return {YUI} The YUI instance.
 @static
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2390);
+_yuitest_coverline("build/yui-core/yui-core.js", 2400);
 YArray.each = YArray.forEach = Lang._isNative(Native.forEach) ? function (array, fn, thisObj) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 14)", 2390);
-_yuitest_coverline("build/yui-core/yui-core.js", 2391);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 14)", 2400);
+_yuitest_coverline("build/yui-core/yui-core.js", 2401);
 Native.forEach.call(array || [], fn, thisObj || Y);
-    _yuitest_coverline("build/yui-core/yui-core.js", 2392);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2402);
 return Y;
 } : function (array, fn, thisObj) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "}", 2393);
-_yuitest_coverline("build/yui-core/yui-core.js", 2394);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "}", 2403);
+_yuitest_coverline("build/yui-core/yui-core.js", 2404);
 for (var i = 0, len = (array && array.length) || 0; i < len; ++i) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2395);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2405);
 if (i in array) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2396);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2406);
 fn.call(thisObj || Y, array[i], i, array);
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2400);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2410);
 return Y;
 };
 
@@ -3045,24 +3055,24 @@ values.
 @return {Object} Hash using the first array as keys and the second as values.
 @static
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2427);
+_yuitest_coverline("build/yui-core/yui-core.js", 2437);
 YArray.hash = function (keys, values) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "hash", 2427);
-_yuitest_coverline("build/yui-core/yui-core.js", 2428);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "hash", 2437);
+_yuitest_coverline("build/yui-core/yui-core.js", 2438);
 var hash = {},
         vlen = (values && values.length) || 0,
         i, len;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2432);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2442);
 for (i = 0, len = keys.length; i < len; ++i) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2433);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2443);
 if (i in keys) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2434);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2444);
 hash[keys[i]] = vlen > i && i in values ? values[i] : true;
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2438);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2448);
 return hash;
 };
 
@@ -3080,44 +3090,44 @@ This method wraps the native ES5 `Array.indexOf()` method if available.
     found.
 @static
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2455);
+_yuitest_coverline("build/yui-core/yui-core.js", 2465);
 YArray.indexOf = Lang._isNative(Native.indexOf) ? function (array, value, from) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 15)", 2455);
-_yuitest_coverline("build/yui-core/yui-core.js", 2456);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 15)", 2465);
+_yuitest_coverline("build/yui-core/yui-core.js", 2466);
 return Native.indexOf.call(array, value, from);
 } : function (array, value, from) {
     // http://es5.github.com/#x15.4.4.14
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "}", 2457);
-_yuitest_coverline("build/yui-core/yui-core.js", 2459);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "}", 2467);
+_yuitest_coverline("build/yui-core/yui-core.js", 2469);
 var len = array.length;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2461);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2471);
 from = +from || 0;
-    _yuitest_coverline("build/yui-core/yui-core.js", 2462);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2472);
 from = (from > 0 || -1) * Math.floor(Math.abs(from));
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2464);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2474);
 if (from < 0) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2465);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2475);
 from += len;
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 2467);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2477);
 if (from < 0) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2468);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2478);
 from = 0;
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2472);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2482);
 for (; from < len; ++from) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2473);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2483);
 if (from in array && array[from] === value) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2474);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2484);
 return from;
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2478);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2488);
 return -1;
 };
 
@@ -3140,10 +3150,10 @@ to sort values in numeric order.
 @return {Number} Difference between _a_ and _b_.
 @static
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2500);
+_yuitest_coverline("build/yui-core/yui-core.js", 2510);
 YArray.numericSort = function (a, b) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "numericSort", 2500);
-_yuitest_coverline("build/yui-core/yui-core.js", 2501);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "numericSort", 2510);
+_yuitest_coverline("build/yui-core/yui-core.js", 2511);
 return a - b;
 };
 
@@ -3163,23 +3173,23 @@ value from the function will stop the processing of remaining items.
   items in the array; `false` otherwise.
 @static
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2520);
+_yuitest_coverline("build/yui-core/yui-core.js", 2530);
 YArray.some = Lang._isNative(Native.some) ? function (array, fn, thisObj) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 16)", 2520);
-_yuitest_coverline("build/yui-core/yui-core.js", 2521);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 16)", 2530);
+_yuitest_coverline("build/yui-core/yui-core.js", 2531);
 return Native.some.call(array, fn, thisObj);
 } : function (array, fn, thisObj) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "}", 2522);
-_yuitest_coverline("build/yui-core/yui-core.js", 2523);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "}", 2532);
+_yuitest_coverline("build/yui-core/yui-core.js", 2533);
 for (var i = 0, len = array.length; i < len; ++i) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2524);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2534);
 if (i in array && fn.call(thisObj, array[i], i, array)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2525);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2535);
 return true;
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2529);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2539);
 return false;
 };
 
@@ -3201,32 +3211,32 @@ collections, such as `<form>` and `<select>`, to be array-like.
 
 @static
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2550);
+_yuitest_coverline("build/yui-core/yui-core.js", 2560);
 YArray.test = function (obj) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "test", 2550);
-_yuitest_coverline("build/yui-core/yui-core.js", 2551);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "test", 2560);
+_yuitest_coverline("build/yui-core/yui-core.js", 2561);
 var result = 0;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2553);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2563);
 if (Lang.isArray(obj)) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2554);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2564);
 result = 1;
-    } else {_yuitest_coverline("build/yui-core/yui-core.js", 2555);
+    } else {_yuitest_coverline("build/yui-core/yui-core.js", 2565);
 if (Lang.isObject(obj)) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2556);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2566);
 try {
             // indexed, but no tagName (element) or scrollTo/document (window. From DOM.isWindow test which we can't use here),
             // or functions without apply/call (Safari
             // HTMLElementCollection bug).
-            _yuitest_coverline("build/yui-core/yui-core.js", 2560);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2570);
 if ('length' in obj && !obj.tagName && !(obj.scrollTo && obj.document) && !obj.apply) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 2561);
+                _yuitest_coverline("build/yui-core/yui-core.js", 2571);
 result = 2;
             }
         } catch (ex) {}
     }}
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2566);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2576);
 return result;
 };
 /**
@@ -3245,16 +3255,16 @@ return result;
  * @constructor
  * @param {MIXED} item* 0..n items to seed the queue.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 2584);
+_yuitest_coverline("build/yui-core/yui-core.js", 2594);
 function Queue() {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "Queue", 2584);
-_yuitest_coverline("build/yui-core/yui-core.js", 2585);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "Queue", 2594);
+_yuitest_coverline("build/yui-core/yui-core.js", 2595);
 this._init();
-    _yuitest_coverline("build/yui-core/yui-core.js", 2586);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2596);
 this.add.apply(this, arguments);
 }
 
-_yuitest_coverline("build/yui-core/yui-core.js", 2589);
+_yuitest_coverline("build/yui-core/yui-core.js", 2599);
 Queue.prototype = {
     /**
      * Initialize the queue
@@ -3270,8 +3280,8 @@ Queue.prototype = {
          * @type Array
          * @protected
          */
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "_init", 2596);
-_yuitest_coverline("build/yui-core/yui-core.js", 2604);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "_init", 2606);
+_yuitest_coverline("build/yui-core/yui-core.js", 2614);
 this._q = [];
     },
 
@@ -3282,8 +3292,8 @@ this._q = [];
      * @return {MIXED} the next item in the queue.
      */
     next: function() {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "next", 2613);
-_yuitest_coverline("build/yui-core/yui-core.js", 2614);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "next", 2623);
+_yuitest_coverline("build/yui-core/yui-core.js", 2624);
 return this._q.shift();
     },
 
@@ -3294,8 +3304,8 @@ return this._q.shift();
      * @return {MIXED} the last item in the queue.
      */
     last: function() {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "last", 2623);
-_yuitest_coverline("build/yui-core/yui-core.js", 2624);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "last", 2633);
+_yuitest_coverline("build/yui-core/yui-core.js", 2634);
 return this._q.pop();
     },
 
@@ -3307,11 +3317,11 @@ return this._q.pop();
      * @return {object} this queue.
      */
     add: function() {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "add", 2634);
-_yuitest_coverline("build/yui-core/yui-core.js", 2635);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "add", 2644);
+_yuitest_coverline("build/yui-core/yui-core.js", 2645);
 this._q.push.apply(this._q, arguments);
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 2637);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2647);
 return this;
     },
 
@@ -3322,16 +3332,16 @@ return this;
      * @return {Number} The size.
      */
     size: function() {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "size", 2646);
-_yuitest_coverline("build/yui-core/yui-core.js", 2647);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "size", 2656);
+_yuitest_coverline("build/yui-core/yui-core.js", 2657);
 return this._q.length;
     }
 };
 
-_yuitest_coverline("build/yui-core/yui-core.js", 2651);
+_yuitest_coverline("build/yui-core/yui-core.js", 2661);
 Y.Queue = Queue;
 
-_yuitest_coverline("build/yui-core/yui-core.js", 2653);
+_yuitest_coverline("build/yui-core/yui-core.js", 2663);
 YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
 
 /**
@@ -3343,7 +3353,7 @@ utilities for the library.
 @submodule yui-base
 **/
 
-_yuitest_coverline("build/yui-core/yui-core.js", 2664);
+_yuitest_coverline("build/yui-core/yui-core.js", 2674);
 var CACHED_DELIMITER = '__',
 
     hasOwn   = Object.prototype.hasOwnProperty,
@@ -3373,27 +3383,27 @@ string `[object Object]` when used as a cache key.
 @return {Function} Wrapped function.
 @for YUI
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2693);
+_yuitest_coverline("build/yui-core/yui-core.js", 2703);
 Y.cached = function (source, cache, refetch) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "cached", 2693);
-_yuitest_coverline("build/yui-core/yui-core.js", 2694);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "cached", 2703);
+_yuitest_coverline("build/yui-core/yui-core.js", 2704);
 cache || (cache = {});
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2696);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2706);
 return function (arg) {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 17)", 2696);
-_yuitest_coverline("build/yui-core/yui-core.js", 2697);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 17)", 2706);
+_yuitest_coverline("build/yui-core/yui-core.js", 2707);
 var key = arguments.length > 1 ?
                 Array.prototype.join.call(arguments, CACHED_DELIMITER) :
                 String(arg);
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 2701);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2711);
 if (!(key in cache) || (refetch && cache[key] == refetch)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2702);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2712);
 cache[key] = source.apply(source, arguments);
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 2705);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2715);
 return cache[key];
     };
 };
@@ -3414,20 +3424,20 @@ in both Safari and MobileSafari browsers:
     instance operates.
 @since 3.5.0
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2725);
+_yuitest_coverline("build/yui-core/yui-core.js", 2735);
 Y.getLocation = function () {
     // It is safer to look this up every time because yui-base is attached to a
     // YUI instance before a user's config is applied; i.e. `Y.config.win` does
     // not point the correct window object when this file is loaded.
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "getLocation", 2725);
-_yuitest_coverline("build/yui-core/yui-core.js", 2729);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "getLocation", 2735);
+_yuitest_coverline("build/yui-core/yui-core.js", 2739);
 var win = Y.config.win;
 
     // It is not safe to hold a reference to the `location` object outside the
     // scope in which it is being used. The WebKit engine used in Safari and
     // MobileSafari will "disconnect" the `location` object from the `window`
     // when a page is restored from back/forward history cache.
-    _yuitest_coverline("build/yui-core/yui-core.js", 2735);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2745);
 return win && win.location;
 };
 
@@ -3443,32 +3453,32 @@ use `clone()`.
 @param {Object} objects* One or more objects to merge.
 @return {Object} A new merged object.
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2750);
+_yuitest_coverline("build/yui-core/yui-core.js", 2760);
 Y.merge = function () {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "merge", 2750);
-_yuitest_coverline("build/yui-core/yui-core.js", 2751);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "merge", 2760);
+_yuitest_coverline("build/yui-core/yui-core.js", 2761);
 var i      = 0,
         len    = arguments.length,
         result = {},
         key,
         obj;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2757);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2767);
 for (; i < len; ++i) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2758);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2768);
 obj = arguments[i];
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 2760);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2770);
 for (key in obj) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2761);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2771);
 if (hasOwn.call(obj, key)) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 2762);
+                _yuitest_coverline("build/yui-core/yui-core.js", 2772);
 result[key] = obj[key];
             }
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2767);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2777);
 return result;
 };
 
@@ -3506,65 +3516,65 @@ properties are not copied). The following copying modes are available:
 @return {Function|Object|YUI} The receiver, or the YUI instance if the
   specified receiver is falsy.
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 2804);
+_yuitest_coverline("build/yui-core/yui-core.js", 2814);
 Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "mix", 2804);
-_yuitest_coverline("build/yui-core/yui-core.js", 2805);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "mix", 2814);
+_yuitest_coverline("build/yui-core/yui-core.js", 2815);
 var alwaysOverwrite, exists, from, i, key, len, to;
 
     // If no supplier is given, we return the receiver. If no receiver is given,
     // we return Y. Returning Y doesn't make much sense to me, but it's
     // grandfathered in for backcompat reasons.
-    _yuitest_coverline("build/yui-core/yui-core.js", 2810);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2820);
 if (!receiver || !supplier) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2811);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2821);
 return receiver || Y;
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2814);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2824);
 if (mode) {
         // In mode 2 (prototype to prototype and object to object), we recurse
         // once to do the proto to proto mix. The object to object mix will be
         // handled later on.
-        _yuitest_coverline("build/yui-core/yui-core.js", 2818);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2828);
 if (mode === 2) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2819);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2829);
 Y.mix(receiver.prototype, supplier.prototype, overwrite,
                     whitelist, 0, merge);
         }
 
         // Depending on which mode is specified, we may be copying from or to
         // the prototypes of the supplier and receiver.
-        _yuitest_coverline("build/yui-core/yui-core.js", 2825);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2835);
 from = mode === 1 || mode === 3 ? supplier.prototype : supplier;
-        _yuitest_coverline("build/yui-core/yui-core.js", 2826);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2836);
 to   = mode === 1 || mode === 4 ? receiver.prototype : receiver;
 
         // If either the supplier or receiver doesn't actually have a
         // prototype property, then we could end up with an undefined `from`
         // or `to`. If that happens, we abort and return the receiver.
-        _yuitest_coverline("build/yui-core/yui-core.js", 2831);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2841);
 if (!from || !to) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2832);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2842);
 return receiver;
         }
     } else {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2835);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2845);
 from = supplier;
-        _yuitest_coverline("build/yui-core/yui-core.js", 2836);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2846);
 to   = receiver;
     }
 
     // If `overwrite` is truthy and `merge` is falsy, then we can skip a
     // property existence check on each iteration and save some time.
-    _yuitest_coverline("build/yui-core/yui-core.js", 2841);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2851);
 alwaysOverwrite = overwrite && !merge;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2843);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2853);
 if (whitelist) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2844);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2854);
 for (i = 0, len = whitelist.length; i < len; ++i) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2845);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2855);
 key = whitelist[i];
 
             // We call `Object.prototype.hasOwnProperty` instead of calling
@@ -3572,19 +3582,19 @@ key = whitelist[i];
             // `hasOwnProperty` method may have been overridden or removed.
             // Also, some native objects don't implement a `hasOwnProperty`
             // method.
-            _yuitest_coverline("build/yui-core/yui-core.js", 2852);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2862);
 if (!hasOwn.call(from, key)) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 2853);
+                _yuitest_coverline("build/yui-core/yui-core.js", 2863);
 continue;
             }
 
             // The `key in to` check here is (sadly) intentional for backwards
             // compatibility reasons. It prevents undesired shadowing of
             // prototype members on `to`.
-            _yuitest_coverline("build/yui-core/yui-core.js", 2859);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2869);
 exists = alwaysOverwrite ? false : key in to;
 
-            _yuitest_coverline("build/yui-core/yui-core.js", 2861);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2871);
 if (merge && exists && isObject(to[key], true)
                     && isObject(from[key], true)) {
                 // If we're in merge mode, and the key is present on both
@@ -3595,45 +3605,45 @@ if (merge && exists && isObject(to[key], true)
                 // Note: It's intentional that the whitelist isn't passed to the
                 // recursive call here. This is legacy behavior that lots of
                 // code still depends on.
-                _yuitest_coverline("build/yui-core/yui-core.js", 2871);
+                _yuitest_coverline("build/yui-core/yui-core.js", 2881);
 Y.mix(to[key], from[key], overwrite, null, 0, merge);
-            } else {_yuitest_coverline("build/yui-core/yui-core.js", 2872);
+            } else {_yuitest_coverline("build/yui-core/yui-core.js", 2882);
 if (overwrite || !exists) {
                 // We're not in merge mode, so we'll only copy the `from` value
                 // to the `to` value if we're in overwrite mode or if the
                 // current key doesn't exist on the `to` object.
-                _yuitest_coverline("build/yui-core/yui-core.js", 2876);
+                _yuitest_coverline("build/yui-core/yui-core.js", 2886);
 to[key] = from[key];
             }}
         }
     } else {
-        _yuitest_coverline("build/yui-core/yui-core.js", 2880);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2890);
 for (key in from) {
             // The code duplication here is for runtime performance reasons.
             // Combining whitelist and non-whitelist operations into a single
             // loop or breaking the shared logic out into a function both result
             // in worse performance, and Y.mix is critical enough that the byte
             // tradeoff is worth it.
-            _yuitest_coverline("build/yui-core/yui-core.js", 2886);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2896);
 if (!hasOwn.call(from, key)) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 2887);
+                _yuitest_coverline("build/yui-core/yui-core.js", 2897);
 continue;
             }
 
             // The `key in to` check here is (sadly) intentional for backwards
             // compatibility reasons. It prevents undesired shadowing of
             // prototype members on `to`.
-            _yuitest_coverline("build/yui-core/yui-core.js", 2893);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2903);
 exists = alwaysOverwrite ? false : key in to;
 
-            _yuitest_coverline("build/yui-core/yui-core.js", 2895);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2905);
 if (merge && exists && isObject(to[key], true)
                     && isObject(from[key], true)) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 2897);
+                _yuitest_coverline("build/yui-core/yui-core.js", 2907);
 Y.mix(to[key], from[key], overwrite, null, 0, merge);
-            } else {_yuitest_coverline("build/yui-core/yui-core.js", 2898);
+            } else {_yuitest_coverline("build/yui-core/yui-core.js", 2908);
 if (overwrite || !exists) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 2899);
+                _yuitest_coverline("build/yui-core/yui-core.js", 2909);
 to[key] = from[key];
             }}
         }
@@ -3641,14 +3651,14 @@ to[key] = from[key];
         // If this is an IE browser with the JScript enumeration bug, force
         // enumeration of the buggy properties by making a recursive call with
         // the buggy properties as the whitelist.
-        _yuitest_coverline("build/yui-core/yui-core.js", 2906);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2916);
 if (Y.Object._hasEnumBug) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 2907);
+            _yuitest_coverline("build/yui-core/yui-core.js", 2917);
 Y.mix(to, from, overwrite, Y.Object._forceEnum, mode, merge);
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 2911);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2921);
 return receiver;
 };
 /**
@@ -3665,7 +3675,7 @@ return receiver;
  * @class Object
  */
 
-_yuitest_coverline("build/yui-core/yui-core.js", 2927);
+_yuitest_coverline("build/yui-core/yui-core.js", 2937);
 var Lang   = Y.Lang,
     hasOwn = Object.prototype.hasOwnProperty,
 
@@ -3688,22 +3698,22 @@ O = Y.Object = Lang._isNative(Object.create) ? function (obj) {
     // support Object.create()'s second argument (properties). Once we have a
     // safe fallback for the properties arg, we can stop wrapping
     // Object.create().
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 18)", 2943);
-_yuitest_coverline("build/yui-core/yui-core.js", 2949);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 18)", 2953);
+_yuitest_coverline("build/yui-core/yui-core.js", 2959);
 return Object.create(obj);
 } : (function () {
     // Reusable constructor function for the Object.create() shim.
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 19)", 2950);
-_yuitest_coverline("build/yui-core/yui-core.js", 2952);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 19)", 2960);
+_yuitest_coverline("build/yui-core/yui-core.js", 2962);
 function F() {}
 
     // The actual shim.
-    _yuitest_coverline("build/yui-core/yui-core.js", 2955);
+    _yuitest_coverline("build/yui-core/yui-core.js", 2965);
 return function (obj) {
-        _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 20)", 2955);
-_yuitest_coverline("build/yui-core/yui-core.js", 2956);
+        _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 20)", 2965);
+_yuitest_coverline("build/yui-core/yui-core.js", 2966);
 F.prototype = obj;
-        _yuitest_coverline("build/yui-core/yui-core.js", 2957);
+        _yuitest_coverline("build/yui-core/yui-core.js", 2967);
 return new F();
     };
 }()),
@@ -3766,8 +3776,8 @@ hasProtoEnumBug = O._hasProtoEnumBug = (function () {}).propertyIsEnumerable('pr
  * @static
  */
 owns = O.owns = function (obj, key) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "owns", 3018);
-_yuitest_coverline("build/yui-core/yui-core.js", 3019);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "owns", 3028);
+_yuitest_coverline("build/yui-core/yui-core.js", 3029);
 return !!obj && hasOwn.call(obj, key);
 }; // <-- End of var declarations.
 
@@ -3780,7 +3790,7 @@ return !!obj && hasOwn.call(obj, key);
  * @return {Boolean} `true` if _key_ exists on _obj_, `false` otherwise.
  * @static
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 3031);
+_yuitest_coverline("build/yui-core/yui-core.js", 3041);
 O.hasKey = owns;
 
 /**
@@ -3804,47 +3814,32 @@ O.hasKey = owns;
  * @return {String[]} Array of keys.
  * @static
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 3054);
+_yuitest_coverline("build/yui-core/yui-core.js", 3064);
 O.keys = Lang._isNative(Object.keys) ? Object.keys : function (obj) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "keys", 3054);
-_yuitest_coverline("build/yui-core/yui-core.js", 3055);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "keys", 3064);
+_yuitest_coverline("build/yui-core/yui-core.js", 3065);
 if (!Lang.isObject(obj)) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3056);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3066);
 throw new TypeError('Object.keys called on a non-object');
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3059);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3069);
 var keys = [],
         i, key, len;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3062);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3072);
 if (hasProtoEnumBug && typeof obj === 'function') {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3063);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3073);
 for (key in obj) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3064);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3074);
 if (owns(obj, key) && key !== 'prototype') {
-                _yuitest_coverline("build/yui-core/yui-core.js", 3065);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3075);
 keys.push(key);
             }
         }
     } else {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3069);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3079);
 for (key in obj) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3070);
-if (owns(obj, key)) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 3071);
-keys.push(key);
-            }
-        }
-    }
-
-    _yuitest_coverline("build/yui-core/yui-core.js", 3076);
-if (hasEnumBug) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3077);
-for (i = 0, len = forceEnum.length; i < len; ++i) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3078);
-key = forceEnum[i];
-
             _yuitest_coverline("build/yui-core/yui-core.js", 3080);
 if (owns(obj, key)) {
                 _yuitest_coverline("build/yui-core/yui-core.js", 3081);
@@ -3854,6 +3849,21 @@ keys.push(key);
     }
 
     _yuitest_coverline("build/yui-core/yui-core.js", 3086);
+if (hasEnumBug) {
+        _yuitest_coverline("build/yui-core/yui-core.js", 3087);
+for (i = 0, len = forceEnum.length; i < len; ++i) {
+            _yuitest_coverline("build/yui-core/yui-core.js", 3088);
+key = forceEnum[i];
+
+            _yuitest_coverline("build/yui-core/yui-core.js", 3090);
+if (owns(obj, key)) {
+                _yuitest_coverline("build/yui-core/yui-core.js", 3091);
+keys.push(key);
+            }
+        }
+    }
+
+    _yuitest_coverline("build/yui-core/yui-core.js", 3096);
 return keys;
 };
 
@@ -3874,22 +3884,22 @@ return keys;
  * @return {Array} Array of values.
  * @static
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 3106);
+_yuitest_coverline("build/yui-core/yui-core.js", 3116);
 O.values = function (obj) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "values", 3106);
-_yuitest_coverline("build/yui-core/yui-core.js", 3107);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "values", 3116);
+_yuitest_coverline("build/yui-core/yui-core.js", 3117);
 var keys   = O.keys(obj),
         i      = 0,
         len    = keys.length,
         values = [];
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3112);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3122);
 for (; i < len; ++i) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3113);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3123);
 values.push(obj[keys[i]]);
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3116);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3126);
 return values;
 };
 
@@ -3901,15 +3911,15 @@ return values;
  * @return {Number} The object's size.
  * @static
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 3127);
+_yuitest_coverline("build/yui-core/yui-core.js", 3137);
 O.size = function (obj) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "size", 3127);
-_yuitest_coverline("build/yui-core/yui-core.js", 3128);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "size", 3137);
+_yuitest_coverline("build/yui-core/yui-core.js", 3138);
 try {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3129);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3139);
 return O.keys(obj).length;
     } catch (ex) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3131);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3141);
 return 0; // Legacy behavior for non-objects.
     }
 };
@@ -3924,10 +3934,10 @@ return 0; // Legacy behavior for non-objects.
  * @return {Boolean} `true` if _obj_ contains _value_, `false` otherwise.
  * @static
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 3145);
+_yuitest_coverline("build/yui-core/yui-core.js", 3155);
 O.hasValue = function (obj, value) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "hasValue", 3145);
-_yuitest_coverline("build/yui-core/yui-core.js", 3146);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "hasValue", 3155);
+_yuitest_coverline("build/yui-core/yui-core.js", 3156);
 return Y.Array.indexOf(O.values(obj), value) > -1;
 };
 
@@ -3951,22 +3961,22 @@ return Y.Array.indexOf(O.values(obj), value) > -1;
  * @chainable
  * @static
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 3169);
+_yuitest_coverline("build/yui-core/yui-core.js", 3179);
 O.each = function (obj, fn, thisObj, proto) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "each", 3169);
-_yuitest_coverline("build/yui-core/yui-core.js", 3170);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "each", 3179);
+_yuitest_coverline("build/yui-core/yui-core.js", 3180);
 var key;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3172);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3182);
 for (key in obj) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3173);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3183);
 if (proto || owns(obj, key)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3174);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3184);
 fn.call(thisObj || Y, obj[key], key, obj);
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3178);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3188);
 return Y;
 };
 
@@ -3990,25 +4000,25 @@ return Y;
  *   `false` otherwise.
  * @static
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 3201);
+_yuitest_coverline("build/yui-core/yui-core.js", 3211);
 O.some = function (obj, fn, thisObj, proto) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "some", 3201);
-_yuitest_coverline("build/yui-core/yui-core.js", 3202);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "some", 3211);
+_yuitest_coverline("build/yui-core/yui-core.js", 3212);
 var key;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3204);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3214);
 for (key in obj) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3205);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3215);
 if (proto || owns(obj, key)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3206);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3216);
 if (fn.call(thisObj || Y, obj[key], key, obj)) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 3207);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3217);
 return true;
             }
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3212);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3222);
 return false;
 };
 
@@ -4025,27 +4035,27 @@ return false;
  * undefined if the source is not an object.  Returns the source object
  * if an empty path is provided.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 3228);
+_yuitest_coverline("build/yui-core/yui-core.js", 3238);
 O.getValue = function(o, path) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "getValue", 3228);
-_yuitest_coverline("build/yui-core/yui-core.js", 3229);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "getValue", 3238);
+_yuitest_coverline("build/yui-core/yui-core.js", 3239);
 if (!Lang.isObject(o)) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3230);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3240);
 return UNDEFINED;
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3233);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3243);
 var i,
         p = Y.Array(path),
         l = p.length;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3237);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3247);
 for (i = 0; o !== UNDEFINED && i < l; i++) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3238);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3248);
 o = o[p[i]];
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3241);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3251);
 return o;
 };
 
@@ -4063,34 +4073,34 @@ return o;
  * @return {Object}     The modified object, with the new sub value set, or
  *                      undefined, if the path was invalid.
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 3258);
+_yuitest_coverline("build/yui-core/yui-core.js", 3268);
 O.setValue = function(o, path, val) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "setValue", 3258);
-_yuitest_coverline("build/yui-core/yui-core.js", 3259);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "setValue", 3268);
+_yuitest_coverline("build/yui-core/yui-core.js", 3269);
 var i,
         p = Y.Array(path),
         leafIdx = p.length - 1,
         ref = o;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3264);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3274);
 if (leafIdx >= 0) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3265);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3275);
 for (i = 0; ref !== UNDEFINED && i < leafIdx; i++) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3266);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3276);
 ref = ref[p[i]];
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 3269);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3279);
 if (ref !== UNDEFINED) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3270);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3280);
 ref[p[i]] = val;
         } else {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3272);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3282);
 return UNDEFINED;
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3276);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3286);
 return o;
 };
 
@@ -4103,10 +4113,10 @@ return o;
  * @static
  * @since 3.2.0
  */
-_yuitest_coverline("build/yui-core/yui-core.js", 3288);
+_yuitest_coverline("build/yui-core/yui-core.js", 3298);
 O.isEmpty = function (obj) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "isEmpty", 3288);
-_yuitest_coverline("build/yui-core/yui-core.js", 3289);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "isEmpty", 3298);
+_yuitest_coverline("build/yui-core/yui-core.js", 3299);
 return !O.keys(Object(obj)).length;
 };
 /**
@@ -4142,19 +4152,19 @@ return !O.keys(Object(obj)).length;
 * @param {String} [subUA=navigator.userAgent] UA string to parse
 * @return {Object} The Y.UA object
 */
-_yuitest_coverline("build/yui-core/yui-core.js", 3324);
+_yuitest_coverline("build/yui-core/yui-core.js", 3334);
 YUI.Env.parseUA = function(subUA) {
 
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "parseUA", 3324);
-_yuitest_coverline("build/yui-core/yui-core.js", 3326);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "parseUA", 3334);
+_yuitest_coverline("build/yui-core/yui-core.js", 3336);
 var numberify = function(s) {
-            _yuitest_coverfunc("build/yui-core/yui-core.js", "numberify", 3326);
-_yuitest_coverline("build/yui-core/yui-core.js", 3327);
+            _yuitest_coverfunc("build/yui-core/yui-core.js", "numberify", 3336);
+_yuitest_coverline("build/yui-core/yui-core.js", 3337);
 var c = 0;
-            _yuitest_coverline("build/yui-core/yui-core.js", 3328);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3338);
 return parseFloat(s.replace(/\./g, function() {
-                _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 22)", 3328);
-_yuitest_coverline("build/yui-core/yui-core.js", 3329);
+                _yuitest_coverfunc("build/yui-core/yui-core.js", "(anonymous 22)", 3338);
+_yuitest_coverline("build/yui-core/yui-core.js", 3339);
 return (c++ === 1) ? '' : '.';
             }));
         },
@@ -4359,7 +4369,7 @@ return (c++ === 1) ? '' : '.';
          * @static
          */
         nodejs: 0,
-        /*
+        /**
         * Window8/IE10 Application host environment
         * @property winjs
         * @type Boolean
@@ -4389,250 +4399,250 @@ return (c++ === 1) ? '' : '.';
     * @type String
     * @static
     */
-    _yuitest_coverline("build/yui-core/yui-core.js", 3563);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3573);
 o.userAgent = ua;
 
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3566);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3576);
 o.secure = href && (href.toLowerCase().indexOf('https') === 0);
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3568);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3578);
 if (ua) {
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 3570);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3580);
 if ((/windows|win32/i).test(ua)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3571);
-o.os = 'windows';
-        } else {_yuitest_coverline("build/yui-core/yui-core.js", 3572);
-if ((/macintosh|mac_powerpc/i).test(ua)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3573);
-o.os = 'macintosh';
-        } else {_yuitest_coverline("build/yui-core/yui-core.js", 3574);
-if ((/android/i).test(ua)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3575);
-o.os = 'android';
-        } else {_yuitest_coverline("build/yui-core/yui-core.js", 3576);
-if ((/symbos/i).test(ua)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3577);
-o.os = 'symbos';
-        } else {_yuitest_coverline("build/yui-core/yui-core.js", 3578);
-if ((/linux/i).test(ua)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3579);
-o.os = 'linux';
-        } else {_yuitest_coverline("build/yui-core/yui-core.js", 3580);
-if ((/rhino/i).test(ua)) {
             _yuitest_coverline("build/yui-core/yui-core.js", 3581);
+o.os = 'windows';
+        } else {_yuitest_coverline("build/yui-core/yui-core.js", 3582);
+if ((/macintosh|mac_powerpc/i).test(ua)) {
+            _yuitest_coverline("build/yui-core/yui-core.js", 3583);
+o.os = 'macintosh';
+        } else {_yuitest_coverline("build/yui-core/yui-core.js", 3584);
+if ((/android/i).test(ua)) {
+            _yuitest_coverline("build/yui-core/yui-core.js", 3585);
+o.os = 'android';
+        } else {_yuitest_coverline("build/yui-core/yui-core.js", 3586);
+if ((/symbos/i).test(ua)) {
+            _yuitest_coverline("build/yui-core/yui-core.js", 3587);
+o.os = 'symbos';
+        } else {_yuitest_coverline("build/yui-core/yui-core.js", 3588);
+if ((/linux/i).test(ua)) {
+            _yuitest_coverline("build/yui-core/yui-core.js", 3589);
+o.os = 'linux';
+        } else {_yuitest_coverline("build/yui-core/yui-core.js", 3590);
+if ((/rhino/i).test(ua)) {
+            _yuitest_coverline("build/yui-core/yui-core.js", 3591);
 o.os = 'rhino';
         }}}}}}
 
         // Modern KHTML browsers should qualify as Safari X-Grade
-        _yuitest_coverline("build/yui-core/yui-core.js", 3585);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3595);
 if ((/KHTML/).test(ua)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3586);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3596);
 o.webkit = 1;
         }
-        _yuitest_coverline("build/yui-core/yui-core.js", 3588);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3598);
 if ((/IEMobile|XBLWP7/).test(ua)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3589);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3599);
 o.mobile = 'windows';
         }
-        _yuitest_coverline("build/yui-core/yui-core.js", 3591);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3601);
 if ((/Fennec/).test(ua)) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3592);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3602);
 o.mobile = 'gecko';
         }
         // Modern WebKit browsers are at least X-Grade
-        _yuitest_coverline("build/yui-core/yui-core.js", 3595);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3605);
 m = ua.match(/AppleWebKit\/([^\s]*)/);
-        _yuitest_coverline("build/yui-core/yui-core.js", 3596);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3606);
 if (m && m[1]) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3597);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3607);
 o.webkit = numberify(m[1]);
-            _yuitest_coverline("build/yui-core/yui-core.js", 3598);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3608);
 o.safari = o.webkit;
 
-            _yuitest_coverline("build/yui-core/yui-core.js", 3600);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3610);
 if (/PhantomJS/.test(ua)) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 3601);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3611);
 m = ua.match(/PhantomJS\/([^\s]*)/);
-                _yuitest_coverline("build/yui-core/yui-core.js", 3602);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3612);
 if (m && m[1]) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3603);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3613);
 o.phantomjs = numberify(m[1]);
                 }
             }
 
             // Mobile browser check
-            _yuitest_coverline("build/yui-core/yui-core.js", 3608);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3618);
 if (/ Mobile\//.test(ua) || (/iPad|iPod|iPhone/).test(ua)) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 3609);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3619);
 o.mobile = 'Apple'; // iPhone or iPod Touch
 
-                _yuitest_coverline("build/yui-core/yui-core.js", 3611);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3621);
 m = ua.match(/OS ([^\s]*)/);
-                _yuitest_coverline("build/yui-core/yui-core.js", 3612);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3622);
 if (m && m[1]) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3613);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3623);
 m = numberify(m[1].replace('_', '.'));
                 }
-                _yuitest_coverline("build/yui-core/yui-core.js", 3615);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3625);
 o.ios = m;
-                _yuitest_coverline("build/yui-core/yui-core.js", 3616);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3626);
 o.os = 'ios';
-                _yuitest_coverline("build/yui-core/yui-core.js", 3617);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3627);
 o.ipad = o.ipod = o.iphone = 0;
 
-                _yuitest_coverline("build/yui-core/yui-core.js", 3619);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3629);
 m = ua.match(/iPad|iPod|iPhone/);
-                _yuitest_coverline("build/yui-core/yui-core.js", 3620);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3630);
 if (m && m[0]) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3621);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3631);
 o[m[0].toLowerCase()] = o.ios;
                 }
             } else {
-                _yuitest_coverline("build/yui-core/yui-core.js", 3624);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3634);
 m = ua.match(/NokiaN[^\/]*|webOS\/\d\.\d/);
-                _yuitest_coverline("build/yui-core/yui-core.js", 3625);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3635);
 if (m) {
                     // Nokia N-series, webOS, ex: NokiaN95
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3627);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3637);
 o.mobile = m[0];
                 }
-                _yuitest_coverline("build/yui-core/yui-core.js", 3629);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3639);
 if (/webOS/.test(ua)) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3630);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3640);
 o.mobile = 'WebOS';
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3631);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3641);
 m = ua.match(/webOS\/([^\s]*);/);
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3632);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3642);
 if (m && m[1]) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 3633);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 3643);
 o.webos = numberify(m[1]);
                     }
                 }
-                _yuitest_coverline("build/yui-core/yui-core.js", 3636);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3646);
 if (/ Android/.test(ua)) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3637);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3647);
 if (/Mobile/.test(ua)) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 3638);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 3648);
 o.mobile = 'Android';
                     }
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3640);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3650);
 m = ua.match(/Android ([^\s]*);/);
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3641);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3651);
 if (m && m[1]) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 3642);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 3652);
 o.android = numberify(m[1]);
                     }
 
                 }
-                _yuitest_coverline("build/yui-core/yui-core.js", 3646);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3656);
 if (/Silk/.test(ua)) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3647);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3657);
 m = ua.match(/Silk\/([^\s]*)\)/);
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3648);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3658);
 if (m && m[1]) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 3649);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 3659);
 o.silk = numberify(m[1]);
                     }
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3651);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3661);
 if (!o.android) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 3652);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 3662);
 o.android = 2.34; //Hack for desktop mode in Kindle
-                        _yuitest_coverline("build/yui-core/yui-core.js", 3653);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 3663);
 o.os = 'Android';
                     }
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3655);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3665);
 if (/Accelerated=true/.test(ua)) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 3656);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 3666);
 o.accel = true;
                     }
                 }
             }
 
-            _yuitest_coverline("build/yui-core/yui-core.js", 3661);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3671);
 m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
-            _yuitest_coverline("build/yui-core/yui-core.js", 3662);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3672);
 if (m && m[1] && m[2]) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 3663);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3673);
 o.chrome = numberify(m[2]); // Chrome
-                _yuitest_coverline("build/yui-core/yui-core.js", 3664);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3674);
 o.safari = 0; //Reset safari back to 0
-                _yuitest_coverline("build/yui-core/yui-core.js", 3665);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3675);
 if (m[1] === 'CrMo') {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3666);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3676);
 o.mobile = 'chrome';
                 }
             } else {
-                _yuitest_coverline("build/yui-core/yui-core.js", 3669);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3679);
 m = ua.match(/AdobeAIR\/([^\s]*)/);
-                _yuitest_coverline("build/yui-core/yui-core.js", 3670);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3680);
 if (m) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3671);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3681);
 o.air = m[0]; // Adobe AIR 1.0 or better
                 }
             }
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 3676);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3686);
 if (!o.webkit) { // not webkit
 // @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)
-            _yuitest_coverline("build/yui-core/yui-core.js", 3678);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3688);
 if (/Opera/.test(ua)) {
-                _yuitest_coverline("build/yui-core/yui-core.js", 3679);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3689);
 m = ua.match(/Opera[\s\/]([^\s]*)/);
-                _yuitest_coverline("build/yui-core/yui-core.js", 3680);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3690);
 if (m && m[1]) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3681);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3691);
 o.opera = numberify(m[1]);
                 }
-                _yuitest_coverline("build/yui-core/yui-core.js", 3683);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3693);
 m = ua.match(/Version\/([^\s]*)/);
-                _yuitest_coverline("build/yui-core/yui-core.js", 3684);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3694);
 if (m && m[1]) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3685);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3695);
 o.opera = numberify(m[1]); // opera 10+
                 }
 
-                _yuitest_coverline("build/yui-core/yui-core.js", 3688);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3698);
 if (/Opera Mobi/.test(ua)) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3689);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3699);
 o.mobile = 'opera';
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3690);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3700);
 m = ua.replace('Opera Mobi', '').match(/Opera ([^\s]*)/);
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3691);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3701);
 if (m && m[1]) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 3692);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 3702);
 o.opera = numberify(m[1]);
                     }
                 }
-                _yuitest_coverline("build/yui-core/yui-core.js", 3695);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3705);
 m = ua.match(/Opera Mini[^;]*/);
 
-                _yuitest_coverline("build/yui-core/yui-core.js", 3697);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3707);
 if (m) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3698);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3708);
 o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
                 }
             } else { // not opera or webkit
-                _yuitest_coverline("build/yui-core/yui-core.js", 3701);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3711);
 m = ua.match(/MSIE\s([^;]*)/);
-                _yuitest_coverline("build/yui-core/yui-core.js", 3702);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3712);
 if (m && m[1]) {
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3703);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3713);
 o.ie = numberify(m[1]);
                 } else { // not opera, webkit, or ie
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3705);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3715);
 m = ua.match(/Gecko\/([^\s]*)/);
-                    _yuitest_coverline("build/yui-core/yui-core.js", 3706);
+                    _yuitest_coverline("build/yui-core/yui-core.js", 3716);
 if (m) {
-                        _yuitest_coverline("build/yui-core/yui-core.js", 3707);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 3717);
 o.gecko = 1; // Gecko detected, look for revision
-                        _yuitest_coverline("build/yui-core/yui-core.js", 3708);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 3718);
 m = ua.match(/rv:([^\s\)]*)/);
-                        _yuitest_coverline("build/yui-core/yui-core.js", 3709);
+                        _yuitest_coverline("build/yui-core/yui-core.js", 3719);
 if (m && m[1]) {
-                            _yuitest_coverline("build/yui-core/yui-core.js", 3710);
+                            _yuitest_coverline("build/yui-core/yui-core.js", 3720);
 o.gecko = numberify(m[1]);
                         }
                     }
@@ -4643,40 +4653,40 @@ o.gecko = numberify(m[1]);
 
     //Check for known properties to tell if touch events are enabled on this device or if
     //the number of MSPointer touchpoints on this device is greater than 0.
-    _yuitest_coverline("build/yui-core/yui-core.js", 3720);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3730);
 if (win && nav && !(o.chrome && o.chrome < 6)) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3721);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3731);
 o.touchEnabled = (("ontouchstart" in win) || (("msMaxTouchPoints" in nav) && (nav.msMaxTouchPoints > 0)));
     }
 
     //It was a parsed UA, do not assign the global value.
-    _yuitest_coverline("build/yui-core/yui-core.js", 3725);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3735);
 if (!subUA) {
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 3727);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3737);
 if (typeof process === 'object') {
 
-            _yuitest_coverline("build/yui-core/yui-core.js", 3729);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3739);
 if (process.versions && process.versions.node) {
                 //NodeJS
-                _yuitest_coverline("build/yui-core/yui-core.js", 3731);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3741);
 o.os = process.platform;
-                _yuitest_coverline("build/yui-core/yui-core.js", 3732);
+                _yuitest_coverline("build/yui-core/yui-core.js", 3742);
 o.nodejs = numberify(process.versions.node);
             }
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 3736);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3746);
 YUI.Env.UA = o;
 
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3740);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3750);
 return o;
 };
 
 
-_yuitest_coverline("build/yui-core/yui-core.js", 3744);
+_yuitest_coverline("build/yui-core/yui-core.js", 3754);
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 
 /**
@@ -4699,61 +4709,63 @@ non-numeric characters, like `"535.8.beta"`, may produce unexpected results.
 @return -1 if _a_ is lower than _b_, 0 if they're equivalent, 1 if _a_ is
     higher than _b_.
 **/
-_yuitest_coverline("build/yui-core/yui-core.js", 3766);
+_yuitest_coverline("build/yui-core/yui-core.js", 3776);
 Y.UA.compareVersions = function (a, b) {
-    _yuitest_coverfunc("build/yui-core/yui-core.js", "compareVersions", 3766);
-_yuitest_coverline("build/yui-core/yui-core.js", 3767);
+    _yuitest_coverfunc("build/yui-core/yui-core.js", "compareVersions", 3776);
+_yuitest_coverline("build/yui-core/yui-core.js", 3777);
 var aPart, aParts, bPart, bParts, i, len;
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3769);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3779);
 if (a === b) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3770);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3780);
 return 0;
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3773);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3783);
 aParts = (a + '').split('.');
-    _yuitest_coverline("build/yui-core/yui-core.js", 3774);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3784);
 bParts = (b + '').split('.');
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3776);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3786);
 for (i = 0, len = Math.max(aParts.length, bParts.length); i < len; ++i) {
-        _yuitest_coverline("build/yui-core/yui-core.js", 3777);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3787);
 aPart = parseInt(aParts[i], 10);
-        _yuitest_coverline("build/yui-core/yui-core.js", 3778);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3788);
 bPart = parseInt(bParts[i], 10);
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 3780);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3790);
 isNaN(aPart) && (aPart = 0);
-        _yuitest_coverline("build/yui-core/yui-core.js", 3781);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3791);
 isNaN(bPart) && (bPart = 0);
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 3783);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3793);
 if (aPart < bPart) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3784);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3794);
 return -1;
         }
 
-        _yuitest_coverline("build/yui-core/yui-core.js", 3787);
+        _yuitest_coverline("build/yui-core/yui-core.js", 3797);
 if (aPart > bPart) {
-            _yuitest_coverline("build/yui-core/yui-core.js", 3788);
+            _yuitest_coverline("build/yui-core/yui-core.js", 3798);
 return 1;
         }
     }
 
-    _yuitest_coverline("build/yui-core/yui-core.js", 3792);
+    _yuitest_coverline("build/yui-core/yui-core.js", 3802);
 return 0;
 };
-_yuitest_coverline("build/yui-core/yui-core.js", 3794);
+_yuitest_coverline("build/yui-core/yui-core.js", 3804);
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
     "anim-shape-transform": ["anim-shape"],
     "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
+    "attribute-events": ["attribute-observable"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
+    "color": ["color-base","color-hsl","color-harmony"],
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],

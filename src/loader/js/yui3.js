@@ -176,7 +176,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "attribute-base": {
         "requires": [
             "attribute-core",
-            "attribute-events",
+            "attribute-observable",
             "attribute-extras"
         ]
     },
@@ -191,13 +191,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     },
     "attribute-events": {
-        "requires": [
-            "event-custom"
+        "use": [
+            "attribute-observable"
         ]
     },
     "attribute-extras": {
         "requires": [
             "oop"
+        ]
+    },
+    "attribute-observable": {
+        "requires": [
+            "event-custom"
         ]
     },
     "autocomplete": {
@@ -313,12 +318,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     },
     "base-base": {
-        "after": [
-            "attribute-complex"
-        ],
         "requires": [
+            "attribute-base",
             "base-core",
-            "attribute-base"
+            "base-observable"
         ]
     },
     "base-build": {
@@ -329,6 +332,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "base-core": {
         "requires": [
             "attribute-core"
+        ]
+    },
+    "base-observable": {
+        "requires": [
+            "attribute-observable"
         ]
     },
     "base-pluginhost": {
@@ -393,9 +401,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "lang": [
             "de",
             "en",
+            "es",
+            "es-AR",
             "fr",
+            "it",
             "ja",
             "nb-NO",
+            "nl",
             "pt-BR",
             "ru",
             "zh-HANT-TW"
@@ -410,9 +422,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "lang": [
             "de",
             "en",
+            "es",
+            "es-AR",
             "fr",
+            "it",
             "ja",
             "nb-NO",
+            "nl",
             "pt-BR",
             "ru",
             "zh-HANT-TW"
@@ -477,6 +493,33 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "arraylist-add",
             "arraylist-filter",
             "array-invoke"
+        ]
+    },
+    "color": {
+        "use": [
+            "color-base",
+            "color-hsl",
+            "color-harmony"
+        ]
+    },
+    "color-base": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "color-harmony": {
+        "requires": [
+            "color-hsl"
+        ]
+    },
+    "color-hsl": {
+        "requires": [
+            "color-base"
+        ]
+    },
+    "color-hsv": {
+        "requires": [
+            "color-base"
         ]
     },
     "console": {
