@@ -245,7 +245,7 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.5.0'; // dev time hack for cdn test
+    VERSION = '3.8.0'; // dev time hack for cdn test
 }
 
 proto = {
