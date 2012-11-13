@@ -1791,6 +1791,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "menu-plugin": {
         "requires": [
+            "event-focus",
             "menu",
             "node-pluginhost",
             "plugin"
@@ -2664,7 +2665,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '15ec4590bfa71dc7fd4e5e4163eaecd1';
+YUI.Env[Y.version].md5 = 'f8eac3220f52508e5e4256969b8d9ca0';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
