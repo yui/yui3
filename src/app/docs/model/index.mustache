@@ -695,7 +695,7 @@ To indicate success, call the provided `callback()` function with no arguments f
 Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
   // ... prototype methods and properties ...
 
-  validate: function (attributes) {
+  validate: function (attributes, callback) {
     var slices;
 
     switch (attributes.type) {
