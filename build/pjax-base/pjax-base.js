@@ -106,7 +106,9 @@ PjaxBase.prototype = {
     },
 
     destructor: function () {
-        this._pjaxEvents && this._pjaxEvents.detach();
+        if (this._pjaxEvents) {
+            this._pjaxEvents.detach();
+        }
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -265,11 +267,11 @@ PjaxBase.prototype = {
         // on `window.location`.
         if (this.get('html5') || options.force) {
             this.fire(EVT_NAVIGATE, options);
-        } else {
+        } else if (win) {
             if (options.replace) {
-                win && win.location.replace(url);
+                win.location.replace(url);
             } else {
-                win && (win.location = url);
+                win.location = url;
             }
         }
 
@@ -341,7 +343,7 @@ PjaxBase.prototype = {
     @since 3.5.0
     **/
     _onLinkClick: function (e) {
-        var link, url;
+        var link, url, navigated;
 
         // Allow the native behavior on middle/right-click, or when Ctrl or
         // Command are pressed.
@@ -366,7 +368,13 @@ PjaxBase.prototype = {
 
         // Try and navigate to the URL via the router, and prevent the default
         // link-click action if we do.
-        url && this._navigate(url, {originEvent: e}) && e.preventDefault();
+        if (url) {
+            navigated = this._navigate(url, {originEvent: e});
+
+            if (navigated) {
+                e.preventDefault();
+            }
+        }
     }
 };
 
