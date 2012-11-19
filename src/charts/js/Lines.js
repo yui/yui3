@@ -6,6 +6,7 @@
  * @class Lines
  * @constructor
  */
+var Y_Lang = Y.Lang;
 function Lines(){}
 
 Lines.prototype = {

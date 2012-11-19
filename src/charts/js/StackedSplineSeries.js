@@ -9,6 +9,14 @@
  * @extends SplineSeries
  * @extends StackingUtil
  */
+var CONFIG = Y.config,
+    WINDOW = CONFIG.win,
+    DOCUMENT = CONFIG.doc,
+    Y_Lang = Y.Lang,
+    IS_STRING = Y_Lang.isString,
+    Y_DOM = Y.DOM,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
 Y.StackedSplineSeries = Y.Base.create("stackedSplineSeries", Y.SplineSeries, [Y.StackingUtil], {
     /**
      * @protected

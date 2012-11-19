@@ -6,6 +6,9 @@
  * @class Plots
  * @constructor
  */
+var Y_Lang = Y.Lang,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
 function Plots(cfg)
 {
     var attrs = {

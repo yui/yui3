@@ -6,6 +6,8 @@
  * @class Histogram
  * @constructor
  */
+var Y_Lang = Y.Lang;
+
 function Histogram(){}
 
 Histogram.prototype = {

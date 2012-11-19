@@ -5,6 +5,7 @@
  * @class Fills
  * @constructor
  */
+var Y_Lang = Y.Lang;
 function Fills(cfg)
 {
     var attrs = {

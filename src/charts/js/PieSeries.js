@@ -8,6 +8,10 @@
  * @constructor
  * @extends MarkerSeries
  */
+var CONFIG = Y.config,
+    DOCUMENT = CONFIG.doc,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
 Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     /**
      * Image map used for interactivity when rendered with canvas.

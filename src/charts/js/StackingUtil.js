@@ -6,6 +6,9 @@
  * @class StackingUtil
  * @constructor
  */
+
+var Y_Lang = Y.Lang;
+
 function StackingUtil(){}
 
 StackingUtil.prototype = {

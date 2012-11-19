@@ -1,4 +1,32 @@
 /**
+ * The Charts widget provides an api for displaying data
+ * graphically.
+ *
+ * @module charts
+ * @main charts
+ */
+
+/**
+ * The charts-base submodule contains the core functionality for the charts module.
+ *
+ * @module charts
+ * @submodule charts-base
+ */
+var CONFIG = Y.config,
+    WINDOW = CONFIG.win,
+    DOCUMENT = CONFIG.doc,
+    Y_Lang = Y.Lang,
+    IS_STRING = Y_Lang.isString,
+    Y_DOM = Y.DOM,
+    LeftAxisLayout,
+    RightAxisLayout,
+    BottomAxisLayout,
+    TopAxisLayout,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
+
+
+/**
  * The Renderer class is a base class for chart components that use the `styles`
  * attribute.
  *

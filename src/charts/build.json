@@ -1,14 +1,27 @@
 {
     "name": "charts",
     "builds": {
-        "charts-base": {
+        "axis-core" : {
             "jsfiles": [
-                "ShapeGroup.js",
-                "CircleGroup.js",
-                "RectGroup.js",
-                "DiamondGroup.js",
-                "EllipseGroup.js",
                 "Renderer.js",
+                "AxisObservable.js",
+                "NumericData.js",
+                "TimeData.js",
+                "CategoryData.js",
+                "StackedData.js",
+                "NumericAxisObservable.js",
+                "StackedAxisObservable.js",
+                "TimeAxisObservable.js",
+                "CategoryAxisObservable.js"
+            ]
+        },
+        "series-core" : {
+            "jsfiles": [
+                "CartesianSeries.js"
+            ]
+        },
+        "axis-widget" : {
+            "jsfiles" : [
                 "LeftAxisLayout.js",
                 "RightAxisLayout.js",
                 "BottomAxisLayout.js",
@@ -18,33 +31,92 @@
                 "NumericAxis.js",
                 "StackedAxis.js",
                 "TimeAxis.js",
-                "CategoryAxis.js",
-                "CurveUtil.js",
-                "StackingUtil.js",
-                "Lines.js",
-                "Fills.js",
-                "Plots.js",
+                "CategoryAxis.js"
+            ]
+        },
+        "series-stacking" : {
+            "jsfiles" : [
+                "StackingUtil.js"
+            ]
+        },
+        "series-line-util" : {
+            "jsfiles" : [
+                "Lines.js"
+            ]
+        },
+        "series-plot-util" : {
+            "jsfiles" : [
+                "Plots.js"
+            ]
+        },
+        "series-fill-util" : {
+            "jsfiles" : [
+                "Fills.js"
+            ]
+        },
+        "series-curve-util" : {
+            "jsfiles" : [
+                "CurveUtil.js"
+            ]
+        },
+        "series-line" : {
+            "jsfiles" : [
+                "LineSeries.js"
+            ]
+        },
+        "series-marker" : {
+            "jsfiles" : [
+                "MarkerSeries.js"
+            ]
+        },
+        "series-histogram" : {
+            "jsfiles" : [
                 "Histogram.js",
-                "CartesianSeries.js",
-                "MarkerSeries.js",
-                "LineSeries.js",
-                "SplineSeries.js",
+                "ColumnSeries.js",
+                "BarSeries.js"
+            ]
+        },
+        "series-pie" : {
+            "jsfiles" : [
+                "PieSeries.js"
+            ]
+        },
+        "series-spline" : {
+            "jsfiles" : [
+                "SplineSeries.js"
+            ]
+        },
+        "series-area" : {
+            "jsfiles" : [
+                "AreaSeries.js"
+            ]
+        },
+        "series-areaspline" : {
+            "jsfiles" : [
+                "AreaSplineSeries.js"
+            ]
+        },
+        "series-combo" : {
+            "jsfiles" : [
+                "ComboSeries.js"
+            ]
+        },
+        "series-combospline" : {
+            "jsfiles" : [
+                "ComboSplineSeries.js"
+            ]
+        },
+        "charts-base": {
+            "jsfiles": [
                 "StackedSplineSeries.js",
                 "StackedMarkerSeries.js",
-                "ColumnSeries.js",
-                "BarSeries.js",
-                "AreaSeries.js",
-                "AreaSplineSeries.js",
                 "StackedAreaSplineSeries.js",
-                "ComboSeries.js",
                 "StackedComboSeries.js",
-                "ComboSplineSeries.js",
                 "StackedComboSplineSeries.js",
                 "StackedLineSeries.js",
                 "StackedAreaSeries.js",
                 "StackedColumnSeries.js",
                 "StackedBarSeries.js",
-                "PieSeries.js",
                 "Gridlines.js",
                 "Graph.js",
                 "ChartBase.js",

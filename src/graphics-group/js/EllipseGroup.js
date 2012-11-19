@@ -6,7 +6,7 @@
  * @class EllipseGroup
  * @constructor
  */
- EllipseGroup = function(cfg)
+ EllipseGroup = function()
  {
     EllipseGroup.superclass.constructor.apply(this, arguments);
  };

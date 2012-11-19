@@ -6,7 +6,7 @@
  * @class GroupDiamond
  * @constructor
  */
- DiamondGroup = function(cfg)
+ DiamondGroup = function()
  {
     DiamondGroup.superclass.constructor.apply(this, arguments);
  };

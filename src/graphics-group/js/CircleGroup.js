@@ -6,7 +6,7 @@
  * @class CircleGroup
  * @constructor
  */
- CircleGroup = function(cfg)
+ CircleGroup = function()
  {
     CircleGroup.superclass.constructor.apply(this, arguments);
  };

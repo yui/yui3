@@ -6,7 +6,7 @@
  * @class GroupRect
  * @constructor
  */
- RectGroup = function(cfg)
+ RectGroup = function()
  {
     RectGroup.superclass.constructor.apply(this, arguments);
  };
