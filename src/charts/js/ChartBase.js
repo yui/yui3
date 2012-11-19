@@ -617,7 +617,7 @@ ChartBase.prototype = {
                         this._activeMarker = null;
                         this.hideTooltip(e);
                     }
-                }, this));
+                }, this), cb);
             }
             else
             {
@@ -714,7 +714,7 @@ ChartBase.prototype = {
             type = "mouseout";
         }
         series.updateMarkerState(type, index);
-        e.halt();
+        e.halt(true);
         /**
          * Broadcasts when `interactionType` is set to `marker` and a series marker has received a mouseover event.
          *
