@@ -48,8 +48,16 @@ suite.add(new Y.Test.Case({
     
     test_bind: function () {
         
+        var g;
+        
+        if(Y.UA.nodejs) {
+            g = global;
+        } else {
+            g= window;
+        }
+        
         function x() {
-            Assert.areEqual(this, window);
+            Assert.areEqual(this, g);
         }
 
         Y.bind(x)();
