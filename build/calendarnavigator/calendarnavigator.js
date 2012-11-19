@@ -9,7 +9,7 @@ var CONTENT_BOX = "contentBox",
     HOST        = "host",
     RENDERED    = "rendered",
     getCN       = Y.ClassNameManager.getClassName,
-    substitute  = Y.substitute,
+    substitute  = Y.Lang.sub,
     node        = Y.Node,
     create      = node.create,
     CALENDAR    = 'calendar',
@@ -291,5 +291,6 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
 });
 
 Y.namespace("Plugin").CalendarNavigator = CalendarNavigator;
+
 
 }, '@VERSION@', {"requires": ["plugin", "classnamemanager", "datatype-date", "node", "substitute"], "skinnable": true});

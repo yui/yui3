@@ -695,12 +695,13 @@ To indicate success, call the provided `callback()` function with no arguments f
 Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
   // ... prototype methods and properties ...
 
-  validate: function (attributes) {
+  validate: function (attributes, callback) {
     var slices;
 
     switch (attributes.type) {
     case 'rhubarb':
       callback('Eww. No. Not allowed.');
+      return;
 
     case 'maple custard':
       slices = Y.Lang.isValue(attributes.slices) ?
@@ -710,6 +711,7 @@ Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
         callback("Making fewer than 10 slices of maple custard pie would be " +
             "silly, because I'm just going to eat 8 of them as soon as it's " +
             "out of the oven.");
+        return;
       }
     }
 
