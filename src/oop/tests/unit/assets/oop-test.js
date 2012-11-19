@@ -52,8 +52,8 @@ suite.add(new Y.Test.Case({
         
         if(Y.UA.nodejs) {
             g = global;
-        } else {
-            g= window;
+        } else if(typeof window != 'undefined'){
+            g = window;
         }
         
         function x() {
