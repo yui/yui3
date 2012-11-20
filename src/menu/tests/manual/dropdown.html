@@ -101,9 +101,10 @@ Y.one('.has-hover-dropdown').plug(Y.Plugin.Menu, {
 });
 
 Y.one('.has-context-dropdown').plug(Y.Plugin.Menu, {
-    items        : menuItems,
-    showOnClick  : false,
-    showOnContext: true
+    items           : menuItems,
+    hideOnMouseLeave: false,
+    showOnClick     : false,
+    showOnContext   : true
 });
 
 });
