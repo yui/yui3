@@ -1138,7 +1138,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
             loader.context = Y;
             loader.data = args;
             loader.ignoreRegistered = false;
-            loader.require(args);
+            loader.require(missing);
             loader.insert(null, (fetchCSS) ? null : 'js');
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
@@ -20457,5 +20457,22 @@ YUI.add('yui', function (Y, NAME) {
 
 
 
-}, '@VERSION@', {"use": ["yui", "oop", "dom", "event-custom-base", "event-base", "pluginhost", "node", "event-delegate", "io-base", "json-parse", "transition", "selector-css3", "dom-style-ie", "querystring-stringify-simple"]});
+}, '@VERSION@', {
+    "use": [
+        "yui",
+        "oop",
+        "dom",
+        "event-custom-base",
+        "event-base",
+        "pluginhost",
+        "node",
+        "event-delegate",
+        "io-base",
+        "json-parse",
+        "transition",
+        "selector-css3",
+        "dom-style-ie",
+        "querystring-stringify-simple"
+    ]
+});
 var Y = YUI().use('*');

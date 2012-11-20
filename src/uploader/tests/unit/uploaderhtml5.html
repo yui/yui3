@@ -87,6 +87,18 @@
 
                 var e = new Y.DOMEventFacade({type:'dragenter', preventDefault: function () {}, stopPropagation: function () {}});
 
+                Y.FileHTML5.prototype.isValidFile = function () { return true; };
+                Y.FileHTML5.prototype.canUpload = function () { return true; };
+
+                var filearray = [];
+
+                for (var i = 0; i <= 10; i++) {
+                    filearray.push({name: i + ".jpg", size: i*1000, type: "jpg"});
+                }
+
+                e._event.dataTransfer = {files: filearray};
+                e._event.dataTransfer.types = ["Files"];
+
                 this.basicuploader._ddEventHandler(e);
 
                 e.type = 'dragleave';
@@ -98,17 +110,6 @@
                 this.basicuploader._ddEventHandler(e);
 
                 e.type = 'drop';
-
-                Y.FileHTML5.prototype.isValidFile = function () { return true; };
-                Y.FileHTML5.prototype.canUpload = function () { return true; };
-
-                var filearray = [];
-
-                for (var i = 0; i <= 10; i++) {
-                    filearray.push({name: i + ".jpg", size: i*1000, type: "jpg"});
-                }
-
-                e._event.dataTransfer = {files: filearray};
 
                 this.basicuploader._ddEventHandler(e);
             },

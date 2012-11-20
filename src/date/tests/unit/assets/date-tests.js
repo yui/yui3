@@ -1,7 +1,5 @@
 YUI.add('date-tests', function(Y) {
 
-
-    
     //Helper function to normalize timezone dependent hours.
     var getHours = function(date, pad) {
         pad = (pad === false) ? false : true;
@@ -15,17 +13,13 @@ YUI.add('date-tests', function(Y) {
         if (h < 10 & pad) {
             h = '0' + h;
         }
-        return h;  
+        return h;
     };
-
-
-
 
     // Set up the page
     var LANG = Y.Lang,
         ASSERT = Y.Assert,
         ARRAYASSERT = Y.ArrayAssert;
-
 
     var testParse = new Y.Test.Case({
         name: "Date Parse Tests",
@@ -41,17 +35,26 @@ YUI.add('date-tests', function(Y) {
         },
 
         testParse: function() {
-            var date = Y.Date.parse("December 17, 1995 03:24:00");
-            ASSERT.isTrue(LANG.isDate(date), "Expected date.");
+            var date, parsed;
 
-            date = Y.Date.parse(1995,11,17);
-            ASSERT.isTrue(LANG.isDate(date), "Expected date.");
+            date = new Date("December 17, 1995 03:24:00");
+            parsed = Y.Date.parse("December 17, 1995 03:24:00");
+            ASSERT.isTrue(LANG.isDate(parsed), "Parsing date string. Expected date.");
+            ASSERT.areEqual(+date, +parsed, "Parsing date string. Dates should have matched.");
 
-            date = Y.Date.parse(1995,11,17,3,24,0);
-            ASSERT.isTrue(LANG.isDate(date), "Expected date.");
+            date = new Date();
+            parsed = Y.Date.parse(date);
+            ASSERT.isTrue(LANG.isDate(parsed), "Parsing date object. Expected date.");
+            ASSERT.areEqual(+date, +parsed, "Parsing date object. Dates should have matched.");
 
-            date = Y.Date.parse(948548583);
-            ASSERT.isTrue(LANG.isDate(date), "Expected date.");
+            date = new Date(819199440000);
+            parsed = Y.Date.parse(819199440000);
+            ASSERT.isTrue(LANG.isDate(parsed), "Parsing numeric timestamp. Expected date.");
+            ASSERT.areEqual(+date, +parsed, "Parsing numeric timestamp. Dates should have matched.");
+
+            parsed = Y.Date.parse('819199440000');
+            ASSERT.isTrue(LANG.isDate(parsed), "Parsing string timestamp. Expected date.");
+            ASSERT.areEqual(+date, +parsed, "Parsing string timestamp. Dates should have matched.");
         }
     });
 
@@ -71,7 +74,7 @@ YUI.add('date-tests', function(Y) {
         testFormats: function() {
             var date = new Date(819199440000),
                 output;
-            
+
             //Must set this here because other tests are "resetting" the default lang.
             Y.Intl.setLang("datatype-date-format", "en-US");
 
@@ -117,7 +120,7 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame(50, parseInt(output, 10), 'Expected %W format.');
 
             output = Y.Date.format(date, {format:"%Z"});
-			var tz = date.toString().replace(/^.*:\d\d( GMT[+-]\d+)? \(?([A-Za-z ]+)\)?\d*$/, "$2").replace(/[a-z ]/g, "");
+            var tz = date.toString().replace(/^.*:\d\d( GMT[+-]\d+)? \(?([A-Za-z ]+)\)?\d*$/, "$2").replace(/[a-z ]/g, "");
             ASSERT.areSame(tz, output, 'Expected %Z format.');
 
             output = Y.Date.format(date, {format:"%"});
@@ -220,7 +223,7 @@ YUI.add('date-tests', function(Y) {
         name: "Date Format Punjabi Tests",
 
         testPunjabi: function() {
-            
+
             // provide data in Punjabi for India
             Y.Intl.add("datatype-date-format", "pa-IN", {
                     "a":["ਐਤ.","ਸੋਮ.","ਮੰਗਲ.","ਬੁਧ.","ਵੀਰ.","ਸ਼ੁਕਰ.","ਸ਼ਨੀ."],
@@ -277,9 +280,6 @@ YUI.add('date-tests', function(Y) {
 
         }
     });
-
-    
-    
 
     var suite = new Y.Test.Suite("Date");
     suite.add(testParse);
