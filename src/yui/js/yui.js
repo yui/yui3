@@ -1296,8 +1296,8 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     Reports an error.
 
     The reporting mechanism is controlled by the `throwFail` configuration
-    attribute. If `throwFail` is falsy, the message is written to the YUI
-    logger. If `throwFail` is truthy, a JS exception is thrown.
+    attribute. If `throwFail` is falsy, the message is logged. If `throwFail` is
+    truthy, a JS exception is thrown.
 
     If an `errorFn` is specified in the config it must return `true` to indicate
     that the exception was handled and keep it from being thrown.
