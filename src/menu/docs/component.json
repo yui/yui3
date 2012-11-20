@@ -1,0 +1,12 @@
+{
+    "name"       : "menu",
+    "displayName": "Menu",
+    "description": "Menu widget.",
+    "author"     : ["rgrove"],
+
+    "tags": [
+        "menu", "widget", "dropdown", "popup"
+    ],
+
+    "use": ["menu"]
+}
