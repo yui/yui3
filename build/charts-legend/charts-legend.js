@@ -1,4 +1,4 @@
-YUI.add('charts-legend', function(Y) {
+YUI.add('charts-legend', function (Y, NAME) {
 
 /**
  * Adds legend functionality to charts.
@@ -6,7 +6,7 @@ YUI.add('charts-legend', function(Y) {
  * @module charts
  * @submodule charts-legend
  */
-var DOCUMENT = Y.config.doc, 
+var DOCUMENT = Y.config.doc,
 TOP = "top",
 RIGHT = "right",
 BOTTOM = "bottom",
@@ -22,7 +22,7 @@ _Y = "y",
 PX = "px",
 LEGEND = {
     setter: function(val)
-    {   
+    {
         var legend = this.get("legend");
         if(legend)
         {
@@ -88,7 +88,7 @@ HorizontalLegendLayout = {
             legendWidth,
             topHeight = padding.top - verticalGap,
             limit = width - (padding.left + padding.right),
-            left, 
+            left,
             top,
             right,
             bottom;
@@ -248,7 +248,7 @@ VerticalLegendLayout = {
             leftWidth = padding.left - horizontalGap,
             legendWidth,
             limit = height - (padding.top + padding.bottom),
-            left, 
+            left,
             top,
             right,
             bottom;
@@ -458,7 +458,7 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
                 bottomAxesYCoords.unshift(h - bottomPaneHeight);
             }
         }
-        
+
         graphWidth = w - (leftPaneWidth + rightPaneWidth);
         graphHeight = h - (bottomPaneHeight + topPaneHeight);
         graphRect.left = leftPaneWidth;
@@ -471,7 +471,7 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
             bottomOverflow = this._getBottomOverflow(leftAxesCollection, rightAxesCollection);
             leftOverflow = this._getLeftOverflow(bottomAxesCollection, topAxesCollection);
             rightOverflow = this._getRightOverflow(bottomAxesCollection, topAxesCollection);
-            
+
             diff = topOverflow - topPaneHeight;
             if(diff > 0)
             {
@@ -542,7 +542,7 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
             {
                 switch(legend.get("position"))
                 {
-                    case "left" : 
+                    case "left" :
                         legend.set("y", graphY);
                         legend.set("height", graphHeight);
                     break;
@@ -550,7 +550,7 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
                         legend.set("x", graphX);
                         legend.set("width", graphWidth);
                     break;
-                    case "bottom" : 
+                    case "bottom" :
                         legend.set("x", graphX);
                         legend.set("width", graphWidth);
                     break;
@@ -662,7 +662,7 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
     },
 
     /**
-     * Positions the legend in a chart and returns the properties of the legend to be used in the 
+     * Positions the legend in a chart and returns the properties of the legend to be used in the
      * chart's layout algorithm.
      *
      * @method _getLayoutDimensions
@@ -698,15 +698,15 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
                 switch(position)
                 {
                     case TOP :
-                        legend.set(_Y, 0); 
+                        legend.set(_Y, 0);
                     break;
-                    case BOTTOM : 
-                        legend.set(_Y, h - size); 
+                    case BOTTOM :
+                        legend.set(_Y, h - size);
                     break;
                     case RIGHT :
                         legend.set(_X, w - size);
                     break;
-                    case LEFT: 
+                    case LEFT:
                         legend.set(_X, 0);
                     break;
                 }
@@ -781,7 +781,7 @@ var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
                 legendWidth = legend.get("width");
                 legendHeight = legend.get("height");
                 gap = legend.get("styles").gap;
-                
+
                 if((direction == "vertical" && (graphWidth + legendWidth + gap !== w)) || (direction == "horizontal" &&  (graphHeight + legendHeight + gap !== h)))
                 {
                     switch(legend.get("position"))
@@ -793,7 +793,7 @@ var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
                             legend.set(HEIGHT, legendHeight);
                         break;
                         case TOP :
-                            dimension = Math.min(h - (legendHeight + gap), w); 
+                            dimension = Math.min(h - (legendHeight + gap), w);
                             legendWidth = w;
                             y = legendHeight + gap;
                             legend.set(WIDTH, legendWidth);
@@ -805,9 +805,9 @@ var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
                             legend.set(HEIGHT, legendHeight);
                         break;
                         case BOTTOM :
-                            dimension = Math.min(h - (legendHeight + gap), w); 
+                            dimension = Math.min(h - (legendHeight + gap), w);
                             legendWidth = w;
-                            legendY = dimension + gap; 
+                            legendY = dimension + gap;
                             legend.set(WIDTH, legendWidth);
                         break;
                     }
@@ -817,7 +817,7 @@ var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
                 else
                 {
                     switch(legend.get("position"))
-                    {   
+                    {
                         case LEFT :
                             x = legendWidth + gap;
                         break;
@@ -828,7 +828,7 @@ var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
                             legendX = graphWidth + gap;
                         break;
                         case BOTTOM :
-                            legendY = graphHeight + gap; 
+                            legendY = graphHeight + gap;
                         break;
                     }
                 }
@@ -902,26 +902,26 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             background = new Y.Rect({
                 graphic: cb,
                 fill: styles.fill,
-                stroke: styles.stroke
+                stroke: styles.border
             });
         bb.setStyle("display", "block");
         bb.setStyle("position", "absolute");
         this.set("background", background);
     },
-    
+
     /**
      * @method bindUI
      * @private
      */
     bindUI: function()
     {
-        this.get("chart").after("seriesCollectionChange", this._updateHandler);
+        this.get("chart").after("seriesCollectionChange", Y.bind(this._updateHandler, this));
         this.after("stylesChange", this._updateHandler);
         this.after("positionChange", this._positionChangeHandler);
         this.after("widthChange", this._handleSizeChange);
         this.after("heightChange", this._handleSizeChange);
     },
-    
+
     /**
      * @method syncUI
      * @private
@@ -951,11 +951,11 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         }
     },
 
-    /** 
+    /**
      * Handles position changes.
      *
      * @method _positionChangeHandler
-     * @parma {Object} e Event object
+     * @param {Object} e Event object
      * @private
      */
     _positionChangeHandler: function(e)
@@ -1026,17 +1026,17 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             labelStyles = itemStyles.label,
             displayName,
             layout = this._layout[this.get("direction")],
-            i, 
+            i,
             len,
             isArray,
             shape,
             shapeClass,
             item,
             fill,
-            stroke,
+            border,
             fillColors,
-            strokeColors,
-            strokeWeight,
+            borderColors,
+            borderWeight,
             items = [],
             markerWidth = marker.width,
             markerHeight = marker.height,
@@ -1054,11 +1054,11 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         if(chart instanceof Y.PieChart)
         {
             series = seriesCollection[0];
-            displayName = series.get("categoryAxis").getDataByKey(series.get("categoryKey")); 
+            displayName = series.get("categoryAxis").getDataByKey(series.get("categoryKey"));
             seriesStyles = series.get("styles").marker;
             fillColors = seriesStyles.fill.colors;
-            strokeColors = seriesStyles.border.colors;
-            strokeWeight = seriesStyles.border.weight;
+            borderColors = seriesStyles.border.colors;
+            borderWeight = seriesStyles.border.weight;
             i = 0;
             len = displayName.length;
             shape = shape || Y.Circle;
@@ -1069,12 +1069,12 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                 fill = {
                     color: fillColors[i]
                 };
-                stroke = {
-                    colors: strokeColors[i],
-                    weight: strokeWeight
+                border = {
+                    colors: borderColors[i],
+                    weight: borderWeight
                 };
                 displayName = chart.getSeriesItems(series, i).category.value;
-                item = this._getLegendItem(node, this._getShapeClass(shape), fill, stroke, labelStyles, markerWidth, markerHeight, displayName);
+                item = this._getLegendItem(node, this._getShapeClass(shape), fill, border, labelStyles, markerWidth, markerHeight, displayName);
                 itemWidth = item.width;
                 itemHeight = item.height;
                 maxWidth = Math.max(maxWidth, itemWidth);
@@ -1101,7 +1101,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                     }
                 }
                 shapeClass = Y.Lang.isArray(shape) ? shape[i] : shape;
-                item = this._getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.stroke, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
+                item = this._getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.border, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
                 itemWidth = item.width;
                 itemHeight = item.height;
                 maxWidth = Math.max(maxWidth, itemWidth);
@@ -1111,7 +1111,6 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                 items.push(item);
             }
         }
-        this.set("items", items);
         this._drawing = false;
         if(this._callLater)
         {
@@ -1143,7 +1142,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             h = contentRect.bottom - y + padding.bottom;
         this.get("background").set({
             fill: backgroundStyles.fill,
-            stroke: backgroundStyles.stroke,
+            stroke: backgroundStyles.border,
             width: w,
             height: h,
             x: x,
@@ -1153,48 +1152,51 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
 
     /**
      * Retrieves the marker styles based on the type of series. For series that contain a marker, the marker styles are returned.
-     * 
+     *
      * @method _getStylesBySeriesType
      * @param {CartesianSeries | PieSeries} The series in which the style properties will be received.
-     * @return Object An object containing fill, stroke and shape information.
+     * @return Object An object containing fill, border and shape information.
      * @private
      */
     _getStylesBySeriesType: function(series)
     {
-        var styles = series.get("styles");
+        var styles = series.get("styles"),
+            color;
         if(series instanceof Y.LineSeries || series instanceof Y.StackedLineSeries)
         {
             styles = series.get("styles").line;
+            color = styles.color || series._getDefaultColor(series.get("graphOrder"), "line");
             return {
-                stroke: {
+                border: {
                     weight: 1,
-                    color: styles.color
+                    color: color
                 },
                 fill: {
-                    color: styles.color
+                    color: color
                 }
             };
         }
         else if(series instanceof Y.AreaSeries || series instanceof Y.StackedAreaSeries)
         {
-            series = series.get("styles").fill;
+            styles = series.get("styles").area;
+            color = styles.color || series._getDefaultColor(series.get("graphOrder"), "slice");
             return {
-                stroke: {
+                border: {
                     weight: 1,
-                    color: styles.color
+                    color: color
                 },
                 fill: {
-                    color: styles.color
+                    color: color
                 }
             };
         }
-        else 
+        else
         {
             styles = series.get("styles").marker;
             return {
                 fill: styles.fill,
 
-                stroke: {
+                border: {
                     weight: styles.border.weight,
 
                     color: styles.border.color,
@@ -1219,7 +1221,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @param {Node} shapeProps Reference to the `node` attribute.
      * @param {String | Class} shapeClass The type of shape
      * @param {Object} fill Properties for the shape's fill
-     * @param {Object} stroke Properties for the shape's stroke
+     * @param {Object} border Properties for the shape's border
      * @param {String} text String to be rendered as the legend's text
      * @param {Number} width Total width of the legend item
      * @param {Number} height Total height of the legend item
@@ -1227,7 +1229,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @return Object
      * @private
      */
-    _getLegendItem: function(node, shapeClass, fill, stroke, labelStyles, w, h, text) 
+    _getLegendItem: function(node, shapeClass, fill, border, labelStyles, w, h, text)
     {
         var containerNode = Y.one(DOCUMENT.createElement("div")),
             textField = Y.one(DOCUMENT.createElement("span")),
@@ -1250,7 +1252,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         containerNode.setStyle("width", (left + textField.get("offsetWidth")) + PX);
         shape = new shapeClass({
             fill: fill,
-            stroke: stroke,
+            stroke: border,
             width: w,
             height: h,
             x: padding * 0.5,
@@ -1280,11 +1282,11 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @private
      */
     _getShapeClass: function()
-    {   
+    {
         var graphic = this.get("background").get("graphic");
         return graphic._getShapeClass.apply(graphic, arguments);
     },
-    
+
     /**
      * Returns the default hash for the `styles` attribute.
      *
@@ -1294,7 +1296,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      */
     _getDefaultStyles: function()
     {
-        var styles = { 
+        var styles = {
             padding: {
                 top: 8,
                 right: 8,
@@ -1310,7 +1312,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                 vSpacing: 5,
                 label: {
                     color:"#808080",
-                    fontSize:"85%"
+                    fontSize:"85%",
+                    whiteSpace: "nowrap"
                 }
             },
             background: {
@@ -1318,7 +1321,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                 fill:{
                     color:"#faf9f2"
                 },
-                stroke: {
+                border: {
                     color:"#dad8c9",
                     weight: 1
                 }
@@ -1360,7 +1363,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                 item = this._items.shift();
                 item.shape.get("graphic").destroy();
                 item.node.empty();
-                item.node.remove(true);
+                item.node.destroy(true);
+                item.node = null;
                 item = null;
             }
         }
@@ -1386,12 +1390,22 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      */
     destructor: function()
     {
-        var graphic = this.get("graphic");
+        var background = this.get("background"),
+            backgroundGraphic;
         this._destroyLegendItems();
-        if(graphic)
+        if(background)
         {
-            graphic.destroy();
+            backgroundGraphic = background.get("graphic");
+            if(backgroundGraphic)
+            {
+                backgroundGraphic.destroy();
+            }
+            else
+            {
+                background.destroy();
+            }
         }
+
     }
 }, {
     ATTRS: {
@@ -1430,7 +1444,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         direction: {
             value: "vertical"
         },
-       
+
         /**
          * Indicates the position and direction of the legend. Possible values are `left`, `top`, `right` and `bottom`. Values of `left` and
          * `right` values have a `direction` of `vertical`. Values of `top` and `bottom` values have a `direction` of `horizontal`.
@@ -1456,12 +1470,15 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                 return val;
             }
         },
- 
+
         /**
-         * The width of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`. By default, the legend is included in the layout of the `Chart` that 
-         * it references. Under this circumstance, `width` is always `readOnly`. When the legend is rendered in its own dom element, the `readOnly` status is determined by the 
-         * direction of the legend. If the `position` is `left` or `right` or the `direction` is `vertical`, width is `readOnly`. If the position is `top` or `bottom` or the `direction`
-         * is `horizontal`, width can be explicitly set. If width is not explicitly set, the width will be determined by the width of the legend's parent element.
+         * The width of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`.
+         * By default, the legend is included in the layout of the `Chart` that it references. Under this circumstance,
+         * `width` is always `readOnly`. When the legend is rendered in its own dom element, the `readOnly` status is
+         * determined by the direction of the legend. If the `position` is `left` or `right` or the `direction` is
+         * `vertical`, width is `readOnly`. If the position is `top` or `bottom` or the `direction` is `horizontal`,
+         * width can be explicitly set. If width is not explicitly set, the width will be determined by the width of the
+         * legend's parent element.
          *
          * @attribute width
          * @type Number
@@ -1497,12 +1514,15 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * The height of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`. By default, the legend is included in the layout of the `Chart` that 
-         * it references. Under this circumstance, `height` is always `readOnly`. When the legend is rendered in its own dom element, the `readOnly` status is determined by the 
-         * direction of the legend. If the `position` is `top` or `bottom` or the `direction` is `horizontal`, height is `readOnly`. If the position is `left` or `right` or the `direction`
-         * is `vertical`, height can be explicitly set. If height is not explicitly set, the height will be determined by the width of the legend's parent element.
+         * The height of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`.
+         * By default, the legend is included in the layout of the `Chart` that it references. Under this circumstance,
+         * `height` is always `readOnly`. When the legend is rendered in its own dom element, the `readOnly` status is
+         * determined by the direction of the legend. If the `position` is `top` or `bottom` or the `direction` is
+         * `horizontal`, height is `readOnly`. If the position is `left` or `right` or the `direction` is `vertical`,
+         * height can be explicitly set. If height is not explicitly set, the height will be determined by the width of the
+         * legend's parent element.
          *
-         * @attribute height 
+         * @attribute height
          * @type Number
          */
         height: {
@@ -1512,7 +1532,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             {
                 var chart = this.get("chart"),
                     parentNode = this._parentNode;
-                if(parentNode) 
+                if(parentNode)
                 {
                     if((chart && this.get("includeInChartLayout")) || this._height)
                     {
@@ -1548,7 +1568,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             lazyAdd: false,
 
             value: 0,
-            
+
             setter: function(val)
             {
                 var node = this.get("boundingBox");
@@ -1571,7 +1591,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             lazyAdd: false,
 
             value: 0,
-            
+
             setter: function(val)
             {
                 var node = this.get("boundingBox");
@@ -1584,6 +1604,25 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         },
 
         /**
+         * Array of items contained in the legend. Each item is an object containing the following properties:
+         *
+         * <dl>
+         *      <dt>node</dt><dd>Node containing text for the legend item.</dd>
+         *      <dt>marker</dt><dd>Shape for the legend item.</dd>
+         * </dl>
+         *
+         * @attribute items
+         * @type Array
+         * @readOnly
+         */
+        items: {
+            getter: function()
+            {
+                return this._items;
+            }
+        },
+
+        /**
          * Background for the legend.
          *
          * @attribute background
@@ -1592,12 +1631,18 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         background: {}
 
         /**
-         * Properties used to display and style the ChartLegend.  This attribute is inherited from `Renderer`. Below are the default values:
+         * Properties used to display and style the ChartLegend.  This attribute is inherited from `Renderer`.
+         * Below are the default values:
          *
          *  <dl>
-         *      <dt>gap</dt><dd>Distance, in pixels, between the `ChartLegend` instance and the chart's content. When `ChartLegend` is rendered within a `Chart` instance this value is applied.</dd>
-         *      <dt>hAlign</dt><dd>Defines the horizontal alignment of the `items` in a `ChartLegend` rendered in a horizontal direction. This value is applied when the instance's `position` is set to top or bottom. This attribute can be set to left, center or right. The default value is center.</dd>
-         *      <dt>vAlign</dt><dd>Defines the vertical alignment of the `items` in a `ChartLegend` rendered in vertical direction. This value is applied when the instance's `position` is set to left or right. The attribute can be set to top, middle or bottom. The default value is middle.</dd>
+         *      <dt>gap</dt><dd>Distance, in pixels, between the `ChartLegend` instance and the chart's content. When `ChartLegend`
+         *      is rendered within a `Chart` instance this value is applied.</dd>
+         *      <dt>hAlign</dt><dd>Defines the horizontal alignment of the `items` in a `ChartLegend` rendered in a horizontal direction.
+         *      This value is applied when the instance's `position` is set to top or bottom. This attribute can be set to left, center
+         *      or right. The default value is center.</dd>
+         *      <dt>vAlign</dt><dd>Defines the vertical alignment of the `items` in a `ChartLegend` rendered in vertical direction. This
+         *      value is applied when the instance's `position` is set to left or right. The attribute can be set to top, middle or
+         *      bottom. The default value is middle.</dd>
          *      <dt>item</dt><dd>Set of style properties applied to the `items` of the `ChartLegend`.
          *          <dl>
          *              <dt>hSpacing</dt><dd>Horizontal distance, in pixels, between legend `items`.</dd>
@@ -1623,10 +1668,10 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
          *                      <dt>color</dt><dd>Color for the fill. The default value is "#faf9f2".</dd>
          *                  </dl>
          *              </dd>
-         *              <dt>stroke</dt><dd>Properties for the background stroke.
+         *              <dt>border</dt><dd>Properties for the background border.
          *                  <dl>
-         *                      <dt>color</dt><dd>Color for the stroke. The default value is "#dad8c9".</dd>
-         *                      <dt>weight</dt><dd>Weight of the stroke. The default values is 1.</dd>
+         *                      <dt>color</dt><dd>Color for the border. The default value is "#dad8c9".</dd>
+         *                      <dt>weight</dt><dd>Weight of the border. The default values is 1.</dd>
          *                  </dl>
          *              </dd>
          *          </dl>
@@ -1659,4 +1704,4 @@ function Chart(cfg)
 Y.Chart = Chart;
 
 
-}, '@VERSION@' ,{requires:['charts-base']});
+}, '@VERSION@', {"requires": ["charts-base"]});

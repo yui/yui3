@@ -5,6 +5,7 @@
     zoom: 1;
     font-size: 100%; 
     *font-size: 90%; /*IE 6/7 - To reduce IE's oversized button text*/
+    *overflow: visible; /*IE 6/7 - Because of IE's overly large left/right padding on buttons */
     padding: 0.4em 1em 0.45em;
     line-height: normal;
     white-space: nowrap;
@@ -20,7 +21,7 @@
     color: #444; /* rgba not supported (IE 8) */
     color: rgba(0, 0, 0, 0.80); /* rgba supported */
     *color: #444; /* IE 6 & 7 */
-    border: outset 1px solid #999;  /*IE 6/7/8*/
+    border: 1px solid #999;  /*IE 6/7/8*/
     border: none rgba(0, 0, 0, 0);  /*IE9 + everything else*/
     background-color: #E6E6E6;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80ffffff', endColorstr='#00ffffff', GradientType=0);
@@ -44,12 +45,6 @@
     -ms-transition: 0.1s linear box-shadow;
     -o-transition: 0.1s linear box-shadow;
     transition: 0.1s linear box-shadow;
-}
-
-/* Because of IE's overly large left/right padding on <input> */
-input.yui3-button{
-    *padding-left:0px; /*IE 6/7*/
-    *padding-right:0px; /*IE 6/7*/
 }
 
 a.yui3-button {
@@ -127,6 +122,7 @@ a.yui3-button {
 
 /* Night */
 .yui3-skin-night .yui3-button {
+    border: 0px;
     background-color: #343536;
     color: #DCDCDC;
     -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.15) inset, 0 1px 2px rgba(0, 0, 0, 0.15);

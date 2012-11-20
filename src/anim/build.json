@@ -1,0 +1,45 @@
+{
+    "name": "anim",
+    "builds": {
+        "anim-xy": {
+            "jsfiles": [
+                "anim-xy.js"
+            ]
+        },
+        "anim-shape": {
+            "jsfiles": [
+                "anim-shape.js"
+            ]
+        },
+        "anim-scroll": {
+            "jsfiles": [
+                "anim-scroll.js"
+            ]
+        },
+        "anim-node-plugin": {
+            "jsfiles": [
+                "anim-node-plugin.js"
+            ]
+        },
+        "anim-easing": {
+            "jsfiles": [
+                "anim-easing.js"
+            ]
+        },
+        "anim-curve": {
+            "jsfiles": [
+                "anim-curve.js"
+            ]
+        },
+        "anim-color": {
+            "jsfiles": [
+                "anim-color.js"
+            ]
+        },
+        "anim-base": {
+            "jsfiles": [
+                "anim.js"
+            ]
+        }
+    }
+}

@@ -1,6 +1,6 @@
 <div class="intro">
     <p>
-    This example demonstrates how to create a reusable dialog for messagages and confirmations.
+    This example demonstrates how to create a reusable dialog for messages and confirmations.
     </p>
 </div>
 
@@ -23,13 +23,11 @@
 
 <h3>The HTML</h3>
 
-<p>Panel requires you to have the class 
-`yui3-skin-sam` on a parent element, commonly the `<body>` tag.</p>
+{{>need-skin-note}}
 
 ```
-<body class="yui3-skin-sam">
-    <div id='dialog'></div>
-     
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+
     <!-- We'll use this button to just represent some user initiated event -->
     <button class='yui3-button btn-show'>Show Dialog</button>
     
@@ -87,7 +85,7 @@ If you use a callback, you'll need to add it every time the dialog is shown.
 ```
 Y.one('.btn-show').on('click', function(){
     // set the content you want in the message
-    Y.one('#dialog .message').setContent('Are you sure you want to [take some action]?');
+    Y.one('#dialog .message').setHTML('Are you sure you want to [take some action]?');
     
     // set the icon (or none) that appears next to the message.
     // the Class 'message' also needs to be maintained.

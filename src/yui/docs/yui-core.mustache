@@ -7,14 +7,14 @@
 </div>
 
 <h3>Setting up the YUI Instance</h3>
-<p>Here we will create our `YUI` instance, loading 'node' so we can work with DOM elements in the example.</p>
+<p>Here we will create our `YUI` instance, loading `node` so we can work with DOM elements in the example.</p>
 
 ```
 YUI().use('node', ...
 ```
 
 <h3>Using the callback</h3>
-<p>The <code>use</code> method will dynamically fetch anything required for 'node' if it isn't already on the page.
+<p>The <code>use</code> method will dynamically fetch anything required for `Node` if it isn't already on the page.
 If dynamic loading is required, the last parameter supplied to <code>use</code> should be a function to execute when
 the load is complete.  This function will be executed whether or not dynamic loading is required, so it
 is the preferred pattern for using <code>YUI</code>.</p>

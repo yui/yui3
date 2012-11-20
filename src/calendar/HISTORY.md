@@ -1,6 +1,37 @@
 Calendar Change History
 =======================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
+3.6.0
+-----
+  * Bug fixes for 2532262, 2532277, 2531828.
+  * Near 100% unit test coverage
+
+3.5.1
+-----
+
+  * No changes.
+
+
 3.5.0 - Updates
 ---------------
    * Calendar is now keyboard navigable [Ticket #2530348]

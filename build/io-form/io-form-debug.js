@@ -1,4 +1,4 @@
-YUI.add('io-form', function(Y) {
+YUI.add('io-form', function (Y, NAME) {
 
 /**
 * Extends IO to enable HTML form data serialization, when specified
@@ -93,4 +93,4 @@ Y.mix(Y.IO.prototype, {
 }, true);
 
 
-}, '@VERSION@' ,{requires:['io-base','node-base']});
+}, '@VERSION@', {"requires": ["io-base", "node-base"]});

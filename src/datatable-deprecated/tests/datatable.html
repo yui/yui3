@@ -103,7 +103,7 @@ _should: {
  
 (function() {
     YUI({
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         allowRollup: false,
         useBrowserConsole: false
     }).use("console", "test", "dump", "datatable", "profiler","node","json-parse", function(Y) {

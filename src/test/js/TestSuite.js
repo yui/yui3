@@ -5,6 +5,7 @@
  * @param {String||Object} data The name of the test suite or an object containing
  *      a name property as well as setUp and tearDown methods.
  * @namespace Test
+ * @module test
  * @class TestSuite
  * @constructor
  */
@@ -37,8 +38,8 @@ YUITest.TestSuite = function (data) {
     }
 
     //double-check name
-    if (this.name === ""){
-        this.name = "testSuite" + (+new Date());
+    if (this.name === "" || !this.name) {
+        this.name = YUITest.guid("testSuite_");
     }
 
 };

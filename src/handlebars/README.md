@@ -37,10 +37,21 @@ The upstream Handlebars code YUI uses is maintained in a fork of the original
 Handlebars.js project on GitHub, which we're trying to keep closely in sync
 with the original Handlebars.js project.
 
-The YUI fork can be found at <https://github.com/rgrove/handlebars.js/tree/yui>.
+The YUI fork can be found at <https://github.com/yui/handlebars.js/tree/yui>.
 The "yui" branch on that fork will contain any changes we've made that haven't
 yet been integrated upstream, but we do our best to get changes integrated
 upstream as quickly as possible to avoid diverging.
+
+Before you can import the Handlebars.js source, you must build Handlebars.js
+locally to create the `lib/handlebars/compiler/parser.js` in the local
+Handlebars.js repo. Here are the steps (you need `Node.js`, `npm`, `Ruby` and
+`Gem` installed):
+
+   * `gem install bundler`
+   * `bundle install`
+   * `rake compile`
+
+This should compile the `parser.js` file required to import into YUI.
 
 Code from this Handlebars.js repo is imported into the YUI 3 repo by a Makefile
 in the `src/handlebars` directory. Running `make import` will copy Handlebars
@@ -55,6 +66,8 @@ After importing Handlebars files, run `ant all` to build the final YUI modules.
 The Handlebars API will be available at `Y.Handlebars` when you use one of the
 Handlebars modules.
 
+When you commit your changes you need to reference the latest Handlebars.js
+commit hash so others know the latest commit that was merged into the build.
 
 License
 =======

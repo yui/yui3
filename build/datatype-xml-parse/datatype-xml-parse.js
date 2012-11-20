@@ -1,16 +1,16 @@
-YUI.add('datatype-xml-parse', function(Y) {
+YUI.add('datatype-xml-parse', function (Y, NAME) {
 
 /**
  * Parse XML submodule.
  *
- * @module datatype
+ * @module datatype-xml
  * @submodule datatype-xml-parse
- * @for DataType.XML
+ * @for XML
  */
 
 var LANG = Y.Lang;
 
-Y.mix(Y.namespace("DataType.XML"), {
+Y.mix(Y.namespace("XML"), {
     /**
      * Converts data to type XMLDocument.
      *
@@ -30,8 +30,12 @@ Y.mix(Y.namespace("DataType.XML"), {
             }
             catch(ee) {
                 try {
-                    if(!LANG.isUndefined(DOMParser)) {
+                    if (!LANG.isUndefined(DOMParser)) {
                         xmlDoc = new DOMParser().parseFromString(data, "text/xml");
+                    }
+                    if (!LANG.isUndefined(Windows.Data.Xml.Dom)) {
+                        xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
+                        xmlDoc.loadXml(data);
                     }
                 }
                 catch(e) {
@@ -47,8 +51,10 @@ Y.mix(Y.namespace("DataType.XML"), {
 });
 
 // Add Parsers shortcut
-Y.namespace("Parsers").xml = Y.DataType.XML.parse;
+Y.namespace("Parsers").xml = Y.XML.parse;
+
+Y.namespace("DataType");
+Y.DataType.XML = Y.XML;
 
 
-
-}, '@VERSION@' );
+}, '@VERSION@');

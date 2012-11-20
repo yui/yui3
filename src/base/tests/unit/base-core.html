@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Base Core Tests</title>
+
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+
+    <script type="text/javascript">
+        YUI({
+            coverage: ['base-core'],
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+            modules: {
+                'base-core-tests': {
+                    fullpath: './assets/base-core-tests.js',
+                    requires: [ 'base-core', 'dump', 'test' ]
+                }
+            }
+        }).use("base-core-tests", "test-console", function(Y) {
+
+            (new Y.Test.Console()).render('#log');
+
+            Y.Test.Runner.run();
+        });
+    </script>
+</head>
+<body class="yui3-skin-sam">
+    <div id="log"></div>
+</body>
+</html>

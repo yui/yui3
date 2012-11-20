@@ -1,4 +1,4 @@
-YUI.add('loader-rollup', function(Y) {
+YUI.add('loader-rollup', function (Y, NAME) {
 
 /**
  * Optional automatic rollup logic for reducing http connections
@@ -67,7 +67,7 @@ Y.Loader.prototype._rollup = function() {
                         // increment the counter if this module is required.
                         // if we are beyond the rollup threshold, we will
                         // use the rollup module
-                        } else if (r[s[j]] && m.type == smod.type) {
+                        } else if (r[s[j]] && m.type === smod.type) {
                             c++;
                             // Y.log("adding to thresh: " + c + ", " + s[j]);
                             roll = (c >= m.rollup);
@@ -99,4 +99,4 @@ Y.Loader.prototype._rollup = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['loader-base']});
+}, '@VERSION@', {"requires": ["loader-base"]});

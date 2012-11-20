@@ -241,7 +241,7 @@ ATTRS[DISABLED] = {
 
 /**
  * @attribute visible
- * @description Boolean indicating weather or not the Widget is visible.
+ * @description Boolean indicating whether or not the Widget is visible.
  * @default TRUE
  * @type boolean
  */
@@ -340,15 +340,13 @@ _getWidgetClassName = Widget.getClassName;
  */
 Widget.getByNode = function(node) {
     var widget,
-        nodeid,
         widgetMarker = _getWidgetClassName();
 
     node = Node.one(node);
     if (node) {
         node = node.ancestor("." + widgetMarker, true);
         if (node) {
-            nodeid = node.get(ID);
-            widget = _instances[nodeid];
+            widget = _instances[Y.stamp(node, true)];
         }
     }
 
@@ -391,8 +389,9 @@ Y.extend(Widget, Y.Base, {
         Y.log('initializer called', 'life', 'widget');
 
         var bb = this.get(BOUNDING_BOX);
+
         if (bb instanceof Node) {
-            this._mapInstance(bb.get(ID));
+            this._mapInstance(Y.stamp(bb));
         }
 
         /**
@@ -422,9 +421,7 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _mapInstance : function(id) {
-        if (!(_instances[id])) {
-            _instances[id] = this;
-        }
+        _instances[id] = this;
     },
 
     /**
@@ -439,13 +436,13 @@ Y.extend(Widget, Y.Base, {
         Y.log('destructor called', 'life', 'widget');
 
         var boundingBox = this.get(BOUNDING_BOX),
-            bbid;
+            bbGuid;
 
         if (boundingBox instanceof Node) {
-            bbid = boundingBox.get(ID);
+            bbGuid = Y.stamp(boundingBox,true);
 
-            if (bbid in _instances) {
-                delete _instances[bbid];
+            if (bbGuid in _instances) {
+                delete _instances[bbGuid];
             }
 
             this._destroyBox();
@@ -763,7 +760,7 @@ Y.extend(Widget, Y.Base, {
      * @return Node
      */
     _setBB: function(node) {
-        return this._setBox(this.get(ID), node, this.BOUNDING_TEMPLATE);
+        return this._setBox(this.get(ID), node, this.BOUNDING_TEMPLATE, true);
     },
 
     /**
@@ -775,7 +772,7 @@ Y.extend(Widget, Y.Base, {
      * @return Node
      */
     _setCB: function(node) {
-        return (this.CONTENT_TEMPLATE === null) ? this.get(BOUNDING_BOX) : this._setBox(null, node, this.CONTENT_TEMPLATE);
+        return (this.CONTENT_TEMPLATE === null) ? this.get(BOUNDING_BOX) : this._setBox(null, node, this.CONTENT_TEMPLATE, false);
     },
 
     /**
@@ -801,13 +798,27 @@ Y.extend(Widget, Y.Base, {
      * @param {String} id The node's id attribute
      * @param {Node|String} node The node reference
      * @param {String} template HTML string template for the node
+     * @param {boolean} true if this is the boundingBox, false if it's the contentBox
      * @return {Node} The node
      */
-    _setBox : function(id, node, template) {
-        node = Node.one(node) || Node.create(template);
+    _setBox : function(id, node, template, isBounding) {
+
+        node = Node.one(node);
+
+        if (!node) {
+            node = Node.create(template);
+
+            if (isBounding) {
+                this._bbFromTemplate = true;
+            } else {
+                this._cbFromTemplate = true;
+            }
+        }
+
         if (!node.get(ID)) {
             node.set(ID, id || Y.guid());
         }
+
         return node;
     },
 
@@ -899,10 +910,13 @@ Y.extend(Widget, Y.Base, {
         // Shared listener across all Widgets.
         if (!focusHandle) {
             focusHandle = Widget._hDocFocus = oDocument.on("focus", this._onDocFocus, this);
-            focusHandle.listeners = 1;
-        } else {
-            focusHandle.listeners++; 
+            focusHandle.listeners = {
+                count: 0
+            };
         }
+
+        focusHandle.listeners[Y.stamp(this, true)] = true;
+        focusHandle.listeners.count++;
 
         //	Fix for Webkit:
         //	Document doesn't receive focus in Webkit when the user mouses 
@@ -921,12 +935,20 @@ Y.extend(Widget, Y.Base, {
     _unbindDOM : function(boundingBox) {
 
         var focusHandle = Widget._hDocFocus,
+            yuid = Y.stamp(this, true),
+            focusListeners,
             mouseHandle = this._hDocMouseDown;
 
         if (focusHandle) {
-            if (focusHandle.listeners > 0) {
-                focusHandle.listeners--;
-            } else {
+
+            focusListeners = focusHandle.listeners;
+
+            if (focusListeners[yuid]) {
+                delete focusListeners[yuid];
+                focusListeners.count--;
+            }
+
+            if (focusListeners.count === 0) {
                 focusHandle.detach();
                 Widget._hDocFocus = null;
             }

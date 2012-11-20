@@ -32,5 +32,4 @@ api:
 source: asserts core errors mock reporting api wrap
 
 build:
-	ant all
-
+	shifter

@@ -8,7 +8,7 @@ YUI({
 
 var myuploader = new Y.UploaderHTML5({contentBox: "#fileselection", 
                                       multipleFiles: true, 
-                                      uploadURL: "upload.php"});
+                                      uploadURL: "http://www.yswfblog.com/upload/simpleupload.php"});
 myuploader.render();
 
 myuploader.set("multipleFiles", true);

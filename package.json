@@ -1,10 +1,9 @@
 {
     "name": "yui",
-    "version": "3.5.0pre",
+    "version": "3.6.0pre",
     "description": "YUI 3 Source",
     "author": "Dav Glass <davglass@gmail.com>",
     "bugs": { "url" : "http://yuilibrary.com/projects/yui3/" },
-    "os": ["darwin", "linux"],
     "engines": {
         "node" : ">=0.4.0"
     },
@@ -13,7 +12,12 @@
     },
     "main": "./index.js",
     "dependencies": {
-        "request": "2.9.100"
+        "request": "2.9.202"
+    },
+    "devDependencies": {
+        "yuidocjs": "*",
+        "shifter": "*",
+        "yogi": "*"
     },
     "licenses":[
         {

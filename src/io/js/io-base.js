@@ -1,7 +1,8 @@
 /**
 Base IO functionality. Provides basic XHR transport support.
-@module io-base
-@main io-base
+
+@module io
+@submodule io-base
 @for IO
 **/
 
@@ -109,8 +110,20 @@ IO.prototype = {
             },
             alt = config.xdr ? config.xdr.use : null,
             form = config.form && config.form.upload ? 'iframe' : null,
-            use = alt || form;
+            use;
 
+        if (alt === 'native') {
+            // Non-IE and IE >= 10  can use XHR level 2 and not rely on an
+            // external transport.
+            alt = Y.UA.ie && !SUPPORTS_CORS ? 'xdr' : null;
+
+            // Prevent "pre-flight" OPTIONS request by removing the
+            // `X-Requested-With` HTTP header from CORS requests. This header
+            // can be added back on a per-request basis, if desired.
+            io.setHeader('X-Requested-With');
+        }
+
+        use = alt || form;
         transaction = use ? Y.merge(Y.IO.customTransport(use), transaction) :
                             Y.merge(Y.IO.defaultTransport(), transaction);
 
@@ -119,7 +132,7 @@ IO.prototype = {
         }
 
         if (!use) {
-            if (win && win.FormData && config.data instanceof FormData) {
+            if (win && win.FormData && config.data instanceof win.FormData) {
                 transaction.c.upload.onprogress = function (e) {
                     io.progress(transaction, e, config);
                 };
@@ -169,6 +182,9 @@ IO.prototype = {
             emitFacade  = io.cfg.emitFacade,
             globalEvent = "io:" + eventName,
             trnEvent    = "io-trn:" + eventName;
+
+        // Workaround for #2532107
+        this.detach(trnEvent);
 
         if (transaction.e) {
             transaction.c = { status: 0, statusText: transaction.e };
@@ -689,10 +705,8 @@ IO.prototype = {
 
             // Will work only in browsers that implement the
             // Cross-Origin Resource Sharing draft.
-            if (config.xdr && config.xdr.credentials) {
-                if (!Y.UA.ie) {
-                    transaction.c.withCredentials = true;
-                }
+            if (config.xdr && config.xdr.credentials && SUPPORTS_CORS) {
+                transaction.c.withCredentials = true;
             }
 
             // Using "null" with HTTP POST will result in a request

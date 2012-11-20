@@ -1,0 +1,218 @@
+<style>
+#docs-main li {
+    margin: 1ex 0;
+}
+
+li code,
+td code {
+    white-space: nowrap;
+    background: #fcfbfa;
+    border: 1px solid #d0d5ec;
+    padding: 0 3px;
+}
+li code {
+    border-color: #efeeed;
+}
+.yui3-skin-sam table {
+    width: auto;
+}
+.yui3-skin-sam td,
+.yui3-skin-sam th {
+    border: 0 none;
+}
+
+.demo    { width: 40%; }
+.details { width: 60%; }
+.before, .after { width: 47%; }
+.after {
+    margin-left: 5%;
+}
+
+#quickref code em {
+    color: #900;
+}
+#quickref code strong {
+    color: #090;
+}
+#quickref pre.code {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.spendy {
+    color: #b00;
+}
+</style>
+<div class="intro">
+    <p>
+        Uploader has been rebuilt in version 3.5.0, and a number of additional
+        supporting modules (`UploaderFlash`, `UploaderHTML5`, `Uploader.Queue` 
+        and `File`) have been added.  The new architecture is <strong>not fully 
+        backward-compatible</strong> with versions 3.4.1 and prior.  This guide 
+        is to help answer questions that may come up when upgrading to the latest 
+        version.
+    </p>
+
+    <p>
+        This guide focuses on 3.4.1 API compatibility.  It <strong>does not
+        describe new features added in 3.5.0</strong>.
+        Refer to the updated <a href="index.html">Uploader user guide</a> for
+        that.
+    </p>
+
+    <p>
+        If you are unable to upgrade due to unresolvable issues, you can use the
+        <a href="../uploader-deprecated/index.html">`uploader-deprecated`</a>
+        module, which is equivalent to the 3.4.1 implementation.  But be
+        aware that this module will be removed in a future version of YUI.
+    </p>
+</div>
+
+<h2 id="overview">Overview of API changes from 3.4.1</h2>
+
+<p>
+    The architectural changes resulted in the deprecation, replacement, or
+    removal of some of the attributes, properties, methods and events from
+    3.4.1 version of the Uploader. Here is a quick list of the changes most 
+    likely to affect your upgrade:
+</p>
+
+<h3>Attribute changes</h3>
+<table>
+    <tr>
+        <th>Attribute in 3.4.1</th>
+        <th>Change in 3.5.0</th>
+    </tr>
+    <tr>
+        <td>`buttonSkin`</td>
+        <td><strong>No longer exists.</strong> The Uploader in Flash mode is now always rendered
+            as transparent, overlaying a "Select Files" button that can be replaced
+            with any control (with any skin) using the `selectFilesButton` attribute.
+        </td>
+    </tr>
+    <tr>
+        <td>`fileFilters`</td>
+        <td>Only available when the Uploader is in <strong>Flash mode</strong>, and has no effect
+            when the Uploader is in HTML5 mode. If filtering by extension is needed
+            across all Uploader modes, it is best to implement it post-selection,
+            by validating individual elements in the `fileList`.
+        </td>
+    </tr>
+    <tr>
+        <td>`log`</td>
+        <td><strong>No longer exists.</strong> All necessary uploader information is transmitted via
+            events.
+        </td>
+    </tr>
+    <tr>
+        <td>`multiFiles`</td>
+        <td>Renamed to `multipleFiles`</td>
+    </tr>
+    <tr>
+        <td>`transparent`</td>
+        <td><strong>No longer exists.</strong> The Uploader in Flash mode is now always rendered as 
+            a transparent overlay over a "Select Files" button that can be customized
+            or replaced with any control using the `selectFilesButton` attribute.</td>
+    </tr>
+</table>
+
+
+<h3>Method changes</h3>
+<table>
+    <tr>
+        <th>Method in 3.4.1</th>
+        <th>Change in 3.5.0</th>
+    </tr>
+    <tr>
+        <td>`cancel`</td>
+        <td><strong>No longer exists</strong> on the Uploader instance. Instead, a `cancelUpload()` method is present on the instance of Uploader's queue, stored in `uploaderInstance.queue`.
+            (See the <a href="{{apiDocs}}/classes/Uploader.Queue.html#method_cancelUpload">API Docs</a> for more information).
+        </td>
+    </tr>
+    <tr>
+        <td>`clearFileList`</td>
+        <td><strong>No longer exists</strong>. Instead, you can directly manipulate the `fileList`
+            attribute.</td>
+    </tr>
+    <tr>
+        <td>`enable`</td>
+        <td><strong>No longer exists</strong>. Instead, set the `enabled` attribute to either `true` or `false`.</td>
+    </tr>
+    <tr>
+        <td>`disable`</td>
+        <td><strong>No longer exists</strong>. Instead, set the `enabled` attribute to either `true` or `false`.</td>
+    </tr>
+    <tr>
+        <td>`removeFile`</td>
+        <td><strong>No longer exists</strong>. Instead, you can directly manipulate the `fileList`
+            attribute.</td>
+    </tr>
+    <tr>
+        <td>`upload`</td>
+        <td><strong>The method signature has changed</strong>. The new `upload()` method takes
+            `file`, `url`, and `postVars` as arguments, where `file` is a references to an instance
+            of `Y.File` (can be obtained from the `fileList` attribute), `url` is the target URL
+            to upload the file to, and `postVars` is a set of key-value pairs specifying the variables
+            that should be POSTed along with the file upload. The old `method` argument has been removed since file upload requests are always POSTed. The old `postFileVarName` argument has been replaced with an instance-level `fileFieldName` attribute. (See the <a href="{{apiDocs}}/classes/UploaderFlash.html#method_upload">API Docs</a> for more information).</td>
+    </tr>
+    <tr>
+        <td>`uploadAll`</td>
+        <td><strong>The method signature has changed</strong>. The new `uploadAll()` method takes
+            `url`, and `postVars` as arguments, where `url` is the target URL to upload the files to, and `postVars` is a set of key-value pairs specifying the variables that should be POSTed along with the file upload. If POST variables need to be specified per file, you can use the `postVarsPerFile` attribute instead of specifying the third argument. The old `method` argument has been removed since file upload requests are always POSTed. The old `postFileVarName` argument has been replaced with an instance-level `fileFieldName` attribute. (See the <a href="{{apiDocs}}/classes/UploaderFlash.html#method_uploadAll">API Docs</a> for more information).</td>
+    </tr>
+    <tr>
+        <td>`uploadThese`</td>
+        <td><strong>The method signature has changed</strong>. The new `uploadThese()` method takes
+            `files`, `url`, and `postVars` as arguments, where `files` is an array of `Y.File` instances (can be obtained as a subset of `fileList` attribute), `url` is the target URL to upload the files to, and `postVars` is a set of key-value pairs specifying the variables that should be POSTed along with the file upload. If POST variables need to be specified per file, you can use the `postVarsPerFile` attribute instead of specifying the third argument. The old `method` argument has been removed since file upload requests are always POSTed. The old `postFileVarName` argument has been replaced with an instance-level `fileFieldName` attribute. (See the <a href="{{apiDocs}}/classes/UploaderFlash.html#method_uploadThese">API Docs</a> for more information).</td>
+    </tr>
+</table>
+<h2 id="progressive-enhancement">Improved Progressive Enhancement</h2>
+
+The progressive enhancement scenario has been improved in 3.5.0 Uploader. The Uploader now keeps a static `TYPE` property (`Y.Uploader.TYPE`), which you can check before creating an instance of Uploader or modifying its configuration settings. We recommend the following pattern for using Uploader on your pages:
+
+```
+
+if (Y.Uploader.TYPE != "none") {
+    
+    var uploaderInstance = new Y.Uploader(....); // Common configuration settings.
+
+    if (Y.Uploader.TYPE == "html5") {
+      // Additional configuration settings for an HTML5 uploader,
+      // e.g. a drag-and-drop area specification, etc.
+    }
+
+    else if (Y.Uploader.TYPE == "flash") {
+      // Flash-specific configuration settings, 
+      // e.g. a fileFilters setting, etc.
+   }
+
+   // Render the uploader
+   uploaderInstance.render("#selectFilesButtonContainer");
+}
+
+else {
+    
+    // Don't render the uploader and use predefined basic functionality
+    // instead (e.g. a simple upload form field).
+
+}
+```
+
+<h2 id="backend-setup">Backend Setup</h2>
+
+The backend requirements for the Flash version of the Uploader have not changed. However, the XMLHttpRequest Level 2 cross-domain request security model is different from that in Flash, and needs a different type of verification from the backend that receives POST requests with uploaded files. See the <a href="index.html#backend-setup">Backend Setup</a> section in the User Guide for more information, or read more about it on the <a href="http://www.html5rocks.com/en/tutorials/cors/#toc-handling-a-not-so-simple-request">HTML5Rocks website.</a>
+
+<h2 id="help-me">What Did We Miss?</h2>
+
+<p>
+    Obviously, there were quite a few changes to Uploader from 3.4.1 to 3.5.0.
+    It's likely that we missed something here.  If you experience trouble with 
+    your upgrade and find this migration guide is missing something important, 
+    please <a href="/projects/yui3/newticket">file a ticket</a> and we'll update 
+    it as soon as possible.
+</p>
+
+<p>
+    Additional resources to help with the upgrade include the <a href="/forum">forums</a>, 
+    and the #yui IRC channel on freenode.net.
+</p>

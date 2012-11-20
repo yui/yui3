@@ -7,6 +7,7 @@
  *                      thrown.
  * @namespace Test 
  * @extends YUITest.AssertionError
+ * @module test
  * @class UnexpectedError
  * @constructor
  */  

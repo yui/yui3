@@ -1,4 +1,4 @@
-YUI.add('anim-scroll', function(Y) {
+YUI.add('anim-scroll', function (Y, NAME) {
 
 /**
  * Adds support for the <code>scroll</code> property in <code>to</code>
@@ -35,4 +35,4 @@ Y.Anim.behaviors.scroll = {
 
 
 
-}, '@VERSION@' ,{requires:['anim-base']});
+}, '@VERSION@', {"requires": ["anim-base"]});

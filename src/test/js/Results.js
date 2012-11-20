@@ -3,6 +3,7 @@
  * test result information.
  * @private
  * @namespace Test
+ * @module test
  * @class Results
  * @constructor
  * @param {String} name The name of the test.
@@ -57,7 +58,7 @@ YUITest.Results = function(name){
      * @property duration
      */
     this.duration = 0;
-}
+};
 
 /**
  * Includes results from another results object into this one.

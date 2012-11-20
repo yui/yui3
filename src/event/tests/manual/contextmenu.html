@@ -24,7 +24,7 @@
         <script type="text/javascript">
 
           YUI({
-            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             allowRollup: false,
             lazyEventFacade: true
           }).use("event-contextmenu", "node-event-delegate", "overlay", function (Y) {

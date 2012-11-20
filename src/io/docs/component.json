@@ -2,7 +2,7 @@
     "name"       : "io",
     "displayName": "IO Utility",
     "description": "HTTP utility for making same-origin and cross-domain requests",
-    "author"     : "tsha",
+    "author"     : "ericf",
 
     "tags": ["utility"],
     "use" : ["io"],
@@ -30,7 +30,7 @@
             "name"       : "xdr",
             "displayName": "Request JSON using Yahoo! Pipes",
             "description": "Use IO to make a cross-domain request to Yahoo! Pipes, returning data from disparate sources.",
-            "modules"    : ["io-xdr", "json-parse", "substitute", "node"],
+            "modules"    : ["io-xdr", "json-parse", "node"],
             "tags"       : ["utility", "pipes", "http", "xdr"],
 
             "hideTableOfContents": true

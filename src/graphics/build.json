@@ -1,0 +1,61 @@
+{
+    "name": "graphics",
+    "builds": {
+        "graphics": {
+            "jsfiles": [
+                "GraphicBase.js"
+            ]
+        },
+        "graphics-canvas-default": {
+            "jsfiles": [
+                "CanvasDefault.js"
+            ]
+        },
+        "graphics-canvas": {
+            "jsfiles": [
+                "CanvasDrawing.js",
+                "CanvasShape.js",
+                "CanvasPath.js",
+                "CanvasRect.js",
+                "CanvasEllipse.js",
+                "CanvasCircle.js",
+                "CanvasPieSlice.js",
+                "CanvasGraphic.js"
+            ]
+        },
+        "graphics-vml-default": {
+            "jsfiles": [
+                "VMLDefault.js"
+            ]
+        },
+        "graphics-vml": {
+            "jsfiles": [
+                "VMLDrawing.js",
+                "VMLShape.js",
+                "VMLPath.js",
+                "VMLRect.js",
+                "VMLEllipse.js",
+                "VMLCircle.js",
+                "VMLPieSlice.js",
+                "VMLGraphic.js"
+            ]
+        },
+        "graphics-svg-default": {
+            "jsfiles": [
+                "SVGDefault.js"
+            ]
+        },
+        "graphics-svg": {
+            "jsfiles": [
+                "SVGDrawing.js",
+                "SVGShape.js",
+                "SVGPath.js",
+                "SVGRect.js",
+                "SVGEllipse.js",
+                "SVGCircle.js",
+                "SVGPieSlice.js",
+                "SVGGraphic.js"
+            ]
+        }
+    }
+}

@@ -18,7 +18,8 @@
             "node-event-simulate": {
                 "requires": [
                     "node-base",
-                    "event-simulate"
+                    "event-simulate",
+                    "gesture-simulate"
                 ]
             },
             "shim-plugin": {

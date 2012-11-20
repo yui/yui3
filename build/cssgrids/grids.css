@@ -4,7 +4,13 @@
     word-spacing: -0.43em; /* IE < 8 && gecko: collapse white-space between units */
 }
 
-.yui3-u,
+.yui3-u {
+    display: inline-block;
+    zoom: 1; *display: inline; /* IE < 8: fake inline-block */
+    letter-spacing: normal;
+    word-spacing: normal;
+    vertical-align: top;
+}
 .yui3-u-1,
 .yui3-u-1-2,
 .yui3-u-1-3,
@@ -151,3 +157,5 @@
 .yui3-u-23-24 {
     width: 95.8333%;
 }
+/* YUI CSS Detection Stamp */
+#yui3-css-stamp.cssgrids { display: none; }

@@ -1,6 +1,19 @@
-YUI.add('datatable-message', function(Y) {
+YUI.add('datatable-message', function (Y, NAME) {
 
 /**
+Adds support for a message container to appear in the table.  This can be used
+to indicate loading progress, lack of records, or any other communication
+needed.
+
+@module datatable
+@submodule datatable-message
+@since 3.5.0
+**/
+var Message;
+
+/**
+_API docs for this extension are included in the DataTable class._
+
 Adds support for a message container to appear in the table.  This can be used
 to indicate loading progress, lack of records, or any other communication
 needed.
@@ -8,12 +21,10 @@ needed.
 Features added to `Y.DataTable`, and made available for custom classes at
 `Y.DataTable.Message`.
 
-@module datatable-message
 @class DataTable.Message
 @for DataTable
+@since 3.5.0
 **/
-var Message;
-
 Y.namespace('DataTable').Message = Message = function () {};
 
 Message.ATTRS = {
@@ -25,6 +36,7 @@ Message.ATTRS = {
     @attribute showMessages
     @type {Boolean}
     @default true
+    @since 3.5.0
     **/
     showMessages: {
         value: true,
@@ -39,6 +51,7 @@ Y.mix(Message.prototype, {
     @property MESSAGE_TEMPLATE
     @type {HTML}
     @default <tbody class="{className}"><td class="{contentClass}" colspan="{colspan}"></td></tbody>
+    @since 3.5.0
     **/
     MESSAGE_TEMPLATE: '<tbody class="{className}"><tr><td class="{contentClass}" colspan="{colspan}"></td></tr></tbody>',
 
@@ -48,6 +61,7 @@ Y.mix(Message.prototype, {
     @method hideMessage
     @return {DataTable}
     @chainable
+    @since 3.5.0
     **/
     hideMessage: function () {
         this.get('boundingBox').removeClass(
@@ -65,6 +79,7 @@ Y.mix(Message.prototype, {
     @param {String} message The message name or message itself to display
     @return {DataTable}
     @chainable
+    @since 3.5.0
     **/
     showMessage: function (message) {
         var content = this.getString(message) || message;
@@ -77,7 +92,7 @@ Y.mix(Message.prototype, {
             if (content) {
                 this._messageNode.one(
                     '.' + this.getClassName('message', 'content'))
-                    .setContent(content);
+                    .setHTML(content);
 
                 this.get('boundingBox').addClass(
                     this.getClassName('message','visible'));
@@ -100,6 +115,7 @@ Y.mix(Message.prototype, {
     @method _afterMessageColumnsChange
     @param {EventFacade} e The columnsChange event
     @protected
+    @since 3.5.0
     **/
     _afterMessageColumnsChange: function (e) {
         var contentNode;
@@ -109,6 +125,8 @@ Y.mix(Message.prototype, {
                 '.' + this.getClassName('message', 'content'));
 
             if (contentNode) {
+                // FIXME: This needs to become a class extension plus a view or
+                // plugin for the table view.
                 contentNode.set('colSpan', this._displayColumns.length);
             }
         }
@@ -120,6 +138,7 @@ Y.mix(Message.prototype, {
     @method _afterMessageDataChange
     @param {EventFacade} e The dataChange event
     @protected
+    @since 3.5.0
     **/
     _afterMessageDataChange: function (e) {
         this._uiSetMessage();
@@ -132,6 +151,7 @@ Y.mix(Message.prototype, {
     @method _afterShowMessagesChange
     @param {EventFacade} e The showMessagesChange event
     @protected
+    @since 3.5.0
     **/
     _afterShowMessagesChange: function (e) {
         if (e.newVal) {
@@ -151,6 +171,7 @@ Y.mix(Message.prototype, {
 
     @method _bindMessageUI
     @protected
+    @since 3.5.0
     **/
     _bindMessageUI: function () {
         this.after(['dataChange', '*:add', '*:remove', '*:reset'],
@@ -168,6 +189,7 @@ Y.mix(Message.prototype, {
 
     @method initializer
     @protected
+    @since 3.5.0
     **/
     initializer: function () {
         this._initMessageStrings();
@@ -186,6 +208,7 @@ Y.mix(Message.prototype, {
 
     @method _initMessageNode
     @protected
+    @since 3.5.0
     **/
     _initMessageNode: function () {
         if (!this._messageNode) {
@@ -205,6 +228,7 @@ Y.mix(Message.prototype, {
     
     @method _initMessageStrings
     @protected
+    @since 3.5.0
     **/
     _initMessageStrings: function () {
         // Not a valueFn because other class extensions will want to add to it
@@ -218,6 +242,7 @@ Y.mix(Message.prototype, {
     @property _messageNode
     @type {Node}
     @value `undefined` (not initially set)
+    @since 3.5.0
     **/
     //_messageNode: null,
 
@@ -226,6 +251,7 @@ Y.mix(Message.prototype, {
 
     @method _syncMessageUI
     @protected
+    @since 3.5.0
     **/
     _syncMessageUI: function () {
         this._uiSetMessage();
@@ -244,6 +270,7 @@ Y.mix(Message.prototype, {
     @method _uiSetMessage
     @param {EventFacade} e The columnsChange event
     @protected
+    @since 3.5.0
     **/
     _uiSetMessage: function (e) {
         if (!this.data.size()) {
@@ -260,4 +287,4 @@ if (Y.Lang.isFunction(Y.DataTable)) {
 }
 
 
-}, '@VERSION@' ,{requires:['datatable-base'], skinnable:true, lang:['en']});
+}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en"], "skinnable": true});

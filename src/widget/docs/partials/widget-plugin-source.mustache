@@ -1,6 +1,6 @@
 <div id="demo"></div>
 <script type="text/javascript">
-YUI().use("widget", "gallery-widget-io", "json-parse", "substitute", "escape", function(Y) {
+YUI().use("widget", "gallery-widget-io", "json-parse", "escape", function(Y) {
 
     var formatRSS = function (val) {
         var formatted = "Error parsing feed data";
@@ -15,7 +15,7 @@ YUI().use("widget", "gallery-widget-io", "json-parse", "substitute", "escape", f
                     if (i < 10) {
                         v.title = Y.Escape.html(v.title);
                         v.link = Y.Escape.html(v.link);
-                        html.push(Y.substitute(linkTemplate, v));
+                        html.push(Y.Lang.sub(linkTemplate, v));
                     }
                 });
                 html.push("</ul>");
@@ -44,7 +44,7 @@ YUI().use("widget", "gallery-widget-io", "json-parse", "substitute", "escape", f
             loading: '<img class="yui3-loading" width="32px" height="32px" src="{{componentAssets}}/img/ajax-loader.gif">'
         });
         widget.render('#demo');
-        
+
         widget.io.refresh();
     });
 
@@ -53,6 +53,6 @@ YUI().use("widget", "gallery-widget-io", "json-parse", "substitute", "escape", f
         yid: Y.id,
         src:'{{yuiLocalBuildUrl}}/io-xdr/io.swf?stamp=' + (new Date()).getTime()
     });
-    
+
 });
 </script>

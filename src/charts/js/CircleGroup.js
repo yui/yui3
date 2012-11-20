@@ -1,18 +1,19 @@
 /**
  * Abstract class for creating groups of circles with the same styles and dimensions.
  *
- * @module graphics
- * @class GroupCircle
+ * @module charts
+ * @submodule charts-base
+ * @class CircleGroup
  * @constructor
  */
  CircleGroup = function(cfg)
  {
     CircleGroup.superclass.constructor.apply(this, arguments);
  };
-    
+
  CircleGroup.NAME = "circleGroup";
 
- Y.extend(CircleGroup, Y.ShapeGroup, {    
+ Y.extend(CircleGroup, Y.ShapeGroup, {
     /**
      * Algorithm for drawing shape.
      *
@@ -54,6 +55,6 @@ CircleGroup.ATTRS = Y.merge(Y.ShapeGroup.ATTRS, {
         }
     }
 });
-    
+
 CircleGroup.ATTRS = Y.ShapeGroup.ATTRS;
 Y.CircleGroup = CircleGroup;

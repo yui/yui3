@@ -1,4 +1,4 @@
-YUI.add('cookie', function(Y) {
+YUI.add('cookie', function (Y, NAME) {
 
 /**
  * Utilities for cookie management
@@ -496,4 +496,4 @@ YUI.add('cookie', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

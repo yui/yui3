@@ -1,4 +1,4 @@
-YUI.add('swf', function(Y) {
+YUI.add('swf', function (Y, NAME) {
 
 /**
  * Embed a Flash applications in a standard manner and communicate with it
@@ -19,7 +19,7 @@ YUI.add('swf', function(Y) {
         FLASH_VER = "10.0.22",
         EXPRESS_INSTALL_URL = "http://fpdownload.macromedia.com/pub/flashplayer/update/current/swf/autoUpdater.swf?" + Math.random(),
         EVENT_HANDLER = "SWF.eventHandler",
-        possibleAttributes = {align:"", allowFullScreen:"", allowNetworking:"", allowScriptAccess:"", base:"", bgcolor:"", menu:"", name:"", quality:"", salign:"", scale:"", tabindex:"", wmode:""};
+        possibleAttributes = {align:"", allowFullScreen:"", allowNetworking:"", allowScriptAccess:"", base:"", bgcolor:"", loop:"", menu:"", name:"", play: "", quality:"", salign:"", scale:"", tabindex:"", wmode:""};
 
         /**
          * The SWF utility is a tool for embedding Flash applications in HTML pages.
@@ -56,10 +56,10 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 
     var _id = this._id;
     var oElement = Node.one(p_oElement);
-	
-	var p_oAttributes = p_oAttributes || {};
+    
+    var p_oAttributes = p_oAttributes || {};
 
-	var flashVersion = p_oAttributes["version"] || FLASH_VER;
+    var flashVersion = p_oAttributes.version || FLASH_VER;
 
     var flashVersionSplit = (flashVersion + '').split(".");
     var isFlashVersionRight = SWFDetect.isFlashVersionAtLeast(parseInt(flashVersionSplit[0], 10), parseInt(flashVersionSplit[1], 10), parseInt(flashVersionSplit[2], 10));
@@ -106,8 +106,9 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
         }
 
         objstring += "</object>";
-        oElement.setContent(objstring);
-
+        //using innerHTML as setHTML/setContent causes some issues with ExternalInterface for IE versions of the player
+        oElement.set("innerHTML", objstring);
+        
         this._swf = Node.one("#" + _id);
     } else {
         /**
@@ -162,35 +163,35 @@ SWF.prototype = {
     },
 
         /**
-	 * Calls a specific function exposed by the SWF's
-	 * ExternalInterface.
-	 * @method callSWF
-	 * @param func {String} the name of the function to call
-	 * @param args {Array} the set of arguments to pass to the function.
-	 */
-	
-	callSWF: function (func, args)
-	{
-	if (!args) { 
-		  args= []; 
-	}	
-		if (this._swf._node[func]) {
-		return(this._swf._node[func].apply(this._swf._node, args));
-	    } else {
-		return null;
-	    }
-	},
-	
-	/**
-	 * Public accessor to the unique name of the SWF instance.
-	 *
-	 * @method toString
-	 * @return {String} Unique name of the SWF instance.
-	 */
-	toString: function()
-	{
-		return "SWF " + this._id;
-	}
+     * Calls a specific function exposed by the SWF's
+     * ExternalInterface.
+     * @method callSWF
+     * @param func {String} the name of the function to call
+     * @param args {Array} the set of arguments to pass to the function.
+     */
+    
+    callSWF: function (func, args)
+    {
+    if (!args) { 
+          args= []; 
+    }   
+        if (this._swf._node[func]) {
+        return(this._swf._node[func].apply(this._swf._node, args));
+        } else {
+        return null;
+        }
+    },
+    
+    /**
+     * Public accessor to the unique name of the SWF instance.
+     *
+     * @method toString
+     * @return {String} Unique name of the SWF instance.
+     */
+    toString: function()
+    {
+        return "SWF " + this._id;
+    }
 };
 
 Y.augment(SWF, Y.EventTarget);
@@ -198,4 +199,4 @@ Y.augment(SWF, Y.EventTarget);
 Y.SWF = SWF;
 
 
-}, '@VERSION@' ,{requires:['event-custom','node','swfdetect','escape']});
+}, '@VERSION@', {"requires": ["event-custom", "node", "swfdetect", "escape"]});

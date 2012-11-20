@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+
+      html {
+        font-family: sans-serif;
+        color: #333;
+      }
+      #circle, #square {
+        width:100px;
+        height:100px;
+        position:absolute;
+      }
+      #circle {
+        border-radius:100px;
+        background: #3071A6;
+        top:10px;
+        left:10px;
+        border:5px solid #81BBEB;
+        -ms-touch-action: none;
+      }
+      #square {
+        background: #DB4E46;
+        top:10px;
+        left:150px;
+        border:5px solid #F78E88;
+      }
+      .black {
+        background: black !important;
+      }
+      #log {
+        float:left;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        width:100%;
+        top:450px;
+        overflow-x: scroll;
+      }
+      button {
+        margin-top: 100px;
+      }
+
+      #scrollview-container {
+        background: blue;
+      }
+      /* To layout horizontal LIs */
+      #scrollview-content {
+          white-space:nowrap;
+      }
+
+      #scrollview-content li {
+          display:inline-block;
+          background-color:#fff;
+      }
+
+      /* For IE 6/7 - needs inline block hack (and the background color mentioned above) */
+      #scrollview-content li {
+          *display:inline;
+          *zoom:1;
+      }
+    </style>
+  </head>
+  <body class="yui3-skin-sam">
+
+    <div id="circle"></div>
+    <div id="square"></div>
+    <button id="attachGestures">Attach Gestures</button>
+    <button id="detachGestures" disabled=true>Detach Gestures</button>
+
+    <div id="scrollview-container">
+        <div id="scrollview-header">
+            <h1>Horizontal ScrollView</h1>
+        </div>
+
+        <div id="scrollview-content" class="yui3-scrollview-loading">
+            <ul>
+                <li><img src="http://farm5.static.flickr.com/4136/4802088086_c621e0b501.jpg" alt="Above The City II"></li>
+                <li><img src="http://farm5.static.flickr.com/4114/4801461321_1373a0ef89.jpg" alt="Walls and Canyon"></li>
+                <li><img src="http://farm5.static.flickr.com/4100/4801614015_4303e8eaea.jpg" alt="Stairs Using In Situ Stone"></li>
+                <li><img src="http://farm5.static.flickr.com/4076/4801368583_854e8c0ef3.jpg" alt="Tree Silhouette"></li>
+            </ul>
+        </div>
+    </div>
+
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce interdum, libero id sagittis euismod, risus elit rhoncus urna, eu dapibus enim ante sed augue. Vestibulum aliquet feugiat hendrerit. Sed vel massa sapien. Integer id sodales diam. Duis ac ipsum id odio egestas iaculis. Praesent sagittis ante id eros rutrum vel faucibus tortor congue. Proin fringilla condimentum justo, eu adipiscing dolor dictum at. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin eleifend condimentum metus imperdiet dignissim. Aliquam leo eros, varius sed mattis imperdiet, tristique a metus. Sed ac tempus tellus. Etiam molestie, ligula vel sodales ullamcorper, mi orci blandit urna, at adipiscing dolor odio non erat. Integer sed ante metus, et molestie est.</p>
+
+    <p>Morbi consectetur lacus non lorem congue ultricies. Praesent faucibus ornare magna, a suscipit arcu suscipit euismod. Integer augue massa, vehicula iaculis pretium vitae, condimentum et turpis. Ut turpis sem, sodales et ultricies id, semper in quam. Cras non lacinia justo. In rhoncus velit ac ligula posuere condimentum. Vestibulum sagittis urna ut urna sagittis cursus. Proin molestie nibh id nibh adipiscing nec consequat ante posuere. Nullam placerat iaculis diam ac pretium. Donec dapibus tristique consequat. Donec condimentum vehicula ante a imperdiet. Aliquam ultrices lobortis mi, eget malesuada nulla consectetur sed. Maecenas sed cursus magna. Quisque eleifend, turpis malesuada volutpat varius, velit tortor lobortis leo, ut auctor massa enim vel ante. Etiam ornare, neque vitae accumsan viverra, risus arcu sollicitudin libero, et iaculis metus nisl vitae quam.</p>
+
+    <p>Nulla varius tincidunt ligula in dictum. Integer id diam justo, consectetur accumsan orci. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec ultrices adipiscing adipiscing. Nam magna orci, imperdiet non egestas ut, aliquam accumsan eros. Donec condimentum bibendum nulla, sit amet malesuada est auctor eu. Pellentesque egestas leo vitae magna rhoncus hendrerit. In hac habitasse platea dictumst. In sollicitudin malesuada quam porta condimentum. Proin non neque sed lacus iaculis auctor. Etiam adipiscing pretium blandit.</p>
+
+    <p>Vestibulum nec erat neque, ac ullamcorper sem. Vestibulum dui metus, eleifend eu imperdiet non, scelerisque nec lacus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Suspendisse nunc urna, commodo sed ultricies id, tempor sit amet tortor. Vivamus id enim sed lectus rhoncus rutrum eget sit amet risus. Suspendisse iaculis viverra accumsan. Nulla ultricies, nulla ut sodales sodales, leo ipsum posuere turpis, ut vehicula augue odio vel arcu. Phasellus lacinia laoreet nunc, eget pellentesque magna elementum nec. Nunc nec erat in augue sollicitudin vestibulum vitae nec tellus. Sed nunc eros, sollicitudin sed aliquam non, bibendum nec lorem. Nulla tempus metus at nisl lacinia vitae rutrum leo posuere. Nulla viverra sagittis bibendum. Pellentesque vel sapien id nibh tincidunt pharetra.
+
+    <p>In facilisis tincidunt metus, ut interdum risus dapibus sed. Nulla cursus, urna eu ultricies rutrum, nibh tortor luctus metus, et sollicitudin dolor tortor id ligula. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec luctus augue ultricies justo posuere bibendum. Vivamus purus ante, interdum sed tempus eleifend, vulputate sit amet risus. Nulla tempor fringilla orci sit amet facilisis. Vivamus non enim vitae ligula semper mattis. Cras bibendum placerat justo, eget hendrerit ipsum adipiscing quis. Vestibulum pharetra scelerisque gravida. Curabitur iaculis nibh sed dolor accumsan at euismod erat placerat.</p>
+
+    <ul id="log" unselectable="on">
+
+    </ul>
+
+    <script src="../../../../build/yui/yui.js"></script>
+    <script>
+      YUI({
+        filter:'raw',
+        useBrowserConsole: true
+      }).use('event-gestures', 'console', 'transition', 'scrollview', function(Y) {
+
+        var scrollView = new Y.ScrollView({
+            id: 'scrollview',
+            srcNode: '#scrollview-content',
+            width: 320,
+            flick: {
+                minDistance:10,
+                minVelocity:0.3,
+                axis: "x"
+            }
+        });
+
+        scrollView.render();
+
+        // Prevent default image drag behavior
+        Y.one("#scrollview-content").delegate("mousedown", function(e) {
+            e.preventDefault();
+        }, "img");
+
+        Y.one("#scrollview-content").delegate("gesturemovestart", function(e) {
+            //Y.one("#scrollview-content").getDOMNode().style.msTouchAction = 'pan-y';
+        }, 'img');
+
+        var circle = Y.one("#circle");
+        var square = Y.one("#square");
+        var cAnim = {
+          easing: 'ease-in-out'
+        };
+        var sAnim = {
+          easing: 'ease-in'
+        };
+
+        var handles = {};
+
+
+        circle.on("MSPointerDown", function(e) {
+          Y.log('circle pointer down');
+        });
+
+        circle.on('flick', function(e) {
+          e.preventDefault();
+          if (e.flick.axis === 'x') {
+            cAnim.left = parseInt(circle.getStyle('left').replace('px', ''), 10) + e.flick.distance + 'px';
+          }
+          else if (e.flick.axis === 'y') {
+            cAnim.top = parseInt(circle.getStyle('top').replace('px', ''), 10) + e.flick.distance + 'px';
+          }
+          cAnim.duration = e.flick.time/800;
+
+          circle.transition(cAnim);
+          Y.log('Flicked');
+        });
+
+        Y.one("#attachGestures").on('click', function (e) {
+
+            // document.addEventListener("MSPointerDown", function(e) {
+            //     DEFAULT_MS_TOUCH_ACTION = square._node.style.msTouchAction;
+            //     square._node.style.msTouchAction = "none";
+            //     Y.log(square._node.style.msTouchAction);
+            // }, true);
+
+
+            handles.START_HANDLE = square.on('gesturemovestart', function(e) {
+              square.addClass('black');
+              square.getDOMNode().style.msTouchAction = 'pan-x';
+              Y.log('Square pointer down...');
+            });
+
+            handles.MOVE_HANDLE = square.on('gesturemove', function(e) {
+              sAnim.top = e.pageY - 50 + 'px';
+              sAnim.left = e.pageX - 50 +'px';
+              sAnim.duration = 0.05;
+              Y.log('moving');
+              square.transition(sAnim);
+
+            });
+
+            handles.END_HANDLE = square.on('gesturemoveend', function(e) {
+              Y.log('end');
+              square.removeClass("black");
+            });
+
+            Y.one("#detachGestures").set('disabled', false);
+            this.set('disabled', true);
+
+        });
+
+        Y.one("#detachGestures").on('click', function (e) {
+            Y.Object.each(handles, function (v, k, o) {
+                v.detach();
+                Y.log("Detaching " + k);
+            });
+
+
+            Y.one("#attachGestures").set('disabled', false);
+            this.set('disabled', true);
+        });
+
+
+      });
+
+
+    </script>
+  </body>
+</html>

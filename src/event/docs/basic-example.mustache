@@ -1,24 +1,40 @@
 <style scoped>
 #container {
-    background-color: #00CCFF;
-    border: 1px dotted black;
-    padding: 1em;
+    background-color: #F5E3B1;
+    border: 1px solid #C2AE6D;
+    height: 76px;
+    /*padding: 1em 0 0 1em;*/
+    padding-left: 1em;
     cursor: pointer;
+}
+#demo .hello {
+    background: url("../assets/event/earth.png") no-repeat scroll 141px -62px #000000;
+    color: #C3A7CD;
+    border-color: #000;
+    font-size: 150%;
 }
 #example-canvas #demo a {
     color: #00c;
     text-decoration: underline;
 }
+.message {
+    visibility: hidden;
+}
 </style>
 
 <div class="intro">
-<p>Clicking in the blue box will pop up a "Hello World!" alert window.  Clicking on the first link will take you to the YUI website; clicking on the second link, which has the same <code>href</code> attribute, will pop up an alert instead and not navigate to a new page.</p>
+<p>Clicking in the yellow box will give hello world feedback.
+Clicking on the first link will take you to the YUI website; clicking on the
+second link, which has the same <code>href</code> attribute, will display
+a message instead, and not navigate to a new page.</p>
 
 <p>Event Utility is used here to do two things:</p>
 
 <ol>
-	<li>Attach the <code>click</code> event handler to the blue box;</li>
-	<li>Attach an event handler to the second <code>&lt;a&gt;</code> element that uses <code>preventDefault()</code> to prevent the link, when clicked, from navigating to a new page. </li>
+	<li>Attach the <code>click</code> event handler to the yellow box;</li>
+	<li>Attach an event handler to the second <code>&lt;a&gt;</code>
+    element that uses <code>preventDefault()</code> to prevent the link,
+    when clicked, from navigating to a new page. </li>
 
 </ol>
 </div>
@@ -29,16 +45,18 @@
 
 <h2>Reacting to the `click` event</h2>
 
-<p>To illustrate event handling syntax, we'll create a `<div>` and pop up an alert message when that `<div>` is clicked.</p>
+<p>To illustrate event handling syntax, we'll create a `<div>` and
+give some feedback when that `<div>` is clicked.</p>
 
 ```
 // Create a YUI instance and load the 'node' module
 YUI().use('node', function (Y) {
 
-    // A function that pops up a "Hello World" alert:
-    var helloWorld = function (e) {
-        alert("Hello World!");
-    };
+    // A function that gives hello world feedback:
+    var helloWorld = function(e) {
+        e.target.setHTML("<p>Hello World!</p>");
+        Y.one('#container').addClass('hello');
+    }
 
     ...
 ```
@@ -69,14 +87,19 @@ For example, let's say you have two links on the page:</p>
 <p><a href="http://yuilibrary.com/" id="secondA">The YUI Library. (Link's default behavior is suppressed.)</a></p>
 ```
 
-<p>Let's say that when the second link is clicked, instead of navigating away from the current page, you want to pop up an alert window.  The event object passed to your event handler is a facade &mdash; not the actual browser event object.  This facade supports the <code>preventDefault</code> method for cancelling inherent browser behavior such as anchor links loading a new page.</p>
+<p>Let's say that when the second link is clicked, instead of navigating away
+from the current page, you want to display a message.
+The event object passed to your event handler is a facade &mdash; not
+the actual browser event object.
+This facade supports the <code>preventDefault</code> method for cancelling
+inherent browser behavior such as anchor links loading a new page.</p>
 
 ```
 // A function that stops the browser from navigating away
-// from the page, and instead pops up an alert.
+// from the page, and instead displays a message.
 var interceptLink = function(e) {
     e.preventDefault();
-    alert("You clicked on the second YUI link.  Because *preventDefault* was called, this link will not navigate away from the page.");
+    Y.one('.message').setStyle('visibility', 'visible');
 }
 
 // subscribe our interceptLink function to the second anchor

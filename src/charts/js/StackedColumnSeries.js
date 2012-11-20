@@ -3,6 +3,7 @@
  * their contribution to the cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedColumnSeries
  * @extends ColumnSeries
  * @uses StackingUtil
@@ -17,12 +18,12 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
 	 */
 	drawSeries: function()
 	{
-        if(this.get("xcoords").length < 1) 
+        if(this.get("xcoords").length < 1)
         {
             return;
         }
         var isNumber = Y_Lang.isNumber,
-            style = Y.clone(this.get("styles").marker), 
+            style = Y.clone(this.get("styles").marker),
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -54,7 +55,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
-            fillColors = style.fill.color.concat(); 
+            fillColors = style.fill.color.concat();
         }
         if(Y_Lang.isArray(style.border.color))
         {
@@ -90,7 +91,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
         {
             left = xcoords[i];
             top = ycoords[i];
-            
+
             if(!isNumber(top) || !isNumber(left))
             {
                 if(useOrigin)
@@ -98,7 +99,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                     negativeBaseValues[i] = this._bottomOrigin;
                     positiveBaseValues[i] = this._bottomOrigin;
                 }
-                this._markers.push(null); 
+                this._markers.push(null);
                 continue;
             }
             if(useOrigin)
@@ -121,7 +122,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                     negativeBaseValues[i] = top;
                 }
             }
-            else 
+            else
             {
                 if(top > this._bottomOrigin)
                 {
@@ -205,15 +206,15 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                 marker = this._markers[i],
                 offset = 0,
                 fillColor,
-                borderColor;        
+                borderColor;
             styles = this.get("styles").marker;
             offset = styles.width * 0.5;
-            markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]); 
+            markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]);
             markerStyles.height = marker.get("height");
             markerStyles.x = (xcoords[i] - offset);
             markerStyles.y = marker.get("y");
             markerStyles.id = marker.get("id");
-            fillColor = markerStyles.fill.color; 
+            fillColor = markerStyles.fill.color;
             borderColor = markerStyles.border.color;
             if(Y_Lang.isArray(fillColor))
             {
@@ -234,9 +235,9 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             marker.set(markerStyles);
         }
     },
-	
+
     /**
-     * Gets the default values for the markers. 
+     * Gets the default values for the markers.
      *
      * @method _getPlotDefaults
      * @return Object
@@ -303,7 +304,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
         positiveBaseValues: {
             value: null
         }
-        
+
         /**
          * Style properties used for drawing markers. This attribute is inherited from `ColumnSeries`. Below are the default values:
          *  <dl>
@@ -326,7 +327,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
          *          </dl>
          *      </dd>
          *      <dt>width</dt><dd>indicates the width of the marker. The default value is 24.</dd>
-         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default 
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default
          *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
          *      the default value for `marker.over.fill.color` is equivalent to `marker.fill.color`.</dd>
          *  </dl>

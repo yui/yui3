@@ -99,10 +99,11 @@
                 <option value="none">None</option>
                 <option value="local" selected>Local (Array)</option>
                 <option value="function">Local (Function)</option>
-                <option value="flickr">Remote (Flickr)</option>
-                <option value="search">Remote (Y! Search)</option>
-                <option value="twitter">Remote (Twitter Search)</option>
+                <option value="flickr">Remote (YQL - Flickr)</option>
+                <option value="search">Remote (YQL - Y! Search)</option>
+                <option value="twitter">Remote (JSONP - Twitter Search)</option>
                 <option value="xhr">Remote (XHR)</option>
+                <option value="ds">Remote (DataSource.Get)</option>
             </select>
 
             <input type="checkbox" id="enable-cache" value="1" checked="checked">
@@ -157,6 +158,7 @@ var Y = YUI({
     'autocomplete-filters',
     'autocomplete-highlighters',
     'console-filters',
+    'datasource',
     'dump',
     'event-delegate',
 function (Y) {
@@ -235,6 +237,10 @@ Y.one('#source').on('change', function (e) {
 
     case 'xhr':
         useXHR();
+        break;
+
+    case 'ds':
+        useDS();
         break;
     }
 });
@@ -340,6 +346,7 @@ function useNone() {
 
     autoComplete.setAttrs({
         maxResults       : 0,
+        requestTemplate  : null,
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
@@ -354,6 +361,7 @@ function useLocal() {
 
     autoComplete.setAttrs({
         maxResults       : 0,
+        requestTemplate  : null,
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
@@ -368,6 +376,7 @@ function useFunction() {
 
     autoComplete.setAttrs({
         maxResults       : 0,
+        requestTemplate  : null,
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
@@ -382,6 +391,7 @@ function useFlickr() {
 
     autoComplete.setAttrs({
         maxResults       : 0,
+        requestTemplate  : null,
         resultFormatter  : flickrFormatter,
         resultListLocator: null,
         resultTextLocator: 'title',
@@ -396,6 +406,7 @@ function useSearch() {
 
     autoComplete.setAttrs({
         maxResults       : 0,
+        requestTemplate  : null,
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
@@ -411,6 +422,7 @@ function useTwitter() {
 
     autoComplete.setAttrs({
         maxResults       : 5,
+        requestTemplate  : null,
         resultFormatter  : twitterFormatter,
         resultListLocator: 'results',
         resultTextLocator: 'text',
@@ -425,10 +437,34 @@ function useXHR() {
 
     autoComplete.setAttrs({
         maxResults       : 5,
+        requestTemplate  : null,
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
         source           : '../assets/xhr-data.json?query={query}'
+    });
+}
+
+function useDS() {
+    var ds;
+
+    Y.log('using DataSource', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    ds = new Y.DataSource.Get({source: 'http://search.twitter.com/searches.json?result_type=recent'});
+
+    autoComplete.setAttrs({
+        maxResults       : 5,
+        requestTemplate  : '&q={query}',
+        resultFormatter  : twitterFormatter,
+
+        resultListLocator: function (response) {
+            return response[0].results;
+        },
+
+        resultTextLocator: 'text',
+        source           : ds
     });
 }
 

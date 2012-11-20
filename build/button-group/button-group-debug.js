@@ -1,4 +1,4 @@
-YUI.add('button-group', function(Y) {
+YUI.add('button-group', function (Y, NAME) {
 
 /**
 * A Widget to create groups of buttons
@@ -8,7 +8,6 @@ YUI.add('button-group', function(Y) {
 */
 
 var CONTENT_BOX = "contentBox",
-    SELECTOR    = "button, input[type=button], input[type=reset], input[type=submit]",
     CLICK_EVENT = "click",
     CLASS_NAMES = Y.ButtonCore.CLASS_NAMES;
 
@@ -45,18 +44,18 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
         var group = this,
             cb = group.get(CONTENT_BOX);
 
-        cb.delegate(CLICK_EVENT, group._handleClick, SELECTOR, group);
+        cb.delegate(CLICK_EVENT, group._handleClick, Y.ButtonGroup.BUTTON_SELECTOR, group);
     },
 
     /**
     * @method getButtons
-    * @description Returns all Y.Buttons instances assigned to this group
+    * @description Returns all buttons inside this this button group
     * @public
     */
     getButtons: function() {
         var cb = this.get(CONTENT_BOX);
 
-        return cb.all(SELECTOR);
+        return cb.all(Y.ButtonGroup.BUTTON_SELECTOR);
     },
 
     /**
@@ -108,17 +107,23 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     * @private
     */
     _handleClick: function(e){
-        var buttons,
-            clickedNode = e.target,
-            group = this,
+        var group = this,
+            clickedNode = e.target.ancestor('.' + ButtonGroup.CLASS_NAMES.BUTTON, true),
             type = group.get('type'),
             selectedClass = ButtonGroup.CLASS_NAMES.SELECTED,
-            isSelected = clickedNode.hasClass(selectedClass);
+            isSelected = clickedNode.hasClass(selectedClass),
+            buttons;
 
         // TODO: Anything for 'push' groups?
 
         if (type === 'checkbox') {
             clickedNode.toggleClass(selectedClass, !isSelected);
+            /**
+             * @event selectionChange
+             * @description fires when any button in the group changes its checked status
+             * @param {Event} the event object. It contains an "originEvent" property
+             * linking to the original DOM event that triggered the selection change
+             */
             group.fire('selectionChange', {originEvent: e});
         }
         else if (type === 'radio') {
@@ -163,14 +168,20 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     },
 
     /**
-     * List of class names used in the ButtonGroup's DOM
+     * List of class names to use for ButtonGroups
      *
      * @property CLASS_NAMES
      * @type {Object}
      * @static
      */
-    CLASS_NAMES: CLASS_NAMES
+    CLASS_NAMES: CLASS_NAMES,
+    
+    /**
+     * Selector used to find buttons inside a ButtonGroup
+     * @type {String}
+     */
+    BUTTON_SELECTOR: "button, input[type=button], input[type=reset], input[type=submit], input[type=radio], input[type=checkbox]"
 });
 
 
-}, '@VERSION@' ,{requires:['button-plugin', 'widget']});
+}, '@VERSION@', {"requires": ["button-plugin", "cssbutton", "widget"]});

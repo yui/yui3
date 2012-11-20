@@ -79,3 +79,8 @@
 	width: 100%;
 	height: 100%;
 }
+
+#out {
+    border: 1px solid #CCC;
+    padding: 1em;
+}

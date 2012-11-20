@@ -6,7 +6,6 @@
  * @for Widget
  */
 
-
 var Widget = Y.Widget,
     Node = Y.Node,
     Lang = Y.Lang,
@@ -91,7 +90,7 @@ Y.mix(Widget.prototype, {
     },
 
     /**
-     * Utilitity method used to apply the <code>HTML_PARSER</code> configuration for the 
+     * Utility method used to apply the <code>HTML_PARSER</code> configuration for the 
      * instance, to retrieve config data values.
      *
      * @method _applyParser
@@ -101,7 +100,7 @@ Y.mix(Widget.prototype, {
     _applyParser : function(config) {
 
         var widget = this,
-            srcNode = widget.get(SRC_NODE),
+            srcNode = this._getNodeToParse(),
             schema = widget._getHtmlParser(),
             parsedConfig,
             val;
@@ -130,6 +129,21 @@ Y.mix(Widget.prototype, {
             });
         }
         config = widget._applyParsedConfig(srcNode, config, parsedConfig);
+    },
+
+    /**
+     * Determines whether we have a node reference which we should try and parse.
+     * 
+     * The current implementation does not parse nodes generated from CONTENT_TEMPLATE,
+     * only explicitly set srcNode, or contentBox attributes.
+     * 
+     * @method _getNodeToParse
+     * @return {Node} The node reference to apply HTML_PARSER to.
+     * @private
+     */
+    _getNodeToParse : function() {
+        var srcNode = this.get("srcNode");
+        return (!this._cbFromTemplate) ? srcNode : null;
     },
 
     /**

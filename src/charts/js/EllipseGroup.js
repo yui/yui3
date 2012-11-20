@@ -1,7 +1,8 @@
 /**
  * Abstract class for creating groups of diamonds with the same styles and dimensions.
  *
- * @module graphics
+ * @module charts
+ * @submodule charts-base
  * @class EllipseGroup
  * @constructor
  */
@@ -9,10 +10,10 @@
  {
     EllipseGroup.superclass.constructor.apply(this, arguments);
  };
-    
+
  EllipseGroup.NAME = "diamondGroup";
 
- Y.extend(EllipseGroup, Y.ShapeGroup, {    
+ Y.extend(EllipseGroup, Y.ShapeGroup, {
     /**
      * Updates the diamond.
      *
@@ -24,6 +25,6 @@
         this.drawEllipse(cfg.x, cfg.y, cfg.width, cfg.height);
     }
  });
-    
+
 EllipseGroup.ATTRS = Y.ShapeGroup.ATTRS;
 Y.EllipseGroup = EllipseGroup;

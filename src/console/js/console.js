@@ -86,7 +86,7 @@ var getCN = Y.ClassNameManager.getClassName,
     isNumber   = L.isNumber,
     isString   = L.isString,
     merge      = Y.merge,
-    substitute = Y.substitute;
+    substitute = Y.Lang.sub;
     
 
 function Console() {
@@ -836,11 +836,11 @@ Y.Console = Y.extend(Console, Y.Widget,
             after  = e.newVal;
 
         if ((!prop || prop === TITLE) && before.title !== after.title) {
-            cb.all(DOT+C_CONSOLE_TITLE).setContent(after.title);
+            cb.all(DOT+C_CONSOLE_TITLE).setHTML(after.title);
         }
 
         if ((!prop || prop === PAUSE) && before.pause !== after.pause) {
-            cb.all(DOT+C_PAUSE_LABEL).setContent(after.pause);
+            cb.all(DOT+C_PAUSE_LABEL).setHTML(after.pause);
         }
 
         if ((!prop || prop === CLEAR) && before.clear !== after.clear) {
@@ -925,7 +925,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         bb[method](C_COLLAPSED);
 
         if (button) {
-            button.setContent(str);
+            button.setHTML(str);
         }
 
         this._uiSetHeight(v ? this._head.get('offsetHeight'): this.get(HEIGHT));
@@ -1178,10 +1178,7 @@ Y.Console = Y.extend(Console, Y.Widget,
     FOOTER_TEMPLATE :
         '<div class="{console_ft_class}">'+
             '<div class="{console_controls_class}">'+
-                '<label for="{id_guid}" class="{console_pause_label_class}">'+
-                    '<input type="checkbox" class="{console_checkbox_class} '+
-                        '{console_pause_class}" value="1" id="{id_guid}"> '+
-                    '{str_pause}</label>' +
+                '<label class="{console_pause_label_class}"><input type="checkbox" class="{console_checkbox_class} {console_pause_class}" value="1" id="{id_guid}"> {str_pause}</label>' +
                 '<button type="button" class="'+
                     '{console_button_class} {console_clear_class}">{str_clear}'+
                 '</button>'+
@@ -1191,7 +1188,7 @@ Y.Console = Y.extend(Console, Y.Widget,
     /**
      * Default markup template used to create the DOM structure for Console
      * entries. The markup contains {placeholder}s for content and classes
-     * that are replaced via Y.substitute.  The default template contains
+     * that are replaced via Y.Lang.sub.  The default template contains
      * the {placeholder}s identified in Console.ENTRY_CLASSES as well as the
      * following placeholders that will be populated by the log entry data:
      *

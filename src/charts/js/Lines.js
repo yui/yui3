@@ -2,6 +2,7 @@
  * Utility class used for drawing lines.
  *
  * @module charts
+ * @submodule charts-base
  * @class Lines
  * @constructor
  */
@@ -14,7 +15,7 @@ Lines.prototype = {
      * @private
      */
     _lineDefaults: null,
-    
+
     /**
      * Creates a graphic in which to draw a series.
      *
@@ -32,7 +33,7 @@ Lines.prototype = {
         this._lineGraphic.clear();
         return this._lineGraphic;
     },
-    
+
     /**
      * Toggles visibility
      *
@@ -56,15 +57,15 @@ Lines.prototype = {
      */
     drawLines: function()
     {
-        if(this.get("xcoords").length < 1) 
+        if(this.get("xcoords").length < 1)
         {
             return;
         }
         var isNumber = Y_Lang.isNumber,
-            xcoords = this.get("xcoords").concat(),
-            ycoords = this.get("ycoords").concat(),
+            xcoords,
+            ycoords,
             direction = this.get("direction"),
-            len = direction === "vertical" ? ycoords.length : xcoords.length,
+            len,
             lastPointValid,
             pointValid,
             noPointsRendered = true,
@@ -84,16 +85,27 @@ Lines.prototype = {
             discontinuousDashLength = styles.discontinuousDashLength,
             discontinuousGapSpace = styles.discontinuousGapSpace,
             path = this._getGraphic();
+        if(this._stacked)
+        {
+            xcoords = this.get("stackedXCoords");
+            ycoords = this.get("stackedYCoords");
+        }
+        else
+        {
+            xcoords = this.get("xcoords");
+            ycoords = this.get("ycoords");
+        }
+        len = direction === "vertical" ? ycoords.length : xcoords.length;
         path.set("stroke", {
-            weight: styles.weight, 
-            color: lc, 
+            weight: styles.weight,
+            color: lc,
             opacity: lineAlpha
         });
         for(i = 0; i < len; i = ++i)
         {
             nextX = xcoords[i];
             nextY = ycoords[i];
-            pointValid = isNumber(nextX) && isNumber(nextY); 
+            pointValid = isNumber(nextX) && isNumber(nextY);
             if(!pointValid)
             {
                 lastPointValid = pointValid;
@@ -112,8 +124,8 @@ Lines.prototype = {
                 }
                 else
                 {
-                    this.drawDashedLine(path, lastValidX, lastValidY, nextX, nextY, 
-                                                dashLength, 
+                    this.drawDashedLine(path, lastValidX, lastValidY, nextX, nextY,
+                                                dashLength,
                                                 gapSpace);
                 }
             }
@@ -125,8 +137,8 @@ Lines.prototype = {
             {
                 if(discontinuousType != "solid")
                 {
-                    this.drawDashedLine(path, lastValidX, lastValidY, nextX, nextY, 
-                                                discontinuousDashLength, 
+                    this.drawDashedLine(path, lastValidX, lastValidY, nextX, nextY,
+                                                discontinuousDashLength,
                                                 discontinuousGapSpace);
                 }
                 else
@@ -140,16 +152,16 @@ Lines.prototype = {
         }
         path.end();
     },
-    
+
     /**
      * Connects data points with a consistent curve for a series.
-     * 
+     *
      * @method drawSpline
      * @protected
      */
     drawSpline: function()
     {
-        if(this.get("xcoords").length < 1) 
+        if(this.get("xcoords").length < 1)
         {
             return;
         }
@@ -168,9 +180,9 @@ Lines.prototype = {
             path = this._getGraphic(),
             lineAlpha = styles.alpha,
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "line");
-        path.set("stroke", { 
-            weight: styles.weight, 
-            color: color, 
+        path.set("stroke", {
+            weight: styles.weight,
+            color: color,
             opacity: lineAlpha
         });
         path.moveTo(xcoords[0], ycoords[0]);
@@ -189,7 +201,7 @@ Lines.prototype = {
 
     /**
      * Draws a dashed line between two points.
-     * 
+     *
      * @method drawDashedLine
      * @param {Number} xStart	The x position of the start of the line
      * @param {Number} yStart	The y position of the start of the line
@@ -214,7 +226,7 @@ Lines.prototype = {
             i;
         xDelta = Math.cos(radians) * segmentLength;
         yDelta = Math.sin(radians) * segmentLength;
-        
+
         for(i = 0; i < segmentCount; ++i)
         {
             path.moveTo(xCurrent, yCurrent);
@@ -222,10 +234,10 @@ Lines.prototype = {
             xCurrent += xDelta;
             yCurrent += yDelta;
         }
-        
+
         path.moveTo(xCurrent, yCurrent);
         delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
-        
+
         if(delta > dashSize)
         {
             path.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
@@ -234,7 +246,7 @@ Lines.prototype = {
         {
             path.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
         }
-        
+
         path.moveTo(xEnd, yEnd);
     },
 
@@ -250,12 +262,12 @@ Lines.prototype = {
         return {
             alpha: 1,
             weight: 6,
-            lineType:"solid", 
-            dashLength:10, 
-            gapSpace:10, 
-            connectDiscontinuousPoints:true, 
-            discontinuousType:"solid", 
-            discontinuousDashLength:10, 
+            lineType:"solid",
+            dashLength:10,
+            gapSpace:10,
+            connectDiscontinuousPoints:true,
+            discontinuousType:"solid",
+            discontinuousDashLength:10,
             discontinuousGapSpace:10
         };
     }

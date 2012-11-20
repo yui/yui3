@@ -1,0 +1,51 @@
+<div id="toolbar-1" class="yui3-toolbar">
+    <span id="add-btn" class="yui3-toolbar-button first-child"><span><span><input type="button" name="btn-add" value="Add"></span></span></span>
+    <span id="edit-btn" class="yui3-toolbar-button"><span><span><input type="button" name="btn-edit" value="Edit"></span></span></span>
+    <span id="print-btn" class="yui3-toolbar-button"><span><span><input type="button" name="btn-print" value="Print"></span></span></span>
+    <span id="delete-btn" class="yui3-toolbar-button"><span><span><input type="button" name="btn-delete" value="Delete"></span></span></span>
+    <span id="open-btn" class="yui3-toolbar-button"><span><span><input type="button" name="btn-open" value="Open"></span></span></span>
+    <span id="save-btn" class="yui3-toolbar-button"><span><span><input type="button" name="btn-save" value="Save"></span></span></span>
+</div>
+<div id="out">(Accessible Toolbar results here)</div>
+
+<script>
+
+    YUI().use("node-focusmanager", function (Y) {
+
+        //  Retrieve the Node instance representing the toolbar
+        //  (<div id="toolbar">) and call the "plug" method
+        //  passing in a reference to the Focus Manager Node Plugin.
+
+        var toolbar = Y.one("#toolbar-1"),
+            out     = Y.one("#out");
+
+        toolbar.plug(Y.Plugin.NodeFocusManager, {
+
+                descendants: "input",
+                keys: { next: "down:39", // Right arrow
+                        previous: "down:37" },  //  Left arrow
+                focusClass: "focus",
+                circular: true
+
+             });
+
+
+        //  Set the ARIA "role" attribute of the Node instance representing the
+        //  toolbar to "toolbar" to improve the semantics of the markup for
+        //  users of screen readers.
+
+        toolbar.set("role", "toolbar");
+
+
+        //  Listen for the click event on each button via the use of the
+        //  "delegate" method
+
+        toolbar.delegate("click", function (event) {
+
+            out.setHTML("You clicked " + this.one("input").get("value"));
+
+        }, ".yui3-toolbar-button");
+
+    });
+
+</script>

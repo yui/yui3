@@ -1,0 +1,657 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Datatable Tests</title>
+<link rel="stylesheet" type="text/css" href="../../../build/cssbase/base-min.css">
+<script src="../../../../build/yui/yui-debug.js"></script>
+
+<style>
+    html {
+        font-family: sans-serif;
+        font-size: smaller;
+    }
+    
+    .message {
+        padding: 5px;
+        font-size:120%;
+        background: #FFFCB6;
+        border:1px solid #C9C675;
+    }
+    
+    #results dt {
+        font-weight:bold;
+        padding:3px;
+        display:block;
+    }
+    #results dd {
+        font-weight:normal;
+        color:grey;
+    }
+    #results dd span {
+        color: red;
+        font-weight:bold;
+    }
+</style>
+</head>
+
+<body class="yui3-skin-sam">
+<h1>Datatable Tests</h1>
+
+<p>To test the performance of various datatables, look at the following sections in the code:
+    
+    <pre>
+//large or small dataset.
+data: large,
+
+//---------------------------------------------
+// Special instructions
+//---------------------------------------------
+
+_should: {
+    ignore: {
+    //ignore following tests (good to do if you are doing a large dataset)
+        testBaseDatatable: true,
+        testXYDatatable: true,
+        testXDatatable: true,
+        testYDatatable_FixedCol: true,
+        testYDatatable_AutoCol: true,
+        testXYDatatable_BigHeaders: false
+    }
+}
+    </pre>
+    
+    Toggle <code>data</code> from <code>large</code> to <code>small</code> to get a different sized dataset. The <code>ignore</code> object determines which table to load. If testing performance, it is recommended that you only enable 1 table at a time.</p>
+    <hr>
+<p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+    <hr>
+<div id="results">
+    <h3>Test Results</h3>
+</div>
+
+<h3>Base Datatable</h3>
+<div id="base"></div>
+
+<h3>Scrolling XY Datatable (Set columnwidths)</h3>
+<P>A general XY scrolling datatable. Column widths are provided for all columns, table width and height is provided.</p>
+<div id="scrolling-xy"></div>
+
+<h3>Scrolling X Datatable (Auto Columns)</h3>
+<p>A X-scrolling datatable. Column A and B have specified widths. The rest of the columns do not have any widths specified. Only a height of 200px is specified.</p>
+<div id="scrolling-x"></div>
+
+<h3>Scrolling Y Datatable</h3>
+<p>A Y-scrolling datatable. Column widths are provided for all columns, table height is provided. Since all cols have specified width, you may see this table overflowing past its container div (the blue div in the background). </p>
+<div id="scrolling-y"></div>
+
+<h3>Scrolling Datatable with no ColumnWidth</h3>
+<p>A Y-scrolling datatable, where only the first 2 columns have a specified width. Only the table height is provided.</p>
+<div id="scrolling-colwidth"></div>
+
+<h3>Scrolling Datatable with Big Headers</h3>
+<p>A XY-scrolling datatable, where only the first 2 columns have a specified width. Table height and width is provided. The table headers are of larger width than the table contents</p>
+<div id="scrolling-bigcols"></div>
+
+
+<h3>Scrolling Datatable with no width or height set</h3>
+<p>A scrolling datatable with no width or height values passed in will result in a base datatable being created with auto width and height.</p>
+<div id="scrolling-noscroll"></div>
+
+<script type="text/javascript">
+
+
+ 
+(function() {
+    YUI({
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+        allowRollup: false,
+        useBrowserConsole: false
+    }).use("console", "test", "dump", "datatable", "profiler","node","json-parse", function(Y) {
+    
+
+        // Set up the page
+        var ASSERT = Y.Assert,
+            ARRAYASSERT = Y.ArrayAssert,
+            BTNRUN = Y.one("#btnRun"),
+            TestRunner = Y.Test.Runner;
+        BTNRUN.set("disabled", false);
+        TestRunner.subscribe(TestRunner.TEST_CASE_COMPLETE_EVENT, testCompleted);
+        Y.on("click", function(e){
+            TestRunner.run();
+            BTNRUN.set("value", 'Running...');
+            BTNRUN.set("disabled", true);
+
+        }, BTNRUN);
+        
+        function testCompleted() {
+            BTNRUN.set("value", 'Test Completed');
+            Y.log('Test Completed');
+        }
+        var myConsole = new Y.Console().render();
+
+
+
+
+
+        
+        //large data set
+        var large = [];
+        for (var i=0; i<500; i++) {
+            large[i] = {a: i+1, b:i+2, c:i+3, d: i+4, e: i+5, f: i+6, g:i+7};
+        }
+        
+        //small data set
+        var small = [{a:3, b:2, c:1, d:6, e:7, f:2, g:0}, {a:9, b:8, c:7, d:6, e:7, f:2, g:0}, {a:1, b:2, c:3, d:6, e:7, f:2, g:0},
+                {a:3, b:2, c:1, d:6, e:7, f:2, g:0}, {a:9, b:8, c:7, d:6, e:7, f:2, g:0}, {a:1, b:2, c:3, d:6, e:7, f:2, g:0},
+                {a:3, b:2, c:1, d:6, e:7, f:2, g:0}, {a:9, b:8, c:7, d:6, e:7, f:2, g:0}, {a:1, b:2, c:3, d:6, e:7, f:2, g:0},
+                {a:3, b:2, c:1, d:6, e:7, f:2, g:0}, {a:9, b:8, c:7, d:6, e:7, f:2, g:0}, {a:1, b:2, c:3, d:6, e:7, f:2, g:0}];
+
+        var testBasic = new Y.Test.Case({
+            name: "API Tests",
+            nestedcols: [
+                    {label:"Grandparent", children:[
+                        {key: "a"},
+                        {label:"Parent", children: [
+                            {key:"b"},
+                            {key:"c"}
+                        ]}
+                    ]}
+                ],
+                cols: [{key:"a", field:"a", label:"AAA", sortable:true, className: ["oneClass", "anotherClass"], width:'75px'},{key:"b", abbr:"bbb", className:"myClass", width: '120px'},{key:"c", width:'75px'},{key:"d", width:'150px'},{key:"3", width:'75px'},{key:"f", width:'150px'},{key:"g", width:'75px'}],
+
+                 cols2: [{key:"a", field:"a", label:"AAA", sortable:true, className: ["oneClass", "anotherClass"], width:'75px'},{key:"b", abbr:"bbb", className:"myClass", width:'75px'},{key:"c"},{key:"d"},{key:"e"},{key:"f"},{key:"g"}],
+
+                cols3: [{key:"a", field:"a", label:"Lorem Ipsum Dolor SIt Amet", sortable:true, className: ["oneClass", "anotherClass"], width:'5px'},{key:"b", abbr:"Lorem Ipsum Dolor SIt Amet", className:"myClass", width:'75px'},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"}],
+                
+                
+                //large or small dataset.
+                data: small,
+                
+                //---------------------------------------------
+                // Special instructions
+                //---------------------------------------------
+
+                _should: {
+                    ignore: {
+                        //ignore following tests (good to do if you are doing a large dataset)
+                        testBaseDatatable:                 true,
+                         testXYDatatable:                 false,
+                        testXDatatable:                 false,
+                        testYDatatable_FixedCol:         false,
+                        testYDatatable_AutoCol:         false,
+                        testXYDatatable_BigHeaders:     false,
+                        testNoScrollDatatablekey:         false
+                    }
+                },
+
+            //---------------------------------------------
+            // Setup and tear down
+            //---------------------------------------------
+
+            setUp : function () {
+                
+                //create recordset
+                //this.rs = new Y.Recordset({records:this.initialData});
+
+                //Some Ways to access recordset properties
+                //Y.log(rs.getRecordByIndex(0).getValue('a'));
+                //Y.log(rs.get('records').length);
+            },
+
+            tearDown : function () {
+                delete this.dt;
+            },
+        
+
+        
+            /////////////////////////////////////////////////////////////////////////////
+            //
+            //  Displaying Report
+            //
+            /////////////////////////////////////////////////////////////////////////////
+        
+            displayReport: function(data) {
+                
+                var dl = Y.Node.create('<dl></dl>'),
+                    results = Y.one('#results');
+                
+                Y.each(data, function(v,k,o) {
+                    var dt = Y.Node.create('<dt>'+k+'</dt>');
+                    var dd = Y.Node.create('<dd>' + v.calls + ' call(s) at ' + v.avg + ' ms/call = <span>' + Math.round(v.avg*v.calls) + '</span> ms total</dd>');
+                     
+                    dt.appendChild(dd);
+                    dl.appendChild(dt);
+                });
+                results.appendChild(dl);
+            },
+        
+            reportParser: function(report) {
+                return (report.calls > 0 && report.avg > 0.2);
+            },
+            
+            
+            /////////////////////////////////////////////////////////////////////////////
+            //
+            // Tests
+            //
+            /////////////////////////////////////////////////////////////////////////////
+            
+            
+            
+            testBaseDatatable: function() {
+                var sel = "#base";
+                Y.Profiler.start('dtBase');
+                this.dt = new Y.DataTable.Base({columnset:this.cols, recordset:this.data, caption:"Base"}); 
+                Y.Profiler.registerObject('dt', this.dt); 
+                this.dt.render(sel);
+                Y.Profiler.stop('dtBase');
+                var msg = Y.Profiler.getAverage('dtBase') + 'ms taken to display';
+                var report = Y.Profiler.getFullReport(this.reportParser);
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                Y.log(msg, "time");
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+            },
+            
+            testXYDatatable: function() {
+                var sel = '#scrolling-xy';
+                Y.Profiler.start('dtXY');
+                this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption: "ScrollingDataTable"});  
+                Y.Profiler.registerObject('dt', this.dt);    
+                this.dt.plug(Y.Plugin.DataTableScroll, {width:"200px", height:"300px"});
+                this.dt.render(sel);
+                Y.Profiler.stop('dtXY');
+                var msg = Y.Profiler.getAverage('dtXY') + 'ms taken to display';
+                
+                var report = Y.Profiler.getFullReport(this.reportParser);
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                Y.log(msg, "time");
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+                
+            },
+            
+            testXDatatable: function() {
+                var sel = "#scrolling-x";
+                
+                Y.Profiler.start('dtX');
+                this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, caption:"ScrollingDataTable"});
+                Y.Profiler.registerObject('dt', this.dt);
+                this.dt.plug(Y.Plugin.DataTableScroll, {width:"150px"});    
+                
+                this.dt.render(sel);
+                Y.Profiler.stop('dtX');
+                
+                var msg = Y.Profiler.getAverage('dtX') + 'ms taken to display';
+                var report = Y.Profiler.getFullReport(this.reportParser);
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                Y.log(msg, "time");
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+                
+            },
+            
+            testYDatatable_FixedCol: function() {
+                var sel = "#scrolling-y";
+                
+                Y.Profiler.start('dtY1');
+                this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+                Y.Profiler.registerObject('dt', this.dt);    
+                this.dt.plug(Y.Plugin.DataTableScroll, {height:"300px"});    
+                this.dt.render(sel);
+            
+            
+                Y.Profiler.stop('dtY1');
+                var msg = Y.Profiler.getAverage('dtY1') + 'ms taken to display';
+                
+                
+                var report = Y.Profiler.getFullReport(this.reportParser);
+
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                    
+                Y.log(msg, 'time');
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+            },
+            
+            testYDatatable_AutoCol: function() {
+                var sel = "#scrolling-colwidth";
+                
+                Y.Profiler.start('dtY2');
+                this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+                Y.Profiler.registerObject('dt', this.dt);    
+                this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px"});    
+                this.dt.render(sel);
+                Y.Profiler.stop('dtY2');
+                
+                var msg = Y.Profiler.getAverage('dtY2') + 'ms taken to display';
+                var report = Y.Profiler.getFullReport(this.reportParser);
+
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                Y.log(msg, 'time');
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+            },
+            
+            testXYDatatable_BigHeaders: function() {
+                var sel = "#scrolling-bigcols";
+                
+                Y.Profiler.start('dtHeaders');
+                this.dt =  new Y.DataTable.Base({columnset:this.cols3, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+                Y.Profiler.registerObject('dt', this.dt);    
+                this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", width:"400px"});    
+                this.dt.render(sel);
+                Y.Profiler.stop('dtHeaders');
+                
+                var msg = Y.Profiler.getAverage('dtHeaders') + 'ms taken to display';
+                var report = Y.Profiler.getFullReport(this.reportParser);
+
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                Y.log(msg, 'time');
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+            },
+            
+            testNoScrollDatatable: function() {
+                var sel = "#scrolling-noscroll";
+                
+                Y.Profiler.start('dtNoScroll');
+                this.dt =  new Y.DataTable.Base({columnset:this.cols3, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+                Y.Profiler.registerObject('dt', this.dt);    
+                this.dt.plug(Y.Plugin.DataTableScroll);    
+                this.dt.render(sel);
+                Y.Profiler.stop('dtNoScroll');
+                
+                var msg = Y.Profiler.getAverage('dtNoScroll') + 'ms taken to display';
+                var report = Y.Profiler.getFullReport(this.reportParser);
+
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                Y.log(msg, 'time');
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+                
+                this.dt.scroll.set('width', '200px');
+            },
+
+            test_uniqueRecordset: function () {
+                // Ticket #2529980
+                var a = new Y.DataTable.Base(),
+                    b = new Y.DataTable.Base(),
+                    aRS = a.get('recordset'),
+                    bRS = b.get('recordset');
+
+                Y.Assert.isTrue(aRS instanceof Y.Recordset);
+                Y.Assert.isTrue(bRS instanceof Y.Recordset);
+                Y.Assert.areNotSame(aRS, bRS);
+            },
+            
+            "caption should not be added to the DOM unless set": function () {
+                var container = Y.one("#base"),
+                    table, caption;
+
+                table = new Y.DataTable.Base({
+                    columnset: this.cols,
+                    recordset: this.data,
+                    caption: "Caption set"
+                }); 
+                table.render(container);
+
+                caption = table.get('boundingBox').one('caption');
+                Y.Assert.isNotNull(caption);
+                Y.Assert.areSame("Caption set", caption.get('text'));
+
+                table.destroy();
+                container.empty(true);
+
+                table = new Y.DataTable.Base({
+                    columnset: this.cols,
+                    recordset: this.data
+                }); 
+                table.render(container);
+
+                caption = table.get('boundingBox').one('caption');
+                Y.Assert.isNull(caption);
+
+                table.set('caption', 'Caption set');
+                caption = table.get('boundingBox').one('caption');
+                Y.Assert.isNotNull(caption);
+                Y.Assert.areSame('Caption set', caption.get('text'));
+            },
+
+            "test table.datasource.load() updates UI": function () {
+                var data = [ {a:1,b:1,c:1}, {a:2,b:2,c:2}, {a:3,b:3,c:3} ],
+                    container = Y.one('#base'),
+                    recordset,
+                    source, table;
+
+                container.empty(true);
+
+                source = new Y.DataSource.Local({ source: data });
+                source.plug(Y.Plugin.DataSourceArraySchema, {
+                    resultFields: ['a','b','c']
+                });
+
+                table = new Y.DataTable.Base({
+                    columnset: [ { key: 'a', sortable: true }, 'b', 'c' ]
+                }); 
+                table.plug(Y.Plugin.DataTableDataSource, {
+                    datasource: source
+                });
+
+                table.render(container);
+
+                Y.Assert.areSame(0, container.all('tbody tr').size());
+
+                table.datasource.load();
+
+                Y.Assert.areSame(3, container.all('tbody tr').size());
+                Y.Assert.areSame('1', container.one('tbody td').get('text'));
+
+                data[0].a = 'NEW';
+
+                table.datasource.load();
+                
+                Y.Assert.areSame(3, container.all('tbody tr').size());
+                Y.Assert.areSame('NEW', container.one('tbody td').get('text'));
+            },
+
+            "test Recordset does not lose plugins on load": function () {
+                var data = [ {a:1,b:1,c:1}, {a:2,b:2,c:2}, {a:3,b:3,c:3} ],
+                    container = Y.one('#base'),
+                    recordset,
+                    source, table;
+
+                container.empty(true);
+
+                source = new Y.DataSource.Local({ source: data });
+                source.plug(Y.Plugin.DataSourceArraySchema, {
+                    resultFields: ['a','b','c']
+                });
+
+                table = new Y.DataTable.Base({
+                    columnset: [ { key: 'a', sortable: true }, 'b', 'c' ]
+                }); 
+                table.plug(Y.Plugin.DataTableDataSource, {
+                    datasource: source
+                });
+                table.plug(Y.Plugin.DataTableSort);
+
+                table.render(container);
+
+                table.datasource.load();
+                
+                recordset = table.get("recordset");
+                Y.Assert.isObject(recordset);
+                Y.Assert.isObject(recordset.sort);
+            },
+
+            "header rows should not have {placeholders}": function () {
+                // Ticket #2530026
+                var data = [ {a:1,b:1,c:1}, {a:2,b:2,c:2}, {a:3,b:3,c:3} ],
+                    container = Y.one('#base'),
+                    recordset,
+                    source, table, html;
+
+                container.empty(true);
+
+                table = new Y.DataTable.Base({
+                    recordset: data,
+                    columnset: [ 'a', 'b', 'c' ]
+                }); 
+
+                table.render(container);
+
+                html = table._theadNode.getContent();
+                Y.Assert.isNull(html.match(/\{\s*\w+\s*\}/));
+            },
+
+            "cells should default content from column.emptyCellValue": function () {
+                // Ticket #2529921
+                var data = [ {b:1,c:1,d:1},
+                             {a:2,c:2,d:2},
+                             {a:3,b:3,d:3},
+                             {a:4,b:4,c:4} ],
+                    container = Y.one('#base'),
+                    recordset,
+                    source, table;
+
+                container.empty(true);
+
+                table = new Y.DataTable.Base({
+                    recordset: data,
+                    columnset: [
+                        'a',
+                        { key: 'b', emptyCellValue: "(NO B)" },
+                        { key: 'c', formatter: "<em>C: {value}</em>",
+                            emptyCellValue: "(NO C)" },
+                        { key: 'd', formatter: function (o) {
+                                return o.value && (o.value + .5);
+                            },
+                            emptyCellValue: "(NO D)" }]
+                }); 
+
+                table.render(container);
+
+                Y.Assert.isNull(table._tbodyNode
+                    .getContent().match(/\{\s*\w+\s*\}/));
+
+                Y.Assert.areSame('', table._tbodyNode.all('tr').item(0)
+                    .all('.yui3-datatable-liner').item(0).getContent());
+
+                Y.Assert.areSame('(NO B)', table._tbodyNode.all('tr').item(1)
+                    .all('.yui3-datatable-liner').item(1).getContent());
+
+                Y.Assert.areSame('<EM>C: (NO C)</EM>',
+                    table._tbodyNode.all('tr').item(2)
+                    .all('.yui3-datatable-liner').item(2).getContent()
+                        .toUpperCase()); // <-- account for IE UC tags
+
+                Y.Assert.areSame('(NO D)', table._tbodyNode.all('tr').item(3)
+                    .all('.yui3-datatable-liner').item(3).getContent());
+
+            },
+
+            "setting the recordset should update the UI": function () {
+                // Ticket #2529920 (comment 18)
+                // http://yuilibrary.com/projects/yui3/ticket/2529920#comment:18
+                var data = [ {a:1,b:1,c:1}, {a:2,b:2,c:2}, {a:3,b:3,c:3} ],
+                    container = Y.one('#base'),
+                    table, cell;
+
+                container.empty(true);
+
+                table = new Y.DataTable.Base({
+                    recordset: data,
+                    columnset: [ 'a', 'b', 'c' ]
+                }); 
+
+                table.render(container);
+
+                cell = table._tbodyNode.one('.yui3-datatable-liner');
+                Y.Assert.areSame('1', cell.get('text'));
+
+                table.set('recordset', [
+                    { a: 10,b: 10,c: 10 },
+                    { a: 20,b: 20,c: 20 },
+                    { a: 30,b: 30,c: 30 }
+                ]);
+
+                cell = table._tbodyNode.one('.yui3-datatable-liner');
+                Y.Assert.areSame('10', cell.get('text'));
+            },
+
+            "formatters should not have access to o.td by default": function () {
+                var table, cells;
+                
+                table = new Y.DataTable.Base({
+                    columnset: [
+                        {
+                            key: 'a',
+                            formatter: function (o) {
+                                Y.Assert.isUndefined(o.td);
+                                return o.value.toUpperCase();
+                            }
+                        },
+                        'b',
+                        { key: 'c', formatter: "({value})" }
+                    ],
+                    recordset: [
+                        { a: "a1", b: 53,  c: "c1" },
+                        { a: "a2", b: 35,  c: "c2" },
+                        { a: "a3", b: 42,  c: "c3" }
+                    ]
+                });
+
+                Y.one('#base').empty();
+
+                table.render('#base');
+
+                cells = table._tbodyNode.one('tr').all('td');
+                Y.ArrayAssert.itemsAreSame(
+                    ['A1', '53', '(c1)'],
+                    cells.get('text'));
+            },
+
+            "createCell should populate o.td in formatters": function () {
+                var table, cells, i = 0;
+                
+                table = new Y.DataTable.Base({
+                    columnset: [
+                        {
+                            key: 'a',
+                            formatter: function (o) {
+                                Y.Assert.isUndefined(o.td);
+                                this.createCell(o)
+                                    .setContent(
+                                        "<strong>???" + (++i) + "</strong>");
+
+                                Y.Assert.isObject(o.td);
+                            }
+                        }
+                    ],
+                    recordset: [{ a: "a1" }, { a: "a2" }, { a: "a3" }]
+                });
+
+                Y.one('#base').empty();
+
+                table.render('#base');
+
+                cells = table._tbodyNode.all('td');
+
+                Y.ArrayAssert.itemsAreSame(
+                    ['???1', '???2', '???3'],
+                    cells.get('text'));
+            }
+        });
+
+        var suite = new Y.Test.Suite("Datatable Test Suite");
+        suite.add(testBasic);
+
+        Y.Test.Runner.setName("Datatable Test Runner");
+        Y.Test.Runner.add(suite);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>

@@ -2,6 +2,7 @@
  * StackedAxis manages stacked numeric data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -21,7 +22,7 @@ Y.extend(StackedAxis, Y.NumericAxis,
      * Calculates the maximum and minimum values for the `Axis`.
      *
      * @method _updateMinAndMax
-     * @private 
+     * @private
      */
     _updateMinAndMax: function()
     {
@@ -71,7 +72,7 @@ Y.extend(StackedAxis, Y.NumericAxis,
             {
                 max = Math.max(max, pos);
             }
-            else 
+            else
             {
                 max = Math.max(max, neg);
             }
@@ -99,4 +100,4 @@ Y.extend(StackedAxis, Y.NumericAxis,
 });
 
 Y.StackedAxis = StackedAxis;
-		
+

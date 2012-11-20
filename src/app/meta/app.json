@@ -2,16 +2,24 @@
     "app": {
         "use": [
             "app-base",
+            "app-content",
             "app-transitions",
+            "lazy-model-list",
             "model",
             "model-list",
+            "model-sync-rest",
             "router",
-            "view"
+            "view",
+            "view-node-map"
         ],
 
         "submodules": {
             "app-base": {
                 "requires": ["classnamemanager", "pjax-base", "router", "view"]
+            },
+
+            "app-content": {
+                "requires": ["app-base", "pjax-content"]
             },
 
             "app-transitions": {
@@ -40,6 +48,10 @@
                 "use": ["router"]
             },
 
+            "lazy-model-list": {
+                "requires": ["model-list"]
+            },
+
             "model": {
                 "requires": ["base-build", "escape", "json-parse"]
             },
@@ -53,6 +65,14 @@
                     "escape",
                     "json-parse",
                     "model"
+                ]
+            },
+
+            "model-sync-rest": {
+                "requires": [
+                    "model",
+                    "io-base",
+                    "json-stringify"
                 ]
             },
 

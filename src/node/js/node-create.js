@@ -11,6 +11,8 @@ var Y_Node = Y.Node,
  * @method create
  * @static
  * @param {String} html The markup used to create the element
+ * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
+ * to escape html content.
  * @param {HTMLDocument} doc An optional document context
  * @return {Node} A Node instance bound to a DOM node or fragment
  * @for Node
@@ -26,7 +28,9 @@ Y.mix(Y_Node.prototype, {
     /**
      * Creates a new Node using the provided markup string.
      * @method create
-     * @param {String} html The markup used to create the element
+     * @param {String} html The markup used to create the element.
+     * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
+     * to escape html content.
      * @param {HTMLDocument} doc An optional document context
      * @return {Node} A Node instance bound to a DOM node or fragment
      */
@@ -36,6 +40,8 @@ Y.mix(Y_Node.prototype, {
      * Inserts the content before the reference node.
      * @method insert
      * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
+     * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
+     * to escape html content.
      * @param {Int | Node | HTMLElement | String} where The position to insert at.
      * Possible "where" arguments
      * <dl>
@@ -83,6 +89,8 @@ Y.mix(Y_Node.prototype, {
      * Inserts the content as the firstChild of the node.
      * @method prepend
      * @param {String | Node | HTMLElement} content The content to insert
+     * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
+     * to escape html content.
      * @chainable
      */
     prepend: function(content) {
@@ -93,6 +101,8 @@ Y.mix(Y_Node.prototype, {
      * Inserts the content as the lastChild of the node.
      * @method append
      * @param {String | Node | HTMLElement} content The content to insert
+     * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
+     * to escape html content.
      * @chainable
      */
     append: function(content) {
@@ -102,6 +112,8 @@ Y.mix(Y_Node.prototype, {
     /**
      * @method appendChild
      * @param {String | HTMLElement | Node} node Node to be appended
+     * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
+     * to escape html content.
      * @return {Node} The appended node
      */
     appendChild: function(node) {
@@ -112,6 +124,8 @@ Y.mix(Y_Node.prototype, {
      * @method insertBefore
      * @param {String | HTMLElement | Node} newNode Node to be appended
      * @param {HTMLElement | Node} refNode Node to be inserted before
+     * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
+     * to escape html content.
      * @return {Node} The inserted node
      */
     insertBefore: function(newNode, refNode) {
@@ -132,7 +146,8 @@ Y.mix(Y_Node.prototype, {
     /**
      * Replaces the node's current content with the content.
      * Note that this passes to innerHTML and is not escaped.
-     * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
+     * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
+     * to escape html content or `set('text')` to add as text.
      * @method setContent
      * @deprecated Use setHTML
      * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
@@ -180,10 +195,12 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      */
     'append',
 
-    /** Called on each Node instance
-      * @method insert
-      * @see Node.insert
-      */
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method insert
+     * @see Node.insert
+     */
     'insert',
 
     /**
@@ -194,41 +211,55 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      */
     'appendChild',
 
-    /** Called on each Node instance
-      * @method insertBefore
-      * @see Node.insertBefore
-      */
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method insertBefore
+     * @see Node.insertBefore
+     */
     'insertBefore',
 
-    /** Called on each Node instance
-      * @method prepend
-      * @see Node.prepend
-      */
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method prepend
+     * @see Node.prepend
+     */
     'prepend',
 
-    /** Called on each Node instance
-      * Note that this passes to innerHTML and is not escaped.
-      * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
-      * @method setContent
-      * @deprecated Use setHTML
-      */
+    /**
+     * Called on each Node instance
+     * Note that this passes to innerHTML and is not escaped.
+     * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
+     * @for NodeList
+     * @method setContent
+     * @deprecated Use setHTML
+     */
     'setContent',
 
-    /** Called on each Node instance
-      * @method getContent
-      * @deprecated Use getHTML
-      */
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method getContent
+     * @deprecated Use getHTML
+     */
     'getContent',
 
-    /** Called on each Node instance
-      * @method setHTML
-      * Note that this passes to innerHTML and is not escaped.
-      * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
-      */
+    /**
+     * Called on each Node instance
+     * Note that this passes to innerHTML and is not escaped.
+     * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
+     * @for NodeList
+     * @method setHTML
+     * @see Node.setHTML
+     */
     'setHTML',
 
-    /** Called on each Node instance
-      * @method getHTML
-      */
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method getHTML
+     * @see Node.getHTML
+     */
     'getHTML'
 ]);

@@ -3,7 +3,8 @@
      * Runs test suites and test cases, providing events to allowing for the
      * interpretation of test results.
      * @namespace Test
-     * @class TestRunner
+     * @module test
+ * @class TestRunner
      * @static
      */
     YUITest.TestRunner = function(){
@@ -34,7 +35,8 @@
          * A node in the test tree structure. May represent a TestSuite, TestCase, or
          * test function.
          * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
-         * @class TestNode
+         * @module test
+ * @class TestNode
          * @constructor
          * @private
          */
@@ -100,6 +102,7 @@
              * of this node.
              * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
              * @return {Void}
+             * @method appendChild
              */
             appendChild : function (testObject){
                 var node = new TestNode(testObject);
@@ -118,7 +121,8 @@
          * Runs test suites and test cases, providing events to allowing for the
          * interpretation of test results.
          * @namespace Test
-         * @class Runner
+         * @module test
+ * @class Runner
          * @static
          */
         function TestRunner(){
@@ -133,7 +137,7 @@
              * @static
              * @private
              */
-            this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());        
+            this.masterSuite = new YUITest.TestSuite(YUITest.guid('testSuite_'));
     
             /**
              * Pointer to the current node in the test tree.
@@ -759,11 +763,11 @@
                     
             /**
              * Runs a single test based on the data provided in the node.
+             * @method _runTest
              * @param {TestNode} node The TestNode representing the test to run.
              * @return {Void}
              * @static
              * @private
-             * @name _runTest
              */
             _runTest : function (node) {
             
@@ -863,7 +867,7 @@
              * @static
              */
             clear : function () {
-                this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());
+                this.masterSuite = new YUITest.TestSuite(YUITest.guid('testSuite_'));
             },
             
             /**
@@ -917,12 +921,19 @@
              *      format is specified, a string representing the results in that format.
              * @method getCoverage
              */
-            getCoverage: function(format){
-                if (!this._running && typeof _yuitest_coverage == "object"){
-                    if (typeof format == "function"){
-                        return format(_yuitest_coverage);                    
+            getCoverage: function(format) {
+                var covObject = null;
+                if (typeof _yuitest_coverage === "object") {
+                    covObject = _yuitest_coverage;
+                }
+                if (typeof __coverage__ === "object") {
+                    covObject = __coverage__;
+                }
+                if (!this._running && typeof covObject == "object"){
+                    if (typeof format == "function") {
+                        return format(covObject);                    
                     } else {
-                        return _yuitest_coverage;
+                        return covObject;
                     }
                 } else {
                     return null;
@@ -938,6 +949,7 @@
              * as the key name (value is the argument itself).
              * @private
              * @return {Function} A callback function.
+             * @method callback
              */
             callback: function(){
                 var names   = arguments,

@@ -1,0 +1,25 @@
+{
+    "name": "pjax",
+    "builds": {
+        "pjax": {
+            "jsfiles": [
+                "pjax.js"
+            ]
+        },
+        "pjax-plugin": {
+            "jsfiles": [
+                "pjax-plugin.js"
+            ]
+        },
+        "pjax-base": {
+            "jsfiles": [
+                "pjax-base.js"
+            ]
+        },
+        "pjax-content": {
+            "jsfiles": [
+                "pjax-content.js"
+            ]
+        }
+    }
+}

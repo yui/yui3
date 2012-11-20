@@ -1,4 +1,4 @@
-YUI.add('editor-selection', function(Y) {
+YUI.add('editor-selection', function (Y, NAME) {
 
     /**
      * Wraps some common Selection/Range functionality into a simple object
@@ -7,7 +7,7 @@ YUI.add('editor-selection', function(Y) {
      * @module editor
      * @submodule selection
      */
-    
+
     //TODO This shouldn't be there, Y.Node doesn't normalize getting textnode content.
     var textContent = 'textContent',
     INNER_HTML = 'innerHTML',
@@ -18,14 +18,19 @@ YUI.add('editor-selection', function(Y) {
     }
 
     Y.EditorSelection = function(domEvent) {
-        var sel, par, ieNode, nodes, rng, i;
+        var sel, par, ieNode, nodes, rng, i,
+            comp, moved = 0, n, id;
 
         if (Y.config.win.getSelection && (!Y.UA.ie || Y.UA.ie < 9)) {
-	        sel = Y.config.win.getSelection();
+            sel = Y.config.win.getSelection();
         } else if (Y.config.doc.selection) {
-    	    sel = Y.config.doc.selection.createRange();
+            sel = Y.config.doc.selection.createRange();
         }
         this._selection = sel;
+
+        if (!sel) {
+            return false;
+        }
 
         if (sel.pasteHTML) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
@@ -52,7 +57,7 @@ YUI.add('editor-selection', function(Y) {
                 }
 
                 this.ieNode = ieNode;
-                
+
                 if (ieNode) {
                     if (ieNode.nodeType !== 3) {
                         if (ieNode.firstChild) {
@@ -65,28 +70,27 @@ YUI.add('editor-selection', function(Y) {
                         }
                     }
                     this.anchorNode = this.focusNode = Y.EditorSelection.resolve(ieNode);
-                    
+
                     rng.moveToElementText(sel.parentElement());
-                    var comp = sel.compareEndPoints('StartToStart', rng),
-                    moved = 0;
+                    comp = sel.compareEndPoints('StartToStart', rng);
                     if (comp) {
                         //We are not at the beginning of the selection.
                         //Setting the move to something large, may need to increase it later
                         moved = Math.abs(sel.move('character', -9999));
                     }
-                    
+
                     this.anchorOffset = this.focusOffset = moved;
-                    
+
                     this.anchorTextNode = this.focusTextNode = Y.one(ieNode);
                 }
-                
-                
+
+
             } else {
                 //This helps IE deal with a selection and nodeChange events
                 if (sel.htmlText && sel.htmlText !== '') {
-                    var n = Y.Node.create(sel.htmlText);
+                    n = Y.Node.create(sel.htmlText);
                     if (n && n.get('id')) {
-                        var id = n.get('id');
+                        id = n.get('id');
                         this.anchorNode = this.focusNode = Y.one('#' + id);
                     } else if (n) {
                         n = n.get('childNodes');
@@ -103,7 +107,7 @@ YUI.add('editor-selection', function(Y) {
             this.focusNode = Y.EditorSelection.resolve(sel.focusNode);
             this.anchorOffset = sel.anchorOffset;
             this.focusOffset = sel.focusOffset;
-            
+
             this.anchorTextNode = Y.one(sel.anchorNode);
             this.focusTextNode = Y.one(sel.focusNode);
         }
@@ -117,7 +121,7 @@ YUI.add('editor-selection', function(Y) {
             }
         }
     };
-    
+
     /**
     * Utility method to remove dead font-family styles from an element.
     * @static
@@ -126,7 +130,7 @@ YUI.add('editor-selection', function(Y) {
     Y.EditorSelection.removeFontFamily = function(n) {
         n.removeAttribute('face');
         var s = n.getAttribute('style').toLowerCase();
-        if (s === '' || (s == 'font-family: ')) {
+        if (s === '' || (s === 'font-family: ')) {
             n.removeAttribute('style');
         }
         if (s.match(Y.EditorSelection.REG_FONTFAMILY)) {
@@ -143,15 +147,16 @@ YUI.add('editor-selection', function(Y) {
     * @method filter
     */
     Y.EditorSelection.filter = function(blocks) {
-        var startTime = (new Date()).getTime();
 
-        var nodes = Y.all(Y.EditorSelection.ALL),
+        var startTime = (new Date()).getTime(),
+            endTime,
+            nodes = Y.all(Y.EditorSelection.ALL),
             baseNodes = Y.all('strong,em'),
             doc = Y.config.doc, hrs,
             classNames = {}, cssString = '',
-            ls;
+            ls, startTime1 = (new Date()).getTime(),
+            endTime1;
 
-        var startTime1 = (new Date()).getTime();
         nodes.each(function(n) {
             var raw = Y.Node.getDOMNode(n);
             if (raw.style[FONT_FAMILY]) {
@@ -160,58 +165,44 @@ YUI.add('editor-selection', function(Y) {
 
                 Y.EditorSelection.removeFontFamily(raw);
             }
-            /*
-            if (n.getStyle(FONT_FAMILY)) {
-                classNames['.' + n._yuid] = n.getStyle(FONT_FAMILY);
-                n.addClass(n._yuid);
-                n.removeAttribute('face');
-                n.setStyle(FONT_FAMILY, '');
-                if (n.getAttribute('style') === '') {
-                    n.removeAttribute('style');
-                }
-                //This is for IE
-                if (n.getAttribute('style').toLowerCase() === 'font-family: ') {
-                    n.removeAttribute('style');
-                }
-            }
-            */
         });
-        var endTime1 = (new Date()).getTime();
+        endTime1 = (new Date()).getTime();
 
         Y.all('.hr').addClass('yui-skip').addClass('yui-non');
-        
+
         if (Y.UA.ie) {
             hrs = doc.getElementsByTagName('hr');
             Y.each(hrs, function(hr) {
-                var el = doc.createElement('div');
-                    el.className = 'hr yui-non yui-skip';
-                    
-                    el.setAttribute('readonly', true);
-                    el.setAttribute('contenteditable', false); //Keep it from being Edited
-                    if (hr.parentNode) {
-                        hr.parentNode.replaceChild(el, hr);
-                    }
-                    //Had to move to inline style. writes for ie's < 8. They don't render el.setAttribute('style');
-                    var s = el.style;
-                    s.border = '1px solid #ccc';
-                    s.lineHeight = '0';
-                    s.height = '0';
-                    s.fontSize = '0';
-                    s.marginTop = '5px';
-                    s.marginBottom = '5px';
-                    s.marginLeft = '0px';
-                    s.marginRight = '0px';
-                    s.padding = '0';
+                var el = doc.createElement('div'),
+                s = el.style;
+
+                el.className = 'hr yui-non yui-skip';
+
+                el.setAttribute('readonly', true);
+                el.setAttribute('contenteditable', false); //Keep it from being Edited
+                if (hr.parentNode) {
+                    hr.parentNode.replaceChild(el, hr);
+                }
+                //Had to move to inline style. writes for ie's < 8. They don't render el.setAttribute('style');
+                s.border = '1px solid #ccc';
+                s.lineHeight = '0';
+                s.height = '0';
+                s.fontSize = '0';
+                s.marginTop = '5px';
+                s.marginBottom = '5px';
+                s.marginLeft = '0px';
+                s.marginRight = '0px';
+                s.padding = '0';
             });
         }
-        
+
 
         Y.each(classNames, function(v, k) {
             cssString += k + ' { font-family: ' + v.replace(/"/gi, '') + '; }';
         });
         Y.StyleSheet(cssString, 'editor');
 
-        
+
         //Not sure about this one?
         baseNodes.each(function(n, k) {
             var t = n.get('tagName').toLowerCase(),
@@ -224,17 +215,17 @@ YUI.add('editor-selection', function(Y) {
 
         //Filter out all the empty UL/OL's
         ls = Y.all('ol,ul');
-        ls.each(function(v, k) {
+        ls.each(function(v) {
             var lis = v.all('li');
             if (!lis.size()) {
                 v.remove();
             }
         });
-        
+
         if (blocks) {
             Y.EditorSelection.filterBlocks();
         }
-        var endTime = (new Date()).getTime();
+        endTime = (new Date()).getTime();
     };
 
     /**
@@ -243,21 +234,21 @@ YUI.add('editor-selection', function(Y) {
     * @method filterBlocks
     */
     Y.EditorSelection.filterBlocks = function() {
-        var startTime = (new Date()).getTime();
-        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
-            sel, single, br, divs, spans, c, s;
+        var startTime = (new Date()).getTime(), endTime,
+            childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
+            sel, single, br, c, s, html;
 
         if (childs) {
             for (i = 0; i < childs.length; i++) {
                 node = Y.one(childs[i]);
                 if (!node.test(Y.EditorSelection.BLOCKS)) {
                     doit = true;
-                    if (childs[i].nodeType == 3) {
+                    if (childs[i].nodeType === 3) {
                         c = childs[i][textContent].match(Y.EditorSelection.REG_CHAR);
                         s = childs[i][textContent].match(Y.EditorSelection.REG_NON);
                         if (c === null && s) {
                             doit = false;
-                            
+
                         }
                     }
                     if (doit) {
@@ -280,7 +271,7 @@ YUI.add('editor-selection', function(Y) {
                 if (!br.item(0).test('.yui-cursor')) {
                     br.item(0).remove();
                 }
-                var html = single.item(0).get('innerHTML');
+                html = single.item(0).get('innerHTML');
                 if (html === '' || html === ' ') {
                     single.set('innerHTML', Y.EditorSelection.CURSOR);
                     sel = new Y.EditorSelection();
@@ -298,50 +289,22 @@ YUI.add('editor-selection', function(Y) {
                 }
             });
         }
-        
-        if (!Y.UA.ie) {
-            /*
-            divs = Y.all('div, p');
-            divs.each(function(d) {
-                if (d.hasClass('yui-non')) {
-                    return;
-                }
-                var html = d.get('innerHTML');
-                if (html === '') {
-                    d.remove();
-                } else {
-                    if (d.get('childNodes').size() == 1) {
-                        if (d.ancestor('p')) {
-                            d.replace(d.get('firstChild'));
-                        }
-                    }
-                }
-            });*/
 
-            /* Removed this, as it was causing Pasting to be funky in Safari
-            spans = Y.all('.Apple-style-span, .apple-style-span');
-            spans.each(function(s) {
-                s.setAttribute('style', '');
-            });
-            */
-        }
-
-
-        var endTime = (new Date()).getTime();
+        endTime = (new Date()).getTime();
     };
 
     /**
     * Regular Expression used to find dead font-family styles
     * @static
     * @property REG_FONTFAMILY
-    */   
-    Y.EditorSelection.REG_FONTFAMILY = /font-family: ;/;
+    */
+    Y.EditorSelection.REG_FONTFAMILY = /font-family:\s*;/;
 
     /**
     * Regular Expression to determine if a string has a character in it
     * @static
     * @property REG_CHAR
-    */   
+    */
     Y.EditorSelection.REG_CHAR = /[a-zA-Z-0-9_!@#\$%\^&*\(\)-=_+\[\]\\{}|;':",.\/<>\?]/gi;
 
     /**
@@ -389,8 +352,8 @@ YUI.add('editor-selection', function(Y) {
         var nodes = Y.all('body [class]'),
             html = '', nons, ids,
             body = Y.one('body');
-        
-        
+
+
         nodes.each(function(n) {
             if (n.hasClass(n._yuid)) {
                 //One of ours
@@ -418,13 +381,13 @@ YUI.add('editor-selection', function(Y) {
                 n.removeAttribute('_yuid');
             }
         });
-        
+
         if (body) {
             html = body.get('innerHTML');
         }
-        
+
         Y.all('.hr').addClass('yui-skip').addClass('yui-non');
-        
+
         /*
         nodes.each(function(n) {
             n.addClass(n._yuid);
@@ -434,7 +397,7 @@ YUI.add('editor-selection', function(Y) {
             }
         });
         */
-        
+
         return html;
     };
     /**
@@ -619,10 +582,10 @@ YUI.add('editor-selection', function(Y) {
         */
         _selection: null,
         /**
-        * Wrap an element, with another element 
+        * Wrap an element, with another element
         * @private
         * @method _wrap
-        * @param {HTMLElement} n The node to wrap 
+        * @param {HTMLElement} n The node to wrap
         * @param {String} tag The tag to use when creating the new element.
         * @return {HTMLElement} The wrapped node
         */
@@ -634,10 +597,10 @@ YUI.add('editor-selection', function(Y) {
             return Y.Node.getDOMNode(tmp);
         },
         /**
-        * Swap an element, with another element 
+        * Swap an element, with another element
         * @private
         * @method _swap
-        * @param {HTMLElement} n The node to swap 
+        * @param {HTMLElement} n The node to swap
         * @param {String} tag The tag to use when creating the new element.
         * @return {HTMLElement} The new node
         */
@@ -659,9 +622,9 @@ YUI.add('editor-selection', function(Y) {
             Y.config.doc.execCommand('fontname', null, Y.EditorSelection.TMP);
             var nodes = Y.all(Y.EditorSelection.ALL),
                 items = [];
-            
+
             nodes.each(function(n, k) {
-                if (n.getStyle(FONT_FAMILY) ==  Y.EditorSelection.TMP) {
+                if (n.getStyle(FONT_FAMILY) === Y.EditorSelection.TMP) {
                     n.setStyle(FONT_FAMILY, '');
                     Y.EditorSelection.removeFontFamily(n);
                     if (!n.test('body')) {
@@ -699,13 +662,13 @@ YUI.add('editor-selection', function(Y) {
                 node = b;
             }
 
-            
+
             if (range.pasteHTML) {
                 if (offset === 0 && node && !node.previous() && node.get('nodeType') === 3) {
                     /*
                     * For some strange reason, range.pasteHTML fails if the node is a textNode and
                     * the offset is 0. (The cursor is at the beginning of the line)
-                    * It will always insert the new content at position 1 instead of 
+                    * It will always insert the new content at position 1 instead of
                     * position 0. Here we test for that case and do it the hard way.
                     */
                     node.insert(html, 'before');
@@ -810,8 +773,8 @@ YUI.add('editor-selection', function(Y) {
                         changed.push(this._wrap(items.item(k), tag));
                     }
                 }, this);
-                
-		        range = this.createRange();
+
+                range = this.createRange();
                 first = changed[0];
                 last = changed[changed.length - 1];
                 if (this._selection.removeAllRanges) {
@@ -838,7 +801,7 @@ YUI.add('editor-selection', function(Y) {
             }
         },
         /**
-        * Find and replace a string inside a text node and replace it with HTML focusing the node after 
+        * Find and replace a string inside a text node and replace it with HTML focusing the node after
         * to allow you to continue to type.
         * @method replace
         * @param {String} se The string to search for.
@@ -886,7 +849,7 @@ YUI.add('editor-selection', function(Y) {
             if (Y.config.doc.selection) {
                 return Y.config.doc.selection.createRange();
             } else {
-		        return Y.config.doc.createRange();
+                return Y.config.doc.createRange();
             }
         },
         /**
@@ -903,7 +866,7 @@ YUI.add('editor-selection', function(Y) {
             }
             end = end || 0;
             node = Y.Node.getDOMNode(node);
-		    var range = this.createRange();
+            var range = this.createRange();
             if (range.selectNode) {
                 range.selectNode(node);
                 this._selection.removeAllRanges();
@@ -998,4 +961,4 @@ YUI.add('editor-selection', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@', {"requires": ["node"]});

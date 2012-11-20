@@ -1,4 +1,4 @@
-YUI.add('base-base', function(Y) {
+YUI.add('base-base', function (Y, NAME) {
 
     /**
      * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
@@ -48,12 +48,12 @@ YUI.add('base-base', function(Y) {
      * A base class which objects requiring attributes and custom event support can 
      * extend. Base also handles the chaining of initializer and destructor methods across 
      * the hierarchy as part of object construction and destruction. Additionally, attributes configured 
-     * through the static <a href="#property_Base.ATTRS">ATTRS</a> property for each class 
+     * through the static <a href="#property_ATTRS">ATTRS</a> property for each class 
      * in the hierarchy will be initialized by Base.
      * </p>
      *
      * <p>
-     * The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
+     * The static <a href="#property_NAME">NAME</a> property of each class extending 
      * from Base will be used as the identifier for the class, and is used by Base to prefix 
      * all events fired by instances of that class.
      * </p>
@@ -62,6 +62,10 @@ YUI.add('base-base', function(Y) {
      * @constructor
      * @uses BaseCore
      * @uses Attribute
+     * @uses AttributeCore
+     * @uses AttributeEvents
+     * @uses AttributeExtras
+     * @uses EventTarget
      *
      * @param {Object} config Object with configuration property name/value pairs. The object can be 
      * used to provide default values for the objects published attributes.
@@ -341,4 +345,4 @@ YUI.add('base-base', function(Y) {
     Y.Base = Base;
 
 
-}, '@VERSION@' ,{requires:['base-core', 'attribute-base']});
+}, '@VERSION@', {"requires": ["base-core", "attribute-base"]});

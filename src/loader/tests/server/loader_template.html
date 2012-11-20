@@ -19,7 +19,8 @@ try {
     YUI({
         useBrowserConsole: false,
         combine: true,
-        comboBase: 'http://127.0.0.1:5000/combo?',
+        //comboBase: 'http://127.0.0.1:5000/combo?',
+        comboBase: '/combo?',
         root: 'build/'
     }).use('{KEY_USE}', function(Y) {
         sendResult({

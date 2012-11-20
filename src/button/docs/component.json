@@ -1,7 +1,7 @@
 {
     "name"       : "button",
     "displayName": "Button",
-    "description": "The Button component is a lightweight wrapper for DOM elements that should be treated like a button.",
+    "description": "YUI's Button component is a mixed-module approach to providing a simple-to-use button that normalizes and enhances the Web browser's default button component.",
     "author"     : "drgath",
 
     "tags": ["widget", "button", "beta"],
@@ -9,28 +9,40 @@
 
     "examples": [
         {
-            "name"       : "simple-button",
-            "displayName": "Button",
-            "description": "",
-            "modules"    : ["button-base", "cssbutton"],
+            "name"       : "cssbutton",
+            "displayName": "Styling elements with cssbutton",
+            "description": "This example shows how you can easily style button and non-button DOM elements to appear as buttons",
+            "modules"    : ["cssbutton"],
             "tags"       : ["button"],
-            "hideTableOfContents": true
+            "use"        : ["cssbutton"],
+            "hideTableOfContents": false
         },
         {
-            "name"       : "css-button",
-            "displayName": "CSS Buttons",
-            "description": "",
-            "modules"    : ["button-base", "cssbutton"],
+            "name"       : "button-plugin",
+            "displayName": "Enhancing <button> nodes with button-plugin",
+            "description": "This example shows a simple, light solution to enhance <button> nodes",
+            "modules"    : ["button-plugin", "cssbutton"],
             "tags"       : ["button"],
-            "hideTableOfContents": true
+            "use"        : ["button"],
+            "hideTableOfContents": false
+        },
+        {
+            "name"       : "button-basic",
+            "displayName": "Basic button widgets",
+            "description": "This example demonstrates how to create button widgets",
+            "modules"    : ["button"],
+            "tags"       : ["button"],
+            "use"        : ["button", "widget"],
+            "hideTableOfContents": false
         },
         {
             "name"       : "button-group",
-            "displayName": "Button Group",
-            "description": "",
+            "displayName": "Managing groups of buttons with button-group",
+            "description": "This example demonstrates how to create a widget containing a group of buttons",
             "modules"    : ["button-group"],
-            "tags"       : ["button", "button-group"],
-            "hideTableOfContents": true
+            "use"        : ["button-group"],
+            "tags"       : ["button", "widget"],
+            "hideTableOfContents": false
         }
     ]
 }

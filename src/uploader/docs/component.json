@@ -7,30 +7,27 @@
     "use" : ["uploader"],
      "examples": [
         {
-            "name"       : "uploader-simple",
-            "displayName": "Simple Uploader with Progress Tracking",
-            "description": "How to upload a single file, while tracking progress and using a sprite-skinned button",
-            "modules"    : ["uploader"],
-            "tags"       : ["uploader", "widget", "utility"],
-
-            "hideTableOfContents": true
-        },
-        {
-            "name"       : "uploader-withvars",
-            "displayName": "Single File Upload with Additional Data",
-            "description": "How to upload a single file, along with GET and POST Vars Submission and receive data from the server",
-            "modules"    : ["uploader"],
-            "tags"       : ["uploader", "widget", "utility"],
-
-            "hideTableOfContents": true
-        },
-        {
             "name"       : "uploader-multiple",
-            "displayName": "Multiple Files Upload with Transparent Overlay Button",
-            "description": "How to upload multiple files with progress tracking and a transparent overlay upload button",
+            "displayName": "Simple Multiple Files Uploader with Progress Tracking",
+            "description": "A simple multiple file uploader with progress tracking",
             "modules"    : ["uploader"],
             "tags"       : ["uploader", "widget", "utility"],
-
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "uploader-dd",
+            "displayName": "Multiple Files Uploader with HTML5 Drag-and-Drop Support",
+            "description": "A multiple file uploader with HTML5 Drag-and-Drop Support",
+            "modules"    : ["uploader"],
+            "tags"       : ["uploader", "widget", "utility"],
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "uploader-data",
+            "displayName": "Multiple Files Uploader with POST Variables and Server Data Retrieval",
+            "description": "A multiple file uploader that submits additional POST vars with each file and receives data from the server",
+            "modules"    : ["uploader"],
+            "tags"       : ["uploader", "widget", "utility"],
             "hideTableOfContents": true
         }
     ]

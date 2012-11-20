@@ -4,12 +4,12 @@
         "submodules": {
             "attribute-core": {
                 "requires" : [
-                    "yui-base"
+                    "oop"
                 ]
             },
             "attribute-extras": {
                 "requires" : [
-                    "yui-base"
+                    "oop"
                 ]
             },
             "attribute-events": {
@@ -23,7 +23,7 @@
                     "attribute-events",
                     "attribute-extras"
                 ]
-            }, 
+            },
             "attribute-complex": {
                 "requires": [
                     "attribute-base"

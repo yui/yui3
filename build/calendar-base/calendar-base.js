@@ -1,4 +1,4 @@
-YUI.add('calendar-base', function(Y) {
+YUI.add('calendar-base', function (Y, NAME) {
 
 /**
  * The CalendarBase submodule is a basic UI calendar view that displays
@@ -32,7 +32,7 @@ var getCN                 = Y.ClassNameManager.getClassName,
     L           = Y.Lang,
     node        = Y.Node,
     create      = node.create,
-    substitute  = Y.substitute,
+    substitute  = L.sub,
     each        = Y.each,
     hasVal      = Y.Array.hasValue,
     iOf         = Y.Array.indexOf,
@@ -144,7 +144,9 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     this._paneProperties = {};
     this._calendarId = Y.guid('calendar');
     this._selectedDates = {};
-    this._rules = {};
+    if (isEmpty(this._rules)) {
+       this._rules = {};      
+    }
     this._storedDateCells = {};
   },
 
@@ -186,25 +188,10 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     this.after('enabledDatesRuleChange', this._afterCustomRendererChange);
     this.after('disabledDatesRuleChange', this._afterCustomRendererChange);
     this.after('focusedChange', this._afterFocusedChange);
+    this.after('selectionChange', this._renderSelectedDates);
     this._bindCalendarEvents();
   },
 
-  /**
-    * syncUI implementation
-    *
-    * Update the scroll position, based on the current value of scrollY
-    * @method syncUI
-    */  
-  syncUI : function () {
-      if (this.get('showPrevMonth')) {
-           this._afterShowPrevMonthChange();
-
-      }
-
-      if (this.get('showNextMonth')) {
-           this._afterShowNextMonthChange();
-      }
-  },
 
     /**
      * An internal utility method that generates a list of selected dates 
@@ -247,56 +234,6 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         }
       },
 
-    /**
-     * An internal rendering method that modifies a date cell to have the
-     * selected CSS class if the date cell is visible.
-     *
-     * @method _renderSelectedDate
-     * @param {Date} oDate The date corresponding to a specific date cell.
-     * @private
-     */
-    _renderSelectedDate : function (oDate) {
-        if (this._isDateVisible(oDate)) {
-            this._dateToNode(oDate).addClass(CAL_DAY_SELECTED).setAttribute("aria-selected", true);
-        }
-    },
-
-    /**
-     * An internal rendering method that modifies a date cell to remove the
-     * selected CSS class if the date cell is visible.
-     *
-     * @method _renderUnelectedDate
-     * @param {Date} oDate The date corresponding to a specific date cell.
-     * @private
-     */
-    _renderUnselectedDate : function (oDate) {
-        if (this._isDateVisible(oDate)) {
-            this._dateToNode(oDate).removeClass(CAL_DAY_SELECTED).setAttribute("aria-selected", false);
-        }
-    },
-
-    /**
-     * An internal utility method that checks whether a particular date
-     * is in the current view of the calendar.
-     *
-     * @method _isDateVisible
-     * @param {Date} oDate The date corresponding to a specific date cell.
-     * @private
-     * @return {boolean} Returns true if the given date is in the current 
-     * view of the calendar.
-     */
-    _isDateVisible : function (oDate) {
-      var minDate = this.get("date"),
-          maxDate = ydate.addMonths(minDate, this._paneNumber - 1),
-          oDateTime = this._normalizeDate(oDate).getTime();
-          
-      if (minDate.getTime() <= oDateTime && oDateTime <= maxDate) {
-          return true;
-      }
-      else {
-          return false;
-      }
-    },
 
     /**
      * An internal parsing method that receives a String list of numbers
@@ -430,6 +367,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * Selects a given date or array of dates.
      * @method selectDates
      * @param {Date|Array} dates A `Date` or `Array` of `Date`s.
+     * @return {CalendarBase} A reference to this object
+     * @chainable
      */
     selectDates : function (dates) {
       if (ydate.isValidDate(dates)) {
@@ -438,6 +377,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
       else if (L.isArray(dates)) {
          this._addDatesToSelection(dates);
       }
+      return this;
     },
 
     /**
@@ -446,9 +386,11 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @method deselectDates
      * @param {Date|Array} [dates] A `Date` or `Array` of `Date`s, or no
      * argument if all dates should be deselected.
+     * @return {CalendarBase} A reference to this object
+     * @chainable
      */
     deselectDates : function (dates) {
-      if (dates == null) {
+      if (!dates) {
          this._clearSelection();
       }
       else if (ydate.isValidDate(dates)) {
@@ -457,6 +399,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
       else if (L.isArray(dates)) {
          this._removeDatesFromSelection(dates);
       }
+      return this;
     },
 
     /**
@@ -492,9 +435,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         }
 
         this._selectedDates = setVal(this._selectedDates, [year, month, day], oDate);
-        this._renderSelectedDate(oDate);
 
-        if (index == null) {
+        if (!index) {
         this._fireSelectionChange();
         }
       }
@@ -519,6 +461,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _addDateRangeToSelection : function (startDate, endDate) {
+
         var timezoneDifference = (endDate.getTimezoneOffset() - startDate.getTimezoneOffset())*60000,
             startTime = startDate.getTime(),
             endTime   = endDate.getTime();
@@ -558,8 +501,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
             hasKey(this._selectedDates[year], month) && 
             hasKey(this._selectedDates[year][month], day)) {
                delete this._selectedDates[year][month][day];
-               this._renderUnselectedDate(oDate);
-               if (index == null) {
+               if (!index) {
                  this._fireSelectionChange();
                }
         }
@@ -572,7 +514,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _removeDatesFromSelection : function (datesArray) {
-        each(datesArray, this._removeDateDromSelection);
+        each(datesArray, this._removeDateFromSelection, this);
         this._fireSelectionChange();
     },
 
@@ -598,7 +540,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * A utility method that removes all dates from selection.
      * @method _clearSelection
      * @param {boolean} noevent A Boolean specifying whether a selectionChange
-     * event should be fired.
+     * event should be fired. If true, the event is not fired.
      * @private
      */
     _clearSelection : function (noevent) {
@@ -648,7 +590,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     _renderCustomRules : function () {
 
         this.get("contentBox").all("." + CAL_DAY + ",." + CAL_NEXTMONTH_DAY).removeClass(SELECTION_DISABLED).setAttribute("aria-disabled", false);
-        
+
         if (!isEmpty(this._rules)) {
         var enRule = this.get("enabledDatesRule"),
             disRule = this.get("disabledDatesRule");
@@ -684,14 +626,14 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @method _renderSelectedDates
      * @private
      */
-  _renderSelectedDates : function () {
+    _renderSelectedDates : function () {
     this.get("contentBox").all("." + CAL_DAY_SELECTED).removeClass(CAL_DAY_SELECTED).setAttribute("aria-selected", false);
     
         for (var paneNum = 0; paneNum < this._paneNumber; paneNum++) {
         var paneDate = ydate.addMonths(this.get("date"), paneNum);
         var dateArray = this._getSelectedDatesInMonth(paneDate);
         each(dateArray, function (date) {
-            this._dateToNode(date).addClass(CAL_DAY_SELECTED).setAttribute("ari-selected", true);
+            this._dateToNode(date).addClass(CAL_DAY_SELECTED).setAttribute("aria-selected", true);
                         },
              this);
       }
@@ -706,7 +648,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @return {Node} The node wrapping the DOM element of the cell the date 
      * corresponds to.
      */
-  _dateToNode : function (oDate) {
+    _dateToNode : function (oDate) {
     var day = oDate.getDate(),
             col = 0,
             daymod = day%7,
@@ -779,7 +721,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @protected
      * @return {Date} The date corresponding to the DOM element that the given node wraps.
      */
-  _nodeToDate : function (oNode) {
+    _nodeToDate : function (oNode) {
     
         var idParts = oNode.get("id").split("_").reverse(),
             paneNum = parseInt(idParts[2], 10),
@@ -797,7 +739,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @method _bindCalendarEvents
      * @protected
      */
-  _bindCalendarEvents : function () {
+    _bindCalendarEvents : function () {
     
   },
 
@@ -811,7 +753,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * set to noon.
      */
     _normalizeDate : function (date) {
-      if (date != null) {
+      if (date) {
        return new Date(date.getFullYear(), date.getMonth(), 1, 12, 0, 0, 0);
       }
       else {
@@ -926,7 +868,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         if (daysInMonth == 31 && (cutoffCol <= 1)) {
           startingCell = 2;
         }
-        else if (daysInMonth== 30 && cutoffCol == 0) {
+        else if (daysInMonth == 30 && cutoffCol === 0) {
           startingCell = 1;
         }
   
@@ -957,7 +899,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         if (daysInMonth == 31 && (cutoffCol <= 1)) {
           startingCell = 2;
         }
-        else if (daysInMonth == 30 && cutoffCol == 0) {
+        else if (daysInMonth == 30 && cutoffCol === 0) {
           startingCell = 1;
         }
   
@@ -1012,8 +954,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @method _afterHeaderRendererChange
      * @private
      */ 
-  _afterHeaderRendererChange : function () {
-    var headerCell = this.get('contentBox').one("." + CAL_HD);
+    _afterHeaderRendererChange : function () {
+    var headerCell = this.get("contentBox").one("." + CAL_HD_LABEL);
     headerCell.setContent(this._updateCalendarHeader(this.get('date')));
   },
 
@@ -1034,7 +976,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @method _afterDateChange
      * @private
      */ 
-  _afterDateChange : function () {
+    _afterDateChange : function () {
     
     var contentBox = this.get('contentBox'),
         headerCell = contentBox.one("." + CAL_HD).one("." + CAL_HD_LABEL),
@@ -1072,7 +1014,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * element ids in the given pane.
      * @private
      */ 
-  _initCalendarPane : function (baseDate, pane_id) {
+    _initCalendarPane : function (baseDate, pane_id) {
         // Initialize final output HTML string
     var calString = '',
         // Get a list of short weekdays from the internationalization package, or else use default English ones.
@@ -1179,7 +1121,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @param {Node} pane The node corresponding to the calendar pane to be rerenders.
      * @private
      */ 
-  _rerenderCalendarPane : function (newDate, pane) {
+    _rerenderCalendarPane : function (newDate, pane) {
 
        // Get the first day of the week from the internationalization package, or else use Sunday as default.
      var firstday = this.get('strings.first_weekday') || 0,
@@ -1316,7 +1258,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @param {Date} baseDate The date with which to initialize the calendar.
      * @private
      */          
-  _initCalendarHTML : function (baseDate) {
+    _initCalendarHTML : function (baseDate) {
         // Instantiate the partials holder
         var partials = {},
             // Counter for iterative template replacement.
@@ -1682,6 +1624,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @default {}
      */
         customRenderer : {
+            lazyAdd: false,
             value: {},
             setter: function (val) {
                 this._rules = val.rules;
@@ -1693,4 +1636,4 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{requires:['widget', 'substitute', 'datatype-date', 'datatype-date-math', 'cssgrids'], lang:['de', 'en', 'fr', 'ja', 'pt-BR', 'ru', 'zh-HANT-TW']});
+}, '@VERSION@', {"requires": ["widget", "substitute", "datatype-date", "datatype-date-math", "cssgrids"], "lang": ["de", "en", "es", "es-AR", "fr", "it", "ja", "nb-NO", "nl", "pt-BR", "ru", "zh-HANT-TW"], "skinnable": true});

@@ -1,6 +1,28 @@
-YUI.add('datatable-scroll', function(Y) {
+YUI.add('datatable-scroll', function (Y, NAME) {
 
 /**
+Adds the ability to make the table rows scrollable while preserving the header
+placement.
+
+@module datatable-scroll
+@for DataTable
+@since 3.5.0
+**/
+var YLang = Y.Lang,
+    isString = YLang.isString,
+    isNumber = YLang.isNumber,
+    isArray  = YLang.isArray,
+
+    Scrollable;
+
+// Returns the numeric value portion of the computed style, defaulting to 0
+function styleDim(node, style) {
+    return parseInt(node.getComputedStyle(style), 10) | 0;
+}
+
+/**
+_API docs for this extension are included in the DataTable class._
+
 Adds the ability to make the table rows scrollable while preserving the header
 placement.
 
@@ -24,22 +46,10 @@ the following values:
  * 'y' - Activate vertical scrolling only. Requires the `height` attribute is
          also set.
 
- @module datatable-scroll
- @class DataTable.Scrollable
- @for DataTable
+@class DataTable.Scrollable
+@for DataTable
+@since 3.5.0
 **/
-var YLang = Y.Lang,
-    isString = YLang.isString,
-    isNumber = YLang.isNumber,
-    isArray  = YLang.isArray,
-
-    Scrollable;
-
-// Returns the numeric value portion of the computed style, defaulting to 0
-function styleDim(node, style) {
-    return parseInt(node.getComputedStyle(style), 10) | 0;
-}
-
 Y.DataTable.Scrollable = Scrollable = function () {};
 
 Scrollable.ATTRS = {
@@ -57,6 +67,7 @@ Scrollable.ATTRS = {
     @attribute scrollable
     @type {String|Boolean}
     @value false
+    @since 3.5.0
     **/
     scrollable: {
         value: false,
@@ -79,6 +90,7 @@ Y.mix(Scrollable.prototype, {
             coordinate array, id string, or Node
     @return {DataTable}
     @chainable
+    @since 3.5.0
     **/
     scrollTo: function (id) {
         var target;
@@ -114,6 +126,7 @@ Y.mix(Scrollable.prototype, {
     @type {HTML}
     @value '<table class="{className}" role="presentation"></table>'
     @protected
+    @since 3.5.0
     **/
     _CAPTION_TABLE_TEMPLATE: '<table class="{className}" role="presentation"></table>',
 
@@ -125,6 +138,7 @@ Y.mix(Scrollable.prototype, {
     @type {HTML}
     @value '<div class="{className}"></div>'
     @protected
+    @since 3.5.0
     **/
     _SCROLL_LINER_TEMPLATE: '<div class="{className}"></div>',
 
@@ -135,6 +149,7 @@ Y.mix(Scrollable.prototype, {
     @type {HTML}
     @value '<div class="{className}"><div></div></div>'
     @protected
+    @since 3.5.0
     **/
     _SCROLLBAR_TEMPLATE: '<div class="{className}"><div></div></div>',
 
@@ -146,6 +161,7 @@ Y.mix(Scrollable.prototype, {
     @type {HTML}
     @value '<div class="{className}"></div>'
     @protected
+    @since 3.5.0
     **/
     _X_SCROLLER_TEMPLATE: '<div class="{className}"></div>',
 
@@ -157,6 +173,7 @@ Y.mix(Scrollable.prototype, {
     @type {HTML}
     @value '<table cellspacing="0" role="presentation" aria-hidden="true" class="{className}"></table>'
     @protected
+    @since 3.5.0
     **/
     _Y_SCROLL_HEADER_TEMPLATE: '<table cellspacing="0" aria-hidden="true" class="{className}"></table>',
 
@@ -168,6 +185,7 @@ Y.mix(Scrollable.prototype, {
     @type {HTML}
     @value '<div class="{className}"><div class="{scrollerClassName}"></div></div>'
     @protected
+    @since 3.5.0
     **/
     _Y_SCROLLER_TEMPLATE: '<div class="{className}"><div class="{scrollerClassName}"></div></div>',
 
@@ -178,6 +196,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _addScrollbarPadding
     @protected
+    @since 3.5.0
     **/
     _addScrollbarPadding: function () {
         var fixedHeader = this._yScrollHeader,
@@ -202,6 +221,7 @@ Y.mix(Scrollable.prototype, {
     @method _afterScrollableChange
     @param {EventFacade} e The relevant change event (ignored)
     @protected
+    @since 3.5.0
     **/
     _afterScrollableChange: function (e) {
         var scroller = this._xScrollNode;
@@ -225,6 +245,7 @@ Y.mix(Scrollable.prototype, {
     @method _afterScrollCaptionChange
     @param {EventFacade} e The relevant change event (ignored)
     @protected
+    @since 3.5.0
     **/
     _afterScrollCaptionChange: function (e) {
         if (this._xScroll || this._yScroll) {
@@ -240,6 +261,7 @@ Y.mix(Scrollable.prototype, {
     @method _afterScrollColumnsChange
     @param {EventFacade} e The relevant change event (ignored)
     @protected
+    @since 3.5.0
     **/
     _afterScrollColumnsChange: function (e) {
         if (this._xScroll || this._yScroll) {
@@ -258,6 +280,7 @@ Y.mix(Scrollable.prototype, {
     @method _afterScrollDataChange
     @param {EventFacade} e The relevant change event (ignored)
     @protected
+    @since 3.5.0
     **/
     _afterScrollDataChange: function (e) {
         if (this._xScroll || this._yScroll) {
@@ -275,6 +298,7 @@ Y.mix(Scrollable.prototype, {
     @method _afterScrollHeightChange
     @param {EventFacade} e The relevant change event (ignored)
     @protected
+    @since 3.5.0
     **/
     _afterScrollHeightChange: function (e) {
         if (this._yScroll) {
@@ -312,6 +336,7 @@ Y.mix(Scrollable.prototype, {
     @method _afterScrollWidthChange
     @param {EventFacade} e The relevant change event (ignored)
     @protected
+    @since 3.5.0
     **/
     _afterScrollWidthChange: function (e) {
         if (this._xScroll || this._yScroll) {
@@ -325,6 +350,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _bindScrollbar
     @protected
+    @since 3.5.0
     **/
     _bindScrollbar: function () {
         var scrollbar = this._scrollbarNode,
@@ -332,7 +358,7 @@ Y.mix(Scrollable.prototype, {
 
         if (scrollbar && scroller && !this._scrollbarEventHandle) {
             this._scrollbarEventHandle = new Y.Event.Handle([
-                scrollbar.on('scroll', this._syncScrollPosition, this, 'virtual'),
+                scrollbar.on('scroll', this._syncScrollPosition, this),
                 scroller.on('scroll', this._syncScrollPosition, this)
             ]);
         }
@@ -344,6 +370,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _bindScrollResize
     @protected
+    @since 3.5.0
     **/
     _bindScrollResize: function () {
         if (!this._scrollResizeHandle) {
@@ -363,6 +390,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _bindScrollUI
     @protected
+    @since 3.5.0
     **/
     _bindScrollUI: function () {
         this.after({
@@ -370,6 +398,7 @@ Y.mix(Scrollable.prototype, {
             heightChange : Y.bind('_afterScrollHeightChange', this),
             widthChange  : Y.bind('_afterScrollWidthChange', this),
             captionChange: Y.bind('_afterScrollCaptionChange', this),
+            scrollableChange: Y.bind('_afterScrollableChange', this),
             // FIXME: this is a last minute hack to work around the fact that
             // DT doesn't use a tableView to render table content that can be
             // replaced with a scrolling table view.  This must be removed asap!
@@ -386,6 +415,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _clearScrollLock
     @protected
+    @since 3.5.0
     **/
     _clearScrollLock: function () {
         if (this._scrollLock) {
@@ -401,6 +431,7 @@ Y.mix(Scrollable.prototype, {
     @method _createScrollbar
     @return {Node} The created Node
     @protected
+    @since 3.5.0
     **/
     _createScrollbar: function () {
         var scrollbar = this._scrollbarNode;
@@ -411,7 +442,9 @@ Y.mix(Scrollable.prototype, {
                     className: this.getClassName('scrollbar')
                 }));
 
-            scrollbar.setStyle('width', Y.DOM.getScrollbarWidth() + 'px');
+            // IE 6-10 require the scrolled area to be visible (at least 1px)
+            // or they don't respond to clicking on the scrollbar rail or arrows
+            scrollbar.setStyle('width', (Y.DOM.getScrollbarWidth() + 1) + 'px');
         }
 
         return scrollbar;
@@ -424,6 +457,7 @@ Y.mix(Scrollable.prototype, {
     @method _createScrollCaptionTable
     @return {Node} The created Node
     @protected
+    @since 3.5.0
     **/
     _createScrollCaptionTable: function () {
         if (!this._captionTable) {
@@ -445,6 +479,7 @@ Y.mix(Scrollable.prototype, {
     @method _createXScrollNode
     @return {Node} The created Node
     @protected
+    @since 3.5.0
     **/
     _createXScrollNode: function () {
         if (!this._xScrollNode) {
@@ -464,6 +499,7 @@ Y.mix(Scrollable.prototype, {
     @method _createYScrollHeader
     @return {Node} The created Node
     @protected
+    @since 3.5.0
     **/
     _createYScrollHeader: function () {
         var fixedHeader = this._yScrollHeader;
@@ -485,6 +521,7 @@ Y.mix(Scrollable.prototype, {
     @method _createYScrollNode
     @return {Node} The created Node
     @protected
+    @since 3.5.0
     **/
     _createYScrollNode: function () {
         var scrollerClass;
@@ -511,6 +548,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _disableScrolling
     @protected
+    @since 3.5.0
     **/
     _disableScrolling: function () {
         this._removeScrollCaptionTable();
@@ -526,6 +564,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _disableXScrolling
     @protected
+    @since 3.5.0
     **/
     _disableXScrolling: function () {
         this._removeXScrollNode();
@@ -536,10 +575,12 @@ Y.mix(Scrollable.prototype, {
 
     @method _disableYScrolling
     @protected
+    @since 3.5.0
     **/
     _disableYScrolling: function () {
         this._removeYScrollHeader();
         this._removeYScrollNode();
+        this._removeYScrollContainer();
         this._removeScrollbar();
     },
 
@@ -548,6 +589,7 @@ Y.mix(Scrollable.prototype, {
 
     @method destructor
     @protected
+    @since 3.5.0
     **/
     destructor: function () {
         this._unbindScrollbar();
@@ -562,6 +604,7 @@ Y.mix(Scrollable.prototype, {
     @method initializer
     @param {Object} config The config object passed to the constructor (ignored)
     @protected
+    @since 3.5.0
     **/
     initializer: function () {
         this._setScrollProperties();
@@ -569,8 +612,9 @@ Y.mix(Scrollable.prototype, {
         this.after(['scrollableChange', 'heightChange', 'widthChange'],
             this._setScrollProperties);
 
+        this.after('renderView', Y.bind('_syncScrollUI', this));
+
         Y.Do.after(this._bindScrollUI, this, 'bindUI');
-        Y.Do.after(this._syncScrollUI, this, 'syncUI');
     },
 
     /**
@@ -578,6 +622,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _removeScrollCaptionTable
     @protected
+    @since 3.5.0
     **/
     _removeScrollCaptionTable: function () {
         if (this._captionTable) {
@@ -597,6 +642,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _removeXScrollNode
     @protected
+    @since 3.5.0
     **/
     _removeXScrollNode: function () {
         var scroller = this._xScrollNode;
@@ -605,7 +651,26 @@ Y.mix(Scrollable.prototype, {
             scroller.replace(scroller.get('childNodes').toFrag());
             scroller.remove().destroy(true);
 
-            delete this._yScrollNode;
+            delete this._xScrollNode;
+        }
+    },
+
+    /**
+    Removes the `<div>` wrapper used to contain the data table and fixed header
+    when the table is vertically scrolling.
+
+    @method _removeYScrollContainer
+    @protected
+    @since 3.5.0
+    **/
+    _removeYScrollContainer: function () {
+        var scroller = this._yScrollContainer;
+
+        if (scroller) {
+            scroller.replace(scroller.get('childNodes').toFrag());
+            scroller.remove().destroy(true);
+
+            delete this._yScrollContainer;
         }
     },
 
@@ -615,6 +680,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _removeYScrollHeader
     @protected
+    @since 3.5.0
     **/
     _removeYScrollHeader: function () {
         if (this._yScrollHeader) {
@@ -630,10 +696,14 @@ Y.mix(Scrollable.prototype, {
 
     @method _removeYScrollNode
     @protected
+    @since 3.5.0
     **/
     _removeYScrollNode: function () {
-        if (this._yScrollNode) {
-            this._yScrollNode.remove().destroy(true);
+        var scroller = this._yScrollNode;
+
+        if (scroller) {
+            scroller.replace(scroller.get('childNodes').toFrag());
+            scroller.remove().destroy(true);
 
             delete this._yScrollNode;
         }
@@ -644,12 +714,18 @@ Y.mix(Scrollable.prototype, {
 
     @method _removeScrollbar
     @protected
+    @since 3.5.0
     **/
     _removeScrollbar: function () {
         if (this._scrollbarNode) {
-            this._scrollBarNode.remove().destroy(true);
+            this._scrollbarNode.remove().destroy(true);
 
-            delete this._scrollBarNode;
+            delete this._scrollbarNode;
+        }
+        if (this._scrollbarEventHandle) {
+            this._scrollbarEventHandle.detach();
+
+            delete this._scrollbarEventHandle;
         }
     },
 
@@ -662,6 +738,7 @@ Y.mix(Scrollable.prototype, {
     @param {String|Boolea} val Incoming value for the `scrollable` attribute
     @return {String}
     @protected
+    @since 3.5.0
     **/
     _setScrollable: function (val) {
         if (val === true) {
@@ -684,6 +761,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _setScrollProperties
     @protected
+    @since 3.5.0
     **/
     _setScrollProperties: function () {
         var scrollable = this.get('scrollable') || '',
@@ -700,13 +778,14 @@ Y.mix(Scrollable.prototype, {
 
     @method _syncScrollPosition
     @param {DOMEventFacade} e The scroll event
-    @param {String} [source] The string "virtual" if the event originated from
-                        the virtual scrollbar
     @protected
+    @since 3.5.0
     **/
-    _syncScrollPosition: function (e, source) {
+    _syncScrollPosition: function (e) {
         var scrollbar = this._scrollbarNode,
-            scroller  = this._yScrollNode;
+            scroller  = this._yScrollNode,
+            source    = e.currentTarget,
+            other;
 
         if (scrollbar && scroller) {
             if (this._scrollLock && this._scrollLock.source !== source) {
@@ -717,11 +796,8 @@ Y.mix(Scrollable.prototype, {
             this._scrollLock = Y.later(300, this, this._clearScrollLock);
             this._scrollLock.source = source;
 
-            if (source === 'virtual') {
-                scroller.set('scrollTop', scrollbar.get('scrollTop'));
-            } else {
-                scrollbar.set('scrollTop', scroller.get('scrollTop'));
-            }
+            other = (source === scrollbar) ? scroller : scrollbar;
+            other.set('scrollTop', source.get('scrollTop'));
         }
     },
 
@@ -732,6 +808,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _syncScrollCaptionUI
     @protected
+    @since 3.5.0
     **/
     _syncScrollCaptionUI: function () {
         var caption      = this._captionNode,
@@ -769,6 +846,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _syncScrollColumnWidths
     @protected
+    @since 3.5.0
     **/
     _syncScrollColumnWidths: function () {
         var widths = [];
@@ -810,6 +888,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _syncScrollHeaders
     @protected
+    @since 3.5.0
     **/
     _syncScrollHeaders: function () {
         var fixedHeader   = this._yScrollHeader,
@@ -858,6 +937,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _syncScrollUI
     @protected
+    @since 3.5.0
     **/
     _syncScrollUI: function () {
         var x = this._xScroll,
@@ -918,9 +998,11 @@ Y.mix(Scrollable.prototype, {
     @method _syncXScrollUI
     @param {Boolean} xy True if the table is configured with scrollable ="xy"
     @protected
+    @since 3.5.0
     **/
     _syncXScrollUI: function (xy) {
         var scroller     = this._xScrollNode,
+            yScroller    = this._yScrollContainer,
             table        = this._tableNode,
             width        = this.get('width'),
             bbWidth      = this.get('boundingBox').get('offsetWidth'),
@@ -932,7 +1014,7 @@ Y.mix(Scrollable.prototype, {
 
             // Not using table.wrap() because IE went all crazy, wrapping the
             // table in the last td in the table itself.
-            table.replace(scroller).appendTo(scroller);
+            (yScroller || table).replace(scroller).appendTo(scroller);
         }
 
         // Can't use offsetHeight - clientHeight because IE6 returns
@@ -986,6 +1068,7 @@ Y.mix(Scrollable.prototype, {
     @method _syncYScrollUI
     @param {Boolean} xy True if the table is configured with scrollable = "xy"
     @protected
+    @since 3.5.0
     **/
     _syncYScrollUI: function (xy) {
         var yScroller    = this._yScrollContainer,
@@ -1085,6 +1168,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _uiSetScrollable
     @protected
+    @since 3.5.0
     **/
     _uiSetScrollable: function () {
         this.get('boundingBox')
@@ -1098,6 +1182,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _uiSetScrollbarHeight
     @protected
+    @since 3.5.0
     **/
     _uiSetScrollbarHeight: function () {
         var scrollbar   = this._scrollbarNode,
@@ -1121,6 +1206,7 @@ Y.mix(Scrollable.prototype, {
     @method _uiSetScrollbarPosition
     @param {Node} scroller Reference node to position the scrollbar over
     @protected
+    @since 3.5.0
     **/
     _uiSetScrollbarPosition: function (scroller) {
         var scrollbar     = this._scrollbarNode,
@@ -1138,8 +1224,11 @@ Y.mix(Scrollable.prototype, {
                       styleDim(scroller, 'borderTopWidth') +
                       scroller.get('offsetTop')) + 'px',
 
+                // Minus 1 because IE 6-10 require the scrolled area to be
+                // visible by at least 1px or it won't respond to clicks on the
+                // scrollbar rail or endcap arrows.
                 left: (scroller.get('offsetWidth') -
-                       Y.DOM.getScrollbarWidth() -
+                       Y.DOM.getScrollbarWidth() - 1 -
                        styleDim(scroller, 'borderRightWidth')) + 'px'
             });
         }
@@ -1155,6 +1244,7 @@ Y.mix(Scrollable.prototype, {
     @method _uiSetYScrollWidth
     @param {String} width The CSS width to attempt to set
     @protected
+    @since 3.5.0
     **/
     _uiSetYScrollWidth: function (width) {
         var scroller = this._yScrollContainer,
@@ -1207,6 +1297,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _unbindScrollbar
     @protected
+    @since 3.5.0
     **/
     _unbindScrollbar: function () {
         if (this._scrollbarEventHandle) {
@@ -1220,6 +1311,7 @@ Y.mix(Scrollable.prototype, {
 
     @method _unbindScrollResize
     @protected
+    @since 3.5.0
     **/
     _unbindScrollResize: function () {
         if (this._scrollResizeHandle) {
@@ -1235,6 +1327,7 @@ Y.mix(Scrollable.prototype, {
     @type {Boolean}
     @default undefined (not initially set)
     @private
+    @since 3.5.0
     **/
     //_xScroll: null,
 
@@ -1245,6 +1338,7 @@ Y.mix(Scrollable.prototype, {
     @type {Boolean}
     @default undefined (not initially set)
     @private
+    @since 3.5.0
     **/
     //_yScroll: null,
 
@@ -1255,6 +1349,7 @@ Y.mix(Scrollable.prototype, {
     @type {Node}
     @default undefined (not initially set)
     @protected
+    @since 3.5.0
     **/
     //_yScrollHeader: null,
 
@@ -1265,6 +1360,7 @@ Y.mix(Scrollable.prototype, {
     @type {Node}
     @default undefined (not initially set)
     @protected
+    @since 3.5.0
     **/
     //_yScrollNode: null,
 
@@ -1276,6 +1372,7 @@ Y.mix(Scrollable.prototype, {
     @type {Node}
     @default undefined (not initially set)
     @protected
+    @since 3.5.0
     **/
     //_xScrollNode: null
 }, true);
@@ -1283,4 +1380,4 @@ Y.mix(Scrollable.prototype, {
 Y.Base.mix(Y.DataTable, [Scrollable]);
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['datatable-base', 'dom-screen']});
+}, '@VERSION@', {"requires": ["datatable-base", "datatable-column-widths", "dom-screen"], "skinnable": true});

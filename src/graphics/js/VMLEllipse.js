@@ -1,7 +1,7 @@
 /**
- * <a href="http://www.w3.org/TR/NOTE-VML">VML</a> implementation of the <a href="Ellipse.html">`Ellipse`</a> class. 
- * `VMLEllipse` is not intended to be used directly. Instead, use the <a href="Ellipse.html">`Ellipse`</a> class. 
- * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
+ * <a href="http://www.w3.org/TR/NOTE-VML">VML</a> implementation of the <a href="Ellipse.html">`Ellipse`</a> class.
+ * `VMLEllipse` is not intended to be used directly. Instead, use the <a href="Ellipse.html">`Ellipse`</a> class.
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a>
  * capabilities, the <a href="Ellipse.html">`Ellipse`</a> class will point to the `VMLEllipse` class.
  *
  * @module graphics
@@ -13,7 +13,7 @@ VMLEllipse = function()
 	VMLEllipse.superclass.constructor.apply(this, arguments);
 };
 
-VMLEllipse.NAME = "vmlEllipse";
+VMLEllipse.NAME = "ellipse";
 
 Y.extend(VMLEllipse, Y.VMLShape, {
 	/**
@@ -26,14 +26,12 @@ Y.extend(VMLEllipse, Y.VMLShape, {
 	_type: "oval"
 });
 VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
-	//
-	// Horizontal radius for the ellipse. This attribute is not implemented in Canvas.
-    // Will add in 3.4.1.
-	//
-	// @config xRadius
-	// @type Number
-	// @readOnly
-	//
+	/**
+	 * Horizontal radius for the ellipse.
+	 *
+	 * @config xRadius
+	 * @type Number
+	 */
 	xRadius: {
 		lazyAdd: false,
 
@@ -43,26 +41,25 @@ VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 			val = Math.round((val/2) * 100)/100;
 			return val;
 		},
-		
+
 		setter: function(val)
 		{
-			var w = val * 2; 
+			var w = val * 2;
 			this.set("width", w);
 			return val;
 		}
 	},
 
-	//
-	// Vertical radius for the ellipse. This attribute is not implemented in Canvas. 
-    // Will add in 3.4.1.
-	//
-	// @config yRadius
-	// @type Number
-	// @readOnly
-	//
+	/**
+	 * Vertical radius for the ellipse.
+	 *
+	 * @config yRadius
+	 * @type Number
+	 * @readOnly
+	 */
 	yRadius: {
 		lazyAdd: false,
-		
+
 		getter: function()
 		{
 			var val = this.get("height");

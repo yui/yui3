@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YUI DOM Event Tests</title>
+</head>
+<body class="yui3-skin-sam">
+    <div id="doc">
+        <div id="clickcontainer">
+            <p id="clicker1" class="clickers"><a id='clicka'>click1</a></p>
+            <p id="clicker2" class="clickers">click2</p>
+        </div>
+    </div>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+    <script type="text/javascript">
+        YUI({
+            coverage: ['event'],
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+        }).use('test-console', 'test', 'node', 'event-simulate', function (Y) {
+
+            // creating the console...
+            (new Y.Test.Console()).render();
+
+            // starting the testing process
+
+            // add the test cases and suites
+            Y.Test.Runner.add(new Y.Test.Case({
+
+                name: "DOM Events",
+
+                _should: {
+                    error: {
+                        // This test fakes the processing of click and mouseup
+                        // events without actually triggering them (because
+                        // Event.simulate tries to correct e.button and doesn't
+                        // accept e.which as simulated event config) which
+                        // runs afoul of the document.createEventObject(e)
+                        // used to allow getters
+                        "test left and right click, mouseup": Y.config.lazyEventFacade
+                    }
+                },
+
+                tearDown: function () {
+                    if (this.timer) {
+                        this.timer.cancel();
+                    }
+                },
+
+                test_on_with_string: function() {
+
+                    var clicked = false,
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+
+                        node = Y.one('#clickcontainer'),
+                        el = document.getElementById('clickcontainer');
+
+                    // el.attachEvent('click', function() {
+                    //     console.log("IE click");
+                    // });
+
+                    // el.addEventListener('click', function() {
+                    //     console.log("DOM2 click");
+                    // }, false);
+
+                    // el.onclick = function() {
+                    //     console.log('DOM0 click');
+                    // };
+
+
+                    Y.on('click', function(e, extra1, extra2) {
+                        clicked = true;
+                        context = this;
+                        ex1 = extra1;
+                        ex2 = extra2;
+                    }, '#clickcontainer', obj, 2, 3);
+
+
+                    Y.Event.simulate(el, 'click');
+
+                    Y.Assert.isTrue(clicked, "click handler via Y.on didn't work when passed a string.");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+                },
+
+                test_on_with_node: function() {
+
+                    var clicked = false,
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+                        node = Y.one('#clickcontainer');
+
+                    Y.on('click', function(e, extra1, extra2) {
+                        clicked = true;
+                        context = this;
+                        ex1 = extra1;
+                        ex2 = extra2;
+                    }, node, obj, 2, 3);
+
+                    Y.Event.simulate(document.getElementById('clickcontainer'), 'click');
+
+                    Y.Assert.isTrue(clicked, "click handler via Y.on didn't work when passed a node.");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+                },
+
+                test_node_on: function() {
+
+                    var clicked = false,
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+                        node = Y.one('#clickcontainer');
+
+                    node.on('click', function(e, extra1, extra2) {
+                        clicked = true;
+                        context = this;
+                        ex1 = extra1;
+                        ex2 = extra2;
+                    }, obj, 2, 3);
+
+                    Y.Event.simulate(document.getElementById('clickcontainer'), 'click');
+
+                    Y.Assert.isTrue(clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+                },
+
+                test_node_detachall: function() {
+
+                    var clicked = false, overed = false,
+                        node = Y.one('#clickcontainer');
+
+                    node.on('click', function(e, extra1, extra2) {
+                        clicked = true;
+                    });
+
+                    node.on('mouseover', function(e, extra1, extra2) {
+                        overed = true;
+                    });
+
+                    node.detachAll();
+
+                    Y.Event.simulate(document.getElementById('clickcontainer'), 'click');
+
+                    Y.Assert.isFalse(clicked, "click handler was not removed");
+                    Y.Assert.isFalse(overed, "mouseover handler was not removed");
+                },
+
+                test_nodelist_on: function() {
+
+                    var clicked = 0,
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+                        nodelist = Y.all('.clickers');
+
+                    nodelist.on('click', function(e, extra1, extra2) {
+                        clicked++;
+                        context = this;
+                        ex1 = extra1;
+                        ex2 = extra2;
+                    }, obj, 2, 3);
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+                    Y.Assert.areEqual(1, clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work"); // bug #2528155
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work"); // bug #2528155
+
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    Y.Assert.areEqual(2, clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work"); // bug #2528155
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work"); // bug #2528155
+                },
+
+                test_y_on_with_nodelist: function() {
+
+                    var clicked = 0,
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+                        nodelist = Y.all('.clickers');
+
+                    Y.on('click', function(e, extra1, extra2) {
+                        clicked++;
+                        context = this;
+                        ex1 = extra1;
+                        ex2 = extra2;
+                    }, nodelist, obj, 2, 3);
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+                    Y.Assert.areEqual(1, clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    Y.Assert.areEqual(2, clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+                },
+
+                test_y_detach_with_nodelist: function() {
+
+                    var clicked = 0,
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+                        nodelist = Y.all('.clickers'),
+                        fn = function(e, extra1, extra2) {
+                            clicked++;
+                            context = this;
+                            ex1 = extra1;
+                            ex2 = extra2;
+                        } ;
+
+                    Y.on('click', fn, nodelist, obj, 2, 3);
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+                    Y.Assert.areEqual(1, clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+
+                    Y.detach('click', fn, nodelist);
+
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    Y.Assert.areEqual(1, clicked, "click handler wasn't removed");
+                },
+
+                test_y_detach_with_array: function() {
+
+                    var clicked = 0,
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+                        arrayofselectors = ['#clicker1', '#clicker2'];
+                        fn = function(e, extra1, extra2) {
+                            clicked++;
+                            context = this;
+                            ex1 = extra1;
+                            ex2 = extra2;
+                        } ;
+
+                    Y.on('click', fn, arrayofselectors, obj, 2, 3);
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+                    Y.Assert.areEqual(1, clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+
+                    Y.detach('click', fn, arrayofselectors);
+
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    Y.Assert.areEqual(1, clicked, "click handler wasn't removed");
+                },
+
+
+                test_y_on_with_selector_multiple_match: function() {
+
+                    var clicked = 0,
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        };
+
+                    Y.on('click', function(e, extra1, extra2) {
+                        clicked++;
+                        context = this;
+                        ex1 = extra1;
+                        ex2 = extra2;
+                    }, '.clickers', obj, 2, 3);
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+                    Y.Assert.areEqual(1, clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    Y.Assert.areEqual(2, clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+                },
+
+                test_y_on_with_htmlelementcollection: function() {
+
+                    var clicked = 0,
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        };
+
+                    Y.on('click', function(e, extra1, extra2) {
+                        clicked++;
+                        context = this;
+                        ex1 = extra1;
+                        ex2 = extra2;
+                    }, document.getElementsByTagName('p'), obj, 2, 3);
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+                    Y.Assert.areEqual(1, clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    Y.Assert.areEqual(2, clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+                },
+
+                test_y_on_empty_array: function() {
+
+                    Y.on('click', function(e, extra1, extra2) {
+                        //
+                    }, []);
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+                },
+
+
+                test_detach_by_sig: function() {
+
+                    var clicked = 0,
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        }, fn = function(e, extra1, extra2) {
+                            clicked++;
+                            context = this;
+                            ex1 = extra1;
+                            ex2 = extra2;
+                        },
+                        els = document.getElementsByTagName('p');
+
+
+                    Y.on('click', fn, '#clicker1', obj, 2, 3);
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+                    Y.detach('click', fn, '#clicker1', obj, 2, 3);
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    Y.Assert.areEqual(1, clicked, "detach by signature was a failure");
+
+                    Y.on('click', fn, '#clicker1');
+                    Y.detach('click', fn, '#clicker1');
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    Y.Assert.areEqual(1, clicked, "detach by signature was a failure");
+
+                    var node = Y.one("#clicker1");
+
+                    node.on('click', fn);
+                    node.detach('click', fn);
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    Y.Assert.areEqual(1, clicked, "detach by signature was a failure");
+
+                    // Y.on('windowresize', fn);
+                    // // unbind windowresize - THIS IS NOT WORKING
+                    // Y.detach('windowresize', fn);
+                    // Y.Event.simulate(window, 'resize');
+                    // Y.Assert.areEqual(1, clicked, "detach by signature was a failure");
+
+                },
+
+                test_multi_detach: function() {
+
+                    var clicked = 0,
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        }, fn = function(e, extra1, extra2) {
+                            clicked++;
+                            context = this;
+                            ex1 = extra1;
+                            ex2 = extra2;
+                        },
+                        els = document.getElementsByTagName('p');
+
+                    var handle = Y.on('click', fn, '.clickers', obj, 2, 3);
+
+                    // Y.log(handle);
+
+                    handle.detach();
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    Y.Assert.areEqual(0, clicked, "single detach handle for multiple listeners doesn't work.");
+
+                },
+
+                test_onavail_detach: function() {
+                    var avail = 0,
+                        handle = Y.on('available', function() {
+                            avail++;
+                        }, '#notthereyet'),
+
+                        div = document.createElement("div");
+                        div.id = 'notthereyet';
+
+                    handle.detach();
+
+                    document.body.appendChild(div);
+
+                    this.wait(function() {
+                        Y.Assert.areEqual(0, avail, "onavailable wasn't canceled.");
+                    }, 300);
+                },
+
+                test_lazy_attach_detach: function() {
+                    var avail = 0,
+                        handle = Y.on('click', function() {
+                            avail++;
+                        }, '#notthereyet'),
+
+                        div = document.createElement("div");
+                        div.id = 'notthereyet';
+
+                    document.body.appendChild(div);
+
+                    this.wait(function() {
+                        handle.detach();
+                        Y.Event.simulate(document.getElementById('notthereyet'), 'click');
+                        Y.Assert.areEqual(0, avail, "lazy detacher didn't work.");
+                    }, 300);
+                },
+
+                test_purge: function() {
+                    var a = 0,
+                        b = 0
+                        c = 0,
+                        d = 0;
+
+                    Y.on('click', function(e) {
+                        a++;
+                    }, '#clickcontainer');
+
+                    Y.on('click', function(e) {
+                        b++;
+                    }, '#clicker1');
+
+                    Y.on('click', function(e) {
+                        c++;
+                    }, '#clicker2');
+
+                    Y.on('click', function(e) {
+                        d++;
+                    }, '#clicka');
+
+                    Y.Event.simulate(document.getElementById('clicka'), 'click');
+                    Y.Assert.areEqual(1, a);
+                    Y.Assert.areEqual(1, b);
+                    Y.Assert.areEqual(0, c);
+                    Y.Assert.areEqual(1, d);
+
+                    Y.Event.purgeElement('#clickcontainer', true, 'click');
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+                    Y.Event.simulate(document.getElementById('clickcontainer'), 'click');
+                    Y.Event.simulate(document.getElementById('clicka'), 'click');
+                    Y.Assert.areEqual(1, a);
+                    Y.Assert.areEqual(1, b);
+                    Y.Assert.areEqual(0, c);
+                    Y.Assert.areEqual(1, d);
+                },
+
+                test_categories: function() {
+                    var count = 0;
+
+                    var list = Y.all('.clickers');
+                    list.on('category|click', function(e) {
+                        count++;
+                    });
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    // @TODO FIX
+
+                    // Y.all('.foo').detach('category|click');
+                    list.detach('category|click');
+
+
+
+                    Y.Assert.areEqual(2, count);
+
+                    // Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    // Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    Y.Assert.areEqual(2, count);
+                },
+
+                "test left and right click, mouseup": function () {
+                    var node = Y.one('#clicker1'),
+                        el = node._node,
+                        fired = {},
+                        typePrefix = 'event:' + Y.stamp(el),
+                        // cribbed from the event-base-ie.js conditional loading
+                        imp = Y.config.doc && Y.config.doc.implementation,
+                        testIE = !(imp && imp.hasFeature
+                                    && imp.hasFeature('Events', '2.0')),
+                        handle;
+
+                    // custom simulation because Y.Event.simulate attempts to
+                    // correct e.button and doesn't accept e.which
+                    function mouseEvent(type, config) {
+                        var key = typePrefix + type,
+                            wrapper = Y.Env.evt.dom_wrappers[key];
+
+                        config.type = type;
+                        config.target = el;
+
+                        wrapper.fire(Y.Event.getEvent(config, el));
+                    }
+
+                    handle = node.on(['mouseup', 'click'], function (e) {
+                        fired[e.type] = true;
+                        Y.Assert.areSame(1, e.button);
+                        Y.Assert.areSame(1, e.which);
+                    });
+
+                    // FF 5-, Chrome, Opera 11- left mouseup,click
+                    mouseEvent('mouseup', { button: 0, which: 1 });
+                    mouseEvent('click', { button: 0, which: 1 });
+
+                    if (testIE) {
+                        // IE 6 - 8 left click
+                        mouseEvent('click', { button: 1 });
+                    }
+
+                    handle.detach();
+
+                    Y.Assert.isTrue(fired.mouseup);
+                    Y.Assert.isTrue(fired.click);
+
+                    fired = {};
+
+                    handle = node.on(['mouseup', 'click'], function (e) {
+                        fired[e.type] = true;
+                        Y.Assert.areSame(3, e.button);
+                        Y.Assert.areSame(3, e.which);
+                    });
+
+
+                    // FF, Chrome, Opera, right mouseup
+                    // Not simulating right 'click' because I can't get the
+                    // event to be triggered manually
+                    mouseEvent('mouseup', { button: 2, which: 3 });
+
+                    if (testIE) {
+                        // IE 6 - 8 left click
+                        mouseEvent('mouseup', { button: 2 });
+                    }
+
+                    handle.detach();
+
+                    Y.Assert.isTrue(fired.mouseup);
+                },
+
+                'test Y.on(load)' : function() {
+                    var test = this;
+
+                    Y.on("load", function() {
+                        var thisWin = this;
+
+                        // setTimeout to make sure we don't hit resume w/o wait, because we don't have absolute control over whether this 
+                        // fires async or sync - based on whether or not the window.load event has fired already.
+
+                        setTimeout(function() {
+                            test.resume(function() {
+                                Y.Assert.areSame(Y.one("window"), thisWin, "Load callback context should be the Y.Node reference to the window");
+                                Y.Assert.isTrue(YUI.Env.DOMReady, "YUI.Env.DOMReady should be true by the time load fires");
+                                Y.Assert.isTrue(YUI.Env.windowLoaded, "YUI.Env.windowLoaded flag should be true");
+                            });
+                        }, 0);
+                    });
+
+                    test.wait();
+                },
+
+                "error in onavailable callback should not result in infinite _poll": function () {
+                    var test = this,
+                        found = false;
+
+                    Y.Assert.isFalse(!!Y.Event.locked);
+
+                    Y.on('available', function () {
+                        found = true;
+                        throw "test error";
+                    }, '#infinite-poll');
+
+                    this.timer = Y.later(25, {}, function () {
+                        if (found) {
+                            test.timer.cancel();
+                            Y.one('#infinite-poll').remove(true);
+
+                            test.resume(function () {
+                                Y.Assert.isFalse(Y.Event.locked);
+                            });
+                        }
+                    }, null, true);
+    
+                    Y.later(25, {}, function () {
+                        Y.one('#clickcontainer')
+                            .append('<p id="infinite-poll">THIS SHOULD NOT BE LEFT OVER</p>');
+                    });
+
+                    test.wait();
+                }
+
+            }));
+
+            Y.Test.Runner.setName("Event: DOM");
+            Y.Test.Runner.run();
+        });
+    </script>
+</body>
+</html>

@@ -1,3 +1,7 @@
+/**
+* @for DOM
+* @module dom
+*/
 var documentElement = Y.config.doc.documentElement,
     Y_DOM = Y.DOM,
     TAG_NAME = 'tagName',
@@ -156,7 +160,7 @@ if (!testFeature('value-set', 'select')) {
                 break;
             }
         }
-    }
+    };
 }
 
 Y.mix(Y_DOM.VALUE_GETTERS, {

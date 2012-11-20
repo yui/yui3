@@ -338,7 +338,7 @@ YUI().use('node', 'panel', 'dd-plugin', function(Y){
 
     var showCode = function(e){
         var snippet = Y.one('.snippet'),
-            html = '<div class="yui3-g">' + e.currentTarget.getContent() + '</div>';      
+            html = '<div class="yui3-g">' + e.currentTarget.getHTML() + '</div>';      
 
         html = html.replace(/<label>|<\/label>/g, "");
         snippet.set('value', html);

@@ -2,7 +2,7 @@ function showInheritance() {
     var chicken = new Chicken('Little'),
         results = Y.one('#demo');
 
-    results.setContent('Running: ' + (new Date()));
+    results.setHTML('Running: ' + (new Date()));
 
     results.append(((chicken instanceof Object) ?
         "<p>chicken IS an instance of Object.</p>" :

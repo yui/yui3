@@ -1,31 +1,30 @@
 /**
-Provides view transitions for `Y.App` in browsers which support native CSS3
-transitions.
+`Y.App` extension that provides view transitions in browsers which support
+native CSS3 transitions.
 
-**Note:** When this module is used, `Y.App.Transitions` will automatically mix
-itself in to `Y.App`.
-
+@module app
 @submodule app-transitions
 @since 3.5.0
 **/
 
 /**
-Provides view transitions for `Y.App` in browsers which support native CSS3
-transitions.
+`Y.App` extension that provides view transitions in browsers which support
+native CSS3 transitions.
 
 View transitions provide an nice way to move from one "page" to the next that is
 both pleasant to the user and helps to communicate a hierarchy between sections
 of an application.
 
-When this module is used, it will automatically mix itself in to `Y.App` and
-transition between `activeView` changes using the following effects:
+When the `"app-transitions"` module is used, it will automatically mix itself
+into `Y.App` and transition between `activeView` changes using the following
+effects:
 
-  * **`fade`**: Cross-fades between the old an new active views.
+  - **`fade`**: Cross-fades between the old an new active views.
 
-  * **`slideLeft`**: The old and new active views are positioned next to each
+  - **`slideLeft`**: The old and new active views are positioned next to each
     other and both slide to the left.
 
-  * **`slideRight`**: The old and new active views are positioned next to each
+  - **`slideRight`**: The old and new active views are positioned next to each
     other and both slide to the right.
 
 **Note:** Transitions are an opt-in feature and are enabled via an app's
@@ -33,6 +32,7 @@ transition between `activeView` changes using the following effects:
 
 @class App.Transitions
 @uses App.TransitionsNative
+@extensionfor App
 @since 3.5.0
 **/
 function AppTransitions() {}
@@ -55,21 +55,6 @@ AppTransitions.ATTRS = {
         setter: '_setTransitions',
         value : false
     }
-};
-
-/**
-CSS classes used by `App.Transitions`.
-
-When an app is transitioning between `activeView`s, its `container` node will
-have the "yui3-app-transitioning" CSS class added.
-
-@property CLASS_NAMES
-@type Object
-@static
-@since 3.5.0
-**/
-AppTransitions.CLASS_NAMES = {
-    transitioning: Y.ClassNameManager.getClassName('app', 'transitioning')
 };
 
 /**
@@ -148,6 +133,10 @@ AppTransitions.prototype = {
     Sets which view is active/visible for the application. This will set the
     app's `activeView` attribute to the specified `view`.
 
+    The `view` will be "attached" to this app, meaning it will be both rendered
+    into this app's `viewContainer` node and all of its events will bubble to
+    the app. The previous `activeView` will be "detached" from this app.
+
     When a string-name is provided for a view which has been registered on this
     app's `views` object, the referenced metadata will be used and the
     `activeView` will be set to either a preserved view instance, or a new
@@ -161,42 +150,55 @@ AppTransitions.prototype = {
     @example
         var app = new Y.App({
             views: {
-                users: {
+                usersView: {
                     // Imagine that `Y.UsersView` has been defined.
                     type: Y.UsersView
                 }
-            }
+            },
+
+            transitions: true,
+            users      : new Y.ModelList()
         });
 
         app.route('/users/', function () {
-            this.showView('users');
+            this.showView('usersView', {users: this.get('users')});
         });
 
         app.render();
-        app.navigate('/uses/'); // => Creates a new `Y.UsersView` and shows it.
+        app.navigate('/uses/');
+        // => Creates a new `Y.UsersView` and transitions to it.
 
     @method showView
     @param {String|View} view The name of a view defined in the `views` object,
-        or a view instance.
+        or a view instance which should become this app's `activeView`.
     @param {Object} [config] Optional configuration to use when creating a new
-        view instance.
+        view instance. This config object can also be used to update an existing
+        or preserved view's attributes when `options.update` is `true`.
     @param {Object} [options] Optional object containing any of the following
         properties:
       @param {Function} [options.callback] Optional callback function to call
         after new `activeView` is ready to use, the function will be passed:
           @param {View} options.callback.view A reference to the new
             `activeView`.
-      @param {Boolean} [options.prepend] Whether the new view should be
+      @param {Boolean} [options.prepend=false] Whether the `view` should be
         prepended instead of appended to the `viewContainer`.
+      @param {Boolean} [options.render] Whether the `view` should be rendered.
+        **Note:** If no value is specified, a view instance will only be
+        rendered if it's newly created by this method.
       @param {Boolean|String} [options.transition] Optional transition override.
         A transition can be specified which will override the default, or
         `false` for no transition.
+      @param {Boolean} [options.update=false] Whether an existing view should
+        have its attributes updated by passing the `config` object to its
+        `setAttrs()` method. **Note:** This option does not have an effect if
+        the `view` instance is created as a result of calling this method.
     @param {Function} [callback] Optional callback Function to call after the
         new `activeView` is ready to use. **Note:** this will override
-        `options.callback`. The function will be passed the following:
+        `options.callback` and it can be specified as either the third or fourth
+        argument. The function will be passed the following:
       @param {View} callback.view A reference to the new `activeView`.
     @chainable
-    @see App.Base.showView()
+    @since 3.5.0
     **/
     // Does not override `showView()` but does use `options.transitions`.
 
@@ -212,6 +214,7 @@ AppTransitions.prototype = {
     @param {Boolean|Object} transitions The new `transitions` attribute value.
     @return {Mixed} The processed value which represents the new state.
     @protected
+    @see App.Base.showView()
     @since 3.5.0
     **/
     _setTransitions: function (transitions) {
@@ -228,3 +231,7 @@ AppTransitions.prototype = {
 // -- Namespace ----------------------------------------------------------------
 Y.App.Transitions = AppTransitions;
 Y.Base.mix(Y.App, [AppTransitions]);
+
+Y.mix(Y.App.CLASS_NAMES, {
+    transitioning: Y.ClassNameManager.getClassName('app', 'transitioning')
+});

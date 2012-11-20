@@ -1,4 +1,4 @@
-YUI.add('node-core', function(Y) {
+YUI.add('node-core', function (Y, NAME) {
 
 /**
  * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
@@ -62,6 +62,7 @@ var DOT = '.',
         /**
          * The underlying DOM node bound to the Y.Node instance
          * @property _node
+         * @type DOMNode
          * @private
          */
         this._node = node;
@@ -110,6 +111,7 @@ Y_Node._fromString = function(node) {
 /**
  * The name of the component
  * @static
+ * @type String
  * @property NAME
  */
 Y_Node.NAME = 'node';
@@ -125,6 +127,7 @@ Y_Node.HIDE_TRANSITION = 'fadeOut';
 /**
  * A list of Node instances that have been created
  * @private
+ * @type Object
  * @property _instances
  * @static
  *
@@ -540,6 +543,7 @@ Y.mix(Y_Node.prototype, {
      * @method ancestor
      * @param {String | Function} fn A selector string or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
+     * If fn is not passed as an argument, the parent node will be returned.
      * @param {Boolean} testSelf optional Whether or not to include the element in the scan
      * @param {String | Function} stopFn optional A selector string or boolean
      * method to indicate when the search should stop. The search bails when the function
@@ -610,11 +614,14 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Retrieves a Node instance of nodes based on the given CSS selector.
+     * Retrieves a single Node instance, the first element matching the given 
+     * CSS selector.
+     * Returns null if no match found.
      * @method one
      *
      * @param {string} selector The CSS selector to test against.
-     * @return {Node} A Node instance for the matching HTMLElement.
+     * @return {Node | null} A Node instance for the matching HTMLElement or null 
+     * if no match found.
      */
     one: function(selector) {
         return Y.one(Y.Selector.query(selector, this._node, true));
@@ -703,7 +710,9 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Nulls internal node references, removes any plugins and event listeners
+     * Nulls internal node references, removes any plugins and event listeners.
+     * Note that destroy() will not remove the node from its parent or from the DOM. For that
+     * functionality, call remove(true).
      * @method destroy
      * @param {Boolean} recursivePurge (optional) Whether or not to remove listeners from the
      * node's subtree (default is false)
@@ -726,6 +735,8 @@ Y.mix(Y_Node.prototype, {
                 instance = Y_Node._instances[node[UID]];
                 if (instance) {
                    instance.destroy();
+                } else { // purge in case added by other means
+                    Y.Event.purgeElement(node);
                 }
             });
         }
@@ -838,6 +849,7 @@ Y.one = Y_Node.one;
  *
  * @class NodeList
  * @constructor
+ * @param nodes {String|element|Node|Array} A selector, DOM element, Node, list of DOM elements, or list of Nodes with which to populate this NodeList.
  */
 
 var NodeList = function(nodes) {
@@ -1173,26 +1185,46 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-    /** Called on each Node instance
+     /** 
+      * Called on each Node instance. Nulls internal node references, 
+      * removes any plugins and event listeners
       * @method destroy
+      * @param {Boolean} recursivePurge (optional) Whether or not to 
+      * remove listeners from the node's subtree (default is false)
       * @see Node.destroy
       */
     'destroy',
 
-    /** Called on each Node instance
+     /** 
+      * Called on each Node instance. Removes and destroys all of the nodes 
+      * within the node
       * @method empty
+      * @chainable
       * @see Node.empty
       */
     'empty',
 
-    /** Called on each Node instance
+     /** 
+      * Called on each Node instance. Removes the node from its parent.
+      * Shortcut for myNode.get('parentNode').removeChild(myNode);
       * @method remove
+      * @param {Boolean} destroy whether or not to call destroy() on the node
+      * after removal.
+      * @chainable
       * @see Node.remove
       */
     'remove',
 
-    /** Called on each Node instance
+     /** 
+      * Called on each Node instance. Sets an attribute on the Node instance.
+      * Unless pre-configured (via Node.ATTRS), set hands
+      * off to the underlying DOM node.  Only valid
+      * attributes/properties for the node will be set.
+      * To set custom attributes use setAttribute.
       * @method set
+      * @param {String} attr The attribute to be set.
+      * @param {any} val The value to set the attribute to.
+      * @chainable
       * @see Node.set
       */
     'set'
@@ -1449,7 +1481,7 @@ Y.Array.each([
 Y.Node.prototype.removeAttribute = function(attr) {
     var node = this._node;
     if (node) {
-        node.removeAttribute(attr);
+        node.removeAttribute(attr, 0); // comma zero for IE < 8 to force case-insensitive
     }
 
     return this;
@@ -1563,4 +1595,4 @@ Y.NodeList.importMethod(Y.Node.prototype, [
 ]);
 
 
-}, '@VERSION@' ,{requires:['dom-core', 'selector']});
+}, '@VERSION@', {"requires": ["dom-core", "selector"]});

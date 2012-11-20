@@ -103,12 +103,14 @@
             "name"       : "anim-drop",
             "displayName": "Animated Drop Targets",
             "description": "How to make an animated node a Drop target.",
+            "newWindow"  : "true",
             "modules"    : ["dd-delegate", "anim"],
             "tags"       : ["dd", "delegation", "animation", "target"]
         },
         {
             "name"       : "photo-browser",
             "displayName": "Photo Browser",
+            "newWindow"  : "true",
             "description": "Example Photo Browser application.",
 	        "modules"    : ["dd", "animation", "event", "slider", "node", "stylesheet", "yql"],
             "tags"       : ["dd", "delegation", "animation", "target", "application", "photos", "yql"]
@@ -116,6 +118,7 @@
         {
             "name"       : "portal-drag",
             "hideTableOfContents": true,
+            "newWindow"  : "true",
             "displayName": "Portal Style Example",
             "description": "Portal style example using Drag & Drop Event Bubbling and Animation.",
 	        "modules"    : ["dd", "animation", "event", "node", "yql", "json"],
@@ -124,16 +127,19 @@
     ],
     "pages": {
         "anim-drop-example": {
-            "displayName": "Animated Drop Targets",
-            "layout"     : "anim-drop-example"
+            "name"          : "anim-drop",
+            "displayName"   : "Animated Drop Targets",
+            "layout"        : "anim-drop-example"
         },
         "photo-browser-example": {
-            "displayName": "Photo Browser",
-            "layout"     : "photo-browser-example"
+            "name"          : "photo-browser",
+            "displayName"   : "Photo Browser",
+            "layout"        : "photo-browser-example"
         },
         "portal-example": {
-            "displayName": "Portal Example",
-            "layout"     : "portal-example"
+            "name"          : "portal-drag",
+            "displayName"   : "Portal Example",
+            "layout"        : "portal-example"
         }
     }
 }

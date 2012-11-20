@@ -2,6 +2,7 @@
 /**
  * Simple custom event implementation.
  * @namespace Test
+ * @module test
  * @class EventTarget
  * @constructor
  */

@@ -1,6 +1,55 @@
 YUI Core Change History
 =======================
 
+
+3.7.3
+-----
+
+* Adding Y.UA.touchEnabled boolean to use in conditional modules
+* 2532797 - Added IE10 ua fixing for Windows8 WinJS
+* 2532675 - Remove the second air property
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* Improved the performance of `Y.merge()` by 10 to 40% (depending on the
+  browser). [Ryan Grove]
+
+
+3.6.0
+-----
+
+* Changed the default `throwFail` behavior to act like it sounds, see ticket #2531679
+    If `throwFail` is `true` (default) we will not wrap modules or the use callback in
+    a try catch. If it's `false`, they will be wrapped (the old behavior).
+
+* 2528334 YUI configuration to delay use() callback until domready or window load
+* 2529742 Y[UI()].use() callback's 2nd parameter: 2 issues
+* 2531647 div is appended precedent to <head> node
+* 2531679 Module/use callback load errors do not provide useful stacktrace
+* 2532215 Y.Parallel should push arguments if fn is not specified
+* 2532344 Missing requirements sometimes return in wrong order
+* 2532397 Automate Testing for OOP examples
+
+
+
+3.5.1
+-----
+
+* Added a `Y.UA.compareVersions()` function for performing simple version number
+  comparisons using version-safe logic rather than numerical logic.
+
+
 3.5.0
 -----
 
@@ -23,7 +72,7 @@ YUI Core Change History
   for testing).
 
 * `Y.Array.indexOf()` now supports a `fromIndex` argument for full ES5
-  compatibility. [Based on a patch from Ryuichi Okumurua]
+  compatibility. [Based on a patch from Ryuichi Okumura]
 
 * `Y.Object.isEmpty()` now casts the given value to an object if it isn't one
   already, which prevents exceptions when it's given a non-object.

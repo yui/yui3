@@ -1,8 +1,8 @@
 /**
- * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Path.html">`Path`</a> class. 
- * `CanvasPath` is not intended to be used directly. Instead, use the <a href="Path.html">`Path`</a> class. 
- * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
- * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Path.html">`Path`</a> 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Path.html">`Path`</a> class.
+ * `CanvasPath` is not intended to be used directly. Instead, use the <a href="Path.html">`Path`</a> class.
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Path.html">`Path`</a>
  * class will point to the `CanvasPath` class.
  *
  * @module graphics
@@ -13,7 +13,7 @@ CanvasPath = function(cfg)
 {
 	CanvasPath.superclass.constructor.apply(this, arguments);
 };
-CanvasPath.NAME = "canvasPath";
+CanvasPath.NAME = "path";
 Y.extend(CanvasPath, Y.CanvasShape, {
     /**
      * Indicates the type of shape
@@ -33,6 +33,7 @@ Y.extend(CanvasPath, Y.CanvasShape, {
     _draw: function()
     {
         this._closePath();
+        this._updateTransform();
     },
 
 	/**
@@ -44,21 +45,24 @@ Y.extend(CanvasPath, Y.CanvasShape, {
 	 */
 	createNode: function()
 	{
-		var node = Y.config.doc.createElement('canvas'),
-			id = this.get("id");
-		this._context = node.getContext('2d');
+		var host = this,
+            node = Y.config.doc.createElement('canvas'),
+			name = host.name,
+            concat = host._camelCaseConcat,
+            id = host.get("id");
+		host._context = node.getContext('2d');
 		node.setAttribute("overflow", "visible");
         node.setAttribute("pointer-events", "none");
         node.style.pointerEvents = "none";
         node.style.overflow = "visible";
 		node.setAttribute("id", id);
 		id = "#" + id;
-		this.node = node;
-		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
+		host.node = node;
+		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)));
 	},
 
     /**
-     * Completes a drawing operation. 
+     * Completes a drawing operation.
      *
      * @method end
      */
@@ -108,7 +112,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 			return val;
 		}
 	},
-	
+
 	/**
 	 * Indicates the path used for the node.
 	 *

@@ -85,7 +85,7 @@
     };
 
     /**
-     * Time in milliseconds passed to setInterval for frame processing 
+     * Time in milliseconds passed to setInterval for frame processing
      *
      * @property intervalTime
      * @default 20
@@ -119,16 +119,20 @@
         var node = anim._node,
             domNode = node._node,
             val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
-        //make sure node instance
-        if (domNode && (domNode.style || domNode.attributes)) {
-            if (att in domNode.style || att in Y.DOM.CUSTOM_STYLES) {
+
+        if (domNode) {
+            if ('style' in domNode && (att in domNode.style || att in Y.DOM.CUSTOM_STYLES)) {
                 unit = unit || '';
                 node.setStyle(att, val + unit);
-            } else if (domNode.attributes[att]) {
+            } else if ('attributes' in domNode && att in domNode.attributes) {
                 node.setAttribute(att, val);
+            } else if (att in domNode) {
+                domNode[att] = val;
             }
         } else if (node.set) {
             node.set(att, val);
+        } else if (att in node) {
+            node[att] = val;
         }
     };
 
@@ -142,15 +146,19 @@
         var node = anim._node,
             domNode = node._node,
             val = '';
-        //make sure node instance
-        if (domNode && (domNode.style || domNode.attributes)) {
-            if (att in domNode.style || att in Y.DOM.CUSTOM_STYLES) {
+
+        if (domNode) {
+            if ('style' in domNode && (att in domNode.style || att in Y.DOM.CUSTOM_STYLES)) {
                 val = node.getComputedStyle(att);
-            } else if (domNode.attributes[att]) {
+            } else if ('attributes' in domNode && att in domNode.attributes) {
                 val = node.getAttribute(att);
+            } else if (att in domNode) {
+                val = domNode[att];
             }
         } else if (node.get) {
             val = node.get(att);
+        } else if (att in node) {
+            val = node[att];
         }
 
         return val;
@@ -165,7 +173,7 @@
         node: {
             setter: function(node) {
                 if (node) {
-                    if (typeof node == 'string' || node.nodeType) {
+                    if (typeof node === 'string' || node.nodeType) {
                         node = Y.one(node);
                     }
                 }
@@ -188,7 +196,7 @@
         },
 
         /**
-         * The method that will provide values to the attribute(s) during the animation. 
+         * The method that will provide values to the attribute(s) during the animation.
          * Defaults to "Easing.easeNone".
          * @attribute easing
          * @type Function
@@ -210,7 +218,7 @@
          * If a function is used, the return value becomes the from value.
          * If no from value is specified, the DEFAULT_GETTER will be used.
          * Supports any unit, provided it matches the "to" (or default)
-         * unit (e.g. `{width: '10em', color: 'rgb(0, 0 0)', borderColor: '#ccc'}`).
+         * unit (e.g. `{width: '10em', color: 'rgb(0, 0, 0)', borderColor: '#ccc'}`).
          *
          * If using the default ('px' for length-based units), the unit may be omitted
          * (e.g. `{width: 100}, borderColor: 'ccc'}`, which defaults to pixels
@@ -241,7 +249,7 @@
          * Date stamp for the first frame of the animation.
          * @attribute startTime
          * @type Int
-         * @default 0 
+         * @default 0
          * @readOnly
          */
         startTime: {
@@ -253,7 +261,7 @@
          * Current time the animation has been running.
          * @attribute elapsedTime
          * @type Int
-         * @default 0 
+         * @default 0
          * @readOnly
          */
         elapsedTime: {
@@ -263,9 +271,9 @@
 
         /**
          * Whether or not the animation is currently running.
-         * @attribute running 
+         * @attribute running
          * @type Boolean
-         * @default false 
+         * @default false
          * @readOnly
          */
         running: {
@@ -277,10 +285,10 @@
         },
 
         /**
-         * The number of times the animation should run 
+         * The number of times the animation should run
          * @attribute iterations
          * @type Int
-         * @default 1 
+         * @default 1
          */
         iterations: {
             value: 1
@@ -288,7 +296,7 @@
 
         /**
          * The number of iterations that have occurred.
-         * Resets when an animation ends (reaches iteration count or stop() called). 
+         * Resets when an animation ends (reaches iteration count or stop() called).
          * @attribute iterationCount
          * @type Int
          * @default 0
@@ -300,7 +308,7 @@
         },
 
         /**
-         * How iterations of the animation should behave. 
+         * How iterations of the animation should behave.
          * Possible values are "normal" and "alternate".
          * Normal will repeat the animation, alternate will reverse on every other pass.
          *
@@ -314,9 +322,9 @@
 
         /**
          * Whether or not the animation is currently paused.
-         * @attribute paused 
+         * @attribute paused
          * @type Boolean
-         * @default false 
+         * @default false
          * @readOnly
          */
         paused: {
@@ -328,7 +336,7 @@
          * If true, animation begins from last frame
          * @attribute reverse
          * @type Boolean
-         * @default false 
+         * @default false
          */
         reverse: {
             value: false
@@ -341,10 +349,11 @@
      * Runs all animation instances.
      * @method run
      * @static
-     */    
+     */
     Y.Anim.run = function() {
-        var instances = Y.Anim._instances;
-        for (var i in instances) {
+        var instances = Y.Anim._instances,
+            i;
+        for (i in instances) {
             if (instances[i].run) {
                 instances[i].run();
             }
@@ -355,7 +364,7 @@
      * Pauses all animation instances.
      * @method pause
      * @static
-     */    
+     */
     Y.Anim.pause = function() {
         for (var i in _running) { // stop timer if nothing running
             if (_running[i].pause) {
@@ -370,7 +379,7 @@
      * Stops all animation instances.
      * @method stop
      * @static
-     */    
+     */
     Y.Anim.stop = function() {
         for (var i in _running) { // stop timer if nothing running
             if (_running[i].stop) {
@@ -379,7 +388,7 @@
         }
         Y.Anim._stopTimer();
     };
-    
+
     Y.Anim._startTimer = function() {
         if (!_timer) {
             _timer = setInterval(Y.Anim._runFrame, Y.Anim._intervalTime);
@@ -396,10 +405,11 @@
      * @method _runFrame
      * @private
      * @static
-     */    
+     */
     Y.Anim._runFrame = function() {
-        var done = true;
-        for (var anim in _running) {
+        var done = true,
+            anim;
+        for (anim in _running) {
             if (_running[anim]._runFrame) {
                 done = false;
                 _running[anim]._runFrame();
@@ -418,7 +428,7 @@
          * Starts or resumes an animation.
          * @method run
          * @chainable
-         */    
+         */
         run: function() {
             if (this.get(PAUSED)) {
                 this._resume();
@@ -434,7 +444,7 @@
          * Calling run() will continue where it left off.
          * @method pause
          * @chainable
-         */    
+         */
         pause: function() {
             if (this.get(RUNNING)) {
                 this._pause();
@@ -447,7 +457,7 @@
          * @method stop
          * @param {Boolean} finish If true, the animation will move to the last frame
          * @chainable
-         */    
+         */
         stop: function(finish) {
             if (this.get(RUNNING) || this.get(PAUSED)) {
                 this._end(finish);
@@ -516,10 +526,8 @@
             var d = this._runtimeAttr.duration,
                 t = new Date() - this.get(START_TIME),
                 reverse = this.get(REVERSE),
-                done = (t >= d),
-                attribute,
-                setter;
-                
+                done = (t >= d);
+
             this._runAttrs(t, d, reverse);
             this._actualFrames += 1;
             this._set(ELAPSED_TIME, t);
@@ -556,9 +564,9 @@
                             customAttr[i].set : Y.Anim.DEFAULT_SETTER;
 
                     if (!done) {
-                        setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit); 
+                        setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit);
                     } else {
-                        setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit); 
+                        setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit);
                     }
                 }
             }
@@ -615,8 +623,8 @@
                     begin = begin.call(this, node);
                 }
 
-                var mFrom = Y.Anim.RE_UNITS.exec(begin);
-                var mTo = Y.Anim.RE_UNITS.exec(val);
+                var mFrom = Y.Anim.RE_UNITS.exec(begin),
+                    mTo = Y.Anim.RE_UNITS.exec(val);
 
                 begin = mFrom ? mFrom[1] : begin;
                 end = mTo ? mTo[1] : val;
@@ -632,7 +640,7 @@
                 }
 
                 attr[name] = {
-                    from: begin,
+                    from: Y.Lang.isObject(begin) ? Y.clone(begin) : begin,
                     to: end,
                     unit: unit
                 };
@@ -648,10 +656,11 @@
             var node = this._node,
                 val = node.getComputedStyle(attr),
                 get = (attr === 'left') ? 'getX': 'getY',
-                set = (attr === 'left') ? 'setX': 'setY';
+                set = (attr === 'left') ? 'setX': 'setY',
+                position;
 
             if (val === 'auto') {
-                var position = node.getStyle('position');
+                position = node.getStyle('position');
                 if (position === 'absolute' || position === 'fixed') {
                     val = node[get]();
                     node[set](val);

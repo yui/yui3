@@ -1,0 +1,15 @@
+{
+    "name": "jsonp",
+    "builds": {
+        "jsonp-url": {
+            "jsfiles": [
+                "jsonp-url.js"
+            ]
+        },
+        "jsonp": {
+            "jsfiles": [
+                "jsonp.js"
+            ]
+        }
+    }
+}

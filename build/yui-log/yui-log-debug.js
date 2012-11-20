@@ -1,4 +1,4 @@
-YUI.add('yui-log', function(Y) {
+YUI.add('yui-log', function (Y, NAME) {
 
 /**
  * Provides console log capability and exposes a custom event for
@@ -44,7 +44,8 @@ INSTANCE.log = function(msg, cat, src, silent) {
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
         // apply source filters
-        if (src) {
+        src = src || "";
+        if (typeof src !== "undefined") {
             excl = c.logExclude;
             incl = c.logInclude;
             if (incl && !(src in incl)) {
@@ -106,4 +107,4 @@ INSTANCE.message = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

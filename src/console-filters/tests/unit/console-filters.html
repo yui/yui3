@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+<div id="log"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script src="./assets/console-filters-tests.js"></script>
+<script>
+YUI({
+    converage: ['console-filters'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+}).use('test','console-filters-tests', function (Y) {
+
+var yconsole = new Y.Console({ boundingBox:"#log", newestOnTop: false }).
+                plug(Y.Plugin.ConsoleFilters).
+                render();
+
+
+//yconsole.hideCategory('info');
+yconsole.printLogEntry = function (m) {
+    if (m.category === 'section') {
+        this._addToConsole(Y.Node.create("<h3>"+m.message+"</h3>"));
+        return this;
+    } else if (m.category === "break") {
+        this._addToConsole(Y.Node.create("<br>"));
+        return this;
+    } else if (m.category === "info") {
+        return this;
+    } else {
+        return Y.Console.prototype.printLogEntry.call(this,m);
+    }
+};
+
+Y.Test.Runner.run();
+
+});
+</script>
+</body>
+</html>

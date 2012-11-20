@@ -3,6 +3,7 @@
  * to indicate their contribution to a cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedLineSeries
  * @constructor
  * @extends  LineSeries
@@ -17,7 +18,7 @@ Y.StackedLineSeries = Y.Base.create("stackedLineSeries", Y.LineSeries, [Y.Stacki
      * @method setAreaData
      */
     setAreaData: function()
-    {   
+    {
         Y.StackedLineSeries.superclass.setAreaData.apply(this);
         this._stackCoordinates.apply(this);
     }

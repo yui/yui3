@@ -1,6 +1,166 @@
 App Framework Change History
 ============================
 
+3.8.0
+-----
+
+### Router
+
+* Decode URL-encoded path matches for Router's `req.params`. [Ticket #2532941]
+
+
+3.7.3
+-----
+
+### App
+
+* Add support for App Transitions in browsers which support native CSS3
+  transitions without using vendor prefixes. This change means IE10 and Opera
+  get view transitions.
+
+
+3.7.2
+-----
+
+* No changes.
+
+
+3.7.1
+-----
+
+* No changes.
+
+
+3.7.0
+-----
+
+### App
+
+* Added App.Content, an App extension that provides pjax-style content fetching
+  and handling, making it seamless to use a mixture of server and client
+  rendered views.
+
+### Model
+
+* Added custom response parsing to ModelSync.REST to make it easy for developers
+  to gain access to the full `Y.io()` response object. Developers using
+  ModelSync.REST can either assign the `parseIOResponse` property to `false` to
+  gain access to the full `Y.io()` response object in their `parse()` method,
+  or provide a custom implementation of the `parseIOResponse()` method.
+
+* ModelSync.REST's `serialize()` method now receives the `action` which the
+  `sync()` method was invoked with. [Ticket #2532625]
+
+### ModelList
+
+* You may now add models to a ModelList at instantiation time by providing an
+  Object, array of Objects, Model instance, array of Model instances, or another
+  ModelList instance in the `items` property of the config object passed to
+  ModelList's constructor. This change also applies to LazyModelList.
+
+### Router
+
+* Added support for route-based middleware to Router. The `route()` method now
+  accepts an arbitrary number of callbacks enabling more reuse of routing code.
+  For people familiar with Express.js' route middleware, this behaves the same.
+  [Ticket #2532620]
+
+### View
+
+* Log a warning when a handler function is not present when a view's `events`
+  are being attached. [Ticket #2532326] [Jay Shirley, Jeff Pihach]
+
+
+3.6.0
+-----
+
+### App
+
+* Added static property: `Y.App.serverRouting`, which serves as the default
+  value for the `serverRouting` attribute of all apps. [Ticket #2532319]
+
+* Fixed issue with non-collapsing white space between views while transitioning.
+  White space is now fully collapsed and prevents views from jumping after a
+  cross-fade transition. [Ticket #2532298]
+
+* Organized all CSS classes `Y.App` uses under a static `CLASS_NAMES` property.
+
+* Moved `transitioning` CSS classname under `Y.App.CLASS_NAMES`.
+
+### Model
+
+* Added ModelSync.REST, an extension which provides a RESTful XHR `sync()`
+  implementation that can be mixed into a Model or ModelList subclass.
+
+### ModelList
+
+* Added LazyModelList, a subclass of ModelList that manages a list of plain
+  objects rather than a list of Model instances. This can be more efficient when
+  working with large numbers of items. [Ryan Grove]
+
+* The `add()` method now accepts an `index` option, which can be used to insert
+  the specified model(s) at a specific index in the list. [Greg Hinch]
+
+* The `each()` and `some()` methods now iterate over a copy of the list, so it's
+  safe to remove a model during iteration. [Ticket #2531910]
+
+* The `remove()` method now optionally accepts the index of a model to remove
+  (or an array of indices). You no longer need to specify the actual model
+  instance(s), although that's still supported as well.
+
+* The `filter()` method now returns an instance of the subclass rather than
+  ModelList itself when called with `options.asList` set to `true` on a subclass
+  of ModelList. [Ryan Grove]
+
+* Fixed an issue where a list that received bubbled events from a model would
+  assume the model was in the list if its `id` changed, even if the model
+  actually wasn't in the list and was merely bubbling events to the list.
+  [Ticket #2532240]
+
+### Router
+
+* [!] Changed how hash-based paths interact with the URL's real path. The
+  path-like hash fragments are now treated as a continuation of the URL's path
+  when the router has been configured with a `root`. [Ticket #2532318]
+
+* Fixed issue when multiple routers are on the page and one router is destroyed
+  the remaining routers would stop dispatching. [Ticket #2532317]
+
+* Fixed a multi-router issue where creating a router instance after a previous
+  router's `save()`/`replace()` method was called would cause in infinite
+  History replace loop. [Ticket #2532340]
+
+* The `req` object passed to routes now has a `pendingRoutes` property that
+  indicates the number of matching routes after the current route in the
+  dispatch chain. [Steven Olmsted]
+
+* Added a static `Y.Router.dispatch()` method which provides a mechanism to
+  cause all active router instances to dispatch to their route handlers without
+  needing to change the URL or fire the `history:change` or `hashchange` event.
+
+
+3.5.1
+-----
+
+### App
+
+* Added `render` and `update` options to the `showView()` method.
+  [PR #100 Pat Cavit]
+
+### Router
+
+* Added a `removeQuery()` function that accepts a URL and returns it without a
+  query string (if it had one). [Pat Cavit]
+
+* Fixed `hasRoute()` failing to match routes with query params. [Pat Cavit]
+
+* Fixed bad route regex generation if a placeholder was the last thing in the
+  route. [Pat Cavit]
+
+* Fixed generated route regexes matching hash/query params when they shouldn't
+  have. [Pat Cavit]
+
+
 3.5.0
 -----
 

@@ -3,6 +3,7 @@
  * The ObjectAssert object provides functions to test JavaScript objects
  * for a variety of cases.
  * @namespace Test
+ * @module test
  * @class ObjectAssert
  * @static
  */

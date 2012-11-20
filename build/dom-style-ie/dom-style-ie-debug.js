@@ -1,4 +1,4 @@
-YUI.add('dom-style-ie', function(Y) {
+YUI.add('dom-style-ie', function (Y, NAME) {
 
 (function(Y) {
 var HAS_LAYOUT = 'hasLayout',
@@ -303,4 +303,4 @@ if (!testFeature('style', 'computedStyle')) {
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-style']});
+}, '@VERSION@', {"requires": ["dom-style"]});

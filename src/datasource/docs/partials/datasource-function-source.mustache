@@ -102,10 +102,10 @@ YUI().use("dump", "node", "datasource-function", "datasource-arrayschema", "data
     myDataSourceArray = new Y.DataSource.Function({source:myFunctionArray}),
     myCallbackArray = {
         success: function(e){
-            Y.one("#demo_output_array").setContent(Y.dump(e.response));
+            Y.one("#demo_output_array").setHTML(Y.dump(e.response));
         },
         failure: function(e){
-            Y.one("#demo_output_array").setContent("Could not retrieve data: " + e.error.message);
+            Y.one("#demo_output_array").setHTML("Could not retrieve data: " + e.error.message);
         }
     };
 
@@ -125,10 +125,10 @@ YUI().use("dump", "node", "datasource-function", "datasource-arrayschema", "data
         myDataSourceJSON = new Y.DataSource.Function({source:myFunctionJSON}),
         myCallbackJSON = {
             success: function(e){
-                Y.one("#demo_output_json").setContent(Y.dump(e.response));
+                Y.one("#demo_output_json").setHTML(Y.dump(e.response));
             },
             failure: function(e){
-                Y.one("#demo_output_json").setContent("Could not retrieve data: " + e.error.message);
+                Y.one("#demo_output_json").setHTML("Could not retrieve data: " + e.error.message);
             }
         };
 

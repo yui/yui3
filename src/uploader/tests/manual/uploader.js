@@ -6,28 +6,48 @@ YUI({
     useBrowserConsole: true
 }).use('cssbutton', 'uploader', 'node', 'console', function(Y) {
 
+// Force Flash uploader
+// Y.Uploader = Y.UploaderFlash;
+
+// Force HTML5 uploader
+// Y.Uploader = Y.UploaderHTML5;
 var myuploader;
 
-
-if (Y.UploaderFlash.TYPE != "none") {
-            myuploader = new Y.UploaderFlash({ multipleFiles: true, 
-                                          uploadURL: "http://bedfamous-lm.corp.yahoo.com/yui3/src/uploader/tests/manual/upload.php",
+if (Y.Uploader.TYPE != "none") {
+            myuploader = new Y.Uploader({ multipleFiles: true, 
+                                          uploadURL: "http://localhost/yui3/src/uploader/tests/manual/uploadwithrandomerrors.php",
                                           dragAndDropArea: "#droparea",
                                           tabIndex: "0",
+                                          width: "100%",
+                                          height: "100%",
                                           swfURL: "assets/flashuploader.swf?t=" + Math.random(),
-                                          tabElements: {from: "#pageTitle", to: "#uploadButton"}
+                                          tabElements: {from: "#pageTitle", to: "#uploadButton"},
+                                          selectFilesButton: Y.Node.create("<button class='yui3-button' tabindex='-1'>Choose Files</button>"),
+                                          errorAction: Y.UploaderHTML5.Queue.RESTART_ASAP,
+                                          withCredentials: false
                                         });
 
-            if (Y.UploaderFlash.TYPE === "html5") {
-            Y.one("#pageTitle").setContent("Using uploader: HTML5");
-            var dropArea = Y.Node.create('<div id="droparea" style="width:500px;height:150px;background:#cccccc;">Drop some files here!</div>');
-            Y.one("body").prepend(dropArea);
-            myuploader.set("dragAndDropArea", dropArea);
+            myuploader.set("fileFilterFunction", function (file) { 
+                if (file.get("size") < 50 || file.get("size") > 8000000) { 
+                    return false;
+                } 
+                else { 
+                    return true; 
+                }
+            });
+
+
+            if (Y.Uploader.TYPE === "html5") {
+              myuploader.set("fileFilters", ["image/*","video/avi"]);
+              Y.one("#pageTitle").setContent("Using uploader: HTML5");
+              var dropArea = Y.Node.create('<div id="droparea" style="width:500px;height:150px;background:#cccccc;">Drop some files here!</div>');
+              Y.one("body").prepend(dropArea);
+              myuploader.set("dragAndDropArea", dropArea);
             }
 
-            else if (Y.UploaderFlash.TYPE === "flash") {
+            else if (Y.Uploader.TYPE === "flash") {
+              myuploader.set("fileFilters", [{description: "Images", extensions: "*.jpg;*.gif;*.png"}, {description: "Videos", extensions: "*.avi"}]);
               Y.one("#pageTitle").setContent("Using uploader: Flash");
-              myuploader.set("swfURL", "assets/flashuploader.swf");
              }
 
             myuploader.render("#fileselection");
@@ -55,7 +75,9 @@ if (Y.UploaderFlash.TYPE != "none") {
             });
 
             myuploader.on("uploadcomplete", function (ev) {
+                    out.one("#" + ev.file.get("id")).setContent(ev.file.get("name") + " | " + "Finished!");
             	 	out.one("#" + ev.file.get("id")).append("<p>DATA:<br> " + ev.data + "</p>");
+                    console.log(ev.file.get("xhr").status);
             });
             	 
             	 
@@ -65,10 +87,24 @@ if (Y.UploaderFlash.TYPE != "none") {
 
             myuploader.on("alluploadscomplete", function (ev) {
             	 	Y.one("#totalpercent").setContent("<p>Upload complete!</p>");
+            });
+
+            myuploader.on("uploaderror", function (ev) {
+                    out.one("#" + ev.file.get("id")).setContent(ev.file.get("name") + " | " + "ERROR!");
+                    console.log("There's been an error uploading " + ev.file.get("name"));
             });	                                    	                                       
 
             Y.one("#uploadButton").on("click", function () {
             	 myuploader.uploadAll();
+            });
+
+            Y.one("#triggerButton").on("click", function () {
+                if (myuploader.get("enabled")) {
+                    myuploader.set("enabled", false);
+                }
+                else {
+                    myuploader.set("enabled", true);
+                }
             });
 }
 else {

@@ -3,7 +3,7 @@
     "displayName": "DataTable (deprecated version)",
     "description": "The DataTable widget displays screen-reader accessible tabular data on a web page. Plugins add functionality such as sorting and scrolling. This component exists for backward compatibility with YUI 3.4.1.  Please use the updated datatable module and components.",
 
-    "author": ["jenny","lsmith"],
+    "author": ["jenny", "lsmith"],
 
     "use": ["datatable-deprecated"],
     "tags": ["beta", "widget", "datatable", "deprecated"],

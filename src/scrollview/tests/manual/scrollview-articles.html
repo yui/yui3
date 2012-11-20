@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>ScrollView Example</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+        <!--<script src=".http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js" type="text/javascript" charset="utf-8"></script> 
+        -->
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script> 
+        
+        <style>
+        #scrollview-bounding {
+        }
+
+        #scrollview-content {
+            margin: 0 auto;
+            white-space: nowrap;
+        }
+
+        #scrollview-content li{
+            display: inline-block;
+            vertical-align: top;
+            white-space: normal;
+            width: 100%;
+            line-height:1.5em;
+            padding:10px;
+        }
+        #scrollview-content h1 {
+            font-size:175%;
+            font-weight:bold;
+            padding:5px;
+        }
+        #scrollview-content h3 {
+            font-size:125%;
+            font-weight:bold;
+        }
+        #scrollview-content p
+        #scrollview-content h3 {
+            padding:3px;
+        }
+        </style>
+        
+        <script type="text/javascript" charset="utf-8">
+        var s;
+        YUI({
+            debug: true,
+            filter:"raw"
+        }).use('cssbutton', 'yql', 'scrollview-base', 'scrollview-paginator', function(Y) {
+            
+
+            var scrollView = new Y.ScrollView({
+                id: "scrollview",
+                srcNode : '#scrollview-content',
+                width: "800px"
+            });
+
+            scrollView.plug(Y.Plugin.ScrollViewPaginator, {
+                selector: 'li',
+                optimizeMemory: true
+            });
+            scrollView.render();
+            
+            Y.YQL("select * from rss where url = 'http://feeds.yuiblog.com/YahooUserInterfaceBlog'", function(results) {
+                var posts = results.query.results.item;
+                Y.Array.each(posts, function(post){
+                    scrollView.pages._pageNodes.push(Y.Node.create('<li><h1>' + post.title + '</h1>' + post.description + '</li>'));
+                });    
+                scrollView.pages.set('total', scrollView.pages._pageNodes.size());
+            });
+            
+            s = scrollView;
+            Y.one('#scrollview-next').on('click', Y.bind(scrollView.pages.next, scrollView.pages));
+            Y.one('#scrollview-prev').on('click', Y.bind(scrollView.pages.prev, scrollView.pages));
+            
+        });
+        </script>
+    </head>
+
+    <body class="yui3-skin-sam">
+        <button id="scrollview-prev" class='yui3-button'><< Prev</button>
+        <button id="scrollview-next" class='yui3-button'>Next >> </button>
+        <ul id="scrollview-content">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+        </ul>
+    </body>
+</html>

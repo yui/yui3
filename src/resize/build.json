@@ -1,0 +1,25 @@
+{
+    "name": "resize",
+    "builds": {
+        "resize-plugin": {
+            "jsfiles": [
+                "resize-plugin.js"
+            ]
+        },
+        "resize-base": {
+            "jsfiles": [
+                "resize-base.js"
+            ]
+        },
+        "resize-proxy": {
+            "jsfiles": [
+                "resize-proxy.js"
+            ]
+        },
+        "resize-constrain": {
+            "jsfiles": [
+                "resize-constrain.js"
+            ]
+        }
+    }
+}

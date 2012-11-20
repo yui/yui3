@@ -1,4 +1,4 @@
-YUI.add('panel', function(Y) {
+YUI.add('panel', function (Y, NAME) {
 
 // TODO: Change this description!
 /**
@@ -46,6 +46,8 @@ Y.Panel = Y.Base.create('panel', Y.Widget, [
     Y.WidgetPositionConstrain,
     Y.WidgetStack
 ], {
+    // -- Public Properties ----------------------------------------------------
+
     /**
     Collection of predefined buttons mapped from name => config.
 
@@ -74,9 +76,13 @@ Y.Panel = Y.Base.create('panel', Y.Widget, [
     **/
     BUTTONS: {
         close: {
-            label     : 'Close',
-            action    : 'hide',
-            section   : 'header',
+            label  : 'Close',
+            action : 'hide',
+            section: 'header',
+
+            // Uses `type="button"` so the button's default action can still
+            // occur but it won't cause things like a form to submit.
+            template  : '<button type="button" />',
             classNames: getClassName('button', 'close')
         }
     }
@@ -90,4 +96,4 @@ Y.Panel = Y.Base.create('panel', Y.Widget, [
 });
 
 
-}, '@VERSION@' ,{requires:['widget', 'widget-autohide', 'widget-buttons',  'widget-modality', 'widget-position', 'widget-position-align', 'widget-position-constrain', 'widget-stack', 'widget-stdmod'], skinnable:true});
+}, '@VERSION@', {"requires": ["widget", "widget-autohide", "widget-buttons", "widget-modality", "widget-position", "widget-position-align", "widget-position-constrain", "widget-stack", "widget-stdmod"], "skinnable": true});

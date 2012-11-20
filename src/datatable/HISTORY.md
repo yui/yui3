@@ -1,6 +1,45 @@
 DataTable Change History
 ========================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
+3.6.0
+-----
+
+ * Extracted all rendering logic into new class Y.DataTable.TableView.  Added
+   `view` and `viewConfig` attributes to configure which view to use to render
+   the table.  `headerView`, `bodyView`, and `footerView` are all passed along
+   to this View class to delegate rendering (if appropriate).  You can now have
+   a single `view` config on DT to render the entire table and contents.
+   NOTE: if you were subscribing to `renderHeader`, `renderBody`, or
+   `renderFooter` events, they now have to be prefixed with 'table' (E.g.
+   `table.after('table:renderBody', fn);`
+ * Column configuration array is now copied when assigned.  This allows the same
+   array and column config objects to be used for multiple tables.
+
+3.5.1
+-----
+
+ * No changes.
+
 3.5.0
 -----
 
@@ -14,7 +53,7 @@ DataTable Change History
  * Scrollable tables now support captions
  * Added datatable-mutable module to provide addRow, removeRow, addColumn, etc
  * Added datatable-column-widths module to set column widths
- 
+
  * Liner `<div>`s have been removed from the cell template in the default markup
  * `<colgroup>` is not rendered by default (added via `datatable-column-widths` extension)
  * message `<tbody>` is not added by default (compatibility module not added yet)
@@ -27,7 +66,7 @@ DataTable Change History
  * Added class "yui3-datatable-cell" to all `<td>`s
  * CSS no longer references tags, only classes
  * ARIA grid, row, and gridcell roles added to the markup templates
- 
+
  * `recordset` attribute deprecated in favor of `data` attribute
  * `columnset` attribute deprecated in favor of `columns` attribute
  * `tdValueTemplate`, `thValueTemplate`, and `trTemplate` attributes and `tdTemplate` and `thTemplate` properties dropped in favor of CELL_TEMPLATE and ROW_TEMPLATE properties on the `bodyView` and `headerView` instances.
@@ -69,7 +108,7 @@ DataTable Change History
 
   * Now creates a new `RecordSet` for each instance rather than reusing the same
     one. [Ticket #2529980]
-  
+
   * Captions are only added if a value is set for the `caption` attribute
     [Ticket #2529968]
 
@@ -78,6 +117,6 @@ DataTable Change History
 -----
 
   * Initial release.
-  
+
   * Known Android issue (Ticket #2529761): Scrolling is currently not supported
     on the Android WebKit browser.

@@ -1,4 +1,4 @@
-YUI.add('dd-drop-plugin', function(Y) {
+YUI.add('dd-drop-plugin', function (Y, NAME) {
 
 
        /**
@@ -19,7 +19,7 @@ YUI.add('dd-drop-plugin', function(Y) {
             config.node = config.host;
             Drop.superclass.constructor.apply(this, arguments);
         };
-        
+
         /**
         * @property NAME
         * @description dd-drop-plugin
@@ -41,4 +41,4 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drop']});
+}, '@VERSION@', {"requires": ["dd-drop"]});

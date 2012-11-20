@@ -1,5 +1,6 @@
 <div id="mychart"></div>
-<div class="fields">
+<form id="changeValue" class="fields" action="#">
+    <div class="body">
     <p>
         <label for="seriesSelector">series:</label>
         <select name="seriesSelector" id="seriesSelector">
@@ -19,10 +20,13 @@
         <label for="borderWeight">border weight:</label>
         <input type="text" name="borderColor" id="borderWeight" />
     </p>
+    </div>
+    <div class="footer">
     <p>
         <button type="button" class="action" id="updateSeries">Update Series</button>
     </p>
-</div>
+    </div>
+</form>
 <script type="text/javascript">
 (function() {
     YUI().use('escape', 'charts', function (Y) 

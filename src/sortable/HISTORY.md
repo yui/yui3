@@ -1,23 +1,50 @@
 Sortable Utility Change History
 ===============================
 
-### 3.5.0
+3.7.3
+-----
 
-No changes.
+* Should completely pass lint now
 
-### 3.4.1
+3.7.0
+-----
 
-No changes.
+* Fixes #2531908 - Improve new nodes handling
 
-### 3.4.0
+3.6.0
+-----
 
-No changes.
+* 2531908 Sortable utility - can't drop on empty container space
+* 2531909 Sortable - JS error when drug between two full join lists after manual nodes manipulation
 
-### 3.3.0
+
+3.5.1
+-----
+
+   * No changes.
+
+3.5.0
+-----
+
+   * No changes.
+
+3.4.1
+-----
+
+   * No changes.
+
+3.4.0
+-----
+
+   * No changes.
+
+3.3.0
+-----
 
    * #2529220 Sortable does not allow dragging from original container to a different container back to original i...
 
-### 3.2.0
+3.2.0
+-----
 
    * #2529063 Sortable: add getOrdering method
    * #2528754 Sortable with nested lists
@@ -27,10 +54,12 @@ No changes.
    * #2529061 Sortable.destroy removes node
 
 
-### 3.1.1
+3.1.1
+-----
 
-No changes.
+   * No changes.
 
-### 3.1.0
+3.1.0
+-----
 
-Initial Release
+   * Initial Release

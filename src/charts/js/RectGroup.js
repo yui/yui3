@@ -1,7 +1,8 @@
 /**
  * Abstract class for creating groups of rects with the same styles and dimensions.
  *
- * @module graphics
+ * @module charts
+ * @submodule charts-base
  * @class GroupRect
  * @constructor
  */
@@ -9,10 +10,10 @@
  {
     RectGroup.superclass.constructor.apply(this, arguments);
  };
-    
+
  RectGroup.NAME = "rectGroup";
 
- Y.extend(RectGroup, Y.ShapeGroup, {    
+ Y.extend(RectGroup, Y.ShapeGroup, {
     /**
      * Updates the rect.
      *
@@ -24,6 +25,6 @@
         this.drawRect(cfg.x, cfg.y, cfg.width, cfg.height);
     }
  });
-    
+
 RectGroup.ATTRS = Y.ShapeGroup.ATTRS;
 Y.RectGroup = RectGroup;

@@ -6,6 +6,7 @@
                 "requires" : [
                     "widget",
                     "event-gestures",
+                    "event-mousewheel",
                     "transition"
                 ],
 
@@ -30,7 +31,8 @@
             },
             "scrollview-paginator" : {
                 "requires" : [
-                    "plugin"
+                    "plugin",
+                    "classnamemanager"
                 ]
             },
             "scrollview-list" : {

@@ -60,6 +60,7 @@ var DOT = '.',
         /**
          * The underlying DOM node bound to the Y.Node instance
          * @property _node
+         * @type DOMNode
          * @private
          */
         this._node = node;
@@ -108,6 +109,7 @@ Y_Node._fromString = function(node) {
 /**
  * The name of the component
  * @static
+ * @type String
  * @property NAME
  */
 Y_Node.NAME = 'node';
@@ -123,6 +125,7 @@ Y_Node.HIDE_TRANSITION = 'fadeOut';
 /**
  * A list of Node instances that have been created
  * @private
+ * @type Object
  * @property _instances
  * @static
  *
@@ -539,6 +542,7 @@ Y.mix(Y_Node.prototype, {
      * @method ancestor
      * @param {String | Function} fn A selector string or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
+     * If fn is not passed as an argument, the parent node will be returned.
      * @param {Boolean} testSelf optional Whether or not to include the element in the scan
      * @param {String | Function} stopFn optional A selector string or boolean
      * method to indicate when the search should stop. The search bails when the function
@@ -609,11 +613,14 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Retrieves a Node instance of nodes based on the given CSS selector.
+     * Retrieves a single Node instance, the first element matching the given 
+     * CSS selector.
+     * Returns null if no match found.
      * @method one
      *
      * @param {string} selector The CSS selector to test against.
-     * @return {Node} A Node instance for the matching HTMLElement.
+     * @return {Node | null} A Node instance for the matching HTMLElement or null 
+     * if no match found.
      */
     one: function(selector) {
         return Y.one(Y.Selector.query(selector, this._node, true));
@@ -702,7 +709,9 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Nulls internal node references, removes any plugins and event listeners
+     * Nulls internal node references, removes any plugins and event listeners.
+     * Note that destroy() will not remove the node from its parent or from the DOM. For that
+     * functionality, call remove(true).
      * @method destroy
      * @param {Boolean} recursivePurge (optional) Whether or not to remove listeners from the
      * node's subtree (default is false)
@@ -725,6 +734,8 @@ Y.mix(Y_Node.prototype, {
                 instance = Y_Node._instances[node[UID]];
                 if (instance) {
                    instance.destroy();
+                } else { // purge in case added by other means
+                    Y.Event.purgeElement(node);
                 }
             });
         }

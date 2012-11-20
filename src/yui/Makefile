@@ -1,15 +1,10 @@
-all: aliases build docmods
+all: build docmods
 
 build:
-	ant all
-
-alias: aliases
-
-aliases:
-	./scripts/build.js
+	shifter --lint defaults
 
 docmods:
 	./scripts/build_doc_modules.js
 
 npm:
-	ant -f npm.xml
+	shifter --config build-npm.json

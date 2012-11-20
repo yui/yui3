@@ -2,6 +2,7 @@
  * Gridlines draws gridlines on a Graph.
  *
  * @module charts
+ * @submodule charts-base
  * @class Gridlines
  * @constructor
  * @extends Base
@@ -136,7 +137,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
         path.moveTo(pt.x, 0);
         path.lineTo(pt.x, h);
     },
-    
+
     /**
      * Gets the default value for the `styles` attribute. Overrides
      * base implementation.
@@ -167,7 +168,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
          * @type String
          */
         direction: {},
-        
+
         /**
          * Indicate the `Axis` in which to bind
          * the gridlines.
@@ -176,9 +177,9 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
          * @type Axis
          */
         axis: {},
-        
+
         /**
-         * Indicates the `Graph` in which the gridlines 
+         * Indicates the `Graph` in which the gridlines
          * are drawn.
          *
          * @attribute graph

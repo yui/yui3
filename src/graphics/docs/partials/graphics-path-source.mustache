@@ -4,13 +4,14 @@
     { 
         var mygraphic = new Y.Graphic({render: "#mygraphiccontainer"}),
             connector = mygraphic.addShape({
-				type: "path",
+                type: "path",
 				stroke: {
 					weight: 1,
 					color: "#000",
 					opacity: 1,
 					dashstyle: [3, 4]
-				}
+				},
+				id: "connector"
             }),
             diamond1 = mygraphic.addShape({
                 type: "path",
@@ -20,7 +21,8 @@
                 },
                 fill: {
                     color: "#f00"
-                }
+                },
+                id: "diamond1"
             }),
             diamond2 = mygraphic.addShape({
                 type: "path",
@@ -30,7 +32,8 @@
                 },
                 fill: {
                     color: "#f00"
-                }
+                },
+                id: "diamond2"
             });
 
             diamond1.moveTo(60, 60);

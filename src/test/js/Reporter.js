@@ -6,7 +6,8 @@
      *      Default is YUITest.TestFormat.XML.
      * @constructor
      * @namespace Test
-     * @class Reporter
+     * @module test
+ * @class Reporter
      */
     YUITest.Reporter = function(url, format) {
     
@@ -68,7 +69,7 @@
         /**
          * Removes all previous defined fields.
          * @return {Void}
-         * @method addField
+         * @method clearFields
          */
         clearFields : function(){
             this._fields = new Object();

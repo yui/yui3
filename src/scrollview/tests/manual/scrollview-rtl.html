@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html dir="rtl">
+    <head>
+        <title>ScrollView Example</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+        <!--<script src=".http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js" type="text/javascript" charset="utf-8"></script> 
+        -->
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script> 
+        
+        <style>
+        #scrollview-bounding {
+            border:dotted 2px orange;
+            height:500px;
+        }
+
+        #scrollview-content {
+            white-space:nowrap;
+        }
+
+        #scrollview-content li{
+            display:inline-block;
+            width:398px;
+            height:398px;
+            border:1px solid red;
+            color:black;
+            font-size:40px;
+            opacity: 0.5;
+            background-image: -webkit-linear-gradient(top, red, white, blue);
+            text-align:center;
+        }​
+        </style>
+        
+        <script type="text/javascript" charset="utf-8">
+        var s;
+        YUI({
+            debug: true,
+            filter:"raw"
+        }).use('scrollview-base', 'scrollview-paginator', function(Y) {
+
+            var scrollView = new Y.ScrollView({
+                id: "scrollview",
+                srcNode : '#scrollview-content',
+                width: "400px"
+            });
+            s = scrollView;
+
+            scrollView.plug(Y.Plugin.ScrollViewPaginator, {
+                selector: 'li',
+                optimizeMemory: true
+            });
+            /*
+            scrollView.plug(Y.Plugin.ScrollViewPaginator, {
+                selector: 'li',
+                optimizeMemory: false
+            });
+*/
+            scrollView.render();
+        });
+        </script>
+    </head>
+
+    <body class="yui3-skin-sam">
+        <div>
+            <div id="scrollview-content">
+                <ul>
+                    <li>1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                    <li>5</li>
+                    <li>6</li>
+                    <li>7</li>
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,31 @@
+YUI().use('datatable', function (Y) {
+
+    var table = new Y.DataTable({
+        columns: [
+            { key: "id",
+              formatter: '<input type="checkbox" name="item" value="{value}">',
+              label: '<input type="checkbox" id="id-all" value="all">',
+              allowHTML: true
+            },
+            "name",
+            { key: "price", formatter: '${value}' }
+        ],
+        data: [
+            { id: "ga-3475", name: "gadget", price: 6.99 },
+            { id: "sp-9980", name: "sprocket", price: 3.75 },
+            { id: "wi-0650", name: "widget", price: 4.25 }
+        ],
+        caption: "Allowing HTML content in cells"
+    }).render("#allowhtml");
+
+    // Delegated because the table header might be re-rendered
+    table.delegate('click', function (e) {
+        this.get('contentBox').all('input[name]')
+            .set('checked', e.currentTarget.get('checked'));
+    }, '#id-all', table);
+
+    table.delegate('click', function (e) {
+        Y.one('#id-all').set('checked', false);
+    }, '.yui3-datatable-data input', table);
+
+});

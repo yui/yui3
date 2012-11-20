@@ -2,13 +2,14 @@
  * AreaSplineSeries renders an area graph with data points connected by a curve.
  *
  * @module charts
+ * @submodule charts-base
  * @class AreaSplineSeries
  * @constructor
  * @extends CartesianSeries
  * @uses Fills
  * @uses CurveUtil
  */
-Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.CartesianSeries, [Y.Fills, Y.CurveUtil], {
+Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.AreaSeries, [Y.CurveUtil], {
     /**
      * @protected
      *
@@ -32,12 +33,12 @@ Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.CartesianSeries, [Y.Fil
         type: {
             value:"areaSpline"
         }
-        
+
         /**
          * Style properties used for drawing area fills. This attribute is inherited from `Renderer`. Below are the default values:
          *
          *  <dl>
-         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be 
+         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be
          *      retrieved from the following array:
          *      `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
          *      </dd>

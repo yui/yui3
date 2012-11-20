@@ -1,4 +1,4 @@
-YUI.add('widget-position', function(Y) {
+YUI.add('widget-position', function (Y, NAME) {
 
 /**
  * Provides basic XY positioning support for Widgets, though an extension
@@ -272,4 +272,4 @@ YUI.add('widget-position', function(Y) {
     Y.WidgetPosition = Position;
 
 
-}, '@VERSION@' ,{requires:['base-build', 'node-screen', 'widget']});
+}, '@VERSION@', {"requires": ["base-build", "node-screen", "widget"]});

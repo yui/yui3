@@ -28,7 +28,7 @@ we'll update the `#event-result` node with some data available through the event
             currentTarget = e.currentTarget, // #container
             target = e.target; // #container or a descendant
             
-        Y.one('#event-result').setContent('<dl>' +
+        Y.one('#event-result').setHTML('<dl>' +
             '<dt>Event Type: </dt>' + 
                 '<dd>' + e.type + '</dd>' +
             '<dt>Target Tag Name: </dt>' + 

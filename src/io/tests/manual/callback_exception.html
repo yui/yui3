@@ -1,0 +1,116 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+    #x {
+        margin-top: 2em;
+        border: 1px solid #ccc;
+        padding: 1ex 1em;
+        font-size: 200%;
+    }
+    .pass {
+        background: #090;
+        color: #fff;
+    }
+    .fail {
+        background: #900;
+        color: #fff;
+    }
+    </style>
+</head>
+<body>
+    <h1>This test can't be run in YUI Test</h1>
+
+    <p>
+        This tests the issue reported in
+        <a href="http://yuilibrary.com/projects/yui3/ticket/2532107">Ticket
+        #2532107</a>, where a callback that throws an error will prevent all
+        subsequent Y.io() calls to fail at the same point.
+    </p>
+
+    <button id="step1">Step 1</button>
+    <button id="step2" disabled>Step 2</button>
+
+    <p>
+        Results: <span id="x">Testing...</span>
+    </p>
+
+    <!--script src="http://yui.yahooapis.com/3.4.1/build/yui/yui.js"></script-->
+    <script src="/dev/yui3/build/yui/yui.js"></script>
+    <script>
+    YUI({
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    }).use('io-base', function (Y) {
+
+
+        var test = this,
+            result = document.getElementById('x'),
+            step1  = document.getElementById('step1'),
+            step2  = document.getElementById('step2'),
+            hijacked = {
+                start   : true,
+                complete: true
+            },
+            timeout;
+
+        step1.onclick = function () {
+            step1.disabled = true;
+
+            setTimeout(function () {
+                step2.disabled = false;
+            }, 100);
+
+            Y.io('#', {
+                on: {
+                    start: function() {
+                        throw "start exception";
+                    },
+                    complete: function() {
+                        throw "complete exception";
+                    },
+                    success: function () {
+                        throw "success exception";
+                    },
+                    end: function() {
+                        throw "end exception";
+                    }
+                }
+            });
+        };
+
+        step2.onclick = function () {
+            timeout = setTimeout(function () {
+                // I know, I know.  It's a race condition. But eh.
+                result.innerHTML = 'FAIL';
+                result.className = 'fail';
+            }, 1000);
+
+            Y.io('#', {
+                on: {
+                    start: function() {
+                        hijacked.start = false;
+                    },
+                    complete: function() {
+                        hijacked.complete = false;
+                    },
+                    success: function () {
+                        hijacked.success = false;
+                    },
+                    end: function() {
+                        clearTimeout(timeout);
+
+                        if (!hijacked.start &&
+                            !hijacked.complete &&
+                            !hijacked.success) {
+                            result.innerHTML = 'PASS';
+                            result.className = 'pass';
+                        }
+                    }
+                }
+            });
+        };
+    });
+    </script>
+</body>
+</html>

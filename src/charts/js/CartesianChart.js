@@ -2,6 +2,7 @@
  * The CartesianChart class creates a chart with horizontal and vertical axes.
  *
  * @module charts
+ * @submodule charts-base
  * @class CartesianChart
  * @extends ChartBase
  * @constructor
@@ -13,12 +14,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      */
     renderUI: function()
     {
-        var cb = this.get("contentBox"),
+        var bb = this.get("boundingBox"),
+            cb = this.get("contentBox"),
             tt = this.get("tooltip"),
             overlay,
             overlayClass = _getClassName("overlay");
         //move the position = absolute logic to a class file
-        this.get("boundingBox").setStyle("position", "absolute");
+        bb.setStyle("position", "absolute");
         cb.setStyle("position", "absolute");
         this._addAxes();
         this._addGridlines();
@@ -33,20 +35,21 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         {
             overlay = DOCUMENT.createElement("div");
             this.get("contentBox").appendChild(overlay);
-            this._overlay = Y.one(overlay); 
+            this._overlay = Y.one(overlay);
+            this._overlay.set("id", this.get("id") + "_overlay");
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);
             this._overlay.addClass(overlayClass);
             this._overlay.setStyle("zIndex", 4);
         }
-        this._setAriaElements(cb);
+        this._setAriaElements(bb, cb);
         this._redraw();
     },
 
     /**
-     * When `interactionType` is set to `planar`, listens for mouse move events and fires `planarEvent:mouseover` or `planarEvent:mouseout` depending on the position of the mouse in relation to 
-     * data points on the `Chart`.
+     * When `interactionType` is set to `planar`, listens for mouse move events and fires `planarEvent:mouseover` or `planarEvent:mouseout`
+     * depending on the position of the mouse in relation to data points on the `Chart`.
      *
      * @method _planarEventDispatcher
      * @param {Object} e Event object.
@@ -140,21 +143,23 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     valueItems.push(item.value);
                     items.push(series);
                 }
-                    
+
             }
             this._selectedIndex = index;
 
             /**
              * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseover event.
-             * 
+             *
              *
              * @event planarEvent:mouseover
              * @preventable false
              * @param {EventFacade} e Event facade with the following additional
              *   properties:
              *  <dl>
-             *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker whose plane has been intersected.</dd>
-             *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose plane has been intersected.</dd>
+             *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker
+             *      whose plane has been intersected.</dd>
+             *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose
+             *      plane has been intersected.</dd>
              *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
              *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
              *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>
@@ -169,18 +174,18 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
              *
              * @event planarEvent:mouseout
              * @preventable false
-             * @param {EventFacade} e 
+             * @param {EventFacade} e
              */
             if(index > -1)
             {
                 this.fire("planarEvent:mouseover", {
-                    categoryItem:categoryItems, 
-                    valueItem:valueItems, 
-                    x:posX, 
-                    y:posY, 
+                    categoryItem:categoryItems,
+                    valueItem:valueItems,
+                    x:posX,
+                    y:posY,
                     pageX:pageX,
                     pageY:pageY,
-                    items:items, 
+                    items:items,
                     index:index,
                     originEvent:e
                 });
@@ -215,7 +220,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      *
      * @method _addToAxesRenderQueue
      * @param {Axis} axis An `Axis` instance.
-     * @private 
+     * @private
      */
     _addToAxesRenderQueue: function(axis)
     {
@@ -257,7 +262,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      */
     _getDefaultSeriesCollection: function()
     {
-        return this._parseSeriesCollection();
+        var seriesCollection,
+            dataProvider = this.get("dataProvider");
+        if(dataProvider)
+        {
+            seriesCollection = this._parseSeriesCollection();
+        }
+        return seriesCollection;
     },
 
     /**
@@ -270,8 +281,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      */
     _parseSeriesCollection: function(val)
     {
-        var dir = this.get("direction"), 
-            sc = val || [], 
+        var dir = this.get("direction"),
+            sc = [],
             catAxis,
             valAxis,
             tempKeys = [],
@@ -285,10 +296,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             catKey,
             seriesKey,
             graph,
+            orphans = [],
             categoryKey = this.get("categoryKey"),
             showMarkers = this.get("showMarkers"),
             showAreaFill = this.get("showAreaFill"),
             showLines = this.get("showLines");
+        val = val || [];
         if(dir == "vertical")
         {
             catAxis = "yAxis";
@@ -303,18 +316,43 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             valAxis = "yAxis";
             seriesKey = "yKey";
         }
-        l = sc.length;
-        for(i = 0; i < l; ++i)
+        l = val.length;
+        while(val && val.length > 0)
         {
-            key = this._getBaseAttribute(sc[i], seriesKey);
+            series = val.shift();
+            key = this._getBaseAttribute(series, seriesKey);
             if(key)
             {
                 index = Y.Array.indexOf(seriesKeys, key);
                 if(index > -1)
                 {
                     seriesKeys.splice(index, 1);
+                    tempKeys.push(key);
+                    sc.push(series);
                 }
-               tempKeys.push(key);
+                else
+                {
+                    orphans.push(series);
+                }
+            }
+            else
+            {
+                orphans.push(series);
+            }
+        }
+        while(orphans.length > 0)
+        {
+            series = orphans.shift();
+            if(seriesKeys.length > 0)
+            {
+                key = seriesKeys.shift();
+                this._setBaseAttribute(series, seriesKey, key);
+                tempKeys.push(key);
+                sc.push(series);
+            }
+            else if(series instanceof Y.CartesianSeries)
+            {
+                series.destroy(true);
             }
         }
         if(seriesKeys.length > 0)
@@ -330,14 +368,15 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 this._parseSeriesAxes(series);
                 continue;
             }
-            
+
             series[catKey] = series[catKey] || categoryKey;
             series[seriesKey] = series[seriesKey] || seriesKeys.shift();
             series[catAxis] = this._getCategoryAxis();
             series[valAxis] = this._getSeriesAxis(series[seriesKey]);
-            
+
             series.type = series.type || type;
-            
+            series.direction = series.direction || dir;
+
             if((series.type == "combo" || series.type == "stackedcombo" || series.type == "combospline" || series.type == "stackedcombospline"))
             {
                 if(showAreaFill !== null)
@@ -355,7 +394,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             }
             sc[i] = series;
         }
-        if(val)
+        if(sc)
         {
             graph = this.get("graph");
             graph.set("seriesCollection", sc);
@@ -387,7 +426,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             }
         }
         if(yAxis && !(yAxis instanceof YAxis) && Y_Lang.isString(yAxis) && axes.hasOwnProperty(yAxis))
-        {   
+        {
             axis = axes[yAxis];
             if(axis instanceof YAxis)
             {
@@ -512,14 +551,16 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         var hash = this._parseAxes(val),
             axes = {},
             axesAttrs = {
-                edgeOffset: "edgeOffset", 
+                edgeOffset: "edgeOffset",
                 position: "position",
                 overlapGraph:"overlapGraph",
                 labelFunction:"labelFunction",
                 labelFunctionScope:"labelFunctionScope",
                 labelFormat:"labelFormat",
+                appendLabelFunction: "appendLabelFunction",
+                appendTitleFunction: "appendTitleFunction",
                 maximum:"maximum",
-                minimum:"minimum", 
+                minimum:"minimum",
                 roundingMethod:"roundingMethod",
                 alwaysShowZero:"alwaysShowZero",
                 title:"title",
@@ -528,12 +569,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             },
             dp = this.get("dataProvider"),
             ai,
-            i, 
-            pos, 
+            i,
+            pos,
             axis,
             axisPosition,
-            dh, 
-            axisClass, 
+            dh,
+            axisClass,
             config,
             axesCollection;
         for(i in hash)
@@ -551,7 +592,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     config = {};
                     config.dataProvider = dh.dataProvider || dp;
                     config.keys = dh.keys;
-                    
+
                     if(dh.hasOwnProperty("roundingUnit"))
                     {
                         config.roundingUnit = dh.roundingUnit;
@@ -569,13 +610,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                             config[ai] = dh[ai];
                         }
                     }
-                   
+
                     //only check for existing axis if we constructed the default axes already
                     if(val)
                     {
                         axis = this.getAxisByKey(i);
                     }
-                    
+
                     if(axis && axis instanceof Y.Axis)
                     {
                         axisPosition = axis.get("position");
@@ -614,7 +655,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         return axes;
     },
-    
+
     /**
      * Adds axes to the chart.
      *
@@ -624,14 +665,14 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     _addAxes: function()
     {
         var axes = this.get("axes"),
-            i, 
-            axis, 
+            i,
+            axis,
             pos,
             w = this.get("width"),
             h = this.get("height"),
             node = Y.Node.one(this._parentNode);
         if(!this._axesCollection)
-        {   
+        {
             this._axesCollection = [];
         }
         for(i in axes)
@@ -721,7 +762,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             {
                 hAxis = rightAxesCollection[0];
             }
-            else 
+            else
             {
                 hAxis = direction == "horizontal" ? catAxis : seriesAxesCollection[0];
             }
@@ -744,7 +785,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             {
                 vAxis = topAxesCollection[0];
             }
-            else 
+            else
             {
                 vAxis = direction == "vertical" ? catAxis : seriesAxesCollection[0];
             }
@@ -758,35 +799,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             }
         }
     },
-   
-    /**
-     * Returns all the keys contained in a  `dataProvider`.
-     *
-     * @method _getAllKeys
-     * @param {Array} dp Collection of objects to be parsed.
-     * @return Object
-     */
-    _getAllKeys: function(dp)
-    {
-        var i = 0,
-            len = dp.length,
-            item,
-            key,
-            keys = {};
-        for(; i < len; ++i)
-        {
-            item = dp[i];
-            for(key in item)
-            {
-                if(item.hasOwnProperty(key))
-                {
-                    keys[key] = true;
-                }
-            }
-        }
-        return keys;
-    },
-    
+
     /**
      * Default Function for the axes attribute.
      *
@@ -796,7 +809,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      */
     _getDefaultAxes: function()
     {
-        return this._parseAxes();
+        var axes;
+        if(this.get("dataProvider"))
+        {
+            axes = this._parseAxes();
+        }
+        return axes;
     },
 
     /**
@@ -817,14 +835,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             claimedKeys = [],
             categoryAxisName = this.get("categoryAxisName") || this.get("categoryKey"),
             valueAxisName = this.get("valueAxisName"),
-            seriesKeys = this.get("seriesKeys") || [], 
-            i, 
+            seriesKeys = this.get("seriesKeys").concat(),
+            i,
             l,
             ii,
             ll,
             cIndex,
-            dv,
-            dp = this.get("dataProvider"),
             direction = this.get("direction"),
             seriesPosition,
             categoryPosition,
@@ -864,7 +880,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     {
                         newAxes[i] = axis;
                     }
-                    else 
+                    else
                     {
                         newAxes[i] = axis;
                         if(i != valueAxisName && keys && Y_Lang.isArray(keys))
@@ -888,17 +904,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
             }
         }
-        if(seriesKeys.length < 1)
-        {
-            dv = this._getAllKeys(dp);
-            for(i in dv)
-            {
-                if(dv.hasOwnProperty(i) && i != catKey && Y.Array.indexOf(claimedKeys, i) == -1)
-                {
-                    seriesKeys.push(i);
-                }
-            }
-        }
         cIndex = Y.Array.indexOf(seriesKeys, catKey);
         if(cIndex > -1)
         {
@@ -907,7 +912,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         l = claimedKeys.length;
         for(i = 0; i < l; ++i)
         {
-            cIndex = Y.Array.indexOf(seriesKeys, claimedKeys[i]); 
+            cIndex = Y.Array.indexOf(seriesKeys, claimedKeys[i]);
             if(cIndex > -1)
             {
                 seriesKeys.splice(cIndex, 1);
@@ -921,12 +926,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         {
             this._setBaseAttribute(newAxes[categoryAxisName], "keys", [catKey]);
         }
-        
+
         if(!(this._getBaseAttribute(newAxes[categoryAxisName], "position")))
         {
             this._setBaseAttribute(newAxes[categoryAxisName], "position", categoryPosition);
         }
-         
+
         if(!(this._getBaseAttribute(newAxes[categoryAxisName], "type")))
         {
             this._setBaseAttribute(newAxes[categoryAxisName], "type", this.get("categoryType"));
@@ -953,16 +958,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             {
                 this._setBaseAttribute(newAxes[valueAxisName], "position", this._getDefaultAxisPosition(newAxes[valueAxisName], valueAxes, seriesPosition));
             }
-            if(!(this._getBaseAttribute(newAxes[valueAxisName], "type")))
-            {
-                this._setBaseAttribute(newAxes[valueAxisName], "type", seriesAxis);
-            }
-            if(!(this._getBaseAttribute(newAxes[valueAxisName], "keys")))
-            {
-                this._setBaseAttribute(newAxes[valueAxisName], "keys", seriesKeys);
-            }
-        } 
-        this.set("seriesKeys", seriesKeys);
+            this._setBaseAttribute(newAxes[valueAxisName], "type", seriesAxis);
+            this._setBaseAttribute(newAxes[valueAxisName], "keys", seriesKeys);
+        }
+        if(!this._seriesKeysExplicitlySet)
+        {
+            this._seriesKeys = seriesKeys;
+        }
         return newAxes;
     },
 
@@ -980,7 +982,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     {
         var direction = this.get("direction"),
             i = Y.Array.indexOf(valueAxes, axis);
-        
+
         if(valueAxes[i - 1] && valueAxes[i - 1].position)
         {
             if(direction == "horizontal")
@@ -999,7 +1001,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 if (valueAxes[i -1].position == "bottom")
                 {
                     position = "top";
-                }       
+                }
                 else
                 {
                     position = "bottom";
@@ -1009,10 +1011,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         return position;
     },
 
-   
+
     /**
      * Returns an object literal containing a categoryItem and a valueItem for a given series index. Below is the structure of each:
-     * 
+     *
      * @method getSeriesItems
      * @param {CartesianSeries} series Reference to a series.
      * @param {Number} index Index of the specified item within a series.
@@ -1097,7 +1099,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._redraw();
         }
     },
-    
+
     /**
      * Returns the maximum distance in pixels that the extends outside the top bounds of all vertical axes.
      *
@@ -1135,7 +1137,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         return overflow;
     },
-    
+
     /**
      * Returns the maximum distance in pixels that the extends outside the right bounds of all horizontal axes.
      *
@@ -1173,7 +1175,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         return overflow;
     },
-    
+
     /**
      * Returns the maximum distance in pixels that the extends outside the left bounds of all horizontal axes.
      *
@@ -1211,7 +1213,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         return overflow;
     },
-    
+
     /**
      * Returns the maximum distance in pixels that the extends outside the bottom bounds of all vertical axes.
      *
@@ -1336,7 +1338,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 bottomAxesYCoords.unshift(h - bottomPaneHeight);
             }
         }
-        
+
         graphWidth = w - (leftPaneWidth + rightPaneWidth);
         graphHeight = h - (bottomPaneHeight + topPaneHeight);
         graphRect.left = leftPaneWidth;
@@ -1349,7 +1351,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             bottomOverflow = this._getBottomOverflow(leftAxesCollection, rightAxesCollection);
             leftOverflow = this._getLeftOverflow(bottomAxesCollection, topAxesCollection);
             rightOverflow = this._getRightOverflow(bottomAxesCollection, topAxesCollection);
-            
+
             diff = topOverflow - topPaneHeight;
             if(diff > 0)
             {
@@ -1610,7 +1612,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             }
             this._seriesIndex = seriesIndex;
             series = this.getSeries(parseInt(seriesIndex, 10));
-            msg = "This is the " + series.get("valueDisplayName") + " series. Move the left and right arrows to navigate through the series items.";
+            msg = series.get("valueDisplayName") + " series.";
         }
         else
         {
@@ -1624,7 +1626,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 seriesIndex = 0;
                 this._seriesIndex = seriesIndex;
                 series = this.getSeries(parseInt(seriesIndex, 10));
-                msg = "This is the " + series.get("valueDisplayName") + " series.";
+                msg = series.get("valueDisplayName") + " series.";
             }
             dataLength = series._dataLength ? series._dataLength : 0;
             if(key === 37)
@@ -1639,16 +1641,16 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             items = this.getSeriesItems(series, itemIndex);
             categoryItem = items.category;
             valueItem = items.value;
-            msg += "Item " + (itemIndex + 1) + " of " + dataLength + ". ";
             if(categoryItem && valueItem && categoryItem.value && valueItem.value)
             {
-                msg += categoryItem.displayName + " is " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]);
-                msg += valueItem.displayName + " is " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]); 
+                msg += categoryItem.displayName + ": " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + ", ";
+                msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", ";
             }
-            else
+           else
             {
                 msg += "No data available.";
             }
+            msg += (itemIndex + 1) + " of " + dataLength + ". ";
         }
         return msg;
     }
@@ -1693,7 +1695,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
                 return styles;
             },
-            
+
             setter: function(val)
             {
                 var axes = this.get("axes"),
@@ -1739,13 +1741,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
                 return styles;
             },
-            
+
             setter: function(val)
             {
                 var i,
                     l,
                     s;
-    
+
                 if(Y_Lang.isArray(val))
                 {
                     s = this.get("seriesCollection");
@@ -1824,7 +1826,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         styles: {
             getter: function()
             {
-                var styles = { 
+                var styles = {
                     axes: this.get("axesStyles"),
                     series: this.get("seriesStyles"),
                     graph: this.get("graphStyles")
@@ -1874,7 +1876,11 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
             setter: function(val)
             {
-                return this._setAxes(val);
+                if(this.get("dataProvider"))
+                {
+                    val = this._setAxes(val);
+                }
+                return val;
             }
         },
 
@@ -1887,10 +1893,14 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          */
         seriesCollection: {
             valueFn: "_getDefaultSeriesCollection",
-            
+
             setter: function(val)
             {
-                return this._parseSeriesCollection(val);
+                if(this.get("dataProvider"))
+                {
+                    val = this._parseSeriesCollection(val);
+                }
+                return val;
             }
         },
 
@@ -1929,7 +1939,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          * @private
          */
         topAxesCollection: {},
-        
+
         /**
          * Indicates whether or not the chart is stacked.
          *
@@ -1943,7 +1953,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         /**
          * Direction of chart's category axis when there is no series collection specified. Charts can
          * be horizontal or vertical. When the chart type is column, the chart is horizontal.
-         * When the chart type is bar, the chart is vertical. 
+         * When the chart type is bar, the chart is vertical.
          *
          * @attribute direction
          * @type String
@@ -1953,7 +1963,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             {
                 var type = this.get("type");
                 if(type == "bar")
-                {   
+                {
                     return "vertical";
                 }
                 else if(type == "column")
@@ -1972,7 +1982,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
         /**
          * Indicates whether or not an area is filled in a combo chart.
-         * 
+         *
          * @attribute showAreaFill
          * @type Boolean
          */
@@ -1997,7 +2007,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         /**
          * Indicates the key value used to identify a category axis in the `axes` hash. If
          * not specified, the categoryKey attribute value will be used.
-         * 
+         *
          * @attribute categoryAxisName
          * @type String
          */
@@ -2081,12 +2091,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
             }
         },
-        
+
         /**
          * Type of chart when there is no series collection specified.
          *
          * @attribute type
-         * @type String 
+         * @type String
          */
         type: {
             getter: function()
@@ -2118,7 +2128,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 return this._type;
             }
         },
-        
+
         /**
          * Reference to the category axis used by the chart.
          *

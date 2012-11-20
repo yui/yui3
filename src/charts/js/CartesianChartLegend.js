@@ -4,7 +4,7 @@
  * @module charts
  * @submodule charts-legend
  */
-var DOCUMENT = Y.config.doc, 
+var DOCUMENT = Y.config.doc,
 TOP = "top",
 RIGHT = "right",
 BOTTOM = "bottom",
@@ -20,7 +20,7 @@ _Y = "y",
 PX = "px",
 LEGEND = {
     setter: function(val)
-    {   
+    {
         var legend = this.get("legend");
         if(legend)
         {
@@ -86,7 +86,7 @@ HorizontalLegendLayout = {
             legendWidth,
             topHeight = padding.top - verticalGap,
             limit = width - (padding.left + padding.right),
-            left, 
+            left,
             top,
             right,
             bottom;
@@ -246,7 +246,7 @@ VerticalLegendLayout = {
             leftWidth = padding.left - horizontalGap,
             legendWidth,
             limit = height - (padding.top + padding.bottom),
-            left, 
+            left,
             top,
             right,
             bottom;
@@ -456,7 +456,7 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
                 bottomAxesYCoords.unshift(h - bottomPaneHeight);
             }
         }
-        
+
         graphWidth = w - (leftPaneWidth + rightPaneWidth);
         graphHeight = h - (bottomPaneHeight + topPaneHeight);
         graphRect.left = leftPaneWidth;
@@ -469,7 +469,7 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
             bottomOverflow = this._getBottomOverflow(leftAxesCollection, rightAxesCollection);
             leftOverflow = this._getLeftOverflow(bottomAxesCollection, topAxesCollection);
             rightOverflow = this._getRightOverflow(bottomAxesCollection, topAxesCollection);
-            
+
             diff = topOverflow - topPaneHeight;
             if(diff > 0)
             {
@@ -540,7 +540,7 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
             {
                 switch(legend.get("position"))
                 {
-                    case "left" : 
+                    case "left" :
                         legend.set("y", graphY);
                         legend.set("height", graphHeight);
                     break;
@@ -548,7 +548,7 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
                         legend.set("x", graphX);
                         legend.set("width", graphWidth);
                     break;
-                    case "bottom" : 
+                    case "bottom" :
                         legend.set("x", graphX);
                         legend.set("width", graphWidth);
                     break;
@@ -660,7 +660,7 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
     },
 
     /**
-     * Positions the legend in a chart and returns the properties of the legend to be used in the 
+     * Positions the legend in a chart and returns the properties of the legend to be used in the
      * chart's layout algorithm.
      *
      * @method _getLayoutDimensions
@@ -696,15 +696,15 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
                 switch(position)
                 {
                     case TOP :
-                        legend.set(_Y, 0); 
+                        legend.set(_Y, 0);
                     break;
-                    case BOTTOM : 
-                        legend.set(_Y, h - size); 
+                    case BOTTOM :
+                        legend.set(_Y, h - size);
                     break;
                     case RIGHT :
                         legend.set(_X, w - size);
                     break;
-                    case LEFT: 
+                    case LEFT:
                         legend.set(_X, 0);
                     break;
                 }

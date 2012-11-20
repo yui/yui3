@@ -1,4 +1,4 @@
-YUI.add('profiler', function(Y) {
+YUI.add('profiler', function (Y, NAME) {
 
     /**
      * The YUI JavaScript profiler.
@@ -543,5 +543,4 @@ YUI.add('profiler', function(Y) {
     
     };
 
-
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

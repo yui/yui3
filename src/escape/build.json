@@ -1,0 +1,10 @@
+{
+    "name": "escape",
+    "builds": {
+        "escape": {
+            "jsfiles": [
+                "escape.js"
+            ]
+        }
+    }
+}

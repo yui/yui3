@@ -1,4 +1,4 @@
-YUI.add('node-event-delegate', function(Y) {
+YUI.add('node-event-delegate', function (Y, NAME) {
 
 /**
  * Functionality to make the node a delegated event container
@@ -51,4 +51,4 @@ Y.Node.prototype.delegate = function(type) {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
+}, '@VERSION@', {"requires": ["node-base", "event-delegate"]});

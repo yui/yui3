@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Get IE 10 Issue</title>
+        <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+
+        <script type="text/javascript" src="a.js"></script> <!-- to cause the 304 below -->
+    </head>
+    <body>
+        <script type="text/javascript">
+            YUI({filter:"raw"}).use("get", function(Y) {
+
+                var t1 = Y.Get.js(['bogus.js', 'bogus.js'], function (err, t) {
+                    console.log("CB bogus, bogus");
+                });
+
+                var t2 = Y.Get.js(['a.js', 'b.js'], function (err, t) {
+                    console.log("CB a, b");
+                });
+
+            });
+        </script>
+    </body>
+</html>

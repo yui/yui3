@@ -1,4 +1,4 @@
-YUI.add('array-extras', function(Y) {
+YUI.add('array-extras', function (Y, NAME) {
 
 /**
 Adds additional utility methods to the `Y.Array` class.
@@ -55,51 +55,58 @@ A.lastIndexOf = L._isNative(ArrayProto.lastIndexOf) ?
     };
 
 /**
-Returns a copy of the specified array with duplicate items removed.
+Returns a copy of the input array with duplicate items removed.
+
+Note: If the input array only contains strings, the `Y.Array.dedupe()` method is
+a much faster alternative.
 
 @method unique
-@param {Array} a Array to dedupe.
-@return {Array} Copy of the array with duplicate items removed.
+@param {Array} array Array to dedupe.
+@param {Function} [testFn] Custom function to use to test the equality of two
+    values. A truthy return value indicates that the values are equal. A falsy
+    return value indicates that the values are not equal.
+
+    @param {Any} testFn.a First value to compare.
+    @param {Any} testFn.b Second value to compare.
+    @param {Number} testFn.index Index of the current item in the original
+        array.
+    @param {Array} testFn.array The original array.
+    @return {Boolean} _true_ if the items are equal, _false_ otherwise.
+
+@return {Array} Copy of the input array with duplicate items removed.
 @static
 **/
-A.unique = function(a, sort) {
-    // Note: the sort param is deprecated and intentionally undocumented since
-    // YUI 3.3.0. It never did what the API docs said it did (see the older
-    // comment below as well).
+A.unique = function (array, testFn) {
     var i       = 0,
-        len     = a.length,
+        len     = array.length,
         results = [],
-        item, j;
+        j, result, resultLen, value;
 
-    for (; i < len; ++i) {
-        item = a[i];
+    // Note the label here. It's used to jump out of the inner loop when a value
+    // is not unique.
+    outerLoop: for (; i < len; i++) {
+        value = array[i];
 
-        // This loop iterates over the results array in reverse order and stops
-        // if it finds an item that matches the current input array item (a
-        // dupe). If it makes it all the way through without finding a dupe, the
-        // current item is pushed onto the results array.
-        for (j = results.length; j > -1; --j) {
-            if (item === results[j]) {
-                break;
+        // For each value in the input array, iterate through the result array
+        // and check for uniqueness against each result value.
+        for (j = 0, resultLen = results.length; j < resultLen; j++) {
+            result = results[j];
+
+            // If the test function returns true or there's no test function and
+            // the value equals the current result item, stop iterating over the
+            // results and continue to the next value in the input array.
+            if (testFn) {
+                if (testFn.call(array, value, result, i, array)) {
+                    continue outerLoop;
+                }
+            } else if (value === result) {
+                continue outerLoop;
             }
         }
 
-        if (j === -1) {
-            results.push(item);
-        }
-    }
-
-    // Note: the sort option doesn't really belong here... I think it was added
-    // because there was a way to fast path the two operations together.  That
-    // implementation was not working, so I replaced it with the following.
-    // Leaving it in so that the API doesn't get broken.
-    if (sort) {
-
-        if (L.isNumber(results[0])) {
-            results.sort(A.numericSort);
-        } else {
-            results.sort();
-        }
+        // If we get this far, that means the current value is not already in
+        // the result array, so add it.
+        results.push(value);
     }
 
     return results;
@@ -119,7 +126,7 @@ containing the items for which the supplied function returned a truthy value.
 */
 A.filter = L._isNative(ArrayProto.filter) ?
     function(a, f, o) {
-        return a.filter(f, o);
+        return ArrayProto.filter.call(a, f, o);
     } :
     function(a, f, o) {
         var i       = 0,
@@ -172,7 +179,7 @@ supplied function does not return a truthy value.
 */
 A.every = L._isNative(ArrayProto.every) ?
     function(a, f, o) {
-        return a.every(f, o);
+        return ArrayProto.every.call(a, f, o);
     } :
     function(a, f, o) {
         for (var i = 0, l = a.length; i < l; ++i) {
@@ -206,12 +213,12 @@ containing all the values returned by the supplied function.
 */
 A.map = L._isNative(ArrayProto.map) ?
     function(a, f, o) {
-        return a.map(f, o);
+        return ArrayProto.map.call(a, f, o);
     } :
     function(a, f, o) {
         var i       = 0,
             len     = a.length,
-            results = a.concat();
+            results = ArrayProto.concat.call(a);
 
         for (; i < len; ++i) {
             if (i in a) {
@@ -247,7 +254,7 @@ A.reduce = L._isNative(ArrayProto.reduce) ?
     function(a, init, f, o) {
         // ES5 Array.reduce doesn't support a thisObject, so we need to
         // implement it manually.
-        return a.reduce(function(init, item, i, a) {
+        return ArrayProto.reduce.call(a, function(init, item, i, a) {
             return f.call(o, init, item, i, a);
         }, init);
     } :
@@ -356,5 +363,38 @@ A.zip = function(a, a2) {
     return results;
 };
 
+/**
+Flattens an array of nested arrays at any abitrary depth into a single, flat
+array.
 
-}, '@VERSION@' ,{requires:['yui-base']});
+@method flatten
+@param {Array} a Array with nested arrays to flatten.
+@return {Array} An array whose nested arrays have been flattened.
+@static
+@since 3.7.0
+**/
+A.flatten = function(a) {
+    var result = [],
+        i, len, val;
+
+    // Always return an array.
+    if (!a) {
+        return result;
+    }
+
+    for (i = 0, len = a.length; i < len; ++i) {
+        val = a[i];
+
+        if (L.isArray(val)) {
+            // Recusively flattens any nested arrays.
+            result.push.apply(result, A.flatten(val));
+        } else {
+            result.push(val);
+        }
+    }
+
+    return result;
+};
+
+
+}, '@VERSION@', {"requires": ["yui-base"]});

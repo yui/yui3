@@ -1,8 +1,9 @@
-YUI.add('model-list', function(Y) {
+YUI.add('model-list', function (Y, NAME) {
 
 /**
 Provides an API for managing an ordered list of Model instances.
 
+@module app
 @submodule model-list
 @since 3.4.0
 **/
@@ -24,6 +25,10 @@ defined, models are sorted in insertion order).
 @extends Base
 @uses ArrayList
 @constructor
+@param {Object} config Config options.
+    @param {Model|Model[]|ModelList|Object|Object[]} config.items Model
+        instance, array of model instances, or ModelList to add to this list on
+        init. The `add` event will not be fired for models added on init.
 @since 3.4.0
 **/
 
@@ -190,10 +195,14 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         this.after('*:idChange', this._afterIdChange);
 
         this._clear();
+
+        if (config.items) {
+            this.add(config.items, {silent: true});
+        }
     },
 
     destructor: function () {
-        YArray.each(this._items, this._detachList, this);
+        this._clear();
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -229,6 +238,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @param {Object} [options] Data to be mixed into the event facade of the
         `add` event(s) for the added models.
 
+        @param {Number} [options.index] Index at which to insert the added
+            models. If not specified, the models will automatically be inserted
+            in the appropriate place according to the current sort order as
+            dictated by the `comparator()` method, if any.
         @param {Boolean} [options.silent=false] If `true`, no `add` event(s)
             will be fired.
 
@@ -238,8 +251,19 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         var isList = models._isYUIModelList;
 
         if (isList || Lang.isArray(models)) {
-            return YArray.map(isList ? models.toArray() : models, function (model) {
-                return this._add(model, options);
+            return YArray.map(isList ? models.toArray() : models, function (model, index) {
+                var modelOptions = options || {};
+
+                // When an explicit insertion index is specified, ensure that
+                // the index is increased by one for each subsequent item in the
+                // array.
+                if ('index' in modelOptions) {
+                    modelOptions = Y.merge(modelOptions, {
+                        index: modelOptions.index + index
+                    });
+                }
+
+                return this._add(model, modelOptions);
             }, this);
         } else {
             return this._add(models, options);
@@ -317,6 +341,38 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    Executes the supplied function on each model in this list.
+
+    By default, the callback function's `this` object will refer to the model
+    currently being iterated. Specify a `thisObj` to override the `this` object
+    if desired.
+
+    Note: Iteration is performed on a copy of the internal array of models, so
+    it's safe to delete a model from the list during iteration.
+
+    @method each
+    @param {Function} callback Function to execute on each model.
+        @param {Model} callback.model Model instance.
+        @param {Number} callback.index Index of the current model.
+        @param {ModelList} callback.list The ModelList being iterated.
+    @param {Object} [thisObj] Object to use as the `this` object when executing
+        the callback.
+    @chainable
+    @since 3.6.0
+    **/
+    each: function (callback, thisObj) {
+        var items = this._items.concat(),
+            i, item, len;
+
+        for (i = 0, len = items.length; i < len; i++) {
+            item = items[i];
+            callback.call(thisObj || item, item, i, this);
+        }
+
+        return this;
+    },
+
+    /**
     Executes the supplied function on each model in this list. Returns an array
     containing the models for which the supplied function returned a truthy
     value.
@@ -374,8 +430,12 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         }
 
         if (options.asList) {
-            list = new Y.ModelList({model: this.model});
-            filtered.length && list.add(filtered, {silent: true});
+            list = new this.constructor({model: this.model});
+
+            if (filtered.length) {
+                list.add(filtered, {silent: true});
+            }
+
             return list;
         } else {
             return filtered;
@@ -549,7 +609,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
                     });
                 }
 
-                parsed = facade.parsed = self.parse(response);
+                parsed = facade.parsed = self._parse(response);
 
                 self.reset(parsed, options);
                 self.fire(EVT_LOAD, facade);
@@ -616,10 +676,12 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     /**
     Removes the specified model or array of models from this list. You may also
     pass another ModelList instance to remove all the models that are in both
-    that instance and this instance.
+    that instance and this instance, or pass numerical indices to remove the
+    models at those indices.
 
     @method remove
-    @param {Model|Model[]|ModelList} models Models to remove.
+    @param {Model|Model[]|ModelList|Number|Number[]} models Models or indices of
+        models to remove.
     @param {Object} [options] Data to be mixed into the event facade of the
         `remove` event(s) for the removed models.
 
@@ -632,7 +694,18 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         var isList = models._isYUIModelList;
 
         if (isList || Lang.isArray(models)) {
-            return YArray.map(isList ? models.toArray() : models, function (model) {
+            // We can't remove multiple models by index because the indices will
+            // change as we remove them, so we need to get the actual models
+            // first.
+            models = YArray.map(isList ? models.toArray() : models, function (model) {
+                if (Lang.isNumber(model)) {
+                    return this.item(model);
+                }
+
+                return model;
+            }, this);
+
+            return YArray.map(models, function (model) {
                 return this._remove(model, options);
             }, this);
         } else {
@@ -690,6 +763,43 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         }
 
         return this;
+    },
+
+    /**
+    Executes the supplied function on each model in this list, and stops
+    iterating if the callback returns `true`.
+
+    By default, the callback function's `this` object will refer to the model
+    currently being iterated. Specify a `thisObj` to override the `this` object
+    if desired.
+
+    Note: Iteration is performed on a copy of the internal array of models, so
+    it's safe to delete a model from the list during iteration.
+
+    @method some
+    @param {Function} callback Function to execute on each model.
+        @param {Model} callback.model Model instance.
+        @param {Number} callback.index Index of the current model.
+        @param {ModelList} callback.list The ModelList being iterated.
+    @param {Object} [thisObj] Object to use as the `this` object when executing
+        the callback.
+    @return {Boolean} `true` if the callback returned `true` for any item,
+        `false` otherwise.
+    @since 3.6.0
+    **/
+    some: function (callback, thisObj) {
+        var items = this._items.concat(),
+            i, item, len;
+
+        for (i = 0, len = items.length; i < len; i++) {
+            item = items[i];
+
+            if (callback.call(thisObj || item, item, i, this)) {
+                return true;
+            }
+        }
+
+        return false;
     },
 
     /**
@@ -834,7 +944,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         }
 
         facade = Y.merge(options, {
-            index: this._findIndex(model),
+            index: 'index' in options ? options.index : this._findIndex(model),
             model: model
         });
 
@@ -943,10 +1053,28 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    Calls the public, overrideable `parse()` method and returns the result.
+
+    Override this method to provide a custom pre-parsing implementation. This
+    provides a hook for custom persistence implementations to "prep" a response
+    before calling the `parse()` method.
+
+    @method _parse
+    @param {Any} response Server response.
+    @return {Object[]} Array of model attribute hashes.
+    @protected
+    @see ModelList.parse()
+    @since 3.7.0
+    **/
+    _parse: function (response) {
+        return this.parse(response);
+    },
+
+    /**
     Removes the specified _model_ if it's in this list.
 
     @method _remove
-    @param {Model} model Model to remove.
+    @param {Model|Number} model Model or index of the model to remove.
     @param {Object} [options] Data to be mixed into the event facade of the
         `remove` event for the removed model.
       @param {Boolean} [options.silent=false] If `true`, no `remove` event will
@@ -955,14 +1083,21 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _remove: function (model, options) {
-        var index = this.indexOf(model),
-            facade;
+        var index, facade;
 
         options || (options = {});
 
-        if (index === -1) {
+        if (Lang.isNumber(model)) {
+            index = model;
+            model = this.item(index);
+        } else {
+            index = this.indexOf(model);
+        }
+
+        if (index === -1 || !model) {
             this.fire(EVT_ERROR, {
                 error: 'Model is not in the list.',
+                index: index,
                 model: model,
                 src  : 'remove'
             });
@@ -1004,8 +1139,29 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _afterIdChange: function (e) {
-        Lang.isValue(e.prevVal) && delete this._idMap[e.prevVal];
-        Lang.isValue(e.newVal) && (this._idMap[e.newVal] = e.target);
+        var newVal  = e.newVal,
+            prevVal = e.prevVal,
+            target  = e.target;
+
+        if (Lang.isValue(prevVal)) {
+            if (this._idMap[prevVal] === target) {
+                delete this._idMap[prevVal];
+            } else {
+                // The model that changed isn't in this list. Probably just a
+                // bubbled change event from a nested Model List.
+                return;
+            }
+        } else {
+            // The model had no previous id. Verify that it exists in this list
+            // before continuing.
+            if (this.indexOf(target) === -1) {
+                return;
+            }
+        }
+
+        if (Lang.isValue(newVal)) {
+            this._idMap[newVal] = target;
+        }
     },
 
     // -- Default Event Handlers -----------------------------------------------
@@ -1080,4 +1236,4 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 Y.augment(ModelList, Y.ArrayList);
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'array-invoke', 'arraylist', 'base-build', 'escape', 'json-parse', 'model']});
+}, '@VERSION@', {"requires": ["array-extras", "array-invoke", "arraylist", "base-build", "escape", "json-parse", "model"]});

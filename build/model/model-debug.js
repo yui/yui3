@@ -1,9 +1,10 @@
-YUI.add('model', function(Y) {
+YUI.add('model', function (Y, NAME) {
 
 /**
 Attribute-based data model with APIs for getting, setting, validating, and
 syncing attribute values, as well as events for being notified of model changes.
 
+@module app
 @submodule model
 @since 3.4.0
 **/
@@ -418,7 +419,7 @@ Y.Model = Y.extend(Model, Y.Base, {
                     });
                 }
 
-                parsed = facade.parsed = self.parse(response);
+                parsed = facade.parsed = self._parse(response);
 
                 self.setAttrs(parsed, options);
                 self.changed = {};
@@ -533,7 +534,7 @@ Y.Model = Y.extend(Model, Y.Base, {
                     }
 
                     if (response) {
-                        parsed = facade.parsed = self.parse(response);
+                        parsed = facade.parsed = self._parse(response);
                         self.setAttrs(parsed, options);
                     }
 
@@ -689,15 +690,13 @@ Y.Model = Y.extend(Model, Y.Base, {
     If you've specified a custom attribute name in the `idAttribute` property,
     the default `id` attribute will not be included in the returned object.
 
-    Note: This method is named `toJSON()`, but it returns an object, not a JSON
-    string. We know that. It's not because we're idiots who are incapable of
-    naming things. It's because the method name "toJSON" and the object return
-    type are specified in the ECMAScript 5 standard. Adhering to this standard
-    allows you to stringify a model by doing `JSON.stringify(model)` if you want
-    to. Please don't file a bug telling us we're idiots. We'll just sigh, cry a
-    little, and mark the bug invalid.
+    Note: The ECMAScript 5 specification states that objects may implement a
+    `toJSON` method to provide an alternate object representation to serialize
+    when passed to `JSON.stringify(obj)`.  This allows class instances to be
+    serialized as if they were plain objects.  This is why Model's `toJSON`
+    returns an object, not a JSON string.
 
-    See <http://es5.github.com/#x15.12.3>.
+    See <http://es5.github.com/#x15.12.3> for details.
 
     @method toJSON
     @return {Object} Copy of this model's attributes.
@@ -861,6 +860,24 @@ Y.Model = Y.extend(Model, Y.Base, {
     },
 
     /**
+    Calls the public, overrideable `parse()` method and returns the result.
+
+    Override this method to provide a custom pre-parsing implementation. This
+    provides a hook for custom persistence implementations to "prep" a response
+    before calling the `parse()` method.
+
+    @method _parse
+    @param {Any} response Server response.
+    @return {Object} Attribute hash.
+    @protected
+    @see Model.parse()
+    @since 3.7.0
+    **/
+    _parse: function (response) {
+        return this.parse(response);
+    },
+
+    /**
     Calls the public, overridable `validate()` method and fires an `error` event
     if validation fails.
 
@@ -967,4 +984,4 @@ Y.Model = Y.extend(Model, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{requires:['base-build', 'escape', 'json-parse']});
+}, '@VERSION@', {"requires": ["base-build", "escape", "json-parse"]});

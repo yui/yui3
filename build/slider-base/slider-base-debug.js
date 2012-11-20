@@ -1,4 +1,4 @@
-YUI.add('slider-base', function(Y) {
+YUI.add('slider-base', function (Y, NAME) {
 
 /**
  * Create a sliding value range input visualized as a draggable thumb on a
@@ -121,7 +121,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         this.thumb = this.renderThumb();
 
         this.rail.appendChild( this.thumb );
-        // @TODO: insert( contentBox, 'replace' ) or setContent?
+        // @TODO: insert( contentBox, 'replace' ) or setHTML?
         contentBox.appendChild( this.rail );
 
         // <span class="yui3-slider-x">
@@ -141,7 +141,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
             maxCapClass = this.getClassName( 'rail', 'cap', this._key.maxEdge );
 
         return Y.Node.create(
-            Y.substitute( this.RAIL_TEMPLATE, {
+            Y.Lang.sub( this.RAIL_TEMPLATE, {
                 railClass      : this.getClassName( 'rail' ),
                 railMinCapClass: minCapClass,
                 railMaxCapClass: maxCapClass
@@ -173,7 +173,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         var imageUrl = this.get( 'thumbUrl' );
 
         return Y.Node.create(
-            Y.substitute( this.THUMB_TEMPLATE, {
+            Y.Lang.sub( this.THUMB_TEMPLATE, {
                 thumbClass      : this.getClassName( 'thumb' ),
                 thumbShadowClass: this.getClassName( 'thumb', 'shadow' ),
                 thumbImageClass : this.getClassName( 'thumb', 'image' ),
@@ -555,6 +555,8 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         //this.get('boundingBox').toggleClass('');
         this.thumb.set('aria-valuemin', this.get('min'));
         this.thumb.set('aria-valuemax', this.get('max'));
+
+        this._dd.set('lock', this.get('disabled'));
     },
 
     /**
@@ -757,5 +759,4 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
 });
 
 
-
-}, '@VERSION@' ,{requires:['widget', 'substitute', 'dd-constrain', 'event-key']});
+}, '@VERSION@', {"requires": ["widget", "dd-constrain", "event-key"], "skinnable": true});

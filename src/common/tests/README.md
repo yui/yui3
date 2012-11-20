@@ -19,7 +19,7 @@ The subset of unit tests that are coverage-ready. This means they:
 2. Respect the ?filter=raw query string parameter by setting the filter config property in the test like this:
 
     var Y = YUI({
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
     });
 
 3. Use modules that can be instrumented by YUI Test Coverage.

@@ -1,0 +1,29 @@
+YUI().use('button-plugin', 'cssbutton', function(Y){
+    
+    // A basic push button
+    Y.one('#myButton').plug(Y.Plugin.Button);
+    
+    
+    // A disabled button
+    var disabledButton = Y.one('#myDisabledButton');
+    disabledButton.plug(Y.Plugin.Button, {
+        disabled: true
+    });
+    
+    disabledButton.on('click', function(){
+        var label = this.get('label');
+        alert("My label is '"  + label + "'");
+    });
+    
+    // An event button, listening for a click
+    var eventButton = Y.Plugin.Button.createNode({
+        srcNode:'#myEventButton'
+    });
+    
+    eventButton.on('click', function(){
+        var disabled = disabledButton.get('disabled'),
+            newLabel = disabled ? 'Not disabled' : 'Disabled';
+            
+        disabledButton.set('label', newLabel).set('disabled', !disabled);
+    });
+});

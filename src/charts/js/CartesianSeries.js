@@ -2,6 +2,7 @@
  * The CartesianSeries class creates a chart with horizontal and vertical axes.
  *
  * @module charts
+ * @submodule charts-base
  * @class CartesianSeries
  * @extends Base
  * @uses Renderer
@@ -25,7 +26,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      * @private
      */
     _yDisplayName: null,
-    
+
     /**
      * Th x-coordinate for the left edge of the series.
      *
@@ -37,7 +38,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
     /**
      * The y-coordinate for the bottom edge of the series.
-     * 
+     *
      * @property _bottomOrigin
      * @type String
      * @private
@@ -68,40 +69,40 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             yAxis = this.get("yAxis");
         if(xAxis)
         {
-            xAxis.after("dataReady", Y.bind(this._xDataChangeHandler, this));
-            xAxis.after("dataUpdate", Y.bind(this._xDataChangeHandler, this));
+            this._xDataReadyHandle = xAxis.after("dataReady", Y.bind(this._xDataChangeHandler, this));
+            this._xDataUpdateHandle = xAxis.after("dataUpdate", Y.bind(this._xDataChangeHandler, this));
         }
         if(yAxis)
         {
-            yAxis.after("dataReady", Y.bind(this._yDataChangeHandler, this));
-            yAxis.after("dataUpdate", Y.bind(this._yDataChangeHandler, this));
+            this._yDataReadyHandle = yAxis.after("dataReady", Y.bind(this._yDataChangeHandler, this));
+            this._yDataUpdateHandle = yAxis.after("dataUpdate", Y.bind(this._yDataChangeHandler, this));
         }
-        this.after("xAxisChange", this._xAxisChangeHandler);
-        this.after("yAxisChange", this._yAxisChangeHandler);
-        this.after("stylesChange", function(e) {
+        this._xAxisChangeHandle = this.after("xAxisChange", this._xAxisChangeHandler);
+        this._yAxisChangeHandle = this.after("yAxisChange", this._yAxisChangeHandler);
+        this._stylesChangeHandle = this.after("stylesChange", function(e) {
             var axesReady = this._updateAxisData();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this.after("widthChange", function(e) {
+        this._widthChangeHandle = this.after("widthChange", function(e) {
             var axesReady = this._updateAxisData();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this.after("heightChange", function(e) {
+        this._heightChangeHandle = this.after("heightChange", function(e) {
             var axesReady = this._updateAxisData();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this.after("visibleChange", this._handleVisibleChange);
+        this._visibleChangeHandle = this.after("visibleChange", this._handleVisibleChange);
     },
-  
+
     /**
      * Event handler for the xAxisChange event.
      *
@@ -115,7 +116,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         xAxis.after("dataReady", Y.bind(this._xDataChangeHandler, this));
         xAxis.after("dataUpdate", Y.bind(this._xDataChangeHandler, this));
     },
-    
+
     /**
      * Event handler the yAxisChange event.
      *
@@ -144,7 +145,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      *
      * @method _xDataChangeHandler
      * @param {Object} event Event object.
-     * @private 
+     * @private
      */
     _xDataChangeHandler: function(event)
     {
@@ -160,7 +161,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      *
      * @method _yDataChangeHandler
      * @param {Object} event Event object.
-     * @private 
+     * @private
      */
     _yDataChangeHandler: function(event)
     {
@@ -172,11 +173,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * Checks to ensure that both xAxis and yAxis data are available. If so, set the `xData` and `yData` attributes and return `true`. Otherwise, return `false`.
+     * Checks to ensure that both xAxis and yAxis data are available. If so, set the `xData` and `yData` attributes
+     * and return `true`. Otherwise, return `false`.
      *
      * @method _updateAxisData
      * @return Boolean
-     * @private 
+     * @private
      */
     _updateAxisData: function()
     {
@@ -279,20 +281,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         dataLength = xData.length;
         xOffset *= 0.5;
         yOffset *= 0.5;
-        //Assuming a vertical graph has a range/category for its vertical axis.    
+        //Assuming a vertical graph has a range/category for its vertical axis.
         if(direction === "vertical")
         {
             yData = yData.reverse();
         }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
-        this._bottomOrigin = Math.round((dataHeight + topPadding + yOffset)); 
-        for (; i < dataLength; ++i) 
+        this._bottomOrigin = Math.round((dataHeight + topPadding + yOffset));
+        if(yMin < 0)
+        {
+            this._bottomOrigin = this._bottomOrigin - ((0 - yMin) * yScaleFactor);
+        }
+        for (; i < dataLength; ++i)
 		{
             xValue = parseFloat(xData[i]);
             yValue = parseFloat(yData[i]);
             if(isNumber(xValue))
             {
-                nextX = Math.round((((xValue - xMin) * xScaleFactor) + leftPadding + xOffset));
+                nextX = (((xValue - xMin) * xScaleFactor) + leftPadding + xOffset);
             }
             else
             {
@@ -300,7 +306,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             }
             if(isNumber(yValue))
             {
-			    nextY = Math.round(((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor));
+			    nextY = ((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor);
             }
             else
             {
@@ -316,6 +322,48 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         this.set("xMarkerPlane", xMarkerPlane);
         this.set("yMarkerPlane", yMarkerPlane);
         this._dataLength = dataLength;
+    },
+
+    /**
+     * Finds the first valid index of an array coordinates.
+     *
+     * @method _getFirstValidIndex
+     * @param {Array} coords An array of x or y coordinates.
+     * @return Number
+     * @private
+     */
+    _getFirstValidIndex: function(coords)
+    {
+        var coord,
+            i = -1,
+            limit = coords.length;
+        while(!Y_Lang.isNumber(coord) && i < limit)
+        {
+            i += 1;
+            coord = coords[i];
+        }
+        return i;
+    },
+
+    /**
+     * Finds the last valid index of an array coordinates.
+     *
+     * @method _getLastValidIndex
+     * @param {Array} coords An array of x or y coordinates.
+     * @return Number
+     * @private
+     */
+    _getLastValidIndex: function(coords)
+    {
+        var coord,
+            i = coords.length,
+            limit = -1;
+        while(!Y_Lang.isNumber(coord) && i > limit)
+        {
+            i -= 1;
+            coord = coords[i];
+        }
+        return i;
     },
 
     /**
@@ -358,16 +406,16 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             }
         }
     },
-    
+
     /**
-     * Default value for plane offsets when the parent chart's `interactiveType` is `planar`. 
+     * Default value for plane offsets when the parent chart's `interactiveType` is `planar`.
      *
      * @property _defaultPlaneOffset
      * @type Number
      * @private
      */
     _defaultPlaneOffset: 4,
-    
+
     /**
      * Gets the default value for the `styles` attribute. Overrides
      * base implementation.
@@ -403,7 +451,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      * @protected
      */
     _defaultFillColors:["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"],
-    
+
     /**
      * Collection of default colors used for marker borders in a series when not specified by user.
      *
@@ -412,7 +460,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      * @protected
      */
     _defaultBorderColors:["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"],
-    
+
     /**
      * Collection of default colors used for area fills, histogram fills and pie fills in a series when not specified by user.
      *
@@ -449,7 +497,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         type = type || "fill";
         return colors[type][index];
     },
-    
+
     /**
      * Shows/hides contents of the series.
      *
@@ -457,7 +505,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      * @param {Object} e Event object.
      * @protected
      */
-    _handleVisibleChange: function(e) 
+    _handleVisibleChange: function(e)
     {
         this._toggleVisible(this.get("visible"));
     },
@@ -482,20 +530,129 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     destructor: function()
     {
+        var marker,
+            markers = this.get("markers");
+        if(this.get("rendered"))
+        {
+            if(this._xDataReadyHandle)
+            {
+                this._xDataReadyHandle.detach();
+            }
+            if(this._xDataUpdateHandle)
+            {
+                this._xDataUpdateHandle.detach();
+            }
+            if(this._yDataReadyHandle)
+            {
+                this._yDataReadyHandle.detach();
+            }
+            if(this._yDataUpdateHandle)
+            {
+                this._yDataUpdateHandle.detach();
+            }
+            this._xAxisChangeHandle.detach();
+            this._yAxisChangeHandle.detach();
+            this._stylesChangeHandle.detach();
+            this._widthChangeHandle.detach();
+            this._heightChangeHandle.detach();
+            this._visibleChangeHandle.detach();
+        }
+        while(markers && markers.length > 0)
+        {
+            marker = markers.shift();
+            if(marker && marker instanceof Y.Shape)
+            {
+                marker.destroy();
+            }
+        }
         if(this._path)
         {
             this._path.destroy();
+            this._path = null;
         }
         if(this._lineGraphic)
         {
             this._lineGraphic.destroy();
             this._lineGraphic = null;
         }
-        if(this.get("graphic"))
+        if(this._groupMarker)
         {
-            this.get("graphic").destroy();
-        }   
+            this._groupMarker.destroy();
+            this._groupMarker = null;
+        }
     }
+        /**
+         * Event handle for the x-axis' dataReady event.
+         *
+         * @property _xDataReadyHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the x-axis dataUpdate event.
+         *
+         * @property _xDataUpdateHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the y-axis dataReady event.
+         *
+         * @property _yDataReadyHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the y-axis dataUpdate event.
+         * @property _yDataUpdateHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the xAxisChange event.
+         * @property _xAxisChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the yAxisChange event.
+         * @property _yAxisChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the stylesChange event.
+         * @property _stylesChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the widthChange event.
+         * @property _widthChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the heightChange event.
+         * @property _heightChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the visibleChange event.
+         * @property _visibleChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
 }, {
     ATTRS: {
         /**
@@ -535,7 +692,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
                 return val;
             }
         },
-        
+
         /**
          * Name used for for displaying category data
          *
@@ -544,11 +701,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @readOnly
          */
         categoryDisplayName: {
-            readOnly: true,
+            lazyAdd: false,
 
             getter: function()
             {
                 return this.get("direction") == "vertical" ? this.get("yDisplayName") : this.get("xDisplayName");
+           },
+
+            setter: function(val)
+            {
+                if(this.get("direction") == "vertical")
+                {
+                    this._yDisplayName = val;
+                }
+                else
+                {
+                    this._xDisplayName = val;
+                }
+                return val;
             }
         },
 
@@ -560,14 +730,27 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @readOnly
          */
         valueDisplayName: {
-            readOnly: true,
+            lazyAdd: false,
 
             getter: function()
             {
                 return this.get("direction") == "vertical" ? this.get("xDisplayName") : this.get("yDisplayName");
+            },
+
+            setter: function(val)
+            {
+                if(this.get("direction") == "vertical")
+                {
+                    this._xDisplayName = val;
+                }
+                else
+                {
+                    this._yDisplayName = val;
+                }
+                return val;
             }
         },
-        
+
         /**
          * Read-only attribute indicating the type of series.
          *
@@ -575,7 +758,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @type String
          * @default cartesian
          */
-        type: {		
+        type: {
             value: "cartesian"
         },
 
@@ -602,7 +785,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @type Array
          */
         xcoords: {},
-        
+
         /**
          * y coordinates for the series
          *
@@ -626,7 +809,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
                 return this.get("graph").get("chart");
             }
         },
-        
+
         /**
          * Reference to the `Graph` in which the series is drawn into.
          *
@@ -636,25 +819,25 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         graph: {},
 
         /**
-         * Reference to the `Axis` instance used for assigning 
+         * Reference to the `Axis` instance used for assigning
          * x-values to the graph.
          *
          * @attribute xAxis
          * @type Axis
          */
         xAxis: {},
-        
+
         /**
-         * Reference to the `Axis` instance used for assigning 
+         * Reference to the `Axis` instance used for assigning
          * y-values to the graph.
          *
          * @attribute yAxis
          * @type Axis
          */
         yAxis: {},
-        
+
         /**
-         * Indicates which array to from the hash of value arrays in 
+         * Indicates which array to from the hash of value arrays in
          * the x-axis `Axis` instance.
          *
          * @attribute xKey
@@ -668,7 +851,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         },
 
         /**
-         * Indicates which array to from the hash of value arrays in 
+         * Indicates which array to from the hash of value arrays in
          * the y-axis `Axis` instance.
          *
          * @attribute yKey
@@ -696,7 +879,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @type Array
          */
         yData: {},
-       
+
         /**
          * Indicates whether the Series has been through its initial set up.
          *
@@ -715,7 +898,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          */
         width: {
             readOnly: true,
-            
+
             getter: function()
             {
                 this.get("graph").get("width");
@@ -730,7 +913,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          */
         height: {
             readOnly: true,
-            
+
             getter: function()
             {
                 this.get("graph").get("height");
@@ -756,7 +939,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @type Array
          */
         xMarkerPlane: {},
-        
+
         /**
          * Collection of area maps along the yAxis. Used to determine mouseover for multiple
          * series.

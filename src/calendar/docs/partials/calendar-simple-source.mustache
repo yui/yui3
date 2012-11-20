@@ -7,7 +7,7 @@
 }
 </style>
 
-<div id="demo" class="yui3-skin-sam yui3-g">
+<div id="demo" class="yui3-skin-sam yui3-g"> {{>need-skin-comment}}
   <div id="leftcolumn" class="yui3-u">
      <!-- Container for the calendar -->
      <div id="mycalendar"></div>
@@ -29,13 +29,13 @@ YUI().use('calendar', 'datatype-date', 'cssbutton',  function(Y) {
     // #mycalendar container, setting its width to 340px,
     // the flags for showing previous and next month's 
     // dates in available empty cells to true, and setting 
-    // the date to August 2011.           
+    // the date to today's date.          
     var calendar = new Y.Calendar({
       contentBox: "#mycalendar",
       width:'340px',
       showPrevMonth: true,
       showNextMonth: true,
-      date: new Date(2011, 07, 01)}).render();
+      date: new Date()}).render();
     
     // Get a reference to Y.DataType.Date
     var dtdate = Y.DataType.Date;
@@ -51,7 +51,7 @@ YUI().use('calendar', 'datatype-date', 'cssbutton',  function(Y) {
 
       // Format the date and output it to a DOM
       // element.
-      Y.one("#selecteddate").setContent(dtdate.format(newDate));
+      Y.one("#selecteddate").setHTML(dtdate.format(newDate));
     });
 
 

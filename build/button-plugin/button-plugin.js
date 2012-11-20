@@ -1,4 +1,4 @@
-YUI.add('button-plugin', function(Y) {
+YUI.add('button-plugin', function (Y, NAME) {
 
 /**
 * A Button Plugin
@@ -129,4 +129,4 @@ ButtonPlugin.createNode = function(node, config) {
 Y.namespace('Plugin').Button = ButtonPlugin;
 
 
-}, '@VERSION@' ,{requires:['button-core', 'cssbutton', 'node-pluginhost']});
+}, '@VERSION@', {"requires": ["button-core", "cssbutton", "node-pluginhost"]});

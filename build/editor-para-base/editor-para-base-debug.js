@@ -1,4 +1,4 @@
-YUI.add('editor-para-base', function(Y) {
+YUI.add('editor-para-base', function (Y, NAME) {
 
 
     /**
@@ -13,8 +13,8 @@ YUI.add('editor-para-base', function(Y) {
 
     var EditorParaBase = function() {
         EditorParaBase.superclass.constructor.apply(this, arguments);
-    }, HOST = 'host', BODY = 'body', NODE_CHANGE = 'nodeChange', PARENT_NODE = 'parentNode',
-    FIRST_P = BODY + ' > p', P = 'p', BR = '<br>', FC = 'firstChild', LI = 'li';
+    }, HOST = 'host', BODY = 'body',
+    FIRST_P = BODY + ' > p', P = 'p', BR = '<br>';
 
 
     Y.extend(EditorParaBase, Y.Base, {
@@ -73,13 +73,12 @@ YUI.add('editor-para-base', function(Y) {
         * @method _afterPaste
         */
         _afterPaste: function() {
-            var host = this.get(HOST), inst = host.getInstance(),
-                sel = new inst.EditorSelection();
+            var host = this.get(HOST), inst = host.getInstance();
 
             Y.later(50, host, function() {
                 inst.EditorSelection.filterBlocks();
             });
-            
+
         },
         initializer: function() {
             var host = this.get(HOST);
@@ -113,12 +112,12 @@ YUI.add('editor-para-base', function(Y) {
             }
         }
     });
-    
+
     Y.namespace('Plugin');
-    
+
     Y.Plugin.EditorParaBase = EditorParaBase;
 
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@', {"requires": ["editor-base"]});

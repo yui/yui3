@@ -1,4 +1,17 @@
-YUI.add('datatable-head', function(Y) {
+YUI.add('datatable-head', function (Y, NAME) {
+
+/**
+View class responsible for rendering the `<thead>` section of a table. Used as
+the default `headerView` for `Y.DataTable.Base` and `Y.DataTable` classes.
+
+@module datatable
+@submodule datatable-head
+@since 3.5.0
+**/
+var Lang = Y.Lang,
+    fromTemplate = Lang.sub,
+    isArray = Lang.isArray,
+    toArray = Y.Array;
 
 /**
 View class responsible for rendering the `<thead>` section of a table. Used as
@@ -45,6 +58,7 @@ Supported properties of the column objects include:
   * `headerTemplate` - Overrides the instance's `CELL_TEMPLATE` for cells in this
     column only.
   * `abbr`      - The content of the 'abbr' attribute of the `<th>`
+  * `title`     - The content of the 'title' attribute of the `<th>`
   * `className` - Adds this string of CSS classes to the column header
 
 Through the life of instantiation and rendering, the column objects will have
@@ -60,19 +74,11 @@ The column object is also used to provide values for {placeholder} tokens in the
 instance's `CELL_TEMPLATE`, so you can modify the template and include other
 column object properties to populate them.
 
-@module datatable-head
 @class HeaderView
 @namespace DataTable
 @extends View
+@since 3.5.0
 **/
-var Lang = Y.Lang,
-    fromTemplate = Lang.sub,
-    isArray = Lang.isArray,
-    toArray = Y.Array,
-
-    ClassNameManager = Y.ClassNameManager,
-    _getClassName    = ClassNameManager.getClassName;
-
 Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     // -- Instance properties -------------------------------------------------
 
@@ -82,10 +88,11 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>'
+    @default '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}{title}>{content}</th>'
+    @since 3.5.0
     **/
     CELL_TEMPLATE:
-        '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>',
+        '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}{title}>{content}</th>',
 
     /**
     The data representation of the header rows to render.  This is assigned by
@@ -95,6 +102,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @property columns
     @type {Array[]}
     @default (initially unset)
+    @since 3.5.0
     **/
     //TODO: should this be protected?
     //columns: null,
@@ -106,6 +114,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @property ROW_TEMPLATE
     @type {HTML}
     @default '<tr>{content}</tr>'
+    @since 3.5.0
     **/
     ROW_TEMPLATE:
         '<tr>{content}</tr>',
@@ -118,30 +127,51 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @property source
     @type {Object}
     @default (initially unset)
+    @since 3.5.0
     **/
     //TODO: should this be protected?
     //source: null,
 
+    /**
+    HTML templates used to create the `<thead>` containing the table headers.
+
+    @property THEAD_TEMPLATE
+    @type {HTML}
+    @default '<thead class="{className}">{content}</thead>'
+    @since 3.6.0
+    **/
+    THEAD_TEMPLATE: '<thead class="{className}"></thead>',
 
     // -- Public methods ------------------------------------------------------
 
     /**
-    Builds a CSS class name from the provided tokens.  If the instance is
-    created with `cssPrefix` or `source` in the configuration, it will use this
-    prefix (the `_cssPrefix` of the `source` object) as the base token.  This
-    allows class instances to generate markup with class names that correspond
-    to the parent class that is consuming them.
+    Returns the generated CSS classname based on the input.  If the `host`
+    attribute is configured, it will attempt to relay to its `getClassName`
+    or use its static `NAME` property as a string base.
+    
+    If `host` is absent or has neither method nor `NAME`, a CSS classname
+    will be generated using this class's `NAME`.
 
     @method getClassName
-    @param {String} token* Any number of tokens to include in the class name
-    @return {String} The generated class name
+    @param {String} token* Any number of token strings to assemble the
+        classname from.
+    @return {String}
+    @protected
     **/
     getClassName: function () {
-        var args = toArray(arguments);
-        args.unshift(this._cssPrefix);
-        args.push(true);
+        // TODO: add attribute with setter? to host to use property this.host
+        // for performance
+        var host = this.host,
+            NAME = (host && host.constructor.NAME) ||
+                    this.constructor.NAME;
 
-        return _getClassName.apply(ClassNameManager, args);
+        if (host && host.getClassName) {
+            return host.getClassName.apply(host, arguments);
+        } else {
+            return Y.ClassNameManager.getClassName
+                .apply(Y.ClassNameManager,
+                       [NAME].concat(toArray(arguments, 0, true)));
+        }
     },
 
     /**
@@ -152,14 +182,18 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @method render
     @return {HeaderView} The instance
     @chainable
+    @since 3.5.0
     **/
     render: function () {
-        var thead    = this.get('container'),
+        var table    = this.get('container'),
+            thead    = this.theadNode ||
+                        (this.theadNode = this._createTHeadNode()),
             columns  = this.columns,
             defaults = {
                 _colspan: 1,
                 _rowspan: 1,
-                abbr: ''
+                abbr: '',
+                title: ''
             },
             i, len, j, jlen, col, html, content, values;
 
@@ -183,9 +217,13 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
                         values._id = col._id ?
                             ' data-yui3-col-id="' + col._id + '"' : '';
-                        
+
                         if (col.abbr) {
                             values.abbr = ' abbr="' + col.abbr + '"';
+                        }
+
+                        if (col.title) {
+                            values.title = ' title="' + col.title + '"';
                         }
 
                         if (col.className) {
@@ -211,7 +249,11 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                 }
             }
 
-            thead.setContent(html);
+            thead.setHTML(html);
+
+            if (thead.get('parentNode') !== table) {
+                table.insertBefore(thead, table.one('tfoot, tbody'));
+            }
         }
 
         this.bindUI();
@@ -220,15 +262,6 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     },
 
     // -- Protected and private properties and methods ------------------------
-    /**
-    The base token for classes created with the `getClassName` method.
-
-    @property _cssPrefix
-    @type {String}
-    @default 'yui3-table'
-    @protected
-    **/
-    _cssPrefix: ClassNameManager.getClassName('table'),
 
     /**
     Handles changes in the source's columns attribute.  Redraws the headers.
@@ -236,6 +269,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @method _afterColumnsChange
     @param {EventFacade} e The `columnsChange` event object
     @protected
+    @since 3.5.0
     **/
     _afterColumnsChange: function (e) {
         this.columns = this._parseColumns(e.newVal);
@@ -248,21 +282,37 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     @method bindUI
     @protected
+    @since 3.5.0
     **/
     bindUI: function () {
-        if (this.source && !this._eventHandles.columnsChange) {
+        if (!this._eventHandles.columnsChange) {
             // TODO: How best to decouple this?
             this._eventHandles.columnsChange =
-                this.source.after('columnsChange',
+                this.after('columnsChange',
                     Y.bind('_afterColumnsChange', this));
         }
     },
 
     /**
+    Creates the `<thead>` node that will store the header rows and cells.
+
+    @method _createTHeadNode
+    @return {Node}
+    @protected
+    @since 3.6.0
+    **/
+    _createTHeadNode: function () {
+        return Y.Node.create(fromTemplate(this.THEAD_TEMPLATE, {
+            className: this.getClassName('columns')
+        }));
+    },
+    
+    /**
     Destroys the instance.
 
     @method destructor
     @protected
+    @since 3.5.0
     **/
     destructor: function () {
         (new Y.EventHandle(Y.Object.values(this._eventHandles))).detach();
@@ -276,6 +326,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @type {Object}
     @default undefined (initially unset)
     @protected
+    @since 3.5.0
     **/
     //_eventHandles: null,
 
@@ -283,26 +334,18 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     Initializes the instance. Reads the following configuration properties:
 
       * `columns` - (REQUIRED) The initial column information
-      * `cssPrefix` - The base string for classes generated by `getClassName`
-      * `source` - The object to serve as source of truth for column info
+      * `host`    - The object to serve as source of truth for column info
 
     @method initializer
     @param {Object} config Configuration data
     @protected
+    @since 3.5.0
     **/
     initializer: function (config) {
-        config || (config = {});
-
-        var cssPrefix = config.cssPrefix || (config.source || {}).cssPrefix;
-
-        this.source  = config.source;
+        this.host  = config.host;
         this.columns = this._parseColumns(config.columns);
 
         this._eventHandles = [];
-
-        if (cssPrefix) {
-            this._cssPrefix = cssPrefix;
-        }
     },
 
     /**
@@ -342,6 +385,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
       * `children` - Array of columns to appear below this column in the next
                      row.
       * `abbr`     - The content of the 'abbr' attribute of the `<th>`
+      * `title`    - The content of the 'title' attribute of the `<th>`
       * `headerTemplate` - Overrides the instance's `CELL_TEMPLATE` for cells
         in this column only.
 
@@ -365,6 +409,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @return {Array[]} An array of arrays corresponding to the header row
             structure to render
     @protected
+    @since 3.5.0
     **/
     _parseColumns: function (data) {
         var columns = [],
@@ -373,6 +418,9 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
             entry, row, col, children, parent, i, len, j;
         
         if (isArray(data) && data.length) {
+            // don't modify the input array
+            data = data.slice();
+
             // First pass, assign colspans and calculate row count for
             // non-nested headers' rowspan
             stack.push([data, -1]);
@@ -383,10 +431,14 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                 i     = entry[1] + 1;
 
                 for (len = row.length; i < len; ++i) {
-                    col = row[i];
+                    row[i] = col = Y.merge(row[i]);
                     children = col.children;
 
                     Y.stamp(col);
+
+                    if (!col.id) {
+                        col.id = Y.guid();
+                    }
 
                     if (isArray(children) && children.length) {
                         stack.push([children, -1]);
@@ -412,6 +464,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                         for (i = 0, len = row.length; i < len; ++i) {
                             // Can't use .length because in 3+ rows, colspan
                             // needs to aggregate the colspans of children
+                            row[i]._parent   = parent;
                             parent._colspan += row[i]._colspan;
                         }
                     }
@@ -477,4 +530,4 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 });
 
 
-}, '@VERSION@' ,{requires:['datatable-core', 'view', 'classnamemanager']});
+}, '@VERSION@', {"requires": ["datatable-core", "view", "classnamemanager"]});

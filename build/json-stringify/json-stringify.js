@@ -1,4 +1,4 @@
-YUI.add('json-stringify', function(Y) {
+YUI.add('json-stringify', function (Y, NAME) {
 
 /**
  * Provides Y.JSON.stringify method for converting objects to JSON strings.
@@ -8,7 +8,12 @@ YUI.add('json-stringify', function(Y) {
  * @for JSON
  * @static
  */
-var _JSON     = (Y.config.win || {}).JSON,
+// All internals kept private for security reasons
+function fromGlobal(ref) {
+    var g = ((typeof global === 'object') ? global : undefined);
+    return ((Y.UA.nodejs && g) ? g : (Y.config.win || {}))[ref];
+}
+var _JSON     = fromGlobal('JSON'),
     Lang      = Y.Lang,
     isFunction= Lang.isFunction,
     isObject  = Lang.isObject,
@@ -345,4 +350,4 @@ Y.mix(Y.namespace('JSON'),{
 });
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

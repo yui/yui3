@@ -1,4 +1,4 @@
-YUI.add('pluginhost-base', function(Y) {
+YUI.add('pluginhost-base', function (Y, NAME) {
 
     /**
      * Provides the augmentable PluginHost interface, which can be added to any class.
@@ -80,7 +80,10 @@ YUI.add('pluginhost-base', function(Y) {
         
                     if (this.hasPlugin(ns)) {
                         // Update config
-                        this[ns].setAttrs(config);
+                        if (this[ns].setAttrs) {
+                            this[ns].setAttrs(config);
+                        }
+                        else { Y.log("Attempt to replug an already attached plugin, and we can't setAttrs, because it's not Attribute based: " + ns); }
                     } else {
                         // Create new instance
                         this[ns] = new Plugin(config);
@@ -94,7 +97,7 @@ YUI.add('pluginhost-base', function(Y) {
 
         /**
          * Removes a plugin from the host object. This will destroy the 
-         * plugin instance and delete the namepsace from the host object. 
+         * plugin instance and delete the namespace from the host object. 
          *
          * @method unplug
          * @param {String | Function} plugin The namespace of the plugin, or the plugin class with the static NS namespace property defined. If not provided,
@@ -116,7 +119,9 @@ YUI.add('pluginhost-base', function(Y) {
         
                 if (ns) {
                     if (this[ns]) {
-                        this[ns].destroy();
+                        if (this[ns].destroy) {
+                            this[ns].destroy();
+                        }
                         delete this[ns];
                     }
                     if (plugins[ns]) {
@@ -175,4 +180,4 @@ YUI.add('pluginhost-base', function(Y) {
     Y.namespace("Plugin").Host = PluginHost;
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

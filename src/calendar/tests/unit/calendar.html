@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Calendar Tests</title>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+    <style>
+    .testclass {
+        color: #ff0000;
+    }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+<div id="log"></div>
+<div id="container"></div>
+<script type="text/javascript">
+YUI({
+    coverage: ['calendar'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'calendar-tests': {
+            fullpath: './assets/calendar-tests.js',
+            requires: [ 'test', 'calendar', 'node-event-simulate', 'dump' ]
+        }
+    }
+}).use('test-console', 'calendar-tests' , function(Y) {
+    
+    (new Y.Test.Console()).render('#log');
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

@@ -123,7 +123,7 @@ function fileSelect (event) {
 
 	for (var key in fileData) {
 		var output = "File selected: " + fileData[key].name;
-		Y.one("#filename").setContent(output);
+		Y.one("#filename").setHTML(output);
 	}
 }
 ```
@@ -134,11 +134,11 @@ function fileSelect (event) {
 
 ```
 function updateProgress (event) {
-	Y.one("#percent").setContent("Percent uploaded: " + Math.round((100 * event.bytesLoaded / event.bytesTotal)) + "%");
+	Y.one("#percent").setHTML("Percent uploaded: " + Math.round((100 * event.bytesLoaded / event.bytesTotal)) + "%");
 }
 
 function uploadComplete (event) {
-	Y.one("#percent").setContent("Upload complete!");
+	Y.one("#percent").setHTML("Upload complete!");
 }
 
 function uploadFile (event) {

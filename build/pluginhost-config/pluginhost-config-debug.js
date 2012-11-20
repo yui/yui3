@@ -1,4 +1,4 @@
-YUI.add('pluginhost-config', function(Y) {
+YUI.add('pluginhost-config', function (Y, NAME) {
 
     /**
      * Adds pluginhost constructor configuration and static configuration support
@@ -127,4 +127,4 @@ YUI.add('pluginhost-config', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['pluginhost-base']});
+}, '@VERSION@', {"requires": ["pluginhost-base"]});

@@ -115,7 +115,7 @@ Y.Array.each([
 Y.Node.prototype.removeAttribute = function(attr) {
     var node = this._node;
     if (node) {
-        node.removeAttribute(attr);
+        node.removeAttribute(attr, 0); // comma zero for IE < 8 to force case-insensitive
     }
 
     return this;

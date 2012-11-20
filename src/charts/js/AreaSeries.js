@@ -3,6 +3,7 @@
  * and the relevant data points.
  *
  * @module charts
+ * @submodule charts-base
  * @class AreaSeries
  * @extends CartesianSeries
  * @uses Fills
@@ -12,7 +13,7 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
     /**
      * @protected
      *
-     * Renders the series. 
+     * Renders the series.
      *
      * @method drawSeries
      */
@@ -20,7 +21,7 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
     {
         this.drawFill.apply(this, this._getClosingPoints());
     },
-    
+
     /**
      * @protected
      *
@@ -66,12 +67,12 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
         type: {
             value:"area"
         }
-        
+
         /**
          * Style properties used for drawing area fills. This attribute is inherited from `Renderer`. Below are the default values:
          *
          *  <dl>
-         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be 
+         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be
          *      retrieved from the following array:
          *      `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
          *      </dd>
@@ -86,6 +87,6 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 
 
 
-		
 
-		
+
+

@@ -5,16 +5,47 @@
  * @submodule event-focus
  */
 var Event    = Y.Event,
+
     YLang    = Y.Lang,
+
     isString = YLang.isString,
+
     arrayIndex = Y.Array.indexOf,
-    useActivate = YLang.isFunction(
-        Y.DOM.create('<p onbeforeactivate=";"/>').onbeforeactivate);
+
+    useActivate = (function() {
+
+        // Changing the structure of this test, so that it doesn't use inline JS in HTML,
+        // which throws an exception in Win8 packaged apps, due to additional security restrictions:
+        // http://msdn.microsoft.com/en-us/library/windows/apps/hh465380.aspx#differences
+
+        var supported = false,
+            doc = Y.config.doc,
+            p;
+
+        if (doc) {
+
+            p = doc.createElement("p");
+            p.setAttribute("onbeforeactivate", ";");
+
+            // onbeforeactivate is a function in IE8+.
+            // onbeforeactivate is a string in IE6,7 (unfortunate, otherwise we could have just checked for function below).
+            // onbeforeactivate is a function in IE10, in a Win8 App environment (no exception running the test).
+
+            // onbeforeactivate is undefined in Webkit/Gecko.
+            // onbeforeactivate is a function in Webkit/Gecko if it's a supported event (e.g. onclick).
+
+            supported = (p.onbeforeactivate !== undefined);
+        }
+
+        return supported;
+    }());
 
 function define(type, proxy, directEvent) {
     var nodeDataKey = '_' + type + 'Notifiers';
 
     Y.Event.define(type, {
+
+        _useActivate : useActivate,
 
         _attach: function (el, notifier, delegate) {
             if (Y.DOM.isWindow(el)) {
@@ -104,25 +135,27 @@ function define(type, proxy, directEvent) {
             // ancestors() returns the Nodes from top to bottom
             axisNodes._nodes.reverse();
 
-            // Store the count for step 2
-            tmp = count;
-            axisNodes.some(function (node) {
-                var yuid      = Y.stamp(node),
-                    notifiers = notifierData[yuid],
-                    i, len;
+            if (count) {
+                // Store the count for step 2
+                tmp = count;
+                axisNodes.some(function (node) {
+                    var yuid      = Y.stamp(node),
+                        notifiers = notifierData[yuid],
+                        i, len;
 
-                if (notifiers) {
-                    count--;
-                    for (i = 0, len = notifiers.length; i < len; ++i) {
-                        if (notifiers[i].handle.sub.filter) {
-                            delegates.push(notifiers[i]);
+                    if (notifiers) {
+                        count--;
+                        for (i = 0, len = notifiers.length; i < len; ++i) {
+                            if (notifiers[i].handle.sub.filter) {
+                                delegates.push(notifiers[i]);
+                            }
                         }
                     }
-                }
 
-                return !count;
-            });
-            count = tmp;
+                    return !count;
+                });
+                count = tmp;
+            }
 
             // Walk up the parent axis, notifying direct subscriptions and
             // testing delegate filters.

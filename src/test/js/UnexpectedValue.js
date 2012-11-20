@@ -8,6 +8,7 @@
  * @param {Object} unexpected The unexpected value.
  * @namespace Test 
  * @extends AssertionError
+ * @module test
  * @class UnexpectedValue
  * @constructor
  */ 

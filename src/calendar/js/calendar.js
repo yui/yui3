@@ -74,16 +74,6 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
   },
 
   /**
-    * syncUI implementation
-    *
-    * Update the scroll position, based on the current value of scrollY
-    * @method syncUI
-    */  
-  syncUI : function () {
-
-  },
-
-  /**
    * Overrides the _bindCalendarEvents placeholder in CalendarBase
    * and binds calendar events during bindUI stage.
    * @method _bindCalendarEvents
@@ -92,12 +82,22 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
   _bindCalendarEvents : function () {
     var contentBox = this.get('contentBox'),
         pane       = contentBox.one("." + CAL_PANE);
-    pane.on("selectstart", function (ev) { ev.preventDefault();});
-    pane.delegate("click", this._clickCalendar, "." + CAL_DAY, this);
+    pane.on("selectstart", this._preventSelectionStart);
+    pane.delegate("click", this._clickCalendar, "." + CAL_DAY + ", ." + CAL_PREVMONTH_DAY + ", ." + CAL_NEXTMONTH_DAY, this);
     pane.delegate("keydown", this._keydownCalendar, "." + CAL_GRID, this);
     pane.delegate("focus", this._focusCalendarGrid, "." + CAL_GRID, this);
     pane.delegate("focus", this._focusCalendarCell, "." + CAL_DAY, this);
     pane.delegate("blur", this._blurCalendarGrid, "." + CAL_GRID + ",." + CAL_DAY, this);
+  },
+
+  /**
+   * Prevents text selection if it is started within the calendar pane
+   * @method _preventSelectionStart
+   * @param event {Event} The selectstart event
+   * @protected
+   */   
+  _preventSelectionStart : function (event) {
+    event.preventDefault();
   },
 
   /**
@@ -115,12 +115,13 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
 
   /**
    * Unhighlights a specific date node currently highlighted with keyboard highlight class
-   * @method _unhighlightDateNode
+   * @method _unhighlightCurrentDateNode
    * @protected
    */   
   _unhighlightCurrentDateNode : function () {
-    if (this._highlightedDateNode) {
-      this._highlightedDateNode.removeClass(CAL_DAY_HILITED);
+    var allHilitedNodes = this.get("contentBox").all("." + CAL_DAY_HILITED);
+    if (allHilitedNodes) {
+      allHilitedNodes.removeClass(CAL_DAY_HILITED);
     }
   },
 
@@ -172,7 +173,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    */ 
    _keydownCalendar : function (ev) {
     var gridNum = this._getGridNumber(ev.target),
-        curDate = this._highlightedDateNode == null ? null : this._nodeToDate(this._highlightedDateNode),
+        curDate = !this._highlightedDateNode ? null : this._nodeToDate(this._highlightedDateNode),
         keyCode = ev.keyCode,
         dayNum = 0,
         dir = '';
@@ -183,7 +184,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
             dir = 's';
           break;
           case KEY_UP: 
-            dayNum = -7
+            dayNum = -7;
             dir = 'n';
           break;
           case KEY_LEFT: 
@@ -195,6 +196,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
             dir = 'e';
           break;
           case KEY_SPACE: case KEY_ENTER:
+            ev.preventDefault();
             if (this._highlightedDateNode) {
             var selMode = this.get("selectionMode");
             if (selMode === "single" && !this._highlightedDateNode.hasClass(CAL_DAY_SELECTED)) {
@@ -216,7 +218,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
 
       if (keyCode == KEY_DOWN || keyCode == KEY_UP || keyCode == KEY_LEFT || keyCode == KEY_RIGHT) {
 
-      if (curDate == null) {
+      if (!curDate) {
              curDate = ydate.addMonths(this.get("date"), gridNum);
              dayNum = 0;
       }
@@ -264,7 +266,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    * @private
    */   
     _clickCalendar : function (ev) {
-        var clickedCell = ev.target,
+        var clickedCell = ev.currentTarget,
             clickedCellIsDay = clickedCell.hasClass(CAL_DAY) && 
                                !clickedCell.hasClass(CAL_PREVMONTH_DAY) && 
                                !clickedCell.hasClass(CAL_NEXTMONTH_DAY),
@@ -289,47 +291,49 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
                }
                break;
             case("multiple"):
-               if (!ev.metaKey && !ev.ctrlKey && !ev.shiftKey) {
-                    this._clearSelection(true);
-                    this._lastSelectedDate = this._nodeToDate(clickedCell);
-                    this._addDateToSelection(this._lastSelectedDate);
-               }
-               else if (((os == 'macintosh' && ev.metaKey) || (os != 'macintosh' && ev.ctrlKey)) && !ev.shiftKey) {
-                  if (clickedCellIsSelected) {
-                    this._removeDateFromSelection(this._nodeToDate(clickedCell));
-                    this._lastSelectedDate = null;
-                  }
-                  else {
-                    this._lastSelectedDate = this._nodeToDate(clickedCell);
-                    this._addDateToSelection(this._lastSelectedDate);
-                  }
-               }
-               else if (((os == 'macintosh' && ev.metaKey) || (os != 'macintosh' && ev.ctrlKey)) && ev.shiftKey) {
-                  if (this._lastSelectedDate != null) {
-                    var selectedDate = this._nodeToDate(clickedCell);
-                    this._addDateRangeToSelection(selectedDate, this._lastSelectedDate);
-                    this._lastSelectedDate = selectedDate;
-                  }
-                  else {
-                    this._lastSelectedDate = this._nodeToDate(clickedCell);
-                    this._addDateToSelection(this._lastSelectedDate);
-                  }
-
-               }
-               else if (ev.shiftKey) {
-                    if (this._lastSelectedDate != null) {
-                      var selectedDate = this._nodeToDate(clickedCell);
+               if (clickedCellIsDay) {
+                 if (!ev.metaKey && !ev.ctrlKey && !ev.shiftKey) {
                       this._clearSelection(true);
+                      this._lastSelectedDate = this._nodeToDate(clickedCell);
+                      this._addDateToSelection(this._lastSelectedDate);
+                 }
+                 else if (((os == 'macintosh' && ev.metaKey) || (os != 'macintosh' && ev.ctrlKey)) && !ev.shiftKey) {
+                    if (clickedCellIsSelected) {
+                      this._removeDateFromSelection(this._nodeToDate(clickedCell));
+                      this._lastSelectedDate = null;
+                    }
+                    else {
+                      this._lastSelectedDate = this._nodeToDate(clickedCell);
+                      this._addDateToSelection(this._lastSelectedDate);
+                    }
+                 }
+                 else if (((os == 'macintosh' && ev.metaKey) || (os != 'macintosh' && ev.ctrlKey)) && ev.shiftKey) {
+                    if (this._lastSelectedDate) {
+                      var selectedDate = this._nodeToDate(clickedCell);
                       this._addDateRangeToSelection(selectedDate, this._lastSelectedDate);
                       this._lastSelectedDate = selectedDate;
                     }
                     else {
-                      this._clearSelection(true);
                       this._lastSelectedDate = this._nodeToDate(clickedCell);
-                        this._addDateToSelection(this._lastSelectedDate);
+                      this._addDateToSelection(this._lastSelectedDate);
                     }
-               }
-               break;
+  
+                 }
+                 else if (ev.shiftKey) {
+                      if (this._lastSelectedDate) {
+                        var selectedDate = this._nodeToDate(clickedCell);
+                        this._clearSelection(true);
+                        this._addDateRangeToSelection(selectedDate, this._lastSelectedDate);
+                        this._lastSelectedDate = selectedDate;
+                      }
+                      else {
+                        this._clearSelection(true);
+                        this._lastSelectedDate = this._nodeToDate(clickedCell);
+                          this._addDateToSelection(this._lastSelectedDate);
+                      }
+                 }
+              }
+              break;
         }
 
       if (clickedCellIsDay) {
@@ -365,37 +369,57 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
   /**
    * Subtracts one month from the current calendar view.
    * @method subtractMonth
+   * @return {Calendar} A reference to this object
+   * @chainable
    */   
   subtractMonth : function (e) {
     this.set("date", ydate.addMonths(this.get("date"), -1));
-    e.halt();
+    if (e) {
+      e.halt();
+    }
+    return this;
   },
 
   /**
    * Subtracts one year from the current calendar view.
    * @method subtractYear
+   * @return {Calendar} A reference to this object
+   * @chainable
    */ 
   subtractYear : function (e) {
     this.set("date", ydate.addYears(this.get("date"), -1));
-    e.halt();
+    if (e) {
+      e.halt();
+    }
+    return this;
   },
 
   /**
    * Adds one month to the current calendar view.
    * @method addMonth
+   * @return {Calendar} A reference to this object
+   * @chainable
    */   
   addMonth : function (e) {    
     this.set("date", ydate.addMonths(this.get("date"), 1));
-    e.halt();
+    if (e) {
+      e.halt();
+    }
+    return this;
   },
 
   /**
    * Adds one year to the current calendar view.
    * @method addYear
+   * @return {Calendar} A reference to this object
+   * @chainable
    */   
   addYear : function (e) {
     this.set("date", ydate.addYears(this.get("date"), 1));
-    e.halt();
+    if (e) {
+      e.halt();
+    }
+    return this;
   }
 },
 
@@ -427,10 +451,11 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
      * A setting specifying the type of selection the calendar allows.
      * Possible values include:
      * <ul>
-     *   <li>`single`</li> - One date at a time
-     *   <li>`multiple-sticky</li> - Multiple dates, selected one at a time (the dates "stick")
-     *   <li>`multiple`</li> - Multiple dates, selected with Ctrl/Meta keys for additional single
-     *   dates, and Shift key for date ranges.
+     *   <li>`single` - One date at a time</li>
+     *   <li>`multiple-sticky` - Multiple dates, selected one at a time (the dates "stick"). This option
+     *   is appropriate for mobile devices, where function keys from the keyboard are not available.</li>
+     *   <li>`multiple` - Multiple dates, selected with Ctrl/Meta keys for additional single
+     *   dates, and Shift key for date ranges.</li>
      *
      * @attribute selectionMode
      * @type String
@@ -459,16 +484,16 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
             newTopDate = ydate.addMonths(newDate, this._paneNumber - 1);
         var minDate = this.get("minimumDate");
         var maxDate = this.get("maximumDate");
-            if ((minDate == null || ydate.isGreaterOrEqual(newDate, minDate)) && 
-                (maxDate == null || ydate.isGreaterOrEqual(maxDate, newTopDate))) {
+            if ((!minDate || ydate.isGreaterOrEqual(newDate, minDate)) && 
+                (!maxDate || ydate.isGreaterOrEqual(maxDate, newTopDate))) {
                 return newDate;
             }
 
-            else if (minDate != null && ydate.isGreater(minDate, newDate)) {
+            else if (minDate && ydate.isGreater(minDate, newDate)) {
                    return minDate;
             }
 
-            else if (maxDate != null && ydate.isGreater(newTopDate, maxDate)) {
+            else if (maxDate && ydate.isGreater(newTopDate, maxDate)) {
                 var actualMaxDate = ydate.addMonths(maxDate, -1*(this._paneNumber - 1));
                   return actualMaxDate;
             }
@@ -487,10 +512,10 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
     minimumDate: {
       value: null,
       setter: function (val) {
-        if (val != null) {
+        if (val) {
           var curDate = this.get('date'),
               newMinDate = this._normalizeDate(val);
-          if (curDate!= null && !ydate.isGreaterOrEqual(curDate, newMinDate)) {
+          if (curDate && !ydate.isGreaterOrEqual(curDate, newMinDate)) {
               this.set('date', newMinDate);
           }
           return newMinDate;
@@ -513,10 +538,10 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
     maximumDate: {
       value: null,
       setter: function (val) {
-        if (val != null) {
+        if (val) {
           var curDate = this.get('date'),
               newMaxDate = this._normalizeDate(val);
-          if (curDate!= null && !ydate.isGreaterOrEqual(val, ydate.addMonths(curDate, this._paneNumber - 1))) {
+          if (curDate && !ydate.isGreaterOrEqual(val, ydate.addMonths(curDate, this._paneNumber - 1))) {
               this.set('date', ydate.addMonths(newMaxDate, -1*(this._paneNumber -1)));
           }
           return newMaxDate;

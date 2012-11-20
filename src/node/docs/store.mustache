@@ -1,0 +1,69 @@
+<div class="intro">
+    <p>Click an item in the store to send it to the shopping cart.</p>
+    <p>Click an item in the cart to remove it.</p>
+</div>
+
+<div class="example">
+{{>store-css}}
+{{>store-html}}
+{{>store-js}}
+</div>
+<p>This example is built upon the
+<a href="dom-node.html">DOM Method</a> example in this `node` module.
+It just has more CSS and some images.
+</p>
+<h2>Setting up the HTML</h2>
+<p>First we need some HTML for a store.</p>
+```
+<ul id="demo">
+    <li>
+        <a>
+            <img src="{{{componentAssets}}}/images/store_soup_tomato.png">
+            <span class="description">Campbells Tomato Condensed Soup - 10.75 Oz</span>
+            <span class="price">
+                <sup>$</sup><span class="dollars">1</span><sup class="cents">.49</sup>
+            </span>
+        </a>
+    </li>
+    <!-- For each item in the store there's an li like the above -->
+</ul>
+```
+<p>Then we need some HTML for a shopping cart.</p>
+```
+<ul id="demo2">
+    <li class="cart-head">
+        <img src="{{{componentAssets}}}/images/store_cart.png" width="35" height="38"> <span>CART</span>
+    </li>
+</ul>
+```
+<h2>Using DOM Methods</h2>
+<p>Most common DOM methods are available via Node instances. These can be used to add, remove, and retrieve other nodes.</p>
+```
+    clone = item.cloneNode(true);
+    list2.append(clone);
+    item.remove(); // sugar for item.get('parentNode').removeChild(item);
+```
+<h2>The JavaScript</h2>
+<p>
+The script for this example is very similar to the
+<a href="dom-node.html">DOM Method</a> example
+</p>
+```
+{{>store-js}}
+```
+<h2>The CSS</h2>
+<p>
+Just like the <a href="dom-node.html">DOM Method</a> example in this `node` module,
+when an item on the left (store) is clicked, an identical clone of that item
+is added to the list on the right (cart). The only thing that makes the cart
+items look different from the store items is the CSS.
+</p>
+```
+{{>store-css}}
+```
+<h2>Complete Example Source</h2>
+```
+{{>store-css}}
+{{>store-html}}
+{{>store-js}}
+```

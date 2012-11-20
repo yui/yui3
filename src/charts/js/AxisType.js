@@ -2,6 +2,7 @@
  * AxisType is an abstract class that manages the data for an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class AxisType
  * @constructor
  * @extends Axis
@@ -74,17 +75,17 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @private
      */
     GUID: "yuibaseaxis",
-	
+
     /**
      * Type of data used in `Axis`.
      *
      * @property _type
-     * @type String 
+     * @type String
      * @readOnly
      * @private
      */
     _type: null,
-	
+
     /**
      * Storage for `setMaximum` attribute.
      *
@@ -93,7 +94,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @private
      */
     _setMaximum: null,
-	
+
     /**
      * Storage for `dataMaximum` attribute.
      *
@@ -102,7 +103,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @private
      */
     _dataMaximum: null,
-	
+
     /**
      * Storage for `setMinimum` attribute.
      *
@@ -111,7 +112,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @private
      */
     _setMinimum: null,
-	
+
     /**
      * Reference to data array.
      *
@@ -139,7 +140,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @private
      */
     _dataReady: false,
-	
+
     /**
      * Adds an array to the key hash.
      *
@@ -181,14 +182,14 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @method _setDataByKey
      * @param {String} key Key value to use.
      * @param {Array} data Array to use.
-     * @private 
+     * @private
      */
     _setDataByKey: function(key, data)
     {
         var i,
-            obj, 
-            arr = [], 
-            dv = this._dataClone.concat(), 
+            obj,
+            arr = [],
+            dv = this._dataClone.concat(),
             len = dv.length;
         for(i = 0; i < len; ++i)
         {
@@ -222,15 +223,15 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
     /**
      * Removes an array from the key hash.
-     * 
+     *
      * @method removeKey
-     * @param {String} value Indicates what key to use in removing from 
+     * @param {String} value Indicates what key to use in removing from
      * the hash.
      */
     removeKey: function(value)
     {
         var keys = this.get("keys");
-        if(keys.hasOwnProperty(value)) 
+        if(keys.hasOwnProperty(value))
         {
             delete keys[value];
             this._keyChangeHandler();
@@ -243,7 +244,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @method getKeyValueAt
      * @param {String} key value used to look up the correct array
      * @param {Number} index within the array
-     * @return Number 
+     * @return Number
      */
     getKeyValueAt: function(key, index)
     {
@@ -277,9 +278,9 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * Calculates the maximum and minimum values for the `Axis`.
      *
      * @method _updateMinAndMax
-     * @private 
+     * @private
      */
-    _updateMinAndMax: function() 
+    _updateMinAndMax: function()
     {
         var data = this.get("data"),
             max = 0,
@@ -294,7 +295,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             if(len > 1)
             {
                 for(i = 1; i < len; i++)
-                {	
+                {
                     num = data[i];
                     if(isNaN(num))
                     {
@@ -320,15 +321,15 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         var units,
             majorUnit = this.get("styles").majorUnit,
             len = this.get("length");
-        if(majorUnit.determinant === "count") 
+        if(majorUnit.determinant === "count")
         {
             units = majorUnit.count;
         }
-        else if(majorUnit.determinant === "distance") 
+        else if(majorUnit.determinant === "distance")
         {
             units = (len/majorUnit.distance) + 1;
         }
-        return units; 
+        return units;
     },
 
     /**
@@ -353,7 +354,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         }
         return dist;
     },
-    
+
     /**
      * Gets the distance that the first and last ticks are offset from there respective
      * edges.
@@ -420,7 +421,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     },
 
     /**
-     * Returns a string corresponding to the first label on an 
+     * Returns a string corresponding to the first label on an
      * axis.
      *
      * @method getMinimumValue
@@ -432,7 +433,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     },
 
     /**
-     * Returns a string corresponding to the last label on an 
+     * Returns a string corresponding to the last label on an
      * axis.
      *
      * @method getMaximumValue
@@ -456,7 +457,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             setter: function(val)
             {
                 var keys = {},
-                    i, 
+                    i,
                     len,
                     data = this.get("dataProvider");
                 if(Y_Lang.isArray(val))
@@ -464,9 +465,9 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                     len = val.length;
                     for(i = 0; i < len; ++i)
                     {
-                        keys[val[i]] = this._getKeyArray(val[i], data);   
+                        keys[val[i]] = this._getKeyArray(val[i], data);
                     }
-                    
+
                 }
                 else if(Y_Lang.isString(val))
                 {
@@ -483,7 +484,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                         }
                     }
                 }
-	            this._updateTotalDataFlag = true;
+                this._updateTotalDataFlag = true;
                 return keys;
             }
         },
@@ -509,7 +510,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
          *Returns the type of axis data
          *  <dl>
          *      <dt>time</dt><dd>Manages time data</dd>
-         *      <dt>stacked</dt><dd>Manages stacked numeric data</dd>      
+         *      <dt>stacked</dt><dd>Manages stacked numeric data</dd>
          *      <dt>numeric</dt><dd>Manages numeric data</dd>
          *      <dt>category</dt><dd>Manages categorical data</dd>
          *  </dl>
@@ -552,7 +553,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             getter: function ()
             {
                 if(!this._dataMaximum)
-                {   
+                {
                     this._updateMinAndMax();
                 }
                 return this._dataMaximum;
@@ -635,7 +636,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         },
 
         /**
-         * Determines whether the maximum is calculated or explicitly 
+         * Determines whether the maximum is calculated or explicitly
          * set by the user.
          *
          * @attribute setMax
@@ -685,7 +686,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
         /**
          * Array containing all the keys in the axis.
-        
+
          * @attribute keyCollection
          * @type Array
          */
@@ -693,7 +694,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             getter: function()
             {
                 var keys = this.get("keys"),
-                    i, 
+                    i,
                     col = [];
                 for(i in keys)
                 {

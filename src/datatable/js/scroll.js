@@ -356,7 +356,7 @@ Y.mix(Scrollable.prototype, {
 
         if (scrollbar && scroller && !this._scrollbarEventHandle) {
             this._scrollbarEventHandle = new Y.Event.Handle([
-                scrollbar.on('scroll', this._syncScrollPosition, this, 'virtual'),
+                scrollbar.on('scroll', this._syncScrollPosition, this),
                 scroller.on('scroll', this._syncScrollPosition, this)
             ]);
         }
@@ -396,6 +396,7 @@ Y.mix(Scrollable.prototype, {
             heightChange : Y.bind('_afterScrollHeightChange', this),
             widthChange  : Y.bind('_afterScrollWidthChange', this),
             captionChange: Y.bind('_afterScrollCaptionChange', this),
+            scrollableChange: Y.bind('_afterScrollableChange', this),
             // FIXME: this is a last minute hack to work around the fact that
             // DT doesn't use a tableView to render table content that can be
             // replaced with a scrolling table view.  This must be removed asap!
@@ -439,7 +440,9 @@ Y.mix(Scrollable.prototype, {
                     className: this.getClassName('scrollbar')
                 }));
 
-            scrollbar.setStyle('width', Y.DOM.getScrollbarWidth() + 'px');
+            // IE 6-10 require the scrolled area to be visible (at least 1px)
+            // or they don't respond to clicking on the scrollbar rail or arrows
+            scrollbar.setStyle('width', (Y.DOM.getScrollbarWidth() + 1) + 'px');
         }
 
         return scrollbar;
@@ -575,6 +578,7 @@ Y.mix(Scrollable.prototype, {
     _disableYScrolling: function () {
         this._removeYScrollHeader();
         this._removeYScrollNode();
+        this._removeYScrollContainer();
         this._removeScrollbar();
     },
 
@@ -606,8 +610,9 @@ Y.mix(Scrollable.prototype, {
         this.after(['scrollableChange', 'heightChange', 'widthChange'],
             this._setScrollProperties);
 
+        this.after('renderView', Y.bind('_syncScrollUI', this));
+
         Y.Do.after(this._bindScrollUI, this, 'bindUI');
-        Y.Do.after(this._syncScrollUI, this, 'syncUI');
     },
 
     /**
@@ -644,7 +649,26 @@ Y.mix(Scrollable.prototype, {
             scroller.replace(scroller.get('childNodes').toFrag());
             scroller.remove().destroy(true);
 
-            delete this._yScrollNode;
+            delete this._xScrollNode;
+        }
+    },
+
+    /**
+    Removes the `<div>` wrapper used to contain the data table and fixed header
+    when the table is vertically scrolling.
+
+    @method _removeYScrollContainer
+    @protected
+    @since 3.5.0
+    **/
+    _removeYScrollContainer: function () {
+        var scroller = this._yScrollContainer;
+
+        if (scroller) {
+            scroller.replace(scroller.get('childNodes').toFrag());
+            scroller.remove().destroy(true);
+
+            delete this._yScrollContainer;
         }
     },
 
@@ -673,8 +697,11 @@ Y.mix(Scrollable.prototype, {
     @since 3.5.0
     **/
     _removeYScrollNode: function () {
-        if (this._yScrollNode) {
-            this._yScrollNode.remove().destroy(true);
+        var scroller = this._yScrollNode;
+
+        if (scroller) {
+            scroller.replace(scroller.get('childNodes').toFrag());
+            scroller.remove().destroy(true);
 
             delete this._yScrollNode;
         }
@@ -689,9 +716,14 @@ Y.mix(Scrollable.prototype, {
     **/
     _removeScrollbar: function () {
         if (this._scrollbarNode) {
-            this._scrollBarNode.remove().destroy(true);
+            this._scrollbarNode.remove().destroy(true);
 
-            delete this._scrollBarNode;
+            delete this._scrollbarNode;
+        }
+        if (this._scrollbarEventHandle) {
+            this._scrollbarEventHandle.detach();
+
+            delete this._scrollbarEventHandle;
         }
     },
 
@@ -744,14 +776,14 @@ Y.mix(Scrollable.prototype, {
 
     @method _syncScrollPosition
     @param {DOMEventFacade} e The scroll event
-    @param {String} [source] The string "virtual" if the event originated from
-                        the virtual scrollbar
     @protected
     @since 3.5.0
     **/
-    _syncScrollPosition: function (e, source) {
+    _syncScrollPosition: function (e) {
         var scrollbar = this._scrollbarNode,
-            scroller  = this._yScrollNode;
+            scroller  = this._yScrollNode,
+            source    = e.currentTarget,
+            other;
 
         if (scrollbar && scroller) {
             if (this._scrollLock && this._scrollLock.source !== source) {
@@ -762,11 +794,8 @@ Y.mix(Scrollable.prototype, {
             this._scrollLock = Y.later(300, this, this._clearScrollLock);
             this._scrollLock.source = source;
 
-            if (source === 'virtual') {
-                scroller.set('scrollTop', scrollbar.get('scrollTop'));
-            } else {
-                scrollbar.set('scrollTop', scroller.get('scrollTop'));
-            }
+            other = (source === scrollbar) ? scroller : scrollbar;
+            other.set('scrollTop', source.get('scrollTop'));
         }
     },
 
@@ -971,6 +1000,7 @@ Y.mix(Scrollable.prototype, {
     **/
     _syncXScrollUI: function (xy) {
         var scroller     = this._xScrollNode,
+            yScroller    = this._yScrollContainer,
             table        = this._tableNode,
             width        = this.get('width'),
             bbWidth      = this.get('boundingBox').get('offsetWidth'),
@@ -982,7 +1012,7 @@ Y.mix(Scrollable.prototype, {
 
             // Not using table.wrap() because IE went all crazy, wrapping the
             // table in the last td in the table itself.
-            table.replace(scroller).appendTo(scroller);
+            (yScroller || table).replace(scroller).appendTo(scroller);
         }
 
         // Can't use offsetHeight - clientHeight because IE6 returns
@@ -1192,8 +1222,11 @@ Y.mix(Scrollable.prototype, {
                       styleDim(scroller, 'borderTopWidth') +
                       scroller.get('offsetTop')) + 'px',
 
+                // Minus 1 because IE 6-10 require the scrolled area to be
+                // visible by at least 1px or it won't respond to clicks on the
+                // scrollbar rail or endcap arrows.
                 left: (scroller.get('offsetWidth') -
-                       Y.DOM.getScrollbarWidth() -
+                       Y.DOM.getScrollbarWidth() - 1 -
                        styleDim(scroller, 'borderRightWidth')) + 'px'
             });
         }

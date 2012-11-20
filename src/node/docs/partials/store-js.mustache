@@ -1,0 +1,23 @@
+<script type="text/javascript">
+YUI().use('node', 'event-touch', function(Y) {
+    var onClick = function(e) {
+        e.preventDefault();
+        var item = e.currentTarget,
+            list2 = Y.one('#demo2');
+
+        if (item.get('parentNode') === list2) { // remove if click is in the cart
+            // remove from cart only if it's not the cart header
+            if (item.hasClass('cart-head') === false) {
+                item.remove(); // sugar for item.get('parentNode').removeChild(item);
+            }
+        } else { // else add a clone of the clicked item to the cart
+            list2.append(item.cloneNode(true));
+        }
+    };
+
+    Y.one('#demo').delegate('click', onClick, 'li');
+    Y.one('#demo').delegate('touchstart', onClick, 'li');
+    Y.one('#demo2').delegate('click', onClick, 'li');
+    Y.one('#demo2').delegate('touchstart', onClick, 'li');
+});
+</script>
