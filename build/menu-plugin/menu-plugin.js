@@ -73,12 +73,7 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
 
     // -- Protected Methods ----------------------------------------------------
     _attachMenuPluginEvents: function () {
-        var doc = Y.one('doc');
-
         // Events added to this._menuEvents will be cleaned up by Y.Menu.
-        this._menuEvents.push(
-            doc.after('mousedown', this._afterDocMouseDown, this)
-        );
 
         if (this.get('showOnClick')) {
             this.afterHostEvent('click', this._afterHostClick);
@@ -88,7 +83,7 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
             // If the host node is the <body> element, we need to listen on the
             // document.
             if (this._hostIsBody) {
-                this._menuEvents.push(doc.on('contextmenu', this._onHostContext, this));
+                this._menuEvents.push(Y.one('doc').on('contextmenu', this._onHostContext, this));
             } else {
                 this.onHostEvent('contextmenu', this._onHostContext);
             }
@@ -101,12 +96,26 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
                 mouseenter: this._afterHostMouseEnter,
                 mouseleave: this._afterHostMouseLeave
             });
-
-            this._menuEvents.push(this.get('container').after({
-                mouseenter: Y.bind(this._afterContainerMouseEnter, this),
-                mouseleave: Y.bind(this._afterContainerMouseLeave, this)
-            }));
         }
+    },
+
+    /**
+    Returns an efficient test function that can be passed to `Y.Node#ancestor()`
+    to test whether a node is this menu's container or its plugin host.
+
+    This is broken out to make overriding easier in subclasses.
+
+    @method _getAncestorTestFn
+    @return {Function} Test function.
+    @protected
+    **/
+    _getAncestorTestFn: function () {
+        var container = this.get('container'),
+            host      = this._host;
+
+        return (function (node) {
+            return node === container || node === host;
+        });
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -123,7 +132,7 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
     },
 
     _afterHostFocus: function () {
-        clearTimeout(this._pluginHideTimeout);
+        clearTimeout(this._timeouts.menu);
 
         if (!this.rendered) {
             this.render();
@@ -133,7 +142,7 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
     },
 
     _afterHostMouseEnter: function () {
-        clearTimeout(this._pluginHideTimeout);
+        clearTimeout(this._timeouts.menu);
 
         if (!this.rendered) {
             this.render();
@@ -145,36 +154,9 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
     _afterHostMouseLeave: function () {
         var self = this;
 
-        this._pluginHideTimeout = setTimeout(function () {
+        this._timeouts.menu = setTimeout(function () {
             self.hide();
         }, 300);
-    },
-
-    _afterContainerMouseEnter: function () {
-        clearTimeout(this._pluginHideTimeout);
-    },
-
-    _afterContainerMouseLeave: function () {
-        var self = this;
-
-        this._pluginHideTimeout = setTimeout(function () {
-            self.hide();
-        }, 300);
-    },
-
-    _afterDocMouseDown: function (e) {
-        if (!this.get('visible')) {
-            return;
-        }
-
-        var container = this.get('container'),
-            host      = this._hostIsBody ? null : this._host;
-
-        if (!e.target.ancestor(function (node) {
-            return node === container || node === host;
-        }, true)) {
-            this.hide();
-        }
     },
 
     _onHostContext: function (e) {
@@ -190,6 +172,18 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
     NS: 'menu',
 
     ATTRS: {
+        /**
+        If `true`, this menu will be hidden when the user moves the mouse
+        outside the menu.
+
+        @attribute {Boolean} hideOnMouseLeave
+        @default true
+        **/
+        hideOnMouseLeave: {
+            // Overrides the default value in Y.Menu.
+            value: true
+        },
+
         /**
         If `true`, this menu will be shown when the host node is clicked with
         the left mouse button or (in the case of `<button>`, `<input>`, and
