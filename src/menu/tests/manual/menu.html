@@ -27,7 +27,7 @@
     <button id="move-bottom">Move to bottom</button>
 </p>
 
-<div id="menu" class="yui3-menu-open"></div>
+<div id="menu"></div>
 
 <script src="../../../../build/yui/yui.js"></script>
 <script>
@@ -38,6 +38,7 @@ var Y = YUI({
 
 var menu = new Y.Menu({
     container: '#menu',
+    hideOnOutsideClick: false,
 
     items: [
         {label: 'Test Menu', type: 'heading'},
@@ -100,6 +101,7 @@ var menu = new Y.Menu({
 });
 
 menu.render();
+menu.show();
 
 menu.on('itemClick#item2-1', function (e) {
     console.log('click!');
