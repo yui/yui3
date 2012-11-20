@@ -13,7 +13,7 @@ YUI.add('test-simple-example-tests', function(Y) {
         'console has entries': function() {
             var entries = Y.all('#testLogger .yui3-console-entry');
 
-            Assert.isTrue((entries.size() > 5), 'Should be at least 5 entries in the console');
+            Assert.isTrue((entries.size() >= 3), 'Should be at least 3 entries in the console');
         }
     }));
 

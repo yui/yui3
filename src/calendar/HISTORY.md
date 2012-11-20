@@ -1,6 +1,26 @@
 Calendar Change History
 =======================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
   * Bug fixes for 2532262, 2532277, 2531828.

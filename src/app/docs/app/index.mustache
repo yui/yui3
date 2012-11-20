@@ -522,7 +522,7 @@ The following is a simple <a href="http://nodejs.org/">Node.js</a> <a href="http
 var express = require('express'),
     server  = express();
 
-// Handles requests to the root path ("/") my simply sending the "shell" page
+// Handles requests to the root path ("/") by simply sending the "shell" page
 // which creates the `Y.App` instance.
 server.get('/', function (req, res) {
     res.sendfile('index.html');
@@ -1255,7 +1255,7 @@ The following example uses both the `Y.App.Content.route` for the `"/about/"` pa
 ```javascript
 Y.PeopleView = Y.Base.create('people', Y.View, [], {
     events: {
-        '.person': {click: showPersonOverlay}
+        '.person': {click: 'showPersonOverlay'}
     },
 
     showPersonOverlay: function (e) {
@@ -1953,12 +1953,12 @@ The following example demonstrates how this hypothetical users app would define 
 
 ```
 // Create the `UsersView`.
-Y.UsersView = Y.Base.create('usersView', Y.View, [] {
+Y.UsersView = Y.Base.create('usersView', Y.View, [], {
     // Implementation would be here...
 });
 
 // Create the `UserView`.
-Y.UserView = Y.Base.create('userView', Y.View, [] {
+Y.UserView = Y.Base.create('userView', Y.View, [], {
     // Implementation would be here...
 });
 

@@ -32,7 +32,7 @@ var getCN                 = Y.ClassNameManager.getClassName,
     L           = Y.Lang,
     node        = Y.Node,
     create      = node.create,
-    substitute  = Y.substitute,
+    substitute  = L.sub,
     each        = Y.each,
     hasVal      = Y.Array.hasValue,
     iOf         = Y.Array.indexOf,
@@ -367,6 +367,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * Selects a given date or array of dates.
      * @method selectDates
      * @param {Date|Array} dates A `Date` or `Array` of `Date`s.
+     * @return {CalendarBase} A reference to this object
+     * @chainable
      */
     selectDates : function (dates) {
       if (ydate.isValidDate(dates)) {
@@ -375,6 +377,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
       else if (L.isArray(dates)) {
          this._addDatesToSelection(dates);
       }
+      return this;
     },
 
     /**
@@ -383,6 +386,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @method deselectDates
      * @param {Date|Array} [dates] A `Date` or `Array` of `Date`s, or no
      * argument if all dates should be deselected.
+     * @return {CalendarBase} A reference to this object
+     * @chainable
      */
     deselectDates : function (dates) {
       if (!dates) {
@@ -394,6 +399,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
       else if (L.isArray(dates)) {
          this._removeDatesFromSelection(dates);
       }
+      return this;
     },
 
     /**
@@ -620,7 +626,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @method _renderSelectedDates
      * @private
      */
-  _renderSelectedDates : function () {
+    _renderSelectedDates : function () {
     this.get("contentBox").all("." + CAL_DAY_SELECTED).removeClass(CAL_DAY_SELECTED).setAttribute("aria-selected", false);
     
         for (var paneNum = 0; paneNum < this._paneNumber; paneNum++) {
@@ -642,7 +648,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @return {Node} The node wrapping the DOM element of the cell the date 
      * corresponds to.
      */
-  _dateToNode : function (oDate) {
+    _dateToNode : function (oDate) {
     var day = oDate.getDate(),
             col = 0,
             daymod = day%7,
@@ -715,7 +721,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @protected
      * @return {Date} The date corresponding to the DOM element that the given node wraps.
      */
-  _nodeToDate : function (oNode) {
+    _nodeToDate : function (oNode) {
     
         var idParts = oNode.get("id").split("_").reverse(),
             paneNum = parseInt(idParts[2], 10),
@@ -733,7 +739,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @method _bindCalendarEvents
      * @protected
      */
-  _bindCalendarEvents : function () {
+    _bindCalendarEvents : function () {
     
   },
 
@@ -948,7 +954,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @method _afterHeaderRendererChange
      * @private
      */ 
-  _afterHeaderRendererChange : function () {
+    _afterHeaderRendererChange : function () {
     var headerCell = this.get("contentBox").one("." + CAL_HD_LABEL);
     headerCell.setContent(this._updateCalendarHeader(this.get('date')));
   },
@@ -970,7 +976,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @method _afterDateChange
      * @private
      */ 
-  _afterDateChange : function () {
+    _afterDateChange : function () {
     
     var contentBox = this.get('contentBox'),
         headerCell = contentBox.one("." + CAL_HD).one("." + CAL_HD_LABEL),
@@ -1008,7 +1014,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * element ids in the given pane.
      * @private
      */ 
-  _initCalendarPane : function (baseDate, pane_id) {
+    _initCalendarPane : function (baseDate, pane_id) {
         // Initialize final output HTML string
     var calString = '',
         // Get a list of short weekdays from the internationalization package, or else use default English ones.
@@ -1115,7 +1121,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @param {Node} pane The node corresponding to the calendar pane to be rerenders.
      * @private
      */ 
-  _rerenderCalendarPane : function (newDate, pane) {
+    _rerenderCalendarPane : function (newDate, pane) {
 
        // Get the first day of the week from the internationalization package, or else use Sunday as default.
      var firstday = this.get('strings.first_weekday') || 0,
@@ -1252,7 +1258,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @param {Date} baseDate The date with which to initialize the calendar.
      * @private
      */          
-  _initCalendarHTML : function (baseDate) {
+    _initCalendarHTML : function (baseDate) {
         // Instantiate the partials holder
         var partials = {},
             // Counter for iterative template replacement.
@@ -1630,4 +1636,4 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 });
 
 
-}, '@VERSION@', {"requires": ["widget", "substitute", "datatype-date", "datatype-date-math", "cssgrids"], "lang": ["de", "en", "fr", "ja", "nb-NO", "pt-BR", "ru", "zh-HANT-TW"], "skinnable": true});
+}, '@VERSION@', {"requires": ["widget", "substitute", "datatype-date", "datatype-date-math", "cssgrids"], "lang": ["de", "en", "es", "es-AR", "fr", "it", "ja", "nb-NO", "nl", "pt-BR", "ru", "zh-HANT-TW"], "skinnable": true});

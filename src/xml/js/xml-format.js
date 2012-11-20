@@ -24,6 +24,10 @@ Y.mix(Y.namespace("XML"), {
      */
     format: function(data) {
         try {
+            if(!LANG.isUndefined(data.getXml)) {
+                return data.getXml();
+            }
+
             if(!LANG.isUndefined(XMLSerializer)) {
                 return (new XMLSerializer()).serializeToString(data);
             }

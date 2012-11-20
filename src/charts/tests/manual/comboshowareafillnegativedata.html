@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3../../../../../ml4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>Combo Chart with area fill and all negative data</title>
+<style>
+#mychart {
+    width:500px;
+    height:350px;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="../../../../build/cssfonts/fonts-min.css">
+</head>		
+<body class="yui3-skin-sam">
+<script type="text/javascript" src="../../../../build/yui/yui-min.js"></script>
+<h3>Combo Chart with area fill and all negative data</h3>
+<div id="mychart"></div>
+<script type="text/javascript">            
+    YUI({
+        defaultGraphicEngine: (window.location.search.match(/[?&]defaultGraphicEngine=([^&]+)/) || [])[1] || 'svg',
+		filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    }).use('charts', function (Y) 
+    { 
+        var myDataValues = [ 
+            {category:"5/1/2010", values:-2000, expenses:-3700, revenue:-2200}, 
+            {category:"5/2/2010", values:-50, expenses:-9100, revenue:-100}, 
+            {category:"5/3/2010", values:-400, expenses:-1100, revenue:-1500}, 
+            {category:"5/4/2010", values:-200, expenses:-1900, revenue:-2800}, 
+            {category:"5/5/2010", values:-5000, expenses:-100, revenue:-2650}
+        ], 
+        mychart = new Y.Chart({
+            showAreaFill: true,
+            dataProvider:myDataValues, 
+            render:"#mychart"
+        });
+    });
+</script>
+</body>
+</html>

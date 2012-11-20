@@ -233,13 +233,16 @@ YUI.add('imageloader-tests', function(Y) {
         name: "Fold Conditional Loading",
 
         setUp: function() {
-            /* heights:
+            /* absolute postions of images:
              *   top: 130
              *   mid: 350
              *   bot: 500
              */
+            var myFoldDistance = 20;
+            Y.one('.fold-bottom-visual-indicator').setStyle('height', myFoldDistance);
+
             this.imageUrl = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/japan.jpg';
-            this.foldGroup = new Y.ImgLoadGroup({ name: 'foldConditionalGroup', foldDistance: 20 });
+            this.foldGroup = new Y.ImgLoadGroup({ name: 'foldConditionalGroup', foldDistance: myFoldDistance });
             this.foldGroup.registerImage({ domId: 'foldImgTop', srcUrl: this.imageUrl });
             this.foldGroup.registerImage({ domId: 'foldImgMiddle', srcUrl: this.imageUrl });
             this.foldGroup.registerImage({ domId: 'foldImgBottom', srcUrl: this.imageUrl });
@@ -250,27 +253,33 @@ YUI.add('imageloader-tests', function(Y) {
 
         testFoldChecks: function() {
             // override DOM's viewportRegion function so that the real browser viewport is not a variable in this test
+            var bottomVal = 320;
+            Y.one('.fold-bottom-visual-indicator').setStyle('top', bottomVal);
             Y.DOM.viewportRegion = function() {
-                return { bottom: 320 };
+                return { bottom: bottomVal };
             };
+
             // fold is at position where only the top image is loaded
             this.foldGroup._foldCheck();
-            Y.Assert.areEqual(this.groupTopImage.src, this.imageUrl);
-            Y.Assert.areEqual(this.groupMidImage.src, '');
-            Y.Assert.areEqual(this.groupBotImage.src, '');
+            Y.Assert.areEqual(this.imageUrl, this.groupTopImage.src, 'top image should load/display with an src = "...japan.jpg"');
+            Y.Assert.areEqual('', this.groupMidImage.src, 'mid image should *not* load, has an src=""');
+            Y.Assert.areEqual('', this.groupBotImage.src, 'bot image should *not* load, has an src=""');
 
             // extend viewport down so that middle image is within distance of the fold and loads
+            bottomVal = 355;
+            Y.one('.fold-bottom-visual-indicator').setStyle('top', bottomVal);
             Y.DOM.viewportRegion = function() {
-                return { bottom: 340 };
+                return { bottom: bottomVal };
             };
+
             this.foldGroup._foldCheck();
-            Y.Assert.areEqual(this.groupTopImage.src, this.imageUrl);
-            Y.Assert.areEqual(this.groupMidImage.src, this.imageUrl);
-            Y.Assert.areEqual(this.groupBotImage.src, '');
+            Y.Assert.areEqual(this.imageUrl, this.groupTopImage.src, 'top image should load/display with an src = "...japan.jpg"');
+            Y.Assert.areEqual(this.imageUrl, this.groupMidImage.src, 'mid image should load/display with an src = "...japan.jpg"');
+            Y.Assert.areEqual('', this.groupBotImage.src, 'bot image should *not* load, has an src=""');
         },
         _should: {
             fail: {
-                'testFoldChecks': Y.UA.ie
+                'testFoldChecks': false  //(Y.UA.ie && Y.UA.ie < 9)
             }
         }
     });

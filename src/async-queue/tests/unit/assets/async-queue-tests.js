@@ -674,15 +674,7 @@ suite.add(new Y.Test.Case({
                 {
                     fn: function () {
                         results.push("N");
-                        Y.io(Y.guid() + '.html', { // 404
-                            on : {
-                                failure : function () {
-                                    results.push("T");
-                                }
-                            }
-                        });
-                    },
-                    waitForIOResponse : true
+                    }
                 });
 
         q.on('execute',function () { results.push("(onExec)"); });

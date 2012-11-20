@@ -242,7 +242,7 @@ YUI.add('uploader-queue', function (Y, NAME) {
           updatedEvent.originEvent = event;
           updatedEvent.file = event.target;
 
-          this.fire("uploadcacel", updatedEvent);
+          this.fire("uploadcancel", updatedEvent);
         },
 
 
@@ -651,5 +651,6 @@ YUI.add('uploader-queue', function (Y, NAME) {
 
     Y.namespace('Uploader');
     Y.Uploader.Queue = UploaderQueue;
+
 
 }, '@VERSION@', {"requires": ["base"]});

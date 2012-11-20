@@ -1,7 +1,7 @@
 /**
- * <a href="http://www.w3.org/TR/NOTE-VML">VML</a> implementation of the <a href="Rect.html">`Rect`</a> class. 
- * `VMLRect` is not intended to be used directly. Instead, use the <a href="Rect.html">`Rect`</a> class. 
- * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
+ * <a href="http://www.w3.org/TR/NOTE-VML">VML</a> implementation of the <a href="Rect.html">`Rect`</a> class.
+ * `VMLRect` is not intended to be used directly. Instead, use the <a href="Rect.html">`Rect`</a> class.
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a>
  * capabilities, the <a href="Rect.html">`Rect`</a> class will point to the `VMLRect` class.
  *
  * @module graphics
@@ -12,7 +12,7 @@ VMLRect = function()
 {
 	VMLRect.superclass.constructor.apply(this, arguments);
 };
-VMLRect.NAME = "rect"; 
+VMLRect.NAME = "rect";
 Y.extend(VMLRect, Y.VMLShape, {
 	/**
 	 * Indicates the type of shape

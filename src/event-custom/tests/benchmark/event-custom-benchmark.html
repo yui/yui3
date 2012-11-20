@@ -10,8 +10,8 @@
 
 <div id="log"></div>
 
-<applet code="nano" archive="http://localhost/benchmark/nano.jar" style="display: none;"></applet>
-<script src="http://localhost/benchmark/benchmark.js"></script>
+<applet code="nano" archive="https://github.com/bestiejs/benchmark.js/raw/v1.0.0/nano.jar" style="display: none;"></applet>
+        <script type='text/javascript' src="https://raw.github.com/bestiejs/benchmark.js/v1.0.0/benchmark.js"></script>
 
 <!--script src="http://yui.yahooapis.com/3.6.0pr2/build/yui/yui.js"></script-->
 <script src="../../../../build/yui/yui.js"></script>
@@ -48,8 +48,8 @@ var Y = YUI({
         Y.log('Starting benchmarks.');
     });
 
-    suite.on('cycle', function (ev, bench) {
-        Y.log(String(bench));
+    suite.on('cycle', function (ev) {
+        Y.log(String(ev.target));
     });
 
     suite.on('complete', function () {
@@ -58,7 +58,7 @@ var Y = YUI({
     });
 
     start.on('click', function () {
-        suite.run(true);
+        suite.run({async:true});
     });
 });
 </script>

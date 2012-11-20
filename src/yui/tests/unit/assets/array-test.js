@@ -11,7 +11,9 @@ suite.add(new Y.Test.Case({
     _should: {
         ignore: {
             testArray: Y.UA.nodejs,
-            testTest_dom: Y.UA.nodejs
+            testTest_dom: Y.UA.nodejs,
+            'test Array.test with window' : !Y.config.win,
+            'test Array.test with dom': !Y.config.win
         }
     },
     testArray: function () {
@@ -248,7 +250,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame(2, calls);
     },
 
-    testTest: function () {
+    'test Array.test': function () {
         Y.Assert.areEqual(0, Y.Array.test(function(){})); // functions should fail
         Y.Assert.areEqual(0, Y.Array.test('string'));
         Y.Assert.areEqual(0, Y.Array.test(12345));
@@ -261,7 +263,12 @@ suite.add(new Y.Test.Case({
         // Y.Assert.areEqual(1, Y.Array.test('string'.toCharArray()));
         Y.Assert.areEqual(2, Y.Array.test(arguments), 'arguments should be arraylike'); // arguments collection
     },
-    testTest_dom: function() {
+
+    'test Array.test with window' : function() {
+        Y.Assert.areEqual(0, Y.Array.test(Y.config.win));
+    },
+
+    'test Array.test with dom': function() {
         Y.Assert.areEqual(0, Y.Array.test(Y.one('#tester'))); // single nodes should fail
         Y.Assert.areEqual(2, Y.Array.test(document.getElementsByTagName('span')), 'htmlelement collections should be arraylike'); // HTMLElementsCollection
 

@@ -1,6 +1,26 @@
 YUI Test Change History
 =======================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
 
@@ -55,12 +75,12 @@ YUI Test Change History
   * Added coverage support, including getCoverage() on TestRunner and CoverageFormat.
   * Changed master suite default name to be "yuitests" plus a timestamp.
   * Added test duration tracking.
-  * Updated JUnit XML test format with time information.  
+  * Updated JUnit XML test format with time information.
   * Changed functionality of TestRunner when there's only one suite to run. Internally, the TestRunner uses
     a TestSuite to manage everything added via add(). Previously, this test suite was always represented
     in the results. Now, if you've only added one TestSuite to the TestRunner via add(), the specified
     TestSuite becomes the root. This may affect the reporting of test results if you're using TestReporter.
-    To run tests in the old way, call TestRunner.run(true).    
+    To run tests in the old way, call TestRunner.run(true).
   * Added styles for console. (trac #2528275).
 
 3.0.0
@@ -88,7 +108,7 @@ YUI Test Change History
   * Added Y.ObjectAssert.ownsNoKeys() (trac# 2527849).
   * Added proper XML escaping to Y.Test.Format.XML.
   * Fixed this._form is undefined error in TestReporter (trac# 2527928).
-    
+
 3.0.0PR2
 --------
 

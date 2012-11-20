@@ -5,7 +5,7 @@ root=`pwd`
 cd ./build-npm/
 
 npm_base=`pwd`
-yogi="${npm_base}/node_modules/.bin/yogi"
+yogi=`which yogi`
 
 echo "Build Root: ${root}"
 echo "NPM Base: ${npm_base}"
@@ -20,11 +20,12 @@ con=""
 timeout=""
 cli=""
 extra=""
+
 if [ -n "$TRAVIS" ]; then
-    con="-c 5 "
-    timeout="-t 400 "
+    con="-c 8 "
+    timeout="-t 500 "
     if [ "${TRAVIS_NODE_VERSION}" = "0.8" ]; then
-        extra="-x editor -x yui-throttle -x scrollview --filter min"
+        extra="-x editor -x yui-throttle"
     else
         echo "Skipping Grover tests for this Node version (not needed)"
         extra="--cli "

@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3../../../../../ml4/strict.dtd">
+<html>
+<head>
+<title>Combo Chart with multidimensional array dataProvider</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style>
+#mychart {
+    width:500px;
+    height:350px;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="../../../../build/cssfonts/fonts-min.css">
+</head>		
+<body class="yui3-skin-sam">
+<h3>Combo Chart with multidimensional array dataProvider</h3>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<div id="mychart"></div>
+<script type="text/javascript">            
+    YUI({
+        defaultGraphicEngine: (window.location.search.match(/[?&]defaultGraphicEngine=([^&]+)/) || [])[1] || 'svg',
+		filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    }).use('charts', function (Y) 
+    {
+        var myDataValues = [
+            ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            [2000, 1500, 200, 400, 5000]
+        ],
+        
+        mychart = new Y.Chart({
+            dataProvider:myDataValues,
+            render: "#mychart"
+        });
+
+    });
+</script>
+</body>
+</html>

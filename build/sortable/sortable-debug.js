@@ -4,7 +4,7 @@ YUI.add('sortable', function (Y, NAME) {
     /**
      * The class allows you to create a Drag & Drop reordered list.
      * @module sortable
-     */     
+     */
     /**
      * The class allows you to create a Drag & Drop reordered list.
      * @class Sortable
@@ -13,7 +13,7 @@ YUI.add('sortable', function (Y, NAME) {
      */
 
 
-    var Sortable = function(o) {
+    var Sortable = function() {
         Sortable.superclass.constructor.apply(this, arguments);
     },
     CURRENT_NODE = 'currentNode',
@@ -85,10 +85,10 @@ YUI.add('sortable', function (Y, NAME) {
         _y: null,
         _onDrag: function(e) {
             if (e.pageY < this._y) {
-                this._up = true; 
-            } else if (e.pageY > this._y) { 
-                this._up = false; 
-            } 
+                this._up = true;
+            } else if (e.pageY > this._y) {
+                this._up = false;
+            }
 
             this._y = e.pageY;
         },
@@ -117,7 +117,7 @@ YUI.add('sortable', function (Y, NAME) {
             if (!e.drop.get(NODE).test(this.get(NODES))) {
                 return;
             }
-            if (e.drag.get(NODE) == e.drop.get(NODE)) {
+            if (e.drag.get(NODE) === e.drop.get(NODE)) {
                 return;
             }
             // is drop a child of drag?
@@ -130,7 +130,7 @@ YUI.add('sortable', function (Y, NAME) {
             if (e.drag.get(NODE).get(PARENT_NODE).contains(e.drop.get(NODE))) {
                 same = true;
             }
-            if (same && moveType == 'move') {
+            if (same && moveType === 'move') {
                 moveType = 'insert';
             }
             switch (moveType) {
@@ -161,7 +161,7 @@ YUI.add('sortable', function (Y, NAME) {
                     if (same) {
                         Y.DD.DDM.swapNode(e.drag, e.drop);
                     } else {
-                        if (this.get('moveType') == 'copy') {
+                        if (this.get('moveType') === 'copy') {
                             //New List
                             oldNode = e.drag.get(NODE);
                             newNode = oldNode.cloneNode(true);
@@ -188,7 +188,7 @@ YUI.add('sortable', function (Y, NAME) {
         * @param Event e The Event Object
         * @description Handles the DragStart event and initializes some settings.
         */
-        _onDragStart: function(e) {
+        _onDragStart: function() {
             var del = this.delegate,
                 lastNode = del.get('lastNode');
             if (lastNode && lastNode.getDOMNode()) {
@@ -203,7 +203,7 @@ YUI.add('sortable', function (Y, NAME) {
         * @param Event e The Event Object
         * @description Handles the DragEnd event that cleans up the settings in the drag:start event.
         */
-        _onDragEnd: function(e) {
+        _onDragEnd: function() {
             this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, 1);
             this.delegate.get(CURRENT_NODE).setStyles({
                 top: '',
@@ -310,9 +310,10 @@ YUI.add('sortable', function (Y, NAME) {
             sel.delegate.dd.addToGroup(this.get(ID));
         },
         /**
-        * A custom callback to allow a user to extract some sort of id or any other data from the node to use in the "ordering list" and then that data should be returned from the callback.
+        * A custom callback to allow a user to extract some sort of id or any other data
+        * from the node to use in the "ordering list" and then that data should be returned from the callback.
         * @method getOrdering
-        * @param Function callback 
+        * @param Function callback
         * @return Array
         */
         getOrdering: function(callback) {
@@ -336,7 +337,7 @@ YUI.add('sortable', function (Y, NAME) {
             * @attribute handles
             * @description Drag handles to pass on to the internal DD.Delegate instance.
             * @type Array
-            */    
+            */
             handles: {
                 value: false
             },
@@ -344,7 +345,7 @@ YUI.add('sortable', function (Y, NAME) {
             * @attribute container
             * @description A selector query to get the container to listen for mousedown events on. All "nodes" should be a child of this container.
             * @type String
-            */    
+            */
             container: {
                 value: 'body'
             },
@@ -352,7 +353,7 @@ YUI.add('sortable', function (Y, NAME) {
             * @attribute nodes
             * @description A selector query to get the children of the "container" to make draggable elements from.
             * @type String
-            */        
+            */
             nodes: {
                 value: '.dd-draggable'
             },
@@ -360,7 +361,7 @@ YUI.add('sortable', function (Y, NAME) {
             * @attribute opacity
             * @description The opacity to change the proxy item to when dragging.
             * @type String
-            */        
+            */
             opacity: {
                 value: '.75'
             },
@@ -368,7 +369,7 @@ YUI.add('sortable', function (Y, NAME) {
             * @attribute opacityNode
             * @description The node to set opacity on when dragging (dragNode or currentNode). Default: currentNode.
             * @type String
-            */        
+            */
             opacityNode: {
                 value: 'currentNode'
             },
@@ -376,7 +377,7 @@ YUI.add('sortable', function (Y, NAME) {
             * @attribute id
             * @description The id of this Sortable, used to get a reference to this Sortable list from another list.
             * @type String
-            */        
+            */
             id: {
                 value: null
             },
@@ -384,7 +385,7 @@ YUI.add('sortable', function (Y, NAME) {
             * @attribute moveType
             * @description How should an item move to another list: insert, swap, move, copy. Default: insert
             * @type String
-            */        
+            */
             moveType: {
                 value: 'insert'
             },
@@ -392,7 +393,7 @@ YUI.add('sortable', function (Y, NAME) {
             * @attribute invalid
             * @description A selector string to test if a list item is invalid and not sortable
             * @type String
-            */        
+            */
             invalid: {
                 value: ''
             }

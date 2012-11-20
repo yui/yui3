@@ -1,6 +1,27 @@
 Widget Buttons Change History
 =============================
 
+3.7.3
+-----
+
+  * Fixed bug with a widget's `defaultButton` changing by binding to the
+    `defaultButtonChange` event in WidgetButtons' `initializer()`.
+
+3.7.2
+-----
+
+  * No changes.
+
+3.7.1
+-----
+
+  * No changes.
+
+3.7.0
+-----
+
+  * No changes.
+
 3.6.0
 -----
 
