@@ -10404,7 +10404,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "classnamemanager",
             "event-hover",
-            "event-outside",
             "menu-base",
             "menu-templates",
             "node-screen",
@@ -11300,7 +11299,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'f8eac3220f52508e5e4256969b8d9ca0';
+YUI.Env[Y.version].md5 = 'e01529e0521f7ed0f38e596928a138d8';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

@@ -1671,7 +1671,6 @@
         "requires": [
             "classnamemanager",
             "event-hover",
-            "event-outside",
             "menu-base",
             "menu-templates",
             "node-screen",
