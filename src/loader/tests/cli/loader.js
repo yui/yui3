@@ -1198,6 +1198,16 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("datatype-date-format")) > -1, "Module (datatype-date-format) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatype-date-math")) > -1, "Module (datatype-date-math) not found in sorted array");
         },
+     "Testing datatype-date-advanced-format": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-date-advanced-format"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-advanced-format")) > -1, "Module (datatype-date-advanced-format) not found in sorted array");
+        },
      "Testing datatype-date-format": function(data) {
             var loader = new Y.Loader({
                 require: ["datatype-date-format"],
@@ -1228,6 +1238,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatype-date-parse")) > -1, "Module (datatype-date-parse) not found in sorted array");
         },
+     "Testing datatype-date-timezone": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-date-timezone"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-timezone")) > -1, "Module (datatype-date-timezone) not found in sorted array");
+        },
      "Testing datatype-number": function(data) {
             var loader = new Y.Loader({
                 require: ["datatype-number"],
@@ -1238,6 +1258,16 @@ suite.add(new YUITest.TestCase({
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("datatype-number-parse")) > -1, "Module (datatype-number-parse) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatype-number-format")) > -1, "Module (datatype-number-format) not found in sorted array");
+        },
+     "Testing datatype-number-advanced-format": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-number-advanced-format"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-advanced-format")) > -1, "Module (datatype-number-advanced-format) not found in sorted array");
         },
      "Testing datatype-number-format": function(data) {
             var loader = new Y.Loader({
@@ -2149,6 +2179,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("intl")) > -1, "Module (intl) not found in sorted array");
+        },
+     "Testing intl-format": function(data) {
+            var loader = new Y.Loader({
+                require: ["intl-format"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("intl-format")) > -1, "Module (intl-format) not found in sorted array");
         },
      "Testing io": function(data) {
             var loader = new Y.Loader({

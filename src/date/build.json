@@ -15,6 +15,23 @@
             "jsfiles": [
                 "date-format.js"
             ]
+        },
+        "datatype-date-advanced-format": {
+            "jsfiles": [
+		"./advanced-format/BaseFormat.js",
+                "./advanced-format/DateFormat.js",
+                "./advanced-format/format-relative.js",
+                "./advanced-format/format-duration.js",
+                "./advanced-format/format-date-advanced.js"
+            ]
+        },
+        "datatype-date-timezone": {
+            "jsfiles": [
+		"./timezone/license.js",
+		"./timezone/timezoneData.js",
+		"./timezone/timezoneLinks.js",
+                "./timezone/timezone.js"
+            ]
         }
     }
 }
