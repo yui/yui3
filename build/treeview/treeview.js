@@ -310,7 +310,7 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
             if (!htmlChildrenNode) {
                 // Parent node hasn't been rendered yet, or hasn't yet been
                 // rendered with children. Render it.
-                htmlNode || (htmlNode = this.renderNode(parent));
+                htmlNode = this.renderNode(parent);
 
                 this.renderChildren(parent, {
                     container: htmlNode
@@ -325,7 +325,7 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
         }), e.index);
     },
 
-    _afterClear: function (e) {
+    _afterClear: function () {
         // Nothing to do if the treeview hasn't been rendered yet.
         if (!this.rendered) {
             return;
