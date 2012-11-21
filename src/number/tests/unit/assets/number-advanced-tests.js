@@ -1,4 +1,4 @@
-YUI.add('format-numbers-tests', function(Y) {
+YUI.add('number-advanced-tests', function(Y) {
 
     var numberFormatTests = new Y.Test.Case({
         name: "Number Format Tests",

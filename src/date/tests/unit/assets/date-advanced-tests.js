@@ -1,4 +1,4 @@
-YUI.add('format-date-tests', function(Y) {
+YUI.add('date-advanced-tests', function(Y) {
 	
     var absoluteDateFormat = new Y.Test.Case({
     

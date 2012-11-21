@@ -667,4 +667,2020 @@ continue;
 if(this._segments[i].toString().indexOf("text: \"</datePattern>\"") == 0) {
             _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 429);
 datePattern = false;
-            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advan
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 430);
+continue;
+        }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 432);
+if(!datePattern || !useRelative) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 433);
+s.push(this._segments[i].format(object));
+        }
+    }
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 436);
+return s.join("");
+}
+
+//
+// Date segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 443);
+DateFormat.DateSegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "DateSegment", 443);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 444);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 445);
+DateFormat.DateSegment.superclass.constructor.call(this, format, s);
+}
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 447);
+Y.extend(DateFormat.DateSegment, Format.Segment);
+
+//
+// Date era segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 453);
+DateFormat.EraSegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "EraSegment", 453);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 454);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 455);
+DateFormat.EraSegment.superclass.constructor.call(this, format, s);
+};
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 457);
+Y.extend(DateFormat.EraSegment, DateFormat.DateSegment);
+
+// Public methods
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 461);
+DateFormat.EraSegment.prototype.format = function(date) { 
+    // NOTE: Only support current era at the moment...
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 461);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 463);
+return this.getFormat().AD;
+};
+
+//
+// Date year segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 470);
+DateFormat.YearSegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "YearSegment", 470);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 471);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 472);
+DateFormat.YearSegment.superclass.constructor.call(this, format, s);
+};
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 474);
+Y.extend(DateFormat.YearSegment, DateFormat.DateSegment);
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 476);
+DateFormat.YearSegment.prototype.toString = function() { 
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "toString", 476);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 477);
+return "dateYear: \""+this._s+'"'; 
+};
+
+// Public methods
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 482);
+DateFormat.YearSegment.prototype.format = function(date) { 
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 482);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 483);
+var year = String(date.getFullYear());
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 484);
+return this._s.length != 1 && this._s.length < 4 ? year.substr(year.length - 2) : zeroPad(year, this._s.length);
+};
+
+//
+// Date month segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 491);
+DateFormat.MonthSegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "MonthSegment", 491);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 492);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 493);
+DateFormat.MonthSegment.superclass.constructor.call(this, format, s);
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 494);
+this.initialize();
+};
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 496);
+Y.extend(DateFormat.MonthSegment, DateFormat.DateSegment);
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 498);
+DateFormat.MonthSegment.prototype.toString = function() { 
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "toString", 498);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 499);
+return "dateMonth: \""+this._s+'"'; 
+};
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 502);
+DateFormat.MonthSegment.prototype.initialize = function() {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "initialize", 502);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 503);
+DateFormat.MonthSegment.MONTHS = {};
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 504);
+DateFormat.MonthSegment.MONTHS[DateFormat.SHORT] = [
+    ShortNames.monthJanShort,ShortNames.monthFebShort,ShortNames.monthMarShort,
+    ShortNames.monthAprShort,ShortNames.monthMayShort,ShortNames.monthJunShort,
+    ShortNames.monthJulShort,ShortNames.monthAugShort,ShortNames.monthSepShort,
+    ShortNames.monthOctShort,ShortNames.monthNovShort,ShortNames.monthDecShort
+    ];
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 510);
+DateFormat.MonthSegment.MONTHS[DateFormat.MEDIUM] = [
+    this.getFormat().Formats.monthJanMedium, this.getFormat().Formats.monthFebMedium, this.getFormat().Formats.monthMarMedium,
+    this.getFormat().Formats.monthAprMedium, this.getFormat().Formats.monthMayMedium, this.getFormat().Formats.monthJunMedium,
+    this.getFormat().Formats.monthJulMedium, this.getFormat().Formats.monthAugMedium, this.getFormat().Formats.monthSepMedium,
+    this.getFormat().Formats.monthOctMedium, this.getFormat().Formats.monthNovMedium, this.getFormat().Formats.monthDecMedium
+    ];
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 516);
+DateFormat.MonthSegment.MONTHS[DateFormat.LONG] = [
+    this.getFormat().Formats.monthJanLong, this.getFormat().Formats.monthFebLong, this.getFormat().Formats.monthMarLong,
+    this.getFormat().Formats.monthAprLong, this.getFormat().Formats.monthMayLong, this.getFormat().Formats.monthJunLong,
+    this.getFormat().Formats.monthJulLong, this.getFormat().Formats.monthAugLong, this.getFormat().Formats.monthSepLong,
+    this.getFormat().Formats.monthOctLong, this.getFormat().Formats.monthNovLong, this.getFormat().Formats.monthDecLong
+    ];
+};
+
+// Public methods
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 526);
+DateFormat.MonthSegment.prototype.format = function(date) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 526);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 527);
+var month = date.getMonth();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 528);
+switch (this._s.length) {
+        case 1:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 530);
+return String(month + 1);
+        case 2:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 532);
+return zeroPad(month + 1, 2);
+        case 3:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 534);
+return DateFormat.MonthSegment.MONTHS[DateFormat.MEDIUM][month];
+        case 5:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 536);
+return DateFormat.MonthSegment.MONTHS[DateFormat.SHORT][month];
+    }
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 538);
+return DateFormat.MonthSegment.MONTHS[DateFormat.LONG][month];
+};
+
+//
+// Date week segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 545);
+DateFormat.WeekSegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "WeekSegment", 545);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 546);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 547);
+DateFormat.WeekSegment.superclass.constructor.call(this, format, s);
+};
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 549);
+Y.extend(DateFormat.WeekSegment, DateFormat.DateSegment);
+
+// Public methods
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 553);
+DateFormat.WeekSegment.prototype.format = function(date) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 553);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 554);
+var year = date.getYear();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 555);
+var month = date.getMonth();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 556);
+var day = date.getDate();
+	
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 558);
+var ofYear = /w/.test(this._s);
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 559);
+var date2 = new Date(year, ofYear ? 0 : month, 1);
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 561);
+var week = 0;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 562);
+while (true) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 563);
+week++;
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 564);
+if (date2.getMonth() > month || (date2.getMonth() == month && date2.getDate() >= day)) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 565);
+break;
+        }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 567);
+date2.setDate(date2.getDate() + 7);
+    }
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 570);
+return zeroPad(week, this._s.length);
+};
+
+//
+// Date day segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 577);
+DateFormat.DaySegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "DaySegment", 577);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 578);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 579);
+DateFormat.DaySegment.superclass.constructor.call(this, format, s);
+};
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 581);
+Y.extend(DateFormat.DaySegment, DateFormat.DateSegment);
+
+// Public methods
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 585);
+DateFormat.DaySegment.prototype.format = function(date) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 585);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 586);
+var month = date.getMonth();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 587);
+var day = date.getDate();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 588);
+if (/D/.test(this._s) && month > 0) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 589);
+var year = date.getYear();
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 590);
+do {
+            // set date to first day of month and then go back one day
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 592);
+var date2 = new Date(year, month, 1);
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 593);
+date2.setDate(0); 
+			
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 595);
+day += date2.getDate();
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 596);
+month--;
+        }while (month > 0);
+    }
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 599);
+return zeroPad(day, this._s.length);
+};
+
+//
+// Date weekday segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 606);
+DateFormat.WeekdaySegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "WeekdaySegment", 606);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 607);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 608);
+DateFormat.WeekdaySegment.superclass.constructor.call(this, format, s);
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 609);
+this.initialize();
+};
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 611);
+Y.extend(DateFormat.WeekdaySegment, DateFormat.DateSegment);
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 613);
+DateFormat.DaySegment.prototype.toString = function() { 
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "toString", 613);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 614);
+return "dateDay: \""+this._s+'"'; 
+};
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 617);
+DateFormat.WeekdaySegment.prototype.initialize = function() {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "initialize", 617);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 618);
+DateFormat.WeekdaySegment.WEEKDAYS = {};
+    // NOTE: The short names aren't available in Java so we have to define them.
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 620);
+DateFormat.WeekdaySegment.WEEKDAYS[DateFormat.SHORT] = [
+    ShortNames.weekdaySunShort,ShortNames.weekdayMonShort,ShortNames.weekdayTueShort,
+    ShortNames.weekdayWedShort,ShortNames.weekdayThuShort,ShortNames.weekdayFriShort,
+    ShortNames.weekdaySatShort
+    ];
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 625);
+DateFormat.WeekdaySegment.WEEKDAYS[DateFormat.MEDIUM] = [
+    this.getFormat().Formats.weekdaySunMedium, this.getFormat().Formats.weekdayMonMedium, this.getFormat().Formats.weekdayTueMedium,
+    this.getFormat().Formats.weekdayWedMedium, this.getFormat().Formats.weekdayThuMedium, this.getFormat().Formats.weekdayFriMedium,
+    this.getFormat().Formats.weekdaySatMedium
+    ];
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 630);
+DateFormat.WeekdaySegment.WEEKDAYS[DateFormat.LONG] = [
+    this.getFormat().Formats.weekdaySunLong, this.getFormat().Formats.weekdayMonLong, this.getFormat().Formats.weekdayTueLong,
+    this.getFormat().Formats.weekdayWedLong, this.getFormat().Formats.weekdayThuLong, this.getFormat().Formats.weekdayFriLong,
+    this.getFormat().Formats.weekdaySatLong
+    ];
+};
+
+// Public methods
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 639);
+DateFormat.WeekdaySegment.prototype.format = function(date) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 639);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 640);
+var weekday = date.getDay();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 641);
+if (/E/.test(this._s)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 642);
+var style;
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 643);
+switch (this._s.length) {
+            case 4:
+                _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 645);
+style = DateFormat.LONG;
+                _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 646);
+break;
+            case 5:
+                _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 648);
+style = DateFormat.SHORT;
+                _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 649);
+break;
+            default:
+                _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 651);
+style = DateFormat.MEDIUM;
+        }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 653);
+return DateFormat.WeekdaySegment.WEEKDAYS[style][weekday];
+    }
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 655);
+return zeroPad(weekday, this._s.length);
+};
+
+//
+// Time segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 662);
+DateFormat.TimeSegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "TimeSegment", 662);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 663);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 664);
+DateFormat.TimeSegment.superclass.constructor.call(this, format, s);
+};
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 666);
+Y.extend(DateFormat.TimeSegment, Format.Segment);
+
+//
+// Time hour segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 672);
+DateFormat.HourSegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "HourSegment", 672);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 673);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 674);
+DateFormat.HourSegment.superclass.constructor.call(this, format, s);
+};
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 676);
+Y.extend(DateFormat.HourSegment, DateFormat.TimeSegment);
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 678);
+DateFormat.HourSegment.prototype.toString = function() { 
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "toString", 678);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 679);
+return "timeHour: \""+this._s+'"'; 
+};
+
+// Public methods
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 684);
+DateFormat.HourSegment.prototype.format = function(date) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 684);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 685);
+var hours = date.getHours();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 686);
+if (hours > 12 && /[hK]/.test(this._s)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 687);
+hours -= 12;
+    }
+    else {_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 689);
+if (hours == 0 && /[h]/.test(this._s)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 690);
+hours = 12;
+    }}
+    /***
+	// NOTE: This is commented out to match the Java formatter output
+	//       but from the comments for these meta-chars, it doesn't
+	//       seem right.
+	if (/[Hk]/.test(this._s)) {
+		hours--;
+	}
+    /***/
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 700);
+return zeroPad(hours, this._s.length);
+};
+
+//
+// Time minute segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 707);
+DateFormat.MinuteSegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "MinuteSegment", 707);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 708);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 709);
+DateFormat.MinuteSegment.superclass.constructor.call(this, format, s);
+};
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 711);
+Y.extend(DateFormat.MinuteSegment, DateFormat.TimeSegment);
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 713);
+DateFormat.MinuteSegment.prototype.toString = function() { 
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "toString", 713);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 714);
+return "timeMinute: \""+this._s+'"'; 
+};
+
+// Public methods
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 719);
+DateFormat.MinuteSegment.prototype.format = function(date) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 719);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 720);
+var minutes = date.getMinutes();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 721);
+return zeroPad(minutes, this._s.length);
+};
+
+//
+// Time second segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 728);
+DateFormat.SecondSegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "SecondSegment", 728);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 729);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 730);
+DateFormat.SecondSegment.superclass.constructor.call(this, format, s);
+};
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 732);
+Y.extend(DateFormat.SecondSegment, DateFormat.TimeSegment);
+
+// Public methods
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 736);
+DateFormat.SecondSegment.prototype.format = function(date) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 736);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 737);
+var minutes = /s/.test(this._s) ? date.getSeconds() : date.getMilliseconds();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 738);
+return zeroPad(minutes, this._s.length);
+};
+
+//
+// Time am/pm segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 745);
+DateFormat.AmPmSegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "AmPmSegment", 745);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 746);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 747);
+DateFormat.AmPmSegment.superclass.constructor.call(this, format, s);
+};
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 749);
+Y.extend(DateFormat.AmPmSegment, DateFormat.TimeSegment);
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 751);
+DateFormat.AmPmSegment.prototype.toString = function() { 
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "toString", 751);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 752);
+return "timeAmPm: \""+this._s+'"'; 
+};
+
+// Public methods
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 757);
+DateFormat.AmPmSegment.prototype.format = function(date) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 757);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 758);
+var hours = date.getHours();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 759);
+return hours < 12 ? this.getFormat().Formats.periodAm : this.getFormat().Formats.periodPm;
+};
+
+//
+// Time timezone segment class
+//
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 766);
+DateFormat.TimezoneSegment = function(format, s) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "TimezoneSegment", 766);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 767);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 768);
+DateFormat.TimezoneSegment.superclass.constructor.call(this, format, s);
+};
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 770);
+Y.extend(DateFormat.TimezoneSegment, DateFormat.TimeSegment);
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 772);
+DateFormat.TimezoneSegment.prototype.toString = function() { 
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "toString", 772);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 773);
+return "timeTimezone: \""+this._s+'"'; 
+};
+
+// Public methods
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 778);
+DateFormat.TimezoneSegment.prototype.format = function(date) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 778);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 779);
+if (/Z/.test(this._s)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 780);
+return this.getFormat().timeZone.getShortName();
+    }
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 782);
+return this._s.length < 4 ? this.getFormat().timeZone.getMediumName() : this.getFormat().timeZone.getLongName();
+};
+    
+//
+// Non-Gregorian Calendars
+//
+    
+//Buddhist Calendar. This is normally used only for Thai locales (th).
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 790);
+BuddhistDateFormat = function(pattern, formats, timeZoneId, locale) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "BuddhistDateFormat", 790);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 791);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 792);
+BuddhistDateFormat.superclass.constructor.call(this, pattern, formats, timeZoneId, locale);
+        
+    //Iterate through _segments, and replace the ones that are different for Buddhist Calendar
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 795);
+var segments = this._segments;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 796);
+for(var i=0; i<segments.length; i++) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 797);
+if(segments[i] instanceof DateFormat.YearSegment) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 798);
+segments[i] = new BuddhistDateFormat.YearSegment(segments[i]);
+        } else {_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 799);
+if (segments[i] instanceof DateFormat.EraSegment) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 800);
+segments[i] = new BuddhistDateFormat.EraSegment(segments[i]);
+        }}
+    }
+}
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 805);
+Y.extend(BuddhistDateFormat, DateFormat);
+    
+//Override YearSegment class for Buddhist Calender
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 808);
+BuddhistDateFormat.YearSegment = function(segment) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "YearSegment", 808);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 809);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 810);
+BuddhistDateFormat.YearSegment.superclass.constructor.call(this, segment._parent, segment._s);
+};
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 813);
+Y.extend(BuddhistDateFormat.YearSegment, DateFormat.YearSegment);
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 815);
+BuddhistDateFormat.YearSegment.prototype.format = function(date) { 
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 815);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 816);
+var year = date.getFullYear();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 817);
+year = String(year + 543);      //Buddhist Calendar epoch is in 543 BC
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 818);
+return this._s.length != 1 && this._s.length < 4 ? year.substr(year.length - 2) : zeroPad(year, this._s.length);
+};
+    
+//Override EraSegment class for Buddhist Calender
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 822);
+BuddhistDateFormat.EraSegment = function(segment) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "EraSegment", 822);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 823);
+if (arguments.length == 0) {return;}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 824);
+BuddhistDateFormat.EraSegment.superclass.constructor.call(this, segment._parent, segment._s);
+};
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 827);
+Y.extend(BuddhistDateFormat.EraSegment, DateFormat.EraSegment);
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 829);
+BuddhistDateFormat.EraSegment.prototype.format = function(date) { 
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 829);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 830);
+return "BE";    //Only Buddhist Era supported for now
+};
+        
+//
+// Start YUI code
+//
+    
+/**
+ * @class YDateFormat
+ * @constructor
+ * @param {String} timeZone (Optional) TZ database ID for the time zone that should be used. If no argument is provided, "Etc/GMT" is used. If an argument is provided that is not a valid time zone identifier, an Error exception is thrown.
+ * @param {Number} dateFormat (Optional) Selector for the desired date format from Y.Date.DATE_FORMATS. If no argument is provided, NONE is assumed. If an argument is provided that's not a valid selector, an Error exception is thrown. 
+ * @param {Number} timeFormat (Optional) Selector for the desired time format from Y.Date.TIME_FORMATS. If no argument is provided, NONE is assumed. If an argument is provided that's not a valid selector, an Error exception is thrown. 
+ * @param {Number} timeZoneFormat (Optional) Selector for the desired time zone format from Y.Date.TIMEZONE_FORMATS. If no argument is provided, NONE is assumed. If an argument is provided that's not a valid selector, an Error exception is thrown. 
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 845);
+YDateFormat = function(timeZone, dateFormat, timeFormat, timeZoneFormat) {
+        
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "YDateFormat", 845);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 847);
+if(timeZone == null) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 848);
+timeZone = "Etc/GMT";
+    }
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 851);
+this._Formats = Y.Intl.get(MODULE_NAME);
+        
+    //If not valid time zone
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 854);
+if(!Y.Date.Timezone.isValidTimezoneId(timeZone)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 855);
+throw new Y.Date.Timezone.UnknownTimeZoneException("Could not find timezone: " + timeZone);
+    }
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 858);
+this._timeZone = timeZone;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 859);
+this._timeZoneInstance = new Y.Date.Timezone(this._timeZone);
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 861);
+this._dateFormat = dateFormat;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 862);
+this._timeFormat = timeFormat;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 863);
+this._timeZoneFormat = timeZoneFormat;
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 865);
+this._relative = false;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 866);
+this._pattern = this._generatePattern();
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 868);
+var locale = Y.Intl.getLang(MODULE_NAME);
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 870);
+if(locale.match(/^th/) && !locale.match(/u-ca-gregory/)) {
+        //Use buddhist calendar
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 872);
+this._dateFormatInstance = new BuddhistDateFormat(this._pattern, this._Formats, this._timeZone);
+    } else {
+        //Use gregorian calendar
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 875);
+this._dateFormatInstance = new DateFormat(this._pattern, this._Formats, this._timeZone);
+    }        
+}
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 879);
+Y.mix(Y.Date, {
+    //Selector values
+    DATE_FORMATS: {
+        NONE: 0,
+        WYMD_LONG: 1,
+        WYMD_ABBREVIATED: 4,
+        WYMD_SHORT: 8,
+        WMD_LONG: 16,
+        WMD_ABBREVIATED: 32,
+        WMD_SHORT: 64,
+        YMD_LONG: 128,
+        YMD_ABBREVIATED: 256,
+        YMD_SHORT: 512,
+        YM_LONG: 1024,
+        MD_LONG: 2048,
+        MD_ABBREVIATED: 4096,
+        MD_SHORT: 8192,
+        W_LONG: 16384,
+        W_ABBREVIATED: 32768,
+        M_LONG: 65536,
+        M_ABBREVIATED: 131072,
+        YMD_FULL: 262144,
+        RELATIVE_DATE: 524288
+    },
+    TIME_FORMATS: {
+        NONE: 0,
+        HM_ABBREVIATED: 1,
+        HM_SHORT: 2,
+        H_ABBREVIATED: 4
+    },
+    TIMEZONE_FORMATS: {
+        NONE: 0,
+        Z_ABBREVIATED: 1,
+        Z_SHORT: 2
+    },
+    
+    //Static methods
+    
+    /**
+     * Returns an array of BCP 47 language tags for the languages supported by this class
+     * @return {Array} an array of BCP 47 language tags for the languages supported by this class.
+     */
+    availableLanguages: function() {
+        _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "availableLanguages", 921);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 922);
+return Y.Intl.getAvailableLangs(MODULE_NAME);
+    }
+});
+
+//Private methods
+
+/**
+ * Generate date pattern for selected format
+ * @return {String} Date pattern for internal use.
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 932);
+YDateFormat.prototype._generateDatePattern = function() {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "_generateDatePattern", 932);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 933);
+var format = this._dateFormat;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 934);
+if(format && Y.Lang.isString(format)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 935);
+format = Y.Date.DATE_FORMATS[format];
+    }
+    
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 938);
+if(format == null) {return "";}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 939);
+if(format & Y.Date.DATE_FORMATS.RELATIVE_DATE) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 940);
+this._relative = true;
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 941);
+format = format ^ Y.Date.DATE_FORMATS.RELATIVE_DATE;
+    }
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 943);
+switch(format) {
+        //Use relative only for formats with day component
+        case Y.Date.DATE_FORMATS.NONE:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 946);
+this._relative = false;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 947);
+return "";
+        case Y.Date.DATE_FORMATS.WYMD_LONG:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 949);
+return this._Formats.WYMD_long;
+        case Y.Date.DATE_FORMATS.WYMD_ABBREVIATED:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 951);
+return this._Formats.WYMD_abbreviated;
+        case Y.Date.DATE_FORMATS.WYMD_SHORT:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 953);
+return this._Formats.WYMD_short;
+        case Y.Date.DATE_FORMATS.WMD_LONG:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 955);
+return this._Formats.WMD_long;
+        case Y.Date.DATE_FORMATS.WMD_ABBREVIATED:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 957);
+return this._Formats.WMD_abbreviated;
+        case Y.Date.DATE_FORMATS.WMD_SHORT:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 959);
+return this._Formats.WMD_short;
+        case Y.Date.DATE_FORMATS.YMD_LONG:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 961);
+return this._Formats.YMD_long;
+        case Y.Date.DATE_FORMATS.YMD_ABBREVIATED:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 963);
+return this._Formats.YMD_abbreviated;
+        case Y.Date.DATE_FORMATS.YMD_SHORT:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 965);
+return this._Formats.YMD_short;
+        case Y.Date.DATE_FORMATS.YM_LONG:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 967);
+this._relative = false;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 968);
+return this._Formats.YM_long;
+        case Y.Date.DATE_FORMATS.MD_LONG:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 970);
+return this._Formats.MD_long;
+        case Y.Date.DATE_FORMATS.MD_ABBREVIATED:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 972);
+return this._Formats.MD_abbreviated;
+        case Y.Date.DATE_FORMATS.MD_SHORT:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 974);
+return this._Formats.MD_short;
+        case Y.Date.DATE_FORMATS.W_LONG:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 976);
+this._relative = false;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 977);
+return this._Formats.W_long;
+        case Y.Date.DATE_FORMATS.W_ABBREVIATED:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 979);
+this._relative = false;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 980);
+return this._Formats.W_abbreviated;
+        case Y.Date.DATE_FORMATS.M_LONG:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 982);
+this._relative = false;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 983);
+return this._Formats.M_long;
+        case Y.Date.DATE_FORMATS.M_ABBREVIATED:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 985);
+this._relative = false;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 986);
+return this._Formats.M_abbreviated;
+        case Y.Date.DATE_FORMATS.YMD_FULL:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 988);
+return this._Formats.YMD_full;
+        default:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 990);
+throw new Format.IllegalArgumentsException("Date format given does not exist");	//Error no such pattern.
+    }
+}
+    
+/**
+ * Generate time pattern for selected format
+ * @return {String} Time pattern for internal use.
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 998);
+YDateFormat.prototype._generateTimePattern = function() {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "_generateTimePattern", 998);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 999);
+var format = this._timeFormat;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1000);
+if(format && Y.Lang.isString(format)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1001);
+format = Y.Date.TIME_FORMATS[format];
+    }
+    
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1004);
+if(format == null) {return "";}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1005);
+switch(format) {
+        case Y.Date.TIME_FORMATS.NONE:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1007);
+return "";
+        case Y.Date.TIME_FORMATS.HM_ABBREVIATED:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1009);
+return this._Formats.HM_abbreviated;
+        case Y.Date.TIME_FORMATS.HM_SHORT:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1011);
+return this._Formats.HM_short;
+        case Y.Date.TIME_FORMATS.H_ABBREVIATED:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1013);
+return this._Formats.H_abbreviated;
+        default:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1015);
+throw new Format.IllegalArgumentsException("Time format given does not exist");	//Error no such pattern.
+    }
+}
+    
+/**
+ * Generate time-zone pattern for selected format
+ * @return {String} Time-Zone pattern for internal use.
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1023);
+YDateFormat.prototype._generateTimeZonePattern = function() {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "_generateTimeZonePattern", 1023);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1024);
+var format = this._timeZoneFormat;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1025);
+if(format && Y.Lang.isString(format)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1026);
+format = Y.Date.TIMEZONE_FORMATS[format];
+    }
+    
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1029);
+if(format == null) {return "";}
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1030);
+switch(format) {
+        case Y.Date.TIMEZONE_FORMATS.NONE:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1032);
+return "";
+        case Y.Date.TIMEZONE_FORMATS.Z_ABBREVIATED:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1034);
+return "z";
+        case Y.Date.TIMEZONE_FORMATS.Z_SHORT:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1036);
+return "Z";
+        default:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1038);
+throw new Format.IllegalArgumentsException("Time Zone format given does not exist");	//Error no such pattern.
+    }
+}
+    
+/**
+ * Generate pattern for selected date, time and time-zone formats
+ * @return {String} Combined pattern for date, time and time-zone for internal use.
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1046);
+YDateFormat.prototype._generatePattern = function() {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "_generatePattern", 1046);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1047);
+var datePattern = this._generateDatePattern();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1048);
+var timePattern = this._generateTimePattern();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1049);
+var timeZonePattern = this._generateTimeZonePattern();
+
+    //Combine patterns. Mark date pattern part, to use with relative dates.
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1052);
+if(datePattern != "") {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1053);
+datePattern = "'<datePattern>'" + datePattern + "'</datePattern>'";
+    }
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1056);
+var pattern = "";
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1057);
+if(timePattern != "" && timeZonePattern != "") {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1058);
+pattern = this._Formats.DateTimeTimezoneCombination;
+    } else {_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1059);
+if (timePattern != "") {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1060);
+pattern = this._Formats.DateTimeCombination;
+    } else {_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1061);
+if(timeZonePattern != "") {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1062);
+pattern = this._Formats.DateTimezoneCombination;
+    } else {_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1063);
+if(datePattern != ""){
+        //Just date
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1065);
+pattern = "{1}";
+    }}}}
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1068);
+pattern = pattern.replace("{0}", timePattern).replace("{1}", datePattern).replace("{2}", timeZonePattern);
+        
+    //Remove unnecessary whitespaces
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1071);
+pattern = pattern.replace(/\s\s+/g, " ").replace(/^\s+/, "").replace(/\s+$/, "");
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1073);
+return pattern;
+}
+
+//public methods
+
+/**
+ * Formats a time value.
+ * @param {Date} date The time value to be formatted. If no valid Date object is provided, an Error exception is thrown.
+ * @return {String} The formatted string
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1083);
+YDateFormat.prototype.format = function(date) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 1083);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1084);
+if(date == null || !Y.Lang.isDate(date)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1085);
+throw new Format.IllegalArgumentsException("format called without a date.");
+    }
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1088);
+var offset = this._timeZoneInstance.getRawOffset() * 1000;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1089);
+date = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000 + offset);
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1091);
+var relativeDate = null;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1092);
+if(this._relative) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1093);
+var today = new Date();
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1094);
+var tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1095);
+var yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1097);
+if(date.getFullYear() == today.getFullYear() && date.getMonth() == today.getMonth() && date.getDate() == today.getDate()) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1098);
+relativeDate = this._Formats.today;
+        }
+
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1101);
+if(date.getFullYear() == tomorrow.getFullYear() && date.getMonth() == tomorrow.getMonth() && date.getDate() == tomorrow.getDate()) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1102);
+relativeDate = this._Formats.tomorrow;
+        }
+
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1105);
+if(date.getFullYear() == yesterday.getFullYear() && date.getMonth() == yesterday.getMonth() && date.getDate() == yesterday.getDate()) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1106);
+relativeDate = this._Formats.yesterday;
+        }
+    }
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1109);
+return this._dateFormatInstance.format(date, relativeDate);
+}/**
+ * YRelativeTimeFormat class provides localized formatting of relative time values such as "3 minutes ago".
+ * Relative time formats supported are defined by how many units they may include.
+ * Relative time is only used for past events. The Relative time formats use appropriate singular/plural/paucal/etc. forms for all languages.
+ * In order to keep relative time formats independent of time zones, relative day names such as today, yesterday, or tomorrow are not used.
+ * @module format-relative
+ */
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1118);
+var MODULE_NAME = "datatype-date-advanced-format";
+/**
+ * @class YRelativeTimeFormat
+ * @constructor
+ * @param {Number} style (Optional) Selector for the desired relative time format. If no argument is provided, default to ONE_UNIT_LONG. If argument is provided but is not a valid selector, an Error exception is thrown.
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1124);
+YRelativeTimeFormat = function(style) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "YRelativeTimeFormat", 1124);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1125);
+if(style && Y.Lang.isString(style)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1126);
+style = Y.Date.RELATIVE_TIME_FORMATS[style];
+    }
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1128);
+if(style == null) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1129);
+style = Y.Date.RELATIVE_TIME_FORMATS.ONE_UNIT_LONG;
+    }
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1132);
+this.patterns = Y.Intl.get(MODULE_NAME);
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1133);
+this.style = style;
+		
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1135);
+switch(style) {
+        case Y.Date.RELATIVE_TIME_FORMATS.ONE_OR_TWO_UNITS_ABBREVIATED:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1137);
+this.numUnits = 2;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1138);
+this.abbr = true;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1139);
+break;
+        case Y.Date.RELATIVE_TIME_FORMATS.ONE_OR_TWO_UNITS_LONG:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1141);
+this.numUnits = 2;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1142);
+this.abbr = false;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1143);
+break;
+        case Y.Date.RELATIVE_TIME_FORMATS.ONE_UNIT_ABBREVIATED:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1145);
+this.numUnits = 1;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1146);
+this.abbr = true;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1147);
+break;
+        case Y.Date.RELATIVE_TIME_FORMATS.ONE_UNIT_LONG:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1149);
+this.numUnits = 1;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1150);
+this.abbr = false;
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1151);
+break;
+        default:
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1153);
+throw new Format.IllegalArgumentsException("Unknown style: Use a style from Y.Date.RELATIVE_TIME_FORMATS");
+    }
+}
+	
+//Static data
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1159);
+Y.mix(Y.Date, {
+    currentDate: function() { _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "currentDate", 1160);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1160);
+return new Date(); },
+    RELATIVE_TIME_FORMATS: {
+        ONE_OR_TWO_UNITS_ABBREVIATED: 0,
+        ONE_OR_TWO_UNITS_LONG: 1,
+        ONE_UNIT_ABBREVIATED: 2,
+        ONE_UNIT_LONG: 4
+    }
+});
+	
+//Public methods
+	
+/**
+ * Formats a time value.
+ * One or two parameters are needed. If only one parameter is specified, this function formats the parameter relative to current time.
+ * If two parameters are specified, this function formats the first parameter relative to the second parameter.
+ * @param {Number} timeValue The time value (seconds since Epoch) to be formatted.
+ * @param {Number} relativeTo (Optional) The time value (seconds since Epoch) in relation to which timeValue should be formatted. It must be greater than or equal to timeValue, otherwise exception will be thrown.
+ * @return {String} The formatted string
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1179);
+YRelativeTimeFormat.prototype.format = function(timeValue, relativeTo) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 1179);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1180);
+if(relativeTo == null) { 
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1181);
+relativeTo = (new Date()).getTime()/1000; 
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1182);
+if(timeValue > relativeTo) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1183);
+throw new Format.IllegalArgumentsException("timeValue must be in the past");
+        }
+    } else {_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1185);
+if(timeValue > relativeTo) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1186);
+throw new Format.IllegalArgumentsException("relativeTo must be greater than or equal to timeValue");
+    }}
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1189);
+var date = new Date((relativeTo - timeValue)*1000);
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1191);
+var result = [];
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1192);
+var numUnits = this.numUnits;
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1194);
+var value = date.getUTCFullYear() - 1970;	//Need zero-based index
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1195);
+var text;
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1197);
+if(value > 0) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1198);
+if(this.abbr) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1199);
+text = value + " " + (value != 1 ? this.patterns.years_abbr : this.patterns.year_abbr); 
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1200);
+result.push(text);
+        } else {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1202);
+text = value + " " + (value != 1 ? this.patterns.years : this.patterns.year); 
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1203);
+result.push(text);
+        }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1205);
+numUnits--;
+    }
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1208);
+value = date.getUTCMonth();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1209);
+if((numUnits > 0) && (numUnits < this.numUnits || value > 0)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1210);
+if(this.abbr) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1211);
+text = value + " " + (value != 1 ? this.patterns.months_abbr : this.patterns.month_abbr); 
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1212);
+result.push(text);
+        } else {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1214);
+text = value + " " + (value != 1 ? this.patterns.months : this.patterns.month); 
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1215);
+result.push(text);
+        }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1217);
+numUnits--;
+    }
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1220);
+value = date.getUTCDate()-1;			//Need zero-based index
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1221);
+if(numUnits > 0 && (numUnits < this.numUnits || value > 0)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1222);
+if(this.abbr) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1223);
+text = value + " " + (value != 1 ? this.patterns.days_abbr : this.patterns.day_abbr); 
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1224);
+result.push(text);
+        } else {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1226);
+text = value + " " + (value != 1 ? this.patterns.days : this.patterns.day); 
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1227);
+result.push(text);
+        }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1229);
+numUnits--;
+    }
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1232);
+value = date.getUTCHours();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1233);
+if(numUnits > 0 && (numUnits < this.numUnits || value > 0)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1234);
+if(this.abbr) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1235);
+text = value + " " + (value != 1 ? this.patterns.hours_abbr : this.patterns.hour_abbr); 
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1236);
+result.push(text);
+        } else {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1238);
+text = value + " " + (value != 1 ? this.patterns.hours : this.patterns.hour); 
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1239);
+result.push(text);
+        }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1241);
+numUnits--;
+    }
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1244);
+value = date.getUTCMinutes();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1245);
+if(numUnits > 0 && (numUnits < this.numUnits || value > 0)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1246);
+if(this.abbr) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1247);
+text = value + " " + (value != 1 ? this.patterns.minutes_abbr : this.patterns.minute_abbr); 
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1248);
+result.push(text);
+        } else {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1250);
+text = value + " " + (value != 1 ? this.patterns.minutes : this.patterns.minute); 
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1251);
+result.push(text);
+        }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1253);
+numUnits--;
+    }
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1256);
+value = date.getUTCSeconds();
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1257);
+if(result.length == 0 || (numUnits > 0 && (numUnits < this.numUnits || value > 0))) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1258);
+if(this.abbr) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1259);
+text = value + " " + (value != 1 ? this.patterns.seconds_abbr : this.patterns.second_abbr); 
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1260);
+result.push(text);
+        } else {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1262);
+text = value + " " + (value != 1 ? this.patterns.seconds : this.patterns.second); 
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1263);
+result.push(text);
+        }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1265);
+numUnits--;
+    }
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1268);
+var pattern = (result.length == 1) ? this.patterns["RelativeTime/oneUnit"] : this.patterns["RelativeTime/twoUnits"];
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1270);
+for(var i=0; i<result.length; i++) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1271);
+pattern = pattern.replace("{" + i + "}", result[i]);
+    }
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1273);
+for(i=result.length; i<this.numUnits; i++) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1274);
+pattern = pattern.replace("{" + i + "}", "");
+    }
+    //Remove unnecessary whitespaces
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1277);
+pattern = pattern.replace(/\s+/g, " ").replace(/^\s+/, "").replace(/\s+$/, "");
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1279);
+return pattern;
+}
+/**
+ * YDurationFormat class formats time in a language independent manner.
+ * The duration formats use appropriate singular/plural/paucal/etc. forms for all languages. 
+ * @module format-duration
+ * @requires format-numbers
+ */
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1288);
+var MODULE_NAME = "datatype-date-advanced-format";
+/**
+ * YDurationFormat class formats time in a language independent manner.
+ * @class YDurationFormat
+ * @constructor
+ * @param {Number} style selector for the desired duration format, from Y.Date.DURATION_FORMATS
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1295);
+YDurationFormat = function(style) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "YDurationFormat", 1295);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1296);
+if(style && Y.Lang.isString(style)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1297);
+style = Y.Date.DURATION_FORMATS[style];
+    }
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1299);
+this.style = style;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1300);
+this.patterns = Y.Intl.get(MODULE_NAME);
+}
+    
+//Exceptions
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1305);
+Y.mix(YDurationFormat, {
+    IllegalArgumentsException: function(message) {
+        _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "IllegalArgumentsException", 1306);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1307);
+this.message = message;
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1308);
+this.toString = function() {
+            _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "toString", 1308);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1309);
+return "IllegalArgumentsException: " + this.message;
+        }
+    }
+})
+
+//Static Data
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1315);
+Y.mix(Y.Date, {
+    DURATION_FORMATS: {
+        HMS_LONG: 0,
+        HMS_SHORT: 1
+    }
+});
+    
+//Support methods
+    
+/**
+ * Strip decimal part of argument and return the integer part
+ * @param floatNum A real number
+ * @return Integer part of floatNum
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1329);
+function stripDecimals(floatNum) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "stripDecimals", 1329);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1330);
+return floatNum > 0 ? Math.floor(floatNum): Math.ceil(floatNum);
+}
+    
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1333);
+function zeroPad (s, length, zeroChar, rightSide) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "zeroPad", 1333);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1334);
+s = typeof s == "string" ? s : String(s);
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1336);
+if (s.length >= length) {return s;}
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1338);
+zeroChar = zeroChar || '0';
+	
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1340);
+var a = [];
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1341);
+for (var i = s.length; i < length; i++) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1342);
+a.push(zeroChar);
+    }
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1344);
+a[rightSide ? "unshift" : "push"](s);
+
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1346);
+return a.join("");
+}
+    
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1349);
+if(String.prototype.trim == null) {
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1350);
+String.prototype.trim = function() {
+        _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "trim", 1350);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1351);
+return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+    };
+}
+    
+/**
+ * Parse XMLDurationFormat (PnYnMnDTnHnMnS) and return an object with hours, minutes and seconds
+ * Any absent values are set to -1, which will be ignored in HMS_long, and set to 0 in HMS_short
+ * Year, Month and Day are ignored. Only Hours, Minutes and Seconds are used
+ * @param {String} xmlDuration XML Duration String. 
+ *      The lexical representation for duration is the [ISO 8601] extended format PnYnMnDTnHnMnS, 
+ *      where nY represents the number of years, nM the number of months, nD the number of days, 
+ *      'T' is the date/time separator,
+ *      nH the number of hours, nM the number of minutes and nS the number of seconds.
+ *      The number of seconds can include decimal digits to arbitrary precision.
+ * @return {Object} Duration as an object with the parameters hours, minutes and seconds.
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1367);
+function getDuration_XML(xmlDuration) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "getDuration_XML", 1367);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1368);
+var regex = new RegExp(/P(\d+Y)?(\d+M)?(\d+D)?T(\d+H)?(\d+M)?(\d+(\.\d+)?S)/);
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1369);
+var matches = xmlDuration.match(regex);
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1371);
+if(matches == null) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1372);
+throw new YDurationFormat.IllegalArgumentsException("xmlDurationFormat should be in the format: 'PnYnMnDTnHnMnS'");
+    }
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1375);
+return {
+        hours: parseInt(matches[4] || -1),
+        minutes: parseInt(matches[5] || -1),
+        seconds: parseFloat(matches[6] || -1)
+    };
+}
+    
+/**
+ * Get duration from time in seconds.
+ * The value should be integer value in seconds, and should not be negative.
+ * @param {Number} timeValueInSeconds Duration in seconds
+ * @return {Object} Duration as an object with the parameters hours, minutes and seconds.
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1388);
+function getDuration_Seconds(timeValueInSeconds) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "getDuration_Seconds", 1388);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1389);
+var duration = {};
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1390);
+if(timeValueInSeconds < 0) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1391);
+throw new YDurationFormat.IllegalArgumentsException("TimeValue cannot be negative");
+    }
+                
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1394);
+duration.hours = stripDecimals(timeValueInSeconds / 3600);
+                
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1396);
+timeValueInSeconds %= 3600;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1397);
+duration.minutes = stripDecimals(timeValueInSeconds / 60);
+                
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1399);
+timeValueInSeconds %= 60;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1400);
+duration.seconds = timeValueInSeconds;
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1402);
+return duration;
+}
+    
+//Public methods
+    
+/**
+ * Formats the given value into a duration format string. This function supports three kinds of usage, listed below:
+ *  String format(int timeValueInSeconds):
+ *      Formats the given value into a duration format string. The value should be integer value in seconds, and should not be negative.
+ *  String format(string xmlDurationFormat):
+ *      Formats the given XML duration format into a duration format string. 
+ *      The year/month/day fields are ignored in the final format string in this version. For future compatibility, please do not pass in the Year/Month/Day part in the parameter.
+ *      For hour, minute, and second, absent parts are ignored in HMS_long format, but are treated as 0 in HMS_short format style.
+ *  String format(int hour, int min, int second)
+ *      Formats the given duration into a duration format string. Negative values are ignored in HMS_long format, but treated as 0 in HMS_short format.
+ * @return {String} The formatted string
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1419);
+YDurationFormat.prototype.format = function() {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 1419);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1420);
+var duration = {};
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1421);
+if(arguments.length == 1) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1422);
+if(arguments[0] == null) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1423);
+throw new YDurationFormat.IllegalArgumentsException("Argument is null");
+        }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1425);
+if(isNaN(arguments[0])) {                               //Non-numeric string. format(string xmlDurationFormat)
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1426);
+duration = getDuration_XML(arguments[0].trim());
+        } else {                                                //format(int timeValueInSeconds)
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1428);
+duration = getDuration_Seconds(arguments[0]);
+        }
+    } else {_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1430);
+if(arguments.length == 3) {                          //format(int hour, int min, int second)
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1431);
+if(arguments[2] == null || arguments[1] == null || arguments[0] == null) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1432);
+throw new YDurationFormat.IllegalArgumentsException("One or more arguments are null/undefined");
+        }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1434);
+if(isNaN(arguments[2]) || isNaN(arguments[1]) || isNaN(arguments[0])) {              //Non-numeric string.
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1435);
+throw new YDurationFormat.IllegalArgumentsException("One or more arguments are not numeric");
+        }
+            
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1438);
+duration = {
+            hours: parseInt(arguments[0]),
+            minutes: parseInt(arguments[1]),
+            seconds: parseInt(arguments[2])
+        }
+    } else {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1444);
+throw new YDurationFormat.IllegalArgumentsException("Unexpected number of arguments");
+    }}
+        
+    //Test minutes and seconds for invalid values
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1448);
+if(duration.minutes > 59 || duration.seconds > 59) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1449);
+throw new YDurationFormat.IllegalArgumentsException("Minutes and Seconds should be less than 60");
+    }
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1452);
+var result = "";
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1454);
+if(this.style == Y.Date.DURATION_FORMATS.HMS_LONG) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1455);
+result = this.patterns.HMS_long;
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1456);
+if(duration.hours < 0) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1457);
+duration.hours = "";
+        } else {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1459);
+duration.hours = Y.Number.format(duration.hours) + " " + (duration.hours == 1 ? this.patterns.hour : this.patterns.hours);
+        }
+            
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1462);
+if(duration.minutes < 0) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1463);
+duration.minutes = "";
+        } else {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1465);
+duration.minutes = duration.minutes + " " + (duration.minutes == 1 ? this.patterns.minute : this.patterns.minutes);
+        }
+            
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1468);
+if(duration.seconds < 0) {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1469);
+duration.seconds = "";
+        } else {
+            _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1471);
+duration.seconds = duration.seconds + " " + (duration.seconds == 1 ? this.patterns.second : this.patterns.seconds);
+        }
+    } else {                                            //HMS_SHORT
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1474);
+result = this.patterns.HMS_short;
+            
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1476);
+duration.hours = Y.Number.format(duration.hours < 0 ? 0: duration.hours);
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1477);
+duration.minutes = duration.minutes < 0 ? "00": zeroPad(duration.minutes, 2);
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1478);
+duration.seconds = duration.seconds < 0 ? "00": zeroPad(duration.seconds, 2);
+    }
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1481);
+result = result.replace("{0}", duration.hours);
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1482);
+result = result.replace("{1}", duration.minutes);
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1483);
+result = result.replace("{2}", duration.seconds);
+        
+    //Remove unnecessary whitespaces
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1486);
+result = result.replace(/\s\s+/g, " ").replace(/^\s+/, "").replace(/\s+$/, "");
+        
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1488);
+return result;
+}
+
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1491);
+Y.Date.deprecatedFormat = Y.Date.format;
+
+/**
+ * Takes a native JavaScript Date and formats it as a string for display to user.
+ * @for Date
+ * @method format
+ * @param oDate {Date} Date
+ * @param oConfig {Obhect} (Optional) Object literal of configuration values:
+ *    <dl>
+ *       <dt>dateFormat {String/Number} (Optional)</dt>
+ *           <dd>Date Format/Style</dd>
+ *       <dt>timeFormat {String/Number} (Optional)</dt>
+ *           <dd>Time Format/Style</dd>
+ *       <dt>timezoneFormat {String/Number} (Optional)</dt>
+ *           <dd> Timezone Format/Style</dd>
+ *       <dt>format {HTML} (Optional)</dt>
+ *           <dd>format string to use the deprecated format method in datatype-date-format module</dd>
+ *    </dl>
+ * @return {String} string representation of the date
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1511);
+Y.Date.format = function(oDate, oConfig) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "format", 1511);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1512);
+oConfig = oConfig || {};
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1513);
+if(oConfig.format && Y.Lang.isString(oConfig.format)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1514);
+return Y.Date.deprecatedFormat(oDate, oConfig);
+    }
+    
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1517);
+if(!Y.Lang.isDate(oDate)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1518);
+return Y.Lang.isValue(oDate) ? oDate : "";
+    }
+                
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1521);
+var formatter;
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1522);
+if(oConfig.dateFormat || oConfig.timeFormat || oConfig.timezoneFormat) {    
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1523);
+formatter = new YDateFormat(oConfig.timezone, oConfig.dateFormat, oConfig.timeFormat, oConfig.timezoneFormat);
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1524);
+return formatter.format(oDate);
+    }
+    
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1527);
+var relativeTo = (typeof Y.Date.currentDate == 'function' ?  Y.Date.currentDate() : Y.Date.currentDate);
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1528);
+if(oConfig.relativeTimeFormat) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1529);
+formatter = new YRelativeTimeFormat(oConfig.relativeTimeFormat, relativeTo);
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1530);
+return formatter.format(oDate.getTime()/1000, Y.Date.currentDate.getTime()/1000);
+    }
+    
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1533);
+throw new Format.FormatException("Unrecognized format options.");
+}
+
+/**
+ * Returns a string representation of the duration
+ * @for Date
+ * @method format
+ * @param oDuration {String/Number/Object} Duration as time in seconds, xml duration format, or an object with hours, minutes and seconds
+ * @param oConfig {Object} (Optional) Configuration object. Used to pass style parameter to the method. 'style' can be a string (HMS_LONG/HMS_SHORT) or the numerical values in Y.Date.DURATION_FORMATS
+ * @return {String} string representation of the duration
+ */
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1544);
+Y.Date.formatDuration = function(oDuration, oConfig) {
+    _yuitest_coverfunc("build/datatype-date-advanced-format/datatype-date-advanced-format.js", "formatDuration", 1544);
+_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1545);
+oConfig = oConfig || {};
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1546);
+if(oDuration == null) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1547);
+oDuration = {};
+    }
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1549);
+if(Y.Lang.isNumber(oDuration) || Y.Lang.isString(oDuration)) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1550);
+return (new YDurationFormat(oConfig.style)).format(oDuration);
+    } else {_yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1551);
+if(oDuration.hours != null || oDuration.minutes != null || oDuration.seconds != null) {
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1552);
+if(oDuration.hours == null) { oDuration.hours = -1; }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1553);
+if(oDuration.minutes == null) { oDuration.minutes= -1; }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1554);
+if(oDuration.seconds == null) { oDuration.seconds = -1; }
+        _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1555);
+return (new YDurationFormat(oConfig.style)).format(oDuration.hours || -1, oDuration.minutes || -1, oDuration.seconds || -1);
+    }}
+    
+    _yuitest_coverline("build/datatype-date-advanced-format/datatype-date-advanced-format.js", 1558);
+throw new Format.IllegalArgumentsException("Unrecognized duration values");
+}
+
+
+}, '@VERSION@', {
+    "lang": [
+        "af-NA",
+        "af",
+        "af-ZA",
+        "am-ET",
+        "am",
+        "ar-AE",
+        "ar-BH",
+        "ar-DZ",
+        "ar-EG",
+        "ar-IQ",
+        "ar-JO",
+        "ar-KW",
+        "ar-LB",
+        "ar-LY",
+        "ar-MA",
+        "ar-OM",
+        "ar-QA",
+        "ar-SA",
+        "ar-SD",
+        "ar-SY",
+        "ar-TN",
+        "ar",
+        "ar-YE",
+        "as-IN",
+        "as",
+        "az-AZ",
+        "az-Cyrl-AZ",
+        "az-Cyrl",
+        "az-Latn-AZ",
+        "az-Latn",
+        "az",
+        "be-BY",
+        "be",
+        "bg-BG",
+        "bg",
+        "bn-BD",
+        "bn-IN",
+        "bn",
+        "bo-CN",
+        "bo-IN",
+        "bo",
+        "ca-ES",
+        "ca",
+        "cs-CZ",
+        "cs",
+        "cy-GB",
+        "cy",
+        "da-DK",
+        "da",
+        "de-AT",
+        "de-BE",
+        "de-CH",
+        "de-DE",
+        "de-LI",
+        "de-LU",
+        "de",
+        "el-CY",
+        "el-GR",
+        "el",
+        "en-AU",
+        "en-BE",
+        "en-BW",
+        "en-BZ",
+        "en-CA",
+        "en-GB",
+        "en-HK",
+        "en-IE",
+        "en-IN",
+        "en-JM",
+        "en-JO",
+        "en-MH",
+        "en-MT",
+        "en-MY",
+        "en-NA",
+        "en-NZ",
+        "en-PH",
+        "en-PK",
+        "en-RH",
+        "en-SG",
+        "en-TT",
+        "en",
+        "en-US-POSIX",
+        "en-US",
+        "en-VI",
+        "en-ZA",
+        "en-ZW",
+        "eo",
+        "es-AR",
+        "es-BO",
+        "es-CL",
+        "es-CO",
+        "es-CR",
+        "es-DO",
+        "es-EC",
+        "es-ES",
+        "es-GT",
+        "es-HN",
+        "es-MX",
+        "es-NI",
+        "es-PA",
+        "es-PE",
+        "es-PR",
+        "es-PY",
+        "es-SV",
+        "es",
+        "es-US",
+        "es-UY",
+        "es-VE",
+        "et-EE",
+        "et",
+        "eu-ES",
+        "eu",
+        "fa-AF",
+        "fa-IR",
+        "fa",
+        "fi-FI",
+        "fi",
+        "fil-PH",
+        "fil",
+        "fo-FO",
+        "fo",
+        "fr-BE",
+        "fr-CA",
+        "fr-CH",
+        "fr-FR",
+        "fr-LU",
+        "fr-MC",
+        "fr-SN",
+        "fr",
+        "ga-IE",
+        "ga",
+        "gl-ES",
+        "gl",
+        "gsw-CH",
+        "gsw",
+        "gu-IN",
+        "gu",
+        "gv-GB",
+        "gv",
+        "ha-GH",
+        "ha-Latn-GH",
+        "ha-Latn-NE",
+        "ha-Latn-NG",
+        "ha-Latn",
+        "ha-NE",
+        "ha-NG",
+        "ha",
+        "haw",
+        "haw-US",
+        "he-IL",
+        "he",
+        "hi-IN",
+        "hi",
+        "hr-HR",
+        "hr",
+        "hu-HU",
+        "hu",
+        "hy-AM-REVISED",
+        "hy-AM",
+        "hy",
+        "id-ID",
+        "id",
+        "ii-CN",
+        "ii",
+        "in-ID",
+        "in",
+        "is-IS",
+        "is",
+        "it-CH",
+        "it-IT",
+        "it",
+        "iw-IL",
+        "iw",
+        "ja-JP-TRADITIONAL",
+        "ja-JP",
+        "ja",
+        "ka-GE",
+        "ka",
+        "kk-Cyrl-KZ",
+        "kk-Cyrl",
+        "kk-KZ",
+        "kk",
+        "kl-GL",
+        "kl",
+        "km-KH",
+        "km",
+        "kn-IN",
+        "kn",
+        "kok-IN",
+        "kok",
+        "ko-KR",
+        "ko",
+        "kw-GB",
+        "kw",
+        "lt-LT",
+        "lt",
+        "lv-LV",
+        "lv",
+        "mk-MK",
+        "mk",
+        "ml-IN",
+        "ml",
+        "mr-IN",
+        "mr",
+        "ms-BN",
+        "ms-MY",
+        "ms",
+        "mt-MT",
+        "mt",
+        "nb-NO",
+        "nb",
+        "ne-IN",
+        "ne-NP",
+        "ne",
+        "nl-BE",
+        "nl-NL",
+        "nl",
+        "nn-NO",
+        "nn",
+        "no-NO-NY",
+        "no-NO",
+        "no",
+        "om-ET",
+        "om-KE",
+        "om",
+        "or-IN",
+        "or",
+        "pa-Arab-PK",
+        "pa-Arab",
+        "pa-Guru-IN",
+        "pa-Guru",
+        "pa-IN",
+        "pa-PK",
+        "pa",
+        "pl-PL",
+        "pl",
+        "ps-AF",
+        "ps",
+        "pt-BR",
+        "pt-PT",
+        "pt",
+        "ro-MD",
+        "ro-RO",
+        "ro",
+        "ru-RU",
+        "ru",
+        "ru-UA",
+        "sh-BA",
+        "sh-CS",
+        "sh",
+        "sh-YU",
+        "si-LK",
+        "si",
+        "sk-SK",
+        "sk",
+        "sl-SI",
+        "sl",
+        "so-DJ",
+        "so-ET",
+        "so-KE",
+        "so-SO",
+        "so",
+        "sq-AL",
+        "sq",
+        "sr-BA",
+        "sr-CS",
+        "sr-Cyrl-BA",
+        "sr-Cyrl-CS",
+        "sr-Cyrl-ME",
+        "sr-Cyrl-RS",
+        "sr-Cyrl",
+        "sr-Cyrl-YU",
+        "sr-Latn-BA",
+        "sr-Latn-CS",
+        "sr-Latn-ME",
+        "sr-Latn-RS",
+        "sr-Latn",
+        "sr-Latn-YU",
+        "sr-ME",
+        "sr-RS",
+        "sr",
+        "sr-YU",
+        "sv-FI",
+        "sv-SE",
+        "sv",
+        "sw-KE",
+        "sw",
+        "sw-TZ",
+        "ta-IN",
+        "ta",
+        "te-IN",
+        "te",
+        "th-TH-TRADITIONAL",
+        "th-TH",
+        "th",
+        "ti-ER",
+        "ti-ET",
+        "ti",
+        "tl-PH",
+        "tl",
+        "tr-TR",
+        "tr",
+        "uk",
+        "uk-UA",
+        "ur-IN",
+        "ur-PK",
+        "ur",
+        "uz-AF",
+        "uz-Arab-AF",
+        "uz-Arab",
+        "uz-Cyrl",
+        "uz-Cyrl-UZ",
+        "uz-Latn",
+        "uz-Latn-UZ",
+        "uz",
+        "uz-UZ",
+        "vi",
+        "vi-VN",
+        "zh-CN",
+        "zh-Hans-CN",
+        "zh-Hans-HK",
+        "zh-Hans-MO",
+        "zh-Hans-SG",
+        "zh-Hans",
+        "zh-Hant-HK",
+        "zh-Hant-MO",
+        "zh-Hant-TW",
+        "zh-Hant",
+        "zh-HK",
+        "zh-MO",
+        "zh-SG",
+        "zh-TW",
+        "zh",
+        "zu",
+        "zu-ZA"
+    ],
+    "requires": [
+        "datatype-date-timezone",
+        "datatype-date-format",
+        "datatype-number-advanced-format"
+    ]
+});

@@ -2371,13 +2371,6 @@
             "base"
         ]
     },
-    "format": {
-        "use": [
-            "datatype-date-advanced-format",
-            "datatype-number-advanced-format",
-            "intl-format"
-        ]
-    },
     "frame": {
         "requires": [
             "base",

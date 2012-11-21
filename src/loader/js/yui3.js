@@ -2428,13 +2428,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base"
         ]
     },
-    "format": {
-        "use": [
-            "datatype-date-advanced-format",
-            "datatype-number-advanced-format",
-            "intl-format"
-        ]
-    },
     "frame": {
         "requires": [
             "base",
@@ -3562,4 +3555,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8bb99f699c2c47f8a33ea7de0cf5bc6d';
+YUI.Env[Y.version].md5 = '5a7c11c518283fe648840f2ed85d065b';

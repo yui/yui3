@@ -1884,18 +1884,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("file-html5")) > -1, "Module (file-html5) not found in sorted array");
         },
-     "Testing format": function(data) {
-            var loader = new Y.Loader({
-                require: ["format"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("datatype-date-advanced-format")) > -1, "Module (datatype-date-advanced-format) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("datatype-number-advanced-format")) > -1, "Module (datatype-number-advanced-format) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("intl-format")) > -1, "Module (intl-format) not found in sorted array");
-        },
      "Testing frame": function(data) {
             var loader = new Y.Loader({
                 require: ["frame"],

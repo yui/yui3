@@ -50,7 +50,7 @@ DateFormatter.prototype.format = function(str, config) {
             //Got a match
             var style = this.styles[params.style];
             var result = Y.Date.format(new Date(params.value), {
-                timezone: config.timezone || Formatter.getTimeZone(),
+                timezone: config.timezone || Formatter.getCurrentTimeZone(),
                 dateFormat: style[0],
                 timeFormat: style[1],
                 timezoneFormat: style[2]

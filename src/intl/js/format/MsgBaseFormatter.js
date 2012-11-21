@@ -50,7 +50,7 @@ Formatter.prototype.format = function(str, config) {
 Y.mix(Formatter, {
     getCurrentTimeZone: function() {
         var systemTZoneOffset = (new Date()).getTimezoneOffset()*-60;
-        return Y.TimeZone.getTimezoneIdForOffset(systemTZoneOffset); 
+        return Y.Date.Timezone.getTimezoneIdForOffset(systemTZoneOffset); 
     }
 })
 

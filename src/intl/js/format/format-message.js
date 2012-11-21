@@ -6,6 +6,7 @@ var formatters = [ StringFormatter, DateFormatter, TimeFormatter, NumberFormatte
 
 Y.mix(Y.Intl, {
     formatMessage: function(pattern, values, config) {
+        config = config || {};
         for(var i=0; i<formatters.length; i++) {
             var formatter = formatters[i].createInstance(values);
             pattern = formatter.format(pattern, config);

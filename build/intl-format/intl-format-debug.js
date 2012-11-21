@@ -52,7 +52,7 @@ Formatter.prototype.format = function(str, config) {
 Y.mix(Formatter, {
     getCurrentTimeZone: function() {
         var systemTZoneOffset = (new Date()).getTimezoneOffset()*-60;
-        return Y.TimeZone.getTimezoneIdForOffset(systemTZoneOffset); 
+        return Y.Date.Timezone.getTimezoneIdForOffset(systemTZoneOffset); 
     }
 })
 
@@ -150,7 +150,7 @@ DateFormatter.prototype.format = function(str, config) {
             //Got a match
             var style = this.styles[params.style];
             var result = Y.Date.format(new Date(params.value), {
-                timezone: config.timezone || Formatter.getTimeZone(),
+                timezone: config.timezone || Formatter.getCurrentTimeZone(),
                 dateFormat: style[0],
                 timeFormat: style[1],
                 timezoneFormat: style[2]
@@ -447,6 +447,7 @@ var formatters = [ StringFormatter, DateFormatter, TimeFormatter, NumberFormatte
 
 Y.mix(Y.Intl, {
     formatMessage: function(pattern, values, config) {
+        config = config || {};
         for(var i=0; i<formatters.length; i++) {
             var formatter = formatters[i].createInstance(values);
             pattern = formatter.format(pattern, config);

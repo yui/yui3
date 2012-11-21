@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.11.07-21-32',
+            GALLERY_VERSION = 'gallery-2012.11.09-01-41',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -5343,13 +5343,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base"
         ]
     },
-    "format": {
-        "use": [
-            "datatype-date-advanced-format",
-            "datatype-number-advanced-format",
-            "intl-format"
-        ]
-    },
     "frame": {
         "requires": [
             "base",
@@ -6477,7 +6470,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8bb99f699c2c47f8a33ea7de0cf5bc6d';
+YUI.Env[Y.version].md5 = '5a7c11c518283fe648840f2ed85d065b';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

@@ -3825,7 +3825,6 @@ YUI.Env.aliases = {
     "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside","event-touch","event-move","event-flick","event-valuechange","event-tap"],
     "event-custom": ["event-custom-base","event-custom-complex"],
     "event-gestures": ["event-flick","event-move"],
-    "format": ["datatype-date-advanced-format","datatype-number-advanced-format","intl-format"],
     "handlebars": ["handlebars-compiler"],
     "highlight": ["highlight-base","highlight-accentfold"],
     "history": ["history-base","history-hash","history-hash-ie","history-html5"],

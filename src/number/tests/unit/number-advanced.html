@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>Timezone Tests</title>
+<title>Number Format Tests</title>
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 
@@ -9,18 +9,17 @@
 <div id="log"></div>
 
 <script type="text/javascript">
-
 (function() {
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-        coverage: ['datatype-date-timezone'],
+        coverage: ['datatype-number-advanced-format'],
         modules: {
-            'timezone-tests': {
-                fullpath: './assets/datatype-date-timezone-tests.js',
-                requires: ["test", "dump", "datatype-date-timezone"]
+            'number-advanced-tests': {
+                fullpath: './assets/number-advanced-tests.js',
+                requires: ['test', 'dump', 'datatype-number-advanced-format']
             }
         }
-    }).use("test-console", 'timezone-tests' , function(Y) {
+    }).use("test-console", "number-advanced-tests" , function(Y) {
         (new Y.Test.Console()).render('#log');
         // Set up the page
         Y.Test.Runner.run();

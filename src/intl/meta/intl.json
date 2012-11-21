@@ -1,8 +1,14 @@
 {
     "intl": {
        "requires": [
-	        "intl-base",
+	    "intl-base",
             "event-custom"
        ]
+    },
+
+    "intl-format": {
+        "requires": [ "datatype-date-advanced-format", "datatype-number-advanced-format", "intl" ],
+        "after": [ "intl" ]
+
     }
 }

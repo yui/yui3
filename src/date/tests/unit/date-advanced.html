@@ -14,12 +14,12 @@
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         coverage: ['datatype-date-advanced-format'],
         modules: {
-            'format-date-tests': {
-                fullpath: './assets/datatype-date-advanced-format-tests.js',
+            'date-advanced-tests': {
+                fullpath: './assets/date-advanced-tests.js',
                 requires: ['test', 'dump', 'datatype-date-advanced-format' ]
             }
         }
-    }).use("test-console", "format-date-tests" , function(Y) {
+    }).use("test-console", "date-advanced-tests" , function(Y) {
         (new Y.Test.Console()).render('#log');
         // Set up the page
         Y.Test.Runner.run();
