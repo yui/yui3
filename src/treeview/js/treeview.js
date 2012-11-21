@@ -208,8 +208,9 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
     renderNode: function (treeNode, options) {
         options || (options = {});
 
-        var classNames = this.classNames,
-            htmlNode   = treeNode._htmlNode;
+        var classNames  = this.classNames,
+            hasChildren = treeNode.hasChildren(),
+            htmlNode    = treeNode._htmlNode;
 
         if (!htmlNode) {
             htmlNode = treeNode._htmlNode = Y.Node.create(TreeView.Templates.node({
@@ -222,6 +223,7 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
         var labelNode = htmlNode.one('.' + classNames.label),
             labelId   = labelNode.get('id');
 
+
         labelNode.setHTML(treeNode.label);
 
         if (!labelId) {
@@ -232,19 +234,14 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
         htmlNode.set('aria-labelledby', labelId);
         htmlNode.set('role', 'treeitem');
 
-        if (treeNode.canHaveChildren) {
-            htmlNode.addClass(classNames.canHaveChildren);
-            htmlNode.toggleClass(classNames.open, treeNode.isOpen());
+        htmlNode.toggleClass(classNames.canHaveChildren, !!treeNode.canHaveChildren);
+        htmlNode.toggleClass(classNames.open, treeNode.isOpen());
+        htmlNode.toggleClass(classNames.hasChildren, hasChildren);
 
-            if (treeNode.hasChildren()) {
-                htmlNode.addClass(classNames.hasChildren);
-
-                if (options.renderChildren) {
-                    this.renderChildren(treeNode, {
-                        container: htmlNode
-                    });
-                }
-            }
+        if (hasChildren && options.renderChildren) {
+            this.renderChildren(treeNode, {
+                container: htmlNode
+            });
         }
 
         if (options.container) {
