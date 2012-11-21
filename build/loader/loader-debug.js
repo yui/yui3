@@ -3091,7 +3091,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "attribute-base": {
         "requires": [
             "attribute-core",
-            "attribute-events",
+            "attribute-observable",
             "attribute-extras"
         ]
     },
@@ -3106,13 +3106,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     },
     "attribute-events": {
-        "requires": [
-            "event-custom"
+        "use": [
+            "attribute-observable"
         ]
     },
     "attribute-extras": {
         "requires": [
             "oop"
+        ]
+    },
+    "attribute-observable": {
+        "requires": [
+            "event-custom"
         ]
     },
     "autocomplete": {
@@ -3228,12 +3233,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     },
     "base-base": {
-        "after": [
-            "attribute-complex"
-        ],
         "requires": [
+            "attribute-base",
             "base-core",
-            "attribute-base"
+            "base-observable"
         ]
     },
     "base-build": {
@@ -3244,6 +3247,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "base-core": {
         "requires": [
             "attribute-core"
+        ]
+    },
+    "base-observable": {
+        "requires": [
+            "attribute-observable"
         ]
     },
     "base-pluginhost": {
@@ -3400,6 +3408,33 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "arraylist-add",
             "arraylist-filter",
             "array-invoke"
+        ]
+    },
+    "color": {
+        "use": [
+            "color-base",
+            "color-hsl",
+            "color-harmony"
+        ]
+    },
+    "color-base": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "color-harmony": {
+        "requires": [
+            "color-hsl"
+        ]
+    },
+    "color-hsl": {
+        "requires": [
+            "color-base"
+        ]
+    },
+    "color-hsv": {
+        "requires": [
+            "color-base"
         ]
     },
     "console": {
@@ -6186,6 +6221,22 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "tabview-base"
         ]
     },
+    "template": {
+        "use": [
+            "template-base",
+            "template-micro"
+        ]
+    },
+    "template-base": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "template-micro": {
+        "requires": [
+            "escape"
+        ]
+    },
     "test": {
         "requires": [
             "event-simulate",
@@ -6470,7 +6521,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5a7c11c518283fe648840f2ed85d065b';
+YUI.Env[Y.version].md5 = '5db6143b6cbb93a15903abd5d07c150c';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

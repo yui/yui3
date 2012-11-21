@@ -1,6 +1,11 @@
 Cookie Change History
 =====================
 
+3.8.0
+-----
+
+* Pull Req: 248 - Make order of cookie loading with the same name configurable
+
 3.7.3
 -----
 

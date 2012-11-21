@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.o../../../..ml4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>Stacked Column Chart with zeros in data and planar interaction</title>
+<style>
+#mychart {
+    width:500px;
+    height:350px;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="../../../../build/cssfonts/fonts.css">
+</head>		
+<body class="yui3-skin-sam">
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<h3>Stacked Column Chart with zeros in data and planar interaction</h3>
+<div id="mychart"></div>
+<script type="text/javascript">            
+    YUI({
+        defaultGraphicEngine: (window.location.search.match(/[?&]defaultGraphicEngine=([^&]+)/) || [])[1] || 'svg',
+		filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    }).use('charts', function (Y) 
+    { 
+        var myDataValues = [
+                {category:"1/1/2010", miscellaneous:1000, expenses:0, revenue:2200},
+                {category:"2/1/2010", miscellaneous:0, expenses:0, revenue:100},
+                {category:"3/1/2010", miscellaneous:0, expenses:0, revenue:1500},
+                {category:"4/1/2010", miscellaneous:0, expenses:500, revenue:2800},
+                {category:"5/1/2010", miscellaneous:0, expenses:0, revenue:2650},
+                {category:"6/1/2010", miscellaneous:0, expenses:0, revenue:1200}
+        ],
+        mychart = new Y.Chart({
+            type:"column", 
+            stacked: true,
+            interactionType: "planar",
+            dataProvider:myDataValues, 
+            render:"#mychart"
+        });
+    });
+</script>
+</body>
+</html>

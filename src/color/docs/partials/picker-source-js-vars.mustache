@@ -1,0 +1,26 @@
+Y.one('.picker').addClass('yui3-skin-sam');
+
+var hue = new Y.Dial({
+        min: 0,
+        max: 360,
+        stepsPerRevolution: 360,
+        continuous: true,
+        centerButtonDiameter: 0.4,
+        render: '#hue-dial'
+    }),
+    sat = new Y.Slider({
+        min: 0,
+        max: 100,
+        value: 100,
+        render: '#sat-slider'
+    }),
+    lum = new Y.Slider({
+        min: 0,
+        max: 100,
+        value: 50,
+        render: '#lum-slider'
+    }),
+    satValue = Y.one('#sat-slider span'),
+    lumValue = Y.one('#lum-slider span'),
+    color = Y.one('.color');
+

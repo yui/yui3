@@ -18,7 +18,7 @@ Y.StackedLineSeries = Y.Base.create("stackedLineSeries", Y.LineSeries, [Y.Stacki
      * @method setAreaData
      */
     setAreaData: function()
-    {   
+    {
         Y.StackedLineSeries.superclass.setAreaData.apply(this);
         this._stackCoordinates.apply(this);
     }

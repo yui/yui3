@@ -17,7 +17,8 @@
 <div id="mychart"></div>
 <script type="text/javascript">            
     YUI({
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+        defaultGraphicEngine: (window.location.search.match(/[?&]defaultGraphicEngine=([^&]+)/) || [])[1] || 'svg',
+		filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
     }).use('charts', function (Y) 
     { 
         var myDataValues = [

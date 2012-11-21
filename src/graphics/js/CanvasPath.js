@@ -1,8 +1,8 @@
 /**
- * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Path.html">`Path`</a> class. 
- * `CanvasPath` is not intended to be used directly. Instead, use the <a href="Path.html">`Path`</a> class. 
- * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
- * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Path.html">`Path`</a> 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Path.html">`Path`</a> class.
+ * `CanvasPath` is not intended to be used directly. Instead, use the <a href="Path.html">`Path`</a> class.
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Path.html">`Path`</a>
  * class will point to the `CanvasPath` class.
  *
  * @module graphics
@@ -58,11 +58,11 @@ Y.extend(CanvasPath, Y.CanvasShape, {
 		node.setAttribute("id", id);
 		id = "#" + id;
 		host.node = node;
-		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name))); 
+		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)));
 	},
 
     /**
-     * Completes a drawing operation. 
+     * Completes a drawing operation.
      *
      * @method end
      */
@@ -112,7 +112,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 			return val;
 		}
 	},
-	
+
 	/**
 	 * Indicates the path used for the node.
 	 *

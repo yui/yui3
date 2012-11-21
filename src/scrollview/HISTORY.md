@@ -1,6 +1,19 @@
 ScrollView Change History
 =========================
 
+3.8.0
+-----
+
+  * Paging is now only triggered when a swipe crosses a mid-point threshold, to match the < 3.7.0 behavior (#2532745)
+
+  * Fixed issue where Mousewheel could prevent next()/prev() API interaction on horizontally paginated instances (#2532815)
+
+  * scrollToIndex now sets correct default value for easing (#2532895) 
+
+  * ScrollViewPaginator#scrollToIndex now properly respects animation duration and easing arguments (thanks juandopazo)
+  
+  * General cleanup
+
 3.7.3
 -----
 

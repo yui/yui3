@@ -15,15 +15,19 @@ var ArrayAssert  = Y.ArrayAssert,
     appContentSuite;
 
 function resetURL() {
+    if (!win) { return; }
+
     if (html5) {
-        win && win.history.replaceState(null, null, originalURL);
+        win.history.replaceState(null, null, originalURL);
     } else {
-        win && (win.location.hash = '');
+        win.location.hash = '';
     }
 }
 
 function resetTitle() {
-    doc && (doc.title = originalTitle);
+    if (doc) {
+        doc.title = originalTitle;
+    }
 }
 
 // -- Global Suite -------------------------------------------------------------
@@ -66,9 +70,11 @@ appContentSuite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
-        this.app && this.app.destroy();
-        delete this.app;
+        if (this.app) {
+            this.app.destroy();
+        }
 
+        delete this.app;
         delete this.TestView;
         delete Y.TestView;
     },
@@ -296,7 +302,10 @@ appContentSuite.add(new Y.Test.Case({
         resetURL();
         resetTitle();
 
-        this.app && this.app.destroy();
+        if (this.app) {
+            this.app.destroy();
+        }
+
         delete this.app;
     },
 

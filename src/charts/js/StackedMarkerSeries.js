@@ -18,7 +18,7 @@ Y.StackedMarkerSeries = Y.Base.create("stackedMarkerSeries", Y.MarkerSeries, [Y.
      * @method setAreaData
      */
     setAreaData: function()
-    {   
+    {
         Y.StackedMarkerSeries.superclass.setAreaData.apply(this);
         this._stackCoordinates.apply(this);
     }

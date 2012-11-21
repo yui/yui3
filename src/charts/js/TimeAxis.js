@@ -15,10 +15,10 @@ function TimeAxis(config)
 
 TimeAxis.NAME = "timeAxis";
 
-TimeAxis.ATTRS = 
+TimeAxis.ATTRS =
 {
     /**
-     * Indicates whether the maximum is calculated or explicitly set. 
+     * Indicates whether the maximum is calculated or explicitly set.
      *
      * @attribute setMax
      * @readOnly
@@ -36,7 +36,7 @@ TimeAxis.ATTRS =
     },
 
     /**
-     * Indicates whether the minimum is calculated or explicitly set. 
+     * Indicates whether the minimum is calculated or explicitly set.
      *
      * @attribute setMin
      * @readOnly
@@ -86,7 +86,7 @@ TimeAxis.ATTRS =
         getter: function ()
         {
             var min = this._getNumber(this._setMinimum);
-            if(!Y_Lang.isNumber(min)) 
+            if(!Y_Lang.isNumber(min))
             {
                 min = this._getNumber(this.get("dataMinimum"));
             }
@@ -100,10 +100,11 @@ TimeAxis.ATTRS =
     },
 
     /**
-     * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String` or an `HTMLElement`. The default implementation of the method returns a `String`. The output of this method
-     * will be rendered to the DOM using `appendChild`. If you override the `labelFunction` method and return an html string, you will also need to override the Axis' 
-     * `appendLabelFunction` to accept html as a `String`.
+     * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
+     * The method use would need to implement the arguments below and return a `String` or an `HTMLElement`. The default
+     * implementation of the method returns a `String`. The output of this method will be rendered to the DOM using
+     * `appendChild`. If you override the `labelFunction` method and return an html string, you will also need to override
+     * the Axis' `appendLabelFunction` to accept html as a `String`.
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>STRFTime string used to format the label. (optional)</dd>
@@ -162,7 +163,7 @@ Y.extend(TimeAxis, Y.AxisType, {
      * @private
      */
     GUID: "yuitimeaxis",
-	
+
     /**
      * Type of data used in `Axis`.
      *
@@ -171,7 +172,7 @@ Y.extend(TimeAxis, Y.AxisType, {
      * @private
      */
     _dataType: "time",
-	
+
     /**
      * Calculates and returns a value based on the number of labels and the index of
      * the current label.
@@ -221,7 +222,7 @@ Y.extend(TimeAxis, Y.AxisType, {
         {
             obj = data[i][key];
             if(Y_Lang.isDate(obj))
-            {   
+            {
                 val = obj.valueOf();
             }
             else
@@ -262,21 +263,21 @@ Y.extend(TimeAxis, Y.AxisType, {
      * @method _setDataByKey
      * @param {String} key Key value to use.
      * @param {Array} data Array to use.
-     * @private 
+     * @private
      */
     _setDataByKey: function(key, data)
     {
-        var obj, 
-            arr = [], 
-            dv = this._dataClone.concat(), 
-            i, 
+        var obj,
+            arr = [],
+            dv = this._dataClone.concat(),
+            i,
             val,
             len = dv.length;
         for(i = 0; i < len; ++i)
         {
             obj = dv[i][key];
             if(Y_Lang.isDate(obj))
-            {   
+            {
                 val = obj.valueOf();
             }
             else
@@ -336,4 +337,4 @@ Y.extend(TimeAxis, Y.AxisType, {
 });
 
 Y.TimeAxis = TimeAxis;
-		
+

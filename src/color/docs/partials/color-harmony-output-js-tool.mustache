@@ -1,0 +1,22 @@
+Y.one('.picker-output').delegate('click', function(e) {
+
+    swatchTip.empty();
+
+    var str = '<ul>',
+        swatch = e.currentTarget,
+        color = swatch.get('title');
+
+    if (swatch.contains(swatchTip)) {
+        swatchTip.remove();
+    } else {
+        str += '<li><strong>Hex: </strong> ' + Y.Color.toHex(color) + '</li>';
+        str += '<li><strong>RGB: </strong> ' + Y.Color.toRGB(color) + '</li>';
+        str += '<li><strong>HSL: </strong> ' + Y.Color.toHSL(color) + '</li>';
+
+        str += '</ul>';
+
+        swatch.append(swatchTip);
+        swatchTip.setHTML(str);
+    };
+
+}, '.swatch');

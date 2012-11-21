@@ -16,7 +16,7 @@ BottomAxisLayout.prototype = {
      *  @method _getDefaultMargins
      *  @return Object
      */
-    _getDefaultMargins: function() 
+    _getDefaultMargins: function()
     {
         return {
             top: 4,
@@ -48,7 +48,7 @@ BottomAxisLayout.prototype = {
                 host.set("topTickOffset", tickLength);
                 host.set("bottomTickOffset", 0);
             break;
-            case "outside" : 
+            case "outside" :
                 host.set("topTickOffset", 0);
                 host.set("bottomTickOffset", tickLength);
             break;
@@ -85,9 +85,9 @@ BottomAxisLayout.prototype = {
         {
             pt.y += tickLength/2;
         }
-        return pt; 
+        return pt;
     },
-    
+
     /**
      * Draws a tick
      *
@@ -120,7 +120,7 @@ BottomAxisLayout.prototype = {
     {
         return {x:point.x, y:point.y + this.get("bottomTickOffset")};
     },
-    
+
     /**
      * Updates the value for the `maxLabelSize` for use in calculating total size.
      *
@@ -147,11 +147,11 @@ BottomAxisLayout.prototype = {
         }
         else
         {
-            max = (sinRadians * labelWidth) + (cosRadians * labelHeight); 
+            max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
     },
-    
+
     /**
      * Determines the available label height when the axis width has been explicitly set.
      *
@@ -203,7 +203,7 @@ BottomAxisLayout.prototype = {
         props.transformOrigin = [0.5, 0.5];
         host._rotate(label, props);
     },
-    
+
     /**
      * Rotate and position labels.
      *
@@ -251,7 +251,7 @@ BottomAxisLayout.prototype = {
         props.y = topOffset;
         host._rotate(label, props);
     },
-    
+
     /**
      * Adjusts the coordinates of an axis label based on the rotation.
      *
@@ -288,7 +288,7 @@ BottomAxisLayout.prototype = {
     },
 
     /**
-     * Returns the transformOrigin to use for an axis label based on the position of the axis 
+     * Returns the transformOrigin to use for an axis label based on the position of the axis
      * and the rotation of the label.
      *
      * @method _getTransformOrigin
