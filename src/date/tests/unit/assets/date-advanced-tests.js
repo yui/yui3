@@ -54,7 +54,7 @@ YUI.add('date-advanced-tests', function(Y) {
             Y.Intl.setLang("datatype-date-advanced-format", "en");
             Y.Intl.setLang("datatype-date-timezone", "en");
                         
-            var date = new Date("2012/6/25 15:30 GMT+05:30");
+            var date = new Date(Date.UTC(2012, 5, 25, 10));
             var result = Y.Date.format(date, {
                 timezone: "Asia/Kolkata",
                 dateFormat: Y.Date.DATE_FORMATS.WYMD_LONG,
@@ -70,7 +70,7 @@ YUI.add('date-advanced-tests', function(Y) {
             Y.Intl.setLang("datatype-date-advanced-format", "th");    //Change language for this test only
             Y.Intl.setLang("datatype-date-timezone", "th");
                         
-            var date = new Date("2012/6/25 15:30 GMT+05:30");
+            var date = new Date(Date.UTC(2012, 5, 25, 10));
             var result = Y.Date.format(date, {
                 timezone: "Asia/Shanghai",
                 dateFormat: Y.Date.DATE_FORMATS.WYMD_LONG,
