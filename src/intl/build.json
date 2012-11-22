@@ -5,6 +5,19 @@
             "jsfiles": [
                 "Intl.js"
             ]
+        },
+        "intl-format": {
+            "jsfiles": [
+		"./format/MsgBaseFormatter.js",
+		"./format/MsgStringFormatter.js",
+		"./format/MsgDateFormatter.js",
+		"./format/MsgTimeFormatter.js",
+		"./format/MsgNumberFormatter.js",
+		"./format/MsgSelectFormatter.js",
+		"./format/MsgPluralFormatter.js",
+		"./format/MsgChoiceFormatter.js",
+                "./format/format-message.js"
+            ]
         }
     }
 }

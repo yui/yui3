@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>NumberFormat Test</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+
+        <script src="../../../../build/yui/yui.js" charset="utf-8"></script>
+
+        <style type="text/css">
+            button {
+                clear: left;
+                float: left;
+                margin: 20px;                
+            }
+            label {
+                clear: both;
+                float: left;
+                width: 200px;
+                margin-top: 10px;
+            }
+            input, select {
+                margin-top: 10px;
+            }
+            input[type="text"], select {
+                float:left;
+                width: 200px;
+            }
+            .options {
+                margin: 20px;
+            }
+            #demo-number-format {
+                border-color: black;
+                border-style: solid;
+                border-width: 1px;
+                width: 500px;
+                float: left;
+                margin: 0;
+                height: 24em;
+            }
+            #number-type-div {
+                clear: left;
+            }
+            #number-type-div input {
+                float: left;
+            }
+            #number-type-div label  {
+                clear: none;
+            }
+            h3 {
+                margin-left: 10px;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div id="demo-number-format">
+            <h3>NumberFormat Test</h3>
+            <div class="options">
+                <label for="duration-value">Number:</label>
+                <input type="text" id="number-value"/>
+
+                <label for="number-style">Style:</label>
+                <select id="number-style">
+                    <option value="CURRENCY_STYLE">CURRENCY_STYLE</option>
+                    <option value="ISO_CURRENCY_STYLE">ISO_CURRENCY_STYLE</option>
+                    <option value="NUMBER_STYLE">NUMBER_STYLE</option>
+                    <option value="PERCENT_STYLE">PERCENT_STYLE</option>
+                    <option value="PLURAL_CURRENCY_STYLE">PLURAL_CURRENCY_STYLE</option>
+                    <option value="SCIENTIFIC_STYLE">SCIENTIFIC_STYLE</option>
+                </select>
+
+                <div id="number-type-div">
+                    <input type="radio" name="number-operation" value="format" checked/> <label>Format</label>
+                    <input type="radio" name="number-operation" value="parse"/> <label>Parse</label>
+                </div>
+                <label for="number-locale">Locale:</label>
+                <input type="text" id="number-locale" value="en"/>
+
+                <label for="number-result">Result:</label>
+                <input type="text" id="number-result" readonly/>
+
+            </div>
+            <button id="number-submit">Done</button>
+        </div>
+
+        <script>
+            YUI().use("node", function (Y) {
+                //NumberFormat Demo
+                var number = Y.one("#number-value");
+                var numberStyle = Y.one("#number-style");
+                var numberLocale = Y.one("#number-locale");
+                var numberResult = Y.one("#number-result");
+                var numberSubmit = Y.one("#number-submit");
+                
+                numberSubmit.on("click", function(e) {
+                    YUI({lang: numberLocale.get("value"), filter: "raw"}).use("datatype-number-advanced-format", "node", "selector-css3", function(Y) {
+                        var operation = Y.one('#number-type-div input[type=radio]:checked').get('value');
+                        var value = number.get("value");
+                        
+                        var style = numberStyle.get("value");
+                        var config = { style: style };
+                        
+                        var result = (operation == "format") ? Y.Number.format(value, config) : Y.Number.parse(value, config);
+                        numberResult.set("value", result);
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
