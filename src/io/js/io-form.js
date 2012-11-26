@@ -8,6 +8,31 @@
 
 var eUC = encodeURIComponent;
 
+/**
+ * Method to enumerate through an HTML form's elements collection
+ * and return a string comprised of key-value pairs.
+ *
+ * @method serialize
+ * @static
+ * @param {Object} c - Configuration:
+ * <dl>
+ * <dt>form</dt>
+ * <dd>YUI form node or HTML form id</dd>
+ * <dt>useDisabled</dt>
+ * <dd>`true` to include disabled fields</dd>
+ * <dt>extra</dt>
+ * <dd>Extra values to include. Can be either a query string or an object with key-value pairs.</dd>
+ * </dl>
+ * @return {String}
+ */
+Y.IO.stringify = function(c) {
+    return Y.IO.prototype._serialize({
+        id: c.form,
+        useDisabled: c.useDisabled
+    },
+    Y.Lang.isObject(c.extra) ? Y.QueryString.stringify(c.extra) ? c.extra);
+};
+
 Y.mix(Y.IO.prototype, {
    /**
     * Method to enumerate through an HTML form's elements collection
@@ -15,8 +40,7 @@ Y.mix(Y.IO.prototype, {
     *
     * @method _serialize
     * @private
-    * @static
-    * @param {Object} c - YUI form node or HTML form id.
+    * @param {Object} c - id: YUI form node or HTML form id, useDisabled: `true` to include disabled fields
     * @param {String} s - Key-value data defined in the configuration object.
     * @return {String}
     */
