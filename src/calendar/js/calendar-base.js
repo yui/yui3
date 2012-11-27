@@ -604,6 +604,15 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         }
     },
 
+    /**
+    * A handler for a date selection event (either a click or a keyboard
+    *   selection) that adds the appropriate CSS class to a specific DOM
+    *   node corresponding to the date and sets its aria-selected
+    *   attribute to true.
+    *
+    * @method _renderCustomRulesHelper
+    * @private
+    */
     _renderCustomRulesHelper: function (date) {
         var enRule = this.get("enabledDatesRule"),
             disRule = this.get("disabledDatesRule"),
@@ -647,6 +656,15 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         }
     },
 
+    /**
+    * Takes in a date and determines whether that date has any rules
+    *   matching it in the customRenderer; then calls the specified
+    *   filterFunction if that's the case and/or disables the date
+    *   if the rule is specified as a disabledDatesRule.
+    *
+    * @method _renderSelectedDatesHelper
+    * @private
+    */
     _renderSelectedDatesHelper: function (date) {
         this._dateToNode(date).addClass(CAL_DAY_SELECTED).setAttribute("aria-selected", true);
     },
