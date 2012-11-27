@@ -17,6 +17,7 @@ var substitute            = Y.Lang.sub,
 * using Flash as a transport engine.
 * @class UploaderFlash
 * @extends Widget
+* @param {Object} config Configuration object.
 * @constructor
 */
 
@@ -648,7 +649,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @method upload
     * @param file {Y.FileFlash} Reference to the instance of the file to be uploaded.
     * @param url {String} The URL to upload the file to.
-    * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
+    * @param [postVars] {Object} A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.
     */
     upload : function (file, url, postvars) {
@@ -676,7 +677,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     *
     * @method uploadAll
     * @param url {String} The URL to upload the files to.
-    * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
+    * @param [postVars] {Object} A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.
     */
     uploadAll : function (url, postvars) {
@@ -689,7 +690,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @method uploadThese
     * @param files {Array} The list of files to upload.
     * @param url {String} The URL to upload the files to.
-    * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
+    * @param [postVars] {Object} A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.
     */
     uploadThese : function (files, url, postvars) {
@@ -728,7 +729,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * with width and height set to 100% of the parent.
     *
     * @property FLASH_CONTAINER
-    * @type {String}
+    * @type {HTML}
     * @static
     * @default '<div id="{swfContainerId}" style="position:absolute; top:0px; left: 0px; margin: 0; padding: 0;
     *           border: 0; width:100%; height:100%"></div>'
@@ -740,7 +741,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * The template for the "Select Files" button.
     *
     * @property SELECT_FILES_BUTTON
-    * @type {String}
+    * @type {HTML}
     * @static
     * @default "<button type='button' class='yui3-button' tabindex='-1'>{selectButtonLabel}</button>"
     */

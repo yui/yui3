@@ -607,7 +607,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     *
     * @method uploadAll
     * @param url {String} The URL to upload the files to.
-    * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
+    * @param [postVars] {Object} A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.
     */
     uploadAll : function (url, postvars) {
@@ -620,7 +620,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @method uploadThese
     * @param files {Array} The list of files to upload.
     * @param url {String} The URL to upload the files to.
-    * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
+    * @param [postVars] {Object} A set of key-value pairs to send as variables along with the file upload HTTP request.
     *                          If not specified, the values from the attribute `postVarsPerFile` are used instead.
     */
     uploadThese : function (files, url, postvars) {
@@ -675,7 +675,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * The template for the "Select Files" button.
     *
     * @property SELECT_FILES_BUTTON
-    * @type {String}
+    * @type {HTML}
     * @static
     * @default '<button type="button" class="yui3-button" role="button" aria-label="{selectButtonLabel}"
     *           tabindex="{tabIndex}">{selectButtonLabel}</button>'
