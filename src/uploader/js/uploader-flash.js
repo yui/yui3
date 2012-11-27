@@ -8,7 +8,7 @@
 */
 
 // Shorthands for external modules
-var substitute            = Y.substitute,
+var substitute            = Y.Lang.sub,
     UploaderQueue         = Y.Uploader.Queue;
 
 
@@ -1057,5 +1057,3 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 });
 
 Y.UploaderFlash.Queue = UploaderQueue;
-
-

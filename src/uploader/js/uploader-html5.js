@@ -8,7 +8,7 @@
 */
 
 // Shorthands for the external modules
-var  substitute  = Y.substitute,
+var  substitute  = Y.Lang.sub,
      UploaderQueue = Y.Uploader.Queue;
 
 /**
@@ -338,50 +338,52 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     */
     _ddEventHandler : function (event) {
 
+
         event.stopPropagation();
         event.preventDefault();
 
-        switch (event.type) {
-            case "dragenter":
-                this.fire("dragenter");
-                break;
-            case "dragover":
-                this.fire("dragover");
-                break;
-            case "dragleave":
-                this.fire("dragleave");
-                break;
-            case "drop":
+        if (Y.Array.indexOf(event._event.dataTransfer.types, 'Files') > -1) {
+            switch (event.type) {
+                case "dragenter":
+                    this.fire("dragenter");
+                    break;
+                case "dragover":
+                    this.fire("dragover");
+                    break;
+                case "dragleave":
+                    this.fire("dragleave");
+                    break;
+                case "drop":
 
-                var newfiles = event._event.dataTransfer.files,
-                   parsedFiles = [],
-                   filterFunc = this.get("fileFilterFunction"),
-                   oldfiles;
+                    var newfiles = event._event.dataTransfer.files,
+                        parsedFiles = [],
+                        filterFunc = this.get("fileFilterFunction"),
+                        oldfiles;
 
-                if (filterFunc) {
-                    Y.each(newfiles, function (value) {
-                        var newfile = new Y.FileHTML5(value);
-                        if (filterFunc(newfile)) {
-                            parsedFiles.push(newfile);
-                        }
-                    });
-                }
-                else {
-                    Y.each(newfiles, function (value) {
-                        parsedFiles.push(new Y.FileHTML5(value));
-                    });
-                }
+                    if (filterFunc) {
+                        Y.each(newfiles, function (value) {
+                            var newfile = new Y.FileHTML5(value);
+                            if (filterFunc(newfile)) {
+                                parsedFiles.push(newfile);
+                            }
+                        });
+                    }
+                    else {
+                        Y.each(newfiles, function (value) {
+                            parsedFiles.push(new Y.FileHTML5(value));
+                        });
+                    }
 
-                if (parsedFiles.length > 0) {
-                    oldfiles = this.get("fileList");
-
-                    this.set("fileList",
+                    if (parsedFiles.length > 0) {
+                        oldfiles = this.get("fileList");
+                        this.set("fileList",
                         this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles);
-                    this.fire("fileselect", {fileList: parsedFiles});
-                }
+                        this.fire("fileselect", {fileList: parsedFiles});
+                    }
 
-                this.fire("drop");
-                break;
+                    this.fire("drop");
+                    break;
+            }
         }
     },
 
