@@ -19,6 +19,12 @@ YUI.add('charts-domevents-tests', function(Y) {
         //---------------------------------------------------------------------
         // Setup and teardown of test harnesses
         //---------------------------------------------------------------------
+
+        _should: {
+            ignore: {
+                'testDefault': (Y.UA.phantomjs)
+            }
+        },
         
         /**
          * Sets up dom elements needed for the test.
