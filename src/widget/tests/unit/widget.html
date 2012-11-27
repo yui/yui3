@@ -73,11 +73,11 @@
         }
     </style>
 </head>
-<body class="yui3-skin-sam wf2-skin-toad">
+<body class="yui3-skin-sam wf2-skin-toad wf3~skin~blue">
 
     <p><input type="button" value="Run Tests" id="btnRun" disabled="true"><span id="automationmsg" class="msg-hidden">Currently running tests, with logging disabled to speed up automation. Button will be enabled once complete.</span></p>
 
-    <div id="testbed" class="yui3-skin-foo wf2-skin-frog"></div>
+    <div id="testbed" class="yui3-skin-foo wf2-skin-frog wf3~skin~pink"></div>
 
     <div id="widgetRenderContainer" style="height:300px;width:300px"></div>
     <div id="customWidgetRenderContainer"></div>
@@ -1985,12 +1985,13 @@
 
                 Y.Assert.isNull( w.getSkinName() );
                 Y.Assert.isNull( w.getSkinName( 'wf2' ) );
+                Y.Assert.isNull( w.getSkinName( 'wf3', '~' ) );
 
                 w.destroy();
             },
 
             "getSkinName should return name from BB if available": function () {
-                var bb = Y.Node.create( '<div class="yui3-skin-foo wf2-skin-bar"><div></div></div>' ),
+                var bb = Y.Node.create( '<div class="yui3-skin-foo wf2-skin-bar wf3~skin~baz"><div></div></div>' ),
                     cb = bb.one( 'div' ),
                     w = new Y.Widget( {
                         boundingBox: bb,
@@ -1999,6 +2000,7 @@
 
                 Y.Assert.areEqual( "foo", w.getSkinName() );
                 Y.Assert.areEqual( "bar", w.getSkinName( 'wf2' ) );
+                Y.Assert.areEqual( "baz", w.getSkinName( 'wf3', '~' ) );
 
                 w.destroy();
             },
@@ -2009,15 +2011,19 @@
 
                 Y.Assert.areEqual( "sam", w.getSkinName() );
                 Y.Assert.areEqual( "toad", w.getSkinName( 'wf2' ) );
+                Y.Assert.areEqual( "blue", w.getSkinName( 'wf3', '~' ) );
 
                 body.removeClass( "yui3-skin-sam" );
                 body.removeClass( "wf2-skin-toad" );
+                body.removeClass( "wf3~skin~blue" );
 
                 Y.Assert.isNull( w.getSkinName() );
                 Y.Assert.isNull( w.getSkinName( 'wf2' ) );
+                Y.Assert.isNull( w.getSkinName( 'wf3', '~' ) );
 
                 body.addClass( "yui3-skin-sam" );
                 body.addClass( "wf2-skin-toad" );
+                body.addClass( "wf3~skin~blue" );
 
                 w.destroy();
             },
@@ -2028,9 +2034,11 @@
 
                 body.addClass( "yui3-skin-sam" );
                 body.addClass( "wf2-skin-toad" );
+                body.addClass( "wf3~skin~blue" );
 
                 Y.Assert.areEqual( "foo", w.getSkinName() );
                 Y.Assert.areEqual( "frog", w.getSkinName( 'wf2' ) );
+                Y.Assert.areEqual( "pink", w.getSkinName( 'wf3', '~' ) );
 
                 w.destroy();
             },
@@ -2038,7 +2046,6 @@
             "getSkinName should return null if prefix parameter contains invalid characters": function() {
                 var w = new Y.Widget().render();
 
-                // Y.Assert.isNull( w.getSkinName( /b.*S+/ ) );
                 w.getSkinName( "(\S+)" );
 
                 w.destroy();
