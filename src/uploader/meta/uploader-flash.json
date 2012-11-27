@@ -4,12 +4,12 @@
             "swf",
             "widget",
             "substitute",
-            "base", 
+            "base",
             "cssbutton",
             "node",
             "event-custom",
             "file-flash",
             "uploader-queue"
-        ] 
+        ]
     }
 }
