@@ -14,22 +14,18 @@ var eUC = encodeURIComponent;
  *
  * @method serialize
  * @static
- * @param {Node|String} f - YUI form node or HTML form id
- * @param {Object} c - Configuration:
- * <dl>
- * <dt>useDisabled</dt>
- * <dd>`true` to include disabled fields</dd>
- * <dt>extra</dt>
- * <dd>Extra values to include. Can be either a query string or an object with key-value pairs.</dd>
- * </dl>
+ * @param {Node|String} form - YUI form node or HTML form id
+ * @param {Object} [options] Configuration options.
+ * @param {Boolean} [options.useDisabled=false] Whether to include disabled fields.
+ * @param {Object|String} [options.extra] Extra values to include. May be a query string or an object with key/value pairs.
  * @return {String}
  */
-Y.IO.stringify = function(f, c) {
+Y.IO.stringify = function(form, options) {
     return Y.IO.prototype._serialize({
-        id: f,
-        useDisabled: c.useDisabled
+        id: form,
+        useDisabled: options.useDisabled
     },
-    Y.Lang.isObject(c.extra) ? Y.QueryString.stringify(c.extra) ? c.extra);
+    Y.Lang.isObject(options.extra) ? Y.QueryString.stringify(options.extra) ? options.extra);
 };
 
 Y.mix(Y.IO.prototype, {
