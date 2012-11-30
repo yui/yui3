@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>MessageFormat Test</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+
+        <script src="../../../../build/yui/yui.js" charset="utf-8"></script>
+
+        <style type="text/css">
+            button {
+                clear: left;
+                float: left;
+                margin: 20px;                
+            }
+            label {
+                clear: both;
+                float: left;
+                width: 200px;
+                margin-top: 10px;
+            }
+            input, select {
+                margin-top: 10px;
+            }
+            input[type="text"], select, textarea {
+                float:left;
+                width: 200px;
+            }
+	    textarea {
+		height: 50px;
+	    }
+            .options {
+                margin: 20px;
+            }
+            #demo {
+                border-color: black;
+                border-style: solid;
+                border-width: 1px;
+                width: 500px;
+                float: left;
+                margin: 0;
+                height: 24em;
+                clear: left;
+            }
+            h3 {
+                margin-left: 10px;
+            }
+            .demo-description {
+                margin-left: 20px;
+                font-style: italic;
+            }
+            .demo-description span {
+                margin-left: 30px;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div id="demo">
+            <h3>MessageFormat Test</h3>
+            <div class="options">
+                <label for="pattern">Pattern:</label>
+                <textarea id="pattern">At {0,time} on {0,date}, there was {1} on planet {2,number,integer}.</textarea>
+
+		<label for="values">Values</label>
+		<textarea id="values">["Mon Oct 01 2012 11:38:54 GMT+0530 (IST)", "a disturbance in the force", 5] </textarea>
+
+                <label for="locale">Locale:</label>
+                <input type="text" id="locale" value="en"/>
+
+                <label for="result">Result:</label>
+                <textarea id="result" readonly></textarea>
+
+            </div>
+            <button id="submit">Done</button>
+        </div>
+
+        <script>
+            YUI().use("node", "json", function (Y) {
+
+                var pattern = Y.one("#pattern");
+		var values = Y.one("#values");
+                var locale = Y.one("#locale");
+                var result = Y.one("#result");
+                var submit = Y.one("#submit");
+                
+		function loadResult () {
+		    YUI({lang: locale.get("value"), filter: "raw" }).use("intl-format", "json-parse", function(Y) {
+			var data = "";
+			var valString = values.get("value");
+			try {
+				data = eval(valString);	//Potentially unsafe. Do not use elsewhere
+			} catch (err) {
+				//Could not parse using eval. Possibly JSON.
+				data = Y.JSON.parse(valString);
+			}
+			result.set("value", Y.Intl.formatMessage(pattern.get("value"), data));
+                    });
+		}
+
+                submit.on("click", loadResult);
+		loadResult();
+            });
+        </script>
+    </body>
+</html>
