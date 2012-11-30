@@ -27,5 +27,15 @@
     },
     "datatype-date-math": {
         "requires": [ "yui-base" ]
-    }
+    },
+    "datatype-date-advanced-format": {
+        "lang": [ ],
+                "requires": [ "datatype-date-timezone", "datatype-date-format", "datatype-number-advanced-format" ],
+                "after": ["datatype-date-timezone"]
+    },
+    "datatype-date-timezone": {
+        	"lang": [ ],
+		"requires": [ "datatype-date-format" ],
+                "after": [ "datatype-date-format" ]
+	}
 }

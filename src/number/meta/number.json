@@ -8,5 +8,10 @@
     "datatype-number-parse": {
     },
     "datatype-number-format": {
+    },
+    "datatype-number-advanced-format": {
+                "lang": [ ],
+                "requires": [ "datatype-number-format", "datatype-number-parse" ],
+                "after": [ "datatype-number-format", "datatype-number-parse" ]
     }
 }
