@@ -1,4 +1,4 @@
-YUI.add('attribute-core-tests', function(Y) {    
+YUI.add('attribute-core-tests', function(Y) {
 
     function TestAugment(attrs, values) {}
     Y.augment(TestAugment, Y.AttributeCore);
@@ -63,12 +63,12 @@ YUI.add('attribute-core-tests', function(Y) {
 
         initOnly : {
             writeOnce:"initOnly"
-        }    
+        }
     };
 
     // Straightup augment, no wrapper functions
     Y.mix(AttrHost, Y.AttributeCore, false, null, 1);
-    
+
     AttrHost.prototype.DEValueFn = function() {
         return this.get("D") + this.get("E");
     };
@@ -120,7 +120,7 @@ YUI.add('attribute-core-tests', function(Y) {
             var o = {
                 methodOne: function() {}
             };
-            
+
             Y.augment(o, Y.Attribute);
 
             o.set("foo", "bar");
@@ -235,6 +235,37 @@ YUI.add('attribute-core-tests', function(Y) {
             Y.Assert.areEqual("TESTADHOCCONFIGURED", h.get("AdHoc"));
         },
 
+        testSetterWithOpts : function() {
+            var h = this.createHost();
+
+
+            h.addAttr("tri", {
+                setter: function(val, name, opts) {
+                    opts = opts || {};
+                    if (opts.src === 'internal') {
+                        if (parseInt(val,10) == val && val >= 0 && val <=2) {
+                            return val;
+                        } else {
+                            return Y.AttributeCore.INVALID_VALUE;
+                        }
+                    } else {
+                        return (val?2:0)
+                    }
+                }
+            });
+
+            h.set("tri", "whatever");
+            Y.Assert.areEqual(2, h.get("tri"),"1");
+            h.set("tri", false);
+            Y.Assert.areEqual(0, h.get("tri"),"2");
+            h.set("tri", 1);
+            Y.Assert.areEqual(2, h.get("tri"),"3");
+            h.set("tri", 1, {src: 'internal'});
+            Y.Assert.areEqual(1, h.get("tri"),"4");
+            h.set("tri", "whatever", {src: 'internal'});
+            Y.Assert.areEqual(1, h.get("tri"),"5");
+
+        },
         testMassSetGet : function() {
             var h = this.createHost();
 
@@ -363,7 +394,7 @@ YUI.add('attribute-core-tests', function(Y) {
             h.set("complex.W.B", 113);
             Y.Assert.areEqual(undefined, h.get("complex.W"));
             Y.Assert.areEqual(undefined, h.get("complex.W.B"));
- 
+
                     h.set("complex.Y", {B:222});
             Y.Assert.areEqual(222, h.get("complex.Y.B"));
             Y.Assert.areEqual(undefined, h.get("complex.Y.A"));

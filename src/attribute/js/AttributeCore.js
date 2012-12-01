@@ -1,6 +1,6 @@
     /**
-     * The attribute module provides an augmentable Attribute implementation, which 
-     * adds configurable attributes and attribute change events to the class being 
+     * The attribute module provides an augmentable Attribute implementation, which
+     * adds configurable attributes and attribute change events to the class being
      * augmented. It also provides a State class, which is used internally by Attribute,
      * but can also be used independently to provide a name/property/value data structure to
      * store state.
@@ -9,7 +9,7 @@
      */
 
     /**
-     * The attribute-core submodule provides the lightest level of attribute handling support 
+     * The attribute-core submodule provides the lightest level of attribute handling support
      * without Attribute change events, or lesser used methods such as reset(), modifyAttrs(),
      * and removeAttr().
      *
@@ -44,8 +44,8 @@
 
     /**
      * <p>
-     * AttributeCore provides the lightest level of configurable attribute support. It is designed to be 
-     * augmented on to a host class, and provides the host with the ability to configure 
+     * AttributeCore provides the lightest level of configurable attribute support. It is designed to be
+     * augmented on to a host class, and provides the host with the ability to configure
      * attributes to store and retrieve state, <strong>but without support for attribute change events</strong>.
      * </p>
      * <p>For example, attributes added to the host can be configured:</p>
@@ -61,10 +61,10 @@
      *
      * <p>See the <a href="#method_addAttr">addAttr</a> method, for the complete set of configuration
      * options available for attributes.</p>
-     * 
-     * <p>Object/Classes based on AttributeCore can augment <a href="AttributeEvents.html">AttributeEvents</a> 
-     * (with true for overwrite) and <a href="AttributeExtras.html">AttributeExtras</a> to add attribute event and 
-     * additional, less commonly used attribute methods, such as `modifyAttr`, `removeAttr` and `reset`.</p>   
+     *
+     * <p>Object/Classes based on AttributeCore can augment <a href="AttributeEvents.html">AttributeEvents</a>
+     * (with true for overwrite) and <a href="AttributeExtras.html">AttributeExtras</a> to add attribute event and
+     * additional, less commonly used attribute methods, such as `modifyAttr`, `removeAttr` and `reset`.</p>
      *
      * @class AttributeCore
      * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
@@ -72,14 +72,14 @@
      * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
      */
     function AttributeCore(attrs, values, lazy) {
-        this._initAttrHost(attrs, values, lazy);            
+        this._initAttrHost(attrs, values, lazy);
     }
 
     /**
      * <p>The value to return from an attribute setter in order to prevent the set from going through.</p>
      *
-     * <p>You can return this value from your setter if you wish to combine validator and setter 
-     * functionality into a single setter function, which either returns the massaged value to be stored or 
+     * <p>You can return this value from your setter if you wish to combine validator and setter
+     * functionality into a single setter function, which either returns the massaged value to be stored or
      * AttributeCore.INVALID_VALUE to prevent invalid values from being stored.</p>
      *
      * @property INVALID_VALUE
@@ -91,7 +91,7 @@
     INVALID_VALUE = AttributeCore.INVALID_VALUE;
 
     /**
-     * The list of properties which can be configured for 
+     * The list of properties which can be configured for
      * each attribute (e.g. setter, getter, writeOnce etc.).
      *
      * This property is used internally as a whitelist for faster
@@ -107,7 +107,7 @@
     AttributeCore.prototype = {
 
         /**
-         * Constructor logic for attributes. Initializes the host state, and sets up the inital attributes passed to the 
+         * Constructor logic for attributes. Initializes the host state, and sets up the inital attributes passed to the
          * constructor.
          *
          * @method _initAttrHost
@@ -128,7 +128,7 @@
          * <p>
          * The config argument object supports the following properties:
          * </p>
-         * 
+         *
          * <dl>
          *    <dt>value &#60;Any&#62;</dt>
          *    <dd>The initial value to set on the attribute</dd>
@@ -136,9 +136,9 @@
          *    <dt>valueFn &#60;Function | String&#62;</dt>
          *    <dd>
          *    <p>A function, which will return the initial value to set on the attribute. This is useful
-         *    for cases where the attribute configuration is defined statically, but needs to 
-         *    reference the host instance ("this") to obtain an initial value. If both the value and valueFn properties are defined, 
-         *    the value returned by the valueFn has precedence over the value property, unless it returns undefined, in which 
+         *    for cases where the attribute configuration is defined statically, but needs to
+         *    reference the host instance ("this") to obtain an initial value. If both the value and valueFn properties are defined,
+         *    the value returned by the valueFn has precedence over the value property, unless it returns undefined, in which
          *    case the value property is used.</p>
          *
          *    <p>valueFn can also be set to a string, representing the name of the instance method to be used to retrieve the value.</p>
@@ -150,8 +150,8 @@
          *
          *    <dt>writeOnce &#60;boolean&#62; or &#60;string&#62;</dt>
          *    <dd>
-         *        Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
-         *        can only have their values set once, be it through the default configuration, 
+         *        Whether or not the attribute is "write once". Attributes having writeOnce set to true,
+         *        can only have their values set once, be it through the default configuration,
          *        constructor configuration arguments, or by invoking set.
          *        <p>The writeOnce attribute can also be set to the string "initOnly", in which case the attribute can only be set during initialization
          *        (when used with Base, this means it can only be set during construction)</p>
@@ -159,20 +159,20 @@
          *
          *    <dt>setter &#60;Function | String&#62;</dt>
          *    <dd>
-         *    <p>The setter function used to massage or normalize the value passed to the set method for the attribute. 
+         *    <p>The setter function used to massage or normalize the value passed to the set method for the attribute.
          *    The value returned by the setter will be the final stored value. Returning
          *    <a href="#property_Attribute.INVALID_VALUE">Attribute.INVALID_VALUE</a>, from the setter will prevent
          *    the value from being stored.
          *    </p>
-         *    
+         *
          *    <p>setter can also be set to a string, representing the name of the instance method to be used as the setter function.</p>
          *    </dd>
-         *      
+         *
          *    <dt>getter &#60;Function | String&#62;</dt>
          *    <dd>
          *    <p>
          *    The getter function used to massage or normalize the value returned by the get method for the attribute.
-         *    The value returned by the getter function is the value which will be returned to the user when they 
+         *    The value returned by the getter function is the value which will be returned to the user when they
          *    invoke get.
          *    </p>
          *
@@ -185,13 +185,13 @@
          *    The validator function invoked prior to setting the stored value. Returning
          *    false from the validator function will prevent the value from being stored.
          *    </p>
-         *    
+         *
          *    <p>validator can also be set to a string, representing the name of the instance method to be used as the validator function.</p>
          *    </dd>
          *
          *    <dt>lazyAdd &#60;boolean&#62;</dt>
-         *    <dd>Whether or not to delay initialization of the attribute until the first call to get/set it. 
-         *    This flag can be used to over-ride lazy initialization on a per attribute basis, when adding multiple attributes through 
+         *    <dd>Whether or not to delay initialization of the attribute until the first call to get/set it.
+         *    This flag can be used to over-ride lazy initialization on a per attribute basis, when adding multiple attributes through
          *    the <a href="#method_addAttrs">addAttrs</a> method.</dd>
          *
          * </dl>
@@ -199,20 +199,20 @@
          * <p>The setter, getter and validator are invoked with the value and name passed in as the first and second arguments, and with
          * the context ("this") set to the host object.</p>
          *
-         * <p>Configuration properties outside of the list mentioned above are considered private properties used internally by attribute, 
+         * <p>Configuration properties outside of the list mentioned above are considered private properties used internally by attribute,
          * and are not intended for public use.</p>
-         * 
+         *
          * @method addAttr
          *
          * @param {String} name The name of the attribute.
          * @param {Object} config An object with attribute configuration property/value pairs, specifying the configuration for the attribute.
          *
          * <p>
-         * <strong>NOTE:</strong> The configuration object is modified when adding an attribute, so if you need 
+         * <strong>NOTE:</strong> The configuration object is modified when adding an attribute, so if you need
          * to protect the original values, you will need to merge the object.
          * </p>
          *
-         * @param {boolean} lazy (optional) Whether or not to add this attribute lazily (on the first call to get/set). 
+         * @param {boolean} lazy (optional) Whether or not to add this attribute lazily (on the first call to get/set).
          *
          * @return {Object} A reference to the host object.
          *
@@ -287,7 +287,7 @@
          *
          * @method get
          *
-         * @param {String} name The name of the attribute. If the value of the attribute is an Object, 
+         * @param {String} name The name of the attribute. If the value of the attribute is an Object,
          * dot notation can be used to obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
          *
          * @return {Any} The value of the attribute
@@ -331,16 +331,18 @@
          * @method set
          * @chainable
          *
-         * @param {String} name The name of the attribute. If the 
+         * @param {String} name The name of the attribute. If the
          * current value of the attribute is an Object, dot notation can be used
          * to set the value of a property within the object (e.g. <code>set("x.y.z", 5)</code>).
          *
          * @param {Any} value The value to set the attribute to.
          *
+         * @param {Object} [opts] Optional data providing the circumstances for the change.
+         *
          * @return {Object} A reference to the host object.
          */
-        set : function(name, val) {
-            return this._setAttr(name, val);
+        set : function(name, val, opts) {
+            return this._setAttr(name, val, opts);
         },
 
         /**
@@ -349,13 +351,14 @@
          * @method _set
          * @protected
          * @chainable
-         * 
+         *
          * @param {String} name The name of the attribute.
          * @param {Any} val The value to set the attribute to.
+         * @param {Object} [opts] Optional data providing the circumstances for the change.
          * @return {Object} A reference to the host object.
          */
-        _set : function(name, val) {
-            return this._setAttr(name, val, null, true);
+        _set : function(name, val, opts) {
+            return this._setAttr(name, val, opts, true);
         },
 
         /**
@@ -369,22 +372,18 @@
          *
          * @param {String} name The name of the attribute.
          * @param {Any} value The value to set the attribute to.
-         * @param {Object} opts (Optional) Optional event data to be mixed into
-         * the event facade passed to subscribers of the attribute's change event.
-         * This is currently a hack. There's no real need for the AttributeCore implementation
-         * to support this parameter, but breaking it out into AttributeEvents, results in
-         * additional function hops for the critical path.
-         * @param {boolean} force If true, allows the caller to set values for 
+         * @param {Object} [opts] Optional data providing the circumstances for the change.
+         * @param {boolean} force If true, allows the caller to set values for
          * readOnly or writeOnce attributes which have already been set.
          *
          * @return {Object} A reference to the host object.
          */
         _setAttr : function(name, val, opts, force)  {
-            
-            // HACK - no real reason core needs to know about opts, but 
-            // it adds fn hops if we want to break it out. 
+
+            // HACK - no real reason core needs to know about opts, but
+            // it adds fn hops if we want to break it out.
             // Not sure it's worth it for this critical path
-            
+
             var allowSet = true,
                 state = this._state,
                 stateProxy = this._stateProxy,
@@ -406,12 +405,12 @@
                 this._addLazyAttr(name);
             }
 
-            cfg = state.getAll(name, true) || {}; 
+            cfg = state.getAll(name, true) || {};
 
             initialSet = (!(VALUE in cfg));
 
             if (stateProxy && name in stateProxy && !cfg._bypassProxy) {
-                // TODO: Value is always set for proxy. Can we do any better? Maybe take a snapshot as the initial value for the first call to set? 
+                // TODO: Value is always set for proxy. Can we do any better? Maybe take a snapshot as the initial value for the first call to set?
                 initialSet = false;
             }
 
@@ -453,9 +452,9 @@
 
                 if (allowSet) {
                     if (!this._fireAttrChange || initializing) {
-                        this._setAttrVal(name, strPath, currVal, val);
+                        this._setAttrVal(name, strPath, currVal, val, opts);
                     } else {
-                        // HACK - no real reason core needs to know about _fireAttrChange, but 
+                        // HACK - no real reason core needs to know about _fireAttrChange, but
                         // it adds fn hops if we want to break it out. Not sure it's worth it for this critical path
                         this._fireAttrChange(name, strPath, currVal, val, opts);
                     }
@@ -499,14 +498,14 @@
                 delete host._tCfgs[name];
                 host._addAttrs(cfg, host._tVals);
             }
-            
+
             // Lazy Init
             if (host._isLazyAttr(name)) {
                 host._addLazyAttr(name);
             }
 
             val = host._getStateVal(name);
-                        
+
             getter = state.get(name, GETTER);
 
             if (getter && !getter.call) {
@@ -520,9 +519,9 @@
         },
 
         /**
-         * Gets the stored value for the attribute, from either the 
+         * Gets the stored value for the attribute, from either the
          * internal state object, or the state proxy if it exits
-         * 
+         *
          * @method _getStateVal
          * @private
          * @param {String} name The name of the attribute
@@ -534,7 +533,7 @@
         },
 
         /**
-         * Sets the stored value for the attribute, in either the 
+         * Sets the stored value for the attribute, in either the
          * internal state object, or the state proxy if it exits
          *
          * @method _setStateVal
@@ -561,10 +560,11 @@
          * @param {String} subAttrName The sub-attribute name, if setting a sub-attribute property ("x.y.z").
          * @param {Any} prevVal The currently stored value of the attribute.
          * @param {Any} newVal The value which is going to be stored.
-         * 
+         * @param {Object} [opts] Optional data providing the circumstances for the change.
+         *
          * @return {booolean} true if the new attribute value was stored, false if not.
          */
-        _setAttrVal : function(attrName, subAttrName, prevVal, newVal) {
+        _setAttrVal : function(attrName, subAttrName, prevVal, newVal, opts) {
 
             var host = this,
                 allowSet = true,
@@ -578,12 +578,12 @@
                 valid;
 
             if (validator) {
-                if (!validator.call) { 
+                if (!validator.call) {
                     // Assume string - trying to keep critical path tight, so avoiding Lang check
                     validator = this[validator];
                 }
                 if (validator) {
-                    valid = validator.call(host, newVal, name);
+                    valid = validator.call(host, newVal, name, opts);
 
                     if (!valid && initializing) {
                         newVal = cfg.defaultValue;
@@ -599,7 +599,7 @@
                         setter = this[setter];
                     }
                     if (setter) {
-                        retVal = setter.call(host, newVal, name);
+                        retVal = setter.call(host, newVal, name, opts);
 
                         if (retVal === INVALID_VALUE) {
                             Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
@@ -637,11 +637,12 @@
          *
          * @method setAttrs
          * @param {Object} attrs  An object with attributes name/value pairs.
+         * @param {Object} [opts] Optional data providing the circumstances for the change.
          * @return {Object} A reference to the host object.
          * @chainable
          */
-        setAttrs : function(attrs) {
-            return this._setAttrs(attrs);
+        setAttrs : function(attrs, opts) {
+            return this._setAttrs(attrs, opts);
         },
 
         /**
@@ -650,14 +651,15 @@
          * @method _setAttrs
          * @protected
          * @param {Object} attrs  An object with attributes name/value pairs.
+         * @param {Object} [opts] Optional data providing the circumstances for the change
          * @return {Object} A reference to the host object.
          * @chainable
          */
-        _setAttrs : function(attrs) {
+        _setAttrs : function(attrs, opts) {
             var attr;
             for (attr in attrs) {
                 if ( attrs.hasOwnProperty(attr) ) {
-                    this.set(attr, attrs[attr]);
+                    this.set(attr, attrs[attr], opts);
                 }
             }
             return this;
@@ -710,7 +712,7 @@
          * Configures a group of attributes, and sets initial values.
          *
          * <p>
-         * <strong>NOTE:</strong> This method does not isolate the configuration object by merging/cloning. 
+         * <strong>NOTE:</strong> This method does not isolate the configuration object by merging/cloning.
          * The caller is responsible for merging/cloning the configuration object if required.
          * </p>
          *
@@ -723,7 +725,7 @@
          * @param {boolean} lazy Whether or not to delay the intialization of these attributes until the first call to get/set.
          * Individual attributes can over-ride this behavior by defining a lazyAdd configuration property in their configuration.
          * See <a href="#method_addAttr">addAttr</a>.
-         * 
+         *
          * @return {Object} A reference to the host object.
          */
         addAttrs : function(cfgs, values, lazy) {
@@ -739,11 +741,11 @@
         },
 
         /**
-         * Implementation behind the public addAttrs method. 
-         * 
-         * This method is invoked directly by get if it encounters a scenario 
-         * in which an attribute's valueFn attempts to obtain the 
-         * value an attribute in the same group of attributes, which has not yet 
+         * Implementation behind the public addAttrs method.
+         *
+         * This method is invoked directly by get if it encounters a scenario
+         * in which an attribute's valueFn attempts to obtain the
+         * value an attribute in the same group of attributes, which has not yet
          * been added (on demand initialization).
          *
          * @method _addAttrs
@@ -786,8 +788,8 @@
 
         /**
          * Utility method to protect an attribute configuration
-         * hash, by merging the entire object and the individual 
-         * attr config objects. 
+         * hash, by merging the entire object and the individual
+         * attr config objects.
          *
          * @method _protectAttrs
          * @protected
@@ -807,7 +809,7 @@
         },
 
         /**
-         * Utility method to normalize attribute values. The base implementation 
+         * Utility method to normalize attribute values. The base implementation
          * simply merges the hash to protect the original.
          *
          * @method _normAttrVals
@@ -823,8 +825,8 @@
 
         /**
          * Returns the initial value of the given attribute from
-         * either the default configuration provided, or the 
-         * over-ridden value if it exists in the set of initValues 
+         * either the default configuration provided, or the
+         * over-ridden value if it exists in the set of initValues
          * provided and the attribute is not read-only.
          *
          * @param {String} attr The name of the attribute
@@ -844,7 +846,7 @@
             } else {
                 val = cfg.value;
                 valFn = cfg.valueFn;
- 
+
                 if (valFn) {
                     if (!valFn.call) {
                         valFn = this[valFn];
@@ -862,7 +864,7 @@
 
         /**
          * Utility method to set up initial attributes defined during construction, either through the constructor.ATTRS property, or explicitly passed in.
-         * 
+         *
          * @method _initAttrs
          * @protected
          * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
@@ -872,7 +874,7 @@
         _initAttrs : function(attrs, values, lazy) {
             // ATTRS support for Node, which is not Base based
             attrs = attrs || this.constructor.ATTRS;
-    
+
             var Base = Y.Base,
                 BaseCore = Y.BaseCore,
                 baseInst = (Base && Y.instanceOf(this, Base)),
