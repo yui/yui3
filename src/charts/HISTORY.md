@@ -1,6 +1,11 @@
 Charts Change History
 =====================
 
+MASTER
+-----
+
+  * #2532955 Addressed issue in which click events were not firing on elements outside of chart in ios.
+
 3.7.3
 -----
 
