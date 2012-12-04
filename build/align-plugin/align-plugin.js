@@ -108,7 +108,7 @@ YUI.add('align-plugin', function (Y, NAME) {
         _resize: function(add) {
             var handle = this._handle;
             if (add && !handle) {
-                this._handle = Y.on('resize', this._onresize, window, this);
+                this._handle = Y.on('windowresize', this._onresize, window, this);
             } else if (!add && handle) {
                 handle.detach();
             }
