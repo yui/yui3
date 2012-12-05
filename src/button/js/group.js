@@ -82,17 +82,13 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
      * @public
      */
     getSelectedValues: function() {
-        var group = this,
-            value,
+        var selected = this.getSelectedButtons(),
             values = [],
-            selected = group.getSelectedButtons(),
-            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED;
+            value;
 
         Y.Array.each(selected, function(node){
-            if (node.hasClass(selectedClass)){
-                value = node.getContent();
-                values.push(value);
-            }
+            value = node.getContent();
+            values.push(value);
         });
 
         return values;
@@ -113,7 +109,6 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
             buttons;
 
         // TODO: Anything for 'push' groups?
-
         if (type === 'checkbox') {
             clickedNode.toggleClass(selectedClass, !isSelected);
             /**
@@ -124,13 +119,12 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
              */
             group.fire('selectionChange', {originEvent: e});
         }
-        else if (type === 'radio') {
-            if (!isSelected) {
-                buttons = group.getButtons(); // Todo: getSelectedButtons()? Need it to return an arraylist then.
-                buttons.removeClass(selectedClass);
-                clickedNode.addClass(selectedClass);
-                group.fire('selectionChange', {originEvent: e});
-            }
+
+        if (type === 'radio' && !isSelected) {
+            buttons = group.getButtons(); // Todo: getSelectedButtons()? Need it to return an arraylist then.
+            buttons.removeClass(selectedClass);
+            clickedNode.addClass(selectedClass);
+            group.fire('selectionChange', {originEvent: e});
         }
     }
 
