@@ -600,6 +600,11 @@ YUI.add('attribute-core', function (Y, NAME) {
                 }
 
                 if (allowSet) {
+                    if (typeof opts === 'string') {
+                         opts = {src:opts};
+                    } else {
+                         opts = opts || {};
+                    }
                     if (!this._fireAttrChange || initializing) {
                         this._setAttrVal(name, strPath, currVal, val, opts);
                     } else {

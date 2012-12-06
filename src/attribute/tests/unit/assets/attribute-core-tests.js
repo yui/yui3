@@ -264,6 +264,11 @@ YUI.add('attribute-core-tests', function(Y) {
             Y.Assert.areEqual(1, h.get("tri"),"4");
             h.set("tri", "whatever", {src: 'internal'});
             Y.Assert.areEqual(1, h.get("tri"),"5");
+            h.set("tri", false);
+            Y.Assert.areEqual(0, h.get("tri"),"6");
+            h.set("tri", 1, "internal");
+            Y.Assert.areEqual(1, h.get("tri"),"7");
+            
 
         },
         testMassSetGet : function() {
