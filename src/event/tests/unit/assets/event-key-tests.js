@@ -442,7 +442,7 @@ suite.add(new Y.Test.Case({
     setUp: setUp,
     tearDown: tearDown,
 
-    "test Y.delegate('key', fn, '65', selector, filter)": function () {
+    "test Y.delegate('key', fn, selector, '65', filter)": function () {
         var items = Y.one("#items"),
             item0 = items.one("#text1"),
             item1 = items.one("#text2"),
@@ -475,7 +475,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame([items, items], container);
     },
 
-    "test Y.delegate('key', fn, '65', node, filter)": function () {
+    "test Y.delegate('key', fn, node, '65', filter)": function () {
         var items = Y.one("#items"),
             item0 = items.one("#text1"),
             item1 = items.one("#text2"),
@@ -508,7 +508,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame([items, items], container);
     },
 
-    "test Y.delegate('key', fn, '65', selector, filter, thisObj)": function () {
+    "test Y.delegate('key', fn, selector, '65', filter, thisObj)": function () {
         var items = Y.one("#items"),
             item0 = items.one("#text1"),
             item1 = items.one("#text2"),
@@ -542,7 +542,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame([items, items], container);
     },
 
-    "test Y.delegate('key', fn, '65', selector, filter, thisObj, args)": function () {
+    "test Y.delegate('key', fn, selector, '65', filter, thisObj, args)": function () {
         var items = Y.one("#items"),
             item0 = items.one("#text1"),
             item1 = items.one("#text2"),
