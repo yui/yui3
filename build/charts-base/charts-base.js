@@ -12969,7 +12969,11 @@ ChartBase.prototype = {
                 Y.delegate("touchend", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
                 //hide active tooltip if the chart is touched
                 Y.on("touchend", Y.bind(function(e) {
-                    e.halt(true);
+                    //only halt the event if it originated from the chart
+                    if(cb.contains(e.target))
+                    {
+                        e.halt(true);
+                    }
                     if(this._activeMarker)
                     {
                         this._activeMarker = null;
@@ -16236,4 +16240,17 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
 });
 
 
-}, '@VERSION@', {"requires": ["dom", "datatype-number", "datatype-date", "event-custom", "event-mouseenter", "event-touch", "widget", "widget-position", "widget-stack", "graphics"]});
+}, '@VERSION@', {
+    "requires": [
+        "dom",
+        "datatype-number",
+        "datatype-date",
+        "event-custom",
+        "event-mouseenter",
+        "event-touch",
+        "widget",
+        "widget-position",
+        "widget-stack",
+        "graphics"
+    ]
+});
