@@ -161,6 +161,29 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+suite.add(new Y.Test.Case({
+    name: 'Scope',
+
+    'this and . should refer to the context object in a with block': function() {
+        var data = { test: "test" },
+            expectedOutput = "test";
+
+        Assert.areSame(expectedOutput, H.render('{{#with test}}{{this}}{{/with}}', data));
+        Assert.areSame(expectedOutput, H.render('{{#with test}}{{.}}{{/with}}', data));
+    },
+
+    'this and . should refer to the context object in a with block when used within a call to a helper function': function() {
+        var data = { author: { firstName: "Bob", lastName: "McTest" } },
+            expectedOutput = "Bob McTest";
+
+        H.registerHelper('formatName', function(person) {
+            return person.firstName + " " + person.lastName;
+        });
+        Assert.areSame(expectedOutput, H.render('{{#with author}}{{formatName this}}{{/with}}', data));
+        Assert.areSame(expectedOutput, H.render('{{#with author}}{{formatName .}}{{/with}}', data));
+    }
+}));
+
 Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {
