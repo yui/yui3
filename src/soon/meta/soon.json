@@ -1,0 +1,7 @@
+{
+    "soon": {
+        "requires": [
+            "yui-base"
+        ]
+    }
+}
