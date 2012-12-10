@@ -52,7 +52,6 @@ YUI({
             fullpath: './assets/seed-tests.js',
             requires: [ 'test']
         },
-        
         'core-tests': {
             fullpath: './assets/core-tests.js',
             requires: [ 'classnamemanager']
@@ -66,10 +65,6 @@ YUI({
             fullpath: './assets/later-test.js'
         },
 
-        'soon-test': {
-            fullpath: './assets/soon-test.js'
-        },
-        
         'browser-tests': {
             fullpath: './assets/browser-tests.js'
         },
@@ -78,7 +73,7 @@ YUI({
         }
         
     }
-}).use('seed-tests', 'core-tests', 'config-test', 'later-test', 'soon-test', 'namespace-test', 'test-console', 'test', function(Y) {
+}).use('seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
 
     Y.Test.Runner.run();

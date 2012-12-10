@@ -29,7 +29,6 @@ without Loader on the page, so Loader is fetched before tests are executed. -->
 <script type="text/javascript" src="../../../../build/intl-base/intl-base.js"></script>
 <script type="text/javascript" src="../../../../build/yui-log/yui-log.js"></script>
 <script type="text/javascript" src="../../../../build/yui-later/yui-later.js"></script>
-<script type="text/javascript" src="../../../../build/yui-soon/yui-soon.js"></script>
 <!--script type="text/javascript" src="../../../build/loader/loader.js"></script-->
 <script type="text/javascript">
 
@@ -55,7 +54,7 @@ YUI.GlobalConfig = {
 var YUI_config = {
     loaderPath: 'loader/loader.js',
     gconfig: true,
-    core: [ 'get', 'features', 'intl-base', 'yui-log', 'yui-later', 'yui-soon', 'loader-base', 'loader-rollup', 'loader-yui3' ],
+    core: ['get', 'features','intl-base','yui-log','yui-later','loader-base','loader-rollup','loader-yui3' ],
     gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 };
 
@@ -86,15 +85,15 @@ YUI({
             fullpath: './assets/core-tests.js',
             requires: [ 'classnamemanager']
         },
+
         'config-test': {
             fullpath: './assets/config-test.js'
         },
+
         'later-test': {
             fullpath: './assets/later-test.js'
         },
-        'soon-test': {
-            fullpath: './assets/soon-test.js'
-        },
+
         'browser-tests': {
             fullpath: './assets/browser-tests.js'
         },
@@ -114,7 +113,7 @@ YUI({
         }
         
     }
-}).use('ua-tests', 'seed-tests', 'core-tests', 'config-test', 'later-test', 'soon-test', 'namespace-test', 'array-test', 'object-test', 'lang-test', 'test-console', 'test', function(Y) {
+}).use('ua-tests', 'seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'array-test', 'object-test', 'lang-test', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
     
     Y.Test.Runner.setName(TestName);

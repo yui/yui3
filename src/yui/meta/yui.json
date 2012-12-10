@@ -11,12 +11,6 @@
             "yui-log": {
                 "requires": ["yui-base"]
             },
-            "yui-soon": {
-                "requires": ["yui-base"]
-            },
-            "yui-soon-nodejs": {
-                "requires": ["yui-base"]
-            },
             "intl-base": {
                 "requires": ["yui-base"]
             }

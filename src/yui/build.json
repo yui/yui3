@@ -40,16 +40,6 @@
                 "yui-later.js"
             ]
         },
-        "yui-soon": {
-            "jsfiles": [
-                "yui-soon.js"
-            ]
-        },
-        "yui-soon-nodejs": {
-            "jsfiles": [
-                "yui-soon-nodejs.js"
-            ]
-        },
         "yui-core": {
             "name": "yui-base",
             "replace": {
@@ -73,7 +63,7 @@
             "basefilename": "yui-base",
             "name": "yui-base",
             "replace": {
-                "@YUI_CORE@": "['get', 'features', 'intl-base', 'yui-log', 'yui-later', 'yui-soon']"
+                "@YUI_CORE@": "['get', 'features', 'intl-base', 'yui-log', 'yui-later']"
             },
             "config": {
                 "use": [
@@ -81,8 +71,7 @@
                     "features",
                     "intl-base",
                     "yui-log",
-                    "yui-later",
-                    "yui-soon"
+                    "yui-later"
                 ]   
             },
             "prependfiles": [
@@ -103,7 +92,7 @@
             "basefilename": "yui-nodejs",
             "name": "yui-base",
             "replace": {
-                "@YUI_CORE@": "['get', 'features', 'intl-base', 'yui-log', 'yui-log-nodejs', 'yui-later', 'yui-soon-nodejs', 'loader-base', 'loader-rollup', 'loader-yui3']"
+                "@YUI_CORE@": "['get', 'features', 'intl-base', 'yui-log', 'yui-log-nodejs', 'yui-later', 'loader-base', 'loader-rollup', 'loader-yui3']"
             },
             "config": {
                 "use": [
@@ -114,7 +103,6 @@
                     "yui-log",
                     "yui-log-nodejs",
                     "yui-later",
-                    "yui-soon-nodejs",
                     "loader-base",
                     "loader-rollup",
                     "loader-yui3"
@@ -138,7 +126,7 @@
             "basefilename": "yui",
             "name": "yui-base",
             "replace": {
-                "@YUI_CORE@": "['get', 'features', 'intl-base', 'yui-log', 'yui-later', 'yui-soon', 'loader-base', 'loader-rollup', 'loader-yui3']"
+                "@YUI_CORE@": "['get', 'features', 'intl-base', 'yui-log', 'yui-later', 'loader-base', 'loader-rollup', 'loader-yui3']"
             },
             "config": {
                 "use": [
@@ -148,7 +136,6 @@
                     "intl-base",
                     "yui-log",
                     "yui-later",
-                    "yui-soon",
                     "loader-base",
                     "loader-rollup",
                     "loader-yui3"
@@ -179,8 +166,7 @@
                     "features",
                     "intl-base",
                     "yui-log",
-                    "yui-later",
-                    "yui-soon"
+                    "yui-later"
                 ]   
             },
             "files": [
@@ -189,8 +175,7 @@
                 "features",
                 "intl-base",
                 "yui-log",
-                "yui-later",
-                "yui-soon"
+                "yui-later"
             ]
         },
         "yui-nodejs": {
@@ -204,7 +189,6 @@
                     "yui-log",
                     "yui-log-nodejs",
                     "yui-later",
-                    "yui-soon-nodejs",
                     "loader-base",
                     "loader-rollup",
                     "loader-yui3"
@@ -218,7 +202,6 @@
                 "yui-log",
                 "yui-log-nodejs",
                 "yui-later",
-                "yui-soon-nodejs",
                 "loader-base",
                 "loader-rollup",
                 "loader-yui3"
@@ -233,7 +216,6 @@
                 "intl-base",
                 "yui-log",
                 "yui-later",
-                "yui-soon",
                 "loader-base",
                 "loader-rollup",
                 "loader-yui3"
@@ -246,7 +228,6 @@
                     "intl-base",
                     "yui-log",
                     "yui-later",
-                    "yui-soon",
                     "loader-base",
                     "loader-rollup",
                     "loader-yui3"

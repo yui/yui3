@@ -22,7 +22,6 @@ sandbox system, plus utilities), and the following optional submodules:
   * `get`: Provides dynamic loading of JavaScript and CSS
   * `yui-log`: Adds support for `Y.log()` and friends.
   * `yui-later`: An abstraction around `setTimeout` and `setInterval`.
-  * `yui-soon`: An abstraction around `setImmediate` and `setTimeout`.
   * `intl-base`: Provides dynamic loading of language packs.
 
 `yui-core` contains:

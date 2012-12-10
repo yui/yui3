@@ -38,11 +38,9 @@ YUI({
             fullpath: './assets/seed-tests.js',
             requires: [ 'test']
         },
-        
         'browser-tests': {
             fullpath: './assets/browser-tests.js'
         },
-        
         'core-tests': {
             fullpath: './assets/core-tests.js',
             requires: [ 'classnamemanager']
@@ -55,17 +53,13 @@ YUI({
         'later-test': {
             fullpath: './assets/later-test.js'
         },
-        
-        'soon-test': {
-            fullpath: './assets/soon-test.js'
-        },
 
         'namespace-test': {
             fullpath: './assets/namespace-test.js'
         }
         
     }
-}).use('seed-tests', 'core-tests', 'config-test', 'later-test', 'soon-test', 'namespace-test', 'test-console', 'test', function(Y) {
+}).use('seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
 
     //This is a YUITest hack to rename this test for reporting
