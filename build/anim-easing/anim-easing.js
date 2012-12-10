@@ -5,13 +5,28 @@ TERMS OF USE - EASING EQUATIONS
 Open source under the BSD License.
 Copyright 2001 Robert Penner All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
- * Neither the name of the author nor the names of contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+ * Redistributions of source code must retain the above copyright notice, this
+    list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ * Neither the name of the author nor the names of contributors may be used to
+    endorse or promote products derived from this software without specific prior
+    written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /**
@@ -37,7 +52,7 @@ var Easing = {
     easeNone: function (t, b, c, d) {
         return c*t/d + b;
     },
-    
+
     /**
      * Begins slowly and accelerates towards end. (quadratic)
      * @method easeIn
@@ -63,7 +78,7 @@ var Easing = {
     easeOut: function (t, b, c, d) {
         return -c *(t/=d)*(t-2) + b;
     },
-    
+
     /**
      * Begins slowly and decelerates towards end. (quadratic)
      * @method easeBoth
@@ -74,13 +89,13 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     easeBoth: function (t, b, c, d) {
-        if ((t/=d/2) < 1) {
+        if ((t /= d/2) < 1) {
             return c/2*t*t + b;
         }
-        
+
         return -c/2 * ((--t)*(t-2) - 1) + b;
     },
-    
+
     /**
      * Begins slowly and accelerates towards end. (quartic)
      * @method easeInStrong
@@ -93,7 +108,7 @@ var Easing = {
     easeInStrong: function (t, b, c, d) {
         return c*(t/=d)*t*t*t + b;
     },
-    
+
     /**
      * Begins quickly and decelerates towards end.  (quartic)
      * @method easeOutStrong
@@ -106,7 +121,7 @@ var Easing = {
     easeOutStrong: function (t, b, c, d) {
         return -c * ((t=t/d-1)*t*t*t - 1) + b;
     },
-    
+
     /**
      * Begins slowly and decelerates towards end. (quartic)
      * @method easeBothStrong
@@ -117,10 +132,10 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     easeBothStrong: function (t, b, c, d) {
-        if ((t/=d/2) < 1) {
+        if ((t /= d/2) < 1) {
             return c/2*t*t*t*t + b;
         }
-        
+
         return -c/2 * ((t-=2)*t*t*t - 2) + b;
     },
 
@@ -147,15 +162,15 @@ var Easing = {
         if (!p) {
             p = d* 0.3;
         }
-        
+
         if (!a || a < Math.abs(c)) {
-            a = c; 
+            a = c;
             s = p/4;
         }
         else {
             s = p/(2*Math.PI) * Math.asin (c/a);
         }
-        
+
         return -(a*Math.pow(2,10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )) + b;
     },
 
@@ -181,7 +196,7 @@ var Easing = {
         if (!p) {
             p=d * 0.3;
         }
-        
+
         if (!a || a < Math.abs(c)) {
             a = c;
             s = p / 4;
@@ -189,10 +204,10 @@ var Easing = {
         else {
             s = p/(2*Math.PI) * Math.asin (c/a);
         }
-        
+
         return a*Math.pow(2,-10*t) * Math.sin( (t*d-s)*(2*Math.PI)/p ) + c + b;
     },
-    
+
     /**
      * Snap both elastic effect.
      * @method elasticBoth
@@ -209,28 +224,28 @@ var Easing = {
         if (t === 0) {
             return b;
         }
-        
+
         if ( (t /= d/2) === 2 ) {
             return b+c;
         }
-        
+
         if (!p) {
             p = d*(0.3*1.5);
         }
-        
+
         if ( !a || a < Math.abs(c) ) {
-            a = c; 
+            a = c;
             s = p/4;
         }
         else {
             s = p/(2*Math.PI) * Math.asin (c/a);
         }
-        
+
         if (t < 1) {
-            return -0.5*(a*Math.pow(2,10*(t-=1)) * 
+            return -0.5*(a*Math.pow(2,10*(t-=1)) *
                     Math.sin( (t*d-s)*(2*Math.PI)/p )) + b;
         }
-        return a*Math.pow(2,-10*(t-=1)) * 
+        return a*Math.pow(2,-10*(t-=1)) *
                 Math.sin( (t*d-s)*(2*Math.PI)/p )*0.5 + c + b;
     },
 
@@ -271,9 +286,9 @@ var Easing = {
         }
         return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
     },
-    
+
     /**
-     * Backtracks slightly, then reverses direction, overshoots end, 
+     * Backtracks slightly, then reverses direction, overshoots end,
      * then reverses and comes back to end.
      * @method backBoth
      * @param {Number} t Time value used to compute current value
@@ -285,9 +300,9 @@ var Easing = {
      */
     backBoth: function (t, b, c, d, s) {
         if (typeof s === 'undefined') {
-            s = 1.70158; 
+            s = 1.70158;
         }
-        
+
         if ((t /= d/2 ) < 1) {
             return c/2*(t*t*(((s*=(1.525))+1)*t - s)) + b;
         }
@@ -306,7 +321,7 @@ var Easing = {
     bounceIn: function (t, b, c, d) {
         return c - Y.Easing.bounceOut(d-t, 0, c, d) + b;
     },
-    
+
     /**
      * Bounces off end.
      * @method bounceOut
@@ -326,7 +341,7 @@ var Easing = {
         }
         return c*(7.5625*(t-=(2.625/2.75))*t + 0.984375) + b;
     },
-    
+
     /**
      * Bounces off start and end.
      * @method bounceBoth
