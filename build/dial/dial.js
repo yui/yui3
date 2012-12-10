@@ -1295,4 +1295,19 @@ YUI.add('dial', function (Y, NAME) {
     Y.Dial = Dial;
 
 
-}, '@VERSION@', {"requires": ["widget", "dd-drag", "event-mouseenter", "event-move", "event-key", "transition", "intl"], "lang": ["en", "es"], "skinnable": true});
+}, '@VERSION@', {
+    "requires": [
+        "widget",
+        "dd-drag",
+        "event-mouseenter",
+        "event-move",
+        "event-key",
+        "transition",
+        "intl"
+    ],
+    "lang": [
+        "en",
+        "es"
+    ],
+    "skinnable": true
+});
