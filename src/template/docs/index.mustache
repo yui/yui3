@@ -583,7 +583,135 @@ To see this simple server in action, save it to a file, install Express and YUI 
 
 <h3>Customizing Template Syntax</h3>
 
-<p>[TODO: describe how to override Y.Template.Micro's regexes to customize the template syntax if desired]</p>
+<p>
+Micro templates have a simple syntax, there are only three forms:
+</p>
+
+<dl>
+    <dt>`<%= ... %>`</dt>
+    <dd>
+        <p>
+        Safely outputs the value of a JavaScript expression. The output will be HTML-escaped by default.
+        </p>
+    </dd>
+
+    <dt>`<%== ... %>`</dt>
+    <dd>
+        <p>
+        Outputs the raw value of a JavaScript expression. This does <em>not</em> HTML-escape the output. Never use it to render unfiltered user input.
+        </p>
+    </dd>
+
+    <dt>`<% ... %>`</dt>
+    <dd>
+        <p>
+        Executes arbitrary JavaScript code within the template without rendering its output.
+        </p>
+    </dd>
+</dl>
+
+<p>
+These syntax identifiers are defined as RegExp on <a href="{{apiDocs}}/classes/Template.Micro.html#property_options">`Y.Template.Micro.options`</a>. If you wish to define a custom syntax for your Micro templates, you can do so by defining new RegExps for your custom identifiers.
+</p>
+
+<h4>Defining a Handlebars-like Syntax</h4>
+
+<p>
+The following example will define a Handlebars-like Micro template syntax:
+</p>
+
+<dl>
+    <dt>`\{{ ... }}`</dt>
+    <dd>
+        <p>
+        Safely outputs the value of a JavaScript expression. The output will be HTML-escaped by default.
+        </p>
+    </dd>
+
+    <dt>`\{{{ ... }}}`</dt>
+    <dd>
+        <p>
+        Outputs the raw value of a JavaScript expression. This does <em>not</em> HTML-escape the output. Never use it to render unfiltered user input.
+        </p>
+    </dd>
+
+    <dt>`\{{% ... %}}`</dt>
+    <dd>
+        <p>
+        Executes arbitrary JavaScript code within the template without rendering its output.
+        </p>
+    </dd>
+</dl>
+
+```javascript
+// Create RegExps which define our new Micro template syntax.
+Y.mix(Y.Template.Micro.options, {
+    code         : /\{\{%([\s\S]+?)%\}\}/g,
+    escapedOutput: /\{\{(?!%)([\s\S]+?)\}\}/g,
+    rawOutput    : /\{\{\{([\s\S]+?)\}\}/g
+}, true);
+```
+
+<table class="micro-code">
+    <tbody>
+        <tr>
+            <th colspan="2">Template Source</th>
+        </tr>
+
+        <tr>
+            <td colspan="2" width="100%">
+                ```html
+                <h1>Animals</h1>
+
+                <ul class="\{{ this.classNames.list }}">
+                  \{{% Y.Array.each(this.animals, function (animal, i) { %}}
+                    <li class="\{{ i % 2 ? 'odd' : 'even' }}">
+                        \{{ animal }}
+                    </li>
+                  \{{% }); %}}
+                </ul>
+                ```
+            </td>
+        </tr>
+
+        <tr>
+            <th style="padding-top: 0.5em;">Data</th>
+            <th style="padding-top: 0.5em;">Output</th>
+        </tr>
+
+        <tr>
+            <td width="50%">
+                ```javascript
+                {
+                    classNames: {list: 'animals'},
+
+                    animals: [
+                        'Rhino',
+                        'Plain Tiger butterfly',
+                        'Spotted Cuscus'
+                    ]
+                }
+                ```
+            </td>
+
+            <td width="50%">
+                ```html
+                <h1>Animals</h1>
+
+                <ul class="animals">
+                    <li class="even">Rhino</li>
+                    <li class="odd">Plain Tiger butterfly</li>
+                    <li class="even">Spotted Cuscus</li>
+                </ul>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+<strong>Note:</strong> The syntax identifiers can be specified on a per-template basis by passing `options` as the second argument to the `compile()`, `precompile()`, or `render()` methods.
+</p>
 
 <h2>Using Templates in Custom Components</h2>
 
