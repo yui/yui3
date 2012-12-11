@@ -372,6 +372,23 @@
 					})
 
 					Test.wait(2000);
+				},
+
+				"Deprecated static values should register": function() {
+
+					Y.ScrollView.SNAP_DURATION = 3;
+			        Y.ScrollView.SNAP_EASING = 3;
+			        Y.ScrollView.EASING = 3;
+			        Y.ScrollView.FRAME_STEP = 3;
+			        Y.ScrollView.BOUNCE_RANGE = 3;
+
+					var scrollview = renderNewScrollview(false);
+
+					Y.Assert.areEqual(Y.ScrollView.SNAP_DURATION, scrollview.get('snapDuration'));
+					Y.Assert.areEqual(Y.ScrollView.SNAP_EASING, scrollview.get('snapEasing'));
+					Y.Assert.areEqual(Y.ScrollView.EASING, scrollview.get('easing'));
+					Y.Assert.areEqual(Y.ScrollView.FRAME_STEP, scrollview.get('frameDuration'));
+					Y.Assert.areEqual(Y.ScrollView.BOUNCE_RANGE, scrollview.get('bounceRange'));
 				}
 
 
