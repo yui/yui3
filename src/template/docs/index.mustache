@@ -888,4 +888,24 @@ Refer to the <a href="../yui/create.html">Creating YUI Modules</a> user guide fo
 
 <h2>Best Practices</h2>
 
-<p>[TODO: recommended best practices for templates -- don't embed too much logic, don't embed huge template strings in JS, compile once; render often, etc.]</p>
+<p>
+The following is a list of best practices to consider when using templates in your app and/or custom components:
+</p>
+
+<h3>Less Logic is Better</h3>
+
+<p>
+Make sure not to embed too much logic in your templates, things can get out of control if you do. You should <em>avoid</em> template logic which has side effects! Micro templates allow you to embed any arbitrary JavaScript in your templates, while Handlebars templates are logic-less by design.
+</p>
+
+<h3>Externalize Templates</h3>
+
+<p>
+Avoid embedding huge templates string in your JavaScript code. Strive to separate your templates from the code the uses them, having your templates specified in separate files is best. The [[#Defining Templates in a Module|template module example]] above would ideally use a build-time process to wrap the template source with the YUI module registration wrapper.
+</p>
+
+<h3>Compile Once, Render Often</h3>
+
+<p>
+Template [[#Instantiating a Template Engine|compliation is expensive]]. You should avoid compiling a template more than once. Ideally, you are [[#Precompiling and Reviving Templates|precompiling templates]] on the server or during a build-time process to avoid the compilation step on the client.
+</p>
