@@ -322,7 +322,7 @@ The generic `Y.Template` interface is [[#Generic Template API|designed]] to work
     <dt>`compile( text , [options] )`</dt>
     <dd>
         <p>
-        Compiles a string template into a resuable function and returns that function to the caller.
+        Compiles a string template into a reusable function and returns that function to the caller.
         </p>
 
         <p>
@@ -583,12 +583,329 @@ To see this simple server in action, save it to a file, install Express and YUI 
 
 <h3>Customizing Template Syntax</h3>
 
-<p>[TODO: describe how to override Y.Template.Micro's regexes to customize the template syntax if desired]</p>
+<p>
+Micro templates have a simple syntax, there are only three forms:
+</p>
+
+<dl>
+    <dt>`<%= ... %>`</dt>
+    <dd>
+        <p>
+        Safely outputs the value of a JavaScript expression. The output will be HTML-escaped by default.
+        </p>
+    </dd>
+
+    <dt>`<%== ... %>`</dt>
+    <dd>
+        <p>
+        Outputs the raw value of a JavaScript expression. This does <em>not</em> HTML-escape the output. Never use it to render unfiltered user input.
+        </p>
+    </dd>
+
+    <dt>`<% ... %>`</dt>
+    <dd>
+        <p>
+        Executes arbitrary JavaScript code within the template without rendering its output.
+        </p>
+    </dd>
+</dl>
+
+<p>
+These syntax identifiers are defined as RegExp on <a href="{{apiDocs}}/classes/Template.Micro.html#property_options">`Y.Template.Micro.options`</a>. If you wish to define a custom syntax for your Micro templates, you can do so by defining new RegExps for your custom identifiers.
+</p>
+
+<h4>Defining a Handlebars-like Syntax</h4>
+
+<p>
+The following example will define a Handlebars-like Micro template syntax:
+</p>
+
+<dl>
+    <dt>`\{{ ... }}`</dt>
+    <dd>
+        <p>
+        Safely outputs the value of a JavaScript expression. The output will be HTML-escaped by default.
+        </p>
+    </dd>
+
+    <dt>`\{{{ ... }}}`</dt>
+    <dd>
+        <p>
+        Outputs the raw value of a JavaScript expression. This does <em>not</em> HTML-escape the output. Never use it to render unfiltered user input.
+        </p>
+    </dd>
+
+    <dt>`\{{% ... %}}`</dt>
+    <dd>
+        <p>
+        Executes arbitrary JavaScript code within the template without rendering its output.
+        </p>
+    </dd>
+</dl>
+
+```javascript
+// Create RegExps which define our new Micro template syntax.
+Y.mix(Y.Template.Micro.options, {
+    code         : /\{\{%([\s\S]+?)%\}\}/g,
+    escapedOutput: /\{\{(?!%)([\s\S]+?)\}\}/g,
+    rawOutput    : /\{\{\{([\s\S]+?)\}\}/g
+}, true);
+```
+
+<table class="micro-code">
+    <tbody>
+        <tr>
+            <th colspan="2">Template Source</th>
+        </tr>
+
+        <tr>
+            <td colspan="2" width="100%">
+                ```html
+                <h1>Animals</h1>
+
+                <ul class="\{{ this.classNames.list }}">
+                  \{{% Y.Array.each(this.animals, function (animal, i) { %}}
+                    <li class="\{{ i % 2 ? 'odd' : 'even' }}">
+                        \{{ animal }}
+                    </li>
+                  \{{% }); %}}
+                </ul>
+                ```
+            </td>
+        </tr>
+
+        <tr>
+            <th style="padding-top: 0.5em;">Data</th>
+            <th style="padding-top: 0.5em;">Output</th>
+        </tr>
+
+        <tr>
+            <td width="50%">
+                ```javascript
+                {
+                    classNames: {list: 'animals'},
+
+                    animals: [
+                        'Rhino',
+                        'Plain Tiger butterfly',
+                        'Spotted Cuscus'
+                    ]
+                }
+                ```
+            </td>
+
+            <td width="50%">
+                ```html
+                <h1>Animals</h1>
+
+                <ul class="animals">
+                    <li class="even">Rhino</li>
+                    <li class="odd">Plain Tiger butterfly</li>
+                    <li class="even">Spotted Cuscus</li>
+                </ul>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+<strong>Note:</strong> The syntax identifiers can be specified on a per-template basis by passing `options` as the second argument to the `compile()`, `precompile()`, or `render()` methods.
+</p>
 
 <h2>Using Templates in Custom Components</h2>
 
-<p>[TODO: guidelines for bundling templates with custom views, widgets, etc. -- how to build, compile, and make them available on a namespace]</p>
+<p>
+When created custom components for your app, it's natural to bundle the templates with the component that will use them. The following examples show how create a custom view component which use templates.
+</p>
+
+<h3>Custom View with Embeded Template</h3>
+
+<p>
+This example shows how to create a very basic view with an embedded template:
+</p>
+
+```javascript
+YUI().use('template-micro', 'view', function (Y) {
+    Y.AnimalListView = Y.Base.create('animalListView', Y.View, [], {
+        // The compiled Micro template sits on the view's prototype.
+        template: Y.Template.Micro.compile(
+            '<ul class="animals">' +
+              '<% Y.Array.each(this.animals, function (animal, i) { %>' +
+                '<li class="<% i % 2 ? "odd" : "even" %>">' +
+                    '<%= animal %>' +
+                '</li>' +
+              '<% }); %>' +
+            '</ul>'
+        ),
+
+        render: function () {
+            var html = this.template({
+                animals: this.get('animals')
+            });
+
+            this.get('container').setHTML(html);
+            return this;
+        }
+    });
+
+    // Create an instance of the view and render it to the `<body>`.
+
+    var animalListView = new Y.AnimalListView({
+        animals: [
+            'Rhino',
+            'Plain Tiger butterfly',
+            'Spotted Cuscus'
+        ]
+    });
+
+    animalListView.get('container').appendTo('body');
+});
+```
+
+<h3>Custom View with External Template</h3>
+
+<p>
+Usually embedding the template in your component's JavaScript code is bad practice. The following examples show two way to externalize a component's templates.
+</p>
+
+<h4>Defining Templates in HTML</h4>
+
+<p>
+One option is to embed your template inside a special `<script>` element, one whose `type` attribute is set to something which the browser will not process as JavaScript:
+</p>
+
+```html
+<script id="t-animals" type="text/x-template">
+    <ul class="animals">
+      <% Y.Array.each(this.animals, function (animal, i) { %>
+        <li class="<% i % 2 ? 'odd' : 'even' %>">
+            <%= animal %>
+        </li>
+      <% }); %>
+    </ul>
+</script>
+```
+
+```javascript
+YUI().use('node-base', 'template-micro', 'view', function (Y) {
+    Y.AnimalListView = Y.Base.create('animalListView', Y.View, [], {
+        // The template source is pulled from the HTML, then compiled into a
+        // template function which sits on the view's prototype.
+        template: Y.Template.Micro.compile(Y.one('#t-animals').getHTML()),
+
+        render: function () {
+            var html = this.template({
+                animals: this.get('animals')
+            });
+
+            this.get('container').setHTML(html);
+            return this;
+        }
+    });
+
+    // Create an instance of the view and render it to the `<body>`.
+
+    var animalListView = new Y.AnimalListView({
+        animals: [
+            'Rhino',
+            'Plain Tiger butterfly',
+            'Spotted Cuscus'
+        ]
+    });
+
+    animalListView.get('container').appendTo('body');
+});
+```
+
+<h4>Defining Templates in a Module</h4>
+
+<p>
+When your custom component is used within multiple apps, you might not have control over the HTML of the page. A great option is to create a separate module which holds your template source which your view module can `require`:
+</p>
+
+```javascript
+// Defines a YUI module which will hold the template source for our view.
+YUI.add('animalListTemplate', function (Y) {
+    Y.namespace('AnimalListView').template = Y.Template.Micro.compile(
+        '<ul class="animals">' +
+          '<% Y.Array.each(this.animals, function (animal, i) { %>' +
+            '<li class="<% i % 2 ? "odd" : "even" %>">' +
+                '<%= animal %>' +
+            '</li>' +
+          '<% }); %>' +
+        '</ul>'
+    );
+}, '0.0.1', {
+    requires: ['template-micro']
+});
+```
+
+```javascript
+// Defines a YUI module defines our view and requires our template module.
+YUI.add('animalListView', function (Y) {
+    var AnimalListView = Y.Base.create('animalListView', Y.View, [], {
+        render: function () {
+            var html = AnimalListView.template({
+                animals: this.get('animals')
+            });
+
+            this.get('container').setHTML(html);
+            return this;
+        }
+    });
+
+    // Properly exposes the view constructor while retaining the namespace.
+    Y.AnimalListView = Y.mix(AnimalListView, Y.AnimalListView);
+}, '0.0.1', {
+    requires: ['animalListTemplate', 'view']
+});
+```
+
+```javascript
+// Create an instance of the view and render it to the `<body>`.
+YUI({
+    modules: {
+        animalListTemplate: '/animal-list-template.js',
+        animalListView    : '/animal-list-view.js'
+    }
+}).use('animalListView', function (Y) {
+    var animalListView = new Y.AnimalListView({
+        animals: [
+            'Rhino',
+            'Plain Tiger butterfly',
+            'Spotted Cuscus'
+        ]
+    });
+
+    animalListView.get('container').appendTo('body');
+});
+```
+
+<p>
+Refer to the <a href="../yui/create.html">Creating YUI Modules</a> user guide for more details.
+</p>
 
 <h2>Best Practices</h2>
 
-<p>[TODO: recommended best practices for templates -- don't embed too much logic, don't embed huge template strings in JS, compile once; render often, etc.]</p>
+<p>
+The following is a list of best practices to consider when using templates in your app and/or custom components:
+</p>
+
+<h3>Less Logic is Better</h3>
+
+<p>
+Make sure not to embed too much logic in your templates, things can get out of control if you do. You should <em>avoid</em> template logic which has side effects! Micro templates allow you to embed any arbitrary JavaScript in your templates, while Handlebars templates are logic-less by design.
+</p>
+
+<h3>Externalize Templates</h3>
+
+<p>
+Avoid embedding huge templates string in your JavaScript code. Strive to separate your templates from the code the uses them, having your templates specified in separate files is best. The [[#Defining Templates in a Module|template module example]] above would ideally use a build-time process to wrap the template source with the YUI module registration wrapper.
+</p>
+
+<h3>Compile Once, Render Often</h3>
+
+<p>
+Template [[#Instantiating a Template Engine|compliation is expensive]]. You should avoid compiling a template more than once. Ideally, you are [[#Precompiling and Reviving Templates|precompiling templates]] on the server or during a build-time process to avoid the compilation step on the client.
+</p>
