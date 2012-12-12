@@ -50,7 +50,7 @@ help:
 $(OUTPUT_DIR)/handlebars-%.js: $(HANDLEBARS_LIB)/handlebars/%.js
 	@echo "$(notdir $@)"
 	@echo "$(PREPEND_COMMENT)" > $@
-	@sed -n '/^\/\/ BEGIN(BROWSER)$$/,/^\/\/ END(BROWSER)$$/p' $< >> $@
+	@sed -n -e 's/this\.\(Handlebars =\)/var \1/' -e 's/this\.\(Handlebars\)/\1/' -e '/^\/\/ BEGIN(BROWSER)$$/,/^\/\/ END(BROWSER)$$/p' $< >> $@
 
 $(OUTPUT_DIR)/handlebars-compiler-%.js: $(HANDLEBARS_LIB)/handlebars/compiler/%.js
 	@echo "$(notdir $@)"

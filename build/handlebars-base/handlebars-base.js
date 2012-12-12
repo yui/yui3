@@ -11,7 +11,9 @@ https://raw.github.com/wycats/handlebars.js/master/LICENSE
 /*jshint eqnull:true*/
 var Handlebars = {};
 
-Handlebars.VERSION = "1.0.beta.5";
+(function(Handlebars) {
+
+Handlebars.VERSION = "1.0.rc.1";
 
 Handlebars.helpers  = {};
 Handlebars.partials = {};
@@ -50,29 +52,53 @@ Handlebars.registerHelper('blockHelperMissing', function(context, options) {
     return inverse(this);
   } else if(type === "[object Array]") {
     if(context.length > 0) {
-      for(var i=0, j=context.length; i<j; i++) {
-        ret = ret + fn(context[i]);
-      }
+      return Handlebars.helpers.each(context, options);
     } else {
-      ret = inverse(this);
+      return inverse(this);
     }
-    return ret;
   } else {
     return fn(context);
   }
 });
 
+Handlebars.K = function() {};
+
+Handlebars.createFrame = Object.create || function(object) {
+  Handlebars.K.prototype = object;
+  var obj = new Handlebars.K();
+  Handlebars.K.prototype = null;
+  return obj;
+};
+
 Handlebars.registerHelper('each', function(context, options) {
   var fn = options.fn, inverse = options.inverse;
-  var ret = "";
+  var i = 0, ret = "", data;
 
-  if(context && context.length > 0) {
-    for(var i=0, j=context.length; i<j; i++) {
-      ret = ret + fn(context[i]);
+  if (options.data) {
+    data = Handlebars.createFrame(options.data);
+  }
+
+  if(context && typeof context === 'object') {
+    if(context instanceof Array){
+      for(var j = context.length; i<j; i++) {
+        if (data) { data.index = i; }
+        ret = ret + fn(context[i], { data: data });
+      }
+    } else {
+      for(var key in context) {
+        if(context.hasOwnProperty(key)) {
+          if(data) { data.key = key; }
+          ret = ret + fn(context[key], {data: data});
+          i++;
+        }
+      }
     }
-  } else {
+  }
+
+  if(i === 0){
     ret = inverse(this);
   }
+
   return ret;
 });
 
@@ -102,6 +128,8 @@ Handlebars.registerHelper('with', function(context, options) {
 Handlebars.registerHelper('log', function(context) {
   Handlebars.log(context);
 });
+
+}(Handlebars));
 
 // END(BROWSER)
 // This file provides a YUI-specific implementation of Handlebars' lib/utils.js
@@ -226,7 +254,7 @@ Handlebars.VM = {
     } else if (!Handlebars.compile) {
       throw new Handlebars.Exception("The partial " + name + " could not be compiled when running in runtime-only mode");
     } else {
-      partials[name] = Handlebars.compile(partial);
+      partials[name] = Handlebars.compile(partial, {data: data !== undefined});
       return partials[name](context, options);
     }
   }
