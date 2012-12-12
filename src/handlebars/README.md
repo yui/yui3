@@ -62,7 +62,7 @@ Handlebars files imported into `src/handlebars/js` are prefixed with
 `handlebars-` and should not be edited, while YUI-specific files that live in
 that directory are prefixed with `yui-handlebars` and may be edited.
 
-After importing Handlebars files, run `ant all` to build the final YUI modules.
+After importing Handlebars files, run `shifter` to build the final YUI modules.
 The Handlebars API will be available at `Y.Handlebars` when you use one of the
 Handlebars modules.
 
