@@ -793,7 +793,9 @@ Y.Loader.prototype = {
                             this.groups.gallery.update(val, o);
                         }
                     } else if (i === 'yui2' || i === '2in3') {
-                        this.groups.yui2.update(o['2in3'], o.yui2, o);
+                        if (this.groups.yui2.update) {
+                            this.groups.yui2.update(o['2in3'], o.yui2, o);
+                        }
                     } else {
                         self[i] = val;
                     }
