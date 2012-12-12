@@ -789,7 +789,9 @@ Y.Loader.prototype = {
                             }
                         }
                     } else if (i === 'gallery') {
-                        this.groups.gallery.update(val, o);
+                        if (this.groups.gallery.update) {
+                            this.groups.gallery.update(val, o);
+                        }
                     } else if (i === 'yui2' || i === '2in3') {
                         this.groups.yui2.update(o['2in3'], o.yui2, o);
                     } else {
