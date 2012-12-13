@@ -22,11 +22,14 @@ var eUC = encodeURIComponent;
  */
 Y.IO.stringify = function(form, options) {
     options = options || {};
-    return Y.IO.prototype._serialize({
+
+    var s = Y.IO.prototype._serialize({
         id: form,
         useDisabled: options.useDisabled
     },
     options.extra && typeof options.extra === 'object' ? Y.QueryString.stringify(options.extra) : options.extra);
+
+    return s;
 };
 
 Y.mix(Y.IO.prototype, {
