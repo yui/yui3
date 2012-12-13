@@ -754,5 +754,5 @@ Y.AxisObservable = Y.Base.create("axisObservable", Y.Base, [Y.Renderer], {
                 return val;
             }
         }
-    },
+    }
 });

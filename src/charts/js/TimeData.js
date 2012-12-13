@@ -152,11 +152,11 @@ TimeData.prototype = {
         increm = ((max - min)/l) * i;
         if(direction && direction == "vertical")
         {
-            label = min + increm;
+            label = max - increm;
         }
         else
         {
-            label = max - increm;
+            label = min + increm;
         }
         return label;
     },
