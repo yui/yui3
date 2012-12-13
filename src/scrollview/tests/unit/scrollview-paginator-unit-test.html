@@ -46,8 +46,10 @@
             coverage: ['scrollview-paginator']
         }).use('console', 'test', 'node-event-simulate', 'scrollview-base', 'scrollview-paginator', function(Y) {
 
+	        var s;
 	        var DURATION = 1;
 	        var SLOW_DURATION = 1000; // Neccesary to trigger certain lines
+	        var WAIT = 2000; // Neccesary to trigger certain lines
 
 	        // Set up the page
 	        var myConsole = new Y.Console().render();
@@ -56,13 +58,15 @@
 	            name: "API Tests",
                 _should: {
                     ignore: {
-                        "Move x should advance 1 page right": Y.UA.phantomjs || Y.UA.ie,
-                        "Move left on X should snap back": Y.UA.phantomjs || Y.UA.ie,
-                        "optimizeMemory should hide nodes not near the viewport" : Y.UA.phantomjs || Y.UA.ie,
+                        "Move x should advance 1 page right": (Y.UA.phantomjs || Y.UA.ie),
+                        "Move left on X should snap back": (Y.UA.phantomjs || Y.UA.ie),
+                        "optimizeMemory should hide nodes not near the viewport" : (Y.UA.phantomjs || Y.UA.ie),
 
                         // TODO: Investigate why these have issues in IE7
-                        "sv.next() should advance to the next page" : Y.UA.ie,
-                        "sv.next() on last index should do nothing" : Y.UA.ie
+                        "sv.next() should advance to the next page" : (Y.UA.ie),
+                        "sv.next() on last index should do nothing" : (Y.UA.ie),
+
+                        "mousewheel down should move the SV down" : (Y.UA.ie || Y.UA.gecko)
                     }
                 },
 
@@ -84,7 +88,7 @@
 			    //---------------------------------------------
 
 				"Ensure rendering & initial state are correct": function() {
-					var scrollview = renderNewScrollview(false),
+					var scrollview = renderNewScrollview('x'),
 						bb = scrollview.get('boundingBox'),
 						cb = scrollview.get('contentBox'),
 						id = cb.get('id'),
@@ -100,7 +104,7 @@
 
 				"sv.next() should advance to the next page" : function () {
 					var Test = this,
-						sv = renderNewScrollview(false);
+						sv = renderNewScrollview('x');
 
 					sv.on('scrollEnd', function () {
 						Test.resume(function () {
@@ -114,7 +118,7 @@
 
 				"sv.next() on last index should do nothing" : function () {
 					var Test = this,
-						sv = renderNewScrollview(false, 9),
+						sv = renderNewScrollview('x', 9),
 						eventsFired = 0;
 
 					sv.on('scrollEnd', function () {
@@ -135,7 +139,7 @@
 
 				"sv.prev() should advance to the previous page" : function () {
 					var Test = this,
-						sv = renderNewScrollview(true, 2);
+						sv = renderNewScrollview('y', 2);
 
 					sv.on('scrollEnd', function () {
 						Test.resume(function () {
@@ -150,7 +154,7 @@
 
 				"sv.prev() on index 0 should do nothing" : function () {
 					var Test = this,
-						sv = renderNewScrollview(true),
+						sv = renderNewScrollview('y'),
 						eventsFired = 0;
 
 					sv.on('scrollEnd', function () {
@@ -169,9 +173,25 @@
 					Test.wait(2000);
 				},
 
+				"scrollTo (deprecated) should animate to the specified index" : function () {
+					var Test = this,
+						sv = renderNewScrollview('y');
+
+					sv.on('scrollEnd', function () {
+						Test.resume(function () {
+							Y.Assert.areEqual(5, sv.pages.get('index'));
+							Y.Assert.areEqual(500, sv.get('scrollY'));
+						});
+					});
+
+					sv.pages.scrollTo(5);
+
+					Test.wait(2000);
+				},
+
 				"scrollToIndex should animate to the specified index" : function () {
 					var Test = this,
-						sv = renderNewScrollview(true);
+						sv = renderNewScrollview('y');
 
 					sv.on('scrollEnd', function () {
 						Test.resume(function () {
@@ -191,7 +211,7 @@
 				*/
 				"scrollToIndex should animate with a longer anim duration": function () {
 					var Test = this,
-						sv = renderNewScrollview(true),
+						sv = renderNewScrollview('y'),
 						startTime = Y.Lang.now();
 
 					sv.on('scrollEnd', function () {
@@ -209,7 +229,7 @@
 
 
 					var Test = this,
-						scrollview = renderNewScrollview(false);
+						scrollview = renderNewScrollview('x');
 
 					scrollview.on('scrollEnd', function(){
 						Test.resume(function(){
@@ -235,7 +255,7 @@
 				"Move left on X should snap back": function() {
 
 					var Test = this,
-						scrollview = renderNewScrollview(false),
+						scrollview = renderNewScrollview('x'),
 						distance = 100;
 						
 					scrollview.on('scrollEnd', function(){
@@ -259,7 +279,7 @@
 				"optimizeMemory should hide nodes not near the viewport": function() {
 
 					var Test = this,
-						scrollview = renderNewScrollview(false, 0, true),
+						scrollview = renderNewScrollview('x', 0, true),
 						distance = 100;
 
 					scrollview.on('scrollEnd', function(){
@@ -294,6 +314,35 @@
 					});
 
 					Test.wait(1000);
+				},
+
+
+
+				"mousewheel down should move the SV down": function () {
+					
+					var Test = this,
+						scrollview = renderNewScrollview('y');
+
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							Y.Assert.areEqual(1, scrollview.pages.get('index'));
+						})
+					});
+
+					Y.later(100, null, function () {
+						simulateMousewheel(Y.one("#container li"), true);
+					});
+
+					Test.wait(WAIT);
+				},
+
+
+				"Dual axis should do something": function () {
+					var Test = this,
+						scrollview = renderNewScrollview('xy');
+
+					scrollview.pages.set('index', 2);
+					Y.Assert.areEqual(2, scrollview.pages.get('index'));
 				}
 
 				/*
@@ -317,7 +366,7 @@
 	        Y.Test.Runner.add(suite);
 	        Y.Test.Runner.run();
 
-			function renderNewScrollview (vertical, startIndex, optimizeMemory) {
+			function renderNewScrollview (axis, startIndex, optimizeMemory) {
 
 				var config = {},
 					guid = Y.guid(),
@@ -328,15 +377,22 @@
 					            
 	            config.srcNode = '#' + guid;
 
-	            if (vertical) {
+	            if (axis === 'y') {
 	            	config.height = "100px";
 	            	widgetClass = 'vertical';
-	            	axis = 'y';
+	            	pAxis = axis;
 	            }
-	            else {
+	            else if (axis === 'x') {
 	            	config.width = "300px";
 	            	widgetClass = 'horizontal';
-	            	axis = 'x';
+	            	pAxis = axis;
+	            }
+	            else if (axis === 'xy') {
+	            	config.height = "100px";
+	            	config.width = "300px";
+	            	widgetClass = 'horizontal';
+	            	config.axis = 'xy';
+	            	pAxis = 'x';
 	            }
 
 	            config.plugins = [{
@@ -344,7 +400,7 @@
                     cfg:{
                     	index: startIndex || 0,
                         _optimizeMemory: optimizeMemory || false,
-                        axis: axis,
+                        axis: pAxis,
                         selector:">ul>li"
                     }
                 }];
@@ -355,6 +411,13 @@
 				scrollview.render();
 
 				return scrollview;
+			}
+
+			function simulateMousewheel (node, down) {
+				var evt = document.createEvent("WheelEvent");
+
+				evt.initWebKitWheelEvent(0, (down ? -1:1), Y.config.win, 0, 0, 0, 0, 0, 0, 0, 0);
+				node.getDOMNode().dispatchEvent(evt);
 			}
         });
         </script>

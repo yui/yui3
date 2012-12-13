@@ -42,6 +42,7 @@
         var s;
         var DURATION = 1;
         var SLOW_DURATION = 1000; // Neccesary to trigger certain lines
+        var WAIT = 2000; // Neccesary to trigger certain lines
 
         YUI({
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
@@ -60,13 +61,14 @@
                     ignore: {
 
                     	// Ignore PhantomJS and IE
-                        "Flick x should provide the correct reaction": Y.UA.phantomjs || Y.UA.ie,
-                        "Disabled flick should not scroll": Y.UA.phantomjs || Y.UA.ie,
-                        "Move right on X should move the content right": Y.UA.phantomjs || Y.UA.ie,
-                        "Move left on X should snap back": Y.UA.phantomjs || Y.UA.ie,
-                        "Move down on Y should move the content at least that distance": Y.UA.phantomjs || Y.UA.ie,
-                        "Move up on Y should bounce back": Y.UA.phantomjs || Y.UA.ie
+                        "Flick x should provide the correct reaction": (Y.UA.phantomjs || Y.UA.ie),
+                        "Disabled flick should not scroll": (Y.UA.phantomjs || Y.UA.ie),
+                        "Move right on X should move the content right": (Y.UA.phantomjs || Y.UA.ie),
+                        "Move left on X should snap back": (Y.UA.phantomjs || Y.UA.ie),
+                        "Move down on Y should move the content at least that distance": (Y.UA.phantomjs || Y.UA.ie),
+                        "Move up on Y should bounce back": (Y.UA.phantomjs || Y.UA.ie),
 
+                        "mousewheel down should move the SV down" : (Y.UA.ie || Y.UA.gecko)
                         // ** Selective disable/enable for easy testing purposes (SV test suite can take a little while to run all tests)
 						// "Ensure rendering & initial state are correct": true,
 						// "Ensure set('scrollX') works properly": true,
@@ -191,7 +193,7 @@
 
 					scrollview.set('scrollX', distance, {duration: 10});
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"Disabled flick should not scroll": function() {
@@ -211,7 +213,7 @@
 						})
 					});
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"Move right on X should move the content right": function() {
@@ -262,7 +264,7 @@
                         duration: DURATION
 					});
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"Move down on Y should move the content at least that distance": function() {
@@ -290,7 +292,7 @@
                         duration: DURATION
 					});
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"Move up on Y should bounce back": function() {
@@ -313,7 +315,7 @@
                         duration: DURATION
 					});
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"Disabled drag should not scroll": function() {
@@ -335,21 +337,46 @@
 						})
 					});
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
-				"Disabled scrollview should not scroll": function() {
+				"Disabled scrollview should not scroll with scrollTo": function() {
 					var Test = this,
-						scrollview = renderNewScrollview(false);
+						scrollview = renderNewScrollview(false),
+						distance = 500;
 
 					scrollview.set('disabled', true);
-					scrollview.scrollTo(500, null);
+					scrollview.scrollTo(distance, null);
+					scrollview.set('scrollY', distance);
+
 					Y.later(100, this, function () {
 						Test.resume(function () {
 							Y.Assert.areEqual(0, scrollview.get('scrollX'));
 						})
 					});
-					Test.wait(2000);
+					Test.wait(WAIT);
+				},
+
+				"Disabled scrollview should not scroll with gesture": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						distance = 500;
+
+					scrollview.set('disabled', true);
+					scrollview.get('contentBox').simulateGesture('move', {
+                        path: {
+                            ydist: distance
+                        },
+                        duration: SLOW_DURATION
+					});
+
+					Y.later(200, this, function () {
+						Test.resume(function(){
+							Y.Assert.areEqual(0, scrollview.get('scrollY'));
+						})
+					});
+
+					Test.wait(WAIT);
 				},
 
 				"Widget resize should trigger heightChange": function() {
@@ -371,7 +398,7 @@
 						scrollview.set('height', 123);
 					})
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"Deprecated static values should register": function() {
@@ -389,6 +416,84 @@
 					Y.Assert.areEqual(Y.ScrollView.EASING, scrollview.get('easing'));
 					Y.Assert.areEqual(Y.ScrollView.FRAME_STEP, scrollview.get('frameDuration'));
 					Y.Assert.areEqual(Y.ScrollView.BOUNCE_RANGE, scrollview.get('bounceRange'));
+				},
+
+				"Move gesture while flicking should stop flick": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						stop1, stop2;
+
+					// flick example from the center of the node, move 50 pixels down for 50ms)
+					scrollview.get('contentBox').simulateGesture("flick", {
+						axis: 'x',
+						distance: -100
+					});
+
+					Y.later(500, this, function () {
+						stop1 = scrollview.get('scrollX');
+						scrollview.get('contentBox').simulateGesture('move', {
+	                        path: {
+	                            xdist: 100
+	                        },
+	                        duration: SLOW_DURATION
+						}, function () {
+							Test.resume(function () {
+								stop2 = scrollview.get('scrollX');
+
+								// 50 is a generous threshold to limit false-positives. It's typically <10, ideally 0.
+								if (Math.abs(stop1 - stop2) < 50) {
+									Y.Assert.pass();
+								}
+								else {
+									Y.Assert.fail();
+								}
+							})
+						});
+					});
+
+					Test.wait(WAIT);
+				},
+
+				"mousewheel down should move the SV down": function () {
+					var Test = this,
+						scrollview = renderNewScrollview(true);
+
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							Y.Assert.areEqual(10, scrollview.get('scrollY'));
+							Y.Assert.areEqual(0, scrollview.get('scrollX'));
+						})
+					});
+
+					Y.later(100, null, function () {
+						simulateMousewheel(Y.one("#container li"), true);
+					});
+
+					Test.wait(WAIT);
+				},
+
+				"Forced axis to X should evaluate properly": function () {
+					var Test = this,
+						scrollview = renderNewScrollview(false, 'x');
+
+					Y.Assert.areEqual(true, scrollview.get('axis').x);
+					Y.Assert.areEqual(false, scrollview.get('axis').y);
+				},
+
+				"Forced axis to Y should evaluate properly": function () {
+					var Test = this,
+						scrollview = renderNewScrollview(true, 'y');
+
+					Y.Assert.areEqual(false, scrollview.get('axis').x);
+					Y.Assert.areEqual(true, scrollview.get('axis').y);
+				},
+
+				"Forced axis to XY should evaluate properly": function () {
+					var Test = this,
+						scrollview = renderNewScrollview(true, 'xy');
+
+					Y.Assert.areEqual(true, scrollview.get('axis').x);
+					Y.Assert.areEqual(true, scrollview.get('axis').y);
 				}
 
 
@@ -447,7 +552,7 @@
 	        Y.Test.Runner.add(suite);
 	        Y.Test.Runner.run();
 
-			function renderNewScrollview (vertical) {
+			function renderNewScrollview (vertical, axis) {
 
 				var config = {},
 					guid = Y.guid(),
@@ -466,6 +571,10 @@
 	            	widgetClass = 'horizontal';
 	            }
 
+	            if (axis) {
+	            	config.axis = axis;
+	            }
+
 				html = "<div class='" + widgetClass + "'><div id='" + guid + "'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>",
 	            Y.one('#container').append(html);
 
@@ -473,6 +582,13 @@
 				scrollview.render();
 
 				return scrollview;
+			}
+
+			function simulateMousewheel (node, down) {
+				var evt = document.createEvent("WheelEvent");
+
+				evt.initWebKitWheelEvent(0, (down ? -1:1), Y.config.win, 0, 0, 0, 0, 0, 0, 0, 0);
+				node.getDOMNode().dispatchEvent(evt);
 			}
 
         });
