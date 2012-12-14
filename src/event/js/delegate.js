@@ -283,11 +283,6 @@ delegate._applyFilter = function (filter, args, ce) {
         args[1] = new Y.DOMEventFacade(e, container, ce);
 
         while (target) {
-            // disabled must make delegate abort
-            if (target.disabled) {
-                match = [];
-                break;
-            }
             // filter(target, e, extra args...) - this === target
             if (filter.apply(args[0], args)) {
                 match.push(target);
