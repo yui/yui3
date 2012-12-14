@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>SmugMug TreeView stress test</title>
+  <style>
+    html {
+      background: #fff;
+      color: #333;
+      font: 14px/1.4 Helvetica, sans-serif;
+    }
+
+    h1 {
+      font-size: 22px;
+    }
+
+    #log {
+      font: 12px Menlo, Consolas, Inconsolata, monospace;
+      display: block;
+      width: 99%;
+    }
+
+    #treeview {
+      margin-top: 1em;
+      max-width: 400px;
+    }
+  </style>
+</head>
+<body class="yui3-skin-sam">
+
+<h1>SmugMug TreeView stress test</h1>
+
+<textarea id="log" rows="5"></textarea>
+<button id="go">Go!</button>
+<div id="treeview"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+YUI().use('treeview', function (Y) {
+
+  var container = Y.one('#treeview'),
+      logNode   = Y.one('#log'),
+      treeview;
+
+  Y.one('#go').after('click', function () {
+    if (treeview) {
+      treeview.destroy();
+    }
+
+    container.empty();
+    logNode.set('value', '');
+
+    log('Running...');
+
+    setTimeout(function () {
+      // Generate a bunch of bogus data to fill the tree with.
+      var nodes = [],
+          child, end, node, start;
+
+      for (var i = 0; i < 1000; i++) {
+        node = {label: 'Item ' + i};
+
+        // Fill every third node with 20 children.
+        if (i % 3 === 0) {
+          fillChildren(node, 20);
+        }
+
+        // Fill every tenth node with children to a depth of 50.
+        if (i % 10 === 0) {
+          fillChildren(node, 1, 50);
+        }
+
+        nodes.push(node);
+      }
+
+      start = new Date();
+
+      treeview = new Y.TreeView({
+        container: container,
+        nodes    : nodes
+      });
+
+      end = new Date();
+
+      log('Instantiated TreeView in ' + (end - start) + 'ms');
+
+      start = new Date();
+      treeview.render();
+      end = new Date();
+
+      log('Rendered ' + treeview.size() + ' nodes in ' + (end - start) + 'ms');
+    }, 0);
+  });
+
+  // -- Utility functions ----
+
+  function fillChildren(parent, count, depth) {
+    var child;
+
+    if (!parent.children) {
+      parent.children = [];
+    }
+
+    for (var i = 0; i < count; i++) {
+      child = {label: 'Child ' + i};
+
+      if (depth) {
+        fillChildren(child, count, depth - 1);
+      }
+
+      parent.children.push(child);
+    }
+  }
+
+  function log(msg) {
+    logNode.set('value', logNode.get('value') + msg + '\n');
+  }
+
+});
+</script>
+
+</body>
+</html>
