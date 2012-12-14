@@ -1,6 +1,35 @@
 YUI Core Change History
 =======================
 
+3.8.0
+-----
+
+* Added `Y.config.global` as an alias to the global scope
+
+3.7.3
+-----
+
+* Adding Y.UA.touchEnabled boolean to use in conditional modules
+* 2532797 - Added IE10 ua fixing for Windows8 WinJS
+* 2532675 - Remove the second air property
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* Improved the performance of `Y.merge()` by 10 to 40% (depending on the
+  browser). [Ryan Grove]
+
+
 3.6.0
 -----
 

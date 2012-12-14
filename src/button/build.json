@@ -1,0 +1,30 @@
+{
+    "name": "button",
+    "builds": {
+        "button": {
+            "jsfiles": [
+                "button.js"
+            ]
+        },
+        "button-plugin": {
+            "jsfiles": [
+                "plugin.js"
+            ]
+        },
+        "button-group": {
+            "jsfiles": [
+                "group.js"
+            ]
+        },
+        "cssbutton": {
+            "cssfiles": [
+                "cssbutton.css"
+            ]
+        },
+        "button-core": {
+            "jsfiles": [
+                "core.js"
+            ]
+        }
+    }
+}

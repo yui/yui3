@@ -55,12 +55,12 @@ Y.extend(CategoryAxis, Y.AxisType,
      * @private
      */
     _type: "category",
-        
+
     /**
      * Calculates the maximum and minimum values for the `Axis`.
      *
      * @method _updateMinAndMax
-     * @private 
+     * @private
      */
     _updateMinAndMax: function()
     {
@@ -104,15 +104,15 @@ Y.extend(CategoryAxis, Y.AxisType,
      * @method _setDataByKey
      * @param {String} key Key value to use.
      * @param {Array} data Array to use.
-     * @private 
+     * @private
      */
     _setDataByKey: function(key)
     {
         var i,
-            obj, 
-            arr = [], 
-            labels = [], 
-            dv = this._dataClone.concat(), 
+            obj,
+            arr = [],
+            labels = [],
+            dv = this._dataClone.concat(),
             len = dv.length;
         if(!this._indices)
         {
@@ -162,7 +162,7 @@ Y.extend(CategoryAxis, Y.AxisType,
     {
         return this.get("data").length;
     },
-    
+
     /**
      * Returns the distance between major units on an axis.
      *
@@ -185,7 +185,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         }
         return dist;
     },
-   
+
     /**
      * Gets the distance that the first and last ticks are offset from there respective
      * edges.
@@ -206,19 +206,19 @@ Y.extend(CategoryAxis, Y.AxisType,
      * @method getKeyValueAt
      * @param {String} key value used to look up the correct array
      * @param {Number} index within the array
-     * @return String 
+     * @return String
      */
     getKeyValueAt: function(key, index)
     {
         var value = NaN,
             keys = this.get("keys");
-        if(keys[key] && keys[key][index]) 
+        if(keys[key] && keys[key][index])
         {
             value = keys[key][index];
         }
         return value;
     },
-   
+
     /**
      * Calculates and returns a value based on the number of labels and the index of
      * the current label.
@@ -240,12 +240,12 @@ Y.extend(CategoryAxis, Y.AxisType,
         else
         {
             label = data[l - (i + 1)];
-        }   
+        }
         return label;
     },
 
     /**
-     * Returns a string corresponding to the first label on an 
+     * Returns a string corresponding to the first label on an
      * axis.
      *
      * @method getMinimumValue
@@ -259,7 +259,7 @@ Y.extend(CategoryAxis, Y.AxisType,
     },
 
     /**
-     * Returns a string corresponding to the last label on an 
+     * Returns a string corresponding to the last label on an
      * axis.
      *
      * @method getMaximumValue
@@ -275,4 +275,4 @@ Y.extend(CategoryAxis, Y.AxisType,
 });
 
 Y.CategoryAxis = CategoryAxis;
-		
+

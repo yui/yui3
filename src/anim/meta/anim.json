@@ -13,47 +13,53 @@
         "submodules": {
             "anim-base": {
                 "requires": [
-                    "base-base", 
+                    "base-base",
                     "node-style"
                 ]
-            }, 
+            },
             "anim-color": {
                 "requires": [
                     "anim-base"
                 ]
-            }, 
+            },
             "anim-curve": {
                 "requires": [
                     "anim-xy"
                 ]
-            }, 
+            },
             "anim-easing": {
                 "requires": [
                     "anim-base"
                 ]
-            }, 
+            },
             "anim-node-plugin": {
                 "requires": [
-                    "node-pluginhost", 
+                    "node-pluginhost",
                     "anim-base"
                 ]
-            }, 
+            },
             "anim-scroll": {
                 "requires": [
                     "anim-base"
                 ]
-            }, 
+            },
             "anim-xy": {
                 "requires": [
-                    "anim-base", 
+                    "anim-base",
                     "node-screen"
                 ]
             },
-            "anim-shape-transform": {
+            "anim-shape": {
                 "requires": [
                     "anim-base",
                     "anim-easing",
+                    "anim-color",
                     "matrix"
+                ]
+            },
+            "anim-shape-transform": {
+                "use": [
+                    "anim-shape"
                 ]
             }
         }

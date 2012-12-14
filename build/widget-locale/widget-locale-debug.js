@@ -1,4 +1,4 @@
-YUI.add('widget-locale', function(Y) {
+YUI.add('widget-locale', function (Y, NAME) {
 
 /**
  * Provides string support for widget with BCP 47 language tag lookup. This module has been deprecated. It's replaced by the "intl" module which provides generic internationalization and BCP 47 language tag support with externalization.
@@ -170,4 +170,4 @@ Y.mix(Widget.prototype, {
 }, true);
 
 
-}, '@VERSION@' ,{requires:['widget-base']});
+}, '@VERSION@', {"requires": ["widget-base"]});

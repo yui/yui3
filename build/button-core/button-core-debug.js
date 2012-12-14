@@ -1,4 +1,4 @@
-YUI.add('button-core', function(Y) {
+YUI.add('button-core', function (Y, NAME) {
 
 /**
 * Provides an interface for working with button-like DOM nodes
@@ -244,4 +244,4 @@ Y.mix(Button.prototype, Y.AttributeCore.prototype);
 Y.ButtonCore = Button;
 
 
-}, '@VERSION@' ,{requires:['attribute-core', 'classnamemanager', 'node-base']});
+}, '@VERSION@', {"requires": ["attribute-core", "classnamemanager", "node-base"]});

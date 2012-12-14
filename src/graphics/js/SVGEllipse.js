@@ -1,7 +1,7 @@
 /**
- * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Ellipse.html">`Ellipse`</a> class. 
- * `SVGEllipse` is not intended to be used directly. Instead, use the <a href="Ellipse.html">`Ellipse`</a> class. 
- * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Ellipse.html">`Ellipse`</a> 
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Ellipse.html">`Ellipse`</a> class.
+ * `SVGEllipse` is not intended to be used directly. Instead, use the <a href="Ellipse.html">`Ellipse`</a> class.
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Ellipse.html">`Ellipse`</a>
  * class will point to the `SVGEllipse` class.
  *
  * @module graphics
@@ -13,7 +13,7 @@ SVGEllipse = function(cfg)
 	SVGEllipse.superclass.constructor.apply(this, arguments);
 };
 
-SVGEllipse.NAME = "svgEllipse";
+SVGEllipse.NAME = "ellipse";
 
 Y.extend(SVGEllipse, SVGShape, {
 	/**
@@ -54,7 +54,7 @@ Y.extend(SVGEllipse, SVGShape, {
 
 SVGEllipse.ATTRS = Y.merge(SVGShape.ATTRS, {
 	/**
-	 * Horizontal radius for the ellipse. 
+	 * Horizontal radius for the ellipse.
 	 *
 	 * @config xRadius
 	 * @type Number
@@ -68,7 +68,7 @@ SVGEllipse.ATTRS = Y.merge(SVGShape.ATTRS, {
 		getter: function()
 		{
 			var val = this.get("width");
-			if(val) 
+			if(val)
 			{
 				val *= 0.5;
 			}
@@ -77,7 +77,7 @@ SVGEllipse.ATTRS = Y.merge(SVGShape.ATTRS, {
 	},
 
 	/**
-	 * Vertical radius for the ellipse. 
+	 * Vertical radius for the ellipse.
 	 *
 	 * @config yRadius
 	 * @type Number
@@ -92,7 +92,7 @@ SVGEllipse.ATTRS = Y.merge(SVGShape.ATTRS, {
 		getter: function()
 		{
 			var val = this.get("height");
-			if(val) 
+			if(val)
 			{
 				val *= 0.5;
 			}

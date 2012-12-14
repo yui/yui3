@@ -1,0 +1,12 @@
+{
+    "datatype-xml": {
+        "use": [
+            "datatype-xml-parse",
+            "datatype-xml-format"
+        ]
+    },
+    "datatype-xml-parse": {
+    },
+    "datatype-xml-format": {
+    }
+}

@@ -28,25 +28,25 @@ YUI.add('dd-plugin', function (Y, NAME) {
         EV_START = 'drag:start',
         EV_DRAG = 'drag:drag',
         EV_DRAG_END = 'drag:end';
-        
+
         /**
+        * dd-plugin
         * @property NAME
-        * @description dd-plugin
         * @type {String}
         */
         Drag.NAME = "dd-plugin";
 
         /**
+        * The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;
         * @property NS
-        * @description The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;
         * @type {String}
         */
         Drag.NS = "dd";
 
         Y.extend(Drag, Y.DD.Drag, {
-                
+
                 _widgetHandles: null,
-                
+
                 /**
                 * refers to a Y.Widget if its the host, otherwise = false.
                 *
@@ -55,7 +55,7 @@ YUI.add('dd-plugin', function (Y, NAME) {
                 */
                 _widget: undefined,
 
-                
+
                 /**
                 * refers to the [x,y] coordinate where the drag was stopped last
                 *
@@ -120,12 +120,12 @@ YUI.add('dd-plugin', function (Y, NAME) {
                 _attachWidgetListeners: function() {
                         //if this thing is a widget, and it uses widgetposition...
                         if (this._usesWidgetPosition(this._widget)) {
-                               
+
                                //set the x,y on the widget's ATTRS
                                this._widgetHandles.push(this.on(EV_DRAG, this._setWidgetCoords));
 
                                //store the new position that the widget ends up on
-                               this._widgetHandles.push(this.on(EV_DRAG_END, this._updateStopPosition)); 
+                               this._widgetHandles.push(this.on(EV_DRAG_END, this._updateStopPosition));
                         }
                 },
                 /**
@@ -135,15 +135,15 @@ YUI.add('dd-plugin', function (Y, NAME) {
                 * @protected
                 */
                 initializer: function(config) {
-                        
+
                         this._widgetHandles = [];
 
                         this._widget = config.widget;
 
                         this.on(EV_START, this._checkEvents); //Always run, don't check
-                        
+
                         this._attachWidgetListeners();
-                               
+
                 },
 
                 /**

@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3../../../../../ml4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>Multiple Series Combo Spline Chart using an array of object literals</title>
+<style>
+#mychart {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    width:500px;
+    height:350px;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="../../../../build/cssfonts/fonts-min.css">
+</head>		
+<body class="yui3-skin-sam">
+<h3>Multiple Series Combo Spline Chart using an array of object literals</h3>
+<div id="mychart"></div>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript">            
+    YUI({
+        defaultGraphicEngine: (window.location.search.match(/[?&]defaultGraphicEngine=([^&]+)/) || [])[1] || 'svg',
+		filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    }).use('charts', function (Y) 
+    {
+        var myDataValues = [ 
+            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
+            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+            {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
+        ],
+        mychart = new Y.Chart({
+            type: "combospline",
+            dataProvider:myDataValues,
+            render:"#mychart"
+        });
+    });
+</script>
+</body>
+</html>

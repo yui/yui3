@@ -1,4 +1,4 @@
-YUI.add('recordset-filter', function(Y) {
+YUI.add('recordset-filter', function (Y, NAME) {
 
 /**
  * Plugin that provides the ability to filter through a recordset.
@@ -102,4 +102,4 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
 Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
 
 
-}, '@VERSION@' ,{requires:['recordset-base','array-extras','plugin']});
+}, '@VERSION@', {"requires": ["recordset-base", "array-extras", "plugin"]});

@@ -1,0 +1,25 @@
+{
+    "name": "querystring",
+    "builds": {
+        "querystring-stringify-simple": {
+            "jsfiles": [
+                "querystring-stringify-simple.js"
+            ]
+        },
+        "querystring-stringify": {
+            "jsfiles": [
+                "querystring-stringify.js"
+            ]
+        },
+        "querystring-parse-simple": {
+            "jsfiles": [
+                "querystring-parse-simple.js"
+            ]
+        },
+        "querystring-parse": {
+            "jsfiles": [
+                "querystring-parse.js"
+            ]
+        }
+    }
+}

@@ -1,4 +1,4 @@
-YUI.add('node-focusmanager', function(Y) {
+YUI.add('node-focusmanager', function (Y, NAME) {
 
 /**
 * <p>The Focus Manager Node Plugin makes it easy to manage focus among
@@ -1063,4 +1063,4 @@ Y.namespace("Plugin");
 Y.Plugin.NodeFocusManager = NodeFocusManager;
 
 
-}, '@VERSION@' ,{requires:['attribute', 'node', 'plugin', 'node-event-simulate', 'event-key', 'event-focus']});
+}, '@VERSION@', {"requires": ["attribute", "node", "plugin", "node-event-simulate", "event-key", "event-focus"]});

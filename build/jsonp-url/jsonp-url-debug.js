@@ -1,4 +1,4 @@
-YUI.add('jsonp-url', function(Y) {
+YUI.add('jsonp-url', function (Y, NAME) {
 
 var JSONPRequest = Y.JSONPRequest,
     getByPath    = Y.Object.getValue,
@@ -123,4 +123,4 @@ Y.mix(JSONPRequest.prototype, {
 }, true);
 
 
-}, '@VERSION@' ,{requires:['jsonp']});
+}, '@VERSION@', {"requires": ["jsonp"]});

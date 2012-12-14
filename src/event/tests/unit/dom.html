@@ -5,16 +5,12 @@
 </head>
 <body class="yui3-skin-sam">
     <div id="doc">
-
         <div id="clickcontainer">
             <p id="clicker1" class="clickers"><a id='clicka'>click1</a></p>
             <p id="clicker2" class="clickers">click2</p>
         </div>
-
     </div>
-    <!-- YUI3 Core //-->
     <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
-    <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
             coverage: ['event'],
@@ -29,7 +25,7 @@
             // add the test cases and suites
             Y.Test.Runner.add(new Y.Test.Case({
 
-                name: "DOM Event Tests",
+                name: "DOM Events",
 
                 _should: {
                     error: {
@@ -618,6 +614,27 @@
                     Y.Assert.isTrue(fired.mouseup);
                 },
 
+                'test Y.on(load)' : function() {
+                    var test = this;
+
+                    Y.on("load", function() {
+                        var thisWin = this;
+
+                        // setTimeout to make sure we don't hit resume w/o wait, because we don't have absolute control over whether this 
+                        // fires async or sync - based on whether or not the window.load event has fired already.
+
+                        setTimeout(function() {
+                            test.resume(function() {
+                                Y.Assert.areSame(Y.one("window"), thisWin, "Load callback context should be the Y.Node reference to the window");
+                                Y.Assert.isTrue(YUI.Env.DOMReady, "YUI.Env.DOMReady should be true by the time load fires");
+                                Y.Assert.isTrue(YUI.Env.windowLoaded, "YUI.Env.windowLoaded flag should be true");
+                            });
+                        }, 0);
+                    });
+
+                    test.wait();
+                },
+
                 "error in onavailable callback should not result in infinite _poll": function () {
                     var test = this,
                         found = false;
@@ -647,14 +664,11 @@
 
                     test.wait();
                 }
+
             }));
 
-            //run all tests
             Y.Test.Runner.setName("Event: DOM");
             Y.Test.Runner.run();
-
-            /* finishing the testing process */
-
         });
     </script>
 </body>

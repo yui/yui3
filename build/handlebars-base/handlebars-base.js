@@ -1,4 +1,4 @@
-YUI.add('handlebars-base', function(Y) {
+YUI.add('handlebars-base', function (Y, NAME) {
 
 /*!
 Handlebars.js - Copyright (C) 2011 Yehuda Katz
@@ -270,9 +270,6 @@ Y.Handlebars = Handlebars;
 
 Handlebars.VERSION += '-yui';
 
-// The rest of this file is just API docs for methods defined in Handlebars
-// itself.
-
 /**
 Registers a helper function that will be made available to all templates.
 
@@ -351,5 +348,11 @@ Converts a precompiled template into a renderable template function.
 @return {Function} Compiled template function.
 */
 
+// Alias for Y.Handlebars.template(), used by Y.Template.
+Handlebars.revive = Handlebars.template;
 
-}, '@VERSION@' ,{requires:['escape']});
+// Make Y.Template.Handlebars an alias for Y.Handlebars.
+Y.namespace('Template').Handlebars = Handlebars;
+
+
+}, '@VERSION@', {"requires": ["escape"]});

@@ -11,20 +11,23 @@ loads all of the YUI modules needed to make YUI run on node properly.
 Installation
 ------------
 
-To create the package you need `bash`, `make`, `node` and `npm` installed.
+To create the package you need `shifter`, `node` and `npm` installed.
 
     cd yui3/src/yui
     make npm
+    //or without make
+    shifter --config build-npm.json
 
 By default this will create the package here:
 
-    /tmp/npm-yui/
+    ../../build-npm/
+    /path/to/yui3/build-npm/
 
 Then you can use `npm` to install this package like this:
 
     mkdir yui_test
     cd yui_test
-    npm i /tmp/npm-yui/
+    npm i /path/to/yui3/build-npm/
 
 Now `npm ls` will show that the package is installed locally in this directory.
 

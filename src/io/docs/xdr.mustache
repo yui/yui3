@@ -13,11 +13,11 @@
 
 <h3 class="first">Implementing a Cross-Domain Request for JSON Data</h3>
 
-<p>In this example, we begin with a YUI instance that loads the <code>io-xdr</code>, <code>json-parse</code>, <code>substitute</code> and <code>node</code> modules. The <code>io-xdr</code> module is the key module. The other modules are used to process and output the results:</p>
+<p>In this example, we begin with a YUI instance that loads the <code>io-xdr</code>, <code>json-parse</code>, and <code>node</code> modules. The <code>io-xdr</code> module is the key module. The other modules are used to process and output the results:</p>
 
 ```
 //Create a YUI instance including support for IO and JSON modules:
-YUI().use("io-xdr", "substitute", "json-parse", "node", function(Y) {
+YUI().use("io-xdr", "json-parse", "node", function(Y) {
     // Y is the YUI instance.
     // The rest of the following code is encapsulated in this
     // anonymous function.
@@ -35,18 +35,18 @@ var output = Y.one("#output ul");
 ```
 var oRSS = Y.JSON.parse(o.responseText);
 ```
-<p>Next, we create a simple markup template and use Y.Lang.substitute to fill in the data, as we iterate through the JSON and output the results.</p>
+<p>Next, we create a simple markup template and use `Y.Lang.sub()` to fill in the data, as we iterate through the JSON and output the results.</p>
 ```
 //From here, we simply access the JSON data from where it's provided
 //in the Yahoo! Pipes output:
 if (oRSS && oRSS.count) {
     var s = "<!--begin news stories fetched via Yahoo! Pipes-->",
         //t in this case is our simple template; this is fed to
-        //Y.Lang.substitute as we loop through RSS items:
+        //Y.Lang.sub() as we loop through RSS items:
         t = "<li><a href='{link}'>{title}</a>, {pubDate}</li>";
 
     for (var i=0; i<oRSS.count; i++) {
-        s += Y.Lang.substitute(t, oRSS.value.items[i]);
+        s += Y.Lang.sub(t, oRSS.value.items[i]);
     }
 
     //Output the string to the page:
@@ -80,7 +80,7 @@ var cfg = {
 var handleClick = function(o) {
     Y.log("Click detected; beginning io request to Yahoo! Pipes.", "info", "example");
     // Remove the default "X-Requested-With" header as this will
-    // prevent the request from succeeding; the Pipes 
+    // prevent the request from succeeding; the Pipes
     // resource will not accept user-defined HTTP headers.
     Y.io.header('X-Requested-With');
     var obj = Y.io(

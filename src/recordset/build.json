@@ -1,0 +1,26 @@
+{
+    "name": "recordset",
+    "builds": {
+        "recordset-indexer": {
+            "jsfiles": [
+                "recordset-indexer.js"
+            ]
+        },
+        "recordset-filter": {
+            "jsfiles": [
+                "recordset-filter.js"
+            ]
+        },
+        "recordset-sort": {
+            "jsfiles": [
+                "recordset-sort.js"
+            ]
+        },
+        "recordset-base": {
+            "jsfiles": [
+                "record.js",
+                "recordset-base.js"
+            ]
+        }
+    }
+}

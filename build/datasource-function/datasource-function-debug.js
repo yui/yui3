@@ -1,4 +1,4 @@
-YUI.add('datasource-function', function(Y) {
+YUI.add('datasource-function', function (Y, NAME) {
 
 /**
  * Provides a DataSource implementation which can be used to retrieve data from
@@ -105,4 +105,4 @@ Y.extend(DSFn, Y.DataSource.Local, {
 Y.DataSource.Function = DSFn;
 
 
-}, '@VERSION@' ,{requires:['datasource-local']});
+}, '@VERSION@', {"requires": ["datasource-local"]});

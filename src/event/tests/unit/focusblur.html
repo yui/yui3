@@ -395,6 +395,16 @@
                     Y.one('#button-1').focus();
 
                     Y.ArrayAssert.itemsAreSame([1, 2, 3, 4], order);
+                },
+
+                "test useActive feature test" : function() {
+                    var useActive = Y.Env.evt.plugins.focus.eventDef._useActivate;
+
+                    if (Y.UA.ie) {
+                        Y.Assert.isTrue(useActive);
+                    } else {
+                        Y.Assert.isFalse(useActive);
+                    }
                 }
 
             }));

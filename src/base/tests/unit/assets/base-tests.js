@@ -16,14 +16,14 @@ YUI.add('base-tests', function(Y) {
 
     Y.extend(EventTests, Y.Base);
 
-    var suite = new Y.Test.Suite("Base");
+    var suite = new Y.Test.Suite("Base Tests");
 
     suite.add(new Y.Test.Case({
         name : "Base Event Tests",
 
         testEventPrefix : function() {
             var h = new EventTests();
-            Y.Assert.areEqual("eventTestsHost", h._eventPrefix);            
+            Y.Assert.areEqual("eventTestsHost", h._eventPrefix);
         },
 
         testEventRegistrationThroughConstructor : function() {
@@ -79,7 +79,7 @@ YUI.add('base-tests', function(Y) {
             });
 
             var h1 = new EventTests({
-               bubbleTargets : [bubbleTargetOne, bubbleTargetTwo]  
+               bubbleTargets : [bubbleTargetOne, bubbleTargetTwo]
             });
 
             h1.set("attr1", "bar");
@@ -102,15 +102,15 @@ YUI.add('base-tests', function(Y) {
                     init : function() {
                         actual.push("onInit");
                     }
-                }, 
+                },
                 after : {
                     init : function() {
-                        actual.push("afterInit");                        
+                        actual.push("afterInit");
                     }
                 }
             });
 
-            Y.ArrayAssert.itemsAreEqual(expected, actual);  
+            Y.ArrayAssert.itemsAreEqual(expected, actual);
         },
 
         testDestroyEvent : function() {
@@ -122,10 +122,10 @@ YUI.add('base-tests', function(Y) {
             h.on("destroy", function() {
                 actual.push("onDestroy");
             });
-            
+
             h.after("destroy", function() {
                 actual.push("afterDestroy");
-            });        
+            });
         }
     }));
 
@@ -136,10 +136,10 @@ YUI.add('base-tests', function(Y) {
         "test:create-basic": function () {
 
             var expectedMethodCalls = [
-                "ext1::constructor", 
+                "ext1::constructor",
                 "myClass::initializer",
-                "ext1::constructor", 
-                "myClass::initializer", 
+                "ext1::constructor",
+                "myClass::initializer",
                 "myClass::methodOne",
                 "myClass::methodOne",
                 "ext1::extOne",
@@ -156,7 +156,7 @@ YUI.add('base-tests', function(Y) {
             };
 
             var MyClass = Y.Base.create("myClass", Y.Base, [Ext1], {
-                
+
                 initializer: function() {
                     actualMethodCalls.push("myClass::initializer");
                 },
@@ -181,9 +181,9 @@ YUI.add('base-tests', function(Y) {
 
             Y.Assert.areEqual(o1.constructor.STATIC_ONE, "static_one", "STATIC_ONE not found on o1's constructor");
             Y.Assert.areEqual(o2.constructor.STATIC_ONE, "static_one", "STATIC_ONE not found on o2's constructor");
-            
+
             Y.Assert.areEqual(o1.constructor.NAME, "myClass", "NAME not found on o1's constructor");
-            Y.Assert.areEqual(o2.constructor.NAME, "myClass", "NAME not found on o2's constructor"); 
+            Y.Assert.areEqual(o2.constructor.NAME, "myClass", "NAME not found on o2's constructor");
 
             o1.methodOne();
             o2.methodOne();
@@ -202,7 +202,7 @@ YUI.add('base-tests', function(Y) {
                 "myClass::initializer",
                 "myClass::constructor",
                 "ext1::constructor",
-                "myClass::initializer", 
+                "myClass::initializer",
                 "myClass::methodOne",
                 "myClass::methodOne",
                 "ext1::extOne",
@@ -224,7 +224,7 @@ YUI.add('base-tests', function(Y) {
             }
 
             Y.extend(MyClass, Y.Base, {
-                
+
                 initializer: function() {
                     actualMethodCalls.push("myClass::initializer");
                 },
@@ -238,7 +238,7 @@ YUI.add('base-tests', function(Y) {
                 NAME: "myClass"
             });
 
-            Y.Base.mix(MyClass, [Ext1]);             
+            Y.Base.mix(MyClass, [Ext1]);
 
             // using 2 instances, just to make sure nothing static/prototype related gets broken by the 1st instance
             var o1 = new MyClass();
@@ -251,7 +251,7 @@ YUI.add('base-tests', function(Y) {
             Y.Assert.isFunction(o2.methodOne, "Prototype method methodOne not found on o2");
 
             Y.Assert.areEqual(o1.constructor.STATIC_ONE, "static_one", "STATIC_ONE not found on o1's constructor");
-            Y.Assert.areEqual(o2.constructor.STATIC_ONE, "static_one", "STATIC_ONE not found on o2's constructor"); 
+            Y.Assert.areEqual(o2.constructor.STATIC_ONE, "static_one", "STATIC_ONE not found on o2's constructor");
 
             o1.methodOne();
             o2.methodOne();
@@ -264,10 +264,10 @@ YUI.add('base-tests', function(Y) {
 
         "test:initializer": function() {
             var expectedMethodCalls = [
-                "ext1::constructor", 
+                "ext1::constructor",
                 "myClass::initializer",
-                "ext1::initializer", 
-                "ext1::constructor", 
+                "ext1::initializer",
+                "ext1::constructor",
                 "myClass::initializer",
                 "ext1::initializer"],
 
@@ -296,7 +296,7 @@ YUI.add('base-tests', function(Y) {
 
             Y.ArrayAssert.itemsAreEqual(expectedMethodCalls, actualMethodCalls, "Unexpected method calls");
         },
-        
+
         "test:destructor": function() {
             var expectedMethodCalls = [
                 "ext1::destructor",
@@ -361,16 +361,16 @@ YUI.add('base-tests', function(Y) {
             // using 2 instances, just to make sure nothing static/prototype related gets broken by the 1st instance
             var o1 = new MyClass();
             var o2 = new MyClass();
-            
+
             o1.set("attr2", "foo");
             o2.set("attr2", "foo");
 
             Y.Assert.areEqual("attr1-ext1", o1.get("attr1"), "o1 attr1 incorrect");
             Y.Assert.areEqual("attr1-ext1", o2.get("attr1"), "o2 attr1 incorrect");
-            
+
             Y.Assert.areEqual("foo", o1.get("attr2"), "o1 attr2 incorrect");
             Y.Assert.areEqual("foo", o2.get("attr2"), "o2 attr2 incorrect");
-            
+
             Y.Assert.areEqual("attr3-ext1", o1.get("attr3"), "o1 attr3 incorrect");
             Y.Assert.areEqual("attr3-ext1", o2.get("attr3"), "o2 attr3 incorrect");
 
@@ -378,7 +378,7 @@ YUI.add('base-tests', function(Y) {
         },
 
         "test:nonAttrsCfg" : function() {
-            
+
             function Ext1() {}
             Ext1._NON_ATTRS_CFG = ["nonAttrA", "nonAttrB"];
 
@@ -402,7 +402,7 @@ YUI.add('base-tests', function(Y) {
             Y.Assert.isUndefined(myClass.get("nonAttrC"), "nonAttrC should not have been configured");
             Y.Assert.isUndefined(myClass.get("nonAttrD"), "nonAttrD should not have been configured");
 
-            Y.Assert.areEqual("adHoc", myClass.get("adHocAttr"), "Show have allows adHoc attrs");           
+            Y.Assert.areEqual("adHoc", myClass.get("adHocAttr"), "Show have allows adHoc attrs");
         },
 
         "test:aggregates" : function() {
@@ -476,7 +476,7 @@ YUI.add('base-tests', function(Y) {
             function MyClass() {
                 MyClass.superclass.constructor.apply(this, arguments);
             }
-            
+
             MyClass.NAME = "myClass";
 
             MyClass.ATTRS = {
@@ -514,7 +514,7 @@ YUI.add('base-tests', function(Y) {
 
             Y.Assert.areEqual("foo", o1.get("attr2"), "o1 attr2 incorrect");
             Y.Assert.areEqual("attr2-ext1", o2.get("attr2"), "o2 attr2 incorrect");
-            
+
             Y.Assert.areEqual("attr3-ext1", o1.get("attr3"), "o1 attr3 incorrect");
             Y.Assert.areEqual("attr3-ext1", o2.get("attr3"), "o2 attr3 incorrect");
 
@@ -539,7 +539,7 @@ YUI.add('base-tests', function(Y) {
                 ];
 
             function Ext1() {}
-            
+
             Ext1.prototype.methodOne = function() {
                 actualMethodCalls.push("ext1::methodOne");
             };
@@ -564,7 +564,7 @@ YUI.add('base-tests', function(Y) {
                 methodOne : function() {
                     actualMethodCalls.push("myClass::methodOne");
                 }
-            }, { 
+            }, {
                 ATTRS : {
                     attr1 : {
                         value:"attr1-myClass"
@@ -612,12 +612,12 @@ YUI.add('base-tests', function(Y) {
             var actualMethodCalls = [],
                 expectedMethodCalls = [
                     "ext1::constructor",
-                    "ext2::constructor", 
+                    "ext2::constructor",
                     "myClass::initializer",
                     "ext1::initializer",
                     "ext2::initializer",
                     "ext1::constructor",
-                    "ext2::constructor", 
+                    "ext2::constructor",
                     "myClass::initializer",
                     "ext1::initializer",
                     "ext2::initializer",
@@ -697,15 +697,15 @@ YUI.add('base-tests', function(Y) {
             };
 
             var MyClass = Y.Base.create("myClass", Y.Base, [Ext1, Ext2], {
-                
+
                 initializer: function() {
                     actualMethodCalls.push("myClass::initializer");
                 },
-                
+
                 methodOne : function() {
                     actualMethodCalls.push("myClass::methodOne");
                 },
-                
+
                 methodTwo : function() {
                     actualMethodCalls.push("myClass::methodTwo");
                 },
@@ -713,7 +713,7 @@ YUI.add('base-tests', function(Y) {
                 methodFive : function() {
                     actualMethodCalls.push("myClass::methodFive");
                 }
-            }, { 
+            }, {
                 ATTRS : {
                     attr1 : {
                         value:"myClass-attr1"
@@ -723,10 +723,10 @@ YUI.add('base-tests', function(Y) {
                     }
                 }
             });
-            
+
             var o1 = new MyClass();
             var o2 = new MyClass();
-            
+
             Y.Assert.areEqual("myClass-attr1", o1.get("attr1"), "o1 attr1 incorrect");
             Y.Assert.areEqual("myClass-attr1", o2.get("attr1"), "o2 attr1 incorrect");
 
@@ -752,10 +752,10 @@ YUI.add('base-tests', function(Y) {
             o2.methodFour();
             o1.methodFive();
             o2.methodFive();
-            
+
             Y.ArrayAssert.itemsAreEqual(expectedMethodCalls, actualMethodCalls, "Unexpected method calls");
         },
-        
+
         "test:classstructure" : function() {
             function Ext1() {}
             Ext1.prototype.extOne = function() {};
@@ -772,7 +772,7 @@ YUI.add('base-tests', function(Y) {
                 initializer: function() {},
                 methodOne: function() {}
             });
-            
+
             var o1 = new MyClassOne();
             var o2 = new MyClassTwo();
 
@@ -781,16 +781,16 @@ YUI.add('base-tests', function(Y) {
 
             Y.Assert.isTrue(o2.hasImpl(Ext1),  "o2 should pass hasImpl(Ext1)");
             Y.Assert.isTrue(o2.hasImpl(Ext2), "o2 should pass hasImpl(Ext1)");
-            
+
             Y.Assert.isTrue(o1 instanceof MyClassOne, "o1 should be an instanceof MyClassOne");
             Y.Assert.isTrue(o1 instanceof Y.Base, "o1 should be an instanceof Base");
-            
+
             Y.Assert.isTrue(o2 instanceof MyClassTwo, "o2 should be an instanceof MyClassTwo");
             Y.Assert.isTrue(o2 instanceof Y.Base, "o2 should be an instanceof Base");
 
             Y.Assert.isFalse(o1 instanceof MyClassTwo, "o1 should NOT be an instanceof MyClassTwo");
             Y.Assert.isFalse(o2 instanceof MyClassOne, "o2 should NOT be an instanceof MyClassOne");
-            
+
             Y.Assert.isFunction(o1.methodOne, "o1 should have a methodOne method");
             Y.Assert.isFunction(o1.extOne, "o1 should have an extOne method");
             Y.Assert.isUndefined(o1.extTwo, "o1 should not have an extTwo method");
@@ -831,10 +831,10 @@ YUI.add('base-tests', function(Y) {
             });
 
             var MyClassOne = Y.Base.create("myClassOne", Y.Base, [Ext1], {
-                
+
                 initializer: function() {
                     actualMethodCalls.push("myClassOne::initializer");
-                    actualMethodCalls.push(this.get("myAttr"));                    
+                    actualMethodCalls.push(this.get("myAttr"));
                 }
 
             }, {
@@ -842,7 +842,7 @@ YUI.add('base-tests', function(Y) {
                     myAttr: {
                         value: 10
                     }
-                }                
+                }
             });
 
             var o = new MyClassOne( {
@@ -858,7 +858,7 @@ YUI.add('base-tests', function(Y) {
         },
 
         "test:extend" : function() {
-            
+
             var actualMethodCalls = [],
                 expectedMethodCalls = [
                     "ext1::constructor",
@@ -874,7 +874,7 @@ YUI.add('base-tests', function(Y) {
                 ];
 
             function Ext1() {
-                actualMethodCalls.push("ext1::constructor");                
+                actualMethodCalls.push("ext1::constructor");
             }
             Ext1.prototype.extOne = function() {
                 actualMethodCalls.push("ext1::extOne");
@@ -895,7 +895,7 @@ YUI.add('base-tests', function(Y) {
 
             var MyClassOne = Y.Base.create("myClassOne", Y.Base, [Ext1], {
                 initializer: function() {
-                    actualMethodCalls.push("myClassOne::initializer");    
+                    actualMethodCalls.push("myClassOne::initializer");
                 },
                 methodOne: function() {
                     actualMethodCalls.push("myClassOne::methodOne");
@@ -934,9 +934,9 @@ YUI.add('base-tests', function(Y) {
             Ext1.STATIC_ONE = "static_one";
             Ext1.STATIC_TWO = "static_two";
             Ext1.STATIC_THREE = "static_three";
-            
+
             var MyClass = Y.extend(function() {
-                MyClass.superclass.constructor.apply(this, arguments);                
+                MyClass.superclass.constructor.apply(this, arguments);
             }, Y.Base, null, {
                 NAME : "myClass",
                 _buildCfg : {
@@ -957,7 +957,7 @@ YUI.add('base-tests', function(Y) {
             Y.Assert.areEqual("static_two", MyBuiltClass.STATIC_TWO);
             Y.Assert.isFalse("STATIC_THREE" in MyBuiltClass);
 
-            Y.Assert.isFalse(MyBuiltClass.ATTRS === Ext1.ATTRS, "Ext1.ATTRS shouldn't have been copied over, it should be aggregated");            
+            Y.Assert.isFalse(MyBuiltClass.ATTRS === Ext1.ATTRS, "Ext1.ATTRS shouldn't have been copied over, it should be aggregated");
         },
 
         "test:mainclass-statics" : function() {
@@ -975,7 +975,7 @@ YUI.add('base-tests', function(Y) {
             Ext1.STATIC_THREE = "static_three";
 
             var MyClass = Y.extend(function() {
-                MyClass.superclass.constructor.apply(this, arguments);                
+                MyClass.superclass.constructor.apply(this, arguments);
             }, Y.Base, null, {
                 NAME : "myClass",
                 _buildCfg : {
@@ -996,7 +996,7 @@ YUI.add('base-tests', function(Y) {
             Y.Assert.areEqual("static_two", MyBuiltClass.STATIC_TWO);
             Y.Assert.isFalse("STATIC_THREE" in MyBuiltClass);
 
-            Y.Assert.isFalse(MyBuiltClass.ATTRS === Ext1.ATTRS, "Ext1.ATTRS shouldn't have been copied over, it should be aggregated");            
+            Y.Assert.isFalse(MyBuiltClass.ATTRS === Ext1.ATTRS, "Ext1.ATTRS shouldn't have been copied over, it should be aggregated");
         },
 
         "test:mainclass-aggregates" : function() {
@@ -1005,14 +1005,14 @@ YUI.add('base-tests', function(Y) {
             Ext1.AGG = {
                 "foo": true
             };
-            
+
             function Ext2() {}
             Ext2.AGG = {
                 "bar": true
             };
 
             var MyClass = Y.extend(function() {
-                MyClass.superclass.constructor.apply(this, arguments);          
+                MyClass.superclass.constructor.apply(this, arguments);
             }, Y.Base, null, {
                 NAME : "myClass",
                 _buildCfg : {
@@ -1070,16 +1070,16 @@ YUI.add('base-tests', function(Y) {
                                 foo:[],
                                 bar:[]
                             };
-    
+
                             if (s[p]) {
                                 if (s[p].foo) {
-                                    r[p].foo = r[p].foo.concat(s[p].foo);    
+                                    r[p].foo = r[p].foo.concat(s[p].foo);
                                 }
                                 if (s[p].bar) {
-                                    r[p].bar = r[p].bar.concat(s[p].bar);    
+                                    r[p].bar = r[p].bar.concat(s[p].bar);
                                 }
                             }
-    
+
                         }
                     }
                 }
@@ -1098,7 +1098,7 @@ YUI.add('base-tests', function(Y) {
                 bar:[1],
                 foo:[1]
             }, MyClass1.CUST, "Class1 - object assert");
-            
+
             Y.ArrayAssert.itemsAreEqual([1], MyClass1.CUST.foo, "Class1 foo assert");
             Y.ArrayAssert.itemsAreEqual([1], MyClass1.CUST.bar, "Class1 bar assert");
 
@@ -1144,7 +1144,7 @@ YUI.add('base-tests', function(Y) {
             Ext1._buildCfg = {
                 custom : {
                     CUST : function(p, r, s) {
-                        
+
                         r[p] = r[p] || {
                             foo:[],
                             bar:[]
@@ -1152,10 +1152,10 @@ YUI.add('base-tests', function(Y) {
 
                         if (s[p]) {
                             if (s[p].foo) {
-                                r[p].foo = r[p].foo.concat(s[p].foo);    
+                                r[p].foo = r[p].foo.concat(s[p].foo);
                             }
                             if (s[p].bar) {
-                                r[p].bar = r[p].bar.concat(s[p].bar);    
+                                r[p].bar = r[p].bar.concat(s[p].bar);
                             }
                         }
 
@@ -1190,7 +1190,7 @@ YUI.add('base-tests', function(Y) {
                 bar:[1],
                 foo:[1]
             }, MyClass1.CUST, "Class1 - object assert");
-            
+
             Y.ArrayAssert.itemsAreEqual([1], MyClass1.CUST.foo, "Class1 foo assert");
             Y.ArrayAssert.itemsAreEqual([1], MyClass1.CUST.bar, "Class1 bar assert");
 
@@ -1235,9 +1235,9 @@ YUI.add('base-tests', function(Y) {
             Ext1._buildCfg = {
                 statics: ["STATIC_ONE", "STATIC_TWO"]
             };
-                        
+
             var MyClass = Y.Base.create("myClass", Y.Base, [Ext1]);
-            
+
             var myclass = new MyClass();
 
             Y.Assert.isTrue(myclass instanceof MyClass);
@@ -1249,7 +1249,7 @@ YUI.add('base-tests', function(Y) {
             Y.Assert.areEqual("static_two", MyClass.STATIC_TWO);
             Y.Assert.isFalse("STATIC_THREE" in MyClass);
 
-            Y.Assert.isFalse(MyClass.ATTRS === Ext1.ATTRS, "Ext1.ATTRS shouldn't have been copied over");            
+            Y.Assert.isFalse(MyClass.ATTRS === Ext1.ATTRS, "Ext1.ATTRS shouldn't have been copied over");
         },
 
         "test:extCfg-aggregates" : function() {
@@ -1263,7 +1263,7 @@ YUI.add('base-tests', function(Y) {
             Ext1.AGGREGATE_ONE = {
                 a: 1,
                 b: 2,
-                c: 3  
+                c: 3
             };
 
             Ext1._buildCfg = {
@@ -1275,7 +1275,7 @@ YUI.add('base-tests', function(Y) {
             Ext2.prototype.methodTwo = function() {
                 return "methodTwo";
             };
-            
+
             Ext2.AGGREGATE_ONE = {
                 c:33,
                 d:4
@@ -1298,7 +1298,7 @@ YUI.add('base-tests', function(Y) {
             Y.Assert.isFalse(MyClass1.AGGREGATE_ONE === Ext1.AGGREGATE_ONE, "Ext1.AGGREGATE_ONE shouldn't have been copied over");
 
             Y.Assert.isFalse(MyClass1.ATTRS === Ext1.ATTRS, "Ext1.ATTRS shouldn't have been copied over with statics:true");
-            
+
             var MyClass2 = Y.Base.create("myClass2", Y.Base, [Ext1, Ext2]);
             var myclass2 = new MyClass2();
 
@@ -1317,7 +1317,7 @@ YUI.add('base-tests', function(Y) {
             Y.Assert.isFalse(MyClass2.AGGREGATE_ONE === Ext1.AGGREGATE_ONE, "Ext1.AGGREGATE_ONE shouldn't have been copied over");
             Y.Assert.isFalse(MyClass2.AGGREGATE_ONE === Ext2.AGGREGATE_ONE, "Ext2.AGGREGATE_ONE shouldn't have been copied over");
         },
-        
+
         "test:extCfg-custom" : function() {
 
             function Ext1() {}
@@ -1335,7 +1335,7 @@ YUI.add('base-tests', function(Y) {
             Ext1._buildCfg = {
                 custom : {
                     CUST : function(p, r, s) {
-                        
+
                         r[p] = r[p] || {
                             foo:[],
                             bar:[]
@@ -1343,10 +1343,10 @@ YUI.add('base-tests', function(Y) {
 
                         if (s[p]) {
                             if (s[p].foo) {
-                                r[p].foo = r[p].foo.concat(s[p].foo);    
+                                r[p].foo = r[p].foo.concat(s[p].foo);
                             }
                             if (s[p].bar) {
-                                r[p].bar = r[p].bar.concat(s[p].bar);    
+                                r[p].bar = r[p].bar.concat(s[p].bar);
                             }
                         }
 
@@ -1381,7 +1381,7 @@ YUI.add('base-tests', function(Y) {
                 bar:[1],
                 foo:[1]
             }, MyClass1.CUST, "Class1 - object assert");
-            
+
             Y.ArrayAssert.itemsAreEqual([1], MyClass1.CUST.foo, "Class1 foo assert");
             Y.ArrayAssert.itemsAreEqual([1], MyClass1.CUST.bar, "Class1 bar assert");
 
@@ -1411,21 +1411,21 @@ YUI.add('base-tests', function(Y) {
         },
 
         "test:deprecated" : function() {
-            
+
             function Ext1() {}
-            
+
             Ext1.MY_AGG = {a:1};
             Ext1.MY_STATICS = "a";
             Ext1.MY_CUSTOM = "a";
 
             function Ext2() {}
-            
+
             Ext2.MY_AGG = {b:2};
             Ext2.MY_STATICS = "b";
             Ext2.MY_CUSTOM = "b";
 
             function Ext3() {}
-            
+
             Ext3.MY_AGG = {c:3};
             Ext3.MY_STATICS = "c";
             Ext3.MY_CUSTOM = "c";
@@ -1451,11 +1451,89 @@ YUI.add('base-tests', function(Y) {
                 b:2,
                 c:3
             }, MyBuiltClass.MY_AGG);
-            
+
             Y.Assert.areEqual("c", MyBuiltClass.MY_STATICS);
 
             /* Currently broken. Will fix in 3.6.0pr1. Too late at this point, given the extreme edge caseness. */
             // Y.Assert.areEqual("abc", MyBuiltClass.MY_CUSTOM);
+        },
+
+        "test:base-core-subclass": function () {
+            var calls = 0,
+                Foo, foo;
+
+            Foo = Y.Base.create('foo', Y.BaseCore, [], {
+                initializer: function () {
+                    calls += 1;
+                }
+            }, {
+                ATTRS: {
+                    bar: {
+                        value: 'bar',
+                        getter: function (val) {
+                            return val.toUpperCase();
+                        }
+                    }
+                }
+            });
+
+            foo = new Foo();
+
+            Y.Assert.areSame('BAR', foo.get('bar'));
+            Y.Assert.areSame(1, calls);
+        },
+
+        "test:base-core-with-base-observable-ext": function () {
+            var calls = 0,
+                Foo, foo;
+
+            Foo = Y.Base.create('foo', Y.BaseCore, [Y.BaseObservable], {
+                initializer: function () {
+                    this.after('barChange', function () {
+                        calls += 1;
+                    });
+                }
+            }, {
+                ATTRS: {
+                    bar: {
+                        value: 'bar',
+                        getter: function (val) {
+                            return val.toUpperCase();
+                        }
+                    }
+                }
+            });
+
+            foo = new Foo();
+            foo.set('bar', 'baz');
+
+            Y.Assert.areSame('BAZ', foo.get('bar'));
+            Y.Assert.areSame(1, calls);
+        },
+
+        "test:base-core-subclass-with-mix-of-base-events-ext": function () {
+            var Foo, foo;
+
+            Foo = Y.Base.create('foo', Y.BaseCore, []);
+
+            // `null` or `undefined`.
+            Y.Assert.isTrue(Foo._ATTR_CFG_HASH == undefined);
+
+            foo = new Foo();
+
+            Y.Assert.isNotNull(Foo._ATTR_CFG_HASH);
+            Y.Assert.isUndefined(Foo._ATTR_CFG_HASH.broadcast);
+
+            Y.Base.mix(Foo, [Y.BaseObservable]);
+
+            // Check that cached hash was cleared.
+            // `null` or `undefined`.
+            Y.Assert.isTrue(Foo._ATTR_CFG_HASH == undefined);
+
+            foo = new Foo();
+
+            Y.Assert.isNotNull(Foo._ATTR_CFG_HASH);
+            Y.Assert.isNotUndefined(Foo._ATTR_CFG_HASH.broadcast);
         }
 
     }));

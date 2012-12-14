@@ -1,4 +1,4 @@
-YUI.add('autocomplete-list-keys', function(Y) {
+YUI.add('autocomplete-list-keys', function (Y, NAME) {
 
 /**
 Mixes keyboard support into AutoCompleteList. By default, this module is not
@@ -183,4 +183,4 @@ ListKeys.prototype = {
 Y.Base.mix(Y.AutoCompleteList, [ListKeys]);
 
 
-}, '@VERSION@' ,{requires:['autocomplete-list', 'base-build']});
+}, '@VERSION@', {"requires": ["autocomplete-list", "base-build"]});

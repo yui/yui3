@@ -1,4 +1,4 @@
-YUI.add('dataschema-base', function(Y) {
+YUI.add('dataschema-base', function (Y, NAME) {
 
 /**
  * The DataSchema utility provides a common configurable interface for widgets to
@@ -63,4 +63,4 @@ Y.namespace("DataSchema").Base = SchemaBase;
 Y.namespace("Parsers");
 
 
-}, '@VERSION@' ,{requires:['base']});
+}, '@VERSION@', {"requires": ["base"]});

@@ -3,7 +3,7 @@
      * Provides the ability to create a Drop Target.
      * @module dd
      * @submodule dd-drop
-     */     
+     */
     /**
      * Provides the ability to create a Drop Target.
      * @class Drop
@@ -17,32 +17,32 @@
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',
         /**
+        * Fires when a drag element is over this target.
         * @event drop:over
-        * @description Fires when a drag element is over this target.
         * @param {EventFacade} event An Event Facade object with the following specific property added:
         * <dl>
         * <dt>drop</dt><dd>The drop object at the time of the event.</dd>
         * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
-        * </dl>        
+        * </dl>
         * @bubbles DDM
         * @type {CustomEvent}
         */
         EV_DROP_OVER = 'drop:over',
         /**
+        * Fires when a drag element enters this target.
         * @event drop:enter
-        * @description Fires when a drag element enters this target.
         * @param {EventFacade} event An Event Facade object with the following specific property added:
         * <dl>
         * <dt>drop</dt><dd>The drop object at the time of the event.</dd>
         * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
-        * </dl>        
+        * </dl>
         * @bubbles DDM
         * @type {CustomEvent}
         */
         EV_DROP_ENTER = 'drop:enter',
         /**
+        * Fires when a drag element exits this target.
         * @event drop:exit
-        * @description Fires when a drag element exits this target.
         * @param {EventFacade} event An Event Facade object
         * @bubbles DDM
         * @type {CustomEvent}
@@ -50,18 +50,18 @@
         EV_DROP_EXIT = 'drop:exit',
 
         /**
+        * Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)
         * @event drop:hit
-        * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)
         * @param {EventFacade} event An Event Facade object with the following specific property added:
         * <dl>
         * <dt>drop</dt><dd>The best guess on what was dropped on.</dd>
         * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
         * <dt>others</dt><dd>An array of all the other drop targets that was dropped on.</dd>
-        * </dl>        
+        * </dl>
         * @bubbles DDM
         * @type {CustomEvent}
         */
-        
+
 
     Drop = function() {
         this._lazyAddAttrs = false;
@@ -87,47 +87,42 @@
 
     Drop.ATTRS = {
         /**
+        * Y.Node instanace to use as the element to make a Drop Target
         * @attribute node
-        * @description Y.Node instanace to use as the element to make a Drop Target
         * @type Node
-        */        
+        */
         node: {
             setter: function(node) {
                 var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drop: Invalid Node Given: ' + node);
                 }
-                return n;               
+                return n;
             }
         },
         /**
+        * Array of groups to add this drop into.
         * @attribute groups
-        * @description Array of groups to add this drop into.
         * @type Array
-        */        
+        */
         groups: {
             value: ['default'],
             getter: function() {
                 if (!this._groups) {
                     this._groups = {};
+                    return [];
                 }
-                var ret = [];
-                Y.each(this._groups, function(v, k) {
-                    ret[ret.length] = k;
-                });
-                return ret;
-            },            
+
+                return Y.Object.keys(this._groups);
+            },
             setter: function(g) {
-                this._groups = {};
-                Y.each(g, function(v, k) {
-                    this._groups[v] = true;
-                }, this);
+                this._groups = Y.Array.hash(g);
                 return g;
             }
-        },   
+        },
         /**
+        * CSS style padding to make the Drop Target bigger than the node.
         * @attribute padding
-        * @description CSS style padding to make the Drop Target bigger than the node.
         * @type String
         */
         padding: {
@@ -137,10 +132,10 @@
             }
         },
         /**
+        * Set to lock this drop element.
         * @attribute lock
-        * @description Set to lock this drop element.
         * @type Boolean
-        */        
+        */
         lock: {
             value: false,
             setter: function(lock) {
@@ -153,9 +148,10 @@
             }
         },
         /**
+        * Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * Use bubbleTargets in config.
         * @deprecated
         * @attribute bubbles
-        * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling. Use bubbleTargets in config.
         * @type Object
         */
         bubbles: {
@@ -166,9 +162,9 @@
             }
         },
         /**
+        * Use the Drop shim. Default: true
         * @deprecated
         * @attribute useShim
-        * @description Use the Drop shim. Default: true
         * @type Boolean
         */
         useShim: {
@@ -182,14 +178,14 @@
 
     Y.extend(Drop, Y.Base, {
         /**
+        * The default bubbleTarget for this object. Default: Y.DD.DDM
         * @private
         * @property _bubbleTargets
-        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
         */
         _bubbleTargets: Y.DD.DDM,
         /**
+        * Add this Drop instance to a group, this should be used for on-the-fly group additions.
         * @method addToGroup
-        * @description Add this Drop instance to a group, this should be used for on-the-fly group additions.
         * @param {String} g The group to add this Drop Instance to.
         * @return {Self}
         * @chainable
@@ -199,8 +195,8 @@
             return this;
         },
         /**
+        * Remove this Drop instance from a group, this should be used for on-the-fly group removals.
         * @method removeFromGroup
-        * @description Remove this Drop instance from a group, this should be used for on-the-fly group removals.
         * @param {String} g The group to remove this Drop Instance from.
         * @return {Self}
         * @chainable
@@ -210,12 +206,12 @@
             return this;
         },
         /**
+        * This method creates all the events for this Event Target and publishes them so we get Event Bubbling.
         * @private
         * @method _createEvents
-        * @description This method creates all the events for this Event Target and publishes them so we get Event Bubbling.
         */
         _createEvents: function() {
-            
+
             var ev = [
                 EV_DROP_OVER,
                 EV_DROP_ENTER,
@@ -223,7 +219,7 @@
                 'drop:hit'
             ];
 
-            Y.each(ev, function(v, k) {
+            Y.Array.each(ev, function(v) {
                 this.publish(v, {
                     type: v,
                     emitFacade: true,
@@ -235,47 +231,47 @@
             }, this);
         },
         /**
+        * Flag for determining if the target is valid in this operation.
         * @private
         * @property _valid
-        * @description Flag for determining if the target is valid in this operation.
         * @type Boolean
         */
         _valid: null,
         /**
+        * The groups this target belongs to.
         * @private
         * @property _groups
-        * @description The groups this target belongs to.
         * @type Array
         */
         _groups: null,
         /**
+        * Node reference to the targets shim
         * @property shim
-        * @description Node reference to the targets shim
         * @type {Object}
         */
         shim: null,
         /**
+        * A region object associated with this target, used for checking regions while dragging.
         * @property region
-        * @description A region object associated with this target, used for checking regions while dragging.
         * @type Object
         */
         region: null,
         /**
+        * This flag is tripped when a drag element is over this target.
         * @property overTarget
-        * @description This flag is tripped when a drag element is over this target.
         * @type Boolean
         */
         overTarget: null,
         /**
+        * Check if this target is in one of the supplied groups.
         * @method inGroup
-        * @description Check if this target is in one of the supplied groups.
         * @param {Array} groups The groups to check against
         * @return Boolean
         */
         inGroup: function(groups) {
             this._valid = false;
             var ret = false;
-            Y.each(groups, function(v, k) {
+            Y.Array.each(groups, function(v) {
                 if (this._groups[v]) {
                     ret = true;
                     this._valid = true;
@@ -284,11 +280,11 @@
             return ret;
         },
         /**
+        * Private lifecycle method
         * @private
         * @method initializer
-        * @description Private lifecycle method
         */
-        initializer: function(cfg) {
+        initializer: function() {
             Y.later(100, this, this._createEvents);
 
             var node = this.get(NODE), id;
@@ -298,12 +294,12 @@
             }
             node.addClass(DDM.CSS_PREFIX + '-drop');
             //Shouldn't have to do this..
-            this.set('groups', this.get('groups'));           
+            this.set('groups', this.get('groups'));
         },
         /**
+        * Lifecycle destructor, unreg the drag from the DDM and remove listeners
         * @private
         * @method destructor
-        * @description Lifecycle destructor, unreg the drag from the DDM and remove listeners
         */
         destructor: function() {
             DDM._unregTarget(this);
@@ -316,9 +312,9 @@
             this.detachAll();
         },
         /**
+        * Removes classes from the target, resets some flags and sets the shims deactive position [-999, -999]
         * @private
         * @method _deactivateShim
-        * @description Removes classes from the target, resets some flags and sets the shims deactive position [-999, -999]
         */
         _deactivateShim: function() {
             if (!this.shim) {
@@ -338,9 +334,9 @@
             this.overTarget = false;
         },
         /**
+        * Activates the shim and adds some interaction CSS classes
         * @private
         * @method _activateShim
-        * @description Activates the shim and adds some interaction CSS classes
         */
         _activateShim: function() {
             if (!DDM.activeDrag) {
@@ -371,8 +367,9 @@
             }
         },
         /**
+        * Positions and sizes the shim with the raw data from the node,
+        * this can be used to programatically adjust the Targets shim for Animation..
         * @method sizeShim
-        * @description Positions and sizes the shim with the raw data from the node, this can be used to programatically adjust the Targets shim for Animation..
         */
         sizeShim: function() {
             if (!DDM.activeDrag) {
@@ -402,21 +399,21 @@
             nh = nh + p.top + p.bottom;
             xy[0] = xy[0] - p.left;
             xy[1] = xy[1] - p.top;
-            
+
 
             if (DDM.activeDrag.get('dragMode') === DDM.INTERSECT) {
                 //Intersect Mode, make the shim bigger
                 dd = DDM.activeDrag;
                 dH = dd.get(NODE).get(OFFSET_HEIGHT);
                 dW = dd.get(NODE).get(OFFSET_WIDTH);
-                
+
                 nh = (nh + dH);
                 nw = (nw + dW);
                 xy[0] = xy[0] - (dW - dd.deltaXY[0]);
                 xy[1] = xy[1] - (dH - dd.deltaXY[1]);
 
             }
-            
+
             if (this.get('useShim')) {
                 //Set the style on the shim
                 this.shim.setStyles({
@@ -429,7 +426,7 @@
 
             //Create the region to be used by intersect when a drag node is over us.
             this.region = {
-                '0': xy[0], 
+                '0': xy[0],
                 '1': xy[1],
                 area: 0,
                 top: xy[1],
@@ -439,9 +436,9 @@
             };
         },
         /**
+        * Creates the Target shim and adds it to the DDM's playground..
         * @private
         * @method _createShim
-        * @description Creates the Target shim and adds it to the DDM's playground..
         */
         _createShim: function() {
             //No playground, defer
@@ -479,9 +476,9 @@
             this.shim = s;
         },
         /**
+        * This handles the over target call made from this object or from the DDM
         * @private
         * @method _handleOverTarget
-        * @description This handles the over target call made from this object or from the DDM
         */
         _handleTargetOver: function() {
             if (DDM.isOverTarget(this)) {
@@ -507,27 +504,27 @@
             }
         },
         /**
+        * Handles the mouseover DOM event on the Target Shim
         * @private
         * @method _handleOverEvent
-        * @description Handles the mouseover DOM event on the Target Shim
         */
         _handleOverEvent: function() {
             this.shim.setStyle('zIndex', '999');
             DDM._addActiveShim(this);
         },
         /**
+        * Handles the mouseout DOM event on the Target Shim
         * @private
         * @method _handleOutEvent
-        * @description Handles the mouseout DOM event on the Target Shim
         */
         _handleOutEvent: function() {
             this.shim.setStyle('zIndex', '1');
             DDM._removeActiveShim(this);
         },
         /**
+        * Handles out of target calls/checks
         * @private
         * @method _handleOut
-        * @description Handles out of target calls/checks
         */
         _handleOut: function(force) {
             if (!DDM.isOverTarget(this) || force) {

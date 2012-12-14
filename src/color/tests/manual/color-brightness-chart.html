@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Color Tests</title>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+<h1>Color Tests</h1>
+<div id="chart" style="width: 900px; height: 600px"></div>
+
+<div id="log"></div>
+
+<script type="text/javascript">
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    combine: false,
+    modules: {
+        'color-tests': {
+            fullpath: './assets/color-harmony-tests.js',
+            requires: [ 'test', 'dump', 'color', 'color-harmony' ]
+        }
+    }
+}).use("test-console", "color-tests", "charts", function(Y) {
+
+    //(new Y.Test.Console()).render('#log');
+
+    //Y.Test.Runner.run();
+
+
+    Y.log(Y.Color.getBrightness);
+    var data = {},
+        hue = 0,
+        sat = 0,
+        lit = 50,
+        min = 1,
+        max = 0,
+        hues = [],
+        maxs = [],
+        mins = [],
+        b;
+
+    for (; hue < 360; hue++) {
+        for (; sat < 100; sat++) {
+            b = Y.Color.getBrightness({type: 'hsl', value: [hue, sat, lit ]});
+            min = Math.min(min, b);
+            max = Math.max(max, b);
+        }
+        data = { hue: hue, max: max, min: min };
+        hues.push(hue);
+        maxs.push(max);
+        mins.push(min);
+        sat = 0;
+        min = 1;
+        max = 0;
+    }
+
+    Y.Chart({
+        dataProvider: [hues, mins, maxs],
+        render: '#chart',
+        groupMarkers: true,
+        interactionType: 'planar',
+        legend: true
+    });
+
+    Y.log(data);
+});
+</script>
+</body>
+</html>

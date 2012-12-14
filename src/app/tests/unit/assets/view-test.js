@@ -136,6 +136,21 @@ viewSuite.add(new Y.Test.Case({
         Assert.isTrue(Y.Object.isEmpty(view.events));
     },
 
+    'events with missing handler functions should not cause an error during destruction': function () {
+        var view = new Y.View({
+            events: {
+                '.foo': {click: 'missingHandlerFn'}
+            }
+        });
+
+        // Cause events to be attached.
+        view.get('container');
+
+        Assert.areSame(0, view._attachedViewEvents.length, 'Event was attached but is missing a handler function.');
+
+        view.destroy();
+    },
+
     'initializer should allow setting a ad-hoc attrs': function () {
         var model = new Y.Model(),
             view  = new Y.View({model: model, foo: 'bar'});
@@ -204,6 +219,7 @@ viewSuite.add(new Y.Test.Case({
     }
 }));
 
+// -- View: Attributes ---------------------------------------------------------
 viewSuite.add(new Y.Test.Case({
     name: 'Attributes',
 
@@ -235,6 +251,7 @@ viewSuite.add(new Y.Test.Case({
     }
 }));
 
+// -- View: Methods ------------------------------------------------------------
 viewSuite.add(new Y.Test.Case({
     name: 'Methods',
 

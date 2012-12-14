@@ -1,4 +1,4 @@
-YUI.add('substitute', function(Y) {
+YUI.add('substitute', function (Y, NAME) {
 
 /**
  * String variable substitution and string formatting.
@@ -158,4 +158,4 @@ YUI.add('substitute', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['yui-base'], optional:['dump']});
+}, '@VERSION@', {"requires": ["yui-base"], "optional": ["dump"]});

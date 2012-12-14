@@ -1,7 +1,7 @@
 Template Change History
 =======================
 
-3.7.0
+3.8.0
 -----
 
 * Initial release.

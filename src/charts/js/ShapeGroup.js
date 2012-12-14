@@ -17,6 +17,7 @@ var CONFIG = Y.config,
     DOCUMENT = CONFIG.doc,
     Y_Lang = Y.Lang,
     IS_STRING = Y_Lang.isString,
+    Y_DOM = Y.DOM,
     LeftAxisLayout,
     RightAxisLayout,
     BottomAxisLayout,
@@ -39,10 +40,10 @@ var CONFIG = Y.config,
  {
     ShapeGroup.superclass.constructor.apply(this, arguments);
  };
-    
+
  ShapeGroup.NAME = "shapeGroup";
 
- Y.extend(ShapeGroup, Y.Path, {    
+ Y.extend(ShapeGroup, Y.Path, {
     /**
      * Updates the shape.
      *
@@ -90,7 +91,7 @@ var CONFIG = Y.config,
                         width: widthIsArray ? width[i] : width,
                         height: heightIsArray ? height[i] : height,
                         radius: xRad,
-                        yRadius: yRad 
+                        yRadius: yRad
                     });
                     this.closePath();
                     attrs[i] = {
@@ -119,13 +120,13 @@ var CONFIG = Y.config,
             len = val.length,
             radii = [];
         for(; i < len; ++i)
-        {   
+        {
             radii[i] = val[i] * 0.5;
         }
         return radii;
     }
  });
-    
+
 ShapeGroup.ATTRS = Y.merge(Y.Path.ATTRS, {
     dimensions: {
         getter: function()

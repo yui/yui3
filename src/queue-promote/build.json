@@ -1,0 +1,10 @@
+{
+    "name": "queue-promote",
+    "builds": {
+        "queue-promote": {
+            "jsfiles": [
+                "queue-promote.js"
+            ]
+        }
+    }
+}

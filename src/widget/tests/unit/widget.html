@@ -686,6 +686,27 @@
                 o.destroy(true);
             },
 
+            "testGetByNodeChangedId" : function() {
+
+                var o = this.createWidget({
+                    id:"oldid"
+                });
+                o.render();
+
+                o.get("contentBox").setHTML('<p id="content">FooBar</p>');
+
+                Y.Assert.areSame(o, Y.Widget.getByNode(o.get("contentBox")), "Couldn't find widget from contentBox even before changing IDs");
+
+                o.get("boundingBox").set("id", "newid");
+
+                Y.Assert.areSame("newid", o.get("boundingBox").get("id"), "Just making sure Node ID was updated. Doesn't seem to be");
+
+                Y.Assert.areSame(o, Y.Widget.getByNode(o.get("contentBox")), "Couldn't find widget from contentBox after changing IDs");
+                Y.Assert.areSame(o, Y.Widget.getByNode("#content"), "Couldn't find widget from content after changing IDs");
+
+                o.destroy(true);
+            },
+
             "testStrings" : function() {
                 var w = this.createWidget();
 

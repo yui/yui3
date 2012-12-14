@@ -1,4 +1,11 @@
-YUI.add('matrix', function(Y) {
+YUI.add('matrix', function (Y, NAME) {
+
+/**
+ * Matrix utilities.
+ *
+ * @class MatrixUtil
+ * @module matrix
+ **/
 
 var MatrixUtil = {
         /**
@@ -8,7 +15,7 @@ var MatrixUtil = {
          * @private
          */
         _rounder: 100000,
-        
+
         /**
          * Rounds values
          *
@@ -61,7 +68,7 @@ var MatrixUtil = {
         },
 
         /**
-         * Converts a transform object to an array of column vectors. 
+         * Converts a transform object to an array of column vectors.
          *
          * /                                             \
          * | matrix[0][0]   matrix[1][0]    matrix[2][0] |
@@ -83,7 +90,7 @@ var MatrixUtil = {
         },
 
         /**
-         * Returns the determinant of a given matrix. 
+         * Returns the determinant of a given matrix.
          *
          * /                                             \
          * | matrix[0][0]   matrix[1][0]    matrix[2][0] |
@@ -112,7 +119,7 @@ var MatrixUtil = {
                 multiplier = matrix[i][0];
                 if(i % 2 === 0 || i === 0)
                 {
-                    determinant += multiplier * MatrixUtil.getDeterminant(MatrixUtil.getMinors(matrix, i, 0));  
+                    determinant += multiplier * MatrixUtil.getDeterminant(MatrixUtil.getMinors(matrix, i, 0));
                 }
                 else
                 {
@@ -146,13 +153,13 @@ var MatrixUtil = {
                 adjunct = [],
                 //vector representing 2x2 matrix
                 minor = [];
-            if(len === 2) 
+            if(len === 2)
             {
                 determinant = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
                 inverse = [
                     [matrix[1][1] * determinant, -matrix[1][0] * determinant],
                     [-matrix[0][1] * determinant, matrix[0][0] * determinant]
-                ]; 
+                ];
             }
             else
             {
@@ -294,7 +301,7 @@ var MatrixUtil = {
             }
             return product;
         },
-        
+
         /**
          * Breaks up a 2d transform matrix into a series of transform operations.
          *
@@ -346,7 +353,7 @@ var MatrixUtil = {
         /**
          * Parses a transform string and returns an array of transform arrays.
          *
-         * @method getTransformArray 
+         * @method getTransformArray
          * @param {String} val A transform string
          * @return Array
          */
@@ -357,9 +364,9 @@ var MatrixUtil = {
                 m,
                 decomp,
                 methods = MatrixUtil.transformMethods;
-            
+
             while ((m = re.exec(transform))) {
-                if (methods.hasOwnProperty(m[1])) 
+                if (methods.hasOwnProperty(m[1]))
                 {
                     args = m[2].split(',');
                     args.unshift(m[1]);
@@ -381,7 +388,7 @@ var MatrixUtil = {
             }
             return transforms;
         },
-        
+
         /**
          * Returns an array of transform arrays representing transform functions and arguments.
          *
@@ -415,7 +422,7 @@ var MatrixUtil = {
         },
 
         /**
-         * Compares to arrays or transform functions to ensure both contain the same functions in the same 
+         * Compares to arrays or transform functions to ensure both contain the same functions in the same
          * order.
          *
          * @method compareTransformSequence
@@ -488,10 +495,10 @@ Matrix.prototype = {
     _rounder: 100000,
 
     /**
-     * Updates the matrix. 
+     * Updates the matrix.
      *
      * @method multiple
-     * @param {Number} a 
+     * @param {Number} a
      * @param {Number} b
      * @param {Number} c
      * @param {Number} d
@@ -535,11 +542,11 @@ Matrix.prototype = {
             }
         }
     },
-    
+
     /**
      * Parses a string and returns an array of transform arrays.
      *
-     * @method getTransformArray 
+     * @method getTransformArray
      * @param {String} val A css transform string
      * @return Array
      */
@@ -548,7 +555,7 @@ Matrix.prototype = {
             transforms = [],
             args,
             m;
-        
+
         val = val.replace(/matrix/g, "multiply");
         while ((m = re.exec(val))) {
             if (typeof this[m[1]] === 'function') {
@@ -619,7 +626,7 @@ Matrix.prototype = {
         this.multiply(x, 0, 0, y, 0, 0);
         return this;
     },
-    
+
     /**
      * Applies a skew transformation.
      *
@@ -674,29 +681,13 @@ Matrix.prototype = {
      */
     toCSSText: function() {
         var matrix = this,
-            dx = matrix.dx,
-            dy = matrix.dy,
-            text = 'matrix(';
-
-
-        if (Y.UA.gecko) { // requires unit
-            if (!isNaN(dx)) {
-                dx += 'px';
-            }
-            if (!isNaN(dy)) {
-                dy += 'px';
-            }
-        }
-
-        text +=     matrix.a + ',' + 
-                    matrix.b + ',' + 
-                    matrix.c + ',' + 
-                    matrix.d + ',' + 
-                    dx + ',' +
-                    dy;
-
-        text += ')';
-
+            text = 'matrix(' +
+                    matrix.a + ',' +
+                    matrix.b + ',' +
+                    matrix.c + ',' +
+                    matrix.d + ',' +
+                    matrix.dx + ',' +
+                    matrix.dy + ')';
         return text;
     },
 
@@ -709,9 +700,9 @@ Matrix.prototype = {
     toFilterText: function() {
         var matrix = this,
             text = 'progid:DXImageTransform.Microsoft.Matrix(';
-        text +=     'M11=' + matrix.a + ',' + 
-                    'M21=' + matrix.b + ',' + 
-                    'M12=' + matrix.c + ',' + 
+        text +=     'M11=' + matrix.a + ',' +
+                    'M21=' + matrix.b + ',' +
+                    'M12=' + matrix.c + ',' +
                     'M22=' + matrix.d + ',' +
                     'sizingMethod="auto expand")';
 
@@ -781,7 +772,7 @@ Matrix.prototype = {
         this.multiply(1, 0, 0, 1, x, y);
         return this;
     },
-    
+
     /**
      * Applies a translate to the x-coordinate
      *
@@ -871,7 +862,7 @@ Matrix.prototype = {
             d = matrix.d,
             dx = matrix.dx,
             dy = matrix.dy,
-            x1 = (a * left + c * top + dx), 
+            x1 = (a * left + c * top + dx),
             y1 = (b * left + d * top + dy),
             //[x2, y2]
             x2 = (a * right + c * top + dx),
@@ -888,8 +879,8 @@ Matrix.prototype = {
             top: Math.min(y2, Math.min(y4, Math.min(y3, y1))),
             bottom: Math.max(y2, Math.max(y4, Math.max(y3, y1)))
         };
-    },       
-    
+    },
+
     /**
      * Returns the determinant of the matrix.
      *
@@ -938,4 +929,4 @@ Matrix.prototype = {
 Y.Matrix = Matrix;
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

@@ -1,4 +1,4 @@
-YUI.add('tabview-plugin', function(Y) {
+YUI.add('tabview-plugin', function (Y, NAME) {
 
 function TabviewPlugin() {
     TabviewPlugin.superclass.constructor.apply(this, arguments);
@@ -13,4 +13,4 @@ Y.namespace('Plugin');
 Y.Plugin.Tabview = TabviewPlugin;
 
 
-}, '@VERSION@' ,{requires:['tabview-base']});
+}, '@VERSION@', {"requires": ["tabview-base"]});

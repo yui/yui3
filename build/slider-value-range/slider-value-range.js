@@ -1,4 +1,4 @@
-YUI.add('slider-value-range', function(Y) {
+YUI.add('slider-value-range', function (Y, NAME) {
 
 /**
  * Adds value support for Slider as a range of integers between a configured
@@ -411,4 +411,4 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
 }, true );
 
 
-}, '@VERSION@' ,{requires:['slider-base']});
+}, '@VERSION@', {"requires": ["slider-base"]});

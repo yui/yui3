@@ -1,0 +1,27 @@
+function setPickerUI(hsl) {
+    if (typeof hsl.h !== 'undefined') {
+        hue.set('value', +hsl.h);
+    }
+
+    if (typeof hsl.s !== 'undefined') {
+        sat.set('value', +hsl.s);
+    }
+
+    if (typeof hsl.l !== 'undefined') {
+        lum.set('value', +hsl.l);
+    }
+}
+
+function updatePickerUI() {
+    var h = hue.get('value'),
+        s = sat.get('value'),
+        l = lum.get('value'),
+        hslString = Y.Color.fromArray([h, s, l], Y.Color.TYPES.HSL);
+
+    satValue.set('text', s + '%');
+    lumValue.set('text', l + '%');
+
+    color.setStyle('backgroundColor', hslString);
+
+    updateOutput(hslString);
+}

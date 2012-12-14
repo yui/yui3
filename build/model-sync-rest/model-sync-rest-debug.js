@@ -1,4 +1,4 @@
-YUI.add('model-sync-rest', function(Y) {
+YUI.add('model-sync-rest', function (Y, NAME) {
 
 /**
 An extension which provides a RESTful XHR sync implementation that can be mixed
@@ -381,7 +381,7 @@ RESTSync.prototype = {
     @method parseIOResponse
     @param {Object} response Response object from `Y.io()`.
     @return {Any} The modified response to pass along to the `parse()` method.
-    @since 3.6.1
+    @since 3.7.0
     **/
     parseIOResponse: function (response) {
         return response.responseText;
@@ -546,7 +546,7 @@ RESTSync.prototype = {
     @param {Object} response Response object from `Y.io()`.
     @return {Object|Object[]} Attribute hash or Array of model attribute hashes.
     @protected
-    @since 3.6.1
+    @since 3.7.0
     **/
     _parse: function (response) {
         // When `parseIOResponse` is defined as a method, it will be invoked and
@@ -730,4 +730,4 @@ RESTSync.prototype = {
 Y.namespace('ModelSync').REST = RESTSync;
 
 
-}, '@VERSION@' ,{requires:['model', 'io-base', 'json-stringify']});
+}, '@VERSION@', {"requires": ["model", "io-base", "json-stringify"]});

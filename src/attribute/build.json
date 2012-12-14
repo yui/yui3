@@ -1,0 +1,31 @@
+{
+    "name": "attribute",
+    "builds": {
+        "attribute-extras": {
+            "jsfiles": [
+                "AttributeExtras.js"
+            ]
+        },
+        "attribute-base": {
+            "jsfiles": [
+                "Attribute.js"
+            ]
+        },
+        "attribute-core": {
+            "jsfiles": [
+                "State.js",
+                "AttributeCore.js"
+            ]
+        },
+        "attribute-complex": {
+            "jsfiles": [
+                "ComplexAttribute.js"
+            ]
+        },
+        "attribute-observable": {
+            "jsfiles": [
+                "AttributeObservable.js"
+            ]
+        }
+    }
+}

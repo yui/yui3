@@ -1,4 +1,4 @@
-YUI.add('widget-stack', function(Y) {
+YUI.add('widget-stack', function (Y, NAME) {
 
 /**
  * Provides stackable (z-index) support for Widgets through an extension.
@@ -435,4 +435,4 @@ YUI.add('widget-stack', function(Y) {
     Y.WidgetStack = Stack;
 
 
-}, '@VERSION@' ,{requires:['base-build', 'widget']});
+}, '@VERSION@', {"requires": ["base-build", "widget"], "skinnable": true});

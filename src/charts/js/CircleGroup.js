@@ -10,10 +10,10 @@
  {
     CircleGroup.superclass.constructor.apply(this, arguments);
  };
-    
+
  CircleGroup.NAME = "circleGroup";
 
- Y.extend(CircleGroup, Y.ShapeGroup, {    
+ Y.extend(CircleGroup, Y.ShapeGroup, {
     /**
      * Algorithm for drawing shape.
      *
@@ -55,6 +55,6 @@ CircleGroup.ATTRS = Y.merge(Y.ShapeGroup.ATTRS, {
         }
     }
 });
-    
+
 CircleGroup.ATTRS = Y.ShapeGroup.ATTRS;
 Y.CircleGroup = CircleGroup;

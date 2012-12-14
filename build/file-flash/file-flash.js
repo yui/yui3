@@ -1,4 +1,4 @@
-YUI.add('file-flash', function(Y) {
+YUI.add('file-flash', function (Y, NAME) {
 
     /**
      * The FileFlash class provides a wrapper for a file pointer stored in Flash. The File wrapper 
@@ -337,5 +337,4 @@ YUI.add('file-flash', function(Y) {
 
     Y.FileFlash = FileFlash;
 
-
-}, '@VERSION@' ,{requires:['base']});
+}, '@VERSION@', {"requires": ["base"]});

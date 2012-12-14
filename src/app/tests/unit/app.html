@@ -8,7 +8,10 @@
 
 <div id="log"></div>
 <div id="test" style="visibility: hidden;">
-    <a href="/foo/" id="link-foo" class="yui3-pjax">foo</a>
+    <a href="/foo/" id="link-foo">foo</a>
+    <a href="assets/page-full.html" id="link-full">Full HTML page</a>
+    <a href="assets/page-snippet.html" id="link-snippet">Snippet HTML page</a>
+    <a href="assets/page-text.html" id="link-text">text page</a>
 </div>
 <iframe src="assets/app-iframe.html" id="test-iframe" style="visibility:hidden"></iframe>
 
@@ -18,20 +21,32 @@
 </script>
 <script>
 var Y = YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-    coverage: [ 'app' ],
+    filter  : (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    coverage: ['app'],
+
     modules: {
         'app-test': {
             use: [
+                'app-base-test',
+                'app-content-test',
                 'lazy-model-list-test',
                 'model-test',
                 'model-list-test',
                 'model-sync-rest-test',
                 'router-test',
                 'view-test',
-                'view-node-map-test',
-                'app-base-test'
+                'view-node-map-test'
             ]
+        },
+
+        'app-base-test': {
+            fullpath: 'assets/app-base-test.js',
+            requires: ['app-base', 'test']
+        },
+
+        'app-content-test': {
+            fullpath: 'assets/app-content-test.js',
+            requires: ['app-content', 'test']
         },
 
         'lazy-model-list-test': {
@@ -67,11 +82,6 @@ var Y = YUI({
         'view-node-map-test': {
             fullpath: 'assets/view-node-map-test.js',
             requires: ['view-node-map', 'test']
-        },
-
-        'app-base-test': {
-            fullpath: 'assets/app-base-test.js',
-            requires: ['app-base', 'test']
         }
     },
     useBrowserConsole: false

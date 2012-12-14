@@ -172,6 +172,49 @@ YUI.add('dd-tests', function(Y) {
             dd.target.removeFromGroup('foo');
             Y.Assert.areSame(1, dd.target.get('groups').length, 'Failed to remove DD from a group');
         },
+        'test: _shimming test for mousemove events': function() {
+            var e = new Y.DOMEventFacade({type:'mousemove', preventDefault: function () {}, fromDom: false }),
+                curShimming = Y.DD.DDM._shimming,
+                _docMove = Y.DD.DDM._docMove,
+                _move = Y.DD.DDM._move;
+
+
+
+            Y.DD.DDM._docMove = function(ev) {
+                ev.fromDom = true;
+                if (!this._shimming) {
+                    this._move(ev);
+                }
+                _docMove.apply(Y.DD.DDM, [ev]);
+                ev.fromDom = false;
+            };
+
+            Y.DD.DDM._move = function(ev) {
+                Y.Assert.areSame('mousemove', ev.type, 'Event type is not `mousemove`.');
+
+                if (this._shimming) {
+                    // shouldn't have come from _domMove
+                    Y.Assert.isFalse(ev.fromDom, 'MouseMove Event is from DOM but but should not be');
+                } else {
+                    // should be from _domMove
+                    Y.Assert.isTrue(ev.fromDom, 'MouseMove Event is not from DOM but should be.')
+                }
+
+                _move.apply(Y.DD.DDM, [ev])
+
+            };
+
+            Y.DD.DDM._shimming = false;
+            Y.DD.DDM._docMove(e);
+            Y.DD.DDM._shimming = true;
+            Y.DD.DDM._docMove(e);
+
+
+            // tear down
+            Y.DD.DDM._shimming = curShimming;
+            Y.DD.DDM._docMove = _docMove;
+            Y.DD.DDM._move = _move;
+        },
         test_drop_overs: function() {
             dd.target._createShim();
             dd.target._handleOverEvent();
@@ -510,29 +553,42 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.isInstanceOf(Y.Plugin.DDWinScroll, dd.winscroll, 'WinScroll: WinScroll Instance');
 
 
-            Y.one(window).set('scrollTop', 0);
-            Y.one(window).set('scrollLeft', 0);
+            window.scrollTo(0, 0);
             _fakeStart(dd);
             var self = this,
-            winHeight = Y.one(window).get('winHeight'),
-            i = (winHeight - dd.get('node').get('offsetHeight') - 100),
-            wait = function() {
-                if (i < (Y.one(window).get('winHeight') - 30)) {
-                    _moveNode(dd, i, true);
-                    i++;
-                    self.wait.call(self, wait, 0);
-                } else {
-                    self.wait.call(self, function() {
-                        _fakeEnd(dd);
-                        Y.Assert.isTrue((Y.one(window).get('scrollTop') > 0), 'window.scrollTop is not greater than 0');
-                        dd.destroy();
-                        Y.one('#drag').setStyles({ top: '', left: '' });
-                        Y.one(window).set('scrollTop', 0);
-                        Y.one(window).set('scrollLeft', 0);
-                        Y.one('body').setStyle('height', '');
-                    }, 1500);
-                }
-            };
+                win = Y.one(window),
+                winHeight = win.get('winHeight'),
+                i = (winHeight - dd.get('node').get('offsetHeight') - 30),
+                hasScrolled = false,
+                wait = function() {
+                    if (win.get('scrollTop')) {
+                        hasScrolled = true;
+                    }
+                    if (i < (Y.one(window).get('winHeight') - 30)) {
+                        _moveNode(dd, i, true);
+                        i++;
+                        self.wait.call(self, wait, 0);
+                    } else {
+                        if (win.get('scrollTop')) {
+                            hasScrolled = true;
+                        }
+                        self.wait.call(self, function() {
+                            _fakeEnd(dd);
+                            if (win.get('scrollTop')) {
+                                hasScrolled = true;
+                            }
+                            Y.Assert.isTrue(hasScrolled, 'window.scrollTop was never greater than 0');
+                            dd.destroy();
+                            Y.one('#drag').setStyles({ top: '', left: '' });
+                            window.scrollTo(0, 0);
+                            Y.one('body').setStyle('height', '');
+                        }, 1500);
+                    }
+                };
+
+            win.on('scroll', function() {
+                hasScrolled = true;
+            });
             this.wait(wait, 0);
         },
         test_delegate: function() {

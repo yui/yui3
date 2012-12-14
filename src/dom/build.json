@@ -1,0 +1,60 @@
+{
+    "name": "dom",
+    "builds": {
+        "dom-style": {
+            "jsfiles": [
+                "dom-style.js",
+                "color.js"
+            ]
+        },
+        "dom-style-ie": {
+            "jsfiles": [
+                "dom-style-ie.js"
+            ]
+        },
+        "selector": {
+            "jsfiles": [
+                "selector.js"
+            ]
+        },
+        "selector-native": {
+            "jsfiles": [
+                "selector-native.js"
+            ]
+        },
+        "selector-css3": {
+            "jsfiles": [
+                "selector-css3.js"
+            ]
+        },
+        "selector-css2": {
+            "jsfiles": [
+                "selector-css2.js"
+            ]
+        },
+        "dom-screen": {
+            "jsfiles": [
+                "dom-screen.js",
+                "dom-region.js"
+            ]
+        },
+        "dom-deprecated": {
+            "jsfiles": [
+                "dom-deprecated.js"
+            ]
+        },
+        "dom-core": {
+            "jsfiles": [
+                "dom-core.js"
+            ]
+        },
+        "dom-base": {
+            "jsfiles": [
+                "dom-attrs.js",
+                "dom-class.js",
+                "dom-create.js",
+                "dom-size.js"
+            ]
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "name": "cssgrids",
+    "builds": {
+        "cssgrids": {
+            "cssfiles": [
+                "cssgrids-base.css",
+                "cssgrids-units.css"
+            ]
+        },
+        "cssgrids-units": {
+            "cssfiles": [
+                "cssgrids-units.css"
+            ]
+        },
+        "cssgrids-base": {
+            "cssfiles": [
+                "cssgrids-base.css"
+            ]
+        }
+    }
+}

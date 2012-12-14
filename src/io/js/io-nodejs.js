@@ -1,4 +1,4 @@
-/*global Y: false, Buffer: false, clearInterval: false, clearTimeout: false, console: false, exports: false, global: false, module: false, process: false, querystring: false, require: false, setInterval: false, setTimeout: false, __filename: false, __dirname: false */   
+/*global Y: false, Buffer: false, clearInterval: false, clearTimeout: false, console: false, exports: false, global: false, module: false, process: false, querystring: false, require: false, setInterval: false, setTimeout: false, __filename: false, __dirname: false */
     /**
     * Node.js override for IO, methods are mixed into `Y.IO`
     * @module io-nodejs
@@ -13,11 +13,13 @@
     * @for IO
     */
     if (!Y.IO.request) {
-        Y.IO.request = require('request');
+        // Default Request's cookie jar to `false`. This way cookies will not be
+        // maintained across requests.
+        Y.IO.request = require('request').defaults({jar: false});
     }
 
     var codes = require('http').STATUS_CODES;
-    
+
     /**
     Flatten headers object
     @method flatten
@@ -42,10 +44,10 @@
     @method transports.nodejs
     @for IO
     @static
-    @returns {Object} This object contains only a `send` method that accepts a
+    @return {Object} This object contains only a `send` method that accepts a
     `transaction object`, `uri` and the `config object`.
     @example
-        
+
         Y.io('https://somedomain.com/url', {
             method: 'PUT',
             data: '?foo=bar',
@@ -70,7 +72,7 @@
                     {
                         body: 'I am an attachment'
                     }
-                ] 
+                ]
             },
             on: {
                 success: function(id, e) {
@@ -150,7 +152,7 @@
                     config.notify('complete', transaction, config);
                     config.notify(((data && (data.statusCode >= 200 && data.statusCode <= 299)) ? 'success' : 'failure'), transaction, config);
                 });
-                
+
                 var ret = {
                     io: transaction
                 };

@@ -1,4 +1,4 @@
-YUI.add('event-key', function(Y) {
+YUI.add('event-key', function (Y, NAME) {
 
 /**
  * Functionality to listen for one or more specific key combinations.
@@ -151,7 +151,7 @@ eventDef.detachDelegate = eventDef.detach;
  * <p>Examples:</p>
  * <ul>
  *   <li><code>Y.on("key", callback, "press:12,65+shift+ctrl", "#my-input");</code></li>
- *   <li><code>Y.delegate("key", preventSubmit, "enter", "#forms", "input[type=text]");</code></li>
+ *   <li><code>Y.delegate("key", preventSubmit, "#forms", "enter", "input[type=text]");</code></li>
  *   <li><code>Y.one("doc").on("key", viNav, "j,k,l,;");</code></li>
  * </ul>
  *   
@@ -168,4 +168,4 @@ eventDef.detachDelegate = eventDef.detach;
 Y.Event.define('key', eventDef, true);
 
 
-}, '@VERSION@' ,{requires:['event-synthetic']});
+}, '@VERSION@', {"requires": ["event-synthetic"]});

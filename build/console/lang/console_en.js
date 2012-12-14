@@ -1,1 +1,1 @@
-YUI.add("lang/console_en",function(a){a.Intl.add("console","en",{title:"Log Console",pause:"Pause",clear:"Clear",collapse:"Collapse",expand:"Expand"});},"@VERSION@");
+YUI.add("lang/console_en",function(e){e.Intl.add("console","en",{title:"Log Console",pause:"Pause",clear:"Clear",collapse:"Collapse",expand:"Expand"})},"@VERSION@");

@@ -1,0 +1,15 @@
+{
+    "name": "datatype-xml",
+    "builds": {
+        "datatype-xml-parse": {
+            "jsfiles": [
+                "xml-parse.js"
+            ]
+        },
+        "datatype-xml-format": {
+            "jsfiles": [
+                "xml-format.js"
+            ]
+        }
+    }
+}

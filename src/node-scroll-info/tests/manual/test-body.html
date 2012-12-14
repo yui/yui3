@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>node-scroll-info test</title>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        body {
+            background: #161616;
+            color: #fff;
+            font: 14px Helvetica, sans-serif;
+        }
+
+        .image {
+            background-color: #999;
+            background-repeat: no-repeat;
+            margin: 1px;
+            float: left;
+            height: 200px;
+            width: 200px;
+        }
+
+        .offscreen { background-image: none !important; }
+
+        #content { padding: 5em 7em; }
+
+        #info {
+            background: #333;
+            border: 1px solid #555;
+            font-size: 12px;
+            min-width: 160px;
+            padding: 3px;
+            position: fixed;
+            right: 5px;
+            top: 5px;
+            *position: absolute;
+        }
+
+        #info th { text-align: right; }
+
+        @media all and (max-width:550px) {
+            #content { padding: 5em 0; }
+
+            .image {
+                background-size: 95px 95px;
+                height: 95px;
+                width: 95px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="content">
+    <p style="text-align: center;">
+    Scroll to the bottom of the page to load more images.
+    </p>
+</div>
+
+<div id="info">
+    <table>
+        <tr>
+            <th scope="row">Images Loaded:</th>
+            <td id="info-loaded"></td>
+        </tr>
+
+        <tr>
+            <th scope="row">Images Onscreen:</th>
+            <td id="info-onscreen"></td>
+        </tr>
+
+        <tr>
+            <th scope="row">Images Offscreen:</th>
+            <td id="info-offscreen"></td>
+        </tr>
+    </table>
+</div>
+
+<script src="../../../../build/yui/yui.js"></script>
+
+<script>
+var Y = YUI().use('lazy-model-list', 'node-scroll-info', function (Y) {
+
+var body    = Y.one('body'),
+    content = Y.one('#content'),
+
+    images    = [],
+    imageTmpl = '<div style="background-image:url(http://smugmug.com/photos/random.mg?AlbumID={AlbumID}&AlbumKey={AlbumKey}&Size=200x200!&{clientId})" class="image" role="img" data-clientId="{clientId}"></div>',
+
+    lastIndex = -1,
+
+    hideTimeout,
+    showTimeout;
+
+function loadNext(count) {
+    var html  = [],
+        limit = Math.min(lastIndex + count + 1, images.length);
+
+    for (var i = lastIndex + 1; i < limit; i++) {
+        html.push(Y.Lang.sub(imageTmpl, images[i]));
+    }
+
+    lastIndex = i - 1;
+
+    if (html.length) {
+        content.append(html.join(''));
+    }
+
+    updateInfo({loaded: lastIndex + 1});
+}
+
+function refresh() {
+    clearTimeout(hideTimeout);
+    clearTimeout(showTimeout);
+
+    showTimeout = setTimeout(function () {
+        Y.log('show');
+
+        var nodes = body.scrollInfo.getOnscreenNodes('.image', 1000);
+
+        nodes.removeClass('offscreen');
+        updateInfo({onscreen: nodes.size()});
+    }, 20);
+
+    hideTimeout = setTimeout(function () {
+        Y.log('hide');
+
+        var nodes = body.scrollInfo.getOffscreenNodes('.image', 1000)
+
+        nodes.addClass('offscreen');
+        updateInfo({offscreen: nodes.size()});
+    }, 1000);
+}
+
+function updateInfo(info) {
+    Y.Object.each(info, function (value, name) {
+        Y.one('#info-' + name).set('text', value);
+    });
+}
+
+for (var i = 0; i < 5000; i++) {
+    images.push({
+        AlbumID : '23398828',
+        AlbumKey: 'JL4cQP',
+        clientId: 'image-' + i
+    });
+}
+
+loadNext(50);
+refresh();
+
+body.plug(Y.Plugin.ScrollInfo, {scrollMargin: 200});
+
+Y.one('win').on('windowresize', refresh);
+
+if (body.scrollInfo.getScrollInfo().atBottom) {
+    loadNext(50);
+    refresh();
+}
+
+body.scrollInfo.on({
+    scroll: function (e) {
+        Y.log('scroll');
+        console.dir(e);
+        refresh();
+    },
+
+    scrollDown: function (e) {
+        Y.log('scrollDown');
+    },
+
+    scrollLeft: function (e) {
+        Y.log('scrollLeft');
+    },
+
+    scrollRight: function (e) {
+        Y.log('scrollRight');
+    },
+
+    scrollUp: function (e) {
+        Y.log('scrollUp');
+    },
+
+    scrollToBottom: function (e) {
+        loadNext(50);
+    },
+
+    scrollToLeft: function (e) {
+        Y.log('scrollToLeft');
+    },
+
+    scrollToRight: function (e) {
+        Y.log('scrollToRight');
+    },
+
+    scrollToTop: function (e) {
+        Y.log('scrollToTop');
+    }
+});
+
+});
+</script>
+
+</body>
+</html>

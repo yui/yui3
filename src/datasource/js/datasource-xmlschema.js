@@ -81,7 +81,7 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
         var schema = this.get('schema'),
             payload = e.details[0],
             // TODO: Do I need to sniff for DS.IO + responseXML.nodeType 9?
-            data = e.data.responseXML || e.data;
+            data = Y.XML.parse(e.data.responseText) || e.data;
 
         payload.response = Y.DataSchema.XML.apply.call(this, schema, data) || {
             meta: {},

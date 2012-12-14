@@ -1,6 +1,32 @@
 Anim Change History
 ===================
 
+3.8.0
+-----
+
+* No changes.
+
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* Added `anim-shape` submodule which allows for animation of all shape
+  attributes in the `graphics` module. [Ticket #2532612]
+
 3.6.0
 -----
   * Allow for pass through to object properties for arbitrary animation.
@@ -12,7 +38,7 @@ Anim Change History
 
 3.5.0
 -----
-  * No change.
+  * No changes.
 
 
 3.4.1

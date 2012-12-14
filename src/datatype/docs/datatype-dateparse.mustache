@@ -11,11 +11,11 @@
     {{>datatype-dateparse-source}}
 </div>
 
-<p>To convert a data value to a date, simply call the `parse()` function of the DataType.Date class:</p>
+<p>To convert a data value to a date, simply call the `parse()` function of the Y.Date class:</p>
 
 ```
 YUI().use("datatype-date", function(Y) {
-    var date = Y.DataType.Date.parse("Jan 7, 2003");
+    var date = Y.Date.parse("Jan 7, 2003");
     // date is a JavaScript Date object
 });
 ```
@@ -25,7 +25,7 @@ YUI().use("datatype-date", function(Y) {
 ```
 YUI().use("datatype-date", function(Y) {
     // These all return dates
-    var date = Y.DataType.Date.parse("December 17, 1995 03:24:00");
-    date = Y.DataType.Date.parse(948548583);
+    var date = Y.Date.parse("December 17, 1995 03:24:00");
+    date = Y.Date.parse(948548583);
 });
 ```

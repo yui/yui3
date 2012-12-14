@@ -419,7 +419,9 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         // represents the developer's intent. When no value is specified, the
         // `view` will only be rendered if it was just created.
         if ('render' in options) {
-            options.render && view.render();
+            if (options.render) {
+                view.render();
+            }
         } else if (created) {
             view.render();
         }
@@ -449,8 +451,13 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         var viewInfo      = this.getViewInfo(view),
             viewContainer = this.get('viewContainer');
 
+        // Bubble the view's events to this app.
         view.addTarget(this);
-        viewInfo && (viewInfo.instance = view);
+
+        // Save the view instance in the `views` registry.
+        if (viewInfo) {
+            viewInfo.instance = view;
+        }
 
         // TODO: Attach events here for persevered Views?
         // See related TODO in `_detachView`.
@@ -482,22 +489,26 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             this.detachEvents();
 
             // Clean-up `yui3-app` CSS class on the `container`.
-            container && container.removeClass(CLASS_NAMES.app);
+            container.removeClass(CLASS_NAMES.app);
 
             if (areSame) {
                 // Clean-up `yui3-app-views` CSS class on the `container`.
-                container && container.removeClass(CLASS_NAMES.views);
+                container.removeClass(CLASS_NAMES.views);
             } else {
                 // Destroy and purge the `viewContainer`.
-                viewContainer && viewContainer.remove(true);
+                viewContainer.remove(true);
             }
 
             return;
         }
 
         // Remove and purge events from both containers.
-        viewContainer && viewContainer.remove(true);
-        !areSame && container && container.remove(true);
+
+        viewContainer.remove(true);
+
+        if (!areSame) {
+            container.remove(true);
+        }
     },
 
     /**
@@ -586,9 +597,10 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         // forcing hash-based URLs in all browsers.
         if (this.get('serverRouting') === false) {
             return false;
-        } else {
-            return Router.html5;
         }
+
+        // Defaults to whether or not the browser supports HTML5 history.
+        return Router.html5;
     },
 
     /**
@@ -696,6 +708,8 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @see Router._save()
     **/
     _save: function (url, replace) {
+        var path;
+
         // Forces full-path URLs to always be used by modifying
         // `window.location` in non-HTML5 history capable browsers.
         if (this.get('serverRouting') && !this.get('html5')) {
@@ -705,15 +719,17 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
                 return this;
             }
 
-            // Results in the URL's full path starting with '/'.
-            url = this._joinURL(url || '');
-
             // Either replace the current history entry or create a new one
             // while navigating to the `url`.
-            if (replace) {
-                win && win.location.replace(url);
-            } else {
-                win && (win.location = url);
+            if (win) {
+                // Results in the URL's full path starting with '/'.
+                path = this._joinURL(url || '');
+
+                if (replace) {
+                    win.location.replace(path);
+                } else {
+                    win.location = path;
+                }
             }
 
             return this;
@@ -775,7 +791,9 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         this._attachView(newView, prepend);
         this._detachView(oldView);
 
-        callback && callback.call(this, newView);
+        if (callback) {
+            callback.call(this, newView);
+        }
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -1043,7 +1061,9 @@ instance will be **auto-mixed** on to the `Y.App` class. Consider this example:
     provided by the `views` object on the `prototype`.
 @constructor
 @extends App.Base
+@uses App.Content
 @uses App.Transitions
+@uses PjaxContent
 @since 3.5.0
 **/
 Y.App = Y.mix(Y.Base.create('app', AppBase, []), Y.App, true);

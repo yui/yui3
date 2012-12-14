@@ -1,0 +1,12 @@
+{
+    "datatype-number": {
+        "use": [
+            "datatype-number-parse",
+            "datatype-number-format"
+        ]
+    },
+    "datatype-number-parse": {
+    },
+    "datatype-number-format": {
+    }
+}

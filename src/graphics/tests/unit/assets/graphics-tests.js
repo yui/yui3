@@ -3,19 +3,40 @@ YUI.add('graphics-tests', function(Y) {
 var suite = new Y.Test.Suite("Graphics: Base"),
     ENGINE = "vml",
     DOCUMENT = Y.config.doc,
+	svg = DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
 	canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
     graphicTests,
     svgTests,
     canvasTests,
-    vmlTests;
+    vmlTests,
+    rectClassString, 
+    circleClassString, 
+    ellipseClassString, 
+    pathClassString, 
+    DEFAULTENGINE = Y.config.defaultGraphicEngine;
 
-if(DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
-{
-    ENGINE = "svg";
-}
-else if(canvas && canvas.getContext && canvas.getContext("2d"))
+if((canvas && canvas.getContext && canvas.getContext("2d")) && (DEFAULTENGINE == "canvas" || !svg))
 {
     ENGINE = "canvas";
+    rectClassString = "yui3-shape yui3-canvasShape yui3-rect yui3-canvasRect"; 
+    circleClassString = "yui3-shape yui3-canvasShape yui3-circle yui3-canvasCircle";
+    ellipseClassString = "yui3-shape yui3-canvasShape yui3-ellipse yui3-canvasEllipse";
+    pathClassString = "yui3-shape yui3-canvasShape yui3-path yui3-canvasPath";
+}
+else if(svg)
+{
+    ENGINE = "svg";
+    rectClassString = "yui3-shape yui3-svgShape yui3-rect yui3-svgRect"; 
+    circleClassString = "yui3-shape yui3-svgShape yui3-circle yui3-svgCircle";
+    ellipseClassString = "yui3-shape yui3-svgShape yui3-ellipse yui3-svgEllipse";
+    pathClassString = "yui3-shape yui3-svgShape yui3-path yui3-svgPath";
+}
+else
+{
+    rectClassString = "yui3-shape yui3-vmlShape yui3-rect yui3-vmlRect vmlrect"; 
+    circleClassString = "yui3-shape yui3-vmlShape yui3-circle yui3-vmlCircle vmloval";
+    ellipseClassString = "yui3-shape yui3-vmlShape yui3-ellipse yui3-vmlEllipse vmloval";
+    pathClassString = "yui3-shape yui3-vmlShape yui3-path yui3-vmlPath vmlshape";
 }
 
 graphicTests = new Y.Test.Case({
@@ -99,7 +120,14 @@ graphicTests = new Y.Test.Case({
         Y.assert(mycircle instanceof Y.Circle);
         this.mycircle = mycircle;
     },
-   
+  
+    "test mycircleDefaultClassString()" : function()
+    {
+        var node = this.mycircle.get("node"),
+            classString = Y.DOM.getAttribute(node, "class");
+        Y.Assert.areEqual(circleClassString, classString, "The class string should be " + circleClassString + ".");
+    },
+
     "test mycircle.get(radius)": function()
     {
         Y.assert(this.mycircle.get("radius") === 12);
@@ -199,6 +227,13 @@ graphicTests = new Y.Test.Case({
         });
         Y.assert(myrect instanceof Y.Rect);
         this.myrect = myrect;
+    },
+  
+    "test myrectDefaultClassString()" : function()
+    {
+        var node = this.myrect.get("node"),
+            classString = Y.DOM.getAttribute(node, "class");
+        Y.Assert.areEqual(rectClassString, classString, "The class string should be " + rectClassString + ".");
     },
 
     "test myrect.get(width)": function()
@@ -310,6 +345,13 @@ graphicTests = new Y.Test.Case({
         });
         Y.assert(myellipse instanceof Y.Ellipse);
         this.myellipse = myellipse;
+    },
+
+    "test myellipseDefaultClassString()" : function()
+    {
+        var node = this.myellipse.get("node"),
+            classString = Y.DOM.getAttribute(node, "class");
+        Y.Assert.areEqual(ellipseClassString, classString, "The class string should be " + ellipseClassString + ".");
     },
 
     "test myellipse.get(width)": function()
@@ -438,6 +480,13 @@ graphicTests = new Y.Test.Case({
         mypath.end();
         Y.assert(mypath instanceof Y.Path);
         this.mypath = mypath;
+    },
+  
+    "test mypathDefaultClassString()" : function()
+    {
+        var node = this.mypath.get("node"),
+            classString = Y.DOM.getAttribute(node, "class");
+        Y.Assert.areEqual(pathClassString, classString, "The class string should be " + pathClassString + ".");
     },
 
     "test mypath.get(width)": function()
@@ -630,6 +679,7 @@ svgTests = new Y.Test.Case({
         Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
         var graphic = new Y.Graphic({render: "#graphiccontainer"});
         graphic.on("init", function(e) {
+            Y.Assert.areEqual(graphic.get("node").nodeName.toLowerCase(), "div", "The node instance should be a div.");
             Y.Assert.isInstanceOf(SVGElement, graphic._contentNode);
         });
         this.graphic = graphic;
@@ -840,7 +890,7 @@ vmlTests = new Y.Test.Case({
         Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
         var graphic = new Y.Graphic({render: "#graphiccontainer"});
         graphic.on("init", function(e) {
-            Y.assert(graphic.get("node").nodeName == "group");
+            Y.Assert.areEqual(graphic.get("node").nodeName, "group", "The node should be a group element.");
         });
         this.graphic = graphic;
     },
@@ -863,14 +913,14 @@ vmlTests = new Y.Test.Case({
             }
         });
         this.myrect = myrect;
-        Y.assert(myrect.get("node").nodeName == "rect");
+        Y.Assert.areEqual(myrect.get("node").nodeName, "rect", "The node should be of type rect.");
     },
 
     "testVMLRectNodeDimensions()" : function()
     {
         var node = this.myrect.get("node");
-        Y.assert(Y.one(node).getComputedStyle("width") == "300px");
-        Y.assert(Y.one(node).getComputedStyle("height") == "200px");
+        Y.Assert.areEqual(Y.one(node).getComputedStyle("width"), "300px", "The node should be 300 pixels wide.");
+        Y.Assert.areEqual(Y.one(node).getComputedStyle("height"), "200px", "The node should be 200 pixels high.");
     },
 
     "testVMLRectNodeFillColor()" : function() 
@@ -1015,13 +1065,13 @@ vmlTests = new Y.Test.Case({
     "testVMLRectNodeWidthAgainstShapeAttr" : function()
     {
         var node = this.myrect.get("node");
-        Y.assert(Y.one(node).getComputedStyle("width") == this.myrect.get("width") + "px");
+        Y.Assert.areEqual(Y.one(node).getComputedStyle("width"),  this.myrect.get("width") + "px", "The width attribute value should be equal to the width of the html element.");
     },
     
     "testVMLRectNodeHeightAgainstShapeAttr" : function()
     {
         var node = this.myrect.get("node");
-        Y.assert(Y.one(node).getComputedStyle("height") == this.myrect.get("height") + "px");
+        Y.Assert.areEqual(Y.one(node).getComputedStyle("height"), this.myrect.get("height") + "px", "The height attribute value should be equal to the height of the html element.");
     },
 
     "testVMLRectNodeFillAgainstShapeAttr" : function()
@@ -1784,7 +1834,7 @@ if(ENGINE == "svg")
 }
 if(ENGINE == "vml")
 {
-    suite.add(vmlTests);
+   suite.add(vmlTests);
 }
 if(ENGINE == "canvas")
 {

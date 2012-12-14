@@ -1,4 +1,4 @@
-YUI.add('dataschema-text', function(Y) {
+YUI.add('dataschema-text', function (Y, NAME) {
 
 /**
  * Provides a DataSchema implementation which can be used to work with
@@ -180,4 +180,4 @@ var Lang = Y.Lang,
 Y.DataSchema.Text = Y.mix(SchemaText, Y.DataSchema.Base);
 
 
-}, '@VERSION@' ,{requires:['dataschema-base']});
+}, '@VERSION@', {"requires": ["dataschema-base"]});

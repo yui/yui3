@@ -24,16 +24,19 @@ YUI.add('loader-tests', function(Y) {
                 'test_timeout': !jsFailure || Y.UA.nodejs,
                 test_module_attrs: Y.UA.nodejs,
                 test_global_attrs: Y.UA.nodejs,
-                test_iter: Y.UA.nodejs,
-                test_progress: Y.UA.nodejs,
-                'test: gallery skinnable': Y.UA.nodejs,
+                test_iter: Y.UA.nodejs || Y.UA.winjs,
+                test_progress: Y.UA.nodejs || Y.UA.winjs,
+                'test: gallery skinnable': Y.UA.nodejs || Y.UA.winjs,
                 test_load: Y.UA.nodejs,
                 test_async: Y.UA.nodejs,
                 test_css_stamp: Y.UA.nodejs,
                 test_group_filters: Y.UA.nodejs,
                 test_cond_no_test_or_ua: Y.UA.nodejs,
                 test_condpattern: Y.UA.nodejs,
-                test_cond_with_test_function: Y.UA.nodejs
+                test_cond_with_test_function: Y.UA.nodejs,
+                'test external lang 1': Y.UA.nodejs,
+                'testing fetchCSS false': !Y.config.win,
+                'testing duplicate CSS loading': !Y.config.win
             }
         },
         'test: skin overrides double loading': function() {
@@ -722,6 +725,60 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
 
+        },
+        'testing duplicate CSS loading': function() {
+            var test = this,
+                links = document.getElementsByTagName('link'),
+                sheets = document.getElementsByTagName('style'),
+                holder = {
+                    'console': 0,
+                    'console-filters': 0,
+                    'test-console': 0
+                };
+            
+            Y.Array.each(links, function(item) {
+                var href = item.href;
+                if (/\/sam\/console\.css/.test(href)) {
+                    holder['console']++;
+                }
+                if (/console-filters\.css/.test(href)) {
+                    holder['console-filters']++;
+                }
+                if (/test-console\.css/.test(href)) {
+                    holder['test-console']++;
+                }
+            });
+            //Older Gecko's
+            Y.Array.each(sheets, function(item) {
+                var html = item.innerHTML;
+                if (/\/sam\/console\.css/.test(html)) {
+                    holder['console']++;
+                }
+                if (/console-filters\.css/.test(html)) {
+                    holder['console-filters']++;
+                }
+                if (/test-console\.css/.test(html)) {
+                    holder['test-console']++;
+                }
+            });
+            Y.Object.each(holder, function(count, name) {
+                Y.Assert.areEqual(1, count, 'Too many of ' + name + '.css');
+            });
+        },
+        'testing fetchCSS false': function() {
+            var test = this,
+                links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
+
+            YUI({
+                fetchCSS: false
+            }).use('panel', function(Y) {
+                test.resume(function() {
+                    var links2 = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
+                    Assert.areEqual(links, links2, 'A new link tag was injected into the page.');
+                });
+            });
+
+            test.wait();
         },
         test_forcemap: function() {
             var test = this;
@@ -2083,6 +2140,33 @@ YUI.add('loader-tests', function(Y) {
             });
             Assert.isTrue(hasYQLCoverage, 'Failed to filter yql-coverage.js');
             Assert.isTrue(hasOOPNoCoverage, 'Failed to filter oop.js');
+        },
+        'test external lang 1': function() {
+            var test = this;
+            YUI({
+                useSync: false,
+                filter: 'raw',
+                lang: ['en'],
+                groups: {
+                    test: {
+                        base: resolvePath('../assets/'),
+                        patterns: {
+                            'test-': {              
+                                configFn: function(me) {
+                                    //Nothing here, used for pattern matching
+                                }
+                            }
+                        }
+                    }
+                }
+            }).use('test-payload-view', function(Y) {
+                test.resume(function() {
+                    Assert.isObject(Y.TEST, 'failed to load module');
+                    var strings = Y.Intl.get('test-payload-view');
+                    Assert.areEqual('It worked!', strings.TEST, 'Failed to resolve language pack');
+                });
+            });
+            test.wait();
         }
     });
     

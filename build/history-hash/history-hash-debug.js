@@ -1,4 +1,4 @@
-YUI.add('history-hash', function(Y) {
+YUI.add('history-hash', function (Y, NAME) {
 
 /**
  * Provides browser history management backed by
@@ -464,4 +464,4 @@ if (useHistoryHTML5 === false || (!Y.History && useHistoryHTML5 !== true &&
 }
 
 
-}, '@VERSION@' ,{requires:['event-synthetic', 'history-base', 'yui-later']});
+}, '@VERSION@', {"requires": ["event-synthetic", "history-base", "yui-later"]});

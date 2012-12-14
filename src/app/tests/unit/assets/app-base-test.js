@@ -1406,7 +1406,7 @@ appBaseSuite.add(new Y.Test.Case({
             e.preventDefault();
 
             Assert.isTrue(e.replace);
-            Assert.areSame(e.url, this._upgradeURL(this._getURL()));
+            Assert.areSame(e.url, this._getURL());
         });
 
         app.navigate('/foo/');
@@ -1435,7 +1435,6 @@ appBaseSuite.add(new Y.Test.Case({
 
             Assert.isTrue(e.replace);
             Assert.areNotSame(e.url, this._getURL());
-            Assert.areNotSame(e.url, this._upgradeURL(this._getURL()));
         });
 
         app.navigate('/foo/', {

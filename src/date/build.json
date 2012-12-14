@@ -1,0 +1,20 @@
+{
+    "name": "datatype-date",
+    "builds": {
+        "datatype-date-parse": {
+            "jsfiles": [
+                "date-parse.js"
+            ]
+        },
+        "datatype-date-math": {
+            "jsfiles": [
+                "date-math.js"
+            ]
+        },
+        "datatype-date-format": {
+            "jsfiles": [
+                "date-format.js"
+            ]
+        }
+    }
+}

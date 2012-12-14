@@ -1,4 +1,4 @@
-YUI.add('stylesheet', function(Y) {
+YUI.add('stylesheet', function (Y, NAME) {
 
 /**
  * The StyleSheet component is a module for creating and modifying CSS
@@ -635,4 +635,4 @@ NOTES
 
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

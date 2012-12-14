@@ -683,7 +683,11 @@ An attribute validator will be called whenever that attribute changes, and can p
 </p>
 
 <p>
-The second way to validate changes is to provide a custom `validate()` method when extending `Y.Model`. The `validate()` method will be called automatically when `save()` is called, and will receive a hash of all the attributes in the model. If the `validate()` method returns anything other than `null` or `undefined`, it will be considered a validation failure, an `error` event will be fired with the returned value as the error message, and the `save()` action will be aborted.
+The second way to validate changes is to provide a custom `validate()` method when extending `Y.Model`. The `validate()` method will be called automatically when `save()` is called, and will receive a hash of all the attributes in the model. Validation can be an asyncronous process, and the `validation()` method takes a `callback()` function. If your `validate()` method calls the `callback()` with an argument other than `null`, or `undefined`, it will be considered a validation failure, an `error` event will be fired with the returned value as the error message, and the `save()` action will be aborted.
+</p>
+
+<p>
+To indicate success, call the provided `callback()` function with no arguments from your validation method. To indicate failure, call the provided `callback()` function with a single argument, which may contain an error message, an array of error messages, or any other value. On validation failure an `error` event will be fired with the passed argument as the error message.
 </p>
 
 ```
@@ -691,23 +695,28 @@ The second way to validate changes is to provide a custom `validate()` method wh
 Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
   // ... prototype methods and properties ...
 
-  validate: function (attributes) {
+  validate: function (attributes, callback) {
     var slices;
 
     switch (attributes.type) {
     case 'rhubarb':
-      return 'Eww. No. Not allowed.';
+      callback('Eww. No. Not allowed.');
+      return;
 
     case 'maple custard':
       slices = Y.Lang.isValue(attributes.slices) ?
           attributes.slices : this.get('slices');
 
       if (slices < 10) {
-        return "Making fewer than 10 slices of maple custard pie would be " +
+        callback("Making fewer than 10 slices of maple custard pie would be " +
             "silly, because I'm just going to eat 8 of them as soon as it's " +
-            "out of the oven.";
+            "out of the oven.");
+        return;
       }
     }
+
+    // Success!
+    callback();
   }
 }, {
   // ... attributes ...
@@ -820,19 +829,26 @@ Y.User = Y.Base.create('user', Y.Model, [Y.ModelSync.REST], {
     root: '/users'
 });
 
-var currentUser, newUser;
+var existingUser = new Y.User({id: '1'}),
+    oldUser      = new Y.User({id: '2'}),
+    newUser      = new Y.User({name: 'Eric Ferraiuolo'});
 
-// GET the user data from: "/users/123"
-currentUser = new Y.User({id: '123'}).load();
+// GET the existing user data from: "/users/1"
+existingUser.load(function () {
+    Y.log(existingUser.get('name')); // => "Ron Swannson"
 
-// PUT the updated user data at: "/users/123"
-currentUser.set('name', 'Ron Swanson').save();
+    // Correct the user's `name` and PUT the updated user at: "/users/1"
+    existingUser.set('name', 'Ron Swanson').save();
+});
 
-// DELETE the user data at: "/users/123"
-currentUser.destroy({remove: true});
+// DELETE the old user data at: "/users/2"
+oldUser.destroy({remove: true});
 
 // POST the new user data to: "/users"
-newUser = new Y.User({name: 'Eric Ferraiuolo'}).save();
+newUser.save(function () {
+    // The server can return the user data with an `id` assigned.
+    Y.log(newUser.get('id')); // => "3"
+});
 ```
 
 <p>
@@ -865,7 +881,7 @@ var users = new Y.Users();
 users.load(function () {
     var firstUser = users.item(0);
 
-    firstUser.get('id'); // => "1"
+    Y.log(firstUser.get('id')); // => "1"
 
     // PUT updated user data at: "/users/1"
     firstUser.set('name', 'Eric').save();

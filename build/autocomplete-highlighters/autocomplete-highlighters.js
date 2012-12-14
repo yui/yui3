@@ -1,4 +1,4 @@
-YUI.add('autocomplete-highlighters', function(Y) {
+YUI.add('autocomplete-highlighters', function (Y, NAME) {
 
 /**
 Provides pre-built result highlighters for AutoComplete.
@@ -196,4 +196,4 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'highlight-base']});
+}, '@VERSION@', {"requires": ["array-extras", "highlight-base"]});

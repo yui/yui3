@@ -17,3 +17,17 @@ faster with fewer lines of code and a smaller network footprint.*
 
     });
 
+
+Plugins
+-------
+
+   * `yql-winjs` - Wrapper to use native `XHR` with `CORS` in WinJS (Windows 8 app env)
+   * `yql-nodejs`- Wrapper to use the `request` module under the hood.
+
+Although both of these techniques allow for more than just `GET` requests, the
+plugins do not allow that to be changed. In order to have code that is portable
+between these environments, it was best to leave their signatures and their
+capabilities the same as in the browser.
+
+If you are in these environments and need to do other request types, you should
+use the `io` module to make the requests.

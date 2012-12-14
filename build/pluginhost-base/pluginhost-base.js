@@ -1,4 +1,4 @@
-YUI.add('pluginhost-base', function(Y) {
+YUI.add('pluginhost-base', function (Y, NAME) {
 
     /**
      * Provides the augmentable PluginHost interface, which can be added to any class.
@@ -178,4 +178,4 @@ YUI.add('pluginhost-base', function(Y) {
     Y.namespace("Plugin").Host = PluginHost;
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

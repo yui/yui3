@@ -1,0 +1,10 @@
+{
+    "name": "widget-position-align",
+    "builds": {
+        "widget-position-align": {
+            "jsfiles": [
+                "Widget-PositionAlign.js"
+            ]
+        }
+    }
+}

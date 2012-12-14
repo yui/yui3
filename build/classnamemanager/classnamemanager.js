@@ -1,4 +1,4 @@
-YUI.add('classnamemanager', function(Y) {
+YUI.add('classnamemanager', function (Y, NAME) {
 
 /**
 * Contains a singleton (ClassNameManager) that enables easy creation and caching of 
@@ -81,4 +81,4 @@ Y.ClassNameManager = function () {
 }();
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

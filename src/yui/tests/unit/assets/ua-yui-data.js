@@ -532,6 +532,34 @@ Y.UAData["YUI Internal"] = [
                 }
         },
         {
+                "ua": "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0; .NET4.0E; .NET4.0C)",
+                "data": {
+                        "ie": 10,
+                        "os": "windows"
+                }
+        },
+        {
+                "ua": "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Win64; x64; Trident/6.0)",
+                "data": {
+                        "ie": 10,
+                        "os": "windows"
+                }
+        },
+        {
+                "ua": "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0; MSAppHost/1.0)",
+                "data": {
+                        "ie": 10,
+                        "os": "windows"
+                }
+        },
+        {
+                "ua": "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; ARM; Trident/6.0)",
+                "data": {
+                        "ie": 10,
+                        "os": "windows"
+                }
+        },
+        {
                 "ua": "Mozilla/5.0 (iPhone; U; CPU iPhone OS 6_0 like Mac OS X; en-us) AppleWebKit/534.46.0 (KHTML, like Gecko) CriOS/19.0.1084.60 Mobile/10A5338d Safari/7534.48.3",
                 "data": {
                         "webkit": 534.46,
