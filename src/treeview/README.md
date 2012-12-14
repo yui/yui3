@@ -1,16 +1,19 @@
 YUI TreeView
 ============
 
-An awesome TreeView widget for YUI.
+A powerful, easy to use, and extremely fast TreeView widget for YUI.
 
 Usage
 -----
+
+Basic usage is simple. Create an instance of `Y.TreeView`, specify some nodes
+to add to the tree, then render the view into a container node.
 
 ```js
 YUI().use('treeview', function (Y) {
 
     // Create a new TreeView with a few nodes.
-    var treeView = new Y.TreeView({
+    var treeview = new Y.TreeView({
             container: '#treeview',
 
             nodes: [
@@ -24,6 +27,9 @@ YUI().use('treeview', function (Y) {
         });
 
     // Render the treeview inside the #container element.
-    treeView.render();
+    treeview.render();
+
 });
 ```
+
+For more detailed usage instructions, see the API docs.
