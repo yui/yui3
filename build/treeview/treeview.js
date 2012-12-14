@@ -77,6 +77,13 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
     **/
     _isYUITreeView: true,
 
+    /**
+    Cached value of the `lazyRender` attribute.
+
+    @property {Boolean} _lazyRender
+    @protected
+    **/
+
     // -- Lifecycle Methods ----------------------------------------------------
 
     initializer: function () {
@@ -116,16 +123,11 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
     @chainable
     **/
     render: function () {
-        var container = this.get('container');
+        var container     = this.get('container'),
+            isTouchDevice = 'ontouchstart' in Y.config.win;
 
         container.addClass(this.classNames.treeview);
-
-        // Detect touchscreen devices.
-        if ('ontouchstart' in Y.config.win) {
-            container.addClass(this.classNames.touch);
-        } else {
-            container.addClass(this.classNames.noTouch);
-        }
+        container.addClass(this.classNames[isTouchDevice ? 'touch' : 'noTouch']);
 
         this._childrenNode = this.renderChildren(this.rootNode, {
             container: container
@@ -158,7 +160,8 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
         options || (options = {});
 
         var container    = options.container,
-            childrenNode = container && container.one('.' + this.classNames.children);
+            childrenNode = container && container.one('.' + this.classNames.children),
+            lazyRender   = this._lazyRender;
 
         if (!childrenNode) {
             childrenNode = Y.Node.create(TreeView.Templates.children({
@@ -177,14 +180,21 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
 
         if (treeNode.hasChildren()) {
             childrenNode.set('aria-expanded', treeNode.isOpen());
+
+            for (var i = 0, len = treeNode.children.length; i < len; i++) {
+                var child = treeNode.children[i];
+
+                this.renderNode(child, {
+                    container     : childrenNode,
+                    renderChildren: !lazyRender || child.isOpen()
+                });
+            }
         }
 
-        for (var i = 0, len = treeNode.children.length; i < len; i++) {
-            this.renderNode(treeNode.children[i], {
-                container     : childrenNode,
-                renderChildren: true
-            });
-        }
+        // Keep track of whether or not this node's children have been rendered
+        // so we'll know whether we need to render them later if the node is
+        // opened.
+        treeNode.state.renderedChildren = true;
 
         if (container) {
             container.append(childrenNode);
@@ -225,7 +235,6 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
         var labelNode = htmlNode.one('.' + classNames.label),
             labelId   = labelNode.get('id');
 
-
         labelNode.setHTML(treeNode.label);
 
         if (!labelId) {
@@ -245,6 +254,8 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
                 container: htmlNode
             });
         }
+
+        treeNode.state.rendered = true;
 
         if (options.container) {
             options.container.append(htmlNode);
@@ -286,6 +297,19 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
         (new Y.EventHandle(this._treeViewEvents)).detach();
     },
 
+    /**
+    Setter for the `lazyRender` attribute.
+
+    Just caches the value in a property for faster lookups.
+
+    @method _setLazyRender
+    @return {Boolean} Value.
+    @protected
+    **/
+    _setLazyRender: function (value) {
+        return this._lazyRender = value;
+    },
+
     // -- Protected Event Handlers ---------------------------------------------
 
     _afterAdd: function (e) {
@@ -301,7 +325,7 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
         if (parent === this.rootNode) {
             htmlChildrenNode = this._childrenNode;
         } else {
-            htmlNode = this.getHTMLNode(parent);
+            htmlNode         = this.getHTMLNode(parent);
             htmlChildrenNode = htmlNode && htmlNode.one('.' + this.classNames.children);
 
             if (!htmlChildrenNode) {
@@ -336,6 +360,10 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
     },
 
     _afterClose: function (e) {
+        if (!this.rendered) {
+            return;
+        }
+
         var htmlNode = this.getHTMLNode(e.node);
 
         htmlNode.removeClass(this.classNames.open);
@@ -343,13 +371,29 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
     },
 
     _afterOpen: function (e) {
-        var htmlNode = this.getHTMLNode(e.node);
+        if (!this.rendered) {
+            return;
+        }
+
+        var treeNode = e.node,
+            htmlNode = this.getHTMLNode(treeNode);
+
+        // If this node's children haven't been rendered yet, render them.
+        if (!treeNode.state.renderedChildren) {
+            this.renderChildren(treeNode, {
+                container: htmlNode
+            });
+        }
 
         htmlNode.addClass(this.classNames.open);
         htmlNode.set('aria-expanded', true);
     },
 
     _afterRemove: function (e) {
+        if (!this.rendered) {
+            return;
+        }
+
         var htmlNode = this.getHTMLNode(e.node);
 
         if (htmlNode) {
@@ -359,6 +403,10 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
     },
 
     _afterSelect: function (e) {
+        if (!this.rendered) {
+            return;
+        }
+
         var htmlNode = this.getHTMLNode(e.node);
 
         htmlNode.addClass(this.classNames.selected);
@@ -373,6 +421,10 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
     },
 
     _afterTreeViewMultiSelectChange: function (e) {
+        if (!this.rendered) {
+            return;
+        }
+
         var container = this.get('container'),
             rootList  = container.one('> .' + this.classNames.children),
             htmlNodes = container.all('.' + this.classNames.node);
@@ -389,6 +441,10 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
     },
 
     _afterUnselect: function (e) {
+        if (!this.rendered) {
+            return;
+        }
+
         var htmlNode = this.getHTMLNode(e.node);
 
         htmlNode.removeClass(this.classNames.selected);
@@ -428,6 +484,25 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
 
     _onRowDoubleClick: function (e) {
         this.getNodeById(e.currentTarget.getData('node-id')).toggle();
+    }
+}, {
+    ATTRS: {
+        /**
+        When `true`, a node's children won't be rendered until the first time
+        that node is opened.
+
+        This can significantly speed up the time it takes to render a large
+        tree, but might not make sense if you're using CSS that doesn't hide the
+        contents of closed nodes.
+
+        @attribute {Boolean} lazyRender
+        @default true
+        **/
+        lazyRender: {
+            lazyAdd: false, // to ensure that the setter runs on init
+            setter : '_setLazyRender',
+            value  : true
+        }
     }
 });
 
