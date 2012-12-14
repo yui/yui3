@@ -8,7 +8,8 @@
 
         <!--<script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js" type="text/javascript" charset="utf-8"></script> 
         -->
-        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>        
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+        
         <style>
         	.horizontal {
                 width:300px;
@@ -40,21 +41,19 @@
         </style>
         
         <script type="text/javascript" charset="utf-8">
-        var s;
+
         YUI({
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             coverage: ['scrollview-paginator']
         }).use('console', 'test', 'node-event-simulate', 'scrollview-base', 'scrollview-paginator', function(Y) {
 
-	        var s;
-	        var DURATION = 1;
-	        var SLOW_DURATION = 1000; // Neccesary to trigger certain lines
-	        var WAIT = 2000; // Neccesary to trigger certain lines
-
-	        // Set up the page
-	        var myConsole = new Y.Console().render();
-			
-	        var testBasic = new Y.Test.Case({
+	        var DURATION = 1,
+	        	SLOW_DURATION = 1000,
+	        	WAIT = 2000,
+	        	myConsole = new Y.Console().render(),
+	        	suite = new Y.Test.Suite({name:"Scrollview Paginator Test Suite"});
+	        
+	        suite.add(new Y.Test.Case({
 	            name: "API Tests",
                 _should: {
                     ignore: {
@@ -66,6 +65,7 @@
                         "sv.next() should advance to the next page" : (Y.UA.ie),
                         "sv.next() on last index should do nothing" : (Y.UA.ie),
 
+                        // Mousewheel emulation is currently only supported in Chrome
                         "mousewheel down should move the SV down" : (Y.UA.ie || Y.UA.gecko)
                     }
                 },
@@ -75,11 +75,10 @@
 			    //---------------------------------------------
 
 	            setUp : function () {
-	            	// console.log('setUp');
+	            	// empty
 	            },
 
 	            tearDown : function () {
-	            	// console.log('tearDown');
 	            	Y.one('#container').empty(true);
                 },
 			
@@ -106,14 +105,14 @@
 					var Test = this,
 						sv = renderNewScrollview('x');
 
-					sv.on('scrollEnd', function () {
+					sv.once('scrollEnd', function () {
 						Test.resume(function () {
 							Y.Assert.areEqual(300, sv.get('scrollX'));
 						})
 					})
 
 					sv.pages.next();
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"sv.next() on last index should do nothing" : function () {
@@ -121,7 +120,7 @@
 						sv = renderNewScrollview('x', 9),
 						eventsFired = 0;
 
-					sv.on('scrollEnd', function () {
+					sv.once('scrollEnd', function () {
 						eventsFired++;
 					});
 
@@ -134,14 +133,14 @@
 
 					sv.pages.next();
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"sv.prev() should advance to the previous page" : function () {
 					var Test = this,
 						sv = renderNewScrollview('y', 2);
 
-					sv.on('scrollEnd', function () {
+					sv.once('scrollEnd', function () {
 						Test.resume(function () {
 							Y.Assert.areEqual(100, sv.get('scrollY'));
 						});
@@ -149,7 +148,7 @@
 
 					sv.pages.prev();
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"sv.prev() on index 0 should do nothing" : function () {
@@ -157,7 +156,7 @@
 						sv = renderNewScrollview('y'),
 						eventsFired = 0;
 
-					sv.on('scrollEnd', function () {
+					sv.once('scrollEnd', function () {
 						eventsFired++;
 					});
 
@@ -170,14 +169,14 @@
 
 					sv.pages.prev();
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"scrollTo (deprecated) should animate to the specified index" : function () {
 					var Test = this,
 						sv = renderNewScrollview('y');
 
-					sv.on('scrollEnd', function () {
+					sv.once('scrollEnd', function () {
 						Test.resume(function () {
 							Y.Assert.areEqual(5, sv.pages.get('index'));
 							Y.Assert.areEqual(500, sv.get('scrollY'));
@@ -186,14 +185,14 @@
 
 					sv.pages.scrollTo(5);
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"scrollToIndex should animate to the specified index" : function () {
 					var Test = this,
 						sv = renderNewScrollview('y');
 
-					sv.on('scrollEnd', function () {
+					sv.once('scrollEnd', function () {
 						Test.resume(function () {
 							Y.Assert.areEqual(5, sv.pages.get('index'));
 							Y.Assert.areEqual(500, sv.get('scrollY'));
@@ -202,7 +201,7 @@
 
 					sv.pages.scrollToIndex(5);
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				/*
@@ -214,14 +213,14 @@
 						sv = renderNewScrollview('y'),
 						startTime = Y.Lang.now();
 
-					sv.on('scrollEnd', function () {
+					sv.once('scrollEnd', function () {
 						Test.resume(function () {
 							Y.Assert.isTrue(Y.Lang.now() - startTime > 1000, 'Animation took less time than expected');
 						});
 					});
 
 					sv.pages.scrollToIndex(5, 1500);
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 
@@ -231,7 +230,7 @@
 					var Test = this,
 						scrollview = renderNewScrollview('x');
 
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						Test.resume(function(){
 							Y.Assert.areEqual(1, scrollview.pages.get('index'));
 							Y.Assert.areEqual(0, scrollview.get('scrollY'));
@@ -246,7 +245,7 @@
                         duration: DURATION
 					});
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 
@@ -258,7 +257,7 @@
 						scrollview = renderNewScrollview('x'),
 						distance = 100;
 						
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						Test.resume(function(){
 							Y.Assert.areEqual(0, scrollview.pages.get('index'));
 							Y.Assert.areEqual(0, scrollview.get('scrollY'));
@@ -273,7 +272,7 @@
                         duration: DURATION
 					});
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"optimizeMemory should hide nodes not near the viewport": function() {
@@ -316,14 +315,12 @@
 					Test.wait(1000);
 				},
 
-
-
 				"mousewheel down should move the SV down": function () {
 					
 					var Test = this,
 						scrollview = renderNewScrollview('y');
 
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						Test.resume(function(){
 							Y.Assert.areEqual(1, scrollview.pages.get('index'));
 						})
@@ -336,31 +333,53 @@
 					Test.wait(WAIT);
 				},
 
-
-				"Dual axis should do something": function () {
+				"Dual axis should do allow scrolling on both X & Y axes": function () {
 					var Test = this,
-						scrollview = renderNewScrollview('xy');
+						scrollview = renderNewScrollview('xy'),
+						scrollToX = 300,
+						scrollToY = 20;
 
-					scrollview.pages.set('index', 2);
-					Y.Assert.areEqual(2, scrollview.pages.get('index'));
+					scrollview.once('scrollEnd', function(){
+
+						Test.resume(function(){
+							Y.Assert.areEqual(1, scrollview.pages.get('index'));
+							Y.Assert.areEqual(scrollToX, scrollview.get('scrollX'));
+
+							scrollview.once('scrollEnd', function(){
+								Test.resume(function(){
+									Y.Assert.areEqual(1, scrollview.pages.get('index'));
+									Y.Assert.areEqual(scrollToX, scrollview.get('scrollX'));
+									Y.Assert.areEqual(scrollToY, scrollview.get('scrollY'));
+								});
+							});
+
+							Y.later(100, null, function () {
+								scrollview.scrollTo(scrollToX, scrollToY, 200);
+							});
+
+							Test.wait(WAIT);
+
+						});
+
+					});
+
+					Y.later(100, null, function () {
+						scrollview.pages.set('index', 1);
+					});
+
+					Test.wait(WAIT);
 				}
 
 				/*
 					Additional tests:
 					- gestures
-					- mousewheel
-					- optimization
 					- next() past total
-					- scrollTo()
 					- lazyload
 					- Forced axis vs auto-detection
 					- Make sure scrollEnd only fires once
 				*/
 
-	        });
-
-	        var suite = new Y.Test.Suite({name:"Scrollview Paginator Test Suite"});
-	        suite.add(testBasic);
+	        }));
 
 	        Y.Test.Runner.setName("Scrollview Test Runner");
 	        Y.Test.Runner.add(suite);

@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
         <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
-
+        
         <style>
         	.horizontal {
                 width:300px;
@@ -39,28 +39,24 @@
         
         <script type="text/javascript" charset="utf-8">
 
-        var s;
-        var DURATION = 1;
-        var SLOW_DURATION = 1000; // Neccesary to trigger certain lines
-        var WAIT = 2000; // Neccesary to trigger certain lines
-
         YUI({
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             coverage: ['scrollview-base']
         }).use('console', 'test', 'node-event-simulate', 'scrollview-base', function(Y) {
 
-	        // Set up the page
-	        var ASSERT = Y.Assert,
-	            ARRAYASSERT = Y.ArrayAssert;
+	        var DURATION = 1,
+	        	SLOW_DURATION = 1000,
+	        	WAIT = 2000,
+	        	LONG_WAIT = 4000,
+	        	myConsole = new Y.Console().render(),
+	        	suite = new Y.Test.Suite("Scrollview: Base");
 
-	        var myConsole = new Y.Console().render();
-			
-	        var testBasic = new Y.Test.Case({
+	        suite.add(new Y.Test.Case({
 	            name: "API Tests",
                 _should: {
                     ignore: {
 
-                    	// Ignore PhantomJS and IE
+                    	// Ignore PhantomJS and IE because lack of gesture simulation support/issues
                         "Flick x should provide the correct reaction": (Y.UA.phantomjs || Y.UA.ie),
                         "Disabled flick should not scroll": (Y.UA.phantomjs || Y.UA.ie),
                         "Move right on X should move the content right": (Y.UA.phantomjs || Y.UA.ie),
@@ -68,21 +64,9 @@
                         "Move down on Y should move the content at least that distance": (Y.UA.phantomjs || Y.UA.ie),
                         "Move up on Y should bounce back": (Y.UA.phantomjs || Y.UA.ie),
 
+                        // Mousewheel emulation is currently only supported in Chrome
                         "mousewheel down should move the SV down" : (Y.UA.ie || Y.UA.gecko)
-                        // ** Selective disable/enable for easy testing purposes (SV test suite can take a little while to run all tests)
-						// "Ensure rendering & initial state are correct": true,
-						// "Ensure set('scrollX') works properly": true,
-						// "Ensure the 'scrollEnd' event fires": true,
-						// "Flick x should provide the correct reaction": true,
-						// "lastScrolledAmt should be correct": true,
-						// "Disabled flick should not scroll": true,
-						// "Move right on X should move the content right": true,
-						// "Move left on X should snap back": true,
-						// "Move down on Y should move the content at least that distance": true,
-						// "Move up on Y should bounce back": true,
-						// "Disabled drag should not scroll": true,
-						// "Disabled scrollview should not scroll": true,
-						// "Widget resize should trigger heightChange": true,
+
                     }
                 },
 
@@ -91,11 +75,10 @@
 			    //---------------------------------------------
 
 	            setUp : function () {
-	            	// console.log('setUp');
+	            	// Empty
 	            },
 
 	            tearDown : function () {
-	            	// console.log('tearDown');
 	            	Y.one('#container').empty(true);
                 },
 			
@@ -148,7 +131,7 @@
 						eventsFired = 0;
 
 					// Ensure scrollEnd fires
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						eventsFired++;
 						Y.Assert.areEqual(distance, scrollview.get('scrollX'));
 						Y.Assert.areEqual(0, scrollview.get('scrollY'));
@@ -163,10 +146,10 @@
 					var Test = this,
 						scrollview = renderNewScrollview(false);
 
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						Test.resume(function(){
 							// depending on browser activity, scrollX won't always be exactly at the end (sometimes a few pixels shy), so we'll give it a large buffer
-							(scrollview.get('scrollX') > 1500) ? Y.Assert.pass() : Y.Assert.fail();
+							(scrollview.get('scrollX') > 1500) ? Y.Assert.pass() : Y.Assert.fail("scrollX offset not large enough");
 							Y.Assert.areEqual(0, scrollview.get('scrollY'));
 						});
 					});
@@ -176,7 +159,7 @@
 						axis: 'x'
 					});
 
-					Test.wait(4000);
+					Test.wait(LONG_WAIT);
 				},
 
 				"lastScrolledAmt should be correct": function() {
@@ -185,7 +168,7 @@
 						scrollview = renderNewScrollview(false),
 						distance = 500;
 
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						Test.resume(function(){
 							Y.Assert.areEqual(distance, scrollview.lastScrolledAmt);
 						})
@@ -222,7 +205,7 @@
 						scrollview = renderNewScrollview(false),
 						distance = 1000;
 						
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						Test.resume(function(){
 							if (scrollview.get('scrollX') >= 50) {
 								Y.Assert.pass();
@@ -241,7 +224,7 @@
                         duration: SLOW_DURATION
 					});
 
-					Test.wait(4000);
+					Test.wait(LONG_WAIT);
 				},
 
 				"Move left on X should snap back": function() {
@@ -250,7 +233,7 @@
 						scrollview = renderNewScrollview(false),
 						distance = 1000;
 						
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						Test.resume(function(){
 							Y.Assert.areEqual(0, scrollview.get('scrollY'));
 							Y.Assert.areEqual(0, scrollview.get('scrollX'));
@@ -273,13 +256,13 @@
 						scrollview = renderNewScrollview(true),
 						distance = 500;
 						
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						Test.resume(function(){
 							if (scrollview.get('scrollY') >= distance) {
 								Y.Assert.pass();
 							}
 							else {
-								Y.Assert.fail();
+								Y.Assert.fail("scrollX offset not large enough");
 							}
 							Y.Assert.areEqual(0, scrollview.get('scrollX'));
 						})
@@ -301,7 +284,7 @@
 						scrollview = renderNewScrollview(true),
 						distance = 500;
 
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						Test.resume(function(){
 							Y.Assert.areEqual(0, scrollview.get('scrollY'));
 							Y.Assert.areEqual(0, scrollview.get('scrollX'));
@@ -445,7 +428,7 @@
 									Y.Assert.pass();
 								}
 								else {
-									Y.Assert.fail();
+									Y.Assert.fail("Stop offset differences were too large");
 								}
 							})
 						});
@@ -458,7 +441,7 @@
 					var Test = this,
 						scrollview = renderNewScrollview(true);
 
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						Test.resume(function(){
 							Y.Assert.areEqual(10, scrollview.get('scrollY'));
 							Y.Assert.areEqual(0, scrollview.get('scrollX'));
@@ -523,17 +506,6 @@
 				},
 */
 
-
-/* These tests are not possible until mousewheel simulation is available
-
-				"Mousewheel event provides the correct reaction": function() {
-					var Test = this,
-						scrollview = renderNewScrollview(true);
-
-					scrollview.get('contentBox').simulate('mousewheel');
-					Y.Assert.isTrue(true, "is true");
-				}
-*/
 				// Additional tests
 				// - Don't scroll Y if a X axis
 				// - Don't scroll X if a Y axis
@@ -544,14 +516,12 @@
 				// - Make sure scrollEnd only fires once
 				// - setScroll after disabling
 
-	        });
-
-	        var suite = new Y.Test.Suite("Scrollview: Base");
-	        suite.add(testBasic);
+	        }));
 
 	        Y.Test.Runner.add(suite);
 	        Y.Test.Runner.run();
 
+	        // Some utilities
 			function renderNewScrollview (vertical, axis) {
 
 				var config = {},
