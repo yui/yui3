@@ -74,7 +74,7 @@ YUI().use("intl", "datatype-date-format", function(Y) {
 <h4 id="parsingdates">Parsing dates</h4>
 
 <p>
-    <code>Y.Date.parse()</code> accepts any value supported by the
+    <code>Y.Date.parse()</code> accepts any <strong>single</strong> value supported by the
     JavaScript <code>Date()</code> constructor and converts it to a Date
     object. Invalid values will return null.
 </p>
@@ -82,11 +82,10 @@ YUI().use("intl", "datatype-date-format", function(Y) {
 ```
 var date1 = Y.Date.parse("December 17, 1995 03:24:00");
 
-var date2 = Y.Date.parse(1995,11,17);
+var date2 = Y.Date.parse("1995,11,17");
 
-var date3 = Y.Date.parse(1995,11,17,3,24,0);
+var date3 = Y.Date.parse(948548583);
 
-var date4 = Y.Date.parse(948548583);
 ```
 
 <h3 id="numbers">Numbers</h3>
