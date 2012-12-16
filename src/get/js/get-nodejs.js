@@ -3,12 +3,13 @@
     * @module get-nodejs
     * @class GetNodeJS
     */
-        
-    var path = require('path'),
+
+    var Module = require('module'),
+
+        path = require('path'),
         vm = require('vm'),
         fs = require('fs'),
-        request = require('request'),
-        existsSync = fs.existsSync || path.existsSync;
+        request = require('request');
 
 
     Y.Get = function() {
@@ -19,7 +20,7 @@
 
     YUI.require = require;
     YUI.process = process;
-    
+
     /**
     * Escape the path for Windows, they need to be double encoded when used as `__dirname` or `__filename`
     * @method escapeWinPath
@@ -44,30 +45,22 @@
     */
 
     Y.Get._exec = function(data, url, cb) {
-        var dirName = escapeWinPath(path.dirname(url));
-        var fileName = escapeWinPath(url);
-
-        if (dirName.match(/^https?:\/\//)) {
-            dirName = '.';
-            fileName = 'remoteResource';
+        if (data.charCodeAt(0) === 0xFEFF) {
+            data = data.slice(1);
         }
 
-        var mod = "(function(YUI) { var __dirname = '" + dirName + "'; "+
-            "var __filename = '" + fileName + "'; " +
-            "var process = YUI.process;" +
-            "var require = function(file) {" +
-            " if (file.indexOf('./') === 0) {" +
-            "   file = __dirname + file.replace('./', '/'); }" +
-            " return YUI.require(file); }; " +
-            data + " ;return YUI; })";
-    
-        //var mod = "(function(YUI) { " + data + ";return YUI; })";
-        var script = vm.createScript(mod, url);
-        var fn = script.runInThisContext(mod);
-        YUI = fn(YUI);
+        var mod = new Module(url, module);
+        mod.filename = url;
+        mod.paths = Module._nodeModulePaths(path.dirname(url));
+        mod._compile('module.exports = function (YUI) {' + data + '\n;return YUI;};', url);
+
+        YUI = mod.exports(YUI);
+
+        mod.loaded = true;
+
         cb(null, url);
     };
-    
+
     /**
     * Fetches the content from a remote URL or a file from disc and passes the content
     * off to `_exec` for parsing
@@ -76,11 +69,13 @@
     * @param {String} url The URL/File path to fetch the content from
     * @param {Callback} cb The callback to fire once the content has been executed via `_exec`
     */
-    Y.Get._include = function(url, cb) {
-        var self = this;
+    Y.Get._include = function (url, cb) {
+        var cfg,
+            mod,
+            self = this;
 
         if (url.match(/^https?:\/\//)) {
-            var cfg = {
+            cfg = {
                 url: url,
                 timeout: self.timeout
             };
@@ -93,25 +88,30 @@
                 }
             });
         } else {
-            if (Y.config.useSync) {
-                //Needs to be in useSync
-                if (existsSync(url)) {
-                    var mod = fs.readFileSync(url,'utf8');
-                    Y.Get._exec(mod, url, cb);
+            try {
+                // Try to resolve paths relative to the module that required yui.
+                url = Module._findPath(url, Module._resolveLookupPaths(url, module.parent.parent)[1]);
+
+                if (Y.config.useSync) {
+                    //Needs to be in useSync
+                    mod = fs.readFileSync(url,'utf8');
                 } else {
-                    cb('Path does not exist: ' + url, url);
+                    fs.readFile(url, 'utf8', function (err, mod) {
+                        if (err) {
+                            cb(err, url);
+                        } else {
+                            Y.Get._exec(mod, url, cb);
+                        }
+                    });
+                    return;
                 }
-            } else {
-                fs.readFile(url, 'utf8', function(err, mod) {
-                    if (err) {
-                        cb(err, url);
-                    } else {
-                        Y.Get._exec(mod, url, cb);
-                    }
-                });
+            } catch (err) {
+                cb(err, url);
+                return;
             }
+
+            Y.Get._exec(mod, url, cb);
         }
-        
     };
 
 
@@ -184,13 +184,13 @@
             });
         }
     };
-    
+
     /**
     * Alias for `Y.Get.js`
     * @method script
     */
     Y.Get.script = Y.Get.js;
-    
+
     //Place holder for SS Dom access
     Y.Get.css = function(s, cb) {
         Y.log('Y.Get.css is not supported, just reporting that it has loaded but not fetching.', 'warn', 'get');
