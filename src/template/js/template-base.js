@@ -84,12 +84,7 @@ Template.prototype = {
     @since 3.8.0
     **/
     compile: function (text, options) {
-        var defaults = this.defaults;
-
-        if (defaults) {
-            options = options ? Y.merge(defaults, options) : defaults;
-        }
-
+        options = options ? Y.merge(this.defaults, options) : this.defaults;
         return this.engine.compile(text, options);
     },
 
@@ -105,12 +100,7 @@ Template.prototype = {
     @since 3.8.0
     **/
     precompile: function (text, options) {
-        var defaults = this.defaults;
-
-        if (defaults) {
-            options = options ? Y.merge(defaults, options) : defaults;
-        }
-
+        options = options ? Y.merge(this.defaults, options) : this.defaults;
         return this.engine.precompile(text, options);
     },
 
@@ -127,11 +117,7 @@ Template.prototype = {
     @since 3.8.0
     **/
     render: function (text, data, options) {
-        var defaults = this.defaults;
-
-        if (defaults) {
-            options = options ? Y.merge(defaults, options) : defaults;
-        }
+        options = options ? Y.merge(this.defaults, options) : this.defaults;
 
         if (this.engine.render) {
             return this.engine.render(text, data, options);
@@ -153,11 +139,7 @@ Template.prototype = {
     @since 3.8.0
     **/
     revive: function (precompiled, options) {
-        var defaults = this.defaults;
-
-        if (defaults) {
-            options = options ? Y.merge(defaults, options) : defaults;
-        }
+        options = options ? Y.merge(this.defaults, options) : this.defaults;
 
         return this.engine.revive ? this.engine.revive(precompiled, options) :
                 precompiled;
