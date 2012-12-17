@@ -336,8 +336,8 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("attribute-events")) > -1, "Module (attribute-events) not found in sorted array");
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("attribute-observable")) > -1, "Module (attribute-observable) not found in sorted array");
         },
      "Testing attribute-extras": function(data) {
             var loader = new Y.Loader({
@@ -348,6 +348,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("attribute-extras")) > -1, "Module (attribute-extras) not found in sorted array");
+        },
+     "Testing attribute-observable": function(data) {
+            var loader = new Y.Loader({
+                require: ["attribute-observable"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("attribute-observable")) > -1, "Module (attribute-observable) not found in sorted array");
         },
      "Testing autocomplete": function(data) {
             var loader = new Y.Loader({
@@ -493,6 +503,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("base-core")) > -1, "Module (base-core) not found in sorted array");
+        },
+     "Testing base-observable": function(data) {
+            var loader = new Y.Loader({
+                require: ["base-observable"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("base-observable")) > -1, "Module (base-observable) not found in sorted array");
         },
      "Testing base-pluginhost": function(data) {
             var loader = new Y.Loader({
@@ -679,6 +699,58 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("arraylist-add")) > -1, "Module (arraylist-add) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("arraylist-filter")) > -1, "Module (arraylist-filter) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("array-invoke")) > -1, "Module (array-invoke) not found in sorted array");
+        },
+     "Testing color": function(data) {
+            var loader = new Y.Loader({
+                require: ["color"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("color-base")) > -1, "Module (color-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("color-hsl")) > -1, "Module (color-hsl) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("color-harmony")) > -1, "Module (color-harmony) not found in sorted array");
+        },
+     "Testing color-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["color-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("color-base")) > -1, "Module (color-base) not found in sorted array");
+        },
+     "Testing color-harmony": function(data) {
+            var loader = new Y.Loader({
+                require: ["color-harmony"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("color-harmony")) > -1, "Module (color-harmony) not found in sorted array");
+        },
+     "Testing color-hsl": function(data) {
+            var loader = new Y.Loader({
+                require: ["color-hsl"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("color-hsl")) > -1, "Module (color-hsl) not found in sorted array");
+        },
+     "Testing color-hsv": function(data) {
+            var loader = new Y.Loader({
+                require: ["color-hsv"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("color-hsv")) > -1, "Module (color-hsv) not found in sorted array");
         },
      "Testing console": function(data) {
             var loader = new Y.Loader({
@@ -2936,6 +3008,37 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("tabview-plugin")) > -1, "Module (tabview-plugin) not found in sorted array");
+        },
+     "Testing template": function(data) {
+            var loader = new Y.Loader({
+                require: ["template"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("template-base")) > -1, "Module (template-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("template-micro")) > -1, "Module (template-micro) not found in sorted array");
+        },
+     "Testing template-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["template-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("template-base")) > -1, "Module (template-base) not found in sorted array");
+        },
+     "Testing template-micro": function(data) {
+            var loader = new Y.Loader({
+                require: ["template-micro"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("template-micro")) > -1, "Module (template-micro) not found in sorted array");
         },
      "Testing test": function(data) {
             var loader = new Y.Loader({

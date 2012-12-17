@@ -151,7 +151,7 @@ Quick Example:
         handles: 't, tr, r, br, b, bl, l, tl'
     });
 
-Check the list of <a href="Resize.html#configattributes">Configuration Attributes</a> available for
+Check the list of <a href="Resize.html#attrs">Configuration Attributes</a> available for
 Resize.
 
 @class Resize

@@ -1,0 +1,63 @@
+
+function updateOutput(hslString) {
+    swatchTip.remove();
+    clearColorSwatches();
+    makeColorSwatches(hslString);
+}
+
+function clearColorSwatches() {
+    complementary.empty();
+    split.empty();
+    analogous.empty();
+    triad.empty();
+    square.empty();
+    tetrad.empty();
+    mono.empty();
+    similar.empty();
+}
+
+function makeColorSwatches(hslString) {
+    // complementary swatches
+    Y.Array.each(Y.Color.getComplementary(hslString), function(color) {
+        complementary.append(getColorSwatch(color));
+    });
+
+    // split complementary swatches
+    Y.Array.each(Y.Color.getSplit(hslString), function(color){
+        split.append(getColorSwatch(color));
+    });
+
+    // analogous swatches
+    Y.Array.each(Y.Color.getAnalogous(hslString), function(color) {
+        analogous.append(getColorSwatch(color));
+    });
+
+    // triad swatches
+    Y.Array.each(Y.Color.getTriad(hslString), function(color) {
+        triad.append(getColorSwatch(color));
+    });
+
+    // square swatches
+    Y.Array.each(Y.Color.getSquare(hslString), function(color) {
+        square.append(getColorSwatch(color));
+    });
+
+    // tetrad swatches
+    Y.Array.each(Y.Color.getTetrad(hslString), function(color) {
+        tetrad.append(getColorSwatch(color));
+    });
+
+    // monochrome swatches
+    Y.Array.each(Y.Color.getMonochrome(hslString), function(color) {
+        mono.append(getColorSwatch(color));
+    });
+
+    // similar swatches
+    Y.Array.each(Y.Color.getSimilar(hslString), function(color) {
+        similar.append(getColorSwatch(color));
+    });
+}
+
+function getColorSwatch(color) {
+    return '<span class="color swatch" style="background-color:' + color + '" title="' + color + '"></span>';
+}

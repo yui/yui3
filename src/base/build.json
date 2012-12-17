@@ -1,14 +1,14 @@
 {
     "name": "base",
     "builds": {
-        "base-pluginhost": {
-            "jsfiles": [
-                "BasePluginHost.js"
-            ]
-        },
         "base-core": {
             "jsfiles": [
                 "BaseCore.js"
+            ]
+        },
+        "base-observable": {
+            "jsfiles": [
+                "BaseObservable.js"
             ]
         },
         "base-base": {
@@ -19,6 +19,11 @@
         "base-build": {
             "jsfiles": [
                 "BaseBuild.js"
+            ]
+        },
+        "base-pluginhost": {
+            "jsfiles": [
+                "BasePluginHost.js"
             ]
         }
     }

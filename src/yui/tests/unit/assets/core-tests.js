@@ -740,6 +740,18 @@ YUI.add('core-tests', function(Y) {
 
             test.wait();
         },
+        'test y.guid': function() {
+            //I can't add tests for this because the API is screwed so I'm adding logical tests with my code update
+            var time = new Date().getTime(),
+                myY = YUI(),
+                idx = myY.Env.yidx,
+                version = '3.5.0-2pre+';
+            //This is what Y.Env._guidp should be if Y.version is '3.5.0-2pre+'
+            myY.Env._guidp = ('yui_' + version + '_' + idx + '_' + time).replace(/[^a-z0-9_]+/g, '_');
+            Y.Assert.areEqual('yui_3_5_0_2pre__' + idx + '_' + time, myY.Env._guidp);
+            Y.Assert.areEqual('yui_3_5_0_2pre__' + idx + '_' + time + '_2', myY.guid());
+            Y.Assert.areEqual('yui_3_5_0_2pre__' + idx + '_' + time + '_3', myY.guid());
+        },
         'test Y.config.global': function() {
             var global = Function('return this')();
             Y.Assert.areEqual(global, Y.config.global);
