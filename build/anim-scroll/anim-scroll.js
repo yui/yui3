@@ -13,7 +13,7 @@ var NUM = Number;
 Y.Anim.behaviors.scroll = {
     set: function(anim, att, from, to, elapsed, duration, fn) {
         var
-            node = anim._node, 
+            node = anim._node,
             val = ([
             fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
             fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)

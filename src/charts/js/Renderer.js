@@ -12,7 +12,7 @@ function Renderer(){}
 Renderer.ATTRS = {
         /**
          * Style properties for class
-         * 
+         *
          * @attribute styles
          * @type Object
          */
@@ -29,7 +29,7 @@ Renderer.ATTRS = {
                 this._styles = this._setStyles(val);
             }
         },
-        
+
         /**
          * The graphic in which drawings will be rendered.
          *
@@ -49,7 +49,7 @@ Renderer.prototype = {
      * @private
      */
 	_styles: null,
-	
+
     /**
      * Method used by `styles` setter.
      *
@@ -63,9 +63,9 @@ Renderer.prototype = {
 		var styles = this.get("styles");
         return this._mergeStyles(newstyles, styles);
 	},
-    
+
     /**
-     * Merges to object literals so that only specified properties are 
+     * Merges to object literals so that only specified properties are
      * overwritten.
      *
      * @method _mergeStyles
@@ -96,7 +96,7 @@ Renderer.prototype = {
     },
 
     /**
-     * Gets the default value for the `styles` attribute. 
+     * Gets the default value for the `styles` attribute.
      *
      * @method _getDefaultStyles
      * @return Object

@@ -1,7 +1,7 @@
 /**
- * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Path.html">`Path`</a> class. 
- * `SVGPath` is not intended to be used directly. Instead, use the <a href="Path.html">`Path`</a> class. 
- * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Path.html">`Path`</a> 
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Path.html">`Path`</a> class.
+ * `SVGPath` is not intended to be used directly. Instead, use the <a href="Path.html">`Path`</a> class.
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Path.html">`Path`</a>
  * class will point to the `SVGPath` class.
  *
  * @module graphics
@@ -32,7 +32,7 @@ Y.extend(SVGPath, Y.SVGShape, {
      * @private
      */
     _right: 0,
-    
+
     /**
      * Top edge of the path
      *
@@ -40,8 +40,8 @@ Y.extend(SVGPath, Y.SVGShape, {
      * @type Number
      * @private
      */
-    _top: 0, 
-    
+    _top: 0,
+
     /**
      * Bottom edge of the path
      *
@@ -90,7 +90,7 @@ SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 
 	/**
 	 * Indicates the width of the shape
-	 * 
+	 *
 	 * @config width
 	 * @type Number
 	 */
@@ -104,7 +104,7 @@ SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 
 	/**
 	 * Indicates the height of the shape
-	 * 
+	 *
 	 * @config height
 	 * @type Number
 	 */
