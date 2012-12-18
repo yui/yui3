@@ -1,6 +1,6 @@
     /**
      * Provides advanced positioning support for Node via a Plugin
-     * for centering and alignment. 
+     * for centering and alignment.
      * @module align-plugin
      */
 
@@ -19,8 +19,11 @@
         if (config.host) {
             this._host = config.host;
         }
+
+        // assign the on resize token from the configuration provided or by default
+        this._onresizeToken = config.onresizeToken ? config.onresizeToken : "resize";
     }
-        
+
     Align.prototype = {
         /**
          * Aligns node with a point on another node or region.
@@ -45,11 +48,11 @@
          *      <dt>cc</dt>
          *      <dd>center center</dd>
          * </dl>
-         * @method to 
+         * @method to
          * @param region {String || Node || HTMLElement || Object} The node or
          * region to align with. Defaults to the viewport region.
          * @param regionPoint {String} The point of the region to align with.
-         * @param point {String} The point of the node aligned to the region. 
+         * @param point {String} The point of the node aligned to the region.
          * @param resize {Boolean} Whether or not the node should re-align when
          * the window is resized. Defaults to false.
          */
@@ -91,7 +94,7 @@
                 if (xy && node) {
                     node.setXY(xy);
                 }
-                
+
                 this._resize(syncOnResize);
 
             }
@@ -106,7 +109,7 @@
         _resize: function(add) {
             var handle = this._handle;
             if (add && !handle) {
-                this._handle = Y.on('resize', this._onresize, window, this);
+                this._handle = Y.on(this._onresizeToken, this._onresize, window, this);
             } else if (!add && handle) {
                 handle.detach();
             }
@@ -119,24 +122,24 @@
                 self.sync();
             });
         },
-    
+
         /**
          * Aligns the center of a node to the center of another node or region.
-         * @method center 
+         * @method center
          * @param region {Node || HTMLElement || Object} optional The node or
          * region to align with. Defaults to the viewport region.
          * the window is resized. If centering to viewport, this defaults
          * to true, otherwise default is false.
          */
         center: function(region, resize) {
-            this.to(region, 'cc', 'cc', resize); 
+            this.to(region, 'cc', 'cc', resize);
             return this;
         },
 
         /**
          * Removes the resize handler, if any. This is called automatically
          * when unplugged from the host node.
-         * @method destroy 
+         * @method destroy
          */
         destroy: function() {
             var handle = this._handle;
