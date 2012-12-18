@@ -482,6 +482,8 @@ proto = {
             } else {
                 docEl.insertBefore(YUI.Env.cssStampEl, docEl.firstChild);
             }
+        } else if (doc && doc.getElementById(CSS_STAMP_EL) && !YUI.Env.cssStampEl) {
+            YUI.Env.cssStampEl = doc.getElementById(CSS_STAMP_EL);
         }
 
         Y.config.lang = Y.config.lang || 'en-US';
@@ -20526,22 +20528,5 @@ YUI.add('yui', function (Y, NAME) {
 
 
 
-}, '@VERSION@', {
-    "use": [
-        "yui",
-        "oop",
-        "dom",
-        "event-custom-base",
-        "event-base",
-        "pluginhost",
-        "node",
-        "event-delegate",
-        "io-base",
-        "json-parse",
-        "transition",
-        "selector-css3",
-        "dom-style-ie",
-        "querystring-stringify-simple"
-    ]
-});
+}, '@VERSION@', {"use": ["yui", "oop", "dom", "event-custom-base", "event-base", "pluginhost", "node", "event-delegate", "io-base", "json-parse", "transition", "selector-css3", "dom-style-ie", "querystring-stringify-simple"]});
 var Y = YUI().use('*');
