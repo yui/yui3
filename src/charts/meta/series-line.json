@@ -1,0 +1,7 @@
+{
+    "series-line": {
+        "requires":[
+            "series-line-util"
+        ]
+    }
+}

@@ -1,18 +1,24 @@
 /**
- * StackedData manages stacked numeric data on an axis.
+ * The axis-stacked submodule contains the core functionality for the handling of stacked axis data for a chart.
  *
- * @submodule charts-base
- * @class StackedData
+ * @submodule axis-stacked
+ */
+
+/**
+ * StackedImpl manages stacked numeric axis data.
+ *
+ * @submodule axis-stacked
+ * @class StackedImpl
  * @constructor
  */
-function StackedData()
+function StackedImpl()
 {
 }
 
-StackedData.NAME = "stackedData";
+StackedImpl.NAME = "stackedImpl";
 
 
-StackedData.prototype = {
+StackedImpl.prototype = {
     /**
      * Calculates the maximum and minimum values for the `Data`.
      *
@@ -94,5 +100,5 @@ StackedData.prototype = {
     }
 };
 
-Y.StackedData = StackedData;
+Y.StackedImpl = StackedImpl;
 

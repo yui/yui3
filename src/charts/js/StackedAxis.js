@@ -6,7 +6,7 @@
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Axis. 
  * @extends NumericAxis
- * @uses StackedData
+ * @uses StackedImpl
  */
-Y.StackedAxis = Y.Base.create("stackedAxis", Y.NumericAxis, [Y.StackedData]);
+Y.StackedAxis = Y.Base.create("stackedAxis", Y.NumericAxis, [Y.StackedImpl]);
 

@@ -7,11 +7,11 @@
  */
 
 /**
- * The charts-base submodule contains the core functionality for the charts module.
+ * The axis-base submodule contains functionality for the handling of axis data in a chart.
  *
- * @module charts
- * @submodule charts-base
+ * @submodule axis-base
  */
+
 var CONFIG = Y.config,
     WINDOW = CONFIG.win,
     DOCUMENT = CONFIG.doc,
@@ -31,7 +31,6 @@ var CONFIG = Y.config,
  * attribute.
  *
  * @module charts
- * @submodule charts-base
  * @class Renderer
  * @constructor
  */

@@ -9,6 +9,7 @@
  * @uses StackingUtil
  * @constructor
  */
+var Y_Lang = Y.Lang;
 Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.StackingUtil], {
     /**
      * Draws the series.

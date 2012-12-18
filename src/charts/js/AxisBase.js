@@ -1,13 +1,13 @@
 /**
- * AxisObservable is an abstract class that manages the data for an axis.
+ * AxisBase is an abstract class that manages the data for an axis.
  *
- * @submodule charts-base
- * @class AxisObservable
+ * @submodule axis-base 
+ * @class AxisBase
  * @constructor
  * @extends Base
  * @uses Renderer 
  */
-Y.AxisObservable = Y.Base.create("axisObservable", Y.Base, [Y.Renderer], {
+Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     /**
      * @method initializer
      * @private

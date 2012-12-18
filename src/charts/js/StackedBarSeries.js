@@ -9,6 +9,7 @@
  * @uses StackingUtil
  * @constructor
  */
+var Y_Lang = Y.Lang;
 Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingUtil], {
     /**
      * @protected

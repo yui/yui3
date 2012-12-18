@@ -4,7 +4,7 @@
  * @submodule charts-base
  * @class Axis
  * @extends Widget
- * @uses AxisObservable 
+ * @uses AxisBase 
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Axis.
  */
@@ -20,7 +20,7 @@ var CONFIG = Y.config,
     TopAxisLayout,
     _getClassName = Y.ClassNameManager.getClassName,
     SERIES_MARKER = _getClassName("seriesmarker");
-Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisObservable], {
+Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     /**
      * Calculates and returns a value based on the number of labels and the index of
      * the current label.

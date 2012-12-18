@@ -1,4 +1,19 @@
 /**
+ * The charts-base submodule contains the core functionality for the charts module.
+ *
+ * @module charts
+ * @submodule charts-base
+ */
+var CONFIG = Y.config,
+    WINDOW = CONFIG.win,
+    DOCUMENT = CONFIG.doc,
+    Y_Lang = Y.Lang,
+    IS_STRING = Y_Lang.isString,
+    Y_DOM = Y.DOM,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
+
+/**
  * Gridlines draws gridlines on a Graph.
  *
  * @module charts

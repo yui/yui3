@@ -1,17 +1,17 @@
 /**
- * NumericData manages numeric data on an axis.
+ * NumericImpl manages numeric data on an axis.
  *
  * @submodule charts-base
- * @class NumericData
+ * @class NumericImpl
  * @constructor
  */
-function NumericData()
+function NumericImpl()
 {
 }
 
-NumericData.NAME = "numericData";
+NumericImpl.NAME = "numericImpl";
 
-NumericData.ATTRS = {
+NumericImpl.ATTRS = {
     /**
      * The maximum value contained in the `data` array. Used for
      * `maximum` when `autoMax` is true.
@@ -101,7 +101,7 @@ NumericData.ATTRS = {
     }
 };
 
-NumericData.prototype = {
+NumericImpl.prototype = {
     /**
      * Formats a label based on the axis type and optionally specified format.
      *
@@ -715,5 +715,5 @@ NumericData.prototype = {
     }
 };
 
-Y.NumericData = NumericData;
+Y.NumericImpl = NumericImpl;
 

@@ -1,17 +1,17 @@
 /**
- * TimeData manages time data on an axis.
+ * TimeImpl manages time data on an axis.
  *
  * @submodule charts-base
- * @class TimeData
+ * @class TimeImpl
  * @constructor
  */
-function TimeData()
+function TimeImpl()
 {
 }
 
-TimeData.NAME = "timeData";
+TimeImpl.NAME = "timeImpl";
 
-TimeData.ATTRS =
+TimeImpl.ATTRS =
 {
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
@@ -50,7 +50,7 @@ TimeData.ATTRS =
     }
 };
 
-TimeData.prototype = {
+TimeImpl.prototype = {
     _maximumGetter: function ()
     {
         var max = this._getNumber(this._setMaximum);
@@ -295,5 +295,5 @@ TimeData.prototype = {
     }
 };
 
-Y.TimeData = TimeData;
+Y.TimeImpl = TimeImpl;
 

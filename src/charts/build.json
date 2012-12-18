@@ -1,26 +1,30 @@
 {
     "name": "charts",
     "builds": {
-        "axis-core" : {
+        "axis-base" : {
             "jsfiles": [
                 "Renderer.js",
-                "AxisObservable.js",
-                "NumericData.js",
-                "TimeData.js",
-                "CategoryData.js",
-                "StackedData.js",
-                "NumericAxisObservable.js",
-                "StackedAxisObservable.js",
-                "TimeAxisObservable.js",
-                "CategoryAxisObservable.js"
+                "AxisBase.js",
+                "CategoryImpl.js",
+                "NumericImpl.js",
+                "TimeImpl.js",
+                "CategoryAxisBase.js",
+                "NumericAxisBase.js",
+                "TimeAxisBase.js"
             ]
         },
-        "series-core" : {
+        "axis-stacked" : {
+            "jsfiles" : [
+                "StackedImpl.js",
+                "StackedAxisBase.js"
+            ]
+        },
+        "series-base" : {
             "jsfiles": [
                 "CartesianSeries.js"
             ]
         },
-        "axis-widget" : {
+        "axis-display" : {
             "jsfiles" : [
                 "LeftAxisLayout.js",
                 "RightAxisLayout.js",
@@ -34,7 +38,7 @@
                 "CategoryAxis.js"
             ]
         },
-        "series-stacking" : {
+        "series-stacked" : {
             "jsfiles" : [
                 "StackingUtil.js"
             ]
@@ -64,16 +68,44 @@
                 "LineSeries.js"
             ]
         },
+        "series-line-stacked" : {
+            "jsfiles" : [
+                "StackedLineSeries.js"
+            ]
+        },
         "series-marker" : {
             "jsfiles" : [
                 "MarkerSeries.js"
             ]
         },
-        "series-histogram" : {
+        "series-marker-stacked" : {
             "jsfiles" : [
-                "Histogram.js",
-                "ColumnSeries.js",
+                "StackedMarkerSeries.js"
+            ]
+        },
+        "series-histogram-base" : {
+            "jsfiles" : [
+                "Histogram.js"
+            ]
+        },
+        "series-column" : {
+            "jsfiles" : [
+                "ColumnSeries.js"
+            ]
+        },
+        "series-column-stacked" : {
+            "jsfiles" : [
+                "StackedColumnSeries.js"
+            ]
+        },
+        "series-bar" : {
+            "jsfiles" : [
                 "BarSeries.js"
+            ]
+        },
+        "series-bar-stacked" : {
+            "jsfiles" : [
+                "StackedBarSeries.js"
             ]
         },
         "series-pie" : {
@@ -86,9 +118,19 @@
                 "SplineSeries.js"
             ]
         },
+        "series-spline-stacked" : {
+            "jsfiles" : [
+                "StackedSplineSeries.js"
+            ]
+        },
         "series-area" : {
             "jsfiles" : [
                 "AreaSeries.js"
+            ]
+        },
+        "series-area-stacked" : {
+            "jsfiles" : [
+                "StackedAreaSeries.js"
             ]
         },
         "series-areaspline" : {
@@ -96,9 +138,19 @@
                 "AreaSplineSeries.js"
             ]
         },
+        "series-areaspline-stacked" : {
+            "jsfiles" : [
+                "StackedAreaSplineSeries.js"
+            ]
+        },
         "series-combo" : {
             "jsfiles" : [
                 "ComboSeries.js"
+            ]
+        },
+        "series-combo-stacked" : {
+            "jsfiles" : [
+                "StackedComboSeries.js"
             ]
         },
         "series-combospline" : {
@@ -106,17 +158,13 @@
                 "ComboSplineSeries.js"
             ]
         },
+        "series-combospline-stacked" : {
+            "jsfiles" : [
+                "StackedComboSplineSeries.js"
+            ]
+        },
         "charts-base": {
             "jsfiles": [
-                "StackedSplineSeries.js",
-                "StackedMarkerSeries.js",
-                "StackedAreaSplineSeries.js",
-                "StackedComboSeries.js",
-                "StackedComboSplineSeries.js",
-                "StackedLineSeries.js",
-                "StackedAreaSeries.js",
-                "StackedColumnSeries.js",
-                "StackedBarSeries.js",
                 "Gridlines.js",
                 "Graph.js",
                 "ChartBase.js",

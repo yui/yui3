@@ -1,10 +1,13 @@
 {
     "charts-base": {
         "requires":[
-            "axis-widget",
+            "dom", 
+            "event-mouseenter", 
+            "event-touch", 
+            "axis-display",
             "series-cartesian",
             "series-pie",
-            "series-stacking"
+            "series-cartesian-stacked"
         ]
     }
 }
