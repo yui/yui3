@@ -318,7 +318,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         }
 
         menuRegion = this._getSortedAnchorRegions(
-            ['tl-bl', 'tr-br', 'bl-tl', 'br-tr'],
+            this.get('alignments'),
             container.get('region'),
             anchorRegion
         )[0].region;
@@ -594,9 +594,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         var childrenNode = htmlNode.one('.' + this.classNames.children),
 
             anchors = this._getSortedAnchorRegions(
-                (item.parent && item.parent.data.menuAnchors) || [
-                    'tl-tr', 'bl-br', 'tr-tl', 'br-bl'
-                ],
+                (item.parent && item.parent.data.menuAnchors) || this.get('subMenuAlignments'),
                 childrenNode.get('region'),
                 htmlNode.get('region')
             );
@@ -1007,6 +1005,40 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
 }, {
     ATTRS: {
         /**
+        Preferred alignment positions at which this menu should be displayed
+        relative to the anchor point when one is provided to the `show()`,
+        `toggle()`, or `reposition()` methods.
+
+        The most optimal alignment position will be chosen automatically based
+        on which one allows the most of this menu to be visible within the
+        browser's viewport. If multiple positions are equally visible, then the
+        optimal position will be chosen based on its order in this array.
+
+        An alignment position is a string like "tl-bl", which means "align the
+        top left of this menu to the bottom left of its anchor point".
+
+        Any combination of top/bottom/left/right alignment positions may be used
+        as long as they follow this format. Here are a few examples:
+
+          * `'bl-br'`: Align the bottom left of this menu with the bottom right
+            of the anchor point.
+          * `'br-bl'`: Align the bottom right of this menu with the bottom left
+            of the anchor point.
+          * `'tl-tr'`: Align the top left of this menu with the top right of
+            the anchor point.
+          * `'tr-tl'`: Align the top right of this menu to the top left of this
+            anchor point.
+
+        @attribute {String[]} alignments
+        @default ['tl-bl', 'tr-br', 'bl-tl', 'br-tr']
+        **/
+        alignments: {
+            valueFn: function () {
+                return ['tl-bl', 'tr-br', 'bl-tl', 'br-tr'];
+            }
+        },
+
+        /**
         If `true`, this menu will be hidden when the user moves the mouse
         outside the menu.
 
@@ -1026,6 +1058,19 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         **/
         hideOnOutsideClick: {
             value: true
+        },
+
+        /**
+        Just like `alignments`, but for submenus of this menu. See the
+        `alignments` attribute for details on how alignment positions work.
+
+        @attribute {String[]} subMenuAlignments
+        @default ['tl-tr', 'bl-br', 'tr-tl', 'br-bl']
+        **/
+        subMenuAlignments: {
+            valueFn: function () {
+                return ['tl-tr', 'bl-br', 'tr-tl', 'br-bl'];
+            }
         },
 
         /**
