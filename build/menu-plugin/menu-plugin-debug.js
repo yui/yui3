@@ -173,18 +173,6 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
 
     ATTRS: {
         /**
-        If `true`, this menu will be hidden when the user moves the mouse
-        outside the menu.
-
-        @attribute {Boolean} hideOnMouseLeave
-        @default true
-        **/
-        hideOnMouseLeave: {
-            // Overrides the default value in Y.Menu.
-            value: true
-        },
-
-        /**
         If `true`, this menu will be shown when the host node is clicked with
         the left mouse button or (in the case of `<button>`, `<input>`, and
         `<a>` elements) activated with the Return key.
