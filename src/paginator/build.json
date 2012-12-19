@@ -1,0 +1,34 @@
+{
+    "name": "paginator",
+    "builds": {
+        "paginator": {
+            "uses": [
+                "paginator-base",
+                "paginator-model",
+                "paginator-view",
+                "paginator-templates"
+            ]
+        },
+        "paginator-base": {
+            "jsfiles": [
+                "paginator.js"
+            ]
+        },
+        "paginator-model": {
+            "jsfiles": [
+                "model.js"
+            ]
+        },
+        "paginator-view": {
+            "jsfiles": [
+                "view.js"
+            ]
+        },
+        "paginator-templates": {
+            "jsfiles": [
+                "templates.js"
+            ]
+        }
+    }
+}
+
