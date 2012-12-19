@@ -1,13 +1,18 @@
 /**
+ * The series-spline submodule contains functionality for creating a spline series.
+ *
+ * @submodule series-spline
+ */
+/**
  * SplineSeries renders a graph with data points connected by a curve.
  *
- * @module charts
- * @submodule charts-base
  * @class SplineSeries
- * @constructor
  * @extends CartesianSeries
  * @uses CurveUtil
  * @uses Lines
+ * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-spline 
  */
 Y.SplineSeries = Y.Base.create("splineSeries",  Y.LineSeries, [Y.CurveUtil, Y.Lines], {
     /**

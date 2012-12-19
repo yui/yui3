@@ -1,7 +1,7 @@
 {
     "series-histogram-base": {
         "requires":[
-            "series-plot-util"
+            "series-marker"
         ]
     }
 }

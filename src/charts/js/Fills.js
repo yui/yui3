@@ -1,9 +1,15 @@
 /**
- * Utility class used for drawing area fills.
+ * The series-fill-util submodule contains functionality for drawing fills.
  *
  * @module charts
+ * @submodule series-fill-util
+ */
+/**
+ * Utility class used for drawing area fills.
+ *
  * @class Fills
  * @constructor
+ * @submodule series-fill-util
  */
 var Y_Lang = Y.Lang;
 function Fills(cfg)

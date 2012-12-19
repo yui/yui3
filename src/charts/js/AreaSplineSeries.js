@@ -1,13 +1,19 @@
 /**
- * AreaSplineSeries renders an area graph with data points connected by a curve.
+ * The series-areaspline submodule contains functionality for creating a areaspline series.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-areaspline
+ */
+/**
+ * AreaSplineSeries renders an area graph with data points connected by a curve.
+ *
  * @class AreaSplineSeries
- * @constructor
  * @extends CartesianSeries
  * @uses Fills
  * @uses CurveUtil
+ * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-areaspline 
  */
 Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.AreaSeries, [Y.CurveUtil], {
     /**

@@ -1,10 +1,10 @@
 /**
  * Histogram is the base class for Column and Bar series.
  *
- * @module charts
- * @submodule charts-base
  * @class Histogram
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-histogram 
  */
 var Y_Lang = Y.Lang;
 

@@ -1,12 +1,17 @@
 /**
+ * The series-line submodule contains functionality for creating a line series.
+ *
+ * @submodule series-line
+ */
+/**
  * The LineSeries class renders quantitative data on a graph by connecting relevant data points.
  *
- * @module charts
- * @submodule charts-base
  * @class LineSeries
  * @extends CartesianSeries
  * @uses Lines
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-line 
  */
 Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
     /**

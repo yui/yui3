@@ -1,13 +1,18 @@
 /**
+ * The series-marker-stacked submodule contains functionality for creating a stacked marker series.
+ *
+ * @submodule series-marker-stacked
+ */
+/**
  * StackedMarkerSeries plots markers with different series stacked along the value axis to indicate each
  * series' contribution to a cumulative total.
  *
- * @module charts
- * @submodule charts-base
  * @class StackedMarkerSeries
  * @constructor
  * @extends MarkerSeries
- * @extends StackingUtil
+ * @uses StackingUtil
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-marker-stacked 
  */
 Y.StackedMarkerSeries = Y.Base.create("stackedMarkerSeries", Y.MarkerSeries, [Y.StackingUtil], {
     /**

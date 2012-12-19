@@ -1,9 +1,9 @@
 /**
  * NumericImpl manages numeric data on an axis.
  *
- * @submodule charts-base
  * @class NumericImpl
  * @constructor
+ * @submodule axis-base
  */
 function NumericImpl()
 {

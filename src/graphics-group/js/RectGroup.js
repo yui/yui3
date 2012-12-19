@@ -1,10 +1,9 @@
 /**
  * Abstract class for creating groups of rects with the same styles and dimensions.
  *
- * @module charts
- * @submodule charts-base
  * @class GroupRect
  * @constructor
+ * @submodule graphics-group
  */
  RectGroup = function()
  {

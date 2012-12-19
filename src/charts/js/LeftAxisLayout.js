@@ -1,10 +1,26 @@
 /**
+ * The axis-display submodule contains functionality for creating chart axes.
+ *
+ * @submodule axis-display
+ */
+var CONFIG = Y.config,
+    WINDOW = CONFIG.win,
+    DOCUMENT = CONFIG.doc,
+    Y_Lang = Y.Lang,
+    IS_STRING = Y_Lang.isString,
+    Y_DOM = Y.DOM,
+    LeftAxisLayout,
+    RightAxisLayout,
+    BottomAxisLayout,
+    TopAxisLayout,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
+/**
  * Algorithmic strategy for rendering a left axis.
  *
- * @module charts
- * @submodule charts-base
  * @class LeftAxisLayout
  * @constructor
+ * @submodule axis-display
  */
 LeftAxisLayout = function() {};
 

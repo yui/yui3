@@ -1,10 +1,11 @@
 /**
  * TimeAxisBase manages time data for an axis.
  *
- * @submodule axis-base 
  * @class TimeAxisBase
- * @constructor
  * @extends AxisBase
- * @uses TimeImpl 
+ * @uses TimeImpl
+ * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule axis-base
  */
 Y.TimeAxisBase = Y.Base.create("timeAxisBase", Y.AxisBase, [Y.TimeImpl]);

@@ -1,14 +1,20 @@
 /**
- * Utility class used for drawing markers.
+ * The series-plot-util submodule contains functionality for drawing plots.
  *
  * @module charts
- * @submodule charts-base
- * @class Plots
- * @constructor
+ * @submodule series-plot-util
  */
 var Y_Lang = Y.Lang,
     _getClassName = Y.ClassNameManager.getClassName,
     SERIES_MARKER = _getClassName("seriesmarker");
+
+/**
+ * Utility class used for drawing markers.
+ *
+ * @class Plots
+ * @constructor
+ * @submodule series-plot-util 
+ */
 function Plots(cfg)
 {
     var attrs = {

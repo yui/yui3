@@ -4,12 +4,12 @@
  * series type has a corresponding boolean attribute indicating if it is rendered. By default, all three types are
  * rendered.
  *
- * @module charts
- * @submodule charts-base
  * @class StackedComboSeries
  * @extends ComboSeries
  * @uses StackingUtil
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-combo-stacked 
  */
 Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.StackingUtil], {
     /**

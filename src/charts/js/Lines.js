@@ -1,10 +1,15 @@
 /**
- * Utility class used for drawing lines.
+ * The series-line-util submodule contains functionality for drawing lines.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-line-util
+ */
+/**
+ * Utility class used for drawing lines.
+ *
  * @class Lines
  * @constructor
+ * @submodule series-line-util 
  */
 var Y_Lang = Y.Lang;
 function Lines(){}

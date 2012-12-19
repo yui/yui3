@@ -4,6 +4,7 @@
             "dom", 
             "event-mouseenter", 
             "event-touch", 
+            "graphics-group",
             "axis-display",
             "series-cartesian",
             "series-pie",

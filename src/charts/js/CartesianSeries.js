@@ -3,17 +3,18 @@
  *
  * @submodule series-base
  */
+var Y_Lang = Y.Lang;
 
 /**
  * The CartesianSeries class creates a chart with horizontal and vertical axes.
  *
- * @submodule series-base 
  * @class CartesianSeries
  * @extends Base
  * @uses Renderer
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-base 
  */
-var Y_Lang = Y.Lang;
 Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     /**
      * Storage for `xDisplayName` attribute.

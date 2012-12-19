@@ -4,7 +4,8 @@
             "dom", 
             "widget", 
             "widget-position", 
-            "widget-stack", 
+            "widget-stack",
+            "graphics", 
             "axis-base",
             "axis-stacked"
         ]

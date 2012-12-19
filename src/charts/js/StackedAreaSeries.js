@@ -1,13 +1,17 @@
 /**
+ * The series-area-stacked submodule contains functionality for creating a stacked area series.
+ *
+ * @submodule series-area-stacked
+ */
+/**
  * StackedAreaSeries area fills to display data showing its contribution to a whole.
  *
- * @module charts
- * @submodule charts-base
  * @class StackedAreaSeries
- * @constructor
- * @param {Object} config (optional) Configuration parameters for the Chart.
  * @extends AreaSeries
  * @uses StackingUtil
+ * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-area-stacked 
  */
 Y.StackedAreaSeries = Y.Base.create("stackedAreaSeries", Y.AreaSeries, [Y.StackingUtil], {
     /**

@@ -2,11 +2,11 @@
  * PieSeries visualizes data as a circular chart divided into wedges which represent data as a
  * percentage of a whole.
  *
- * @module charts
- * @submodule charts-base
  * @class PieSeries
  * @constructor
  * @extends MarkerSeries
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-pie 
  */
 var CONFIG = Y.config,
     DOCUMENT = CONFIG.doc,

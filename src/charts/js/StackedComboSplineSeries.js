@@ -4,12 +4,12 @@
  * series type has a corresponding boolean attribute indicating if it is rendered. By default, all three types are
  * rendered.
  *
- * @module charts
- * @submodule charts-base
  * @class StackedComboSplineSeries
  * @extends StackedComboSeries
  * @uses CurveUtil
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-combospline-stacked 
  */
 Y.StackedComboSplineSeries = Y.Base.create("stackedComboSplineSeries", Y.StackedComboSeries, [Y.CurveUtil], {
     /**

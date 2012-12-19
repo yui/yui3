@@ -1,9 +1,9 @@
 /**
  * TimeImpl manages time data on an axis.
  *
- * @submodule charts-base
  * @class TimeImpl
  * @constructor
+ * @submodule axis-base
  */
 function TimeImpl()
 {
@@ -60,13 +60,13 @@ TimeImpl.prototype = {
         }
         return parseFloat(max);
     },
-    
+   
     _maximumSetter: function (value)
     {
         this._setMaximum = this._getNumber(value);
         return value;
     },
-    
+   
     _minimumGetter: function ()
     {
         var min = this._getNumber(this._setMinimum);

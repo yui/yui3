@@ -1,25 +1,17 @@
 /**
  * The Axis class. Generates axes for a chart.
  *
- * @submodule charts-base
  * @class Axis
  * @extends Widget
- * @uses AxisBase 
+ * @uses AxisBase
+ * @uses TopAxisLayout
+ * @uses RightAxisLayout
+ * @uses BottomAxisLayout
+ * @uses LeftAxisLayout 
  * @constructor
- * @param {Object} config (optional) Configuration parameters for the Axis.
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule axis-display
  */
-var CONFIG = Y.config,
-    WINDOW = CONFIG.win,
-    DOCUMENT = CONFIG.doc,
-    Y_Lang = Y.Lang,
-    IS_STRING = Y_Lang.isString,
-    Y_DOM = Y.DOM,
-    LeftAxisLayout,
-    RightAxisLayout,
-    BottomAxisLayout,
-    TopAxisLayout,
-    _getClassName = Y.ClassNameManager.getClassName,
-    SERIES_MARKER = _getClassName("seriesmarker");
 Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     /**
      * Calculates and returns a value based on the number of labels and the index of

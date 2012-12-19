@@ -1,15 +1,21 @@
 /**
+ * The series-bar-stacked submodule contains functionality for creating a stacked bar series.
+ *
+ * @submodule series-bar-stacked
+ */
+var Y_Lang = Y.Lang;
+
+/**
  * The StackedBarSeries renders bar chart in which series are stacked horizontally to show
  * their contribution to the cumulative total.
  *
- * @module charts
- * @submodule charts-base
  * @class StackedBarSeries
  * @extends BarSeries
  * @uses StackingUtil
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-bar-stacked 
  */
-var Y_Lang = Y.Lang;
 Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingUtil], {
     /**
      * @protected

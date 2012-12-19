@@ -1,15 +1,21 @@
 /**
+ * The series-column-stacked submodule contains functionality for creating a stacked column series.
+ *
+ * @submodule series-column-stacked
+ */
+var Y_Lang = Y.Lang;
+
+/**
  * The StackedColumnSeries renders column chart in which series are stacked vertically to show
  * their contribution to the cumulative total.
  *
- * @module charts
- * @submodule charts-base
  * @class StackedColumnSeries
  * @extends ColumnSeries
  * @uses StackingUtil
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-column-stacked 
  */
-var Y_Lang = Y.Lang;
 Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.StackingUtil], {
     /**
      * Draws the series.

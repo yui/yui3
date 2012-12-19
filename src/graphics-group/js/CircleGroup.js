@@ -1,10 +1,9 @@
 /**
  * Abstract class for creating groups of circles with the same styles and dimensions.
  *
- * @module charts
- * @submodule charts-base
  * @class CircleGroup
  * @constructor
+ * @submodule graphics-group
  */
  CircleGroup = function()
  {

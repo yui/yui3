@@ -1,13 +1,18 @@
 /**
+ * The series-marker submodule contains functionality for creating a marker series.
+ *
+ * @submodule series-marker
+ */
+/**
  * The MarkerSeries class renders quantitative data by plotting relevant data points
  * on a graph.
  *
- * @module charts
- * @submodule charts-base
  * @class MarkerSeries
  * @extends CartesianSeries
  * @uses Plots
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-marker 
  */
 Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
     /**

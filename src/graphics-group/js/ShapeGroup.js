@@ -1,8 +1,8 @@
 /**
- * Abstract class for creating groups of shapes with the same styles and dimensions.
+ * The graphics-group submodule allows from drawing a shape multiple times within a single instance.
  *
- * @class ShapeGroup
- * @constructor
+ * @module graphics
+ * @submodule graphics-group
  */
 var ShapeGroup,
     CircleGroup,
@@ -10,7 +10,15 @@ var ShapeGroup,
     EllipseGroup,
     DiamondGroup,
     Y_Lang = Y.Lang;
- 
+
+/**
+ * Abstract class for creating groups of shapes with the same styles and dimensions.
+ *
+ * @class ShapeGroup
+ * @constructor
+ * @submodule graphics-group
+ */
+
  ShapeGroup = function()
  {
     ShapeGroup.superclass.constructor.apply(this, arguments);

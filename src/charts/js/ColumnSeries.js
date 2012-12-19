@@ -1,14 +1,19 @@
 /**
+ * The series-column submodule contains functionality for creating a column series.
+ *
+ * @submodule series-column
+ */
+/**
  * The ColumnSeries class renders columns positioned horizontally along a category or time axis. The columns'
  * lengths are proportional to the values they represent along a vertical axis.
  * and the relevant data points.
  *
- * @module charts
- * @submodule charts-base
  * @class ColumnSeries
  * @extends MarkerSeries
  * @uses Histogram
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-column 
  */
 Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
     /**
