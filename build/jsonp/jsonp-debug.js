@@ -104,11 +104,11 @@ JSONPRequest.prototype = {
             }, callback, { on: subs });
     },
 
-    /** 
+    /**
      * Override this method to provide logic to default the success callback if
      * it is not provided at construction.  This is overridden by jsonp-url to
      * parse the callback from the url string.
-     * 
+     *
      * @method _defaultCallback
      * @param url {String} the url passed at construction
      * @param config {Object} (optional) the config object passed at
@@ -117,7 +117,7 @@ JSONPRequest.prototype = {
      */
     _defaultCallback: function () {},
 
-    /** 
+    /**
      * Issues the JSONP request.
      *
      * @method send
@@ -200,7 +200,8 @@ JSONPRequest.prototype = {
             onTimeout : wrap(config.on.timeout, true),
             timeout   : config.timeout,
             charset   : config.charset,
-            attributes: config.attributes
+            attributes: config.attributes,
+            async     : config.async
         });
 
         return self;
