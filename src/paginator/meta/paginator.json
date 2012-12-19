@@ -1,0 +1,32 @@
+{
+    "paginator": {
+        "uses": [
+            "paginator-base",
+            "paginator-model",
+            "paginator-view",
+            "paginator-template"
+        ]
+    },
+    "paginator-base": {
+        "requires": [
+            "base"
+        ]
+    },
+    "paginator-model": {
+        "requires": [
+            "model"
+        ]
+    },
+    "paginator-view": {
+        "requires": [
+            "view",
+            "classnamemanager"
+        ]
+    },
+    "paginator-template": {
+        "requires": [
+            "template"
+        ]
+    }
+}
+

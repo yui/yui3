@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Paginator Demo</title>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+<div id="log"></div>
+
+<script type="text/javascript">
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    combine: false
+}).use("paginator", function(Y) {
+
+ var pg = new Y.Paginator();
+
+});
+</script>
+</body>
+</html>
