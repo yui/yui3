@@ -1,10 +1,16 @@
 JSON Utility Change History
 ===========================
 
+3.8.0.NEXT
+----------
+
+* The JavaScript fallback version is only loaded when the environment
+  doesn't provide a native implementation
+
 3.8.0
 -----
 
-  * No changes.
+* No changes.
 
 3.7.3
 -----
