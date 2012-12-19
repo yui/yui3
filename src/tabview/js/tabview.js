@@ -129,7 +129,6 @@ var _queries = Y.TabviewBase._queries,
                 tabview.add({
                     boundingBox: node,
                     contentBox: node.one(DOT + _classNames.tabLabel),
-                    label: node.one(DOT + _classNames.tabLabel).get('text'),
                     panelNode: panelNode
                 });
             });

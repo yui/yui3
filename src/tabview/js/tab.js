@@ -110,17 +110,21 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     },
 
     _defLabelSetter: function(label) {
-        this.get('contentBox').setContent(label);
+        this.get('contentBox').setHTML(label);
         return label;
     },
 
+    _defLabelGetter: function(label) {
+        return this.get('contentBox').getHTML();
+    },
+
     _defContentSetter: function(content) {
-        this.get('panelNode').setContent(content);
+        this.get('panelNode').setHTML(content);
         return content;
     },
 
     _defContentGetter: function(content) {
-        return this.get('panelNode').getContent();
+        return this.get('panelNode').getHTML();
     },
 
     // find panel by ID mapping from label href
@@ -167,6 +171,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
          */
         label: { 
             setter: '_defLabelSetter',
+            getter: '_defLabelGetter',
             validator: Lang.isString
         },
 
