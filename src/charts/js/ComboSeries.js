@@ -1,5 +1,5 @@
 /**
- * Provides functionality for creating a combo series. 
+ * Provides functionality for creating a combo series.
  *
  * @module charts
  * @submodule series-combo
@@ -16,7 +16,7 @@
  * @uses Plots
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-combo 
+ * @submodule series-combo
  */
 Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Lines, Y.Plots], {
 	/**

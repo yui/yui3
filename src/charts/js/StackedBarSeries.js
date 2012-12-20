@@ -15,7 +15,7 @@ var Y_Lang = Y.Lang;
  * @uses StackingUtil
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-bar-stacked 
+ * @submodule series-bar-stacked
  */
 Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingUtil], {
     /**

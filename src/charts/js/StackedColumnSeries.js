@@ -15,7 +15,7 @@ var Y_Lang = Y.Lang;
  * @uses StackingUtil
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-column-stacked 
+ * @submodule series-column-stacked
  */
 Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.StackingUtil], {
     /**

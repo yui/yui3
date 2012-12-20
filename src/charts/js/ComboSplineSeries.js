@@ -14,7 +14,7 @@
  * @uses CurveUtil
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-combospline 
+ * @submodule series-combospline
  */
 Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.CurveUtil], {
     /**

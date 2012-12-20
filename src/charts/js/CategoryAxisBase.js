@@ -4,8 +4,8 @@
  * @class CategoryAxisBase
  * @constructor
  * @extends AxisBase
- * @uses CategoryImpl 
+ * @uses CategoryImpl
  * @param {Object} config (optional) Configuration parameters.
- * @submodule axis-category-base 
+ * @submodule axis-category-base
  */
 Y.CategoryAxisBase = Y.Base.create("categoryAxisBase", Y.AxisBase, [Y.CategoryImpl]);

@@ -15,7 +15,7 @@
  * @uses CurveUtil
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-combospline-stacked 
+ * @submodule series-combospline-stacked
  */
 Y.StackedComboSplineSeries = Y.Base.create("stackedComboSplineSeries", Y.StackedComboSeries, [Y.CurveUtil], {
     /**

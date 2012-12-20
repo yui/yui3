@@ -13,7 +13,7 @@
  * @uses Lines
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-spline 
+ * @submodule series-spline
  */
 Y.SplineSeries = Y.Base.create("splineSeries",  Y.LineSeries, [Y.CurveUtil, Y.Lines], {
     /**

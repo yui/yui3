@@ -13,7 +13,7 @@
  * @extends MarkerSeries
  * @uses StackingUtil
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-marker-stacked 
+ * @submodule series-marker-stacked
  */
 Y.StackedMarkerSeries = Y.Base.create("stackedMarkerSeries", Y.MarkerSeries, [Y.StackingUtil], {
     /**

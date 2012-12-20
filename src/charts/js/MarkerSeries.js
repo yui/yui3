@@ -13,7 +13,7 @@
  * @uses Plots
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-marker 
+ * @submodule series-marker
  */
 Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
     /**

@@ -13,7 +13,7 @@
  * @uses CurveUtil
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-areaspline 
+ * @submodule series-areaspline
  */
 Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.AreaSeries, [Y.CurveUtil], {
     /**

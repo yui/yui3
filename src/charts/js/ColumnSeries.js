@@ -14,7 +14,7 @@
  * @uses Histogram
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-column 
+ * @submodule series-column
  */
 Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
     /**

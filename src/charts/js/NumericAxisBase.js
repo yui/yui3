@@ -4,8 +4,8 @@
  * @class NumericAxisBase
  * @constructor
  * @extends AxisBase
- * @uses NumericImpl 
+ * @uses NumericImpl
  * @param {Object} config (optional) Configuration parameters.
- * @submodule axis-numeric-base 
+ * @submodule axis-numeric-base
  */
 Y.NumericAxisBase = Y.Base.create("numericAxisBase", Y.AxisBase, [Y.NumericImpl]);

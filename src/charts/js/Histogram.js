@@ -12,7 +12,7 @@ var Y_Lang = Y.Lang;
  * @class Histogram
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-histogram 
+ * @submodule series-histogram
  */
 function Histogram(){}
 

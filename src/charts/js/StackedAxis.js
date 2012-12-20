@@ -12,7 +12,7 @@
  * @param {Object} config (optional) Configuration parameters.
  * @extends NumericAxis
  * @uses StackedImpl
- * @submodule axis-stacked 
+ * @submodule axis-stacked
  */
 Y.StackedAxis = Y.Base.create("stackedAxis", Y.NumericAxis, [Y.StackedImpl]);
 

@@ -37,7 +37,7 @@ NumericImpl.ATTRS = {
             return this._dataMaximum;
         }
     },
-    
+   
     /**
      * The minimum value contained in the `data` array. Used for
      * `minimum` when `autoMin` is true.
@@ -55,7 +55,7 @@ NumericImpl.ATTRS = {
             return this._dataMinimum;
         }
     },
-    
+   
     /**
      * Indicates whether 0 should always be displayed.
      *
@@ -588,7 +588,7 @@ NumericImpl.prototype = {
     _getLabelByIndex: function()
     {
         var i = arguments[0],
-            l = arguments[1], 
+            l = arguments[1],
             min = this.get("minimum"),
             max = this.get("maximum"),
             increm = (max - min)/(l-1),

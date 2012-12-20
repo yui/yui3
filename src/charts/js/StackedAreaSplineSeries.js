@@ -13,7 +13,7 @@
  * @uses StackingUtil
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-areaspline-stacked 
+ * @submodule series-areaspline-stacked
  */
 Y.StackedAreaSplineSeries = Y.Base.create("stackedAreaSplineSeries", Y.AreaSeries, [Y.CurveUtil, Y.StackingUtil], {
     /**

@@ -12,7 +12,7 @@
  * @constructor
  * @extends MarkerSeries
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-pie 
+ * @submodule series-pie
  */
 var CONFIG = Y.config,
     DOCUMENT = CONFIG.doc,

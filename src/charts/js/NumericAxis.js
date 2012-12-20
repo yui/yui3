@@ -12,7 +12,7 @@
  * @extends Axis
  * @uses NumericImpl
  * @param {Object} config (optional) Configuration parameters.
- * @submodule axis-numeric 
+ * @submodule axis-numeric
  */
 Y.NumericAxis = Y.Base.create("numericAxis", Y.Axis, [Y.NumericImpl]);
 

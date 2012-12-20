@@ -12,7 +12,7 @@
  * @uses Lines
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-line 
+ * @submodule series-line
  */
 Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
     /**

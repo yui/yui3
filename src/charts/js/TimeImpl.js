@@ -68,13 +68,13 @@ TimeImpl.prototype = {
         }
         return parseFloat(max);
     },
-   
+  
     _maximumSetter: function (value)
     {
         this._setMaximum = this._getNumber(value);
         return value;
     },
-   
+  
     _minimumGetter: function ()
     {
         var min = this._getNumber(this._setMinimum);

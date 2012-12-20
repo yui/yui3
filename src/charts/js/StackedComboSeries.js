@@ -1,5 +1,5 @@
 /**
- * Provides functionality for creating a stacked combo series. 
+ * Provides functionality for creating a stacked combo series.
  *
  * @module charts
  * @submodule series-combo-stacked
@@ -15,7 +15,7 @@
  * @uses StackingUtil
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-combo-stacked 
+ * @submodule series-combo-stacked
  */
 Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.StackingUtil], {
     /**

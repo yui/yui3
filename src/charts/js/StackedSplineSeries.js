@@ -13,7 +13,7 @@
  * @extends SplineSeries
  * @uses StackingUtil
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-spline-stacked 
+ * @submodule series-spline-stacked
  */
 Y.StackedSplineSeries = Y.Base.create("stackedSplineSeries", Y.SplineSeries, [Y.StackingUtil], {
     /**

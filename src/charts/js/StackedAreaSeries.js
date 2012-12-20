@@ -12,7 +12,7 @@
  * @uses StackingUtil
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-area-stacked 
+ * @submodule series-area-stacked
  */
 Y.StackedAreaSeries = Y.Base.create("stackedAreaSeries", Y.AreaSeries, [Y.StackingUtil], {
     /**

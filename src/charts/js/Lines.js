@@ -9,7 +9,7 @@
  *
  * @class Lines
  * @constructor
- * @submodule series-line-util 
+ * @submodule series-line-util
  */
 var Y_Lang = Y.Lang;
 function Lines(){}

@@ -7,7 +7,7 @@
  * @uses TopAxisLayout
  * @uses RightAxisLayout
  * @uses BottomAxisLayout
- * @uses LeftAxisLayout 
+ * @uses LeftAxisLayout
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
  * @submodule axis
@@ -25,7 +25,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     getLabelByIndex: function(i, l)
     {
         var position = this.get("position"),
-            direction = position == "left" || position == "right" ? "vertical" : "horizontal"; 
+            direction = position == "left" || position == "right" ? "vertical" : "horizontal";
         return this._getLabelByIndex(i, l, direction);
     },
 
@@ -1105,7 +1105,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
         textField.appendChild(val);
     }
 }, {
-    ATTRS: 
+    ATTRS:
     {
         /**
          * When set, defines the width of a vertical axis instance. By default, vertical axes automatically size based

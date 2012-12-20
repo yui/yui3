@@ -3,7 +3,7 @@
  *
  * @class BottomAxisLayout
  * @Constructor
- * @submodule axis 
+ * @submodule axis
  */
 BottomAxisLayout = function(){};
 

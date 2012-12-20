@@ -224,7 +224,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
         graph: {},
 
         /**
-         * Indicates the number of gridlines to display. If no value is set, gridlines will equal the number of ticks in 
+         * Indicates the number of gridlines to display. If no value is set, gridlines will equal the number of ticks in
          * the corresponding axis.
          *
          * @attribute count

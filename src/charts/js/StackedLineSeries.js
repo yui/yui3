@@ -13,7 +13,7 @@
  * @extends  LineSeries
  * @uses StackingUtil
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-line-stacked 
+ * @submodule series-line-stacked
  */
 Y.StackedLineSeries = Y.Base.create("stackedLineSeries", Y.LineSeries, [Y.StackingUtil], {
     /**

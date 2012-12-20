@@ -13,7 +13,7 @@
  * @uses Fills
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-area 
+ * @submodule series-area
  */
 Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
     /**

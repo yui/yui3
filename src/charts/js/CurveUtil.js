@@ -9,7 +9,7 @@
  *
  * @class CurveUtil
  * @constructor
- * @submodule series-curve-util 
+ * @submodule series-curve-util
  */
 function CurveUtil()
 {

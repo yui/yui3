@@ -4,8 +4,8 @@
  * @class StackedAxisBase
  * @constructor
  * @extends AxisBase
- * @uses StackedImpl 
+ * @uses StackedImpl
  * @param {Object} config (optional) Configuration parameters.
- * @submodule axis-stacked-base 
+ * @submodule axis-stacked-base
  */
 Y.StackedAxisBase = Y.Base.create("stackedAxisBase", Y.AxisBase, [Y.StackedImpl]);

@@ -14,7 +14,7 @@ var Y_Lang = Y.Lang;
  * @uses Renderer
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule series-base 
+ * @submodule series-base
  */
 Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     /**

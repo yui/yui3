@@ -5,14 +5,14 @@
  * @submodule axis-category
  */
 /**
- * CategoryAxis draws a category axis for a chart. 
+ * CategoryAxis draws a category axis for a chart.
  *
  * @class CategoryAxis
  * @constructor
  * @extends Axis
  * @uses CategoryImpl
  * @param {Object} config (optional) Configuration parameters.
- * @submodule axis-category 
+ * @submodule axis-category
  */
 Y.CategoryAxis = Y.Base.create("categoryAxis", Y.Axis, [Y.CategoryImpl]);
 

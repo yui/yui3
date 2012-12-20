@@ -13,7 +13,7 @@ var Y_Lang = Y.Lang,
  *
  * @class Plots
  * @constructor
- * @submodule series-plot-util 
+ * @submodule series-plot-util
  */
 function Plots(cfg)
 {

@@ -12,7 +12,7 @@ var Y_Lang = Y.Lang;
  * @module charts
  * @class StackingUtil
  * @constructor
- * @submodule series-stacked 
+ * @submodule series-stacked
  */
 function StackingUtil(){}
 

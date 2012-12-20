@@ -457,17 +457,17 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         };
         return axisstyles;
     },
-           
+          
     _getSetMax: function()
     {
         return Y_Lang.isNumber(this._setMaximum);
     },
-   
+  
     _getSetMin: function()
     {
         return Y_Lang.isNumber(this._setMinimum);
     },
-           
+          
     _minimumGetter: function ()
     {
         var min = this.get("dataMinimum");
@@ -477,7 +477,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         }
         return parseFloat(min);
     },
-   
+  
     _minimumSetter: function(val)
     {
         this._setMinimum = parseFloat(val);
@@ -500,7 +500,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         }
         return parseFloat(max);
     },
-   
+  
     _maximumSetter: function (value)
     {
         this._setMaximum = parseFloat(value);
@@ -633,7 +633,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
             lazyAdd: false,
 
             getter: "_maximumGetter",
-           
+          
             setter: "_maximumSetter"
         },
 
@@ -665,7 +665,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
             lazyAdd: false,
 
             getter: "_minimumGetter",
-           
+          
             setter: "_minimumSetter"
         },
 

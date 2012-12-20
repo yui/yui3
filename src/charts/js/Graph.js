@@ -582,7 +582,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         chart: {
             getter: function() {
                 var chart = this._state.chart || this;
-                return chart; 
+                return chart;
             }
         },
 
@@ -662,7 +662,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 {
                     cfg = {
                         direction: "horizonal",
-                        graph: this 
+                        graph: this
                     };
                     for(key in val)
                     {
@@ -706,7 +706,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 {
                     cfg = {
                         direction: "vertical",
-                        graph: this 
+                        graph: this
                     };
                     for(key in val)
                     {
