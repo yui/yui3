@@ -1,15 +1,48 @@
 /**
- * The Axis class. Generates axes for a chart.
+ * An abstract class that is used to generates axes for a chart.
  *
- * @module charts
- * @submodule charts-base
  * @class Axis
  * @extends Widget
- * @uses Renderer
+ * @uses AxisBase
+ * @uses TopAxisLayout
+ * @uses RightAxisLayout
+ * @uses BottomAxisLayout
+ * @uses LeftAxisLayout 
  * @constructor
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule axis
  */
-Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
+Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
+    /**
+     * Calculates and returns a value based on the number of labels and the index of
+     * the current label.
+     *
+     * @method getLabelByIndex
+     * @param {Number} i Index of the label.
+     * @param {Number} l Total number of labels.
+     * @return String
+     */
+    getLabelByIndex: function(i, l)
+    {
+        var position = this.get("position"),
+            direction = position == "left" || position == "right" ? "vertical" : "horizontal"; 
+        return this._getLabelByIndex(i, l, direction);
+    },
+
+    /**
+     * @method bindUI
+     * @private
+     */
+    bindUI: function()
+    {
+        this.after("stylesChange", this._updateHandler);
+        this.after("overlapGraphChange", this._updateHandler);
+        this.after("positionChange", this._positionChangeHandler);
+        this.after("widthChange", this._handleSizeChange);
+        this.after("heightChange", this._handleSizeChange);
+        this.after("calculatedWidthChange", this._handleSizeChange);
+        this.after("calculatedHeightChange", this._handleSizeChange);
+    },
     /**
      * Storage for calculatedWidth value.
      *
@@ -370,7 +403,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 graphic = this.get("graphic"),
                 path = this.get("path"),
                 tickPath,
-                explicitlySized;
+                explicitlySized,
+                position = this.get("position"),
+                direction = (position == "left" || position == "right") ? "vertical" : "horizontal";
             this._labelWidths = [];
             this._labelHeights = [];
             graphic.set("autoDraw", false);
@@ -424,7 +459,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                     label = this.getLabel(tickPoint, labelStyles);
                     this._labels.push(label);
                     this._tickPoints.push({x:tickPoint.x, y:tickPoint.y});
-                    this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]));
+                    this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [this._getLabelByIndex(i, len, direction), labelFormat]));
                     labelWidth = Math.round(label.offsetWidth);
                     labelHeight = Math.round(label.offsetHeight);
                     if(!explicitlySized)
@@ -1070,7 +1105,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         textField.appendChild(val);
     }
 }, {
-    ATTRS:
+    ATTRS: 
     {
         /**
          * When set, defines the width of a vertical axis instance. By default, vertical axes automatically size based
@@ -1358,14 +1393,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * Object which should have by the labelFunction
-         *
-         * @attribute labelFunctionScope
-         * @type Object
-         */
-        labelFunctionScope: {},
-
-        /**
          * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
          *
          * @attribute maxLabelSize
@@ -1399,24 +1426,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          */
         title: {
             value: null
-        },
-
-        /**
-         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
-         * The method use would need to implement the arguments below and return a `String` or `HTMLElement`.
-         * <dl>
-         *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
-         *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
-         * </dl>
-         *
-         * @attribute labelFunction
-         * @type Function
-         */
-        labelFunction: {
-            value: function(val, format)
-            {
-                return val;
-            }
         },
 
         /**

@@ -1,10 +1,19 @@
 /**
- * Utility class used for drawing markers.
+ * Provides functionality for drawing plots in a series.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-plot-util
+ */
+var Y_Lang = Y.Lang,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
+
+/**
+ * Utility class used for drawing markers.
+ *
  * @class Plots
  * @constructor
+ * @submodule series-plot-util 
  */
 function Plots(cfg)
 {

@@ -1,10 +1,9 @@
 /**
  * Contains algorithms for rendering a bottom axis.
  *
- * @module charts
- * @submodule charts-base
  * @class BottomAxisLayout
  * @Constructor
+ * @submodule axis 
  */
 BottomAxisLayout = function(){};
 

@@ -1,12 +1,20 @@
 /**
- * The CartesianSeries class creates a chart with horizontal and vertical axes.
+ * Provides functionality for creating a chart series.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-base
+ */
+var Y_Lang = Y.Lang;
+
+/**
+ * The CartesianSeries class creates a chart with horizontal and vertical axes.
+ *
  * @class CartesianSeries
  * @extends Base
  * @uses Renderer
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-base 
  */
 Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     /**
@@ -80,21 +88,21 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         this._xAxisChangeHandle = this.after("xAxisChange", this._xAxisChangeHandler);
         this._yAxisChangeHandle = this.after("yAxisChange", this._yAxisChangeHandler);
         this._stylesChangeHandle = this.after("stylesChange", function(e) {
-            var axesReady = this._updateAxisData();
+            var axesReady = this._updateAxisBase();
             if(axesReady)
             {
                 this.draw();
             }
         });
         this._widthChangeHandle = this.after("widthChange", function(e) {
-            var axesReady = this._updateAxisData();
+            var axesReady = this._updateAxisBase();
             if(axesReady)
             {
                 this.draw();
             }
         });
         this._heightChangeHandle = this.after("heightChange", function(e) {
-            var axesReady = this._updateAxisData();
+            var axesReady = this._updateAxisBase();
             if(axesReady)
             {
                 this.draw();
@@ -149,7 +157,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     _xDataChangeHandler: function(event)
     {
-        var axesReady = this._updateAxisData();
+        var axesReady = this._updateAxisBase();
         if(axesReady)
         {
             this.draw();
@@ -165,7 +173,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     _yDataChangeHandler: function(event)
     {
-        var axesReady = this._updateAxisData();
+        var axesReady = this._updateAxisBase();
         if(axesReady)
         {
             this.draw();
@@ -176,11 +184,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      * Checks to ensure that both xAxis and yAxis data are available. If so, set the `xData` and `yData` attributes
      * and return `true`. Otherwise, return `false`.
      *
-     * @method _updateAxisData
+     * @method _updateAxisBase
      * @return Boolean
      * @private
      */
-    _updateAxisData: function()
+    _updateAxisBase: function()
     {
         var xAxis = this.get("xAxis"),
             yAxis = this.get("yAxis"),
@@ -211,7 +219,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     validate: function()
     {
-        if((this.get("xData") && this.get("yData")) || this._updateAxisData())
+        if((this.get("xData") && this.get("yData")) || this._updateAxisBase())
         {
             this.draw();
         }
@@ -244,9 +252,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     {
         var isNumber = Y_Lang.isNumber,
             nextX, nextY,
-            graph = this.get("graph"),
-            w = graph.get("width"),
-            h = graph.get("height"),
+            w = this.get("width"),
+            h = this.get("height"),
             xAxis = this.get("xAxis"),
             yAxis = this.get("yAxis"),
             xData = this.get("xData").concat(),
@@ -374,12 +381,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     draw: function()
     {
-        var graph = this.get("graph"),
-            w = graph.get("width"),
-            h = graph.get("height");
+        var w = this.get("width"),
+            h = this.get("height");
         if(this.get("rendered"))
         {
-            if((isFinite(w) && isFinite(h) && w > 0 && h > 0) && ((this.get("xData") && this.get("yData")) || this._updateAxisData()))
+            if((isFinite(w) && isFinite(h) && w > 0 && h > 0) && ((this.get("xData") && this.get("yData")) || this._updateAxisBase()))
             {
                 if(this._drawing)
                 {
@@ -901,7 +907,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             getter: function()
             {
-                this.get("graph").get("width");
+                return this.get("graphic").get("width");
             }
         },
 
@@ -916,7 +922,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             getter: function()
             {
-                this.get("graph").get("height");
+                return this.get("graphic").get("height");
             }
         },
 

@@ -1,13 +1,23 @@
 /**
+ * Provides functionality for creating a pie series.
+ *
+ * @module charts
+ * @submodule series-pie
+ */
+/**
  * PieSeries visualizes data as a circular chart divided into wedges which represent data as a
  * percentage of a whole.
  *
- * @module charts
- * @submodule charts-base
  * @class PieSeries
  * @constructor
  * @extends MarkerSeries
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-pie 
  */
+var CONFIG = Y.config,
+    DOCUMENT = CONFIG.doc,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
 Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     /**
      * Image map used for interactivity when rendered with canvas.

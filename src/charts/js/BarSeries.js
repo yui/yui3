@@ -1,14 +1,20 @@
 /**
+ * Provides functionality for creating a bar series.
+ *
+ * @module charts
+ * @submodule series-bar
+ */
+/**
  * The BarSeries class renders bars positioned vertically along a category or time axis. The bars'
  * lengths are proportional to the values they represent along a horizontal axis.
  * and the relevant data points.
  *
- * @module charts
- * @submodule charts-base
  * @class BarSeries
  * @extends MarkerSeries
  * @uses Histogram
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-bar 
  */
 Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     /**

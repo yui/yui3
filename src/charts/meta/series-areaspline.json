@@ -1,0 +1,8 @@
+{
+    "series-areaspline": {
+        "requires":[
+            "series-fill-util",
+            "series-curve-util"
+        ]
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "series-plot-util": {
+        "requires":[
+            "series-base"
+        ]
+    }
+}

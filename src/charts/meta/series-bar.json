@@ -1,0 +1,7 @@
+{
+    "series-bar": {
+        "requires":[
+            "series-histogram-base"
+        ]
+    }
+}

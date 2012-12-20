@@ -1,10 +1,9 @@
 /**
  * Contains algorithms for rendering a top axis.
  *
- * @module charts
- * @submodule charts-base
  * @class TopAxisLayout
  * @constructor
+ * @submodule axis
  */
 TopAxisLayout = function(){};
 
