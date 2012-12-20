@@ -1,0 +1,7 @@
+{
+    "series-base": {
+        "requires":[
+            "axis-base"
+        ]
+    }
+}

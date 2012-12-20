@@ -1,5 +1,5 @@
 /**
- * The Axis class. Generates axes for a chart.
+ * An abstract class that is used to generates axes for a chart.
  *
  * @class Axis
  * @extends Widget

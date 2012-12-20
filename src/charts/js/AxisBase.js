@@ -5,7 +5,7 @@
  * @submodule axis-base
  */
 /**
- * AxisBase is an abstract class that manages the data for an axis.
+ * An abstract class that manages the data for an axis.
  *
  * @class AxisBase
  * @constructor
