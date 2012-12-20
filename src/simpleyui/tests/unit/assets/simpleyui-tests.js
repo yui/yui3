@@ -21,6 +21,7 @@ suite.add( new Y.Test.Case({
                 'dom',
                 'event-custom',
                 'event-base',
+                'event-base-ie',
                 'pluginhost',
                 'node',
                 'event-delegate',
