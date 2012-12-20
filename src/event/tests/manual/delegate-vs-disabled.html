@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+    p {
+        margin-right: 400px;
+    }
+    .test span { display: none; }
+    .select-failed .select-failed,
+    .input-failed .input-failed,
+    .checkbox-failed .checkbox-failed,
+    .radio-failed .radio-failed,
+    .textarea-failed .textarea-failed {
+        *display: inline;
+        display: inline-block;
+        width: 5em;
+        text-align: right;
+        color: #900;
+        font-weight: bold;
+        font-size: 18px;
+    }
+    .yui3-skin-sam .yui3-console .yui3-console-entry {
+        min-height: 0;
+        _height: 0;
+    }
+    .yui3-skin-sam .yui3-console-entry em {
+        color: #fff;
+        padding: 0 1em;
+        font-style: normal;
+        text-transform: uppercase;
+    }
+    .yui3-skin-sam .yui3-console-entry pre {
+        margin: 0;
+    }
+    .yui3-console-entry-pass {
+        background: #ECFFEA;
+    }
+    .yui3-console-entry-fail {
+        background: #FFE0E0;
+    }
+    .yui3-skin-sam .yui3-console-entry-pass em {
+        background: #090;
+    }
+    .yui3-skin-sam .yui3-console-entry-fail em {
+        background: #900;
+    }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+<h1>Disabled elements shouldn't trigger delegate subscribers.</h1>
+<p>This is a manual test for <a href="http://yuilibrary.com/projects/yui3/ticket/2532677">ticket 2532677</a> - IE fires delegate subs when clicking on disabled elements.</p>
+<p>The reason this is a manual test is that what is being tested is browser behavior in response to user interaction. In particular, the success case for the test is either:</p>
+<ul>
+    <li>The browser doesn't fire the event at all, or</li>
+    <li>The browser (IE) fires the event from the disabled element's parent, but the delegate subscriber is NOT notified.</li>
+</ul>
+
+<p>SHORT FORM: The first set of controls should log. The second set should NOT.</p>
+
+<h2>Set one: delegating NON-disabled elements</h2>
+<form id="non" class="test">
+    <p><select name="foo"><option value="1">Open this...</option><option value="2">thanks!</option></select></p>
+    <p><label><input value="1" type="checkbox"> check me</label></p>
+    <p><label><input name="radio" value="1" type="radio"> Choose</label> <label><input name="radio" value="2" type="radio"> one</label></p>
+    <p><input type="text" value="Click inside me"></p>
+    <p><textarea>Click inside me</textarea></p>
+    <p><input type="button" value="Click me"></p>
+    <p><button type="button">Click me</button></p>
+</form>
+
+<h2>Set two: delegating disabled elements</h2>
+<form id="dis" class="test">
+    <p><select name="foo" disabled><option value="1">Open this...</option><option value="2">thanks!</option></select></p>
+    <p><label><input value="1" type="checkbox" disabled> check me</label></p>
+    <p><label><input name="radio" value="1" type="radio" disabled> Choose</label> <label><input name="radio" value="2" type="radio" disabled> one</label></p>
+    <p><input type="text" value="Click inside me" disabled></p>
+    <p><textarea disabled>Click inside me</textarea></p>
+    <p><input type="button" value="Click me" disabled></p>
+    <p><button type="button" disabled>Click me</button></p>
+</form>
+
+<script src="../../../../build/yui/yui.js"></script>
+<!--script src="http://yui.yahooapis.com/3.8.0/build/yui/yui.js"></script-->
+<script>
+YUI({ filter: 'raw' }).use('console', 'event-delegate', function (Y) {
+    new Y.Console({
+            newestOnTop: false,
+            entryTemplate: '<div class="{entry_class} {cat_class}"><pre><em>{category}</em> {message}</pre></div>'
+        }).render();
+
+    Y.one(Y.config.doc).on('click', function (e) {
+        if (e.target.get('tagName').toLowerCase() === 'a') {
+            e.preventDefault();
+        }
+    });
+
+    function report(e, passfail) {
+        var type = this.get('nodeName').toLowerCase();
+
+        if (type === 'input') {
+            type = this.get('type');
+        }
+
+        Y.log(type, passfail);
+    }
+
+    Y.delegate('click', report, '#non', 'select,input,textarea,button', null, 'pass');
+    Y.delegate('click', report, '#dis', 'select,input,textarea,button', null, 'fail');
+});
+</script>
+</body>
+</html>

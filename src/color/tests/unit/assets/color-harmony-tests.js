@@ -1,7 +1,7 @@
 YUI.add('color-harmony-tests', function(Y) {
 
     var testBasic = new Y.Test.Case({
-            name: "Color Convertion Tests",
+            name: "Color Harmony Convertion Tests",
 
             'complementary of "blue"': function() {
                 var c = Y.Color.getComplementary('blue');
@@ -108,7 +108,7 @@ YUI.add('color-harmony-tests', function(Y) {
             'brightness of "yellow"': function() {
                 var b = Y.Color.getBrightness('yellow');
 
-                Y.Assert.areSame(0.97, Math.round(b*100)/100, 'length is greater than 1');
+                Y.Assert.areSame(97, b, 'length is greater than 100');
             },
 
             'similar brightness of "yellow" matching "blue" to rgb': function() {
@@ -162,7 +162,7 @@ YUI.add('color-harmony-tests', function(Y) {
 
         });
 
-    var suite = new Y.Test.Suite("Color");
+    var suite = new Y.Test.Suite("Color Harmony");
     suite.add(testBasic);
 
     Y.Test.Runner.add(suite);
