@@ -2,7 +2,23 @@ YUI.add('xdr-tests', function (Y) {
 
     var URLS      = Y.IO.URLS,
         suite     = new Y.Test.Suite('IO XDR Tests'),
+        xdrNative = getNativeXDRSupport(),
         xdrServer = getXDRServerLocation();
+
+    function getNativeXDRSupport() {
+        var win = Y.config.win;
+
+        if (!win) { return false; }
+
+        // Checks for the presence of the `withCredentials` in an XHR instance
+        // object, which will be present if the environment supports CORS.
+        if (win.XMLHttpRequest && 'withCredentials' in (new XMLHttpRequest())) {
+            return 'CORS';
+        }
+
+        // IE's proprietary cross-domain transport.
+        return win.XDomainRequest ? 'XDR' : false;
+    }
 
     function getXDRServerLocation() {
         var loc  = window.location,
@@ -19,7 +35,7 @@ YUI.add('xdr-tests', function (Y) {
 
         _should: {
             ignore: {
-                'XDR GET should return the queried data in the response': !xdrServer
+                'XDR GET should return the queried data in the response': !(xdrNative && xdrServer)
             }
         },
 
@@ -39,7 +55,7 @@ YUI.add('xdr-tests', function (Y) {
                 on    : {success: handleSuccess}
             });
 
-            test.wait(5000);
+            test.wait(2000);
         }
     }));
 
@@ -48,7 +64,7 @@ YUI.add('xdr-tests', function (Y) {
 
         _should: {
             ignore: {
-                'XDR POST should return the POSTed data in the response': !xdrServer
+                'XDR POST should return the POSTed data in the response': !(xdrNative && xdrServer)
             }
         },
 
@@ -67,10 +83,10 @@ YUI.add('xdr-tests', function (Y) {
                 data   : data,
                 headers: {'Content-Type': 'text/plain'},
                 xdr    : {use: 'native'},
-                on     : {success: handleSuccess},
+                on     : {success: handleSuccess}
             });
 
-            test.wait(5000);
+            test.wait(2000);
         }
     }));
 
