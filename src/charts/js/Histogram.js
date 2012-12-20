@@ -1,4 +1,12 @@
 /**
+ * Provides core functionality for creating a bar or column series.
+ *
+ * @module charts
+ * @submodule series-histogram
+ */
+var Y_Lang = Y.Lang;
+
+/**
  * Histogram is the base class for Column and Bar series.
  *
  * @class Histogram
@@ -6,8 +14,6 @@
  * @param {Object} config (optional) Configuration parameters.
  * @submodule series-histogram 
  */
-var Y_Lang = Y.Lang;
-
 function Histogram(){}
 
 Histogram.prototype = {

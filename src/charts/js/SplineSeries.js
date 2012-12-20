@@ -1,6 +1,7 @@
 /**
- * The series-spline submodule contains functionality for creating a spline series.
+ * Provides functionality for creating a spline series.
  *
+ * @module charts
  * @submodule series-spline
  */
 /**

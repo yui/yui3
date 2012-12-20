@@ -1,6 +1,7 @@
 /**
- * The series-line-stacked submodule contains functionality for creating a stacked line series.
+ * Provides functionality for creatiing a stacked line series.
  *
+ * @module charts
  * @submodule series-line-stacked
  */
 /**

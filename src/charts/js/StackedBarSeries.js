@@ -1,6 +1,7 @@
 /**
- * The series-bar-stacked submodule contains functionality for creating a stacked bar series.
+ * Provides functionality for creating a stacked bar series.
  *
+ * @module charts
  * @submodule series-bar-stacked
  */
 var Y_Lang = Y.Lang;

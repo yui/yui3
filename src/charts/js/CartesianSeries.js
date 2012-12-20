@@ -1,6 +1,7 @@
 /**
- * The series-base submodule contains functionality for creating a chart series.
+ * Provides functionality for creating a chart series.
  *
+ * @module charts
  * @submodule series-base
  */
 var Y_Lang = Y.Lang;

@@ -1,6 +1,7 @@
 /**
- * The axis-stacked submodule contains the core functionality for the handling of stacked axis data for a chart.
+ * Provides core functionality for the handling of stacked numeric axis data for a chart.
  *
+ * @module charts
  * @submodule axis-stacked
  */
 

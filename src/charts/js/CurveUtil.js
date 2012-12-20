@@ -1,5 +1,5 @@
 /**
- * The series-curve-util submodule contains functionality for drawing curves.
+ * Provides functionality for drawing curves in a series.
  *
  * @module charts
  * @submodule series-curve-util

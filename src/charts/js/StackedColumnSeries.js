@@ -1,6 +1,7 @@
 /**
- * The series-column-stacked submodule contains functionality for creating a stacked column series.
+ * Provides functionality for creating a stacked column series.
  *
+ * @module charts
  * @submodule series-column-stacked
  */
 var Y_Lang = Y.Lang;

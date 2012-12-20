@@ -1,5 +1,5 @@
 /**
- * The series-plot-util submodule contains functionality for drawing plots.
+ * Provides functionality for drawing plots in a series.
  *
  * @module charts
  * @submodule series-plot-util

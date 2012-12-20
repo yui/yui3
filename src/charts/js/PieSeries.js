@@ -1,4 +1,10 @@
 /**
+ * Provides functionality for creating a pie series.
+ *
+ * @module charts
+ * @submodule series-pie
+ */
+/**
  * PieSeries visualizes data as a circular chart divided into wedges which represent data as a
  * percentage of a whole.
  *

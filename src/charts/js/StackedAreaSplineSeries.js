@@ -1,6 +1,7 @@
 /**
- * The series-areaspline-stacked submodule contains functionality for creating a stacked area spline series.
+ * Provides functionality for creating a stacked area spline series.
  *
+ * @module charts
  * @submodule series-areaspline-stacked
  */
 /**

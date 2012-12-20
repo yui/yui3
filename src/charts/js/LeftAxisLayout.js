@@ -1,6 +1,7 @@
 /**
- * The axis-display submodule contains functionality for creating chart axes.
+ * Provides functionality for drawing chart axes.
  *
+ * @module charts
  * @submodule axis-display
  */
 var CONFIG = Y.config,

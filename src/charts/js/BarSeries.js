@@ -1,5 +1,5 @@
 /**
- * The series-bar submodule contains functionality for creating a bar series.
+ * Provides functionality for creating a bar series.
  *
  * @module charts
  * @submodule series-bar

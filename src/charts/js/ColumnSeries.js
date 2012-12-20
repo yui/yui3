@@ -1,6 +1,7 @@
 /**
- * The series-column submodule contains functionality for creating a column series.
+ * Provides functionality for creating a column series.
  *
+ * @module charts
  * @submodule series-column
  */
 /**

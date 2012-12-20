@@ -1,6 +1,7 @@
 /**
- * The series-marker-stacked submodule contains functionality for creating a stacked marker series.
+ * Provides functionality for creating a stacked marker series.
  *
+ * @module charts
  * @submodule series-marker-stacked
  */
 /**

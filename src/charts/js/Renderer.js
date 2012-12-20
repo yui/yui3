@@ -7,8 +7,9 @@
  */
 
 /**
- * The axis-base submodule contains functionality for the handling of axis data in a chart.
+ * Provides functionality for the handling of axis data in a chart.
  *
+ * @module charts
  * @submodule axis-base
  */
 

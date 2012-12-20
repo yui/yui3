@@ -1,5 +1,5 @@
 /**
- * The series-areaspline submodule contains functionality for creating a areaspline series.
+ * Provides functionality for creating an areaspline series.
  *
  * @module charts
  * @submodule series-areaspline

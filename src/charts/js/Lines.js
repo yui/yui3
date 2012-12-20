@@ -1,5 +1,5 @@
 /**
- * The series-line-util submodule contains functionality for drawing lines.
+ * Provides functionality for drawing lines in a series.
  *
  * @module charts
  * @submodule series-line-util

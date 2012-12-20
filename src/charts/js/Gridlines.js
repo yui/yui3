@@ -1,5 +1,5 @@
 /**
- * The charts-base submodule contains the core functionality for the charts module.
+ * Provides functionality for creating charts.
  *
  * @module charts
  * @submodule charts-base

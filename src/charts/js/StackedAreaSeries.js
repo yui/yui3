@@ -1,6 +1,7 @@
 /**
- * The series-area-stacked submodule contains functionality for creating a stacked area series.
+ * Provides functionality for creating a stacked area series.
  *
+ * @module charts
  * @submodule series-area-stacked
  */
 /**

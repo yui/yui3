@@ -1,6 +1,7 @@
 /**
- * The series-marker submodule contains functionality for creating a marker series.
+ * Provides functionality for creating a marker series.
  *
+ * @module charts
  * @submodule series-marker
  */
 /**

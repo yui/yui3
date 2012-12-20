@@ -1,5 +1,5 @@
 /**
- * The series-combospline submodule contains functionality for creating a combospline series.
+ * Provides functionality for creating a combospline series.
  *
  * @module charts
  * @submodule series-combospline

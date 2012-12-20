@@ -1,5 +1,5 @@
 /**
- * The series-area submodule contains functionality for creating a area series.
+ * Provides functionality for creating a area series.
  *
  * @module charts
  * @submodule series-area

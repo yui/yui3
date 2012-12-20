@@ -1,6 +1,7 @@
 /**
- * The series-line submodule contains functionality for creating a line series.
+ * Provides functionality for creating a line series.
  *
+ * @module charts
  * @submodule series-line
  */
 /**

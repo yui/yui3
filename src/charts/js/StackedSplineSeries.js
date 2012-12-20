@@ -1,4 +1,10 @@
 /**
+ * Provides functionality for creating a stacked spline series.
+ *
+ * @module charts
+ * @submodule series-spline-stacked
+ */
+/**
  * StackedSplineSeries creates spline graphs in which the different series are stacked along a value axis
  * to indicate their contribution to a cumulative total.
  *
