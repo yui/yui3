@@ -3,7 +3,7 @@
  *
  * @class TopAxisLayout
  * @constructor
- * @submodule axis-display
+ * @submodule axis
  */
 TopAxisLayout = function(){};
 

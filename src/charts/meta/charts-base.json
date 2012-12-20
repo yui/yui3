@@ -5,7 +5,7 @@
             "event-mouseenter", 
             "event-touch", 
             "graphics-group",
-            "axis-display",
+            "axes",
             "series-cartesian",
             "series-pie",
             "series-cartesian-stacked"

@@ -3,7 +3,7 @@
  *
  * @class RightAxisLayout
  * @constructor
- * @submodule axis-display
+ * @submodule axis
  */
 RightAxisLayout = function(){};
 

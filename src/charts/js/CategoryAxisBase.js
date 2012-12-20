@@ -6,6 +6,6 @@
  * @extends AxisBase
  * @uses CategoryImpl 
  * @param {Object} config (optional) Configuration parameters.
- * @submodule axis-base 
+ * @submodule axis-category-base 
  */
 Y.CategoryAxisBase = Y.Base.create("categoryAxisBase", Y.AxisBase, [Y.CategoryImpl]);

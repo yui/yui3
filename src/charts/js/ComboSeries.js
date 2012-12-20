@@ -2,7 +2,7 @@
  * Provides functionality for creating a combo series. 
  *
  * @module charts
- * @submoule series-combo
+ * @submodule series-combo
  */
 /**
  * The ComboSeries class renders a combination of lines, plots and area fills in a single series.

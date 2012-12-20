@@ -1,9 +1,17 @@
 /**
+ * Provides functionality for the handling of numeric axis data for a chart.
+ *
+ * @module charts
+ * @submodule axis-numeric-base
+ */
+
+var Y_Lang = Y.Lang;
+/**
  * NumericImpl manages numeric data on an axis.
  *
  * @class NumericImpl
  * @constructor
- * @submodule axis-base
+ * @submodule axis-numeric-base
  */
 function NumericImpl()
 {

@@ -10,7 +10,7 @@
  * @uses LeftAxisLayout 
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule axis-display
+ * @submodule axis
  */
 Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     /**

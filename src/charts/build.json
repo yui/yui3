@@ -4,16 +4,28 @@
         "axis-base" : {
             "jsfiles": [
                 "Renderer.js",
-                "AxisBase.js",
-                "CategoryImpl.js",
+                "AxisBase.js"
+            ]
+        },
+        "axis-numeric-base" : {
+            "jsfiles": [
                 "NumericImpl.js",
+                "NumericAxisBase.js"
+            ]
+        },
+        "axis-category-base" : {
+            "jsfiles": [
+                "CategoryImpl.js",
+                "CategoryAxisBase.js"
+            ]
+        },
+        "axis-time-base" : {
+            "jsfiles": [
                 "TimeImpl.js",
-                "CategoryAxisBase.js",
-                "NumericAxisBase.js",
                 "TimeAxisBase.js"
             ]
         },
-        "axis-stacked" : {
+        "axis-stacked-base" : {
             "jsfiles" : [
                 "StackedImpl.js",
                 "StackedAxisBase.js"
@@ -24,18 +36,34 @@
                 "CartesianSeries.js"
             ]
         },
-        "axis-display" : {
+        "axis" : {
             "jsfiles" : [
                 "LeftAxisLayout.js",
                 "RightAxisLayout.js",
                 "BottomAxisLayout.js",
                 "TopAxisLayout.js",
                 "Axis.js",
-                "AxisType.js",
-                "NumericAxis.js",
-                "StackedAxis.js",
-                "TimeAxis.js",
+                "AxisType.js"
+            ]
+        },
+        "axis-numeric" : {
+            "jsfiles" : [
+                "NumericAxis.js"
+            ]
+        },
+        "axis-category" : {
+            "jsfiles" : [
                 "CategoryAxis.js"
+            ]
+        },
+        "axis-time" : {
+            "jsfiles" : [
+                "TimeAxis.js"
+            ]
+        },
+        "axis-stacked" : {
+            "jsfiles" : [
+                "StackedAxis.js"
             ]
         },
         "series-stacked" : {

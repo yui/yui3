@@ -1,9 +1,17 @@
 /**
+ * Provides functionality for the handling of time axis data for a chart.
+ *
+ * @module charts
+ * @submodule axis-time-base
+ */
+
+var Y_Lang = Y.Lang;
+/**
  * TimeImpl manages time data on an axis.
  *
  * @class TimeImpl
  * @constructor
- * @submodule axis-base
+ * @submodule axis-time-base
  */
 function TimeImpl()
 {

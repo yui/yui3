@@ -2,7 +2,7 @@
  * Provides functionality for creating a stacked combo series. 
  *
  * @module charts
- * @submoule series-combo-stacked
+ * @submodule series-combo-stacked
  */
 /**
  * The StackedComboSeries class renders a combination of lines, plots and area fills in a single series. Series

@@ -1,8 +1,8 @@
 /**
- * Provides functionality for drawing chart axes.
+ * Provides base functionality for drawing chart axes.
  *
  * @module charts
- * @submodule axis-display
+ * @submodule axis
  */
 var CONFIG = Y.config,
     WINDOW = CONFIG.win,
@@ -21,7 +21,7 @@ var CONFIG = Y.config,
  *
  * @class LeftAxisLayout
  * @constructor
- * @submodule axis-display
+ * @submodule axis
  */
 LeftAxisLayout = function() {};
 

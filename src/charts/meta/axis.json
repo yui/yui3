@@ -1,13 +1,12 @@
 {
-    "axis-display": {
+    "axis": {
         "requires":[
             "dom", 
             "widget", 
             "widget-position", 
             "widget-stack",
             "graphics", 
-            "axis-base",
-            "axis-stacked"
+            "axis-base"
         ]
     }
 }

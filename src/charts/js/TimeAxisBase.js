@@ -6,6 +6,6 @@
  * @uses TimeImpl
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
- * @submodule axis-base
+ * @submodule axis-time-base
  */
 Y.TimeAxisBase = Y.Base.create("timeAxisBase", Y.AxisBase, [Y.TimeImpl]);

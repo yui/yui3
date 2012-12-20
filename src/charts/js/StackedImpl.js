@@ -2,7 +2,7 @@
  * Provides core functionality for the handling of stacked numeric axis data for a chart.
  *
  * @module charts
- * @submodule axis-stacked
+ * @submodule axis-stacked-base
  */
 
 /**

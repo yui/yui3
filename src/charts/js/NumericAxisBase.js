@@ -6,6 +6,6 @@
  * @extends AxisBase
  * @uses NumericImpl 
  * @param {Object} config (optional) Configuration parameters.
- * @submodule axis-base 
+ * @submodule axis-numeric-base 
  */
 Y.NumericAxisBase = Y.Base.create("numericAxisBase", Y.AxisBase, [Y.NumericImpl]);
