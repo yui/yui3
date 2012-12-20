@@ -648,7 +648,7 @@ The following example will define a Handlebars-like Micro template syntax:
 Y.mix(Y.Template.Micro.options, {
     code         : /\{\{%([\s\S]+?)%\}\}/g,
     escapedOutput: /\{\{(?!%)([\s\S]+?)\}\}/g,
-    rawOutput    : /\{\{\{([\s\S]+?)\}\}/g
+    rawOutput    : /\{\{\{([\s\S]+?)\}\}\}/g
 }, true);
 ```
 
@@ -710,7 +710,7 @@ Y.mix(Y.Template.Micro.options, {
 </table>
 
 <p>
-<strong>Note:</strong> The syntax identifiers can be specified on a per-template basis by passing `options` as the second argument to the `compile()`, `precompile()`, or `render()` methods.
+<strong>Note:</strong> The syntax identifiers can be specified on a per-template basis by passing `options` as the second argument to the `compile()`, `precompile()`, or `render()` methods. Alternatively you can specify `defaults` when using the [[#Generic Template API|generic Template API]], doing so will only affect how the templates are process for that engine instance.
 </p>
 
 <h2>Using Templates in Custom Components</h2>

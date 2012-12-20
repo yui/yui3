@@ -234,6 +234,91 @@ templateSuite.add(new Y.Test.Case({
     }
 }));
 
+templateSuite.add(new Y.Test.Case({
+    name: 'Options',
+
+    setUp: function () {
+        // Creates a Template.Micro engine with specificed defaults.
+        this.microEngine = new Y.Template(Y.Template.Micro, {
+            code         : /\{\{%([\s\S]+?)%\}\}/g,
+            escapedOutput: /\{\{(?!%)([\s\S]+?)\}\}/g,
+            rawOutput    : /\{\{\{([\s\S]+?)\}\}\}/g
+        });
+
+        // Creates a Handlebars engine with specificed defaults.
+        this.hbEngine = new Y.Template(Y.Handlebars, {
+            partials: {
+                foo: '!{{a}}!'
+            }
+        });
+    },
+
+    tearDown: function () {
+        delete this.microEngine;
+        delete this.hbEngine;
+    },
+
+    'compile() should compile a template using the specified `defaults`': function () {
+        Assert.areSame('foo', this.microEngine.compile('{{this.a}}')({a: 'foo'}), 'should compile Micro templates with custom syntax');
+        Assert.areSame('!foo!', this.hbEngine.compile('{{> foo}}')({a: 'foo'}, this.hbEngine.defaults), 'should compile Handlebars template with default partials');
+    },
+
+    'compile() should merge `defaults` with specificed `options`': function () {
+        Assert.areSame(
+            'foo',
+            this.microEngine.compile('<%= data.a %>', {
+                escapedOutput: /<%=([\s\S]+?)%>/g
+            })({a: 'foo'})
+        );
+    },
+
+    'precompile() should precompile a template using the specified `defaults`': function () {
+        Assert.areSame(
+            "function (Y, $e, data) {\nvar $b='',$t=''+\n$e((data.test)||$b)+\n'';\nreturn $t;\n}",
+            this.microEngine.precompile('{{data.test}}')
+        );
+    },
+
+    'precompile() should merge `defaults` with the specified `options`': function () {
+        Assert.areSame(
+            "function (Y, $e, data) {\nvar $b='',$t=''+\n$e((data.test)||$b)+\n'';\nreturn $t;\n}",
+
+            this.microEngine.precompile('<%=data.test%>', {
+                escapedOutput:  /<%=([\s\S]+?)%>/g
+            })
+        );
+    },
+
+    'render() should compile and render a template using the the specified `defaults`': function () {
+        Assert.areSame(
+            'foo',
+            this.microEngine.render('{{data.a}}', {a: 'foo'})
+        );
+    },
+
+    'render() should merge `defaults` with the specified `options`': function () {
+        Assert.areSame(
+            'foo bar',
+            this.microEngine.render('<%= data.a %> {{{ data.b }}}', {
+                a: 'foo',
+                b: 'bar'
+            }, {
+                escapedOutput:  /<%=([\s\S]+?)%>/g
+            })
+        );
+    },
+
+    'revive() should revive a precompiled template using the specified `defaults`': function () {
+        eval('var precompiled = ' + this.microEngine.precompile('{{data.a}}') + ';');
+        Assert.areSame('foo', this.microEngine.revive(precompiled)({a: 'foo'}));
+    },
+
+    'revive() should merge `defaults` with the specified `options`': function () {
+        eval('var precompiled = ' + this.microEngine.precompile('{{data.a}}') + ';');
+        Assert.areSame('foo', this.microEngine.revive(precompiled, {})({a: 'foo'}));
+    }
+}));
+
 }, '@VERSION@', {
     requires: ['handlebars', 'template', 'test']
 });
