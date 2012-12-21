@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,52 +10,51 @@
 
 <div id="log"></div>
 
-<applet code="nano" archive="http://pieisgood.org/misc/benchmark/nano.jar" style="display: none;"></applet>
-<script src="http://pieisgood.org/misc/benchmark/benchmark.js"></script>
+<applet code="nano" archive="https://github.com/bestiejs/benchmark.js/raw/v1.0.0/nano.jar" style="display: none;"></applet>
+<script src="https://raw.github.com/bestiejs/benchmark.js/v1.0.0/benchmark.js"></script>
 
 <script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
+    combine: false,
     modules: {
         'datatable-benchmark': {
             fullpath: 'datatable-benchmark.js',
             requires: ['datatable']
-        },
-
-        'test-console': {
-            fullpath : '../../../common/tests/assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '../../../common/tests/assets/test-console.css',
-            type    : 'css'
         }
     },
 
-    useBrowserConsole: false
+    useBrowserConsole: true
 }).use('datatable-benchmark', 'node-base', 'test-console', function (Y) {
     var suite = Y.BenchmarkSuite,
         start = Y.one('#start');
 
     suite.on('start', function () {
         start.set('disabled', true);
-        Y.log('Starting benchmarks.');
+        Y.log('Starting benchmarks.', 'status', 'benchmark');
     });
 
-    suite.on('cycle', function (bench) {
-        Y.log(String(bench));
+    suite.on('cycle', function (e) {
+        Y.log(String(e.target), 'info', 'benchmark');
+        Y.all('.yui3-datatable').remove(true);
     });
 
     suite.on('complete', function () {
         start.set('disabled', false);
-        Y.log('Finished.');
+        Y.log('Finished.', 'status', 'benchmark');
     });
 
     start.on('click', function () {
-        suite.run(true);
+        suite.run({async: true});
     });
+
+    new Y.Test.Console({render: '#log'}).filter.setAttrs({
+        'category.fail'    : false,
+        'category.status'  : true,
+        'source.benchmark' : true,
+        'source.TestRunner': false
+    });
+
 });
 </script>
 
