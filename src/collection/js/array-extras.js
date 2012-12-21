@@ -393,3 +393,36 @@ A.flatten = function(a) {
 
     return result;
 };
+
+
+
+
+
+/**
+Intersection of two or more arrays.
+
+Note that the return value may contain duplicate values - you
+will need to use Y.Array.unique(returnedArray) if that's what you want. 
+
+@method intersect
+@param {Array} arr1 First array 
+@param {Array} arr2* Second array to compare with the first
+@return {Array} Array of items that appear in both original arrays.
+@static
+@since 3.8.
+**/
+A.intersect = function (arr1, arr2) {
+
+    var args = Y.Array(arguments),
+        otherArrays;
+
+    if (args.length > 2) {
+        otherArrays = args.splice(2);
+        return A.intersect.call(this, A.intersect(arr1, arr2), otherArrays);
+    }
+
+    return A.filter(arr1, function (val1) {
+        return (A.indexOf(arr2, val1) !== -1);
+    });
+
+};
