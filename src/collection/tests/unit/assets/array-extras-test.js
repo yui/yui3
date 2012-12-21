@@ -416,6 +416,56 @@ suite.add(new Y.Test.Case({
             ['foo', 'bar', null],
             A.flatten([[[[['foo']], [['bar'], [null]]]]])
         );
+    },
+
+    'intersect() should find common elements in two arrays': function () {
+
+        Assert.isArray(A.intersect([],[]));
+
+        ArrayAssert.itemsAreSame(
+            [1,2,3],
+            A.intersect([1,2,3], [1,2,3])
+        );
+
+        ArrayAssert.itemsAreSame(
+            [1],
+            A.intersect(["a", {1}, "1", 1, true], [1, 2, 3, false])
+        );
+
+        ArrayAssert.itemsAreSame(
+            [],
+            A.intersect([1,2,3], [4,5,6])
+        );
+
+        ArrayAssert.itemsAreSame(
+            [1, 1, 1]
+            A.intersect([1, 1, 1, 3], [2, 1, 2])
+        );
+
+        Assert.areEqual(
+            3,
+            A.intersect([1, 1, 1, 3], [2, 1, 2]).length
+        );
+
+
+        // This might be problematic: same arguments, different
+        // order (as previous two tests): results are different.
+        // Because we're not calling unique()
+        ArrayAssert.itemsAreSame(
+            [1]
+            A.intersect([2, 1, 2], [1, 1, 1, 3])
+        );
+
+        Assert.areEqual(
+            1,
+            A.intersect([2, 1, 2], [1, 1, 1, 3]).length
+        );
+
+
+        ArrayAssert.itemsAreSame(
+            [1,2,3,4],
+            A.intersect([1, 2, 3, 4, 6, 7, 8], [41, 42, 1, 2, 3, 4], [1, 2, 3, 4, 5, 6, 7, 8, 41]);
+        );
     }
 }));
 
