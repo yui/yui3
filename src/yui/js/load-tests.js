@@ -87,8 +87,14 @@ add('load', '5', {
 },
     "trigger": "node-base"
 });
-// graphics-canvas
+// event-delegate-change
 add('load', '6', {
+    "name": "event-delegate-change",
+    "trigger": "event-base-ie",
+    "ua": "ie"
+});
+// graphics-canvas
+add('load', '7', {
     "name": "graphics-canvas",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -100,7 +106,7 @@ add('load', '6', {
     "trigger": "graphics"
 });
 // graphics-canvas-default
-add('load', '7', {
+add('load', '8', {
     "name": "graphics-canvas-default",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -112,7 +118,7 @@ add('load', '7', {
     "trigger": "graphics"
 });
 // graphics-svg
-add('load', '8', {
+add('load', '9', {
     "name": "graphics-svg",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -125,7 +131,7 @@ add('load', '8', {
     "trigger": "graphics"
 });
 // graphics-svg-default
-add('load', '9', {
+add('load', '10', {
     "name": "graphics-svg-default",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -138,7 +144,7 @@ add('load', '9', {
     "trigger": "graphics"
 });
 // graphics-vml
-add('load', '10', {
+add('load', '11', {
     "name": "graphics-vml",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -148,7 +154,7 @@ add('load', '10', {
     "trigger": "graphics"
 });
 // graphics-vml-default
-add('load', '11', {
+add('load', '12', {
     "name": "graphics-vml-default",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -158,7 +164,7 @@ add('load', '11', {
     "trigger": "graphics"
 });
 // history-hash-ie
-add('load', '12', {
+add('load', '13', {
     "name": "history-hash-ie",
     "test": function (Y) {
     var docMode = Y.config.doc && Y.config.doc.documentMode;
@@ -169,19 +175,19 @@ add('load', '12', {
     "trigger": "history-hash"
 });
 // io-nodejs
-add('load', '13', {
+add('load', '14', {
     "name": "io-nodejs",
     "trigger": "io-base",
     "ua": "nodejs"
 });
 // scrollview-base-ie
-add('load', '14', {
+add('load', '15', {
     "name": "scrollview-base-ie",
     "trigger": "scrollview-base",
     "ua": "ie"
 });
 // selector-css2
-add('load', '15', {
+add('load', '16', {
     "name": "selector-css2",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -192,7 +198,7 @@ add('load', '15', {
     "trigger": "selector"
 });
 // transition-timer
-add('load', '16', {
+add('load', '17', {
     "name": "transition-timer",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -208,20 +214,20 @@ add('load', '16', {
     "trigger": "transition"
 });
 // widget-base-ie
-add('load', '17', {
+add('load', '18', {
     "name": "widget-base-ie",
     "trigger": "widget-base",
     "ua": "ie"
 });
 // yql-nodejs
-add('load', '18', {
+add('load', '19', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '19', {
+add('load', '20', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",

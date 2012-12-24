@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+    <title>Event Delegate Change Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+    <div id="mainWrapper">
+        <p>Normal select, will not prevent any listeners</p>
+        <select id="selectElement">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+        </select>
+
+        <p>Checkbox, will stop propagation</p>
+        <input type="checkbox" id="checkboxStopPropagation" />
+
+        <p>Checkbox, will stop immediate propagation</p>
+        <input type="checkbox" id="checkboxStopImmediatePropagation" />
+
+        <p>Normal input, will not prevent any listeners</p>
+        <input type="text" class="node-text" />
+
+        <p>Normal radio, will not prevent any listeners</p>
+        <input checked type="radio" name="group1" class="node-radio" />
+        <input type="radio" name="group1" class="node-radio" />
+        <input type="radio" name="group1" class="node-radio" />
+        <input type="radio" name="group1" class="node-radio" />
+
+        <p>Normal checkbox, will not prevent any listeners</p>
+        <input id="checkboxNormal" type="checkbox" class="node-checkbox" />
+
+    </div>
+
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+
+    <script>
+        YUI({
+            coverage: ['event-delegate-change'],
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+            modules: {
+                'event-delegate-change-tests': {
+                    fullpath: './assets/event-delegate-change-tests.js',
+                    requires: [ 'array-invoke', 'event-delegate-change', 'test-console', 'test' ]
+                }
+            }
+        }).use('event-delegate-change-tests', function(Y) {
+            new Y.Test.Console().render();
+
+            Y.Test.Runner.setName('Event: event-delegate-change');
+
+            Y.Test.Runner.run();
+        });
+    </script>
+</body>
+</html>

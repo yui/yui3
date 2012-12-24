@@ -79,6 +79,11 @@
             "jsfiles": [
                 "event-facade-dom-ie.js"
             ]
+        },
+        "event-delegate-change": {
+            "jsfiles": [
+                "event-delegate-change.js"
+            ]
         }
     }
 }

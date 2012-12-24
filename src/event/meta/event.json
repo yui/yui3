@@ -104,6 +104,19 @@
                    "trigger": "node-base",
                    "test": "ie-base-test.js"
                 }
+            },
+            "event-delegate-change": {
+                "requires": [
+                    "node-event-delegate",
+                    "event-synthetic"
+                ],
+                "after": [
+                    "event-base"
+                ],
+                "condition": {
+                    "trigger": "event-base-ie",
+                    "ua": "ie"
+                }
             }
         }
     }
