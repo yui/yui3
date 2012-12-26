@@ -30,6 +30,7 @@ YUI.add('event-tap-tests', function(Y) {
                 'touchend not in same area': (Y.UA.ie === 9 || Y.UA.phantomjs),
                 'on tap': Y.UA.phantomjs,
                 'right mouse click': Y.UA.phantomjs,
+                'atttach and detach': Y.UA.phantomjs,
                 'multiple touches': (Y.UA.ie === 9 || Y.UA.phantomjs)
             }
         },

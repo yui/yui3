@@ -75,9 +75,7 @@ YUI.add('gesture-tests', function(Y) {
             }, {
                 fire: function(e) {
                     Assert.areSame(eventNoTouch.target, e.target, 'Targets are not the same');
-                    Assert.areSame('gesturemovestart', e.type, 'Event type not correct');
-                    Assert.areEqual(1, e.button, 'e.button is not set');
-                }
+                    Assert.areSame('gesturemovestart', e.type, 'Event type not correct');                }
             });
 
         },
