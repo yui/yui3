@@ -24,13 +24,13 @@ YUI.add('event-tap-tests', function(Y) {
                 provide 0,0 for pageX and pageY respectively. Manual testing confirms
                 that this test works. See http://yuilibrary.com/projects/yui3/ticket/2531581
                 */
-                'touchend not in same area': (true),
-                'delegate tap': (true),
-                'touchmove/mousemove fired': (true),
-                'touchend not in same area': (Y.UA.ie === 9 || true),
-                'on tap': true,
-                'right mouse click': true,
-                'multiple touches': false
+                'touchend not in same area': (Y.UA.phantomjs),
+                'delegate tap': (Y.UA.phantomjs),
+                'touchmove/mousemove fired': (Y.UA.phantomjs),
+                'touchend not in same area': (Y.UA.ie === 9 || Y.UA.phantomjs),
+                'on tap': Y.UA.phantomjs,
+                'right mouse click': Y.UA.phantomjs,
+                'multiple touches': (Y.UA.ie === 9 || Y.UA.phantomjs)
             }
         },
 
