@@ -119,7 +119,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         return content;
     },
 
-    _defContentGetter: function(content) {
+    _defContentGetter: function() {
         return this.get('panelNode').getContent();
     },
 
@@ -202,7 +202,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     },
 
     HTML_PARSER: {
-        selected: function(contentBox) {
+        selected: function() {
             var ret = (this.get('boundingBox').hasClass(_classNames.selectedTab)) ?
                         1 : 0;
             return ret;

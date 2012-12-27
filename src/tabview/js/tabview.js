@@ -19,7 +19,7 @@ var _queries = Y.TabviewBase._queries,
      * @uses WidgetParent
      */
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
-    _afterChildAdded: function(e) {
+    _afterChildAdded: function() {
         this.get('contentBox').focusManager.refresh();
     },
 
@@ -82,7 +82,7 @@ var _queries = Y.TabviewBase._queries,
         this._renderTabs(contentBox);
     },
 
-    _setDefSelection: function(contentBox) {
+    _setDefSelection: function() {
         //  If no tab is selected, select the first tab.
         var selection = this.get('selection') || this.item(0);
 
