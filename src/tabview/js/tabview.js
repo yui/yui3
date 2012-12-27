@@ -1,5 +1,5 @@
 /**
- * The TabView module 
+ * The TabView module
  *
  * @module tabview
  */
@@ -10,7 +10,7 @@ var _queries = Y.TabviewBase._queries,
     getClassName = Y.ClassNameManager.getClassName,
 
     /**
-     * Provides a tabbed widget interface 
+     * Provides a tabbed widget interface
      * @param config {Object} Object literal specifying tabview configuration properties.
      *
      * @class TabView
@@ -51,7 +51,7 @@ var _queries = Y.TabviewBase._queries,
 
         if (tablist) {
             tablist.setAttrs({
-                //'aria-labelledby': 
+                //'aria-labelledby':
                 role: 'tablist'
             });
         }
@@ -75,7 +75,7 @@ var _queries = Y.TabviewBase._queries,
     },
     
     renderUI: function() {
-        var contentBox = this.get('contentBox'); 
+        var contentBox = this.get('contentBox');
         this._renderListBox(contentBox);
         this._renderPanelBox(contentBox);
         this._childrenContainer = this.get('listNode');
@@ -141,7 +141,7 @@ var _queries = Y.TabviewBase._queries,
     PANEL_TEMPLATE: '<div class="' + _classNames.tabviewPanel + '"></div>',
 
     ATTRS: {
-        defaultChildType: {  
+        defaultChildType: {
             value: 'Tab'
         },
 
