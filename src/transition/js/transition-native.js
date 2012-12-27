@@ -183,13 +183,13 @@ Transition.prototype = {
         anim._count++; // properties per transition
 
         // make 0 async and fire events
-        dur = ((typeof config.duration != 'undefined') ? config.duration :
+        dur = ((typeof config.duration !== 'undefined') ? config.duration :
                     anim._duration) || 0.0001;
 
         attrs[prop] = {
             value: val,
             duration: dur,
-            delay: (typeof config.delay != 'undefined') ? config.delay :
+            delay: (typeof config.delay !== 'undefined') ? config.delay :
                     anim._delay,
 
             easing: config.easing || anim._easing,
@@ -609,14 +609,14 @@ Y.Node.prototype.toggleView = function(name, on, callback) {
     this._toggles = this._toggles || [];
     callback = arguments[arguments.length - 1];
 
-    if (typeof name == 'boolean') { // no transition, just toggle
+    if (typeof name === 'boolean') { // no transition, just toggle
         on = name;
         name = null;
     }
 
     name = name || Y.Transition.DEFAULT_TOGGLE;
 
-    if (typeof on == 'undefined' && name in this._toggles) { // reverse current toggle
+    if (typeof on === 'undefined' && name in this._toggles) { // reverse current toggle
         on = ! this._toggles[name];
     }
 
