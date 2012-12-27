@@ -7,7 +7,6 @@
 var _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
     DOT = '.',
-    getClassName = Y.ClassNameManager.getClassName,
 
     /**
      * Provides a tabbed widget interface

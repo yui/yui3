@@ -1,7 +1,6 @@
 var getClassName = Y.ClassNameManager.getClassName,
     TABVIEW = 'tabview',
     TAB = 'tab',
-    CONTENT = 'content',
     PANEL = 'panel',
     SELECTED = 'selected',
     EMPTY_OBJ = {},

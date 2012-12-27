@@ -1,7 +1,5 @@
 var Lang = Y.Lang,
-    _queries = Y.TabviewBase._queries,
-    _classNames = Y.TabviewBase._classNames,
-    getClassName = Y.ClassNameManager.getClassName;
+    _classNames = Y.TabviewBase._classNames;
 
 /**
  * Provides Tab instances for use with TabView
