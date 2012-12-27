@@ -1,7 +1,7 @@
 YUI.add('tabview', function (Y, NAME) {
 
 /**
- * The TabView module 
+ * The TabView module
  *
  * @module tabview
  */
@@ -12,7 +12,7 @@ var _queries = Y.TabviewBase._queries,
     getClassName = Y.ClassNameManager.getClassName,
 
     /**
-     * Provides a tabbed widget interface 
+     * Provides a tabbed widget interface
      * @param config {Object} Object literal specifying tabview configuration properties.
      *
      * @class TabView
@@ -53,7 +53,7 @@ var _queries = Y.TabviewBase._queries,
 
         if (tablist) {
             tablist.setAttrs({
-                //'aria-labelledby': 
+                //'aria-labelledby':
                 role: 'tablist'
             });
         }
@@ -77,7 +77,7 @@ var _queries = Y.TabviewBase._queries,
     },
     
     renderUI: function() {
-        var contentBox = this.get('contentBox'); 
+        var contentBox = this.get('contentBox');
         this._renderListBox(contentBox);
         this._renderPanelBox(contentBox);
         this._childrenContainer = this.get('listNode');
@@ -143,7 +143,7 @@ var _queries = Y.TabviewBase._queries,
     PANEL_TEMPLATE: '<div class="' + _classNames.tabviewPanel + '"></div>',
 
     ATTRS: {
-        defaultChildType: {  
+        defaultChildType: {
             value: 'Tab'
         },
 
@@ -282,7 +282,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
 
     _onActivate: function(e) {
          if (e.target === this) {
-             //  Prevent the browser from navigating to the URL specified by the 
+             //  Prevent the browser from navigating to the URL specified by the
              //  anchor's href attribute.
              e.domEvent.preventDefault();
              e.target.set('selected', 1);
@@ -290,7 +290,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     },
     
     initializer: function() {
-       this.publish(this.get('triggerEvent'), { 
+       this.publish(this.get('triggerEvent'), {
            defaultFn: this._onActivate
        });
     },
@@ -340,7 +340,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     ATTRS: {
         /**
          * @attribute triggerEvent
-         * @default "click" 
+         * @default "click"
          * @type String
          */
         triggerEvent: {
@@ -351,7 +351,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
          * @attribute label
          * @type HTML
          */
-        label: { 
+        label: {
             setter: '_defLabelSetter',
             validator: Lang.isString
         },
@@ -383,7 +383,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         tabIndex: {
             value: null,
             validator: '_validTabIndex'
-        }        
+        }
 
     },
 
