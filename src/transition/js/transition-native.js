@@ -290,7 +290,7 @@ Transition.prototype = {
         return dur + 'ms';
     },
 
-    _runNative: function(time) {
+    _runNative: function() {
         var anim = this,
             node = anim._node,
             uid = Y.stamp(node),
