@@ -1,9 +1,9 @@
-.yui3-g-responsive {
+.yui3-g-r {
     letter-spacing: -0.31em;
     *letter-spacing: normal;
     word-spacing: -0.43em;
 }
-.yui3-g-responsive img {
+.yui3-g-r img {
     max-width: 100%;
 }
 
@@ -19,12 +19,12 @@
     }
 }
 @media (max-width:480px) { 
-    .yui3-g-responsive > [class ^= "yui3-u"] {
+    .yui3-g-r > [class ^= "yui3-u"] {
         width: 100%;
     }
 }
 @media (max-width:767px) { 
-    .yui3-g-responsive > [class ^= "yui3-u"] {
+    .yui3-g-r > [class ^= "yui3-u"] {
         width: 100%;
     }
     .yui3-hidden-phone {
