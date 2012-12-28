@@ -4,7 +4,12 @@ YUI.add('bugs-tests', function(Y) {
     var suite = new Y.Test.Suite("YUI Test Bugs");
 
     suite.add(new Y.Test.Case({
-
+        _should: {
+            ignore: {
+                //http://code.google.com/p/phantomjs/issues/detail?id=947
+                "creating an iframe should allow its name to be retrieved in the DOM": Y.UA.phantomjs
+            }
+        },
         name : "TestReporter",
 
         "creating an iframe should allow its name to be retrieved in the DOM": function () {
