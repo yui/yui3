@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Test page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="z"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var bind, model;
+
+YUI({ filter: 'raw' }).use('data-bind', 'widget', 'base-build', 'console', 'json-stringify', function (Y) {
+    new Y.Console({ newestOnTop: false }).render();
+
+    var BoundWidget = Y.Base.create('bound', Y.Widget, [Y.DataBind], {
+        renderUI: function () {
+            this.get('contentBox').append(
+'<form><p><label>Field 1: <input name="f1" data-bind-attr="field1" value="field 1 value"></label></p> <p>Field 2: <label><input name="f2" data-bind-attr="field2" type="radio" value="a" checked> 2a</label> <label><input name="f2" data-bind-attr="field2" type="radio" value="b"> 2b</label> <label><input name="f2" data-bind-attr="field2" type="radio" value="c"> 2c</label> </p> <p><label>Field 3: <input name="f3" data-bind-attr="field3" type="checkbox" value="field 3 value"></label></p> <p><label>Field 4: <input name="f4" data-bind-attr="field4" type="hidden" value="field 4 value"></label></p> <p><label>Field 5: <textarea name="f5" data-bind-attr="field5">field 5 value</textarea></label></p> <p><label>Field 6: <select name="f6" data-bind-attr="field6"> <option value="a" selected>6a</option> <option value="b">6b</option> <option value="c">6c</option> </select> </label> </p> </form>');
+        },
+        bindUI: function () {
+            this._initDataBinding();
+        },
+        syncUI: function () {
+            this.syncToUI();
+        }
+    }, {
+        ATTRS: {
+            field1: { value: 'This is not in the DOM' },
+            field2: { value: 'b' },
+            field3: { value: 'field 3 value' },
+            field4: { value: 'hidden stuff!' },
+            field5: { value: 'This is not in the textarea' },
+            field6: { value: 'c' }
+        }
+    });
+
+    bind = new BoundWidget().render('#z');
+
+    bind.after(['field1Change', 'field2Change','field3Change','field4Change','field5Change', 'field6Change'], function (e) {
+        Y.log(Y.JSON.stringify({
+            name: e.attrName,
+            newVal: e.newVal,
+            prevVal: e.prevVal
+        }, null, 4), 'info', 'data-bind');
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+    "name": "data-bind",
+    "builds": {
+        "data-bind": {
+            "jsfiles": [
+                "data-bind.js"
+            ]
+        }
+    }
+}
+

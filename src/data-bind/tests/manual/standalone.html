@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Test page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<form id="x">
+    <p><label>Field 1: <input name="f1" data-bind-attr="field1" value="field 1 value"></label></p>
+    <p>Field 2: 
+        <label><input name="f2" data-bind-attr="field2" type="radio" value="a" checked> 2a</label>
+        <label><input name="f2" data-bind-attr="field2" type="radio" value="b"> 2b</label>
+        <label><input name="f2" data-bind-attr="field2" type="radio" value="c"> 2c</label>
+    </p>
+    <p><label>Field 3: <input name="f3" data-bind-attr="field3" type="checkbox" value="field 3 value"></label></p>
+    <p><label>Field 4: <input name="f4" data-bind-attr="field4" type="hidden" value="field 4 value"></label></p>
+    <p><label>Field 5: <textarea name="f5" data-bind-attr="field5">field 5 value</textarea></label></p>
+    <p><label>Field 6:
+        <select name="f6" data-bind-attr="field6">
+            <option value="a" selected>6a</option>
+            <option value="b">6b</option>
+            <option value="c">6c</option>
+        </select>
+       </label>
+    </p>
+</form>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var bind, model;
+
+YUI({ filter: 'raw' }).use('data-bind', 'model', 'console', 'json-stringify', function (Y) {
+    new Y.Console({ newestOnTop: false }).render();
+
+    model = new Y.Model();
+    model.addAttrs({
+        field1: {},
+        field2: {},
+        field3: {},
+        field4: {},
+        field5: {},
+        field6: {}
+    }, {
+        field1: 'This is not in the DOM',
+        field2: 'b',
+        field3: 'field 3 value',
+        field4: 'hidden stuff!',
+        field5: 'This is not in the textarea',
+        field6: 'c'
+    });
+
+    bind = new Y.DataBind({
+        container: '#x',
+        model    : model,
+        fields   : {
+            f1: {
+                attr: 'field1',
+                formatter: function (val) {
+                    return val.toUpperCase();
+                },
+                parser: function (val) {
+                    return val.toLowerCase();
+                }
+            },
+            f2: 'field2',
+            f3: 'field3',
+            f4: 'field4',
+            f5: 'field5',
+            f6: 'field6'
+        }
+    });
+
+    // Push DOM values to the Model
+    bind.syncToModel();
+
+    model.after('change', function (e) {
+        Y.log(Y.JSON.stringify(e.changed, null, 4), 'info', 'data-bind');
+    });
+});
+</script>
+</body>
+</html>
