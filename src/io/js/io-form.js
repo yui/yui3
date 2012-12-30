@@ -14,7 +14,7 @@ var eUC = encodeURIComponent;
  *
  * @method serialize
  * @static
- * @param {Node|String} form - YUI form node or HTML form id
+ * @param {Node|String} form YUI form node or HTML form id
  * @param {Object} [options] Configuration options.
  * @param {Boolean} [options.useDisabled=false] Whether to include disabled fields.
  * @param {Object|String} [options.extra] Extra values to include. May be a query string or an object with key/value pairs.
@@ -39,8 +39,10 @@ Y.mix(Y.IO.prototype, {
     *
     * @method _serialize
     * @private
-    * @param {Object} c - id: YUI form node or HTML form id, useDisabled: `true` to include disabled fields
-    * @param {String} s - Key-value data defined in the configuration object.
+    * @param {Object} c
+    * @param {String|Element} c.id YUI form node or HTML form id
+    * @param {Boolean} c.useDisabled `true` to include disabled fields
+    * @param {String} s Key-value data defined in the configuration object.
     * @return {String}
     */
     _serialize: function(c, s) {
@@ -50,12 +52,16 @@ Y.mix(Y.IO.prototype, {
             id = (typeof c.id === 'string') ? c.id : c.id.getAttribute('id'),
             e, f, n, v, d, i, il, j, jl, o;
 
-            if (!id) {
-                id = Y.guid('io:');
-                c.id.setAttribute('id', id);
-            }
+        if (!id) {
+            id = Y.guid('io:');
+            c.id.setAttribute('id', id);
+        }
 
-            f = Y.config.doc.getElementById(id);
+        f = Y.config.doc.getElementById(id);
+
+        if (!f || !f.elements) {
+            return s || '';
+        }
 
         // Iterate over the form elements collection to construct the
         // label-value pairs.
@@ -108,7 +114,12 @@ Y.mix(Y.IO.prototype, {
                 }
             }
         }
+
+        if (s) {
+            data[item++] = s;
+        }
+
         Y.log('HTML form serialized. The value is: ' + data.join('&'), 'info', 'io');
-        return s ? data.join('&') + "&" + s : data.join('&');
+        return data.join('&');
     }
 }, true);
