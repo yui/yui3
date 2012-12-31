@@ -219,7 +219,8 @@ AppContent.prototype = {
 };
 
 // Mix statics.
-Y.mix(AppContent, PjaxContent);
+AppContent.ATTRS = Y.Attribute.protectAttrs(PjaxContent.ATTRS);
+
 // Mix prototype.
 Y.mix(AppContent, PjaxContent, false, null, 1);
 

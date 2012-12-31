@@ -1,0 +1,71 @@
+<div class="intro">
+<p>{{description}}</p>
+</div>
+
+<div id="demo" class="example">
+    <style>
+    {{>picker-source-css}}
+    {{>color-harmony-output-css}}
+    </style>
+
+    {{>picker-source-html}}
+    {{>color-harmony-output-html}}
+
+    <script>
+    YUI().use('dial', 'slider', 'color', function(Y){
+        {{>picker-source-js}}
+        {{>color-harmony-output-js}}
+    });
+    </script>
+</div>
+
+<h3>Setting Up the HSL Picker UI</h3>
+<p>This example takes advantage of the `dial` and `slider` widgets. We will use the dial widget to represent and select the hue from the 360 degree color wheel.</p>
+<p>Next we will use two sliders to select the saturation and luminance.</p>
+
+```
+{{>picker-source-html}}
+{{>color-harmony-output-html}}
+```
+
+<p>This could use a little CSS for positioning, so let's get to that next.</p>
+
+```
+{{>picker-source-css}}
+{{>color-harmony-output-css}}
+```
+
+<h3>Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the `color`, `slider`, `dial` and `event-valuechange` modules.</p>
+
+```
+YUI().use('dial', 'slider', 'event-valuechange', 'color', function (Y) {
+    // Code Here.
+});
+```
+{{>build-color-picker-doc-js}}
+
+<h4>Building The Picker's Output</h4>
+<h5>Initializing Output Variables</h5>
+```
+{{>color-harmony-output-js-vars}}
+```
+
+<h5>Ouput Functions</h5>
+```
+{{>color-harmony-output-js-func}}
+```
+
+<h5>Provide Useful Information</h5>
+<p>Let's be honest, having a bunch of colors show up on the screen isn't really useful if you cannot get the value easily.</p>
+<p>One solution is to provide a tooltip with the hex, rgb, and hsl values when the user clicks on the swatch. So let's set that up.</p>
+```
+{{>color-harmony-output-js-tool}}
+```
+
+
+<h4>Get It Started</h4>
+<p>Our last step is to make sure we set the initial view of the UI when everything has loaded. We can do this by simply calling `updatePickerUI`.</p>
+```
+{{>picker-source-js-start}}
+```

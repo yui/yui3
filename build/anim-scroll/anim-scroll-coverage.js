@@ -26,7 +26,7 @@ _yuitest_coverage["build/anim-scroll/anim-scroll.js"] = {
     path: "build/anim-scroll/anim-scroll.js",
     code: []
 };
-_yuitest_coverage["build/anim-scroll/anim-scroll.js"].code=["YUI.add('anim-scroll', function (Y, NAME) {","","/**"," * Adds support for the <code>scroll</code> property in <code>to</code>"," * and <code>from</code> attributes."," * @module anim"," * @submodule anim-scroll"," */","","var NUM = Number;","","//TODO: deprecate for scrollTop/Left properties?","Y.Anim.behaviors.scroll = {","    set: function(anim, att, from, to, elapsed, duration, fn) {","        var","            node = anim._node, ","            val = ([","            fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),","            fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)","        ]);","","        if (val[0]) {","            node.set('scrollLeft', val[0]);","        }","","        if (val[1]) {","            node.set('scrollTop', val[1]);","        }","    },","    get: function(anim) {","        var node = anim._node;","        return [node.get('scrollLeft'), node.get('scrollTop')];","    }","};","","","","}, '@VERSION@', {\"requires\": [\"anim-base\"]});"];
+_yuitest_coverage["build/anim-scroll/anim-scroll.js"].code=["YUI.add('anim-scroll', function (Y, NAME) {","","/**"," * Adds support for the <code>scroll</code> property in <code>to</code>"," * and <code>from</code> attributes."," * @module anim"," * @submodule anim-scroll"," */","","var NUM = Number;","","//TODO: deprecate for scrollTop/Left properties?","Y.Anim.behaviors.scroll = {","    set: function(anim, att, from, to, elapsed, duration, fn) {","        var","            node = anim._node,","            val = ([","            fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),","            fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)","        ]);","","        if (val[0]) {","            node.set('scrollLeft', val[0]);","        }","","        if (val[1]) {","            node.set('scrollTop', val[1]);","        }","    },","    get: function(anim) {","        var node = anim._node;","        return [node.get('scrollLeft'), node.get('scrollTop')];","    }","};","","","","}, '@VERSION@', {\"requires\": [\"anim-base\"]});"];
 _yuitest_coverage["build/anim-scroll/anim-scroll.js"].lines = {"1":0,"10":0,"13":0,"15":0,"22":0,"23":0,"26":0,"27":0,"31":0,"32":0};
 _yuitest_coverage["build/anim-scroll/anim-scroll.js"].functions = {"set:14":0,"get:30":0,"(anonymous 1):1":0};
 _yuitest_coverage["build/anim-scroll/anim-scroll.js"].coveredLines = 10;
@@ -52,7 +52,7 @@ Y.Anim.behaviors.scroll = {
         _yuitest_coverfunc("build/anim-scroll/anim-scroll.js", "set", 14);
 _yuitest_coverline("build/anim-scroll/anim-scroll.js", 15);
 var
-            node = anim._node, 
+            node = anim._node,
             val = ([
             fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
             fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)

@@ -1,6 +1,22 @@
 Attribute Change History
 ========================
 
+3.8.0
+-----
+
+* [!] The `AttributeEvents` class extension and the `attribute-events` module
+  have been renamed to `AttributeObservable` and `attribute-observable`
+  respectively. The old names are deprecated, but have been retained as aliases
+  for backwards compatibility. They will be removed in a future version of YUI.
+
+* [!] The `AttributeComplex` class extension and the `attribute-complex` module
+  have been deprecated. This functionality is now part of `AttributeCore`, and
+  this extension and module are no longer needed.
+
+* Moved AttributeCore's protected `_protectAttrs()` utility method to a public
+  static method, `protectAttrs()`, which is available on both `Y.Attribute` and
+  `Y.AttributeCore` namespaces.
+
 3.7.3
 -----
 

@@ -1,0 +1,17 @@
+{
+    "name": "template",
+
+    "builds": {
+        "template-base": {
+            "jsfiles": [
+                "template-base.js"
+            ]
+        },
+
+        "template-micro": {
+            "jsfiles": [
+                "template-micro.js"
+            ]
+        }
+    }
+}
