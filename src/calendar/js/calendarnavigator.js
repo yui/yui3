@@ -282,6 +282,8 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
         this._updateControlState();
 
         host.after("dateChange", this._updateControlState, this);
+        host.after("minimumDateChange", this._updateControlState, this);
+        host.after("maximumDateChange", this._updateControlState, this);
 
         headerCell.prepend(this._controls.prevMonth);
         headerCell.append(this._controls.nextMonth);
