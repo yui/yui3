@@ -67,8 +67,10 @@
      * additional, less commonly used attribute methods, such as `modifyAttr`, `removeAttr` and `reset`.</p>
      *
      * @class AttributeCore
-     * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
-     * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>). These are not merged/cloned. The caller is responsible for isolating user provided values if required.
+     * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>).
+     *        These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
+     * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>).
+     *        These are not merged/cloned. The caller is responsible for isolating user provided values if required.
      * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
      */
     function AttributeCore(attrs, values, lazy) {
@@ -111,8 +113,10 @@
          * constructor.
          *
          * @method _initAttrHost
-         * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
-         * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>). These are not merged/cloned. The caller is responsible for isolating user provided values if required.
+         * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>).
+         *        These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
+         * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>).
+         *        These are not merged/cloned. The caller is responsible for isolating user provided values if required.
          * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
          * @private
          */
@@ -153,7 +157,8 @@
          *        Whether or not the attribute is "write once". Attributes having writeOnce set to true,
          *        can only have their values set once, be it through the default configuration,
          *        constructor configuration arguments, or by invoking set.
-         *        <p>The writeOnce attribute can also be set to the string "initOnly", in which case the attribute can only be set during initialization
+         *        <p>The writeOnce attribute can also be set to the string "initOnly",
+         *         in which case the attribute can only be set during initialization
          *        (when used with Base, this means it can only be set during construction)</p>
          *    </dd>
          *
@@ -237,7 +242,7 @@
                     added : true
                 });
             } else {
-
+                /*jshint maxlen:200*/
                 if (host.attrAdded(name) && !state.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
                 if (!host.attrAdded(name) || state.get(name, IS_LAZY_ADD)) {
@@ -245,6 +250,7 @@
                     hasValue = (VALUE in config);
 
                     if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
+                /*jshint maxlen:150*/
 
                     if (hasValue) {
                         // We'll go through set, don't want to set value in config directly
@@ -274,7 +280,8 @@
          *
          * @method attrAdded
          * @param {String} name The name of the attribute to check.
-         * @return {boolean} true if an attribute with the given name has been added, false if it hasn't. This method will return true for lazily added attributes.
+         * @return {boolean} true if an attribute with the given name has been added, false if it hasn't.
+         *         This method will return true for lazily added attributes.
          */
         attrAdded: function(name) {
             return !!this._state.get(name, ADDED);
@@ -380,10 +387,6 @@
          */
         _setAttr : function(name, val, opts, force)  {
 
-            // HACK - no real reason core needs to know about opts, but
-            // it adds fn hops if we want to break it out.
-            // Not sure it's worth it for this critical path
-
             var allowSet = true,
                 state = this._state,
                 stateProxy = this._stateProxy,
@@ -451,11 +454,7 @@
                 }
 
                 if (allowSet) {
-                    if (typeof opts === 'string') {
-                         opts = {src:opts};
-                    } else {
-                         opts = opts || {};
-                    }
+                    opts = opts || {};
                     if (!this._fireAttrChange || initializing) {
                         this._setAttrVal(name, strPath, currVal, val, opts);
                     } else {
@@ -868,12 +867,15 @@
         },
 
         /**
-         * Utility method to set up initial attributes defined during construction, either through the constructor.ATTRS property, or explicitly passed in.
+         * Utility method to set up initial attributes defined during construction,
+         * either through the constructor.ATTRS property, or explicitly passed in.
          *
          * @method _initAttrs
          * @protected
-         * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
-         * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>). These are not merged/cloned. The caller is responsible for isolating user provided values if required.
+         * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>).
+         *        These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
+         * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>).
+         *        These are not merged/cloned. The caller is responsible for isolating user provided values if required.
          * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
          */
         _initAttrs : function(attrs, values, lazy) {
