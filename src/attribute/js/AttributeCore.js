@@ -323,7 +323,7 @@
          * @private
          * @param {Object} name The name of the attribute
          */
-        _addLazyAttr: function(name, cfg) {
+        _addLazyAttr: function(name) {
             var state = this._state,
                 lazyCfg = state.get(name, LAZY);
 
