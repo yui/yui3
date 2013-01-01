@@ -8,7 +8,8 @@
 
         <!--<script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js" type="text/javascript" charset="utf-8"></script> 
         -->
-        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>        
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+        
         <style>
         	.horizontal {
                 width:300px;
@@ -40,29 +41,32 @@
         </style>
         
         <script type="text/javascript" charset="utf-8">
-        var s;
+
         YUI({
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             coverage: ['scrollview-paginator']
         }).use('console', 'test', 'node-event-simulate', 'scrollview-base', 'scrollview-paginator', function(Y) {
 
-	        var DURATION = 1;
-	        var SLOW_DURATION = 1000; // Neccesary to trigger certain lines
-
-	        // Set up the page
-	        var myConsole = new Y.Console().render();
-			
-	        var testBasic = new Y.Test.Case({
+	        var DURATION = 1,
+	        	SLOW_DURATION = 1000,
+	        	WAIT = 2000,
+	        	myConsole = new Y.Console().render(),
+	        	suite = new Y.Test.Suite({name:"Scrollview Paginator Test Suite"});
+	        
+	        suite.add(new Y.Test.Case({
 	            name: "API Tests",
                 _should: {
                     ignore: {
-                        "Move x should advance 1 page right": Y.UA.phantomjs || Y.UA.ie,
-                        "Move left on X should snap back": Y.UA.phantomjs || Y.UA.ie,
-                        "optimizeMemory should hide nodes not near the viewport" : Y.UA.phantomjs || Y.UA.ie,
+                        "Move x should advance 1 page right": (Y.UA.phantomjs || Y.UA.ie),
+                        "Move left on X should snap back": (Y.UA.phantomjs || Y.UA.ie),
+                        "optimizeMemory should hide nodes not near the viewport" : (Y.UA.phantomjs || Y.UA.ie),
 
                         // TODO: Investigate why these have issues in IE7
-                        "sv.next() should advance to the next page" : Y.UA.ie,
-                        "sv.next() on last index should do nothing" : Y.UA.ie
+                        "sv.next() should advance to the next page" : (Y.UA.ie),
+                        "sv.next() on last index should do nothing" : (Y.UA.ie),
+
+                        // Mousewheel emulation is currently only supported in Chrome
+                        "mousewheel down should move the SV down" : (Y.UA.ie || Y.UA.gecko)
                     }
                 },
 
@@ -71,11 +75,10 @@
 			    //---------------------------------------------
 
 	            setUp : function () {
-	            	// console.log('setUp');
+	            	// empty
 	            },
 
 	            tearDown : function () {
-	            	// console.log('tearDown');
 	            	Y.one('#container').empty(true);
                 },
 			
@@ -84,7 +87,7 @@
 			    //---------------------------------------------
 
 				"Ensure rendering & initial state are correct": function() {
-					var scrollview = renderNewScrollview(false),
+					var scrollview = renderNewScrollview('x'),
 						bb = scrollview.get('boundingBox'),
 						cb = scrollview.get('contentBox'),
 						id = cb.get('id'),
@@ -100,24 +103,24 @@
 
 				"sv.next() should advance to the next page" : function () {
 					var Test = this,
-						sv = renderNewScrollview(false);
+						sv = renderNewScrollview('x');
 
-					sv.on('scrollEnd', function () {
+					sv.once('scrollEnd', function () {
 						Test.resume(function () {
 							Y.Assert.areEqual(300, sv.get('scrollX'));
 						})
 					})
 
 					sv.pages.next();
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"sv.next() on last index should do nothing" : function () {
 					var Test = this,
-						sv = renderNewScrollview(false, 9),
+						sv = renderNewScrollview('x', 9),
 						eventsFired = 0;
 
-					sv.on('scrollEnd', function () {
+					sv.once('scrollEnd', function () {
 						eventsFired++;
 					});
 
@@ -130,14 +133,14 @@
 
 					sv.pages.next();
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"sv.prev() should advance to the previous page" : function () {
 					var Test = this,
-						sv = renderNewScrollview(true, 2);
+						sv = renderNewScrollview('y', 2);
 
-					sv.on('scrollEnd', function () {
+					sv.once('scrollEnd', function () {
 						Test.resume(function () {
 							Y.Assert.areEqual(100, sv.get('scrollY'));
 						});
@@ -145,15 +148,15 @@
 
 					sv.pages.prev();
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"sv.prev() on index 0 should do nothing" : function () {
 					var Test = this,
-						sv = renderNewScrollview(true),
+						sv = renderNewScrollview('y'),
 						eventsFired = 0;
 
-					sv.on('scrollEnd', function () {
+					sv.once('scrollEnd', function () {
 						eventsFired++;
 					});
 
@@ -166,14 +169,30 @@
 
 					sv.pages.prev();
 
-					Test.wait(2000);
+					Test.wait(WAIT);
+				},
+
+				"scrollTo (deprecated) should animate to the specified index" : function () {
+					var Test = this,
+						sv = renderNewScrollview('y');
+
+					sv.once('scrollEnd', function () {
+						Test.resume(function () {
+							Y.Assert.areEqual(5, sv.pages.get('index'));
+							Y.Assert.areEqual(500, sv.get('scrollY'));
+						});
+					});
+
+					sv.pages.scrollTo(5);
+
+					Test.wait(WAIT);
 				},
 
 				"scrollToIndex should animate to the specified index" : function () {
 					var Test = this,
-						sv = renderNewScrollview(true);
+						sv = renderNewScrollview('y');
 
-					sv.on('scrollEnd', function () {
+					sv.once('scrollEnd', function () {
 						Test.resume(function () {
 							Y.Assert.areEqual(5, sv.pages.get('index'));
 							Y.Assert.areEqual(500, sv.get('scrollY'));
@@ -182,22 +201,36 @@
 
 					sv.pages.scrollToIndex(5);
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
+				/*
+				The default anim duration is 300ms so this test is designed to
+				check that the duration can be changed
+				*/
+				"scrollToIndex should animate with a longer anim duration": function () {
+					var Test = this,
+						sv = renderNewScrollview('y'),
+						startTime = Y.Lang.now();
 
+					sv.once('scrollEnd', function () {
+						Test.resume(function () {
+							Y.Assert.isTrue(Y.Lang.now() - startTime > 1000, 'Animation took less time than expected');
+						});
+					});
 
-
-
+					sv.pages.scrollToIndex(5, 1500);
+					Test.wait(WAIT);
+				},
 
 
 				"Move x should advance 1 page right": function() {
 
 
 					var Test = this,
-						scrollview = renderNewScrollview(false);
+						scrollview = renderNewScrollview('x');
 
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						Test.resume(function(){
 							Y.Assert.areEqual(1, scrollview.pages.get('index'));
 							Y.Assert.areEqual(0, scrollview.get('scrollY'));
@@ -207,12 +240,12 @@
 
 					scrollview.get('contentBox').simulateGesture('move', {
                         path: {
-                            xdist: -5
+                            xdist: -500
                         },
                         duration: DURATION
 					});
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 
@@ -221,10 +254,10 @@
 				"Move left on X should snap back": function() {
 
 					var Test = this,
-						scrollview = renderNewScrollview(false),
+						scrollview = renderNewScrollview('x'),
 						distance = 100;
 						
-					scrollview.on('scrollEnd', function(){
+					scrollview.once('scrollEnd', function(){
 						Test.resume(function(){
 							Y.Assert.areEqual(0, scrollview.pages.get('index'));
 							Y.Assert.areEqual(0, scrollview.get('scrollY'));
@@ -239,13 +272,13 @@
                         duration: DURATION
 					});
 
-					Test.wait(2000);
+					Test.wait(WAIT);
 				},
 
 				"optimizeMemory should hide nodes not near the viewport": function() {
 
 					var Test = this,
-						scrollview = renderNewScrollview(false, 0, true),
+						scrollview = renderNewScrollview('x', 0, true),
 						distance = 100;
 
 					scrollview.on('scrollEnd', function(){
@@ -263,7 +296,7 @@
 							if (index+1 < total) {
 								scrollview.get('contentBox').simulateGesture('move', {
 			                        path: {
-			                            xdist: -5
+			                            xdist: -500
 			                        },
 			                        duration: DURATION
 								});
@@ -274,36 +307,85 @@
 
 					scrollview.get('contentBox').simulateGesture('move', {
 						path: {
-							xdist: -1
+							xdist: -500
 						},
 						duration: DURATION
 					});
 
 					Test.wait(1000);
+				},
+
+				"mousewheel down should move the SV down": function () {
+					
+					var Test = this,
+						scrollview = renderNewScrollview('y');
+
+					scrollview.once('scrollEnd', function(){
+						Test.resume(function(){
+							Y.Assert.areEqual(1, scrollview.pages.get('index'));
+						})
+					});
+
+					Y.later(100, null, function () {
+						simulateMousewheel(Y.one("#container li"), true);
+					});
+
+					Test.wait(WAIT);
+				},
+
+				"Dual axis should do allow scrolling on both X & Y axes": function () {
+					var Test = this,
+						scrollview = renderNewScrollview('xy'),
+						scrollToX = 300,
+						scrollToY = 20;
+
+					scrollview.once('scrollEnd', function(){
+
+						Test.resume(function(){
+							Y.Assert.areEqual(1, scrollview.pages.get('index'));
+							Y.Assert.areEqual(scrollToX, scrollview.get('scrollX'));
+
+							scrollview.once('scrollEnd', function(){
+								Test.resume(function(){
+									Y.Assert.areEqual(1, scrollview.pages.get('index'));
+									Y.Assert.areEqual(scrollToX, scrollview.get('scrollX'));
+									Y.Assert.areEqual(scrollToY, scrollview.get('scrollY'));
+								});
+							});
+
+							Y.later(100, null, function () {
+								scrollview.scrollTo(scrollToX, scrollToY, 200);
+							});
+
+							Test.wait(WAIT);
+
+						});
+
+					});
+
+					Y.later(100, null, function () {
+						scrollview.pages.set('index', 1);
+					});
+
+					Test.wait(WAIT);
 				}
 
 				/*
 					Additional tests:
 					- gestures
-					- mousewheel
-					- optimization
 					- next() past total
-					- scrollTo()
 					- lazyload
 					- Forced axis vs auto-detection
 					- Make sure scrollEnd only fires once
 				*/
 
-	        });
-
-	        var suite = new Y.Test.Suite({name:"Scrollview Paginator Test Suite"});
-	        suite.add(testBasic);
+	        }));
 
 	        Y.Test.Runner.setName("Scrollview Test Runner");
 	        Y.Test.Runner.add(suite);
 	        Y.Test.Runner.run();
 
-			function renderNewScrollview (vertical, startIndex, optimizeMemory) {
+			function renderNewScrollview (axis, startIndex, optimizeMemory) {
 
 				var config = {},
 					guid = Y.guid(),
@@ -314,15 +396,22 @@
 					            
 	            config.srcNode = '#' + guid;
 
-	            if (vertical) {
+	            if (axis === 'y') {
 	            	config.height = "100px";
 	            	widgetClass = 'vertical';
-	            	axis = 'y';
+	            	pAxis = axis;
 	            }
-	            else {
+	            else if (axis === 'x') {
 	            	config.width = "300px";
 	            	widgetClass = 'horizontal';
-	            	axis = 'x';
+	            	pAxis = axis;
+	            }
+	            else if (axis === 'xy') {
+	            	config.height = "100px";
+	            	config.width = "300px";
+	            	widgetClass = 'horizontal';
+	            	config.axis = 'xy';
+	            	pAxis = 'x';
 	            }
 
 	            config.plugins = [{
@@ -330,7 +419,7 @@
                     cfg:{
                     	index: startIndex || 0,
                         _optimizeMemory: optimizeMemory || false,
-                        axis: axis,
+                        axis: pAxis,
                         selector:">ul>li"
                     }
                 }];
@@ -341,6 +430,13 @@
 				scrollview.render();
 
 				return scrollview;
+			}
+
+			function simulateMousewheel (node, down) {
+				var evt = document.createEvent("WheelEvent");
+
+				evt.initWebKitWheelEvent(0, (down ? -1:1), Y.config.win, 0, 0, 0, 0, 0, 0, 0, 0);
+				node.getDOMNode().dispatchEvent(evt);
 			}
         });
         </script>

@@ -23,41 +23,41 @@
 
     Y.extend(Delegate, Y.Base, {
         /**
+        * The default bubbleTarget for this object. Default: Y.DD.DDM
         * @private
         * @property _bubbleTargets
-        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
         */
         _bubbleTargets: Y.DD.DDM,
         /**
+        * A reference to the temporary dd instance used under the hood.
         * @property dd
-        * @description A reference to the temporary dd instance used under the hood.
         */
         dd: null,
         /**
+        * The state of the Y.DD.DDM._noShim property to it can be reset.
         * @property _shimState
         * @private
-        * @description The state of the Y.DD.DDM._noShim property to it can be reset.
         */
         _shimState: null,
         /**
+        * Array of event handles to be destroyed
         * @private
         * @property _handles
-        * @description Array of event handles to be destroyed
         */
         _handles: null,
         /**
+        * Listens to the nodeChange event and sets the dragNode on the temp dd instance.
         * @private
         * @method _onNodeChange
-        * @description Listens to the nodeChange event and sets the dragNode on the temp dd instance.
         * @param {Event} e The Event.
         */
         _onNodeChange: function(e) {
             this.set('dragNode', e.newVal);
         },
         /**
+        * Listens for the drag:end event and updates the temp dd instance.
         * @private
         * @method _afterDragEnd
-        * @description Listens for the drag:end event and updates the temp dd instance.
         * @param {Event} e The Event.
         */
         _afterDragEnd: function() {
@@ -69,9 +69,9 @@
             this.dd.set('node', _tmpNode);
         },
         /**
+        * The callback for the Y.DD.Delegate instance used
         * @private
         * @method _delMouseDown
-        * @description The callback for the Y.DD.Delegate instance used
         * @param {Event} e The MouseDown Event.
         */
         _delMouseDown: function(e) {
@@ -97,9 +97,9 @@
             }
         },
         /**
+        * Sets the target shim state
         * @private
         * @method _onMouseEnter
-        * @description Sets the target shim state
         * @param {Event} e The MouseEnter Event
         */
         _onMouseEnter: function() {
@@ -107,9 +107,9 @@
             Y.DD.DDM._noShim = true;
         },
         /**
+        * Resets the target shim state
         * @private
         * @method _onMouseLeave
-        * @description Resets the target shim state
         * @param {Event} e The MouseLeave Event
         */
         _onMouseLeave: function() {
@@ -149,8 +149,8 @@
             Y.DD.DDM.regDelegate(this);
         },
         /**
+        * Applies the Y.Plugin.Drop to all nodes matching the cont + nodes selector query.
         * @method syncTargets
-        * @description Applies the Y.Plugin.Drop to all nodes matching the cont + nodes selector query.
         * @return {Self}
         * @chainable
         */
@@ -176,8 +176,8 @@
             return this;
         },
         /**
+        * Apply the Drop plugin to this node
         * @method createDrop
-        * @description Apply the Drop plugin to this node
         * @param {Node} node The Node to apply the plugin to
         * @param {Array} groups The default groups to assign this target to.
         * @return Node
@@ -202,7 +202,7 @@
                 var targets = Y.one(this.get(CONT)).all(this.get(NODES));
                 targets.unplug(Y.Plugin.Drop);
             }
-            Y.each(this._handles, function(v) {
+            Y.Array.each(this._handles, function(v) {
                 v.detach();
             });
         }
@@ -210,80 +210,80 @@
         NAME: 'delegate',
         ATTRS: {
             /**
+            * A selector query to get the container to listen for mousedown events on. All "nodes" should be a child of this container.
             * @attribute container
-            * @description A selector query to get the container to listen for mousedown events on. All "nodes" should be a child of this container.
             * @type String
             */
             container: {
                 value: 'body'
             },
             /**
+            * A selector query to get the children of the "container" to make draggable elements from.
             * @attribute nodes
-            * @description A selector query to get the children of the "container" to make draggable elements from.
             * @type String
             */
             nodes: {
                 value: '.dd-draggable'
             },
             /**
+            * A selector query to test a node to see if it's an invalid item.
             * @attribute invalid
-            * @description A selector query to test a node to see if it's an invalid item.
             * @type String
             */
             invalid: {
                 value: 'input, select, button, a, textarea'
             },
             /**
+            * Y.Node instance of the last item dragged.
             * @attribute lastNode
-            * @description Y.Node instance of the last item dragged.
             * @type Node
             */
             lastNode: {
                 value: _tmpNode
             },
             /**
+            * Y.Node instance of the dd node.
             * @attribute currentNode
-            * @description Y.Node instance of the dd node.
             * @type Node
             */
             currentNode: {
                 value: _tmpNode
             },
             /**
+            * Y.Node instance of the dd dragNode.
             * @attribute dragNode
-            * @description Y.Node instance of the dd dragNode.
             * @type Node
             */
             dragNode: {
                 value: _tmpNode
             },
             /**
+            * Is the mouse currently over the container
             * @attribute over
-            * @description Is the mouse currently over the container
             * @type Boolean
             */
             over: {
                 value: false
             },
             /**
+            * Should the items also be a drop target.
             * @attribute target
-            * @description Should the items also be a drop target.
             * @type Boolean
             */
             target: {
                 value: false
             },
             /**
+            * The default config to be used when creating the DD instance.
             * @attribute dragConfig
-            * @description The default config to be used when creating the DD instance.
             * @type Object
             */
             dragConfig: {
                 value: null
             },
             /**
+            * The handles config option added to the temp DD instance.
             * @attribute handles
-            * @description The handles config option added to the temp DD instance.
             * @type Array
             */
             handles: {
@@ -294,31 +294,31 @@
 
     Y.mix(Y.DD.DDM, {
         /**
+        * Holder for all Y.DD.Delegate instances
         * @private
         * @for DDM
         * @property _delegates
-        * @description Holder for all Y.DD.Delegate instances
         * @type Array
         */
         _delegates: [],
         /**
+        * Register a Delegate with the DDM
         * @for DDM
         * @method regDelegate
-        * @description Register a Delegate with the DDM
         */
         regDelegate: function(del) {
             this._delegates.push(del);
         },
         /**
+        * Get a delegate instance from a container node
         * @for DDM
         * @method getDelegate
-        * @description Get a delegate instance from a container node
         * @return Y.DD.Delegate
         */
         getDelegate: function(node) {
             var del = null;
             node = Y.one(node);
-            Y.each(this._delegates, function(v) {
+            Y.Array.each(this._delegates, function(v) {
                 if (node.test(v.get(CONT))) {
                     del = v;
                 }

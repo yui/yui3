@@ -1,0 +1,37 @@
+function updateOutput(hslString) {
+    if (hexOutput !== focused) {
+        hexOutput.set('value', Y.Color.toHex(hslString));
+    }
+    if (rgbOutput !== focused) {
+        rgbOutput.set('value', Y.Color.toRGB(hslString));
+    }
+    if (hslOutput !== focused) {
+        hslOutput.set('value', hslString);
+    }
+}
+
+function updatePickerFromValue(e) {
+    var val = e.newVal,
+        hsl = [];
+
+    if (Y.Color.toArray(val)) {
+        hsl = Y.Color.toArray(Y.Color.toHSL(val));
+        setPickerUI({
+            h: hsl[0],
+            s: hsl[1],
+            l: hsl[2]
+        });
+    }
+}
+
+function setFocused(e) {
+    focused = e.currentTarget;
+}
+
+function unsetFocused(e) {
+    if (focused === e.currentTarget) {
+        focused = null;
+    }
+}
+
+

@@ -60,7 +60,7 @@ YUI.add('dom-deprecated-test', function(Y) {
                 doc = frame.contentWindow.document,
                 node = doc .getElementById('demo');
 
-            Assert.areEqual(node, Y.DOM.firstByTag('div', doc));
+            Assert.areEqual(node, Y.DOM.firstByTag('div', doc.body));
         }
     }));
 }, '@VERSION@' ,{requires:['dom-base', 'dom-deprecated', 'test']});
