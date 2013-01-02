@@ -155,13 +155,13 @@ suite.add(new Y.Test.Case({
             this.view.tbodyNode.one('tr').compareTo(
                 this.view.getRow(this.view.get('modelList').item(0))));
     },
-        
+
     "getRow(model.clientId) should return the <tr>": function () {
         Y.Assert.isTrue(
             this.view.tbodyNode.one('tr').compareTo(
                 this.view.getRow(this.view.get('modelList').item(0).get('clientId'))));
     }
-        
+
 }));
 
 suite.add(new Y.Test.Case({
@@ -201,19 +201,19 @@ suite.add(new Y.Test.Case({
             this.view.getRecord(
                 this.view.tbodyNode.one('tr')));
     },
-        
+
     "getRecord(childNode) should return the corresponding Model": function () {
         Y.Assert.areSame(this.view.get('modelList').item(0),
             this.view.getRecord(
                 this.view.tbodyNode.one('em')));
     },
-        
+
     "getRecord(rowId) should return the corresponding Model": function () {
         Y.Assert.areSame(this.view.get('modelList').item(0),
             this.view.getRecord(
                 this.view.tbodyNode.one('tr').get('id')));
     },
-        
+
     "getRecord(childElId) should return the corresponding Model": function () {
         var guid = Y.guid();
 
@@ -265,7 +265,7 @@ suite.add(new Y.Test.Case({
             this.view.getRecord(
                 this.view.get('modelList').item(0).get('clientId')));
     }
-        
+
 }));
 
 suite.add(new Y.Test.Case({
@@ -297,7 +297,10 @@ suite.add(new Y.Test.Case({
                     return false;
                   }
                 },
-                { key: 'd' }
+                { key: 'd' },
+                { key: 'e',
+                  formatter:'{a},{b}'
+                }
             ],
             modelList: new Y.ModelList().reset([
                 { a: 'a1', b: 'b1', c: 'c1', d: 'd1' },
@@ -308,6 +311,15 @@ suite.add(new Y.Test.Case({
 
     tearDown: function () {
         this.view.destroy();
+    },
+    "string formatter should follow the template": function () {
+        var view = this.view,
+            node = view.getCell([0,0]),
+            content = node.get('children').item(0);
+        Y.Assert.areSame('ema1', content.get('id'));
+        Y.Assert.areSame('a1', content.getHTML());
+        node = view.getCell([0,4]);
+        Y.Assert.areSame('a1,b1', node.getHTML());
     },
 
     "formatter adding to o.className should add to cell classes": function () {
@@ -352,7 +364,7 @@ suite.add(new Y.Test.Case({
             tbody     = view.tbodyNode,
             className = '.' + view.getClassName('cell');
 
-        Y.Assert.areSame(8, tbody.all(className).size());
+        Y.Assert.areSame(10, tbody.all(className).size());
 
         this.view.set('columns', [{ key: 'd' }]);
 
