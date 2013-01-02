@@ -397,4 +397,82 @@ A.flatten = function(a) {
 };
 
 
+
+
+
+/**
+Intersection of two or more arrays.
+
+Note that the return value may contain duplicate values - you
+will need to use Y.Array.unique(returnedArray) if that's what you want. 
+
+This is likely to be very slow with large arrays, or large numbers
+or arrays, as it relies on indexOf.  If you can be sure of the type
+of data in the arrays that you are comparing there may be alternative,
+faster ways to do this.
+
+@method intersect
+@param {Array} arr1 First array 
+@param {Array} arr2* Second array to compare with the first
+@return {Array} Array of items that appear in both original arrays.
+@static
+@since 3.8.
+**/
+A.intersect = function (arr1, arr2) {
+
+    var args = Y.Array(arguments),
+        otherArrays;
+
+    // Recursively intersect():
+    if (args.length > 2) {
+        otherArrays = args.splice(2);
+        // unshift - order of arguments may be important
+        // because there's no call to unique()
+        // which means that intersect(a,b) !== intersect(b,a)
+        // when there are repeated values in the arrays
+        otherArrays.unshift(A.intersect(arr1, arr2));
+        return A.intersect.apply(this, otherArrays);
+    }
+
+    return A.filter(arr1, function (val1) {
+        return (A.indexOf(arr2, val1) !== -1);
+    });
+
+};
+
+
+
+
+/**
+Computes the difference of two or more arrays: that is, the values
+in arr1 that are not contained in arr2 (or any subsequent arrays
+passed as arguments)
+
+The return value may contain duplicate values if they
+exists in the arrays passed.
+
+@method diff
+@param {Array} arr1 First array 
+@param {Array} arr2* Second array to compare with the first
+@return {Array} Array of items that appear in arr1 but not arr2
+@static
+@since 3.8.
+**/
+A.diff = function (arr1, arr2) {
+
+    var args = Y.Array(arguments),
+        cc;
+
+    if (args.length > 2) {
+        // combine all subsequent arguments (arr2 onwards)
+        args.splice(0, 2);
+        cc = arr2.concat(args);
+        return A.diff(arr1, cc);
+    }
+
+    return A.filter(arr1, function (val1) {
+        return (A.indexOf(arr2, val1) === -1);
+    });
+};
+
 }, '@VERSION@', {"requires": ["yui-base"]});
