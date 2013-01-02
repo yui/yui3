@@ -1,6 +1,11 @@
 Uploader Utility (New) Change History
 =====================================
 
+3.8.1
+-----
+
+ * Add dropped file infomation to uploader drop event
+
 3.8.0
 -----
 

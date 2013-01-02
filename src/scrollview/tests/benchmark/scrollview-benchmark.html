@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ScrollView Benchmarks</title>
+
+    <style type="text/css">
+
+        .container {
+            margin:20px;
+            padding:0;
+            border:1px solid #000;
+            vertical-align:top;
+            display:inline-block;
+            *display:inline;
+            *zoom:1;
+            width:300px;
+        }
+
+        .horiz-content ul, .vert-content ul {
+            font:13px/1.231 arial,helvetica,clean,sans-serif;            
+            margin:0;
+            padding:0;
+            list-style:none;
+            white-space:nowrap;
+            *zoom:1;
+        }
+
+        .horiz-content ul li {
+            width:298px;
+            height:198px;
+            line-height:198px;
+            margin:0;
+            display:inline-block;
+            *display:inline;
+            *zoom:1;
+            padding:0;
+            border:1px solid #00ff00;
+            background:#eee;
+            font-size:150px;
+            text-align:center;
+            vertical-align:top;
+        }
+
+    </style>
+    
+</head>
+
+<body class="yui3-skin-sam">
+
+    <p><button id="start">Start Benchmarks</button></p>
+
+    <div id="log"></div>
+
+    <applet code="nano" archive="http://pieisgood.org/misc/benchmark/nano.jar" style="display: none;"></applet>
+    <script src="http://pieisgood.org/misc/benchmark/benchmark.js"></script>
+    <script src="../../../../build/yui/yui.js"></script>
+
+    <script>
+    var Y = YUI({
+        modules: {
+            'scrollview-benchmark': {
+                fullpath: 'scrollview-benchmark.js',
+                requires: ['scrollview-base', 'scrollview-paginator']
+            },
+
+            'test-console': {
+                fullpath : '../../../common/tests/assets/test-console.js',
+                requires : ['console-filters'],
+                skinnable: true
+            },
+
+            'skin-sam-test-console': {
+                fullpath: '../../../common/tests/assets/test-console.css',
+                type    : 'css'
+            }
+        },
+        useBrowserConsole: false
+    }).use('scrollview-benchmark', 'node-base', 'test-console', 'node-event-simulate', function (Y) {
+
+        var suite = Y.BenchmarkSuite,
+            start = Y.one('#start');
+
+        suite.on('start', function () {
+            start.set('disabled', true);
+            Y.log('Starting benchmarks.');
+        });
+
+        suite.on('cycle', function (bench) {
+            Y.log(String(bench));
+        });
+
+        suite.on('complete', function () {
+            start.set('disabled', false);
+            Y.log('Finished.');
+        });
+
+        start.on('click', function () {
+            suite.run(true);
+        });
+
+    });
+    </script>
+
+    <div id="container"></div>
+
+</body>
+</html>
