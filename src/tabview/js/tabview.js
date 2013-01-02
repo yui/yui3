@@ -1,5 +1,5 @@
 /**
- * The TabView module 
+ * The TabView module
  *
  * @module tabview
  */
@@ -7,10 +7,9 @@
 var _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
     DOT = '.',
-    getClassName = Y.ClassNameManager.getClassName,
 
     /**
-     * Provides a tabbed widget interface 
+     * Provides a tabbed widget interface
      * @param config {Object} Object literal specifying tabview configuration properties.
      *
      * @class TabView
@@ -19,7 +18,7 @@ var _queries = Y.TabviewBase._queries,
      * @uses WidgetParent
      */
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
-    _afterChildAdded: function(e) {
+    _afterChildAdded: function() {
         this.get('contentBox').focusManager.refresh();
     },
 
@@ -51,7 +50,7 @@ var _queries = Y.TabviewBase._queries,
 
         if (tablist) {
             tablist.setAttrs({
-                //'aria-labelledby': 
+                //'aria-labelledby':
                 role: 'tablist'
             });
         }
@@ -75,14 +74,14 @@ var _queries = Y.TabviewBase._queries,
     },
     
     renderUI: function() {
-        var contentBox = this.get('contentBox'); 
+        var contentBox = this.get('contentBox');
         this._renderListBox(contentBox);
         this._renderPanelBox(contentBox);
         this._childrenContainer = this.get('listNode');
         this._renderTabs(contentBox);
     },
 
-    _setDefSelection: function(contentBox) {
+    _setDefSelection: function() {
         //  If no tab is selected, select the first tab.
         var selection = this.get('selection') || this.item(0);
 
@@ -141,7 +140,7 @@ var _queries = Y.TabviewBase._queries,
     PANEL_TEMPLATE: '<div class="' + _classNames.tabviewPanel + '"></div>',
 
     ATTRS: {
-        defaultChildType: {  
+        defaultChildType: {
             value: 'Tab'
         },
 
