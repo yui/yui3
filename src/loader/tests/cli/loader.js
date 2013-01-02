@@ -1735,6 +1735,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-delegate")) > -1, "Module (event-delegate) not found in sorted array");
         },
+     "Testing event-delegate-change": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-delegate-change"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-delegate-change")) > -1, "Module (event-delegate-change) not found in sorted array");
+        },
      "Testing event-flick": function(data) {
             var loader = new Y.Loader({
                 require: ["event-flick"],

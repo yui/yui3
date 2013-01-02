@@ -1259,6 +1259,20 @@
             "node-base"
         ]
     },
+    "event-delegate-change": {
+        "after": [
+            "event-base"
+        ],
+        "condition": {
+            "name": "event-delegate-change",
+            "trigger": "event-base-ie",
+            "ua": "ie"
+        },
+        "requires": [
+            "node-event-delegate",
+            "event-synthetic"
+        ]
+    },
     "event-flick": {
         "requires": [
             "node-base",

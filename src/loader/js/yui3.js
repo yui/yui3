@@ -1316,6 +1316,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base"
         ]
     },
+    "event-delegate-change": {
+        "after": [
+            "event-base"
+        ],
+        "condition": {
+            "name": "event-delegate-change",
+            "trigger": "event-base-ie",
+            "ua": "ie"
+        },
+        "requires": [
+            "node-event-delegate",
+            "event-synthetic"
+        ]
+    },
     "event-flick": {
         "requires": [
             "node-base",
@@ -2561,4 +2575,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'd050a2294f84d3996bb46f592448f782';
+YUI.Env[Y.version].md5 = '299273b49e0bb93f3c00fbb04fcaa513';

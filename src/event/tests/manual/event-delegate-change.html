@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Delegate Change Events</title>
+        
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src="../../../../build/yui/yui.js"></script>
+
+    </head>
+
+    <body class="yui3-skin-sam">
+
+        <div id="mainWrapper">
+            <p>Normal select, will not prevent any listeners</p>
+            <select>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+            </select>
+
+            <p>Checkbox, will stop propagation</p>
+            <input type="checkbox" id="checkboxStopPropagation" />
+
+            <p>Checkbox, will stop immediate propagation</p>
+            <input type="checkbox" id="checkboxStopImmediatePropagation" />
+
+            <p>Normal input, will not prevent any listeners</p>
+            <input type="text" class="node-text" />
+
+            <p>Normal radio, will not prevent any listeners</p>
+            <input checked type="radio" name="group1" class="node-radio" />
+            <input type="radio" name="group1" class="node-radio" />
+            <input type="radio" name="group1" class="node-radio" />
+            <input type="radio" name="group1" class="node-radio" />
+
+            <p>Normal checkbox, will not prevent any listeners</p>
+            <input type="checkbox" class="node-checkbox" />
+
+            <p>Checkbox, will halt the event</p>
+            <input type="checkbox" class="node-checkbox" id="haltEventCheckbox" />
+
+            <p>Checkbox, the listener returns false</p>
+            <input type="checkbox" class="node-checkbox" id="returnFalseCheckbox" />
+
+            <div>
+                <p>Detach all listeners</p>
+                <button id="detachListeners">Detach</button>
+            </div>
+
+        </div>
+
+        <script>
+            var Y  = YUI();
+
+            YUI({filter:'raw', combine:false}).use('array-invoke', 'console', 'node-base', 'event-base', function(Y) {
+                new Y.Console().render();
+
+                var handles = [
+                    Y.delegate(
+                        'change',
+                        function() {
+                            Y.log('change event to input or select is fired..');
+                        },
+                        document.body,
+                        'input, select'
+                    ),
+
+                    Y.delegate(
+                        'change',
+                        function() {
+                            Y.log('Attached to a div - change event to input or select is fired..');
+                        },
+                        '#mainWrapper',
+                        'input, select'
+                    ),
+
+                    Y.one('#checkboxStopPropagation').on(
+                        'change',
+                        function(event) {
+                            Y.log('change event to checkbox is fired, stopping propagation');
+
+                            event.stopPropagation();
+                        }
+                    ),
+
+                    Y.one('#checkboxStopPropagation').on(
+                        'change',
+                        function(event) {
+                            Y.log('change event 2 to checkbox is fired..');
+                        }
+                    ),
+
+                    Y.one('#checkboxStopImmediatePropagation').on(
+                        'change',
+                        function(event) {
+                            Y.log('change event to checkbox is fired, stopping immediate propagation');
+
+                            event.stopImmediatePropagation();
+                        }
+                    ),
+
+                    Y.one('#checkboxStopImmediatePropagation').on(
+                        'change',
+                        function(event) {
+                            Y.log('change event to checkbox is fired, this should never log');
+                        }
+                    ),
+
+                    Y.one('#haltEventCheckbox').on(
+                        'change',
+                        function(event) {
+                            Y.log('Change event to checkbox is fired, halting the events. The second event listener to this checkbox should not execute.');
+
+                            event.halt(true);
+                        }
+                    ),
+
+                    Y.one('#haltEventCheckbox').on(
+                        'change',
+                        function(event) {
+                            Y.log('Second change event to checkbox, halting the events, this should never log');
+                        }
+                    ),
+
+                    Y.one('#returnFalseCheckbox').on(
+                        'change',
+                        function(event) {
+                            Y.log('Change event to checkbox, returning false. The second event listener to this checkbox should not execute.');
+
+                            return false;
+                        }
+                    ),
+
+                    Y.one('#returnFalseCheckbox').on(
+                        'change',
+                        function(event) {
+                            Y.log('Second change event to checkbox, returning false, this should never log');
+                        }
+                    )
+                ];
+
+                Y.one('#detachListeners').once('click', function(events) {
+                    Y.Array.invoke(handles, 'detach');
+                });
+            });
+        </script>
+    </body>
+</html>
