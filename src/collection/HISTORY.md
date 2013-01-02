@@ -1,6 +1,11 @@
 Collection Change History
 =========================
 
+3.8.?
+-----
+* Added `Y.Array.intersect()` and `Y.Array.diff()` which compute the intersection
+  or diff of two or more arrays.
+
 3.8.0
 -----
 
