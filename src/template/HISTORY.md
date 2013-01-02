@@ -1,6 +1,13 @@
 Template Change History
 =======================
 
+@VERSION@
+-----
+
+* The number 0 (as opposed to the string "0") is no longer treated as an empty
+  value by Template.Micro. [Ticket #2533040]
+
+
 3.8.1
 -----
 

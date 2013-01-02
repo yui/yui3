@@ -30,14 +30,14 @@ microSuite.add(new Y.Test.Case({
 
     'precompile() should return precompiled template code': function () {
         Assert.areSame(
-            "function (Y, $e, data) {\nvar $b='',$t='test';\nreturn $t;\n}",
+            "function (Y, $e, data) {\nvar $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='test';\nreturn $t;\n}",
             Micro.precompile('test')
         );
     },
 
     'precompile() should respect compile options': function () {
         Assert.areSame(
-            "function (Y, $e, data) {\nvar $b='',$t=''+\n$e((data.test)||$b)+\n'';\nreturn $t;\n}",
+            "function (Y, $e, data) {\nvar $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t=''+\n$e($v(data.test))+\n'';\nreturn $t;\n}",
 
             Micro.precompile('{{data.test}}', {
                 escapedOutput: /\{\{([\s\S]+?)\}\}/g
@@ -112,16 +112,28 @@ microSuite.add(new Y.Test.Case({
         Assert.areSame('at&amp;t', Micro.render('<%= data.name %>', {name: 'at&t'}));
     },
 
-    '<%= ... %> should print an empty string if given a falsy value': function () {
-        Assert.areSame('foobar', Micro.render('foo<%= data.bogus %>bar'));
+    '<%= ... %> should print an empty string if given a falsy non-numeric value': function () {
+        Assert.areSame('foobar', Micro.render('foo<%= data.value %>bar'), 'should print an empty string when the value is `undefined`');
+        Assert.areSame('foobar', Micro.render('foo<%= data.value %>bar', {value: false}), 'should print an empty string when the value is `false`');
+        Assert.areSame('foobar', Micro.render('foo<%= data.value %>bar', {value: null}), 'should print an empty string when the value is `null`');
+    },
+
+    '<%= ... %> should print "0" if given a numerical 0': function () {
+        Assert.areSame('0', Micro.render('<%= data.zero %>', {zero: 0}));
     },
 
     '<%== ... %> should be rendered as raw output': function () {
         Assert.areSame('at&t', Micro.render('<%== data.name %>', {name: 'at&t'}));
     },
 
-    '<%== ... %> should print an empty string if given a falsy value': function () {
-        Assert.areSame('foobar', Micro.render('foo<%== data.bogus %>bar'));
+    '<%== ... %> should print an empty string if given a falsy non-numeric value': function () {
+        Assert.areSame('foobar', Micro.render('foo<%== data.value %>bar'), 'should print an empty string when the value is `undefined`');
+        Assert.areSame('foobar', Micro.render('foo<%== data.value %>bar', {value: false}), 'should print an empty string when the value is `false`');
+        Assert.areSame('foobar', Micro.render('foo<%== data.value %>bar', {value: null}), 'should print an empty string when the value is `null`');
+    },
+
+    '<%== ... %> should print "0" if given a numerical 0': function () {
+        Assert.areSame('0', Micro.render('<%== data.zero %>', {zero: 0}));
     }
 }));
 
@@ -182,18 +194,17 @@ templateSuite.add(new Y.Test.Case({
 
     'precompile() should precompile a template using the selected engine': function () {
         Assert.areSame(
-            "function (Y, $e, data) {\nvar $b='',$t='test';\nreturn $t;\n}",
+            Y.Template.Micro.precompile('test'),
             (new Y.Template()).precompile('test')
         );
     },
 
     'precompile() should pass options to the selected engine': function () {
-        Assert.areSame(
-            "function (Y, $e, data) {\nvar $b='',$t=''+\n$e((data.test)||$b)+\n'';\nreturn $t;\n}",
+        var escapedOutputRegex = /\{\{([\s\S]+?)\}\}/g;
 
-            (new Y.Template()).precompile('{{data.test}}', {
-                escapedOutput: /\{\{([\s\S]+?)\}\}/g
-            })
+        Assert.areSame(
+            Y.Template.Micro.precompile('{{data.test}}', {escapedOutput: escapedOutputRegex}),
+            (new Y.Template()).precompile('{{data.test}}', {escapedOutput: escapedOutputRegex})
         );
     },
 
@@ -274,14 +285,14 @@ templateSuite.add(new Y.Test.Case({
 
     'precompile() should precompile a template using the specified `defaults`': function () {
         Assert.areSame(
-            "function (Y, $e, data) {\nvar $b='',$t=''+\n$e((data.test)||$b)+\n'';\nreturn $t;\n}",
+            "function (Y, $e, data) {\nvar $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t=''+\n$e($v(data.test))+\n'';\nreturn $t;\n}",
             this.microEngine.precompile('{{data.test}}')
         );
     },
 
     'precompile() should merge `defaults` with the specified `options`': function () {
         Assert.areSame(
-            "function (Y, $e, data) {\nvar $b='',$t=''+\n$e((data.test)||$b)+\n'';\nreturn $t;\n}",
+            "function (Y, $e, data) {\nvar $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t=''+\n$e($v(data.test))+\n'';\nreturn $t;\n}",
 
             this.microEngine.precompile('<%=data.test%>', {
                 escapedOutput:  /<%=([\s\S]+?)%>/g

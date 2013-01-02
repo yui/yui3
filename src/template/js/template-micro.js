@@ -1,3 +1,5 @@
+/*jshint expr:true */
+
 /**
 Adds the `Y.Template.Micro` template engine, which provides fast, simple
 string-based micro-templating similar to ERB or Underscore templates.
@@ -97,6 +99,8 @@ property using `<%= data.message %>`.
 @since 3.8.0
 **/
 Micro.compile = function (text, options) {
+    /*jshint evil:true */
+
     var blocks     = [],
         tokenClose = "\uffff",
         tokenOpen  = "\ufffe",
@@ -107,7 +111,15 @@ Micro.compile = function (text, options) {
     // Parse the input text into a string of JavaScript code, with placeholders
     // for code blocks. Text outside of code blocks will be escaped for safe
     // usage within a double-quoted string literal.
-    source = "var $b='',$t='" +
+    //
+    // $b is a blank string, used to avoid creating lots of string objects.
+    //
+    // $v is a function that returns the supplied value if the value is truthy
+    // or the number 0, or returns an empty string if the value is falsy and not
+    // 0.
+    //
+    // $t is the template string.
+    source = "var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='" +
 
         // U+FFFE and U+FFFF are guaranteed to represent non-characters, so no
         // valid UTF-8 string should ever contain them. That means we can freely
@@ -118,11 +130,11 @@ Micro.compile = function (text, options) {
         text.replace(/\ufffe|\uffff/g, '')
 
         .replace(options.rawOutput, function (match, code) {
-            return tokenOpen + (blocks.push("'+\n((" + code + ")||$b)+\n'") - 1) + tokenClose;
+            return tokenOpen + (blocks.push("'+\n$v(" + code + ")+\n'") - 1) + tokenClose;
         })
 
         .replace(options.escapedOutput, function (match, code) {
-            return tokenOpen + (blocks.push("'+\n$e((" + code + ")||$b)+\n'") - 1) + tokenClose;
+            return tokenOpen + (blocks.push("'+\n$e($v(" + code + "))+\n'") - 1) + tokenClose;
         })
 
         .replace(options.code, function (match, code) {
