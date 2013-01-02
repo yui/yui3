@@ -19,7 +19,8 @@
 
             new Y.Console({render:true});
 
-            var timeStart = 0,
+            var start = Y.one('#start'),
+                timeStart = 0,
                 frameCount = 0,
                 scrollview = new Y.ScrollView({
                     srcNode: "#content",
@@ -47,16 +48,20 @@
             scrollview.after('scrollEnd', onScrollEnd);
             scrollview.after(['scrollXChange', 'scrollYChange'], nextFrame);
 
-            cb.simulateGesture('flick', {
-                distance: -10000,
-                axis: 'x'
-            });
+            start.on('click', function () {
 
-            scrollview.once('scrollEnd', function () {
+                scrollview.once('scrollEnd', function () {
+                    cb.simulateGesture('flick', {
+                        distance: 5000,
+                        axis: 'x'
+                    });
+                });
+
                 cb.simulateGesture('flick', {
-                    distance: 5000,
+                    distance: -10000,
                     axis: 'x'
                 });
+
             });
 
             // Globalize
@@ -66,6 +71,7 @@
     </head>
 
     <body class="yui3-skin-sam">
+        <p><button id="start">Start Benchmarks</button></p>
         <ul id="content">
             <li>
                 <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.</p>
