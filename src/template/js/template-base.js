@@ -43,11 +43,21 @@ Using with Handlebars:
 @param {Mixed} [engine=Y.Template.Micro] Template engine to use, such as
     `Y.Template.Micro` or `Y.Handlebars`. Defaults to `Y.Template.Micro` if not
     specified.
+@param {Object} [defaults] Default options to use when instance methods are
+    invoked.
 @constructor
 @since 3.8.0
 **/
 
-function Template(engine) {
+function Template(engine, defaults) {
+    /**
+    Default options.
+
+    @property {Object} defaults
+    @since 3.8.1
+    **/
+    this.defaults = defaults;
+
     /**
     Template engine class.
 
@@ -74,6 +84,7 @@ Template.prototype = {
     @since 3.8.0
     **/
     compile: function (text, options) {
+        options = options ? Y.merge(this.defaults, options) : this.defaults;
         return this.engine.compile(text, options);
     },
 
@@ -89,6 +100,7 @@ Template.prototype = {
     @since 3.8.0
     **/
     precompile: function (text, options) {
+        options = options ? Y.merge(this.defaults, options) : this.defaults;
         return this.engine.precompile(text, options);
     },
 
@@ -105,6 +117,8 @@ Template.prototype = {
     @since 3.8.0
     **/
     render: function (text, data, options) {
+        options = options ? Y.merge(this.defaults, options) : this.defaults;
+
         if (this.engine.render) {
             return this.engine.render(text, data, options);
         }
@@ -125,6 +139,8 @@ Template.prototype = {
     @since 3.8.0
     **/
     revive: function (precompiled, options) {
+        options = options ? Y.merge(this.defaults, options) : this.defaults;
+
         return this.engine.revive ? this.engine.revive(precompiled, options) :
                 precompiled;
     }
