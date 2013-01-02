@@ -306,7 +306,7 @@ supplied regular expression.
 @static
 */
 A.grep = function(a, pattern) {
-    return A.filter(a, function(item, index) {
+    return A.filter(a, function(item) {
         return pattern.test(item);
     });
 };
@@ -404,7 +404,7 @@ A.flatten = function(a) {
 Intersection of two or more arrays.
 
 Note that the return value may contain duplicate values - you
-will need to use Y.Array.unique(returnedArray) if that's what you want. 
+will need to use Y.Array.unique(returnedArray) if that's what you want.
 
 This is likely to be very slow with large arrays, or large numbers
 or arrays, as it relies on indexOf.  If you can be sure of the type
@@ -412,7 +412,7 @@ of data in the arrays that you are comparing there may be alternative,
 faster ways to do this.
 
 @method intersect
-@param {Array} arr1 First array 
+@param {Array} arr1 First array
 @param {Array} arr2* Second array to compare with the first
 @return {Array} Array of items that appear in both original arrays.
 @static
@@ -452,7 +452,7 @@ The return value may contain duplicate values if they
 exists in the arrays passed.
 
 @method diff
-@param {Array} arr1 First array 
+@param {Array} arr1 First array
 @param {Array} arr2* Second array to compare with the first
 @return {Array} Array of items that appear in arr1 but not arr2
 @static
