@@ -34,6 +34,10 @@ var testModules = {
     "transport-tests": {
         "fullpath": "./js/transport-tests.js",
         "requires": ["io-xdr", "test"]
+    },
+    "serialize-tests": {
+        "fullpath": "./js/serialize-tests.js",
+        "requires": ["io-form", "test"]
     }
 };
 
