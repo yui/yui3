@@ -487,6 +487,37 @@ suite.add(new Y.Test.Case({
         );
 
   
+    },
+
+
+    'diff should return empty array when passed empty arrays': function () {
+        ArrayAssert.itemsAreSame(
+            [], A.diff([],[])
+        );
+    },
+
+    'diff() should find values in first that are not in second - simple values': function () {
+        ArrayAssert.itemsAreSame(
+            [1, 2],
+            A.diff([1, 2], [3, 4])
+        );
+
+        ArrayAssert.itemsAreSame(
+            [1, 2],
+            A.diff([1, 2, 3], [3, 4])
+        );
+    },
+
+    'diff() should work with more than 2 arrays': function () {
+        ArrayAssert.itemsAreSame(
+            [1, 2],
+            A.diff([1, 2], [3, 4], [5, 6])
+        );
+
+        ArrayAssert.itemsAreSame(
+            [1, 2],
+            A.diff([1, 3, 2, 4], [3, 4], [5, 6])
+        );
     }
     
 }));
