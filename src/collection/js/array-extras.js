@@ -418,7 +418,8 @@ A.intersect = function (arr1, arr2) {
 
     if (args.length > 2) {
         otherArrays = args.splice(2);
-        return A.intersect.call(this, A.intersect(arr1, arr2), otherArrays);
+        otherArrays.unshift(A.intersect(arr1, arr2));
+        return A.intersect.apply(this, otherArrays);
     }
 
     return A.filter(arr1, function (val1) {
