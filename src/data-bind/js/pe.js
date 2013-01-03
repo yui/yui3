@@ -20,15 +20,15 @@ Y.DataBind.HTML_PARSER = {
         var bindings = {};
 
         srcNode.all('[data-bind-attr]').each(function (node) {
-            var attr  = node.getAttribute('data-bind-attr'),
-                nodes = bindings[attr];
+            var attr   = node.getAttribute('data-bind-attr'),
+                config = bindings[attr];
 
-            if (nodes) {
-                if (!nodes.getDOMNodes) {
+            if (config) {
+                if (!config.field.getDOMNodes) {
                     // Node -> NodeList
-                    bindings[attr].field = nodes = Y.all(nodes);
+                    config.field = Y.all(config.field);
                 }
-                nodes.push(this);
+                config.field.push(this);
             } else {
                 bindings[attr] = { field: this };
             }
