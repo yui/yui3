@@ -1,6 +1,12 @@
 Attribute Change History
 ========================
 
+@VERSION@
+-----
+
+* Attribute validators and setters now receive set's `options` argument. This is
+  now a part of `AttributeCore`. [Ticket #2532810] [Satyam]
+
 3.8.0
 -----
 

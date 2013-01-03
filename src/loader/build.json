@@ -9,7 +9,7 @@
     "builds": {
         "loader-base": {
             "replace": {
-                "@GALLERY@": "gallery-2012.12.12-21-11",
+                "@GALLERY@": "gallery-2012.12.26-20-48",
                 "@TNT@": "4",
                 "@YUI2@": "2.9.0"
             },
@@ -20,7 +20,7 @@
         },
         "loader-yui3": {
             "exec": [
-                "./scripts/meta_join.js"
+                "yogi loader --yes --mix --start ../"
             ],
             "jsfiles": [
                 "yui3.js"
