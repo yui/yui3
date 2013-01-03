@@ -14,7 +14,8 @@ var Lang         = Y.Lang,
     htmlEscape   = Y.Escape.html,
     toArray      = Y.Array,
     bind         = Y.bind,
-    YObject      = Y.Object;
+    YObject      = Y.Object,
+    valueRegExp  = /\{value\}/g;
 
 /**
 View class responsible for rendering the `<tbody>` section of a table. Used as
@@ -455,7 +456,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     // 2. column deletions
     // 3. column additions
     // 4. column moves (preserve cells)
-    _afterColumnsChange: function (e) {
+    _afterColumnsChange: function () {
         this.render();
     },
 
@@ -469,7 +470,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     @since 3.5.0
     **/
-    _afterDataChange: function (e) {
+    _afterDataChange: function () {
         //var type = e.type.slice(e.type.lastIndexOf(':') + 1);
 
         // TODO: Isolate changes
@@ -486,7 +487,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     @since 3.6.0
     **/
-    _afterModelListChange: function (e) {
+    _afterModelListChange: function () {
         var handles = this._eventHandles;
 
         if (handles.dataChange) {
@@ -721,6 +722,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _createRowTemplate: function (columns) {
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
+            F = Y.DataTable.Formatters || {},
             i, len, col, key, token, headers, tokenValues, formatter;
 
         for (i = 0, len = columns.length; i < len; ++i) {
@@ -741,14 +743,12 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                            ' {' + token + '-className}'
             };
             if (formatter) {
-                if (isString(formatter)) {
-                    if (/\{\w+\}/.test(formatter)) {
-                        tokenValues.content = formatter.replace(/\{value\}/g,tokenValues.content);
-                    } else {
-                        columns[i]._formatterFn = Y.DataTable.FORMATTERS[formatter];
-                    }
-                } else if (Lang.isFunction(formatter)) {
+                if (Lang.isFunction(formatter)) {
                     columns[i]._formatterFn = formatter;
+                } else if (formatter in F) {
+                    columns[i]._formatterFn = F[formatter];
+                } else {
+                    tokenValues.content = formatter.replace(valueRegExp, tokenValues.content);
                 }
             }
 
