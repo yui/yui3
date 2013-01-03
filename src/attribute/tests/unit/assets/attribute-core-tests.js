@@ -95,7 +95,7 @@ YUI.add('attribute-core-tests', function(Y) {
 
             function FooBar(userVals) {
                 Y.Attribute.call(this, null, userVals);
-            };
+            }
 
             FooBar.ATTRS = {
                 foo:{
@@ -367,6 +367,50 @@ YUI.add('attribute-core-tests', function(Y) {
                     h.set("complex.Y", {B:222});
             Y.Assert.areEqual(222, h.get("complex.Y.B"));
             Y.Assert.areEqual(undefined, h.get("complex.Y.A"));
+        },
+
+        testDefaultSet: function() {
+            function FooBar(userVals) {
+                Y.Attribute.call(this, null, userVals);
+            }
+
+            FooBar.ATTRS = {
+                foo:{
+                    value: "bar",
+
+                    setter: function (v) {
+                        if (v !== 'A' && v !== 'B') {
+                            return Y.Attribute.INVALID_VALUE;
+                        }
+
+                        return v;
+                    }
+                }
+            };
+
+            // Straightup augment, no wrapper functions
+            Y.mix(FooBar, Y.Attribute, false, null, 1);
+
+            var h = new FooBar({foo: 'zee'});
+            Y.Assert.areNotSame(undefined, h.get('foo'));
+            Y.Assert.areSame('bar', h.get('foo'));
+
+            h.set('foo', 'invalid again');
+            Y.Assert.areSame('bar', h.get('foo'));
+
+            h.set('foo', 'A');
+            Y.Assert.areSame('A', h.get('foo'));
+
+            h = new FooBar({foo: 'B'});
+            Y.Assert.areNotSame(undefined, h.get('foo'));
+            Y.Assert.areNotSame('bar', h.get('foo'));
+            Y.Assert.areSame('B', h.get('foo'));
+
+            h.set('foo', 'invalid');
+            Y.Assert.areSame('B', h.get('foo'));
+
+            h.set('foo', 'A');
+            Y.Assert.areSame('A', h.get('foo'));
         },
 
         testInitialValidation: function() {
