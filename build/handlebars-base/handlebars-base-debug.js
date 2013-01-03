@@ -270,9 +270,6 @@ Y.Handlebars = Handlebars;
 
 Handlebars.VERSION += '-yui';
 
-// The rest of this file is just API docs for methods defined in Handlebars
-// itself.
-
 /**
 Registers a helper function that will be made available to all templates.
 
@@ -350,6 +347,12 @@ Converts a precompiled template into a renderable template function.
 @param {Function} template Precompiled Handlebars template function.
 @return {Function} Compiled template function.
 */
+
+// Alias for Y.Handlebars.template(), used by Y.Template.
+Handlebars.revive = Handlebars.template;
+
+// Make Y.Template.Handlebars an alias for Y.Handlebars.
+Y.namespace('Template').Handlebars = Handlebars;
 
 
 }, '@VERSION@', {"requires": ["escape"]});

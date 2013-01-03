@@ -411,7 +411,7 @@ YUI.add('attribute-core-tests', function(Y) {
 
         testProtect : function() {
             var h = this.createHost();
-            var q = h._protectAttrs(AttrHost.ATTRS);
+            var q = Y.Attribute.protectAttrs(AttrHost.ATTRS);
 
             Y.Assert.areNotSame(AttrHost.ATTRS, q);
             Y.Assert.areEqual(Y.dump(AttrHost.ATTRS), Y.dump(q));

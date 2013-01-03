@@ -360,7 +360,7 @@ suite.add( new Y.Test.Case({
 
     _should: {
         ignore: {
-            "test clickableRail": Y.UA.phantomjs
+            "test clickableRail": Y.UA.phantomjs || Y.UA.touchEnabled
         },
         fail: {
             // TODO This is a bug. invalid construction value should fallback
@@ -517,6 +517,7 @@ suite.add( new Y.Test.Case({
         slider.destroy();
     },
 
+    //TODO This test uses click simulation and will fail in touch environments
     "test clickableRail": function () {
         var slider = new Y.Slider({
                 width    : '300px',
@@ -658,7 +659,7 @@ suite.add( new Y.Test.Case({
     name: "Mouse",
     _should: {
         ignore: {
-            "clicking on the rail should move the thumb": Y.UA.phantomjs
+            "clicking on the rail should move the thumb": Y.UA.phantomjs || Y.UA.touchEnabled
         }
     },
     setUp: function () {
@@ -668,7 +669,8 @@ suite.add( new Y.Test.Case({
     tearDown: function () {
         Y.one("#testbed").remove(true);
     },
-
+    
+    //TODO This test uses click simulation and will fail in touch environments
     "clicking on the rail should move the thumb": function () {
         var slider = new Y.Slider({
                 length: '350px',

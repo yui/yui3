@@ -1,6 +1,11 @@
 YUI Loader Change History
 =========================
 
+3.8.0
+-----
+
+* No changes
+
 3.7.3
 -----
 

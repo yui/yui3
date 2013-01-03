@@ -31,6 +31,7 @@
      * methods for Attribute management such as modifyAttrs(), removeAttr and reset()
      *
      * @class AttributeExtras
+     * @extensionfor AttributeCore
      */
     function AttributeExtras() {}
 

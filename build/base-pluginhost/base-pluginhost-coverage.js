@@ -26,7 +26,7 @@ _yuitest_coverage["build/base-pluginhost/base-pluginhost.js"] = {
     path: "build/base-pluginhost/base-pluginhost.js",
     code: []
 };
-_yuitest_coverage["build/base-pluginhost/base-pluginhost.js"].code=["YUI.add('base-pluginhost', function (Y, NAME) {","","    /**","     * The base-pluginhost submodule adds Plugin support to Base, by augmenting Base with ","     * Plugin.Host and setting up static (class level) Base.plug and Base.unplug methods.","     *","     * @module base","     * @submodule base-pluginhost","     * @for Base","     */","","    var Base = Y.Base,","        PluginHost = Y.Plugin.Host;","","    Y.mix(Base, PluginHost, false, null, 1);","","    /**","     * Alias for <a href=\"Plugin.Host.html#method_Plugin.Host.plug\">Plugin.Host.plug</a>. See aliased ","     * method for argument and return value details.","     *","     * @method plug","     * @static","     */","    Base.plug = PluginHost.plug;","","    /**","     * Alias for <a href=\"Plugin.Host.html#method_Plugin.Host.unplug\">Plugin.Host.unplug</a>. See the ","     * aliased method for argument and return value details.","     *","     * @method unplug","     * @static","     */","    Base.unplug = PluginHost.unplug;","","","}, '@VERSION@', {\"requires\": [\"base-base\", \"pluginhost\"]});"];
+_yuitest_coverage["build/base-pluginhost/base-pluginhost.js"].code=["YUI.add('base-pluginhost', function (Y, NAME) {","","    /**","     * The base-pluginhost submodule adds Plugin support to Base, by augmenting Base with","     * Plugin.Host and setting up static (class level) Base.plug and Base.unplug methods.","     *","     * @module base","     * @submodule base-pluginhost","     * @for Base","     */","","    var Base = Y.Base,","        PluginHost = Y.Plugin.Host;","","    Y.mix(Base, PluginHost, false, null, 1);","","    /**","     * Alias for <a href=\"Plugin.Host.html#method_Plugin.Host.plug\">Plugin.Host.plug</a>. See aliased","     * method for argument and return value details.","     *","     * @method plug","     * @static","     */","    Base.plug = PluginHost.plug;","","    /**","     * Alias for <a href=\"Plugin.Host.html#method_Plugin.Host.unplug\">Plugin.Host.unplug</a>. See the","     * aliased method for argument and return value details.","     *","     * @method unplug","     * @static","     */","    Base.unplug = PluginHost.unplug;","","","}, '@VERSION@', {\"requires\": [\"base-base\", \"pluginhost\"]});"];
 _yuitest_coverage["build/base-pluginhost/base-pluginhost.js"].lines = {"1":0,"12":0,"15":0,"24":0,"33":0};
 _yuitest_coverage["build/base-pluginhost/base-pluginhost.js"].functions = {"(anonymous 1):1":0};
 _yuitest_coverage["build/base-pluginhost/base-pluginhost.js"].coveredLines = 5;
@@ -35,7 +35,7 @@ _yuitest_coverline("build/base-pluginhost/base-pluginhost.js", 1);
 YUI.add('base-pluginhost', function (Y, NAME) {
 
     /**
-     * The base-pluginhost submodule adds Plugin support to Base, by augmenting Base with 
+     * The base-pluginhost submodule adds Plugin support to Base, by augmenting Base with
      * Plugin.Host and setting up static (class level) Base.plug and Base.unplug methods.
      *
      * @module base
@@ -52,7 +52,7 @@ var Base = Y.Base,
 Y.mix(Base, PluginHost, false, null, 1);
 
     /**
-     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.plug">Plugin.Host.plug</a>. See aliased 
+     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.plug">Plugin.Host.plug</a>. See aliased
      * method for argument and return value details.
      *
      * @method plug
@@ -62,7 +62,7 @@ Y.mix(Base, PluginHost, false, null, 1);
 Base.plug = PluginHost.plug;
 
     /**
-     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.unplug">Plugin.Host.unplug</a>. See the 
+     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.unplug">Plugin.Host.unplug</a>. See the
      * aliased method for argument and return value details.
      *
      * @method unplug

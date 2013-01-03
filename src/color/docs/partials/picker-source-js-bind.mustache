@@ -1,0 +1,12 @@
+hue.after('valueChange', function(e) {
+    updatePickerUI();
+});
+
+sat.after('thumbMove', function(e) {
+    updatePickerUI();
+});
+
+lum.after('thumbMove', function(e) {
+    lumValue.set('text', lum.get('value') + '%');
+    updatePickerUI();
+});

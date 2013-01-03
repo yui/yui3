@@ -1,0 +1,21 @@
+
+<h4>Building The Color Picker</h4>
+<h5>Initializing UI Variables</h5>
+<p>First things first, we need to make sure our picker UI has the sam skin class applied.</p>
+<p>Next, we create a dial for the hue from 0 to 360. Then create a slider from 0 to 100 for saturation and luminance.</p>
+<p>We also want to maintain a reference to the nodes where the saturation and luminance value can be read and the color swatch that will be updated from the UI.</p>
+```
+{{>picker-source-js-vars}}
+```
+<h5>Binding Events</h5>
+<p>After the UI components are initialized, we need to bind their respective change methods to update the UI. For dial, this is `valueChange`. For a slider, we use `thumbMove`.</p>
+```
+{{>picker-source-js-bind}}
+```
+<h5>Useful Functions</h5>
+<p>Finally, we create two methods: `setPickerUI` and `updatePickerUI`. </p>
+<p>`setPickerUI` will allow us to send an Object with `h`, `s` and `l` values to update the UI positions. </p>
+<p>`updatePickerUI` will process the values for hue, saturation and luminance and update the color swatch. `updatePickerUI` will also call `updateOutput` that we will define next.</p>
+```
+{{>picker-source-js-func}}
+```

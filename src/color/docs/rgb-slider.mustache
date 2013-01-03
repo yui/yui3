@@ -1,0 +1,88 @@
+<div class="intro">
+<p>{{description}}</p>
+</div>
+
+<div id="demo" class="example">
+    <style>
+    {{>rgb-slider-source-css}}
+    </style>
+
+    {{>rgb-slider-source-html}}
+
+    <script>
+    YUI().use('slider', 'color', function(Y){
+        {{>rgb-slider-build-js}}
+        {{>rgb-slider-bind-js}}
+        {{>rgb-slider-start-js}}
+    });
+    </script>
+</div>
+
+<h3>Setting Up the Sliders</h3>
+<p>First we need to construct the HTML for the UI. This will consist of three sliders and three output boxes.</p>
+
+```
+{{>rgb-slider-source-html}}
+```
+
+<p>Now we give the list some CSS to make it a little easier to use.</p>
+
+```
+{{>rgb-slider-source-css}}
+```
+
+<h3>Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the `color` and `slider` modules.</p>
+
+```
+YUI().use('slider', 'color', function (Y) {
+    // Code Here.
+});
+```
+
+<h3>Building the UI</h3>
+<p>The first bit of YUI we need to implement is creating our slider instances. We set the initial value of the sliders to a random position between `0` and `255`.</p>
+<p>We follow that up by assigning nodes to variables. This helps prevent multiple look ups of the same node as we move the sliders.</p>
+<p>Next we render our slider instances into their containers.</p>
+```
+{{>rgb-slider-build-js}}
+```
+
+<h3>Binding Events</h3>
+<p>After we have our UI built and ready, we need to bind events to the `slider` instances for R, G, and B values.</p>
+<p>In each event callback we update the text value in the UI, then call `updateColors()` to update the color strings.</p>
+<p>In `updateColors()` we get to see the use of `Y.Color`. We create `rgbStr` from an array of color values. We can then create the hex and hsl value strings with `toHex()` and `toHSL()` respectively.</p>
+```
+{{>rgb-slider-bind-js}}
+```
+
+<h3>Start it up!</h3>
+<p>Now that we have our UI built and events bound, we need to do an initial update to the UI.</p>
+<p>First we display the each `slider`'s current value. Next we update the color strings with `updateColors()`.</p>
+```
+{{>rgb-slider-start-js}}
+```
+
+
+<h3>The Whole Example</h3>
+<p>Now let's see it all together!</p>
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        {{>rgb-slider-source-css}}
+        </style>
+    </head>
+    <body>
+        {{>rgb-slider-source-html}}
+        <script>
+            YUI().use('slider', 'color', function(Y){
+            {{>rgb-slider-build-js}}
+            {{>rgb-slider-bind-js}}
+            {{>rgb-slider-start-js}}
+            });
+        </script>
+    </body>
+</html>
+```

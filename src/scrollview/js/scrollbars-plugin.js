@@ -163,7 +163,9 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      */    
     _hostDimensionsChange: function() {
         var host = this._host,
-            axis = host._cAxis;
+            axis = host._cAxis,
+            scrollX = host.get(SCROLL_X),
+            scrollY = host.get(SCROLL_Y);
 
         this._dims = host._getScrollDims();
 
@@ -175,7 +177,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             this._renderBar(this.get(HORIZONTAL_NODE), true, 'horiz');
         }
 
-        this._update();
+        this._update(scrollX, scrollY);
 
         Y.later(500, this, 'flash', true);
     },
@@ -188,9 +190,13 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @protected
      */
     _hostScrollEnd : function(e) {
-        if (!this._host._flicking) {
-            this.flash();
-        }
+        var host = this._host,
+            scrollX = host.get(SCROLL_X),
+            scrollY = host.get(SCROLL_Y);
+
+        this.flash();
+
+        this._update(scrollX, scrollY);
     },
 
     /**
@@ -425,7 +431,6 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @protected
      */
     _update: function(x, y, duration, easing) {
-
         var vNode = this.get(VERTICAL_NODE),
             hNode = this.get(HORIZONTAL_NODE),
             host = this._host,
@@ -437,11 +442,11 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             this.show();
         }
 
-        if (axis && axis.y && vNode) {
+        if (axis && axis.y && vNode && y != null) {
             this._updateBar(vNode, y, duration, false);
         }
 
-        if (axis && axis.x && hNode) {
+        if (axis && axis.x && hNode && x != null) {
             this._updateBar(hNode, x, duration, true);
         }
     },

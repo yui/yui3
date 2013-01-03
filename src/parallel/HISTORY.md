@@ -1,6 +1,11 @@
 Parallel Change History
 =======================
 
+3.8.0
+-----
+
+* No changes
+
 3.7.3
 -----
 
@@ -29,9 +34,9 @@ Parallel Change History
 3.5.1
 -----
 
-  * No changes.
+* No changes.
 
 3.5.0
 -----
 
-  * Initial Release
+* Initial Release

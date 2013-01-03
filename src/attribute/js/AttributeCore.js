@@ -62,7 +62,7 @@
      * <p>See the <a href="#method_addAttr">addAttr</a> method, for the complete set of configuration
      * options available for attributes.</p>
      *
-     * <p>Object/Classes based on AttributeCore can augment <a href="AttributeEvents.html">AttributeEvents</a>
+     * <p>Object/Classes based on AttributeCore can augment <a href="AttributeObservable.html">AttributeObservable</a>
      * (with true for overwrite) and <a href="AttributeExtras.html">AttributeExtras</a> to add attribute event and
      * additional, less commonly used attribute methods, such as `modifyAttr`, `removeAttr` and `reset`.</p>
      *
@@ -74,6 +74,12 @@
      * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
      */
     function AttributeCore(attrs, values, lazy) {
+        // HACK: Fix #2531929
+        // Complete hack, to make sure the first clone of a node value in IE doesn't doesn't hurt state - maintains 3.4.1 behavior.
+        // Too late in the release cycle to do anything about the core problem.
+        // The root issue is that cloning a Y.Node instance results in an object which barfs in IE, when you access it's properties (since 3.3.0).
+        this._yuievt = null;
+
         this._initAttrHost(attrs, values, lazy);
     }
 
@@ -105,6 +111,28 @@
      * @protected
      */
     AttributeCore._ATTR_CFG = [SETTER, GETTER, VALIDATOR, VALUE, VALUE_FN, WRITE_ONCE, READ_ONLY, LAZY_ADD, BYPASS_PROXY];
+
+    /**
+     * Utility method to protect an attribute configuration hash, by merging the
+     * entire object and the individual attr config objects.
+     *
+     * @method protectAttrs
+     * @static
+     * @param {Object} attrs A hash of attribute to configuration object pairs.
+     * @return {Object} A protected version of the `attrs` argument.
+     */
+    AttributeCore.protectAttrs = function (attrs) {
+        if (attrs) {
+            attrs = Y.merge(attrs);
+            for (var attr in attrs) {
+                if (attrs.hasOwnProperty(attr)) {
+                    attrs[attr] = Y.merge(attrs[attr]);
+                }
+            }
+        }
+
+        return attrs;
+    };
 
     AttributeCore.prototype = {
 
@@ -341,11 +369,8 @@
          * @param {String} name The name of the attribute. If the
          * current value of the attribute is an Object, dot notation can be used
          * to set the value of a property within the object (e.g. <code>set("x.y.z", 5)</code>).
-         *
          * @param {Any} value The value to set the attribute to.
-         *
          * @param {Object} [opts] Optional data providing the circumstances for the change.
-         *
          * @return {Object} A reference to the host object.
          */
         set : function(name, val, opts) {
@@ -386,7 +411,6 @@
          * @return {Object} A reference to the host object.
          */
         _setAttr : function(name, val, opts, force)  {
-
             var allowSet = true,
                 state = this._state,
                 stateProxy = this._stateProxy,
@@ -799,18 +823,10 @@
          * @protected
          * @param {Object} attrs A hash of attribute to configuration object pairs.
          * @return {Object} A protected version of the attrs argument.
+         * @deprecated Use `AttributeCore.protectAttrs()` or
+         *   `Attribute.protectAttrs()` which are the same static utility method.
          */
-        _protectAttrs : function(attrs) {
-            if (attrs) {
-                attrs = Y.merge(attrs);
-                for (var attr in attrs) {
-                    if (attrs.hasOwnProperty(attr)) {
-                        attrs[attr] = Y.merge(attrs[attr]);
-                    }
-                }
-            }
-            return attrs;
-        },
+        _protectAttrs : AttributeCore.protectAttrs,
 
         /**
          * Utility method to normalize attribute values. The base implementation
@@ -819,12 +835,39 @@
          * @method _normAttrVals
          * @param {Object} valueHash An object with attribute name/value pairs
          *
-         * @return {Object}
+         * @return {Object} An object literal with 2 properties - "simple" and "complex",
+         * containing simple and complex attribute values respectively keyed
+         * by the top level attribute name, or null, if valueHash is falsey.
          *
          * @private
          */
         _normAttrVals : function(valueHash) {
-            return (valueHash) ? Y.merge(valueHash) : null;
+            var vals = {},
+                subvals = {},
+                path,
+                attr,
+                v, k;
+
+            if (valueHash) {
+                for (k in valueHash) {
+                    if (valueHash.hasOwnProperty(k)) {
+                        if (k.indexOf(DOT) !== -1) {
+                            path = k.split(DOT);
+                            attr = path.shift();
+                            v = subvals[attr] = subvals[attr] || [];
+                            v[v.length] = {
+                                path : path,
+                                value: valueHash[k]
+                            };
+                        } else {
+                            vals[k] = valueHash[k];
+                        }
+                    }
+                }
+                return { simple:vals, complex:subvals };
+            } else {
+                return null;
+            }
         },
 
         /**
@@ -843,25 +886,51 @@
          * @private
          */
         _getAttrInitVal : function(attr, cfg, initValues) {
-            var val, valFn;
-            // init value is provided by the user if it exists, else, provided by the config
-            if (!cfg.readOnly && initValues && initValues.hasOwnProperty(attr)) {
-                val = initValues[attr];
-            } else {
-                val = cfg.value;
-                valFn = cfg.valueFn;
+            var val = cfg.value,
+                valFn = cfg.valueFn,
+                tmpVal,
+                initValSet = false,
+                simple,
+                complex,
+                i,
+                l,
+                path,
+                subval,
+                subvals;
 
-                if (valFn) {
-                    if (!valFn.call) {
-                        valFn = this[valFn];
-                    }
-                    if (valFn) {
-                        val = valFn.call(this, attr);
-                    }
+            if (!cfg.readOnly && initValues) {
+                // Simple Attributes
+                simple = initValues.simple;
+                if (simple && simple.hasOwnProperty(attr)) {
+                    val = simple[attr];
+                    initValSet = true;
                 }
             }
 
-            Y.log('initValue for ' + attr + ':' + val, 'info', 'attribute');
+            if (valFn && !initValSet) {
+                if (!valFn.call) {
+                    valFn = this[valFn];
+                }
+                if (valFn) {
+                    tmpVal = valFn.call(this, attr);
+                    val = tmpVal;
+                }
+            }
+
+            if (!cfg.readOnly && initValues) {
+
+                // Complex Attributes (complex values applied, after simple, in case both are set)
+                complex = initValues.complex;
+
+                if (complex && complex.hasOwnProperty(attr) && (val !== undefined) && (val !== null)) {
+                    subvals = complex[attr];
+                    for (i = 0, l = subvals.length; i < l; ++i) {
+                        path = subvals[i].path;
+                        subval = subvals[i].value;
+                        O.setValue(val, path, subval);
+                    }
+                }
+            }
 
             return val;
         },
@@ -887,8 +956,8 @@
                 baseInst = (Base && Y.instanceOf(this, Base)),
                 baseCoreInst = (!baseInst && BaseCore && Y.instanceOf(this, BaseCore));
 
-            if ( attrs && !baseInst && !baseCoreInst) {
-                this.addAttrs(this._protectAttrs(attrs), values, lazy);
+            if (attrs && !baseInst && !baseCoreInst) {
+                this.addAttrs(Y.AttributeCore.protectAttrs(attrs), values, lazy);
             }
         }
     };

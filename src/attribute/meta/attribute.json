@@ -3,24 +3,24 @@
         "use": ["attribute-base", "attribute-complex"],
         "submodules": {
             "attribute-core": {
-                "requires" : [
+                "requires": [
                     "oop"
                 ]
             },
             "attribute-extras": {
-                "requires" : [
+                "requires": [
                     "oop"
                 ]
             },
-            "attribute-events": {
-                "requires" : [
+            "attribute-observable": {
+                "requires": [
                     "event-custom"
                 ]
             },
             "attribute-base": {
                 "requires": [
                     "attribute-core",
-                    "attribute-events",
+                    "attribute-observable",
                     "attribute-extras"
                 ]
             },
@@ -28,6 +28,9 @@
                 "requires": [
                     "attribute-base"
                 ]
+            },
+            "attribute-events": {
+                "use": ["attribute-observable"]
             }
         }
     }

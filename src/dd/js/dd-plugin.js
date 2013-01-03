@@ -28,15 +28,15 @@
         EV_DRAG_END = 'drag:end';
 
         /**
+        * dd-plugin
         * @property NAME
-        * @description dd-plugin
         * @type {String}
         */
         Drag.NAME = "dd-plugin";
 
         /**
+        * The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;
         * @property NS
-        * @description The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;
         * @type {String}
         */
         Drag.NS = "dd";
