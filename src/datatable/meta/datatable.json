@@ -92,7 +92,15 @@
 					"dom-screen"
 				],
                 "skinnable": true
-			}
+			},
+            "datatable-formatters": {
+                "requires": [
+                    "datatable-base",
+                    "datatype-number-format",
+                    "datatype-date-format",
+                    "escape"
+                ]
+            }
         }
     }
 }
