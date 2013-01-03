@@ -20,7 +20,7 @@
         },
         "loader-yui3": {
             "exec": [
-                "./scripts/meta_join.js"
+                "yogi loader --yes --mix --start ../"
             ],
             "jsfiles": [
                 "yui3.js"
