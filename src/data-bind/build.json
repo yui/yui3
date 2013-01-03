@@ -5,6 +5,11 @@
             "jsfiles": [
                 "data-bind.js"
             ]
+        },
+        "data-bind-html": {
+            "jsfiles": [
+                "pe.js"
+            ]
         }
     }
 }

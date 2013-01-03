@@ -6,22 +6,71 @@
 </head>
 <body class="yui3-skin-sam">
 
-<div id="z"></div>
+<div id="x"></div>
+<div id="y">
+    <form>
+        <p><label>Field 1: <input name="f1" data-bind-attr="field1" value="field 1 value"></label></p>
+        <p>Field 2:
+            <label><input name="f2" data-bind-attr="field2" type="radio" value="a" checked> 2a</label>
+            <label><input name="f2" data-bind-attr="field2" type="radio" value="b"> 2b</label>
+            <label><input name="f2" data-bind-attr="field2" type="radio" value="c"> 2c</label>
+        </p>
+        <p><label>Field 3: <input name="f3" data-bind-attr="field3" type="checkbox" value="field 3 value"></label></p>
+        <p><label>Field 4: <input name="f4" data-bind-attr="field4" type="hidden" value="field 4 value"></label></p>
+        <p><label>Field 5: <textarea name="f5" data-bind-attr="field5">field 5 value</textarea></label></p>
+        <p><label>Field 6:
+            <select name="f6" data-bind-attr="field6">
+                <option value="a" selected>6a</option>
+                <option value="b">6b</option>
+                <option value="c">6c</option>
+            </select></label></p>
+    </form>
+</div>
 
 <script src="../../../../build/yui/yui.js"></script>
 <script>
-var bind, model;
+var bound, bound2;
 
-YUI({ filter: 'raw' }).use('data-bind', 'widget', 'base-build', 'console', 'json-stringify', function (Y) {
+YUI({ filter: 'raw' }).use('data-bind-html', 'widget', 'base-build', 'console', 'json-stringify', function (Y) {
     new Y.Console({ newestOnTop: false }).render();
 
     var BoundWidget = Y.Base.create('bound', Y.Widget, [Y.DataBind], {
+        initializer: function (config) {
+            this._bindings = config.bindings;
+        },
+
         renderUI: function () {
-            this.get('contentBox').append(
+            var contentBox = this.get('contentBox');
+
+            if (!contentBox.getHTML()) {
+                contentBox.append(
 '<form><p><label>Field 1: <input name="f1" data-bind-attr="field1" value="field 1 value"></label></p> <p>Field 2: <label><input name="f2" data-bind-attr="field2" type="radio" value="a" checked> 2a</label> <label><input name="f2" data-bind-attr="field2" type="radio" value="b"> 2b</label> <label><input name="f2" data-bind-attr="field2" type="radio" value="c"> 2c</label> </p> <p><label>Field 3: <input name="f3" data-bind-attr="field3" type="checkbox" value="field 3 value"></label></p> <p><label>Field 4: <input name="f4" data-bind-attr="field4" type="hidden" value="field 4 value"></label></p> <p><label>Field 5: <textarea name="f5" data-bind-attr="field5">field 5 value</textarea></label></p> <p><label>Field 6: <select name="f6" data-bind-attr="field6"> <option value="a" selected>6a</option> <option value="b">6b</option> <option value="c">6c</option> </select> </label> </p> </form>');
+            }
         },
         bindUI: function () {
-            this._initDataBinding();
+            var bindings   = this._bindings,
+                contentBox = this.get('contentBox');
+
+            if (!bindings) {
+                bindings = {
+                    field1: {
+                        field: contentBox.one('[name=f1]'),
+                        formatter: function (val) {
+                            return val.toUpperCase();
+                        },
+                        parser: function (val) {
+                            return val.toLowerCase();
+                        }
+                    },
+                    field2: contentBox.all('[name=f2]'),
+                    field3: contentBox.one('[name=f3]'),
+                    field4: contentBox.one('[name=f4]'),
+                    field5: contentBox.one('[name=f5]'),
+                    field6: contentBox.one('[name=f6]')
+                };
+            }
+
+            this._bindAttrs(bindings);
         },
         syncUI: function () {
             this.syncToUI();
@@ -37,9 +86,18 @@ YUI({ filter: 'raw' }).use('data-bind', 'widget', 'base-build', 'console', 'json
         }
     });
 
-    bind = new BoundWidget().render('#z');
+    bound = new BoundWidget().render('#x');
 
-    bind.after(['field1Change', 'field2Change','field3Change','field4Change','field5Change', 'field6Change'], function (e) {
+    bound.after(['field1Change', 'field2Change','field3Change','field4Change','field5Change', 'field6Change'], function (e) {
+        Y.log(Y.JSON.stringify({
+            name: e.attrName,
+            newVal: e.newVal,
+            prevVal: e.prevVal
+        }, null, 4), 'info', 'data-bind');
+    });
+
+    bound2 = new BoundWidget({ srcNode: '#y' }).render();
+    bound2.after(['field1Change', 'field2Change','field3Change','field4Change','field5Change', 'field6Change'], function (e) {
         Y.log(Y.JSON.stringify({
             name: e.attrName,
             newVal: e.newVal,

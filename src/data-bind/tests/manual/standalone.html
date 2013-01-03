@@ -28,7 +28,7 @@
 
 <script src="../../../../build/yui/yui.js"></script>
 <script>
-var bind, model;
+var binder, model;
 
 YUI({ filter: 'raw' }).use('data-bind', 'model', 'console', 'json-stringify', function (Y) {
     new Y.Console({ newestOnTop: false }).render();
@@ -50,29 +50,26 @@ YUI({ filter: 'raw' }).use('data-bind', 'model', 'console', 'json-stringify', fu
         field6: 'c'
     });
 
-    bind = new Y.DataBind({
-        container: '#x',
-        model    : model,
-        fields   : {
-            f1: {
-                attr: 'field1',
-                formatter: function (val) {
-                    return val.toUpperCase();
-                },
-                parser: function (val) {
-                    return val.toLowerCase();
-                }
+    binder = new Y.DataBind();
+    binder.bindAttrs({
+        field1: {
+            field: '[name=f1]',
+            formatter: function (val) {
+                return val.toUpperCase();
             },
-            f2: 'field2',
-            f3: 'field3',
-            f4: 'field4',
-            f5: 'field5',
-            f6: 'field6'
-        }
-    });
+            parser: function (val) {
+                return val.toLowerCase();
+            }
+        },
+        field2: '[name=f2]',
+        field3: '[name=f3]',
+        field4: '[name=f4]',
+        field5: '[name=f5]',
+        field6: '[name=f6]'
+    }, model);
 
     // Push DOM values to the Model
-    bind.syncToModel();
+    binder.syncToModel();
 
     model.after('change', function (e) {
         Y.log(Y.JSON.stringify(e.changed, null, 4), 'info', 'data-bind');
