@@ -48,7 +48,8 @@ var testModules = {
 if (typeof exports !== 'undefined') {
     module.exports = testModules;
 
-    // Remove non Nodejs Tests
+    //Remove non-Node.js Tests
     delete testModules['transport-tests'];
+    delete testModules['serialize-tests'];
     delete testModules['xdr-tests'];
 }
