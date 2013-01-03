@@ -7,6 +7,9 @@ Template Change History
 * The number 0 (as opposed to the string "0") is no longer treated as an empty
   value by Template.Micro. [Ticket #2533040]
 
+* Fixed a bug in Template.Micro that caused control characters like `\n` in
+  template strings to be improperly escaped in the compiled template.
+
 
 3.8.1
 -----

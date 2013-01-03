@@ -134,6 +134,10 @@ microSuite.add(new Y.Test.Case({
 
     '<%== ... %> should print "0" if given a numerical 0': function () {
         Assert.areSame('0', Micro.render('<%== data.zero %>', {zero: 0}));
+    },
+
+    'Special characters in a template string should be properly escaped for use in a string literal': function () {
+        Assert.areSame('\r\r\n\n\t\t\'\'\\\\\u2028\u2029', Micro.render('\r\r\n\n\t\t\'\'\\\\\u2028\u2029'));
     }
 }));
 

@@ -37,6 +37,10 @@ Default options for `Y.Template.Micro`.
         `<%== ... %>`.
     @param {RegExp} [options.stringEscape] Regex that matches characters that
         need to be escaped inside single-quoted JavaScript string literals.
+    @param {Object} [options.stringReplace] Hash that maps characters matched by
+        `stringEscape` to the strings they should be replaced with. If you add
+        a character to the `stringEscape` regex, you need to add it here too or
+        it will be replaced with an empty string.
 
 @static
 @since 3.8.0
@@ -45,7 +49,17 @@ Micro.options = {
     code         : /<%([\s\S]+?)%>/g,
     escapedOutput: /<%=([\s\S]+?)%>/g,
     rawOutput    : /<%==([\s\S]+?)%>/g,
-    stringEscape : /\\|'|\r|\n|\t|\u2028|\u2029/g
+    stringEscape : /\\|'|\r|\n|\t|\u2028|\u2029/g,
+
+    stringReplace: {
+        '\\'    : '\\\\',
+        "'"     : "\\'",
+        '\r'    : '\\r',
+        '\n'    : '\\n',
+        '\t'    : '\\t',
+        '\u2028': '\\u2028',
+        '\u2029': '\\u2029'
+    }
 };
 
 /**
@@ -141,7 +155,9 @@ Micro.compile = function (text, options) {
             return tokenOpen + (blocks.push("';\n" + code + "\n$t+='") - 1) + tokenClose;
         })
 
-        .replace(options.stringEscape, "\\$&")
+        .replace(options.stringEscape, function (match) {
+            return options.stringReplace[match] || '';
+        })
 
         // Replace the token placeholders with code.
         .replace(/\ufffe(\d+)\uffff/g, function (match, index) {
