@@ -10235,6 +10235,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "text-data-wordbreak"
         ]
     },
+    "timers": {
+        "requires": [
+            "yui-base"
+        ]
+    },
     "transition": {
         "requires": [
             "node-style"
@@ -10476,7 +10481,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '70eab935f16880d7d483a331d2b8f892';
+YUI.Env[Y.version].md5 = 'bb4cfd83625b82bc125ebb3280d96510';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
