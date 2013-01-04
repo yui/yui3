@@ -202,7 +202,7 @@ JSONPRequest.prototype = {
             charset   : config.charset,
             attributes: config.attributes,
             async     : config.async
-        });
+        }).execute();
 
         return self;
     },
