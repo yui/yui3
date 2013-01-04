@@ -59,7 +59,7 @@ Supported properties of the column objects include:
 A column `formatter` can be:
 
   * a function, as described below.
-  * a string which can be:.
+  * a string which can be:
       * the name of a pre-defined formatter function
         which can be located in the `Y.DataTable.BodyView.Formatters` hash using the
         value of the `formatter` property as the index.
