@@ -1,3 +1,7 @@
-timers
-========
-* Initial release.
+Timers
+======
+
+@VERSION@
+-----
+
+* Initial module release.
