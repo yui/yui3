@@ -56,6 +56,18 @@ Supported properties of the column objects include:
     against XSS.
   * `className` - Space delimited CSS classes to add to all `<td>`s in a column.
 
+A column `formatter` can be:
+
+  * a function, as described below.
+  * a string which can be:.
+      * the name of a pre-defined formatter function
+        which can be located in the `Y.DataTable.BodyView.Formatters` hash using the
+        value of the `formatter` property as the index.
+      * A template that can use the `{value}` placeholder to include the value
+        for the current cell or the name of any field in the underlaying model
+        also enclosed in curly braces.  Any number and type of these placeholders
+        can be used.
+
 Column `formatter`s are passed an object (`o`) with the following properties:
 
   * `value` - The current value of the column's associated attribute, if any.
@@ -862,4 +874,18 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     //_rowTemplate: null
+},{
+    /**
+    Hash of formatting functions for cell contents.
+
+    This property can be populated with a hash of formatting functions by the developer
+    or a set of pre-defined functions can be loaded via the `datatable-formatters` module.
+
+    See: [DataTable.BodyView.Formatters](./DataTable.BodyView.Formatters.html)
+    @property Formatters
+    @type Object
+    @since 3.8.0
+    @static
+    **/
+    Formatters: {}
 });

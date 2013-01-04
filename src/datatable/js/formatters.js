@@ -399,16 +399,3 @@ Y.namespace('DataTable').Formatters = {
 if (Lang.isFunction(Y.DataTable.BodyView)) {
     Y.Base.mix(Y.DataTable.BodyView, [Formatters]);
 }
-/**
-Hash of formatting functions for cell contents.
-
-This property can be populated with a hash of formatting functions by the developer
-or a set of pre-defined functions can be loaded via the `datatable-formatters` module.
-
-See: [DataTable.BodyView.Formatters](./DataTable.BodyView.Formatters.html)
-@property Formatters
-@for DataTable.BodyView
-@type Object
-@since 3.8.0
-@static
-**/
