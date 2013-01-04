@@ -5,7 +5,7 @@
  * @author Steven Olmsted
  */
 
-var global = Y.config.global,
+var YGLOBAL = Y.config.global,
 
     /**
      * Y.soon accepts a callback function.  The callback function will be called
@@ -64,7 +64,7 @@ var global = Y.config.global,
  */
 
 // Check for a native or already polyfilled implementation of setImmediate.
-if ('setImmediate' in global) {
+if ('setImmediate' in YGLOBAL) {
     soon._asynchronizer = function (callbackFunction) {
         setImmediate(callbackFunction);
     };
@@ -72,7 +72,7 @@ if ('setImmediate' in global) {
 }
 
 // Check for process and process.nextTick
-else if (('process' in global) && ('nextTick' in process)) {
+else if (('process' in YGLOBAL) && ('nextTick' in process)) {
     soon._asynchronizer = process.nextTick;
     soon._impl = 'nextTick';
 }
