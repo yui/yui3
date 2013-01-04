@@ -42,7 +42,6 @@ YUI.add('core-tests', function(Y) {
             var path = require('path');
             //Shifting up a dir, then back down since we live in assets and so does the include
             p = path.join(__dirname, '../', p);
-            console.log(p);
         }
         return p;
     };
