@@ -23,6 +23,7 @@ var loader = new Y.Loader({
         'dom',
         'event-custom',
         'event-base',
+        'event-base-ie',
         'pluginhost',
         'node',
         'event-delegate',

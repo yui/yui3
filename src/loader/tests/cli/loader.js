@@ -3131,6 +3131,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("text-wordbreak")) > -1, "Module (text-wordbreak) not found in sorted array");
         },
+     "Testing timers": function(data) {
+            var loader = new Y.Loader({
+                require: ["timers"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("timers")) > -1, "Module (timers) not found in sorted array");
+        },
      "Testing transition": function(data) {
             var loader = new Y.Loader({
                 require: ["transition"],
