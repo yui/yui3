@@ -1,5 +1,5 @@
 /**
-Adds predefined cell formatters to `Y.DataTable` (or other built class).
+Adds predefined cell formatters to `Y.DataTable.BodyView`.
 
 @module datatable
 @submodule datatable-formatters
@@ -18,9 +18,19 @@ stringValue = function (value, def) {
     return (isValue(value) ? escape(value.toString()) : def || '');
 };
 /**
- Registry of cell formatting functions, enables names to be used in Column
- definition formatter value (i.e., {key:"myColumn", formatter:"date"}).
-@class DataTable.Formatters
+Registry of cell formatting functions, enables names to be used in column
+definition `formatter` property:
+
+    {key:"myColumn", formatter:"date"}
+
+These functions are not meant to be used directly.  Instead, they will be
+automatically called when their names are used as values for the `formatter`
+property in a columnd definition.
+
+The functions provided are simple and with few configurable options.
+The developers are encouraged to define and add to this hash the functions
+that better suit their needs.
+@class DataTable.BodyView.Formatters
 @since 3.8.0
 **/
 Y.namespace('DataTable').Formatters = {
@@ -30,7 +40,7 @@ Y.namespace('DataTable').Formatters = {
 
     Applies the CSS className `button` to the cell.
 
-    @method Formatters.button
+    @method button
     @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
     @param o.value {any} The raw value from the record Model to populate this cell.
          Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -55,7 +65,7 @@ Y.namespace('DataTable').Formatters = {
 
     Applies the CSS className `checkbox` to the cell.
 
-    @method Formatters.checkbox
+    @method checkbox
     @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
     @param o.value {any} The raw value from the record Model to populate this cell.
          Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -88,7 +98,7 @@ Y.namespace('DataTable').Formatters = {
          }}
 
     Applies the CSS className `currency` to the cell.
-    @method Formatters.currency
+    @method currency
     @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
     @param o.value {any} The raw value from the record Model to populate this cell.
          Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -116,7 +126,7 @@ Y.namespace('DataTable').Formatters = {
         {key: "DOB", formatter: "date", dateFormat: "%I:%M:%S %p"}
 
     Applies the CSS className `date` to the cell.
-    @method Formatters.date
+    @method date
     @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
     @param o.value {any} The raw value from the record Model to populate this cell.
          Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -156,7 +166,7 @@ Y.namespace('DataTable').Formatters = {
 
     Applies the CSS className `dropdown` to the cell.
 
-    @method Formatters.dropdown
+    @method dropdown
     @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
     @param o.value {any} The raw value from the record Model to populate this cell.
          Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -194,13 +204,13 @@ Y.namespace('DataTable').Formatters = {
     /**
     Formats emails links.
     If the column definition contains a property `linkFrom` it will use the value
-    in that column for the link, otherwise, the same column value will be used for both
+    in that field for the link, otherwise, the same column value will be used for both
     link and text.
 
         {key: "contact", formatter: "email", linkFrom: "contactEmail"}
 
     Applies the CSS className `email` to the cell.
-    @method Formatters.email
+    @method email
     @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
     @param o.value {any} The raw value from the record Model to populate this cell.
          Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -225,13 +235,13 @@ Y.namespace('DataTable').Formatters = {
     /**
     Formats links.
     If the column definition contains a property `linkFrom` it will use the value
-    in that column for the link, otherwise, the same column value will be used for both
+    in that field for the link, otherwise, the same column value will be used for both
     link and text.
 
         {key: "companyName", formatter: "link", linkFrom: "CompanyWebSite"}
 
     Applies the CSS className `link` to the cell.
-    @method Formatters.link
+    @method link
     @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
     @param o.value {any} The raw value from the record Model to populate this cell.
          Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -266,7 +276,7 @@ Y.namespace('DataTable').Formatters = {
         }}
 
     Applies the CSS className `number` to the cell.
-    @method Formatters.number
+    @method number
     @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
     @param o.value {any} The raw value from the record Model to populate this cell.
          Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -291,7 +301,7 @@ Y.namespace('DataTable').Formatters = {
     All the radios on the same column share a unique name so they are mutually exclusive
 
     Applies the CSS className `radio` to the cell.
-    @method Formatters.radio
+    @method radio
     @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
     @param o.value {any} The raw value from the record Model to populate this cell.
          Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -317,7 +327,7 @@ Y.namespace('DataTable').Formatters = {
     It escapes HTML reserved values and turns nulls and undefineds into a single blank.
 
     Applies the CSS className `text` to the cell.
-    @method Formatters.text
+    @method text
     @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
     @param o.value {any} The raw value from the record Model to populate this cell.
          Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -341,7 +351,7 @@ Y.namespace('DataTable').Formatters = {
     It produces a TEXTAREA filled with the escaped value of the cell.
 
     Applies the CSS className `textarea` to the cell.
-    @method Formatters.textarea
+    @method textarea
     @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
     @param o.value {any} The raw value from the record Model to populate this cell.
          Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -364,7 +374,7 @@ Y.namespace('DataTable').Formatters = {
     It produces a TEXTBOX filled with the escaped value of the cell.
 
     Applies the CSS className `textbox` to the cell.
-    @method Formatters.textbox
+    @method textbox
     @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
     @param o.value {any} The raw value from the record Model to populate this cell.
          Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -386,14 +396,18 @@ Y.namespace('DataTable').Formatters = {
 
 };
 
-if (Lang.isFunction(Y.DataTable)) {
-    Y.Base.mix(Y.DataTable, [Formatters]);
+if (Lang.isFunction(Y.DataTable.BodyView)) {
+    Y.Base.mix(Y.DataTable.BodyView, [Formatters]);
 }
 /**
 Hash of formatting functions for cell contents.
-See: [DataTable.Formatters](./DataTable.Formatters.html)
+
+This property can be populated with a hash of formatting functions by the developer
+or a set of pre-defined functions can be loaded via the `datatable-formatters` module.
+
+See: [DataTable.BodyView.Formatters](./DataTable.BodyView.Formatters.html)
 @property Formatters
-@for DataTable
+@for DataTable.BodyView
 @type Object
 @since 3.8.0
 @static

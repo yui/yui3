@@ -95,7 +95,7 @@
 			},
             "datatable-formatters": {
                 "requires": [
-                    "datatable-base",
+                    "datatable-body",
                     "datatype-number-format",
                     "datatype-date-format",
                     "escape"
