@@ -8,5 +8,10 @@
         "requires": [
             "data-bind"
         ]
+    },
+    "data-bind-form": {
+        "requires": [
+            "data-bind"
+        ]
     }
 }

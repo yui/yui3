@@ -7,6 +7,7 @@
 <body class="yui3-skin-sam">
 
 <form id="x">
+    <p><span id="greeting">Hello</span>, <em id="name">NAME</em>.</p>
     <p><label>Field 1: <input name="f1" data-bind-attr="field1" value="field 1 value"></label></p>
     <p>Field 2: 
         <label><input name="f2" data-bind-attr="field2" type="radio" value="a" checked> 2a</label>
@@ -30,7 +31,7 @@
 <script>
 var binder, model;
 
-YUI({ filter: 'raw' }).use('data-bind', 'model', 'console', 'json-stringify', function (Y) {
+YUI({ filter: 'raw' }).use('data-bind-form', 'model', 'console', 'json-stringify', function (Y) {
     new Y.Console({ newestOnTop: false }).render();
 
     model = new Y.Model();
@@ -40,14 +41,18 @@ YUI({ filter: 'raw' }).use('data-bind', 'model', 'console', 'json-stringify', fu
         field3: {},
         field4: {},
         field5: {},
-        field6: {}
+        field6: {},
+        greeting: {},
+        name: {}
     }, {
         field1: 'This is not in the DOM',
         field2: 'b',
         field3: 'field 3 value',
         field4: 'hidden stuff!',
         field5: 'This is not in the textarea',
-        field6: 'c'
+        field6: 'c',
+        greeting: 'Bonjour',
+        name: 'Philipe'
     });
 
     binder = new Y.DataBind();
@@ -65,11 +70,13 @@ YUI({ filter: 'raw' }).use('data-bind', 'model', 'console', 'json-stringify', fu
         field3: '[name=f3]',
         field4: '[name=f4]',
         field5: '[name=f5]',
-        field6: '[name=f6]'
+        field6: '[name=f6]',
+        greeting: '#greeting',
+        name: '#name'
     }, model);
 
     // Push DOM values to the Model
-    binder.syncToModel();
+    binder.syncToUI();
 
     model.after('change', function (e) {
         Y.log(Y.JSON.stringify(e.changed, null, 4), 'info', 'data-bind');

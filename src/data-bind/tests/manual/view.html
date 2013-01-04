@@ -12,7 +12,9 @@
 <script>
 var bound, model;
 
-YUI({ filter: 'raw' }).use('data-bind', 'view', 'model', 'base-build', 'console', 'json-stringify', function (Y) {
+// uncomment to see only base data-binding (non-form fields, except textarea)
+//YUI({ filter: 'raw' }).use('data-bind', 'view', 'model', 'base-build', 'console', 'json-stringify', function (Y) {
+YUI({ filter: 'raw' }).use('data-bind-form', 'view', 'model', 'base-build', 'console', 'json-stringify', function (Y) {
     new Y.Console({ newestOnTop: false }).render();
 
     model = new Y.Model();
@@ -22,14 +24,18 @@ YUI({ filter: 'raw' }).use('data-bind', 'view', 'model', 'base-build', 'console'
         field3: {},
         field4: {},
         field5: {},
-        field6: {}
+        field6: {},
+        greeting: {},
+        name: {}
     }, {
         field1: 'This is not in the DOM',
         field2: 'b',
         field3: 'field 3 value',
         field4: 'hidden stuff!',
         field5: 'This is not in the textarea',
-        field6: 'c'
+        field6: 'c',
+        greeting: 'Hello',
+        name: 'John'
     });
 
     var BoundView = Y.Base.create('bound', Y.View, [Y.DataBind], {
@@ -37,7 +43,7 @@ YUI({ filter: 'raw' }).use('data-bind', 'view', 'model', 'base-build', 'console'
                 var container = this.get('container');
 
                 container.append(
-'<form><p><label>Field 1: <input name="f1" data-bind-attr="field1" value="field 1 value"></label></p> <p>Field 2: <label><input name="f2" data-bind-attr="field2" type="radio" value="a" checked> 2a</label> <label><input name="f2" data-bind-attr="field2" type="radio" value="b"> 2b</label> <label><input name="f2" data-bind-attr="field2" type="radio" value="c"> 2c</label> </p> <p><label>Field 3: <input name="f3" data-bind-attr="field3" type="checkbox" value="field 3 value"></label></p> <p><label>Field 4: <input name="f4" data-bind-attr="field4" type="hidden" value="field 4 value"></label></p> <p><label>Field 5: <textarea name="f5" data-bind-attr="field5">field 5 value</textarea></label></p> <p><label>Field 6: <select name="f6" data-bind-attr="field6"> <option value="a" selected>6a</option> <option value="b">6b</option> <option value="c">6c</option> </select> </label> </p> </form>');
+'<form><p><span class="greeting">Hola</span>, <em class="name">Juan</em>!</p><p><label>Field 1: <input name="f1" data-bind-attr="field1" value="field 1 value"></label></p> <p>Field 2: <label><input name="f2" data-bind-attr="field2" type="radio" value="a" checked> 2a</label> <label><input name="f2" data-bind-attr="field2" type="radio" value="b"> 2b</label> <label><input name="f2" data-bind-attr="field2" type="radio" value="c"> 2c</label> </p> <p><label>Field 3: <input name="f3" data-bind-attr="field3" type="checkbox" value="field 3 value"></label></p> <p><label>Field 4: <input name="f4" data-bind-attr="field4" type="hidden" value="field 4 value"></label></p> <p><label>Field 5: <textarea name="f5" data-bind-attr="field5">field 5 value</textarea></label></p> <p><label>Field 6: <select name="f6" data-bind-attr="field6"> <option value="a" selected>6a</option> <option value="b">6b</option> <option value="c">6c</option> </select> </label> </p> </form>');
 
                 this._bindAttrs({
                     field1: '[name=f1]',
@@ -45,7 +51,9 @@ YUI({ filter: 'raw' }).use('data-bind', 'view', 'model', 'base-build', 'console'
                     field3: '[name=f3]',
                     field4: '[name=f4]',
                     field5: '[name=f5]',
-                    field6: '[name=f6]'
+                    field6: '[name=f6]',
+                    greeting: '.greeting',
+                    name: '.name'
                 }, this.get('model'));
 
                 this.syncToUI();

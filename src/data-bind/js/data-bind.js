@@ -6,6 +6,11 @@ methods `_bindAttr`, `_bindAttrs`, `_unbindAttr`, and `_unbindAttrs`. When used
 as a standalone class, these methods are mirrored as public versions without
 the leading underscore (e.g. `bindAttr`).
 
+The base module focuses on binding attributes to non-form related elements by
+writing to the DOM when the attribute changes. However, it is possible to set
+up bidirectional and custom DOM<->attribute relationships. See the
+`data-bind-form` module to add support for binding to form elements.
+
 @module data-bind
 @class DataBind
 @since 3.9.0
@@ -31,9 +36,11 @@ map, the 'change' event will be used.
 @type {Object}
 @static
 **/
-Y.DataBind.FIELD_EVENTS = {
-    radio: 'click',
-    checkbox: 'click'
+Y.DataBind.BIND_CONFIGS = {
+    _default: {
+        getter: '_getBoundNodeContent',
+        setter: '_setBoundNodeContent'
+    }
 };
 
 /**
@@ -45,13 +52,17 @@ class when used as a class extension.
 @protected
 @static
 **/
-Y.DataBind._buildCfg = { aggregate: ['FIELD_EVENTS'] };
+Y.DataBind._buildCfg = { aggregate: ['BIND_CONFIGS'] };
+
+function camelize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 Y.mix(Y.DataBind.prototype, {
     /**
-    Gets the value from the DOM element representing the provided attribute. If
-    the binding is configured with a `parser`, the value returned will be the
-    parsed value.
+    Gets the value from the DOM element representing the provided attribute
+    using the configured or defaulted `getter`. If the binding is configured
+    with a `parser`, the value returned will be the parsed value.
 
     @method getUIValue
     @param {String} attr Attribute name corresponding to the DOM element
@@ -59,13 +70,18 @@ Y.mix(Y.DataBind.prototype, {
     **/
     getUIValue: function (attr) {
         var config = this._bindMap[attr],
-            value;
+            method, value;
 
         if (config) {
-            value = config.getter.call(this, config.field);
+            method = config.getter;
+            // support function or string values for getter, late bound
+            value  = (this[method] || method).call(this, config.field, config);
 
-            // e.g. this._getRadioValue(field)
-            return config.parser ? config.parser.call(this, value) : value;
+            method = config.parser;
+            return method ?
+                // support function or string values for parser, late bound
+                (this[method] || method).call(this, value, config) :
+                value;
         }
 
         // TODO: Better default return value?
@@ -73,10 +89,10 @@ Y.mix(Y.DataBind.prototype, {
     },
 
     /**
-    Sets the value in the DOM element for the provided attribute. *This does
-    not update the attribute value*. If the binding is configured with a
-    formatter, the value assigned to the DOM element will be the formatted
-    value.
+    Sets the value in the DOM element for the provided attribute using the
+    configured or defaulted `setter`. *This does not update the attribute
+    value*. If the binding is configured with a formatter, the value assigned
+    to the DOM element will be the formatted value.
 
     @method setUIValue
     @param {String} attr Attribute name corresponding to the DOM element
@@ -85,15 +101,19 @@ Y.mix(Y.DataBind.prototype, {
     @chainable
     **/
     setUIValue: function (attr, value) {
-        var config = this._bindMap[attr];
+        var config = this._bindMap[attr],
+            method;
 
         if (config) {
             if (config.formatter) {
-                value = config.formatter.call(this, value);
+                method = config.formatter;
+                // support function or string values for formatter, late bound
+                value = (this[method] || method).call(this, value, config);
             }
 
-            // e.g. this._setRadioValue(field, value)
-            config.setter.call(this, config.field, value);
+            method = config.setter;
+            // support function or string values for setter, late bound
+            (this[method] || method).call(this, config.field, value, config);
         }
 
         return this;
@@ -162,30 +182,46 @@ Y.mix(Y.DataBind.prototype, {
 
     /**
     Binds an attribute to a DOM element or set of DOM elements. When the
-    attribute is changed, the DOM element(s) will be updated, and when the DOM
-    element is changed _by user action_, the attribute will be updated.
+    attribute is changed, the DOM element(s) will be updated.
     
-    The basic form of this method is `binder._bindAttr('foo', '#fooField');`,
-    but a configuration object can be passed as a second argument for more
-    control.
-
-    Extracting and assigning values from and to an element is automatically
-    determined by the type of DOM element, but can be overridden by configuring
-    the binding with `getter` and `setter` functions. If the value itself
-    should be represented in the DOM differently than in the attribute,
-    configure the binding with `parser` and `formatter` functions.
+    The basic form of this method is `instance._bindAttr('foo', '#fooNode');`,
+    but a Node, NodeList, or configuration object can be passed as a second
+    argument for more control.
 
     Available bind configurations are:
 
     ```
     {
         field: <selector string, Node, or NodeList>,
-        getter: function (node) { <code to get a value from node> },
-        setter: function (node, value) { <... to set a value in node> },
-        formatter: function (value) { <massage value for display in DOM> },
-        parser: function (value) { <extract raw value from DOM value> }
+        type: string,
+        getter: string or function (node) { <code to get value> },
+        setter: string or function (node, value) { <... to set value> },
+        formatter: string or function (value) { <massage value for display> },
+        parser: string or function (value) { <extract value from DOM value> }
     }
     ```
+
+    The means to read or write content from or to an element is determined by
+    the bind configuration's `getter` and `setter` functions. If a bind
+    configuration is not passed or doesn't contain `getter` or `setter`, an
+    appropriate `getter` and `setter` will be guessed based on the DOM
+    element. The default `getter` and `setter` read and write the bound
+    element's `innerHTML`.
+    
+    To register a `getter`/`setter` pair for a custom type, add an entry to
+    the `BIND_CONFIGS` static, and include that type in the bind configuration.
+
+    If the raw value in the attribute should be formatted for the UI, a
+    `formatter` can be configured instead of a `setter`, assuming what needs to
+    be customized is _what_ is pushed to the DOM, not _how_ it's pushed.
+
+    Though only relevant to bidirectional bindings and progressive enhancement,
+    the reverse is true for the `parser` configuration. Parsers extract the raw
+    value that should be assigned to the attribute from the value as it exists
+    in the DOM (i.e. a string).
+
+    You can provide either a function or a string to any function configuration.
+    String values are considered method names on the instance.
 
     @method _bindAttr
     @param {String} attr Name of the attribute to bind
@@ -198,10 +234,11 @@ Y.mix(Y.DataBind.prototype, {
         // Can't bind the same attribute multiple times
         if (this._bindMap[attr]) { return; }
 
-        var eventMap = this.constructor.FIELD_EVENTS || Y.DataBind.FIELD_EVENTS,
-            selector = typeof config       === 'string' ? config :
+        var selector = typeof config       === 'string' ? config :
                        typeof config.field === 'string' ? config.field : null,
-            field, event;
+            bindTypes = this.constructor.BIND_CONFIGS ||
+                        Y.DataBind.BIND_CONFIGS,
+            field, method, typeConfig;
 
         if (selector) {
             if (config === selector) {
@@ -217,44 +254,33 @@ Y.mix(Y.DataBind.prototype, {
         }
 
         // Copy, since we'll be adding properties
-        config = Y.merge(config);
+        this._bindMap[attr] = config = Y.merge(config);
 
         config.host = host || this;
+        config.handle =
+            config.host.after(attr+'Change', this._afterBoundAttrChange, this);
 
-        field = config.field;
+        if (!config.type) {
+            field = config.field;
         
-        if (field instanceof Y.NodeList) {
-            field = field.item(0);
+            if (field instanceof Y.NodeList) {
+                field = field.item(0);
+            }
+
+            config.type = field.get('nodeName').toLowerCase();
         }
 
-        config.type = field.get('nodeName').toLowerCase();
+        method = '_bind' + camelize(config.type);
 
-        if (config.type === 'input') {
-            config.type = field.get('type').toLowerCase();
-        }
+        // _bindFoo must be called before typeConfig is resolved because
+        // binders may override the config.type (e.g. type=input is
+        // overridden with type=input.type in data-bind-form)
+        this[method] && this[method](attr, config);
 
-        if (!config.getter) {
-            config.getter = this['_get' + config.type.charAt(0).toUpperCase() +
-                                      config.type.slice(1) +
-                                      'Value'] ||
-                            this._getSimpleValue;
-        }
+        typeConfig = bindTypes[config.type] || bindTypes._default;
 
-        if (!config.setter) {
-            config.setter = this['_set' + config.type.charAt(0).toUpperCase() +
-                                      config.type.slice(1) +
-                                      'Value'] ||
-                            this._setSimpleValue;
-        }
-
-        event = eventMap[config.type] || 'change';
-
-        config.handle = new Y.EventHandle([
-            config.host.after(attr+'Change', this._afterBoundAttrChange, this),
-            config.field.on(event, this._onUIChange, this, attr)
-        ]);
-
-        this._bindMap[attr] = config;
+        config.getter || (config.getter = typeConfig.getter);
+        config.setter || (config.setter = typeConfig.setter);
     },
 
     /**
@@ -315,161 +341,29 @@ Y.mix(Y.DataBind.prototype, {
     },
 
     /**
-    Relays field changes from user input to the bound attribute.
+    The default value setter. Assigns the `innerHTML` of the provided Node.
 
-    @method _onUIChange
-    @param {DOMEventFacade} e DOM event originating the change
-    @param {String} the name of the bound attribute for this field
-    @protected
-    **/
-    _onUIChange: function (e, attr) {
-        var config = this._bindMap[attr];
-
-        if (config) {
-            config.host.set(attr, this.getUIValue(attr), { src: 'UI' });
-        }
-    },
-
-    /**
-    Setter for radio input values. Assigns the 'checked' property of the radio
-    in the radio group with the corresponding value. If the provided value
-    doesn't match any of the DOM values, the current DOM value is not changed.
-
-    @method _setRadioValue
-    @param {NodeList} radioGroup The radio input nodes in the radio group
-    @param {Any} value The value to set in the UI
-    @protected
-    **/
-    _setRadioValue: function (radioGroup, value) {
-        var radios = radioGroup.getDOMNodes(),
-            i, len;
-
-        for (i = 0, len = radios.length; i < len; ++i) {
-            // allowing for type coercion on purpose
-            if (radios[i].value == value) {
-                break;
-            }
-        }
-
-        if (i < len) {
-            radios[i].checked = true;
-        }
-    },
-
-    /**
-    Setter for checkbox input values. Assigns the 'checked' property of the
-    input if the provided value is `true` or is equal to the 'value' property
-    of the checkbox element. Otherwise, it unchecks it.
-
-    @method _setCheckboxValue
-    @param {Node} checkbox The checkbox input Node
-    @param {Any} value The value to trigger checking or unchecking the box
-    @protected
-    **/
-    _setCheckboxValue: function (checkbox, value) {
-        checkbox.set('checked',
-            (value === true || value === checkbox.get('value')));
-    },
-
-    /**
-    Setter for select fields. Assigns the 'selected' property of the option
-    in the select with the corresponding value. If the provided value
-    doesn't match any of the DOM values, the current DOM value is not changed.
-
-    @method _setSelectValue
-    @param {Node} select The select Node
-    @param {Any} value The value to set in the UI
-    @protected
-    **/
-    _setSelectValue: function (select, value) {
-        var options = select.getDOMNode().options,
-            i, len;
-
-        for (i = 0, len = options.length; i < len; ++i) {
-            // allowing for type coercion on purpose
-            if (options[i].value == value) {
-                break;
-            }
-        }
-
-        if (i < len) {
-            options[i].selected = true;
-        }
-    },
-
-    /**
-    The default value setter for elements. Assigns the 'value' property of the
-    provided Node.
-
-    @method _setSimpleValue
+    @method _setBoundNodeContent
     @param {Node} field The bound Node
     @param {Any} value The value to set in the UI
+    @param {Object} config The bind config
     @protected
     **/
-    _setSimpleValue: function (field, value) {
-        field.set('value', value);
+    _setBoundNodeContent: function (field, value) {
+        field.setHTML(value);
     },
 
     /**
-    Gets the value of the currently checked radio button in the group.
+    Default value getter for non-form elements. Returns the `innerHTML` of the
+    Node.
 
-    @method _getRadioValue
-    @param {NodeList} radioGroup The input Nodes in the radio group
-    @return {String|null} The value of the checked radio or null if none
-    @protected
-    **/
-    _getRadioValue: function (radioGroup) {
-        var radios = radioGroup.getDOMNodes(),
-            i, len, radio;
-
-        for (i = 0, len = radios.length; i < len; ++i) {
-            radio = radios[i];
-            if (radio.checked) {
-                return radio.value;
-            }
-        }
-
-        // TODO: better default return value?
-        return null;
-    },
-
-    /**
-    Returns the value of the checkbox if its checked, or `null` otherwise.
-
-    @method _getCheckboxValue
-    @param {Node} checkbox The checkbox input Node
-    @return {String|null} The value of the checkbox or null if unchecked
-    @protected
-    **/
-    _getCheckboxValue: function (checkbox) {
-        // TODO: better default value for unchecked box?
-        return checkbox.get('checked') ? checkbox.get('value') : null;
-    },
-
-    /**
-    Gets the value of the currently selected option in the select.
-
-    @method _getSelectValue
-    @param {Node} select The select Node
-    @return {String|null} The value of the selected option or null if none
-    @protected
-    **/
-    _getSelectValue: function (select) {
-        select = select.getDOMNode();
-        return (select.selectedIndex >= 0) ?
-            select.options[select.selectedIndex].value :
-            null;
-    },
-
-    /**
-    Default value getter. Returns the value of the Node's 'value' property.
-
-    @method _getSimpleValue
+    @method _getBoundNodeContent
     @param {Node} field The bound Node
+    @param {Object} config The bind config
     @return {String} The value of the field's 'value' property
     @protected
     **/
-    _getSimpleValue: function (field) {
-        return field.get('value');
+    _getBoundNodeContent: function (field) {
+        return field.getHTML();
     }
 }, true);
