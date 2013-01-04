@@ -1,10 +1,10 @@
 {
     "builds": {
-        "soon": {
+        "timers": {
             "jsfiles": [
-                "js/soon.js"
+                "js/timers.js"
             ]
         }
     },
-    "name": "soon"
+    "name": "timers"
 }

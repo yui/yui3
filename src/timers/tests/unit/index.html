@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <title>
-            soon
+            timers
         </title>
         <script src="/build/yui/yui.js">
         </script>
@@ -16,12 +16,12 @@
         <script>
             YUI({
                 coverage: [
-                    'soon'
+                    'timers'
                 ],
                 filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
             }).use('test-console', 'test', 'module-tests', function (Y) {
                 (new Y.Test.Console()).render('#logger');
-                Y.Test.Runner.setName('soon');
+                Y.Test.Runner.setName('timers');
                 Y.Test.Runner.run();
             });
         </script>

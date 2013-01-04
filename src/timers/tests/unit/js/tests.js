@@ -54,7 +54,7 @@ YUI.add('module-tests', function (Y) {
     Y.Test.Runner.add(suite);
 }, '', {
     requires: [
-        'soon',
-        'test'
+        'test',
+        'timers'
     ]
 });

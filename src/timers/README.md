@@ -1,4 +1,4 @@
-soon
+timers
 ========
 Similar to `Y.later`, but sooner.  `Y.soon` standardizes the way to make
 something happen asynchronously but without a timed delay.  Under the covers,
