@@ -16,6 +16,13 @@
             "cssfiles": [
                 "cssgrids-base.css"
             ]
+        },
+        "cssgrids-responsive": {
+            "cssfiles": [
+                "cssgrids-base.css",
+                "cssgrids-units.css",
+                "cssgrids-responsive-base.css"
+            ]
         }
     }
 }
