@@ -71,8 +71,9 @@
                     }
                 }
             }
-
+            /*jshint maxlen:200*/
             if (!host.attrAdded(name)) {Y.log('Attribute modifyAttr:' + name + ' has not been added. Use addAttr to add the attribute', 'warn', 'attribute');}
+            /*jshint maxlen:150 */
         },
 
         /**

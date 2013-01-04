@@ -178,8 +178,10 @@ YUI.add('attribute-observable', function (Y, NAME) {
          * @param {EventFacade} e The event object for attribute change events.
          */
         _defAttrChangeFn : function(e) {
-            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
+            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, e.opts)) {
+                /*jshint maxlen:200*/
                 Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
+                /*jshint maxlen:150*/
                 // Prevent "after" listeners from being invoked since nothing changed.
                 e.stopImmediatePropagation();
             } else {
