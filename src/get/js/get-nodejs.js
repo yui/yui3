@@ -1,5 +1,6 @@
     /**
-    * NodeJS specific Get module used to load remote resources. It contains the same signature as the default Get module so there is no code change needed.
+    * NodeJS specific Get module used to load remote resources.
+    * It contains the same signature as the default Get module so there is no code change needed.
     * @module get-nodejs
     * @class GetNodeJS
     */
@@ -7,9 +8,27 @@
     var Module = require('module'),
 
         path = require('path'),
-        vm = require('vm'),
         fs = require('fs'),
-        request = require('request');
+        request = require('request'),
+        end = function(cb, msg, result) {
+            //Y.log('Get end: ' + cb.onEnd);
+            if (Y.Lang.isFunction(cb.onEnd)) {
+                cb.onEnd.call(Y, msg, result);
+            }
+        }, pass = function(cb) {
+            //Y.log('Get pass: ' + cb.onSuccess);
+            if (Y.Lang.isFunction(cb.onSuccess)) {
+                cb.onSuccess.call(Y, cb);
+            }
+            end(cb, 'success', 'success');
+        }, fail = function(cb, er) {
+            //Y.log('Get fail: ' + er);
+            er.errors = [er];
+            if (Y.Lang.isFunction(cb.onFailure)) {
+                cb.onFailure.call(Y, er, cb);
+            }
+            end(cb, er, 'fail');
+        };
 
 
     Y.Get = function() {
@@ -20,17 +39,6 @@
 
     YUI.require = require;
     YUI.process = process;
-
-    /**
-    * Escape the path for Windows, they need to be double encoded when used as `__dirname` or `__filename`
-    * @method escapeWinPath
-    * @protected
-    * @param {String} p The path to modify
-    * @return {String} The encoded path
-    */
-    var escapeWinPath = function(p) {
-        return p.replace(/\\/g, '\\\\');
-    };
 
     /**
     * Takes the raw JS files and wraps them to be executed in the YUI context so they can be loaded
@@ -54,6 +62,7 @@
         mod.paths = Module._nodeModulePaths(path.dirname(url));
         mod._compile('module.exports = function (YUI) {' + data + '\n;return YUI;};', url);
 
+        /*global YUI:true */
         YUI = mod.exports(YUI);
 
         mod.loaded = true;
@@ -115,27 +124,6 @@
     };
 
 
-    var end = function(cb, msg, result) {
-        //Y.log('Get end: ' + cb.onEnd);
-        if (Y.Lang.isFunction(cb.onEnd)) {
-            cb.onEnd.call(Y, msg, result);
-        }
-    }, pass = function(cb) {
-        //Y.log('Get pass: ' + cb.onSuccess);
-        if (Y.Lang.isFunction(cb.onSuccess)) {
-            cb.onSuccess.call(Y, cb);
-        }
-        end(cb, 'success', 'success');
-    }, fail = function(cb, er) {
-        //Y.log('Get fail: ' + er);
-        er.errors = [er];
-        if (Y.Lang.isFunction(cb.onFailure)) {
-            cb.onFailure.call(Y, er, cb);
-        }
-        end(cb, er, 'fail');
-    };
-
-
     /**
     * Override for Get.script for loading local or remote YUI modules.
     * @method js
@@ -143,9 +131,7 @@
     * @param {Object} options Transaction options
     */
     Y.Get.js = function(s, options) {
-        var A = Y.Array,
-            self = this,
-            urls = A(s), url, i, l = urls.length, c= 0,
+        var urls = Y.Array(s), url, i, l = urls.length, c= 0,
             check = function() {
                 if (c === l) {
                     pass(options);
@@ -153,7 +139,7 @@
             };
 
 
-
+        /*jshint loopfunc: true */
         for (i=0; i<l; i++) {
             url = urls[i];
             if (Y.Lang.isObject(url)) {
