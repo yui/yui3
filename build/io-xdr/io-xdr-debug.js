@@ -8,6 +8,10 @@ cross-domain requests.
 @for IO
 **/
 
+// Helpful resources when working with the mess that is XDomainRequest:
+// http://www.cypressnorth.com/blog/web-programming-and-development/internet-explorer-aborting-ajax-requests-fixed/
+// http://blogs.msdn.com/b/ieinternals/archive/2010/05/13/xdomainrequest-restrictions-limitations-and-workarounds.aspx
+
 /**
 Fires when the XDR transport is ready for use.
 @event io:xdrReady
@@ -144,13 +148,11 @@ Y.mix(Y.IO.prototype, {
             _rS[i] = 4;
             io.xdrResponse('failure', o, c);
         };
-        if (c[t]) {
-            o.c.ontimeout = function() {
-                _rS[i] = 4;
-                io.xdrResponse(t, o, c);
-            };
-            o.c[t] = c[t];
-        }
+        o.c.ontimeout = function() {
+            _rS[i] = 4;
+            io.xdrResponse(t, o, c);
+        };
+        o.c[t] = c[t] || 0;
     },
 
     /**
@@ -186,7 +188,11 @@ Y.mix(Y.IO.prototype, {
         else if (xdr) {
             io._ieEvt(o, c);
             o.c.open(c.method || 'GET', uri);
-            o.c.send(c.data);
+
+            // Make async to protect against IE 8 oddities.
+            setTimeout(function() {
+                o.c.send(c.data);
+            }, 0);
         }
         else {
             o.c.send(uri, o, c);

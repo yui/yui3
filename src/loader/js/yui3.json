@@ -1667,42 +1667,6 @@
             "yui-base"
         ]
     },
-    "menu": {
-        "requires": [
-            "classnamemanager",
-            "event-hover",
-            "menu-base",
-            "menu-templates",
-            "node-screen",
-            "view"
-        ],
-        "skinnable": true
-    },
-    "menu-base": {
-        "requires": [
-            "menu-item",
-            "tree"
-        ]
-    },
-    "menu-item": {
-        "requires": [
-            "oop",
-            "tree-node"
-        ]
-    },
-    "menu-plugin": {
-        "requires": [
-            "event-focus",
-            "menu",
-            "node-pluginhost",
-            "plugin"
-        ]
-    },
-    "menu-templates": {
-        "requires": [
-            "template-micro"
-        ]
-    },
     "model": {
         "requires": [
             "base-build",
@@ -2294,39 +2258,6 @@
         },
         "requires": [
             "transition"
-        ]
-    },
-    "tree": {
-        "requires": [
-            "base-build",
-            "tree-node"
-        ]
-    },
-    "tree-lazy": {
-        "requires": [
-            "base-pluginhost",
-            "plugin",
-            "tree"
-        ]
-    },
-    "tree-node": {
-        "requires": [
-            "yui-base"
-        ]
-    },
-    "treeview": {
-        "requires": [
-            "base-build",
-            "classnamemanager",
-            "tree",
-            "treeview-templates",
-            "view"
-        ],
-        "skinnable": true
-    },
-    "treeview-templates": {
-        "requires": [
-            "template-micro"
         ]
     },
     "uploader": {

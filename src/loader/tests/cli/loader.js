@@ -2315,56 +2315,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("matrix")) > -1, "Module (matrix) not found in sorted array");
         },
-     "Testing menu": function(data) {
-            var loader = new Y.Loader({
-                require: ["menu"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("menu")) > -1, "Module (menu) not found in sorted array");
-        },
-     "Testing menu-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["menu-base"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("menu-base")) > -1, "Module (menu-base) not found in sorted array");
-        },
-     "Testing menu-item": function(data) {
-            var loader = new Y.Loader({
-                require: ["menu-item"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("menu-item")) > -1, "Module (menu-item) not found in sorted array");
-        },
-     "Testing menu-plugin": function(data) {
-            var loader = new Y.Loader({
-                require: ["menu-plugin"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("menu-plugin")) > -1, "Module (menu-plugin) not found in sorted array");
-        },
-     "Testing menu-templates": function(data) {
-            var loader = new Y.Loader({
-                require: ["menu-templates"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("menu-templates")) > -1, "Module (menu-templates) not found in sorted array");
-        },
      "Testing model": function(data) {
             var loader = new Y.Loader({
                 require: ["model"],
@@ -3230,56 +3180,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("transition-timer")) > -1, "Module (transition-timer) not found in sorted array");
-        },
-     "Testing tree": function(data) {
-            var loader = new Y.Loader({
-                require: ["tree"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("tree")) > -1, "Module (tree) not found in sorted array");
-        },
-     "Testing tree-lazy": function(data) {
-            var loader = new Y.Loader({
-                require: ["tree-lazy"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("tree-lazy")) > -1, "Module (tree-lazy) not found in sorted array");
-        },
-     "Testing tree-node": function(data) {
-            var loader = new Y.Loader({
-                require: ["tree-node"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("tree-node")) > -1, "Module (tree-node) not found in sorted array");
-        },
-     "Testing treeview": function(data) {
-            var loader = new Y.Loader({
-                require: ["treeview"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("treeview")) > -1, "Module (treeview) not found in sorted array");
-        },
-     "Testing treeview-templates": function(data) {
-            var loader = new Y.Loader({
-                require: ["treeview-templates"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("treeview-templates")) > -1, "Module (treeview-templates) not found in sorted array");
         },
      "Testing uploader": function(data) {
             var loader = new Y.Loader({
