@@ -536,8 +536,8 @@ The `precompiled` variable will contain a string of JavaScript code that looks s
 
 ```javascript
 function (Y, $e, data) {
-var $b='',$t='My favorite animal is a '+
-$e(( this.animal )||$b)+
+var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='My favorite animal is a '+
+$e($v( this.animal ))+
 '.';
 return $t;
 }
