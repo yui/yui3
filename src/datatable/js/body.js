@@ -734,7 +734,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _createRowTemplate: function (columns) {
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
-            F = Y.DataTable.BodyView.Formatters || {},
+            F = Y.DataTable.BodyView.Formatters,
             i, len, col, key, token, headers, tokenValues, formatter;
 
         for (i = 0, len = columns.length; i < len; ++i) {

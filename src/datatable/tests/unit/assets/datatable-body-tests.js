@@ -300,11 +300,18 @@ suite.add(new Y.Test.Case({
                 { key: 'd' },
                 { key: 'e',
                   formatter:'{a},{b}'
-                }
+                },
+                { key: 'f', formatter:'currency'},
+                { key: 'g', formatter:'currency', currencyFormat: {
+                    decimalPlaces:2,
+                    decimalSeparator: ",",
+                    thousandsSeparator: ",",
+                    suffix: "€"
+                }}
             ],
             modelList: new Y.ModelList().reset([
-                { a: 'a1', b: 'b1', c: 'c1', d: 'd1' },
-                { a: 'a2',          c: 'c2', d: 'd2' }
+                { a: 'a1', b: 'b1', c: 'c1', d: 'd1', f: 123.45 , g: 123.45},
+                { a: 'a2',          c: 'c2', d: 'd2', f: 678    , g: 678   }
             ])
         }).render();
     },
@@ -315,7 +322,7 @@ suite.add(new Y.Test.Case({
     "string formatter should follow the template": function () {
         var view = this.view,
             node = view.getCell([0,0]),
-            content = node.get('children').item(0);
+            content = node.get('firstChild');
         Y.Assert.areSame('ema1', content.get('id'));
         Y.Assert.areSame('a1', content.getHTML());
         node = view.getCell([0,4]);
@@ -364,13 +371,181 @@ suite.add(new Y.Test.Case({
             tbody     = view.tbodyNode,
             className = '.' + view.getClassName('cell');
 
-        Y.Assert.areSame(10, tbody.all(className).size());
+        Y.Assert.areSame(14, tbody.all(className).size());
 
         this.view.set('columns', [{ key: 'd' }]);
 
         Y.Assert.areSame(2, tbody.all(className).size());
+    },
+    "testing node formatters": function () {
+        var view = this.view,
+            node = view.getCell([0,5]);
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-currency'));
+        Y.Assert.areEqual('123.45', node.getHTML());
+        node = view.getCell([0,6]);
+        Y.Assert.areEqual('123,45€', node.getHTML());
+
     }
 }));
+
+suite.add(new Y.Test.Case({
+    name: "default format specs",
+    setUp: function () {
+        this.dt = new Y.DataTable({
+            columns:[
+                {key: 'a', formatter:'currency', currencyFormat: {
+                    decimalPlaces:2,
+                    decimalSeparator: 'd',
+                    thousandsSeparator: 't',
+                    prefix: 'p',
+                    suffix: 's'
+                }},
+                {key: 'b', formatter:'currency'},
+                {key: 'button', formatter: 'button'},
+                {key: 'checkbox', formatter: 'checkbox'},
+                {key: 'date', formatter: 'date'},
+                {key: 'dropdown', formatter: 'dropdown', dropdownOptions: [
+                        'none',
+                        '1',
+                        {value: 2, label: 'this'},
+                        {value: 3, label: 'three'}
+                ]},
+                {key: 'email', formatter: 'email', linkFrom: 'linkSrc'},
+                {key: 'link', formatter: 'link', linkFrom: 'linkSrc'},
+                {key: 'number', formatter: 'number',numberFormat: {
+                    decimalPlaces:2,
+                    decimalSeparator: 'd',
+                    thousandsSeparator: 't',
+                    prefix: 'p',
+                    suffix: 's'
+                }},
+                {key: 'radio', formatter: 'radio'},
+                {key: 'textarea', formatter: 'textarea'},
+                {key: 'textbox', formatter: 'textbox'}
+
+            ],
+            data: [
+                {
+                    a: 123.45, b: 123.45, button:'btn', checkbox: true, 'date': new Date(), dropdown: 2, email: 'me', link: 'site', linkSrc: 'there',
+                    number: 987654, radio: true, textarea: 'two\nlines', textbox:'simple text'
+                },
+                {a: 6789,   b: 6789  ,               checkbox: false , radio: true}
+            ],
+            currencyFormat: {
+                decimalPlaces:1,
+                decimalSeparator: ",",
+                thousandsSeparator: ".",
+                suffix: " Pts."
+            }
+        }).render();
+    },
+    tearDown: function () {
+        this.dt.destroy();
+    },
+    "test currency format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,0]);
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-currency'));
+        Y.Assert.areEqual('p123d45s', node.getHTML());
+
+        node = dt.getCell([0,1]);
+        Y.Assert.areEqual('123,5 Pts.', node.getHTML());  // rounded up
+        node = dt.getCell([1,0]);
+        Y.Assert.areEqual('p6t789d00s', node.getHTML());
+        node = dt.getCell([1,1]);
+        Y.Assert.areEqual('6.789,0 Pts.', node.getHTML());
+    },
+    "test button format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,2]),
+            content = node.get('firstChild');
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-button'));
+        Y.Assert.areEqual('BUTTON', content.get('tagName').toUpperCase());
+        Y.Assert.areEqual('btn', content.getHTML());
+    },
+    "test checkbox format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,3]),
+            content = node.get('firstChild');
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-checkbox'));
+        Y.Assert.areEqual('INPUT', content.get('tagName').toUpperCase());
+        Y.Assert.areEqual('checkbox', content.get('type'));
+        Y.Assert.isTrue(content.get('checked'));
+        node = dt.getCell([1,3]),
+        content = node.get('firstChild');
+        Y.Assert.isFalse(content.get('checked'));
+    },
+    "test date format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,4]);
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
+        Y.Assert.areEqual(Y.Date.format(new Date()), node.getHTML());
+    },
+    "test dropdown format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,5]),
+            content = node.get('firstChild');
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-dropdown'));
+        Y.Assert.areEqual('SELECT', content.get('tagName').toUpperCase());
+        Y.Assert.areEqual('2', content.get('value'));
+        Y.Assert.areEqual(2, content.get('selectedIndex'));
+        Y.Assert.areEqual(4, content.get('children').size());
+    },
+    "test email format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,6]),
+            content = node.get('firstChild');
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-email'));
+        Y.Assert.areEqual('A', content.get('tagName').toUpperCase());
+        Y.Assert.areEqual('me', content.getHTML());
+        Y.Assert.areEqual('mailto:there', content.get('href'));
+    },
+    "test link format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,7]),
+            content = node.get('firstChild');
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-link'));
+        Y.Assert.areEqual('A', content.get('tagName').toUpperCase());
+        Y.Assert.areEqual('site', content.getHTML());
+        Y.Assert.isTrue(/\/there$/.test(content.get('href')));
+    },
+    "test number format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,8]);
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-number'));
+        Y.Assert.areEqual('p987t654d00s', node.getHTML());
+    },
+    "test radio format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,9]),
+            content = node.get('firstChild');
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-radio'));
+        Y.Assert.areEqual('INPUT', content.get('tagName').toUpperCase());
+        Y.Assert.areEqual('radio', content.get('type'));
+        Y.Assert.isFalse(content.get('checked'));
+        node = dt.getCell([1,9]),
+        content = node.get('firstChild');
+        Y.Assert.isTrue(content.get('checked'));
+    },
+    "test textarea format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,10]),
+            content = node.get('firstChild');
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-textarea'));
+        Y.Assert.areEqual('TEXTAREA', content.get('tagName').toUpperCase());
+        Y.Assert.areEqual('two\nlines', content.getHTML());
+    },
+    "test textbox format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,11]),
+            content = node.get('firstChild');
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-textbox'));
+        Y.Assert.areEqual('INPUT', content.get('tagName').toUpperCase());
+        Y.Assert.areEqual('text', content.get('type'));
+        Y.Assert.areEqual('simple text', content.get('value'));
+    }
+}));
+
 
 suite.add(new Y.Test.Case({
     name: "getClassName",
@@ -497,4 +672,4 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{requires:['datatable-base', 'test']});
+}, '@VERSION@' ,{requires:['datatable-base','datatable-formatters', 'test']});
