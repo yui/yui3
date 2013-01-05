@@ -86,7 +86,7 @@ function nameSort(a, b, desc) {
     var aa = a.get('lastName') + a.get('firstName'),
         bb = a.get('lastName') + b.get('firstName'),
         order = (aa > bb) ? 1 : -(aa < bb);
-        
+
     return desc ? -order : order;
 }
 
@@ -359,7 +359,7 @@ Y.mix(Sortable.prototype, {
     **/
     _bindSortUI: function () {
         var handles = this._eventHandles;
-        
+
         if (!handles.sortAttrs) {
             handles.sortAttrs = this.after(
                 ['sortableChange', 'sortByChange', 'columnsChange'],
@@ -387,7 +387,7 @@ Y.mix(Sortable.prototype, {
 
     /**
     Getter for the `sortBy` attribute.
-    
+
     Supports the special subattribute "sortBy.state" to get a normalized JSON
     version of the current sort state.  Otherwise, returns the last assigned
     value.
@@ -417,7 +417,7 @@ Y.mix(Sortable.prototype, {
     _getSortBy: function (val, detail) {
         var state, i, len, col;
 
-        // "sortBy." is 7 characters. Used to catch 
+        // "sortBy." is 7 characters. Used to catch
         detail = detail.slice(7);
 
         // TODO: table.get('sortBy.asObject')? table.get('sortBy.json')?
@@ -527,14 +527,14 @@ Y.mix(Sortable.prototype, {
 
     /**
     Add the sort related strings to the `strings` map.
-    
+
     @method _initSortStrings
     @protected
     @since 3.5.0
     **/
     _initSortStrings: function () {
         // Not a valueFn because other class extensions will want to add to it
-        this.set('strings', Y.mix((this.get('strings') || {}), 
+        this.set('strings', Y.mix((this.get('strings') || {}),
             Y.Intl.get('datatable-sort')));
     },
 
@@ -564,7 +564,7 @@ Y.mix(Sortable.prototype, {
         if (column) {
             if (e.shiftKey) {
                 for (i = 0, len = sortBy.length; i < len; ++i) {
-                    if (id === sortBy[i] || Math.abs(sortBy[i][id] === 1)) {
+                    if (id === sortBy[i]  || Math.abs(sortBy[i][id]) === 1) {
                         if (!isObject(sortBy[i])) {
                             sortBy[i] = {};
                         }
