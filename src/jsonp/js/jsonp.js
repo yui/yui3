@@ -198,6 +198,7 @@ JSONPRequest.prototype = {
             onTimeout : wrap(config.on.timeout, true),
             timeout   : config.timeout,
             charset   : config.charset,
+            async     : config.async, 
             attributes: config.attributes
         });
 
