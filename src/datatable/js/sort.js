@@ -86,7 +86,7 @@ function nameSort(a, b, desc) {
     var aa = a.get('lastName') + a.get('firstName'),
         bb = a.get('lastName') + b.get('firstName'),
         order = (aa > bb) ? 1 : -(aa < bb);
-        
+
     return desc ? -order : order;
 }
 
@@ -293,7 +293,7 @@ Y.mix(Sortable.prototype, {
     @protected
     @since 3.5.0
     **/
-    _afterSortByChange: function (e) {
+    _afterSortByChange: function () {
         // Can't use a setter because it's a chicken and egg problem. The
         // columns need to be set up to translate, but columns are initialized
         // from Core's initializer.  So construction-time assignment would
@@ -359,7 +359,7 @@ Y.mix(Sortable.prototype, {
     **/
     _bindSortUI: function () {
         var handles = this._eventHandles;
-        
+
         if (!handles.sortAttrs) {
             handles.sortAttrs = this.after(
                 ['sortableChange', 'sortByChange', 'columnsChange'],
@@ -387,7 +387,7 @@ Y.mix(Sortable.prototype, {
 
     /**
     Getter for the `sortBy` attribute.
-    
+
     Supports the special subattribute "sortBy.state" to get a normalized JSON
     version of the current sort state.  Otherwise, returns the last assigned
     value.
@@ -417,7 +417,7 @@ Y.mix(Sortable.prototype, {
     _getSortBy: function (val, detail) {
         var state, i, len, col;
 
-        // "sortBy." is 7 characters. Used to catch 
+        // "sortBy." is 7 characters. Used to catch
         detail = detail.slice(7);
 
         // TODO: table.get('sortBy.asObject')? table.get('sortBy.json')?
@@ -527,14 +527,14 @@ Y.mix(Sortable.prototype, {
 
     /**
     Add the sort related strings to the `strings` map.
-    
+
     @method _initSortStrings
     @protected
     @since 3.5.0
     **/
     _initSortStrings: function () {
         // Not a valueFn because other class extensions will want to add to it
-        this.set('strings', Y.mix((this.get('strings') || {}), 
+        this.set('strings', Y.mix((this.get('strings') || {}),
             Y.Intl.get('datatable-sort')));
     },
 
@@ -569,7 +569,7 @@ Y.mix(Sortable.prototype, {
                             sortBy[i] = {};
                         }
 
-                        sortBy[i][id] = -(column.sortDir|0) || 1;
+                        sortBy[i][id] = -(column.sortDir||0) || 1;
                         break;
                     }
                 }
@@ -578,7 +578,7 @@ Y.mix(Sortable.prototype, {
                     sortBy.push(column._id);
                 }
             } else {
-                sortBy[0][id] = -(column.sortDir|0) || 1;
+                sortBy[0][id] = -(column.sortDir||0) || 1;
             }
 
             this.fire('sort', {

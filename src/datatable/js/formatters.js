@@ -7,7 +7,6 @@ Adds predefined cell formatters to `Y.DataTable.BodyView`.
 **/
 var Lang = Y.Lang,
     isValue = Lang.isValue,
-    subs = Lang.sub,
     escape = Y.Escape.html,
 
     getCName = Y.ClassNameManager.getClassName,
