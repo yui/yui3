@@ -676,7 +676,8 @@ Y.Get = Get = {
         item = this._queue.shift();
 
         if (item) {
-            this._pending = item;
+            // this._pending = item; 
+            this._pending = item.transaction.options.async ? null : item;
             item.transaction.execute(item.callback);
         }
     },
