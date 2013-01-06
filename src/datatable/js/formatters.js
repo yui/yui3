@@ -36,7 +36,8 @@ var Lang = Y.Lang,
     Formatters = {
 
         /**
-        Formats a BUTTON element using the value as the label.
+        Formats a BUTTON element using the value of the `buttonLabel` column
+        definition attribute as its label..
 
         Applies the CSS className `yui3-datatable-button` to the cell.
 
@@ -58,15 +59,15 @@ var Lang = Y.Lang,
         button : function(o) {
             o.className = cName('button');
             o.column.allowHTML = true;
-            return '<button>' + stringValue(o.value, 'Click') + '</button>';
+            return '<button>' + (o.column.buttonLabel || 'Click') + '</button>';
         },
 
         /**
-        Formats a CHECKBOX element based on the <i>truthy</i> value of the cell.
+        Assigns the CSS classNames `yui3-datatable-true` or `yui3-datatable-false`
+        based on the <i>truthy</i> value of the cell.
 
-        Applies the CSS className `yui3-datatable-checkbox` to the cell.
 
-        @method checkbox
+        @method truefalse
         @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
         @param o.value {any} The raw value from the record Model to populate this cell.
              Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -78,13 +79,13 @@ var Lang = Y.Lang,
         @param o.rowIndex {Number} The index of the current Model in the ModelList.
                Typically correlates to the row index as well.
         @param o.rowClass {String} A string of css classes to add `<tr class="HERE"><td....`
-        @return {String} the markup for the checkbox.
+        @return {String} `" "` The return value is mostly irrelevant since the
+                effective output is the className assigned .
         @static
         **/
-        checkbox : function(o) {
-            o.className = cName('checkbox');
-            o.column.allowHTML = true;
-            return '<input type="checkbox"' + (o.value ? ' checked="checked"' : '')  +'/>';
+        truefalse : function(o) {
+            o.className = cName(o.value?'true':'false');
+            return ' ';
         },
 
         /**
@@ -98,6 +99,8 @@ var Lang = Y.Lang,
                 thousandsSeparator: ".",
                 suffix: "&euro;"
              }}
+
+        See <a href="Number.html#method_format">Y.Number.format</a> for the available format specs.
 
         Applies the CSS className `yui3-datatable-currency` to the cell.
         @method currency
@@ -128,6 +131,8 @@ var Lang = Y.Lang,
 
             {key: "DOB", formatter: "date", dateFormat: "%I:%M:%S %p"}
 
+        See <a href="Date.html#method_format">Y.Date.format</a> for the available format specs.
+
         Applies the CSS className `yui3-datatable-date` to the cell.
         @method date
         @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
@@ -151,59 +156,6 @@ var Lang = Y.Lang,
             });
         },
 
-        /**
-        Formats SELECT elements.
-
-        It looks for the options to offer in the `dropdownOptions` property of the column.
-        The `dropdownOptions` must be an array either of plain values,
-        which will be used as both the value and the label or objects with
-        `value` and `label` properties.
-
-            {key: "color", formatter: "dropdown", dropdownOptions: [
-                 {value:"", label:"-none selected"},
-                 "blue",
-                 "red",
-                 "green"
-            ]}
-
-
-        Applies the CSS className `yui3-datatable-dropdown` to the cell.
-
-        @method dropdown
-        @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
-        @param o.value {any} The raw value from the record Model to populate this cell.
-             Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
-        @param o.data {Object} The Model data for this row in simple object format.
-        @param o.column {Object} The column configuration object.
-        @param o.record {Y.Model} The Model for this row.
-        @param o.className {String} A string of class names to add `<td class="HERE">`
-               in addition to the column class and any classes in the column's className configuration.
-        @param o.rowIndex {Number} The index of the current Model in the ModelList.
-               Typically correlates to the row index as well.
-        @param o.rowClass {String} A string of css classes to add `<tr class="HERE"><td....`
-        @return {String} the markup for the dropdown box.
-        **/
-        dropdown : function(o) {
-            var s = ['<select>'],
-                options = o.column.dropdownOptions || [],
-                template = '<option {selected} value="{value}">{label}</option>';
-
-            o.className = cName('dropdown');
-            o.column.allowHTML = true;
-            Y.Array.each(options, function (option) {
-                if (Lang.isObject(option)) {
-                    option.selected = (option.value === o.value?'selected':'');
-                    s.push(subs(template, option));
-                } else {
-                    s.push(subs(template, {
-                        value:option,
-                        label:option,
-                        selected: (option === o.value)?'selected':''
-                    }));
-                }
-            });
-            return s.join('') + '</select>';
-        },
 
         /**
         Formats emails links.
@@ -281,6 +233,8 @@ var Lang = Y.Lang,
                 suffix: "kg"
             }}
 
+        See <a href="Number.html#method_format">Y.Number.format</a> for the available format specs.
+
         Applies the CSS className `yui3-datatable-number` to the cell.
         @method number
         @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
@@ -301,87 +255,8 @@ var Lang = Y.Lang,
             o.className = cName('number');
             o.column.allowHTML = true;
             return Y.Number.format(parseFloat(o.value), o.column.numberFormat || this.get("numberFormat"));
-        },
-
-        /**
-        Formats a CHECKBOX element based on the <i>truthy</i> value of the cell.
-        All the radios on the same column share a unique name so they are mutually exclusive
-
-        Applies the CSS className `yui3-datatable-radio` to the cell.
-        @method radio
-        @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
-        @param o.value {any} The raw value from the record Model to populate this cell.
-             Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
-        @param o.data {Object} The Model data for this row in simple object format.
-        @param o.column {Object} The column configuration object.
-        @param o.record {Y.Model} The Model for this row.
-        @param o.className {String} A string of class names to add `<td class="HERE">`
-               in addition to the column class and any classes in the column's className configuration.
-        @param o.rowIndex {Number} The index of the current Model in the ModelList.
-               Typically correlates to the row index as well.
-        @param o.rowClass {String} A string of css classes to add `<tr class="HERE"><td....`
-        @return {String} the markup for the radio.
-        @static
-        **/
-        radio : function(o) {
-            o.className = cName('radio');
-            o.column.allowHTML = true;
-            return '<input type="radio"' + (o.value ? ' checked="checked"' : '') +
-            ' name="'+ this.get('boundingBox').get('id') + o.column.key + '" />';
-        },
-
-        /**
-        It produces a TEXTAREA filled with the escaped value of the cell.
-
-        Applies the CSS className `yui3-datatable-textarea` to the cell.
-        @method textarea
-        @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
-        @param o.value {any} The raw value from the record Model to populate this cell.
-             Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
-        @param o.data {Object} The Model data for this row in simple object format.
-        @param o.column {Object} The column configuration object.
-        @param o.record {Y.Model} The Model for this row.
-        @param o.className {String} A string of class names to add `<td class="HERE">`
-               in addition to the column class and any classes in the column's className configuration.
-        @param o.rowIndex {Number} The index of the current Model in the ModelList.
-               Typically correlates to the row index as well.
-        @param o.rowClass {String} A string of css classes to add `<tr class="HERE"><td....`
-        @return {String} the markup for the textarea
-        @static
-        **/
-        textarea : function(o) {
-            o.className = cName('textarea');
-            o.column.allowHTML = true;
-            return '<textarea>' + stringValue(o.value) + '</textarea>';
-        },
-
-        /**
-        It produces a TEXTBOX filled with the escaped value of the cell.
-
-        Applies the CSS className `yui3-datatable-textbox` to the cell.
-        @method textbox
-        @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
-        @param o.value {any} The raw value from the record Model to populate this cell.
-             Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
-        @param o.data {Object} The Model data for this row in simple object format.
-        @param o.column {Object} The column configuration object.
-        @param o.record {Y.Model} The Model for this row.
-        @param o.className {String} A string of class names to add `<td class="HERE">`
-               in addition to the column class and any classes in the column's className configuration.
-        @param o.rowIndex {Number} The index of the current Model in the ModelList.
-               Typically correlates to the row index as well.
-        @param o.rowClass {String} A string of css classes to add `<tr class="HERE"><td....`
-        @return {String} the markup for the textbox
-        @static
-        **/
-        textbox : function(o) {
-            o.className = cName('textbox');
-            o.column.allowHTML = true;
-            return '<input type="text" value="' + stringValue(o.value) + '"/>';
         }
 
     };
 
-if (Lang.isFunction(Y.DataTable.BodyView)) {
-    Y.mix(Y.DataTable.BodyView.Formatters, Formatters);
-}
+Y.mix(Y.DataTable.BodyView.Formatters, Formatters);

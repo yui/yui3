@@ -401,15 +401,9 @@ suite.add(new Y.Test.Case({
                     suffix: 's'
                 }},
                 {key: 'b', formatter:'currency'},
-                {key: 'button', formatter: 'button'},
-                {key: 'checkbox', formatter: 'checkbox'},
+                {key: 'button', formatter: 'button', buttonLabel:'press me'},
+                {key: 'truefalse', formatter: 'truefalse'},
                 {key: 'date', formatter: 'date'},
-                {key: 'dropdown', formatter: 'dropdown', dropdownOptions: [
-                        'none',
-                        '1',
-                        {value: 2, label: 'this'},
-                        {value: 3, label: 'three'}
-                ]},
                 {key: 'email', formatter: 'email', linkFrom: 'linkSrc'},
                 {key: 'link', formatter: 'link', linkFrom: 'linkSrc'},
                 {key: 'number', formatter: 'number',numberFormat: {
@@ -418,18 +412,15 @@ suite.add(new Y.Test.Case({
                     thousandsSeparator: 't',
                     prefix: 'p',
                     suffix: 's'
-                }},
-                {key: 'radio', formatter: 'radio'},
-                {key: 'textarea', formatter: 'textarea'},
-                {key: 'textbox', formatter: 'textbox'}
+                }}
 
             ],
             data: [
                 {
-                    a: 123.45, b: 123.45, button:'btn', checkbox: true, 'date': new Date(), dropdown: 2, email: 'me', link: 'site', linkSrc: 'there',
-                    number: 987654, radio: true, textarea: 'two\nlines', textbox:'simple text'
+                    a: 123.45, b: 123.45, button:'btn', truefalse: true, 'date': new Date(),
+                    email: 'me', link: 'site', linkSrc: 'there', number: 987654
                 },
-                {a: 6789,   b: 6789  ,               checkbox: false , radio: true}
+                {a: 6789,   b: 6789  ,               truefalse: false }
             ],
             currencyFormat: {
                 decimalPlaces:1,
@@ -461,19 +452,14 @@ suite.add(new Y.Test.Case({
             content = node.get('firstChild');
         Y.Assert.isTrue(node.hasClass('yui3-datatable-button'));
         Y.Assert.areEqual('BUTTON', content.get('tagName').toUpperCase());
-        Y.Assert.areEqual('btn', content.getHTML());
+        Y.Assert.areEqual('press me', content.getHTML());
     },
-    "test checkbox format": function () {
+    "test truefalse format": function () {
         var dt = this.dt,
-            node = dt.getCell([0,3]),
-            content = node.get('firstChild');
-        Y.Assert.isTrue(node.hasClass('yui3-datatable-checkbox'));
-        Y.Assert.areEqual('INPUT', content.get('tagName').toUpperCase());
-        Y.Assert.areEqual('checkbox', content.get('type'));
-        Y.Assert.isTrue(content.get('checked'));
+            node = dt.getCell([0,3]);
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-true'));
         node = dt.getCell([1,3]),
-        content = node.get('firstChild');
-        Y.Assert.isFalse(content.get('checked'));
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-false'));
     },
     "test date format": function () {
         var dt = this.dt,
@@ -481,19 +467,9 @@ suite.add(new Y.Test.Case({
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
         Y.Assert.areEqual(Y.Date.format(new Date()), node.getHTML());
     },
-    "test dropdown format": function () {
-        var dt = this.dt,
-            node = dt.getCell([0,5]),
-            content = node.get('firstChild');
-        Y.Assert.isTrue(node.hasClass('yui3-datatable-dropdown'));
-        Y.Assert.areEqual('SELECT', content.get('tagName').toUpperCase());
-        Y.Assert.areEqual('2', content.get('value'));
-        Y.Assert.areEqual(2, content.get('selectedIndex'));
-        Y.Assert.areEqual(4, content.get('children').size());
-    },
     "test email format": function () {
         var dt = this.dt,
-            node = dt.getCell([0,6]),
+            node = dt.getCell([0,5]),
             content = node.get('firstChild');
         Y.Assert.isTrue(node.hasClass('yui3-datatable-email'));
         Y.Assert.areEqual('A', content.get('tagName').toUpperCase());
@@ -502,7 +478,7 @@ suite.add(new Y.Test.Case({
     },
     "test link format": function () {
         var dt = this.dt,
-            node = dt.getCell([0,7]),
+            node = dt.getCell([0,6]),
             content = node.get('firstChild');
         Y.Assert.isTrue(node.hasClass('yui3-datatable-link'));
         Y.Assert.areEqual('A', content.get('tagName').toUpperCase());
@@ -511,38 +487,9 @@ suite.add(new Y.Test.Case({
     },
     "test number format": function () {
         var dt = this.dt,
-            node = dt.getCell([0,8]);
+            node = dt.getCell([0,7]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-number'));
         Y.Assert.areEqual('p987t654d00s', node.getHTML());
-    },
-    "test radio format": function () {
-        var dt = this.dt,
-            node = dt.getCell([0,9]),
-            content = node.get('firstChild');
-        Y.Assert.isTrue(node.hasClass('yui3-datatable-radio'));
-        Y.Assert.areEqual('INPUT', content.get('tagName').toUpperCase());
-        Y.Assert.areEqual('radio', content.get('type'));
-        Y.Assert.isFalse(content.get('checked'));
-        node = dt.getCell([1,9]),
-        content = node.get('firstChild');
-        Y.Assert.isTrue(content.get('checked'));
-    },
-    "test textarea format": function () {
-        var dt = this.dt,
-            node = dt.getCell([0,10]),
-            content = node.get('firstChild');
-        Y.Assert.isTrue(node.hasClass('yui3-datatable-textarea'));
-        Y.Assert.areEqual('TEXTAREA', content.get('tagName').toUpperCase());
-        Y.Assert.areEqual('two\nlines', content.getHTML());
-    },
-    "test textbox format": function () {
-        var dt = this.dt,
-            node = dt.getCell([0,11]),
-            content = node.get('firstChild');
-        Y.Assert.isTrue(node.hasClass('yui3-datatable-textbox'));
-        Y.Assert.areEqual('INPUT', content.get('tagName').toUpperCase());
-        Y.Assert.areEqual('text', content.get('type'));
-        Y.Assert.areEqual('simple text', content.get('value'));
     }
 }));
 
