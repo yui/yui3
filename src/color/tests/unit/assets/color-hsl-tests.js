@@ -2,7 +2,7 @@ YUI.add('color-hsl-tests', function(Y) {
 
     var areSame = Y.Assert.areSame,
         testBasic = new Y.Test.Case({
-            name: "Color Convertion Tests",
+            name: "Color HSL Convertion Tests",
 
             'convert hex to hsl': function() {
                 var c = Y.Color.toHSL('#ff00ff'),
@@ -140,7 +140,7 @@ YUI.add('color-hsl-tests', function(Y) {
 
         });
 
-    var suite = new Y.Test.Suite("Color");
+    var suite = new Y.Test.Suite("Color HSL");
     suite.add(testBasic);
 
     Y.Test.Runner.add(suite);

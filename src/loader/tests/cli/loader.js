@@ -2245,6 +2245,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("json-parse")) > -1, "Module (json-parse) not found in sorted array");
         },
+     "Testing json-parse-shim": function(data) {
+            var loader = new Y.Loader({
+                require: ["json-parse-shim"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("json-parse-shim")) > -1, "Module (json-parse-shim) not found in sorted array");
+        },
      "Testing json-stringify": function(data) {
             var loader = new Y.Loader({
                 require: ["json-stringify"],
@@ -2254,6 +2264,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("json-stringify")) > -1, "Module (json-stringify) not found in sorted array");
+        },
+     "Testing json-stringify-shim": function(data) {
+            var loader = new Y.Loader({
+                require: ["json-stringify-shim"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("json-stringify-shim")) > -1, "Module (json-stringify-shim) not found in sorted array");
         },
      "Testing jsonp": function(data) {
             var loader = new Y.Loader({
@@ -3110,6 +3130,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("text-wordbreak")) > -1, "Module (text-wordbreak) not found in sorted array");
+        },
+     "Testing timers": function(data) {
+            var loader = new Y.Loader({
+                require: ["timers"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("timers")) > -1, "Module (timers) not found in sorted array");
         },
      "Testing transition": function(data) {
             var loader = new Y.Loader({

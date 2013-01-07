@@ -1,6 +1,19 @@
 IO Utility Change History
 =========================
 
+@VERSION@
+-----
+
+* Exposed IO's form serialize via the new `Y.IO.stringify()` method.
+  [Ticket #2529073] [Pull Request #351] [John Lindal]
+
+
+3.8.0
+-----
+
+* No changes.
+
+
 3.7.3
 -----
 

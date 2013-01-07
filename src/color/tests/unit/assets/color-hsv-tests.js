@@ -2,7 +2,7 @@ YUI.add('color-hsv-tests', function(Y) {
 
     var areSame = Y.Assert.areSame,
         testBasic = new Y.Test.Case({
-            name: "Color Convertion Tests",
+            name: "Color HSV Convertion Tests",
 
             'convert hex to hsv': function() {
                 var c = Y.Color.toHSV('#ff00ff'),
@@ -140,7 +140,7 @@ YUI.add('color-hsv-tests', function(Y) {
 
         });
 
-    var suite = new Y.Test.Suite("Color");
+    var suite = new Y.Test.Suite("Color HSV");
     suite.add(testBasic);
 
     Y.Test.Runner.add(suite);
