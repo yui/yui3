@@ -572,6 +572,17 @@
         ],
         "type": "css"
     },
+    "cssgrids-responsive": {
+        "optional": [
+            "cssreset",
+            "cssfonts"
+        ],
+        "requires": [
+            "cssgrids",
+            "cssgrids-responsive-base"
+        ],
+        "type": "css"
+    },
     "cssgrids-units": {
         "optional": [
             "cssreset",
