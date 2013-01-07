@@ -1,6 +1,6 @@
 YUI.add('jsonp-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.JSONPRequest and Y.jsonp with jsonp-url"),
+var suite = new Y.Test.Suite("JSONP"),
     // Dirty dirty hack to future proof duck type for onload where
     // possible
     onScriptLoad = (function () {
@@ -47,7 +47,7 @@ suite.add(new Y.Test.Case({
             scripts = Y.all('script')._nodes,
             newScript;
 
-        Y.jsonp("server/service.php?callback={callback}", function () {});
+        Y.jsonp("echo/jsonp?callback={callback}", function () {});
 
         newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
             return Y.Array.indexOf(scripts, s) === -1;
@@ -57,7 +57,7 @@ suite.add(new Y.Test.Case({
 
         scripts.push(newScript);
 
-        Y.jsonp("server/service.php?callback={callback}", {
+        Y.jsonp("echo/jsonp?callback={callback}", {
             on: {
                 success: function () {}
             },
@@ -80,13 +80,12 @@ suite.add(new Y.Test.Case({
         // (which it doesn't) so resume() is never called.
         test.wait(function () {}, 1000);
     },
-
     "config attributes should be set via Y.Get.script": function () {
         var test = this,
             scripts = Y.all('script')._nodes,
             newScript;
 
-        Y.jsonp("server/service.php?callback={callback}", {
+        Y.jsonp("echo/jsonp?callback={callback}", {
             on: {
                 success: function () { test.resume(); }
             },
@@ -122,7 +121,7 @@ suite.add(new Y.Test.Case({
     "callback function as second arg should be success handler": function () {
         var self = this;
 
-        Y.jsonp("server/service.php?&callback={callback}", function (json) {
+        Y.jsonp("echo/jsonp?&callback={callback}", function (json) {
             //console.log(Y.Object.keys(YUI.Env.JSONP), "callback function as second arg should be success handler");
             self.resume(function () {
                 Y.Assert.isObject(json);
@@ -135,7 +134,7 @@ suite.add(new Y.Test.Case({
     "success handler in callback object should execute": function () {
         var self = this;
 
-        Y.jsonp("server/service.php?&callback={callback}", {
+        Y.jsonp("echo/jsonp?&callback={callback}", {
             on: {
                 success: function (json) {
                     //console.log(Y.Object.keys(YUI.Env.JSONP), "success handler in callback object should execute");
@@ -152,7 +151,7 @@ suite.add(new Y.Test.Case({
     "failure handler in callback object should execute": function () {
         var self = this;
 
-        Y.jsonp("server/404.php?&callback={callback}", {
+        Y.jsonp("status/404?callback={callback}", {
             on: {
                 success: function (json) {
                     self.resume(function () {
@@ -173,7 +172,7 @@ suite.add(new Y.Test.Case({
     "failure handler in callback object should not execute for successful io": function () {
         var self = this;
 
-        Y.jsonp("server/service.php?&callback={callback}", {
+        Y.jsonp("echo/jsonp?&callback={callback}", {
             on: {
                 success: function (json) {
                     //console.log(Y.Object.keys(YUI.Env.JSONP), "failure handler in callback object should not execute for successful io");
@@ -196,7 +195,7 @@ suite.add(new Y.Test.Case({
             count = 0,
             service;
 
-        service = new Y.JSONPRequest("server/service.php?callback={callback}", {
+        service = new Y.JSONPRequest("echo/jsonp?callback={callback}", {
             on: {
                 success: function (json) {
                     //console.log(Y.Object.keys(YUI.Env.JSONP), "test multiple send() from an instance of Y.JSONPRequest");
@@ -225,23 +224,13 @@ suite.add(new Y.Test.Case({
 }));
 
 suite.add(new Y.Test.Case({
-    name : "context and args"
-        
-}));
-
-suite.add(new Y.Test.Case({
-    name : "format"
-        
-}));
-
-suite.add(new Y.Test.Case({
     name : "allowCache",
         
     "allowCache should preserve the same callback": function () {
         var test = this,
             remaining = 2,
             callback,
-            jsonp = new Y.JSONPRequest('server/service.php?&callback={callback}', {
+            jsonp = new Y.JSONPRequest('echo/jsonp?&callback={callback}', {
                 allowCache: true,
                 on: {
                     success: function (data) {
@@ -276,7 +265,7 @@ suite.add(new Y.Test.Case({
     function () {
         var test = this,
             callbacks = [],
-            jsonp = new Y.JSONPRequest('server/service.php?&callback={callback}', {
+            jsonp = new Y.JSONPRequest('echo/jsonp?&callback={callback}', {
                 allowCache: true,
                 on: {
                     success: function (data) {
@@ -308,6 +297,7 @@ suite.add(new Y.Test.Case({
 
 }));
 
+/*
 suite.add(new Y.Test.Case({
     name : "timeout",
         
@@ -315,7 +305,7 @@ suite.add(new Y.Test.Case({
         var test = this,
             timeoutCalled = false,
             jsonpProxies = Y.Object.keys(YUI.Env.JSONP).length,
-            jsonp = new Y.JSONPRequest('server/service.php?&wait=2&callback={callback}', {
+            jsonp = new Y.JSONPRequest('echo/jsonp?&wait=2&callback={callback}', {
                 timeout: 1000,
                 on: {
                     success: function (data) {
@@ -362,8 +352,6 @@ suite.add(new Y.Test.Case({
 
         test.wait(3000);
     }
-
-    /*
     ,
 
     "timeout should not flush the global proxy across multiple send calls": function () {
@@ -375,7 +363,7 @@ suite.add(new Y.Test.Case({
         // test behavior.  Which is icky.
         var test = this,
             timeoutCalled = false,
-            jsonp = new Y.JSONPRequest('server/service.php?wait=2&callback={callback}', {
+            jsonp = new Y.JSONPRequest('echo/jsonp?wait=2&callback={callback}', {
                 timeout: 1000,
                 on: {
                     success: function (data) {
@@ -405,8 +393,8 @@ suite.add(new Y.Test.Case({
 
         test.wait(3000);
     }
-    */
 }));
+    */
 
 Y.Test.Runner.add(suite);
 

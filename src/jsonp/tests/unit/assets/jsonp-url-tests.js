@@ -1,6 +1,6 @@
 YUI.add('jsonp-url-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.JSONPRequest and Y.jsonp");
+var suite = new Y.Test.Suite("JSONP: URL's");
 
 suite.add(new Y.Test.Case({
     name : "Callback in URL",
@@ -14,7 +14,7 @@ suite.add(new Y.Test.Case({
                 Y.Assert.isObject(json);
             });
         };
-        Y.jsonp("server/service.php?&callback=globalFunction");
+        Y.jsonp("echo/jsonp?&callback=globalFunction");
 
         self.wait();
     },
@@ -29,7 +29,7 @@ suite.add(new Y.Test.Case({
             });
         };
 
-        Y.jsonp("server/service.php?&callback=globalFunction", function (data) {
+        Y.jsonp("echo/jsonp?&callback=globalFunction", function (data) {
             self.resume(function () {
                 Y.config.win.globalFunction = undefined;
                 Y.Assert.isObject(data);
@@ -49,7 +49,7 @@ suite.add(new Y.Test.Case({
             });
         };
 
-        Y.jsonp("server/service.php?&callback=globalFunction", {
+        Y.jsonp("echo/jsonp?&callback=globalFunction", {
             on: {
                 success: function (data) {
                     self.resume(function () {
@@ -85,7 +85,7 @@ suite.add(new Y.Test.Case({
             }
         ];
 
-        Y.jsonp('server/service.php?&callback=deeply[2].nested["global"].func["tion"]');
+        Y.jsonp('echo/jsonp?&callback=deeply[2].nested["global"].func["tion"]');
 
         self.wait();
     },
@@ -99,7 +99,7 @@ suite.add(new Y.Test.Case({
                 Y.Assert.isObject(json);
             });
         };
-        Y.jsonp("server/service.php?&callback=callbackFunction");
+        Y.jsonp("echo/jsonp?&callback=callbackFunction");
 
         self.wait();
     },
@@ -126,7 +126,7 @@ suite.add(new Y.Test.Case({
             }
         ];
 
-        Y.jsonp('server/service.php?&callback=deeply[2].nested["global"].func["tion"]');
+        Y.jsonp('echo/jsonp?&callback=deeply[2].nested["global"].func["tion"]');
         self.wait();
     },
 
@@ -139,7 +139,7 @@ suite.add(new Y.Test.Case({
                 Y.Assert.isObject(json);
             });
         };
-        Y.jsonp("server/service.php?&callback=Y.callbackFunction");
+        Y.jsonp("echo/jsonp?&callback=Y.callbackFunction");
 
         self.wait();
     },
@@ -166,7 +166,7 @@ suite.add(new Y.Test.Case({
             }
         ];
 
-        Y.jsonp('server/service.php?&callback=deeply[2].nested["global"].func["tion"]', function (data) {
+        Y.jsonp('echo/jsonp?&callback=deeply[2].nested["global"].func["tion"]', function (data) {
             self.resume(function () {
                 delete Y.deeply;
                 Y.Assert.isObject(data);
@@ -198,7 +198,7 @@ suite.add(new Y.Test.Case({
             }
         ];
 
-        Y.jsonp('server/service.php?&callback=deeply[2].nested["global"].func["tion"]', {
+        Y.jsonp('echo/jsonp?&callback=deeply[2].nested["global"].func["tion"]', {
             on: {
                 success: function (data) {
                     self.resume(function () {
