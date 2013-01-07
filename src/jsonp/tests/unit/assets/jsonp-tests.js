@@ -105,6 +105,27 @@ suite.add(new Y.Test.Case({
         // to allow JSONP the chance to clean up the callback registry before
         // other tests begin.
         test.wait();
+    },
+    "async config should be set via Y.Get.script": function () {
+        var test = this,
+            scripts = Y.all('script')._nodes,
+            newScript;
+
+        Y.jsonp("echo/jsonp?callback={callback}", {
+            on: {
+                success: function () {
+                
+                }
+            },
+            async: true
+        });
+
+        newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
+            return Y.Array.indexOf(scripts, s) === -1;
+        })[0];
+
+        Y.Assert.isTrue(Y.one(newScript).get("async"));
+
     }
 }));
 
