@@ -9062,6 +9062,17 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "type": "css"
     },
+    "cssgrids-responsive": {
+        "optional": [
+            "cssreset",
+            "cssfonts"
+        ],
+        "requires": [
+            "cssgrids",
+            "cssgrids-responsive-base"
+        ],
+        "type": "css"
+    },
     "cssgrids-units": {
         "optional": [
             "cssreset",
@@ -11085,7 +11096,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'bb4cfd83625b82bc125ebb3280d96510';
+YUI.Env[Y.version].md5 = 'b1f1e0c3c652588981a70b8ce90498ed';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
