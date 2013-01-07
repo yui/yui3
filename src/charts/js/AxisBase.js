@@ -5,7 +5,17 @@
  * @submodule axis-base
  */
 /**
- * An abstract class that manages the data for an axis.
+ * An abstract class that provides the core functionality used by the following classes:
+ * <ul>
+ *      <li>{{#crossLink "CategoryAxisBase"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "NumericAxisBase"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "StackedAxisBase"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "TimeAxisBase"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "CategoryAxis"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "NumericAxis"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "StackedAxis"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "TimeAxis"}}{{/crossLink}}</li>
+ *  </ul>
  *
  * @class AxisBase
  * @constructor
@@ -21,14 +31,10 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
      */
     initializer: function()
     {
-        this.after("dataReady", Y.bind(this._dataChangeHandler, this));
-        this.after("dataUpdate", Y.bind(this._dataChangeHandler, this));
         this.after("minimumChange", Y.bind(this._keyChangeHandler, this));
         this.after("maximumChange", Y.bind(this._keyChangeHandler, this));
         this.after("keysChange", this._keyChangeHandler);
         this.after("dataProviderChange", this._dataProviderChangeHandler);
-        this.after("alwaysShowZeroChange", this._keyChangeHandler);
-        this.after("roundingMethodChange", this._keyChangeHandler);
     },
 
     /**
@@ -60,6 +66,15 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     },
 
     /**
+     * Calculates the maximum and minimum values for the `Data`.
+     *
+     * @method _updateMinAndMax
+     * @private
+     */
+    _updateMinAndMax: function() {
+    },
+
+    /**
      * Constant used to generate unique id.
      *
      * @property GUID
@@ -86,15 +101,6 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
      * @private
      */
     _setMaximum: null,
-
-    /**
-     * Storage for `dataMaximum` attribute.
-     *
-     * @property _dataMaximum
-     * @type Object
-     * @private
-     */
-    _dataMaximum: null,
 
     /**
      * Storage for `setMinimum` attribute.
@@ -166,30 +172,6 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
             keyArray[i] = obj[key];
         }
         return keyArray;
-    },
-
-    /**
-     * Sets data by key
-     *
-     * @method _setDataByKey
-     * @param {String} key Key value to use.
-     * @param {Array} data Array to use.
-     * @private
-     */
-    _setDataByKey: function(key, data)
-    {
-        var i,
-            obj,
-            arr = [],
-            dv = this._dataClone.concat(),
-            len = dv.length;
-        for(i = 0; i < len; ++i)
-        {
-            obj = dv[i];
-            arr[i] = obj[key];
-        }
-        this.get("keys")[key] = arr;
-        this._updateTotalDataFlag = true;
     },
 
     /**
@@ -267,42 +249,6 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * Calculates the maximum and minimum values for the `Axis`.
-     *
-     * @method _updateMinAndMax
-     * @private
-     */
-    _updateMinAndMax: function()
-    {
-        var data = this.get("data"),
-            max = 0,
-            min = 0,
-            len,
-            num,
-            i;
-        if(data && data.length && data.length > 0)
-        {
-            len = data.length;
-            max = min = data[0];
-            if(len > 1)
-            {
-                for(i = 1; i < len; i++)
-                {
-                    num = data[i];
-                    if(isNaN(num))
-                    {
-                        continue;
-                    }
-                    max = Math.max(num, max);
-                    min = Math.min(num, min);
-                }
-            }
-        }
-        this._dataMaximum = max;
-        this._dataMinimum = min;
-    },
-
-    /**
      * Returns the total number of majorUnits that will appear on an axis.
      *
      * @method getTotalMajorUnits
@@ -311,40 +257,9 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     getTotalMajorUnits: function()
     {
         var units,
-            majorUnit = this.get("styles").majorUnit,
-            len = this.get("length");
-        if(majorUnit.determinant === "count")
-        {
-            units = majorUnit.count;
-        }
-        else if(majorUnit.determinant === "distance")
-        {
-            units = (len/majorUnit.distance) + 1;
-        }
+            majorUnit = this.get("styles").majorUnit;
+        units = majorUnit.count;
         return units;
-    },
-
-    /**
-     * Returns the distance between major units on an axis.
-     *
-     * @method getMajorUnitDistance
-     * @param {Number} len Number of ticks
-     * @param {Number} uiLen Size of the axis.
-     * @param {Object} majorUnit Hash of properties used to determine the majorUnit
-     * @return Number
-     */
-    getMajorUnitDistance: function(len, uiLen, majorUnit)
-    {
-        var dist;
-        if(majorUnit.determinant === "count")
-        {
-            dist = uiLen/(len - 1);
-        }
-        else if(majorUnit.determinant === "distance")
-        {
-            dist = majorUnit.distance;
-        }
-        return dist;
     },
 
     /**
@@ -362,28 +277,6 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * Calculates and returns a value based on the number of labels and the index of
-     * the current label.
-     *
-     * @method getLabelByIndex
-     * @param {Number} i Index of the label.
-     * @param {Number} l Total number of labels.
-     * @return String
-     */
-    _getLabelByIndex: function()
-    {
-        var i = arguments[0],
-            l = arguments[i],
-            min = this.get("minimum"),
-            max = this.get("maximum"),
-            increm = (max - min)/(l-1),
-            label;
-            l -= 1;
-        label = min + (i * increm);
-        return label;
-    },
-
-    /**
      * Updates the `Axis` after a change in keys.
      *
      * @method _keyChangeHandler
@@ -393,49 +286,8 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     _keyChangeHandler: function(e)
     {
         this._updateMinAndMax();
+        this._updateTotalDataFlag = true;
         this.fire("dataUpdate");
-    },
-
-    /**
-     * Checks to see if data extends beyond the range of the axis. If so,
-     * that data will need to be hidden. This method is internal, temporary and subject
-     * to removal in the future.
-     *
-     * @method _hasDataOverflow
-     * @protected
-     * @return Boolean
-     */
-    _hasDataOverflow: function()
-    {
-        if(this.get("setMin") || this.get("setMax"))
-        {
-            return true;
-        }
-        return false;
-    },
-
-    /**
-     * Returns a string corresponding to the first label on an
-     * axis.
-     *
-     * @method getMinimumValue
-     * @return String
-     */
-    getMinimumValue: function()
-    {
-        return this.get("minimum");
-    },
-
-    /**
-     * Returns a string corresponding to the last label on an
-     * axis.
-     *
-     * @method getMaximumValue
-     * @return String
-     */
-    getMaximumValue: function()
-    {
-        return this.get("maximum");
     },
 
     /**
@@ -458,32 +310,13 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         return axisstyles;
     },
           
-    _getSetMax: function()
-    {
-        return Y_Lang.isNumber(this._setMaximum);
-    },
-  
-    _getSetMin: function()
-    {
-        return Y_Lang.isNumber(this._setMinimum);
-    },
-          
-    _minimumGetter: function ()
-    {
-        var min = this.get("dataMinimum");
-        if(Y_Lang.isNumber(this._setMinimum))
-        {
-            min = this._setMinimum;
-        }
-        return parseFloat(min);
-    },
-  
-    _minimumSetter: function(val)
-    {
-        this._setMinimum = parseFloat(val);
-        return val;
-    },
-
+    /**
+     * Getter method for maximum attribute.
+     *
+     * @method _maximumGetter
+     * @return Number
+     * @private
+     */
     _maximumGetter: function ()
     {
         var max = this.get("dataMaximum"),
@@ -501,13 +334,80 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         return parseFloat(max);
     },
   
+    /**
+     * Setter method for maximum attribute.
+     *
+     * @method _maximumSetter
+     * @param {Object} value
+     * @private
+     */
     _maximumSetter: function (value)
     {
         this._setMaximum = parseFloat(value);
         return value;
+    },
+
+    /**
+     * Getter method for minimum attribute.
+     *
+     * @method _minimumGetter
+     * @return Number
+     * @private
+     */
+    _minimumGetter: function ()
+    {
+        var min = this.get("dataMinimum");
+        if(Y_Lang.isNumber(this._setMinimum))
+        {
+            min = this._setMinimum;
+        }
+        return parseFloat(min);
+    },
+  
+    /**
+     * Setter method for minimum attribute.
+     *
+     * @method _minimumSetter
+     * @param {Object} value
+     * @private
+     */
+    _minimumSetter: function(val)
+    {
+        this._setMinimum = parseFloat(val);
+        return val;
+    },
+
+    /**
+     * Indicates whether or not the maximum attribute has been explicitly set.
+     *
+     * @method _getSetMax
+     * @return Boolean
+     * @private
+     */
+    _getSetMax: function()
+    {
+        return Y_Lang.isNumber(this._setMaximum);
+    },
+  
+    /**
+     * Indicates whether or not the minimum attribute has been explicitly set.
+     *
+     * @method _getSetMin
+     * @return Boolean
+     * @private
+     */
+    _getSetMin: function()
+    {
+        return Y_Lang.isNumber(this._setMinimum);
     }
 }, {
     ATTRS: {
+        labelFunction: {
+            valueFn: function() {
+                return this.formatLabel;
+            }
+        },
+  
         /**
          * Hash of array identifed by a string value.
          *
@@ -550,23 +450,6 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
                 this._updateTotalDataFlag = true;
                 return keys;
             }
-        },
-
-        /**
-         *Indicates how to round unit values.
-         *  <dl>
-         *      <dt>niceNumber</dt><dd>Units will be smoothed based on the number of ticks and data range.</dd>
-         *      <dt>auto</dt><dd>If the range is greater than 1, the units will be rounded.</dd>
-         *      <dt>numeric value</dt><dd>Units will be equal to the numeric value.</dd>
-         *      <dt>null</dt><dd>No rounding will occur.</dd>
-         *  </dl>
-         *
-         * @attribute roundingMethod
-         * @type String
-         * @default niceNumber
-         */
-        roundingMethod: {
-            value: "niceNumber"
         },
 
         /**
@@ -615,7 +498,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         dataMaximum: {
             getter: function ()
             {
-                if(!this._dataMaximum)
+                if(!Y_Lang.isNumber(this._dataMaximum))
                 {
                     this._updateMinAndMax();
                 }
@@ -647,7 +530,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         dataMinimum: {
             getter: function ()
             {
-                if(!this._dataMinimum)
+                if(!Y_Lang.isNumber(this._dataMinimum))
                 {
                     this._updateMinAndMax();
                 }
@@ -742,24 +625,6 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
          * @attribute labelFunctionScope
          * @type Object
          */
-        labelFunctionScope: {},
-
-        /**
-         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
-         * The method use would need to implement the arguments below and return a `String` or `HTMLElement`.
-         * <dl>
-         *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
-         *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
-         * </dl>
-         *
-         * @attribute labelFunction
-         * @type Function
-         */
-        labelFunction: {
-            value: function(val, format)
-            {
-                return val;
-            }
-        }
+        labelFunctionScope: {}
     }
 });

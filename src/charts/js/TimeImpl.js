@@ -35,17 +35,6 @@ TimeImpl.ATTRS =
      * @attribute labelFunction
      * @type Function
      */
-    labelFunction: {
-        value: function(val, format)
-        {
-            val = Y.DataType.Date.parse(val);
-            if(format)
-            {
-                return Y.DataType.Date.format(val, {format:format});
-            }
-            return val;
-        }
-    },
 
     /**
      * Pattern used by the `labelFunction` to format a label.
@@ -59,6 +48,22 @@ TimeImpl.ATTRS =
 };
 
 TimeImpl.prototype = {
+    /**
+     * Type of data used in `Data`.
+     *
+     * @property _type
+     * @readOnly
+     * @private
+     */
+    _type: "time",
+
+    /**
+     * Getter method for maximum attribute.
+     *
+     * @method _maximumGetter
+     * @return Number
+     * @private
+     */
     _maximumGetter: function ()
     {
         var max = this._getNumber(this._setMaximum);
@@ -69,12 +74,26 @@ TimeImpl.prototype = {
         return parseFloat(max);
     },
   
+    /**
+     * Setter method for maximum attribute.
+     *
+     * @method _maximumSetter
+     * @param {Object} value
+     * @private
+     */
     _maximumSetter: function (value)
     {
         this._setMaximum = this._getNumber(value);
         return value;
     },
   
+    /**
+     * Getter method for minimum attribute.
+     *
+     * @method _minimumGetter
+     * @return Number
+     * @private
+     */
     _minimumGetter: function ()
     {
         var min = this._getNumber(this._setMinimum);
@@ -85,18 +104,39 @@ TimeImpl.prototype = {
         return parseFloat(min);
     },
 
+    /**
+     * Setter method for minimum attribute.
+     *
+     * @method _minimumSetter
+     * @param {Object} value
+     * @private
+     */
     _minimumSetter: function (value)
     {
         this._setMinimum = this._getNumber(value);
         return value;
     },
 
+    /**
+     * Indicates whether or not the maximum attribute has been explicitly set.
+     *
+     * @method _getSetMax
+     * @return Boolean
+     * @private
+     */
     _getSetMax: function()
     {
         var max = this._getNumber(this._setMaximum);
         return (Y_Lang.isNumber(max));
     },
 
+    /**
+     * Indicates whether or not the minimum attribute has been explicitly set.
+     *
+     * @method _getSetMin
+     * @return Boolean
+     * @private
+     */
     _getSetMin: function()
     {
         var min = this._getNumber(this._setMinimum);
@@ -138,36 +178,6 @@ TimeImpl.prototype = {
      * @private
      */
     _dataType: "time",
-
-    /**
-     * Calculates and returns a value based on the number of labels and the index of
-     * the current label.
-     *
-     * @method _getLabelByIndex
-     * @param {Number} i Index of the label.
-     * @param {Number} l Total number of labels.
-     * @param {String} direction The direction of the axis. (vertical or horizontal)
-     * @return String
-     * @private
-     */
-    _getLabelByIndex: function(i, l, direction)
-    {
-        var min = this.get("minimum"),
-            max = this.get("maximum"),
-            increm,
-            label;
-            l -= 1;
-        increm = ((max - min)/l) * i;
-        if(direction && direction == "vertical")
-        {
-            label = max - increm;
-        }
-        else
-        {
-            label = min + increm;
-        }
-        return label;
-    },
 
     /**
      * Gets an array of values based on a key.
@@ -225,59 +235,39 @@ TimeImpl.prototype = {
     },
 
     /**
-     * Sets data by key
+     * Calculates the maximum and minimum values for the `Axis`.
      *
-     * @method _setDataByKey
-     * @param {String} key Key value to use.
-     * @param {Array} data Array to use.
+     * @method _updateMinAndMax
      * @private
      */
-    _setDataByKey: function(key, data)
+    _updateMinAndMax: function()
     {
-        var obj,
-            arr = [],
-            dv = this._dataClone.concat(),
-            i,
-            val,
-            len = dv.length;
-        for(i = 0; i < len; ++i)
+        var data = this.get("data"),
+            max = 0,
+            min = 0,
+            len,
+            num,
+            i;
+        if(data && data.length && data.length > 0)
         {
-            obj = dv[i][key];
-            if(Y_Lang.isDate(obj))
+            len = data.length;
+            max = min = data[0];
+            if(len > 1)
             {
-                val = obj.valueOf();
-            }
-            else
-            {
-                val = new Date(obj);
-                if(Y_Lang.isDate(val))
+                for(i = 1; i < len; i++)
                 {
-                    val = val.valueOf();
-                }
-                else if(!Y_Lang.isNumber(obj))
-                {
-                    if(Y_Lang.isNumber(parseFloat(obj)))
+                    num = data[i];
+                    if(isNaN(num))
                     {
-                        val = parseFloat(obj);
+                        continue;
                     }
-                    else
-                    {
-                        if(typeof obj != "string")
-                        {
-                            obj = obj.toString();
-                        }
-                        val = new Date(obj).valueOf();
-                    }
-                }
-                else
-                {
-                    val = obj;
+                    max = Math.max(num, max);
+                    min = Math.min(num, min);
                 }
             }
-            arr[i] = val;
         }
-        this.get("keys")[key] = arr;
-        this._updateTotalDataFlag = true;
+        this._dataMaximum = max;
+        this._dataMinimum = min;
     },
 
     /**

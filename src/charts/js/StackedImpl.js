@@ -18,8 +18,16 @@ function StackedImpl()
 
 StackedImpl.NAME = "stackedImpl";
 
-
 StackedImpl.prototype = {
+    /**
+     * Type of data used in `Data`.
+     *
+     * @property _type
+     * @readOnly
+     * @private
+     */
+    _type: "stacked",
+
     /**
      * Calculates the maximum and minimum values for the `Data`.
      *

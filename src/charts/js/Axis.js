@@ -35,6 +35,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
      */
     bindUI: function()
     {
+        this.after("dataReady", Y.bind(this._dataChangeHandler, this));
+        this.after("dataUpdate", Y.bind(this._dataChangeHandler, this));
         this.after("stylesChange", this._updateHandler);
         this.after("overlapGraphChange", this._updateHandler);
         this.after("positionChange", this._positionChangeHandler);
@@ -1103,6 +1105,93 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             val = DOCUMENT.createTextNode(val);
         }
         textField.appendChild(val);
+    },
+
+    /**
+     * Returns the total number of majorUnits that will appear on an axis.
+     *
+     * @method getTotalMajorUnits
+     * @return Number
+     */
+    getTotalMajorUnits: function()
+    {
+        var units,
+            majorUnit = this.get("styles").majorUnit,
+            len = this.get("length");
+        if(majorUnit.determinant === "count")
+        {
+            units = majorUnit.count;
+        }
+        else if(majorUnit.determinant === "distance")
+        {
+            units = (len/majorUnit.distance) + 1;
+        }
+        return units;
+    },
+
+    /**
+     * Returns the distance between major units on an axis.
+     *
+     * @method getMajorUnitDistance
+     * @param {Number} len Number of ticks
+     * @param {Number} uiLen Size of the axis.
+     * @param {Object} majorUnit Hash of properties used to determine the majorUnit
+     * @return Number
+     */
+    getMajorUnitDistance: function(len, uiLen, majorUnit)
+    {
+        var dist;
+        if(majorUnit.determinant === "count")
+        {
+            dist = uiLen/(len - 1);
+        }
+        else if(majorUnit.determinant === "distance")
+        {
+            dist = majorUnit.distance;
+        }
+        return dist;
+    },
+
+    /**
+     * Checks to see if data extends beyond the range of the axis. If so,
+     * that data will need to be hidden. This method is internal, temporary and subject
+     * to removal in the future.
+     *
+     * @method _hasDataOverflow
+     * @protected
+     * @return Boolean
+     */
+    _hasDataOverflow: function()
+    {
+        if(this.get("setMin") || this.get("setMax"))
+        {
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Returns a string corresponding to the first label on an
+     * axis.
+     *
+     * @method getMinimumValue
+     * @return String
+     */
+    getMinimumValue: function()
+    {
+        return this.get("minimum");
+    },
+
+    /**
+     * Returns a string corresponding to the last label on an
+     * axis.
+     *
+     * @method getMaximumValue
+     * @return String
+     */
+    getMaximumValue: function()
+    {
+        return this.get("maximum");
     }
 }, {
     ATTRS:

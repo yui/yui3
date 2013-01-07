@@ -8,4 +8,4 @@
  * @param {Object} config (optional) Configuration parameters.
  * @submodule axis-stacked-base
  */
-Y.StackedAxisBase = Y.Base.create("stackedAxisBase", Y.AxisBase, [Y.StackedImpl]);
+Y.StackedAxisBase = Y.Base.create("stackedAxisBase", Y.NumericAxisBase, [Y.StackedImpl]);

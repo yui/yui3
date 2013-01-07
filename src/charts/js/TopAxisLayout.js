@@ -369,7 +369,7 @@ TopAxisLayout.prototype = {
             ttl = Math.round(topTickOffset + totalLabelSize + totalTitleSize);
         if(this._explicitHeight)
         {
-           ttl = this._explicitWidth;
+           ttl = this._explicitHeight;
         }
         host.set("calculatedHeight", ttl);
         graphic.set("y", ttl - topTickOffset);

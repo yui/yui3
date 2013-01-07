@@ -21,42 +21,6 @@ NumericImpl.NAME = "numericImpl";
 
 NumericImpl.ATTRS = {
     /**
-     * The maximum value contained in the `data` array. Used for
-     * `maximum` when `autoMax` is true.
-     *
-     * @attribute dataMaximum
-     * @type Number
-     */
-    dataMaximum: {
-        getter: function ()
-        {
-            if(!Y.Lang.isNumber(this._dataMaximum))
-            {
-                this._updateMinAndMax();
-            }
-            return this._dataMaximum;
-        }
-    },
-   
-    /**
-     * The minimum value contained in the `data` array. Used for
-     * `minimum` when `autoMin` is true.
-     *
-     * @attribute dataMinimum
-     * @type Number
-     */
-    dataMinimum: {
-        getter: function ()
-        {
-            if(!Y.Lang.isNumber(this._dataMinimum))
-            {
-                this._updateMinAndMax();
-            }
-            return this._dataMinimum;
-        }
-    },
-   
-    /**
      * Indicates whether 0 should always be displayed.
      *
      * @attribute alwaysShowZero
@@ -80,16 +44,6 @@ NumericImpl.ATTRS = {
      * @attribute labelFunction
      * @type Function
      */
-    labelFunction: {
-        value: function(val, format)
-        {
-            if(format)
-            {
-                return Y.DataType.Number.format(val, format);
-            }
-            return val;
-        }
-    },
 
     /**
      * Object containing properties used by the `labelFunction` to format a
@@ -106,14 +60,40 @@ NumericImpl.ATTRS = {
             decimalPlaces: "0",
             suffix: ""
         }
+    },
+
+    /**
+     *Indicates how to round unit values.
+     *  <dl>
+     *      <dt>niceNumber</dt><dd>Units will be smoothed based on the number of ticks and data range.</dd>
+     *      <dt>auto</dt><dd>If the range is greater than 1, the units will be rounded.</dd>
+     *      <dt>numeric value</dt><dd>Units will be equal to the numeric value.</dd>
+     *      <dt>null</dt><dd>No rounding will occur.</dd>
+     *  </dl>
+     *
+     * @attribute roundingMethod
+     * @type String
+     * @default niceNumber
+     */
+    roundingMethod: {
+        value: "niceNumber"
     }
 };
 
 NumericImpl.prototype = {
     /**
+     * @method initializer
+     * @private
+     */
+    initializer: function() {
+        this.after("alwaysShowZeroChange", this._keyChangeHandler);
+        this.after("roundingMethodChange", this._keyChangeHandler);
+    },
+
+    /**
      * Formats a label based on the axis type and optionally specified format.
      *
-     * @method formatLabel
+     * @method 
      * @param {Object} value
      * @param {Object} format Pattern used to format the value.
      * @return String
@@ -235,19 +215,6 @@ NumericImpl.prototype = {
                     num = data[i];
                     if(isNaN(num))
                     {
-                        if(Y_Lang.isObject(num))
-                        {
-                            min = max = 0;
-                            //hloc values
-                            for(key in num)
-                            {
-                               if(num.hasOwnProperty(key))
-                               {
-                                    max = Math.max(num[key], max);
-                                    min = Math.min(num[key], min);
-                               }
-                            }
-                        }
                         max = setMax ? this._setMaximum : max;
                         min = setMin ? this._setMinimum : min;
                         continue;
@@ -464,8 +431,13 @@ NumericImpl.prototype = {
                     if(useIntegers)
                     {
                         roundingUnit = Math.ceil(roundingUnit);
+                        max = min + (roundingUnit * units);
                     }
-                    max = min + (roundingUnit * units);
+                    else
+                    {
+                        max = min + Math.ceil(roundingUnit * units * 100000)/100000;
+
+                    }
                 }
                 else if(maxGreaterThanZero && !minGreaterThanZero)
                 {
@@ -479,15 +451,18 @@ NumericImpl.prototype = {
                         {
                             tempMax = Math.ceil( max/topTicks );
                             tempMin = Math.floor( min/botTicks ) * -1;
+                            roundingUnit = Math.max(tempMax, tempMin);
+                            max = roundingUnit * topTicks;
+                            min = roundingUnit * botTicks * -1;
                         }
                         else
                         {
                             tempMax = max/topTicks;
                             tempMin = min/botTicks * -1;
+                            roundingUnit = Math.max(tempMax, tempMin);
+                            max = Math.ceil(roundingUnit * topTicks * 100000)/100000;
+                            min = Math.ceil(roundingUnit * botTicks * 100000)/100000 * -1;
                         }
-                        roundingUnit = Math.max(tempMax, tempMin);
-                        max = roundingUnit * topTicks;
-                        min = roundingUnit * botTicks * -1;
                     }
                     else
                     {
@@ -496,8 +471,8 @@ NumericImpl.prototype = {
                         {
                             roundingUnit = Math.ceil(roundingUnit);
                         }
-                        min = this._roundDownToNearest(min, roundingUnit);
-                        max = this._roundUpToNearest(max, roundingUnit);
+                        min = Math.round(this._roundDownToNearest(min, roundingUnit) * 100000)/100000;
+                        max = Math.round(this._roundUpToNearest(max, roundingUnit) * 100000)/100000;
                     }
                 }
                 else
@@ -514,8 +489,12 @@ NumericImpl.prototype = {
                         if(useIntegers)
                         {
                             Math.ceil(roundingUnit);
+                            min = max - (roundingUnit * units);
                         }
-                        min = max - (roundingUnit * units);
+                        else
+                        {
+                            min = max - Math.ceil(roundingUnit * units * 100000)/100000;
+                        }
                     }
                     else
                     {
@@ -576,47 +555,6 @@ NumericImpl.prototype = {
     },
 
     /**
-     * Calculates and returns a value based on the number of labels and the index of
-     * the current label.
-     *
-     * @method getLabelByIndex
-     * @param {Number} i Index of the label.
-     * @param {Number} l Total number of labels.
-     * @return String
-     * @private
-     */
-    _getLabelByIndex: function()
-    {
-        var i = arguments[0],
-            l = arguments[1],
-            min = this.get("minimum"),
-            max = this.get("maximum"),
-            increm = (max - min)/(l-1),
-            label,
-            roundingMethod = this.get("roundingMethod");
-            l -= 1;
-        //respect the min and max. calculate all other labels.
-        if(i === 0)
-        {
-            label = min;
-        }
-        else if(i === l)
-        {
-            label = max;
-        }
-        else
-        {
-            label = (i * increm);
-            if(roundingMethod == "niceNumber")
-            {
-                label = this._roundToNearest(label, increm);
-            }
-            label += min;
-        }
-        return parseFloat(label);
-    },
-
-    /**
      * Rounds a Number to the nearest multiple of an input. For example, by rounding
      * 16 to the nearest 10, you will receive 20. Similar to the built-in function Math.round().
      *
@@ -629,10 +567,6 @@ NumericImpl.prototype = {
     _roundToNearest: function(number, nearest)
     {
         nearest = nearest || 1;
-        if(nearest === 0)
-        {
-            return number;
-        }
         var roundedNumber = Math.round(this._roundToPrecision(number / nearest, 10)) * nearest;
         return this._roundToPrecision(roundedNumber, 10);
     },
@@ -650,10 +584,6 @@ NumericImpl.prototype = {
     _roundUpToNearest: function(number, nearest)
     {
         nearest = nearest || 1;
-        if(nearest === 0)
-        {
-            return number;
-        }
         return Math.ceil(this._roundToPrecision(number / nearest, 10)) * nearest;
     },
 
@@ -670,10 +600,6 @@ NumericImpl.prototype = {
     _roundDownToNearest: function(number, nearest)
     {
         nearest = nearest || 1;
-        if(nearest === 0)
-        {
-            return number;
-        }
         return Math.floor(this._roundToPrecision(number / nearest, 10)) * nearest;
     },
 
@@ -692,34 +618,6 @@ NumericImpl.prototype = {
         precision = precision || 0;
         var decimalPlaces = Math.pow(10, precision);
         return Math.round(decimalPlaces * number) / decimalPlaces;
-    },
-
-    /**
-     * Checks to see if data extends beyond the range of the axis. If so,
-     * that data will need to be hidden. This method is internal, temporary and subject
-     * to removal in the future.
-     *
-     * @method _hasDataOverflow
-     * @protected
-     * @return Boolean
-     */
-    _hasDataOverflow: function()
-    {
-        var roundingMethod,
-            min,
-            max;
-        if(this.get("setMin") || this.get("setMax"))
-        {
-            return true;
-        }
-        roundingMethod = this.get("roundingMethod");
-        min = this._actualMinimum;
-        max = this._actualMaximum;
-        if(Y_Lang.isNumber(roundingMethod) && ((Y_Lang.isNumber(max) && max > this._dataMaximum) || (Y_Lang.isNumber(min) && min < this._dataMinimum)))
-        {
-            return true;
-        }
-        return false;
     }
 };
 
