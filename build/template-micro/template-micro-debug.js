@@ -1,5 +1,7 @@
 YUI.add('template-micro', function (Y, NAME) {
 
+/*jshint expr:true */
+
 /**
 Adds the `Y.Template.Micro` template engine, which provides fast, simple
 string-based micro-templating similar to ERB or Underscore templates.
@@ -37,6 +39,10 @@ Default options for `Y.Template.Micro`.
         `<%== ... %>`.
     @param {RegExp} [options.stringEscape] Regex that matches characters that
         need to be escaped inside single-quoted JavaScript string literals.
+    @param {Object} [options.stringReplace] Hash that maps characters matched by
+        `stringEscape` to the strings they should be replaced with. If you add
+        a character to the `stringEscape` regex, you need to add it here too or
+        it will be replaced with an empty string.
 
 @static
 @since 3.8.0
@@ -45,7 +51,17 @@ Micro.options = {
     code         : /<%([\s\S]+?)%>/g,
     escapedOutput: /<%=([\s\S]+?)%>/g,
     rawOutput    : /<%==([\s\S]+?)%>/g,
-    stringEscape : /\\|'|\r|\n|\t|\u2028|\u2029/g
+    stringEscape : /\\|'|\r|\n|\t|\u2028|\u2029/g,
+
+    stringReplace: {
+        '\\'    : '\\\\',
+        "'"     : "\\'",
+        '\r'    : '\\r',
+        '\n'    : '\\n',
+        '\t'    : '\\t',
+        '\u2028': '\\u2028',
+        '\u2029': '\\u2029'
+    }
 };
 
 /**
@@ -99,6 +115,8 @@ property using `<%= data.message %>`.
 @since 3.8.0
 **/
 Micro.compile = function (text, options) {
+    /*jshint evil:true */
+
     var blocks     = [],
         tokenClose = "\uffff",
         tokenOpen  = "\ufffe",
@@ -109,7 +127,15 @@ Micro.compile = function (text, options) {
     // Parse the input text into a string of JavaScript code, with placeholders
     // for code blocks. Text outside of code blocks will be escaped for safe
     // usage within a double-quoted string literal.
-    source = "var $b='',$t='" +
+    //
+    // $b is a blank string, used to avoid creating lots of string objects.
+    //
+    // $v is a function that returns the supplied value if the value is truthy
+    // or the number 0, or returns an empty string if the value is falsy and not
+    // 0.
+    //
+    // $t is the template string.
+    source = "var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='" +
 
         // U+FFFE and U+FFFF are guaranteed to represent non-characters, so no
         // valid UTF-8 string should ever contain them. That means we can freely
@@ -120,18 +146,20 @@ Micro.compile = function (text, options) {
         text.replace(/\ufffe|\uffff/g, '')
 
         .replace(options.rawOutput, function (match, code) {
-            return tokenOpen + (blocks.push("'+\n((" + code + ")||$b)+\n'") - 1) + tokenClose;
+            return tokenOpen + (blocks.push("'+\n$v(" + code + ")+\n'") - 1) + tokenClose;
         })
 
         .replace(options.escapedOutput, function (match, code) {
-            return tokenOpen + (blocks.push("'+\n$e((" + code + ")||$b)+\n'") - 1) + tokenClose;
+            return tokenOpen + (blocks.push("'+\n$e($v(" + code + "))+\n'") - 1) + tokenClose;
         })
 
         .replace(options.code, function (match, code) {
             return tokenOpen + (blocks.push("';\n" + code + "\n$t+='") - 1) + tokenClose;
         })
 
-        .replace(options.stringEscape, "\\$&")
+        .replace(options.stringEscape, function (match) {
+            return options.stringReplace[match] || '';
+        })
 
         // Replace the token placeholders with code.
         .replace(/\ufffe(\d+)\uffff/g, function (match, index) {
