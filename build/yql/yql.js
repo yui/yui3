@@ -118,19 +118,8 @@ YQLRequest.prototype = {
     * @param {String} url The URL to request
     * @param {Object} o The config object
     */
-    _send: function(url, o) {
-        if (o.allowCache !== false) {
-            o.allowCache = true;
-        }
-        if (!this._jsonp) {
-            this._jsonp = Y.jsonp(url, o);
-        } else {
-            this._jsonp.url = url;
-            if (o.on && o.on.success) {
-                this._jsonp._config.on.success = o.on.success;
-            }
-            this._jsonp.send();
-        }
+    _send: function() {
+        //Overwritten in plugins
     }
 };
 
@@ -175,4 +164,4 @@ Y.YQL = function (sql, callback, params, opts) {
 };
 
 
-}, '@VERSION@', {"requires": ["jsonp", "jsonp-url"]});
+}, '@VERSION@');
