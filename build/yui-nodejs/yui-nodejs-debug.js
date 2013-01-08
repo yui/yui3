@@ -2010,20 +2010,6 @@ relying on ES5 functionality, even when ES5 functionality is available.
 **/
 
 /**
-<<<<<<< HEAD
-Event to wait for before executing the `use()` callback.
-
-The following events are supported:
-
-  - available
-  - contentready
-  - domready
-  - load
-
-The event may be specified as a string or as an object hash that provides
-additional event configuration, as illustrated in the example below.
-
-=======
  * Leverage native JSON stringify if the browser has a native
  * implementation.  In general, this is a good idea.  See the Known Issues
  * section in the JSON user guide for caveats.  The default value is true
@@ -2052,7 +2038,6 @@ Delay the `use` callback until a specific event has passed (`load`, `domready`, 
 @property delayUntil
 @type String|Object
 @since 3.6.0
->>>>>>> 1b3b9bce26c91c9be5440b38b03d2a95fbf83ba4
 @example
 
 You can use `load` or `domready` strings by default:
@@ -3983,16 +3968,36 @@ YUI.Env.aliases = {
 YUI.add('get', function (Y, NAME) {
 
     /**
-    * NodeJS specific Get module used to load remote resources. It contains the same signature as the default Get module so there is no code change needed.
+    * NodeJS specific Get module used to load remote resources.
+    * It contains the same signature as the default Get module so there is no code change needed.
     * @module get-nodejs
     * @class GetNodeJS
     */
-        
-    var path = require('path'),
-        vm = require('vm'),
+
+    var Module = require('module'),
+
+        path = require('path'),
         fs = require('fs'),
         request = require('request'),
-        existsSync = fs.existsSync || path.existsSync;
+        end = function(cb, msg, result) {
+            //Y.log('Get end: ' + cb.onEnd);
+            if (Y.Lang.isFunction(cb.onEnd)) {
+                cb.onEnd.call(Y, msg, result);
+            }
+        }, pass = function(cb) {
+            //Y.log('Get pass: ' + cb.onSuccess);
+            if (Y.Lang.isFunction(cb.onSuccess)) {
+                cb.onSuccess.call(Y, cb);
+            }
+            end(cb, 'success', 'success');
+        }, fail = function(cb, er) {
+            //Y.log('Get fail: ' + er);
+            er.errors = [er];
+            if (Y.Lang.isFunction(cb.onFailure)) {
+                cb.onFailure.call(Y, er, cb);
+            }
+            end(cb, er, 'fail');
+        };
 
 
     Y.Get = function() {
@@ -4003,17 +4008,6 @@ YUI.add('get', function (Y, NAME) {
 
     YUI.require = require;
     YUI.process = process;
-    
-    /**
-    * Escape the path for Windows, they need to be double encoded when used as `__dirname` or `__filename`
-    * @method escapeWinPath
-    * @protected
-    * @param {String} p The path to modify
-    * @return {String} The encoded path
-    */
-    var escapeWinPath = function(p) {
-        return p.replace(/\\/g, '\\\\');
-    };
 
     /**
     * Takes the raw JS files and wraps them to be executed in the YUI context so they can be loaded
@@ -4028,30 +4022,23 @@ YUI.add('get', function (Y, NAME) {
     */
 
     Y.Get._exec = function(data, url, cb) {
-        var dirName = escapeWinPath(path.dirname(url));
-        var fileName = escapeWinPath(url);
-
-        if (dirName.match(/^https?:\/\//)) {
-            dirName = '.';
-            fileName = 'remoteResource';
+        if (data.charCodeAt(0) === 0xFEFF) {
+            data = data.slice(1);
         }
 
-        var mod = "(function(YUI) { var __dirname = '" + dirName + "'; "+
-            "var __filename = '" + fileName + "'; " +
-            "var process = YUI.process;" +
-            "var require = function(file) {" +
-            " if (file.indexOf('./') === 0) {" +
-            "   file = __dirname + file.replace('./', '/'); }" +
-            " return YUI.require(file); }; " +
-            data + " ;return YUI; })";
-    
-        //var mod = "(function(YUI) { " + data + ";return YUI; })";
-        var script = vm.createScript(mod, url);
-        var fn = script.runInThisContext(mod);
-        YUI = fn(YUI);
+        var mod = new Module(url, module);
+        mod.filename = url;
+        mod.paths = Module._nodeModulePaths(path.dirname(url));
+        mod._compile('module.exports = function (YUI) {' + data + '\n;return YUI;};', url);
+
+        /*global YUI:true */
+        YUI = mod.exports(YUI);
+
+        mod.loaded = true;
+
         cb(null, url);
     };
-    
+
     /**
     * Fetches the content from a remote URL or a file from disc and passes the content
     * off to `_exec` for parsing
@@ -4060,11 +4047,13 @@ YUI.add('get', function (Y, NAME) {
     * @param {String} url The URL/File path to fetch the content from
     * @param {Callback} cb The callback to fire once the content has been executed via `_exec`
     */
-    Y.Get._include = function(url, cb) {
-        var self = this;
+    Y.Get._include = function (url, cb) {
+        var cfg,
+            mod,
+            self = this;
 
         if (url.match(/^https?:\/\//)) {
-            var cfg = {
+            cfg = {
                 url: url,
                 timeout: self.timeout
             };
@@ -4077,46 +4066,30 @@ YUI.add('get', function (Y, NAME) {
                 }
             });
         } else {
-            if (Y.config.useSync) {
-                //Needs to be in useSync
-                if (existsSync(url)) {
-                    var mod = fs.readFileSync(url,'utf8');
-                    Y.Get._exec(mod, url, cb);
+            try {
+                // Try to resolve paths relative to the module that required yui.
+                url = Module._findPath(url, Module._resolveLookupPaths(url, module.parent.parent)[1]);
+
+                if (Y.config.useSync) {
+                    //Needs to be in useSync
+                    mod = fs.readFileSync(url,'utf8');
                 } else {
-                    cb('Path does not exist: ' + url, url);
+                    fs.readFile(url, 'utf8', function (err, mod) {
+                        if (err) {
+                            cb(err, url);
+                        } else {
+                            Y.Get._exec(mod, url, cb);
+                        }
+                    });
+                    return;
                 }
-            } else {
-                fs.readFile(url, 'utf8', function(err, mod) {
-                    if (err) {
-                        cb(err, url);
-                    } else {
-                        Y.Get._exec(mod, url, cb);
-                    }
-                });
+            } catch (err) {
+                cb(err, url);
+                return;
             }
-        }
-        
-    };
 
-
-    var end = function(cb, msg, result) {
-        //Y.log('Get end: ' + cb.onEnd);
-        if (Y.Lang.isFunction(cb.onEnd)) {
-            cb.onEnd.call(Y, msg, result);
+            Y.Get._exec(mod, url, cb);
         }
-    }, pass = function(cb) {
-        //Y.log('Get pass: ' + cb.onSuccess);
-        if (Y.Lang.isFunction(cb.onSuccess)) {
-            cb.onSuccess.call(Y, cb);
-        }
-        end(cb, 'success', 'success');
-    }, fail = function(cb, er) {
-        //Y.log('Get fail: ' + er);
-        er.errors = [er];
-        if (Y.Lang.isFunction(cb.onFailure)) {
-            cb.onFailure.call(Y, er, cb);
-        }
-        end(cb, er, 'fail');
     };
 
 
@@ -4127,9 +4100,7 @@ YUI.add('get', function (Y, NAME) {
     * @param {Object} options Transaction options
     */
     Y.Get.js = function(s, options) {
-        var A = Y.Array,
-            self = this,
-            urls = A(s), url, i, l = urls.length, c= 0,
+        var urls = Y.Array(s), url, i, l = urls.length, c= 0,
             check = function() {
                 if (c === l) {
                     pass(options);
@@ -4137,7 +4108,7 @@ YUI.add('get', function (Y, NAME) {
             };
 
 
-
+        /*jshint loopfunc: true */
         for (i=0; i<l; i++) {
             url = urls[i];
             if (Y.Lang.isObject(url)) {
@@ -4168,13 +4139,13 @@ YUI.add('get', function (Y, NAME) {
             });
         }
     };
-    
+
     /**
     * Alias for `Y.Get.js`
     * @method script
     */
     Y.Get.script = Y.Get.js;
-    
+
     //Place holder for SS Dom access
     Y.Get.css = function(s, cb) {
         Y.log('Y.Get.css is not supported, just reporting that it has loaded but not fetching.', 'warn', 'get');
@@ -4564,15 +4535,27 @@ add('load', '19', {
     "trigger": "widget-base",
     "ua": "ie"
 });
-// yql-nodejs
+// yql-jsonp
 add('load', '20', {
+    "name": "yql-jsonp",
+    "test": function (Y) {
+    /* Only load the JSONP module when not in nodejs or winjs
+    TODO Make the winjs module a CORS module
+    */
+    return (!Y.UA.nodejs && !Y.UA.winjs);
+},
+    "trigger": "yql",
+    "when": "after"
+});
+// yql-nodejs
+add('load', '21', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '21', {
+add('load', '22', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
@@ -8292,7 +8275,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "requires": [
             "widget",
-            "substitute",
             "datatype-date",
             "datatype-date-math",
             "cssgrids"
@@ -8304,8 +8286,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "plugin",
             "classnamemanager",
             "datatype-date",
-            "node",
-            "substitute"
+            "node"
         ],
         "skinnable": true
     },
@@ -8455,6 +8436,17 @@ Y.mix(YUI.Env[Y.version].modules, {
         "optional": [
             "cssreset",
             "cssfonts"
+        ],
+        "type": "css"
+    },
+    "cssgrids-responsive": {
+        "optional": [
+            "cssreset",
+            "cssfonts"
+        ],
+        "requires": [
+            "cssgrids",
+            "cssgrids-responsive-base"
         ],
         "type": "css"
     },
@@ -10283,7 +10275,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "swf",
             "widget",
-            "substitute",
             "base",
             "cssbutton",
             "node",
@@ -10296,7 +10287,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "widget",
             "node-event-simulate",
-            "substitute",
             "file-html5",
             "uploader-queue"
         ]
@@ -10441,7 +10431,19 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-base"
         ]
     },
-    "yql": {
+    "yql": {},
+    "yql-jsonp": {
+        "condition": {
+            "name": "yql-jsonp",
+            "test": function (Y) {
+    /* Only load the JSONP module when not in nodejs or winjs
+    TODO Make the winjs module a CORS module
+    */
+    return (!Y.UA.nodejs && !Y.UA.winjs);
+},
+            "trigger": "yql",
+            "when": "after"
+        },
         "requires": [
             "jsonp",
             "jsonp-url"
@@ -10481,7 +10483,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'bb4cfd83625b82bc125ebb3280d96510';
+YUI.Env[Y.version].md5 = 'c646045acbe99c55704e5d09fa32f307';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

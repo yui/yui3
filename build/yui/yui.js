@@ -1671,20 +1671,6 @@ relying on ES5 functionality, even when ES5 functionality is available.
 **/
 
 /**
-<<<<<<< HEAD
-Event to wait for before executing the `use()` callback.
-
-The following events are supported:
-
-  - available
-  - contentready
-  - domready
-  - load
-
-The event may be specified as a string or as an object hash that provides
-additional event configuration, as illustrated in the example below.
-
-=======
  * Leverage native JSON stringify if the browser has a native
  * implementation.  In general, this is a good idea.  See the Known Issues
  * section in the JSON user guide for caveats.  The default value is true
@@ -1713,7 +1699,6 @@ Delay the `use` callback until a specific event has passed (`load`, `domready`, 
 @property delayUntil
 @type String|Object
 @since 3.6.0
->>>>>>> 1b3b9bce26c91c9be5440b38b03d2a95fbf83ba4
 @example
 
 You can use `load` or `domready` strings by default:
@@ -4633,7 +4618,7 @@ Transaction.prototype = {
     _getInsertBefore: function (req) {
         var doc = req.doc,
             el  = req.insertBefore,
-            cache, cachedNode, docStamp;
+            cache, docStamp;
 
         if (el) {
             return typeof el === 'string' ? doc.getElementById(el) : el;
@@ -4763,11 +4748,12 @@ Transaction.prototype = {
 
             if (ua.ie >= 10) {
 
-                // We currently need to introduce a timeout for IE10, since it 
+                // We currently need to introduce a timeout for IE10, since it
                 // calls onerror/onload synchronously for 304s - messing up existing
-                // program flow. 
+                // program flow.
 
                 // Remove this block if the following bug gets fixed by GA
+                /*jshint maxlen: 1500 */
                 // https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload
                 node.onerror = function() { setTimeout(onError, 0); };
                 node.onload  = function() { setTimeout(onLoad, 0); };
@@ -5292,15 +5278,27 @@ add('load', '19', {
     "trigger": "widget-base",
     "ua": "ie"
 });
-// yql-nodejs
+// yql-jsonp
 add('load', '20', {
+    "name": "yql-jsonp",
+    "test": function (Y) {
+    /* Only load the JSONP module when not in nodejs or winjs
+    TODO Make the winjs module a CORS module
+    */
+    return (!Y.UA.nodejs && !Y.UA.winjs);
+},
+    "trigger": "yql",
+    "when": "after"
+});
+// yql-nodejs
+add('load', '21', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '21', {
+add('load', '22', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
@@ -8896,7 +8894,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "requires": [
             "widget",
-            "substitute",
             "datatype-date",
             "datatype-date-math",
             "cssgrids"
@@ -8908,8 +8905,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "plugin",
             "classnamemanager",
             "datatype-date",
-            "node",
-            "substitute"
+            "node"
         ],
         "skinnable": true
     },
@@ -9059,6 +9055,17 @@ Y.mix(YUI.Env[Y.version].modules, {
         "optional": [
             "cssreset",
             "cssfonts"
+        ],
+        "type": "css"
+    },
+    "cssgrids-responsive": {
+        "optional": [
+            "cssreset",
+            "cssfonts"
+        ],
+        "requires": [
+            "cssgrids",
+            "cssgrids-responsive-base"
         ],
         "type": "css"
     },
@@ -10887,7 +10894,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "swf",
             "widget",
-            "substitute",
             "base",
             "cssbutton",
             "node",
@@ -10900,7 +10906,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "widget",
             "node-event-simulate",
-            "substitute",
             "file-html5",
             "uploader-queue"
         ]
@@ -11045,7 +11050,19 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-base"
         ]
     },
-    "yql": {
+    "yql": {},
+    "yql-jsonp": {
+        "condition": {
+            "name": "yql-jsonp",
+            "test": function (Y) {
+    /* Only load the JSONP module when not in nodejs or winjs
+    TODO Make the winjs module a CORS module
+    */
+    return (!Y.UA.nodejs && !Y.UA.winjs);
+},
+            "trigger": "yql",
+            "when": "after"
+        },
         "requires": [
             "jsonp",
             "jsonp-url"
@@ -11085,7 +11102,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'bb4cfd83625b82bc125ebb3280d96510';
+YUI.Env[Y.version].md5 = 'c646045acbe99c55704e5d09fa32f307';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

@@ -3424,6 +3424,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("yql")) > -1, "Module (yql) not found in sorted array");
         },
+     "Testing yql-jsonp": function(data) {
+            var loader = new Y.Loader({
+                require: ["yql-jsonp"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("yql-jsonp")) > -1, "Module (yql-jsonp) not found in sorted array");
+        },
      "Testing yql-nodejs": function(data) {
             var loader = new Y.Loader({
                 require: ["yql-nodejs"],

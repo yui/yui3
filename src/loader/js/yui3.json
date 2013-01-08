@@ -406,7 +406,6 @@
         ],
         "requires": [
             "widget",
-            "substitute",
             "datatype-date",
             "datatype-date-math",
             "cssgrids"
@@ -418,8 +417,7 @@
             "plugin",
             "classnamemanager",
             "datatype-date",
-            "node",
-            "substitute"
+            "node"
         ],
         "skinnable": true
     },
@@ -569,6 +567,17 @@
         "optional": [
             "cssreset",
             "cssfonts"
+        ],
+        "type": "css"
+    },
+    "cssgrids-responsive": {
+        "optional": [
+            "cssreset",
+            "cssfonts"
+        ],
+        "requires": [
+            "cssgrids",
+            "cssgrids-responsive-base"
         ],
         "type": "css"
     },
@@ -2277,7 +2286,6 @@
         "requires": [
             "swf",
             "widget",
-            "substitute",
             "base",
             "cssbutton",
             "node",
@@ -2290,7 +2298,6 @@
         "requires": [
             "widget",
             "node-event-simulate",
-            "substitute",
             "file-html5",
             "uploader-queue"
         ]
@@ -2435,7 +2442,14 @@
             "widget-base"
         ]
     },
-    "yql": {
+    "yql": {},
+    "yql-jsonp": {
+        "condition": {
+            "name": "yql-jsonp",
+            "test": "jsonp.js",
+            "trigger": "yql",
+            "when": "after"
+        },
         "requires": [
             "jsonp",
             "jsonp-url"

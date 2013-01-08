@@ -1,6 +1,11 @@
 Calendar Change History
 =======================
 
+@VERSION@
+-----
+
+ * Removed unused `substitute` dependency.
+
 3.8.0
 -----
 

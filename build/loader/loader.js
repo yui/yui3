@@ -3311,7 +3311,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "requires": [
             "widget",
-            "substitute",
             "datatype-date",
             "datatype-date-math",
             "cssgrids"
@@ -3323,8 +3322,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "plugin",
             "classnamemanager",
             "datatype-date",
-            "node",
-            "substitute"
+            "node"
         ],
         "skinnable": true
     },
@@ -3474,6 +3472,17 @@ Y.mix(YUI.Env[Y.version].modules, {
         "optional": [
             "cssreset",
             "cssfonts"
+        ],
+        "type": "css"
+    },
+    "cssgrids-responsive": {
+        "optional": [
+            "cssreset",
+            "cssfonts"
+        ],
+        "requires": [
+            "cssgrids",
+            "cssgrids-responsive-base"
         ],
         "type": "css"
     },
@@ -5302,7 +5311,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "swf",
             "widget",
-            "substitute",
             "base",
             "cssbutton",
             "node",
@@ -5315,7 +5323,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "widget",
             "node-event-simulate",
-            "substitute",
             "file-html5",
             "uploader-queue"
         ]
@@ -5460,7 +5467,19 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-base"
         ]
     },
-    "yql": {
+    "yql": {},
+    "yql-jsonp": {
+        "condition": {
+            "name": "yql-jsonp",
+            "test": function (Y) {
+    /* Only load the JSONP module when not in nodejs or winjs
+    TODO Make the winjs module a CORS module
+    */
+    return (!Y.UA.nodejs && !Y.UA.winjs);
+},
+            "trigger": "yql",
+            "when": "after"
+        },
         "requires": [
             "jsonp",
             "jsonp-url"
@@ -5500,7 +5519,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'bb4cfd83625b82bc125ebb3280d96510';
+YUI.Env[Y.version].md5 = 'c646045acbe99c55704e5d09fa32f307';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
