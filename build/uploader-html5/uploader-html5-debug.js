@@ -1000,4 +1000,4 @@ Y.UploaderHTML5.Queue = UploaderQueue;
 
 
 
-}, '@VERSION@', {"requires": ["widget", "node-event-simulate", "substitute", "file-html5", "uploader-queue"]});
+}, '@VERSION@', {"requires": ["widget", "node-event-simulate", "file-html5", "uploader-queue"]});

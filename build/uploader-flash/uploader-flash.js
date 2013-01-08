@@ -1062,16 +1062,4 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 Y.UploaderFlash.Queue = UploaderQueue;
 
 
-}, '@VERSION@', {
-    "requires": [
-        "swf",
-        "widget",
-        "substitute",
-        "base",
-        "cssbutton",
-        "node",
-        "event-custom",
-        "file-flash",
-        "uploader-queue"
-    ]
-});
+}, '@VERSION@', {"requires": ["swf", "widget", "base", "cssbutton", "node", "event-custom", "file-flash", "uploader-queue"]});
