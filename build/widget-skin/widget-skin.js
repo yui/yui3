@@ -53,7 +53,7 @@ Y.Widget.prototype.getSkinName = function (skinPrefix) {
     }
 
     return ( match ) ? match[1] : null;
-}
+};
 
 
 }, '@VERSION@', {"requires": ["widget-base"]});
