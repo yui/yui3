@@ -139,7 +139,9 @@ suite.add(new Y.Test.Case({
         });
         
         Y.on('available', function() {
-            Y.Assert.isTrue(Y.one('#async_test').get("async"));
+            test.resume(function() {
+                Y.Assert.isTrue(Y.one('#async_test').getDOMNode().async);
+            });
         }, '#async_test');
 
         test.wait();
