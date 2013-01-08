@@ -1671,20 +1671,6 @@ relying on ES5 functionality, even when ES5 functionality is available.
 **/
 
 /**
-<<<<<<< HEAD
-Event to wait for before executing the `use()` callback.
-
-The following events are supported:
-
-  - available
-  - contentready
-  - domready
-  - load
-
-The event may be specified as a string or as an object hash that provides
-additional event configuration, as illustrated in the example below.
-
-=======
  * Leverage native JSON stringify if the browser has a native
  * implementation.  In general, this is a good idea.  See the Known Issues
  * section in the JSON user guide for caveats.  The default value is true
@@ -1713,7 +1699,6 @@ Delay the `use` callback until a specific event has passed (`load`, `domready`, 
 @property delayUntil
 @type String|Object
 @since 3.6.0
->>>>>>> 1b3b9bce26c91c9be5440b38b03d2a95fbf83ba4
 @example
 
 You can use `load` or `domready` strings by default:
@@ -4633,7 +4618,7 @@ Transaction.prototype = {
     _getInsertBefore: function (req) {
         var doc = req.doc,
             el  = req.insertBefore,
-            cache, cachedNode, docStamp;
+            cache, docStamp;
 
         if (el) {
             return typeof el === 'string' ? doc.getElementById(el) : el;
@@ -4763,11 +4748,12 @@ Transaction.prototype = {
 
             if (ua.ie >= 10) {
 
-                // We currently need to introduce a timeout for IE10, since it 
+                // We currently need to introduce a timeout for IE10, since it
                 // calls onerror/onload synchronously for 304s - messing up existing
-                // program flow. 
+                // program flow.
 
                 // Remove this block if the following bug gets fixed by GA
+                /*jshint maxlen: 1500 */
                 // https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload
                 node.onerror = function() { setTimeout(onError, 0); };
                 node.onload  = function() { setTimeout(onLoad, 0); };
@@ -9062,6 +9048,17 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "type": "css"
     },
+    "cssgrids-responsive": {
+        "optional": [
+            "cssreset",
+            "cssfonts"
+        ],
+        "requires": [
+            "cssgrids",
+            "cssgrids-responsive-base"
+        ],
+        "type": "css"
+    },
     "cssgrids-units": {
         "optional": [
             "cssreset",
@@ -11085,7 +11082,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'bb4cfd83625b82bc125ebb3280d96510';
+YUI.Env[Y.version].md5 = 'b1f1e0c3c652588981a70b8ce90498ed';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

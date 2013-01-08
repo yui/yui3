@@ -11,6 +11,11 @@
                 "yql-winjs.js"
             ]
         },
+        "yql-jsonp": {
+            "jsfiles": [
+                "yql-jsonp.js"
+            ]
+        },
         "yql-nodejs": {
             "jsfiles": [
                 "yql-nodejs.js"
