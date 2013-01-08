@@ -41,44 +41,57 @@ var suite = new Y.Test.Suite("JSONP"),
 
 suite.add(new Y.Test.Case({
     name: "send",
-
+    
     "config charset should be set via Y.Get.script": function () {
         var test = this,
-            scripts = Y.all('script')._nodes,
-            newScript;
+            counter = 0,
+            check = function() {
+                if (counter === 2) {
+                    test.resume();
+                }
+            };
 
-        Y.jsonp("echo/jsonp?callback={callback}", function () {});
+        Y.jsonp("echo/jsonp?callback={callback}", {
+            on: { 
+                success: function () {}
+            },
+            attributes: {
+                id: 'jsonp_utf8'
+            }
+        });
 
-        newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
-            return Y.Array.indexOf(scripts, s) === -1;
-        })[0];
+        Y.on('available', function() {
+            counter++;
+            var newScript = Y.one('#jsonp_utf8').getDOMNode();
+            Y.Assert.areSame("utf-8", newScript.charset);
+            check();
+        }, '#jsonp_utf8');
+        
 
-        Y.Assert.areSame("utf-8", newScript.charset);
-
-        scripts.push(newScript);
 
         Y.jsonp("echo/jsonp?callback={callback}", {
             on: {
                 success: function () {}
             },
-            charset: "GBK"
+            charset: "GBK",
+            attributes: {
+                id: 'gbk_charset'
+            }
         });
 
-        newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
-            return Y.Array.indexOf(scripts, s) === -1;
-        })[0];
+        Y.on('available', function() {
+            counter++;
+            var newScript = Y.one('#gbk_charset').getDOMNode();
+            Y.Assert.areSame("GBK", newScript.getAttribute("charset"));
+            check();
+        }, '#gbk_charset');
+        
+        Y.on('available', function() {
+            var newScript = Y.one('#jsonp_utf8').getDOMNode();
+            Y.Assert.areSame("utf-8", newScript.charset);
+        }, '#jsonp_utf8');
 
-        Y.Assert.areSame("GBK", newScript.getAttribute("charset"));
-
-        // to allow JSONP the chance to clean up the callback registry
-        // before other tests begin.  Race condition, yes.  The alternative
-        // was to wait() and resume() in the success callback, but for some
-        // reason Test.Runner cleared the test's wait timer before the
-        // success callback, so either the test fails because resume() is
-        // called when Test.Runner doesn't think it's waiting, OR the test
-        // fails if resume() is only called if Test.Runner thinks it is waiting
-        // (which it doesn't) so resume() is never called.
-        test.wait(function () {}, 1000);
+        test.wait();
     },
     "config attributes should be set via Y.Get.script": function () {
         var test = this,
@@ -87,7 +100,11 @@ suite.add(new Y.Test.Case({
 
         Y.jsonp("echo/jsonp?callback={callback}", {
             on: {
-                success: function () { test.resume(); }
+                success: function () {
+                    if (Y.Test.Runner._waiting) {
+                        test.resume();
+                    }
+                }
             },
             attributes: {
                 // passing an attribute that is less likely to be skipped over
@@ -107,9 +124,7 @@ suite.add(new Y.Test.Case({
         test.wait();
     },
     "async config should be set via Y.Get.script": function () {
-        var test = this,
-            scripts = Y.all('script')._nodes,
-            newScript;
+        var test = this;
 
         Y.jsonp("echo/jsonp?callback={callback}", {
             on: {
@@ -117,14 +132,17 @@ suite.add(new Y.Test.Case({
                 
                 }
             },
-            async: true
+            async: true,
+            attributes: {
+                id: 'async_test'
+            }
         });
+        
+        Y.on('available', function() {
+            Y.Assert.isTrue(Y.one('#async_test').get("async"));
+        }, '#async_test');
 
-        newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
-            return Y.Array.indexOf(scripts, s) === -1;
-        })[0];
-
-        Y.Assert.isTrue(Y.one(newScript).get("async"));
+        test.wait();
 
     }
 }));
@@ -198,12 +216,18 @@ suite.add(new Y.Test.Case({
                 success: function (json) {
                     //console.log(Y.Object.keys(YUI.Env.JSONP), "failure handler in callback object should not execute for successful io");
                     // Pass
-                    self.resume(function () {});
+                    if (Y.Test.Runner._waiting) {
+                        self.resume();
+                    }
                 },
                 failure: function () {
-                    self.resume(function () {
+                    if (Y.Test.Runner._waiting) {
+                        self.resume(function () {
+                            Y.Assert.fail("Failure handler called after successful response");
+                        });
+                    } else {
                         Y.Assert.fail("Failure handler called after successful response");
-                    });
+                    }
                 }
             }
         });
@@ -420,4 +444,4 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{requires:['jsonp', 'test', 'array-extras']});
+}, '@VERSION@' ,{requires:['jsonp', 'test', 'array-extras', 'event']});
