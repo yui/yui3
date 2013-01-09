@@ -72,7 +72,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
         this._createMarkerCache();
         if(totalWidth > this.get("width"))
         {
-            ratio = this.width/totalWidth;
+            ratio = this.get("width")/totalWidth;
             w *= ratio;
             w = Math.max(w, 1);
         }

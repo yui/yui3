@@ -74,7 +74,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
         this._createMarkerCache();
         if(totalHeight > this.get("height"))
         {
-            ratio = this.height/totalHeight;
+            ratio = this.get("height")/totalHeight;
             h *= ratio;
             h = Math.max(h, 1);
         }
