@@ -493,7 +493,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
                 border: this._defaultBorderColors,
                 slice: this._defaultSliceColors
             },
-            col = colors[type],
+            col = colors[type] || colors.fill,
             l = col.length;
         index = index || 0;
         if(index >= l)
@@ -524,7 +524,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     getTotalValues: function()
     {
-        var total = this.get("valueAxis").getTotalByKey(this.get("valueKey"));
+        var valueCoord = this.get("direction") === "vertical" ? "x" : "y",
+            total = this.get(valueCoord + "Axis").getTotalByKey(this.get(valueCoord + "Key"));
         return total;
     },
 
