@@ -1014,16 +1014,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-base")) > -1, "Module (datatable-base) not found in sorted array");
         },
-     "Testing datatable-base-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["datatable-base-deprecated"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datatable-base-deprecated")) > -1, "Module (datatable-base-deprecated) not found in sorted array");
-        },
      "Testing datatable-body": function(data) {
             var loader = new Y.Loader({
                 require: ["datatable-body"],
@@ -1063,29 +1053,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-datasource")) > -1, "Module (datatable-datasource) not found in sorted array");
-        },
-     "Testing datatable-datasource-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["datatable-datasource-deprecated"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datatable-datasource-deprecated")) > -1, "Module (datatable-datasource-deprecated) not found in sorted array");
-        },
-     "Testing datatable-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["datatable-deprecated"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("datatable-base-deprecated")) > -1, "Module (datatable-base-deprecated) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("datatable-datasource-deprecated")) > -1, "Module (datatable-datasource-deprecated) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("datatable-sort-deprecated")) > -1, "Module (datatable-sort-deprecated) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("datatable-scroll-deprecated")) > -1, "Module (datatable-scroll-deprecated) not found in sorted array");
         },
      "Testing datatable-head": function(data) {
             var loader = new Y.Loader({
@@ -1127,16 +1094,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-scroll")) > -1, "Module (datatable-scroll) not found in sorted array");
         },
-     "Testing datatable-scroll-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["datatable-scroll-deprecated"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datatable-scroll-deprecated")) > -1, "Module (datatable-scroll-deprecated) not found in sorted array");
-        },
      "Testing datatable-sort": function(data) {
             var loader = new Y.Loader({
                 require: ["datatable-sort"],
@@ -1146,16 +1103,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-sort")) > -1, "Module (datatable-sort) not found in sorted array");
-        },
-     "Testing datatable-sort-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["datatable-sort-deprecated"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datatable-sort-deprecated")) > -1, "Module (datatable-sort-deprecated) not found in sorted array");
         },
      "Testing datatable-table": function(data) {
             var loader = new Y.Loader({
@@ -3170,16 +3117,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("uploader")) > -1, "Module (uploader) not found in sorted array");
-        },
-     "Testing uploader-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["uploader-deprecated"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("uploader-deprecated")) > -1, "Module (uploader-deprecated) not found in sorted array");
         },
      "Testing uploader-flash": function(data) {
             var loader = new Y.Loader({

@@ -734,15 +734,6 @@
         ],
         "skinnable": true
     },
-    "datatable-base-deprecated": {
-        "requires": [
-            "recordset-base",
-            "widget",
-            "substitute",
-            "event-mouseenter"
-        ],
-        "skinnable": true
-    },
     "datatable-body": {
         "requires": [
             "datatable-core",
@@ -767,21 +758,6 @@
             "datatable-base",
             "plugin",
             "datasource-local"
-        ]
-    },
-    "datatable-datasource-deprecated": {
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin",
-            "datasource-local"
-        ]
-    },
-    "datatable-deprecated": {
-        "use": [
-            "datatable-base-deprecated",
-            "datatable-datasource-deprecated",
-            "datatable-sort-deprecated",
-            "datatable-scroll-deprecated"
         ]
     },
     "datatable-head": {
@@ -813,12 +789,6 @@
         ],
         "skinnable": true
     },
-    "datatable-scroll-deprecated": {
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin"
-        ]
-    },
     "datatable-sort": {
         "lang": [
             "en"
@@ -827,16 +797,6 @@
             "datatable-base"
         ],
         "skinnable": true
-    },
-    "datatable-sort-deprecated": {
-        "lang": [
-            "en"
-        ],
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin",
-            "recordset-sort"
-        ]
     },
     "datatable-table": {
         "requires": [
@@ -2272,14 +2232,6 @@
         "requires": [
             "uploader-html5",
             "uploader-flash"
-        ]
-    },
-    "uploader-deprecated": {
-        "requires": [
-            "event-custom",
-            "node",
-            "base",
-            "swf"
         ]
     },
     "uploader-flash": {
