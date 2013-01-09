@@ -1,10 +1,17 @@
 {
     "yql": {
-        "requires": [
-            "jsonp",
-            "jsonp-url"
-        ],
         "plugins": {
+            "yql-jsonp": {
+                "condition": {
+                    "trigger": "yql",
+                    "test": "jsonp.js",
+                    "when": "after"
+                },
+                "requires": [
+                    "jsonp",
+                    "jsonp-url"
+                ]
+            },
             "yql-winjs": {
                 "condition": {
                     "trigger": "yql",
