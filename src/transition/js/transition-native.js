@@ -551,7 +551,7 @@ var _wrapCallBack = function(anim, fn, callback) {
         if (fn) {
             fn.call(anim);
         }
-        if (callback) {
+        if (callback && typeof callback === 'function') {
             callback.apply(anim._node, arguments);
         }
     };
@@ -633,10 +633,6 @@ Y.NodeList.prototype.transition = function(config, callback) {
 Y.Node.prototype.toggleView = function(name, on, callback) {
     this._toggles = this._toggles || [];
     callback = arguments[arguments.length - 1];
-
-    if (typeof callback !== 'function') {
-      callback = (function() {}); // Empty Callback
-    }
 
     if (typeof name !== 'string') { // no transition, just toggle
         on = name;
