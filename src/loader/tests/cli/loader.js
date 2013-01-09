@@ -3131,6 +3131,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("text-wordbreak")) > -1, "Module (text-wordbreak) not found in sorted array");
         },
+     "Testing timers": function(data) {
+            var loader = new Y.Loader({
+                require: ["timers"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("timers")) > -1, "Module (timers) not found in sorted array");
+        },
      "Testing transition": function(data) {
             var loader = new Y.Loader({
                 require: ["transition"],
@@ -3413,6 +3423,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("yql")) > -1, "Module (yql) not found in sorted array");
+        },
+     "Testing yql-jsonp": function(data) {
+            var loader = new Y.Loader({
+                require: ["yql-jsonp"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("yql-jsonp")) > -1, "Module (yql-jsonp) not found in sorted array");
         },
      "Testing yql-nodejs": function(data) {
             var loader = new Y.Loader({
