@@ -524,7 +524,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // TODO: Would we be better off using a Matrix for this?
         var prop = 'translate(' + x + 'px, ' + y + 'px)';
 
-        if (this._forceHWTransforms) {
+        if (this._forceHWTransforms && Y.UA.ios < 6) {
             prop += ' translateZ(0)';
         }
 
@@ -543,6 +543,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _moveTo : function(node, x, y) {
         if (NATIVE_TRANSITIONS) {
             node.setStyle('transform', this._transform(x, y));
+			// active GPU acceleration for iOS 6
+			if (this._forceHWTransforms && Y.UA.ios >= 6) {
+				node.setStyle(vendorPrefix + 'perspective', 1000);
+				node.setStyle(vendorPrefix + 'backface-visibility', "hidden");
+			}
         } else {
             node.setStyle(LEFT, x + PX);
             node.setStyle(TOP, y + PX);
