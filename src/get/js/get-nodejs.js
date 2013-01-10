@@ -60,6 +60,9 @@
         var mod = new Module(url, module);
         mod.filename = url;
         mod.paths = Module._nodeModulePaths(path.dirname(url));
+        if (typeof YUI.getLoadHook === 'function') {
+            data = YUI.getLoadHook(data, url);
+        }
         mod._compile('module.exports = function (YUI) {' + data + '\n;return YUI;};', url);
 
         /*global YUI:true */
