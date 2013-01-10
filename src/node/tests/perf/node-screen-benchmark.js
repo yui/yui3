@@ -52,4 +52,24 @@ YUI.add('node-screen-benchmark', function (Y) {
         testNode.setXY();
     });
 
+    suite.add('node.get("region")', function() { 
+        testNode.get('region');
+    });
+
+    suite.add('node.get("viewportRegion")', function() { 
+        testNode.get('viewportRegion');
+    });
+
+    suite.add('node.inViewportRegion()', function() { 
+        testNode.inViewportRegion();
+    });
+
+    suite.add('node.intersect()', function() { 
+        testNode.intersect(bodyNode);
+    });
+
+    suite.add('node.inRegion()', function() { 
+        testNode.inRegion(bodyNode);
+    });
+
 }, '@VERSION@', {requires: ['node-screen']});
