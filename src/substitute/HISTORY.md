@@ -1,6 +1,13 @@
 Substitute Utility Change History
 =================================
 
+
+@VERSION@
+-----
+
+ * Officially Deprecating
+
+
 3.8.0
 -----
 

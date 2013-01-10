@@ -361,11 +361,6 @@ suite.add( new Y.Test.Case({
     _should: {
         ignore: {
             "test clickableRail": Y.UA.phantomjs || Y.UA.touchEnabled
-        },
-        fail: {
-            // TODO This is a bug. invalid construction value should fallback
-            // to specified attribute default
-            "axis should only accept 'x', 'X', 'y', and 'Y'": true
         }
     },
 

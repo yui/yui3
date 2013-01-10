@@ -436,7 +436,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "requires": [
             "widget",
-            "substitute",
             "datatype-date",
             "datatype-date-math",
             "cssgrids"
@@ -448,8 +447,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "plugin",
             "classnamemanager",
             "datatype-date",
-            "node",
-            "substitute"
+            "node"
         ],
         "skinnable": true
     },
@@ -766,15 +764,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
-    "datatable-base-deprecated": {
-        "requires": [
-            "recordset-base",
-            "widget",
-            "substitute",
-            "event-mouseenter"
-        ],
-        "skinnable": true
-    },
     "datatable-body": {
         "requires": [
             "datatable-core",
@@ -799,21 +788,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datatable-base",
             "plugin",
             "datasource-local"
-        ]
-    },
-    "datatable-datasource-deprecated": {
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin",
-            "datasource-local"
-        ]
-    },
-    "datatable-deprecated": {
-        "use": [
-            "datatable-base-deprecated",
-            "datatable-datasource-deprecated",
-            "datatable-sort-deprecated",
-            "datatable-scroll-deprecated"
         ]
     },
     "datatable-head": {
@@ -845,12 +819,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
-    "datatable-scroll-deprecated": {
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin"
-        ]
-    },
     "datatable-sort": {
         "lang": [
             "en"
@@ -859,16 +827,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datatable-base"
         ],
         "skinnable": true
-    },
-    "datatable-sort-deprecated": {
-        "lang": [
-            "en"
-        ],
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin",
-            "recordset-sort"
-        ]
     },
     "datatable-table": {
         "requires": [
@@ -2426,19 +2384,10 @@ Y.mix(YUI.Env[Y.version].modules, {
             "uploader-flash"
         ]
     },
-    "uploader-deprecated": {
-        "requires": [
-            "event-custom",
-            "node",
-            "base",
-            "swf"
-        ]
-    },
     "uploader-flash": {
         "requires": [
             "swf",
             "widget",
-            "substitute",
             "base",
             "cssbutton",
             "node",
@@ -2451,7 +2400,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "widget",
             "node-event-simulate",
-            "substitute",
             "file-html5",
             "uploader-queue"
         ]
@@ -2598,6 +2546,22 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "yql": {
         "requires": [
+            "oop"
+        ]
+    },
+    "yql-jsonp": {
+        "condition": {
+            "name": "yql-jsonp",
+            "test": function (Y) {
+    /* Only load the JSONP module when not in nodejs or winjs
+    TODO Make the winjs module a CORS module
+    */
+    return (!Y.UA.nodejs && !Y.UA.winjs);
+},
+            "trigger": "yql",
+            "when": "after"
+        },
+        "requires": [
             "jsonp",
             "jsonp-url"
         ]
@@ -2636,4 +2600,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'b1f1e0c3c652588981a70b8ce90498ed';
+YUI.Env[Y.version].md5 = '0ab25a267e8f4fc15265c424cf14fb69';

@@ -406,7 +406,6 @@
         ],
         "requires": [
             "widget",
-            "substitute",
             "datatype-date",
             "datatype-date-math",
             "cssgrids"
@@ -418,8 +417,7 @@
             "plugin",
             "classnamemanager",
             "datatype-date",
-            "node",
-            "substitute"
+            "node"
         ],
         "skinnable": true
     },
@@ -736,15 +734,6 @@
         ],
         "skinnable": true
     },
-    "datatable-base-deprecated": {
-        "requires": [
-            "recordset-base",
-            "widget",
-            "substitute",
-            "event-mouseenter"
-        ],
-        "skinnable": true
-    },
     "datatable-body": {
         "requires": [
             "datatable-core",
@@ -769,21 +758,6 @@
             "datatable-base",
             "plugin",
             "datasource-local"
-        ]
-    },
-    "datatable-datasource-deprecated": {
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin",
-            "datasource-local"
-        ]
-    },
-    "datatable-deprecated": {
-        "use": [
-            "datatable-base-deprecated",
-            "datatable-datasource-deprecated",
-            "datatable-sort-deprecated",
-            "datatable-scroll-deprecated"
         ]
     },
     "datatable-head": {
@@ -815,12 +789,6 @@
         ],
         "skinnable": true
     },
-    "datatable-scroll-deprecated": {
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin"
-        ]
-    },
     "datatable-sort": {
         "lang": [
             "en"
@@ -829,16 +797,6 @@
             "datatable-base"
         ],
         "skinnable": true
-    },
-    "datatable-sort-deprecated": {
-        "lang": [
-            "en"
-        ],
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin",
-            "recordset-sort"
-        ]
     },
     "datatable-table": {
         "requires": [
@@ -2276,19 +2234,10 @@
             "uploader-flash"
         ]
     },
-    "uploader-deprecated": {
-        "requires": [
-            "event-custom",
-            "node",
-            "base",
-            "swf"
-        ]
-    },
     "uploader-flash": {
         "requires": [
             "swf",
             "widget",
-            "substitute",
             "base",
             "cssbutton",
             "node",
@@ -2301,7 +2250,6 @@
         "requires": [
             "widget",
             "node-event-simulate",
-            "substitute",
             "file-html5",
             "uploader-queue"
         ]
@@ -2447,6 +2395,17 @@
         ]
     },
     "yql": {
+        "requires": [
+            "oop"
+        ]
+    },
+    "yql-jsonp": {
+        "condition": {
+            "name": "yql-jsonp",
+            "test": "jsonp.js",
+            "trigger": "yql",
+            "when": "after"
+        },
         "requires": [
             "jsonp",
             "jsonp-url"

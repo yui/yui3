@@ -772,7 +772,11 @@ YUI.add('attribute-core', function (Y, NAME) {
                         retVal = setter.call(host, newVal, name, opts);
 
                         if (retVal === INVALID_VALUE) {
-                            allowSet = false;
+                            if (initializing) {
+                                newVal = cfg.defaultValue;
+                            } else {
+                                allowSet = false;
+                            }
                         } else if (retVal !== undefined){
                             newVal = retVal;
                         }

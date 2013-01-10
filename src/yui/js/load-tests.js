@@ -263,15 +263,27 @@ add('load', '19', {
     "trigger": "widget-base",
     "ua": "ie"
 });
-// yql-nodejs
+// yql-jsonp
 add('load', '20', {
+    "name": "yql-jsonp",
+    "test": function (Y) {
+    /* Only load the JSONP module when not in nodejs or winjs
+    TODO Make the winjs module a CORS module
+    */
+    return (!Y.UA.nodejs && !Y.UA.winjs);
+},
+    "trigger": "yql",
+    "when": "after"
+});
+// yql-nodejs
+add('load', '21', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '21', {
+add('load', '22', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
