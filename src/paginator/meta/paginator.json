@@ -1,6 +1,6 @@
 {
     "paginator": {
-        "uses": [
+        "use": [
             "paginator-core",
             "paginator-url"
         ],
@@ -13,7 +13,15 @@
                 ]
             },
             "paginator-url": {
-                "requires": []
+                "requires": [
+                    "paginator-core",
+                    "base-build"
+                ]
+            },
+            "paginator-list": {
+                "requires": [
+                    "paginator"
+                ]
             }
         }
     }

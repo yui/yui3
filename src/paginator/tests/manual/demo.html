@@ -10,13 +10,24 @@
 
 <script type="text/javascript">
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    filter: 'raw',
     combine: false
-}).use("paginator", function(Y) {
+}).use("paginator-list", function(Y) {
 
- var pg = new Y.Paginator();
+    console.log(Y.Object.keys(Y.Paginator.Core.prototype));
 
- console.log(pg);
+    console.log(Y.Object.keys(Y.Paginator.prototype));
+
+    var pg = new Y.Paginator({
+        url: '?pg={page}',
+        page: 9
+    });
+
+    pg.after('pageChange', function(e) {
+        console.log('page:: ' + e.newVal);
+    });
+
+    console.log(pg.render());
 
 });
 </script>

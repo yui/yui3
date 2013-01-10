@@ -8,10 +8,10 @@ PaginatorCore.ATTRS = {
     /**
     Index of the first item on the page.
     @readOnly
-    @attribute currentIndex
+    @attribute index
     @type Number
     **/
-    currentIndex: {
+    index: {
         readOnly: true,
         getter: '_getIndex'
     },
@@ -50,46 +50,48 @@ PaginatorCore.ATTRS = {
     @attribute totalItems
     @type Number
     **/
-    totalItems: {}
+    totalItems: {
+        value: 100
+    }
 
 };
 
 Y.extend(PaginatorCore, Y.Base, {
 
-    goto: function(pageNumber) {
-        this.set('currentPage', pageNumber);
+    select: function(pageNumber) {
+        this.set('page', pageNumber);
     },
 
     first: function() {
-        if (this.hasPrevPage()) {
-            this.goto(1);
+        if (this.hasPrev()) {
+            this.select(1);
         }
     },
 
     last: function() {
-        if (this.hasNextPage()) {
-            this.goto(this.get('numberOfPages'));
+        if (this.hasNext()) {
+            this.select(this.get('pages'));
         }
     },
 
     prev: function() {
-        if (this.hasPrevPage()) {
-            this.goto(this.get('currentPage') - 1);
+        if (this.hasPrev()) {
+            this.select(this.get('page') - 1);
         }
     },
 
     next: function() {
-        if (this.hasNextPage()) {
-            this.goto(this.get('currentPage') + 1);
+        if (this.hasNext()) {
+            this.select(this.get('page') + 1);
         }
     },
 
     hasPrev: function() {
-        return (this.get('currentPage') > 1);
+        return (this.get('page') > 1);
     },
 
     hasNext: function() {
-        return (this.get('currentPage') + 1 <= this.get('numberOfPages'));
+        return (this.get('page') + 1 <= this.get('pages'));
     },
 
     ////////////////
@@ -108,10 +110,7 @@ Y.extend(PaginatorCore, Y.Base, {
 
 Y.namespace('Paginator').Core = PaginatorCore;
 
-Y.Paginator = Y.mix(Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core]), {
-
-    fooga: function () {
-        consol.log('i has fooga');
-    }
-
-}, Y.Paginator);
+Y.Paginator = Y.mix(
+    Y.Base.create('paginator', Y.Paginator.Core, [Y.Widget]),
+    Y.Paginator
+);
