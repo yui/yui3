@@ -1,5 +1,14 @@
 {
     "charts-base": {
-        "requires":["dom", "datatype-number", "datatype-date", "event-custom", "event-mouseenter", "event-touch", "widget", "widget-position", "widget-stack", "graphics"]
+        "requires":[
+            "dom", 
+            "event-mouseenter", 
+            "event-touch", 
+            "graphics-group",
+            "axes",
+            "series-cartesian",
+            "series-pie",
+            "series-cartesian-stacked"
+        ]
     }
 }

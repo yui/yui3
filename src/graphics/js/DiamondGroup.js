@@ -1,12 +1,11 @@
 /**
  * Abstract class for creating groups of diamonds with the same styles and dimensions.
  *
- * @module charts
- * @submodule charts-base
  * @class GroupDiamond
  * @constructor
+ * @submodule graphics-group
  */
- DiamondGroup = function(cfg)
+ DiamondGroup = function()
  {
     DiamondGroup.superclass.constructor.apply(this, arguments);
  };

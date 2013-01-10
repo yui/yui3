@@ -1,13 +1,19 @@
 /**
+ * Provides functionality for creatiing a stacked line series.
+ *
+ * @module charts
+ * @submodule series-line-stacked
+ */
+/**
  * StackedLineSeries creates line graphs in which the different series are stacked along a value axis
  * to indicate their contribution to a cumulative total.
  *
- * @module charts
- * @submodule charts-base
  * @class StackedLineSeries
  * @constructor
  * @extends  LineSeries
  * @uses StackingUtil
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-line-stacked
  */
 Y.StackedLineSeries = Y.Base.create("stackedLineSeries", Y.LineSeries, [Y.StackingUtil], {
     /**

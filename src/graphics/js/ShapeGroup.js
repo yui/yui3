@@ -1,42 +1,25 @@
 /**
- * The Charts widget provides an api for displaying data
- * graphically.
+ * The graphics-group submodule allows from drawing a shape multiple times within a single instance.
  *
- * @module charts
- * @main charts
+ * @module graphics
+ * @submodule graphics-group
  */
-
-/**
- * The charts-base submodule contains the core functionality for the charts module.
- *
- * @module charts
- * @submodule charts-base
- */
-var CONFIG = Y.config,
-    WINDOW = CONFIG.win,
-    DOCUMENT = CONFIG.doc,
-    Y_Lang = Y.Lang,
-    IS_STRING = Y_Lang.isString,
-    Y_DOM = Y.DOM,
-    LeftAxisLayout,
-    RightAxisLayout,
-    BottomAxisLayout,
-    TopAxisLayout,
-    _getClassName = Y.ClassNameManager.getClassName,
-    SERIES_MARKER = _getClassName("seriesmarker"),
-    ShapeGroup,
+var ShapeGroup,
     CircleGroup,
     RectGroup,
     EllipseGroup,
-    DiamondGroup;
+    DiamondGroup,
+    Y_Lang = Y.Lang;
 
 /**
  * Abstract class for creating groups of shapes with the same styles and dimensions.
  *
  * @class ShapeGroup
  * @constructor
+ * @submodule graphics-group
  */
- ShapeGroup = function(cfg)
+
+ ShapeGroup = function()
  {
     ShapeGroup.superclass.constructor.apply(this, arguments);
  };
@@ -60,14 +43,11 @@ var CONFIG = Y.config,
             yRad,
             i = 0,
             len,
-            attrs = [],
             dimensions = this.get("dimensions"),
             width = dimensions.width,
             height = dimensions.height,
             radius = dimensions.radius,
             yRadius = dimensions.yRadius,
-            id = this.get("id"),
-            className = this.node.className,
             widthIsArray = Y_Lang.isArray(width),
             heightIsArray = Y_Lang.isArray(height),
             radiusIsArray = Y_Lang.isArray(radius),
@@ -94,12 +74,6 @@ var CONFIG = Y.config,
                         yRadius: yRad
                     });
                     this.closePath();
-                    attrs[i] = {
-                        id: id + "_" + i,
-                        className: className,
-                        coords: (x - this._left) + ", " + (y - this._top)  + ", " + radius,
-                        shape: "circle"
-                    };
                 }
             }
             this._closePath();

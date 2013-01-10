@@ -579,7 +579,12 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
          * @type ChartBase
          * @readOnly
          */
-        chart: {},
+        chart: {
+            getter: function() {
+                var chart = this._state.chart || this;
+                return chart;
+            }
+        },
 
         /**
          * Collection of series. When setting the `seriesCollection` the array can contain a combination of either
@@ -640,7 +645,9 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 
             setter: function(val)
             {
-                var gl = this.get("horizontalGridlines");
+                var cfg,
+                    key,
+                    gl = this.get("horizontalGridlines");
                 if(gl && gl instanceof Y.Gridlines)
                 {
                     gl.remove();
@@ -651,9 +658,20 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                     val.set("graph", this);
                     return val;
                 }
-                else if(val && val.axis)
+                else if(val)
                 {
-                    gl = new Y.Gridlines({direction:"horizontal", axis:val.axis, graph:this, styles:val.styles});
+                    cfg = {
+                        direction: "horizonal",
+                        graph: this
+                    };
+                    for(key in val)
+                    {
+                        if(val.hasOwnProperty(key))
+                        {
+                            cfg[key] = val[key];
+                        }
+                    }
+                    gl = new Y.Gridlines(cfg);
                     return gl;
                 }
             }
@@ -671,7 +689,9 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 
             setter: function(val)
             {
-                var gl = this.get("verticalGridlines");
+                var cfg,
+                    key,
+                    gl = this.get("verticalGridlines");
                 if(gl && gl instanceof Y.Gridlines)
                 {
                     gl.remove();
@@ -682,9 +702,20 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                     val.set("graph", this);
                     return val;
                 }
-                else if(val && val.axis)
+                else if(val)
                 {
-                    gl = new Y.Gridlines({direction:"vertical", axis:val.axis, graph:this, styles:val.styles});
+                    cfg = {
+                        direction: "vertical",
+                        graph: this
+                    };
+                    for(key in val)
+                    {
+                        if(val.hasOwnProperty(key))
+                        {
+                            cfg[key] = val[key];
+                        }
+                    }
+                    gl = new Y.Gridlines(cfg);
                     return gl;
                 }
             }

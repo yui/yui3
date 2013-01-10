@@ -1,0 +1,7 @@
+{
+    "series-histogram-base": {
+        "requires":[
+            "series-marker"
+        ]
+    }
+}

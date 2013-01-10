@@ -1,10 +1,18 @@
 /**
+ * Provides functionality for creating stacked series.
+ *
+ * @module charts
+ * @submodule series-stacked
+ */
+var Y_Lang = Y.Lang;
+
+/**
  * Utility class used for creating stacked series.
  *
  * @module charts
- * @submodule charts-base
  * @class StackingUtil
  * @constructor
+ * @submodule series-stacked
  */
 function StackingUtil(){}
 

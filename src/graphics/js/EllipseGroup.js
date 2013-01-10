@@ -1,21 +1,20 @@
 /**
- * Abstract class for creating groups of diamonds with the same styles and dimensions.
+ * Abstract class for creating groups of ellipses with the same styles and dimensions.
  *
- * @module charts
- * @submodule charts-base
  * @class EllipseGroup
  * @constructor
+ * @submodule graphics-group
  */
- EllipseGroup = function(cfg)
+ EllipseGroup = function()
  {
     EllipseGroup.superclass.constructor.apply(this, arguments);
  };
 
- EllipseGroup.NAME = "diamondGroup";
+ EllipseGroup.NAME = "ellipseGroup";
 
  Y.extend(EllipseGroup, Y.ShapeGroup, {
     /**
-     * Updates the diamond.
+     * Updates the ellipse.
      *
      * @method _draw
      * @private

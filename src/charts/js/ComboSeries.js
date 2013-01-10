@@ -1,16 +1,22 @@
 /**
+ * Provides functionality for creating a combo series.
+ *
+ * @module charts
+ * @submodule series-combo
+ */
+/**
  * The ComboSeries class renders a combination of lines, plots and area fills in a single series.
  * Each series type has a corresponding boolean attribute indicating if it is rendered. By default,
  * lines and plots are rendered and area is not.
  *
- * @module charts
- * @submodule charts-base
  * @class ComboSeries
  * @extends CartesianSeries
  * @uses Fills
  * @uses Lines
  * @uses Plots
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-combo
  */
 Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Lines, Y.Plots], {
 	/**
