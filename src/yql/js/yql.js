@@ -91,7 +91,7 @@ YQLRequest.prototype = {
     send: function () {
         var qs = [], url = ((this._opts && this._opts.proto) ? this._opts.proto : Y.YQLRequest.PROTO), o;
 
-        Y.each(this._params, function (v, k) {
+        Y.Object.each(this._params, function (v, k) {
             qs.push(k + '=' + encodeURIComponent(v));
         });
 

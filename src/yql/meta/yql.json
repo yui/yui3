@@ -1,5 +1,6 @@
 {
     "yql": {
+        "requires": [ "oop" ],
         "plugins": {
             "yql-jsonp": {
                 "condition": {
