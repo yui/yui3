@@ -8,7 +8,12 @@
         },
         "paginator-url": {
             "jsfiles": [
-                "paginator-url"
+                "paginator-url.js"
+            ]
+        },
+        "paginator-list": {
+            "jsfiles": [
+                "paginator-list.js"
             ]
         }
     }
