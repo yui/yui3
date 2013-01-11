@@ -637,7 +637,7 @@ IO.prototype = {
             u = uri,
             response = {};
 
-        config = config ? Y.Object(config) : {};
+        config = Y.merge(config);
         transaction = io._create(config, id);
         method = config.method ? config.method.toUpperCase() : 'GET';
         sync = config.sync;
@@ -647,6 +647,7 @@ IO.prototype = {
         // querystring-stringify-simple.
         if ((Y.Lang.isObject(data) && !data.nodeType) && !transaction.upload) {
             data = Y.QueryString.stringify(data);
+            config.data = data;
         }
 
         if (config.form) {
