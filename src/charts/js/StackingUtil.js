@@ -54,8 +54,7 @@ StackingUtil.prototype = {
     {
         var order = this.get("order"),
             type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
+            seriesCollection = this.get("seriesTypeCollection"),
             i = 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
@@ -135,9 +134,9 @@ StackingUtil.prototype = {
     {
         var order = this.get("order"),
             type = this.get("type"),
-            graph = this.get("graph"),
-            h = graph.get("height"),
-            seriesCollection = graph.seriesTypes[type],
+            graphic = this.get("graphic"),
+            h = graphic.get("height"),
+            seriesCollection = this.get("seriesTypeCollection"),
             i = 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),

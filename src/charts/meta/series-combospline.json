@@ -1,9 +1,8 @@
 {
     "series-combospline": {
         "requires":[
-            "series-curve-util",
-            "series-plot-util",
-            "series-fill-util"
+            "series-combo",
+            "series-curve-util"
         ]
     }
 }

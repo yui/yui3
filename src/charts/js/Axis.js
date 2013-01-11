@@ -1117,7 +1117,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     {
         var units,
             majorUnit = this.get("styles").majorUnit,
-            len = this.get("length");
+            len = this.getLength();
         if(majorUnit.determinant === "count")
         {
             units = majorUnit.count;

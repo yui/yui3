@@ -216,6 +216,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         series.set("graphOrder", graphSeriesLength);
         series.set("order", typeSeriesCollection.length);
         typeSeriesCollection.push(series);
+        series.set("seriesTypeCollection", typeSeriesCollection);
         this.addDispatcher(series);
         series.after("drawingComplete", Y.bind(this._drawingCompleteHandler, this));
         this.fire("seriesAdded", series);
@@ -252,6 +253,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         series.after("drawingComplete", Y.bind(this._drawingCompleteHandler, this));
         typeSeriesCollection.push(series);
         seriesCollection.push(series);
+        series.set("seriesTypeCollection", typeSeriesCollection);
         if(this.get("rendered"))
         {
             series.render();

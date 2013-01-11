@@ -46,7 +46,7 @@ Fills.prototype = {
         var path = this._path;
         if(!path)
         {
-            path = this.get("graph").get("graphic").addShape({type:"path"});
+            path = this.get("graphic").addShape({type:"path"});
             this._path = path;
         }
         return path;
@@ -204,8 +204,7 @@ Fills.prototype = {
             curvecoords,
             order = this.get("order"),
             type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
+            seriesCollection = this.get("seriesTypeCollection"),
             prevXCoords,
             prevYCoords,
             len,
@@ -388,9 +387,8 @@ Fills.prototype = {
     {
         var order = this.get("order"),
             type = this.get("type"),
-            graph = this.get("graph"),
             direction = this.get("direction"),
-            seriesCollection = graph.seriesTypes[type],
+            seriesCollection = this.get("seriesTypeCollection"),
             firstValidIndex,
             lastValidIndex,
             xcoords = this.get("stackedXCoords"),
