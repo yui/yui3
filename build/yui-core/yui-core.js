@@ -8,6 +8,7 @@ utilities for the library.
 @submodule yui-base
 **/
 
+/*jshint eqeqeq: false*/
 if (typeof YUI != 'undefined') {
     YUI._YUI = YUI;
 }
@@ -505,7 +506,7 @@ proto = {
     @method _setup
     @private
     **/
-    _setup: function(o) {
+    _setup: function() {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
@@ -902,7 +903,6 @@ with any configuration info required for the module.
             callback = args[args.length - 1],
             Y = this,
             i = 0,
-            a = [],
             name,
             Env = Y.Env,
             provisioned = true;
@@ -993,7 +993,7 @@ with any configuration info required for the module.
             this._attach(['yui-base']);
         }
 
-        var len, loader, handleBoot, handleRLS,
+        var len, loader, handleBoot,
             Y = this,
             G_ENV = YUI.Env,
             mods = G_ENV.mods,
@@ -1478,13 +1478,13 @@ with any configuration info required for the module.
         * Set a method to be called when `Get.script` is called in Node.js
         * `Get` will open the file, then pass it's content and it's path
         * to this method before attaching it. Commonly used for code coverage
-        * instrumentation. <strong>Calling this multiple times will only 
-        * attach the last hook method</strong>. This method is only 
+        * instrumentation. <strong>Calling this multiple times will only
+        * attach the last hook method</strong>. This method is only
         * available in Node.js.
         * @method setLoadHook
         * @static
         * @param {Function} fn The function to set
-        * @param {String} fn.data The content of the file 
+        * @param {String} fn.data The content of the file
         * @param {String} fn.path The file path of the file
         */
         YUI.setLoadHook = function(fn) {
@@ -1494,7 +1494,7 @@ with any configuration info required for the module.
         * Load hook for `Y.Get.script` in Node.js, see `YUI.setLoadHook`
         * @method _getLoadHook
         * @private
-        * @param {String} data The content of the file 
+        * @param {String} data The content of the file
         * @param {String} path The file path of the file
         */
         YUI._getLoadHook = null;
@@ -2120,6 +2120,7 @@ pass `true` as the value of the _force_ parameter.
 function YArray(thing, startIndex, force) {
     var len, result;
 
+    /*jshint expr: true*/
     startIndex || (startIndex = 0);
 
     if (force || YArray.test(thing)) {
@@ -2492,13 +2493,15 @@ string `[object Object]` when used as a cache key.
 @for YUI
 **/
 Y.cached = function (source, cache, refetch) {
+    /*jshint expr: true*/
     cache || (cache = {});
 
     return function (arg) {
         var key = arguments.length > 1 ?
                 Array.prototype.join.call(arguments, CACHED_DELIMITER) :
                 String(arg);
-
+        
+        /*jshint eqeqeq: false*/
         if (!(key in cache) || (refetch && cache[key] == refetch)) {
             cache[key] = source.apply(source, arguments);
         }
@@ -3578,6 +3581,7 @@ Y.UA.compareVersions = function (a, b) {
         aPart = parseInt(aParts[i], 10);
         bPart = parseInt(bParts[i], 10);
 
+        /*jshint expr: true*/
         isNaN(aPart) && (aPart = 0);
         isNaN(bPart) && (bPart = 0);
 
