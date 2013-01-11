@@ -495,11 +495,12 @@ Y.mix(Sortable.prototype, {
         // extra function hop during sorting. Lesser of three evils?
         this.data._compare = function (a, b) {
             var cmp = 0,
-                i, len, col, dir, aa, bb;
+                i, len, col, dir, cs, aa, bb;
 
             for (i = 0, len = self._sortBy.length; !cmp && i < len; ++i) {
                 col = self._sortBy[i];
-                dir = col.sortDir;
+                dir = col.sortDir,
+                cs = col.caseSensitive;
 
                 if (col.sortFn) {
                     cmp = col.sortFn(a, b, (dir === -1));
@@ -507,7 +508,10 @@ Y.mix(Sortable.prototype, {
                     // FIXME? Requires columns without sortFns to have key
                     aa = a.get(col.key) || '';
                     bb = b.get(col.key) || '';
-
+                    if (!cs && typeof(aa) === "string" && typeof(bb) === "string"){// Not case sensitive
+                        aa = aa.toLowerCase();
+                        bb = bb.toLowerCase();
+                    }
                     cmp = (aa > bb) ? dir : ((aa < bb) ? -dir : 0);
                 }
             }
