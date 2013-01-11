@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Benchmarks</title>
+</head>
+<body class="yui3-skin-sam">
+
+<p><button id="start">Start Benchmarks</button></p>
+
+<div id="log"></div>
+<div id="test-node"></div>
+
+<applet code="nano" archive="https://github.com/bestiejs/benchmark.js/raw/v1.0.0/nano.jar" style="display: none;"></applet>
+<script src="http://pieisgood.org/misc/benchmark/benchmark.js"></script>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    modules: {
+        'node-data-benchmark': {
+            fullpath: 'node-data-benchmark.js',
+            requires: ['node-base']
+        },
+
+        'test-console': {
+            fullpath : '../../../common/tests/assets/test-console.js',
+            requires : ['console-filters'],
+            skinnable: true
+        },
+
+        'skin-sam-test-console': {
+            fullpath: '../../../common/tests/assets/test-console.css',
+            type    : 'css'
+        }
+    },
+
+    useBrowserConsole: false
+}).use('node-data-benchmark', 'test-console', function (Y) {
+    var suite = Y.BenchmarkSuite,
+        start = Y.one('#start');
+
+    suite.on('start', function () {
+        start.set('disabled', true);
+        Y.log('Starting benchmarks.');
+    });
+
+    suite.on('cycle', function (bench) {
+        Y.log(String(bench));
+    });
+
+    suite.on('complete', function () {
+        start.set('disabled', false);
+        Y.log('Finished.');
+    });
+
+    start.on('click', function () {
+        suite.run(true);
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Datatable Tests</title>
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssbase/base-min.css">
+<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+
+<style>
+    html {
+        font-family: sans-serif;
+        font-size: smaller;
+    }
+
+</style>
+</head>
+
+<body class="yui3-skin-sam">
+<h1>Datatable Tests</h1>
+<div id="dtable"></div>
+
+
+<script type="text/javascript">
+
+
+
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    allowRollup: false,
+    useBrowserConsole: true
+}).use("datatable","node","datatype-number-format", function(Y) {
+
+    var portfolio = [
+        { stock_id:3, ticker:'XYZEE', company:'XYZ Corporation', qty:300, cost:4500, price:15.83 },
+        { stock_id:11, ticker:'FUBAR', company:'FooBar Computers, Inc.', qty:100, cost:2187, price:28.90 },
+        { stock_id:17, ticker:'GIFT', company:"Spinoff Technology", qty:400, cost:0, price:4.11 },
+        { stock_id:19, ticker:'DOLLARS', company:"Consultants 'R Us", qty:1750, cost:6099.13, price:3.97 },
+        { stock_id:5, ticker:'SAFET', company:'Stability Partners LLP', qty:25, cost:7283.41, price:58.74 }
+    ];
+
+    function formatCurrency(o) {
+        return Y.DataType.Number.format(o.value, {
+            prefix:"$ ",
+            thousandsSeparator: ",",
+            decimalSeparator: ".",
+            decimalPlaces: 2
+        });
+    }
+
+    function formatGainLoss(o) {
+        o.className += (o.value < 0) ? 'loss' : 'gain';
+
+        return o.value ?
+            Y.DataType.Number.format(o.value, {
+                suffix: ' %',
+                decimalSeparator: ".",
+                decimalPlaces: 2
+            }) :
+            'n/a';
+    }
+
+    var dt = new Y.DataTable({
+        data: portfolio,
+        columns: [
+            { key: 'ticker',  label: 'Ticker' },
+            { key: 'company', label: 'Company Name' }
+        ],
+        recordType: {
+            ticker: {},
+            company: {},
+            qty: {},
+            cost: {},
+            marketvalue: {
+                getter: function () {
+                    return +((this.get('price') * this.get('qty')).toFixed(2));
+                }
+            },
+            gainloss: {
+                getter: function () {
+                    var cost = this.get('cost'),
+                        amt  = (this.get('qty') * this.get('price')) -
+                                    this.get('cost');
+
+                    return cost ? ((100 * amt) / cost) : 0;
+                }
+            }
+        },
+        sortable: ['company']
+    });
+
+    dt.render("#dtable");
+
+});
+</script>
+</body>
+</html>
