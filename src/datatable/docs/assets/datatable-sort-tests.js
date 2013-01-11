@@ -46,6 +46,65 @@ YUI.add('datatable-sort-tests', function(Y) {
         }
     }));
 
+
+    /* sortable data types test */
+
+    var suiteSortable = new Y.Test.Suite('datatable-sort example test suite'),
+        tableSortableSelector = '#sortSensitive ',
+        ths = Y.all(tableSortableSelector + 'th'),
+        tds = Y.all(tableSortableSelector + 'td'),
+        trs = Y.all(tableSortableSelector + 'tr');
+
+
+
+
+    suiteSortable.add(new Y.Test.Case({
+        name: 'Example sortable tests',
+        'test click to sort data types': function() {
+            Assert.areEqual('1', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 before sort');
+
+            ths.item(0).simulate('click');
+            tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
+            Assert.areEqual('1', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after Number sort');
+
+            ths.item(0).simulate('click');
+            tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
+            Assert.areEqual('4', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after Number sort');
+
+            ths.item(1).simulate('click');
+            tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
+            Assert.areEqual('1', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after DATE sort');
+
+            ths.item(1).simulate('click');
+            tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
+            Assert.areEqual('4', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after DATE sort');
+
+            // should be AaBbCcZz
+            ths.item(2).simulate('click');
+            tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
+            Assert.areEqual('2', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after String sort');
+
+            ths.item(2).simulate('click');
+            tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
+            Assert.areEqual('4', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after String sort');
+
+            // should be ABCZabcz
+            ths.item(3).simulate('click');
+            tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
+            Assert.areEqual('1', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after String case sensitive sort');
+
+            ths.item(3).simulate('click');
+            tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
+            Assert.areEqual('4', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after String case sensitive sort');
+
+            ths.item(0).simulate('click');
+        }
+    }));
+
+
+
+
     Y.Test.Runner.add(suite);
+    Y.Test.Runner.add(suiteSortable);
 
 }, '', { requires: [ 'node', 'node-event-simulate' ] });
