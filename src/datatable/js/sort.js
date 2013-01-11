@@ -564,7 +564,7 @@ Y.mix(Sortable.prototype, {
         if (column) {
             if (e.shiftKey) {
                 for (i = 0, len = sortBy.length; i < len; ++i) {
-                    if (id === sortBy[i] || Math.abs(sortBy[i][id] === 1)) {
+                    if (id === sortBy[i]  || Math.abs(sortBy[i][id]) === 1) {
                         if (!isObject(sortBy[i])) {
                             sortBy[i] = {};
                         }

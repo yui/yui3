@@ -1,6 +1,11 @@
 DataTable Change History
 ========================
 
+@VERSION@
+---------
+
+* Pull Req: #176 - Avoid processing columns if there aren't any to allow empty tables [markwoon]
+
 3.8.0
 -----
 
