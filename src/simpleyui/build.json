@@ -5,7 +5,7 @@
     ],
     "shifter": {
         "coverage": false,
-        "lint": "defaults"
+        "lint": false
     },
     "builds": {
         "simpleyui": {
