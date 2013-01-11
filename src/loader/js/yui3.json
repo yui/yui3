@@ -2394,7 +2394,11 @@
             "widget-base"
         ]
     },
-    "yql": {},
+    "yql": {
+        "requires": [
+            "oop"
+        ]
+    },
     "yql-jsonp": {
         "condition": {
             "name": "yql-jsonp",

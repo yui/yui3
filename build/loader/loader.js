@@ -5419,7 +5419,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-base"
         ]
     },
-    "yql": {},
+    "yql": {
+        "requires": [
+            "oop"
+        ]
+    },
     "yql-jsonp": {
         "condition": {
             "name": "yql-jsonp",
@@ -5471,7 +5475,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'b923fa7bda511930063f3677b9510486';
+YUI.Env[Y.version].md5 = '0ab25a267e8f4fc15265c424cf14fb69';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

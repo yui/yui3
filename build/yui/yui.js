@@ -1474,6 +1474,30 @@ with any configuration info required for the module.
     // Support the CommonJS method for exporting our single global
     if (typeof exports == 'object') {
         exports.YUI = YUI;
+        /**
+        * Set a method to be called when `Get.script` is called in Node.js
+        * `Get` will open the file, then pass it's content and it's path
+        * to this method before attaching it. Commonly used for code coverage
+        * instrumentation. <strong>Calling this multiple times will only 
+        * attach the last hook method</strong>. This method is only 
+        * available in Node.js.
+        * @method setLoadHook
+        * @static
+        * @param {Function} fn The function to set
+        * @param {String} fn.data The content of the file 
+        * @param {String} fn.path The file path of the file
+        */
+        YUI.setLoadHook = function(fn) {
+            YUI._getLoadHook = fn;
+        };
+        /**
+        * Load hook for `Y.Get.script` in Node.js, see `YUI.setLoadHook`
+        * @method _getLoadHook
+        * @private
+        * @param {String} data The content of the file 
+        * @param {String} path The file path of the file
+        */
+        YUI._getLoadHook = null;
     }
 
 }());
@@ -11001,7 +11025,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-base"
         ]
     },
-    "yql": {},
+    "yql": {
+        "requires": [
+            "oop"
+        ]
+    },
     "yql-jsonp": {
         "condition": {
             "name": "yql-jsonp",
@@ -11053,7 +11081,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'b923fa7bda511930063f3677b9510486';
+YUI.Env[Y.version].md5 = '0ab25a267e8f4fc15265c424cf14fb69';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
