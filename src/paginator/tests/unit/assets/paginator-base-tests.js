@@ -126,10 +126,10 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: 'Widget methods',
 
-    'test widget extending': function() {
+    'test view extending': function() {
         var pg = new Y.Paginator();
 
-        Y.Assert.isNotUndefined(pg.render);
+        Y.Assert.isTrue(pg instanceof Y.View);
     }
 }));
 
