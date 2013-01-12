@@ -258,27 +258,31 @@
             var host = this, // help compression
                 state = host._state,
                 value,
+                added,
                 hasValue;
 
             config = config || {};
 
             lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
 
-            if (lazy && !host.attrAdded(name)) {
+            added = host.attrAdded(name);
+
+            if (lazy && !added) {
                 state.addAll(name, {
                     lazy : config,
                     added : true
-                });
+                }, true);
             } else {
-                /*jshint maxlen:200*/
-                if (host.attrAdded(name) && !state.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
-                if (!host.attrAdded(name) || state.get(name, IS_LAZY_ADD)) {
+                /*jshint maxlen:200*/
+                if (added && !state.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
+
+                if (!added || state.get(name, IS_LAZY_ADD)) {
 
                     hasValue = (VALUE in config);
 
+                    /*jshint maxlen:200*/
                     if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
-                /*jshint maxlen:150*/
 
                     if (hasValue) {
                         // We'll go through set, don't want to set value in config directly
@@ -289,7 +293,8 @@
                     config.added = true;
                     config.initializing = true;
 
-                    state.addAll(name, config);
+                    // PERF TODO: Make sure addAll(..., true) is OK here. IS_LAZY_ADD gets blown away.
+                    state.addAll(name, config, true);
 
                     if (hasValue) {
                         // Go through set, so that raw values get normalized/validated
@@ -312,7 +317,7 @@
          *         This method will return true for lazily added attributes.
          */
         attrAdded: function(name) {
-            return !!this._state.get(name, ADDED);
+            return !!(this._state.get(name, ADDED));
         },
 
         /**
