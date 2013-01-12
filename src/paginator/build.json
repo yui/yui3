@@ -1,6 +1,11 @@
 {
     "name": "paginator",
     "builds": {
+        "paginator-base": {
+            "jsfiles": [
+                "paginator-base.js"
+            ]
+        },
         "paginator-core": {
             "jsfiles": [
                 "paginator-core.js"

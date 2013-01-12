@@ -49,4 +49,4 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{ requires:['paginator-url'] });
+}, '@VERSION@' ,{ requires:['paginator-base'] });

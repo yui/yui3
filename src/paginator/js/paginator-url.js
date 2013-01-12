@@ -1,10 +1,14 @@
-var PaginatorUrl = function() {};
+function PaginatorUrl () {
+    PaginatorUrl.superclass.constructor.apply(this, arguments);
+}
+
+PaginatorUrl.NAME = 'paginator-url';
 
 PaginatorUrl.ATTRS = {
     url: {}
 };
 
-Y.mix(PaginatorUrl.prototype, {
+Y.extend(PaginatorUrl, Y.Base, {
     prevUrl: function () {
         if (this.hasPrev()) {
             return this.formatUrl(this.get('page') - 1);
@@ -26,5 +30,9 @@ Y.mix(PaginatorUrl.prototype, {
     }
 });
 
+Y.namespace('Paginator').Url = PaginatorUrl;
 
-Y.Base.mix(Y.Paginator, [PaginatorUrl]);
+if (Y.Paginator.prototype) {
+    console.log('auto mixing url');
+    Y.Base.mix(Y.Paginator, [PaginatorUrl]);
+}
