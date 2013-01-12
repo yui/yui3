@@ -1,22 +1,24 @@
 {
     "paginator": {
         "use": [
-            "paginator-core",
-            "paginator-url"
+            "paginator-base"
         ],
 
         "submodules": {
+            "paginator-base": {
+                "requires": [
+                    "widget",
+                    "paginator-core",
+                    "paginator-url"
+                ]
+            },
             "paginator-core": {
                 "requires": [
-                    "base",
-                    "widget"
+                    "base"
                 ]
             },
             "paginator-url": {
-                "requires": [
-                    "paginator-core",
-                    "base-build"
-                ]
+                "requires": []
             },
             "paginator-list": {
                 "requires": [

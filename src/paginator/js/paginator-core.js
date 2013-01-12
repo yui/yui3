@@ -109,8 +109,3 @@ Y.extend(PaginatorCore, Y.Base, {
 });
 
 Y.namespace('Paginator').Core = PaginatorCore;
-
-Y.Paginator = Y.mix(
-    Y.Base.create('paginator', Y.Paginator.Core, [Y.Widget]),
-    Y.Paginator
-);
