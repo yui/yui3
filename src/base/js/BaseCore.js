@@ -313,7 +313,7 @@
          * initialization. Returns a disposable object with the attributes defined for
          * the provided class, extracted from the set of all attributes passed in.
          *
-         * @method _filterAttrCfs
+         * @method _filterAttrCfgs
          * @private
          *
          * @param {Function} clazz The class for which the desired attributes are required.
@@ -325,14 +325,27 @@
          * of an object with attribute name/configuration pairs.
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
-            var cfgs = null, attr, attrs = clazz.ATTRS;
+            var cfgs = null,
+                cfg,
+                val,
+                attr,
+                attrs = clazz.ATTRS;
 
             if (attrs) {
                 for (attr in attrs) {
                     if (allCfgs[attr]) {
+
                         cfgs = cfgs || {};
-                        cfgs[attr] = allCfgs[attr];
-                        allCfgs[attr] = null;
+
+                        // PERF TODO: Revisit once all unit tests pass for further runtime/memory optimizations.
+                        // See if we really need to isolate this.
+                        cfg = cfgs[attr] = _wlmix({}, allCfgs[attr], this._attrCfgHash());
+
+                        val = cfg.value;
+
+                        if (val && (typeof val === "object")) {
+                            this._cloneDefaultValue(attr, cfg);
+                        }
                     }
                 }
             }
@@ -379,6 +392,7 @@
          * @private
          */
         _initHierarchyData : function() {
+
             var ctor = this.constructor,
                 c,
                 i,
@@ -387,65 +401,101 @@
                 attrCfgHash,
                 needsAttrCfgHash = !ctor._ATTR_CFG_HASH,
                 nonAttrsCfg,
-                nonAttrs = (this._allowAdHocAttrs) ? {} : null,
+                nonAttrs = {},
                 classes = [],
                 attrs = [];
 
             // Start with `this` instance's constructor.
             c = ctor;
 
-            while (c) {
-                // Add to classes
-                classes[classes.length] = c;
+            if (!ctor._CACHED_CLASS_DATA) {
 
-                // Add to attributes
-                if (c.ATTRS) {
-                    attrs[attrs.length] = c.ATTRS;
+                ctor._CACHED_CLASS_DATA = {};
+
+                while (c) {
+                    // Add to classes
+                    classes[classes.length] = c;
+
+                    // Add to attributes
+                    if (c.ATTRS) {
+                        attrs[attrs.length] = c.ATTRS;
+                    }
+
+                    // Aggregate ATTR cfg whitelist.
+                    if (needsAttrCfgHash) {
+                        attrCfg     = c._ATTR_CFG;
+                        attrCfgHash = attrCfgHash || {};
+
+                        if (attrCfg) {
+                            for (i = 0, l = attrCfg.length; i < l; i += 1) {
+                                attrCfgHash[attrCfg[i]] = true;
+                            }
+                        }
+                    }
+
+                    //if (this._allowAdHocAttrs) {
+                        nonAttrsCfg = c._NON_ATTRS_CFG;
+                        if (nonAttrsCfg) {
+                            for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
+                                nonAttrs[nonAttrsCfg[i]] = true;
+                            }
+                        }
+                    //}
+
+                    c = c.superclass ? c.superclass.constructor : null;
                 }
 
-                // Aggregate ATTR cfg whitelist.
+                // Cache computed `_ATTR_CFG_HASH` on the constructor.
                 if (needsAttrCfgHash) {
-                    attrCfg     = c._ATTR_CFG;
-                    attrCfgHash = attrCfgHash || {};
-
-                    if (attrCfg) {
-                        for (i = 0, l = attrCfg.length; i < l; i += 1) {
-                            attrCfgHash[attrCfg[i]] = true;
-                        }
-                    }
+                    ctor._ATTR_CFG_HASH = attrCfgHash;
                 }
 
-                if (this._allowAdHocAttrs) {
-                    nonAttrsCfg = c._NON_ATTRS_CFG;
-                    if (nonAttrsCfg) {
-                        for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
-                            nonAttrs[nonAttrsCfg[i]] = true;
-                        }
-                    }
-                }
+                ctor._CACHED_CLASS_DATA.classes = this._classes = classes;
+                ctor._CACHED_CLASS_DATA.nonAttrs = this._nonAttrs = nonAttrs;
+                ctor._CACHED_CLASS_DATA.attrs = this._attrs = this._aggregateAttrs(attrs);
 
-                c = c.superclass ? c.superclass.constructor : null;
+            } else {
+                this._classes = ctor._CACHED_CLASS_DATA.classes;
+                this._attrs = ctor._CACHED_CLASS_DATA.attrs;
+                this._nonAttrs = ctor._CACHED_CLASS_DATA.nonAttrs;
             }
-
-            // Cache computed `_ATTR_CFG_HASH` on the constructor.
-            if (needsAttrCfgHash) {
-                ctor._ATTR_CFG_HASH = attrCfgHash;
-            }
-
-            this._classes = classes;
-            this._nonAttrs = nonAttrs;
-            this._attrs = this._aggregateAttrs(attrs);
         },
 
         /**
          * Utility method to define the attribute hash used to filter/whitelist property mixes for
-         * this class.
+         * this class for iteration performance reasons.
          *
          * @method _attrCfgHash
          * @private
          */
         _attrCfgHash: function() {
             return this.constructor._ATTR_CFG_HASH;
+        },
+
+        /**
+         * This method assumes that the value has already been checked to be an object.
+         * Since it's on a critical path, we don't want to re-do the check.
+         *
+         * @method _cloneDefaultValue
+         * @param {Object} cfg
+         * @private
+         */
+        _cloneDefaultValue : function(attr, cfg) {
+
+            var val = cfg.value,
+                clone = cfg.cloneDefaultValue;
+
+            if (clone === DEEP || clone === true) {
+                Y.log('Cloning default value for attribute:' + attr, 'info', 'base');
+                cfg.value = Y.clone(val);
+            } else if (clone === SHALLOW) {
+                Y.log('Merging default value for attribute:' + attr, 'info', 'base');
+                cfg.value = Y.merge(val);
+            } else if ((clone === undefined && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val)))) {
+                cfg.value = Y.clone(val);
+            }
+            // else if (clone === false), don't clone the static default value.
+            // It's intended to be used by reference.
         },
 
         /**
@@ -463,13 +513,13 @@
          * @return {Object} The aggregate set of ATTRS definitions for the instance
          */
         _aggregateAttrs : function(allAttrs) {
+
             var attr,
                 attrs,
                 cfg,
                 val,
                 path,
                 i,
-                clone,
                 cfgPropsHash = this._attrCfgHash(),
                 aggAttr,
                 aggAttrs = {};
@@ -485,18 +535,9 @@
                             cfg = _wlmix({}, attrs[attr], cfgPropsHash);
 
                             val = cfg.value;
-                            clone = cfg.cloneDefaultValue;
 
-                            if (val) {
-                                if ( (clone === undefined && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) || clone === DEEP || clone === true) {
-                                    Y.log('Cloning default value for attribute:' + attr, 'info', 'base');
-                                    cfg.value = Y.clone(val);
-                                } else if (clone === SHALLOW) {
-                                    Y.log('Merging default value for attribute:' + attr, 'info', 'base');
-                                    cfg.value = Y.merge(val);
-                                }
-                                // else if (clone === false), don't clone the static default value.
-                                // It's intended to be used by reference.
+                            if (val && (typeof val === "object")) {
+                                this._cloneDefaultValue(attr, cfg);
                             }
 
                             path = null;
@@ -506,6 +547,7 @@
                             }
 
                             aggAttr = aggAttrs[attr];
+
                             if (path && aggAttr && aggAttr.value) {
                                 O.setValue(aggAttr.value, path, val);
                             } else if (!path) {
