@@ -4,12 +4,24 @@
             "paginator-base"
         ],
 
+        "lang": [
+            "en"
+        ],
+
+        "skinnable": true,
+
         "submodules": {
             "paginator-base": {
                 "requires": [
-                    "widget",
+                    "view",
                     "paginator-core",
-                    "paginator-url"
+                    "paginator-url",
+                    "classnamemanager",
+                    "template",
+                    "intl"
+                ],
+                "lang": [
+                    "en"
                 ]
             },
             "paginator-core": {

@@ -2,8 +2,6 @@ function PaginatorUrl () {
     PaginatorUrl.superclass.constructor.apply(this, arguments);
 }
 
-PaginatorUrl.NAME = 'paginator-url';
-
 PaginatorUrl.ATTRS = {
     url: {}
 };
@@ -32,7 +30,6 @@ Y.extend(PaginatorUrl, Y.Base, {
 
 Y.namespace('Paginator').Url = PaginatorUrl;
 
-if (Y.Paginator.prototype) {
-    console.log('auto mixing url');
+if (Y.Lang.isFunction(Y.Paginator)) {
     Y.Base.mix(Y.Paginator, [PaginatorUrl]);
 }
