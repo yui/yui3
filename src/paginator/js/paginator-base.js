@@ -40,7 +40,9 @@ var Paginator = Y.Base.create('paginator', Y.View, [Y.Paginator.Core, Y.Paginato
             container = this.get('container');
 
         subscriptions.push(
-            this.on('pageChange', this._onPageChange),
+            this.on('pageChange', this._onPageChange, this),
+            this.on('itemsPerPageChange', this._onItemsPerPageChange, this ),
+            this.on('totalItemsChange', this._onTotalItemsChange, this),
             container.delegate('click', this._onControlClick, '.' + classNames.control, this),
             container.delegate('click', this._onPageClick, '.' + classNames.page, this),
             container.delegate('change', this._onPageInputChange, '.' + classNames.pageInput, this),
@@ -74,28 +76,107 @@ var Paginator = Y.Base.create('paginator', Y.View, [Y.Paginator.Core, Y.Paginato
     /////////////////////////////////
     _onPageChange: function(e) {
         console.log('_pageChange');
+        // should rebuild {pages} container only for minimum ui update
+        // should disable first/prev/next/last controls
+    },
+
+    _onItemsPerPageChange: function() {
+        console.log('itemsPerPage was changed');
+        // should rebuild all controls
+    },
+
+    _onTotalItemsChange: function () {
+        console.log('totalItems was changed');
+        // should rebuild all controls
     },
 
     _onControlClick: function() {
         console.log('control was clicked');
+        // sets page based on type of control clicked
     },
 
     _onPageClick: function() {
         console.log('page was clicked');
+        // set page to specific page clicked
     },
 
     _onPageInputChange: function() {
         console.log('page input was changed');
+        // set page to input value if within range
     },
 
     _onPageSelectChange: function() {
         console.log('page select was changed');
+        // set page to selected page value
     },
 
     _onItemsSelectChange: function() {
         console.log('items select was changed');
+        // update items per page
     },
 
+
+    ///////////////////////////////////////
+    // T E M P L A T E   R E N D E R I N G
+    ///////////////////////////////////////
+
+    orderOfTemplateBuilding: function() {
+        // build pages
+        var pages = function() {
+            // build page links starting from previous "lookBackward" range
+            // build current page link
+            // build page links using "lookFoward" range and "totalDisplay"
+        };
+
+        var controls = function () {
+            // controls should include:
+            // * prev && next
+            // * first && last
+            // * {pages}
+            // * pageInput
+            // * pageSelect
+            // * itemsSelect
+        };
+
+        var container = function() {
+            // general housing template to load in {controls}
+        }
+
+        // smush the container html into the container
+        // container.setHTML(container<-controls<-pages);
+    },
+
+    buildContainer: function () {
+
+    },
+
+    buildControls: function () {
+
+    },
+
+    buildControl: function () {
+
+    },
+
+    buildPages: function () {
+
+    },
+
+    buildPage: function () {
+
+    },
+
+    buildPageInput: function () {
+
+    },
+
+    buildPageSelect: function () {
+
+    },
+
+    buildItemsSelect: function () {
+
+    },
 
     /////////////////////
     // P R O T E C T E D
@@ -138,6 +219,7 @@ var Paginator = Y.Base.create('paginator', Y.View, [Y.Paginator.Core, Y.Paginato
                 pageText: '{page}'
             }, Y.Intl.get("paginator-base"), true);
     }
+
 
 }, {
     ATTRS: {
