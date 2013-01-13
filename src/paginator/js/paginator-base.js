@@ -146,36 +146,56 @@ var Paginator = Y.Base.create('paginator', Y.View, [Y.Paginator.Core, Y.Paginato
         // container.setHTML(container<-controls<-pages);
     },
 
-    buildContainer: function () {
+    replaceControls: function () {
+        this.get('container').setHTML(this.buildContainer());
 
+        return this;
+    },
+
+    replacePages: function () {
+        var container = this.get('container'),
+            pages = container.one('.' + this.classNames.pages);
+        pages.insertBefore(this.buildPages());
+        pages.remove();
+
+        return this;
+    },
+
+    buildContainer: function () {
+        // return container template populated with controls
     },
 
     buildControls: function () {
-
+        // return controls container template populated with controls
     },
 
     buildControl: function () {
-
+        // return a single rendered control template
     },
 
     buildPages: function () {
+        // loop through all pages (within range)
 
+        // return pages template with pages
     },
 
     buildPage: function () {
-
+        // return a single rendered page template
     },
 
     buildPageInput: function () {
-
+        // return <input> template with label and classnames
     },
 
     buildPageSelect: function () {
+        // loop through items and build options
 
+        // return <select> template with label, classnames and <option>s
     },
 
     buildItemsSelect: function () {
-
+        // options should be predefined in template
+        // return <select> template with label, classnames and <option>s
     },
 
     /////////////////////

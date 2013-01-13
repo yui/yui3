@@ -17,11 +17,7 @@
                     "paginator-core",
                     "paginator-url",
                     "classnamemanager",
-                    "template",
-                    "intl"
-                ],
-                "lang": [
-                    "en"
+                    "paginator-templates"
                 ]
             },
             "paginator-core": {
@@ -32,9 +28,13 @@
             "paginator-url": {
                 "requires": []
             },
-            "paginator-list": {
+            "paginator-templates": {
                 "requires": [
-                    "paginator"
+                    "template",
+                    "intl"
+                ],
+                "lang": [
+                    "en"
                 ]
             }
         }
