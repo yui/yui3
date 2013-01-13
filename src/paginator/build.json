@@ -20,6 +20,11 @@
             "jsfiles": [
                 "paginator-list.js"
             ]
+        },
+        "paginator-templates": {
+            "jsfiles": [
+                "paginator-templates.js"
+            ]
         }
     }
 }
