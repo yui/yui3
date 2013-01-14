@@ -6,7 +6,6 @@
  */
 var getClassName = Y.ClassNameManager.getClassName,
     DOCUMENT = Y.config.doc,
-    WINDOW = Y.config.win,
     IE = Y.UA.ie,
     NATIVE_TRANSITIONS = Y.Transition.useNative,
     vendorPrefix = Y.Transition._VENDOR_PREFIX, // Todo: This is a private property, and alternative approaches should be investigated
@@ -21,8 +20,6 @@ var getClassName = Y.ClassNameManager.getClassName,
     MOUSEWHEEL = 'mousewheel',
     UI = 'ui',
     TOP = 'top',
-    RIGHT = 'right',
-    BOTTOM = 'bottom',
     LEFT = 'left',
     PX = 'px',
     AXIS = 'axis',
@@ -41,9 +38,9 @@ var getClassName = Y.ClassNameManager.getClassName,
     EMPTY = '',
     ZERO = '0s',
     SNAP_DURATION = 'snapDuration',
-    SNAP_EASING = 'snapEasing', 
-    EASING = 'easing', 
-    FRAME_DURATION = 'frameDuration', 
+    SNAP_EASING = 'snapEasing',
+    EASING = 'easing',
+    FRAME_DURATION = 'frameDuration',
     BOUNCE_RANGE = 'bounceRange',
     
     _constrain = function (val, min, max) {
@@ -107,15 +104,15 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * Contains the distance (postive or negative) in pixels by which 
-     * the scrollview was last scrolled. This is useful when setting up 
-     * click listeners on the scrollview content, which on mouse based 
-     * devices are always fired, even after a drag/flick. 
-     * 
-     * <p>Touch based devices don't currently fire a click event, 
-     * if the finger has been moved (beyond a threshold) so this 
-     * check isn't required, if working in a purely touch based environment</p>
-     * 
+     * Contains the distance (postive or negative) in pixels by which
+     *  the scrollview was last scrolled. This is useful when setting up
+     *  click listeners on the scrollview content, which on mouse based
+     *  devices are always fired, even after a drag/flick.
+     *
+     * <p>Touch based devices don't currently fire a click event,
+     *  if the finger has been moved (beyond a threshold) so this
+     *  check isn't required, if working in a purely touch based environment</p>
+     *
      * @property lastScrolledAmt
      * @type Number
      * @public
@@ -129,7 +126,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method initializer
      * @param {config} Configuration object for the plugin
      */
-    initializer: function (config) {
+    initializer: function () {
         var sv = this;
 
         // Cache these values, since they aren't going to change.
@@ -221,7 +218,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * Bind (or unbind) gesture move listeners required for drag support
      *
      * @method _bindDrag
-     * @param drag {boolean} If true, the method binds listener to enable drag (gesturemovestart). If false, the method unbinds gesturemove listeners for drag support.
+     * @param drag {boolean} If true, the method binds listener to enable
+     *  drag (gesturemovestart). If false, the method unbinds gesturemove
+     *  listeners for drag support.
      * @private
      */
     _bindDrag: function (drag) {
@@ -240,7 +239,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * Bind (or unbind) flick listeners.
      *
      * @method _bindFlick
-     * @param flick {Object|boolean} If truthy, the method binds listeners for flick support. If false, the method unbinds flick listeners.
+     * @param flick {Object|boolean} If truthy, the method binds listeners for
+     *  flick support. If false, the method unbinds flick listeners.
      * @private
      */
     _bindFlick: function (flick) {
@@ -262,7 +262,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * Bind (or unbind) mousewheel listeners.
      *
      * @method _bindMousewheel
-     * @param mousewheel {Object|boolean} If truthy, the method binds listeners for mousewheel support. If false, the method unbinds mousewheel listeners.
+     * @param mousewheel {Object|boolean} If truthy, the method binds listeners for
+     *  mousewheel support. If false, the method unbinds mousewheel listeners.
      * @private
      */
     _bindMousewheel: function (mousewheel) {
@@ -324,9 +325,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
     /**
      * Utility method to obtain widget dimensions
-     * 
+     *
      * @method _getScrollDims
-     * @returns {Object} The offsetWidth, offsetHeight, scrollWidth and scrollHeight as an array: [offsetWidth, offsetHeight, scrollWidth, scrollHeight]
+     * @return {Object} The offsetWidth, offsetHeight, scrollWidth and
+     *  scrollHeight as an array: [offsetWidth, offsetHeight, scrollWidth,
+     *  scrollHeight]
      * @private
      */
     _getScrollDims: function () {
@@ -436,7 +439,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param y {Number} The y-position to scroll to. (null for no movement)
      * @param {Number} [duration] ms of the scroll animation. (default is 0)
      * @param {String} [easing] An easing equation if duration is set. (default is `easing` attribute)
-     * @param {String} [node] The node to transform.  Setting this can be useful in dual-axis paginated instances. (default is the instance's contentBox)
+     * @param {String} [node] The node to transform.  Setting this can be useful in
+     *  dual-axis paginated instances. (default is the instance's contentBox)
      */
     scrollTo: function (x, y, duration, easing, node) {
         // Check to see if widget is disabled
@@ -555,7 +559,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param {Event.Facade} e The event facade
      * @private
      */
-    _onTransEnd: function (e) {
+    _onTransEnd: function () {
         var sv = this;
 
         /**
@@ -671,7 +675,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             gesture.axis = (Math.abs(gesture.deltaX) > Math.abs(gesture.deltaY)) ? DIM_X : DIM_Y;
         }
 
-        // Move X or Y.  @TODO: Move both if dualaxis.        
+        // Move X or Y.  @TODO: Move both if dualaxis.
         if (gesture.axis === DIM_X && svAxisX) {
             sv.set(SCROLL_X, startX + gesture.deltaX);
         }
@@ -708,8 +712,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // If this wasn't a flick, wrap up the gesture cycle
         if (!flick) {
-            // @TODO: Be more intelligent about this. Look at the Flick attribute to see 
-            // if it is safe to assume _flick did or didn't fire.  
+            // @TODO: Be more intelligent about this. Look at the Flick attribute to see
+            // if it is safe to assume _flick did or didn't fire.
             // Then, the order _flick and _onGestureMoveEnd fire doesn't matter?
 
             // If there was movement (_onGestureMove fired)
@@ -795,10 +799,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             aboveMin       = (newPosition > min),
             aboveMax       = (newPosition > max),
             belowMinRange  = (newPosition < (min - bounceRange)),
-            belowMaxRange  = (newPosition < (max + bounceRange)),
             withinMinRange = (belowMin && (newPosition > (min - bounceRange))),
             withinMaxRange = (aboveMax && (newPosition < (max + bounceRange))),
-            aboveMinRange  = (newPosition > (min - bounceRange)),
             aboveMaxRange  = (newPosition > (max + bounceRange)),
             tooSlow;
 
@@ -856,7 +858,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // Because Mousewheel events fire off 'document', every ScrollView widget will react
         // to any mousewheel anywhere on the page. This check will ensure that the mouse is currently
-        // over this specific ScrollView.  Also, only allow mousewheel scrolling on Y-axis, 
+        // over this specific ScrollView.  Also, only allow mousewheel scrolling on Y-axis,
         // becuase otherwise the 'prevent' will block page scrolling.
         if (bb.contains(e.target) && sv._cAxis[DIM_Y]) {
 
@@ -890,7 +892,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method _isOutOfBounds
      * @param x {Number} [optional] The X position to check
      * @param y {Number} [optional] The Y position to check
-     * @returns {boolen} Whether the current X/Y position is out of bounds (true) or not (false)
+     * @return {boolen} Whether the current X/Y position is out of bounds (true) or not (false)
      * @private
      */
     _isOutOfBounds: function (x, y) {
@@ -1041,7 +1043,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param e {Event.Facade} The event facade
      * @protected
      */
-    _afterScrollEnd: function (e) {
+    _afterScrollEnd: function () {
         var sv = this;
 
         // @TODO: Move to sv._cancelFlick()
@@ -1058,7 +1060,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             sv._snapBack();
         }
 
-        // Ideally this should be removed, but doing so causing some JS errors with fast swiping 
+        // Ideally this should be removed, but doing so causing some JS errors with fast swiping
         // because _gesture is being deleted after the previous one has been overwritten
         // delete sv._gesture; // TODO: Move to sv.prevGesture?
     },
@@ -1070,10 +1072,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param val {Mixed} A string ('x', 'y', 'xy') to specify which axis/axes to allow scrolling on
      * @param name {String} The attribute name
      * @return {Object} An object to specify scrollability on the x & y axes
-     * 
+     *
      * @protected
      */
-    _axisSetter: function (val, name) {
+    _axisSetter: function (val) {
 
         // Turn a string into an axis object
         if (Y.Lang.isString(val)) {
@@ -1094,12 +1096,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     *
     * @return {Number} The value
     */
-    _setScroll : function(val, dim) {
+    _setScroll : function(val) {
 
         // Just ensure the widget is not disabled
         if (this._cDisabled) {
             val = Y.Attribute.INVALID_VALUE;
-        } 
+        }
 
         return val;
     },
