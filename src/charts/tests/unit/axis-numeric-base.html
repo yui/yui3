@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+    <title>NumericAxisBase Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+<script src="../../../../build/yui/yui.js"></script>
+<script src="./assets/chart-test-template.js"></script>
+<script src="./assets/axis-numeric-base-tests.js"></script>
+<script>
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    coverage: ['axis-numeric-base']
+}).use(
+    'test-console', 
+    'chart-test-template',
+    'axis-numeric-base-tests',
+    function (Y) {
+
+    (new Y.Test.Console()).render('#log');
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>
