@@ -3639,15 +3639,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
-    "datatable-base-deprecated": {
-        "requires": [
-            "recordset-base",
-            "widget",
-            "substitute",
-            "event-mouseenter"
-        ],
-        "skinnable": true
-    },
     "datatable-body": {
         "requires": [
             "datatable-core",
@@ -3672,21 +3663,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datatable-base",
             "plugin",
             "datasource-local"
-        ]
-    },
-    "datatable-datasource-deprecated": {
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin",
-            "datasource-local"
-        ]
-    },
-    "datatable-deprecated": {
-        "use": [
-            "datatable-base-deprecated",
-            "datatable-datasource-deprecated",
-            "datatable-sort-deprecated",
-            "datatable-scroll-deprecated"
         ]
     },
     "datatable-head": {
@@ -3718,12 +3694,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
-    "datatable-scroll-deprecated": {
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin"
-        ]
-    },
     "datatable-sort": {
         "lang": [
             "en"
@@ -3732,16 +3702,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datatable-base"
         ],
         "skinnable": true
-    },
-    "datatable-sort-deprecated": {
-        "lang": [
-            "en"
-        ],
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin",
-            "recordset-sort"
-        ]
     },
     "datatable-table": {
         "requires": [
@@ -5299,14 +5259,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "uploader-flash"
         ]
     },
-    "uploader-deprecated": {
-        "requires": [
-            "event-custom",
-            "node",
-            "base",
-            "swf"
-        ]
-    },
     "uploader-flash": {
         "requires": [
             "swf",
@@ -5467,7 +5419,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-base"
         ]
     },
-    "yql": {},
+    "yql": {
+        "requires": [
+            "oop"
+        ]
+    },
     "yql-jsonp": {
         "condition": {
             "name": "yql-jsonp",
@@ -5519,7 +5475,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'c646045acbe99c55704e5d09fa32f307';
+YUI.Env[Y.version].md5 = '0ab25a267e8f4fc15265c424cf14fb69';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
