@@ -1,4 +1,8 @@
-var Paginator = Y.Base.create('paginator', Y.View, [Y.Paginator.Core, Y.Paginator.Url], {
+var Y_Paginator = Y.Paginator,
+    Y_Paginator_Templates = Y_Paginator.Templates,
+    PaginatorBase;
+
+PaginatorBase = Y.Base.create('paginator', Y.View, [Y_Paginator.Core, Y_Paginator.Url], {
 
     prefix: null,
 
@@ -39,6 +43,8 @@ var Paginator = Y.Base.create('paginator', Y.View, [Y.Paginator.Core, Y.Paginato
             classNames = this.classNames,
             container = this.get('container');
 
+        console.log(classNames.control);
+
         subscriptions.push(
             this.on('pageChange', this._onPageChange, this),
             this.on('itemsPerPageChange', this._onItemsPerPageChange, this ),
@@ -74,7 +80,7 @@ var Paginator = Y.Base.create('paginator', Y.View, [Y.Paginator.Core, Y.Paginato
     /////////////////////////////////
     // E V E N T   C A L L B A C K S
     /////////////////////////////////
-    _onPageChange: function(e) {
+    _onPageChange: function() {
         console.log('_pageChange');
         // should rebuild {pages} container only for minimum ui update
         // should disable first/prev/next/last controls
@@ -120,34 +126,8 @@ var Paginator = Y.Base.create('paginator', Y.View, [Y.Paginator.Core, Y.Paginato
     // T E M P L A T E   R E N D E R I N G
     ///////////////////////////////////////
 
-    orderOfTemplateBuilding: function() {
-        // build pages
-        var pages = function() {
-            // build page links starting from previous "lookBackward" range
-            // build current page link
-            // build page links using "lookFoward" range and "totalDisplay"
-        };
-
-        var controls = function () {
-            // controls should include:
-            // * prev && next
-            // * first && last
-            // * {pages}
-            // * pageInput
-            // * pageSelect
-            // * itemsSelect
-        };
-
-        var container = function() {
-            // general housing template to load in {controls}
-        }
-
-        // smush the container html into the container
-        // container.setHTML(container<-controls<-pages);
-    },
-
     replaceControls: function () {
-        this.get('container').setHTML(this.buildContainer());
+        this.get('container').setHTML(this.buildControls());
 
         return this;
     },
@@ -161,26 +141,86 @@ var Paginator = Y.Base.create('paginator', Y.View, [Y.Paginator.Core, Y.Paginato
         return this;
     },
 
-    buildContainer: function () {
-        // return container template populated with controls
-    },
-
     buildControls: function () {
-        // return controls container template populated with controls
+        return Y_Paginator_Templates.list({
+            classname: this.classNames.controls,
+            first: this.buildControl('first'),
+            prev: this.buildControl('prev'),
+            next: this.buildControl('next'),
+            last: this.buildControl('last'),
+            pagesClass: this.classNames.pages,
+            pages: this.buildPages()
+        });
     },
 
-    buildControl: function () {
-        // return a single rendered control template
+    buildControl: function (type) {
+        var link,
+            title,
+            label,
+            strings = this.get('strings');
+
+        switch (type) {
+            case 'first':
+                link = this.formatUrl(1);
+                title = strings.firstTitle;
+                label = strings.firstText;
+                disabled = !this.hasPrev();
+                break;
+            case 'prev':
+                link = this.formatUrl(this.get('page') - 1);
+                title = strings.prevTitle;
+                label = strings.prevText;
+                disabled = !this.hasPrev();
+                break;
+            case 'next':
+                link = this.formatUrl(this.get('page') + 1);
+                title = strings.nextTitle;
+                label = strings.nextText;
+                disabled = !this.hasNext();
+                break;
+            case 'last':
+                link = this.formatUrl(this.get('pages'));
+                title = strings.lastTitle;
+                label = strings.lastText;
+                disabled = !this.hasNext();
+                break;
+        }
+
+        return Y_Paginator_Templates.controlWrapper({
+            classname: this.classNames.control + '-' + type,
+            control: Y_Paginator_Templates.control({
+                link: link,
+                title: title,
+                classname: this.classNames.control,
+                label: label
+            })
+        });
+
     },
 
     buildPages: function () {
-        // loop through all pages (within range)
+        var range = this.getDisplayRange(),
+            pages = '',
+            i,
+            l;
 
-        // return pages template with pages
+        for(i = range.min, l = range.max; i <= l; i++) {
+            pages += this.buildPage(i);
+        }
+
+        return pages;
     },
 
-    buildPage: function () {
-        // return a single rendered page template
+    buildPage: function (pageNumber) {
+        return Y_Paginator_Templates.pageWrapper({
+            classname: this.classNames.page + '-' + pageNumber,
+            page: Y_Paginator_Templates.page({
+                link: this.formatUrl(pageNumber),
+                title: pageNumber,
+                classname: this.classNames.page,
+                label: pageNumber
+            })
+        });
     },
 
     buildPageInput: function () {
@@ -196,6 +236,29 @@ var Paginator = Y.Base.create('paginator', Y.View, [Y.Paginator.Core, Y.Paginato
     buildItemsSelect: function () {
         // options should be predefined in template
         // return <select> template with label, classnames and <option>s
+    },
+
+    getDisplayRange: function () {
+        var currentPage = this.get('page'),
+            pages = this.get('pages'),
+            displayRange = this.get('displayRange'),
+            halfRange = Math.floor(displayRange / 2),
+
+            minRange = currentPage - halfRange,
+            maxRange = currentPage + halfRange;
+
+        if (minRange < 1) {
+          maxRange += -minRange;
+        }
+
+        if (maxRange > pages) {
+          minRange -= maxRange - pages;
+        }
+
+        return {
+            min: Math.max(1, minRange),
+            max: Math.min(pages, maxRange)
+        };
     },
 
     /////////////////////
@@ -224,20 +287,20 @@ var Paginator = Y.Base.create('paginator', Y.View, [Y.Paginator.Core, Y.Paginato
 
         return Y.mix({
                 firstTitle: 'First Page',
-                firstText: '&lt;&lt;',
+                firstText: '<<',
 
                 lastTitle: 'Last Page',
-                lastText: '&gt;&gt;',
+                lastText: '>>',
 
                 prevTitle: 'Previous Page',
-                prevText: '&lt;',
+                prevText: '<',
 
                 nextTitle: 'Next Page',
-                nextText: '&gt;',
+                nextText: '<',
 
                 pageTitle: 'Page {page}',
                 pageText: '{page}'
-            }, Y.Intl.get("paginator-base"), true);
+            }, Y.Intl.get("paginator-templates"), true);
     }
 
 
@@ -249,8 +312,12 @@ var Paginator = Y.Base.create('paginator', Y.View, [Y.Paginator.Core, Y.Paginato
 
         strings : {
             valueFn: '_defStringVals'
+        },
+
+        displayRange: {
+            value: 10
         }
     }
 });
 
-Y.Paginator = Y.mix(Paginator, Y.Paginator);
+Y.Paginator = Y.mix(PaginatorBase, Y_Paginator);

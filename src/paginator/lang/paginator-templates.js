@@ -1,15 +1,15 @@
 {
     firstTitle: 'First Page',
-    firstText: '&lt;&lt;',
+    firstText: '<<',
 
     lastTitle: 'Last Page',
-    lastText: '&gt;&gt;',
+    lastText: '>>',
 
     prevTitle: 'Previous Page',
-    prevText: '&lt;',
+    prevText: '<',
 
     nextTitle: 'Next Page',
-    nextText: '&gt;',
+    nextText: '>',
 
     pageTitle: 'Page {page}',
     pageText: '{page}'
