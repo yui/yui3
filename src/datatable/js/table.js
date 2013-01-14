@@ -414,7 +414,9 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
             }
         }
 
-        process(columns);
+        if (columns) {
+            process(columns);
+        }
 
         /**
         Array of the columns that correspond to those with value cells in the
