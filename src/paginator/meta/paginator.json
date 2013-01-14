@@ -16,8 +16,8 @@
                     "view",
                     "paginator-core",
                     "paginator-url",
-                    "classnamemanager",
-                    "paginator-templates"
+                    "paginator-templates",
+                    "classnamemanager"
                 ]
             },
             "paginator-core": {

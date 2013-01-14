@@ -12,15 +12,13 @@
 YUI({
     filter: 'raw',
     combine: false
-}).use("paginator-list", function(Y) {
-
-    console.log(Y.Object.keys(Y.Paginator.Core.prototype));
-
-    console.log(Y.Object.keys(Y.Paginator.prototype));
+}).use("paginator-base", function(Y) {
 
     var pg = new Y.Paginator({
-        url: '?pg={page}',
-        page: 9
+        url: '#',
+        page: 72,
+        itemsPerPage: 10,
+        totalItems: 1000
     });
 
     pg.after('pageChange', function(e) {
@@ -29,7 +27,8 @@ YUI({
 
     console.log(pg.render());
 
-    pg.first();
+
+    Y.one('body').append(pg.buildControls());
 
 });
 </script>
