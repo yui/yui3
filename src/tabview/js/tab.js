@@ -107,8 +107,15 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
        });
     },
 
+    _defLabelGetter: function() {
+        return this.get('contentBox').getHTML();
+    },
+
     _defLabelSetter: function(label) {
-        this.get('contentBox').setContent(label);
+        var labelNode = this.get('contentBox');
+        if (labelNode.getHTML() !== label) { // Avoid rewriting existing label.
+            labelNode.setHTML(label);
+        }
         return label;
     },
 
@@ -168,7 +175,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
          */
         label: {
             setter: '_defLabelSetter',
-            validator: Lang.isString
+            getter: '_defLabelGetter'
         },
 
         /**
