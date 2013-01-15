@@ -113,12 +113,15 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     },
 
     _defContentSetter: function(content) {
-        this.get('panelNode').setContent(content);
+        var panel = this.get('panelNode');
+        if (panel.getHTML() !== content) { // Avoid rewriting existing content.
+            panel.setHTML(content);
+        }
         return content;
     },
 
     _defContentGetter: function() {
-        return this.get('panelNode').getContent();
+        return this.get('panelNode').getHTML();
     },
 
     // find panel by ID mapping from label href
