@@ -73,7 +73,7 @@ YUI.add('tabview-test', function(Y) {
 
         },
 
-        'should set the label': function() {
+        'should set the content': function() {
             var tab = new Y.Tab();
             tab.set('content', 'new content');
             Y.Assert.areEqual('new content', tab.get('content'));
