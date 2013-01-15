@@ -2,6 +2,45 @@
 <html>
 <head>
 <title>Paginator Demo</title>
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.8.0/build/cssreset/cssreset-min.css">
+<style>
+body {
+    margin: 30px;
+}
+.yui3-paginator {
+}
+.yui3-paginator > *,
+.yui3-paginator-controls > * {
+    display: inline-block;
+    vertical-align: middle;
+    font-family: 'Helvetica Neue';
+}
+.yui3-paginator a {
+    text-decoration: none;
+}
+.yui3-paginator a:hover {
+    box-shadow: inset 0 0 1px 2px hsla(222,90%,59%,0.6)
+}
+.yui3-paginator-page-wrapper {
+    display: inline-block;
+}
+.yui3-paginator-control,
+.yui3-paginator-page {
+    color: #767676;
+    display: block;
+    border: 1px solid #333;
+    border-width: 1px 0;
+    font-size: 13px;
+    line-height: 22px;
+    height: 22px;
+    padding: 0 4px;
+    color: #767676;
+}
+.yui3-paginator-control-selected {
+    background: hsla(222,90%,59%,1);
+    color: #fff;
+}
+</style>
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 
@@ -12,25 +51,80 @@
 YUI({
     filter: 'raw',
     combine: false
-}).use("paginator-base", function(Y) {
+}).use("paginator-base", "datatable", "datasource-get", "datasource-jsonschema", "datatable-datasource", function(Y) {
 
     var pg = new Y.Paginator({
         url: '#',
         page: 72,
         itemsPerPage: 10,
-        totalItems: 1000
+        totalItems: 1000,
+        template: 'all'
     });
 
     pg.after('pageChange', function(e) {
         console.log('page:: ' + e.newVal);
     });
 
-    console.log(pg.render());
+    pg.render();
 
+/// DATATABLE
+/*
 
-    Y.one('body').append(pg.buildControls());
+    var url = "http://query.yahooapis.com/v1/public/yql?format=json" +
+                  "&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys",
+        query = "&q=" + encodeURIComponent(
+                'select * from local.search(500) ' +
+                'where zip = "30350" and query = "food" ' +
+                'limit 20 '),
+        dataSource,
+        table;
+
+    dataSource = new Y.DataSource.Get({ source: url });
+
+    dataSource.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "query.results.Result",
+            resultFields: [
+                "Title",
+                "Phone",
+                {
+                    key: "Rating",
+                    locator: "Rating.AverageRating",
+                    parser: function (val) {
+                        // YQL is returning "NaN" for unrated restaurants
+                        return isNaN(val) ? -1 : +val;
+                    }
+                }
+            ]
+        }
+    });
+
+    table = new Y.DataTable({
+        columns: [
+            "Title",
+            "Phone",
+            {
+                key: "Rating",
+                formatter: function (o) {
+                    if (o.value === -1) {
+                        o.value = '(none)';
+                    }
+                }
+            }
+        ],
+        summary: "Pizza places near 98089",
+        caption: "Table with JSON data from YQL"
+    });
+
+    table.plug(Y.Plugin.DataTableDataSource, { datasource: dataSource });
+
+    table.render("#pizza");
+
+    table.datasource.load({ request: query });
+*/
 
 });
 </script>
 </body>
 </html>
+

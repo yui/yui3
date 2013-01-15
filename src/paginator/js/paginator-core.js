@@ -22,7 +22,8 @@ PaginatorCore.ATTRS = {
     @type Number
     **/
     itemsPerPage: {
-        value: 10
+        value: 10,
+        setter: '_itemsPerPageSetterFn'
     },
 
     /**
@@ -31,7 +32,8 @@ PaginatorCore.ATTRS = {
     @type Number
     **/
     page: {
-        value: 1
+        value: 1,
+        setter: '_pageSetterFn'
     },
 
     /**
@@ -51,7 +53,8 @@ PaginatorCore.ATTRS = {
     @type Number
     **/
     totalItems: {
-        value: 100
+        value: 100,
+        setter: '_totalItemsSetterFn'
     }
 
 };
@@ -104,6 +107,18 @@ Y.extend(PaginatorCore, Y.Base, {
 
     _getIndex: function () {
         return (this.get('page') - 1) * this.get('itemsPerPage') + 1;
+    },
+
+    _pageSetterFn: function(val) {
+        return parseInt(val, 10);
+    },
+
+    _itemsPerPageSetterFn: function (val) {
+        return parseInt(val, 10);
+    },
+
+    _totalItemsSetterFn: function (val) {
+        return parseInt(val, 10);
     }
 
 });
