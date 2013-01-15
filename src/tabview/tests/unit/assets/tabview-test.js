@@ -65,6 +65,28 @@ YUI.add('tabview-test', function(Y) {
 
         },
 
+        'should return the label from existing HTML': function() {
+            var tabview = new Y.TabView({
+                srcNode: '#demo-base'
+            });
+
+            tabview.render();
+            Y.Assert.areEqual('foo', tabview.item(0).get('label'));
+        },
+
+        'should return the label from dynamic tabview': function() {
+            var tabview = new Y.TabView({
+                children: [{
+                    label: 'foo',
+                    content: 'foo content'
+                }]
+            });
+
+            tabview.render();
+            Y.Assert.areEqual('foo', tabview.item(0).get('label'));
+            tabview.destroy();
+        },
+
         'should set the label': function() {
             var tab = new Y.Tab();
             tab.set('label', 'new label');
@@ -79,6 +101,28 @@ YUI.add('tabview-test', function(Y) {
 
             tab.set('label', node);
             Y.Assert.areEqual(html, tab.get('label'));
+        },
+
+        'should return the content from existing HTML': function() {
+            var tabview = new Y.TabView({
+                srcNode: '#demo-base'
+            });
+
+            tabview.render();
+            Y.Assert.areEqual('foo content', tabview.item(0).get('content'));
+        },
+
+        'should return the content from dynamic tabview': function() {
+            var tabview = new Y.TabView({
+                children: [{
+                    label: 'foo',
+                    content: 'foo content'
+                }]
+            });
+
+            tabview.render();
+            Y.Assert.areEqual('foo content', tabview.item(0).get('content'));
+            tabview.destroy();
         },
 
         'should set the content': function() {
