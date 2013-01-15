@@ -176,6 +176,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     
     /**
      * Selector used to find buttons inside a ButtonGroup
+     * @property BUTTON_SELECTOR
      * @type {String}
      */
     BUTTON_SELECTOR: "button, input[type=button], input[type=reset], input[type=submit], input[type=radio], input[type=checkbox]"
