@@ -70,15 +70,53 @@ YUI.add('tabview-test', function(Y) {
             tab.set('label', 'new label');
             Y.Assert.areEqual('new label', tab.get('label'));
             Y.Assert.areEqual('new label', tab.get('contentBox').get('text'));
-
         },
 
-        'should set the label': function() {
+        'should set the label via Y.Node instance': function() {
+            var tab = new Y.Tab(),
+                html = '<em>new label</em>',
+                node = Y.Node.create(html);
+
+            tab.set('label', node);
+            Y.Assert.areEqual(html, tab.get('label'));
+        },
+
+        'should set the content': function() {
             var tab = new Y.Tab();
             tab.set('content', 'new content');
             Y.Assert.areEqual('new content', tab.get('content'));
             Y.Assert.areEqual('new content', tab.get('panelNode').get('text'));
+        },
 
+        'should set the content via Y.Node instance': function() {
+            var tab = new Y.Tab(),
+                html = '<div>new content</div>',
+                node = Y.Node.create(html);
+
+            tab.set('content', node);
+            Y.Assert.areEqual(html, tab.get('content'));
+        },
+
+        'should preserve existing content events post render()': function() {
+            var html = '<div><a href="#">new content</a></div>',
+                node = Y.Node.create(html),
+                clicked = false,
+                tabview = new Y.TabView({
+                    children: [{
+                        label: 'new label',
+                        panelNode: node
+                    }]
+                });
+
+            node.one('a').on('click', function(e) {
+                e.preventDefault();
+                clicked = true;
+            });
+
+            tabview.render();
+            node.one('a').simulate('click');
+            Y.Assert.isTrue(clicked);
+            tabview.destroy();
         }
     })); 
 }, '@VERSION@' ,{requires:['tabview', 'test']});
