@@ -636,13 +636,12 @@ Y.Node.prototype.toggleView = function(name, on, callback) {
 
     if (typeof name !== 'string') { // no transition, just toggle
         on = name;
-        name = null;
-        this._toggleView(name, on); // call original _toggleView in Y.Node
+        this._toggleView(on, callback); // call original _toggleView in Y.Node
         return;
     }
 
-    if (typeof on === 'function') { // 'on' is not passed
-      on = undefined;
+    if (typeof on === 'function') { // Ignore "on" if used for callback argument.
+        on = undefined;
     }
 
     if (typeof on === 'undefined' && name in this._toggles) { // reverse current toggle
@@ -668,7 +667,8 @@ Y.NodeList.prototype.toggleView = function(name, on, callback) {
         node;
 
     while ((node = nodes[i++])) {
-        Y.one(node).toggleView(name, on, callback);
+        node = Y.one(node);
+        node.toggleView.apply(node, arguments);
     }
 
     return this;
