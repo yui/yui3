@@ -61,20 +61,24 @@ YUI.add('axis-time-base-tests', function(Y) {
                 len,
                 axisKeys,
                 dateDataByKey,
-                dateKeyValue;
+                dateKeyValue,
+                formatMethod = Y.Date.format,
+                format = this.axis.get("labelFormat"),
+                testFormattedDate;
             this.axis.set("keys", this.keys);
             axisKeys = this.axis.get("keys");
             dateDataByKey = this.axis.getDataByKey("date");
             len = this.dataProvider.length;
             
             for(i = 0; i < len; i = i + 1) {
-                Y.Assert.areEqual(this.dateValues[i], axisKeys.date[i], "The keys attribute should be equal to the values it received.");
-                Y.Assert.areEqual(this.dateValues[i], dateDataByKey[i], "The getDataByKey method should return the correct values.");
-                dateKeyValue = this.axis.getKeyValueAt("date", i);
+                testFormattedDate = formatMethod(new Date(this.dateValues[i]), format); 
+                Y.Assert.areEqual(testFormattedDate, formatMethod(new Date(axisKeys.date[i]), format), "The keys attribute should be equal to the values it received.");
+                Y.Assert.areEqual(testFormattedDate, formatMethod(new Date(dateDataByKey[i]), format), "The getDataByKey method should return the correct values.");
+                dateKeyValue = formatMethod(new Date(this.axis.getKeyValueAt("date", i)), format);
                 Y.Assert.areEqual(
-                    this.dateValues[i], 
+                    testFormattedDate, 
                     dateKeyValue, 
-                    'The axis.getKeyValueAt("date", ' + i + ') method should return a value of ' + this.dateValues[i] + '.'
+                    'The axis.getKeyValueAt("date", ' + i + ') method should return a value of ' + testFormattedDate + '.'
                 );
             }
         },
@@ -84,19 +88,23 @@ YUI.add('axis-time-base-tests', function(Y) {
                 len = this.dataProvider.length,
                 axisKeys,
                 dateDataByKey,
-                dateKeyValue;
+                dateKeyValue,
+                formatMethod = Y.Date.format,
+                format = this.axis.get("labelFormat"),
+                testFormattedDate;
             this.axis.set("dataProvider", this.dataProvider);
             this.axis.addKey("date");
             axisKeys = this.axis.get("keys");
             dateDataByKey = this.axis.getDataByKey("date");
             for(i = 0; i < len; i = i + 1) {
-                Y.Assert.areEqual(this.dateValues[i], axisKeys.date[i], "The keys attribute should be equal to the values it received.");
-                Y.Assert.areEqual(this.dateValues[i], dateDataByKey[i], "The getDataByKey method should return the correct values.");
-                dateKeyValue = this.axis.getKeyValueAt("date", i);
+                testFormattedDate = formatMethod(new Date(this.dateValues[i]), format); 
+                Y.Assert.areEqual(testFormattedDate, formatMethod(new Date(axisKeys.date[i]), format), "The keys attribute should be equal to the values it received.");
+                Y.Assert.areEqual(testFormattedDate, formatMethod(new Date(dateDataByKey[i]), format), "The getDataByKey method should return the correct values.");
+                dateKeyValue = formatMethod(new Date(this.axis.getKeyValueAt("date", i)), format);
                 Y.Assert.areEqual(
-                    this.dateValues[i], 
+                    testFormattedDate, 
                     dateKeyValue, 
-                    'The axis.getKeyValueAt("date", ' + i + ') method should return a value of ' + this.dateValues[i] + '.'
+                    'The axis.getKeyValueAt("date", ' + i + ') method should return a value of ' + testFormattedDate + '.'
                 );
             }
         },
