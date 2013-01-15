@@ -21,14 +21,12 @@ PaginatorBase = Y.Base.create('paginator', Y.View, [Y_Paginator.Core, Y_Paginato
     },
 
     render: function () {
-        var container = this.get('container'),
-            strings = this.get('strings'),
-            html      = Y.Lang.sub(this.template, Y.mix(strings, this.getAttrs()));
-
-        console.log(strings);
+        var container = this.get('container');
 
         // Render this view's HTML into the container element.
-        container.setHTML(html);
+        container.setHTML(this.buildControls());
+        this.updatePageInput();
+        this.updatePageSelect();
 
         // Append the container element to the DOM if it's not on the page already.
         if (!container.inDoc()) {
@@ -46,9 +44,9 @@ PaginatorBase = Y.Base.create('paginator', Y.View, [Y_Paginator.Core, Y_Paginato
         console.log(classNames.control);
 
         subscriptions.push(
-            this.on('pageChange', this._onPageChange, this),
-            this.on('itemsPerPageChange', this._onItemsPerPageChange, this ),
-            this.on('totalItemsChange', this._onTotalItemsChange, this),
+            this.after('pageChange', this._onPageChange, this),
+            this.after('itemsPerPageChange', this._onItemsPerPageChange, this ),
+            this.after('totalItemsChange', this._onTotalItemsChange, this),
             container.delegate('click', this._onControlClick, '.' + classNames.control, this),
             container.delegate('click', this._onPageClick, '.' + classNames.page, this),
             container.delegate('change', this._onPageInputChange, '.' + classNames.pageInput, this),
@@ -67,11 +65,18 @@ PaginatorBase = Y.Base.create('paginator', Y.View, [Y_Paginator.Core, Y_Paginato
                 container: _getClassName('container'),
                 controls: _getClassName('controls'),
                 control: _getClassName('control'),
+                controlWrapper: _getClassName('control','wrapper'),
+                controlFirst: _getClassName('control', 'first'),
+                controlPrev: _getClassName('control', 'prev'),
+                controlNext: _getClassName('control', 'next'),
+                controlLast: _getClassName('control', 'last'),
                 pages: _getClassName('pages'),
                 page: _getClassName('page'),
+                pageWrapper: _getClassName('page', 'wrapper'),
                 pageSelect: _getClassName('page','select'),
                 pageInput: _getClassName('page', 'input'),
-                itemsSelect: _getClassName('items','select')
+                itemsSelect: _getClassName('items','select'),
+                controlSelected: _getClassName('control', 'selected')
             };
 
         this.classNames = classNames;
@@ -80,13 +85,21 @@ PaginatorBase = Y.Base.create('paginator', Y.View, [Y_Paginator.Core, Y_Paginato
     /////////////////////////////////
     // E V E N T   C A L L B A C K S
     /////////////////////////////////
-    _onPageChange: function() {
+    _onPageChange: function(e) {
         console.log('_pageChange');
-        // should rebuild {pages} container only for minimum ui update
+
+        this.updatePageInput();
+        this.updatePageSelect();
+
+        if (this.get('container').one('.' + this.classNames.pages)) {
+            this.replacePages();
+        }
+
+
         // should disable first/prev/next/last controls
     },
 
-    _onItemsPerPageChange: function() {
+    _onItemsPerPageChange: function(e) {
         console.log('itemsPerPage was changed');
         // should rebuild all controls
     },
@@ -96,38 +109,75 @@ PaginatorBase = Y.Base.create('paginator', Y.View, [Y_Paginator.Core, Y_Paginato
         // should rebuild all controls
     },
 
-    _onControlClick: function() {
-        console.log('control was clicked');
-        // sets page based on type of control clicked
+    _onControlClick: function(e) {
+        var control = e.target,
+            classNames = this.classNames;
+
+        if (control.hasClass(classNames.controlFirst)) {
+            this.first();
+        } else if (control.hasClass(classNames.controlPrev)) {
+            this.prev();
+        } else if (control.hasClass(classNames.controlNext)) {
+            this.next();
+        } else if (control.hasClass(classNames.controlLast)) {
+            this.last();
+        }
     },
 
-    _onPageClick: function() {
+    _onPageClick: function(e) {
         console.log('page was clicked');
-        // set page to specific page clicked
+        this.set('page', e.target.getData('page'));
     },
 
-    _onPageInputChange: function() {
-        console.log('page input was changed');
-        // set page to input value if within range
+    _onPageInputChange: function (e) {
+        this.set('page', e.target.get('value'));
     },
 
-    _onPageSelectChange: function() {
-        console.log('page select was changed');
-        // set page to selected page value
+    _onPageSelectChange: function (e) {
+        this.set('page', e.target.get('value'));
     },
 
-    _onItemsSelectChange: function() {
-        console.log('items select was changed');
-        // update items per page
+    _onItemsSelectChange: function (e) {
+        this.set('itemsPerPage', e.target.get('value'));
+        this.replaceControls();
+        this.set('page', 1);
     },
 
 
-    ///////////////////////////////////////
-    // T E M P L A T E   R E N D E R I N G
-    ///////////////////////////////////////
+    /////////////////////////////////////
+    // T E M P L A T E   U P D A T I N G
+    /////////////////////////////////////
+    updatePageInput: function() {
+        var pageInput = this.get('container').one('.' + this.classNames.pageInput);
+
+        if (pageInput) {
+            pageInput.one('input').set('value', this.get('page'));
+        }
+    },
+
+    updatePageSelect: function() {
+        var pageSelect = this.get('container').one('.' + this.classNames.pageSelect);
+
+        if (pageSelect) {
+            pageSelect.one('select').set('value', this.get('page'));
+        }
+    },
+
+    updateItemSelect: function() {
+        var itemsSelect = this.get('container').one('.' + this.classNames.itemsSelect);
+
+        if (itemsSelect) {
+            itemsSelect.one('select').set('value', this.get('itemsPerPage'));
+        }
+    },
 
     replaceControls: function () {
+
         this.get('container').setHTML(this.buildControls());
+
+        this.updatePageInput();
+        this.updatePageSelect();
+        this.updateItemSelect();
 
         return this;
     },
@@ -135,21 +185,31 @@ PaginatorBase = Y.Base.create('paginator', Y.View, [Y_Paginator.Core, Y_Paginato
     replacePages: function () {
         var container = this.get('container'),
             pages = container.one('.' + this.classNames.pages);
-        pages.insertBefore(this.buildPages());
-        pages.remove();
+
+        pages.setHTML(this.buildPages());
 
         return this;
     },
 
-    buildControls: function () {
-        return Y_Paginator_Templates.list({
+    ///////////////////////////////////////
+    // T E M P L A T E   R E N D E R I N G
+    ///////////////////////////////////////
+
+
+    buildControls: function (template) {
+        template || (template = this.get('template'));
+
+        return Y_Paginator_Templates[template]({
             classname: this.classNames.controls,
             first: this.buildControl('first'),
             prev: this.buildControl('prev'),
             next: this.buildControl('next'),
             last: this.buildControl('last'),
             pagesClass: this.classNames.pages,
-            pages: this.buildPages()
+            pages: this.buildPages(),
+            pageInput: this.buildPageInput(),
+            pageSelect: this.buildPageSelect(),
+            itemsSelect: this.buildItemsSelect()
         });
     },
 
@@ -157,6 +217,8 @@ PaginatorBase = Y.Base.create('paginator', Y.View, [Y_Paginator.Core, Y_Paginato
         var link,
             title,
             label,
+            classNames = this.classNames,
+            controlClasses = [classNames.control],
             strings = this.get('strings');
 
         switch (type) {
@@ -164,34 +226,38 @@ PaginatorBase = Y.Base.create('paginator', Y.View, [Y_Paginator.Core, Y_Paginato
                 link = this.formatUrl(1);
                 title = strings.firstTitle;
                 label = strings.firstText;
+                controlClasses.push(classNames.controlFirst);
                 disabled = !this.hasPrev();
                 break;
             case 'prev':
                 link = this.formatUrl(this.get('page') - 1);
                 title = strings.prevTitle;
                 label = strings.prevText;
+                controlClasses.push(classNames.controlPrev);
                 disabled = !this.hasPrev();
                 break;
             case 'next':
                 link = this.formatUrl(this.get('page') + 1);
                 title = strings.nextTitle;
                 label = strings.nextText;
+                controlClasses.push(classNames.controlNext);
                 disabled = !this.hasNext();
                 break;
             case 'last':
                 link = this.formatUrl(this.get('pages'));
                 title = strings.lastTitle;
                 label = strings.lastText;
+                controlClasses.push(classNames.controlLast);
                 disabled = !this.hasNext();
                 break;
         }
 
         return Y_Paginator_Templates.controlWrapper({
-            classname: this.classNames.control + '-' + type,
+            classname: classNames.controlWrapper,
             control: Y_Paginator_Templates.control({
                 link: link,
                 title: title,
-                classname: this.classNames.control,
+                classname: controlClasses.join(' '),
                 label: label
             })
         });
@@ -212,30 +278,68 @@ PaginatorBase = Y.Base.create('paginator', Y.View, [Y_Paginator.Core, Y_Paginato
     },
 
     buildPage: function (pageNumber) {
+        var classNames = this.classNames,
+            pageClasses = [
+                classNames.page,
+                classNames.page + '-' + pageNumber
+                ];
+
+        if (pageNumber === this.get('page')) {
+            pageClasses.push(classNames.controlSelected);
+        }
+
         return Y_Paginator_Templates.pageWrapper({
-            classname: this.classNames.page + '-' + pageNumber,
+            classname: classNames.pageWrapper,
             page: Y_Paginator_Templates.page({
                 link: this.formatUrl(pageNumber),
                 title: pageNumber,
-                classname: this.classNames.page,
-                label: pageNumber
+                classname: pageClasses.join(' '),
+                label: pageNumber,
+                number: pageNumber
             })
         });
     },
 
     buildPageInput: function () {
+        var classNames = this.classNames,
+            inputClasses = [classNames.control, classNames.pageInput];
         // return <input> template with label and classnames
+        return Y_Paginator_Templates.pageInput({
+            classname: inputClasses.join(' ')
+        });
     },
 
     buildPageSelect: function () {
         // loop through items and build options
+        var classNames = this.classNames,
+            selectClasses = [classNames.control, classNames.pageSelect],
+            pageOptions = '',
+            currentPage = this.get('page'),
+            i,
+            l;
 
+        for (i = 1, l = this.get('pages'); i <= l; i++) {
+            pageOptions += Y_Paginator_Templates.pageSelectOption({
+                pageNumber: i,
+                selected: i === currentPage
+            });
+        }
         // return <select> template with label, classnames and <option>s
+        return Y_Paginator_Templates.pageSelect({
+            pageOptions: pageOptions,
+            classname: selectClasses.join(' ')
+        });
     },
 
     buildItemsSelect: function () {
         // options should be predefined in template
         // return <select> template with label, classnames and <option>s
+        var classNames = this.classNames,
+            selectClasses = [classNames.control, classNames.itemsSelect];
+
+        return Y_Paginator_Templates.itemsSelect({
+            classname: selectClasses.join(' ')
+        });
     },
 
     getDisplayRange: function () {
@@ -306,6 +410,10 @@ PaginatorBase = Y.Base.create('paginator', Y.View, [Y_Paginator.Core, Y_Paginato
 
 }, {
     ATTRS: {
+        template: {
+            value: 'list'
+        },
+
         container: {
             valueFn: '_defContainerFn'
         },
