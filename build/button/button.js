@@ -37,7 +37,12 @@ Y.extend(Button, Y.Widget,  {
     * @private
     */
     initializer: function(config) {
-        this._host = this.get('boundingBox');
+        var button = this;
+        button._host = button.get('boundingBox');
+
+        if (config.disabled) {
+            button.set('disabled', config.disabled);
+        }
     },
 
     /**
@@ -58,8 +63,8 @@ Y.extend(Button, Y.Widget,  {
      */
     syncUI: function() {
         var button = this;
-        button._uiSetLabel(button.get('label'));
-        button._uiSetDisabled(button.get('disabled'));
+        Y.ButtonCore.prototype._uiSetLabel.call(button, button.get('label'));
+        Y.ButtonCore.prototype._uiSetDisabled.call(button, button.get('disabled'));
     },
 
     /**
@@ -67,7 +72,7 @@ Y.extend(Button, Y.Widget,  {
     * @private
     */
     _afterLabelChange: function(e) {
-        this._uiSetLabel(e.newVal);
+        Y.ButtonCore.prototype._uiSetLabel.call(this, e.newVal);
     },
 
     /**
@@ -75,7 +80,11 @@ Y.extend(Button, Y.Widget,  {
     * @private
     */
     _afterDisabledChange: function(e) {
-        this._uiSetDisabled(e.newVal);
+        // Unable to use `this._uiSetDisabled` because that points 
+        // to `Y.Widget.prototype._uiSetDisabled`. 
+        // This works for now.
+        // @TODO Investigate appropriate solution.
+        Y.ButtonCore.prototype._uiSetDisabled.call(this, e.newVal);
     }
 
 }, {
