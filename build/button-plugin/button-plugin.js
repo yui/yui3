@@ -8,9 +8,11 @@ YUI.add('button-plugin', function (Y, NAME) {
 */
 
 /**
-* @class ButtonPlugin
+* @class Button
 * @param config {Object} Configuration object
+* @extends ButtonCore
 * @constructor
+* @namespace Plugin
 */
 function ButtonPlugin() {
     ButtonPlugin.superclass.constructor.apply(this, arguments);
