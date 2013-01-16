@@ -162,6 +162,22 @@ suite.add(new Y.Test.Case({
         cb.simulate('click');
         
         Assert.areSame('true', cb.get('aria-checked'));
+    },
+    
+    'hide() and show() should behave correctly': function () {
+        var button = this.button,
+            cb = button.get('contentBox'),
+            origStyle = cb.getStyle('display');
+        
+        button.hide();
+
+        Assert.isTrue(cb.hasClass('yui3-button-hidden'));
+        Assert.areSame('none', cb.getComputedStyle('display'));
+
+        button.show();
+
+        Assert.isFalse(cb.hasClass('yui3-button-hidden'));
+        Assert.areSame(origStyle, cb.getStyle('display'));
     }
 }));
 
