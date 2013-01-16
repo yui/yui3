@@ -4,24 +4,38 @@
 * @module button-core
 * @since 3.5.0
 */
-
 var getClassName = Y.ClassNameManager.getClassName;
 
 /**
 * Creates a button
 *
 * @class ButtonCore
+* @uses AttributeCore
 * @param config {Object} Configuration object
 * @constructor
 */
-function Button(config) {
+function ButtonCore(config) {
     this.initializer(config);
 }
 
-Button.prototype = {
+ButtonCore.prototype = {
+
+    /**
+     *
+     * @property TEMPLATE
+     * @type {String}
+     * @default <button/>
+     */
     TEMPLATE: '<button/>',
 
-    constructor: Button,
+    /**
+     *
+     * @property constructor
+     * @type {Object}
+     * @default ButtonCore
+     * @private
+     */
+    constructor: ButtonCore,
 
     /**
     * @method initializer
@@ -57,10 +71,10 @@ Button.prototype = {
     */
     _initAttributes: function(config) {
         var host = this._host,
-            node = host.one('.' + Button.CLASS_NAMES.LABEL) || host;
+            node = host.one('.' + ButtonCore.CLASS_NAMES.LABEL) || host;
             
         config.label = config.label || this._getLabel(node);
-        Y.AttributeCore.call(this, Button.ATTRS, config);
+        Y.AttributeCore.call(this, ButtonCore.ATTRS, config);
     },
 
     /**
@@ -74,7 +88,7 @@ Button.prototype = {
             tagName = node.get('tagName').toLowerCase();
 
         // Set some default node attributes
-        node.addClass(Button.CLASS_NAMES.BUTTON);
+        node.addClass(ButtonCore.CLASS_NAMES.BUTTON);
         
         if (tagName !== 'button' && tagName !== 'input') {
             node.set('role', 'button');
@@ -101,7 +115,7 @@ Button.prototype = {
 
     /**
     * @method getNode
-    * @description Gets the host node for this button instance
+    * @description Gets the host DOM node for this button instance
     * @public
     */
     getNode: function() {
@@ -122,7 +136,7 @@ Button.prototype = {
             label = node.get('value');
         }
         else {
-            label = (node.one('.' + Button.CLASS_NAMES.LABEL) || node).get('text');
+            label = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).get('text');
         }
         
         return label;
@@ -141,7 +155,7 @@ Button.prototype = {
         if (tagName === 'input') {
             node.set('value', label);
         } else {
-            (node.one('.' + Button.CLASS_NAMES.LABEL) || node).set('text', label);
+            (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).set('text', label);
         }
 
         return label;
@@ -157,27 +171,43 @@ Button.prototype = {
         var node = this.getNode();
         
         node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
-        node.toggleClass(Button.CLASS_NAMES.DISABLED, value);
+        node.toggleClass(ButtonCore.CLASS_NAMES.DISABLED, value);
         
         return value;
     }
 };
+
+
+Y.mix(ButtonCore.prototype, Y.AttributeCore.prototype);
 
 /**
 * Attribute configuration.
 *
 * @property ATTRS
 * @type {Object}
-* @private
+* @protected
 * @static
 */
-Button.ATTRS = {
+ButtonCore.ATTRS = {
+
+    /**
+    * The text of the button (the `value` or `text` property)
+    *
+    * @attribute label
+    * @type String
+    */
     label: {
         setter: '_uiSetLabel',
         getter: '_getLabel',
         lazyAdd: false
     },
 
+    /**
+    * The button's enabled/disabled state
+    *
+    * @attribute disabled
+    * @type Boolean
+    */
     disabled: {
         value: false,
         setter: '_uiSetDisabled',
@@ -192,7 +222,7 @@ Button.ATTRS = {
 * @type String
 * @static
 */
-Button.NAME = "button";
+ButtonCore.NAME = "button";
 
 /**
 * Array of static constants used to identify the classnames applied to DOM nodes
@@ -202,7 +232,7 @@ Button.NAME = "button";
 * @public
 * @static
 */
-Button.CLASS_NAMES = {
+ButtonCore.CLASS_NAMES = {
     BUTTON  : getClassName('button'),
     DISABLED: getClassName('button', 'disabled'),
     SELECTED: getClassName('button', 'selected'),
@@ -217,7 +247,7 @@ Button.CLASS_NAMES = {
 * @private
 * @static
 */
-Button.ARIA_STATES = {
+ButtonCore.ARIA_STATES = {
     PRESSED : 'aria-pressed',
     CHECKED : 'aria-checked'
 };
@@ -230,13 +260,11 @@ Button.ARIA_STATES = {
 * @private
 * @static
 */
-Button.ARIA_ROLES = {
+ButtonCore.ARIA_ROLES = {
     BUTTON  : 'button',
     CHECKBOX: 'checkbox',
     TOGGLE  : 'toggle'
 };
 
-Y.mix(Button.prototype, Y.AttributeCore.prototype);
-
 // Export Button
-Y.ButtonCore = Button;
+Y.ButtonCore = ButtonCore;

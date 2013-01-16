@@ -159,6 +159,11 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     * @static
     */
     ATTRS: {
+        
+        /*
+        * @attribute type
+        * @type String
+        */
         type: {
             writeOnce: 'initOnly',
             value: 'radio'
