@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../build/yui/yui.js"></script>
+<meta charset=utf-8 />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>JS Bin</title>
+</head>
+<body>
+  <p><a id="link1" href="#foo">Listening to taps!</a></p>
+  <p><a id="link2" href="#bar">Listening to clicks!</a></p>
+
+  <script>
+  YUI({
+  	filter: 'raw'
+  }).use('event-tap', 'node', function (Y) {
+    
+    Y.one('#link1').on('tap', function (e) {
+      e.preventDefault();
+    });
+    
+    Y.one('#link2').on('click', function (e) {
+      e.preventDefault();
+    });
+    
+  });
+  </script>
+</body>
+</html>
