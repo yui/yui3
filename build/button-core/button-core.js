@@ -71,7 +71,7 @@ Button.prototype = {
     * @param config {Object} Config object.
     * @private
     */
-    _renderUI: function(config) {
+    _renderUI: function() {
         var node = this.getNode(),
             tagName = node.get('tagName').toLowerCase();
 
@@ -79,12 +79,12 @@ Button.prototype = {
         node.addClass(Button.CLASS_NAMES.BUTTON);
         
         if (tagName !== 'button' && tagName !== 'input') {
-            node.set('role', 'button');   
+            node.set('role', 'button');
         }
     },
 
     /**
-    * @method enable    
+    * @method enable
     * @description Sets the button's `disabled` DOM attribute to false
     * @public
     */

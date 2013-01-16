@@ -19,7 +19,7 @@ var CLASS_NAMES = Y.ButtonCore.CLASS_NAMES,
 * @param config {Object} Configuration object
 * @constructor
 */
-function Button(config) {
+function Button() {
     Button.superclass.constructor.apply(this, arguments);
 }
 
@@ -36,7 +36,7 @@ Y.extend(Button, Y.Widget,  {
     * @param config {Object} Config object.
     * @private
     */
-    initializer: function(config) {
+    initializer: function() {
         this._host = this.get('boundingBox');
     },
 
@@ -149,7 +149,7 @@ Y.mix(Button.prototype, Y.ButtonCore.prototype);
 * @param config {Object} Configuration object
 * @constructor
 */
-function ToggleButton(config) {
+function ToggleButton() {
     Button.superclass.constructor.apply(this, arguments);
 }
 

@@ -10,7 +10,7 @@
 * @param config {Object} Configuration object
 * @constructor
 */
-function ButtonPlugin(config) {
+function ButtonPlugin() {
     ButtonPlugin.superclass.constructor.apply(this, arguments);
 }
 
@@ -104,14 +104,14 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
 * @description A factory that plugs a Y.Node instance with Y.Plugin.Button
 * @param node {Object}
 * @param config {Object}
-* @returns {Object} A plugged Y.Node instance
+* @return {Object} A plugged Y.Node instance
 * @public
 */
 ButtonPlugin.createNode = function(node, config) {
     var template;
 
     if (node && !config) {
-        if (! (node.nodeType || node.getDOMNode || typeof node == 'string')) {
+        if (! (node.nodeType || node.getDOMNode || typeof node === 'string')) {
             config = node;
             node = config.srcNode;
         }

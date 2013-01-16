@@ -17973,10 +17973,13 @@ IO.prototype = {
         sync = config.sync;
         data = config.data;
 
-        // Serialize an map object into a key-value string using
+        // Serialize a map object into a key-value string using
         // querystring-stringify-simple.
         if ((Y.Lang.isObject(data) && !data.nodeType) && !transaction.upload) {
-            data = Y.QueryString.stringify(data);
+            if (Y.QueryString && Y.QueryString.stringify) {
+                config.data = data = Y.QueryString.stringify(data);
+            } else {
+            }
         }
 
         if (config.form) {
