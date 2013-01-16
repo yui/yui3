@@ -83,6 +83,37 @@ Y.Event.define(EVT_TAP, {
     **/
     on: function (node, subscription, notifier) {
         subscription[HANDLES.START] = node.on(EVT_START, this.touchStart, this, node, subscription, notifier);
+
+        /*
+            Patch synthetic event's fire method to allow for e.preventDefault() 
+            or e.stopPropagation() on a subsequent click event
+
+            Check https://gist.github.com/4272500 for some more info
+            Check http://www.youtube.com/watch?v=v7Z6FlO1opU for the discussion.
+        */
+        notifier.handle.evt.fire = function (e) {
+            var subs = this._subscribers.concat(this._afters),
+                args = Y.Array(arguments, 0, true),
+                i, len, halt;
+              
+            for (i = 0, len = subs.length; i < len; ++i) {
+                halt = subs[i].notify(args, this);
+            
+                // stopImmediatePropagation
+                if (halt === false || e.stopped > 1) {
+                    break;
+                }
+            }
+          
+            if (e.prevented || e.stopped) {
+                e.target.once('click', function (clickEvt) {
+                    e.prevented && clickEvt.preventDefault();
+                    e.stopped && clickEvt[e.stopped === 2 ? 'stopImmediatePropagation' : 'stopPropagation']();
+                });
+            }
+          
+            return !!this.stopped;
+        };
     },
 
     /**
