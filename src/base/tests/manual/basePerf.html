@@ -135,12 +135,134 @@ YUI({filter:"raw"}).use('base', 'node', function(Y) {
 
     Y.extend(Test, Y.BaseCore);
 
+    var MyBaseCore20Ideal = function() {
+        MyBaseCore20Ideal.superclass.constructor.apply(this, arguments);
+    };
+
+    Y.extend(MyBaseCore20Ideal, Y.BaseCore);
+
+    MyBaseCore20Ideal.NAME = 'myBaseCore20Ideal';
+
+    MyBaseCore20Ideal.ATTRS = {
+
+        attr1: {
+            value: "Foo",
+            setter: function(n) {
+                return n;
+            }
+        },
+
+        attr2: {
+            value: "Bar",
+            setter: function(n) {
+                return n;
+            }
+        },
+
+        attr3: {
+            value: true
+        },
+
+        attr4: {
+            value: 3
+        },
+
+        attr5: {
+            value: 3
+        },
+
+        attr6: {
+            value: false,
+            setter: function(lock) {
+                return lock;
+            }
+        },
+
+        attr7: {
+            value: 10
+        },
+
+        attr8: {
+            valueFn: function() {
+                return {};
+            }
+        },
+
+        attr9: {
+            valueFn : function() {
+                return [];
+            }
+        },
+
+        attr10: {
+            value: "Foobar"
+        },
+
+        attr11: {
+            value: 25
+        },
+
+        attr12: {
+            value: null
+        },
+
+        attr13: {
+            value: false
+        },
+
+        attr14: {
+            value: false,
+            setter: function(val) {
+                return val;
+            }
+        },
+
+        attr15: {
+            value: null,
+            setter: function(val) {
+                return false;
+            }
+        },
+
+        attr16: {
+            valueFn: function() {
+                return ['default'];
+            },
+
+            getter: function() {
+                return false;
+            },
+
+            setter: function(g) {
+                return g;
+            }
+        },
+        attr17: {
+            value: null,
+            setter: function(g) {
+                return g;
+            }
+        },
+        attr18: {
+            writeOnce: true,
+            value: null
+        },
+        attr19: {
+            writeOnce: true,
+            value: null
+        },
+        attr20: {
+            writeOnce: true,
+            value: null
+        }
+    };
+
     Y.one("document").on("click", function() {
 
         console.profile("instantiation");
 
-        for (var i = 0; i < 1000; i++) {
-            t = new Test();
+        for (var i = 0; i < 10000; i++) {
+            t = new MyBaseCore20Ideal();
         }
 
         console.profileEnd("instantiation");

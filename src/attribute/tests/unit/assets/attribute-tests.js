@@ -1210,7 +1210,11 @@ YUI.add('attribute-tests', function(Y) {
                 initValue: "foo",
                 readOnly: true,
                 setter: function (val) { return val; },
-                value: "foo"
+                value: "foo",
+
+                // Internals. Left in for performance, to avoid delete
+                initializing: false,
+                isLazyAdd: true
             };
 
             Y.Assert.areEqual(Y.Object.size(expected), Y.Object.size(attrCfg), "getAttrCfg returned unexpected populated state");

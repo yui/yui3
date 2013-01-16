@@ -325,6 +325,7 @@
          * of an object with attribute name/configuration pairs.
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
+
             var cfgs = null,
                 cfg,
                 val,
@@ -335,10 +336,12 @@
                 for (attr in attrs) {
                     if (allCfgs[attr]) {
 
-                        cfgs = cfgs || {};
+                        if (!cfgs) {
+                            cfgs = {};
+                        }
 
-                        // PERF TODO: Revisit once all unit tests pass for further runtime/memory optimizations.
-                        // See if we really need to isolate this.
+                        // PERF TODO:
+                        // Revisit once all unit tests pass for further optimizations. See if we really need to isolate this.
                         cfg = cfgs[attr] = _wlmix({}, allCfgs[attr], this._attrCfgHash());
 
                         val = cfg.value;
@@ -394,6 +397,7 @@
         _initHierarchyData : function() {
 
             var ctor = this.constructor,
+                cachedClassData = ctor._CACHED_CLASS_DATA,
                 c,
                 i,
                 l,
@@ -408,9 +412,7 @@
             // Start with `this` instance's constructor.
             c = ctor;
 
-            if (!ctor._CACHED_CLASS_DATA) {
-
-                ctor._CACHED_CLASS_DATA = {};
+            if (!cachedClassData) {
 
                 while (c) {
                     // Add to classes
@@ -433,7 +435,9 @@
                         }
                     }
 
-                    //if (this._allowAdHocAttrs) {
+                    // Commenting out the if. We always aggregate, since we don't
+                    // know if we'll be needing this on the instance or not.
+                    // if (this._allowAdHocAttrs) {
                         nonAttrsCfg = c._NON_ATTRS_CFG;
                         if (nonAttrsCfg) {
                             for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
@@ -450,15 +454,17 @@
                     ctor._ATTR_CFG_HASH = attrCfgHash;
                 }
 
-                ctor._CACHED_CLASS_DATA.classes = this._classes = classes;
-                ctor._CACHED_CLASS_DATA.nonAttrs = this._nonAttrs = nonAttrs;
-                ctor._CACHED_CLASS_DATA.attrs = this._attrs = this._aggregateAttrs(attrs);
+                cachedClassData = ctor._CACHED_CLASS_DATA = {
+                    classes : classes,
+                    nonAttrs : nonAttrs,
+                    attrs : this._aggregateAttrs(attrs)
+                };
 
-            } else {
-                this._classes = ctor._CACHED_CLASS_DATA.classes;
-                this._attrs = ctor._CACHED_CLASS_DATA.attrs;
-                this._nonAttrs = ctor._CACHED_CLASS_DATA.nonAttrs;
             }
+
+            this._classes = cachedClassData.classes;
+            this._attrs = cachedClassData.attrs;
+            this._nonAttrs = cachedClassData.nonAttrs;
         },
 
         /**
@@ -517,7 +523,6 @@
             var attr,
                 attrs,
                 cfg,
-                val,
                 path,
                 i,
                 cfgPropsHash = this._attrCfgHash(),
@@ -526,19 +531,15 @@
 
             if (allAttrs) {
                 for (i = allAttrs.length-1; i >= 0; --i) {
+
                     attrs = allAttrs[i];
 
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            // Protect config passed in
+                            // PERF TODO: Do we need to merge here, since we're merging later in filterAttrCfg
+                            // Should we move this down to only merge if we hit the path or valueFn ifs below?
                             cfg = _wlmix({}, attrs[attr], cfgPropsHash);
-
-                            val = cfg.value;
-
-                            if (val && (typeof val === "object")) {
-                                this._cloneDefaultValue(attr, cfg);
-                            }
 
                             path = null;
                             if (attr.indexOf(DOT) !== -1) {
@@ -549,14 +550,29 @@
                             aggAttr = aggAttrs[attr];
 
                             if (path && aggAttr && aggAttr.value) {
-                                O.setValue(aggAttr.value, path, val);
+
+                                // PERF TODO: Is this really required here, since we need
+                                // to clone again anyway when re-using the value for a new
+                                // instance. Could we hold onto the raw reference here ("a.b":"foo")?
+                                // That would move the setValue cost to the instance though, and we
+                                // maybe take on an iteration cost also.
+
+                                if (typeof aggAttr.value === "object") {
+                                    this._cloneDefaultValue(attr, aggAttr);
+                                }
+
+                                O.setValue(aggAttr.value, path, cfg.value);
+
                             } else if (!path) {
+
                                 if (!aggAttr) {
                                     aggAttrs[attr] = cfg;
                                 } else {
                                     if (aggAttr.valueFn && VALUE in cfg) {
                                         aggAttr.valueFn = null;
                                     }
+
+                                    // Mix into existing config.
                                     _wlmix(aggAttr, cfg, cfgPropsHash);
                                 }
                             }

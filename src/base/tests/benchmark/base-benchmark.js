@@ -476,6 +476,25 @@ var suite = Y.BenchmarkSuite = new Benchmark.Suite();
 
     Y.extend(MyBaseCore, Y.BaseCore);
 
+    var MyModelCore = function() {
+        MyModelCore.superclass.constructor.apply(this, arguments);
+    };
+
+    MyModelCore.NAME = "myModel";
+
+    Y.extend(MyModelCore, Y.BaseCore, {
+        _allowAdHocAttrs : true
+    });
+
+    var MyModel = function() {
+        MyModel.superclass.constructor.apply(this, arguments);
+    };
+
+    MyModel.NAME = "myModel";
+
+    Y.extend(MyModel, Y.Base, {
+        _allowAdHocAttrs : true
+    });
 
 suite.add('Base', function () {
    var b = new Y.Base();
@@ -514,5 +533,20 @@ suite.add('MyBaseCore with 20 varied attributes', function () {
 suite.add('MyBaseCore with 20 varied attributes (using perf. best practices)', function () {
    var b = new MyBaseCore20Ideal();
 });
+
+suite.add('MyModelCore with 2 ad-hoc attrs', function () {
+    var b = new MyModelCore({
+        label : 1,
+        description : "01234567890"
+    });
+});
+
+suite.add('MyModel with 2 ad-hoc attrs', function () {
+    var b = new MyModel({
+        label : 1,
+        description : "01234567890"
+    });
+});
+
 
 }, '@VERSION@', {requires: ['base']});

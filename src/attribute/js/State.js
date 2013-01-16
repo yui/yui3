@@ -43,25 +43,18 @@
          * @method addAll
          * @param name {String} The name of the item.
          * @param obj {Object} A hash of property/value pairs.
-         * @param [override] {boolean} If true, the hash passed in replaces the currently stored hash for the item.
          */
-        addAll: function(name, obj, override) {
-            var item,
+        addAll: function(name, obj) {
+            var item = this.data[name],
                 key;
 
-            if (override) {
-                this.data[name] = obj;
-            } else {
-                item = this.data[name];
+            if (!item) {
+                item = this.data[name] = {};
+            }
 
-                if (!item) {
-                    item = this.data[name] = {};
-                }
-
-                for (key in obj) {
-                    if (obj.hasOwnProperty(key)) {
-                        item[key] = obj[key];
-                    }
+            for (key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    item[key] = obj[key];
                 }
             }
         },

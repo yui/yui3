@@ -35,10 +35,8 @@
         // Used for internal state management
         ADDED = "added",
         BYPASS_PROXY = "_bypassProxy",
-        INITIALIZING = "initializing",
         INIT_VALUE = "initValue",
         LAZY = "lazy",
-        IS_LAZY_ADD = "isLazyAdd",
 
         INVALID_VALUE;
 
@@ -263,21 +261,23 @@
 
             config = config || {};
 
-            lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
+            if (LAZY_ADD in config) {
+                lazy = config[LAZY_ADD];
+            }
 
-            added = host.attrAdded(name);
+            added = state.get(name, ADDED);
 
             if (lazy && !added) {
-                state.addAll(name, {
+                state.data[name] = {
                     lazy : config,
                     added : true
-                }, true);
+                };
             } else {
 
                 /*jshint maxlen:200*/
-                if (added && !state.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
+                if (added && !config.isLazyAdd) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
-                if (!added || state.get(name, IS_LAZY_ADD)) {
+                if (!added || config.isLazyAdd) {
 
                     hasValue = (VALUE in config);
 
@@ -285,23 +285,29 @@
                     if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
 
                     if (hasValue) {
+
                         // We'll go through set, don't want to set value in config directly
+
+                        // PERF TODO: VALIDATE: See if setting this to undefined is sufficient. We use to delete before.
+                        // In certain code paths/use cases, undefined may not be the same as not present.
+                        // If not, we can set it to some known fixed value (like INVALID_VALUE, say INITIALIZING_VALUE) for performance,
+                        // to avoid a delete which seems to help a lot.
+
                         value = config.value;
-                        delete config.value;
+                        config.value = undefined;
                     }
 
                     config.added = true;
                     config.initializing = true;
 
-                    // PERF TODO: Make sure addAll(..., true) is OK here. IS_LAZY_ADD gets blown away.
-                    state.addAll(name, config, true);
+                    state.data[name] = config;
 
                     if (hasValue) {
                         // Go through set, so that raw values get normalized/validated
                         host.set(name, value);
                     }
 
-                    state.remove(name, INITIALIZING);
+                    config.initializing = false;
                 }
             }
 
@@ -357,12 +363,18 @@
          * @param {Object} name The name of the attribute
          */
         _addLazyAttr: function(name) {
-            var state = this._state,
-                lazyCfg = state.get(name, LAZY);
+            var lazyCfg = this._state.get(name, LAZY);
 
-            state.add(name, IS_LAZY_ADD, true);
-            state.remove(name, LAZY);
-            this.addAttr(name, lazyCfg);
+            if (lazyCfg) {
+                // PERF TODO: For App's id override, otherwise wouldn't be
+                // needed. It expects to find it in the cfg for it's
+                // addAttr override. Would like to remove, once App override is
+                // removed.
+                this._state.data[name].lazy = undefined;
+
+                lazyCfg.isLazyAdd = true;
+                this.addAttr(name, lazyCfg);
+            }
         },
 
         /**
@@ -433,13 +445,11 @@
                 name = path.shift();
             }
 
-            if (this._isLazyAttr(name)) {
-                this._addLazyAttr(name);
-            }
+            this._addLazyAttr(name);
 
             cfg = state.getAll(name, true) || {};
 
-            initialSet = (!(VALUE in cfg));
+            initialSet = (cfg.value === undefined);
 
             if (stateProxy && name in stateProxy && !cfg._bypassProxy) {
                 // TODO: Value is always set for proxy. Can we do any better? Maybe take a snapshot as the initial value for the first call to set?
@@ -483,7 +493,6 @@
                 }
 
                 if (allowSet) {
-                    opts = opts || {};
                     if (!this._fireAttrChange || initializing) {
                         this._setAttrVal(name, strPath, currVal, val, opts);
                     } else {
@@ -533,9 +542,7 @@
             }
 
             // Lazy Init
-            if (host._isLazyAttr(name)) {
-                host._addLazyAttr(name);
-            }
+            host._addLazyAttr(name);
 
             val = host._getStateVal(name);
 
@@ -762,15 +769,14 @@
          * @return {Object} A reference to the host object.
          */
         addAttrs : function(cfgs, values, lazy) {
-            var host = this; // help compression
             if (cfgs) {
-                host._tCfgs = cfgs;
-                host._tVals = host._normAttrVals(values);
-                host._addAttrs(cfgs, host._tVals, lazy);
-                host._tCfgs = host._tVals = null;
+                this._tCfgs = cfgs;
+                this._tVals = (values) ? this._normAttrVals(values) : null;
+                this._addAttrs(cfgs, this._tVals, lazy);
+                this._tCfgs = this._tVals = null;
             }
 
-            return host;
+            return this;
         },
 
         /**
@@ -811,7 +817,7 @@
                     }
 
                     if (host._tCfgs[attr]) {
-                        delete host._tCfgs[attr];
+                        host._tCfgs[attr] = undefined;
                     }
 
                     host.addAttr(attr, attrCfg, lazy);
@@ -847,32 +853,38 @@
          * @private
          */
         _normAttrVals : function(valueHash) {
-            var vals = {},
-                subvals = {},
+            var vals,
+                subvals,
                 path,
                 attr,
                 v, k;
 
-            if (valueHash) {
-                for (k in valueHash) {
-                    if (valueHash.hasOwnProperty(k)) {
-                        if (k.indexOf(DOT) !== -1) {
-                            path = k.split(DOT);
-                            attr = path.shift();
-                            v = subvals[attr] = subvals[attr] || [];
-                            v[v.length] = {
-                                path : path,
-                                value: valueHash[k]
-                            };
-                        } else {
-                            vals[k] = valueHash[k];
-                        }
-                    }
-                }
-                return { simple:vals, complex:subvals };
-            } else {
+            if (!valueHash) {
                 return null;
             }
+
+            vals = {};
+
+            for (k in valueHash) {
+                if (valueHash.hasOwnProperty(k)) {
+                    if (k.indexOf(DOT) !== -1) {
+                        path = k.split(DOT);
+                        attr = path.shift();
+
+                        subvals = subvals || {};
+
+                        v = subvals[attr] = subvals[attr] || [];
+                        v[v.length] = {
+                            path : path,
+                            value: valueHash[k]
+                        };
+                    } else {
+                        vals[k] = valueHash[k];
+                    }
+                }
+            }
+
+            return { simple:vals, complex:subvals };
         },
 
         /**
@@ -895,6 +907,7 @@
                 valFn = cfg.valueFn,
                 tmpVal,
                 initValSet = false,
+                readOnly = cfg.readOnly,
                 simple,
                 complex,
                 i,
@@ -903,7 +916,7 @@
                 subval,
                 subvals;
 
-            if (!cfg.readOnly && initValues) {
+            if (!readOnly && initValues) {
                 // Simple Attributes
                 simple = initValues.simple;
                 if (simple && simple.hasOwnProperty(attr)) {
@@ -922,7 +935,7 @@
                 }
             }
 
-            if (!cfg.readOnly && initValues) {
+            if (!readOnly && initValues) {
 
                 // Complex Attributes (complex values applied, after simple, in case both are set)
                 complex = initValues.complex;
