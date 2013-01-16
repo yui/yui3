@@ -284,7 +284,9 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
         var boundingBox = this.get("boundingBox"),
             contentBox = this.get('contentBox'),
             selFilesButton = this.get("selectFilesButton"),
-            flashContainer = Y.one("#" + this._swfContainerId),
+            flashContainer = Y.Node.create(substitute(UploaderFlash.FLASH_CONTAINER, {
+                swfContainerId: this._swfContainerId
+            })),
             params = {
                 version: "10.0.45",
                 fixedAttributes: {
@@ -298,9 +300,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
         boundingBox.setStyle("position", "relative");
         selFilesButton.setStyles({width: "100%", height: "100%"});
         contentBox.append(selFilesButton);
-        contentBox.append(Y.Node.create(substitute(UploaderFlash.FLASH_CONTAINER, {
-            swfContainerId: this._swfContainerId
-        })));
+        contentBox.append(flashContainer);
 
         this._swfReference = new Y.SWF(flashContainer, this.get("swfURL"), params);
     },
