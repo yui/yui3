@@ -71,7 +71,7 @@ YUI.add('tabview-test', function(Y) {
             });
 
             tabview.render();
-            Y.Assert.areEqual('foo', tabview.item(0).get('label'));
+            Y.Assert.areEqual(Y.one('#demo-base li a').getHTML(), tabview.item(0).get('label'));
         },
 
         'should return the label from dynamic tabview': function() {
