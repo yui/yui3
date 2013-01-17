@@ -1,0 +1,10 @@
+{
+    "name": "normalize",
+    "builds": {
+        "normalize": {
+            "cssfiles": [
+                "normalize.css"
+            ]
+        }
+    }
+}
