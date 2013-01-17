@@ -2582,6 +2582,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-style")) > -1, "Module (node-style) not found in sorted array");
         },
+     "Testing normalize": function(data) {
+            var loader = new Y.Loader({
+                require: ["normalize"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("normalize")) > -1, "Module (normalize) not found in sorted array");
+        },
      "Testing oop": function(data) {
             var loader = new Y.Loader({
                 require: ["oop"],

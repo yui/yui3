@@ -4869,6 +4869,9 @@ Y.mix(YUI.Env[Y.version].modules, {
             "node-base"
         ]
     },
+    "normalize": {
+        "type": "css"
+    },
     "oop": {
         "requires": [
             "yui-base"
@@ -5729,7 +5732,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '6eecff08bd9d5521555ade0c451e8ab0';
+YUI.Env[Y.version].md5 = '4d7a621688853ccee63f83c0fcbc810a';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
