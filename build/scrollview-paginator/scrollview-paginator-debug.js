@@ -327,7 +327,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @param e {Event.Facade} The event facade
      * @protected
      */
-    _beforeHostFlick: function () {
+    _beforeHostFlick: function (e) {
 
         // The drag was out of bounds, so do nothing (which will cause a snapback)
         if (this._host._isOutOfBounds()){
