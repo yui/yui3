@@ -130,7 +130,6 @@ var _queries = Y.TabviewBase._queries,
                 tabview.add({
                     boundingBox: node,
                     contentBox: node.one(DOT + _classNames.tabLabel),
-                    label: node.one(DOT + _classNames.tabLabel).get('text'),
                     panelNode: panelNode
                 });
             });
@@ -292,18 +291,28 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
        });
     },
 
+    _defLabelGetter: function() {
+        return this.get('contentBox').getHTML();
+    },
+
     _defLabelSetter: function(label) {
-        this.get('contentBox').setContent(label);
+        var labelNode = this.get('contentBox');
+        if (labelNode.getHTML() !== label) { // Avoid rewriting existing label.
+            labelNode.setHTML(label);
+        }
         return label;
     },
 
     _defContentSetter: function(content) {
-        this.get('panelNode').setContent(content);
+        var panel = this.get('panelNode');
+        if (panel.getHTML() !== content) { // Avoid rewriting existing content.
+            panel.setHTML(content);
+        }
         return content;
     },
 
     _defContentGetter: function() {
-        return this.get('panelNode').getContent();
+        return this.get('panelNode').getHTML();
     },
 
     // find panel by ID mapping from label href
@@ -350,7 +359,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
          */
         label: {
             setter: '_defLabelSetter',
-            validator: Lang.isString
+            getter: '_defLabelGetter'
         },
 
         /**
