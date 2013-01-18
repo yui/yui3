@@ -14,7 +14,7 @@ if [ -n "$TRAVIS" ]; then
     npm -g install yogi -loglevel silent
     cd ../
     echo "building entire library with yogi";
-    yogi build --no-lint --cache
+    yogi build --no-lint --cache --no-coverage
     cd yui;
 else 
     make npm

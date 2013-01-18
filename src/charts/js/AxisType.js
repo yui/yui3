@@ -320,7 +320,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     {
         var units,
             majorUnit = this.get("styles").majorUnit,
-            len = this.get("length");
+            len = this.getLength();
         if(majorUnit.determinant === "count")
         {
             units = majorUnit.count;
