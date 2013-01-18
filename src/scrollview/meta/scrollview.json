@@ -23,7 +23,7 @@
             },
             "scrollview-scrollbars" : {
                 "requires" : [
-		            "classnamemanager",
+                    "classnamemanager",
                     "transition",
                     "plugin"
                 ],
