@@ -63,7 +63,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     {
         this._setCanvas();
         this.addListeners();
-        this.set("rendered", true);
         this.validate();
     },
 
@@ -686,6 +685,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          */
 }, {
     ATTRS: {
+        /**
+         * The graphic in which drawings will be rendered.
+         *
+         * @attribute graphic
+         * @type Graphic
+         */
+        graphic: {
+            lazyAdd: false,
+
+            setter: function(val) {
+                //woraround for Attribute order of operations bug
+                if(!this.get("rendered")) {
+                    this.set("rendered", true);
+                }
+                return val;
+            }
+        },
+
         /**
          * An array of all series of the same type used within a chart application.
          *

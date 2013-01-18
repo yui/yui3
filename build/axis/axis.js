@@ -2852,6 +2852,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
          * @type String
          */
         position: {
+            lazyAdd: false,
+
             setter: function(val)
             {
                 var layoutClass = this._layoutClasses[val];
