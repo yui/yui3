@@ -16,12 +16,12 @@ var CONFIG = Y.config,
 /**
  * Gridlines draws gridlines on a Graph.
  *
- * @module charts
- * @submodule charts-base
  * @class Gridlines
  * @constructor
  * @extends Base
  * @uses Renderer
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule charts-base
  */
 Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     /**

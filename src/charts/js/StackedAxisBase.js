@@ -1,5 +1,5 @@
 /**
- * StackedAxisBase manages time data for an axis.
+ * StackedAxisBase manages stacked numeric data for an axis.
  *
  * @class StackedAxisBase
  * @constructor

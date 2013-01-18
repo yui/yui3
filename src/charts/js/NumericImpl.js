@@ -7,7 +7,11 @@
 
 var Y_Lang = Y.Lang;
 /**
- * NumericImpl manages numeric data on an axis.
+ * NumericImpl contains logic for numeric data. NumericImpl is used by the following classes:
+ * <ul>
+ *      <li>{{#crossLink "NumericAxisBase"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "NumericAxis"}}{{/crossLink}}</li>
+ *  </ul>
  *
  * @class NumericImpl
  * @constructor

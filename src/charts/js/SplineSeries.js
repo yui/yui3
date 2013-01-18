@@ -8,7 +8,7 @@
  * SplineSeries renders a graph with data points connected by a curve.
  *
  * @class SplineSeries
- * @extends CartesianSeries
+ * @extends LineSeries
  * @uses CurveUtil
  * @uses Lines
  * @constructor

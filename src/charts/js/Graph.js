@@ -2,12 +2,11 @@
  * Graph manages and contains series instances for a `CartesianChart`
  * instance.
  *
- * @module charts
- * @submodule charts-base
  * @class Graph
  * @constructor
  * @extends Widget
  * @uses Renderer
+ * @submodule charts-base
  */
 Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     /**

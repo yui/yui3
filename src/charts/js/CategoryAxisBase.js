@@ -1,5 +1,5 @@
 /**
- * CategoryAxisBase is an abstract class that manages numeric data for an axis.
+ * CategoryAxisBase manages category data for an axis.
  *
  * @class CategoryAxisBase
  * @constructor

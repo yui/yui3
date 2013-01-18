@@ -8,8 +8,7 @@
  * AreaSplineSeries renders an area graph with data points connected by a curve.
  *
  * @class AreaSplineSeries
- * @extends CartesianSeries
- * @uses Fills
+ * @extends AreaSeries
  * @uses CurveUtil
  * @constructor
  * @param {Object} config (optional) Configuration parameters.

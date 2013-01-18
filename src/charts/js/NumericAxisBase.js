@@ -1,5 +1,5 @@
 /**
- * NumericAxisBase is an abstract class that manages numeric data for an axis.
+ * NumericAxisBase manages numeric data for an axis.
  *
  * @class NumericAxisBase
  * @constructor

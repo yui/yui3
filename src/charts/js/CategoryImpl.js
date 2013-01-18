@@ -6,7 +6,11 @@
  */
 
 /**
- * CategoryImpl manages category data on an axis.
+ * CategoryImpl contains logic for managing category data. CategoryImpl is used by the following classes:
+ * <ul>
+ *      <li>{{#crossLink "CategoryAxisBase"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "CategoryAxis"}}{{/crossLink}}</li>
+ *  </ul>
  *
  * @class CategoryImpl
  * @constructor

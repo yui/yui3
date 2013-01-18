@@ -6,9 +6,13 @@
  */
 
 /**
- * StackedImpl manages stacked numeric axis data.
+ * StackedImpl contains logic for managing stacked numeric data. StackedImpl is used by the following classes:
+ * <ul>
+ *      <li>{{#crossLink "StackedAxisBase"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "StackedAxis"}}{{/crossLink}}</li>
+ *  </ul>
  *
- * @submodule axis-stacked
+ * @submodule axis-stacked-base
  * @class StackedImpl
  * @constructor
  */

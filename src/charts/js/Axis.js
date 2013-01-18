@@ -1,5 +1,11 @@
 /**
- * An abstract class that is used to generates axes for a chart.
+ * An abstract class that provides the core functionality for draw a chart axis. Axis is used by the following classes:
+ * <ul>
+ *      <li>{{#crossLink "CategoryAxis"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "NumericAxis"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "StackedAxis"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "TimeAxis"}}{{/crossLink}}</li>
+ *  </ul>
  *
  * @class Axis
  * @extends Widget
