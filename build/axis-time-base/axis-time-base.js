@@ -9,7 +9,11 @@ YUI.add('axis-time-base', function (Y, NAME) {
 
 var Y_Lang = Y.Lang;
 /**
- * TimeImpl manages time data on an axis.
+ * TimeImpl contains logic for time data. TimeImpl is used by the following classes:
+ * <ul>
+ *      <li>{{#crossLink "TimeAxisBase"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "TimeAxis"}}{{/crossLink}}</li>
+ *  </ul>
  *
  * @class TimeImpl
  * @constructor

@@ -18,12 +18,12 @@ var CONFIG = Y.config,
 /**
  * Gridlines draws gridlines on a Graph.
  *
- * @module charts
- * @submodule charts-base
  * @class Gridlines
  * @constructor
  * @extends Base
  * @uses Renderer
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule charts-base
  */
 Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     /**
@@ -239,12 +239,11 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
  * Graph manages and contains series instances for a `CartesianChart`
  * instance.
  *
- * @module charts
- * @submodule charts-base
  * @class Graph
  * @constructor
  * @extends Widget
  * @uses Renderer
+ * @submodule charts-base
  */
 Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     /**
@@ -4945,9 +4944,9 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
 /**
  * The Chart class is the basic application used to create a chart.
  *
- * @module charts
  * @class Chart
  * @constructor
+ * @submodule charts-base
  */
 function Chart(cfg)
 {

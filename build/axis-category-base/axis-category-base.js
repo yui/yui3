@@ -8,7 +8,11 @@ YUI.add('axis-category-base', function (Y, NAME) {
  */
 
 /**
- * CategoryImpl manages category data on an axis.
+ * CategoryImpl contains logic for managing category data. CategoryImpl is used by the following classes:
+ * <ul>
+ *      <li>{{#crossLink "CategoryAxisBase"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "CategoryAxis"}}{{/crossLink}}</li>
+ *  </ul>
  *
  * @class CategoryImpl
  * @constructor
@@ -187,7 +191,7 @@ CategoryImpl.prototype = {
 Y.CategoryImpl = CategoryImpl;
 
 /**
- * CategoryAxisBase is an abstract class that manages numeric data for an axis.
+ * CategoryAxisBase manages category data for an axis.
  *
  * @class CategoryAxisBase
  * @constructor

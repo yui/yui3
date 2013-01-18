@@ -8,9 +8,13 @@ YUI.add('axis-stacked-base', function (Y, NAME) {
  */
 
 /**
- * StackedImpl manages stacked numeric axis data.
+ * StackedImpl contains logic for managing stacked numeric data. StackedImpl is used by the following classes:
+ * <ul>
+ *      <li>{{#crossLink "StackedAxisBase"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "StackedAxis"}}{{/crossLink}}</li>
+ *  </ul>
  *
- * @submodule axis-stacked
+ * @submodule axis-stacked-base
  * @class StackedImpl
  * @constructor
  */
@@ -114,7 +118,7 @@ StackedImpl.prototype = {
 Y.StackedImpl = StackedImpl;
 
 /**
- * StackedAxisBase manages time data for an axis.
+ * StackedAxisBase manages stacked numeric data for an axis.
  *
  * @class StackedAxisBase
  * @constructor
