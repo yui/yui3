@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Transition tests</title>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <style>
 .demo {
     background: #ccc;
@@ -622,23 +622,6 @@ YUI({
                 test.wait(2500);
             },
 
-            'nodelist should transition together': function() {
-                var test = this,
-                    resumed = false;
-
-                Y.all('.demo').transition({duration: 0.15, opacity: 0}, function(e) {
-                    if (!resumed) {
-                        test.resume(function() {
-                            resumed = true;
-                            var nodes = Y.all('.demo');
-                            Y.Assert.areEqual(0, nodes.item(0).getStyle('opacity'));
-                            Y.Assert.areEqual(1, parseInt(e.elapsedTime * 10));
-                        });
-                    }
-                });
-                test.wait(2000);
-            }
-
 
         }));
         suite.add(new Y.Test.Case({
@@ -889,17 +872,160 @@ YUI({
         suite.add(new Y.Test.Case({
             name: 'toggleView Tests',
 
+            setUp: function() {
+                Y.one('.demo').setStyles({
+                    display: 'block',
+                    opacity: '1'
+                });
+            },
+
+            tearDown: function() {
+                Y.one('.demo').setStyles({
+                    display: 'block',
+                    opacity: '1'
+                });
+            },
+
             'should force state with boolean first arg': function() {
                 var node = Y.one('.demo'),
                     test = this;
 
                 node.toggleView(false, function() {
-                    test.resume(function() {
-                        Y.Assert.areEqual(0, node.getStyle('opacity'));
-                        node.destroy();
-                    })
+                    Y.Assert.areEqual('none', node.getStyle('display'));
+                    node.destroy();
+                });
+            },
+
+            'should force state with boolean first arg for all nodes': function() {
+                var nodes = Y.all('.demo'),
+                    count = 0;
+
+                nodes.toggleView(false, function() {
+                    if (count < nodes.size()) {
+                        count++;
+                    } else {
+                        Y.Assert.areEqual('none', nodes.item(0).getStyle('display'));
+                        Y.Assert.areEqual('none', nodes.item(1).getStyle('display'));
+                    }
+                    nodes.destroy();
+                });
+
+                Y.Assert.areEqual(nodes.size(), count);
+            },
+
+            'should toggle using the named toggle': function() {
+                var nodes = Y.all('.demo'),
+                    test = this,
+                    count = 0;
+
+                nodes.toggleView('fade', function() {
+                    test.resume(function () {
+                        Y.Assert.areEqual('none', nodes.item(0).getStyle('display'));
+                        Y.Assert.areEqual('none', nodes.item(1).getStyle('display'));
+                        Y.Assert.areEqual('0', nodes.item(0).getStyle('opacity'));
+                        Y.Assert.areEqual('0', nodes.item(1).getStyle('opacity'));
+                    });
+                });
+
+                test.wait(1000);
+            },
+
+            'should hide using the named toggle': function() {
+                var nodes = Y.all('.demo'),
+                    test = this;
+
+                nodes.toggleView('fade', false, function() {
+                    Y.Assert.areEqual('block', nodes.item(0).getStyle('display'));
+                    Y.Assert.areEqual('block', nodes.item(1).getStyle('display'));
+                    Y.Assert.areEqual('1', nodes.item(0).getStyle('opacity'));
+                    Y.Assert.areEqual('1', nodes.item(1).getStyle('opacity'));
+                    nodes.destroy();
+                });
+            },
+
+            'should show using the named toggle': function() {
+                var nodes = Y.all('.demo'),
+                    test = this;
+
+                nodes.setStyles({
+                    display: 'none',
+                    opacity: '0'
+                });
+
+                nodes.toggleView('fade', true, function() {
+                    Y.Assert.areEqual('block', nodes.item(0).getStyle('display'));
+                    Y.Assert.areEqual('block', nodes.item(1).getStyle('display'));
+                    Y.Assert.areEqual('1', nodes.item(0).getStyle('opacity'));
+                    Y.Assert.areEqual('1', nodes.item(1).getStyle('opacity'));
+                    nodes.destroy();
+                });
+            }
+        }));
+
+        suite.add(new Y.Test.Case({
+            name: 'NodeList Transitions',
+
+            setUp: function() {
+                Y.one('.demo').setStyles({
+                    display: 'block',
+                    opacity: '1'
+                });
+            },
+
+            'nodelist should transition together': function() {
+                var test = this,
+                    resumed = false;
+
+                Y.all('.demo').transition({duration: 0.15, opacity: 0}, function(e) {
+                    if (!resumed) {
+                        test.resume(function() {
+                            resumed = true;
+                            var nodes = Y.all('.demo');
+                            Y.Assert.areEqual(0, nodes.item(0).getStyle('opacity'));
+                            Y.Assert.areEqual(0, nodes.item(1).getStyle('opacity'));
+                            Y.Assert.areEqual(1, parseInt(e.elapsedTime * 10));
+                        });
+                    }
                 });
                 test.wait(2000);
+            },
+
+            'should show the nodes with the default transition': function() {
+                var nodes = Y.all('.demo'),
+                    test = this;
+
+                nodes.setStyle('display', 'none');
+                nodes.setStyle('opacity', '0');
+                nodes.show(true);
+
+                Y.later(550, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(1, nodes.item(0).getStyle('opacity'));
+                        Y.Assert.areEqual('block', nodes.item(0).getStyle('display'));
+                        Y.Assert.areEqual(1, nodes.item(1).getStyle('opacity'));
+                        Y.Assert.areEqual('block', nodes.item(1).getStyle('display'));
+                    });
+                });
+                test.wait(1000);
+            },
+
+            'should hide the nodes with the default transition': function() {
+                var nodes = Y.all('.demo'),
+                    test = this;
+
+                nodes.setStyle('display', 'none');
+                nodes.setStyle('opacity', '0');
+                nodes.hide(true);
+
+                Y.later(550, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(0, nodes.item(0).getStyle('opacity'));
+                        Y.Assert.areEqual('none', nodes.item(0).getStyle('display'));
+                        Y.Assert.areEqual(0, nodes.item(1).getStyle('opacity'));
+                        Y.Assert.areEqual('none', nodes.item(1).getStyle('display'));
+                    });
+                });
+                test.wait(1000);
             }
 
         }));
