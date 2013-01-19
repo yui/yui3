@@ -273,7 +273,13 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
      */
     getEdgeOffset: function(ct, l)
     {
-        return 0;
+        var edgeOffset;
+        if(this.get("calculateEdgeOffset")) {
+            edgeOffset = l/ct;
+        } else {
+            edgeOffset = 0;
+        }
+        return edgeOffset;
     },
 
     /**
@@ -402,6 +408,16 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     }
 }, {
     ATTRS: {
+        /**
+         * Determines whether and offset is automatically calculated for the edges of the axis.
+         *
+         * @attr calculateEdgeOffset
+         * @type Boolean
+         */
+        calculateEdgeOffset: {
+            value: false
+        },
+        
         labelFunction: {
             valueFn: function() {
                 return this.formatLabel;
