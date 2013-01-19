@@ -35,11 +35,14 @@ Y.extend(Button, Y.Widget,  {
     * @private
     */
     initializer: function(config) {
-        var button = this;
-        button._host = button.get('boundingBox');
 
+        // ButtonCore requires this
+        this._host = this.get('boundingBox');
+
+        // A workaround until there's a better way to handle setting Node attributes 
+        // via HTML parsing in classes that extend Widget
         if (config.disabled) {
-            button.set('disabled', config.disabled);
+            this.set('disabled', config.disabled);
         }
     },
 
