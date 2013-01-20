@@ -22,9 +22,13 @@ Y.extend(PaginatorUrl, Y.Base, {
     },
 
     formatUrl: function (page) {
-        return Y.Lang.sub(this.get('url'), {
-            page: page || this.get('page')
-        });
+        var url = this.get('url');
+        if (url) {
+            return Y.Lang.sub(this.get('url'), {
+                page: page || this.get('page')
+            });
+        }
+        return null;
     }
 });
 

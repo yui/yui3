@@ -22,7 +22,7 @@ PaginatorCore.ATTRS = {
     @type Number
     **/
     itemsPerPage: {
-        value: 10,
+        value: 1,
         setter: '_itemsPerPageSetterFn'
     },
 
@@ -53,7 +53,7 @@ PaginatorCore.ATTRS = {
     @type Number
     **/
     totalItems: {
-        value: 100,
+        value: 1,
         setter: '_totalItemsSetterFn'
     }
 
@@ -61,39 +61,39 @@ PaginatorCore.ATTRS = {
 
 Y.extend(PaginatorCore, Y.Base, {
 
-    select: function(pageNumber) {
+    select: function (pageNumber) {
         this.set('page', pageNumber);
     },
 
-    first: function() {
+    first: function () {
         if (this.hasPrev()) {
             this.select(1);
         }
     },
 
-    last: function() {
+    last: function () {
         if (this.hasNext()) {
             this.select(this.get('pages'));
         }
     },
 
-    prev: function() {
+    prev: function () {
         if (this.hasPrev()) {
             this.select(this.get('page') - 1);
         }
     },
 
-    next: function() {
+    next: function () {
         if (this.hasNext()) {
             this.select(this.get('page') + 1);
         }
     },
 
-    hasPrev: function() {
+    hasPrev: function () {
         return (this.get('page') > 1);
     },
 
-    hasNext: function() {
+    hasNext: function () {
         return (this.get('page') + 1 <= this.get('pages'));
     },
 
@@ -109,11 +109,14 @@ Y.extend(PaginatorCore, Y.Base, {
         return (this.get('page') - 1) * this.get('itemsPerPage') + 1;
     },
 
-    _pageSetterFn: function(val) {
+    _pageSetterFn: function (val) {
         return parseInt(val, 10);
     },
 
     _itemsPerPageSetterFn: function (val) {
+        if (val.toString().toLowerCase() === 'all' || val === '*') {
+            val = this.get('totalItems');
+        }
         return parseInt(val, 10);
     },
 

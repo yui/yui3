@@ -11,9 +11,9 @@
                 "paginator-core.js"
             ]
         },
-        "paginator-url": {
+        "paginator-dt": {
             "jsfiles": [
-                "paginator-url.js"
+                "paginator-dt.js"
             ]
         },
         "paginator-list": {
@@ -24,6 +24,16 @@
         "paginator-templates": {
             "jsfiles": [
                 "paginator-templates.js"
+            ]
+        },
+        "paginator-url": {
+            "jsfiles": [
+                "paginator-url.js"
+            ]
+        },
+        "paginator-view": {
+            "jsfiles": [
+                "paginator-view.js"
             ]
         }
     }

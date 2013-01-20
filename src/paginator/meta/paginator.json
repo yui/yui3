@@ -25,8 +25,15 @@
                     "base"
                 ]
             },
-            "paginator-url": {
-                "requires": []
+            "paginator-dt": {
+                "requires": [
+                    "paginator-view"
+                ]
+            },
+            "paginator-list": {
+                "requires": [
+                    "paginator-view"
+                ]
             },
             "paginator-templates": {
                 "requires": [
@@ -36,6 +43,12 @@
                 "lang": [
                     "en"
                 ]
+            },
+            "paginator-url": {
+                "requires": []
+            },
+            "paginator-view": {
+                "requires": ["view"]
             }
         }
     }
