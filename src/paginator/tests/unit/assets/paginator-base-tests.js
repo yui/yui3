@@ -1,4 +1,4 @@
-YUI.add('paginator-base-tests', function(Y) {
+YUI.add('paginator-base-tests', function (Y) {
 
 var suite = new Y.Test.Suite("Paginator: Base");
 
@@ -28,7 +28,7 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: 'Paging methods',
 
-    'test first last paging': function() {
+    'test first last paging': function () {
         var pg = new Y.Paginator({
             itemsPerPage: 10,
             totalItems: 100
@@ -51,7 +51,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(1, pg.get('page'), 'first() did not go to one');
     },
 
-    'test next prev paging': function() {
+    'test next prev paging': function () {
         var pg = new Y.Paginator({
                 itemsPerPage: 10,
                 totalItems: 100,
@@ -69,7 +69,7 @@ suite.add(new Y.Test.Case({
 
     },
 
-    'test direct paging': function() {
+    'test direct paging': function () {
         var pg = new Y.Paginator({
                 itemsPerPage: 10,
                 totalItems: 100,
@@ -91,7 +91,7 @@ suite.add(new Y.Test.Case({
 
     },
 
-    'test end +1 paging': function() {
+    'test end +1 paging': function () {
         var pg = new Y.Paginator({
                 itemsPerPage: 10,
                 totalItems: 100,
@@ -126,7 +126,7 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: 'Widget methods',
 
-    'test view extending': function() {
+    'test view extending': function () {
         var pg = new Y.Paginator();
 
         Y.Assert.isTrue(pg instanceof Y.View);
@@ -136,7 +136,7 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: 'Url methods',
 
-    'test url methods': function() {
+    'test url methods': function () {
         var pg = new Y.Paginator();
 
         Y.Assert.isNotUndefined(pg.formatUrl);

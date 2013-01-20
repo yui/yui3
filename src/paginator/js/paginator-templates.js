@@ -8,19 +8,21 @@ var template = new Y.Template(),
 
     page = '<a href="<%= this.link %>" data-page="<%= this.number %>" title="Page <%= this.title %>" class="<%= this.classname %>"><%= this.label %></a>',
 
-    pageInput = '<label class="<%= this.classname %>">Go to page: <input type="text"></label>',
+    pageInput = '<label class="<%= this.classname %>">Page <input type="text" value="<%= this.page %>"> of <%= this.pages %></label>',
 
-    pageSelect = '<label class="<%= this.classname %>" class="<%= this.classname %>">Go to page: <select><%== this.pageOptions %></select></label>',
+    pageSelect = '<label class="<%= this.classname %>" class="<%= this.classname %>">Go to page: <select><%== this.options %></select></label>',
 
-    pageSelectOption = '<option value="<%= this.pageNumber %>"<% if(this.selected) { %> selected="selected"<% }; %>><%= this.pageNumber %></option>',
+    pageSelectOption = '<option value="<%= this.page %>"<% if(this.selected) { %> selected="selected"<% }; %>><%= this.page %></option>',
 
-    itemsSelect = '<label class="<%= this.classname %>">Items per page: <select><option>10</option><option>50</option><option>100</option></select></label>',
+    perPageSelect = '<label class="<%= this.classname %>">Items per page: <select><%== this.options %></label>',
+
+    perPageSelectOption = '<option value="<%= this.display %>"<% if(this.selected) { %> selected="selected"<% }; %>><%= this.display %></option>',
 
     list = '<ul class="<%= this.classname %>"><%== this.first %><%== this.prev %><ul class="<%= this.pagesClass %>"><%== this.pages %></ul><%== this.next %><%== this.last %></ul>',
 
-    dt = '<ul class="<%= this.classname %>"><%== this.first %><%== this.prev %><%== this.pageInput %><%== this.next %><%== this.last %><%== this.pageSelect %><%== this.itemsSelect %></ul>',
+    dt = '<ul class="<%= this.classname %>"><%== this.first %><%== this.prev %><%== this.pageInput %><%== this.next %><%== this.last %><%== this.pageSelect %><%== this.perPageSelect %></ul>',
 
-    all = '<ul class="<%= this.classname %>"><%== this.first %><%== this.prev %><ul class="<%= this.pagesClass %>"><%== this.pages %></ul><%== this.next %><%== this.last %><%== this.pageInput %><%== this.pageSelect %><%== this.itemsSelect %></ul>',
+    all = '<ul class="<%= this.classname %>"><%== this.first %><%== this.prev %><ul class="<%= this.pagesClass %>"><%== this.pages %></ul><%== this.next %><%== this.last %><%== this.pageInput %><%== this.pageSelect %><%== this.perPageSelect %></ul>',
 
     PageTemplates = {
         control: template.compile(control),
@@ -30,7 +32,8 @@ var template = new Y.Template(),
         pageInput: template.compile(pageInput),
         pageSelect: template.compile(pageSelect),
         pageSelectOption: template.compile(pageSelectOption),
-        itemsSelect: template.compile(itemsSelect),
+        perPageSelect: template.compile(perPageSelect),
+        perPageSelectOption: template.compile(perPageSelectOption),
         list: template.compile(list),
         all: template.compile(all),
         dt: template.compile(dt)
@@ -38,7 +41,3 @@ var template = new Y.Template(),
 
 
 Y.namespace('Paginator').Templates = PageTemplates;
-
-if (Y.Lang.isFunction(Y.Paginator)) {
-    Y.Base.mix(Y.Paginator, [PageTemplates]);
-}

@@ -10,7 +10,7 @@ var YUITest = require('yuitest'),
     json;
 
 
-YUI({useSync: true }).use('test', function(Y) {
+YUI({useSync: true }).use('test', function (Y) {
     Y.Test.Runner = YUITest.TestRunner;
     Y.Test.Case = YUITest.TestCase;
     Y.Test.Suite = YUITest.TestSuite;

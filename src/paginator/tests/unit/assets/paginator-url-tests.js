@@ -1,4 +1,4 @@
-YUI.add('paginator-url-tests', function(Y) {
+YUI.add('paginator-url-tests', function (Y) {
 
 var suite = new Y.Test.Suite("Paginator: Core");
 
@@ -6,7 +6,7 @@ var suite = new Y.Test.Suite("Paginator: Core");
 suite.add(new Y.Test.Case({
     name: 'Naviagion methods',
 
-    'test navigation url generation': function() {
+    'test navigation url generation': function () {
         var url = '/?pg={page}',
             pg = new Y.Paginator({
                 itemsPerPage: 10,
@@ -24,7 +24,7 @@ suite.add(new Y.Test.Case({
 
     },
 
-    'test prev next naviagion generation': function() {
+    'test prev next naviagion generation': function () {
         var pg = new Y.Paginator({
             itemsPerPage: 10,
             totalItems: 100,
