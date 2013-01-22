@@ -114,9 +114,11 @@ Y.extend(PaginatorCore, Y.Base, {
     },
 
     _itemsPerPageSetterFn: function (val) {
+        this._viewItemsPerPage = val;
         if (val.toString().toLowerCase() === 'all' || val === '*') {
             val = this.get('totalItems');
         }
+
         return parseInt(val, 10);
     },
 

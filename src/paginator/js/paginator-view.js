@@ -43,6 +43,8 @@ var Y_Paginator = Y.Paginator,
         // T E M P L A T E   R E N D E R I N G
         ///////////////////////////////////////
 
+        buildControls: function () {},
+
         buildControl: function (type) {
             var link,
                 title,
@@ -297,7 +299,7 @@ var Y_Paginator = Y.Paginator,
             var perPageSelect = this.get('container').one('.' + this.classNames.perPageSelect);
 
             if (perPageSelect) {
-                perPageSelect.one('select').set('value', this.controller.get('itemsPerPage'));
+                perPageSelect.one('select').set('value', this.controller._viewItemsPerPage);
             }
         },
 
