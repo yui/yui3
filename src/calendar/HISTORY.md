@@ -4,7 +4,7 @@ Calendar Change History
 3.8.1
 -----
 
-* No changes.
+* Update calendar navigator controls when minimum or maximum date changes 
 
 3.8.0
 -----
