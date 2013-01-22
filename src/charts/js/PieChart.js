@@ -1,11 +1,10 @@
 /**
  * The PieChart class creates a pie chart
  *
- * @module charts
- * @submodule charts-base
  * @class PieChart
  * @extends ChartBase
  * @constructor
+ * @submodule charts-base
  */
 Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     /**

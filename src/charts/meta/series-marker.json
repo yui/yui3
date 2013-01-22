@@ -1,0 +1,7 @@
+{
+    "series-marker": {
+        "requires":[
+            "series-plot-util"
+        ]
+    }
+}

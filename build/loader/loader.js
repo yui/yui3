@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.01.09-23-24',
+            GALLERY_VERSION = 'gallery-2013.01.16-21-05',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -3186,6 +3186,85 @@ Y.mix(YUI.Env[Y.version].modules, {
             "autocomplete-base"
         ]
     },
+    "axes": {
+        "use": [
+            "axis-numeric",
+            "axis-category",
+            "axis-time",
+            "axis-stacked"
+        ]
+    },
+    "axes-base": {
+        "use": [
+            "axis-numeric-base",
+            "axis-category-base",
+            "axis-time-base",
+            "axis-stacked-base"
+        ]
+    },
+    "axis": {
+        "requires": [
+            "dom",
+            "widget",
+            "widget-position",
+            "widget-stack",
+            "graphics",
+            "axis-base"
+        ]
+    },
+    "axis-base": {
+        "requires": [
+            "classnamemanager",
+            "datatype-number",
+            "datatype-date",
+            "base",
+            "event-custom"
+        ]
+    },
+    "axis-category": {
+        "requires": [
+            "axis",
+            "axis-category-base"
+        ]
+    },
+    "axis-category-base": {
+        "requires": [
+            "axis-base"
+        ]
+    },
+    "axis-numeric": {
+        "requires": [
+            "axis",
+            "axis-numeric-base"
+        ]
+    },
+    "axis-numeric-base": {
+        "requires": [
+            "axis-base"
+        ]
+    },
+    "axis-stacked": {
+        "requires": [
+            "axis-numeric",
+            "axis-stacked-base"
+        ]
+    },
+    "axis-stacked-base": {
+        "requires": [
+            "axis-numeric-base"
+        ]
+    },
+    "axis-time": {
+        "requires": [
+            "axis",
+            "axis-time-base"
+        ]
+    },
+    "axis-time-base": {
+        "requires": [
+            "axis-base"
+        ]
+    },
     "base": {
         "use": [
             "base-base",
@@ -3327,22 +3406,20 @@ Y.mix(YUI.Env[Y.version].modules, {
         "skinnable": true
     },
     "charts": {
-        "requires": [
+        "use": [
             "charts-base"
         ]
     },
     "charts-base": {
         "requires": [
             "dom",
-            "datatype-number",
-            "datatype-date",
-            "event-custom",
             "event-mouseenter",
             "event-touch",
-            "widget",
-            "widget-position",
-            "widget-stack",
-            "graphics"
+            "graphics-group",
+            "axes",
+            "series-cartesian",
+            "series-pie",
+            "series-cartesian-stacked"
         ]
     },
     "charts-legend": {
@@ -4331,6 +4408,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "graphics"
         }
     },
+    "graphics-group": {
+        "requires": [
+            "graphics"
+        ]
+    },
     "graphics-svg": {
         "condition": {
             "name": "graphics-svg",
@@ -5075,6 +5157,178 @@ Y.mix(YUI.Env[Y.version].modules, {
             "dom-base"
         ]
     },
+    "series-area": {
+        "requires": [
+            "series-fill-util"
+        ]
+    },
+    "series-area-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-area"
+        ]
+    },
+    "series-areaspline": {
+        "requires": [
+            "series-area",
+            "series-curve-util"
+        ]
+    },
+    "series-areaspline-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-areaspline"
+        ]
+    },
+    "series-bar": {
+        "requires": [
+            "series-histogram-base"
+        ]
+    },
+    "series-bar-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-bar"
+        ]
+    },
+    "series-base": {
+        "requires": [
+            "graphics",
+            "axis-base"
+        ]
+    },
+    "series-cartesian": {
+        "use": [
+            "series-line",
+            "series-marker",
+            "series-area",
+            "series-spline",
+            "series-column",
+            "series-bar",
+            "series-areaspline",
+            "series-combo",
+            "series-combospline"
+        ]
+    },
+    "series-cartesian-stacked": {
+        "use": [
+            "series-line-stacked",
+            "series-marker-stacked",
+            "series-area-stacked",
+            "series-spline-stacked",
+            "series-column-stacked",
+            "series-bar-stacked",
+            "series-areaspline-stacked",
+            "series-combo-stacked",
+            "series-combospline-stacked"
+        ]
+    },
+    "series-column": {
+        "requires": [
+            "series-histogram-base"
+        ]
+    },
+    "series-column-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-column"
+        ]
+    },
+    "series-combo": {
+        "requires": [
+            "series-line-util",
+            "series-plot-util",
+            "series-fill-util"
+        ]
+    },
+    "series-combo-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-combo"
+        ]
+    },
+    "series-combospline": {
+        "requires": [
+            "series-combo",
+            "series-curve-util"
+        ]
+    },
+    "series-combospline-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-combospline"
+        ]
+    },
+    "series-curve-util": {
+        "requires": [
+            "series-base"
+        ]
+    },
+    "series-fill-util": {
+        "requires": [
+            "series-base"
+        ]
+    },
+    "series-histogram-base": {
+        "requires": [
+            "series-marker"
+        ]
+    },
+    "series-line": {
+        "requires": [
+            "series-line-util"
+        ]
+    },
+    "series-line-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-line"
+        ]
+    },
+    "series-line-util": {
+        "requires": [
+            "series-base"
+        ]
+    },
+    "series-marker": {
+        "requires": [
+            "series-plot-util"
+        ]
+    },
+    "series-marker-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-marker"
+        ]
+    },
+    "series-pie": {
+        "requires": [
+            "series-marker"
+        ]
+    },
+    "series-plot-util": {
+        "requires": [
+            "series-base"
+        ]
+    },
+    "series-spline": {
+        "requires": [
+            "series-line",
+            "series-curve-util"
+        ]
+    },
+    "series-spline-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-spline"
+        ]
+    },
+    "series-stacked": {
+        "requires": [
+            "series-base",
+            "axis-stacked"
+        ]
+    },
     "shim-plugin": {
         "requires": [
             "node-style",
@@ -5475,7 +5729,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '0ab25a267e8f4fc15265c424cf14fb69';
+YUI.Env[Y.version].md5 = '6eecff08bd9d5521555ade0c451e8ab0';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

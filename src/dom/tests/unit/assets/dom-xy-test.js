@@ -11,6 +11,21 @@ YUI.add('dom-xy-test', function(Y) {
         window.scrollTo(100, 100);
         play2.scrollTop = 50;
 
+        function testXY(expected, actual) {
+            var x = actual[0],
+                pass = false;
+
+            // Expected is in pixels from offsetTop/Left, actual may be subpixels.
+            // Browsers don't agree on which way to round, so its
+            // considered a match if rounding up or down yields a match.
+            if ((Math.floor(actual[0]) === expected[0] || Math.ceil(actual[0]) === expected[0]) &&
+                (Math.floor(actual[1]) === expected[1] || Math.ceil(actual[1]) === expected[1])) {
+                pass = true;
+            }
+
+            return pass;
+        }
+
         Y.each(nodes, function(n) {
             var el = document.createElement('div'),
                 xy = Y.DOM.getXY(n),
@@ -30,7 +45,8 @@ YUI.add('dom-xy-test', function(Y) {
             actual = [el.offsetLeft, el.offsetTop];
 
             tests['should set ' + id + ' in page coords'] = function() {
-                ArrayAssert.itemsAreEqual(actual, [Math.round(xy[0]), Math.round(xy[1])]);
+                Assert.isTrue(testXY(actual, xy));
+                Assert.isTrue(testXY(actual, xy));
             };
         });
 

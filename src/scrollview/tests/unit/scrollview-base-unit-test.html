@@ -42,15 +42,16 @@
         YUI({
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             coverage: ['scrollview-base']
-        }).use('console', 'test', 'node-event-simulate', 'scrollview-base', function(Y) {
+        }).use('test-console', 'test', 'node-event-simulate', 'scrollview-base', function(Y) {
 
 	        var DURATION = 1,
 	        	SLOW_DURATION = 1000,
 	        	WAIT = 2000,
 	        	LONG_WAIT = 4000,
-	        	myConsole = new Y.Console().render(),
 	        	suite = new Y.Test.Suite("Scrollview: Base");
-
+			
+			new Y.Test.Console().render();
+	        
 	        suite.add(new Y.Test.Case({
 	            name: "API Tests",
                 _should: {

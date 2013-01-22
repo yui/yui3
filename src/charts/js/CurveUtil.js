@@ -1,10 +1,15 @@
 /**
- * Utility class used for calculating curve points.
+ * Provides functionality for drawing curves in a series.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-curve-util
+ */
+/**
+ * Utility class used for calculating curve points.
+ *
  * @class CurveUtil
  * @constructor
+ * @submodule series-curve-util
  */
 function CurveUtil()
 {

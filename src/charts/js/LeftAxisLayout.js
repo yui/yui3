@@ -1,10 +1,27 @@
 /**
- * Algorithmic strategy for rendering a left axis.
+ * Provides base functionality for drawing chart axes.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule axis
+ */
+var CONFIG = Y.config,
+    WINDOW = CONFIG.win,
+    DOCUMENT = CONFIG.doc,
+    Y_Lang = Y.Lang,
+    IS_STRING = Y_Lang.isString,
+    Y_DOM = Y.DOM,
+    LeftAxisLayout,
+    RightAxisLayout,
+    BottomAxisLayout,
+    TopAxisLayout,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
+/**
+ * Algorithmic strategy for rendering a left axis.
+ *
  * @class LeftAxisLayout
  * @constructor
+ * @submodule axis
  */
 LeftAxisLayout = function() {};
 
