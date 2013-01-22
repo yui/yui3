@@ -4,7 +4,7 @@ Transition Change History
 3.8.1
 -----
 
-* No changes.
+* PR #398 Fix show, hide and toggleView methods in transition module [prajwalit]
 
 3.8.0
 -----
