@@ -4,7 +4,7 @@ YUI Core Change History
 3.8.1
 -----
 
-* No changes.
+* Fixed issue with cssstamp element not being assigned if YUI is loaded twice on the page.
 
 3.8.0
 -----
