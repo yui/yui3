@@ -4,7 +4,7 @@ TabView Change History
 3.8.1
 -----
 
-* No changes.
+* Avoids rewriting Tab label & panel content. Fixes #2530253.
 
 3.8.0
 -----
