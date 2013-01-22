@@ -475,7 +475,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 			sNodeName = oTarget.get("nodeName").toLowerCase();
 
 		if (event.keyCode === 13 && (!clickableElements[sNodeName] ||
-				(sNodeName === "a" && !oTarget.getAttribute("href"))) && this._isDescendant(event.target)) {
+				(sNodeName === "a" && !oTarget.getAttribute("href"))) && this._isDescendant(oTarget)) {
 
 			Y.log(("Firing click event for node:" + oTarget.get("id")), "info", "nodeFocusManager");
 
