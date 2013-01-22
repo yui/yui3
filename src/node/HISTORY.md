@@ -1,6 +1,11 @@
 Node Change History
 ===================
 
+3.8.1
+-----
+
+* Fix show, hide and toggleView methods in transition module Deals with - http://yuilibrary.com/forum/viewtopic.php?p=36173 [Prajwalit Bhopale]
+
 3.8.0
 -----
 
