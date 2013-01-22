@@ -1,7 +1,7 @@
 IO Utility Change History
 =========================
 
-@VERSION@
+3.8.1
 -----
 
 * Exposed IO's form serialize via the new `Y.IO.stringify()` method.

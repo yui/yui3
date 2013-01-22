@@ -1,6 +1,11 @@
 Charts Change History
 =====================
 
+3.8.1
+-----
+
+* #2533048 Addressed issue in which styles.majorUnit.determinant was not honored when set to distance.
+
 3.8.0
 -----
 
