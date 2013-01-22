@@ -7,7 +7,7 @@ PaginatorBase = Y.Base.create('paginator', Y.Base, [Y_Paginator.Core, Y_Paginato
 
     initializer: function (config) {
         this.classNames = Y.Paginator.CLASSNAMES;
-        this.bind();
+        this._bind();
     },
 
     destructor: function () {
@@ -33,7 +33,7 @@ PaginatorBase = Y.Base.create('paginator', Y.Base, [Y_Paginator.Core, Y_Paginato
         return this;
     },
 
-    bind: function () {
+    _bind: function () {
         var subscriptions = [];
 
         subscriptions.push(
