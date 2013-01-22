@@ -1,7 +1,7 @@
 YUI.add('tabview', function (Y, NAME) {
 
 /**
- * The TabView module 
+ * The TabView module
  *
  * @module tabview
  */
@@ -9,10 +9,9 @@ YUI.add('tabview', function (Y, NAME) {
 var _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
     DOT = '.',
-    getClassName = Y.ClassNameManager.getClassName,
 
     /**
-     * Provides a tabbed widget interface 
+     * Provides a tabbed widget interface
      * @param config {Object} Object literal specifying tabview configuration properties.
      *
      * @class TabView
@@ -21,7 +20,7 @@ var _queries = Y.TabviewBase._queries,
      * @uses WidgetParent
      */
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
-    _afterChildAdded: function(e) {
+    _afterChildAdded: function() {
         this.get('contentBox').focusManager.refresh();
     },
 
@@ -53,7 +52,7 @@ var _queries = Y.TabviewBase._queries,
 
         if (tablist) {
             tablist.setAttrs({
-                //'aria-labelledby': 
+                //'aria-labelledby':
                 role: 'tablist'
             });
         }
@@ -77,14 +76,14 @@ var _queries = Y.TabviewBase._queries,
     },
     
     renderUI: function() {
-        var contentBox = this.get('contentBox'); 
+        var contentBox = this.get('contentBox');
         this._renderListBox(contentBox);
         this._renderPanelBox(contentBox);
         this._childrenContainer = this.get('listNode');
         this._renderTabs(contentBox);
     },
 
-    _setDefSelection: function(contentBox) {
+    _setDefSelection: function() {
         //  If no tab is selected, select the first tab.
         var selection = this.get('selection') || this.item(0);
 
@@ -131,7 +130,6 @@ var _queries = Y.TabviewBase._queries,
                 tabview.add({
                     boundingBox: node,
                     contentBox: node.one(DOT + _classNames.tabLabel),
-                    label: node.one(DOT + _classNames.tabLabel).get('text'),
                     panelNode: panelNode
                 });
             });
@@ -143,7 +141,7 @@ var _queries = Y.TabviewBase._queries,
     PANEL_TEMPLATE: '<div class="' + _classNames.tabviewPanel + '"></div>',
 
     ATTRS: {
-        defaultChildType: {  
+        defaultChildType: {
             value: 'Tab'
         },
 
@@ -185,9 +183,7 @@ var _queries = Y.TabviewBase._queries,
 
 Y.TabView = TabView;
 var Lang = Y.Lang,
-    _queries = Y.TabviewBase._queries,
-    _classNames = Y.TabviewBase._classNames,
-    getClassName = Y.ClassNameManager.getClassName;
+    _classNames = Y.TabviewBase._classNames;
 
 /**
  * Provides Tab instances for use with TabView
@@ -282,7 +278,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
 
     _onActivate: function(e) {
          if (e.target === this) {
-             //  Prevent the browser from navigating to the URL specified by the 
+             //  Prevent the browser from navigating to the URL specified by the
              //  anchor's href attribute.
              e.domEvent.preventDefault();
              e.target.set('selected', 1);
@@ -290,23 +286,33 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     },
     
     initializer: function() {
-       this.publish(this.get('triggerEvent'), { 
+       this.publish(this.get('triggerEvent'), {
            defaultFn: this._onActivate
        });
     },
 
+    _defLabelGetter: function() {
+        return this.get('contentBox').getHTML();
+    },
+
     _defLabelSetter: function(label) {
-        this.get('contentBox').setContent(label);
+        var labelNode = this.get('contentBox');
+        if (labelNode.getHTML() !== label) { // Avoid rewriting existing label.
+            labelNode.setHTML(label);
+        }
         return label;
     },
 
     _defContentSetter: function(content) {
-        this.get('panelNode').setContent(content);
+        var panel = this.get('panelNode');
+        if (panel.getHTML() !== content) { // Avoid rewriting existing content.
+            panel.setHTML(content);
+        }
         return content;
     },
 
-    _defContentGetter: function(content) {
-        return this.get('panelNode').getContent();
+    _defContentGetter: function() {
+        return this.get('panelNode').getHTML();
     },
 
     // find panel by ID mapping from label href
@@ -340,7 +346,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     ATTRS: {
         /**
          * @attribute triggerEvent
-         * @default "click" 
+         * @default "click"
          * @type String
          */
         triggerEvent: {
@@ -351,9 +357,9 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
          * @attribute label
          * @type HTML
          */
-        label: { 
+        label: {
             setter: '_defLabelSetter',
-            validator: Lang.isString
+            getter: '_defLabelGetter'
         },
 
         /**
@@ -383,12 +389,12 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         tabIndex: {
             value: null,
             validator: '_validTabIndex'
-        }        
+        }
 
     },
 
     HTML_PARSER: {
-        selected: function(contentBox) {
+        selected: function() {
             var ret = (this.get('boundingBox').hasClass(_classNames.selectedTab)) ?
                         1 : 0;
             return ret;
