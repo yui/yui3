@@ -4,7 +4,8 @@ Button Change History
 3.8.1
 -----
 
-* No changes.
+* Documentation updates.
+* Linting cleanup.
 
 3.8.0
 -----
