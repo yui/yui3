@@ -16,27 +16,27 @@ var HTML_CHARS = {
         '/': '&#x2F;',
         '`': '&#x60;'
     },
-var JS_CHARS = {
-		'(': '',
-		')': '',
-		'{': '',
-		'}': '',
-		';': '',
-		'"': '',
-		"'": '',
-		'`': '',
-		'\r': '',
-		'\n': '',
-		'\t': ''
-	},
-var URI_HANDLERS = {
-		'javascript:': 'http://',
-		'data:': 'http://',
-		'vbscript:': 'http://',
-		'javascript&#58;': 'http://',
-		'data&#58;': 'http://',
-		'vbscript&#58;': 'http://'
-	},
+JS_CHARS = {
+	'(': '\x28',
+	')': '\x29',
+	'{': '\x7B',
+	'}': '\x7D',
+	';': '\x3B',
+	'"': '\x22',
+	"'": '\x27',
+	'`': '\x60',
+	'\r': '\x5C\x72',
+	'\n': '\x5C\x6E',
+	'\t': '\x5C\x74'
+    },
+URI_HANDLERS = {
+	'javascript:': 'http://',
+	'data:': 'http://',
+	'vbscript:': 'http://',
+	'javascript&#58;': 'http://',
+	'data&#58;': 'http://',
+	'vbscript&#58;': 'http://'
+    },
 Escape = {
     // -- Public Static Methods ------------------------------------------------
 
