@@ -143,25 +143,29 @@
 
 
 // Axis setters
+				"Forced axis to X should evaluate properly 1": function () {
+					var Test = this,
+						scrollview = renderNewScrollview(false, 'x');
 
-				"Axis setters should work": function() {
-					var scrollview = renderNewScrollview(false, {axis:'x'});
-					
-					Y.ObjectAssert.areEqual({x:true,y:false}, scrollview.get('axis'));
+					Y.Assert.areEqual(true, scrollview.get('axis').x);
+					Y.Assert.areEqual(false, scrollview.get('axis').y);
 				},
 
-				"Axis setters should work": function() {
-					var scrollview = renderNewScrollview(false, {axis:'y'});
+				"Forced axis to Y should evaluate properly 2": function () {
+					var Test = this,
+						scrollview = renderNewScrollview(true, 'y');
 
-					Y.ObjectAssert.areEqual({x:false,y:true}, scrollview.get('axis'));
+					Y.Assert.areEqual(false, scrollview.get('axis').x);
+					Y.Assert.areEqual(true, scrollview.get('axis').y);
 				},
 
-				"Axis setters should work": function() {
-					var scrollview = renderNewScrollview(false, {axis:'xy'});
+				"Forced axis to XY should evaluate properly 3": function () {
+					var Test = this,
+						scrollview = renderNewScrollview(true, 'xy');
 
-					Y.ObjectAssert.areEqual({x:true,y:true}, scrollview.get('axis'));
+					Y.Assert.areEqual(true, scrollview.get('axis').x);
+					Y.Assert.areEqual(true, scrollview.get('axis').y);
 				},
-
 // end Axis setters
 
 
@@ -655,30 +659,6 @@
 					});
 
 					Test.wait(WAIT);
-				},
-
-				"Forced axis to X should evaluate properly": function () {
-					var Test = this,
-						scrollview = renderNewScrollview(false, 'x');
-
-					Y.Assert.areEqual(true, scrollview.get('axis').x);
-					Y.Assert.areEqual(false, scrollview.get('axis').y);
-				},
-
-				"Forced axis to Y should evaluate properly": function () {
-					var Test = this,
-						scrollview = renderNewScrollview(true, 'y');
-
-					Y.Assert.areEqual(false, scrollview.get('axis').x);
-					Y.Assert.areEqual(true, scrollview.get('axis').y);
-				},
-
-				"Forced axis to XY should evaluate properly": function () {
-					var Test = this,
-						scrollview = renderNewScrollview(true, 'xy');
-
-					Y.Assert.areEqual(true, scrollview.get('axis').x);
-					Y.Assert.areEqual(true, scrollview.get('axis').y);
 				}
 // end Disabled
 
@@ -714,7 +694,7 @@
 	        Y.Test.Runner.run();
 
 			function renderNewScrollview (vertical, axis) {
-				var config = config || {},
+				var config = {},
 					guid = Y.guid(),
 					html,
 					scrollview,
