@@ -173,6 +173,29 @@ YUI.add('graph-tests', function(Y) {
 
             series = graph._getSeries(Y.CustomLineSeries);
             Y.Assert.areEqual(series, Y.CustomLineSeries, "The series type should be Y.CustomLineSeries");
+        },
+
+        "test:graph._drawSeries()" : function() 
+        {
+            var chart = this.chart,
+                graph = chart.get("graph"),
+                graphic = graph.get("graphic"),
+                width = chart.get("width") + 100,
+                height = chart.get("height") + 100,
+                graphWidth,
+                graphHeight;
+            chart.set("width", width);
+            chart.set("height", height);
+            graphWidth = graph.get("width");
+            graphHeight = graph.get("height");
+            Y.Assert.areEqual(graphWidth, graphic.get("width"), "The width of the graphic should be equal to the width of the graph.");
+            Y.Assert.areEqual(graphHeight, graphic.get("height"), "The height of the graphic should be equal to the height of the graph.");
+            width = width + 50;
+            height = height - 50;
+            graph.set("width", width);
+            graph.set("height", height);
+            Y.Assert.areEqual(width, graphic.get("width"), "The width of the graphic should be equal to the width of the graph.");
+            Y.Assert.areEqual(height, graphic.get("height"), "The height of the graphic should be equal to the height of the graph.");
         }
     });
 
