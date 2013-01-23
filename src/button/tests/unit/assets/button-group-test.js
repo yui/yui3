@@ -182,7 +182,10 @@ YUI.add('button-group-test', function (Y) {
         tearDown: function () {
             Y.one('#container').empty(true);
         },
-    
+        
+        // This test just simulates a click on non-standard button types to satisfy 
+        // an 'else path not taken' warning in Istanbul's coverage for in _handleClick.
+        // Nothing to test or assert
         'ButtonGroups should execute edge case branch': function () {
             var ButtonGroup = this.ButtonGroup;
             var buttons = ButtonGroup.getButtons();
