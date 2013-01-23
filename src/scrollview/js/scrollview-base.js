@@ -471,7 +471,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method _getBounds
      * @protected
      */
-    _getBounds: function (bounds) {
+    _getBounds: function () {
         var sv = this;
         
         return {
