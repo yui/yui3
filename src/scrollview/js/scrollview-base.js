@@ -747,11 +747,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _onGestureMoveEnd: function (e) {
         var sv = this,
             gesture = sv._gesture,
-            gestureAxis = gesture.axis,
             flick = gesture.flick,
             clientX = e.clientX,
             clientY = e.clientY,
-            isOOB, paginatorAxis, sameAxis;
+            isOOB;
 
         if (sv._prevent.end) {
             e.preventDefault();
