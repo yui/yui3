@@ -681,6 +681,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             len,
             graphic = this.get("graphic");
         graphic.set("autoDraw", false);
+        graphic.set("width", this.get("width"));
+        graphic.set("height", this.get("height"));
         this._callLater = false;
         this._drawing = true;
         sc = this.get("seriesCollection");
