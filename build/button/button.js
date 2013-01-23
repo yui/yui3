@@ -46,28 +46,20 @@ Y.extend(Button, Y.Widget,  {
     CONTENT_TEMPLATE  : null,
 
     /**
-<<<<<<< HEAD
      * @method initializer
      * @description Internal init() handler.
      * @param config {Object} Config object.
      * @private
      */
-    initializer: function() {
-        this._host = this.get('boundingBox');
-=======
-    * @method initializer
-    * @description Internal init() handler.
-    * @param config {Object} Config object.
-    * @private
-    */
     initializer: function(config) {
-        var button = this;
-        button._host = button.get('boundingBox');
+        // ButtonCore requires this
+        this._host = this.get('boundingBox');
 
+        // A workaround until there's a better way to handle setting Node attributes
+        // via HTML parsing in classes that extend Widget
         if (config.disabled) {
-            button.set('disabled', config.disabled);
+            this.set('disabled', config.disabled);
         }
->>>>>>> button-disabled
     },
 
     /**
@@ -105,10 +97,10 @@ Y.extend(Button, Y.Widget,  {
      * @private
      */
     _afterDisabledChange: function(e) {
-        // Unable to use `this._uiSetDisabled` because that points 
-        // to `Y.Widget.prototype._uiSetDisabled`. 
+        // Unable to use `this._uiSetDisabled` because that points
+        // to `Y.Widget.prototype._uiSetDisabled`.
         // This works for now.
-        // @TODO Investigate appropriate solution.
+        // @TODO Investigate most appropriate solution.
         Y.ButtonCore.prototype._uiSetDisabled.call(this, e.newVal);
     }
 
