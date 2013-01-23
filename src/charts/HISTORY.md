@@ -8,8 +8,13 @@ Charts Change History
   * #2533050 Addressed issue in which stacked histograms failed to render properly when there was less available space than specified dimensions.
   * #2533052 Addressed issue in which CartesianSeries.getTotalValues threw an error.
   * #2533053 Addressed issue in which CartesianSeries._getDefaultColor threw an error when the type argument was not given.
-  * #2532883 Refactored code to be more modular.  
-   
+  * #2532883 Refactored code to be more modular.
+
+3.8.1
+-----
+
+* #2533048 Addressed issue in which styles.majorUnit.determinant was not honored when set to distance.
+
 3.8.0
 -----
 
@@ -38,7 +43,7 @@ Charts Change History
 3.6.0
 -----
 
-  * #2532336 Addressed issue in which tooltip was referenced before it was set. 
+  * #2532336 Addressed issue in which tooltip was referenced before it was set.
   * #2532078 Addressed issue in which setting a dataProvider with a different structure failed to update a chart.
   * #2532103 Addressed issues with null values in stacked area charts.
   * #2532115 Addressed issue in which stacked area charts did not close correctly when a series had null values at the beginning or end.
@@ -52,7 +57,7 @@ Charts Change History
   * #2532348 Addressed issue in which AreaSpline style object returned null.
   * #2532353 Addressed issue in which vertical attribute was not being set properly on non-histogram cartesian series.
   * #2532292 Filled out testing coverage
-  * #2531688 Fixed rounding bug in pie chart. 
+  * #2531688 Fixed rounding bug in pie chart.
 
 3.5.1
 -----
@@ -63,11 +68,11 @@ Charts Change History
 3.5.0
 -----
 
-  * #2531748 Added aria keyboard navigation. 
-  * #2530195 Tooltip display toggles on touchend event for mobile implementations. 
+  * #2531748 Added aria keyboard navigation.
+  * #2530195 Tooltip display toggles on touchend event for mobile implementations.
   * #2531410 Fixed issue in which specifying color arrays for marker borders of some series type broke in canvas implementation.
   * #2528814 Added charts-legend submodule to allow chart legends.
-  * #2531456 Fixed issue in which loading a chart with an empty data provider throw an error and not load. 
+  * #2531456 Fixed issue in which loading a chart with an empty data provider throw an error and not load.
   * #2530559 Added ability to explicitly set the width/height for vertical/horizontal axes
   * #2531003 Fixed issue in which axis labels flowed outside the chart's bounding box. Added allowContentOverflow attribute to allow for the overflow if desired.
   * #2531390 Addressed performance issues with IE
@@ -78,14 +83,14 @@ Charts Change History
   * Removed memory leaks caused by orphaned dom elements.
   * Axes performance enhancements.
   * #2529859 Fixed issue in which Chart with timeAxis was not correctly initialized when setting dataProvider.
-  * #2529922 Fixed issue in which updates to axes config after chart render did not take affect.  
+  * #2529922 Fixed issue in which updates to axes config after chart render did not take affect.
   * #2530032 Fixed issue in which changing dataProvider after instantiation but pre-render resulted in the original dataProvider being used by the chart.
   * #2531245 Fixed issue in which the alwaysShowZero attribute was ignored by the NumericAxis.
   * #2531277 Fixed issue in which the area charts bled outside of content bounds when minimum was higher than zero.
   * #2531283 Fixed issue in which stacked historgrams did not accept an array for marker color values.
-  * #2531314 Fixed issue in which a series failed to show if its value was missing from the first index of the dataProvider.  
+  * #2531314 Fixed issue in which a series failed to show if its value was missing from the first index of the dataProvider.
   * #2529878 Added a percentage of whole value to the tooltip for PieChart.
-  * #2529916 Added ability to distinguish between zero and null values in histograms. 
+  * #2529916 Added ability to distinguish between zero and null values in histograms.
   * #2531515 Fixed issue in which PieChart was not handling numbers of type string.
   * #2531459 Fixed issue with histogram marker size irregularity on mouseover when specified width/height values are larger than the area available on the graph.
 
@@ -96,7 +101,7 @@ Charts Change History
   * #2531234 Fixed issue in which axis titles were not positioned properly in IE 6 and 7.
   * #2531233 Fixed issue in which axis line and tick styles were overriding each other.
   * #2531232 Fixed issue in which inner axis ticks did not display.
-  * #2531231 Fixed issue in which the top axis line was not positioned properly. 
+  * #2531231 Fixed issue in which the top axis line was not positioned properly.
   * #2530109 Fixed issue in which the NumericAxis roundingMethod was not always being respected when a number was specified.
   * #2531100 Fixed issue in which the NumericAxis was not correctly calculating its data range when a minimum or maximum was explicitly set.
   * #2530127 Added originEvent, pageX and pageY properties to the event facade for marker and planar events.
@@ -115,12 +120,12 @@ Charts Change History
 3.4.0
 -----
 
-  * Charts only requires datatype-number and datatype-date instead of the datatype rollup. 
-  * #2530413 Position axis labels with transform instead of css styles.   
-  * #2530533 Fixed issue in which stacked bar/column displayed inaccurated data on mouseover when zero values appeared in the series.  
-  * #2530404 Fix issue in which markers were incorrectly omitted from graphs.   
-  * #2530395 SplineSeries extends LineSeries instead of CartesianSeries. 
-  * #2529841 Add axis title.  
+  * Charts only requires datatype-number and datatype-date instead of the datatype rollup.
+  * #2530413 Position axis labels with transform instead of css styles.
+  * #2530533 Fixed issue in which stacked bar/column displayed inaccurated data on mouseover when zero values appeared in the series.
+  * #2530404 Fix issue in which markers were incorrectly omitted from graphs.
+  * #2530395 SplineSeries extends LineSeries instead of CartesianSeries.
+  * #2529841 Add axis title.
   * #2530143 Refactor to use Graphics API
   * #2530223 Fixed bug in which negative value markers were not displayed in column/bar series.
   * #2529849 Fixed styles documentation bug

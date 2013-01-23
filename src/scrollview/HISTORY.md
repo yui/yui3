@@ -1,6 +1,12 @@
 ScrollView Change History
 =========================
 
+3.8.1
+-----
+
+* Linting cleanup.
+* Improvements to ScrollView's unit tests. PR #361
+
 3.8.0
 -----
 

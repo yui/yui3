@@ -7,6 +7,10 @@ YQL Change History
 * Created a `yql-jsonp` module that requires the various JSONP modules needed. This allows us to use Conditional Loading
 to only load them when needed.
 
+3.8.1
+-----
+
+* No changes.
 
 3.8.0
 -----

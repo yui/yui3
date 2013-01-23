@@ -1,7 +1,7 @@
 Template Change History
 =======================
 
-@VERSION@
+3.8.1
 -----
 
 * The number 0 (as opposed to the string "0") is no longer treated as an empty
@@ -9,10 +9,6 @@ Template Change History
 
 * Fixed a bug in Template.Micro that caused control characters like `\n` in
   template strings to be improperly escaped in the compiled template.
-
-
-3.8.1
------
 
 * Added the concept of default options to `Y.Template` via the following
   constructor signature: `Y.Template(engine, defaults)`.
