@@ -473,7 +473,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method _getBounds
      * @protected
      */
-    _getBounds: function (bounds) {
+    _getBounds: function () {
         var sv = this;
         
         return {
@@ -749,11 +749,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _onGestureMoveEnd: function (e) {
         var sv = this,
             gesture = sv._gesture,
-            gestureAxis = gesture.axis,
             flick = gesture.flick,
             clientX = e.clientX,
             clientY = e.clientY,
-            isOOB, paginatorAxis, sameAxis;
+            isOOB;
 
         if (sv._prevent.end) {
             e.preventDefault();
@@ -785,23 +784,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
                 // Inbounds
                 else {
-<<<<<<< HEAD
-                    if (sv.pages) {
-                        paginatorAxis = sv.pages.get(AXIS);
-                        sameAxis = paginatorAxis[gestureAxis];
-
-                        // Don't fire scrollEnd on the gesture axis is the same as paginator's
-                        // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
-                        if (!sameAxis) {
-                            sv._onTransEnd();
-                        }
-                    }
-                    else {
-=======
                     // Fire scrollEnd unless this is a paginated instance and the gesture axis is the same as paginator's
                     // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
                     if (!sv.pages || (sv.pages && !sv.pages.get(AXIS)[gesture.axis])) {
->>>>>>> scrollEnd-2533030
                         sv._onTransEnd();
                     }
                 }
