@@ -785,6 +785,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
                 // Inbounds
                 else {
+<<<<<<< HEAD
                     if (sv.pages) {
                         paginatorAxis = sv.pages.get(AXIS);
                         sameAxis = paginatorAxis[gestureAxis];
@@ -796,6 +797,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
                         }
                     }
                     else {
+=======
+                    // Fire scrollEnd unless this is a paginated instance and the gesture axis is the same as paginator's
+                    // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
+                    if (!sv.pages || (sv.pages && !sv.pages.get(AXIS)[gesture.axis])) {
+>>>>>>> scrollEnd-2533030
                         sv._onTransEnd();
                     }
                 }

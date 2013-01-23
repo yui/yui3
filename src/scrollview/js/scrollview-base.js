@@ -783,17 +783,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
                 // Inbounds
                 else {
-                    if (sv.pages) {
-                        paginatorAxis = sv.pages.get(AXIS);
-                        sameAxis = paginatorAxis[gestureAxis];
-
-                        // Don't fire scrollEnd on the gesture axis is the same as paginator's
-                        // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
-                        if (!sameAxis) {
-                            sv._onTransEnd();
-                        }
-                    }
-                    else {
+                    // Fire scrollEnd unless this is a paginated instance and the gesture axis is the same as paginator's
+                    // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
+                    if (!sv.pages || (sv.pages && !sv.pages.get(AXIS)[gesture.axis])) {
                         sv._onTransEnd();
                     }
                 }
