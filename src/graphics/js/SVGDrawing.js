@@ -636,6 +636,7 @@ SVGDrawing.prototype = {
         this._bottom = 0;
         this._pathArray = [];
         this._path = "";
+        this._pathType = "";
     },
 
     /**
