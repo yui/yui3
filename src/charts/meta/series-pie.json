@@ -1,0 +1,7 @@
+{
+    "series-pie": {
+        "requires":[
+            "series-marker"
+        ]
+    }
+}

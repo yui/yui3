@@ -1,14 +1,23 @@
 /**
- * Utility class used for drawing markers.
+ * Provides functionality for drawing plots in a series.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-plot-util
+ */
+var Y_Lang = Y.Lang,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
+
+/**
+ * Utility class used for drawing markers.
+ *
  * @class Plots
  * @constructor
+ * @submodule series-plot-util
  */
 function Plots(cfg)
 {
-    var attrs = { 
+    var attrs = {
         markers: {
             getter: function()
             {
@@ -37,7 +46,7 @@ Plots.prototype = {
      */
     drawPlots: function()
     {
-        if(!this.get("xcoords") || this.get("xcoords").length < 1) 
+        if(!this.get("xcoords") || this.get("xcoords").length < 1)
 		{
 			return;
 		}
@@ -85,7 +94,7 @@ Plots.prototype = {
         }
         if(Y_Lang.isArray(style.fill.color))
         {
-            fillColors = style.fill.color.concat(); 
+            fillColors = style.fill.color.concat();
         }
         if(Y_Lang.isArray(style.border.color))
         {
@@ -95,7 +104,7 @@ Plots.prototype = {
         for(; i < len; ++i)
         {
             top = parseFloat(ycoords[i] - offsetHeight);
-            left = parseFloat(xcoords[i] - offsetWidth);            
+            left = parseFloat(xcoords[i] - offsetWidth);
             if(!isNumber(left) || !isNumber(top))
             {
                 this._markers.push(null);
@@ -134,7 +143,7 @@ Plots.prototype = {
      * Returns the correct group shape class.
      *
      * @method _getGroupShape
-     * @param {Shape | String} shape Indicates which shape class. 
+     * @param {Shape | String} shape Indicates which shape class.
      * @return Function
      * @protected
      */
@@ -195,7 +204,7 @@ Plots.prototype = {
      * @private
      */
     _markerCache: null,
-   
+
     /**
      * Gets and styles a marker. If there is a marker in cache, it will use it. Otherwise
      * it will create one.
@@ -211,7 +220,7 @@ Plots.prototype = {
     {
         var marker,
             border = styles.border;
-        styles.id = this.get("chart").get("id") + "_" + order + "_" + index;
+        styles.id = this._getChart().get("id") + "_" + order + "_" + index;
         //fix name differences between graphic layer
         border.opacity = border.alpha;
         styles.stroke = border;
@@ -237,7 +246,7 @@ Plots.prototype = {
         this._markers.push(marker);
         return marker;
     },
-    
+
     /**
      * Creates a shape to be used as a marker.
      *
@@ -253,13 +262,12 @@ Plots.prototype = {
         var graphic = this.get("graphic"),
             marker,
             cfg = Y.clone(styles);
-        graphic.set("autoDraw", false);
         cfg.type = cfg.shape;
-        marker = graphic.addShape(cfg); 
+        marker = graphic.addShape(cfg);
         marker.addClass(SERIES_MARKER);
         return marker;
     },
-    
+
     /**
      * Creates a cache of markers for reuse.
      *
@@ -283,7 +291,7 @@ Plots.prototype = {
         }
         this._markers = [];
     },
-  
+
     /**
      * Draws a series of markers in a single shape instance.
      *
@@ -311,7 +319,7 @@ Plots.prototype = {
         //fix name differences between graphic layer
         border.opacity = border.alpha;
         cfg = {
-            id: this.get("chart").get("id") + "_" + styles.graphOrder,
+            id: this._getChart().get("id") + "_" + styles.graphOrder,
             stroke: border,
             fill: styles.fill,
             dimensions: styles.dimensions,
@@ -402,7 +410,7 @@ Plots.prototype = {
                 xcoords = this.get("xcoords"),
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
-                markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
+                markerStyles = state == "off" || !styles[state] ? styles : styles[state];
                 markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
                 markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
                 markerStyles.stroke = markerStyles.border;
@@ -501,7 +509,7 @@ Plots.prototype = {
         }
         return state;
     },
-    
+
     /**
      * @property _statSyles
      * @type Object

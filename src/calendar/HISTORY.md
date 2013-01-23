@@ -1,6 +1,21 @@
 Calendar Change History
 =======================
 
+@VERSION@
+-----
+
+* Removed unused `substitute` dependency.
+
+3.8.1
+-----
+
+* Update calendar navigator controls when minimum or maximum date changes [jafl].
+
+3.8.0
+-----
+
+* No changes.
+
 3.7.3
 -----
 

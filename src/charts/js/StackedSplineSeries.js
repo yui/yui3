@@ -1,13 +1,19 @@
 /**
+ * Provides functionality for creating a stacked spline series.
+ *
+ * @module charts
+ * @submodule series-spline-stacked
+ */
+/**
  * StackedSplineSeries creates spline graphs in which the different series are stacked along a value axis
  * to indicate their contribution to a cumulative total.
  *
- * @module charts
- * @submodule charts-base
  * @class StackedSplineSeries
  * @constructor
  * @extends SplineSeries
- * @extends StackingUtil
+ * @uses StackingUtil
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-spline-stacked
  */
 Y.StackedSplineSeries = Y.Base.create("stackedSplineSeries", Y.SplineSeries, [Y.StackingUtil], {
     /**
@@ -18,7 +24,7 @@ Y.StackedSplineSeries = Y.Base.create("stackedSplineSeries", Y.SplineSeries, [Y.
      * @method setAreaData
      */
     setAreaData: function()
-    {   
+    {
         Y.StackedSplineSeries.superclass.setAreaData.apply(this);
         this._stackCoordinates.apply(this);
     }

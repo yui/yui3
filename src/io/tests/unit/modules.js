@@ -34,10 +34,21 @@ var testModules = {
     "transport-tests": {
         "fullpath": "./js/transport-tests.js",
         "requires": ["io-xdr", "test"]
+    },
+    "serialize-tests": {
+        "fullpath": "./js/serialize-tests.js",
+        "requires": ["io-form", "test"]
+    },
+    "xdr-tests": {
+        "fullpath": "./js/xdr-tests.js",
+        "requires": ["io-xdr", "test"]
     }
 };
 
 if (typeof exports !== 'undefined') {
     module.exports = testModules;
-    delete testModules['transport-tests']; //Remove non Nodejs Tests
+    //Remove non-Node.js Tests
+    delete testModules['transport-tests'];
+    delete testModules['serialize-tests'];
+    delete testModules['xdr-tests'];
 }

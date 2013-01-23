@@ -205,17 +205,16 @@
 (function() {
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-        coverage: ['scrollview-base', 'scrollview-list']
-    }).use("console", "test", "dump", "scrollview-base", 'scrollview-list', function(Y) {
+        coverage: ['scrollview-list']
+    }).use("test-console", "test", "dump", "scrollview-base", 'scrollview-list', function(Y) {
 	
 
         // Set up the page
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert;
 
-        var myConsole = new Y.Console().render();
+		new Y.Test.Console().render();
 		
-
         var testBasic = new Y.Test.Case({
             name: "API Tests",
 			

@@ -1,15 +1,21 @@
 /**
+ * Provides functionality for creating a stacked combo series.
+ *
+ * @module charts
+ * @submodule series-combo-stacked
+ */
+/**
  * The StackedComboSeries class renders a combination of lines, plots and area fills in a single series. Series
  * are stacked along the value axis to indicate each series contribution to a cumulative total. Each
  * series type has a corresponding boolean attribute indicating if it is rendered. By default, all three types are
- * rendered.  
+ * rendered.
  *
- * @module charts
- * @submodule charts-base
  * @class StackedComboSeries
  * @extends ComboSeries
  * @uses StackingUtil
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-combo-stacked
  */
 Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.StackingUtil], {
     /**
@@ -20,11 +26,11 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.Sta
      * @method setAreaData
      */
     setAreaData: function()
-    {   
+    {
         Y.StackedComboSeries.superclass.setAreaData.apply(this);
         this._stackCoordinates.apply(this);
     },
-	
+
     /**
      * @protected
      *
@@ -38,16 +44,16 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.Sta
         {
             this.drawFill.apply(this, this._getStackedClosingPoints());
         }
-        if(this.get("showLines")) 
+        if(this.get("showLines"))
         {
             this.drawLines();
         }
         if(this.get("showMarkers"))
         {
             this.drawPlots();
-        }   
+        }
     }
-    
+
 }, {
     ATTRS : {
         /**

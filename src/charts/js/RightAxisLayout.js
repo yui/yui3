@@ -1,10 +1,9 @@
 /**
  * RightAxisLayout contains algorithms for rendering a right axis.
  *
- * @module charts
- * @submodule charts-base
  * @class RightAxisLayout
  * @constructor
+ * @submodule axis
  */
 RightAxisLayout = function(){};
 
@@ -16,7 +15,7 @@ RightAxisLayout.prototype = {
      *  @method _getDefaultMargins
      *  @return Object
      */
-    _getDefaultMargins: function() 
+    _getDefaultMargins: function()
     {
         return {
             top: 0,
@@ -41,14 +40,14 @@ RightAxisLayout.prototype = {
             display = majorTicks.display;
         host.set("topTickOffset",  0);
         host.set("bottomTickOffset",  0);
-        
+
         switch(display)
         {
             case "inside" :
                 host.set("leftTickOffset", tickLength);
                 host.set("rightTickOffset", 0);
             break;
-            case "outside" : 
+            case "outside" :
                 host.set("leftTickOffset", 0);
                 host.set("rightTickOffset", tickLength);
             break;
@@ -82,7 +81,7 @@ RightAxisLayout.prototype = {
             end = {x:padding.left + tickLength, y:pt.y};
         host.drawLine(path, start, end);
     },
-    
+
     /**
      * Calculates the coordinates for the first point on an axis.
      *
@@ -109,20 +108,20 @@ RightAxisLayout.prototype = {
         }
         return pt;
     },
-    
+
     /**
      * Calculates the point for a label.
      *
      * @method getLabelPoint
      * @param {Object} point Point on the axis in which the tick will intersect.
-     * @return {Object} 
+     * @return {Object}
      * @protected
      */
     getLabelPoint: function(point)
     {
         return {x:point.x + this.get("rightTickOffset"), y:point.y};
     },
-    
+
     /**
      * Updates the value for the `maxLabelSize` for use in calculating total size.
      *
@@ -153,7 +152,7 @@ RightAxisLayout.prototype = {
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
     },
-    
+
     /**
      * Determines the available label width when the axis width has been explicitly set.
      *
@@ -258,7 +257,7 @@ RightAxisLayout.prototype = {
         props.y = Math.round(topOffset);
         this._rotate(label, props);
     },
- 
+
     /**
      * Adjusts the coordinates of an axis label based on the rotation.
      *
@@ -295,9 +294,9 @@ RightAxisLayout.prototype = {
         props.x -= leftOffset;
         props.y -= topOffset;
     },
-   
+
     /**
-     * Returns the transformOrigin to use for an axis label based on the position of the axis 
+     * Returns the transformOrigin to use for an axis label based on the position of the axis
      * and the rotation of the label.
      *
      * @method _getTransformOrigin

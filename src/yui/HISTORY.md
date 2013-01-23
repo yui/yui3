@@ -1,6 +1,15 @@
 YUI Core Change History
 =======================
 
+3.8.1
+-----
+
+* Fixed issue with cssstamp element not being assigned if YUI is loaded twice on the page.
+
+3.8.0
+-----
+
+* Added `Y.config.global` as an alias to the global scope
 
 3.7.3
 -----

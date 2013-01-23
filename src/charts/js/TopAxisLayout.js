@@ -1,10 +1,9 @@
 /**
  * Contains algorithms for rendering a top axis.
  *
- * @module charts
- * @submodule charts-base
  * @class TopAxisLayout
  * @constructor
+ * @submodule axis
  */
 TopAxisLayout = function(){};
 
@@ -16,7 +15,7 @@ TopAxisLayout.prototype = {
      *  @method _getDefaultMargins
      *  @return Object
      */
-    _getDefaultMargins: function() 
+    _getDefaultMargins: function()
     {
         return {
             top: 0,
@@ -25,7 +24,7 @@ TopAxisLayout.prototype = {
             bottom: 4
         };
     },
-    
+
     /**
      * Sets the length of the tick on either side of the axis line.
      *
@@ -47,7 +46,7 @@ TopAxisLayout.prototype = {
                 host.set("bottomTickOffset", tickLength);
                 host.set("topTickOffset", 0);
             break;
-            case "outside" : 
+            case "outside" :
                 host.set("bottomTickOffset", 0);
                 host.set("topTickOffset",  tickLength);
             break;
@@ -85,9 +84,9 @@ TopAxisLayout.prototype = {
         {
             pt.y += tickLength/2;
         }
-        return pt; 
+        return pt;
     },
-    
+
     /**
      * Draws a tick
      *
@@ -107,7 +106,7 @@ TopAxisLayout.prototype = {
             end = {x:pt.x, y:tickLength + padding.top};
         host.drawLine(path, start, end);
     },
-    
+
     /**
      * Calculates the point for a label.
      *
@@ -120,7 +119,7 @@ TopAxisLayout.prototype = {
     {
         return {x:pt.x, y:pt.y - this.get("topTickOffset")};
     },
-    
+
     /**
      * Updates the value for the `maxLabelSize` for use in calculating total size.
      *
@@ -147,7 +146,7 @@ TopAxisLayout.prototype = {
         }
         else
         {
-            max = (sinRadians * labelWidth) + (cosRadians * labelHeight); 
+            max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
     },
@@ -240,7 +239,7 @@ TopAxisLayout.prototype = {
             else if (rot === -90)
             {
                 topOffset -= (labelHeight * 0.5);
-            }    
+            }
             else if(rot > 0)
             {
                 leftOffset -= labelWidth;
@@ -288,7 +287,7 @@ TopAxisLayout.prototype = {
             else if (rot === -90)
             {
                 topOffset = (labelHeight * 0.5);
-            }    
+            }
             else if(rot > 0)
             {
                 leftOffset = labelWidth;
@@ -304,7 +303,7 @@ TopAxisLayout.prototype = {
     },
 
     /**
-     * Returns the transformOrigin to use for an axis label based on the position of the axis 
+     * Returns the transformOrigin to use for an axis label based on the position of the axis
      * and the rotation of the label.
      *
      * @method _getTransformOrigin
@@ -328,7 +327,7 @@ TopAxisLayout.prototype = {
             else if (rot === -90)
             {
                 transformOrigin = [0, 0.5];
-            }    
+            }
             else if(rot > 0)
             {
                 transformOrigin = [1, 0.5];
@@ -370,7 +369,7 @@ TopAxisLayout.prototype = {
             ttl = Math.round(topTickOffset + totalLabelSize + totalTitleSize);
         if(this._explicitHeight)
         {
-           ttl = this._explicitWidth; 
+           ttl = this._explicitHeight;
         }
         host.set("calculatedHeight", ttl);
         graphic.set("y", ttl - topTickOffset);

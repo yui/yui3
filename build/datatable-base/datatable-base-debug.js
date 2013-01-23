@@ -680,4 +680,14 @@ Y.DataTable = Y.mix(
     Y.DataTable); // Migrate static and namespaced classes
 
 
-}, '@VERSION@', {"requires": ["datatable-core", "datatable-table", "datatable-head", "datatable-body", "base-build", "widget"], "skinnable": true});
+}, '@VERSION@', {
+    "requires": [
+        "datatable-core",
+        "datatable-table",
+        "datatable-head",
+        "datatable-body",
+        "base-build",
+        "widget"
+    ],
+    "skinnable": true
+});

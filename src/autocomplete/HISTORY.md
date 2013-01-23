@@ -1,6 +1,16 @@
 AutoComplete Change History
 ===========================
 
+3.8.1
+-----
+
+* Remove hardcoded position:absolute because it shouldn't be necessary anymore [nhusher].
+
+3.8.0
+-----
+
+* No changes.
+
 3.7.3
 -----
 

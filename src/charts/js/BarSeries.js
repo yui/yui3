@@ -1,18 +1,24 @@
 /**
+ * Provides functionality for creating a bar series.
+ *
+ * @module charts
+ * @submodule series-bar
+ */
+/**
  * The BarSeries class renders bars positioned vertically along a category or time axis. The bars'
  * lengths are proportional to the values they represent along a horizontal axis.
  * and the relevant data points.
  *
- * @module charts
- * @submodule charts-base
  * @class BarSeries
  * @extends MarkerSeries
  * @uses Histogram
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-bar
  */
 Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     /**
-     * Helper method for calculating the size of markers. 
+     * Helper method for calculating the size of markers.
      *
      * @method _getMarkerDimensions
      * @param {Number} xcoord The x-coordinate representing the data point for the marker.
@@ -39,7 +45,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
         }
         return config;
     },
-    
+
     /**
      * Resizes and positions markers based on a mouse interaction.
      *
@@ -59,8 +65,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
                 markers,
-                graph = this.get("graph"),
-                seriesCollection = graph.seriesTypes[this.get("type")],
+                seriesCollection = this.get("seriesTypeCollection"),
                 seriesLen = seriesCollection.length,
                 seriesStyles,
                 seriesSize = 0,
@@ -70,7 +75,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 ys = [],
                 order = this.get("order"),
                 config;
-            markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
+            markerStyles = state == "off" || !styles[state] ? styles : styles[state];
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.height, offset);
@@ -81,7 +86,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
             {
                 ys[n] = ycoords[i] + seriesSize;
                 seriesStyles = seriesCollection[n].get("styles").marker;
-                seriesSize += Math.min(this._maxSize, seriesStyles.height); 
+                seriesSize += Math.min(this._maxSize, seriesStyles.height);
                 if(order > n)
                 {
                     offset = seriesSize;
@@ -124,7 +129,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
         direction: {
             value: "vertical"
         }
-        
+
         /**
          * Style properties used for drawing markers. This attribute is inherited from `MarkerSeries`. Below are the default values:
          *  <dl>
@@ -147,7 +152,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
          *          </dl>
          *      </dd>
          *      <dt>height</dt><dd>indicates the width of the marker. The default value is 12.</dd>
-         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default 
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default
          *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
          *      the default value for `marker.over.fill.color` is equivalent to `marker.fill.color`.</dd>
          *  </dl>

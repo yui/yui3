@@ -10,8 +10,8 @@ YUI.add('anim-shape', function (Y, NAME) {
 /**
  * Adds support for the <code>transform</code>, <code>fill</code>, and <code> attributes of <code>Graphic</code>
  * <code>Shape</code> instances. The <code>anim-shape</code> submodule can be used for all animations involving
- * <code>Graphic</code> <code>Shape</code> attributes. 
- * 
+ * <code>Graphic</code> <code>Shape</code> attributes.
+ *
  * @module anim
  * @submodule anim-shape
  */
@@ -29,15 +29,6 @@ YUI.add('anim-shape', function (Y, NAME) {
             fromStop,
             prop,
             len = to.length,
-            color,
-            opacity,
-            offset,
-            rotation,
-            r,
-            fx,
-            fy,
-            cx,
-            cy,
             stops = [],
             stop;
         for(; i < len; i = i + 1)
@@ -49,9 +40,15 @@ YUI.add('anim-shape', function (Y, NAME) {
             {
                 if(toStop.hasOwnProperty(prop))
                 {
-                    if(prop == COLOR)
+                    if(prop === COLOR)
                     {
-                        stop[prop] = Y.Color.toHex(getUpdatedColorValue(Y.Color.toHex(fromStop[prop]), Y.Color.toHex(toStop[prop]), elapsed, duration, fn));
+                        stop[prop] = Y.Color.toHex(getUpdatedColorValue(
+                            Y.Color.toHex(fromStop[prop]),
+                            Y.Color.toHex(toStop[prop]),
+                            elapsed,
+                            duration,
+                            fn
+                        ));
                     }
                     else
                     {
@@ -71,7 +68,7 @@ YUI.add('anim-shape', function (Y, NAME) {
             getUpdatedStops = GETUPDATEDSTOPS;
             for(i in to)
             {
-                if(to.hasOwnProperty(i) && i != TYPE)
+                if(to.hasOwnProperty(i) && i !== TYPE)
                 {
                     switch(i)
                     {
@@ -91,7 +88,7 @@ YUI.add('anim-shape', function (Y, NAME) {
         }
     };
     Y.Anim.behaviors.fill = FILLANDSTROKEBEHAVIOR;
-    Y.Anim.behaviors.stroke = FILLANDSTROKEBEHAVIOR; 
+    Y.Anim.behaviors.stroke = FILLANDSTROKEBEHAVIOR;
 
     Y.Anim.behaviors.transform = {
         set: function(anim, att, from, to, elapsed, duration, fn) {
@@ -131,11 +128,10 @@ YUI.add('anim-shape', function (Y, NAME) {
             }
             node._transform = TOSTRING;
         },
-        
+
         get: function(anim) {
             var node = anim._node,
                 fromMatrix = node.matrix,
-                toAttr = anim.get("to") || {},
                 toString = anim.get("to").transform,
                 fromString = node.get("transform"),
                 toArray = Y.MatrixUtil.getTransformArray(toString),
@@ -171,8 +167,8 @@ YUI.add('anim-shape', function (Y, NAME) {
                     for(i = 0; i < len; ++i)
                     {
                         transformFunction = toArray[i].shift();
-                        transformFunction = transformFunction == "matrix" ? "multiply" : transformFunction;
-                        toMatrix[transformFunction].apply(toMatrix, toArray[i]); 
+                        transformFunction = transformFunction === "matrix" ? "multiply" : transformFunction;
+                        toMatrix[transformFunction].apply(toMatrix, toArray[i]);
                     }
 
                     TO = toMatrix.decompose();
@@ -182,7 +178,7 @@ YUI.add('anim-shape', function (Y, NAME) {
             TOSTRING = toString;
             return from;
         }
-    };  
+    };
 
 
 

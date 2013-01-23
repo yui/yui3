@@ -1,10 +1,18 @@
 /**
- * Histogram is the base class for Column and Bar series.
+ * Provides core functionality for creating a bar or column series.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-histogram
+ */
+var Y_Lang = Y.Lang;
+
+/**
+ * Histogram is the base class for Column and Bar series.
+ *
  * @class Histogram
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-histogram
  */
 function Histogram(){}
 
@@ -17,11 +25,12 @@ Histogram.prototype = {
      */
     drawSeries: function()
     {
-        if(this.get("xcoords").length < 1) 
+        if(this.get("xcoords").length < 1)
         {
             return;
         }
         var style = Y.clone(this.get("styles").marker),
+            graphic = this.get("graphic"),
             setSize,
             calculatedSize,
             xcoords = this.get("xcoords"),
@@ -30,9 +39,8 @@ Histogram.prototype = {
             len = xcoords.length,
             top = ycoords[0],
             type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
-            seriesLen = seriesCollection.length,
+            seriesTypeCollection = this.get("seriesTypeCollection"),
+            seriesLen = seriesTypeCollection.length || 0,
             seriesSize = 0,
             totalSize = 0,
             offset = 0,
@@ -62,7 +70,7 @@ Histogram.prototype = {
             groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
-            fillColors = style.fill.color.concat(); 
+            fillColors = style.fill.color.concat();
         }
         if(Y_Lang.isArray(style.border.color))
         {
@@ -83,18 +91,18 @@ Histogram.prototype = {
         this._createMarkerCache();
         for(; i < seriesLen; ++i)
         {
-            renderer = seriesCollection[i];
+            renderer = seriesTypeCollection[i];
             seriesSize += renderer.get("styles").marker[setSizeKey];
-            if(order > i) 
+            if(order > i)
             {
                 offset = seriesSize;
             }
         }
         totalSize = len * seriesSize;
-        this._maxSize = graph.get(setSizeKey);
+        this._maxSize = graphic.get(setSizeKey);
         if(totalSize > this._maxSize)
         {
-            ratio = graph.get(setSizeKey)/totalSize;
+            ratio = graphic.get(setSizeKey)/totalSize;
             seriesSize *= ratio;
             offset *= ratio;
             setSize *= ratio;
@@ -169,7 +177,7 @@ Histogram.prototype = {
             this._clearMarkerCache();
         }
     },
-    
+
     /**
      * Collection of default colors used for marker fills in a series when not specified by user.
      *
@@ -178,7 +186,7 @@ Histogram.prototype = {
      * @protected
      */
     _defaultFillColors: ["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"],
-    
+
     /**
      * Gets the default style values for the markers.
      *

@@ -1,12 +1,27 @@
 /**
- * Gridlines draws gridlines on a Graph.
+ * Provides functionality for creating charts.
  *
  * @module charts
  * @submodule charts-base
+ */
+var CONFIG = Y.config,
+    WINDOW = CONFIG.win,
+    DOCUMENT = CONFIG.doc,
+    Y_Lang = Y.Lang,
+    IS_STRING = Y_Lang.isString,
+    Y_DOM = Y.DOM,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
+
+/**
+ * Gridlines draws gridlines on a Graph.
+ *
  * @class Gridlines
  * @constructor
  * @extends Base
  * @uses Renderer
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule charts-base
  */
 Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     /**
@@ -69,27 +84,23 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
             color = line.color,
             weight = line.weight,
             alpha = line.alpha,
+            count = this.get("count"),
             lineFunction = direction == "vertical" ? this._verticalLine : this._horizontalLine;
         if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
         {
-            if(axisPosition != "none" && axis && axis.get("tickPoints"))
+            if(count && Y.Lang.isNumber(count))
+            {
+                points = this._getPoints(count, w, h);
+            }
+            else if(axisPosition != "none" && axis && axis.get("tickPoints"))
             {
                 points = axis.get("tickPoints");
-                l = points.length;
             }
             else
             {
-                points = [];
-                l = axis.get("styles").majorUnit.count;
-                for(; i < l; ++i)
-                {
-                    points[i] = {
-                        x: w * (i/(l-1)),
-                        y: h * (i/(l-1))
-                    };
-                }
-                i = 0;
+                points = this._getPoints(axis.get("styles").majorUnit.count, w, h);
             }
+            l = points.length;
             path = graph.get("gridlines");
             path.set("width", w);
             path.set("height", h);
@@ -98,12 +109,37 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
                 color: color,
                 opacity: alpha
             });
-            for(; i < l; ++i)
+            for(i = 0; i < l; i = i + 1)
             {
                 lineFunction(path, points[i], w, h);
             }
             path.end();
         }
+    },
+
+    /**
+     * Calculates the coordinates for the gridlines based on a count.
+     *
+     * @method _getPoints
+     * @param {Number} count Number of gridlines
+     * @return Array
+     * @private
+     */
+    _getPoints: function(count, w, h)
+    {
+        var i,
+            points = [],
+            multiplier,
+            divisor = count - 1;
+        for(i = 0; i < count; i = i + 1)
+        {
+            multiplier = i/divisor;
+            points[i] = {
+                x: w * multiplier,
+                y: h * multiplier
+            };
+        }
+        return points;
     },
 
     /**
@@ -137,7 +173,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
         path.moveTo(pt.x, 0);
         path.lineTo(pt.x, h);
     },
-    
+
     /**
      * Gets the default value for the `styles` attribute. Overrides
      * base implementation.
@@ -168,7 +204,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
          * @type String
          */
         direction: {},
-        
+
         /**
          * Indicate the `Axis` in which to bind
          * the gridlines.
@@ -177,14 +213,23 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
          * @type Axis
          */
         axis: {},
-        
+
         /**
-         * Indicates the `Graph` in which the gridlines 
+         * Indicates the `Graph` in which the gridlines
          * are drawn.
          *
          * @attribute graph
          * @type Graph
          */
-        graph: {}
+        graph: {},
+
+        /**
+         * Indicates the number of gridlines to display. If no value is set, gridlines will equal the number of ticks in
+         * the corresponding axis.
+         *
+         * @attribute count
+         * @type Number
+         */
+        count: {}
     }
 });

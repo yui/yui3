@@ -17,9 +17,9 @@ var IMPLEMENTATION = "svg",
 function SVGDrawing(){}
 
 /**
- * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Drawing.html">`Drawing`</a> class. 
- * `SVGDrawing` is not intended to be used directly. Instead, use the <a href="Drawing.html">`Drawing`</a> class. 
- * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Drawing.html">`Drawing`</a> 
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Drawing.html">`Drawing`</a> class.
+ * `SVGDrawing` is not intended to be used directly. Instead, use the <a href="Drawing.html">`Drawing`</a> class.
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Drawing.html">`Drawing`</a>
  * class will point to the `SVGDrawing` class.
  *
  * @module graphics
@@ -64,7 +64,7 @@ SVGDrawing.prototype = {
      * @private
      */
     _currentY: 0,
-    
+
     /**
      * Indicates the type of shape
      *
@@ -74,7 +74,7 @@ SVGDrawing.prototype = {
      * @type String
      */
     _type: "path",
-   
+
     /**
      * Draws a bezier curve.
      *
@@ -167,7 +167,7 @@ SVGDrawing.prototype = {
             top = Math.min(y, Math.min(cp1y, cp2y));
             w = Math.abs(right - left);
             h = Math.abs(bottom - top);
-            pts = [[this._currentX, this._currentY] , [cp1x, cp1y], [cp2x, cp2y], [x, y]]; 
+            pts = [[this._currentX, this._currentY] , [cp1x, cp1y], [cp2x, cp2y], [x, y]];
             this._setCurveBoundingBox(pts, w, h);
             this._currentX = x;
             this._currentY = y;
@@ -199,7 +199,7 @@ SVGDrawing.prototype = {
     relativeQuadraticCurveTo: function() {
         this._quadraticCurveTo.apply(this, [Y.Array(arguments), true]);
     },
-   
+
     /**
      * Implements quadraticCurveTo methods.
      *
@@ -209,9 +209,9 @@ SVGDrawing.prototype = {
      * @private
      */
     _quadraticCurveTo: function(args, relative) {
-        var cpx, 
-            cpy, 
-            x, 
+        var cpx,
+            cpy,
+            x,
             y,
             pathArrayLen,
             currentArray,
@@ -257,7 +257,7 @@ SVGDrawing.prototype = {
             top = Math.min(y, cpy);
             w = Math.abs(right - left);
             h = Math.abs(bottom - top);
-            pts = [[this._currentX, this._currentY] , [cpx, cpy], [x, y]]; 
+            pts = [[this._currentX, this._currentY] , [cpx, cpy], [x, y]];
             this._setCurveBoundingBox(pts, w, h);
             this._currentX = x;
             this._currentY = y;
@@ -283,7 +283,7 @@ SVGDrawing.prototype = {
 
     /**
      * Draws a rectangle with rounded corners.
-     * 
+     *
      * @method drawRect
      * @param {Number} x x-coordinate
      * @param {Number} y y-coordinate
@@ -305,8 +305,8 @@ SVGDrawing.prototype = {
 	},
 
     /**
-     * Draws a circle.     
-     * 
+     * Draws a circle.
+     *
      * @method drawCircle
      * @param {Number} x y-coordinate
      * @param {Number} y x-coordinate
@@ -326,7 +326,7 @@ SVGDrawing.prototype = {
         this._currentY = y;
         return this;
     },
-   
+
     /**
      * Draws an ellipse.
      *
@@ -353,8 +353,8 @@ SVGDrawing.prototype = {
     },
 
     /**
-     * Draws a diamond.     
-     * 
+     * Draws a diamond.
+     *
      * @method drawDiamond
      * @param {Number} x y-coordinate
      * @param {Number} y x-coordinate
@@ -412,29 +412,29 @@ SVGDrawing.prototype = {
         }
         else
         {
-            currentArray = this._getCurrentArray(); 
+            currentArray = this._getCurrentArray();
         }
         pathArrayLen = this._pathArray.length - 1;
-        this._pathArray[pathArrayLen].push(x); 
-        this._pathArray[pathArrayLen].push(x); 
-        
+        this._pathArray[pathArrayLen].push(x);
+        this._pathArray[pathArrayLen].push(x);
+
         // limit sweep to reasonable numbers
         if(Math.abs(arc) > 360)
         {
             arc = 360;
         }
-        
+
         // First we calculate how many segments are needed
         // for a smooth arc.
         segs = Math.ceil(Math.abs(arc) / 45);
-        
+
         // Now calculate the sweep of each segment.
         segAngle = arc / segs;
-        
+
         // The math requires radians rather than degrees. To convert from degrees
         // use the formula (degrees/180)*Math.PI to get radians.
         theta = -(segAngle / 180) * Math.PI;
-        
+
         // convert angle startAngle to radians
         angle = (startAngle / 180) * Math.PI;
         if(segs > 0)
@@ -447,7 +447,7 @@ SVGDrawing.prototype = {
             this._pathArray[pathArrayLen] = ["L"];
             this._pathArray[pathArrayLen].push(Math.round(ax));
             this._pathArray[pathArrayLen].push(Math.round(ay));
-            pathArrayLen++; 
+            pathArrayLen++;
             this._pathType = "Q";
             this._pathArray[pathArrayLen] = ["Q"];
             for(i = 0; i < segs; ++i)
@@ -466,13 +466,13 @@ SVGDrawing.prototype = {
         }
         this._currentX = x;
         this._currentY = y;
-        this._trackSize(diameter, diameter); 
+        this._trackSize(diameter, diameter);
         return this;
     },
 
     /**
      * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
-     * 
+     *
      * @method lineTo
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
@@ -484,7 +484,7 @@ SVGDrawing.prototype = {
 
     /**
      * Draws a line segment using the current line style from the current drawing position to the relative x and y coordinates.
-     * 
+     *
      * @method relativeLineTo
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
@@ -608,9 +608,9 @@ SVGDrawing.prototype = {
         this._currentY = y;
         this._trackSize(x, y);
     },
- 
+
     /**
-     * Completes a drawing operation. 
+     * Completes a drawing operation.
      *
      * @method end
      */
@@ -723,7 +723,7 @@ SVGDrawing.prototype = {
             {
                 node.setAttribute("d", path);
             }
-            
+
             this._path = path;
             this._fillChangeHandler();
             this._strokeChangeHandler();
@@ -758,7 +758,7 @@ SVGDrawing.prototype = {
         }
         return currentArray;
     },
-    
+
     /**
      * Returns the points on a curve
      *
@@ -768,7 +768,7 @@ SVGDrawing.prototype = {
      * @return Array
      * @private
      */
-    getBezierData: function(points, t) {  
+    getBezierData: function(points, t) {
         var n = points.length,
             tmp = [],
             i,
@@ -777,16 +777,16 @@ SVGDrawing.prototype = {
         for (i = 0; i < n; ++i){
             tmp[i] = [points[i][0], points[i][1]]; // save input
         }
-        
+
         for (j = 1; j < n; ++j) {
             for (i = 0; i < n - j; ++i) {
                 tmp[i][0] = (1 - t) * tmp[i][0] + t * tmp[parseInt(i + 1, 10)][0];
-                tmp[i][1] = (1 - t) * tmp[i][1] + t * tmp[parseInt(i + 1, 10)][1]; 
+                tmp[i][1] = (1 - t) * tmp[i][1] + t * tmp[parseInt(i + 1, 10)][1];
             }
         }
-        return [ tmp[0][0], tmp[0][1] ]; 
+        return [ tmp[0][0], tmp[0][1] ];
     },
-  
+
     /**
      * Calculates the bounding box for a curve
      *
@@ -821,7 +821,7 @@ SVGDrawing.prototype = {
         this._trackSize(right, bottom);
         this._trackSize(left, top);
     },
-    
+
     /**
      * Updates the size of the graphics object
      *
@@ -836,13 +836,13 @@ SVGDrawing.prototype = {
         }
         if(w < this._left)
         {
-            this._left = w;    
+            this._left = w;
         }
         if (h < this._top)
         {
             this._top = h;
         }
-        if (h > this._bottom) 
+        if (h > this._bottom)
         {
             this._bottom = h;
         }

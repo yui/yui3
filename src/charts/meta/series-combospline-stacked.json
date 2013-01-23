@@ -1,0 +1,8 @@
+{
+    "series-combospline-stacked": {
+        "requires":[
+            "series-stacked",
+            "series-combospline"
+        ]
+    }
+}

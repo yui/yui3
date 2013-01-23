@@ -1,6 +1,19 @@
 App Framework Change History
 ============================
 
+3.8.1
+-----
+
+* No changes.
+
+3.8.0
+-----
+
+### Router
+
+* Decode URL-encoded path matches for Router's `req.params`. [Ticket #2532941]
+
+
 3.7.3
 -----
 

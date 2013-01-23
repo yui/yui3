@@ -1235,6 +1235,10 @@ YUI({ filter: 'raw' }).use('datatable-sort', function (Y) {
 <p>
     Disable header-click sorting by setting `sortable` to `false`.
 </p>
+<p>
+    The default sort order is case insensitive, the sort order can be set to case sensitive
+    by using the `caseSensitive` attribute, see <a href="#column-config">Appendix A</a> below.
+</p>
 
 <h4 id="customsort">Custom Sorting</h4>
 
@@ -1810,6 +1814,21 @@ pies.on('pie:slicesChange', function (e) {
             <td>`datatable-base`</td>
         </tr>
         <tr>
+            <td>title</td>
+            <td>
+                ```
+                {
+                  key  : 'forecast',
+                  label: '1yr Target Forecast',
+                  title: 'Target Forecast for the Next 12 Months'
+                }
+                ```
+
+                <p>Assigns the value `<th title="HERE">`.</p>
+            </td>
+            <td>`datatable-base`</td>
+        </tr>
+        <tr>
             <td>headerTemplate</td>
             <td>
                 ```
@@ -2005,8 +2024,26 @@ pies.on('pie:slicesChange', function (e) {
                     user sorting by clicking on the header.
                 </p>
                 <p>
-                    If the instance's `sortable` attribute is set, this
+                    If the instance's `key` attribute is not set, this
                     configuration is ignored.
+                </p>
+            </td>
+            <td>`datatable-sort`</td>
+        </tr>
+        <tr>
+            <td>caseSensitive</td>
+            <td>
+                ```
+                { key: 'lastLogin', sortable: true, caseSensitive: true }
+                ```
+
+                <p>
+                    When the instance's `caseSensitive` attribute is set to
+                    "true" the sort order is case sensitive (relevant to string columns only).
+                </p>
+                <p>
+                    Case sensitive sort is marginally more efficient and should be considered
+                    for large data sets when case insensitive sort is not required.
                 </p>
             </td>
             <td>`datatable-sort`</td>

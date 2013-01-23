@@ -1,0 +1,911 @@
+<style scoped>
+.micro-code pre.code {
+    height: 100%;
+    margin: 0;
+}
+
+.micro-code td,
+.micro-code th {
+    background: #fff;
+    padding: 0 0 0 12px;
+}
+
+.micro-code td:first-child,
+.micro-code th:first-child {
+    padding-left: 0;
+}
+</style>
+
+<div class="intro">
+<p>
+The Template component provides `Y.Template`, a generic template engine API, and `Y.Template.Micro`, a string-based micro-templating language similar to <a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html">ERB</a> and <a href="http://underscorejs.org/#template">Underscore</a> templates.
+</p>
+</div>
+
+{{>getting-started}}
+
+<h2>Using `Template`</h2>
+
+<h3>Quick Start</h3>
+
+<p>
+A template engine takes a template&mdash;usually in the form of a string&mdash;and some data, and renders the data into the template to produce an HTML or text string. Using templates to keep markup and structure separate from content encourages reuse and can make code easier to read and maintain, and in many cases faster.
+</p>
+
+<p>
+`Y.Template` provides a common API that can be used to compile and render templates with a variety of template engines. The two template engines included in YUI are <a href="../handlebars/index.html">Handlebars</a> and [[#Using Template.Micro|Template.Micro]].
+</p>
+
+<p>
+The quickest way to get started is using the `template` module which will load both the `template-base` and `template-micro` modules. The following example shows the most basic usage with the `Y.Template.Micro` engine (the default template engine):
+</p>
+
+```javascript
+YUI().use('template', function (Y) {
+    var micro = new Y.Template(),
+        html  = micro.render('<i><%= this.message %></i>', {message: 'hello!'});
+
+    Y.log(html); // => "<i>hello!</i>"
+});
+```
+
+<p>
+In the above example, `micro` is an instance of a template engine backed by Template.Micro. The `Y.Template()` constructor provides an abstraction over the backing engine, giving the engine instances a uniform API.
+</p>
+
+<p>
+Handlebars templates can be used instead of Micro templates by using the `template-base` and `handlebars` modules. The following example shows how to generate the same output as the above example with the Handlebars engine:
+</p>
+
+```javascript
+YUI().use('template-base', 'handlebars', function (Y) {
+    var handlebars = new Y.Template(Y.Handlebars),
+        html       = handlebars.render('<i>\{{message}}</i>', {message: 'hello!'});
+
+    Y.log(html); // => "<i>hello!</i>"
+});
+```
+
+<p>
+<strong>Note:</strong> Both examples are using the engine's <strong>`render()`</strong> method to compile and render the template dynamically on the <strong>client</strong>, doing this with Micro templates is fine, but it should be <strong>avoided with Handlebars</strong> templates. It is recommended that Handlebars templates be <a href="../handlebars/index.html#precompiling-templates">precompiled</a>, enabling the client code to use the lighter and faster `handlebars-base` module.
+</p>
+
+<h3>Generic Template API</h3>
+
+<p>
+`Y.Template` exists specifically to provide its API as a normalization layer on top of conceptually similar, but technically different template engines and syntaxes. This layer of abstraction allows components which work with templates to not be tied to a particular engine. Another huge benefit is allowing developers to override a component's default templates using an entirely different template engine.
+</p>
+
+<p>
+The two template engines provided in YUI, Handlebars and Template.Micro, are conceptually similar. They both compile string-based templates into functions, which are invoked with a data context and return the rendered output as a string. Handlebars is really well suited for organizing and managing the templates of an entire app or complex widget because of its partials and helpers features. Template.Micro is great for small templates, or when you need more powerful templates and its compilation engine is <em>extremely</em> small.
+</p>
+
+<p>
+By making Template.Micro's public API very similar to Handlebars, we've made it possible to use the two template engines interchangeably via the `Y.Template` normalization API. When you need to compile templates on the client, it is <strong>strongly recommend</strong> that you use Micro templates, because Template.Micro's compiler is <em>much</em> smaller than Handlebars' compiler &mdash; 0.5KB vs 9KB (minified and gzipped) respectively.
+</p>
+
+<h3>Instantiating a Template Engine</h3>
+
+<p>
+While you can use a specific template engine directly, it is recommended that you create an instance of the generic `Y.Template` engine wrapper. Doing so allows for greater flexibility and interoperability as described in the previous section.
+</p>
+
+<p>
+To create a template engine instance, you must first determine which underlying engine you want to use. The two template engines included in YUI are <a href="../handlebars/index.html">Handlebars</a> and [[#Using Template.Micro|Template.Micro]]. If you're looking to use a different engine, refer to [[#Creating a Custom Template Engine]] section below.
+</p>
+
+<p>
+Once you've determined the underlying template engine, you'll need to load the appropriate YUI module to fulfill how you plan to use templates. Refer to the following table of YUI modules to understand what each module provides:
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Module</th>
+            <th>Compiler</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="white-space: nowrap;">`template-base`</td>
+            <td>No</td>
+            <td>
+                <p>
+                Provides a generic API for using template engines such as `Handlebars` and `Y.Template.Micro`.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="white-space: nowrap;">`template-micro`</td>
+            <td>Yes</td>
+            <td>
+                <p>
+                Adds the `Y.Template.Micro` template engine, which provides fast, simple string-based micro-templating similar to ERB or Underscore templates.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="white-space: nowrap;">`template`</td>
+            <td>Yes</td>
+            <td>
+                <p>
+                Virtual rollup of the `template-base` and `template-micro` modules.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="white-space: nowrap;">`handlebars-base`</td>
+            <td>No</td>
+            <td>
+                <p>
+                Provides basic Handlebars template rendering functionality. Use this module when you only need to render pre-compiled templates.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="white-space: nowrap;">`handlebars-compiler`</td>
+            <td>Yes</td>
+            <td>
+                <p>
+                Handlebars parser and compiler. Use this module when you need to compile Handlebars templates.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="white-space: nowrap;">`handlebars`</td>
+            <td>Yes</td>
+            <td>
+                <p>
+                Virtual rollup of the `handlebars-base` and `handlebars-compiler` modules.
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>Using Micro Templates</h4>
+
+<p>
+When working with Micro templates, it's easiest to use the `template` virtual rollup module. The `Y.Template.Micro` compiler is small enough that it is included with the runtime functionality.
+</p>
+
+<p>
+The following example creates two template engine instances with are functionally equivalent and both backed by Template.Micro:
+</p>
+
+```javascript
+YUI().use('template', function (Y) {
+    var microExplicit, microDefault;
+
+    // Creates a template engine instance and explicitly specifies the
+    // underlying engine.
+    microExplicit = new Y.Template(Y.Template.Micro);
+
+    // Creates another template engine instance with the same functionality,
+    // but relies on `Y.Template.Micro` being defined as the underlying engine
+    // by default.
+    microDefault = new Y.Template();
+});
+```
+
+<h4>Using Handlebars Templates</h4>
+
+<p>
+When working with Handlebars templates, you'll need to determine if the need the Handlebars compiler functionality provided by the `handlebars-compiler` module. It is recommended that Handlebars templates be <a href="../handlebars/index.html#precompiling-templates">precompiled</a>, enabling the client code to use the lighter and faster `handlebars-base` module.
+</p>
+
+<p>
+The following example loads only the Handlebars runtime and generic `Y.Template()` wrapper API. It assumes that all templates have previously been precompiled on the server or during a build step:
+</p>
+
+```javascript
+YUI().use('template-base', 'handlebars-base', function (Y) {
+    // Creates a limited template engine instance using Handlebars as the
+    // underlaying engine, but with only the runtime functionality.
+    var handlebars = new Y.Template(Y.Handlebars);
+});
+```
+
+<p>
+<strong>Note:</strong> In the above example, the `handlebars` engine does <strong>not</strong> have the ability to `render()`, `compile()`, or `precompile()` template. It only has the ability to `revive()` and execute precompiled templates.
+</p>
+
+<p>
+The following example, uses the `handlebars` virtual rollup module which includes the `handlebars-compiler`. This enables the Handlebars-backed template engine instances to use the <a href="{{apiDocs}}/classes/Template.html">full API</a>:
+</p>
+
+```javascript
+YUI().use('template-base', 'handlebars', function (Y) {
+    // Creates a template engine instance using Handlebars as the underlaying
+    // engine, with both the runtime and compiler functionality.
+    var handlebars = new Y.Template(Y.Handlebars);
+});
+```
+
+<h3>Compiling and Rendering Templates</h3>
+
+<p>
+Both Handlebars and Micro templates must be compiled before they can be rendered. One benefit of this is that a template only needs to be compiled once, and it can then be rendered multiple times without being recompiled. Templates can even be [[#Precompiling and Reviving Templates|precompiled]] on the server or at build time and then rendered on the client for optimal performance.
+</p>
+
+<p>
+Before compiling a template string, a template engine needs to be created. Once the engine instance has been created, the template string can be passed to its <a href="{{apiDocs}}/classes/Template.html#method_compile">`compile()`</a> method. What's returned is a reusable function.
+</p>
+
+```javascript
+var engine, template;
+
+// Create a Template.Micro engine instance.
+engine = new Y.Template();
+
+// Compile a template into a reusable function.
+template = engine.compile('My favorite animal is a <%= this.animal %>.');
+```
+
+<p>
+When you're ready to render the template, execute the function and pass in some data. You'll get back a rendered string.
+</p>
+
+```javascript
+// Render a previously compiled template.
+var output = template({animal: 'Rhino'});
+Y.log(output); // => "My favorite animal is a Rhino."
+```
+
+<p>
+You can re-render the template at any time just by calling the function again. You can even pass in completely different data.
+</p>
+
+```javascript
+// Re-render a previously compiled template.
+output = template({animal: 'Spotted Cuscus'});
+Y.log(output); // => "My favorite animal is a Spotted Cuscus."
+```
+
+<p>
+If you don't plan to use a template more than once, you can compile and render it in a single step with the template engine's <a href="{{apiDocs}}/classes/Template.html#method_render">`render()`</a> method.
+</p>
+
+```javascript
+// Compile and render a template in a single step.
+output = engine.render('My favorite animal is a <%= this.animal %>.', {animal: 'Rhino'});
+Y.log(output); // => "My favorite animal is a Rhino."
+```
+
+<p>
+<strong> Note:</strong> The above examples are using Micro templates. If these examples used Handlebars templates, the `engine` instance would have been created using `Y.Handlebars`, and template syntax would have used `\{{animal}}` instead of `<%= this.animal %>`.
+</p>
+
+<h3>Precompiling and Reviving Templates</h3>
+
+<p>
+Since Micro and Handlebars templates can be compiled and rendered in separate steps, it's possible to precompile a template for use later. You can precompile a template into raw JavaScript on the server (or even on the command line in the case of Handlebars), serve this precompiled JavaScript template to the client, and then render it on the client using any data the client has at its disposal.
+</p>
+
+<p>
+The main benefit of precompilation is performance. Not only does the client not need to go through the compile step, but if your using a template engine like Handlebars, you don't even have to load the compiler on the client! All the client needs in order to render a precompiled template is the engine's runtime. In the case of Handlebars this is a 9KB (minified and gzipped) savings.
+</p>
+
+<p>
+`Y.Template` engine instances have a <a href="{{apiDocs}}/classes/Template.html#method_precompile">`precompile()` method</a> which uses the underlaying `engine` to convert the specified `text` into a string of JavaScript source code. This string of code which represents the template, can later be revived using the engine instance's <a href="{{apiDocs}}/classes/Template.html#method_revive">`revive()` method</a> which turns it into a JavaScript function.
+</p>
+
+<p>
+The `precompile()` method differs from the `compile()` method in a couple of important ways:
+</p>
+
+<ul>
+<li>
+    <p>
+    The `precompile()` method returns a string of JavaScript code that's meant to be parsed and executed later, whereas `compile()` returns a live JavaScript function.
+    </p>
+</li>
+<li>
+    <p>
+    The code returned by the `precompile()` method contains no references to any outside objects. Once it's evaluated, the resulting precompiled function must be passed to `Y.Template` engine instance's `revive()` method, which will "rehydrate" it into an executable template function using the current template engine.
+    </p>
+</li>
+</ul>
+
+<p>
+For more details, refer to the Precompiling and Reviving Templates sections of the [[#Precompiling and Reviving Micro Templates|Template.Micro]] and <a href="../handlebars/index.html#precompiling-templates">Handlebars</a> user guides.
+</p>
+
+<h3>Creating a Custom Template Engine</h3>
+
+<p>
+The generic `Y.Template` interface is [[#Generic Template API|designed]] to work with a variety of string -> function template engines. To implement a custom underlaying template engine for `Y.Template`, refer to the following list of methods and their descriptions which need to be implemented:
+</p>
+
+<dl>
+    <dt>`compile( text , [options] )`</dt>
+    <dd>
+        <p>
+        Compiles a string template into a reusable function and returns that function to the caller.
+        </p>
+
+        <p>
+        The core concept of a string -> function template engine is its compilation method. A custom template engine <em>must</em> implement this method.
+        </p>
+    </dd>
+
+    <dt>`render( text , data , [options] )`</dt>
+    <dd>
+        <p>
+        Compiles and renders a template in a single step, and returns the rendered result.
+        </p>
+
+        <p>
+        A custom template engine does <em>not</em> have to implement this method. It is merely provided as a convenience to the user. If the underlying engine does not implement this method, the `compile()` method will be called and the resulting function will be invoked.
+        </p>
+    </dd>
+
+    <dt>`precompile( text , [options] )`</dt>
+    <dd>
+        <p>
+        Precompiles a string template into a new string containing JavaScript source code for the precompiled template and returns it to the caller. The `revive()` method is this method's companion, it converts the precompiled template back into a renderable function.
+        </p>
+
+        <p>
+        A custom template engine does <em>not</em> have to implement this method. If precompilation is a feature of the underlying template engine, then the `revive()` method <em>must</em> also be implemented.
+        </p>
+    </dd>
+
+    <dt>`revive( precompiled , [options] )`</dt>
+    <dd>
+        <p>
+        Revives a precompiled template function into an executable template function and returns that function to the caller. The precompiled code must already have been evaluated; this method won't evaluate it for you.
+        </p>
+
+        <p>
+        This is a companion method to the `precompile()` method and it <em>must</em> be implemented if the underlying template engine supports precompilation.
+        </p>
+    </dd>
+</dl>
+
+<h2>Using `Template.Micro`</h2>
+
+<p>
+`Y.Template.Micro` is a string-based micro-templating language similar to <a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html">ERB</a> and <a href="http://underscorejs.org/#template">Underscore</a> templates. Template.Micro is great for small, powerful templates, and its compilation engine is <em>extremely</em> fast with a small footprint.
+</p>
+
+<p>
+Compared with the features of Handlebars, Template.Micro is much simpler. Using the [[#Generic Template API|generic engine API]] provided by `Y.Template`, Micro and Handlebars templates can be used interchangeably. This gives you a powerful way to customize a component's Handlebars templates by overriding them with Micro templates, and not incur the cost of loading the `handlebars-compiler` module.
+</p>
+
+<h3>Template Syntax</h3>
+
+<h4>Basic Expressions</h4>
+
+<p>
+Within a Micro template, use `<%= ... %>` to output the value of an expression (where `...` is the JavaScript expression or data variable to evaluate). The output will be <strong>HTML-escaped by default.</strong>
+</p>
+
+<p>
+A simple Template.Micro expression looks like this:
+</p>
+
+```
+<h1><%= this.title %></h1>
+```
+
+<p>
+This tells Template.Micro:
+</p>
+
+<ol>
+    <li>
+        <p>
+        if there exists a `title` property in the current context in which the template function was executed, and that property is not falsy or an empty array, insert its value here.
+        </p>
+    </li>
+    <li>
+        <p>
+        Otherwise, insert an empty string.
+        </p>
+    </li>
+</ol>
+
+<p>
+The following example shows how the data context is defined when executing a Micro template function:
+</p>
+
+```javascript
+var micro   = new Y.Template(),
+    heading = micro.compile('<h1><%= this.title %></h1>'),
+    output;
+
+// The object passed to the template function becomes the context in which the
+// template is executed. This object is also available through the `data`
+// variable within the template's expressions.
+output = heading({title: 'The Adventures of the Spotted Cuscus'});
+Y.log(output); // => "<h1>The Adventures of the Spotted Cuscus</h1>"
+```
+
+<p>
+<strong>Note:</strong> The template functions are `call()`-ed with the context of the object which is passed to the template function. This object is also available through the `data` variable. Therefore, `data === this`, within the template expressions. The previous template could have been written as:
+</p>
+
+```
+<h1><%= data.title %></h1>
+```
+
+<h4>HTML Escaping</h4>
+
+<p>
+By default, content rendered using a percent-equals expression like `<%= foo %>` will automatically be HTML-escaped for safety. To render unescaped HTML output, use a percent-double-equals expression like `<%== foo %>`. <strong>Only use a percent-double-equals expression for content you trust!</strong> Never use it to render unfiltered user input.
+</p>
+
+<h4>Inline Code &amp; Code Blocks</h4>
+
+<p>
+To execute arbitrary JavaScript code within the template without rendering its output, use `<% ... %>` (where `...` is the code to be executed). This allows the use of if/else blocks, loops, function calls, etc., although it's recommended that you avoid embedding anything beyond basic flow control logic in your templates.
+</p>
+
+<table class="micro-code">
+    <tbody>
+        <tr>
+            <th colspan="2">Template Source</th>
+        </tr>
+
+        <tr>
+            <td colspan="2" width="100%">
+                ```html
+                <h1>Animals</h1>
+
+                <ul class="<%= this.classNames.list %>">
+                  <% Y.Array.each(this.animals, function (animal, i) { %>
+                    <li class="<% i % 2 ? 'odd' : 'even' %>">
+                        <%= animal %>
+                    </li>
+                  <% }); %>
+                </ul>
+                ```
+            </td>
+        </tr>
+
+        <tr>
+            <th style="padding-top: 0.5em;">Data</th>
+            <th style="padding-top: 0.5em;">Output</th>
+        </tr>
+
+        <tr>
+            <td width="50%">
+                ```javascript
+                {
+                    classNames: {list: 'animals'},
+
+                    animals: [
+                        'Rhino',
+                        'Plain Tiger butterfly',
+                        'Spotted Cuscus'
+                    ]
+                }
+                ```
+            </td>
+
+            <td width="50%">
+                ```html
+                <h1>Animals</h1>
+
+                <ul class="animals">
+                    <li class="even">Rhino</li>
+                    <li class="odd">Plain Tiger butterfly</li>
+                    <li class="even">Spotted Cuscus</li>
+                </ul>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Precompiling and Reviving Micro Templates</h3>
+
+<p>
+Precompiling Micro templates [[#Precompiling and Reviving Templates|has advantages]], especially when an app uses many templates. The rest of this section will demonstrate how to precompile templates on the server.
+</p>
+
+<p>
+To precompile Micro templates on the server using <a href="http://nodejs.org/">Node.js</a>, first install the YUI <a href="http://npmjs.org/">npm</a> module by running the following in a terminal from the directory that contains your server application (this assumes you already have Node and npm installed):
+</p>
+
+```terminal
+$ npm install yui
+```
+
+<p>
+This will install the `yui` npm module in the current directory and make it available to your application.
+</p>
+
+<p>
+Next, in your application code, call the <a href="{{apiDocs}}/classes/Template.Micro.html#method_precompile">`precompile()`</a> method to precompile a Micro template. It will return a string containing JavaScript code.
+</p>
+
+```javascript
+// Load the YUI Template.Micro module.
+var Micro = require('yui/template-micro').Template.Micro;
+
+// Precompile a template string (pass any string you like here).
+var precompiled = Micro.precompile('My favorite animal is a <%= this.animal %>.');
+```
+
+<p>
+The `precompiled` variable will contain a string of JavaScript code that looks something like this:
+</p>
+
+```javascript
+function (Y, $e, data) {
+var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='My favorite animal is a '+
+$e($v( this.animal ))+
+'.';
+return $t;
+}
+```
+
+<p>
+You can now serve this precompiled JS to the client in whatever way makes the most sense for your application. On the client, load the `template` YUI module, create a `Y.Template` engine instance, and pass the precompiled template to its <a href="{{apiDocs}}/classes/Template.html#method_revive">`revive()`</a> method to convert it into a renderable template function.
+</p>
+
+<p>
+Here's a simple <a href="http://expressjs.com/">Express</a> app that precompiles a template on the server and renders it on the client:
+</p>
+
+```javascript
+#!/usr/bin/env node
+var Micro   = require('yui/template-micro').Template.Micro,
+    express = require('express'),
+    app     = express(),
+
+    precompiled = Micro.precompile('My favorite animal is a <%= this.animal %>.');
+
+app.get('/', function (req, res) {
+    res.send(
+        '<html><body>' +
+            '<script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/yui/yui-min.js"></script>' +
+            '<script>' +
+                'YUI().use("template", function (Y) {' +
+                    'var micro    = new Y.Template(),' +
+                    '    template = micro.revive(' + precompiled + ');' +
+                    'Y.one("body").append(template({animal: "Plain Tiger butterfly"}));' +
+                '});' +
+            '</script>' +
+        '</body></html>'
+    );
+});
+
+app.listen(7000);
+```
+
+<p>
+To see this simple server in action, save it to a file, install Express and YUI by running `npm i express yui`, then execute the file with Node.js and browse to <a href="http://localhost:7000/" target="_blank">http://localhost:7000/</a>.
+</p>
+
+<h3>Customizing Template Syntax</h3>
+
+<p>
+Micro templates have a simple syntax, there are only three forms:
+</p>
+
+<dl>
+    <dt>`<%= ... %>`</dt>
+    <dd>
+        <p>
+        Safely outputs the value of a JavaScript expression. The output will be HTML-escaped by default.
+        </p>
+    </dd>
+
+    <dt>`<%== ... %>`</dt>
+    <dd>
+        <p>
+        Outputs the raw value of a JavaScript expression. This does <em>not</em> HTML-escape the output. Never use it to render unfiltered user input.
+        </p>
+    </dd>
+
+    <dt>`<% ... %>`</dt>
+    <dd>
+        <p>
+        Executes arbitrary JavaScript code within the template without rendering its output.
+        </p>
+    </dd>
+</dl>
+
+<p>
+These syntax identifiers are defined as RegExp on <a href="{{apiDocs}}/classes/Template.Micro.html#property_options">`Y.Template.Micro.options`</a>. If you wish to define a custom syntax for your Micro templates, you can do so by defining new RegExps for your custom identifiers.
+</p>
+
+<h4>Defining a Handlebars-like Syntax</h4>
+
+<p>
+The following example will define a Handlebars-like Micro template syntax:
+</p>
+
+<dl>
+    <dt>`\{{ ... }}`</dt>
+    <dd>
+        <p>
+        Safely outputs the value of a JavaScript expression. The output will be HTML-escaped by default.
+        </p>
+    </dd>
+
+    <dt>`\{{{ ... }}}`</dt>
+    <dd>
+        <p>
+        Outputs the raw value of a JavaScript expression. This does <em>not</em> HTML-escape the output. Never use it to render unfiltered user input.
+        </p>
+    </dd>
+
+    <dt>`\{{% ... %}}`</dt>
+    <dd>
+        <p>
+        Executes arbitrary JavaScript code within the template without rendering its output.
+        </p>
+    </dd>
+</dl>
+
+```javascript
+// Create RegExps which define our new Micro template syntax.
+Y.mix(Y.Template.Micro.options, {
+    code         : /\{\{%([\s\S]+?)%\}\}/g,
+    escapedOutput: /\{\{(?!%)([\s\S]+?)\}\}/g,
+    rawOutput    : /\{\{\{([\s\S]+?)\}\}\}/g
+}, true);
+```
+
+<table class="micro-code">
+    <tbody>
+        <tr>
+            <th colspan="2">Template Source</th>
+        </tr>
+
+        <tr>
+            <td colspan="2" width="100%">
+                ```html
+                <h1>Animals</h1>
+
+                <ul class="\{{ this.classNames.list }}">
+                  \{{% Y.Array.each(this.animals, function (animal, i) { %}}
+                    <li class="\{{ i % 2 ? 'odd' : 'even' }}">
+                        \{{ animal }}
+                    </li>
+                  \{{% }); %}}
+                </ul>
+                ```
+            </td>
+        </tr>
+
+        <tr>
+            <th style="padding-top: 0.5em;">Data</th>
+            <th style="padding-top: 0.5em;">Output</th>
+        </tr>
+
+        <tr>
+            <td width="50%">
+                ```javascript
+                {
+                    classNames: {list: 'animals'},
+
+                    animals: [
+                        'Rhino',
+                        'Plain Tiger butterfly',
+                        'Spotted Cuscus'
+                    ]
+                }
+                ```
+            </td>
+
+            <td width="50%">
+                ```html
+                <h1>Animals</h1>
+
+                <ul class="animals">
+                    <li class="even">Rhino</li>
+                    <li class="odd">Plain Tiger butterfly</li>
+                    <li class="even">Spotted Cuscus</li>
+                </ul>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+<strong>Note:</strong> The syntax identifiers can be specified on a per-template basis by passing `options` as the second argument to the `compile()`, `precompile()`, or `render()` methods. Alternatively you can specify `defaults` when using the [[#Generic Template API|generic Template API]], doing so will only affect how the templates are process for that engine instance.
+</p>
+
+<h2>Using Templates in Custom Components</h2>
+
+<p>
+When creating custom components for your app, it's natural to bundle the templates with the component that will use them. The following examples show how to create a custom view component which uses templates.
+</p>
+
+<h3>Custom View with Embeded Template</h3>
+
+<p>
+This example shows how to create a very basic view with an embedded template:
+</p>
+
+```javascript
+YUI().use('template-micro', 'view', function (Y) {
+    Y.AnimalListView = Y.Base.create('animalListView', Y.View, [], {
+        // The compiled Micro template sits on the view's prototype.
+        template: Y.Template.Micro.compile(
+            '<ul class="animals">' +
+              '<% Y.Array.each(this.animals, function (animal, i) { %>' +
+                '<li class="<% i % 2 ? "odd" : "even" %>">' +
+                    '<%= animal %>' +
+                '</li>' +
+              '<% }); %>' +
+            '</ul>'
+        ),
+
+        render: function () {
+            var html = this.template({
+                animals: this.get('animals')
+            });
+
+            this.get('container').setHTML(html);
+            return this;
+        }
+    });
+
+    // Create an instance of the view and render it to the `<body>`.
+
+    var animalListView = new Y.AnimalListView({
+        animals: [
+            'Rhino',
+            'Plain Tiger butterfly',
+            'Spotted Cuscus'
+        ]
+    });
+
+    animalListView.get('container').appendTo('body');
+});
+```
+
+<h3>Custom View with External Template</h3>
+
+<p>
+Usually embedding the template in your component's JavaScript code is bad practice. The following examples show two ways to externalize a component's templates.
+</p>
+
+<h4>Defining Templates in HTML</h4>
+
+<p>
+One option is to embed your template inside a special `<script>` element, one whose `type` attribute is set to something which the browser will not process as JavaScript:
+</p>
+
+```html
+<script id="t-animals" type="text/x-template">
+    <ul class="animals">
+      <% Y.Array.each(this.animals, function (animal, i) { %>
+        <li class="<% i % 2 ? 'odd' : 'even' %>">
+            <%= animal %>
+        </li>
+      <% }); %>
+    </ul>
+</script>
+```
+
+```javascript
+YUI().use('node-base', 'template-micro', 'view', function (Y) {
+    Y.AnimalListView = Y.Base.create('animalListView', Y.View, [], {
+        // The template source is pulled from the HTML, then compiled into a
+        // template function which sits on the view's prototype.
+        template: Y.Template.Micro.compile(Y.one('#t-animals').getHTML()),
+
+        render: function () {
+            var html = this.template({
+                animals: this.get('animals')
+            });
+
+            this.get('container').setHTML(html);
+            return this;
+        }
+    });
+
+    // Create an instance of the view and render it to the `<body>`.
+
+    var animalListView = new Y.AnimalListView({
+        animals: [
+            'Rhino',
+            'Plain Tiger butterfly',
+            'Spotted Cuscus'
+        ]
+    });
+
+    animalListView.get('container').appendTo('body');
+});
+```
+
+<h4>Defining Templates in a Module</h4>
+
+<p>
+When your custom component is used within multiple apps, you might not have control over the HTML of the page. A great option is to create a separate module which holds your template source which your view module can `require`:
+</p>
+
+```javascript
+// Defines a YUI module which will hold the template source for our view.
+YUI.add('animalListTemplate', function (Y) {
+    Y.namespace('AnimalListView').template = Y.Template.Micro.compile(
+        '<ul class="animals">' +
+          '<% Y.Array.each(this.animals, function (animal, i) { %>' +
+            '<li class="<% i % 2 ? "odd" : "even" %>">' +
+                '<%= animal %>' +
+            '</li>' +
+          '<% }); %>' +
+        '</ul>'
+    );
+}, '0.0.1', {
+    requires: ['template-micro']
+});
+```
+
+```javascript
+// Defines a YUI module which defines our view and requires our template module.
+YUI.add('animalListView', function (Y) {
+    var AnimalListView = Y.Base.create('animalListView', Y.View, [], {
+        render: function () {
+            var html = AnimalListView.template({
+                animals: this.get('animals')
+            });
+
+            this.get('container').setHTML(html);
+            return this;
+        }
+    });
+
+    // Properly exposes the view constructor while retaining the namespace.
+    Y.AnimalListView = Y.mix(AnimalListView, Y.AnimalListView);
+}, '0.0.1', {
+    requires: ['animalListTemplate', 'view']
+});
+```
+
+```javascript
+// Create an instance of the view and render it to the `<body>`.
+YUI({
+    modules: {
+        animalListTemplate: '/animal-list-template.js',
+        animalListView    : '/animal-list-view.js'
+    }
+}).use('animalListView', function (Y) {
+    var animalListView = new Y.AnimalListView({
+        animals: [
+            'Rhino',
+            'Plain Tiger butterfly',
+            'Spotted Cuscus'
+        ]
+    });
+
+    animalListView.get('container').appendTo('body');
+});
+```
+
+<p>
+Refer to the <a href="../yui/create.html">Creating YUI Modules</a> user guide for more details.
+</p>
+
+<h2>Best Practices</h2>
+
+<p>
+The following is a list of best practices to consider when using templates in your app and/or custom components:
+</p>
+
+<h3>Less Logic is Better</h3>
+
+<p>
+Make sure not to embed too much logic in your templates, things can get out of control if you do. You should <em>avoid</em> template logic which has side effects! Micro templates allow you to embed any arbitrary JavaScript in your templates, while Handlebars templates are logic-less by design.
+</p>
+
+<h3>Externalize Templates</h3>
+
+<p>
+Avoid embedding huge template strings in your JavaScript code. Strive to separate your templates from the code that uses them, having your templates specified in separate files is best. The [[#Defining Templates in a Module|template module example]] above would ideally use a build-time process to wrap the template source with the YUI module registration wrapper.
+</p>
+
+<h3>Compile Once, Render Often</h3>
+
+<p>
+Template [[#Instantiating a Template Engine|compilation is expensive]]. You should avoid compiling a template more than once. Ideally, you are [[#Precompiling and Reviving Templates|precompiling templates]] on the server or during a build-time process to avoid the compilation step on the client.
+</p>

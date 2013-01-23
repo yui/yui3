@@ -1,13 +1,18 @@
 /**
- * StackedAreaSeries area fills to display data showing its contribution to a whole.
+ * Provides functionality for creating a stacked area series.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-area-stacked
+ */
+/**
+ * StackedAreaSeries area fills to display data showing its contribution to a whole.
+ *
  * @class StackedAreaSeries
- * @constructor
- * @param {Object} config (optional) Configuration parameters for the Chart.
  * @extends AreaSeries
  * @uses StackingUtil
+ * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-area-stacked
  */
 Y.StackedAreaSeries = Y.Base.create("stackedAreaSeries", Y.AreaSeries, [Y.StackingUtil], {
     /**
@@ -18,7 +23,7 @@ Y.StackedAreaSeries = Y.Base.create("stackedAreaSeries", Y.AreaSeries, [Y.Stacki
      * @method setAreaData
      */
     setAreaData: function()
-    {   
+    {
         Y.StackedAreaSeries.superclass.setAreaData.apply(this);
         this._stackCoordinates.apply(this);
     },

@@ -1,18 +1,24 @@
 /**
+ * Provides functionality for creating a column series.
+ *
+ * @module charts
+ * @submodule series-column
+ */
+/**
  * The ColumnSeries class renders columns positioned horizontally along a category or time axis. The columns'
  * lengths are proportional to the values they represent along a vertical axis.
  * and the relevant data points.
  *
- * @module charts
- * @submodule charts-base
  * @class ColumnSeries
  * @extends MarkerSeries
  * @uses Histogram
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-column
  */
 Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
     /**
-     * Helper method for calculating the size of markers. 
+     * Helper method for calculating the size of markers.
      *
      * @method _getMarkerDimensions
      * @param {Number} xcoord The x-coordinate representing the data point for the marker.
@@ -59,9 +65,8 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
                 markers,
-                graph = this.get("graph"),
                 seriesStyles,
-                seriesCollection = graph.seriesTypes[this.get("type")],
+                seriesCollection = this.get("seriesTypeCollection"),
                 seriesLen = seriesCollection.length,
                 seriesSize = 0,
                 offset = 0,
@@ -70,7 +75,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 xs = [],
                 order = this.get("order"),
                 config;
-            markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]); 
+            markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]);
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.width, offset);
@@ -115,7 +120,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
         type: {
             value: "column"
         }
-        
+
         /**
          * Style properties used for drawing markers. This attribute is inherited from `MarkerSeries`. Below are the default values:
          *  <dl>
@@ -138,7 +143,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
          *          </dl>
          *      </dd>
          *      <dt>width</dt><dd>indicates the width of the marker. The default value is 12.</dd>
-         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default 
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default
          *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
          *      the default value for `marker.over.fill.color` is equivalent to `marker.fill.color`.</dd>
          *  </dl>
