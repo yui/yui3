@@ -96,6 +96,10 @@ a.yui3-button {
     box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset;
 }
 
+.yui3-button-hidden {
+    display:none;
+}
+
 /* Firefox: Get rid of the inner focus border */
 .yui3-button::-moz-focus-inner{
     padding: 0;
