@@ -2110,7 +2110,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     /**
     * The default Loader onTimeout handler, calls this.onTimeout with a payload
     * @method _onTimeout
-    * @param {Object} transaction The Transaction object from `Y.Get`
+    * @param {Get.Transaction} transaction The Transaction object from `Y.Get`
     * @private
     */
     _onTimeout: function(transaction) {
