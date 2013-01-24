@@ -370,6 +370,52 @@
 					});
 
 					Test.wait(WAIT);
+				},
+
+
+
+				"Disabled scrollviews should not advance page index on flick": function() {
+
+					var Test = this,
+						scrollview = renderNewScrollview('x');
+
+					scrollview.set('disabled', true);
+
+					Y.later('100', null, function(){
+						Test.resume(function(){
+							scrollview.set('disabled', false);
+
+							scrollview.once('scrollEnd', function(){
+								Test.resume(function(){
+									Y.Assert.areEqual(1, scrollview.pages.get('index'));
+									Y.Assert.areEqual(0, scrollview.get('scrollY'));
+									Y.Assert.areEqual(300, scrollview.get('scrollX'));
+								})
+							});
+
+							Y.Assert.areEqual(0, scrollview.pages.get('index'));
+							Y.Assert.areEqual(0, scrollview.get('scrollY'));
+							Y.Assert.areEqual(0, scrollview.get('scrollX'));
+
+							scrollview.get('contentBox').simulateGesture('move', {
+		                        path: {
+		                            xdist: -500
+		                        },
+		                        duration: DURATION
+							});
+
+							Test.wait(WAIT);
+						})
+					});
+
+					scrollview.get('contentBox').simulateGesture('move', {
+                        path: {
+                            xdist: -500
+                        },
+                        duration: DURATION
+					});
+
+					Test.wait(WAIT);
 				}
 
 				/*

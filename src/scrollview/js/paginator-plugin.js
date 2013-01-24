@@ -12,6 +12,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     SCROLL_X = 'scrollX',
     SCROLL_Y = 'scrollY',
     TOTAL = 'total',
+    DISABLED = 'disabled',
     HOST = 'host',
     SELECTOR = 'selector',
     AXIS = 'axis',
@@ -327,6 +328,11 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _beforeHostFlick: function (e) {
         
+        // If the widget is disabled
+        if (this._host.get(DISABLED)) {
+            return false;
+        }
+
         // The drag was out of bounds, so do nothing (which will cause a snapback)
         if (this._host._isOutOfBounds()){
             return new Y.Do.Prevent();
