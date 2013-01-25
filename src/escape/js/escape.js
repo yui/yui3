@@ -29,14 +29,6 @@ JS_CHARS = {
 	'\n': '\x5C\x6E',
 	'\t': '\x5C\x74'
     },
-URI_HANDLERS = {
-	'javascript:': 'http://',
-	'data:': 'http://',
-	'vbscript:': 'http://',
-	'javascript&#58;': 'http://',
-	'data&#58;': 'http://',
-	'vbscript&#58;': 'http://'
-    },
 Escape = {
     // -- Public Static Methods ------------------------------------------------
 
@@ -80,15 +72,21 @@ Escape = {
 	return (string + '').replace(/([\(\);="'`\{\}])|(\r)|(\n)|(\t)|/g, Escape._uriReplacer);
     },
     /**
-    Returns a copy of the specified string with special URI Protocol Handlers
-    escaped. The following characters will be stripped off from the string:
+    Returns a copy of the specified string with http:// prepended to it
+    if the string does not start with a http:// or https://
 	
-	javascript: data: vbscript: javascript&#58; data&#58; vbscript&#58;
+
 	
 	If _string_ is not already a string, it will be coerced to a string.
     **/
     uri: function (string) {
-         return (string + '').replace(/(javascript:)|(data:)|(vbscript:)|(javascript&#58;)|(data&#58;)|(vbscript&#58;)/g, Escape._jsReplacer);
+         string += '';
+         if(string.indexOf('http://')==0)
+         	return string;
+         else if(string.indexOf('https://')==0)
+         	return string;
+         else
+         	return 'http://'+string;
     },
     /**
     Returns a copy of the specified string with special regular expression
