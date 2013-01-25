@@ -361,9 +361,11 @@
          * @method _addLazyAttr
          * @private
          * @param {Object} name The name of the attribute
+         * @param {Object} [lazyCfg] Optional config hash for the attribute. This is added for performance
+         * along the critical path, where the calling method has already obtained lazy config from state.
          */
-        _addLazyAttr: function(name) {
-            var lazyCfg = this._state.get(name, LAZY);
+        _addLazyAttr: function(name, lazyCfg) {
+            lazyCfg = lazyCfg || this._state.get(name, LAZY);
 
             if (lazyCfg) {
                 // PERF TODO: For App's id override, otherwise wouldn't be
@@ -441,13 +443,17 @@
 
             if (name.indexOf(DOT) !== -1) {
                 strPath = name;
+
                 path = name.split(DOT);
                 name = path.shift();
             }
 
-            this._addLazyAttr(name);
-
             cfg = state.getAll(name, true) || {};
+
+            if (cfg.lazy) {
+                cfg = cfg.lazy;
+                this._addLazyAttr(name, cfg.lazy);
+            }
 
             initialSet = (cfg.value === undefined);
 
@@ -494,7 +500,7 @@
 
                 if (allowSet) {
                     if (!this._fireAttrChange || initializing) {
-                        this._setAttrVal(name, strPath, currVal, val, opts);
+                        this._setAttrVal(name, strPath, currVal, val, opts, cfg);
                     } else {
                         // HACK - no real reason core needs to know about _fireAttrChange, but
                         // it adds fn hops if we want to break it out. Not sure it's worth it for this critical path
@@ -526,6 +532,7 @@
                 path,
                 getter,
                 val,
+                attrCfg,
                 cfg;
 
             if (name.indexOf(DOT) !== -1) {
@@ -541,12 +548,17 @@
                 host._addAttrs(cfg, host._tVals);
             }
 
+            attrCfg = state.getAll(name, true) || {};
+
             // Lazy Init
-            host._addLazyAttr(name);
+            if (attrCfg.lazy) {
+                attrCfg = attrCfg.lazy;
+                host._addLazyAttr(name, attrCfg.lazy);
+            }
 
-            val = host._getStateVal(name);
+            val = host._getStateVal(name, attrCfg);
 
-            getter = state.get(name, GETTER);
+            getter = attrCfg.getter;
 
             if (getter && !getter.call) {
                 getter = this[getter];
@@ -565,11 +577,19 @@
          * @method _getStateVal
          * @private
          * @param {String} name The name of the attribute
+         * @param {Object} [cfg] Optional config hash for the attribute. This is added for performance along the critical path,
+         * where the calling method has already obtained the config from state.
+         *
          * @return {Any} The stored value of the attribute
          */
-        _getStateVal : function(name) {
+        _getStateVal : function(name, cfg) {
             var stateProxy = this._stateProxy;
-            return stateProxy && (name in stateProxy) && !this._state.get(name, BYPASS_PROXY) ? stateProxy[name] : this._state.get(name, VALUE);
+
+            if (!cfg) {
+                cfg = this._state.getAll(name) || {};
+            }
+
+            return (stateProxy && (name in stateProxy) && !(cfg._bypassProxy)) ? stateProxy[name] : cfg.value;
         },
 
         /**
@@ -601,18 +621,20 @@
          * @param {Any} prevVal The currently stored value of the attribute.
          * @param {Any} newVal The value which is going to be stored.
          * @param {Object} [opts] Optional data providing the circumstances for the change.
+         * @param {Object} [attrCfg] Optional config hash for the attribute. This is added for performance along the critical path,
+         * where the calling method has already obtained the config from state.
          *
          * @return {booolean} true if the new attribute value was stored, false if not.
          */
-        _setAttrVal : function(attrName, subAttrName, prevVal, newVal, opts) {
+        _setAttrVal : function(attrName, subAttrName, prevVal, newVal, opts, attrCfg) {
 
             var host = this,
                 allowSet = true,
-                cfg = this._state.getAll(attrName, true) || {},
+                cfg = attrCfg || this._state.getAll(attrName, true) || {},
                 validator = cfg.validator,
                 setter = cfg.setter,
                 initializing = cfg.initializing,
-                prevRawVal = this._getStateVal(attrName),
+                prevRawVal = this._getStateVal(attrName, cfg),
                 name = subAttrName || attrName,
                 retVal,
                 valid;

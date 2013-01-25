@@ -301,6 +301,9 @@ var suite = Y.BenchmarkSuite = new Benchmark.Suite();
 
     Y.extend(MyBaseCore, Y.BaseCore);
 
+var GLOBAL_MY_BASE_CORE_10 = new MyBaseCore10();
+var UNIQUE_VALUE = 10;
+
 // BaseCore
 
 suite.add('BaseCore', function () {
@@ -321,6 +324,14 @@ suite.add('MyBaseCore with 20 varied attributes', function () {
 
 suite.add('MyBaseCore with 20 varied attributes (using perf. best practices)', function () {
    var b = new MyBaseCore20Ideal();
+});
+
+suite.add('MyBaseCore with 10 simple value attributes - set', function () {
+    GLOBAL_MY_BASE_CORE_10.set("attr1", UNIQUE_VALUE++);
+});
+
+suite.add('MyBaseCore with 10 simple value attributes - get', function () {
+   var val = GLOBAL_MY_BASE_CORE_10.get("attr2");
 });
 
 }, '@VERSION@', {requires: ['base-core']});
