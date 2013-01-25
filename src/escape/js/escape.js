@@ -17,17 +17,17 @@ var HTML_CHARS = {
         '`': '&#x60;'
     },
 JS_CHARS = {
-	'(': '\x28',
-	')': '\x29',
-	'{': '\x7B',
-	'}': '\x7D',
-	';': '\x3B',
-	'"': '\x22',
-	"'": '\x27',
-	'`': '\x60',
-	'\r': '\x5C\x72',
-	'\n': '\x5C\x6E',
-	'\t': '\x5C\x74'
+	'(': '\u0028',
+	')': '\u0029',
+	'{': '\u007B',
+	'}': '\u007D',
+	';': '\u003B',
+	'"': '\u0022',
+	"'": '\u0027',
+	'`': '\u0060',
+	'\r': '\u005C\u0072',
+	'\n': '\u005C\u006E',
+	'\t': '\u005C\u0074'
     },
 Escape = {
     // -- Public Static Methods ------------------------------------------------
@@ -69,7 +69,7 @@ Escape = {
 	[1]: http://code.google.com/p/gdata-java-client/source/browse/trunk/java/src/com/google/gdata/util/common/base/CharEscapers.java
     **/
     js: function (string) {
-	return (string + '').replace(/([\(\);="'`\{\}])|(\r)|(\n)|(\t)|/g, Escape._uriReplacer);
+	return (string + '').replace(/([\(\);="'`\{\}])|(\r)|(\n)|(\t)|/g, Escape._jsReplacer);
     },
     /**
     Returns a copy of the specified string with http:// prepended to it
@@ -84,6 +84,8 @@ Escape = {
          if(string.indexOf('http://')==0)
          	return string;
          else if(string.indexOf('https://')==0)
+         	return string;
+         else if(string.indexOf('/')==0)
          	return string;
          else
          	return 'http://' + string;
@@ -122,18 +124,6 @@ Escape = {
      */
     _htmlReplacer: function (match) {
         return HTML_CHARS[match];
-    },
-    /**
-     * Regex replacer for URL escaping.
-     *
-     * @method _uriReplacer
-     * @param {String} match Matched character (must exist in URI_HANDLERS).
-     * @returns {String} escaped entity.
-     * @static
-     * @protected
-     */
-    _uriReplacer: function (match) {
-	return URI_HANDLERS[match]
     },
     /**
      * Regex replacer for JavaScript escaping.
