@@ -17,17 +17,20 @@ var HTML_CHARS = {
         '`': '&#x60;'
     },
 JS_CHARS = {
-	'(': '\u0028',
-	')': '\u0029',
-	'{': '\u007B',
-	'}': '\u007D',
-	';': '\u003B',
-	'"': '\u0022',
-	"'": '\u0027',
-	'`': '\u0060',
-	'\r': '\u005C\u0072',
-	'\n': '\u005C\u006E',
-	'\t': '\u005C\u0074'
+	'(': '\\u0028',
+	')': '\\u0029',
+	'{': '\\u007B',
+	'}': '\\u007D',
+	';': '\\u003B',
+	'"': '\\u0022',
+	'|': '\\u007C',
+	'&': '\\u0026',
+	'/': '\\u002F',
+	"'": '\\u0027',
+	'`': '\\u0060',
+	'\r': '\\u005C\\u0072',
+	'\n': '\\u005C\\u006E',
+	'\t': '\\u005C\\u0074' 
     },
 Escape = {
     // -- Public Static Methods ------------------------------------------------
@@ -69,7 +72,7 @@ Escape = {
 	[1]: http://code.google.com/p/gdata-java-client/source/browse/trunk/java/src/com/google/gdata/util/common/base/CharEscapers.java
     **/
     js: function (string) {
-	return (string + '').replace(/([\(\);="'`\{\}])|(\r)|(\n)|(\t)|/g, Escape._jsReplacer);
+	return (string + '').replace(/([();="'`{}])|(\r)|(\n)|(\t)/g, Escape._jsReplacer);
     },
     /**
     Returns a copy of the specified string with http:// prepended to it
