@@ -86,7 +86,7 @@ Escape = {
          else if(string.indexOf('https://')==0)
          	return string;
          else
-         	return 'http://'+string;
+         	return 'http://' + string;
     },
     /**
     Returns a copy of the specified string with special regular expression
