@@ -1,16 +1,25 @@
 {
     firstTitle: 'First Page',
-    firstText: '<<',
+    firstDisplay: '<<',
 
     lastTitle: 'Last Page',
-    lastText: '>>',
+    lastDisplay: '>>',
 
     prevTitle: 'Previous Page',
-    prevText: '<',
+    prevDisplay: '<',
 
     nextTitle: 'Next Page',
-    nextText: '>',
+    nextDisplay: '>',
 
     pageTitle: 'Page {page}',
-    pageText: '{page}'
+    pageDisplay: '{page}',
+
+    pageInputPreLabel: '',
+    pageInputPostLabel: ' of {pages}',
+
+    pageSelectPreLabel: 'Go to:',
+    pageSelectPostLabel: '',
+
+    perPagePreLabel: 'Display:',
+    perPagePostLabel: ''
 }

@@ -1,28 +1,60 @@
-var Y_Paginator = Y.Paginator,
-    Y_Paginator_Templates = Y_Paginator.Templates,
+var PaginatorList;
 
-    PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [], {
+PaginatorList = Y.Base.create('paginator-list', Y.Paginator.Renderer, [Y.Paginator.Url], {
 
-        buildControls: function () {
-            console.log('buildControls', '::', 'Y.Paginator.List');
+    /**
+     @method renderUI
+     @param {Event} [e]
+     **/
+    renderUI: function () {
+        // build full ui
+        this.get('contentBox').setHTML(this.renderControls());
+    },
 
-            return Y_Paginator_Templates.list({
-                classname: this.classNames.controls,
-                first: this.buildControl('first'),
-                prev: this.buildControl('prev'),
-                next: this.buildControl('next'),
-                last: this.buildControl('last'),
-                pagesClass: this.classNames.pages,
-                pages: this.buildPages()
-            });
+    /**
+     @method syncUI
+     @param {Event} [e]
+     **/
+    syncUI: function (e) {
+        if (e && e.src === 'page') {
+            this.syncPages();
+        } else {
+            this.syncControls();
         }
+    },
 
-    }, {
-        ATTRS: {
-            displayRange: {
-                value: 10
-            }
+    syncPages: function () {
+        // update pages node
+
+        // disable controls
+    },
+
+    syncControls: function () {
+        // update all controls
+
+        // disable controls
+    },
+
+
+    renderControls: function () {
+        console.log('buildControls', '::', 'Y.Paginator.List');
+
+        return this.templates.list({
+            classNames: this.classNames,
+            first: this.renderControl('first'),
+            prev: this.renderControl('prev'),
+            next: this.renderControl('next'),
+            last: this.renderControl('last'),
+            pages: this.renderPages()
+        });
+    }
+
+}, {
+    ATTRS: {
+        displayRange: {
+            value: 10
         }
-    });
+    }
+});
 
 Y.namespace('Paginator').List = PaginatorList;

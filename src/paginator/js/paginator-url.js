@@ -1,12 +1,10 @@
-function PaginatorUrl () {
-    PaginatorUrl.superclass.constructor.apply(this, arguments);
-}
+function PaginatorUrl () {}
 
 PaginatorUrl.ATTRS = {
     url: {}
 };
 
-Y.extend(PaginatorUrl, Y.Base, {
+PaginatorUrl.prototype = {
     prevUrl: function () {
         if (this.hasPrev()) {
             return this.formatUrl(this.get('page') - 1);
@@ -30,10 +28,6 @@ Y.extend(PaginatorUrl, Y.Base, {
         }
         return null;
     }
-});
+};
 
 Y.namespace('Paginator').Url = PaginatorUrl;
-
-if (Y.Lang.isFunction(Y.Paginator)) {
-    Y.Base.mix(Y.Paginator, [PaginatorUrl]);
-}

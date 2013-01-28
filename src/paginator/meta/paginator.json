@@ -13,26 +13,26 @@
         "submodules": {
             "paginator-base": {
                 "requires": [
-                    "view",
-                    "paginator-core",
-                    "paginator-url",
-                    "paginator-templates",
-                    "classnamemanager"
+                    "widget",
+                    "base-build",
+                    "intl"
                 ]
             },
-            "paginator-core": {
+            "paginator-renderer": {
                 "requires": [
-                    "base"
+                    "paginator-base",
+                    "paginator-templates"
                 ]
             },
             "paginator-dt": {
                 "requires": [
-                    "paginator-view"
+                    "paginator-renderer"
                 ]
             },
             "paginator-list": {
                 "requires": [
-                    "paginator-view"
+                    "paginator-renderer",
+                    "paginator-url"
                 ]
             },
             "paginator-templates": {
@@ -46,9 +46,6 @@
             },
             "paginator-url": {
                 "requires": []
-            },
-            "paginator-view": {
-                "requires": ["view"]
             }
         }
     }
