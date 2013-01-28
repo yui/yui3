@@ -1,13 +1,32 @@
-var Y_Paginator = Y.Paginator,
+var getClassName = Y.ClassNameManager.getClassName,
+    LNAME = NAME + '::',
     PaginatorBase;
 
-PaginatorBase = Y.Base.create('paginator', Y.Base, [Y_Paginator.Core, Y_Paginator.Url], {
+PaginatorBase = Y.Base.create('paginator', Y.Widget, [], {
 
-    prefix: null,
+    classNames: {
+        container: getClassName('paginator', 'container'),
+        controls: getClassName('paginator', 'controls'),
+        control: getClassName('paginator', 'control'),
+        controlWrapper: getClassName('paginator', 'control-wrapper'),
+        controlDisabled: getClassName('paginator', 'control-disabled'),
+        controlSelected: getClassName('paginator', 'control-selected'),
+        controlFirst: getClassName('paginator', 'control-first'),
+        controlPrev: getClassName('paginator', 'control-prev'),
+        controlNext: getClassName('paginator', 'control-next'),
+        controlLast: getClassName('paginator', 'control-last'),
+        pages: getClassName('paginator', 'pages'),
+        page: getClassName('paginator', 'page'),
+        pageWrapper: getClassName('paginator', 'page-wrapper'),
+        pageSelect: getClassName('paginator', 'page-select'),
+        pageInput: getClassName('paginator', 'page-input'),
+        perPageSelect: getClassName('paginator', 'per-page-select')
+    },
 
-    initializer: function (config) {
-        this.classNames = Y.Paginator.CLASSNAMES;
-        this._bind();
+    initializer: function () {
+        this.lastPage = null;
+        this.lastTotalItems = null;
+        this.lastItemsPerPage = null;
     },
 
     destructor: function () {
@@ -19,27 +38,21 @@ PaginatorBase = Y.Base.create('paginator', Y.Base, [Y_Paginator.Core, Y_Paginato
         this._subs = null;
     },
 
-    render: function () {
-        var View = this.get('view');
 
-        if (View) {
-            (this.view = new View(
-                Y.mix({
-                    controller: this
-                }, this.getAttrs())
-            )).render();
-        }
+//-- L I F E   C Y C L E ----
 
-        return this;
+    renderUI: function () {
     },
 
-    _bind: function () {
+    bindUI: function () {
         var subscriptions = [];
 
         subscriptions.push(
-            this.after('pageChange', this._onPageChange, this),
-            this.after('itemsPerPageChange', this._onItemsPerPageChange, this ),
-            this.after('totalItemsChange', this._onTotalItemsChange, this)
+            this.after({
+                'pageChange': this._afterPageChange,
+                'itemsPerPageChange': this._afterItemsPerPageChange,
+                'totalItemsChange': this._afterTotalItemsChange
+            })
         );
 
         this._subs = subscriptions;
@@ -47,29 +60,79 @@ PaginatorBase = Y.Base.create('paginator', Y.Base, [Y_Paginator.Core, Y_Paginato
         return this;
     },
 
-    /////////////////////////////////
-    // E V E N T   C A L L B A C K S
-    /////////////////////////////////
-
-    _onPageChange: function () {
-        this.view.syncPages();
+    syncUI: function () {
+        console.info(LNAME, 'syncUI');
     },
 
-    _onItemsPerPageChange: function () {
-        this.view.syncControls();
+
+//-- C O R E   M E T H O D S ----------
+
+    select: function (pageNumber) {
+        this.set('page', pageNumber);
+    },
+
+    first: function () {
+        if (this.hasPrev()) {
+            this.select(1);
+        }
+    },
+
+    last: function () {
+        if (this.hasNext()) {
+            this.select(this.get('pages'));
+        }
+    },
+
+    prev: function () {
+        if (this.hasPrev()) {
+            this.select(this.get('page') - 1);
+        }
+    },
+
+    next: function () {
+        if (this.hasNext()) {
+            this.select(this.get('page') + 1);
+        }
+    },
+
+    hasPrev: function () {
+        return (this.get('page') > 1);
+    },
+
+    hasNext: function () {
+        return (this.get('page') + 1 <= this.get('pages'));
+    },
+
+
+//-- E V E N T   C A L L B A C K S -------
+
+    _afterPageChange: function (e) {
+        this.lastPage = e.prevVal;
+        e.src = 'page';
+        this.syncUI(e);
+    },
+
+    _afterItemsPerPageChange: function (e) {
+        this.lastItemsPerPage = e.prevVal;
+        e.src = 'itemsPerPage';
+        this.syncUI(e);
         this.set('page', 1);
     },
 
-    _onTotalItemsChange: function () {
-        this.view.syncControls();
+    _afterTotalItemsChange: function (e) {
+        this.lastTotalItems = e.prevVal;
+        e.src = 'totalItems';
+        this.syncUI(e);
     },
 
 
 
 
-    /////////////////////
-    // P R O T E C T E D
-    /////////////////////
+//-- P R O T E C T E D ----
+
+
+
+//-- D E F A U L T   F U N C T I O N S ----
 
     _defContainerFn: function () {
         return Y.Node.create('<div class="' + this.className('paginator') + '"></div>');
@@ -79,40 +142,115 @@ PaginatorBase = Y.Base.create('paginator', Y.Base, [Y_Paginator.Core, Y_Paginato
         return Y.Intl.get("paginator-templates");
     },
 
-    _viewSetter: function (val) {
-        this.view = val;
-        return val;
+
+//-- G E T T E R S ----
+
+    _pagesGetterFn: function () {
+        return Math.ceil(this.get('totalItems') / this.get('itemsPerPage'));
     },
 
-    _viewGetter: function () {
-        return this.view || this._defViewFn();
+    _indexGetterFn: function () {
+        return (this.get('page') - 1) * this.get('itemsPerPage') + 1;
     },
 
-    _defViewFn: function () {
-        return Y.Paginator.List;
+//-- S E T T E R S ----
+
+    _pageSetterFn: function (val) {
+        val = parseInt(val, 10);
+
+        if (val <= this.get('pages')) {
+            return parseInt(val, 10);
+        }
+
+        return Y.Attribute.INVALID_VALUE;
+    },
+
+    _itemsPerPageSetterFn: function (val) {
+        this._viewItemsPerPage = val;
+
+        if (val.toString().toLowerCase() === 'all' || val === '*') {
+            val = this.get('totalItems');
+        }
+
+        return parseInt(val, 10);
+    },
+
+    _totalItemsSetterFn: function (val) {
+        return parseInt(val, 10);
     }
 
 
 }, {
+    NAME: 'paginator',
+
     ATTRS: {
-        view: {
-            valueFn: '_defViewFn',
-            setter: '_viewSetter',
-            getter: '_viewGetter'
+        /**
+         Index of the first item on the page.
+         @readOnly
+         @attribute index
+         @type Number
+         **/
+        index: {
+            readOnly: true,
+            getter: '_indexGetterFn'
         },
 
-        container: {
-            valueFn: '_defContainerFn'
+        /**
+         Maximum number of items per page
+         @attribute itemsPerPage
+         @type Number
+         **/
+        itemsPerPage: {
+            value: 1,
+            setter: '_itemsPerPageSetterFn'
+        },
+
+        /**
+         Current page count. First page is 1
+         @attribute page
+         @type Number
+         **/
+        page: {
+            value: 1,
+            setter: '_pageSetterFn'
+        },
+
+        /**
+         Total number of pages to display
+         @readOnly
+         @attribute pages
+         @type Number
+         **/
+        pages: {
+            readOnly: true,
+            getter: '_pagesGetterFn'
+        },
+
+        /**
+         Array of items to display per page
+         @attribute pageSizes
+         @type {Array}
+         @default [10, 25, '*']
+         **/
+        pageSizes: {
+            value: [10, 25, '*']
+        },
+
+        /**
+         Total number of items in all pages
+         @attribute totalItems
+         @type Number
+         **/
+        totalItems: {
+            value: 1,
+            setter: '_totalItemsSetterFn'
         },
 
         strings : {
             valueFn: '_defStringVals'
-        },
-
-        pageSizes: {},
-
-        displayRange: {}
+        }
     }
 });
 
-Y.Paginator = Y.mix(PaginatorBase, Y_Paginator);
+Y.namespace('Paginator').Base = PaginatorBase;
+Y.Paginator = Y.mix(PaginatorBase, Y.namespace('Paginator'));

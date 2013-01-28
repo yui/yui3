@@ -1,43 +1,146 @@
 var template = new Y.Template(),
 
-    controlWrapper = '<li class="<%= this.classname %>"><%== this.control %></li>',
+    /**
+        {
+            classNames:,
+            link:,
+            title:,
+            display:,
+        }
+    */
+    control =   '<li class="<%= data.classNames.controlWrapper %>">' +
+                    '<a href="<%= data.link %>" title="<%= data.title %>" class="<%= data.classNames.control %>">' +
+                        '<%= data.display %>' +
+                    '</a>' +
+                '</li>',
 
-    control = '<a href="<%= this.link %>" title="<%= this.title %>" class="<%= this.classname %>"><%= this.label %></a>',
+    /**
+        {
+            classNames:,
+            link:,
+            page:,
+            title:,
+            display:,
+        }
+    */
+    page =  '<li class="<%= data.classNames.controlWrapper %>">' +
+                '<a href="<%= data.link %>" data-page="<%= data.page %>" title="<%= data.title %>" class="<%= data.classNames.page %>">' +
+                    '<%= data.display %>' +
+                '</a>' +
+            '</li>',
 
-    pageWrapper = '<li class="<%= this.classname %>"><%== this.page %></li>',
+    /**
+        {
+            classNames:,
+            preLabel:,
+            page:,
+            postLabel:,
+        }
+    */
+    pageInput = '<li class="<%= data.classNames.controlWrapper %>">' +
+                    '<label class="<%= data.classNames.control %>">' +
+                        '<%= data.preLabel %> <input class="<%= data.classNames.pageInput %>" type="text" value="<%= data.page %>"> <%= data.postLabel %>' +
+                    '</label>' +
+                '</li>',
 
-    page = '<a href="<%= this.link %>" data-page="<%= this.number %>" title="Page <%= this.title %>" class="<%= this.classname %>"><%= this.label %></a>',
+    /**
+        {
+            classNames:,
+            preLabel:,
+            postLabel:,
+            options: [
+                {
+                    value:,
+                    selected:,
+                    display:,
+                }
+            ]
+        }
+    */
+    pageSelect =    '<li class="<%= data.classNames.controlWrapper %>">' +
+                        '<label class="<%= data.classNames.control %>">' +
+                            '<%= data.preLabel %> <select class="<%= data.classNames.pageSelect %>">' +
+                            '<% Y.Array.each(data.options, function(option) { %>' +
+                                '<option value="<%= option.value %>">' +
+                                    '<%= option.display %>' +
+                                '</option>' +
+                            '<% }); %>' +
+                            '</select><%= data.postLabel %>' +
+                        '</label>' +
+                    '</li>',
 
-    pageInput = '<label class="<%= this.classname %>">Page <input type="text" value="<%= this.page %>"> of <%= this.pages %></label>',
+    /**
+        {
+            classNames:,
+            preLabel:,
+            postLabel:,
+            options: [
+                {
+                    value:,
+                    selected:,
+                    display:,
+                }
+            ]
+        }
+    */
+    perPageSelect = '<li class="<%= data.classNames.controlWrapper %>">' +
+                        '<label class="<%= data.classNames.control %>">' +
+                            '<%= data.preLabel %> <select class="<%= data.classNames.pageSelect %>">' +
+                            '<% Y.Array.each(data.options, function(option) { %>' +
+                                '<option value="<%= option.value %>">' +
+                                    '<%= option.display %>' +
+                                '</option>' +
+                            '<% }); %>' +
+                            '</select><%= data.postLabel %>' +
+                        '</label>' +
+                    '</li>',
 
-    pageSelect = '<label class="<%= this.classname %>" class="<%= this.classname %>">Go to page: <select><%== this.options %></select></label>',
+    /**
+        {
+            classNames:,
+            first:,
+            prev:,
+            pages:,
+            next:,
+            last:,
+        }
+    */
+    list =  '<ul class="<%= data.classNames.list %>">' +
+                '<%== data.first %><%== data.prev %>' +
+                '<ul class="<%= data.classNames.pages %>">' +
+                    '<%== data.pages %>' +
+                '</ul>' +
+                '<%== data.next %><%== data.last %>' +
+            '</ul>',
 
-    pageSelectOption = '<option value="<%= this.page %>"<% if(this.selected) { %> selected="selected"<% }; %>><%= this.page %></option>',
-
-    perPageSelect = '<label class="<%= this.classname %>">Items per page: <select><%== this.options %></label>',
-
-    perPageSelectOption = '<option value="<%= this.display %>"<% if(this.selected) { %> selected="selected"<% }; %>><%= this.display %></option>',
-
-    list = '<ul class="<%= this.classname %>"><%== this.first %><%== this.prev %><ul class="<%= this.pagesClass %>"><%== this.pages %></ul><%== this.next %><%== this.last %></ul>',
-
-    dt = '<ul class="<%= this.classname %>"><%== this.first %><%== this.prev %><%== this.pageInput %><%== this.next %><%== this.last %><%== this.pageSelect %><%== this.perPageSelect %></ul>',
-
-    all = '<ul class="<%= this.classname %>"><%== this.first %><%== this.prev %><ul class="<%= this.pagesClass %>"><%== this.pages %></ul><%== this.next %><%== this.last %><%== this.pageInput %><%== this.pageSelect %><%== this.perPageSelect %></ul>',
+    /**
+        {
+            classNames:,
+            first:,
+            pref:,
+            pageInput:,
+            next:,
+            last:,
+            pageSelect:,
+            perPageSelect:,
+        }
+    */
+    dt =    '<ul class="<%= data.classNames.dt %>">' +
+                '<%== data.first %><%== data.prev %>' +
+                '<%== data.pageInput %>' +
+                '<%== data.next %><%== data.last %>' +
+                '<%== data.pageSelect %>' +
+                '<%== data.perPageSelect %>' +
+            '</ul>',
 
     PageTemplates = {
         control: template.compile(control),
-        controlWrapper: template.compile(controlWrapper),
         page: template.compile(page),
-        pageWrapper: template.compile(pageWrapper),
         pageInput: template.compile(pageInput),
         pageSelect: template.compile(pageSelect),
-        pageSelectOption: template.compile(pageSelectOption),
         perPageSelect: template.compile(perPageSelect),
-        perPageSelectOption: template.compile(perPageSelectOption),
         list: template.compile(list),
-        all: template.compile(all),
         dt: template.compile(dt)
     };
-
 
 Y.namespace('Paginator').Templates = PageTemplates;
