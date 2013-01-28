@@ -1,6 +1,11 @@
 DataTable Change History
 ========================
 
+@VERSION@
+-----
+
+* Making sortable datatableheaders unselectable [Pull Request #286]
+  [Pull Request #378] [Ticket #2532825] [ItsAsbreuk] [apipkin]
 
 3.8.1
 -----
