@@ -14156,10 +14156,10 @@ Y.mix(Y_Node.prototype, {
     /**
      * Displays or hides the node.
      * If the "transition" module is loaded, toggleView optionally
-     * animates the toggling of the node using either the default
-     * transition effect ('fadeIn'), or the given named effect.
+     * animates the toggling of the node using given named effect.
      * @method toggleView
      * @for Node
+     * @param {String} [name] An optional string value to use as transition effect.
      * @param {Boolean} [on] An optional boolean value to force the node to be shown or hidden
      * @param {Function} [callback] An optional function to run after the transition completes.
      * @chainable
@@ -14250,9 +14250,9 @@ Y.NodeList.importMethod(Y.Node.prototype, [
     /**
      * Displays or hides each node.
      * If the "transition" module is loaded, toggleView optionally
-     * animates the toggling of the nodes using either the default
-     * transition effect ('fadeIn'), or the given named effect.
+     * animates the toggling of the nodes using given named effect.
      * @method toggleView
+     * @param {String} [name] An optional string value to use as transition effect.
      * @param {Boolean} [on] An optional boolean value to force the nodes to be shown or hidden
      * @param {Function} [callback] An optional function to run after the transition completes.
      * @chainable
@@ -17973,10 +17973,13 @@ IO.prototype = {
         sync = config.sync;
         data = config.data;
 
-        // Serialize an map object into a key-value string using
+        // Serialize a map object into a key-value string using
         // querystring-stringify-simple.
         if ((Y.Lang.isObject(data) && !data.nodeType) && !transaction.upload) {
-            data = Y.QueryString.stringify(data);
+            if (Y.QueryString && Y.QueryString.stringify) {
+                config.data = data = Y.QueryString.stringify(data);
+            } else {
+            }
         }
 
         if (config.form) {
@@ -19091,12 +19094,26 @@ Y.Node.prototype.show = function(name, config, callback) {
     return this;
 };
 
+Y.NodeList.prototype.show = function(name, config, callback) {
+    var nodes = this._nodes,
+        i = 0,
+        node;
+
+    while ((node = nodes[i++])) {
+        Y.one(node).show(name, config, callback);
+    }
+
+    return this;
+};
+
+
+
 var _wrapCallBack = function(anim, fn, callback) {
     return function() {
         if (fn) {
             fn.call(anim);
         }
-        if (callback) {
+        if (callback && typeof callback === 'function') {
             callback.apply(anim._node, arguments);
         }
     };
@@ -19121,6 +19138,18 @@ Y.Node.prototype.hide = function(name, config, callback) {
     } else {
         this._hide();
     }
+    return this;
+};
+
+Y.NodeList.prototype.hide = function(name, config, callback) {
+    var nodes = this._nodes,
+        i = 0,
+        node;
+
+    while ((node = nodes[i++])) {
+        Y.one(node).hide(name, config, callback);
+    }
+
     return this;
 };
 
@@ -19166,12 +19195,15 @@ Y.Node.prototype.toggleView = function(name, on, callback) {
     this._toggles = this._toggles || [];
     callback = arguments[arguments.length - 1];
 
-    if (typeof name === 'boolean') { // no transition, just toggle
+    if (typeof name !== 'string') { // no transition, just toggle
         on = name;
-        name = null;
+        this._toggleView(on, callback); // call original _toggleView in Y.Node
+        return;
     }
 
-    name = name || Y.Transition.DEFAULT_TOGGLE;
+    if (typeof on === 'function') { // Ignore "on" if used for callback argument.
+        on = undefined;
+    }
 
     if (typeof on === 'undefined' && name in this._toggles) { // reverse current toggle
         on = ! this._toggles[name];
@@ -19196,7 +19228,8 @@ Y.NodeList.prototype.toggleView = function(name, on, callback) {
         node;
 
     while ((node = nodes[i++])) {
-        Y.one(node).toggleView(name, on, callback);
+        node = Y.one(node);
+        node.toggleView.apply(node, arguments);
     }
 
     return this;
@@ -19255,9 +19288,6 @@ Y.mix(Transition.toggles, {
     size: ['sizeOut', 'sizeIn'],
     fade: ['fadeOut', 'fadeIn']
 });
-
-Transition.DEFAULT_TOGGLE = 'fade';
-
 
 
 }, '@VERSION@', {"requires": ["node-style"]});
