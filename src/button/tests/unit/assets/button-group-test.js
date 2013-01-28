@@ -11,10 +11,7 @@ YUI.add('button-group-test', function (Y) {
         name: 'Methods',
 
         setUp : function () {
-            Y.one("#container").setContent('<div id="group"><button>A</button><button>B</button><button>C</button></div>');
-            this.ButtonGroup = new Y.ButtonGroup({
-                srcNode: '#group'
-            }).render();
+            this.ButtonGroup = renderButtonGroup();
         },
     
         tearDown: function () {
@@ -34,11 +31,7 @@ YUI.add('button-group-test', function (Y) {
         name: 'Checkbox',
 
         setUp : function () {
-            Y.one("#container").setContent('<div id="group"><button>A</button><button>B</button><button>C</button></div>');
-            this.ButtonGroup = new Y.ButtonGroup({
-                srcNode: '#group',
-                type: 'checkbox'
-            }).render();
+            this.ButtonGroup = renderButtonGroup({type: 'checkbox'});
         },
     
         tearDown: function () {
@@ -128,11 +121,7 @@ YUI.add('button-group-test', function (Y) {
         name: 'Radio',
 
         setUp : function () {
-            Y.one("#container").setContent('<div id="group"><button>A</button><button>B</button><button>C</button></div>');
-            this.ButtonGroup = new Y.ButtonGroup({
-                srcNode: '#group',
-                type: 'radio'
-            }).render();
+            this.ButtonGroup = renderButtonGroup({type: 'radio'});
         },
     
         tearDown: function () {
@@ -181,7 +170,42 @@ YUI.add('button-group-test', function (Y) {
             Assert.areSame('button', Y.one('#group .yui3-button-selected').get('tagName').toLowerCase());
         }
     }));
+
+    // -- MISC2 ----------------------------------------------------------------
+    suite.add(new Y.Test.Case({
+        name: 'MISC2',
+
+        setUp : function () {
+            this.ButtonGroup = renderButtonGroup({type: 'text'});
+        },
     
+        tearDown: function () {
+            Y.one('#container').empty(true);
+        },
+        
+        // This test just simulates a click on non-standard button types to satisfy 
+        // an 'else path not taken' warning in Istanbul's coverage for in _handleClick.
+        // Nothing to test or assert
+        'ButtonGroups should execute edge case branch': function () {
+            var ButtonGroup = this.ButtonGroup;
+            var buttons = ButtonGroup.getButtons();
+
+            Y.one('#group>button').simulate('click');
+        }
+    }));
+
+    function renderButtonGroup(config) {
+        var config = config || {};
+        config.srcNode = '#group';
+
+        Y.one("#container").setContent('<div id="group"><button>A</button><button>B</button><button>C</button></div>');
+        
+        var buttonGroup = new Y.ButtonGroup(config);
+        buttonGroup.render();
+
+        return buttonGroup;
+    }
+
     Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {
