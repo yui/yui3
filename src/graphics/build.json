@@ -3,7 +3,8 @@
     "builds": {
         "graphics": {
             "jsfiles": [
-                "GraphicBase.js"
+                "GraphicBase.js",
+                "DrawingBase.js"
             ]
         },
         "graphics-canvas-default": {
