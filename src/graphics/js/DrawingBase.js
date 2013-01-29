@@ -53,6 +53,8 @@ DrawingBase.prototype = {
      */
     _currentY: 0,
 
+    _data: "",
+
     /**
      * Indicates the type of shape
      *
@@ -76,7 +78,25 @@ DrawingBase.prototype = {
      * @chainable
      */
     curveTo: function() {
-        this._curveTo.apply(this, [Y.Array(arguments), false]);
+        var args = Y.Array(arguments),
+            len = args.length,
+            i;
+        if(this._pathType !== "C") 
+        {
+            this._data = this._data + " C";
+        }
+        else 
+        {
+            this._data = this._data + " ";
+        }
+        for(i = 0; i < len - 1; i = i + 2) {
+            if(i > 1) 
+            {
+                this._data = this._data + " ";
+            }
+            this._data = this._data + args[i] + ", " + args[i + 1];
+        }
+        this._curveTo.apply(this, [args, false]);
         return this;
     },
 
@@ -93,7 +113,25 @@ DrawingBase.prototype = {
      * @chainable
      */
     relativeCurveTo: function() {
-        this._curveTo.apply(this, [Y.Array(arguments), true]);
+        var args = Y.Array(arguments),
+            len = args.length,
+            i;
+        if(this._pathType !== "c") 
+        {
+            this._data = this._data + " c";
+        }
+        else 
+        {
+            this._data = this._data + " ";
+        }
+        for(i = 0; i < len - 1; i = i + 2) {
+            if(i > 1) 
+            {
+                this._data = this._data + " ";
+            }
+            this._data = this._data + args[i] + ", " + args[i + 1];
+        }
+        this._curveTo.apply(this, [args, true]);
         return this;
     },
 
@@ -108,7 +146,25 @@ DrawingBase.prototype = {
      * @chainable
      */
     quadraticCurveTo: function() {
-        this._quadraticCurveTo.apply(this, [Y.Array(arguments), false]);
+        var args = Y.Array(arguments),
+            len = args.length,
+            i;
+        if(this._pathType !== "Q") 
+        {
+            this._data = this._data + " Q";
+        }
+        else 
+        {
+            this._data = this._data + " ";
+        }
+        for(i = 0; i < len - 1; i = i + 2) {
+            if(i > 1) 
+            {
+                this._data = this._data + " ";
+            }
+            this._data = this._data + args[i] + ", " + args[i + 1];
+        }
+        this._quadraticCurveTo.apply(this, [args, false]);
         return this;
     },
 
@@ -123,7 +179,25 @@ DrawingBase.prototype = {
      * @chainable
      */
     relativeQuadraticCurveTo: function() {
-        this._quadraticCurveTo.apply(this, [Y.Array(arguments), true]);
+        var args = Y.Array(arguments),
+            len = args.length,
+            i;
+        if(this._pathType !== "q") 
+        {
+            this._data = this._data + " q";
+        }
+        else 
+        {
+            this._data = this._data + " ";
+        }
+        for(i = 0; i < len - 1; i = i + 2) {
+            if(i > 1) 
+            {
+                this._data = this._data + " ";
+            }
+            this._data = this._data + args[i] + ", " + args[i + 1];
+        }
+        this._quadraticCurveTo.apply(this, [args, true]);
         return this;
     },
 
@@ -193,18 +267,100 @@ DrawingBase.prototype = {
         this.lineTo(x + midWidth, y);
         return this;
     },
+    /**
+     * Draws a wedge.
+     *
+     * @method drawWedge
+     * @param {Number} x x-coordinate of the wedge's center point
+     * @param {Number} y y-coordinate of the wedge's center point
+     * @param {Number} startAngle starting angle in degrees
+     * @param {Number} arc sweep of the wedge. Negative values draw clockwise.
+     * @param {Number} radius radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+     * @param {Number} yRadius [optional] y radius for wedge.
+     * @chainable
+     * @private
+     */
+    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
+    {
+        var segs,
+            segAngle,
+            theta,
+            angle,
+            angleMid,
+            ax,
+            ay,
+            bx,
+            by,
+            cx,
+            cy,
+            i,
+            diameter = radius * 2;
+        yRadius = yRadius || radius;
+        this.moveTo(x, y);
+
+        // limit sweep to reasonable numbers
+        if(Math.abs(arc) > 360)
+        {
+            arc = 360;
+        }
+
+        // First we calculate how many segments are needed
+        // for a smooth arc.
+        segs = Math.ceil(Math.abs(arc) / 45);
+
+        // Now calculate the sweep of each segment.
+        segAngle = arc / segs;
+
+        // The math requires radians rather than degrees. To convert from degrees
+        // use the formula (degrees/180)*Math.PI to get radians.
+        theta = -(segAngle / 180) * Math.PI;
+
+        // convert angle startAngle to radians
+        angle = (startAngle / 180) * Math.PI;
+        if(segs > 0)
+        {
+            // draw a line from the center to the start of the curve
+            ax = x + Math.cos(startAngle / 180 * Math.PI) * radius;
+            ay = y + Math.sin(startAngle / 180 * Math.PI) * yRadius;
+            this.lineTo(Math.round(ax), Math.round(ay));
+            for(i = 0; i < segs; ++i)
+            {
+                angle += theta;
+                angleMid = angle - (theta / 2);
+                bx = x + Math.cos(angle) * radius;
+                by = y + Math.sin(angle) * yRadius;
+                cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
+                cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
+                this.quadraticCurveTo(Math.round(cx), Math.round(cy), Math.round(bx), Math.round(by));
+            }
+        }
+        this._currentX = x;
+        this._currentY = y;
+        this._trackSize(diameter, diameter);
+        return this;
+    },
 
     /**
      * Draws a line segment from the current drawing position to the specified x and y coordinates.
      *
      * @method lineTo
-     * @param {Number} point1 x-coordinate for the end point.
+     * @param {Number} arg1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
      * @chainable
      */
     lineTo: function()
     {
-        this._lineTo.apply(this, [Y.Array(arguments), false]);
+        var args = this._getLineToArgs.apply(this, arguments);
+        if(this._pathType !== "L") 
+        {
+            this._data = this._data + " L";
+        }
+        else 
+        {
+            this._data = this._data + ", ";
+        }
+        this._data = this._data + args.join(", ");
+        this._lineTo.apply(this, [args, false]);
         return this;
     },
 
@@ -218,7 +374,17 @@ DrawingBase.prototype = {
      */
     relativeLineTo: function()
     {
-        this._lineTo.apply(this, [Y.Array(arguments), true]);
+        var args = this._getLineToArgs.apply(this, arguments);
+        if(this._pathType !== "l") 
+        {
+            this._data = this._data + " l";
+        }
+        else 
+        {
+            this._data = this._data + ", ";
+        }
+        this._data = this._data + args.join(", ");
+        this._lineTo.apply(this, [args, true]);
         return this;
     },
 
@@ -232,7 +398,17 @@ DrawingBase.prototype = {
      */
     moveTo: function()
     {
-        this._moveTo.apply(this, [Y.Array(arguments), false]);
+        var args = Y.Array(arguments);
+        if(this._pathType !== "M") 
+        {
+            this._data = this._data + " M";
+        }
+        else 
+        {
+            this._data = this._data + ", ";
+        }
+        this._data = this._data + args.join(", ");
+        this._moveTo.apply(this, [args, false]);
         return this;
     },
 
@@ -246,6 +422,15 @@ DrawingBase.prototype = {
      */
     relativeMoveTo: function()
     {
+        var args = Y.Array(arguments);
+        if(this._pathType !== "m") 
+        {
+            this._data = this._data + " m";
+        }
+        else 
+        {
+            this._data = this._data + ", ";
+        }
         this._moveTo.apply(this, [Y.Array(arguments), true]);
         return this;
     },
@@ -272,6 +457,35 @@ DrawingBase.prototype = {
     {
         this._pathArray.push(["z"]);
         return this;
+    },
+
+    /**
+     * Returns an array of points for the _lineTo method.
+     *
+     * @method _getLineToArgs
+     * @return Array
+     * @private
+     */
+    _getLineToArgs: function() {
+        var arg1 = arguments[0],
+            args,
+            i,
+            len;
+        if(typeof arg1 === "string" || typeof arg1 === "number") 
+        {
+            args = Y.Array(arguments);
+        }
+        else
+        {
+            args = [];
+            len = arg1.length;
+            for(i = 0; i < len; i = i + 1) 
+            {
+                args.push(arg1[i][0]);
+                args.push(arg1[i][1]);
+            }
+        }
+        return args;
     },
 
     /**
@@ -337,6 +551,35 @@ DrawingBase.prototype = {
         this._trackSize(left, top);
     },
 
+    /**
+     * Returns the svg data string for drawn circle or ellipse.
+     *
+     * @method _getEllipseData
+     * @param {Number} x The x coordinate for the ellipse.
+     * @param {Number} y The y coordinate for the ellipse.
+     * @param {Number} radius The x radius of the ellipse.
+     * @param {Number} yRadius The y radius of the ellipse. If not specified, data for a circle will be created.
+     * @return String
+     * @private
+     */ 
+    _getEllipseData: function(x, y, radius, yRadius) {
+        var data;
+        yRadius = yRadius || radius;
+        if(this._pathType !== "M") 
+        {
+            data = " M";
+        }
+        else 
+        {
+            data =  ", ";
+        }
+        data = data + (x + radius) + ", " + y;
+        data = data + " A" + radius + ", " + yRadius + " 0 1, 0 " + (x + radius) + ", " + (y + (yRadius * 2));
+        data = data + " A" + radius + ", " + yRadius + " 0 1, 0 " + (x + radius) + ", " + y; 
+        this._pathType = "A";
+        return data;
+    },
+    
     /**
      * Updates the size of the graphics object
      *

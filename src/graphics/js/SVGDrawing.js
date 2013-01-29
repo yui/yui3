@@ -177,6 +177,7 @@ Y.extend(SVGDrawing, Y.DrawingBase, Y.mix({
         this._trackSize(x, y);
         this._trackSize(x + circum, y + circum);
         this._pathArray = this._pathArray || [];
+        this._data = this._data +  this._getEllipseData.apply(this, arguments);
         this._pathArray.push(["M", x + radius, y]);
         this._pathArray.push(["A",  radius, radius, 0, 1, 0, x + radius, y + circum]);
         this._pathArray.push(["A",  radius, radius, 0, 1, 0, x + radius, y]);
@@ -184,7 +185,7 @@ Y.extend(SVGDrawing, Y.DrawingBase, Y.mix({
         this._currentY = y;
         return this;
     },
-
+    
     /**
      * Draws an ellipse.
      *
@@ -203,109 +204,12 @@ Y.extend(SVGDrawing, Y.DrawingBase, Y.mix({
         this._trackSize(x, y);
         this._trackSize(x + w, y + h);
         this._pathArray = this._pathArray || [];
+        this._data = this._data + this._getEllipseData.apply(this, [x, y, radius, yRadius]);
         this._pathArray.push(["M", x + radius, y]);
         this._pathArray.push(["A",  radius, yRadius, 0, 1, 0, x + radius, y + h]);
         this._pathArray.push(["A",  radius, yRadius, 0, 1, 0, x + radius, y]);
         this._currentX = x;
         this._currentY = y;
-        return this;
-    },
-
-    /**
-     * Draws a wedge.
-     *
-     * @method drawWedge
-     * @param {Number} x x-coordinate of the wedge's center point
-     * @param {Number} y y-coordinate of the wedge's center point
-     * @param {Number} startAngle starting angle in degrees
-     * @param {Number} arc sweep of the wedge. Negative values draw clockwise.
-     * @param {Number} radius radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
-     * @param {Number} yRadius [optional] y radius for wedge.
-     * @chainable
-     * @private
-     */
-    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
-    {
-        var segs,
-            segAngle,
-            theta,
-            angle,
-            angleMid,
-            ax,
-            ay,
-            bx,
-            by,
-            cx,
-            cy,
-            i,
-            diameter = radius * 2,
-            currentArray,
-            pathArrayLen;
-        this._pathArray = this._pathArray || [];
-        yRadius = yRadius || radius;
-        if(this._pathType != "M")
-        {
-            this._pathType = "M";
-            currentArray = ["M"];
-            this._pathArray.push(currentArray);
-        }
-        else
-        {
-            currentArray = this._getCurrentArray();
-        }
-        pathArrayLen = this._pathArray.length - 1;
-        this._pathArray[pathArrayLen].push(x);
-        this._pathArray[pathArrayLen].push(x);
-
-        // limit sweep to reasonable numbers
-        if(Math.abs(arc) > 360)
-        {
-            arc = 360;
-        }
-
-        // First we calculate how many segments are needed
-        // for a smooth arc.
-        segs = Math.ceil(Math.abs(arc) / 45);
-
-        // Now calculate the sweep of each segment.
-        segAngle = arc / segs;
-
-        // The math requires radians rather than degrees. To convert from degrees
-        // use the formula (degrees/180)*Math.PI to get radians.
-        theta = -(segAngle / 180) * Math.PI;
-
-        // convert angle startAngle to radians
-        angle = (startAngle / 180) * Math.PI;
-        if(segs > 0)
-        {
-            // draw a line from the center to the start of the curve
-            ax = x + Math.cos(startAngle / 180 * Math.PI) * radius;
-            ay = y + Math.sin(startAngle / 180 * Math.PI) * yRadius;
-            this._pathType = "L";
-            pathArrayLen++;
-            this._pathArray[pathArrayLen] = ["L"];
-            this._pathArray[pathArrayLen].push(Math.round(ax));
-            this._pathArray[pathArrayLen].push(Math.round(ay));
-            pathArrayLen++;
-            this._pathType = "Q";
-            this._pathArray[pathArrayLen] = ["Q"];
-            for(i = 0; i < segs; ++i)
-            {
-                angle += theta;
-                angleMid = angle - (theta / 2);
-                bx = x + Math.cos(angle) * radius;
-                by = y + Math.sin(angle) * yRadius;
-                cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
-                cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-                this._pathArray[pathArrayLen].push(Math.round(cx));
-                this._pathArray[pathArrayLen].push(Math.round(cy));
-                this._pathArray[pathArrayLen].push(Math.round(bx));
-                this._pathArray[pathArrayLen].push(Math.round(by));
-            }
-        }
-        this._currentX = x;
-        this._currentY = y;
-        this._trackSize(diameter, diameter);
         return this;
     },
 
@@ -318,9 +222,8 @@ Y.extend(SVGDrawing, Y.DrawingBase, Y.mix({
      * @private
      */
     _lineTo: function(args, relative) {
-        var point1 = args[0],
-            i,
-            len,
+        var i,
+            len = args.length,
             pathArrayLen,
             currentArray,
             x,
@@ -330,7 +233,6 @@ Y.extend(SVGDrawing, Y.DrawingBase, Y.mix({
             relativeY = relative ? parseFloat(this._currentY) : 0;
         this._pathArray = this._pathArray || [];
         this._shapeType = "path";
-        len = args.length;
         if(this._pathType !== command)
         {
             this._pathType = command;
@@ -342,32 +244,16 @@ Y.extend(SVGDrawing, Y.DrawingBase, Y.mix({
             currentArray = this._getCurrentArray();
         }
         pathArrayLen = this._pathArray.length - 1;
-        if (typeof point1 === 'string' || typeof point1 === 'number') {
-            for (i = 0; i < len; i = i + 2) {
-                x = parseFloat(args[i]);
-                y = parseFloat(args[i + 1]);
-                this._pathArray[pathArrayLen].push(x);
-                this._pathArray[pathArrayLen].push(y);
-                x = x + relativeX;
-                y = y + relativeY;
-                this._currentX = x;
-                this._currentY = y;
-                this._trackSize.apply(this, [x, y]);
-            }
-        }
-        else
-        {
-            for (i = 0; i < len; ++i) {
-                x = parseFloat(args[i][0]);
-                y = parseFloat(args[i][1]);
-                this._pathArray[pathArrayLen].push(x);
-                this._pathArray[pathArrayLen].push(y);
-                this._currentX = x;
-                this._currentY = y;
-                x = x + relativeX;
-                y = y + relativeY;
-                this._trackSize.apply(this, [x, y]);
-            }
+        for (i = 0; i < len; i = i + 2) {
+            x = parseFloat(args[i]);
+            y = parseFloat(args[i + 1]);
+            this._pathArray[pathArrayLen].push(x);
+            this._pathArray[pathArrayLen].push(y);
+            x = x + relativeX;
+            y = y + relativeY;
+            this._currentX = x;
+            this._currentY = y;
+            this._trackSize.apply(this, [x, y]);
         }
     },
 
@@ -418,6 +304,7 @@ Y.extend(SVGDrawing, Y.DrawingBase, Y.mix({
         this._bottom = 0;
         this._pathArray = [];
         this._path = "";
+        this._data = "";
         return this;
     },
 

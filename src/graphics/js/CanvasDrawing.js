@@ -166,9 +166,8 @@ Y.extend(CanvasDrawing, Y.DrawingBase, Y.mix({
      */
     _lineTo: function(args, relative)
     {
-        var point1 = args[0],
-            i,
-            len,
+        var i,
+            len = args.length - 1,
             x,
             y,
             wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
@@ -178,31 +177,15 @@ Y.extend(CanvasDrawing, Y.DrawingBase, Y.mix({
         {
             this._lineToMethods = [];
         }
-        len = args.length - 1;
-        if (typeof point1 === 'string' || typeof point1 === 'number') {
-            for (i = 0; i < len; i = i + 2) {
-                x = parseFloat(args[i]);
-                y = parseFloat(args[i + 1]);
-                x = x + relativeX;
-                y = y + relativeY;
-                this._updateDrawingQueue(["lineTo", x, y]);
-                this._trackSize(x - wt, y - wt);
-                this._trackSize(x + wt, y + wt);
-                this._updateCoords(x, y);
-            }
-        }
-        else
-        {
-            for (i = 0; i < len; i = i + 1)
-            {
-                x = parseFloat(args[i][0]);
-                y = parseFloat(args[i][1]);
-                this._updateDrawingQueue(["lineTo", x, y]);
-                this._lineToMethods[this._lineToMethods.length] = this._methods[this._methods.length - 1];
-                this._trackSize(x - wt, y - wt);
-                this._trackSize(x + wt, y + wt);
-                this._updateCoords(x, y);
-            }
+        for (i = 0; i < len; i = i + 2) {
+            x = parseFloat(args[i]);
+            y = parseFloat(args[i + 1]);
+            x = x + relativeX;
+            y = y + relativeY;
+            this._updateDrawingQueue(["lineTo", x, y]);
+            this._trackSize(x - wt, y - wt);
+            this._trackSize(x + wt, y + wt);
+            this._updateCoords(x, y);
         }
         return this;
     },
@@ -299,7 +282,6 @@ Y.extend(CanvasDrawing, Y.DrawingBase, Y.mix({
             top,
             i,
             len = args.length - 3,
-            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
         for(i = 0; i < len; i = i + 4)
@@ -316,7 +298,7 @@ Y.extend(CanvasDrawing, Y.DrawingBase, Y.mix({
             h = Math.abs(bottom - top);
             pts = [[this._currentX, this._currentY] , [cpx, cpy], [x, y]];
             this._setCurveBoundingBox(pts, w, h);
-            this._updateDrawingQueue(["quadraticCurveTo", cpx, cpy, x, y]);
+            this._updateDrawingQueue(["quadraticCurveTo", Math.round(cpx), Math.round(cpy), Math.round(x), Math.round(y)]);
             this._updateCoords(x, y);
         }
         return this;
@@ -341,6 +323,7 @@ Y.extend(CanvasDrawing, Y.DrawingBase, Y.mix({
         this._trackSize(x + circum, y + circum);
         this._trackSize(x - wt, y - wt);
         this._updateCoords(x, y);
+        this._data = this._data +  this._getEllipseData.apply(this, arguments);
         this._updateDrawingQueue(["arc", x + radius, y + radius, radius, startAngle, endAngle, false]);
         return this;
     },
@@ -371,7 +354,8 @@ Y.extend(CanvasDrawing, Y.DrawingBase, Y.mix({
 
         ax = centerX + Math.cos(0) * radius;
         ay = centerY + Math.sin(0) * yRadius;
-        this.moveTo(ax, ay);
+        this._data = this._data + this._getEllipseData.apply(this, [x, y, radius, yRadius]);
+        this._updateDrawingQueue(["moveTo", x, y]);
         for(i = 0; i < l; i++)
         {
             angle += theta;
@@ -387,7 +371,6 @@ Y.extend(CanvasDrawing, Y.DrawingBase, Y.mix({
         this._updateCoords(x, y);
         return this;
     },
-
     /**
      * Draws a wedge.
      *
@@ -398,72 +381,12 @@ Y.extend(CanvasDrawing, Y.DrawingBase, Y.mix({
      * @param {Number} arc sweep of the wedge. Negative values draw clockwise.
      * @param {Number} radius radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
      * @param {Number} yRadius [optional] y radius for wedge.
-     * @chainable
      * @private
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
-        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
-            segs,
-            segAngle,
-            theta,
-            angle,
-            angleMid,
-            ax,
-            ay,
-            bx,
-            by,
-            cx,
-            cy,
-            i = 0;
-        yRadius = yRadius || radius;
-
-        // move to x,y position
-        this._updateDrawingQueue(["moveTo", x, y]);
-
-        yRadius = yRadius || radius;
-
-        // limit sweep to reasonable numbers
-        if(Math.abs(arc) > 360)
-        {
-            arc = 360;
-        }
-
-        // First we calculate how many segments are needed
-        // for a smooth arc.
-        segs = Math.ceil(Math.abs(arc) / 45);
-
-        // Now calculate the sweep of each segment.
-        segAngle = arc / segs;
-
-        // The math requires radians rather than degrees. To convert from degrees
-        // use the formula (degrees/180)*Math.PI to get radians.
-        theta = -(segAngle / 180) * Math.PI;
-
-        // convert angle startAngle to radians
-        angle = (startAngle / 180) * Math.PI;
-
-        // draw the curve in segments no larger than 45 degrees.
-        if(segs > 0)
-        {
-            // draw a line from the center to the start of the curve
-            ax = x + Math.cos(startAngle / 180 * Math.PI) * radius;
-            ay = y + Math.sin(startAngle / 180 * Math.PI) * yRadius;
-            this.lineTo(ax, ay);
-            // Loop for drawing curve segments
-            for(i = 0; i < segs; ++i)
-            {
-                angle += theta;
-                angleMid = angle - (theta / 2);
-                bx = x + Math.cos(angle) * radius;
-                by = y + Math.sin(angle) * yRadius;
-                cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
-                cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-                this._updateDrawingQueue(["quadraticCurveTo", cx, cy, bx, by]);
-            }
-            // close the wedge by drawing a line to the center
-            this._updateDrawingQueue(["lineTo", x, y]);
-        }
+        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
+        Y.CanvasDrawing.superclass.drawWedge.apply(this, arguments);
         this._trackSize(-wt , -wt);
         this._trackSize((radius * 2) + wt, (radius * 2) + wt);
         return this;

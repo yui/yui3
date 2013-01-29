@@ -197,7 +197,8 @@ Y.extend(VMLDrawing, Y.DrawingBase, Y.mix({
         endAngle *= 65535;
         this._drawingComplete = false;
         this._trackSize(x + circum, y + circum);
-        this.moveTo((x + circum), (y + radius));
+        this._data = this._data +  this._getEllipseData.apply(this, arguments);
+        this._movePath = "m" + this._round(x) + ", " + this._round(y);
         this._addToPath(" ae " + this._round(x + radius) + ", " + this._round(y + radius) + ", " + this._round(radius) + ", " + this._round(radius) + ", " + startAngle + ", " + endAngle);
         return this;
     },
@@ -221,40 +222,9 @@ Y.extend(VMLDrawing, Y.DrawingBase, Y.mix({
         endAngle *= 65535;
         this._drawingComplete = false;
         this._trackSize(x + w, y + h);
-        this.moveTo((x + w), (y + yRadius));
+        this._data = this._data +  this._getEllipseData.apply(this, [x, y, radius, yRadius]);
+        this._movePath = "m" + this._round(x + w) + ", " + this._round(y + yRadius);
         this._addToPath(" ae " + this._round(x + radius) + ", " + this._round(x + radius) + ", " + this._round(y + yRadius) + ", " + this._round(radius) + ", " + this._round(yRadius) + ", " + startAngle + ", " + endAngle);
-        return this;
-    },
-
-    /**
-     * Draws a wedge.
-     *
-     * @method drawWedge
-     * @param {Number} x x-coordinate of the wedge's center point
-     * @param {Number} y y-coordinate of the wedge's center point
-     * @param {Number} startAngle starting angle in degrees
-     * @param {Number} arc sweep of the wedge. Negative values draw clockwise.
-     * @param {Number} radius radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
-     * @param {Number} yRadius [optional] y radius for wedge.
-     * @chainable
-     * @private
-     */
-    drawWedge: function(x, y, startAngle, arc, radius)
-    {
-        var diameter = radius * 2;
-        if(Math.abs(arc) > 360)
-        {
-            arc = 360;
-        }
-        this._currentX = x;
-        this._currentY = y;
-        startAngle *= -65535;
-        arc *= 65536;
-        startAngle = Math.round(startAngle);
-        arc = Math.round(arc);
-        this.moveTo(x, y);
-        this._addToPath(" ae " + this._round(x) + ", " + this._round(y) + ", " + this._round(radius) + " " + this._round(radius) + ", " +  startAngle + ", " + arc);
-        this._trackSize(diameter, diameter);
         return this;
     },
 
@@ -267,40 +237,22 @@ Y.extend(VMLDrawing, Y.DrawingBase, Y.mix({
      * @private
      */
     _lineTo: function(args, relative) {
-        var point1 = args[0],
-            i,
-            len,
+        var i,
+            len = args.length - 1,
             x,
             y,
             path = relative ? " r " : " l ",
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
-        if (typeof point1 == "string" || typeof point1 == "number") {
-            len = args.length - 1;
-            for (i = 0; i < len; i = i + 2) {
-                x = parseFloat(args[i]);
-                y = parseFloat(args[i + 1]);
-                path += ' ' + this._round(x) + ', ' + this._round(y);
-                x = x + relativeX;
-                y = y + relativeY;
-                this._currentX = x;
-                this._currentY = y;
-                this._trackSize.apply(this, [x, y]);
-            }
-        }
-        else
-        {
-            len = args.length;
-            for (i = 0; i < len; i = i + 1) {
-                x = parseFloat(args[i][0]);
-                y = parseFloat(args[i][1]);
-                path += ' ' + this._round(x) + ', ' + this._round(y);
-                x = x + relativeX;
-                y = y + relativeY;
-                this._currentX = x;
-                this._currentY = y;
-                this._trackSize.apply(this, [x, y]);
-            }
+        for (i = 0; i < len; i = i + 2) {
+            x = parseFloat(args[i]);
+            y = parseFloat(args[i + 1]);
+            path += ' ' + this._round(x) + ', ' + this._round(y);
+            x = x + relativeX;
+            y = y + relativeY;
+            this._currentX = x;
+            this._currentY = y;
+            this._trackSize.apply(this, [x, y]);
         }
         this._addToPath(path);
         return this;
