@@ -267,54 +267,54 @@
                     }],                    
                     render:true
                 });
-                // svHorizPagedDA = new Y.ScrollView({
-                //     id:"svHorizPagedDA",
-                //     srcNode:"#sv-horiz-paged-dualaxis-content",
-                //     height:200,
-                //     width:300,
-                //     axis:"xy",
-                //     flick: {
-                //         minDistance: 10,
-                //         minVelocity:0.3,
-                //         axis:"y"
-                //     },
-                //     plugins: [{
-                //         fn:Y.Plugin.ScrollViewPaginator, 
-                //         cfg:{
-                //             axis:"x",
-                //             selector:">ul>li"
-                //         }
-                //     }],    
-                //     render:true
-                // });
+                svHorizPagedDA = new Y.ScrollView({
+                    id:"svHorizPagedDA",
+                    srcNode:"#sv-horiz-paged-dualaxis-content",
+                    height:200,
+                    width:300,
+                    axis:"xy",
+                    flick: {
+                        minDistance: 10,
+                        minVelocity:0.3,
+                        axis:"y"
+                    },
+                    plugins: [{
+                        fn:Y.Plugin.ScrollViewPaginator, 
+                        cfg:{
+                            axis:"x",
+                            selector:">ul>li"
+                        }
+                    }],    
+                    render:true
+                });
 
-                // svVertPagedDA = new Y.ScrollView({
-                //     id:"svVertPaged",
-                //     srcNode:"#sv-vert-paged-dualaxis-content",
-                //     height:300,
-                //     width:200,
-                //     axis:"xy",
-                //     flick: {
-                //         minDistance: 10,
-                //         minVelocity:0.3,
-                //         axis:"x"
-                //     },
-                //     plugins: [{
-                //         fn:Y.Plugin.ScrollViewPaginator, 
-                //         cfg:{
-                //             axis:"y",
-                //             selector:">ul>li"
-                //         }
-                //     }],                    
-                //     render:true
-                // });
+                svVertPagedDA = new Y.ScrollView({
+                    id:"svVertPaged",
+                    srcNode:"#sv-vert-paged-dualaxis-content",
+                    height:300,
+                    width:200,
+                    axis:"xy",
+                    flick: {
+                        minDistance: 10,
+                        minVelocity:0.3,
+                        axis:"x"
+                    },
+                    plugins: [{
+                        fn:Y.Plugin.ScrollViewPaginator, 
+                        cfg:{
+                            axis:"y",
+                            selector:">ul>li"
+                        }
+                    }],                    
+                    render:true
+                });
                 
                 svHoriz._origFlick = svHoriz.get("flick");
                 svVert._origFlick = svVert.get("flick");
                 svVertPaged._origFlick = svVertPaged.get("flick");
                 svHorizPaged._origFlick = svHorizPaged.get("flick");
-                // svVertPagedDA._origFlick = svVertPaged.get("flick");
-                // svHorizPagedDA._origFlick = svHorizPaged.get("flick");
+                svVertPagedDA._origFlick = svVertPaged.get("flick");
+                svHorizPagedDA._origFlick = svHorizPaged.get("flick");
 
                 var state = Y.one("#state");
 
