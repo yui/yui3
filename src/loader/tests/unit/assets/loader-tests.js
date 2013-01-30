@@ -547,6 +547,8 @@ YUI.add('loader-tests', function(Y) {
                 onTimeout: function(e) {
                     Assert.isFalse(e.success, 'Bogus module reported it was loaded');
                     Assert.areSame('timeout', e.msg, 'Failure event was not sent');
+                    Assert.isObject(e.transaction, 'Failed to pass Get transaction object');
+                    Assert.isArray(e.transaction.errors, 'Failed to pass Get transaction object with errors');
                 },
                 modules: {
                     'bogus-module': {
