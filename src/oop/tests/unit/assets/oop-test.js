@@ -45,6 +45,58 @@ suite.add(new Y.Test.Case({
         Assert.isTrue((d.c() === 3));
 
     },
+    
+    test_bind: function () {
+        
+        var g;
+        
+        if(Y.UA.nodejs) {
+            g = global;
+        } else if(typeof window != 'undefined'){
+            g = window;
+        }
+        
+        function x() {
+            Assert.areEqual(this, g);
+        }
+
+        Y.bind(x)();
+
+        if (x.bind) {
+            x.bind()();
+        }
+
+        function y(a, b, c) {
+            Assert.areEqual(a, 1);
+            Assert.areEqual(b, 2);
+            Assert.areEqual(c, 3);
+            Assert.isTrue(this instanceof y);
+        }
+
+        var context = {};
+
+        // when new, ignore context
+        new (Y.bind(y, context, 1, 2))(3);
+
+        if (y.bind) {
+            new (y.bind(context, 1, 2))(3);
+        }
+
+        function z(a, b, c) {
+            Assert.areEqual(a, 1);
+            Assert.areEqual(b, 2);
+            Assert.areEqual(c, 3);
+            Assert.areEqual(this, context);
+        }
+
+        // consider context
+        Y.bind(z, context, 1, 2)(3);
+
+        if (z.bind) {
+            z.bind(context, 1, 2)(3);
+        }
+        
+    },
 
     test_clone_node: function () {
         var a = {

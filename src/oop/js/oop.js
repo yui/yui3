@@ -346,6 +346,24 @@ if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
 };
 
 
+function bind_(r,f,c){
+    var xargs = arguments.length > 3 ?
+            Y.Array(arguments, 3, true) : [],
+        Noop = function () {
+        },
+        bound = function () {
+            var fn = L.isString(f) ? c[f] : f,
+                inArgs = Y.Array(arguments, 0, true);            
+            return fn.apply(this instanceof Noop ? this : c,
+                (r ? inArgs.concat(xargs) : xargs.concat(inArgs)));
+        };
+    if (L.isFunction(f)) {
+        Noop.prototype = f.prototype;   
+        bound.prototype = new Noop(); 
+    }    
+    return bound;
+}
+
 /**
  * Returns a function that will execute the supplied function in the
  * supplied object's context, optionally adding any additional
@@ -360,16 +378,7 @@ if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
  * function is executed with.
  * @return {function} the wrapped function.
  */
-Y.bind = function(f, c) {
-    var xargs = arguments.length > 2 ?
-            Y.Array(arguments, 2, true) : null;
-    return function() {
-        var fn = L.isString(f) ? c[f] : f,
-            args = (xargs) ?
-                xargs.concat(Y.Array(arguments, 0, true)) : arguments;
-        return fn.apply(c || fn, args);
-    };
-};
+Y.bind = bind_(0, bind_, null, 0);
 
 /**
  * Returns a function that will execute the supplied function in the
@@ -385,12 +394,4 @@ Y.bind = function(f, c) {
  * arguments collection supplied to the function.
  * @return {function} the wrapped function.
  */
-Y.rbind = function(f, c) {
-    var xargs = arguments.length > 2 ? Y.Array(arguments, 2, true) : null;
-    return function() {
-        var fn = L.isString(f) ? c[f] : f,
-            args = (xargs) ?
-                Y.Array(arguments, 0, true).concat(xargs) : arguments;
-        return fn.apply(c || fn, args);
-    };
-};
+Y.rbind = bind_(0, bind_, null, 1);
