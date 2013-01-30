@@ -53,7 +53,20 @@
             },
 
             "model": {
-                "requires": ["base-build", "escape", "json-parse"]
+                "requires": ["base-build", "model-base", "model-observable"]
+            },
+
+            "model-base": {
+                "requires": [
+                    "attribute-extras",
+                    "base-core",
+                    "escape",
+                    "json-parse"
+                ]
+            },
+
+            "model-observable": {
+                "requires": ["base-observable", "model-base"]
             },
 
             "model-list": {
