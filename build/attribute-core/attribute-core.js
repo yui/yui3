@@ -184,10 +184,8 @@ YUI.add('attribute-core', function (Y, NAME) {
         // Used for internal state management
         ADDED = "added",
         BYPASS_PROXY = "_bypassProxy",
-        INITIALIZING = "initializing",
         INIT_VALUE = "initValue",
         LAZY = "lazy",
-        IS_LAZY_ADD = "isLazyAdd",
 
         INVALID_VALUE;
 
@@ -406,43 +404,56 @@ YUI.add('attribute-core', function (Y, NAME) {
             var host = this, // help compression
                 state = host._state,
                 value,
+                added,
                 hasValue;
 
             config = config || {};
 
-            lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
+            if (LAZY_ADD in config) {
+                lazy = config[LAZY_ADD];
+            }
 
-            if (lazy && !host.attrAdded(name)) {
-                state.addAll(name, {
+            added = state.get(name, ADDED);
+
+            if (lazy && !added) {
+                state.data[name] = {
                     lazy : config,
                     added : true
-                });
+                };
             } else {
+
                 /*jshint maxlen:200*/
 
-                if (!host.attrAdded(name) || state.get(name, IS_LAZY_ADD)) {
+                if (!added || config.isLazyAdd) {
 
                     hasValue = (VALUE in config);
 
-                /*jshint maxlen:150*/
+                    /*jshint maxlen:200*/
 
                     if (hasValue) {
+
                         // We'll go through set, don't want to set value in config directly
+
+                        // PERF TODO: VALIDATE: See if setting this to undefined is sufficient. We use to delete before.
+                        // In certain code paths/use cases, undefined may not be the same as not present.
+                        // If not, we can set it to some known fixed value (like INVALID_VALUE, say INITIALIZING_VALUE) for performance,
+                        // to avoid a delete which seems to help a lot.
+
                         value = config.value;
-                        delete config.value;
+                        config.value = undefined;
                     }
 
                     config.added = true;
                     config.initializing = true;
 
-                    state.addAll(name, config);
+                    state.data[name] = config;
 
                     if (hasValue) {
                         // Go through set, so that raw values get normalized/validated
                         host.set(name, value);
                     }
 
-                    state.remove(name, INITIALIZING);
+                    config.initializing = false;
                 }
             }
 
@@ -458,7 +469,7 @@ YUI.add('attribute-core', function (Y, NAME) {
          *         This method will return true for lazily added attributes.
          */
         attrAdded: function(name) {
-            return !!this._state.get(name, ADDED);
+            return !!(this._state.get(name, ADDED));
         },
 
         /**
@@ -496,14 +507,22 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @method _addLazyAttr
          * @private
          * @param {Object} name The name of the attribute
+         * @param {Object} [lazyCfg] Optional config hash for the attribute. This is added for performance
+         * along the critical path, where the calling method has already obtained lazy config from state.
          */
-        _addLazyAttr: function(name) {
-            var state = this._state,
-                lazyCfg = state.get(name, LAZY);
+        _addLazyAttr: function(name, lazyCfg) {
+            lazyCfg = lazyCfg || this._state.get(name, LAZY);
 
-            state.add(name, IS_LAZY_ADD, true);
-            state.remove(name, LAZY);
-            this.addAttr(name, lazyCfg);
+            if (lazyCfg) {
+                // PERF TODO: For App's id override, otherwise wouldn't be
+                // needed. It expects to find it in the cfg for it's
+                // addAttr override. Would like to remove, once App override is
+                // removed.
+                this._state.data[name].lazy = undefined;
+
+                lazyCfg.isLazyAdd = true;
+                this.addAttr(name, lazyCfg);
+            }
         },
 
         /**
@@ -570,17 +589,19 @@ YUI.add('attribute-core', function (Y, NAME) {
 
             if (name.indexOf(DOT) !== -1) {
                 strPath = name;
+
                 path = name.split(DOT);
                 name = path.shift();
             }
 
-            if (this._isLazyAttr(name)) {
-                this._addLazyAttr(name);
-            }
-
             cfg = state.getAll(name, true) || {};
 
-            initialSet = (!(VALUE in cfg));
+            if (cfg.lazy) {
+                cfg = cfg.lazy;
+                this._addLazyAttr(name, cfg.lazy);
+            }
+
+            initialSet = (cfg.value === undefined);
 
             if (stateProxy && name in stateProxy && !cfg._bypassProxy) {
                 // TODO: Value is always set for proxy. Can we do any better? Maybe take a snapshot as the initial value for the first call to set?
@@ -620,9 +641,8 @@ YUI.add('attribute-core', function (Y, NAME) {
                 }
 
                 if (allowSet) {
-                    opts = opts || {};
                     if (!this._fireAttrChange || initializing) {
-                        this._setAttrVal(name, strPath, currVal, val, opts);
+                        this._setAttrVal(name, strPath, currVal, val, opts, cfg);
                     } else {
                         // HACK - no real reason core needs to know about _fireAttrChange, but
                         // it adds fn hops if we want to break it out. Not sure it's worth it for this critical path
@@ -654,6 +674,7 @@ YUI.add('attribute-core', function (Y, NAME) {
                 path,
                 getter,
                 val,
+                attrCfg,
                 cfg;
 
             if (name.indexOf(DOT) !== -1) {
@@ -669,14 +690,17 @@ YUI.add('attribute-core', function (Y, NAME) {
                 host._addAttrs(cfg, host._tVals);
             }
 
+            attrCfg = state.getAll(name, true) || {};
+
             // Lazy Init
-            if (host._isLazyAttr(name)) {
-                host._addLazyAttr(name);
+            if (attrCfg.lazy) {
+                attrCfg = attrCfg.lazy;
+                host._addLazyAttr(name, attrCfg.lazy);
             }
 
-            val = host._getStateVal(name);
+            val = host._getStateVal(name, attrCfg);
 
-            getter = state.get(name, GETTER);
+            getter = attrCfg.getter;
 
             if (getter && !getter.call) {
                 getter = this[getter];
@@ -695,11 +719,19 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @method _getStateVal
          * @private
          * @param {String} name The name of the attribute
+         * @param {Object} [cfg] Optional config hash for the attribute. This is added for performance along the critical path,
+         * where the calling method has already obtained the config from state.
+         *
          * @return {Any} The stored value of the attribute
          */
-        _getStateVal : function(name) {
+        _getStateVal : function(name, cfg) {
             var stateProxy = this._stateProxy;
-            return stateProxy && (name in stateProxy) && !this._state.get(name, BYPASS_PROXY) ? stateProxy[name] : this._state.get(name, VALUE);
+
+            if (!cfg) {
+                cfg = this._state.getAll(name) || {};
+            }
+
+            return (stateProxy && (name in stateProxy) && !(cfg._bypassProxy)) ? stateProxy[name] : cfg.value;
         },
 
         /**
@@ -731,18 +763,20 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @param {Any} prevVal The currently stored value of the attribute.
          * @param {Any} newVal The value which is going to be stored.
          * @param {Object} [opts] Optional data providing the circumstances for the change.
+         * @param {Object} [attrCfg] Optional config hash for the attribute. This is added for performance along the critical path,
+         * where the calling method has already obtained the config from state.
          *
          * @return {booolean} true if the new attribute value was stored, false if not.
          */
-        _setAttrVal : function(attrName, subAttrName, prevVal, newVal, opts) {
+        _setAttrVal : function(attrName, subAttrName, prevVal, newVal, opts, attrCfg) {
 
             var host = this,
                 allowSet = true,
-                cfg = this._state.getAll(attrName, true) || {},
+                cfg = attrCfg || this._state.getAll(attrName, true) || {},
                 validator = cfg.validator,
                 setter = cfg.setter,
                 initializing = cfg.initializing,
-                prevRawVal = this._getStateVal(attrName),
+                prevRawVal = this._getStateVal(attrName, cfg),
                 name = subAttrName || attrName,
                 retVal,
                 valid;
@@ -895,15 +929,14 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @return {Object} A reference to the host object.
          */
         addAttrs : function(cfgs, values, lazy) {
-            var host = this; // help compression
             if (cfgs) {
-                host._tCfgs = cfgs;
-                host._tVals = host._normAttrVals(values);
-                host._addAttrs(cfgs, host._tVals, lazy);
-                host._tCfgs = host._tVals = null;
+                this._tCfgs = cfgs;
+                this._tVals = (values) ? this._normAttrVals(values) : null;
+                this._addAttrs(cfgs, this._tVals, lazy);
+                this._tCfgs = this._tVals = null;
             }
 
-            return host;
+            return this;
         },
 
         /**
@@ -944,7 +977,7 @@ YUI.add('attribute-core', function (Y, NAME) {
                     }
 
                     if (host._tCfgs[attr]) {
-                        delete host._tCfgs[attr];
+                        host._tCfgs[attr] = undefined;
                     }
 
                     host.addAttr(attr, attrCfg, lazy);
@@ -980,32 +1013,38 @@ YUI.add('attribute-core', function (Y, NAME) {
          * @private
          */
         _normAttrVals : function(valueHash) {
-            var vals = {},
-                subvals = {},
+            var vals,
+                subvals,
                 path,
                 attr,
                 v, k;
 
-            if (valueHash) {
-                for (k in valueHash) {
-                    if (valueHash.hasOwnProperty(k)) {
-                        if (k.indexOf(DOT) !== -1) {
-                            path = k.split(DOT);
-                            attr = path.shift();
-                            v = subvals[attr] = subvals[attr] || [];
-                            v[v.length] = {
-                                path : path,
-                                value: valueHash[k]
-                            };
-                        } else {
-                            vals[k] = valueHash[k];
-                        }
-                    }
-                }
-                return { simple:vals, complex:subvals };
-            } else {
+            if (!valueHash) {
                 return null;
             }
+
+            vals = {};
+
+            for (k in valueHash) {
+                if (valueHash.hasOwnProperty(k)) {
+                    if (k.indexOf(DOT) !== -1) {
+                        path = k.split(DOT);
+                        attr = path.shift();
+
+                        subvals = subvals || {};
+
+                        v = subvals[attr] = subvals[attr] || [];
+                        v[v.length] = {
+                            path : path,
+                            value: valueHash[k]
+                        };
+                    } else {
+                        vals[k] = valueHash[k];
+                    }
+                }
+            }
+
+            return { simple:vals, complex:subvals };
         },
 
         /**
@@ -1028,6 +1067,7 @@ YUI.add('attribute-core', function (Y, NAME) {
                 valFn = cfg.valueFn,
                 tmpVal,
                 initValSet = false,
+                readOnly = cfg.readOnly,
                 simple,
                 complex,
                 i,
@@ -1036,7 +1076,7 @@ YUI.add('attribute-core', function (Y, NAME) {
                 subval,
                 subvals;
 
-            if (!cfg.readOnly && initValues) {
+            if (!readOnly && initValues) {
                 // Simple Attributes
                 simple = initValues.simple;
                 if (simple && simple.hasOwnProperty(attr)) {
@@ -1055,7 +1095,7 @@ YUI.add('attribute-core', function (Y, NAME) {
                 }
             }
 
-            if (!cfg.readOnly && initValues) {
+            if (!readOnly && initValues) {
 
                 // Complex Attributes (complex values applied, after simple, in case both are set)
                 complex = initValues.complex;

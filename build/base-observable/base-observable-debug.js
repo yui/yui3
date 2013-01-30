@@ -41,7 +41,7 @@ YUI.add('base-observable', function (Y, NAME) {
          * @method _initAttribute
          * @private
          */
-        _initAttribute: function(cfg) {
+        _initAttribute: function() {
             BaseCore.prototype._initAttribute.apply(this, arguments);
             AttributeObservable.call(this);
 
@@ -115,6 +115,7 @@ YUI.add('base-observable', function (Y, NAME) {
 
             if (userTargets || _BUBBLETARGETS in this) {
                 target = userTargets ? (config && config.bubbleTargets) : this._bubbleTargets;
+
                 if (L.isArray(target)) {
                     for (i = 0, l = target.length; i < l; i++) {
                         this.addTarget(target[i]);
