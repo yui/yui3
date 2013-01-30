@@ -62,11 +62,11 @@
                     ignore: {
                         // Ignore PhantomJS and IE because lack of gesture simulation support/issues
                         "Flick x should provide the correct reaction": (Y.UA.phantomjs || Y.UA.ie),
-                        "Move left on X should snap back": (Y.UA.phantomjs || Y.UA.ie),
-                        "Move up on Y should bounce back": (Y.UA.phantomjs || Y.UA.ie),
                         "Move right on X should move the content right": (Y.UA.phantomjs || Y.UA.ie),
+                        "Move left on X should snap back": (Y.UA.phantomjs || Y.UA.ie),
                         "Move down on Y should move the content at least that distance": (Y.UA.phantomjs || Y.UA.ie),
-
+                        "Move up on Y should bounce back": (Y.UA.phantomjs || Y.UA.ie),
+                        
                         // Mousewheel emulation is currently only supported in Chrome
                         "mousewheel down should move the SV down" : (Y.UA.phantomjs || Y.UA.ie || Y.UA.gecko)
                     }

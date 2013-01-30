@@ -63,14 +63,13 @@
                 name: "API Tests",
                 _should: {
                     ignore: {
-                        "Move x should advance 1 page right": (Y.UA.phantomjs || Y.UA.ie),
-                        "Move left on X should snap back": (Y.UA.phantomjs || Y.UA.ie),
+                        // Ignore PhantomJS because of lack of gesture simulation support/issues
+                        "Move x should advance 1 page right": (Y.UA.phantomjs),
+                        "Move left on X should snap back": (Y.UA.phantomjs),
                         "optimizeMemory should hide nodes not near the viewport" : (Y.UA.phantomjs || Y.UA.ie),
-                        "Disabled scrollviews should not advance page index on flick" : (Y.UA.phantomjs || Y.UA.ie),
+                        "Disabled scrollviews should not advance page index on flick" : (Y.UA.phantomjs),
 
-                        // TODO: Investigate why these have issues in IE7
-                        "sv.next() should advance to the next page" : (Y.UA.ie),
-                        "sv.next() on last index should do nothing" : (Y.UA.ie),
+                        // TODO: Fix for IE (#2533100)
                         "Dual axis should allow scrolling on both X & Y axes" : (Y.UA.ie),
 
                         // Mousewheel emulation is currently only supported in Chrome
