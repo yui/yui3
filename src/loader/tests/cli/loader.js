@@ -2325,6 +2325,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("model")) > -1, "Module (model) not found in sorted array");
         },
+     "Testing model-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["model-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("model-base")) > -1, "Module (model-base) not found in sorted array");
+        },
      "Testing model-list": function(data) {
             var loader = new Y.Loader({
                 require: ["model-list"],
@@ -2334,6 +2344,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("model-list")) > -1, "Module (model-list) not found in sorted array");
+        },
+     "Testing model-observable": function(data) {
+            var loader = new Y.Loader({
+                require: ["model-observable"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("model-observable")) > -1, "Module (model-observable) not found in sorted array");
         },
      "Testing model-sync-rest": function(data) {
             var loader = new Y.Loader({

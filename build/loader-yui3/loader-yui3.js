@@ -1828,6 +1828,14 @@ Y.mix(YUI.Env[Y.version].modules, {
     "model": {
         "requires": [
             "base-build",
+            "model-base",
+            "model-observable"
+        ]
+    },
+    "model-base": {
+        "requires": [
+            "attribute-extras",
+            "base-core",
             "escape",
             "json-parse"
         ]
@@ -1841,6 +1849,12 @@ Y.mix(YUI.Env[Y.version].modules, {
             "escape",
             "json-parse",
             "model"
+        ]
+    },
+    "model-observable": {
+        "requires": [
+            "base-observable",
+            "model-base"
         ]
     },
     "model-sync-rest": {
@@ -2638,7 +2652,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'b1f1e0c3c652588981a70b8ce90498ed';
+YUI.Env[Y.version].md5 = '718a9e819086122ce926c83f46434c0a';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
