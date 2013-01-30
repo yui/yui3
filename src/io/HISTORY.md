@@ -1,11 +1,14 @@
 IO Utility Change History
 =========================
 
-@VERSION@
+3.8.1
 -----
 
 * Exposed IO's form serialize via the new `Y.IO.stringify()` method.
   [Ticket #2529073] [Pull Request #351] [John Lindal]
+
+* Stringified request data is now passed to custom transport layers.
+  [Ticket #2532594] [Pull Request #383] [John Lindal]
 
 
 3.8.0

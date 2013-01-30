@@ -8,8 +8,7 @@ Color provides static methods for color conversion.
 
 @module color
 @submodule color-base
-@class Base
-@namespace Color
+@class Color
 @since 3.8.0
 **/
 
