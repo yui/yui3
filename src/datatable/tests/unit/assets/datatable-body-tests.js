@@ -402,7 +402,10 @@ suite.add(new Y.Test.Case({
                 }},
                 {key: 'b', formatter:'currency'},
                 {key: 'button', formatter: 'button', buttonLabel:'press me'},
-                {key: 'truefalse', formatter: 'truefalse'},
+                {key: 'boolean', formatter: 'boolean', booleanLabels: {
+                        'true': 'yes',
+                        'false': 'no'
+                }},
                 {key: 'date', formatter: 'date'},
                 {key: 'email', formatter: 'email', linkFrom: 'linkSrc'},
                 {key: 'link', formatter: 'link', linkFrom: 'linkSrc'},
@@ -417,10 +420,10 @@ suite.add(new Y.Test.Case({
             ],
             data: [
                 {
-                    a: 123.45, b: 123.45, button:'btn', truefalse: true, 'date': new Date(),
+                    a: 123.45, b: 123.45, button:'btn', 'boolean': true, 'date': new Date(),
                     email: 'me', link: 'site', linkSrc: 'there', number: 987654
                 },
-                {a: 6789,   b: 6789  ,               truefalse: false }
+                {a: 6789,   b: 6789  ,               'boolean': false }
             ],
             currencyFormat: {
                 decimalPlaces:1,
@@ -454,12 +457,14 @@ suite.add(new Y.Test.Case({
         Y.Assert.areEqual('BUTTON', content.get('tagName').toUpperCase());
         Y.Assert.areEqual('press me', content.getHTML());
     },
-    "test truefalse format": function () {
+    "test boolean format": function () {
         var dt = this.dt,
             node = dt.getCell([0,3]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-true'));
+        Y.Assert.areEqual('yes',node.getHTML());
         node = dt.getCell([1,3]),
         Y.Assert.isTrue(node.hasClass('yui3-datatable-false'));
+        Y.Assert.areEqual('no',node.getHTML());
     },
     "test date format": function () {
         var dt = this.dt,

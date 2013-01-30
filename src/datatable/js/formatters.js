@@ -65,8 +65,20 @@ var Lang = Y.Lang,
         Assigns the CSS classNames `yui3-datatable-true` or `yui3-datatable-false`
         based on the <i>truthy</i> value of the cell.
 
+        If either a `booleanLabels` configuration object is defined for the column
+        or a `booleanLabels` configuration attribute is defined for the datatable,
+        the formatter will use the values for the properties `true` or `false`
+        of either of those objects as the text to show.
+        If none is found, a single whitespace will be put into the cell,
+        all visual clues relying on the CSS styling.
 
-        @method truefalse
+            {key:"active", formatter: "boolean", booleanLabels: {
+                "true": "yes",
+                "false": "no"
+            }}
+
+
+        @method boolean
         @param o {Object} As provided by [BodyView](DataTable.BodyView.html)
         @param o.value {any} The raw value from the record Model to populate this cell.
              Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
@@ -78,13 +90,15 @@ var Lang = Y.Lang,
         @param o.rowIndex {Number} The index of the current Model in the ModelList.
                Typically correlates to the row index as well.
         @param o.rowClass {String} A string of css classes to add `<tr class="HERE"><td....`
-        @return {String} `" "` The return value is mostly irrelevant since the
-                effective output is the className assigned .
+        @return {String} `" "` unless either a `booleanLabels`
+            column configuration or datatable configuration is defined.
         @static
         **/
-        truefalse : function(o) {
-            o.className = cName(o.value?'true':'false');
-            return ' ';
+        'boolean' : function(o) {
+            var textValue = o.value?'true':'false',
+                labels = o.column.booleanLabels || this.get('booleanLabels');
+            o.className = cName(textValue);
+            return (labels?labels[textValue]:' ');
         },
 
         /**
