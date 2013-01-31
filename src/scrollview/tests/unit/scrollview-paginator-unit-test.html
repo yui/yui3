@@ -55,6 +55,7 @@
             var DURATION = 1,
                 SLOW_DURATION = 1000,
                 WAIT = 2000,
+                LONG_WAIT = 4000,
                 suite = new Y.Test.Suite({name:"Scrollview: Paginator"});
 
             new Y.Test.Console().render();
@@ -73,7 +74,7 @@
                         "Dual axis should allow scrolling on both X & Y axes" : (Y.UA.ie),
 
                         // Mousewheel emulation is currently only supported in Chrome
-                        "mousewheel down should move the SV down" : (Y.UA.phantomjs || Y.UA.ie || Y.UA.gecko)
+                        "mousewheel down should move the SV down" : (Y.UA.phantomjs || Y.UA.ie || Y.UA.gecko || Y.UA.android)
                     }
                 },
 
@@ -281,7 +282,7 @@
                         duration: SLOW_DURATION
                     });
 
-                    Test.wait(WAIT);
+                    Test.wait(LONG_WAIT);
                 },
 
                 "optimizeMemory should hide nodes not near the viewport": function() {

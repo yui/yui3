@@ -68,7 +68,7 @@
                         "Move up on Y should bounce back": (Y.UA.phantomjs || Y.UA.ie),
                         
                         // Mousewheel emulation is currently only supported in Chrome
-                        "mousewheel down should move the SV down" : (Y.UA.phantomjs || Y.UA.ie || Y.UA.gecko)
+                        "mousewheel down should move the SV down" : (Y.UA.phantomjs || Y.UA.ie || Y.UA.gecko || Y.UA.android)
                     }
                 },
 
@@ -470,12 +470,16 @@
                 "Flick x should provide the correct reaction": function() {
                     
                     var Test = this,
-                        scrollview = renderNewScrollview(false);
+                        scrollview = renderNewScrollview(false),
+                        expected = 1400,
+                        scrollX;
 
                     scrollview.on('scrollEnd', function(){
                         Test.resume(function(){
+                            scrollX = scrollview.get('scrollX');
+                            
                             // depending on browser activity, scrollX won't always be exactly at the end (sometimes a few pixels shy), so we'll give it a large buffer
-                            (scrollview.get('scrollX') > 2000) ? Y.Assert.pass() : Y.Assert.fail();
+                            (scrollX > expected) ? Y.Assert.pass() : Y.Assert.fail('scrollX - expected: ' + expected + ', actual: ' + scrollX);
                             Y.Assert.areEqual(0, scrollview.get('scrollY'));
                         });
                     });
@@ -647,7 +651,7 @@
                         });
                     });
 
-                    Test.wait(WAIT);
+                    Test.wait(LONG_WAIT);
                 },
 
                 "mousewheel down should move the SV down": function () {
