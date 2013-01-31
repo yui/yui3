@@ -84,22 +84,22 @@
                   /**
                    * Signals that this file's upload has completed, but data has not yet been received from the server. 
                    *
-                   * @event uploadfinished
-                   * @param event {Event} The event object for the `uploadfinished` with the
+                   * @event uploadcomplete
+                   * @param event {Event} The event object for the `uploadcomplete` with the
                    *                      following payload:
                    *  <dl>
                    *      <dt>originEvent</dt>
                    *          <dd>The original event fired by the Flash player instance.</dd>
                    *  </dl>
                    */
-                 this.fire("uploadfinished", {originEvent: event});
+                 this.fire("uploadcomplete", {originEvent: event});
                  break;
             case "uploadcompletedata":
                 /**
                  * Signals that this file's upload has completed and data has been received from the server.
                  *
-                 * @event uploadcomplete
-                 * @param event {Event} The event object for the `uploadcomplete` with the
+                 * @event uploadcompletedata
+                 * @param event {Event} The event object for the `uploadcompletedata` with the
                  *                      following payload:
                  *  <dl>
                  *      <dt>originEvent</dt>
@@ -108,7 +108,7 @@
                  *          <dd>The data returned by the server.</dd>
                  *  </dl>
                  */
-                 this.fire("uploadcomplete", {originEvent: event,
+                 this.fire("uploadcompletedata", {originEvent: event,
                                               data: event.data});  
                  break;
             case "uploadcancel":
