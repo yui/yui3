@@ -19,12 +19,14 @@
     }
 }
 @media (max-width:480px) { 
-    .yui3-g-r > [class *= "yui3-u"] {
+    .yui3-g-r > .yui3-u,
+    .yui3-g-r > [class *= "yui3-u-"] {
         width: 100%;
     }
 }
 @media (max-width:767px) { 
-    .yui3-g-r > [class *= "yui3-u"] {
+    .yui3-g-r > .yui3-u,
+    .yui3-g-r > [class *= "yui3-u-"] {
         width: 100%;
     }
     .yui3-hidden-phone {
