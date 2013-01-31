@@ -6,7 +6,7 @@ YUI.add('cssgrids-magazine-tests', function(Y) {
     suite.add(new Y.Test.Case({
         name: 'Responsive tests',
         'images have max-widths defined': function() {
-            var headlineImg = Y.one('.left-bar .article img');
+            var headlineImg = Y.one('.sidebar .article img');
             Assert.isNotUndefined(headlineImg.getComputedStyle('maxWidth'), 'maxWidth undefined on images');
         }
     }));
