@@ -1,0 +1,45 @@
+{
+    "tree": {
+        "requires": [
+            "base-build",
+            "tree-node"
+        ]
+    },
+
+    "tree-lazy": {
+        "requires": [
+            "base-pluginhost",
+            "plugin",
+            "tree"
+        ]
+    },
+
+    "tree-node": {},
+
+    "tree-node-openable": {
+        "requires": [
+            "tree-node"
+        ]
+    },
+
+    "tree-node-selectable": {
+        "requires": [
+            "oop",
+            "tree-node"
+        ]
+    },
+
+    "tree-openable": {
+        "requires": [
+            "tree",
+            "tree-node-openable"
+        ]
+    },
+
+    "tree-selectable": {
+        "requires": [
+            "tree",
+            "tree-node-selectable"
+        ]
+    }
+}

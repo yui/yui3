@@ -1,0 +1,47 @@
+{
+    "name": "tree",
+
+    "builds": {
+        "tree": {
+            "jsfiles": [
+                "js/tree.js"
+            ]
+        },
+
+        "tree-lazy": {
+            "jsfiles": [
+                "js/plugins/tree-lazy.js"
+            ]
+        },
+
+        "tree-node": {
+            "jsfiles": [
+                "js/tree-node.js"
+            ]
+        },
+
+        "tree-node-openable": {
+            "jsfiles": [
+                "js/extensions/tree-node-openable.js"
+            ]
+        },
+
+        "tree-node-selectable": {
+            "jsfiles": [
+                "js/extensions/tree-node-selectable.js"
+            ]
+        },
+
+        "tree-openable": {
+            "jsfiles": [
+                "js/extensions/tree-openable.js"
+            ]
+        },
+
+        "tree-selectable": {
+            "jsfiles": [
+                "js/extensions/tree-selectable.js"
+            ]
+        }
+    }
+}
