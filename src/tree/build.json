@@ -8,6 +8,12 @@
             ]
         },
 
+        "tree-labelable": {
+            "jsfiles": [
+                "js/extensions/tree-labelable.js"
+            ]
+        },
+
         "tree-lazy": {
             "jsfiles": [
                 "js/plugins/tree-lazy.js"
@@ -17,6 +23,12 @@
         "tree-node": {
             "jsfiles": [
                 "js/tree-node.js"
+            ]
+        },
+
+        "tree-node-labelable": {
+            "jsfiles": [
+                "js/extensions/tree-node-labelable.js"
             ]
         },
 

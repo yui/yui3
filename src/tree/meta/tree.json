@@ -6,6 +6,13 @@
         ]
     },
 
+    "tree-labelable": {
+        "requires": [
+            "tree",
+            "tree-node-labelable"
+        ]
+    },
+
     "tree-lazy": {
         "requires": [
             "base-pluginhost",
@@ -15,6 +22,12 @@
     },
 
     "tree-node": {},
+
+    "tree-node-labelable": {
+        "requires": [
+            "tree-node"
+        ]
+    },
 
     "tree-node-openable": {
         "requires": [

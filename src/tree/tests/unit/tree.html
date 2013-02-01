@@ -15,8 +15,10 @@ var Y = YUI({
 
     coverage: [
         'tree',
+        'tree-labelable',
         'tree-lazy',
         'tree-node',
+        'tree-node-labelable',
         'tree-node-openable',
         'tree-node-selectable',
         'tree-openable',
@@ -27,6 +29,11 @@ var Y = YUI({
         'tree-test': {
             fullpath: 'assets/tree-test.js',
             requires: ['tree-openable', 'tree-lazy', 'json', 'test']
+        },
+
+        'tree-labelable-test': {
+            fullpath: 'assets/tree-labelable-test.js',
+            requires: ['tree-labelable', 'test']
         },
 
         'tree-openable-test': {
@@ -41,12 +48,14 @@ var Y = YUI({
     },
 
     useBrowserConsole: false
-}).use('tree-test', 'tree-openable-test', 'tree-selectable-test', 'test-console', function (Y) {
+}).use('tree-test', 'tree-labelable-test', 'tree-openable-test', 'tree-selectable-test', 'test-console', function (Y) {
     new Y.Test.Console().render('#log');
 
     Y.Test.Runner.add(Y.TreeTestSuite);
+    Y.Test.Runner.add(Y.TreeLabelableTestSuite);
     Y.Test.Runner.add(Y.TreeOpenableTestSuite);
     Y.Test.Runner.add(Y.TreeSelectableTestSuite);
+
     Y.Test.Runner.run();
 });
 </script>

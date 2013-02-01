@@ -29,24 +29,24 @@ treeSuite.add(new Y.Test.Case({
     'constructor: `nodes` config property should support an array of node configs to add to the tree': function () {
         var tree = new Tree({
                 nodes: [
-                    {label: 'one'},
-                    {label: 'two'},
-                    {label: 'three'}
+                    {id: 'one'},
+                    {id: 'two'},
+                    {id: 'three'}
                 ]
             });
 
         Assert.areSame(3, tree.children.length, 'rootNode should have three children');
-        Assert.areSame('one', tree.children[0].label, 'node one should be added');
-        Assert.areSame('two', tree.children[1].label, 'node two should be added');
-        Assert.areSame('three', tree.children[2].label, 'node three should be added');
+        Assert.areSame('one', tree.children[0].id, 'node one should be added');
+        Assert.areSame('two', tree.children[1].id, 'node two should be added');
+        Assert.areSame('three', tree.children[2].id, 'node three should be added');
     },
 
     'constructor: `nodes` config property should support an array of TreeNode.Node instances to add to the tree': function () {
         var treeA = new Tree({
                 nodes: [
-                    {label: 'one'},
-                    {label: 'two'},
-                    {label: 'three'}
+                    {id: 'one'},
+                    {id: 'two'},
+                    {id: 'three'}
                 ]
             }),
 
@@ -55,39 +55,39 @@ treeSuite.add(new Y.Test.Case({
             });
 
         Assert.areSame(3, treeB.children.length, 'rootNode should have three children');
-        Assert.areSame('one', treeB.children[0].label, 'node one should be added');
-        Assert.areSame('two', treeB.children[1].label, 'node two should be added');
-        Assert.areSame('three', treeB.children[2].label, 'node three should be added');
+        Assert.areSame('one', treeB.children[0].id, 'node one should be added');
+        Assert.areSame('two', treeB.children[1].id, 'node two should be added');
+        Assert.areSame('three', treeB.children[2].id, 'node three should be added');
     },
 
     'constructor: `rootNode` config property should support a custom root node config': function () {
-        var tree = new Tree({rootNode: {label: 'hi!'}});
+        var tree = new Tree({rootNode: {id: 'hi!'}});
 
         Assert.isInstanceOf(Tree.Node, tree.rootNode, 'rootNode should be an instance of Tree.Node');
-        Assert.areSame('hi!', tree.rootNode.label, 'rootNode should have the custom label specified');
+        Assert.areSame('hi!', tree.rootNode.id, 'rootNode should have the custom id specified');
     },
 
     'constructor: `rootNode` config property should support a custom Tree.Node instance': function () {
         var treeA = new Tree(),
-            node  = treeA.createNode({label: 'hi!'}),
+            node  = treeA.createNode({id: 'hi!'}),
             treeB = new Tree({rootNode: node});
 
         Assert.areSame(node, treeB.rootNode, 'rootNode should be the specified node');
-        Assert.areSame('hi!', treeB.rootNode.label, 'rootNode should have the custom label specified');
+        Assert.areSame('hi!', treeB.rootNode.id, 'rootNode should have the custom id specified');
         Assert.areSame(treeB, treeB.rootNode.tree, 'rootNode should have the correct tree reference');
     },
 
     'constructor: should allow both `nodes` and `rootNode` to be specified': function () {
         var tree = new Tree({
-                nodes   : [{label: 'one'}, {label: 'two'}, {label: 'three'}],
-                rootNode: {label: 'hi!'}
+                nodes   : [{id: 'one'}, {id: 'two'}, {id: 'three'}],
+                rootNode: {id: 'hi!'}
             });
 
-        Assert.areSame('hi!', tree.rootNode.label, 'rootNode should have the custom label specified');
+        Assert.areSame('hi!', tree.rootNode.id, 'rootNode should have the custom id specified');
         Assert.areSame(3, tree.children.length, 'rootNode should have three children');
-        Assert.areSame('one', tree.children[0].label, 'node one should be added');
-        Assert.areSame('two', tree.children[1].label, 'node two should be added');
-        Assert.areSame('three', tree.children[2].label, 'node three should be added');
+        Assert.areSame('one', tree.children[0].id, 'node one should be added');
+        Assert.areSame('two', tree.children[1].id, 'node two should be added');
+        Assert.areSame('three', tree.children[2].id, 'node three should be added');
     },
 
     'destructor should destroy the root node': function () {
@@ -114,9 +114,9 @@ treeSuite.add(new Y.Test.Case({
 
     setUp: function () {
         this.tree = new Tree({nodes: [
-            {label: 'one'},
-            {label: 'two'},
-            {label: 'three'}
+            {id: 'one'},
+            {id: 'two'},
+            {id: 'three'}
         ]});
     },
 
@@ -139,7 +139,7 @@ treeSuite.add(new Y.Test.Case({
         });
 
         var tree = new Tree({nodeClass: MyNode});
-        var node = tree.createNode({label: 'foo'});
+        var node = tree.createNode();
 
         Assert.isTrue(node._isMyNode);
     },
@@ -153,7 +153,7 @@ treeSuite.add(new Y.Test.Case({
             nodeClass: 'Foo.Bar.MyNode'
         });
 
-        var node = tree.createNode({label: 'foo'});
+        var node = tree.createNode();
 
         Assert.isTrue(node._isMyNode);
     },
@@ -186,9 +186,9 @@ treeSuite.add(new Y.Test.Case({
             nodeExtensions: [ExtensionOne, ExtensionTwo]
         });
 
-        var node = tree.rootNode.append({label: 'Hello!'});
+        var node = tree.rootNode.append({id: 'Hello!'});
 
-        Assert.areSame('Hello!', node.label, 'label should be set');
+        Assert.areSame('Hello!', node.id, 'id should be set');
         Assert.isTrue(extensionOneCalled, "extension one's constructor should be called");
         Assert.isTrue(extensionTwoCalled, "extension two's constructor should be called");
         Assert.areSame('foo', node.extensionOneProp, 'node should have mixed in prototype properties from extension one');
@@ -203,9 +203,9 @@ treeSuite.add(new Y.Test.Case({
 
     setUp: function () {
         this.tree = new Tree({nodes: [
-            {label: 'one', children: [{label: 'one-one'}, {label: 'one-two'}, {label: 'one-three'}]},
-            {label: 'two'},
-            {label: 'three'}
+            {id: 'one', children: [{id: 'one-one'}, {id: 'one-two'}, {id: 'one-three'}]},
+            {id: 'two'},
+            {id: 'three'}
         ]});
     },
 
@@ -216,7 +216,7 @@ treeSuite.add(new Y.Test.Case({
 
     'appendNode() should append a node to the end of the specified parent node': function () {
         var parent = this.tree.rootNode,
-            node   = this.tree.appendNode(parent, {label: 'appended'});
+            node   = this.tree.appendNode(parent, {id: 'appended'});
 
         Assert.isInstanceOf(Tree.Node, node, 'return value should be the appended node');
         Assert.areSame(node, parent.children[parent.children.length - 1], 'node should be the last child of the parent');
@@ -226,9 +226,9 @@ treeSuite.add(new Y.Test.Case({
     'appendNode() should append an array of nodes to the end of the specified parent node': function () {
         var parent = this.tree.rootNode,
             nodes  = this.tree.appendNode(parent, [
-                {label: 'appended one'},
-                {label: 'appended two'},
-                this.tree.createNode({label: 'appended three'})
+                {id: 'appended one'},
+                {id: 'appended two'},
+                this.tree.createNode({id: 'appended three'})
             ]);
 
         Assert.isArray(nodes, 'return value should be an array');
@@ -238,7 +238,7 @@ treeSuite.add(new Y.Test.Case({
     },
 
     'appendNode() should adopt a node if it exists in another tree': function () {
-        var otherTree = new Tree({nodes: [{label: 'adopted node'}]}),
+        var otherTree = new Tree({nodes: [{id: 'adopted node'}]}),
             node      = otherTree.children[0];
 
         this.tree.appendNode(this.tree.rootNode, node);
@@ -261,8 +261,8 @@ treeSuite.add(new Y.Test.Case({
     },
 
     'clear() should support a custom root node argument': function () {
-        this.tree.clear({label: 'new root'});
-        Assert.areSame('new root', this.tree.rootNode.label);
+        this.tree.clear({id: 'new root'});
+        Assert.areSame('new root', this.tree.rootNode.id);
     },
 
     'clear() should be chainable': function () {
@@ -271,18 +271,18 @@ treeSuite.add(new Y.Test.Case({
 
     'createNode() should create a node and associate it with this tree': function () {
         var node = this.tree.createNode({
-                label: 'new node',
+                id: 'new node',
 
                 children: [
-                    {label: 'one', children: [{label: 'one-one'}]},
-                    {label: 'two'},
-                    {label: 'three'}
+                    {id: 'one', children: [{id: 'one-one'}]},
+                    {id: 'two'},
+                    {id: 'three'}
                 ]
             });
 
         Assert.isInstanceOf(Tree.Node, node, 'node should be a Tree.Node instance');
 
-        Assert.areSame('new node', node.label, 'node should have the specified label');
+        Assert.areSame('new node', node.id, 'node should have the specified id');
         Assert.areSame(3, node.children.length, 'node should have three children');
         Assert.areSame(this.tree, node.tree, 'node should be associated with this tree');
         Assert.areSame(node, this.tree.getNodeById(node.id), "node should be in this tree's id map");
@@ -294,7 +294,7 @@ treeSuite.add(new Y.Test.Case({
     },
 
     "createNode() should adopt the specified node if it's from another tree": function () {
-        var otherTree = new Tree({nodes: [{label: 'other node'}]}),
+        var otherTree = new Tree({nodes: [{id: 'other node'}]}),
             node      = otherTree.children[0];
 
         Assert.areSame(otherTree, node.tree, 'sanity check');
@@ -334,9 +334,9 @@ treeSuite.add(new Y.Test.Case({
 
         Assert.isArray(nodes, 'should return an array');
 
-        Assert.areSame('one', nodes[0].label, 'first removed node should match');
-        Assert.areSame('two', nodes[1].label, 'second removed node should match');
-        Assert.areSame('three', nodes[2].label, 'third removed node should match');
+        Assert.areSame('one', nodes[0].id, 'first removed node should match');
+        Assert.areSame('two', nodes[1].id, 'second removed node should match');
+        Assert.areSame('three', nodes[2].id, 'third removed node should match');
 
         ArrayAssert.isEmpty(this.tree.children, 'root node should now be empty');
 
@@ -363,37 +363,37 @@ treeSuite.add(new Y.Test.Case({
     },
 
     'insertNode() should insert a node at the specified index': function () {
-        var node = this.tree.insertNode(this.tree.rootNode, {label: 'inserted'}, {index: 1});
+        var node = this.tree.insertNode(this.tree.rootNode, {id: 'inserted'}, {index: 1});
 
         Assert.isInstanceOf(Tree.Node, node, 'return value should be a Tree.Node instance');
-        Assert.areSame('inserted', node.label, 'inserted node should be returned');
-        Assert.areSame('one', this.tree.children[0].label, '"one" should be at index 0');
-        Assert.areSame('inserted', this.tree.children[1].label, '"inserted" should be at index 1');
-        Assert.areSame('two', this.tree.children[2].label, '"two" should be at index 2');
+        Assert.areSame('inserted', node.id, 'inserted node should be returned');
+        Assert.areSame('one', this.tree.children[0].id, '"one" should be at index 0');
+        Assert.areSame('inserted', this.tree.children[1].id, '"inserted" should be at index 1');
+        Assert.areSame('two', this.tree.children[2].id, '"two" should be at index 2');
     },
 
     'insertNode() should insert an array of nodes at the specified index': function () {
         var nodes = this.tree.insertNode(this.tree.rootNode, [
-                {label: 'inserted one'},
-                {label: 'inserted two'},
-                this.tree.createNode({label: 'inserted three'})
+                {id: 'inserted one'},
+                {id: 'inserted two'},
+                this.tree.createNode({id: 'inserted three'})
             ], {index: 1});
 
         Assert.isArray(nodes, 'return value should be an array');
-        Assert.areSame('one', this.tree.children[0].label, '"one" should be at index 0');
-        Assert.areSame('inserted one', this.tree.children[1].label, '"inserted one" should be at index 1');
-        Assert.areSame('inserted two', this.tree.children[2].label, '"inserted two" should be at index 2');
-        Assert.areSame('inserted three', this.tree.children[3].label, '"inserted three" should be at index 3');
-        Assert.areSame('two', this.tree.children[4].label, '"two" should be at index 4');
+        Assert.areSame('one', this.tree.children[0].id, '"one" should be at index 0');
+        Assert.areSame('inserted one', this.tree.children[1].id, '"inserted one" should be at index 1');
+        Assert.areSame('inserted two', this.tree.children[2].id, '"inserted two" should be at index 2');
+        Assert.areSame('inserted three', this.tree.children[3].id, '"inserted three" should be at index 3');
+        Assert.areSame('two', this.tree.children[4].id, '"two" should be at index 4');
     },
 
     'insertNode() should append if no index is specified': function () {
-        this.tree.insertNode(this.tree.rootNode, {label: 'inserted'});
-        Assert.areSame('inserted', this.tree.children[this.tree.children.length - 1].label);
+        this.tree.insertNode(this.tree.rootNode, {id: 'inserted'});
+        Assert.areSame('inserted', this.tree.children[this.tree.children.length - 1].id);
     },
 
     'insertNode() should adopt a node if it exists in another tree': function () {
-        var otherTree = new Tree({nodes: [{label: 'adopted'}]}),
+        var otherTree = new Tree({nodes: [{id: 'adopted'}]}),
             node      = otherTree.children[0];
 
         this.tree.insertNode(this.tree.rootNode, node);
@@ -420,7 +420,7 @@ treeSuite.add(new Y.Test.Case({
 
     'prependNode() should prepend a node to the beginning of the specified parent node': function () {
         var parent = this.tree.rootNode,
-            node   = this.tree.prependNode(parent, {label: 'prepended'});
+            node   = this.tree.prependNode(parent, {id: 'prepended'});
 
         Assert.isInstanceOf(Tree.Node, node, 'return value should be the prepended node');
         Assert.areSame(node, parent.children[0], 'node should be the first child of the parent');
@@ -430,9 +430,9 @@ treeSuite.add(new Y.Test.Case({
     'prependNode() should prepend an array of nodes to the beginning of the specified parent node': function () {
         var parent = this.tree.rootNode,
             nodes  = this.tree.prependNode(parent, [
-                {label: 'prepended one'},
-                {label: 'prepended two'},
-                this.tree.createNode({label: 'prepended three'})
+                {id: 'prepended one'},
+                {id: 'prepended two'},
+                this.tree.createNode({id: 'prepended three'})
             ]);
 
         Assert.isArray(nodes, 'return value should be an array');
@@ -442,7 +442,7 @@ treeSuite.add(new Y.Test.Case({
     },
 
     'prependNode() should adopt a node if it exists in another tree': function () {
-        var otherTree = new Tree({nodes: [{label: 'adopted node'}]}),
+        var otherTree = new Tree({nodes: [{id: 'adopted node'}]}),
             node      = otherTree.children[0];
 
         this.tree.prependNode(this.tree.rootNode, node);
@@ -453,7 +453,7 @@ treeSuite.add(new Y.Test.Case({
     },
 
     'removeNode() should remove the specified node from its parent': function () {
-        var node = this.tree.prependNode(this.tree.rootNode, {label: 'remove me!'});
+        var node = this.tree.prependNode(this.tree.rootNode, {id: 'remove me!'});
 
         Assert.isTrue(node.isInTree(), 'sanity check');
         Assert.areSame(this.tree.rootNode, node.parent, 'sanity check');
@@ -468,7 +468,7 @@ treeSuite.add(new Y.Test.Case({
     },
 
     'removeNode() should remove and destroy the specified node when options.destroy is truthy': function () {
-        var node = this.tree.prependNode(this.tree.rootNode, {label: 'remove me!'});
+        var node = this.tree.prependNode(this.tree.rootNode, {id: 'remove me!'});
 
         Assert.isTrue(node.isInTree(), 'sanity check');
         Assert.areSame(this.tree.rootNode, node.parent, 'sanity check');
@@ -490,20 +490,19 @@ treeSuite.add(new Y.Test.Case({
 
         // Now the tedious stuff.
         function verifyNode(node, jsonObj) {
-            Assert.areSame(node.canHaveChildren, jsonObj.canHaveChildren, node.label + ': canHaveChildren should be serialized');
-            Assert.isObject(jsonObj.data, node.label + ': data should be serialized');
-            Assert.areSame(node.id, jsonObj.id, node.label + ': id should be serialized');
-            Assert.areSame(node.label, jsonObj.label, node.label + ': label should be serialized');
-            Assert.isObject(jsonObj.state, node.label + ': state should be serialized');
+            Assert.areSame(node.canHaveChildren, jsonObj.canHaveChildren, node.id + ': canHaveChildren should be serialized');
+            Assert.isObject(jsonObj.data, node.id + ': data should be serialized');
+            Assert.areSame(node.id, jsonObj.id, node.id + ': id should be serialized');
+            Assert.isObject(jsonObj.state, node.id + ': state should be serialized');
 
             if (node.hasChildren()) {
-                Assert.isArray(jsonObj.children, node.label + ': children should be an array');
+                Assert.isArray(jsonObj.children, node.id + ': children should be an array');
 
                 for (var i = 0, len = node.children.length; i < len; i++) {
                     verifyNode(node.children[i], jsonObj.children[i]);
                 }
             } else {
-                Assert.isUndefined(jsonObj.children, node.label + ': children should not be defined for node without children');
+                Assert.isUndefined(jsonObj.children, node.id + ': children should not be defined for node without children');
             }
         }
 
@@ -517,9 +516,9 @@ treeSuite.add(new Y.Test.Case({
 
     setUp: function () {
         this.tree = new Tree({nodes: [
-            {label: 'one', children: [{label: 'one-one'}, {label: 'one-two'}, {label: 'one-three'}]},
-            {label: 'two'},
-            {label: 'three'}
+            {id: 'one', children: [{id: 'one-one'}, {id: 'one-two'}, {id: 'one-three'}]},
+            {id: 'two'},
+            {id: 'three'}
         ]});
     },
 
@@ -529,7 +528,7 @@ treeSuite.add(new Y.Test.Case({
     },
 
     'appendNode() should fire an `add` event with src "append"': function () {
-        var node = this.tree.createNode({label: 'appended'}),
+        var node = this.tree.createNode({id: 'appended'}),
             test = this,
             fired;
 
@@ -551,7 +550,7 @@ treeSuite.add(new Y.Test.Case({
             Assert.fail('add event should not fire');
         });
 
-        this.tree.appendNode(this.tree.rootNode, {label: 'appended'}, {silent: true});
+        this.tree.appendNode(this.tree.rootNode, {id: 'appended'}, {silent: true});
     },
 
     'clear() should fire a `clear` event': function () {
@@ -597,7 +596,7 @@ treeSuite.add(new Y.Test.Case({
     },
 
     'prependNode() should fire an `add` event with src "prepend"': function () {
-        var node = this.tree.createNode({label: 'prepended'}),
+        var node = this.tree.createNode({id: 'prepended'}),
             test = this,
             fired;
 
@@ -619,11 +618,11 @@ treeSuite.add(new Y.Test.Case({
             Assert.fail('add event should not fire');
         });
 
-        this.tree.prependNode(this.tree.rootNode, {label: 'prepended'}, {silent: true});
+        this.tree.prependNode(this.tree.rootNode, {id: 'prepended'}, {silent: true});
     },
 
     'insertNode() should fire an `add` event with src "insert"': function () {
-        var node = this.tree.createNode({label: 'inserted'}),
+        var node = this.tree.createNode({id: 'inserted'}),
             test = this,
             fired;
 
@@ -641,7 +640,7 @@ treeSuite.add(new Y.Test.Case({
     },
 
     'insertNode() should fire an `add` event with a custom src': function () {
-        var node = this.tree.createNode({label: 'inserted'}),
+        var node = this.tree.createNode({id: 'inserted'}),
             test = this,
             fired;
 
@@ -659,7 +658,7 @@ treeSuite.add(new Y.Test.Case({
             Assert.fail('add event should not fire');
         });
 
-        this.tree.insertNode(this.tree.rootNode, {label: 'inserted'}, {silent: true});
+        this.tree.insertNode(this.tree.rootNode, {id: 'inserted'}, {silent: true});
     },
 
     'removeNode() should fire a `remove` event': function () {
@@ -692,7 +691,7 @@ treeSuite.add(new Y.Test.Case({
             e.preventDefault();
         });
 
-        this.tree.insertNode(this.tree.rootNode, {label: 'added'});
+        this.tree.insertNode(this.tree.rootNode, {id: 'added'});
         Assert.areSame(6, this.tree.size(), 'node should not have been added');
     },
 
@@ -747,7 +746,6 @@ nodeSuite.add(new Y.Test.Case({
                 children       : [child0, child1, child2],
                 data           : {foo: 'bar'},
                 id             : 'mynode',
-                label          : 'pants',
                 state          : {tested: true}
             });
 
@@ -763,7 +761,6 @@ nodeSuite.add(new Y.Test.Case({
 
         Assert.areSame('bar', node.data.foo, 'data should be set');
         Assert.areSame('mynode', node.id, 'custom id should be set');
-        Assert.areSame('pants', node.label, 'custom label should be set');
         Assert.isTrue(node.state.tested, 'custom state should be set');
     },
 
@@ -772,6 +769,15 @@ nodeSuite.add(new Y.Test.Case({
 
         Assert.areSame('bar', node.foo, 'node should have a `foo` property');
         Assert.isTrue(node._isYUITreeNode, '`_isYUITreeNode` property should not be overwritten');
+    },
+
+    'constructor should generate a unique id if one is not specified': function () {
+        var nodeOne = new Tree.Node(this.tree),
+            nodeTwo = new Tree.Node(this.tree);
+
+        Assert.isString(nodeOne.id, 'nodeOne.id should be a string');
+        Assert.isString(nodeTwo.id, 'nodeTwo.id should be a string');
+        Assert.areNotSame(nodeOne.id, nodeTwo.id, 'ids should be unique');
     }
 }));
 
@@ -821,10 +827,6 @@ nodeSuite.add(new Y.Test.Case({
         Assert.areNotSame(this.node.id, otherNode.id, 'should be unique');
     },
 
-    'label should be an empty string by default': function () {
-        Assert.areSame('', this.node.label);
-    },
-
     'parent should be the parent node of this node, if any': function () {
         this.tree.rootNode.append(this.node);
 
@@ -848,7 +850,7 @@ nodeSuite.add(new Y.Test.Case({
 
     setUp: function () {
         this.tree = new Tree();
-        this.node = this.tree.rootNode.append({label: 'one'});
+        this.node = this.tree.rootNode.append({});
         this.unattachedNode = this.tree.createNode();
     },
 
@@ -996,7 +998,7 @@ nodeSuite.add(new Y.Test.Case({
     },
 
     'toJSON() should return a serializable object representing this node': function () {
-        this.node.append([{label: 'child one'}, {label: 'child two'}, {label: 'child three'}]);
+        this.node.append([{id: 'child one'}, {id: 'child two'}, {id: 'child three'}]);
 
         var obj = this.node.toJSON();
 
@@ -1006,20 +1008,19 @@ nodeSuite.add(new Y.Test.Case({
 
         // Now the tedious stuff.
         function verifyNode(node, jsonObj) {
-            Assert.areSame(node.canHaveChildren, jsonObj.canHaveChildren, node.label + ': canHaveChildren should be serialized');
-            Assert.isObject(jsonObj.data, node.label + ': data should be serialized');
-            Assert.areSame(node.id, jsonObj.id, node.label + ': id should be serialized');
-            Assert.areSame(node.label, jsonObj.label, node.label + ': label should be serialized');
-            Assert.isObject(jsonObj.state, node.label + ': state should be serialized');
+            Assert.areSame(node.canHaveChildren, jsonObj.canHaveChildren, node.id + ': canHaveChildren should be serialized');
+            Assert.isObject(jsonObj.data, node.id + ': data should be serialized');
+            Assert.areSame(node.id, jsonObj.id, node.id + ': id should be serialized');
+            Assert.isObject(jsonObj.state, node.id + ': state should be serialized');
 
             if (node.hasChildren()) {
-                Assert.isArray(jsonObj.children, node.label + ': children should be an array');
+                Assert.isArray(jsonObj.children, node.id + ': children should be an array');
 
                 for (var i = 0, len = node.children.length; i < len; i++) {
                     verifyNode(node.children[i], jsonObj.children[i]);
                 }
             } else {
-                Assert.isUndefined(jsonObj.children, node.label + ': children should not be defined for node without children');
+                Assert.isUndefined(jsonObj.children, node.id + ': children should not be defined for node without children');
             }
         }
 
@@ -1093,10 +1094,7 @@ lazySuite.add(new Y.Test.Case({
     setUp: function () {
         this.tree = new LazyTree({
             nodes: [
-                {
-                    label: 'test node',
-                    canHaveChildren: true
-                }
+                {canHaveChildren: true}
             ]
         });
 
@@ -1207,10 +1205,7 @@ lazySuite.add(new Y.Test.Case({
     setUp: function () {
         this.tree = new LazyTree({
             nodes: [
-                {
-                    label: 'test node',
-                    canHaveChildren: true
-                }
+                {canHaveChildren: true}
             ]
         });
 

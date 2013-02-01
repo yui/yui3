@@ -30,8 +30,6 @@ Represents a tree node in a `Tree` data structure.
         node's DOM id when it's rendered by a TreeView. A unique id will be
         automatically generated unless you specify a custom value.
 
-    @param {HTML} [config.label=''] User-visible HTML label for this node.
-
     @param {Object} [config.state] State hash for this node. You may add
         arbitrary state properties to this hash for your own use. See the
         docs for `Tree.Node`'s `state` property for details on state values used
@@ -45,10 +43,6 @@ function TreeNode(tree, config) {
 
     this.id   = this._yuid = config.id || this.id || Y.guid('treeNode-');
     this.tree = tree;
-
-    if ('label' in config) {
-        this.label = config.label;
-    }
 
     this.children = config.children || [];
     this.data     = config.data || {};
@@ -116,17 +110,6 @@ TreeNode.prototype = {
     **/
 
     /**
-    User-visible HTML label for this node.
-
-    This value may be rendered as HTML without sanitization, so **do not** put
-    untrusted user input here without escaping it first using `Y.Escape.html()`.
-
-    @property {HTML} label
-    @default ''
-    **/
-    label: '',
-
-    /**
     Parent node of this node, or `undefined` if this is an unattached node or
     the root node.
 
@@ -184,7 +167,7 @@ TreeNode.prototype = {
     @property {String[]} _serializable
     @protected
     **/
-    _serializable: ['canHaveChildren', 'data', 'id', 'label', 'state'],
+    _serializable: ['canHaveChildren', 'data', 'id', 'state'],
 
     // -- Public Methods -------------------------------------------------------
 
