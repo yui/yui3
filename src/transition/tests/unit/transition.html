@@ -781,7 +781,7 @@ YUI({
                     test.resume(function() {
                         Y.Assert.areEqual(1, parseInt(e.elapsedTime * 10));
                         node.setStyle('height', '100px');
-                        if (Y.UA.webkit) {
+                        if (Y.UA.webkit && !Y.UA.phantomjs) {
                             Y.Assert.areEqual('matrix(-1, 0.00000000000000012246467991473532, -0.00000000000000012246467991473532, -1, 0, 0)', node.getComputedStyle('WebkitTransform'));
                         }
                     });
