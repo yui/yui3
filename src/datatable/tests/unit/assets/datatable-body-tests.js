@@ -400,13 +400,16 @@ suite.add(new Y.Test.Case({
                     prefix: 'p',
                     suffix: 's'
                 }},
-                {key: 'b', formatter:'currency'},
+                {key: 'b', formatter:'currency', emptyCellValue:'no charge'},
                 {key: 'button', formatter: 'button', buttonLabel:'press me'},
                 {key: 'boolean', formatter: 'boolean', booleanLabels: {
                         'true': 'yes',
                         'false': 'no'
                 }},
                 {key: 'date', formatter: 'date'},
+                {key: 'localDate', formatter: 'localDate', emptyCellValue:'never'},
+                {key: 'localTime', formatter: 'localTime'},
+                {key: 'localDateTime', formatter: 'localDateTime'},
                 {key: 'email', formatter: 'email', linkFrom: 'linkSrc'},
                 {key: 'link', formatter: 'link', linkFrom: 'linkSrc'},
                 {key: 'number', formatter: 'number',numberFormat: {
@@ -421,9 +424,11 @@ suite.add(new Y.Test.Case({
             data: [
                 {
                     a: 123.45, b: 123.45, button:'btn', 'boolean': true, 'date': new Date(),
+                    localDate: new Date(), localTime: new Date(), localDateTime: new Date(),
                     email: 'me', link: 'site', linkSrc: 'there', number: 987654
                 },
-                {a: 6789,   b: 6789  ,               'boolean': false }
+                {a: 6789,   b: 6789  , email: 'me', link: 'site',              'boolean': false },
+                {}
             ],
             currencyFormat: {
                 decimalPlaces:1,
@@ -448,6 +453,10 @@ suite.add(new Y.Test.Case({
         Y.Assert.areEqual('p6t789d00s', node.getHTML());
         node = dt.getCell([1,1]);
         Y.Assert.areEqual('6.789,0 Pts.', node.getHTML());
+        node = dt.getCell([2, 0]);
+        Y.Assert.areEqual('', node.getHTML());
+        node = dt.getCell([2, 1]);
+        Y.Assert.areEqual('no charge', node.getHTML());
     },
     "test button format": function () {
         var dt = this.dt,
@@ -465,36 +474,66 @@ suite.add(new Y.Test.Case({
         node = dt.getCell([1,3]),
         Y.Assert.isTrue(node.hasClass('yui3-datatable-false'));
         Y.Assert.areEqual('no',node.getHTML());
+        node = dt.getCell([2,3]);
+        Y.Assert.areEqual('', node.getHTML());
     },
-    "test date format": function () {
+    "test date formats": function () {
         var dt = this.dt,
             node = dt.getCell([0,4]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
         Y.Assert.areEqual(Y.Date.format(new Date()), node.getHTML());
+
+        node = dt.getCell([0,5]);
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
+        Y.Assert.areEqual(Y.Date.format(new Date(),{format:'%x'}), node.getHTML());
+
+        node = dt.getCell([0,6]);
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
+        Y.Assert.areEqual(Y.Date.format(new Date(),{format:'%X'}), node.getHTML());
+
+        node = dt.getCell([0,7]);
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
+        Y.Assert.areEqual(Y.Date.format(new Date(),{format:'%c'}), node.getHTML());
+
+        node = dt.getCell([2,4]);
+        Y.Assert.areEqual('', node.getHTML());
+        node = dt.getCell([2,5]);
+        Y.Assert.areEqual('never', node.getHTML());
     },
     "test email format": function () {
         var dt = this.dt,
-            node = dt.getCell([0,5]),
+            node = dt.getCell([0,8]),
             content = node.get('firstChild');
         Y.Assert.isTrue(node.hasClass('yui3-datatable-email'));
         Y.Assert.areEqual('A', content.get('tagName').toUpperCase());
         Y.Assert.areEqual('me', content.getHTML());
         Y.Assert.areEqual('mailto:there', content.get('href'));
+
+        node = dt.getCell([1,8]);
+        Y.Assert.areEqual('me', node.getHTML());
+        node = dt.getCell([2,8]);
+        Y.Assert.areEqual('', node.getHTML());
     },
     "test link format": function () {
         var dt = this.dt,
-            node = dt.getCell([0,6]),
+            node = dt.getCell([0,9]),
             content = node.get('firstChild');
         Y.Assert.isTrue(node.hasClass('yui3-datatable-link'));
         Y.Assert.areEqual('A', content.get('tagName').toUpperCase());
         Y.Assert.areEqual('site', content.getHTML());
         Y.Assert.isTrue(/\/there$/.test(content.get('href')));
+        node = dt.getCell([1,9]);
+        Y.Assert.areEqual('site', node.getHTML());
+        node = dt.getCell([2,9]);
+        Y.Assert.areEqual('', node.getHTML());
     },
     "test number format": function () {
         var dt = this.dt,
-            node = dt.getCell([0,7]);
+            node = dt.getCell([0,10]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-number'));
         Y.Assert.areEqual('p987t654d00s', node.getHTML());
+        node = dt.getCell([2, 0]);
+        Y.Assert.areEqual('', node.getHTML());
     }
 }));
 

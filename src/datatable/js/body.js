@@ -756,9 +756,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             };
             if (formatter) {
                 if (Lang.isFunction(formatter)) {
-                    columns[i]._formatterFn = formatter;
+                    col._formatterFn = formatter;
                 } else if (formatter in F) {
-                    columns[i]._formatterFn = F[formatter];
+                    col._formatterFn = F[formatter].call(this.host || this, col);
                 } else {
                     tokenValues.content = formatter.replace(valueRegExp, tokenValues.content);
                 }
