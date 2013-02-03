@@ -15,7 +15,12 @@ YUI.add('number-tests', function(Y) {
                 var number = Y.Number.parse(null);
                 ASSERT.isNull(number, "Expected null.")
             },
-            
+
+            testEmpty: function() {
+                var number = Y.Number.parse("");
+                ASSERT.isNull(number, "Expected null.");
+            },
+
             testStrings: function() {
                 var number = Y.Number.parse("0");
                 ASSERT.areSame(0, number, "Incorrect number 0.");
