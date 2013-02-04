@@ -1,40 +1,7 @@
-var PaginatorList;
+var PaginatorList,
+    LNAME = NAME + '::';
 
-PaginatorList = Y.Base.create('paginator-list', Y.Paginator.Renderer, [Y.Paginator.Url], {
-
-    /**
-     @method renderUI
-     @param {Event} [e]
-     **/
-    renderUI: function () {
-        // build full ui
-        this.get('contentBox').setHTML(this.renderControls());
-    },
-
-    /**
-     @method syncUI
-     @param {Event} [e]
-     **/
-    syncUI: function (e) {
-        if (e && e.src === 'page') {
-            this.syncPages();
-        } else {
-            this.syncControls();
-        }
-    },
-
-    syncPages: function () {
-        // update pages node
-
-        // disable controls
-    },
-
-    syncControls: function () {
-        // update all controls
-
-        // disable controls
-    },
-
+PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.Url], {
 
     renderControls: function () {
         console.log('buildControls', '::', 'Y.Paginator.List');

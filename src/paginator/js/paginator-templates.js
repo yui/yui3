@@ -9,7 +9,7 @@ var template = new Y.Template(),
         }
     */
     control =   '<li class="<%= data.classNames.controlWrapper %>">' +
-                    '<a href="<%= data.link %>" title="<%= data.title %>" class="<%= data.classNames.control %>">' +
+                    '<a href="<%= data.link %>" title="<%= data.title %>" class="<%= data.classNames.control %> <%= data.controlClass %>" data-type="<%= data.type %>">' +
                         '<%= data.display %>' +
                     '</a>' +
                 '</li>',
@@ -24,7 +24,7 @@ var template = new Y.Template(),
         }
     */
     page =  '<li class="<%= data.classNames.controlWrapper %>">' +
-                '<a href="<%= data.link %>" data-page="<%= data.page %>" title="<%= data.title %>" class="<%= data.classNames.page %>">' +
+                '<a href="<%= data.link %>" data-page="<%= data.page %>" title="<%= data.title %>" class="<%= data.classNames.page %><%= data.selectedClass %>">' +
                     '<%= data.display %>' +
                 '</a>' +
             '</li>',
@@ -38,8 +38,10 @@ var template = new Y.Template(),
         }
     */
     pageInput = '<li class="<%= data.classNames.controlWrapper %>">' +
-                    '<label class="<%= data.classNames.control %>">' +
-                        '<%= data.preLabel %> <input class="<%= data.classNames.pageInput %>" type="text" value="<%= data.page %>"> <%= data.postLabel %>' +
+                    '<label class="<%= data.classNames.control %>" data-type="<%= data.type %>">' +
+                        '<%= data.preLabel %>' +
+                        '<input class="<%= data.classNames.pageInput %>" type="text" value="<%= data.page %>">' +
+                        '<%= data.postLabel %>' +
                     '</label>' +
                 '</li>',
 
@@ -58,10 +60,10 @@ var template = new Y.Template(),
         }
     */
     pageSelect =    '<li class="<%= data.classNames.controlWrapper %>">' +
-                        '<label class="<%= data.classNames.control %>">' +
-                            '<%= data.preLabel %> <select class="<%= data.classNames.pageSelect %>">' +
+                        '<label class="<%= data.classNames.control %>" data-type="<%= data.type %>">' +
+                            '<%= data.preLabel %><select class="<%= data.classNames.pageSelect %>">' +
                             '<% Y.Array.each(data.options, function(option) { %>' +
-                                '<option value="<%= option.value %>">' +
+                                '<option value="<%= option.value %>"<% if(option.selected) {%> selected="selected"<% }; %>>' +
                                     '<%= option.display %>' +
                                 '</option>' +
                             '<% }); %>' +
@@ -84,10 +86,10 @@ var template = new Y.Template(),
         }
     */
     perPageSelect = '<li class="<%= data.classNames.controlWrapper %>">' +
-                        '<label class="<%= data.classNames.control %>">' +
+                        '<label class="<%= data.classNames.control %>" data-type="<%= data.type %>">' +
                             '<%= data.preLabel %> <select class="<%= data.classNames.pageSelect %>">' +
                             '<% Y.Array.each(data.options, function(option) { %>' +
-                                '<option value="<%= option.value %>">' +
+                                '<option value="<%= option.value %>"<% if(option.selected) {%> selected="selected"<% }; %>>' +
                                     '<%= option.display %>' +
                                 '</option>' +
                             '<% }); %>' +
