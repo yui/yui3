@@ -65,30 +65,39 @@ body {
 YUI({
     filter: 'raw',
     combine: false
-}).use("paginator-dt", function (Y) {
+}).use("paginator", "paginator-list", "paginator-dt", function (Y) {
 
 // PAGINATOR
-    var pg = new Y.Paginator.DataTable({
-        totalItems: 100,
-        itemsPerPage: 25,
+    var pgList = new Y.Paginator({
+        totalItems: 1000,
+        itemsPerPage: 10,
+        displayRange: 10,
         page: 3,
-        pageSizes: [10, 25, '*']
+        view: new Y.Paginator.List()
     });
 
-    pg.after('pageChange', function (e) {
+    var pgDt = new Y.Paginator({
+        totalItems: 1000,
+        itemsPerPage: 10,
+        displayRange: 10,
+        page: 3,
+        pageSizes: [10, 25, { value: -1, display: '*' } ],
+        view: new Y.Paginator.DataTable()
+    });
+
+    pgDt.after('pageChange', function (e) {
         console.log('page:: ' + e.newVal);
     });
 
-    pg.render();
+    pgList.render();
+    pgDt.render();
 
-    pg.after(['pageChange', 'itemsPerPageChange'], function(e) {
+    pgDt.after(['pageChange', 'itemsPerPageChange'], function(e) {
+        Y.log('model changed!!! ', 'info');
         Y.log(e);
     });
 
-    Y.log(pg);
-
-    pg.set('page', 4);
-
+    pgDt.page(10);
 
 });
 </script>

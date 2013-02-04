@@ -6,9 +6,14 @@
                 "paginator-base.js"
             ]
         },
-        "paginator-renderer": {
+        "paginator-model": {
             "jsfiles": [
-                "paginator-renderer.js"
+                "paginator-model.js"
+            ]
+        },
+        "paginator-view": {
+            "jsfiles": [
+                "paginator-view.js"
             ]
         },
         "paginator-dt": {

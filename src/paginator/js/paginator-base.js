@@ -1,256 +1,178 @@
-var getClassName = Y.ClassNameManager.getClassName,
+var Y_Paginator = Y.namespace('Paginator'),
+    getClassName = Y.ClassNameManager.getClassName,
     LNAME = NAME + '::',
     PaginatorBase;
 
-PaginatorBase = Y.Base.create('paginator', Y.Widget, [], {
+PaginatorBase = Y.Base.create('paginator', Y.View, [], {
 
-    classNames: {
-        container: getClassName('paginator', 'container'),
-        controls: getClassName('paginator', 'controls'),
-        control: getClassName('paginator', 'control'),
-        controlWrapper: getClassName('paginator', 'control-wrapper'),
-        controlDisabled: getClassName('paginator', 'control-disabled'),
-        controlSelected: getClassName('paginator', 'control-selected'),
-        controlFirst: getClassName('paginator', 'control-first'),
-        controlPrev: getClassName('paginator', 'control-prev'),
-        controlNext: getClassName('paginator', 'control-next'),
-        controlLast: getClassName('paginator', 'control-last'),
-        pages: getClassName('paginator', 'pages'),
-        page: getClassName('paginator', 'page'),
-        pageWrapper: getClassName('paginator', 'page-wrapper'),
-        pageSelect: getClassName('paginator', 'page-select'),
-        pageInput: getClassName('paginator', 'page-input'),
-        perPageSelect: getClassName('paginator', 'per-page-select')
+    containerTemplate: '<div class="' + getClassName('paginator') + '"></div>',
+
+    events: {
+        '.yui3-paginator-control': {
+            'click': 'controlClick',
+            'change': 'controlChange'
+        },
+        '.yui3-paginator-page': {
+            'click': 'pageClick'
+        }
     },
 
+
     initializer: function () {
-        this.lastPage = null;
-        this.lastTotalItems = null;
-        this.lastItemsPerPage = null;
+        console.log(LNAME, 'initializer');
+        this.get('model').addTarget(this);
     },
 
     destructor: function () {
-        this.view.destroy();
-
-        Y.Array.each(this._subs, function (item) {
-            item.detach();
-        });
-        this._subs = null;
+        console.log(LNAME, 'destructor');
     },
 
+    render: function () {
+        console.log(LNAME, 'render');
 
-//-- L I F E   C Y C L E ----
+        this.renderUI();
+
+        if (!this.bound) {
+            this.bindUI();
+        }
+    },
 
     renderUI: function () {
-    },
+        console.log(LNAME, 'renderUI');
+        var container = this.get('container'),
+            view = this.get('view');
 
-    bindUI: function () {
-        var subscriptions = [];
-
-        subscriptions.push(
-            this.after({
-                'pageChange': this._afterPageChange,
-                'itemsPerPageChange': this._afterItemsPerPageChange,
-                'totalItemsChange': this._afterTotalItemsChange
-            })
-        );
-
-        this._subs = subscriptions;
-
-        return this;
-    },
-
-    syncUI: function () {
-        console.info(LNAME, 'syncUI');
-    },
-
-
-//-- C O R E   M E T H O D S ----------
-
-    select: function (pageNumber) {
-        this.set('page', pageNumber);
-    },
-
-    first: function () {
-        if (this.hasPrev()) {
-            this.select(1);
+        if (!view.get('model')) {
+            view.set('model', this.get('model'));
+            view.bind();
         }
+
+        if (!view._container) {
+            view.set('container', container);
+        } else {
+            container.append(view.get('container'));
+        }
+
+        view.render();
+
+        if (!container.inDoc()) {
+            Y.one('body').append(container);
+        }
+    },
+
+    bindUI: function () {},
+
+    // MODEL METHODS
+
+    first: function() {
+        return this._model.first();
     },
 
     last: function () {
-        if (this.hasNext()) {
-            this.select(this.get('pages'));
-        }
+        return this._model.last();
     },
 
     prev: function () {
-        if (this.hasPrev()) {
-            this.select(this.get('page') - 1);
-        }
+        return this._model.prev();
     },
 
     next: function () {
-        if (this.hasNext()) {
-            this.select(this.get('page') + 1);
-        }
+        return this._model.next();
+    },
+
+    page: function (page) {
+        return this._model.page(page);
+    },
+
+    perPage: function (perPage) {
+        return this._model.perPage(perPage);
     },
 
     hasPrev: function () {
-        return (this.get('page') > 1);
+        return this._model.hasPrev();
     },
 
     hasNext: function () {
-        return (this.get('page') + 1 <= this.get('pages'));
+        return this._model.hasNext();
     },
 
 
-//-- E V E N T   C A L L B A C K S -------
+    //---- PROTECTED ----
 
-    _afterPageChange: function (e) {
-        this.lastPage = e.prevVal;
-        e.src = 'page';
-        this.syncUI(e);
+
+    // ATTRS
+    _defModelVal: function () {
+        console.log(LNAME, '_defModelVal');
+        var Model = this.get('modelType');
+        return new Model(this.getAttrs());
     },
 
-    _afterItemsPerPageChange: function (e) {
-        this.lastItemsPerPage = e.prevVal;
-        e.src = 'itemsPerPage';
-        this.syncUI(e);
-        this.set('page', 1);
+    _modelSetter: function (val) {
+        this._model = val;
+        return val;
     },
 
-    _afterTotalItemsChange: function (e) {
-        this.lastTotalItems = e.prevVal;
-        e.src = 'totalItems';
-        this.syncUI(e);
+    _defViewVal: function () {
+        console.log(LNAME, '_defViewVal');
+        var View = this.get('viewType');
+
+        return new View({
+            container: this.get('contentBox'),
+            model: this.get('model')
+        });
     },
 
+    // EVENT CALL BACKS
+    controlClick: function(e) {
+        console.log(LNAME, 'controlClick');
+        e.preventDefault();
+        var model = this.get('model'),
+            type = e.currentTarget.getData('type');
 
-
-
-//-- P R O T E C T E D ----
-
-
-
-//-- D E F A U L T   F U N C T I O N S ----
-
-    _defContainerFn: function () {
-        return Y.Node.create('<div class="' + this.className('paginator') + '"></div>');
-    },
-
-    _defStringVals: function () {
-        return Y.Intl.get("paginator-templates");
-    },
-
-
-//-- G E T T E R S ----
-
-    _pagesGetterFn: function () {
-        return Math.ceil(this.get('totalItems') / this.get('itemsPerPage'));
-    },
-
-    _indexGetterFn: function () {
-        return (this.get('page') - 1) * this.get('itemsPerPage') + 1;
-    },
-
-//-- S E T T E R S ----
-
-    _pageSetterFn: function (val) {
-        val = parseInt(val, 10);
-
-        if (val <= this.get('pages')) {
-            return parseInt(val, 10);
+        if (model[type]) {
+            (model[type])();
         }
-
-        return Y.Attribute.INVALID_VALUE;
     },
 
-    _itemsPerPageSetterFn: function (val) {
-        this._viewItemsPerPage = val;
+    controlChange: function (e) {
+        console.log(LNAME, 'controlChange');
+        e.preventDefault();
 
-        if (val.toString().toLowerCase() === 'all' || val === '*') {
-            val = this.get('totalItems');
+        var model = this.get('model'),
+            type = e.currentTarget.getData('type');
+
+        if (model[type]) {
+            (model[type])(e.target.get('value'));
         }
-
-        return parseInt(val, 10);
     },
 
-    _totalItemsSetterFn: function (val) {
-        return parseInt(val, 10);
+    pageClick: function(e) {
+        console.log(LNAME, 'pageClick');
+        e.preventDefault();
+        this.get('model').page(e.currentTarget.getData('page'));
     }
 
-
 }, {
-    NAME: 'paginator',
-
     ATTRS: {
-        /**
-         Index of the first item on the page.
-         @readOnly
-         @attribute index
-         @type Number
-         **/
-        index: {
-            readOnly: true,
-            getter: '_indexGetterFn'
+        model: {
+            valueFn: '_defModelVal',
+            setter: '_modelSetter'
         },
 
-        /**
-         Maximum number of items per page
-         @attribute itemsPerPage
-         @type Number
-         **/
-        itemsPerPage: {
-            value: 1,
-            setter: '_itemsPerPageSetterFn'
+        view: {
+            valueFn: '_defViewVal'
         },
 
-        /**
-         Current page count. First page is 1
-         @attribute page
-         @type Number
-         **/
-        page: {
-            value: 1,
-            setter: '_pageSetterFn'
+        modelType: {
+            value: Y_Paginator.Model
         },
 
-        /**
-         Total number of pages to display
-         @readOnly
-         @attribute pages
-         @type Number
-         **/
-        pages: {
-            readOnly: true,
-            getter: '_pagesGetterFn'
-        },
-
-        /**
-         Array of items to display per page
-         @attribute pageSizes
-         @type {Array}
-         @default [10, 25, '*']
-         **/
-        pageSizes: {
-            value: [10, 25, '*']
-        },
-
-        /**
-         Total number of items in all pages
-         @attribute totalItems
-         @type Number
-         **/
-        totalItems: {
-            value: 1,
-            setter: '_totalItemsSetterFn'
-        },
-
-        strings : {
-            valueFn: '_defStringVals'
+        viewType: {
+            value: Y_Paginator.View
         }
     }
 });
 
-Y.namespace('Paginator').Base = PaginatorBase;
-Y.Paginator = Y.mix(PaginatorBase, Y.namespace('Paginator'));
+Y_Paginator.Base = PaginatorBase;
+
+Y.Paginator = Y.mix(PaginatorBase, Y_Paginator);
