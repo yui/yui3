@@ -4177,7 +4177,7 @@ YUI.add('get', function (Y, NAME) {
         //Keeping Signature in the browser.
         return {
             execute: function() {}
-        }
+        };
     };
 
     /**
@@ -4977,7 +4977,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.01.23-21-59',
+            GALLERY_VERSION = 'gallery-2013.01.30-21-00',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -7174,16 +7174,18 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     /**
     * The default Loader onTimeout handler, calls this.onTimeout with a payload
     * @method _onTimeout
+    * @param {Get.Transaction} transaction The Transaction object from `Y.Get`
     * @private
     */
-    _onTimeout: function() {
+    _onTimeout: function(transaction) {
         Y.log('loader timeout: ' + Y.id, 'error', 'loader');
         var f = this.onTimeout;
         if (f) {
             f.call(this.context, {
                 msg: 'timeout',
                 data: this.data,
-                success: false
+                success: false,
+                transaction: transaction
             });
         }
     },
