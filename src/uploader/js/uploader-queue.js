@@ -551,7 +551,7 @@ Y.extend(UploaderQueue, Y.Base, {
         * the upload has no effect, and `addToQueueTop` or `addToQueueBottom` methods
         * should be used instead.
         * @property fileList
-        * @type Number
+        * @type Array
         */
         fileList: {
             value: [],
