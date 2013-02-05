@@ -246,7 +246,7 @@ var Lang = Y.Lang,
             col.allowHTML = true;
             return function (o) {
                 var value = stringValue(o.value, emptyValue),
-                    link = (linkFrom?stringValue(o.data[linkFrom],emptyLink):value);
+                    link = (linkFrom ? stringValue(o.data[linkFrom], emptyLink) : value);
                 o.className = className;
                 if (link) {
                     return '<a href="mailto:' + link + '">' + value + '</a>';
@@ -283,7 +283,7 @@ var Lang = Y.Lang,
             col.allowHTML = true;
             return function (o) {
                 var value = stringValue(o.value, emptyValue),
-                    link = (linkFrom?stringValue(o.data[linkFrom], emptyLink):value);
+                    link = (linkFrom ? stringValue(o.data[linkFrom], emptyLink) : value);
                 o.className = className;
                 if (link) {
                     return '<a href="' + link + '">' + value + '</a>';

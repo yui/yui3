@@ -447,6 +447,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             table.appendChild(tbody);
         }
 
+        this._afterRenderCleanup();
+
         this.bindUI();
 
         return this;
@@ -775,6 +777,20 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         this._rowTemplate = fromTemplate(this.ROW_TEMPLATE, {
             content: html
         });
+    },
+    /**
+    Cleans up temporary values created during rendering.
+    @method _afterRenderCleanup
+    @private
+    */
+    _afterRenderCleanup: function () {
+        var columns = this.get('columns'),
+            i, len = columns.length;
+
+        for (i = 0;i < len; i+=1) {
+            delete columns[i]._formatterFn;
+        }
+
     },
 
     /**

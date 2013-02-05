@@ -548,23 +548,42 @@ var cols = [
 <p>
     If such a formatter will be used regularly, it is best to store it in the
     `Y.DataTable.BodyView.Formatters` hash. The formatter can later be used
-    by its name.   An optional `datatable-formatters` module provides
-    a collection of such formatters.
+    by its name.
+</p>
+<p>
+    Named formatters are structured slightly differently in
+    order to improve performance:
 </p>
 ```
-Y.DataTable.BodyView.Formatters.currency = function (o) {
-    return Y.DataType.Number.format(o.value, {
-        prefix            : o.column.currencySymbol     || '$',
-        decimalPlaces     : o.column.decimalPlaces      || 2,
-        decimalSeparator  : o.column.decimalSeparator   || '.',
-        thousandsSeparator: o.column.thousandsSeparator || ','
-    });
+Y.DataTable.BodyView.Formatters.currency = function (col) {
+    // This is done just once per rendering cycle:
+    var fn = Y.DataType.Number.format,
+        format = {
+            prefix            : col.currencySymbol     || '$',
+            decimalPlaces     : col.decimalPlaces      || 2,
+            decimalSeparator  : col.decimalSeparator   || '.',
+            thousandsSeparator: col.thousandsSeparator || ','
+        };
+    return function (o) {
+        // This is done once per row:
+        return fn(o.value, format);
+    }
 }
-
-var cols = [
-    { key: "price", formatter: "currency", decimalPlaces: 3 },
-    ...
 ```
+<p>
+    The function stored in the `Formatters` table is not the formatter function
+    itself, instead, it returns the formatting function.  The outer function is called just
+    once per rendering cycle and does any preliminary setup usually based on the
+    column configuration which it receives as its only argument, storing any
+    information in local variables.  The returned formatting function is then
+    run once per row accessing all the setup information via closure.
+</p>
+<p>
+    An optional `datatable-formatters` module provides
+    a collection of such formatters.
+    See the <a href="../api/classes/DataTable.BodyView.Formatters.html">API docs</a>
+    for more information on them.
+</p>
 <p>
     See <a href="#formatter-props">Appendix B</a> for a list of all properties
     passed to `formatter` functions.
