@@ -108,6 +108,11 @@ PaginatorBase = Y.Base.create('paginator', Y.View, [], {
     },
 
     _modelSetter: function (val) {
+        if (!val._isYUIModel) {
+            // assume val is a model config if it's not a model
+            var Model = this.get('modelType');
+            val = new Model(val);
+        }
         this._model = val;
         return val;
     },
