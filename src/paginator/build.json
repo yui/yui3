@@ -1,9 +1,9 @@
 {
     "name": "paginator",
     "builds": {
-        "paginator-base": {
+        "paginator": {
             "jsfiles": [
-                "paginator-base.js"
+                "paginator.js"
             ]
         },
         "paginator-model": {

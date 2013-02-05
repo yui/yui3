@@ -69,35 +69,32 @@ YUI({
 
 // PAGINATOR
     var pgList = new Y.Paginator({
-        totalItems: 1000,
-        itemsPerPage: 10,
-        displayRange: 10,
-        page: 3,
-        view: new Y.Paginator.List()
-    });
+                        model: {
+                            totalItems: 1000,
+                            itemsPerPage: 10,
+                            page: 3
+                        },
+                        view: {
+                            displayRange: 10
+                        },
+                        viewType: 'Paginator.List'
+                    });
 
-    var pgDt = new Y.Paginator({
-        totalItems: 1000,
-        itemsPerPage: 10,
-        displayRange: 10,
-        page: 3,
-        pageSizes: [10, 25, { value: -1, display: '*' } ],
-        view: new Y.Paginator.DataTable()
-    });
+    pgList.render("#pg");
 
-    pgDt.after('pageChange', function (e) {
-        console.log('page:: ' + e.newVal);
-    });
+    var pgDT = new Y.Paginator({
+                        model: {
+                            totalItems: 1000,
+                            itemsPerPage: 10,
+                            page: 3
+                        },
+                        view: {
+                            pageSizes: [10, 25, { value: -1, display: '*' }]
+                        },
+                        viewType: 'Paginator.DataTable'
+                    });
 
-    pgList.render();
-    pgDt.render();
-
-    pgDt.after(['pageChange', 'itemsPerPageChange'], function(e) {
-        Y.log('model changed!!! ', 'info');
-        Y.log(e);
-    });
-
-    pgDt.page(10);
+    pgDT.render("#pg");
 
 });
 </script>
