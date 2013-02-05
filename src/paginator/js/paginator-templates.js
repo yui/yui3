@@ -97,52 +97,13 @@ var template = new Y.Template(),
                         '</label>' +
                     '</li>',
 
-    /**
-        {
-            classNames:,
-            first:,
-            prev:,
-            pages:,
-            next:,
-            last:,
-        }
-    */
-    list =  '<ul class="<%= data.classNames.list %>">' +
-                '<%== data.first %><%== data.prev %>' +
-                '<ul class="<%= data.classNames.pages %>">' +
-                    '<%== data.pages %>' +
-                '</ul>' +
-                '<%== data.next %><%== data.last %>' +
-            '</ul>',
-
-    /**
-        {
-            classNames:,
-            first:,
-            pref:,
-            pageInput:,
-            next:,
-            last:,
-            pageSelect:,
-            perPageSelect:,
-        }
-    */
-    dt =    '<ul class="<%= data.classNames.dt %>">' +
-                '<%== data.first %><%== data.prev %>' +
-                '<%== data.pageInput %>' +
-                '<%== data.next %><%== data.last %>' +
-                '<%== data.pageSelect %>' +
-                '<%== data.perPageSelect %>' +
-            '</ul>',
-
     PageTemplates = {
+        compile: Y.bind(template.compile, template),
         control: template.compile(control),
         page: template.compile(page),
         pageInput: template.compile(pageInput),
         pageSelect: template.compile(pageSelect),
-        perPageSelect: template.compile(perPageSelect),
-        list: template.compile(list),
-        dt: template.compile(dt)
+        perPageSelect: template.compile(perPageSelect)
     };
 
 Y.namespace('Paginator').Templates = PageTemplates;

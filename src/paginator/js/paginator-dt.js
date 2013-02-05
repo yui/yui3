@@ -3,10 +3,18 @@ var PaginatorDT,
 
 PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
 
+    template:   '<ul class="<%= data.classNames.dt %>">' +
+                    '<%== data.first %><%== data.prev %>' +
+                    '<%== data.pageInput %>' +
+                    '<%== data.next %><%== data.last %>' +
+                    '<%== data.pageSelect %>' +
+                    '<%== data.perPageSelect %>' +
+                '</ul>',
+
     renderControls: function () {
         console.log(LNAME, 'renderControls');
 
-        return this.templates.dt({
+        return this.template({
             classNames: this.classNames,
             first: this.renderControl('first'),
             prev: this.renderControl('prev'),
