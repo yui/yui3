@@ -165,6 +165,11 @@ YUI.add('get', function (Y, NAME) {
                 }
             });
         }
+        
+        //Keeping Signature in the browser.
+        return {
+            execute: function() {}
+        };
     };
 
     /**

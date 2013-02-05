@@ -1,7 +1,7 @@
 Attribute Change History
 ========================
 
-@VERSION@
+3.8.1
 -----
 
 * Invalid values supplied during Attribute initialization that fail setter

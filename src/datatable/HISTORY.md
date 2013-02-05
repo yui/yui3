@@ -2,7 +2,7 @@ DataTable Change History
 ========================
 
 
-@VERSION@
+3.8.1
 -----
 
 * Avoid processing columns if there aren't any to allow empty tables.

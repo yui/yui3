@@ -172,6 +172,11 @@
                 }
             });
         }
+        
+        //Keeping Signature in the browser.
+        return {
+            execute: function() {}
+        };
     };
 
     /**
