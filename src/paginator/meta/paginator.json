@@ -1,19 +1,12 @@
 {
     "paginator": {
-        "use": [
-            "paginator-base"
-        ],
 
-        "lang": [
-            "en"
-        ],
-
-        "skinnable": true,
+        "skinnable": false,
 
         "submodules": {
-            "paginator-base": {
+            "paginator": {
                 "requires": [
-                    "view",
+                    "widget",
                     "paginator-view",
                     "paginator-model",
                     "base-build",

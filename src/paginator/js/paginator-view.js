@@ -29,6 +29,16 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         perPageSelect: getClassName('paginator', 'per-page', 'select')
     },
 
+    events: {
+        '.yui3-paginator-control': {
+            'click': 'controlClick',
+            'change': 'controlChange'
+        },
+        '.yui3-paginator-page': {
+            'click': 'pageClick'
+        }
+    },
+
     initializer: function () {
         if (this.get('model')) {
             this.bind();
@@ -47,13 +57,14 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     render: function () {
         console.log(LNAME, 'render');
         this.get('container').setContent(this.renderControls());
+        if (!this.bound) {
+            this.bind();
+        }
     },
 
     bind: function () {
-        if (!this.bound) {
-            this.get('model').on('change', this._modelChange, this);
-            this.bound = true;
-        }
+        this.get('model').on('change', this._modelChange, this);
+        this.bound = true;
     },
 
     renderControls: function () {},
@@ -267,9 +278,37 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         };
     },
 
+    // EVENT CALL BACKS
+    controlClick: function(e) {
+        console.log(LNAME, 'controlClick');
+        e.preventDefault();
+
+        this.fire(e.currentTarget.getData('type'));
+    },
+
+    controlChange: function (e) {
+        console.log(LNAME, 'controlChange');
+        e.preventDefault();
+        var control = e.currentTarget,
+            type = control.getData('type'),
+            data = {};
+        data[type] = e.target.get('value');
+
+        this.fire(type, data);
+    },
+
+    pageClick: function(e) {
+        console.log(LNAME, 'pageClick');
+        e.preventDefault();
+        this.fire('page', {page: e.currentTarget.getData('page')});
+    },
+
+
+    //-- PROTECTED ----
+
     _defStringVals: function () {
         console.log(LNAME, '_defStringVals');
-        return Y.Intl.get("paginator-templates");
+        return Y.Intl.get('paginator-templates');
     }
 
 }, {
