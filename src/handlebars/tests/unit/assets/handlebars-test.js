@@ -114,7 +114,11 @@ suite.add(new Y.Test.Case({
     },
 
     'isEmpty() should be false for all strings': function () {
-        Assert.isFalse(H.Utils.isEmpty(''));
+        // Ignoring this test to match the following change in Handlebars:
+        // https://github.com/wycats/handlebars.js/commit/5f56d6
+        //
+        // Assert.isFalse(H.Utils.isEmpty(''));
+
         Assert.isFalse(H.Utils.isEmpty('foo'));
         Assert.isFalse(H.Utils.isEmpty(new String('')));
         Assert.isFalse(H.Utils.isEmpty(new String('foo')));
