@@ -240,7 +240,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @chainable
     **/
     clear: function (rootNode, options) {
-        return this._fire(EVT_CLEAR, {
+        return this._fireTreeEvent(EVT_CLEAR, {
             rootNode: this.createNode(rootNode || this._rootNodeConfig)
         }, {
             defaultFn: this._defClearFn,
@@ -427,7 +427,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
 
         node = this.createNode(node);
 
-        this._fire(EVT_ADD, {
+        this._fireTreeEvent(EVT_ADD, {
             index : index,
             node  : node,
             parent: parent,
@@ -483,7 +483,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     removeNode: function (node, options) {
         options || (options = {});
 
-        this._fire(EVT_REMOVE, {
+        this._fireTreeEvent(EVT_REMOVE, {
             destroy: !!options.destroy,
             node   : node,
             parent : node.parent,
@@ -614,7 +614,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     /**
     Utility method for lazily publishing and firing events.
 
-    @method _fire
+    @method _fireTreeEvent
     @param {String} name Event name to fire.
     @param {Object} facade Event facade.
     @param {Object} [options] Options.
@@ -624,7 +624,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @chainable
     @protected
     **/
-    _fire: function (name, facade, options) {
+    _fireTreeEvent: function (name, facade, options) {
         if (options && options.silent) {
             if (options.defaultFn) {
                 options.defaultFn.call(this, facade);

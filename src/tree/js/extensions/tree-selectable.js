@@ -97,7 +97,7 @@ Selectable.prototype = {
         // in cases such as a node being added to this tree with its selected
         // state already set to true.
         if (!this._selectedMap[node.id]) {
-            this._fire(EVT_SELECT, {node: node}, {
+            this._fireTreeEvent(EVT_SELECT, {node: node}, {
                 defaultFn: this._defSelectFn,
                 silent   : options && options.silent
             });
@@ -137,7 +137,7 @@ Selectable.prototype = {
     **/
     unselectNode: function (node, options) {
         if (node.isSelected() || this._selectedMap[node.id]) {
-            this._fire(EVT_UNSELECT, {node: node}, {
+            this._fireTreeEvent(EVT_UNSELECT, {node: node}, {
                 defaultFn: this._defUnselectFn,
                 silent   : options && options.silent
             });

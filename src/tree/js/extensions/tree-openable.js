@@ -55,7 +55,7 @@ Openable.prototype = {
     **/
     closeNode: function (node, options) {
         if (node.canHaveChildren && node.isOpen()) {
-            this._fire(EVT_CLOSE, {node: node}, {
+            this._fireTreeEvent(EVT_CLOSE, {node: node}, {
                 defaultFn: this._defCloseFn,
                 silent   : options && options.silent
             });
@@ -75,7 +75,7 @@ Openable.prototype = {
     **/
     openNode: function (node, options) {
         if (node.canHaveChildren && !node.isOpen()) {
-            this._fire(EVT_OPEN, {node: node}, {
+            this._fireTreeEvent(EVT_OPEN, {node: node}, {
                 defaultFn: this._defOpenFn,
                 silent   : options && options.silent
             });
