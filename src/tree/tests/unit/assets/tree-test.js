@@ -1136,16 +1136,16 @@ lazySuite.add(new Y.Test.Case({
         Assert.isTrue(fired, 'error event should fire');
     },
 
-    '`loading` event should fire just before the `load()` callback is called': function () {
+    '`beforeLoad` event should fire just before the `load()` callback is called': function () {
         var test = this,
             fired,
             loadCalled;
 
-        this.lazy.on('loading', function (e) {
+        this.lazy.on('beforeLoad', function (e) {
             fired = true;
 
             if (loadCalled) {
-                Assert.fail('loading event should fire before the load() callback is called');
+                Assert.fail('beforeLoad event should fire before the load() callback is called');
             }
 
             Assert.areSame(test.node, e.node, 'node should be the the node whose children are being loaded');
@@ -1158,16 +1158,16 @@ lazySuite.add(new Y.Test.Case({
 
         this.node.open();
 
-        Assert.isTrue(fired, 'loading event should fire');
+        Assert.isTrue(fired, 'beforeLoad event should fire');
         Assert.isTrue(loadCalled, 'load() callback should be called');
     },
 
-    '`loading` event should be preventable': function () {
+    '`beforeLoad` event should be preventable': function () {
         var test = this,
             fired,
             loadCalled;
 
-        this.lazy.on('loading', function (e) {
+        this.lazy.on('beforeLoad', function (e) {
             fired = true;
             e.preventDefault();
         });
@@ -1179,22 +1179,22 @@ lazySuite.add(new Y.Test.Case({
 
         this.node.open();
 
-        Assert.isTrue(fired, 'loading event should fire');
+        Assert.isTrue(fired, 'beforeLoad event should fire');
         Assert.isUndefined(loadCalled, 'load() callback should not be called');
     },
 
-    '`loaded` event should fire after the `load()` callback is called without an error': function () {
+    '`load` event should fire after the `load()` callback is called without an error': function () {
         var test = this,
             fired;
 
-        this.lazy.on('loaded', function (e) {
+        this.lazy.on('load', function (e) {
             fired = true;
             Assert.areSame(test.node, e.node, 'node should be the the node whose children were loaded');
         });
 
         this.node.open();
 
-        Assert.isTrue(fired, 'loaded event should fire');
+        Assert.isTrue(fired, 'load event should fire');
     }
 }));
 

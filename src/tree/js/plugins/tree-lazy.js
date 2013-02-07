@@ -65,6 +65,19 @@ contents of tree nodes the first time they're opened.
 **/
 
 /**
+Fired just before the custom `load()` method is called to load child nodes for a
+node.
+
+Calling `preventDefault()` on this event's facade will cancel the load action
+and prevent the `load()` method from being called.
+
+@event beforeLoad
+@param {Tree.Node} node Tree node whose children will be loaded.
+@preventable _defBeforeLoadFn
+**/
+var EVT_BEFORE_LOAD = 'beforeLoad';
+
+/**
 Fired when the `load()` method indicates there was an error loading child nodes.
 
 @event error
@@ -76,23 +89,10 @@ var EVT_ERROR = 'error';
 /**
 Fired after child nodes have finished loading and have been added to the tree.
 
-@event loaded
+@event load
 @param {Tree.Node} node Tree node whose children have been loaded.
 **/
-var EVT_LOADED  = 'loaded';
-
-/**
-Fired just before the custom `load()` method is called to load child nodes for a
-node.
-
-Calling `preventDefault()` on this event's facade will cancel the load action
-and prevent the `load()` method from being called.
-
-@event loading
-@param {Tree.Node} node Tree node whose children will be loaded.
-@preventable _defLoadingFn
-**/
-var EVT_LOADING = 'loading';
+var EVT_LOAD = 'load';
 
 Y.namespace('Plugin.Tree').Lazy = Y.Base.create('lazyTreePlugin', Y.Plugin.Base, [], {
     // -- Lifecycle Methods ----------------------------------------------------
@@ -133,13 +133,13 @@ Y.namespace('Plugin.Tree').Lazy = Y.Base.create('lazyTreePlugin', Y.Plugin.Base,
             return;
         }
 
-        if (!this._published[EVT_LOADING]) {
-            this._published[EVT_LOADING] = this.publish(EVT_LOADING, {
+        if (!this._published[EVT_BEFORE_LOAD]) {
+            this._published[EVT_BEFORE_LOAD] = this.publish(EVT_BEFORE_LOAD, {
                 defaultFn: this._defLoadingFn
             });
         }
 
-        this.fire(EVT_LOADING, {node: node});
+        this.fire(EVT_BEFORE_LOAD, {node: node});
     },
 
     // -- Default Event Handlers -----------------------------------------------
@@ -163,7 +163,7 @@ Y.namespace('Plugin.Tree').Lazy = Y.Base.create('lazyTreePlugin', Y.Plugin.Base,
 
             node.state.loaded = true;
 
-            self.fire(EVT_LOADED, {node: node});
+            self.fire(EVT_LOAD, {node: node});
         });
     }
 }, {
