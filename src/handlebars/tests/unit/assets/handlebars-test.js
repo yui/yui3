@@ -185,6 +185,13 @@ suite.add(new Y.Test.Case({
         });
         Assert.areSame(expectedOutput, H.render('{{#with author}}{{formatName this}}{{/with}}', data));
         Assert.areSame(expectedOutput, H.render('{{#with author}}{{formatName .}}{{/with}}', data));
+    },
+
+    'Arrays as context objects should be supported': function () {
+        var data           = [1, 2, 3],
+            expectedOutput = "123";
+
+        Assert.areSame(expectedOutput, H.render('{{#each .}}{{.}}{{/each}}', data));
     }
 }));
 
