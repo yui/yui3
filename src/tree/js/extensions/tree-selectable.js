@@ -54,9 +54,9 @@ Selectable.prototype = {
         this.nodeExtensions = this.nodeExtensions.concat(Y.Tree.Node.Selectable);
         this._selectedMap   = {};
 
-        Do.after(this._afterDefAddFn, this, '_defAddFn');
-        Do.after(this._afterDefClearFn, this, '_defClearFn');
-        Do.after(this._afterDefRemoveFn, this, '_defRemoveFn');
+        Do.after(this._selectableAfterDefAddFn, this, '_defAddFn');
+        Do.after(this._selectableAfterDefClearFn, this, '_defClearFn');
+        Do.after(this._selectableAfterDefRemoveFn, this, '_defRemoveFn');
 
         this._selectableEvents = [
             this.after('multiSelectChange', this._afterMultiSelectChange)
@@ -148,7 +148,7 @@ Selectable.prototype = {
     },
 
     // -- Protected Methods ----------------------------------------------------
-    _afterDefAddFn: function (e) {
+    _selectableAfterDefAddFn: function (e) {
         // If the node is marked as selected, we need go through the select
         // flow.
         if (e.node.isSelected()) {
@@ -156,11 +156,11 @@ Selectable.prototype = {
         }
     },
 
-    _afterDefClearFn: function () {
+    _selectableAfterDefClearFn: function () {
         this._selectedMap = {};
     },
 
-    _afterDefRemoveFn: function (e) {
+    _selectableAfterDefRemoveFn: function (e) {
         delete e.node.state.selected;
         delete this._selectedMap[e.node.id];
     },
