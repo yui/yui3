@@ -52,27 +52,27 @@ suite.add(new Y.Test.Case({
         Assert.areSame(this.tree, this.tree.openNode(this.tree.children[0]));
     },
 
-    'toggleNode() should open a closed node': function () {
+    'toggleOpenNode() should open a closed node': function () {
         var node = this.tree.children[0];
 
         Assert.isFalse(node.isOpen(), 'sanity check');
 
-        this.tree.toggleNode(node);
+        this.tree.toggleOpenNode(node);
         Assert.isTrue(node.isOpen(), 'node should be open');
     },
 
-    'toggleNode() should close an open node': function () {
+    'toggleOpenNode() should close an open node': function () {
         var node = this.tree.children[0];
 
         this.tree.openNode(node);
         Assert.isTrue(node.isOpen(), 'sanity check');
 
-        this.tree.toggleNode(node);
+        this.tree.toggleOpenNode(node);
         Assert.isFalse(node.isOpen(), 'node should be closed');
     },
 
-    'toggleNode() should be chainable': function () {
-        Assert.areSame(this.tree, this.tree.toggleNode(this.tree.children[0]));
+    'toggleOpenNode() should be chainable': function () {
+        Assert.areSame(this.tree, this.tree.toggleOpenNode(this.tree.children[0]));
     }
 }));
 
@@ -197,7 +197,7 @@ suite.add(new Y.Test.Case({
         this.tree.openNode(node);
     },
 
-    'toggleNode() should not fire any events if options.silent is truthy': function () {
+    'toggleOpenNode() should not fire any events if options.silent is truthy': function () {
         var node = this.tree.children[0];
 
         this.tree.once('close', function () {
@@ -208,8 +208,8 @@ suite.add(new Y.Test.Case({
             Assert.fail('open event should not fire');
         });
 
-        this.tree.toggleNode(node, {silent: true});
-        this.tree.toggleNode(node, {silent: true});
+        this.tree.toggleOpenNode(node, {silent: true});
+        this.tree.toggleOpenNode(node, {silent: true});
     },
 
     '`close` event should be preventable': function () {
@@ -316,24 +316,24 @@ nodeSuite.add(new Y.Test.Case({
         Assert.areSame(this.node, this.node.open());
     },
 
-    'toggle() should wrap Tree#toggleNode()': function () {
+    'toggleOpen() should wrap Tree#toggleOpenNode()': function () {
         var mock    = Mock(),
             options = {};
 
         Mock.expect(mock, {
-            method : 'toggleNode',
+            method : 'toggleOpenNode',
             args   : [this.node, options],
-            run    : Y.bind(this.tree.toggleNode, this.tree)
+            run    : Y.bind(this.tree.toggleOpenNode, this.tree)
         });
 
         this.node.tree = mock;
-        this.node.toggle(options);
+        this.node.toggleOpen(options);
 
         Mock.verify(mock);
     },
 
-    'toggle() should be chainable': function () {
-        Assert.areSame(this.node, this.node.toggle());
+    'toggleOpen() should be chainable': function () {
+        Assert.areSame(this.node, this.node.toggleOpen());
     },
 
 

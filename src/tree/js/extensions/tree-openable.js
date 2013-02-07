@@ -88,14 +88,14 @@ Openable.prototype = {
     Toggles the open/closed state of the specified node, closing it if it's
     currently open or opening it if it's currently closed.
 
-    @method toggleNode
+    @method toggleOpenNode
     @param {Tree.Node} node Node to toggle.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, events will be
             suppressed.
     @chainable
     **/
-    toggleNode: function (node, options) {
+    toggleOpenNode: function (node, options) {
         return node.isOpen() ? this.closeNode(node, options) :
             this.openNode(node, options);
     },
