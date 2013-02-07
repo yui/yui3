@@ -1,3 +1,5 @@
+/*jshint expr:true, onevar:false */
+
 /**
 Extension for `Tree` that adds the concept of selection state for nodes.
 
@@ -6,7 +8,7 @@ Extension for `Tree` that adds the concept of selection state for nodes.
 @main tree-selectable
 **/
 
-var Do = Y.Do,
+var Do = Y.Do;
 
 /**
 Extension for `Tree` that adds the concept of selection state for nodes.
@@ -23,7 +25,7 @@ Fired when a node is selected.
 @param {Tree.Node} node Node being selected.
 @preventable _defSelectFn
 **/
-EVT_SELECT = 'select',
+var EVT_SELECT = 'select';
 
 /**
 Fired when a node is unselected.
@@ -32,13 +34,9 @@ Fired when a node is unselected.
 @param {Tree.Node} node Node being unselected.
 @preventable _defUnselectFn
 **/
-EVT_UNSELECT = 'unselect';
+var EVT_UNSELECT = 'unselect';
 
-function Selectable() {
-    Do.after(this._afterDefAddFn, this, '_defAddFn');
-    Do.after(this._afterDefClearFn, this, '_defClearFn');
-    Do.after(this._afterDefRemoveFn, this, '_defRemoveFn');
-}
+function Selectable() {}
 
 Selectable.prototype = {
     // -- Protected Properties -------------------------------------------------
@@ -52,10 +50,13 @@ Selectable.prototype = {
     **/
 
     // -- Lifecycle ------------------------------------------------------------
-
     initializer: function () {
         this.nodeExtensions = this.nodeExtensions.concat(Y.Tree.Node.Selectable);
         this._selectedMap   = {};
+
+        Do.after(this._afterDefAddFn, this, '_defAddFn');
+        Do.after(this._afterDefClearFn, this, '_defClearFn');
+        Do.after(this._afterDefRemoveFn, this, '_defRemoveFn');
 
         this._selectableEvents = [
             this.after('multiSelectChange', this._afterMultiSelectChange)

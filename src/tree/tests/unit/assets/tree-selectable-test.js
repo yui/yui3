@@ -33,9 +33,9 @@ suite.add(new Y.Test.Case({
 
     setUp: function () {
         this.tree = new Tree({nodes: [
-            {label: 'one'},
-            {label: 'two'},
-            {label: 'three'}
+            {id: 'one'},
+            {id: 'two'},
+            {id: 'three'}
         ]});
     },
 
@@ -78,9 +78,9 @@ suite.add(new Y.Test.Case({
 
     setUp: function () {
         this.tree = new Tree({nodes: [
-            {label: 'one', children: [{label: 'one-one'}, {label: 'one-two'}, {label: 'one-three'}]},
-            {label: 'two'},
-            {label: 'three'}
+            {id: 'one', children: [{id: 'one-one'}, {id: 'one-two'}, {id: 'one-three'}]},
+            {id: 'two'},
+            {id: 'three'}
         ]});
     },
 
@@ -97,8 +97,8 @@ suite.add(new Y.Test.Case({
         var selected = this.tree.getSelectedNodes();
 
         Assert.isArray(selected, 'return value should be an array');
-        Assert.areSame('one', selected[0].label, 'node "one" should be selected');
-        Assert.areSame('one-two', selected[1].label, 'node "one-two" should be selected');
+        Assert.areSame('one', selected[0].id, 'node "one" should be selected');
+        Assert.areSame('one-two', selected[1].id, 'node "one-two" should be selected');
     },
 
     'selectNode() should select the specified node': function () {
@@ -152,9 +152,9 @@ suite.add(new Y.Test.Case({
 
     setUp: function () {
         this.tree = new Tree({nodes: [
-            {label: 'one', children: [{label: 'one-one'}, {label: 'one-two'}, {label: 'one-three'}]},
-            {label: 'two'},
-            {label: 'three'}
+            {id: 'one', children: [{id: 'one-one'}, {id: 'one-two'}, {id: 'one-three'}]},
+            {id: 'two'},
+            {id: 'three'}
         ]});
     },
 
@@ -260,6 +260,53 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+// -- Events -------------------------------------------------------------------
+suite.add(new Y.Test.Case({
+    name: 'Events',
+
+    setUp: function () {
+        this.tree = new Tree({nodes: [
+            {id: 'one', children: [{id: 'one-one'}, {id: 'one-two'}, {id: 'one-three'}]},
+            {id: 'two'},
+            {id: 'three'}
+        ]});
+    },
+
+    tearDown: function () {
+        this.tree.destroy();
+        delete this.tree;
+    },
+
+    'should handle a node being added in a selected state': function () {
+        var node = this.tree.createNode({state: {selected: true}});
+
+        this.tree.children[0].select();
+
+        Assert.isTrue(this.tree.children[0].isSelected(), 'sanity');
+
+        this.tree.rootNode.append(node);
+        Assert.isFalse(this.tree.children[0].isSelected(), 'first node should no longer be selected');
+        Assert.isTrue(node.isSelected(), 'newly appended node should be selected');
+    },
+
+    'selection should be cleared when the tree is cleared': function () {
+        this.tree.children[0].select();
+        Assert.areSame(1, this.tree.getSelectedNodes().length, 'one node should be selected');
+
+        this.tree.clear();
+        Assert.areSame(0, this.tree.getSelectedNodes().length, 'zero nodes should be selected');
+    },
+
+    'selection should be updated when a selected node is removed from the tree': function () {
+        this.tree.children[0].select();
+        Assert.areSame(1, this.tree.getSelectedNodes().length, 'one node should be selected');
+
+        this.tree.children[0].remove();
+        Assert.areSame(0, this.tree.getSelectedNodes().length, 'zero nodes should be selected');
+    }
+}));
+
+
 // -- Y.Tree.Node --------------------------------------------------------------
 var nodeSuite = new Y.Test.Suite('Tree.Node.Selectable');
 suite.add(nodeSuite);
@@ -270,7 +317,7 @@ nodeSuite.add(new Y.Test.Case({
 
     setUp: function () {
         this.tree = new Tree();
-        this.node = this.tree.rootNode.append({label: 'one'});
+        this.node = this.tree.rootNode.append({id: 'one'});
         this.unattachedNode = this.tree.createNode();
     },
 
