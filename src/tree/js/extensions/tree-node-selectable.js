@@ -1,9 +1,6 @@
 /**
-Provides the `Tree.Node.Selectable` class, an extension for `Tree.Node` that
-adds methods useful for nodes in trees that use the `Tree.Selectable` extension.
-
-@module tree-selectable
-@submodule tree-node-selectable
+@module tree
+@submodule tree-selectable
 **/
 
 /**

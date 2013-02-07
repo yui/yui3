@@ -1,9 +1,6 @@
 /**
-Provides the `Tree.Node.Openable` class, an extension for `Tree.Node` that
-adds methods useful for nodes in trees that use the `Tree.Openable` extension.
-
-@module tree-openable
-@submodule tree-node-openable
+@module tree
+@submodule tree-openable
 **/
 
 /**

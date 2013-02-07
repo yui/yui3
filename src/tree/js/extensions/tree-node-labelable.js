@@ -1,9 +1,6 @@
 /**
-Provides the `Tree.Node.Labelable` class, an extension for `Tree.Node` that
-adds baked-in support for labels like you might see in a treeview or menu.
-
-@module tree-labelable
-@submodule tree-node-labelable
+@module tree
+@submodule tree-labelable
 **/
 
 /**
