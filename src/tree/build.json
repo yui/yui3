@@ -10,7 +10,8 @@
 
         "tree-labelable": {
             "jsfiles": [
-                "js/extensions/tree-labelable.js"
+                "js/extensions/tree-labelable.js",
+                "js/extensions/tree-node-labelable.js"
             ]
         },
 
@@ -26,33 +27,17 @@
             ]
         },
 
-        "tree-node-labelable": {
-            "jsfiles": [
-                "js/extensions/tree-node-labelable.js"
-            ]
-        },
-
-        "tree-node-openable": {
-            "jsfiles": [
-                "js/extensions/tree-node-openable.js"
-            ]
-        },
-
-        "tree-node-selectable": {
-            "jsfiles": [
-                "js/extensions/tree-node-selectable.js"
-            ]
-        },
-
         "tree-openable": {
             "jsfiles": [
-                "js/extensions/tree-openable.js"
+                "js/extensions/tree-openable.js",
+                "js/extensions/tree-node-openable.js"
             ]
         },
 
         "tree-selectable": {
             "jsfiles": [
-                "js/extensions/tree-selectable.js"
+                "js/extensions/tree-selectable.js",
+                "js/extensions/tree-node-selectable.js"
             ]
         }
     }

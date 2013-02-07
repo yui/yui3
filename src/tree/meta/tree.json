@@ -8,8 +8,7 @@
 
     "tree-labelable": {
         "requires": [
-            "tree",
-            "tree-node-labelable"
+            "tree"
         ]
     },
 
@@ -23,36 +22,15 @@
 
     "tree-node": {},
 
-    "tree-node-labelable": {
-        "requires": [
-            "tree-node"
-        ]
-    },
-
-    "tree-node-openable": {
-        "requires": [
-            "tree-node"
-        ]
-    },
-
-    "tree-node-selectable": {
-        "requires": [
-            "oop",
-            "tree-node"
-        ]
-    },
-
     "tree-openable": {
         "requires": [
-            "tree",
-            "tree-node-openable"
+            "tree"
         ]
     },
 
     "tree-selectable": {
         "requires": [
-            "tree",
-            "tree-node-selectable"
+            "tree"
         ]
     }
 }
