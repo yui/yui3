@@ -7,7 +7,18 @@
 var Y_Lang = Y.Lang;
 
 /**
- * The CartesianSeries class creates a chart with horizontal and vertical axes.
+ * An abstract class for creating series instances with horizontal and vertical axes.
+ * CartesianSeries provides the core functionality used by the following classes:
+ * <ul>
+ *      <li>{{#crossLink "LineSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "MarkerSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "AreaSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "SplineSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "AreaSplineSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "ComboSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "ComboSplineSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "Histogram"}}{{/crossLink}}</li>
+ *  </ul>
  *
  * @class CartesianSeries
  * @extends SeriesBase
@@ -224,42 +235,30 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
      */
     setAreaData: function()
     {
-        var isNumber = Y_Lang.isNumber,
-            nextX, nextY,
-            w = this.get("width"),
+        var w = this.get("width"),
             h = this.get("height"),
             xAxis = this.get("xAxis"),
             yAxis = this.get("yAxis"),
             xData = this.get("xData").concat(),
             yData = this.get("yData").concat(),
-            xValue,
-            yValue,
-            xOffset = xAxis.getEdgeOffset(xData.length, w),
-            yOffset = yAxis.getEdgeOffset(yData.length, h),
+            direction = this.get("direction"),
+            dataLength = direction === "vertical" ? yData.length : xData.length,
+            xOffset = xAxis.getEdgeOffset(dataLength, w),
+            yOffset = yAxis.getEdgeOffset(dataLength, h),
             padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
 			dataWidth = w - (leftPadding + padding.right + xOffset),
 			dataHeight = h - (topPadding + padding.bottom + yOffset),
-			xcoords = [],
-			ycoords = [],
 			xMax = xAxis.get("maximum"),
 			xMin = xAxis.get("minimum"),
 			yMax = yAxis.get("maximum"),
 			yMin = yAxis.get("minimum"),
             xScaleFactor = dataWidth / (xMax - xMin),
 			yScaleFactor = dataHeight / (yMax - yMin),
-            dataLength,
-            direction = this.get("direction"),
-            i = 0,
-            xMarkerPlane = [],
-            yMarkerPlane = [],
-            xMarkerPlaneOffset = this.get("xMarkerPlaneOffset"),
-            yMarkerPlaneOffset = this.get("yMarkerPlaneOffset"),
             graphic = this.get("graphic");
         graphic.set("width", w);
         graphic.set("height", h);
-        dataLength = xData.length;
         xOffset *= 0.5;
         yOffset *= 0.5;
         //Assuming a vertical graph has a range/category for its vertical axis.
@@ -273,7 +272,44 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
         {
             this._bottomOrigin = this._bottomOrigin - ((0 - yMin) * yScaleFactor);
         }
-        for (; i < dataLength; ++i)
+        this._setCoords(xData, yData, xMin, yMin, dataWidth, dataHeight, xScaleFactor, yScaleFactor, xOffset, yOffset, dataLength, leftPadding, topPadding, direction);
+    },
+
+    /**
+     * Sets the coordinates and marker plane arrays for a series. Used by the setAreaData method.
+     *
+     * @method _setCoords
+     * @param {Array} xData An array of data values mapped to the x axis.
+     * @param {Array} yData An array of data values mapped to the y axis.
+     * @param {Number} xMin The minimum value of the x axis.
+     * @param {Number} yMin The minimum value of the y axis.
+     * @param {Number} dataWidth The width used to calculate the x-coordinates.
+     * @param {Number} dataHeight The height used to calculate the y-coordinates.
+     * @param {Number} xScaleFactor The ratio used to calculate x-coordinates.
+     * @param {Number} yScaleFactor The ratio used to calculate y-coordinates.
+     * @param {Number} xOffset The distance of the first and last x-coordinate from the beginning and end of the x-axis.
+     * @param {Number} yOffset The distance of the first and last y-coordinate from the beginning and end of the y-axis.
+     * @param {Number} dataLength The number of data points in the arrays. 
+     * @param {Number} leftPadding The left padding of the series.
+     * @param {Number} topPadding The top padding of the series.
+     * @param {String} direction The direction of the series.
+     * @private
+     */
+    _setCoords: function(xData, yData, xMin, yMin, dataWidth, dataHeight, xScaleFactor, yScaleFactor, xOffset, yOffset, dataLength, leftPadding, topPadding, direction) 
+    {
+        var isNumber = Y_Lang.isNumber,
+			xcoords = [],
+			ycoords = [],
+            xMarkerPlane = [],
+            yMarkerPlane = [],
+            xMarkerPlaneOffset = this.get("xMarkerPlaneOffset"),
+            yMarkerPlaneOffset = this.get("yMarkerPlaneOffset"),
+            xValue,
+            yValue,
+            nextX,
+            nextY,
+            i;
+        for (i = 0; i < dataLength; ++i)
 		{
             xValue = parseFloat(xData[i]);
             yValue = parseFloat(yData[i]);
