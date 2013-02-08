@@ -105,6 +105,7 @@ Escape = {
         else
             return 'http://' + string;
     },
+    
     /**
     Returns a copy of the specified string with special regular expression
     characters escaped, allowing the string to be used safely inside a regex.
