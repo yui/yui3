@@ -13,25 +13,22 @@ var Y_Lang = Y.Lang;
  * @constructor
  * @submodule series-fill-util
  */
-function Fills(cfg)
-{
-    var attrs = {
-        area: {
-            getter: function()
-            {
-                return this._defaults || this._getAreaDefaults();
-            },
+function Fills(cfg) {}
 
-            setter: function(val)
-            {
-                var defaults = this._defaults || this._getAreaDefaults();
-                this._defaults = Y.merge(defaults, val);
-            }
+Fills.ATTRS = {
+    area: {
+        getter: function()
+        {
+            return this._defaults || this._getAreaDefaults();
+        },
+
+        setter: function(val)
+        {
+            var defaults = this._defaults || this._getAreaDefaults();
+            this._defaults = Y.merge(defaults, val);
         }
-    };
-    this.addAttrs(attrs, cfg);
-    this.get("styles");
-}
+    }
+};
 
 Fills.prototype = {
     /**
