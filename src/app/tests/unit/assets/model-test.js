@@ -78,6 +78,7 @@ modelSuite.add(new Y.Test.Case({
 
         model.destroy({remove: true}, mock.callback);
         Y.Mock.verify(mock);
+        Assert.areSame(1, calls);
     },
 
     'destroy() should remove the model from all lists': function () {
@@ -99,6 +100,38 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame(0, listOne.size(), 'model should be removed from list one');
         Assert.areSame(0, listTwo.size(), 'model should be removed from list two');
         Assert.areSame(0, listThree.size(), 'model should be removed from list three');
+    },
+
+    'destroy() should not remove the model lists when sync has an error': function () {
+        var calls     = 0,
+            model     = new Y.Model(),
+            listOne   = new Y.ModelList(),
+            listTwo   = new Y.ModelList(),
+            listThree = new Y.ModelList();
+
+        model.sync = function (action, options, callback) {
+            calls += 1;
+            Assert.areSame('delete', action, 'sync action should be "delete"');
+            callback('Delete failed');
+        };
+
+        listOne.add(model);
+        listTwo.add(model);
+        listThree.add(model);
+
+        Assert.areSame(1, listOne.size(), 'model should be added to list one');
+        Assert.areSame(1, listTwo.size(), 'model should be added to list two');
+        Assert.areSame(1, listThree.size(), 'model should be added to list three');
+
+        model.destroy({remove: true}, function (err) {
+            Assert.areSame('Delete failed', err, 'Sync err was not "Delete failed"');
+        });
+
+        Assert.areSame(1, listOne.size(), 'model should be removed from list one');
+        Assert.areSame(1, listTwo.size(), 'model should be removed from list two');
+        Assert.areSame(1, listThree.size(), 'model should be removed from list three');
+
+        Assert.areSame(1, calls);
     }
 }));
 
@@ -305,11 +338,51 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame(Y.Escape.html(value), model.getAsHTML('foo'));
     },
 
+    'getAsHTML() should return an empty string for null attribute values': function () {
+        var model = new this.TestModel({
+            nullish1: undefined,
+            nullish2: null,
+            nullish3: NaN,
+
+            falsy1: false,
+            falsy2: 0,
+            falsy3: ''
+        });
+
+        Assert.areSame('', model.getAsHTML('nullish1'));
+        Assert.areSame('', model.getAsHTML('nullish2'));
+        Assert.areSame('', model.getAsHTML('nullish3'));
+
+        Assert.areSame('false', model.getAsHTML('falsy1'));
+        Assert.areSame('0', model.getAsHTML('falsy2'));
+        Assert.areSame('', model.getAsHTML('falsy3'));
+    },
+
     'getAsURL() should return a URL-encoded attribute value': function () {
         var value = 'foo & bar = baz',
             model = new this.TestModel({foo: value});
 
         Assert.areSame(encodeURIComponent(value), model.getAsURL('foo'));
+    },
+
+    'getAsURL() should return an empty string for null attribute values': function () {
+        var model = new this.TestModel({
+            nullish1: undefined,
+            nullish2: null,
+            nullish3: NaN,
+
+            falsy1: false,
+            falsy2: 0,
+            falsy3: ''
+        });
+
+        Assert.areSame('', model.getAsURL('nullish1'));
+        Assert.areSame('', model.getAsURL('nullish2'));
+        Assert.areSame('', model.getAsURL('nullish3'));
+
+        Assert.areSame('false', model.getAsURL('falsy1'));
+        Assert.areSame('0', model.getAsURL('falsy2'));
+        Assert.areSame('', model.getAsURL('falsy3'));
     },
 
     'isModified() should return true if the model is new': function () {
@@ -572,6 +645,28 @@ modelSuite.add(new Y.Test.Case({
         });
 
         model.undo();
+    },
+
+    'undo() should only fire one change when a custom id attribute changes': function () {
+        // Set custom id attribute.
+        this.TestModel.prototype.idAttribute = 'userId';
+
+        var calls = 0,
+            model = new this.TestModel({foo: 'foo'});
+
+        model.setAttrs({userId: '1', foo: 'bar'});
+
+        model.after('change', function (e) {
+            calls += 1;
+            Assert.isNull(this.get('userId'));
+            Assert.areSame('foo', this.get('foo'));
+        });
+
+        model.undo();
+        Assert.areSame(1, calls);
+
+        // Return back to default id attribute.
+        this.TestModel.prototype.idAttribute = Y.Model.prototype.idAttribute;
     },
 
     'validate() should only be called on save()': function () {
