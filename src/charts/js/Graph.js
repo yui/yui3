@@ -54,7 +54,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         for(; i < len; ++i)
         {
             series = sc[i];
-            if(series instanceof Y.CartesianSeries)
+            if(series instanceof Y.SeriesBase)
             {
                 series.render();
             }
