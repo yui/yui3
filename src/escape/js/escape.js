@@ -96,9 +96,9 @@ Escape = {
     **/
     uri: function (string) {
         string += '';
-        if(decodeURIComponent(string).indexOf('http://')==0)
+        if(string.indexOf('http://')==0)
             return string;
-        else if(decodeURIComponent(string).indexOf('https://')==0)
+        else if(string.indexOf('https://')==0)
             return string;
         else if(decodeURIComponent(string).indexOf('/')==0)
             return string;
