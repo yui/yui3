@@ -64,16 +64,16 @@ Y.Test.Runner.add(new Y.Test.Case({
         Assert.areSame('/article/show.php', Escape.uri('/article/show.php'));
         Assert.areSame('http://yuilibrary.com', Escape.uri('http://yuilibrary.com'));
         Assert.areSame('https://yuilibrary.com', Escape.uri('https://yuilibrary.com'));
-        Assert.areSame('http://javascript:alert(1)', Escape.uri('javascript:alert(1)'));
-        Assert.areSame('http://data:text/html;<html>', Escape.uri('data:text/html;<html>'));
+        Assert.areSame('/javascript:alert(1)', Escape.uri('javascript:alert(1)'));
+        Assert.areSame('/data:text/html;<html>', Escape.uri('data:text/html;<html>'));
         Assert.areSame('%2Farticle%2Fshow.php', Escape.uri('%2Farticle%2Fshow.php'));
     },
     
     'uri() should coerce non-strings to strings': function () {
-        Assert.areSame('http://1', Escape.uri(1));
-        Assert.areSame('http://false', Escape.uri(false));
-        Assert.areSame('http://null', Escape.uri(null));
-        Assert.areSame('http://undefined', Escape.uri());
+        Assert.areSame('/1', Escape.uri(1));
+        Assert.areSame('/false', Escape.uri(false));
+        Assert.areSame('/null', Escape.uri(null));
+        Assert.areSame('/undefined', Escape.uri());
     }
 
 }));
