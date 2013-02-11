@@ -12,7 +12,7 @@ Differences
 
 YUI-specific changes are minimal. YUI uses Normalize v1.1.0.
 
-  - Create a contextual normalize.css toggled off a parent class-name
+  - Create a contextual normalize.css (normalize-context.css) toggled off a parent class-name (.yui3-normalized)
 
 License
 =======
