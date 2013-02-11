@@ -102,7 +102,7 @@ Escape = {
         else if(decodeURIComponent(string).indexOf('/')==0)
             return string;
         else
-            return '/' + string;
+            return encodeURIComponent(string);
     },
     
     /**
