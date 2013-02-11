@@ -66,12 +66,11 @@ Escape = {
         encoded_string = "";
         for (i=0;i<str_len;i++) {
             if(string[i].match(/\w+/g)===null) {
+                var hex_value = string[i].charCodeAt(0).toString(16).toUpperCase();
                 if(string[i].charCodeAt(0) < 256) {
-                    var hex_value = string[i].charCodeAt(0).toString(16).toUpperCase();
                     encoded_string += "\\x" + "00".substring(hex_value.length) + hex_value;
                 }
                 else {
-                    var hex_value = string[i].charCodeAt(0).toString(16).toUpperCase();
                     encoded_string += "\\u" + "0000".substring(hex_value.length) + hex_value;
                 }
             }
@@ -96,9 +95,9 @@ Escape = {
     **/
     uri: function (string) {
         string += '';
-        if(string.indexOf('http://')==0)
+        if(string.toLowerCase().indexOf('http://')==0)
             return string;
-        else if(string.indexOf('https://')==0)
+        else if(string.toLowerCase().indexOf('https://')==0)
             return string;
         else if(decodeURIComponent(string).indexOf('/')==0)
             return string;
