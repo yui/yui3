@@ -78,17 +78,14 @@ YUI.add('batch-tests', function (Y) {
         },
 
         'correct handling of function parameters': function () {
-            var test = this,
-                result = 5;
+            var test = this;
 
-            Y.batch(function (fulfill) {
-                setTimeout(function () {
-                    fulfill(result);
-                }, 10);
-            }).then(function (values) {
+            function testFn() {}
+
+            Y.batch(testFn).then(function (values) {
                 test.resume(function () {
-                    Assert.isNumber(values[0], 'promise value should be a number, not a function');
-                    Assert.areSame(result, values[0], 'promise value should be ' + result);
+                    Assert.isFunction(values[0], 'promise value should be a function');
+                    Assert.areSame(testFn, values[0], 'promise value should be the passed function');
                 });
             });
 
