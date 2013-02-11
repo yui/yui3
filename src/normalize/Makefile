@@ -49,6 +49,7 @@ $(OUTPUT_DIR)/%.css: $(NORMALIZE_LIB)/%.css
 	@echo "$(notdir $@)"
 	@echo "$(PREPEND_COMMENT)" > $@
 	cat $(BASE_FILES) >> $@
+	node make-context.js
 
 $(TESTS_DIR)/%.html: $(NORMALIZE_LIB)/%.html
 	@echo "Copying test contents over..."
