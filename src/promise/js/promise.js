@@ -25,13 +25,15 @@ asynchronous or synchronous operations. E.g.
 **/
 
 /**
-The public API for a Resolver. Used to subscribe to the notification events for
-resolution or progress of the operation represented by the Resolver.
+A promise represents a value that may not yet be available. Promises allow
+you to chain asynchronous operations, write synchronous looking code and
+handle errors throughout the process.
 
 @class Promise
 @constructor
 @param {Function} fn A function where to insert the logic that resolves this
-        promise. Receives `fulfill` and `reject` functions as parameters
+        promise. Receives `fulfill` and `reject` functions as parameters.
+        This function is called synchronously.
 **/
 function Promise(fn) {
     if (!(this instanceof Promise)) {
@@ -56,37 +58,39 @@ function Promise(fn) {
     });
 }
 
-/**
-Schedule execution of a callback to either or both of "fulfill" and
-"reject" resolutions for this promise. The callbacks are wrapped in a new
-promise and that promise is returned.  This allows operation chaining ala
-`functionA().then(functionB).then(functionC)` where `functionA` returns
-a promise, and `functionB` and `functionC` _may_ return promises.
+Y.mix(Promise.prototype, {
+    /**
+    Schedule execution of a callback to either or both of "fulfill" and
+    "reject" resolutions for this promise. The callbacks are wrapped in a new
+    promise and that promise is returned.  This allows operation chaining ala
+    `functionA().then(functionB).then(functionC)` where `functionA` returns
+    a promise, and `functionB` and `functionC` _may_ return promises.
 
-Asynchronicity of the callbacks is guaranteed.
+    Asynchronicity of the callbacks is guaranteed.
 
-@method then
-@param {Function} [callback] function to execute if the promise
-            resolves successfully
-@param {Function} [errback] function to execute if the promise
-            resolves unsuccessfully
-@return {Promise} A promise wrapping the resolution of either "resolve" or
-            "reject" callback
-**/
+    @method then
+    @param {Function} [callback] function to execute if the promise
+                resolves successfully
+    @param {Function} [errback] function to execute if the promise
+                resolves unsuccessfully
+    @return {Promise} A promise wrapping the resolution of either "resolve" or
+                "reject" callback
+    **/
+    then: function (callback, errback) {
+        this._resolver.then(callback, errback);
+    },
 
-/**
-Returns the current status of the operation. Possible results are
-"pending", "fulfilled", and "rejected".
+    /**
+    Returns the current status of the operation. Possible results are
+    "pending", "fulfilled", and "rejected".
 
-@method getStatus
-@return {String}
-**/
-Y.Array.each(['then', 'getStatus'], function (method) {
-    Promise.prototype[method] = function () {
-        return this._resolver[method].apply(this._resolver, arguments);
-    };
+    @method getStatus
+    @return {String}
+    **/
+    getStatus: function () {
+        return this._resolver.getStatus();
+    }
 });
-
 
 /**
 Checks if an object or value is a promise. This is cross-implementation
