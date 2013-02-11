@@ -49,7 +49,11 @@ function Promise(fn) {
     */
     this._resolver = resolver;
 
-    fn.call(this, Y.bind('fulfill', resolver), Y.bind('reject', resolver));
+    fn.call(this, function (value) {
+        resolver.fulfill(value);
+    }, function (reason) {
+        resolver.reject(reason);
+    });
 }
 
 /**

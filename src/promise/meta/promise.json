@@ -1,7 +1,6 @@
 {
 	"promise": {
 		"requires": [
-			"oop",
 			"timers"
 		]
 	},
