@@ -61,26 +61,26 @@ Escape = {
     @static
     **/
     js: function (string) {
-            string += "";
-            var str_len = string.length,
-            encoded_string = "";
-            for (i=0;i<str_len;i++) {
-                    if(Escape._isAplhaNum(string[i])==false) {
-                        if(string[i].charCodeAt(0) < 256) {
-                            var hex_value = string[i].charCodeAt(0).toString(16).toUpperCase();
-                            encoded_string += "\\x" + "00".substring(hex_value.length) + hex_value;
-                        }
-                        else {
-                            var hex_value = string[i].charCodeAt(0).toString(16).toUpperCase();
-                            encoded_string += "\\u" + "0000".substring(hex_value.length) + hex_value;
-                        }
-                    }
-                    else {
-                            encoded_string += string[i];
-                    }
-                     
+        string += "";
+        var str_len = string.length,
+        encoded_string = "";
+        for (i=0;i<str_len;i++) {
+            if(string[i].match(/\w+/g)===null) {
+                if(string[i].charCodeAt(0) < 256) {
+                    var hex_value = string[i].charCodeAt(0).toString(16).toUpperCase();
+                    encoded_string += "\\x" + "00".substring(hex_value.length) + hex_value;
+                }
+                else {
+                    var hex_value = string[i].charCodeAt(0).toString(16).toUpperCase();
+                    encoded_string += "\\u" + "0000".substring(hex_value.length) + hex_value;
+                }
             }
-            return encoded_string;
+            else {
+                encoded_string += string[i];
+            }
+                     
+        }
+        return encoded_string;
     },
     
     /**
@@ -140,24 +140,6 @@ Escape = {
      */
     _htmlReplacer: function (match) {
         return HTML_CHARS[match];
-    },
-    
-    /**
-    Method to check if a character is Alpha-Numeric using regex.
-
-    @method _isAlphaNum
-    @param {String} match Matched character (match in regex: [a-zA-Z0-9]*).
-    @returns {Boolean} true if match is successful; else false.
-    @static
-    @protected
-    **/
-    _isAplhaNum: function (match) {
-        if(match.match(/[a-zA-Z0-9]*/g)[0]==match) {
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 };
 
