@@ -5,6 +5,11 @@
             "cssfiles": [
                 "normalize.css"
             ]
+        },
+        "normalize-context": {
+            "cssfiles": [
+                "normalize-context.css"
+            ]
         }
     }
 }
