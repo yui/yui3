@@ -1965,7 +1965,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "plugin",
             "node-focusmanager"
         ],
-        "skinnable": true
+        "skinnable": false
     },
     "node-pluginhost": {
         "requires": [
@@ -2857,4 +2857,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '4d7a621688853ccee63f83c0fcbc810a';
+YUI.Env[Y.version].md5 = '005a214b18bb5df588ace1799ca5818c';

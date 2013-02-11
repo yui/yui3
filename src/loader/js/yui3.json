@@ -1830,7 +1830,7 @@
             "plugin",
             "node-focusmanager"
         ],
-        "skinnable": true
+        "skinnable": false
     },
     "node-pluginhost": {
         "requires": [
