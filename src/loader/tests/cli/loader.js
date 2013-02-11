@@ -524,6 +524,37 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("base-pluginhost")) > -1, "Module (base-pluginhost) not found in sorted array");
         },
+     "Testing benchmark": function(data) {
+            var loader = new Y.Loader({
+                require: ["benchmark"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("benchmark-base")) > -1, "Module (benchmark-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("benchmark-console")) > -1, "Module (benchmark-console) not found in sorted array");
+        },
+     "Testing benchmark-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["benchmark-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("benchmark-base")) > -1, "Module (benchmark-base) not found in sorted array");
+        },
+     "Testing benchmark-console": function(data) {
+            var loader = new Y.Loader({
+                require: ["benchmark-console"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("benchmark-console")) > -1, "Module (benchmark-console) not found in sorted array");
+        },
      "Testing button": function(data) {
             var loader = new Y.Loader({
                 require: ["button"],

@@ -1,0 +1,17 @@
+<html>
+	<body class="yui3-skin-sam">
+		<script src="../../../../build/yui/yui.js"></script>
+		<script>
+			YUI({
+				filter: 'raw',
+				combine: false
+			}).use('benchmark', function (Y) {
+				var Bench = new Y.Benchmark.Timer('Foo');
+
+				Bench.start();
+
+				Y.later(50, Bench, Bench.end);
+			});
+		</script>
+	</body>
+</html>

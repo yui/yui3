@@ -1,0 +1,25 @@
+{
+	"benchmark": {
+		"use" : [
+			"benchmark-base",
+			"benchmark-console"
+		]
+	},
+	
+    "benchmark-base": {
+        "requires": [
+            "oop",
+            "json-stringify",
+            "profiler"
+        ]
+    },
+
+    "benchmark-console": {
+        "requires": [
+            "console-filters",
+            "test",
+            "array-extras"
+        ],
+        "skinnable": true
+    }
+}

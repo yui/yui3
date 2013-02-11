@@ -348,6 +348,27 @@ Y.mix(YUI.Env[Y.version].modules, {
             "pluginhost"
         ]
     },
+    "benchmark": {
+        "use": [
+            "benchmark-base",
+            "benchmark-console"
+        ]
+    },
+    "benchmark-base": {
+        "requires": [
+            "oop",
+            "json-stringify",
+            "profiler"
+        ]
+    },
+    "benchmark-console": {
+        "requires": [
+            "console-filters",
+            "test",
+            "array-extras"
+        ],
+        "skinnable": true
+    },
     "button": {
         "requires": [
             "button-core",
@@ -2564,4 +2585,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'd050a2294f84d3996bb46f592448f782';
+YUI.Env[Y.version].md5 = '84064be4674a951ed40b038c0d4ff8ca';

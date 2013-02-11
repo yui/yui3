@@ -1,0 +1,15 @@
+{
+    "name": "benchmark",
+    "builds": {
+        "benchmark-base": {
+            "jsfiles": [
+                "benchmark-base.js"
+            ]
+        },
+        "benchmark-console": {
+            "jsfiles": [
+                "benchmark-console.js"
+            ]
+        }
+    }
+}

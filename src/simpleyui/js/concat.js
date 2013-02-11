@@ -3899,6 +3899,7 @@ YUI.Env.aliases = {
     "attribute-events": ["attribute-observable"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
+    "benchmark": ["benchmark-base","benchmark-console"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "color": ["color-base","color-hsl","color-harmony"],
