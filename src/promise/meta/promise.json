@@ -1,0 +1,12 @@
+{
+	"promise": {
+		"requires": [
+			"timers"
+		]
+	},
+	"promise-batch": {
+		"requires": [
+			"promise"
+		]
+	}
+}
