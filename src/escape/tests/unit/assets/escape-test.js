@@ -72,6 +72,7 @@ Y.Test.Runner.add(new Y.Test.Case({
         Assert.areSame('yahoo.php?q=1', Escape.uri('yahoo.php?q=1'));
         Assert.areSame('?param=value', Escape.uri('?param=value'));
         Assert.areSame('#bookmark', Escape.uri('#bookmark'));
+        Assert.areSame('HtTp://www.yahoo.com', Escape.uri('HtTp://www.yahoo.com'));
     },
     
     'uri() should coerce non-strings to strings': function () {
