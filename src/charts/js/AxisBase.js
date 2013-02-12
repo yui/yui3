@@ -254,7 +254,10 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
             for(i = 0; i < len; i = i + 1) 
             {
                 key = value[i];
-                obj[key] = this.getDataByKey(key);
+                if(keys[key]) 
+                {
+                    obj[key] = this.getDataByKey(key);
+                }
             }
         }
         else if(keys[value])
