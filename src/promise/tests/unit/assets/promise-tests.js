@@ -18,6 +18,14 @@ YUI.add('promise-tests', function (Y) {
             Assert.isInstanceOf(Y.Promise, Y.Promise(function () {}), 'Y.Promise as a function should return a promise');
         },
 
+        'promise.then returns a promise': function () {
+            var promise = new Y.Promise(function (fulfill) {
+                fulfill(5);
+            });
+
+            Assert.isInstanceOf(Y.Promise, promise.then(), 'promise.then returns a promise');
+        },
+
         'promise state should change only once': function () {
             var fulfilled = new Promise(function (fulfill, reject) {
                     Assert.areEqual('pending', this.getStatus(), 'before fulfillment the resolver status should be "pending"');
