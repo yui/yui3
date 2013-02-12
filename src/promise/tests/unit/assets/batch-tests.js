@@ -22,7 +22,7 @@ YUI.add('batch-tests', function (Y) {
 
     // -- Suite --------------------------------------------------------------------
     var suite = new Y.Test.Suite({
-        name: 'Y.batch tests'
+        name: 'Promise: Y.batch'
     });
 
     // -- Lifecycle ----------------------------------------------------------------
