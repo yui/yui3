@@ -75,10 +75,10 @@ Y.Test.Runner.add(new Y.Test.Case({
     },
     
     'uri() should coerce non-strings to strings': function () {
-        Assert.areSame('/1', Escape.uri(1));
-        Assert.areSame('/false', Escape.uri(false));
-        Assert.areSame('/null', Escape.uri(null));
-        Assert.areSame('/undefined', Escape.uri());
+        Assert.areSame('1', Escape.uri(1));
+        Assert.areSame('false', Escape.uri(false));
+        Assert.areSame('null', Escape.uri(null));
+        Assert.areSame('undefined', Escape.uri());
     }
 
 }));
