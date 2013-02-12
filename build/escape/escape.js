@@ -85,8 +85,18 @@ Escape = {
     },
     
     /**
-    Returns a copy of the specified string with a / prepended to it if 
-    the string does not start with a http:// or https://
+    Returns a copy of the string with if it matches one of the following format (case insensitive):
+    
+    https://yahoo.com
+    http://www.yahoo.com
+    //yahoo.com
+    /yahoo.html
+    ?param=value
+    #bookmark
+    yahoo.php?q=1
+    india-yahoo#bookmark
+    
+    If match fails, URL encoded string is returned.
     
     If _string_ is not already a string, it will be coerced to a string.
     
@@ -97,14 +107,13 @@ Escape = {
     **/
     uri: function (string) {
         string += '';
-        if(string.toLowerCase().indexOf('http://')==0)
+        var match = string.toLowerCase().match(/(https)|(http)|(\/\/)|([#?\/])/g);
+        if (match !== null && string.toLowerCase().indexOf(match[0])==0)
             return string;
-        else if(string.toLowerCase().indexOf('https://')==0)
-            return string;
-        else if(decodeURIComponent(string).indexOf('/')==0)
+        else if(match !== null && string.indexOf(':')==-1)
             return string;
         else
-            return '/' + string;
+            return encodeURIComponent(string);
     },
     
     /**
