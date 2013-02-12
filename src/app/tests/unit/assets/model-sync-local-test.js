@@ -171,11 +171,24 @@ modelSyncLocalSuite.add(new Y.Test.Case({
         Assert.isUndefined(data['users']['users-1'], 'Data should be deleted');
     },
 
-    'Failed sync() calls should pass an error message to the callback': function () {
+    'Failed lookups should pass an error message to the callback': function () {
         var model = new Y.TestModel({id: 'users-3'});
 
         model.sync('read', {}, function (err, res) {
-            Assert.areSame('Data not found', err);
+            Assert.areSame('Data not found in LocalStorage', err);
+        });
+    },
+
+    'Failed syncs due to errors should pass an error message to the callback': function () {
+        var model = new Y.TestModel({id: 'users-4'});
+
+        model._save = function () {
+            throw new Error('Failed sync');
+        }
+
+        model.set('name', 'jeff');
+        model.save(function (err, res) {
+            Assert.areSame('Failed sync', err);
         });
     }
 }));
