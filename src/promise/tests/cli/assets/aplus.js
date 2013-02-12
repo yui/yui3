@@ -40,7 +40,7 @@ YUI.add('aplus-tests', function(Y) {
 
             promisesAplusTests(adapter, function (err) {
                 test.resume(function() {
-                    Assert.areEqual(0, err.failures, 'should have no failures');
+                    Assert.isNull(err, 'All promises tests should pass');
                 });
             });
 
