@@ -103,12 +103,12 @@ Y.mix(Resolver.prototype, {
         // its promise returned.
 
         var promise = this.promise,
-            thenFullfill, thenReject,
+            thenFulfill, thenReject,
 
             // using promise constructor allows for customized promises to be
             // returned instead of plain ones
             then = new promise.constructor(function (fulfill, reject) {
-                thenFullfill = fulfill;
+                thenFulfill = fulfill;
                 thenReject = reject;
             }),
 
@@ -118,52 +118,10 @@ Y.mix(Resolver.prototype, {
         // Because the callback and errback are represented by a Resolver, it
         // must be fulfilled or rejected to propagate through the then() chain.
         // The same logic applies to resolve() and reject() for fulfillment.
-        function wrap(fn) {
-            return function () {
-                // The args coming in to the callback/errback from the
-                // resolution of the parent promise.
-                var args = arguments;
-
-                // Wrapping all callbacks in Y.soon to guarantee
-                // asynchronicity. Because setTimeout can cause unnecessary
-                // delays that *can* become noticeable in some situations
-                // (especially in Node.js)
-                Y.soon(function () {
-                    // Call the callback/errback with promise as `this` to
-                    // preserve the contract that access to the deferred is
-                    // only for code that may resolve/reject it.
-                    // Another option would be call the function from the
-                    // global context, but it seemed less useful.
-                    var result;
-
-                    // Promises model exception handling through callbacks
-                    // making both synchronous and asynchronous errors behave
-                    // the same way
-                    try {
-                        result = fn.apply(promise, args);
-                    } catch (e) {
-                        return thenReject(e);
-                    }
-
-                    // Returning a promise from a callback makes the current
-                    // promise sync up with the returned promise
-                    if (Promise.isPromise(result)) {
-                        result.then(thenFullfill, thenReject);
-                    } else {
-                        // Non-promise return values always trigger resolve()
-                        // because callback is affirmative, and errback is
-                        // recovery.  To continue on the rejection path, errbacks
-                        // must return rejected promises or throw.
-                        thenFullfill(result);
-                    }
-                });
-            };
-        }
-
         resolveSubs.push(typeof callback === 'function' ?
-            wrap(callback) : thenFullfill);
+            this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
         rejectSubs.push(typeof errback === 'function' ?
-            wrap(errback) : thenReject);
+            this._wrap(thenFulfill, thenReject, errback) : thenReject);
 
         if (this._status === 'fulfilled') {
             this.fulfill(this._result);
@@ -172,6 +130,64 @@ Y.mix(Resolver.prototype, {
         }
 
         return then;
+    },
+
+    /**
+    Wraps the callback in Y.soon to guarantee its asynchronous execution. It
+    also catches exceptions to turn them into rejections and links promises
+    returned from the `then` callback.
+
+    @method _wrap
+    @param {Function} thenFulfill Fulfillment function of the resolver that
+                        handles this promise
+    @param {Function} thenReject Rejection function of the resolver that
+                        handles this promise
+    @param {Function} fn Callback to wrap
+    @return {Function}
+    @private
+    **/
+    _wrap: function (thenFulfill, thenReject, fn) {
+        var promise = this.promise;
+
+        return function () {
+            // The args coming in to the callback/errback from the
+            // resolution of the parent promise.
+            var args = arguments;
+
+            // Wrapping all callbacks in Y.soon to guarantee
+            // asynchronicity. Because setTimeout can cause unnecessary
+            // delays that *can* become noticeable in some situations
+            // (especially in Node.js)
+            Y.soon(function () {
+                // Call the callback/errback with promise as `this` to
+                // preserve the contract that access to the deferred is
+                // only for code that may resolve/reject it.
+                // Another option would be call the function from the
+                // global context, but it seemed less useful.
+                var result;
+
+                // Promises model exception handling through callbacks
+                // making both synchronous and asynchronous errors behave
+                // the same way
+                try {
+                    result = fn.apply(promise, args);
+                } catch (e) {
+                    return thenReject(e);
+                }
+
+                // Returning a promise from a callback makes the current
+                // promise sync up with the returned promise
+                if (Promise.isPromise(result)) {
+                    result.then(thenFulfill, thenReject);
+                } else {
+                    // Non-promise return values always trigger resolve()
+                    // because callback is affirmative, and errback is
+                    // recovery.  To continue on the rejection path, errbacks
+                    // must return rejected promises or throw.
+                    thenFulfill(result);
+                }
+            });
+        };
     },
 
     /**
