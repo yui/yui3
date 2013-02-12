@@ -64,9 +64,14 @@ Y.Test.Runner.add(new Y.Test.Case({
         Assert.areSame('/article/show.php', Escape.uri('/article/show.php'));
         Assert.areSame('http://yuilibrary.com', Escape.uri('http://yuilibrary.com'));
         Assert.areSame('https://yuilibrary.com', Escape.uri('https://yuilibrary.com'));
-        Assert.areSame('/javascript:alert(1)', Escape.uri('javascript:alert(1)'));
-        Assert.areSame('/data:text/html;<html>', Escape.uri('data:text/html;<html>'));
+        Assert.areSame('javascript%3Aalert(1)', Escape.uri('javascript:alert(1)'));
+        Assert.areSame('data%3Atext%2Fhtml%3B%3Chtml%3E', Escape.uri('data:text/html;<html>'));
         Assert.areSame('%2Farticle%2Fshow.php', Escape.uri('%2Farticle%2Fshow.php'));
+        Assert.areSame('//yahoo.com', Escape.uri('//yahoo.com'));
+        Assert.areSame('india-yahoo#bookmark', Escape.uri('india-yahoo#bookmark'));
+        Assert.areSame('yahoo.php?q=1', Escape.uri('yahoo.php?q=1'));
+        Assert.areSame('?param=value', Escape.uri('?param=value'));
+        Assert.areSame('#bookmark', Escape.uri('#bookmark'));
     },
     
     'uri() should coerce non-strings to strings': function () {
