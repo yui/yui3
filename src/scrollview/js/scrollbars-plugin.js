@@ -497,11 +497,11 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             opacity : opacity
         };
 
-        if (verticalNode) {
+        if (verticalNode && verticalNode._node) {
             verticalNode.transition(transition);
         }
 
-        if (horizontalNode) {
+        if (horizontalNode && horizontalNode._node) {
             horizontalNode.transition(transition);
         }
     },
