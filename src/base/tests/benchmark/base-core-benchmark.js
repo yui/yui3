@@ -1,27 +1,18 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-    <title>YUI: Base Perf</title>
-</head>
-<body class="yui3-skin-sam">
+YUI.add('base-core-benchmark', function (Y) {
 
-<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+var suite = Y.BenchmarkSuite = new Benchmark.Suite();
 
-<p>This test creates a class with 20 attributes and extends from Y.Base.</p>
+    // MyBaseCore
 
-<div id="results"></div>
-
-<script>
-
-YUI({filter:"raw"}).use('base', 'node', function(Y) {
-
-    var Test = function() {
-        Test.superclass.constructor.apply(this, arguments);
+    var MyBaseCore20 = function() {
+        MyBaseCore20.superclass.constructor.apply(this, arguments);
     };
 
-    Test.NAME = 'test';
+    Y.extend(MyBaseCore20, Y.BaseCore);
 
-    Test.ATTRS = {
+    MyBaseCore20.NAME = 'myBase20';
+
+    MyBaseCore20.ATTRS = {
 
         attr1: {
             value: "Foo",
@@ -57,27 +48,27 @@ YUI({filter:"raw"}).use('base', 'node', function(Y) {
         },
 
         attr7: {
-            value: false
+            value: 10
         },
 
         attr8: {
-            value: true
+            value: {}
         },
 
         attr9: {
-            value: true
+            value: []
         },
 
         attr10: {
-            value: false
+            value: "Foobar"
         },
 
         attr11: {
-            value: true
+            value: 25
         },
 
         attr12: {
-            value: false
+            value: null
         },
 
         attr13: {
@@ -99,7 +90,7 @@ YUI({filter:"raw"}).use('base', 'node', function(Y) {
         },
 
         attr16: {
-            value: 10,
+            value: ['default'],
 
             getter: function() {
                 return false;
@@ -109,31 +100,25 @@ YUI({filter:"raw"}).use('base', 'node', function(Y) {
                 return g;
             }
         },
-
         attr17: {
             value: null,
             setter: function(g) {
                 return g;
             }
         },
-
         attr18: {
             writeOnce: true,
             value: null
         },
-
         attr19: {
             writeOnce: true,
             value: null
         },
-
         attr20: {
             writeOnce: true,
             value: null
         }
     };
-
-    Y.extend(Test, Y.BaseCore);
 
     var MyBaseCore20Ideal = function() {
         MyBaseCore20Ideal.superclass.constructor.apply(this, arguments);
@@ -257,18 +242,96 @@ YUI({filter:"raw"}).use('base', 'node', function(Y) {
         }
     };
 
-    Y.one("document").on("click", function() {
+    var MyBaseCore10 = function() {
+        MyBaseCore10.superclass.constructor.apply(this, arguments);
+    };
 
-        console.profile("instantiation");
+    Y.extend(MyBaseCore10, Y.BaseCore);
 
-        for (var i = 0; i < 10000; i++) {
-            t = new MyBaseCore20Ideal();
+    MyBaseCore10.NAME = 'myBaseCore10';
+
+    MyBaseCore10.ATTRS = {
+
+        attr1: {
+            value: "Foo"
+        },
+
+        attr2: {
+            value: "Bar"
+        },
+
+        attr3: {
+            value: true
+        },
+
+        attr4: {
+            value: 3
+        },
+
+        attr5: {
+            value: 3
+        },
+
+        attr6: {
+            value: false
+        },
+
+        attr7: {
+            value: 10
+        },
+
+        attr8: {
+            value: true
+        },
+
+        attr9: {
+            value: false
+        },
+
+        attr10: {
+            value: null
         }
+    };
 
-        console.profileEnd("instantiation");
+    var MyBaseCore = function() {
+       MyBaseCore.superclass.constructor.apply(this, arguments);
+    };
 
-    });
+    MyBaseCore.NAME = "myBaseCore";
+
+    Y.extend(MyBaseCore, Y.BaseCore);
+
+var GLOBAL_MY_BASE_CORE_10 = new MyBaseCore10();
+var UNIQUE_VALUE = 10;
+
+// BaseCore
+
+suite.add('BaseCore', function () {
+   var b = new Y.BaseCore();
 });
-</script>
-</body>
-</html>
+
+suite.add('MyBaseCore', function () {
+   var b = new MyBaseCore();
+});
+
+suite.add('MyBaseCore with 10 simple value attributes', function () {
+   var b = new MyBaseCore10();
+});
+
+suite.add('MyBaseCore with 20 varied attributes', function () {
+   var b = new MyBaseCore20();
+});
+
+suite.add('MyBaseCore with 20 varied attributes (using perf. best practices)', function () {
+   var b = new MyBaseCore20Ideal();
+});
+
+suite.add('MyBaseCore with 10 simple value attributes - set', function () {
+    GLOBAL_MY_BASE_CORE_10.set("attr1", UNIQUE_VALUE++);
+});
+
+suite.add('MyBaseCore with 10 simple value attributes - get', function () {
+   var val = GLOBAL_MY_BASE_CORE_10.get("attr2");
+});
+
+}, '@VERSION@', {requires: ['base-core']});
