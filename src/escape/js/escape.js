@@ -105,8 +105,8 @@ Escape = {
     **/
     uri: function (string) {
         string += '';
-        var match = string.toLowerCase().match(/(https)|(http)|(\/\/)|([#?\/])/g);
-        if (match !== null && string.toLowerCase().indexOf(match[0])==0)
+        var match = decodeURIComponent(string).toLowerCase().match(/(https)|(http)|(\/\/)|([#?\/])/g);
+        if (match !== null && decodeURIComponent(string).toLowerCase().indexOf(match[0])==0)
             return string;
         else if(match !== null && string.indexOf(':')==-1)
             return string;
