@@ -129,31 +129,39 @@ LocalSync.prototype = {
     **/
     sync: function (action, options, callback) {
         options || (options = {});
-        var response;
+        var response, errorInfo;
 
-        switch (action) {
-            case 'read':
-                if (this._isYUIModelList) {
-                    response = this._index(options);
-                } else {
-                    response = this._show(options);
-                }
-                break;
-            case 'create':
-                response = this._create(options);
-                break;
-            case 'update':
-                response = this._update(options);
-                break;
-            case 'delete':
-                response = this._destroy(options);
-                break;
+        try {
+            switch (action) {
+                case 'read':
+                    if (this._isYUIModelList) {
+                        response = this._index(options);
+                    } else {
+                        response = this._show(options);
+                    }
+                    break;
+                case 'create':
+                    response = this._create(options);
+                    break;
+                case 'update':
+                    response = this._update(options);
+                    break;
+                case 'delete':
+                    response = this._destroy(options);
+                    break;
+            }
+        } catch (error) {
+            errorInfo = error.message;
         }
 
         if (response) {
             callback(null, response);
         } else {
-            callback('Data not found');
+            if (errorInfo) {
+                callback(errorInfo);
+            } else {
+                callback("Data not found in LocalStorage");
+            }
         }
     },
 
