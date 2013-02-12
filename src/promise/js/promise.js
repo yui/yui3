@@ -77,7 +77,7 @@ Y.mix(Promise.prototype, {
                 "reject" callback
     **/
     then: function (callback, errback) {
-        this._resolver.then(callback, errback);
+        return this._resolver.then(callback, errback);
     },
 
     /**
