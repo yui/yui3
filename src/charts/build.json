@@ -51,6 +51,11 @@
                 "CandlestickSeries.js"
             ]
         },
+        "series-ohlc" : {
+            "jsfiles" : [
+                "OHLCSeries.js"
+            ]
+        },
         "axis" : {
             "jsfiles" : [
                 "LeftAxisLayout.js",
