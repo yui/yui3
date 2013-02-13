@@ -349,6 +349,11 @@
                             attr = path.shift();
                         }
 
+                        // When we have a `path` we have a complex attribute,
+                        // something like: "foo.bar". In this case, it's assumed
+                        // that the "root" attribute has already been setup. If
+                        // it hasn't, then that's a user error. This will apply
+                        // the sub-attribute value to the main attribute.
                         if (path) {
 
                             attrCfg = allCfgs[attr];
