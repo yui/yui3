@@ -24,6 +24,30 @@ PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.U
             last: this.renderControl('last'),
             pages: this.renderPages()
         });
+    },
+
+    preRender: function (template, data) {
+        console.log(LNAME, 'preRender');
+
+        switch(template) {
+            case 'control':
+                if (data.type === 'first') {
+                    data.href = this.formatUrl(1);
+                } else if (data.type === 'last') {
+                    data.href = this.formatUrl(data.attrs.pages);
+                } else if (data.type === 'prev') {
+                    data.href = this.formatUrl(data.attrs.page - 1);
+                } else if (data.type === 'next') {
+                    data.href = this.formatUrl(data.attrs.page + 1);
+                }
+                break;
+
+            case 'page':
+                data.href = this.formatUrl(data.page);
+                break;
+        }
+
+        return data;
     }
 
 }, {

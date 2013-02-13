@@ -3,13 +3,13 @@ var template = new Y.Template(),
     /**
         {
             classNames:,
-            link:,
+            href:,
             title:,
             display:,
         }
     */
     control =   '<li class="<%= data.classNames.controlWrapper %>">' +
-                    '<a href="<%= data.link %>" title="<%= data.title %>" class="<%= data.classNames.control %> <%= data.controlClass %>" data-type="<%= data.type %>">' +
+                    '<a href="<%= data.href %>" title="<%= data.title %>" class="<%= data.classNames.control %> <%= data.controlClass %>" data-type="<%= data.type %>">' +
                         '<%= data.display %>' +
                     '</a>' +
                 '</li>',
@@ -17,14 +17,14 @@ var template = new Y.Template(),
     /**
         {
             classNames:,
-            link:,
+            href:,
             page:,
             title:,
             display:,
         }
     */
     page =  '<li class="<%= data.classNames.controlWrapper %>">' +
-                '<a href="<%= data.link %>" data-page="<%= data.page %>" title="<%= data.title %>" class="<%= data.classNames.page %><%= data.selectedClass %>">' +
+                '<a href="<%= data.href %>" data-page="<%= data.page %>" title="<%= data.title %>" class="<%= data.classNames.page %><%= data.selectedClass %>">' +
                     '<%= data.display %>' +
                 '</a>' +
             '</li>',

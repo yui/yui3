@@ -15,16 +15,16 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
         console.log(LNAME, 'bindUI');
         var view = this.get('view');
 
-        this.after('pageChange', this.syncUI, this);
-        this.after('itemsPerPageChange', this.syncUI, this);
-        this.after('totalItemsChange', this.syncUI, this);
+        this.after(['pageChange', 'itemsPerPageChange', 'totalItemsChange'], this.syncUI, this);
 
-        this.after('*:first', this._afterUIFirst, this);
-        this.after('*:last', this._afterUILast, this);
-        this.after('*:prev', this._afterUIPrev, this);
-        this.after('*:next', this._afterUINext, this);
-        this.after('*:page', this._afterUIPage, this);
-        this.after('*:perPage', this._afterUIPerPage, this);
+        this.after({
+            '*:first': this._afterUIFirst,
+            '*:last': this._afterUILast,
+            '*:prev': this._afterUIPrev,
+            '*:next': this._afterUINext,
+            '*:page': this._afterUIPage,
+            '*:perPage': this._afterUIPerPage
+        }, null, this);
 
         view.addTarget(this);
         view.attachEvents();
@@ -76,24 +76,29 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
     },
 
     // View
-    _getConstructor: function(type) {
-        return typeof type === 'string' ?
-                Y.Object.getValue(Y, type.split('.')) : type;
+    _viewSetterFn: function (view) {
+        console.log(LNAME, '_viewSetterFn');
+
+        if (typeof view === 'string') {
+            view = this._createView(view);
+        }
+
+        return view;
     },
 
-    _setView: function (view) {
-        var ViewConstructor = this.get('viewType'),
-            viewConfig;
+    _createView: function (viewType) {
+        console.log(LNAME, '_createView');
 
-        // assume view is a config object if not a View instance
-        if (!(view instanceof Y.View)) {
-            viewConfig = Y.merge(view);
+        var ViewConstructor = Y.Object.getValue(Y, viewType.split('.')),
+            viewConfig = this.get('viewConfig'),
+            view;
 
-            delete viewConfig.container;
-            delete viewConfig.model;
+        viewConfig = Y.merge(viewConfig);
 
-            view = new ViewConstructor(viewConfig);
-        }
+        delete viewConfig.container;
+        delete viewConfig.model;
+
+        view = new ViewConstructor(viewConfig);
 
         view.setAttrs({
             container: this.get('contentBox'),
@@ -108,13 +113,13 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
     ATTRS: {
 
         view: {
-            setter: '_setView',
-            value: null
+            setter: '_viewSetterFn',
+            value: 'Paginator.View',
+            writeOnce: 'initOnly'
         },
 
-        viewType: {
-            getter: '_getConstructor',
-            value: 'Paginator.View',
+        viewConfig: {
+            value: {},
             writeOnce: 'initOnly'
         }
     }

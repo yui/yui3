@@ -56,6 +56,10 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     // T E M P L A T E   R E N D E R I N G
     ///////////////////////////////////////
 
+    preRender: function (type, data) {
+        return data;
+    },
+
     renderControl: function (type) {
         console.log(LNAME, 'renderControl');
         var strings = this.get('strings'),
@@ -64,8 +68,8 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
             ucType = type[0].toUpperCase() + type.substring(1),
             controlDisabled = this.classNames.controlDisabled,
             data = {
-                link: '',
                 type: type,
+                attrs: attrs,
                 controlClass: [this.classNames['control' + ucType]],
                 title: YLSub(strings[type + 'Title'], attrs),
                 display: YLSub(strings[type + 'Display'], attrs)
@@ -128,6 +132,7 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
             attrs = this.getTemplateAttrs({page: page}),
             data = {
                 page: page,
+                attrs: attrs,
                 title: YLSub(strings.pageTitle, attrs ),
                 display: YLSub(strings.pageDisplay, attrs ),
                 selectedClass: curPage === page ? ' ' + this.classNames.controlSelected : ''
@@ -218,6 +223,10 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         //console.log(LNAME, 'renderTemplate');
         data.classNames || (data.classNames = this.classNames);
 
+        if (this.preRender) {
+            this.preRender(template, data);
+        }
+
         return this.templates[template](data);
     },
 
@@ -275,8 +284,8 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
 
     //-- PROTECTED ----
 
-    _defStringVals: function () {
-        console.log(LNAME, '_defStringVals');
+    _stringValueFn: function () {
+        console.log(LNAME, '_stringValueFn');
         return Y.Intl.get('paginator-templates');
     }
 
@@ -287,7 +296,8 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         },
 
         strings : {
-            valueFn: '_defStringVals'
+            valueFn: '_stringValueFn',
+            writeOnce: 'initOnly'
         }
     }
 });
