@@ -326,28 +326,50 @@
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
 
-            var cfgs = null,
+            var attrs = clazz.ATTRS,
+                cfgs = null,
                 cfg,
                 val,
                 attr,
-                attrs = clazz.ATTRS;
+                path,
+                attrCfg,
+                attrCfgHash;
 
             if (attrs) {
-                for (attr in attrs) {
-                    if (allCfgs[attr]) {
+                attrCfgHash = this._attrCfgHash();
 
-                        if (!cfgs) {
-                            cfgs = {};
+                for (attr in attrs) {
+                    cfg = allCfgs[attr];
+
+                    if (cfg) {
+                        path = null;
+
+                        if (attr.indexOf(DOT) !== -1) {
+                            path = attr.split(DOT);
+                            attr = path.shift();
                         }
 
-                        // PERF TODO:
-                        // Revisit once all unit tests pass for further optimizations. See if we really need to isolate this.
-                        cfg = cfgs[attr] = _wlmix({}, allCfgs[attr], this._attrCfgHash());
+                        if (path) {
 
-                        val = cfg.value;
+                            attrCfg = allCfgs[attr];
+                            val     = attrCfg && attrCfg.value;
 
-                        if (val && (typeof val === "object")) {
-                            this._cloneDefaultValue(attr, cfg);
+                            if (val) {
+                                O.setValue(val, path, cfg.value);
+                            }
+
+                        } else {
+
+                            if (!cfgs) {
+                                cfgs = {};
+                            }
+
+                            attrCfg = cfgs[attr] = _wlmix({}, cfg, attrCfgHash);
+                            val     = attrCfg.value;
+
+                            if (val && (typeof val === 'object')) {
+                                this._cloneDefaultValue(attr, attrCfg);
+                            }
                         }
                     }
                 }
@@ -520,14 +542,13 @@
          */
         _aggregateAttrs : function(allAttrs) {
 
-            var attr,
+            var cfgPropsHash = this._attrCfgHash(),
+                aggAttrs = {},
+                attr,
                 attrs,
                 cfg,
-                path,
                 i,
-                cfgPropsHash = this._attrCfgHash(),
-                aggAttr,
-                aggAttrs = {};
+                aggAttr;
 
             if (allAttrs) {
                 for (i = allAttrs.length-1; i >= 0; --i) {
@@ -537,44 +558,18 @@
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            // PERF TODO: Do we need to merge here, since we're merging later in filterAttrCfg
-                            // Should we move this down to only merge if we hit the path or valueFn ifs below?
-                            cfg = _wlmix({}, attrs[attr], cfgPropsHash);
-
-                            path = null;
-                            if (attr.indexOf(DOT) !== -1) {
-                                path = attr.split(DOT);
-                                attr = path.shift();
-                            }
-
+                            cfg     = attrs[attr];
                             aggAttr = aggAttrs[attr];
 
-                            if (path && aggAttr && aggAttr.value) {
-
-                                // PERF TODO: Is this really required here, since we need
-                                // to clone again anyway when re-using the value for a new
-                                // instance. Could we hold onto the raw reference here ("a.b":"foo")?
-                                // That would move the setValue cost to the instance though, and we
-                                // maybe take on an iteration cost also.
-
-                                if (typeof aggAttr.value === "object") {
-                                    this._cloneDefaultValue(attr, aggAttr);
+                            if (!aggAttr) {
+                                aggAttrs[attr] = _wlmix({}, cfg, cfgPropsHash);
+                            } else {
+                                if (aggAttr.valueFn && VALUE in cfg) {
+                                    aggAttr.valueFn = null;
                                 }
 
-                                O.setValue(aggAttr.value, path, cfg.value);
-
-                            } else if (!path) {
-
-                                if (!aggAttr) {
-                                    aggAttrs[attr] = cfg;
-                                } else {
-                                    if (aggAttr.valueFn && VALUE in cfg) {
-                                        aggAttr.valueFn = null;
-                                    }
-
-                                    // Mix into existing config.
-                                    _wlmix(aggAttr, cfg, cfgPropsHash);
-                                }
+                                // Mix into existing config.
+                                _wlmix(aggAttr, cfg, cfgPropsHash);
                             }
                         }
                     }
