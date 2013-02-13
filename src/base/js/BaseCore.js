@@ -309,6 +309,65 @@
         },
 
         /**
+        Returns a copy of the aggregated set of attribute configurations
+        protecting the static configs and cloning any default value objects.
+
+        This method is used internally to prep the attribute configurations
+        before they are applied to a new instnace.
+
+        @method _protectAttrCfgs
+        @param {Object} attrCfgs The aggregated static attribute configurations.
+        @return {Object} A copy of `attrCfgs` which can be safely appied to a
+            new instance by passing it to `addAttrs()`.
+        @private
+        @since @VERSION@
+        **/
+        _protectAttrCfgs : function (attrCfgs) {
+            var attrCfgHash   = this._attrCfgHash(),
+                protectedCfgs = {},
+                attr,
+                cfg,
+                pCfg,
+                val;
+
+            for (attr in attrCfgs) {
+                cfg  = attrCfgs[attr];
+                path = null;
+
+                if (attr.indexOf(DOT) !== -1) {
+                    path = attr.split(DOT);
+                    attr = path.shift();
+                }
+
+                // When we have a `path` we have a complex attribute, something
+                // like: "foo.bar". In this case, it's assumed that the "root"
+                // attribute has already been setup. If it hasn't, then that's a
+                // user error. This will apply the sub-attribute value to the
+                // main attribute.
+                if (path) {
+
+                    pCfg = protectedCfgs[attr];
+                    val  = pCfg && pCfg.value;
+
+                    if (val) {
+                        O.setValue(val, path, cfg.value);
+                    }
+
+                } else {
+
+                    pCfg = protectedCfgs[attr] = _wlmix({}, cfg, attrCfgHash);
+                    val  = pCfg.value;
+
+                    if (val && (typeof val === 'object')) {
+                        this._cloneDefaultValue(attr, pCfg);
+                    }
+                }
+            }
+
+            return protectedCfgs;
+        },
+
+        /**
          * A helper method used when processing ATTRS across the class hierarchy during
          * initialization. Returns a disposable object with the attributes defined for
          * the provided class, extracted from the set of all attributes passed in.
@@ -325,57 +384,21 @@
          * of an object with attribute name/configuration pairs.
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
-
             var attrs = clazz.ATTRS,
                 cfgs = null,
                 cfg,
-                val,
-                attr,
-                path,
-                attrCfg,
-                attrCfgHash;
+                attr;
 
             if (attrs) {
-                attrCfgHash = this._attrCfgHash();
-
                 for (attr in attrs) {
                     cfg = allCfgs[attr];
 
                     if (cfg) {
-                        path = null;
-
-                        if (attr.indexOf(DOT) !== -1) {
-                            path = attr.split(DOT);
-                            attr = path.shift();
+                        if (!cfgs) {
+                            cfgs = {};
                         }
 
-                        // When we have a `path` we have a complex attribute,
-                        // something like: "foo.bar". In this case, it's assumed
-                        // that the "root" attribute has already been setup. If
-                        // it hasn't, then that's a user error. This will apply
-                        // the sub-attribute value to the main attribute.
-                        if (path) {
-
-                            attrCfg = allCfgs[attr];
-                            val     = attrCfg && attrCfg.value;
-
-                            if (val) {
-                                O.setValue(val, path, cfg.value);
-                            }
-
-                        } else {
-
-                            if (!cfgs) {
-                                cfgs = {};
-                            }
-
-                            attrCfg = cfgs[attr] = _wlmix({}, cfg, attrCfgHash);
-                            val     = attrCfg.value;
-
-                            if (val && (typeof val === 'object')) {
-                                this._cloneDefaultValue(attr, attrCfg);
-                            }
-                        }
+                        cfgs[attr] = cfg;
                     }
                 }
             }
@@ -546,9 +569,9 @@
          * @return {Object} The aggregate set of ATTRS definitions for the instance
          */
         _aggregateAttrs : function(allAttrs) {
-
             var cfgPropsHash = this._attrCfgHash(),
                 aggAttrs = {},
+                protectedAttrs = {},
                 attr,
                 attrs,
                 cfg,
@@ -567,8 +590,16 @@
                             aggAttr = aggAttrs[attr];
 
                             if (!aggAttr) {
-                                aggAttrs[attr] = _wlmix({}, cfg, cfgPropsHash);
+                                aggAttrs[attr] = cfg;
                             } else {
+                                if (!protectedAttrs[attr]) {
+                                    // Protect static atttribute configuration.
+                                    aggAttr = _wlmix({}, aggAttr, cfgPropsHash);
+
+                                    aggAttrs[attr]       = aggAttr;
+                                    protectedAttrs[attr] = true;
+                                }
+
                                 if (aggAttr.valueFn && VALUE in cfg) {
                                     aggAttr.valueFn = null;
                                 }
@@ -606,6 +637,9 @@
                 classes = this._getClasses(),
                 attrCfgs = this._getAttrCfgs(),
                 cl = classes.length - 1;
+
+            // Protect attribute configs.
+            attrCfgs = this._protectAttrCfgs(attrCfgs);
 
             for (ci = cl; ci >= 0; ci--) {
 
