@@ -202,17 +202,6 @@ Y.mix(Resolver.prototype, {
     },
 
     /**
-    Returns the result of the Resolver.  Use `getStatus()` to test that the
-    promise is fulfilled before calling this.
-
-    @method getResult
-    @return {Any} Value passed to `resolve()` or `reject()`
-    **/
-    getResult: function () {
-        return this._result;
-    },
-
-    /**
     Executes an array of callbacks from a specified context, passing a set of
     arguments.
 
@@ -224,10 +213,8 @@ Y.mix(Resolver.prototype, {
     _notify: function (subs, result) {
         var i, len;
 
-        if (subs) {
-            for (i = 0, len = subs.length; i < len; ++i) {
-                subs[i](result);
-            }
+        for (i = 0, len = subs.length; i < len; ++i) {
+            subs[i](result);
         }
     }
 
