@@ -40,31 +40,14 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     },
 
     initializer: function () {
-        if (this.get('model')) {
-            this.bind();
-        }
-
         if (this.template && typeof this.template !== 'function') {
             this.template = Y.Paginator.Templates.compile(this.template);
         }
     },
 
-    _modelChange: function (e) {
-        console.log(LNAME, '_modelChange');
-        this.render();
-    },
-
     render: function () {
         console.log(LNAME, 'render');
         this.get('container').setContent(this.renderControls());
-        if (!this.bound) {
-            this.bind();
-        }
-    },
-
-    bind: function () {
-        this.get('model').on('change', this._modelChange, this);
-        this.bound = true;
     },
 
     renderControls: function () {},
@@ -77,7 +60,6 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         console.log(LNAME, 'renderControl');
         var strings = this.get('strings'),
             attrs = this.getTemplateAttrs(),
-            link = '#',
             model = this.get('model'),
             ucType = type[0].toUpperCase() + type.substring(1),
             controlDisabled = this.classNames.controlDisabled,
@@ -89,40 +71,32 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
                 display: YLSub(strings[type + 'Display'], attrs)
             };
 
-        if (this.formatUrl) {
-            switch (type) {
-                case 'first':
-                    link = this.formatUrl(1);
-                    if (!model.hasPrev()) {
-                        data.controlClass.push(controlDisabled);
-                    }
-                    break;
-                case 'prev':
-                    link = this.formatUrl(model.get('page') - 1);
-                    if (!model.hasPrev()) {
-                        data.controlClass.push(controlDisabled);
-                    }
-                    break;
-                case 'next':
-                    link = this.formatUrl(model.get('page') + 1);
-                    if (!model.hasNext()) {
-                        data.controlClass.push(controlDisabled);
-                    }
-                    break;
-                case 'last':
-                    link = this.formatUrl(model.get('pages'));
-                    if (!model.hasNext()) {
-                        data.controlClass.push(controlDisabled);
-                    }
-                    break;
-            }
+        switch (type) {
+            case 'first':
+                if (!model.hasPrev()) {
+                    data.controlClass.push(controlDisabled);
+                }
+                break;
+            case 'prev':
+                if (!model.hasPrev()) {
+                    data.controlClass.push(controlDisabled);
+                }
+                break;
+            case 'next':
+                if (!model.hasNext()) {
+                    data.controlClass.push(controlDisabled);
+                }
+                break;
+            case 'last':
+                if (!model.hasNext()) {
+                    data.controlClass.push(controlDisabled);
+                }
+                break;
         }
 
         this.controls[type] = true;
 
         data.controlClass = data.controlClass.join(' ');
-
-        data.link = link;
 
         return this.renderTemplate('control', data);
 
@@ -153,7 +127,6 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         var strings = this.get('strings'),
             attrs = this.getTemplateAttrs({page: page}),
             data = {
-                link: this.formatUrl(page),
                 page: page,
                 title: YLSub(strings.pageTitle, attrs ),
                 display: YLSub(strings.pageDisplay, attrs ),
@@ -289,20 +262,16 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     controlChange: function (e) {
         console.log(LNAME, 'controlChange');
         e.preventDefault();
-        var control = e.currentTarget,
-            type = control.getData('type'),
-            data = {};
-        data[type] = e.target.get('value');
+        var type = e.currentTarget.getData('type');
 
-        this.fire(type, data);
+        this.fire(type, { val: e.target.get('value') });
     },
 
     pageClick: function(e) {
         console.log(LNAME, 'pageClick');
         e.preventDefault();
-        this.fire('page', {page: e.currentTarget.getData('page')});
+        this.fire('page', { val: e.currentTarget.getData('page') });
     },
-
 
     //-- PROTECTED ----
 

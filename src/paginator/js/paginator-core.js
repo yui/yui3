@@ -1,10 +1,8 @@
-function PaginatorModel () {
-    PaginatorModel.superclass.constructor.apply(this, arguments);
-}
+function PaginatorCore () {}
 
-PaginatorModel.NAME = 'paginator-model';
+PaginatorCore.NAME = 'paginator-core';
 
-PaginatorModel.ATTRS = {
+PaginatorCore.ATTRS = {
     /**
     Index of the first item on the page.
     @readOnly
@@ -56,15 +54,25 @@ PaginatorModel.ATTRS = {
     totalItems: {
         value: 1,
         setter: '_totalItemsSetterFn'
+    },
+
+    circular: {
+        value: false
     }
 
 };
 
-Y.extend(PaginatorModel, Y.Model, {
+PaginatorCore.prototype = {
 
     page: function (pageNumber) {
-        if (pageNumber && pageNumber >= 1 && pageNumber <= this.get('pages')){
-            this.set('page', pageNumber);
+        if (pageNumber) {
+            if (this.get('circular')) {
+                pageNumber %= this.get('pages');
+            }
+
+            if (pageNumber >= 1 && pageNumber <= this.get('pages')){
+                this.set('page', pageNumber);
+            }
         }
     },
 
@@ -92,17 +100,20 @@ Y.extend(PaginatorModel, Y.Model, {
         }
     },
 
+    perPage: function (itemsPerPage) {
+        if (!itemsPerPage) {
+            return;
+        }
+        this.set('itemsPerPage', itemsPerPage);
+        this.page(1);
+    },
+
     hasPrev: function () {
-        return (this.get('page') > 1);
+        return this.get('circular') || (this.get('page') > 1);
     },
 
     hasNext: function () {
-        return (this.get('page') + 1 <= this.get('pages'));
-    },
-
-    perPage: function (itemsPerPage) {
-        this.set('itemsPerPage', itemsPerPage);
-        this.page(1);
+        return this.get('circular') || (this.get('page') + 1 <= this.get('pages'));
     },
 
     ////////////////
@@ -128,6 +139,10 @@ Y.extend(PaginatorModel, Y.Model, {
     },
 
     _itemsPerPageSetterFn: function (val) {
+        if (!val) {
+            return Y.Attribute.INVALID_VALUE;
+        }
+
         if (val.toString().toLowerCase() === 'all' || val === '*') {
             val = this.get('totalItems');
             val = -1;
@@ -140,6 +155,6 @@ Y.extend(PaginatorModel, Y.Model, {
         return parseInt(val, 10);
     }
 
-});
+};
 
-Y.namespace('Paginator').Model = PaginatorModel;
+Y.namespace('Paginator').Core = PaginatorCore;

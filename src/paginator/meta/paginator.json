@@ -8,7 +8,7 @@
                 "requires": [
                     "widget",
                     "paginator-view",
-                    "paginator-model",
+                    "paginator-core",
                     "base-build",
                     "intl"
                 ]
@@ -21,10 +21,8 @@
                     "intl"
                 ]
             },
-            "paginator-model": {
-                "requires": [
-                    "model"
-                ]
+            "paginator-core": {
+                "requires": []
             },
             "paginator-list": {
                 "requires": [

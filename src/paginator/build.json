@@ -6,9 +6,9 @@
                 "paginator.js"
             ]
         },
-        "paginator-model": {
+        "paginator-core": {
             "jsfiles": [
-                "paginator-model.js"
+                "paginator-core.js"
             ]
         },
         "paginator-view": {
