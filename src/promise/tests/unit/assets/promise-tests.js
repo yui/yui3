@@ -116,6 +116,45 @@ YUI.add('promise-tests', function (Y) {
     }));
 
     suite.add(new Y.Test.Case({
+        name: 'Behavior of the then() callbacks',
+
+        'throwing inside a callback should turn into a rejection': function () {
+            var test = this,
+                error = new Error('Arbitrary error');
+
+            Y.Promise(function (fulfill) {
+                fulfill(5);
+            }).then(function (value) {
+                throw error;
+            }).then(null, function (reason) {
+                test.resume(function () {
+                    Assert.areSame(error, reason, 'thrown error should become the rejection reason');
+                });
+            });
+
+            test.wait(50);
+        },
+
+        'returning a promise from a callback should link both promises': function () {
+            var test = this;
+
+            Y.Promise(function (fulfill) {
+                fulfill('placeholder');
+            }).then(function () {
+                return Y.Promise(function (fulfill) {
+                    fulfill(5);
+                });
+            }).then(function (value) {
+                test.resume(function () {
+                    Assert.areEqual(5, value, 'new value should be the value from the returned promise');
+                });
+            });
+
+            test.wait(50);
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
         name: 'Promise detection with Promise.isPromise',
 
         'detecting YUI promises': function () {

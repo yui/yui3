@@ -41,6 +41,41 @@ YUI.add('when-tests', function (Y) {
 
             // almost promises
             Assert.isInstanceOf(Promise, Y.when({then: 5}), 'promise-like objects should be wrapped in a promise');
+        },
+
+        'callbacks should behave the same as using then()': function () {
+            var test = this,
+                value = 'not modified',
+                error = new Error('reason');
+
+            Y.when(new Y.Promise(function (fulfill) {
+                fulfill(5);
+            }), function (result) {
+                value = 'modified';
+
+                test.resume(function () {
+                    Assert.areEqual(5, result, 'first callback should receive the result of a fulfilled promise');
+                });
+            });
+
+            Assert.areEqual('not modified', value, 'value should not be changed by a callback synchronously');
+
+            test.wait(50);
+        },
+
+        'errbacks should behave the same as using then()': function () {
+            var test = this,
+                error = new Error('reason');
+
+            Y.when(new Y.Promise(function (fulfill, reject) {
+                reject(error);
+            }), null, function (reason) {
+                test.resume(function () {
+                    Assert.areSame(error, reason, 'second callback should receive the reason of a rejected promise');
+                });
+            });
+
+            test.wait(50);
         }
     }));
 
