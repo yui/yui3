@@ -6,11 +6,7 @@
 			"jsfiles": [
 				"promise.js",
 				"resolver.js",
-				"when.js"
-			]
-		},
-		"promise-batch": {
-			"jsfiles": [
+				"when.js",
 				"batch.js"
 			]
 		}
