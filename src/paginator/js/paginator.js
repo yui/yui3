@@ -3,107 +3,89 @@ var Y_Paginator = Y.namespace('Paginator'),
     LNAME = NAME + '::',
     Paginator;
 
-Paginator = Y.Base.create('paginator', Y.Widget, [], {
+Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
 
     renderUI: function () {
         console.log(LNAME, 'renderUI');
-        this.get('view').render();
+        // initialize the view since syncUI will render the UI
+        this.get('view');
     },
 
     bindUI: function () {
         console.log(LNAME, 'bindUI');
         var view = this.get('view');
 
-        this.on('*:first', this.first, this);
-        this.on('*:last', this.last, this);
-        this.on('*:prev', this.prev, this);
-        this.on('*:next', this.next, this);
-        this.on('*:page', this.page, this);
-        this.on('*:perPage', this.perPage, this);
+        this.after('pageChange', this.syncUI, this);
+        this.after('itemsPerPageChange', this.syncUI, this);
+        this.after('totalItemsChange', this.syncUI, this);
+
+        this.after('*:first', this._afterUIFirst, this);
+        this.after('*:last', this._afterUILast, this);
+        this.after('*:prev', this._afterUIPrev, this);
+        this.after('*:next', this._afterUINext, this);
+        this.after('*:page', this._afterUIPage, this);
+        this.after('*:perPage', this._afterUIPerPage, this);
 
         view.addTarget(this);
         view.attachEvents();
     },
 
-    // MODEL METHODS
-
-    first: function() {
-        console.log(LNAME, 'first');
-        return this.get('model').first();
+    syncUI: function () {
+        console.log(LNAME, 'syncUI');
+        this.get('view').render();
     },
 
-    last: function () {
-        console.log(LNAME, 'last');
-        return this.get('model').last();
-    },
 
-    prev: function () {
-        console.log(LNAME, 'prev');
-        return this.get('model').prev();
-    },
+    toJSON: function () {
+        var attrs = this.getAttrs();
 
-    next: function () {
-        console.log(LNAME, 'next');
-        return this.get('model').next();
-    },
+        delete attrs.boundingBox;
+        delete attrs.contentBox;
+        delete attrs.srcNode;
+        delete attrs.view;
+        delete attrs.viewType;
 
-    page: function (e) {
-        console.log(LNAME, 'page');
-        return this.get('model').page(e.page);
+        return attrs;
     },
-
-    perPage: function (e) {
-        console.log(LNAME, 'perPage');
-        return this.get('model').perPage(e.perPage);
-    },
-
-    hasPrev: function () {
-        console.log(LNAME, 'bindUI');
-        return this.get('model').hasPrev();
-    },
-
-    hasNext: function () {
-        console.log(LNAME, 'bindUI');
-        return this.get('model').hasNext();
-    },
-
 
     //---- PROTECTED ----
 
-    _getConstructor: function (type) {
-        return typeof type === 'string' ?
-            Y.Object.getValue(Y, type.split('.')) :
-            type;
+    // UI Events
+    _afterUIFirst: function () {
+        this.first();
     },
 
-    // ATTRS
-
-    // Container
-    _getContainer: function () {
-        return this.get('boundingBox');
+    _afterUILast: function () {
+        this.last();
     },
 
-    _setContainer: function (node) {
-        this.set('boundingBox', node);
-        return this.get('boundingBox');
+    _afterUIPrev: function () {
+        this.prev();
     },
 
-    // Model
-    _setModel: function (model) {
-        var ModelConstructor = this.get('modelType');
+    _afterUINext: function () {
+        this.next();
+    },
 
-        if (!(model && model._isYUIModel)) {
-            model = new ModelConstructor(model);
-        }
+    _afterUIPage: function (e) {
+        this.page(e.val);
+    },
 
-        return model;
+    _afterUIPerPage: function (e) {
+        this.perPage(e.val);
     },
 
     // View
+    _getConstructor: function(type) {
+        return typeof type === 'string' ?
+                Y.Object.getValue(Y, type.split('.')) : type;
+    },
+
     _setView: function (view) {
         var ViewConstructor = this.get('viewType'),
             viewConfig;
 
+        // assume view is a config object if not a View instance
         if (!(view instanceof Y.View)) {
             viewConfig = Y.merge(view);
 
@@ -114,8 +96,8 @@ Paginator = Y.Base.create('paginator', Y.Widget, [], {
         }
 
         view.setAttrs({
-            container: this.get('container'),
-            model: this.get('model')
+            container: this.get('contentBox'),
+            model: this
         });
 
         return view;
@@ -124,24 +106,6 @@ Paginator = Y.Base.create('paginator', Y.Widget, [], {
 
 }, {
     ATTRS: {
-        container: {
-            getter: '_getContainer',
-            setter: '_setContainer',
-            value: null,
-            writeOnce: true
-        },
-
-        model: {
-            setter: '_setModel',
-            value: null,
-            writeOnce: 'initOnly'
-        },
-
-        modelType: {
-            getter: '_getConstructor',
-            value: 'Paginator.Model',
-            writeOnce: 'initOnly'
-        },
 
         view: {
             setter: '_setView',

@@ -69,11 +69,10 @@ YUI({
 
 // PAGINATOR
     var pgList = new Y.Paginator({
-                        model: {
-                            totalItems: 1000,
-                            itemsPerPage: 10,
-                            page: 3
-                        },
+                        totalItems: 1000,
+                        itemsPerPage: 10,
+                        page: 3,
+
                         view: {
                             displayRange: 10
                         },
@@ -83,11 +82,9 @@ YUI({
     pgList.render("#pg");
 
     var pgDT = new Y.Paginator({
-                        model: {
-                            totalItems: 1000,
-                            itemsPerPage: 10,
-                            page: 3
-                        },
+                        totalItems: 1000,
+                        itemsPerPage: 10,
+                        page: 3,
                         view: {
                             pageSizes: [10, 25, { value: -1, display: '*' }]
                         },
