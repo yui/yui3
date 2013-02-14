@@ -64,7 +64,9 @@ parser.addListener('startrule', function (event) {
         No point adding a .yui3-normalized if the selector contains `<html>`
         */
         else {
-            CSS += s[i].text;
+            //Replace multiple spaces with a single space. This is for the case where
+            //html input[type='button'] comes through as html    input[type='button']
+            CSS += s[i].text.replace(/ +/g, " ");
         }
 
         //If theres a following property, add a comma. 

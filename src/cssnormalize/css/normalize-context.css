@@ -198,14 +198,14 @@ html,
     text-transform: none; 
 }
 .yui3-normalized button,
-html   input[type="button"],
+html input[type="button"],
 .yui3-normalized input[type="reset"],
 .yui3-normalized input[type="submit"] {
     -webkit-appearance: button; 
     cursor: pointer; 
 }
 .yui3-normalized button[disabled],
-html   input[disabled] {
+html input[disabled] {
     cursor: default; 
 }
 .yui3-normalized input[type="checkbox"],
