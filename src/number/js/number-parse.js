@@ -18,7 +18,7 @@ Y.mix(Y.namespace("Number"), {
      * @return {Number} A number, or null.
      */
     parse: function(data) {
-        var number = (data === null) ? data : +data;
+        var number = (data === null || data === "") ? data : +data;
         if(LANG.isNumber(number)) {
             return number;
         }

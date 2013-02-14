@@ -1,13 +1,19 @@
 /**
+ * Provides functionality for creating a area series.
+ *
+ * @module charts
+ * @submodule series-area
+ */
+/**
  * The AreaSeries class renders quantitative data on a graph by creating a fill between 0
  * and the relevant data points.
  *
- * @module charts
- * @submodule charts-base
  * @class AreaSeries
  * @extends CartesianSeries
  * @uses Fills
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-area
  */
 Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
     /**

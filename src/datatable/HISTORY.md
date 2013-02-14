@@ -1,6 +1,24 @@
 DataTable Change History
 ========================
 
+@VERSION@
+-----
+
+* Making sortable datatableheaders unselectable [Pull Request #286]
+  [Pull Request #378] [Ticket #2532825] [ItsAsbreuk] [apipkin]
+
+3.8.1
+-----
+
+* Avoid processing columns if there aren't any to allow empty tables.
+  [Pull Request #176] [Mark Woon]
+
+* Default sort for text columns is now case insensitive. Added `caseSensitive`
+  attribute to table columns config. Setting `caseSensitive` to `true` will
+  bypass the case insensitive sort speeding up sort in large data sets, where
+  case insensitivity is not required. [Ticket #2532134] [Pull Request #281]
+  [clanceyp]
+
 3.8.0
 -----
 

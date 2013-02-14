@@ -361,11 +361,6 @@ suite.add( new Y.Test.Case({
     _should: {
         ignore: {
             "test clickableRail": Y.UA.phantomjs || Y.UA.touchEnabled
-        },
-        fail: {
-            // TODO This is a bug. invalid construction value should fallback
-            // to specified attribute default
-            "axis should only accept 'x', 'X', 'y', and 'Y'": true
         }
     },
 
@@ -650,6 +645,21 @@ suite.add( new Y.Test.Case({
         var slider = new Y.Slider({ disabled: true }).render('#testbed');
 
         Y.Assert.isTrue(slider._dd.get('lock'));
+
+        slider.destroy();
+    },
+
+    "test ARIA attributes upon instantiation": function () {
+        var slider  = new Y.Slider({ min: 0, max: 100, value: 50 });
+
+        slider.render('#testbed');
+
+        var thumb = slider.thumb;
+
+        Y.Assert.areEqual(0, thumb.getAttribute('aria-valuemin'));
+        Y.Assert.areEqual(100, thumb.getAttribute('aria-valuemax'));
+        Y.Assert.areEqual(50, thumb.getAttribute('aria-valuenow'));
+        Y.Assert.areEqual(50, thumb.getAttribute('aria-valuetext'));
 
         slider.destroy();
     }

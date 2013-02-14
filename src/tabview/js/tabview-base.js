@@ -1,7 +1,6 @@
 var getClassName = Y.ClassNameManager.getClassName,
     TABVIEW = 'tabview',
     TAB = 'tab',
-    CONTENT = 'content',
     PANEL = 'panel',
     SELECTED = 'selected',
     EMPTY_OBJ = {},
@@ -29,7 +28,7 @@ var getClassName = Y.ClassNameManager.getClassName,
         selectedPanel: '> div ' + DOT + _classNames.selectedPanel
     },
 
-    TabviewBase = function(config) {
+    TabviewBase = function() {
         this.init.apply(this, arguments);
     };
 

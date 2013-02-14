@@ -2,7 +2,6 @@
     "calendar-base": {
         "requires": [
             "widget",
-            "substitute",
             "datatype-date",
             "datatype-date-math",
             "cssgrids"

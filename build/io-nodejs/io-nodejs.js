@@ -96,15 +96,10 @@ YUI.add('io-nodejs', function (Y, NAME) {
                 };
 
                 if (config.data) {
-                    if (Y.Lang.isObject(config.data)) {
-                        if (Y.QueryString && Y.QueryString.stringify) {
-                            rconf.body = Y.QueryString.stringify(config.data);
-                        } else {
-                        }
-                    } else if (Y.Lang.isString(config.data)) {
+                    if (Y.Lang.isString(config.data)) {
                         rconf.body = config.data;
                     }
-                    if (rconf.method === 'GET') {
+                    if (rconf.body && rconf.method === 'GET') {
                         rconf.uri += (rconf.uri.indexOf('?') > -1 ? '&' : '?') + rconf.body;
                         rconf.body = '';
                     }

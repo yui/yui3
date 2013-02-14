@@ -38,9 +38,10 @@ YUI.add('core-tests', function(Y) {
     YUI.GlobalConfig.useSync = true;
 
     var resolvePath = function(p) {
-        if (Y.UA.nodejs) {
+        if (Y.UA.nodejs || typeof __dirname !== 'undefined') {
             var path = require('path');
-            p = path.join(__dirname, p);
+            //Shifting up a dir, then back down since we live in assets and so does the include
+            p = path.join(__dirname, '../', p);
         }
         return p;
     };

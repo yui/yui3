@@ -1,6 +1,16 @@
 Uploader Utility (New) Change History
 =====================================
 
+@VERSION@
+-----
+
+ * Removed unused `substitute` dependency.
+
+3.8.1
+-----
+
+ * Add dropped file infomation to uploader drop event
+
 3.8.0
 -----
 

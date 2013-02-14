@@ -1,11 +1,17 @@
 /**
- * Utility class used for drawing lines.
+ * Provides functionality for drawing lines in a series.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-line-util
+ */
+/**
+ * Utility class used for drawing lines.
+ *
  * @class Lines
  * @constructor
+ * @submodule series-line-util
  */
+var Y_Lang = Y.Lang;
 function Lines(){}
 
 Lines.prototype = {

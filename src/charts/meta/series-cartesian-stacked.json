@@ -1,0 +1,15 @@
+{
+    "series-cartesian-stacked": {
+        "use":[
+            "series-line-stacked",
+            "series-marker-stacked",
+            "series-area-stacked",
+            "series-spline-stacked",
+            "series-column-stacked",
+            "series-bar-stacked",
+            "series-areaspline-stacked",
+            "series-combo-stacked",
+            "series-combospline-stacked"
+        ]
+    }
+}
