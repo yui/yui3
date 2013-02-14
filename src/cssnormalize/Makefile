@@ -30,7 +30,7 @@ all: import
 clean:
 	rm -f $(BASE_TARGETS) $(TEST_TARGETS)
 
-# target: import - Imports Handlebars.js source files from a separate repo.
+# target: import - Imports normalize.css source files from a separate repo.
 import: import-base import-tests
 
 
