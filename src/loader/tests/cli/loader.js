@@ -2713,6 +2713,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("profiler")) > -1, "Module (profiler) not found in sorted array");
         },
+     "Testing promise": function(data) {
+            var loader = new Y.Loader({
+                require: ["promise"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("promise")) > -1, "Module (promise) not found in sorted array");
+        },
      "Testing querystring": function(data) {
             var loader = new Y.Loader({
                 require: ["querystring"],
