@@ -62,39 +62,24 @@ YUI.add('series-cartesian-tests', function(Y) {
             {
                 bottomOrigin = bottomOrigin - ((0 - yMin) * yScaleFactor);
             }
-            for (i = 0; i < dataLength; ++i)
-            {
-                xValue = parseFloat(xData[i]);
-                yValue = parseFloat(yData[i]);
-                if(isNumber(xValue))
-                {
-                    nextX = (((xValue - xMin) * xScaleFactor) + leftPadding + xOffset);
-                }
-                else
-                {
-                    nextX = NaN;
-                }
-                if(isNumber(yValue))
-                {
-                    nextY = ((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor);
-                }
-                else
-                {
-                    nextY = NaN;
-                }
-                xcoords.push(nextX);
-                ycoords.push(nextY);
-                xMarkerPlane.push({start:nextX - xMarkerPlaneOffset, end: nextX + xMarkerPlaneOffset});
-                yMarkerPlane.push({start:nextY - yMarkerPlaneOffset, end: nextY + yMarkerPlaneOffset});
-            }
-            return({
-                xcoords: xcoords,
-                ycoords: ycoords,
-                xMarkerPlane: xMarkerPlane,
-                yMarkerPlane: yMarkerPlane,
+            return {
+                xData: xData,
+                yData: yData,
+                xMin: xMin,
+                yMin: yMin,
+                dataWidth: dataWidth,
+                dataHeight: dataHeight,
+                xScaleFactor: xScaleFactor,
+                yScaleFactor: yScaleFactor,
+                xOffset: xOffset,
+                yOffset: yOffset,
+                dataLength: dataLength,
+                leftPadding: leftPadding,
+                topPadding: topPadding,
+                direction: direction,
                 leftOrigin: leftOrigin,
                 bottomOrigin: bottomOrigin
-            });
+            };
         },
         
         "test: addListeners()" : function() {
@@ -240,10 +225,41 @@ YUI.add('series-cartesian-tests', function(Y) {
         },
 
         "test: _updateAxisBase()" : function() {
-            var axisData = {},
+            var UpdateAxisBaseMockSeries = Y.Base.create("updateAxisBaseMockSeries", Y.CartesianSeries, [], {
+                    _checkForDataByKey: function(data, key) {
+                        var i,
+                            len,
+                            hasData = false;
+                        if(Y.Lang.isArray(key)) {
+                            len = key.length;
+                            for(i = 0; i < len; i = i + 1) {
+                                if(data[key[i]] && Y.Lang.isArray(data[key[i]]))
+                                {
+                                    hasData = true;
+                                }
+                            }
+                        }
+                        return hasData;
+                    }
+                }),
+                axisData = {},
                 mockAxis = {
                     getDataByKey: function(key) {
-                        return axisData[key];
+                        var i,
+                            len,
+                            data;
+                        if(Y.Lang.isArray(key)) {
+                            len = key.length;
+                            data = {};
+                            for(i = 0; i < len; i = i + 1) {
+                                if(axisData.hasOwnProperty(key[i])) {
+                                    data[key[i]] = axisData[key[i]];
+                                }
+                            }
+                        } else {
+                            data = axisData[key]; 
+                        }
+                        return data; 
                     }
                 },
                 xAxisKey = "xAxisKey",
@@ -254,26 +270,49 @@ YUI.add('series-cartesian-tests', function(Y) {
                 seriesYData,
                 i,
                 len = xKeyData.length,
-                series = this.series;
-            Y.Assert.isFalse(series._updateAxisBase(), "The _updateAxisBase method should return false because there are no defined axes or keys.");
-            series.set("xAxis", mockAxis);
-            Y.Assert.isFalse(series._updateAxisBase(), "The _updateAxisBase method should return false because the is no defined yAxis or keys.");
-            series.set("yAxis", mockAxis);
-            Y.Assert.isFalse(series._updateAxisBase(), "The _updateAxisBase method should return false because there are no defined keys.");
-            series.set("xKey", xAxisKey);
-            Y.Assert.isFalse(series._updateAxisBase(), "The _updateAxisBase method should return false because there is no defined yKey.");
-            series.set("yKey", yAxisKey);
-            Y.Assert.isFalse(series._updateAxisBase(), "The _updateAxisBase method should return false because there is no data for either axis.");
+                series = this.series,
+                mockSeries = new UpdateAxisBaseMockSeries();
+            Y.Assert.isFalse(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return false because there are no defined axes or keys.");
+            mockSeries.set("xAxis", mockAxis);
+            Y.Assert.isFalse(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return false because the is no defined yAxis or keys.");
+            mockSeries.set("yAxis", mockAxis);
+            Y.Assert.isFalse(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return false because there are no defined keys.");
+            mockSeries.set("xKey", xAxisKey);
+            Y.Assert.isFalse(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return false because there is no defined yKey.");
+            mockSeries.set("yKey", yAxisKey);
+            Y.Assert.isFalse(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return false because there is no data for either axis.");
             axisData.xAxisKey = xKeyData;
-            Y.Assert.isFalse(series._updateAxisBase(), "The _updateAxisBase method should return false because there is no data for the y axis.");
+            Y.Assert.isFalse(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return false because there is no data for the y axis.");
             axisData.yAxisKey = yKeyData;
-            Y.Assert.isTrue(series._updateAxisBase(), "The _updateAxisBase method should return true because there is a defined x and y axis and the both have data.");    
-            seriesXData = series.get("xData");
-            seriesYData = series.get("yData");
+            Y.Assert.isTrue(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return true because there is a defined x and y axis and the both have data.");    
+            seriesXData = mockSeries.get("xData");
+            seriesYData = mockSeries.get("yData");
             for(i = 0; i < len; i = i + 1) {
                 Y.Assert.areEqual(xKeyData[i], seriesXData[i], "The value of xData[" + i + "] should equal " + xKeyData[i] + ".");
                 Y.Assert.areEqual(yKeyData[i], seriesYData[i], "The value of yData[" + i + "] should equal " + xKeyData[i] + ".");
             }
+            xAxisKey = ["xKey1", "xKey2"];
+            yAxisKey = ["yKey1", "yKey2"];
+            mockSeries.set("xKey", xAxisKey);
+            mockSeries.set("yKey", yAxisKey);
+            Y.Assert.isFalse(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return false because there is no data for either axis.");
+            axisData = {
+                xKey1: xKeyData,
+                xKey2: xKeyData,
+                yKey1: yKeyData,
+                yKey2: yKeyData   
+            }
+            Y.Assert.isTrue(series._updateAxisBase.apply(mockSeries), "The _updateAxisBase method should return true because there is a defined x and y axis and the both have data.");    
+        },
+    
+        "test: _checkForDataByKey()" : function() {
+            var series = this.series,
+                keys = ["key1", "key2"],
+                data = {};
+            Y.Assert.isFalse(series._checkForDataByKey(data, keys), "The _checkForDataByKey method should return false because there is no data in the object.");
+            data.key1 = [10, 20, 30];
+            data.key2 = [5, 15, 25];
+            Y.Assert.isTrue(series._checkForDataByKey(data, keys), "The _checkForDataByKey method should return true because there is data in the object.");
         },
 
         "test: validate()" : function() {
@@ -329,24 +368,11 @@ YUI.add('series-cartesian-tests', function(Y) {
 
         "test: setAreaData()" : function() {
             var series = this.series,
-                catMax = 0,
-                catMin = 0,
-                valueMax = 0,
-                valueMin = 0,
                 wid = 500,
                 ht = 500,
-                xcoords,
-                ycoords,
-                xMarkerPlane,
-                yMarkerPlane,
-                testXCoords,
-                testYCoords,
-                testXMarkerPlane,
-                testYMarkerPlane,
                 i,
                 len,
                 direction = "horizontal",
-                isVertical = direction === "vertical",
                 xOffset = 0, 
                 yOffset = 0, 
                 padding = {
@@ -372,7 +398,50 @@ YUI.add('series-cartesian-tests', function(Y) {
                     }
                 }),
                 mockGraphic = new MockSetAreaDataGraphic(),
-                MockSetAreaDataSeries = Y.Base.create("mockSetAreaDataSeries", Y.CartesianSeries, [], {}, {
+                MockSetAreaDataSeries = Y.Base.create("mockSetAreaDataSeries", Y.CartesianSeries, [], {
+                    _getXCoords: function(
+                        xData, 
+                        xMin, 
+                        dataWidth, 
+                        xScaleFactor, 
+                        xOffset, 
+                        dataLength, 
+                        leftPadding, 
+                        direction
+                    ) {
+                        this.set("setXAreaResults", {
+                            xData: xData,
+                            xMin: xMin,
+                            dataWidth: dataWidth,
+                            xScaleFactor: xScaleFactor,
+                            xOffset: xOffset,
+                            dataLength: dataLength,
+                            leftPadding: leftPadding,
+                            direction: direction
+                        });
+                    },
+                    _getYCoords: function(
+                        yData, 
+                        yMin, 
+                        dataHeight, 
+                        yScaleFactor, 
+                        yOffset, 
+                        dataLength, 
+                        topPadding, 
+                        direction
+                    ) {
+                        this.set("setYAreaResults", {
+                            yData: yData,
+                            yMin: yMin,
+                            dataHeight: dataHeight,
+                            yScaleFactor: yScaleFactor,
+                            yOffset: yOffset,
+                            dataLength: dataLength,
+                            topPadding: topPadding,
+                            direction: direction
+                        });
+                    }
+                }, {
                     ATTRS: {
                         maximimum: {
                             getter: function() {
@@ -415,18 +484,6 @@ YUI.add('series-cartesian-tests', function(Y) {
                                 return this.get("direction") === "vertical" ? categoryAxis.getDataByKey("date") : valueAxis.getDataByKey("open");
                             }
                         },
-                        xcoords: {
-                            value: [] 
-                        },
-                        ycoords: {
-                            value: []
-                        },
-                        xMarkerPlane: {
-                            value: null
-                        },
-                        yMarkerPlane: {
-                            value: null
-                        },
                         graphic: {
                             getter: function() {
                                 return mockGraphic;
@@ -436,65 +493,42 @@ YUI.add('series-cartesian-tests', function(Y) {
                 }),
                 mockSeries = new MockSetAreaDataSeries(),
                 testData,
-                key,
-                loopThroughAndAssert = function() {
-                    xcoords = mockSeries.get("xcoords");
-                    ycoords = mockSeries.get("ycoords");
-                    xMarkerPlane = mockSeries.get("xMarkerPlane");
-                    yMarkerPlane = mockSeries.get("yMarkerPlane"); 
-                    testXCoords = testData.xcoords;
-                    testYCoords = testData.ycoords;
-                    testXMarkerPlane = testData.xMarkerPlane;
-                    testYMarkerPlane = testData.yMarkerPlane;
-                    len = testXCoords.length;
+                setAreaDataAssert = function() { 
+                    var xResults = mockSeries.get("setXAreaResults"),
+                        yResults = mockSeries.get("setYAreaResults"),
+                        xData = testData.xData,
+                        yData = testData.yData,
+                        xMin = testData.xMin,
+                        yMin = testData.yMin,
+                        dataWidth = testData.dataWidth,
+                        dataHeight = testData.dataHeight,
+                        xScaleFactor = testData.xScaleFactor,
+                        yScaleFactor = testData.yScaleFactor,
+                        xOffset = testData.xOffset,
+                        yOffset = testData.yOffset,
+                        dataLength = testData.dataLength,
+                        leftPadding = testData.leftPadding,
+                        topPadding = testData.topPadding,
+                        len = dataLength,
+                        i,
+                        resultXData = xResults.xData,
+                        resultYData = yResults.yData;
                     for(i = 0; i < len; i = i + 1) {
-                        if(isNaN(testXCoords[i])) {
-                            Y.Assert.isNaN(xcoords[i], "The " + i + " index of the xcoords attribute should be NaN.");
-                        } else {
-                            Y.Assert.areEqual(testXCoords[i], xcoords[i], "The " + i + " index of the xcoords attribute should be " + testXCoords[i] + ".");
-                        }
-                        if(isNaN(testYCoords[i])) {
-                            Y.Assert.isNaN(ycoords[i], "The " + i + " index of the ycoords attribute should be NaN.");
-                        } else {
-                            Y.Assert.areEqual(testYCoords[i], ycoords[i], "The " + i + " index of the ycoords attribute should be " + testYCoords[i] + ".");
-                        }
-                        if(isNaN(testXMarkerPlane[i].start)) {
-                            Y.Assert.isNaN(xMarkerPlane[i].start, "The start value of the " + i + " index of the xMarkerPlane attribute should be NaN.");
-                        } else {
-                            Y.Assert.areEqual(
-                                testXMarkerPlane[i].start, 
-                                xMarkerPlane[i].start, 
-                                "The start value of the " + i + " index of the xMarkerPlane attribute should be " + testXMarkerPlane[i].start + "."
-                            );
-                        }
-                        if(isNaN(testXMarkerPlane[i].end)) {
-                            Y.Assert.isNaN(xMarkerPlane[i].end, "The end value of the " + i + " index of the xMarkerPlane attribute should be NaN.");
-                        } else {
-                            Y.Assert.areEqual(
-                                testXMarkerPlane[i].end, 
-                                xMarkerPlane[i].end, 
-                                "The end value of the " + i + " index of the xMarkerPlane attribute should be " + testXMarkerPlane[i].end + "."
-                            );
-                        }
-                        if(isNaN(testYMarkerPlane[i].start)) {
-                            Y.Assert.isNaN(yMarkerPlane[i].start, "The start value of the " + i + " index of the yMarkerPlane attribute should be NaN.");
-                        } else {
-                            Y.Assert.areEqual(
-                                testYMarkerPlane[i].start, 
-                                yMarkerPlane[i].start, 
-                                "The start value of the " + i + " index of the yMarkerPlane attribute should be " + testYMarkerPlane[i].start + "."
-                            );
-                        }
-                        if(isNaN(testYMarkerPlane[i].end)) {
-                            Y.Assert.isNaN(yMarkerPlane[i].end, "The end value of the " + i + " index of the yMarkerPlane attribute should be NaN.");
-                        } else {
-                            Y.Assert.areEqual(
-                                testYMarkerPlane[i].end, 
-                                yMarkerPlane[i].end, 
-                                "The end value of the " + i + " index of the yMarkerPlane attribute should be " + testYMarkerPlane[i].end + "."
-                            );
-                        }
+                        Y.Assert.areEqual(xData[i], resultXData[i], "The " + i + " index of the xData array should equal " + xData[i] + ".");
+                        Y.Assert.areEqual(yData[i], resultYData[i], "The " + i + " index of the yData array should equal " + yData[i] + ".");
                     }
+                    Y.Assert.areEqual(xMin, xResults.xMin, "The value of xMin should be " + xMin + ".");
+                    Y.Assert.areEqual(yMin, yResults.yMin, "The value of yMin should be " + yMin + ".");
+                    Y.Assert.areEqual(dataWidth, xResults.dataWidth, "The value of dataWidth should be " + dataWidth + ".");
+                    Y.Assert.areEqual(dataHeight, yResults.dataHeight, "The value of dataHeight should be " + dataHeight + ".");
+                    Y.Assert.areEqual(xScaleFactor, xResults.xScaleFactor, "The value of xScaleFactor should be " + xScaleFactor + ".");
+                    Y.Assert.areEqual(yScaleFactor, yResults.yScaleFactor, "The value of yScaleFactor should be " + yScaleFactor + ".");
+                    Y.Assert.areEqual(xOffset, xResults.xOffset, "The value of xOffset is " + xOffset + ".");
+                    Y.Assert.areEqual(yOffset, yResults.yOffset, "The value of yOffset is " + yOffset + ".");
+                    Y.Assert.areEqual(dataLength, xResults.dataLength, "The value of dataLength should be " + dataLength + ".");
+                    Y.Assert.areEqual(dataLength, yResults.dataLength, "The value of dataLength should be " + dataLength + ".");
+                    Y.Assert.areEqual(leftPadding, xResults.leftPadding, "The value of leftPadding should be " + leftPadding + ".");
+                    Y.Assert.areEqual(topPadding, yResults.topPadding, "The value of topPadding should be " + topPadding + ".");
                     Y.Assert.areEqual(testData.leftOrigin, mockSeries._leftOrigin, "The leftOrigin should be " + testData.leftOrigin + ".");
                     Y.Assert.areEqual(testData.bottomOrigin, mockSeries._bottomOrigin, "The bottomOrigin should be " + testData.bottomOrigin + ".");
                 };
@@ -515,8 +549,7 @@ YUI.add('series-cartesian-tests', function(Y) {
                     wid,
                     ht
                 );
-                loopThroughAndAssert(); 
-                
+                setAreaDataAssert();
                 mockSeries.set("direction", "vertical");
                 series.setAreaData.apply(mockSeries);
                 testData = this.getAreaData(
@@ -535,7 +568,7 @@ YUI.add('series-cartesian-tests', function(Y) {
                     wid,
                     ht
                 );
-                loopThroughAndAssert(); 
+                setAreaDataAssert(); 
                 
                 valueAxis.set("dataProvider", missingValuesDataProvider); 
                 categoryAxis.set("dataProvider", missingValuesDataProvider); 
@@ -556,7 +589,7 @@ YUI.add('series-cartesian-tests', function(Y) {
                     wid,
                     ht
                 );
-                loopThroughAndAssert(); 
+                setAreaDataAssert(); 
                 
                 mockSeries.set("direction", "horizontal");
                 series.setAreaData.apply(mockSeries);
@@ -576,7 +609,7 @@ YUI.add('series-cartesian-tests', function(Y) {
                     wid,
                     ht
                 );
-                loopThroughAndAssert(); 
+                setAreaDataAssert(); 
 
                 valueAxis.set("dataProvider", positiveAndNegativeValuesDataProvider); 
                 categoryAxis.set("dataProvider", positiveAndNegativeValuesDataProvider); 
@@ -597,11 +630,317 @@ YUI.add('series-cartesian-tests', function(Y) {
                     wid,
                     ht
                 );
-                loopThroughAndAssert(); 
+                setAreaDataAssert(); 
+        },
+        
+        "test: _setXMarkerPlane()" : function() {
+            var series = this.series,
+                getXMarkerPlane = function(coords, dataLength, offset)
+                {
+                    var i = 0,
+                        xMarkerPlane,
+                        nextX;
+                    if(Y.Lang.isArray(coords))
+                    {
+                        xMarkerPlane = [];
+                        for(i = 0; i < dataLength; i = i + 1) 
+                        {
+                            nextX = coords[i]; 
+                            xMarkerPlane.push({start:nextX - offset, end: nextX + offset});
+                        }
+                    }
+                    return xMarkerPlane;
+                },
+                compareAndAssert = function(test, results) {
+                    var start,
+                        end,
+                        i,
+                        len = test.length;
+                    for(i = 0; i < len; i = i + 1) {
+                        if(isNaN(test[i].start)) {
+                            Y.Assert.isNaN(results[i].start, "The start value of the " + i + " index of the xMarkerPlane attribute should be NaN.");
+                        } else {
+                            Y.Assert.areEqual(
+                                test[i].start, 
+                                results[i].start, 
+                                "The start value of the " + i + " index of the xMarkerPlane attribute should be " + test[i].start + "."
+                            );
+                        }
+                        if(isNaN(test[i].end)) {
+                            Y.Assert.isNaN(results[i].end, "The end value of the " + i + " index of the xMarkerPlane attribute should be NaN.");
+                        } else {
+                            Y.Assert.areEqual(
+                                test[i].end, 
+                                results[i].end, 
+                                "The end value of the " + i + " index of the xMarkerPlane attribute should be " + test[i].end + "."
+                            );
+                        }
+                    }
+                },
+                markerPlaneOffset = series.get("xMarkerPlaneOffset"),
+                coords = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400],
+                dataLen = 11,
+                testMarkerPlane,
+                resultMarkerPlane;
+            series._setXMarkerPlane({}, 5);
+            Y.Assert.isUndefined(series.get("xMarkerPlane"), "The xMarkerPlane attribute should be undefined.");
+            series._setXMarkerPlane(coords, dataLen);
+            compareAndAssert(getXMarkerPlane(coords, dataLen, series.get("xMarkerPlaneOffset")), series.get("xMarkerPlane"));
+        },
+        
+        "test: _setYMarkerPlane()" : function() {
+            var series = this.series,
+                getYMarkerPlane = function(coords, dataLength, offset)
+                {
+                    var i = 0,
+                        yMarkerPlane,
+                        nextY;
+                    if(Y.Lang.isArray(coords))
+                    {
+                        yMarkerPlane = [];
+                        for(i = 0; i < dataLength; i = i + 1) 
+                        {
+                            nextY = coords[i]; 
+                            yMarkerPlane.push({start:nextY - offset, end: nextY + offset});
+                        }
+                    }
+                    return yMarkerPlane;
+                },
+                compareAndAssert = function(test, results) {
+                    var start,
+                        end,
+                        i,
+                        len = test.length;
+                    for(i = 0; i < len; i = i + 1) {
+                        if(isNaN(test[i].start)) {
+                            Y.Assert.isNaN(results[i].start, "The start value of the " + i + " index of the yMarkerPlane attribute should be NaN.");
+                        } else {
+                            Y.Assert.areEqual(
+                                test[i].start, 
+                                results[i].start, 
+                                "The start value of the " + i + " index of the yMarkerPlane attribute should be " + test[i].start + "."
+                            );
+                        }
+                        if(isNaN(test[i].end)) {
+                            Y.Assert.isNaN(results[i].end, "The end value of the " + i + " index of the yMarkerPlane attribute should be NaN.");
+                        } else {
+                            Y.Assert.areEqual(
+                                test[i].end, 
+                                results[i].end, 
+                                "The end value of the " + i + " index of the yMarkerPlane attribute should be " + test[i].end + "."
+                            );
+                        }
+                    }
+                },
+                markerPlaneOffset = series.get("yMarkerPlaneOffset"),
+                coords = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400],
+                dataLen = 11,
+                testMarkerPlane,
+                resultMarkerPlane;
+            series._setYMarkerPlane({}, 5);
+            Y.Assert.isUndefined(series.get("yMarkerPlane"), "The yMarkerPlane attribute should be undefined.");
+            series._setYMarkerPlane(coords, dataLen);
+            compareAndAssert(getYMarkerPlane(coords, dataLen, series.get("yMarkerPlaneOffset")), series.get("yMarkerPlane"));
+        },
+        
+        _getXCoords: function(xData, xMin, dataWidth, xScaleFactor, xOffset, dataLength, leftPadding, direction) 
+        {
+            var isNumber = Y.Lang.isNumber,
+                xcoords,
+                xValue,
+                nextX,
+                key,
+                i;
+            if(Y.Lang.isArray(xData)) {
+                xcoords = [];
+                for (i = 0; i < dataLength; ++i) {
+                    xValue = parseFloat(xData[i]);
+                    if(isNumber(xValue)) {
+                        nextX = (((xValue - xMin) * xScaleFactor) + leftPadding + xOffset);
+                    } else {
+                        nextX = NaN;
+                    }
+                    xcoords.push(nextX);
+                }
+            } else {
+                xcoords = {};
+                for(key in xData) {
+                    if(xData.hasOwnProperty(key)) {
+                        xcoords[key] = this._getXCoords.apply(
+                            this,
+                            [xData[key], xMin, dataWidth, xScaleFactor, xOffset, dataLength, leftPadding, direction]
+                        );
+                    }
+                }
+            }
+            return xcoords; 
+        },
+        
+        "test: _getXCoords()" : function() {
+            var series = this.series,
+                len = 10,
+                args1 = [
+                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                    0, 
+                    400,
+                    400/9,
+                    0,
+                    len,
+                    0
+                ],
+                args2 = [
+                    {
+                        key1: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+                        key2: [-5, 5, 15, 25, null, 45, 55, 65, 75, 85]
+                    },
+                    -5,
+                    400,
+                    400/105,
+                    0,
+                    len,
+                    0
+                ],
+                testCoords,
+                resultCoords,
+                testCoord,
+                i,
+                key,
+                compareCoords = function(test, result) {
+                    for(i = 0; i < len; i = i + 1) {
+                          testCoord = test[i];
+                          if(!isNaN(testCoord)) {
+                            Y.Assert.areEqual(testCoord, result[i], "The coord should equal " + testCoord + ".");
+                          } else {
+                            Y.Assert.isNaN(result[i], "The coords should be NaN.");
+                          }
+                    }
+                };
+            resultCoords = series._getXCoords.apply(series, args1);
+            testCoords = this._getXCoords.apply(this, args1);
+            compareCoords(testCoords, resultCoords);
+            resultCoords = series._getXCoords.apply(series, args2);
+            testCoords = this._getXCoords.apply(this, args2);
+            for(key in resultCoords) {
+                if(resultCoords.hasOwnProperty(key)) {
+                    compareCoords(testCoords[key], resultCoords[key]);   
+                }
+            }
+        },
+    
+        _getYCoords: function(yData, yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding) 
+        {
+            var isNumber = Y.Lang.isNumber,
+                ycoords,
+                yValue,
+                nextY,
+                key,
+                i;
+            if(Y.Lang.isArray(yData)) {
+                ycoords = [];
+                for (i = 0; i < dataLength; ++i) {
+                    yValue = parseFloat(yData[i]);
+                    if(isNumber(yValue)) {
+                        nextY = ((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor);
+                    } else {
+                        nextY = NaN;
+                    }
+                    ycoords.push(nextY);
+                }
+            } else {
+                ycoords = {};
+                for(key in yData) {
+                    if(yData.hasOwnProperty(key)) {
+                        ycoords[key] = this._getYCoords.apply(
+                            this,
+                            [yData[key], yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding]
+                        );     
+                    }
+                }
+            }
+            return ycoords;
+        },
 
+        "test: _getYCoords()" : function() {
+            var series = this.series,
+                len = 10,
+                args1 = [
+                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                    0, 
+                    400,
+                    400/9,
+                    0,
+                    len,
+                    0
+                ],
+                args2 = [
+                    {
+                        key1: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+                        key2: [-5, 5, 15, 25, null, 45, 55, 65, 75, 85]
+                    },
+                    -5,
+                    400,
+                    400/105,
+                    0,
+                    len,
+                    0
+                ],
+                testCoords,
+                resultCoords,
+                testCoord,
+                i,
+                key,
+                compareCoords = function(test, result) {
+                    for(i = 0; i < len; i = i + 1) {
+                          testCoord = test[i];
+                          if(!isNaN(testCoord)) {
+                            Y.Assert.areEqual(testCoord, result[i], "The coord should equal " + testCoord + ".");
+                          } else {
+                            Y.Assert.isNaN(result[i], "The coords should be NaN.");
+                          }
+                    }
+                };
+            resultCoords = series._getYCoords.apply(series, args1);
+            testCoords = this._getYCoords.apply(this, args1);
+            compareCoords(testCoords, resultCoords);
+            resultCoords = series._getYCoords.apply(series, args2);
+            testCoords = this._getYCoords.apply(this, args2);
+            for(key in resultCoords) {
+                if(resultCoords.hasOwnProperty(key)) {
+                    compareCoords(testCoords[key], resultCoords[key]);   
+                }
+            }
 
         },
 
+        "test: _copyData()" : function() {
+            var series = this.series,
+                dataArray1 = [10, 20, 30],
+                dataArray2 = [5, 15, 25],
+                dataObj = {
+                    key1: dataArray1,
+                    key2: dataArray2
+                },
+                i,
+                len = 3,
+                key,
+                resultData;
+            resultData = series._copyData(dataArray1);
+            for(i = 0; i < len; i = i + 1) {
+                Y.Assert.areEqual(dataArray1[i], resultData[i], "The " + i + " index of the returned array should equal " + dataArray1[i] + ".");
+            }
+            resultData = series._copyData(dataObj);
+            for(key in dataObj) {
+                if(dataObj.hasOwnProperty(key)) {
+                    for(i = 0; i < len; i = i + 1) {
+                        Y.Assert.areEqual(
+                            dataObj[key][i], 
+                            resultData[key][i], "The " + i + " index of the " + key + " property of the returned object should equal " + dataObj[key][i] + "."
+                        );
+                    }
+                }
+            }
+        },
+        
         "test: _getFirstValidIndex()" : function() {
             var series = this.series,
                 validIndex = 2,
@@ -700,7 +1039,6 @@ YUI.add('series-cartesian-tests', function(Y) {
                         }
                     }
                 }),
-                
                 mockSeries = new MockTestDrawSeries();
             series.draw.apply(mockSeries);
             hasRendered = true;
@@ -715,7 +1053,7 @@ YUI.add('series-cartesian-tests', function(Y) {
             series.draw.apply(mockSeries);
             Y.Assert.isTrue(areaDataSet, "The setAreaData method should have been called.");
             Y.Assert.isTrue(visibleToggled, "The _toggleVisible method should have been called.");
-            xcoords = [];
+            xcoords = [10, 20];
             ycoords = [];
             series.draw.apply(mockSeries);  
             Y.Assert.isTrue(seriesDrawn, "The drawSeries method should have been called.");

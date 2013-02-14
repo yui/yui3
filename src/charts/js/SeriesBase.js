@@ -1,8 +1,23 @@
 /**
  * Provides functionality for creating a chart series.
  *
- * @uses Renderer
  * @module charts
+ * @submodule series-base
+ */
+
+/**
+ * An abstract class for creating series instances.
+ * SeriesBase is used by the following classes:
+ * <ul>
+ *      <li>{{#crossLink "CartesianSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "PieSeries"}}{{/crossLink}}</li>
+ *  </ul>
+ *
+ * @class SeriesBase
+ * @extends Base
+ * @uses Renderer
+ * @constructor
+ * @param {Object} config (optional) Configuration parameters.
  * @submodule series-base
  */
 Y.SeriesBase = Y.Base.create("seriesBase", Y.Base, [Y.Renderer], {

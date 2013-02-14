@@ -7,7 +7,18 @@
 var Y_Lang = Y.Lang;
 
 /**
- * The CartesianSeries class creates a chart with horizontal and vertical axes.
+ * An abstract class for creating series instances with horizontal and vertical axes.
+ * CartesianSeries provides the core functionality used by the following classes:
+ * <ul>
+ *      <li>{{#crossLink "LineSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "MarkerSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "AreaSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "SplineSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "AreaSplineSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "ComboSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "ComboSplineSeries"}}{{/crossLink}}</li>
+ *      <li>{{#crossLink "Histogram"}}{{/crossLink}}</li>
+ *  </ul>
  *
  * @class CartesianSeries
  * @extends SeriesBase
@@ -182,20 +193,67 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
             xKey = this.get("xKey"),
             yKey = this.get("yKey"),
             yData,
-            xData;
+            xData,
+            xReady,
+            yReady,
+            ready;
         if(!xAxis || !yAxis || !xKey || !yKey)
         {
-            return false;
+            ready = false;
         }
-        xData = xAxis.getDataByKey(xKey);
-        yData = yAxis.getDataByKey(yKey);
-        if(!xData || !yData)
+        else 
         {
-            return false;
+            xData = xAxis.getDataByKey(xKey);
+            yData = yAxis.getDataByKey(yKey);
+            if(Y_Lang.isArray(xKey))
+            {
+                xReady = (xData && Y.Object.size(xData) > 0) ? this._checkForDataByKey(xData, xKey) : false;
+            }
+            else
+            {
+                xReady = xData ? true : false;
+            }
+            if(Y_Lang.isArray(yKey))
+            {
+                yReady = (yData && Y.Object.size(yData) > 0) ? this._checkForDataByKey(yData, yKey) : false;
+            }
+            else
+            {
+                yReady = yData ? true : false;
+            }
+            ready = xReady && yReady;
+            if(ready)
+            {
+                this.set("xData", xData);
+                this.set("yData", yData);
+            }
         }
-        this.set("xData", xData.concat());
-        this.set("yData", yData.concat());
-        return true;
+        return ready;
+    },
+
+    /**
+     * Checks to see if all keys of a data object exist and contain data.
+     *
+     * @method _checkForDataByKey
+     * @param {Object} obj The object to check
+     * @param {Array} keys The keys to check
+     * @return Boolean
+     * @private
+     */
+    _checkForDataByKey: function(obj, keys)
+    {
+        var i,
+            len = keys.length,
+            hasData = false;
+        for(i = 0; i < len; i = i + 1) 
+        {
+            if(obj[keys[i]])
+            {
+                hasData = true;
+                break;
+            }
+        }
+        return hasData;
     },
 
     /**
@@ -224,42 +282,32 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
      */
     setAreaData: function()
     {
-        var isNumber = Y_Lang.isNumber,
-            nextX, nextY,
-            w = this.get("width"),
+        var w = this.get("width"),
             h = this.get("height"),
             xAxis = this.get("xAxis"),
             yAxis = this.get("yAxis"),
-            xData = this.get("xData").concat(),
-            yData = this.get("yData").concat(),
-            xValue,
-            yValue,
-            xOffset = xAxis.getEdgeOffset(xData.length, w),
-            yOffset = yAxis.getEdgeOffset(yData.length, h),
+            xData = this._copyData(this.get("xData")),
+            yData = this._copyData(this.get("yData")),
+            direction = this.get("direction"),
+            dataLength = direction === "vertical" ? yData.length : xData.length,
+            xOffset = xAxis.getEdgeOffset(dataLength, w),
+            yOffset = yAxis.getEdgeOffset(dataLength, h),
             padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
 			dataWidth = w - (leftPadding + padding.right + xOffset),
 			dataHeight = h - (topPadding + padding.bottom + yOffset),
-			xcoords = [],
-			ycoords = [],
 			xMax = xAxis.get("maximum"),
 			xMin = xAxis.get("minimum"),
 			yMax = yAxis.get("maximum"),
 			yMin = yAxis.get("minimum"),
             xScaleFactor = dataWidth / (xMax - xMin),
 			yScaleFactor = dataHeight / (yMax - yMin),
-            dataLength,
-            direction = this.get("direction"),
-            i = 0,
-            xMarkerPlane = [],
-            yMarkerPlane = [],
-            xMarkerPlaneOffset = this.get("xMarkerPlaneOffset"),
-            yMarkerPlaneOffset = this.get("yMarkerPlaneOffset"),
-            graphic = this.get("graphic");
+            graphic = this.get("graphic"),
+            xcoords,
+            ycoords;
         graphic.set("width", w);
         graphic.set("height", h);
-        dataLength = xData.length;
         xOffset *= 0.5;
         yOffset *= 0.5;
         //Assuming a vertical graph has a range/category for its vertical axis.
@@ -273,36 +321,211 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
         {
             this._bottomOrigin = this._bottomOrigin - ((0 - yMin) * yScaleFactor);
         }
-        for (; i < dataLength; ++i)
-		{
-            xValue = parseFloat(xData[i]);
-            yValue = parseFloat(yData[i]);
-            if(isNumber(xValue))
-            {
-                nextX = (((xValue - xMin) * xScaleFactor) + leftPadding + xOffset);
-            }
-            else
-            {
-                nextX = NaN;
-            }
-            if(isNumber(yValue))
-            {
-			    nextY = ((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor);
-            }
-            else
-            {
-                nextY = NaN;
-            }
-            xcoords.push(nextX);
-            ycoords.push(nextY);
-            xMarkerPlane.push({start:nextX - xMarkerPlaneOffset, end: nextX + xMarkerPlaneOffset});
-            yMarkerPlane.push({start:nextY - yMarkerPlaneOffset, end: nextY + yMarkerPlaneOffset});
-        }
+        xcoords = this._getXCoords(xData, xMin, dataWidth, xScaleFactor, xOffset, dataLength, leftPadding);
+        ycoords = this._getYCoords(yData, yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding);
         this.set("xcoords", xcoords);
 		this.set("ycoords", ycoords);
-        this.set("xMarkerPlane", xMarkerPlane);
-        this.set("yMarkerPlane", yMarkerPlane);
         this._dataLength = dataLength;
+        this._setXMarkerPlane(xcoords, dataLength); 
+        this._setYMarkerPlane(ycoords, dataLength); 
+    },
+    
+    /**
+     * Used to cache xData and yData in the setAreaData method. Returns a copy of an array if an array is received as the param
+     * and returns an object literal of array copies if an object literal is received as the param.
+     *
+     * @method _copyData
+     * @param {Array|Object} 
+     * @return Array|Object
+     * @private
+     */
+    _copyData: function(val)
+    {
+        var copy;
+        if(Y_Lang.isArray(val))
+        {
+            copy = val.concat();
+        }
+        else
+        {
+            copy = {};
+            for(key in val)
+            {
+                if(val.hasOwnProperty(key))
+                {
+                    copy[key] = val[key].concat();
+                }
+            }
+        }
+        return copy;
+    },
+
+    /**
+     * Sets the marker plane for the series when the coords argument is an array. If the coords argument
+     * is an object literal no marker plane is set.
+     *
+     * @method _setXMarkerPlane
+     * @param {Array|Object} coords An array of x coordinates or an object literal containing key value pairs mapped to
+     * an array of coordinates.
+     * @param {Number} dataLength The length of data for the series.
+     * @private 
+     */
+    _setXMarkerPlane: function(coords, dataLength)
+    {
+        var i = 0,
+            xMarkerPlane = [],
+            xMarkerPlaneOffset = this.get("xMarkerPlaneOffset"),
+            nextX;
+        if(Y_Lang.isArray(coords))
+        {
+            for(i = 0; i < dataLength; i = i + 1) 
+            {
+                nextX = coords[i]; 
+                xMarkerPlane.push({start:nextX - xMarkerPlaneOffset, end: nextX + xMarkerPlaneOffset});
+            }
+            this.set("xMarkerPlane", xMarkerPlane);
+        }
+    },
+
+    /**
+     * Sets the marker plane for the series when the coords argument is an array. If the coords argument
+     * is an object literal no marker plane is set.
+     *
+     * @method _setYMarkerPlane
+     * @param {Array|Object} coords An array of y coordinates or an object literal containing key value pairs mapped to
+     * an array of coordinates.
+     * @param {Number} dataLength The length of data for the series.
+     * @private 
+     */
+    _setYMarkerPlane: function(coords, dataLength)
+    {
+        var i = 0,
+            yMarkerPlane = [],
+            yMarkerPlaneOffset = this.get("yMarkerPlaneOffset"),
+            nextY;
+        if(Y_Lang.isArray(coords))
+        {
+            for(i = 0; i < dataLength; i = i + 1) 
+            {
+                nextY = coords[i]; 
+                yMarkerPlane.push({start:nextY - yMarkerPlaneOffset, end: nextY + yMarkerPlaneOffset});
+            }
+            this.set("yMarkerPlane", yMarkerPlane);
+        }
+    },
+
+    /**
+     * Gets the x-coordinates for a series. Used by the setAreaData method. Returns an array when an array is received as the first argument.
+     * Returns an object literal when an object literal is received as the first argument.
+     *
+     * @method _getXCoords
+     * @param {Array|Object} xData An array of data values mapped to the x axis or an object literal containing key values pairs of data values mapped to the x axis.
+     * @param {Number} xMin The minimum value of the x axis.
+     * @param {Number} dataWidth The width used to calculate the x-coordinates.
+     * @param {Number} xScaleFactor The ratio used to calculate x-coordinates.
+     * @param {Number} xOffset The distance of the first and last x-coordinate from the beginning and end of the x-axis.
+     * @param {Number} dataLength The number of data points in the arrays. 
+     * @param {Number} leftPadding The left padding of the series.
+     * @return Array|Object
+     * @private
+     */
+    _getXCoords: function(xData, xMin, dataWidth, xScaleFactor, xOffset, dataLength, leftPadding) 
+    {
+        var isNumber = Y_Lang.isNumber,
+			xcoords,
+            xValue,
+            nextX,
+            key,
+            i;
+        if(Y_Lang.isArray(xData))
+        {
+            xcoords = [];
+            for (i = 0; i < dataLength; ++i)
+            {
+                xValue = parseFloat(xData[i]);
+                if(isNumber(xValue))
+                {
+                    nextX = (((xValue - xMin) * xScaleFactor) + leftPadding + xOffset);
+                }
+                else
+                {
+                    nextX = NaN;
+                }
+                xcoords.push(nextX);
+            }
+        }
+        else
+        {
+            xcoords = {};
+            for(key in xData)
+            {
+                if(xData.hasOwnProperty(key))
+                {
+                    xcoords[key] = this._getXCoords.apply(
+                        this,
+                        [xData[key], xMin, dataWidth, xScaleFactor, xOffset, dataLength, leftPadding]
+                    );
+                }
+            }
+        }
+        return xcoords; 
+    },
+    
+    /**
+     * Gets the y-coordinates for a series. Used by the setAreaData method. Returns an array when an array is received as the first argument.
+     * Returns an object literal when an object literal is received as the first argument.
+     *
+     * @method _getYCoords
+     * @param {Array|Object} yData An array of data values mapped to the y axis or an object literal containing key values pairs of data values mapped to the y axis.
+     * @param {Number} yMin The minimum value of the y axis.
+     * @param {Number} dataHeight The height used to calculate the y-coordinates.
+     * @param {Number} yScaleFactor The ratio used to calculate y-coordinates.
+     * @param {Number} yOffset The distance of the first and last y-coordinate from the beginning and end of the y-axis.
+     * @param {Number} dataLength The number of data points in the arrays. 
+     * @param {Number} topPadding The top padding of the series.
+     * @return Array|Object
+     * @private
+     */
+    _getYCoords: function(yData, yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding) 
+    {
+        var isNumber = Y_Lang.isNumber,
+			ycoords,
+            yValue,
+            nextY,
+            key,
+            i;
+        if(Y_Lang.isArray(yData))
+        {
+            ycoords = [];
+            for (i = 0; i < dataLength; ++i)
+            {
+                yValue = parseFloat(yData[i]);
+                if(isNumber(yValue))
+                {
+                    nextY = ((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor);
+                }
+                else
+                {
+                    nextY = NaN;
+                }
+                ycoords.push(nextY);
+            }
+        }
+        else
+        {
+            ycoords = {};
+            for(key in yData)
+            {
+                if(yData.hasOwnProperty(key))
+                {
+                    ycoords[key] = this._getYCoords.apply(
+                        this,
+                        [yData[key], yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding]
+                    );     
+                }
+            }
+        }
+        return ycoords;
     },
 
     /**
@@ -356,7 +579,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
     draw: function()
     {
         var w = this.get("width"),
-            h = this.get("height");
+            h = this.get("height"),
+            xcoords,
+            ycoords;
         if(this.get("rendered"))
         {
             if((isFinite(w) && isFinite(h) && w > 0 && h > 0) && ((this.get("xData") && this.get("yData")) || this._updateAxisBase()))
@@ -369,7 +594,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
                 this._drawing = true;
                 this._callLater = false;
                 this.setAreaData();
-                if(this.get("xcoords") && this.get("ycoords"))
+                xcoords = this.get("xcoords");
+                ycoords = this.get("ycoords");
+                if(xcoords && ycoords && xcoords.length > 0)
                 {
                     this.drawSeries();
                 }
@@ -675,7 +902,14 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
         xKey: {
             setter: function(val)
             {
-                return val.toString();
+                if(Y_Lang.isArray(val))
+                {
+                    return val;
+                }
+                else
+                {
+                    return val.toString();
+                }
             }
         },
 
@@ -689,7 +923,14 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
         yKey: {
             setter: function(val)
             {
-                return val.toString();
+                if(Y_Lang.isArray(val))
+                {
+                    return val;
+                }
+                else
+                {
+                    return val.toString();
+                }
             }
         },
 

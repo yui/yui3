@@ -41,6 +41,16 @@
                 "CartesianSeries.js"
             ]
         },
+        "series-range" : {
+            "jsfiles" : [
+                "RangeSeries.js"
+            ]
+        },
+        "series-candlestick" : {
+            "jsfiles" : [
+                "CandlestickSeries.js"
+            ]
+        },
         "axis" : {
             "jsfiles" : [
                 "LeftAxisLayout.js",
