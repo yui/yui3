@@ -368,45 +368,6 @@
         },
 
         /**
-         * A helper method used when processing ATTRS across the class hierarchy during
-         * initialization. Returns a disposable object with the attributes defined for
-         * the provided class, extracted from the set of all attributes passed in.
-         *
-         * @method _filterAttrCfgs
-         * @private
-         *
-         * @param {Function} clazz The class for which the desired attributes are required.
-         * @param {Object} allCfgs The set of all attribute configurations for this instance.
-         * Attributes will be removed from this set, if they belong to the filtered class, so
-         * that by the time all classes are processed, allCfgs will be empty.
-         *
-         * @return {Object} The set of attributes belonging to the class passed in, in the form
-         * of an object with attribute name/configuration pairs.
-         */
-        _filterAttrCfgs : function(clazz, allCfgs) {
-            var attrs = clazz.ATTRS,
-                cfgs = null,
-                cfg,
-                attr;
-
-            if (attrs) {
-                for (attr in attrs) {
-                    cfg = allCfgs[attr];
-
-                    if (cfg) {
-                        if (!cfgs) {
-                            cfgs = {};
-                        }
-
-                        cfgs[attr] = cfg;
-                    }
-                }
-            }
-
-            return cfgs;
-        },
-
-        /**
          * @method _filterAdHocAttrs
          * @private
          *
@@ -641,6 +602,12 @@
             // Protect attribute configs.
             attrCfgs = this._protectAttrCfgs(attrCfgs);
 
+            this.addAttrs(attrCfgs, userVals, lazy);
+
+            if (this._allowAdHocAttrs) {
+                this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
+            }
+
             for (ci = cl; ci >= 0; ci--) {
 
                 constr = classes[ci];
@@ -651,12 +618,6 @@
                     for (ei = 0, el = exts.length; ei < el; ei++) {
                         exts[ei].apply(this, arguments);
                     }
-                }
-
-                this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
-
-                if (this._allowAdHocAttrs && ci === cl) {
-                    this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
                 }
 
                 // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
