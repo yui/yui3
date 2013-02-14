@@ -1,50 +1,90 @@
+'use strict';
+
+var Bindable      = Y.Attribute.Bindable,
+    bindableProto = Bindable.prototype;
 /**
-DataBind provides the `Y.DataBind` class to bind attributes to form elements.
+DataBind provides the `Y.DataBind` class to automate binding attribute state
+to the state of other objects via configuration, obviating the need to manually
+subscribe to change events or, in the event of bidirectional binding,
+transfering data from the other object back to the attribute.
 
-The class may be used standalone, or as a class extension, and provides the
-methods `_bindAttr`, `_bindAttrs`, `_unbindAttr`, and `_unbindAttrs`. When used
-as a standalone class, these methods are mirrored as public versions without
-the leading underscore (e.g. `bindAttr`).
-
-The base module focuses on binding attributes to non-form related elements by
-writing to the DOM when the attribute changes. However, it is possible to set
-up bidirectional and custom DOM<->attribute relationships. See the
-`data-bind-form` module to add support for binding to form elements.
-
-@module data-bind
+@module attr-bindable
+@submodule data-bind
 @class DataBind
 @since 3.9.0
 **/
-Y.DataBind = function () {
-    this._bindMap = {};
+Y.DataBind = Y.extend(
+    function (host) {
+        Y.Attribute.Bindable.call(this, { model: host });
+    },
+    Y.Attribute.Bindable,
+    {
+        destroy: bindableProto.destructor,
 
-    if (!Y.Base || !(this instanceof Y.Base)) {
-        // alias methods for convenience
-        this.destroy     = this.destructor;
-        this.bindAttr    = this._bindAttr;
-        this.bindAttrs   = this._bindAttrs;
-        this.unbindAttr  = this._unbindAttr;
-        this.unbindAttrs = this._unbindAttrs;
-    }
-};
+
+        /**
+        Relays `instance.get(attr)` to the bound attribute's host's `get(attr)`
+        method. If no binding for the provided attribute is found, `undefined`
+        is returned.
+
+        @method get
+        @param {String} attr Attribute name to get value from host
+        @return {Any} Whatever is stored in the attribute, or `undefined` if the
+                      provided attribute is not bound
+        **/
+        get: function (attr) {
+            var binding = this._bindMap[attr],
+                host    = binding && binding.host;
+
+            // Returning `undefined` because the binding isn't defined, so
+            // there's no value associated, not even `null`.
+            return host ? host.get.apply(host, arguments) : undefined;
+        },
+
+        /**
+        Relays `instance.set(attr, val)` to the bound attribute's host's
+        `set(attr, val)` method.
+
+        @method set
+        @param {String} attr Attribute name to get value from host
+        @param {Any} value Attribute name to get value from host
+        @param {Any} [args]* Additional arguments to relay to host's `set()` method
+        @chainable
+        **/
+        set: function (attr) {
+            var binding = this._bindMap[attr],
+                host    = binding && binding.host;
+
+            if (host) {
+                host.get.apply(host, arguments);
+            }
+
+            return this;
+        }
+    }, {
+        BIND_TYPES: Bindable.BIND_TYPES
+    });
 
 /**
-Map of user events to subscribe to for specific types of inputs. If not in this
-map, the 'change' event will be used.
+Map of binding types. Other binding related modules should contribute to this
+map.
 
-@property FIELD_EVENTS
+@property BIND_TYPE
 @type {Object}
 @static
 **/
-Y.DataBind.BIND_CONFIGS = {
+Y.DataBind.BIND_TYPE = {
     _default: {
-        getter: '_getBoundNodeContent',
-        setter: '_setBoundNodeContent'
+        bind    : '_bindUnknownType',
+        getAttr : 'get',
+        setAttr : 'set',
+        getBound: '_getBoundNodeContent',
+        setBound: '_setBoundNodeContent'
     }
 };
 
 /**
-Build configuration to migrate the FIELD_EVENTS static property to the host
+Build configuration to migrate the BIND_TYPE static property to the host
 class when used as a class extension.
 
 @property _buildCfg
@@ -52,7 +92,7 @@ class when used as a class extension.
 @protected
 @static
 **/
-Y.DataBind._buildCfg = { aggregate: ['BIND_CONFIGS'] };
+Y.DataBind._buildCfg = { aggregate: ['BIND_TYPE'] };
 
 function camelize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -60,49 +100,66 @@ function camelize(str) {
 
 Y.mix(Y.DataBind.prototype, {
     /**
-    Gets the value from the DOM element representing the provided attribute
-    using the configured or defaulted `getter`. If the binding is configured
-    with a `parser`, the value returned will be the parsed value.
+    Gets the value from the bound object representing the provided attribute
+    using the configured or defaulted `get` method for the binding. If the
+    binding is configured with a `parser`, the value returned will be the
+    parsed value.
 
-    @method getUIValue
-    @param {String} attr Attribute name corresponding to the DOM element
-    @return {Any} Usually a string, but parsers can return anything
+    If an array of attribute names is passed, an object map of names to values
+    will be returned.
+
+    If no arguments are passed, an object map of all bound values is returned.
+
+    @method getBoundValue
+    @param {String|String[]} [attr] Attribute name(s) to get bound values for
+    @return {Any} Usually a string for single attributes, but parsers can
+        return anything. Otherwise, an object with individual values.
     **/
-    getUIValue: function (attr) {
+    getBoundValue: function (attr) {
         var config = this._bindMap[attr],
-            method, value;
+            // TODO: Better default return value?
+            value  = null,
+            method;
 
         if (config) {
-            method = config.getter;
+            method = config.get;
             // support function or string values for getter, late bound
             value  = (this[method] || method).call(this, config.field, config);
 
             method = config.parser;
-            return method ?
+
+            if (method) {
                 // support function or string values for parser, late bound
-                (this[method] || method).call(this, value, config) :
-                value;
+                value = (this[method] || method).call(this, value, config);
+            }
         }
 
-        // TODO: Better default return value?
-        return null;
+        return value;
     },
 
     /**
-    Sets the value in the DOM element for the provided attribute using the
-    configured or defaulted `setter`. *This does not update the attribute
-    value*. If the binding is configured with a formatter, the value assigned
-    to the DOM element will be the formatted value.
+    Sends the value to the bound object for the provided attribute using the
+    configured or defaulted `set` method of the binding.
+    
+    *This does not update the attribute value*.
+    
+    If the binding is configured with a formatter, the value assigned to the
+    bound object will be the formatted value.
 
-    @method setUIValue
-    @param {String} attr Attribute name corresponding to the DOM element
-    @param {Any} value The value to assign to the DOM element
-    @return {DataBind} this instance
+    Also accepts an object with a map of attribute names to values for setting
+    multiple bindings at once.
+
+    If no value is passed, sets all bound attribute values according to their
+    current values.
+
+    @method setBoundValue
+    @param {String} [attr] Bound attribute name
+    @param {Any} [value] The value to set in the bound object
     @chainable
     **/
-    setUIValue: function (attr, value) {
+    setBoundValue: function (attr, value) {
         var config = this._bindMap[attr],
-            method;
+            method, name;
 
         if (config) {
             if (config.formatter) {
@@ -114,21 +171,80 @@ Y.mix(Y.DataBind.prototype, {
             method = config.setter;
             // support function or string values for setter, late bound
             (this[method] || method).call(this, config.field, value, config);
+        } else if (isObject(attr, true)) {
+            for (name in attr) {
+                if (attr.hasOwnProperty(name)) {
+                    this.setBoundValue(name, attr[name]);
+                }
+            }
         }
 
         return this;
     },
 
     /**
-    Pushes current Attribute values to the UI.
+    Gets the values from the bound object representing the provided attributes
+    using the configured or defaulted `get` method for each binding. If the
+    bindings are configured with a `parser`, the values returned will be the
+    parsed value.
 
-    @method syncToUI
-    @return {DataBind} this instance
+    If an array of attribute names is passed, an object map of names to values
+    will be returned. If no arguments are passed, an object map of all bound
+    values is returned.
+
+    @method getBoundValues
+    @param {String[]} [attrs] Attribute names to get bound values for
+    @return {Object}
+    **/
+    getBoundValues: function (attrs) {
+        var map    = this._bindMap,
+            values = {},
+            i, len;
+
+        if (!attrs) {
+            attrs = Y.Object.keys(this._bindMap);
+        } 
+
+        for (i = 0, len = attrs.length; i < len; ++i) {
+            values[attr[i]] = this.getBoundValue(attr[i]);
+        }
+
+        return values;
+    },
+
+    /**
+    Sends the values to the bound object for the provided attributes using the
+    configured or defaulted `set` method of each binding.
+    
+    *This does not update the attribute values*.
+    
+    If the bindings are configured with formatters, the value assigned to the
+    respective bound object will be the formatted value.
+
+    If an object map of attribute names to values is passed, only those
+    bindings will be assigned. If no argument is passed, all bindings will be
+    updated with the current bound attribute value.
+
+    @method setBoundValues
+    @param {Object} [attrs] Bound attribute name
     @chainable
     **/
-    syncToUI: function () {
+    setBoundValues: function (attrs) {
         var map = this._bindMap,
-            attr;
+            attr, binding, getAttr;
+
+        if (!attrs) {
+            attrs = {};
+
+            for (attr in map) {
+                if (map.hasOwnProperty(attr)) {
+                    binding = map[attr];
+                    getAttr = binding.host[binding.getAttr] || binding.getAttr;
+
+                    attrs[attr] = getAttr.apply(binding.host,
+                }
+            }
+        }
 
         for (attr in map) {
             if (map.hasOwnProperty(attr)) {
@@ -142,11 +258,10 @@ Y.mix(Y.DataBind.prototype, {
     /**
     Pushes current DOM element values to the bound attributes.
 
-    @method syncToModel
-    @return {DataBind} this instance
+    @method setBoundAttrs
     @chainable
     **/
-    syncToModel: function () {
+    setBoundAttrs: function () {
         var map = this._bindMap,
             attr;
 

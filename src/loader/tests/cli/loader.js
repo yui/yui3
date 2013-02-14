@@ -928,6 +928,36 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("createlink-base")) > -1, "Module (createlink-base) not found in sorted array");
         },
+     "Testing data-bind": function(data) {
+            var loader = new Y.Loader({
+                require: ["data-bind"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("data-bind")) > -1, "Module (data-bind) not found in sorted array");
+        },
+     "Testing data-bind-form": function(data) {
+            var loader = new Y.Loader({
+                require: ["data-bind-form"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("data-bind-form")) > -1, "Module (data-bind-form) not found in sorted array");
+        },
+     "Testing data-bind-html": function(data) {
+            var loader = new Y.Loader({
+                require: ["data-bind-html"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("data-bind-html")) > -1, "Module (data-bind-html) not found in sorted array");
+        },
      "Testing dataschema": function(data) {
             var loader = new Y.Loader({
                 require: ["dataschema"],
@@ -1500,6 +1530,26 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dd-scroll")) > -1, "Module (dd-scroll) not found in sorted array");
+        },
+     "Testing deferred": function(data) {
+            var loader = new Y.Loader({
+                require: ["deferred"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("deferred")) > -1, "Module (deferred) not found in sorted array");
+        },
+     "Testing deferred-extras": function(data) {
+            var loader = new Y.Loader({
+                require: ["deferred-extras"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("deferred-extras")) > -1, "Module (deferred-extras) not found in sorted array");
         },
      "Testing dial": function(data) {
             var loader = new Y.Loader({

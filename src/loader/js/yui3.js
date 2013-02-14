@@ -706,6 +706,21 @@ Y.mix(YUI.Env[Y.version].modules, {
     "cssreset-context": {
         "type": "css"
     },
+    "data-bind": {
+        "requires": [
+            "node-base"
+        ]
+    },
+    "data-bind-form": {
+        "requires": [
+            "data-bind"
+        ]
+    },
+    "data-bind-html": {
+        "requires": [
+            "data-bind"
+        ]
+    },
     "dataschema": {
         "use": [
             "dataschema-base",
@@ -1125,6 +1140,16 @@ Y.mix(YUI.Env[Y.version].modules, {
     "dd-scroll": {
         "requires": [
             "dd-drag"
+        ]
+    },
+    "deferred": {
+        "requires": [
+            "oop"
+        ]
+    },
+    "deferred-extras": {
+        "requires": [
+            "deferred"
         ]
     },
     "dial": {

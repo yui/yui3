@@ -5988,7 +5988,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.01.30-21-00',
+            GALLERY_VERSION = 'gallery-2013.02.13-21-08',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -9602,6 +9602,21 @@ Y.mix(YUI.Env[Y.version].modules, {
     "cssreset-context": {
         "type": "css"
     },
+    "data-bind": {
+        "requires": [
+            "node-base"
+        ]
+    },
+    "data-bind-form": {
+        "requires": [
+            "data-bind"
+        ]
+    },
+    "data-bind-html": {
+        "requires": [
+            "data-bind"
+        ]
+    },
     "dataschema": {
         "use": [
             "dataschema-base",
@@ -10021,6 +10036,16 @@ Y.mix(YUI.Env[Y.version].modules, {
     "dd-scroll": {
         "requires": [
             "dd-drag"
+        ]
+    },
+    "deferred": {
+        "requires": [
+            "oop"
+        ]
+    },
+    "deferred-extras": {
+        "requires": [
+            "deferred"
         ]
     },
     "dial": {
