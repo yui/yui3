@@ -1,12 +1,12 @@
 {
     "name": "normalize",
     "builds": {
-        "normalize": {
+        "cssnormalize": {
             "cssfiles": [
                 "normalize.css"
             ]
         },
-        "normalize-context": {
+        "cssnormalize-context": {
             "cssfiles": [
                 "normalize-context.css"
             ]
