@@ -46,9 +46,9 @@ Fired right before CSS properties are parsed for a certain rule.
 Go through and add all the selectors to the `css` string.
 */
 parser.addListener('startrule', function (event) {
-    //console.log('Starting rule with ' + event.selectors.length + ' selector(s)');
+    var s;
     for (var i = 0, len = event.selectors.length; i < len; i++){
-        var s = event.selectors;
+        s = event.selectors;
 
         /*
         If the selector does not contain the html selector,
