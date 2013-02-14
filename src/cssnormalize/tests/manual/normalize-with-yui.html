@@ -48,7 +48,7 @@
             table.render("#example");
 
             Y.one('#normalizeBtn').on('click', function(e) {
-                YUI().use('normalize', function (Y) {
+                YUI().use('cssnormalize', function (Y) {
                     Y.log('normalize loaded');
                 });
             });
@@ -61,7 +61,7 @@
                 });
             });
             Y.one('#normalizeContextBtn').on('click', function(e) {
-                YUI().use('normalize-context', function (Y) {
+                YUI().use('cssnormalize-context', function (Y) {
                     Y.log('normalize-context.css loaded');
                 });
             });
