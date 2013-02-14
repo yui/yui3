@@ -19,18 +19,6 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
     /**
      * @protected
      *
-     * Draws the series.
-     *
-     * @method drawSeries
-     */
-    drawSeries: function()
-    {
-        this.drawPlots();
-    },
-
-    /**
-     * @protected
-     *
      * Method used by `styles` setter. Overrides base implementation.
      *
      * @method _setStyles
@@ -45,21 +33,6 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
         }
         val = this._parseMarkerStyles(val);
         return Y.MarkerSeries.superclass._mergeStyles.apply(this, [val, this._getDefaultStyles()]);
-    },
-
-    /**
-     * @protected
-     *
-     * Gets the default value for the `styles` attribute. Overrides
-     * base implementation.
-     *
-     * @method _getDefaultStyles
-     * @return Object
-     */
-    _getDefaultStyles: function()
-    {
-        var styles = this._mergeStyles({marker:this._getPlotDefaults()}, Y.MarkerSeries.superclass._getDefaultStyles());
-        return styles;
     }
 },{
     ATTRS : {

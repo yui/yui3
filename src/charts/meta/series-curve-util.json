@@ -1,7 +1,3 @@
 {
-    "series-curve-util": {
-        "requires":[
-            "series-base"
-        ]
-    }
+    "series-curve-util": {}
 }

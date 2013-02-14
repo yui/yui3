@@ -33,6 +33,11 @@
         },
         "series-base" : {
             "jsfiles": [
+                "SeriesBase.js"
+            ]
+        },
+        "series-cartesian" : {
+            "jsfiles": [
                 "CartesianSeries.js"
             ]
         },
