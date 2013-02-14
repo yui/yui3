@@ -16,7 +16,7 @@
             "displayName": "Applying normalize.css to a basic page",
             "description": "When CSS Base is included in a page it provides consistent and basic cross-browser styling for HTML elements.",
             "modules"    : ["normalize"],
-            "tags"       : ["normalize"],
+            "tags"       : ["normalize", "css", "reset"],
 
             "hideTableOfContents": true
         }
