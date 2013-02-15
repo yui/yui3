@@ -7,6 +7,11 @@ module.exports = function(grunt) {
         type: String
     };
 
+    cli.optlist['cache-build'] = {
+        info: 'Cache the build',
+        type: Boolean
+    };
+
 
     grunt.loadNpmTasks('grunt-yui-contrib');
     grunt.loadNpmTasks('grunt-contrib-compress');
