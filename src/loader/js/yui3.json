@@ -1508,9 +1508,7 @@
         ]
     },
     "handlebars-base": {
-        "requires": [
-            "escape"
-        ]
+        "requires": []
     },
     "handlebars-compiler": {
         "requires": [
@@ -1945,6 +1943,11 @@
     "profiler": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "promise": {
+        "requires": [
+            "timers"
         ]
     },
     "querystring": {

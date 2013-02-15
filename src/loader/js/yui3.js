@@ -1602,9 +1602,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "handlebars-base": {
-        "requires": [
-            "escape"
-        ]
+        "requires": []
     },
     "handlebars-compiler": {
         "requires": [
@@ -2082,6 +2080,11 @@ Y.mix(YUI.Env[Y.version].modules, {
     "profiler": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "promise": {
+        "requires": [
+            "timers"
         ]
     },
     "querystring": {
@@ -2856,4 +2859,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '6eecff08bd9d5521555ade0c451e8ab0';
+YUI.Env[Y.version].md5 = '60ad5e383254f90b84fa284a4d0d96f2';

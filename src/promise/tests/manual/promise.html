@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Manual Y.Promise Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+    <h1>Manual <code>Y.Promise</code> Tests</h1>
+    <div id="tests"></div>
+
+    <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui.js"></script>
+    <script>
+    YUI({
+        filter: 'raw',
+        modules: {
+            promise: {
+                fullpath: '../../../../build/promise/promise-min.js',
+                requires: ['oop']
+            }
+        }
+    }).use('promise', function (Y) {
+
+        var promise = new Y.Promise(function (resolve) {
+            setTimeout(function () {
+                resolve("hello, Martha");
+
+                promise.then(function (result) {
+                    console.log("then() after resolved", result);
+                });
+            }, 100);
+        });
+
+        promise
+            .then(function (message) {
+                console.log(this, 'asdf', message);
+
+                return new Y.Promise(function (resolve) {
+                    setTimeout(function () {
+                        resolve(message + "\nGoodbye, Mr. Bond");
+                    }, 100);
+                });
+            })
+            .then(function () {
+                console.log(this, arguments);
+
+                return "Whazzaaaaaaap";
+            })
+            .then(function () {
+                console.log("Last one", this, arguments);
+            });
+
+    });
+    </script>
+</body>
+</html>
