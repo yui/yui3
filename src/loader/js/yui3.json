@@ -668,6 +668,12 @@
         ],
         "type": "css"
     },
+    "cssnormalize": {
+        "type": "css"
+    },
+    "cssnormalize-context": {
+        "type": "css"
+    },
     "cssreset": {
         "type": "css"
     },
@@ -1830,7 +1836,7 @@
             "plugin",
             "node-focusmanager"
         ],
-        "skinnable": false
+        "skinnable": true
     },
     "node-pluginhost": {
         "requires": [
@@ -1858,9 +1864,6 @@
             "dom-style",
             "node-base"
         ]
-    },
-    "normalize": {
-        "type": "css"
     },
     "oop": {
         "requires": [

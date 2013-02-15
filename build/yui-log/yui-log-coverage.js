@@ -97,4 +97,83 @@ incl = c.logInclude;
 if (incl && !(src in incl)) {
                 _yuitest_coverline("build/yui-log/yui-log.js", 53);
 bail = 1;
-            } else {_yuitest_coverline("build/yui-log/yui-
+            } else {_yuitest_coverline("build/yui-log/yui-log.js", 54);
+if (incl && (src in incl)) {
+                _yuitest_coverline("build/yui-log/yui-log.js", 55);
+bail = !incl[src];
+            } else {_yuitest_coverline("build/yui-log/yui-log.js", 56);
+if (excl && (src in excl)) {
+                _yuitest_coverline("build/yui-log/yui-log.js", 57);
+bail = excl[src];
+            }}}
+        }
+        _yuitest_coverline("build/yui-log/yui-log.js", 60);
+if (!bail) {
+            _yuitest_coverline("build/yui-log/yui-log.js", 61);
+if (c.useBrowserConsole) {
+                _yuitest_coverline("build/yui-log/yui-log.js", 62);
+m = (src) ? src + ': ' + msg : msg;
+                _yuitest_coverline("build/yui-log/yui-log.js", 63);
+if (Y.Lang.isFunction(c.logFn)) {
+                    _yuitest_coverline("build/yui-log/yui-log.js", 64);
+c.logFn.call(Y, msg, cat, src);
+                } else {_yuitest_coverline("build/yui-log/yui-log.js", 65);
+if (typeof console !== UNDEFINED && console.log) {
+                    _yuitest_coverline("build/yui-log/yui-log.js", 66);
+f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
+                    _yuitest_coverline("build/yui-log/yui-log.js", 67);
+console[f](m);
+                } else {_yuitest_coverline("build/yui-log/yui-log.js", 68);
+if (typeof opera !== UNDEFINED) {
+                    _yuitest_coverline("build/yui-log/yui-log.js", 69);
+opera.postError(m);
+                }}}
+            }
+
+            _yuitest_coverline("build/yui-log/yui-log.js", 73);
+if (publisher && !silent) {
+
+                _yuitest_coverline("build/yui-log/yui-log.js", 75);
+if (publisher === Y && (!publisher.getEvent(LOGEVENT))) {
+                    _yuitest_coverline("build/yui-log/yui-log.js", 76);
+publisher.publish(LOGEVENT, {
+                        broadcast: 2
+                    });
+                }
+
+                _yuitest_coverline("build/yui-log/yui-log.js", 81);
+publisher.fire(LOGEVENT, {
+                    msg: msg,
+                    cat: cat,
+                    src: src
+                });
+            }
+        }
+    }
+
+    _yuitest_coverline("build/yui-log/yui-log.js", 90);
+return Y;
+};
+
+/**
+ * Write a system message.  This message will be preserved in the
+ * minified and raw versions of the YUI files, unlike log statements.
+ * @method message
+ * @for YUI
+ * @param  {String}  msg  The message to log.
+ * @param  {String}  cat  The log category for the message.  Default
+ *                        categories are "info", "warn", "error", time".
+ *                        Custom categories can be used as well. (opt).
+ * @param  {String}  src  The source of the the message (opt).
+ * @param  {boolean} silent If true, the log event won't fire.
+ * @return {YUI}      YUI instance.
+ */
+_yuitest_coverline("build/yui-log/yui-log.js", 106);
+INSTANCE.message = function() {
+    _yuitest_coverfunc("build/yui-log/yui-log.js", "message", 106);
+_yuitest_coverline("build/yui-log/yui-log.js", 107);
+return INSTANCE.log.apply(INSTANCE, arguments);
+};
+
+
+}, '@VERSION@', {"requires": ["yui-base"]});

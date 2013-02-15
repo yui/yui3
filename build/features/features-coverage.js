@@ -510,4 +510,51 @@ var DOCUMENT = Y.config.doc,
     _yuitest_coverline("build/features/features.js", 366);
 if (node && node.style) {
         _yuitest_coverline("build/features/features.js", 367);
-ret = !('MozTransition' in node
+ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style || 'transition' in node.style);
+    }
+
+    _yuitest_coverline("build/features/features.js", 370);
+return ret;
+},
+    "trigger": "transition"
+});
+// widget-base-ie
+_yuitest_coverline("build/features/features.js", 375);
+add('load', '19', {
+    "name": "widget-base-ie",
+    "trigger": "widget-base",
+    "ua": "ie"
+});
+// yql-jsonp
+_yuitest_coverline("build/features/features.js", 381);
+add('load', '20', {
+    "name": "yql-jsonp",
+    "test": function (Y) {
+    /* Only load the JSONP module when not in nodejs or winjs
+    TODO Make the winjs module a CORS module
+    */
+    _yuitest_coverfunc("build/features/features.js", "\"test\"", 383);
+_yuitest_coverline("build/features/features.js", 387);
+return (!Y.UA.nodejs && !Y.UA.winjs);
+},
+    "trigger": "yql",
+    "when": "after"
+});
+// yql-nodejs
+_yuitest_coverline("build/features/features.js", 393);
+add('load', '21', {
+    "name": "yql-nodejs",
+    "trigger": "yql",
+    "ua": "nodejs",
+    "when": "after"
+});
+// yql-winjs
+_yuitest_coverline("build/features/features.js", 400);
+add('load', '22', {
+    "name": "yql-winjs",
+    "trigger": "yql",
+    "ua": "winjs",
+    "when": "after"
+});
+
+}, '@VERSION@', {"requires": ["yui-base"]});

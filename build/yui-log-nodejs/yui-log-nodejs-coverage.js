@@ -150,4 +150,10 @@ sys.error(this.consoleColor(t.toLowerCase() + ':', lvl) + m + ' ' + this.console
 
 _yuitest_coverline("build/yui-log-nodejs/yui-log-nodejs.js", 75);
 if (!Y.config.logFn) {
-    _yuitest_coverline("build/yui-log-nodejs/yui-log-node
+    _yuitest_coverline("build/yui-log-nodejs/yui-log-nodejs.js", 76);
+Y.config.logFn = logFn;
+}
+
+
+
+}, '@VERSION@');
