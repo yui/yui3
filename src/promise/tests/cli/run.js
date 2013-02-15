@@ -22,10 +22,7 @@ YUI({useSync: true }).use('test', function(Y) {
         modules: {
             'batch-tests':  {
                 fullpath: path.join(__dirname, '../unit/assets/batch-tests.js'),
-                requires: [
-                    'promise-batch',
-                    'test'
-                ]
+                requires: [ 'promise', 'test' ]
             },
             'when-tests': {
                 fullpath: path.join(__dirname, '../unit/assets/when-tests.js'),

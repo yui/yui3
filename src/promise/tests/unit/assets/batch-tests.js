@@ -113,7 +113,7 @@ YUI.add('batch-tests', function (Y) {
 
 }, '@VERSION@', {
     requires: [
-        'promise-batch',
+        'promise',
         'test'
     ]
 });
