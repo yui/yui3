@@ -10522,6 +10522,35 @@ Y.mix(YUI.Env[Y.version].modules, {
             "transition"
         ]
     },
+    "tree": {
+        "requires": [
+            "base-build",
+            "tree-node"
+        ]
+    },
+    "tree-labelable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-lazy": {
+        "requires": [
+            "base-pluginhost",
+            "plugin",
+            "tree"
+        ]
+    },
+    "tree-node": {},
+    "tree-openable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-selectable": {
+        "requires": [
+            "tree"
+        ]
+    },
     "uploader": {
         "requires": [
             "uploader-html5",
@@ -10744,7 +10773,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '60ad5e383254f90b84fa284a4d0d96f2';
+YUI.Env[Y.version].md5 = 'd17ee7896ae14d00bcbcb6f7f59310c2';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
