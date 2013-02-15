@@ -10,7 +10,7 @@
     "exec": [
         "./scripts/build.js"
     ],
-    "postexec": [
+    "_postexec": [
         "shifter --config build-npm.json"
     ],
     "builds": {
