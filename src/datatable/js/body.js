@@ -14,7 +14,8 @@ var Lang         = Y.Lang,
     htmlEscape   = Y.Escape.html,
     toArray      = Y.Array,
     bind         = Y.bind,
-    YObject      = Y.Object;
+    YObject      = Y.Object,
+    valueRegExp  = /\{value\}/g;
 
 /**
 View class responsible for rendering the `<tbody>` section of a table. Used as
@@ -55,13 +56,25 @@ Supported properties of the column objects include:
     against XSS.
   * `className` - Space delimited CSS classes to add to all `<td>`s in a column.
 
+A column `formatter` can be:
+
+  * a function, as described below.
+  * a string which can be:
+      * the name of a pre-defined formatter function
+        which can be located in the `Y.DataTable.BodyView.Formatters` hash using the
+        value of the `formatter` property as the index.
+      * A template that can use the `{value}` placeholder to include the value
+        for the current cell or the name of any field in the underlaying model
+        also enclosed in curly braces.  Any number and type of these placeholders
+        can be used.
+
 Column `formatter`s are passed an object (`o`) with the following properties:
 
   * `value` - The current value of the column's associated attribute, if any.
   * `data` - An object map of Model keys to their current values.
   * `record` - The Model instance.
   * `column` - The column configuration object for the current column.
-  * `className` - Initially empty string to allow `formatter`s to add CSS 
+  * `className` - Initially empty string to allow `formatter`s to add CSS
     classes to the cell's `<td>`.
   * `rowIndex` - The zero-based row number.
   * `rowClass` - Initially empty string to allow `formatter`s to add CSS
@@ -112,7 +125,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     /**
     CSS class applied to even rows.  This is assigned at instantiation.
-    
+
     For DataTable, this will be `yui3-datatable-even`.
 
     @property CLASS_EVEN
@@ -124,7 +137,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     /**
     CSS class applied to odd rows.  This is assigned at instantiation.
-    
+
     When used by DataTable instances, this will be `yui3-datatable-odd`.
 
     @property CLASS_ODD
@@ -229,7 +242,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 }
             }
         }
-        
+
         return cell || null;
     },
 
@@ -237,7 +250,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     Returns the generated CSS classname based on the input.  If the `host`
     attribute is configured, it will attempt to relay to its `getClassName`
     or use its static `NAME` property as a string base.
-    
+
     If `host` is absent or has neither method nor `NAME`, a CSS classname
     will be generated using this class's `NAME`.
 
@@ -376,7 +389,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
       * `data` - An object map of Model keys to their current values.
       * `record` - The Model instance.
       * `column` - The column configuration object for the current column.
-      * `className` - Initially empty string to allow `formatter`s to add CSS 
+      * `className` - Initially empty string to allow `formatter`s to add CSS
         classes to the cell's `<td>`.
       * `rowIndex` - The zero-based row number.
       * `rowClass` - Initially empty string to allow `formatter`s to add CSS
@@ -420,7 +433,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             columns = this.get('columns'),
             tbody   = this.tbodyNode ||
                       (this.tbodyNode = this._createTBodyNode());
-        
+
         // Needed for mutation
         this._createRowTemplate(columns);
 
@@ -433,6 +446,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         if (tbody.get('parentNode') !== table) {
             table.appendChild(tbody);
         }
+
+        this._afterRenderCleanup();
 
         this.bindUI();
 
@@ -455,7 +470,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     // 2. column deletions
     // 3. column additions
     // 4. column moves (preserve cells)
-    _afterColumnsChange: function (e) {
+    _afterColumnsChange: function () {
         this.render();
     },
 
@@ -469,7 +484,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     @since 3.5.0
     **/
-    _afterDataChange: function (e) {
+    _afterDataChange: function () {
         //var type = e.type.slice(e.type.lastIndexOf(':') + 1);
 
         // TODO: Isolate changes
@@ -486,7 +501,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     @since 3.6.0
     **/
-    _afterModelListChange: function (e) {
+    _afterModelListChange: function () {
         var handles = this._eventHandles;
 
         if (handles.dataChange) {
@@ -632,7 +647,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
       * `clientID` - From Model, used the assign the `<tr>`'s 'id' attribute.
       * `foo` - The value to populate the 'foo' column cell content.  This
         value will be the value stored in the Model's `foo` attribute, or the
-        result of the column's `formatter` if assigned.  If the value is '', 
+        result of the column's `formatter` if assigned.  If the value is '',
         `null`, or `undefined`, and the column's `emptyCellValue` is assigned,
         that value will be used.
       * `bar` - Same for the 'bar' column cell content.
@@ -671,7 +686,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
             values[token + '-className'] = '';
 
-            if (col.formatter) {
+            if (col._formatterFn) {
                 formatterData = {
                     value    : value,
                     data     : data,
@@ -682,23 +697,16 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                     rowIndex : index
                 };
 
-                if (typeof col.formatter === 'string') {
-                    if (value !== undefined) {
-                        // TODO: look for known formatters by string name
-                        value = fromTemplate(col.formatter, formatterData);
-                    }
-                } else {
-                    // Formatters can either return a value
-                    value = col.formatter.call(host, formatterData);
+                // Formatters can either return a value
+                value = col._formatterFn.call(host, formatterData);
 
-                    // or update the value property of the data obj passed
-                    if (value === undefined) {
-                        value = formatterData.value;
-                    }
-
-                    values[token + '-className'] = formatterData.className;
-                    values.rowClass += ' ' + formatterData.rowClass;
+                // or update the value property of the data obj passed
+                if (value === undefined) {
+                    value = formatterData.value;
                 }
+
+                values[token + '-className'] = formatterData.className;
+                values.rowClass += ' ' + formatterData.rowClass;
             }
 
             if (value === undefined || value === null || value === '') {
@@ -728,12 +736,14 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _createRowTemplate: function (columns) {
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
-            i, len, col, key, token, headers, tokenValues;
+            F = Y.DataTable.BodyView.Formatters,
+            i, len, col, key, token, headers, tokenValues, formatter;
 
         for (i = 0, len = columns.length; i < len; ++i) {
             col     = columns[i];
             key     = col.key;
             token   = col._id || key;
+            formatter = col.formatter;
             // Only include headers if there are more than one
             headers = (col._headers || []).length > 1 ?
                         'headers="' + col._headers.join(' ') + '"' : '';
@@ -746,6 +756,15 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                            this.getClassName('cell') +
                            ' {' + token + '-className}'
             };
+            if (formatter) {
+                if (Lang.isFunction(formatter)) {
+                    col._formatterFn = formatter;
+                } else if (formatter in F) {
+                    col._formatterFn = F[formatter].call(this.host || this, col);
+                } else {
+                    tokenValues.content = formatter.replace(valueRegExp, tokenValues.content);
+                }
+            }
 
             if (col.nodeFormatter) {
                 // Defer all node decoration to the formatter
@@ -758,6 +777,20 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         this._rowTemplate = fromTemplate(this.ROW_TEMPLATE, {
             content: html
         });
+    },
+    /**
+    Cleans up temporary values created during rendering.
+    @method _afterRenderCleanup
+    @private
+    */
+    _afterRenderCleanup: function () {
+        var columns = this.get('columns'),
+            i, len = columns.length;
+
+        for (i = 0;i < len; i+=1) {
+            delete columns[i]._formatterFn;
+        }
+
     },
 
     /**
@@ -857,4 +890,18 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     //_rowTemplate: null
+},{
+    /**
+    Hash of formatting functions for cell contents.
+
+    This property can be populated with a hash of formatting functions by the developer
+    or a set of pre-defined functions can be loaded via the `datatable-formatters` module.
+
+    See: [DataTable.BodyView.Formatters](./DataTable.BodyView.Formatters.html)
+    @property Formatters
+    @type Object
+    @since 3.8.0
+    @static
+    **/
+    Formatters: {}
 });
