@@ -1,7 +1,7 @@
 Promise Change History
 ======================
 
-3.9.0
+@VERSION@
 -----
 
-* Initial release.
+* Initial release. [Juan Dopazo and Luke Smith]
