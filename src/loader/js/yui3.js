@@ -816,7 +816,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "datatable-message": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "datatable-base"
@@ -844,7 +845,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "datatable-sort": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "datatable-base"
@@ -2564,4 +2566,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'd050a2294f84d3996bb46f592448f782';
+YUI.Env[Y.version].md5 = '94eedda504937a40f7cb6369adfcd937';

@@ -4520,7 +4520,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.01.30-21-00',
+            GALLERY_VERSION = 'gallery-2013.02.13-21-08',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -8194,7 +8194,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "datatable-message": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "datatable-base"
@@ -8222,7 +8223,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "datatable-sort": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "datatable-base"
@@ -9942,7 +9944,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'd050a2294f84d3996bb46f592448f782';
+YUI.Env[Y.version].md5 = '94eedda504937a40f7cb6369adfcd937';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
