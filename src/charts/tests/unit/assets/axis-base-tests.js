@@ -111,6 +111,35 @@ YUI.add('axis-base-tests', function(Y) {
             {date: "01/21/2009", revenue: 198.91, expenses: 211.91},
             {date: "01/22/2009", revenue: 229.28, expenses: 176.28}
         ],
+        
+        "test: getDataByKey()" : function() {
+            var resultData,
+                key,
+                i,
+                len,
+                item,
+                dataValue,
+                axis = new Y.AxisBase({
+                    dataProvider: this.dataValues
+                });
+            resultData = axis.getDataByKey(this.keys);
+            Y.Assert.areEqual(0, Y.Object.size(resultData), "The getDataByKey method should return an empty object.");
+            axis.set("keys", this.keys); 
+            resultData = axis.getDataByKey(this.keys);
+            for(key in resultData) {
+                if(resultData.hasOwnProperty(key)) {
+                    item = resultData[key];
+                    for(i = 0; i < len; i = i + 1) {
+                        dataValue = this.dataValues[i][key];
+                        Y.Assert.areEqual(
+                            dataValue, 
+                            item[i], 
+                            "The value of the " + i + " index of the " + key + " array from the object returned by getDataByKey should equal " + dataValue + "."
+                       ); 
+                    }
+                }
+            }
+        },
 
         "test: AxisBase()" : function() {
             this.axis = new Y.AxisBase();

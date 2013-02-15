@@ -1,6 +1,7 @@
 {
     "series-line": {
         "requires":[
+            "series-cartesian",
             "series-line-util"
         ]
     }
