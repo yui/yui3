@@ -4,4 +4,4 @@ Tree Change History
 @VERSION@
 -----
 
-* Initial release.
+* Initial release. [Ryan Grove]
