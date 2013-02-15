@@ -14,6 +14,10 @@ YUI({
     coverage: ['promise'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
+        'batch-tests': {
+            fullpath: './assets/batch-tests.js',
+            requires: ['promise', 'test']
+        },
         'when-tests': {
             fullpath: './assets/when-tests.js',
             requires: ['promise', 'test']
@@ -23,7 +27,7 @@ YUI({
             requires: ['promise', 'test']
         }
     }
-}).use('promise-tests', 'when-tests', 'test-console', function(Y) {
+}).use('promise-tests', 'when-tests', 'batch-tests', 'test-console', function(Y) {
 
     (new Y.Test.Console()).render('#log');
     Y.Test.Runner.setName('Promise');

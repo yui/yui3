@@ -14,4 +14,4 @@ written by members of the JavaScript community.
 Create promises by calling the Y.Promise constructor. Inherit from the Y.Promise
 constructor to return customized promises that have extra methods. The `then`
 method returns a promise based on its constructor, so extended promises will
-return the right from `then`.
+return the right promise type from `then`.

@@ -3,7 +3,6 @@ Adds a `Y.batch()` method to wrap any number of callbacks or promises in a
 single promise that will be resolved when all callbacks and/or promises have completed.
 
 @module promise
-@submodule promise-batch
 **/
 
 var slice = [].slice;
@@ -22,16 +21,16 @@ it will be wrapped in a new promise.
 Y.batch = function () {
     var funcs     = slice.call(arguments),
         remaining = funcs.length,
-        j         = 0,
+        i         = 0,
         length    = funcs.length,
         results   = [];
 
     return new Y.Promise(function (fulfill, reject) {
         var allDone = this;
 
-        function oneDone(i) {
+        function oneDone(index) {
             return function (value) {
-                results[i] = value;
+                results[index] = value;
 
                 remaining--;
 
@@ -45,8 +44,8 @@ Y.batch = function () {
             return fulfill(results);
         }
 
-        for (; j < length; j++) {
-            Y.when(funcs[j], oneDone(j), reject);
+        for (; i < length; i++) {
+            Y.when(funcs[i], oneDone(i), reject);
         }
     });
 };
