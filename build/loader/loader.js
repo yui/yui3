@@ -3577,6 +3577,12 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "type": "css"
     },
+    "cssnormalize": {
+        "type": "css"
+    },
+    "cssnormalize-context": {
+        "type": "css"
+    },
     "cssreset": {
         "type": "css"
     },
@@ -3755,7 +3761,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "datatable-message": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "datatable-base"
@@ -3777,7 +3784,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "datatable-sort": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "datatable-base"
@@ -5514,6 +5522,35 @@ Y.mix(YUI.Env[Y.version].modules, {
             "transition"
         ]
     },
+    "tree": {
+        "requires": [
+            "base-build",
+            "tree-node"
+        ]
+    },
+    "tree-labelable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-lazy": {
+        "requires": [
+            "base-pluginhost",
+            "plugin",
+            "tree"
+        ]
+    },
+    "tree-node": {},
+    "tree-openable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-selectable": {
+        "requires": [
+            "tree"
+        ]
+    },
     "uploader": {
         "requires": [
             "uploader-html5",
@@ -5736,7 +5773,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '60ad5e383254f90b84fa284a4d0d96f2';
+YUI.Env[Y.version].md5 = '607251d809f111706870ff018e0c1a73';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

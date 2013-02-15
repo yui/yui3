@@ -668,6 +668,12 @@
         ],
         "type": "css"
     },
+    "cssnormalize": {
+        "type": "css"
+    },
+    "cssnormalize-context": {
+        "type": "css"
+    },
     "cssreset": {
         "type": "css"
     },
@@ -846,7 +852,8 @@
     },
     "datatable-message": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "datatable-base"
@@ -868,7 +875,8 @@
     },
     "datatable-sort": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "datatable-base"
@@ -2483,6 +2491,35 @@
         },
         "requires": [
             "transition"
+        ]
+    },
+    "tree": {
+        "requires": [
+            "base-build",
+            "tree-node"
+        ]
+    },
+    "tree-labelable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-lazy": {
+        "requires": [
+            "base-pluginhost",
+            "plugin",
+            "tree"
+        ]
+    },
+    "tree-node": {},
+    "tree-openable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-selectable": {
+        "requires": [
+            "tree"
         ]
     },
     "uploader": {
