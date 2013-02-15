@@ -4,7 +4,7 @@
     "description": "A modern, HTML5-ready alternative to CSS resets",
     "author"     : "Nicolas Gallagher",
 
-    "tags": ["css"],
+    "tags": ["css", "beta"],
     "use" : ["normalize"],
 
     "hideAPILink": true,
