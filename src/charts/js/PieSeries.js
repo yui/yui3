@@ -1,13 +1,23 @@
 /**
+ * Provides functionality for creating a pie series.
+ *
+ * @module charts
+ * @submodule series-pie
+ */
+/**
  * PieSeries visualizes data as a circular chart divided into wedges which represent data as a
  * percentage of a whole.
  *
- * @module charts
- * @submodule charts-base
  * @class PieSeries
  * @constructor
  * @extends MarkerSeries
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-pie
  */
+var CONFIG = Y.config,
+    DOCUMENT = CONFIG.doc,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
 Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     /**
      * Image map used for interactivity when rendered with canvas.
@@ -36,8 +46,19 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     _setMap: function()
     {
         var id = "pieHotSpotMapi_" + Math.round(100000 * Math.random()),
-            cb = this.get("graph").get("contentBox"),
+            graph = this.get("graph"),
+            graphic,
+            cb,
             areaNode;
+        if(graph) 
+        {
+            cb = graph.get("contentBox");
+        }
+        else
+        {
+            graphic = this.get("graphic");
+            cb = graphic.get("node");
+        }
         if(this._image)
         {
             cb.removeChild(this._image);
@@ -184,6 +205,18 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
 
     /**
+     * Returns the sum of all values for the series.
+     *
+     * @method getTotalValues
+     * @return Number
+     */
+    getTotalValues: function()
+    {
+        var total = this.get("valueAxis").getTotalByKey(this.get("valueKey"));
+        return total;
+    },
+
+    /**
      * Draws the series. Overrides the base implementation.
      *
      * @method draw
@@ -191,9 +224,9 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
      */
     draw: function()
     {
-        var graph = this.get("graph"),
-            w = graph.get("width"),
-            h = graph.get("height");
+        var graphic = this.get("graphic"),
+            w = graphic.get("width"),
+            h = graphic.get("height");
         if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
         {
             this._rendered = true;
@@ -241,8 +274,8 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             tfc,
             tfa,
             padding = styles.padding,
-            graph = this.get("graph"),
-            minDimension = Math.min(graph.get("width"), graph.get("height")),
+            graphic = this.get("graphic"),
+            minDimension = Math.min(graphic.get("width"), graphic.get("height")),
             w = minDimension - (padding.left + padding.right),
             h = minDimension - (padding.top + padding.bottom),
             startAngle = -90,
@@ -257,7 +290,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             lw,
             wedgeStyle,
             marker,
-            graphOrder = this.get("graphOrder"),
+            graphOrder = this.get("graphOrder") || 0,
             isCanvas = Y.Graphic.NAME == "canvasGraphic";
         for(; i < itemCount; ++i)
         {
@@ -439,7 +472,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         var graphic = this.get("graphic"),
             marker,
             cfg = Y.clone(styles);
-        graphic.set("autoDraw", false);
         marker = graphic.addShape(cfg);
         marker.addClass(SERIES_MARKER);
         return marker;

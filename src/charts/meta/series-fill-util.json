@@ -1,0 +1,7 @@
+{
+    "series-fill-util": {
+        "requires":[
+            "series-base"
+        ]
+    }
+}

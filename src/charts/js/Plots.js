@@ -1,10 +1,19 @@
 /**
- * Utility class used for drawing markers.
+ * Provides functionality for drawing plots in a series.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-plot-util
+ */
+var Y_Lang = Y.Lang,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
+
+/**
+ * Utility class used for drawing markers.
+ *
  * @class Plots
  * @constructor
+ * @submodule series-plot-util
  */
 function Plots(cfg)
 {
@@ -211,7 +220,7 @@ Plots.prototype = {
     {
         var marker,
             border = styles.border;
-        styles.id = this.get("chart").get("id") + "_" + order + "_" + index;
+        styles.id = this._getChart().get("id") + "_" + order + "_" + index;
         //fix name differences between graphic layer
         border.opacity = border.alpha;
         styles.stroke = border;
@@ -253,7 +262,6 @@ Plots.prototype = {
         var graphic = this.get("graphic"),
             marker,
             cfg = Y.clone(styles);
-        graphic.set("autoDraw", false);
         cfg.type = cfg.shape;
         marker = graphic.addShape(cfg);
         marker.addClass(SERIES_MARKER);
@@ -311,7 +319,7 @@ Plots.prototype = {
         //fix name differences between graphic layer
         border.opacity = border.alpha;
         cfg = {
-            id: this.get("chart").get("id") + "_" + styles.graphOrder,
+            id: this._getChart().get("id") + "_" + styles.graphOrder,
             stroke: border,
             fill: styles.fill,
             dimensions: styles.dimensions,

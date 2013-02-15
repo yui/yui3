@@ -33,13 +33,10 @@
     // pass or at runtime.
   };
 
-  Handlebars.AST.PartialNode = function(id, context) {
-    this.type    = "partial";
-
-    // TODO: disallow complex IDs
-
-    this.id      = id;
-    this.context = context;
+  Handlebars.AST.PartialNode = function(partialName, context) {
+    this.type         = "partial";
+    this.partialName  = partialName;
+    this.context      = context;
   };
 
   var verifyMatch = function(open, close) {
@@ -91,21 +88,36 @@
     // an ID is simple if it only has one part, and that part is not
     // `..` or `this`.
     this.isSimple = parts.length === 1 && !this.isScoped && depth === 0;
+
+    this.stringModeValue = this.string;
+  };
+
+  Handlebars.AST.PartialNameNode = function(name) {
+    this.type = "PARTIAL_NAME";
+    this.name = name;
+  };
+
+  Handlebars.AST.DataNode = function(id) {
+    this.type = "DATA";
+    this.id = id;
   };
 
   Handlebars.AST.StringNode = function(string) {
     this.type = "STRING";
     this.string = string;
+    this.stringModeValue = string;
   };
 
   Handlebars.AST.IntegerNode = function(integer) {
     this.type = "INTEGER";
     this.integer = integer;
+    this.stringModeValue = Number(integer);
   };
 
   Handlebars.AST.BooleanNode = function(bool) {
     this.type = "BOOLEAN";
     this.bool = bool;
+    this.stringModeValue = bool === "true";
   };
 
   Handlebars.AST.CommentNode = function(comment) {

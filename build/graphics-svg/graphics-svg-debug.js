@@ -286,7 +286,7 @@ SVGDrawing.prototype = {
     /**
      * Draws a rectangle with rounded corners.
      *
-     * @method drawRect
+     * @method drawRoundRect
      * @param {Number} x x-coordinate
      * @param {Number} y y-coordinate
      * @param {Number} w width

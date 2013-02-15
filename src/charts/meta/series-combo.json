@@ -1,0 +1,9 @@
+{
+    "series-combo": {
+        "requires":[
+            "series-line-util",
+            "series-plot-util",
+            "series-fill-util"
+        ]
+    }
+}

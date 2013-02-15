@@ -1659,7 +1659,6 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 }, '@VERSION@', {
     "requires": [
         "widget",
-        "substitute",
         "datatype-date",
         "datatype-date-math",
         "cssgrids"

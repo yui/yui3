@@ -1,15 +1,23 @@
 Handlebars Change History
 =========================
 
+@VERSION@
+-----
+
+* Upgraded Handlebars.js to 1.0.rc.2. [Issue #440]
+
+
 3.8.1
 -----
 
 * No changes.
 
+
 3.8.0
 -----
 
-  * No changes.
+* No changes.
+
 
 3.7.3
 -----

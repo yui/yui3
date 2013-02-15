@@ -129,7 +129,7 @@ Handlebars.JavaScriptCompiler = function() {};
         // evaluate it by executing `blockHelperMissing`
         this.opcode('pushProgram', program);
         this.opcode('pushProgram', inverse);
-        this.opcode('pushLiteral', '{}');
+        this.opcode('pushHash');
         this.opcode('blockValue');
       } else {
         this.ambiguousMustache(mustache, program, inverse);
@@ -138,7 +138,7 @@ Handlebars.JavaScriptCompiler = function() {};
         // evaluate it by executing `blockHelperMissing`
         this.opcode('pushProgram', program);
         this.opcode('pushProgram', inverse);
-        this.opcode('pushLiteral', '{}');
+        this.opcode('pushHash');
         this.opcode('ambiguousBlockValue');
       }
 
@@ -148,19 +148,24 @@ Handlebars.JavaScriptCompiler = function() {};
     hash: function(hash) {
       var pairs = hash.pairs, pair, val;
 
-      this.opcode('push', '{}');
+      this.opcode('pushHash');
 
       for(var i=0, l=pairs.length; i<l; i++) {
         pair = pairs[i];
         val  = pair[1];
 
-        this.accept(val);
+        if (this.options.stringParams) {
+          this.opcode('pushStringParam', val.stringModeValue, val.type);
+        } else {
+          this.accept(val);
+        }
+
         this.opcode('assignToHash', pair[0]);
       }
     },
 
     partial: function(partial) {
-      var id = partial.id;
+      var partialName = partial.partialName;
       this.usePartial = true;
 
       if(partial.context) {
@@ -169,7 +174,7 @@ Handlebars.JavaScriptCompiler = function() {};
         this.opcode('push', 'depth0');
       }
 
-      this.opcode('invokePartial', id.original);
+      this.opcode('invokePartial', partialName.name);
       this.opcode('append');
     },
 
@@ -210,17 +215,17 @@ Handlebars.JavaScriptCompiler = function() {};
     simpleMustache: function(mustache, program, inverse) {
       var id = mustache.id;
 
-      this.addDepth(id.depth);
-      this.opcode('getContext', id.depth);
-
-      if (id.parts.length) {
-        this.opcode('lookupOnContext', id.parts[0]);
-        for(var i=1, l=id.parts.length; i<l; i++) {
-          this.opcode('lookup', id.parts[i]);
-        }
+      if (id.type === 'DATA') {
+        this.DATA(id);
+      } else if (id.parts.length) {
+        this.ID(id);
       } else {
+        // Simplified ID for `this`
+        this.addDepth(id.depth);
+        this.opcode('getContext', id.depth);
         this.opcode('pushContext');
       }
+
       this.opcode('resolvePossibleLambda');
     },
 
@@ -240,11 +245,22 @@ Handlebars.JavaScriptCompiler = function() {};
     ID: function(id) {
       this.addDepth(id.depth);
       this.opcode('getContext', id.depth);
-      this.opcode('lookupOnContext', id.parts[0]);
+
+      var name = id.parts[0];
+      if (!name) {
+        this.opcode('pushContext');
+      } else {
+        this.opcode('lookupOnContext', id.parts[0]);
+      }
 
       for(var i=1, l=id.parts.length; i<l; i++) {
         this.opcode('lookup', id.parts[i]);
       }
+    },
+
+    DATA: function(data) {
+      this.options.data = true;
+      this.opcode('lookupData', data.id);
     },
 
     STRING: function(string) {
@@ -271,6 +287,7 @@ Handlebars.JavaScriptCompiler = function() {};
     },
 
     addDepth: function(depth) {
+      if(isNaN(depth)) { throw new Error("EWOT"); }
       if(depth === 0) { return; }
 
       if(!this.depths[depth]) {
@@ -312,7 +329,7 @@ Handlebars.JavaScriptCompiler = function() {};
           }
 
           this.opcode('getContext', param.depth || 0);
-          this.opcode('pushStringParam', param.string);
+          this.opcode('pushStringParam', param.stringModeValue, param.type);
         } else {
           this[param.type](param);
         }
@@ -326,7 +343,7 @@ Handlebars.JavaScriptCompiler = function() {};
       if(mustache.hash) {
         this.hash(mustache.hash);
       } else {
-        this.opcode('pushLiteral', '{}');
+        this.opcode('pushHash');
       }
 
       return params;
@@ -343,7 +360,7 @@ Handlebars.JavaScriptCompiler = function() {};
       if(mustache.hash) {
         this.hash(mustache.hash);
       } else {
-        this.opcode('pushLiteral', '{}');
+        this.opcode('pushHash');
       }
 
       return params;
@@ -437,7 +454,8 @@ Handlebars.JavaScriptCompiler = function() {};
       if (!this.isChild) {
         var namespace = this.namespace;
         var copies = "helpers = helpers || " + namespace + ".helpers;";
-        if(this.environment.usePartial) { copies = copies + " partials = partials || " + namespace + ".partials;"; }
+        if (this.environment.usePartial) { copies = copies + " partials = partials || " + namespace + ".partials;"; }
+        if (this.options.data) { copies = copies + " data = data || {};"; }
         out.push(copies);
       } else {
         out.push('');
@@ -517,7 +535,7 @@ Handlebars.JavaScriptCompiler = function() {};
 
       this.replaceStack(function(current) {
         params.splice(1, 0, current);
-        return current + " = blockHelperMissing.call(" + params.join(", ") + ")";
+        return "blockHelperMissing.call(" + params.join(", ") + ")";
       });
     },
 
@@ -629,7 +647,7 @@ Handlebars.JavaScriptCompiler = function() {};
       this.context.aliases.functionType = '"function"';
 
       this.replaceStack(function(current) {
-        return "typeof " + current + " === functionType ? " + current + "() : " + current;
+        return "typeof " + current + " === functionType ? " + current + ".apply(depth0) : " + current;
       });
     },
 
@@ -646,6 +664,16 @@ Handlebars.JavaScriptCompiler = function() {};
       });
     },
 
+    // [lookupData]
+    //
+    // On stack, before: ...
+    // On stack, after: data[id], ...
+    //
+    // Push the result of looking up `id` on the current data
+    lookupData: function(id) {
+      this.pushStack(this.nameLookup('data', id, 'data'));
+    },
+
     // [pushStringParam]
     //
     // On stack, before: ...
@@ -654,9 +682,24 @@ Handlebars.JavaScriptCompiler = function() {};
     // This opcode is designed for use in string mode, which
     // provides the string value of a parameter along with its
     // depth rather than resolving it immediately.
-    pushStringParam: function(string) {
+    pushStringParam: function(string, type) {
       this.pushStackLiteral('depth' + this.lastContext);
-      this.pushString(string);
+
+      this.pushString(type);
+
+      if (typeof string === 'string') {
+        this.pushString(string);
+      } else {
+        this.pushStackLiteral(string);
+      }
+    },
+
+    pushHash: function() {
+      this.push('{}');
+
+      if (this.options.stringParams) {
+        this.register('hashTypes', '{}');
+      }
     },
 
     // [pushString]
@@ -764,7 +807,7 @@ Handlebars.JavaScriptCompiler = function() {};
       var nextStack = this.nextStack();
 
       this.source.push('if (foundHelper) { ' + nextStack + ' = foundHelper.call(' + helper.callParams + '); }');
-      this.source.push('else { ' + nextStack + ' = ' + nonHelper + '; ' + nextStack + ' = typeof ' + nextStack + ' === functionType ? ' + nextStack + '() : ' + nextStack + '; }');
+      this.source.push('else { ' + nextStack + ' = ' + nonHelper + '; ' + nextStack + ' = typeof ' + nextStack + ' === functionType ? ' + nextStack + '.apply(depth0) : ' + nextStack + '; }');
     },
 
     // [invokePartial]
@@ -782,7 +825,7 @@ Handlebars.JavaScriptCompiler = function() {};
       }
 
       this.context.aliases.self = "this";
-      this.pushStack("self.invokePartial(" + params.join(", ") + ");");
+      this.pushStack("self.invokePartial(" + params.join(", ") + ")");
     },
 
     // [assignToHash]
@@ -794,6 +837,13 @@ Handlebars.JavaScriptCompiler = function() {};
     // and pushes the hash back onto the stack.
     assignToHash: function(key) {
       var value = this.popStack();
+
+      if (this.options.stringParams) {
+        var type = this.popStack();
+        this.popStack();
+        this.source.push("hashTypes['" + key + "'] = " + type + ";");
+      }
+
       var hash = this.topStack();
 
       this.source.push(hash + "['" + key + "'] = " + value + ";");
@@ -863,21 +913,28 @@ Handlebars.JavaScriptCompiler = function() {};
     },
 
     pushStack: function(item) {
-      this.source.push(this.incrStack() + " = " + item + ";");
-      this.compileStack.push("stack" + this.stackSlot);
-      return "stack" + this.stackSlot;
+      var stack = this.incrStack();
+      this.source.push(stack + " = " + item + ";");
+      this.compileStack.push(stack);
+      return stack;
     },
 
     replaceStack: function(callback) {
-      var item = callback.call(this, this.topStack());
+      var stack = this.topStack(),
+          item = callback.call(this, stack);
 
-      this.source.push(this.topStack() + " = " + item + ";");
-      return "stack" + this.stackSlot;
+      // Prevent modification of the context depth variable. Through replaceStack
+      if (/^depth/.test(stack)) {
+        stack = this.nextStack();
+      }
+
+      this.source.push(stack + " = " + item + ";");
+      return stack;
     },
 
     nextStack: function(skipCompileStack) {
       var name = this.incrStack();
-      this.compileStack.push("stack" + this.stackSlot);
+      this.compileStack.push(name);
       return name;
     },
 
@@ -932,7 +989,7 @@ Handlebars.JavaScriptCompiler = function() {};
     // the params and contexts arguments are passed in arrays
     // to fill in
     setupParams: function(paramSize, params) {
-      var options = [], contexts = [], param, inverse, program;
+      var options = [], contexts = [], types = [], param, inverse, program;
 
       options.push("hash:" + this.popStack());
 
@@ -961,12 +1018,15 @@ Handlebars.JavaScriptCompiler = function() {};
         params.push(param);
 
         if(this.options.stringParams) {
+          types.push(this.popStack());
           contexts.push(this.popStack());
         }
       }
 
       if (this.options.stringParams) {
         options.push("contexts:[" + contexts.join(",") + "]");
+        options.push("types:[" + types.join(",") + "]");
+        options.push("hashTypes:hashTypes");
       }
 
       if(this.options.data) {
@@ -1012,16 +1072,28 @@ Handlebars.JavaScriptCompiler = function() {};
 })(Handlebars.Compiler, Handlebars.JavaScriptCompiler);
 
 Handlebars.precompile = function(string, options) {
-  options = options || {};
+  if (typeof string !== 'string') {
+    throw new Handlebars.Exception("You must pass a string to Handlebars.compile. You passed " + string);
+  }
 
+  options = options || {};
+  if (!('data' in options)) {
+    options.data = true;
+  }
   var ast = Handlebars.parse(string);
   var environment = new Handlebars.Compiler().compile(ast, options);
   return new Handlebars.JavaScriptCompiler().compile(environment, options);
 };
 
 Handlebars.compile = function(string, options) {
-  options = options || {};
+  if (typeof string !== 'string') {
+    throw new Handlebars.Exception("You must pass a string to Handlebars.compile. You passed " + string);
+  }
 
+  options = options || {};
+  if (!('data' in options)) {
+    options.data = true;
+  }
   var compiled;
   function compile() {
     var ast = Handlebars.parse(string);
