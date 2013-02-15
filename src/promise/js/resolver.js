@@ -8,8 +8,23 @@ successfully (`fulfill()`) or unsuccessfully (`reject()`).
 @param {Promise} promise The promise instance this resolver will be handling
 **/
 function Resolver(promise) {
-    this._fulfillSubs = [];
-    this._rejectSubs = [];
+    /**
+    List of success callbacks
+
+    @property _callbacks
+    @type Array
+    @private
+    **/
+    this._callbacks = [];
+
+    /**
+    List of failure callbacks
+
+    @property _errbacks
+    @type Array
+    @private
+    **/
+    this._errbacks = [];
 
     /**
     The promise for this Resolver.
@@ -20,10 +35,12 @@ function Resolver(promise) {
     this.promise = promise;
 
     /**
-    The status of the operation.
+    The status of the operation. This property may take only one of the following
+    values: 'pending', 'fulfilled' or 'rejected'.
 
     @property _status
     @type String
+    @default 'pending'
     @private
     **/
     this._status = 'pending';
@@ -45,10 +62,19 @@ Y.mix(Resolver.prototype, {
         }
 
         if (this._status !== 'rejected') {
-            this._notify(this._fulfillSubs, this._result);
+            this._notify(this._callbacks, this._result);
 
-            this._fulfillSubs = [];
-            this._rejectSubs = null;
+            // Reset the callback list so that future calls to fulfill()
+            // won't call the same callbacks again. Promises keep a list
+            // of callbacks, they're not the same as events. In practice,
+            // calls to fulfill() after the first one should not be made by
+            // the user but by then()
+            this._callbacks = [];
+
+            // Once a promise gets fulfilled it can't be rejected, so
+            // there is no point in keeping the list. Remove it to help
+            // garbage collection
+            this._errbacks = null;
 
             this._status = 'fulfilled';
         }
@@ -69,10 +95,11 @@ Y.mix(Resolver.prototype, {
         }
 
         if (this._status !== 'fulfilled') {
-            this._notify(this._rejectSubs, this._result);
+            this._notify(this._errbacks, this._result);
 
-            this._fulfillSubs = null;
-            this._rejectSubs = [];
+            // See fulfill()
+            this._callbacks = null;
+            this._errbacks = [];
 
             this._status = 'rejected';
         }
@@ -97,11 +124,10 @@ Y.mix(Resolver.prototype, {
     then: function (callback, errback) {
         // When the current promise is fulfilled or rejected, either the
         // callback or errback will be executed via the function pushed onto
-        // this._subs.resolve or this._sub.reject.  However, to allow then()
+        // this._callbacks or this._errbacks.  However, to allow then()
         // chaining, the execution of either function needs to be represented
         // by a Resolver (the same Resolver can represent both flow paths), and
         // its promise returned.
-
         var promise = this.promise,
             thenFulfill, thenReject,
 
@@ -112,17 +138,19 @@ Y.mix(Resolver.prototype, {
                 thenReject = reject;
             }),
 
-            resolveSubs = this._fulfillSubs || [],
-            rejectSubs  = this._rejectSubs  || [];
+            callbackList = this._callbacks || [],
+            errbackList  = this._errbacks  || [];
 
         // Because the callback and errback are represented by a Resolver, it
         // must be fulfilled or rejected to propagate through the then() chain.
         // The same logic applies to resolve() and reject() for fulfillment.
-        resolveSubs.push(typeof callback === 'function' ?
+        callbackList.push(typeof callback === 'function' ?
             this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
-        rejectSubs.push(typeof errback === 'function' ?
+        errbackList.push(typeof errback === 'function' ?
             this._wrap(thenFulfill, thenReject, errback) : thenReject);
 
+        // If a promise is already fulfilled or rejected, notify the newly added
+        // callbacks by calling fulfill() or reject()
         if (this._status === 'fulfilled') {
             this.fulfill(this._result);
         } else if (this._status === 'rejected') {
@@ -175,9 +203,9 @@ Y.mix(Resolver.prototype, {
                     return thenReject(e);
                 }
 
-                // Returning a promise from a callback makes the current
-                // promise sync up with the returned promise
                 if (Promise.isPromise(result)) {
+                    // Returning a promise from a callback makes the current
+                    // promise sync up with the returned promise
                     result.then(thenFulfill, thenReject);
                 } else {
                     // Non-promise return values always trigger resolve()
