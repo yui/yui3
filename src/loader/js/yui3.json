@@ -1947,6 +1947,11 @@
             "yui-base"
         ]
     },
+    "promise": {
+        "requires": [
+            "timers"
+        ]
+    },
     "querystring": {
         "use": [
             "querystring-parse",
