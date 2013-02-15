@@ -950,6 +950,19 @@ nodeSuite.add(new Y.Test.Case({
         Assert.isFalse(this.unattachedNode.isRoot(), 'should be false for an unattached node');
     },
 
+    'next() should return the next sibling': function () {
+        var nextNode = this.tree.rootNode.append({});
+        Assert.areSame(nextNode, this.node.next(), 'should be the next sibling');
+    },
+
+    'next() should return `undefined` if there is no next sibling': function () {
+        Assert.isUndefined(this.node.next(), 'should be undefined');
+    },
+
+    'next() should return `undefined` if the node is a root node': function () {
+        Assert.isUndefined(this.node.next(), 'should be undefined');
+    },
+
     'prepend() should wrap Tree#prependNode()': function () {
         var child   = this.tree.createNode(),
             mock    = Mock(),
@@ -965,6 +978,19 @@ nodeSuite.add(new Y.Test.Case({
         Assert.areSame(child, this.node.prepend(child, options), 'should return the child');
 
         Mock.verify(mock);
+    },
+
+    'previous() should return the previous sibling': function () {
+        var prevNode = this.tree.rootNode.prepend({});
+        Assert.areSame(prevNode, this.node.previous(), 'should be the previous sibling');
+    },
+
+    'previous() should return `undefined` if there is no previous sibling': function () {
+        Assert.isUndefined(this.node.previous(), 'should be undefined');
+    },
+
+    'previous() should return `undefined` if the node is a root node': function () {
+        Assert.isUndefined(this.node.previous(), 'should be undefined');
     },
 
     'remove() should wrap Tree#removeNode()': function () {

@@ -306,6 +306,20 @@ TreeNode.prototype = {
     },
 
     /**
+    Returns this node's next sibling, or `undefined` if this node is the last
+    child.
+
+    @method next
+    @return {Tree.Node} This node's next sibling, or `undefined` if this node is
+        the last child.
+    **/
+    next: function () {
+        if (this.parent) {
+            return this.parent.children[this.index() + 1];
+        }
+    },
+
+    /**
     Prepends a node or array of nodes at the beginning of this node's children.
 
     If a node being prepended is from another tree, it and all its children will
@@ -323,6 +337,20 @@ TreeNode.prototype = {
     **/
     prepend: function (node, options) {
         return this.tree.prependNode(this, node, options);
+    },
+
+    /**
+    Returns this node's previous sibling, or `undefined` if this node is the
+    first child
+
+    @method previous
+    @return {Tree.Node} This node's previous sibling, or `undefined` if this
+        node is the first child.
+    **/
+    previous: function () {
+        if (this.parent) {
+            return this.parent.children[this.index() - 1];
+        }
     },
 
     /**
