@@ -189,8 +189,6 @@ TreeNode.prototype = {
         return this.tree.appendNode(this, node, options);
     },
 
-    // TODO: clone()?
-
     /**
     Removes all children from this node. The removed children will still be
     reusable unless the `destroy` option is truthy.
