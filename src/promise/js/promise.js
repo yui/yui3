@@ -29,6 +29,21 @@ A promise represents a value that may not yet be available. Promises allow
 you to chain asynchronous operations, write synchronous looking code and
 handle errors throughout the process.
 
+This constructor takes a function as a parameter where you can insert the logic
+that fulfills or rejects this promise. The fulfillment value and the rejection
+reason can be any JavaScript value. It's encouraged that rejection reasons be
+error objects
+
+<pre><code>
+var fulfilled = new Y.Promise(function (fulfill) {
+    fulfill('I am a fulfilled promise');
+});
+
+var rejected = new Y.Promise(function (fulfill, reject) {
+    reject(new Error('I am a rejected promise'));
+});
+</code></pre>
+
 @class Promise
 @constructor
 @param {Function} fn A function where to insert the logic that resolves this
@@ -104,6 +119,9 @@ method.
 @static
 **/
 Promise.isPromise = function (obj) {
+    // We test promises by form to be able to identify other implementations
+    // as promises. This is important for cross compatibility and in particular
+    // Y.when which should take any kind of promise
     return !!obj && typeof obj.then === 'function';
 };
 
