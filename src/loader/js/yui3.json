@@ -668,6 +668,12 @@
         ],
         "type": "css"
     },
+    "cssnormalize": {
+        "type": "css"
+    },
+    "cssnormalize-context": {
+        "type": "css"
+    },
     "cssreset": {
         "type": "css"
     },
