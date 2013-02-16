@@ -33,7 +33,27 @@
         },
         "series-base" : {
             "jsfiles": [
+                "SeriesBase.js"
+            ]
+        },
+        "series-cartesian" : {
+            "jsfiles": [
                 "CartesianSeries.js"
+            ]
+        },
+        "series-range" : {
+            "jsfiles" : [
+                "RangeSeries.js"
+            ]
+        },
+        "series-candlestick" : {
+            "jsfiles" : [
+                "CandlestickSeries.js"
+            ]
+        },
+        "series-ohlc" : {
+            "jsfiles" : [
+                "OHLCSeries.js"
             ]
         },
         "axis" : {
