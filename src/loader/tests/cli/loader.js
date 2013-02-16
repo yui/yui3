@@ -1180,6 +1180,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-datasource")) > -1, "Module (datatable-datasource) not found in sorted array");
         },
+     "Testing datatable-formatters": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatable-formatters"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatable-formatters")) > -1, "Module (datatable-formatters) not found in sorted array");
+        },
      "Testing datatable-head": function(data) {
             var loader = new Y.Loader({
                 require: ["datatable-head"],
@@ -2008,6 +2018,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("frame")) > -1, "Module (frame) not found in sorted array");
+        },
+     "Testing gallery-context-menu": function(data) {
+            var loader = new Y.Loader({
+                require: ["gallery-context-menu"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("gallery-context-menu")) > -1, "Module (gallery-context-menu) not found in sorted array");
         },
      "Testing gesture-simulate": function(data) {
             var loader = new Y.Loader({
@@ -3059,6 +3079,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("series-base")) > -1, "Module (series-base) not found in sorted array");
         },
+     "Testing series-candlestick": function(data) {
+            var loader = new Y.Loader({
+                require: ["series-candlestick"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("series-candlestick")) > -1, "Module (series-candlestick) not found in sorted array");
+        },
      "Testing series-cartesian": function(data) {
             var loader = new Y.Loader({
                 require: ["series-cartesian"],
@@ -3066,34 +3096,8 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("series-line")) > -1, "Module (series-line) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-marker")) > -1, "Module (series-marker) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-area")) > -1, "Module (series-area) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-spline")) > -1, "Module (series-spline) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-column")) > -1, "Module (series-column) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-bar")) > -1, "Module (series-bar) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-areaspline")) > -1, "Module (series-areaspline) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-combo")) > -1, "Module (series-combo) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-combospline")) > -1, "Module (series-combospline) not found in sorted array");
-        },
-     "Testing series-cartesian-stacked": function(data) {
-            var loader = new Y.Loader({
-                require: ["series-cartesian-stacked"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("series-line-stacked")) > -1, "Module (series-line-stacked) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-marker-stacked")) > -1, "Module (series-marker-stacked) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-area-stacked")) > -1, "Module (series-area-stacked) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-spline-stacked")) > -1, "Module (series-spline-stacked) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-column-stacked")) > -1, "Module (series-column-stacked) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-bar-stacked")) > -1, "Module (series-bar-stacked) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-areaspline-stacked")) > -1, "Module (series-areaspline-stacked) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-combo-stacked")) > -1, "Module (series-combo-stacked) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("series-combospline-stacked")) > -1, "Module (series-combospline-stacked) not found in sorted array");
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("series-cartesian")) > -1, "Module (series-cartesian) not found in sorted array");
         },
      "Testing series-column": function(data) {
             var loader = new Y.Loader({
@@ -3235,6 +3239,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("series-marker-stacked")) > -1, "Module (series-marker-stacked) not found in sorted array");
         },
+     "Testing series-ohlc": function(data) {
+            var loader = new Y.Loader({
+                require: ["series-ohlc"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("series-ohlc")) > -1, "Module (series-ohlc) not found in sorted array");
+        },
      "Testing series-pie": function(data) {
             var loader = new Y.Loader({
                 require: ["series-pie"],
@@ -3254,6 +3268,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("series-plot-util")) > -1, "Module (series-plot-util) not found in sorted array");
+        },
+     "Testing series-range": function(data) {
+            var loader = new Y.Loader({
+                require: ["series-range"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("series-range")) > -1, "Module (series-range) not found in sorted array");
         },
      "Testing series-spline": function(data) {
             var loader = new Y.Loader({
