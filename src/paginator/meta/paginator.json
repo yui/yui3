@@ -1,8 +1,6 @@
 {
     "paginator": {
 
-        "skinnable": false,
-
         "submodules": {
             "paginator": {
                 "requires": [
@@ -19,7 +17,8 @@
                     "paginator-templates",
                     "classnamemanager",
                     "intl"
-                ]
+                ],
+                "skinnable": true
             },
             "paginator-core": {
                 "requires": []
@@ -28,12 +27,14 @@
                 "requires": [
                     "paginator-view",
                     "paginator-url"
-                ]
+                ],
+                "skinnable": true
             },
             "paginator-dt": {
                 "requires": [
                     "paginator-view"
-                ]
+                ],
+                "skinnable": true
             },
             "paginator-templates": {
                 "requires": [
