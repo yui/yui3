@@ -1,5 +1,4 @@
 var Y_Paginator = Y.namespace('Paginator'),
-    getClassName = Y.ClassNameManager.getClassName,
     LNAME = NAME + '::',
     Paginator;
 

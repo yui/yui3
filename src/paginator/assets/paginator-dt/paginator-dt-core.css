@@ -1,0 +1,12 @@
+.yui3-paginator-dt .yui3-paginator-control {
+    display: block;
+    margin: 0 3px;
+    padding: 0 0.5em;
+    text-align: center;
+    text-decoration: none;
+    line-height: 1.7em;
+}
+.yui3-paginator-dt .yui3-paginator-control-first {
+}
+.yui3-paginator-dt .yui3-paginator-control-last {
+}
