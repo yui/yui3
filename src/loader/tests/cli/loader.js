@@ -2713,6 +2713,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("profiler")) > -1, "Module (profiler) not found in sorted array");
         },
+     "Testing promise": function(data) {
+            var loader = new Y.Loader({
+                require: ["promise"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("promise")) > -1, "Module (promise) not found in sorted array");
+        },
      "Testing querystring": function(data) {
             var loader = new Y.Loader({
                 require: ["querystring"],
@@ -3539,6 +3549,66 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("transition-timer")) > -1, "Module (transition-timer) not found in sorted array");
+        },
+     "Testing tree": function(data) {
+            var loader = new Y.Loader({
+                require: ["tree"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("tree")) > -1, "Module (tree) not found in sorted array");
+        },
+     "Testing tree-labelable": function(data) {
+            var loader = new Y.Loader({
+                require: ["tree-labelable"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("tree-labelable")) > -1, "Module (tree-labelable) not found in sorted array");
+        },
+     "Testing tree-lazy": function(data) {
+            var loader = new Y.Loader({
+                require: ["tree-lazy"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("tree-lazy")) > -1, "Module (tree-lazy) not found in sorted array");
+        },
+     "Testing tree-node": function(data) {
+            var loader = new Y.Loader({
+                require: ["tree-node"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("tree-node")) > -1, "Module (tree-node) not found in sorted array");
+        },
+     "Testing tree-openable": function(data) {
+            var loader = new Y.Loader({
+                require: ["tree-openable"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("tree-openable")) > -1, "Module (tree-openable) not found in sorted array");
+        },
+     "Testing tree-selectable": function(data) {
+            var loader = new Y.Loader({
+                require: ["tree-selectable"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("tree-selectable")) > -1, "Module (tree-selectable) not found in sorted array");
         },
      "Testing uploader": function(data) {
             var loader = new Y.Loader({

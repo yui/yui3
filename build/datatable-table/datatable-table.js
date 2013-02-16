@@ -118,7 +118,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @return {Node}
     @since 3.5.0
     **/
-    getCell: function (seed, shift) {
+    getCell: function (/* seed, shift */) {
         return this.body && this.body.getCell &&
             this.body.getCell.apply(this.body, arguments);
     },
@@ -127,7 +127,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     Returns the generated CSS classname based on the input.  If the `host`
     attribute is configured, it will attempt to relay to its `getClassName`
     or use its static `NAME` property as a string base.
-    
+
     If `host` is absent or has neither method nor `NAME`, a CSS classname
     will be generated using this class's `NAME`.
 
@@ -178,7 +178,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @return {Node}
     @since 3.5.0
     **/
-    getRow: function (id) {
+    getRow: function (/* id */) {
         return this.body && this.body.getRow &&
             this.body.getRow.apply(this.body, arguments);
     },
@@ -580,8 +580,8 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
         // Table width needs to account for borders
         table.setStyle('width', !width ? '' :
             (this.get('container').get('offsetWidth') -
-             (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0) -
-             (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0)) +
+             (parseInt(table.getComputedStyle('borderLeftWidth'), 10)||0) -
+             (parseInt(table.getComputedStyle('borderLeftWidth'), 10)||0)) +
              'px');
 
         table.setStyle('width', width);
@@ -636,7 +636,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
         parsed from the columns array.  If there are no nested columns (columns
         configured with a `children` array), the `displayColumns` is the same
         as the raw value.
-        
+
         @attribute columns
         @type {Object[]}
         @since 3.6.0
@@ -663,7 +663,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
         /**
         An instance of this class is used to render the contents of the
         `<thead>`&mdash;the column headers for the table.
-        
+
         The instance of this View will be assigned to the instance's `head`
         property.
 
@@ -693,7 +693,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
         /**
         An instance of this class is used to render the contents of the
         `<tfoot>` (if appropriate).
-        
+
         The instance of this View will be assigned to the instance's `foot`
         property.
 
@@ -721,7 +721,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
         /**
         An instance of this class is used to render the contents of the table's
         `<tbody>`&mdash;the data cells in the table.
-        
+
         The instance of this View will be assigned to the instance's `body`
         property.
 

@@ -69,6 +69,14 @@ YUI.add('axis-tests', function(Y) {
         }
     });
     Y.MockNode = Y.Base.create("mockNode", Y.MockWriterAttr, [], {
+        get: function(name) {
+            return this["_" + name];
+        },
+
+        set: function(name, val) {
+            this["_" + name] = val;
+        },
+
         getDOMNode: function() {
             return this;
         },

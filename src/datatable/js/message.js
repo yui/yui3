@@ -115,7 +115,7 @@ Y.mix(Message.prototype, {
     @protected
     @since 3.5.0
     **/
-    _afterMessageColumnsChange: function (e) {
+    _afterMessageColumnsChange: function () {
         var contentNode;
 
         if (this._messageNode) {
@@ -138,7 +138,7 @@ Y.mix(Message.prototype, {
     @protected
     @since 3.5.0
     **/
-    _afterMessageDataChange: function (e) {
+    _afterMessageDataChange: function () {
         this._uiSetMessage();
     },
 
@@ -223,14 +223,14 @@ Y.mix(Message.prototype, {
 
     /**
     Add the messaging related strings to the `strings` map.
-    
+
     @method _initMessageStrings
     @protected
     @since 3.5.0
     **/
     _initMessageStrings: function () {
         // Not a valueFn because other class extensions will want to add to it
-        this.set('strings', Y.mix((this.get('strings') || {}), 
+        this.set('strings', Y.mix((this.get('strings') || {}),
             Y.Intl.get('datatable-message')));
     },
 
