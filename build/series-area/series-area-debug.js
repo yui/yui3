@@ -100,4 +100,4 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 
 
 
-}, '@VERSION@', {"requires": ["series-fill-util"]});
+}, '@VERSION@', {"requires": ["series-cartesian", "series-fill-util"]});

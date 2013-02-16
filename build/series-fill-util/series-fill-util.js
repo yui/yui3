@@ -516,4 +516,4 @@ Y.augment(Fills, Y.Attribute);
 Y.Fills = Fills;
 
 
-}, '@VERSION@', {"requires": ["series-base"]});
+}, '@VERSION@');

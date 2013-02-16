@@ -127,4 +127,4 @@ CurveUtil.prototype = {
 Y.CurveUtil = CurveUtil;
 
 
-}, '@VERSION@', {"requires": ["series-base"]});
+}, '@VERSION@');
