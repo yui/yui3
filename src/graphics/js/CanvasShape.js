@@ -278,18 +278,23 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 
 	/**
      * Overrides default `on` method. Checks to see if its a dom interaction event. If so,
-     * return an event attached to the `node` element. If not, return the normal functionality.
+     * return an event attached to the `node` attribute of the shape instance. If not, return the normal functionality.
      *
      * @method on
-     * @param {String} type event type
-     * @param {Object} callback function
-	 * @private
+     * @param {String} type The name of the event
+     * @param {Function} fn The callback to execute in response to the event
+     * @param {Object} [context] Override `this` object in callback
+     * @param {Any} [arg*] 0..n additional arguments to supply to the subscriber
+     * @return {EventHandle} A subscription handle capable of detaching that subscription
 	 */
-	on: function(type, fn)
+	on: function()
 	{
-		if(Y.Node.DOM_EVENTS[type])
+        var context = arguments[2] || this,
+            node;
+		if(Y.Node.DOM_EVENTS[arguments[0]])
 		{
-			return Y.one("#" +  this.get("id")).on(type, fn);
+            node = Y.one("#" +  this.get("id"));
+			return node.on.apply(node, arguments);
 		}
 		return Y.on.apply(this, arguments);
 	},
