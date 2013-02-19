@@ -680,4 +680,83 @@ if(previousXCoords && previousXCoords.length > 0 && previousSeriesLastValidIndex
 closingXCoords = closingXCoords.concat(previousXCoords);
             _yuitest_coverline("build/series-fill-util/series-fill-util.js", 466);
 closingYCoords = closingYCoords.concat(previousYCoords);
-            _yuitest_coverline("build/series-fill-util/ser
+            _yuitest_coverline("build/series-fill-util/series-fill-util.js", 467);
+highestValidOrder = order -1;
+        }
+        _yuitest_coverline("build/series-fill-util/series-fill-util.js", 469);
+currentIndex = Math.max(firstValidIndex, previousSeriesLastValidIndex);
+        _yuitest_coverline("build/series-fill-util/series-fill-util.js", 470);
+order = order - 1;
+        _yuitest_coverline("build/series-fill-util/series-fill-util.js", 471);
+highestValidOrder = NaN;
+        _yuitest_coverline("build/series-fill-util/series-fill-util.js", 472);
+while(currentIndex <= lastValidIndex)
+        {
+            _yuitest_coverline("build/series-fill-util/series-fill-util.js", 474);
+oldOrder = highestValidOrder;
+            _yuitest_coverline("build/series-fill-util/series-fill-util.js", 475);
+highestValidOrder = this._getHighestValidOrder(seriesCollection, currentIndex, order, direction);
+            _yuitest_coverline("build/series-fill-util/series-fill-util.js", 476);
+if(!isNaN(oldOrder))
+            {
+                _yuitest_coverline("build/series-fill-util/series-fill-util.js", 478);
+if(highestValidOrder > oldOrder)
+                {
+                    _yuitest_coverline("build/series-fill-util/series-fill-util.js", 480);
+coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex, oldOrder, direction);
+                    _yuitest_coverline("build/series-fill-util/series-fill-util.js", 481);
+closingXCoords.push(coords[0]);
+                    _yuitest_coverline("build/series-fill-util/series-fill-util.js", 482);
+closingYCoords.push(coords[1]);
+                }
+                else {_yuitest_coverline("build/series-fill-util/series-fill-util.js", 484);
+if(highestValidOrder < oldOrder)
+                {
+                    _yuitest_coverline("build/series-fill-util/series-fill-util.js", 486);
+coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex - 1, highestValidOrder, direction);
+                    _yuitest_coverline("build/series-fill-util/series-fill-util.js", 487);
+closingXCoords.push(coords[0]);
+                    _yuitest_coverline("build/series-fill-util/series-fill-util.js", 488);
+closingYCoords.push(coords[1]);
+                }}
+            }
+            _yuitest_coverline("build/series-fill-util/series-fill-util.js", 491);
+coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex, highestValidOrder, direction);
+            _yuitest_coverline("build/series-fill-util/series-fill-util.js", 492);
+closingXCoords.push(coords[0]);
+            _yuitest_coverline("build/series-fill-util/series-fill-util.js", 493);
+closingYCoords.push(coords[1]);
+            _yuitest_coverline("build/series-fill-util/series-fill-util.js", 494);
+currentIndex = currentIndex + 1;
+        }
+
+        _yuitest_coverline("build/series-fill-util/series-fill-util.js", 497);
+closingXCoords.reverse();
+        _yuitest_coverline("build/series-fill-util/series-fill-util.js", 498);
+closingYCoords.reverse();
+        _yuitest_coverline("build/series-fill-util/series-fill-util.js", 499);
+return [xcoords.concat(closingXCoords), ycoords.concat(closingYCoords)];
+    },
+
+    /**
+     * Returns default values for area styles.
+     *
+     * @method _getAreaDefaults
+     * @return Object
+     * @private
+     */
+    _getAreaDefaults: function()
+    {
+        _yuitest_coverfunc("build/series-fill-util/series-fill-util.js", "_getAreaDefaults", 509);
+_yuitest_coverline("build/series-fill-util/series-fill-util.js", 511);
+return {
+        };
+    }
+};
+_yuitest_coverline("build/series-fill-util/series-fill-util.js", 515);
+Y.augment(Fills, Y.Attribute);
+_yuitest_coverline("build/series-fill-util/series-fill-util.js", 516);
+Y.Fills = Fills;
+
+
+}, '@VERSION@');
