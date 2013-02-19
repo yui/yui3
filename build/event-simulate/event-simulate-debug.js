@@ -829,13 +829,13 @@ function simulateTouchEvent(target, type,
     //check for DOM-compliant browsers first
     if (Y.Lang.isFunction(Y.config.doc.createEvent)) {
         if (Y.UA.android) {
-            /**
+            /*
                 * Couldn't find android start version that supports touch event. 
                 * Assumed supported(btw APIs broken till icecream sandwitch) 
                 * from the beginning.
-                */
+            */
             if(Y.UA.android < 4.0) {
-                /**
+                /*
                     * Touch APIs are broken in androids older than 4.0. We will use 
                     * simulated touch apis for these versions. 
                     * App developer still can listen for touch events. This events
@@ -843,7 +843,7 @@ function simulateTouchEvent(target, type,
                     * 
                     * (Note) Used target for the relatedTarget. Need to verify if
                     * it has a side effect.
-                    */
+                */
                 customEvent = Y.config.doc.createEvent("MouseEvents");
                 customEvent.initMouseEvent(type, bubbles, cancelable, view, detail, 
                     screenX, screenY, clientX, clientY,
