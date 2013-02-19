@@ -9006,16 +9006,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "yui-throttle"
         ]
     },
-    "gallery-context-menu": {
-        "requires": [
-            "overlay",
-            "node",
-            "attribute",
-            "event",
-            "widget"
-        ],
-        "skinnable": true
-    },
     "gesture-simulate": {
         "requires": [
             "async-queue",
@@ -10404,7 +10394,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'bc04571ca4aefa6b41f49ad35c04e7a4';
+YUI.Env[Y.version].md5 = '5e3711de438f84e75215b4ab99ccd852';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

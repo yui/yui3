@@ -2019,16 +2019,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("frame")) > -1, "Module (frame) not found in sorted array");
         },
-     "Testing gallery-context-menu": function(data) {
-            var loader = new Y.Loader({
-                require: ["gallery-context-menu"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("gallery-context-menu")) > -1, "Module (gallery-context-menu) not found in sorted array");
-        },
      "Testing gesture-simulate": function(data) {
             var loader = new Y.Loader({
                 require: ["gesture-simulate"],
