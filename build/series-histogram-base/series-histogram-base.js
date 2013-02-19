@@ -230,4 +230,4 @@ Histogram.prototype = {
 Y.Histogram = Histogram;
 
 
-}, '@VERSION@', {"requires": ["series-marker"]});
+}, '@VERSION@', {"requires": ["series-cartesian", "series-plot-util"]});

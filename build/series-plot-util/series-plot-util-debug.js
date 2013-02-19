@@ -517,11 +517,38 @@ Plots.prototype = {
      * @type Object
      * @private
      */
-    _stateSyles: null
+    _stateSyles: null,
+    
+    /**
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
+    drawSeries: function()
+    {
+        this.drawPlots();
+    },
+
+    /**
+     * @protected
+     *
+     * Gets the default value for the `styles` attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
+     */
+    _getDefaultStyles: function()
+    {
+        var styles = this._mergeStyles({marker:this._getPlotDefaults()}, this.constructor.superclass._getDefaultStyles());
+        return styles;
+    }
 };
 
 Y.augment(Plots, Y.Attribute);
 Y.Plots = Plots;
 
 
-}, '@VERSION@', {"requires": ["series-base"]});
+}, '@VERSION@');

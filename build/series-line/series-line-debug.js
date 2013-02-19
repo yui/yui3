@@ -110,4 +110,4 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
 
 
 
-}, '@VERSION@', {"requires": ["series-line-util"]});
+}, '@VERSION@', {"requires": ["series-cartesian", "series-line-util"]});
