@@ -1,11 +1,11 @@
 {
-    "name"       : "normalize",
+    "name"       : "cssnormalize",
     "displayName": "Normalize.css",
     "description": "A modern, HTML5-ready alternative to CSS resets",
     "author"     : "Nicolas Gallagher",
 
     "tags": ["css", "beta"],
-    "use" : ["normalize"],
+    "use" : ["cssnormalize"],
 
     "hideAPILink": true,
 
@@ -15,8 +15,8 @@
             "name"       : "normalize-basic",
             "displayName": "Applying normalize.css to a basic page",
             "description": "When CSS Base is included in a page it provides consistent and basic cross-browser styling for HTML elements.",
-            "modules"    : ["normalize"],
-            "tags"       : ["normalize", "css", "reset"],
+            "modules"    : ["cssnormalize"],
+            "tags"       : ["cssnormalize", "css", "reset"],
 
             "hideTableOfContents": true
         }
