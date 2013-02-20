@@ -22,42 +22,45 @@ module.exports = function(grunt) {
             dist: {
                 files: [
                     {
-                        src: ['release/<%= version %>/dist/'+'**'],
-                        dest: 'release/<%= version %>/yui_<%= version %>.zip'
+                        expand: true,
+                        cwd: 'release/<%= version %>/dist/',
+                        src: ['**'],
+                        dest: 'yui/'
                     }
                 ],
                 options: {
+                    archive: 'release/<%= version %>/yui_<%= version %>.zip',
                     mode: 'zip',
-                    rootDir: 'yui/',
-                    basePath: 'release/<%= version %>/dist/',
                     level: 3
                 }
             },
             cdn: {
                 files: [
                     {
-                        src: ['release/<%= version %>/cdn/'+'**'],
-                        dest: 'release/<%= version %>/akamai_<%= version %>.zip'
+                        expand: true,
+                        cwd: 'release/<%= version %>/cdn/',
+                        dest: '<%= version %>/',
+                        src: ['**']
                     }
                 ],
                 options: {
+                    archive: 'release/<%= version %>/akamai_<%= version %>.zip',
                     mode: 'zip',
-                    rootDir: 'yui/',
-                    basePath: 'release/<%= version %>/cdn/',
                     level: 3
                 }
             },
             'cdn-ssl': {
                 files: [
                     {
-                        src: ['release/<%= version %>/cdn-ssl/'+'**'],
-                        dest: 'release/<%= version %>/akamaissl_<%= version %>.zip'
+                        expand: true,
+                        cwd: 'release/<%= version %>/cdn-ssl/',
+                        dest: '<%= version %>/',
+                        src: ['**']
                     }
                 ],
                 options: {
+                    archive: 'release/<%= version %>/akamaissl_<%= version %>.zip',
                     mode: 'zip',
-                    rootDir: 'yui/',
-                    basePath: 'release/<%= version %>/cdn-ssl/',
                     level: 3
                 }
             }

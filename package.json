@@ -16,9 +16,9 @@
     },
     "devDependencies": {
         "yogi": "*",
-        "grunt": "~0.3.17",
+        "grunt": "~0.4.0",
         "grunt-yui-contrib": "*",
-        "grunt-contrib-compress": "~0.3.3"
+        "grunt-contrib-compress": "~0.4.0"
     },
     "scripts": {
         "postinstall": "grunt build",
