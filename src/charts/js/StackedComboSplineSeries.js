@@ -1,15 +1,21 @@
 /**
+ * Provides functionality for creating a stacked combospline series.
+ *
+ * @module charts
+ * @submodule series-combospline-stacked
+ */
+/**
  * The StackedComboSplineSeries class renders a combination of splines, plots and areaspline fills in a single series. Series
  * are stacked along the value axis to indicate each series contribution to a cumulative total. Each
  * series type has a corresponding boolean attribute indicating if it is rendered. By default, all three types are
  * rendered.
  *
- * @module charts
- * @submodule charts-base
  * @class StackedComboSplineSeries
  * @extends StackedComboSeries
  * @uses CurveUtil
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-combospline-stacked
  */
 Y.StackedComboSplineSeries = Y.Base.create("stackedComboSplineSeries", Y.StackedComboSeries, [Y.CurveUtil], {
     /**

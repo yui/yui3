@@ -664,8 +664,13 @@
                         retVal = setter.call(host, newVal, name, opts);
 
                         if (retVal === INVALID_VALUE) {
-                            Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
-                            allowSet = false;
+                            if (initializing) {
+                                Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal + ', initializing to default value', 'warn', 'attribute');
+                                newVal = cfg.defaultValue;
+                            } else {
+                                Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
+                                allowSet = false;
+                            }
                         } else if (retVal !== undefined){
                             Y.log('Attribute: ' + attrName + ', raw value: ' + newVal + ' modified by setter to:' + retVal, 'info', 'attribute');
                             newVal = retVal;

@@ -316,6 +316,31 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+suite.add(new Y.Test.Case({
+    name: "emptyTable",
+
+    setUp: function () {
+        this.table = new Y.DataTable();
+    },
+
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "render method should not fail on empty table": function () {
+        var pass = true;
+        try{
+            this.table.render();
+        }
+        catch(e) {
+            pass = false;
+        }
+
+        Y.Assert.isTrue(pass);
+
+    }
+}));
+
 /*
 suite.add(new Y.Test.Case({
     name: "destroy",

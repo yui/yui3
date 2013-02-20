@@ -125,7 +125,8 @@ var columns = [
 
 ### Row Data Configuration
 
-The `data` configuration attribute is responsible for housing the data objects that will be rendered as rows.  You can provide this information in two ways by default:
+The `data` configuration attribute is responsible for housing the data objects
+that will be rendered as rows.  You can provide this information in two ways by default:
 
 1. An array of simple objects with key:value pairs
 2. A ModelList of Base-based class instances (presumably Model subclass
@@ -278,7 +279,7 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     @return {Node}
     @since 3.5.0
     **/
-    getCell: function (seed, shift) {
+    getCell: function (/* seed, shift */) {
         return this.view && this.view.getCell &&
             this.view.getCell.apply(this.view, arguments);
     },
@@ -296,7 +297,7 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     @return {Node}
     @since 3.5.0
     **/
-    getRow: function (id) {
+    getRow: function (/* id */) {
         return this.view && this.view.getRow &&
             this.view.getRow.apply(this.view, arguments);
     },
@@ -469,7 +470,7 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
                     },
                     // FIXME: guarantee that the properties are available, even
                     // if the configured (or omitted) views don't create them
-                    renderTable: function (e) {
+                    renderTable: function () {
                         var contentBox = this.get('container');
 
                         self._tableNode = this.tableNode ||
@@ -572,7 +573,7 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
         If the View class assigned to the DataTable's `view` attribute supports
         it, this class will be used for rendering the contents of the
         `<thead>`&mdash;the column headers for the table.
-        
+
         Similar to `view`, the instance of this View will be assigned to the
         DataTable instance's `head` property.
 
@@ -606,7 +607,7 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
         /**
         If the View class assigned to the DataTable's `view` attribute supports
         it, this class will be used for rendering the contents of the `<tfoot>`.
-        
+
         Similar to `view`, the instance of this View will be assigned to the
         DataTable instance's `foot` property.
 
@@ -639,7 +640,7 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
         If the View class assigned to the DataTable's `view` attribute supports
         it, this class will be used for rendering the contents of the `<tbody>`
         including all data rows.
-        
+
         Similar to `view`, the instance of this View will be assigned to the
         DataTable instance's `body` property.
 

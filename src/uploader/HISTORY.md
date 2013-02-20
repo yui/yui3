@@ -1,6 +1,11 @@
 Uploader Utility (New) Change History
 =====================================
 
+@VERSION@
+-----
+
+ * Removed unused `substitute` dependency.
+
 3.8.1
 -----
 

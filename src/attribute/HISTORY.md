@@ -1,8 +1,12 @@
 Attribute Change History
 ========================
 
-@VERSION@
+3.8.1
 -----
+
+* Invalid values supplied during Attribute initialization that fail setter
+  validation will now fallback the default value defined in `ATTRS`.
+  [Ticket #2528732] [redbat]
 
 * Attribute validators and setters now receive set's `options` argument. This is
   now a part of `AttributeCore`. [Ticket #2532810] [Satyam]

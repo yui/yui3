@@ -1,9 +1,17 @@
 /**
- * Utility class used for drawing area fills.
+ * Provides functionality for drawing fills in a series.
  *
  * @module charts
+ * @submodule series-fill-util
+ */
+var Y_Lang = Y.Lang;
+
+/**
+ * Utility class used for drawing area fills.
+ *
  * @class Fills
  * @constructor
+ * @submodule series-fill-util
  */
 function Fills(cfg)
 {
@@ -38,7 +46,7 @@ Fills.prototype = {
         var path = this._path;
         if(!path)
         {
-            path = this.get("graph").get("graphic").addShape({type:"path"});
+            path = this.get("graphic").addShape({type:"path"});
             this._path = path;
         }
         return path;
@@ -196,8 +204,7 @@ Fills.prototype = {
             curvecoords,
             order = this.get("order"),
             type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
+            seriesCollection = this.get("seriesTypeCollection"),
             prevXCoords,
             prevYCoords,
             len,
@@ -380,9 +387,8 @@ Fills.prototype = {
     {
         var order = this.get("order"),
             type = this.get("type"),
-            graph = this.get("graph"),
             direction = this.get("direction"),
-            seriesCollection = graph.seriesTypes[type],
+            seriesCollection = this.get("seriesTypeCollection"),
             firstValidIndex,
             lastValidIndex,
             xcoords = this.get("stackedXCoords"),
