@@ -232,9 +232,21 @@ Y.Event.define(EVT_TAP, {
     @static
     **/
     touchMove: function (event, node, subscription, notifier, delegate, context) {
-        detachHelper(subscription, [ HANDLES.MOVE, HANDLES.END, HANDLES.CANCEL ], true, context);
-        context.cancelled = true;
+        
+        var currentXY = [];
+        if (SUPPORTS_TOUCHES && event.touches) {
+          currentXY = [ event.touches[0].pageX, event.touches[0].pageY ];
+        }
+        else {
+          currentXY = [ event.pageX, event.pageY ];
+        }
 
+        //Only detach helpers if the touchmove/mousemove event has different xy coordinates than
+        //the touchstart/mousedown event.
+        if (Math.abs(currentXY[0] - context.startXY[0]) > 5 || Math.abs(currentXY[1] - context.startXY[1]) > 5) {
+            detachHelper(subscription, [ HANDLES.MOVE, HANDLES.END, HANDLES.CANCEL ], true, context);
+            context.cancelled = true;
+        } 
     },
 
     /**
