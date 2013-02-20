@@ -12,10 +12,6 @@ module.exports = function(grunt) {
         type: Boolean
     };
 
-
-    grunt.loadNpmTasks('grunt-yui-contrib');
-    grunt.loadNpmTasks('grunt-contrib-compress');
-
     grunt.initConfig({
         version: grunt.option('release-version'),
         compress: {
@@ -29,7 +25,7 @@ module.exports = function(grunt) {
                     }
                 ],
                 options: {
-                    archive: 'release/<%= version %>/yui_<%= version %>.zip',
+                    archive: 'release/<%= version %>/archives/yui_<%= version %>.zip',
                     mode: 'zip',
                     level: 3
                 }
@@ -44,7 +40,7 @@ module.exports = function(grunt) {
                     }
                 ],
                 options: {
-                    archive: 'release/<%= version %>/akamai_<%= version %>.zip',
+                    archive: 'release/<%= version %>/archives/akamai_<%= version %>.zip',
                     mode: 'zip',
                     level: 3
                 }
@@ -59,13 +55,16 @@ module.exports = function(grunt) {
                     }
                 ],
                 options: {
-                    archive: 'release/<%= version %>/akamaissl_<%= version %>.zip',
+                    archive: 'release/<%= version %>/archives/akamaissl_<%= version %>.zip',
                     mode: 'zip',
                     level: 3
                 }
             }
         }
     });
+
+    grunt.loadNpmTasks('grunt-yui-contrib');
+    grunt.loadNpmTasks('grunt-contrib-compress');
 
     grunt.registerTask('default', ['boot']);
 
