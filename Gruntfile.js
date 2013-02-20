@@ -7,6 +7,11 @@ module.exports = function(grunt) {
         type: String
     };
 
+    cli.optlist['release-build'] = {
+        info: 'Release Build',
+        type: String
+    };
+
     cli.optlist['cache-build'] = {
         info: 'Cache the build',
         type: Boolean
@@ -14,6 +19,7 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         version: grunt.option('release-version'),
+        build: grunt.option('release-build'),
         compress: {
             dist: {
                 files: [
