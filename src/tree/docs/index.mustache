@@ -223,6 +223,8 @@ console.log(tree.children[0].foo); // => 'bar'
 console.log(tree.children[1].baz); // => 'quux'
 ```
 
+<p>Note that arbitrary properties placed on the node itself won't be serialized if you call the node's <a href="{{apiDocs}}/classes/Tree.Node.html#method_toJSON">`toJSON()`</a> method or pass it to `JSON.stringify()`. If you want to store serializable data on a node, store it in the node's `data` property.</p>
+
 <h4>Creating Unattached Nodes</h4>
 
 <p>An unattached node is a node that has been created, but hasn't yet been added to a tree. Unattached nodes can be created using a tree's `createNode()` method.</p>
