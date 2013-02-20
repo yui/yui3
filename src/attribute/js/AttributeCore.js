@@ -249,7 +249,7 @@
          *
          * @chainable
          */
-        addAttr: function(name, config, lazy) {
+        addAttr : function(name, config, lazy) {
 
             Y.log('Adding attribute: ' + name, 'info', 'attribute');
 
@@ -365,14 +365,16 @@
          * along the critical path, where the calling method has already obtained lazy config from state.
          */
         _addLazyAttr: function(name, lazyCfg) {
-            lazyCfg = lazyCfg || this._state.get(name, LAZY);
+            var state = this._state;
+
+            lazyCfg = lazyCfg || state.get(name, LAZY);
 
             if (lazyCfg) {
                 // PERF TODO: For App's id override, otherwise wouldn't be
                 // needed. It expects to find it in the cfg for it's
                 // addAttr override. Would like to remove, once App override is
                 // removed.
-                this._state.data[name].lazy = undefined;
+                state.data[name].lazy = undefined;
 
                 lazyCfg.isLazyAdd = true;
                 this.addAttr(name, lazyCfg);
@@ -448,11 +450,11 @@
                 name = path.shift();
             }
 
-            cfg = state.getAll(name, true) || {};
+            cfg = state.data[name] || {};
 
             if (cfg.lazy) {
                 cfg = cfg.lazy;
-                this._addLazyAttr(name, cfg.lazy);
+                this._addLazyAttr(name, cfg);
             }
 
             initialSet = (cfg.value === undefined);
@@ -526,9 +528,8 @@
          * @return {Any} The value of the attribute.
          */
         _getAttr : function(name) {
-            var host = this, // help compression
-                fullName = name,
-                state = host._state,
+            var fullName = name,
+                tCfgs    = this._tCfgs,
                 path,
                 getter,
                 val,
@@ -541,22 +542,22 @@
             }
 
             // On Demand - Should be rare - handles out of order valueFn references
-            if (host._tCfgs && host._tCfgs[name]) {
+            if (tCfgs && tCfgs[name]) {
                 cfg = {};
-                cfg[name] = host._tCfgs[name];
-                delete host._tCfgs[name];
-                host._addAttrs(cfg, host._tVals);
+                cfg[name] = tCfgs[name];
+                delete tCfgs[name];
+                this._addAttrs(cfg, this._tVals);
             }
 
-            attrCfg = state.getAll(name, true) || {};
+            attrCfg = this._state.data[name] || {};
 
             // Lazy Init
             if (attrCfg.lazy) {
                 attrCfg = attrCfg.lazy;
-                host._addLazyAttr(name, attrCfg.lazy);
+                this._addLazyAttr(name, attrCfg);
             }
 
-            val = host._getStateVal(name, attrCfg);
+            val = this._getStateVal(name, attrCfg);
 
             getter = attrCfg.getter;
 
@@ -564,7 +565,7 @@
                 getter = this[getter];
             }
 
-            val = (getter) ? getter.call(host, val, fullName) : val;
+            val = (getter) ? getter.call(this, val, fullName) : val;
             val = (path) ? O.getValue(val, path) : val;
 
             return val;
@@ -630,7 +631,7 @@
 
             var host = this,
                 allowSet = true,
-                cfg = attrCfg || this._state.getAll(attrName, true) || {},
+                cfg = attrCfg || this._state.data[attrName] || {},
                 validator = cfg.validator,
                 setter = cfg.setter,
                 initializing = cfg.initializing,
@@ -824,7 +825,8 @@
          * See <a href="#method_addAttr">addAttr</a>.
          */
         _addAttrs : function(cfgs, values, lazy) {
-            var host = this, // help compression
+            var tCfgs = this._tCfgs,
+                tVals = this._tVals,
                 attr,
                 attrCfg,
                 value;
@@ -837,17 +839,17 @@
                     attrCfg.defaultValue = attrCfg.value;
 
                     // Handle simple, complex and user values, accounting for read-only
-                    value = host._getAttrInitVal(attr, attrCfg, host._tVals);
+                    value = this._getAttrInitVal(attr, attrCfg, tVals);
 
                     if (value !== undefined) {
                         attrCfg.value = value;
                     }
 
-                    if (host._tCfgs[attr]) {
-                        host._tCfgs[attr] = undefined;
+                    if (tCfgs[attr]) {
+                        tCfgs[attr] = undefined;
                     }
 
-                    host.addAttr(attr, attrCfg, lazy);
+                    this.addAttr(attr, attrCfg, lazy);
                 }
             }
         },

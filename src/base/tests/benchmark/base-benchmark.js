@@ -170,7 +170,7 @@ var suite = Y.BenchmarkSuite = new Benchmark.Suite();
     };
 
     var MyBase = function() {
-	   MyBase.superclass.constructor.apply(this, arguments);
+       MyBase.superclass.constructor.apply(this, arguments);
     };
 
     MyBase.NAME = "myBase";
