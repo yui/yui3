@@ -329,6 +329,9 @@
             var cfgs = null,
                 cfg,
                 val,
+                subAttr,
+                subAttrs,
+                subAttrPath,
                 attr,
                 attrs = clazz.ATTRS;
 
@@ -348,6 +351,18 @@
 
                         if (val && (typeof val === "object")) {
                             this._cloneDefaultValue(attr, cfg);
+                        }
+
+                        if (allCfgs._subAttrs && allCfgs._subAttrs.hasOwnProperty(attr)) {
+                            subAttrs = allCfgs._subAttrs[attr];
+
+                            for (subAttrPath in subAttrs) {
+                                subAttr = subAttrs[subAttrPath];
+
+                                if (subAttr.path) {
+                                    O.setValue(cfg.value, subAttr.path, subAttr.value);
+                                }
+                            }
                         }
                     }
                 }
@@ -522,6 +537,7 @@
 
             var attr,
                 attrs,
+                subAttrsHash,
                 cfg,
                 path,
                 i,
@@ -551,17 +567,20 @@
 
                             if (path && aggAttr && aggAttr.value) {
 
-                                // PERF TODO: Is this really required here, since we need
-                                // to clone again anyway when re-using the value for a new
-                                // instance. Could we hold onto the raw reference here ("a.b":"foo")?
-                                // That would move the setValue cost to the instance though, and we
-                                // maybe take on an iteration cost also.
+                                subAttrsHash = aggAttrs._subAttrs;
 
-                                if (typeof aggAttr.value === "object") {
-                                    this._cloneDefaultValue(attr, aggAttr);
+                                if (!subAttrsHash) {
+                                    subAttrsHash = aggAttrs._subAttrs = {};
                                 }
 
-                                O.setValue(aggAttr.value, path, cfg.value);
+                                if (!subAttrsHash[attr]) {
+                                    subAttrsHash[attr] = {};
+                                }
+
+                                subAttrsHash[attr][path.join(DOT)] = {
+                                    value: cfg.value,
+                                    path : path
+                                };
 
                             } else if (!path) {
 
