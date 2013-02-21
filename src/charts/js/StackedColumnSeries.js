@@ -1,13 +1,21 @@
 /**
+ * Provides functionality for creating a stacked column series.
+ *
+ * @module charts
+ * @submodule series-column-stacked
+ */
+var Y_Lang = Y.Lang;
+
+/**
  * The StackedColumnSeries renders column chart in which series are stacked vertically to show
  * their contribution to the cumulative total.
  *
- * @module charts
- * @submodule charts-base
  * @class StackedColumnSeries
  * @extends ColumnSeries
  * @uses StackingUtil
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-column-stacked
  */
 Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.StackingUtil], {
     /**
@@ -32,8 +40,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             len = xcoords.length,
             top = ycoords[0],
             type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
+            seriesCollection = this.get("seriesTypeCollection"),
             ratio,
             order = this.get("order"),
             graphOrder = this.get("graphOrder"),
@@ -64,7 +71,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
         this._createMarkerCache();
         if(totalWidth > this.get("width"))
         {
-            ratio = this.width/totalWidth;
+            ratio = this.get("width")/totalWidth;
             w *= ratio;
             w = Math.max(w, 1);
         }

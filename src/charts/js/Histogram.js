@@ -1,10 +1,18 @@
 /**
- * Histogram is the base class for Column and Bar series.
+ * Provides core functionality for creating a bar or column series.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-histogram
+ */
+var Y_Lang = Y.Lang;
+
+/**
+ * Histogram is the base class for Column and Bar series.
+ *
  * @class Histogram
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-histogram
  */
 function Histogram(){}
 
@@ -22,6 +30,7 @@ Histogram.prototype = {
             return;
         }
         var style = Y.clone(this.get("styles").marker),
+            graphic = this.get("graphic"),
             setSize,
             calculatedSize,
             xcoords = this.get("xcoords"),
@@ -30,9 +39,8 @@ Histogram.prototype = {
             len = xcoords.length,
             top = ycoords[0],
             type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
-            seriesLen = seriesCollection.length,
+            seriesTypeCollection = this.get("seriesTypeCollection"),
+            seriesLen = seriesTypeCollection.length || 0,
             seriesSize = 0,
             totalSize = 0,
             offset = 0,
@@ -83,7 +91,7 @@ Histogram.prototype = {
         this._createMarkerCache();
         for(; i < seriesLen; ++i)
         {
-            renderer = seriesCollection[i];
+            renderer = seriesTypeCollection[i];
             seriesSize += renderer.get("styles").marker[setSizeKey];
             if(order > i)
             {
@@ -91,10 +99,10 @@ Histogram.prototype = {
             }
         }
         totalSize = len * seriesSize;
-        this._maxSize = graph.get(setSizeKey);
+        this._maxSize = graphic.get(setSizeKey);
         if(totalSize > this._maxSize)
         {
-            ratio = graph.get(setSizeKey)/totalSize;
+            ratio = graphic.get(setSizeKey)/totalSize;
             seriesSize *= ratio;
             offset *= ratio;
             setSize *= ratio;

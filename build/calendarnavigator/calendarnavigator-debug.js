@@ -284,6 +284,8 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
         this._updateControlState();
 
         host.after("dateChange", this._updateControlState, this);
+        host.after("minimumDateChange", this._updateControlState, this);
+        host.after("maximumDateChange", this._updateControlState, this);
 
         headerCell.prepend(this._controls.prevMonth);
         headerCell.append(this._controls.nextMonth);
@@ -293,4 +295,4 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
 Y.namespace("Plugin").CalendarNavigator = CalendarNavigator;
 
 
-}, '@VERSION@', {"requires": ["plugin", "classnamemanager", "datatype-date", "node", "substitute"], "skinnable": true});
+}, '@VERSION@', {"requires": ["plugin", "classnamemanager", "datatype-date", "node"], "skinnable": true});

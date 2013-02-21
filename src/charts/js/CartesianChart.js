@@ -1,11 +1,10 @@
 /**
  * The CartesianChart class creates a chart with horizontal and vertical axes.
  *
- * @module charts
- * @submodule charts-base
  * @class CartesianChart
  * @extends ChartBase
  * @constructor
+ * @submodule charts-base
  */
 Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     /**
@@ -552,6 +551,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             axes = {},
             axesAttrs = {
                 edgeOffset: "edgeOffset",
+                calculateEdgeOffset: "calculateEdgeOffset",
                 position: "position",
                 overlapGraph:"overlapGraph",
                 labelFunction:"labelFunction",

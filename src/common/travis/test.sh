@@ -25,7 +25,7 @@ if [ -n "$TRAVIS" ]; then
     con="-c 8 "
     timeout="-t 500 "
     if [ "${TRAVIS_NODE_VERSION}" = "0.8" ]; then
-        extra="-x editor -x yui-throttle"
+        extra="-x editor"
     else
         echo "Skipping Grover tests for this Node version (not needed)"
         extra="--cli "

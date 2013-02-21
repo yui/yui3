@@ -73,7 +73,8 @@ YUI.add('attribute-extras', function (Y, NAME) {
                     }
                 }
             }
-
+            /*jshint maxlen:200*/
+            /*jshint maxlen:150 */
         },
 
         /**

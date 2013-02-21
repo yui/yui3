@@ -221,7 +221,7 @@
             
             /**
             * If true, YUITest will not fire an error for tests with no Asserts.
-            * @prop _ignoreEmpty
+            * @property _ignoreEmpty
             * @private
             * @type Boolean
             * @static

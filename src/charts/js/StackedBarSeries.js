@@ -1,13 +1,21 @@
 /**
+ * Provides functionality for creating a stacked bar series.
+ *
+ * @module charts
+ * @submodule series-bar-stacked
+ */
+var Y_Lang = Y.Lang;
+
+/**
  * The StackedBarSeries renders bar chart in which series are stacked horizontally to show
  * their contribution to the cumulative total.
  *
- * @module charts
- * @submodule charts-base
  * @class StackedBarSeries
  * @extends BarSeries
  * @uses StackingUtil
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-bar-stacked
  */
 Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingUtil], {
     /**
@@ -34,8 +42,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             len = xcoords.length,
             top = ycoords[0],
             type = this.get("type"),
-            graph = this.get("graph"),
-            seriesCollection = graph.seriesTypes[type],
+            seriesCollection = this.get("seriesTypeCollection"),
             ratio,
             order = this.get("order"),
             graphOrder = this.get("graphOrder"),
@@ -66,7 +73,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
         this._createMarkerCache();
         if(totalHeight > this.get("height"))
         {
-            ratio = this.height/totalHeight;
+            ratio = this.get("height")/totalHeight;
             h *= ratio;
             h = Math.max(h, 1);
         }

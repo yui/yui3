@@ -222,7 +222,13 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
         * Signals that an object has been dropped over the uploader's associated drag-and-drop area.
         *
         * @event drop
-        * @param event {Event} The event object for the `drop`.
+        * @param event {Event} The event object for the `drop` with the
+        *                      following payload:
+        *  <dl>
+        *      <dt>fileList</dt>
+        *          <dd>An `Array` of files dropped by the user, encapsulated
+        *              in Y.FileHTML5 objects.</dd>
+        *  </dl>
         */
         this.publish("drop");
 
@@ -381,7 +387,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
                         this.fire("fileselect", {fileList: parsedFiles});
                     }
 
-                    this.fire("drop");
+                    this.fire("drop", {fileList: parsedFiles});
                     break;
             }
         }

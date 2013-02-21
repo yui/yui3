@@ -806,17 +806,6 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 		context.moveTo(xEnd, yEnd);
 	},
 
-	//This should move to CanvasDrawing class.
-    //Currently docmented in CanvasDrawing class.
-    clear: function() {
-		this._initProps();
-        if(this.node)
-        {
-            this._context.clearRect(0, 0, this.node.width, this.node.height);
-        }
-        return this;
-	},
-
 	/**
 	 * Returns the bounds for a shape.
 	 *
