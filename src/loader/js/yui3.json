@@ -784,7 +784,8 @@
     },
     "datatable-message": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "datatable-base"
@@ -812,7 +813,8 @@
     },
     "datatable-sort": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "datatable-base"

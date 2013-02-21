@@ -1,6 +1,13 @@
 DataTable Change History
 ========================
 
+@VERSION@
+-----
+
+* Making sortable datatableheaders unselectable [Pull Request #286]
+  [Pull Request #378] [Ticket #2532825] [ItsAsbreuk] [apipkin]
+
+* French translations for the DataTable [Pull Request #454] [ArnaudD] [davglass]
 
 3.8.1
 -----
