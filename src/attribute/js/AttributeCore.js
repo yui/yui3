@@ -1,3 +1,6 @@
+    /*For log lines*/
+    /*jshint maxlen:200*/
+
     /**
      * The attribute module provides an augmentable Attribute implementation, which
      * adds configurable attributes and attribute change events to the class being
@@ -274,14 +277,12 @@
                 };
             } else {
 
-                /*jshint maxlen:200*/
                 if (added && !config.isLazyAdd) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
                 if (!added || config.isLazyAdd) {
 
                     hasValue = (VALUE in config);
 
-                    /*jshint maxlen:200*/
                     if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
 
                     if (hasValue) {
@@ -666,11 +667,9 @@
 
                         if (retVal === INVALID_VALUE) {
                             if (initializing) {
-                                /*jshint maxlen:200*/
                                 Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal + ', initializing to default value', 'warn', 'attribute');
                                 newVal = cfg.defaultValue;
                             } else {
-                                /*jshint maxlen:200*/
                                 Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
                                 allowSet = false;
                             }
