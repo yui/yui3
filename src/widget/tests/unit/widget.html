@@ -73,11 +73,11 @@
         }
     </style>
 </head>
-<body class="yui3-skin-sam wf2-skin-toad wf3~skin~blue">
+<body class="yui3-skin-sam">
 
     <p><input type="button" value="Run Tests" id="btnRun" disabled="true"><span id="automationmsg" class="msg-hidden">Currently running tests, with logging disabled to speed up automation. Button will be enabled once complete.</span></p>
 
-    <div id="testbed" class="yui3-skin-foo wf2-theme-frog wf3skin~pink"></div>
+    <div id="testbed"></div>
 
     <div id="widgetRenderContainer" style="height:300px;width:300px"></div>
     <div id="customWidgetRenderContainer"></div>
@@ -1981,11 +1981,18 @@
             name : "getSkinName",
 
             "getSkinName should return null if not rendered" : function () {
-                var w = new Y.Widget();
+                var w = new Y.Widget(),
+                    body = Y.one("body");
+
+                body.addClass('wf2-skin-toad');
+                body.addClass('wf3~skin~blue');
 
                 Y.Assert.isNull( w.getSkinName() );
                 Y.Assert.isNull( w.getSkinName('wf2-theme-') );
-                Y.Assert.isNull( w.getSkinName('wf3skin~') );
+                Y.Assert.isNull( w.getSkinName('wf3~skin~') );
+
+                body.removeClass('wf2-skin-toad');
+                body.removeClass('wf3~skin~blue');
 
                 w.destroy();
             },
@@ -1993,14 +2000,21 @@
             "getSkinName should return name from BB if available": function () {
                 var bb = Y.Node.create( '<div class="yui3-skin-foo wf2-theme-bar wf3skin~baz"><div></div></div>' ),
                     cb = bb.one( 'div' ),
+                    body = Y.one("body"),
                     w = new Y.Widget( {
                         boundingBox: bb,
                         contentBox:  cb
                     } );
 
+                body.addClass('wf2-theme-toad');
+                body.addClass('wf3skin~blue');
+
                 Y.Assert.areEqual( 'foo', w.getSkinName() );
                 Y.Assert.areEqual( 'bar', w.getSkinName( 'wf2-theme-' ) );
                 Y.Assert.areEqual( 'baz', w.getSkinName( 'wf3skin~' ) );
+
+                body.removeClass('wf2-theme-toad');
+                body.removeClass('wf3skin~blue');
 
                 w.destroy();
             },
@@ -2009,36 +2023,49 @@
                 var w = new Y.Widget().render(),
                     body = Y.one( 'body' );
 
+                body.addClass('wf2-skin-toad');
+                body.addClass('wf3skin~blue');
+
                 Y.Assert.areEqual( 'sam', w.getSkinName() );
-                Y.Assert.areEqual( 'toad', w.getSkinName( 'wf2-theme-' ) );
+                Y.Assert.areEqual( 'toad', w.getSkinName( 'wf2-skin-' ) );
                 Y.Assert.areEqual( 'blue', w.getSkinName( 'wf3skin~' ) );
 
                 body.removeClass( 'yui3-skin-sam' );
-                body.removeClass( 'wf2-theme-toad' );
+                body.removeClass( 'wf2-skin-toad' );
                 body.removeClass( 'wf3skin~blue' );
 
                 Y.Assert.isNull( w.getSkinName() );
-                Y.Assert.isNull( w.getSkinName( 'wf2-theme-' ) );
+                Y.Assert.isNull( w.getSkinName( 'wf2-skin-' ) );
                 Y.Assert.isNull( w.getSkinName( 'wf3skin~' ) );
 
                 body.addClass( 'yui3-skin-sam' );
-                body.addClass( 'wf2-theme-toad' );
-                body.addClass( 'wf3skin~blue' );
 
                 w.destroy();
             },
 
             "getSkinName should return name from ancestor if both ancestor and body are classed": function () {
-                var w = new Y.Widget().render( '#testbed' ),
-                    body = Y.one( 'body' );
+                var body = Y.one('body'),
+                    testbed = Y.one('#testbed'),
+                    w = new Y.Widget().render(testbed);
 
-                body.addClass( 'yui3-skin-sam' );
-                body.addClass( 'wf2-theme-toad' );
-                body.addClass( 'wf3skin~blue' );
+                body.addClass('yui3-skin-sam');
+                body.addClass('wf2-theme-toad');
+                body.addClass('wf3skin~blue');
+
+                testbed.addClass('yui3-skin-foo');
+                testbed.addClass('wf2-theme-frog');
+                testbed.addClass('wf3skin~pink');
 
                 Y.Assert.areEqual( 'foo', w.getSkinName() );
                 Y.Assert.areEqual( 'frog', w.getSkinName( 'wf2-theme-' ) );
                 Y.Assert.areEqual( 'pink', w.getSkinName( 'wf3skin~' ) );
+
+                body.removeClass('wf2-theme-toad');
+                body.removeClass('wf3skin~blue');
+
+                testbed.removeClass('yui3-skin-foo');
+                testbed.removeClass('wf2-theme-frog');
+                testbed.removeClass('wf3skin~pink');
 
                 w.destroy();
             },
