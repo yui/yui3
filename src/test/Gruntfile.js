@@ -87,6 +87,7 @@ module.exports = function(grunt) {
             str = str.replace(/class YUITest/g, 'class Test');
             str = str.replace(/\{YUITest/g, '{Test');
             str = str.replace(/@class /g, '@module test\n * @class ');
+            str = str.replace(/@prop /g, '@property ');
 
             grunt.file.write(file, str);
         });
