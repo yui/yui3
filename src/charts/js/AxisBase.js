@@ -434,7 +434,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         /**
          * Determines whether and offset is automatically calculated for the edges of the axis.
          *
-         * @attr calculateEdgeOffset
+         * @attribute calculateEdgeOffset
          * @type Boolean
          */
         calculateEdgeOffset: {

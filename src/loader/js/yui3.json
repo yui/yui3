@@ -1457,16 +1457,6 @@
             "yui-throttle"
         ]
     },
-    "gallery-context-menu": {
-        "requires": [
-            "overlay",
-            "node",
-            "attribute",
-            "event",
-            "widget"
-        ],
-        "skinnable": true
-    },
     "gesture-simulate": {
         "requires": [
             "async-queue",
