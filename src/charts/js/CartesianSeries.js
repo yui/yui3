@@ -335,7 +335,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
      * and returns an object literal of array copies if an object literal is received as the param.
      *
      * @method _copyData
-     * @param {Array|Object} 
+     * @param {Array|Object} val The object or array to be copied. 
      * @return Array|Object
      * @private
      */
