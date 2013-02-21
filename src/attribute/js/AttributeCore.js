@@ -666,9 +666,11 @@
 
                         if (retVal === INVALID_VALUE) {
                             if (initializing) {
+                                /*jshint maxlen:200*/
                                 Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal + ', initializing to default value', 'warn', 'attribute');
                                 newVal = cfg.defaultValue;
                             } else {
+                                /*jshint maxlen:200*/
                                 Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
                                 allowSet = false;
                             }
