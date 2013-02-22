@@ -20,6 +20,9 @@ module.exports = function(grunt) {
     grunt.initConfig({
         version: grunt.option('release-version'),
         build: grunt.option('release-build'),
+        buildtag: 'YUI <%= version %> (build <%= build %>)',
+        copyright: 'Copyright <%= grunt.template.today("yyyy") %> Yahoo! Inc. All rights reserved.',
+        license: 'Licensed under the BSD License.\nhttp://yuilibrary.com/license/',
         compress: {
             dist: {
                 files: [
@@ -31,6 +34,7 @@ module.exports = function(grunt) {
                     }
                 ],
                 options: {
+                    pretty: true,
                     archive: 'release/<%= version %>/archives/yui_<%= version %>.zip',
                     mode: 'zip',
                     level: 3
@@ -46,6 +50,7 @@ module.exports = function(grunt) {
                     }
                 ],
                 options: {
+                    pretty: true,
                     archive: 'release/<%= version %>/archives/akamai_<%= version %>.zip',
                     mode: 'zip',
                     level: 3
@@ -61,6 +66,7 @@ module.exports = function(grunt) {
                     }
                 ],
                 options: {
+                    pretty: true,
                     archive: 'release/<%= version %>/archives/akamaissl_<%= version %>.zip',
                     mode: 'zip',
                     level: 3
