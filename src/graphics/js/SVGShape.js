@@ -243,7 +243,15 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             concat = host._camelCaseConcat,
 			pointerEvents = host.get("pointerEvents");
 		host.node = node;
-		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)));
+		host.addClass(
+            _getClassName(SHAPE) +
+            " " +
+            _getClassName(concat(IMPLEMENTATION, SHAPE)) +
+            " " +
+            _getClassName(name) +
+            " " +
+            _getClassName(concat(IMPLEMENTATION, name))
+        );
         if(id)
 		{
 			node.setAttribute("id", id);

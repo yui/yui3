@@ -186,7 +186,18 @@ VMLDrawing.prototype = {
             {
                 path = path + ", ";
             }
-            path = path + this._round(cp1x) + ", " + this._round(cp1y) + ", " + this._round(cp2x) + ", " + this._round(cp2y) + ", " + this._round(x) + ", " + this._round(y);
+            path = path +
+                    this._round(cp1x) +
+                    ", " +
+                    this._round(cp1y) +
+                    ", " +
+                    this._round(cp2x) +
+                    ", " +
+                    his._round(cp2y) +
+                    ", " +
+                    this._round(x) +
+                    ", " +
+                    this._round(y);
             cp1x = cp1x + relativeX;
             cp1y = cp1y + relativeY;
             cp2x = cp2x + relativeX;
@@ -346,7 +357,20 @@ VMLDrawing.prototype = {
         this._drawingComplete = false;
         this._trackSize(x + circum, y + circum);
         this.moveTo((x + circum), (y + radius));
-        this._addToPath(" ae " + this._round(x + radius) + ", " + this._round(y + radius) + ", " + this._round(radius) + ", " + this._round(radius) + ", " + startAngle + ", " + endAngle);
+        this._addToPath(
+            " ae " +
+            this._round(x + radius) +
+            ", " +
+            this._round(y + radius) +
+            ", " +
+            this._round(radius) +
+            ", " +
+            this._round(radius) +
+            ", " +
+            startAngle +
+            ", " +
+            endAngle
+        );
         return this;
     },
 
@@ -370,7 +394,22 @@ VMLDrawing.prototype = {
         this._drawingComplete = false;
         this._trackSize(x + w, y + h);
         this.moveTo((x + w), (y + yRadius));
-        this._addToPath(" ae " + this._round(x + radius) + ", " + this._round(x + radius) + ", " + this._round(y + yRadius) + ", " + this._round(radius) + ", " + this._round(yRadius) + ", " + startAngle + ", " + endAngle);
+        this._addToPath(
+            " ae " +
+            this._round(x + radius) +
+            ", " +
+            this._round(x + radius) +
+            ", " +
+            this._round(y + yRadius) +
+            ", " +
+            this._round(radius) +
+            ", " +
+            this._round(yRadius) +
+            ", " +
+            startAngle +
+            ", " +
+            endAngle
+        );
         return this;
     },
 
@@ -424,7 +463,20 @@ VMLDrawing.prototype = {
         startAngle = Math.round(startAngle);
         arc = Math.round(arc);
         this.moveTo(x, y);
-        this._addToPath(" ae " + this._round(x) + ", " + this._round(y) + ", " + this._round(radius) + " " + this._round(radius) + ", " +  startAngle + ", " + arc);
+        this._addToPath(
+            " ae " +
+            this._round(x) +
+            ", " +
+            this._round(y) +
+            ", " +
+            this._round(radius) +
+            " " +
+            this._round(radius) +
+            ", " +
+            startAngle +
+            ", " +
+            arc
+        );
         this._trackSize(diameter, diameter);
         return this;
     },

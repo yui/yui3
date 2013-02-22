@@ -142,11 +142,36 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			fillstring;
 			id = this.get("id");
 		type = this._type == "path" ? "shape" : this._type;
-        classString = _getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)) + " " + IMPLEMENTATION + type;
+        classString = _getClassName(SHAPE) +
+                    " " +
+                    _getClassName(concat(IMPLEMENTATION, SHAPE)) +
+                    " " +
+                    _getClassName(name) +
+                    " " +
+                    _getClassName(concat(IMPLEMENTATION, name)) +
+                    " " +
+                    IMPLEMENTATION +
+                    type;
         stroke = this._getStrokeProps();
         fill = this._getFillProps();
 
-		nodestring  = '<' + type + '  xmlns="urn:schemas-microsft.com:vml" id="' + id + '" class="' + classString + '" style="behavior:url(#default#VML);display:inline-block;position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px;visibility:' + visibility + '"';
+		nodestring  = '<' +
+                        type +
+                        '  xmlns="urn:schemas-microsft.com:vml" id="' +
+                        id +
+                        '" class="' +
+                        classString +
+                        '" style="behavior:url(#default#VML);display:inline-block;position:absolute;left:' +
+                        x +
+                        'px;top:' +
+                        y +
+                        'px;width:' +
+                        w +
+                        'px;height:' +
+                        h +
+                        'px;visibility:' +
+                        visibility +
+                        '"';
 
         if(stroke && stroke.weight && stroke.weight > 0)
         {
@@ -157,8 +182,11 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             dashstyle = stroke.dashstyle;
             nodestring += ' stroked="t" strokecolor="' + stroke.color + '" strokeWeight="' + stroke.weight + 'px"';
 
-            strokestring = '<stroke class="vmlstroke" xmlns="urn:schemas-microsft.com:vml" on="t" style="behavior:url(#default#VML);display:inline-block;"';
-            strokestring += ' opacity="' + opacity + '"';
+            strokestring = '<stroke class="vmlstroke"' +
+                            ' xmlns="urn:schemas-microsft.com:vml"' +
+                            ' on="t"' +
+                            ' style="behavior:url(#default#VML);display:inline-block;"' +
+                            ' opacity="' + opacity + '"';
             if(endcap)
             {
                 strokestring += ' endcap="' + endcap + '"';
@@ -475,7 +503,9 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 				fillOpacity = IS_NUM(fillOpacity) ? fillOpacity : 1;
 				filled = true;
 				gradient = this._getGradientFill(fill);
-				fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" opacity="' + fillOpacity + '"';
+				fillstring = '<fill xmlns="urn:schemas-microsft.com:vml"' +
+                            ' class="vmlfill" style="behavior:url(#default#VML);display:inline-block;"' +
+                            ' opacity="' + fillOpacity + '"';
 				for(i in gradient)
 				{
 					if(gradient.hasOwnProperty(i))
@@ -497,7 +527,9 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                     props.opacity = fillOpacity;
                     if(fillOpacity < 1)
                     {
-                        props.node = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" type="solid" opacity="' + fillOpacity + '"/>';
+                        props.node = '<fill xmlns="urn:schemas-microsft.com:vml"' +
+                        ' class="vmlfill" style="behavior:url(#default#VML);display:inline-block;"' +
+                        ' type="solid" opacity="' + fillOpacity + '"/>';
                     }
                 }
 			}
@@ -550,7 +582,9 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                 }
                 else
                 {
-                    fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;"';
+                    fillstring = '<fill xmlns="urn:schemas-microsft.com:vml"' +
+                                ' class="vmlfill"' +
+                                ' style="behavior:url(#default#VML);display:inline-block;"';
                     for(i in gradient)
                     {
                         if(gradient.hasOwnProperty(i))
@@ -581,7 +615,12 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 					}
 					else
 					{
-                        fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" type="solid" opacity="' + fillOpacity + '"/>';
+                        fillstring = '<fill xmlns="urn:schemas-microsft.com:vml"' +
+                        ' class="vmlfill"' +
+                        ' style="behavior:url(#default#VML);display:inline-block;"' +
+                        ' type="solid"' +
+                        ' opacity="' + fillOpacity + '"' +
+                        '/>';
                         this._fillNode = DOCUMENT.createElement(fillstring);
                         node.appendChild(this._fillNode);
 					}
@@ -772,7 +811,13 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         {
             if(!this._skew)
             {
-                this._skew = DOCUMENT.createElement( '<skew class="vmlskew" xmlns="urn:schemas-microsft.com:vml" on="false" style="behavior:url(#default#VML);display:inline-block;" />');
+                this._skew = DOCUMENT.createElement(
+                    '<skew class="vmlskew"' +
+                    ' xmlns="urn:schemas-microsft.com:vml"' +
+                    ' on="false"' +
+                    ' style="behavior:url(#default#VML);display:inline-block;"' +
+                    '/>'
+                );
                 this.node.appendChild(this._skew);
             }
             this._skew.matrix = transform;
@@ -985,7 +1030,13 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	_createGraphicNode: function(type)
 	{
 		type = type || this._type;
-		return DOCUMENT.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;" class="vml' + type + '"/>');
+		return DOCUMENT.createElement(
+                '<' + type +
+                ' xmlns="urn:schemas-microsft.com:vml"' +
+                ' style="behavior:url(#default#VML);display:inline-block;"' +
+                ' class="vml' + type + '"' +
+                '/>'
+            );
 	},
 
 	/**
