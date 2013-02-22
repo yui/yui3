@@ -17,7 +17,7 @@ module.exports = function(grunt) {
         type: Boolean
     };
 
-    grunt.initConfig({
+    grunt.config.init({
         version: grunt.option('release-version'),
         build: grunt.option('release-build'),
         buildtag: 'YUI <%= version %> (build <%= build %>)',
@@ -77,7 +77,6 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-yui-contrib');
     grunt.loadNpmTasks('grunt-contrib-compress');
-
     grunt.registerTask('default', ['boot']);
 
 };
