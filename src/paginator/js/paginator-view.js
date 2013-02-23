@@ -43,6 +43,8 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         if (this.template && typeof this.template !== 'function') {
             this.template = Y.Paginator.Templates.compile(this.template);
         }
+
+        this.after('containerChange', this._afterContainerChanged, this);
     },
 
     render: function () {

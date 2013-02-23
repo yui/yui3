@@ -25,6 +25,18 @@ PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
             perPageSelect: this.renderPerPageSelect()
         });
 
+    },
+
+    _afterContainerChanged: function () {
+        var container = this.get('container'),
+            getClassName = Y.ClassNameManager.getClassName,
+            mainClass = getClassName('paginator');
+
+        if(!container.hasClass(mainClass)) {
+            container = container.ancestor('.' + mainClass);
+        }
+
+        container.addClass(getClassName(NAME));
     }
 
 }, {

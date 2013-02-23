@@ -61,7 +61,7 @@ var template = new Y.Template(),
     */
     pageSelect =    '<li class="<%= data.classNames.controlWrapper %>">' +
                         '<label class="<%= data.classNames.control %>" data-type="<%= data.type %>">' +
-                            '<%= data.preLabel %><select class="<%= data.classNames.pageSelect %>">' +
+                            '<%= data.preLabel %> <select class="<%= data.classNames.pageSelect %>">' +
                             '<% Y.Array.each(data.options, function(option) { %>' +
                                 '<option value="<%= option.value %>"<% if(option.selected) {%> selected="selected"<% }; %>>' +
                                     '<%= option.display %>' +
