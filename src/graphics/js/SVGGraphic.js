@@ -8,7 +8,7 @@
  * @class SVGGraphic
  * @constructor
  */
-SVGGraphic = function(cfg) {
+SVGGraphic = function() {
     SVGGraphic.superclass.constructor.apply(this, arguments);
 };
 
@@ -279,9 +279,10 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
      * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function(attr, value)
+	set: function()
 	{
 		var host = this,
+            attr = arguments[0],
             redrawAttrs = {
                 autoDraw: true,
                 autoSize: true,

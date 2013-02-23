@@ -244,7 +244,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 */
 	addClass: function(className)
 	{
-		var node = this.node;
+        var node = this.node;
 		Y_DOM.addClass(node, className);
 	},
 
@@ -256,7 +256,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 */
 	removeClass: function(className)
 	{
-		var node = this.node;
+        var node = this.node;
 		Y_DOM.removeClass(node, className);
 	},
 
@@ -310,8 +310,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @return {Boolean} True if the nodes match, false if they do not.
 	 */
 	compareTo: function(refNode) {
-		var node = this.node;
-
+        var node = this.node;
 		return node === refNode;
 	},
 
@@ -400,13 +399,13 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method _strokeChangeHandler
 	 * @private
 	 */
-	_strokeChangeHandler: function(e)
+	_strokeChangeHandler: function()
 	{
         if(!this._strokeFlag)
         {
             return;
         }
-		var node = this.node,
+        var node = this.node,
 			stroke = this.get("stroke"),
 			strokeOpacity,
 			dashstyle,
@@ -544,7 +543,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method _fillChangeHandler
 	 * @private
 	 */
-	_fillChangeHandler: function(e)
+	_fillChangeHandler: function()
 	{
         if(!this._fillFlag)
         {
@@ -924,7 +923,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * @param {Number} x The value to skew on the x-axis.
      * @param {Number} y The value to skew on the y-axis.
      */
-    skew: function(x, y)
+    skew: function()
     {
         this._addTransform("skew", arguments);
     },
@@ -935,7 +934,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method skewX
 	 * @param {Number} x x-coordinate
 	 */
-     skewX: function(x)
+     skewX: function()
      {
         this._addTransform("skewX", arguments);
      },
@@ -946,7 +945,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method skewY
 	 * @param {Number} y y-coordinate
 	 */
-     skewY: function(y)
+     skewY: function()
      {
         this._addTransform("skewY", arguments);
      },
@@ -957,7 +956,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method rotate
 	 * @param {Number} deg The degree of the rotation.
 	 */
-     rotate: function(deg)
+     rotate: function()
      {
         this._addTransform("rotate", arguments);
      },
@@ -968,7 +967,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method scale
 	 * @param {Number} val
 	 */
-    scale: function(x, y)
+    scale: function()
     {
         this._addTransform("scale", arguments);
     },
@@ -1007,7 +1006,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * @method _updateHandler
 	 * @private
 	 */
-	_updateHandler: function(e)
+	_updateHandler: function()
 	{
 		var host = this,
             node = host.node;
