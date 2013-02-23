@@ -1,15 +1,15 @@
 {
     firstTitle: 'First Page',
-    firstDisplay: '<<',
+    firstDisplay: 'First',
 
     lastTitle: 'Last Page',
-    lastDisplay: '>>',
+    lastDisplay: 'Last',
 
     prevTitle: 'Previous Page',
-    prevDisplay: '<',
+    prevDisplay: 'Previous',
 
     nextTitle: 'Next Page',
-    nextDisplay: '>',
+    nextDisplay: 'Next',
 
     pageTitle: 'Page {page}',
     pageDisplay: '{page}',
