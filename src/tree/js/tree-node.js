@@ -73,8 +73,8 @@ TreeNode.prototype = {
 
     This value is falsy by default unless child nodes are added at instantiation
     time, in which case it will be automatically set to `true`. You can also
-    manually set it to `true` to indicate that a node can have children even if
-    it doesn't currently have any children.
+    manually set it to `true` to indicate that a node can have children even
+    though it might not currently have any children.
 
     Note that regardless of the value of this property, appending, prepending,
     or inserting a node into this node will cause `canHaveChildren` to be set to
@@ -92,11 +92,10 @@ TreeNode.prototype = {
     **/
 
     /**
-    Arbitrary implementation-specific data related to this node.
+    Arbitrary serializable data related to this node.
 
-    This property is created by setting a `data` property in the config object
-    passed to Tree.Node's constructor. It may contain any serializable data
-    you want to store on this node instance.
+    Use this property to store any data that should accompany this node when it
+    is serialized to JSON.
 
     @property {Object} data
     @default {}
@@ -119,6 +118,10 @@ TreeNode.prototype = {
 
     /**
     Current state of this node.
+
+    Use this property to store state-specific info -- such as whether this node
+    is "open", "selected", or any other arbitrary state -- that should accompany
+    this node when it is serialized to JSON.
 
     @property {Object} state
     **/

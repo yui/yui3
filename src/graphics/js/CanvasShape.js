@@ -9,7 +9,7 @@
  * @class CanvasShape
  * @constructor
  */
-CanvasShape = function(cfg)
+CanvasShape = function()
 {
     this._transforms = [];
     this.matrix = new Y.Matrix();
@@ -273,7 +273,15 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 		node.setAttribute("id", id);
 		id = "#" + id;
         host.node = node;
-		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)));
+		host.addClass(
+            _getClassName(SHAPE) +
+            " " +
+            _getClassName(concat(IMPLEMENTATION, SHAPE)) +
+            " " +
+            _getClassName(name) +
+            " " +
+            _getClassName(concat(IMPLEMENTATION, name))
+        );
 	},
 
 	/**
@@ -368,8 +376,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
      */
 	set: function()
 	{
-		var host = this,
-			val = arguments[0];
+		var host = this;
 		AttributeLite.prototype.set.apply(host, arguments);
 		if(host.initialized)
 		{
@@ -473,7 +480,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
      * @param {Number} x The value to skew on the x-axis.
      * @param {Number} y The value to skew on the y-axis.
      */
-    skew: function(x, y)
+    skew: function()
     {
         this._addTransform("skew", arguments);
     },
@@ -484,7 +491,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 * @method skewX
 	 * @param {Number} x x-coordinate
 	 */
-    skewX: function(x)
+    skewX: function()
     {
         this._addTransform("skewX", arguments);
     },
@@ -495,7 +502,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 * @method skewY
 	 * @param {Number} y y-coordinate
 	 */
-    skewY: function(y)
+    skewY: function()
     {
         this._addTransform("skewY", arguments);
     },
@@ -506,9 +513,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 * @method rotate
 	 * @param {Number} deg The degree of the rotation.
 	 */
-    rotate: function(deg)
+    rotate: function()
     {
-        this._rotation = deg;
         this._addTransform("rotate", arguments);
     },
 
@@ -518,19 +524,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 * @method scale
 	 * @param {Number} val
 	 */
-    scale: function(x, y)
+    scale: function()
     {
         this._addTransform("scale", arguments);
     },
-
-    /**
-     * Storage for `rotation` atribute.
-     *
-     * @property _rotation
-     * @type Number
-	 * @private
-	 */
-	_rotation: 0,
 
     /**
      * Storage for the transform attribute.

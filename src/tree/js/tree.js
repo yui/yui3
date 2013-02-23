@@ -89,7 +89,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     The `Tree.Node` class or subclass that should be used for nodes created by
     this tree.
 
-    You may specific an actual class reference or a string that resolves to a
+    You may specify an actual class reference or a string that resolves to a
     class reference at runtime.
 
     @property {String|Tree.Node} nodeClass
