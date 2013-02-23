@@ -86,8 +86,8 @@ var template = new Y.Template(),
         }
     */
     perPageSelect = '<li class="<%= data.classNames.controlWrapper %>">' +
-                        '<label class="<%= data.classNames.control %>" data-type="<%= data.type %>">' +
-                            '<%= data.preLabel %> <select class="<%= data.classNames.pageSelect %>">' +
+                        '<label class="<%= data.classNames.control %> <%= data.classNames.pageSelect %>" data-type="<%= data.type %>">' +
+                            '<%= data.preLabel %> <select class="">' +
                             '<% Y.Array.each(data.options, function(option) { %>' +
                                 '<option value="<%= option.value %>"<% if(option.selected) {%> selected="selected"<% }; %>>' +
                                     '<%= option.display %>' +

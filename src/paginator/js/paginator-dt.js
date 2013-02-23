@@ -7,7 +7,6 @@ PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
                     '<%== data.first %><%== data.prev %>' +
                     '<%== data.pageInput %>' +
                     '<%== data.next %><%== data.last %>' +
-                    '<%== data.pageSelect %>' +
                     '<%== data.perPageSelect %>' +
                 '</ul>',
 

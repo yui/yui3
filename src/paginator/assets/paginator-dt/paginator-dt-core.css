@@ -1,13 +1,4 @@
 @font-face {
-  font-family: 'FontAwesome';
-  src: url('./fonts/fontawesome-webfont.eot?v=3.0.1');
-  src: url('./fonts/fontawesome-webfont.eot?#iefix&v=3.0.1') format('embedded-opentype'),
-    url('./fonts/fontawesome-webfont.woff?v=3.0.1') format('woff'),
-    url('./fonts/fontawesome-webfont.ttf?v=3.0.1') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
   font-family: 'YUIFont';
   src: url('../../fonts/font-yui/yui.eot?v=3.0.1');
   src: url('../../fonts/font-yui/yui.eot?#iefix&v=3.0.1') format('embedded-opentype'),
@@ -46,13 +37,13 @@
 }
 .yui3-paginator-dt .yui3-paginator-control:before {
     font-family: "YUIFont";
-    height: 100%;
     width: 100%;
     text-align: center;
     position: absolute;
     left: 0;
     top: 0;
     text-indent: 0;
+    vertical-align: middle;
 }
 .yui3-paginator-dt .yui3-paginator-control-first:before {
     content: "\f048"; /* |< */
