@@ -1,10 +1,10 @@
 .yui3-paginator-dt {
     background: white url(http://yui.yahooapis.com/3.8.1/build/assets/skins/sam/sprite.png) repeat-x 0 0;
-    background-image: -webkit-linear-gradient(transparent 40%,hsla(0, 0%, 0%, 0.21));
-    background-image: -moz-linear-gradient(top,transparent 40%,hsla(0, 0%, 0%, 0.21));
-    background-image: -ms-linear-gradient(transparent 40%,hsla(0, 0%, 0%, 0.21));
-    background-image: -o-linear-gradient(transparent 40%,hsla(0, 0%, 0%, 0.21));
-    background-image: linear-gradient(transparent 40%,hsla(0, 0%, 0%, 0.21));
+    background-image: -webkit-linear-gradient(transparent 40%, hsla(0, 0%, 0%, 0.21));
+    background-image: -moz-linear-gradient(top, transparent 40%, hsla(0, 0%, 0%, 0.21));
+    background-image: -ms-linear-gradient(transparent 40%, hsla(0, 0%, 0%, 0.21));
+    background-image: -o-linear-gradient(transparent 40%, hsla(0, 0%, 0%, 0.21));
+    background-image: linear-gradient(transparent 40%, hsla(0, 0%, 0%, 0.21));
 }
 
 .yui3-paginator-dt .yui3-paginator-control {
