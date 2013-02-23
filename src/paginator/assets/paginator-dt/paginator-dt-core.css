@@ -11,6 +11,14 @@
 .yui3-paginator-dt {
     padding: 3px;
 }
+.yui3-paginator-dt .yui3-paginator-content {
+    position: relative;
+}
+.yui3-paginator-dt .yui3-paginator-page-select {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
 .yui3-paginator-dt .yui3-paginator-control {
     display: block;
     margin: 0 3px;
