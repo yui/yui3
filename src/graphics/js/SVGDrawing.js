@@ -682,7 +682,6 @@ SVGDrawing.prototype = {
             pathType,
             len,
             val,
-            val2,
             i,
             path = "",
             node = this.node,

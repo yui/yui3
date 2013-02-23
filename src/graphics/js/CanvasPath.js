@@ -9,7 +9,7 @@
  * @class CanvasPath
  * @extends CanvasShape
  */
-CanvasPath = function(cfg)
+CanvasPath = function()
 {
 	CanvasPath.superclass.constructor.apply(this, arguments);
 };
