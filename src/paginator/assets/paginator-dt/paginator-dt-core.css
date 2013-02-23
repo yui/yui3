@@ -39,6 +39,7 @@
 .yui3-paginator-dt .yui3-paginator-control-prev,
 .yui3-paginator-dt .yui3-paginator-control-next {
     text-indent: -999px;
+    direction: ltr;
     overflow: hidden;
     position: relative;
     width: 1em;
@@ -54,14 +55,14 @@
     text-indent: 0;
 }
 .yui3-paginator-dt .yui3-paginator-control-first:before {
-    content: "c";
+    content: "\f048"; /* |< */
 }
 .yui3-paginator-dt .yui3-paginator-control-last:before {
-    content: "d";
+    content: "\f051"; /* >| */
 }
 .yui3-paginator-dt .yui3-paginator-control-prev:before {
-    content: "a";
+    content: "\f0d9"; /* < */
 }
 .yui3-paginator-dt .yui3-paginator-control-next:before {
-    content: "b";
+    content: "\f0da"; /* > */
 }
