@@ -52,3 +52,7 @@
     color: hsl(220,30%,80%);
     background: transparent;
 }
+.yui3-paginator-page-input {
+    width: 3em;
+    text-align: right;
+}
