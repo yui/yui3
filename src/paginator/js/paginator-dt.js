@@ -3,6 +3,9 @@ var PaginatorDT,
 
 PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
 
+    /**
+     @property template
+     */
     template:   '<ul class="<%= data.classNames.dt %>">' +
                     '<%== data.first %><%== data.prev %>' +
                     '<%== data.pageInput %>' +
@@ -10,6 +13,9 @@ PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
                     '<%== data.perPageSelect %>' +
                 '</ul>',
 
+    /**
+     @method renderControls
+     */
     renderControls: function () {
         console.log(LNAME, 'renderControls');
 
@@ -26,6 +32,10 @@ PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
 
     },
 
+    /**
+     @protected
+     @method _afterContainerChanged
+     */
     _afterContainerChanged: function () {
         var container = this.get('container'),
             getClassName = Y.ClassNameManager.getClassName,

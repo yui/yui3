@@ -1,17 +1,20 @@
 var Y_Paginator = Y.namespace('Paginator'),
-    LNAME = NAME + '::',
     Paginator;
 
 Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
 
+    /**
+     @method renderUI
+     */
     renderUI: function () {
-        console.log(LNAME, 'renderUI');
         // initialize the view since syncUI will render the UI
         this.get('view');
     },
 
+    /**
+     @method bindUI
+     */
     bindUI: function () {
-        console.log(LNAME, 'bindUI');
         var view = this.get('view');
 
         this.after(['pageChange', 'itemsPerPageChange', 'totalItemsChange'], this.syncUI, this);
@@ -29,12 +32,16 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
         view.attachEvents();
     },
 
+    /**
+     @method syncUI
+     */
     syncUI: function () {
-        console.log(LNAME, 'syncUI');
         this.get('view').render();
     },
 
-
+    /**
+     @method toJSON
+     */
     toJSON: function () {
         var attrs = this.getAttrs();
 
@@ -50,34 +57,60 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
     //---- PROTECTED ----
 
     // UI Events
+    /**
+     @protected
+     @method _afterUIFirst
+     */
     _afterUIFirst: function () {
         this.first();
     },
 
+    /**
+     @protected
+     @method _afterUILast
+     */
     _afterUILast: function () {
         this.last();
     },
 
+    /**
+     @protected
+     @method _afterUIPrev
+     */
     _afterUIPrev: function () {
         this.prev();
     },
 
+    /**
+     @protected
+     @method _afterUINext
+     */
     _afterUINext: function () {
         this.next();
     },
 
+    /**
+     @protected
+     @method _afterUIPage
+     */
     _afterUIPage: function (e) {
         this.page(e.val);
     },
 
+    /**
+     @protected
+     @method _afterUIPerPage
+     */
     _afterUIPerPage: function (e) {
         this.perPage(e.val);
     },
 
     // View
+    /**
+     @protected
+     @method _viewSetterFn
+     */
     _viewSetterFn: function (view) {
-        console.log(LNAME, '_viewSetterFn');
-
         if (typeof view === 'string') {
             view = this._createView(view);
         }
@@ -85,9 +118,11 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
         return view;
     },
 
+    /**
+     @protected
+     @method _createView
+     */
     _createView: function (viewType) {
-        console.log(LNAME, '_createView');
-
         var ViewConstructor = Y.Object.getValue(Y, viewType.split('.')),
             viewConfig = this.get('viewConfig'),
             view;

@@ -3,6 +3,9 @@ var PaginatorList,
 
 PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.Url], {
 
+    /**
+     @property template
+     */
     template:   '<ul class="<%= data.classNames.list %>">' +
                     '<%== data.first %><%== data.prev %>' +
                     '<li class="<%= data.classNames.controlWrapper %>">' +
@@ -13,6 +16,9 @@ PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.U
                     '<%== data.next %><%== data.last %>' +
                 '</ul>',
 
+    /**
+     @method renderControls
+     */
     renderControls: function () {
         console.log(LNAME, 'renderControls');
 
@@ -26,6 +32,9 @@ PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.U
         });
     },
 
+    /**
+     @method preRender
+     */
     preRender: function (template, data) {
         console.log(LNAME, 'preRender');
 
@@ -50,6 +59,10 @@ PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.U
         return data;
     },
 
+    /**
+     @protected
+     @method _afterContainerChanged
+     */
     _afterContainerChanged: function () {
         var container = this.get('container'),
             getClassName = Y.ClassNameManager.getClassName,
