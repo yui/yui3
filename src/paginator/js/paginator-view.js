@@ -6,10 +6,19 @@ var getClassName = Y.ClassNameManager.getClassName,
 
 PaginatorView = Y.Base.create('paginator', Y.View, [], {
 
+    /**
+     @property templates
+     */
     templates: Y_Paginator.Templates,
 
+    /**
+     @property controls
+     */
     controls: {},
 
+    /**
+     @property classNames
+     */
     classNames: {
         container: getClassName('paginator', 'container'),
         controls: getClassName('paginator', 'controls'),
@@ -29,6 +38,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         perPageSelect: getClassName('paginator', 'per-page', 'select')
     },
 
+    /**
+     @property events
+     */
     events: {
         '.yui3-paginator-control': {
             'click': 'controlClick',
@@ -39,6 +51,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         }
     },
 
+    /**
+     @method initializer
+     */
     initializer: function () {
         if (this.template && typeof this.template !== 'function') {
             this.template = Y.Paginator.Templates.compile(this.template);
@@ -47,21 +62,33 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         this.after('containerChange', this._afterContainerChanged, this);
     },
 
+    /**
+     @method render
+     */
     render: function () {
         console.log(LNAME, 'render');
         this.get('container').setContent(this.renderControls());
     },
 
+    /**
+     @method renderControls
+     */
     renderControls: function () {},
 
     ///////////////////////////////////////
     // T E M P L A T E   R E N D E R I N G
     ///////////////////////////////////////
 
+    /**
+     @method preRender
+     */
     preRender: function (type, data) {
         return data;
     },
 
+    /**
+     @method renderControl
+     */
     renderControl: function (type) {
         console.log(LNAME, 'renderControl');
         var strings = this.get('strings'),
@@ -108,6 +135,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
 
     },
 
+    /**
+     @method renderPages
+     */
     renderPages: function () {
         console.log(LNAME, 'renderPages');
         var rangeValues = this.getDisplayRangeValues(),
@@ -128,6 +158,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
 
     },
 
+    /**
+     @method renderPage
+     */
     renderPage: function (page, curPage) {
         //console.log(LNAME, 'renderPage');
         var strings = this.get('strings'),
@@ -145,6 +178,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         return this.renderTemplate('page', data);
     },
 
+    /**
+     @method renderPageInput
+     */
     renderPageInput: function () {
         console.log(LNAME, 'renderPageInput');
         var strings = this.get('strings'),
@@ -161,6 +197,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         return this.renderTemplate('pageInput', data);
     },
 
+    /**
+     @method renderPageSelect
+     */
     renderPageSelect: function () {
         console.log(LNAME, 'renderPageSelect');
         var strings = this.get('strings'),
@@ -187,6 +226,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         return this.renderTemplate('pageSelect', data);
     },
 
+    /**
+     @method renderPerPageSelect
+     */
     renderPerPageSelect: function () {
         console.log(LNAME, 'renderPerPageSelect');
         var strings = this.get('strings'),
@@ -221,6 +263,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         return this.renderTemplate('perPageSelect', data);
     },
 
+    /**
+     @method renderTemplate
+     */
     renderTemplate: function(template, data) {
         //console.log(LNAME, 'renderTemplate');
         data.classNames || (data.classNames = this.classNames);
@@ -232,11 +277,17 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         return this.templates[template](data);
     },
 
+    /**
+     @method getTemplateAttrs
+     */
     getTemplateAttrs: function (attrs) {
         var retAttrs = Y.mix(attrs || {}, this.get('model').toJSON());
         return Y.mix(retAttrs, this.getAttrs());
     },
 
+    /**
+     @method getDisplayRangeValues
+     */
     getDisplayRangeValues: function () {
         console.log('getDisplayRange', '::', 'Y.Paginator.View');
         var model = this.get('model'),
@@ -263,6 +314,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     },
 
     // EVENT CALL BACKS
+    /**
+     @method controlClick
+     */
     controlClick: function(e) {
         console.log(LNAME, 'controlClick');
         e.preventDefault();
@@ -270,6 +324,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         this.fire(e.currentTarget.getData('type'));
     },
 
+    /**
+     @method controlChange
+     */
     controlChange: function (e) {
         console.log(LNAME, 'controlChange');
         e.preventDefault();
@@ -278,6 +335,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         this.fire(type, { val: e.target.get('value') });
     },
 
+    /**
+     @method pageClick
+     */
     pageClick: function(e) {
         console.log(LNAME, 'pageClick');
         e.preventDefault();
@@ -286,6 +346,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
 
     //-- PROTECTED ----
 
+    /**
+     @method _stringValueFn
+     */
     _stringValueFn: function () {
         console.log(LNAME, '_stringValueFn');
         return Y.Intl.get('paginator-templates');
