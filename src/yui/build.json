@@ -10,8 +10,8 @@
     "exec": [
         "./scripts/build.js"
     ],
-    "_postexec": [
-        "shifter --config build-npm.json"
+    "postexec": [
+        "grunt npm"
     ],
     "builds": {
         "features": {
