@@ -144,7 +144,7 @@ var SETTER = "setter",
                 getter = attrConfig[attr].getter;
                 if(getter)
                 {
-                    if(typeof getter == STR)
+                    if(typeof getter === STR)
                     {
                         return host[getter].apply(host);
                     }
@@ -207,7 +207,7 @@ var SETTER = "setter",
 				if(setter)
 				{
 					args = [val];
-					if(typeof setter == STR)
+					if(typeof setter === STR)
 					{
 						val = host[setter].apply(host, args);
 					}

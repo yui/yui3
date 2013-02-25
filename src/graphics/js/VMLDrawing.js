@@ -1,7 +1,7 @@
 var IMPLEMENTATION = "vml",
     SHAPE = "shape",
 	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
-    SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
+    SPLITARGSPATTERN = /[\-]?[0-9]*[0-9|\.][0-9]*/g,
     Y_LANG = Y.Lang,
     IS_NUM = Y_LANG.isNumber,
     IS_ARRAY = Y_LANG.isArray,
@@ -192,7 +192,7 @@ VMLDrawing.prototype = {
                     ", " +
                     this._round(cp2x) +
                     ", " +
-                    his._round(cp2y) +
+                    this._round(cp2y) +
                     ", " +
                     this._round(x) +
                     ", " +
@@ -525,7 +525,7 @@ VMLDrawing.prototype = {
             path = relative ? " r " : " l ",
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
-        if (typeof point1 == "string" || typeof point1 == "number") {
+        if (typeof point1 === "string" || typeof point1 === "number") {
             len = args.length - 1;
             for (i = 0; i < len; i = i + 2) {
                 x = parseFloat(args[i]);

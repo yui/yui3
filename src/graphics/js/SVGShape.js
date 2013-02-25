@@ -651,7 +651,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 */
 	_updateTransform: function()
 	{
-		var isPath = this._type == "path",
+		var isPath = this._type === "path",
             node = this.node,
 			key,
 			transform,
@@ -771,10 +771,10 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			stroke = this.get("stroke"),
             w = this.get("width"),
 			h = this.get("height"),
-			x = type == "path" ? 0 : this._x,
-			y = type == "path" ? 0 : this._y,
+			x = type === "path" ? 0 : this._x,
+			y = type === "path" ? 0 : this._y,
             wt = 0;
-        if(type != "path")
+        if(type !== "path")
         {
             if(stroke && stroke.weight)
             {
