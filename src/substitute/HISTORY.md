@@ -1,7 +1,11 @@
 Substitute Utility Change History
 =================================
 
-@VERSION@
+3.9.0
+-----
+* No changes.
+
+3.9.0
 -----
 
 * Officially Deprecating.

@@ -1,7 +1,7 @@
 Rich Text Editor Change History
 ===============================
 
-@VERSION@
+3.9.0
 -----
 
 * Removed unused `substitute` dependency.

@@ -1,7 +1,7 @@
 DataTable Change History
 ========================
 
-@VERSION@
+3.9.0
 -----
 
 * Making sortable datatableheaders unselectable [Pull Request #286]

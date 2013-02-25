@@ -1,7 +1,7 @@
 JSON Utility Change History
 ===========================
 
-@VERSION@
+3.9.0
 -----
 
 * The JavaScript fallback version is only loaded when the environment doesn't
