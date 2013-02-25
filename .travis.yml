@@ -8,3 +8,6 @@ script:
     - grunt travis
 git:
     depth: 30
+branches:
+  except:
+      - live-docs
