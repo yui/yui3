@@ -12,13 +12,14 @@
     },
     "main": "./index.js",
     "dependencies": {
-        "request": "~2.12.0"
+        "request": "~2.14.0"
     },
     "devDependencies": {
         "yogi": "*",
         "parserlib": "~0.2.2",
         "grunt": "~0.4.0",
         "grunt-yui-contrib": "*",
+        "grunt-lib-contrib": "~0.5.3",
         "grunt-contrib-compress": "~0.4.1"
     },
     "scripts": {
