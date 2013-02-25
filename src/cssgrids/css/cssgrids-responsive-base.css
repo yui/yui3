@@ -1,7 +1,7 @@
 .yui3-g-r {
     letter-spacing: -0.31em;
     *letter-spacing: normal;
-    word-spacing: -0.43em;
+    *word-spacing: -0.43em;
 }
 .yui3-g-r img {
     max-width: 100%;
