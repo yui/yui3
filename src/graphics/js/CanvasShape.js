@@ -660,7 +660,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			{
 				methods[i] = cachedMethods[i].concat();
 				args = methods[i];
-                argsLen = (args[0] == "quadraticCurveTo" || args[0] == "bezierCurveTo") ? args.length : 3;
+                argsLen = (args[0] === "quadraticCurveTo" || args[0] === "bezierCurveTo") ? args.length : 3;
 				for(j = 1; j < argsLen; ++j)
 				{
 					if(j % 2 === 0)
@@ -684,12 +684,12 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 					method = args.shift();
 					if(method)
 					{
-                        if(method == "closePath")
+                        if(method === "closePath")
                         {
                             context.closePath();
                             this._strokeAndFill(context);
                         }
-						else if(method && method == "lineTo" && this._dashstyle)
+						else if(method && method === "lineTo" && this._dashstyle)
 						{
 							args.unshift(this._xcoords[i] - this._left, this._ycoords[i] - this._top);
 							this._drawDashedLine.apply(this, args);
@@ -819,7 +819,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			h = this.get("height"),
 			x = this.get("x"),
 			y = this.get("y");
-        if(type == "path")
+        if(type === "path")
         {
             x = x + this._left;
             y = y + this._top;
@@ -851,7 +851,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
             transform,
             key,
             contentRect;
-        if(this._type == "path")
+        if(this._type === "path")
         {
             transformX = transformX + x;
             transformY = transformY + y;

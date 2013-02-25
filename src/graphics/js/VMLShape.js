@@ -141,7 +141,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			fill,
 			fillstring;
 			id = this.get("id");
-		type = this._type == "path" ? "shape" : this._type;
+		type = this._type === "path" ? "shape" : this._type;
         classString = _getClassName(SHAPE) +
                     " " +
                     _getClassName(concat(IMPLEMENTATION, SHAPE)) +
@@ -568,7 +568,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                     {
                         if(gradient.hasOwnProperty(i))
                         {
-                            if(i == "colors")
+                            if(i === "colors")
                             {
                                 this._fillNode.colors.value = gradient[i];
                             }
@@ -606,7 +606,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 					fill.opacity = fillOpacity;
                     if(this._fillNode)
 					{
-                        if(this._fillNode.getAttribute("type") != "solid")
+                        if(this._fillNode.getAttribute("type") !== "solid")
                         {
                             this._fillNode.type = "solid";
                         }
@@ -824,7 +824,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             //this._skew.offset = this._getSkewOffsetValue(normalizedMatrix.dx) + "px, " + this._getSkewOffsetValue(normalizedMatrix.dy) + "px";
             this._skew.origin = tx + ", " + ty;
         }
-        if(this._type != "path")
+        if(this._type !== "path")
         {
             this._transforms = [];
         }
