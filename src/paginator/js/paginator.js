@@ -4,6 +4,8 @@ var Y_Paginator = Y.namespace('Paginator'),
 Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
 
     /**
+     Requests the view so we can be sure the view is initialized. We
+       render the view in syncUI so the render only happens once on initialization.
      @method renderUI
      */
     renderUI: function () {
@@ -12,6 +14,8 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
     },
 
     /**
+     Registers change events to update the view. Registers view events
+       to update local attrs.
      @method bindUI
      */
     bindUI: function () {
