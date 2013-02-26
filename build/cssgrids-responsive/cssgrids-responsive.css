@@ -6,9 +6,10 @@
 }
 
 /* Opera as of 12 on Windows needs word-spacing.
-   The "opera-only" selector is used to prevent actual prefocus styling.
+   The ".opera-only" selector is used to prevent actual prefocus styling
+   and is not required in markup.
 */
-opera-only :-o-prefocus,
+.opera-only :-o-prefocus,
 .yui3-g {
     word-spacing: -0.43em;
 }
@@ -175,9 +176,10 @@ opera-only :-o-prefocus,
 }
 
 /* Opera as of 12 on Windows needs word-spacing.
-   The "opera-only" selector is used to prevent actual prefocus styling.
+   The ".opera-only" selector is used to prevent actual prefocus styling
+   and is not required in markup.
 */
-opera-only :-o-prefocus,
+.opera-only :-o-prefocus,
 .yui3-g-r {
     word-spacing: -0.43em;
 }
