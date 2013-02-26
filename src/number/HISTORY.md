@@ -4,7 +4,7 @@ Number Change History
 3.9.0
 -----
 
-* No changes.
+* PR #433 (ticket #2533028) - Fix incorrectly parsing empty string as 0. [okuryu]
 
 3.8.1
 -----
