@@ -9,6 +9,8 @@ DataTable Change History
 
 * French translations for the DataTable [Pull Request #454] [ArnaudD] [davglass]
 
+* Merged in #392: Named cell formatters [satyam] 
+
 3.8.1
 -----
 
