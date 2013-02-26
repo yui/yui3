@@ -5,3 +5,4 @@ CSSNormalize Change History
 -----
 
 * Initial release.
+
