@@ -5,11 +5,19 @@
     text-rendering: optimizespeed; /* Webkit: fixes text-rendering: optimizeLegibility */
 }
 
+/* Opera as of 12 on Windows needs word-spacing.
+   The "opera-only" selector is used to prevent actual prefocus styling.
+*/
+opera-only :-o-prefocus,
+.yui3-g {
+    word-spacing: -0.43em;
+}
+
 .yui3-u {
     display: inline-block;
     zoom: 1; *display: inline; /* IE < 8: fake inline-block */
     letter-spacing: normal;
-    *word-spacing: normal;
+    word-spacing: normal;
     vertical-align: top;
     text-rendering: auto;
 }
@@ -165,6 +173,15 @@
     *letter-spacing: normal;
     *word-spacing: -0.43em;
 }
+
+/* Opera as of 12 on Windows needs word-spacing.
+   The "opera-only" selector is used to prevent actual prefocus styling.
+*/
+opera-only :-o-prefocus,
+.yui3-g-r {
+    word-spacing: -0.43em;
+}
+
 .yui3-g-r img {
     max-width: 100%;
 }
