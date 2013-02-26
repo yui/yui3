@@ -1,7 +1,7 @@
 Tree Change History
 ===================
 
-@VERSION@
+3.9.0
 -----
 
 * Initial release. [Ryan Grove]
