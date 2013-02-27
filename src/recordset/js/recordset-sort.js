@@ -4,15 +4,18 @@
  * @submodule recordset-sort
  */
 
-var Compare = Y.ArraySort.compare,
+var y_compare = Y.ArraySort.compare,
 isValue = Y.Lang.isValue;
 
 /**
  * Plugin that adds default and custom sorting functionality to the Recordset utility
  * @class RecordsetSort
+ * @param field
+ * @param desc
+ * @param sorter
  */
 
-function RecordsetSort(field, desc, sorter) {
+function RecordsetSort() {
     RecordsetSort.superclass.constructor.apply(this, arguments);
 }
 
@@ -52,9 +55,9 @@ Y.mix(RecordsetSort, {
         */
         defaultSorter: {
             value: function(recA, recB, field, desc) {
-                var sorted = Compare(recA.getValue(field), recB.getValue(field), desc);
+                var sorted = y_compare(recA.getValue(field), recB.getValue(field), desc);
                 if (sorted === 0) {
-                    return Compare(recA.get("id"), recB.get("id"), desc);
+                    return y_compare(recA.get("id"), recB.get("id"), desc);
                 }
                 else {
                     return sorted;
@@ -80,10 +83,11 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     /**
      * @description Sets up the default function to use when the "sort" event is fired.
      *
-     * @method initializer
      * @protected
+     * @method initializer
+     * @param config
      */
-    initializer: function(config) {
+    initializer: function() {
 
         var self = this,
         host = this.get('host');
@@ -113,12 +117,9 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 
     },
 
-    destructor: function(config) {
-        },
-
     /**
-     * @description Method that all sort calls go through. 
-     * Sets up the lastSortProperties object with the details of the sort, and passes in parameters 
+     * @description Method that all sort calls go through.
+     * Sets up the lastSortProperties object with the details of the sort, and passes in parameters
      * to the "defaultSorter" or a custom specified sort function.
      *
      * @method _defSortFn
@@ -129,7 +130,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
         this.get("host")._items.sort(function(a, b) {
             return (e.sorter)(a, b, e.field, e.desc);
         });
-        
+
         this.set('lastSortProperties', e);
     },
 
@@ -175,7 +176,8 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     },
 
     /**
-     * @description Sorts the recordset based on the last-used sort parameters, but flips the order. (ie: Descending becomes ascending, and vice versa).
+     * @description Sorts the recordset based on the last-used sort parameters, but flips
+     *              the order. (ie: Descending becomes ascending, and vice versa).
      *
      * @method flip
      * @public

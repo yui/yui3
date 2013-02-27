@@ -7,8 +7,9 @@
  * Plugin that provides the ability to store multiple custom hash tables referencing records in the recordset.
  * This utility does not support any collision handling. New hash table entries with a used key overwrite older ones.
  * @class RecordsetIndexer
+ * @param {Object} config
  */
-function RecordsetIndexer(config) {
+function RecordsetIndexer() {
     RecordsetIndexer.superclass.constructor.apply(this, arguments);
 }
 
@@ -19,8 +20,8 @@ Y.mix(RecordsetIndexer, {
 
     ATTRS: {
         /**
-        * @description Collection of all the hashTables created by the plugin. 
-        * The individual tables can be accessed by the key they are hashing against. 
+        * @description Collection of all the hashTables created by the plugin.
+        * The individual tables can be accessed by the key they are hashing against.
         *
         * @attribute hashTables
         * @public
@@ -44,7 +45,11 @@ Y.mix(RecordsetIndexer, {
 
 Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 
-    initializer: function(config) {
+    /**
+     * @method initializer
+     * @param config
+     */
+    initializer: function() {
         var host = this.get('host');
 
         //setup listeners on recordset events
@@ -52,10 +57,6 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
         this.onHostEvent('remove', Y.bind('_defRemoveHash', this), host);
         this.onHostEvent('update', Y.bind('_defUpdateHash', this), host);
 
-    },
-
-    destructor: function(config) {
-    
     },
 
 
@@ -126,7 +127,8 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
             function(o) {
                 reckey = o.getValue(key);
 
-                //if the hashtable has a key storing a record, and the key and the record both match the record being deleted, delete that row from the hashtable
+                //if the hashtable has a key storing a record, and the key and the record both match the record being
+                //  deleted, delete that row from the hashtable
                 if (reckey && v[reckey] === o) {
                     delete v[reckey];
                 }
@@ -142,7 +144,8 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
      */
     _defUpdateHash: function(e) {
 
-        //TODO: It will be more performant to create a new method rather than using _defAddHash, _defRemoveHash, due to the number of loops. See commented code.
+        //TODO: It will be more performant to create a new method rather than using _defAddHash, _defRemoveHash, due
+        //      to the number of loops. See commented code.
         e.added = e.updated;
         e.removed = e.overwritten;
         this._defAddHash(e);
@@ -150,31 +153,31 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 
         /*
                     var tbl = this.get('hashTables'), reckey;
-                    
+
                     Y.each(tbl, function(v, key) {
                         Y.each(e.updated, function(o, i) {
-                            
+
                             //delete record from hashtable if it has been overwritten
                             reckey = o.getValue(key);
-                            
+
                             if (reckey) {
                                 v[reckey] = o;
                             }
-                            
-                            //the undefined case is if more records are updated than currently exist in the recordset. 
+
+                            //the undefined case is if more records are updated than currently exist in the recordset.
                             if (e.overwritten[i] && (v[e.overwritten[i].getValue(key)] === e.overwritten[i])) {
                                 delete v[e.overwritten[i].getValue(key)];
                             }
-                            
+
                             // if (v[reckey] === o) {
                             //  delete v[reckey];
                             // }
-                            //              
+                            //
                             // //add the new updated record if it has a key that corresponds to a hash table
                             // if (o.getValue(key)) {
                             //  v[o.getValue(key)] = o;
                             // }
-                                                            
+
                         });
                     });
             */
