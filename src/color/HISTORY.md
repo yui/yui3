@@ -1,7 +1,7 @@
 Color Change History
 ====================
 
-@VERSION@
+3.9.0
 -----
 
 * Fix 2532977: getSimilar now returns proper color values

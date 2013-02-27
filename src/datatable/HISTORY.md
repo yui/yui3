@@ -1,13 +1,15 @@
 DataTable Change History
 ========================
 
-@VERSION@
+3.9.0
 -----
 
 * Making sortable datatableheaders unselectable [Pull Request #286]
   [Pull Request #378] [Ticket #2532825] [ItsAsbreuk] [apipkin]
 
 * French translations for the DataTable [Pull Request #454] [ArnaudD] [davglass]
+
+* Merged in #392: Named cell formatters [satyam] 
 
 3.8.1
 -----

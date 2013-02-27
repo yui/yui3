@@ -1,6 +1,11 @@
 Matrix Change History
 =====================
 
+3.9.0
+-----
+
+* No changes.
+
 3.8.1
 -----
 
