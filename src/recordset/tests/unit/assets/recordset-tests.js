@@ -710,6 +710,9 @@ YUI.add('recordset-tests', function(Y) {
             var hashA = this.rs.indexer.createTable('a');
             var hashTables = this.rs.indexer.get('hashTables');
 
+            // test getTable return'd value
+            Y.ObjectAssert.areEqual(hashTables[3], this.rs.indexer.getTable(3));
+
             //check hashA
             Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
             Y.ObjectAssert.areEqual(hashA[9].getValue(), {a:9, b:8, c:7});

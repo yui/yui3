@@ -164,7 +164,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
      */
     getRecordsByIndex: function(index, range) {
         var i = 0,
-        returnedRecords = [];
+            returnedRecords = [];
         //Range cannot take on negative values
         range = (Lang.isNumber(range) && (range > 0)) ? range: 1;
 
@@ -196,8 +196,8 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     **/
     getValuesByKey: function(key) {
         var i = 0,
-        len = this._items.length,
-        retVals = [];
+            len = this._items.length,
+            retVals = [];
         for (; i < len; i++) {
             retVals.push(this._items[i].getValue(key));
         }
@@ -216,8 +216,8 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     add: function(oData, index) {
 
         var newRecords = [],
-        idx,
-        i = 0;
+            idx,
+            i = 0;
 
         idx = (Lang.isNumber(index) && (index > -1)) ? index: this._items.length;
 
