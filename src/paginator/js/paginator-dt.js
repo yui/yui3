@@ -4,7 +4,11 @@ var PaginatorDT,
 PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
 
     /**
+     Template for this view's content. The template is compiled in the
+       `initializer` of `Y.Paginator.View`
+
      @property template
+     @type {String}
      */
     template:   '<ul class="<%= data.classNames.dt %>">' +
                     '<%== data.first %><%== data.prev %>' +
@@ -14,11 +18,12 @@ PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
                 '</ul>',
 
     /**
+     Returns the template string compiled with the corresponding controls provided
+       by `Y.Paginator.View`
      @method renderControls
+     @returns {String}
      */
     renderControls: function () {
-        console.log(LNAME, 'renderControls');
-
         return this.template({
             classNames: this.classNames,
             first: this.renderControl('first'),
@@ -33,8 +38,12 @@ PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
     },
 
     /**
-     @protected
-     @method _afterContainerChanged
+     Sets the href for controls, modifying the data object used to
+       generate the controls from templates.
+     @method preRender
+     @param {String} template Name of template used
+     @param {Object} data Original data object used to render template
+     @return {Object}
      */
     _afterContainerChanged: function () {
         var container = this.get('container'),
@@ -50,6 +59,20 @@ PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
 
 }, {
     ATTRS: {
+        /**
+         Each value in the array corresponds to
+
+         A value can be a number or an Object with the keys of 'value' and 'display'.
+         If the value is a number, the `&lt;option>` tag created will have the `value`
+           attribute set to that of the number AND and display text set to the number
+           as well.
+
+         If the value is an Object, the `&lt;option>` tag created will have the `value`
+           attribute set to `Object.value` and the display text is set to `Object.display`.
+
+         @attribute pageSizes
+         @type {Array}
+         */
         pageSizes: {
             value: [10, 50, 100]
         }

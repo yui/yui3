@@ -37,6 +37,7 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
     },
 
     /**
+     Calls render() on the view to resync the view
      @method syncUI
      */
     syncUI: function () {
@@ -44,7 +45,9 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
     },
 
     /**
+     Returns an object of the current ATTRS to be used in the view.
      @method toJSON
+     @retuns Object
      */
     toJSON: function () {
         var attrs = this.getAttrs();
@@ -62,48 +65,60 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
 
     // UI Events
     /**
+     Called when the view fires a 'first' event.
      @protected
      @method _afterUIFirst
+     @param {EventFacade} e
      */
     _afterUIFirst: function () {
         this.first();
     },
 
     /**
+     Called when the view fires a 'last' event.
      @protected
      @method _afterUILast
+     @param {EventFacade} e
      */
     _afterUILast: function () {
         this.last();
     },
 
     /**
+     Called when the view fires a 'prev' event.
      @protected
      @method _afterUIPrev
+     @param {EventFacade} e
      */
     _afterUIPrev: function () {
         this.prev();
     },
 
     /**
+     Called when the view fires a 'next' event.
      @protected
      @method _afterUINext
+     @param {EventFacade} e
      */
     _afterUINext: function () {
         this.next();
     },
 
     /**
+     Called when the view fires a 'page' event.
      @protected
      @method _afterUIPage
+     @param {EventFacade} e
      */
     _afterUIPage: function (e) {
         this.page(e.val);
     },
 
     /**
+     Called when the view fires a 'perPage' event.
      @protected
      @method _afterUIPerPage
+     @param {EventFacade} e
      */
     _afterUIPerPage: function (e) {
         this.perPage(e.val);
@@ -111,8 +126,12 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
 
     // View
     /**
+     Sets the view of the paginator. If the view provided is a String,
+       we construct a new view and save that locally.
      @protected
      @method _viewSetterFn
+     @param {String|Object} view
+     @returns Y.View
      */
     _viewSetterFn: function (view) {
         if (typeof view === 'string') {
@@ -123,8 +142,11 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
     },
 
     /**
+     Creates a View instance based on the provided viewType using the viewConfig ATTRS
      @protected
      @method _createView
+     @param {String} viewType
+     @returns Y.View
      */
     _createView: function (viewType) {
         var ViewConstructor = Y.Object.getValue(Y, viewType.split('.')),
@@ -150,12 +172,25 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
 }, {
     ATTRS: {
 
+        /**
+         The view to be rendered within the paginator. If the view provided is a String,
+           a new view will be instantiated using the viewConfig.
+         @property view
+         @type {Y.View|String}
+         @initOnly
+         */
         view: {
             setter: '_viewSetterFn',
             value: 'Paginator.View',
             writeOnce: 'initOnly'
         },
 
+        /**
+         Configuration for the view created IF `view` is a String to a Y.View constructor
+         @property viewConfig
+         @type {Object}
+         @initOnly
+         */
         viewConfig: {
             value: {},
             writeOnce: 'initOnly'
