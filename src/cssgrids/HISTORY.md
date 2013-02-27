@@ -1,6 +1,13 @@
 CSS Grids Change History
 ========================
 
+3.9.0
+-----
+
+* Fixed over-collapsing spaces between grid units in Chrome 25, which has added
+  support for `word-spacing`. The `word-spacing` rules are now only targeted at
+  IE < 8.
+
 3.8.1
 -----
 
