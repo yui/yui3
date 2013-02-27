@@ -4,7 +4,7 @@ YUI Core Change History
 3.9.0
 -----
 
-* No changes.
+* Setup YUI.setLoadHook and its docs  (used for Node.js injection)
 
 3.8.1
 -----
