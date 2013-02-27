@@ -86,8 +86,9 @@ PaginatorCore.prototype = {
      */
     page: function (pageNumber) {
         if (pageNumber) {
-            if (this.get('circular')) {
-                pageNumber %= this.get('pages');
+            var pages = this.get('pages');
+            if (this.get('circular') && pageNumber > pages) {
+                pageNumber %= pages;
             }
 
             if (pageNumber >= 1 && pageNumber <= this.get('pages')){

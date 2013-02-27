@@ -1,6 +1,6 @@
 var template = new Y.Template(),
 
-    /**
+    /*
         {
             classNames:,
             href:,
@@ -14,7 +14,7 @@ var template = new Y.Template(),
                     '</a>' +
                 '</li>',
 
-    /**
+    /*
         {
             classNames:,
             href:,
@@ -29,7 +29,7 @@ var template = new Y.Template(),
                 '</a>' +
             '</li>',
 
-    /**
+    /*
         {
             classNames:,
             preLabel:,
@@ -45,7 +45,7 @@ var template = new Y.Template(),
                     '</label>' +
                 '</li>',
 
-    /**
+    /*
         {
             classNames:,
             preLabel:,
@@ -71,7 +71,7 @@ var template = new Y.Template(),
                         '</label>' +
                     '</li>',
 
-    /**
+    /*
         {
             classNames:,
             preLabel:,

@@ -4,7 +4,11 @@ var PaginatorList,
 PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.Url], {
 
     /**
+     Template for this view's content. The template is compiled in the
+       `initializer` of `Y.Paginator.View`
+
      @property template
+     @type {String}
      */
     template:   '<ul class="<%= data.classNames.list %>">' +
                     '<%== data.first %><%== data.prev %>' +
@@ -17,11 +21,13 @@ PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.U
                 '</ul>',
 
     /**
+     Returns the template string compiled with the corresponding controls provided
+       by `Y.Paginator.View`
+
      @method renderControls
+     @returns {String}
      */
     renderControls: function () {
-        console.log(LNAME, 'renderControls');
-
         return this.template({
             classNames: this.classNames,
             first: this.renderControl('first'),
@@ -33,7 +39,13 @@ PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.U
     },
 
     /**
+     Sets the href for controls, modifying the data object used to
+       generate the controls from templates.
+
      @method preRender
+     @param {String} template Name of template used
+     @param {Object} data Original data object used to render template
+     @return {Object} modified data object
      */
     preRender: function (template, data) {
         console.log(LNAME, 'preRender');
@@ -60,6 +72,7 @@ PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.U
     },
 
     /**
+     Adds current view NAME as a class to the container.
      @protected
      @method _afterContainerChanged
      */
@@ -77,6 +90,15 @@ PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.U
 
 }, {
     ATTRS: {
+        /**
+         The number of list items to be displayed at any given time. The
+           list items will attempt to place current page item in the middle
+           of the display range.
+
+         @attribute displayRange
+         @type {Number}
+         @default 10
+         */
         displayRange: {
             value: 10
         }

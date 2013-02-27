@@ -7,17 +7,17 @@ var getClassName = Y.ClassNameManager.getClassName,
 PaginatorView = Y.Base.create('paginator', Y.View, [], {
 
     /**
+     Local templates to be used in various render methods
      @property templates
+     @type {Object}
+     @default Y.Paginator.Templates
      */
     templates: Y_Paginator.Templates,
 
     /**
-     @property controls
-     */
-    controls: {},
-
-    /**
+     Classnames used in rendering templates
      @property classNames
+     @type {Ojbect}
      */
     classNames: {
         container: getClassName('paginator', 'container'),
@@ -39,7 +39,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     },
 
     /**
+     Default generic events for control clicks and changes
      @property events
+     @type {Object}
      */
     events: {
         '.yui3-paginator-control': {
@@ -52,6 +54,8 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     },
 
     /**
+     Compiles the template string if it exists and is not already compiled
+       Binds the container change event
      @method initializer
      */
     initializer: function () {
@@ -63,34 +67,38 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     },
 
     /**
+     Sets the content of the container to the renter value of renderControls
      @method render
      */
     render: function () {
-        console.log(LNAME, 'render');
         this.get('container').setContent(this.renderControls());
     },
-
-    /**
-     @method renderControls
-     */
-    renderControls: function () {},
 
     ///////////////////////////////////////
     // T E M P L A T E   R E N D E R I N G
     ///////////////////////////////////////
 
     /**
-     @method preRender
+     Placeholder method for rendering controls
+     @method renderControls
      */
-    preRender: function (type, data) {
-        return data;
-    },
+    renderControls: function () {},
 
     /**
+     Placeholder method for modifying template render data
+     @method preRender
+     @param {String} type
+     @param {Object} data
+     */
+    preRender: function () {},
+
+    /**
+     Generates a control based on the type provided and the control template
      @method renderControl
+     @param {String} type
+     @returns {String}
      */
     renderControl: function (type) {
-        console.log(LNAME, 'renderControl');
         var strings = this.get('strings'),
             attrs = this.getTemplateAttrs(),
             model = this.get('model'),
@@ -127,8 +135,6 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
                 break;
         }
 
-        this.controls[type] = true;
-
         data.controlClass = data.controlClass.join(' ');
 
         return this.renderTemplate('control', data);
@@ -136,10 +142,12 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     },
 
     /**
+     Creates a list of pages based on the displayRange, totoal number of
+       pages and the current page being displayed
      @method renderPages
+     @returns {String}
      */
     renderPages: function () {
-        console.log(LNAME, 'renderPages');
         var rangeValues = this.getDisplayRangeValues(),
             minPage = rangeValues.min,
             maxPage = rangeValues.max,
@@ -152,17 +160,18 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
             pages += this.renderPage(i, curPage);
         }
 
-        this.controls.pages = true;
-
         return pages;
-
     },
 
     /**
+     Creates a page control based on the page number provided and the current
+       page displayed
      @method renderPage
+     @param {Number} page
+     @param {Number} curPage
+     @returns {String}
      */
     renderPage: function (page, curPage) {
-        //console.log(LNAME, 'renderPage');
         var strings = this.get('strings'),
             attrs = this.getTemplateAttrs({page: page}),
             data = {
@@ -173,16 +182,15 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
                 selectedClass: curPage === page ? ' ' + this.classNames.controlSelected : ''
             };
 
-        this.controls.page = true;
-
         return this.renderTemplate('page', data);
     },
 
     /**
+     Creates a page input control based on the page input template
      @method renderPageInput
+     @returns {String}
      */
     renderPageInput: function () {
-        console.log(LNAME, 'renderPageInput');
         var strings = this.get('strings'),
             attrs = this.getTemplateAttrs(),
             data = {
@@ -192,16 +200,15 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
                 postLabel: YLSub(strings.pageInputPostLabel, attrs )
             };
 
-        this.controls.pageInput = true;
-
         return this.renderTemplate('pageInput', data);
     },
 
     /**
+     Creates a page select control based on the page select template
      @method renderPageSelect
+     @returns {String}
      */
     renderPageSelect: function () {
-        console.log(LNAME, 'renderPageSelect');
         var strings = this.get('strings'),
             attrs = this.getTemplateAttrs(),
             data = {
@@ -221,16 +228,15 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
             });
         }
 
-        this.controls.pageSelect = true;
-
         return this.renderTemplate('pageSelect', data);
     },
 
     /**
+     Creates a per page select control based on the per page select template
      @method renderPerPageSelect
+     @returns {String}
      */
     renderPerPageSelect: function () {
-        console.log(LNAME, 'renderPerPageSelect');
         var strings = this.get('strings'),
             attrs = this.getTemplateAttrs(),
             data = {
@@ -258,16 +264,17 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
             });
         }
 
-        this.controls.perPageSelect = true;
-
         return this.renderTemplate('perPageSelect', data);
     },
 
     /**
+     Processes the template with classnames and a preRender()
      @method renderTemplate
+     @param {String} template
+     @param {Object} data
+     @returns {String}
      */
     renderTemplate: function(template, data) {
-        //console.log(LNAME, 'renderTemplate');
         data.classNames || (data.classNames = this.classNames);
 
         if (this.preRender) {
@@ -278,7 +285,11 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     },
 
     /**
+     Mixes the provided attr Object with the `model`s `toJSON()` method and the `view`s
+       `getAttrs()` method.
      @method getTemplateAttrs
+     @param {Ojbect} attrs
+     @returns {Object}
      */
     getTemplateAttrs: function (attrs) {
         var retAttrs = Y.mix(attrs || {}, this.get('model').toJSON());
@@ -286,10 +297,12 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     },
 
     /**
+     Calculates the min and max page to display based on the displayRange,
+       the current page, and the total number of pages.
      @method getDisplayRangeValues
+     @returns {Object}
      */
     getDisplayRangeValues: function () {
-        console.log('getDisplayRange', '::', 'Y.Paginator.View');
         var model = this.get('model'),
             currentPage = model.get('page'),
             pages = model.get('pages'),
@@ -315,51 +328,64 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
 
     // EVENT CALL BACKS
     /**
+     Fires an event as the type of control that was clicked.
      @method controlClick
+     @param {EventFacade}
      */
     controlClick: function(e) {
-        console.log(LNAME, 'controlClick');
         e.preventDefault();
 
         this.fire(e.currentTarget.getData('type'));
     },
 
     /**
+     Fires an event as the type of control that was changed with the value from the control
      @method controlChange
+     @param {EventFacade}
      */
     controlChange: function (e) {
-        console.log(LNAME, 'controlChange');
         e.preventDefault();
-        var type = e.currentTarget.getData('type');
 
-        this.fire(type, { val: e.target.get('value') });
+        this.fire(e.currentTarget.getData('type'), { val: e.newVal });
     },
 
     /**
+     Fires a page event with the value of the page number that was clicked
      @method pageClick
+     @param {EventFacade}
      */
     pageClick: function(e) {
-        console.log(LNAME, 'pageClick');
         e.preventDefault();
+
         this.fire('page', { val: e.currentTarget.getData('page') });
     },
 
     //-- PROTECTED ----
 
     /**
+     Returns the default string values used in the template for internationalization
      @method _stringValueFn
+     @returns {Object}
      */
     _stringValueFn: function () {
-        console.log(LNAME, '_stringValueFn');
         return Y.Intl.get('paginator-templates');
     }
 
 }, {
     ATTRS: {
+        /**
+         @attribute displayRange
+         @type {Number}
+         @default 10
+         */
         displayRange: {
             value: 10
         },
 
+        /**
+         @attribute strings
+         @type {Object}
+         */
         strings : {
             valueFn: '_stringValueFn',
             writeOnce: 'initOnly'
