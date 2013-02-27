@@ -1,6 +1,11 @@
 Get Utility Change History
 ==========================
 
+3.9.0
+-----
+
+ * Added fake transaction object to Node.js version
+
 3.8.1
 -----
 

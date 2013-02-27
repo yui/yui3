@@ -1,6 +1,11 @@
 YUI Loader Change History
 =========================
 
+3.9.0
+-----
+
+ * Fixed gallery update method for override group configs
+
 3.8.1
 -----
 
