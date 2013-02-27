@@ -284,4 +284,4 @@ Y.augment(Lines, Y.Attribute);
 Y.Lines = Lines;
 
 
-}, '@VERSION@', {"requires": ["series-base"]});
+}, '@VERSION@');

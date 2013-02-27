@@ -18,29 +18,6 @@ YUI.add('axis-category', function (Y, NAME) {
  */
 Y.CategoryAxis = Y.Base.create("categoryAxis", Y.Axis, [Y.CategoryImpl], {
     /**
-     * Returns the distance between major units on an axis.
-     *
-     * @method getMajorUnitDistance
-     * @param {Number} len Number of ticks
-     * @param {Number} uiLen Size of the axis.
-     * @param {Object} majorUnit Hash of properties used to determine the majorUnit
-     * @return Number
-     */
-    getMajorUnitDistance: function(len, uiLen, majorUnit)
-    {
-        var dist;
-        if(majorUnit.determinant === "count")
-        {
-            dist = uiLen/len;
-        }
-        else if(majorUnit.determinant === "distance")
-        {
-            dist = majorUnit.distance;
-        }
-        return dist;
-    },
-
-    /**
      * Returns a string corresponding to the first label on an
      * axis.
      *
@@ -86,11 +63,11 @@ Y.CategoryAxis = Y.Base.create("categoryAxis", Y.Axis, [Y.CategoryImpl], {
             data = this.get("data");
         if(direction && direction == "vertical")
         {
-            label = data[i];
+            label = data[l - (i + 1)];
         }
         else
         {
-            label = data[l - (i + 1)];
+            label = data[i];
         }
         return label;
     }

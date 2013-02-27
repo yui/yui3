@@ -329,6 +329,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         } else if (scrollbarPos < 0) {
             scrollbarSize = scrollbarPos + scrollbarSize;
             scrollbarPos = 0;
+        } else if (isNaN(scrollbarPos)) {
+            scrollbarPos = 0;
         }
 
         middleChildSize = (scrollbarSize - (firstChildSize + lastChildSize));
@@ -499,11 +501,11 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             opacity : opacity
         };
 
-        if (verticalNode) {
+        if (verticalNode && verticalNode._node) {
             verticalNode.transition(transition);
         }
 
-        if (horizontalNode) {
+        if (horizontalNode && horizontalNode._node) {
             horizontalNode.transition(transition);
         }
     },

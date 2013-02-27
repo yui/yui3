@@ -166,4 +166,4 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
 });
 
 
-}, '@VERSION@', {"requires": ["series-histogram-base"]});
+}, '@VERSION@', {"requires": ["series-marker", "series-histogram-base"]});

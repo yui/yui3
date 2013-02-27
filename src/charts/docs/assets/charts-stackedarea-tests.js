@@ -58,8 +58,8 @@ YUI.add('charts-stackedarea-tests', function(Y) {
         
         _should: {
             ignore: {
-                testMouseEvents:  isTouch || IGNORETOOLTIPTEST//,
-                //testTouchEvents: isMouse || IGNORETOOLTIPTEST
+                testMouseEvents:  isTouch || IGNORETOOLTIPTEST,
+                testTouchEvents: isMouse || IGNORETOOLTIPTEST
             }
         },
         
@@ -116,7 +116,6 @@ YUI.add('charts-stackedarea-tests', function(Y) {
                 clientX:x + 10,
                 clientY:y
             });
-            /*
         },
 
         testTouchEvents: function()
@@ -175,7 +174,6 @@ YUI.add('charts-stackedarea-tests', function(Y) {
                     Y.Assert.fail("Example does not seem to have executed within " + timeout + " seconds.");
                 };
             checkAndFireEvent();
-            */
         }
     }));
 

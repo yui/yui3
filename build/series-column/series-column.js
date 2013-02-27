@@ -157,4 +157,4 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
 });
 
 
-}, '@VERSION@', {"requires": ["series-histogram-base"]});
+}, '@VERSION@', {"requires": ["series-marker", "series-histogram-base"]});

@@ -291,7 +291,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         for(; i < len; ++i)
         {
             series = sc[i];
-            if(series instanceof Y.CartesianSeries)
+            if(series instanceof Y.SeriesBase)
             {
                 series.render();
             }
@@ -2908,6 +2908,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             axes = {},
             axesAttrs = {
                 edgeOffset: "edgeOffset",
+                calculateEdgeOffset: "calculateEdgeOffset",
                 position: "position",
                 overlapGraph:"overlapGraph",
                 labelFunction:"labelFunction",
@@ -4971,8 +4972,24 @@ Y.Chart = Chart;
         "event-touch",
         "graphics-group",
         "axes",
-        "series-cartesian",
         "series-pie",
-        "series-cartesian-stacked"
+        "series-line",
+        "series-marker",
+        "series-area",
+        "series-spline",
+        "series-column",
+        "series-bar",
+        "series-areaspline",
+        "series-combo",
+        "series-combospline",
+        "series-line-stacked",
+        "series-marker-stacked",
+        "series-area-stacked",
+        "series-spline-stacked",
+        "series-column-stacked",
+        "series-bar-stacked",
+        "series-areaspline-stacked",
+        "series-combo-stacked",
+        "series-combospline-stacked"
     ]
 });

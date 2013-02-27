@@ -355,4 +355,4 @@ StackingUtil.prototype = {
 Y.StackingUtil = StackingUtil;
 
 
-}, '@VERSION@', {"requires": ["series-base", "axis-stacked"]});
+}, '@VERSION@', {"requires": ["axis-stacked"]});

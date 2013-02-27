@@ -21,14 +21,6 @@ modules:
 
 The 'handlebars' module is an alias that can be used to load both modules.
 
-Apart from the YUI wrapper code, the only other significant change is that we
-use YUI's own `Y.Escape.html()` method to escape strings rather than using
-Handlebars's built-in escaping. This is done because Handlebars's built-in HTML
-escaper avoids double-escaping existing `&amp;` entities, which can lead to
-unexpected output, especially when using Handlebars templates to render code
-snippets in which double-escaping is necessary to properly display the literal
-text "&amp;".
-
 
 Code Organization
 -----------------

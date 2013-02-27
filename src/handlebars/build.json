@@ -1,12 +1,17 @@
 {
     "name": "handlebars",
+
+    "shifter": {
+        "coverage": false
+    },
+
     "builds": {
         "handlebars-base": {
             "regex": "",
             "jsfiles": [
                 "yui-handlebars-copyright.js",
                 "handlebars-base.js",
-                "yui-handlebars-utils.js",
+                "handlebars-utils.js",
                 "handlebars-runtime.js",
                 "yui-handlebars-base-after.js"
             ]
