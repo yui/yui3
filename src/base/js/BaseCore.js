@@ -333,11 +333,17 @@
                 subAttrs,
                 subAttrPath,
                 attr,
+                attrCfg,
+                filtered = this._filteredAttrs,
                 attrs = clazz.ATTRS;
 
             if (attrs) {
                 for (attr in attrs) {
-                    if (allCfgs[attr]) {
+                    attrCfg = allCfgs[attr];
+
+                    // Using hasOwnProperty, since it's faster (for the 80% case where filtered doesn't have attr) for the majority
+                    // of browsers, FF being the major outlier. http://jsperf.com/in-vs-hasownproperty/6. May revisit.
+                    if (attrCfg && !filtered.hasOwnProperty(attr)) {
 
                         if (!cfgs) {
                             cfgs = {};
@@ -345,7 +351,9 @@
 
                         // PERF TODO:
                         // Revisit once all unit tests pass for further optimizations. See if we really need to isolate this.
-                        cfg = cfgs[attr] = _wlmix({}, allCfgs[attr], this._attrCfgHash());
+                        cfg = cfgs[attr] = _wlmix({}, attrCfg, this._attrCfgHash());
+
+                        filtered[attr] = true;
 
                         val = cfg.value;
 
@@ -626,6 +634,8 @@
                 attrCfgs = this._getAttrCfgs(),
                 cl = classes.length - 1;
 
+            this._filteredAttrs = {};
+
             for (ci = cl; ci >= 0; ci--) {
 
                 constr = classes[ci];
@@ -659,6 +669,8 @@
                     }
                 }
             }
+
+            this._filteredAttrs = null;
         },
 
         /**
