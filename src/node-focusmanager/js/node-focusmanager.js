@@ -27,6 +27,7 @@
 * </p>
 *
 * @module node-focusmanager
+* @deprecated
 */
 
 	//	Frequently used strings

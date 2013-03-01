@@ -77,6 +77,7 @@
 * </p>
 * 
 * @module node-menunav
+* @deprecated
 */
 
 
