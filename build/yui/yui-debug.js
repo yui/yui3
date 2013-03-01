@@ -9152,7 +9152,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "autocomplete-sources"
         ],
         "lang": [
-            "en"
+            "en",
+            "es"
         ],
         "requires": [
             "autocomplete-base",
@@ -9803,7 +9804,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "datatable-message": {
         "lang": [
             "en",
-            "fr"
+            "fr",
+            "es"
         ],
         "requires": [
             "datatable-base"
@@ -9826,7 +9828,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "datatable-sort": {
         "lang": [
             "en",
-            "fr"
+            "fr",
+            "es"
         ],
         "requires": [
             "datatable-base"
@@ -11799,7 +11802,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '5e3711de438f84e75215b4ab99ccd852';
+YUI.Env[Y.version].md5 = '660f328e92276f36e9abfafb02169183';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
