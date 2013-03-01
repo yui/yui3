@@ -121,16 +121,21 @@ YUI.add('calendar-tests', function(Y) {
                 this.firstcalendar = new Y.Calendar(cfg);
                 this.firstcalendar.render();
 
+                Y.DateAssert.datesAreEqual(new Date(2011,6,12), this.firstcalendar.get('minimumDate'));
+                Y.DateAssert.datesAreEqual(new Date(2011,7,12), this.firstcalendar.get('maximumDate'));
+
                 //calendar is visible
                 Y.Assert.areEqual(this.firstcalendar.get('visible'), true);
 
-                //calendar date is reset correclty when minimum date is set
+                //calendar date is reset correctly when minimum date is set
                 Y.DateAssert.datesAreEqual(new Date(2011,6,1), this.firstcalendar.get("date"), "minimumDate reset date");
                 Y.Assert.isTrue (this.firstcalendar._dateToNode(new Date(2011,6,11)).hasClass("yui3-calendar-selection-disabled"), "2011-07-11 should be disabled");
                 Y.Assert.isFalse(this.firstcalendar._dateToNode(new Date(2011,6,12)).hasClass("yui3-calendar-selection-disabled"), "2011-07-12 should be enabled");
 
                 this.firstcalendar.set("minimumDate", new Date (2011,2,12));
                 this.firstcalendar.set("maximumDate", new Date (2011,5,12));
+                Y.DateAssert.datesAreEqual(new Date(2011,2,12), this.firstcalendar.get('minimumDate'), "min date should be correctly set");
+                Y.DateAssert.datesAreEqual(new Date(2011,5,12), this.firstcalendar.get('maximumDate'), "max date should be correctly set");
                 Y.DateAssert.datesAreEqual(new Date(2011,5,1), this.firstcalendar.get("date"), "minimumDate reset date");
                 Y.Assert.isFalse(this.firstcalendar._dateToNode(new Date(2011,5,12)).hasClass("yui3-calendar-selection-disabled"), "2011-06-12 should be enabled");
                 Y.Assert.isTrue (this.firstcalendar._dateToNode(new Date(2011,5,13)).hasClass("yui3-calendar-selection-disabled"), "2011-06-13 should be disabled");
@@ -737,6 +742,26 @@ YUI.add('calendar-tests', function(Y) {
                 Y.DateAssert.datesAreEqual(date2, new Date(2011,11,31));
                 Y.DateAssert.datesAreEqual(date3, new Date(2012,0,1));
                 Y.DateAssert.datesAreEqual(date4, new Date(2012,0,2));
+            },
+
+            testMultiplePanesLimits : function () {
+                 var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(2011,4,5),
+                    minimumDate: new Date(2011,5,10),
+                    maximumDate: new Date(2011,6,15),
+                    selectionMode: "multiple"
+                };
+                // Set the content template to a two-pane template
+                Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
+                this.firstcalendar = new Y.Calendar(cfg);
+                this.firstcalendar.render();
+
+                Y.DateAssert.datesAreEqual(new Date(2011,5,1), this.firstcalendar.get("date"));
+                Y.Assert.isTrue (this.firstcalendar._dateToNode(new Date(2011,5, 9)).hasClass("yui3-calendar-selection-disabled"), "2011-08-14 should be disabled");
+                Y.Assert.isFalse(this.firstcalendar._dateToNode(new Date(2011,5,10)).hasClass("yui3-calendar-selection-disabled"), "2011-08-15 should be enabled");
+                Y.Assert.isTrue (this.firstcalendar._dateToNode(new Date(2011,6,16)).hasClass("yui3-calendar-selection-disabled"), "2011-08-14 should be disabled");
+                Y.Assert.isFalse(this.firstcalendar._dateToNode(new Date(2011,6,15)).hasClass("yui3-calendar-selection-disabled"), "2011-08-15 should be enabled");
             }
         });
 
