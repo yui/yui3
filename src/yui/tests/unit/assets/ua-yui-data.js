@@ -575,7 +575,7 @@ Y.UAData["YUI Internal"] = [
                 "data": {
                         "gecko": 13,
                         "os": "android",
-                        "mobile": "gecko"
+                        "mobile": "ffos"
                 }
         },
         {
@@ -583,7 +583,7 @@ Y.UAData["YUI Internal"] = [
                 "data": {
                         "gecko": 13,
                         "os": "android",
-                        "mobile": "gecko"
+                        "mobile": "ffos"
                 }
         }
 ];

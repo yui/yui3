@@ -419,7 +419,7 @@ YUI.Env.parseUA = function(subUA) {
                         if (m && m[1]) {
                             o.gecko = numberify(m[1]);
                             if (/Mobile|Tablet/.test(ua)) {
-                                o.mobile = "gecko";
+                                o.mobile = "ffos";
                             }
                         }
                     }
