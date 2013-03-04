@@ -14,14 +14,14 @@
  *  </ul>
  *
  * @class RangeSeries
- * @extends CartesianSeries 
+ * @extends CartesianSeries
  * @constructor
  * @param {Object} config (optional) Configuration parameters.
  * @submodule series-range
  */
-function RangeSeries() 
+function RangeSeries()
 {
-    RangeSeries.superclass.constructor.apply(this, arguments);    
+    RangeSeries.superclass.constructor.apply(this, arguments);
 }
 
 RangeSeries.NAME = "rangeSeries";
@@ -39,11 +39,11 @@ RangeSeries.ATTRS = {
     },
 
     /**
-     * Values to be used for open, high, low and close keys. 
+     * Values to be used for open, high, low and close keys.
      *
      * @attribute ohlc
      * @type Object
-     */    
+     */
     ohlckeys: {
         valueFn: function() {
             return {
@@ -83,6 +83,6 @@ Y.extend(RangeSeries, Y.CartesianSeries, {
     }
 });
 
-Y.RangeSeries = RangeSeries; 
+Y.RangeSeries = RangeSeries;
 
 

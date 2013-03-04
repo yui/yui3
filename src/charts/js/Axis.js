@@ -1149,7 +1149,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
         var dist;
         if(majorUnit.determinant === "count")
         {
-            if(!this.get("calculateEdgeOffset")) 
+            if(!this.get("calculateEdgeOffset"))
             {
                 len = len - 1;
             }

@@ -51,7 +51,7 @@ Y.SeriesBase = Y.Base.create("seriesBase", Y.Base, [Y.Renderer], {
      *
      * @method _getChart
      * @return {Object}
-     * @private 
+     * @private
      */
     _getChart:function() {
         var chart,
@@ -60,7 +60,7 @@ Y.SeriesBase = Y.Base.create("seriesBase", Y.Base, [Y.Renderer], {
         {
             chart = graph.get("chart");
         }
-        if(!chart) 
+        if(!chart)
         {
             chart = this.get("graphic");
         }
@@ -327,7 +327,7 @@ Y.SeriesBase = Y.Base.create("seriesBase", Y.Base, [Y.Renderer], {
                     groupMarkers = this._groupMarkers;
                 if(!groupMarkers) {
                     graph = this.get("graph");
-                    if(graph) 
+                    if(graph)
                     {
                         groupMarkers = graph.get("groupMarkers");
                     }

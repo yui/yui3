@@ -51,7 +51,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
             graphic,
             cb,
             areaNode;
-        if(graph) 
+        if(graph)
         {
             cb = graph.get("contentBox");
         }
@@ -377,7 +377,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
         }
         this._clearMarkerCache();
     },
-    
+
     /**
      * @protected
      *
