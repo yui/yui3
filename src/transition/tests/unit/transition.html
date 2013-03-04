@@ -233,7 +233,7 @@ YUI({
                     opacity: 1
                 });
 
-                Y.later(250, null, function() {
+                Y.later(300, null, function() {
                     test.resume(function() {
                         Y.Assert.areEqual(h, node.getComputedStyle('height'));
                         Y.Assert.areEqual(w, node.getComputedStyle('width'));
