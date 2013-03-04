@@ -77,7 +77,7 @@ TimeImpl.prototype = {
         }
         return parseFloat(max);
     },
-  
+
     /**
      * Setter method for maximum attribute.
      *
@@ -90,7 +90,7 @@ TimeImpl.prototype = {
         this._setMaximum = this._getNumber(value);
         return value;
     },
-  
+
     /**
      * Getter method for minimum attribute.
      *

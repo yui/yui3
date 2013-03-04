@@ -201,7 +201,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
         {
             ready = false;
         }
-        else 
+        else
         {
             xData = xAxis.getDataByKey(xKey);
             yData = yAxis.getDataByKey(yKey);
@@ -245,7 +245,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
         var i,
             len = keys.length,
             hasData = false;
-        for(i = 0; i < len; i = i + 1) 
+        for(i = 0; i < len; i = i + 1)
         {
             if(obj[keys[i]])
             {
@@ -326,16 +326,16 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
         this.set("xcoords", xcoords);
 		this.set("ycoords", ycoords);
         this._dataLength = dataLength;
-        this._setXMarkerPlane(xcoords, dataLength); 
-        this._setYMarkerPlane(ycoords, dataLength); 
+        this._setXMarkerPlane(xcoords, dataLength);
+        this._setYMarkerPlane(ycoords, dataLength);
     },
-    
+
     /**
      * Used to cache xData and yData in the setAreaData method. Returns a copy of an array if an array is received as the param
      * and returns an object literal of array copies if an object literal is received as the param.
      *
      * @method _copyData
-     * @param {Array|Object} val The object or array to be copied. 
+     * @param {Array|Object} val The object or array to be copied.
      * @return Array|Object
      * @private
      */
@@ -368,7 +368,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
      * @param {Array|Object} coords An array of x coordinates or an object literal containing key value pairs mapped to
      * an array of coordinates.
      * @param {Number} dataLength The length of data for the series.
-     * @private 
+     * @private
      */
     _setXMarkerPlane: function(coords, dataLength)
     {
@@ -378,9 +378,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
             nextX;
         if(Y_Lang.isArray(coords))
         {
-            for(i = 0; i < dataLength; i = i + 1) 
+            for(i = 0; i < dataLength; i = i + 1)
             {
-                nextX = coords[i]; 
+                nextX = coords[i];
                 xMarkerPlane.push({start:nextX - xMarkerPlaneOffset, end: nextX + xMarkerPlaneOffset});
             }
             this.set("xMarkerPlane", xMarkerPlane);
@@ -395,7 +395,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
      * @param {Array|Object} coords An array of y coordinates or an object literal containing key value pairs mapped to
      * an array of coordinates.
      * @param {Number} dataLength The length of data for the series.
-     * @private 
+     * @private
      */
     _setYMarkerPlane: function(coords, dataLength)
     {
@@ -405,9 +405,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
             nextY;
         if(Y_Lang.isArray(coords))
         {
-            for(i = 0; i < dataLength; i = i + 1) 
+            for(i = 0; i < dataLength; i = i + 1)
             {
-                nextY = coords[i]; 
+                nextY = coords[i];
                 yMarkerPlane.push({start:nextY - yMarkerPlaneOffset, end: nextY + yMarkerPlaneOffset});
             }
             this.set("yMarkerPlane", yMarkerPlane);
@@ -424,12 +424,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
      * @param {Number} dataWidth The width used to calculate the x-coordinates.
      * @param {Number} xScaleFactor The ratio used to calculate x-coordinates.
      * @param {Number} xOffset The distance of the first and last x-coordinate from the beginning and end of the x-axis.
-     * @param {Number} dataLength The number of data points in the arrays. 
+     * @param {Number} dataLength The number of data points in the arrays.
      * @param {Number} leftPadding The left padding of the series.
      * @return Array|Object
      * @private
      */
-    _getXCoords: function(xData, xMin, dataWidth, xScaleFactor, xOffset, dataLength, leftPadding) 
+    _getXCoords: function(xData, xMin, dataWidth, xScaleFactor, xOffset, dataLength, leftPadding)
     {
         var isNumber = Y_Lang.isNumber,
 			xcoords,
@@ -468,9 +468,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
                 }
             }
         }
-        return xcoords; 
+        return xcoords;
     },
-    
+
     /**
      * Gets the y-coordinates for a series. Used by the setAreaData method. Returns an array when an array is received as the first argument.
      * Returns an object literal when an object literal is received as the first argument.
@@ -481,12 +481,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
      * @param {Number} dataHeight The height used to calculate the y-coordinates.
      * @param {Number} yScaleFactor The ratio used to calculate y-coordinates.
      * @param {Number} yOffset The distance of the first and last y-coordinate from the beginning and end of the y-axis.
-     * @param {Number} dataLength The number of data points in the arrays. 
+     * @param {Number} dataLength The number of data points in the arrays.
      * @param {Number} topPadding The top padding of the series.
      * @return Array|Object
      * @private
      */
-    _getYCoords: function(yData, yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding) 
+    _getYCoords: function(yData, yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding)
     {
         var isNumber = Y_Lang.isNumber,
 			ycoords,
@@ -521,7 +521,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
                     ycoords[key] = this._getYCoords.apply(
                         this,
                         [yData[key], yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding]
-                    );     
+                    );
                 }
             }
         }
@@ -734,7 +734,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
          * @type Array
          */
         seriesTypeCollection: {},
-        
+
         /**
          * Name used for for displaying data related to the x-coordinate.
          *

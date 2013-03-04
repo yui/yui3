@@ -32,7 +32,7 @@ CategoryImpl.ATTRS = {
     calculateEdgeOffset: {
         value: true
     }
-        
+
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
      * The method use would need to implement the arguments below and return a `String` or `HTMLElement`.

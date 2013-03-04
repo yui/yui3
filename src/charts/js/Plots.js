@@ -516,7 +516,7 @@ Plots.prototype = {
      * @private
      */
     _stateSyles: null,
-    
+
     /**
      * @protected
      *

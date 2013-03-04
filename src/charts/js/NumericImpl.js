@@ -97,7 +97,7 @@ NumericImpl.prototype = {
     /**
      * Formats a label based on the axis type and optionally specified format.
      *
-     * @method 
+     * @method
      * @param {Object} value
      * @param {Object} format Pattern used to format the value.
      * @return String
