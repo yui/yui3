@@ -435,7 +435,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
     {
         var node = shape.node,
             parentNode = this._frag || this._node;
-        if(this.get("autoDraw") || this.get("autoSize") == "sizeContentToGraphic")
+        if(this.get("autoDraw") || this.get("autoSize") === "sizeContentToGraphic")
         {
             parentNode.appendChild(node);
         }
@@ -755,10 +755,10 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         this._node.style.visibility = "hidden";
         if(autoSize)
         {
-            if(autoSize == "sizeContentToGraphic")
+            if(autoSize === "sizeContentToGraphic")
             {
                 preserveAspectRatio = this.get("preserveAspectRatio");
-                if(preserveAspectRatio == "none" || contentWidth/contentHeight === nodeWidth/nodeHeight)
+                if(preserveAspectRatio === "none" || contentWidth/contentHeight === nodeWidth/nodeHeight)
                 {
                     xCoordOrigin = left;
                     yCoordOrigin = top;
