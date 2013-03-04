@@ -467,7 +467,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                     label = this.getLabel(tickPoint, labelStyles);
                     this._labels.push(label);
                     this._tickPoints.push({x:tickPoint.x, y:tickPoint.y});
-                    this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [this._getLabelByIndex(i, len, direction), labelFormat]));
+                    this.get("appendLabelFunction")(
+                        label,
+                        labelFunction.apply(
+                            labelFunctionScope,
+                            [this._getLabelByIndex(i, len, direction), labelFormat]
+                        )
+                    );
                     labelWidth = Math.round(label.offsetWidth);
                     labelHeight = Math.round(label.offsetHeight);
                     if(!explicitlySized)

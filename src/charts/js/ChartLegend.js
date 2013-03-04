@@ -229,7 +229,16 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                     }
                 }
                 shapeClass = Y.Lang.isArray(shape) ? shape[i] : shape;
-                item = this._getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.border, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
+                item = this._getLegendItem(
+                    node,
+                    this._getShapeClass(shape),
+                    seriesStyles.fill,
+                    seriesStyles.border,
+                    labelStyles,
+                    markerWidth,
+                    markerHeight,
+                    series.get("valueDisplayName")
+                );
                 itemWidth = item.width;
                 itemHeight = item.height;
                 maxWidth = Math.max(maxWidth, itemWidth);
@@ -246,7 +255,10 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         }
         else
         {
-            layout._positionLegendItems.apply(this, [items, maxWidth, maxHeight, totalWidth, totalHeight, padding, hSpacing, vSpacing, hAlign, vAlign]);
+            layout._positionLegendItems.apply(
+                this,
+                [items, maxWidth, maxHeight, totalWidth, totalHeight, padding, hSpacing, vSpacing, hAlign, vAlign]
+            );
             this._updateBackground(styles);
             this.fire("legendRendered");
         }
@@ -574,8 +586,9 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * Indicates the position and direction of the legend. Possible values are `left`, `top`, `right` and `bottom`. Values of `left` and
-         * `right` values have a `direction` of `vertical`. Values of `top` and `bottom` values have a `direction` of `horizontal`.
+         * Indicates the position and direction of the legend. Possible values are `left`, `top`, `right` and `bottom`.
+         * Values of `left` and `right` values have a `direction` of `vertical`. Values of `top` and `bottom` values have
+         * a `direction` of `horizontal`.
          *
          * @attribute position
          * @type String

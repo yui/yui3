@@ -1103,7 +1103,10 @@ ChartBase.prototype = {
             series;
         if(categoryAxis)
         {
-            categoryValue = categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
+            categoryValue = categoryAxis.get("labelFunction").apply(
+                this,
+                [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]
+            );
             if(!Y_Lang.isObject(categoryValue))
             {
                 categoryValue = DOCUMENT.createTextNode(categoryValue);
@@ -1118,7 +1121,10 @@ ChartBase.prototype = {
             {
                 valueItem = valueItems[i];
                 axis = valueItem.axis;
-                seriesValue =  axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]);
+                seriesValue =  axis.get("labelFunction").apply(
+                    this,
+                    [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]
+                );
                 msg.appendChild(DOCUMENT.createElement("br"));
                 msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));
                 msg.appendChild(DOCUMENT.createTextNode(": "));
@@ -1159,8 +1165,14 @@ ChartBase.prototype = {
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
     {
         var msg = DOCUMENT.createElement("div"),
-            categoryValue = categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]),
-            seriesValue = valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]);
+            categoryValue = categoryItem.axis.get("labelFunction").apply(
+                this,
+                [categoryItem.value, categoryItem.axis.get("labelFormat")]
+            ),
+            seriesValue = valueItem.axis.get("labelFunction").apply(
+                this,
+                [valueItem.value, valueItem.axis.get("labelFormat")]
+            );
         msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName));
         msg.appendChild(DOCUMENT.createTextNode(": "));
         if(!Y_Lang.isObject(categoryValue))

@@ -455,7 +455,10 @@ Fills.prototype = {
             closingYCoords.push(coords[1]);
             currentIndex = currentIndex + 1;
         }
-        if(previousXCoords && previousXCoords.length > 0 && previousSeriesLastValidIndex > firstValidIndex && previousSeriesFirstValidIndex < lastValidIndex)
+        if(previousXCoords &&
+            previousXCoords.length > 0 &&
+            previousSeriesLastValidIndex > firstValidIndex &&
+            previousSeriesFirstValidIndex < lastValidIndex)
         {
             closingXCoords = closingXCoords.concat(previousXCoords);
             closingYCoords = closingYCoords.concat(previousYCoords);

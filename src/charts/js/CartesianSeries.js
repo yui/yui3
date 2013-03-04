@@ -331,8 +331,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
     },
 
     /**
-     * Used to cache xData and yData in the setAreaData method. Returns a copy of an array if an array is received as the param
-     * and returns an object literal of array copies if an object literal is received as the param.
+     * Used to cache xData and yData in the setAreaData method. Returns a copy of an
+     * array if an array is received as the param and returns an object literal of
+     * array copies if an object literal is received as the param.
      *
      * @method _copyData
      * @param {Array|Object} val The object or array to be copied.
@@ -361,12 +362,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
     },
 
     /**
-     * Sets the marker plane for the series when the coords argument is an array. If the coords argument
-     * is an object literal no marker plane is set.
+     * Sets the marker plane for the series when the coords argument is an array.
+     * If the coords argument is an object literal no marker plane is set.
      *
      * @method _setXMarkerPlane
-     * @param {Array|Object} coords An array of x coordinates or an object literal containing key value pairs mapped to
-     * an array of coordinates.
+     * @param {Array|Object} coords An array of x coordinates or an object literal
+     * containing key value pairs mapped to an array of coordinates.
      * @param {Number} dataLength The length of data for the series.
      * @private
      */
@@ -388,12 +389,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
     },
 
     /**
-     * Sets the marker plane for the series when the coords argument is an array. If the coords argument
-     * is an object literal no marker plane is set.
+     * Sets the marker plane for the series when the coords argument is an array.
+     * If the coords argument is an object literal no marker plane is set.
      *
      * @method _setYMarkerPlane
-     * @param {Array|Object} coords An array of y coordinates or an object literal containing key value pairs mapped to
-     * an array of coordinates.
+     * @param {Array|Object} coords An array of y coordinates or an object literal
+     * containing key value pairs mapped to an array of coordinates.
      * @param {Number} dataLength The length of data for the series.
      * @private
      */
@@ -415,15 +416,18 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
     },
 
     /**
-     * Gets the x-coordinates for a series. Used by the setAreaData method. Returns an array when an array is received as the first argument.
+     * Gets the x-coordinates for a series. Used by the setAreaData method.
+     * Returns an array when an array is received as the first argument.
      * Returns an object literal when an object literal is received as the first argument.
      *
      * @method _getXCoords
-     * @param {Array|Object} xData An array of data values mapped to the x axis or an object literal containing key values pairs of data values mapped to the x axis.
+     * @param {Array|Object} xData An array of data values mapped to the x axis or an
+     * object literal containing key values pairs of data values mapped to the x axis.
      * @param {Number} xMin The minimum value of the x axis.
      * @param {Number} dataWidth The width used to calculate the x-coordinates.
      * @param {Number} xScaleFactor The ratio used to calculate x-coordinates.
-     * @param {Number} xOffset The distance of the first and last x-coordinate from the beginning and end of the x-axis.
+     * @param {Number} xOffset The distance of the first and last x-coordinate from the
+     * beginning and end of the x-axis.
      * @param {Number} dataLength The number of data points in the arrays.
      * @param {Number} leftPadding The left padding of the series.
      * @return Array|Object
@@ -472,11 +476,13 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
     },
 
     /**
-     * Gets the y-coordinates for a series. Used by the setAreaData method. Returns an array when an array is received as the first argument.
+     * Gets the y-coordinates for a series. Used by the setAreaData method.
+     * Returns an array when an array is received as the first argument.
      * Returns an object literal when an object literal is received as the first argument.
      *
      * @method _getYCoords
-     * @param {Array|Object} yData An array of data values mapped to the y axis or an object literal containing key values pairs of data values mapped to the y axis.
+     * @param {Array|Object} yData An array of data values mapped to the y axis or an
+     * object literal containing key values pairs of data values mapped to the y axis.
      * @param {Number} yMin The minimum value of the y axis.
      * @param {Number} dataHeight The height used to calculate the y-coordinates.
      * @param {Number} yScaleFactor The ratio used to calculate y-coordinates.
@@ -584,7 +590,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
             ycoords;
         if(this.get("rendered"))
         {
-            if((isFinite(w) && isFinite(h) && w > 0 && h > 0) && ((this.get("xData") && this.get("yData")) || this._updateAxisBase()))
+            if((isFinite(w) && isFinite(h) && w > 0 && h > 0) &&
+                ((this.get("xData") && this.get("yData")) ||
+                this._updateAxisBase()))
             {
                 if(this._drawing)
                 {
@@ -624,7 +632,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
     _defaultPlaneOffset: 4,
 
     /**
-     * Destructor implementation for the CartesianSeries class. Calls destroy on all Graphic instances.
+     * Destructor implementation for the CartesianSeries class.
+     * Calls destroy on all Graphic instances.
      *
      * @method destructor
      * @protected
@@ -786,7 +795,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
             getter: function()
             {
                 return this.get("direction") == "vertical" ? this.get("yDisplayName") : this.get("xDisplayName");
-           },
+            },
 
             setter: function(val)
             {

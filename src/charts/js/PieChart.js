@@ -366,8 +366,13 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
         pct = Math.round((valueItem.value / total) * 10000)/100;
         if(categoryItem && valueItem)
         {
-            msg += categoryItem.displayName + ": " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + ", ";
-            msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", ";
+            msg += categoryItem.displayName +
+                ": " +
+                categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) +
+                ", ";
+            msg += valueItem.displayName +
+                ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) +
+                ", ";
             msg += "Percent of total " + valueItem.displayName + ": " + pct + "%,";
         }
         else
