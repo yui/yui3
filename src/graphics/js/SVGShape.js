@@ -314,7 +314,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			node.setAttribute("stroke-linecap", stroke.linecap);
 			node.setAttribute("stroke-width",  stroke.weight);
 			node.setAttribute("stroke-opacity", stroke.opacity);
-			if(linejoin == "round" || linejoin == "bevel")
+			if(linejoin === "round" || linejoin === "bevel")
 			{
 				node.setAttribute("stroke-linejoin", linejoin);
 			}
@@ -349,7 +349,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 		if(fill)
 		{
 			type = fill.type;
-			if(type == "linear" || type == "radial")
+			if(type === "linear" || type === "radial")
 			{
 				this._setGradientFill(fill);
 				node.setAttribute("fill", "url(#grad" + this.get("id") + ")");
@@ -409,7 +409,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			fy = fill.fy,
 			r = fill.r,
             stopNodes = [];
-		if(type == "linear")
+		if(type === "linear")
 		{
             cx = w/2;
             cy = h/2;
@@ -1121,7 +1121,7 @@ SVGShape.ATTRS = {
 			fill = (val) ? Y.merge(tmpl, val) : null;
 			if(fill && fill.color)
 			{
-				if(fill.color === undefined || fill.color == "none")
+				if(fill.color === undefined || fill.color === "none")
 				{
 					fill.color = null;
 				}

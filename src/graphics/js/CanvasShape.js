@@ -345,7 +345,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
                 this._strokeStyle = color;
             }
             this._linecap = linecap;
-            if(linejoin == "round" || linejoin == "bevel")
+            if(linejoin === "round" || linejoin === "bevel")
             {
                 this._linejoin = linejoin;
             }
@@ -401,7 +401,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         {
             color = fill.color;
             type = fill.type;
-            if(type == "linear" || type == "radial")
+            if(type === "linear" || type === "radial")
             {
                 this._fillType = type;
             }
@@ -721,11 +721,11 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
     {
         if (this._fillType)
         {
-            if(this._fillType == "linear")
+            if(this._fillType === "linear")
             {
                 context.fillStyle = this._getLinearGradient();
             }
-            else if(this._fillType == "radial")
+            else if(this._fillType === "radial")
             {
                 context.fillStyle = this._getRadialGradient();
             }
@@ -1197,7 +1197,7 @@ CanvasShape.ATTRS =  {
 			fill = (val) ? Y.merge(tmpl, val) : null;
 			if(fill && fill.color)
 			{
-				if(fill.color === undefined || fill.color == "none")
+				if(fill.color === undefined || fill.color === "none")
 				{
 					fill.color = null;
 				}

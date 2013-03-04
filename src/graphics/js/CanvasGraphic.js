@@ -662,14 +662,14 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             node = this.get("node");
         if(autoSize)
         {
-            if(autoSize == "sizeContentToGraphic")
+            if(autoSize === "sizeContentToGraphic")
             {
                 contentWidth = box.right - box.left;
                 contentHeight = box.bottom - box.top;
                 w = parseFloat(Y_DOM.getComputedStyle(node, "width"));
                 h = parseFloat(Y_DOM.getComputedStyle(node, "height"));
                 matrix = new Y.Matrix();
-                if(preserveAspectRatio == "none")
+                if(preserveAspectRatio === "none")
                 {
                     xScale = w/contentWidth;
                     yScale = h/contentHeight;
