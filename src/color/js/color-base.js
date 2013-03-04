@@ -181,7 +181,8 @@ Y.Color = {
         // parse with regex and return "matches" array
         var type = Y.Color.findType(str).toUpperCase(),
             regex,
-            arr;
+            arr,
+            lastItem;
 
         if (type === 'HEX' && str.length < 5) {
             type = 'HEX3';
@@ -196,8 +197,8 @@ Y.Color = {
 
             if (arr.length) {
                 arr.shift();
-
-                if (typeof arr[arr.length - 1] === 'undefined') {
+                lastItem = arr[arr.length - 1];
+                if (typeof lastItem === 'undefined' || lastItem === '') {
                     arr[arr.length - 1] = 1;
                 }
             }
