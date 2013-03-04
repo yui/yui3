@@ -697,8 +697,8 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			aHandlers = [],
 			oDoc;
 
-		Y.warn("WARNING: Node-MenuNav is a deprecated module as of YUI 3.9.0. This module will be removed from a later version of the library.");
-		
+		Y.log("WARNING: Node-MenuNav is a deprecated module as of YUI 3.9.0. This module will be removed from a later version of the library.", "warn");
+
 		if (oRootMenu) {
 
 			menuNav._rootMenu = oRootMenu;

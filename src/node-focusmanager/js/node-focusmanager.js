@@ -921,7 +921,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	//	Public methods
 
     initializer: function (config) {
-    	Y.warn("WARNING: node-focusmanager is a deprecated module as of YUI 3.9.0. This module will be removed from a later version of the library.");
+    	Y.log("WARNING: node-focusmanager is a deprecated module as of YUI 3.9.0. This module will be removed from a later version of the library.", "warn");
 		this.start();
 
     },
