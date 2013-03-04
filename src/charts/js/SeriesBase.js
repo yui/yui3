@@ -46,8 +46,10 @@ Y.SeriesBase = Y.Base.create("seriesBase", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * Returns a reference to the parent container to which all chart elements are contained. When the series is bound to a `Chart` instance, the `Chart` instance is
-     * the reference. If nothing is set as the `chart` attribute, the `_getChart` method will return a reference to the `graphic` attribute.
+     * Returns a reference to the parent container to which all chart elements are contained.
+     * When the series is bound to a `Chart` instance, the `Chart` instance is the reference.
+     * If nothing is set as the `chart` attribute, the `_getChart` method will return a reference
+     * to the `graphic` attribute.
      *
      * @method _getChart
      * @return {Object}
@@ -159,7 +161,18 @@ Y.SeriesBase = Y.Base.create("seriesBase", Y.Base, [Y.Renderer], {
      * @type Array
      * @protected
      */
-    _defaultLineColors:["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"],
+    _defaultLineColors:[
+        "#426ab3",
+        "#d09b2c",
+        "#000000",
+        "#b82837",
+        "#b384b5",
+        "#ff7200",
+        "#779de3",
+        "#cbc8ba",
+        "#7ed7a6",
+        "#007a6c"
+    ],
 
     /**
      * Collection of default colors used for marker fills in a series when not specified by user.
@@ -168,7 +181,18 @@ Y.SeriesBase = Y.Base.create("seriesBase", Y.Base, [Y.Renderer], {
      * @type Array
      * @protected
      */
-    _defaultFillColors:["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"],
+    _defaultFillColors:[
+        "#6084d0",
+        "#eeb647",
+        "#6c6b5f",
+        "#d6484f",
+        "#ce9ed1",
+        "#ff9f3b",
+        "#93b7ff",
+        "#e0ddd0",
+        "#94ecba",
+        "#309687"
+    ],
 
     /**
      * Collection of default colors used for marker borders in a series when not specified by user.
@@ -177,7 +201,18 @@ Y.SeriesBase = Y.Base.create("seriesBase", Y.Base, [Y.Renderer], {
      * @type Array
      * @protected
      */
-    _defaultBorderColors:["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"],
+    _defaultBorderColors:[
+        "#205096",
+        "#b38206",
+        "#000000",
+        "#94001e",
+        "#9d6fa0",
+        "#e55b00",
+        "#5e85c9",
+        "#adab9e",
+        "#6ac291",
+        "#006457"
+    ],
 
     /**
      * Collection of default colors used for area fills, histogram fills and pie fills in a series when not specified by user.
@@ -186,7 +221,18 @@ Y.SeriesBase = Y.Base.create("seriesBase", Y.Base, [Y.Renderer], {
      * @type Array
      * @protected
      */
-    _defaultSliceColors: ["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"],
+    _defaultSliceColors: [
+        "#66007f",
+        "#a86f41",
+        "#295454",
+        "#996ab2",
+        "#e8cdb7",
+        "#90bdbd",
+        "#000000",
+        "#c3b8ca",
+        "#968373",
+        "#678585"
+    ],
 
     /**
      * Parses a color based on a series order and type.
@@ -266,8 +312,8 @@ Y.SeriesBase = Y.Base.create("seriesBase", Y.Base, [Y.Renderer], {
         },
 
         /**
-         * Reference to the `Chart` application. If no `Chart` application is present, a reference to the `Graphic` instance that
-         * the series is drawn into will be returned.
+         * Reference to the `Chart` application. If no `Chart` application is present,
+         * a reference to the `Graphic` instance that the series is drawn into will be returned.
          *
          * @attribute chart
          * @type ChartBase

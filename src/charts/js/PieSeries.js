@@ -71,7 +71,8 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
             cb.removeChild(this._map);
         }
         this._image = DOCUMENT.createElement("img");
-        this._image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAABCAYAAAD9yd/wAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABJJREFUeNpiZGBgSGPAAgACDAAIkABoFyloZQAAAABJRU5ErkJggg==";
+        this._image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAABCAYAAAD9yd/wAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSB" +
+                        "JbWFnZVJlYWR5ccllPAAAABJJREFUeNpiZGBgSGPAAgACDAAIkABoFyloZQAAAABJRU5ErkJggg==";
         cb.appendChild(this._image);
         this._image.style.position = "absolute";
         this._image.style.left = "0px";

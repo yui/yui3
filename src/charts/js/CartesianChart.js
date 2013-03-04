@@ -376,7 +376,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             series.type = series.type || type;
             series.direction = series.direction || dir;
 
-            if((series.type == "combo" || series.type == "stackedcombo" || series.type == "combospline" || series.type == "stackedcombospline"))
+            if(series.type == "combo" ||
+                series.type == "stackedcombo" ||
+                series.type == "combospline" ||
+                series.type == "stackedcombospline")
             {
                 if(showAreaFill !== null)
                 {
@@ -898,7 +901,11 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                         }
                         if(!(this._getBaseAttribute(newAxes[i], "position")))
                         {
-                            this._setBaseAttribute(newAxes[i], "position", this._getDefaultAxisPosition(newAxes[i], valueAxes, seriesPosition));
+                            this._setBaseAttribute(
+                                newAxes[i],
+                                "position",
+                                this._getDefaultAxisPosition(newAxes[i], valueAxes, seriesPosition)
+                            );
                         }
                     }
                 }
@@ -956,7 +963,11 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         {
             if(!(this._getBaseAttribute(newAxes[valueAxisName], "position")))
             {
-                this._setBaseAttribute(newAxes[valueAxisName], "position", this._getDefaultAxisPosition(newAxes[valueAxisName], valueAxes, seriesPosition));
+                this._setBaseAttribute(
+                    newAxes[valueAxisName],
+                    "position",
+                    this._getDefaultAxisPosition(newAxes[valueAxisName], valueAxes, seriesPosition)
+                );
             }
             this._setBaseAttribute(newAxes[valueAxisName], "type", seriesAxis);
             this._setBaseAttribute(newAxes[valueAxisName], "keys", seriesKeys);
@@ -1122,7 +1133,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             for(; i < len; ++i)
             {
                 axis = set1[i];
-                overflow = Math.max(overflow, Math.abs(axis.getMaxLabelBounds().top) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5));
+                overflow = Math.max(
+                    overflow,
+                    Math.abs(axis.getMaxLabelBounds().top) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5)
+                );
             }
         }
         if(set2)
@@ -1132,7 +1146,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             for(; i < len; ++i)
             {
                 axis = set2[i];
-                overflow = Math.max(overflow, Math.abs(axis.getMaxLabelBounds().top) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5));
+                overflow = Math.max(
+                    overflow,
+                    Math.abs(axis.getMaxLabelBounds().top) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5)
+                );
             }
         }
         return overflow;
@@ -1160,7 +1177,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             for(; i < len; ++i)
             {
                 axis = set1[i];
-                overflow = Math.max(overflow, axis.getMaxLabelBounds().right - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5));
+                overflow = Math.max(
+                    overflow,
+                    axis.getMaxLabelBounds().right - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5)
+                );
             }
         }
         if(set2)
@@ -1170,7 +1190,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             for(; i < len; ++i)
             {
                 axis = set2[i];
-                overflow = Math.max(overflow, axis.getMaxLabelBounds().right - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5));
+                overflow = Math.max(
+                    overflow,
+                    axis.getMaxLabelBounds().right - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5)
+                );
             }
         }
         return overflow;
@@ -1198,7 +1221,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             for(; i < len; ++i)
             {
                 axis = set1[i];
-                overflow = Math.max(overflow, Math.abs(axis.getMinLabelBounds().left) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5));
+                overflow = Math.max(
+                    overflow,
+                    Math.abs(axis.getMinLabelBounds().left) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5)
+                );
             }
         }
         if(set2)
@@ -1208,7 +1234,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             for(; i < len; ++i)
             {
                 axis = set2[i];
-                overflow = Math.max(overflow, Math.abs(axis.getMinLabelBounds().left) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5));
+                overflow = Math.max(
+                    overflow,
+                    Math.abs(axis.getMinLabelBounds().left) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5)
+                );
             }
         }
         return overflow;
@@ -1236,7 +1265,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             for(; i < len; ++i)
             {
                 axis = set1[i];
-                overflow = Math.max(overflow, axis.getMinLabelBounds().bottom - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5));
+                overflow = Math.max(
+                    overflow,
+                    axis.getMinLabelBounds().bottom - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5)
+                );
             }
         }
         if(set2)
@@ -1246,7 +1278,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             for(; i < len; ++i)
             {
                 axis = set2[i];
-                overflow = Math.max(overflow, axis.getMinLabelBounds().bottom - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5));
+                overflow = Math.max(
+                    overflow,
+                    axis.getMinLabelBounds().bottom - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5)
+                );
             }
         }
         return overflow;
@@ -1643,8 +1678,14 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             valueItem = items.value;
             if(categoryItem && valueItem && categoryItem.value && valueItem.value)
             {
-                msg += categoryItem.displayName + ": " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + ", ";
-                msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", ";
+                msg += categoryItem.displayName +
+                    ": " +
+                    categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) +
+                    ", ";
+                msg += valueItem.displayName +
+                    ": " +
+                    valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) +
+                    ", ";
             }
            else
             {
