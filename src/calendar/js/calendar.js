@@ -555,9 +555,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
         },
 
         /**
-         * The minimum date that can be displayed by the calendar. The calendar will not
-         * allow dates earlier than this one to be set, and will reset any earlier date to
-         * this date. Should be `null` if no minimum date is needed.
+         * Unless minimumDate is null, it will not be possible to display and select dates earlier than this one.
          *
          * @attribute minimumDate
          * @type Date
@@ -580,9 +578,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
         },
 
         /**
-         * The maximum date that can be displayed by the calendar. The calendar will not
-         * allow dates later than this one to be set, and will reset any later date to
-         * this date. Should be `null` if no maximum date is needed.
+         * Unless maximumDate is null, it will not be possible to display and select dates later than this one.
          *
          * @attribute maximumDate
          * @type Date
