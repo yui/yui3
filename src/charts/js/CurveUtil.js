@@ -30,8 +30,8 @@ CurveUtil.prototype = {
 		var outpoints = [],
             i = 1,
             l = xcoords.length - 1,
-		    xvals = [],
-		    yvals = [];
+            xvals = [],
+            yvals = [];
 
 
 		// Too few points, need at least two
