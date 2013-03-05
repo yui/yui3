@@ -63,7 +63,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
         {
             this._axes = {};
         }
-        var i, pos, axis, dh, config, axisClass,
+        var i, pos, axis, dh, config, AxisClass,
             type = this.get("type"),
             w = this.get("width"),
             h = this.get("height"),
@@ -84,7 +84,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             {
                 dh = hash[i];
                 pos = type == "pie" ? "none" : dh.position;
-                axisClass = this._getAxisClass(dh.type);
+                AxisClass = this._getAxisClass(dh.type);
                 config = {dataProvider:this.get("dataProvider")};
                 if(dh.hasOwnProperty("roundingUnit"))
                 {
@@ -95,7 +95,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
                 config.height = h;
                 config.position = pos;
                 config.styles = dh.styles;
-                axis = new axisClass(config);
+                axis = new AxisClass(config);
                 axis.on("axisRendered", Y.bind(this._itemRendered, this));
                 this._axes[i] = axis;
             }

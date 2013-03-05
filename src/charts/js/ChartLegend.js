@@ -377,7 +377,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             dimension,
             padding,
             left,
-            item;
+            item,
+            ShapeClass = shapeClass;
         containerNode.setStyle(POSITION, "absolute");
         textField.setStyle(POSITION, "absolute");
         textField.setStyles(labelStyles);
@@ -390,7 +391,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         textField.setStyle("left", left + PX);
         containerNode.setStyle("height", dimension + PX);
         containerNode.setStyle("width", (left + textField.get("offsetWidth")) + PX);
-        shape = new shapeClass({
+        shape = new ShapeClass({
             fill: fill,
             stroke: border,
             width: w,
