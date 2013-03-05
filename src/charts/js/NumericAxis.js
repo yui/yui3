@@ -48,7 +48,7 @@ Y.NumericAxis = Y.Base.create("numericAxis", Y.Axis, [Y.NumericImpl], {
         else
         {
             label = (i * increm);
-            if(roundingMethod == "niceNumber")
+            if(roundingMethod === "niceNumber")
             {
                 label = this._roundToNearest(label, increm);
             }

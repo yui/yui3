@@ -686,10 +686,10 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
         {
             gap = legend.get("styles").gap;
             position = legend.get(POSITION);
-            if(position != EXTERNAL)
+            if(position !== EXTERNAL)
             {
                 direction = legend.get("direction");
-                dimension = direction == HORIZONTAL ? HEIGHT : WIDTH;
+                dimension = direction === HORIZONTAL ? HEIGHT : WIDTH;
                 size = legend.get(dimension);
                 box[position] = size + gap;
                 switch(position)

@@ -183,7 +183,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         for(i = 0; i < len; ++i)
         {
             series = this.get("seriesCollection")[i];
-            seriesKey = series.get("direction") == "horizontal" ? "yKey" : "xKey";
+            seriesKey = series.get("direction") === "horizontal" ? "yKey" : "xKey";
             this._seriesDictionary[series.get(seriesKey)] = series;
         }
     },

@@ -795,12 +795,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
 
             getter: function()
             {
-                return this.get("direction") == "vertical" ? this.get("yDisplayName") : this.get("xDisplayName");
+                return this.get("direction") === "vertical" ? this.get("yDisplayName") : this.get("xDisplayName");
             },
 
             setter: function(val)
             {
-                if(this.get("direction") == "vertical")
+                if(this.get("direction") === "vertical")
                 {
                     this._yDisplayName = val;
                 }
@@ -824,12 +824,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
 
             getter: function()
             {
-                return this.get("direction") == "vertical" ? this.get("xDisplayName") : this.get("yDisplayName");
+                return this.get("direction") === "vertical" ? this.get("xDisplayName") : this.get("yDisplayName");
             },
 
             setter: function(val)
             {
-                if(this.get("direction") == "vertical")
+                if(this.get("direction") === "vertical")
                 {
                     this._xDisplayName = val;
                 }

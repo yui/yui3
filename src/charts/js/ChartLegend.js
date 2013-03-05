@@ -111,8 +111,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
     {
         var attrName = e.attrName,
             pos = this.get(POSITION),
-            vert = pos == LEFT || pos == RIGHT,
-            hor = pos == BOTTOM || pos == TOP;
+            vert = pos === LEFT || pos === RIGHT,
+            hor = pos === BOTTOM || pos === TOP;
         if((hor && attrName === WIDTH) || (vert && attrName === HEIGHT))
         {
             this._drawLegend();
@@ -601,11 +601,11 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
 
             setter: function(val)
             {
-                if(val == TOP || val == BOTTOM)
+                if(val === TOP || val === BOTTOM)
                 {
                     this.set("direction", HORIZONTAL);
                 }
-                else if(val == LEFT || val == RIGHT)
+                else if(val === LEFT || val === RIGHT)
                 {
                     this.set("direction", VERTICAL);
                 }

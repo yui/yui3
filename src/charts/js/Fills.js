@@ -331,7 +331,7 @@ Fills.prototype = {
      */
     _getHighestValidOrder: function(seriesCollection, index, order, direction)
     {
-        var coords = direction == "vertical" ? "stackedXCoords" : "stackedYCoords",
+        var coords = direction === "vertical" ? "stackedXCoords" : "stackedYCoords",
             coord;
         while(isNaN(coord) && order > -1)
         {
@@ -359,7 +359,7 @@ Fills.prototype = {
     {
         var xcoord,
             ycoord;
-        if(direction == "vertical")
+        if(direction === "vertical")
         {
             xcoord = order < 0 ? this._leftOrigin : seriesCollection[order].get("stackedXCoords")[index];
             ycoord = this.get("stackedYCoords")[index];
@@ -408,7 +408,7 @@ Fills.prototype = {
         previousSeries = seriesCollection[order - 1];
         previousXCoords = previousSeries.get("stackedXCoords").concat();
         previousYCoords = previousSeries.get("stackedYCoords").concat();
-        if(direction == "vertical")
+        if(direction === "vertical")
         {
             firstValidIndex = this._getFirstValidIndex(xcoords);
             lastValidIndex = this._getLastValidIndex(xcoords);

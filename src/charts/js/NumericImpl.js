@@ -282,7 +282,7 @@ NumericImpl.prototype = {
             useIntegers = (max - min)/units >= 1;
         if(roundingMethod)
         {
-            if(roundingMethod == "niceNumber")
+            if(roundingMethod === "niceNumber")
             {
                 roundingUnit = this._getMinimumUnit(max, min, units);
                 if(minGreaterThanZero && maxGreaterThanZero)
@@ -420,7 +420,7 @@ NumericImpl.prototype = {
                     }
                 }
             }
-            else if(roundingMethod == "auto")
+            else if(roundingMethod === "auto")
             {
                 if(minGreaterThanZero && maxGreaterThanZero)
                 {
