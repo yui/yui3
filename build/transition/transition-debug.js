@@ -12,6 +12,7 @@ var CAMEL_VENDOR_PREFIX = '',
     VENDOR_PREFIX = '',
     DOCUMENT = Y.config.doc,
     DOCUMENT_ELEMENT = 'documentElement',
+    DOCUMENT_STYLE = DOCUMENT[DOCUMENT_ELEMENT].style,
     TRANSITION_CAMEL = 'transition',
     TRANSITION_PROPERTY_CAMEL = 'transitionProperty',
     TRANSFORM_CAMEL = 'transform',
@@ -71,7 +72,11 @@ Transition.HIDE_TRANSITION = 'fadeOut';
 
 Transition.useNative = false;
 
-if ('transition' in DOCUMENT[DOCUMENT_ELEMENT].style) {
+if ('transition' in DOCUMENT_STYLE 
+    && 'transitionProperty' in DOCUMENT_STYLE 
+    && 'transitionDuration' in DOCUMENT_STYLE
+    && 'transitionTimingFunction' in DOCUMENT_STYLE
+    && 'transitionDelay' in DOCUMENT_STYLE) {
     Transition.useNative = true;
     Transition.supported = true; // TODO: remove
 } else {
