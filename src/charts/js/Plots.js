@@ -408,7 +408,7 @@ Plots.prototype = {
                 xcoords = this.get("xcoords"),
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
-                markerStyles = state == "off" || !styles[state] ? styles : styles[state];
+                markerStyles = state === "off" || !styles[state] ? styles : styles[state];
                 markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
                 markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
                 markerStyles.stroke = markerStyles.border;

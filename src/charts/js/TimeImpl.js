@@ -221,7 +221,7 @@ TimeImpl.prototype = {
                     }
                     else
                     {
-                        if(typeof obj != "string")
+                        if(typeof obj !== "string")
                         {
                             obj = obj;
                         }

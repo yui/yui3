@@ -708,11 +708,11 @@ ChartBase.prototype = {
             pageY = isTouch ? e.changedTouches[0].pageY : e.pageY,
             x = pageX - cb.getX(),
             y = pageY - cb.getY();
-        if(type == "mouseenter")
+        if(type === "mouseenter")
         {
             type = "mouseover";
         }
-        else if(type == "mouseleave")
+        else if(type === "mouseleave")
         {
             type = "mouseout";
         }

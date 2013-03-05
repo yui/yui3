@@ -294,7 +294,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
             wedgeStyle,
             marker,
             graphOrder = this.get("graphOrder") || 0,
-            isCanvas = Y.Graphic.NAME == "canvasGraphic";
+            isCanvas = Y.Graphic.NAME === "canvasGraphic";
         for(; i < itemCount; ++i)
         {
             value = parseFloat(values[i]);
@@ -471,7 +471,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
                 indexStyles,
                 marker = this._markers[i],
                 styles = this.get("styles").marker;
-            markerStyles = state == "off" || !styles[state] ? styles : styles[state];
+            markerStyles = state === "off" || !styles[state] ? styles : styles[state];
             indexStyles = this._mergeStyles(markerStyles, {});
             indexStyles.fill.color = indexStyles.fill.colors[i % indexStyles.fill.colors.length];
             indexStyles.fill.alpha = indexStyles.fill.alphas[i % indexStyles.fill.alphas.length];
