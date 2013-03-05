@@ -34,7 +34,7 @@ StackingUtil.prototype = {
      */
     _stackCoordinates: function()
     {
-        if(this.get("direction") == "vertical")
+        if(this.get("direction") === "vertical")
         {
             this._stackXCoords();
         }

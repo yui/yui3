@@ -75,7 +75,7 @@ Histogram.prototype = {
         {
             borderColors = style.border.color.concat();
         }
-        if(this.get("direction") == "vertical")
+        if(this.get("direction") === "vertical")
         {
             setSizeKey = "height";
             calculatedSizeKey = "width";

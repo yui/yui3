@@ -83,7 +83,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             if(hash.hasOwnProperty(i))
             {
                 dh = hash[i];
-                pos = type == "pie" ? "none" : dh.position;
+                pos = type === "pie" ? "none" : dh.position;
                 AxisClass = this._getAxisClass(dh.type);
                 config = {dataProvider:this.get("dataProvider")};
                 if(dh.hasOwnProperty("roundingUnit"))

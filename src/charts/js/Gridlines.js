@@ -92,7 +92,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
             {
                 points = this._getPoints(count, w, h);
             }
-            else if(axisPosition != "none" && axis && axis.get("tickPoints"))
+            else if(axisPosition !== "none" && axis && axis.get("tickPoints"))
             {
                 points = axis.get("tickPoints");
             }

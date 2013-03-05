@@ -600,7 +600,7 @@ ChartBase.prototype = {
                 this._liveRegion.appendChild(DOCUMENT.createTextNode(msg));
             }
         }, this), this.get("contentBox"));
-        if(interactionType == "marker")
+        if(interactionType === "marker")
         {
             //if touch capabilities, toggle tooltip on touchend. otherwise, the tooltip attribute's hideEvent/showEvent types.
             hideEvent = tt.hideEvent;
@@ -632,7 +632,7 @@ ChartBase.prototype = {
                 Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
             }
         }
-        else if(interactionType == "planar")
+        else if(interactionType === "planar")
         {
             if(isTouch)
             {
@@ -660,7 +660,7 @@ ChartBase.prototype = {
                     tt.markerEventHandler.apply(this, [e]);
                 }
             }, this));
-            if(hideEvent && showEvent && hideEvent == showEvent)
+            if(hideEvent && showEvent && hideEvent === showEvent)
             {
                 this.on(interactionType + "Event:" + hideEvent, this.toggleTooltip);
             }
@@ -857,7 +857,7 @@ ChartBase.prototype = {
                     axis = axes[i];
                     if(axis instanceof Y.Axis)
                     {
-                        if(axis.get("position") != "none")
+                        if(axis.get("position") !== "none")
                         {
                             this._addToAxesRenderQueue(axis);
                         }
@@ -1289,7 +1289,7 @@ ChartBase.prototype = {
         allKeys = this._getAllKeys(dataProvider);
         for(i in allKeys)
         {
-            if(allKeys.hasOwnProperty(i) && i != catKey)
+            if(allKeys.hasOwnProperty(i) && i !== catKey)
             {
                 keys.push(i);
             }
