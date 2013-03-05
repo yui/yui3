@@ -577,7 +577,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             axis,
             axisPosition,
             dh,
-            axisClass,
+            AxisClass,
             config,
             axesCollection;
         for(i in hash)
@@ -639,8 +639,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     }
                     else
                     {
-                        axisClass = this._getAxisClass(dh.type);
-                        axis = new axisClass(config);
+                        AxisClass = this._getAxisClass(dh.type);
+                        axis = new AxisClass(config);
                         axis.after("axisRendered", Y.bind(this._itemRendered, this));
                     }
                 }

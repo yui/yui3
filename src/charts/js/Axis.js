@@ -1396,10 +1396,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
 
             setter: function(val)
             {
-                var layoutClass = this._layoutClasses[val];
+                var LayoutClass = this._layoutClasses[val];
                 if(val && val != "none")
                 {
-                    this._layout = new layoutClass();
+                    this._layout = new LayoutClass();
                 }
                 return val;
             }
