@@ -38,7 +38,6 @@ Histogram.prototype = {
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
-            type = this.get("type"),
             seriesTypeCollection = this.get("seriesTypeCollection"),
             seriesLen = seriesTypeCollection.length || 0,
             seriesSize = 0,

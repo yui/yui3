@@ -13,7 +13,7 @@ var Y_Lang = Y.Lang;
  * @constructor
  * @submodule series-fill-util
  */
-function Fills(cfg) {}
+function Fills() {}
 
 Fills.ATTRS = {
     area: {
@@ -200,7 +200,6 @@ Fills.prototype = {
             ycoords = this.get("ycoords"),
             curvecoords,
             order = this.get("order"),
-            type = this.get("type"),
             seriesCollection = this.get("seriesTypeCollection"),
             prevXCoords,
             prevYCoords,
@@ -383,7 +382,6 @@ Fills.prototype = {
     _getStackedClosingPoints: function()
     {
         var order = this.get("order"),
-            type = this.get("type"),
             direction = this.get("direction"),
             seriesCollection = this.get("seriesTypeCollection"),
             firstValidIndex,

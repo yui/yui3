@@ -149,7 +149,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
      * @param {Object} e Event object.
      * @private
      */
-    _categoryAxisChangeHandler: function(e)
+    _categoryAxisChangeHandler: function()
     {
         var categoryAxis = this.get("categoryAxis");
         categoryAxis.after("dataReady", Y.bind(this._categoryDataChangeHandler, this));
@@ -163,7 +163,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
      * @param {Object} e Event object.
      * @private
      */
-    _valueAxisChangeHandler: function(e)
+    _valueAxisChangeHandler: function()
     {
         var valueAxis = this.get("valueAxis");
         valueAxis.after("dataReady", Y.bind(this._valueDataChangeHandler, this));
@@ -186,7 +186,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
      * @param {Object} event Event object.
      * @private
      */
-    _categoryDataChangeHandler: function(event)
+    _categoryDataChangeHandler: function()
     {
        if(this._rendered && this.get("categoryKey") && this.get("valueKey"))
         {
@@ -201,7 +201,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
      * @param {Object} event Event object.
      * @private
      */
-    _valueDataChangeHandler: function(event)
+    _valueDataChangeHandler: function()
     {
         if(this._rendered && this.get("categoryKey") && this.get("valueKey"))
         {
@@ -263,7 +263,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
     drawPlots: function()
     {
         var values = this.get("valueAxis").getDataByKey(this.get("valueKey")).concat(),
-            catValues = this.get("categoryAxis").getDataByKey(this.get("categoryKey")).concat(),
             totalValue = 0,
             itemCount = values.length,
             styles = this.get("styles").marker,
@@ -485,12 +484,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
      *
      * @method _createMarker
      * @param {Object} styles Hash of style properties.
-     * @param {Number} order Order of the series.
-     * @param {Number} index Index within the series associated with the marker.
      * @return Shape
      * @private
      */
-    _createMarker: function(styles, order, index)
+    _createMarker: function(styles)
     {
         var graphic = this.get("graphic"),
             marker,

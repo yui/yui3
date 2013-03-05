@@ -231,7 +231,7 @@ Plots.prototype = {
             {
                 if(this._markerCache.length < 1)
                 {
-                    marker = this._createMarker(styles, order, index);
+                    marker = this._createMarker(styles);
                     break;
                 }
                 marker = this._markerCache.shift();
@@ -241,7 +241,7 @@ Plots.prototype = {
         }
         else
         {
-            marker = this._createMarker(styles, order, index);
+            marker = this._createMarker(styles);
         }
         this._markers.push(marker);
         return marker;
@@ -252,12 +252,10 @@ Plots.prototype = {
      *
      * @method _createMarker
      * @param {Object} styles Hash of style properties.
-     * @param {Number} order Order of the series.
-     * @param {Number} index Index within the series associated with the marker.
      * @return Shape
      * @private
      */
-    _createMarker: function(styles, order, index)
+    _createMarker: function(styles)
     {
         var graphic = this.get("graphic"),
             marker,

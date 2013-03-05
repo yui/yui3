@@ -76,7 +76,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
      * @param {Object} e Event object
      * @private
      */
-    _dataChangeHandler: function(e)
+    _dataChangeHandler: function()
     {
         if(this.get("rendered"))
         {
@@ -130,7 +130,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
      * @param {Object} e Event object
      * @private
      */
-    _updateHandler: function(e)
+    _updateHandler: function()
     {
         if(this.get("rendered"))
         {
@@ -400,7 +400,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 i = 0,
                 layout = this._layout,
                 layoutLength,
-                position,
                 lineStart,
                 label,
                 labelWidth,

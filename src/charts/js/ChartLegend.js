@@ -71,7 +71,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @param {Object} e Event object
      * @private
      */
-    _updateHandler: function(e)
+    _updateHandler: function()
     {
         if(this.get("rendered"))
         {
@@ -86,7 +86,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @param {Object} e Event object
      * @private
      */
-    _positionChangeHandler: function(e)
+    _positionChangeHandler: function()
     {
         var chart = this.get("chart"),
             parentNode = this._parentNode;

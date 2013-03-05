@@ -18,6 +18,7 @@ POSITION = "position",
 _X = "x",
 _Y = "y",
 PX = "px",
+PieChartLegend,
 LEGEND = {
     setter: function(val)
     {

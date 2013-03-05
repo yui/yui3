@@ -39,7 +39,6 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
-            type = this.get("type"),
             seriesCollection = this.get("seriesTypeCollection"),
             ratio,
             order = this.get("order"),

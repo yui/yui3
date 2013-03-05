@@ -85,21 +85,21 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
         }
         this._xAxisChangeHandle = this.after("xAxisChange", this._xAxisChangeHandler);
         this._yAxisChangeHandle = this.after("yAxisChange", this._yAxisChangeHandler);
-        this._stylesChangeHandle = this.after("stylesChange", function(e) {
+        this._stylesChangeHandle = this.after("stylesChange", function() {
             var axesReady = this._updateAxisBase();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this._widthChangeHandle = this.after("widthChange", function(e) {
+        this._widthChangeHandle = this.after("widthChange", function() {
             var axesReady = this._updateAxisBase();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this._heightChangeHandle = this.after("heightChange", function(e) {
+        this._heightChangeHandle = this.after("heightChange", function() {
             var axesReady = this._updateAxisBase();
             if(axesReady)
             {
@@ -116,7 +116,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
      * @param {Object} e Event object.
      * @private
      */
-    _xAxisChangeHandler: function(e)
+    _xAxisChangeHandler: function()
     {
         var xAxis = this.get("xAxis");
         xAxis.after("dataReady", Y.bind(this._xDataChangeHandler, this));
@@ -130,7 +130,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
      * @param {Object} e Event object.
      * @private
      */
-    _yAxisChangeHandler: function(e)
+    _yAxisChangeHandler: function()
     {
         var yAxis = this.get("yAxis");
         yAxis.after("dataReady", Y.bind(this._yDataChangeHandler, this));
@@ -153,7 +153,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
      * @param {Object} event Event object.
      * @private
      */
-    _xDataChangeHandler: function(event)
+    _xDataChangeHandler: function()
     {
         var axesReady = this._updateAxisBase();
         if(axesReady)
@@ -169,7 +169,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
      * @param {Object} event Event object.
      * @private
      */
-    _yDataChangeHandler: function(event)
+    _yDataChangeHandler: function()
     {
         var axesReady = this._updateAxisBase();
         if(axesReady)
@@ -342,7 +342,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
      */
     _copyData: function(val)
     {
-        var copy;
+        var copy,
+            key;
         if(Y_Lang.isArray(val))
         {
             copy = val.concat();

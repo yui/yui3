@@ -299,7 +299,7 @@ ChartBase.prototype = {
             chart:this,
             groupMarkers: this.get("groupMarkers")
         });
-        graph.after("chartRendered", Y.bind(function(e) {
+        graph.after("chartRendered", Y.bind(function() {
             this.fire("chartRendered");
         }, this));
         return graph;

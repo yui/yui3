@@ -52,10 +52,9 @@ CategoryImpl.prototype = {
      *
      * @method formatLabel
      * @param {Object} value
-     * @param {Object} format Pattern used to format the value.
      * @return String
      */
-    formatLabel: function(val, format)
+    formatLabel: function(val)
     {
         return val;
     },
@@ -157,7 +156,7 @@ CategoryImpl.prototype = {
      * @param {Number} len Length of the axis.
      * @return Number
      */
-    getTotalMajorUnits: function(majorUnit, len)
+    getTotalMajorUnits: function()
     {
         return this.get("data").length;
     },
