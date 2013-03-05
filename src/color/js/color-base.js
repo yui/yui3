@@ -182,6 +182,7 @@ Y.Color = {
         var type = Y.Color.findType(str).toUpperCase(),
             regex,
             arr,
+            length,
             lastItem;
 
         if (type === 'HEX' && str.length < 5) {
@@ -194,12 +195,16 @@ Y.Color = {
         regex = Y.Color['REGEX_' + type];
         if (regex) {
             arr = regex.exec(str) || [];
+            length = arr.length;
 
-            if (arr.length) {
+            if (length) {
+
                 arr.shift();
-                lastItem = arr[arr.length - 1];
-                if (typeof lastItem === 'undefined' || lastItem === '') {
-                    arr[arr.length - 1] = 1;
+                length--;
+
+                lastItem = arr[length - 1];
+                if (!lastItem) {
+                    arr[length - 1] = 1;
                 }
             }
         }
