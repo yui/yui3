@@ -67,10 +67,9 @@ HorizontalLegendLayout = {
      * @param {Number} horizontalGap The horizontal distance between items in a legend.
      * @param {Number} verticalGap The vertical distance between items in a legend.
      * @param {String} hAlign The horizontal alignment of the legend.
-     * @param {String} vAlign The vertical alignment of the legend.
      * @protected
      */
-    _positionLegendItems: function(items, maxWidth, maxHeight, totalWidth, totalHeight, padding, horizontalGap, verticalGap, hAlign, vAlign)
+    _positionLegendItems: function(items, maxWidth, maxHeight, totalWidth, totalHeight, padding, horizontalGap, verticalGap, hAlign)
     {
         var i = 0,
             rowIterator = 0,
@@ -225,11 +224,10 @@ VerticalLegendLayout = {
      * @param {Number} padding The left, top, right and bottom padding properties for the legend.
      * @param {Number} horizontalGap The horizontal distance between items in a legend.
      * @param {Number} verticalGap The vertical distance between items in a legend.
-     * @param {String} hAlign The horizontal alignment of the legend.
      * @param {String} vAlign The vertical alignment of the legend.
      * @protected
      */
-    _positionLegendItems: function(items, maxWidth, maxHeight, totalWidth, totalHeight, padding, horizontalGap, verticalGap, hAlign, vAlign)
+    _positionLegendItems: function(items, maxWidth, maxHeight, totalWidth, totalHeight, padding, horizontalGap, verticalGap, vAlign)
     {
         var i = 0,
             columnIterator = 0,

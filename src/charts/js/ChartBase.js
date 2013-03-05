@@ -1091,7 +1091,7 @@ ChartBase.prototype = {
      *  @return {String | HTML}
      * @private
      */
-    _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray, seriesIndex)
+    _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray)
     {
         var msg = DOCUMENT.createElement("div"),
             valueItem,
@@ -1156,13 +1156,10 @@ ChartBase.prototype = {
      *      <dt>key</dt><dd>The key for the series.</dd>
      *      <dt>value</dt><dd>The value for the series item.</dd>
      *  </dl>
-     * @param {Number} itemIndex The index of the item within the series.
-     * @param {CartesianSeries} series The `CartesianSeries` instance of the item.
-     * @param {Number} seriesIndex The index of the series in the `seriesCollection`.
      * @return {String | HTML}
      * @private
      */
-    _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
+    _tooltipLabelFunction: function(categoryItem, valueItem)
     {
         var msg = DOCUMENT.createElement("div"),
             categoryValue = categoryItem.axis.get("labelFunction").apply(
@@ -1198,7 +1195,7 @@ ChartBase.prototype = {
      * @param {Object} e Event object.
      * @private
      */
-    _tooltipChangeHandler: function(e)
+    _tooltipChangeHandler: function()
     {
         if(this.get("tooltip"))
         {
