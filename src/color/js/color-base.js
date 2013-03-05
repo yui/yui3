@@ -188,7 +188,7 @@ Y.Color = {
             type = 'HEX3';
         }
 
-        if (type[type.length - 1] === 'A') {
+        if (type.charAt(type.length - 1) === 'A') {
             type = type.slice(0, -1);
         }
         regex = Y.Color['REGEX_' + type];
@@ -326,28 +326,30 @@ Y.Color = {
         }
 
         if (from === 'hex' && clr.length < 5) {
-            if (clr[0] === '#') {
+            if (clr.charAt(0) === '#') {
                 clr = clr.substr(1);
             }
 
-            clr = '#' + clr[0] + clr[0] + clr[1] + clr[1] + clr[2] + clr[2];
+            clr = '#' + clr.charAt(0) + clr.charAt(0) +
+                        clr.charAt(1) + clr.charAt(1) +
+                        clr.charAt(2) + clr.charAt(2);
         }
 
         if (from === to) {
             return clr;
         }
 
-        if (from[from.length - 1] === 'a') {
+        if (from.charAt(from.length - 1) === 'a') {
             from = from.slice(0, -1);
         }
 
-        needsAlpha = (to[to.length - 1] === 'a');
+        needsAlpha = (to.charAt(to.length - 1) === 'a');
         if (needsAlpha) {
             to = to.slice(0, -1);
             alpha = Y.Color._getAlpha(clr);
         }
 
-        ucTo = to[0].toUpperCase() + to.substr(1).toLowerCase();
+        ucTo = to.charAt(0).toUpperCase() + to.substr(1).toLowerCase();
         method = Y.Color['_' + from + 'To' + ucTo ];
 
         // check to see if need conversion to rgb first
