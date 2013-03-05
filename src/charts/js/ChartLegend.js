@@ -148,12 +148,12 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             seriesStyles,
             hSpacing = itemStyles.hSpacing,
             vSpacing = itemStyles.vSpacing,
-            hAlign = styles.hAlign,
-            vAlign = styles.vAlign,
+            direction = this.get("direction"),
+            align = direction === "vertical" ? styles.vAlign : styles.hAlign,
             marker = styles.marker,
             labelStyles = itemStyles.label,
             displayName,
-            layout = this._layout[this.get("direction")],
+            layout = this._layout[direction],
             i,
             len,
             isArray,
@@ -257,7 +257,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         {
             layout._positionLegendItems.apply(
                 this,
-                [items, maxWidth, maxHeight, totalWidth, totalHeight, padding, hSpacing, vSpacing, hAlign, vAlign]
+                [items, maxWidth, maxHeight, totalWidth, totalHeight, padding, hSpacing, vSpacing, align]
             );
             this._updateBackground(styles);
             this.fire("legendRendered");

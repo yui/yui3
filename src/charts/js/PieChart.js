@@ -307,11 +307,10 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      *  </dl>
      * @param {Number} itemIndex The index of the item within the series.
      * @param {CartesianSeries} series The `PieSeries` instance of the item.
-     * @param {Number} seriesIndex The index of the series in the `seriesCollection`.
      * @return {HTML}
      * @private
      */
-    _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
+    _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series)
     {
         var msg = DOCUMENT.createElement("div"),
             total = series.getTotalValues(),
