@@ -5,7 +5,6 @@
  * @submodule axis-numeric-base
  */
 
-var Y_Lang = Y.Lang;
 /**
  * NumericImpl contains logic for numeric data. NumericImpl is used by the following classes:
  * <ul>
@@ -30,9 +29,9 @@ NumericImpl.ATTRS = {
      * @attribute alwaysShowZero
      * @type Boolean
      */
-	alwaysShowZero: {
-	    value: true
-	},
+    alwaysShowZero: {
+        value: true
+    },
 
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
@@ -206,7 +205,6 @@ NumericImpl.prototype = {
             len,
             num,
             i = 0,
-            key,
             setMax = this.get("setMax"),
             setMin = this.get("setMin");
         if(!setMax || !setMin)

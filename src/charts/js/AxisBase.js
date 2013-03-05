@@ -44,7 +44,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
      * @param {Object} e Event object.
      * @private
      */
-    _dataProviderChangeHandler: function(e)
+    _dataProviderChangeHandler: function()
     {
         var keyCollection = this.get("keyCollection").concat(),
             keys = this.get("keys"),
@@ -312,7 +312,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
      * @param {Object} e Event object.
      * @private
      */
-    _keyChangeHandler: function(e)
+    _keyChangeHandler: function()
     {
         this._updateMinAndMax();
         this._updateTotalDataFlag = true;

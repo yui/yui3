@@ -262,7 +262,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      * @param {Object} e Event object.
      * @private
      */
-    _sizeChanged: function(e)
+    _sizeChanged: function()
     {
         this._redraw();
     },
@@ -342,7 +342,6 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             valueItem,
             seriesIndex = 0,
             itemIndex = this._itemIndex,
-            seriesCollection = this.get("seriesCollection"),
             len,
             total,
             pct,
@@ -430,6 +429,8 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
          * @type Array
          */
         seriesCollection: {
+            lazyAdd: false,
+
             getter: function()
             {
                 return this._getSeriesCollection();

@@ -389,7 +389,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      * @param {Object} e Event object.
      * @private
      */
-    _sizeChangeHandler: function(e)
+    _sizeChangeHandler: function()
     {
         var hgl = this.get("horizontalGridlines"),
             vgl = this.get("verticalGridlines"),

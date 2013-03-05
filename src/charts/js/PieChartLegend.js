@@ -1,4 +1,4 @@
-var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
+PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
     /**
      * Redraws the chart instance.
      *

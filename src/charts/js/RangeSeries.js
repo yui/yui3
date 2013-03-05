@@ -69,7 +69,6 @@ Y.extend(RangeSeries, Y.CartesianSeries, {
             ycoords = this.get("ycoords"),
             styles = this.get("styles"),
             padding = styles.padding,
-            i,
             len = xcoords.length,
             dataWidth = this.get("width") - (padding.left + padding.right),
             keys = this.get("ohlckeys"),

@@ -107,7 +107,7 @@ Y.SeriesBase = Y.Base.create("seriesBase", Y.Base, [Y.Renderer], {
      * @param {Object} e Event object.
      * @protected
      */
-    _handleVisibleChange: function(e)
+    _handleVisibleChange: function()
     {
         this._toggleVisible(this.get("visible"));
     },
