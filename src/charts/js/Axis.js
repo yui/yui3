@@ -295,7 +295,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             hor = pos == "bottom" || pos == "top";
         cb.setStyle("width", this.get("width"));
         cb.setStyle("height", this.get("height"));
-        if((hor && attrName == "width") || (vert && attrName == "height"))
+        if((hor && attrName === "width") || (vert && attrName === "height"))
         {
             this._drawAxis();
         }

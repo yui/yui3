@@ -113,7 +113,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             pos = this.get(POSITION),
             vert = pos == LEFT || pos == RIGHT,
             hor = pos == BOTTOM || pos == TOP;
-        if((hor && attrName == WIDTH) || (vert && attrName == HEIGHT))
+        if((hor && attrName === WIDTH) || (vert && attrName === HEIGHT))
         {
             this._drawLegend();
         }

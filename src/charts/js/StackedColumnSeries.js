@@ -215,7 +215,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                 borderColor;
             styles = this.get("styles").marker;
             offset = styles.width * 0.5;
-            markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]);
+            markerStyles = state === "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]);
             markerStyles.height = marker.get("height");
             markerStyles.x = (xcoords[i] - offset);
             markerStyles.y = marker.get("y");
