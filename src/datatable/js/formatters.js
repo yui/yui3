@@ -328,8 +328,39 @@ var Lang = Y.Lang,
                 }
                 return fn(value, format);
             };
-        }
+        },
+        /**
+        Returns a formatter function that returns texts from a lookup table
+        based on the stored value.
 
+        It looks for the format to apply in the `lookupTable` property of the
+        column.
+
+            {key: "status", formatter: "lookup", lookupTable: [
+                {value:0, text: "unknown"},
+                {value:1, text: "requested"},
+                {value:2, text: "approved"},
+                {value:3, text: "delivered"}
+            ]}
+
+        Applies the CSS className `yui3-datatable-lookup` to the cell.
+        @method lookup
+        @param col {Object} The column definition
+        @return {Function} A formatter function that returns the `text`
+                associated with `value`.
+        @static
+         */
+        lookup: function (col) {
+            var className = cName('lookup'),
+                lookup = {};
+            Y.Array.each(col.lookupTable, function (entry) {
+                lookup[entry.value] = entry.text;
+            });
+            return function (o) {
+                o.className = className;
+                return lookup[o.value];
+            };
+        }
     };
 
 Y.mix(Y.DataTable.BodyView.Formatters, Formatters);

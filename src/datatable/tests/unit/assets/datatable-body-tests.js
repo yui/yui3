@@ -418,16 +418,24 @@ suite.add(new Y.Test.Case({
                     thousandsSeparator: 't',
                     prefix: 'p',
                     suffix: 's'
-                }}
+                }},
+                {key: 'lookup', formatter: 'lookup', lookupTable: [
+                    {value: undefined, text: 'unknown'},
+                    {value: 0, text: 'zero'},
+                    {value: 1, text: 'one'},
+                    {value: 2, text: 'two'},
+                    {value: 3, text: 'three'},
+                    {value: 4, text: 'four'}
+                ]}
 
             ],
             data: [
                 {
                     a: 123.45, b: 123.45, button:'btn', 'boolean': true, 'date': new Date(),
                     localDate: new Date(), localTime: new Date(), localDateTime: new Date(),
-                    email: 'me', link: 'site', linkSrc: 'there', number: 987654
+                    email: 'me', link: 'site', linkSrc: 'there', number: 987654, lookup: 1
                 },
-                {a: 6789,   b: 6789  , email: 'me', link: 'site',              'boolean': false },
+                {a: 6789,   b: 6789  , email: 'me', link: 'site',              'boolean': false, lookup:3 },
                 {}
             ],
             currencyFormat: {
@@ -534,6 +542,16 @@ suite.add(new Y.Test.Case({
         Y.Assert.areEqual('p987t654d00s', node.getHTML());
         node = dt.getCell([2, 0]);
         Y.Assert.areEqual('', node.getHTML());
+    },
+    "test lookup format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,11]);
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-lookup'));
+        Y.Assert.areEqual('one', node.getHTML());
+        node = dt.getCell(node, 'below');
+        Y.Assert.areEqual('three', node.getHTML());
+        node = dt.getCell(node, 'below');
+        Y.Assert.areEqual('unknown', node.getHTML());
     }
 }));
 
