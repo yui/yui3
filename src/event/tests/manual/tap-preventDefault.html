@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../build/yui/yui.js"></script>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>JS Bin</title>
+
+<style>
+  body {
+    font-family: sans-serif;
+  }
+  a {
+    padding:15px;
+    background: #eee;
+    border: 1px solid #ccc;
+    text-align: center;
+    margin: 20px 0;
+    display: block;
+    width:200px;
+    box-shadow: 0 1px 2px #ddd;
+    color: #333;
+    text-decoration: none;
+  }
+
+
+</style>
+</head>
+<body>
+  <p><a id="link1" href="#foo">Listening to taps!</a></p>
+  <p><a id="link2" href="#bar">Listening to clicks!</a></p>
+  <textarea id="ta" rows="25" cols="45"></textarea>
+  <script>
+  YUI({
+  	filter: 'raw'
+  }).use('event-tap', 'node', function (Y) {
+    
+    Y.one('#link1').on('tap', function (e) {
+      e.preventDefault();
+    });
+    
+    Y.one('#link2').on('click', function (e) {
+      e.preventDefault();
+    });
+
+
+    var elt = document.getElementById('link1');
+    var textarea = document.getElementById('ta');
+    var makeListener = function(txt){
+        var listener = function(e){
+            var val = textarea.value;
+            val += txt + '\n';
+            ta.value = val;
+        };
+        return listener;
+    };    
+    var events = ['click','mousedown','mouseup','touchstart','touchend'];
+    for (var i = 0; i < events.length; i++) {
+        elt.addEventListener(events[i], makeListener(events[i]));
+    }
+    
+  });
+  </script>
+</body>
+</html>

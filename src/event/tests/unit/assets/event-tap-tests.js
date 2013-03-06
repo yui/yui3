@@ -31,7 +31,8 @@ YUI.add('event-tap-tests', function(Y) {
                 'on tap': Y.UA.phantomjs,
                 'right mouse click': Y.UA.phantomjs,
                 'attach and detach': Y.UA.phantomjs,
-                'multiple touches': (Y.UA.ie === 9 || Y.UA.phantomjs)
+                'multiple touches': (Y.UA.ie === 9 || Y.UA.phantomjs),
+                'tap changedTouches': Y.UA.phantomjs
             }
         },
 
@@ -961,7 +962,7 @@ YUI.add('event-tap-tests', function(Y) {
             Y.Assert.isFalse(clicked, "clicked boolean should not be flipped if there are multiple touches");
         },
 
-        'changedTouches': function() {
+        'tap changedTouches': function() {
             var node = Y.one('#clicker1'),
             node2 = Y.one('#clicker2')
             clicked = false,
@@ -975,6 +976,8 @@ YUI.add('event-tap-tests', function(Y) {
                 screenX: 0, 
                 screenY: 0,  // long
                 clientX: 0,
+                pageX: 0,
+                pageY: 0,
                 clientY: 0,   // long
                 ctrlKey: false, 
                 altKey: false, 
@@ -1011,22 +1014,6 @@ YUI.add('event-tap-tests', function(Y) {
                         force: 0.5,
                         target: node
                     }
-                ],      // TouchList
-                changedTouches: [
-                    {
-                        identifier: 'foo',
-                        screenX: 235,
-                        screenY: 25,
-                        clientX: 600,
-                        clientY: 600,
-                        pageX: 500,
-                        pageY: 500,
-                        radiusX: 15,
-                        radiusY: 15,
-                        rotationAngle: 0,
-                        force: 0.5,
-                        target: node
-                    }
                 ]
             },
             endOpts = {
@@ -1038,11 +1025,11 @@ YUI.add('event-tap-tests', function(Y) {
                 detail: 0,            // long
                 screenX: 235, 
                 screenY: 25,  // long
-                clientX: 235,
-                clientY: 25,   // long
+                clientX: 0,
+                clientY: 0,   // long
                 ctrlKey: false,
-                pageX: 235,
-                pageY:25,  
+                pageX: 0,
+                pageY: 0,
                 altKey: false, 
                 shiftKey:false,
                 metaKey: false, // boolean
@@ -1051,56 +1038,26 @@ YUI.add('event-tap-tests', function(Y) {
                         identifier: 'foo',
                         screenX: 235,
                         screenY: 25,
-                        clientX: 235,
-                        clientY: 25,
-                        pageX: 235,
-                        pageY: 25,
-                        radiusX: 15,
-                        radiusY: 15,
-                        rotationAngle: 0,
-                        force: 0.5,
-                        target: node
-                    },
-                    {
-                        identifier: 'foo',
-                        screenX: 235,
-                        screenY: 25,
-                        clientX: 235,
-                        clientY: 25,
-                        pageX: 235,
-                        pageY: 25,
-                        radiusX: 15,
-                        radiusY: 15,
-                        rotationAngle: 0,
-                        force: 0.5,
-                        target: node2
-                    }
-                ],            // TouchList
-                targetTouches: [
-                    {
-                        identifier: 'foo',
-                        screenX: 235,
-                        screenY: 25,
-                        clientX: 235,
-                        clientY: 25,
-                        pageX: 235,
-                        pageY: 25,
+                        clientX: 0,
+                        clientY: 0,
+                        pageX: 0,
+                        pageY: 0,
                         radiusX: 15,
                         radiusY: 15,
                         rotationAngle: 0,
                         force: 0.5,
                         target: node
                     }
-                ],      // TouchList
+                ],  
                 changedTouches: [
                     {
                         identifier: 'foo',
                         screenX: 235,
                         screenY: 25,
-                        clientX: 600,
-                        clientY: 600,
-                        pageX: 500,
-                        pageY: 500,
+                        clientX: 0,
+                        clientY: 0,
+                        pageX: 0,
+                        pageY: 0,
                         radiusX: 15,
                         radiusY: 15,
                         rotationAngle: 0,
@@ -1125,4 +1082,4 @@ YUI.add('event-tap-tests', function(Y) {
 
     Y.Test.Runner.add(suite);
 
-}, '@VERSION@' ,{requires:['event-tap','test', 'node-event-simulate']});
+}, '@VERSION@' ,{requires:['event-tap','test', 'node-event-simulate', 'gesture-simulate']});
