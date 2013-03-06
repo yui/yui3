@@ -17,7 +17,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the last from the NodeList and returns it.
           * @for NodeList
           * @method pop
-          * @return {Node} The last item in the NodeList.
+          * @return {Node} The last item in the NodeList, or null if the NodeList is empty.
           */
         'pop': 0,
         /** Adds the given Node(s) to the end of the NodeList.
