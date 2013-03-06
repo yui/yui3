@@ -1,8 +1,5 @@
 var _JSON = Y.config.global.JSON;
 
-Y.namespace('JSON').parse = function () {
-    if(typeof arguments[0] !== 'string') {
-        arguments[0] = arguments[0] + '';
-    }
-    return _JSON.parse.apply(_JSON, arguments);
+Y.namespace('JSON').parse = function (obj, reviver, space) {
+    return _JSON.parse((typeof obj === 'string' ? obj : obj + ''), reviver, space);
 };
