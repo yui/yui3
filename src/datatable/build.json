@@ -60,6 +60,21 @@
             "jsfiles": [
                 "formatters.js"
             ]
+        },
+        "datatable-editable": {
+            "jsfiles":[
+                "editable.js"
+            ]
+        },
+        "datatable-celleditor-inline": {
+            "jsfiles": [
+                "celleditor-inline.js"
+            ]
+        },
+        "datatable-celleditor-popup": {
+            "jsfiles": [
+                "celleditor-popup.js"
+            ]
         }
     }
 }

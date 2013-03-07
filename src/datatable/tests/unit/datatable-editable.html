@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+    <title>datatable-editor</title>
+    <script src="/build/yui/yui.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="dtable"></div>
+<div id="logger"></div>
+
+<script src="assets/datatable-editable-tests.js"></script>
+
+<script>
+YUI({
+    coverage: ['datatable-editable'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    groups: {
+        builds: {
+            base: ' ../../../build/',
+            modules: {
+                'datatable-editable': {
+                    path: 'datatable-editable/datatable-editable-min.js',
+                    requires:[
+                        "datatable-base",
+                        "datatype",
+                        "node-screen"
+                    ],
+                    skinnable:true
+                },
+                'datatable-celleditor-inline': {
+                    path: 'datatable-celleditor-inline/datatable-celleditor-inline-min.js',
+                    requires:[
+                        "datatable-editable",
+                        "view",
+                        "base-build",
+                        "event-mouseenter"
+                    ],
+                    skinnable:true
+                },
+                'datatable-celleditor-popup': {
+                    path: 'datatable-celleditor-popup/datatable-celleditor-popup-min.js',
+                    requires:[
+                        "datatable-editable",
+                        "base-build",
+                        "view",
+                        "cssbutton",
+                        "event-outside",
+                        "overlay",
+                        "dd-plugin",
+                        "template"
+                    ],
+                    skinnable:true
+                }
+            }
+        }
+    }
+ }).use( 'test-console', 'test', 'module-tests-dteditable',  "node-event-simulate",
+        "datatable-editable",  "datatable",'datatable-scroll',
+        "datatable-celleditor-inline",
+        function(Y) {
+
+    (new Y.Test.Console()).render('#logger');
+
+    Y.Test.Runner.setName('datatable-editable');
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>
