@@ -1,11 +1,23 @@
+var Lang = Y.Lang,
+Array = Y.Array,
+arrEach = Array.each,
+
+EDITABLE = 'editable',
+EDITOR_OPEN_ACTION = 'editorOpenAction',
+DEF_EDITOR = 'defaultEditor',
+WRAP_AROUND_NAV = 'wrapAroundNavigation',
+
+CHANGE = 'Change',
+CELL_EDITOR = 'celleditor',
+COL = 'col',
+COLUMNS = 'columns';
 /**
  A DataTable class extension that configures a DT for "editing", current deployment supports cell editing
- (and planned near-term support for row editing).
+ both inline and with popups.
 
  This module is essentially a base wrapper-class to setup DT for editing with the appropriate attributes and
  listener creation / detachment.  The real guts of "datatable-editing" is in the View class definitions, within
- the datatable-celleditor-inline and datatable-celleditor-inline modules (and possibly future
- editor View class modules).
+ the datatable-celleditor-inline and datatable-celleditor-popup modules.
 
  #### Functionality
 
@@ -13,11 +25,11 @@
  housekeeping functions with regard to managing editor View instance creation, rendering and destruction.
 
  By design this module attempts to group common editor View instances wherever possible.  So for a DT with 14 columns
- all set with "inline" View classes only 1 View instance is created.
- <br/>Likewise if a DT uses 4 different "calendar" editor View types but each one as slightly different "editorConfig",
+ all set with `"inline"` View classes only 1 View instance is created.
+ <br/>Likewise if a DT uses 4 different `"calendar"` editor View types but each one as slightly different `editorConfig`,
  then this module creates 4 different calendar View instances to handle the different configurations.
 
- Listeners are set for the "celleditor:save" event and saved to the active "data" setting within this module.
+ Listeners are set for the `celleditor:save` event and saved to the active `data` setting within this module.
 
  Additional capability is provided for cell editing situations to add CSS classes to TD's which are added to "editable"
  columns (e.g. cursor) to indicate they are "clickable".
@@ -29,7 +41,7 @@
  #### Attributes
 
  Presently three attributes are provided;
- [editable](#attr_editable), [editOpenType](#attr_editOpenType) and [defaultEditor](#attr_defaultEditor).
+ [editable](#attr_editable), [editorOpenAction](#attr_editorOpenAction) and [defaultEditor](#attr_defaultEditor).
 
  The primary ATTR is the [editable](#attr_editable), which is used to toggle on/off the editing state of the DT
  instance.
@@ -95,7 +107,7 @@ DtEditable.ATTRS = {
      */
     editable: {
         value:      false,
-        validator:  Y.Lang.isBoolean
+        validator:  Lang.isBoolean
     },
 
     /**
@@ -104,17 +116,19 @@ DtEditable.ATTRS = {
      *
      * Note: IMHO The only sensible options are 'click' or 'dblclick'
      *
-     * @attribute editOpenType
-     * @type {String|Null}
+     * @attribute editorOpenAction
+     * @type {String|null}
      * @default 'dblclick'
      */
-    editOpenType: {
+    editorOpenAction: {
         value:      'dblclick',
-        validator:  function(v){ return Y.Lang.isString(v) || v===null; }
+        validator:  function(v){
+            return Lang.isString(v) || v===null;
+        }
     },
 
     /**
-     * Specifies a default editor name to respond to an editing event defined in [_editOpenType](#attr_editOpenType)
+     * Specifies a default editor name to respond to an editing event defined in [_editorOpenAction](#attr_editorOpenAction)
      * attribute.  The default editor is used if the DataTable is in editing mode (i.e. "editable:true") and if
      * the column DOES NOT include a property editable:false in its definitions.
      *
@@ -130,14 +144,28 @@ DtEditable.ATTRS = {
      */
     defaultEditor : {
         value:      null,
-        validator:  function(v){ return Y.Lang.isString(v) || v === null; }
+        validator:  function(v){
+            return Lang.isString(v) || v === null;
+        }
+    },
+    /**
+    Determines whether keyboard navigation beyond an edge of the table wraps
+    around to the opposite edge.
+
+    @attribute wrapAroundNavigation
+    @type Boolean
+    @default true
+    */
+    wrapAroundNavigation: {
+        value: true,
+        validator: Lang.isBoolean
     }
 };
 
 // Add static props and public/private methods to be added to DataTable
 Y.mix( DtEditable.prototype, {
 
-// -------------------------- Placeholder Private Properties  -----------------------------
+    // -------------------------- Placeholder Private Properties  -----------------------------
 
     /**
      Holds the View instance of the active cell editor currently displayed
@@ -191,7 +219,7 @@ Y.mix( DtEditable.prototype, {
      **/
     _openCell:          null,
 
-// -------------------------- Subscriber handles  -----------------------------
+    // -------------------------- Subscriber handles  -----------------------------
 
     /**
      Placeholder for the DT level event listener for "editableChange" attribute.
@@ -204,7 +232,7 @@ Y.mix( DtEditable.prototype, {
     _subscrEditable:     null,
 
     /**
-     Placeholder for the DT event listener to begin editing a cell (based on editOpenType ATTR)
+     Placeholder for the DT event listener to begin editing a cell (based on editorOpenAction ATTR)
      @property _subscrEditOpen
      @type EventHandle
      @default null
@@ -279,7 +307,7 @@ Y.mix( DtEditable.prototype, {
     // future
     //_editableType:      null,   //  'cell', 'row', 'inline?'
 
-//==========================  LIFECYCLE METHODS  =============================
+    //==========================  LIFECYCLE METHODS  =============================
 
     /**
      * Initializer that sets up listeners for "editable" state and sets some CSS names
@@ -288,14 +316,14 @@ Y.mix( DtEditable.prototype, {
      */
     initializer: function(){
 
-        this._classColEditable = this.getClassName('col','editable');
+        this._classColEditable = this.getClassName(COL,EDITABLE);
 
         // Hacky, but works ...
-        if(this.get('editable')) {
-            this._onEditableChange(true);
+        if(this.get(EDITABLE)) {
+            this._afterEditableChange(true);
         }
 
-        this.after('editableChange',this._onEditableChange);
+        this.after(EDITABLE + CHANGE ,this._afterEditableChange);
 
         this._bindEditable();
 
@@ -309,11 +337,11 @@ Y.mix( DtEditable.prototype, {
      */
     destructor:function() {
         // detach the "editableChange" listener on the DT
-        this.set('editable',false);
+        this.set(EDITABLE,false);
         this._unbindEditable();
     },
 
-//==========================  PUBLIC METHODS  =============================
+    //==========================  PUBLIC METHODS  =============================
 
     /**
      * Opens the given TD eventfacade or Node with it's assigned cell editor.
@@ -324,10 +352,10 @@ Y.mix( DtEditable.prototype, {
      */
     openCellEditor: function(e) {
         var td       = e.currentTarget || e,
-            col      = this.getColumnByTd(td),
-            colKey   = col.key || col.name,
-            editorRef = (colKey) ? this._columnEditors[colKey] : null,
-            editorInstance = (editorRef && Y.Lang.isString(editorRef) ) ? this._commonEditors[editorRef] : editorRef;
+        col      = this.getColumnByTd(td),
+        colKey   = col.key || col.name,
+        editorRef = (colKey) ? this._columnEditors[colKey] : null,
+        editorInstance = (editorRef && Lang.isString(editorRef) ) ? this._commonEditors[editorRef] : editorRef;
 
         if(!td) {
             return;
@@ -383,7 +411,7 @@ Y.mix( DtEditable.prototype, {
             //  Set the editor Attributes and render it ... (display it!)
             //
             this._openEditor.setAttrs({
-       //         hostDT: this,
+                //         hostDT: this,
                 cell:   this._openCell,
                 value:  this._openRecord.get(colKey)
             });
@@ -416,7 +444,7 @@ Y.mix( DtEditable.prototype, {
     hideAllCellEditors: function(){
         this.hideCellEditor();
         var ces = this._getAllCellEditors();
-        Y.Array.each( ces, function(editor){
+        arrEach( ces, function(editor){
             if(editor && editor.hideEditor) {
                 editor.hideEditor();
             }
@@ -441,7 +469,7 @@ Y.mix( DtEditable.prototype, {
     getCellEditors: function(){
         var rtn = [], ed;
         Y.Object.each(this._columnEditors,function(v,k){
-            ed = (Y.Lang.isString(v)) ? this._commonEditors[v] : v;
+            ed = (Lang.isString(v)) ? this._commonEditors[v] : v;
             rtn.push({
                 columnKey:      k,
                 cellEditor:     ed,
@@ -464,12 +492,12 @@ Y.mix( DtEditable.prototype, {
      */
     getCellEditor: function(col) {
         var ce = this._columnEditors,
-            column = (col && typeof col !== "object") ? this.getColumn(col) : null,
-            colKey = (column) ? column.key || column.name : null,
-            rtn = null;
+        column = (col && typeof col !== "object") ? this.getColumn(col) : null,
+        colKey = (column) ? column.key || column.name : null,
+        rtn = null;
 
         if(colKey && ce[colKey]) {
-            if(Y.Lang.isString(ce[colKey])) {
+            if(Lang.isString(ce[colKey])) {
                 // ce[colKey] is a common editor name, like "textarea", etc..
                 rtn = this._commonEditors[ ce[colKey] ];
             } else {
@@ -503,12 +531,12 @@ Y.mix( DtEditable.prototype, {
      */
     getColumnNameByTd: function(cell){
         var classes = cell.get('className').split(" "),
-            regCol  = new RegExp( this.getClassName('col') + '-(.*)'),
-            colName;
+        regCol  = new RegExp( this.getClassName(COL) + '-(.*)'),
+        colName;
 
-        Y.Array.some(classes,function(item){
+        Array.some(classes,function(item){
             var colmatch =  item.match(regCol);
-            if ( colmatch && Y.Lang.isArray(colmatch) && colmatch[1] ) {
+            if ( colmatch && Lang.isArray(colmatch) && colmatch[1] ) {
                 colName = colmatch[1];
                 return true;
             }
@@ -518,7 +546,7 @@ Y.mix( DtEditable.prototype, {
     },
 
 
-//==========================  PRIVATE METHODS  =============================
+    //==========================  PRIVATE METHODS  =============================
 
 
     /**
@@ -527,10 +555,10 @@ Y.mix( DtEditable.prototype, {
      * @private
      */
     _bindEditable: function(){
-        var eotype = this.get('editOpenType');
+        var eotype = this.get(EDITOR_OPEN_ACTION);
 
         if(this._subscrEditable) {
-            Y.Array.each(this._subscrEditable,function(eh){
+            arrEach(this._subscrEditable,function(eh){
                 if(eh && eh.detach) {
                     eh.detach();
                 }
@@ -540,7 +568,7 @@ Y.mix( DtEditable.prototype, {
         this._subscrEditable = [];
 
         // Check the editing open type setting ...
-        eotype = (eotype && Y.Lang.isString(eotype) && eotype.search(/none/i)===-1 ) ? eotype : null;
+        eotype = (eotype && Lang.isString(eotype) && eotype.search(/none/i)===-1 ) ? eotype : null;
         if(eotype) {
             if(this._subscrEditOpen) {
                 this._subscrEditOpen.detach();
@@ -551,9 +579,9 @@ Y.mix( DtEditable.prototype, {
         this._subscrEditable.push(
             Y.Do.after(this._updateAllEditableColumnsCSS,this,'syncUI'),
             this.after('sort', this._afterEditableSort),
-            this.after('editOpenTypeChange',this._onEditOpenTypeChange),
-            this.after('defaultEditorChange',this._onDefaultEditorChange)
-        );
+            this.after(EDITOR_OPEN_ACTION + CHANGE,this._afterEditorOpenActionChange),
+            this.after(DEF_EDITOR + CHANGE,this._afterDefaultEditorChange)
+            );
 
     },
 
@@ -565,9 +593,9 @@ Y.mix( DtEditable.prototype, {
      */
     _unbindEditable: function() {
 
-        // Detach 'editable' related listeners
+        // Detach EDITABLE related listeners
         if(this._subscrEditable) {
-            Y.Array.each(this._subscrEditable,function(eh){
+            arrEach(this._subscrEditable,function(eh){
                 if(eh && eh.detach) {
                     eh.detach();
                 }
@@ -587,8 +615,8 @@ Y.mix( DtEditable.prototype, {
         }
 
         // Detach scrolling listeners
-        if(this._subscrCellEditorScrolls && Y.Lang.isArray(this._subscrCellEditorScrolls) ) {
-            Y.Array.each(this._subscrCellEditorScroll, function(dh){
+        if(this._subscrCellEditorScrolls && Lang.isArray(this._subscrCellEditorScrolls) ) {
+            arrEach(this._subscrCellEditorScroll, function(dh){
                 if(dh && dh.detach) {
                     dh.detach();
                 }
@@ -596,7 +624,7 @@ Y.mix( DtEditable.prototype, {
             this._subscrCellEditorScrolls = [];
         }
 
-        this.detach('celleditor:*');
+        this.detach(CELL_EDITOR + ':*');
 
         this._unsetEditor();
 
@@ -626,12 +654,12 @@ Y.mix( DtEditable.prototype, {
 
         // Add a ESC key listener on the body (hate doing this!) to close editor if open ...
         this._subscrCellEditors.push(
-           // Y.one('body').after('keydown', Y.bind(this._onKeyEsc,this) ),
-            this.on('celleditor:save',this._onCellEditorSave),
-            this.after('celleditor:save',this._afterCellEditorSave),
-            this.on('celleditor:cancel',this._onCellEditorCancel),
-            this.after('celleditor:cancel',this._afterCellEditorCancel),
-            this.on('celleditor:keyDirChange',this._onKeyDirChange)
+            // Y.one('body').after('keydown', Y.bind(this._onKeyEsc,this) ),
+            this.on(CELL_EDITOR + ':save',this._onCellEditorSave),
+            this.after(CELL_EDITOR + ':save',this._afterCellEditorSave),
+            this.on(CELL_EDITOR + ':cancel',this._onCellEditorCancel),
+            this.after(CELL_EDITOR + ':cancel',this._afterCellEditorCancel),
+            this.after(CELL_EDITOR + ':keyDirChange',this._afterKeyDirChange)
         );
     },
 
@@ -642,7 +670,7 @@ Y.mix( DtEditable.prototype, {
      */
     _unbindCellEditingListeners: function(){
         if(this._subscrCellEditors) {
-            Y.Array.each(this._subscrCellEditors,function(e){
+            arrEach(this._subscrCellEditors,function(e){
                 if(e && e.detach) {
                     e.detach();
                 }
@@ -671,11 +699,11 @@ Y.mix( DtEditable.prototype, {
     /**
      * Listener that toggles the DT editable state, setting/unsetting the listeners associated with
      * cell editing.
-     * @method _onEditableChange
+     * @method _afterEditableChange
      * @param o {EventFacade} Change event facade for "editable" attribute
      * @private
      */
-    _onEditableChange: function(o) {
+    _afterEditableChange: function(o) {
         if(o.newVal || o===true ) {
 
             this._bindEditable();
@@ -701,32 +729,31 @@ Y.mix( DtEditable.prototype, {
      * If the default editor is changed to a valid setting, we disable and re-enable
      * editing on the DT to reset the column editors.
      *
-     * @method _onDefaultEditorChange
-     * @param o {EventFacade} Change eventfacade for "defaultEditor" attribute
+     * @method _afterDefaultEditorChange
+     * @param e {EventFacade} Change eventfacade for "defaultEditor" attribute
      * @private
      */
-    _onDefaultEditorChange: function(o) {
-        var defeditor = o.newVal;
+    _afterDefaultEditorChange: function(e) {
+        var defeditor = e.newVal;
 
         // if a valid editor is given AND we are in editing mode, toggle off/on ...
-        if ( defeditor && defeditor.search(/none/i)===-1 && this.get('editable') ) {
-            this.set('editable',false);
-            this.set('editable',true);
+        if ( defeditor && this.get(EDITABLE) ) {
+            this.set(EDITABLE,false);
+            this.set(EDITABLE,true);
         }
     },
 
     /**
-     * Setter method for the [editOpenType](#attr_editOpenType) attribute, specifies what
+     * Setter method for the [editorOpenAction](#attr_editorOpenAction) attribute, specifies what
      * TD event to listen to for initiating editing.
      * @method _setEditOpenType
      * @param v {String}
      * @private
      */
-    _onEditOpenTypeChange: function() {
-        //var eotype = o.newVal || o;
-        if(this.get('editable')) {
-            this.set('editable',false);
-            this.set('editable',true);
+    _afterEditorOpenActionChange: function() {
+        if(this.get(EDITABLE)) {
+            this.set(EDITABLE,false);
+            this.set(EDITABLE,true);
         }
     },
 
@@ -740,9 +767,9 @@ Y.mix( DtEditable.prototype, {
      * @private
      */
     _buildColumnEditors: function(){
-        var cols     = this.get('columns'),
-            defEditr = this.get('defaultEditor'),
-            edName, colKey, editorInstance;
+        var cols     = this.get(COLUMNS),
+        defEditor = this.get(DEF_EDITOR),
+        editorName, colKey, editorInstance;
 
         if( !Y.DataTable.EditorOptions ) {
             return;
@@ -756,14 +783,9 @@ Y.mix( DtEditable.prototype, {
         this._columnEditors = {};
 
         //
-        //  Set the default editor, if one is defined
-        //
-        defEditr = (defEditr && defEditr.search(/none|null/i) !==0 ) ? defEditr : null;
-
-        //
         //  Loop over all DT columns ....
         //
-        Y.Array.each(cols,function(c){
+        arrEach(cols,function(c){
             if(!c) {
                 return;
             }
@@ -773,12 +795,12 @@ Y.mix( DtEditable.prototype, {
             // An editor was defined (in column) and doesn't yet exist ...
             if(colKey && c.editable !== false) {
 
-                edName = c.editor || defEditr;
+                editorName = c.editor || defEditor;
 
                 // This is an editable column, update the TD's for the editable column
                 this._updateEditableColumnCSS(colKey,true);
 
-                //this._editorColHash[colKey] = edName;
+                //this._editorColHash[colKey] = editorName;
 
                 //
                 // If an editor is named, check if its definition exists, and that it is
@@ -786,22 +808,22 @@ Y.mix( DtEditable.prototype, {
                 //
 
                 // check for common editor ....
-                if (edName && Y.DataTable.EditorOptions[edName]) {
+                if (editorName && Y.DataTable.EditorOptions[editorName]) {
 
-                    if(c.editorConfig && Y.Lang.isObject(c.editorConfig) ) {
+                    if(Lang.isObject(c.editorConfig) ) {
 
-                        editorInstance = this._createCellEditorInstance(edName,c);
+                        editorInstance = this._createCellEditorInstance(editorName,c);
 
                         this._columnEditors[colKey] = editorInstance || null;
 
                     } else {
 
-                        if( !this._commonEditors[edName] ) {
-                            editorInstance = this._createCellEditorInstance(edName,c);
-                            this._commonEditors[edName] = editorInstance;
+                        if( !this._commonEditors[editorName] ) {
+                            editorInstance = this._createCellEditorInstance(editorName,c);
+                            this._commonEditors[editorName] = editorInstance;
                         }
 
-                        this._columnEditors[colKey] = edName;
+                        this._columnEditors[colKey] = editorName;
 
                     }
 
@@ -827,10 +849,10 @@ Y.mix( DtEditable.prototype, {
      */
     _createCellEditorInstance: function(editorName, column) {
         var conf_obj      = Y.clone(Y.DataTable.EditorOptions[editorName],true),
-            BaseViewClass = Y.DataTable.EditorOptions[editorName].BaseViewClass,
-            editorInstance;
+        BaseViewClass = Y.DataTable.EditorOptions[editorName].BaseViewClass,
+        editorInstance;
 
-        if(column.editorConfig && Y.Lang.isObject(column.editorConfig)) {
+        if(Lang.isObject(column.editorConfig)) {
             conf_obj = Y.merge(conf_obj, column.editorConfig);
 
             if(column.editorConfig.overlayConfig) {
@@ -873,11 +895,11 @@ Y.mix( DtEditable.prototype, {
             return;
         }
 
-        var ces = this._getAllCellEditors();
-        Y.Array.each(ces,function(ce){
+        arrEach(this._getAllCellEditors(),function(ce){
             if(ce && ce.destroy) {
-              //   ce.destroy();
-                ce.destroy({remove:true});
+                ce.destroy({
+                    remove:true
+                });
             }
         });
 
@@ -885,7 +907,7 @@ Y.mix( DtEditable.prototype, {
         this._columnEditors = null;
 
         // remove editing class from all editable columns ...
-        Y.Array.each( this.get('columns'), function(c){
+        arrEach( this.get(COLUMNS), function(c){
             if(c.editable === undefined || c.editable === true) {
                 this._updateEditableColumnCSS(c.key || c.name,false);
             }
@@ -941,7 +963,7 @@ Y.mix( DtEditable.prototype, {
      * @private
      */
     _afterEditableSort: function() {
-        if(this.get('editable')) {
+        if(this.get(EDITABLE)) {
             this.hideCellEditor();
             this._updateAllEditableColumnsCSS();
         }
@@ -967,10 +989,9 @@ Y.mix( DtEditable.prototype, {
      * @private
      */
     _updateAllEditableColumnsCSS : function() {
-        if(this.get('editable')) {
-            var cols = this.get('columns'),
-                ckey;
-            Y.Array.each(cols,function(col){
+        if(this.get(EDITABLE)) {
+            var ckey;
+            arrEach(this.get(COLUMNS),function(col){
                 ckey = col.key || col.name;
                 if(ckey) {
                     this._updateEditableColumnCSS(ckey, true); //(flag) ? col.editable || true : false);
@@ -990,21 +1011,20 @@ Y.mix( DtEditable.prototype, {
      */
     _updateEditableColumnCSS : function(cname,opt) {
         var tbody = this.get('contentBox').one('tbody.'+this.getClassName('data')),
-            col   = (cname) ? this.getColumn(cname) : null,
-            colEditable = col && col.editable !== false,
-            tdCol;
+        col   = (cname) ? this.getColumn(cname) : null,
+        colEditable = col && col.editable !== false,
+        tdCol;
         if(!cname || !col || !colEditable) {
             return;
         }
 
-        colEditable = ( col.editor || (this.get('defaultEditor')!==null
-            && this.get('defaultEditor').search(/none/i)!==0) ) ? true : false;
+        colEditable = col.editor || this.get(DEF_EDITOR);
 
         if(!tbody || !colEditable) {
             return;
         }
 
-        tdCol = tbody.all('td.'+this.getClassName('col',cname));
+        tdCol = tbody.all('td.'+this.getClassName(COL,cname));
 
         if(tdCol && opt===true) {
             tdCol.addClass(this._classColEditable);
@@ -1021,7 +1041,7 @@ Y.mix( DtEditable.prototype, {
      */
     _handleCellClick:  function(e){
         var td = e.currentTarget,
-            cn = this.getColumnNameByTd(td);
+        cn = this.getColumnNameByTd(td);
         if (cn && this._openEditor &&  this._openEditor.get('colKey')!==cn) {
             this.hideCellEditor();
         }
@@ -1038,14 +1058,14 @@ Y.mix( DtEditable.prototype, {
         //
         //  Only go into this dark realm if we have a TD and an editor is open ...
         //
-        if(this.get('editable') && this.get('scrollable') && this._openEditor && this._openTd ) {
+        if(this.get(EDITABLE) && this.get('scrollable') && this._openEditor && this._openTd ) {
 
-           var tar    = e.target,
-               tarcl  = tar.get('className') || '',
-               tr1    = this.getRow(0),
-               trh    = (tr1) ? +tr1.getComputedStyle('height').replace(/px/,'') : 0,
-               tdxy   = (this._openTd) ? this._openTd.getXY() : null,
-               xmin, xmax, ymin, ymax, hidef;
+            var tar    = e.target,
+            tarcl  = tar.get('className') || '',
+            tr1    = this.getRow(0),
+            trh    = (tr1) ? parseInt(tr1.getComputedStyle('height'),10) : 0,
+            tdxy   = (this._openTd) ? this._openTd.getXY() : null,
+            xmin, xmax, ymin, ymax, hidef;
 
             //
             // For vertical scrolling - check vertical 'y' limits
@@ -1053,7 +1073,7 @@ Y.mix( DtEditable.prototype, {
             if( tarcl.search(/-y-/) !==-1 ) {
 
                 ymin = this._yScrollNode.getY() + trh - 5;
-                ymax = ymin + (+this._yScrollNode.getComputedStyle('height').replace(/px/,'')) - 2*trh;
+                ymax = ymin + parseInt(this._yScrollNode.getComputedStyle('height'), 10) - 2 * trh;
 
                 if(tdxy[1] >= ymin && tdxy[1] <= ymax ) {
                     if(this._openEditor.get('hidden')) {
@@ -1072,8 +1092,8 @@ Y.mix( DtEditable.prototype, {
             if( tarcl.search(/-x-/) !==-1 ) {
 
                 xmin = this._xScrollNode.getX();
-                xmax = xmin + (+this._xScrollNode.getComputedStyle('width').replace(/px/,''));
-                xmax -= +this._openTd.getComputedStyle('width').replace(/px/,'');
+                xmax = xmin + parseInt(this._xScrollNode.getComputedStyle('width'), 10);
+                xmax -= parseInt(this._openTd.getComputedStyle('width'),10);
 
                 if(tdxy[0] >= xmin && tdxy[0] <= xmax ) {
                     if(this._openEditor.get('hidden')) {
@@ -1102,45 +1122,61 @@ Y.mix( DtEditable.prototype, {
      * the number of rows or columns to be changed to from the current TD location
      * (See the base method .getCell)
      *
-     * @method _onKeyDirChange
+     * @method _afterKeyDirChange
      * @param e {EventFacade} The attribute change event facade for the View's 'keyDir' attribute
      * @private
      */
-    _onKeyDirChange : function(e) {
-        var dir     = e.newVal,
-            recIndex = this.data.indexOf(this._openRecord),
-            col      = this.getColumn(this._openColKey),
-            colIndex = Y.Array.indexOf(this.get('columns'),col),
-            oldTd    = this._openTd,
-            newTd, ndir, circ;
+    _afterKeyDirChange : function(e) {
+        var dir = e.newVal,
+            dx = dir[1],
+            dy = dir[0],
+            td = this._openTd,
+            colIndex = td.get('cellIndex'),
+            tr = td.ancestor('tr'),
+            tbody = tr.ancestor('tbody'),
+            rowIndex = tr.get('rowIndex') - tbody.get('firstChild.rowIndex'),
+            numCols = tr.get('children').size(),
+            numRows = tbody.get('children').size(),
+            wrap = this.get(WRAP_AROUND_NAV), wrappedOnce = false;
 
-       this.hideCellEditor();
+        this.hideCellEditor();
 
-       //TODO: Implement "circular" mode, maybe thru an attribute to wrap col/row navigation
-       if(circ) {
+        while (true) {
+            rowIndex += dy;
+            colIndex += dx;
 
-           if(dir[1] === 1 && colIndex === this.get('columns').length-1 ) {
-               ndir = [0, -this.get('columns').length+1];
-           } else if(dir[1] === -1 && colIndex === 0) {
-               ndir = [0, this.get('columns').length-1];
-           } else if(dir[0] === 1 && recIndex === this.data.size()-1 ) {
-               ndir = [ -this.data.size()+1, 0];
-           } else if(dir[0] === -1 && recIndex === 0) {
-               ndir = [ this.data.size()-1, 0];
-           }
-
-           if(ndir) {
-               dir = ndir;
-           }
-
-       }
-
-       if(dir){
-           newTd = this.getCell(oldTd, dir);
-           if(newTd) {
-               this.openCellEditor(newTd);
-           }
-       }
+            if(colIndex === numCols) {
+                if (!wrap || wrappedOnce) {
+                    return;
+                }
+                colIndex = 0;
+                wrappedOnce = true;
+            } else if(colIndex < 0) {
+                if (!wrap || wrappedOnce) {
+                    return;
+                }
+                colIndex = numCols - 1;
+                wrappedOnce = true;
+            } else if(rowIndex === numRows) {
+                if (!wrap || wrappedOnce) {
+                    return;
+                }
+                rowIndex = 0;
+                wrappedOnce = true;
+            } else if(rowIndex < 0) {
+                if (!wrap || wrappedOnce) {
+                    return;
+                }
+                rowIndex = numRows - 1;
+                wrappedOnce = true;
+            }
+            if (this.getColumn(colIndex).editable !== false) {
+                tr = tbody.get('children').item(rowIndex);
+                td = tr.get('children').item(colIndex);
+                this.openCellEditor(td);
+                return;
+            }
+        }
     },
 
     /**
@@ -1233,7 +1269,7 @@ Y.mix( DtEditable.prototype, {
         this.hideCellEditor();
     }
 
-    /**
+/**
      * Event fired after a Cell Editor has sent the 'save' event closing an editing session.
      * @event celleditor:save
      * @param ev {Event Facade} including:
