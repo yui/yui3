@@ -15,9 +15,10 @@
 YUI({
     coverage: ['datatable-celleditor-popup'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    // The following should go away once loader learns about them:
     groups: {
         builds: {
-            base: ' ../../../build/',
+            base: '../../../build/',
             modules: {
                 'datatable-editable': {
                     path: 'datatable-editable/datatable-editable-min.js',
@@ -55,7 +56,7 @@ YUI({
             }
         }
     }
-}).use( 'test-console', 'test', 'module-tests-dtpopup',  "node-event-simulate",
+}).use( 'test-console', 'test', 'datatable-celleditor-popup-tests',  "node-event-simulate",
         "datatable-editable",  "datatable", "template",
         "datatable-celleditor-popup",
         function(Y) {

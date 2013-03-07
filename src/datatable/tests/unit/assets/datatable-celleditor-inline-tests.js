@@ -1,6 +1,6 @@
-YUI.add('module-tests-dtinline', function(Y) {
+YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
-    var suite = new Y.Test.Suite('gallery-datatable-celleditor-inline'),
+    var suite = new Y.Test.Suite('datatable-celleditor-inline'),
         Assert = Y.Test.Assert;
 
     var fireKey = function(ceditor, key) {
@@ -107,7 +107,7 @@ YUI.add('module-tests-dtinline', function(Y) {
             columns: cols[colChoice],
             data:    someData,
             defaultEditor:  'inline',
-            editOpenType:   'click',
+            editorOpenAction:   'click',
             editable:       true
         };
 
@@ -656,4 +656,4 @@ YUI.add('module-tests-dtinline', function(Y) {
 
     Y.Test.Runner.add(suite);
 
-},'', { requires: [ 'test' ] });
+},'', { requires: [ 'test', 'node-event-simulate', 'datatable-celleditor-inline'] });

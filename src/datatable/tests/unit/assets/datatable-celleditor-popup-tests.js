@@ -1,13 +1,11 @@
-YUI.add('module-tests-dtpopup', function(Y) {
+YUI.add('datatable-celleditor-popup-tests', function(Y) {
 
-    var suite = new Y.Test.Suite('gallery-datatable-celleditor-popup'),
+    var suite = new Y.Test.Suite('datatable-celleditor-popup'),
         Assert = Y.Test.Assert;
 
 
 
     var fireKey = function(ceditor, key) {
-        //var inst = editor.getInstance();
-        inst = Y.one('body');
 
         ceditor.simulate('keydown', {
             keyCode: key
@@ -161,7 +159,7 @@ YUI.add('module-tests-dtpopup', function(Y) {
         'check ATTR default values' : function(){
             Assert.isFalse( this.dt.get('editable'), "editable default not false" );
             Assert.areSame( null, this.dt.get('defaultEditor'), "default editor not 'none'" );
-            Assert.areSame( 'dblclick', this.dt.get('editOpenType'), "default editOpenType not 'dblclick'" );
+            Assert.areSame( 'dblclick', this.dt.get('editorOpenAction'), "default editorOpenAction not 'dblclick'" );
         }
 
     }));
@@ -307,7 +305,7 @@ YUI.add('module-tests-dtpopup', function(Y) {
             Assert.isTrue(oe.get('visible'),'col 1 not open on dblclick');
             Assert.areSame(oe.get('cell').td,tds.item(3));
 
-        },
+        }
 
     }));
 
@@ -315,4 +313,4 @@ YUI.add('module-tests-dtpopup', function(Y) {
     Y.Test.Runner.add(suite);
 
 
-},'', { requires: [ 'test' ] });
+},'', { requires: [ 'test', 'node-event-simulate' , 'datatable-celleditor-popup'] });
