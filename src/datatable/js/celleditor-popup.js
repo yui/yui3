@@ -2543,10 +2543,12 @@ Y.DataTable.EditorOptions.dropdown = {
                 sopt;
 
             sopts.some(function(n){
+                /*jshint eqeqeq:false */
                 if(n && n.get('value') == val) {  // not a === check, to account for mixed vars
                     sopt = n;
                     return true;
                 }
+                /*jshint eqeqeq:true */
             });
 
             if(sopt) {
