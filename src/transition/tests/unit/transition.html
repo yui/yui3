@@ -233,7 +233,7 @@ YUI({
                     opacity: 1
                 });
 
-                Y.later(250, null, function() {
+                Y.later(300, null, function() {
                     test.resume(function() {
                         Y.Assert.areEqual(h, node.getComputedStyle('height'));
                         Y.Assert.areEqual(w, node.getComputedStyle('width'));
@@ -620,8 +620,7 @@ YUI({
                 });
 
                 test.wait(2500);
-            },
-
+            }
 
         }));
         suite.add(new Y.Test.Case({
@@ -779,10 +778,10 @@ YUI({
                     transform: 'rotate(180deg)'
                 }, function(e) {
                     test.resume(function() {
-                        Y.Assert.areEqual(1, parseInt(e.elapsedTime * 10));
-                        node.setStyle('height', '100px');
-                        if (Y.UA.webkit && !Y.UA.phantomjs) {
-                            Y.Assert.areEqual('matrix(-1, 0.00000000000000012246467991473532, -0.00000000000000012246467991473532, -1, 0, 0)', node.getComputedStyle('WebkitTransform'));
+                        if (!(Y.UA.ie < 9)) {
+                            Y.Assert.areEqual(1, parseInt(e.elapsedTime * 10));
+                            node.setStyle('height', '100px');
+                            Y.Assert.areEqual('matrix(-1, 0.00000000000000012246467991473532, -0.00000000000000012246467991473532, -1, 0, 0)', node.getComputedStyle(Y.Transition._TRANSFORM));
                         }
                     });
                 });
