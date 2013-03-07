@@ -44,7 +44,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
      * @param {Object} e Event object.
      * @private
      */
-    _dataProviderChangeHandler: function(e)
+    _dataProviderChangeHandler: function()
     {
         var keyCollection = this.get("keyCollection").concat(),
             keys = this.get("keys"),
@@ -233,7 +233,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
 
     /**
      * Returns values based on key identifiers. When a string is passed as an argument, an array of values is returned.
-     * When an array of keys is passed as an argument, an object literal with an array of values mapped to each key is 
+     * When an array of keys is passed as an argument, an object literal with an array of values mapped to each key is
      * returned.
      *
      * @method getDataByKey
@@ -247,14 +247,14 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
             len,
             key,
             keys = this.get("keys");
-        if(Y_Lang.isArray(value)) 
+        if(Y_Lang.isArray(value))
         {
             obj = {};
             len = value.length;
-            for(i = 0; i < len; i = i + 1) 
+            for(i = 0; i < len; i = i + 1)
             {
                 key = value[i];
-                if(keys[key]) 
+                if(keys[key])
                 {
                     obj[key] = this.getDataByKey(key);
                 }
@@ -312,7 +312,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
      * @param {Object} e Event object.
      * @private
      */
-    _keyChangeHandler: function(e)
+    _keyChangeHandler: function()
     {
         this._updateMinAndMax();
         this._updateTotalDataFlag = true;
@@ -338,7 +338,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         };
         return axisstyles;
     },
-          
+
     /**
      * Getter method for maximum attribute.
      *
@@ -362,7 +362,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         }
         return parseFloat(max);
     },
-  
+
     /**
      * Setter method for maximum attribute.
      *
@@ -392,7 +392,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         }
         return parseFloat(min);
     },
-  
+
     /**
      * Setter method for minimum attribute.
      *
@@ -417,7 +417,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     {
         return Y_Lang.isNumber(this._setMaximum);
     },
-  
+
     /**
      * Indicates whether or not the minimum attribute has been explicitly set.
      *
@@ -440,13 +440,13 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         calculateEdgeOffset: {
             value: false
         },
-        
+
         labelFunction: {
             valueFn: function() {
                 return this.formatLabel;
             }
         },
-  
+
         /**
          * Hash of array identifed by a string value.
          *
@@ -555,7 +555,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
             lazyAdd: false,
 
             getter: "_maximumGetter",
-          
+
             setter: "_maximumSetter"
         },
 
@@ -587,7 +587,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
             lazyAdd: false,
 
             getter: "_minimumGetter",
-          
+
             setter: "_minimumSetter"
         },
 

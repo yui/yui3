@@ -323,7 +323,7 @@ BottomAxisLayout.prototype = {
     offsetNodeForTick: function(cb)
     {
         var host = this;
-        host.get("contentBox").setStyle("top", 0 - host.get("topTickOffset"));
+        cb.setStyle("top", 0 - host.get("topTickOffset"));
     },
 
     /**
