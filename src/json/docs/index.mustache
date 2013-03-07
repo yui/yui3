@@ -392,10 +392,10 @@ YUI({
 });
 ```
 
-<h4>Changes in 3.8.0</h4>
+<h4>Changes in 3.9.0</h4>
 
 <p>
-    As of version 3.8.0 YUI has changed to loading the JavaScript
+    As of version 3.9.0 YUI has changed to loading the JavaScript
     implementation of JSON only when the browser does not provide a native
     API. You can no longer change the desired implementation at run-time
     by changing `Y.JSON.useNativeParse`. Since native JSON implementations
@@ -403,3 +403,20 @@ YUI({
     for most users. You can still chose to use the JavaScript fallback
     by calling `Y.use('json-parse-shim')` or `Y.use('json-stringify-shim')`.
 </p>
+<h2 id="issues">Known Issues</h2>
+<ul class="spaced">
+    <li>
+        <p>Native JSON.stringify treats regex values as a function on Android 2.3.</p>
+        ```
+Y.JSON.stringify([{
+    "str" : "string", 
+    "arr" : [5, /some regex/]
+}]);
+//most modern browsers return
+[{"str":"string","arr":[5,{}]}]
+//Android 2.3.4 returns
+[{"str":"string","arr":[5,null]}]
+        
+        ```
+    </li>
+</ul>
