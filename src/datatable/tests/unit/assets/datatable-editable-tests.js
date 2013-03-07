@@ -1,6 +1,6 @@
-YUI.add('module-tests-dteditable', function(Y) {
+YUI.add('datatable-editable-tests', function(Y) {
 
-    var suite = new Y.Test.Suite('gallery-datatable-editable'),
+    var suite = new Y.Test.Suite('datatable-editable'),
         Assert = Y.Test.Assert,
         areSame = Assert.areSame,
         isFalse = Assert.isFalse,
@@ -63,14 +63,18 @@ YUI.add('module-tests-dteditable', function(Y) {
         var td = dt.getCell([row, col]),
             ed = Y.one('.yui3-datatable-inline-input'),
             regEd = ed.get('region'),
-            regTd = td.get('region');
+            regTd = td.get('region'),
+            nextCell;
         areSame('block', ed.ancestor().getStyle('display'), 'Editor should be visible.: [' + row + ':' + col + ']')
 
         areSame(Math.round(regEd.top), Math.round(regTd.top), 'tops should match: [' + row + ':' + col + ']');
         areSame(Math.round(regEd.left), Math.round(regTd.left), 'lefts should match: [' + row + ':' + col + ']');
-        regTd = dt.getCell(td,[1,1]).get('region');
-        areSame(Math.round(regEd.bottom), Math.round(regTd.top), 'bottom should match top of next: [' + row + ':' + col + ']');
-        areSame(Math.round(regEd.right), Math.round(regTd.left), 'right edge should match left edge of next: [' + row + ':' + col + ']');
+        nextCell = dt.getCell(td,[1,1]);
+        if (nextCell) {
+            regTd = nextCell.get('region');
+            areSame(Math.round(regEd.bottom), Math.round(regTd.top), 'bottom should match top of next: [' + row + ':' + col + ']');
+            areSame(Math.round(regEd.right), Math.round(regTd.left), 'right edge should match left edge of next: [' + row + ':' + col + ']');
+        }
     },
     openEditorAt = function (row, col) {
         var td = dt.getCell([row, col]);
@@ -110,7 +114,7 @@ YUI.add('module-tests-dteditable', function(Y) {
         'check ATTR default values' : function(){
             isFalse( dt.get('editable'), "editable default not false" );
             isNull( dt.get('defaultEditor'), "default editor not null" );
-            areSame( 'dblclick', dt.get('editOpenType'), "default editOpenType not 'dblclick'" );
+            areSame( 'dblclick', dt.get('editorOpenAction'), "default editorOpenAction not 'dblclick'" );
         },
 
         'check ATTR editable setting' : function(){
@@ -134,24 +138,24 @@ YUI.add('module-tests-dteditable', function(Y) {
 
         },
 
-        'check ATTR editOpenType setting' : function(){
+        'check ATTR editorOpenAction setting' : function(){
             isFalse( dt.get('editable'), "editable not initially false" );
-            areSame( 'dblclick', dt.get('editOpenType'), "default editOpenType not dblclick" );
+            areSame( 'dblclick', dt.get('editorOpenAction'), "default editorOpenAction not dblclick" );
 
 
             dt.set('editable',true);
             isTrue( dt.get('editable'), "set editable to true" );
 
-            areSame('dblclick', dt.get('editOpenType'), "default editOpenType not dblclick" );
+            areSame('dblclick', dt.get('editorOpenAction'), "default editorOpenAction not dblclick" );
 
-            dt.set('editOpenType',null);
-            isNull(dt.get('editOpenType'), "set editOpenType failed on null" );
+            dt.set('editorOpenAction',null);
+            isNull(dt.get('editorOpenAction'), "set editorOpenAction failed on null" );
 
-            dt.set('editOpenType',1);
-            isNull(dt.get('editOpenType'), "set editOpenType failed on 1" );
+            dt.set('editorOpenAction',1);
+            isNull(dt.get('editorOpenAction'), "set editorOpenAction failed on 1" );
 
-            dt.set('editOpenType','click');
-            areSame( 'click', dt.get('editOpenType'), "set editOpenType to click failed" );
+            dt.set('editorOpenAction','click');
+            areSame( 'click', dt.get('editorOpenAction'), "set editorOpenAction to click failed" );
 
         },
 
@@ -202,7 +206,7 @@ YUI.add('module-tests-dteditable', function(Y) {
             // {sid: sname: sdesc: sopen:0, stype:0, stock:0, sprice:, shipst:'s', sdate: },
             dt = makeDT({
                 defaultEditor:  'inline',
-                editOpenType:   'click',
+                editorOpenAction:   'click',
                 editable:       true
             });
 
@@ -294,7 +298,7 @@ YUI.add('module-tests-dteditable', function(Y) {
 
         },
 
-        'check ATTR editOpenType setting' : function(){
+        'check ATTR editorOpenAction setting' : function(){
 
             isTrue( dt.get('editable'), "set editable to true" );
 
@@ -303,6 +307,9 @@ YUI.add('module-tests-dteditable', function(Y) {
         'check navigation': function () {
             openEditorAt(0, 1);
             var ed = Y.one('.yui3-datatable-inline-input')
+
+
+
             fireKey(ed, 39,{ctrlKey:true});  // Ctrl-right
             checkPosition(0,2);
 
@@ -317,6 +324,11 @@ YUI.add('module-tests-dteditable', function(Y) {
             checkPosition(0,2);
             fireKey(ed, 9,{shiftKey:true});  // back-tab
             checkPosition(0,1);
+
+            fireKey(ed, 9,{shiftKey:true});  // back-tab
+            checkPosition(0,7);
+            fireKey(ed, 38,{ctrlKey:true});  // Ctrl-up
+            checkPosition(5,7);
         },
         'check editing': function () {
             var td =  dt.getCell([0,1]);
@@ -432,7 +444,7 @@ YUI.add('module-tests-dteditable', function(Y) {
                 width: '100px',
                 height: '150px',
                 defaultEditor:  'inline',
-                editOpenType:   'click',
+                editorOpenAction:   'click',
                 editable:       true
             }).render();
         },
@@ -465,4 +477,4 @@ YUI.add('module-tests-dteditable', function(Y) {
     Y.Test.Runner.add(suite);
 
 
-},'', {requires: [ 'test' ]});
+},'', {requires: [ 'test', 'datatable-editable', 'datatable-scroll','node-event-simulate', 'datatable-celleditor-inline' ]});
