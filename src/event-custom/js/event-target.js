@@ -670,8 +670,8 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
             yuievt = this._yuievt,
-            pre = yuievt.config.prefix, 
-            ce, ret, 
+            pre = yuievt.config.prefix,
+            ce, ret,
             ce2,
             args = (typeIncluded) ? nativeSlice.call(arguments, 1) : arguments;
 
@@ -857,7 +857,7 @@ selector or other identifier.
 `defaultFn` can prevent the default behavior with `e.preventDefault()` from the
 event object passed as the first parameter to the subscription callback.
 
-To subscribe to the execution of an object method, pass arguments corresponding to the call signature for 
+To subscribe to the execution of an object method, pass arguments corresponding to the call signature for
 <a href="../classes/Do.html#methods_before">`Y.Do.before(...)`</a>.
 
 NOTE: The formal parameter list below is for events, not for function
@@ -866,6 +866,7 @@ injection.  See `Y.Do.before` for that signature.
 @method on
 @param {String} type DOM or custom event name
 @param {Function} fn The callback to execute in response to the event
+@param {string|Node|NodeList} [el] A CSS selector string or Node to be passed in case of DOM events. Defaults to window object.
 @param {Object} [context] Override `this` object in callback
 @param {Any} [arg*] 0..n additional arguments to supply to the subscriber
 @return {EventHandle} A subscription handle capable of detaching the
