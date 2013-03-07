@@ -1,7 +1,7 @@
 var IMPLEMENTATION = "canvas",
     SHAPE = "shape",
 	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
-    SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
+    SPLITARGSPATTERN = /[\-]?[0-9]*[0-9|\.][0-9]*/g,
     DOCUMENT = Y.config.doc,
     Y_LANG = Y.Lang,
     AttributeLite = Y.AttributeLite,
@@ -460,7 +460,6 @@ CanvasDrawing.prototype = {
             top,
             i,
             len = args.length - 3,
-            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
         for(i = 0; i < len; i = i + 4)
@@ -585,7 +584,6 @@ CanvasDrawing.prototype = {
      * @chainable
      */
     drawRect: function(x, y, w, h) {
-        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         this._drawingComplete = false;
         this.moveTo(x, y);
         this.lineTo(x + w, y);
@@ -608,7 +606,6 @@ CanvasDrawing.prototype = {
      * @chainable
      */
     drawRoundRect: function(x, y, w, h, ew, eh) {
-        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         this._drawingComplete = false;
         this.moveTo( x, y + eh);
         this.lineTo(x, y + h - eh);
@@ -953,7 +950,7 @@ CanvasDrawing.prototype = {
      * @return HTMLCanvasElement
      * @private
      */
-    _createGraphic: function(config) {
+    _createGraphic: function() {
         var graphic = Y.config.doc.createElement('canvas');
         return graphic;
     },
