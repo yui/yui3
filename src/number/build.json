@@ -1,5 +1,5 @@
 {
-    "name": "datatype-number",
+    "name": "number",
     "builds": {
         "datatype-number-parse": {
             "jsfiles": [

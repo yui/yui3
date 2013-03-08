@@ -1,14 +1,25 @@
 /**
+ * Provides functionality for creating a pie series.
+ *
+ * @module charts
+ * @submodule series-pie
+ */
+/**
  * PieSeries visualizes data as a circular chart divided into wedges which represent data as a
  * percentage of a whole.
  *
- * @module charts
- * @submodule charts-base
  * @class PieSeries
  * @constructor
- * @extends MarkerSeries
+ * @extends SeriesBase
+ * @uses Plots
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-pie
  */
-Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
+var CONFIG = Y.config,
+    DOCUMENT = CONFIG.doc,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
+Y.PieSeries = Y.Base.create("pieSeries", Y.SeriesBase, [Y.Plots], {
     /**
      * Image map used for interactivity when rendered with canvas.
      *
@@ -36,8 +47,19 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     _setMap: function()
     {
         var id = "pieHotSpotMapi_" + Math.round(100000 * Math.random()),
-            cb = this.get("graph").get("contentBox"),
+            graph = this.get("graph"),
+            graphic,
+            cb,
             areaNode;
+        if(graph) 
+        {
+            cb = graph.get("contentBox");
+        }
+        else
+        {
+            graphic = this.get("graphic");
+            cb = graphic.get("node");
+        }
         if(this._image)
         {
             cb.removeChild(this._image);
@@ -51,12 +73,14 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         this._image = DOCUMENT.createElement("img");
         this._image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAABCAYAAAD9yd/wAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABJJREFUeNpiZGBgSGPAAgACDAAIkABoFyloZQAAAABJRU5ErkJggg==";
         cb.appendChild(this._image);
+        this._image.style.position = "absolute";
+        this._image.style.left = "0px";
+        this._image.style.top = "0px";
         this._image.setAttribute("usemap", "#" + id);
         this._image.style.zIndex = 3;
         this._image.style.opacity = 0;
         this._image.setAttribute("alt", "imagemap");
         this._map = DOCUMENT.createElement("map");
-        this._map.style.zIndex = 5;
         cb.appendChild(this._map);
         this._map.setAttribute("name", id);
         this._map.setAttribute("id", id);
@@ -102,6 +126,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         this.after("categoryAxisChange", this.categoryAxisChangeHandler);
         this.after("valueAxisChange", this.valueAxisChangeHandler);
         this.after("stylesChange", this._updateHandler);
+        this._visibleChangeHandle = this.after("visibleChange", this._handleVisibleChange);
     },
 
     /**
@@ -184,6 +209,18 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
 
     /**
+     * Returns the sum of all values for the series.
+     *
+     * @method getTotalValues
+     * @return Number
+     */
+    getTotalValues: function()
+    {
+        var total = this.get("valueAxis").getTotalByKey(this.get("valueKey"));
+        return total;
+    },
+
+    /**
      * Draws the series. Overrides the base implementation.
      *
      * @method draw
@@ -191,9 +228,8 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
      */
     draw: function()
     {
-        var graph = this.get("graph"),
-            w = graph.get("width"),
-            h = graph.get("height");
+        var w = this.get("width"),
+            h = this.get("height");
         if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
         {
             this._rendered = true;
@@ -241,8 +277,8 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             tfc,
             tfa,
             padding = styles.padding,
-            graph = this.get("graph"),
-            minDimension = Math.min(graph.get("width"), graph.get("height")),
+            graphic = this.get("graphic"),
+            minDimension = Math.min(graphic.get("width"), graphic.get("height")),
             w = minDimension - (padding.left + padding.right),
             h = minDimension - (padding.top + padding.bottom),
             startAngle = -90,
@@ -257,7 +293,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             lw,
             wedgeStyle,
             marker,
-            graphOrder = this.get("graphOrder"),
+            graphOrder = this.get("graphOrder") || 0,
             isCanvas = Y.Graphic.NAME == "canvasGraphic";
         for(; i < itemCount; ++i)
         {
@@ -340,6 +376,25 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             }
         }
         this._clearMarkerCache();
+    },
+    
+    /**
+     * @protected
+     *
+     * Method used by `styles` setter. Overrides base implementation.
+     *
+     * @method _setStyles
+     * @param {Object} newStyles Hash of properties to update.
+     * @return Object
+     */
+    _setStyles: function(val)
+    {
+        if(!val.marker)
+        {
+            val = {marker:val};
+        }
+        val = this._parseMarkerStyles(val);
+        return Y.PieSeries.superclass._mergeStyles.apply(this, [val, this._getDefaultStyles()]);
     },
 
     /**
@@ -439,7 +494,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         var graphic = this.get("graphic"),
             marker,
             cfg = Y.clone(styles);
-        graphic.set("autoDraw", false);
         marker = graphic.addShape(cfg);
         marker.addClass(SERIES_MARKER);
         return marker;
@@ -494,70 +548,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         defs.fill.colors = this._defaultSliceColors;
         defs.border.colors = this._defaultBorderColors;
         return defs;
-    },
-
-    /**
-     * Collection of default colors used for lines in a series when not specified by user.
-     *
-     * @property _defaultLineColors
-     * @type Array
-     * @protected
-     */
-    _defaultLineColors:["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"],
-
-    /**
-     * Collection of default colors used for marker fills in a series when not specified by user.
-     *
-     * @property _defaultFillColors
-     * @type Array
-     * @protected
-     */
-    _defaultFillColors:["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"],
-
-    /**
-     * Collection of default colors used for marker borders in a series when not specified by user.
-     *
-     * @property _defaultBorderColors
-     * @type Array
-     * @protected
-     */
-    _defaultBorderColors:["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"],
-
-    /**
-     * Collection of default colors used for area fills, histogram fills and pie fills in a series when not specified by user.
-     *
-     * @property _defaultSliceColors
-     * @type Array
-     * @protected
-     */
-    _defaultSliceColors: ["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"],
-
-    /**
-     * Colors used if style colors are not specified
-     *
-     * @method _getDefaultColor
-     * @param {Number} index Index indicating the series order.
-     * @param {String} type Indicates which type of object needs the color.
-     * @return String
-     * @protected
-     */
-    _getDefaultColor: function(index, type)
-    {
-        var colors = {
-                line: this._defaultLineColors,
-                fill: this._defaultFillColors,
-                border: this._defaultBorderColors,
-                slice: this._defaultSliceColors
-            },
-            col = colors[type],
-            l = col.length;
-        index = index || 0;
-        if(index >= l)
-        {
-            index = index % l;
-        }
-        type = type || "fill";
-        return colors[type][index];
     }
 }, {
     ATTRS: {

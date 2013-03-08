@@ -178,21 +178,21 @@ suite.add(new Y.Test.Case({
     },
 
     'valuechange should not report stale changes that occurred while a node was not focused - with focus() and blur()': function () {
-        var fired = false;
-
-        this.textInput.simulate('mousedown');
-        this.textInput.set('value', 'foo');
-
-        this.textInput.on('valuechange', function (e) {
-            fired = true;
-        });
-
-        this.textInput.blur();
-        this.textInput.set('value', 'bar');
-        this.textInput.focus();
-        this.textInput.simulate('mousedown');
-
         this.wait(function () {
+            var fired = false;
+
+            this.textInput.simulate('mousedown');
+            this.textInput.set('value', 'foo');
+
+            this.textInput.on('valuechange', function (e) {
+                fired = true;
+            });
+
+            this.textInput.blur();
+            this.textInput.set('value', 'bar');
+            this.textInput.focus();
+            this.textInput.simulate('mousedown');
+
             Assert.isFalse(fired);
         }, 200);
     },

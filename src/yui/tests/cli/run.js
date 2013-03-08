@@ -93,6 +93,11 @@ YUI({
         var mod = modules[name];
         mod.fullpath = path.join(__dirname, '../unit/assets', mod.fullpath);
     });
+    
+    modules['core-nodejs-tests'] = {
+        fullpath: path.join(__dirname, './lib/nodejs-tests.js'),
+        requires: ['test']
+    };
 
     Y.applyConfig({
         modules: modules

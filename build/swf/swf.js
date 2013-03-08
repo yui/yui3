@@ -32,7 +32,7 @@ YUI.add('swf', function (Y, NAME) {
          * Creates the SWF instance and keeps the configuration data
          *
          * @class SWF
-         * @augments Y.Event.Target
+         * @uses Y.Event.Target
          * @constructor
          * @param {String|HTMLElement} id The id of the element, or the element itself that the SWF will be inserted into.
          *        The width and height of the SWF will be set to the width and height of this container element.
