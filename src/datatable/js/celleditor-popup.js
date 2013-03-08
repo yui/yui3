@@ -1,4 +1,9 @@
 /**
+ Provides cell editors contained in an overlay that pops on top of the cell to be edited.
+ @module datatable
+ @submodule datatable-celleditor-popup
+*/
+/**
  This module defines an extension of View that includes a BASE Y.DataTable.BaseCellPopupEditor View class definition
  cell "pop-up" editor.  This view class includes an editor with HTML inserted into an Overlay widget directly over
  the TD cell.  Positioning, event management, creation/destruction and attribute changes are managed by this class.
@@ -50,7 +55,7 @@
 
  When a "key navigation" request is received it is passed to the [keyDir](#attr_keyDir) as a change
  in [row,col] that implementers can listen to "change" events on, to reposition and open editing on the
- new relative cell.  (NOTE: This view does not reposition, it simply fires a `keyDirChange` event.
+ new relative cell.  (NOTE: This view does not reposition, it simply fires a `keyNav` event.
 
  ##### Events
  Several events are fired by this View;  which can be listened for and acted upon to achieve differing results.
@@ -89,9 +94,7 @@
  <li>In-cell key navigation with scrolling DT's can put the View out of the DT limits, no bounds checking is currently done!</li>
  <li>Some problems have been encountered after "datatable.destroy()" and then immediate re-building of the same DT without a page refresh.</li>
  </ul>
-
- @module datatable-celleditor-popup
- @class Y.DataTable.BaseCellPopupEditor
+ @class DataTable.BaseCellPopupEditor
  @extends Y.View
  @author Todd Smith
  @since 3.8.0
@@ -623,49 +626,50 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
      * @param e {EventFacade} Keydown event facade
      * @public
      */
+    /**
+     * Fires when the navigation keys are pressed to move to another cell.
+     * @event keyNav
+     * @param dx {Integer} number of cells to move in the x direction. (usually -1: left, 0 or 1: right)
+     * @param dy {Integer} number of cells to move in the y direction. (usually -1: up, 0 or 1: down)
+     */
     processKeyDown : function(e){
         var keyc    = e.keyCode,
-            dir;
+            dx = 0, dy = 0;
+
+        if (keyc === KEYC_ESC) {
+            e.preventDefault();
+            this.cancelEditor();
+        }
+        if(!this.get('inputKeys')) {
+            return;
+        }
 
         switch(keyc) {
-
-            case KEYC_ESC:
-                e.preventDefault();
-                this.hideEditor();
-                break;
-
             case KEYC_UP:
-                dir = (e.ctrlKey) ? [-1,0] : null;
+                dy = (e.ctrlKey) ? -1 : 0;
                 break;
 
             case KEYC_DOWN:
-                dir = (e.ctrlKey) ? [1,0] : null;
+                dy = (e.ctrlKey) ? 1 : 0;
                 break;
 
             case KEYC_LEFT:
-                dir = (e.ctrlKey) ? [0,-1] : null;
+                dx = (e.ctrlKey) ? -1 : 0;
                 break;
 
             case KEYC_RIGHT:
-                dir = (e.ctrlKey) ? [0,1] : null;
+                dx = (e.ctrlKey) ? 1 : 0;
                 break;
 
             case KEYC_TAB: // tab
-                dir = (e.shiftKey) ? [0,-1] : [0,1] ;
+                dx = (e.shiftKey) ? -1 : 1;
                 break;
         }
 
-        //
-        //  If dir is non-falsey, a navigation direction was set ...
-        //
-        if(dir) {
-            // set the key direction movement
-            if(this.get('inputKeys')===true) {
-                this._set('keyDir',dir);
-            }
+        if(dx || dy) {
+            this.fire('keyNav', {dx:dx, dy:dy});
             e.preventDefault();
         }
-
     },
 
 
@@ -1159,20 +1163,6 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
             validator:  Y.Lang.isFunction
         },
 
-        /**
-         * Tracks navigation changes during keyboard input as relative [row,col] changes from the currently
-         * active cell TD.
-         *
-         * @attribute keyDir
-         * @type Array as [row,col] from current TD
-         * @readOnly
-         * @default []
-         */
-        keyDir: {
-            value:      [],
-            readOnly:   true,
-            validator:  Y.Lang.isArray
-        },
 
         /**
          * Setting for checking the visibility status of this Editor
@@ -1352,7 +1342,7 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
  **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
  `editorConfig` object.
 
- @class Y.DataTable.EditorOptions.text
+ @class DataTable.EditorOptions.text
  @since 3.8.0
  @public
  **/
@@ -1439,7 +1429,7 @@ Y.DataTable.EditorOptions.text = {
  **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
  `editorConfig` object.
 
- @class Y.DataTable.EditorOptions.textarea
+ @class DataTable.EditorOptions.textarea
  @since 3.8.0
  @public
  **/
@@ -1550,7 +1540,7 @@ Y.DataTable.EditorOptions.textarea = {
  **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
  `editorConfig` object.
 
- @class Y.DataTable.EditorOptions.number
+ @class DataTable.EditorOptions.number
  @since 3.8.0
  @public
  **/
@@ -1659,7 +1649,7 @@ Y.DataTable.EditorOptions.number = {
  **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
  `editorConfig` object.
 
- @class Y.DataTable.EditorOptions.date
+ @class DataTable.EditorOptions.date
  @since 3.8.0
  @public
  **/
@@ -1894,7 +1884,7 @@ Y.DataTable.EditorOptions.date = {
  **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the `editorConfig`
  object.
 
- @class Y.DataTable.EditorOptions.calendar
+ @class DataTable.EditorOptions.calendar
  @since 3.8.0
  @public
  **/
@@ -2140,7 +2130,7 @@ Y.DataTable.EditorOptions.calendar = {
  **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
  `editorConfig` object.
 
- @class Y.DataTable.EditorOptions.autocomplete
+ @class DataTable.EditorOptions.autocomplete
  @since 3.8.0
  @public
  **/
@@ -2283,7 +2273,7 @@ Y.DataTable.EditorOptions.autocomplete = {
  **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
  `editorConfig` object.
 
- @class Y.DataTable.EditorOptions.radio
+ @class DataTable.EditorOptions.radio
  @since 3.8.0
  @public
  **/
@@ -2481,7 +2471,7 @@ Y.DataTable.EditorOptions.radio = {
  #### DEBUGGING
  If your SELECT box contains "[object Object]" you probably forgot to define `propValue` and `propText`.
 
- @class Y.DataTable.EditorOptions.dropdown
+ @class DataTable.EditorOptions.dropdown
  @since 3.8.0
  @public
  **/
@@ -2639,7 +2629,7 @@ Y.DataTable.EditorOptions.combobox = Y.DataTable.EditorOptions.dropdown;
  **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
  `editorConfig` object.
 
- @class Y.DataTable.EditorOptions.checkbox
+ @class DataTable.EditorOptions.checkbox
  @since 3.8.0
  @public
  **/

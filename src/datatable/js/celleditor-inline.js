@@ -1,4 +1,9 @@
 /**
+ Provides cell editors that appear to make the cell itself editable by occupying the same region.
+ @module datatable
+ @submodule datatable-celleditor-inline
+*/
+/**
  A View class that serves as the BASE View class for a TD Cell "inline" editor, i.e. an editor that
  is a single INPUT node that completely overlies the TD cell.  This editor is intended to replicate
  the familiar "spreadsheet" type of input.
@@ -24,7 +29,7 @@
 
  When a "key navigation" request is received it is passed to the [keyDir](#attr_keyDir) as a change
  in [row,col] that implementers can listen to "change" events on, to reposition and open editing on the
- new relative cell.  (NOTE: This view does not reposition, it simply fires a `keyDirChange` event.
+ new relative cell.  (NOTE: This view does not reposition, it simply fires a `keyNav` event.
 
  ##### Events
  Several events are fired by this View;  which can be listened for and acted upon to achieve differing results.
@@ -63,8 +68,7 @@
         requiring a page refresh.</li>
    </ul>
 
- @module datatable-celleditor-inline
- @class Y.DataTable.BaseCellInlineEditor
+ @class DataTable.BaseCellInlineEditor
  @extends Y.View
  @author Todd Smith
  @since 3.8.0
@@ -456,47 +460,48 @@ Y.DataTable.BaseCellInlineEditor =  Y.Base.create('celleditor',Y.View,[],{
      * @param e {EventFacade} Keydown event facade
      * @public
      */
+    /**
+     * Fires when the navigation keys are pressed to move to another cell.
+     * @event keyNav
+     * @param dx {Integer} number of cells to move in the x direction. (usually -1: left, 0 or 1: right)
+     * @param dy {Integer} number of cells to move in the y direction. (usually -1: up, 0 or 1: down)
+     */
     processKeyDown : function(e){
         var keyc    = e.keyCode,
-            dir;
+            dx = 0, dy = 0;
+
+        if (keyc === KEYC_ESC) {
+            e.preventDefault();
+            this.cancelEditor();
+        }
+        if(!this.get('inputKeys')) {
+            return;
+        }
 
         switch(keyc) {
-
-            case KEYC_ESC:
-                console.log('esc at inline');
-                e.preventDefault();
-                this.cancelEditor();
-                break;
-
             case KEYC_UP:
-                dir = (e.ctrlKey) ? [-1,0] : null;
+                dy = (e.ctrlKey) ? -1 : 0;
                 break;
 
             case KEYC_DOWN:
-                dir = (e.ctrlKey) ? [1,0] : null;
+                dy = (e.ctrlKey) ? 1 : 0;
                 break;
 
             case KEYC_LEFT:
-                dir = (e.ctrlKey) ? [0,-1] : null;
+                dx = (e.ctrlKey) ? -1 : 0;
                 break;
 
             case KEYC_RIGHT:
-                dir = (e.ctrlKey) ? [0,1] : null;
+                dx = (e.ctrlKey) ? 1 : 0;
                 break;
 
             case KEYC_TAB: // tab
-                dir = (e.shiftKey) ? [0,-1] : [0,1] ;
+                dx = (e.shiftKey) ? -1 : 1;
                 break;
         }
 
-        //
-        //  If dir is non-falsey, a navigation direction was set ...
-        //
-        if(dir) {
-            // set the key direction movement
-            if(this.get('inputKeys')===true) {
-                this._set('keyDir',dir);
-            }
+        if(dx || dy) {
+            this.fire('keyNav', {dx:dx, dy:dy});
             e.preventDefault();
         }
 
@@ -761,21 +766,6 @@ Y.DataTable.BaseCellInlineEditor =  Y.Base.create('celleditor',Y.View,[],{
         },
 
         /**
-         * Tracks navigation changes during keyboard input as relative [row,col] changes from the currently
-         * active cell TD.
-         *
-         * @attribute keyDir
-         * @type Array as [row,col] from current TD
-         * @readOnly
-         * @default []
-         */
-        keyDir: {
-            value:      [],
-            readOnly:   true,
-            validator:  Y.Lang.isArray
-        },
-
-        /**
          * Setting for checking the visibility status of this Editor
          * @attribute visible
          * @type Boolean
@@ -914,7 +904,7 @@ The configuration {Object} for this cell editor View is predefined as;
  **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
  `editorConfig` object.
 
-@class Y.DataTable.EditorOptions.inline
+@class DataTable.EditorOptions.inline
 @since 3.8.0
 @public
 **/
@@ -973,7 +963,7 @@ The configuration {Object} for this cell editor View is predefined as;
  **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
  `editorConfig` object.
 
-@class Y.DataTable.EditorOptions.inlineNumber
+@class DataTable.EditorOptions.inlineNumber
 @since 3.8.0
 @public
 **/
@@ -1060,7 +1050,7 @@ The configuration {Object} for this cell editor View is predefined as;
  **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
  `editorConfig` object.
 
-@class Y.DataTable.EditorOptions.inlineDate
+@class DataTable.EditorOptions.inlineDate
 @since 3.8.0
 @public
 **/
@@ -1168,7 +1158,7 @@ The configuration {Object} for this cell editor View is predefined as;
 **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
 `editorConfig` object.
 
-@class Y.DataTable.EditorOptions.inlineAC
+@class DataTable.EditorOptions.inlineAC
 @since 3.8.0
 @public
 **/

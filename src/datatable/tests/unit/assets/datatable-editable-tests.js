@@ -58,7 +58,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         return new Y.DataTable(Y.merge(basic_config,config_arg)).render('#dtable');
     };
 
-    var checkPosition = function(row, col ) {
+    var checkPosition = function(row, col, skip ) {
 
         var td = dt.getCell([row, col]),
             ed = Y.one('.yui3-datatable-inline-input'),
@@ -74,7 +74,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             regTd = nextCell.get('region');
             areSame(Math.round(regEd.bottom), Math.round(regTd.top), 'bottom should match top of next: [' + row + ':' + col + ']');
             areSame(Math.round(regEd.right), Math.round(regTd.left), 'right edge should match left edge of next: [' + row + ':' + col + ']');
-        }
+        } else isTrue(skip, 'there should be a further cell to the right or bottom');
     },
     openEditorAt = function (row, col) {
         var td = dt.getCell([row, col]);
@@ -326,9 +326,12 @@ YUI.add('datatable-editable-tests', function(Y) {
             checkPosition(0,1);
 
             fireKey(ed, 9,{shiftKey:true});  // back-tab
-            checkPosition(0,7);
+            // It should wrap around and skip over column 0
+            checkPosition(0,7, true);
+
             fireKey(ed, 38,{ctrlKey:true});  // Ctrl-up
-            checkPosition(5,7);
+            // It should wrap around to the bottom row
+            checkPosition(5,7, true);
         },
         'check editing': function () {
             var td =  dt.getCell([0,1]);
