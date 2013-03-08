@@ -1,0 +1,21 @@
+{
+    "name": "data-bind",
+    "builds": {
+        "data-bind": {
+            "jsfiles": [
+                "data-bind.js"
+            ]
+        },
+        "data-bind-html": {
+            "jsfiles": [
+                "pe.js"
+            ]
+        },
+        "data-bind-form": {
+            "jsfiles": [
+                "form.js"
+            ]
+        }
+    }
+}
+

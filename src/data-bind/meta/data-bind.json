@@ -1,0 +1,17 @@
+{
+    "data-bind": {
+        "requires": [
+            "node-base"
+        ]
+    },
+    "data-bind-html": {
+        "requires": [
+            "data-bind"
+        ]
+    },
+    "data-bind-form": {
+        "requires": [
+            "data-bind"
+        ]
+    }
+}
