@@ -129,7 +129,7 @@ YUI.add('requests-tests', function (Y) {
             function handler(tx, res, extra) {
                 var status = res.status;
 
-                // IE: It'll never fail to show you it's dumb parts!
+                // IE: It'll never fail to show you its dumb parts!
                 if (status === 1223) {
                     status = 204;
                 }
