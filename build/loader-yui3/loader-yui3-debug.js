@@ -1164,16 +1164,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "dd-drag"
         ]
     },
-    "deferred": {
-        "requires": [
-            "oop"
-        ]
-    },
-    "deferred-extras": {
-        "requires": [
-            "deferred"
-        ]
-    },
     "dial": {
         "lang": [
             "en",
@@ -2942,7 +2932,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '508fbcdc2053d6cf6aea4e50535ca830';
+YUI.Env[Y.version].md5 = '6bfc116f1f6814654e86d6adb16ae0a0';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
