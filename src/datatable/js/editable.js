@@ -15,7 +15,15 @@ var Lang = Y.Lang,
     CHANGE = 'Change',
     CELL_EDITOR = 'celleditor',
     COL = 'col',
-    COLUMNS = 'columns';
+    COLUMNS = 'columns',
+
+    KEYC_ESC = 27,
+    KEYC_RTN = 13,
+    KEYC_TAB = 9,
+    KEYC_UP  = 38,
+    KEYC_DOWN  = 40,
+    KEYC_RIGHT  = 39,
+    KEYC_LEFT  = 37;
 
 /**
  A DataTable class extension that configures a DT for "editing", current deployment supports cell editing
@@ -897,11 +905,9 @@ Y.mix( DtEditable.prototype, {
             return;
         }
 
-        arrEach(this._getAllCellEditors(),function (ce){
+        arrEach(this._getAllCellEditors(),function (ce) {
             if(ce && ce.destroy) {
-                ce.destroy({
-                    remove:true
-                });
+                ce.destroy();
             }
         });
 
@@ -1053,7 +1059,7 @@ Y.mix( DtEditable.prototype, {
             var tar    = e.target,
                 tarcl  = tar.get('className') || '',
                 tr1    = this.getRow(0),
-                trh    = (tr1) ? parseInt(tr1.getComputedStyle('height'),10) : 0,
+                trh    = (tr1) ? parseFloat(tr1.getComputedStyle('height')) : 0,
                 tdxy   = (this._openTd) ? this._openTd.getXY() : null,
                 xmin, xmax, ymin, ymax, hidef;
 
@@ -1063,7 +1069,7 @@ Y.mix( DtEditable.prototype, {
             if( tarcl.search(/-y-/) !==-1 ) {
 
                 ymin = this._yScrollNode.getY() + trh - 5;
-                ymax = ymin + parseInt(this._yScrollNode.getComputedStyle('height'), 10) - 2 * trh;
+                ymax = ymin + parseFloat(this._yScrollNode.getComputedStyle('height')) - 2 * trh;
 
                 if(tdxy[1] >= ymin && tdxy[1] <= ymax ) {
                     if(this._openEditor.get('hidden')) {
@@ -1082,8 +1088,8 @@ Y.mix( DtEditable.prototype, {
             if( tarcl.search(/-x-/) !==-1 ) {
 
                 xmin = this._xScrollNode.getX();
-                xmax = xmin + parseInt(this._xScrollNode.getComputedStyle('width'), 10);
-                xmax -= parseInt(this._openTd.getComputedStyle('width'),10);
+                xmax = xmin + parseFloat(this._xScrollNode.getComputedStyle('width'));
+                xmax -= parseFloat(this._openTd.getComputedStyle('width'));
 
                 if(tdxy[0] >= xmin && tdxy[0] <= xmax ) {
                     if(this._openEditor.get('hidden')) {
@@ -1255,7 +1261,6 @@ Y.mix( DtEditable.prototype, {
             ev.record.set(ev.colKey, ev.newValue);
         }
 
-        this.hideCellEditor();
     }
 
 /**

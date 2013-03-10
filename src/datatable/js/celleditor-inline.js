@@ -69,19 +69,12 @@
    </ul>
 
  @class DataTable.BaseCellInlineEditor
- @extends Y.View
+ @extends DataTable.BaseCellEditor
  @author Todd Smith
  @since 3.8.0
  **/
-var KEYC_ESC = 27,
-    KEYC_RTN = 13,
-    KEYC_TAB = 9,
-    KEYC_UP  = 38,
-    KEYC_DOWN  = 40,
-    KEYC_RIGHT  = 39,
-    KEYC_LEFT  = 37;
 
-Y.DataTable.BaseCellInlineEditor =  Y.Base.create('celleditor',Y.View,[],{
+var IEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
 
     /**
      * Defines the INPUT HTML content "template" for this editor's View container
@@ -93,32 +86,6 @@ Y.DataTable.BaseCellInlineEditor =  Y.Base.create('celleditor',Y.View,[],{
     template: '<input type="text" class="{cssInput}" />',
 
     /**
-     * Defines the View container events and listeners used within this View
-     * @property events
-     * @type Object
-     * @default See Code
-     * @static
-     */
-    events : {
-        'input' : {
-            'keypress':     'processKeyPress',      // for key filtering and charCode keys
-            'keydown':      'processKeyDown',           // for direction, ESC only, keyCode
-            'click' :       '_onClick',
-            'mouseleave' :  '_onMouseLeave'
-        }
-    },
-
-    /**
-     * Array of detach handles to any listeners set on this View class
-     * @property _subscr
-     * @type Array of EventHandles
-     * @default null
-     * @protected
-     * @static
-     */
-    _subscr: null,
-
-    /**
      * CSS classname to identify the editor's INPUT Node
      * @property _classInput
      * @type String
@@ -128,394 +95,46 @@ Y.DataTable.BaseCellInlineEditor =  Y.Base.create('celleditor',Y.View,[],{
      */
     _cssInput: 'yui3-datatable-inline-input',
 
-    /**
-     * Placeholder for the created INPUT Node created within the View container
-     * @property _inputNode
-     * @type Node
-     * @default null
-     * @protected
-     * @static
-     */
-    _inputNode: false,
 
-//======================   LIFECYCLE METHODS   ===========================
+
 
     /**
-     * Initialize and create the View contents
-     * @method initializer
-     * @public
-     * @return {*}
-     */
-    initializer: function(){
-        this._createUI();
-        this._bindUI();
-        return this;
-    },
+    The default action for the `show` event which should make the editor visible.
 
-    /**
-     * Cleans up the View after it is destroyed
-     * @method destructor
-     * @public
-     */
-    destructor: function(){
-        this._unbindUI();
-        this.fire('editorDestroyed');
-    },
 
-    /**
-     * Event fired when the cell editor View is destroyed.
-     *
-     * Implementers can listen for this event to check if any sub-components / widgets, etc.. they
-     * had created as part of this View need to be destroyed or listener unbound.
-     *
-     * @event editorDestroyed
-     */
-
-    /**
-     * Adds a listener to this editor instance to reposition based on "xy" attribute changes
-     * @method _bindUI
-     * @private
-     */
-    _bindUI: function(){
-
-        this.publish({
-            save: {
-                defaultFn:   this._defSaveFn
-            },
-            cancel: {
-                defaultFn:   this._defCancelFn
-            },
-            show: {
-                defaultFn: this._defShowFn
-            }
-        });
-
-        // This is here to support "scrolling" of the underlying DT ...
-        this._subscr = [];
-        this._subscr.push( this.on('xyChange',this._setEditorXY) );
-    },
-
-    /**
-     * Detaches any listener handles created by this view
-     * @method _unbindUI
-     * @private
-     */
-    _unbindUI: function(){
-        Y.Array.each(this._subscr,function(e){
-            if(e && e.detach) {
-                e.detach();
-            }
-        });
-        this._subscr = null;
-    },
-
-    /**
-     * The defaultFn for the `save` event
-     * @method _defSaveFn
-     * @param e {EventFacade} For save event
-     * @private
-     */
-    _defSaveFn: function(e){
-        this.set('value', e.newValue);
-        this.hideEditor();
-    },
-
-    /**
-     * The defaultFn for the `cancel` event
-     * @method _defCancelFn
-     * @private
-     */
-    _defCancelFn: function(){
-        this.hideEditor();
-    },
-
-    /**
-     */
+    @method _defShowFn
+    @param e {EventFacade}
+    @protected
+    */
     _defShowFn: function (ev) {
         var cont = this.get('container'),
             cell = ev.cell,
             td = cell.td || ev.td,
-            xy = td.getXY(),
-            val = ev.value;
+            xy = td.getXY();
         //
         // Get the TD Node's XY position, and resize/position the container
         //   over the TD
         //
 
         cont.show();
-        this._resizeCont(cont,td);
+        this._resizeCont(cont, td);
         cont.setXY(xy);
 
-        // focus the inner INPUT ...
-        this._inputNode.focus();
-        // set the INPUT value
-        this._inputNode.set('value',val);
-        this.set('lastValue',val);
-
-        this._set('visible',true);
-        this._set('hidden',false);
+        IEd.superclass._defShowFn.apply(this, arguments);
     },
 
 //======================   PUBLIC METHODS   ===========================
 
-    /**
-     * Displays the inline cell editor and positions / resizes the INPUT to
-     * overlay the edited TD element.
-     *
-     * Set the initial value for the INPUT element, after preprocessing (if reqd)
-     *
-     * @method showEditor
-     * @param {Node} td The Node instance of the TD to begin editing on
-     * @public
-     */
-    showEditor: function(td) {
-        var cell = this.get('cell'),
-            val  = cell.value || this.get('value'),
-            prepfn = this.get('prepFn');
-
-
-        if (prepfn) { // you have already checked it is a function
-            val = prepfn.call(this, val);
-        }
-
-        this.fire('show',{
-            td:         td,
-            cell:       cell,
-            inputNode:  this._inputNode,
-            value:      val
-        });
-
-    },
-
-    /**
-     * Event fired when the cell editor is displayed and becomes visible.
-     *
-     * Implementers may listen for this event if they have configured complex View's, that include
-     * other widgets or components, to update their UI upon displaying of the view.
-     *
-     * @event show
-     * @param {Object} rtn Returned object
-     * @param {Node} rtn.td TD Node instance of the calling editor
-     * @param {Node} rtn.inputNode The editor's INPUT / TEXTAREA Node
-     * @param {String|Number|Date} rtn.value The current "value" setting
-     * @param {Object} rtn.cell object
-     */
-
-    /**
-     * Saves the View's `value` setting (usually after keyboard RTN or other means) and fires the
-     * [save](#event_editorSave) event so consumers (i.e. DataTable) can make final changes to the
-     * Model or dataset.
-     *
-     * Thank you to **Satyam** for his guidance on configuring the event publishing, defaultFn related to this
-     * technique!
-
-     * @method saveEditor
-     * @param val {String|Number|Date} Raw value setting to be saved after editing
-     * @public
-     */
-    saveEditor: function(val){
-        //
-        //  Only save the edited data if it is valid ...
-        //
-        if( val !== undefined && val !== null ){
-
-            // If a "save" function was defined, run thru it and update the "value" setting
-            var savefn = this.get('saveFn') ;
-            if (savefn) {
-                val = savefn.call(this,val);
-            }
-
-            // So value was initially okay, but didn't pass saveFn validation call ...
-            if (val === undefined) {
-                this.cancelEditor();
-                return;
-            }
-
-            this.fire("save",{
-                td:         this.get('cell').td,
-                cell:       this.get('cell'),
-                oldValue:   this.get('lastValue'),
-                newValue:   val
-            });
-        }
-    },
-
-    /**
-     * Event that is fired when the user has finished editing the View's cell contents (signified by either
-     * a keyboard RTN entry or "Save" button, etc...).
-     *
-     * This event is intended to be the PRIMARY means for implementers to know that the editing has been
-     * completed and validated.  Consumers (i.e. DataTable) should listen to this event and process it's results
-     * to save to the Model and or dataset for the DT.
-     *
-     * @event save
-     * @param {Object} rtn Returned object
-     *  @param {Node} rtn.td TD Node for the edited cell
-     *  @param {Object} rtn.cell Current cell object
-     *  @param {String|Number|Date} rtn.oldValue Data value of this cell prior to editing
-     *  @param {String|Number|Date} rtn.newValue Data value of this cell after editing
-     */
-
-    /**
-     * Hides the current editor View instance.  If the optional `hideMe` param is true this View will
-     * be temporarily "hidden" (used for scrolling DT's when the TD is scrolled off/on to the page)
-     *
-     * @method hideEditor
-     * @public
-     */
-    hideEditor: function(hideMe){
-        var cont  = this.get('container');
-        if(cont && cont.hide) {
-            cont.hide();
-        }
-        if(hideMe===true) {
-            this._set('hidden',true);
-        }
-        this._set('visible',false);
-
-        this.fire('editorHide');
-
-    },
-
-    /**
-     * Fired when the active cell editor is hidden
-     * @event editorHide
-     */
-
-    /**
-     * Called when the user has requested to cancel, and abort any changes to the DT cell,
-     * usually signified by a keyboard ESC or "Cancel" button, etc..
-     *
-     * @method cancelEditor
-     * @public
-     */
-    cancelEditor: function(){
-      //  this.hideEditor();
-        this.fire("cancel",{
-            td:         this.get('cell').td,
-            cell:       this.get('cell'),
-            oldValue:   this.get('lastValue')
-        });
-    },
-
-    /**
-     * Fired when editing is cancelled (without saving) on this cell editor
-     * @event cancel
-     * @param {Object} rtn Returned object
-     *  @param {Node} rtn.td TD Node for the edited cell
-     *  @param {Object} rtn.cell Current cell object
-     *  @param {String|Number|Date} rtn.oldValue Data value of this cell prior to editing
-     */
-
-    /**
-     * Provides a method to process keypress entries and validate or prevent invalid inputs.
-     * This method is meant to be overrideable by implementers to customize behaviors.
-     *
-     * @method processKeyPress
-     * @param e {EventFacade} Key press event object
-     * @public
-     */
-    processKeyPress: function(e) {
-        var keyc    = e.keyCode,
-            inp     = e.target || this._inputNode,
-            value   = inp.get('value'),
-            keyfilt = this.get('keyFiltering'),
-         //   keyvald = this.get('keyValidator'),
-            kchar   = String.fromCharCode(keyc),
-            flagRE  = true,
-            krtn;
-
-        //
-        // If RTN, then prevent and save ...
-        //
-        if(keyc === KEYC_RTN) {
-            e.preventDefault();
-            this.saveEditor(value);
-        }
-
-        //
-        // Check key filtering validation ... either a RegExp or a user-function
-        //
-        if(keyfilt instanceof RegExp) {
-            flagRE = (!kchar.match(keyfilt)) ? false : flagRE;
-        } else if (Y.Lang.isFunction(keyfilt)) {
-            krtn = keyfilt.call(this,e);
-            flagRE = (krtn) ? true : false;
-        }
-
-        // If key filtering returned false, prevent continuing
-        if(!flagRE) {
-            e.preventDefault();
-        }
-
-    },
-
-    /**
-     * Key listener for the INPUT inline editor, "keydown" is checked for non-printing key
-     *  strokes, navigation or ESC.
-     *
-     *  This method is intended to overridden by implementers in order to customize behaviors.
-     *
-     * @method processKeyDown
-     * @param e {EventFacade} Keydown event facade
-     * @public
-     */
-    /**
-     * Fires when the navigation keys are pressed to move to another cell.
-     * @event keyNav
-     * @param dx {Integer} number of cells to move in the x direction. (usually -1: left, 0 or 1: right)
-     * @param dy {Integer} number of cells to move in the y direction. (usually -1: up, 0 or 1: down)
-     */
-    processKeyDown : function(e){
-        var keyc    = e.keyCode,
-            dx = 0, dy = 0;
-
-        if (keyc === KEYC_ESC) {
-            e.preventDefault();
-            this.cancelEditor();
-        }
-        if(!this.get('inputKeys')) {
-            return;
-        }
-
-        switch(keyc) {
-            case KEYC_UP:
-                dy = (e.ctrlKey) ? -1 : 0;
-                break;
-
-            case KEYC_DOWN:
-                dy = (e.ctrlKey) ? 1 : 0;
-                break;
-
-            case KEYC_LEFT:
-                dx = (e.ctrlKey) ? -1 : 0;
-                break;
-
-            case KEYC_RIGHT:
-                dx = (e.ctrlKey) ? 1 : 0;
-                break;
-
-            case KEYC_TAB: // tab
-                dx = (e.shiftKey) ? -1 : 1;
-                break;
-        }
-
-        if(dx || dy) {
-            this.fire('keyNav', {dx:dx, dy:dy});
-            e.preventDefault();
-        }
-
-    },
 
 //======================   PRIVATE METHODS   ===========================
 
     /**
      * Processes the initial container for this View, sets up the HTML content
      *  and creates a listener for positioning changes
-     * @method _createUI
+     * @method _defCreateUIFn
      * @private
      */
-    _createUI: function() {
+    _defCreateUIFn: function() {
         var container = this.get('container'),
             html      = Y.Lang.sub(this.template, {cssInput:this._cssInput});
 
@@ -537,23 +156,12 @@ Y.DataTable.BaseCellInlineEditor =  Y.Base.create('celleditor',Y.View,[],{
             this._inputNode.addClass(this.get('className'));
         }
 
-        this.fire('editorCreated',{
-            inputNode:  this._inputNode,
-            container:  container
-        });
-
     },
 
-    /**
-     * View event fired when the inline editor has been initialized and ready for usage.
-     * This event can be listened to in order to add additional content or widgets, etc onto
-     * the View's container.
-     *
-     * @event editorCreated
-     * @param {Object} rtn Returned object
-     *  @param {Node} rtn.inputNode The created INPUT[text] node
-     *  @param {Object} rtn.container The View container
-     */
+    _bindUI: function () {
+        IEd.superclass._bindUI.apply(this, arguments);
+        this._subscr.push(this._inputNode.on('mouseleave', this._onMouseLeave, this));
+    },
 
     /**
      * Resizes the view "container" to match the dimensions of the TD cell that is
@@ -565,43 +173,24 @@ Y.DataTable.BaseCellInlineEditor =  Y.Base.create('celleditor',Y.View,[],{
      * @private
      */
     _resizeCont: function(cont,td) {
-        var w   = this._parseStyle(td,'width'),
-            h   = this._parseStyle(td,'height'),
-            pl  = this._parseStyle(td,'paddingLeft'),
-            pt  = this._parseStyle(td,'paddingTop'),
-            blw = this._parseStyle(td,'borderLeftWidth');
+        var parseStyle = function (v) {
+               return parseFloat(td.getComputedStyle(v));
+            },
+            w   = parseStyle('width'),
+            h   = parseStyle('height'),
+            pl  = parseStyle('paddingLeft'),
+            pt  = parseStyle('paddingTop'),
+            blw = parseStyle('borderLeftWidth');
 
         //  resize the INPUT width and height based upon the TD's styles
         w += pl + blw - 1;
         h += pt;
 
-        cont.setStyle('width',w+'px');
-        cont.setStyle('height',h+'px');
+        cont.setStyle('width', w + 'px');
+        cont.setStyle('height', h + 'px');
 
     },
 
-    /**
-     * Helper method that returns the computed CSS style for the reference node as a parsed number
-     * @method _parseStyle
-     * @param el {Node} Node instance to check style on
-     * @param v {String} Style name to return
-     * @return {Number|String} Computed style with 'px' removed
-     * @private
-     */
-    _parseStyle: function(el,v) {
-        return +(el.getComputedStyle(v).replace(/px/,''));
-    },
-
-    /**
-     * Listener to INPUT "click" events that will stop bubbling to the DT TD listener,
-     * to prevent closing editing while clicking within an INPUT.
-     * @method _onClick
-     * @param o {EventFacade}
-     * @private
-     */
-    _onClick: function(o) {
-        o.stopPropagation();
-    },
 
     /**
      * Listener to mouseleave event that will hide the editor if attribute "hideMouseLeave" is true
@@ -638,16 +227,6 @@ Y.DataTable.BaseCellInlineEditor =  Y.Base.create('celleditor',Y.View,[],{
 },{
     ATTRS:{
 
-        /**
-         * Name for this View instance
-         * @attribute name
-         * @type String
-         * @default null
-         */
-        name :{
-            value:      null,
-            validator:  Y.Lang.isString
-        },
 
         /**
          * A cell reference object populated by the calling DataTable, contains
@@ -662,71 +241,8 @@ Y.DataTable.BaseCellInlineEditor =  Y.Base.create('celleditor',Y.View,[],{
             }
         },
 
-        /**
-         * Value that was saved in the Editor View and returned to the record
-         *
-         * @attribute value
-         * @type {String|Number|Date}
-         * @default null
-         */
-        value: {
-            value:  null
-        },
 
-        /**
-         * Value that was contained in the cell when the Editor View was displayed
-         *
-         * @attribute lastValue
-         * @type {String|Number|Date}
-         * @default null
-         */
-        lastValue:{
-            value:  null
-        },
 
-        /**
-         * Maintains a reference back to the calling DataTable instance
-         * @attribute hostDT
-         * @type Y.DataTable
-         * @default null
-         */
-        hostDT : {
-            value:  null,
-            validator:  function(v) { return v instanceof Y.DataTable; }
-        },
-
-        /**
-         * Function to execute on the "data" contents just prior to displaying in the Editor's main view
-         * (i.e. typically used for pre-formatting Date information from JS to mm/dd/YYYY format)
-         *
-         * This function will receive one argument "value" which is the data value from the record, and
-         *  the function runs in Editor scope.
-         *
-         * @attribute prepFn
-         * @type Function
-         * @default null
-         */
-        prepFn: {
-            value:      null,
-            validator:  Y.Lang.isFunction
-        },
-
-        /**
-         * Function to execute when Editing is complete, prior to "saving" the data to the Record (Model)
-         * This function will receive one argument "value" which is the data value from the INPUT and within
-         * the scope of the current View instances.
-         *
-         * This method is intended to be used for input validation prior to saving.  **If the returned value
-         * is "undefined" the cancelEditor method is executed.**
-         *
-         * @attribute saveFn
-         * @type Function
-         * @default null
-         */
-        saveFn:{
-            value:      null,
-            validator:  Y.Lang.isFunction
-        },
 
         /**
          * This flag dictates whether the View container is hidden when the mouse leaves
@@ -765,44 +281,6 @@ Y.DataTable.BaseCellInlineEditor =  Y.Base.create('celleditor',Y.View,[],{
             validator:  Y.Lang.isBoolean
         },
 
-        /**
-         * Setting for checking the visibility status of this Editor
-         * @attribute visible
-         * @type Boolean
-         * @default false
-         * @readOnly
-         */
-        visible: {
-            value:      false,
-            readOnly:   true,
-            validator:  Y.Lang.isBoolean
-        },
-
-        /**
-         * Setting to check if the editor is "still open" but just hidden, created in order to support
-         * scrolling datatables when an editor scrolls out of open window.
-         *
-         * @attribute hidden
-         * @type Boolean
-         * @default false
-         * @readOnly
-         */
-        hidden: {
-            value:      false,
-            readOnly:   true,
-            validator:  Y.Lang.isBoolean
-        },
-
-        /**
-         * XY coordinate position of the editor View container (INPUT)
-         * @attribute xy
-         * @type Array
-         * @default null
-         */
-        xy : {
-            value:      null,
-            validator:  Y.Lang.isArray
-        },
 
         /**
          * Provides a keystroke filtering capability to restrict input into the editing area checked during the
@@ -847,36 +325,12 @@ Y.DataTable.BaseCellInlineEditor =  Y.Base.create('celleditor',Y.View,[],{
             value:      null
         }
 
-        /**
-          Concept for user-prescribed key mappings ... still incomplete
-
-            keyNav: { modifier:'ctrl+meta', circular:true  }
-
-          OR, define ALL recognized key actions for navigation ...
-
-            keyNav:{
-
-               keydown:  {
-                    left:  [ {ctrlKey:37}, {shiftKey:9}
-                    right: [ {ctrlKey:39
-                    up:    [ 38
-                    down:  [ 40
-                    save:  [ 13
-                    cancel: [27
-               },
-
-               mouse: {
-                   open : [click, focus]
-                   close : [ blur ]
-               }
-            }
-
-         */
 
     }
 });
 
 
+Y.DataTable.BaseCellInlineEditor = IEd;
 //====================================================================================================================
 //                   I N L I N E    C E L L    E D I T O R    D E F I N I T I O N S
 //====================================================================================================================
@@ -909,7 +363,7 @@ The configuration {Object} for this cell editor View is predefined as;
 @public
 **/
 Y.DataTable.EditorOptions.inline = {
-    BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
+    BaseViewClass:  IEd,
     name:           'inline'
 };
 
@@ -968,7 +422,7 @@ The configuration {Object} for this cell editor View is predefined as;
 @public
 **/
 Y.DataTable.EditorOptions.inlineNumber = {
-    BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
+    BaseViewClass:  IEd,
     name:           'inlineNumber',
     hideMouseLeave: false,
 
@@ -1055,7 +509,7 @@ The configuration {Object} for this cell editor View is predefined as;
 @public
 **/
 Y.DataTable.EditorOptions.inlineDate = {
-    BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
+    BaseViewClass:  IEd,
     name:           'inlineDate',
 
     /**
@@ -1132,8 +586,8 @@ The configuration {Object} for this cell editor View is predefined as;
                 //  After this View is instantiated and created,
                 //     configure the Y.Plugin.AutoComplete as a plugin to the editor INPUT node
                 //---------
-                editorCreated : function(o){
-                   var inputNode = o.inputNode,
+                createUI : function(){
+                   var inputNode = this._inputNode,
                        // Get the users's editorConfig "autocompleteConfig" settings
                        acConfig = this.get('autocompleteConfig') || {},
                        editor = this;
@@ -1163,7 +617,7 @@ The configuration {Object} for this cell editor View is predefined as;
 @public
 **/
 Y.DataTable.EditorOptions.inlineAC = {
-    BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
+    BaseViewClass:  IEd,
     name:           'inlineAC',
     hideMouseLeave: false,
 
@@ -1188,8 +642,8 @@ Y.DataTable.EditorOptions.inlineAC = {
        //  After this View is instantiated and created,
        //     configure the Y.Plugin.AutoComplete as a plugin to the editor INPUT node
        //---------
-       editorCreated : function(o){
-           var inputNode = o.inputNode,
+       createUI : function(){
+           var inputNode = this._inputNode,
                // Get the users's editorConfig "autocompleteConfig" settings
                acConfig = this.get('autocompleteConfig') || {},
                editor = this;

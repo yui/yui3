@@ -5,8 +5,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         areSame = Assert.areSame,
         isFalse = Assert.isFalse,
         isTrue = Assert.isTrue,
-        isNull = Assert.isNull,
-        dt;
+        isNull = Assert.isNull;
 
     var fireKey = function(ceditor, key, opts) {
         opts = Y.merge({keyCode: key}, opts);
@@ -58,7 +57,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         return new Y.DataTable(Y.merge(basic_config,config_arg)).render('#dtable');
     };
 
-    var checkPosition = function(row, col, skip ) {
+    var checkPosition = function(dt, row, col, skip ) {
 
         var td = dt.getCell([row, col]),
             ed = Y.one('.yui3-datatable-inline-input'),
@@ -67,22 +66,22 @@ YUI.add('datatable-editable-tests', function(Y) {
             nextCell;
         areSame('block', ed.ancestor().getStyle('display'), 'Editor should be visible.: [' + row + ':' + col + ']')
 
-        areSame(Math.round(regEd.top), Math.round(regTd.top), 'tops should match: [' + row + ':' + col + ']');
-        areSame(Math.round(regEd.left), Math.round(regTd.left), 'lefts should match: [' + row + ':' + col + ']');
+        areSame(Math.round(regTd.top), Math.round(regEd.top), 'tops should match: [' + row + ':' + col + ']');
+        areSame(Math.round(regTd.left), Math.round(regEd.left), 'lefts should match: [' + row + ':' + col + ']');
         nextCell = dt.getCell(td,[1,1]);
         if (nextCell) {
             regTd = nextCell.get('region');
-            areSame(Math.round(regEd.bottom), Math.round(regTd.top), 'bottom should match top of next: [' + row + ':' + col + ']');
-            areSame(Math.round(regEd.right), Math.round(regTd.left), 'right edge should match left edge of next: [' + row + ':' + col + ']');
+            areSame(Math.round(regTd.top), Math.round(regEd.bottom), 'bottom should match top of next: [' + row + ':' + col + ']');
+            areSame(Math.round(regTd.left), Math.round(regEd.right), 'right edge should match left edge of next: [' + row + ':' + col + ']');
         } else isTrue(skip, 'there should be a further cell to the right or bottom');
     },
-    openEditorAt = function (row, col) {
+    openEditorAt = function (dt, row, col) {
         var td = dt.getCell([row, col]);
         td.simulate('click');
 
         isTrue(dt._openEditor.get('visible'),'cell editor col 1 should be visible: [' + row + ':' + col + ']')
         areSame(1, Y.all('.yui3-datatable-inline-input').size(),'There should be one editor: [' + row + ':' + col + ']');
-        checkPosition(row, col);
+        checkPosition(dt, row, col);
     };
 
     suite.add(new Y.Test.Case({
@@ -90,13 +89,14 @@ YUI.add('datatable-editable-tests', function(Y) {
 
         setUp : function () {
             // {sid: sname: sdesc: sopen:0, stype:0, stock:0, sprice:, shipst:'s', sdate: },
-            dt = makeDT();
+            this.dt = makeDT();
         },
 
         tearDown : function () {
-            if(dt) {
-                dt.destroy();
+            if(this.dt) {
+                this.dt.destroy();
             }
+            delete this.dt;
         },
 
         'should be a class': function() {
@@ -104,6 +104,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
 
         'should instantiate as a DT instance': function() {
+            var dt = this.dt;
             Assert.isInstanceOf( Y.DataTable, dt, 'Not an instanceof Y.DataTable');
         },
 
@@ -112,12 +113,14 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
 
         'check ATTR default values' : function(){
+            var dt = this.dt;
             isFalse( dt.get('editable'), "editable default not false" );
             isNull( dt.get('defaultEditor'), "default editor not null" );
             areSame( 'dblclick', dt.get('editorOpenAction'), "default editorOpenAction not 'dblclick'" );
         },
 
         'check ATTR editable setting' : function(){
+            var dt = this.dt;
             isFalse( dt.get('editable'), "editable not initially false" );
 
             areSame( 0, dt.getCellEditors().length, "No editors initially" );
@@ -139,6 +142,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
 
         'check ATTR editorOpenAction setting' : function(){
+            var dt = this.dt;
             isFalse( dt.get('editable'), "editable not initially false" );
             areSame( 'dblclick', dt.get('editorOpenAction'), "default editorOpenAction not dblclick" );
 
@@ -160,6 +164,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
 
         'check ATTR defaultEditor setting' : function(){
+            var dt = this.dt;
             isFalse( dt.get('editable'), "editable not initially false" );
             isNull(dt.get('defaultEditor'), "default defaultEditor not none" );
 
@@ -181,6 +186,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
 
         'check destructor' : function(){
+            var dt = this.dt;
             dt.set('editable',true);
             isTrue( dt.get('editable'), "set editable to true" );
 
@@ -204,7 +210,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
         setUp : function () {
             // {sid: sname: sdesc: sopen:0, stype:0, stock:0, sprice:, shipst:'s', sdate: },
-            dt = makeDT({
+            this.dt = makeDT({
                 defaultEditor:  'inline',
                 editorOpenAction:   'click',
                 editable:       true
@@ -213,12 +219,14 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
 
         tearDown : function () {
-            if(dt) {
-                dt.destroy();
+            if(this.dt) {
+                this.dt.destroy();
             }
+            delete this.dt;
         },
 
         'check editor counts' : function(){
+            var dt = this.dt;
 
             isTrue( dt.get('editable'), "set editable to true" );
 
@@ -230,10 +238,11 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
 
         'check public methods - open/hide cell editors' : function(){
-            var td = dt.getCell([0,1]);
+            var dt = this.dt,
+                td = dt.getCell([0,1]);
 
             // on column 1, open an editor, then hide it
-            openEditorAt(0,1);
+            openEditorAt(dt, 0,1);
 
 
             dt.hideCellEditor();
@@ -280,6 +289,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
 
         'check initial setup - inline row 0' : function(){
+            var dt = this.dt;
 
             // column 0 of any row is uneditable, make sure ...
             dt.getCell([0,0]).simulate('click');
@@ -299,42 +309,45 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
 
         'check ATTR editorOpenAction setting' : function(){
+            var dt = this.dt;
 
             isTrue( dt.get('editable'), "set editable to true" );
 
 
         },
         'check navigation': function () {
-            openEditorAt(0, 1);
+            var dt = this.dt;
+            openEditorAt(dt, 0, 1);
             var ed = Y.one('.yui3-datatable-inline-input')
 
 
 
             fireKey(ed, 39,{ctrlKey:true});  // Ctrl-right
-            checkPosition(0,2);
+            checkPosition(dt, 0,2);
 
             fireKey(ed, 40,{ctrlKey:true});  // Ctrl-down
-            checkPosition(1,2);
+            checkPosition(dt, 1,2);
 
             fireKey(ed, 37,{ctrlKey:true});  // Ctrl-left
-            checkPosition(1,1);
+            checkPosition(dt, 1,1);
             fireKey(ed, 38,{ctrlKey:true});  // Ctrl-up
-            checkPosition(0,1);
+            checkPosition(dt, 0,1);
             fireKey(ed, 9);  // tab
-            checkPosition(0,2);
+            checkPosition(dt, 0,2);
             fireKey(ed, 9,{shiftKey:true});  // back-tab
-            checkPosition(0,1);
+            checkPosition(dt, 0,1);
 
             fireKey(ed, 9,{shiftKey:true});  // back-tab
             // It should wrap around and skip over column 0
-            checkPosition(0,7, true);
+            checkPosition(dt, 0,7, true);
 
             fireKey(ed, 38,{ctrlKey:true});  // Ctrl-up
             // It should wrap around to the bottom row
-            checkPosition(5,7, true);
+            checkPosition(dt, 5,7, true);
         },
         'check editing': function () {
-            var td =  dt.getCell([0,1]);
+            var dt = this.dt,
+                td =  dt.getCell([0,1]);
             td.simulate('click');
             var ed = Y.one('.yui3-datatable-inline-input');
             dt.after('celleditor:save', function (ev) {
@@ -360,7 +373,8 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame('none', ed.ancestor().getStyle('display') ,'editor should be hidden');
         },
         'check editing canceled via event': function () {
-            var td =  dt.getCell([0,1]);
+            var dt = this.dt,
+                td =  dt.getCell([0,1]);
             td.simulate('click');
             var ed = Y.one('.yui3-datatable-inline-input');
             dt.on('celleditor:save', function (ev) {
@@ -387,7 +401,8 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
 
         'check canceled editing': function () {
-            var td =  dt.getCell([0,1]);
+            var dt = this.dt,
+                td =  dt.getCell([0,1]);
             td.simulate('click');
             var ed = Y.one('.yui3-datatable-inline-input');
             dt.after('celleditor:save', function (ev) {
@@ -412,6 +427,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame('none', ed.ancestor().getStyle('display') ,'editor should be hidden');
         },
         'check destructor' : function(){
+            var dt = this.dt;
             dt.set('editable',true);
             isTrue( dt.get('editable'), "set editable to true" );
 
@@ -440,7 +456,7 @@ YUI.add('datatable-editable-tests', function(Y) {
                 data.push({ a: i * 1000 , b: i * 1000, c: i * 1000, d: i * 1000, e: i * 1000});
             }
 
-            dt = new Y.DataTable({
+            this.dt = new Y.DataTable({
                 columns: ['a','b','c','d','e'],
                 data: data,
                 scrollable: 'xy',
@@ -453,23 +469,25 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
 
         tearDown: function () {
-            if (dt) {
-                dt.destroy();
+            if (this.dt) {
+                this.dt.destroy();
             }
+            delete this.dt;
         },
 
         "test scroll": function () {
+            var dt = this.dt;
 
             // The scrolling happens asynchronously so I need to give it a chance to happen
             dt.scrollTo([0,2]);
             this.wait(function () {
-                openEditorAt(0,2);
+                openEditorAt(dt, 0,2);
                 dt.scrollTo([10,2]);
                 this.wait(function () {
-                    openEditorAt(8,2);
+                    openEditorAt(dt, 8,2);
                     dt.scrollTo([10,0]);
                     this.wait(function () {
-                        openEditorAt(8,0);
+                        openEditorAt(dt, 8,0);
                     },100);
                 },100);
 

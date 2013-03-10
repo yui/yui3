@@ -1,7 +1,11 @@
 YUI.add('datatable-celleditor-popup-tests', function(Y) {
 
     var suite = new Y.Test.Suite('datatable-celleditor-popup'),
-        Assert = Y.Test.Assert;
+        Assert = Y.Test.Assert,
+        areSame = Assert.areSame,
+        isFalse = Assert.isFalse,
+        isTrue = Assert.isTrue,
+        isNull = Assert.isNull;
 
 
 
@@ -140,7 +144,9 @@ YUI.add('datatable-celleditor-popup-tests', function(Y) {
         },
 
         tearDown : function () {
-            this.dt.destroy();
+            if (this.dt) {
+                this.dt.destroy();
+            }
             delete this.dt;
         },
 
@@ -149,17 +155,19 @@ YUI.add('datatable-celleditor-popup-tests', function(Y) {
         },
 
         'should instantiate as a Model': function() {
-            Assert.isInstanceOf( Y.DataTable, this.dt, 'Not an instanceof Y.DataTable');
+            var dt = this.dt;
+            Assert.isInstanceOf( Y.DataTable, dt, 'Not an instanceof Y.DataTable');
         },
 
         'listeners are set' : function(){
-            //Assert.areSame( 3, this.m._subscr.length, "Didn't find 3 listeners" );
+            //areSame( 3, this.m._subscr.length, "Didn't find 3 listeners" );
         },
 
         'check ATTR default values' : function(){
-            Assert.isFalse( this.dt.get('editable'), "editable default not false" );
-            Assert.areSame( null, this.dt.get('defaultEditor'), "default editor not 'none'" );
-            Assert.areSame( 'dblclick', this.dt.get('editorOpenAction'), "default editorOpenAction not 'dblclick'" );
+            var dt = this.dt;
+            isFalse( dt.get('editable'), "editable default not false" );
+            areSame( null, dt.get('defaultEditor'), "default editor not 'none'" );
+            areSame( 'dblclick', dt.get('editorOpenAction'), "default editorOpenAction not 'dblclick'" );
         }
 
     }));
@@ -178,22 +186,26 @@ YUI.add('datatable-celleditor-popup-tests', function(Y) {
         },
 
         tearDown : function () {
-            this.dt.destroy();
+            if (this.dt) {
+                this.dt.destroy();
+
+            }
             delete this.dt;
         },
 
         'check all editors set as "text" except first col' : function(){
+            var dt = this.dt;
 
-            Assert.isTrue( this.dt.get('editable'), "set editable to true" );
-            Assert.areSame( 'text', this.dt.get('defaultEditor'), "defaultEditor not text" );
+            isTrue( dt.get('editable'), "set editable to true" );
+            areSame( 'text', dt.get('defaultEditor'), "defaultEditor not text" );
 
-            var ed = this.dt._commonEditors[this.dt.get('defaultEditor')];
-            Assert.areSame( 'text', ed.get('name'), "common editor 0 should be text");
+            var ed = dt._commonEditors[dt.get('defaultEditor')];
+            areSame( 'text', ed.get('name'), "common editor 0 should be text");
 
-            var ces = this.dt.getCellEditors();
-            Assert.areSame( 7, ces.length,'there are not 7 columns editable');
+            var ces = dt.getCellEditors();
+            areSame( 7, ces.length,'there are not 7 columns editable');
 
-            Assert.isNull( this.dt.getCellEditor('sid'));
+            isNull( dt.getCellEditor('sid'));
         },
 
         'editor on col 0 doesn\'t come up' : function(){
@@ -203,11 +215,11 @@ YUI.add('datatable-celleditor-popup-tests', function(Y) {
 
             tr3.all('td').item(0).simulate('click');
             oe = dt._openEditor;
-            Assert.isNull(oe,'col 0 is not editable');
+            isNull(oe,'col 0 is not editable');
 
             tr3.all('td').item(0).simulate('dblclick');
             oe = dt._openEditor;
-            Assert.isNull(oe,'col 0 is not editable');
+            isNull(oe,'col 0 is not editable');
         },
 
         'row index 3 popup editor on col 1 come up' : function(){
@@ -217,12 +229,12 @@ YUI.add('datatable-celleditor-popup-tests', function(Y) {
 
             tr3.all('td').item(1).simulate('click');
             oe = dt._openEditor;
-            Assert.isNull(oe,'col 1 opened on click');
+            isNull(oe,'col 1 opened on click');
 
             tr3.all('td').item(1).simulate('dblclick');
             oe = dt._openEditor;
             Assert.isObject(oe,'col 1 not open on dblclick');
-            Assert.isTrue(oe.get('visible'),'col 1 not open on dblclick');
+            isTrue(oe.get('visible'),'col 1 not open on dblclick');
 
         },
 
@@ -234,14 +246,14 @@ YUI.add('datatable-celleditor-popup-tests', function(Y) {
             tr3.all('td').item(1).simulate('dblclick');
             oe = dt._openEditor;
             Assert.isObject(oe,'col 1 not open on dblclick');
-            Assert.isTrue(oe.get('visible'),'col 1 not open on dblclick');
+            isTrue(oe.get('visible'),'col 1 not open on dblclick');
 
             Assert.isInstanceOf(Y.View,oe);
             Assert.isInstanceOf(Y.Node,oe._inputNode);
 
             oe.destroy({remove:true});
 
-            Assert.isTrue(oe.get('destroyed'),'destroyed flag not set');
+            isTrue(oe.get('destroyed'),'destroyed flag not set');
 
         },
 
@@ -255,12 +267,12 @@ YUI.add('datatable-celleditor-popup-tests', function(Y) {
             inp = oe._inputNode;
 
             Assert.isObject(oe,'col 1 not open on dblclick');
-            Assert.isTrue(oe.get('visible'),'col 1 not open on dblclick');
+            isTrue(oe.get('visible'),'col 1 not open on dblclick');
 
             inputKey(inp,"hi",13);
-            Assert.isFalse(oe.get('visible'),'col 1 not open on dblclick');
-            Assert.areSame('hi',oe.get('value'));
-            Assert.areSame(1,oe.get('lastValue'));
+            isFalse(oe.get('visible'),'col 1 not open on dblclick');
+            areSame('hi',oe.get('value'));
+            areSame(1,oe.get('lastValue'));
 
         },
 
@@ -274,11 +286,11 @@ YUI.add('datatable-celleditor-popup-tests', function(Y) {
             inp = oe._inputNode;
 
             Assert.isObject(oe,'col 1 not open on dblclick');
-            Assert.isTrue(oe.get('visible'),'col 1 not open on dblclick');
+            isTrue(oe.get('visible'),'col 1 not open on dblclick');
 
             inputKey(inp,"hi",27);
-            Assert.isFalse(oe.get('visible'),'col 1 not open on dblclick');
-            Assert.areSame(1,oe.get('value'));
+            isFalse(oe.get('visible'),'col 1 not open on dblclick');
+            areSame(1,oe.get('value'));
         },
 
         'row index 3 col 1 : tab to next cell' : function(){
@@ -294,16 +306,16 @@ YUI.add('datatable-celleditor-popup-tests', function(Y) {
             inp = oe._inputNode;
 
             Assert.isObject(oe,'col 1 not open on dblclick');
-            Assert.isTrue(oe.get('visible'),'col 1 not open on dblclick');
+            isTrue(oe.get('visible'),'col 1 not open on dblclick');
 
             inputKey(inp,"hi",9);
-            Assert.isTrue(oe.get('visible'),'col 1 not open on dblclick');
-            Assert.areSame(oe.get('cell').td,td2);
-            Assert.areSame("1",td1.getHTML(),'old cell should not have saved')
+            isTrue(oe.get('visible'),'col 1 not open on dblclick');
+            areSame(oe.get('cell').td,td2);
+            areSame("1",td1.getHTML(),'old cell should not have saved')
 
             inputKey(inp,"hi",9);
-            Assert.isTrue(oe.get('visible'),'col 1 not open on dblclick');
-            Assert.areSame(oe.get('cell').td,tds.item(3));
+            isTrue(oe.get('visible'),'col 1 not open on dblclick');
+            areSame(oe.get('cell').td,tds.item(3));
 
         }
 

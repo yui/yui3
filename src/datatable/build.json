@@ -63,7 +63,8 @@
         },
         "datatable-editable": {
             "jsfiles":[
-                "editable.js"
+                "editable.js",
+                "celleditor-base.js"
             ]
         },
         "datatable-celleditor-inline": {

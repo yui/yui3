@@ -95,19 +95,12 @@
  <li>Some problems have been encountered after "datatable.destroy()" and then immediate re-building of the same DT without a page refresh.</li>
  </ul>
  @class DataTable.BaseCellPopupEditor
- @extends Y.View
+ @extends DataTable.BaseCellEditor
  @author Todd Smith
  @since 3.8.0
  **/
-var KEYC_ESC = 27,
-    KEYC_RTN = 13,
-    KEYC_TAB = 9,
-    KEYC_UP  = 38,
-    KEYC_DOWN  = 40,
-    KEYC_RIGHT  = 39,
-    KEYC_LEFT  = 37;
 
-Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
+PEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
 
     /**
      * Defines the HTML content "template" for the containing Overlay of this editor,
@@ -182,121 +175,22 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
      */
     _classOverlayBtn:  'yui3-datatable-editor-overlay-button',
 
-    /**
-     * CSS classname to identify the individual input collection HTML nodes within
-     * the View container
-     * @property _classEditing
-     * @type String
-     * @default 'editing'
-     * @protected
-     * @static
-     */
-    _classEditing:  'editing',
 
-    /**
-     * Placeholder for the created Input element contained within the Overlay and
-     * View container
-     * @property _inputNode
-     * @type Node
-     * @default null
-     * @protected
-     * @static
-     */
-    _inputNode:     null,
 
-    /**
-     * Placeholder for listener handles created from this View
-     * @property _subscr
-     * @type Array of {EventHandles}
-     * @default []
-     * @protected
-     * @static
-     */
-    _subscr:        [],
+
 
 //======================   LIFECYCLE METHODS   ===========================
-
-    /**
-     * Creates the View instance and sets the container and bindings
-     * @method initializer
-     * @chainable
-     * @return {*}
-     * @protected
-     */
-    initializer: function(){
-        this._createUI();
-        this._bindUI();
-        return this;
-    },
-
-    /**
-     * @method destructor
-     * @protected
-     */
-    destructor: function(){
-        this.cancelEditor();
-        this._unbindUI();
-        this.fire('editorDestroyed');
-    },
-
-    /**
-     * Event fired when the cell editor View is destroyed.
-     *
-     * Implementers can listen for this event to check if any sub-components / widgets, etc.. they
-     * had created as part of this View need to be destroyed or listener unbound.
-     *
-     * @event editorDestroyed
-     */
-
-    /**
-     * Method that publishes the custom events and sets bindings for key handling and
-     * positioning changes
-     * @method _bindUI
-     * @private
-     */
-    _bindUI:  function(){
-
-        this.publish({
-            editorSave: {
-                defaultFn:   this._defEditorSaveFn,
-                emitFacade:  true,
-                preventable: true
-            },
-            editorCancel: {
-                defaultFn:   this._defEditorCancelFn,
-                emitFacade:  true,
-                preventable: true
-            },
-            editorCreated: {emitFacade:  true, preventable: true },
-            editorDestroyed: {emitFacade:  true, preventable: true }
-        });
-
-        // Set a key listener on inputnode
-        if(this._inputNode ) {
-            this._subscr.push(
-                this._inputNode.on('keydown',this.processKeyDown, this),
-                this._inputNode.on('keypress',this.processKeyPress, this)
-            );
-        }
-
-        // This is here to support "scrolling" of the underlying DT ...
-        this._subscr.push( this.on('xyChange',this._setEditorXY) );
-      //  this.on('xyChange',this._setEditorXY);
-
-    },
-
-
     /**
      * Creates this View's container, including instantiating the Overlay widget within
      * the container, incorporating user-supplied overlay configs, creating buttons and
      * creating the internal HTML content within the Overlay (using a Template-based
      * method)
      *
-     * @method _createUI
+     * @method _defCreateUIFn
      * @return {Y.Overlay} Overlay instance for this View
      * @private
      */
-    _createUI: function(){
+    _defCreateUIFn: function(){
        var ocfg  = this.get('overlayConfig'),
            tobj  = this.get('templateObject'),
            overlay;
@@ -325,27 +219,12 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
         this.overlay = overlay;
         overlay.render();
 
-        this.fire('editorCreated',{
-            inputNode:  this._inputNode,
-            container:  overlay
-        });
-
         this.set('container',overlay);
 
         this.overlay = overlay;
 
     },
 
-    /**
-     * View event fired when the inline editor has been initialized and ready for usage.
-     * This event can be listened to in order to add additional content or widgets, etc onto
-     * the View's container.
-     *
-     * @event editorCreated
-     * @param {Object} rtn Returned object
-     *  @param {Node} rtn.inputNode The created INPUT[text] node, if any
-     *  @param {Object} rtn.container The View container / Overlay instance
-     */
 
     /**
      * Detaches the listeners that were set on this view, any widgets that were created
@@ -353,14 +232,9 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
      * @method _unbindUI
      * @private
      */
-    _unbindUI: function(){
+    _unbindUI: function () {
 
-        Y.Array.each(this._subscr,function(e){
-            if(e && e.detach) {
-                e.detach();
-            }
-        });
-        this._subscr = null;
+        PEd.superclass._unbindUI.apply(this, arguments);
 
         if(this.widget) {
             this.widget.destroy({remove:true});
@@ -373,30 +247,28 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
 
     },
 
+
+
 //======================   PUBLIC METHODS   ===========================
 
     /**
-     * Method that displays the editor configured for the input TD node, this is done
-     * in lieu of a `render` method for this View.  If no `td` is provided then the
-     * last configured [cell](#attr_cell) attribute's `td` property is used.
-     *
-     * @method showEditor
-     * @param {Node} tar Target TD cell that editing takes place on
-     * @public
-     */
-    showEditor: function(td){
+    The default action for the `show` event which should make the editor visible.
 
-        td = td || this.get('cell').td;
+
+    @method _defShowFn
+    @param e {EventFacade}
+    @protected
+    */
+    _defShowFn: function (ev) {
 
         var cell   = this.get('cell'),
+            td = cell.td || ev.td,
             td_xy  = td.getXY(),
             off_xy = this.get('offsetXY'),
-            td_w   = +(td.getComputedStyle('width').replace(/px/,'')),
-            oVal   = (this._isZeroOr(cell.value)) ? cell.value : this.get('value');
+            td_w   = parseFloat(td.getComputedStyle('width'));
             //(rec && coln) ? rec.get(coln) : null;
 
-    // Decorate the TD target and show the Overlay
-        td.addClass(this._classEditing);
+
         this.overlay.show();
 
         // clear up browser "selected" stuff
@@ -416,284 +288,13 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
         if(this._inputNode) {
             this._inputNode.setStyle('width', td_w );
         }
-
-        this._set('visible',true);
-        this._set('hidden',false);
-
-    // Set the initial display "value" in INPUT ... (mostly for text)
-        this._setInputValue(oVal);
-
-        this.fire('editorShow',{
-            td:         td,
-            cell:       cell,
-            inputNode:  this._inputNode,
-            value:      oVal //cell.value || this.get('value')
-        });
+        PEd.superclass._defShowFn.apply(this, arguments);
 
     },
 
-    /**
-     * Event fired when the cell editor is displayed and becomes visible.
-     *
-     * Implementers may listen for this event if they have configured complex View's, that include
-     * other widgets or components, to update their UI upon displaying of the view.
-     *
-     * @event editorShow
-     * @param {Object} rtn Returned object
-     * @param {Node} rtn.inputNode The editor's INPUT / TEXTAREA Node
-     * @param {String|Number|Date} rtn.value The current "value" setting
-     * @param {Object} rtn.cell object
-     *  @param {Node} rtn.cell.td TD Node undergoing editing
-     *  @param {String} rtn.cell.recClientId The active record's "clientId" attribute setting
-     *  @param {String} rtn.cell.colKey The active column's key or name setting
-     */
-
-
-    /**
-     * Called when the user has requested to cancel, and abort any changes to the DT cell,
-     * usually signified by a keyboard ESC or "Cancel" button, etc..
-     *
-     * @method cancelEditor
-     * @public
-     */
-    cancelEditor: function(){
-        this.fire("editorCancel",{
-            td:         this.get('cell').td,
-            cell:       this.get('cell'),
-            oldValue:   this.get('lastValue')
-        });
-    },
-
-    /**
-     * Fired when editing is cancelled (without saving) on this cell editor
-     * @event editorCancel
-     * @param {Object} rtn Returned object
-     *  @param {Node} rtn.td TD Node for the edited cell
-     *  @param {Object} rtn.cell Current cell object
-     *  @param {String|Number|Date} rtn.oldValue Data value of this cell prior to editing
-     */
-
-    /**
-     * Saves the View's `value` setting (usually after keyboard RTN or other means) and fires the
-     * [editorSave](#event_editorSave) event so consumers (i.e. DataTable) can make final changes to the
-     * Model or dataset.
-     *
-     * Thank you to **Satyam** for his guidance on configuring the event publishing, defaultFn related to this
-     * technique!
-     *
-     * @method saveEditor
-     * @param val {String|Number|Date} Value to save to the current editor's [value](#attr_value) attribute
-     * @public
-     */
-    saveEditor: function(val){
-        var cell = this.get('cell'),
-            savefn;
-
-        val = (val !== undefined && val !== null) ? val : this.get('value') ||  this._inputNode.get('value');
-
-        //
-        // If a valid record exists and we found the updated "value" from this View,
-        //   then apply the changed "value" to the record (Model) attribute ...
-        //
-        if( val !== undefined && val !== null ) {
-
-            // If a "save" function was defined, run thru it and update the "value" setting
-            savefn = this.get('saveFn');
-            val = (savefn) ? savefn.call(this,val) : val;
-
-            if(val === undefined) {
-                //val = this.get('lastValue');
-                this.cancelEditor();
-                return;
-            }
-
-            // set the 'lastValue' attribute prior to updating value in View
-            if(val) {
-                this.set('lastValue',this.get('value'));
-            }
-
-            // set this editor's value ATTR
-           // this.set('value',val);
-            this.fire("editorSave",{
-                td:         cell.td,
-                cell:       cell,
-                oldValue:   this.get('lastValue'),
-                newValue:   val
-            });
-
-        }
-
-    },
-
-    /**
-     * Event that is fired when the user has finished editing the View's cell contents (signified by either
-     * a keyboard RTN entry or "Save" button, etc...).
-     *
-     * This event is intended to be the PRIMARY means for implementers to know that the editing has been
-     * completed and validated.  Consumers (i.e. DataTable) should listen to this event and process it's results
-     * to save to the Model and or dataset for the DT.
-     *
-     * @event editorSave
-     * @param {Object} rtn Returned object
-     *  @param {Node} rtn.td TD Node for the edited cell
-     *  @param {Object} rtn.cell Current cell object
-     *  @param {String|Number|Date} rtn.oldValue Data value of this cell prior to editing
-     *  @param {String|Number|Date} rtn.newValue Data value of this cell after editing
-     */
-
-    /**
-     * Hides the current editor View instance.  If the optional `hideMe` param is true this View will
-     * be temporarily "hidden" (used for scrolling DT's when the TD is scrolled off/on to the page)
-     *
-     * @method hideEditor
-     * @param keep {Boolean} Keep visible set to true/false
-     * @public
-     */
-    hideEditor: function(hideMe){
-        var cell;
-        if(this.overlay) {
-            this.overlay.hide();
-        }
-
-        cell = this.get('cell');
-        if(cell && cell.td) {
-            cell.td.removeClass(this._classEditing);
-        }
-
-        if(hideMe===true) {
-            this._set('hidden',true);
-        }
-        this._set('visible',false);
-
-        this.fire('editorHide');
-    },
-
-    /**
-     * Fired when the active cell editor is hidden
-     * @event editorHide
-     */
-
-    /**
-     * Provides a method to process keypress entries and validate or prevent invalid inputs.
-     * This method is meant to be overrideable by implementers to customize behaviors.
-     *
-     * @method processKeyPress
-     * @param e {EventFacade} Key press event object
-     * @public
-     */
-    processKeyPress: function(e) {
-        var keyc    = e.keyCode,
-            inp     = e.target || this._inputNode,
-            value   = inp.get('value'),
-            keyfilt = this.get('keyFiltering'),
-         //   keyvald = this.get('keyValidator'),
-            kchar   = String.fromCharCode(keyc),
-            flagRE  = true,
-            krtn;
-
-        //
-        // If RTN, then prevent and save ...
-        //
-        if(keyc === KEYC_RTN && this.get('saveKeyRTN')) {
-            e.preventDefault();
-            this.saveEditor(value);
-        }
-
-        //
-        // Check key filtering validation ... either a RegExp or a user-function
-        //
-        if(keyfilt instanceof RegExp) {
-            flagRE = (!kchar.match(keyfilt)) ? false : flagRE;
-        } else if (Y.Lang.isFunction(keyfilt)) {
-            krtn = keyfilt.call(this,e);
-            flagRE = (krtn) ? true : false;
-        }
-
-        // If key filtering returned false, prevent continuing
-        if(!flagRE) {
-            e.preventDefault();
-        }
-
-    },
-
-    /**
-     * Key listener for the INPUT inline editor, "keydown" is checked for non-printing key
-     *  strokes, navigation or ESC.
-     *
-     *  This method is intended to overridden by implementers in order to customize behaviors.
-     *
-     * @method processKeyDown
-     * @param e {EventFacade} Keydown event facade
-     * @public
-     */
-    /**
-     * Fires when the navigation keys are pressed to move to another cell.
-     * @event keyNav
-     * @param dx {Integer} number of cells to move in the x direction. (usually -1: left, 0 or 1: right)
-     * @param dy {Integer} number of cells to move in the y direction. (usually -1: up, 0 or 1: down)
-     */
-    processKeyDown : function(e){
-        var keyc    = e.keyCode,
-            dx = 0, dy = 0;
-
-        if (keyc === KEYC_ESC) {
-            e.preventDefault();
-            this.cancelEditor();
-        }
-        if(!this.get('inputKeys')) {
-            return;
-        }
-
-        switch(keyc) {
-            case KEYC_UP:
-                dy = (e.ctrlKey) ? -1 : 0;
-                break;
-
-            case KEYC_DOWN:
-                dy = (e.ctrlKey) ? 1 : 0;
-                break;
-
-            case KEYC_LEFT:
-                dx = (e.ctrlKey) ? -1 : 0;
-                break;
-
-            case KEYC_RIGHT:
-                dx = (e.ctrlKey) ? 1 : 0;
-                break;
-
-            case KEYC_TAB: // tab
-                dx = (e.shiftKey) ? -1 : 1;
-                break;
-        }
-
-        if(dx || dy) {
-            this.fire('keyNav', {dx:dx, dy:dy});
-            e.preventDefault();
-        }
-    },
 
 
 //======================   PRIVATE METHODS   ===========================
-
-    /**
-     * The defaultFn for the `editorSave` event
-     * @method _defEditorSaveFn
-     * @param e {EventFacade} For editorSave event
-     * @private
-     */
-    _defEditorSaveFn: function(e){
-        this.set('value', e.newValue);
-        this.hideEditor();
-    },
-
-    /**
-     * The defaultFn for the `editorCancel` event
-     * @method _defEditorCancelFn
-     * @private
-     */
-    _defEditorCancelFn: function(){
-        this.hideEditor();
-    },
 
     /**
      * Method that creates the Editor's Overlay instance and populates the base content.
@@ -707,7 +308,7 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
     //
     //  Create the Overlay
     //
-        html = Y.Lang.sub(this.get('template'),{
+        html = Y.Lang.sub(this.template,{
             classOverlay:   this._classOverlay+' '
         });
 
@@ -848,7 +449,7 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
                 tmplOpts = Y.merge(tmplOpts);
                 tmplObj.options = [];
                 Y.Object.each(tmplOpts,function(v,k,obj){
-                    if(this._isZeroOr(v) && this._isZeroOr(k)) {
+                    if(Lang.isValue(v) && this._isZeroOr(k)) {
                         robj = {
                             value: (Y.Lang.isString(k) && /^\d*$/.test(k) ) ? +k : k,
                             text: v,
@@ -893,18 +494,6 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
         }
     },
 
-    /**
-     * Utility method that checks if a value (include ZERO!!) is defined and
-     * not null  (there's probably a much better way to do this)
-     *
-     * @method _isZeroOr
-     * @param v {Number|String} Value to check
-     * @return {Boolean} True if value is defined, not null, and possibly zero
-     * @private
-     */
-    _isZeroOr : function(v) {
-        return (v !== undefined && v !== null) ? true : false;
-    },
 
     /**
      * Listener to mouseleave event that closes the active editor
@@ -915,29 +504,6 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
         this.cancelEditor();
     },
 
-    /**
-     * @method _setInputValue
-     * @param {Number|String|Date} val
-     * @return {*}
-     * @private
-     */
-    _setInputValue: function(val) {
-        var prepFn;
-        val = val || this.get('cell').value || this.get('value');
-
-        if(!val) {
-            return;
-        }
-
-        prepFn = this.get('prepFn');
-        val = (prepFn) ? prepFn.call(this,val) : val;
-
-        if(this._inputNode){
-            this._inputNode.set('value',val);
-        }
-
-        return val;
-    },
 
     /**
      * Helper method to clear DOM "selected" text or ranges
@@ -1221,11 +787,11 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
          *
          * For example, textarea typically will not, to allow a newline to be added.
          *
-         * @attribute saveKeyRTN
+         * @attribute saveOnEnterKey
          * @type boolean
          * @default true
          */
-        saveKeyRTN: {
+        saveOnEnterKey: {
             value:      true,
             validator:  Y.Lang.isBoolean
         },
@@ -1347,7 +913,7 @@ Y.DataTable.BaseCellPopupEditor =  Y.Base.create('celleditor',Y.View,[],{
  @public
  **/
 Y.DataTable.EditorOptions.text = {
-    BaseViewClass:  Y.DataTable.BaseCellPopupEditor,
+    BaseViewClass:  PEd,
     name:           'text',
 
     templateObject: {
@@ -1399,7 +965,7 @@ Y.DataTable.EditorOptions.text = {
             inputKeys: true,
 
             // don't save editor when KEY RTN is detected (must use Save button to save)
-            saveKeyRTN: false,
+            saveOnEnterKey: false,
 
             // setup two buttons "Save" and "Cancel" for the containing overlay
             overlayConfig:{
@@ -1434,14 +1000,14 @@ Y.DataTable.EditorOptions.text = {
  @public
  **/
 Y.DataTable.EditorOptions.textarea = {
-    BaseViewClass:  Y.DataTable.BaseCellPopupEditor,
+    BaseViewClass:  PEd,
     name:           'textarea',
     templateObject:{
         html: '<textarea title="inline cell editor" class="<%= this.classInput %>"></textarea>'
     },
 
     inputKeys: true,
-    saveKeyRTN: false,
+    saveOnEnterKey: false,
 
     // setup two buttons "Save" and "Cancel" for the containing overlay
     overlayConfig:{
@@ -1545,7 +1111,7 @@ Y.DataTable.EditorOptions.textarea = {
  @public
  **/
 Y.DataTable.EditorOptions.number = {
-    BaseViewClass:  Y.DataTable.BaseCellPopupEditor,
+    BaseViewClass:  PEd,
     name:           'number',
 
     templateObject:{
@@ -1654,7 +1220,7 @@ Y.DataTable.EditorOptions.number = {
  @public
  **/
 Y.DataTable.EditorOptions.date = {
-    BaseViewClass:  Y.DataTable.BaseCellPopupEditor,
+    BaseViewClass:  PEd,
     name:           'date',
     templateObject: {
         html: '<input type="text" title="inline cell editor" class="<%= this.classInput %>"  />'
@@ -1757,7 +1323,7 @@ Y.DataTable.EditorOptions.date = {
                 // After this View is created,
                 //    create the Calendar widget ...
                 //-------
-                editorCreated: function(){
+                createUI: function(){
                     var calNode = this.overlay.get('contentBox').one('.yui3-dt-editor-calendar'),
                         calWidget,
 
@@ -1831,7 +1397,7 @@ Y.DataTable.EditorOptions.date = {
                 // After this View is destroyed,
                 //    we need to destroy the Calendar widget instance ...
                 //-------
-                editorDestroyed: function(){
+                'celleditor:destroy': function(){
                     if(this.widget) {
                         this.widget.destroy({remove:true});
                     }
@@ -1889,7 +1455,7 @@ Y.DataTable.EditorOptions.date = {
  @public
  **/
 Y.DataTable.EditorOptions.calendar = {
-    BaseViewClass:  Y.DataTable.BaseCellPopupEditor,
+    BaseViewClass:  PEd,
     name:           'calendar',
     inputKeys:      true,
 
@@ -1940,7 +1506,7 @@ Y.DataTable.EditorOptions.calendar = {
         // After this View is created,
         //    create the Calendar widget ...
         //-------
-        editorCreated: function(){
+        createUI: function(){
             var calNode = this.overlay.get('contentBox').one('.yui3-dt-editor-calendar'),
                 calWidget,
 
@@ -2014,7 +1580,7 @@ Y.DataTable.EditorOptions.calendar = {
         // After this View is destroyed,
         //    we need to destroy the Calendar widget instance ...
         //-------
-        editorDestroyed: function(){
+        'celleditor:destroy': function(){
             if(this.widget) {
                 this.widget.destroy({remove:true});
             }
@@ -2106,8 +1672,8 @@ Y.DataTable.EditorOptions.calendar = {
                //  After the cell editor View is instantiated,
                //    get the INPUT node and plugin the AutoComplete to it
                //---------
-               editorCreated : function(o){
-                   var inputNode = o.inputNode,
+               createUI : function(){
+                   var inputNode = this._inputNode,
                        acConfig = this.get('autocompleteConfig') || {},
                        editor = this;
 
@@ -2135,7 +1701,7 @@ Y.DataTable.EditorOptions.calendar = {
  @public
  **/
 Y.DataTable.EditorOptions.autocomplete = {
-    BaseViewClass:  Y.DataTable.BaseCellPopupEditor,
+    BaseViewClass:  PEd,
     name:           'autocomplete',
     templateObject: {
         html: '<input type="text" title="inline cell editor" class="<%= this.classInput %>" />'
@@ -2149,8 +1715,8 @@ Y.DataTable.EditorOptions.autocomplete = {
        //  After the cell editor View is instantiated,
        //    get the INPUT node and plugin the AutoComplete to it
        //---------
-       editorCreated : function(o){
-           var inputNode = o.inputNode,
+       createUI : function(){
+           var inputNode = this._inputNode,
                acConfig = this.get('autocompleteConfig') || {},
                editor = this;
 
@@ -2224,10 +1790,10 @@ Y.DataTable.EditorOptions.autocomplete = {
             on: {
 
                 //--------
-                //  When editorCreated fires (at initialization),
+                //  When createUI fires (at initialization),
                 //    setup a listener to save changes based on INPUT[radio] 'click' events
                 //--------
-                editorCreated: function(){
+                createUI: function(){
                     var cbox = this.overlay.get('contentBox');
 
                     this._subscr.push(
@@ -2235,7 +1801,7 @@ Y.DataTable.EditorOptions.autocomplete = {
                             var tar = e.target,
                                 val = tar.get('value');
 
-                            if(this._isZeroOr(val)) {
+                            if(Lang.isValue(val)) {
                                 this.saveEditor(val);
                             }
                         },'input[type="radio"]', this)
@@ -2278,7 +1844,7 @@ Y.DataTable.EditorOptions.autocomplete = {
  @public
  **/
 Y.DataTable.EditorOptions.radio = {
-    BaseViewClass:  Y.DataTable.BaseCellPopupEditor,
+    BaseViewClass:  PEd,
     name:           'radio',
 
     // Define the template for the radio group ...
@@ -2309,7 +1875,7 @@ Y.DataTable.EditorOptions.radio = {
         //  After the editor instance is created (at initialization),
         //    setup a listener to save changes based on INPUT[radio] 'click' events
         //--------
-        editorCreated: function(){
+        createUI: function(){
             var cbox = this.overlay.get('contentBox');
 
             this._subscr.push(
@@ -2317,7 +1883,7 @@ Y.DataTable.EditorOptions.radio = {
                     var tar = e.target,
                         val = tar.get('value');
 
-                    if(this._isZeroOr(val)) {
+                    if(Lang.isValue(val)) {
                         this.saveEditor(val);
                     }
                 },'input[type="radio"]', this)
@@ -2423,14 +1989,14 @@ Y.DataTable.EditorOptions.radio = {
                 //  After the editor view instance is created,
                 //    set a "change" listener on the SELECT element
                 //--------
-                editorCreated: function(){
+                createUI: function(){
                     var cbox = this.overlay.get('contentBox');
 
                     this._subscr.push(
                         cbox.delegate('change',function(e){
                             var val = e.currentTarget.get('value');
 
-                            if(this._isZeroOr(val)) {
+                            if(Lang.isValue(val)) {
                                 this.saveEditor(val);
                             }
 
@@ -2476,7 +2042,7 @@ Y.DataTable.EditorOptions.radio = {
  @public
  **/
 Y.DataTable.EditorOptions.dropdown = {
-    BaseViewClass:  Y.DataTable.BaseCellPopupEditor,
+    BaseViewClass:  PEd,
     name:           'dropdown',    // OR 'select' or 'combobox'
 
     // Define the template for the SELECT and OPTIONS ...
@@ -2507,14 +2073,14 @@ Y.DataTable.EditorOptions.dropdown = {
         //  After the editor view instance is created,
         //    set a "change" listener on the SELECT element
         //--------
-        editorCreated: function(){
+        createUI: function(){
             var cbox = this.overlay.get('contentBox');
 
             this._subscr.push(
                 cbox.delegate('change',function(e){
                     var val = e.currentTarget.get('value');
 
-                    if(this._isZeroOr(val)) {
+                    if(Lang.isValue(val)) {
                         this.saveEditor(val);
                     }
 
@@ -2588,7 +2154,7 @@ Y.DataTable.EditorOptions.combobox = Y.DataTable.EditorOptions.dropdown;
                 // After this cell editor instance is created,
                 //   setup a click listener on the INPUT[checkbox]
                 //---------
-                editorCreated: function(){
+                createUI: function(){
                     var cbox = this.overlay.get('contentBox');
 
                     this._subscr.push(
@@ -2598,7 +2164,7 @@ Y.DataTable.EditorOptions.combobox = Y.DataTable.EditorOptions.dropdown;
                                 chkopt = this.get('checkboxHash') || { 'true':true, 'false':false },
                                 val    = chkopt[cvalue];
 
-                            if(this._isZeroOr(val)) {
+                            if(Lang.isValue(val)) {
                                 this.saveEditor(val);
                             }
 
@@ -2634,7 +2200,7 @@ Y.DataTable.EditorOptions.combobox = Y.DataTable.EditorOptions.dropdown;
  @public
  **/
 Y.DataTable.EditorOptions.checkbox = {
-    BaseViewClass:  Y.DataTable.BaseCellPopupEditor,
+    BaseViewClass:  PEd,
     name:           'checkbox',
 
     templateObject: {
@@ -2648,7 +2214,7 @@ Y.DataTable.EditorOptions.checkbox = {
         // After this cell editor instance is created,
         //   setup a click listener on the INPUT[checkbox]
         //---------
-        editorCreated: function(){
+        createUI: function(){
             var cbox = this.overlay.get('contentBox');
 
             this._subscr.push(
@@ -2658,7 +2224,7 @@ Y.DataTable.EditorOptions.checkbox = {
                         chkopt = this.get('checkboxHash') || { 'true':true, 'false':false },
                         val    = chkopt[cvalue];
 
-                    if(this._isZeroOr(val)) {
+                    if(Lang.isValue(val)) {
                         this.saveEditor(val);
                     }
 
@@ -2685,3 +2251,4 @@ Y.DataTable.EditorOptions.checkbox = {
         }
     }
 };
+Y.DataTable.BaseCellPopupEditor = PEd;
