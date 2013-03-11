@@ -13,23 +13,23 @@
 <applet code="nano" archive="https://github.com/bestiejs/benchmark.js/raw/v1.0.0/nano.jar" style="display: none;"></applet>
 <script src="https://raw.github.com/bestiejs/benchmark.js/v1.0.0/benchmark.js"></script>
 
-<script src="http://yui.yahooapis.com/3.8.1/build/yui/yui.js"></script>
-<!--script src="../../../../build/yui/yui.js"></script-->
+<!--script src="http://yui.yahooapis.com/3.8.1/build/yui/yui.js"></script-->
+<script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
     combine: false,
     filter : 'raw',
 
     modules: {
-        'base-benchmark': {
-            fullpath: 'base-benchmark.js',
-            requires: ['base']
+        'base-core-benchmark': {
+            fullpath: 'base-core-benchmark.js',
+            requires: ['base-core']
         }
     },
 
     useBrowserConsole: false
 
-}).use('base-benchmark', 'node-base', 'test-console', function (Y) {
+}).use('base-core-benchmark', 'node-base', 'test-console', function (Y) {
 
     var suite = Y.BenchmarkSuite,
         start = Y.one('#start');

@@ -366,7 +366,7 @@
      *           "CustomProperty" : function(property, Receiver, Supplier) {
      *              ...
      *              var triggers = Receiver.CustomProperty.triggers;
-                    Receiver.CustomProperty.triggers = triggers.concat(Supplier.CustomProperty.triggers);
+     *               Receiver.CustomProperty.triggers = triggers.concat(Supplier.CustomProperty.triggers);
      *              ...
      *           }
      *        }
@@ -395,7 +395,8 @@
      * @method create
      * @static
      * @param {Function} name The name of the newly created class. Used to define the NAME property for the new class.
-     * @param {Function} main The base class which the new class should extend. This class needs to be Base or a class derived from base (e.g. Widget).
+     * @param {Function} main The base class which the new class should extend.
+     * This class needs to be Base or a class derived from base (e.g. Widget).
      * @param {Function[]} extensions The list of extensions which will be mixed into the built class.
      * @param {Object} px The set of prototype properties/methods to add to the built class.
      * @param {Object} sx The set of static properties/methods to add to the built class.
@@ -409,11 +410,17 @@
      * <p>Mixes in a list of extensions to an existing class.</p>
      * @method mix
      * @static
-     * @param {Function} main The existing class into which the extensions should be mixed.  The class needs to be Base or a class derived from Base (e.g. Widget)
+     * @param {Function} main The existing class into which the extensions should be mixed.
+     * The class needs to be Base or a class derived from Base (e.g. Widget)
      * @param {Function[]} extensions The set of extension classes which will mixed into the existing main class.
      * @return {Function} The modified main class, with extensions mixed in.
      */
     Base.mix = function(main, extensions) {
+
+        if (main._CACHED_CLASS_DATA) {
+            main._CACHED_CLASS_DATA = null;
+        }
+
         return build(null, main, extensions, null, null, {dynamic:false});
     };
 

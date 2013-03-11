@@ -313,7 +313,7 @@
          * initialization. Returns a disposable object with the attributes defined for
          * the provided class, extracted from the set of all attributes passed in.
          *
-         * @method _filterAttrCfs
+         * @method _filterAttrCfgs
          * @private
          *
          * @param {Function} clazz The class for which the desired attributes are required.
@@ -325,14 +325,53 @@
          * of an object with attribute name/configuration pairs.
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
-            var cfgs = null, attr, attrs = clazz.ATTRS;
+
+            var cfgs = null,
+                cfg,
+                val,
+                subAttr,
+                subAttrs,
+                subAttrPath,
+                attr,
+                attrCfg,
+                filtered = this._filteredAttrs,
+                attrs = clazz.ATTRS;
 
             if (attrs) {
                 for (attr in attrs) {
-                    if (allCfgs[attr]) {
-                        cfgs = cfgs || {};
-                        cfgs[attr] = allCfgs[attr];
-                        allCfgs[attr] = null;
+                    attrCfg = allCfgs[attr];
+
+                    // Using hasOwnProperty, since it's faster (for the 80% case where filtered doesn't have attr) for the majority
+                    // of browsers, FF being the major outlier. http://jsperf.com/in-vs-hasownproperty/6. May revisit.
+                    if (attrCfg && !filtered.hasOwnProperty(attr)) {
+
+                        if (!cfgs) {
+                            cfgs = {};
+                        }
+
+                        // PERF TODO:
+                        // Revisit once all unit tests pass for further optimizations. See if we really need to isolate this.
+                        cfg = cfgs[attr] = _wlmix({}, attrCfg, this._attrCfgHash());
+
+                        filtered[attr] = true;
+
+                        val = cfg.value;
+
+                        if (val && (typeof val === "object")) {
+                            this._cloneDefaultValue(attr, cfg);
+                        }
+
+                        if (allCfgs._subAttrs && allCfgs._subAttrs.hasOwnProperty(attr)) {
+                            subAttrs = allCfgs._subAttrs[attr];
+
+                            for (subAttrPath in subAttrs) {
+                                subAttr = subAttrs[subAttrPath];
+
+                                if (subAttr.path) {
+                                    O.setValue(cfg.value, subAttr.path, subAttr.value);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -379,7 +418,9 @@
          * @private
          */
         _initHierarchyData : function() {
+
             var ctor = this.constructor,
+                cachedClassData = ctor._CACHED_CLASS_DATA,
                 c,
                 i,
                 l,
@@ -387,65 +428,103 @@
                 attrCfgHash,
                 needsAttrCfgHash = !ctor._ATTR_CFG_HASH,
                 nonAttrsCfg,
-                nonAttrs = (this._allowAdHocAttrs) ? {} : null,
+                nonAttrs = {},
                 classes = [],
                 attrs = [];
 
             // Start with `this` instance's constructor.
             c = ctor;
 
-            while (c) {
-                // Add to classes
-                classes[classes.length] = c;
+            if (!cachedClassData) {
 
-                // Add to attributes
-                if (c.ATTRS) {
-                    attrs[attrs.length] = c.ATTRS;
+                while (c) {
+                    // Add to classes
+                    classes[classes.length] = c;
+
+                    // Add to attributes
+                    if (c.ATTRS) {
+                        attrs[attrs.length] = c.ATTRS;
+                    }
+
+                    // Aggregate ATTR cfg whitelist.
+                    if (needsAttrCfgHash) {
+                        attrCfg     = c._ATTR_CFG;
+                        attrCfgHash = attrCfgHash || {};
+
+                        if (attrCfg) {
+                            for (i = 0, l = attrCfg.length; i < l; i += 1) {
+                                attrCfgHash[attrCfg[i]] = true;
+                            }
+                        }
+                    }
+
+                    // Commenting out the if. We always aggregate, since we don't
+                    // know if we'll be needing this on the instance or not.
+                    // if (this._allowAdHocAttrs) {
+                        nonAttrsCfg = c._NON_ATTRS_CFG;
+                        if (nonAttrsCfg) {
+                            for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
+                                nonAttrs[nonAttrsCfg[i]] = true;
+                            }
+                        }
+                    //}
+
+                    c = c.superclass ? c.superclass.constructor : null;
                 }
 
-                // Aggregate ATTR cfg whitelist.
+                // Cache computed `_ATTR_CFG_HASH` on the constructor.
                 if (needsAttrCfgHash) {
-                    attrCfg     = c._ATTR_CFG;
-                    attrCfgHash = attrCfgHash || {};
-
-                    if (attrCfg) {
-                        for (i = 0, l = attrCfg.length; i < l; i += 1) {
-                            attrCfgHash[attrCfg[i]] = true;
-                        }
-                    }
+                    ctor._ATTR_CFG_HASH = attrCfgHash;
                 }
 
-                if (this._allowAdHocAttrs) {
-                    nonAttrsCfg = c._NON_ATTRS_CFG;
-                    if (nonAttrsCfg) {
-                        for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
-                            nonAttrs[nonAttrsCfg[i]] = true;
-                        }
-                    }
-                }
+                cachedClassData = ctor._CACHED_CLASS_DATA = {
+                    classes : classes,
+                    nonAttrs : nonAttrs,
+                    attrs : this._aggregateAttrs(attrs)
+                };
 
-                c = c.superclass ? c.superclass.constructor : null;
             }
 
-            // Cache computed `_ATTR_CFG_HASH` on the constructor.
-            if (needsAttrCfgHash) {
-                ctor._ATTR_CFG_HASH = attrCfgHash;
-            }
-
-            this._classes = classes;
-            this._nonAttrs = nonAttrs;
-            this._attrs = this._aggregateAttrs(attrs);
+            this._classes = cachedClassData.classes;
+            this._attrs = cachedClassData.attrs;
+            this._nonAttrs = cachedClassData.nonAttrs;
         },
 
         /**
          * Utility method to define the attribute hash used to filter/whitelist property mixes for
-         * this class.
+         * this class for iteration performance reasons.
          *
          * @method _attrCfgHash
          * @private
          */
         _attrCfgHash: function() {
             return this.constructor._ATTR_CFG_HASH;
+        },
+
+        /**
+         * This method assumes that the value has already been checked to be an object.
+         * Since it's on a critical path, we don't want to re-do the check.
+         *
+         * @method _cloneDefaultValue
+         * @param {Object} cfg
+         * @private
+         */
+        _cloneDefaultValue : function(attr, cfg) {
+
+            var val = cfg.value,
+                clone = cfg.cloneDefaultValue;
+
+            if (clone === DEEP || clone === true) {
+                Y.log('Cloning default value for attribute:' + attr, 'info', 'base');
+                cfg.value = Y.clone(val);
+            } else if (clone === SHALLOW) {
+                Y.log('Merging default value for attribute:' + attr, 'info', 'base');
+                cfg.value = Y.merge(val);
+            } else if ((clone === undefined && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val)))) {
+                cfg.value = Y.clone(val);
+            }
+            // else if (clone === false), don't clone the static default value.
+            // It's intended to be used by reference.
         },
 
         /**
@@ -463,41 +542,28 @@
          * @return {Object} The aggregate set of ATTRS definitions for the instance
          */
         _aggregateAttrs : function(allAttrs) {
+
             var attr,
                 attrs,
+                subAttrsHash,
                 cfg,
-                val,
                 path,
                 i,
-                clone,
                 cfgPropsHash = this._attrCfgHash(),
                 aggAttr,
                 aggAttrs = {};
 
             if (allAttrs) {
                 for (i = allAttrs.length-1; i >= 0; --i) {
+
                     attrs = allAttrs[i];
 
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            // Protect config passed in
+                            // PERF TODO: Do we need to merge here, since we're merging later in filterAttrCfg
+                            // Should we move this down to only merge if we hit the path or valueFn ifs below?
                             cfg = _wlmix({}, attrs[attr], cfgPropsHash);
-
-                            val = cfg.value;
-                            clone = cfg.cloneDefaultValue;
-
-                            if (val) {
-                                if ( (clone === undefined && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) || clone === DEEP || clone === true) {
-                                    Y.log('Cloning default value for attribute:' + attr, 'info', 'base');
-                                    cfg.value = Y.clone(val);
-                                } else if (clone === SHALLOW) {
-                                    Y.log('Merging default value for attribute:' + attr, 'info', 'base');
-                                    cfg.value = Y.merge(val);
-                                }
-                                // else if (clone === false), don't clone the static default value.
-                                // It's intended to be used by reference.
-                            }
 
                             path = null;
                             if (attr.indexOf(DOT) !== -1) {
@@ -506,15 +572,34 @@
                             }
 
                             aggAttr = aggAttrs[attr];
+
                             if (path && aggAttr && aggAttr.value) {
-                                O.setValue(aggAttr.value, path, val);
+
+                                subAttrsHash = aggAttrs._subAttrs;
+
+                                if (!subAttrsHash) {
+                                    subAttrsHash = aggAttrs._subAttrs = {};
+                                }
+
+                                if (!subAttrsHash[attr]) {
+                                    subAttrsHash[attr] = {};
+                                }
+
+                                subAttrsHash[attr][path.join(DOT)] = {
+                                    value: cfg.value,
+                                    path : path
+                                };
+
                             } else if (!path) {
+
                                 if (!aggAttr) {
                                     aggAttrs[attr] = cfg;
                                 } else {
                                     if (aggAttr.valueFn && VALUE in cfg) {
                                         aggAttr.valueFn = null;
                                     }
+
+                                    // Mix into existing config.
                                     _wlmix(aggAttr, cfg, cfgPropsHash);
                                 }
                             }
@@ -549,6 +634,8 @@
                 attrCfgs = this._getAttrCfgs(),
                 cl = classes.length - 1;
 
+            this._filteredAttrs = {};
+
             for (ci = cl; ci >= 0; ci--) {
 
                 constr = classes[ci];
@@ -582,6 +669,8 @@
                     }
                 }
             }
+
+            this._filteredAttrs = null;
         },
 
         /**
