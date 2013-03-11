@@ -1662,6 +1662,100 @@ var table = new Y.DataTable({
 }).render("#scroll-example");
 });
 </script>
+<h3 id="cellediting">Cell Editing</h3>
+
+<p>
+    Editing of cell contents can be enabled by including either
+    of two cell-editing modules:  <ul>
+        <li>The `datatable-celleditor-inline` module
+        provides an editing box that overlaps the cell being edited so the user
+        perceives it as editing in the table cell itself.
+
+        It includes the following  editors:
+        <ul>
+            <li>inline (default)</li>
+            <li>inlineNumber</li>
+            <li>inlineDate</li>
+            <li>inlineAC (text with auto-complete)</li>
+        </ul></li>
+        <li>   The `datatable-celleditor-popup`
+        module creates an overlay aligned with the cell being edited, but with a potentially
+        larger area, allowing for richer input widgets.
+
+        It includes the following  editors:
+        <ul>
+            <li>text (default)</li>
+            <li>textarea</li>
+            <li>checkbox</li>
+            <li>radio</li>
+            <li>dropdown</li>
+            <li>autocomplete</li>
+            <li>calendar</li>
+            <li>date</li>
+            <li>number</li>
+        </ul></li>
+
+    </ul>
+    Neither of these modules are included in the `datatable` rollup module,
+    so they <strong>must</strong> be included separately.
+</p>
+
+<h4 id="celleditor-config">Cell editor configuration</h4>
+
+<p>
+    After including either of the cell-editing modules, editing is enabled on each individual
+    datatable by setting the `editable` attribute in the datatable configuration.
+    All cells in the table become editable unless explicitly disabled in the column
+    configuration by setting the `editable` configuration attribute to `false`.
+</p>
+<p>
+    Specific editing widgets can be specified by setting the `editor` property
+    for each column to any of the named editors listed above.
+    If no editor is specified then the default editor is used
+    which is a plain input box either in-line or in a popup.
+    The default editor can be changed by setting
+    the `defaultEditor` datatable attribute to any of the editor names provided.
+    The editor will open with the action specified in the `editorOpenAction`
+    which defaults to `dblclick`.
+</p>
+```
+var table = new Y.DataTable({
+    columns: [
+        {key: 'id', editable: false},
+        {key: 'name'},
+        {key: 'description', editor: 'textarea'}
+    ],
+    data: [ ... ],
+    editable: true,
+    editorOpenAction: 'click'
+}).render('#ce');
+```
+<p>
+In the datatable above, editing has been globally enabled except for the column `id`
+where it has been explicitly disabled.  The `description` column will use the
+`textarea` pop-up cell editor while the `name` column will use the default,
+single-line input box.  The editor will open by simply clicking on the cell.
+</p>
+<p>
+Further options can be specified in any of the columns as properties in the
+`editorConfig` object.
+</p>
+```
+{key: 'date_of_claim', editor: 'inlineDate', editorConfig: {dateformat: '%Y-%m-%d'}}
+```
+<h4 id="celleditor-navigation">Navigation</h4>
+
+<p>
+The editor provides keyboard navigation in between the editing cells by using the
+arrow keys along with the `ctrl` key.  It will also move right and left by using the
+`tab` and shift-`tab` (backtab) keys.
+</p>
+
+<p>
+The edited values will be saved when the Enter key is pressed, except in some
+editors such as `textarea` where a `Save` button is explicitly provided.
+The `Esc` key will always cancel editing.
+</p>
 
 <h2 id="events">DataTable Events</h2>
 
