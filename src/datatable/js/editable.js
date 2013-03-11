@@ -886,7 +886,7 @@ Y.mix( DtEditable.prototype, {
         //
         if(BaseViewClass){
             conf_obj.hostDT = this;
-            editorInstance = new BaseViewClass(conf_obj);
+            editorInstance = new BaseViewClass(conf_obj).render();
 
             // make the one of this editor's targets ...
             editorInstance.addTarget(this);

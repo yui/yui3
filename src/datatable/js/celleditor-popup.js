@@ -186,11 +186,11 @@ PEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
      * creating the internal HTML content within the Overlay (using a Template-based
      * method)
      *
-     * @method _defCreateUIFn
+     * @method _defRenderFn
      * @return {Y.Overlay} Overlay instance for this View
      * @private
      */
-    _defCreateUIFn: function(){
+    _defRenderFn: function(){
        var ocfg  = this.get('overlayConfig'),
            tobj  = this.get('templateObject'),
            overlay;
@@ -308,7 +308,7 @@ PEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
     //
     //  Create the Overlay
     //
-        html = Y.Lang.sub(this.template,{
+        html = Y.Lang.sub(this.get('template') ,{
             classOverlay:   this._classOverlay+' '
         });
 

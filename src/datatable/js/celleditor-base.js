@@ -64,54 +64,39 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @chainable
     @protected
     */
-    initializer: function (config) {
-        /**
-        Event fired when the inline editor has been initialized and ready for usage.
-
-        This event can be listened to in order to add additional content or widgets, etc onto
-        the View's container.
-
-        @event createUI
-        @param config {Object} The configuration object as received by the `initializer`
-        */
-        this.publish('createUI', {defaultFn: this._defCreateUIFn});
-        this.fire('createUI', config);
-        this._bindUI();
-    },
-
-    /**
-    @method destructor
-    @protected
-    */
-    destructor: function () {
-        this.cancelEditor();
-        this._unbindUI();
-        this._destroyContainer();
-    },
-
-
-    /**
-    Processes the initial container for this View, sets up the HTML content
-    and creates a listener for positioning changes.
-
-    To be defined by the subclass.
-
-    @method _defCreateUIFn
-    @private
-    */
-    _defCreateUIFn: function() {
-
-    },
-
-    /**
-    Adds a listener to this editor instance to reposition based on "xy" attribute changes.
-
-    @method _bindUI
-    @private
-    */
-    _bindUI: function () {
-
+    initializer: function () {
         this.publish({
+            /**
+            Event fired when the inline editor has been initialized and ready for usage.
+
+            This event can be listened to in order to add additional content or widgets, etc onto
+            the View's container.
+
+            @event render
+            @param config {Object} The configuration object as received by the `initializer`
+            */
+            render: {
+                defaultFn: this._defRenderFn
+            },
+
+            /**
+            Event fired when the cell editor is displayed and becomes visible.
+
+            Implementers may listen for this event if they have configured complex View's, that include
+            other widgets or components, to update their UI upon displaying of the view.
+
+            @event show
+            @param {Object} rtn Returned object
+              @param {Node} rtn.td TD Node instance of the calling editor
+              @param {Node} rtn.inputNode The editor's INPUT / TEXTAREA Node
+              @param {String|Number|Date} rtn.value The current "value" setting
+              @param {Object} rtn.cell object
+            */
+
+            show: {
+                defaultFn: this._defShowFn
+            },
+
             /**
             Event that is fired when the user has finished editing the View's cell contents (signified by either
             a keyboard RTN entry or "Save" button, etc...).
@@ -142,26 +127,51 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
             */
             cancel: {
                 defaultFn: this._defCancelFn
-            },
-
-            /**
-            Event fired when the cell editor is displayed and becomes visible.
-
-            Implementers may listen for this event if they have configured complex View's, that include
-            other widgets or components, to update their UI upon displaying of the view.
-
-            @event show
-            @param {Object} rtn Returned object
-              @param {Node} rtn.td TD Node instance of the calling editor
-              @param {Node} rtn.inputNode The editor's INPUT / TEXTAREA Node
-              @param {String|Number|Date} rtn.value The current "value" setting
-              @param {Object} rtn.cell object
-            */
-
-            show: {
-                defaultFn: this._defShowFn
             }
         });
+
+    },
+
+    /**
+    @method destructor
+    @protected
+    */
+    destructor: function () {
+        this.cancelEditor();
+        this._unbindUI();
+        this._destroyContainer();
+    },
+
+    /**
+    @method render
+    */
+    render: function () {
+        this.fire('render');
+        this._bindUI();
+        return this;
+    },
+
+    /**
+    Processes the initial container for this View, sets up the HTML content
+    and creates a listener for positioning changes.
+
+    To be defined by the subclass.
+
+    @method _defRenderFn
+    @private
+    */
+    _defRenderFn: function() {
+
+    },
+
+    /**
+    Adds a listener to this editor instance to reposition based on "xy" attribute changes.
+
+    @method _bindUI
+    @private
+    */
+    _bindUI: function () {
+
 
         this._subscr = [
             // This is here to support "scrolling" of the underlying DT ...

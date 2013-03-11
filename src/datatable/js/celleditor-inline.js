@@ -131,10 +131,10 @@ var IEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
     /**
      * Processes the initial container for this View, sets up the HTML content
      *  and creates a listener for positioning changes
-     * @method _defCreateUIFn
+     * @method _defRenderFn
      * @private
      */
-    _defCreateUIFn: function() {
+    _defRenderFn: function() {
         var container = this.get('container'),
             html      = Y.Lang.sub(this.template, {cssInput:this._cssInput});
 
