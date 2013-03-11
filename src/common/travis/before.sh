@@ -16,6 +16,6 @@ if [ -n "$TRAVIS" ]; then
     echo "building entire library with yogi";
     yogi build --no-lint --cache --no-coverage
     cd yui;
-else 
-    make npm
 fi
+
+make npm
