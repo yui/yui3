@@ -12,8 +12,8 @@ YUI.add('event-custom-benchmark', function (Y) {
 
    ET10.publish("fooChange", {
       queuable:false,
-      defaultTargetOnly: true, 
-      defaultFn:function() {}, 
+      defaultTargetOnly: true,
+      defaultFn:function() {},
       silent:true
    });
 
@@ -28,8 +28,8 @@ YUI.add('event-custom-benchmark', function (Y) {
 
    ET2.publish("fooChange", {
       queuable:false,
-      defaultTargetOnly: true, 
-      defaultFn:function() {}, 
+      defaultTargetOnly: true,
+      defaultFn:function() {},
       silent:true
    });
 
@@ -42,8 +42,8 @@ YUI.add('event-custom-benchmark', function (Y) {
 
    var ET_CFG = {
          queuable:false,
-         defaultTargetOnly: true, 
-         defaultFn:function() {}, 
+         defaultTargetOnly: true,
+         defaultFn:function() {},
          silent:true
       };
 
@@ -100,8 +100,8 @@ YUI.add('event-custom-benchmark', function (Y) {
 
       et.publish("fooChange", {
          queuable:false,
-         defaultTargetOnly: true, 
-         defaultFn:function() {}, 
+         defaultTargetOnly: true,
+         defaultFn:function() {},
          silent:true
       });
 
@@ -119,8 +119,8 @@ YUI.add('event-custom-benchmark', function (Y) {
 
       et.publish("fooChange", {
          queuable:false,
-         defaultTargetOnly: true, 
-         defaultFn:function() {}, 
+         defaultTargetOnly: true,
+         defaultFn:function() {},
          silent:true
       });
 
