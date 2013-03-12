@@ -1,41 +1,42 @@
-YUI.add('requests-tests', function(Y) {
+YUI.add('requests-tests', function (Y) {
 
     var suite = new Y.Test.Suite('IO Requests Suite');
+
+    function resume(test, handler) {
+        return function () {
+            var args = Y.Array(arguments);
+
+            test.resume(function () {
+                handler.apply(test, args);
+            });
+        };
+    }
 
     suite.add(new Y.Test.Case({
         name: 'HTTP GET',
 
         'testGET': function() {
-            var t = this;
-            this.handler = function() {
-                Y.Assert.areSame(200, t.status);
-            };
+            function handler(tx, res, extra) {
+                Y.Assert.areSame(200, res.status);
+            }
 
             Y.io(Y.IO.URLS.get, {
-                on: { success: function(i, o, a) {
-                        t.status = o.status;
-                        t.resume(t.handler);
-                    }
-                }
+                on: {success: resume(this, handler)}
             });
 
-            this.wait(null, 1000);
+            this.wait(1000);
         },
 
         'testGETWithData': function() {
-            var t = this, cb;
-            this.handler = function() {
-                Y.Assert.areSame('hello=world&foo=bar', t.response);
-            };
-            cb = {
-                on: { success: function(id, o, a) {
-                        t.response = o.responseText;
-                        t.resume(t.handler);
-                    }
-                }
-            };
-            Y.io(Y.IO.URLS.get + '?hello=world&foo=bar', cb);
-            this.wait(null, 1000);
+            function handler(tx, res, extra) {
+                Y.Assert.areSame('hello=world&foo=bar', res.responseText);
+            }
+
+            Y.io(Y.IO.URLS.get + '?hello=world&foo=bar', {
+                on: {success: resume(this, handler)}
+            });
+
+            this.wait(1000);
         }
     }));
 
@@ -43,20 +44,16 @@ YUI.add('requests-tests', function(Y) {
         name: 'HTTP DELETE',
 
         'testDELETEWithData': function() {
-            var t = this, cb;
-            this.handler = function() {
-                Y.Assert.areSame('hello=world&foo=bar', t.response);
-            };
-            cb = {
+            function handler(tx, res, extra) {
+                Y.Assert.areSame('hello=world&foo=bar', res.responseText);
+            }
+
+            Y.io(Y.IO.URLS['delete'] + '?hello=world&foo=bar', {
                 method: 'DELETE',
-                on: { success: function(id, o, a) {
-                        t.response = o.responseText;
-                        t.resume(t.handler);
-                    }
-                }
-            };
-            Y.io(Y.IO.URLS['delete'] + '?hello=world&foo=bar', cb);
-            this.wait(null, 1000);
+                on    : {success: resume(this, handler)}
+            });
+
+            this.wait(1000);
         }
     }));
 
@@ -64,29 +61,26 @@ YUI.add('requests-tests', function(Y) {
         name: 'HTTP HEAD',
 
         'testHEAD': function() {
-            var t = this;
-            this.handler = function() {
-                if (t.headers) {
+            function handler(tx, res, extra) {
+                var headers = res.getAllResponseHeaders();
+
+                if (headers) {
                     // IE, Safari, Opera all return HTTP response headers
-                    Y.Assert.isString(t.headers);
+                    Y.Assert.isString(headers);
                 }
                 else {
                     // Firefox 3 does not return anything except an HTTP
                     // status of 0.
-                    Y.Assert.areSame(0, t.status);
+                    Y.Assert.areSame(0, res.status);
                 }
-            };
+            }
 
             Y.io(Y.IO.URLS.get, {
                 method: 'HEAD',
-                on: { complete: function(i, o, a) {
-                        t.status = o.status;
-                        t.headers = o.getAllResponseHeaders();
-                        t.resume(t.handler);
-                    }
-                }
+                on    : {complete: resume(this, handler)}
             });
-            this.wait(null, 1000);
+
+            this.wait(1000);
         }
     }));
 
@@ -95,24 +89,21 @@ YUI.add('requests-tests', function(Y) {
         name: 'HTTP OPTIONS',
 
         'testOPTIONS': function() {
-            var t = this;
-            this.handler = function() {
-                if (t.headers) {
-                    Y.Assert.areSame(200, t.status);
-                    Y.Assert.isString(t.headers);
+            function handler(tx, res, extra) {
+                var headers = res.getAllResponseHeaders();
+
+                if (headers) {
+                    Y.Assert.areSame(200, res.status);
+                    Y.Assert.isString(headers);
                 }
-            };
+            }
 
             Y.io(Y.IO.URLS.get, {
                 method: 'OPTIONS',
-                on: { complete: function(i, o, a) {
-                        t.status = o.status;
-                        t.headers = o.getAllResponseHeaders();
-                        t.resume(t.handler);
-                    }
-                }
+                on    : {complete: resume(this, handler)}
             });
-            this.wait(null, 1000);
+
+            this.wait(1000);
         }
     }));
 
@@ -120,43 +111,39 @@ YUI.add('requests-tests', function(Y) {
         name: "HTTP POST",
 
         'testPOST': function() {
-            var t = this;
-            this.handler = function() {
-                Y.Assert.areSame(200, t.status);
-                Y.Assert.areSame('hello=world&foo=bar', t.response, 'POST message and response do not match.');
-            };
+            function handler(tx, res, extra) {
+                Y.Assert.areSame(200, res.status);
+                Y.Assert.areSame('hello=world&foo=bar', res.responseText, 'POST message and response do not match.');
+            }
 
             Y.io(Y.IO.URLS.post, {
                 method: 'POST',
-                data: 'hello=world&foo=bar',
-                on: { success: function(i, o, a) {
-                        t.response = o.responseText;
-                        t.status = o.status;
-                        t.resume(t.handler);
-                    }
-                }
+                data  : 'hello=world&foo=bar',
+                on    : {success: resume(this, handler)}
             });
-            this.wait(null, 1000);
+
+            this.wait(1000);
         },
 
         'testPOSTWithNoData': function() {
-            var t = this;
-            this.handler = function() {
-                Y.Assert.areSame(200, t.status);
-                Y.Assert.areSame(0, parseInt(t.response, 0), 'POST message and response do not match.');
+            function handler(tx, res, extra) {
+                var status = res.status;
 
-            };
+                // IE: It'll never fail to show you its dumb parts!
+                if (status === 1223) {
+                    status = 204;
+                }
+
+                Y.Assert.areSame(204, status);
+                Y.Assert.areSame('', res.responseText, 'POST message and response do not match.');
+            }
 
             Y.io(Y.IO.URLS.post, {
                 method: 'POST',
-                on: { success: function(i, o, a) {
-                        t.response =+ o.responseText;
-                        t.status = o.status;
-                        t.resume(t.handler);
-                    }
-                }
+                on    : {success: resume(this, handler)}
             });
-            this.wait(null, 1500);
+
+            this.wait(1500);
         }
     }));
 
