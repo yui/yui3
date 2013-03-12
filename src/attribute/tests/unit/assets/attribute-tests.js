@@ -2007,6 +2007,42 @@ YUI.add('attribute-tests', function(Y) {
             h.set("Z", "MYZ");
 
             Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+        },
+
+        testSetterWithOpts : function() {
+            var h = this.createHost();
+
+
+            h.addAttr("tri", {
+                setter: function(val, name, opts) {
+                    opts = opts || {};
+                    if (opts.src === 'internal') {
+                        if (parseInt(val,10) == val && val >= 0 && val <=2) {
+                            return val;
+                        } else {
+                            return Y.AttributeCore.INVALID_VALUE;
+                        }
+                    } else {
+                        return (val?2:0)
+                    }
+                }
+            });
+
+            h.set("tri", "whatever");
+            Y.Assert.areEqual(2, h.get("tri"),"1");
+            h.set("tri", false);
+            Y.Assert.areEqual(0, h.get("tri"),"2");
+            h.set("tri", 1);
+            Y.Assert.areEqual(2, h.get("tri"),"3");
+            h.set("tri", 1, {src: 'internal'});
+            Y.Assert.areEqual(1, h.get("tri"),"4");
+            h.set("tri", "whatever", {src: 'internal'});
+            Y.Assert.areEqual(1, h.get("tri"),"5");
+            h.set("tri", false);
+            Y.Assert.areEqual(0, h.get("tri"),"6");
+
+
+
         }
     };
 
