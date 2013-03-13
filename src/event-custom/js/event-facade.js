@@ -139,22 +139,22 @@ CEProto.fireComplex = function(args) {
         self = this, host = self.host || self, next, oldbubble,
         hasPotentialSubscribers;
 
-    hasPotentialSubscribers = this.hasSubs() || host._yuievt.hasTargets || this.broadcast;
+    if (self.stack) {
+        // queue this event if the current item in the queue bubbles
+        if (self.queuable && self.type !== self.stack.next.type) {
+            self.log('queue ' + self.type);
+            self.stack.queue.push([self, args]);
+            return true;
+        }
+    }
+
+    hasPotentialSubscribers = self.hasSubs() || host._yuievt.hasTargets || self.broadcast || self.stack;
 
     self.target = self.target || host;
     self.currentTarget = host;
     self.details = args.concat();
 
     if (hasPotentialSubscribers) {
-
-        if (self.stack) {
-            // queue this event if the current item in the queue bubbles
-            if (self.queuable && self.type !== self.stack.next.type) {
-                self.log('queue ' + self.type);
-                self.stack.queue.push([self, args]);
-                return true;
-            }
-        }
 
         es = self.stack || {
            // id of the first event in the stack
@@ -173,11 +173,13 @@ CEProto.fireComplex = function(args) {
 
         subs = self.getSubs();
 
+        // State of this event fire, starts from the same event in the stack, or gets reset if different
         self.stopped = (self.type !== es.type) ? 0 : es.stopped;
         self.prevented = (self.type !== es.type) ? 0 : es.prevented;
 
         if (self.stoppedFn) {
 
+            // PERF TODO: Replace with callback
             events = new Y.EventTarget({
                 fireOnce: true,
                 context: host
@@ -195,7 +197,7 @@ CEProto.fireComplex = function(args) {
 
         ef = self._getFacade(args);
 
-        if (Y.Lang.isObject(args[0])) {
+        if (typeof args[0] === "object") {
             args[0] = ef;
         } else {
             args.unshift(ef);
@@ -292,16 +294,20 @@ CEProto.fireComplex = function(args) {
 
     } else {
 
-        ef = self._getFacade(args);
+        if (self.defaultFn) {
 
-        if (Y.Lang.isObject(args[0])) {
-            args[0] = ef;
-        } else {
-            args.unshift(ef);
-        }
+            ef = self._getFacade(args);
 
-        if (self.defaultFn && ((!self.defaultTargetOnly) || host === ef.target)) {
-            self.defaultFn.apply(host, args);
+            if ((!self.defaultTargetOnly) || (host === ef.target)) {
+
+                if (Y.Lang.isObject(args[0])) {
+                    args[0] = ef;
+                } else {
+                    args.unshift(ef);
+                }
+
+                self.defaultFn.apply(host, args);
+            }
         }
 
         return ret;
@@ -465,19 +471,29 @@ ETProto.removeTarget = function(o) {
  */
 ETProto.bubble = function(evt, args, target, es) {
 
-    var targs = this._yuievt.targets, ret = true,
-        t, type = evt && evt.type, ce, i, bc, ce2,
+    var targs = this._yuievt.targets,
+        ret = true,
+        t,
+        ce,
+        i,
+        bc,
+        ce2,
+        type = evt && evt.type,
         originalTarget = target || (evt && evt.target) || this,
         oldbubble;
 
     if (!evt || ((!evt.stopped) && targs)) {
 
-        // Y.log('Bubbling ' + evt.type);
         for (i in targs) {
             if (targs.hasOwnProperty(i)) {
+
                 t = targs[i];
+
                 ce = t.getEvent(type, true);
-                ce2 = t.getSibling(type, ce);
+
+                if (t._hasSiblings) {
+                    ce2 = t.getSibling(type, ce);
+                }
 
                 if (ce2 && !ce) {
                     ce = t.publish(type);
