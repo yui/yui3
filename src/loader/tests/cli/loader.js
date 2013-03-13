@@ -2,7 +2,6 @@
 * This file was assembled by ../scripts/build_loader_tests.js
 */
 
-
 var path = require('path'),
     YUI = require(path.join(__dirname, '../../../../', 'build/yui/yui.js')).YUI;
     Y = YUI(),
