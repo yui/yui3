@@ -309,6 +309,10 @@ ET.prototype = {
         if (!handle) {
             ce = yuievt.events[type] || this.publish(type);
             handle = ce._on(fn, context, (arguments.length > 3) ? nativeSlice.call(arguments, 3) : null, (after) ? 'after' : true);
+
+            if (type.indexOf("*:") !== -1) {
+                this._hasSiblings = true;
+            }
         }
 
         if (detachcategory) {
@@ -687,7 +691,10 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         t = (pre) ? _getType(t, pre) : t;
 
         ce = this.getEvent(t, true);
-        ce2 = this.getSibling(t, ce);
+
+        if (this._hasSiblings) {
+            ce2 = this.getSibling(t, ce);
+        }
 
         if (ce2 && !ce) {
             ce = this.publish(t);
