@@ -153,7 +153,7 @@
                 state.add(attrName, PUBLISHED, true);
             }
 
-            facade = (opts) ? Y.merge(opts, {_opts: opts}) : host._ATTR_E_FACADE;
+            facade = (opts) ? Y.merge(opts) : host._ATTR_E_FACADE;
 
             // Not using the single object signature for fire({type:..., newVal:...}), since
             // we don't want to override type. Changed to the fire(type, {newVal:...}) signature.
@@ -165,7 +165,7 @@
             facade.newVal = newVal;
 
             // host.fire(facade);
-            host.fire(eventName, facade);
+            host.fire(eventName, facade, opts);
         },
 
         /**
@@ -176,7 +176,7 @@
          * @param {EventFacade} e The event object for attribute change events.
          */
         _defAttrChangeFn : function(e) {
-            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, e._opts)) {
+            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, e.details[1])) {
                 /*jshint maxlen:200*/
                 Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
                 /*jshint maxlen:150*/
