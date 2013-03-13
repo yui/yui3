@@ -1,3 +1,7 @@
+    /*For log lines*/
+    /*jshint maxlen:200*/
+
+
     /**
      * The attribute module provides an augmentable Attribute implementation, which
      * adds configurable attributes and attribute change events to the class being
@@ -137,10 +141,8 @@
             if (!state.get(attrName, PUBLISHED)) {
 
                 evtCfg = {
-                    queuable:false,
                     defaultTargetOnly: true,
-                    defaultFn:host._defAttrChangeFn,
-                    silent:true
+                    defaultFn:host._defAttrChangeFn
                 };
 
                 broadcast = state.get(attrName, BROADCAST);
@@ -177,9 +179,8 @@
          */
         _defAttrChangeFn : function(e) {
             if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, e.opts)) {
-                /*jshint maxlen:200*/
                 Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
-                /*jshint maxlen:150*/
+
                 // Prevent "after" listeners from being invoked since nothing changed.
                 e.stopImmediatePropagation();
             } else {
