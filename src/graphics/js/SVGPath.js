@@ -9,7 +9,7 @@
  * @extends SVGShape
  * @constructor
  */
-SVGPath = function(cfg)
+SVGPath = function()
 {
 	SVGPath.superclass.constructor.apply(this, arguments);
 };
