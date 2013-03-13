@@ -165,7 +165,7 @@
             facade.newVal = newVal;
 
             // host.fire(facade);
-            host.fire(eventName, facade);
+            host.fire(eventName, facade, opts);
         },
 
         /**
@@ -176,7 +176,7 @@
          * @param {EventFacade} e The event object for attribute change events.
          */
         _defAttrChangeFn : function(e) {
-            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, e.opts)) {
+            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, e.details[1])) {
                 /*jshint maxlen:200*/
                 Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
                 /*jshint maxlen:150*/

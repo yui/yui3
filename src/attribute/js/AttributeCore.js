@@ -478,7 +478,6 @@
                 }
 
                 if (allowSet) {
-                    opts = opts || {};
                     if (!this._fireAttrChange || initializing) {
                         this._setAttrVal(name, strPath, currVal, val, opts);
                     } else {
@@ -631,10 +630,12 @@
 
                         if (retVal === INVALID_VALUE) {
                             if (initializing) {
+                /*jshint maxlen:200*/
                                 Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal + ', initializing to default value', 'warn', 'attribute');
                                 newVal = cfg.defaultValue;
                             } else {
                                 Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
+                /*jshint maxlen:150*/
                                 allowSet = false;
                             }
                         } else if (retVal !== undefined){
