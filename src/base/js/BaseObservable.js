@@ -76,7 +76,6 @@
              * refers to the configuration object passed to the constructor.
              */
             this.publish(INIT, {
-                queuable:false,
                 fireOnce:true,
                 defaultTargetOnly:true,
                 defaultFn:this._defInitFn
@@ -159,7 +158,6 @@
              * @param {EventFacade} e Event object
              */
             this.publish(DESTROY, {
-                queuable:false,
                 fireOnce:true,
                 defaultTargetOnly:true,
                 defaultFn: this._defDestroyFn
