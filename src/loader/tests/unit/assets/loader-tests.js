@@ -37,7 +37,7 @@ YUI.add('loader-tests', function(Y) {
                 'test external lang 1': Y.UA.nodejs,
                 'testing fetchCSS false': !Y.config.win,
                 'testing duplicate CSS loading': !Y.config.win,
-                'test: mojito loader calculate bleeding over': !(typeof JSON === 'undefined')
+                'test: mojito loader calculate bleeding over': (Y.UA.ie < 9)
             }
         },
         'test: skin overrides double loading': function() {
