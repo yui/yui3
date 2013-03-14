@@ -310,6 +310,7 @@ ET.prototype = {
             ce = yuievt.events[type] || this.publish(type);
             handle = ce._on(fn, context, (arguments.length > 3) ? nativeSlice.call(arguments, 3) : null, (after) ? 'after' : true);
 
+            // TODO: More robust regex, accounting for category
             if (type.indexOf("*:") !== -1) {
                 this._hasSiblings = true;
             }
@@ -680,7 +681,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
     fire: function(type) {
 
         var typeIncluded = typeof type === "string",
-            t = (typeIncluded) ? type : (type && type.type),
+            t = type,
             yuievt = this._yuievt,
             pre = yuievt.config.prefix,
             ret,
@@ -688,16 +689,22 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             ce2,
             args = (typeIncluded) ? nativeSlice.call(arguments, 1) : arguments;
 
-        t = (pre) ? _getType(t, pre) : t;
+        if (!typeIncluded) {
+            t = (type && type.type);
+        }
 
-        ce = this.getEvent(t, true);
+        if (pre) {
+            t = _getType(t, pre);
+        }
+
+        ce = yuievt.events[t];
 
         if (this._hasSiblings) {
             ce2 = this.getSibling(t, ce);
-        }
 
-        if (ce2 && !ce) {
-            ce = this.publish(t);
+            if (ce2 && !ce) {
+                ce = this.publish(t);
+            }
         }
 
         this._monitor('fire', (ce || t), {
@@ -713,7 +720,10 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             // otherwise there is nothing to be done
             ret = true;
         } else {
-            ce.sibling = ce2;
+
+            if (ce2) {
+                ce.sibling = ce2;
+            }
             ret = ce.fire.apply(ce, args);
         }
 
@@ -749,6 +759,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     getEvent: function(type, prefixed) {
         var pre, e;
+
         if (!prefixed) {
             pre = this._yuievt.config.prefix;
             type = (pre) ? _getType(type, pre) : type;
