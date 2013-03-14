@@ -1,7 +1,7 @@
 Simple YUI Change History
 =========================
 
-@VERSION@
+3.9.0
 -----
 
 * Added event-base-ie to restore IE8- support. [#2532508]

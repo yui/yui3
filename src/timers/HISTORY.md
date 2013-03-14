@@ -1,7 +1,7 @@
 Timers
 ======
 
-@VERSION@
+3.9.0
 -----
 
-* Initial module release.
+* Initial release.

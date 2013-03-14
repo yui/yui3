@@ -720,6 +720,7 @@ SVGDrawing.prototype = {
                     case "L" :
                     case "l" :
                     case "M" :
+                    case "m" :
                     case "Q" :
                     case "q" :
                         for(i = 2; i < len; ++i)

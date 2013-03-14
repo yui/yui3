@@ -1,7 +1,7 @@
-CSSNormalize Change History
-===========================
+CSS Normalize Change History
+============================
 
-@VERSION@
+3.9.0
 -----
 
 * Initial release.
