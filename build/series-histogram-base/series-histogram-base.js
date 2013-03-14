@@ -40,7 +40,6 @@ Histogram.prototype = {
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
-            type = this.get("type"),
             seriesTypeCollection = this.get("seriesTypeCollection"),
             seriesLen = seriesTypeCollection.length || 0,
             seriesSize = 0,
@@ -78,7 +77,7 @@ Histogram.prototype = {
         {
             borderColors = style.border.color.concat();
         }
-        if(this.get("direction") == "vertical")
+        if(this.get("direction") === "vertical")
         {
             setSizeKey = "height";
             calculatedSizeKey = "width";
