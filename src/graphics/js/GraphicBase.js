@@ -144,7 +144,7 @@ var SETTER = "setter",
                 getter = attrConfig[attr].getter;
                 if(getter)
                 {
-                    if(typeof getter == STR)
+                    if(typeof getter === STR)
                     {
                         return host[getter].apply(host);
                     }
@@ -165,9 +165,10 @@ var SETTER = "setter",
          * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
          * the name param.
          */
-        set: function(attr, val)
+        set: function()
         {
-            var i;
+            var attr = arguments[0],
+                i;
             if(Y_LANG.isObject(attr))
             {
                 for(i in attr)
@@ -206,7 +207,7 @@ var SETTER = "setter",
 				if(setter)
 				{
 					args = [val];
-					if(typeof setter == STR)
+					if(typeof setter === STR)
 					{
 						val = host[setter].apply(host, args);
 					}
