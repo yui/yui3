@@ -569,6 +569,11 @@ ETProto.bubble = function(evt, args, target, es) {
 
                     ce.stack = es;
 
+                    // TODO: See what's getting in the way of changing this to use
+                    // the more performant ce._fire(args || evt.details || []).
+
+                    // Something in Widget Parent/Child tests is not happy if we
+                    // change it - maybe evt.details related?
                     ret = ret && ce.fire.apply(ce, args || evt.details || []);
 
                     ce.broadcast = bc;

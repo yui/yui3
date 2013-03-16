@@ -723,10 +723,12 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             }
         }
 
-        // PERF TODO: Wrap with 'if'
-        this._monitor('fire', (ce || t), {
-            args: args
-        });
+        // PERF: trying to avoid function call, since this is a critical path
+        if ((etConfig.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
+            this._monitor('fire', (ce || t), {
+                args: args
+            });
+        }
 
         // this event has not been published or subscribed to
         if (!ce) {

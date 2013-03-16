@@ -632,11 +632,11 @@ Y.CustomEvent.prototype = {
      */
     fire: function() {
 
-        // Fastest way to currently go from arguments to arrays
+        // push is the fastest way to go from arguments to arrays
+        // for most browsers currently
         // http://jsperf.com/push-vs-concat-vs-slice/2
 
         var args = [];
-
         args.push.apply(args, arguments);
 
         return this._fire(args);
