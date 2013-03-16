@@ -26,7 +26,7 @@ Y.extend(CanvasPieSlice, Y.CanvasShape, {
 	 * @private
 	 * @method _updateHandler
 	 */
-	_draw: function(e)
+	_draw: function()
 	{
         var x = this.get("cx"),
             y = this.get("cy"),

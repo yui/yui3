@@ -573,6 +573,16 @@ treeSuite.add(new Y.Test.Case({
         this.tree.clear(null, {silent: true});
     },
 
+    'clear() should pass along a custom `src`': function () {
+        this.tree.once('clear', function (e) {
+            fired = true;
+            Assert.areSame('foo', e.src, 'src should be set');
+        });
+
+        this.tree.clear(null, {src: 'foo'});
+        Assert.isTrue(fired, 'event should fire');
+    },
+
     'destroyNode() should fire a `remove` event': function () {
         var node = this.tree.children[0],
             fired;
@@ -593,6 +603,19 @@ treeSuite.add(new Y.Test.Case({
         });
 
         this.tree.destroyNode(node, {silent: true});
+    },
+
+    'destroyNode() should pass along a custom `src`': function () {
+        var node = this.tree.children[0],
+            fired;
+
+        this.tree.once('remove', function (e) {
+            fired = true;
+            Assert.areSame('foo', e.src, 'src should be set');
+        });
+
+        this.tree.destroyNode(node, {src: 'foo'});
+        Assert.isTrue(fired, 'event should fire');
     },
 
     'prependNode() should fire an `add` event with src "prepend"': function () {
@@ -684,6 +707,20 @@ treeSuite.add(new Y.Test.Case({
         });
 
         this.tree.removeNode(this.tree.children[1], {silent: true});
+    },
+
+    'removeNode() should pass along a custom `src`': function () {
+        var node = this.tree.children[1],
+            test = this,
+            fired;
+
+        this.tree.once('remove', function (e) {
+            fired = true;
+            Assert.areSame('foo', e.src, 'src should be set');
+        });
+
+        this.tree.removeNode(node, {src: 'foo'});
+        Assert.isTrue(fired, 'event should fire');
     },
 
     '`add` event should be preventable': function () {
