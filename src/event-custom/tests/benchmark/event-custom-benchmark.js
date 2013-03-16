@@ -48,8 +48,14 @@ YUI.add('event-custom-benchmark', function (Y) {
       };
 
    suite.add('Publish', function () {
-      ETPUBLISH.publish("fooChange", ET_CFG);
+
+      var et = new Y.EventTarget({
+         emitFacade:true
+      });
+
+      et.publish("fooChange", ET_CFG);
    });
+
 
    suite.add('Fire - 2 listeners', function () {
       ET2.fire("fooChange");
@@ -134,29 +140,44 @@ YUI.add('event-custom-benchmark', function (Y) {
 
    suite.add('Publish - 10 different events', function () {
 
+      var et = new Y.EventTarget({
+         emitFacade:true
+      });
+
       for (var i = 0; i < 10; i++) {
-         ET.publish("fooChange" + i, ET_CFG);
+         et.publish("fooChange" + i, ET_CFG);
       }
 
    });
 
    suite.add('Fire - 10 different events, no listeners', function () {
 
+      var et = new Y.EventTarget({
+         emitFacade:true
+      });
+
       for (var i = 0; i < 10; i++) {
-         ET.fire("fooChange" + i);
+         et.fire("fooChange" + i);
       }
 
    });
 
    suite.add('Subscribe + Fire - 10 different events', function () {
 
+      var onListener = function() {},
+          afterListener = function() {};
+
+      var et = new Y.EventTarget({
+         emitFacade:true
+      });
+
       for (var i = 0; i < 10; i++) {
-         ET.on("fooChange" + i, function() {});
-         ET.after("fooChange" + i, function() {});
+         et.on("fooChange" + i, onListener);
+         et.after("fooChange" + i, afterListener);
       }
 
       for (i = 0; i < 10; i++) {
-         ET.fire("fooChange" + i);
+         et.fire("fooChange" + i);
       }
 
    });

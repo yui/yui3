@@ -314,7 +314,7 @@ CEProto.fireComplex = function(args) {
                     ce = q[0];
                     // set up stack to allow the next item to be processed
                     es.next = ce;
-                    ce.fire.apply(ce, q[1]);
+                    ce._fire(q[1]);
                 }
             }
 
@@ -570,6 +570,7 @@ ETProto.bubble = function(evt, args, target, es) {
                     ce.stack = es;
 
                     ret = ret && ce.fire.apply(ce, args || evt.details || []);
+
                     ce.broadcast = bc;
                     ce.originalTarget = null;
 
