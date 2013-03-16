@@ -631,12 +631,33 @@ Y.CustomEvent.prototype = {
      *
      */
     fire: function() {
+
+        // push is the fastest way to go from arguments to arrays
+        // for most browsers currently
+        // http://jsperf.com/push-vs-concat-vs-slice/2
+
+        var args = [];
+        args.push.apply(args, arguments);
+
+        return this._fire(args);
+    },
+
+    /**
+     * Private internal implementation for `fire`, which is can be used directly by
+     * `EventTarget` and other event module classes which have already converted from
+     * an `arguments` list to an array, to avoid the repeated overhead.
+     *
+     * @method _fire
+     * @private
+     * @param {Array} args The array of arguments passed to be passed to handlers.
+     * @return {boolean} false if one of the subscribers returned false, true otherwise.
+     */
+    _fire: function(args) {
+
         if (this.fireOnce && this.fired) {
             this.log('fireOnce event: ' + this.type + ' already fired');
             return true;
         } else {
-
-            var args = nativeSlice.call(arguments, 0);
 
             // this doesn't happen if the event isn't published
             // this.host._monitor('fire', this.type, args);

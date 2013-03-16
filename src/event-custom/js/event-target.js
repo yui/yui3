@@ -680,14 +680,30 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     fire: function(type) {
 
-        var typeIncluded = typeof type === "string",
+        var typeIncluded = (typeof type === "string"),
+            argCount = arguments.length,
             t = type,
             yuievt = this._yuievt,
-            pre = yuievt.config.prefix,
+            etConfig = yuievt.config,
+            pre = etConfig.prefix,
             ret,
             ce,
             ce2,
-            args = (typeIncluded) ? nativeSlice.call(arguments, 1) : arguments;
+            args;
+
+        if (typeIncluded && argCount <= 2) {
+
+            // PERF: Try to avoid slice/iteration for the common signatures
+
+            if (argCount === 2) {
+                args = [arguments[1]]; // fire("foo", {})
+            } else {
+                args = []; // fire("foo")
+            }
+
+        } else {
+            args = nativeSlice.call(arguments, ((typeIncluded) ? 1 : 0));
+        }
 
         if (!typeIncluded) {
             t = (type && type.type);
@@ -707,9 +723,12 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             }
         }
 
-        this._monitor('fire', (ce || t), {
-            args: args
-        });
+        // PERF: trying to avoid function call, since this is a critical path
+        if ((etConfig.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
+            this._monitor('fire', (ce || t), {
+                args: args
+            });
+        }
 
         // this event has not been published or subscribed to
         if (!ce) {
@@ -724,7 +743,8 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             if (ce2) {
                 ce.sibling = ce2;
             }
-            ret = ce.fire.apply(ce, args);
+
+            ret = ce._fire(args);
         }
 
         return (yuievt.chain) ? this : ret;
@@ -732,17 +752,15 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
     getSibling: function(type, ce) {
         var ce2;
+
         // delegate to *:type events if there are subscribers
         if (type.indexOf(PREFIX_DELIMITER) > -1) {
             type = _wildType(type);
-            // console.log(type);
             ce2 = this.getEvent(type, true);
             if (ce2) {
-                // console.log("GOT ONE: " + type);
                 ce2.applyConfig(ce);
                 ce2.bubbles = false;
                 ce2.broadcast = 0;
-                // ret = ce2.fire.apply(ce2, a);
             }
         }
 
