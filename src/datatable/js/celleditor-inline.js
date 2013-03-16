@@ -74,7 +74,8 @@
  @since 3.8.0
  **/
 
-var IEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
+var Editors = {},
+    IEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
 
     /**
      * Defines the INPUT HTML content "template" for this editor's View container
@@ -107,6 +108,7 @@ var IEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
     @protected
     */
     _defShowFn: function (ev) {
+        Y.log('DataTable.BaseCellInlineEditor._defShowFn');
         var cont = this.get('container'),
             cell = ev.cell,
             td = cell.td || ev.td,
@@ -135,6 +137,7 @@ var IEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
      * @private
      */
     _defRenderFn: function() {
+        Y.log('DataTable.BaseCellInlineEditor._defRenderFn');
         var container = this.get('container'),
             html      = Y.Lang.sub(this.template, {cssInput:this._cssInput});
 
@@ -159,6 +162,7 @@ var IEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
     },
 
     _bindUI: function () {
+        Y.log('DataTable.BaseCellInlineEditor._bindUI');
         IEd.superclass._bindUI.apply(this, arguments);
         this._subscr.push(this._inputNode.on('mouseleave', this._onMouseLeave, this));
     },
@@ -172,7 +176,8 @@ var IEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
      * @param {Node} td The Node instance for the TD to match dimensions of
      * @private
      */
-    _resizeCont: function(cont,td) {
+    _resizeCont: function (cont, td) {
+        Y.log('DataTable.BaseCellInlineEditor._resizeCont');
         var parseStyle = function (v) {
                return parseFloat(td.getComputedStyle(v));
             },
@@ -197,7 +202,8 @@ var IEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
      * @method _onMouseLeave
      * @private
      */
-    _onMouseLeave : function() {
+    _onMouseLeave : function () {
+        Y.log('DataTable.BaseCellInlineEditor._onMouseLeave');
         if(this.get('hideMouseLeave')){
             this.hideEditor();
         }
@@ -213,7 +219,8 @@ var IEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
      * @param e {EventFacade} The xy attribute change event facade
      * @private
      */
-    _setEditorXY: function() {
+    _setEditorXY: function () {
+        Y.log('DataTable.BaseCellInlineEditor._setEditorXY');
 
         //if(this._inputNode && e.newVal) {
         //    this._inputNode.setXY(e.newVal);
@@ -362,10 +369,7 @@ The configuration {Object} for this cell editor View is predefined as;
 @since 3.8.0
 @public
 **/
-Y.DataTable.EditorOptions.inline = {
-    BaseViewClass:  IEd,
-    name:           'inline'
-};
+Editors.inline = IEd;
 
 
 /**
@@ -421,40 +425,53 @@ The configuration {Object} for this cell editor View is predefined as;
 @since 3.8.0
 @public
 **/
-Y.DataTable.EditorOptions.inlineNumber = {
-    BaseViewClass:  IEd,
-    name:           'inlineNumber',
-    hideMouseLeave: false,
+Editors.inlineNumber = Y.Base.create('inlineNumber', IEd, [],
+    {},
+    {
+        ATTRS: {
 
-    // Define a key filtering regex ...
-    keyFiltering:   /\.|\d|\-/,
-    //keyValidator:   /^\s*(\+|-)?((\d+(\.\d*)?)|(\.\d*))\s*$/,
+            hideMouseLeave: {
+                value: false
+            },
 
-    /**
-     * A validation regular expression object used to check validity of the input floating point number.
-     * This can be defined by the user to accept other numeric input, or set to "null" to disable regex checks.
-     *
-     * @attribute validator
-     * @type {RegExp|Function}
-     * @default /^\s*(\+|-)?((\d+(\.\d+)?)|(\.\d+))\s*$/
-     */
-    validator: /^\s*(\+|-)?((\d+(\.\d*)?)|(\.\d*))\s*$/,
+            // Define a key filtering regex ...
+            keyFiltering:   {
+                    value : /\.|\d|\-/
+            },
+            //keyValidator:   /^\s*(\+|-)?((\d+(\.\d*)?)|(\.\d*))\s*$/,
 
-    // Function to call after numeric editing is complete, prior to saving to DataTable ...
-    //  i.e. checks validation against ad-hoc attribute "validationRegExp" (if it exists)
-    //       and converts the value to numeric (or undefined if fails regexp);
-    saveFn: function(v){
-        var vre = this.get('validator'),
-            value;
-        if(vre instanceof RegExp) {
-            value = (vre.test(v)) ? +v : undefined;
-        } else {
-            value = +v;
+            /**
+             * A validation regular expression object used to check validity of the input floating point number.
+             * This can be defined by the user to accept other numeric input, or set to "null" to disable regex checks.
+             *
+             * @attribute validator
+             * @type {RegExp|Function}
+             * @default /^\s*(\+|-)?((\d+(\.\d+)?)|(\.\d+))\s*$/
+             */
+            validator: {
+                    value: /^\s*(\+|-)?((\d+(\.\d*)?)|(\.\d*))\s*$/
+            },
+
+            // Function to call after numeric editing is complete, prior to saving to DataTable ...
+            //  i.e. checks validation against ad-hoc attribute "validationRegExp" (if it exists)
+            //       and converts the value to numeric (or undefined if fails regexp);
+            saveFn: {
+                value: function (v) {
+                    Y.log('inlineNumber.saveFn: ' + v);
+                    var vre = this.get('validator'),
+                        value;
+                    if(vre instanceof RegExp) {
+                        value = (vre.test(v)) ? +v : undefined;
+                    } else {
+                        value = +v;
+                    }
+                    return value;
+                }
+            }
+
         }
-        return value;
     }
-
-};
+);
 
 /**
 ### Inline Cell Editor "inlineDate"
@@ -508,36 +525,49 @@ The configuration {Object} for this cell editor View is predefined as;
 @since 3.8.0
 @public
 **/
-Y.DataTable.EditorOptions.inlineDate = {
-    BaseViewClass:  IEd,
-    name:           'inlineDate',
+Editors.inlineDate = Y.Base.create('inlineDate', IEd, [],
+    {},
+    {
+        ATTRS: {
 
-    /**
-     * A user-supplied Date format string to be used to display the date in the View's container.
-     * (Must conform with date format strings from http://yuilibrary.com/yui/docs/api/classes/Date.html#method_format,
-     * i.e. strftime format)
-     *
-     * @attribute dateFormat
-     * @type String
-     * @default "%D"
-     */
-    dateFormat: "%D",
+            /**
+             * A user-supplied Date format string to be used to display the date in the View's container.
+             * (Must conform with date format strings from http://yuilibrary.com/yui/docs/api/classes/Date.html#method_format,
+             * i.e. strftime format)
+             *
+             * @attribute dateFormat
+             * @type String
+             * @default "%D"
+             */
+            dateFormat: {
+                value:"%D"
+            },
 
-    keyFiltering:   /\/|\d|\-/,
+            keyFiltering: {
+                    value: /\/|\d|\-/
+            },
 
-    //  Function to call just prior to populating the INPUT text box,
-    //   so we pre-format the textbox in "human readable" format here
-    prepFn: function(v){
-        var dfmt =  this.get('dateFormat') || "%m/%d/%Y";
-        return Y.DataType.Date.format(v,{format:dfmt});
-    },
+            //  Function to call just prior to populating the INPUT text box,
+            //   so we pre-format the textbox in "human readable" format here
+            prepFn: {
+                value: function (v){
+                    Y.log('inlineDate.prepFn: ' + v);
+                    var dfmt =  this.get('dateFormat') || "%m/%d/%Y";
+                    return Y.DataType.Date.format(v,{format:dfmt});
+                }
+            },
 
-    // Function to call after Date editing is complete, prior to saving to DataTable ...
-    //  i.e. converts back to "Date" format that DT expects ...
-    saveFn: function(v){
-        return Y.DataType.Date.parse(v) || undefined;
+            // Function to call after Date editing is complete, prior to saving to DataTable ...
+            //  i.e. converts back to "Date" format that DT expects ...
+            saveFn: {
+                value: function(v){
+                    Y.log('inlineDate.saveFn: ' + v);
+                    return Y.DataType.Date.parse(v) || undefined;
+                }
+            }
+        }
     }
-};
+);
 
 
 /**
@@ -616,39 +646,17 @@ The configuration {Object} for this cell editor View is predefined as;
 @since 3.8.0
 @public
 **/
-Y.DataTable.EditorOptions.inlineAC = {
-    BaseViewClass:  IEd,
-    name:           'inlineAC',
-    hideMouseLeave: false,
-
-    /**
-     * A user-supplied set of configuration parameters to be passed into this View's Y.Plugin.AutoComplete
-     * configuration object.
-     *
-     * At a bare minimum, the user MUST provide the "source" of data for the AutoComplete !!
-     *
-     * For this control to save anything, the user needs to define an "on:select" listener in the AC's
-     * "autocompleteConfig" in order to saveEditor when the select action occurs.
-     *
-     * @attribute autocompleteConfig
-     * @type Object
-     * @default {}
-     */
-
-    // Define listener to this editor View's events
-    after: {
-
-       //---------
-       //  After this View is instantiated and created,
-       //     configure the Y.Plugin.AutoComplete as a plugin to the editor INPUT node
-       //---------
-       createUI : function(){
-           var inputNode = this._inputNode,
+Editors.inlineAC = Y.Base.create('inlineAC', IEd, [],
+    {
+        render: function () {
+            Y.log('inlineAC.render');
+            Editors.inlineAC.superclass.render.apply(this, arguments);
+            var inputNode = this._inputNode,
                // Get the users's editorConfig "autocompleteConfig" settings
                acConfig = this.get('autocompleteConfig') || {},
                editor = this;
 
-           if(inputNode && Y.Plugin.AutoComplete) {
+            if(inputNode && Y.Plugin.AutoComplete) {
                // merge user settings with these required settings ...
                acConfig = Y.merge(acConfig,{
                    alwaysShowList: true,
@@ -659,9 +667,35 @@ Y.DataTable.EditorOptions.inlineAC = {
 
                // add this View class as a static prop on the ac plugin
                inputNode.ac.editor = editor;
-           }
+            }
+            return this;
 
-       }
+        }
+    },
+    {
+        ATTRS: {
+
+            hideMouseLeave: {
+                value: false
+            }
+
+            /**
+             * A user-supplied set of configuration parameters to be passed into this View's Y.Plugin.AutoComplete
+             * configuration object.
+             *
+             * At a bare minimum, the user MUST provide the "source" of data for the AutoComplete !!
+             *
+             * For this control to save anything, the user needs to define an "on:select" listener in the AC's
+             * "autocompleteConfig" in order to saveEditor when the select action occurs.
+             *
+             * @attribute autocompleteConfig
+             * @type Object
+             * @default {}
+             */
+
+            // Define listener to this editor View's events
+        }
     }
 
-};
+);
+Y.DataTable.EditorOptions = Editors;

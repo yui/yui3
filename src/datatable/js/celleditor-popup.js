@@ -665,16 +665,6 @@ PEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
             value:  {}
         },
 
-        /**
-         * Maintains a reference back to the calling DataTable instance (not really used yet)
-         * @attribute hostDT
-         * @type Y.DataTable
-         * @default null
-         */
-        hostDT : {
-            value:  null,
-            validator:  function(v) { return v instanceof Y.DataTable; }
-        },
 
         /**
          * Value that was saved in the Editor View and returned to the record

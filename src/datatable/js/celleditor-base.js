@@ -65,6 +65,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     initializer: function () {
+        Y.log('DataTable.BaseCellEditor.initializer');
         this.publish({
             /**
             Event fired when the inline editor has been initialized and ready for usage.
@@ -137,6 +138,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     destructor: function () {
+        Y.log('DataTable.BaseCellEditor.destructor');
         this.cancelEditor();
         this._unbindUI();
         this._destroyContainer();
@@ -146,6 +148,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @method render
     */
     render: function () {
+        Y.log('DataTable.BaseCellEditor.render');
         this.fire('render');
         this._bindUI();
         return this;
@@ -160,7 +163,8 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @method _defRenderFn
     @private
     */
-    _defRenderFn: function() {
+    _defRenderFn: function () {
+        Y.log('DataTable.BaseCellEditor._defRenderFn');
 
     },
 
@@ -171,6 +175,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @private
     */
     _bindUI: function () {
+        Y.log('DataTable.BaseCellEditor._bindUI');
 
 
         this._subscr = [
@@ -190,6 +195,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @private
     */
     _unbindUI: function () {
+        Y.log('DataTable.BaseCellEditor._unbindUI');
         arrEach(this._subscr, function(e){
             if(e && e.detach) {
                 e.detach();
@@ -206,6 +212,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     _defSaveFn: function (e) {
+        Y.log('DataTable.BaseCellEditor._defSaveFn');
         this.set('value', e.newValue);
         this.hideEditor();
     },
@@ -217,6 +224,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     _defCancelFn: function () {
+        Y.log('DataTable.BaseCellEditor._defCancelFn');
         this.hideEditor();
     },
 
@@ -230,6 +238,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     _defShowFn: function (e) {
+        Y.log('DataTable.BaseCellEditor._defShowFn');
         var value = e.value;
 
         e.td.addClass(this._classEditing);
@@ -255,7 +264,8 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @param {Node} td The Node instance of the TD to begin editing on
     @public
     */
-    showEditor: function(td) {
+    showEditor: function (td) {
+        Y.log('DataTable.BaseCellEditor.showEditor');
         var cell = this.get('cell'),
             value  = this.get('value'),
             prepfn = this.get('prepFn');
@@ -283,6 +293,8 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @public
     */
     saveEditor: function (value) {
+        Y.log('DataTable.BaseCellEditor.saveEditor: ' + value);
+
         //
         //  Only save the edited data if it is valid ...
         //
@@ -317,6 +329,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @public
     */
     hideEditor: function (hideMe) {
+        Y.log('DataTable.BaseCellEditor.hideEditor: ' + hideMe);
         var cont  = this.get('container'),
             cell = this.get('cell');
         if(cont && cont.hide) {
@@ -332,12 +345,6 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         }
         this._set('visible',false);
 
-        /**
-        Fired when the active cell editor is hidden
-        @event editorHide
-        */
-        this.fire('editorHide');
-
     },
 
 
@@ -349,6 +356,8 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @public
     */
     cancelEditor: function () {
+        Y.log('DataTable.BaseCellEditor.cancelEditor');
+
         this.fire("cancel",{
             cell:       this.get('cell'),
             td:         this.get('cell').td,
@@ -365,6 +374,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @public
     */
     processKeyPress: function (e) {
+        Y.log('DataTable.BaseCellEditor.processKeyPress');
         var keyc    = e.keyCode,
             inp     = e.target || this._inputNode,
             value   = inp.get('value'),
@@ -417,6 +427,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @param dy {Integer} number of cells to move in the y direction. (usually -1: up, 0 or 1: down)
     */
     processKeyDown : function(e){
+        Y.log('DataTable.BaseCellEditor.processKeyDown');
         var keyc    = e.keyCode,
             dx = 0, dy = 0;
 
@@ -467,6 +478,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @private
     */
     _onClick: function(e) {
+        Y.log('DataTable.BaseCellEditor._onClick');
         e.stopPropagation();
     },
 
@@ -483,6 +495,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     @private
     */
     _setEditorXY: function() {
+        Y.log('DataTable.BaseCellEditor._setEditorXY');
     }
 },{
     ATTRS:{
