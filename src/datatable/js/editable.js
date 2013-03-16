@@ -7,6 +7,8 @@ var Lang = Y.Lang,
     Array = Y.Array,
     arrEach = Array.each,
 
+    returnUnchanged = function (value) { return value;},
+
     EDITABLE = 'editable',
     EDITOR_OPEN_ACTION = 'editorOpenAction',
     DEF_EDITOR = 'defaultEditor',
@@ -730,8 +732,8 @@ Y.mix( DtEditable.prototype, {
 
         // if a valid editor is given AND we are in editing mode, toggle off/on ...
         if ( defeditor && this.get(EDITABLE) ) {
-            this._disableEdting();
-            this._enableEditing();
+            this._uiSetEditable(false);
+            this._uiSetEditable(true);
         }
     },
     /**
@@ -745,10 +747,13 @@ Y.mix( DtEditable.prototype, {
     @private
     */
     _uiSetEditorOpenAction: function (val) {
+        console.log('_uiSetEditorOpenAction', val, "tbody." + this.getClassName('data') + " td");
         if(this._subscrEditOpen) {
             this._subscrEditOpen.detach();
         }
-        this._subscrEditOpen = this.delegate( val, this.openCellEditor,"tbody." + this.getClassName('data') + " td", this);
+        if (val) {
+            this._subscrEditOpen = this.delegate( val, this.openCellEditor,"tbody." + this.getClassName('data') + " td", this);
+        }
     },
 
 

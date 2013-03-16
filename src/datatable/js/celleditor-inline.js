@@ -386,7 +386,7 @@ saving to the DT.
         { key:'QuantityInStock', editor:"inlineNumber", editorConfig:{ keyFiltering: /\d/ }  }
 
 ##### Standard Configuration
-This inline editor creates a simple INPUT[type=text] control and positions it to match the underlying TD node.  A `saveFn`
+This inline editor creates a simple INPUT[type=text] control and positions it to match the underlying TD node.  A `parser`
 is defined that uses an ad-hoc attribute "validationRegEx" to test for validity prior to saving the data.  If the
 value passes validation it is converted to numeric form and returned.
 
@@ -406,7 +406,7 @@ The configuration {Object} for this cell editor View is predefined as;
              // Function to call after numeric editing is complete, prior to saving to DataTable ...
              //  i.e. checks validation against ad-hoc attribute "validationRegExp" (if it exists)
              //       and converts the value to numeric (or undefined if fails regexp);
-             saveFn: function(v){
+             parser: function(v){
                  var vre = this.get('validationRegExp'),
                      value;
                  if(vre instanceof RegExp) {
@@ -455,9 +455,9 @@ Editors.inlineNumber = Y.Base.create('inlineNumber', IEd, [],
             // Function to call after numeric editing is complete, prior to saving to DataTable ...
             //  i.e. checks validation against ad-hoc attribute "validationRegExp" (if it exists)
             //       and converts the value to numeric (or undefined if fails regexp);
-            saveFn: {
+            parser: {
                 value: function (v) {
-                    Y.log('inlineNumber.saveFn: ' + v);
+                    Y.log('inlineNumber.parser: ' + v);
                     var vre = this.get('validator'),
                         value;
                     if(vre instanceof RegExp) {
@@ -488,8 +488,8 @@ saving to the DT.
 
 ##### Standard Configuration
 This inline editor creates a simple INPUT[type=text] control and positions it to match the underlying TD node.  Since
-a JS Date object isn't very pretty to display / edit in a textbox, we use a `prepFn` to preformat the Date in a
-human-readable form within the textbox.  Also a `saveFn` is defined to convert the entered data using `Date.parse`
+a JS Date object isn't very pretty to display / edit in a textbox, we use a `formatter` to preformat the Date in a
+human-readable form within the textbox.  Also a `parser` is defined to convert the entered data using `Date.parse`
 back to a valid JS Date prior to saving to the DT.
 
 The configuration {Object} for this cell editor View is predefined as;
@@ -506,14 +506,14 @@ The configuration {Object} for this cell editor View is predefined as;
 
              //  Function to call just prior to populating the INPUT text box,
              //   so we pre-format the textbox in "human readable" format here
-             prepFn: function(v){
+             formatter: function(v){
                  var dfmt =  this.get('dateFormat') || "%m/%d/%Y";
                  return Y.DataType.Date.format(v,{format:dfmt});
              },
 
              // Function to call after Date editing is complete, prior to saving to DataTable ...
              //  i.e. converts back to "Date" format that DT expects ...
-             saveFn: function(v){
+             parser: function(v){
                  return Y.DataType.Date.parse(v);
              }
         };
@@ -549,9 +549,9 @@ Editors.inlineDate = Y.Base.create('inlineDate', IEd, [],
 
             //  Function to call just prior to populating the INPUT text box,
             //   so we pre-format the textbox in "human readable" format here
-            prepFn: {
+            formatter: {
                 value: function (v){
-                    Y.log('inlineDate.prepFn: ' + v);
+                    Y.log('inlineDate.formatter: ' + v);
                     var dfmt =  this.get('dateFormat') || "%m/%d/%Y";
                     return Y.DataType.Date.format(v,{format:dfmt});
                 }
@@ -559,9 +559,9 @@ Editors.inlineDate = Y.Base.create('inlineDate', IEd, [],
 
             // Function to call after Date editing is complete, prior to saving to DataTable ...
             //  i.e. converts back to "Date" format that DT expects ...
-            saveFn: {
+            parser: {
                 value: function(v){
-                    Y.log('inlineDate.saveFn: ' + v);
+                    Y.log('inlineDate.parser: ' + v);
                     return Y.DataType.Date.parse(v) || undefined;
                 }
             }

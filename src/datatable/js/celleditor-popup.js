@@ -688,37 +688,6 @@ PEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
             value:  null
         },
 
-        /**
-         * Function to execute on the "data" contents just prior to displaying in the Editor's main view
-         * (i.e. typically used for pre-formatting Date information from JS to mm/dd/YYYY format)
-         *
-         * This function will receive one argument "value" which is the data value from the record, and
-         *  the function runs in Editor scope.
-         *
-         * @attribute prepFn
-         * @type Function
-         * @default null
-         */
-        prepFn:{
-            value:      null,
-            validator:  Y.Lang.isFunction
-        },
-
-        /**
-         * Function to execute when Editing is complete, prior to "saving" the data to the Record (Model)
-         *
-         * This function will receive one argument "value" which is the data value from the INPUT or Widget, and
-         *  the function runs in Editor scope.
-         *
-         * @attribute saveFn
-         * @type Function
-         * @default null
-         */
-        saveFn:{
-            value:      null,
-            validator:  Y.Lang.isFunction
-        },
-
 
         /**
          * Setting for checking the visibility status of this Editor
@@ -1031,7 +1000,7 @@ Y.DataTable.EditorOptions.textarea = {
 /**
  ### Popup Cell Editor "number"
  This View configuration is used to setup a basic numeric editor as a popup-type cell editor.
- A `saveFn` is prescribed that handles validation and converting the input text to numeric format.
+ A `parser` is prescribed that handles validation and converting the input text to numeric format.
 
  ##### Basic Usage
         // Column definition
@@ -1045,7 +1014,7 @@ Y.DataTable.EditorOptions.textarea = {
  ##### Standard Configuration
  This editor creates a simple INPUT[text] internally within the popup Editor View container positioned
  directly over the TD element. Configuration is almost identical to [text](/api/classes/Y.DataTable.EditorOptions.text.html#index)
- editor except for the pre-selection of contents and conversion of saved value to numeric format in saveFn.
+ editor except for the pre-selection of contents and conversion of saved value to numeric format in parser.
 
  The configuration {Object} for this cell editor View is predefined as;
 
@@ -1067,7 +1036,7 @@ Y.DataTable.EditorOptions.textarea = {
             // Function to call after numeric editing is complete, prior to saving to DataTable ...
             //  i.e. checks validation against ad-hoc attribute "validationRegExp" (if it exists)
             //       and converts the value to numeric (or undefined if fails regexp);
-            saveFn: function(v){
+            parser: function(v){
                 var vre = this.get('validator'),
                     value;
                 if(vre instanceof RegExp) {
@@ -1125,7 +1094,7 @@ Y.DataTable.EditorOptions.number = {
     // Function to call after numeric editing is complete, prior to saving to DataTable ...
     //  i.e. checks validation against ad-hoc attribute "validationRegExp" (if it exists)
     //       and converts the value to numeric (or undefined if fails regexp);
-    saveFn: function(v){
+    parser: function(v){
         var vre = this.get('validator'),
             value;
         if(vre instanceof RegExp) {
@@ -1154,7 +1123,7 @@ Y.DataTable.EditorOptions.number = {
 /**
  ### Popup Cell Editor "date"
  This View configuration is used to setup a bare-bones date editor as a popup-type cell editor.
- Configuration is setup with both `prepFn` and `saveFn` to convert the Date object.
+ Configuration is setup with both `formatter` and `parser` to convert the Date object.
 
  ##### Basic Usage
         // Column definition
@@ -1190,14 +1159,14 @@ Y.DataTable.EditorOptions.number = {
 
             // Function to call prior to displaying editor, to put a human-readable Date into
             //  the INPUT box initially ...
-            prepFn: function(v){
+            formatter: function(v){
                 var dfmt = this.get('dateFormat') || "%D";
                 return Y.DataType.Date.format(v,{format:dfmt});
             },
 
             // Function to call after Date editing is complete, prior to saving to DataTable ...
             //  i.e. converts back to "Date" format that DT expects ...
-            saveFn: function(v){
+            parser: function(v){
                 return Y.DataType.Date.parse(v) || undefined;
             }
         };
@@ -1224,14 +1193,14 @@ Y.DataTable.EditorOptions.date = {
 
     // Function to call prior to displaying editor, to put a human-readable Date into
     //  the INPUT box initially ...
-    prepFn: function(v){
+    formatter: function(v){
         var dfmt = this.get('dateFormat') || "%D";
         return Y.DataType.Date.format(v,{format:dfmt});
     },
 
     // Function to call after Date editing is complete, prior to saving to DataTable ...
     //  i.e. converts back to "Date" format that DT expects ...
-    saveFn: function(v){
+    parser: function(v){
         return Y.DataType.Date.parse(v) || undefined;
     }
 };
@@ -1293,14 +1262,14 @@ Y.DataTable.EditorOptions.date = {
 
             // Function to call prior to displaying editor, to put a human-readable Date into
             //  the INPUT box initially ...
-            prepFn: function(v){
+            formatter: function(v){
                 var dfmt = this.get('dateFormat') || "%D" || "%m/%d/%Y";
                 return Y.DataType.Date.format(v,{format:dfmt});
             },
 
             // Function to call after Date editing is complete, prior to saving to DataTable ...
             //  i.e. converts back to "Date" format that DT expects ...
-            saveFn: function(v){
+            parser: function(v){
                 return Y.DataType.Date.parse(v) || undefined;
             },
 
@@ -1335,9 +1304,9 @@ Y.DataTable.EditorOptions.date = {
                                 selectionChange : function(o){
                                     var newDate = o.newSelection[0],
                                         editor  = this.editor, //this.get('editor'),
-                                        prepFn  = editor.get('prepFn'),
+                                        formatter  = editor.get('formatter'),
                                         inpn    = editor._inputNode;
-                                    inpn.set('value', (prepFn) ? prepFn.call(this,newDate) : newDate );
+                                    inpn.set('value', (formatter) ? formatter.call(this,newDate) : newDate );
                                 },
 
                                 //-------
@@ -1476,14 +1445,14 @@ Y.DataTable.EditorOptions.calendar = {
 
     // Function to call prior to displaying editor, to put a human-readable Date into
     //  the INPUT box initially ...
-    prepFn: function(v){
+    formatter: function(v){
         var dfmt = this.get('dateFormat') || "%D" || "%m/%d/%Y";
         return Y.DataType.Date.format(v,{format:dfmt});
     },
 
     // Function to call after Date editing is complete, prior to saving to DataTable ...
     //  i.e. converts back to "Date" format that DT expects ...
-    saveFn: function(v){
+    parser: function(v){
         return Y.DataType.Date.parse(v) || undefined;
     },
 
@@ -1518,9 +1487,9 @@ Y.DataTable.EditorOptions.calendar = {
                         selectionChange : function(o){
                             var newDate = o.newSelection[0],
                                 editor  = this.editor, //this.get('editor'),
-                                prepFn  = editor.get('prepFn'),
+                                formatter  = editor.get('formatter'),
                                 inpn    = editor._inputNode;
-                            inpn.set('value', (prepFn) ? prepFn.call(this,newDate) : newDate );
+                            inpn.set('value', (formatter) ? formatter.call(this,newDate) : newDate );
                         },
 
                         //-------

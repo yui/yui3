@@ -55,6 +55,24 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     */
     _classEditing:  'editing',
 
+    /**
+    Copy of the formatter attribute for internal use.
+    @method _formatter
+    @type Function
+    @default (returns value unchanged)
+    @private
+    */
+   _formatter: returnUnchanged,
+
+    /**
+    Copy of the parser attribute for internal use.
+    @method _parser
+    @type Function
+    @default (returns value unchanged)
+    @private
+    */
+   _parser: returnUnchanged,
+
 //======================   LIFECYCLE METHODS   ===========================
 
     /**
@@ -267,13 +285,10 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     showEditor: function (td) {
         Y.log('DataTable.BaseCellEditor.showEditor');
         var cell = this.get('cell'),
-            value  = this.get('value'),
-            prepfn = this.get('prepFn');
+            value  = this.get('value');
 
 
-        if (prepfn) {
-            value = prepfn.call(this, value);
-        }
+        value = this._formatter(value);
 
         this.fire('show',{
             td:         td,
@@ -301,12 +316,9 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         if(Lang.isValue(value)){
 
             // If a "save" function was defined, run thru it and update the "value" setting
-            var savefn = this.get('saveFn') ;
-            if (savefn) {
-                value = savefn.call(this,value);
-            }
+            value = this._parser(value);
 
-            // So value was initially okay, but didn't pass saveFn validation call ...
+            // So value was initially okay, but didn't pass _parser validation call ...
             if (value === undefined) {
                 this.cancelEditor();
                 return;
@@ -540,13 +552,16 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         This function will receive one argument "value" which is the data value from the record, and
         the function runs in Editor scope.
 
-        @attribute prepFn
+        @attribute formatter
         @type Function
         @default null
         */
-        prepFn: {
-            value:      null,
-            validator:  Lang.isFunction
+        formatter: {
+            value: returnUnchanged,
+            lazyAdd: false,
+            setter: function (formatter) {
+                this._formatter =  (typeof formatter === 'function') ? formatter : returnUnchanged;
+            }
         },
 
         /**
@@ -557,13 +572,16 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         This method is intended to be used for input validation prior to saving.  **If the returned value
         is "undefined" the cancelEditor method is executed.**
 
-        @attribute saveFn
+        @attribute parser
         @type Function
         @default null
         */
-        saveFn:{
-            value:      null,
-            validator:  Lang.isFunction
+        parser:{
+            value: returnUnchanged,
+            lazyAdd: false,
+            setter: function (parser) {
+                this._parser =  (typeof parser === 'function') ? parser : returnUnchanged;
+            }
         },
 
         /**
