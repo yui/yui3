@@ -1,20 +1,23 @@
 YUI.add('event-custom-benchmark', function (Y) {
 
-   var suite = Y.BenchmarkSuite = new Benchmark.Suite();
+   var suite = Y.BenchmarkSuite = new Benchmark.Suite(),
+       I = 0,
+       ETPUBLISH,
+       ET10,
+       ET2,
+       ET;
 
-   var ETPUBLISH = new Y.EventTarget({
+   ETPUBLISH = new Y.EventTarget({
       emitFacade:true
    });
 
-   var ET10 = new Y.EventTarget({
-         emitFacade:true
+   ET10 = new Y.EventTarget({
+      emitFacade:true
    });
 
    ET10.publish("fooChange", {
-      queuable:false,
       defaultTargetOnly: true,
-      defaultFn:function() {},
-      silent:true
+      defaultFn:function() {}
    });
 
    for (var i = 0; i < 5; i++) {
@@ -22,40 +25,42 @@ YUI.add('event-custom-benchmark', function (Y) {
       ET10.after("fooChange", function() {});
    }
 
-   var ET2 = new Y.EventTarget({
-         emitFacade:true
+   ET2 = new Y.EventTarget({
+      emitFacade:true
    });
 
    ET2.publish("fooChange", {
-      queuable:false,
       defaultTargetOnly: true,
-      defaultFn:function() {},
-      silent:true
+      defaultFn:function() {}
    });
 
    ET2.on("fooChange", function() {});
    ET2.after("fooChange", function() {});
 
-   var ET = new Y.EventTarget({
+   ET0 = new Y.EventTarget({
       emitFacade:true
    });
 
    var ET_CFG = {
-         queuable:false,
-         defaultTargetOnly: true,
-         defaultFn:function() {},
-         silent:true
-      };
+      defaultTargetOnly: true,
+      defaultFn:function() {}
+   };
 
-   suite.add('Publish', function () {
+   // Ideally, would like to create a new ET for each run, but
+   // benchmark doesn't give me a trivial way to do that. Live with
+   // publishing a new event each time.
 
-      var et = new Y.EventTarget({
-         emitFacade:true
-      });
-
-      et.publish("fooChange", ET_CFG);
+   suite.add('Fire - 0 listeners', function () {
+      ET0.fire("fooChange");
    });
 
+   suite.add('Fire With Payload - 0 listeners', function () {
+      ET0.fire("fooChange", {
+         a: 1,
+         b: 2,
+         c: 3
+      });
+   });
 
    suite.add('Fire - 2 listeners', function () {
       ET2.fire("fooChange");
@@ -88,10 +93,8 @@ YUI.add('event-custom-benchmark', function (Y) {
       });
 
       et.publish("fooChange", {
-         queuable:false,
          defaultTargetOnly: true,
-         defaultFn:function() {},
-         silent:true
+         defaultFn:function() {}
       });
 
       et.fire("fooChange");
@@ -105,10 +108,8 @@ YUI.add('event-custom-benchmark', function (Y) {
       });
 
       et.publish("fooChange", {
-         queuable:false,
          defaultTargetOnly: true,
-         defaultFn:function() {},
-         silent:true
+         defaultFn:function() {}
       });
 
       et.on("fooChange", function() {});
@@ -124,10 +125,8 @@ YUI.add('event-custom-benchmark', function (Y) {
       });
 
       et.publish("fooChange", {
-         queuable:false,
          defaultTargetOnly: true,
-         defaultFn:function() {},
-         silent:true
+         defaultFn:function() {}
       });
 
       for (var i = 0; i < 5; i++) {
@@ -138,56 +137,16 @@ YUI.add('event-custom-benchmark', function (Y) {
       et.fire("fooChange");
    });
 
-   suite.add('Publish - 10 different events', function () {
-
-      var et = new Y.EventTarget({
-         emitFacade:true
-      });
-
-      for (var i = 0; i < 10; i++) {
-         et.publish("fooChange" + i, ET_CFG);
-      }
-
-   });
-
-   suite.add('Fire - 10 different events, no listeners', function () {
-
-      var et = new Y.EventTarget({
-         emitFacade:true
-      });
-
-      for (var i = 0; i < 10; i++) {
-         et.fire("fooChange" + i);
-      }
-
-   });
-
-   suite.add('Subscribe + Fire - 10 different events', function () {
-
-      var onListener = function() {},
-          afterListener = function() {};
-
-      var et = new Y.EventTarget({
-         emitFacade:true
-      });
-
-      for (var i = 0; i < 10; i++) {
-         et.on("fooChange" + i, onListener);
-         et.after("fooChange" + i, afterListener);
-      }
-
-      for (i = 0; i < 10; i++) {
-         et.fire("fooChange" + i);
-      }
-
-   });
-
    suite.add('new Base()', function () {
       var b = new Y.Base();
    });
 
    suite.add('new BaseCore()', function () {
       var b = new Y.BaseCore();
+   });
+
+   suite.add('Publish', function () {
+      ETPUBLISH.publish("fooChange" + (I++), ET_CFG);
    });
 
 }, '@VERSION@', {requires: ['event-custom', 'widget']});
