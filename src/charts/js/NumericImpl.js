@@ -5,7 +5,6 @@
  * @submodule axis-numeric-base
  */
 
-var Y_Lang = Y.Lang;
 /**
  * NumericImpl contains logic for numeric data. NumericImpl is used by the following classes:
  * <ul>
@@ -30,9 +29,9 @@ NumericImpl.ATTRS = {
      * @attribute alwaysShowZero
      * @type Boolean
      */
-	alwaysShowZero: {
-	    value: true
-	},
+    alwaysShowZero: {
+        value: true
+    },
 
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
@@ -97,7 +96,7 @@ NumericImpl.prototype = {
     /**
      * Formats a label based on the axis type and optionally specified format.
      *
-     * @method 
+     * @method
      * @param {Object} value
      * @param {Object} format Pattern used to format the value.
      * @return String
@@ -206,7 +205,6 @@ NumericImpl.prototype = {
             len,
             num,
             i = 0,
-            key,
             setMax = this.get("setMax"),
             setMin = this.get("setMin");
         if(!setMax || !setMin)
@@ -284,7 +282,7 @@ NumericImpl.prototype = {
             useIntegers = (max - min)/units >= 1;
         if(roundingMethod)
         {
-            if(roundingMethod == "niceNumber")
+            if(roundingMethod === "niceNumber")
             {
                 roundingUnit = this._getMinimumUnit(max, min, units);
                 if(minGreaterThanZero && maxGreaterThanZero)
@@ -422,7 +420,7 @@ NumericImpl.prototype = {
                     }
                 }
             }
-            else if(roundingMethod == "auto")
+            else if(roundingMethod === "auto")
             {
                 if(minGreaterThanZero && maxGreaterThanZero)
                 {

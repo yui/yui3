@@ -778,10 +778,10 @@ YUI({
                     transform: 'rotate(180deg)'
                 }, function(e) {
                     test.resume(function() {
-                        if (!(Y.UA.ie < 9)) {
+                        if (!(Y.UA.ie < 10)) {
                             Y.Assert.areEqual(1, parseInt(e.elapsedTime * 10));
                             node.setStyle('height', '100px');
-                            Y.Assert.areEqual('matrix(-1, 0.00000000000000012246467991473532, -0.00000000000000012246467991473532, -1, 0, 0)', node.getComputedStyle(Y.Transition._TRANSFORM));
+                            Y.Assert.areEqual('matrix(-1, -8.74228e-008, 8.74228e-008, -1, 0, 0)', node.getComputedStyle(Y.Transition._TRANSFORM));
                         }
                     });
                 });
