@@ -32,7 +32,7 @@ CategoryImpl.ATTRS = {
     calculateEdgeOffset: {
         value: true
     }
-        
+
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
      * The method use would need to implement the arguments below and return a `String` or `HTMLElement`.
@@ -52,10 +52,9 @@ CategoryImpl.prototype = {
      *
      * @method formatLabel
      * @param {Object} value
-     * @param {Object} format Pattern used to format the value.
      * @return String
      */
-    formatLabel: function(val, format)
+    formatLabel: function(val)
     {
         return val;
     },
@@ -157,7 +156,7 @@ CategoryImpl.prototype = {
      * @param {Number} len Length of the axis.
      * @return Number
      */
-    getTotalMajorUnits: function(majorUnit, len)
+    getTotalMajorUnits: function()
     {
         return this.get("data").length;
     },

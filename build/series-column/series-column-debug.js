@@ -77,7 +77,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 xs = [],
                 order = this.get("order"),
                 config;
-            markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]);
+            markerStyles = state === "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]);
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.width, offset);

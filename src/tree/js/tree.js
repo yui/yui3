@@ -56,6 +56,7 @@ var Lang = Y.Lang,
     @event clear
     @param {Tree.Node} rootNode New root node of this tree (the old root node is
         always destroyed when a tree is cleared).
+    @param {String} src Source of the event.
     @preventable _defClearFn
     **/
     EVT_CLEAR = 'clear',
@@ -68,6 +69,7 @@ var Lang = Y.Lang,
         being removed from this tree.
     @param {Tree.Node} node Node being removed.
     @param {Tree.Node} parent Parent node from which the node will be removed.
+    @param {String} src Source of the event.
     @preventable _defRemoveFn
     **/
     EVT_REMOVE = 'remove';
@@ -237,11 +239,16 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `clear` event
             will be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     clear: function (rootNode, options) {
         return this._fireTreeEvent(EVT_CLEAR, {
-            rootNode: this.createNode(rootNode || this._rootNodeConfig)
+            rootNode: this.createNode(rootNode || this._rootNodeConfig),
+            src     : options && options.src
         }, {
             defaultFn: this._defClearFn,
             silent   : options && options.silent
@@ -295,6 +302,10 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, `remove` events will
             be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting events. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     destroyNode: function (node, options) {
@@ -342,6 +353,10 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             and means they can't be reused.
         @param {Boolean} [options.silent=false] If `true`, `remove` events will
             be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting events. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @return {Tree.Node[]} Array of removed child nodes.
     **/
     emptyNode: function (node, options) {
@@ -386,6 +401,10 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             parent.
         @param {Boolean} [options.silent=false] If `true`, the `add` event will
             be suppressed.
+        @param {String} [options.src='insert'] Source of the change, to be
+            passed along to the event facade of the resulting event. This can be
+            used to distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
 
     @return {Tree.Node[]} Node or array of nodes that were inserted.
     **/
@@ -478,6 +497,10 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             garbage collection and means they can't be reused.
         @param {Boolean} [options.silent=false] If `true`, the `remove` event
             will be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @return {Tree.Node} Node that was removed.
     **/
     removeNode: function (node, options) {
