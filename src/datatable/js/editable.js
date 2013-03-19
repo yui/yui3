@@ -260,27 +260,6 @@ Y.mix( DtEditable.prototype, {
      */
     _subscrEditOpen: null,
 
-    /**
-     Placeholder Array for TD editor invocation event handles (i.e. click or dblclick) that
-     are set on the TBODY to initiate cellEditing.
-     @property _subscrCellEditors
-     @type Array of EventHandles
-     @default null
-     @private
-     @static
-     */
-    _subscrCellEditors:    null,
-
-    /**
-     Placeholder for event handles for scrollable DT that listens to "scroll" events and repositions editor
-     (we need two listeners, one for each of X or Y scroller)
-     @property _subscrCellEditorScrolls
-     @type Array of EventHandles
-     @default null
-     @private
-     @static
-     */
-    _subscrCellEditorScrolls: null,
 
     /**
      Shortcut to the CSS class that is added to indicate a column is editable
@@ -375,11 +354,6 @@ Y.mix( DtEditable.prototype, {
 
         if(!td) {
             return;
-        }
-
-        // First time in,
-        if( (this._yScroll || this._xScroll) && !this._subscrCellEditorScroll) {
-            this._bindEditorScroll();
         }
 
         //
@@ -567,6 +541,7 @@ Y.mix( DtEditable.prototype, {
         Y.log('DataTable.Editable._bindEditable');
 
         if(this._subscrEditable) {
+            Y.log('Check: DataTable.Editable._bindEditable: there should not be subscribers leftover', 'warn');
             arrEach(this._subscrEditable, function (eh){
                 if(eh && eh.detach) {
                     eh.detach();
@@ -577,8 +552,22 @@ Y.mix( DtEditable.prototype, {
         this._subscrEditable = [
             Y.Do.after(this._updateAllEditableColumnsCSS, this, 'syncUI'),
             this.after('sort', this._afterEditableSort),
-            this.after(DEF_EDITOR + CHANGE, this._afterDefaultEditorChange)
+            this.after(DEF_EDITOR + CHANGE, this._afterDefaultEditorChange),
+
+            this.on(   CELL_EDITOR + ':save', this._onCellEditorSave),
+            this.after(CELL_EDITOR + ':save', this._afterCellEditorSave),
+
+            this.on(   CELL_EDITOR + ':cancel', this._onCellEditorCancel),
+            this.after(CELL_EDITOR + ':cancel', this._afterCellEditorCancel),
+
+            this.after(CELL_EDITOR + ':keyNav', this._afterkeyNav)
         ];
+        if(this._xScroll && this._xScrollNode) {
+            this._subscrEditable.push(this._xScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
+        }
+        if(this._yScroll && this._yScrollNode) {
+            this._subscrEditable.push(this._yScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
+        }
         this._uiSetEditorOpenAction(this.get(EDITOR_OPEN_ACTION));
     },
 
@@ -613,7 +602,7 @@ Y.mix( DtEditable.prototype, {
         }
 
         // Detach scrolling listeners
-        arrEach(this._subscrCellEditorScroll, function (dh){
+        arrEach(this._subscrCellEditorScrolls, function (dh){
             if(dh && dh.detach) {
                 dh.detach();
             }
@@ -630,67 +619,6 @@ Y.mix( DtEditable.prototype, {
     },
 
     /**
-    Binds listeners to cell TD "open editing" events (i.e. either click or dblclick)
-    as a result of DataTable setting "editable:true".
-
-    Also sets a body listener for ESC key, to close the current open editor.
-
-    @method _bindCellEditingListeners
-    @private
-     */
-    _bindCellEditingListeners: function () {
-        Y.log('DataTable.Editable._bindCellEditingListeners');
-
-        // clear up previous listeners, if any ...
-        if(this._subscrCellEditors) {
-            this._unbindCellEditingListeners();
-        }
-
-        // create listeners
-        this._subscrCellEditors = [
-
-            this.on(   CELL_EDITOR + ':save', this._onCellEditorSave),
-            this.after(CELL_EDITOR + ':save', this._afterCellEditorSave),
-
-            this.on(   CELL_EDITOR + ':cancel', this._onCellEditorCancel),
-            this.after(CELL_EDITOR + ':cancel', this._afterCellEditorCancel),
-
-            this.after(CELL_EDITOR + ':keyNav', this._afterkeyNav)
-        ];
-    },
-
-    /**
-    Unbinds the TD click delegated click listeners for initiating editing in TDs
-    @method _unbindCellEditingListeners
-    @private
-     */
-    _unbindCellEditingListeners: function () {
-        Y.log('DataTable.Editable._unbindCellEditingListeners');
-        arrEach(this._subscrCellEditors, function (e) {
-            if(e && e.detach) {
-                e.detach();
-            }
-        });
-        this._subscrCellEditors = null;
-    },
-
-    /**
-    Sets up listeners for DT scrollable "scroll" events
-    @method _bindEditorScroll
-    @private
-     */
-    _bindEditorScroll: function () {
-        Y.log('DataTable.Editable._bindEditorScroll');
-        this._subscrCellEditorScrolls = [];
-        if(this._xScroll && this._xScrollNode) {
-            this._subscrCellEditorScrolls.push(this._xScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
-        }
-        if(this._yScroll && this._yScrollNode) {
-            this._subscrCellEditorScrolls.push(this._yScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
-        }
-
-    },
-    /**
     Listener that toggles the DT editable state, setting/unsetting the listeners associated with
     cell editing.
     @method _uiSetEditable
@@ -702,12 +630,10 @@ Y.mix( DtEditable.prototype, {
         Y.log('DataTable.Editable._uiSetEditable: ' + value);
         if (value) {
             this._bindEditable();
-            this._bindCellEditingListeners();
             this._buildColumnEditors();
 
         } else {
             this._unbindEditable();
-            this._unbindCellEditingListeners();
             this._destroyColumnEditors();
 
         }
@@ -744,7 +670,7 @@ Y.mix( DtEditable.prototype, {
     @private
     */
     _uiSetEditorOpenAction: function (val) {
-        console.log('_uiSetEditorOpenAction', val, "tbody." + this.getClassName('data') + " td");
+        console.log('_uiSetEditorOpenAction', val);
         if(this._subscrEditOpen) {
             this._subscrEditOpen.detach();
         }

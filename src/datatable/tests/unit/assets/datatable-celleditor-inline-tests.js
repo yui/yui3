@@ -192,14 +192,12 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
             Assert.isTrue( dt.get('editable'), "set editable to true" );
 
-            var ces = dt.getCellEditors();
-            Assert.areSame(7, ces.length, 'there should be 7 cell editors');
+            Assert.areSame(7, Y.Object.size(dt.getCellEditors()), 'there should be 7 cell editors');
 
             Assert.isNull( dt.getCellEditor('sid'),'column 0 (sid) editor should be null');
-            Assert.areSame( 'inline', dt.getCellEditor('sopen').get('name'),'column 1 (sopen) editor name should be inline');
+            Assert.areSame( Y.DataTable.EditorOptions.inline, dt.getCellEditor('sopen').constructor,'column 1 (sopen) editor name should be inline');
 
         },
-
         'check inline editor - row 0 column 6 (sprice) : showeditor' : function(){
             var dt = this.dt,
                 tr0 = dt.getRow(0),

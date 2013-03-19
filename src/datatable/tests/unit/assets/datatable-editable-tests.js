@@ -123,11 +123,11 @@ YUI.add('datatable-editable-tests', function(Y) {
             var dt = this.dt;
             isFalse( dt.get('editable'), "editable not initially false" );
 
-            areSame( 0, dt.getCellEditors().length, "No editors initially" );
+            areSame( 0, Y.Object.size(dt.getCellEditors()), "No editors initially" );
 
             dt.set('editable',true);
             isTrue( dt.get('editable'), "set editable to true" );
-            areSame( 0, dt.getCellEditors().length, "Still no editors (no default editor set)" );
+            areSame( 0, Y.Object.size(dt.getCellEditors()), "Still no editors (no default editor set)" );
 
             dt.set('editable',null);
             isTrue( dt.get('editable'), "set editable to null" );
@@ -137,7 +137,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             dt.set('editable',false);
             isFalse( dt.get('editable'), "set editable false" );
-            areSame( 0, dt.getCellEditors().length, "No editors initially" );
+            areSame( 0, Y.Object.size(dt.getCellEditors()), "No editors initially" );
 
         },
 
@@ -169,7 +169,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             isNull(dt.get('defaultEditor'), "default defaultEditor not none" );
 
             dt.set('editable',true);
-            areSame( 0, dt.getCellEditors().length, "No editors yet" );
+            areSame( 0, Y.Object.size(dt.getCellEditors()), "No editors yet" );
 
             dt.set('defaultEditor',null);
             isNull( dt.get('defaultEditor'), "set defaultEditor not null" );
@@ -177,7 +177,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             dt.set('defaultEditor','inline');
             areSame( 'inline', dt.get('defaultEditor'), "set defaultEditor failed on inline" );
 
-            areSame( 7, dt.getCellEditors().length, "setup default editors count not 7" );
+            areSame( 7, Y.Object.size(dt.getCellEditors()), "setup default editors count not 7" );
 
             areSame(1, Y.Object.size(dt._commonEditors), "There should be only one common editor" );
             var inl = dt._commonEditors.inline;
@@ -230,7 +230,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             isTrue( dt.get('editable'), "set editable to true" );
 
-            areSame(7, dt.getCellEditors().length, 'there should be 7 cell editors');
+            areSame(7, Y.Object.size(dt.getCellEditors()), 'there should be 7 cell editors');
 
             isNull( dt.getCellEditor('sid'),'column 0 (sid) editor should be null');
             areSame( Y.DataTable.EditorOptions.inline , dt.getCellEditor('sopen').constructor, "common editor 0 should be inline");
