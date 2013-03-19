@@ -513,17 +513,6 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     ATTRS:{
 
         /**
-        Name for this View instance
-
-        @attribute name
-        @type String
-        @default null
-        */
-        name :{
-            value:      null,
-            validator:  Lang.isString
-        },
-        /**
         Value that was saved in the Editor View and returned to the record
 
         @attribute value

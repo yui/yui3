@@ -7,7 +7,10 @@ var Lang = Y.Lang,
     Array = Y.Array,
     arrEach = Array.each,
 
-    returnUnchanged = function (value) { return value;},
+    returnUnchanged = function (value) {
+        Y.log('(private) returnUnchanged: ' + value);
+        return value;
+    },
 
     EDITABLE = 'editable',
     EDITOR_OPEN_ACTION = 'editorOpenAction',
@@ -470,18 +473,14 @@ Y.mix( DtEditable.prototype, {
     /**
     Returns all cell editor View instances for the editable columns of the current DT instance
     @method getCellEditors
-    @return editors {Array} Array containing an Object as {columnKey, cellEditor, cellEditorName}
+    @return {Object} Hash containing all the cell editors instances indexed by the column key.
      */
     getCellEditors: function (){
         Y.log('DataTable.Editable.getCellEditors');
-        var rtn = [], ed;
+        var rtn = {}, ed;
         Y.Object.each(this._columnEditors, function (v, k){
             ed = (Lang.isString(v)) ? this._commonEditors[v] : v;
-            rtn.push({
-                columnKey:      k,
-                cellEditor:     ed,
-                cellEditorName: ed.get('name')
-            });
+            rtn[k] =  ed;
         }, this);
         return rtn;
     },
@@ -575,14 +574,12 @@ Y.mix( DtEditable.prototype, {
             });
         }
 
-        this._subscrEditable = [];
-
-        this._subscrEditable.push(
+        this._subscrEditable = [
             Y.Do.after(this._updateAllEditableColumnsCSS, this, 'syncUI'),
             this.after('sort', this._afterEditableSort),
             this.after(DEF_EDITOR + CHANGE, this._afterDefaultEditorChange)
-        );
-
+        ];
+        this._uiSetEditorOpenAction(this.get(EDITOR_OPEN_ACTION));
     },
 
     /**
@@ -1168,7 +1165,6 @@ Y.mix( DtEditable.prototype, {
 
             ev.record = this.data.getByClientId(cell.recClientId) || this._openRecord;
             ev.colKey = cell.colKey || this._openColKey;
-            ev.editorName = this._openEditor.get('name');
         } else {
             ev.halt();
         }
@@ -1197,7 +1193,6 @@ Y.mix( DtEditable.prototype, {
      @param ev.record {Model} Model instance of the record data for the edited cell
      @param ev.colKey {String} Column key (or name) of the edited cell
      @param {String|Number|Date} prevVal The old (last) value of the underlying data for the cell
-     @param ev.editorName {String} The name attribute of the editor that updated this cell
      */
 
     /**
@@ -1222,7 +1217,6 @@ Y.mix( DtEditable.prototype, {
 
             ev.record = this.data.getByClientId(cell.recClientId) || this._openRecord;
             ev.colKey = cell.colKey || this._openColKey;
-            ev.editorName = this._openEditor.get('name');
         } else {
             ev.halt();
         }
@@ -1253,7 +1247,6 @@ Y.mix( DtEditable.prototype, {
      @param ev.colKey {String} Column key (or name) of the edited cell
      @param ev.newVal {String|Number|Date} The new (updated) value of the underlying data for the cell
      @param ev.prevVal {String|Number|Date} The old (last) value of the underlying data for the cell
-     @param ev.editorName {String} The name attribute of the editor that updated this cell
      @param {String|Number|Date} prevVal The old (last) value of the underlying data for the cell
      */
 
