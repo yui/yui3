@@ -347,18 +347,15 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
         'check editing': function () {
             var dt = this.dt,
-                td =  dt.getCell([0,1]);
+                td =  dt.getCell([0,1]),
+                evFac, fail = false;
             td.simulate('click');
             var ed = Y.one('.yui3-datatable-inline-input');
             dt.after('celleditor:save', function (ev) {
-                areSame('sopen',ev.colKey, 'ev.colKey');
-                areSame(td,ev.td,'ev.td');
-                areSame('inline',ev.editorName,'ev.editorName');
-                areSame(0,ev.oldValue,'ev.oldValue');
-                areSame('abc',ev.newValue,'ev.newValue');
+                evFac = ev;
             });
             dt.after('celleditor:cancel', function (ev) {
-                Assert.fail('should never fire');
+                fail = true;
             });
 
             areSame('0', ed.get('value'), 'check input box');
@@ -366,6 +363,13 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(0, dt.getRecord(0).get('sopen'), 'check value on record');
 
             inputKey(ed, 'abc', 13);
+                isFalse(fail, 'cancel should never fire');
+                areSame('sopen',evFac.colKey, 'ev.colKey');
+                areSame(td,evFac.td,'ev.td');
+                areSame(0,evFac.oldValue,'ev.oldValue');
+                areSame('abc',evFac.newValue,'ev.newValue');
+                fail = false;
+                evFac = null;
             areSame('abc', ed.get('value'), 'check changed input');
 
             areSame('abc', dt.getRecord(0).get('sopen'), 'record should have changed');
@@ -374,19 +378,16 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
         'check editing canceled via event': function () {
             var dt = this.dt,
-                td =  dt.getCell([0,1]);
+                td =  dt.getCell([0,1]),
+                evFac, fail = false;
             td.simulate('click');
             var ed = Y.one('.yui3-datatable-inline-input');
             dt.on('celleditor:save', function (ev) {
-                areSame('sopen',ev.colKey, 'ev.colKey');
-                areSame(td,ev.td,'ev.td');
-                areSame('inline',ev.editorName,'ev.editorName');
-                areSame(0,ev.oldValue,'ev.oldValue');
-                areSame('abc',ev.newValue,'ev.newValue');
+                evFac = ev;
                 ev.halt();
             });
             dt.after('celleditor:cancel', function (ev) {
-                Assert.fail('should never fire');
+                fail = true;
             });
 
             areSame('0', ed.get('value'), 'check input box');
@@ -394,6 +395,15 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(0, dt.getRecord(0).get('sopen'), 'check value on record');
 
             inputKey(ed, 'abc', 13);
+
+                isFalse(fail, 'cancel should never fire');
+                areSame('sopen',evFac.colKey, 'ev.colKey');
+                areSame(td,evFac.td,'ev.td');
+                areSame(0,evFac.oldValue,'ev.oldValue');
+                areSame('abc',evFac.newValue,'ev.newValue');
+                fail = false;
+                evFac = null;
+
             areSame('abc', ed.get('value'), 'check changed input');
             areSame(0, dt.getRecord(0).get('sopen'), 'record should not have changed');
             areSame('0', dt.getCell([0,1]).getHTML(), 'check cell remains the same');
@@ -402,17 +412,15 @@ YUI.add('datatable-editable-tests', function(Y) {
 
         'check canceled editing': function () {
             var dt = this.dt,
-                td =  dt.getCell([0,1]);
+                td =  dt.getCell([0,1]),
+                evFac, fail = false;
             td.simulate('click');
             var ed = Y.one('.yui3-datatable-inline-input');
             dt.after('celleditor:save', function (ev) {
-                Assert.fail('should not fire');
+                fail = true;
             });
             dt.after('celleditor:cancel', function (ev) {
-                areSame('sopen',ev.colKey, 'ev.colKey');
-                areSame(td,ev.td,'ev.td');
-                areSame('inline',ev.editorName,'ev.editorName');
-                areSame(0,ev.oldValue,'ev.oldValue');
+                evFac = ev;
             });
 
             areSame('0', ed.get('value'), 'check input box');
@@ -420,6 +428,10 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(0, dt.getRecord(0).get('sopen'), 'check value on record');
 
             inputKey(ed, 'abc', 27);
+                isFalse(fail, 'save event should not fire');
+                areSame('sopen',evFac.colKey, 'ev.colKey');
+                areSame(td,evFac.td,'ev.td');
+                areSame(0,evFac.oldValue,'ev.oldValue');
             areSame('abc', ed.get('value'), 'check changed input');
 
             areSame(0, dt.getRecord(0).get('sopen'), 'record should not have changed');
