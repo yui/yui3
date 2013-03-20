@@ -65,6 +65,11 @@ var AttrProto = Y.Attribute.prototype,
     EVT_RESET = 'reset';
 
 Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
+    // -- Lifecycle ------------------------------------------------------------
+    initializer: function () {
+        this.after('*:change', this._afterModelChange);
+    },
+
     // -- Public Methods -------------------------------------------------------
 
     /**
@@ -433,6 +438,30 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
         }
 
         return model;
+    },
+
+    // -- Event Handlers -------------------------------------------------------
+
+    /**
+    Handles `change` events on revived models and updates the original objects
+    with the changes.
+
+    @method _afterModelChange
+    @param {EventFacade} e
+    @protected
+    **/
+    _afterModelChange: function (e) {
+        var changed = e.changed,
+            item    = this._clientIdMap[e.target.get('clientId')],
+            name;
+
+        if (item) {
+            for (name in changed) {
+                if (changed.hasOwnProperty(name)) {
+                    item[name] = changed[name].newVal;
+                }
+            }
+        }
     },
 
     // -- Default Event Handlers -----------------------------------------------

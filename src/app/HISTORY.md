@@ -6,6 +6,9 @@ App Framework Change History
 
 ### LazyModelList
 
+* Fixed: Changing an attribute on a revived model did not update the
+  corresponding property on the original object. [#528] [Ryan Grove]
+
 * Fixed: Revived models didn't have the same `clientId` as the original object.
   [#530] [Ryan Grove]
 
