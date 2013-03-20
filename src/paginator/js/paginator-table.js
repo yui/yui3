@@ -3,8 +3,8 @@
     as well as a list of numbers
 
  @module paginator
- @submodule paginator-view
- @class View
+ @submodule paginator-table
+ @class Table
  @namespace Paginator
  @since 3.10.0
  */
