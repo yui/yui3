@@ -61,13 +61,13 @@ Y.CategoryAxis = Y.Base.create("categoryAxis", Y.Axis, [Y.CategoryImpl], {
     {
         var label,
             data = this.get("data");
-        if(direction && direction == "vertical")
+        if(direction && direction === "vertical")
         {
-            label = data[i];
+            label = data[l - (i + 1)];
         }
         else
         {
-            label = data[l - (i + 1)];
+            label = data[i];
         }
         return label;
     }

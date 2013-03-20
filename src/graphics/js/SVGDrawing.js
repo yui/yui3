@@ -1,7 +1,7 @@
 var IMPLEMENTATION = "svg",
     SHAPE = "shape",
 	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
-    SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
+    SPLITARGSPATTERN = /[\-]?[0-9]*[0-9|\.][0-9]*/g,
     Y_LANG = Y.Lang,
 	AttributeLite = Y.AttributeLite,
 	SVGGraphic,
@@ -422,7 +422,7 @@ SVGDrawing.prototype = {
             pathArrayLen;
         this._pathArray = this._pathArray || [];
         yRadius = yRadius || radius;
-        if(this._pathType != "M")
+        if(this._pathType !== "M")
         {
             this._pathType = "M";
             currentArray = ["M"];
@@ -682,7 +682,6 @@ SVGDrawing.prototype = {
             pathType,
             len,
             val,
-            val2,
             i,
             path = "",
             node = this.node,
@@ -701,11 +700,11 @@ SVGDrawing.prototype = {
                 {
                     path += pathType + segmentArray[1] + "," + segmentArray[2];
                 }
-                else if(pathType == "z" || pathType == "Z")
+                else if(pathType === "z" || pathType === "Z")
                 {
                     path += " z ";
                 }
-                else if(pathType == "C" || pathType == "c")
+                else if(pathType === "C" || pathType === "c")
                 {
                     path += pathType + (segmentArray[1] - left)+ "," + (segmentArray[2] - top);
                 }
@@ -718,6 +717,7 @@ SVGDrawing.prototype = {
                     case "L" :
                     case "l" :
                     case "M" :
+                    case "m" :
                     case "Q" :
                     case "q" :
                         for(i = 2; i < len; ++i)

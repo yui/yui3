@@ -63,7 +63,12 @@ YUI.add('ua-tests', function(Y) {
         },
         tearDown: function() {
             if (window && window.Windows && window.Windows.YUI) {
-                delete window.Windows;
+                try {
+                    delete window.Windows;
+                } catch (e) {
+                    // For IE6, IE7
+                    window.Windows = undefined;
+                }
             }
         },
         'test: win8 app': function() {
