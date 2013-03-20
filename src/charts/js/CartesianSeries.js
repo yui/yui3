@@ -295,8 +295,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
             padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
-			dataWidth = w - (leftPadding + padding.right + xOffset),
-			dataHeight = h - (topPadding + padding.bottom + yOffset),
+			dataWidth = w - (leftPadding + padding.right + xOffset * 2),
+			dataHeight = h - (topPadding + padding.bottom + yOffset * 2),
 			xMax = xAxis.get("maximum"),
 			xMin = xAxis.get("minimum"),
 			yMax = yAxis.get("maximum"),
@@ -308,8 +308,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
             ycoords;
         graphic.set("width", w);
         graphic.set("height", h);
-        xOffset *= 0.5;
-        yOffset *= 0.5;
         //Assuming a vertical graph has a range/category for its vertical axis.
         if(direction === "vertical")
         {
