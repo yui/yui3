@@ -58,8 +58,6 @@ PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.U
      @return {Object} modified data object
      */
     preRender: function (template, data) {
-        console.log(LNAME, 'preRender');
-
         switch(template) {
             case 'control':
                 if (data.type === 'first') {

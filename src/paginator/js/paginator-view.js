@@ -318,12 +318,8 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
             displayRange = this.get('displayRange'),
             halfRange = Math.floor(displayRange / 2),
 
-            minRange = currentPage - halfRange,
-            maxRange = currentPage + halfRange;
-
-        if (minRange < 1) {
-          maxRange += -minRange;
-        }
+            minRange = Math.max(1, currentPage - halfRange),
+            maxRange = minRange + displayRange - 1;
 
         if (maxRange > pages) {
           minRange -= maxRange - pages;
