@@ -3,7 +3,7 @@
 
  @module paginator
  @submodule paginator-url
- @class View
+ @class Url
  @namespace Paginator
  @since 3.10.0
  */
