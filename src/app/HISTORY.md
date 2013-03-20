@@ -1,10 +1,20 @@
 App Framework Change History
 ============================
 
+3.9.0
+-----
+
+### App
+
+* Applied the same changes from CSS Grids to App Transitions to support changes
+  in how Chrome 25 renders `word-spacing`.
+
+
 3.8.1
 -----
 
 * No changes.
+
 
 3.8.0
 -----

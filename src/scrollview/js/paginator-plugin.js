@@ -12,6 +12,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     SCROLL_X = 'scrollX',
     SCROLL_Y = 'scrollY',
     TOTAL = 'total',
+    DISABLED = 'disabled',
     HOST = 'host',
     SELECTOR = 'selector',
     AXIS = 'axis',
@@ -326,6 +327,11 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @protected
      */
     _beforeHostFlick: function (e) {
+        
+        // If the widget is disabled
+        if (this._host.get(DISABLED)) {
+            return false;
+        }
 
         // The drag was out of bounds, so do nothing (which will cause a snapback)
         if (this._host._isOutOfBounds()){
@@ -338,7 +344,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             paginatorAxis = paginator.get(AXIS),
             flick = e.flick,
             velocity = flick.velocity,
-            flickAxis = flick.axis,
+            flickAxis = flick.axis || false,
             isForward = (velocity < 0),
             canScroll = paginatorAxis[flickAxis],
             rtl = host.rtl;
@@ -354,8 +360,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             // Fire next()/prev()
             paginator[(rtl === isForward ? 'prev' : 'next')]();
 
-            // Prevent flick animations on the paginated axis.
-            return new Y.Do.Prevent();
+            // Prevent flicks on the paginated axis
+            if (paginatorAxis[flickAxis]) {
+                return new Y.Do.Prevent();
+            }
         }
     },
 

@@ -1,5 +1,5 @@
 {
-    "name": "datatype-date",
+    "name": "date",
     "builds": {
         "datatype-date-parse": {
             "jsfiles": [

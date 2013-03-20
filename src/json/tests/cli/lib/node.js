@@ -6,10 +6,10 @@ YUI.add('node-tests', function (Y) {
     suite.add(new Y.Test.Case({
         name: 'Check native in Node.js',
         'should be using native parse': function() {
-            Assert.isTrue(Y.JSON.useNativeParse, 'should be true here');
+            Assert.isTrue(Y.JSON.parse.isShim !== true, 'should not be true here');
         },
         'should be using native stringify': function() {
-            Assert.isTrue(Y.JSON.useNativeStringify, 'should be true here');
+            Assert.isTrue(Y.JSON.stringify.isShim !== true, 'should not be true here');
         }
     }));
 

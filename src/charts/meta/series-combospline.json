@@ -1,0 +1,8 @@
+{
+    "series-combospline": {
+        "requires":[
+            "series-combo",
+            "series-curve-util"
+        ]
+    }
+}
