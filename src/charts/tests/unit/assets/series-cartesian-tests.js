@@ -36,8 +36,8 @@ YUI.add('series-cartesian-tests', function(Y) {
                 yValue,
                 leftPadding = padding.left,
                 topPadding = padding.top,
-                dataWidth = wid - (leftPadding + padding.right + xOffset),
-                dataHeight = ht - (topPadding + padding.bottom + yOffset),
+                dataWidth = wid - (leftPadding + padding.right + xOffset * 2),
+                dataHeight = ht - (topPadding + padding.bottom + yOffset * 2),
                 xcoords = [],
                 ycoords = [],
                 leftOrigin,
@@ -49,8 +49,6 @@ YUI.add('series-cartesian-tests', function(Y) {
                 xMarkerPlane = [],
                 yMarkerPlane = [],
             dataLength = xData.length;
-            xOffset *= 0.5;
-            yOffset *= 0.5;
             //Assuming a vertical graph has a range/category for its vertical axis.
             if(direction === "vertical")
             {
