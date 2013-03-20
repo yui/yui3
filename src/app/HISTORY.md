@@ -1,6 +1,15 @@
 App Framework Change History
 ============================
 
+@VERSION@
+-----
+
+### LazyModelList
+
+* Fixed: Revived models didn't have the same `clientId` as the original object.
+  [#530] [Ryan Grove]
+
+
 3.9.0
 -----
 

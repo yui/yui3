@@ -422,6 +422,12 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
 
         if (!model) {
             model = new this.model(item);
+
+            // The clientId attribute is read-only, but revived models should
+            // have the same clientId as the original object, so we need to set
+            // it manually.
+            model._set('clientId', item.clientId);
+
             this._attachList(model);
             this._models[index] = model;
         }
