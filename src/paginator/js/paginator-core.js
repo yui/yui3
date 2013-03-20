@@ -1,3 +1,13 @@
+/**
+ A collection of generic paginator methods and properties.
+
+ @module paginator
+ @submodule paginator-core
+ @class Core
+ @namespace Paginator
+ @since 3.10.0
+ */
+
 function PaginatorCore () {}
 
 PaginatorCore.NAME = 'paginator-core';
@@ -152,7 +162,7 @@ PaginatorCore.prototype = {
     /**
      Returns True if there is a previous page in the set.
      @method hasPrev
-     @returns Boolean
+     @return Boolean
      */
     hasPrev: function () {
         return this.get('circular') || (this.get('page') > 1);
@@ -161,7 +171,7 @@ PaginatorCore.prototype = {
     /**
      Returns True if there is a previous page in the set.
      @method hasNext
-     @returns Boolean
+     @return Boolean
      */
     hasNext: function () {
         return this.get('circular') || (this.get('page') + 1 <= this.get('pages'));
@@ -176,7 +186,7 @@ PaginatorCore.prototype = {
        items provided and the number of items per page
      @protected
      @method _getPages
-     @returns Number
+     @return Number
      */
     _getPages: function () {
         var itemsPerPage = this.get('itemsPerPage');
@@ -192,7 +202,7 @@ PaginatorCore.prototype = {
      Returns the zero-based index of the first item on the page.
      @protected
      @method _getIndex
-     @returns Number
+     @return Number
      */
     _getIndex: function () {
         return (this.get('page') - 1) * this.get('itemsPerPage');
@@ -202,7 +212,7 @@ PaginatorCore.prototype = {
      Returns the one-based index of the first item on the page.
      @protected
      @method _getItemIndex
-     @returns Number
+     @return Number
      */
     _getItemIndex: function () {
         return (this.get('page') - 1) * this.get('itemsPerPage') + 1;
@@ -212,7 +222,7 @@ PaginatorCore.prototype = {
      Sets the current page to the value provided.
      @protected
      @method _pageSetterFn
-     @returns Number
+     @return Number
      */
     _pageSetterFn: function (val) {
         return parseInt(val, 10);
@@ -222,7 +232,7 @@ PaginatorCore.prototype = {
      Sets the number of items to be displayed per page
      @protected
      @method _itemsPerPageSetterFn
-     @returns Number
+     @return Number
      */
     _itemsPerPageSetterFn: function (val) {
         if (!val) {
@@ -241,7 +251,7 @@ PaginatorCore.prototype = {
      Sets the total number of items in the set.
      @protected
      @method _totalItemsSetterFn
-     @returns Number
+     @return Number
      */
     _totalItemsSetterFn: function (val) {
         return parseInt(val, 10);

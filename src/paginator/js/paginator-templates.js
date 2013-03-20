@@ -1,3 +1,13 @@
+/**
+ A default set of templates to use with the default Y.Paginator.View.
+
+ @module paginator
+ @submodule paginator-templates
+ @class Templates
+ @namespace Paginator
+ @since 3.10.0
+ */
+
 var template = new Y.Template(),
 
     /*

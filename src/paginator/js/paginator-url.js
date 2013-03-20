@@ -1,3 +1,13 @@
+/**
+ Adds in URL options for paginator links.
+
+ @module paginator
+ @submodule paginator-url
+ @class View
+ @namespace Paginator
+ @since 3.10.0
+ */
+
 function PaginatorUrl () {}
 
 PaginatorUrl.ATTRS = {
@@ -13,7 +23,7 @@ PaginatorUrl.prototype = {
     /**
      Returns a formated URL for the previous page.
      @method prevUrl
-     @returns String | NULL
+     @return String | NULL
      */
     prevUrl: function () {
         return (this.hasPrev() && this.formatUrl(this.get('page') - 1)) || null;
@@ -22,7 +32,7 @@ PaginatorUrl.prototype = {
     /**
      Returns a formated URL for the next page.
      @method nextUrl
-     @returns String | NULL
+     @return String | NULL
      */
     nextUrl: function () {
         return (this.hasNext() && this.formatUrl(this.get('page') + 1)) || null;
@@ -31,7 +41,7 @@ PaginatorUrl.prototype = {
     /**
      Returns a formated URL for the provided page number.
      @method formatUrl
-     @returns String | NULL
+     @return String | NULL
      */
     formatUrl: function (page) {
         var url = this.get('url');

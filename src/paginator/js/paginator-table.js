@@ -1,7 +1,17 @@
-var PaginatorDT,
-    LNAME = NAME + '::';
+/**
+ A base paginator view displaying first, previous, next and last buttons,
+    as well as a list of numbers
 
-PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
+ @module paginator
+ @submodule paginator-view
+ @class View
+ @namespace Paginator
+ @since 3.10.0
+ */
+
+var PaginatorTable;
+
+PaginatorTable = Y.Base.create('paginator-table', Y.Paginator.View, [], {
 
     /**
      Template for this view's content. The template is compiled in the
@@ -21,7 +31,7 @@ PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
      Returns the template string compiled with the corresponding controls provided
        by `Y.Paginator.View`
      @method renderControls
-     @returns {String}
+     @return {String}
      */
     renderControls: function () {
         return this.template({
@@ -79,5 +89,5 @@ PaginatorDT = Y.Base.create('paginator-dt', Y.Paginator.View, [], {
     }
 });
 
-Y.namespace('Paginator').DataTable = PaginatorDT;
+Y.namespace('Paginator').Table = PaginatorTable;
 

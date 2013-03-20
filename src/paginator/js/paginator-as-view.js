@@ -1,3 +1,12 @@
+/**
+ Mixes into Y.Paginator a classical interface to use the Paginator as a View.
+
+ @module paginator
+ @submodule paginator-as-view
+ @namespace Paginator
+ @since 3.10.0
+ */
+
 function PaginatorAsView(){}
 
 PaginatorAsView.ATTRS = {
@@ -18,7 +27,7 @@ Y.mix(PaginatorAsView.protype, {
     /**
      @method _containerSetterFn
      @attribute {Y.Node} node
-     @returns Y.Node
+     @return Y.Node
      */
     _containerSetterFn: function (node) {
         this.set('boundingBox', node);
@@ -27,7 +36,7 @@ Y.mix(PaginatorAsView.protype, {
 
     /**
      @method _containerGetterFn
-     @returns Y.Node
+     @return Y.Node
      */
     _containerGetterFn: function () {
         return this.get('boundingBox');

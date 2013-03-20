@@ -1,5 +1,15 @@
-var PaginatorList,
-    LNAME = NAME + '::';
+/**
+ A base paginator view displaying first, previous, next and last buttons,
+    as well as a list of numbers
+
+ @module paginator
+ @submodule paginator-list
+ @class List
+ @namespace Paginator
+ @since 3.10.0
+ */
+
+var PaginatorList;
 
 PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.Url], {
 
@@ -25,7 +35,7 @@ PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.U
        by `Y.Paginator.View`
 
      @method renderControls
-     @returns {String}
+     @return {String}
      */
     renderControls: function () {
         return this.template({
