@@ -18193,6 +18193,10 @@ IO.prototype = {
             }
         }
 
+        // Convert falsy values to an empty string. This way IE can't be
+        // rediculous and translate `undefined` to "undefined".
+        data || (data = '');
+
         if (data) {
             switch (method) {
                 case 'GET':
@@ -18532,9 +18536,10 @@ YUI.add('json-parse', function (Y, NAME) {
 
 var _JSON = Y.config.global.JSON;
 
-Y.namespace('JSON').parse = function () {
-    return _JSON.parse.apply(_JSON, arguments);
+Y.namespace('JSON').parse = function (obj, reviver, space) {
+    return _JSON.parse((typeof obj === 'string' ? obj : obj + ''), reviver, space);
 };
+
 
 }, '@VERSION@', {"requires": ["yui-base"]});
 YUI.add('transition', function (Y, NAME) {

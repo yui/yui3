@@ -26,7 +26,7 @@ _yuitest_coverage["build/json-parse/json-parse.js"] = {
     path: "build/json-parse/json-parse.js",
     code: []
 };
-_yuitest_coverage["build/json-parse/json-parse.js"].code=["YUI.add('json-parse', function (Y, NAME) {","","var _JSON = Y.config.global.JSON;","","Y.namespace('JSON').parse = function () {","    return _JSON.parse.apply(_JSON, arguments);","};","","}, '@VERSION@', {\"requires\": [\"yui-base\"]});"];
+_yuitest_coverage["build/json-parse/json-parse.js"].code=["YUI.add('json-parse', function (Y, NAME) {","","var _JSON = Y.config.global.JSON;","","Y.namespace('JSON').parse = function (obj, reviver, space) {","    return _JSON.parse((typeof obj === 'string' ? obj : obj + ''), reviver, space);","};","","","}, '@VERSION@', {\"requires\": [\"yui-base\"]});"];
 _yuitest_coverage["build/json-parse/json-parse.js"].lines = {"1":0,"3":0,"5":0,"6":0};
 _yuitest_coverage["build/json-parse/json-parse.js"].functions = {"parse:5":0,"(anonymous 1):1":0};
 _yuitest_coverage["build/json-parse/json-parse.js"].coveredLines = 4;
@@ -39,10 +39,11 @@ _yuitest_coverline("build/json-parse/json-parse.js", 3);
 var _JSON = Y.config.global.JSON;
 
 _yuitest_coverline("build/json-parse/json-parse.js", 5);
-Y.namespace('JSON').parse = function () {
+Y.namespace('JSON').parse = function (obj, reviver, space) {
     _yuitest_coverfunc("build/json-parse/json-parse.js", "parse", 5);
 _yuitest_coverline("build/json-parse/json-parse.js", 6);
-return _JSON.parse.apply(_JSON, arguments);
+return _JSON.parse((typeof obj === 'string' ? obj : obj + ''), reviver, space);
 };
+
 
 }, '@VERSION@', {"requires": ["yui-base"]});
