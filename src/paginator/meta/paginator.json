@@ -30,7 +30,7 @@
                 ],
                 "skinnable": true
             },
-            "paginator-dt": {
+            "paginator-table": {
                 "requires": [
                     "paginator-view"
                 ],

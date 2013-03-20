@@ -1,7 +1,16 @@
+/**
+ A base paginator view
+
+ @module paginator
+ @submodule paginator-view
+ @class View
+ @namespace Paginator
+ @since 3.10.0
+ */
+
 var getClassName = Y.ClassNameManager.getClassName,
     YLSub = Y.Lang.sub,
     Y_Paginator = Y.Paginator,
-    LNAME = NAME + ':: ',
     PaginatorView;
 
 PaginatorView = Y.Base.create('paginator', Y.View, [], {
@@ -96,7 +105,7 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
      Generates a control based on the type provided and the control template
      @method renderControl
      @param {String} type
-     @returns {String}
+     @return {String}
      */
     renderControl: function (type) {
         var strings = this.get('strings'),
@@ -145,7 +154,7 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
      Creates a list of pages based on the displayRange, totoal number of
        pages and the current page being displayed
      @method renderPages
-     @returns {String}
+     @return {String}
      */
     renderPages: function () {
         var rangeValues = this.getDisplayRangeValues(),
@@ -169,7 +178,7 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
      @method renderPage
      @param {Number} page
      @param {Number} curPage
-     @returns {String}
+     @return {String}
      */
     renderPage: function (page, curPage) {
         var strings = this.get('strings'),
@@ -188,7 +197,7 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     /**
      Creates a page input control based on the page input template
      @method renderPageInput
-     @returns {String}
+     @return {String}
      */
     renderPageInput: function () {
         var strings = this.get('strings'),
@@ -206,7 +215,7 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     /**
      Creates a page select control based on the page select template
      @method renderPageSelect
-     @returns {String}
+     @return {String}
      */
     renderPageSelect: function () {
         var strings = this.get('strings'),
@@ -234,7 +243,7 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     /**
      Creates a per page select control based on the per page select template
      @method renderPerPageSelect
-     @returns {String}
+     @return {String}
      */
     renderPerPageSelect: function () {
         var strings = this.get('strings'),
@@ -272,7 +281,7 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
      @method renderTemplate
      @param {String} template
      @param {Object} data
-     @returns {String}
+     @return {String}
      */
     renderTemplate: function(template, data) {
         data.classNames || (data.classNames = this.classNames);
@@ -289,7 +298,7 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
        `getAttrs()` method.
      @method getTemplateAttrs
      @param {Ojbect} attrs
-     @returns {Object}
+     @return {Object}
      */
     getTemplateAttrs: function (attrs) {
         var retAttrs = Y.mix(attrs || {}, this.get('model').toJSON());
@@ -300,7 +309,7 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
      Calculates the min and max page to display based on the displayRange,
        the current page, and the total number of pages.
      @method getDisplayRangeValues
-     @returns {Object}
+     @return {Object}
      */
     getDisplayRangeValues: function () {
         var model = this.get('model'),
@@ -365,7 +374,7 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     /**
      Returns the default string values used in the template for internationalization
      @method _stringValueFn
-     @returns {Object}
+     @return {Object}
      */
     _stringValueFn: function () {
         return Y.Intl.get('paginator-templates');

@@ -1,3 +1,16 @@
+/**
+ The Paginator Control allows you to reduce the page size and render
+    time of your site or web application by breaking up large data sets
+    into discrete pages. Paginator addresses the navigation aspect of
+    chunked content, offering a set of controls that it can render into
+    your UI to allow users to navigate through logical sections of local
+    or remote data.
+
+ @module paginator
+ @class Paginator
+ @since 3.10.0
+ */
+
 var Y_Paginator = Y.namespace('Paginator'),
     Paginator;
 
@@ -131,7 +144,7 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
      @protected
      @method _viewSetterFn
      @param {String|Object} view
-     @returns Y.View
+     @return Y.View
      */
     _viewSetterFn: function (view) {
         if (typeof view === 'string') {
@@ -146,7 +159,7 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
      @protected
      @method _createView
      @param {String} viewType
-     @returns Y.View
+     @return Y.View
      */
     _createView: function (viewType) {
         var ViewConstructor = Y.Object.getValue(Y, viewType.split('.')),

@@ -16,9 +16,9 @@
                 "paginator-view.js"
             ]
         },
-        "paginator-dt": {
+        "paginator-table": {
             "jsfiles": [
-                "paginator-dt.js"
+                "paginator-table.js"
             ]
         },
         "paginator-list": {
