@@ -1,0 +1,5 @@
+[
+	"scrollview/tests/benchmark/scrollview-benchmark.js",
+	"base/tests/benchmark/base-benchmark.js",
+	"app/tests/benchmark/app-benchmark.js"
+]
