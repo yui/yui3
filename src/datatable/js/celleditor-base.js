@@ -44,16 +44,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     */
     _subscr:        null,
 
-    /**
-    CSS classname to identify the individual input collection HTML nodes within
-    the View container
 
-    @property _classEditing
-    @type String
-    @default 'editing'
-    @protected
-    */
-    _classEditing:  'editing',
 
     /**
     Copy of the formatter attribute for internal use.
@@ -284,15 +275,13 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     */
     showEditor: function (td) {
         Y.log('DataTable.BaseCellEditor.showEditor');
-        var cell = this.get('cell'),
-            value  = this.get('value');
+        var value  = this.get('value');
 
 
         value = this._formatter(value);
 
         this.fire('show',{
             td:         td,
-            cell:       cell,
             inputNode:  this._inputNode,
             value:      value
         });
@@ -325,8 +314,6 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
             }
 
             this.fire("save", {
-                td:         this.get('cell').td,
-                cell:       this.get('cell'),
                 oldValue:   this.get('lastValue'),
                 newValue:   value
             });
@@ -342,14 +329,9 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     */
     hideEditor: function (hideMe) {
         Y.log('DataTable.BaseCellEditor.hideEditor: ' + hideMe);
-        var cont  = this.get('container'),
-            cell = this.get('cell');
+        var cont  = this.get('container');
         if(cont && cont.hide) {
             cont.hide();
-        }
-
-        if(cell && cell.td) {
-            cell.td.removeClass(this._classEditing);
         }
 
         if(hideMe) {
@@ -371,8 +353,6 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         Y.log('DataTable.BaseCellEditor.cancelEditor');
 
         this.fire("cancel",{
-            cell:       this.get('cell'),
-            td:         this.get('cell').td,
             oldValue:   this.get('lastValue')
         });
     },
@@ -399,7 +379,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         //
         // If RTN, then prevent and save ...
         //
-        if(keyc === KEYC_RTN && this.get('saveOnEnterKey')) {
+        if(keyc === KEYC_ENTER && this.get('saveOnEnterKey')) {
             e.preventDefault();
             this.saveEditor(value);
             return;
@@ -511,6 +491,13 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     }
 },{
     ATTRS:{
+
+        /**
+        Reference to the cell being edited
+        @attribute td
+        @type Node
+        */
+       td: {},
 
         /**
         Value that was saved in the Editor View and returned to the record

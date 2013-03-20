@@ -196,7 +196,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(0, Y.Object.size(dt._commonEditors), "_commonEditors not {}" );
             areSame(0, Y.Object.size(dt._columnEditors), "_columnEditors not {}" );
             isNull( dt._openEditor, "_openEditor not null" );
-            isNull( dt._openTd, "_openTd not null" );
+            isNull( dt._editorTd, "_editorTd not null" );
             areSame(0, Y.all('.yui3-datatable-inline-input').size(),'There should be no editors left behind');
 
         }
@@ -274,7 +274,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             td4.simulate('click');
             areSame('30',td4.getHTML(),'row 3, col 4 should be "30"');
-            areSame(td4.get('text'),dt._openCell.td.getHTML());
+            areSame(td4.get('text'),dt._editorTd.getHTML());
 
             // check getColumnXXX methods
             areSame('stype',dt.getColumnByTd(td4).key,'getColumnByTd should be sdesc');
@@ -348,7 +348,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         'check editing': function () {
             var dt = this.dt,
                 td =  dt.getCell([0,1]),
-                evFac, fail = false;
+                evFac = {}, fail = false;
             td.simulate('click');
             var ed = Y.one('.yui3-datatable-inline-input');
             dt.after('celleditor:save', function (ev) {
@@ -379,7 +379,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         'check editing canceled via event': function () {
             var dt = this.dt,
                 td =  dt.getCell([0,1]),
-                evFac, fail = false;
+                evFac = {}, fail = false;
             td.simulate('click');
             var ed = Y.one('.yui3-datatable-inline-input');
             dt.on('celleditor:save', function (ev) {
@@ -413,7 +413,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         'check canceled editing': function () {
             var dt = this.dt,
                 td =  dt.getCell([0,1]),
-                evFac, fail = false;
+                evFac = {}, fail = false;
             td.simulate('click');
             var ed = Y.one('.yui3-datatable-inline-input');
             dt.after('celleditor:save', function (ev) {
@@ -449,7 +449,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(0, Y.Object.size(dt._commonEditors), "_commonEditors not {}" );
             areSame(0, Y.Object.size(dt._columnEditors), "_columnEditors not {}" );
             isNull( dt._openEditor, "_openEditor not null" );
-            isNull( dt._openTd, "_openTd not null" );
+            isNull( dt._editorTd, "_editorTd not null" );
             areSame(0, Y.all('.yui3-datatable-inline-input').size(),'There should be no editors left behind');
 
         }

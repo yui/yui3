@@ -110,8 +110,7 @@ var Editors = {},
     _defShowFn: function (ev) {
         Y.log('DataTable.BaseCellInlineEditor._defShowFn');
         var cont = this.get('container'),
-            cell = ev.cell,
-            td = cell.td || ev.td,
+            td = ev.td,
             xy = td.getXY();
         //
         // Get the TD Node's XY position, and resize/position the container
@@ -233,22 +232,6 @@ var Editors = {},
 
 },{
     ATTRS:{
-
-
-        /**
-         * A cell reference object populated by the calling DataTable, contains
-         * the following key properties: {td,value,recClientId,colKey}
-         * @attribute cell
-         * @type Object
-         * @default {}
-         */
-        cell: {
-            valueFn: function () {
-                return {};  // otherwise you get all of them pointing exactly to the same static object.
-            }
-        },
-
-
 
 
         /**

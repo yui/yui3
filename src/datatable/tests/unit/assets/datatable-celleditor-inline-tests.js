@@ -370,11 +370,11 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             oe = dt._openEditor;
             inp = oe._inputNode;
             Assert.isTrue(oe.get('visible'),'cell editor should be visible');
-            Assert.areSame(td3,oe.get('cell').td);
+            Assert.areSame(td3,oe.get('td'));
 
             // navigate to cell 4 via TAB
             inputKey(inp,'abc',9);
-            Assert.areSame(tds.item(4),oe.get('cell').td,'should have tabbed to cell 4');
+            Assert.areSame(tds.item(4),oe.get('td'),'should have tabbed to cell 4');
 
         },
 
@@ -390,12 +390,12 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             oe = dt._openEditor;
             inp = oe._inputNode;
             Assert.isTrue(oe.get('visible'),'cell editor should be visible');
-            Assert.areSame(td3,oe.get('cell').td);
+            Assert.areSame(td3,oe.get('td'));
 
             // navigate to cell 4 via TAB
             //inputKey(inp,'abc',9);
             fireKeyObj(inp,{keyCode:9,shiftKey:true});
-            Assert.areSame(tds.item(2),oe.get('cell').td,'should have shift tabbed to cell 2');
+            Assert.areSame(tds.item(2),oe.get('td'),'should have shift tabbed to cell 2');
 
         },
 
@@ -411,11 +411,11 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             oe = dt._openEditor;
             inp = oe._inputNode;
             Assert.isTrue(oe.get('visible'),'cell editor should be visible');
-            Assert.areSame(td3,oe.get('cell').td);
+            Assert.areSame(td3,oe.get('td'));
 
             // navigate up one row, via ctrl-up
             fireKeyObj(inp,{keyCode:38,ctrlKey:true});
-            Assert.areSame(dt.getCell(td3,[-1,0]),oe.get('cell').td,'should have shift tabbed to cell 2');
+            Assert.areSame(dt.getCell(td3,[-1,0]),oe.get('td'),'should have shift tabbed to cell 2');
 
         },
 
@@ -431,11 +431,11 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             oe = dt._openEditor;
             inp = oe._inputNode;
             Assert.isTrue(oe.get('visible'),'cell editor should be visible');
-            Assert.areSame(td3,oe.get('cell').td);
+            Assert.areSame(td3,oe.get('td'));
 
             // navigate down one row, via ctrl-up
             fireKeyObj(inp,{keyCode:40,ctrlKey:true});
-            Assert.areSame(dt.getRow(3).all('td').item(3),oe.get('cell').td,'should have shift tabbed to cell 2');
+            Assert.areSame(dt.getRow(3).all('td').item(3),oe.get('td'),'should have shift tabbed to cell 2');
 
         },
 
@@ -451,11 +451,11 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             oe = dt._openEditor;
             inp = oe._inputNode;
             Assert.isTrue(oe.get('visible'),'cell editor should be visible');
-            Assert.areSame(td3,oe.get('cell').td);
+            Assert.areSame(td3,oe.get('td'));
 
             // navigate left one cell
             fireKeyObj(inp,{keyCode:37,ctrlKey:true});
-            Assert.areSame(tds.item(2),oe.get('cell').td);
+            Assert.areSame(tds.item(2),oe.get('td'));
 
         },
 
@@ -471,11 +471,11 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             oe = dt._openEditor;
             inp = oe._inputNode;
             Assert.isTrue(oe.get('visible'),'cell editor should be visible');
-            Assert.areSame(td3,oe.get('cell').td);
+            Assert.areSame(td3,oe.get('td'));
 
             // navigate right one cell, via ctrl-right
             fireKeyObj(inp,{keyCode:39,ctrlKey:true});
-            Assert.areSame(tds.item(4),oe.get('cell').td);
+            Assert.areSame(tds.item(4),oe.get('td'));
 
         }
 
