@@ -347,7 +347,7 @@ TopAxisLayout.prototype = {
      * @param {Node} cb contentBox of the axis
      * @protected
      */
-    offsetNodeForTick: function(cb)
+    offsetNodeForTick: function()
     {
     },
 

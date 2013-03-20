@@ -203,6 +203,10 @@ TreeNode.prototype = {
             and means they can't be reused.
         @param {Boolean} [options.silent=false] If `true`, `remove` events will
             be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @return {Tree.Node[]} Array of removed child nodes.
     **/
     empty: function (options) {
@@ -272,6 +276,10 @@ TreeNode.prototype = {
             parent.
         @param {Boolean} [options.silent=false] If `true`, the `add` event will
             be suppressed.
+        @param {String} [options.src='insert'] Source of the change, to be
+            passed along to the event facade of the resulting event. This can be
+            used to distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
 
     @return {Tree.Node[]} Node or array of nodes that were inserted.
     **/
@@ -364,6 +372,10 @@ TreeNode.prototype = {
             garbage collection and means they can't be reused.
         @param {Boolean} [options.silent=false] If `true`, the `remove` event
             will be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     remove: function (options) {

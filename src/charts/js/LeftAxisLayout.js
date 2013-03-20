@@ -5,7 +5,6 @@
  * @submodule axis
  */
 var CONFIG = Y.config,
-    WINDOW = CONFIG.win,
     DOCUMENT = CONFIG.doc,
     Y_Lang = Y.Lang,
     IS_STRING = Y_Lang.isString,
@@ -13,9 +12,7 @@ var CONFIG = Y.config,
     LeftAxisLayout,
     RightAxisLayout,
     BottomAxisLayout,
-    TopAxisLayout,
-    _getClassName = Y.ClassNameManager.getClassName,
-    SERIES_MARKER = _getClassName("seriesmarker");
+    TopAxisLayout;
 /**
  * Algorithmic strategy for rendering a left axis.
  *
@@ -344,10 +341,10 @@ LeftAxisLayout.prototype = {
      * Adjust the position of the Axis widget's content box for internal axes.
      *
      * @method offsetNodeForTick
-     * @param {Node} cb Content box of the Axis.
+     * @param {Node} cb contentBox of the axis
      * @protected
      */
-    offsetNodeForTick: function(cb)
+    offsetNodeForTick: function()
     {
     },
 
