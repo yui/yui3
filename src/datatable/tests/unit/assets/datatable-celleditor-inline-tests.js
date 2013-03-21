@@ -207,7 +207,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             td6.simulate('click');
             oe = dt._openEditor;
-            Assert.isTrue(oe.get('visible'),'cell editor col 6 should be visible');
+            Assert.isTrue(oe.get('active'),'cell editor col 6 should be active');
         },
 
         'check inline editor - row 0 column 6 (sprice) : hideeditor' : function(){
@@ -219,24 +219,12 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             td6.simulate('click');
             oe = dt._openEditor;
-            Assert.isTrue(oe.get('visible'),'cell editor col 6 should be visible');
+            Assert.isTrue(oe.get('active'),'cell editor col 6 should be active');
 
             // hideEditor
             oe.hideEditor();
-            Assert.isFalse(oe.get('visible'),'cell editor col 1 should be closed');
-            Assert.isFalse(dt.getCellEditor('sprice').get('visible'),'cell editor col 1 should be closed');
-            Assert.isFalse(dt.getCellEditor('sprice').get('hidden'),'cell editor col 1 should not be hidden');
-
-            // open the editor
-            td6.simulate('click');
-            oe = dt._openEditor;
-            Assert.isTrue(oe.get('visible'),'cell editor col 6 should be visible');
-
-            // hideEditor
-            oe.hideEditor(true);
-            Assert.isFalse(oe.get('visible'),'cell editor col 1 should be closed');
-            Assert.isFalse(dt.getCellEditor('sprice').get('visible'),'cell editor col 1 should be closed');
-            Assert.isTrue(dt.getCellEditor('sprice').get('hidden'),'cell editor col 1 should be hidden');
+            Assert.isFalse(oe.get('active'),'cell editor col 1 should be closed');
+            Assert.isFalse(dt.getCellEditor('sprice').get('active'),'cell editor col 1 should be closed');
         },
 
         'canceleditor via ESC' : function(){
@@ -249,8 +237,6 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td6.simulate('click');
             oe = dt._openEditor;
 
-            // showEditor
-            oe.showEditor(td6);
             inp = oe._inputNode;
 
             // ESC cancelEditor
@@ -259,8 +245,8 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             inp.simulate('keypress',{charCode:72}); //  4:52     H:72   i:105
             inp.simulate('keypress',{charCode:52}); //  4:52     H:72   i:105
             inp.simulate('keydown',{keyCode:27});
-            Assert.isFalse(oe.get('visible'),'cell editor col 1 should be closed');
-            Assert.isFalse(dt.getCellEditor('sprice').get('visible'),'cell editor col 1 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 1 should be closed');
+            Assert.isFalse(dt.getCellEditor('sprice').get('active'),'cell editor col 1 should be closed');
 
         },
 
@@ -274,8 +260,8 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td6.simulate('click');
             oe = dt._openEditor;
             oe.cancelEditor();
-            Assert.isFalse(oe.get('visible'),'cell editor col 1 should be closed');
-            Assert.isFalse(dt.getCellEditor('sprice').get('visible'),'cell editor col 1 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 1 should be closed');
+            Assert.isFalse(dt.getCellEditor('sprice').get('active'),'cell editor col 1 should be closed');
 
         },
 
@@ -289,9 +275,8 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td6.simulate('click');
             oe = dt._openEditor;
             oe.saveEditor('abcdefg');
-            Assert.isFalse(oe.get('visible'),'cell editor col 1 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 1 should be closed');
             Assert.areSame('abcdefg', oe.get('value'),'after save lastvalue should be abcdefg');
-            Assert.areSame(59.93, oe.get('lastValue'),'after save lastvalue should be 59.93');
         },
 
         'saveEditor via RTN' : function() {
@@ -304,9 +289,8 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             oe = dt._openEditor;
             inp = oe._inputNode;
             inputKey(inp,'abcdefg',13);
-            Assert.isFalse(oe.get('visible'),'cell editor col 1 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 1 should be closed');
             Assert.areSame('abcdefg', oe.get('value'),'after save lastvalue should be abcdefg');
-            Assert.areSame(59.93, oe.get('lastValue'),'after save lastvalue should be 59.93');
         },
 
         'saveEditor with undefined' : function() {
@@ -319,7 +303,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             oe = dt._openEditor;
             inp = oe._inputNode;
             inputKey(inp,undefined,13);
-            Assert.isFalse(oe.get('visible'),'cell editor col 1 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 1 should be closed');
     //      Assert.areSame(59.93, oe.get('value'),'after save value should be 59.93');
         },
 
@@ -334,7 +318,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             inp = oe._inputNode;
             //inputKey(inp,undefined,13);
             oe.saveEditor(undefined);
-            Assert.isFalse(oe.get('visible'),'cell editor col 1 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 1 should be closed');
             Assert.areSame(59.93, oe.get('value'),'after save value should be 59.93');
         }
 
@@ -369,12 +353,12 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td3.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor should be visible');
-            Assert.areSame(td3,oe.get('td'));
+            Assert.isTrue(oe.get('active'),'cell editor should be active');
+            Assert.areSame(td3,oe._cellInfo.td);
 
             // navigate to cell 4 via TAB
             inputKey(inp,'abc',9);
-            Assert.areSame(tds.item(4),oe.get('td'),'should have tabbed to cell 4');
+            Assert.areSame(tds.item(4),oe._cellInfo.td,'should have tabbed to cell 4');
 
         },
 
@@ -389,13 +373,13 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td3.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor should be visible');
-            Assert.areSame(td3,oe.get('td'));
+            Assert.isTrue(oe.get('active'),'cell editor should be active');
+            Assert.areSame(td3,oe._cellInfo.td);
 
             // navigate to cell 4 via TAB
             //inputKey(inp,'abc',9);
             fireKeyObj(inp,{keyCode:9,shiftKey:true});
-            Assert.areSame(tds.item(2),oe.get('td'),'should have shift tabbed to cell 2');
+            Assert.areSame(tds.item(2),oe._cellInfo.td,'should have shift tabbed to cell 2');
 
         },
 
@@ -410,12 +394,12 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td3.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor should be visible');
-            Assert.areSame(td3,oe.get('td'));
+            Assert.isTrue(oe.get('active'),'cell editor should be active');
+            Assert.areSame(td3,oe._cellInfo.td);
 
             // navigate up one row, via ctrl-up
             fireKeyObj(inp,{keyCode:38,ctrlKey:true});
-            Assert.areSame(dt.getCell(td3,[-1,0]),oe.get('td'),'should have shift tabbed to cell 2');
+            Assert.areSame(dt.getCell(td3,[-1,0]),oe._cellInfo.td,'should have shift tabbed to cell 2');
 
         },
 
@@ -430,12 +414,12 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td3.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor should be visible');
-            Assert.areSame(td3,oe.get('td'));
+            Assert.isTrue(oe.get('active'),'cell editor should be active');
+            Assert.areSame(td3,oe._cellInfo.td);
 
             // navigate down one row, via ctrl-up
             fireKeyObj(inp,{keyCode:40,ctrlKey:true});
-            Assert.areSame(dt.getRow(3).all('td').item(3),oe.get('td'),'should have shift tabbed to cell 2');
+            Assert.areSame(dt.getRow(3).all('td').item(3),oe._cellInfo.td,'should have shift tabbed to cell 2');
 
         },
 
@@ -450,12 +434,12 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td3.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor should be visible');
-            Assert.areSame(td3,oe.get('td'));
+            Assert.isTrue(oe.get('active'),'cell editor should be active');
+            Assert.areSame(td3,oe._cellInfo.td);
 
             // navigate left one cell
             fireKeyObj(inp,{keyCode:37,ctrlKey:true});
-            Assert.areSame(tds.item(2),oe.get('td'));
+            Assert.areSame(tds.item(2),oe._cellInfo.td);
 
         },
 
@@ -470,12 +454,12 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td3.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor should be visible');
-            Assert.areSame(td3,oe.get('td'));
+            Assert.isTrue(oe.get('active'),'cell editor should be active');
+            Assert.areSame(td3,oe._cellInfo.td);
 
             // navigate right one cell, via ctrl-right
             fireKeyObj(inp,{keyCode:39,ctrlKey:true});
-            Assert.areSame(tds.item(4),oe.get('td'));
+            Assert.areSame(tds.item(4),oe._cellInfo.td);
 
         }
 
@@ -506,11 +490,11 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td6.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor col 6 should be visible');
+            Assert.isTrue(oe.get('active'),'cell editor col 6 should be active');
 
 
             inputKey(inp,'9876.5',13);
-            Assert.isFalse(oe.get('visible'),'cell editor col 6 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 6 should be closed');
             Assert.areSame(9876.5,oe.get('value'));
         },
 
@@ -524,12 +508,12 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td6.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor col 6 should be visible');
+            Assert.isTrue(oe.get('active'),'cell editor col 6 should be active');
 
 
             //inputKey(inp,'9876.5',13);
             oe.saveEditor(9876.5);
-            Assert.isFalse(oe.get('visible'),'cell editor col 6 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 6 should be closed');
             Assert.areSame(9876.5,oe.get('value'));
         },
 
@@ -543,11 +527,11 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td6.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor col 6 should be visible');
+            Assert.isTrue(oe.get('active'),'cell editor col 6 should be active');
 
 
             inputKey(inp,'abcdefg',13);
-            Assert.isFalse(oe.get('visible'),'cell editor col 6 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 6 should be closed');
             Assert.areSame(1.29,oe.get('value'));
         },
 
@@ -561,11 +545,11 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td6.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor col 6 should be visible');
+            Assert.isTrue(oe.get('active'),'cell editor col 6 should be active');
 
             //inputKey(inp,'abcdefg',13);
             oe.saveEditor('abcdefg');
-            Assert.isFalse(oe.get('visible'),'cell editor col 6 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 6 should be closed');
             Assert.areSame(1.29,oe.get('value'));
         }
 
@@ -597,13 +581,13 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td6.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor col 7 should be visible');
+            Assert.isTrue(oe.get('active'),'cell editor col 7 should be active');
 
             // prepFn should format as 06/13/09
             Assert.areSame('06/13/09',inp.get('value'),'prepfn did not work');
 
             inputKey(inp,'2013-01-12',13);
-            Assert.isFalse(oe.get('visible'),'cell editor col 7 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 7 should be closed');
             Assert.isTrue(Y.Lang.isDate(oe.get('value')));
         },
 
@@ -617,14 +601,14 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td6.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor col 7 should be visible');
+            Assert.isTrue(oe.get('active'),'cell editor col 7 should be active');
 
             // prepFn should format as 06/13/09
             Assert.areSame('06/13/09',inp.get('value'),'prepfn did not work');
 
             //inputKey(inp,'2013-01-12',13);
             oe.saveEditor('09/11/2011');
-            Assert.isFalse(oe.get('visible'),'cell editor col 7 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 7 should be closed');
             Assert.isTrue(Y.Lang.isDate(oe.get('value')));
         },
 
@@ -638,13 +622,13 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td6.simulate('click');
             oe = dt._openEditor;
             inp = oe._inputNode;
-            Assert.isTrue(oe.get('visible'),'cell editor col 7 should be visible');
+            Assert.isTrue(oe.get('active'),'cell editor col 7 should be active');
 
             // prepFn should format as 06/13/09
             Assert.areSame('06/13/09',inp.get('value'),'prepfn did not work');
 
             inputKey(inp,'abc2013-01-12',13);
-            Assert.isFalse(oe.get('visible'),'cell editor col 7 should be closed');
+            Assert.isFalse(oe.get('active'),'cell editor col 7 should be closed');
             Assert.areSame('06/13/2009',Y.Date.format(oe.get('value'),{format:'%m/%d/%Y'}));
         }
 

@@ -214,12 +214,12 @@ var Editors = {},
      *
      * NOTE: Scrollable inline editing is a little "rough" right now
      *
-     * @method _setEditorXY
+     * @method _afterXYChange
      * @param e {EventFacade} The xy attribute change event facade
      * @private
      */
-    _setEditorXY: function () {
-        Y.log('DataTable.BaseCellInlineEditor._setEditorXY');
+    _afterXYChange: function () {
+        Y.log('DataTable.BaseCellInlineEditor._afterXYChange');
 
         //if(this._inputNode && e.newVal) {
         //    this._inputNode.setXY(e.newVal);

@@ -79,7 +79,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         var td = dt.getCell([row, col]);
         td.simulate('click');
 
-        isTrue(dt._openEditor.get('visible'),'cell editor col 1 should be visible: [' + row + ':' + col + ']')
+        isTrue(dt._openEditor.get('active'),'cell editor col 1 should be active: [' + row + ':' + col + ']')
         areSame(1, Y.all('.yui3-datatable-inline-input').size(),'There should be one editor: [' + row + ':' + col + ']');
         checkPosition(dt, row, col);
     };
@@ -247,23 +247,23 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             dt.hideCellEditor();
             isNull(dt._openEditor,'cell editor col 1 should be closed');
-            isFalse(dt.getCellEditor('sopen').get('visible'),'cell editor col 1 should be closed');
+            isFalse(dt.getCellEditor('sopen').get('active'),'cell editor col 1 should be closed');
 
-            // open column 1 again, then click another cell ... col 1 should hide, col 6 should be visible
+            // open column 1 again, then click another cell ... col 1 should hide, col 6 should be active
             td.simulate('click');
-            isTrue(dt._openEditor.get('visible'),'cell editor col 1 should be visible');
+            isTrue(dt._openEditor.get('active'),'cell editor col 1 should be active');
             var ce = dt.getCellEditor('sopen');
-            isTrue(ce.get('visible'),'cell editor col 1 should be visible');
+            isTrue(ce.get('active'),'cell editor col 1 should be active');
 
             dt.getCell([0,6]).simulate('click');
-            isTrue(dt._openEditor.get('visible'),'cell editor col 6 should be visible');
+            isTrue(dt._openEditor.get('active'),'cell editor col 6 should be active');
             areSame(59.93, dt._openEditor.get('value'),'cell editor col 6 value should be 59.93');
 
             // check hideallcelleditors
             dt.hideAllCellEditors();
-            isFalse(dt.getCellEditor('sdesc').get('visible'),'cell editor col 3 should be closed');
+            isFalse(dt.getCellEditor('sdesc').get('active'),'cell editor col 3 should be closed');
             isNull(dt._openEditor,'open editor should be null');
-            isFalse(dt.getCellEditor('sprice').get('visible'),'cell editor col 3 should be closed');
+            isFalse(dt.getCellEditor('sprice').get('active'),'cell editor col 3 should be closed');
 
             // select row 3, column 4 ... stype value=30
             dt.set('editable',false);
@@ -298,7 +298,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             // column 1 of row 0 should open ...
             dt.getCell([0,1]).simulate('click');
             Assert.isNotNull(dt._openEditor,'cell editor col 1 should be open');
-            isTrue(dt._openEditor.get('visible'),'cell editor col 1 should be visible');
+            isTrue(dt._openEditor.get('active'),'cell editor col 1 should be active');
 
             areSame(0,dt._openEditor.get('value'),'initial editor value of col 1 should be 0');
 
@@ -366,7 +366,7 @@ YUI.add('datatable-editable-tests', function(Y) {
                 isFalse(fail, 'cancel should never fire');
                 areSame('sopen',evFac.colKey, 'ev.colKey');
                 areSame(td,evFac.td,'ev.td');
-                areSame(0,evFac.oldValue,'ev.oldValue');
+                areSame(0,evFac.initialValue,'ev.initialValue');
                 areSame('abc',evFac.newValue,'ev.newValue');
                 fail = false;
                 evFac = null;
@@ -399,7 +399,7 @@ YUI.add('datatable-editable-tests', function(Y) {
                 isFalse(fail, 'cancel should never fire');
                 areSame('sopen',evFac.colKey, 'ev.colKey');
                 areSame(td,evFac.td,'ev.td');
-                areSame(0,evFac.oldValue,'ev.oldValue');
+                areSame(0,evFac.initialValue,'ev.initialValue');
                 areSame('abc',evFac.newValue,'ev.newValue');
                 fail = false;
                 evFac = null;
@@ -431,7 +431,7 @@ YUI.add('datatable-editable-tests', function(Y) {
                 isFalse(fail, 'save event should not fire');
                 areSame('sopen',evFac.colKey, 'ev.colKey');
                 areSame(td,evFac.td,'ev.td');
-                areSame(0,evFac.oldValue,'ev.oldValue');
+                areSame(0,evFac.initialValue,'ev.initialValue');
             areSame('abc', ed.get('value'), 'check changed input');
 
             areSame(0, dt.getRecord(0).get('sopen'), 'record should not have changed');

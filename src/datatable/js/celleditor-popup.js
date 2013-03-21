@@ -484,11 +484,11 @@ PEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
     /**
      * This method can be used to quickly reset the current View editor's position,
      *  used for scrollable DataTables.
-     * @method _setEditorXY
+     * @method _afterXYChange
      * @param e {EventFacade} The xy attribute change event facade
      * @private
      */
-    _setEditorXY: function(e) {
+    _afterXYChange: function(e) {
         if(this.overlay && e.newVal) {
             this.overlay.set('xy', e.newVal);
         }
