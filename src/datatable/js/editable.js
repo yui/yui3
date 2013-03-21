@@ -267,7 +267,7 @@ Y.mix( DtEditable.prototype, {
 
      @property _classEditing
      @type String
-     @default 'editing'
+     @default 'yui3-datatable-col-editing'
      @protected
     */
     _classEditing:  null,
@@ -322,8 +322,6 @@ Y.mix( DtEditable.prototype, {
 
         this._UI_ATTRS.SYNC = this._UI_ATTRS.SYNC.concat(EDITABLE, EDITOR_OPEN_ACTION);
         this._UI_ATTRS.BIND.push(EDITABLE, EDITOR_OPEN_ACTION);
-
-
     },
 
     /**
@@ -360,6 +358,13 @@ Y.mix( DtEditable.prototype, {
             return;
         }
 
+        if(this._xScroll && this._xScrollNode) {
+            this._subscrEditable.push(this._xScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
+        }
+        if(this._yScroll && this._yScrollNode) {
+            this._subscrEditable.push(this._yScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
+        }
+
         //
         // Bailout if column is null, has editable:false or no editor assigned ...
         //
@@ -392,21 +397,16 @@ Y.mix( DtEditable.prototype, {
             //
             this._openEditor   = editorInstance;          // placeholder to the open Editor View instance
             this._editorTd     = td;                      // store the TD
-            this._editorRecord = record;      // placeholder to the editing Record
+            this._editorRecord = record;                  // placeholder to the editing Record
             this._editorColKey = colKey;                  // the column key (or name)
 
 
-            //
-            //  Set the editor Attributes and render it ... (display it!)
-            //  The cell editor might not care about some of these
-            this._openEditor.setAttrs({
+            editorInstance.showEditor({
                 td:     td,
                 record: record,
                 colKey: colKey,
-                value:  record.get(colKey)
+                initialValue:  record.get(colKey)
             });
-
-            this._openEditor.showEditor(td);
 
         }
 
@@ -554,20 +554,14 @@ Y.mix( DtEditable.prototype, {
             this.after('sort', this._afterEditableSort),
             this.after(DEF_EDITOR + CHANGE, this._afterDefaultEditorChange),
 
-            this.on(   CELL_EDITOR + ':save', this._onCellEditorEvent),
             this.after(CELL_EDITOR + ':save', this._afterCellEditorSave),
 
-            this.on(   CELL_EDITOR + ':cancel', this._onCellEditorEvent),
             this.after(CELL_EDITOR + ':cancel', this._afterCellEditorCancel),
 
             this.after(CELL_EDITOR + ':keyNav', this._afterkeyNav)
         ];
-        if(this._xScroll && this._xScrollNode) {
-            this._subscrEditable.push(this._xScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
-        }
-        if(this._yScroll && this._yScrollNode) {
-            this._subscrEditable.push(this._yScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
-        }
+
+
         this._uiSetEditorOpenAction(this.get(EDITOR_OPEN_ACTION));
     },
 
@@ -953,57 +947,46 @@ Y.mix( DtEditable.prototype, {
         //
         //  Only go into this dark realm if we have a TD and an editor is open ...
         //
-        if(this.get(EDITABLE) && this.get('scrollable') && this._openEditor && this._editorTd ) {
+        if(this.get(EDITABLE) && this.get('scrollable') && this._openEditor && this._openEditor.get('active') ) {
 
-            var tar    = e.target,
-                tarcl  = tar.get('className') || '',
+            var oe = this._openEditor,
+                scrollBar    = e.target,
+                scrollBarClassName  = scrollBar.get('className') || '',
                 tr1    = this.getRow(0),
                 trh    = (tr1) ? parseFloat(tr1.getComputedStyle('height')) : 0,
                 tdxy   = (this._editorTd) ? this._editorTd.getXY() : null,
-                xmin, xmax, ymin, ymax, hidef;
+                xmin, xmax, ymin, ymax, offLimits = false;
 
             //
             // For vertical scrolling - check vertical 'y' limits
             //
-            if( tarcl.search(/-y-/) !==-1 ) {
+            if( scrollBarClassName.search(/-y-/) !==-1 ) {
 
                 ymin = this._yScrollNode.getY() + trh - 5;
                 ymax = ymin + parseFloat(this._yScrollNode.getComputedStyle('height')) - 2 * trh;
 
-                if(tdxy[1] >= ymin && tdxy[1] <= ymax ) {
-                    if(this._openEditor.get('hidden')) {
-                        this._openEditor.showEditor(this._editorTd);
-                    } else {
-                        this._openEditor.set('xy', tdxy );
-                    }
-                } else {
-                    hidef = true;
+                if(tdxy[1] < ymin || tdxy[1] > ymax ) {
+                    offLimits = true;
                 }
             }
 
             //
             // For horizontal scrolling - check horizontal 'x' limits
             //
-            if( tarcl.search(/-x-/) !==-1 ) {
+            if( scrollBarClassName.search(/-x-/) !==-1 ) {
 
                 xmin = this._xScrollNode.getX();
                 xmax = xmin + parseFloat(this._xScrollNode.getComputedStyle('width'));
                 xmax -= parseFloat(this._editorTd.getComputedStyle('width'));
 
-                if(tdxy[0] >= xmin && tdxy[0] <= xmax ) {
-                    if(this._openEditor.get('hidden')) {
-                        this._openEditor.showEditor(this._editorTd);
-                    } else {
-                        this._openEditor.set('xy', tdxy );
-                    }
-                } else {
-                    hidef = true;
+                if(tdxy[0] < xmin || tdxy[0] > xmax ) {
+                    offLimits = true;
                 }
             }
 
-            // If hidef is true, editor is out of view, hide it temporarily
-            if(hidef) {
-                this._openEditor.hideEditor(true);
+            oe.set('visible', !offLimits);
+            if(!offLimits) {
+                oe.set('xy', tdxy);
             }
 
         }
@@ -1074,20 +1057,43 @@ Y.mix( DtEditable.prototype, {
         }
     },
 
-    /**
-    Listener to the cell editor View's `save` and `cancel` events.
-    This method fills it up with extra information.
 
-    @method _onCellEditorEvent
-    @param ev {Event Facade} As provided by the celleditor event
-    @private
+    /**
+    Fired when the the cell editor is about to be opened.
+    @event celleditor:show
+    @param ev {Event Facade} Event facade, including:
+     @param ev.editor {DataTable.BaseCellEditor} Editor instance used to edit this cell.
+     @param ev.td {Node} The TD Node that was edited
+     @param ev.record {Model} Model instance of the record data for the edited cell
+     @param ev.colKey {String} Column key (or name) of the edited cell
+     @param ev.initialValue {Any} The original value of the underlying data for the cell
+     @param ev.formattedValue {any} Value as shown to the user
+     @param ev.inputNode {Node} Input element for the editor
      */
-    _onCellEditorEvent: function (ev) {
-        Y.log('DataTable.Editable._onCellEditorEvent');
-        ev.record = ev.record || this._editorRecord;
-        ev.colKey =  ev.colKey || this._editorColKey;
-        ev.td = ev.td || this._editorTd;
-    },
+    /**
+    Fired when the open Cell Editor has sent an 'cancel' event, typically from
+    a user cancelling editing via ESC key or "Cancel Button"
+    @event celleditor:cancel
+    @param ev {Event Facade} Event facade, including:
+     @param ev.editor {DataTable.BaseCellEditor} Editor instance used to edit this cell.
+     @param ev.td {Node} The TD Node that was edited
+     @param ev.record {Model} Model instance of the record data for the edited cell
+     @param ev.colKey {String} Column key (or name) of the edited cell
+     @param ev.initialValue {Any} The original value of the underlying data for the cell
+     */
+    /**
+    Event fired after a Cell Editor has sent the `save` event, closing an editing session.
+    @event celleditor:save
+    @param ev {Event Facade} Event facade, including:
+     @param ev.editor {DataTable.BaseCellEditor} Editor instance used to edit this cell.
+     @param ev.td {Node} The TD Node that was edited
+     @param ev.record {Model} Model instance of the record data for the edited cell
+     @param ev.colKey {String} Column key (or name) of the edited cell
+     @param ev.initialValue {Any} The original value of the underlying data for the cell
+     @param ev.formattedValue {any} Value as entered by the user
+     @param ev.newValue {Any} The value to be saved
+      */
+
     /**
     After listener for the cell editor `cancel` event. If no other listener
     has halted the event, this method will finally hide the editor.
@@ -1105,17 +1111,6 @@ Y.mix( DtEditable.prototype, {
         }
     },
 
-    /**
-    Fired when the open Cell Editor has sent an 'editorCancel' event, typically from
-    a user cancelling editing via ESC key or "Cancel Button"
-    @event celleditor:cancel
-    @param ev {Event Facade} Event facade, including:
-     @param ev.td {Node} The TD Node that was edited
-     @param ev.cell {Object} The cell object container for the edited cell
-     @param ev.record {Model} Model instance of the record data for the edited cell
-     @param ev.colKey {String} Column key (or name) of the edited cell
-     @param {String|Number|Date} prevVal The old (last) value of the underlying data for the cell
-     */
 
     /**
     After listener for the cell editor `save` event. If no other listener
@@ -1135,18 +1130,6 @@ Y.mix( DtEditable.prototype, {
 
     }
 
-/**
-    Event fired after a Cell Editor has sent the 'save' event closing an editing session.
-    @event celleditor:save
-    @param ev {Event Facade} including:
-     @param ev.td {Node} The TD Node that was edited
-     @param ev.cell {Object} The cell object container for the edited cell
-     @param ev.record {Model} Model instance of the record data for the edited cell
-     @param ev.colKey {String} Column key (or name) of the edited cell
-     @param ev.newVal {String|Number|Date} The new (updated) value of the underlying data for the cell
-     @param ev.prevVal {String|Number|Date} The old (last) value of the underlying data for the cell
-     @param {String|Number|Date} prevVal The old (last) value of the underlying data for the cell
-     */
 
 });
 
