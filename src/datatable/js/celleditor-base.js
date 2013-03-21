@@ -64,6 +64,16 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     */
    _parser: returnUnchanged,
 
+   /**
+    Collection of information related to the cell being edited.
+    It is used mostly to provide context information when firing events.
+    @property _cellInfo
+    @type Object
+    @default null
+    @private
+    */
+   _cellInfo: null,
+
 //======================   LIFECYCLE METHODS   ===========================
 
     /**
@@ -83,7 +93,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
             the View's container.
 
             @event render
-            @param config {Object} The configuration object as received by the `initializer`
+            @param ev {EventFacade} The configuration object as received by the `initializer`
             */
             render: {
                 defaultFn: this._defRenderFn
@@ -91,16 +101,10 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
 
             /**
             Event fired when the cell editor is displayed and becomes visible.
-
-            Implementers may listen for this event if they have configured complex View's, that include
-            other widgets or components, to update their UI upon displaying of the view.
-
             @event show
-            @param {Object} rtn Returned object
-              @param {Node} rtn.td TD Node instance of the calling editor
-              @param {Node} rtn.inputNode The editor's INPUT / TEXTAREA Node
-              @param {String|Number|Date} rtn.value The current "value" setting
-              @param {Object} rtn.cell object
+            @param ev {EventFacade} Event Facade including:
+            @param ev.inputNode {Node} The editor's INPUT / TEXTAREA Node
+            @param ev.formattedValue {String} The value as shown to the user.
             */
 
             show: {
@@ -108,19 +112,12 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
             },
 
             /**
-            Event that is fired when the user has finished editing the View's cell contents (signified by either
-            a keyboard RTN entry or "Save" button, etc...).
-
-            This event is intended to be the PRIMARY means for implementers to know that the editing has been
-            completed and validated.  Consumers (i.e. DataTable) should listen to this event and process it's results
-            to save to the Model and or dataset for the DT.
+            Event that is fired when the user has finished editing the View's cell contents
 
             @event save
-            @param {Object} rtn Returned object
-              @param {Node} rtn.td TD Node for the edited cell
-              @param {Object} rtn.cell Current cell object
-              @param {String|Number|Date} rtn.oldValue Data value of this cell prior to editing
-              @param {String|Number|Date} rtn.newValue Data value of this cell after editing
+            @param ev {Object} Event facade, including:
+              @param ev.formattedValue {Any} Data value as entered by the user
+              @param ev.newValue {Any} Parsed value ready to be saved
             */
             save: {
                 defaultFn: this._defSaveFn
@@ -130,10 +127,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
             Fired when editing is cancelled (without saving) on this cell editor.
 
             @event cancel
-            @param {Object} rtn Returned object
-              @param {Node} rtn.td TD Node for the edited cell
-              @param {Object} rtn.cell Current cell object
-              @param {String|Number|Date} rtn.oldValue Data value of this cell prior to editing
+            @param ev {Object}  Event facade
             */
             cancel: {
                 defaultFn: this._defCancelFn
@@ -148,7 +142,9 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     */
     destructor: function () {
         Y.log('DataTable.BaseCellEditor.destructor');
-        this.cancelEditor();
+        if (this.get('active')) {
+            this.cancelEditor();
+        }
         this._unbindUI();
         this._destroyContainer();
     },
@@ -164,13 +160,13 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     },
 
     /**
-    Processes the initial container for this View, sets up the HTML content
-    and creates a listener for positioning changes.
+    It should insert the HTML for this editor into the container.
+    The default implementation does nothing.
 
-    To be defined by the subclass.
+    It must be defined by the subclass.
 
     @method _defRenderFn
-    @private
+    @protected
     */
     _defRenderFn: function () {
         Y.log('DataTable.BaseCellEditor._defRenderFn');
@@ -189,7 +185,8 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
 
         this._subscr = [
             // This is here to support "scrolling" of the underlying DT ...
-            this.on('xyChange',this._setEditorXY),
+            this.after('xyChange',this._afterXYChange),
+            this.after('visibleChange', this._afterVisibleChange),
 
             this._inputNode.on('keydown',    this.processKeyDown, this),
             this._inputNode.on('keypress',   this.processKeyPress, this),
@@ -248,17 +245,15 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     */
     _defShowFn: function (e) {
         Y.log('DataTable.BaseCellEditor._defShowFn');
-        var value = e.value;
+        var value = e.formattedValue;
 
-        e.td.addClass(this._classEditing);
+
         // focus the inner INPUT ...
         this._inputNode.focus();
         // set the INPUT value
         this._inputNode.set('value',value);
-        this.set('lastValue',value);
 
-        this._set('visible',true);
-        this._set('hidden',false);
+        this._set('active',true);
     },
 
     //======================   PUBLIC METHODS   ===========================
@@ -270,21 +265,28 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     Set the initial value for the INPUT element, after preprocessing (if reqd)
 
     @method showEditor
-    @param {Node} td The Node instance of the TD to begin editing on
+    @param cellInfo {Object} Information about the cell that is to be edited, including:
+    @param cellInfo.td {Node} Reference to the table cell
+    @param cellInfo.record {Model} Reference to the model containing the underlying data
+    @param cellInfo.colKey {String} Key of the column for the cell to be edited
+    @param cellInfo.initialValue {Any} The underlying value of the cell to be edited
     @public
     */
-    showEditor: function (td) {
+    showEditor: function (cellInfo) {
         Y.log('DataTable.BaseCellEditor.showEditor');
-        var value  = this.get('value');
 
+        this._cellInfo = cellInfo;
+
+        var value  = cellInfo.initialValue;
+
+        this.set('value', value);
 
         value = this._formatter(value);
 
-        this.fire('show',{
-            td:         td,
+        this.fire('show', Y.merge(cellInfo, {
             inputNode:  this._inputNode,
-            value:      value
-        });
+            formattedValue: value
+        }));
 
     },
     /**
@@ -305,40 +307,34 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         if(Lang.isValue(value)){
 
             // If a "save" function was defined, run thru it and update the "value" setting
-            value = this._parser(value);
+            var parsedValue = this._parser(value);
 
             // So value was initially okay, but didn't pass _parser validation call ...
-            if (value === undefined) {
+            if (parsedValue === undefined) {
                 this.cancelEditor();
                 return;
             }
 
-            this.fire("save", {
-                oldValue:   this.get('lastValue'),
-                newValue:   value
-            });
+            this.fire("save", Y.merge(this._cellInfo, {
+                formattedValue:   value,
+                newValue:   parsedValue
+            }));
         }
     },
 
     /**
-    Hides the current editor View instance.  If the optional `hideMe` param is true this View will
-    be temporarily "hidden" (used for scrolling DT's when the TD is scrolled off/on to the page)
-
+    Hides the current editor View instance.
     @method hideEditor
     @public
     */
-    hideEditor: function (hideMe) {
-        Y.log('DataTable.BaseCellEditor.hideEditor: ' + hideMe);
+    hideEditor: function () {
+        Y.log('DataTable.BaseCellEditor.hideEditor');
         var cont  = this.get('container');
         if(cont && cont.hide) {
             cont.hide();
         }
-
-        if(hideMe) {
-            this._set('hidden',true);
-        }
-        this._set('visible',false);
-
+        this._cellInfo = null;
+        this._set('active', false);
     },
 
 
@@ -352,9 +348,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     cancelEditor: function () {
         Y.log('DataTable.BaseCellEditor.cancelEditor');
 
-        this.fire("cancel",{
-            oldValue:   this.get('lastValue')
-        });
+        this.fire("cancel", this._cellInfo);
     },
 
     /**
@@ -377,7 +371,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
             krtn;
 
         //
-        // If RTN, then prevent and save ...
+        // If Enter, then prevent and save ...
         //
         if(keyc === KEYC_ENTER && this.get('saveOnEnterKey')) {
             e.preventDefault();
@@ -482,44 +476,47 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
 
     NOTE: Scrollable inline editing is a little "rough" right now
 
-    @method _setEditorXY
+    @method _afterXYChange
     @param e {EventFacade} The xy attribute change event facade
+    @protected
+    */
+    _afterXYChange: function() {
+        Y.log('DataTable.BaseCellEditor._afterXYChange');
+    },
+
+    /**
+    Responds to changes in the `visible` attribute by showing/hiding the
+    cell editor
+    @method _afterVisibleChange
+    @param e {EventFacade} Standard Attribute change event facade
     @private
     */
-    _setEditorXY: function() {
-        Y.log('DataTable.BaseCellEditor._setEditorXY');
-    }
+   _afterVisibleChange: function (e) {
+        var container  = this.get('container');
+        if(container) {
+            if (e.newVal) {
+                container.show();
+            } else {
+                container.hide();
+            }
+        }
+   }
 },{
     ATTRS:{
 
-        /**
-        Reference to the cell being edited
-        @attribute td
-        @type Node
-        */
-       td: {},
+
 
         /**
         Value that was saved in the Editor View and returned to the record
 
         @attribute value
-        @type {String|Number|Date}
+        @type Any
         @default null
         */
         value: {
             value:  null
         },
 
-        /**
-        Value that was contained in the cell when the Editor View was displayed
-
-        @attribute lastValue
-        @type {String|Number|Date}
-        @default null
-        */
-        lastValue:{
-            value:  null
-        },
 
         /**
         Function to execute on the "data" contents just prior to displaying in the Editor's main view
@@ -560,34 +557,35 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
             }
         },
 
+
         /**
-        Setting for checking the visibility status of this Editor.
+        Signals whether the editor is open and active.
+
+        @attribute active
+        @type Boolean
+        @default false
+        @readOnly
+        */
+        active: {
+            value:      false,
+            readOnly:   true,
+            validator:  Lang.isBoolean
+        },
+
+        /**
+        Determines whether the cell editor is visible.
+        The cell editor might be active but it might have scrolled off the
+        visible area of an scrolling datatable hence turning invisible.
 
         @attribute visible
         @type Boolean
         @default false
-        @readOnly
         */
         visible: {
-            value:      false,
-            readOnly:   true,
-            validator:  Lang.isBoolean
+            value: false,
+            validator: Lang.isBoolean
         },
 
-        /**
-        Setting to check if the editor is "still open" but just hidden, created in order to support
-        scrolling datatables when an editor scrolls out of open window.
-
-        @attribute hidden
-        @type Boolean
-        @default false
-        @readOnly
-        */
-        hidden: {
-            value:      false,
-            readOnly:   true,
-            validator:  Lang.isBoolean
-        },
 
         /**
         XY coordinate position of the editor View container (INPUT).
