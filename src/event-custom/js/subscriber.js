@@ -29,7 +29,7 @@ Y.Subscriber = function(fn, context, args, when) {
      * @property id
      * @type String
      */
-    this.id = Y.stamp(this);
+    this.id = Y.guid();
 
     /**
      * Additional arguments to propagate to the subscriber

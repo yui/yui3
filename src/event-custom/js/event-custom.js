@@ -81,7 +81,7 @@ Y.CustomEvent = function(type, defaults) {
 
     this._kds = Y.CustomEvent.keepDeprecatedSubs;
 
-    this.id = Y.stamp(this);
+    this.id = Y.guid();
 
     this.type = type;
     this.silent = this.logSystem = (type === YUI_LOG);
