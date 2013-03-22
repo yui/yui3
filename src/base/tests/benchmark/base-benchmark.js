@@ -496,6 +496,9 @@ var suite = Y.BenchmarkSuite = new Benchmark.Suite();
         _allowAdHocAttrs : true
     });
 
+var GLOBAL_MY_BASE_10 = new MyBase10();
+var UNIQUE_VALUE = 10;
+
 suite.add('Base', function () {
    var b = new Y.Base();
 });
@@ -512,8 +515,15 @@ suite.add('MyBase with 20 varied attributes', function () {
    var b = new MyBase20();
 });
 
-// BaseCore
+suite.add('MyBase with 10 simple value attributes - set', function () {
+    GLOBAL_MY_BASE_10.set("attr4", UNIQUE_VALUE++);
+});
 
+suite.add('MyBase with 10 simple value attributes - get', function () {
+   var val = GLOBAL_MY_BASE_10.get("attr2");
+});
+
+// BaseCore
 suite.add('BaseCore', function () {
    var b = new Y.BaseCore();
 });
@@ -547,6 +557,5 @@ suite.add('MyModel with 2 ad-hoc attrs', function () {
         description : "01234567890"
     });
 });
-
 
 }, '@VERSION@', {requires: ['base']});
