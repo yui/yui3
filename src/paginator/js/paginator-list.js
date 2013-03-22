@@ -77,23 +77,6 @@ PaginatorList = Y.Base.create('paginator-list', Y.Paginator.View, [Y.Paginator.U
         }
 
         return data;
-    },
-
-    /**
-     Adds current view NAME as a class to the container.
-     @protected
-     @method _afterContainerChanged
-     */
-    _afterContainerChanged: function () {
-        var container = this.get('container'),
-            getClassName = Y.ClassNameManager.getClassName,
-            mainClass = getClassName('paginator');
-
-        if(!container.hasClass(mainClass)) {
-            container = container.ancestor('.' + mainClass);
-        }
-
-        container.addClass(getClassName(NAME));
     }
 
 }, {

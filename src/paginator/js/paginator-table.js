@@ -44,27 +44,6 @@ PaginatorTable = Y.Base.create('paginator-table', Y.Paginator.View, [], {
             pageSelect: this.renderPageSelect(),
             perPageSelect: this.renderPerPageSelect()
         });
-
-    },
-
-    /**
-     Sets the href for controls, modifying the data object used to
-       generate the controls from templates.
-     @method preRender
-     @param {String} template Name of template used
-     @param {Object} data Original data object used to render template
-     @return {Object}
-     */
-    _afterContainerChanged: function () {
-        var container = this.get('container'),
-            getClassName = Y.ClassNameManager.getClassName,
-            mainClass = getClassName('paginator');
-
-        if(!container.hasClass(mainClass)) {
-            container = container.ancestor('.' + mainClass);
-        }
-
-        container.addClass(getClassName(NAME));
     }
 
 }, {
