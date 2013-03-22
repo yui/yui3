@@ -128,6 +128,7 @@
          * @param {Any} currVal The current value of the attribute
          * @param {Any} newVal The new value of the attribute
          * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
+         * @param {Object} [cfg] The attribute config stored in State, if already available.
          */
         _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts, cfg) {
             var host = this,
