@@ -50,7 +50,7 @@ Y.NumericAxis = Y.Base.create("numericAxis", Y.Axis, [Y.NumericImpl], {
         else
         {
             label = (i * increm);
-            if(roundingMethod == "niceNumber")
+            if(roundingMethod === "niceNumber")
             {
                 label = this._roundToNearest(label, increm);
             }
@@ -80,7 +80,8 @@ Y.NumericAxis = Y.Base.create("numericAxis", Y.Axis, [Y.NumericImpl], {
         roundingMethod = this.get("roundingMethod");
         min = this._actualMinimum;
         max = this._actualMaximum;
-        if(Y_Lang.isNumber(roundingMethod) && ((Y_Lang.isNumber(max) && max > this._dataMaximum) || (Y_Lang.isNumber(min) && min < this._dataMinimum)))
+        if(Y_Lang.isNumber(roundingMethod) &&
+            ((Y_Lang.isNumber(max) && max > this._dataMaximum) || (Y_Lang.isNumber(min) && min < this._dataMinimum)))
         {
             return true;
         }
