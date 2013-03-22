@@ -8,18 +8,18 @@
   font-style: normal;
 }
 
-.yui3-paginator-dt {
+.yui3-paginator-table {
     padding: 3px;
 }
-.yui3-paginator-dt .yui3-paginator-content {
+.yui3-paginator-table .yui3-paginator-content {
     position: relative;
 }
-.yui3-paginator-dt .yui3-paginator-page-select {
+.yui3-paginator-table .yui3-paginator-page-select {
     position: absolute;
     right: 0;
     top: 0;
 }
-.yui3-paginator-dt .yui3-paginator-control {
+.yui3-paginator-table .yui3-paginator-control {
     display: block;
     margin: 0 3px;
     padding: 0 0.2em;
@@ -29,21 +29,21 @@
     border: 1px solid transparent;
     border-radius: 3px;
 }
-.yui3-paginator-dt .yui3-paginator-control-disabled,
-.yui3-paginator-dt .yui3-paginator-control-disabled:hover {
+.yui3-paginator-table .yui3-paginator-control-disabled,
+.yui3-paginator-table .yui3-paginator-control-disabled:hover {
     cursor: default;
 }
-.yui3-paginator-dt .yui3-paginator-control-first,
-.yui3-paginator-dt .yui3-paginator-control-last,
-.yui3-paginator-dt .yui3-paginator-control-prev,
-.yui3-paginator-dt .yui3-paginator-control-next {
+.yui3-paginator-table .yui3-paginator-control-first,
+.yui3-paginator-table .yui3-paginator-control-last,
+.yui3-paginator-table .yui3-paginator-control-prev,
+.yui3-paginator-table .yui3-paginator-control-next {
     text-indent: -999px;
     direction: ltr;
     overflow: hidden;
     position: relative;
     width: 1em;
 }
-.yui3-paginator-dt .yui3-paginator-control:before {
+.yui3-paginator-table .yui3-paginator-control:before {
     font-family: "YUIFont";
     width: 100%;
     text-align: center;
@@ -53,15 +53,15 @@
     text-indent: 0;
     vertical-align: middle;
 }
-.yui3-paginator-dt .yui3-paginator-control-first:before {
+.yui3-paginator-table .yui3-paginator-control-first:before {
     content: "\f048"; /* |< */
 }
-.yui3-paginator-dt .yui3-paginator-control-last:before {
+.yui3-paginator-table .yui3-paginator-control-last:before {
     content: "\f051"; /* >| */
 }
-.yui3-paginator-dt .yui3-paginator-control-prev:before {
+.yui3-paginator-table .yui3-paginator-control-prev:before {
     content: "\f0d9"; /* < */
 }
-.yui3-paginator-dt .yui3-paginator-control-next:before {
+.yui3-paginator-table .yui3-paginator-control-next:before {
     content: "\f0da"; /* > */
 }

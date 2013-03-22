@@ -47,20 +47,6 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         perPageSelect: getClassName('paginator', 'per-page', 'select')
     },
 
-    /**
-     Default generic events for control clicks and changes
-     @property events
-     @type {Object}
-     */
-    events: {
-        '.yui3-paginator-control': {
-            'click': 'controlClick',
-            'change': 'controlChange'
-        },
-        '.yui3-paginator-page': {
-            'click': 'pageClick'
-        }
-    },
 
     /**
      Compiles the template string if it exists and is not already compiled
@@ -73,6 +59,46 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
         }
 
         this.after('containerChange', this._afterContainerChanged, this);
+    },
+
+    /**
+     Adds current view's NAME as a class to the container. Initializes
+       default events if non are provided.
+     @protected
+     @method _afterContainerChanged
+     */
+    _afterContainerChanged: function(e) {
+        var container = e.newVal,
+            getClassName = Y.ClassNameManager.getClassName,
+            mainClass = getClassName('paginator');
+
+        if(!container.hasClass(mainClass)) {
+            container = container.ancestor('.' + mainClass);
+        }
+
+        container.addClass(getClassName(this._classes[0].NAME));
+
+
+        if (Y.Object.keys(this.events).length === 0) {
+            this._setDefaultEvents();
+        }
+    },
+
+    /**
+     Delegates default events on the container
+     @protected
+     @method _setDefaultEvents
+     */
+    _setDefaultEvents: function() {
+        var cont = this.get('container'),
+            classNames = this.classNames;
+
+
+        cont.delegate('change', this.controlChange, '.' + classNames.control, this);
+        cont.delegate('click', this.controlClick, '.' + classNames.control, this);
+        cont.delegate('click', this.pageClick, '.' + classNames.page, this);
+
+        // should these get pushed to _attachedViewEvents?
     },
 
     /**
@@ -351,7 +377,9 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
     controlChange: function (e) {
         e.preventDefault();
 
-        this.fire(e.currentTarget.getData('type'), { val: e.newVal });
+        var val = e.newVal || e.target.get('value');
+
+        this.fire(e.currentTarget.getData('type'), { val: val });
     },
 
     /**
