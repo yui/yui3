@@ -507,7 +507,7 @@
                     } else {
                         // HACK - no real reason core needs to know about _fireAttrChange, but
                         // it adds fn hops if we want to break it out. Not sure it's worth it for this critical path
-                        this._fireAttrChange(name, strPath, currVal, val, opts);
+                        this._fireAttrChange(name, strPath, currVal, val, opts, cfg);
                     }
                 }
             }
