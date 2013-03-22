@@ -40,14 +40,14 @@ var L = Y.Lang,
      * @method _getType
      * @private
      */
-    _getType = Y.cached(function(type, pre) {
+    _getType = function(type, pre) {
 
-        if (!pre || (typeof type !== "string") || type.indexOf(PREFIX_DELIMITER) > -1) {
+        if (!pre || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
         }
 
         return pre + PREFIX_DELIMITER + type;
-    }),
+    },
 
     /**
      * Returns an array with the detach key (if provided),

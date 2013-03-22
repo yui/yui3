@@ -34,7 +34,7 @@ StackingUtil.prototype = {
      */
     _stackCoordinates: function()
     {
-        if(this.get("direction") == "vertical")
+        if(this.get("direction") === "vertical")
         {
             this._stackXCoords();
         }
@@ -53,7 +53,6 @@ StackingUtil.prototype = {
     _stackXCoords: function()
     {
         var order = this.get("order"),
-            type = this.get("type"),
             seriesCollection = this.get("seriesTypeCollection"),
             i = 0,
             xcoords = this.get("xcoords"),
@@ -133,7 +132,6 @@ StackingUtil.prototype = {
     _stackYCoords: function()
     {
         var order = this.get("order"),
-            type = this.get("type"),
             graphic = this.get("graphic"),
             h = graphic.get("height"),
             seriesCollection = this.get("seriesTypeCollection"),

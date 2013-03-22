@@ -31,7 +31,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     getLabelByIndex: function(i, l)
     {
         var position = this.get("position"),
-            direction = position == "left" || position == "right" ? "vertical" : "horizontal";
+            direction = position === "left" || position === "right" ? "vertical" : "horizontal";
         return this._getLabelByIndex(i, l, direction);
     },
 
@@ -76,7 +76,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
      * @param {Object} e Event object
      * @private
      */
-    _dataChangeHandler: function(e)
+    _dataChangeHandler: function()
     {
         if(this.get("rendered"))
         {
@@ -107,7 +107,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     _updateGraphic: function(position)
     {
         var graphic = this.get("graphic");
-        if(position == "none")
+        if(position === "none")
         {
             if(graphic)
             {
@@ -130,7 +130,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
      * @param {Object} e Event object
      * @private
      */
-    _updateHandler: function(e)
+    _updateHandler: function()
     {
         if(this.get("rendered"))
         {
@@ -290,12 +290,12 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     {
         var attrName = e.attrName,
             pos = this.get("position"),
-            vert = pos == "left" || pos == "right",
+            vert = pos === "left" || pos === "right",
             cb = this.get("contentBox"),
-            hor = pos == "bottom" || pos == "top";
+            hor = pos === "bottom" || pos === "top";
         cb.setStyle("width", this.get("width"));
         cb.setStyle("height", this.get("height"));
-        if((hor && attrName == "width") || (vert && attrName == "height"))
+        if((hor && attrName === "width") || (vert && attrName === "height"))
         {
             this._drawAxis();
         }
@@ -392,7 +392,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 line = styles.line,
                 labelStyles = styles.label,
                 majorTickStyles = styles.majorTicks,
-                drawTicks = majorTickStyles.display != "none",
+                drawTicks = majorTickStyles.display !== "none",
                 tickPoint,
                 majorUnit = styles.majorUnit,
                 len,
@@ -400,7 +400,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 i = 0,
                 layout = this._layout,
                 layoutLength,
-                position,
                 lineStart,
                 label,
                 labelWidth,
@@ -413,7 +412,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 tickPath,
                 explicitlySized,
                 position = this.get("position"),
-                direction = (position == "left" || position == "right") ? "vertical" : "horizontal";
+                direction = (position === "left" || position === "right") ? "vertical" : "horizontal";
             this._labelWidths = [];
             this._labelHeights = [];
             graphic.set("autoDraw", false);
@@ -467,7 +466,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                     label = this.getLabel(tickPoint, labelStyles);
                     this._labels.push(label);
                     this._tickPoints.push({x:tickPoint.x, y:tickPoint.y});
-                    this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [this._getLabelByIndex(i, len, direction), labelFormat]));
+                    this.get("appendLabelFunction")(
+                        label,
+                        labelFunction.apply(
+                            labelFunctionScope,
+                            [this._getLabelByIndex(i, len, direction), labelFormat]
+                        )
+                    );
                     labelWidth = Math.round(label.offsetWidth);
                     labelHeight = Math.round(label.offsetHeight);
                     if(!explicitlySized)
@@ -526,7 +531,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             matrix = new Y.Matrix();
         matrix.rotate(rot);
         bounds = matrix.getContentRect(w, h);
-        if(position == "left" || position == "right")
+        if(position === "left" || position === "right")
         {
             size = bounds.right - bounds.left;
             if(margin)
@@ -1149,7 +1154,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
         var dist;
         if(majorUnit.determinant === "count")
         {
-            if(!this.get("calculateEdgeOffset")) 
+            if(!this.get("calculateEdgeOffset"))
             {
                 len = len - 1;
             }
@@ -1391,10 +1396,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
 
             setter: function(val)
             {
-                var layoutClass = this._layoutClasses[val];
-                if(val && val != "none")
+                var LayoutClass = this._layoutClasses[val];
+                if(val && val !== "none")
                 {
-                    this._layout = new layoutClass();
+                    this._layout = new LayoutClass();
                 }
                 return val;
             }
@@ -1469,7 +1474,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
 
             getter: function()
             {
-                if(this.get("position") == "none")
+                if(this.get("position") === "none")
                 {
                     return this.get("styles").majorUnit.count;
                 }
