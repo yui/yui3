@@ -22,8 +22,7 @@
     var EventTarget = Y.EventTarget,
 
         CHANGE = "Change",
-        BROADCAST = "broadcast",
-        PUBLISHED = "published";
+        BROADCAST = "broadcast";
 
     /**
      * Provides an augmentable implementation of attribute change events for
@@ -130,7 +129,7 @@
          * @param {Any} newVal The new value of the attribute
          * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
          */
-        _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts) {
+        _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts, cfg) {
             var host = this,
                 eventName = attrName + CHANGE,
                 state = host._state,
@@ -138,21 +137,25 @@
                 broadcast,
                 evtCfg;
 
-            if (!state.get(attrName, PUBLISHED)) {
+            if (!cfg) {
+                cfg = state.data[attrName] || {};
+            }
+
+            if (!cfg.published) {
 
                 evtCfg = {
                     defaultTargetOnly: true,
                     defaultFn:host._defAttrChangeFn
                 };
 
-                broadcast = state.get(attrName, BROADCAST);
+                broadcast = cfg.broadcast;
                 if (broadcast !== undefined) {
                     evtCfg.broadcast = broadcast;
                 }
 
                 host.publish(eventName, evtCfg);
 
-                state.add(attrName, PUBLISHED, true);
+                cfg.published = true;
             }
 
             facade = (opts) ? Y.merge(opts) : host._ATTR_E_FACADE;
