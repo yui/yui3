@@ -841,6 +841,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     /**
      * Calculates points based off the majorUnit count or distance of the Axis.
      *
+     * @method _getPoints
      * @param {Object} startPoint An object literal containing the x and y coordinates of the first
      * point on the axis.
      * @param {Number} len The number of points on an axis.
