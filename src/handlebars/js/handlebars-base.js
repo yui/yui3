@@ -2,11 +2,6 @@
 
 // BEGIN(BROWSER)
 
-/*jshint eqnull:true*/
-var Handlebars = {};
-
-(function(Handlebars) {
-
 Handlebars.VERSION = "1.0.0-rc.3";
 Handlebars.COMPILER_REVISION = 2;
 
@@ -40,8 +35,6 @@ var toString = Object.prototype.toString, functionType = "[object Function]";
 Handlebars.registerHelper('blockHelperMissing', function(context, options) {
   var inverse = options.inverse || function() {}, fn = options.fn;
 
-
-  var ret = "";
   var type = toString.call(context);
 
   if(type === functionType) { context = context.call(this); }
@@ -132,11 +125,7 @@ Handlebars.registerHelper('if', function(context, options) {
 });
 
 Handlebars.registerHelper('unless', function(context, options) {
-  var fn = options.fn, inverse = options.inverse;
-  options.fn = inverse;
-  options.inverse = fn;
-
-  return Handlebars.helpers['if'].call(this, context, options);
+  return Handlebars.helpers['if'].call(this, context, {fn: options.inverse, inverse: options.fn});
 });
 
 Handlebars.registerHelper('with', function(context, options) {
@@ -147,7 +136,5 @@ Handlebars.registerHelper('log', function(context, options) {
   var level = options.data && options.data.level != null ? parseInt(options.data.level, 10) : 1;
   Handlebars.log(level, context);
 });
-
-}(Handlebars));
 
 // END(BROWSER)
