@@ -4,13 +4,8 @@
  @submodule datatable-editable
 */
 var Lang = Y.Lang,
-    Array = Y.Array,
-    arrEach = Array.each,
+    arrEach = Y.Array.each,
 
-    returnUnchanged = function (value) {
-        Y.log('(private) returnUnchanged: ' + value);
-        return value;
-    },
 
     EDITABLE = 'editable',
     EDITOR_OPEN_ACTION = 'editorOpenAction',
@@ -22,13 +17,7 @@ var Lang = Y.Lang,
     COL = 'col',
     COLUMNS = 'columns',
 
-    KEYC_ESC = 27,
-    KEYC_ENTER = 13,
-    KEYC_TAB = 9,
-    KEYC_UP  = 38,
-    KEYC_DOWN  = 40,
-    KEYC_RIGHT  = 39,
-    KEYC_LEFT  = 37;
+
 
 /**
  A DataTable class extension that configures a DT for "editing", current deployment supports cell editing
@@ -517,7 +506,7 @@ Y.mix( DtEditable.prototype, {
         regCol  = new RegExp(this.getClassName(COL) + '-(.*)'),
         colName;
 
-        Array.some(classes,function (item){
+        Y.Array.some(classes,function (item){
             var colmatch =  item.match(regCol);
             if ( colmatch && Lang.isArray(colmatch) && colmatch[1] ) {
                 colName = colmatch[1];
