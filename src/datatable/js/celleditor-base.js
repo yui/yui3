@@ -5,6 +5,18 @@ by actual implementations of cell editors
 @submodule datatable-celleditor-base
 */
 
+/*jshint onevar:false*/
+var returnUnchanged = function (value) {
+        Y.log('(private) returnUnchanged: ' + value);
+        return value;
+    },
+    KEYC_ESC = 27,
+    KEYC_ENTER = 13,
+    KEYC_TAB = 9,
+    KEYC_UP  = 38,
+    KEYC_DOWN  = 40,
+    KEYC_RIGHT  = 39,
+    KEYC_LEFT  = 37,
 /**
 @class DataTable.BaseCellEditor
 @extends Y.View
@@ -12,7 +24,9 @@ by actual implementations of cell editors
 @since 3.8.0
 */
 
-Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
+BCE =  Y.Base.create('celleditor', Y.View, [], {
+
+/*jshint onevar:true*/
     /**
     Defines the INPUT HTML content "template" for the editor's View container.
 
@@ -25,17 +39,20 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     template: '',
 
     /**
-    Placeholder for the created INPUT Node created within the View container.
+    Placeholder for the input or textarea Node created within the View container.
+    For input widgets that don't have any such as Calendar, this can be left null.
+    In such cases, code must be provided for navigation and to display and update
+    the [value](#attr_value) attribute with the entered value.
 
     @property _inputNode
     @type Node
     @default null
     @protected
     */
-    _inputNode: false,
+    _inputNode: null,
 
     /**
-    Placeholder for listener handles created from this View.
+    Placeholder for generic event listener handles created from this View.
 
     @property _subscr
     @type Array of EventHandles
@@ -47,7 +64,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
 
 
     /**
-    Copy of the formatter attribute for internal use.
+    Copy of the [formatter](#attr_formatter) attribute for internal use.
     @method _formatter
     @type Function
     @default (returns value unchanged)
@@ -56,7 +73,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
    _formatter: returnUnchanged,
 
     /**
-    Copy of the parser attribute for internal use.
+    Copy of the [parser](#attr_parser) attribute for internal use.
     @method _parser
     @type Function
     @default (returns value unchanged)
@@ -74,7 +91,6 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     */
    _cellInfo: null,
 
-//======================   LIFECYCLE METHODS   ===========================
 
     /**
     Creates the View instance and sets the container and bindings
@@ -87,13 +103,9 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         Y.log('DataTable.BaseCellEditor.initializer');
         this.publish({
             /**
-            Event fired when the inline editor has been initialized and ready for usage.
-
-            This event can be listened to in order to add additional content or widgets, etc onto
-            the View's container.
+            Event fired when the inline editor has been initialized and is ready for use.
 
             @event render
-            @param ev {EventFacade} The configuration object as received by the `initializer`
             */
             render: {
                 defaultFn: this._defRenderFn
@@ -103,6 +115,10 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
             Event fired when the cell editor is displayed and becomes visible.
             @event show
             @param ev {EventFacade} Event Facade including:
+            @param ev.td {Node} The TD Node that was edited
+            @param ev.record {Model} Model instance of the record data for the edited cell
+            @param ev.colKey {String} Column key (or name) of the edited cell
+            @param ev.initialValue {Any} The original value of the underlying data for the cell
             @param ev.inputNode {Node} The editor's INPUT / TEXTAREA Node
             @param ev.formattedValue {String} The value as shown to the user.
             */
@@ -116,8 +132,12 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
 
             @event save
             @param ev {Object} Event facade, including:
-              @param ev.formattedValue {Any} Data value as entered by the user
-              @param ev.newValue {Any} Parsed value ready to be saved
+            @param ev.td {Node} The TD Node that was edited
+            @param ev.record {Model} Model instance of the record data for the edited cell
+            @param ev.colKey {String} Column key (or name) of the edited cell
+            @param ev.initialValue {Any} The original value of the underlying data for the cell
+            @param ev.formattedValue {Any} Data value as entered by the user
+            @param ev.newValue {Any} Parsed value ready to be saved
             */
             save: {
                 defaultFn: this._defSaveFn
@@ -127,7 +147,11 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
             Fired when editing is cancelled (without saving) on this cell editor.
 
             @event cancel
-            @param ev {Object}  Event facade
+            @param ev {Object}  Event facade, including:
+            @param ev.td {Node} The TD Node that was edited
+            @param ev.record {Model} Model instance of the record data for the edited cell
+            @param ev.colKey {String} Column key (or name) of the edited cell
+            @param ev.initialValue {Any} The original value of the underlying data for the cell
             */
             cancel: {
                 defaultFn: this._defCancelFn
@@ -165,6 +189,11 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
 
     It must be defined by the subclass.
 
+    If a particular cell editor has an input or textarea control,
+    a reference to it should be stored in the [_inputNode](#property__inputNode)
+    property to enable keyboard navigation, setting and updating the value and
+    a few other actions.
+
     @method _defRenderFn
     @protected
     */
@@ -174,7 +203,8 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     },
 
     /**
-    Adds a listener to this editor instance to reposition based on "xy" attribute changes.
+    Sets the event listeners.
+    If [_inputNode](#property__inputNode) is set it will also set listeners for it.
 
     @method _bindUI
     @private
@@ -182,20 +212,32 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     _bindUI: function () {
         Y.log('DataTable.BaseCellEditor._bindUI');
 
+        var input = this._inputNode,
+            subscr;
 
-        this._subscr = [
+        subscr = [
             // This is here to support "scrolling" of the underlying DT ...
             this.after('xyChange',this._afterXYChange),
-            this.after('visibleChange', this._afterVisibleChange),
-
-            this._inputNode.on('keydown',    this.processKeyDown, this),
-            this._inputNode.on('keypress',   this.processKeyPress, this),
-            this._inputNode.on('click',      this._onClick, this)
+            this.after('visibleChange', this._afterVisibleChange)
         ];
+
+        if (input) {
+            subscr.push(
+
+                input.on('keydown',    this._onKeyDown, this),
+                input.on('click',      this._onClick, this)
+            );
+            if (this.get('keyFiltering') && Y.ValueChange) {
+                subscr.push(
+                    input.on('valuechange', this._onValueChange, this)
+                );
+            }
+        }
+        this._subscr = subscr;
     },
 
     /**
-    Detaches any listener handles created by this view.
+    Detaches all event listeners.
 
     @method _unbindUI
     @private
@@ -211,7 +253,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     },
 
     /**
-    The default action for the `save` event.
+    The default action for the [save](#event_save) event.
 
     @method _defSaveFn
     @param e {EventFacade} For save event
@@ -224,7 +266,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     },
 
     /**
-    The default action for the `cancel` event.
+    The default action for the [cancel](#event_cancel) event.
 
     @method _defCancelFn
     @protected
@@ -235,9 +277,10 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     },
 
     /**
-    The default action for the `show` event which should make the editor visible.
+    The default action for the [show](#event_show) event which should make the editor visible.
 
-    It should be defined by each class of cell editor.
+    The default implementation expects [_inputNode](#property__inputNode) to be
+    a reference to an input or textarea with a `focus` method and a `value` property.
 
     @method _defShowFn
     @param e {EventFacade}
@@ -256,13 +299,11 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         this._set('active',true);
     },
 
-    //======================   PUBLIC METHODS   ===========================
 
     /**
-    Displays the inline cell editor and positions / resizes the INPUT to
-    overlay the edited TD element.
+    Displays, positions and resizes the cell editor over the edited TD element.
 
-    Set the initial value for the INPUT element, after preprocessing (if reqd)
+    Sets the initial value after formatting.
 
     @method showEditor
     @param cellInfo {Object} Information about the cell that is to be edited, including:
@@ -290,12 +331,10 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
 
     },
     /**
-    Saves the View's `value` setting (usually after keyboard RTN or other means) and fires the
-    [save](#event_editorSave) event so consumers (i.e. DataTable) can make final changes to the
-    Model or dataset.
+    Saves the value provided after parsing it.
 
     @method saveEditor
-    @param value {String|Number|Date} Raw value setting to be saved after editing
+    @param value {Any} Raw value (not yet parsed) to be saved.
     @public
     */
     saveEditor: function (value) {
@@ -304,10 +343,11 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         //
         //  Only save the edited data if it is valid ...
         //
-        if(Lang.isValue(value)){
+        var validator = this.get('validator'), parsedValue;
+        if(Lang.isValue(value) && (validator instanceof RegExp ? validator.test(value) : true)){
 
             // If a "save" function was defined, run thru it and update the "value" setting
-            var parsedValue = this._parser(value);
+            parsedValue = this._parser(value);
 
             // So value was initially okay, but didn't pass _parser validation call ...
             if (parsedValue === undefined) {
@@ -351,110 +391,119 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         this.fire("cancel", this._cellInfo);
     },
 
-    /**
-    Provides a method to process keypress entries and validate or prevent invalid inputs.
-    This method is meant to be overrideable by implementers to customize behaviors.
-
-    @method processKeyPress
-    @param e {EventFacade} Key press event object
-    @public
-    */
-    processKeyPress: function (e) {
-        Y.log('DataTable.BaseCellEditor.processKeyPress');
-        var keyc    = e.keyCode,
-            inp     = e.target || this._inputNode,
-            value   = inp.get('value'),
-            keyfilt = this.get('keyFiltering'),
-         //   keyvald = this.get('keyValidator'),
-            kchar   = String.fromCharCode(keyc),
-            flagRE  = true,
-            krtn;
-
-        //
-        // If Enter, then prevent and save ...
-        //
-        if(keyc === KEYC_ENTER && this.get('saveOnEnterKey')) {
-            e.preventDefault();
-            this.saveEditor(value);
-            return;
-        }
-
-        //
-        // Check key filtering validation ... either a RegExp or a user-function
-        //
-        if(keyfilt instanceof RegExp) {
-            flagRE = (!kchar.match(keyfilt)) ? false : flagRE;
-        } else if (Lang.isFunction(keyfilt)) {
-            krtn = keyfilt.call(this,e);
-            flagRE = (krtn) ? true : false;
-        }
-
-        // If key filtering returned false, prevent continuing
-        if(!flagRE) {
-            e.preventDefault();
-        }
-
-    },
 
     /**
-    Key listener for the INPUT inline editor, "keydown" is checked for non-printing key
-    strokes, navigation or ESC.
+    Key listener for the input element `keydown`.
+    It handles navigation, Enter or Esc.
+    It is automatically attached if [_inputNode](#property__inputNode) is set.
 
-    This method is intended to overridden by implementers in order to customize behaviors.
-
-    @method processKeyDown
+    @method _onKeyDown
     @param e {EventFacade} Keydown event facade
-    @public
+    @protected
     */
     /**
     Fires when the navigation keys are pressed to move to another cell.
     @event keyNav
-    @param dx {Integer} number of cells to move in the x direction. (usually -1: left, 0 or 1: right)
-    @param dy {Integer} number of cells to move in the y direction. (usually -1: up, 0 or 1: down)
+    @param e {EventFacade} event facade including:
+    @param e.dx {Integer} number of cells to move in the x direction. (usually -1: left, 0 or 1: right)
+    @param e.dy {Integer} number of cells to move in the y direction. (usually -1: up, 0 or 1: down)
     */
-    processKeyDown : function(e){
-        Y.log('DataTable.BaseCellEditor.processKeyDown');
-        var keyc    = e.keyCode,
+    _onKeyDown : function (e) {
+        Y.log('DataTable.BaseCellEditor._onKeyDown');
+        var keyc = e.keyCode,
             dx = 0, dy = 0;
 
-        if (keyc === KEYC_ESC) {
-            e.preventDefault();
-            this.cancelEditor();
-        }
-        if(!this.get('inputKeys')) {
-            return;
-        }
-
         switch(keyc) {
-            case KEYC_UP:
-                dy = (e.ctrlKey) ? -1 : 0;
+            case KEYC_ENTER:
+                if (this.get('saveOnEnterKey')) {
+                    e.preventDefault();
+                    this.saveEditor(e.target.get('value'));
+                    return;
+                }
                 break;
-
-            case KEYC_DOWN:
-                dy = (e.ctrlKey) ? 1 : 0;
-                break;
-
-            case KEYC_LEFT:
-                dx = (e.ctrlKey) ? -1 : 0;
-                break;
-
-            case KEYC_RIGHT:
-                dx = (e.ctrlKey) ? 1 : 0;
-                break;
-
-            case KEYC_TAB: // tab
-                dx = (e.shiftKey) ? -1 : 1;
-                break;
+            case KEYC_ESC:
+                e.preventDefault();
+                this.cancelEditor();
+                return;
         }
+        if(this.get('navigationEnabled')) {
+            switch(keyc) {
+                case KEYC_UP:
+                    dy = (e.ctrlKey) ? -1 : 0;
+                    break;
 
-        if(dx || dy) {
-            this.fire('keyNav', {dx:dx, dy:dy});
-            e.preventDefault();
+                case KEYC_DOWN:
+                    dy = (e.ctrlKey) ? 1 : 0;
+                    break;
+
+                case KEYC_LEFT:
+                    dx = (e.ctrlKey) ? -1 : 0;
+                    break;
+
+                case KEYC_RIGHT:
+                    dx = (e.ctrlKey) ? 1 : 0;
+                    break;
+
+                case KEYC_TAB: // tab
+                    dx = (e.shiftKey) ? -1 : 1;
+                    break;
+            }
+
+            if(dx || dy) {
+                this.fire('keyNav', {dx:dx, dy:dy});
+                e.preventDefault();
+            }
         }
     },
 
-//======================   PRIVATE METHODS   ===========================
+    /**
+    Handles validation while the value is being entered. It applies the
+    [keyFiltering](#attr_keyFiltering) regular expression or function to the input
+    and rejects the entry if it doesn't match.
 
+    It will be active if there is an [_inputNode](#property__inputNode) set,
+    a [keyFiltering](#attr_keyFiltering) set and the `event-valuechange` module
+    is loaded.
+    @method _onValueChange
+    @param e {EventFacade} Event facade as provided by the `valuechange` event.
+    @private
+    */
+    _onValueChange: function (e) {
+        if (!this._keyFilter(e.newVal)) {
+            e.halt();
+        }
+    },
+
+    /**
+    Null [keyFiltering](#attr_keyFiltering) function, accepts everything.
+
+    It may be replaced by other functions when the [keyFiltering](#attr_keyFiltering)
+    attribute is changed.
+
+    Do not override as this method might be replaced dynamically during execution.
+    @method _keyFilter
+    @param value {String} input value to be validated
+    @return {Boolean} true if value is valid
+    @private
+    */
+    _keyFilter : function (/* value */) {
+        return true;
+    },
+    /**
+    Returns a function that uses the regular expression provided to check a value
+    passed to that function.  It is used along the [keyFiltering](#attr_keyFiltering)
+    attribute to set the [_keyFilter](#method__keyFilter) method for input validation.
+    @method _regExpFilter
+    @param regExp {RegExp} regular expression to use when checking.
+    @return {Function} Function that checks a value passed to it against the regular expression.
+    @private
+
+     */
+    _regExpFilter: function (regExp) {
+        return function (value) {
+            return regExp.test(value);
+        };
+    },
     /**
     Listener to INPUT "click" events that will stop bubbling to the DT TD listener,
     to prevent closing editing while clicking within an INPUT.
@@ -469,12 +518,11 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     },
 
     /**
-    This method can be used to quickly reset the current View editor's position,
+    Event listener for the [xy](#attr_xy) change event.
+    It can be used to quickly reset the cell editor's position,
     used for scrollable DataTables.
 
     To be implemented by the subclasses.
-
-    NOTE: Scrollable inline editing is a little "rough" right now
 
     @method _afterXYChange
     @param e {EventFacade} The xy attribute change event facade
@@ -485,7 +533,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
     },
 
     /**
-    Responds to changes in the `visible` attribute by showing/hiding the
+    Responds to changes in the [visible](#attr_visible) attribute by showing/hiding the
     cell editor
     @method _afterVisibleChange
     @param e {EventFacade} Standard Attribute change event facade
@@ -507,7 +555,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
 
 
         /**
-        Value that was saved in the Editor View and returned to the record
+        Value being edited.  It should be a copy of the value stored in the record.
 
         @attribute value
         @type Any
@@ -519,31 +567,36 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
 
 
         /**
-        Function to execute on the "data" contents just prior to displaying in the Editor's main view
+        Function to execute on the [value](#attr_value) just prior to displaying in the
+        editor's input element.
         (i.e. typically used for pre-formatting Date information from JS to mm/dd/YYYY format)
 
-        This function will receive one argument "value" which is the data value from the record, and
-        the function runs in Editor scope.
+        This function will receive the value from the record as its only argument
+        and should return the formatted version to be shown to the user.
 
         @attribute formatter
-        @type Function
+        @type Function || null
         @default null
         */
         formatter: {
             value: returnUnchanged,
             lazyAdd: false,
+            getter: function (formatter) {
+                return (formatter === returnUnchanged ? null : formatter);
+            },
             setter: function (formatter) {
                 this._formatter =  (typeof formatter === 'function') ? formatter : returnUnchanged;
             }
         },
 
         /**
-        Function to execute when Editing is complete, prior to "saving" the data to the Record (Model)
-        This function will receive one argument "value" which is the data value from the INPUT and within
-        the scope of the current View instances.
+        Function to execute prior to saving the data to the record (Model).
 
-        This method is intended to be used for input validation prior to saving.  **If the returned value
-        is "undefined" the cancelEditor method is executed.**
+        This function will receive the raw value from the INPUT element as
+        its only argument and should return the value to be stored in the record.
+
+        This method can also be used for input validation prior to saving.
+        If the returned value is `undefined` the cancelEditor method is executed.
 
         @attribute parser
         @type Function
@@ -552,6 +605,9 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         parser:{
             value: returnUnchanged,
             lazyAdd: false,
+            getter: function (parser) {
+                return (parser === returnUnchanged ? null : parser);
+            },
             setter: function (parser) {
                 this._parser =  (typeof parser === 'function') ? parser : returnUnchanged;
             }
@@ -574,6 +630,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
 
         /**
         Determines whether the cell editor is visible.
+
         The cell editor might be active but it might have scrolled off the
         visible area of an scrolling datatable hence turning invisible.
 
@@ -617,17 +674,28 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         @default null
         */
         keyFiltering:  {
-            value:  null
+            value:  null,
+            setter: function (value) {
+                if (value === null) {
+                    this._keyFilter = BCE.prototype._keyFilter;
+                } else if (typeof value === 'function') {
+                    this._keyFilter = value;
+                } else if (value instanceof RegExp) {
+                    this._keyFilter = this._regExpFilter(value);
+                }
+                return value;
+            }
         },
 
         /**
-        Provides the capability to validate the final saved value after editing is finished.
-        This attribute can be set to either a RegEx or a function, that operates on the entire
-        "value" setting of the editor input (whereas [keyFiltering](#attr_keyFilter) performs
-        validation checks on each key input).
+        Provides the capability to validate the final value to be saved after editing is finished.
+        This attribute can be a RegEx that operates on the entire
+        `value` setting of the editor input element.
 
-        If a function is provided, the single argument is the value setting of the editor.
-        the keystroke is valid it should return true, otherwise if invalid false;
+        Further validation can be provided by the method set in the [parser](#attr_parser)
+        attribute while [keyFiltering](#attr_keyFilter) performs
+        validation checks as the value is being entered.
+
 
         @example
              /\d/            // for numeric digit-only input
@@ -635,7 +703,7 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
              /\d|\//         // for Date field entry in MM/DD/YYYY format
 
         @attribute validator
-        @type {RegExp|Function}
+        @type RegExp
         @default null
         */
         validator: {
@@ -655,6 +723,17 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
         saveOnEnterKey: {
             value:      true,
             validator:  Lang.isBoolean
+        },
+        /**
+        A flag to indicate if cell-to-cell navigation should be implemented (currently setup for CTRL-arrow
+        key, TAB and Shift-TAB) capability
+        @attribute navigationEnabled
+        @type Boolean
+        @default true
+        */
+        navigationEnabled:{
+            value:      true,
+            validator:  Lang.isBoolean
         }
 
 
@@ -663,3 +742,4 @@ Y.DataTable.BaseCellEditor =  Y.Base.create('celleditor', Y.View, [], {
 
 
 });
+Y.DataTable.BaseCellEditor = BCE;

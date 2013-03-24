@@ -257,63 +257,8 @@ var Editors = {},
         className: {
             value:      null,
             validator:  Y.Lang.isString
-        },
-
-        /**
-         * A flag to indicate if cell-to-cell navigation should be implemented (currently setup for CTRL-arrow
-         * key, TAB and Shift-TAB) capability
-         * @attribute inputKeys
-         * @type Boolean
-         * @default true
-         */
-        inputKeys:{
-            value:      true,
-            validator:  Y.Lang.isBoolean
-        },
-
-
-        /**
-         * Provides a keystroke filtering capability to restrict input into the editing area checked during the
-         * "keypress" event.  This attribute is set to either a RegEx or a function that confirms if the keystroke
-         * was valid for this editor.  (TRUE meaning valid, FALSE meaning invalid)
-         *
-         * If a function is provided, the single argument is the keystroke event facade `e` and if
-         * the keystroke is valid it should return true, otherwise if invalid false;
-         *
-         *  @example
-         *      /\d/            // for numeric digit-only input
-         *      /\d|\-|\./      // for floating point numeric input
-         *      /\d|\//         // for Date field entry in MM/DD/YYYY format
-         *
-         * @attribute keyFiltering
-         * @type {RegExp|Function}
-         * @default null
-         */
-        keyFiltering:  {
-            value:  null
-        },
-
-        /**
-         * Provides the capability to validate the final saved value after editing is finished.
-         * This attribute can be set to either a RegEx or a function, that operates on the entire
-         * "value" setting of the editor input (whereas [keyFiltering](#attr_keyFilter) performs
-         * validation checks on each key input).
-         *
-         * If a function is provided, the single argument is the value setting of the editor.
-         * the keystroke is valid it should return true, otherwise if invalid false;
-         *
-         *  @example
-         *      /\d/            // for numeric digit-only input
-         *      /\d|\-|\.|\+/   // for floating point numeric input
-         *      /\d|\//         // for Date field entry in MM/DD/YYYY format
-         *
-         * @attribute validator
-         * @type {RegExp|Function}
-         * @default null
-         */
-        validator: {
-            value:      null
         }
+
 
 
     }
@@ -441,14 +386,7 @@ Editors.inlineNumber = Y.Base.create('inlineNumber', IEd, [],
             parser: {
                 value: function (v) {
                     Y.log('inlineNumber.parser: ' + v);
-                    var vre = this.get('validator'),
-                        value;
-                    if(vre instanceof RegExp) {
-                        value = (vre.test(v)) ? +v : undefined;
-                    } else {
-                        value = +v;
-                    }
-                    return value;
+                    return parseFloat(v) || 0;
                 }
             }
 
