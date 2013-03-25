@@ -564,6 +564,38 @@ suite.add(new Y.Test.Case({
         this.wait();
     },
 
+    test_until_after_paused_callback: function () {
+        var results = '',
+            self = this;
+
+        (new Y.AsyncQueue(
+            function () {
+                this.pause();
+                Y.later(0, this, function () {
+                    results += 'A';
+                    this.run();
+                });
+            },
+            {
+                fn: function () {
+                    results += 'B'; // should be executed once
+                },
+                until: function () {
+                    return results === '' || results === 'AB';
+                }
+            },
+            { fn: function () {
+                self.resume(function () {
+                    Y.Assert.areSame('AB', results);
+                });
+              }
+            })).run();
+
+        Y.Assert.areSame('', results);
+
+        this.wait();
+    },
+
     test_timeout : function () {
         function inc() { ++results; }
 
