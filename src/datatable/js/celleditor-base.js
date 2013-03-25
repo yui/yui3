@@ -91,6 +91,15 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     */
    _cellInfo: null,
 
+   /**
+   CSS class name to add to an input box when it fails validation.
+   @property _classError
+   @type String
+   @default "yui3-datatable-celleditor-error"
+   @private
+   */
+   _classError: 'yui3-datatable-celleditor-error',
+
 
     /**
     Creates the View instance and sets the container and bindings
@@ -227,11 +236,6 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
                 input.on('keydown',    this._onKeyDown, this),
                 input.on('click',      this._onClick, this)
             );
-            if (this.get('keyFiltering') && Y.ValueChange) {
-                subscr.push(
-                    input.on('valuechange', this._onValueChange, this)
-                );
-            }
         }
         this._subscr = subscr;
     },
@@ -344,7 +348,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         //  Only save the edited data if it is valid ...
         //
         var validator = this.get('validator'), parsedValue;
-        if(Lang.isValue(value) && (validator instanceof RegExp ? validator.test(value) : true)){
+        if(validator instanceof RegExp ? validator.test(value) : true) {
 
             // If a "save" function was defined, run thru it and update the "value" setting
             parsedValue = this._parser(value);
@@ -359,6 +363,10 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
                 formattedValue:   value,
                 newValue:   parsedValue
             }));
+        } else {
+            if (this._inputNode) {
+                this._inputNode.addClass(this._classError);
+            }
         }
     },
 
@@ -373,6 +381,10 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         if(cont && cont.hide) {
             cont.hide();
         }
+        if (this._inputNode) {
+            this._inputNode.removeClass(this._classError);
+        }
+
         this._cellInfo = null;
         this._set('active', false);
     },
@@ -456,54 +468,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         }
     },
 
-    /**
-    Handles validation while the value is being entered. It applies the
-    [keyFiltering](#attr_keyFiltering) regular expression or function to the input
-    and rejects the entry if it doesn't match.
 
-    It will be active if there is an [_inputNode](#property__inputNode) set,
-    a [keyFiltering](#attr_keyFiltering) set and the `event-valuechange` module
-    is loaded.
-    @method _onValueChange
-    @param e {EventFacade} Event facade as provided by the `valuechange` event.
-    @private
-    */
-    _onValueChange: function (e) {
-        if (!this._keyFilter(e.newVal)) {
-            e.halt();
-        }
-    },
 
-    /**
-    Null [keyFiltering](#attr_keyFiltering) function, accepts everything.
-
-    It may be replaced by other functions when the [keyFiltering](#attr_keyFiltering)
-    attribute is changed.
-
-    Do not override as this method might be replaced dynamically during execution.
-    @method _keyFilter
-    @param value {String} input value to be validated
-    @return {Boolean} true if value is valid
-    @private
-    */
-    _keyFilter : function (/* value */) {
-        return true;
-    },
-    /**
-    Returns a function that uses the regular expression provided to check a value
-    passed to that function.  It is used along the [keyFiltering](#attr_keyFiltering)
-    attribute to set the [_keyFilter](#method__keyFilter) method for input validation.
-    @method _regExpFilter
-    @param regExp {RegExp} regular expression to use when checking.
-    @return {Function} Function that checks a value passed to it against the regular expression.
-    @private
-
-     */
-    _regExpFilter: function (regExp) {
-        return function (value) {
-            return regExp.test(value);
-        };
-    },
     /**
     Listener to INPUT "click" events that will stop bubbling to the DT TD listener,
     to prevent closing editing while clicking within an INPUT.
@@ -581,11 +547,9 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         formatter: {
             value: returnUnchanged,
             lazyAdd: false,
-            getter: function (formatter) {
-                return (formatter === returnUnchanged ? null : formatter);
-            },
             setter: function (formatter) {
                 this._formatter =  (typeof formatter === 'function') ? formatter : returnUnchanged;
+                return formatter;
             }
         },
 
@@ -605,11 +569,9 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         parser:{
             value: returnUnchanged,
             lazyAdd: false,
-            getter: function (parser) {
-                return (parser === returnUnchanged ? null : parser);
-            },
             setter: function (parser) {
                 this._parser =  (typeof parser === 'function') ? parser : returnUnchanged;
+                return parser;
             }
         },
 
@@ -656,36 +618,6 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
             validator:  Lang.isArray
         },
 
-        /**
-        Provides a keystroke filtering capability to restrict input into the editing area checked during the
-        "keypress" event.  This attribute is set to either a RegEx or a function that confirms if the keystroke
-        was valid for this editor.  (TRUE meaning valid, FALSE meaning invalid)
-
-        If a function is provided, the single argument is the keystroke event facade `e` and if
-        the keystroke is valid it should return true, otherwise if invalid false;
-
-        @example
-              /\d/            // for numeric digit-only input
-              /\d|\-|\./      // for floating point numeric input
-              /\d|\//         // for Date field entry in MM/DD/YYYY format
-
-        @attribute keyFiltering
-        @type {RegExp|Function}
-        @default null
-        */
-        keyFiltering:  {
-            value:  null,
-            setter: function (value) {
-                if (value === null) {
-                    this._keyFilter = BCE.prototype._keyFilter;
-                } else if (typeof value === 'function') {
-                    this._keyFilter = value;
-                } else if (value instanceof RegExp) {
-                    this._keyFilter = this._regExpFilter(value);
-                }
-                return value;
-            }
-        },
 
         /**
         Provides the capability to validate the final value to be saved after editing is finished.
