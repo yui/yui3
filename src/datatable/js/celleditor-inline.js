@@ -8,66 +8,6 @@
  is a single INPUT node that completely overlies the TD cell.  This editor is intended to replicate
  the familiar "spreadsheet" type of input.
 
- ##### Editing / Validation
-
- This editor view creates a simple INPUT[type=text] control and repositions and resizes it to match the
- underlying TD, set with a z-Index to visually appear over the TD cell.
-
- Key listeners are provided to detect changes, prohibit invalid keystrokes (via the [keyFiltering](#attr_keyFiltering)
-  setting) and to allow validation upon a "save" entry (keyboard RTN stroke) where a [validator](#attr_validator) can
- be prescribed to allow/disallow changes based upon the overall "value" of the INPUT control.
-
- ##### Navigation
- The editor provides the capability to navigate from TD cell via key listeners on the following key
- combinations;
-  * CTRL-arrow keys
-  * TAB goes to RIGHT, SHIFT-TAB goes to left
-  * ESC cancels editing
-  * RTN saves cell
-
- Key navigation can be disabled via the [inputKeys](#attr_inputKeys) attribute set to `false`.
-
- When a "key navigation" request is received it is passed to the [keyDir](#attr_keyDir) as a change
- in [row,col] that implementers can listen to "change" events on, to reposition and open editing on the
- new relative cell.  (NOTE: This view does not reposition, it simply fires a `keyNav` event.
-
- ##### Events
- Several events are fired by this View;  which can be listened for and acted upon to achieve differing results.
- For example, the Y.DataTable.EditorOptions.inlineAC (inline autocompletion editor) listens for the
- [editorCreated](#event_editorCreated) event and once received, it configures the autocomplete plugin onto the
- INPUT node.
-
- ##### Configuration
- Ths Y.DataTable.BaseCellInlineEditor editor is intended to be configured by varying the configuration
- parameters (i.e. attribute and related configuration) to permit a variety of editing features.
-
- Since the View class permits ad-hoc attributes, the implementer can pass many properties in during instantiation
- that will become available as run-time View attributes.
-
- This Module includes several pre-defined editor configurations which are stored within the Y.DataTable.EditorOptions
- namespace (presently there are "inline", "inlineNumber", "inlineDate", "inlineAC").  New inline editors can be
- created and added to this namespace at runtime, and by defining the `BaseViewClass:Y.DataTable.BaseCellInlineEditor` property.
-
- For example, the pre-built configuration object for the [inlineDate](Y.DataTable.EditorOptions.inlineDate.html) inline editor
- is stored as `Y.DataTable.EditorOptions.inlineDate`.
-
- To configure an editor on-the-fly (i.e. within a DataTable column definition) just include the configuration object options
- within DT's column `editorConfig` object, which is Y.merge'ed with the pre-built configs;
-
-        // define an 'inlineDate' editor with additional configs ...
-        { key:'date_of_claim', editor:"inlineDate", editorConfig:{ dateformat:'%Y-%m-%d'} }
-
- This `Y.DataTable.BaseCellinlineEditor` class is similar to (and compatible with ) the `Y.DataTable.BaseCellPopupEditor`.
- Note that since the "inline" editor uses a simple INPUT[type=text] Node instead of an
- Overlay the codeline is quite a bit simpler.
-
- ###### KNOWN ISSUES:
-   <ul>
-   <li>This View doesn't work well with scrolling DT's, so I've disabled it currently.</li>
-   <li>Sometimes after a DT's `editable` ATTR is toggled true/false a "cannot read 'style'" message occurs and editing failes
-        requiring a page refresh.</li>
-   </ul>
-
  @class DataTable.BaseCellInlineEditor
  @extends DataTable.BaseCellEditor
  @author Todd Smith
@@ -82,7 +22,6 @@ var Editors = {},
      * @property template
      * @type String
      * @default '<input type="text" class="{cssInput}" />'
-     * @static
      */
     template: '<input type="text" class="{cssInput}" />',
 
@@ -92,7 +31,6 @@ var Editors = {},
      * @type String
      * @default 'yui3-datatable-inline-input'
      * @protected
-     * @static
      */
     _cssInput: 'yui3-datatable-inline-input',
 
@@ -104,7 +42,7 @@ var Editors = {},
 
 
     @method _defShowFn
-    @param e {EventFacade}
+    @param ev {EventFacade}
     @protected
     */
     _defShowFn: function (ev) {
@@ -124,18 +62,13 @@ var Editors = {},
         IEd.superclass._defShowFn.apply(this, arguments);
     },
 
-//======================   PUBLIC METHODS   ===========================
-
-
-//======================   PRIVATE METHODS   ===========================
-
     /**
      * Processes the initial container for this View, sets up the HTML content
      *  and creates a listener for positioning changes
      * @method _defRenderFn
      * @private
      */
-    _defRenderFn: function() {
+    _defRenderFn: function () {
         Y.log('DataTable.BaseCellInlineEditor._defRenderFn');
         var container = this.get('container'),
             html      = Y.Lang.sub(this.template, {cssInput:this._cssInput});
@@ -159,6 +92,12 @@ var Editors = {},
         }
 
     },
+
+    /**
+    Overrides the base _bindUI method to add a its own event listeners
+    @method _bindUI
+    @protected
+    */
 
     _bindUI: function () {
         Y.log('DataTable.BaseCellInlineEditor._bindUI');
@@ -272,28 +211,20 @@ Y.DataTable.BaseCellInlineEditor = IEd;
 
 
 /**
-### Inline Cell Editor "inline"
-This View configuration is used to setup an editor referenced as "inline" as a simple inline-type cell editor.
+Produces a simple simple inline-type cell editor.
 
 ##### Basic Usage:
-          // Column definition
-          { key:'surName', editor:"inline" }
 
-##### Standard Configuration
-This inline editor creates a simple INPUT[type=text] control and positions it to match the underlying TD node. It
-uses the default settings from the BaseViewClass's attributes.
+    // Column definition
+    { key:'surName', editor:"inline" }
 
-The configuration {Object} for this cell editor View is predefined as;
+Since the `defaultEditor` attribute defaults to `"inline"`, any cell that
+doesn't have editing disable will use this editor.
 
-         Y.DataTable.EditorOptions.inline = {
-             BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
-             name:           'inline'
-         };
 
- **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
- `editorConfig` object.
-
-@class DataTable.EditorOptions.inline
+@property inline
+@type DataTable.BaseCellEditor
+@for DataTable.Editors
 @since 3.8.0
 @public
 **/
@@ -301,55 +232,27 @@ Editors.inline = IEd;
 
 
 /**
-### Inline Cell Editor "inlineNumber"
-This View configuration is used to setup an editor referenced as "inlineNumber" as a simple inline-type
-cell editor.  It is identical to the "inline" textual editor but incorporates Numeric validation prior to
+This cell editor is identical to the "inline" textual editor but incorporates Numeric validation prior to
 saving to the DT.
 
 ##### Basic Usage:
-        // Column definition
-        { key:'unit_price', editor:"inlineNumber" }
 
-        // Column definition ... to allow integers only
-        { key:'QuantityInStock', editor:"inlineNumber", editorConfig:{ keyFiltering: /\d/ }  }
+    // Column definition
+    { key:'unit_price', editor:"inlineNumber" }
 
-##### Standard Configuration
-This inline editor creates a simple INPUT[type=text] control and positions it to match the underlying TD node.  A `parser`
-is defined that uses an ad-hoc attribute "validationRegEx" to test for validity prior to saving the data.  If the
-value passes validation it is converted to numeric form and returned.
+    // Column definition ... to allow integers only
+    {
+        key:'QuantityInStock',
+        editor:"inlineNumber",
+        editorConfig: {
+            keyFiltering: /\d/
+        }
+    }
 
-The configuration {Object} for this cell editor View is predefined as;
-
-         Y.DataTable.EditorOptions.inlineNumber = {
-             BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
-             name:           'inlineNumber',
-             hideMouseLeave: false,
-
-             // Define a key filtering regex ... only allow digits, "-" or "."
-             keyFiltering:   /\.|\d|\-/,
-
-             // setup a RegExp to check for valid floating point input ....
-             validator: /^\s*(\+|-)?((\d+(\.\d*)?)|(\.\d*))\s*$/,
-
-             // Function to call after numeric editing is complete, prior to saving to DataTable ...
-             //  i.e. checks validation against ad-hoc attribute "validationRegExp" (if it exists)
-             //       and converts the value to numeric (or undefined if fails regexp);
-             parser: function(v){
-                 var vre = this.get('validationRegExp'),
-                     value;
-                 if(vre instanceof RegExp) {
-                     value = (vre.test(v)) ? +v : undefined;
-                 } else {
-                     value = +v;
-                 }
-                 return value;
-             }
-         };
-
- **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
- `editorConfig` object.
-
-@class DataTable.EditorOptions.inlineNumber
+(note: keyFiltering requires the `datatable-celleditor-keyfiltering` module to be active)
+@property inlineNumber
+@type DataTable.BaseCellEditor
+@for DataTable.Editors
 @since 3.8.0
 @public
 **/
@@ -395,54 +298,25 @@ Editors.inlineNumber = Y.Base.create('inlineNumber', IEd, [],
 );
 
 /**
-### Inline Cell Editor "inlineDate"
-This View configuration is used to setup an editor referenced as "inlineDate" as a simple inline-type
-cell editor.  It is identical to the "inline" textual editor but incorporates Numeric validation prior to
+This cell editor is identical to the "inline" textual editor but incorporates date validation prior to
 saving to the DT.
 
 ##### Basic Usage:
-        // Column definition
-        { key:'weddingDate', editor:"inlineDate" }
 
-        // Column definition with user-specified 'dateFormat' to display Date in text box on display
-        { key:'date_of_claim', editor:"inlineDate", editorConfig:{ dateformat:'%Y-%m-%d'} }
+    // Column definition
+    { key:'weddingDate', editor:"inlineDate" }
 
-##### Standard Configuration
-This inline editor creates a simple INPUT[type=text] control and positions it to match the underlying TD node.  Since
-a JS Date object isn't very pretty to display / edit in a textbox, we use a `formatter` to preformat the Date in a
-human-readable form within the textbox.  Also a `parser` is defined to convert the entered data using `Date.parse`
-back to a valid JS Date prior to saving to the DT.
+    // Column definition with user-specified 'dateFormat' to display Date in text box on display
+    {
+        key:'date_of_claim',
+        editor:"inlineDate",
+        editorConfig:{ dateformat:'%Y-%m-%d'}
+    }
 
-The configuration {Object} for this cell editor View is predefined as;
 
-        Y.DataTable.EditorOptions.inlineDate = {
-             BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
-             name:           'inlineDate',
-
-             // Define default date format string to use
-             dateFormat: "%D",
-
-             // Setup input key filtering for only digits, "-" or "/" characters
-             keyFiltering:   /\/|\d|\-/,
-
-             //  Function to call just prior to populating the INPUT text box,
-             //   so we pre-format the textbox in "human readable" format here
-             formatter: function(v){
-                 var dfmt =  this.get('dateFormat') || "%m/%d/%Y";
-                 return Y.DataType.Date.format(v,{format:dfmt});
-             },
-
-             // Function to call after Date editing is complete, prior to saving to DataTable ...
-             //  i.e. converts back to "Date" format that DT expects ...
-             parser: function(v){
-                 return Y.DataType.Date.parse(v);
-             }
-        };
-
- **PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
- `editorConfig` object.
-
-@class DataTable.EditorOptions.inlineDate
+@property inlineDate
+@type DataTable.BaseCellEditor
+@for DataTable.Editors
 @since 3.8.0
 @public
 **/
@@ -492,78 +366,34 @@ Editors.inlineDate = Y.Base.create('inlineDate', IEd, [],
 
 
 /**
-### Inline Cell Editor "inlineAC"
-This View configuration is used to setup an inline editor referenced as "inlineAC" composed of a simple inline-type
-cell editor which has the AutoComplete plugin attached to the input node.
+This cell editor has the AutoComplete plugin attached to the input node.
 
 ##### Basic Usage:
-       // Column definition
-       { key:'degreeProgram', editor:"inlineAC",
-         editorConfig:{
+
+    // Column definition
+    {
+        key:'degreeProgram',
+        editor:"inlineAC",
+        editorConfig:{
 
             // The following object is passed to "autocomplete" plugin when this
             //   editor is instantiated
             autocompleteConfig: {
                source:  [ "Bachelor of Science", "Master of Science", "PhD" ]
                on: {
-                   select: function(r){
+                   select: function (r) {
                        var val = r.result.display;
                        this.editor.saveEditor(val);
                    }
                }
             }
-          }
-       }
+        }
+    }
 
-##### Standard Configuration
-This inline editor creates a simple INPUT[type=text] control and positions it to match the underlying TD node.
-When the editor is first instantiated, the Y.Plugin.AutoComplete is connected to the INPUT using the `autocompleteConfig`
-object passed in by the user.
 
-This editor View instance is attached to the autocomplete plugin as static property "editor".  An "on:select" listener
-is defined in the configs to take action on saving the selected item from the autocomplete.
-
-The configuration {Object} for this cell editor View is predefined as;
-
-        Y.DataTable.EditorOptions.inlineAC = {
-             BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
-             name:           'inlineAC',
-             hideMouseLeave: false,
-
-             // Define listener to this editor View's events
-             after: {
-
-                //---------
-                //  After this View is instantiated and created,
-                //     configure the Y.Plugin.AutoComplete as a plugin to the editor INPUT node
-                //---------
-                createUI : function(){
-                   var inputNode = this._inputNode,
-                       // Get the users's editorConfig "autocompleteConfig" settings
-                       acConfig = this.get('autocompleteConfig') || {},
-                       editor = this;
-
-                   if(inputNode && Y.Plugin.AutoComplete) {
-                       // merge user settings with these required settings ...
-                       acConfig = Y.merge(acConfig,{
-                           alwaysShowList: true,
-                           render: true
-                       });
-                       // plug in the autocomplete and we're done ...
-                       inputNode.plug(Y.Plugin.AutoComplete, acConfig);
-
-                       // add this View class as a static prop on the ac plugin
-                       inputNode.ac.editor = editor;
-                   }
-
-                }
-             }
-         };
-
-**PLEASE NOTE:** All other attributes from the `BaseViewClass` apply and can be included within the
-`editorConfig` object.
-
-@class DataTable.EditorOptions.inlineAC
+@property inlineAC
+@type DataTable.BaseCellEditor
+@for DataTable.Editors
 @since 3.8.0
 @public
 **/
@@ -619,4 +449,4 @@ Editors.inlineAC = Y.Base.create('inlineAC', IEd, [],
     }
 
 );
-Y.DataTable.EditorOptions = Editors;
+Y.mix(Y.DataTable.Editors, Editors);

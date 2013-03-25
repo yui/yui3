@@ -184,7 +184,7 @@ Y.mix( DtEditable.prototype, {
 
     /**
      Hash that stores the "common" editors, i.e. standard editor names that occur
-     within Y.DataTable.EditorOptions and are used in this DataTable.
+     within Y.DataTable.Editors and are used in this DataTable.
 
      This object holds the BaseCellEditor instances, keyed by the editor "name" for quick hash reference.
 
@@ -603,7 +603,7 @@ Y.mix( DtEditable.prototype, {
             defEditor = this.get(DEF_EDITOR),
             editorName, colKey, editorInstance;
 
-        if( !Y.DataTable.EditorOptions ) {
+        if( !Y.DataTable.Editors ) {
             return;
         }
 
@@ -638,7 +638,7 @@ Y.mix( DtEditable.prototype, {
                 //
 
                 // check for common editor ....
-                if (editorName && Y.DataTable.EditorOptions[editorName]) {
+                if (editorName && Y.DataTable.Editors[editorName]) {
 
                     if(Lang.isObject(c.editorConfig) ) {
 
@@ -678,7 +678,7 @@ Y.mix( DtEditable.prototype, {
      */
     _createCellEditorInstance: function (editorName, column) {
         Y.log('DataTable.Editable._createCellEditorInstance: ' + editorName + ' for ' + column.key);
-        var Editor = Y.DataTable.EditorOptions[editorName],
+        var Editor = Y.DataTable.Editors[editorName],
             editor = null;
 
         if (Editor) {
@@ -1047,12 +1047,9 @@ Y.Base.mix(Y.DataTable, [DtEditable]);
 /**
 This object is attached to the DataTable namespace to allow addition of "editors" in conjunction
 with the Y.DataTable.Editable module.
- *
-(See modules datatable-celleditor-popup and datatable-celleditor-inline for
- examples of the content of this object)
- *
-@class DataTable.EditorOptions
+
+@class DataTable.Editors
 @type {Object}
 @since 3.8.0
  */
-Y.DataTable.EditorOptions = {};
+Y.DataTable.Editors = {};
