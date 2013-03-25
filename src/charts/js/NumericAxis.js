@@ -26,11 +26,9 @@ Y.NumericAxis = Y.Base.create("numericAxis", Y.Axis, [Y.NumericImpl], {
      * @return String
      * @private
      */
-    _getLabelByIndex: function()
+    _getLabelByIndex: function(i, l)
     {
-        var i = arguments[0],
-            l = arguments[1],
-            min = this.get("minimum"),
+        var min = this.get("minimum"),
             max = this.get("maximum"),
             increm = (max - min)/(l-1),
             label,

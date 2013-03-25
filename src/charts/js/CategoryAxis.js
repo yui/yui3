@@ -50,23 +50,14 @@ Y.CategoryAxis = Y.Base.create("categoryAxis", Y.Axis, [Y.CategoryImpl], {
      *
      * @method _getLabelByIndex
      * @param {Number} i Index of the label.
-     * @param {Number} l Total number of labels.
-     * @param {String} direction The direction of the axis. (vertical or horizontal)
      * @return String
      * @private
      */
-    _getLabelByIndex: function(i, l, direction)
+    _getLabelByIndex: function(i)
     {
         var label,
             data = this.get("data");
-        if(direction && direction === "vertical")
-        {
-            label = data[l - (i + 1)];
-        }
-        else
-        {
-            label = data[i];
-        }
+        label = data[i];
         return label;
     },
 

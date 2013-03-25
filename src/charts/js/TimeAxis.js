@@ -22,11 +22,10 @@ Y.TimeAxis = Y.Base.create("timeAxis", Y.Axis, [Y.TimeImpl], {
      * @method _getLabelByIndex
      * @param {Number} i Index of the label.
      * @param {Number} l Total number of labels.
-     * @param {String} direction The direction of the axis. (vertical or horizontal)
      * @return String
      * @private
      */
-    _getLabelByIndex: function(i, l, direction)
+    _getLabelByIndex: function(i, l)
     {
         var min = this.get("minimum"),
             max = this.get("maximum"),
@@ -34,14 +33,7 @@ Y.TimeAxis = Y.Base.create("timeAxis", Y.Axis, [Y.TimeImpl], {
             label;
             l -= 1;
         increm = ((max - min)/l) * i;
-        if(direction && direction === "vertical")
-        {
-            label = max - increm;
-        }
-        else
-        {
-            label = min + increm;
-        }
+        label = min + increm;
         return label;
     },
 
