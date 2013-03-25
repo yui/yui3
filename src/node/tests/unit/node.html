@@ -1351,15 +1351,20 @@ YUI({
         'should hide the node': function() {
             var node = Y.one('body');
             node.hide();
+            Assert.areEqual('true', node.getAttribute('hidden'));
             Assert.areEqual('none', node.getStyle('display'));
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
         'should show the node': function() {
             var node = Y.one('body');
+            node.setAttribute('hidden', true);
             node.setStyle('display', 'none');
             node.show(1);
+            Assert.areEqual('', node.getAttribute('hidden'));
             Assert.areEqual('block', node.getStyle('display'));
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1367,13 +1372,15 @@ YUI({
             var node = Y.one('body'),
                 called = false;
 
+            node.setAttribute('hidden', true);
             node.setStyle('display', 'none');
 
             node.show(function() {
                 called = true;
             });
 
-            Assert.isTrue(called);
+            Assert.isTrue(called);            
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1381,13 +1388,15 @@ YUI({
             var node = Y.one('body'),
                 called = false;
 
+            node.setAttribute('hidden', true);
             node.setStyle('display', 'none');
 
             node.show(null, function() {
                 called = true;
             });
 
-            Assert.isTrue(called);
+            Assert.isTrue(called); 
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1400,6 +1409,7 @@ YUI({
             });
 
             Assert.isTrue(called);
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1411,16 +1421,19 @@ YUI({
                 called = true;
             });
 
-            Assert.isTrue(called);
+            Assert.isTrue(called); 
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
         'should toggle the node view on': function() {
             var node = Y.one('body');
 
+            node.setAttribute('hidden', true);
             node.setStyle('display', 'none');
             node.toggleView();
 
+            Assert.areEqual('', node.getAttribute('hidden'));
             Assert.areEqual('block', node.getStyle('display'));
         },
 
@@ -1428,13 +1441,15 @@ YUI({
             var node = Y.one('body'),
                 called = false;
 
+            node.setAttribute('hidden', true);    
             node.setStyle('display', 'none');
 
             node.toggleView('foo', function() {
                 called = true;
             });
 
-            Assert.isTrue(called);
+            Assert.isTrue(called);            
+            node.removeAttribute('hidden');
             Assert.areEqual('block', node.getStyle('display'));
         },
 
@@ -1444,6 +1459,7 @@ YUI({
 
             node.toggleView(true);
 
+            Assert.areEqual('', node.getAttribute('hidden'));
             Assert.areEqual('block', node.getStyle('display'));
         },
 
@@ -1456,6 +1472,7 @@ YUI({
             });
 
             Assert.isTrue(called);
+            Assert.areEqual('', node.getAttribute('hidden'));
             Assert.areEqual('block', node.getStyle('display'));
         },
 
@@ -1464,7 +1481,9 @@ YUI({
 
             node.toggleView(false);
 
+            Assert.areEqual('true', node.getAttribute('hidden'));
             Assert.areEqual('none', node.getStyle('display'));
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
@@ -1477,7 +1496,9 @@ YUI({
             });
 
             Assert.isTrue(called);
+            Assert.areEqual('true', node.getAttribute('hidden'));
             Assert.areEqual('none', node.getStyle('display'));
+            node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
 
