@@ -459,6 +459,22 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 //Don't set labelValues fix for #2533172 is available
                 //this.set("labelValues", labelValues, {src: internal});
             }
+            
+            //Don't create the last label or tick.
+            if(this.get("hideFirstMajorUnit"))
+            {
+                points.shift();
+                labelValues.shift();
+                len = len - 1;
+            }
+
+            //Don't create the last label or tick.
+            if(this.get("hideLastMajorUnit"))
+            {
+                points.pop();
+                labelValues.pop();
+                len = len - 1;
+            }
 
             if(len < 1)
             {
@@ -885,29 +901,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             coord = coord + majorUnitDistance;
         }
         return points;
-    },
-
-    /**
-     * Calculates the placement of last tick on an axis.
-     *
-     * @method getLastPoint
-     * @return Object
-     * @private
-     */
-    getLastPoint: function()
-    {
-        var style = this.get("styles"),
-            padding = style.padding,
-            w = this.get("width"),
-            pos = this.get("position");
-        if(pos === "top" || pos === "bottom")
-        {
-            return {x:w - padding.right, y:padding.top};
-        }
-        else
-        {
-            return {x:padding.left, y:padding.top};
-        }
     },
 
     /**
@@ -1622,6 +1615,26 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 }
                 return val;
             }
+        },
+
+        /**
+         * Suppresses the creation of the the first visible label and tick.
+         *
+         * @attribute hideFirstMajorUnit
+         * @type Boolean
+         */
+        hideFirstMajorUnit: {
+            value: false
+        },
+
+        /**
+         * Suppresses the creation of the the last visible label and tick.
+         *
+         * @attribute hideLastMajorUnit
+         * @type Boolean
+         */
+        hideLastMajorUnit: {
+            value: false
         }
 
         /**
