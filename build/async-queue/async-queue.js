@@ -352,7 +352,7 @@ Y.extend(Queue, Y.EventTarget, {
      * @chainable
      */
     pause: function () {
-        if (isObject(this._running)) {
+        if (this._running && isObject(this._running)) {
             this._running.cancel();
         }
 
@@ -369,10 +369,20 @@ Y.extend(Queue, Y.EventTarget, {
      * @return {AsyncQueue} the AsyncQueue instance
      * @chainable
      */
-    stop : function () { 
+    stop : function () {
+
         this._q = [];
 
-        return this.pause();
+        if (this._running && isObject(this._running)) {
+            this._running.cancel();
+            this._running = false;
+        }
+        // otherwise don't systematically set this._running to false, because if
+        // stop has been called from inside a queued callback, the _execute method
+        // currenty running needs to call run() one more time for the 'complete'
+        // event to be fired.
+
+        return this;
     },
 
     /** 
