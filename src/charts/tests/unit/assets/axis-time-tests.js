@@ -75,19 +75,12 @@ YUI.add('axis-time-tests', function(Y) {
             var axis = this.axis,
                 min = axis.get("minimum"),
                 max = axis.get("maximum"),
-                index = 5,
+                index = 8,
                 len = 11,
-                testLabel,
                 increm = ((max - min)/(len - 1)) * index,
-                position = this.position,
-                direction = position === "left" || position === "right" ? "vertical" : "horizontal";
-            if(direction === "vertical") {
-                testLabel = max - increm;
-            } else {
                 testLabel = min + increm;
-            }
             
-            Y.Assert.areEqual(testLabel, axis._getLabelByIndex(index, len, direction), "The label's value should be " + testLabel + ".");
+            Y.Assert.areEqual(testLabel, axis._getLabelByIndex(index, len), "The label's value should be " + testLabel + ".");
         },
 
         "test: _getDataFromLabelValues()" : function() {

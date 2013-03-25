@@ -128,17 +128,9 @@ YUI.add('axis-category-tests', function(Y) {
                 testLabel,
                 position = this.position,
                 direction = position === "left" || position === "right" ? "vertical" : "horizontal";
-           
-            if(direction && direction == "vertical")
-            {
-                testLabel = data[len - (index + 1)];
-            }
-            else
-            {
                 testLabel = data[index];
-            }
             
-            Y.Assert.areEqual(testLabel, axis._getLabelByIndex(index, len, direction), "The label's value should be " + testLabel + ".");
+            Y.Assert.areEqual(testLabel, axis._getLabelByIndex(index, len), "The label's value should be " + testLabel + ".");
         },
 
         "test: get(labels)" : function() {
@@ -155,10 +147,6 @@ YUI.add('axis-category-tests', function(Y) {
             Y.one('body').append(mydiv);
             axis.render(mydiv);
             labels = axis.get("labels");
-            //category labels on a vertical axis are reversed
-            if(direction === "vertical") {
-                labels.reverse();
-            }
             len = plainOldDataProvider.length;
             for(i = 0; i < len; i = i + 1) {
                 label = labels[i];
