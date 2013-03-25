@@ -305,8 +305,8 @@ Y.mix( DtEditable.prototype, {
     initializer: function (){
         Y.log('DataTable.Editable.initializer');
 
-        this._classColEditable = this.getClassName(COL,EDITABLE);
-        this._classEditing = this.getClassName(COL,'editing');
+        this._classColEditable = this.getClassName(COL, EDITABLE);
+        this._classEditing = this.getClassName(COL, 'editing');
 
 
         this._UI_ATTRS.SYNC = this._UI_ATTRS.SYNC.concat(EDITABLE, EDITOR_OPEN_ACTION);
@@ -1123,7 +1123,7 @@ Y.mix( DtEditable.prototype, {
 });
 
 Y.DataTable.Editable = DtEditable;
-Y.Base.mix(Y.DataTable, [Y.DataTable.Editable]);
+Y.Base.mix(Y.DataTable, [DtEditable]);
 
 /**
 This object is attached to the DataTable namespace to allow addition of "editors" in conjunction

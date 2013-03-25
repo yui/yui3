@@ -76,6 +76,11 @@
             "jsfiles": [
                 "celleditor-popup.js"
             ]
+        },
+        "datatable-celleditor-keyfiltering": {
+            "jsfiles": [
+                "celleditor-keyfiltering.js"
+            ]
         }
     }
 }

@@ -1,56 +1,56 @@
 {
     "datatable": {
         "use": [
-        "datatable-core",
-        "datatable-table",
-        "datatable-head",
-        "datatable-body",
-        "datatable-base",
-        "datatable-column-widths",
-        "datatable-message",
-        "datatable-mutable",
-        "datatable-sort",
-        "datatable-datasource"
+            "datatable-core",
+            "datatable-table",
+            "datatable-head",
+            "datatable-body",
+            "datatable-base",
+            "datatable-column-widths",
+            "datatable-message",
+            "datatable-mutable",
+            "datatable-sort",
+            "datatable-datasource"
         ],
         "submodules": {
             "datatable-core": {
                 "requires": [
-                "escape",
-                "model-list",
-                "node-event-delegate"
+                    "escape",
+                    "model-list",
+                    "node-event-delegate"
                 ]
             },
             "datatable-table": {
                 "requires": [
-                "datatable-core",
-                "datatable-head",
-                "datatable-body",
-                "view",
-                "classnamemanager"
+                    "datatable-core",
+                    "datatable-head",
+                    "datatable-body",
+                    "view",
+                    "classnamemanager"
                 ]
             },
             "datatable-head": {
                 "requires": [
-                "datatable-core",
-                "view",
-                "classnamemanager"
+                    "datatable-core",
+                    "view",
+                    "classnamemanager"
                 ]
             },
             "datatable-body": {
                 "requires": [
-                "datatable-core",
-                "view",
-                "classnamemanager"
+                    "datatable-core",
+                    "view",
+                    "classnamemanager"
                 ]
             },
             "datatable-base": {
                 "requires": [
-                "datatable-core",
-                "datatable-table",
-                "datatable-head",
-                "datatable-body",
-                "base-build",
-                "widget"
+                    "datatable-core",
+                    "datatable-table",
+                    "datatable-head",
+                    "datatable-body",
+                    "base-build",
+                    "widget"
                 ],
                 "skinnable": true
             },
@@ -61,75 +61,82 @@
             },
             "datatable-message": {
                 "requires": [
-                "datatable-base"
+                    "datatable-base"
                 ],
                 "lang": ["en", "fr", "es"],
                 "skinnable": true
             },
             "datatable-mutable": {
                 "requires": [
-                "datatable-base"
+                    "datatable-base"
                 ]
             },
             "datatable-datasource": {
                 "requires": [
-                "datatable-base",
-                "plugin",
-                "datasource-local"
-                ]
+                    "datatable-base",
+                    "plugin",
+                    "datasource-local"
+                    ]
             },
             "datatable-sort": {
                 "requires": [
-                "datatable-base"
+                    "datatable-base"
                 ],
                 "lang": ["en", "fr", "es"],
                 "skinnable": true
             },
             "datatable-scroll": {
                 "requires": [
-                "datatable-base",
-                "datatable-column-widths",
-                "dom-screen"
+                    "datatable-base",
+                    "datatable-column-widths",
+                    "dom-screen"
                 ],
                 "skinnable": true
             },
             "datatable-formatters": {
                 "requires": [
-                "datatable-body",
-                "datatype-number-format",
-                "datatype-date-format",
-                "escape"
+                    "datatable-body",
+                    "datatype-number-format",
+                    "datatype-date-format",
+                    "escape"
                 ]
             },
             "datatable-editable": {
                 "skinnable": "true",
                 "requires": [
-                "datatable-base",
-                "datatype",
-                "node-screen"
+                    "datatable-base",
+                    "datatype",
+                    "node-screen"
                 ]
             },
             "datatable-celleditor-inline": {
                 "skinnable": "true",
                 "requires": [
-                "datatable-editable",
-                "view",
-                "base-build",
-                "event-mouseenter"
+                    "datatable-editable",
+                    "view",
+                    "base-build",
+                    "event-mouseenter"
                 ]
             },
             "datatable-celleditor-popup": {
                 "skinnable": "true",
                 "requires": [
-                "datatable-editable",
-                "base-build",
-                "view",
-                "cssbutton",
-                "event-outside",
-                "overlay",
-                "dd-plugin",
-                "template"
+                    "datatable-editable",
+                    "base-build",
+                    "view",
+                    "cssbutton",
+                    "event-outside",
+                    "overlay",
+                    "dd-plugin",
+                    "template"
                 ]
+            },
+            "datatable-celleditor-keyfiltering": {
+               "requires": [
+                   "datatable-editable",
+                   "event-valuechange",
+                   "base-build"
+               ]
             }
         }
     }
