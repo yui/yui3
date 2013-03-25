@@ -319,8 +319,54 @@ suite.add(new Y.Test.Case({
         setTimeout(function () {
             self.resume(function () {
                 Y.Assert.areSame('STOP',results);
+                Y.Assert.areSame(false, q.isRunning());
             });
         },100);
+
+        q.run();
+
+        this.wait();
+    },
+
+    test_stop_inside_the_callback : function () {
+        var results = "",
+            self = this,
+            completeEvt = false,
+            q = new Y.AsyncQueue(
+                    function () { this.stop(); },
+                    function () { Y.Assert.fail("q.stop() should have cleared this callback"); });
+
+        q.defaults = { timeout: -1 }; // sync queue
+
+        q.on('complete', function () { completeEvt = true; });
+
+        q.run();
+
+        Y.Assert.areSame(0, q.size());
+        Y.Assert.areSame(false, q.isRunning());
+        if (!completeEvt) { Y.Assert.fail("'q.stop() should fire the 'complete' event"); }
+
+    },
+
+    test_stop_inside_the_callback_async : function () {
+        var results = "",
+            self = this,
+            q = new Y.AsyncQueue(
+                    function () { this.stop(); },
+                    function () {
+                        self.resume(function () {
+                            Y.Assert.fail("q.stop() should have cleared this callback");
+                        });
+                    });
+
+        q.defaults = { timeout: 10 }; // async queue
+
+        q.on('complete', function () {
+            self.resume(function () {
+                Y.Assert.areSame(0, q.size());
+                Y.Assert.areSame(false, q.isRunning());
+            });
+        });
 
         q.run();
 
