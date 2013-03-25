@@ -798,9 +798,6 @@ suite.add(new Y.Test.Case({
                     "E",
                     "(afterExec)",
 
-                    "(onShift)",
-                    "(afterShift)",
-
                     "(onPromote)",
                     "(afterPromote)",
 
@@ -813,6 +810,9 @@ suite.add(new Y.Test.Case({
                     "(onExec)",
                     "V",
                     "(afterExec)",
+
+                    "(onShift)",
+                    "(afterShift)",
 
                     "(onShift)",
                     "(afterShift)",

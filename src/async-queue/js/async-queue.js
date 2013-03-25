@@ -218,12 +218,20 @@ Y.extend(Queue, Y.EventTarget, {
             cont = true;
 
         for (callback = this.next();
-            cont && callback && !this.isRunning();
+            callback && !this.isRunning();
             callback = this.next())
         {
             cont = (callback.timeout < 0) ?
                 this._execute(callback) :
                 this._schedule(callback);
+
+            // Break to avoid an extra call to next (final-expression of the
+            // 'for' loop), because the until function of the next callback
+            // in the queue may return a wrong result if it depends on the
+            // not-yet-finished work of the previous callback.
+            if (!cont) {
+                break;
+            }
         }
 
         if (!callback) {
