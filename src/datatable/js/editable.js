@@ -20,79 +20,13 @@ var Lang = Y.Lang,
 
 
 /**
- A DataTable class extension that configures a DT for "editing", current deployment supports cell editing
- both inline and with popups.
+ A DataTable class extension that configures a DataTable for editing.
+ Currently it supports cell editing via both inline and with popups.
 
- This module is essentially a base wrapper-class to setup DT for editing with the appropriate attributes and
- listener creation / detachment.  The real guts of "datatable-editing" is in the View class definitions, within
+ This module is essentially a base wrapper-class to setup a DataTable
+ for editing with the appropriate attributes and
+ listener creation / detachment.  The actual editors are within
  the datatable-celleditor-inline and datatable-celleditor-popup modules.
-
- #### Functionality
-
- The module is basically intended to keep track of the editing state (via [editable](#attr_editable) attribute) and
- housekeeping functions with regard to managing editor View instance creation, rendering and destruction.
-
- By design this module attempts to group common editor View instances wherever possible.  So for a DT with 14 columns
- all set with `"inline"` View classes only 1 View instance is created.
- <br/>Likewise if a DT uses 4 different `"calendar"` editor View types but each one as slightly different `editorConfig`,
- then this module creates 4 different calendar View instances to handle the different configurations.
-
- Listeners are set for the `celleditor:save` event and saved to the active `data` setting within this module.
-
- Additional capability is provided for cell editing situations to add CSS classes to TD's which are added to "editable"
- columns (e.g. cursor) to indicate they are "clickable".
-
- This module works sortable, scrollable (y-scrolling currently) to make changes to the client-side of the DT model
- (remote updates should be provided via ModelList sync or user-defined listeners.)
-
-
- #### Attributes
-
- Presently three attributes are provided;
- [editable](#attr_editable), [editorOpenAction](#attr_editorOpenAction) and [defaultEditor](#attr_defaultEditor).
-
- The primary ATTR is the [editable](#attr_editable), which is used to toggle on/off the editing state of the DT
- instance.
-
- The [defaultEditor](#attr_defaultEditor) attribute is used to setup a cell editor View instance to be used on all editable columns
- that don't already have an editor assigned.
-
- ##### Column Properties
-
- In addition to a few new attributes the module also recognizes some new column properties in order to support
- cell-editing in particular;
- <table>
- <tr><th>editable</th><td>{Boolean}</td><td>Flag to indicate if column is editable (set `editable:false` to exclude an
- individual column)</td></tr>
- <tr><th>editor</th><td>{String}</td><td>Name of the defined Y.DataTable.EditorOptions View configuration for this column.</td></tr>
- <tr><th>editorConfig</th><td>{Object}</td><td>Passed to the View editor class when instantiated, and Y.merge'ed in to become View class
- attributes.</td></tr>
- </table>
-
- When this module is loaded and the "editable:true" attribute is set, it attempts to economize on the "instantiation cost"
- of creating View instances by identifying only editor Views that are required based upon column definitions and/or the
- defaultEditor attribute. (e.g. if all columns are "text" editors, only one "text" editor View is instantiated)
-
- ##### ... More Info
-
- The module fires the event [celleditor:save](#event_celleditor:save), which can be listened for to provide updating
- of remote data back to a server (assuming a ModelList "sync" layer is NOT used).  Haven't provided the equivalent to
- YUI 2.x's "asyncSubmitter" because I think this event could easily be listened to in order to provide follow-on
- updating to remote data stores.
-
- A new class Object (Y.DataTable.EditorOptions) is added to the DataTable namespace that serves as the
- datastore of the editor View configuration properties.  Each "key" (object property) within this object
- is an entrypoint to a specific editor configuration, which are defined in the separate View class extensions (presently
- datatable-celleditor-inline and datatable-celleditor-popup. Please see those for specifics.)
-
- ###### KNOWN ISSUES:
-   <ul>
-   <li>Works minimally with "y" scrolling, "x" scrolling still needs work.</li>
-   <li>Initial editor invocation is limited to "mouse" actions on TD only (although keyboard navigation cell-to-cell is available).</li>
-   </ul>
-
- ###### FUTURE:
- This module will be amended to add support for "row" editing, if required.
 
  @class DataTable.Editable
  @extends Y.DataTable
@@ -118,10 +52,8 @@ DtEditable.ATTRS = {
     },
 
     /**
-    Defines the cell editing event type on the TD that initiates the editor, used to
-    specify the listener that invokes an editor.
-
-    Note: IMHO The only sensible options are 'click' or 'dblclick'
+    Defines the event type on the TD that opens the cell editor, usually
+    'click' or 'dblclick'
 
     @attribute editorOpenAction
     @type {String|null}
@@ -135,12 +67,13 @@ DtEditable.ATTRS = {
     },
 
     /**
-    Specifies a default editor name to respond to an editing event defined in [_editorOpenAction](#attr_editorOpenAction)
-    attribute.  The default editor is used if the DataTable is in editing mode (i.e. "editable:true") and if
-    the column DOES NOT include a property editable:false in its definitions.
+    Specifies a default editor name to respond to an editing event defined in
+    [_editorOpenAction](#attr_editorOpenAction) attribute.
+    The default editor is used if the DataTable is in editing mode (i.e. "editable:true") and if
+    the column DOES NOT include a property `editable:false` in its definitions.
 
-    Cell editors are typically assigned by setting a column property (i.e. editor:'text' or 'date') on each
-    individual column.
+    Cell editors are typically assigned by setting a column property
+    (i.e. `editor:"text"` or `editor:"date"`) on each individual column.
 
     This attribute can be used to set a single editor to work on every column without having to define it on each
     column.
@@ -170,39 +103,32 @@ DtEditable.ATTRS = {
     }
 };
 
-// Add static props and public/private methods to be added to DataTable
 Y.mix( DtEditable.prototype, {
 
-    // -------------------------- Placeholder Private Properties  -----------------------------
-
     /**
-     Holds the View instance of the active cell editor currently displayed
+     Holds a reference to the active cell editor.
      @property _openEditor
-     @type Y.View
+     @type DataTable.BaseCellEditor
      @default null
      @private
-     @static
      */
     _openEditor:        null,
 
     /**
      Holds the current record (i.e. a Model class) of the TD being edited
-     (Note: this may not always work, better to use "clientId" of the record, i.e. sorting, etc..)
      @property _editorRecord
      @type Model
      @default null
      @private
-     @static
      */
     _editorRecord:        null,
 
     /**
-     Holds the column key (or name) of the TD cell being edited
+     Holds the column key (or name) of the cell being edited
      @property _editorColKey
      @type String
      @default null
      @private
-     @static
      */
     _editorColKey:        null,
 
@@ -212,7 +138,6 @@ Y.mix( DtEditable.prototype, {
      @type Node
      @default null
      @private
-     @static
      */
     _editorTd:            null,
 
@@ -220,22 +145,20 @@ Y.mix( DtEditable.prototype, {
     // -------------------------- Subscriber handles  -----------------------------
 
     /**
-     Placeholder for the DT level event listener for "editableChange" attribute.
+     Array with the Event Handles of the events to be cleared on destroying.
      @property _subscrEditable
-     @type EventHandle
+     @type [EventHandle]
      @default null
      @private
-     @static
      */
     _subscrEditable:     null,
 
     /**
-     Placeholder for the DT event listener to begin editing a cell (based on editorOpenAction ATTR)
+     Event handle to the action set in [editorOpenAction](#attr_editorOpenAction).
      @property _subscrEditOpen
      @type EventHandle
      @default null
      @private
-     @static
      */
     _subscrEditOpen: null,
 
@@ -246,13 +169,11 @@ Y.mix( DtEditable.prototype, {
      @type String
      @default 'yui3-datatable-col-editable'
      @private
-     @static
      */
     _classColEditable:  null,
 
     /**
-     CSS classname to identify the individual input collection HTML nodes within
-     the View container
+     CSS classname applied to the TD element being edited.
 
      @property _classEditing
      @type String
@@ -262,43 +183,38 @@ Y.mix( DtEditable.prototype, {
     _classEditing:  null,
 
     /**
-     Placeholder hash that stores the "common" editors, i.e. standard editor names that occur
-     within Y.DataTable.EditorOptions and are used in this DT.
+     Hash that stores the "common" editors, i.e. standard editor names that occur
+     within Y.DataTable.EditorOptions and are used in this DataTable.
 
-     This object holds the View instances, keyed by the editor "name" for quick hash reference.
-     The object is populated in method [_buildColumnEditors](#method__buildColumnEditors).
+     This object holds the BaseCellEditor instances, keyed by the editor "name" for quick hash reference.
 
      @property _commonEditors
      @type Object
      @default null
      @private
-     @static
      */
     _commonEditors:  null,
 
     /**
-     Placeholder hash that stores cell editors keyed by column key (or column name) where the value
-     for the associated key is either a (a) {String} which references an editor name in the [_commonEditors](#property__commonEditors)
-     hash or (b) {View} instance for a customized editor View instance (typically one with specified "editorConfig" in the
-     column definition).
-
-     The object is populated in method [_buildColumnEditors](#method__buildColumnEditors).
-
+     Hash that stores cell editors keyed by column key (or column name) where the value
+     for the associated key is either:<ul>
+    <li>`String` which references an editor name in the [_commonEditors](#property__commonEditors) hash</li>
+    <li>`DataTable.BaseCellEditor` instance for a customized editor instance
+      (typically one with specified "editorConfig" in the column definition)</li>
+    </ul>
      @property _columnEditors
      @type Object
      @default null
      @private
-     @static
      */
     _columnEditors: null,
 
-    // future
-    //_editableType:      null,   //  'cell', 'row', 'inline?'
 
     //==========================  LIFECYCLE METHODS  =============================
 
     /**
-    Initializer that sets up listeners for "editable" state and sets some CSS names
+    Initializer that sets up listeners for `editable` and `editorOpenAction` attributes
+    and sets some CSS names
     @method initializer
     @protected
      */
@@ -314,30 +230,31 @@ Y.mix( DtEditable.prototype, {
     },
 
     /**
-    Cleans up ALL of the DT listeners and the editor View instances and generated private props
+    Cleans up ALL of the DT listeners and the editor instances and generated private props
     @method destructor
     @protected
     */
     destructor:function () {
         Y.log('DataTable.Editable.destructor');
         // detach the "editableChange" listener on the DT
-        this.set(EDITABLE,false);
+        this.set(EDITABLE, false);
         this._unbindEditable();
     },
 
     //==========================  PUBLIC METHODS  =============================
 
     /**
-    Opens the given TD eventfacade or Node with it's assigned cell editor.
+    Opens a cell editor on the given DataTable cell.
+    It also accepts an EventFacade resulting from a user action.
 
     @method openCellEditor
-    @param e {EventFacade|Node} Passed in object from an event OR a TD Node istance
+    @param td {Node | EventFacade} Table cell to be edited or EventFacade of an action on that cell.
     @public
      */
-    openCellEditor: function (e) {
+    openCellEditor: function (td) {
         Y.log('DataTable.Editable.openCellEditor');
-        var td        = e.currentTarget || e,
-            col       = this.getColumnByTd(td),
+        td        = td.currentTarget || td;
+        var col       = this.getColumnByTd(td),
             colKey    = col.key || col.name,
             record    = this.getRecord(td),
             editorRef = (colKey) ? this._columnEditors[colKey] : null,
@@ -403,12 +320,12 @@ Y.mix( DtEditable.prototype, {
 
 
     /**
-    Cleans up a currently open cell editor View and unbinds any listeners that this DT had
+    Cleans up a currently open cell editor and unbinds any listeners that this DT had
     set on the View.
     @method hideCellEditor
     @public
     */
-    hideCellEditor: function (){
+    hideCellEditor: function () {
         Y.log('DataTable.Editable.hideCellEditor');
         if(this._openEditor) {
             this._openEditor.hideEditor();
@@ -420,7 +337,7 @@ Y.mix( DtEditable.prototype, {
     Utility method that scans through all editor instances and hides them
     @method hideAllCellEditors
     @private
-     */
+     * / //TODO: Can there be more than one at a time??
     hideAllCellEditors: function (){
         Y.log('DataTable.Editable.hideAllCellEditors');
         this.hideCellEditor();
@@ -431,14 +348,14 @@ Y.mix( DtEditable.prototype, {
             }
         });
     },
-
+    */
 
     /**
-    Returns all cell editor View instances for the editable columns of the current DT instance
+    Returns all cell editor instances for the editable columns of the current DT instance
     @method getCellEditors
     @return {Object} Hash containing all the cell editors instances indexed by the column key.
      */
-    getCellEditors: function (){
+    getCellEditors: function () {
         Y.log('DataTable.Editable.getCellEditors');
         var rtn = {}, ed;
         Y.Object.each(this._columnEditors, function (v, k){
@@ -449,14 +366,14 @@ Y.mix( DtEditable.prototype, {
     },
 
     /**
-    Utility method to return the cell editor View instance associated with a particular column of the
+    Returns the cell editor instance associated with a particular column of the
     Datatable.
 
     Returns null if the given column is not editable.
 
     @method getCellEditor
     @param col {Object|String|Integer} Column identifier, either the Column object, column key or column index
-    @returns {View} Cell editor instance, or null if no editor for given column
+    @returns {DataTable.BaseCellEditor} Cell editor instance, or null if no editor for given column
     @public
      */
     getCellEditor: function (col) {
@@ -556,7 +473,7 @@ Y.mix( DtEditable.prototype, {
 
     /**
     Unbinds ALL of the popup editor listeners and removes column editors.
-    This should only be used when the DT is destroyed
+
     @method _unbindEditable
     @private
      */
@@ -604,8 +521,11 @@ Y.mix( DtEditable.prototype, {
     /**
     Listener that toggles the DT editable state, setting/unsetting the listeners associated with
     cell editing.
+
+    It uses the _UI_ATTRS facility of Widget.
+
     @method _uiSetEditable
-    @param e {EventFacade} Change event facade for "editable" attribute
+    @param value {Boolean} Value for [editable](#attr_editable) attribute
     @private
      */
 
@@ -628,8 +548,10 @@ Y.mix( DtEditable.prototype, {
     If the default editor is changed to a valid setting, we disable and re-enable
     editing on the DT to reset the column editors.
 
+    //TODO either do it better or make defaultEditor writeOnce
+
     @method _afterDefaultEditorChange
-    @param e {EventFacade} Change eventfacade for "defaultEditor" attribute
+    @param e {EventFacade} Attribute change event facade
     @private
     */
     _afterDefaultEditorChange: function (e) {
@@ -642,9 +564,10 @@ Y.mix( DtEditable.prototype, {
             this._uiSetEditable(true);
         }
     },
+
     /**
-    Setter method for the [editorOpenAction](#attr_editorOpenAction) attribute, specifies what
-    TD event to listen to for initiating editing.
+    Setter method for the [editorOpenAction](#attr_editorOpenAction) attribute,
+    Sets the TD event listener for initiating editing.
 
     It uses the _UI_ATTRS facility of Widget.
 
@@ -665,9 +588,10 @@ Y.mix( DtEditable.prototype, {
 
 
     /**
-    Pre-scans the DT columns looking for column named editors and collects unique editors,
-    instantiates them, and adds them to the  _columnEditors array.  This method only creates
-    View instances that are required, through combination of _commonEditors and _columnEditors
+    Pre-scans the DT columns looking for named editors and collects unique editors,
+    instantiates them, and adds them to the  [_columnEditors](#property__columnEditors) array.
+    This method only creates the editor instances that are required, through a combination of
+    [_commonEditors](#property__commonEditors) and [_columnEditors](#property__columnEditors)
     properties.
 
     @method _buildColumnEditors
@@ -708,8 +632,6 @@ Y.mix( DtEditable.prototype, {
                 // This is an editable column, update the TD's for the editable column
                 this._updateEditableColumnCSS(colKey, true);
 
-                //this._editorColHash[colKey] = editorName;
-
                 //
                 // If an editor is named, check if its definition exists, and that it is
                 // not already instantiated.   If not, create it ...
@@ -743,16 +665,15 @@ Y.mix( DtEditable.prototype, {
     },
 
     /**
-    This method takes the given editorName (i.e. 'textarea') and if the default editor
-    configuration, adds in any column 'editorConfig' and creates the corresponding
-    cell editor View instance.
-
-    Makes shallow copies of editorConfig: { overlayConfig, widgetConfig, templateObject }
+    Takes the given editorName (i.e. 'textarea'),
+    fetches the corresponding editor class, merges any column 'editorConfig'
+    and creates the corresponding
+    cell editor instance.
 
     @method _createCellEditorInstance
     @param editorName {String} Editor name
     @param column {Object} Column object
-    @return editorInstance {View} A newly created editor instance for the supplied editorname and column definitions
+    @return {DataTable.BaseCellEditor} A newly created editor instance
     @private
      */
     _createCellEditorInstance: function (editorName, column) {
@@ -841,7 +762,7 @@ Y.mix( DtEditable.prototype, {
     },
 
     /**
-    Re-initializes the static props to null
+    Re-initializes the cell-dependent properties to null
     @method _unsetEditor
     @private
      */
@@ -861,15 +782,13 @@ Y.mix( DtEditable.prototype, {
      */
     _updateAllEditableColumnsCSS : function () {
         Y.log('DataTable.Editable._updateAllEditableColumnsCSS');
-        if(this.get(EDITABLE)) {
-            var ckey;
-            arrEach(this.get(COLUMNS),function (col){
-                ckey = col.key || col.name;
-                if(ckey) {
-                    this._updateEditableColumnCSS(ckey, col.editable !== false); //(flag) ? col.editable || true : false);
-                }
-            },this);
-        }
+        var ckey, editable = this.get(EDITABLE);
+        arrEach(this.get(COLUMNS),function (col){
+            ckey = col.key || col.name;
+            if(ckey) {
+                this._updateEditableColumnCSS(ckey, editable && col.editable !== false);
+            }
+        },this);
     },
 
     /**
@@ -877,17 +796,17 @@ Y.mix( DtEditable.prototype, {
     based upon the setting of the boolean "opt"
 
     @method _updateEditableColumnCSS
-    @param cname {String}  Column key or name to alter
+    @param colKey {String}  Column key or name to alter
     @param opt {Boolean} True of False to indicate if the CSS class should be added or removed
     @private
      */
-    _updateEditableColumnCSS : function (cname, opt) {
-        Y.log('DataTable.Editable._updateEditableColumnCSS: ' + cname + ' add: ' + opt);
+    _updateEditableColumnCSS : function (colKey, opt) {
+        Y.log('DataTable.Editable._updateEditableColumnCSS: ' + colKey + ' add: ' + opt);
         var tbody = this.get('contentBox').one('tbody.'+ this.getClassName('data')),
-            col   = (cname) ? this.getColumn(cname) : null,
+            col   = (colKey) ? this.getColumn(colKey) : null,
             colEditable = col && col.editable !== false,
             tdCol;
-        if(!cname || !col || !colEditable) {
+        if(!colKey || !col || !colEditable) {
             return;
         }
 
@@ -897,7 +816,7 @@ Y.mix( DtEditable.prototype, {
             return;
         }
 
-        tdCol = tbody.all('td.'+this.getClassName(COL,cname));
+        tdCol = tbody.all('td.' + this.getClassName(COL, colKey));
 
         if(tdCol) {
             if (opt) {
@@ -909,7 +828,7 @@ Y.mix( DtEditable.prototype, {
     },
 
     /**
-    Listener to TD "click" events that hides a popup editor is not in the current cell
+    Listener to TD "click" events that hides a popup editor if not in the current cell
     @method _handleCellClick
     @param e
     @private
@@ -982,15 +901,14 @@ Y.mix( DtEditable.prototype, {
     },
 
     /**
-    Listens to changes to an Editor's "keyDir" event, which result from the user
+    Listens to the editor's "keyNav" event, which results from the user
     pressing "ctrl-" arrow key while in an editor to navigate to an cell.
 
-    The value of "keyDir" is an Array of two elements, in [row,col] format which indicates
-    the number of rows or columns to be changed to from the current TD location
-    (See the base method .getCell)
 
     @method _afterkeyNav
-    @param e {EventFacade} The attribute change event facade for the View's 'keyDir' attribute
+    @param e {EventFacade} Event facade, including:
+    @param e.dx {integer} the 'x' displacement
+    @param e.dy {integer} the 'y' displacement
     @private
      */
     _afterkeyNav : function (e) {
@@ -1106,6 +1024,7 @@ Y.mix( DtEditable.prototype, {
     has halted the event, this method will finally save the new value
     and hide the editor.
     @method _afterCellEditorSave
+    @param ev {Event Facade} Event facade (see: [celleditor:save](#event_celleditor:save) event.
     @private
      */
     _afterCellEditorSave: function (ev) {
@@ -1133,7 +1052,6 @@ with the Y.DataTable.Editable module.
  examples of the content of this object)
  *
 @class DataTable.EditorOptions
-@extends Y.DataTable
 @type {Object}
 @since 3.8.0
  */

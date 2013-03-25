@@ -1743,19 +1743,54 @@ Further options can be specified in any of the columns as properties in the
 ```
 {key: 'date_of_claim', editor: 'inlineDate', editorConfig: {dateformat: '%Y-%m-%d'}}
 ```
+<p>
+See the <a href="{{apiDocs}}/classes/DataTable.Editors.html">API docs</a> of the
+cell editors themselves for the applicable options.
+</p>
+
+<h4 id="celleditor-show-save">Showing and Saving</h4>
+
+<p>The cell editors read the values from the underlying model, not from the displayed
+values. All cell editors have a `formatter` attribute which can be a function
+to format the raw value into the one the user edits.  This is provided because
+the value displayed might be decorated in ways that might make editing harder.
+</p>
+
+<p>
+The edited values will be saved when the `Enter` key is pressed, except in some
+editors such as `textarea` where a `Save` button is explicitly provided.
+The `saveOnEnterKey` attribute controls the effect of the `Enter` key.
+The `Esc` key will always cancel editing.
+</p>
+<p>
+Validation will be applied to the value before being saved.  If the `validator`
+attribute is set to a Regular Expression, the value will be first checked against it.
+The value is then passed to the function set in the `parser` attribute to reverse
+the effect of the `formatter` function.   The `parser` function may do further
+validation on the value, returning `Y.Attribute.INVALID_VALUE` to reject it.
+</p>
+<p>
+If a value is rejected the editor will not close, allowing the user to correct
+the entry or press the `Esc` key to cancel.  A CSS class name is applied to the
+container for the cell editor so that visual clue can be provided to the user.
+</p>
+
+
 <h4 id="celleditor-navigation">Navigation</h4>
 
 <p>
 The editor provides keyboard navigation in between the editing cells by using the
 arrow keys along with the `ctrl` key.  It will also move right and left by using the
-`tab` and shift-`tab` (backtab) keys.
+`tab` and shift-`tab` (backtab) keys.  When reaching any edge, navigation will
+continue on the first cell on the opposite edge when the `wrapAroundNavigation`
+attribute is set (the default).  Non-editable cells will be skipped over.
+</p>
+<p>
+Individual cell editors may disable navigation
+if these key combinations conflict with their operation by setting the `navigationEnabled`
+attribute to false.
 </p>
 
-<p>
-The edited values will be saved when the Enter key is pressed, except in some
-editors such as `textarea` where a `Save` button is explicitly provided.
-The `Esc` key will always cancel editing.
-</p>
 
 <h2 id="events">DataTable Events</h2>
 

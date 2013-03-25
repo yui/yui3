@@ -40,7 +40,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
     /**
     Placeholder for the input or textarea Node created within the View container.
-    For input widgets that don't have any such as Calendar, this can be left null.
+    For input widgets that don't have any, such as Calendar, this can be left null.
     In such cases, code must be provided for navigation and to display and update
     the [value](#attr_value) attribute with the entered value.
 
@@ -52,10 +52,11 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     _inputNode: null,
 
     /**
-    Placeholder for generic event listener handles created from this View.
+    Array of generic event listener handles created by this class to be
+    detached on destruction.
 
     @property _subscr
-    @type Array of EventHandles
+    @type [EventHandles]
     @default null
     @protected
     */
@@ -105,7 +106,6 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     Creates the View instance and sets the container and bindings
 
     @method initializer
-    @chainable
     @protected
     */
     initializer: function () {
@@ -183,7 +183,12 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     },
 
     /**
+    Renders the editor and binds several event listeners.
+    Developers writing specific cell editors should not override this method
+    but [_defRenderFn](#method__defRenderFn) instead.
+
     @method render
+    @chainable
     */
     render: function () {
         Y.log('DataTable.BaseCellEditor.render');
@@ -260,8 +265,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     The default action for the [save](#event_save) event.
 
     @method _defSaveFn
-    @param e {EventFacade} For save event
-    @protected
+    @param e {EventFacade} For [save](#event_save) event
+    @private
     */
     _defSaveFn: function (e) {
         Y.log('DataTable.BaseCellEditor._defSaveFn');
@@ -273,7 +278,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     The default action for the [cancel](#event_cancel) event.
 
     @method _defCancelFn
-    @protected
+    @private
     */
     _defCancelFn: function () {
         Y.log('DataTable.BaseCellEditor._defCancelFn');
@@ -284,23 +289,23 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     The default action for the [show](#event_show) event which should make the editor visible.
 
     The default implementation expects [_inputNode](#property__inputNode) to be
-    a reference to an input or textarea with a `focus` method and a `value` property.
+    a reference to an input or textarea with a `focus` method and a `value` attribute.
 
     @method _defShowFn
-    @param e {EventFacade}
+    @param e {EventFacade} for the [show](#event_show) event.
     @protected
     */
     _defShowFn: function (e) {
         Y.log('DataTable.BaseCellEditor._defShowFn');
-        var value = e.formattedValue;
+        var value = e.formattedValue,
+            input = this._inputNode;
 
+        if (input) {
+            input.focus();
+            input.set('value',value);
+        }
 
-        // focus the inner INPUT ...
-        this._inputNode.focus();
-        // set the INPUT value
-        this._inputNode.set('value',value);
-
-        this._set('active',true);
+        this._set('active', true);
     },
 
 
@@ -335,7 +340,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
     },
     /**
-    Saves the value provided after parsing it.
+    Saves the value provided after validating and parsing it.
 
     @method saveEditor
     @param value {Any} Raw value (not yet parsed) to be saved.
@@ -354,7 +359,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
             parsedValue = this._parser(value);
 
             // So value was initially okay, but didn't pass _parser validation call ...
-            if (parsedValue === undefined) {
+            if (parsedValue === Y.Attribute.INAVLID_VALUE) {
                 this.cancelEditor();
                 return;
             }
@@ -364,9 +369,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
                 newValue:   parsedValue
             }));
         } else {
-            if (this._inputNode) {
-                this._inputNode.addClass(this._classError);
-            }
+            this.get('container').addClass(this._classError);
         }
     },
 
@@ -381,9 +384,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         if(cont && cont.hide) {
             cont.hide();
         }
-        if (this._inputNode) {
-            this._inputNode.removeClass(this._classError);
-        }
+        cont.removeClass(this._classError);
 
         this._cellInfo = null;
         this._set('active', false);
@@ -391,7 +392,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
 
     /**
-    Called when the user has requested to cancel, and abort any changes to the DT cell,
+    Called when the user has requested to cancel and abort any changes to the DT cell,
     usually signified by a keyboard ESC or "Cancel" button, etc..
 
     @method cancelEditor
@@ -405,7 +406,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
 
     /**
-    Key listener for the input element `keydown`.
+    Key listener for the input element `keydown` event.
     It handles navigation, Enter or Esc.
     It is automatically attached if [_inputNode](#property__inputNode) is set.
 
@@ -491,7 +492,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     To be implemented by the subclasses.
 
     @method _afterXYChange
-    @param e {EventFacade} The xy attribute change event facade
+    @param e {EventFacade} Standard attribute change event facade
     @protected
     */
     _afterXYChange: function() {
@@ -560,7 +561,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         its only argument and should return the value to be stored in the record.
 
         This method can also be used for input validation prior to saving.
-        If the returned value is `undefined` the cancelEditor method is executed.
+        If the returned value is `Y.Attribute.INVALID_VALUE` saving will be prevented.
 
         @attribute parser
         @type Function
@@ -593,7 +594,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         /**
         Determines whether the cell editor is visible.
 
-        The cell editor might be active but it might have scrolled off the
+        The cell editor might be [active](#attr_active) but it might have scrolled off the
         visible area of an scrolling datatable hence turning invisible.
 
         @attribute visible
@@ -622,12 +623,11 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         /**
         Provides the capability to validate the final value to be saved after editing is finished.
         This attribute can be a RegEx that operates on the entire
-        `value` setting of the editor input element.
+        `value` setting of the editor input element.  
 
         Further validation can be provided by the method set in the [parser](#attr_parser)
-        attribute while [keyFiltering](#attr_keyFilter) performs
-        validation checks as the value is being entered.
-
+        attribute.
+        //TODO: shouldn't they be enclosed in between $ and ^ ?
 
         @example
              /\d/            // for numeric digit-only input
