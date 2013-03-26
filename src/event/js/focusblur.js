@@ -5,6 +5,7 @@
  * @submodule event-focus
  */
 var Event    = Y.Event,
+    DOMEvent = Event.DOMEvent,
 
     YLang    = Y.Lang,
 
@@ -49,13 +50,18 @@ function define(type, proxy, directEvent) {
 
         _attach: function (el, notifier, delegate) {
             if (Y.DOM.isWindow(el)) {
-                return Event._attach([type, function (e) {
-                    notifier.fire(e);
-                }, el]);
+                return DOMEvent
+                    .subscribe(el,[type, 'fire', notifier], { phase: 'on' });
+                //return Event._attach([type, function (e) {
+                //    notifier.fire(e);
+                //}, el]);
             } else {
-                return Event._attach(
-                    [proxy, this._proxy, el, this, notifier, delegate],
-                    { capture: true });
+                return DOMEvent
+                    .subscribe(el, [proxy, '_proxy', this, notifier, delegate],
+                    { phase: 'capture' });
+                //return Event._attach(
+                //    [proxy, this._proxy, el, this, notifier, delegate],
+                //    { capture: true });
             }
         },
 
@@ -81,9 +87,12 @@ function define(type, proxy, directEvent) {
                 // only subscribe to the element's focus if the target is
                 // not the current target (
                 if (defer) {
-                    directSub = Event._attach(
-                        [directEvent, this._notify, target._node]).sub;
-                    directSub.once = true;
+                    directSub = DOMEvent.subscribe(target._node,
+                        [directEvent, '_notify', this],
+                        { phase: 'on', once: true });
+                    //directSub = Event._attach(
+                    //    [directEvent, this._notify, target._node]).sub;
+                    //directSub.once = true;
                 }
             } else {
                 // In old IE, defer is always true.  In capture-phase browsers,
@@ -146,7 +155,7 @@ function define(type, proxy, directEvent) {
                     if (notifiers) {
                         count--;
                         for (i = 0, len = notifiers.length; i < len; ++i) {
-                            if (notifiers[i].handle.sub.filter) {
+                            if (notifiers[i].details.filter) {
                                 delegates.push(notifiers[i]);
                             }
                         }
@@ -166,27 +175,26 @@ function define(type, proxy, directEvent) {
 
                 if (notifiers) {
                     for (i = 0, len = notifiers.length; i < len; ++i) {
-                        notifier = notifiers[i];
-                        sub      = notifier.handle.sub;
-                        match    = true;
+                        sub   = notifiers[i];
+                        match = true;
 
                         e.currentTarget = target;
 
                         if (sub.filter) {
                             match = sub.filter.apply(target,
-                                [target, e].concat(sub.args || []));
+                                [target, e].concat(sub.payload || []));
 
                             // No longer necessary to test against this
                             // delegate subscription for the nodes along
                             // the parent axis.
                             delegates.splice(
-                                arrayIndex(delegates, notifier), 1);
+                                arrayIndex(delegates, sub), 1);
                         }
 
                         if (match) {
                             // undefined for direct subs
-                            e.container = notifier.container;
-                            ret = notifier.fire(e);
+                            e.set('container', sub.details.container);
+                            ret = sub.fire(e);
                         }
 
                         if (ret === false || e.stopped === 2) {
@@ -203,15 +211,14 @@ function define(type, proxy, directEvent) {
                     // because they would not normally report until they'd
                     // bubbled to the container node.
                     for (i = 0, len = delegates.length; i < len; ++i) {
-                        notifier = delegates[i];
-                        sub = notifier.handle.sub;
+                        sub = delegates[i];
 
                         if (sub.filter.apply(target,
-                            [target, e].concat(sub.args || []))) {
+                            [target, e].concat(sub.payload || []))) {
 
-                            e.container = notifier.container;
-                            e.currentTarget = target;
-                            ret = notifier.fire(e);
+                            e.set('container', sub.details.container);
+                            e.set('currentTarget', target);
+                            ret = sub.fire(e);
                         }
 
                         if (ret === false || e.stopped === 2) {
