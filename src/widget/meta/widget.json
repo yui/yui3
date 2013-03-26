@@ -47,7 +47,6 @@
 
             "widget-uievents": {
                 "requires": [
-                    "node-event-delegate",
                     "widget-base"
                 ]
             },

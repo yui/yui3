@@ -82,7 +82,7 @@
             },
 
             "view": {
-                "requires": ["base-build", "node-event-delegate"]
+                "requires": ["base-build", "node-base"]
             },
 
             "view-node-map": {

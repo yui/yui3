@@ -19,7 +19,7 @@
                 "requires": [
                     "base",
                     "widget",
-                    "event",
+                    "eventx-dom",
                     "oop",
                     "dd-drag",
                     "dd-delegate",

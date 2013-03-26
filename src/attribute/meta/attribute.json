@@ -14,7 +14,8 @@
             },
             "attribute-observable": {
                 "requires": [
-                    "event-custom"
+                    "eventx",
+                    "eventx-compat"
                 ]
             },
             "attribute-base": {

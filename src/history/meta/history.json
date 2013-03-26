@@ -21,7 +21,7 @@
         "submodules": {
             "history-base": {
                 "requires": [
-                    "event-custom-complex"
+                    "eventx"
                 ]
             },
 
@@ -43,7 +43,7 @@
                 ],
 
                 "requires": [
-                    "event-base",
+                    "eventx-dom",
                     "history-base",
                     "node-base"
                 ]

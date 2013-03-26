@@ -10,7 +10,7 @@
         "submodules": {
             "io-base": {
                 "requires": [
-                    "event-custom-base",
+                    "eventx",
                     "querystring-stringify-simple"
                 ]
             }, 

@@ -2,7 +2,6 @@
     "node": {
         "use": [
             "node-base",
-            "node-event-delegate",
             "node-pluginhost",
             "node-screen",
             "node-style"
@@ -45,20 +44,14 @@
             "node-core": {
                 "requires": [
                     "dom-core",
-                    "selector"
+                    "selector",
+                    "eventx-dom"
                 ]
             },
             "node-base": {
                 "requires": [
-                    "event-base",
                     "node-core",
                     "dom-base"
-                ]
-            },
-            "node-event-delegate": {
-                "requires": [
-                    "node-base",
-                    "event-delegate"
                 ]
             },
             "node-event-html5": {

@@ -38,17 +38,17 @@
             },
             "event-focus": {
                 "requires": [
-                    "event-synthetic"
+                    "eventx-synthetic"
                 ]
             },
             "event-key": {
                 "requires": [
-                    "event-synthetic"
+                    "eventx-synthetic"
                 ]
             },
             "event-mouseenter": {
                 "requires": [
-                    "event-synthetic"
+                    "eventx-synthetic"
                 ]
             },
             "event-mousewheel": {
@@ -59,7 +59,7 @@
             "event-resize": {
                 "requires": [
                     "node-base",
-                    "event-synthetic"
+                    "eventx-synthetic"
                 ]
             },
             "event-hover": {
@@ -69,7 +69,7 @@
             },
             "event-outside": {
                 "requires": [
-                    "event-synthetic"
+                    "eventx-synthetic"
                 ]
             },
             "event-tap": {
@@ -77,12 +77,12 @@
                     "node-base",
                     "event-base",
                     "event-touch",
-                    "event-synthetic"
+                    "eventx-synthetic"
                 ]
             },
             "event-contextmenu": {
                 "requires": [
-                    "event-synthetic",
+                    "eventx-synthetic",
                     "dom-screen"
                 ]
             }            

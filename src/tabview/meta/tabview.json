@@ -8,7 +8,7 @@
             },
             "tabview-base": {
                 "requires": [
-                    "node-event-delegate",
+                    "node-base",
                     "classnamemanager",
                     "skin-sam-tabview"
                 ]
