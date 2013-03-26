@@ -1751,9 +1751,10 @@ cell editors themselves for the applicable options.
 <h4 id="celleditor-show-save">Showing and Saving</h4>
 
 <p>The cell editors read the values from the underlying model, not from the displayed
-values. All cell editors have a `formatter` attribute which can be a function
+values. All cell editors have a `formatter` attribute which, if not null, should be a function
 to format the raw value into the one the user edits.  This is provided because
-the value displayed might be decorated in ways that might make editing harder.
+the value as displayed by the regular formatter might be decorated in ways that
+might make editing harder.
 </p>
 
 <p>

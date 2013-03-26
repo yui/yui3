@@ -373,7 +373,7 @@ Y.mix( DtEditable.prototype, {
 
     @method getCellEditor
     @param col {Object|String|Integer} Column identifier, either the Column object, column key or column index
-    @returns {DataTable.BaseCellEditor} Cell editor instance, or null if no editor for given column
+    @return {DataTable.BaseCellEditor} Cell editor instance, or null if no editor for given column
     @public
      */
     getCellEditor: function (col) {

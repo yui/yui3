@@ -712,29 +712,6 @@ PEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
             value:      null
         }
 
-        /**
-          Concept for user-prescribed key mappings ... still incomplete
-
-            keyNav:{
-
-               keydown:  {
-                    left:  [ {ctrlKey:37}, {shiftKey:9}
-                    right: [ {ctrlKey:39
-                    up:    [ 38
-                    down:  [ 40
-                    save:  [ 13
-                    cancel: [27
-               },
-
-               mouse: {
-                   open : [click, focus]
-                   close : [ blur ]
-               }
-            }
-
-         */
-
-
     }
 });
 
