@@ -110,6 +110,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     */
     initializer: function () {
         Y.log('DataTable.BaseCellEditor.initializer');
+        this._subscr = [];
         this.publish({
             /**
             Event fired when the inline editor has been initialized and is ready for use.
@@ -242,7 +243,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
                 input.on('click',      this._onClick, this)
             );
         }
-        this._subscr = subscr;
+        this._subscr.push(subscr);
     },
 
     /**
@@ -359,7 +360,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
             parsedValue = this._parser(value);
 
             // So value was initially okay, but didn't pass _parser validation call ...
-            if (parsedValue === Y.Attribute.INAVLID_VALUE) {
+            if (parsedValue === Y.Attribute.INVALID_VALUE) {
                 this.cancelEditor();
                 return;
             }
@@ -623,7 +624,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         /**
         Provides the capability to validate the final value to be saved after editing is finished.
         This attribute can be a RegEx that operates on the entire
-        `value` setting of the editor input element.  
+        `value` setting of the editor input element.
 
         Further validation can be provided by the method set in the [parser](#attr_parser)
         attribute.

@@ -3,14 +3,14 @@ Extension to DataTable Cell Editors that does input validation as the entry is b
 typed or pasted in.  It uses the `event-valuechange` module to check the on
 input and textarea elements.
 
-The built-in cell editors hhave key filters configured, when applicable, but they
+The built-in cell editors have key filters configured, when applicable, but they
 will not be operative unless this module is loaded.
 @module datatable
 @submodule datatable-celleditor-keyfiltering
 */
 /**
 This class is not meant to be used directly, it will get automatically mixed into
-`DataTable.BaseCellEditor`.  
+`DataTable.BaseCellEditor`.
 @class DataTable.BaseCellEditor.KeyFiltering
 @static
  */
@@ -18,20 +18,21 @@ var KF = function () {};
 
 KF.ATTRS = {
     /**
-    Provides a keystroke filtering capability to restrict input into the editing area checked during the
-    "keypress" event.  This attribute is set to either a RegEx or a function that confirms if the keystroke
-    was valid for this editor.  (TRUE meaning valid, FALSE meaning invalid)
+    Provides a input filtering capability to restrict input into the editing area
+    checked via the event-valuechange module.
+    This attribute is set to either a RegEx or a function that confirms if the entry
+    was valid for this editor.
 
-    If a function is provided, the single argument is the keystroke event facade `e` and if
-    the keystroke is valid it should return true, otherwise if invalid false;
+    If a function is provided, the single argument is the current input value and if
+    it is valid it should return true.
 
     @example
-          /\d/            // for numeric digit-only input
-          /\d|\-|\./      // for floating point numeric input
-          /\d|\//         // for Date field entry in MM/DD/YYYY format
+          /^\d*$/            // for numeric digit-only input
+          /^(\d|\-|\.)*$/      // for floating point numeric input
+          /^(\d|\/)*$/         // for Date field entry in MM/DD/YYYY format
 
     @attribute keyFiltering
-    @type {RegExp|Function}
+    @type RegExp | Function
     @for DataTable.BaseCellEditor
     @default null
     */
@@ -41,10 +42,22 @@ KF.ATTRS = {
 };
 
 Y.mix( KF.prototype, {
+
+    /**
+    Event handle to changes in the [keyFiltering](#attr_keyFiltering) attribute
+    value change, to detach when done.
+    @property _keyFilteringSubscr
+    @type EventHandle | null
+    @default null
+    @private
+     */
     _keyFilteringSubscr: null,
+
     /**
     Internal copy of the function set in the [keyFiltering](#attr_keyFiltering)
-    attribute for faster processing.
+    attribute for faster processing.  If  [keyFiltering](#attr_keyFiltering)
+    was a RegExp, it will be converted to a function using that RegExp to check
+    the entry.
 
     @method _keyFilter
     @param value {String} input value to be validated
@@ -53,14 +66,22 @@ Y.mix( KF.prototype, {
     @private
     */
     _keyFilter : null,
+
+    /**
+    Lifecycle method
+    @method initializer
+    @protected
+    */
     initializer: function () {
         this._subscr.push(this.after('keyFilteringChange', this._processKeyFiltering));
-        this.once('render', this._processKeyFiltering);
+        this.onceAfter('render', this._processKeyFiltering);
     },
+
     /**
     Processes both changes in the [keyFiltering](#attr_keyFiltering)  attribute
     and the initial rendering of the input element to be monitored for valid
     entries.
+
     @method _processKeyFiltering
     @for DataTable.BaseCellEditor
     @private
@@ -86,10 +107,12 @@ Y.mix( KF.prototype, {
             }
         }
     },
+
     /**
     Returns a function that uses the regular expression provided to check a value
     passed to that function.  It is used along the [keyFiltering](#attr_keyFiltering)
     attribute to set the [_keyFilter](#method__keyFilter) method for input validation.
+
     @method _regExpFilter
     @param regExp {RegExp} regular expression to use when checking.
     @return {Function} Function that checks a value passed to it against the regular expression.
@@ -102,14 +125,15 @@ Y.mix( KF.prototype, {
             return regExp.test(value);
         };
     },
+
     /**
     Handles validation while the value is being entered. It applies the
     [keyFiltering](#attr_keyFiltering) regular expression or function to the input
     and rejects the entry if it doesn't match.
 
-    It will be active if there is an [_inputNode](#property__inputNode) set,
-    a [keyFiltering](#attr_keyFiltering) set and the `event-valuechange` module
-    is loaded.
+    It will be active if there is an [_inputNode](#property__inputNode) set and
+    a [keyFiltering](#attr_keyFiltering) set.
+
     @method _onValueChange
     @param e {EventFacade} Event facade as provided by the `valuechange` event.
     @private
@@ -117,7 +141,7 @@ Y.mix( KF.prototype, {
     */
     _onValueChange: function (e) {
         if (!this._keyFilter(e.newVal)) {
-            e.halt();
+            e.target.set('value', e.prevVal);
         }
     }
 });

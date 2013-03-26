@@ -181,7 +181,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             areSame(1, Y.Object.size(dt._commonEditors), "There should be only one common editor" );
             var inl = dt._commonEditors.inline;
-            areSame( Y.DataTable.EditorOptions.inline , inl.constructor, "common editor 0 should be inline");
+            areSame( Y.DataTable.Editors.inline , inl.constructor, "common editor 0 should be inline");
 
         },
 
@@ -233,7 +233,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(7, Y.Object.size(dt.getCellEditors()), 'there should be 7 cell editors');
 
             isNull( dt.getCellEditor('sid'),'column 0 (sid) editor should be null');
-            areSame( Y.DataTable.EditorOptions.inline , dt.getCellEditor('sopen').constructor, "common editor 0 should be inline");
+            areSame( Y.DataTable.Editors.inline , dt.getCellEditor('sopen').constructor, "common editor 0 should be inline");
 
         },
 

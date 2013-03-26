@@ -678,9 +678,9 @@ PEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
          * the keystroke is valid it should return true, otherwise if invalid false;
          *
          *  @example
-         *      /\d/            // for numeric digit-only input
-         *      /\d|\-|\./      // for floating point numeric input
-         *      /\d|\//         // for Date field entry in MM/DD/YYYY format
+         *      /^\d*$/            // for numeric digit-only input
+         *      /^(\d|\-|\.)*$/      // for floating point numeric input
+         *      /^(\d|\/)*$/         // for Date field entry in MM/DD/YYYY format
          *
          * @attribute keyFiltering
          * @type {RegExp|Function}
@@ -700,9 +700,9 @@ PEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
          * the keystroke is valid it should return true, otherwise if invalid false;
          *
          *  @example
-         *      /\d/            // for numeric digit-only input
-         *      /\d|\-|\.|\+/   // for floating point numeric input
-         *      /\d|\//         // for Date field entry in MM/DD/YYYY format
+         *      /^\d$/            // for numeric digit-only input
+         *      /^\d|\-|\.|\+$/   // for floating point numeric input
+         *      /^\d|\/$/         // for Date field entry in MM/DD/YYYY format
          *
          * @attribute validator
          * @type {RegExp|Function}
@@ -887,7 +887,7 @@ Y.DataTable.Editors.number = {
      */
     validator:  /^\s*(\+|-)?((\d+(\.\d+)?)|(\.\d+))\s*$/,
 
-    keyFiltering:   /\.|\d|\-/,
+    keyFiltering:   /^(\.|\d|\-)*$/,
 
     // Function to call after numeric editing is complete, prior to saving to DataTable ...
     //  i.e. checks validation against ad-hoc attribute "validationRegExp" (if it exists)
@@ -952,7 +952,7 @@ Y.DataTable.Editors.date = {
     inputWidth: 75,
 
     // only allow keyboard input of digits or '/' or '-' within the editor ...
-    keyFiltering:   /\/|\d|\-/,
+    keyFiltering:   /^(\/|\d|\-)*$/,
 
     // Function to call prior to displaying editor, to put a human-readable Date into
     //  the INPUT box initially ...
@@ -1024,7 +1024,7 @@ Y.DataTable.Editors.calendar = {
     inputWidth: 75,
 
     // only allow keyboard input of digits or '/' or '-' within the editor ...
-    keyFiltering:   /\/|\d|\-/,
+    keyFiltering:   /^(\/|\d|\-)*$/,
 
     // Function to call prior to displaying editor, to put a human-readable Date into
     //  the INPUT box initially ...

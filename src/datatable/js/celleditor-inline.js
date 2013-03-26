@@ -245,7 +245,7 @@ saving to the DT.
         key:'QuantityInStock',
         editor:"inlineNumber",
         editorConfig: {
-            keyFiltering: /\d/
+            keyFiltering: /^\d*$/
         }
     }
 
@@ -256,7 +256,7 @@ saving to the DT.
 @since 3.8.0
 @public
 **/
-Editors.inlineNumber = Y.Base.create('inlineNumber', IEd, [],
+Editors.inlineNumber = Y.Base.create('celleditor', IEd, [],
     {},
     {
         ATTRS: {
@@ -267,9 +267,8 @@ Editors.inlineNumber = Y.Base.create('inlineNumber', IEd, [],
 
             // Define a key filtering regex ...
             keyFiltering:   {
-                    value : /\.|\d|\-/
+                    value : /^(\.|\d|\-)*$/
             },
-            //keyValidator:   /^\s*(\+|-)?((\d+(\.\d*)?)|(\.\d*))\s*$/,
 
             /**
              * A validation regular expression object used to check validity of the input floating point number.
@@ -320,7 +319,7 @@ saving to the DT.
 @since 3.8.0
 @public
 **/
-Editors.inlineDate = Y.Base.create('inlineDate', IEd, [],
+Editors.inlineDate = Y.Base.create('celleditor', IEd, [],
     {},
     {
         ATTRS: {
@@ -339,7 +338,7 @@ Editors.inlineDate = Y.Base.create('inlineDate', IEd, [],
             },
 
             keyFiltering: {
-                    value: /\/|\d|\-/
+                    value: /^(\/|\d|\-)*$/
             },
 
             //  Function to call just prior to populating the INPUT text box,
@@ -397,7 +396,7 @@ This cell editor has the AutoComplete plugin attached to the input node.
 @since 3.8.0
 @public
 **/
-Editors.inlineAC = Y.Base.create('inlineAC', IEd, [],
+Editors.inlineAC = Y.Base.create('celleditor', IEd, [],
     {
         render: function () {
             Y.log('inlineAC.render');
