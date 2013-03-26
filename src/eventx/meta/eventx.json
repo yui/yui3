@@ -1,0 +1,25 @@
+{
+    "eventx": {
+        "use": [
+            "eventx-base",
+            "eventx-do"
+        ],
+        "submodules": {
+            "eventx-base": {
+                "requires": [
+                    "oop"
+                ]
+            },
+            "eventx-do": {
+                "requires": [
+                    "eventx-base"
+                ]
+            },
+            "eventx-compat": {
+                "requires": [
+                    "eventx-base"
+                ]
+            }
+        }
+    }
+}

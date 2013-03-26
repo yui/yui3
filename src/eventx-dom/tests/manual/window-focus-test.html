@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Window Focus Listener Test</title>
+</head>
+<body class="yui3-skin-sam">
+
+	<script type="text/javascript" src="../../../../build/yui/yui-min.js"></script>
+	<!-- Initialization process //-->
+	<script type="text/javascript">
+
+    // ,
+    // filter: 'debug',
+    // combine: false,
+    // useConsole: true,
+    // logExclude: {deprecated: 1,
+    // Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+
+		YUI({
+            lazyEventFacade: true
+        }).use('console', 'event-focus', function (Y) {
+
+			(new Y.Console()).render();
+
+            var win = Y.one(window);
+
+            win.on("focus", function (e) {
+                Y.log("First focus listener called");
+            });
+            
+            win.on("blur", function (e) {
+                Y.log("First blur listener called");
+            });
+
+            Y.on("focus", function (e) {
+                Y.log("Second focus listener called");
+            }, window);
+            
+            Y.on("blur", function (e) {
+                Y.log("Second blur listener called");
+            }, window);
+
+        });
+    
+    </script>
+
+</body>
+</html>

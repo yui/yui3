@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+        div {
+            margin: 1em 0;
+        }
+    </style>
+</head>
+<body class="yui-skin-sam">
+<div id="outer">
+    <div id="inner">
+        <button type="button" class="go">Button 1</button>
+        <button type="button" class="go">Button 2</button>
+        <button type="button" class="go">Button 3</button>
+    </div>
+</div>
+<div>
+    <button type="button" id="attach">attach</button>
+    <button type="button" id="attach_handle">attach + handle</button>
+    <button type="button" id="attach_cat">attach + category</button>
+    <button type="button" id="detach">detach by signature</button>
+    <button type="button" id="detach_handle">detach by handle</button>
+    <button type="button" id="detach_cat">detach by category</button>
+    <button type="button" id="detach_nofn">detach without fn</button>
+    <button type="button" id="remove">remove buttons</button>
+</div>
+<ul id="output"></ul>
+
+<script src="../../../../build/yui/yui.js"></script>
+<!--script src="js/synthetic.js"></script-->
+<!--script src="../../../build/event/event-synthetic.js"></script-->
+<script>
+YUI({
+    useBrowserConsole: false,
+    lazyEventFacade: true,
+    filter: 'raw'
+}).use('event-synthetic', 'event-custom', 'node', function (Y) {
+
+Y.on('yui:log', function (e) {
+    Y.one("#output").append("<li>" + e.msg + "</li>");
+});
+
+Y.Event.define('test', {
+    //allowDups: true,
+
+    //publishConfig: { emitFacade: false },
+
+    on: function (node, sub, notifier) {
+        Y.log("on " + this.type + ": " + node.get('text'));
+        sub.testHandle = node.on('click', function (e) {
+            //notifier.fire(e);
+            notifier.fire();
+        });
+    },
+
+    detach: function (node, sub, notifier) {
+        Y.log("detach " + this.type + ": " + node.get('text'));
+        sub.testHandle.detach();
+    },
+
+    delegate: function (container, sub, notifier, filter) {
+        Y.log("delegate " + this.type);
+        sub.delegateHandle = container.delegate('click', function (e) {
+            notifier.fire(e);
+            //notifier.fire();
+            //notifier.fire({ currentTarget: e.currentTarget });
+        }, filter);
+    },
+
+    detachDelegate: function (container, sub, notifier, filter) {
+        Y.log("detachDelegate " + this.type);
+        sub.delegateHandle.detach();
+    }
+});
+
+var outer = Y.one('#outer'),
+    inner = Y.one('#inner'),
+    mode  = 4,
+    //obj   = null,
+    obj   = { get: function () { return 'Context set OK'; } },
+    handle;
+
+function notify(e, extra) {
+    var thisText = this.get('text'),
+        ctText, message;
+
+    if (typeof e === 'object') {
+        ctText  = e.currentTarget.get('text');
+        message = 'fired ' + e.type + ' from ' + ctText + ' (' + thisText + ')';
+
+        if (extra) {
+            message += ' + ' + extra;
+        }
+    } else {
+        message = "fired from " + thisText + " with args (" +
+                  Y.Array(arguments,0,true).join() + ")";
+    }
+
+    Y.log(message);
+}
+
+Y.one('#attach').on('click', function (e) {
+    switch (mode) {
+        case 1: Y.one('.go').on('test', notify); break;
+        //case 1: Y.one('.go').on('test', notify, obj, 1); break;
+        case 2: Y.all('.go').on('test', notify); break;
+        //case 2: Y.all('.go').on('test', notify, obj, 1); break;
+        case 3: Y.on('test', notify, '.go'); break;
+        //case 3: Y.on('test', notify, '.go', obj, 1); break;
+        case 4: Y.delegate('test', notify, '#outer', '.go'); break;
+        //case 4: Y.delegate('test', notify, '#outer', '.go', obj, 1); break;
+    }
+});
+
+Y.one('#attach_handle').on('click', function (e) {
+    switch(mode) {
+        case 1: handle = Y.one('.go').on('test', notify); break;
+        //case 1: handle = Y.one('.go').on('test', notify, obj, 1); break;
+        case 2: handle = Y.all('.go').on('test', notify); break;
+        //case 2: handle = Y.all('.go').on('test', notify, obj, 1); break;
+        case 3: handle = Y.on('test', notify, '.go'); break;
+        //case 3: handle = Y.on('test', notify, '.go', obj, 1); break;
+        case 4: handle = Y.delegate('test', notify, '#outer', '.go'); break;
+        //case 4: handle = Y.delegate('test', notify, '#outer', '.go', obj, 1); break;
+    }
+});
+
+Y.one('#attach_cat').on('click', function (e) {
+    switch (mode) {
+        case 1: Y.one('.go').on('foo|test', notify); break;
+        //case 1: Y.one('.go').on('foo|test', notify, obj, 1); break;
+        case 2: Y.all('.go').on('foo|test', notify); break;
+        //case 2: Y.all('.go').on('foo|test', notify, obj, 1); break;
+        case 3: Y.on('foo|test', notify, '.go'); break;
+        //case 3: Y.on('foo|test', notify, '.go', obj, 1); break;
+        case 4: Y.delegate('foo|test', notify, '#outer', '.go'); break;
+        //case 4: Y.delegate('foo|test', notify, '#outer', '.go', obj, 1); break;
+    }
+});
+
+Y.one('#detach').on('click', function (e) {
+    switch (mode) {
+        case 1: Y.one('.go').detach('test', notify); break;
+        case 2: Y.all('.go').detach('test', notify); break;
+        case 3: Y.detach('test', notify, '.go'); break;
+        case 4: Y.detach('test', notify, '#outer', '.go'); break;
+    }
+});
+
+Y.one('#detach_handle').on('click', function (e) {
+    handle.detach();
+});
+
+Y.one('#detach_cat').on('click', function (e) {
+    switch (mode) {
+        case 1: Y.one('.go').detach('foo|test'); break;
+        case 2: Y.all('.go').detach('foo|test'); break;
+        case 3: Y.detach('foo|test'); break;
+        case 4: Y.one('#outer').detach('foo|test'); break;
+    }
+});
+
+Y.one('#detach_nofn').on('click', function (e) {
+    switch (mode) {
+        case 1: Y.one('.go').detach('test'); break;
+        case 2: Y.all('.go').detach('test'); break;
+        case 3: Y.detach('foo|*'); break;
+        case 4: Y.one('#outer').detach('test'); break;
+    }
+});
+
+Y.one('#remove').on('click', function (e) {
+    outer.remove(true);
+    Y.log('Detached');
+});
+
+});
+</script>
+</body>
+</html>

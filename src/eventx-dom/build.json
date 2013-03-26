@@ -1,0 +1,16 @@
+{
+    "name": "eventx-dom",
+    "builds": {
+        "eventx-dom": {
+            "jsfiles": [
+                "event-dom.js",
+                "event-onload.js"
+            ]
+        },
+        "eventx-synthetic": {
+            "jsfiles": [
+                "event-synthetic.js"
+            ]
+        }
+    }
+}

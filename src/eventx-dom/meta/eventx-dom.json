@@ -1,0 +1,13 @@
+{
+    "eventx-dom": {
+        "requires": [
+            "eventx",
+            "selector"
+        ]
+    },
+    "eventx-synthetic": {
+        "requires": [
+            "node-base"
+        ]
+    }
+}

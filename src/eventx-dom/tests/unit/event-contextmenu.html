@@ -1,0 +1,298 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>YUI Context Menu Synth Event Tests</title>
+</head>
+<body lang="en" class="yui3-skin-sam">
+    <div id="doc">
+           <button id="btn-1">Button 1</button>
+    </div>
+
+    <script src="../../../../build/yui/yui.js"></script>
+    <script src="./assets/window-focus.js"></script>
+    <script type="text/javascript">
+        YUI({
+            coverage: ['event-contextmenu'],
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+        }).use('console', 'test', 'event-contextmenu', 'node-event-simulate', 'window-focus', 'node-screen', function (Y) {
+            
+            var called = 0;            
+            
+            var onContextMenu = function () {
+               called = called + 1;
+            };
+
+            var isWinWebkit = (Y.UA.webkit && Y.UA.os === "windows");
+
+            var keyDownConfig = Y.UA.os == "macintosh" ? {
+                    shiftKey: true,
+                    ctrlKey: true,
+                    altKey: (Y.UA.opera ? false : true),
+                    keyCode: 77
+                } : {
+                    shiftKey: true,
+                    keyCode: 121
+                };
+
+            var doc = Y.one("doc");
+            var btn = Y.one("#btn-1");            
+
+            var simulateKeyDown = function () {
+
+                // For Chrome on Windows a real Shift + F10 keydown
+                // event generated from the user WILL trigger the 
+                // contextmenu event. A simulated Shift + F10 does 
+                // not, so need to simulate what the browser does for 
+                // the test.
+                if (isWinWebkit) {
+                    btn.once("keydown", function (e) {
+                        if (e.shiftKey && e.keyCode === 121) {
+                            btn.simulate("contextmenu");
+                        }
+                    });                    
+                }
+                        
+                btn.simulate("keydown", keyDownConfig);                    
+
+            };
+            
+            (new Y.Console()).render();
+
+
+            var suite = new Y.Test.Suite("Event: ContextMenu");
+
+            suite.add(new Y.Test.Case({
+                _should: {
+                    ignore: {
+                        test_xy_coords_for_shift10_or_ctrl_shift_option_m: Y.UA.phantomjs || Y.UA.touchEnabled,
+                        test_multiple_on_listeners: Y.UA.phantomjs || Y.UA.touchEnabled,
+                        test_multiple_delegate_listeners: Y.UA.phantomjs || Y.UA.touchEnabled,
+                        test_multiple_on_and_delegate_listeners: Y.UA.phantomjs || Y.UA.touchEnabled
+                    }
+                },
+                
+                name: "ContextMenu Synth Tests",
+    
+                test_contextmenu_event: function () {
+
+                    called = 0;                        
+
+                    btn.on("contextmenu", onContextMenu);
+                    
+                    btn.simulate("contextmenu");
+
+                    Y.Assert.isTrue((called === 1), "contextmenu event listener not called");
+                    
+                    btn.detach("contextmenu");
+
+                },
+                
+
+                test_mac_kb_shortct: function(){
+
+                    called = 0;                        
+
+                    btn.on("contextmenu", onContextMenu);
+                    
+                    btn.simulate("keydown", {
+                        keyCode: 77,
+                        shiftKey: true,
+                        ctrlKey: true,
+                        altKey: true
+                    });
+
+                    if (Y.UA.os == "macintosh") {
+                        Y.Assert.areSame(1, called, "contextmenu event listener not called");
+                    } else {
+                       Y.Assert.areSame(0, called, "ctrl + shift + alt + M should only fire the contextmenu event for mac");
+                    }
+                    
+                    btn.detach("contextmenu");
+                },
+                
+                test_shiftF10_key: function(){
+                    
+                    called = 0;                        
+
+                    btn.on("contextmenu", onContextMenu);
+                    
+
+                    if (isWinWebkit) {
+                        btn.once("keydown", function (e) {
+                            if (e.shiftKey && e.keyCode === 121) {
+                                btn.simulate("contextmenu");
+                            }
+                        });                    
+                    }
+                    
+                    btn.simulate("keydown", { shiftKey: true, keyCode: 121 });    
+
+                    if (Y.UA.os == "windows") {
+                        Y.Assert.areSame(1, called, "contextmenu event listener not called");
+                    } else {
+                        Y.Assert.areSame(0, called, "the shift + f10 key should only fire the contextmenu event on windows");
+                    }
+                    
+                    btn.detach("contextmenu");
+                    
+                },
+            
+                test_menu_key: function(){
+                    
+                    called = 0;                        
+
+                    btn.on("contextmenu", onContextMenu);
+
+                    if (Y.UA.os == "windows") {                    
+                        btn.once("keydown", function (e) {
+                            if (e.keyCode === 93) {
+                                btn.simulate("contextmenu");
+                            }
+                        });
+                    }
+                    
+                    btn.simulate("keydown", { keyCode: 93 });
+
+                    if (Y.UA.os == "windows") {
+                        Y.Assert.areSame(1, called, "contextmenu event listener not called");
+                    } else {
+                        Y.Assert.areSame(0, called, "the Menu key should only fire the contextmenu event on windows");
+                    }
+                    
+                    btn.detach("contextmenu");
+                    
+                },
+
+                test_xy_coords_for_menu: function () {
+
+                    var received = false;
+
+                    btn.on("contextmenu", function (e) {
+                        received = true;
+                
+                        var xy = btn.getXY(),
+    
+                        scrollX = Y.DOM.docScrollX(),
+                        scrollY = Y.DOM.docScrollY(),          
+                        
+                        clientX = (xy[0] + (btn.get("offsetWidth")/2)) - scrollX,
+                        clientY = (xy[1] + (btn.get("offsetHeight")/2)) - scrollY,
+                        
+                        pageX = clientX + scrollX,
+                        pageY = clientY + scrollY;  
+
+                        Y.Assert.areSame(parseInt(e.clientX, 10), parseInt(clientX, 10), "clientX mismatch");
+                        Y.Assert.areSame(parseInt(e.clientY, 10), parseInt(clientY, 10), "clientY mismatch");
+                        Y.Assert.areSame(parseInt(e.pageX, 10), parseInt(pageX, 10), "pageX mismatch");
+                        Y.Assert.areSame(parseInt(e.pageY, 10), parseInt(pageY, 10), "pageY mismatch");
+                    });
+                
+                    if (Y.UA.os == "windows") {                    
+                        btn.once("keydown", function (e) {
+                            if (e.keyCode === 93) {
+                                btn.simulate("contextmenu");
+                            }
+                        });
+                    }
+                    
+                    btn.simulate("keydown", { keyCode: 93 });
+
+                    if (Y.UA.os == "windows") {
+                       Y.Assert.isTrue(received, "contextmenu event xy coords don't reference the center of the event target");
+                    } else {
+                       Y.Assert.isFalse(received, "the Menu key should only fire the contextmenu event on windows");
+                    }
+                    
+                    btn.detach("contextmenu");
+        
+                },
+
+                test_xy_coords_for_shift10_or_ctrl_shift_option_m: function () {
+
+                    var received = false;
+
+                    btn.on("contextmenu", function (e) {
+                
+                        received = true;
+
+                        var xy = btn.getXY(),
+            
+                        scrollX = Y.DOM.docScrollX(),
+                        scrollY = Y.DOM.docScrollY(),          
+                        
+                        clientX = Math.floor(xy[0] + (btn.get("offsetWidth")/2)) - scrollX,
+                        clientY = Math.floor(xy[1] + (btn.get("offsetHeight")/2)) - scrollY,
+                        
+                        pageX = clientX + scrollX,
+                        pageY = clientY + scrollY;  
+
+                        Y.Assert.areSame(parseInt(e.clientX, 10), parseInt(clientX, 10), "clientX mismatch");
+                        Y.Assert.areSame(parseInt(e.clientY, 10), parseInt(clientY, 10), "clientY mismatch");
+                        Y.Assert.areSame(parseInt(e.pageX, 10), parseInt(pageX, 10), "pageX mismatch");
+                        Y.Assert.areSame(parseInt(e.pageY, 10), parseInt(pageY, 10), "pageY mismatch");
+                
+                    });
+
+                    simulateKeyDown();
+
+                    Y.Assert.isTrue(received, "contextmenu event xy coords don't reference the center of the event target");
+                    
+                    btn.detach("contextmenu");
+                },
+                
+                test_multiple_on_listeners: function(){
+                    
+                    called = 0;
+                    
+                    btn.on("contextmenu", onContextMenu);
+                    btn.on("contextmenu", onContextMenu);
+
+                    simulateKeyDown();
+
+                    Y.Assert.areSame(2, called, "contextmenu event listener not called correct number of times");
+                    
+                    btn.detach("contextmenu");
+                    
+                },
+                
+                test_multiple_delegate_listeners: function(){
+                    
+                    called = 0;
+
+                    doc.delegate("contextmenu", onContextMenu, "button");
+                    doc.delegate("contextmenu", onContextMenu, "button");
+
+                    simulateKeyDown();
+
+                    Y.Assert.areSame(2, called, "contextmenu event listener not called correct number of times");
+                    
+                    doc.detach("contextmenu");
+                },
+                
+                test_multiple_on_and_delegate_listeners: function(){
+                    
+                    called = 0;
+
+                    btn.on("contextmenu", onContextMenu);
+                    btn.on("contextmenu", onContextMenu);                    
+
+                    doc.delegate("contextmenu", onContextMenu, "button");
+                    doc.delegate("contextmenu", onContextMenu, "button");
+
+                    simulateKeyDown();
+
+                    Y.Assert.areSame(4, called, "contextmenu event listener not called correct number of times");
+                    
+                    btn.detach("contextmenu");
+                    doc.detach("contextmenu");                    
+                }    
+            })); 
+
+
+            Y.Test.Runner.add(suite);
+            Y.Test.Runner.run();
+        });
+    </script>
+</body>
+</html>

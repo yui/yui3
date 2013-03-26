@@ -1,0 +1,20 @@
+{
+    "name": "eventx",
+    "builds": {
+        "eventx-base": {
+            "jsfiles": [
+                "event.js"
+            ]
+        },
+        "eventx-do": {
+            "jsfiles": [
+                "event-do.js"
+            ]
+        },
+        "eventx-compat": {
+            "jsfiles": [
+                "event-compat.js"
+            ]
+        }
+    }
+}

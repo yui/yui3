@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+        div {
+            margin: 1em 0;
+        }
+    </style>
+</head>
+<body class="yui-skin-sam">
+<input type="text" value="" id="k"><label for="k">&lt;-- up,up,dn,dn,l,r,l,r,b,a</label>
+<ul id="output"></ul>
+
+<script src="../../../../build/yui/yui.js"></script>
+<!--
+<script src="http://yui.yahooapis.com/3.2.0/build/yui/yui-min.js"></script>
+<script src="../../../../build/event/event-synthetic.js"></script>
+-->
+<script>
+YUI({
+    useBrowserConsole: false,
+    //lazyEventFacade: true,
+    filter: 'raw'
+}).use('event-synthetic', function (Y) {
+
+Y.on('yui:log', function (e) {
+    Y.one("#output").append("<li>" + e.msg + "</li>");
+});
+
+Y.Event.define('konami', {
+    on: function (node, sub, ce) {
+        var guid = Y.guid();
+
+        node.on(guid + '|keydown', function (e) {
+
+            Y.log(e.keyCode);
+
+            if (e.keyCode === sub.keys[sub.progress]) {
+                if (++sub.progress === sub.keys.length) {
+                    ce.fire();
+                    ce.detach(sub.fn, sub.context);
+                }
+            } else {
+                sub.progress = 0;
+            }
+        });
+
+        Y.mix(sub,{
+            progress : 0,
+            keys     : [38,38,40,40,37,39,37,39,66,65],
+            keys     : [38,38,40,40,37,39,37,39,66,65],
+            _evtGuid : guid
+        });
+    },
+    detach: function (node, sub, ce) {
+        node.detach(sub._evtGuid + '|*');
+    }
+});
+
+Y.one('#k').on('konami', function (e) {
+    Y.one('#output').append('<li>UNICORNS!</li>');
+});
+
+});
+</script>
+</body>
+</html>

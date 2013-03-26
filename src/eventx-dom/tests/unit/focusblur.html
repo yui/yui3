@@ -1,0 +1,418 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>YUI focus/blur synth Tests</title>
+
+    <script src="../../../../build/yui/yui.js"></script>
+    <script src="./assets/window-focus.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+    <div id="container">
+        <div class="not-focusable">
+            <button id="button-1">Click Me!</button>
+            <a id="anchor-1" href="http://www.yahoo.com">Click Me!</a>
+            <input type="text" id="text-1">
+        </div>
+    </div>
+    <div id="log"></div>
+
+    <script>
+        YUI({
+            //lazyEventFacade: true,
+            coverage: ['event-focus'],
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+        }).use('test-console', 'test', 'event', 'event-simulate', 'node-event-delegate', 'window-focus', function (Y) {
+
+            var Assert = Y.Assert;
+
+            (new Y.Test.Console()).render();
+
+            Y.Test.Runner.add(new Y.Test.Case({
+                name: "Event Focus And Blur Test",
+
+                _should: {
+                    fail: {
+                        //test_purge_focus: 2528244, // fixed
+                        //test_purge_blur: 2528244   // fixed
+                    }
+                },
+
+                tearDown: function () {
+                    Y.one('#container').purge(true);
+                },
+
+                test_add_focus: function(){
+
+                    var foo = false,
+                        target,
+                        boundEl,
+                        handle,
+
+                        onFocus = function(e) {
+
+                            foo = true;
+                            boundEl = this;
+                            target = e.target;
+
+                        };
+
+                    handle = Y.on('focus', onFocus, '#container');
+
+                    Y.one('#button-1').focus();
+
+                    if (Y.isWindowInFocus()) {
+                        Assert.isTrue(foo, "simple focus fails, container should pickup the focus event");
+                        Assert.areEqual(Y.one('#button-1'), target, "the target is the incorrect node, should be the actual focus target");
+                        Assert.areEqual(Y.one('#container'), boundEl, "the default scope should be the bound element");
+
+                        foo = false;
+                        target = null;
+                        boundEl = null;
+
+                        Y.one('#text-1').focus();
+                        Y.one('#button-1').focus();
+
+                        Assert.isTrue(foo, "simple focus fails, container should pickup the focus event");
+                        Assert.areEqual(Y.one('#button-1'), target, "the target is the incorrect node, should be the actual focus target");
+                        Assert.areEqual(Y.one('#container'), boundEl, "the default scope should be the bound element");
+
+                        Y.one('#button-1').blur();
+                    } else {
+                        Y.log("Window is not focused.", "warn", "TestRunner");
+                    }
+
+                    handle.detach();
+
+                },
+
+                test_remove_focus: function () {
+
+                    var foo = false,
+
+                        onFocus = function(e) {
+
+                            foo = true;
+
+                        };
+
+                    var handle = Y.on('focus', onFocus, '#container');
+
+                    if (Y.isWindowInFocus()) {
+                        Y.one('#button-1').focus();
+
+                        Assert.isTrue(foo, "simple focus fails, container should pickup the focus event");
+
+                        handle.detach();
+
+                        Y.one('#button-1').blur();
+
+                        foo = false;
+
+                        Y.one('#button-1').focus();
+
+                        Assert.isFalse(foo, "container should not pickup the focus event after listener is removed");
+
+                        Y.one('#button-1').blur();
+                    } else {
+                        Y.log("Window is not focused.", "warn", "TestRunner");
+                    }
+                },
+
+                test_purge_focus: function () {
+
+                    var foo = false,
+
+                        onFocus = function(e) {
+
+                            foo = true;
+
+                        };
+
+                    if (Y.isWindowInFocus()) {
+                        Y.on('focus', onFocus, '#container');
+
+                        Y.one('#button-1').focus();
+
+                        Assert.isTrue(foo, "simple focus fails, container should pickup the focus event");
+
+                        Y.Event.purgeElement('#container', false, 'focus');
+
+                        Y.one('#button-1').blur();
+
+                        foo = false;
+
+                        Y.one('#button-1').focus();
+
+                        Assert.isFalse(foo, "container should not pickup the focus event after listener has been purged");
+                    } else {
+                        Y.log("Window is not focused.", "warn", "TestRunner");
+                    }
+                },
+
+                test_bubble_order: function () {
+                    var from = [],
+                        doc  = Y.one(Y.config.doc),
+                        body = Y.one('body'),
+                        container = Y.one('#container'),
+                        handles = [];
+
+                    function onFocus(e) {
+                        from.push(this);
+                    }
+
+                    if (Y.isWindowInFocus()) {
+                        handles.push(
+                            container.on('focus', onFocus),
+                            doc.on('focus', onFocus),
+                            body.on('focus', onFocus));
+
+                        Y.one('#anchor-1').focus();
+
+                        new Y.EventHandle(handles).detach();
+
+                        Y.ArrayAssert.itemsAreSame([container, body, doc], from, "Incorrect bubble order");
+                    } else {
+                        Y.log("Window is not focused.", "warn", "TestRunner");
+                    }
+                },
+
+                test_add_blur: function () {
+
+                    var foo = false,
+                        target,
+                        boundEl,
+                        handle,
+
+                        onBlur = function(e) {
+
+                            foo = true;
+                            boundEl = this;
+                            target = e.target;
+
+                        };
+
+                    if (Y.isWindowInFocus()) {
+                        handle = Y.on('blur', onBlur, '#container');
+
+                        Y.one('#button-1').focus();
+                        Y.one('#button-1').blur();
+
+                        Assert.isTrue(foo, "simple blur fails, container should pickup the focus event");
+                        Assert.areEqual(target, Y.one('#button-1'), "the target is the incorrect node, should be the actual blur target");
+                        Assert.areEqual(boundEl, Y.one('#container'), "the default scope should be the bound element");
+
+                        foo = false;
+                        target = null;
+                        boundEl = null;
+
+                        Y.one('#button-1').focus();
+                        Y.one('#text-1').focus();
+
+                        Assert.isTrue(foo, "simple blur fails, container should pickup the focus event");
+                        Assert.areEqual(target, Y.one('#button-1'), "the target is the incorrect node, should be the actual blur target");
+                        Assert.areEqual(boundEl, Y.one('#container'), "the default scope should be the bound element");
+                    } else {
+                        Y.log("Window is not focused.", "warn", "TestRunner");
+                    }
+                },
+
+                test_remove_blur: function () {
+                    var foo = false,
+                        onBlur = function(e) {
+                            foo = true;
+                        };
+
+                    if (Y.isWindowInFocus()) {
+                        var handle = Y.on('blur', onBlur, '#container');
+
+                        Y.one('#button-1').focus();
+                        Y.one('#button-1').blur();
+
+                        Assert.isTrue(foo, "simple focus fails, container should pickup the focus event");
+                        foo = false;
+                        handle.detach();
+                        Y.one('#button-1').focus();
+                        Y.one('#text-1').focus();
+                        Assert.isFalse(foo, "container should not pickup the blur event after listener has been removed");
+                    } else {
+                        Y.log("Window is not focused.", "warn", "TestRunner");
+                    }
+                },
+
+                test_purge_blur: function () {
+                    var foo = false,
+                        onBlur = function(e) {
+                            foo = true;
+                        };
+
+                    if (Y.isWindowInFocus()) {
+                        Y.on('blur', onBlur, '#container');
+
+                        Y.one('#button-1').focus();
+                        Y.one('#button-1').blur();
+                        Assert.isTrue(foo, "simple focus fails, container should pickup the focus event");
+                        foo = false;
+                        Y.Event.purgeElement('#container', false, 'blur');
+                        Y.one('#button-1').focus();
+                        Y.one('#text-1').focus();
+                        Assert.isFalse(foo, "container should not pickup the blur event after listener has been purged");
+                    } else {
+                        Y.log("Window is not focused.", "warn", "TestRunner");
+                    }
+                },
+
+                "test delegating with filter matching non-focusable elements": function () {
+                    var button       = Y.one('#button-1'),
+                        container    = Y.one('#container'),
+                        notFocusable = Y.one('.not-focusable'),
+                        called, handle;
+
+                    if (Y.isWindowInFocus()) {
+                        handle = container.delegate('focus', function (e) {
+                            called = true;
+                            Assert.areSame(button, e.target);
+                            Assert.areSame(notFocusable, e.currentTarget);
+                            Assert.areSame(notFocusable, this);
+                            Assert.areSame(container, e.container);
+                        }, '.not-focusable');
+
+                        Y.one('#button-1').focus();
+
+                        handle.detach();
+
+                        Assert.isTrue(called);
+                    }
+
+                },
+
+                "test stopping propagation for on() subs": function () {
+                    var handles = [],
+                        outerCalled, innerCalled;
+
+                    // Make sure button-1 isn't focused
+                    Y.one('#anchor-1').focus();
+
+                    handles.push(Y.one('#container').on('focus', function () {
+                        outerCalled = true;
+                    }));
+                    handles.push(Y.one('.not-focusable').on('focus', function (e) {
+                        innerCalled = true;
+                        e.stopPropagation();
+                    }));
+
+                    Y.one('#button-1').focus();
+
+                    new Y.EventHandle(handles).detach();
+
+                    Assert.isTrue(innerCalled);
+                    Assert.isUndefined(outerCalled);
+                },
+
+                "test stopping propagation for delegate() subs matching the same node": function () {
+                    var handles = [],
+                        called = 0;
+
+                    // Matches at the same level, stopProp should not prevent
+                    // both delegate callbacks
+                    handles.push(
+                        Y.one('#container').delegate('focus', function (e) {
+                            called++;
+                            e.stopPropagation();
+                        }, '.not-focusable'),
+                        Y.one('doc').delegate('focus', function () {
+                            called++;
+                        }, '.not-focusable'));
+
+                    Y.one('#anchor-1').focus();
+
+                    new Y.EventHandle(handles).detach();
+
+                    Assert.areSame(2, called);
+                },
+
+                "test stopping propagation for delegate() subs not matching the same node": function () {
+                    var handles = [],
+                        called = 0;
+
+                    // Matches at the same level, stopProp should not prevent
+                    // both delegate callbacks
+                    handles.push(
+                        Y.one('#container').delegate('focus', function (e) {
+                            called++;
+                            e.stopPropagation();
+                        }, '.not-focusable'),
+                        Y.one('doc').delegate('focus', function () {
+                            called++;
+                        }, '#container'));
+
+                    Y.one('#button-1').focus();
+
+                    new Y.EventHandle(handles).detach();
+
+                    Assert.areSame(1, called);
+                },
+
+                "test stopImmediatePropagation for on() and delegate() subs": function () {
+                    var handles = [],
+                        called = 0;
+
+                    handles.push(
+                        Y.one('#container').delegate('focus', function (e) {
+                            called++;
+                            e.stopImmediatePropagation();
+                        }, '.not-focusable'),
+                        Y.one('doc').delegate('focus', function () {
+                            called++;
+                        }, '.not-focusable'));
+
+                    Y.one('#anchor-1').focus();
+
+                    new Y.EventHandle(handles).detach();
+
+                    Assert.areSame(1, called);
+                },
+
+                "test callback order from a mix of subs": function () {
+                    var order = [],
+                        handles = [];
+
+                    handles.push(
+                        Y.one('#container').delegate('focus', function () {
+                            order.push(2);
+                        }, '.not-focusable'),
+                        Y.one('#button-1').on('focus', function () {
+                            order.push(1);
+                        }),
+                        Y.one('doc').delegate('focus', function () {
+                            order.push(3);
+                        }, '.not-focusable'),
+                        Y.one('#container').on('focus', function () {
+                            order.push(4);
+                        })
+                    );
+
+                    Y.one('#button-1').focus();
+
+                    Y.ArrayAssert.itemsAreSame([1, 2, 3, 4], order);
+                },
+
+                "test useActive feature test" : function() {
+                    var useActive = Y.Env.evt.plugins.focus.eventDef._useActivate;
+
+                    if (Y.UA.ie) {
+                        Y.Assert.isTrue(useActive);
+                    } else {
+                        Y.Assert.isFalse(useActive);
+                    }
+                }
+
+            }));
+
+	        Y.Test.Runner.setName("Event: FocusBlur");
+            Y.Test.Runner.run();
+
+        });
+    </script>
+</body>
+</html>

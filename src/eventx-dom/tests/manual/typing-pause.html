@@ -1,0 +1,276 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+        body { font: normal 87%/1.4 Arial, sans-serif; }
+        input { width: 35em; }
+        div input { width: auto; }
+        xp { margin: 1.4em 0 1ex; }
+    </style>
+</head>
+<body class="yui-skin-sam">
+    <h1>The typing-pause special event</h1>
+    <p>
+        <label for="in">Type here and look for responses in the console</label>
+    </p>
+    <input id="in">
+
+    <div>
+        <p>
+            <input type="radio" name="mode" id="mode1" value="1" checked="checked">
+            <label for="mode1">Simple default subscription</label>
+        </p>
+        <p>
+            <input type="radio" name="mode" id="mode2" value="2">
+            <label for="mode2">Non-adaptive subscription (400ms delay)</label>
+        </p>
+        <p>
+            <input type="radio" name="mode" id="mode3" value="3">
+            <label for="mode3">Configured sub, fires after mention of &quot;dog&quot;</label>
+        </p>
+
+        <button type="button" id="attach">attach</button>
+        <button type="button" id="attach_handle">attach + handle</button>
+        <button type="button" id="attach_cat">attach + category</button>
+        <button type="button" id="detach">detach by signature</button>
+        <button type="button" id="detach_handle">detach by handle</button>
+        <button type="button" id="detach_cat">detach by category</button>
+        <button type="button" id="detach_nofn">detach without fn</button>
+        <button type="button" id="remove">remove buttons</button>
+    </div>
+    <script src="../../../../build/yui/yui.js"></script>
+    <script src="../../../../build/event/event-synthetic.js"></script>
+    <script>
+YUI({
+    lazyEventFacade: true
+}).use('node-base', 'event-synthetic', function (Y) {
+
+    function asIs(x) { return x; }
+
+    Y.Event.define('typing-pause', {
+        processArgs: function (args) {
+            // Extract configuration from third position in the args
+            // Apply defaults to the returned config object.
+            return Y.mix({
+                adaptive: true,
+                minLength: 1,
+                minWait: 400,
+                maxWait: 3000,
+                waitMultiplier: 4,
+                filter: asIs,
+            }, (args.splice(3,1)[0] || {}), true);
+        },
+
+        on: function (node, sub, ce) {
+            sub._cat     = Y.guid();
+            sub._strokes = 0;
+            sub._first   = 0;
+            sub._args    = Y.Array(arguments, 4, true);
+
+            node.on(sub._cat+'|keyup', this._handleKey, null, sub, ce);
+            node.on(sub._cat+'|blur', this._handleBlur, null, sub, ce);
+        },
+
+        detach: function (node, sub, ce) {
+            node.detach(sub._cat + '|*');
+            clearTimeout(sub._timer);
+        },
+
+        // Support functions
+        _handleKey: function (e, sub, ce) {
+            // Allow delete and backspace, but not shift, alt, ctrl, etc
+            if (e.keyCode < 46 && e.keyCode !== 8 && e.keyCode !== 32) {
+                return;
+            }
+
+            var raw       = this.get('value'),
+                config    = sub._extra,
+                value     = config.filter.call(this, raw),
+                minLength = config.minLength,
+                minWait   = config.minWait,
+                maxWait   = config.maxWait,
+
+                delay, now;
+
+            if (sub._timer) {
+                sub._timer.cancel();
+                delete sub._timer;
+            }
+
+            if (value && value.length > minLength) {
+                if (config.adaptive) {
+                    now = new Date();
+
+                    ++sub._strokes;
+
+                    // On first key stroke, use maxWait because we don't
+                    // have enough data to calculate a reasonable delay
+                    if (sub._strokes === 1) {
+                        sub._first = now;
+                        delay = maxWait;
+                    } else {
+                        // @TODO: intentional pauses should not affect
+                        // the average (e.g. fast typist that pauses
+                        // enough to trigger the event, then leaves
+                        // focus in the input.  The avg is then
+                        // skewed.)
+                        delay = (now - sub._first) / sub._strokes;
+                        delay = Math.round(delay) * config.waitMultiplier;
+
+                        if (delay > maxWait) {
+                            delay = maxWait;
+                        }
+                    }
+
+                    if (delay < minWait) {
+                        delay = minWait;
+                    }
+                } else {
+                    delay = minWait;
+                }
+
+                // Schedule firing according to the appropriate delay
+                sub._timer = Y.later(delay, this, function () {
+                    ce.fire({
+                        inputValue: raw,
+                        value: value,
+                        lastKeyEvent: e,
+                        target: this,
+                        currentTarget: this
+                    });
+                });
+            }
+        },
+
+        _handleBlur: function (e, sub, ce) {
+            sub._strokes = 0;
+
+            if (sub._timer) {
+                sub._timer.cancel();
+                delete sub._timer;
+            }
+        }
+    });
+
+
+    /****************************************************************/
+    /********************** Test implementation *********************/
+    /****************************************************************/
+    var handle, last;
+
+    function notify(e) {
+        console.log(this, e, new Date() - last);
+    }
+    
+    Y.one('#in').on('keyup', function (e) {
+        last = new Date();
+    });
+
+    Y.one('#attach').on('click', function (e) {
+        var mode = parseInt(Y.one("input[name=mode]:checked").get('value'));
+
+        switch (mode) {
+            case 1: Y.one('#in').on('typing-pause', notify); break;
+            case 2: Y.one('#in').on('typing-pause', notify, {
+                adaptive: false
+            }); break;
+            case 3: Y.one('#in').on('typing-pause', notify, {
+                //adaptive: true,
+                minLength: 8,
+                minWait: 1000,
+                maxWait: 5000,
+                waitMultiplier: 2,
+                filter: function (v) {
+                    var m = /\bdog\b/i.exec(v);
+                    return m ? ("'"+m[0]+"' at "+RegExp.leftContext.length) :'';
+                }
+            });
+        }
+    });
+
+    Y.one('#attach_handle').on('click', function (e) {
+        var mode = parseInt(Y.one("input[name=mode]:checked").get('value'));
+
+        switch(mode) {
+            case 1: handle = Y.one('#in').on('typing-pause', notify); break;
+            case 2: handle = Y.one('#in').on('typing-pause', notify, {
+                adaptive: false
+            }); break;
+            case 3: handle = Y.one('#in').on('typing-pause', notify, {
+                minLength: 8,
+                minWait: 1000,
+                maxWait: 5000,
+                waitMultiplier: 2,
+                filter: function (v) {
+                    var m = /\bdog\b/i.exec(v);
+                    return m ? ("'"+m[0]+"' at "+RegExp.leftContext.length) :'';
+                }
+            });
+        }
+    });
+
+    Y.one('#attach_cat').on('click', function (e) {
+        var mode = parseInt(Y.one("input[name=mode]:checked").get('value'));
+
+        switch (mode) {
+            case 1: Y.one('#in').on('foo|typing-pause', notify); break;
+            case 2: Y.one('#in').on('foo|typing-pause', notify, {
+                adaptive: false
+            }); break;
+            case 3: Y.one('#in').on('foo|typing-pause', notify, {
+                minLength: 8,
+                minWait: 1000,
+                maxWait: 5000,
+                waitMultiplier: 2,
+                filter: function (v) {
+                    var m = /\bdog\b/i.exec(v);
+                    return m ? ("'"+m[0]+"' at "+RegExp.leftContext.length) :'';
+                }
+            });
+        }
+    });
+
+    Y.one('#detach').on('click', function (e) {
+        var mode = parseInt(Y.one("input[name=mode]:checked").get('value'));
+
+        switch (mode) {
+            case 1: Y.one('#in').detach('typing-pause', notify); break;
+            case 2: Y.all('#in').detach('typing-pause', notify); break;
+            case 3: Y.detach('typing-pause', notify, '#in');
+        }
+    });
+
+    Y.one('#detach_handle').on('click', function (e) {
+        handle.detach();
+    });
+
+    Y.one('#detach_cat').on('click', function (e) {
+        var mode = parseInt(Y.one("input[name=mode]:checked").get('value'));
+
+        switch (mode) {
+            case 1: Y.one('#in').detach('foo|typing-pause'); break;
+            case 2: Y.all('#in').detach('foo|typing-pause'); break;
+            case 3: Y.detach('foo|typing-pause');
+        }
+    });
+
+    Y.one('#detach_nofn').on('click', function (e) {
+        var mode = parseInt(Y.one("input[name=mode]:checked").get('value'));
+
+        switch (mode) {
+            case 1: Y.one('#in').detach('typing-pause'); break;
+            case 2: all('#in').detach('typing-pause'); break;
+            case 3: Y.detach('foo|*');
+        }
+    });
+
+    Y.one('#remove').on('click', function (e) {
+        inner.remove(true);
+        Y.log('Detached');
+    });
+
+});
+</script>
+</body>
+</html>
