@@ -4,7 +4,7 @@ Graphics Change History
 3.9.1
 -----
 
-* No changes.
+* #2533119 Removed all lint warnings.
 
 3.9.0
 -----
