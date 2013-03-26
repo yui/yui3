@@ -263,6 +263,41 @@ YUI.add('date-tests', function(Y) {
         }
     });
 
+    var testParserWithFormat = new Y.Test.Case({
+        testParsing: function () {
+            var values = [
+                ["01/02/2003","%d/%m/%Y"],
+                ["01/Mar/2003","%d/%b/%Y"],
+                ["01/March/2003","%d/%B/%Y"],
+                ["01 - 02 - 2003","%d - %m - %Y"],
+                ["01 - Mar - 2003","%d - %b - %Y"],
+                ["01 - March - 2003","%d - %B - %Y"],
+                ["Sat, March 01, 2003", "%a, %B %d, %Y"],
+                ["Saturday, March 01, 2003", "%A, %B %d, %Y"]
+            ];
+            for (var i = 0; i < values.length; i++) {
+                var f = values[i][1], d = values[i][0];
+                ASSERT.areSame(d, Y.Date.format(Y.Date.parse(d, f),{format:f}), i);
+            }
+        },
+        testParsingFR:function () {
+            var values = [
+                ["01/02/2003","%d/%m/%Y"],
+                ["01/mars/2003","%d/%b/%Y"],
+                ["01/mars/2003","%d/%B/%Y"],
+                ["01 - 02 - 2003","%d - %m - %Y"],
+                ["01 - mars - 2003","%d - %b - %Y"],
+                ["01 - mars - 2003","%d - %B - %Y"],
+                ["sam., mars 01, 2003", "%a, %B %d, %Y"],
+                ["samedi, mars 01, 2003", "%A, %B %d, %Y"]
+            ];
+            for (var i = 0; i < values.length; i++) {
+                var f = values[i][1], d = values[i][0];
+                ASSERT.areSame(d, dateFR.format(dateFR.parse(d, f),{format:f}), i);
+            }
+        }
+    });
+
     var testFormatAvailable = new Y.Test.Case({
         name: "Date Format Available Format Tests",
 
@@ -289,6 +324,7 @@ YUI.add('date-tests', function(Y) {
     suite.add(testFormatIN);
     suite.add(testFormatAvailable);
     suite.add(testFormat);
+    suite.add(testParserWithFormat);
 
     Y.Test.Runner.add(suite);
 

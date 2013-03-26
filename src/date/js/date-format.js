@@ -1,5 +1,6 @@
+/* jshint onevar:false*/
 /**
- * The `datatype` module is an alias for three utilities, Y.Date, 
+ * The `datatype` module is an alias for three utilities, Y.Date,
  * Y.Number and Y.XML, that provide type-conversion and string-formatting
  * convenience methods for various JavaScript object types.
  *
@@ -52,7 +53,7 @@ var xPad=function (x, pad, r)
 	{
 		r=10;
 	}
-	pad = pad + ""; 
+	pad = pad + "";
 	for( ; parseInt(x, 10)<r && r>1; r/=10) {
 		x = pad + x;
 	}
@@ -61,29 +62,29 @@ var xPad=function (x, pad, r)
 
 var Dt = {
 	formats: {
-		a: function (d, l) { return l.a[d.getDay()]; },
-		A: function (d, l) { return l.A[d.getDay()]; },
-		b: function (d, l) { return l.b[d.getMonth()]; },
-		B: function (d, l) { return l.B[d.getMonth()]; },
-		C: function (d) { return xPad(parseInt(d.getFullYear()/100, 10), 0); },
+		a: function (d, l) {return l.a[d.getDay()];},
+		A: function (d, l) {return l.A[d.getDay()];},
+		b: function (d, l) {return l.b[d.getMonth()];},
+		B: function (d, l) {return l.B[d.getMonth()];},
+		C: function (d) {return xPad(parseInt(d.getFullYear()/100, 10), 0);},
 		d: ["getDate", "0"],
 		e: ["getDate", " "],
-		g: function (d) { return xPad(parseInt(Dt.formats.G(d)%100, 10), 0); },
+		g: function (d) {return xPad(parseInt(Dt.formats.G(d)%100, 10), 0);},
 		G: function (d) {
 				var y = d.getFullYear();
 				var V = parseInt(Dt.formats.V(d), 10);
 				var W = parseInt(Dt.formats.W(d), 10);
-	
+
 				if(W > V) {
 					y++;
 				} else if(W===0 && V>=52) {
 					y--;
 				}
-	
+
 				return y;
 			},
 		H: ["getHours", "0"],
-		I: function (d) { var I=d.getHours()%12; return xPad(I===0?12:I, 0); },
+		I: function (d) {var I=d.getHours()%12;return xPad(I===0?12:I, 0);},
 		j: function (d) {
 				var gmd_1 = new Date("" + d.getFullYear() + "/1/1 GMT");
 				var gmdate = new Date("" + d.getFullYear() + "/" + (d.getMonth()+1) + "/" + d.getDate() + " GMT");
@@ -92,14 +93,14 @@ var Dt = {
 				return xPad(doy, 0, 100);
 			},
 		k: ["getHours", " "],
-		l: function (d) { var I=d.getHours()%12; return xPad(I===0?12:I, " "); },
-		m: function (d) { return xPad(d.getMonth()+1, 0); },
+		l: function (d) {var I=d.getHours()%12;return xPad(I===0?12:I, " ");},
+		m: function (d) {return xPad(d.getMonth()+1, 0);},
 		M: ["getMinutes", "0"],
-		p: function (d, l) { return l.p[d.getHours() >= 12 ? 1 : 0 ]; },
-		P: function (d, l) { return l.P[d.getHours() >= 12 ? 1 : 0 ]; },
-		s: function (d, l) { return parseInt(d.getTime()/1000, 10); },
+		p: function (d, l) {return l.p[d.getHours() >= 12 ? 1 : 0 ];},
+		P: function (d, l) {return l.P[d.getHours() >= 12 ? 1 : 0 ];},
+		s: function (d, l) {return parseInt(d.getTime()/1000, 10);},
 		S: ["getSeconds", "0"],
-		u: function (d) { var dow = d.getDay(); return dow===0?7:dow; },
+		u: function (d) {var dow = d.getDay();return dow===0?7:dow;},
 		U: function (d) {
 				var doy = parseInt(Dt.formats.j(d), 10);
 				var rdow = 6-d.getDay();
@@ -112,7 +113,7 @@ var Dt = {
 				// First week is 01 and not 00 as in the case of %U and %W,
 				// so we add 1 to the final result except if day 1 of the year
 				// is a Monday (then %W returns 01).
-				// We also need to subtract 1 if the day 1 of the year is 
+				// We also need to subtract 1 if the day 1 of the year is
 				// Friday-Sunday, so the resulting equation becomes:
 				var idow = woy + (dow1_1 > 4 || dow1_1 <= 1 ? 0 : 1);
 				if(idow === 53 && (new Date("" + d.getFullYear() + "/12/31")).getDay() < 4)
@@ -123,7 +124,7 @@ var Dt = {
 				{
 					idow = Dt.formats.V(new Date("" + (d.getFullYear()-1) + "/12/31"));
 				}
-	
+
 				return xPad(idow, 0);
 			},
 		w: "getDay",
@@ -133,7 +134,7 @@ var Dt = {
 				var woy = parseInt((doy+rdow)/7, 10);
 				return xPad(woy, 0, 10);
 			},
-		y: function (d) { return xPad(d.getFullYear()%100, 0); },
+		y: function (d) {return xPad(d.getFullYear()%100, 0);},
 		Y: "getFullYear",
 		z: function (d) {
 				var o = d.getTimezoneOffset();
@@ -148,7 +149,7 @@ var Dt = {
 			}
 			return tz;
 		},
-		"%": function (d) { return "%"; }
+		"%": function (d) {return "%";}
 	},
 
 	aggregates: {
@@ -165,6 +166,20 @@ var Dt = {
 		X: "locale"
 		//"+": "%a %b %e %T %Z %Y"
 	},
+    _resources: Y.Intl.get('datatype-date-format'),
+    _expandAggregates: function (format) {
+		var resources = this._resources,
+            replace_aggs = function (m0, m1) {
+                var f = Dt.aggregates[m1];
+                return (f === "locale" ? resources[m1] : f);
+            };
+		while(format.match(/%[cDFhnrRtTxX]/)) {
+			format = format.replace(/%([cDFhnrRtTxX])/g, replace_aggs);
+		}
+		replace_aggs = undefined;
+        return format;
+
+    },
 
 	 /**
 	 * Takes a native JavaScript Date and formats it as a string for display to user.
@@ -177,7 +192,7 @@ var Dt = {
 	 *   <dt>format {HTML} (Optional)</dt>
 	 *   <dd>
 	 *   <p>
-	 *   Any strftime string is supported, such as "%I:%M:%S %p". strftime has several format specifiers defined by the Open group at 
+	 *   Any strftime string is supported, such as "%I:%M:%S %p". strftime has several format specifiers defined by the Open group at
 	 *   <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html">http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html</a>
 	 *   PHP added a few of its own, defined at <a href="http://www.php.net/strftime">http://www.php.net/strftime</a>
 	 *   </p>
@@ -240,25 +255,16 @@ var Dt = {
 	 */
 	format : function (oDate, oConfig) {
 		oConfig = oConfig || {};
-		
+
 		if(!Y.Lang.isDate(oDate)) {
 			Y.log("format called without a date", "WARN", "date");
 			return Y.Lang.isValue(oDate) ? oDate : "";
 		}
 
-		var format, resources, compatMode, sLocale, LOCALE;
+		var format, resources = this._resources;
 
         format = oConfig.format || "%Y-%m-%d";
 
-        resources = Y.Intl.get('datatype-date-format');
-
-		var replace_aggs = function (m0, m1) {
-			if (compatMode && m1 === "r") {
-			    return resources[m1];
-			}
-			var f = Dt.aggregates[m1];
-			return (f === "locale" ? resources[m1] : f);
-		};
 
 		var replace_formats = function (m0, m1) {
 			var f = Dt.formats[m1];
@@ -277,15 +283,11 @@ var Dt = {
 			}
 		};
 
-		// First replace aggregates (run in a loop because an agg may be made up of other aggs)
-		while(format.match(/%[cDFhnrRtTxX]/)) {
-			format = format.replace(/%([cDFhnrRtTxX])/g, replace_aggs);
-		}
-
+        format = this._expandAggregates(format);
 		// Now replace formats (do not run in a loop otherwise %%a will be replace with the value of %a)
 		var str = format.replace(/%([aAbBCdegGHIjklmMpPsSuUVwWyYzZ%])/g, replace_formats);
 
-		replace_aggs = replace_formats = undefined;
+        replace_formats = undefined;
 
 		return str;
 	}
