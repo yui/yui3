@@ -32,11 +32,6 @@
                 "node-load.js"
             ]
         },
-        "node-event-delegate": {
-            "jsfiles": [
-                "node-event-delegate.js"
-            ]
-        },
         "node-deprecated": {
             "jsfiles": [
                 "node-deprecated.js"
@@ -45,6 +40,7 @@
         "node-core": {
             "jsfiles": [
                 "node-core.js",
+                "node-event-delegate.js",
                 "nodelist.js",
                 "nodelist-array.js",
                 "node-imports.js"
@@ -55,7 +51,6 @@
                 "node-class.js",
                 "node-create.js",
                 "node-attrs.js",
-                "node-event.js",
                 "node-size.js",
                 "node-view.js",
                 "node-ie.js",
