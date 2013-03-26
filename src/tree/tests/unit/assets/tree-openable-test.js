@@ -377,9 +377,7 @@ nodeSuite.add(new Y.Test.Case({
 
     'toggleOpen() should be chainable': function () {
         Assert.areSame(this.node, this.node.toggleOpen());
-    },
-
-
+    }
 }));
 
 }, '@VERSION@', {
