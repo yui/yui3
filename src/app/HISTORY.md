@@ -12,6 +12,11 @@ App Framework Change History
 * Fixed: Revived models didn't have the same `clientId` as the original object.
   [#530] [Ryan Grove]
 
+### Router
+
+* Added a more helpful error when a named route callback function doesn't exist.
+  [#513] [Ryan Grove]
+
 
 3.9.0
 -----
