@@ -93,20 +93,8 @@ function Console() {
     Console.superclass.constructor.apply(this,arguments);
 }
 
-Y.Console = Y.extend(Console, Y.Widget,
-
-// Y.Console prototype
-{
-    /**
-     * Category to prefix all event subscriptions to allow for ease of detach
-     * during destroy.
-     *
-     * @property _evtCat
-     * @type string
-     * @protected
-     */
-    _evtCat : null,
-
+Y.Console = Y.extend(Console, Y.Widget, {
+    // Y.Console prototype
     /**
      * Reference to the Node instance containing the header contents.
      *
@@ -293,12 +281,9 @@ Y.Console = Y.extend(Console, Y.Widget,
      * @protected
      */
     initializer : function () {
-        this._evtCat = Y.stamp(this) + '|';
-
         this.buffer = [];
 
-        this.get('logSource').on(this._evtCat +
-            this.get('logEvent'),Y.bind("_onLogEvent",this));
+        this.get('logSource').on(this.get('logEvent'), '_onLogEvent', this);
 
         /**
          * Transfers a received message to the print loop buffer.  Default
@@ -312,7 +297,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          *  </dl>
          * @preventable _defEntryFn
          */
-        this.publish(ENTRY, { defaultFn: this._defEntryFn });
+        //this.publish(ENTRY, { defaultFn: this._defEntryFn });
 
         /**
          * Triggers the reset behavior via the default logic in _defResetFn.
@@ -321,9 +306,9 @@ Y.Console = Y.extend(Console, Y.Widget,
          * @param event {Event.Facade} Event Facade object
          * @preventable _defResetFn
          */
-        this.publish(RESET, { defaultFn: this._defResetFn });
+        //this.publish(RESET, { defaultFn: this._defResetFn });
 
-        this.after('rendered', this._schedulePrint);
+        this.after('render', this._schedulePrint);
     },
 
     /**
@@ -337,9 +322,11 @@ Y.Console = Y.extend(Console, Y.Widget,
 
         this._cancelPrintLoop();
 
-        this.get('logSource').detach(this._evtCat + '*');
+        this.get('logSource').detach(this.get('logEvent'), '_onLogEvent');
         
-        bb.purge(true);
+        if (bb) {
+            bb.purge(true);
+        }
     },
 
     /**
@@ -378,24 +365,27 @@ Y.Console = Y.extend(Console, Y.Widget,
      * @protected
      */
     bindUI : function () {
-        this.get(CONTENT_BOX).one('button.'+C_COLLAPSE).
-            on(CLICK,this._onCollapseClick,this);
+        this.delegate(CLICK, '_onCollapseClick', 'button.' + C_COLLAPSE);
+        this.delegate(CLICK, '_onPauseClick', 'input.' + C_PAUSE);
+        this.delegate(CLICK, '_onClearClick', 'button.' + C_CLEAR);
+        /*
+        var contentBox = this.get(CONTENT_BOX);
 
-        this.get(CONTENT_BOX).one('input[type=checkbox].'+C_PAUSE).
-            on(CLICK,this._onPauseClick,this);
-
-        this.get(CONTENT_BOX).one('button.'+C_CLEAR).
-            on(CLICK,this._onClearClick,this);
+        contentBox.one('button.' + C_COLLAPSE)
+            .on(CLICK, '_onCollapseClick', this);
+        contentBox.one('input[type=checkbox].' + C_PAUSE)
+            .on(CLICK, '_onPauseClick', this);
+        contentBox.one('button.' + C_CLEAR)
+            .on(CLICK, '_onClearClick', this);
+        */
 
         // Attribute changes
-        this.after(this._evtCat + 'stringsChange',
-            this._afterStringsChange);
-        this.after(this._evtCat + 'pausedChange',
-            this._afterPausedChange);
-        this.after(this._evtCat + 'consoleLimitChange',
-            this._afterConsoleLimitChange);
-        this.after(this._evtCat + 'collapsedChange',
-            this._afterCollapsedChange);
+        this.after({
+            stringsChange     : '_afterStringsChange',
+            pausedChange      : '_afterPausedChange',
+            consoleLimitChange: '_afterConsoleLimitChange',
+            collapsedChange   : '_afterCollapsedChange'
+        }, this);
     },
 
     
@@ -1506,4 +1496,9 @@ Y.Console = Y.extend(Console, Y.Widget,
          }
     }
 
+});
+
+Y.EventTarget.configure(Console, {
+    'entry': { defaultFn: '_defEntryFn' },
+    'reset': { defaultFn: '_defResetFn' }
 });
