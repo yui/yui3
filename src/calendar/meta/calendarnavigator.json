@@ -1,12 +1,11 @@
 {
- "calendarnavigator": {
-            	"requires": [
-                	"plugin",
-                	"classnamemanager",
-                    "datatype-date",
-                    "node",
-                    "substitute"
-            	],
-                "skinnable": true
-			}
+    "calendarnavigator": {
+        "requires": [
+            "plugin",
+            "classnamemanager",
+            "datatype-date",
+            "node"
+        ],
+        "skinnable": true
+    }
 }

@@ -1,10 +1,9 @@
 /**
  * Contains algorithms for rendering a top axis.
  *
- * @module charts
- * @submodule charts-base
  * @class TopAxisLayout
  * @constructor
+ * @submodule axis
  */
 TopAxisLayout = function(){};
 
@@ -348,7 +347,7 @@ TopAxisLayout.prototype = {
      * @param {Node} cb contentBox of the axis
      * @protected
      */
-    offsetNodeForTick: function(cb)
+    offsetNodeForTick: function()
     {
     },
 
@@ -370,7 +369,7 @@ TopAxisLayout.prototype = {
             ttl = Math.round(topTickOffset + totalLabelSize + totalTitleSize);
         if(this._explicitHeight)
         {
-           ttl = this._explicitWidth;
+           ttl = this._explicitHeight;
         }
         host.set("calculatedHeight", ttl);
         graphic.set("y", ttl - topTickOffset);

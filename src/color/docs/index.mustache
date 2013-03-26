@@ -54,7 +54,7 @@ Y.Color.toArray('rgba(255, 0, 0, 1)'); // [255, 0, 0, 1]
 <pre class="code prettyprint">
 Y.Color.fromArray(['ff', '00', '00'], Y.Color.TYPES.HEX); // #ff0000
 Y.Color.fromArray([255, 0, 0], Y.Color.TYPES.RGB); // rgb(255, 0, 0)
-Y.Color.fromArray([255, 0, 0, 1], Y.Color.TYPES.RGBA); // rgb(255, 0, 0, 1)
+Y.Color.fromArray([255, 0, 0, 1], Y.Color.TYPES.RGBA); // rgba(255, 0, 0, 1)
 </pre>
 
 <h2 id="hsl">HSL Color</h2>
@@ -233,17 +233,17 @@ Y.Color.getOffset(red, {h: 40, l: 20, s: -50}); // #d9ad8c{{>color-s}}#d9ad8c{{>
 </pre>
 
 <h3 id="brightness">Perceived Brightness</h3>
-<p>Different hues at the same saturation and luminance can be perceived brighter or darker than each other (such as blue and yellow). Brightness is represented as a value from `0` to `1` &mdash; where `0` is darkest (black) and `1` is brightest (white).</p>
+<p>Different hues at the same saturation and luminance can be perceived brighter or darker than each other (such as blue and yellow). Brightness is represented as a value from `0` to `100` &mdash; where `0` is darkest (black) and `100` is brightest (white).</p>
 
 <p>Note: `getBrightness` uses a weighted distance in 3D space algorithm. Traditionally these values are `{r: 0.241, g: 0.691, b: 0.068 }`. These values were adjusted during tests to `{ r: 0.221, g: 0.711, b: 0.068 }`. You can override these values with `Y.Color._brightnessWeights`.</p>
 <pre class="code prettyprint">
 // getBrightness(color)
 
-Y.Color.getBrightness(white); // 1
+Y.Color.getBrightness(white); // 100
 
 Y.Color.getBrightness(black); // 0
 
-Y.Color.getBrightness(yellow); // 0.9654014708917736
+Y.Color.getBrightness(yellow); // 97
 </pre>
 
 <h3 id="similar-brightness">Match Brightness</h3>

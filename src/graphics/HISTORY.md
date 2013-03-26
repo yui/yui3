@@ -1,20 +1,37 @@
 Graphics Change History
 =======================
 
+3.9.0
+-----
+
+   * #2533116 Addressed issue in which relativeMoveTo did not work in the SVG implementation.
+   * #2530941 Added chaining to drawing commands.
+   * #2532710 Addressed issue in which malformed path data was being created.
+
+3.8.1
+-----
+
+   * No changes.
+
+3.8.0
+-----
+
+   * No changes.
+
 3.7.3
 -----
 
-* No changes.
+   * No changes.
 
 3.7.2
 -----
 
-* No changes.
+   * No changes.
 
 3.7.1
 -----
 
-* No changes.
+   * No changes.
 
 3.7.0
 -----

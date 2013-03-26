@@ -26,6 +26,14 @@ var L   = Y.Lang,
         contextmenu:1
     },
 
+    msPointerEvents = {
+        MSPointerOver:  1,
+        MSPointerOut:   1,
+        MSPointerDown:  1,
+        MSPointerUp:    1,
+        MSPointerMove:  1
+    },
+
     //key events supported
     keyEvents   = {
         keydown:    1,
@@ -322,21 +330,20 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
                                shiftKey /*:Boolean*/,   metaKey /*:Boolean*/,
                                button /*:int*/,         relatedTarget /*:HTMLElement*/) /*:Void*/
 {
-
     //check target
     if (!target){
         Y.error("simulateMouseEvent(): Invalid target.");
     }
 
-    //check event type
+    
     if (isString(type)){
-        type = type.toLowerCase();
 
-        //make sure it's a supported mouse event
-        if (!mouseEvents[type]){
+        //make sure it's a supported mouse event or an msPointerEvent. 
+        if (!mouseEvents[type.toLowerCase()] && !msPointerEvents[type]){
             Y.error("simulateMouseEvent(): Event type '" + type + "' not supported.");
         }
-    } else {
+    } 
+    else {
         Y.error("simulateMouseEvent(): Event type must be a string.");
     }
 
@@ -345,7 +352,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         bubbles = true; //all mouse events bubble
     }
     if (!isBoolean(cancelable)){
-        cancelable = (type != "mousemove"); //mousemove is the only one that can't be cancelled
+        cancelable = (type !== "mousemove"); //mousemove is the only one that can't be cancelled
     }
     if (!isObject(view)){
         view = Y.config.win; //view is typically window
@@ -426,9 +433,9 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
          * event.
          */
         if (relatedTarget && !customEvent.relatedTarget){
-            if (type == "mouseout"){
+            if (type === "mouseout"){
                 customEvent.toElement = relatedTarget;
-            } else if (type == "mouseover"){
+            } else if (type === "mouseover"){
                 customEvent.fromElement = relatedTarget;
             }
         }
@@ -542,7 +549,7 @@ function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
         bubbles = (type in bubbleEvents);  //not all events bubble
     }
     if (!isBoolean(cancelable)){
-        cancelable = (type == "submit"); //submit is the only one that can be cancelled
+        cancelable = (type === "submit"); //submit is the only one that can be cancelled
     }
     if (!isObject(view)){
         view = Y.config.win; //view is typically window
@@ -801,7 +808,7 @@ function simulateTouchEvent(target, type,
     // setup default values
     if (!Y.Lang.isBoolean(bubbles)) { bubbles = true; } // bubble by default.
     if (!Y.Lang.isBoolean(cancelable)) { 
-        cancelable = (type != "touchcancel"); // touchcancel is not cancelled 
+        cancelable = (type !== "touchcancel"); // touchcancel is not cancelled 
     } 
     if (!Y.Lang.isObject(view))     { view = Y.config.win; }
     if (!Y.Lang.isNumber(detail))   { detail = 1; } // usually not used. defaulted to # of touch objects.
@@ -820,13 +827,13 @@ function simulateTouchEvent(target, type,
     //check for DOM-compliant browsers first
     if (Y.Lang.isFunction(Y.config.doc.createEvent)) {
         if (Y.UA.android) {
-            /**
+            /*
                 * Couldn't find android start version that supports touch event. 
                 * Assumed supported(btw APIs broken till icecream sandwitch) 
                 * from the beginning.
-                */
+            */
             if(Y.UA.android < 4.0) {
-                /**
+                /*
                     * Touch APIs are broken in androids older than 4.0. We will use 
                     * simulated touch apis for these versions. 
                     * App developer still can listen for touch events. This events
@@ -834,7 +841,7 @@ function simulateTouchEvent(target, type,
                     * 
                     * (Note) Used target for the relatedTarget. Need to verify if
                     * it has a side effect.
-                    */
+                */
                 customEvent = Y.config.doc.createEvent("MouseEvents");
                 customEvent.initMouseEvent(type, bubbles, cancelable, view, detail, 
                     screenX, screenY, clientX, clientY,
@@ -894,7 +901,7 @@ Y.Event.simulate = function(target, type, options){
 
     options = options || {};
 
-    if (mouseEvents[type]){
+    if (mouseEvents[type] || msPointerEvents[type]){
         simulateMouseEvent(target, type, options.bubbles,
             options.cancelable, options.view, options.detail, options.screenX,
             options.screenY, options.clientX, options.clientY, options.ctrlKey,

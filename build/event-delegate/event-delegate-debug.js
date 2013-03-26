@@ -209,6 +209,23 @@ delegate.compileFilter = Y.cached(function (selector) {
 });
 
 /**
+Regex to test for disabled elements during filtering. This is only relevant to
+IE to normalize behavior with other browsers, which swallow events that occur
+to disabled elements. IE fires the event from the parent element instead of the
+original target, though it does preserve `event.srcElement` as the disabled
+element. IE also supports disabled on `<a>`, but the event still bubbles, so it
+acts more like `e.preventDefault()` plus styling. That issue is not handled here
+because other browsers fire the event on the `<a>`, so delegate is supported in
+both cases.
+
+@property _disabledRE
+@type {RegExp}
+@protected
+@since 3.8.1
+**/
+delegate._disabledRE = /^(?:button|input|select|textarea)$/i;
+
+/**
 Walks up the parent axis of an event's target, and tests each element
 against a supplied filter function.  If any Nodes, including the container,
 satisfy the filter, the delegated callback will be triggered for each.
@@ -234,6 +251,14 @@ delegate._applyFilter = function (filter, args, ce) {
     // Resolve text nodes to their containing element
     if (target.nodeType === 3) {
         target = target.parentNode;
+    }
+
+    // For IE. IE propagates events from the parent element of disabled
+    // elements, where other browsers swallow the event entirely. To normalize
+    // this in IE, filtering for matching elements should abort if the target
+    // is a disabled form control.
+    if (target.disabled && delegate._disabledRE.test(target.nodeName)) {
+        return match;
     }
 
     // passing target as the first arg rather than leaving well enough alone

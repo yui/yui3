@@ -3,6 +3,8 @@
 <head>
 <title>Node Test Suite</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script type="text/javascript" src="./assets/node-data-test.js"></script>
 <script type="text/javascript" src="./assets/node-attrs-test.js"></script>
@@ -12,6 +14,8 @@
 <style type="text/css">
 body {
     font:13px/1.22 arial;
+    height: 2000px;
+    width: 2000px;
 }
 
 #doc {
@@ -688,28 +692,62 @@ YUI({
         },
 
         test_scroll: function() {
+            var test = this;
             Y.one('#test-scroll').set('scrollTop', 100);
             Y.one('#test-scroll').set('scrollLeft', 200);
             Assert.areEqual(100, byId('test-scroll').scrollTop, 'test-scroll.set("scrollTop", 100)');
             Assert.areEqual(200, byId('test-scroll').scrollLeft, 'test-scroll.set("scrollLeft", 200)');
-            document.body.style.height = '5000px';
-            document.body.style.width = '5000px';
-/*
-            Y.one(window).set('scrollTop', 100);
-            Y.one(window).set('scrollLeft', 200);
-            Assert.areEqual(100, Y.DOM.docScrollY(window), 'window.set("scrollTop", 100)');
-            Assert.areEqual(200, Y.DOM.docScrollX(window), 'window.set("scrollLeft", 200)');
-*/
-
-            Y.one(document).set('scrollTop', 200);
-            Y.one(document).set('scrollLeft', 100);
-            Assert.areEqual(200, Y.DOM.docScrollY(document), 'document.set("scrollTop", 200)');
-            Assert.areEqual(100, Y.DOM.docScrollX(document), 'document.set("scrollLeft", 100)');
-
-            document.body.style.height = '';
-            document.body.style.width = '';
-
             window.scrollTo(0, 0);
+        },
+
+        test_winScrollLeft: function() {
+            var test = this;
+            Y.one(window).set('scrollLeft', 100);
+            setTimeout(function() {
+                test.resume(function() {
+                    Assert.areEqual(100, Y.DOM.docScrollX(window), 'window.set("scrollLeft", 100)');
+                    window.scrollTo(0, 0);
+                });
+            }, 100);
+
+            test.wait();
+        },
+
+        test_winScrollTop: function() {
+            var test = this;
+            Y.one(window).set('scrollTop', 200);
+            setTimeout(function() {
+                test.resume(function() {
+                    Assert.areEqual(200, Y.DOM.docScrollY(window), 'window.set("scrollTop", 200)');
+                    window.scrollTo(0, 0);
+                });
+            }, 100);
+            test.wait();
+        },
+
+        test_docScrollLeft: function() {
+            var test = this;
+            Y.one(document).set('scrollLeft', 100);
+            setTimeout(function() {
+                test.resume(function() {
+                    Assert.areEqual(100, Y.DOM.docScrollX(document), 'document.set("scrollLeft", 100)');
+                    window.scrollTo(0, 0);
+                });
+            }, 100);
+
+            test.wait();
+        },
+
+        test_docScrollTop: function() {
+            var test = this;
+            Y.one(document).set('scrollTop', 200);
+            setTimeout(function() {
+                test.resume(function() {
+                    Assert.areEqual(200, Y.DOM.docScrollY(document), 'document.set("scrollTop", 200)');
+                    window.scrollTo(0, 0);
+                });
+            }, 100);
+            test.wait();
         },
 
         test_setContent: function() {
@@ -1004,7 +1042,7 @@ YUI({
             mask.className = 'mask';
             document.body.appendChild(mask);
             var doc = Y.one('document');
-            window.scrollTo(0,0);
+            //window.scrollTo(0,0);
             mask.style.height = doc.get('docHeight') + 'px';
             mask.style.width = doc.get('docWidth') + 'px';
             Y.DOM.setStyle(mask, 'opacity', 0.4); 

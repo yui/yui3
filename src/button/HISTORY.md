@@ -1,6 +1,22 @@
 Button Change History
 ====================
 
+3.9.0
+-----
+
+ * Fixed issue where disabled button widgets are still clickable (#2532775)
+
+3.8.1
+-----
+
+* Documentation updates.
+* Linting cleanup.
+
+3.8.0
+-----
+
+* No changes.
+
 3.7.3
 -----
 

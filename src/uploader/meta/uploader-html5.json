@@ -3,9 +3,8 @@
         "requires": [
             "widget",
             "node-event-simulate",
-            "substitute",
             "file-html5",
             "uploader-queue"
-        ] 
+        ]
     }
 }

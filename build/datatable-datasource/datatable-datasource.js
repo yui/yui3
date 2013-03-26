@@ -59,7 +59,7 @@ Y.mix(DataTableDataSource, {
         datasource: {
             setter: "_setDataSource"
         },
-        
+
         /**
         * @attribute initialRequest
         * @description Request sent to DataSource immediately upon initialization.
@@ -99,7 +99,7 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     * @param request {Object} DataSource request.
     * @private
     */
-    _setInitialRequest: function(request) {
+    _setInitialRequest: function(/* request */) {
     },
 
     /////////////////////////////////////////////////////////////////////////////

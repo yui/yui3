@@ -3,7 +3,7 @@
     "version": "3.6.0pre",
     "description": "YUI 3 Source",
     "author": "Dav Glass <davglass@gmail.com>",
-    "bugs": { "url" : "http://yuilibrary.com/projects/yui3/" },
+    "bugs": { "url" : "https://github.com/yui/yui3/issues" },
     "engines": {
         "node" : ">=0.4.0"
     },
@@ -12,7 +12,7 @@
     },
     "main": "./index.js",
     "dependencies": {
-        "request": "2.9.202"
+        "request": "~2.12.0"
     },
     "devDependencies": {
         "yuidocjs": "*",

@@ -1,20 +1,19 @@
 language: node_js
 node_js:
-    - 0.6
-    - 0.8
-    - 0.9
+    - "0.8"
+    - "0.9"
+    - "0.10"
 branches:
     only:
         - master
         - 3.x
-        - ie10
+        - dev-master
+        - dev-3.x
 before_install:
     - ./src/common/travis/before.sh
 install:
     - ./src/common/travis/install.sh
 script:
     - ./src/common/travis/test.sh
-notifications:
-    email:
-        - davglass@gmail.com
-        - davglass@yahoo-inc.com
+git:
+    depth: 30

@@ -360,12 +360,7 @@ suite.add( new Y.Test.Case({
 
     _should: {
         ignore: {
-            "test clickableRail": Y.UA.phantomjs
-        },
-        fail: {
-            // TODO This is a bug. invalid construction value should fallback
-            // to specified attribute default
-            "axis should only accept 'x', 'X', 'y', and 'Y'": true
+            "test clickableRail": Y.UA.phantomjs || Y.UA.touchEnabled
         }
     },
 
@@ -517,6 +512,7 @@ suite.add( new Y.Test.Case({
         slider.destroy();
     },
 
+    //TODO This test uses click simulation and will fail in touch environments
     "test clickableRail": function () {
         var slider = new Y.Slider({
                 width    : '300px',
@@ -651,6 +647,21 @@ suite.add( new Y.Test.Case({
         Y.Assert.isTrue(slider._dd.get('lock'));
 
         slider.destroy();
+    },
+
+    "test ARIA attributes upon instantiation": function () {
+        var slider  = new Y.Slider({ min: 0, max: 100, value: 50 });
+
+        slider.render('#testbed');
+
+        var thumb = slider.thumb;
+
+        Y.Assert.areEqual(0, thumb.getAttribute('aria-valuemin'));
+        Y.Assert.areEqual(100, thumb.getAttribute('aria-valuemax'));
+        Y.Assert.areEqual(50, thumb.getAttribute('aria-valuenow'));
+        Y.Assert.areEqual(50, thumb.getAttribute('aria-valuetext'));
+
+        slider.destroy();
     }
 }));
 
@@ -658,7 +669,7 @@ suite.add( new Y.Test.Case({
     name: "Mouse",
     _should: {
         ignore: {
-            "clicking on the rail should move the thumb": Y.UA.phantomjs
+            "clicking on the rail should move the thumb": Y.UA.phantomjs || Y.UA.touchEnabled
         }
     },
     setUp: function () {
@@ -668,7 +679,8 @@ suite.add( new Y.Test.Case({
     tearDown: function () {
         Y.one("#testbed").remove(true);
     },
-
+    
+    //TODO This test uses click simulation and will fail in touch environments
     "clicking on the rail should move the thumb": function () {
         var slider = new Y.Slider({
                 length: '350px',

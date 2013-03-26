@@ -22,8 +22,6 @@ var getClassName = Y.ClassNameManager.getClassName,
     LEFT = "left",
     WIDTH = "width",
     HEIGHT = "height",
-    SCROLL_WIDTH = "scrollWidth",
-    SCROLL_HEIGHT = "scrollHeight",
 
     HORIZ_CACHE = "_sbh",
     VERT_CACHE = "_sbv",
@@ -144,7 +142,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * Designated initializer
      *
      * @method initializer
-     */    
+     */
     initializer: function() {
         this._host = this.get("host");
 
@@ -160,7 +158,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      *
      * @method _hostDimensionsChange
      * @protected
-     */    
+     */
     _hostDimensionsChange: function() {
         var host = this._host,
             axis = host._cAxis,
@@ -189,7 +187,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @param {Event.Facade} e The event facade.
      * @protected
      */
-    _hostScrollEnd : function(e) {
+    _hostScrollEnd : function() {
         var host = this._host,
             scrollX = host.get(SCROLL_X),
             scrollY = host.get(SCROLL_Y);
@@ -201,7 +199,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
     /**
      * Adds or removes a scrollbar node from the document.
-     * 
+     *
      * @method _renderBar
      * @private
      * @param {Node} bar The scrollbar node
@@ -224,8 +222,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
     /**
      * Caches scrollbar child element information,
-     * to optimize _update implementation 
-     * 
+     * to optimize _update implementation
+     *
      * @method _setChildCache
      * @private
      * @param {Node} node
@@ -252,7 +250,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
     /**
      * Clears child cache
-     * 
+     *
      * @method _clearChildCache
      * @private
      * @param {Node} node
@@ -276,7 +274,6 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
         var host = this._host,
             basic = this._basic,
-            cb = host._cb,
 
             scrollbarSize = 0,
             scrollbarPos = 1,
@@ -330,6 +327,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         } else if (scrollbarPos < 0) {
             scrollbarSize = scrollbarPos + scrollbarSize;
             scrollbarPos = 0;
+        } else if (isNaN(scrollbarPos)) {
+            scrollbarPos = 0;
         }
 
         middleChildSize = (scrollbarSize - (firstChildSize + lastChildSize));
@@ -372,7 +371,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
                 if (duration !== 0) {
                     transition = {
-                        duration : duration             
+                        duration : duration
                     };
 
                     if(NATIVE_TRANSITIONS) {
@@ -395,23 +394,23 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
                     lastChildPosition = scrollbarSize - lastChildSize;
     
-                    if(duration !== 0) { 
+                    if(duration !== 0) {
                         transition = {
                             duration : duration
                         };
                 
                         if (NATIVE_TRANSITIONS) {
-                            transition.transform = translate + lastChildPosition + PX_CLOSE; 
+                            transition.transform = translate + lastChildPosition + PX_CLOSE;
                         } else {
-                            transition[dimOffset] = lastChildPosition; 
+                            transition[dimOffset] = lastChildPosition;
                         }
 
                         lastChild.transition(transition);
                     } else {
                         if (NATIVE_TRANSITIONS) {
-                            lastChild.setStyle(TRANSFORM, translate + lastChildPosition + PX_CLOSE); 
+                            lastChild.setStyle(TRANSFORM, translate + lastChildPosition + PX_CLOSE);
                         } else {
-                            lastChild.setStyle(dimOffset, lastChildPosition + PX); 
+                            lastChild.setStyle(dimOffset, lastChildPosition + PX);
                         }
                     }
                 }
@@ -420,17 +419,17 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     },
 
     /**
-     * AOP method, invoked after the host's _uiScrollTo method, 
-     * to position and resize the scroll bars
+     * AOP method, invoked after the host's _uiScrollTo method,
+     *  to position and resize the scroll bars
      *
      * @method _update
      * @param x {Number} The current scrollX value
      * @param y {Number} The current scrollY value
-     * @param duration {Number} Number of ms of animation (optional) - used when snapping to bounds 
+     * @param duration {Number} Number of ms of animation (optional) - used when snapping to bounds
      * @param easing {String} Optional easing equation to use during the animation, if duration is set
      * @protected
      */
-    _update: function(x, y, duration, easing) {
+    _update: function(x, y, duration) {
         var vNode = this.get(VERTICAL_NODE),
             hNode = this.get(HORIZONTAL_NODE),
             host = this._host,
@@ -442,11 +441,11 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             this.show();
         }
 
-        if (axis && axis.y && vNode && y != null) {
+        if (axis && axis.y && vNode && y !== null) {
             this._updateBar(vNode, y, duration, false);
         }
 
-        if (axis && axis.x && hNode && x != null) {
+        if (axis && axis.x && hNode && x !== null) {
             this._updateBar(hNode, x, duration, true);
         }
     },
@@ -455,7 +454,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * Show the scroll bar indicators
      *
      * @method show
-     * @param animated {Boolean} Whether or not to animate the showing 
+     * @param animated {Boolean} Whether or not to animate the showing
      */
     show: function(animated) {
         this._show(true, animated);
@@ -475,7 +474,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * Internal hide/show implementation utility method
      *
      * @method _show
-     * @param {boolean} show Whether to show or hide the scrollbar 
+     * @param {boolean} show Whether to show or hide the scrollbar
      * @param {bolean} animated Whether or not to animate while showing/hide
      * @protected
      */
@@ -500,11 +499,11 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             opacity : opacity
         };
 
-        if (verticalNode) {
+        if (verticalNode && verticalNode._node) {
             verticalNode.transition(transition);
         }
 
-        if (horizontalNode) {
+        if (horizontalNode && horizontalNode._node) {
             horizontalNode.transition(transition);
         }
     },
@@ -515,8 +514,6 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @method flash
      */
     flash: function() {
-        var host = this._host;
-
         this.show(true);
         this._flashTimer = Y.later(800, this, 'hide', true);
     },
@@ -528,7 +525,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @param node {Node} The Y.Node instance for the scrollbar
      * @param name {String} The attribute name
      * @return {Node} The Y.Node instance for the scrollbar
-     * 
+     *
      * @protected
      */
     _setNode: function(node, name) {
@@ -549,12 +546,12 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      *
      * @method _defaultNode
      * @return {Node} The Y.Node instance for the scrollbar
-     * 
+     *
      * @protected
      */
     _defaultNode: function() {
         return Y.Node.create(ScrollbarsPlugin.SCROLLBAR_TEMPLATE);
-    },    
+    },
 
     _basic: Y.UA.ie && Y.UA.ie <= 8
 

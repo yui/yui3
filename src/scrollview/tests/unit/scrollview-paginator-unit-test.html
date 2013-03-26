@@ -8,9 +8,10 @@
 
         <!--<script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js" type="text/javascript" charset="utf-8"></script> 
         -->
-        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>        
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+        
         <style>
-        	.horizontal {
+            .horizontal {
                 width:300px;
                 height:200px;
                 overflow:hidden;
@@ -26,10 +27,15 @@
                 font-size:5em;
                 opacity: 0.4;
                 text-align:center;
+
+                /* IE 6/7 needs inline block hack */
+                *display:inline;
+                *zoom:1;
             }
 
             .vertical li {
-            	height: 100px;
+                *zoom:1;
+                height: 100px;
                 width:300px;
                 color:black;
                 font-size:5em;
@@ -40,322 +46,454 @@
         </style>
         
         <script type="text/javascript" charset="utf-8">
-        var s;
+
         YUI({
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             coverage: ['scrollview-paginator']
-        }).use('console', 'test', 'node-event-simulate', 'scrollview-base', 'scrollview-paginator', function(Y) {
+        }).use('test-console', 'test', 'node-event-simulate', 'scrollview-base', 'scrollview-paginator', function(Y) {
 
-	        var DURATION = 1;
-	        var SLOW_DURATION = 1000; // Neccesary to trigger certain lines
+            var DURATION = 1,
+                SLOW_DURATION = 1000,
+                WAIT = 2000,
+                LONG_WAIT = 4000,
+                suite = new Y.Test.Suite({name:"Scrollview: Paginator"});
 
-	        // Set up the page
-	        var myConsole = new Y.Console().render();
-			
-	        var testBasic = new Y.Test.Case({
-	            name: "API Tests",
+            new Y.Test.Console().render();
+
+            suite.add(new Y.Test.Case({
+                name: "API Tests",
                 _should: {
                     ignore: {
-                        "Move x should advance 1 page right": Y.UA.phantomjs || Y.UA.ie,
-                        "Move left on X should snap back": Y.UA.phantomjs || Y.UA.ie,
-                        "optimizeMemory should hide nodes not near the viewport" : Y.UA.phantomjs || Y.UA.ie,
+                        // Ignore PhantomJS because of lack of gesture simulation support/issues
+                        "Move x should advance 1 page right": (Y.UA.phantomjs),
+                        "Move left on X should snap back": (Y.UA.phantomjs),
+                        "optimizeMemory should hide nodes not near the viewport" : (Y.UA.phantomjs || Y.UA.ie),
+                        "Disabled scrollviews should not advance page index on flick" : (Y.UA.phantomjs),
 
-                        // TODO: Investigate why these have issues in IE7
-                        "sv.next() should advance to the next page" : Y.UA.ie,
-                        "sv.next() on last index should do nothing" : Y.UA.ie
+                        // TODO: Fix for IE (#2533100)
+                        "Dual axis should allow scrolling on both X & Y axes" : (Y.UA.ie),
+
+                        // Mousewheel emulation is currently only supported in Chrome
+                        "mousewheel down should move the SV down" : (Y.UA.phantomjs || Y.UA.ie || Y.UA.gecko || Y.UA.android)
                     }
                 },
 
-			    //---------------------------------------------
-			    // Setup and tear down
-			    //---------------------------------------------
+                //---------------------------------------------
+                // Setup and tear down
+                //---------------------------------------------
 
-	            setUp : function () {
-	            	// console.log('setUp');
-	            },
-
-	            tearDown : function () {
-	            	// console.log('tearDown');
-	            	Y.one('#container').empty(true);
+                setUp : function () {
+                    // empty
                 },
-			
-				//---------------------------------------------
-			    // Instantiation
-			    //---------------------------------------------
 
-				"Ensure rendering & initial state are correct": function() {
-					var scrollview = renderNewScrollview(false),
-						bb = scrollview.get('boundingBox'),
-						cb = scrollview.get('contentBox'),
-						id = cb.get('id'),
-						ul = cb.all('> ul'),
-						li = cb.all('> ul > li');
+                tearDown : function () {
+                    // this.scrollview.destroy();
+                    Y.one('#container').empty(true);
+                },
+            
+                //---------------------------------------------
+                // Instantiation
+                //---------------------------------------------
 
-					Y.Assert.isTrue(bb.hasClass('yui3-scrollview'), "BoundingBox does not contain class 'yui3-scrollview'");
-					// @TODO:  False-positive. This is having issues in IE7, fix
-					// Y.Assert.isTrue(bb.hasClass('yui3-scrollview-horiz'), "BoundingBox does not contain class 'yui3-scrollview-horiz'");
-					Y.Assert.isTrue(bb.hasClass('yui3-scrollview-paged'), "BoundingBox does not contain class 'yui3-scrollview-paged'");
-					Y.Assert.isTrue(cb.hasClass('yui3-scrollview-content'), "ContentBox does not contain class 'yui3-scrollview-content'");
-				},
+                "Ensure rendering & initial state are correct": function() {
+                    var scrollview = renderNewScrollview('x'),
+                        bb = scrollview.get('boundingBox'),
+                        cb = scrollview.get('contentBox'),
+                        id = cb.get('id'),
+                        ul = cb.all('> ul'),
+                        li = cb.all('> ul > li');
 
-				"sv.next() should advance to the next page" : function () {
-					var Test = this,
-						sv = renderNewScrollview(false);
+                    Y.Assert.isTrue(bb.hasClass('yui3-scrollview'), "BoundingBox does not contain class 'yui3-scrollview'");
+                    // @TODO:  False-positive. This is having issues in IE7, fix
+                    // Y.Assert.isTrue(bb.hasClass('yui3-scrollview-horiz'), "BoundingBox does not contain class 'yui3-scrollview-horiz'");
+                    Y.Assert.isTrue(bb.hasClass('yui3-scrollview-paged'), "BoundingBox does not contain class 'yui3-scrollview-paged'");
+                    Y.Assert.isTrue(cb.hasClass('yui3-scrollview-content'), "ContentBox does not contain class 'yui3-scrollview-content'");
+                },
 
-					sv.on('scrollEnd', function () {
-						Test.resume(function () {
-							Y.Assert.areEqual(300, sv.get('scrollX'));
-						})
-					})
+                "sv.next() should advance to the next page" : function () {
+                    var Test = this,
+                        sv = renderNewScrollview('x');
 
-					sv.pages.next();
-					Test.wait(2000);
-				},
+                    sv.once('scrollEnd', function () {
+                        Test.resume(function () {
+                            Y.Assert.areEqual(300, sv.get('scrollX'));
+                        })
+                    })
 
-				"sv.next() on last index should do nothing" : function () {
-					var Test = this,
-						sv = renderNewScrollview(false, 9),
-						eventsFired = 0;
+                    sv.pages.next();
+                    Test.wait(WAIT);
+                },
 
-					sv.on('scrollEnd', function () {
-						eventsFired++;
-					});
+                "sv.next() on last index should do nothing" : function () {
+                    var Test = this,
+                        sv = renderNewScrollview('x', 9),
+                        eventsFired = 0;
 
-					Y.later(500, this, function () {
-						Test.resume(function () {
-							Y.Assert.areEqual(0, eventsFired);
-							Y.Assert.areEqual(2700, sv.get('scrollX'));
-						});
-					});
+                    sv.once('scrollEnd', function () {
+                        eventsFired++;
+                    });
 
-					sv.pages.next();
+                    Y.later(500, this, function () {
+                        Test.resume(function () {
+                            Y.Assert.areEqual(0, eventsFired);
+                            Y.Assert.areEqual(2700, sv.get('scrollX'));
+                        });
+                    });
 
-					Test.wait(2000);
-				},
+                    sv.pages.next();
 
-				"sv.prev() should advance to the previous page" : function () {
-					var Test = this,
-						sv = renderNewScrollview(true, 2);
+                    Test.wait(WAIT);
+                },
 
-					sv.on('scrollEnd', function () {
-						Test.resume(function () {
-							Y.Assert.areEqual(100, sv.get('scrollY'));
-						});
-					});
+                "sv.prev() should advance to the previous page" : function () {
+                    var Test = this,
+                        sv = renderNewScrollview('y', 2);
 
-					sv.pages.prev();
+                    sv.once('scrollEnd', function () {
+                        Test.resume(function () {
+                            Y.Assert.areEqual(100, sv.get('scrollY'));
+                        });
+                    });
 
-					Test.wait(2000);
-				},
+                    sv.pages.prev();
 
-				"sv.prev() on index 0 should do nothing" : function () {
-					var Test = this,
-						sv = renderNewScrollview(true),
-						eventsFired = 0;
+                    Test.wait(WAIT);
+                },
 
-					sv.on('scrollEnd', function () {
-						eventsFired++;
-					});
+                "sv.prev() on index 0 should do nothing" : function () {
+                    var Test = this,
+                        sv = renderNewScrollview('y'),
+                        eventsFired = 0;
 
-					Y.later(500, this, function () {
-						Test.resume(function () {
-							Y.Assert.areEqual(0, eventsFired);
-							Y.Assert.areEqual(0, sv.get('scrollY'));
-						});
-					});
+                    sv.once('scrollEnd', function () {
+                        eventsFired++;
+                    });
 
-					sv.pages.prev();
+                    Y.later(500, this, function () {
+                        Test.resume(function () {
+                            Y.Assert.areEqual(0, eventsFired);
+                            Y.Assert.areEqual(0, sv.get('scrollY'));
+                        });
+                    });
 
-					Test.wait(2000);
-				},
+                    sv.pages.prev();
 
-				"scrollToIndex should animate to the specified index" : function () {
-					var Test = this,
-						sv = renderNewScrollview(true);
+                    Test.wait(WAIT);
+                },
 
-					sv.on('scrollEnd', function () {
-						Test.resume(function () {
-							Y.Assert.areEqual(5, sv.pages.get('index'));
-							Y.Assert.areEqual(500, sv.get('scrollY'));
-						});
-					});
+                "scrollTo (deprecated) should animate to the specified index" : function () {
+                    var Test = this,
+                        sv = renderNewScrollview('y');
 
-					sv.pages.scrollToIndex(5);
+                    sv.once('scrollEnd', function () {
+                        Test.resume(function () {
+                            Y.Assert.areEqual(5, sv.pages.get('index'));
+                            Y.Assert.areEqual(500, sv.get('scrollY'));
+                        });
+                    });
 
-					Test.wait(2000);
-				},
+                    sv.pages.scrollTo(5);
 
-				/*
-				The default anim duration is 300ms so this test is designed to
-				check that the duration can be changed
-				*/
-				"scrollToIndex should animate with a longer anim duration": function () {
-					var Test = this,
-						sv = renderNewScrollview(true),
-						startTime = Y.Lang.now();
+                    Test.wait(WAIT);
+                },
 
-					sv.on('scrollEnd', function () {
-						Test.resume(function () {
-							Y.Assert.isTrue(Y.Lang.now() - startTime > 1000, 'Animation took less time than expected');
-						});
-					});
+                "scrollToIndex should animate to the specified index" : function () {
+                    var Test = this,
+                        sv = renderNewScrollview('y');
 
-					sv.pages.scrollToIndex(5, 1500);
-					Test.wait(2000);
-				},
+                    sv.once('scrollEnd', function () {
+                        Test.resume(function () {
+                            Y.Assert.areEqual(5, sv.pages.get('index'));
+                            Y.Assert.areEqual(500, sv.get('scrollY'));
+                        });
+                    });
+
+                    sv.pages.scrollToIndex(5);
+
+                    Test.wait(WAIT);
+                },
+
+                
+                /*
+                The default anim duration is 300ms so this test is designed to
+                check that the duration can be changed
+                */
+                "scrollToIndex should animate with a longer anim duration": function () {
+                    var Test = this,
+                        sv = renderNewScrollview('y'),
+                        startTime = Y.Lang.now();
+
+                    sv.once('scrollEnd', function () {
+                        Test.resume(function () {
+                            Y.Assert.isTrue(Y.Lang.now() - startTime > 1000, 'Animation took less time than expected');
+                        });
+                    });
+
+                    sv.pages.scrollToIndex(5, 1500);
+                    Test.wait(WAIT);
+                },
 
 
-				"Move x should advance 1 page right": function() {
+                "Move x should advance 1 page right": function() {
 
 
-					var Test = this,
-						scrollview = renderNewScrollview(false);
+                    var Test = this,
+                        scrollview = renderNewScrollview('x');
 
-					scrollview.on('scrollEnd', function(){
-						Test.resume(function(){
-							Y.Assert.areEqual(1, scrollview.pages.get('index'));
-							Y.Assert.areEqual(0, scrollview.get('scrollY'));
-							Y.Assert.areEqual(300, scrollview.get('scrollX'));
-						})
-					});
+                    scrollview.once('scrollEnd', function(){
+                        Test.resume(function(){
+                            Y.Assert.areEqual(1, scrollview.pages.get('index'));
+                            Y.Assert.areEqual(0, scrollview.get('scrollY'));
+                            Y.Assert.areEqual(300, scrollview.get('scrollX'));
+                        })
+                    });
 
-					scrollview.get('contentBox').simulateGesture('move', {
+                    scrollview.get('contentBox').simulateGesture('move', {
                         path: {
                             xdist: -500
                         },
                         duration: DURATION
-					});
+                    });
 
-					Test.wait(2000);
-				},
-
-
+                    Test.wait(WAIT);
+                },
 
 
-				"Move left on X should snap back": function() {
 
-					var Test = this,
-						scrollview = renderNewScrollview(false),
-						distance = 100;
-						
-					scrollview.on('scrollEnd', function(){
-						Test.resume(function(){
-							Y.Assert.areEqual(0, scrollview.pages.get('index'));
-							Y.Assert.areEqual(0, scrollview.get('scrollY'));
-							Y.Assert.areEqual(0, scrollview.get('scrollX'));
-						})
-					});
 
-					scrollview.get('contentBox').simulateGesture('move', {
+                "Move left on X should snap back": function() {
+
+                    var Test = this,
+                        scrollview = renderNewScrollview('x'),
+                        distance = 100;
+                        
+                    scrollview.once('scrollEnd', function(){
+                        Test.resume(function(){
+                            Y.Assert.areEqual(0, scrollview.pages.get('index'));
+                            Y.Assert.areEqual(0, scrollview.get('scrollY'));
+                            Y.Assert.areEqual(0, scrollview.get('scrollX'));
+                        })
+                    });
+
+                    scrollview.get('contentBox').simulateGesture('move', {
                         path: {
                             xdist: distance
                         },
+                        duration: SLOW_DURATION
+                    });
+
+                    Test.wait(LONG_WAIT);
+                },
+
+                "optimizeMemory should hide nodes not near the viewport": function() {
+
+                    var Test = this,
+                        scrollview = renderNewScrollview('x', 0, true),
+                        distance = 100;
+
+                    scrollview.on('scrollEnd', function(){
+                        Test.resume(function(){
+                            var index = scrollview.pages.get('index'),
+                                total = scrollview.pages.get('total'),
+                                pageNodes = scrollview.pages._getPageNodes();
+
+                            if (node = pageNodes.item(index-3)) { Y.Assert.isTrue(node.hasClass('yui3-scrollview-hidden')); }
+                            if (node = pageNodes.item(index-2)) { Y.Assert.isFalse(node.hasClass('yui3-scrollview-hidden')); }
+                            if (node = pageNodes.item(index-1)) { Y.Assert.isFalse(node.hasClass('yui3-scrollview-hidden')); }
+                            if (node = pageNodes.item(index))   { Y.Assert.isFalse(node.hasClass('yui3-scrollview-hidden')); }
+                            if (node = pageNodes.item(index+1)) { Y.Assert.isTrue(node.hasClass('yui3-scrollview-hidden')); }
+
+                            if (index+1 < total) {
+                                scrollview.get('contentBox').simulateGesture('move', {
+                                    path: {
+                                        xdist: -100
+                                    },
+                                    duration: DURATION
+                                });
+                                Test.wait(1000);
+                            }
+                        })
+                    });
+
+                    scrollview.get('contentBox').simulateGesture('move', {
+                        path: {
+                            xdist: -100
+                        },
                         duration: DURATION
-					});
+                    });
 
-					Test.wait(2000);
-				},
+                    Test.wait(1000);
+                },
 
-				"optimizeMemory should hide nodes not near the viewport": function() {
+                "mousewheel down should move the SV down": function () {
+                    
+                    var Test = this,
+                        scrollview = renderNewScrollview('y');
 
-					var Test = this,
-						scrollview = renderNewScrollview(false, 0, true),
-						distance = 100;
+                    scrollview.once('scrollEnd', function(){
+                        Test.resume(function(){
+                            Y.Assert.areEqual(1, scrollview.pages.get('index'));
+                        })
+                    });
 
-					scrollview.on('scrollEnd', function(){
-						Test.resume(function(){
-							var index = scrollview.pages.get('index'),
-								total = scrollview.pages.get('total'),
-								pageNodes = scrollview.pages._getPageNodes();
+                    Y.later(100, null, function () {
+                        simulateMousewheel(Y.one("#container li"), true);
+                    });
 
-							if (node = pageNodes.item(index-3)) { Y.Assert.isTrue(node.hasClass('yui3-scrollview-hidden')); }
-							if (node = pageNodes.item(index-2)) { Y.Assert.isFalse(node.hasClass('yui3-scrollview-hidden')); }
-							if (node = pageNodes.item(index-1)) { Y.Assert.isFalse(node.hasClass('yui3-scrollview-hidden')); }
-							if (node = pageNodes.item(index))   { Y.Assert.isFalse(node.hasClass('yui3-scrollview-hidden')); }
-							if (node = pageNodes.item(index+1)) { Y.Assert.isTrue(node.hasClass('yui3-scrollview-hidden')); }
+                    Test.wait(WAIT);
+                },
 
-							if (index+1 < total) {
-								scrollview.get('contentBox').simulateGesture('move', {
-			                        path: {
-			                            xdist: -500
-			                        },
-			                        duration: DURATION
-								});
-								Test.wait(1000);
-							}
-						})
-					});
+                "Dual axis should allow scrolling on both X & Y axes": function () {
+                    var Test = this,
+                        scrollview = renderNewScrollview('xy'),
+                        scrollToX = 300,
+                        scrollToY = 20;
 
-					scrollview.get('contentBox').simulateGesture('move', {
-						path: {
-							xdist: -500
-						},
-						duration: DURATION
-					});
+                    scrollview.once('scrollEnd', function(){
 
-					Test.wait(1000);
-				}
+                        Test.resume(function(){
+                            Y.Assert.areEqual(1, scrollview.pages.get('index'));
+                            Y.Assert.areEqual(scrollToX, scrollview.get('scrollX'));
 
-				/*
-					Additional tests:
-					- gestures
-					- mousewheel
-					- optimization
-					- next() past total
-					- scrollTo()
-					- lazyload
-					- Forced axis vs auto-detection
-					- Make sure scrollEnd only fires once
-				*/
+                            scrollview.once('scrollEnd', function(){
+                                Test.resume(function(){
+                                    Y.Assert.areEqual(1, scrollview.pages.get('index'));
+                                    Y.Assert.areEqual(scrollToX, scrollview.get('scrollX'));
+                                    Y.Assert.areEqual(scrollToY, scrollview.get('scrollY'));
+                                });
+                            });
 
-	        });
+                            Y.later(100, null, function () {
+                                scrollview.scrollTo(scrollToX, scrollToY, 200);
+                            });
 
-	        var suite = new Y.Test.Suite({name:"Scrollview Paginator Test Suite"});
-	        suite.add(testBasic);
+                            Test.wait(WAIT);
 
-	        Y.Test.Runner.setName("Scrollview Test Runner");
-	        Y.Test.Runner.add(suite);
-	        Y.Test.Runner.run();
+                        });
 
-			function renderNewScrollview (vertical, startIndex, optimizeMemory) {
+                    });
 
-				var config = {},
-					guid = Y.guid(),
-					html,
-					scrollview,
-					widgetClass,
-					axis;
-					            
-	            config.srcNode = '#' + guid;
+                    Y.later(100, null, function () {
+                        scrollview.pages.set('index', 1);
+                    });
 
-	            if (vertical) {
-	            	config.height = "100px";
-	            	widgetClass = 'vertical';
-	            	axis = 'y';
-	            }
-	            else {
-	            	config.width = "300px";
-	            	widgetClass = 'horizontal';
-	            	axis = 'x';
-	            }
+                    Test.wait(WAIT);
+                },
 
-	            config.plugins = [{
+
+
+                "Disabled scrollviews should not advance page index on flick": function() {
+
+                    var Test = this,
+                        scrollview = renderNewScrollview('x');
+
+                    scrollview.set('disabled', true);
+
+                    Y.later('100', null, function(){
+                        Test.resume(function(){
+                            scrollview.set('disabled', false);
+
+                            scrollview.once('scrollEnd', function(){
+                                Test.resume(function(){
+                                    Y.Assert.areEqual(1, scrollview.pages.get('index'));
+                                    Y.Assert.areEqual(0, scrollview.get('scrollY'));
+                                    Y.Assert.areEqual(300, scrollview.get('scrollX'));
+                                })
+                            });
+
+                            Y.Assert.areEqual(0, scrollview.pages.get('index'));
+                            Y.Assert.areEqual(0, scrollview.get('scrollY'));
+                            Y.Assert.areEqual(0, scrollview.get('scrollX'));
+
+                            scrollview.get('contentBox').simulateGesture('move', {
+                                path: {
+                                    xdist: -500
+                                },
+                                duration: DURATION
+                            });
+
+                            Test.wait(WAIT);
+                        })
+                    });
+
+                    scrollview.get('contentBox').simulateGesture('move', {
+                        path: {
+                            xdist: -500
+                        },
+                        duration: DURATION
+                    });
+
+                    Test.wait(WAIT);
+                }
+
+                /*
+                    Additional tests:
+                    - gestures
+                    - next() past total
+                    - lazyload
+                    - Forced axis vs auto-detection
+                    - Make sure scrollEnd only fires once
+                */
+
+            }));
+
+            Y.Test.Runner.setName("Scrollview Test Runner");
+            Y.Test.Runner.add(suite);
+            Y.Test.Runner.run();
+
+            function renderNewScrollview (axis, startIndex, optimizeMemory) {
+
+                var config = {},
+                    guid = Y.guid(),
+                    html,
+                    scrollview,
+                    widgetClass,
+                    axis;
+                                
+                config.srcNode = '#' + guid;
+
+                if (axis === 'y') {
+                    config.height = "100px";
+                    widgetClass = 'vertical';
+                    pAxis = axis;
+                }
+                else if (axis === 'x') {
+                    config.width = "300px";
+                    widgetClass = 'horizontal';
+                    pAxis = axis;
+                }
+                else if (axis === 'xy') {
+                    config.height = "100px";
+                    config.width = "300px";
+                    widgetClass = 'horizontal';
+                    config.axis = 'xy';
+                    pAxis = 'x';
+                }
+
+                config.plugins = [{
                     fn:Y.Plugin.ScrollViewPaginator,
                     cfg:{
-                    	index: startIndex || 0,
+                        index: startIndex || 0,
                         _optimizeMemory: optimizeMemory || false,
-                        axis: axis,
+                        axis: pAxis,
                         selector:">ul>li"
                     }
                 }];
-				html = "<div class='" + widgetClass + "'><div id='" + guid + "'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>",
-	            Y.one('#container').append(html);
+                html = "<div class='" + widgetClass + "'><div id='" + guid + "'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>",
+                Y.one('#container').append(html);
 
-				scrollview = new Y.ScrollView(config);
-				scrollview.render();
+                scrollview = new Y.ScrollView(config);
+                scrollview.render();
 
-				return scrollview;
-			}
+                return scrollview;
+            }
+
+            function simulateMousewheel (node, down) {
+                var evt = document.createEvent("WheelEvent");
+
+                evt.initWebKitWheelEvent(0, (down ? -1:1), Y.config.win, 0, 0, 0, 0, 0, 0, 0, 0);
+                node.getDOMNode().dispatchEvent(evt);
+            }
         });
         </script>
     </head>

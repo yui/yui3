@@ -55,6 +55,11 @@
             "jsfiles": [
                 "colwidths.js"
             ]
+        },
+        "datatable-formatters": {
+            "jsfiles": [
+                "formatters.js"
+            ]
         }
     }
 }

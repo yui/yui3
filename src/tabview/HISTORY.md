@@ -1,6 +1,21 @@
 TabView Change History
 ======================
 
+3.9.0
+-----
+
+* No changes.
+
+3.8.1
+-----
+
+* PR #404 Avoids rewriting Tab label & panel content. Fixes #2530253.
+
+3.8.0
+-----
+
+  * No changes.
+
 3.7.3
 -----
 
