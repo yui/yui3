@@ -1,4 +1,9 @@
 .yui3-datatable-col-editable {
     cursor: pointer;
 }
+.yui3-datatable-celleditor-error input,
+.yui3-datatable-celleditor-error textarea {
+    background-color: orange;
+}
+
 
