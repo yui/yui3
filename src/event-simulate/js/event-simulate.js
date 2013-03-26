@@ -897,7 +897,7 @@ function simulateTouchEvent(target, type,
  * @method simulate
  * @static
  */
-Y.Event.simulate = function(target, type, options){
+Y.namespace('Event').simulate = function(target, type, options){
 
     options = options || {};
 
