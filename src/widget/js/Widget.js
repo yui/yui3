@@ -1257,4 +1257,6 @@ Y.extend(Widget, Y.Base, {
     }
 });
 
+Y.EventTarget.configure(Widget);
+
 Y.Widget = Widget;

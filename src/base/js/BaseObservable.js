@@ -44,7 +44,7 @@
             AttributeObservable.call(this);
 
             this._eventPrefix = this.constructor.EVENT_PREFIX || this.constructor.NAME;
-            this._yuievt.config.prefix = this._eventPrefix;
+            //this._yuievt.config.prefix = this._eventPrefix;
         },
 
         /**
@@ -194,5 +194,7 @@
     };
 
     Y.mix(BaseObservable, AttributeObservable, false, null, 1);
+
+    Y.EventTarget.configure(BaseObservable, AttributeObservable.events);
 
     Y.BaseObservable = BaseObservable;

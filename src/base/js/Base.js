@@ -126,7 +126,7 @@
      * @type Object
      * @static
      */
-    Base.ATTRS = AttributeCore.protectAttrs(BaseCore.ATTRS);
+    Base.ATTRS  = AttributeCore.protectAttrs(BaseCore.ATTRS);
 
     Y.mix(Base, BaseCore, false, null, 1);
     Y.mix(Base, AttributeExtras, false, null, 1);
@@ -136,5 +136,7 @@
 
     // Fix constructor
     Base.prototype.constructor = Base;
+
+    Y.EventTarget.configure(Base, BaseObservable.events);
 
     Y.Base = Base;

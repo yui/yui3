@@ -4,46 +4,52 @@
  * @submodule node-core
  */
 
-/**
- * The NodeList class provides a wrapper for manipulating DOM NodeLists.
- * NodeList properties can be accessed via the set/get methods.
- * Use Y.all() to retrieve NodeList instances.
- *
- * @class NodeList
- * @constructor
- * @param nodes {String|element|Node|Array} A selector, DOM element, Node, list of DOM elements, or list of Nodes with which to populate this NodeList.
- */
 
-var NodeList = function(nodes) {
-    var tmp = [];
-
-    if (nodes) {
-        if (typeof nodes === 'string') { // selector query
-            this._query = nodes;
-            nodes = Y.Selector.query(nodes);
-        } else if (nodes.nodeType || Y_DOM.isWindow(nodes)) { // domNode || window
-            nodes = [nodes];
-        } else if (nodes._node) { // Y.Node
-            nodes = [nodes._node];
-        } else if (nodes[0] && nodes[0]._node) { // allow array of Y.Nodes
-            Y.Array.each(nodes, function(node) {
-                if (node._node) {
-                    tmp.push(node._node);
-                }
-            });
-            nodes = tmp;
-        } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
-            nodes = Y.Array(nodes, 0, true);
-        }
-    }
+var EventTarget = Y.EventTarget,
+    DEFAULT = '@default',
+    defaultEvent = Y._yuievt.events[DEFAULT],
 
     /**
-     * The underlying array of DOM nodes bound to the Y.NodeList instance
-     * @property _nodes
-     * @private
+     * The NodeList class provides a wrapper for manipulating DOM NodeLists.
+     * NodeList properties can be accessed via the set/get methods.
+     * Use Y.all() to retrieve NodeList instances.
+     *
+     * @class NodeList
+     * @constructor
+     * @param nodes {String|element|Node|Array} A selector, DOM element, Node, list of DOM elements, or list of Nodes with which to populate this NodeList.
      */
-    this._nodes = nodes || [];
-};
+    NodeList = function(nodes) {
+        var tmp = [];
+
+        EventTarget.call(this);
+
+        if (nodes) {
+            if (typeof nodes === 'string') { // selector query
+                this._query = nodes;
+                nodes = Y.Selector.query(nodes);
+            } else if (nodes.nodeType || Y_DOM.isWindow(nodes)) { // domNode || window
+                nodes = [nodes];
+            } else if (nodes._node) { // Y.Node
+                nodes = [nodes._node];
+            } else if (nodes[0] && nodes[0]._node) { // allow array of Y.Nodes
+                Y.Array.each(nodes, function(node) {
+                    if (node._node) {
+                        tmp.push(node._node);
+                    }
+                });
+                nodes = tmp;
+            } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
+                nodes = Y.Array(nodes, 0, true);
+            }
+        }
+
+        /**
+         * The underlying array of DOM nodes bound to the Y.NodeList instance
+         * @property _nodes
+         * @private
+         */
+        this._nodes = nodes || [];
+    };
 
 NodeList.NAME = 'NodeList';
 
@@ -121,7 +127,7 @@ NodeList._getTempNode = function(node) {
     return tmp;
 };
 
-Y.mix(NodeList.prototype, {
+Y.extend(NodeList, EventTarget, {
     _invoke: function(method, args, getter) {
         var ret = (getter) ? [] : this;
 
@@ -391,7 +397,16 @@ NodeList.importMethod(Y.Node.prototype, [
       * @chainable
       * @see Node.set
       */
-    'set'
+    'set',
+
+    /**
+    Override EventTarget's `detachAll` implementation to also remove DOM event
+    subscriptions from the elements in this Node.
+
+    @method detachAll
+    @chainable
+    **/
+    'detachAll'
 ]);
 
 // one-off implementation to convert array of Nodes to NodeList
@@ -434,6 +449,10 @@ NodeList.prototype.get = function(attr) {
 
     return (isNodeList) ? Y.all(ret) : ret;
 };
+
+EventTarget.configure(NodeList);
+NodeList.events = Y.Object(Y.Event.DOM_EVENTS);
+NodeList.events[DEFAULT] = defaultEvent;
 
 Y.NodeList = NodeList;
 

@@ -102,4 +102,6 @@
      */
     Attribute.protectAttrs = Y.AttributeCore.protectAttrs;
 
+    Y.EventTarget.configure(Attribute, Y.AttributeObservable.events);
+
     Y.Attribute = Attribute;

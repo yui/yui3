@@ -37,6 +37,25 @@
         }
     }
 
+    // TODO: This needs more thought
+    function eventsAggregator(prop, r, s) {
+        var sEvents, rEvents, type;
+
+        if (s.events) {
+            rEvents = r._buildEvents || (r._buildEvents = {});
+
+            sEvents = s.events;
+
+            for (type in sEvents) {
+                // Not in a hasOwnProperty check on purpose
+                rEvents[type] = rEvents[type] || {};
+                // TODO: do we want custom event overrides merging between
+                // superclass and extensions?
+                Y.mix(rEvents[type], sEvents[type], true);
+            }
+        }
+    }
+
     // Utility function used in `_buildCfg` to aggregate ATTRS configs from one
     // the sender constructor to the reciver constructor.
     function attrsAggregator(prop, r, s) {
@@ -114,7 +133,11 @@
         if (dynamic) {
             builtClass.NAME = name;
             builtClass.prototype.constructor = builtClass;
+            Y.EventTarget.configure(builtClass, builtClass._buildEvents);
+        } else if (builtClass._buildEvents) {
+            builtClass.publish(builtClass._buildEvents);
         }
+        delete builtClass._buildEvents;
 
         return builtClass;
     };
@@ -432,6 +455,7 @@
      */
     BaseCore._buildCfg = {
         custom: {
+            events        : eventsAggregator,
             ATTRS         : attrsAggregator,
             _ATTR_CFG     : attrCfgAggregator,
             _NON_ATTRS_CFG: arrayAggregator
@@ -443,6 +467,7 @@
     // Makes sure Base and BaseCore use separate `_buildCfg` objects.
     Base._buildCfg = {
         custom: {
+            events        : eventsAggregator,
             ATTRS         : attrsAggregator,
             _ATTR_CFG     : attrCfgAggregator,
             _NON_ATTRS_CFG: arrayAggregator

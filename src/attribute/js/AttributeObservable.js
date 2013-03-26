@@ -33,7 +33,17 @@
         // Perf tweak - avoid creating event literals if not required.
         this._ATTR_E_FACADE = {};
 
-        EventTarget.call(this, {emitFacade:true});
+        // Hack to make eventx work transparently, rather than require
+        // subclasses to call EventTarget.configure(MyClass)
+        if (!EventTarget.events.isPrototypeOf(this.constructor.events)) {
+            // FIXME: This will do bad things if MyClass.prototype = { ... },
+            // so it needs to go away.
+            EventTarget.configure(this.constructor);
+        }
+
+        //EventTarget.call(this, {emitFacade:true});
+        // emitFacade is configured in the class default event
+        EventTarget.call(this);
     }
 
     AttributeObservable._ATTR_CFG = [BROADCAST];
@@ -190,6 +200,9 @@
 
     // Basic prototype augment - no lazy constructor invocation.
     Y.mix(AttributeObservable, EventTarget, false, null, 1);
+
+    // AttributeObservable class default event is a FacadeEvent
+    Y.EventTarget.configure(AttributeObservable, null, { emitFacade: true });
 
     Y.AttributeObservable = AttributeObservable;
 
