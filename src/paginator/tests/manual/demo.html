@@ -21,7 +21,7 @@ body {
 YUI({
     filter: 'raw',
     combine: false
-}).use("paginator", "paginator-list", "paginator-dt", function (Y) {
+}).use("paginator", "paginator-list", "paginator-table", function (Y) {
 
 // PAGINATOR
     var pgList = new Y.Paginator({
@@ -39,7 +39,7 @@ YUI({
     var pgDT = new Y.Paginator({
                         totalItems: 1000,
                         itemsPerPage: 10,
-                        view: 'Paginator.DataTable',
+                        view: 'Paginator.Table',
                         viewConfig: {
                             pageSizes: [10, 25, { value: -1, display: '*' }]
                         }

@@ -2,19 +2,19 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>paginator-core Tests</title>
+    <title>paginator-base Tests</title>
 </head>
 <body lang="en" class="yui3-skin-sam">
 
     <div id="testbed"></div>
 
     <script src="../../../../build/yui/yui.js"></script>
-    <script src="./assets/paginator-core-tests.js"></script>
+    <script src="./assets/paginator-tests.js"></script>
     <script>
         YUI({
-            coverage: ['paginator-core'],
+            coverage: ['paginator', 'paginator-core', 'paginator-url'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-        }).use('test-console', 'paginator-core-tests', function (Y) {
+        }).use('test-console', 'paginator-tests', function (Y) {
 
             new Y.Test.Console().render();
 

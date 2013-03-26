@@ -95,15 +95,18 @@ PaginatorCore.prototype = {
      @method page
      */
     page: function (pageNumber) {
-        if (pageNumber) {
+        if (typeof pageNumber !== 'undefined') {
             var pages = this.get('pages');
-            if (this.get('circular') && pageNumber > pages) {
-                pageNumber %= pages;
+            if (this.get('circular')) {
+                if (pageNumber < 1) {
+                    pageNumber = pages - pageNumber;
+                }
+                if (pageNumber > pages) {
+                    pageNumber %= pages;
+                }
             }
 
-            if (pageNumber >= 1 && pageNumber <= this.get('pages')){
-                this.set('page', pageNumber);
-            }
+            this.set('page', Math.max(1, Math.min(pages, pageNumber)));
         }
     },
 

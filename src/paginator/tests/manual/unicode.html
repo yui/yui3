@@ -55,7 +55,7 @@
 
 
 <script>
-YUI().use('node', 'event', 'paginator', 'paginator-dt', function(Y){
+YUI().use('node', 'event', 'paginator', 'paginator-table', function(Y){
     var table = Y.one('tbody'),
         a = 0,
         maxA = 0,
@@ -66,7 +66,7 @@ YUI().use('node', 'event', 'paginator', 'paginator-dt', function(Y){
         pgConfig = {
                         totalItems: 0xFFFF,
                         itemsPerPage: 10,
-                        view: 'Paginator.DataTable',
+                        view: 'Paginator.Table',
                         viewConfig: {
                             pageSizes: [10, 25, 100]
                         }

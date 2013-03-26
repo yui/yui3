@@ -1,4 +1,4 @@
-YUI.add('paginator-base-tests', function (Y) {
+YUI.add('paginator-tests', function (Y) {
 
 var suite = new Y.Test.Suite("Paginator: Base");
 
@@ -26,7 +26,7 @@ suite.add(new Y.Test.Case({
 }));
 
 suite.add(new Y.Test.Case({
-    name: 'Paging methods',
+    name: 'Paginator Core methods',
 
     'test first last paging': function () {
         var pg = new Y.Paginator({
@@ -76,18 +76,17 @@ suite.add(new Y.Test.Case({
                 page: 5
             });
 
-        pg.set('page', 6);
-
+        pg.page(6);
         Y.Assert.areSame(6, pg.get('page'), 'did not page to 6');
 
-        pg.set('page', 2);
-
+        pg.page(2);
         Y.Assert.areSame(2, pg.get('page'), 'did not page to 2');
 
-        pg.set('page', 8);
-
+        pg.page(8);
         Y.Assert.areSame(8, pg.get('page'), 'did not page to 8');
 
+        pg.page();
+        Y.Assert.areSame(8, pg.get('page'), 'did not stay at page 8');
 
     },
 
@@ -110,6 +109,45 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(10, pg.get('page'), 'did not stay at page 10');
     },
 
+    'test circular paging': function () {
+        var pg = new Y.Paginator({
+                itemsPerPage: 10,
+                totalItems: 100,
+                page: 5,
+                circular: true
+            });
+
+        // go to last page
+        pg.last();
+        Y.Assert.areSame(10, pg.get('page'), 'did not page to 10');
+        // go to next page from last ... page 1
+        pg.next();
+        Y.Assert.areSame(1, pg.get('page'), 'did not wrap to 1');
+        // go to previous page from first ... page 10
+        pg.prev();
+        Y.Assert.areSame(10, pg.get('page'), 'did not wrap backwards to 10');
+    },
+
+    'test perPage should set page number': function () {
+        var pg = new Y.Paginator({
+                itemsPerPage: 10,
+                totalItems: 100,
+                page: 5
+            });
+
+        Y.Assert.areSame(5, pg.get('page'), 'Page is not currently set correctly.');
+
+        pg.perPage();
+
+        Y.Assert.areSame(10, pg.get('itemsPerPage'), 'itemsPerPage was updated');
+        Y.Assert.areSame(5, pg.get('page'), 'current page was updated.');
+
+        pg.perPage(2);
+
+        Y.Assert.areSame(2, pg.get('itemsPerPage'), 'itemsPerPage did not update');
+        Y.Assert.areSame(1, pg.get('page'), 'current page did not get updated to 1');
+    },
+
     'test index count to page': function () {
         var pg = new Y.Paginator({
                 itemsPerPage: 10,
@@ -117,33 +155,62 @@ suite.add(new Y.Test.Case({
                 page: 5
             });
 
-        Y.Assert.areSame(41, pg.get('index'));
+        Y.Assert.areSame(40, pg.get('index'));
+        Y.Assert.areSame(41, pg.get('itemIndex'));
+    },
+
+    'test all items per page has 1 page': function () {
+        var pg = new Y.Paginator({
+                itemsPerPage: '*',
+                totalItems: 100,
+                page: 1
+            });
+
+        Y.Assert.areSame(1, pg.get('pages'));
+        Y.Assert.areSame(-1, pg.get('itemsPerPage'));
+
+        // null should fail and keep same
+        pg.set('itemsPerPage', null);
+        Y.Assert.areSame(-1, pg.get('itemsPerPage'), 'Items were adjusted');
     }
 
 }));
 
 
 suite.add(new Y.Test.Case({
-    name: 'Widget methods',
+    name: 'Paginator Widget methods',
 
-    'test view extending': function () {
+    'test widget extending': function () {
         var pg = new Y.Paginator();
 
-        Y.Assert.isTrue(pg instanceof Y.View);
+        Y.Assert.isTrue(pg instanceof Y.Widget);
+    },
+
+    'test paginator can render': function () {
+        var pg = new Y.Paginator();
+
+        Y.Assert.areSame('function', typeof pg.render);
+
+        pg.render();
+    },
+
+    'test paging event listeners': function () {
+
+    },
+
+    'test to json method': function () {
+        var pg = new Y.Paginator({
+                itemsPerPage: 10,
+                totalItems: 100,
+                page: 5
+            });
+
+        console.log(pg.toJSON());
     }
 }));
 
-suite.add(new Y.Test.Case({
-    name: 'Url methods',
-
-    'test url methods': function () {
-        var pg = new Y.Paginator();
-
-        Y.Assert.isNotUndefined(pg.formatUrl);
-    }
-}));
 
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{ requires:['paginator-base', 'base-build', 'widget'] });
+}, '@VERSION@' ,{ requires:['paginator', 'base-build', 'widget'] });
