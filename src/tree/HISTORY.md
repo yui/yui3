@@ -1,7 +1,7 @@
 Tree Change History
 ===================
 
-@VERSION@
+3.9.1
 -----
 
 * Added a `src` option to all methods that trigger events. This value is passed
