@@ -219,6 +219,11 @@ Y.extend(Queue, Y.EventTarget, {
         var callback,
             cont = true;
 
+        if (this._executing) {
+            this._running = true;
+            return this;
+        }
+
         for (callback = this.next();
             callback && !this.isRunning();
             callback = this.next())
@@ -257,14 +262,17 @@ Y.extend(Queue, Y.EventTarget, {
      * @protected
      */
     _execute : function (callback) {
-        this._running = callback._running = true;
+
+        this._running   = callback._running = true;
+        this._executing = callback;
 
         callback.iterations--;
         this.fire(EXECUTE, { callback: callback });
 
         var cont = this._running && callback.autoContinue;
 
-        this._running = callback._running = false;
+        this._running   = callback._running = false;
+        this._executing = false;
 
         return cont;
     },

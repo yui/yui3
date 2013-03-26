@@ -906,8 +906,7 @@ suite.add(new Y.Test.Case({
     }
 }));
 
-/*
-// Avoiding a Y.Test bug where tests repeat infinitely
+
 suite.add(new Y.Test.Case({
     name : "From bugs",
 
@@ -946,7 +945,7 @@ suite.add(new Y.Test.Case({
 
     }
 }));
-*/
+
 
 Y.Test.Runner.add(suite);
 
