@@ -127,6 +127,10 @@ Y.augment = function (receiver, supplier, overwrite, whitelist, args) {
 
     Y.mix(to, newPrototype || sProto, overwrite, whitelist);
 
+    if (Y.EventTarget && Y.EventTarget.events.isPrototypeOf(supplier.events)) {
+        Y.EventTarget.configure(receiver);
+    }
+
     if (!sequester) {
         supplier.apply(to, args);
     }
@@ -189,6 +193,10 @@ Y.extend = function(r, s, px, sx) {
     // add object overrides
     if (sx) {
         Y.mix(r, sx, true);
+    }
+
+    if (Y.EventTarget && Y.EventTarget.events.isPrototypeOf(s.events)) {
+        Y.EventTarget.configure(r);
     }
 
     return r;
