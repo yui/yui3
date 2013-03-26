@@ -1,6 +1,11 @@
 Graphics Change History
 =======================
 
+@VERSION@
+-----
+
+  * #2533119 Removed all lint warnings.
+
 3.9.0
 -----
 
