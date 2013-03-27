@@ -13239,7 +13239,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the last from the NodeList and returns it.
           * @for NodeList
           * @method pop
-          * @return {Node} The last item in the NodeList.
+          * @return {Node | null} The last item in the NodeList, or null if the list is empty.
           */
         'pop': 0,
         /** Adds the given Node(s) to the end of the NodeList.
@@ -13251,7 +13251,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the first item from the NodeList and returns it.
           * @for NodeList
           * @method shift
-          * @return {Node} The first item in the NodeList.
+          * @return {Node | null} The first item in the NodeList, or null if the NodeList is empty.
           */
         'shift': 0,
         /** Returns a new NodeList comprising the Nodes in the given range.
@@ -18219,6 +18219,10 @@ IO.prototype = {
             }
         }
 
+        // Convert falsy values to an empty string. This way IE can't be
+        // rediculous and translate `undefined` to "undefined".
+        data || (data = '');
+
         if (data) {
             switch (method) {
                 case 'GET':
@@ -18558,9 +18562,10 @@ YUI.add('json-parse', function (Y, NAME) {
 
 var _JSON = Y.config.global.JSON;
 
-Y.namespace('JSON').parse = function () {
-    return _JSON.parse.apply(_JSON, arguments);
+Y.namespace('JSON').parse = function (obj, reviver, space) {
+    return _JSON.parse((typeof obj === 'string' ? obj : obj + ''), reviver, space);
 };
+
 
 }, '@VERSION@', {"requires": ["yui-base"]});
 YUI.add('transition', function (Y, NAME) {

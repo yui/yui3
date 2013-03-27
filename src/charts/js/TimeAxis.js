@@ -34,7 +34,7 @@ Y.TimeAxis = Y.Base.create("timeAxis", Y.Axis, [Y.TimeImpl], {
             label;
             l -= 1;
         increm = ((max - min)/l) * i;
-        if(direction && direction == "vertical")
+        if(direction && direction === "vertical")
         {
             label = max - increm;
         }

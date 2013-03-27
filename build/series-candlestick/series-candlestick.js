@@ -8,7 +8,7 @@ YUI.add('series-candlestick', function (Y, NAME) {
  */
 /**
  * The CandlestickSeries class renders columns (candles) and lines (wicks) representing the open, high, low and close
- * values for a chart. 
+ * values for a chart.
  *
  * @class CandlestickSeries
  * @extends RangeSeries
@@ -51,13 +51,13 @@ CandlestickSeries.ATTRS = {
                 this.set("rendered", true);
             }
             this.set("upcandle", val.addShape({
-               type: "path" 
+               type: "path"
             }));
             this.set("downcandle", val.addShape({
-               type: "path" 
+               type: "path"
             }));
             this.set("wick", val.addShape({
-               type: "path" 
+               type: "path"
             }));
             return val;
         }
@@ -66,31 +66,31 @@ CandlestickSeries.ATTRS = {
     /**
      * Reference to the candlestick used when the close value is higher than the open value.
      *
-     * @attribute upcandle 
+     * @attribute upcandle
      * @type Path
-     */ 
+     */
     upcandle: {},
 
     /**
      * Reference to the candlestick used when the open value is higher than the close value.
      *
-     * @attribute downcandle 
+     * @attribute downcandle
      * @type Path
-     */ 
+     */
     downcandle: {},
 
     /**
      * Reference to the line drawn between the high and low values.
      *
-     * @attribute wick 
+     * @attribute wick
      * @type Path
-     */ 
+     */
     wick: {}
 
     /**
      * Style properties used for drawing candles and wicks. This attribute is inherited from `RangeSeries`. Below are the default values:
      *  <dl>
-     *      <dt>upcandle</dt><dd>Properties for a candle representing a period that closes higher than it opens.    
+     *      <dt>upcandle</dt><dd>Properties for a candle representing a period that closes higher than it opens.
      *          <dl>
      *              <dt>fill</dt><dd>A hash containing the following values:
      *                  <dl>
@@ -108,7 +108,7 @@ CandlestickSeries.ATTRS = {
      *              </dd>
      *          </dl>
      *      </dd>
-     *      <dt>downcandle</dt><dd>Properties for a candle representing a period that opens higher than it closes.    
+     *      <dt>downcandle</dt><dd>Properties for a candle representing a period that opens higher than it closes.
      *          <dl>
      *              <dt>fill</dt><dd>A hash containing the following values:
      *                  <dl>
@@ -119,7 +119,7 @@ CandlestickSeries.ATTRS = {
      *              </dd>
      *              <dt>border</dt><dd>A hash containing the following values:
      *                  <dl>
-     *                      <dt>color</dt><dd>Color of the border. The default value is "#000000".</dd> 
+     *                      <dt>color</dt><dd>Color of the border. The default value is "#000000".</dd>
      *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
      *                      <dt>weight</dt><dd>Number indicating the width of the border. The default value is 0.</dd>
      *                  </dl>
@@ -189,7 +189,7 @@ Y.extend(CandlestickSeries, Y.RangeSeries, {
             closecoord = closecoords[i];
             up = opencoord > closecoord;
             top = up ? closecoord : opencoord;
-            bottom = up ? opencoord : closecoord; 
+            bottom = up ? opencoord : closecoord;
             height = bottom - top;
             candle = up ? upcandle : downcandle;
             candle.drawRect(left, top, width, height);
@@ -227,15 +227,15 @@ Y.extend(CandlestickSeries, Y.RangeSeries, {
         var upcandle = this.get("upcandle"),
             downcandle = this.get("downcandle"),
             wick = this.get("wick");
-        if(upcandle) 
+        if(upcandle)
         {
             upcandle.destroy();
         }
-        if(downcandle) 
+        if(downcandle)
         {
             downcandle.destroy();
         }
-        if(wick) 
+        if(wick)
         {
             wick.destroy();
         }

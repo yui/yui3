@@ -9,7 +9,7 @@
  * @class CanvasGraphic
  * @constructor
  */
-function CanvasGraphic(config) {
+function CanvasGraphic() {
 
     CanvasGraphic.superclass.constructor.apply(this, arguments);
 }
@@ -277,9 +277,10 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function(attr, value)
+	set: function()
 	{
 		var host = this,
+            attr = arguments[0],
             redrawAttrs = {
                 autoDraw: true,
                 autoSize: true,
@@ -355,7 +356,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      * @param {Object} config Optional attributes
      * @private
      */
-    initializer: function(config) {
+    initializer: function() {
         var render = this.get("render"),
             visibility = this.get("visible") ? "visible" : "hidden",
             w = this.get("width") || 0,
@@ -431,8 +432,8 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         {
             cfg.visible = false;
         }
-        var shapeClass = this._getShapeClass(cfg.type),
-            shape = new shapeClass(cfg);
+        var ShapeClass = this._getShapeClass(cfg.type),
+            shape = new ShapeClass(cfg);
         this._appendShape(shape);
         return shape;
     },
@@ -661,14 +662,14 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             node = this.get("node");
         if(autoSize)
         {
-            if(autoSize == "sizeContentToGraphic")
+            if(autoSize === "sizeContentToGraphic")
             {
                 contentWidth = box.right - box.left;
                 contentHeight = box.bottom - box.top;
                 w = parseFloat(Y_DOM.getComputedStyle(node, "width"));
                 h = parseFloat(Y_DOM.getComputedStyle(node, "height"));
                 matrix = new Y.Matrix();
-                if(preserveAspectRatio == "none")
+                if(preserveAspectRatio === "none")
                 {
                     xScale = w/contentWidth;
                     yScale = h/contentHeight;
