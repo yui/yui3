@@ -9,6 +9,9 @@ Tree Change History
   distinguish between changes caused by different sources (such as
   user-initiated changes vs. programmatic changes). [Ryan Grove]
 
+* Added a `Tree.Sortable` extension, which can be mixed into any Tree class to
+  provide customizable sorting logic for nodes.
+
 
 3.9.0
 -----
