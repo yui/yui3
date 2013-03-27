@@ -1,10 +1,11 @@
 YUI.add('date-tests', function(Y) {
 
     //Helper function to normalize timezone dependent hours.
-    var getHours = function(date, pad) {
+    var getHours = function(date, pad, ampm) {
         pad = (pad === false) ? false : true;
+        ampm = (ampm === false) ? false : true;
         var h = date.getHours();
-        if (h > 12) {
+        if (h > 12 & ampm) {
             h = (h - 12);
         }
         if (h === 0) {
@@ -80,7 +81,6 @@ YUI.add('date-tests', function(Y) {
             //Must set this here because other tests are "resetting" the default lang.
             Y.Intl.setLang("datatype-date-format", "en-US");
             ampm = Y.Date.format(date, {format: "%p"});
-            hour = Y.Date.format(date, {format: "%H"});
 
             output = Y.Date.format(date);
             ASSERT.areSame("1995-12-17", output, "Expected default format (%F)");
@@ -89,7 +89,7 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame("12/17/95", output, "Expected %D format.");
 
             output = Y.Date.format(date, {format:"%R"});
-            ASSERT.areSame(hour + ":24", output, "Expected %R format.");
+            ASSERT.areSame(getHours(date, true, false) + ":24", output, "Expected %R format.");
 
             output = Y.Date.format(date, {format:"%C"});
             ASSERT.areSame(19, parseInt(output, 10), 'Expected %C format.');
