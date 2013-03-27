@@ -1,0 +1,264 @@
+<link type="text/css" rel="stylesheet" href="{{yuiBuildUrl}}/cssbutton/cssbutton-min.css">
+<div class="intro">
+    <p>
+        Promises are a tool to help write and manage asynchronous code in a
+        more readable style that looks similar to synchronous code.
+    </p>
+
+    <p>
+        Promises allow you to wrap, and even chain, asynchronous operations
+        using a consistent API, avoiding writing nested anonymous callbacks
+        (the "pyramid of doom"). Additionally, promises allow you to intercept,
+        and optionally recover from, errors that happen at any point in a
+        promise chain.
+    </p>
+
+    <p>
+        The `Y.Promise` class is compatible with the
+        <a href="http://promises-aplus.github.com/promises-spec/">Promises/A+</a>
+        specifiation.
+    </p>
+
+</div>
+
+{{>getting-started}}
+
+<h2>The Basics</h2>
+
+<p>
+    It is sometimes helpful to describe promises by first stating what they
+    <em>are not</em>. Promises are not a replacement for events. They are less
+    feature rich than `Y.AsyncQueue` and more generic than `Y.Parallel`, though
+    some concepts are shared. They aren't an abstraction for streaming data.
+</p>
+
+<h3>Two Simple Methods</h3>
+
+<p>
+    Promises operate using two methods: the `Y.Promise` constructor, and the
+    promise instance's `then` method.
+</p>
+
+```
+// Create a promise for a value
+var promise = new Y.Promise(function (resolve, reject) {
+    var promisedValue;
+
+    // ...do some work to assign promisedValue, most likely asynchronously
+
+    // When the work is done, fulfill the promise with the resolve function,
+    // which was passed in the arguments.
+    resolve(promisedValue);
+
+    // Or if something went wrong, reject the promise with the reject function,
+    // also passed in the arguments.
+    reject(reasonForFailure);
+});
+
+// Do something with the promised value when it is ready using the then()
+// method. then() takes two functions as arguments.
+// promise.then(onFulfilled, onRejected);
+promise.then(
+    // aka onFulfilled
+    function (promisedValue) {
+        alert("Here's that value I promised I'd get for you: " + promisedValue);
+    },
+
+    // aka onRejected
+    function (reason) {
+        alert("Oh no! I broke my promise. Here's why: " + reason);
+    });
+```
+
+<h3>Resolving a Promise</h3>
+
+<p>
+    Promises can be in one of three states:
+</p>
+
+<ol>
+    <li>`pending`   - the promised value is not ready yet (default)</li>
+    <li>`fulfilled` - the value is ready</li>
+    <li>`rejected`  - something went wrong, the value can't be produced</li>
+</ol>
+
+<p>
+    "Resolving" a promise moves a `pending` promise to either `fulfilled` or
+    `rejected`, though the term is often used interchangeably with "fulfill"
+    (it's good to have a positive outlook). Once a promise is fulfilled or
+    rejected, it can't be transitioned to another state.
+</p>
+
+<p>
+    There are two ways promises get resolved. We'll talk about the second way
+    when we discuss <a href="">promise chaining</a>.
+</p>
+
+<h3>Creating a Promise</h3>
+
+<p>
+    The `Y.Promise` constructor takes as its argument a function we'll call the
+    "executor function". This function is responsible for saying when the
+    promised value is ready, or notifying that something went wrong.
+</p>
+
+<p>
+    The executor function receives two customized functions as its arguments,
+    commonly called `resolve` and `reject`. If the work in the executor
+    function to get the promised value completes successfully, pass the value
+    to the `resolve` method. If something went wrong, pass the
+    reason&mdash;commonly an `Error`&mdash;to the `reject` method.
+</p>
+
+```
+var promise = new Y.Promise(function (resolve, reject) {
+    Y.io('getdata.php', {
+        on: {
+            success: function (id, response) {
+                // The IO completed, so the promise can be resolved
+                try {
+                    resolve(Y.JSON.parse(response.responseText));
+                } catch (e) {
+                    // any failure to produce the value is a rejection
+                    reject(e);
+                }
+            },
+            failure: function (id, response) {
+                // The IO failed
+                reject(new Error("getdata.php request failed: " + response));
+            }
+        }
+    });
+});
+```
+
+<h3>Getting the Promised Value</h3>
+
+<p>
+    Since the promised value probably isn't ready when you create the promise,
+    you can't synchronously consume the value. Schedule the code that will use
+    the promised value to execute with the promise's `then` method.
+</p>
+
+```
+var stuff;
+
+var promise = new Y.Promise(getStuff);
+
+// when getStuff says the promise is fulfilled, update the stuff variable
+promise.then(function (stuffValue) {
+    stuff = stuffValue;
+});
+
+// stuff isn't populated yet because the promise hasn't been fulfilled
+console.log("Stuff value is " + stuff); // => "Stuff value is undefined"
+```
+
+<h4>Always Asynchronous</h4>
+
+<p>
+    It's important to note that even if the `getStuff` function above resolved
+    the promise immediately, callbacks scheduled with `then` will
+    <strong>always be called asynchronously</strong>. So the example code above
+    will always log "Stuff value is undefined", regardless of whether
+    `getStuff` operates synchronously or asynchronously.
+</p>
+
+<p>
+    To limit the runtime impact of `then` callbacks always being executed
+    asynchronously, they are scheduled using `Y.soon()`, which will attempt to
+    avoid any minimum delay that some browsers impose on `setTimeout`.
+</p>
+
+<h2>The Not-so Basics</h2>
+
+<h3>Promise Chaining</h3>
+
+<p>
+    Here's where things start getting fun. When you call `promise.then(...)`,
+    a new promise is returned. The new promise will resolve when either of the
+    original promise's `onFulfilled` or `onRejected` functions return a value
+    or throw an error. This allows you to schedule several asynchronous
+    operations using chained `then()` calls.
+</p>
+
+```
+startSpinner();
+
+// Note Y.Promise can be called without 'new'
+Promise(function (resolve) {
+        // make sure the node-transition module is loaded, and use the resolve
+        // function as the use() callback.
+        Y.use('node-transition', resolve);
+    })
+    .then(loadUserData)            // returns another promise
+    .then(renderTemplates)         // returns another promise
+    .then(stopSpinner, showError); // returns another promise
+```
+
+<p>
+    A chained promise is resolved by the return value of the previous promise's
+    callbacks. Or, if an error is thrown, the chained promise is rejected.
+</p>
+
+```
+var handlePromise = getDBHandle();
+
+handlePromise
+    .then(function (handle) {
+        
+    
+});
+```
+
+<h3>Omitting `onFulfilled` or `onRejected`</h3>
+
+
+<h3>Handling Errors</h3>
+ - recovering from errors
+ - caveat: the unhandled rejection
+
+```
+getServerAHandle()
+    .then(null, getServerBHandle)
+    .then(getUserData)
+    .then(renderTemplates)
+    .then(stopSpinner, showError)
+```
+
+<h3>Resolving Promises With Promises</h3>
+
+<p>
+    Maybe you've noticed all the examples above include only one asynchronous
+    operation in the promise chain&mdash&the operation wrapped by the executor
+    function passed to the `Y.Promise` constructor. Now it's time to add
+    more asynchronous operations into the chain.
+</p>
+
+<p>
+    To delay the fulfillment or rejection of a chained promise, return another
+    promise from the `onFulfilled` callback. Resolving a promise with another
+    promise tells the first to use the resolved state of the second when it is
+    ready.
+</p>
+
+```
+```
+
+<h3>`Y.when()` For Promise wrapping</h3>
+
+not sure if that method returns a promise, or that external lib returns a compatible promise-like object? wrap it with Y.when()
+
+<h3>Non-serial Operatation Batching</h3>
+Y.batch(promise, promise, promise).then(...)
+
+<h3>Custom Promises</h3>
+Subclassing Promise
+
+<h2>FAQ</h2>
+What's the difference between `Y.Promise` and...
+ - events     - promises are transactional
+ - AsyncQueue - AQ is for splitting up lengthy synchronous operations
+ - Parallel   - similar to batch, but no error handling or async guarantee
+
+What are the plans for Promises in the library?
