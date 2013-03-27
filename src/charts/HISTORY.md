@@ -1,6 +1,11 @@
 Charts Change History
 =====================
 
+3.9.1
+-----
+
+  * #2533120 Removed all lint warnings.
+
 3.9.0
 -----
 
