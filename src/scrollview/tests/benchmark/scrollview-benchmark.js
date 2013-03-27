@@ -1,23 +1,32 @@
-YUI().use('scrollview-base', 'benchmark', function (Y) {
+YUI.add('scrollview-benchmark', function (Y, NAME) {
 
-    var container = document.createElement('div'),
-        bench,
+    var suite = Y.Benchmark.suite,
+        container,
         scrollview;
-
+    
+    container = document.createElement('div')
     container.id = "container";
     document.body.appendChild(container);
 
-    var suite = new Benchmark.Suite();
-    
-    Y.Benchmark.addTest(suite);
-    
-    suite.add("Create and Destroy", function () {
-        scrollview = new Y.ScrollView({
-            render: container
-        });
-        scrollview.destroy();
+    suite.add({
+        Y: Y,
+        name: 'ScrollView: Create', 
+        fn: function () {
+            scrollview = new Y.ScrollView({
+                render: container
+            });
+        }
     });
     
-    suite.run();
+    suite.add({
+        Y: Y,
+        name: 'ScrollView: Create & Destroy', 
+        fn: function () {
+            scrollview = new Y.ScrollView({
+                render: container
+            });
+            scrollview.destroy();
+        }
+    });
 
-});
+}, '@VERSION@', {requires: ['scrollview-base']});

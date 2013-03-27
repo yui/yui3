@@ -1,7 +1,6 @@
-YUI().use('base', 'benchmark', function (Y) {
+YUI.add('base-benchmark', function (Y) {
 
-    var suite = new Benchmark.Suite();
-    Y.Benchmark.addTest(suite);
+    var suite = Y.Benchmark.suite;
 
     var MyBase20 = function() {
         MyBase20.superclass.constructor.apply(this, arguments);
@@ -357,39 +356,70 @@ YUI().use('base', 'benchmark', function (Y) {
     Y.extend(MyBaseCore, Y.BaseCore);
 
 
-    suite.add('Base', function () {
-       var b = new Y.Base();    
+    suite.add({
+        Y: Y,
+        name: 'Base', 
+        fn: function () {
+            var b = new Y.Base();    
+        }
     });
 
-    suite.add('MyBase', function () {
-       var b = new MyBase();   
+    suite.add({
+        Y: Y,
+        name: 'MyBase', 
+        fn: function () {
+            var b = new MyBase();   
+        }
     });
 
-    suite.add('MyBase with 10 simple value attributes', function () {
-       var b = new MyBase10(); 
-    });
+    // suite.add({
+    //     Y: Y,
+    //     name: 'MyBase with 10 simple value attributes', 
+    //     fn: function () {
+    //         var b = new MyBase10(); 
+    //     }
+    // });
 
-    suite.add('MyBase with 20 varied attributes', function () {
-       var b = new MyBase20(); 
-    });
+    // suite.add({
+    //     Y: Y,
+    //     name: 'MyBase with 20 varied attributes', 
+    //     fn: function () {
+    //         var b = new MyBase20(); 
+    //     }
+    // });
 
-    // // BaseCore
+    // // // BaseCore
 
-    suite.add('BaseCore', function () {
-       var b = new Y.BaseCore();    
-    });
+    // suite.add({
+    //     Y: Y,
+    //     name: 'BaseCore', 
+    //     fn: function () {
+    //         var b = new Y.BaseCore();
+    //     }   
+    // });
 
-    suite.add('MyBaseCore', function () {
-       var b = new MyBaseCore();   
-    });
+    // suite.add({
+    //     Y: Y,
+    //     name: 'MyBaseCore', 
+    //     fn: function () {
+    //         var b = new MyBaseCore();  
+    //     } 
+    // });
 
-    suite.add('MyBaseCore with 10 simple value attributes', function () {
-       var b = new MyBaseCore10(); 
-    });
+    // suite.add({
+    //     Y: Y,
+    //     name: 'MyBaseCore with 10 simple value attributes', 
+    //     fn: function () {
+    //         var b = new MyBaseCore10(); 
+    //     }
+    // });
 
-    suite.add('MyBaseCore with 20 varied attributes', function () {
-       var b = new MyBaseCore20(); 
-    });
+    // suite.add({
+    //     Y: Y,
+    //     name: 'MyBaseCore with 20 varied attributes', 
+    //     fn: function () {
+    //         var b = new MyBaseCore20(); 
+    //     }
+    // });
 
-    suite.run(true);
-});
+}, '@VERSION@', {requires: ['base']});
