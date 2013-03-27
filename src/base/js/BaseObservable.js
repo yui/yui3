@@ -75,16 +75,18 @@
              * @param {EventFacade} e Event object, with a cfg property which
              * refers to the configuration object passed to the constructor.
              */
-            this.publish(INIT, {
-                queuable:false,
-                fireOnce:true,
-                defaultTargetOnly:true,
-                defaultFn:this._defInitFn
-            });
+
+            var type = this._getFullType(INIT),
+                e = this._publish(type);
+
+            e.emitFacade = true;
+            e.fireOnce = true;
+            e.defaultTargetOnly = true;
+            e.defaultFn = this._defInitFn;
 
             this._preInitEventCfg(config);
 
-            this.fire(INIT, {cfg: config});
+            this.fire(type, {cfg: config});
 
             return this;
         },

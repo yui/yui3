@@ -87,27 +87,34 @@ var L = Y.Lang,
 
     ET = function(opts) {
 
-        if (!opts) {
-            opts = {};
-        }
+        var etState = this._yuievt,
+            etConfig;
 
-        if (!this._yuievt) {
-            this._yuievt = {
-
+        if (!etState) {
+            etState = this._yuievt = {
                 events: {},    // PERF: Not much point instantiating lazily. We're bound to have events
-                targets: null, // PERF: Instantiate lazily, if user actually adds target
-                config: opts,
-
-                chain: ('chain' in opts) ? opts.chain : Y.config.chain,
-
-                defaults: {
+                targets: null, // PERF: Instantiate lazily, if user actually adds target,
+                config: {
                     host: this,
                     context: this
-                }
+                },
+                chain: Y.config.chain
             };
         }
 
-        mixConfigs(this._yuievt.defaults, opts, true);
+        etConfig = etState.config;
+
+        if (opts) {
+            mixConfigs(etConfig, opts, true);
+
+            if (opts.chain !== undefined) {
+                etState.chain = opts.chain;
+            }
+
+            if (opts.prefix) {
+                etConfig.prefix = opts.prefix;
+            }
+        }
     };
 
 ET.prototype = {
@@ -551,67 +558,101 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     publish: function(type, opts) {
 
-        var events,
-            ce,
-            ret,
-            etState,
-            etConfig,
-            pre;
-
-        if (typeof type === "string")  {
-
-            etState  = this._yuievt;
-            etConfig = etState.config;
-            events = etState.events;
+        var ret,
+            etState = this._yuievt,
+            etConfig = etState.config,
             pre = etConfig.prefix;
 
+        if (typeof type === "string")  {
             if (pre) {
                 type = _getType(type, pre);
             }
-
-            ce = events[type];
-
-            // PERF: Hate to pull the check out of monitor, but trying to keep critical path tight.
-            if ((etConfig.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
-                this._monitor('publish', type, {
-                    args: arguments
-                });
-            }
-
-            if (ce) {
-                // Apply new config to already published event
-                if (opts) {
-                    ce.applyConfig(opts, true);
-                }
-            } else {
-                // Publish event
-                ce = new Y.CustomEvent(type, etState.defaults);
-
-                if (opts) {
-                    mixConfigs(ce, opts, true);
-                }
-
-                events[type] = ce;
-            }
-
-            // make sure we turn the broadcast flag off if this
-            // event was published as a result of bubbling
-            // if (opts instanceof Y.CustomEvent) {
-            //   events[type].broadcast = false;
-            // }
-
-            return events[type];
-
+            ret = this._publish(type, etConfig, opts);
         } else {
-
             ret = {};
 
             Y.each(type, function(v, k) {
-                ret[k] = this.publish(k, v || opts);
+                if (pre) {
+                    k = _getType(k, pre);
+                }
+                ret[k] = this._publish(k, etConfig, v || opts);
             }, this);
 
-            return ret;
         }
+
+        return ret;
+    },
+
+    /**
+     * Returns the fully qualified type, given a short type string.
+     * That is, returns "foo:bar" when given "bar" if "foo" is the configured prefix.
+     *
+     * NOTE: This method, unlike _getType, does no checking of the value passed in, and
+     * is designed to be used with the low level _publish() method, for critical path
+     * implementations which need to fast-track publish for performance reasons.
+     *
+     * @method _getFullType
+     * @private
+     * @param {String} type The short type to prefix
+     * @return {String} The prefixed type, if a prefix is set, otherwise the type passed in
+     */
+    _getFullType : function(type) {
+
+        var pre = this._yuievt.config.prefix;
+
+        if (pre) {
+            return pre + PREFIX_DELIMITER + type;
+        } else {
+            return type;
+        }
+    },
+
+    /**
+     * The low level event publish implementation. It expects all the massaging to have been done
+     * outside of this method. e.g. the `type` to `fullType` conversion. It's designed to be a fast
+     * path publish, which can be used by critical code paths to improve performance.
+     *
+     * @method _publish
+     * @private
+     * @param {String} fullType The prefixed type of the event to publish.
+     * @param {Object} etOpts The EventTarget specific configuration to mix into the published event.
+     * @param {Object} ceOpts The publish specific configuration to mix into the published event.
+     * @return {CustomEvent} The published event. If called without `etOpts` or `ceOpts`, this will
+     * be the default `CustomEvent` instance, and can be configured independently.
+     */
+    _publish : function(fullType, etOpts, ceOpts) {
+
+        var ce,
+            etState = this._yuievt,
+            etConfig = etState.config,
+            host = etConfig.host,
+            context = etConfig.context,
+            events = etState.events;
+
+        ce = events[fullType];
+
+        // PERF: Hate to pull the check out of monitor, but trying to keep critical path tight.
+        if ((etConfig.monitored && !ce) || (ce && ce.monitored)) {
+            this._monitor('publish', fullType, {
+                args: arguments
+            });
+        }
+
+        if (!ce) {
+            // Publish event
+            ce = events[fullType] = new Y.CustomEvent(fullType, etOpts);
+
+            if (!etOpts) {
+                ce.host = host;
+                ce.context = context;
+            }
+        }
+
+        if (ceOpts) {
+            mixConfigs(ce, ceOpts, true);
+        }
+
+        return ce;
     },
 
     /**

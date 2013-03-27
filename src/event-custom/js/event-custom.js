@@ -104,12 +104,9 @@ Y.CustomEvent = function(type, defaults) {
         this.afters = {};
     }
 
-    mixConfigs(this, defaults, true);
-
-    // this.subCount = 0;
-    // this.afterCount = 0;
-    this._hasSubs = false;
-    this._hasAfters = false;
+    if (defaults) {
+        mixConfigs(this, defaults, true);
+    }
 };
 
 /**
