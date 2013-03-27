@@ -274,7 +274,7 @@ YUI.add('date-tests', function(Y) {
                 ["01 - March - 2003","%d - %B - %Y",2003,2,1],
                 ["Sat, March 01, 2003", "%a, %B %d, %Y",2003,2,1],
                 ["Saturday, March 01, 2003", "%A, %B %d, %Y",2003,2,1],
-                ["Wed Mar 27 2013 17:56:13 GMT+0100 (CET)","%a %b %d %Y %T GMT%z",2013,2,27,16,56,13]
+                ["Wed Mar 27 2013 17:56:13 GMT+0100 (CET)","%a %b %d %Y %T GMT%z", 2013, 2, 27, 17, 56, 13]
             ];
             for (var i = 0; i < values.length; i++) {
                 var v = values[i];
