@@ -28,6 +28,16 @@ suite.add(new Y.Test.Case({
 
         Assert.areSame(Y.one('#test'), this.widget.get('constrain'), '`constrain` is not "#test" node.');
         Assert.isTrue(this.widget.get('preventOverlap'), '`preventOverlap` is not `false`.');
+    },
+
+    '`constrain` should be chainable': function () {
+        this.widget = new TestWidget({
+            constrain     : '#test',
+            preventOverlap: true,
+            render        : '#test'
+        });
+
+        Assert.areSame(this.widget, this.widget.constrain(), '`constrain` should return `this`');
     }
 }));
 
