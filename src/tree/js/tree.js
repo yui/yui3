@@ -412,12 +412,6 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
         options || (options = {});
         parent  || (parent = this.rootNode);
 
-        var index = options.index;
-
-        if (typeof index === 'undefined') {
-            index = parent.children.length;
-        }
-
         // If `node` is an array, recurse to insert each node it contains.
         //
         // Note: If you're getting an exception here because `node` is null when
@@ -445,6 +439,12 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
         }
 
         node = this.createNode(node);
+
+        var index = options.index;
+
+        if (typeof index === 'undefined') {
+            index = this._getDefaultNodeIndex(parent, node, options);
+        }
 
         this._fireTreeEvent(EVT_ADD, {
             index : index,
@@ -663,6 +663,25 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
         }
 
         return this;
+    },
+
+    /**
+    Returns the default insertion index that should be used when _node_ is
+    inserted as a child of _parent_ without an explicit index.
+
+    The primary purpose of this method is to serve as a hook point for
+    extensions and plugins that need to customize insertion order.
+
+    @method _getDefaultNodeIndex
+    @param {Tree.Node} parent Parent node.
+    @param {Tree.Node} node Node being inserted.
+    @param {Object} [options] Options passed to `insertNode()`.
+    @return {Number} Index at which _node_ should be inserted into _parent_'s
+        `children` array.
+    @protected
+    **/
+    _getDefaultNodeIndex: function (parent, node, options) {
+        return parent.children.length
     },
 
     /**
