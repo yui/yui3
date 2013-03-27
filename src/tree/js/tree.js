@@ -680,8 +680,8 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
         `children` array.
     @protected
     **/
-    _getDefaultNodeIndex: function (parent, node, options) {
-        return parent.children.length
+    _getDefaultNodeIndex: function (parent/*, node, options*/) {
+        return parent.children.length;
     },
 
     /**
