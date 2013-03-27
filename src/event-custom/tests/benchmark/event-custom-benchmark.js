@@ -3,13 +3,11 @@ YUI.add('event-custom-benchmark', function (Y) {
    var suite = Y.BenchmarkSuite = new Benchmark.Suite(),
        I = 0,
        ETPUBLISH,
+       ET_FAST_PUBLISH,
+       FN = function() {},
        ET10,
        ET2,
        ET;
-
-   ETPUBLISH = new Y.EventTarget({
-      emitFacade:true
-   });
 
    ET10 = new Y.EventTarget({
       emitFacade:true
@@ -29,6 +27,7 @@ YUI.add('event-custom-benchmark', function (Y) {
       emitFacade:true
    });
 
+
    ET2.publish("fooChange", {
       defaultTargetOnly: true,
       defaultFn:function() {}
@@ -43,7 +42,7 @@ YUI.add('event-custom-benchmark', function (Y) {
 
    var ET_CFG = {
       defaultTargetOnly: true,
-      defaultFn:function() {}
+      defaultFn:FN
    };
 
    // Ideally, would like to create a new ET for each run, but
@@ -146,7 +145,25 @@ YUI.add('event-custom-benchmark', function (Y) {
    });
 
    suite.add('Publish', function () {
-      ETPUBLISH.publish("fooChange" + (I++), ET_CFG);
+      // Unfortunate, but best way to reduce variance.
+      ETPUBLISH = new Y.EventTarget({emitFacade:true});
+
+      ETPUBLISH.publish("fooChange", ET_CFG);
+   });
+
+   suite.add('Low-level Publish', function () {
+
+      var type, e;
+
+      // Unfortunate, but best way to reduce variance.
+      ET_FAST_PUBLISH = new Y.EventTarget({emitFacade:true});
+
+      type = ET_FAST_PUBLISH._getFullType("fooChange");
+
+      e = ET_FAST_PUBLISH._publish(type);
+      e.emitFacade = true;
+      e.defaultFn = FN;
+      e.defaultTargetOnly = true;
    });
 
 }, '@VERSION@', {requires: ['event-custom', 'widget']});

@@ -132,11 +132,11 @@
          */
         _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts, cfg) {
             var host = this,
-                eventName = attrName + CHANGE,
+                eventName = this._getFullType(attrName + CHANGE),
                 state = host._state,
                 facade,
                 broadcast,
-                evtCfg;
+                e;
 
             if (!cfg) {
                 cfg = state.data[attrName] || {};
@@ -144,17 +144,16 @@
 
             if (!cfg.published) {
 
-                evtCfg = {
-                    defaultTargetOnly: true,
-                    defaultFn:host._defAttrChangeFn
-                };
+                e = host._publish(eventName);
+
+                e.emitFacade = true;
+                e.defaultTargetOnly = true;
+                e.defaultFn = host._defAttrChangeFn;
 
                 broadcast = cfg.broadcast;
                 if (broadcast !== undefined) {
-                    evtCfg.broadcast = broadcast;
+                    e.broadcast = broadcast;
                 }
-
-                host.publish(eventName, evtCfg);
 
                 cfg.published = true;
             }
