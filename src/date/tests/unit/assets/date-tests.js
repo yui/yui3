@@ -75,7 +75,6 @@ YUI.add('date-tests', function(Y) {
         testFormats: function() {
             var date = new Date(819199440000),
                 ampm,
-                hour,
                 output;
 
             //Must set this here because other tests are "resetting" the default lang.
