@@ -1901,7 +1901,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             lineStart = layout.getLineStart.apply(this);
             len = this.getTotalMajorUnits(majorUnit);
             majorUnitDistance = this.getMajorUnitDistance(len, layoutLength, majorUnit);
-            this.set("edgeOffset", this.getEdgeOffset(len, layoutLength) * 0.5);
+            this.set("edgeOffset", this.getEdgeOffset(len, layoutLength));
             if(len < 1)
             {
                 this._clearLabelCache();
