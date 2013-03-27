@@ -1,3 +1,5 @@
+// Constants to refer to the parts of the date array
+var YR = 0, MO = 1, D = 2, H = 3, MI = 4, S = 5;
 /**
  * Parse number submodule.
  *
@@ -6,17 +8,27 @@
  * @for Date
  */
 Y.mix(Y.namespace("Date"), {
-    _parseDigits: function (data, maxLen) {
+    /**
+     * Turns a sequence of digits into a number.
+     * Returns an array containing the value parsed and the number of characters read.
+     *
+     */
+    _parseDigits: function (data, maxLen, max, skipSpace) {
         var i, digit, val = 0;
         for (i = 0; i < maxLen; i += 1) {
-            digit = parseInt(data[i],10);
-            if (isNaN(digit)) {
-                if (i === 0) {
-                    i = NaN;
+            if (!(skipSpace && data[i] === ' ')) {
+                digit = parseInt(data[i],10);
+                if (isNaN(digit)) {
+                    if (i === 0) {
+                        i = NaN;
+                    }
+                    break;
                 }
-                break;
+                val = val * 10 + digit;
             }
-            val = val * 10 + digit;
+        }
+        if (val < 0 || max && val > max) {
+            i = NaN;
         }
         return [val,i];
     },
@@ -29,6 +41,7 @@ Y.mix(Y.namespace("Date"), {
         }
         return [0,NaN];
     },
+    _pending: {},
     parsers: {
         // Though some of the parts might not provide useful information,
         // such as the weekday
@@ -43,115 +56,194 @@ Y.mix(Y.namespace("Date"), {
         },
         b: function (data, d , resources) {
             var val = this._parseStrings(data, resources.b);
-            d[1] = val[0];
+            d[MO] = val[0];
             return val[1];
         },
         B: function (data, d , resources) {
             var val = this._parseStrings(data, resources.B);
-            d[1] = val[0];
+            d[MO] = val[0];
             return val[1];
         },
         C: function (data, d) {
             var val = this._parseDigits(data, 2);
-            d[0] += val[0];
+            d[YR] += val[0];
             return val[1];
         },
         d: function (data, d) {
-            var val = this._parseDigits(data, 2);
-            d[2] = val[0];
-            if (d[2] > 31) {
-                return NaN;
-            }
+            var val = this._parseDigits(data, 2, 31);
+            d[D] = val[0];
             return  val[1];
         },
         e: function (data, d) {
-            var val = this._parseDigits(data, 2);
-            d[2] = val[0];
-            if (d[2] > 31) {
-                return NaN;
-            }
+            var val = this._parseDigits(data.substr(i), 2, 31, true);
+            d[D] = val[0];
             return  val[1];
         },
-        g: function (data, d , resources) {
+        g: function (data, d) {
             var val = this._parseDigits(data, 2);
-            d[0] = val[0];
+            d[YR] = val[0];
             return  val[1];
         },
-        G: function (data, d , resources) {
+        G: function (data, d) {
             var val = this._parseDigits(data, 4);
-            d[0] = val[0];
+            d[YR] = val[0];
             return  val[1];
 
         },
-        H: function (data, d , resources) {
+        H: function (data, d) {
+            var val = this._parseDigits(data, 2, 23);
+            d[H] += val[0];
+            return val[1];
 
         },
-        I: function (data, d , resources) {
+        I: function (data, d) {
+            var val = this._parseDigits(data, 2, 12);
+            d[H] += val[0] - 1;
+            return val[1];
 
         },
-        j: function (data, d , resources) {
+        j: function (data) {
+            // The year might not be in yet, so I leave it pending
+            this._pending.j = this._parseDigits(data, 3);
 
         },
-        k: function (data, d , resources) {
+        k: function (data, d) {
+            var  val = this._parseDigits(data.substr(i), 2, 23, true);
+            d[H] += val[0];
+            return val[1];
+
 
         },
-        l: function (data, d , resources) {
+        l: function (data, d) {
+            var val = this._parseDigits(data, 2, 12, true);
+            d[H] += val[0] - 1;
+            return val[1];
 
         },
-        m: function (data, d , resources) {
-            var val = this._parseDigits(data, 2);
-            d[1] = val[0] - 1;
-            if (d[1] > 11) {
-                return NaN;
-            }
+        m: function (data, d) {
+            var val = this._parseDigits(data, 2, 12);
+            d[MO] = val[0] - 1;
             return  val[1];
 
         },
-        M: function (data, d , resources) {
-
+        M: function (data, d) {
+            var val = this._parseDigits(data, 2, 59);
+            d[MI] += val[0];
+            return  val[1];
         },
         p: function (data, d , resources) {
-
+            var val = this._parseStrings(data, resources.p);
+            d[H] += val[0] ? 12 : 0;
+            return val[1];
         },
         P: function (data, d , resources) {
-
+            var val = this._parseStrings(data, resources.P);
+            d[H] += val[0] ? 12 : 0;
+            return val[1];
         },
-        s: function (data, d , resources) {
-
+        s: function (data) {
+            // The seconds by themselves provide all that is needed
+            this._pending.s = parseInt(data, 10);
         },
-        S: function (data, d , resources) {
-
+        S: function (data, d) {
+            var val = this._parseDigits(data, 2, 59);
+            d[S] = val[0];
+            return  val[1];
         },
-        u: function (data, d , resources) {
-
+        u: function (data) {
+            // No useful information, just skip over
+            var val = this._parseDigits(data, 1);
+            return val[1];
         },
-        U: function (data, d , resources) {
-
+        U: function (data) {
+            // No useful information, just skip over
+            var val = this._parseDigits(data, 2);
+            return val[1];
         },
-        V: function (data, d , resources) {
-
+        V: function (data) {
+            // No useful information, just skip over
+            var val = this._parseDigits(data, 2);
+            return val[1];
         },
-        w: function (data, d , resources) {
-
+        w: function (data) {
+            // No useful information, just skip over
+            var val = this._parseDigits(data, 1);
+            return val[1];
         },
-        W: function (data, d , resources) {
-
+        W: function (data) {
+            // No useful information, just skip over
+            var val = this._parseDigits(data, 2);
+            return val[1];
         },
-        y: function (data, d , resources) {
-
+        y: function (data, d) {
+            var val = this._parseDigits(data, 4);
+            d[YR] = val[0];
+            return  val[1];
         },
         Y: function (data, d) {
             var val = this._parseDigits(data, 4);
-            d[0] = val[0];
+            d[YR] = val[0];
             return  val[1];
         },
-        z: function (data, d , resources) {
+        z: function (data, d) {
+            var len = 1, more = false, sign = 1, h = 0, m = 0,
+                code = data[0], val,
+                offset = new Date().getTimezoneOffset();
+            switch (code) {
+                case '+':
+                    more = true;
+                    break;
+                case '-':
+                    sign = -1;
+                    more = true;
+                    break;
+                case 'Z':
+                    break;
+                default:
+                    h = code.charCodeAt() - 'A'.charCodeAt();
+                    if (h > 24) {
+                        return NaN;
+                    }
+                    if (h > 12) {
+                        h = h - 12;
+                        sign = -1;
+                    }
+            }
+            if (more) {
+                val = this._parseDigits(data.substr(1),4);
+                len += val[1];
+                h = val[0];
+                if (val[1] <= 2) {
+                    if (data[val[1] + 1] === ':') {
+                        val = this._parseDigits(data.substr(val[1] + 2),2);
+                        len += val[1] + 1;
+                        m = val[0];
+                    }
+                } else {
+                    m = h % 100;
+                    h = Math.floor(h / 100);
+                }
+
+            }
+            m = d[MI] - sign * m + offset;
+            h = d[H] - sign * h;
+            while (m < 0) {
+                h -=1;
+                m += 60;
+            }
+            while (m > 59) {
+                h += 1;
+                m -= 60;
+            }
+            d[H] = h;
+            d[MI] = m;
+            return len;
+        },
+        Z: function () {
+            return NaN;
 
         },
-        Z: function (data, d , resources) {
-
-        },
-        '%': function (data, d , resources) {
+        '%': function () {
             return 1;
 
         }
@@ -180,9 +272,9 @@ Y.mix(Y.namespace("Date"), {
 
         cutoff = (cutoff === undefined ? 30 : cutoff);
 
-        /* jshint eqeqeq: false */ // The simple != below is intentional
+        /*jshint eqeqeq:false */ // The simple != below is intentional
         if (data && format && typeof(data) === 'string' && +data != data) {
-        /* jshint eqeqeq: true */
+        /*jshint eqeqeq:true */
 
             data = data.toLowerCase();
             format = this._expandAggregates(format);
@@ -202,7 +294,7 @@ Y.mix(Y.namespace("Date"), {
                     if (c === '%') {
                         p = true;
                     } else {
-                        if (data[j] !== c) {
+                        if (data[j] !== c.toLowerCase()) {
                             break scan;
                         }
                         j += 1;
@@ -214,10 +306,22 @@ Y.mix(Y.namespace("Date"), {
                 return null;
 
             }
-            if (cutoff !== null && d[0] < 100) {
-                d[0] += (d[0] < cutoff ? 2000 : 1900);
+            if (cutoff !== null && d[YR] < 100) {
+                d[YR] += (d[YR] < cutoff ? 2000 : 1900);
             }
-            return new Date(d[0],d[1],d[2],d[3],d[4],d[5],d[6]);
+            for (c in this._pending) {
+                switch (c) {
+                    case 'j':
+                        val = new Date(d[YR], 0, this._pending.j);
+                        d[MO] = val.getMonth();
+                        d[D] = val.getDate();
+                        break;
+                    case 's':
+                        return new Date(this._pending.s * 1000);
+
+                }
+            }
+            return new Date(d[YR],d[MO],d[D],d[H],d[MI],d[S]);
 
         } else {
 

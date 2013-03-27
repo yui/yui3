@@ -266,34 +266,43 @@ YUI.add('date-tests', function(Y) {
     var testParserWithFormat = new Y.Test.Case({
         testParsing: function () {
             var values = [
-                ["01/02/2003","%d/%m/%Y"],
-                ["01/Mar/2003","%d/%b/%Y"],
-                ["01/March/2003","%d/%B/%Y"],
-                ["01 - 02 - 2003","%d - %m - %Y"],
-                ["01 - Mar - 2003","%d - %b - %Y"],
-                ["01 - March - 2003","%d - %B - %Y"],
-                ["Sat, March 01, 2003", "%a, %B %d, %Y"],
-                ["Saturday, March 01, 2003", "%A, %B %d, %Y"]
+                ["01/02/2003","%d/%m/%Y", 2003,1,1],
+                ["01/Mar/2003","%d/%b/%Y",2003,2,1],
+                ["01/March/2003","%d/%B/%Y",2003,2,1],
+                ["01 - 02 - 2003","%d - %m - %Y",2003,1,1],
+                ["01 - Mar - 2003","%d - %b - %Y",2003,2,1],
+                ["01 - March - 2003","%d - %B - %Y",2003,2,1],
+                ["Sat, March 01, 2003", "%a, %B %d, %Y",2003,2,1],
+                ["Saturday, March 01, 2003", "%A, %B %d, %Y",2003,2,1],
+                ["Wed Mar 27 2013 17:56:13 GMT+0100 (CET)","%a %b %d %Y %T GMT%z",2013,2,27,16,56,13]
             ];
             for (var i = 0; i < values.length; i++) {
-                var f = values[i][1], d = values[i][0];
-                ASSERT.areSame(d, Y.Date.format(Y.Date.parse(d, f),{format:f}), i);
+                var v = values[i];
+                ASSERT.areSame(
+                    (new Date(v[2] || 0, v[3] || 0, v[4] || 0,v[5] || 0,v[6] || 0,v[7] || 0,v[8] || 0)).getTime(),
+                    Y.Date.parse(v[0], v[1]).getTime(),
+                    v[0] + ', ' + v[1] + ' at ' + i
+                );
             }
         },
         testParsingFR:function () {
             var values = [
-                ["01/02/2003","%d/%m/%Y"],
-                ["01/mars/2003","%d/%b/%Y"],
-                ["01/mars/2003","%d/%B/%Y"],
-                ["01 - 02 - 2003","%d - %m - %Y"],
-                ["01 - mars - 2003","%d - %b - %Y"],
-                ["01 - mars - 2003","%d - %B - %Y"],
-                ["sam., mars 01, 2003", "%a, %B %d, %Y"],
-                ["samedi, mars 01, 2003", "%A, %B %d, %Y"]
+                ["01/02/2003","%d/%m/%Y", 2003,1,1],
+                ["01/mars/2003","%d/%b/%Y", 2003,2,1],
+                ["01/mars/2003","%d/%B/%Y", 2003,2,1],
+                ["01 - 02 - 2003","%d - %m - %Y", 2003,1,1],
+                ["01 - mars - 2003","%d - %b - %Y", 2003,2,1],
+                ["01 - mars - 2003","%d - %B - %Y", 2003,2,1],
+                ["sam., mars 01, 2003", "%a, %B %d, %Y", 2003,2,1],
+                ["samedi, mars 01, 2003", "%A, %B %d, %Y", 2003,2,1]
             ];
             for (var i = 0; i < values.length; i++) {
-                var f = values[i][1], d = values[i][0];
-                ASSERT.areSame(d, dateFR.format(dateFR.parse(d, f),{format:f}), i);
+                var v = values[i];
+                ASSERT.areSame(
+                    (new Date(v[2] || 0, v[3] || 0, v[4] || 0,v[5] || 0,v[6] || 0,v[7] || 0,v[8] || 0)).getTime(),
+                    dateFR.parse(v[0], v[1]).getTime(),
+                    v[0] + ', ' + v[1] + ' at ' + i
+                );
             }
         }
     });
