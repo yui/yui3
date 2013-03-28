@@ -26,9 +26,9 @@ _yuitest_coverage["build/charts-base/charts-base.js"] = {
     path: "build/charts-base/charts-base.js",
     code: []
 };
-_yuitest_coverage["build/charts-base/charts-base.js"].code=["YUI.add('charts-base', function (Y, NAME) {","","/**"," * Provides functionality for creating charts."," *"," * @module charts"," * @submodule charts-base"," */","var CONFIG = Y.config,","    WINDOW = CONFIG.win,","    DOCUMENT = CONFIG.doc,","    Y_Lang = Y.Lang,","    IS_STRING = Y_Lang.isString,","    _getClassName = Y.ClassNameManager.getClassName,","    SERIES_MARKER = _getClassName(\"seriesmarker\");","","/**"," * Gridlines draws gridlines on a Graph."," *"," * @class Gridlines"," * @constructor"," * @extends Base"," * @uses Renderer"," * @param {Object} config (optional) Configuration parameters."," * @submodule charts-base"," */","Y.Gridlines = Y.Base.create(\"gridlines\", Y.Base, [Y.Renderer], {","    /**","     * Reference to the `Path` element used for drawing Gridlines.","     *","     * @property _path","     * @type Path","     * @private","     */","    _path: null,","","    /**","     * Removes the Gridlines.","     *","     * @method remove","     * @private","     */","    remove: function()","    {","        var path = this._path;","        if(path)","        {","            path.destroy();","        }","    },","","    /**","     * Draws the gridlines","     *","     * @method draw","     * @protected","     */","    draw: function()","    {","        if(this.get(\"axis\") && this.get(\"graph\"))","        {","            this._drawGridlines();","        }","    },","","    /**","     * Algorithm for drawing gridlines","     *","     * @method _drawGridlines","     * @private","     */","    _drawGridlines: function()","    {","        var path,","            axis = this.get(\"axis\"),","            axisPosition = axis.get(\"position\"),","            points,","            i = 0,","            l,","            direction = this.get(\"direction\"),","            graph = this.get(\"graph\"),","            w = graph.get(\"width\"),","            h = graph.get(\"height\"),","            line = this.get(\"styles\").line,","            color = line.color,","            weight = line.weight,","            alpha = line.alpha,","            count = this.get(\"count\"),","            length,","            lineFunction;","        if(isFinite(w) && isFinite(h) && w > 0 && h > 0)","        {","            if(count && Y.Lang.isNumber(count))","            {","                points = this._getPoints(count, w, h);","            }","            else if(axisPosition !== \"none\" && axis && axis.get(\"tickPoints\"))","            {","                points = axis.get(\"tickPoints\");","            }","            else","            {","                points = this._getPoints(axis.get(\"styles\").majorUnit.count, w, h);","            }","            l = points.length;","            path = graph.get(\"gridlines\");","            path.set(\"width\", w);","            path.set(\"height\", h);","            path.set(\"stroke\", {","                weight: weight,","                color: color,","                opacity: alpha","            });","            if(direction === \"vertical\")","            {","                lineFunction = this._verticalLine;","                length = h;","            }","            else","            {","                lineFunction = this._horizontalLine;","                length = w;","            }","            for(i = 0; i < l; i = i + 1)","            {","                lineFunction(path, points[i], length);","            }","            path.end();","        }","    },","","    /**","     * Calculates the coordinates for the gridlines based on a count.","     *","     * @method _getPoints","     * @param {Number} count Number of gridlines","     * @return Array","     * @private","     */","    _getPoints: function(count, w, h)","    {","        var i,","            points = [],","            multiplier,","            divisor = count - 1;","        for(i = 0; i < count; i = i + 1)","        {","            multiplier = i/divisor;","            points[i] = {","                x: w * multiplier,","                y: h * multiplier","            };","        }","        return points;","    },","","    /**","     * Algorithm for horizontal lines.","     *","     * @method _horizontalLine","     * @param {Path} path Reference to path element","     * @param {Object} pt Coordinates corresponding to a major unit of an axis.","     * @param {Number} w Width of the Graph","     * @private","     */","    _horizontalLine: function(path, pt, w)","    {","        path.moveTo(0, pt.y);","        path.lineTo(w, pt.y);","    },","","    /**","     * Algorithm for vertical lines.","     *","     * @method _verticalLine","     * @param {Path} path Reference to path element","     * @param {Object} pt Coordinates corresponding to a major unit of an axis.","     * @param {Number} h Height of the Graph","     * @private","     */","    _verticalLine: function(path, pt, h)","    {","        path.moveTo(pt.x, 0);","        path.lineTo(pt.x, h);","    },","","    /**","     * Gets the default value for the `styles` attribute. Overrides","     * base implementation.","     *","     * @method _getDefaultStyles","     * @return Object","     * @protected","     */","    _getDefaultStyles: function()","    {","        var defs = {","            line: {","                color:\"#f0efe9\",","                weight: 1,","                alpha: 1","            }","        };","        return defs;","    }","","},","{","    ATTRS: {","        /**","         * Indicates the direction of the gridline.","         *","         * @attribute direction","         * @type String","         */","        direction: {},","","        /**","         * Indicate the `Axis` in which to bind","         * the gridlines.","         *","         * @attribute axis","         * @type Axis","         */","        axis: {},","","        /**","         * Indicates the `Graph` in which the gridlines","         * are drawn.","         *","         * @attribute graph","         * @type Graph","         */","        graph: {},","","        /**","         * Indicates the number of gridlines to display. If no value is set, gridlines will equal the number of ticks in","         * the corresponding axis.","         *","         * @attribute count","         * @type Number","         */","        count: {}","    }","});","/**"," * Graph manages and contains series instances for a `CartesianChart`"," * instance."," *"," * @class Graph"," * @constructor"," * @extends Widget"," * @uses Renderer"," * @submodule charts-base"," */","Y.Graph = Y.Base.create(\"graph\", Y.Widget, [Y.Renderer], {","    /**","     * @method bindUI","     * @private","     */","    bindUI: function()","    {","        var bb = this.get(\"boundingBox\");","        bb.setStyle(\"position\", \"absolute\");","        this.after(\"widthChange\", this._sizeChangeHandler);","        this.after(\"heightChange\", this._sizeChangeHandler);","        this.after(\"stylesChange\", this._updateStyles);","        this.after(\"groupMarkersChange\", this._drawSeries);","    },","","    /**","     * @method syncUI","     * @private","     */","    syncUI: function()","    {","        var background,","            cb,","            bg,","            sc = this.get(\"seriesCollection\"),","            series,","            i = 0,","            len = sc ? sc.length : 0,","            hgl = this.get(\"horizontalGridlines\"),","            vgl = this.get(\"verticalGridlines\");","        if(this.get(\"showBackground\"))","        {","            background = this.get(\"background\");","            cb = this.get(\"contentBox\");","            bg = this.get(\"styles\").background;","            bg.stroke = bg.border;","            bg.stroke.opacity = bg.stroke.alpha;","            bg.fill.opacity = bg.fill.alpha;","            bg.width = this.get(\"width\");","            bg.height = this.get(\"height\");","            bg.type = bg.shape;","            background.set(bg);","        }","        for(; i < len; ++i)","        {","            series = sc[i];","            if(series instanceof Y.SeriesBase)","            {","                series.render();","            }","        }","        if(hgl && hgl instanceof Y.Gridlines)","        {","            hgl.draw();","        }","        if(vgl && vgl instanceof Y.Gridlines)","        {","            vgl.draw();","        }","    },","","    /**","     * Object of arrays containing series mapped to a series type.","     *","     * @property seriesTypes","     * @type Object","     * @private","     */","    seriesTypes: null,","","    /**","     * Returns a series instance based on an index.","     *","     * @method getSeriesByIndex","     * @param {Number} val index of the series","     * @return CartesianSeries","     */","    getSeriesByIndex: function(val)","    {","        var col = this.get(\"seriesCollection\"),","            series;","        if(col && col.length > val)","        {","            series = col[val];","        }","        return series;","    },","","    /**","     * Returns a series instance based on a key value.","     *","     * @method getSeriesByKey","     * @param {String} val key value of the series","     * @return CartesianSeries","     */","    getSeriesByKey: function(val)","    {","        var obj = this._seriesDictionary,","            series;","        if(obj && obj.hasOwnProperty(val))","        {","            series = obj[val];","        }","        return series;","    },","","    /**","     * Adds dispatcher to a `_dispatcher` used to","     * to ensure all series have redrawn before for firing event.","     *","     * @method addDispatcher","     * @param {CartesianSeries} val series instance to add","     * @protected","     */","    addDispatcher: function(val)","    {","        if(!this._dispatchers)","        {","            this._dispatchers = [];","        }","        this._dispatchers.push(val);","    },","","    /**","     * Collection of series to be displayed in the graph.","     *","     * @property _seriesCollection","     * @type Array","     * @private","     */","    _seriesCollection: null,","","    /**","     * Object containing key value pairs of `CartesianSeries` instances.","     *","     * @property _seriesDictionary","     * @type Object","     * @private","     */","    _seriesDictionary: null,","","    /**","     * Parses series instances to be displayed in the graph.","     *","     * @method _parseSeriesCollection","     * @param {Array} Collection of `CartesianSeries` instances or objects container `CartesianSeries` attributes values.","     * @private","     */","    _parseSeriesCollection: function(val)","    {","        if(!val)","        {","            return;","        }","        var len = val.length,","            i = 0,","            series,","            seriesKey;","        this._seriesCollection = [];","        this._seriesDictionary = {};","        this.seriesTypes = [];","        for(; i < len; ++i)","        {","            series = val[i];","            if(!(series instanceof Y.CartesianSeries) && !(series instanceof Y.PieSeries))","            {","                this._createSeries(series);","                continue;","            }","            this._addSeries(series);","        }","        len = this._seriesCollection.length;","        for(i = 0; i < len; ++i)","        {","            series = this.get(\"seriesCollection\")[i];","            seriesKey = series.get(\"direction\") === \"horizontal\" ? \"yKey\" : \"xKey\";","            this._seriesDictionary[series.get(seriesKey)] = series;","        }","    },","","    /**","     * Adds a series to the graph.","     *","     * @method _addSeries","     * @param {CartesianSeries} series Series to add to the graph.","     * @private","     */","    _addSeries: function(series)","    {","        var type = series.get(\"type\"),","            seriesCollection = this.get(\"seriesCollection\"),","            graphSeriesLength = seriesCollection.length,","            seriesTypes = this.seriesTypes,","            typeSeriesCollection;","        if(!series.get(\"graph\"))","        {","            series.set(\"graph\", this);","        }","        seriesCollection.push(series);","        if(!seriesTypes.hasOwnProperty(type))","        {","            this.seriesTypes[type] = [];","        }","        typeSeriesCollection = this.seriesTypes[type];","        series.set(\"graphOrder\", graphSeriesLength);","        series.set(\"order\", typeSeriesCollection.length);","        typeSeriesCollection.push(series);","        series.set(\"seriesTypeCollection\", typeSeriesCollection);","        this.addDispatcher(series);","        series.after(\"drawingComplete\", Y.bind(this._drawingCompleteHandler, this));","        this.fire(\"seriesAdded\", series);","    },","","    /**","     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs. The key value pairs include","     * attributes for the specific series and a type value which defines the type of series to be used.","     *","     * @method createSeries","     * @param {Object} seriesData Series attribute key value pairs.","     * @private","     */","    _createSeries: function(seriesData)","    {","        var type = seriesData.type,","            seriesCollection = this.get(\"seriesCollection\"),","            seriesTypes = this.seriesTypes,","            typeSeriesCollection,","            SeriesClass,","            series;","            seriesData.graph = this;","        if(!seriesTypes.hasOwnProperty(type))","        {","            seriesTypes[type] = [];","        }","        typeSeriesCollection = seriesTypes[type];","        seriesData.graph = this;","        seriesData.order = typeSeriesCollection.length;","        seriesData.graphOrder = seriesCollection.length;","        SeriesClass = this._getSeries(seriesData.type);","        series = new SeriesClass(seriesData);","        this.addDispatcher(series);","        series.after(\"drawingComplete\", Y.bind(this._drawingCompleteHandler, this));","        typeSeriesCollection.push(series);","        seriesCollection.push(series);","        series.set(\"seriesTypeCollection\", typeSeriesCollection);","        if(this.get(\"rendered\"))","        {","            series.render();","        }","    },","","    /**","     * String reference for pre-defined `Series` classes.","     *","     * @property _seriesMap","     * @type Object","     * @private","     */","    _seriesMap: {","        line : Y.LineSeries,","        column : Y.ColumnSeries,","        bar : Y.BarSeries,","        area :  Y.AreaSeries,","        candlestick : Y.CandlestickSeries,","        ohlc : Y.OHLCSeries,","        stackedarea : Y.StackedAreaSeries,","        stackedline : Y.StackedLineSeries,","        stackedcolumn : Y.StackedColumnSeries,","        stackedbar : Y.StackedBarSeries,","        markerseries : Y.MarkerSeries,","        spline : Y.SplineSeries,","        areaspline : Y.AreaSplineSeries,","        stackedspline : Y.StackedSplineSeries,","        stackedareaspline : Y.StackedAreaSplineSeries,","        stackedmarkerseries : Y.StackedMarkerSeries,","        pie : Y.PieSeries,","        combo : Y.ComboSeries,","        stackedcombo : Y.StackedComboSeries,","        combospline : Y.ComboSplineSeries,","        stackedcombospline : Y.StackedComboSplineSeries","    },","","    /**","     * Returns a specific `CartesianSeries` class based on key value from a look up table of a direct reference to a","     * class. When specifying a key value, the following options are available:","     *","     *  <table>","     *      <tr><th>Key Value</th><th>Class</th></tr>","     *      <tr><td>line</td><td>Y.LineSeries</td></tr>","     *      <tr><td>column</td><td>Y.ColumnSeries</td></tr>","     *      <tr><td>bar</td><td>Y.BarSeries</td></tr>","     *      <tr><td>area</td><td>Y.AreaSeries</td></tr>","     *      <tr><td>stackedarea</td><td>Y.StackedAreaSeries</td></tr>","     *      <tr><td>stackedline</td><td>Y.StackedLineSeries</td></tr>","     *      <tr><td>stackedcolumn</td><td>Y.StackedColumnSeries</td></tr>","     *      <tr><td>stackedbar</td><td>Y.StackedBarSeries</td></tr>","     *      <tr><td>markerseries</td><td>Y.MarkerSeries</td></tr>","     *      <tr><td>spline</td><td>Y.SplineSeries</td></tr>","     *      <tr><td>areaspline</td><td>Y.AreaSplineSeries</td></tr>","     *      <tr><td>stackedspline</td><td>Y.StackedSplineSeries</td></tr>","     *      <tr><td>stackedareaspline</td><td>Y.StackedAreaSplineSeries</td></tr>","     *      <tr><td>stackedmarkerseries</td><td>Y.StackedMarkerSeries</td></tr>","     *      <tr><td>pie</td><td>Y.PieSeries</td></tr>","     *      <tr><td>combo</td><td>Y.ComboSeries</td></tr>","     *      <tr><td>stackedcombo</td><td>Y.StackedComboSeries</td></tr>","     *      <tr><td>combospline</td><td>Y.ComboSplineSeries</td></tr>","     *      <tr><td>stackedcombospline</td><td>Y.StackedComboSplineSeries</td></tr>","     *  </table>","     *","     * When referencing a class directly, you can specify any of the above classes or any custom class that extends","     * `CartesianSeries` or `PieSeries`.","     *","     * @method _getSeries","     * @param {String | Object} type Series type.","     * @return CartesianSeries","     * @private","     */","    _getSeries: function(type)","    {","        var seriesClass;","        if(Y_Lang.isString(type))","        {","            seriesClass = this._seriesMap[type];","        }","        else","        {","            seriesClass = type;","        }","        return seriesClass;","    },","","    /**","     * Event handler for marker events.","     *","     * @method _markerEventHandler","     * @param {Object} e Event object.","     * @private","     */","    _markerEventHandler: function(e)","    {","        var type = e.type,","            markerNode = e.currentTarget,","            strArr = markerNode.getAttribute(\"id\").split(\"_\"),","            series = this.getSeriesByIndex(strArr[1]),","            index = strArr[2];","        series.updateMarkerState(type, index);","    },","","    /**","     * Collection of `CartesianSeries` instances to be redrawn.","     *","     * @property _dispatchers","     * @type Array","     * @private","     */","    _dispatchers: null,","","    /**","     * Updates the `Graph` styles.","     *","     * @method _updateStyles","     * @private","     */","    _updateStyles: function()","    {","        var styles = this.get(\"styles\").background,","            border = styles.border;","            border.opacity = border.alpha;","            styles.stroke = border;","            styles.fill.opacity = styles.fill.alpha;","        this.get(\"background\").set(styles);","        this._sizeChangeHandler();","    },","","    /**","     * Event handler for size changes.","     *","     * @method _sizeChangeHandler","     * @param {Object} e Event object.","     * @private","     */","    _sizeChangeHandler: function()","    {","        var hgl = this.get(\"horizontalGridlines\"),","            vgl = this.get(\"verticalGridlines\"),","            w = this.get(\"width\"),","            h = this.get(\"height\"),","            bg = this.get(\"styles\").background,","            weight,","            background;","        if(bg && bg.border)","        {","            weight = bg.border.weight || 0;","        }","        if(this.get(\"showBackground\"))","        {","            background = this.get(\"background\");","            if(w && h)","            {","                background.set(\"width\", w);","                background.set(\"height\", h);","            }","        }","        if(this._gridlines)","        {","            this._gridlines.clear();","        }","        if(hgl && hgl instanceof Y.Gridlines)","        {","            hgl.draw();","        }","        if(vgl && vgl instanceof Y.Gridlines)","        {","            vgl.draw();","        }","        this._drawSeries();","    },","","    /**","     * Draws each series.","     *","     * @method _drawSeries","     * @private","     */","    _drawSeries: function()","    {","        if(this._drawing)","        {","            this._callLater = true;","            return;","        }","        var sc,","            i,","            len,","            graphic = this.get(\"graphic\");","        graphic.set(\"autoDraw\", false);","        graphic.set(\"width\", this.get(\"width\"));","        graphic.set(\"height\", this.get(\"height\"));","        this._callLater = false;","        this._drawing = true;","        sc = this.get(\"seriesCollection\");","        i = 0;","        len = sc ? sc.length : 0;","        for(; i < len; ++i)","        {","            sc[i].draw();","            if((!sc[i].get(\"xcoords\") || !sc[i].get(\"ycoords\")) && !sc[i] instanceof Y.PieSeries)","            {","                this._callLater = true;","                break;","            }","        }","        this._drawing = false;","        if(this._callLater)","        {","            this._drawSeries();","        }","    },","","    /**","     * Event handler for series drawingComplete event.","     *","     * @method _drawingCompleteHandler","     * @param {Object} e Event object.","     * @private","     */","    _drawingCompleteHandler: function(e)","    {","        var series = e.currentTarget,","            graphic,","            index = Y.Array.indexOf(this._dispatchers, series);","        if(index > -1)","        {","            this._dispatchers.splice(index, 1);","        }","        if(this._dispatchers.length < 1)","        {","            graphic = this.get(\"graphic\");","            if(!graphic.get(\"autoDraw\"))","            {","                graphic._redraw();","            }","            this.fire(\"chartRendered\");","        }","    },","","    /**","     * Gets the default value for the `styles` attribute. Overrides","     * base implementation.","     *","     * @method _getDefaultStyles","     * @return Object","     * @protected","     */","    _getDefaultStyles: function()","    {","        var defs = {","            background: {","                shape: \"rect\",","                fill:{","                    color:\"#faf9f2\"","                },","                border: {","                    color:\"#dad8c9\",","                    weight: 1","                }","            }","        };","        return defs;","    },","","    /**","     * Destructor implementation Graph class. Removes all Graphic instances from the widget.","     *","     * @method destructor","     * @protected","     */","    destructor: function()","    {","        if(this._graphic)","        {","            this._graphic.destroy();","            this._graphic = null;","        }","        if(this._background)","        {","            this._background.get(\"graphic\").destroy();","            this._background = null;","        }","        if(this._gridlines)","        {","            this._gridlines.get(\"graphic\").destroy();","            this._gridlines = null;","        }","    }","}, {","    ATTRS: {","        /**","         * The x-coordinate for the graph.","         *","         * @attribute x","         * @type Number","         * @protected","         */","        x: {","            setter: function(val)","            {","                this.get(\"boundingBox\").setStyle(\"left\", val + \"px\");","                return val;","            }","        },","","        /**","         * The y-coordinate for the graph.","         *","         * @attribute y","         * @type Number","         * @protected","         */","        y: {","            setter: function(val)","            {","                this.get(\"boundingBox\").setStyle(\"top\", val + \"px\");","                return val;","            }","        },","","        /**","         * Reference to the chart instance using the graph.","         *","         * @attribute chart","         * @type ChartBase","         * @readOnly","         */","        chart: {","            getter: function() {","                var chart = this._state.chart || this;","                return chart;","            }","        },","","        /**","         * Collection of series. When setting the `seriesCollection` the array can contain a combination of either","         * `CartesianSeries` instances or object literals with properties that will define a series.","         *","         * @attribute seriesCollection","         * @type CartesianSeries","         */","        seriesCollection: {","            getter: function()","            {","                return this._seriesCollection;","            },","","            setter: function(val)","            {","                this._parseSeriesCollection(val);","                return this._seriesCollection;","            }","        },","","        /**","         * Indicates whether the `Graph` has a background.","         *","         * @attribute showBackground","         * @type Boolean","         * @default true","         */","        showBackground: {","            value: true","        },","","        /**","         * Read-only hash lookup for all series on in the `Graph`.","         *","         * @attribute seriesDictionary","         * @type Object","         * @readOnly","         */","        seriesDictionary: {","            readOnly: true,","","            getter: function()","            {","                return this._seriesDictionary;","            }","        },","","        /**","         * Reference to the horizontal `Gridlines` instance.","         *","         * @attribute horizontalGridlines","         * @type Gridlines","         * @default null","         */","        horizontalGridlines: {","            value: null,","","            setter: function(val)","            {","                var cfg,","                    key,","                    gl = this.get(\"horizontalGridlines\");","                if(gl && gl instanceof Y.Gridlines)","                {","                    gl.remove();","                }","                if(val instanceof Y.Gridlines)","                {","                    gl = val;","                    val.set(\"graph\", this);","                    return val;","                }","                else if(val)","                {","                    cfg = {","                        direction: \"horizonal\",","                        graph: this","                    };","                    for(key in val)","                    {","                        if(val.hasOwnProperty(key))","                        {","                            cfg[key] = val[key];","                        }","                    }","                    gl = new Y.Gridlines(cfg);","                    return gl;","                }","            }","        },","","        /**","         * Reference to the vertical `Gridlines` instance.","         *","         * @attribute verticalGridlines","         * @type Gridlines","         * @default null","         */","        verticalGridlines: {","            value: null,","","            setter: function(val)","            {","                var cfg,","                    key,","                    gl = this.get(\"verticalGridlines\");","                if(gl && gl instanceof Y.Gridlines)","                {","                    gl.remove();","                }","                if(val instanceof Y.Gridlines)","                {","                    gl = val;","                    val.set(\"graph\", this);","                    return val;","                }","                else if(val)","                {","                    cfg = {","                        direction: \"vertical\",","                        graph: this","                    };","                    for(key in val)","                    {","                        if(val.hasOwnProperty(key))","                        {","                            cfg[key] = val[key];","                        }","                    }","                    gl = new Y.Gridlines(cfg);","                    return gl;","                }","            }","        },","","        /**","         * Reference to graphic instance used for the background.","         *","         * @attribute background","         * @type Graphic","         * @readOnly","         */","        background: {","            getter: function()","            {","                if(!this._background)","                {","                    this._backgroundGraphic = new Y.Graphic({render:this.get(\"contentBox\")});","                    this._backgroundGraphic.get(\"node\").style.zIndex = 0;","                    this._background = this._backgroundGraphic.addShape({type: \"rect\"});","                }","                return this._background;","            }","        },","","        /**","         * Reference to graphic instance used for gridlines.","         *","         * @attribute gridlines","         * @type Graphic","         * @readOnly","         */","        gridlines: {","            readOnly: true,","","            getter: function()","            {","                if(!this._gridlines)","                {","                    this._gridlinesGraphic = new Y.Graphic({render:this.get(\"contentBox\")});","                    this._gridlinesGraphic.get(\"node\").style.zIndex = 1;","                    this._gridlines = this._gridlinesGraphic.addShape({type: \"path\"});","                }","                return this._gridlines;","            }","        },","","        /**","         * Reference to graphic instance used for series.","         *","         * @attribute graphic","         * @type Graphic","         * @readOnly","         */","        graphic: {","            readOnly: true,","","            getter: function()","            {","                if(!this._graphic)","                {","                    this._graphic = new Y.Graphic({render:this.get(\"contentBox\")});","                    this._graphic.get(\"node\").style.zIndex = 2;","                    this._graphic.set(\"autoDraw\", false);","                }","                return this._graphic;","            }","        },","","        /**","         * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.","         *","         * @attribute groupMarkers","         * @type Boolean","         */","        groupMarkers: {","            value: false","        }","","        /**","         * Style properties used for drawing a background. Below are the default values:","         *  <dl>","         *      <dt>background</dt><dd>An object containing the following values:","         *          <dl>","         *              <dt>fill</dt><dd>Defines the style properties for the fill. Contains the following values:","         *                  <dl>","         *                      <dt>color</dt><dd>Color of the fill. The default value is #faf9f2.</dd>","         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background fill.","         *                      The default value is 1.</dd>","         *                  </dl>","         *              </dd>","         *              <dt>border</dt><dd>Defines the style properties for the border. Contains the following values:","         *                  <dl>","         *                      <dt>color</dt><dd>Color of the border. The default value is #dad8c9.</dd>","         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background border.","         *                      The default value is 1.</dd>","         *                      <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>","         *                  </dl>","         *              </dd>","         *          </dl>","         *      </dd>","         *  </dl>","         *","         * @attribute styles","         * @type Object","         */","    }","});","/**"," * The ChartBase class is an abstract class used to create charts."," *"," * @class ChartBase"," * @constructor"," * @submodule charts-base"," */","function ChartBase() {}","","ChartBase.ATTRS = {","    /**","     * Data used to generate the chart.","     *","     * @attribute dataProvider","     * @type Array","     */","    dataProvider: {","        lazyAdd: false,","","        valueFn: function()","        {","            var defDataProvider = [];","            if(!this._seriesKeysExplicitlySet)","            {","                this._seriesKeys = this._buildSeriesKeys(defDataProvider);","            }","            return defDataProvider;","        },","","        setter: function(val)","        {","            var dataProvider = this._setDataValues(val);","            if(!this._seriesKeysExplicitlySet)","            {","                this._seriesKeys = this._buildSeriesKeys(dataProvider);","            }","            return dataProvider;","        }","    },","","    /**","     * A collection of keys that map to the series axes. If no keys are set,","     * they will be generated automatically depending on the data structure passed into","     * the chart.","     *","     * @attribute seriesKeys","     * @type Array","     */","    seriesKeys: {","        getter: function()","        {","            return this._seriesKeys;","        },","","        setter: function(val)","        {","            this._seriesKeysExplicitlySet = true;","            this._seriesKeys = val;","            return val;","        }","    },","","    /**","     * Sets the `aria-label` for the chart.","     *","     * @attribute ariaLabel","     * @type String","     */","    ariaLabel: {","        value: \"Chart Application\",","","        setter: function(val)","        {","            var cb = this.get(\"contentBox\");","            if(cb)","            {","                cb.setAttribute(\"aria-label\", val);","            }","            return val;","        }","    },","","    /**","     * Sets the aria description for the chart.","     *","     * @attribute ariaDescription","     * @type String","     */","    ariaDescription: {","        value: \"Use the up and down keys to navigate between series. Use the left and right keys to navigate through items in a series.\",","","        setter: function(val)","        {","            if(this._description)","            {","                this._description.setContent(\"\");","                this._description.appendChild(DOCUMENT.createTextNode(val));","            }","            return val;","        }","    },","","    /**","     * Reference to the default tooltip available for the chart.","     * <p>Contains the following properties:</p>","     *  <dl>","     *      <dt>node</dt><dd>Reference to the actual dom node</dd>","     *      <dt>showEvent</dt><dd>Event that should trigger the tooltip</dd>","     *      <dt>hideEvent</dt><dd>Event that should trigger the removal of a tooltip (can be an event or an array of events)</dd>","     *      <dt>styles</dt><dd>A hash of style properties that will be applied to the tooltip node</dd>","     *      <dt>show</dt><dd>Indicates whether or not to show the tooltip</dd>","     *      <dt>markerEventHandler</dt><dd>Displays and hides tooltip based on marker events</dd>","     *      <dt>planarEventHandler</dt><dd>Displays and hides tooltip based on planar events</dd>","     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text.","     *      The method contains the following arguments:","     *  <dl>","     *      <dt>categoryItem</dt><dd>An object containing the following:","     *  <dl>","     *      <dt>axis</dt><dd>The axis to which the category is bound.</dd>","     *      <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided).</dd>","     *      <dt>key</dt><dd>The key of the category.</dd>","     *      <dt>value</dt><dd>The value of the category.</dd>","     *  </dl>","     *  </dd>","     *  <dt>valueItem</dt><dd>An object containing the following:","     *      <dl>","     *          <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>","     *          <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>","     *          <dt>key</dt><dd>The key for the series.</dd>","     *          <dt>value</dt><dd>The value for the series item.</dd>","     *      </dl>","     *  </dd>","     *  <dt>itemIndex</dt><dd>The index of the item within the series.</dd>","     *  <dt>series</dt><dd> The `CartesianSeries` instance of the item.</dd>","     *  <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>","     *  </dl>","     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose","     *  to return an html string, you will also need to override the tooltip's `setTextFunction` method to accept an html string.","     *  </dd>","     *  <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text","     *  <dl>","     *      <dt>categoryAxis</dt><dd> `CategoryAxis` Reference to the categoryAxis of the chart.","     *      <dt>valueItems</dt><dd>Array of objects for each series that has a data point in the coordinate plane of the event. Each","     *      object contains the following data:","     *  <dl>","     *      <dt>axis</dt><dd>The value axis of the series.</dd>","     *      <dt>key</dt><dd>The key for the series.</dd>","     *      <dt>value</dt><dd>The value for the series item.</dd>","     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>","     *  </dl>","     *  </dd>","     *      <dt>index</dt><dd>The index of the item within its series.</dd>","     *      <dt>seriesArray</dt><dd>Array of series instances for each value item.</dd>","     *      <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>","     *  </dl>","     *  </dd>","     *  </dl>","     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose","     *  to return an html string, you will also need to override the tooltip's `setTextFunction` method to accept an html string.","     *  </dd>","     *  <dt>setTextFunction</dt><dd>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the","     *  the tooltip node. Has the following signature:","     *  <dl>","     *      <dt>label</dt><dd>The `HTMLElement` that the content is to be added.</dd>","     *      <dt>val</dt><dd>The content to be rendered into tooltip. This can be a `String` or `HTMLElement`. If an HTML string is used,","     *      it will be rendered as a string.</dd>","     *  </dl>","     *  </dd>","     *  </dl>","     * @attribute tooltip","     * @type Object","     */","    tooltip: {","        valueFn: \"_getTooltip\",","","        setter: function(val)","        {","            return this._updateTooltip(val);","        }","    },","","    /**","     * The key value used for the chart's category axis.","     *","     * @attribute categoryKey","     * @type String","     * @default category","     */","    categoryKey: {","        value: \"category\"","    },","","    /**","     * Indicates the type of axis to use for the category axis.","     *","     *  <dl>","     *      <dt>category</dt><dd>Specifies a `CategoryAxis`.</dd>","     *      <dt>time</dt><dd>Specifies a `TimeAxis</dd>","     *  </dl>","     *","     * @attribute categoryType","     * @type String","     * @default category","     */","    categoryType:{","        value:\"category\"","    },","","    /**","     * Indicates the the type of interactions that will fire events.","     *","     *  <dl>","     *      <dt>marker</dt><dd>Events will be broadcasted when the mouse interacts with individual markers.</dd>","     *      <dt>planar</dt><dd>Events will be broadcasted when the mouse intersects the plane of any markers on the chart.</dd>","     *      <dt>none</dt><dd>No events will be broadcasted.</dd>","     *  </dl>","     *","     * @attribute interactionType","     * @type String","     * @default marker","     */","    interactionType: {","        value: \"marker\"","    },","","    /**","     * Reference to all the axes in the chart.","     *","     * @attribute axesCollection","     * @type Array","     */","    axesCollection: {},","","    /**","     * Reference to graph instance.","     *","     * @attribute graph","     * @type Graph","     */","    graph: {","        valueFn: \"_getGraph\"","    },","","    /**","     * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.","     *","     * @attribute groupMarkers","     * @type Boolean","     */","    groupMarkers: {","        value: false","    }","};","","ChartBase.prototype = {","    /**","     * Handles groupMarkers change event.","     *","     * @method _groupMarkersChangeHandler","     * @param {Object} e Event object.","     * @private","     */","    _groupMarkersChangeHandler: function(e)","    {","        var graph = this.get(\"graph\"),","            useGroupMarkers = e.newVal;","        if(graph)","        {","            graph.set(\"groupMarkers\", useGroupMarkers);","        }","    },","","    /**","     * Handler for itemRendered event.","     *","     * @method _itemRendered","     * @param {Object} e Event object.","     * @private","     */","    _itemRendered: function(e)","    {","        this._itemRenderQueue = this._itemRenderQueue.splice(1 + Y.Array.indexOf(this._itemRenderQueue, e.currentTarget), 1);","        if(this._itemRenderQueue.length < 1)","        {","            this._redraw();","        }","    },","","    /**","     * Default value function for the `Graph` attribute.","     *","     * @method _getGraph","     * @return Graph","     * @private","     */","    _getGraph: function()","    {","        var graph = new Y.Graph({","            chart:this,","            groupMarkers: this.get(\"groupMarkers\")","        });","        graph.after(\"chartRendered\", Y.bind(function() {","            this.fire(\"chartRendered\");","        }, this));","        return graph;","    },","","    /**","     * Returns a series instance by index or key value.","     *","     * @method getSeries","     * @param val","     * @return CartesianSeries","     */","    getSeries: function(val)","    {","        var series = null,","            graph = this.get(\"graph\");","        if(graph)","        {","            if(Y_Lang.isNumber(val))","            {","                series = graph.getSeriesByIndex(val);","            }","            else","            {","                series = graph.getSeriesByKey(val);","            }","        }","        return series;","    },","","    /**","     * Returns an `Axis` instance by key reference. If the axis was explicitly set through the `axes` attribute,","     * the key will be the same as the key used in the `axes` object. For default axes, the key for","     * the category axis is the value of the `categoryKey` (`category`). For the value axis, the default","     * key is `values`.","     *","     * @method getAxisByKey","     * @param {String} val Key reference used to look up the axis.","     * @return Axis","     */","    getAxisByKey: function(val)","    {","        var axis,","            axes = this.get(\"axes\");","        if(axes && axes.hasOwnProperty(val))","        {","            axis = axes[val];","        }","        return axis;","    },","","    /**","     * Returns the category axis for the chart.","     *","     * @method getCategoryAxis","     * @return Axis","     */","    getCategoryAxis: function()","    {","        var axis,","            key = this.get(\"categoryKey\"),","            axes = this.get(\"axes\");","        if(axes.hasOwnProperty(key))","        {","            axis = axes[key];","        }","        return axis;","    },","","    /**","     * Default direction of the chart.","     *","     * @property _direction","     * @type String","     * @default horizontal","     * @private","     */","    _direction: \"horizontal\",","","    /**","     * Storage for the `dataProvider` attribute.","     *","     * @property _dataProvider","     * @type Array","     * @private","     */","    _dataProvider: null,","","    /**","     * Setter method for `dataProvider` attribute.","     *","     * @method _setDataValues","     * @param {Array} val Array to be set as `dataProvider`.","     * @return Array","     * @private","     */","    _setDataValues: function(val)","    {","        if(Y_Lang.isArray(val[0]))","        {","            var hash,","                dp = [],","                cats = val[0],","                i = 0,","                l = cats.length,","                n,","                sl = val.length;","            for(; i < l; ++i)","            {","                hash = {category:cats[i]};","                for(n = 1; n < sl; ++n)","                {","                    hash[\"series\" + n] = val[n][i];","                }","                dp[i] = hash;","            }","            return dp;","        }","        return val;","    },","","    /**","     * Storage for `seriesCollection` attribute.","     *","     * @property _seriesCollection","     * @type Array","     * @private","     */","    _seriesCollection: null,","","    /**","     * Setter method for `seriesCollection` attribute.","     *","     * @property _setSeriesCollection","     * @param {Array} val Array of either `CartesianSeries` instances or objects containing series attribute key value pairs.","     * @private","     */","    _setSeriesCollection: function(val)","    {","        this._seriesCollection = val;","    },","    /**","     * Helper method that returns the axis class that a key references.","     *","     * @method _getAxisClass","     * @param {String} t The type of axis.","     * @return Axis","     * @private","     */","    _getAxisClass: function(t)","    {","        return this._axisClass[t];","    },","","    /**","     * Key value pairs of axis types.","     *","     * @property _axisClass","     * @type Object","     * @private","     */","    _axisClass: {","        stacked: Y.StackedAxis,","        numeric: Y.NumericAxis,","        category: Y.CategoryAxis,","        time: Y.TimeAxis","    },","","    /**","     * Collection of axes.","     *","     * @property _axes","     * @type Array","     * @private","     */","    _axes: null,","","    /**","     * @method initializer","     * @private","     */","    initializer: function()","    {","        this._itemRenderQueue = [];","        this._seriesIndex = -1;","        this._itemIndex = -1;","        this.after(\"dataProviderChange\", this._dataProviderChangeHandler);","    },","","    /**","     * @method renderUI","     * @private","     */","    renderUI: function()","    {","        var tt = this.get(\"tooltip\"),","            bb = this.get(\"boundingBox\"),","            cb = this.get(\"contentBox\");","        //move the position = absolute logic to a class file","        bb.setStyle(\"position\", \"absolute\");","        cb.setStyle(\"position\", \"absolute\");","        this._addAxes();","        this._addSeries();","        if(tt && tt.show)","        {","            this._addTooltip();","        }","        this._setAriaElements(bb, cb);","    },","","    /**","     * Creates an aria `live-region`, `aria-label` and `aria-describedby` for the Chart.","     *","     * @method _setAriaElements","     * @param {Node} cb Reference to the Chart's `contentBox` attribute.","     * @private","     */","    _setAriaElements: function(bb, cb)","    {","        var description = this._getAriaOffscreenNode(),","            id = this.get(\"id\") + \"_description\",","            liveRegion = this._getAriaOffscreenNode();","        cb.set(\"tabIndex\", 0);","        cb.set(\"role\", \"img\");","        cb.setAttribute(\"aria-label\", this.get(\"ariaLabel\"));","        cb.setAttribute(\"aria-describedby\", id);","        description.set(\"id\", id);","        description.set(\"tabIndex\", -1);","        description.appendChild(DOCUMENT.createTextNode(this.get(\"ariaDescription\")));","        liveRegion.set(\"id\", \"live-region\");","        liveRegion.set(\"aria-live\", \"polite\");","        liveRegion.set(\"aria-atomic\", \"true\");","        liveRegion.set(\"role\", \"status\");","        bb.setAttribute(\"role\", \"application\");","        bb.appendChild(description);","        bb.appendChild(liveRegion);","        this._description = description;","        this._liveRegion = liveRegion;","    },","","    /**","     * Sets a node offscreen for use as aria-description or aria-live-regin.","     *","     * @method _setOffscreen","     * @return Node","     * @private","     */","    _getAriaOffscreenNode: function()","    {","        var node = Y.Node.create(\"<div></div>\"),","            ie = Y.UA.ie,","            clipRect = (ie && ie < 8) ? \"rect(1px 1px 1px 1px)\" : \"rect(1px, 1px, 1px, 1px)\";","        node.setStyle(\"position\", \"absolute\");","        node.setStyle(\"height\", \"1px\");","        node.setStyle(\"width\", \"1px\");","        node.setStyle(\"overflow\", \"hidden\");","        node.setStyle(\"clip\", clipRect);","        return node;","    },","","    /**","     * @method syncUI","     * @private","     */","    syncUI: function()","    {","        this._redraw();","    },","","    /**","     * @method bindUI","     * @private","     */","    bindUI: function()","    {","        this.after(\"tooltipChange\", Y.bind(this._tooltipChangeHandler, this));","        this.after(\"widthChange\", this._sizeChanged);","        this.after(\"heightChange\", this._sizeChanged);","        this.after(\"groupMarkersChange\", this._groupMarkersChangeHandler);","        var tt = this.get(\"tooltip\"),","            hideEvent = \"mouseout\",","            showEvent = \"mouseover\",","            cb = this.get(\"contentBox\"),","            interactionType = this.get(\"interactionType\"),","            i = 0,","            len,","            markerClassName = \".\" + SERIES_MARKER,","            isTouch = ((WINDOW && (\"ontouchstart\" in WINDOW)) && !(Y.UA.chrome && Y.UA.chrome < 6));","        Y.on(\"keydown\", Y.bind(function(e) {","            var key = e.keyCode,","                numKey = parseFloat(key),","                msg;","            if(numKey > 36 && numKey < 41)","            {","                e.halt();","                msg = this._getAriaMessage(numKey);","                this._liveRegion.setContent(\"\");","                this._liveRegion.appendChild(DOCUMENT.createTextNode(msg));","            }","        }, this), this.get(\"contentBox\"));","        if(interactionType === \"marker\")","        {","            //if touch capabilities, toggle tooltip on touchend. otherwise, the tooltip attribute's hideEvent/showEvent types.","            hideEvent = tt.hideEvent;","            showEvent = tt.showEvent;","            if(isTouch)","            {","                Y.delegate(\"touchend\", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);","                //hide active tooltip if the chart is touched","                Y.on(\"touchend\", Y.bind(function(e) {","                    //only halt the event if it originated from the chart","                    if(cb.contains(e.target))","                    {","                        e.halt(true);","                    }","                    if(this._activeMarker)","                    {","                        this._activeMarker = null;","                        this.hideTooltip(e);","                    }","                }, this));","            }","            else","            {","                Y.delegate(\"mouseenter\", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);","                Y.delegate(\"mousedown\", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);","                Y.delegate(\"mouseup\", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);","                Y.delegate(\"mouseleave\", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);","                Y.delegate(\"click\", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);","                Y.delegate(\"mousemove\", Y.bind(this._positionTooltip, this), cb, markerClassName);","            }","        }","        else if(interactionType === \"planar\")","        {","            if(isTouch)","            {","                this._overlay.on(\"touchend\", Y.bind(this._planarEventDispatcher, this));","            }","            else","            {","                this._overlay.on(\"mousemove\", Y.bind(this._planarEventDispatcher, this));","                this.on(\"mouseout\", this.hideTooltip);","            }","        }","        if(tt)","        {","            this.on(\"markerEvent:touchend\", Y.bind(function(e) {","                var marker = e.series.get(\"markers\")[e.index];","                if(this._activeMarker && marker === this._activeMarker)","                {","                    this._activeMarker = null;","                    this.hideTooltip(e);","                }","                else","                {","","                    this._activeMarker = marker;","                    tt.markerEventHandler.apply(this, [e]);","                }","            }, this));","            if(hideEvent && showEvent && hideEvent === showEvent)","            {","                this.on(interactionType + \"Event:\" + hideEvent, this.toggleTooltip);","            }","            else","            {","                if(showEvent)","                {","                    this.on(interactionType + \"Event:\" + showEvent, tt[interactionType + \"EventHandler\"]);","                }","                if(hideEvent)","                {","                    if(Y_Lang.isArray(hideEvent))","                    {","                        len = hideEvent.length;","                        for(; i < len; ++i)","                        {","                            this.on(interactionType + \"Event:\" + hideEvent[i], this.hideTooltip);","                        }","                    }","                    this.on(interactionType + \"Event:\" + hideEvent, this.hideTooltip);","                }","            }","        }","    },","","    /**","     * Event handler for marker events.","     *","     * @method _markerEventDispatcher","     * @param {Object} e Event object.","     * @private","     */","    _markerEventDispatcher: function(e)","    {","        var type = e.type,","            cb = this.get(\"contentBox\"),","            markerNode = e.currentTarget,","            strArr = markerNode.getAttribute(\"id\").split(\"_\"),","            index = strArr.pop(),","            seriesIndex = strArr.pop(),","            series = this.getSeries(parseInt(seriesIndex, 10)),","            items = this.getSeriesItems(series, index),","            isTouch = e && e.hasOwnProperty(\"changedTouches\"),","            pageX = isTouch ? e.changedTouches[0].pageX : e.pageX,","            pageY = isTouch ? e.changedTouches[0].pageY : e.pageY,","            x = pageX - cb.getX(),","            y = pageY - cb.getY();","        if(type === \"mouseenter\")","        {","            type = \"mouseover\";","        }","        else if(type === \"mouseleave\")","        {","            type = \"mouseout\";","        }","        series.updateMarkerState(type, index);","        e.halt();","        /**","         * Broadcasts when `interactionType` is set to `marker` and a series marker has received a mouseover event.","         *","         *","         * @event markerEvent:mouseover","         * @preventable false","         * @param {EventFacade} e Event facade with the following additional","         *   properties:","         *  <dl>","         *      <dt>categoryItem</dt><dd>Hash containing information about the category `Axis`.</dd>","         *      <dt>valueItem</dt><dd>Hash containing information about the value `Axis`.</dd>","         *      <dt>node</dt><dd>The dom node of the marker.</dd>","         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>","         *      <dt>index</dt><dd>Index of the marker in the series.</dd>","         *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>","         *  </dl>","         */","        /**","         * Broadcasts when `interactionType` is set to `marker` and a series marker has received a mouseout event.","         *","         * @event markerEvent:mouseout","         * @preventable false","         * @param {EventFacade} e Event facade with the following additional","         *   properties:","         *  <dl>","         *      <dt>categoryItem</dt><dd>Hash containing information about the category `Axis`.</dd>","         *      <dt>valueItem</dt><dd>Hash containing information about the value `Axis`.</dd>","         *      <dt>node</dt><dd>The dom node of the marker.</dd>","         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>","         *      <dt>index</dt><dd>Index of the marker in the series.</dd>","         *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>","         *  </dl>","         */","        /**","         * Broadcasts when `interactionType` is set to `marker` and a series marker has received a mousedown event.","         *","         * @event markerEvent:mousedown","         * @preventable false","         * @param {EventFacade} e Event facade with the following additional","         *   properties:","         *  <dl>","         *      <dt>categoryItem</dt><dd>Hash containing information about the category `Axis`.</dd>","         *      <dt>valueItem</dt><dd>Hash containing information about the value `Axis`.</dd>","         *      <dt>node</dt><dd>The dom node of the marker.</dd>","         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>","         *      <dt>index</dt><dd>Index of the marker in the series.</dd>","         *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>","         *  </dl>","         */","        /**","         * Broadcasts when `interactionType` is set to `marker` and a series marker has received a mouseup event.","         *","         * @event markerEvent:mouseup","         * @preventable false","         * @param {EventFacade} e Event facade with the following additional","         *   properties:","         *  <dl>","         *      <dt>categoryItem</dt><dd>Hash containing information about the category `Axis`.</dd>","         *      <dt>valueItem</dt><dd>Hash containing information about the value `Axis`.</dd>","         *      <dt>node</dt><dd>The dom node of the marker.</dd>","         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>","         *      <dt>index</dt><dd>Index of the marker in the series.</dd>","         *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>","         *  </dl>","         */","        /**","         * Broadcasts when `interactionType` is set to `marker` and a series marker has received a click event.","         *","         * @event markerEvent:click","         * @preventable false","         * @param {EventFacade} e Event facade with the following additional","         *   properties:","         *  <dl>","         *      <dt>categoryItem</dt><dd>Hash containing information about the category `Axis`.</dd>","         *      <dt>valueItem</dt><dd>Hash containing information about the value `Axis`.</dd>","         *      <dt>node</dt><dd>The dom node of the marker.</dd>","         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>","         *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>","         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>","         *      <dt>index</dt><dd>Index of the marker in the series.</dd>","         *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>","         *      <dt>originEvent</dt><dd>Underlying dom event.</dd>","         *  </dl>","         */","        this.fire(\"markerEvent:\" + type, {","            originEvent: e,","            pageX:pageX,","            pageY:pageY,","            categoryItem:items.category,","            valueItem:items.value,","            node:markerNode,","            x:x,","            y:y,","            series:series,","            index:index,","            seriesIndex:seriesIndex","        });","    },","","    /**","     * Event handler for dataProviderChange.","     *","     * @method _dataProviderChangeHandler","     * @param {Object} e Event object.","     * @private","     */","    _dataProviderChangeHandler: function(e)","    {","        var dataProvider = e.newVal,","            axes,","            i,","            axis;","        this._seriesIndex = -1;","        this._itemIndex = -1;","        if(this instanceof Y.CartesianChart)","        {","            this.set(\"axes\", this.get(\"axes\"));","            this.set(\"seriesCollection\", this.get(\"seriesCollection\"));","        }","        axes = this.get(\"axes\");","        if(axes)","        {","            for(i in axes)","            {","                if(axes.hasOwnProperty(i))","                {","                    axis = axes[i];","                    if(axis instanceof Y.Axis)","                    {","                        if(axis.get(\"position\") !== \"none\")","                        {","                            this._addToAxesRenderQueue(axis);","                        }","                        axis.set(\"dataProvider\", dataProvider);","                    }","                }","            }","        }","    },","","    /**","     * Event listener for toggling the tooltip. If a tooltip is visible, hide it. If not, it","     * will create and show a tooltip based on the event object.","     *","     * @method toggleTooltip","     * @param {Object} e Event object.","     */","    toggleTooltip: function(e)","    {","        var tt = this.get(\"tooltip\");","        if(tt.visible)","        {","            this.hideTooltip();","        }","        else","        {","            tt.markerEventHandler.apply(this, [e]);","        }","    },","","    /**","     * Shows a tooltip","     *","     * @method _showTooltip","     * @param {String} msg Message to dispaly in the tooltip.","     * @param {Number} x x-coordinate","     * @param {Number} y y-coordinate","     * @private","     */","    _showTooltip: function(msg, x, y)","    {","        var tt = this.get(\"tooltip\"),","            node = tt.node;","        if(msg)","        {","            tt.visible = true;","            tt.setTextFunction(node, msg);","            node.setStyle(\"top\", y + \"px\");","            node.setStyle(\"left\", x + \"px\");","            node.setStyle(\"visibility\", \"visible\");","        }","    },","","    /**","     * Positions the tooltip","     *","     * @method _positionTooltip","     * @param {Object} e Event object.","     * @private","     */","    _positionTooltip: function(e)","    {","        var tt = this.get(\"tooltip\"),","            node = tt.node,","            cb = this.get(\"contentBox\"),","            x = (e.pageX + 10) - cb.getX(),","            y = (e.pageY + 10) - cb.getY();","        if(node)","        {","            node.setStyle(\"left\", x + \"px\");","            node.setStyle(\"top\", y + \"px\");","        }","    },","","    /**","     * Hides the default tooltip","     *","     * @method hideTooltip","     */","    hideTooltip: function()","    {","        var tt = this.get(\"tooltip\"),","            node = tt.node;","        tt.visible = false;","        node.set(\"innerHTML\", \"\");","        node.setStyle(\"left\", -10000);","        node.setStyle(\"top\", -10000);","        node.setStyle(\"visibility\", \"hidden\");","    },","","    /**","     * Adds a tooltip to the dom.","     *","     * @method _addTooltip","     * @private","     */","    _addTooltip: function()","    {","        var tt = this.get(\"tooltip\"),","            id = this.get(\"id\") + \"_tooltip\",","            cb = this.get(\"contentBox\"),","            oldNode = DOCUMENT.getElementById(id);","        if(oldNode)","        {","            cb.removeChild(oldNode);","        }","        tt.node.set(\"id\", id);","        tt.node.setStyle(\"visibility\", \"hidden\");","        cb.appendChild(tt.node);","    },","","    /**","     * Updates the tooltip attribute.","     *","     * @method _updateTooltip","     * @param {Object} val Object containing properties for the tooltip.","     * @return Object","     * @private","     */","    _updateTooltip: function(val)","    {","        var tt = this.get(\"tooltip\") || this._getTooltip(),","            i,","            styles,","            node,","            props = {","                markerLabelFunction:\"markerLabelFunction\",","                planarLabelFunction:\"planarLabelFunction\",","                setTextFunction:\"setTextFunction\",","                showEvent:\"showEvent\",","                hideEvent:\"hideEvent\",","                markerEventHandler:\"markerEventHandler\",","                planarEventHandler:\"planarEventHandler\",","                show:\"show\"","            };","        if(Y_Lang.isObject(val))","        {","            styles = val.styles;","            node = Y.one(val.node) || tt.node;","            if(styles)","            {","                for(i in styles)","                {","                    if(styles.hasOwnProperty(i))","                    {","                        node.setStyle(i, styles[i]);","                    }","                }","            }","            for(i in props)","            {","                if(val.hasOwnProperty(i))","                {","                    tt[i] = val[i];","                }","            }","            tt.node = node;","        }","        return tt;","    },","","    /**","     * Default getter for `tooltip` attribute.","     *","     * @method _getTooltip","     * @return Object","     * @private","     */","    _getTooltip: function()","    {","        var node = DOCUMENT.createElement(\"div\"),","            tooltipClass = _getClassName(\"chart-tooltip\"),","            tt = {","                setTextFunction: this._setText,","                markerLabelFunction: this._tooltipLabelFunction,","                planarLabelFunction: this._planarLabelFunction,","                show: true,","                hideEvent: \"mouseout\",","                showEvent: \"mouseover\",","                markerEventHandler: function(e)","                {","                    var tt = this.get(\"tooltip\"),","                    msg = tt.markerLabelFunction.apply(this, [e.categoryItem, e.valueItem, e.index, e.series, e.seriesIndex]);","                    this._showTooltip(msg, e.x + 10, e.y + 10);","                },","                planarEventHandler: function(e)","                {","                    var tt = this.get(\"tooltip\"),","                        msg ,","                        categoryAxis = this.get(\"categoryAxis\");","                    msg = tt.planarLabelFunction.apply(this, [categoryAxis, e.valueItem, e.index, e.items, e.seriesIndex]);","                    this._showTooltip(msg, e.x + 10, e.y + 10);","                }","            };","        node = Y.one(node);","        node.set(\"id\", this.get(\"id\") + \"_tooltip\");","        node.setStyle(\"fontSize\", \"85%\");","        node.setStyle(\"opacity\", \"0.83\");","        node.setStyle(\"position\", \"absolute\");","        node.setStyle(\"paddingTop\", \"2px\");","        node.setStyle(\"paddingRight\", \"5px\");","        node.setStyle(\"paddingBottom\", \"4px\");","        node.setStyle(\"paddingLeft\", \"2px\");","        node.setStyle(\"backgroundColor\", \"#fff\");","        node.setStyle(\"border\", \"1px solid #dbdccc\");","        node.setStyle(\"pointerEvents\", \"none\");","        node.setStyle(\"zIndex\", 3);","        node.setStyle(\"whiteSpace\", \"noWrap\");","        node.setStyle(\"visibility\", \"hidden\");","        node.addClass(tooltipClass);","        tt.node = Y.one(node);","        return tt;","    },","","    /**","     * Formats tooltip text when `interactionType` is `planar`.","     *","     * @method _planarLabelFunction","     * @param {Axis} categoryAxis Reference to the categoryAxis of the chart.","     * @param {Array} valueItems Array of objects for each series that has a data point in the coordinate plane of the event.","     * Each object contains the following data:","     *  <dl>","     *      <dt>axis</dt><dd>The value axis of the series.</dd>","     *      <dt>key</dt><dd>The key for the series.</dd>","     *      <dt>value</dt><dd>The value for the series item.</dd>","     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>","     *  </dl>","     *  @param {Number} index The index of the item within its series.","     *  @param {Array} seriesArray Array of series instances for each value item.","     *  @param {Number} seriesIndex The index of the series in the `seriesCollection`.","     *  @return {String | HTML}","     * @private","     */","    _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray)","    {","        var msg = DOCUMENT.createElement(\"div\"),","            valueItem,","            i = 0,","            len = seriesArray.length,","            axis,","            categoryValue,","            seriesValue,","            series;","        if(categoryAxis)","        {","            categoryValue = categoryAxis.get(\"labelFunction\").apply(","                this,","                [categoryAxis.getKeyValueAt(this.get(\"categoryKey\"), index), categoryAxis.get(\"labelFormat\")]","            );","            if(!Y_Lang.isObject(categoryValue))","            {","                categoryValue = DOCUMENT.createTextNode(categoryValue);","            }","            msg.appendChild(categoryValue);","        }","","        for(; i < len; ++i)","        {","            series = seriesArray[i];","            if(series.get(\"visible\"))","            {","                valueItem = valueItems[i];","                axis = valueItem.axis;","                seriesValue =  axis.get(\"labelFunction\").apply(","                    this,","                    [axis.getKeyValueAt(valueItem.key, index), axis.get(\"labelFormat\")]","                );","                msg.appendChild(DOCUMENT.createElement(\"br\"));","                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));","                msg.appendChild(DOCUMENT.createTextNode(\": \"));","                if(!Y_Lang.isObject(seriesValue))","                {","                    seriesValue = DOCUMENT.createTextNode(seriesValue);","                }","                msg.appendChild(seriesValue);","            }","        }","        return msg;","    },","","    /**","     * Formats tooltip text when `interactionType` is `marker`.","     *","     * @method _tooltipLabelFunction","     * @param {Object} categoryItem An object containing the following:","     *  <dl>","     *      <dt>axis</dt><dd>The axis to which the category is bound.</dd>","     *      <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided)</dd>","     *      <dt>key</dt><dd>The key of the category.</dd>","     *      <dt>value</dt><dd>The value of the category</dd>","     *  </dl>","     * @param {Object} valueItem An object containing the following:","     *  <dl>","     *      <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>","     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>","     *      <dt>key</dt><dd>The key for the series.</dd>","     *      <dt>value</dt><dd>The value for the series item.</dd>","     *  </dl>","     * @return {String | HTML}","     * @private","     */","    _tooltipLabelFunction: function(categoryItem, valueItem)","    {","        var msg = DOCUMENT.createElement(\"div\"),","            categoryValue = categoryItem.axis.get(\"labelFunction\").apply(","                this,","                [categoryItem.value, categoryItem.axis.get(\"labelFormat\")]","            ),","            seriesValue = valueItem.axis.get(\"labelFunction\").apply(","                this,","                [valueItem.value, valueItem.axis.get(\"labelFormat\")]","            );","        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName));","        msg.appendChild(DOCUMENT.createTextNode(\": \"));","        if(!Y_Lang.isObject(categoryValue))","        {","            categoryValue = DOCUMENT.createTextNode(categoryValue);","        }","        msg.appendChild(categoryValue);","        msg.appendChild(DOCUMENT.createElement(\"br\"));","        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));","        msg.appendChild(DOCUMENT.createTextNode(\": \"));","        if(!Y_Lang.isObject(seriesValue))","        {","            seriesValue = DOCUMENT.createTextNode(seriesValue);","        }","        msg.appendChild(seriesValue);","        return msg;","    },","","    /**","     * Event handler for the tooltipChange.","     *","     * @method _tooltipChangeHandler","     * @param {Object} e Event object.","     * @private","     */","    _tooltipChangeHandler: function()","    {","        if(this.get(\"tooltip\"))","        {","            var tt = this.get(\"tooltip\"),","                node = tt.node,","                show = tt.show,","                cb = this.get(\"contentBox\");","            if(node && show)","            {","                if(!cb.contains(node))","                {","                    this._addTooltip();","                }","            }","        }","    },","","    /**","     * Updates the content of text field. This method writes a value into a text field using","     * `appendChild`. If the value is a `String`, it is converted to a `TextNode` first.","     *","     * @method _setText","     * @param label {HTMLElement} label to be updated","     * @param val {String} value with which to update the label","     * @private","     */","    _setText: function(textField, val)","    {","        textField.setContent(\"\");","        if(Y_Lang.isNumber(val))","        {","            val = val + \"\";","        }","        else if(!val)","        {","            val = \"\";","        }","        if(IS_STRING(val))","        {","            val = DOCUMENT.createTextNode(val);","        }","        textField.appendChild(val);","    },","","    /**","     * Returns all the keys contained in a  `dataProvider`.","     *","     * @method _getAllKeys","     * @param {Array} dp Collection of objects to be parsed.","     * @return Object","     */","    _getAllKeys: function(dp)","    {","        var i = 0,","            len = dp.length,","            item,","            key,","            keys = {};","        for(; i < len; ++i)","        {","            item = dp[i];","            for(key in item)","            {","                if(item.hasOwnProperty(key))","                {","                    keys[key] = true;","                }","            }","        }","        return keys;","    },","","    /**","     * Constructs seriesKeys if not explicitly specified.","     *","     * @method _buildSeriesKeys","     * @param {Array} dataProvider The dataProvider for the chart.","     * @return Array","     * @private","     */","    _buildSeriesKeys: function(dataProvider)","    {","        var allKeys,","            catKey = this.get(\"categoryKey\"),","            keys = [],","            i;","        if(this._seriesKeysExplicitlySet)","        {","            return this._seriesKeys;","        }","        allKeys = this._getAllKeys(dataProvider);","        for(i in allKeys)","        {","            if(allKeys.hasOwnProperty(i) && i !== catKey)","            {","                keys.push(i);","            }","        }","        return keys;","    }","};","Y.ChartBase = ChartBase;","/**"," * The CartesianChart class creates a chart with horizontal and vertical axes."," *"," * @class CartesianChart"," * @extends ChartBase"," * @constructor"," * @submodule charts-base"," */","Y.CartesianChart = Y.Base.create(\"cartesianChart\", Y.Widget, [Y.ChartBase], {","    /**","     * @method renderUI","     * @private","     */","    renderUI: function()","    {","        var bb = this.get(\"boundingBox\"),","            cb = this.get(\"contentBox\"),","            tt = this.get(\"tooltip\"),","            overlay,","            overlayClass = _getClassName(\"overlay\");","        //move the position = absolute logic to a class file","        bb.setStyle(\"position\", \"absolute\");","        cb.setStyle(\"position\", \"absolute\");","        this._addAxes();","        this._addGridlines();","        this._addSeries();","        if(tt && tt.show)","        {","            this._addTooltip();","        }","        //If there is a style definition. Force them to set.","        this.get(\"styles\");","        if(this.get(\"interactionType\") === \"planar\")","        {","            overlay = DOCUMENT.createElement(\"div\");","            this.get(\"contentBox\").appendChild(overlay);","            this._overlay = Y.one(overlay);","            this._overlay.set(\"id\", this.get(\"id\") + \"_overlay\");","            this._overlay.setStyle(\"position\", \"absolute\");","            this._overlay.setStyle(\"background\", \"#fff\");","            this._overlay.setStyle(\"opacity\", 0);","            this._overlay.addClass(overlayClass);","            this._overlay.setStyle(\"zIndex\", 4);","        }","        this._setAriaElements(bb, cb);","        this._redraw();","    },","","    /**","     * When `interactionType` is set to `planar`, listens for mouse move events and fires `planarEvent:mouseover` or `planarEvent:mouseout`","     * depending on the position of the mouse in relation to data points on the `Chart`.","     *","     * @method _planarEventDispatcher","     * @param {Object} e Event object.","     * @private","     */","    _planarEventDispatcher: function(e)","    {","        var graph = this.get(\"graph\"),","            bb = this.get(\"boundingBox\"),","            cb = graph.get(\"contentBox\"),","            isTouch = e && e.hasOwnProperty(\"changedTouches\"),","            pageX = isTouch ? e.changedTouches[0].pageX : e.pageX,","            pageY = isTouch ? e.changedTouches[0].pageY : e.pageY,","            posX = pageX - bb.getX(),","            posY = pageY - bb.getY(),","            offset = {","                x: pageX - cb.getX(),","                y: pageY - cb.getY()","            },","            sc = graph.get(\"seriesCollection\"),","            series,","            i = 0,","            index,","            oldIndex = this._selectedIndex,","            item,","            items = [],","            categoryItems = [],","            valueItems = [],","            direction = this.get(\"direction\"),","            hasMarkers,","            catAxis,","            valAxis,","            coord,","            //data columns and area data could be created on a graph level","            markerPlane,","            len,","            coords;","        e.halt(true);","        if(direction === \"horizontal\")","        {","            catAxis = \"x\";","            valAxis = \"y\";","        }","        else","        {","            valAxis = \"x\";","            catAxis = \"y\";","        }","        coord = offset[catAxis];","        if(sc)","        {","            len = sc.length;","            while(i < len && !markerPlane)","            {","                if(sc[i])","                {","                    markerPlane = sc[i].get(catAxis + \"MarkerPlane\");","                }","                i++;","            }","        }","        if(markerPlane)","        {","            len = markerPlane.length;","            for(i = 0; i < len; ++i)","            {","                if(coord <= markerPlane[i].end && coord >= markerPlane[i].start)","                {","                    index = i;","                    break;","                }","            }","            len = sc.length;","            for(i = 0; i < len; ++i)","            {","                series = sc[i];","                coords = series.get(valAxis + \"coords\");","                hasMarkers = series.get(\"markers\");","                if(hasMarkers && !isNaN(oldIndex) && oldIndex > -1)","                {","                    series.updateMarkerState(\"mouseout\", oldIndex);","                }","                if(coords && coords[index] > -1)","                {","                    if(hasMarkers && !isNaN(index) && index > -1)","                    {","                        series.updateMarkerState(\"mouseover\", index);","                    }","                    item = this.getSeriesItems(series, index);","                    categoryItems.push(item.category);","                    valueItems.push(item.value);","                    items.push(series);","                }","","            }","            this._selectedIndex = index;","","            /**","             * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseover event.","             *","             *","             * @event planarEvent:mouseover","             * @preventable false","             * @param {EventFacade} e Event facade with the following additional","             *   properties:","             *  <dl>","             *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker","             *      whose plane has been intersected.</dd>","             *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose","             *      plane has been intersected.</dd>","             *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>","             *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>","             *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>","             *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>","             *      <dt>items</dt><dd>An array including all the series which contain a marker whose plane has been intersected.</dd>","             *      <dt>index</dt><dd>Index of the markers in their respective series.</dd>","             *      <dt>originEvent</dt><dd>Underlying dom event.</dd>","             *  </dl>","             */","            /**","             * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseout event.","             *","             * @event planarEvent:mouseout","             * @preventable false","             * @param {EventFacade} e","             */","            if(index > -1)","            {","                this.fire(\"planarEvent:mouseover\", {","                    categoryItem:categoryItems,","                    valueItem:valueItems,","                    x:posX,","                    y:posY,","                    pageX:pageX,","                    pageY:pageY,","                    items:items,","                    index:index,","                    originEvent:e","                });","            }","            else","            {","                this.fire(\"planarEvent:mouseout\");","            }","        }","    },","","    /**","     * Indicates the default series type for the chart.","     *","     * @property _type","     * @type {String}","     * @private","     */","    _type: \"combo\",","","    /**","     * Queue of axes instances that will be updated. This method is used internally to determine when all axes have been updated.","     *","     * @property _itemRenderQueue","     * @type Array","     * @private","     */","    _itemRenderQueue: null,","","    /**","     * Adds an `Axis` instance to the `_itemRenderQueue`.","     *","     * @method _addToAxesRenderQueue","     * @param {Axis} axis An `Axis` instance.","     * @private","     */","    _addToAxesRenderQueue: function(axis)","    {","        if(!this._itemRenderQueue)","        {","            this._itemRenderQueue = [];","        }","        if(Y.Array.indexOf(this._itemRenderQueue, axis) < 0)","        {","            this._itemRenderQueue.push(axis);","        }","    },","","    /**","     * Adds axis instance to the appropriate array based on position","     *","     * @method _addToAxesCollection","     * @param {String} position The position of the axis","     * @param {Axis} axis The `Axis` instance","     */","    _addToAxesCollection: function(position, axis)","    {","        var axesCollection = this.get(position + \"AxesCollection\");","        if(!axesCollection)","        {","            axesCollection = [];","            this.set(position + \"AxesCollection\", axesCollection);","        }","        axesCollection.push(axis);","    },","","    /**","     * Returns the default value for the `seriesCollection` attribute.","     *","     * @method _getDefaultSeriesCollection","     * @param {Array} val Array containing either `CartesianSeries` instances or objects containing data to construct series instances.","     * @return Array","     * @private","     */","    _getDefaultSeriesCollection: function()","    {","        var seriesCollection,","            dataProvider = this.get(\"dataProvider\");","        if(dataProvider)","        {","            seriesCollection = this._parseSeriesCollection();","        }","        return seriesCollection;","    },","","    /**","     * Parses and returns a series collection from an object and default properties.","     *","     * @method _parseSeriesCollection","     * @param {Object} val Object contain properties for series being set.","     * @return Object","     * @private","     */","    _parseSeriesCollection: function(val)","    {","        var dir = this.get(\"direction\"),","            sc = [],","            catAxis,","            valAxis,","            tempKeys = [],","            series,","            seriesKeys = this.get(\"seriesKeys\").concat(),","            i,","            index,","            l,","            type = this.get(\"type\"),","            key,","            catKey,","            seriesKey,","            graph,","            orphans = [],","            categoryKey = this.get(\"categoryKey\"),","            showMarkers = this.get(\"showMarkers\"),","            showAreaFill = this.get(\"showAreaFill\"),","            showLines = this.get(\"showLines\");","        val = val ? val.concat() : [];","        if(dir === \"vertical\")","        {","            catAxis = \"yAxis\";","            catKey = \"yKey\";","            valAxis = \"xAxis\";","            seriesKey = \"xKey\";","        }","        else","        {","            catAxis = \"xAxis\";","            catKey = \"xKey\";","            valAxis = \"yAxis\";","            seriesKey = \"yKey\";","        }","        l = val.length;","        while(val && val.length > 0)","        {","            series = val.shift();","            key = this._getBaseAttribute(series, seriesKey);","            if(key)","            {","                index = Y.Array.indexOf(seriesKeys, key);","                if(index > -1)","                {","                    seriesKeys.splice(index, 1);","                    tempKeys.push(key);","                    sc.push(series);","                }","                else","                {","                    orphans.push(series);","                }","            }","            else","            {","                orphans.push(series);","            }","        }","        while(orphans.length > 0)","        {","            series = orphans.shift();","            if(seriesKeys.length > 0)","            {","                key = seriesKeys.shift();","                this._setBaseAttribute(series, seriesKey, key);","                tempKeys.push(key);","                sc.push(series);","            }","            else if(series instanceof Y.CartesianSeries)","            {","                series.destroy(true);","            }","        }","        if(seriesKeys.length > 0)","        {","            tempKeys = tempKeys.concat(seriesKeys);","        }","        l = tempKeys.length;","        for(i = 0; i < l; ++i)","        {","            series = sc[i] || {type:type};","            if(series instanceof Y.CartesianSeries)","            {","                this._parseSeriesAxes(series);","                continue;","            }","","            series[catKey] = series[catKey] || categoryKey;","            series[seriesKey] = series[seriesKey] || seriesKeys.shift();","            series[catAxis] = this._getCategoryAxis();","            series[valAxis] = this._getSeriesAxis(series[seriesKey]);","","            series.type = series.type || type;","            series.direction = series.direction || dir;","","            if(series.type === \"combo\" ||","                series.type === \"stackedcombo\" ||","                series.type === \"combospline\" ||","                series.type === \"stackedcombospline\")","            {","                if(showAreaFill !== null)","                {","                    series.showAreaFill = (series.showAreaFill !== null && series.showAreaFill !== undefined) ? series.showAreaFill : showAreaFill;","                }","                if(showMarkers !== null)","                {","                    series.showMarkers = (series.showMarkers !== null && series.showMarkers !== undefined) ? series.showMarkers : showMarkers;","                }","                if(showLines !== null)","                {","                    series.showLines = (series.showLines !== null && series.showLines !== undefined) ? series.showLines : showLines;","                }","            }","            sc[i] = series;","        }","        if(sc)","        {","            graph = this.get(\"graph\");","            graph.set(\"seriesCollection\", sc);","            sc = graph.get(\"seriesCollection\");","        }","        return sc;","    },","","    /**","     * Parse and sets the axes for a series instance.","     *","     * @method _parseSeriesAxes","     * @param {CartesianSeries} series A `CartesianSeries` instance.","     * @private","     */","    _parseSeriesAxes: function(series)","    {","        var axes = this.get(\"axes\"),","            xAxis = series.get(\"xAxis\"),","            yAxis = series.get(\"yAxis\"),","            YAxis = Y.Axis,","            axis;","        if(xAxis && !(xAxis instanceof YAxis) && Y_Lang.isString(xAxis) && axes.hasOwnProperty(xAxis))","        {","            axis = axes[xAxis];","            if(axis instanceof YAxis)","            {","                series.set(\"xAxis\", axis);","            }","        }","        if(yAxis && !(yAxis instanceof YAxis) && Y_Lang.isString(yAxis) && axes.hasOwnProperty(yAxis))","        {","            axis = axes[yAxis];","            if(axis instanceof YAxis)","            {","                series.set(\"yAxis\", axis);","            }","        }","","    },","","    /**","     * Returns the category axis instance for the chart.","     *","     * @method _getCategoryAxis","     * @return Axis","     * @private","     */","    _getCategoryAxis: function()","    {","        var axis,","            axes = this.get(\"axes\"),","            categoryAxisName = this.get(\"categoryAxisName\") || this.get(\"categoryKey\");","        axis = axes[categoryAxisName];","        return axis;","    },","","    /**","     * Returns the value axis for a series.","     *","     * @method _getSeriesAxis","     * @param {String} key The key value used to determine the axis instance.","     * @return Axis","     * @private","     */","    _getSeriesAxis:function(key, axisName)","    {","        var axes = this.get(\"axes\"),","            i,","            keys,","            axis;","        if(axes)","        {","            if(axisName && axes.hasOwnProperty(axisName))","            {","                axis = axes[axisName];","            }","            else","            {","                for(i in axes)","                {","                    if(axes.hasOwnProperty(i))","                    {","                        keys = axes[i].get(\"keys\");","                        if(keys && keys.hasOwnProperty(key))","                        {","                            axis = axes[i];","                            break;","                        }","                    }","                }","            }","        }","        return axis;","    },","","    /**","     * Gets an attribute from an object, using a getter for Base objects and a property for object","     * literals. Used for determining attributes from series/axis references which can be an actual class instance","     * or a hash of properties that will be used to create a class instance.","     *","     * @method _getBaseAttribute","     * @param {Object} item Object or instance in which the attribute resides.","     * @param {String} key Attribute whose value will be returned.","     * @return Object","     * @private","     */","    _getBaseAttribute: function(item, key)","    {","        if(item instanceof Y.Base)","        {","            return item.get(key);","        }","        if(item.hasOwnProperty(key))","        {","            return item[key];","        }","        return null;","    },","","    /**","     * Sets an attribute on an object, using a setter of Base objects and a property for object","     * literals. Used for setting attributes on a Base class, either directly or to be stored in an object literal","     * for use at instantiation.","     *","     * @method _setBaseAttribute","     * @param {Object} item Object or instance in which the attribute resides.","     * @param {String} key Attribute whose value will be assigned.","     * @param {Object} value Value to be assigned to the attribute.","     * @private","     */","    _setBaseAttribute: function(item, key, value)","    {","        if(item instanceof Y.Base)","        {","            item.set(key, value);","        }","        else","        {","            item[key] = value;","        }","    },","","    /**","     * Creates `Axis` instances.","     *","     * @method _setAxes","     * @param {Object} val Object containing `Axis` instances or objects in which to construct `Axis` instances.","     * @return Object","     * @private","     */","    _setAxes: function(val)","    {","        var hash = this._parseAxes(val),","            axes = {},","            axesAttrs = {","                edgeOffset: \"edgeOffset\",","                calculateEdgeOffset: \"calculateEdgeOffset\",","                position: \"position\",","                overlapGraph:\"overlapGraph\",","                labelFunction:\"labelFunction\",","                labelFunctionScope:\"labelFunctionScope\",","                labelFormat:\"labelFormat\",","                appendLabelFunction: \"appendLabelFunction\",","                appendTitleFunction: \"appendTitleFunction\",","                maximum:\"maximum\",","                minimum:\"minimum\",","                roundingMethod:\"roundingMethod\",","                alwaysShowZero:\"alwaysShowZero\",","                title:\"title\",","                width:\"width\",","                height:\"height\"","            },","            dp = this.get(\"dataProvider\"),","            ai,","            i,","            pos,","            axis,","            axisPosition,","            dh,","            AxisClass,","            config,","            axesCollection;","        for(i in hash)","        {","            if(hash.hasOwnProperty(i))","            {","                dh = hash[i];","                if(dh instanceof Y.Axis)","                {","                    axis = dh;","                }","                else","                {","                    axis = null;","                    config = {};","                    config.dataProvider = dh.dataProvider || dp;","                    config.keys = dh.keys;","","                    if(dh.hasOwnProperty(\"roundingUnit\"))","                    {","                        config.roundingUnit = dh.roundingUnit;","                    }","                    pos = dh.position;","                    if(dh.styles)","                    {","                        config.styles = dh.styles;","                    }","                    config.position = dh.position;","                    for(ai in axesAttrs)","                    {","                        if(axesAttrs.hasOwnProperty(ai) && dh.hasOwnProperty(ai))","                        {","                            config[ai] = dh[ai];","                        }","                    }","","                    //only check for existing axis if we constructed the default axes already","                    if(val)","                    {","                        axis = this.getAxisByKey(i);","                    }","","                    if(axis && axis instanceof Y.Axis)","                    {","                        axisPosition = axis.get(\"position\");","                        if(pos !== axisPosition)","                        {","                            if(axisPosition !== \"none\")","                            {","                                axesCollection = this.get(axisPosition + \"AxesCollection\");","                                axesCollection.splice(Y.Array.indexOf(axesCollection, axis), 1);","                            }","                            if(pos !== \"none\")","                            {","                                this._addToAxesCollection(pos, axis);","                            }","                        }","                        axis.setAttrs(config);","                    }","                    else","                    {","                        AxisClass = this._getAxisClass(dh.type);","                        axis = new AxisClass(config);","                        axis.after(\"axisRendered\", Y.bind(this._itemRendered, this));","                    }","                }","","                if(axis)","                {","                    axesCollection = this.get(pos + \"AxesCollection\");","                    if(axesCollection && Y.Array.indexOf(axesCollection, axis) > 0)","                    {","                        axis.set(\"overlapGraph\", false);","                    }","                    axes[i] = axis;","                }","            }","        }","        return axes;","    },","","    /**","     * Adds axes to the chart.","     *","     * @method _addAxes","     * @private","     */","    _addAxes: function()","    {","        var axes = this.get(\"axes\"),","            i,","            axis,","            pos,","            w = this.get(\"width\"),","            h = this.get(\"height\"),","            node = Y.Node.one(this._parentNode);","        if(!this._axesCollection)","        {","            this._axesCollection = [];","        }","        for(i in axes)","        {","            if(axes.hasOwnProperty(i))","            {","                axis = axes[i];","                if(axis instanceof Y.Axis)","                {","                    if(!w)","                    {","                        this.set(\"width\", node.get(\"offsetWidth\"));","                        w = this.get(\"width\");","                    }","                    if(!h)","                    {","                        this.set(\"height\", node.get(\"offsetHeight\"));","                        h = this.get(\"height\");","                    }","                    this._addToAxesRenderQueue(axis);","                    pos = axis.get(\"position\");","                    if(!this.get(pos + \"AxesCollection\"))","                    {","                        this.set(pos + \"AxesCollection\", [axis]);","                    }","                    else","                    {","                        this.get(pos + \"AxesCollection\").push(axis);","                    }","                    this._axesCollection.push(axis);","                    if(axis.get(\"keys\").hasOwnProperty(this.get(\"categoryKey\")))","                    {","                        this.set(\"categoryAxis\", axis);","                    }","                    axis.render(this.get(\"contentBox\"));","                }","            }","        }","    },","","    /**","     * Renders the Graph.","     *","     * @method _addSeries","     * @private","     */","    _addSeries: function()","    {","        var graph = this.get(\"graph\");","        graph.render(this.get(\"contentBox\"));","","    },","","    /**","     * Adds gridlines to the chart.","     *","     * @method _addGridlines","     * @private","     */","    _addGridlines: function()","    {","        var graph = this.get(\"graph\"),","            hgl = this.get(\"horizontalGridlines\"),","            vgl = this.get(\"verticalGridlines\"),","            direction = this.get(\"direction\"),","            leftAxesCollection = this.get(\"leftAxesCollection\"),","            rightAxesCollection = this.get(\"rightAxesCollection\"),","            bottomAxesCollection = this.get(\"bottomAxesCollection\"),","            topAxesCollection = this.get(\"topAxesCollection\"),","            seriesAxesCollection,","            catAxis = this.get(\"categoryAxis\"),","            hAxis,","            vAxis;","        if(this._axesCollection)","        {","            seriesAxesCollection = this._axesCollection.concat();","            seriesAxesCollection.splice(Y.Array.indexOf(seriesAxesCollection, catAxis), 1);","        }","        if(hgl)","        {","            if(leftAxesCollection && leftAxesCollection[0])","            {","                hAxis = leftAxesCollection[0];","            }","            else if(rightAxesCollection && rightAxesCollection[0])","            {","                hAxis = rightAxesCollection[0];","            }","            else","            {","                hAxis = direction === \"horizontal\" ? catAxis : seriesAxesCollection[0];","            }","            if(!this._getBaseAttribute(hgl, \"axis\") && hAxis)","            {","                this._setBaseAttribute(hgl, \"axis\", hAxis);","            }","            if(this._getBaseAttribute(hgl, \"axis\"))","            {","                graph.set(\"horizontalGridlines\", hgl);","            }","        }","        if(vgl)","        {","            if(bottomAxesCollection && bottomAxesCollection[0])","            {","                vAxis = bottomAxesCollection[0];","            }","            else if (topAxesCollection && topAxesCollection[0])","            {","                vAxis = topAxesCollection[0];","            }","            else","            {","                vAxis = direction === \"vertical\" ? catAxis : seriesAxesCollection[0];","            }","            if(!this._getBaseAttribute(vgl, \"axis\") && vAxis)","            {","                this._setBaseAttribute(vgl, \"axis\", vAxis);","            }","            if(this._getBaseAttribute(vgl, \"axis\"))","            {","                graph.set(\"verticalGridlines\", vgl);","            }","        }","    },","","    /**","     * Default Function for the axes attribute.","     *","     * @method _getDefaultAxes","     * @return Object","     * @private","     */","    _getDefaultAxes: function()","    {","        var axes;","        if(this.get(\"dataProvider\"))","        {","            axes = this._parseAxes();","        }","        return axes;","    },","","    /**","     * Generates and returns a key-indexed object containing `Axis` instances or objects used to create `Axis` instances.","     *","     * @method _parseAxes","     * @param {Object} axes Object containing `Axis` instances or `Axis` attributes.","     * @return Object","     * @private","     */","    _parseAxes: function(axes)","    {","        var catKey = this.get(\"categoryKey\"),","            axis,","            attr,","            keys,","            newAxes = {},","            claimedKeys = [],","            categoryAxisName = this.get(\"categoryAxisName\") || this.get(\"categoryKey\"),","            valueAxisName = this.get(\"valueAxisName\"),","            seriesKeys = this.get(\"seriesKeys\").concat(),","            i,","            l,","            ii,","            ll,","            cIndex,","            direction = this.get(\"direction\"),","            seriesPosition,","            categoryPosition,","            valueAxes = [],","            seriesAxis = this.get(\"stacked\") ? \"stacked\" : \"numeric\";","        if(direction === \"vertical\")","        {","            seriesPosition = \"bottom\";","            categoryPosition = \"left\";","        }","        else","        {","            seriesPosition = \"left\";","            categoryPosition = \"bottom\";","        }","        if(axes)","        {","            for(i in axes)","            {","                if(axes.hasOwnProperty(i))","                {","                    axis = axes[i];","                    keys = this._getBaseAttribute(axis, \"keys\");","                    attr = this._getBaseAttribute(axis, \"type\");","                    if(attr === \"time\" || attr === \"category\")","                    {","                        categoryAxisName = i;","                        this.set(\"categoryAxisName\", i);","                        if(Y_Lang.isArray(keys) && keys.length > 0)","                        {","                            catKey = keys[0];","                            this.set(\"categoryKey\", catKey);","                        }","                        newAxes[i] = axis;","                    }","                    else if(i === categoryAxisName)","                    {","                        newAxes[i] = axis;","                    }","                    else","                    {","                        newAxes[i] = axis;","                        if(i !== valueAxisName && keys && Y_Lang.isArray(keys))","                        {","                            ll = keys.length;","                            for(ii = 0; ii < ll; ++ii)","                            {","                                claimedKeys.push(keys[ii]);","                            }","                            valueAxes.push(newAxes[i]);","                        }","                        if(!(this._getBaseAttribute(newAxes[i], \"type\")))","                        {","                            this._setBaseAttribute(newAxes[i], \"type\", seriesAxis);","                        }","                        if(!(this._getBaseAttribute(newAxes[i], \"position\")))","                        {","                            this._setBaseAttribute(","                                newAxes[i],","                                \"position\",","                                this._getDefaultAxisPosition(newAxes[i], valueAxes, seriesPosition)","                            );","                        }","                    }","                }","            }","        }","        cIndex = Y.Array.indexOf(seriesKeys, catKey);","        if(cIndex > -1)","        {","            seriesKeys.splice(cIndex, 1);","        }","        l = claimedKeys.length;","        for(i = 0; i < l; ++i)","        {","            cIndex = Y.Array.indexOf(seriesKeys, claimedKeys[i]);","            if(cIndex > -1)","            {","                seriesKeys.splice(cIndex, 1);","            }","        }","        if(!newAxes.hasOwnProperty(categoryAxisName))","        {","            newAxes[categoryAxisName] = {};","        }","        if(!(this._getBaseAttribute(newAxes[categoryAxisName], \"keys\")))","        {","            this._setBaseAttribute(newAxes[categoryAxisName], \"keys\", [catKey]);","        }","","        if(!(this._getBaseAttribute(newAxes[categoryAxisName], \"position\")))","        {","            this._setBaseAttribute(newAxes[categoryAxisName], \"position\", categoryPosition);","        }","","        if(!(this._getBaseAttribute(newAxes[categoryAxisName], \"type\")))","        {","            this._setBaseAttribute(newAxes[categoryAxisName], \"type\", this.get(\"categoryType\"));","        }","        if(!newAxes.hasOwnProperty(valueAxisName) && seriesKeys && seriesKeys.length > 0)","        {","            newAxes[valueAxisName] = {keys:seriesKeys};","            valueAxes.push(newAxes[valueAxisName]);","        }","        if(claimedKeys.length > 0)","        {","            if(seriesKeys.length > 0)","            {","                seriesKeys = claimedKeys.concat(seriesKeys);","            }","            else","            {","                seriesKeys = claimedKeys;","            }","        }","        if(newAxes.hasOwnProperty(valueAxisName))","        {","            if(!(this._getBaseAttribute(newAxes[valueAxisName], \"position\")))","            {","                this._setBaseAttribute(","                    newAxes[valueAxisName],","                    \"position\",","                    this._getDefaultAxisPosition(newAxes[valueAxisName], valueAxes, seriesPosition)","                );","            }","            this._setBaseAttribute(newAxes[valueAxisName], \"type\", seriesAxis);","            this._setBaseAttribute(newAxes[valueAxisName], \"keys\", seriesKeys);","        }","        if(!this._seriesKeysExplicitlySet)","        {","            this._seriesKeys = seriesKeys;","        }","        return newAxes;","    },","","    /**","     * Determines the position of an axis when one is not specified.","     *","     * @method _getDefaultAxisPosition","     * @param {Axis} axis `Axis` instance.","     * @param {Array} valueAxes Array of `Axis` instances.","     * @param {String} position Default position depending on the direction of the chart and type of axis.","     * @return String","     * @private","     */","    _getDefaultAxisPosition: function(axis, valueAxes, position)","    {","        var direction = this.get(\"direction\"),","            i = Y.Array.indexOf(valueAxes, axis);","","        if(valueAxes[i - 1] && valueAxes[i - 1].position)","        {","            if(direction === \"horizontal\")","            {","                if(valueAxes[i - 1].position === \"left\")","                {","                    position = \"right\";","                }","                else if(valueAxes[i - 1].position === \"right\")","                {","                    position = \"left\";","                }","            }","            else","            {","                if (valueAxes[i -1].position === \"bottom\")","                {","                    position = \"top\";","                }","                else","                {","                    position = \"bottom\";","                }","            }","        }","        return position;","    },","","","    /**","     * Returns an object literal containing a categoryItem and a valueItem for a given series index. Below is the structure of each:","     *","     * @method getSeriesItems","     * @param {CartesianSeries} series Reference to a series.","     * @param {Number} index Index of the specified item within a series.","     * @return Object An object literal containing the following:","     *","     *  <dl>","     *      <dt>categoryItem</dt><dd>Object containing the following data related to the category axis of the series.","     *  <dl>","     *      <dt>axis</dt><dd>Reference to the category axis of the series.</dd>","     *      <dt>key</dt><dd>Category key for the series.</dd>","     *      <dt>value</dt><dd>Value on the axis corresponding to the series index.</dd>","     *  </dl>","     *      </dd>","     *      <dt>valueItem</dt><dd>Object containing the following data related to the category axis of the series.","     *  <dl>","     *      <dt>axis</dt><dd>Reference to the value axis of the series.</dd>","     *      <dt>key</dt><dd>Value key for the series.</dd>","     *      <dt>value</dt><dd>Value on the axis corresponding to the series index.</dd>","     *  </dl>","     *      </dd>","     *  </dl>","     */","    getSeriesItems: function(series, index)","    {","        var xAxis = series.get(\"xAxis\"),","            yAxis = series.get(\"yAxis\"),","            xKey = series.get(\"xKey\"),","            yKey = series.get(\"yKey\"),","            categoryItem,","            valueItem;","        if(this.get(\"direction\") === \"vertical\")","        {","            categoryItem = {","                axis:yAxis,","                key:yKey,","                value:yAxis.getKeyValueAt(yKey, index)","            };","            valueItem = {","                axis:xAxis,","                key:xKey,","                value: xAxis.getKeyValueAt(xKey, index)","            };","        }","        else","        {","            valueItem = {","                axis:yAxis,","                key:yKey,","                value:yAxis.getKeyValueAt(yKey, index)","            };","            categoryItem = {","                axis:xAxis,","                key:xKey,","                value: xAxis.getKeyValueAt(xKey, index)","            };","        }","        categoryItem.displayName = series.get(\"categoryDisplayName\");","        valueItem.displayName = series.get(\"valueDisplayName\");","        categoryItem.value = categoryItem.axis.getKeyValueAt(categoryItem.key, index);","        valueItem.value = valueItem.axis.getKeyValueAt(valueItem.key, index);","        return {category:categoryItem, value:valueItem};","    },","","    /**","     * Handler for sizeChanged event.","     *","     * @method _sizeChanged","     * @param {Object} e Event object.","     * @private","     */","    _sizeChanged: function()","    {","        if(this._axesCollection)","        {","            var ac = this._axesCollection,","                i = 0,","                l = ac.length;","            for(; i < l; ++i)","            {","                this._addToAxesRenderQueue(ac[i]);","            }","            this._redraw();","        }","    },","","    /**","     * Returns the maximum distance in pixels that the extends outside the top bounds of all vertical axes.","     *","     * @method _getTopOverflow","     * @param {Array} set1 Collection of axes to check.","     * @param {Array} set2 Seconf collection of axes to check.","     * @param {Number} width Width of the axes","     * @return Number","     * @private","     */","    _getTopOverflow: function(set1, set2, height)","    {","        var i = 0,","            len,","            overflow = 0,","            axis;","        if(set1)","        {","            len = set1.length;","            for(; i < len; ++i)","            {","                axis = set1[i];","                overflow = Math.max(","                    overflow,","                    Math.abs(axis.getMaxLabelBounds().top) - (axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, height) * 0.5)","                );","            }","        }","        if(set2)","        {","            i = 0;","            len = set2.length;","            for(; i < len; ++i)","            {","                axis = set2[i];","                overflow = Math.max(","                    overflow,","                    Math.abs(axis.getMaxLabelBounds().top) - (axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, height) * 0.5)","                );","            }","        }","        return overflow;","    },","","    /**","     * Returns the maximum distance in pixels that the extends outside the right bounds of all horizontal axes.","     *","     * @method _getRightOverflow","     * @param {Array} set1 Collection of axes to check.","     * @param {Array} set2 Seconf collection of axes to check.","     * @param {Number} width Width of the axes","     * @return Number","     * @private","     */","    _getRightOverflow: function(set1, set2, width)","    {","        var i = 0,","            len,","            overflow = 0,","            axis;","        if(set1)","        {","            len = set1.length;","            for(; i < len; ++i)","            {","                axis = set1[i];","                overflow = Math.max(","                    overflow,","                    axis.getMaxLabelBounds().right - (axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, width) * 0.5)","                );","            }","        }","        if(set2)","        {","            i = 0;","            len = set2.length;","            for(; i < len; ++i)","            {","                axis = set2[i];","                overflow = Math.max(","                    overflow,","                    axis.getMaxLabelBounds().right - (axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, width) * 0.5)","                );","            }","        }","        return overflow;","    },","","    /**","     * Returns the maximum distance in pixels that the extends outside the left bounds of all horizontal axes.","     *","     * @method _getLeftOverflow","     * @param {Array} set1 Collection of axes to check.","     * @param {Array} set2 Seconf collection of axes to check.","     * @param {Number} width Width of the axes","     * @return Number","     * @private","     */","    _getLeftOverflow: function(set1, set2, width)","    {","        var i = 0,","            len,","            overflow = 0,","            axis;","        if(set1)","        {","            len = set1.length;","            for(; i < len; ++i)","            {","                axis = set1[i];","                overflow = Math.max(","                    overflow,","                    Math.abs(axis.getMinLabelBounds().left) - (axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, width) * 0.5)","                );","            }","        }","        if(set2)","        {","            i = 0;","            len = set2.length;","            for(; i < len; ++i)","            {","                axis = set2[i];","                overflow = Math.max(","                    overflow,","                    Math.abs(axis.getMinLabelBounds().left) - (axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, width) * 0.5)","                );","            }","        }","        return overflow;","    },","","    /**","     * Returns the maximum distance in pixels that the extends outside the bottom bounds of all vertical axes.","     *","     * @method _getBottomOverflow","     * @param {Array} set1 Collection of axes to check.","     * @param {Array} set2 Seconf collection of axes to check.","     * @param {Number} height Height of the axes","     * @return Number","     * @private","     */","    _getBottomOverflow: function(set1, set2, height)","    {","        var i = 0,","            len,","            overflow = 0,","            axis;","        if(set1)","        {","            len = set1.length;","            for(; i < len; ++i)","            {","                axis = set1[i];","                overflow = Math.max(","                    overflow,","                    axis.getMinLabelBounds().bottom - (axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, height) * 0.5)","                );","            }","        }","        if(set2)","        {","            i = 0;","            len = set2.length;","            for(; i < len; ++i)","            {","                axis = set2[i];","                overflow = Math.max(","                    overflow,","                    axis.getMinLabelBounds().bottom - (axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, height) * 0.5)","                );","            }","        }","        return overflow;","    },","","    /**","     * Redraws and position all the components of the chart instance.","     *","     * @method _redraw","     * @private","     */","    _redraw: function()","    {","        if(this._drawing)","        {","            this._callLater = true;","            return;","        }","        this._drawing = true;","        this._callLater = false;","        var w = this.get(\"width\"),","            h = this.get(\"height\"),","            leftPaneWidth = 0,","            rightPaneWidth = 0,","            topPaneHeight = 0,","            bottomPaneHeight = 0,","            leftAxesCollection = this.get(\"leftAxesCollection\"),","            rightAxesCollection = this.get(\"rightAxesCollection\"),","            topAxesCollection = this.get(\"topAxesCollection\"),","            bottomAxesCollection = this.get(\"bottomAxesCollection\"),","            i = 0,","            l,","            axis,","            graphOverflow = \"visible\",","            graph = this.get(\"graph\"),","            topOverflow,","            bottomOverflow,","            leftOverflow,","            rightOverflow,","            graphWidth,","            graphHeight,","            graphX,","            graphY,","            allowContentOverflow = this.get(\"allowContentOverflow\"),","            diff,","            rightAxesXCoords,","            leftAxesXCoords,","            topAxesYCoords,","            bottomAxesYCoords,","            graphRect = {};","        if(leftAxesCollection)","        {","            leftAxesXCoords = [];","            l = leftAxesCollection.length;","            for(i = l - 1; i > -1; --i)","            {","                leftAxesXCoords.unshift(leftPaneWidth);","                leftPaneWidth += leftAxesCollection[i].get(\"width\");","            }","        }","        if(rightAxesCollection)","        {","            rightAxesXCoords = [];","            l = rightAxesCollection.length;","            i = 0;","            for(i = l - 1; i > -1; --i)","            {","                rightPaneWidth += rightAxesCollection[i].get(\"width\");","                rightAxesXCoords.unshift(w - rightPaneWidth);","            }","        }","        if(topAxesCollection)","        {","            topAxesYCoords = [];","            l = topAxesCollection.length;","            for(i = l - 1; i > -1; --i)","            {","                topAxesYCoords.unshift(topPaneHeight);","                topPaneHeight += topAxesCollection[i].get(\"height\");","            }","        }","        if(bottomAxesCollection)","        {","            bottomAxesYCoords = [];","            l = bottomAxesCollection.length;","            for(i = l - 1; i > -1; --i)","            {","                bottomPaneHeight += bottomAxesCollection[i].get(\"height\");","                bottomAxesYCoords.unshift(h - bottomPaneHeight);","            }","        }","","        graphWidth = w - (leftPaneWidth + rightPaneWidth);","        graphHeight = h - (bottomPaneHeight + topPaneHeight);","        graphRect.left = leftPaneWidth;","        graphRect.top = topPaneHeight;","        graphRect.bottom = h - bottomPaneHeight;","        graphRect.right = w - rightPaneWidth;","        if(!allowContentOverflow)","        {","            topOverflow = this._getTopOverflow(leftAxesCollection, rightAxesCollection);","            bottomOverflow = this._getBottomOverflow(leftAxesCollection, rightAxesCollection);","            leftOverflow = this._getLeftOverflow(bottomAxesCollection, topAxesCollection);","            rightOverflow = this._getRightOverflow(bottomAxesCollection, topAxesCollection);","","            diff = topOverflow - topPaneHeight;","            if(diff > 0)","            {","                graphRect.top = topOverflow;","                if(topAxesYCoords)","                {","                    i = 0;","                    l = topAxesYCoords.length;","                    for(; i < l; ++i)","                    {","                        topAxesYCoords[i] += diff;","                    }","                }","            }","","            diff = bottomOverflow - bottomPaneHeight;","            if(diff > 0)","            {","                graphRect.bottom = h - bottomOverflow;","                if(bottomAxesYCoords)","                {","                    i = 0;","                    l = bottomAxesYCoords.length;","                    for(; i < l; ++i)","                    {","                        bottomAxesYCoords[i] -= diff;","                    }","                }","            }","","            diff = leftOverflow - leftPaneWidth;","            if(diff > 0)","            {","                graphRect.left = leftOverflow;","                if(leftAxesXCoords)","                {","                    i = 0;","                    l = leftAxesXCoords.length;","                    for(; i < l; ++i)","                    {","                        leftAxesXCoords[i] += diff;","                    }","                }","            }","","            diff = rightOverflow - rightPaneWidth;","            if(diff > 0)","            {","                graphRect.right = w - rightOverflow;","                if(rightAxesXCoords)","                {","                    i = 0;","                    l = rightAxesXCoords.length;","                    for(; i < l; ++i)","                    {","                        rightAxesXCoords[i] -= diff;","                    }","                }","            }","        }","        graphWidth = graphRect.right - graphRect.left;","        graphHeight = graphRect.bottom - graphRect.top;","        graphX = graphRect.left;","        graphY = graphRect.top;","        if(topAxesCollection)","        {","            l = topAxesCollection.length;","            i = 0;","            for(; i < l; i++)","            {","                axis = topAxesCollection[i];","                if(axis.get(\"width\") !== graphWidth)","                {","                    axis.set(\"width\", graphWidth);","                }","                axis.get(\"boundingBox\").setStyle(\"left\", graphX + \"px\");","                axis.get(\"boundingBox\").setStyle(\"top\", topAxesYCoords[i] + \"px\");","            }","            if(axis._hasDataOverflow())","            {","                graphOverflow = \"hidden\";","            }","        }","        if(bottomAxesCollection)","        {","            l = bottomAxesCollection.length;","            i = 0;","            for(; i < l; i++)","            {","                axis = bottomAxesCollection[i];","                if(axis.get(\"width\") !== graphWidth)","                {","                    axis.set(\"width\", graphWidth);","                }","                axis.get(\"boundingBox\").setStyle(\"left\", graphX + \"px\");","                axis.get(\"boundingBox\").setStyle(\"top\", bottomAxesYCoords[i] + \"px\");","            }","            if(axis._hasDataOverflow())","            {","                graphOverflow = \"hidden\";","            }","        }","        if(leftAxesCollection)","        {","            l = leftAxesCollection.length;","            i = 0;","            for(; i < l; ++i)","            {","                axis = leftAxesCollection[i];","                axis.get(\"boundingBox\").setStyle(\"top\", graphY + \"px\");","                axis.get(\"boundingBox\").setStyle(\"left\", leftAxesXCoords[i] + \"px\");","                if(axis.get(\"height\") !== graphHeight)","                {","                    axis.set(\"height\", graphHeight);","                }","            }","            if(axis._hasDataOverflow())","            {","                graphOverflow = \"hidden\";","            }","        }","        if(rightAxesCollection)","        {","            l = rightAxesCollection.length;","            i = 0;","            for(; i < l; ++i)","            {","                axis = rightAxesCollection[i];","                axis.get(\"boundingBox\").setStyle(\"top\", graphY + \"px\");","                axis.get(\"boundingBox\").setStyle(\"left\", rightAxesXCoords[i] + \"px\");","                if(axis.get(\"height\") !== graphHeight)","                {","                    axis.set(\"height\", graphHeight);","                }","            }","            if(axis._hasDataOverflow())","            {","                graphOverflow = \"hidden\";","            }","        }","        this._drawing = false;","        if(this._callLater)","        {","            this._redraw();","            return;","        }","        if(graph)","        {","            graph.get(\"boundingBox\").setStyle(\"left\", graphX + \"px\");","            graph.get(\"boundingBox\").setStyle(\"top\", graphY + \"px\");","            graph.set(\"width\", graphWidth);","            graph.set(\"height\", graphHeight);","            graph.get(\"boundingBox\").setStyle(\"overflow\", graphOverflow);","        }","","        if(this._overlay)","        {","            this._overlay.setStyle(\"left\", graphX + \"px\");","            this._overlay.setStyle(\"top\", graphY + \"px\");","            this._overlay.setStyle(\"width\", graphWidth + \"px\");","            this._overlay.setStyle(\"height\", graphHeight + \"px\");","        }","    },","","    /**","     * Destructor implementation for the CartesianChart class. Calls destroy on all axes, series and the Graph instance.","     * Removes the tooltip and overlay HTML elements.","     *","     * @method destructor","     * @protected","     */","    destructor: function()","    {","        var graph = this.get(\"graph\"),","            i = 0,","            len,","            seriesCollection = this.get(\"seriesCollection\"),","            axesCollection = this._axesCollection,","            tooltip = this.get(\"tooltip\").node;","        if(this._description)","        {","            this._description.empty();","            this._description.remove(true);","        }","        if(this._liveRegion)","        {","            this._liveRegion.empty();","            this._liveRegion.remove(true);","        }","        len = seriesCollection ? seriesCollection.length : 0;","        for(; i < len; ++i)","        {","            if(seriesCollection[i] instanceof Y.CartesianSeries)","            {","                seriesCollection[i].destroy(true);","            }","        }","        len = axesCollection ? axesCollection.length : 0;","        for(i = 0; i < len; ++i)","        {","            if(axesCollection[i] instanceof Y.Axis)","            {","                axesCollection[i].destroy(true);","            }","        }","        if(graph)","        {","            graph.destroy(true);","        }","        if(tooltip)","        {","            tooltip.empty();","            tooltip.remove(true);","        }","        if(this._overlay)","        {","            this._overlay.empty();","            this._overlay.remove(true);","        }","    },","","    /**","     * Returns the appropriate message based on the key press.","     *","     * @method _getAriaMessage","     * @param {Number} key The keycode that was pressed.","     * @return String","     */","    _getAriaMessage: function(key)","    {","        var msg = \"\",","            series,","            items,","            categoryItem,","            valueItem,","            seriesIndex = this._seriesIndex,","            itemIndex = this._itemIndex,","            seriesCollection = this.get(\"seriesCollection\"),","            len = seriesCollection.length,","            dataLength;","        if(key % 2 === 0)","        {","            if(len > 1)","            {","                if(key === 38)","                {","                    seriesIndex = seriesIndex < 1 ? len - 1 : seriesIndex - 1;","                }","                else if(key === 40)","                {","                    seriesIndex = seriesIndex >= len - 1 ? 0 : seriesIndex + 1;","                }","                this._itemIndex = -1;","            }","            else","            {","                seriesIndex = 0;","            }","            this._seriesIndex = seriesIndex;","            series = this.getSeries(parseInt(seriesIndex, 10));","            msg = series.get(\"valueDisplayName\") + \" series.\";","        }","        else","        {","            if(seriesIndex > -1)","            {","                msg = \"\";","                series = this.getSeries(parseInt(seriesIndex, 10));","            }","            else","            {","                seriesIndex = 0;","                this._seriesIndex = seriesIndex;","                series = this.getSeries(parseInt(seriesIndex, 10));","                msg = series.get(\"valueDisplayName\") + \" series.\";","            }","            dataLength = series._dataLength ? series._dataLength : 0;","            if(key === 37)","            {","                itemIndex = itemIndex > 0 ? itemIndex - 1 : dataLength - 1;","            }","            else if(key === 39)","            {","                itemIndex = itemIndex >= dataLength - 1 ? 0 : itemIndex + 1;","            }","            this._itemIndex = itemIndex;","            items = this.getSeriesItems(series, itemIndex);","            categoryItem = items.category;","            valueItem = items.value;","            if(categoryItem && valueItem && categoryItem.value && valueItem.value)","            {","                msg += categoryItem.displayName +","                    \": \" +","                    categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get(\"labelFormat\")]) +","                    \", \";","                msg += valueItem.displayName +","                    \": \" +","                    valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get(\"labelFormat\")]) +","                    \", \";","            }","           else","            {","                msg += \"No data available.\";","            }","            msg += (itemIndex + 1) + \" of \" + dataLength + \". \";","        }","        return msg;","    }","}, {","    ATTRS: {","        /**","         * Indicates whether axis labels are allowed to overflow beyond the bounds of the chart's content box.","         *","         * @attribute allowContentOverflow","         * @type Boolean","         */","        allowContentOverflow: {","            value: false","        },","","        /**","         * Style object for the axes.","         *","         * @attribute axesStyles","         * @type Object","         * @private","         */","        axesStyles: {","            getter: function()","            {","                var axes = this.get(\"axes\"),","                    i,","                    styles = this._axesStyles;","                if(axes)","                {","                    for(i in axes)","                    {","                        if(axes.hasOwnProperty(i) && axes[i] instanceof Y.Axis)","                        {","                            if(!styles)","                            {","                                styles = {};","                            }","                            styles[i] = axes[i].get(\"styles\");","                        }","                    }","                }","                return styles;","            },","","            setter: function(val)","            {","                var axes = this.get(\"axes\"),","                    i;","                for(i in val)","                {","                    if(val.hasOwnProperty(i) && axes.hasOwnProperty(i))","                    {","                        this._setBaseAttribute(axes[i], \"styles\", val[i]);","                    }","                }","            }","        },","","        /**","         * Style object for the series","         *","         * @attribute seriesStyles","         * @type Object","         * @private","         */","        seriesStyles: {","            getter: function()","            {","                var styles = this._seriesStyles,","                    graph = this.get(\"graph\"),","                    dict,","                    i;","                if(graph)","                {","                    dict = graph.get(\"seriesDictionary\");","                    if(dict)","                    {","                        styles = {};","                        for(i in dict)","                        {","                            if(dict.hasOwnProperty(i))","                            {","                                styles[i] = dict[i].get(\"styles\");","                            }","                        }","                    }","                }","                return styles;","            },","","            setter: function(val)","            {","                var i,","                    l,","                    s;","","                if(Y_Lang.isArray(val))","                {","                    s = this.get(\"seriesCollection\");","                    i = 0;","                    l = val.length;","","                    for(; i < l; ++i)","                    {","                        this._setBaseAttribute(s[i], \"styles\", val[i]);","                    }","                }","                else","                {","                    for(i in val)","                    {","                        if(val.hasOwnProperty(i))","                        {","                            s = this.getSeries(i);","                            this._setBaseAttribute(s, \"styles\", val[i]);","                        }","                    }","                }","            }","        },","","        /**","         * Styles for the graph.","         *","         * @attribute graphStyles","         * @type Object","         * @private","         */","        graphStyles: {","            getter: function()","            {","                var graph = this.get(\"graph\");","                if(graph)","                {","                    return(graph.get(\"styles\"));","                }","                return this._graphStyles;","            },","","            setter: function(val)","            {","                var graph = this.get(\"graph\");","                this._setBaseAttribute(graph, \"styles\", val);","            }","","        },","","        /**","         * Style properties for the chart. Contains a key indexed hash of the following:","         *  <dl>","         *      <dt>series</dt><dd>A key indexed hash containing references to the `styles` attribute for each series in the chart.","         *      Specific style attributes vary depending on the series:","         *      <ul>","         *          <li><a href=\"AreaSeries.html#attr_styles\">AreaSeries</a></li>","         *          <li><a href=\"BarSeries.html#attr_styles\">BarSeries</a></li>","         *          <li><a href=\"ColumnSeries.html#attr_styles\">ColumnSeries</a></li>","         *          <li><a href=\"ComboSeries.html#attr_styles\">ComboSeries</a></li>","         *          <li><a href=\"LineSeries.html#attr_styles\">LineSeries</a></li>","         *          <li><a href=\"MarkerSeries.html#attr_styles\">MarkerSeries</a></li>","         *          <li><a href=\"SplineSeries.html#attr_styles\">SplineSeries</a></li>","         *      </ul>","         *      </dd>","         *      <dt>axes</dt><dd>A key indexed hash containing references to the `styles` attribute for each axes in the chart. Specific","         *      style attributes can be found in the <a href=\"Axis.html#attr_styles\">Axis</a> class.</dd>","         *      <dt>graph</dt><dd>A reference to the `styles` attribute in the chart. Specific style attributes can be found in the","         *      <a href=\"Graph.html#attr_styles\">Graph</a> class.</dd>","         *  </dl>","         *","         * @attribute styles","         * @type Object","         */","        styles: {","            getter: function()","            {","                var styles = {","                    axes: this.get(\"axesStyles\"),","                    series: this.get(\"seriesStyles\"),","                    graph: this.get(\"graphStyles\")","                };","                return styles;","            },","            setter: function(val)","            {","                if(val.hasOwnProperty(\"axes\"))","                {","                    if(this.get(\"axesStyles\"))","                    {","                        this.set(\"axesStyles\", val.axes);","                    }","                    else","                    {","                        this._axesStyles = val.axes;","                    }","                }","                if(val.hasOwnProperty(\"series\"))","                {","                    if(this.get(\"seriesStyles\"))","                    {","                        this.set(\"seriesStyles\", val.series);","                    }","                    else","                    {","                        this._seriesStyles = val.series;","                    }","                }","                if(val.hasOwnProperty(\"graph\"))","                {","                    this.set(\"graphStyles\", val.graph);","                }","            }","        },","","        /**","         * Axes to appear in the chart. This can be a key indexed hash of axis instances or object literals","         * used to construct the appropriate axes.","         *","         * @attribute axes","         * @type Object","         */","        axes: {","            valueFn: \"_getDefaultAxes\",","","            setter: function(val)","            {","                if(this.get(\"dataProvider\"))","                {","                    val = this._setAxes(val);","                }","                return val;","            }","        },","","        /**","         * Collection of series to appear on the chart. This can be an array of Series instances or object literals","         * used to construct the appropriate series.","         *","         * @attribute seriesCollection","         * @type Array","         */","        seriesCollection: {","            lazyAdd: false,","","            valueFn: \"_getDefaultSeriesCollection\",","","            setter: function(val)","            {","                if(this.get(\"dataProvider\"))","                {","                    return this._parseSeriesCollection(val);","                }","                return val;","            }","        },","","        /**","         * Reference to the left-aligned axes for the chart.","         *","         * @attribute leftAxesCollection","         * @type Array","         * @private","         */","        leftAxesCollection: {},","","        /**","         * Reference to the bottom-aligned axes for the chart.","         *","         * @attribute bottomAxesCollection","         * @type Array","         * @private","         */","        bottomAxesCollection: {},","","        /**","         * Reference to the right-aligned axes for the chart.","         *","         * @attribute rightAxesCollection","         * @type Array","         * @private","         */","        rightAxesCollection: {},","","        /**","         * Reference to the top-aligned axes for the chart.","         *","         * @attribute topAxesCollection","         * @type Array","         * @private","         */","        topAxesCollection: {},","","        /**","         * Indicates whether or not the chart is stacked.","         *","         * @attribute stacked","         * @type Boolean","         */","        stacked: {","            value: false","        },","","        /**","         * Direction of chart's category axis when there is no series collection specified. Charts can","         * be horizontal or vertical. When the chart type is column, the chart is horizontal.","         * When the chart type is bar, the chart is vertical.","         *","         * @attribute direction","         * @type String","         */","        direction: {","            getter: function()","            {","                var type = this.get(\"type\");","                if(type === \"bar\")","                {","                    return \"vertical\";","                }","                else if(type === \"column\")","                {","                    return \"horizontal\";","                }","                return this._direction;","            },","","            setter: function(val)","            {","                this._direction = val;","                return this._direction;","            }","        },","","        /**","         * Indicates whether or not an area is filled in a combo chart.","         *","         * @attribute showAreaFill","         * @type Boolean","         */","        showAreaFill: {},","","        /**","         * Indicates whether to display markers in a combo chart.","         *","         * @attribute showMarkers","         * @type Boolean","         */","        showMarkers:{},","","        /**","         * Indicates whether to display lines in a combo chart.","         *","         * @attribute showLines","         * @type Boolean","         */","        showLines:{},","","        /**","         * Indicates the key value used to identify a category axis in the `axes` hash. If","         * not specified, the categoryKey attribute value will be used.","         *","         * @attribute categoryAxisName","         * @type String","         */","        categoryAxisName: {","        },","","        /**","         * Indicates the key value used to identify a the series axis when an axis not generated.","         *","         * @attribute valueAxisName","         * @type String","         */","        valueAxisName: {","            value: \"values\"","        },","","        /**","         * Reference to the horizontalGridlines for the chart.","         *","         * @attribute horizontalGridlines","         * @type Gridlines","         */","        horizontalGridlines: {","            getter: function()","            {","                var graph = this.get(\"graph\");","                if(graph)","                {","                    return graph.get(\"horizontalGridlines\");","                }","                return this._horizontalGridlines;","            },","            setter: function(val)","            {","                var graph = this.get(\"graph\");","                if(val && !Y_Lang.isObject(val))","                {","                    val = {};","                }","                if(graph)","                {","                    graph.set(\"horizontalGridlines\", val);","                }","                else","                {","                    this._horizontalGridlines = val;","                }","            }","        },","","        /**","         * Reference to the verticalGridlines for the chart.","         *","         * @attribute verticalGridlines","         * @type Gridlines","         */","        verticalGridlines: {","            getter: function()","            {","                var graph = this.get(\"graph\");","                if(graph)","                {","                    return graph.get(\"verticalGridlines\");","                }","                return this._verticalGridlines;","            },","            setter: function(val)","            {","                var graph = this.get(\"graph\");","                if(val && !Y_Lang.isObject(val))","                {","                    val = {};","                }","                if(graph)","                {","                    graph.set(\"verticalGridlines\", val);","                }","                else","                {","                    this._verticalGridlines = val;","                }","            }","        },","","        /**","         * Type of chart when there is no series collection specified.","         *","         * @attribute type","         * @type String","         */","        type: {","            getter: function()","            {","                if(this.get(\"stacked\"))","                {","                    return \"stacked\" + this._type;","                }","                return this._type;","            },","","            setter: function(val)","            {","                if(this._type === \"bar\")","                {","                    if(val !== \"bar\")","                    {","                        this.set(\"direction\", \"horizontal\");","                    }","                }","                else","                {","                    if(val === \"bar\")","                    {","                        this.set(\"direction\", \"vertical\");","                    }","                }","                this._type = val;","                return this._type;","            }","        },","","        /**","         * Reference to the category axis used by the chart.","         *","         * @attribute categoryAxis","         * @type Axis","         */","        categoryAxis:{}","    }","});","/**"," * The PieChart class creates a pie chart"," *"," * @class PieChart"," * @extends ChartBase"," * @constructor"," * @submodule charts-base"," */","Y.PieChart = Y.Base.create(\"pieChart\", Y.Widget, [Y.ChartBase], {","    /**","     * Calculates and returns a `seriesCollection`.","     *","     * @method _getSeriesCollection","     * @return Array","     * @private","     */","    _getSeriesCollection: function()","    {","        if(this._seriesCollection)","        {","            return this._seriesCollection;","        }","        var axes = this.get(\"axes\"),","            sc = [],","            seriesKeys,","            i = 0,","            l,","            type = this.get(\"type\"),","            key,","            catAxis = \"categoryAxis\",","            catKey = \"categoryKey\",","            valAxis = \"valueAxis\",","            seriesKey = \"valueKey\";","        if(axes)","        {","            seriesKeys = axes.values.get(\"keyCollection\");","            key = axes.category.get(\"keyCollection\")[0];","            l = seriesKeys.length;","            for(; i < l; ++i)","            {","                sc[i] = {type:type};","                sc[i][catAxis] = \"category\";","                sc[i][valAxis] = \"values\";","                sc[i][catKey] = key;","                sc[i][seriesKey] = seriesKeys[i];","            }","        }","        this._seriesCollection = sc;","        return sc;","    },","","    /**","     * Creates `Axis` instances.","     *","     * @method _parseAxes","     * @param {Object} val Object containing `Axis` instances or objects in which to construct `Axis` instances.","     * @return Object","     * @private","     */","    _parseAxes: function(hash)","    {","        if(!this._axes)","        {","            this._axes = {};","        }","        var i, pos, axis, dh, config, AxisClass,","            type = this.get(\"type\"),","            w = this.get(\"width\"),","            h = this.get(\"height\"),","            node = Y.Node.one(this._parentNode);","        if(!w)","        {","            this.set(\"width\", node.get(\"offsetWidth\"));","            w = this.get(\"width\");","        }","        if(!h)","        {","            this.set(\"height\", node.get(\"offsetHeight\"));","            h = this.get(\"height\");","        }","        for(i in hash)","        {","            if(hash.hasOwnProperty(i))","            {","                dh = hash[i];","                pos = type === \"pie\" ? \"none\" : dh.position;","                AxisClass = this._getAxisClass(dh.type);","                config = {dataProvider:this.get(\"dataProvider\")};","                if(dh.hasOwnProperty(\"roundingUnit\"))","                {","                    config.roundingUnit = dh.roundingUnit;","                }","                config.keys = dh.keys;","                config.width = w;","                config.height = h;","                config.position = pos;","                config.styles = dh.styles;","                axis = new AxisClass(config);","                axis.on(\"axisRendered\", Y.bind(this._itemRendered, this));","                this._axes[i] = axis;","            }","        }","    },","","    /**","     * Adds axes to the chart.","     *","     * @method _addAxes","     * @private","     */","    _addAxes: function()","    {","        var axes = this.get(\"axes\"),","            i,","            axis,","            p;","        if(!axes)","        {","            this.set(\"axes\", this._getDefaultAxes());","            axes = this.get(\"axes\");","        }","        if(!this._axesCollection)","        {","            this._axesCollection = [];","        }","        for(i in axes)","        {","            if(axes.hasOwnProperty(i))","            {","                axis = axes[i];","                p = axis.get(\"position\");","                if(!this.get(p + \"AxesCollection\"))","                {","                    this.set(p + \"AxesCollection\", [axis]);","                }","                else","                {","                    this.get(p + \"AxesCollection\").push(axis);","                }","                this._axesCollection.push(axis);","            }","        }","    },","","    /**","     * Renders the Graph.","     *","     * @method _addSeries","     * @private","     */","    _addSeries: function()","    {","        var graph = this.get(\"graph\"),","            seriesCollection = this.get(\"seriesCollection\");","        this._parseSeriesAxes(seriesCollection);","        graph.set(\"showBackground\", false);","        graph.set(\"width\", this.get(\"width\"));","        graph.set(\"height\", this.get(\"height\"));","        graph.set(\"seriesCollection\", seriesCollection);","        this._seriesCollection = graph.get(\"seriesCollection\");","        graph.render(this.get(\"contentBox\"));","    },","","    /**","     * Parse and sets the axes for the chart.","     *","     * @method _parseSeriesAxes","     * @param {Array} c A collection `PieSeries` instance.","     * @private","     */","    _parseSeriesAxes: function(c)","    {","        var i = 0,","            len = c.length,","            s,","            axes = this.get(\"axes\"),","            axis;","        for(; i < len; ++i)","        {","            s = c[i];","            if(s)","            {","                //If series is an actual series instance,","                //replace axes attribute string ids with axes","                if(s instanceof Y.PieSeries)","                {","                    axis = s.get(\"categoryAxis\");","                    if(axis && !(axis instanceof Y.Axis))","                    {","                        s.set(\"categoryAxis\", axes[axis]);","                    }","                    axis = s.get(\"valueAxis\");","                    if(axis && !(axis instanceof Y.Axis))","                    {","                        s.set(\"valueAxis\", axes[axis]);","                    }","                    continue;","                }","                s.categoryAxis = axes.category;","                s.valueAxis = axes.values;","                if(!s.type)","                {","                    s.type = this.get(\"type\");","                }","            }","        }","    },","","    /**","     * Generates and returns a key-indexed object containing `Axis` instances or objects used to create `Axis` instances.","     *","     * @method _getDefaultAxes","     * @return Object","     * @private","     */","    _getDefaultAxes: function()","    {","        var catKey = this.get(\"categoryKey\"),","            seriesKeys = this.get(\"seriesKeys\").concat(),","            seriesAxis = \"numeric\";","        return {","            values:{","                keys:seriesKeys,","                type:seriesAxis","            },","            category:{","                keys:[catKey],","                type:this.get(\"categoryType\")","            }","        };","    },","","    /**","     * Returns an object literal containing a categoryItem and a valueItem for a given series index.","     *","     * @method getSeriesItem","     * @param series Reference to a series.","     * @param index Index of the specified item within a series.","     * @return Object","     */","    getSeriesItems: function(series, index)","    {","        var categoryItem = {","                axis: series.get(\"categoryAxis\"),","                key: series.get(\"categoryKey\"),","                displayName: series.get(\"categoryDisplayName\")","            },","            valueItem = {","                axis: series.get(\"valueAxis\"),","                key: series.get(\"valueKey\"),","                displayName: series.get(\"valueDisplayName\")","            };","        categoryItem.value = categoryItem.axis.getKeyValueAt(categoryItem.key, index);","        valueItem.value = valueItem.axis.getKeyValueAt(valueItem.key, index);","        return {category:categoryItem, value:valueItem};","    },","","    /**","     * Handler for sizeChanged event.","     *","     * @method _sizeChanged","     * @param {Object} e Event object.","     * @private","     */","    _sizeChanged: function()","    {","        this._redraw();","    },","","    /**","     * Redraws the chart instance.","     *","     * @method _redraw","     * @private","     */","    _redraw: function()","    {","        var graph = this.get(\"graph\"),","            w = this.get(\"width\"),","            h = this.get(\"height\"),","            dimension;","        if(graph)","        {","            dimension = Math.min(w, h);","            graph.set(\"width\", dimension);","            graph.set(\"height\", dimension);","        }","    },","","    /**","     * Formats tooltip text for a pie chart.","     *","     * @method _tooltipLabelFunction","     * @param {Object} categoryItem An object containing the following:","     *  <dl>","     *      <dt>axis</dt><dd>The axis to which the category is bound.</dd>","     *      <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided)</dd>","     *      <dt>key</dt><dd>The key of the category.</dd>","     *      <dt>value</dt><dd>The value of the category</dd>","     *  </dl>","     * @param {Object} valueItem An object containing the following:","     *  <dl>","     *      <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>","     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>","     *      <dt>key</dt><dd>The key for the series.</dd>","     *      <dt>value</dt><dd>The value for the series item.</dd>","     *  </dl>","     * @param {Number} itemIndex The index of the item within the series.","     * @param {CartesianSeries} series The `PieSeries` instance of the item.","     * @return {HTML}","     * @private","     */","    _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series)","    {","        var msg = DOCUMENT.createElement(\"div\"),","            total = series.getTotalValues(),","            pct = Math.round((valueItem.value / total) * 10000)/100;","        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName +","        \": \" + categoryItem.axis.get(\"labelFunction\").apply(this, [categoryItem.value, categoryItem.axis.get(\"labelFormat\")])));","        msg.appendChild(DOCUMENT.createElement(\"br\"));","        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName +","        \": \" + valueItem.axis.get(\"labelFunction\").apply(this, [valueItem.value, valueItem.axis.get(\"labelFormat\")])));","        msg.appendChild(DOCUMENT.createElement(\"br\"));","        msg.appendChild(DOCUMENT.createTextNode(pct + \"%\"));","        return msg;","    },","","    /**","     * Returns the appropriate message based on the key press.","     *","     * @method _getAriaMessage","     * @param {Number} key The keycode that was pressed.","     * @return String","     */","    _getAriaMessage: function(key)","    {","        var msg = \"\",","            categoryItem,","            items,","            series,","            valueItem,","            seriesIndex = 0,","            itemIndex = this._itemIndex,","            len,","            total,","            pct,","            markers;","        series = this.getSeries(parseInt(seriesIndex, 10));","        markers = series.get(\"markers\");","        len = markers && markers.length ? markers.length : 0;","        if(key === 37)","        {","            itemIndex = itemIndex > 0 ? itemIndex - 1 : len - 1;","        }","        else if(key === 39)","        {","            itemIndex = itemIndex >= len - 1 ? 0 : itemIndex + 1;","        }","        this._itemIndex = itemIndex;","        items = this.getSeriesItems(series, itemIndex);","        categoryItem = items.category;","        valueItem = items.value;","        total = series.getTotalValues();","        pct = Math.round((valueItem.value / total) * 10000)/100;","        if(categoryItem && valueItem)","        {","            msg += categoryItem.displayName +","                \": \" +","                categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get(\"labelFormat\")]) +","                \", \";","            msg += valueItem.displayName +","                \": \" + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get(\"labelFormat\")]) +","                \", \";","            msg += \"Percent of total \" + valueItem.displayName + \": \" + pct + \"%,\";","        }","        else","        {","            msg += \"No data available,\";","        }","        msg += (itemIndex + 1) + \" of \" + len + \". \";","        return msg;","    }","}, {","    ATTRS: {","        /**","         * Sets the aria description for the chart.","         *","         * @attribute ariaDescription","         * @type String","         */","        ariaDescription: {","            value: \"Use the left and right keys to navigate through items.\",","","            setter: function(val)","            {","                if(this._description)","                {","                    this._description.setContent(\"\");","                    this._description.appendChild(DOCUMENT.createTextNode(val));","                }","                return val;","            }","        },","","        /**","         * Axes to appear in the chart.","         *","         * @attribute axes","         * @type Object","         */","        axes: {","            getter: function()","            {","                return this._axes;","            },","","            setter: function(val)","            {","                this._parseAxes(val);","            }","        },","","        /**","         * Collection of series to appear on the chart. This can be an array of Series instances or object literals","         * used to describe a Series instance.","         *","         * @attribute seriesCollection","         * @type Array","         */","        seriesCollection: {","            lazyAdd: false,","","            getter: function()","            {","                return this._getSeriesCollection();","            },","","            setter: function(val)","            {","                return this._setSeriesCollection(val);","            }","        },","","        /**","         * Type of chart when there is no series collection specified.","         *","         * @attribute type","         * @type String","         */","        type: {","            value: \"pie\"","        }","    }","});","/**"," * The Chart class is the basic application used to create a chart."," *"," * @class Chart"," * @constructor"," * @submodule charts-base"," */","function Chart(cfg)","{","    if(cfg.type !== \"pie\")","    {","        return new Y.CartesianChart(cfg);","    }","    else","    {","        return new Y.PieChart(cfg);","    }","}","Y.Chart = Chart;","","","}, '@VERSION@', {","    \"requires\": [","        \"dom\",","        \"event-mouseenter\",","        \"event-touch\",","        \"graphics-group\",","        \"axes\",","        \"series-pie\",","        \"series-line\",","        \"series-marker\",","        \"series-area\",","        \"series-spline\",","        \"series-column\",","        \"series-bar\",","        \"series-areaspline\",","        \"series-combo\",","        \"series-combospline\",","        \"series-line-stacked\",","        \"series-marker-stacked\",","        \"series-area-stacked\",","        \"series-spline-stacked\",","        \"series-column-stacked\",","        \"series-bar-stacked\",","        \"series-areaspline-stacked\",","        \"series-combo-stacked\",","        \"series-combospline-stacked\"","    ]","});"];
-_yuitest_coverage["build/charts-base/charts-base.js"].lines = {"1":0,"9":0,"27":0,"45":0,"46":0,"48":0,"60":0,"62":0,"74":0,"91":0,"93":0,"95":0,"97":0,"99":0,"103":0,"105":0,"106":0,"107":0,"108":0,"109":0,"114":0,"116":0,"117":0,"121":0,"122":0,"124":0,"126":0,"128":0,"142":0,"146":0,"148":0,"149":0,"154":0,"168":0,"169":0,"183":0,"184":0,"197":0,"204":0,"256":0,"263":0,"264":0,"265":0,"266":0,"267":0,"268":0,"277":0,"286":0,"288":0,"289":0,"290":0,"291":0,"292":0,"293":0,"294":0,"295":0,"296":0,"297":0,"299":0,"301":0,"302":0,"304":0,"307":0,"309":0,"311":0,"313":0,"335":0,"337":0,"339":0,"341":0,"353":0,"355":0,"357":0,"359":0,"372":0,"374":0,"376":0,"406":0,"408":0,"410":0,"414":0,"415":0,"416":0,"417":0,"419":0,"420":0,"422":0,"423":0,"425":0,"427":0,"428":0,"430":0,"431":0,"432":0,"445":0,"450":0,"452":0,"454":0,"455":0,"457":0,"459":0,"460":0,"461":0,"462":0,"463":0,"464":0,"465":0,"466":0,"479":0,"485":0,"486":0,"488":0,"490":0,"491":0,"492":0,"493":0,"494":0,"495":0,"496":0,"497":0,"498":0,"499":0,"500":0,"501":0,"503":0,"575":0,"576":0,"578":0,"582":0,"584":0,"596":0,"601":0,"621":0,"623":0,"624":0,"625":0,"626":0,"627":0,"639":0,"646":0,"648":0,"650":0,"652":0,"653":0,"655":0,"656":0,"659":0,"661":0,"663":0,"665":0,"667":0,"669":0,"671":0,"682":0,"684":0,"685":0,"687":0,"691":0,"692":0,"693":0,"694":0,"695":0,"696":0,"697":0,"698":0,"699":0,"701":0,"702":0,"704":0,"705":0,"708":0,"709":0,"711":0,"724":0,"727":0,"729":0,"731":0,"733":0,"734":0,"736":0,"738":0,"752":0,"764":0,"775":0,"777":0,"778":0,"780":0,"782":0,"783":0,"785":0,"787":0,"788":0,"803":0,"804":0,"818":0,"819":0,"832":0,"833":0,"847":0,"852":0,"853":0,"880":0,"896":0,"899":0,"901":0,"903":0,"905":0,"906":0,"907":0,"909":0,"911":0,"915":0,"917":0,"919":0,"922":0,"923":0,"940":0,"943":0,"945":0,"947":0,"949":0,"950":0,"951":0,"953":0,"955":0,"959":0,"961":0,"963":0,"966":0,"967":0,"982":0,"984":0,"985":0,"986":0,"988":0,"1004":0,"1006":0,"1007":0,"1008":0,"1010":0,"1026":0,"1028":0,"1029":0,"1030":0,"1032":0,"1082":0,"1084":0,"1096":0,"1097":0,"1099":0,"1101":0,"1106":0,"1107":0,"1109":0,"1111":0,"1126":0,"1131":0,"1132":0,"1133":0,"1148":0,"1149":0,"1151":0,"1153":0,"1168":0,"1170":0,"1171":0,"1173":0,"1252":0,"1329":0,"1339":0,"1341":0,"1343":0,"1356":0,"1357":0,"1359":0,"1372":0,"1376":0,"1377":0,"1379":0,"1391":0,"1393":0,"1395":0,"1397":0,"1401":0,"1404":0,"1419":0,"1421":0,"1423":0,"1425":0,"1436":0,"1439":0,"1441":0,"1443":0,"1475":0,"1477":0,"1484":0,"1486":0,"1487":0,"1489":0,"1491":0,"1493":0,"1495":0,"1516":0,"1528":0,"1560":0,"1561":0,"1562":0,"1563":0,"1572":0,"1576":0,"1577":0,"1578":0,"1579":0,"1580":0,"1582":0,"1584":0,"1596":0,"1599":0,"1600":0,"1601":0,"1602":0,"1603":0,"1604":0,"1605":0,"1606":0,"1607":0,"1608":0,"1609":0,"1610":0,"1611":0,"1612":0,"1613":0,"1614":0,"1626":0,"1629":0,"1630":0,"1631":0,"1632":0,"1633":0,"1634":0,"1643":0,"1652":0,"1653":0,"1654":0,"1655":0,"1656":0,"1665":0,"1666":0,"1669":0,"1671":0,"1672":0,"1673":0,"1674":0,"1677":0,"1680":0,"1681":0,"1682":0,"1684":0,"1686":0,"1688":0,"1690":0,"1692":0,"1694":0,"1695":0,"1701":0,"1702":0,"1703":0,"1704":0,"1705":0,"1706":0,"1709":0,"1711":0,"1713":0,"1717":0,"1718":0,"1721":0,"1723":0,"1724":0,"1725":0,"1727":0,"1728":0,"1733":0,"1734":0,"1737":0,"1739":0,"1743":0,"1745":0,"1747":0,"1749":0,"1751":0,"1752":0,"1754":0,"1757":0,"1772":0,"1785":0,"1787":0,"1789":0,"1791":0,"1793":0,"1794":0,"1889":0,"1913":0,"1917":0,"1918":0,"1919":0,"1921":0,"1922":0,"1924":0,"1925":0,"1927":0,"1929":0,"1931":0,"1932":0,"1934":0,"1936":0,"1938":0,"1954":0,"1955":0,"1957":0,"1961":0,"1976":0,"1978":0,"1980":0,"1981":0,"1982":0,"1983":0,"1984":0,"1997":0,"2002":0,"2004":0,"2005":0,"2016":0,"2018":0,"2019":0,"2020":0,"2021":0,"2022":0,"2033":0,"2037":0,"2039":0,"2041":0,"2042":0,"2043":0,"2056":0,"2070":0,"2072":0,"2073":0,"2074":0,"2076":0,"2078":0,"2080":0,"2084":0,"2086":0,"2088":0,"2091":0,"2093":0,"2105":0,"2116":0,"2118":0,"2122":0,"2125":0,"2126":0,"2129":0,"2130":0,"2131":0,"2132":0,"2133":0,"2134":0,"2135":0,"2136":0,"2137":0,"2138":0,"2139":0,"2140":0,"2141":0,"2142":0,"2143":0,"2144":0,"2145":0,"2146":0,"2170":0,"2178":0,"2180":0,"2184":0,"2186":0,"2188":0,"2191":0,"2193":0,"2194":0,"2196":0,"2197":0,"2198":0,"2202":0,"2203":0,"2204":0,"2205":0,"2207":0,"2209":0,"2212":0,"2238":0,"2247":0,"2248":0,"2249":0,"2251":0,"2253":0,"2254":0,"2255":0,"2256":0,"2257":0,"2259":0,"2261":0,"2262":0,"2274":0,"2276":0,"2280":0,"2282":0,"2284":0,"2301":0,"2302":0,"2304":0,"2306":0,"2308":0,"2310":0,"2312":0,"2314":0,"2326":0,"2331":0,"2333":0,"2334":0,"2336":0,"2338":0,"2342":0,"2355":0,"2359":0,"2361":0,"2363":0,"2364":0,"2366":0,"2368":0,"2371":0,"2374":0,"2383":0,"2390":0,"2396":0,"2397":0,"2398":0,"2399":0,"2400":0,"2401":0,"2403":0,"2406":0,"2407":0,"2409":0,"2410":0,"2411":0,"2412":0,"2413":0,"2414":0,"2415":0,"2416":0,"2417":0,"2419":0,"2420":0,"2433":0,"2463":0,"2464":0,"2466":0,"2467":0,"2471":0,"2472":0,"2474":0,"2475":0,"2477":0,"2478":0,"2480":0,"2482":0,"2484":0,"2487":0,"2489":0,"2490":0,"2492":0,"2494":0,"2495":0,"2498":0,"2499":0,"2501":0,"2502":0,"2503":0,"2504":0,"2506":0,"2508":0,"2510":0,"2512":0,"2514":0,"2515":0,"2516":0,"2517":0,"2521":0,"2552":0,"2554":0,"2568":0,"2600":0,"2602":0,"2604":0,"2606":0,"2619":0,"2620":0,"2622":0,"2623":0,"2625":0,"2638":0,"2640":0,"2642":0,"2644":0,"2657":0,"2677":0,"2678":0,"2680":0,"2681":0,"2682":0,"2683":0,"2687":0,"2688":0,"2689":0,"2690":0,"2692":0,"2693":0,"2695":0,"2696":0,"2697":0,"2699":0,"2700":0,"2702":0,"2703":0,"2704":0,"2708":0,"2713":0,"2716":0,"2718":0,"2719":0,"2721":0,"2722":0,"2723":0,"2724":0,"2726":0,"2728":0,"2731":0,"2733":0,"2735":0,"2736":0,"2738":0,"2739":0,"2741":0,"2742":0,"2745":0,"2746":0,"2747":0,"2748":0,"2750":0,"2751":0,"2753":0,"2758":0,"2760":0,"2762":0,"2764":0,"2766":0,"2768":0,"2771":0,"2773":0,"2775":0,"2776":0,"2777":0,"2779":0,"2791":0,"2796":0,"2798":0,"2799":0,"2801":0,"2804":0,"2806":0,"2807":0,"2809":0,"2824":0,"2827":0,"2828":0,"2841":0,"2845":0,"2847":0,"2849":0,"2853":0,"2855":0,"2857":0,"2858":0,"2860":0,"2861":0,"2867":0,"2883":0,"2885":0,"2887":0,"2889":0,"2891":0,"2907":0,"2909":0,"2913":0,"2927":0,"2957":0,"2959":0,"2961":0,"2962":0,"2964":0,"2968":0,"2969":0,"2970":0,"2971":0,"2973":0,"2975":0,"2977":0,"2978":0,"2980":0,"2982":0,"2983":0,"2985":0,"2987":0,"2992":0,"2994":0,"2997":0,"2999":0,"3000":0,"3002":0,"3004":0,"3005":0,"3007":0,"3009":0,"3012":0,"3016":0,"3017":0,"3018":0,"3022":0,"3024":0,"3025":0,"3027":0,"3029":0,"3033":0,"3044":0,"3051":0,"3053":0,"3055":0,"3057":0,"3059":0,"3060":0,"3062":0,"3064":0,"3065":0,"3067":0,"3069":0,"3070":0,"3072":0,"3073":0,"3074":0,"3076":0,"3080":0,"3082":0,"3083":0,"3085":0,"3087":0,"3101":0,"3102":0,"3114":0,"3126":0,"3128":0,"3129":0,"3131":0,"3133":0,"3135":0,"3137":0,"3139":0,"3143":0,"3145":0,"3147":0,"3149":0,"3151":0,"3154":0,"3156":0,"3158":0,"3160":0,"3162":0,"3166":0,"3168":0,"3170":0,"3172":0,"3174":0,"3188":0,"3189":0,"3191":0,"3193":0,"3206":0,"3225":0,"3227":0,"3228":0,"3232":0,"3233":0,"3235":0,"3237":0,"3239":0,"3241":0,"3242":0,"3243":0,"3244":0,"3246":0,"3247":0,"3248":0,"3250":0,"3251":0,"3253":0,"3255":0,"3257":0,"3261":0,"3262":0,"3264":0,"3265":0,"3267":0,"3269":0,"3271":0,"3273":0,"3275":0,"3277":0,"3287":0,"3288":0,"3290":0,"3292":0,"3293":0,"3295":0,"3296":0,"3298":0,"3301":0,"3303":0,"3305":0,"3307":0,"3310":0,"3312":0,"3315":0,"3317":0,"3319":0,"3321":0,"3322":0,"3324":0,"3326":0,"3328":0,"3332":0,"3335":0,"3337":0,"3339":0,"3345":0,"3346":0,"3348":0,"3350":0,"3352":0,"3367":0,"3370":0,"3372":0,"3374":0,"3376":0,"3378":0,"3380":0,"3385":0,"3387":0,"3391":0,"3395":0,"3426":0,"3432":0,"3434":0,"3439":0,"3447":0,"3452":0,"3458":0,"3459":0,"3460":0,"3461":0,"3462":0,"3474":0,"3476":0,"3479":0,"3481":0,"3483":0,"3499":0,"3503":0,"3505":0,"3506":0,"3508":0,"3509":0,"3515":0,"3517":0,"3518":0,"3519":0,"3521":0,"3522":0,"3528":0,"3543":0,"3547":0,"3549":0,"3550":0,"3552":0,"3553":0,"3559":0,"3561":0,"3562":0,"3563":0,"3565":0,"3566":0,"3572":0,"3587":0,"3591":0,"3593":0,"3594":0,"3596":0,"3597":0,"3603":0,"3605":0,"3606":0,"3607":0,"3609":0,"3610":0,"3616":0,"3631":0,"3635":0,"3637":0,"3638":0,"3640":0,"3641":0,"3647":0,"3649":0,"3650":0,"3651":0,"3653":0,"3654":0,"3660":0,"3671":0,"3673":0,"3674":0,"3676":0,"3677":0,"3678":0,"3708":0,"3710":0,"3711":0,"3712":0,"3714":0,"3715":0,"3718":0,"3720":0,"3721":0,"3722":0,"3723":0,"3725":0,"3726":0,"3729":0,"3731":0,"3732":0,"3733":0,"3735":0,"3736":0,"3739":0,"3741":0,"3742":0,"3743":0,"3745":0,"3746":0,"3750":0,"3751":0,"3752":0,"3753":0,"3754":0,"3755":0,"3756":0,"3758":0,"3759":0,"3760":0,"3761":0,"3763":0,"3764":0,"3766":0,"3767":0,"3769":0,"3770":0,"3771":0,"3773":0,"3778":0,"3779":0,"3781":0,"3782":0,"3784":0,"3785":0,"3786":0,"3788":0,"3793":0,"3794":0,"3796":0,"3797":0,"3799":0,"3800":0,"3801":0,"3803":0,"3808":0,"3809":0,"3811":0,"3812":0,"3814":0,"3815":0,"3816":0,"3818":0,"3823":0,"3824":0,"3825":0,"3826":0,"3827":0,"3829":0,"3830":0,"3831":0,"3833":0,"3834":0,"3836":0,"3838":0,"3839":0,"3841":0,"3843":0,"3846":0,"3848":0,"3849":0,"3850":0,"3852":0,"3853":0,"3855":0,"3857":0,"3858":0,"3860":0,"3862":0,"3865":0,"3867":0,"3868":0,"3869":0,"3871":0,"3872":0,"3873":0,"3874":0,"3876":0,"3879":0,"3881":0,"3884":0,"3886":0,"3887":0,"3888":0,"3890":0,"3891":0,"3892":0,"3893":0,"3895":0,"3898":0,"3900":0,"3903":0,"3904":0,"3906":0,"3907":0,"3909":0,"3911":0,"3912":0,"3913":0,"3914":0,"3915":0,"3918":0,"3920":0,"3921":0,"3922":0,"3923":0,"3936":0,"3942":0,"3944":0,"3945":0,"3947":0,"3949":0,"3950":0,"3952":0,"3953":0,"3955":0,"3957":0,"3960":0,"3961":0,"3963":0,"3965":0,"3968":0,"3970":0,"3972":0,"3974":0,"3975":0,"3977":0,"3979":0,"3980":0,"3993":0,"4003":0,"4005":0,"4007":0,"4009":0,"4011":0,"4013":0,"4015":0,"4019":0,"4021":0,"4022":0,"4023":0,"4027":0,"4029":0,"4030":0,"4034":0,"4035":0,"4036":0,"4037":0,"4039":0,"4040":0,"4042":0,"4044":0,"4046":0,"4048":0,"4049":0,"4050":0,"4051":0,"4052":0,"4054":0,"4058":0,"4065":0,"4067":0,"4069":0,"4093":0,"4096":0,"4098":0,"4100":0,"4102":0,"4104":0,"4106":0,"4110":0,"4115":0,"4117":0,"4119":0,"4121":0,"4137":0,"4141":0,"4143":0,"4144":0,"4146":0,"4147":0,"4149":0,"4151":0,"4156":0,"4161":0,"4165":0,"4167":0,"4168":0,"4169":0,"4171":0,"4173":0,"4178":0,"4180":0,"4182":0,"4183":0,"4200":0,"4201":0,"4203":0,"4205":0,"4210":0,"4211":0,"4243":0,"4248":0,"4252":0,"4254":0,"4256":0,"4260":0,"4263":0,"4265":0,"4267":0,"4271":0,"4274":0,"4276":0,"4293":0,"4295":0,"4297":0,"4315":0,"4317":0,"4319":0,"4380":0,"4381":0,"4383":0,"4385":0,"4387":0,"4389":0,"4394":0,"4395":0,"4452":0,"4453":0,"4455":0,"4457":0,"4461":0,"4462":0,"4464":0,"4466":0,"4468":0,"4472":0,"4486":0,"4487":0,"4489":0,"4491":0,"4495":0,"4496":0,"4498":0,"4500":0,"4502":0,"4506":0,"4520":0,"4522":0,"4524":0,"4529":0,"4531":0,"4533":0,"4538":0,"4540":0,"4543":0,"4544":0,"4565":0,"4575":0,"4577":0,"4579":0,"4590":0,"4592":0,"4593":0,"4594":0,"4595":0,"4597":0,"4598":0,"4599":0,"4600":0,"4601":0,"4604":0,"4605":0,"4618":0,"4620":0,"4622":0,"4627":0,"4629":0,"4630":0,"4632":0,"4634":0,"4635":0,"4637":0,"4639":0,"4641":0,"4642":0,"4643":0,"4644":0,"4645":0,"4647":0,"4649":0,"4650":0,"4651":0,"4652":0,"4653":0,"4654":0,"4655":0,"4656":0,"4669":0,"4673":0,"4675":0,"4676":0,"4678":0,"4680":0,"4682":0,"4684":0,"4686":0,"4687":0,"4688":0,"4690":0,"4694":0,"4696":0,"4709":0,"4711":0,"4712":0,"4713":0,"4714":0,"4715":0,"4716":0,"4717":0,"4729":0,"4734":0,"4736":0,"4737":0,"4741":0,"4743":0,"4744":0,"4746":0,"4748":0,"4749":0,"4751":0,"4753":0,"4755":0,"4756":0,"4757":0,"4759":0,"4774":0,"4777":0,"4799":0,"4809":0,"4810":0,"4811":0,"4823":0,"4834":0,"4838":0,"4840":0,"4841":0,"4842":0,"4871":0,"4874":0,"4876":0,"4877":0,"4879":0,"4880":0,"4881":0,"4893":0,"4904":0,"4905":0,"4906":0,"4907":0,"4909":0,"4911":0,"4913":0,"4915":0,"4916":0,"4917":0,"4918":0,"4919":0,"4920":0,"4921":0,"4923":0,"4927":0,"4930":0,"4934":0,"4936":0,"4937":0,"4952":0,"4954":0,"4955":0,"4957":0,"4970":0,"4975":0,"4991":0,"4996":0,"5018":0,"5020":0,"5022":0,"5026":0,"5029":0};
-_yuitest_coverage["build/charts-base/charts-base.js"].functions = {"remove:43":0,"draw:58":0,"_drawGridlines:72":0,"_getPoints:140":0,"_horizontalLine:166":0,"_verticalLine:181":0,"_getDefaultStyles:195":0,"bindUI:261":0,"syncUI:275":0,"getSeriesByIndex:333":0,"getSeriesByKey:351":0,"addDispatcher:370":0,"_parseSeriesCollection:404":0,"_addSeries:443":0,"_createSeries:477":0,"_getSeries:573":0,"_markerEventHandler:594":0,"_updateStyles:619":0,"_sizeChangeHandler:637":0,"_drawSeries:680":0,"_drawingCompleteHandler:722":0,"_getDefaultStyles:750":0,"destructor:773":0,"setter:801":0,"setter:816":0,"getter:831":0,"getter:845":0,"setter:850":0,"getter:878":0,"setter:894":0,"setter:938":0,"getter:980":0,"getter:1002":0,"getter:1024":0,"ChartBase:1082":0,"valueFn:1094":0,"setter:1104":0,"getter:1124":0,"setter:1129":0,"setter:1146":0,"setter:1166":0,"setter:1250":0,"_groupMarkersChangeHandler:1337":0,"_itemRendered:1354":0,"(anonymous 2):1376":0,"_getGraph:1370":0,"getSeries:1389":0,"getAxisByKey:1417":0,"getCategoryAxis:1434":0,"_setDataValues:1473":0,"_setSeriesCollection:1514":0,"_getAxisClass:1526":0,"initializer:1558":0,"renderUI:1570":0,"_setAriaElements:1594":0,"_getAriaOffscreenNode:1624":0,"syncUI:1641":0,"(anonymous 3):1665":0,"(anonymous 4):1686":0,"(anonymous 5):1723":0,"bindUI:1650":0,"_markerEventDispatcher:1770":0,"_dataProviderChangeHandler:1911":0,"toggleTooltip:1952":0,"_showTooltip:1974":0,"_positionTooltip:1995":0,"hideTooltip:2014":0,"_addTooltip:2031":0,"_updateTooltip:2054":0,"markerEventHandler:2114":0,"planarEventHandler:2120":0,"_getTooltip:2103":0,"_planarLabelFunction:2168":0,"_tooltipLabelFunction:2236":0,"_tooltipChangeHandler:2272":0,"_setText:2299":0,"_getAllKeys:2324":0,"_buildSeriesKeys:2353":0,"renderUI:2388":0,"_planarEventDispatcher:2431":0,"_addToAxesRenderQueue:2598":0,"_addToAxesCollection:2617":0,"_getDefaultSeriesCollection:2636":0,"_parseSeriesCollection:2655":0,"_parseSeriesAxes:2789":0,"_getCategoryAxis:2822":0,"_getSeriesAxis:2839":0,"_getBaseAttribute:2881":0,"_setBaseAttribute:2905":0,"_setAxes:2925":0,"_addAxes:3042":0,"_addSeries:3099":0,"_addGridlines:3112":0,"_getDefaultAxes:3186":0,"_parseAxes:3204":0,"_getDefaultAxisPosition:3365":0,"getSeriesItems:3424":0,"_sizeChanged:3472":0,"_getTopOverflow:3497":0,"_getRightOverflow:3541":0,"_getLeftOverflow:3585":0,"_getBottomOverflow:3629":0,"_redraw:3669":0,"destructor:3934":0,"_getAriaMessage:3991":0,"getter:4091":0,"setter:4113":0,"getter:4135":0,"setter:4159":0,"getter:4198":0,"setter:4208":0,"getter:4241":0,"setter:4250":0,"setter:4291":0,"setter:4313":0,"getter:4378":0,"setter:4392":0,"getter:4450":0,"setter:4459":0,"getter:4484":0,"setter:4493":0,"getter:4518":0,"setter:4527":0,"_getSeriesCollection:4573":0,"_parseAxes:4616":0,"_addAxes:4667":0,"_addSeries:4707":0,"_parseSeriesAxes:4727":0,"_getDefaultAxes:4772":0,"getSeriesItems:4797":0,"_sizeChanged:4821":0,"_redraw:4832":0,"_tooltipLabelFunction:4869":0,"_getAriaMessage:4891":0,"setter:4950":0,"getter:4968":0,"setter:4973":0,"getter:4989":0,"setter:4994":0,"Chart:5018":0,"(anonymous 1):1":0};
+_yuitest_coverage["build/charts-base/charts-base.js"].code=["YUI.add('charts-base', function (Y, NAME) {","","/**"," * Provides functionality for creating charts."," *"," * @module charts"," * @submodule charts-base"," */","var CONFIG = Y.config,","    WINDOW = CONFIG.win,","    DOCUMENT = CONFIG.doc,","    Y_Lang = Y.Lang,","    IS_STRING = Y_Lang.isString,","    _getClassName = Y.ClassNameManager.getClassName,","    SERIES_MARKER = _getClassName(\"seriesmarker\");","","/**"," * Gridlines draws gridlines on a Graph."," *"," * @class Gridlines"," * @constructor"," * @extends Base"," * @uses Renderer"," * @param {Object} config (optional) Configuration parameters."," * @submodule charts-base"," */","Y.Gridlines = Y.Base.create(\"gridlines\", Y.Base, [Y.Renderer], {","    /**","     * Reference to the `Path` element used for drawing Gridlines.","     *","     * @property _path","     * @type Path","     * @private","     */","    _path: null,","","    /**","     * Removes the Gridlines.","     *","     * @method remove","     * @private","     */","    remove: function()","    {","        var path = this._path;","        if(path)","        {","            path.destroy();","        }","    },","","    /**","     * Draws the gridlines","     *","     * @method draw","     * @protected","     */","    draw: function()","    {","        if(this.get(\"axis\") && this.get(\"graph\"))","        {","            this._drawGridlines();","        }","    },","","    /**","     * Algorithm for drawing gridlines","     *","     * @method _drawGridlines","     * @private","     */","    _drawGridlines: function()","    {","        var path,","            axis = this.get(\"axis\"),","            axisPosition = axis.get(\"position\"),","            points,","            i = 0,","            l,","            direction = this.get(\"direction\"),","            graph = this.get(\"graph\"),","            w = graph.get(\"width\"),","            h = graph.get(\"height\"),","            line = this.get(\"styles\").line,","            color = line.color,","            weight = line.weight,","            alpha = line.alpha,","            count = this.get(\"count\"),","            length,","            lineFunction;","        if(isFinite(w) && isFinite(h) && w > 0 && h > 0)","        {","            if(count && Y.Lang.isNumber(count))","            {","                points = this._getPoints(count, w, h);","            }","            else if(axisPosition !== \"none\" && axis && axis.get(\"tickPoints\"))","            {","                points = axis.get(\"tickPoints\");","            }","            else","            {","                points = this._getPoints(axis.get(\"styles\").majorUnit.count, w, h);","            }","            l = points.length;","            path = graph.get(\"gridlines\");","            path.set(\"width\", w);","            path.set(\"height\", h);","            path.set(\"stroke\", {","                weight: weight,","                color: color,","                opacity: alpha","            });","            if(direction === \"vertical\")","            {","                lineFunction = this._verticalLine;","                length = h;","            }","            else","            {","                lineFunction = this._horizontalLine;","                length = w;","            }","            for(i = 0; i < l; i = i + 1)","            {","                lineFunction(path, points[i], length);","            }","            path.end();","        }","    },","","    /**","     * Calculates the coordinates for the gridlines based on a count.","     *","     * @method _getPoints","     * @param {Number} count Number of gridlines","     * @return Array","     * @private","     */","    _getPoints: function(count, w, h)","    {","        var i,","            points = [],","            multiplier,","            divisor = count - 1;","        for(i = 0; i < count; i = i + 1)","        {","            multiplier = i/divisor;","            points[i] = {","                x: w * multiplier,","                y: h * multiplier","            };","        }","        return points;","    },","","    /**","     * Algorithm for horizontal lines.","     *","     * @method _horizontalLine","     * @param {Path} path Reference to path element","     * @param {Object} pt Coordinates corresponding to a major unit of an axis.","     * @param {Number} w Width of the Graph","     * @private","     */","    _horizontalLine: function(path, pt, w)","    {","        path.moveTo(0, pt.y);","        path.lineTo(w, pt.y);","    },","","    /**","     * Algorithm for vertical lines.","     *","     * @method _verticalLine","     * @param {Path} path Reference to path element","     * @param {Object} pt Coordinates corresponding to a major unit of an axis.","     * @param {Number} h Height of the Graph","     * @private","     */","    _verticalLine: function(path, pt, h)","    {","        path.moveTo(pt.x, 0);","        path.lineTo(pt.x, h);","    },","","    /**","     * Gets the default value for the `styles` attribute. Overrides","     * base implementation.","     *","     * @method _getDefaultStyles","     * @return Object","     * @protected","     */","    _getDefaultStyles: function()","    {","        var defs = {","            line: {","                color:\"#f0efe9\",","                weight: 1,","                alpha: 1","            }","        };","        return defs;","    }","","},","{","    ATTRS: {","        /**","         * Indicates the direction of the gridline.","         *","         * @attribute direction","         * @type String","         */","        direction: {},","","        /**","         * Indicate the `Axis` in which to bind","         * the gridlines.","         *","         * @attribute axis","         * @type Axis","         */","        axis: {},","","        /**","         * Indicates the `Graph` in which the gridlines","         * are drawn.","         *","         * @attribute graph","         * @type Graph","         */","        graph: {},","","        /**","         * Indicates the number of gridlines to display. If no value is set, gridlines will equal the number of ticks in","         * the corresponding axis.","         *","         * @attribute count","         * @type Number","         */","        count: {}","    }","});","/**"," * Graph manages and contains series instances for a `CartesianChart`"," * instance."," *"," * @class Graph"," * @constructor"," * @extends Widget"," * @uses Renderer"," * @submodule charts-base"," */","Y.Graph = Y.Base.create(\"graph\", Y.Widget, [Y.Renderer], {","    /**","     * @method bindUI","     * @private","     */","    bindUI: function()","    {","        var bb = this.get(\"boundingBox\");","        bb.setStyle(\"position\", \"absolute\");","        this.after(\"widthChange\", this._sizeChangeHandler);","        this.after(\"heightChange\", this._sizeChangeHandler);","        this.after(\"stylesChange\", this._updateStyles);","        this.after(\"groupMarkersChange\", this._drawSeries);","    },","","    /**","     * @method syncUI","     * @private","     */","    syncUI: function()","    {","        var background,","            cb,","            bg,","            sc = this.get(\"seriesCollection\"),","            series,","            i = 0,","            len = sc ? sc.length : 0,","            hgl = this.get(\"horizontalGridlines\"),","            vgl = this.get(\"verticalGridlines\");","        if(this.get(\"showBackground\"))","        {","            background = this.get(\"background\");","            cb = this.get(\"contentBox\");","            bg = this.get(\"styles\").background;","            bg.stroke = bg.border;","            bg.stroke.opacity = bg.stroke.alpha;","            bg.fill.opacity = bg.fill.alpha;","            bg.width = this.get(\"width\");","            bg.height = this.get(\"height\");","            bg.type = bg.shape;","            background.set(bg);","        }","        for(; i < len; ++i)","        {","            series = sc[i];","            if(series instanceof Y.SeriesBase)","            {","                series.render();","            }","        }","        if(hgl && hgl instanceof Y.Gridlines)","        {","            hgl.draw();","        }","        if(vgl && vgl instanceof Y.Gridlines)","        {","            vgl.draw();","        }","    },","","    /**","     * Object of arrays containing series mapped to a series type.","     *","     * @property seriesTypes","     * @type Object","     * @private","     */","    seriesTypes: null,","","    /**","     * Returns a series instance based on an index.","     *","     * @method getSeriesByIndex","     * @param {Number} val index of the series","     * @return CartesianSeries","     */","    getSeriesByIndex: function(val)","    {","        var col = this.get(\"seriesCollection\"),","            series;","        if(col && col.length > val)","        {","            series = col[val];","        }","        return series;","    },","","    /**","     * Returns a series instance based on a key value.","     *","     * @method getSeriesByKey","     * @param {String} val key value of the series","     * @return CartesianSeries","     */","    getSeriesByKey: function(val)","    {","        var obj = this._seriesDictionary,","            series;","        if(obj && obj.hasOwnProperty(val))","        {","            series = obj[val];","        }","        return series;","    },","","    /**","     * Adds dispatcher to a `_dispatcher` used to","     * to ensure all series have redrawn before for firing event.","     *","     * @method addDispatcher","     * @param {CartesianSeries} val series instance to add","     * @protected","     */","    addDispatcher: function(val)","    {","        if(!this._dispatchers)","        {","            this._dispatchers = [];","        }","        this._dispatchers.push(val);","    },","","    /**","     * Collection of series to be displayed in the graph.","     *","     * @property _seriesCollection","     * @type Array","     * @private","     */","    _seriesCollection: null,","","    /**","     * Object containing key value pairs of `CartesianSeries` instances.","     *","     * @property _seriesDictionary","     * @type Object","     * @private","     */","    _seriesDictionary: null,","","    /**","     * Parses series instances to be displayed in the graph.","     *","     * @method _parseSeriesCollection","     * @param {Array} Collection of `CartesianSeries` instances or objects container `CartesianSeries` attributes values.","     * @private","     */","    _parseSeriesCollection: function(val)","    {","        if(!val)","        {","            return;","        }","        var len = val.length,","            i = 0,","            series,","            seriesKey;","        this._seriesCollection = [];","        this._seriesDictionary = {};","        this.seriesTypes = [];","        for(; i < len; ++i)","        {","            series = val[i];","            if(!(series instanceof Y.CartesianSeries) && !(series instanceof Y.PieSeries))","            {","                this._createSeries(series);","                continue;","            }","            this._addSeries(series);","        }","        len = this._seriesCollection.length;","        for(i = 0; i < len; ++i)","        {","            series = this.get(\"seriesCollection\")[i];","            seriesKey = series.get(\"direction\") === \"horizontal\" ? \"yKey\" : \"xKey\";","            this._seriesDictionary[series.get(seriesKey)] = series;","        }","    },","","    /**","     * Adds a series to the graph.","     *","     * @method _addSeries","     * @param {CartesianSeries} series Series to add to the graph.","     * @private","     */","    _addSeries: function(series)","    {","        var type = series.get(\"type\"),","            seriesCollection = this.get(\"seriesCollection\"),","            graphSeriesLength = seriesCollection.length,","            seriesTypes = this.seriesTypes,","            typeSeriesCollection;","        if(!series.get(\"graph\"))","        {","            series.set(\"graph\", this);","        }","        seriesCollection.push(series);","        if(!seriesTypes.hasOwnProperty(type))","        {","            this.seriesTypes[type] = [];","        }","        typeSeriesCollection = this.seriesTypes[type];","        series.set(\"graphOrder\", graphSeriesLength);","        series.set(\"order\", typeSeriesCollection.length);","        typeSeriesCollection.push(series);","        series.set(\"seriesTypeCollection\", typeSeriesCollection);","        this.addDispatcher(series);","        series.after(\"drawingComplete\", Y.bind(this._drawingCompleteHandler, this));","        this.fire(\"seriesAdded\", series);","    },","","    /**","     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs. The key value pairs include","     * attributes for the specific series and a type value which defines the type of series to be used.","     *","     * @method createSeries","     * @param {Object} seriesData Series attribute key value pairs.","     * @private","     */","    _createSeries: function(seriesData)","    {","        var type = seriesData.type,","            seriesCollection = this.get(\"seriesCollection\"),","            seriesTypes = this.seriesTypes,","            typeSeriesCollection,","            SeriesClass,","            series;","            seriesData.graph = this;","        if(!seriesTypes.hasOwnProperty(type))","        {","            seriesTypes[type] = [];","        }","        typeSeriesCollection = seriesTypes[type];","        seriesData.graph = this;","        seriesData.order = typeSeriesCollection.length;","        seriesData.graphOrder = seriesCollection.length;","        SeriesClass = this._getSeries(seriesData.type);","        series = new SeriesClass(seriesData);","        this.addDispatcher(series);","        series.after(\"drawingComplete\", Y.bind(this._drawingCompleteHandler, this));","        typeSeriesCollection.push(series);","        seriesCollection.push(series);","        series.set(\"seriesTypeCollection\", typeSeriesCollection);","        if(this.get(\"rendered\"))","        {","            series.render();","        }","    },","","    /**","     * String reference for pre-defined `Series` classes.","     *","     * @property _seriesMap","     * @type Object","     * @private","     */","    _seriesMap: {","        line : Y.LineSeries,","        column : Y.ColumnSeries,","        bar : Y.BarSeries,","        area :  Y.AreaSeries,","        candlestick : Y.CandlestickSeries,","        ohlc : Y.OHLCSeries,","        stackedarea : Y.StackedAreaSeries,","        stackedline : Y.StackedLineSeries,","        stackedcolumn : Y.StackedColumnSeries,","        stackedbar : Y.StackedBarSeries,","        markerseries : Y.MarkerSeries,","        spline : Y.SplineSeries,","        areaspline : Y.AreaSplineSeries,","        stackedspline : Y.StackedSplineSeries,","        stackedareaspline : Y.StackedAreaSplineSeries,","        stackedmarkerseries : Y.StackedMarkerSeries,","        pie : Y.PieSeries,","        combo : Y.ComboSeries,","        stackedcombo : Y.StackedComboSeries,","        combospline : Y.ComboSplineSeries,","        stackedcombospline : Y.StackedComboSplineSeries","    },","","    /**","     * Returns a specific `CartesianSeries` class based on key value from a look up table of a direct reference to a","     * class. When specifying a key value, the following options are available:","     *","     *  <table>","     *      <tr><th>Key Value</th><th>Class</th></tr>","     *      <tr><td>line</td><td>Y.LineSeries</td></tr>","     *      <tr><td>column</td><td>Y.ColumnSeries</td></tr>","     *      <tr><td>bar</td><td>Y.BarSeries</td></tr>","     *      <tr><td>area</td><td>Y.AreaSeries</td></tr>","     *      <tr><td>stackedarea</td><td>Y.StackedAreaSeries</td></tr>","     *      <tr><td>stackedline</td><td>Y.StackedLineSeries</td></tr>","     *      <tr><td>stackedcolumn</td><td>Y.StackedColumnSeries</td></tr>","     *      <tr><td>stackedbar</td><td>Y.StackedBarSeries</td></tr>","     *      <tr><td>markerseries</td><td>Y.MarkerSeries</td></tr>","     *      <tr><td>spline</td><td>Y.SplineSeries</td></tr>","     *      <tr><td>areaspline</td><td>Y.AreaSplineSeries</td></tr>","     *      <tr><td>stackedspline</td><td>Y.StackedSplineSeries</td></tr>","     *      <tr><td>stackedareaspline</td><td>Y.StackedAreaSplineSeries</td></tr>","     *      <tr><td>stackedmarkerseries</td><td>Y.StackedMarkerSeries</td></tr>","     *      <tr><td>pie</td><td>Y.PieSeries</td></tr>","     *      <tr><td>combo</td><td>Y.ComboSeries</td></tr>","     *      <tr><td>stackedcombo</td><td>Y.StackedComboSeries</td></tr>","     *      <tr><td>combospline</td><td>Y.ComboSplineSeries</td></tr>","     *      <tr><td>stackedcombospline</td><td>Y.StackedComboSplineSeries</td></tr>","     *  </table>","     *","     * When referencing a class directly, you can specify any of the above classes or any custom class that extends","     * `CartesianSeries` or `PieSeries`.","     *","     * @method _getSeries","     * @param {String | Object} type Series type.","     * @return CartesianSeries","     * @private","     */","    _getSeries: function(type)","    {","        var seriesClass;","        if(Y_Lang.isString(type))","        {","            seriesClass = this._seriesMap[type];","        }","        else","        {","            seriesClass = type;","        }","        return seriesClass;","    },","","    /**","     * Event handler for marker events.","     *","     * @method _markerEventHandler","     * @param {Object} e Event object.","     * @private","     */","    _markerEventHandler: function(e)","    {","        var type = e.type,","            markerNode = e.currentTarget,","            strArr = markerNode.getAttribute(\"id\").split(\"_\"),","            series = this.getSeriesByIndex(strArr[1]),","            index = strArr[2];","        series.updateMarkerState(type, index);","    },","","    /**","     * Collection of `CartesianSeries` instances to be redrawn.","     *","     * @property _dispatchers","     * @type Array","     * @private","     */","    _dispatchers: null,","","    /**","     * Updates the `Graph` styles.","     *","     * @method _updateStyles","     * @private","     */","    _updateStyles: function()","    {","        var styles = this.get(\"styles\").background,","            border = styles.border;","            border.opacity = border.alpha;","            styles.stroke = border;","            styles.fill.opacity = styles.fill.alpha;","        this.get(\"background\").set(styles);","        this._sizeChangeHandler();","    },","","    /**","     * Event handler for size changes.","     *","     * @method _sizeChangeHandler","     * @param {Object} e Event object.","     * @private","     */","    _sizeChangeHandler: function()","    {","        var hgl = this.get(\"horizontalGridlines\"),","            vgl = this.get(\"verticalGridlines\"),","            w = this.get(\"width\"),","            h = this.get(\"height\"),","            bg = this.get(\"styles\").background,","            weight,","            background;","        if(bg && bg.border)","        {","            weight = bg.border.weight || 0;","        }","        if(this.get(\"showBackground\"))","        {","            background = this.get(\"background\");","            if(w && h)","            {","                background.set(\"width\", w);","                background.set(\"height\", h);","            }","        }","        if(this._gridlines)","        {","            this._gridlines.clear();","        }","        if(hgl && hgl instanceof Y.Gridlines)","        {","            hgl.draw();","        }","        if(vgl && vgl instanceof Y.Gridlines)","        {","            vgl.draw();","        }","        this._drawSeries();","    },","","    /**","     * Draws each series.","     *","     * @method _drawSeries","     * @private","     */","    _drawSeries: function()","    {","        if(this._drawing)","        {","            this._callLater = true;","            return;","        }","        var sc,","            i,","            len,","            graphic = this.get(\"graphic\");","        graphic.set(\"autoDraw\", false);","        graphic.set(\"width\", this.get(\"width\"));","        graphic.set(\"height\", this.get(\"height\"));","        this._callLater = false;","        this._drawing = true;","        sc = this.get(\"seriesCollection\");","        i = 0;","        len = sc ? sc.length : 0;","        for(; i < len; ++i)","        {","            sc[i].draw();","            if((!sc[i].get(\"xcoords\") || !sc[i].get(\"ycoords\")) && !sc[i] instanceof Y.PieSeries)","            {","                this._callLater = true;","                break;","            }","        }","        this._drawing = false;","        if(this._callLater)","        {","            this._drawSeries();","        }","    },","","    /**","     * Event handler for series drawingComplete event.","     *","     * @method _drawingCompleteHandler","     * @param {Object} e Event object.","     * @private","     */","    _drawingCompleteHandler: function(e)","    {","        var series = e.currentTarget,","            graphic,","            index = Y.Array.indexOf(this._dispatchers, series);","        if(index > -1)","        {","            this._dispatchers.splice(index, 1);","        }","        if(this._dispatchers.length < 1)","        {","            graphic = this.get(\"graphic\");","            if(!graphic.get(\"autoDraw\"))","            {","                graphic._redraw();","            }","            this.fire(\"chartRendered\");","        }","    },","","    /**","     * Gets the default value for the `styles` attribute. Overrides","     * base implementation.","     *","     * @method _getDefaultStyles","     * @return Object","     * @protected","     */","    _getDefaultStyles: function()","    {","        var defs = {","            background: {","                shape: \"rect\",","                fill:{","                    color:\"#faf9f2\"","                },","                border: {","                    color:\"#dad8c9\",","                    weight: 1","                }","            }","        };","        return defs;","    },","","    /**","     * Destructor implementation Graph class. Removes all Graphic instances from the widget.","     *","     * @method destructor","     * @protected","     */","    destructor: function()","    {","        if(this._graphic)","        {","            this._graphic.destroy();","            this._graphic = null;","        }","        if(this._background)","        {","            this._background.get(\"graphic\").destroy();","            this._background = null;","        }","        if(this._gridlines)","        {","            this._gridlines.get(\"graphic\").destroy();","            this._gridlines = null;","        }","    }","}, {","    ATTRS: {","        /**","         * The x-coordinate for the graph.","         *","         * @attribute x","         * @type Number","         * @protected","         */","        x: {","            setter: function(val)","            {","                this.get(\"boundingBox\").setStyle(\"left\", val + \"px\");","                return val;","            }","        },","","        /**","         * The y-coordinate for the graph.","         *","         * @attribute y","         * @type Number","         * @protected","         */","        y: {","            setter: function(val)","            {","                this.get(\"boundingBox\").setStyle(\"top\", val + \"px\");","                return val;","            }","        },","","        /**","         * Reference to the chart instance using the graph.","         *","         * @attribute chart","         * @type ChartBase","         * @readOnly","         */","        chart: {","            getter: function() {","                var chart = this._state.chart || this;","                return chart;","            }","        },","","        /**","         * Collection of series. When setting the `seriesCollection` the array can contain a combination of either","         * `CartesianSeries` instances or object literals with properties that will define a series.","         *","         * @attribute seriesCollection","         * @type CartesianSeries","         */","        seriesCollection: {","            getter: function()","            {","                return this._seriesCollection;","            },","","            setter: function(val)","            {","                this._parseSeriesCollection(val);","                return this._seriesCollection;","            }","        },","","        /**","         * Indicates whether the `Graph` has a background.","         *","         * @attribute showBackground","         * @type Boolean","         * @default true","         */","        showBackground: {","            value: true","        },","","        /**","         * Read-only hash lookup for all series on in the `Graph`.","         *","         * @attribute seriesDictionary","         * @type Object","         * @readOnly","         */","        seriesDictionary: {","            readOnly: true,","","            getter: function()","            {","                return this._seriesDictionary;","            }","        },","","        /**","         * Reference to the horizontal `Gridlines` instance.","         *","         * @attribute horizontalGridlines","         * @type Gridlines","         * @default null","         */","        horizontalGridlines: {","            value: null,","","            setter: function(val)","            {","                var cfg,","                    key,","                    gl = this.get(\"horizontalGridlines\");","                if(gl && gl instanceof Y.Gridlines)","                {","                    gl.remove();","                }","                if(val instanceof Y.Gridlines)","                {","                    gl = val;","                    val.set(\"graph\", this);","                    return val;","                }","                else if(val)","                {","                    cfg = {","                        direction: \"horizonal\",","                        graph: this","                    };","                    for(key in val)","                    {","                        if(val.hasOwnProperty(key))","                        {","                            cfg[key] = val[key];","                        }","                    }","                    gl = new Y.Gridlines(cfg);","                    return gl;","                }","            }","        },","","        /**","         * Reference to the vertical `Gridlines` instance.","         *","         * @attribute verticalGridlines","         * @type Gridlines","         * @default null","         */","        verticalGridlines: {","            value: null,","","            setter: function(val)","            {","                var cfg,","                    key,","                    gl = this.get(\"verticalGridlines\");","                if(gl && gl instanceof Y.Gridlines)","                {","                    gl.remove();","                }","                if(val instanceof Y.Gridlines)","                {","                    gl = val;","                    val.set(\"graph\", this);","                    return val;","                }","                else if(val)","                {","                    cfg = {","                        direction: \"vertical\",","                        graph: this","                    };","                    for(key in val)","                    {","                        if(val.hasOwnProperty(key))","                        {","                            cfg[key] = val[key];","                        }","                    }","                    gl = new Y.Gridlines(cfg);","                    return gl;","                }","            }","        },","","        /**","         * Reference to graphic instance used for the background.","         *","         * @attribute background","         * @type Graphic","         * @readOnly","         */","        background: {","            getter: function()","            {","                if(!this._background)","                {","                    this._backgroundGraphic = new Y.Graphic({render:this.get(\"contentBox\")});","                    this._backgroundGraphic.get(\"node\").style.zIndex = 0;","                    this._background = this._backgroundGraphic.addShape({type: \"rect\"});","                }","                return this._background;","            }","        },","","        /**","         * Reference to graphic instance used for gridlines.","         *","         * @attribute gridlines","         * @type Graphic","         * @readOnly","         */","        gridlines: {","            readOnly: true,","","            getter: function()","            {","                if(!this._gridlines)","                {","                    this._gridlinesGraphic = new Y.Graphic({render:this.get(\"contentBox\")});","                    this._gridlinesGraphic.get(\"node\").style.zIndex = 1;","                    this._gridlines = this._gridlinesGraphic.addShape({type: \"path\"});","                }","                return this._gridlines;","            }","        },","","        /**","         * Reference to graphic instance used for series.","         *","         * @attribute graphic","         * @type Graphic","         * @readOnly","         */","        graphic: {","            readOnly: true,","","            getter: function()","            {","                if(!this._graphic)","                {","                    this._graphic = new Y.Graphic({render:this.get(\"contentBox\")});","                    this._graphic.get(\"node\").style.zIndex = 2;","                    this._graphic.set(\"autoDraw\", false);","                }","                return this._graphic;","            }","        },","","        /**","         * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.","         *","         * @attribute groupMarkers","         * @type Boolean","         */","        groupMarkers: {","            value: false","        }","","        /**","         * Style properties used for drawing a background. Below are the default values:","         *  <dl>","         *      <dt>background</dt><dd>An object containing the following values:","         *          <dl>","         *              <dt>fill</dt><dd>Defines the style properties for the fill. Contains the following values:","         *                  <dl>","         *                      <dt>color</dt><dd>Color of the fill. The default value is #faf9f2.</dd>","         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background fill.","         *                      The default value is 1.</dd>","         *                  </dl>","         *              </dd>","         *              <dt>border</dt><dd>Defines the style properties for the border. Contains the following values:","         *                  <dl>","         *                      <dt>color</dt><dd>Color of the border. The default value is #dad8c9.</dd>","         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background border.","         *                      The default value is 1.</dd>","         *                      <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>","         *                  </dl>","         *              </dd>","         *          </dl>","         *      </dd>","         *  </dl>","         *","         * @attribute styles","         * @type Object","         */","    }","});","/**"," * The ChartBase class is an abstract class used to create charts."," *"," * @class ChartBase"," * @constructor"," * @submodule charts-base"," */","function ChartBase() {}","","ChartBase.ATTRS = {","    /**","     * Data used to generate the chart.","     *","     * @attribute dataProvider","     * @type Array","     */","    dataProvider: {","        lazyAdd: false,","","        valueFn: function()","        {","            var defDataProvider = [];","            if(!this._seriesKeysExplicitlySet)","            {","                this._seriesKeys = this._buildSeriesKeys(defDataProvider);","            }","            return defDataProvider;","        },","","        setter: function(val)","        {","            var dataProvider = this._setDataValues(val);","            if(!this._seriesKeysExplicitlySet)","            {","                this._seriesKeys = this._buildSeriesKeys(dataProvider);","            }","            return dataProvider;","        }","    },","","    /**","     * A collection of keys that map to the series axes. If no keys are set,","     * they will be generated automatically depending on the data structure passed into","     * the chart.","     *","     * @attribute seriesKeys","     * @type Array","     */","    seriesKeys: {","        getter: function()","        {","            return this._seriesKeys;","        },","","        setter: function(val)","        {","            this._seriesKeysExplicitlySet = true;","            this._seriesKeys = val;","            return val;","        }","    },","","    /**","     * Sets the `aria-label` for the chart.","     *","     * @attribute ariaLabel","     * @type String","     */","    ariaLabel: {","        value: \"Chart Application\",","","        setter: function(val)","        {","            var cb = this.get(\"contentBox\");","            if(cb)","            {","                cb.setAttribute(\"aria-label\", val);","            }","            return val;","        }","    },","","    /**","     * Sets the aria description for the chart.","     *","     * @attribute ariaDescription","     * @type String","     */","    ariaDescription: {","        value: \"Use the up and down keys to navigate between series. Use the left and right keys to navigate through items in a series.\",","","        setter: function(val)","        {","            if(this._description)","            {","                this._description.setContent(\"\");","                this._description.appendChild(DOCUMENT.createTextNode(val));","            }","            return val;","        }","    },","","    /**","     * Reference to the default tooltip available for the chart.","     * <p>Contains the following properties:</p>","     *  <dl>","     *      <dt>node</dt><dd>Reference to the actual dom node</dd>","     *      <dt>showEvent</dt><dd>Event that should trigger the tooltip</dd>","     *      <dt>hideEvent</dt><dd>Event that should trigger the removal of a tooltip (can be an event or an array of events)</dd>","     *      <dt>styles</dt><dd>A hash of style properties that will be applied to the tooltip node</dd>","     *      <dt>show</dt><dd>Indicates whether or not to show the tooltip</dd>","     *      <dt>markerEventHandler</dt><dd>Displays and hides tooltip based on marker events</dd>","     *      <dt>planarEventHandler</dt><dd>Displays and hides tooltip based on planar events</dd>","     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text.","     *      The method contains the following arguments:","     *  <dl>","     *      <dt>categoryItem</dt><dd>An object containing the following:","     *  <dl>","     *      <dt>axis</dt><dd>The axis to which the category is bound.</dd>","     *      <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided).</dd>","     *      <dt>key</dt><dd>The key of the category.</dd>","     *      <dt>value</dt><dd>The value of the category.</dd>","     *  </dl>","     *  </dd>","     *  <dt>valueItem</dt><dd>An object containing the following:","     *      <dl>","     *          <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>","     *          <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>","     *          <dt>key</dt><dd>The key for the series.</dd>","     *          <dt>value</dt><dd>The value for the series item.</dd>","     *      </dl>","     *  </dd>","     *  <dt>itemIndex</dt><dd>The index of the item within the series.</dd>","     *  <dt>series</dt><dd> The `CartesianSeries` instance of the item.</dd>","     *  <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>","     *  </dl>","     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose","     *  to return an html string, you will also need to override the tooltip's `setTextFunction` method to accept an html string.","     *  </dd>","     *  <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text","     *  <dl>","     *      <dt>categoryAxis</dt><dd> `CategoryAxis` Reference to the categoryAxis of the chart.","     *      <dt>valueItems</dt><dd>Array of objects for each series that has a data point in the coordinate plane of the event. Each","     *      object contains the following data:","     *  <dl>","     *      <dt>axis</dt><dd>The value axis of the series.</dd>","     *      <dt>key</dt><dd>The key for the series.</dd>","     *      <dt>value</dt><dd>The value for the series item.</dd>","     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>","     *  </dl>","     *  </dd>","     *      <dt>index</dt><dd>The index of the item within its series.</dd>","     *      <dt>seriesArray</dt><dd>Array of series instances for each value item.</dd>","     *      <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>","     *  </dl>","     *  </dd>","     *  </dl>","     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose","     *  to return an html string, you will also need to override the tooltip's `setTextFunction` method to accept an html string.","     *  </dd>","     *  <dt>setTextFunction</dt><dd>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the","     *  the tooltip node. Has the following signature:","     *  <dl>","     *      <dt>label</dt><dd>The `HTMLElement` that the content is to be added.</dd>","     *      <dt>val</dt><dd>The content to be rendered into tooltip. This can be a `String` or `HTMLElement`. If an HTML string is used,","     *      it will be rendered as a string.</dd>","     *  </dl>","     *  </dd>","     *  </dl>","     * @attribute tooltip","     * @type Object","     */","    tooltip: {","        valueFn: \"_getTooltip\",","","        setter: function(val)","        {","            return this._updateTooltip(val);","        }","    },","","    /**","     * The key value used for the chart's category axis.","     *","     * @attribute categoryKey","     * @type String","     * @default category","     */","    categoryKey: {","        value: \"category\"","    },","","    /**","     * Indicates the type of axis to use for the category axis.","     *","     *  <dl>","     *      <dt>category</dt><dd>Specifies a `CategoryAxis`.</dd>","     *      <dt>time</dt><dd>Specifies a `TimeAxis</dd>","     *  </dl>","     *","     * @attribute categoryType","     * @type String","     * @default category","     */","    categoryType:{","        value:\"category\"","    },","","    /**","     * Indicates the the type of interactions that will fire events.","     *","     *  <dl>","     *      <dt>marker</dt><dd>Events will be broadcasted when the mouse interacts with individual markers.</dd>","     *      <dt>planar</dt><dd>Events will be broadcasted when the mouse intersects the plane of any markers on the chart.</dd>","     *      <dt>none</dt><dd>No events will be broadcasted.</dd>","     *  </dl>","     *","     * @attribute interactionType","     * @type String","     * @default marker","     */","    interactionType: {","        value: \"marker\"","    },","","    /**","     * Reference to all the axes in the chart.","     *","     * @attribute axesCollection","     * @type Array","     */","    axesCollection: {},","","    /**","     * Reference to graph instance.","     *","     * @attribute graph","     * @type Graph","     */","    graph: {","        valueFn: \"_getGraph\"","    },","","    /**","     * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.","     *","     * @attribute groupMarkers","     * @type Boolean","     */","    groupMarkers: {","        value: false","    }","};","","ChartBase.prototype = {","    /**","     * Handles groupMarkers change event.","     *","     * @method _groupMarkersChangeHandler","     * @param {Object} e Event object.","     * @private","     */","    _groupMarkersChangeHandler: function(e)","    {","        var graph = this.get(\"graph\"),","            useGroupMarkers = e.newVal;","        if(graph)","        {","            graph.set(\"groupMarkers\", useGroupMarkers);","        }","    },","","    /**","     * Handler for itemRendered event.","     *","     * @method _itemRendered","     * @param {Object} e Event object.","     * @private","     */","    _itemRendered: function(e)","    {","        this._itemRenderQueue = this._itemRenderQueue.splice(1 + Y.Array.indexOf(this._itemRenderQueue, e.currentTarget), 1);","        if(this._itemRenderQueue.length < 1)","        {","            this._redraw();","        }","    },","","    /**","     * Default value function for the `Graph` attribute.","     *","     * @method _getGraph","     * @return Graph","     * @private","     */","    _getGraph: function()","    {","        var graph = new Y.Graph({","            chart:this,","            groupMarkers: this.get(\"groupMarkers\")","        });","        graph.after(\"chartRendered\", Y.bind(function() {","            this.fire(\"chartRendered\");","        }, this));","        return graph;","    },","","    /**","     * Returns a series instance by index or key value.","     *","     * @method getSeries","     * @param val","     * @return CartesianSeries","     */","    getSeries: function(val)","    {","        var series = null,","            graph = this.get(\"graph\");","        if(graph)","        {","            if(Y_Lang.isNumber(val))","            {","                series = graph.getSeriesByIndex(val);","            }","            else","            {","                series = graph.getSeriesByKey(val);","            }","        }","        return series;","    },","","    /**","     * Returns an `Axis` instance by key reference. If the axis was explicitly set through the `axes` attribute,","     * the key will be the same as the key used in the `axes` object. For default axes, the key for","     * the category axis is the value of the `categoryKey` (`category`). For the value axis, the default","     * key is `values`.","     *","     * @method getAxisByKey","     * @param {String} val Key reference used to look up the axis.","     * @return Axis","     */","    getAxisByKey: function(val)","    {","        var axis,","            axes = this.get(\"axes\");","        if(axes && axes.hasOwnProperty(val))","        {","            axis = axes[val];","        }","        return axis;","    },","","    /**","     * Returns the category axis for the chart.","     *","     * @method getCategoryAxis","     * @return Axis","     */","    getCategoryAxis: function()","    {","        var axis,","            key = this.get(\"categoryKey\"),","            axes = this.get(\"axes\");","        if(axes.hasOwnProperty(key))","        {","            axis = axes[key];","        }","        return axis;","    },","","    /**","     * Default direction of the chart.","     *","     * @property _direction","     * @type String","     * @default horizontal","     * @private","     */","    _direction: \"horizontal\",","","    /**","     * Storage for the `dataProvider` attribute.","     *","     * @property _dataProvider","     * @type Array","     * @private","     */","    _dataProvider: null,","","    /**","     * Setter method for `dataProvider` attribute.","     *","     * @method _setDataValues","     * @param {Array} val Array to be set as `dataProvider`.","     * @return Array","     * @private","     */","    _setDataValues: function(val)","    {","        if(Y_Lang.isArray(val[0]))","        {","            var hash,","                dp = [],","                cats = val[0],","                i = 0,","                l = cats.length,","                n,","                sl = val.length;","            for(; i < l; ++i)","            {","                hash = {category:cats[i]};","                for(n = 1; n < sl; ++n)","                {","                    hash[\"series\" + n] = val[n][i];","                }","                dp[i] = hash;","            }","            return dp;","        }","        return val;","    },","","    /**","     * Storage for `seriesCollection` attribute.","     *","     * @property _seriesCollection","     * @type Array","     * @private","     */","    _seriesCollection: null,","","    /**","     * Setter method for `seriesCollection` attribute.","     *","     * @property _setSeriesCollection","     * @param {Array} val Array of either `CartesianSeries` instances or objects containing series attribute key value pairs.","     * @private","     */","    _setSeriesCollection: function(val)","    {","        this._seriesCollection = val;","    },","    /**","     * Helper method that returns the axis class that a key references.","     *","     * @method _getAxisClass","     * @param {String} t The type of axis.","     * @return Axis","     * @private","     */","    _getAxisClass: function(t)","    {","        return this._axisClass[t];","    },","","    /**","     * Key value pairs of axis types.","     *","     * @property _axisClass","     * @type Object","     * @private","     */","    _axisClass: {","        stacked: Y.StackedAxis,","        numeric: Y.NumericAxis,","        category: Y.CategoryAxis,","        time: Y.TimeAxis","    },","","    /**","     * Collection of axes.","     *","     * @property _axes","     * @type Array","     * @private","     */","    _axes: null,","","    /**","     * @method initializer","     * @private","     */","    initializer: function()","    {","        this._itemRenderQueue = [];","        this._seriesIndex = -1;","        this._itemIndex = -1;","        this.after(\"dataProviderChange\", this._dataProviderChangeHandler);","    },","","    /**","     * @method renderUI","     * @private","     */","    renderUI: function()","    {","        var tt = this.get(\"tooltip\"),","            bb = this.get(\"boundingBox\"),","            cb = this.get(\"contentBox\");","        //move the position = absolute logic to a class file","        bb.setStyle(\"position\", \"absolute\");","        cb.setStyle(\"position\", \"absolute\");","        this._addAxes();","        this._addSeries();","        if(tt && tt.show)","        {","            this._addTooltip();","        }","        this._setAriaElements(bb, cb);","    },","","    /**","     * Creates an aria `live-region`, `aria-label` and `aria-describedby` for the Chart.","     *","     * @method _setAriaElements","     * @param {Node} cb Reference to the Chart's `contentBox` attribute.","     * @private","     */","    _setAriaElements: function(bb, cb)","    {","        var description = this._getAriaOffscreenNode(),","            id = this.get(\"id\") + \"_description\",","            liveRegion = this._getAriaOffscreenNode();","        cb.set(\"tabIndex\", 0);","        cb.set(\"role\", \"img\");","        cb.setAttribute(\"aria-label\", this.get(\"ariaLabel\"));","        cb.setAttribute(\"aria-describedby\", id);","        description.set(\"id\", id);","        description.set(\"tabIndex\", -1);","        description.appendChild(DOCUMENT.createTextNode(this.get(\"ariaDescription\")));","        liveRegion.set(\"id\", \"live-region\");","        liveRegion.set(\"aria-live\", \"polite\");","        liveRegion.set(\"aria-atomic\", \"true\");","        liveRegion.set(\"role\", \"status\");","        bb.setAttribute(\"role\", \"application\");","        bb.appendChild(description);","        bb.appendChild(liveRegion);","        this._description = description;","        this._liveRegion = liveRegion;","    },","","    /**","     * Sets a node offscreen for use as aria-description or aria-live-regin.","     *","     * @method _setOffscreen","     * @return Node","     * @private","     */","    _getAriaOffscreenNode: function()","    {","        var node = Y.Node.create(\"<div></div>\"),","            ie = Y.UA.ie,","            clipRect = (ie && ie < 8) ? \"rect(1px 1px 1px 1px)\" : \"rect(1px, 1px, 1px, 1px)\";","        node.setStyle(\"position\", \"absolute\");","        node.setStyle(\"height\", \"1px\");","        node.setStyle(\"width\", \"1px\");","        node.setStyle(\"overflow\", \"hidden\");","        node.setStyle(\"clip\", clipRect);","        return node;","    },","","    /**","     * @method syncUI","     * @private","     */","    syncUI: function()","    {","        this._redraw();","    },","","    /**","     * @method bindUI","     * @private","     */","    bindUI: function()","    {","        this.after(\"tooltipChange\", Y.bind(this._tooltipChangeHandler, this));","        this.after(\"widthChange\", this._sizeChanged);","        this.after(\"heightChange\", this._sizeChanged);","        this.after(\"groupMarkersChange\", this._groupMarkersChangeHandler);","        var tt = this.get(\"tooltip\"),","            hideEvent = \"mouseout\",","            showEvent = \"mouseover\",","            cb = this.get(\"contentBox\"),","            interactionType = this.get(\"interactionType\"),","            i = 0,","            len,","            markerClassName = \".\" + SERIES_MARKER,","            isTouch = ((WINDOW && (\"ontouchstart\" in WINDOW)) && !(Y.UA.chrome && Y.UA.chrome < 6));","        Y.on(\"keydown\", Y.bind(function(e) {","            var key = e.keyCode,","                numKey = parseFloat(key),","                msg;","            if(numKey > 36 && numKey < 41)","            {","                e.halt();","                msg = this._getAriaMessage(numKey);","                this._liveRegion.setContent(\"\");","                this._liveRegion.appendChild(DOCUMENT.createTextNode(msg));","            }","        }, this), this.get(\"contentBox\"));","        if(interactionType === \"marker\")","        {","            //if touch capabilities, toggle tooltip on touchend. otherwise, the tooltip attribute's hideEvent/showEvent types.","            hideEvent = tt.hideEvent;","            showEvent = tt.showEvent;","            if(isTouch)","            {","                Y.delegate(\"touchend\", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);","                //hide active tooltip if the chart is touched","                Y.on(\"touchend\", Y.bind(function(e) {","                    //only halt the event if it originated from the chart","                    if(cb.contains(e.target))","                    {","                        e.halt(true);","                    }","                    if(this._activeMarker)","                    {","                        this._activeMarker = null;","                        this.hideTooltip(e);","                    }","                }, this));","            }","            else","            {","                Y.delegate(\"mouseenter\", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);","                Y.delegate(\"mousedown\", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);","                Y.delegate(\"mouseup\", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);","                Y.delegate(\"mouseleave\", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);","                Y.delegate(\"click\", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);","                Y.delegate(\"mousemove\", Y.bind(this._positionTooltip, this), cb, markerClassName);","            }","        }","        else if(interactionType === \"planar\")","        {","            if(isTouch)","            {","                this._overlay.on(\"touchend\", Y.bind(this._planarEventDispatcher, this));","            }","            else","            {","                this._overlay.on(\"mousemove\", Y.bind(this._planarEventDispatcher, this));","                this.on(\"mouseout\", this.hideTooltip);","            }","        }","        if(tt)","        {","            this.on(\"markerEvent:touchend\", Y.bind(function(e) {","                var marker = e.series.get(\"markers\")[e.index];","                if(this._activeMarker && marker === this._activeMarker)","                {","                    this._activeMarker = null;","                    this.hideTooltip(e);","                }","                else","                {","","                    this._activeMarker = marker;","                    tt.markerEventHandler.apply(this, [e]);","                }","            }, this));","            if(hideEvent && showEvent && hideEvent === showEvent)","            {","                this.on(interactionType + \"Event:\" + hideEvent, this.toggleTooltip);","            }","            else","            {","                if(showEvent)","                {","                    this.on(interactionType + \"Event:\" + showEvent, tt[interactionType + \"EventHandler\"]);","                }","                if(hideEvent)","                {","                    if(Y_Lang.isArray(hideEvent))","                    {","                        len = hideEvent.length;","                        for(; i < len; ++i)","                        {","                            this.on(interactionType + \"Event:\" + hideEvent[i], this.hideTooltip);","                        }","                    }","                    this.on(interactionType + \"Event:\" + hideEvent, this.hideTooltip);","                }","            }","        }","    },","","    /**","     * Event handler for marker events.","     *","     * @method _markerEventDispatcher","     * @param {Object} e Event object.","     * @private","     */","    _markerEventDispatcher: function(e)","    {","        var type = e.type,","            cb = this.get(\"contentBox\"),","            markerNode = e.currentTarget,","            strArr = markerNode.getAttribute(\"id\").split(\"_\"),","            index = strArr.pop(),","            seriesIndex = strArr.pop(),","            series = this.getSeries(parseInt(seriesIndex, 10)),","            items = this.getSeriesItems(series, index),","            isTouch = e && e.hasOwnProperty(\"changedTouches\"),","            pageX = isTouch ? e.changedTouches[0].pageX : e.pageX,","            pageY = isTouch ? e.changedTouches[0].pageY : e.pageY,","            x = pageX - cb.getX(),","            y = pageY - cb.getY();","        if(type === \"mouseenter\")","        {","            type = \"mouseover\";","        }","        else if(type === \"mouseleave\")","        {","            type = \"mouseout\";","        }","        series.updateMarkerState(type, index);","        e.halt();","        /**","         * Broadcasts when `interactionType` is set to `marker` and a series marker has received a mouseover event.","         *","         *","         * @event markerEvent:mouseover","         * @preventable false","         * @param {EventFacade} e Event facade with the following additional","         *   properties:","         *  <dl>","         *      <dt>categoryItem</dt><dd>Hash containing information about the category `Axis`.</dd>","         *      <dt>valueItem</dt><dd>Hash containing information about the value `Axis`.</dd>","         *      <dt>node</dt><dd>The dom node of the marker.</dd>","         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>","         *      <dt>index</dt><dd>Index of the marker in the series.</dd>","         *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>","         *  </dl>","         */","        /**","         * Broadcasts when `interactionType` is set to `marker` and a series marker has received a mouseout event.","         *","         * @event markerEvent:mouseout","         * @preventable false","         * @param {EventFacade} e Event facade with the following additional","         *   properties:","         *  <dl>","         *      <dt>categoryItem</dt><dd>Hash containing information about the category `Axis`.</dd>","         *      <dt>valueItem</dt><dd>Hash containing information about the value `Axis`.</dd>","         *      <dt>node</dt><dd>The dom node of the marker.</dd>","         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>","         *      <dt>index</dt><dd>Index of the marker in the series.</dd>","         *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>","         *  </dl>","         */","        /**","         * Broadcasts when `interactionType` is set to `marker` and a series marker has received a mousedown event.","         *","         * @event markerEvent:mousedown","         * @preventable false","         * @param {EventFacade} e Event facade with the following additional","         *   properties:","         *  <dl>","         *      <dt>categoryItem</dt><dd>Hash containing information about the category `Axis`.</dd>","         *      <dt>valueItem</dt><dd>Hash containing information about the value `Axis`.</dd>","         *      <dt>node</dt><dd>The dom node of the marker.</dd>","         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>","         *      <dt>index</dt><dd>Index of the marker in the series.</dd>","         *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>","         *  </dl>","         */","        /**","         * Broadcasts when `interactionType` is set to `marker` and a series marker has received a mouseup event.","         *","         * @event markerEvent:mouseup","         * @preventable false","         * @param {EventFacade} e Event facade with the following additional","         *   properties:","         *  <dl>","         *      <dt>categoryItem</dt><dd>Hash containing information about the category `Axis`.</dd>","         *      <dt>valueItem</dt><dd>Hash containing information about the value `Axis`.</dd>","         *      <dt>node</dt><dd>The dom node of the marker.</dd>","         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>","         *      <dt>index</dt><dd>Index of the marker in the series.</dd>","         *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>","         *  </dl>","         */","        /**","         * Broadcasts when `interactionType` is set to `marker` and a series marker has received a click event.","         *","         * @event markerEvent:click","         * @preventable false","         * @param {EventFacade} e Event facade with the following additional","         *   properties:","         *  <dl>","         *      <dt>categoryItem</dt><dd>Hash containing information about the category `Axis`.</dd>","         *      <dt>valueItem</dt><dd>Hash containing information about the value `Axis`.</dd>","         *      <dt>node</dt><dd>The dom node of the marker.</dd>","         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>","         *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>","         *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>","         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>","         *      <dt>index</dt><dd>Index of the marker in the series.</dd>","         *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>","         *      <dt>originEvent</dt><dd>Underlying dom event.</dd>","         *  </dl>","         */","        this.fire(\"markerEvent:\" + type, {","            originEvent: e,","            pageX:pageX,","            pageY:pageY,","            categoryItem:items.category,","            valueItem:items.value,","            node:markerNode,","            x:x,","            y:y,","            series:series,","            index:index,","            seriesIndex:seriesIndex","        });","    },","","    /**","     * Event handler for dataProviderChange.","     *","     * @method _dataProviderChangeHandler","     * @param {Object} e Event object.","     * @private","     */","    _dataProviderChangeHandler: function(e)","    {","        var dataProvider = e.newVal,","            axes,","            i,","            axis;","        this._seriesIndex = -1;","        this._itemIndex = -1;","        if(this instanceof Y.CartesianChart)","        {","            this.set(\"axes\", this.get(\"axes\"));","            this.set(\"seriesCollection\", this.get(\"seriesCollection\"));","        }","        axes = this.get(\"axes\");","        if(axes)","        {","            for(i in axes)","            {","                if(axes.hasOwnProperty(i))","                {","                    axis = axes[i];","                    if(axis instanceof Y.Axis)","                    {","                        if(axis.get(\"position\") !== \"none\")","                        {","                            this._addToAxesRenderQueue(axis);","                        }","                        axis.set(\"dataProvider\", dataProvider);","                    }","                }","            }","        }","    },","","    /**","     * Event listener for toggling the tooltip. If a tooltip is visible, hide it. If not, it","     * will create and show a tooltip based on the event object.","     *","     * @method toggleTooltip","     * @param {Object} e Event object.","     */","    toggleTooltip: function(e)","    {","        var tt = this.get(\"tooltip\");","        if(tt.visible)","        {","            this.hideTooltip();","        }","        else","        {","            tt.markerEventHandler.apply(this, [e]);","        }","    },","","    /**","     * Shows a tooltip","     *","     * @method _showTooltip","     * @param {String} msg Message to dispaly in the tooltip.","     * @param {Number} x x-coordinate","     * @param {Number} y y-coordinate","     * @private","     */","    _showTooltip: function(msg, x, y)","    {","        var tt = this.get(\"tooltip\"),","            node = tt.node;","        if(msg)","        {","            tt.visible = true;","            tt.setTextFunction(node, msg);","            node.setStyle(\"top\", y + \"px\");","            node.setStyle(\"left\", x + \"px\");","            node.setStyle(\"visibility\", \"visible\");","        }","    },","","    /**","     * Positions the tooltip","     *","     * @method _positionTooltip","     * @param {Object} e Event object.","     * @private","     */","    _positionTooltip: function(e)","    {","        var tt = this.get(\"tooltip\"),","            node = tt.node,","            cb = this.get(\"contentBox\"),","            x = (e.pageX + 10) - cb.getX(),","            y = (e.pageY + 10) - cb.getY();","        if(node)","        {","            node.setStyle(\"left\", x + \"px\");","            node.setStyle(\"top\", y + \"px\");","        }","    },","","    /**","     * Hides the default tooltip","     *","     * @method hideTooltip","     */","    hideTooltip: function()","    {","        var tt = this.get(\"tooltip\"),","            node = tt.node;","        tt.visible = false;","        node.set(\"innerHTML\", \"\");","        node.setStyle(\"left\", -10000);","        node.setStyle(\"top\", -10000);","        node.setStyle(\"visibility\", \"hidden\");","    },","","    /**","     * Adds a tooltip to the dom.","     *","     * @method _addTooltip","     * @private","     */","    _addTooltip: function()","    {","        var tt = this.get(\"tooltip\"),","            id = this.get(\"id\") + \"_tooltip\",","            cb = this.get(\"contentBox\"),","            oldNode = DOCUMENT.getElementById(id);","        if(oldNode)","        {","            cb.removeChild(oldNode);","        }","        tt.node.set(\"id\", id);","        tt.node.setStyle(\"visibility\", \"hidden\");","        cb.appendChild(tt.node);","    },","","    /**","     * Updates the tooltip attribute.","     *","     * @method _updateTooltip","     * @param {Object} val Object containing properties for the tooltip.","     * @return Object","     * @private","     */","    _updateTooltip: function(val)","    {","        var tt = this.get(\"tooltip\") || this._getTooltip(),","            i,","            styles,","            node,","            props = {","                markerLabelFunction:\"markerLabelFunction\",","                planarLabelFunction:\"planarLabelFunction\",","                setTextFunction:\"setTextFunction\",","                showEvent:\"showEvent\",","                hideEvent:\"hideEvent\",","                markerEventHandler:\"markerEventHandler\",","                planarEventHandler:\"planarEventHandler\",","                show:\"show\"","            };","        if(Y_Lang.isObject(val))","        {","            styles = val.styles;","            node = Y.one(val.node) || tt.node;","            if(styles)","            {","                for(i in styles)","                {","                    if(styles.hasOwnProperty(i))","                    {","                        node.setStyle(i, styles[i]);","                    }","                }","            }","            for(i in props)","            {","                if(val.hasOwnProperty(i))","                {","                    tt[i] = val[i];","                }","            }","            tt.node = node;","        }","        return tt;","    },","","    /**","     * Default getter for `tooltip` attribute.","     *","     * @method _getTooltip","     * @return Object","     * @private","     */","    _getTooltip: function()","    {","        var node = DOCUMENT.createElement(\"div\"),","            tooltipClass = _getClassName(\"chart-tooltip\"),","            tt = {","                setTextFunction: this._setText,","                markerLabelFunction: this._tooltipLabelFunction,","                planarLabelFunction: this._planarLabelFunction,","                show: true,","                hideEvent: \"mouseout\",","                showEvent: \"mouseover\",","                markerEventHandler: function(e)","                {","                    var tt = this.get(\"tooltip\"),","                    msg = tt.markerLabelFunction.apply(this, [e.categoryItem, e.valueItem, e.index, e.series, e.seriesIndex]);","                    this._showTooltip(msg, e.x + 10, e.y + 10);","                },","                planarEventHandler: function(e)","                {","                    var tt = this.get(\"tooltip\"),","                        msg ,","                        categoryAxis = this.get(\"categoryAxis\");","                    msg = tt.planarLabelFunction.apply(this, [categoryAxis, e.valueItem, e.index, e.items, e.seriesIndex]);","                    this._showTooltip(msg, e.x + 10, e.y + 10);","                }","            };","        node = Y.one(node);","        node.set(\"id\", this.get(\"id\") + \"_tooltip\");","        node.setStyle(\"fontSize\", \"85%\");","        node.setStyle(\"opacity\", \"0.83\");","        node.setStyle(\"position\", \"absolute\");","        node.setStyle(\"paddingTop\", \"2px\");","        node.setStyle(\"paddingRight\", \"5px\");","        node.setStyle(\"paddingBottom\", \"4px\");","        node.setStyle(\"paddingLeft\", \"2px\");","        node.setStyle(\"backgroundColor\", \"#fff\");","        node.setStyle(\"border\", \"1px solid #dbdccc\");","        node.setStyle(\"pointerEvents\", \"none\");","        node.setStyle(\"zIndex\", 3);","        node.setStyle(\"whiteSpace\", \"noWrap\");","        node.setStyle(\"visibility\", \"hidden\");","        node.addClass(tooltipClass);","        tt.node = Y.one(node);","        return tt;","    },","","    /**","     * Formats tooltip text when `interactionType` is `planar`.","     *","     * @method _planarLabelFunction","     * @param {Axis} categoryAxis Reference to the categoryAxis of the chart.","     * @param {Array} valueItems Array of objects for each series that has a data point in the coordinate plane of the event.","     * Each object contains the following data:","     *  <dl>","     *      <dt>axis</dt><dd>The value axis of the series.</dd>","     *      <dt>key</dt><dd>The key for the series.</dd>","     *      <dt>value</dt><dd>The value for the series item.</dd>","     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>","     *  </dl>","     *  @param {Number} index The index of the item within its series.","     *  @param {Array} seriesArray Array of series instances for each value item.","     *  @param {Number} seriesIndex The index of the series in the `seriesCollection`.","     *  @return {String | HTML}","     * @private","     */","    _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray)","    {","        var msg = DOCUMENT.createElement(\"div\"),","            valueItem,","            i = 0,","            len = seriesArray.length,","            axis,","            categoryValue,","            seriesValue,","            series;","        if(categoryAxis)","        {","            categoryValue = categoryAxis.get(\"labelFunction\").apply(","                this,","                [categoryAxis.getKeyValueAt(this.get(\"categoryKey\"), index), categoryAxis.get(\"labelFormat\")]","            );","            if(!Y_Lang.isObject(categoryValue))","            {","                categoryValue = DOCUMENT.createTextNode(categoryValue);","            }","            msg.appendChild(categoryValue);","        }","","        for(; i < len; ++i)","        {","            series = seriesArray[i];","            if(series.get(\"visible\"))","            {","                valueItem = valueItems[i];","                axis = valueItem.axis;","                seriesValue =  axis.get(\"labelFunction\").apply(","                    this,","                    [axis.getKeyValueAt(valueItem.key, index), axis.get(\"labelFormat\")]","                );","                msg.appendChild(DOCUMENT.createElement(\"br\"));","                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));","                msg.appendChild(DOCUMENT.createTextNode(\": \"));","                if(!Y_Lang.isObject(seriesValue))","                {","                    seriesValue = DOCUMENT.createTextNode(seriesValue);","                }","                msg.appendChild(seriesValue);","            }","        }","        return msg;","    },","","    /**","     * Formats tooltip text when `interactionType` is `marker`.","     *","     * @method _tooltipLabelFunction","     * @param {Object} categoryItem An object containing the following:","     *  <dl>","     *      <dt>axis</dt><dd>The axis to which the category is bound.</dd>","     *      <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided)</dd>","     *      <dt>key</dt><dd>The key of the category.</dd>","     *      <dt>value</dt><dd>The value of the category</dd>","     *  </dl>","     * @param {Object} valueItem An object containing the following:","     *  <dl>","     *      <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>","     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>","     *      <dt>key</dt><dd>The key for the series.</dd>","     *      <dt>value</dt><dd>The value for the series item.</dd>","     *  </dl>","     * @return {String | HTML}","     * @private","     */","    _tooltipLabelFunction: function(categoryItem, valueItem)","    {","        var msg = DOCUMENT.createElement(\"div\"),","            categoryValue = categoryItem.axis.get(\"labelFunction\").apply(","                this,","                [categoryItem.value, categoryItem.axis.get(\"labelFormat\")]","            ),","            seriesValue = valueItem.axis.get(\"labelFunction\").apply(","                this,","                [valueItem.value, valueItem.axis.get(\"labelFormat\")]","            );","        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName));","        msg.appendChild(DOCUMENT.createTextNode(\": \"));","        if(!Y_Lang.isObject(categoryValue))","        {","            categoryValue = DOCUMENT.createTextNode(categoryValue);","        }","        msg.appendChild(categoryValue);","        msg.appendChild(DOCUMENT.createElement(\"br\"));","        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));","        msg.appendChild(DOCUMENT.createTextNode(\": \"));","        if(!Y_Lang.isObject(seriesValue))","        {","            seriesValue = DOCUMENT.createTextNode(seriesValue);","        }","        msg.appendChild(seriesValue);","        return msg;","    },","","    /**","     * Event handler for the tooltipChange.","     *","     * @method _tooltipChangeHandler","     * @param {Object} e Event object.","     * @private","     */","    _tooltipChangeHandler: function()","    {","        if(this.get(\"tooltip\"))","        {","            var tt = this.get(\"tooltip\"),","                node = tt.node,","                show = tt.show,","                cb = this.get(\"contentBox\");","            if(node && show)","            {","                if(!cb.contains(node))","                {","                    this._addTooltip();","                }","            }","        }","    },","","    /**","     * Updates the content of text field. This method writes a value into a text field using","     * `appendChild`. If the value is a `String`, it is converted to a `TextNode` first.","     *","     * @method _setText","     * @param label {HTMLElement} label to be updated","     * @param val {String} value with which to update the label","     * @private","     */","    _setText: function(textField, val)","    {","        textField.setContent(\"\");","        if(Y_Lang.isNumber(val))","        {","            val = val + \"\";","        }","        else if(!val)","        {","            val = \"\";","        }","        if(IS_STRING(val))","        {","            val = DOCUMENT.createTextNode(val);","        }","        textField.appendChild(val);","    },","","    /**","     * Returns all the keys contained in a  `dataProvider`.","     *","     * @method _getAllKeys","     * @param {Array} dp Collection of objects to be parsed.","     * @return Object","     */","    _getAllKeys: function(dp)","    {","        var i = 0,","            len = dp.length,","            item,","            key,","            keys = {};","        for(; i < len; ++i)","        {","            item = dp[i];","            for(key in item)","            {","                if(item.hasOwnProperty(key))","                {","                    keys[key] = true;","                }","            }","        }","        return keys;","    },","","    /**","     * Constructs seriesKeys if not explicitly specified.","     *","     * @method _buildSeriesKeys","     * @param {Array} dataProvider The dataProvider for the chart.","     * @return Array","     * @private","     */","    _buildSeriesKeys: function(dataProvider)","    {","        var allKeys,","            catKey = this.get(\"categoryKey\"),","            keys = [],","            i;","        if(this._seriesKeysExplicitlySet)","        {","            return this._seriesKeys;","        }","        allKeys = this._getAllKeys(dataProvider);","        for(i in allKeys)","        {","            if(allKeys.hasOwnProperty(i) && i !== catKey)","            {","                keys.push(i);","            }","        }","        return keys;","    }","};","Y.ChartBase = ChartBase;","/**"," * The CartesianChart class creates a chart with horizontal and vertical axes."," *"," * @class CartesianChart"," * @extends ChartBase"," * @constructor"," * @submodule charts-base"," */","Y.CartesianChart = Y.Base.create(\"cartesianChart\", Y.Widget, [Y.ChartBase], {","    /**","     * @method renderUI","     * @private","     */","    renderUI: function()","    {","        var bb = this.get(\"boundingBox\"),","            cb = this.get(\"contentBox\"),","            tt = this.get(\"tooltip\"),","            overlay,","            overlayClass = _getClassName(\"overlay\");","        //move the position = absolute logic to a class file","        bb.setStyle(\"position\", \"absolute\");","        cb.setStyle(\"position\", \"absolute\");","        this._addAxes();","        this._addGridlines();","        this._addSeries();","        if(tt && tt.show)","        {","            this._addTooltip();","        }","        //If there is a style definition. Force them to set.","        this.get(\"styles\");","        if(this.get(\"interactionType\") === \"planar\")","        {","            overlay = DOCUMENT.createElement(\"div\");","            this.get(\"contentBox\").appendChild(overlay);","            this._overlay = Y.one(overlay);","            this._overlay.set(\"id\", this.get(\"id\") + \"_overlay\");","            this._overlay.setStyle(\"position\", \"absolute\");","            this._overlay.setStyle(\"background\", \"#fff\");","            this._overlay.setStyle(\"opacity\", 0);","            this._overlay.addClass(overlayClass);","            this._overlay.setStyle(\"zIndex\", 4);","        }","        this._setAriaElements(bb, cb);","        this._redraw();","    },","","    /**","     * When `interactionType` is set to `planar`, listens for mouse move events and fires `planarEvent:mouseover` or `planarEvent:mouseout`","     * depending on the position of the mouse in relation to data points on the `Chart`.","     *","     * @method _planarEventDispatcher","     * @param {Object} e Event object.","     * @private","     */","    _planarEventDispatcher: function(e)","    {","        var graph = this.get(\"graph\"),","            bb = this.get(\"boundingBox\"),","            cb = graph.get(\"contentBox\"),","            isTouch = e && e.hasOwnProperty(\"changedTouches\"),","            pageX = isTouch ? e.changedTouches[0].pageX : e.pageX,","            pageY = isTouch ? e.changedTouches[0].pageY : e.pageY,","            posX = pageX - bb.getX(),","            posY = pageY - bb.getY(),","            offset = {","                x: pageX - cb.getX(),","                y: pageY - cb.getY()","            },","            sc = graph.get(\"seriesCollection\"),","            series,","            i = 0,","            index,","            oldIndex = this._selectedIndex,","            item,","            items = [],","            categoryItems = [],","            valueItems = [],","            direction = this.get(\"direction\"),","            hasMarkers,","            catAxis,","            valAxis,","            coord,","            //data columns and area data could be created on a graph level","            markerPlane,","            len,","            coords;","        e.halt(true);","        if(direction === \"horizontal\")","        {","            catAxis = \"x\";","            valAxis = \"y\";","        }","        else","        {","            valAxis = \"x\";","            catAxis = \"y\";","        }","        coord = offset[catAxis];","        if(sc)","        {","            len = sc.length;","            while(i < len && !markerPlane)","            {","                if(sc[i])","                {","                    markerPlane = sc[i].get(catAxis + \"MarkerPlane\");","                }","                i++;","            }","        }","        if(markerPlane)","        {","            len = markerPlane.length;","            for(i = 0; i < len; ++i)","            {","                if(coord <= markerPlane[i].end && coord >= markerPlane[i].start)","                {","                    index = i;","                    break;","                }","            }","            len = sc.length;","            for(i = 0; i < len; ++i)","            {","                series = sc[i];","                coords = series.get(valAxis + \"coords\");","                hasMarkers = series.get(\"markers\");","                if(hasMarkers && !isNaN(oldIndex) && oldIndex > -1)","                {","                    series.updateMarkerState(\"mouseout\", oldIndex);","                }","                if(coords && coords[index] > -1)","                {","                    if(hasMarkers && !isNaN(index) && index > -1)","                    {","                        series.updateMarkerState(\"mouseover\", index);","                    }","                    item = this.getSeriesItems(series, index);","                    categoryItems.push(item.category);","                    valueItems.push(item.value);","                    items.push(series);","                }","","            }","            this._selectedIndex = index;","","            /**","             * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseover event.","             *","             *","             * @event planarEvent:mouseover","             * @preventable false","             * @param {EventFacade} e Event facade with the following additional","             *   properties:","             *  <dl>","             *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker","             *      whose plane has been intersected.</dd>","             *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose","             *      plane has been intersected.</dd>","             *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>","             *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>","             *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>","             *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>","             *      <dt>items</dt><dd>An array including all the series which contain a marker whose plane has been intersected.</dd>","             *      <dt>index</dt><dd>Index of the markers in their respective series.</dd>","             *      <dt>originEvent</dt><dd>Underlying dom event.</dd>","             *  </dl>","             */","            /**","             * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseout event.","             *","             * @event planarEvent:mouseout","             * @preventable false","             * @param {EventFacade} e","             */","            if(index > -1)","            {","                this.fire(\"planarEvent:mouseover\", {","                    categoryItem:categoryItems,","                    valueItem:valueItems,","                    x:posX,","                    y:posY,","                    pageX:pageX,","                    pageY:pageY,","                    items:items,","                    index:index,","                    originEvent:e","                });","            }","            else","            {","                this.fire(\"planarEvent:mouseout\");","            }","        }","    },","","    /**","     * Indicates the default series type for the chart.","     *","     * @property _type","     * @type {String}","     * @private","     */","    _type: \"combo\",","","    /**","     * Queue of axes instances that will be updated. This method is used internally to determine when all axes have been updated.","     *","     * @property _itemRenderQueue","     * @type Array","     * @private","     */","    _itemRenderQueue: null,","","    /**","     * Adds an `Axis` instance to the `_itemRenderQueue`.","     *","     * @method _addToAxesRenderQueue","     * @param {Axis} axis An `Axis` instance.","     * @private","     */","    _addToAxesRenderQueue: function(axis)","    {","        if(!this._itemRenderQueue)","        {","            this._itemRenderQueue = [];","        }","        if(Y.Array.indexOf(this._itemRenderQueue, axis) < 0)","        {","            this._itemRenderQueue.push(axis);","        }","    },","","    /**","     * Adds axis instance to the appropriate array based on position","     *","     * @method _addToAxesCollection","     * @param {String} position The position of the axis","     * @param {Axis} axis The `Axis` instance","     */","    _addToAxesCollection: function(position, axis)","    {","        var axesCollection = this.get(position + \"AxesCollection\");","        if(!axesCollection)","        {","            axesCollection = [];","            this.set(position + \"AxesCollection\", axesCollection);","        }","        axesCollection.push(axis);","    },","","    /**","     * Returns the default value for the `seriesCollection` attribute.","     *","     * @method _getDefaultSeriesCollection","     * @param {Array} val Array containing either `CartesianSeries` instances or objects containing data to construct series instances.","     * @return Array","     * @private","     */","    _getDefaultSeriesCollection: function()","    {","        var seriesCollection,","            dataProvider = this.get(\"dataProvider\");","        if(dataProvider)","        {","            seriesCollection = this._parseSeriesCollection();","        }","        return seriesCollection;","    },","","    /**","     * Parses and returns a series collection from an object and default properties.","     *","     * @method _parseSeriesCollection","     * @param {Object} val Object contain properties for series being set.","     * @return Object","     * @private","     */","    _parseSeriesCollection: function(val)","    {","        var dir = this.get(\"direction\"),","            sc = [],","            catAxis,","            valAxis,","            tempKeys = [],","            series,","            seriesKeys = this.get(\"seriesKeys\").concat(),","            i,","            index,","            l,","            type = this.get(\"type\"),","            key,","            catKey,","            seriesKey,","            graph,","            orphans = [],","            categoryKey = this.get(\"categoryKey\"),","            showMarkers = this.get(\"showMarkers\"),","            showAreaFill = this.get(\"showAreaFill\"),","            showLines = this.get(\"showLines\");","        val = val ? val.concat() : [];","        if(dir === \"vertical\")","        {","            catAxis = \"yAxis\";","            catKey = \"yKey\";","            valAxis = \"xAxis\";","            seriesKey = \"xKey\";","        }","        else","        {","            catAxis = \"xAxis\";","            catKey = \"xKey\";","            valAxis = \"yAxis\";","            seriesKey = \"yKey\";","        }","        l = val.length;","        while(val && val.length > 0)","        {","            series = val.shift();","            key = this._getBaseAttribute(series, seriesKey);","            if(key)","            {","                index = Y.Array.indexOf(seriesKeys, key);","                if(index > -1)","                {","                    seriesKeys.splice(index, 1);","                    tempKeys.push(key);","                    sc.push(series);","                }","                else","                {","                    orphans.push(series);","                }","            }","            else","            {","                orphans.push(series);","            }","        }","        while(orphans.length > 0)","        {","            series = orphans.shift();","            if(seriesKeys.length > 0)","            {","                key = seriesKeys.shift();","                this._setBaseAttribute(series, seriesKey, key);","                tempKeys.push(key);","                sc.push(series);","            }","            else if(series instanceof Y.CartesianSeries)","            {","                series.destroy(true);","            }","        }","        if(seriesKeys.length > 0)","        {","            tempKeys = tempKeys.concat(seriesKeys);","        }","        l = tempKeys.length;","        for(i = 0; i < l; ++i)","        {","            series = sc[i] || {type:type};","            if(series instanceof Y.CartesianSeries)","            {","                this._parseSeriesAxes(series);","                continue;","            }","","            series[catKey] = series[catKey] || categoryKey;","            series[seriesKey] = series[seriesKey] || seriesKeys.shift();","            series[catAxis] = this._getCategoryAxis();","            series[valAxis] = this._getSeriesAxis(series[seriesKey]);","","            series.type = series.type || type;","            series.direction = series.direction || dir;","","            if(series.type === \"combo\" ||","                series.type === \"stackedcombo\" ||","                series.type === \"combospline\" ||","                series.type === \"stackedcombospline\")","            {","                if(showAreaFill !== null)","                {","                    series.showAreaFill = (series.showAreaFill !== null && series.showAreaFill !== undefined) ? series.showAreaFill : showAreaFill;","                }","                if(showMarkers !== null)","                {","                    series.showMarkers = (series.showMarkers !== null && series.showMarkers !== undefined) ? series.showMarkers : showMarkers;","                }","                if(showLines !== null)","                {","                    series.showLines = (series.showLines !== null && series.showLines !== undefined) ? series.showLines : showLines;","                }","            }","            sc[i] = series;","        }","        if(sc)","        {","            graph = this.get(\"graph\");","            graph.set(\"seriesCollection\", sc);","            sc = graph.get(\"seriesCollection\");","        }","        return sc;","    },","","    /**","     * Parse and sets the axes for a series instance.","     *","     * @method _parseSeriesAxes","     * @param {CartesianSeries} series A `CartesianSeries` instance.","     * @private","     */","    _parseSeriesAxes: function(series)","    {","        var axes = this.get(\"axes\"),","            xAxis = series.get(\"xAxis\"),","            yAxis = series.get(\"yAxis\"),","            YAxis = Y.Axis,","            axis;","        if(xAxis && !(xAxis instanceof YAxis) && Y_Lang.isString(xAxis) && axes.hasOwnProperty(xAxis))","        {","            axis = axes[xAxis];","            if(axis instanceof YAxis)","            {","                series.set(\"xAxis\", axis);","            }","        }","        if(yAxis && !(yAxis instanceof YAxis) && Y_Lang.isString(yAxis) && axes.hasOwnProperty(yAxis))","        {","            axis = axes[yAxis];","            if(axis instanceof YAxis)","            {","                series.set(\"yAxis\", axis);","            }","        }","","    },","","    /**","     * Returns the category axis instance for the chart.","     *","     * @method _getCategoryAxis","     * @return Axis","     * @private","     */","    _getCategoryAxis: function()","    {","        var axis,","            axes = this.get(\"axes\"),","            categoryAxisName = this.get(\"categoryAxisName\") || this.get(\"categoryKey\");","        axis = axes[categoryAxisName];","        return axis;","    },","","    /**","     * Returns the value axis for a series.","     *","     * @method _getSeriesAxis","     * @param {String} key The key value used to determine the axis instance.","     * @return Axis","     * @private","     */","    _getSeriesAxis:function(key, axisName)","    {","        var axes = this.get(\"axes\"),","            i,","            keys,","            axis;","        if(axes)","        {","            if(axisName && axes.hasOwnProperty(axisName))","            {","                axis = axes[axisName];","            }","            else","            {","                for(i in axes)","                {","                    if(axes.hasOwnProperty(i))","                    {","                        keys = axes[i].get(\"keys\");","                        if(keys && keys.hasOwnProperty(key))","                        {","                            axis = axes[i];","                            break;","                        }","                    }","                }","            }","        }","        return axis;","    },","","    /**","     * Gets an attribute from an object, using a getter for Base objects and a property for object","     * literals. Used for determining attributes from series/axis references which can be an actual class instance","     * or a hash of properties that will be used to create a class instance.","     *","     * @method _getBaseAttribute","     * @param {Object} item Object or instance in which the attribute resides.","     * @param {String} key Attribute whose value will be returned.","     * @return Object","     * @private","     */","    _getBaseAttribute: function(item, key)","    {","        if(item instanceof Y.Base)","        {","            return item.get(key);","        }","        if(item.hasOwnProperty(key))","        {","            return item[key];","        }","        return null;","    },","","    /**","     * Sets an attribute on an object, using a setter of Base objects and a property for object","     * literals. Used for setting attributes on a Base class, either directly or to be stored in an object literal","     * for use at instantiation.","     *","     * @method _setBaseAttribute","     * @param {Object} item Object or instance in which the attribute resides.","     * @param {String} key Attribute whose value will be assigned.","     * @param {Object} value Value to be assigned to the attribute.","     * @private","     */","    _setBaseAttribute: function(item, key, value)","    {","        if(item instanceof Y.Base)","        {","            item.set(key, value);","        }","        else","        {","            item[key] = value;","        }","    },","","    /**","     * Creates `Axis` instances.","     *","     * @method _setAxes","     * @param {Object} val Object containing `Axis` instances or objects in which to construct `Axis` instances.","     * @return Object","     * @private","     */","    _setAxes: function(val)","    {","        var hash = this._parseAxes(val),","            axes = {},","            axesAttrs = {","                edgeOffset: \"edgeOffset\",","                calculateEdgeOffset: \"calculateEdgeOffset\",","                position: \"position\",","                overlapGraph:\"overlapGraph\",","                labelValues: \"labelValues\",","                hideFirstMajorUnit: \"hideFirstMajorUnit\",","                hideLastMajorUnit: \"hideLastMajorUnit\",","                labelFunction:\"labelFunction\",","                labelFunctionScope:\"labelFunctionScope\",","                labelFormat:\"labelFormat\",","                appendLabelFunction: \"appendLabelFunction\",","                appendTitleFunction: \"appendTitleFunction\",","                maximum:\"maximum\",","                minimum:\"minimum\",","                roundingMethod:\"roundingMethod\",","                alwaysShowZero:\"alwaysShowZero\",","                title:\"title\",","                width:\"width\",","                height:\"height\"","            },","            dp = this.get(\"dataProvider\"),","            ai,","            i,","            pos,","            axis,","            axisPosition,","            dh,","            AxisClass,","            config,","            axesCollection;","        for(i in hash)","        {","            if(hash.hasOwnProperty(i))","            {","                dh = hash[i];","                if(dh instanceof Y.Axis)","                {","                    axis = dh;","                }","                else","                {","                    axis = null;","                    config = {};","                    config.dataProvider = dh.dataProvider || dp;","                    config.keys = dh.keys;","","                    if(dh.hasOwnProperty(\"roundingUnit\"))","                    {","                        config.roundingUnit = dh.roundingUnit;","                    }","                    pos = dh.position;","                    if(dh.styles)","                    {","                        config.styles = dh.styles;","                    }","                    config.position = dh.position;","                    for(ai in axesAttrs)","                    {","                        if(axesAttrs.hasOwnProperty(ai) && dh.hasOwnProperty(ai))","                        {","                            config[ai] = dh[ai];","                        }","                    }","","                    //only check for existing axis if we constructed the default axes already","                    if(val)","                    {","                        axis = this.getAxisByKey(i);","                    }","","                    if(axis && axis instanceof Y.Axis)","                    {","                        axisPosition = axis.get(\"position\");","                        if(pos !== axisPosition)","                        {","                            if(axisPosition !== \"none\")","                            {","                                axesCollection = this.get(axisPosition + \"AxesCollection\");","                                axesCollection.splice(Y.Array.indexOf(axesCollection, axis), 1);","                            }","                            if(pos !== \"none\")","                            {","                                this._addToAxesCollection(pos, axis);","                            }","                        }","                        axis.setAttrs(config);","                    }","                    else","                    {","                        AxisClass = this._getAxisClass(dh.type);","                        axis = new AxisClass(config);","                        axis.after(\"axisRendered\", Y.bind(this._itemRendered, this));","                    }","                }","","                if(axis)","                {","                    axesCollection = this.get(pos + \"AxesCollection\");","                    if(axesCollection && Y.Array.indexOf(axesCollection, axis) > 0)","                    {","                        axis.set(\"overlapGraph\", false);","                    }","                    axes[i] = axis;","                }","            }","        }","        return axes;","    },","","    /**","     * Adds axes to the chart.","     *","     * @method _addAxes","     * @private","     */","    _addAxes: function()","    {","        var axes = this.get(\"axes\"),","            i,","            axis,","            pos,","            w = this.get(\"width\"),","            h = this.get(\"height\"),","            node = Y.Node.one(this._parentNode);","        if(!this._axesCollection)","        {","            this._axesCollection = [];","        }","        for(i in axes)","        {","            if(axes.hasOwnProperty(i))","            {","                axis = axes[i];","                if(axis instanceof Y.Axis)","                {","                    if(!w)","                    {","                        this.set(\"width\", node.get(\"offsetWidth\"));","                        w = this.get(\"width\");","                    }","                    if(!h)","                    {","                        this.set(\"height\", node.get(\"offsetHeight\"));","                        h = this.get(\"height\");","                    }","                    this._addToAxesRenderQueue(axis);","                    pos = axis.get(\"position\");","                    if(!this.get(pos + \"AxesCollection\"))","                    {","                        this.set(pos + \"AxesCollection\", [axis]);","                    }","                    else","                    {","                        this.get(pos + \"AxesCollection\").push(axis);","                    }","                    this._axesCollection.push(axis);","                    if(axis.get(\"keys\").hasOwnProperty(this.get(\"categoryKey\")))","                    {","                        this.set(\"categoryAxis\", axis);","                    }","                    axis.render(this.get(\"contentBox\"));","                }","            }","        }","    },","","    /**","     * Renders the Graph.","     *","     * @method _addSeries","     * @private","     */","    _addSeries: function()","    {","        var graph = this.get(\"graph\");","        graph.render(this.get(\"contentBox\"));","","    },","","    /**","     * Adds gridlines to the chart.","     *","     * @method _addGridlines","     * @private","     */","    _addGridlines: function()","    {","        var graph = this.get(\"graph\"),","            hgl = this.get(\"horizontalGridlines\"),","            vgl = this.get(\"verticalGridlines\"),","            direction = this.get(\"direction\"),","            leftAxesCollection = this.get(\"leftAxesCollection\"),","            rightAxesCollection = this.get(\"rightAxesCollection\"),","            bottomAxesCollection = this.get(\"bottomAxesCollection\"),","            topAxesCollection = this.get(\"topAxesCollection\"),","            seriesAxesCollection,","            catAxis = this.get(\"categoryAxis\"),","            hAxis,","            vAxis;","        if(this._axesCollection)","        {","            seriesAxesCollection = this._axesCollection.concat();","            seriesAxesCollection.splice(Y.Array.indexOf(seriesAxesCollection, catAxis), 1);","        }","        if(hgl)","        {","            if(leftAxesCollection && leftAxesCollection[0])","            {","                hAxis = leftAxesCollection[0];","            }","            else if(rightAxesCollection && rightAxesCollection[0])","            {","                hAxis = rightAxesCollection[0];","            }","            else","            {","                hAxis = direction === \"horizontal\" ? catAxis : seriesAxesCollection[0];","            }","            if(!this._getBaseAttribute(hgl, \"axis\") && hAxis)","            {","                this._setBaseAttribute(hgl, \"axis\", hAxis);","            }","            if(this._getBaseAttribute(hgl, \"axis\"))","            {","                graph.set(\"horizontalGridlines\", hgl);","            }","        }","        if(vgl)","        {","            if(bottomAxesCollection && bottomAxesCollection[0])","            {","                vAxis = bottomAxesCollection[0];","            }","            else if (topAxesCollection && topAxesCollection[0])","            {","                vAxis = topAxesCollection[0];","            }","            else","            {","                vAxis = direction === \"vertical\" ? catAxis : seriesAxesCollection[0];","            }","            if(!this._getBaseAttribute(vgl, \"axis\") && vAxis)","            {","                this._setBaseAttribute(vgl, \"axis\", vAxis);","            }","            if(this._getBaseAttribute(vgl, \"axis\"))","            {","                graph.set(\"verticalGridlines\", vgl);","            }","        }","    },","","    /**","     * Default Function for the axes attribute.","     *","     * @method _getDefaultAxes","     * @return Object","     * @private","     */","    _getDefaultAxes: function()","    {","        var axes;","        if(this.get(\"dataProvider\"))","        {","            axes = this._parseAxes();","        }","        return axes;","    },","","    /**","     * Generates and returns a key-indexed object containing `Axis` instances or objects used to create `Axis` instances.","     *","     * @method _parseAxes","     * @param {Object} axes Object containing `Axis` instances or `Axis` attributes.","     * @return Object","     * @private","     */","    _parseAxes: function(axes)","    {","        var catKey = this.get(\"categoryKey\"),","            axis,","            attr,","            keys,","            newAxes = {},","            claimedKeys = [],","            categoryAxisName = this.get(\"categoryAxisName\") || this.get(\"categoryKey\"),","            valueAxisName = this.get(\"valueAxisName\"),","            seriesKeys = this.get(\"seriesKeys\").concat(),","            i,","            l,","            ii,","            ll,","            cIndex,","            direction = this.get(\"direction\"),","            seriesPosition,","            categoryPosition,","            valueAxes = [],","            seriesAxis = this.get(\"stacked\") ? \"stacked\" : \"numeric\";","        if(direction === \"vertical\")","        {","            seriesPosition = \"bottom\";","            categoryPosition = \"left\";","        }","        else","        {","            seriesPosition = \"left\";","            categoryPosition = \"bottom\";","        }","        if(axes)","        {","            for(i in axes)","            {","                if(axes.hasOwnProperty(i))","                {","                    axis = axes[i];","                    keys = this._getBaseAttribute(axis, \"keys\");","                    attr = this._getBaseAttribute(axis, \"type\");","                    if(attr === \"time\" || attr === \"category\")","                    {","                        categoryAxisName = i;","                        this.set(\"categoryAxisName\", i);","                        if(Y_Lang.isArray(keys) && keys.length > 0)","                        {","                            catKey = keys[0];","                            this.set(\"categoryKey\", catKey);","                        }","                        newAxes[i] = axis;","                    }","                    else if(i === categoryAxisName)","                    {","                        newAxes[i] = axis;","                    }","                    else","                    {","                        newAxes[i] = axis;","                        if(i !== valueAxisName && keys && Y_Lang.isArray(keys))","                        {","                            ll = keys.length;","                            for(ii = 0; ii < ll; ++ii)","                            {","                                claimedKeys.push(keys[ii]);","                            }","                            valueAxes.push(newAxes[i]);","                        }","                        if(!(this._getBaseAttribute(newAxes[i], \"type\")))","                        {","                            this._setBaseAttribute(newAxes[i], \"type\", seriesAxis);","                        }","                        if(!(this._getBaseAttribute(newAxes[i], \"position\")))","                        {","                            this._setBaseAttribute(","                                newAxes[i],","                                \"position\",","                                this._getDefaultAxisPosition(newAxes[i], valueAxes, seriesPosition)","                            );","                        }","                    }","                }","            }","        }","        cIndex = Y.Array.indexOf(seriesKeys, catKey);","        if(cIndex > -1)","        {","            seriesKeys.splice(cIndex, 1);","        }","        l = claimedKeys.length;","        for(i = 0; i < l; ++i)","        {","            cIndex = Y.Array.indexOf(seriesKeys, claimedKeys[i]);","            if(cIndex > -1)","            {","                seriesKeys.splice(cIndex, 1);","            }","        }","        if(!newAxes.hasOwnProperty(categoryAxisName))","        {","            newAxes[categoryAxisName] = {};","        }","        if(!(this._getBaseAttribute(newAxes[categoryAxisName], \"keys\")))","        {","            this._setBaseAttribute(newAxes[categoryAxisName], \"keys\", [catKey]);","        }","","        if(!(this._getBaseAttribute(newAxes[categoryAxisName], \"position\")))","        {","            this._setBaseAttribute(newAxes[categoryAxisName], \"position\", categoryPosition);","        }","","        if(!(this._getBaseAttribute(newAxes[categoryAxisName], \"type\")))","        {","            this._setBaseAttribute(newAxes[categoryAxisName], \"type\", this.get(\"categoryType\"));","        }","        if(!newAxes.hasOwnProperty(valueAxisName) && seriesKeys && seriesKeys.length > 0)","        {","            newAxes[valueAxisName] = {keys:seriesKeys};","            valueAxes.push(newAxes[valueAxisName]);","        }","        if(claimedKeys.length > 0)","        {","            if(seriesKeys.length > 0)","            {","                seriesKeys = claimedKeys.concat(seriesKeys);","            }","            else","            {","                seriesKeys = claimedKeys;","            }","        }","        if(newAxes.hasOwnProperty(valueAxisName))","        {","            if(!(this._getBaseAttribute(newAxes[valueAxisName], \"position\")))","            {","                this._setBaseAttribute(","                    newAxes[valueAxisName],","                    \"position\",","                    this._getDefaultAxisPosition(newAxes[valueAxisName], valueAxes, seriesPosition)","                );","            }","            this._setBaseAttribute(newAxes[valueAxisName], \"type\", seriesAxis);","            this._setBaseAttribute(newAxes[valueAxisName], \"keys\", seriesKeys);","        }","        if(!this._seriesKeysExplicitlySet)","        {","            this._seriesKeys = seriesKeys;","        }","        return newAxes;","    },","","    /**","     * Determines the position of an axis when one is not specified.","     *","     * @method _getDefaultAxisPosition","     * @param {Axis} axis `Axis` instance.","     * @param {Array} valueAxes Array of `Axis` instances.","     * @param {String} position Default position depending on the direction of the chart and type of axis.","     * @return String","     * @private","     */","    _getDefaultAxisPosition: function(axis, valueAxes, position)","    {","        var direction = this.get(\"direction\"),","            i = Y.Array.indexOf(valueAxes, axis);","","        if(valueAxes[i - 1] && valueAxes[i - 1].position)","        {","            if(direction === \"horizontal\")","            {","                if(valueAxes[i - 1].position === \"left\")","                {","                    position = \"right\";","                }","                else if(valueAxes[i - 1].position === \"right\")","                {","                    position = \"left\";","                }","            }","            else","            {","                if (valueAxes[i -1].position === \"bottom\")","                {","                    position = \"top\";","                }","                else","                {","                    position = \"bottom\";","                }","            }","        }","        return position;","    },","","","    /**","     * Returns an object literal containing a categoryItem and a valueItem for a given series index. Below is the structure of each:","     *","     * @method getSeriesItems","     * @param {CartesianSeries} series Reference to a series.","     * @param {Number} index Index of the specified item within a series.","     * @return Object An object literal containing the following:","     *","     *  <dl>","     *      <dt>categoryItem</dt><dd>Object containing the following data related to the category axis of the series.","     *  <dl>","     *      <dt>axis</dt><dd>Reference to the category axis of the series.</dd>","     *      <dt>key</dt><dd>Category key for the series.</dd>","     *      <dt>value</dt><dd>Value on the axis corresponding to the series index.</dd>","     *  </dl>","     *      </dd>","     *      <dt>valueItem</dt><dd>Object containing the following data related to the category axis of the series.","     *  <dl>","     *      <dt>axis</dt><dd>Reference to the value axis of the series.</dd>","     *      <dt>key</dt><dd>Value key for the series.</dd>","     *      <dt>value</dt><dd>Value on the axis corresponding to the series index.</dd>","     *  </dl>","     *      </dd>","     *  </dl>","     */","    getSeriesItems: function(series, index)","    {","        var xAxis = series.get(\"xAxis\"),","            yAxis = series.get(\"yAxis\"),","            xKey = series.get(\"xKey\"),","            yKey = series.get(\"yKey\"),","            categoryItem,","            valueItem;","        if(this.get(\"direction\") === \"vertical\")","        {","            categoryItem = {","                axis:yAxis,","                key:yKey,","                value:yAxis.getKeyValueAt(yKey, index)","            };","            valueItem = {","                axis:xAxis,","                key:xKey,","                value: xAxis.getKeyValueAt(xKey, index)","            };","        }","        else","        {","            valueItem = {","                axis:yAxis,","                key:yKey,","                value:yAxis.getKeyValueAt(yKey, index)","            };","            categoryItem = {","                axis:xAxis,","                key:xKey,","                value: xAxis.getKeyValueAt(xKey, index)","            };","        }","        categoryItem.displayName = series.get(\"categoryDisplayName\");","        valueItem.displayName = series.get(\"valueDisplayName\");","        categoryItem.value = categoryItem.axis.getKeyValueAt(categoryItem.key, index);","        valueItem.value = valueItem.axis.getKeyValueAt(valueItem.key, index);","        return {category:categoryItem, value:valueItem};","    },","","    /**","     * Handler for sizeChanged event.","     *","     * @method _sizeChanged","     * @param {Object} e Event object.","     * @private","     */","    _sizeChanged: function()","    {","        if(this._axesCollection)","        {","            var ac = this._axesCollection,","                i = 0,","                l = ac.length;","            for(; i < l; ++i)","            {","                this._addToAxesRenderQueue(ac[i]);","            }","            this._redraw();","        }","    },","","    /**","     * Returns the maximum distance in pixels that the extends outside the top bounds of all vertical axes.","     *","     * @method _getTopOverflow","     * @param {Array} set1 Collection of axes to check.","     * @param {Array} set2 Seconf collection of axes to check.","     * @param {Number} width Width of the axes","     * @return Number","     * @private","     */","    _getTopOverflow: function(set1, set2, height)","    {","        var i = 0,","            len,","            overflow = 0,","            axis;","        if(set1)","        {","            len = set1.length;","            for(; i < len; ++i)","            {","                axis = set1[i];","                overflow = Math.max(","                    overflow,","                    Math.abs(axis.getMaxLabelBounds().top) - axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, height)","                );","            }","        }","        if(set2)","        {","            i = 0;","            len = set2.length;","            for(; i < len; ++i)","            {","                axis = set2[i];","                overflow = Math.max(","                    overflow,","                    Math.abs(axis.getMaxLabelBounds().top) - axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, height)","                );","            }","        }","        return overflow;","    },","","    /**","     * Returns the maximum distance in pixels that the extends outside the right bounds of all horizontal axes.","     *","     * @method _getRightOverflow","     * @param {Array} set1 Collection of axes to check.","     * @param {Array} set2 Seconf collection of axes to check.","     * @param {Number} width Width of the axes","     * @return Number","     * @private","     */","    _getRightOverflow: function(set1, set2, width)","    {","        var i = 0,","            len,","            overflow = 0,","            axis;","        if(set1)","        {","            len = set1.length;","            for(; i < len; ++i)","            {","                axis = set1[i];","                overflow = Math.max(","                    overflow,","                    axis.getMaxLabelBounds().right - axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, width)","                );","            }","        }","        if(set2)","        {","            i = 0;","            len = set2.length;","            for(; i < len; ++i)","            {","                axis = set2[i];","                overflow = Math.max(","                    overflow,","                    axis.getMaxLabelBounds().right - axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, width)","                );","            }","        }","        return overflow;","    },","","    /**","     * Returns the maximum distance in pixels that the extends outside the left bounds of all horizontal axes.","     *","     * @method _getLeftOverflow","     * @param {Array} set1 Collection of axes to check.","     * @param {Array} set2 Seconf collection of axes to check.","     * @param {Number} width Width of the axes","     * @return Number","     * @private","     */","    _getLeftOverflow: function(set1, set2, width)","    {","        var i = 0,","            len,","            overflow = 0,","            axis;","        if(set1)","        {","            len = set1.length;","            for(; i < len; ++i)","            {","                axis = set1[i];","                overflow = Math.max(","                    overflow,","                    Math.abs(axis.getMinLabelBounds().left) - axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, width)","                );","            }","        }","        if(set2)","        {","            i = 0;","            len = set2.length;","            for(; i < len; ++i)","            {","                axis = set2[i];","                overflow = Math.max(","                    overflow,","                    Math.abs(axis.getMinLabelBounds().left) - axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, width)","                );","            }","        }","        return overflow;","    },","","    /**","     * Returns the maximum distance in pixels that the extends outside the bottom bounds of all vertical axes.","     *","     * @method _getBottomOverflow","     * @param {Array} set1 Collection of axes to check.","     * @param {Array} set2 Seconf collection of axes to check.","     * @param {Number} height Height of the axes","     * @return Number","     * @private","     */","    _getBottomOverflow: function(set1, set2, height)","    {","        var i = 0,","            len,","            overflow = 0,","            axis;","        if(set1)","        {","            len = set1.length;","            for(; i < len; ++i)","            {","                axis = set1[i];","                overflow = Math.max(","                    overflow,","                    axis.getMinLabelBounds().bottom - axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, height)","                );","            }","        }","        if(set2)","        {","            i = 0;","            len = set2.length;","            for(; i < len; ++i)","            {","                axis = set2[i];","                overflow = Math.max(","                    overflow,","                    axis.getMinLabelBounds().bottom - axis.getEdgeOffset(axis.get(\"styles\").majorTicks.count, height)","                );","            }","        }","        return overflow;","    },","","    /**","     * Redraws and position all the components of the chart instance.","     *","     * @method _redraw","     * @private","     */","    _redraw: function()","    {","        if(this._drawing)","        {","            this._callLater = true;","            return;","        }","        this._drawing = true;","        this._callLater = false;","        var w = this.get(\"width\"),","            h = this.get(\"height\"),","            leftPaneWidth = 0,","            rightPaneWidth = 0,","            topPaneHeight = 0,","            bottomPaneHeight = 0,","            leftAxesCollection = this.get(\"leftAxesCollection\"),","            rightAxesCollection = this.get(\"rightAxesCollection\"),","            topAxesCollection = this.get(\"topAxesCollection\"),","            bottomAxesCollection = this.get(\"bottomAxesCollection\"),","            i = 0,","            l,","            axis,","            graphOverflow = \"visible\",","            graph = this.get(\"graph\"),","            topOverflow,","            bottomOverflow,","            leftOverflow,","            rightOverflow,","            graphWidth,","            graphHeight,","            graphX,","            graphY,","            allowContentOverflow = this.get(\"allowContentOverflow\"),","            diff,","            rightAxesXCoords,","            leftAxesXCoords,","            topAxesYCoords,","            bottomAxesYCoords,","            graphRect = {};","        if(leftAxesCollection)","        {","            leftAxesXCoords = [];","            l = leftAxesCollection.length;","            for(i = l - 1; i > -1; --i)","            {","                leftAxesXCoords.unshift(leftPaneWidth);","                leftPaneWidth += leftAxesCollection[i].get(\"width\");","            }","        }","        if(rightAxesCollection)","        {","            rightAxesXCoords = [];","            l = rightAxesCollection.length;","            i = 0;","            for(i = l - 1; i > -1; --i)","            {","                rightPaneWidth += rightAxesCollection[i].get(\"width\");","                rightAxesXCoords.unshift(w - rightPaneWidth);","            }","        }","        if(topAxesCollection)","        {","            topAxesYCoords = [];","            l = topAxesCollection.length;","            for(i = l - 1; i > -1; --i)","            {","                topAxesYCoords.unshift(topPaneHeight);","                topPaneHeight += topAxesCollection[i].get(\"height\");","            }","        }","        if(bottomAxesCollection)","        {","            bottomAxesYCoords = [];","            l = bottomAxesCollection.length;","            for(i = l - 1; i > -1; --i)","            {","                bottomPaneHeight += bottomAxesCollection[i].get(\"height\");","                bottomAxesYCoords.unshift(h - bottomPaneHeight);","            }","        }","","        graphWidth = w - (leftPaneWidth + rightPaneWidth);","        graphHeight = h - (bottomPaneHeight + topPaneHeight);","        graphRect.left = leftPaneWidth;","        graphRect.top = topPaneHeight;","        graphRect.bottom = h - bottomPaneHeight;","        graphRect.right = w - rightPaneWidth;","        if(!allowContentOverflow)","        {","            topOverflow = this._getTopOverflow(leftAxesCollection, rightAxesCollection);","            bottomOverflow = this._getBottomOverflow(leftAxesCollection, rightAxesCollection);","            leftOverflow = this._getLeftOverflow(bottomAxesCollection, topAxesCollection);","            rightOverflow = this._getRightOverflow(bottomAxesCollection, topAxesCollection);","","            diff = topOverflow - topPaneHeight;","            if(diff > 0)","            {","                graphRect.top = topOverflow;","                if(topAxesYCoords)","                {","                    i = 0;","                    l = topAxesYCoords.length;","                    for(; i < l; ++i)","                    {","                        topAxesYCoords[i] += diff;","                    }","                }","            }","","            diff = bottomOverflow - bottomPaneHeight;","            if(diff > 0)","            {","                graphRect.bottom = h - bottomOverflow;","                if(bottomAxesYCoords)","                {","                    i = 0;","                    l = bottomAxesYCoords.length;","                    for(; i < l; ++i)","                    {","                        bottomAxesYCoords[i] -= diff;","                    }","                }","            }","","            diff = leftOverflow - leftPaneWidth;","            if(diff > 0)","            {","                graphRect.left = leftOverflow;","                if(leftAxesXCoords)","                {","                    i = 0;","                    l = leftAxesXCoords.length;","                    for(; i < l; ++i)","                    {","                        leftAxesXCoords[i] += diff;","                    }","                }","            }","","            diff = rightOverflow - rightPaneWidth;","            if(diff > 0)","            {","                graphRect.right = w - rightOverflow;","                if(rightAxesXCoords)","                {","                    i = 0;","                    l = rightAxesXCoords.length;","                    for(; i < l; ++i)","                    {","                        rightAxesXCoords[i] -= diff;","                    }","                }","            }","        }","        graphWidth = graphRect.right - graphRect.left;","        graphHeight = graphRect.bottom - graphRect.top;","        graphX = graphRect.left;","        graphY = graphRect.top;","        if(topAxesCollection)","        {","            l = topAxesCollection.length;","            i = 0;","            for(; i < l; i++)","            {","                axis = topAxesCollection[i];","                if(axis.get(\"width\") !== graphWidth)","                {","                    axis.set(\"width\", graphWidth);","                }","                axis.get(\"boundingBox\").setStyle(\"left\", graphX + \"px\");","                axis.get(\"boundingBox\").setStyle(\"top\", topAxesYCoords[i] + \"px\");","            }","            if(axis._hasDataOverflow())","            {","                graphOverflow = \"hidden\";","            }","        }","        if(bottomAxesCollection)","        {","            l = bottomAxesCollection.length;","            i = 0;","            for(; i < l; i++)","            {","                axis = bottomAxesCollection[i];","                if(axis.get(\"width\") !== graphWidth)","                {","                    axis.set(\"width\", graphWidth);","                }","                axis.get(\"boundingBox\").setStyle(\"left\", graphX + \"px\");","                axis.get(\"boundingBox\").setStyle(\"top\", bottomAxesYCoords[i] + \"px\");","            }","            if(axis._hasDataOverflow())","            {","                graphOverflow = \"hidden\";","            }","        }","        if(leftAxesCollection)","        {","            l = leftAxesCollection.length;","            i = 0;","            for(; i < l; ++i)","            {","                axis = leftAxesCollection[i];","                axis.get(\"boundingBox\").setStyle(\"top\", graphY + \"px\");","                axis.get(\"boundingBox\").setStyle(\"left\", leftAxesXCoords[i] + \"px\");","                if(axis.get(\"height\") !== graphHeight)","                {","                    axis.set(\"height\", graphHeight);","                }","            }","            if(axis._hasDataOverflow())","            {","                graphOverflow = \"hidden\";","            }","        }","        if(rightAxesCollection)","        {","            l = rightAxesCollection.length;","            i = 0;","            for(; i < l; ++i)","            {","                axis = rightAxesCollection[i];","                axis.get(\"boundingBox\").setStyle(\"top\", graphY + \"px\");","                axis.get(\"boundingBox\").setStyle(\"left\", rightAxesXCoords[i] + \"px\");","                if(axis.get(\"height\") !== graphHeight)","                {","                    axis.set(\"height\", graphHeight);","                }","            }","            if(axis._hasDataOverflow())","            {","                graphOverflow = \"hidden\";","            }","        }","        this._drawing = false;","        if(this._callLater)","        {","            this._redraw();","            return;","        }","        if(graph)","        {","            graph.get(\"boundingBox\").setStyle(\"left\", graphX + \"px\");","            graph.get(\"boundingBox\").setStyle(\"top\", graphY + \"px\");","            graph.set(\"width\", graphWidth);","            graph.set(\"height\", graphHeight);","            graph.get(\"boundingBox\").setStyle(\"overflow\", graphOverflow);","        }","","        if(this._overlay)","        {","            this._overlay.setStyle(\"left\", graphX + \"px\");","            this._overlay.setStyle(\"top\", graphY + \"px\");","            this._overlay.setStyle(\"width\", graphWidth + \"px\");","            this._overlay.setStyle(\"height\", graphHeight + \"px\");","        }","    },","","    /**","     * Destructor implementation for the CartesianChart class. Calls destroy on all axes, series and the Graph instance.","     * Removes the tooltip and overlay HTML elements.","     *","     * @method destructor","     * @protected","     */","    destructor: function()","    {","        var graph = this.get(\"graph\"),","            i = 0,","            len,","            seriesCollection = this.get(\"seriesCollection\"),","            axesCollection = this._axesCollection,","            tooltip = this.get(\"tooltip\").node;","        if(this._description)","        {","            this._description.empty();","            this._description.remove(true);","        }","        if(this._liveRegion)","        {","            this._liveRegion.empty();","            this._liveRegion.remove(true);","        }","        len = seriesCollection ? seriesCollection.length : 0;","        for(; i < len; ++i)","        {","            if(seriesCollection[i] instanceof Y.CartesianSeries)","            {","                seriesCollection[i].destroy(true);","            }","        }","        len = axesCollection ? axesCollection.length : 0;","        for(i = 0; i < len; ++i)","        {","            if(axesCollection[i] instanceof Y.Axis)","            {","                axesCollection[i].destroy(true);","            }","        }","        if(graph)","        {","            graph.destroy(true);","        }","        if(tooltip)","        {","            tooltip.empty();","            tooltip.remove(true);","        }","        if(this._overlay)","        {","            this._overlay.empty();","            this._overlay.remove(true);","        }","    },","","    /**","     * Returns the appropriate message based on the key press.","     *","     * @method _getAriaMessage","     * @param {Number} key The keycode that was pressed.","     * @return String","     */","    _getAriaMessage: function(key)","    {","        var msg = \"\",","            series,","            items,","            categoryItem,","            valueItem,","            seriesIndex = this._seriesIndex,","            itemIndex = this._itemIndex,","            seriesCollection = this.get(\"seriesCollection\"),","            len = seriesCollection.length,","            dataLength;","        if(key % 2 === 0)","        {","            if(len > 1)","            {","                if(key === 38)","                {","                    seriesIndex = seriesIndex < 1 ? len - 1 : seriesIndex - 1;","                }","                else if(key === 40)","                {","                    seriesIndex = seriesIndex >= len - 1 ? 0 : seriesIndex + 1;","                }","                this._itemIndex = -1;","            }","            else","            {","                seriesIndex = 0;","            }","            this._seriesIndex = seriesIndex;","            series = this.getSeries(parseInt(seriesIndex, 10));","            msg = series.get(\"valueDisplayName\") + \" series.\";","        }","        else","        {","            if(seriesIndex > -1)","            {","                msg = \"\";","                series = this.getSeries(parseInt(seriesIndex, 10));","            }","            else","            {","                seriesIndex = 0;","                this._seriesIndex = seriesIndex;","                series = this.getSeries(parseInt(seriesIndex, 10));","                msg = series.get(\"valueDisplayName\") + \" series.\";","            }","            dataLength = series._dataLength ? series._dataLength : 0;","            if(key === 37)","            {","                itemIndex = itemIndex > 0 ? itemIndex - 1 : dataLength - 1;","            }","            else if(key === 39)","            {","                itemIndex = itemIndex >= dataLength - 1 ? 0 : itemIndex + 1;","            }","            this._itemIndex = itemIndex;","            items = this.getSeriesItems(series, itemIndex);","            categoryItem = items.category;","            valueItem = items.value;","            if(categoryItem && valueItem && categoryItem.value && valueItem.value)","            {","                msg += categoryItem.displayName +","                    \": \" +","                    categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get(\"labelFormat\")]) +","                    \", \";","                msg += valueItem.displayName +","                    \": \" +","                    valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get(\"labelFormat\")]) +","                    \", \";","            }","           else","            {","                msg += \"No data available.\";","            }","            msg += (itemIndex + 1) + \" of \" + dataLength + \". \";","        }","        return msg;","    }","}, {","    ATTRS: {","        /**","         * Indicates whether axis labels are allowed to overflow beyond the bounds of the chart's content box.","         *","         * @attribute allowContentOverflow","         * @type Boolean","         */","        allowContentOverflow: {","            value: false","        },","","        /**","         * Style object for the axes.","         *","         * @attribute axesStyles","         * @type Object","         * @private","         */","        axesStyles: {","            getter: function()","            {","                var axes = this.get(\"axes\"),","                    i,","                    styles = this._axesStyles;","                if(axes)","                {","                    for(i in axes)","                    {","                        if(axes.hasOwnProperty(i) && axes[i] instanceof Y.Axis)","                        {","                            if(!styles)","                            {","                                styles = {};","                            }","                            styles[i] = axes[i].get(\"styles\");","                        }","                    }","                }","                return styles;","            },","","            setter: function(val)","            {","                var axes = this.get(\"axes\"),","                    i;","                for(i in val)","                {","                    if(val.hasOwnProperty(i) && axes.hasOwnProperty(i))","                    {","                        this._setBaseAttribute(axes[i], \"styles\", val[i]);","                    }","                }","            }","        },","","        /**","         * Style object for the series","         *","         * @attribute seriesStyles","         * @type Object","         * @private","         */","        seriesStyles: {","            getter: function()","            {","                var styles = this._seriesStyles,","                    graph = this.get(\"graph\"),","                    dict,","                    i;","                if(graph)","                {","                    dict = graph.get(\"seriesDictionary\");","                    if(dict)","                    {","                        styles = {};","                        for(i in dict)","                        {","                            if(dict.hasOwnProperty(i))","                            {","                                styles[i] = dict[i].get(\"styles\");","                            }","                        }","                    }","                }","                return styles;","            },","","            setter: function(val)","            {","                var i,","                    l,","                    s;","","                if(Y_Lang.isArray(val))","                {","                    s = this.get(\"seriesCollection\");","                    i = 0;","                    l = val.length;","","                    for(; i < l; ++i)","                    {","                        this._setBaseAttribute(s[i], \"styles\", val[i]);","                    }","                }","                else","                {","                    for(i in val)","                    {","                        if(val.hasOwnProperty(i))","                        {","                            s = this.getSeries(i);","                            this._setBaseAttribute(s, \"styles\", val[i]);","                        }","                    }","                }","            }","        },","","        /**","         * Styles for the graph.","         *","         * @attribute graphStyles","         * @type Object","         * @private","         */","        graphStyles: {","            getter: function()","            {","                var graph = this.get(\"graph\");","                if(graph)","                {","                    return(graph.get(\"styles\"));","                }","                return this._graphStyles;","            },","","            setter: function(val)","            {","                var graph = this.get(\"graph\");","                this._setBaseAttribute(graph, \"styles\", val);","            }","","        },","","        /**","         * Style properties for the chart. Contains a key indexed hash of the following:","         *  <dl>","         *      <dt>series</dt><dd>A key indexed hash containing references to the `styles` attribute for each series in the chart.","         *      Specific style attributes vary depending on the series:","         *      <ul>","         *          <li><a href=\"AreaSeries.html#attr_styles\">AreaSeries</a></li>","         *          <li><a href=\"BarSeries.html#attr_styles\">BarSeries</a></li>","         *          <li><a href=\"ColumnSeries.html#attr_styles\">ColumnSeries</a></li>","         *          <li><a href=\"ComboSeries.html#attr_styles\">ComboSeries</a></li>","         *          <li><a href=\"LineSeries.html#attr_styles\">LineSeries</a></li>","         *          <li><a href=\"MarkerSeries.html#attr_styles\">MarkerSeries</a></li>","         *          <li><a href=\"SplineSeries.html#attr_styles\">SplineSeries</a></li>","         *      </ul>","         *      </dd>","         *      <dt>axes</dt><dd>A key indexed hash containing references to the `styles` attribute for each axes in the chart. Specific","         *      style attributes can be found in the <a href=\"Axis.html#attr_styles\">Axis</a> class.</dd>","         *      <dt>graph</dt><dd>A reference to the `styles` attribute in the chart. Specific style attributes can be found in the","         *      <a href=\"Graph.html#attr_styles\">Graph</a> class.</dd>","         *  </dl>","         *","         * @attribute styles","         * @type Object","         */","        styles: {","            getter: function()","            {","                var styles = {","                    axes: this.get(\"axesStyles\"),","                    series: this.get(\"seriesStyles\"),","                    graph: this.get(\"graphStyles\")","                };","                return styles;","            },","            setter: function(val)","            {","                if(val.hasOwnProperty(\"axes\"))","                {","                    if(this.get(\"axesStyles\"))","                    {","                        this.set(\"axesStyles\", val.axes);","                    }","                    else","                    {","                        this._axesStyles = val.axes;","                    }","                }","                if(val.hasOwnProperty(\"series\"))","                {","                    if(this.get(\"seriesStyles\"))","                    {","                        this.set(\"seriesStyles\", val.series);","                    }","                    else","                    {","                        this._seriesStyles = val.series;","                    }","                }","                if(val.hasOwnProperty(\"graph\"))","                {","                    this.set(\"graphStyles\", val.graph);","                }","            }","        },","","        /**","         * Axes to appear in the chart. This can be a key indexed hash of axis instances or object literals","         * used to construct the appropriate axes.","         *","         * @attribute axes","         * @type Object","         */","        axes: {","            valueFn: \"_getDefaultAxes\",","","            setter: function(val)","            {","                if(this.get(\"dataProvider\"))","                {","                    val = this._setAxes(val);","                }","                return val;","            }","        },","","        /**","         * Collection of series to appear on the chart. This can be an array of Series instances or object literals","         * used to construct the appropriate series.","         *","         * @attribute seriesCollection","         * @type Array","         */","        seriesCollection: {","            lazyAdd: false,","","            valueFn: \"_getDefaultSeriesCollection\",","","            setter: function(val)","            {","                if(this.get(\"dataProvider\"))","                {","                    return this._parseSeriesCollection(val);","                }","                return val;","            }","        },","","        /**","         * Reference to the left-aligned axes for the chart.","         *","         * @attribute leftAxesCollection","         * @type Array","         * @private","         */","        leftAxesCollection: {},","","        /**","         * Reference to the bottom-aligned axes for the chart.","         *","         * @attribute bottomAxesCollection","         * @type Array","         * @private","         */","        bottomAxesCollection: {},","","        /**","         * Reference to the right-aligned axes for the chart.","         *","         * @attribute rightAxesCollection","         * @type Array","         * @private","         */","        rightAxesCollection: {},","","        /**","         * Reference to the top-aligned axes for the chart.","         *","         * @attribute topAxesCollection","         * @type Array","         * @private","         */","        topAxesCollection: {},","","        /**","         * Indicates whether or not the chart is stacked.","         *","         * @attribute stacked","         * @type Boolean","         */","        stacked: {","            value: false","        },","","        /**","         * Direction of chart's category axis when there is no series collection specified. Charts can","         * be horizontal or vertical. When the chart type is column, the chart is horizontal.","         * When the chart type is bar, the chart is vertical.","         *","         * @attribute direction","         * @type String","         */","        direction: {","            getter: function()","            {","                var type = this.get(\"type\");","                if(type === \"bar\")","                {","                    return \"vertical\";","                }","                else if(type === \"column\")","                {","                    return \"horizontal\";","                }","                return this._direction;","            },","","            setter: function(val)","            {","                this._direction = val;","                return this._direction;","            }","        },","","        /**","         * Indicates whether or not an area is filled in a combo chart.","         *","         * @attribute showAreaFill","         * @type Boolean","         */","        showAreaFill: {},","","        /**","         * Indicates whether to display markers in a combo chart.","         *","         * @attribute showMarkers","         * @type Boolean","         */","        showMarkers:{},","","        /**","         * Indicates whether to display lines in a combo chart.","         *","         * @attribute showLines","         * @type Boolean","         */","        showLines:{},","","        /**","         * Indicates the key value used to identify a category axis in the `axes` hash. If","         * not specified, the categoryKey attribute value will be used.","         *","         * @attribute categoryAxisName","         * @type String","         */","        categoryAxisName: {","        },","","        /**","         * Indicates the key value used to identify a the series axis when an axis not generated.","         *","         * @attribute valueAxisName","         * @type String","         */","        valueAxisName: {","            value: \"values\"","        },","","        /**","         * Reference to the horizontalGridlines for the chart.","         *","         * @attribute horizontalGridlines","         * @type Gridlines","         */","        horizontalGridlines: {","            getter: function()","            {","                var graph = this.get(\"graph\");","                if(graph)","                {","                    return graph.get(\"horizontalGridlines\");","                }","                return this._horizontalGridlines;","            },","            setter: function(val)","            {","                var graph = this.get(\"graph\");","                if(val && !Y_Lang.isObject(val))","                {","                    val = {};","                }","                if(graph)","                {","                    graph.set(\"horizontalGridlines\", val);","                }","                else","                {","                    this._horizontalGridlines = val;","                }","            }","        },","","        /**","         * Reference to the verticalGridlines for the chart.","         *","         * @attribute verticalGridlines","         * @type Gridlines","         */","        verticalGridlines: {","            getter: function()","            {","                var graph = this.get(\"graph\");","                if(graph)","                {","                    return graph.get(\"verticalGridlines\");","                }","                return this._verticalGridlines;","            },","            setter: function(val)","            {","                var graph = this.get(\"graph\");","                if(val && !Y_Lang.isObject(val))","                {","                    val = {};","                }","                if(graph)","                {","                    graph.set(\"verticalGridlines\", val);","                }","                else","                {","                    this._verticalGridlines = val;","                }","            }","        },","","        /**","         * Type of chart when there is no series collection specified.","         *","         * @attribute type","         * @type String","         */","        type: {","            getter: function()","            {","                if(this.get(\"stacked\"))","                {","                    return \"stacked\" + this._type;","                }","                return this._type;","            },","","            setter: function(val)","            {","                if(this._type === \"bar\")","                {","                    if(val !== \"bar\")","                    {","                        this.set(\"direction\", \"horizontal\");","                    }","                }","                else","                {","                    if(val === \"bar\")","                    {","                        this.set(\"direction\", \"vertical\");","                    }","                }","                this._type = val;","                return this._type;","            }","        },","","        /**","         * Reference to the category axis used by the chart.","         *","         * @attribute categoryAxis","         * @type Axis","         */","        categoryAxis:{}","    }","});","/**"," * The PieChart class creates a pie chart"," *"," * @class PieChart"," * @extends ChartBase"," * @constructor"," * @submodule charts-base"," */","Y.PieChart = Y.Base.create(\"pieChart\", Y.Widget, [Y.ChartBase], {","    /**","     * Calculates and returns a `seriesCollection`.","     *","     * @method _getSeriesCollection","     * @return Array","     * @private","     */","    _getSeriesCollection: function()","    {","        if(this._seriesCollection)","        {","            return this._seriesCollection;","        }","        var axes = this.get(\"axes\"),","            sc = [],","            seriesKeys,","            i = 0,","            l,","            type = this.get(\"type\"),","            key,","            catAxis = \"categoryAxis\",","            catKey = \"categoryKey\",","            valAxis = \"valueAxis\",","            seriesKey = \"valueKey\";","        if(axes)","        {","            seriesKeys = axes.values.get(\"keyCollection\");","            key = axes.category.get(\"keyCollection\")[0];","            l = seriesKeys.length;","            for(; i < l; ++i)","            {","                sc[i] = {type:type};","                sc[i][catAxis] = \"category\";","                sc[i][valAxis] = \"values\";","                sc[i][catKey] = key;","                sc[i][seriesKey] = seriesKeys[i];","            }","        }","        this._seriesCollection = sc;","        return sc;","    },","","    /**","     * Creates `Axis` instances.","     *","     * @method _parseAxes","     * @param {Object} val Object containing `Axis` instances or objects in which to construct `Axis` instances.","     * @return Object","     * @private","     */","    _parseAxes: function(hash)","    {","        if(!this._axes)","        {","            this._axes = {};","        }","        var i, pos, axis, dh, config, AxisClass,","            type = this.get(\"type\"),","            w = this.get(\"width\"),","            h = this.get(\"height\"),","            node = Y.Node.one(this._parentNode);","        if(!w)","        {","            this.set(\"width\", node.get(\"offsetWidth\"));","            w = this.get(\"width\");","        }","        if(!h)","        {","            this.set(\"height\", node.get(\"offsetHeight\"));","            h = this.get(\"height\");","        }","        for(i in hash)","        {","            if(hash.hasOwnProperty(i))","            {","                dh = hash[i];","                pos = type === \"pie\" ? \"none\" : dh.position;","                AxisClass = this._getAxisClass(dh.type);","                config = {dataProvider:this.get(\"dataProvider\")};","                if(dh.hasOwnProperty(\"roundingUnit\"))","                {","                    config.roundingUnit = dh.roundingUnit;","                }","                config.keys = dh.keys;","                config.width = w;","                config.height = h;","                config.position = pos;","                config.styles = dh.styles;","                axis = new AxisClass(config);","                axis.on(\"axisRendered\", Y.bind(this._itemRendered, this));","                this._axes[i] = axis;","            }","        }","    },","","    /**","     * Adds axes to the chart.","     *","     * @method _addAxes","     * @private","     */","    _addAxes: function()","    {","        var axes = this.get(\"axes\"),","            i,","            axis,","            p;","        if(!axes)","        {","            this.set(\"axes\", this._getDefaultAxes());","            axes = this.get(\"axes\");","        }","        if(!this._axesCollection)","        {","            this._axesCollection = [];","        }","        for(i in axes)","        {","            if(axes.hasOwnProperty(i))","            {","                axis = axes[i];","                p = axis.get(\"position\");","                if(!this.get(p + \"AxesCollection\"))","                {","                    this.set(p + \"AxesCollection\", [axis]);","                }","                else","                {","                    this.get(p + \"AxesCollection\").push(axis);","                }","                this._axesCollection.push(axis);","            }","        }","    },","","    /**","     * Renders the Graph.","     *","     * @method _addSeries","     * @private","     */","    _addSeries: function()","    {","        var graph = this.get(\"graph\"),","            seriesCollection = this.get(\"seriesCollection\");","        this._parseSeriesAxes(seriesCollection);","        graph.set(\"showBackground\", false);","        graph.set(\"width\", this.get(\"width\"));","        graph.set(\"height\", this.get(\"height\"));","        graph.set(\"seriesCollection\", seriesCollection);","        this._seriesCollection = graph.get(\"seriesCollection\");","        graph.render(this.get(\"contentBox\"));","    },","","    /**","     * Parse and sets the axes for the chart.","     *","     * @method _parseSeriesAxes","     * @param {Array} c A collection `PieSeries` instance.","     * @private","     */","    _parseSeriesAxes: function(c)","    {","        var i = 0,","            len = c.length,","            s,","            axes = this.get(\"axes\"),","            axis;","        for(; i < len; ++i)","        {","            s = c[i];","            if(s)","            {","                //If series is an actual series instance,","                //replace axes attribute string ids with axes","                if(s instanceof Y.PieSeries)","                {","                    axis = s.get(\"categoryAxis\");","                    if(axis && !(axis instanceof Y.Axis))","                    {","                        s.set(\"categoryAxis\", axes[axis]);","                    }","                    axis = s.get(\"valueAxis\");","                    if(axis && !(axis instanceof Y.Axis))","                    {","                        s.set(\"valueAxis\", axes[axis]);","                    }","                    continue;","                }","                s.categoryAxis = axes.category;","                s.valueAxis = axes.values;","                if(!s.type)","                {","                    s.type = this.get(\"type\");","                }","            }","        }","    },","","    /**","     * Generates and returns a key-indexed object containing `Axis` instances or objects used to create `Axis` instances.","     *","     * @method _getDefaultAxes","     * @return Object","     * @private","     */","    _getDefaultAxes: function()","    {","        var catKey = this.get(\"categoryKey\"),","            seriesKeys = this.get(\"seriesKeys\").concat(),","            seriesAxis = \"numeric\";","        return {","            values:{","                keys:seriesKeys,","                type:seriesAxis","            },","            category:{","                keys:[catKey],","                type:this.get(\"categoryType\")","            }","        };","    },","","    /**","     * Returns an object literal containing a categoryItem and a valueItem for a given series index.","     *","     * @method getSeriesItem","     * @param series Reference to a series.","     * @param index Index of the specified item within a series.","     * @return Object","     */","    getSeriesItems: function(series, index)","    {","        var categoryItem = {","                axis: series.get(\"categoryAxis\"),","                key: series.get(\"categoryKey\"),","                displayName: series.get(\"categoryDisplayName\")","            },","            valueItem = {","                axis: series.get(\"valueAxis\"),","                key: series.get(\"valueKey\"),","                displayName: series.get(\"valueDisplayName\")","            };","        categoryItem.value = categoryItem.axis.getKeyValueAt(categoryItem.key, index);","        valueItem.value = valueItem.axis.getKeyValueAt(valueItem.key, index);","        return {category:categoryItem, value:valueItem};","    },","","    /**","     * Handler for sizeChanged event.","     *","     * @method _sizeChanged","     * @param {Object} e Event object.","     * @private","     */","    _sizeChanged: function()","    {","        this._redraw();","    },","","    /**","     * Redraws the chart instance.","     *","     * @method _redraw","     * @private","     */","    _redraw: function()","    {","        var graph = this.get(\"graph\"),","            w = this.get(\"width\"),","            h = this.get(\"height\"),","            dimension;","        if(graph)","        {","            dimension = Math.min(w, h);","            graph.set(\"width\", dimension);","            graph.set(\"height\", dimension);","        }","    },","","    /**","     * Formats tooltip text for a pie chart.","     *","     * @method _tooltipLabelFunction","     * @param {Object} categoryItem An object containing the following:","     *  <dl>","     *      <dt>axis</dt><dd>The axis to which the category is bound.</dd>","     *      <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided)</dd>","     *      <dt>key</dt><dd>The key of the category.</dd>","     *      <dt>value</dt><dd>The value of the category</dd>","     *  </dl>","     * @param {Object} valueItem An object containing the following:","     *  <dl>","     *      <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>","     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>","     *      <dt>key</dt><dd>The key for the series.</dd>","     *      <dt>value</dt><dd>The value for the series item.</dd>","     *  </dl>","     * @param {Number} itemIndex The index of the item within the series.","     * @param {CartesianSeries} series The `PieSeries` instance of the item.","     * @return {HTML}","     * @private","     */","    _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series)","    {","        var msg = DOCUMENT.createElement(\"div\"),","            total = series.getTotalValues(),","            pct = Math.round((valueItem.value / total) * 10000)/100;","        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName +","        \": \" + categoryItem.axis.get(\"labelFunction\").apply(this, [categoryItem.value, categoryItem.axis.get(\"labelFormat\")])));","        msg.appendChild(DOCUMENT.createElement(\"br\"));","        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName +","        \": \" + valueItem.axis.get(\"labelFunction\").apply(this, [valueItem.value, valueItem.axis.get(\"labelFormat\")])));","        msg.appendChild(DOCUMENT.createElement(\"br\"));","        msg.appendChild(DOCUMENT.createTextNode(pct + \"%\"));","        return msg;","    },","","    /**","     * Returns the appropriate message based on the key press.","     *","     * @method _getAriaMessage","     * @param {Number} key The keycode that was pressed.","     * @return String","     */","    _getAriaMessage: function(key)","    {","        var msg = \"\",","            categoryItem,","            items,","            series,","            valueItem,","            seriesIndex = 0,","            itemIndex = this._itemIndex,","            len,","            total,","            pct,","            markers;","        series = this.getSeries(parseInt(seriesIndex, 10));","        markers = series.get(\"markers\");","        len = markers && markers.length ? markers.length : 0;","        if(key === 37)","        {","            itemIndex = itemIndex > 0 ? itemIndex - 1 : len - 1;","        }","        else if(key === 39)","        {","            itemIndex = itemIndex >= len - 1 ? 0 : itemIndex + 1;","        }","        this._itemIndex = itemIndex;","        items = this.getSeriesItems(series, itemIndex);","        categoryItem = items.category;","        valueItem = items.value;","        total = series.getTotalValues();","        pct = Math.round((valueItem.value / total) * 10000)/100;","        if(categoryItem && valueItem)","        {","            msg += categoryItem.displayName +","                \": \" +","                categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get(\"labelFormat\")]) +","                \", \";","            msg += valueItem.displayName +","                \": \" + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get(\"labelFormat\")]) +","                \", \";","            msg += \"Percent of total \" + valueItem.displayName + \": \" + pct + \"%,\";","        }","        else","        {","            msg += \"No data available,\";","        }","        msg += (itemIndex + 1) + \" of \" + len + \". \";","        return msg;","    }","}, {","    ATTRS: {","        /**","         * Sets the aria description for the chart.","         *","         * @attribute ariaDescription","         * @type String","         */","        ariaDescription: {","            value: \"Use the left and right keys to navigate through items.\",","","            setter: function(val)","            {","                if(this._description)","                {","                    this._description.setContent(\"\");","                    this._description.appendChild(DOCUMENT.createTextNode(val));","                }","                return val;","            }","        },","","        /**","         * Axes to appear in the chart.","         *","         * @attribute axes","         * @type Object","         */","        axes: {","            getter: function()","            {","                return this._axes;","            },","","            setter: function(val)","            {","                this._parseAxes(val);","            }","        },","","        /**","         * Collection of series to appear on the chart. This can be an array of Series instances or object literals","         * used to describe a Series instance.","         *","         * @attribute seriesCollection","         * @type Array","         */","        seriesCollection: {","            lazyAdd: false,","","            getter: function()","            {","                return this._getSeriesCollection();","            },","","            setter: function(val)","            {","                return this._setSeriesCollection(val);","            }","        },","","        /**","         * Type of chart when there is no series collection specified.","         *","         * @attribute type","         * @type String","         */","        type: {","            value: \"pie\"","        }","    }","});","/**"," * The Chart class is the basic application used to create a chart."," *"," * @class Chart"," * @constructor"," * @submodule charts-base"," */","function Chart(cfg)","{","    if(cfg.type !== \"pie\")","    {","        return new Y.CartesianChart(cfg);","    }","    else","    {","        return new Y.PieChart(cfg);","    }","}","Y.Chart = Chart;","","","}, '@VERSION@', {","    \"requires\": [","        \"dom\",","        \"event-mouseenter\",","        \"event-touch\",","        \"graphics-group\",","        \"axes\",","        \"series-pie\",","        \"series-line\",","        \"series-marker\",","        \"series-area\",","        \"series-spline\",","        \"series-column\",","        \"series-bar\",","        \"series-areaspline\",","        \"series-combo\",","        \"series-combospline\",","        \"series-line-stacked\",","        \"series-marker-stacked\",","        \"series-area-stacked\",","        \"series-spline-stacked\",","        \"series-column-stacked\",","        \"series-bar-stacked\",","        \"series-areaspline-stacked\",","        \"series-combo-stacked\",","        \"series-combospline-stacked\"","    ]","});"];
+_yuitest_coverage["build/charts-base/charts-base.js"].lines = {"1":0,"9":0,"27":0,"45":0,"46":0,"48":0,"60":0,"62":0,"74":0,"91":0,"93":0,"95":0,"97":0,"99":0,"103":0,"105":0,"106":0,"107":0,"108":0,"109":0,"114":0,"116":0,"117":0,"121":0,"122":0,"124":0,"126":0,"128":0,"142":0,"146":0,"148":0,"149":0,"154":0,"168":0,"169":0,"183":0,"184":0,"197":0,"204":0,"256":0,"263":0,"264":0,"265":0,"266":0,"267":0,"268":0,"277":0,"286":0,"288":0,"289":0,"290":0,"291":0,"292":0,"293":0,"294":0,"295":0,"296":0,"297":0,"299":0,"301":0,"302":0,"304":0,"307":0,"309":0,"311":0,"313":0,"335":0,"337":0,"339":0,"341":0,"353":0,"355":0,"357":0,"359":0,"372":0,"374":0,"376":0,"406":0,"408":0,"410":0,"414":0,"415":0,"416":0,"417":0,"419":0,"420":0,"422":0,"423":0,"425":0,"427":0,"428":0,"430":0,"431":0,"432":0,"445":0,"450":0,"452":0,"454":0,"455":0,"457":0,"459":0,"460":0,"461":0,"462":0,"463":0,"464":0,"465":0,"466":0,"479":0,"485":0,"486":0,"488":0,"490":0,"491":0,"492":0,"493":0,"494":0,"495":0,"496":0,"497":0,"498":0,"499":0,"500":0,"501":0,"503":0,"575":0,"576":0,"578":0,"582":0,"584":0,"596":0,"601":0,"621":0,"623":0,"624":0,"625":0,"626":0,"627":0,"639":0,"646":0,"648":0,"650":0,"652":0,"653":0,"655":0,"656":0,"659":0,"661":0,"663":0,"665":0,"667":0,"669":0,"671":0,"682":0,"684":0,"685":0,"687":0,"691":0,"692":0,"693":0,"694":0,"695":0,"696":0,"697":0,"698":0,"699":0,"701":0,"702":0,"704":0,"705":0,"708":0,"709":0,"711":0,"724":0,"727":0,"729":0,"731":0,"733":0,"734":0,"736":0,"738":0,"752":0,"764":0,"775":0,"777":0,"778":0,"780":0,"782":0,"783":0,"785":0,"787":0,"788":0,"803":0,"804":0,"818":0,"819":0,"832":0,"833":0,"847":0,"852":0,"853":0,"880":0,"896":0,"899":0,"901":0,"903":0,"905":0,"906":0,"907":0,"909":0,"911":0,"915":0,"917":0,"919":0,"922":0,"923":0,"940":0,"943":0,"945":0,"947":0,"949":0,"950":0,"951":0,"953":0,"955":0,"959":0,"961":0,"963":0,"966":0,"967":0,"982":0,"984":0,"985":0,"986":0,"988":0,"1004":0,"1006":0,"1007":0,"1008":0,"1010":0,"1026":0,"1028":0,"1029":0,"1030":0,"1032":0,"1082":0,"1084":0,"1096":0,"1097":0,"1099":0,"1101":0,"1106":0,"1107":0,"1109":0,"1111":0,"1126":0,"1131":0,"1132":0,"1133":0,"1148":0,"1149":0,"1151":0,"1153":0,"1168":0,"1170":0,"1171":0,"1173":0,"1252":0,"1329":0,"1339":0,"1341":0,"1343":0,"1356":0,"1357":0,"1359":0,"1372":0,"1376":0,"1377":0,"1379":0,"1391":0,"1393":0,"1395":0,"1397":0,"1401":0,"1404":0,"1419":0,"1421":0,"1423":0,"1425":0,"1436":0,"1439":0,"1441":0,"1443":0,"1475":0,"1477":0,"1484":0,"1486":0,"1487":0,"1489":0,"1491":0,"1493":0,"1495":0,"1516":0,"1528":0,"1560":0,"1561":0,"1562":0,"1563":0,"1572":0,"1576":0,"1577":0,"1578":0,"1579":0,"1580":0,"1582":0,"1584":0,"1596":0,"1599":0,"1600":0,"1601":0,"1602":0,"1603":0,"1604":0,"1605":0,"1606":0,"1607":0,"1608":0,"1609":0,"1610":0,"1611":0,"1612":0,"1613":0,"1614":0,"1626":0,"1629":0,"1630":0,"1631":0,"1632":0,"1633":0,"1634":0,"1643":0,"1652":0,"1653":0,"1654":0,"1655":0,"1656":0,"1665":0,"1666":0,"1669":0,"1671":0,"1672":0,"1673":0,"1674":0,"1677":0,"1680":0,"1681":0,"1682":0,"1684":0,"1686":0,"1688":0,"1690":0,"1692":0,"1694":0,"1695":0,"1701":0,"1702":0,"1703":0,"1704":0,"1705":0,"1706":0,"1709":0,"1711":0,"1713":0,"1717":0,"1718":0,"1721":0,"1723":0,"1724":0,"1725":0,"1727":0,"1728":0,"1733":0,"1734":0,"1737":0,"1739":0,"1743":0,"1745":0,"1747":0,"1749":0,"1751":0,"1752":0,"1754":0,"1757":0,"1772":0,"1785":0,"1787":0,"1789":0,"1791":0,"1793":0,"1794":0,"1889":0,"1913":0,"1917":0,"1918":0,"1919":0,"1921":0,"1922":0,"1924":0,"1925":0,"1927":0,"1929":0,"1931":0,"1932":0,"1934":0,"1936":0,"1938":0,"1954":0,"1955":0,"1957":0,"1961":0,"1976":0,"1978":0,"1980":0,"1981":0,"1982":0,"1983":0,"1984":0,"1997":0,"2002":0,"2004":0,"2005":0,"2016":0,"2018":0,"2019":0,"2020":0,"2021":0,"2022":0,"2033":0,"2037":0,"2039":0,"2041":0,"2042":0,"2043":0,"2056":0,"2070":0,"2072":0,"2073":0,"2074":0,"2076":0,"2078":0,"2080":0,"2084":0,"2086":0,"2088":0,"2091":0,"2093":0,"2105":0,"2116":0,"2118":0,"2122":0,"2125":0,"2126":0,"2129":0,"2130":0,"2131":0,"2132":0,"2133":0,"2134":0,"2135":0,"2136":0,"2137":0,"2138":0,"2139":0,"2140":0,"2141":0,"2142":0,"2143":0,"2144":0,"2145":0,"2146":0,"2170":0,"2178":0,"2180":0,"2184":0,"2186":0,"2188":0,"2191":0,"2193":0,"2194":0,"2196":0,"2197":0,"2198":0,"2202":0,"2203":0,"2204":0,"2205":0,"2207":0,"2209":0,"2212":0,"2238":0,"2247":0,"2248":0,"2249":0,"2251":0,"2253":0,"2254":0,"2255":0,"2256":0,"2257":0,"2259":0,"2261":0,"2262":0,"2274":0,"2276":0,"2280":0,"2282":0,"2284":0,"2301":0,"2302":0,"2304":0,"2306":0,"2308":0,"2310":0,"2312":0,"2314":0,"2326":0,"2331":0,"2333":0,"2334":0,"2336":0,"2338":0,"2342":0,"2355":0,"2359":0,"2361":0,"2363":0,"2364":0,"2366":0,"2368":0,"2371":0,"2374":0,"2383":0,"2390":0,"2396":0,"2397":0,"2398":0,"2399":0,"2400":0,"2401":0,"2403":0,"2406":0,"2407":0,"2409":0,"2410":0,"2411":0,"2412":0,"2413":0,"2414":0,"2415":0,"2416":0,"2417":0,"2419":0,"2420":0,"2433":0,"2463":0,"2464":0,"2466":0,"2467":0,"2471":0,"2472":0,"2474":0,"2475":0,"2477":0,"2478":0,"2480":0,"2482":0,"2484":0,"2487":0,"2489":0,"2490":0,"2492":0,"2494":0,"2495":0,"2498":0,"2499":0,"2501":0,"2502":0,"2503":0,"2504":0,"2506":0,"2508":0,"2510":0,"2512":0,"2514":0,"2515":0,"2516":0,"2517":0,"2521":0,"2552":0,"2554":0,"2568":0,"2600":0,"2602":0,"2604":0,"2606":0,"2619":0,"2620":0,"2622":0,"2623":0,"2625":0,"2638":0,"2640":0,"2642":0,"2644":0,"2657":0,"2677":0,"2678":0,"2680":0,"2681":0,"2682":0,"2683":0,"2687":0,"2688":0,"2689":0,"2690":0,"2692":0,"2693":0,"2695":0,"2696":0,"2697":0,"2699":0,"2700":0,"2702":0,"2703":0,"2704":0,"2708":0,"2713":0,"2716":0,"2718":0,"2719":0,"2721":0,"2722":0,"2723":0,"2724":0,"2726":0,"2728":0,"2731":0,"2733":0,"2735":0,"2736":0,"2738":0,"2739":0,"2741":0,"2742":0,"2745":0,"2746":0,"2747":0,"2748":0,"2750":0,"2751":0,"2753":0,"2758":0,"2760":0,"2762":0,"2764":0,"2766":0,"2768":0,"2771":0,"2773":0,"2775":0,"2776":0,"2777":0,"2779":0,"2791":0,"2796":0,"2798":0,"2799":0,"2801":0,"2804":0,"2806":0,"2807":0,"2809":0,"2824":0,"2827":0,"2828":0,"2841":0,"2845":0,"2847":0,"2849":0,"2853":0,"2855":0,"2857":0,"2858":0,"2860":0,"2861":0,"2867":0,"2883":0,"2885":0,"2887":0,"2889":0,"2891":0,"2907":0,"2909":0,"2913":0,"2927":0,"2960":0,"2962":0,"2964":0,"2965":0,"2967":0,"2971":0,"2972":0,"2973":0,"2974":0,"2976":0,"2978":0,"2980":0,"2981":0,"2983":0,"2985":0,"2986":0,"2988":0,"2990":0,"2995":0,"2997":0,"3000":0,"3002":0,"3003":0,"3005":0,"3007":0,"3008":0,"3010":0,"3012":0,"3015":0,"3019":0,"3020":0,"3021":0,"3025":0,"3027":0,"3028":0,"3030":0,"3032":0,"3036":0,"3047":0,"3054":0,"3056":0,"3058":0,"3060":0,"3062":0,"3063":0,"3065":0,"3067":0,"3068":0,"3070":0,"3072":0,"3073":0,"3075":0,"3076":0,"3077":0,"3079":0,"3083":0,"3085":0,"3086":0,"3088":0,"3090":0,"3104":0,"3105":0,"3117":0,"3129":0,"3131":0,"3132":0,"3134":0,"3136":0,"3138":0,"3140":0,"3142":0,"3146":0,"3148":0,"3150":0,"3152":0,"3154":0,"3157":0,"3159":0,"3161":0,"3163":0,"3165":0,"3169":0,"3171":0,"3173":0,"3175":0,"3177":0,"3191":0,"3192":0,"3194":0,"3196":0,"3209":0,"3228":0,"3230":0,"3231":0,"3235":0,"3236":0,"3238":0,"3240":0,"3242":0,"3244":0,"3245":0,"3246":0,"3247":0,"3249":0,"3250":0,"3251":0,"3253":0,"3254":0,"3256":0,"3258":0,"3260":0,"3264":0,"3265":0,"3267":0,"3268":0,"3270":0,"3272":0,"3274":0,"3276":0,"3278":0,"3280":0,"3290":0,"3291":0,"3293":0,"3295":0,"3296":0,"3298":0,"3299":0,"3301":0,"3304":0,"3306":0,"3308":0,"3310":0,"3313":0,"3315":0,"3318":0,"3320":0,"3322":0,"3324":0,"3325":0,"3327":0,"3329":0,"3331":0,"3335":0,"3338":0,"3340":0,"3342":0,"3348":0,"3349":0,"3351":0,"3353":0,"3355":0,"3370":0,"3373":0,"3375":0,"3377":0,"3379":0,"3381":0,"3383":0,"3388":0,"3390":0,"3394":0,"3398":0,"3429":0,"3435":0,"3437":0,"3442":0,"3450":0,"3455":0,"3461":0,"3462":0,"3463":0,"3464":0,"3465":0,"3477":0,"3479":0,"3482":0,"3484":0,"3486":0,"3502":0,"3506":0,"3508":0,"3509":0,"3511":0,"3512":0,"3518":0,"3520":0,"3521":0,"3522":0,"3524":0,"3525":0,"3531":0,"3546":0,"3550":0,"3552":0,"3553":0,"3555":0,"3556":0,"3562":0,"3564":0,"3565":0,"3566":0,"3568":0,"3569":0,"3575":0,"3590":0,"3594":0,"3596":0,"3597":0,"3599":0,"3600":0,"3606":0,"3608":0,"3609":0,"3610":0,"3612":0,"3613":0,"3619":0,"3634":0,"3638":0,"3640":0,"3641":0,"3643":0,"3644":0,"3650":0,"3652":0,"3653":0,"3654":0,"3656":0,"3657":0,"3663":0,"3674":0,"3676":0,"3677":0,"3679":0,"3680":0,"3681":0,"3711":0,"3713":0,"3714":0,"3715":0,"3717":0,"3718":0,"3721":0,"3723":0,"3724":0,"3725":0,"3726":0,"3728":0,"3729":0,"3732":0,"3734":0,"3735":0,"3736":0,"3738":0,"3739":0,"3742":0,"3744":0,"3745":0,"3746":0,"3748":0,"3749":0,"3753":0,"3754":0,"3755":0,"3756":0,"3757":0,"3758":0,"3759":0,"3761":0,"3762":0,"3763":0,"3764":0,"3766":0,"3767":0,"3769":0,"3770":0,"3772":0,"3773":0,"3774":0,"3776":0,"3781":0,"3782":0,"3784":0,"3785":0,"3787":0,"3788":0,"3789":0,"3791":0,"3796":0,"3797":0,"3799":0,"3800":0,"3802":0,"3803":0,"3804":0,"3806":0,"3811":0,"3812":0,"3814":0,"3815":0,"3817":0,"3818":0,"3819":0,"3821":0,"3826":0,"3827":0,"3828":0,"3829":0,"3830":0,"3832":0,"3833":0,"3834":0,"3836":0,"3837":0,"3839":0,"3841":0,"3842":0,"3844":0,"3846":0,"3849":0,"3851":0,"3852":0,"3853":0,"3855":0,"3856":0,"3858":0,"3860":0,"3861":0,"3863":0,"3865":0,"3868":0,"3870":0,"3871":0,"3872":0,"3874":0,"3875":0,"3876":0,"3877":0,"3879":0,"3882":0,"3884":0,"3887":0,"3889":0,"3890":0,"3891":0,"3893":0,"3894":0,"3895":0,"3896":0,"3898":0,"3901":0,"3903":0,"3906":0,"3907":0,"3909":0,"3910":0,"3912":0,"3914":0,"3915":0,"3916":0,"3917":0,"3918":0,"3921":0,"3923":0,"3924":0,"3925":0,"3926":0,"3939":0,"3945":0,"3947":0,"3948":0,"3950":0,"3952":0,"3953":0,"3955":0,"3956":0,"3958":0,"3960":0,"3963":0,"3964":0,"3966":0,"3968":0,"3971":0,"3973":0,"3975":0,"3977":0,"3978":0,"3980":0,"3982":0,"3983":0,"3996":0,"4006":0,"4008":0,"4010":0,"4012":0,"4014":0,"4016":0,"4018":0,"4022":0,"4024":0,"4025":0,"4026":0,"4030":0,"4032":0,"4033":0,"4037":0,"4038":0,"4039":0,"4040":0,"4042":0,"4043":0,"4045":0,"4047":0,"4049":0,"4051":0,"4052":0,"4053":0,"4054":0,"4055":0,"4057":0,"4061":0,"4068":0,"4070":0,"4072":0,"4096":0,"4099":0,"4101":0,"4103":0,"4105":0,"4107":0,"4109":0,"4113":0,"4118":0,"4120":0,"4122":0,"4124":0,"4140":0,"4144":0,"4146":0,"4147":0,"4149":0,"4150":0,"4152":0,"4154":0,"4159":0,"4164":0,"4168":0,"4170":0,"4171":0,"4172":0,"4174":0,"4176":0,"4181":0,"4183":0,"4185":0,"4186":0,"4203":0,"4204":0,"4206":0,"4208":0,"4213":0,"4214":0,"4246":0,"4251":0,"4255":0,"4257":0,"4259":0,"4263":0,"4266":0,"4268":0,"4270":0,"4274":0,"4277":0,"4279":0,"4296":0,"4298":0,"4300":0,"4318":0,"4320":0,"4322":0,"4383":0,"4384":0,"4386":0,"4388":0,"4390":0,"4392":0,"4397":0,"4398":0,"4455":0,"4456":0,"4458":0,"4460":0,"4464":0,"4465":0,"4467":0,"4469":0,"4471":0,"4475":0,"4489":0,"4490":0,"4492":0,"4494":0,"4498":0,"4499":0,"4501":0,"4503":0,"4505":0,"4509":0,"4523":0,"4525":0,"4527":0,"4532":0,"4534":0,"4536":0,"4541":0,"4543":0,"4546":0,"4547":0,"4568":0,"4578":0,"4580":0,"4582":0,"4593":0,"4595":0,"4596":0,"4597":0,"4598":0,"4600":0,"4601":0,"4602":0,"4603":0,"4604":0,"4607":0,"4608":0,"4621":0,"4623":0,"4625":0,"4630":0,"4632":0,"4633":0,"4635":0,"4637":0,"4638":0,"4640":0,"4642":0,"4644":0,"4645":0,"4646":0,"4647":0,"4648":0,"4650":0,"4652":0,"4653":0,"4654":0,"4655":0,"4656":0,"4657":0,"4658":0,"4659":0,"4672":0,"4676":0,"4678":0,"4679":0,"4681":0,"4683":0,"4685":0,"4687":0,"4689":0,"4690":0,"4691":0,"4693":0,"4697":0,"4699":0,"4712":0,"4714":0,"4715":0,"4716":0,"4717":0,"4718":0,"4719":0,"4720":0,"4732":0,"4737":0,"4739":0,"4740":0,"4744":0,"4746":0,"4747":0,"4749":0,"4751":0,"4752":0,"4754":0,"4756":0,"4758":0,"4759":0,"4760":0,"4762":0,"4777":0,"4780":0,"4802":0,"4812":0,"4813":0,"4814":0,"4826":0,"4837":0,"4841":0,"4843":0,"4844":0,"4845":0,"4874":0,"4877":0,"4879":0,"4880":0,"4882":0,"4883":0,"4884":0,"4896":0,"4907":0,"4908":0,"4909":0,"4910":0,"4912":0,"4914":0,"4916":0,"4918":0,"4919":0,"4920":0,"4921":0,"4922":0,"4923":0,"4924":0,"4926":0,"4930":0,"4933":0,"4937":0,"4939":0,"4940":0,"4955":0,"4957":0,"4958":0,"4960":0,"4973":0,"4978":0,"4994":0,"4999":0,"5021":0,"5023":0,"5025":0,"5029":0,"5032":0};
+_yuitest_coverage["build/charts-base/charts-base.js"].functions = {"remove:43":0,"draw:58":0,"_drawGridlines:72":0,"_getPoints:140":0,"_horizontalLine:166":0,"_verticalLine:181":0,"_getDefaultStyles:195":0,"bindUI:261":0,"syncUI:275":0,"getSeriesByIndex:333":0,"getSeriesByKey:351":0,"addDispatcher:370":0,"_parseSeriesCollection:404":0,"_addSeries:443":0,"_createSeries:477":0,"_getSeries:573":0,"_markerEventHandler:594":0,"_updateStyles:619":0,"_sizeChangeHandler:637":0,"_drawSeries:680":0,"_drawingCompleteHandler:722":0,"_getDefaultStyles:750":0,"destructor:773":0,"setter:801":0,"setter:816":0,"getter:831":0,"getter:845":0,"setter:850":0,"getter:878":0,"setter:894":0,"setter:938":0,"getter:980":0,"getter:1002":0,"getter:1024":0,"ChartBase:1082":0,"valueFn:1094":0,"setter:1104":0,"getter:1124":0,"setter:1129":0,"setter:1146":0,"setter:1166":0,"setter:1250":0,"_groupMarkersChangeHandler:1337":0,"_itemRendered:1354":0,"(anonymous 2):1376":0,"_getGraph:1370":0,"getSeries:1389":0,"getAxisByKey:1417":0,"getCategoryAxis:1434":0,"_setDataValues:1473":0,"_setSeriesCollection:1514":0,"_getAxisClass:1526":0,"initializer:1558":0,"renderUI:1570":0,"_setAriaElements:1594":0,"_getAriaOffscreenNode:1624":0,"syncUI:1641":0,"(anonymous 3):1665":0,"(anonymous 4):1686":0,"(anonymous 5):1723":0,"bindUI:1650":0,"_markerEventDispatcher:1770":0,"_dataProviderChangeHandler:1911":0,"toggleTooltip:1952":0,"_showTooltip:1974":0,"_positionTooltip:1995":0,"hideTooltip:2014":0,"_addTooltip:2031":0,"_updateTooltip:2054":0,"markerEventHandler:2114":0,"planarEventHandler:2120":0,"_getTooltip:2103":0,"_planarLabelFunction:2168":0,"_tooltipLabelFunction:2236":0,"_tooltipChangeHandler:2272":0,"_setText:2299":0,"_getAllKeys:2324":0,"_buildSeriesKeys:2353":0,"renderUI:2388":0,"_planarEventDispatcher:2431":0,"_addToAxesRenderQueue:2598":0,"_addToAxesCollection:2617":0,"_getDefaultSeriesCollection:2636":0,"_parseSeriesCollection:2655":0,"_parseSeriesAxes:2789":0,"_getCategoryAxis:2822":0,"_getSeriesAxis:2839":0,"_getBaseAttribute:2881":0,"_setBaseAttribute:2905":0,"_setAxes:2925":0,"_addAxes:3045":0,"_addSeries:3102":0,"_addGridlines:3115":0,"_getDefaultAxes:3189":0,"_parseAxes:3207":0,"_getDefaultAxisPosition:3368":0,"getSeriesItems:3427":0,"_sizeChanged:3475":0,"_getTopOverflow:3500":0,"_getRightOverflow:3544":0,"_getLeftOverflow:3588":0,"_getBottomOverflow:3632":0,"_redraw:3672":0,"destructor:3937":0,"_getAriaMessage:3994":0,"getter:4094":0,"setter:4116":0,"getter:4138":0,"setter:4162":0,"getter:4201":0,"setter:4211":0,"getter:4244":0,"setter:4253":0,"setter:4294":0,"setter:4316":0,"getter:4381":0,"setter:4395":0,"getter:4453":0,"setter:4462":0,"getter:4487":0,"setter:4496":0,"getter:4521":0,"setter:4530":0,"_getSeriesCollection:4576":0,"_parseAxes:4619":0,"_addAxes:4670":0,"_addSeries:4710":0,"_parseSeriesAxes:4730":0,"_getDefaultAxes:4775":0,"getSeriesItems:4800":0,"_sizeChanged:4824":0,"_redraw:4835":0,"_tooltipLabelFunction:4872":0,"_getAriaMessage:4894":0,"setter:4953":0,"getter:4971":0,"setter:4976":0,"getter:4992":0,"setter:4997":0,"Chart:5021":0,"(anonymous 1):1":0};
 _yuitest_coverage["build/charts-base/charts-base.js"].coveredLines = 1356;
 _yuitest_coverage["build/charts-base/charts-base.js"].coveredFunctions = 141;
 _yuitest_coverline("build/charts-base/charts-base.js", 1);
@@ -3759,6 +3759,9 @@ var hash = this._parseAxes(val),
                 calculateEdgeOffset: "calculateEdgeOffset",
                 position: "position",
                 overlapGraph:"overlapGraph",
+                labelValues: "labelValues",
+                hideFirstMajorUnit: "hideFirstMajorUnit",
+                hideLastMajorUnit: "hideLastMajorUnit",
                 labelFunction:"labelFunction",
                 labelFunctionScope:"labelFunctionScope",
                 labelFormat:"labelFormat",
@@ -3782,120 +3785,120 @@ var hash = this._parseAxes(val),
             AxisClass,
             config,
             axesCollection;
-        _yuitest_coverline("build/charts-base/charts-base.js", 2957);
+        _yuitest_coverline("build/charts-base/charts-base.js", 2960);
 for(i in hash)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 2959);
+            _yuitest_coverline("build/charts-base/charts-base.js", 2962);
 if(hash.hasOwnProperty(i))
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 2961);
+                _yuitest_coverline("build/charts-base/charts-base.js", 2964);
 dh = hash[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 2962);
+                _yuitest_coverline("build/charts-base/charts-base.js", 2965);
 if(dh instanceof Y.Axis)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 2964);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 2967);
 axis = dh;
                 }
                 else
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 2968);
-axis = null;
-                    _yuitest_coverline("build/charts-base/charts-base.js", 2969);
-config = {};
-                    _yuitest_coverline("build/charts-base/charts-base.js", 2970);
-config.dataProvider = dh.dataProvider || dp;
                     _yuitest_coverline("build/charts-base/charts-base.js", 2971);
+axis = null;
+                    _yuitest_coverline("build/charts-base/charts-base.js", 2972);
+config = {};
+                    _yuitest_coverline("build/charts-base/charts-base.js", 2973);
+config.dataProvider = dh.dataProvider || dp;
+                    _yuitest_coverline("build/charts-base/charts-base.js", 2974);
 config.keys = dh.keys;
 
-                    _yuitest_coverline("build/charts-base/charts-base.js", 2973);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 2976);
 if(dh.hasOwnProperty("roundingUnit"))
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 2975);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 2978);
 config.roundingUnit = dh.roundingUnit;
                     }
-                    _yuitest_coverline("build/charts-base/charts-base.js", 2977);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 2980);
 pos = dh.position;
-                    _yuitest_coverline("build/charts-base/charts-base.js", 2978);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 2981);
 if(dh.styles)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 2980);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 2983);
 config.styles = dh.styles;
                     }
-                    _yuitest_coverline("build/charts-base/charts-base.js", 2982);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 2985);
 config.position = dh.position;
-                    _yuitest_coverline("build/charts-base/charts-base.js", 2983);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 2986);
 for(ai in axesAttrs)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 2985);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 2988);
 if(axesAttrs.hasOwnProperty(ai) && dh.hasOwnProperty(ai))
                         {
-                            _yuitest_coverline("build/charts-base/charts-base.js", 2987);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 2990);
 config[ai] = dh[ai];
                         }
                     }
 
                     //only check for existing axis if we constructed the default axes already
-                    _yuitest_coverline("build/charts-base/charts-base.js", 2992);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 2995);
 if(val)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 2994);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 2997);
 axis = this.getAxisByKey(i);
                     }
 
-                    _yuitest_coverline("build/charts-base/charts-base.js", 2997);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3000);
 if(axis && axis instanceof Y.Axis)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 2999);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3002);
 axisPosition = axis.get("position");
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3000);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3003);
 if(pos !== axisPosition)
                         {
-                            _yuitest_coverline("build/charts-base/charts-base.js", 3002);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 3005);
 if(axisPosition !== "none")
                             {
-                                _yuitest_coverline("build/charts-base/charts-base.js", 3004);
+                                _yuitest_coverline("build/charts-base/charts-base.js", 3007);
 axesCollection = this.get(axisPosition + "AxesCollection");
-                                _yuitest_coverline("build/charts-base/charts-base.js", 3005);
+                                _yuitest_coverline("build/charts-base/charts-base.js", 3008);
 axesCollection.splice(Y.Array.indexOf(axesCollection, axis), 1);
                             }
-                            _yuitest_coverline("build/charts-base/charts-base.js", 3007);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 3010);
 if(pos !== "none")
                             {
-                                _yuitest_coverline("build/charts-base/charts-base.js", 3009);
+                                _yuitest_coverline("build/charts-base/charts-base.js", 3012);
 this._addToAxesCollection(pos, axis);
                             }
                         }
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3012);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3015);
 axis.setAttrs(config);
                     }
                     else
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3016);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3019);
 AxisClass = this._getAxisClass(dh.type);
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3017);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3020);
 axis = new AxisClass(config);
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3018);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3021);
 axis.after("axisRendered", Y.bind(this._itemRendered, this));
                     }
                 }
 
-                _yuitest_coverline("build/charts-base/charts-base.js", 3022);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3025);
 if(axis)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3024);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3027);
 axesCollection = this.get(pos + "AxesCollection");
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3025);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3028);
 if(axesCollection && Y.Array.indexOf(axesCollection, axis) > 0)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3027);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3030);
 axis.set("overlapGraph", false);
                     }
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3029);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3032);
 axes[i] = axis;
                 }
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3033);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3036);
 return axes;
     },
 
@@ -3907,8 +3910,8 @@ return axes;
      */
     _addAxes: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_addAxes", 3042);
-_yuitest_coverline("build/charts-base/charts-base.js", 3044);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_addAxes", 3045);
+_yuitest_coverline("build/charts-base/charts-base.js", 3047);
 var axes = this.get("axes"),
             i,
             axis,
@@ -3916,63 +3919,63 @@ var axes = this.get("axes"),
             w = this.get("width"),
             h = this.get("height"),
             node = Y.Node.one(this._parentNode);
-        _yuitest_coverline("build/charts-base/charts-base.js", 3051);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3054);
 if(!this._axesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3053);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3056);
 this._axesCollection = [];
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3055);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3058);
 for(i in axes)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3057);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3060);
 if(axes.hasOwnProperty(i))
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3059);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3062);
 axis = axes[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3060);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3063);
 if(axis instanceof Y.Axis)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3062);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3065);
 if(!w)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3064);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3067);
 this.set("width", node.get("offsetWidth"));
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3065);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3068);
 w = this.get("width");
                     }
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3067);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3070);
 if(!h)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3069);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3072);
 this.set("height", node.get("offsetHeight"));
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3070);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3073);
 h = this.get("height");
                     }
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3072);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3075);
 this._addToAxesRenderQueue(axis);
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3073);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3076);
 pos = axis.get("position");
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3074);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3077);
 if(!this.get(pos + "AxesCollection"))
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3076);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3079);
 this.set(pos + "AxesCollection", [axis]);
                     }
                     else
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3080);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3083);
 this.get(pos + "AxesCollection").push(axis);
                     }
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3082);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3085);
 this._axesCollection.push(axis);
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3083);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3086);
 if(axis.get("keys").hasOwnProperty(this.get("categoryKey")))
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3085);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3088);
 this.set("categoryAxis", axis);
                     }
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3087);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3090);
 axis.render(this.get("contentBox"));
                 }
             }
@@ -3987,10 +3990,10 @@ axis.render(this.get("contentBox"));
      */
     _addSeries: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_addSeries", 3099);
-_yuitest_coverline("build/charts-base/charts-base.js", 3101);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_addSeries", 3102);
+_yuitest_coverline("build/charts-base/charts-base.js", 3104);
 var graph = this.get("graph");
-        _yuitest_coverline("build/charts-base/charts-base.js", 3102);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3105);
 graph.render(this.get("contentBox"));
 
     },
@@ -4003,8 +4006,8 @@ graph.render(this.get("contentBox"));
      */
     _addGridlines: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_addGridlines", 3112);
-_yuitest_coverline("build/charts-base/charts-base.js", 3114);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_addGridlines", 3115);
+_yuitest_coverline("build/charts-base/charts-base.js", 3117);
 var graph = this.get("graph"),
             hgl = this.get("horizontalGridlines"),
             vgl = this.get("verticalGridlines"),
@@ -4017,77 +4020,77 @@ var graph = this.get("graph"),
             catAxis = this.get("categoryAxis"),
             hAxis,
             vAxis;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3126);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3129);
 if(this._axesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3128);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3131);
 seriesAxesCollection = this._axesCollection.concat();
-            _yuitest_coverline("build/charts-base/charts-base.js", 3129);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3132);
 seriesAxesCollection.splice(Y.Array.indexOf(seriesAxesCollection, catAxis), 1);
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3131);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3134);
 if(hgl)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3133);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3136);
 if(leftAxesCollection && leftAxesCollection[0])
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3135);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3138);
 hAxis = leftAxesCollection[0];
             }
-            else {_yuitest_coverline("build/charts-base/charts-base.js", 3137);
+            else {_yuitest_coverline("build/charts-base/charts-base.js", 3140);
 if(rightAxesCollection && rightAxesCollection[0])
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3139);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3142);
 hAxis = rightAxesCollection[0];
             }
             else
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3143);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3146);
 hAxis = direction === "horizontal" ? catAxis : seriesAxesCollection[0];
             }}
-            _yuitest_coverline("build/charts-base/charts-base.js", 3145);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3148);
 if(!this._getBaseAttribute(hgl, "axis") && hAxis)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3147);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3150);
 this._setBaseAttribute(hgl, "axis", hAxis);
             }
-            _yuitest_coverline("build/charts-base/charts-base.js", 3149);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3152);
 if(this._getBaseAttribute(hgl, "axis"))
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3151);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3154);
 graph.set("horizontalGridlines", hgl);
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3154);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3157);
 if(vgl)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3156);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3159);
 if(bottomAxesCollection && bottomAxesCollection[0])
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3158);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3161);
 vAxis = bottomAxesCollection[0];
             }
-            else {_yuitest_coverline("build/charts-base/charts-base.js", 3160);
+            else {_yuitest_coverline("build/charts-base/charts-base.js", 3163);
 if (topAxesCollection && topAxesCollection[0])
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3162);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3165);
 vAxis = topAxesCollection[0];
             }
             else
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3166);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3169);
 vAxis = direction === "vertical" ? catAxis : seriesAxesCollection[0];
             }}
-            _yuitest_coverline("build/charts-base/charts-base.js", 3168);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3171);
 if(!this._getBaseAttribute(vgl, "axis") && vAxis)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3170);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3173);
 this._setBaseAttribute(vgl, "axis", vAxis);
             }
-            _yuitest_coverline("build/charts-base/charts-base.js", 3172);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3175);
 if(this._getBaseAttribute(vgl, "axis"))
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3174);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3177);
 graph.set("verticalGridlines", vgl);
             }
         }
@@ -4102,16 +4105,16 @@ graph.set("verticalGridlines", vgl);
      */
     _getDefaultAxes: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getDefaultAxes", 3186);
-_yuitest_coverline("build/charts-base/charts-base.js", 3188);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getDefaultAxes", 3189);
+_yuitest_coverline("build/charts-base/charts-base.js", 3191);
 var axes;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3189);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3192);
 if(this.get("dataProvider"))
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3191);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3194);
 axes = this._parseAxes();
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3193);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3196);
 return axes;
     },
 
@@ -4125,8 +4128,8 @@ return axes;
      */
     _parseAxes: function(axes)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_parseAxes", 3204);
-_yuitest_coverline("build/charts-base/charts-base.js", 3206);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_parseAxes", 3207);
+_yuitest_coverline("build/charts-base/charts-base.js", 3209);
 var catKey = this.get("categoryKey"),
             axis,
             attr,
@@ -4146,88 +4149,88 @@ var catKey = this.get("categoryKey"),
             categoryPosition,
             valueAxes = [],
             seriesAxis = this.get("stacked") ? "stacked" : "numeric";
-        _yuitest_coverline("build/charts-base/charts-base.js", 3225);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3228);
 if(direction === "vertical")
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3227);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3230);
 seriesPosition = "bottom";
-            _yuitest_coverline("build/charts-base/charts-base.js", 3228);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3231);
 categoryPosition = "left";
         }
         else
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3232);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3235);
 seriesPosition = "left";
-            _yuitest_coverline("build/charts-base/charts-base.js", 3233);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3236);
 categoryPosition = "bottom";
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3235);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3238);
 if(axes)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3237);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3240);
 for(i in axes)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3239);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3242);
 if(axes.hasOwnProperty(i))
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3241);
-axis = axes[i];
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3242);
-keys = this._getBaseAttribute(axis, "keys");
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3243);
-attr = this._getBaseAttribute(axis, "type");
                     _yuitest_coverline("build/charts-base/charts-base.js", 3244);
+axis = axes[i];
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3245);
+keys = this._getBaseAttribute(axis, "keys");
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3246);
+attr = this._getBaseAttribute(axis, "type");
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3247);
 if(attr === "time" || attr === "category")
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3246);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3249);
 categoryAxisName = i;
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3247);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3250);
 this.set("categoryAxisName", i);
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3248);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3251);
 if(Y_Lang.isArray(keys) && keys.length > 0)
                         {
-                            _yuitest_coverline("build/charts-base/charts-base.js", 3250);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 3253);
 catKey = keys[0];
-                            _yuitest_coverline("build/charts-base/charts-base.js", 3251);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 3254);
 this.set("categoryKey", catKey);
                         }
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3253);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3256);
 newAxes[i] = axis;
                     }
-                    else {_yuitest_coverline("build/charts-base/charts-base.js", 3255);
+                    else {_yuitest_coverline("build/charts-base/charts-base.js", 3258);
 if(i === categoryAxisName)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3257);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3260);
 newAxes[i] = axis;
                     }
                     else
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3261);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3264);
 newAxes[i] = axis;
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3262);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3265);
 if(i !== valueAxisName && keys && Y_Lang.isArray(keys))
                         {
-                            _yuitest_coverline("build/charts-base/charts-base.js", 3264);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 3267);
 ll = keys.length;
-                            _yuitest_coverline("build/charts-base/charts-base.js", 3265);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 3268);
 for(ii = 0; ii < ll; ++ii)
                             {
-                                _yuitest_coverline("build/charts-base/charts-base.js", 3267);
+                                _yuitest_coverline("build/charts-base/charts-base.js", 3270);
 claimedKeys.push(keys[ii]);
                             }
-                            _yuitest_coverline("build/charts-base/charts-base.js", 3269);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 3272);
 valueAxes.push(newAxes[i]);
                         }
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3271);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3274);
 if(!(this._getBaseAttribute(newAxes[i], "type")))
                         {
-                            _yuitest_coverline("build/charts-base/charts-base.js", 3273);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 3276);
 this._setBaseAttribute(newAxes[i], "type", seriesAxis);
                         }
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3275);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3278);
 if(!(this._getBaseAttribute(newAxes[i], "position")))
                         {
-                            _yuitest_coverline("build/charts-base/charts-base.js", 3277);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 3280);
 this._setBaseAttribute(
                                 newAxes[i],
                                 "position",
@@ -4238,102 +4241,102 @@ this._setBaseAttribute(
                 }
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3287);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3290);
 cIndex = Y.Array.indexOf(seriesKeys, catKey);
-        _yuitest_coverline("build/charts-base/charts-base.js", 3288);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3291);
 if(cIndex > -1)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3290);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3293);
 seriesKeys.splice(cIndex, 1);
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3292);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3295);
 l = claimedKeys.length;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3293);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3296);
 for(i = 0; i < l; ++i)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3295);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3298);
 cIndex = Y.Array.indexOf(seriesKeys, claimedKeys[i]);
-            _yuitest_coverline("build/charts-base/charts-base.js", 3296);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3299);
 if(cIndex > -1)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3298);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3301);
 seriesKeys.splice(cIndex, 1);
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3301);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3304);
 if(!newAxes.hasOwnProperty(categoryAxisName))
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3303);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3306);
 newAxes[categoryAxisName] = {};
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3305);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3308);
 if(!(this._getBaseAttribute(newAxes[categoryAxisName], "keys")))
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3307);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3310);
 this._setBaseAttribute(newAxes[categoryAxisName], "keys", [catKey]);
         }
 
-        _yuitest_coverline("build/charts-base/charts-base.js", 3310);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3313);
 if(!(this._getBaseAttribute(newAxes[categoryAxisName], "position")))
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3312);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3315);
 this._setBaseAttribute(newAxes[categoryAxisName], "position", categoryPosition);
         }
 
-        _yuitest_coverline("build/charts-base/charts-base.js", 3315);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3318);
 if(!(this._getBaseAttribute(newAxes[categoryAxisName], "type")))
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3317);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3320);
 this._setBaseAttribute(newAxes[categoryAxisName], "type", this.get("categoryType"));
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3319);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3322);
 if(!newAxes.hasOwnProperty(valueAxisName) && seriesKeys && seriesKeys.length > 0)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3321);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3324);
 newAxes[valueAxisName] = {keys:seriesKeys};
-            _yuitest_coverline("build/charts-base/charts-base.js", 3322);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3325);
 valueAxes.push(newAxes[valueAxisName]);
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3324);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3327);
 if(claimedKeys.length > 0)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3326);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3329);
 if(seriesKeys.length > 0)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3328);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3331);
 seriesKeys = claimedKeys.concat(seriesKeys);
             }
             else
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3332);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3335);
 seriesKeys = claimedKeys;
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3335);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3338);
 if(newAxes.hasOwnProperty(valueAxisName))
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3337);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3340);
 if(!(this._getBaseAttribute(newAxes[valueAxisName], "position")))
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3339);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3342);
 this._setBaseAttribute(
                     newAxes[valueAxisName],
                     "position",
                     this._getDefaultAxisPosition(newAxes[valueAxisName], valueAxes, seriesPosition)
                 );
             }
-            _yuitest_coverline("build/charts-base/charts-base.js", 3345);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3348);
 this._setBaseAttribute(newAxes[valueAxisName], "type", seriesAxis);
-            _yuitest_coverline("build/charts-base/charts-base.js", 3346);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3349);
 this._setBaseAttribute(newAxes[valueAxisName], "keys", seriesKeys);
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3348);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3351);
 if(!this._seriesKeysExplicitlySet)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3350);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3353);
 this._seriesKeys = seriesKeys;
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3352);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3355);
 return newAxes;
     },
 
@@ -4349,46 +4352,46 @@ return newAxes;
      */
     _getDefaultAxisPosition: function(axis, valueAxes, position)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getDefaultAxisPosition", 3365);
-_yuitest_coverline("build/charts-base/charts-base.js", 3367);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getDefaultAxisPosition", 3368);
+_yuitest_coverline("build/charts-base/charts-base.js", 3370);
 var direction = this.get("direction"),
             i = Y.Array.indexOf(valueAxes, axis);
 
-        _yuitest_coverline("build/charts-base/charts-base.js", 3370);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3373);
 if(valueAxes[i - 1] && valueAxes[i - 1].position)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3372);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3375);
 if(direction === "horizontal")
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3374);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3377);
 if(valueAxes[i - 1].position === "left")
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3376);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3379);
 position = "right";
                 }
-                else {_yuitest_coverline("build/charts-base/charts-base.js", 3378);
+                else {_yuitest_coverline("build/charts-base/charts-base.js", 3381);
 if(valueAxes[i - 1].position === "right")
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3380);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3383);
 position = "left";
                 }}
             }
             else
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3385);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3388);
 if (valueAxes[i -1].position === "bottom")
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3387);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3390);
 position = "top";
                 }
                 else
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3391);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3394);
 position = "bottom";
                 }
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3395);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3398);
 return position;
     },
 
@@ -4420,24 +4423,24 @@ return position;
      */
     getSeriesItems: function(series, index)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "getSeriesItems", 3424);
-_yuitest_coverline("build/charts-base/charts-base.js", 3426);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "getSeriesItems", 3427);
+_yuitest_coverline("build/charts-base/charts-base.js", 3429);
 var xAxis = series.get("xAxis"),
             yAxis = series.get("yAxis"),
             xKey = series.get("xKey"),
             yKey = series.get("yKey"),
             categoryItem,
             valueItem;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3432);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3435);
 if(this.get("direction") === "vertical")
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3434);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3437);
 categoryItem = {
                 axis:yAxis,
                 key:yKey,
                 value:yAxis.getKeyValueAt(yKey, index)
             };
-            _yuitest_coverline("build/charts-base/charts-base.js", 3439);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3442);
 valueItem = {
                 axis:xAxis,
                 key:xKey,
@@ -4446,28 +4449,28 @@ valueItem = {
         }
         else
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3447);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3450);
 valueItem = {
                 axis:yAxis,
                 key:yKey,
                 value:yAxis.getKeyValueAt(yKey, index)
             };
-            _yuitest_coverline("build/charts-base/charts-base.js", 3452);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3455);
 categoryItem = {
                 axis:xAxis,
                 key:xKey,
                 value: xAxis.getKeyValueAt(xKey, index)
             };
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3458);
-categoryItem.displayName = series.get("categoryDisplayName");
-        _yuitest_coverline("build/charts-base/charts-base.js", 3459);
-valueItem.displayName = series.get("valueDisplayName");
-        _yuitest_coverline("build/charts-base/charts-base.js", 3460);
-categoryItem.value = categoryItem.axis.getKeyValueAt(categoryItem.key, index);
         _yuitest_coverline("build/charts-base/charts-base.js", 3461);
-valueItem.value = valueItem.axis.getKeyValueAt(valueItem.key, index);
+categoryItem.displayName = series.get("categoryDisplayName");
         _yuitest_coverline("build/charts-base/charts-base.js", 3462);
+valueItem.displayName = series.get("valueDisplayName");
+        _yuitest_coverline("build/charts-base/charts-base.js", 3463);
+categoryItem.value = categoryItem.axis.getKeyValueAt(categoryItem.key, index);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3464);
+valueItem.value = valueItem.axis.getKeyValueAt(valueItem.key, index);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3465);
 return {category:categoryItem, value:valueItem};
     },
 
@@ -4480,21 +4483,21 @@ return {category:categoryItem, value:valueItem};
      */
     _sizeChanged: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_sizeChanged", 3472);
-_yuitest_coverline("build/charts-base/charts-base.js", 3474);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_sizeChanged", 3475);
+_yuitest_coverline("build/charts-base/charts-base.js", 3477);
 if(this._axesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3476);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3479);
 var ac = this._axesCollection,
                 i = 0,
                 l = ac.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3479);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3482);
 for(; i < l; ++i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3481);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3484);
 this._addToAxesRenderQueue(ac[i]);
             }
-            _yuitest_coverline("build/charts-base/charts-base.js", 3483);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3486);
 this._redraw();
         }
     },
@@ -4511,49 +4514,49 @@ this._redraw();
      */
     _getTopOverflow: function(set1, set2, height)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getTopOverflow", 3497);
-_yuitest_coverline("build/charts-base/charts-base.js", 3499);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getTopOverflow", 3500);
+_yuitest_coverline("build/charts-base/charts-base.js", 3502);
 var i = 0,
             len,
             overflow = 0,
             axis;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3503);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3506);
 if(set1)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3505);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3508);
 len = set1.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3506);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3509);
 for(; i < len; ++i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3508);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3511);
 axis = set1[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3509);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3512);
 overflow = Math.max(
                     overflow,
-                    Math.abs(axis.getMaxLabelBounds().top) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5)
+                    Math.abs(axis.getMaxLabelBounds().top) - axis.getEdgeOffset(axis.get("styles").majorTicks.count, height)
                 );
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3515);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3518);
 if(set2)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3517);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3520);
 i = 0;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3518);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3521);
 len = set2.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3519);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3522);
 for(; i < len; ++i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3521);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3524);
 axis = set2[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3522);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3525);
 overflow = Math.max(
                     overflow,
-                    Math.abs(axis.getMaxLabelBounds().top) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5)
+                    Math.abs(axis.getMaxLabelBounds().top) - axis.getEdgeOffset(axis.get("styles").majorTicks.count, height)
                 );
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3528);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3531);
 return overflow;
     },
 
@@ -4569,49 +4572,49 @@ return overflow;
      */
     _getRightOverflow: function(set1, set2, width)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getRightOverflow", 3541);
-_yuitest_coverline("build/charts-base/charts-base.js", 3543);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getRightOverflow", 3544);
+_yuitest_coverline("build/charts-base/charts-base.js", 3546);
 var i = 0,
             len,
             overflow = 0,
             axis;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3547);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3550);
 if(set1)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3549);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3552);
 len = set1.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3550);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3553);
 for(; i < len; ++i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3552);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3555);
 axis = set1[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3553);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3556);
 overflow = Math.max(
                     overflow,
-                    axis.getMaxLabelBounds().right - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5)
+                    axis.getMaxLabelBounds().right - axis.getEdgeOffset(axis.get("styles").majorTicks.count, width)
                 );
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3559);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3562);
 if(set2)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3561);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3564);
 i = 0;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3562);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3565);
 len = set2.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3563);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3566);
 for(; i < len; ++i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3565);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3568);
 axis = set2[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3566);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3569);
 overflow = Math.max(
                     overflow,
-                    axis.getMaxLabelBounds().right - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5)
+                    axis.getMaxLabelBounds().right - axis.getEdgeOffset(axis.get("styles").majorTicks.count, width)
                 );
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3572);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3575);
 return overflow;
     },
 
@@ -4627,49 +4630,49 @@ return overflow;
      */
     _getLeftOverflow: function(set1, set2, width)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getLeftOverflow", 3585);
-_yuitest_coverline("build/charts-base/charts-base.js", 3587);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getLeftOverflow", 3588);
+_yuitest_coverline("build/charts-base/charts-base.js", 3590);
 var i = 0,
             len,
             overflow = 0,
             axis;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3591);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3594);
 if(set1)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3593);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3596);
 len = set1.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3594);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3597);
 for(; i < len; ++i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3596);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3599);
 axis = set1[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3597);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3600);
 overflow = Math.max(
                     overflow,
-                    Math.abs(axis.getMinLabelBounds().left) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5)
+                    Math.abs(axis.getMinLabelBounds().left) - axis.getEdgeOffset(axis.get("styles").majorTicks.count, width)
                 );
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3603);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3606);
 if(set2)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3605);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3608);
 i = 0;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3606);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3609);
 len = set2.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3607);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3610);
 for(; i < len; ++i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3609);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3612);
 axis = set2[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3610);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3613);
 overflow = Math.max(
                     overflow,
-                    Math.abs(axis.getMinLabelBounds().left) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5)
+                    Math.abs(axis.getMinLabelBounds().left) - axis.getEdgeOffset(axis.get("styles").majorTicks.count, width)
                 );
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3616);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3619);
 return overflow;
     },
 
@@ -4685,49 +4688,49 @@ return overflow;
      */
     _getBottomOverflow: function(set1, set2, height)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getBottomOverflow", 3629);
-_yuitest_coverline("build/charts-base/charts-base.js", 3631);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getBottomOverflow", 3632);
+_yuitest_coverline("build/charts-base/charts-base.js", 3634);
 var i = 0,
             len,
             overflow = 0,
             axis;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3635);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3638);
 if(set1)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3637);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3640);
 len = set1.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3638);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3641);
 for(; i < len; ++i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3640);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3643);
 axis = set1[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3641);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3644);
 overflow = Math.max(
                     overflow,
-                    axis.getMinLabelBounds().bottom - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5)
+                    axis.getMinLabelBounds().bottom - axis.getEdgeOffset(axis.get("styles").majorTicks.count, height)
                 );
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3647);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3650);
 if(set2)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3649);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3652);
 i = 0;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3650);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3653);
 len = set2.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3651);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3654);
 for(; i < len; ++i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3653);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3656);
 axis = set2[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3654);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3657);
 overflow = Math.max(
                     overflow,
-                    axis.getMinLabelBounds().bottom - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5)
+                    axis.getMinLabelBounds().bottom - axis.getEdgeOffset(axis.get("styles").majorTicks.count, height)
                 );
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3660);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3663);
 return overflow;
     },
 
@@ -4739,20 +4742,20 @@ return overflow;
      */
     _redraw: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_redraw", 3669);
-_yuitest_coverline("build/charts-base/charts-base.js", 3671);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_redraw", 3672);
+_yuitest_coverline("build/charts-base/charts-base.js", 3674);
 if(this._drawing)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3673);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3676);
 this._callLater = true;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3674);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3677);
 return;
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3676);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3679);
 this._drawing = true;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3677);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3680);
 this._callLater = false;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3678);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3681);
 var w = this.get("width"),
             h = this.get("height"),
             leftPaneWidth = 0,
@@ -4783,352 +4786,352 @@ var w = this.get("width"),
             topAxesYCoords,
             bottomAxesYCoords,
             graphRect = {};
-        _yuitest_coverline("build/charts-base/charts-base.js", 3708);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3711);
 if(leftAxesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3710);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3713);
 leftAxesXCoords = [];
-            _yuitest_coverline("build/charts-base/charts-base.js", 3711);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3714);
 l = leftAxesCollection.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3712);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3715);
 for(i = l - 1; i > -1; --i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3714);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3717);
 leftAxesXCoords.unshift(leftPaneWidth);
-                _yuitest_coverline("build/charts-base/charts-base.js", 3715);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3718);
 leftPaneWidth += leftAxesCollection[i].get("width");
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3718);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3721);
 if(rightAxesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3720);
-rightAxesXCoords = [];
-            _yuitest_coverline("build/charts-base/charts-base.js", 3721);
-l = rightAxesCollection.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3722);
-i = 0;
             _yuitest_coverline("build/charts-base/charts-base.js", 3723);
+rightAxesXCoords = [];
+            _yuitest_coverline("build/charts-base/charts-base.js", 3724);
+l = rightAxesCollection.length;
+            _yuitest_coverline("build/charts-base/charts-base.js", 3725);
+i = 0;
+            _yuitest_coverline("build/charts-base/charts-base.js", 3726);
 for(i = l - 1; i > -1; --i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3725);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3728);
 rightPaneWidth += rightAxesCollection[i].get("width");
-                _yuitest_coverline("build/charts-base/charts-base.js", 3726);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3729);
 rightAxesXCoords.unshift(w - rightPaneWidth);
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3729);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3732);
 if(topAxesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3731);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3734);
 topAxesYCoords = [];
-            _yuitest_coverline("build/charts-base/charts-base.js", 3732);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3735);
 l = topAxesCollection.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3733);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3736);
 for(i = l - 1; i > -1; --i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3735);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3738);
 topAxesYCoords.unshift(topPaneHeight);
-                _yuitest_coverline("build/charts-base/charts-base.js", 3736);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3739);
 topPaneHeight += topAxesCollection[i].get("height");
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3739);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3742);
 if(bottomAxesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3741);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3744);
 bottomAxesYCoords = [];
-            _yuitest_coverline("build/charts-base/charts-base.js", 3742);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3745);
 l = bottomAxesCollection.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3743);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3746);
 for(i = l - 1; i > -1; --i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3745);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3748);
 bottomPaneHeight += bottomAxesCollection[i].get("height");
-                _yuitest_coverline("build/charts-base/charts-base.js", 3746);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3749);
 bottomAxesYCoords.unshift(h - bottomPaneHeight);
             }
         }
 
-        _yuitest_coverline("build/charts-base/charts-base.js", 3750);
-graphWidth = w - (leftPaneWidth + rightPaneWidth);
-        _yuitest_coverline("build/charts-base/charts-base.js", 3751);
-graphHeight = h - (bottomPaneHeight + topPaneHeight);
-        _yuitest_coverline("build/charts-base/charts-base.js", 3752);
-graphRect.left = leftPaneWidth;
         _yuitest_coverline("build/charts-base/charts-base.js", 3753);
-graphRect.top = topPaneHeight;
+graphWidth = w - (leftPaneWidth + rightPaneWidth);
         _yuitest_coverline("build/charts-base/charts-base.js", 3754);
-graphRect.bottom = h - bottomPaneHeight;
+graphHeight = h - (bottomPaneHeight + topPaneHeight);
         _yuitest_coverline("build/charts-base/charts-base.js", 3755);
-graphRect.right = w - rightPaneWidth;
+graphRect.left = leftPaneWidth;
         _yuitest_coverline("build/charts-base/charts-base.js", 3756);
+graphRect.top = topPaneHeight;
+        _yuitest_coverline("build/charts-base/charts-base.js", 3757);
+graphRect.bottom = h - bottomPaneHeight;
+        _yuitest_coverline("build/charts-base/charts-base.js", 3758);
+graphRect.right = w - rightPaneWidth;
+        _yuitest_coverline("build/charts-base/charts-base.js", 3759);
 if(!allowContentOverflow)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3758);
-topOverflow = this._getTopOverflow(leftAxesCollection, rightAxesCollection);
-            _yuitest_coverline("build/charts-base/charts-base.js", 3759);
-bottomOverflow = this._getBottomOverflow(leftAxesCollection, rightAxesCollection);
-            _yuitest_coverline("build/charts-base/charts-base.js", 3760);
-leftOverflow = this._getLeftOverflow(bottomAxesCollection, topAxesCollection);
             _yuitest_coverline("build/charts-base/charts-base.js", 3761);
+topOverflow = this._getTopOverflow(leftAxesCollection, rightAxesCollection);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3762);
+bottomOverflow = this._getBottomOverflow(leftAxesCollection, rightAxesCollection);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3763);
+leftOverflow = this._getLeftOverflow(bottomAxesCollection, topAxesCollection);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3764);
 rightOverflow = this._getRightOverflow(bottomAxesCollection, topAxesCollection);
 
-            _yuitest_coverline("build/charts-base/charts-base.js", 3763);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3766);
 diff = topOverflow - topPaneHeight;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3764);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3767);
 if(diff > 0)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3766);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3769);
 graphRect.top = topOverflow;
-                _yuitest_coverline("build/charts-base/charts-base.js", 3767);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3770);
 if(topAxesYCoords)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3769);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3772);
 i = 0;
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3770);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3773);
 l = topAxesYCoords.length;
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3771);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3774);
 for(; i < l; ++i)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3773);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3776);
 topAxesYCoords[i] += diff;
                     }
                 }
             }
 
-            _yuitest_coverline("build/charts-base/charts-base.js", 3778);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3781);
 diff = bottomOverflow - bottomPaneHeight;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3779);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3782);
 if(diff > 0)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3781);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3784);
 graphRect.bottom = h - bottomOverflow;
-                _yuitest_coverline("build/charts-base/charts-base.js", 3782);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3785);
 if(bottomAxesYCoords)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3784);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3787);
 i = 0;
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3785);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3788);
 l = bottomAxesYCoords.length;
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3786);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3789);
 for(; i < l; ++i)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3788);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3791);
 bottomAxesYCoords[i] -= diff;
                     }
                 }
             }
 
-            _yuitest_coverline("build/charts-base/charts-base.js", 3793);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3796);
 diff = leftOverflow - leftPaneWidth;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3794);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3797);
 if(diff > 0)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3796);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3799);
 graphRect.left = leftOverflow;
-                _yuitest_coverline("build/charts-base/charts-base.js", 3797);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3800);
 if(leftAxesXCoords)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3799);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3802);
 i = 0;
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3800);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3803);
 l = leftAxesXCoords.length;
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3801);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3804);
 for(; i < l; ++i)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3803);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3806);
 leftAxesXCoords[i] += diff;
                     }
                 }
             }
 
-            _yuitest_coverline("build/charts-base/charts-base.js", 3808);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3811);
 diff = rightOverflow - rightPaneWidth;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3809);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3812);
 if(diff > 0)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3811);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3814);
 graphRect.right = w - rightOverflow;
-                _yuitest_coverline("build/charts-base/charts-base.js", 3812);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3815);
 if(rightAxesXCoords)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3814);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3817);
 i = 0;
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3815);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3818);
 l = rightAxesXCoords.length;
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3816);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3819);
 for(; i < l; ++i)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 3818);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 3821);
 rightAxesXCoords[i] -= diff;
                     }
                 }
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3823);
-graphWidth = graphRect.right - graphRect.left;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3824);
-graphHeight = graphRect.bottom - graphRect.top;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3825);
-graphX = graphRect.left;
         _yuitest_coverline("build/charts-base/charts-base.js", 3826);
-graphY = graphRect.top;
+graphWidth = graphRect.right - graphRect.left;
         _yuitest_coverline("build/charts-base/charts-base.js", 3827);
+graphHeight = graphRect.bottom - graphRect.top;
+        _yuitest_coverline("build/charts-base/charts-base.js", 3828);
+graphX = graphRect.left;
+        _yuitest_coverline("build/charts-base/charts-base.js", 3829);
+graphY = graphRect.top;
+        _yuitest_coverline("build/charts-base/charts-base.js", 3830);
 if(topAxesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3829);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3832);
 l = topAxesCollection.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3830);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3833);
 i = 0;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3831);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3834);
 for(; i < l; i++)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3833);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3836);
 axis = topAxesCollection[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3834);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3837);
 if(axis.get("width") !== graphWidth)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3836);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3839);
 axis.set("width", graphWidth);
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 3838);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3841);
 axis.get("boundingBox").setStyle("left", graphX + "px");
-                _yuitest_coverline("build/charts-base/charts-base.js", 3839);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3842);
 axis.get("boundingBox").setStyle("top", topAxesYCoords[i] + "px");
             }
-            _yuitest_coverline("build/charts-base/charts-base.js", 3841);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3844);
 if(axis._hasDataOverflow())
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3843);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3846);
 graphOverflow = "hidden";
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3846);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3849);
 if(bottomAxesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3848);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3851);
 l = bottomAxesCollection.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3849);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3852);
 i = 0;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3850);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3853);
 for(; i < l; i++)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3852);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3855);
 axis = bottomAxesCollection[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3853);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3856);
 if(axis.get("width") !== graphWidth)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3855);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3858);
 axis.set("width", graphWidth);
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 3857);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3860);
 axis.get("boundingBox").setStyle("left", graphX + "px");
-                _yuitest_coverline("build/charts-base/charts-base.js", 3858);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3861);
 axis.get("boundingBox").setStyle("top", bottomAxesYCoords[i] + "px");
             }
-            _yuitest_coverline("build/charts-base/charts-base.js", 3860);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3863);
 if(axis._hasDataOverflow())
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3862);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3865);
 graphOverflow = "hidden";
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3865);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3868);
 if(leftAxesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3867);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3870);
 l = leftAxesCollection.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3868);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3871);
 i = 0;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3869);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3872);
 for(; i < l; ++i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3871);
-axis = leftAxesCollection[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3872);
-axis.get("boundingBox").setStyle("top", graphY + "px");
-                _yuitest_coverline("build/charts-base/charts-base.js", 3873);
-axis.get("boundingBox").setStyle("left", leftAxesXCoords[i] + "px");
                 _yuitest_coverline("build/charts-base/charts-base.js", 3874);
+axis = leftAxesCollection[i];
+                _yuitest_coverline("build/charts-base/charts-base.js", 3875);
+axis.get("boundingBox").setStyle("top", graphY + "px");
+                _yuitest_coverline("build/charts-base/charts-base.js", 3876);
+axis.get("boundingBox").setStyle("left", leftAxesXCoords[i] + "px");
+                _yuitest_coverline("build/charts-base/charts-base.js", 3877);
 if(axis.get("height") !== graphHeight)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3876);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3879);
 axis.set("height", graphHeight);
                 }
             }
-            _yuitest_coverline("build/charts-base/charts-base.js", 3879);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3882);
 if(axis._hasDataOverflow())
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3881);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3884);
 graphOverflow = "hidden";
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3884);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3887);
 if(rightAxesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3886);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3889);
 l = rightAxesCollection.length;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3887);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3890);
 i = 0;
-            _yuitest_coverline("build/charts-base/charts-base.js", 3888);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3891);
 for(; i < l; ++i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3890);
-axis = rightAxesCollection[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 3891);
-axis.get("boundingBox").setStyle("top", graphY + "px");
-                _yuitest_coverline("build/charts-base/charts-base.js", 3892);
-axis.get("boundingBox").setStyle("left", rightAxesXCoords[i] + "px");
                 _yuitest_coverline("build/charts-base/charts-base.js", 3893);
+axis = rightAxesCollection[i];
+                _yuitest_coverline("build/charts-base/charts-base.js", 3894);
+axis.get("boundingBox").setStyle("top", graphY + "px");
+                _yuitest_coverline("build/charts-base/charts-base.js", 3895);
+axis.get("boundingBox").setStyle("left", rightAxesXCoords[i] + "px");
+                _yuitest_coverline("build/charts-base/charts-base.js", 3896);
 if(axis.get("height") !== graphHeight)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 3895);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 3898);
 axis.set("height", graphHeight);
                 }
             }
-            _yuitest_coverline("build/charts-base/charts-base.js", 3898);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3901);
 if(axis._hasDataOverflow())
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3900);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3903);
 graphOverflow = "hidden";
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3903);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3906);
 this._drawing = false;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3904);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3907);
 if(this._callLater)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3906);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3909);
 this._redraw();
-            _yuitest_coverline("build/charts-base/charts-base.js", 3907);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3910);
 return;
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3909);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3912);
 if(graph)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3911);
-graph.get("boundingBox").setStyle("left", graphX + "px");
-            _yuitest_coverline("build/charts-base/charts-base.js", 3912);
-graph.get("boundingBox").setStyle("top", graphY + "px");
-            _yuitest_coverline("build/charts-base/charts-base.js", 3913);
-graph.set("width", graphWidth);
             _yuitest_coverline("build/charts-base/charts-base.js", 3914);
-graph.set("height", graphHeight);
+graph.get("boundingBox").setStyle("left", graphX + "px");
             _yuitest_coverline("build/charts-base/charts-base.js", 3915);
+graph.get("boundingBox").setStyle("top", graphY + "px");
+            _yuitest_coverline("build/charts-base/charts-base.js", 3916);
+graph.set("width", graphWidth);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3917);
+graph.set("height", graphHeight);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3918);
 graph.get("boundingBox").setStyle("overflow", graphOverflow);
         }
 
-        _yuitest_coverline("build/charts-base/charts-base.js", 3918);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3921);
 if(this._overlay)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3920);
-this._overlay.setStyle("left", graphX + "px");
-            _yuitest_coverline("build/charts-base/charts-base.js", 3921);
-this._overlay.setStyle("top", graphY + "px");
-            _yuitest_coverline("build/charts-base/charts-base.js", 3922);
-this._overlay.setStyle("width", graphWidth + "px");
             _yuitest_coverline("build/charts-base/charts-base.js", 3923);
+this._overlay.setStyle("left", graphX + "px");
+            _yuitest_coverline("build/charts-base/charts-base.js", 3924);
+this._overlay.setStyle("top", graphY + "px");
+            _yuitest_coverline("build/charts-base/charts-base.js", 3925);
+this._overlay.setStyle("width", graphWidth + "px");
+            _yuitest_coverline("build/charts-base/charts-base.js", 3926);
 this._overlay.setStyle("height", graphHeight + "px");
         }
     },
@@ -5142,74 +5145,74 @@ this._overlay.setStyle("height", graphHeight + "px");
      */
     destructor: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "destructor", 3934);
-_yuitest_coverline("build/charts-base/charts-base.js", 3936);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "destructor", 3937);
+_yuitest_coverline("build/charts-base/charts-base.js", 3939);
 var graph = this.get("graph"),
             i = 0,
             len,
             seriesCollection = this.get("seriesCollection"),
             axesCollection = this._axesCollection,
             tooltip = this.get("tooltip").node;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3942);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3945);
 if(this._description)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3944);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3947);
 this._description.empty();
-            _yuitest_coverline("build/charts-base/charts-base.js", 3945);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3948);
 this._description.remove(true);
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3947);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3950);
 if(this._liveRegion)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3949);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3952);
 this._liveRegion.empty();
-            _yuitest_coverline("build/charts-base/charts-base.js", 3950);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3953);
 this._liveRegion.remove(true);
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3952);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3955);
 len = seriesCollection ? seriesCollection.length : 0;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3953);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3956);
 for(; i < len; ++i)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3955);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3958);
 if(seriesCollection[i] instanceof Y.CartesianSeries)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3957);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3960);
 seriesCollection[i].destroy(true);
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3960);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3963);
 len = axesCollection ? axesCollection.length : 0;
-        _yuitest_coverline("build/charts-base/charts-base.js", 3961);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3964);
 for(i = 0; i < len; ++i)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3963);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3966);
 if(axesCollection[i] instanceof Y.Axis)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 3965);
+                _yuitest_coverline("build/charts-base/charts-base.js", 3968);
 axesCollection[i].destroy(true);
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3968);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3971);
 if(graph)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3970);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3973);
 graph.destroy(true);
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3972);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3975);
 if(tooltip)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3974);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3977);
 tooltip.empty();
-            _yuitest_coverline("build/charts-base/charts-base.js", 3975);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3978);
 tooltip.remove(true);
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 3977);
+        _yuitest_coverline("build/charts-base/charts-base.js", 3980);
 if(this._overlay)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 3979);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3982);
 this._overlay.empty();
-            _yuitest_coverline("build/charts-base/charts-base.js", 3980);
+            _yuitest_coverline("build/charts-base/charts-base.js", 3983);
 this._overlay.remove(true);
         }
     },
@@ -5223,8 +5226,8 @@ this._overlay.remove(true);
      */
     _getAriaMessage: function(key)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getAriaMessage", 3991);
-_yuitest_coverline("build/charts-base/charts-base.js", 3993);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getAriaMessage", 3994);
+_yuitest_coverline("build/charts-base/charts-base.js", 3996);
 var msg = "",
             series,
             items,
@@ -5235,91 +5238,91 @@ var msg = "",
             seriesCollection = this.get("seriesCollection"),
             len = seriesCollection.length,
             dataLength;
-        _yuitest_coverline("build/charts-base/charts-base.js", 4003);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4006);
 if(key % 2 === 0)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4005);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4008);
 if(len > 1)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 4007);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4010);
 if(key === 38)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4009);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4012);
 seriesIndex = seriesIndex < 1 ? len - 1 : seriesIndex - 1;
                 }
-                else {_yuitest_coverline("build/charts-base/charts-base.js", 4011);
+                else {_yuitest_coverline("build/charts-base/charts-base.js", 4014);
 if(key === 40)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4013);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4016);
 seriesIndex = seriesIndex >= len - 1 ? 0 : seriesIndex + 1;
                 }}
-                _yuitest_coverline("build/charts-base/charts-base.js", 4015);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4018);
 this._itemIndex = -1;
             }
             else
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 4019);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4022);
 seriesIndex = 0;
             }
-            _yuitest_coverline("build/charts-base/charts-base.js", 4021);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4024);
 this._seriesIndex = seriesIndex;
-            _yuitest_coverline("build/charts-base/charts-base.js", 4022);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4025);
 series = this.getSeries(parseInt(seriesIndex, 10));
-            _yuitest_coverline("build/charts-base/charts-base.js", 4023);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4026);
 msg = series.get("valueDisplayName") + " series.";
         }
         else
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4027);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4030);
 if(seriesIndex > -1)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 4029);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4032);
 msg = "";
-                _yuitest_coverline("build/charts-base/charts-base.js", 4030);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4033);
 series = this.getSeries(parseInt(seriesIndex, 10));
             }
             else
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 4034);
-seriesIndex = 0;
-                _yuitest_coverline("build/charts-base/charts-base.js", 4035);
-this._seriesIndex = seriesIndex;
-                _yuitest_coverline("build/charts-base/charts-base.js", 4036);
-series = this.getSeries(parseInt(seriesIndex, 10));
                 _yuitest_coverline("build/charts-base/charts-base.js", 4037);
+seriesIndex = 0;
+                _yuitest_coverline("build/charts-base/charts-base.js", 4038);
+this._seriesIndex = seriesIndex;
+                _yuitest_coverline("build/charts-base/charts-base.js", 4039);
+series = this.getSeries(parseInt(seriesIndex, 10));
+                _yuitest_coverline("build/charts-base/charts-base.js", 4040);
 msg = series.get("valueDisplayName") + " series.";
             }
-            _yuitest_coverline("build/charts-base/charts-base.js", 4039);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4042);
 dataLength = series._dataLength ? series._dataLength : 0;
-            _yuitest_coverline("build/charts-base/charts-base.js", 4040);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4043);
 if(key === 37)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 4042);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4045);
 itemIndex = itemIndex > 0 ? itemIndex - 1 : dataLength - 1;
             }
-            else {_yuitest_coverline("build/charts-base/charts-base.js", 4044);
+            else {_yuitest_coverline("build/charts-base/charts-base.js", 4047);
 if(key === 39)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 4046);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4049);
 itemIndex = itemIndex >= dataLength - 1 ? 0 : itemIndex + 1;
             }}
-            _yuitest_coverline("build/charts-base/charts-base.js", 4048);
-this._itemIndex = itemIndex;
-            _yuitest_coverline("build/charts-base/charts-base.js", 4049);
-items = this.getSeriesItems(series, itemIndex);
-            _yuitest_coverline("build/charts-base/charts-base.js", 4050);
-categoryItem = items.category;
             _yuitest_coverline("build/charts-base/charts-base.js", 4051);
-valueItem = items.value;
+this._itemIndex = itemIndex;
             _yuitest_coverline("build/charts-base/charts-base.js", 4052);
+items = this.getSeriesItems(series, itemIndex);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4053);
+categoryItem = items.category;
+            _yuitest_coverline("build/charts-base/charts-base.js", 4054);
+valueItem = items.value;
+            _yuitest_coverline("build/charts-base/charts-base.js", 4055);
 if(categoryItem && valueItem && categoryItem.value && valueItem.value)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 4054);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4057);
 msg += categoryItem.displayName +
                     ": " +
                     categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) +
                     ", ";
-                _yuitest_coverline("build/charts-base/charts-base.js", 4058);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4061);
 msg += valueItem.displayName +
                     ": " +
                     valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) +
@@ -5327,13 +5330,13 @@ msg += valueItem.displayName +
             }
            else
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 4065);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4068);
 msg += "No data available.";
             }
-            _yuitest_coverline("build/charts-base/charts-base.js", 4067);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4070);
 msg += (itemIndex + 1) + " of " + dataLength + ". ";
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 4069);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4072);
 return msg;
     }
 }, {
@@ -5358,48 +5361,48 @@ return msg;
         axesStyles: {
             getter: function()
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4091);
-_yuitest_coverline("build/charts-base/charts-base.js", 4093);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4094);
+_yuitest_coverline("build/charts-base/charts-base.js", 4096);
 var axes = this.get("axes"),
                     i,
                     styles = this._axesStyles;
-                _yuitest_coverline("build/charts-base/charts-base.js", 4096);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4099);
 if(axes)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4098);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4101);
 for(i in axes)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4100);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4103);
 if(axes.hasOwnProperty(i) && axes[i] instanceof Y.Axis)
                         {
-                            _yuitest_coverline("build/charts-base/charts-base.js", 4102);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 4105);
 if(!styles)
                             {
-                                _yuitest_coverline("build/charts-base/charts-base.js", 4104);
+                                _yuitest_coverline("build/charts-base/charts-base.js", 4107);
 styles = {};
                             }
-                            _yuitest_coverline("build/charts-base/charts-base.js", 4106);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 4109);
 styles[i] = axes[i].get("styles");
                         }
                     }
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4110);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4113);
 return styles;
             },
 
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4113);
-_yuitest_coverline("build/charts-base/charts-base.js", 4115);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4116);
+_yuitest_coverline("build/charts-base/charts-base.js", 4118);
 var axes = this.get("axes"),
                     i;
-                _yuitest_coverline("build/charts-base/charts-base.js", 4117);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4120);
 for(i in val)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4119);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4122);
 if(val.hasOwnProperty(i) && axes.hasOwnProperty(i))
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4121);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4124);
 this._setBaseAttribute(axes[i], "styles", val[i]);
                     }
                 }
@@ -5416,74 +5419,74 @@ this._setBaseAttribute(axes[i], "styles", val[i]);
         seriesStyles: {
             getter: function()
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4135);
-_yuitest_coverline("build/charts-base/charts-base.js", 4137);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4138);
+_yuitest_coverline("build/charts-base/charts-base.js", 4140);
 var styles = this._seriesStyles,
                     graph = this.get("graph"),
                     dict,
                     i;
-                _yuitest_coverline("build/charts-base/charts-base.js", 4141);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4144);
 if(graph)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4143);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4146);
 dict = graph.get("seriesDictionary");
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4144);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4147);
 if(dict)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4146);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4149);
 styles = {};
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4147);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4150);
 for(i in dict)
                         {
-                            _yuitest_coverline("build/charts-base/charts-base.js", 4149);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 4152);
 if(dict.hasOwnProperty(i))
                             {
-                                _yuitest_coverline("build/charts-base/charts-base.js", 4151);
+                                _yuitest_coverline("build/charts-base/charts-base.js", 4154);
 styles[i] = dict[i].get("styles");
                             }
                         }
                     }
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4156);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4159);
 return styles;
             },
 
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4159);
-_yuitest_coverline("build/charts-base/charts-base.js", 4161);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4162);
+_yuitest_coverline("build/charts-base/charts-base.js", 4164);
 var i,
                     l,
                     s;
 
-                _yuitest_coverline("build/charts-base/charts-base.js", 4165);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4168);
 if(Y_Lang.isArray(val))
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4167);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4170);
 s = this.get("seriesCollection");
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4168);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4171);
 i = 0;
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4169);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4172);
 l = val.length;
 
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4171);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4174);
 for(; i < l; ++i)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4173);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4176);
 this._setBaseAttribute(s[i], "styles", val[i]);
                     }
                 }
                 else
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4178);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4181);
 for(i in val)
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4180);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4183);
 if(val.hasOwnProperty(i))
                         {
-                            _yuitest_coverline("build/charts-base/charts-base.js", 4182);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 4185);
 s = this.getSeries(i);
-                            _yuitest_coverline("build/charts-base/charts-base.js", 4183);
+                            _yuitest_coverline("build/charts-base/charts-base.js", 4186);
 this._setBaseAttribute(s, "styles", val[i]);
                         }
                     }
@@ -5501,25 +5504,25 @@ this._setBaseAttribute(s, "styles", val[i]);
         graphStyles: {
             getter: function()
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4198);
-_yuitest_coverline("build/charts-base/charts-base.js", 4200);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4201);
+_yuitest_coverline("build/charts-base/charts-base.js", 4203);
 var graph = this.get("graph");
-                _yuitest_coverline("build/charts-base/charts-base.js", 4201);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4204);
 if(graph)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4203);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4206);
 return(graph.get("styles"));
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4205);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4208);
 return this._graphStyles;
             },
 
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4208);
-_yuitest_coverline("build/charts-base/charts-base.js", 4210);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4211);
+_yuitest_coverline("build/charts-base/charts-base.js", 4213);
 var graph = this.get("graph");
-                _yuitest_coverline("build/charts-base/charts-base.js", 4211);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4214);
 this._setBaseAttribute(graph, "styles", val);
             }
 
@@ -5552,53 +5555,53 @@ this._setBaseAttribute(graph, "styles", val);
         styles: {
             getter: function()
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4241);
-_yuitest_coverline("build/charts-base/charts-base.js", 4243);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4244);
+_yuitest_coverline("build/charts-base/charts-base.js", 4246);
 var styles = {
                     axes: this.get("axesStyles"),
                     series: this.get("seriesStyles"),
                     graph: this.get("graphStyles")
                 };
-                _yuitest_coverline("build/charts-base/charts-base.js", 4248);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4251);
 return styles;
             },
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4250);
-_yuitest_coverline("build/charts-base/charts-base.js", 4252);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4253);
+_yuitest_coverline("build/charts-base/charts-base.js", 4255);
 if(val.hasOwnProperty("axes"))
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4254);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4257);
 if(this.get("axesStyles"))
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4256);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4259);
 this.set("axesStyles", val.axes);
                     }
                     else
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4260);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4263);
 this._axesStyles = val.axes;
                     }
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4263);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4266);
 if(val.hasOwnProperty("series"))
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4265);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4268);
 if(this.get("seriesStyles"))
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4267);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4270);
 this.set("seriesStyles", val.series);
                     }
                     else
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4271);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4274);
 this._seriesStyles = val.series;
                     }
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4274);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4277);
 if(val.hasOwnProperty("graph"))
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4276);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4279);
 this.set("graphStyles", val.graph);
                 }
             }
@@ -5616,14 +5619,14 @@ this.set("graphStyles", val.graph);
 
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4291);
-_yuitest_coverline("build/charts-base/charts-base.js", 4293);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4294);
+_yuitest_coverline("build/charts-base/charts-base.js", 4296);
 if(this.get("dataProvider"))
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4295);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4298);
 val = this._setAxes(val);
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4297);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4300);
 return val;
             }
         },
@@ -5642,14 +5645,14 @@ return val;
 
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4313);
-_yuitest_coverline("build/charts-base/charts-base.js", 4315);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4316);
+_yuitest_coverline("build/charts-base/charts-base.js", 4318);
 if(this.get("dataProvider"))
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4317);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4320);
 return this._parseSeriesCollection(val);
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4319);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4322);
 return val;
             }
         },
@@ -5711,31 +5714,31 @@ return val;
         direction: {
             getter: function()
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4378);
-_yuitest_coverline("build/charts-base/charts-base.js", 4380);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4381);
+_yuitest_coverline("build/charts-base/charts-base.js", 4383);
 var type = this.get("type");
-                _yuitest_coverline("build/charts-base/charts-base.js", 4381);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4384);
 if(type === "bar")
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4383);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4386);
 return "vertical";
                 }
-                else {_yuitest_coverline("build/charts-base/charts-base.js", 4385);
+                else {_yuitest_coverline("build/charts-base/charts-base.js", 4388);
 if(type === "column")
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4387);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4390);
 return "horizontal";
                 }}
-                _yuitest_coverline("build/charts-base/charts-base.js", 4389);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4392);
 return this._direction;
             },
 
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4392);
-_yuitest_coverline("build/charts-base/charts-base.js", 4394);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4395);
+_yuitest_coverline("build/charts-base/charts-base.js", 4397);
 this._direction = val;
-                _yuitest_coverline("build/charts-base/charts-base.js", 4395);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4398);
 return this._direction;
             }
         },
@@ -5793,38 +5796,38 @@ return this._direction;
         horizontalGridlines: {
             getter: function()
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4450);
-_yuitest_coverline("build/charts-base/charts-base.js", 4452);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4453);
+_yuitest_coverline("build/charts-base/charts-base.js", 4455);
 var graph = this.get("graph");
-                _yuitest_coverline("build/charts-base/charts-base.js", 4453);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4456);
 if(graph)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4455);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4458);
 return graph.get("horizontalGridlines");
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4457);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4460);
 return this._horizontalGridlines;
             },
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4459);
-_yuitest_coverline("build/charts-base/charts-base.js", 4461);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4462);
+_yuitest_coverline("build/charts-base/charts-base.js", 4464);
 var graph = this.get("graph");
-                _yuitest_coverline("build/charts-base/charts-base.js", 4462);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4465);
 if(val && !Y_Lang.isObject(val))
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4464);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4467);
 val = {};
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4466);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4469);
 if(graph)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4468);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4471);
 graph.set("horizontalGridlines", val);
                 }
                 else
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4472);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4475);
 this._horizontalGridlines = val;
                 }
             }
@@ -5839,38 +5842,38 @@ this._horizontalGridlines = val;
         verticalGridlines: {
             getter: function()
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4484);
-_yuitest_coverline("build/charts-base/charts-base.js", 4486);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4487);
+_yuitest_coverline("build/charts-base/charts-base.js", 4489);
 var graph = this.get("graph");
-                _yuitest_coverline("build/charts-base/charts-base.js", 4487);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4490);
 if(graph)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4489);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4492);
 return graph.get("verticalGridlines");
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4491);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4494);
 return this._verticalGridlines;
             },
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4493);
-_yuitest_coverline("build/charts-base/charts-base.js", 4495);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4496);
+_yuitest_coverline("build/charts-base/charts-base.js", 4498);
 var graph = this.get("graph");
-                _yuitest_coverline("build/charts-base/charts-base.js", 4496);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4499);
 if(val && !Y_Lang.isObject(val))
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4498);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4501);
 val = {};
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4500);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4503);
 if(graph)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4502);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4505);
 graph.set("verticalGridlines", val);
                 }
                 else
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4506);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4509);
 this._verticalGridlines = val;
                 }
             }
@@ -5885,42 +5888,42 @@ this._verticalGridlines = val;
         type: {
             getter: function()
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4518);
-_yuitest_coverline("build/charts-base/charts-base.js", 4520);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4521);
+_yuitest_coverline("build/charts-base/charts-base.js", 4523);
 if(this.get("stacked"))
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4522);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4525);
 return "stacked" + this._type;
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4524);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4527);
 return this._type;
             },
 
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4527);
-_yuitest_coverline("build/charts-base/charts-base.js", 4529);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4530);
+_yuitest_coverline("build/charts-base/charts-base.js", 4532);
 if(this._type === "bar")
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4531);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4534);
 if(val !== "bar")
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4533);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4536);
 this.set("direction", "horizontal");
                     }
                 }
                 else
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4538);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4541);
 if(val === "bar")
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4540);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4543);
 this.set("direction", "vertical");
                     }
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4543);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4546);
 this._type = val;
-                _yuitest_coverline("build/charts-base/charts-base.js", 4544);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4547);
 return this._type;
             }
         },
@@ -5942,7 +5945,7 @@ return this._type;
  * @constructor
  * @submodule charts-base
  */
-_yuitest_coverline("build/charts-base/charts-base.js", 4565);
+_yuitest_coverline("build/charts-base/charts-base.js", 4568);
 Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     /**
      * Calculates and returns a `seriesCollection`.
@@ -5953,14 +5956,14 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      */
     _getSeriesCollection: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getSeriesCollection", 4573);
-_yuitest_coverline("build/charts-base/charts-base.js", 4575);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getSeriesCollection", 4576);
+_yuitest_coverline("build/charts-base/charts-base.js", 4578);
 if(this._seriesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4577);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4580);
 return this._seriesCollection;
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 4579);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4582);
 var axes = this.get("axes"),
             sc = [],
             seriesKeys,
@@ -5972,33 +5975,33 @@ var axes = this.get("axes"),
             catKey = "categoryKey",
             valAxis = "valueAxis",
             seriesKey = "valueKey";
-        _yuitest_coverline("build/charts-base/charts-base.js", 4590);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4593);
 if(axes)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4592);
-seriesKeys = axes.values.get("keyCollection");
-            _yuitest_coverline("build/charts-base/charts-base.js", 4593);
-key = axes.category.get("keyCollection")[0];
-            _yuitest_coverline("build/charts-base/charts-base.js", 4594);
-l = seriesKeys.length;
             _yuitest_coverline("build/charts-base/charts-base.js", 4595);
+seriesKeys = axes.values.get("keyCollection");
+            _yuitest_coverline("build/charts-base/charts-base.js", 4596);
+key = axes.category.get("keyCollection")[0];
+            _yuitest_coverline("build/charts-base/charts-base.js", 4597);
+l = seriesKeys.length;
+            _yuitest_coverline("build/charts-base/charts-base.js", 4598);
 for(; i < l; ++i)
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 4597);
-sc[i] = {type:type};
-                _yuitest_coverline("build/charts-base/charts-base.js", 4598);
-sc[i][catAxis] = "category";
-                _yuitest_coverline("build/charts-base/charts-base.js", 4599);
-sc[i][valAxis] = "values";
                 _yuitest_coverline("build/charts-base/charts-base.js", 4600);
-sc[i][catKey] = key;
+sc[i] = {type:type};
                 _yuitest_coverline("build/charts-base/charts-base.js", 4601);
+sc[i][catAxis] = "category";
+                _yuitest_coverline("build/charts-base/charts-base.js", 4602);
+sc[i][valAxis] = "values";
+                _yuitest_coverline("build/charts-base/charts-base.js", 4603);
+sc[i][catKey] = key;
+                _yuitest_coverline("build/charts-base/charts-base.js", 4604);
 sc[i][seriesKey] = seriesKeys[i];
             }
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 4604);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4607);
 this._seriesCollection = sc;
-        _yuitest_coverline("build/charts-base/charts-base.js", 4605);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4608);
 return sc;
     },
 
@@ -6012,70 +6015,70 @@ return sc;
      */
     _parseAxes: function(hash)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_parseAxes", 4616);
-_yuitest_coverline("build/charts-base/charts-base.js", 4618);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_parseAxes", 4619);
+_yuitest_coverline("build/charts-base/charts-base.js", 4621);
 if(!this._axes)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4620);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4623);
 this._axes = {};
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 4622);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4625);
 var i, pos, axis, dh, config, AxisClass,
             type = this.get("type"),
             w = this.get("width"),
             h = this.get("height"),
             node = Y.Node.one(this._parentNode);
-        _yuitest_coverline("build/charts-base/charts-base.js", 4627);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4630);
 if(!w)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4629);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4632);
 this.set("width", node.get("offsetWidth"));
-            _yuitest_coverline("build/charts-base/charts-base.js", 4630);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4633);
 w = this.get("width");
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 4632);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4635);
 if(!h)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4634);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4637);
 this.set("height", node.get("offsetHeight"));
-            _yuitest_coverline("build/charts-base/charts-base.js", 4635);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4638);
 h = this.get("height");
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 4637);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4640);
 for(i in hash)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4639);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4642);
 if(hash.hasOwnProperty(i))
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 4641);
-dh = hash[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 4642);
-pos = type === "pie" ? "none" : dh.position;
-                _yuitest_coverline("build/charts-base/charts-base.js", 4643);
-AxisClass = this._getAxisClass(dh.type);
                 _yuitest_coverline("build/charts-base/charts-base.js", 4644);
-config = {dataProvider:this.get("dataProvider")};
+dh = hash[i];
                 _yuitest_coverline("build/charts-base/charts-base.js", 4645);
+pos = type === "pie" ? "none" : dh.position;
+                _yuitest_coverline("build/charts-base/charts-base.js", 4646);
+AxisClass = this._getAxisClass(dh.type);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4647);
+config = {dataProvider:this.get("dataProvider")};
+                _yuitest_coverline("build/charts-base/charts-base.js", 4648);
 if(dh.hasOwnProperty("roundingUnit"))
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4647);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4650);
 config.roundingUnit = dh.roundingUnit;
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4649);
-config.keys = dh.keys;
-                _yuitest_coverline("build/charts-base/charts-base.js", 4650);
-config.width = w;
-                _yuitest_coverline("build/charts-base/charts-base.js", 4651);
-config.height = h;
                 _yuitest_coverline("build/charts-base/charts-base.js", 4652);
-config.position = pos;
+config.keys = dh.keys;
                 _yuitest_coverline("build/charts-base/charts-base.js", 4653);
-config.styles = dh.styles;
+config.width = w;
                 _yuitest_coverline("build/charts-base/charts-base.js", 4654);
-axis = new AxisClass(config);
+config.height = h;
                 _yuitest_coverline("build/charts-base/charts-base.js", 4655);
-axis.on("axisRendered", Y.bind(this._itemRendered, this));
+config.position = pos;
                 _yuitest_coverline("build/charts-base/charts-base.js", 4656);
+config.styles = dh.styles;
+                _yuitest_coverline("build/charts-base/charts-base.js", 4657);
+axis = new AxisClass(config);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4658);
+axis.on("axisRendered", Y.bind(this._itemRendered, this));
+                _yuitest_coverline("build/charts-base/charts-base.js", 4659);
 this._axes[i] = axis;
             }
         }
@@ -6089,48 +6092,48 @@ this._axes[i] = axis;
      */
     _addAxes: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_addAxes", 4667);
-_yuitest_coverline("build/charts-base/charts-base.js", 4669);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_addAxes", 4670);
+_yuitest_coverline("build/charts-base/charts-base.js", 4672);
 var axes = this.get("axes"),
             i,
             axis,
             p;
-        _yuitest_coverline("build/charts-base/charts-base.js", 4673);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4676);
 if(!axes)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4675);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4678);
 this.set("axes", this._getDefaultAxes());
-            _yuitest_coverline("build/charts-base/charts-base.js", 4676);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4679);
 axes = this.get("axes");
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 4678);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4681);
 if(!this._axesCollection)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4680);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4683);
 this._axesCollection = [];
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 4682);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4685);
 for(i in axes)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4684);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4687);
 if(axes.hasOwnProperty(i))
             {
-                _yuitest_coverline("build/charts-base/charts-base.js", 4686);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4689);
 axis = axes[i];
-                _yuitest_coverline("build/charts-base/charts-base.js", 4687);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4690);
 p = axis.get("position");
-                _yuitest_coverline("build/charts-base/charts-base.js", 4688);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4691);
 if(!this.get(p + "AxesCollection"))
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4690);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4693);
 this.set(p + "AxesCollection", [axis]);
                 }
                 else
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4694);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4697);
 this.get(p + "AxesCollection").push(axis);
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4696);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4699);
 this._axesCollection.push(axis);
             }
         }
@@ -6144,23 +6147,23 @@ this._axesCollection.push(axis);
      */
     _addSeries: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_addSeries", 4707);
-_yuitest_coverline("build/charts-base/charts-base.js", 4709);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_addSeries", 4710);
+_yuitest_coverline("build/charts-base/charts-base.js", 4712);
 var graph = this.get("graph"),
             seriesCollection = this.get("seriesCollection");
-        _yuitest_coverline("build/charts-base/charts-base.js", 4711);
-this._parseSeriesAxes(seriesCollection);
-        _yuitest_coverline("build/charts-base/charts-base.js", 4712);
-graph.set("showBackground", false);
-        _yuitest_coverline("build/charts-base/charts-base.js", 4713);
-graph.set("width", this.get("width"));
         _yuitest_coverline("build/charts-base/charts-base.js", 4714);
-graph.set("height", this.get("height"));
+this._parseSeriesAxes(seriesCollection);
         _yuitest_coverline("build/charts-base/charts-base.js", 4715);
-graph.set("seriesCollection", seriesCollection);
+graph.set("showBackground", false);
         _yuitest_coverline("build/charts-base/charts-base.js", 4716);
-this._seriesCollection = graph.get("seriesCollection");
+graph.set("width", this.get("width"));
         _yuitest_coverline("build/charts-base/charts-base.js", 4717);
+graph.set("height", this.get("height"));
+        _yuitest_coverline("build/charts-base/charts-base.js", 4718);
+graph.set("seriesCollection", seriesCollection);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4719);
+this._seriesCollection = graph.get("seriesCollection");
+        _yuitest_coverline("build/charts-base/charts-base.js", 4720);
 graph.render(this.get("contentBox"));
     },
 
@@ -6173,53 +6176,53 @@ graph.render(this.get("contentBox"));
      */
     _parseSeriesAxes: function(c)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_parseSeriesAxes", 4727);
-_yuitest_coverline("build/charts-base/charts-base.js", 4729);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_parseSeriesAxes", 4730);
+_yuitest_coverline("build/charts-base/charts-base.js", 4732);
 var i = 0,
             len = c.length,
             s,
             axes = this.get("axes"),
             axis;
-        _yuitest_coverline("build/charts-base/charts-base.js", 4734);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4737);
 for(; i < len; ++i)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4736);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4739);
 s = c[i];
-            _yuitest_coverline("build/charts-base/charts-base.js", 4737);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4740);
 if(s)
             {
                 //If series is an actual series instance,
                 //replace axes attribute string ids with axes
-                _yuitest_coverline("build/charts-base/charts-base.js", 4741);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4744);
 if(s instanceof Y.PieSeries)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4743);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4746);
 axis = s.get("categoryAxis");
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4744);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4747);
 if(axis && !(axis instanceof Y.Axis))
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4746);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4749);
 s.set("categoryAxis", axes[axis]);
                     }
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4748);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4751);
 axis = s.get("valueAxis");
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4749);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4752);
 if(axis && !(axis instanceof Y.Axis))
                     {
-                        _yuitest_coverline("build/charts-base/charts-base.js", 4751);
+                        _yuitest_coverline("build/charts-base/charts-base.js", 4754);
 s.set("valueAxis", axes[axis]);
                     }
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4753);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4756);
 continue;
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4755);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4758);
 s.categoryAxis = axes.category;
-                _yuitest_coverline("build/charts-base/charts-base.js", 4756);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4759);
 s.valueAxis = axes.values;
-                _yuitest_coverline("build/charts-base/charts-base.js", 4757);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4760);
 if(!s.type)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4759);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4762);
 s.type = this.get("type");
                 }
             }
@@ -6235,12 +6238,12 @@ s.type = this.get("type");
      */
     _getDefaultAxes: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getDefaultAxes", 4772);
-_yuitest_coverline("build/charts-base/charts-base.js", 4774);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getDefaultAxes", 4775);
+_yuitest_coverline("build/charts-base/charts-base.js", 4777);
 var catKey = this.get("categoryKey"),
             seriesKeys = this.get("seriesKeys").concat(),
             seriesAxis = "numeric";
-        _yuitest_coverline("build/charts-base/charts-base.js", 4777);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4780);
 return {
             values:{
                 keys:seriesKeys,
@@ -6263,8 +6266,8 @@ return {
      */
     getSeriesItems: function(series, index)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "getSeriesItems", 4797);
-_yuitest_coverline("build/charts-base/charts-base.js", 4799);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "getSeriesItems", 4800);
+_yuitest_coverline("build/charts-base/charts-base.js", 4802);
 var categoryItem = {
                 axis: series.get("categoryAxis"),
                 key: series.get("categoryKey"),
@@ -6275,11 +6278,11 @@ var categoryItem = {
                 key: series.get("valueKey"),
                 displayName: series.get("valueDisplayName")
             };
-        _yuitest_coverline("build/charts-base/charts-base.js", 4809);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4812);
 categoryItem.value = categoryItem.axis.getKeyValueAt(categoryItem.key, index);
-        _yuitest_coverline("build/charts-base/charts-base.js", 4810);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4813);
 valueItem.value = valueItem.axis.getKeyValueAt(valueItem.key, index);
-        _yuitest_coverline("build/charts-base/charts-base.js", 4811);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4814);
 return {category:categoryItem, value:valueItem};
     },
 
@@ -6292,8 +6295,8 @@ return {category:categoryItem, value:valueItem};
      */
     _sizeChanged: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_sizeChanged", 4821);
-_yuitest_coverline("build/charts-base/charts-base.js", 4823);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_sizeChanged", 4824);
+_yuitest_coverline("build/charts-base/charts-base.js", 4826);
 this._redraw();
     },
 
@@ -6305,20 +6308,20 @@ this._redraw();
      */
     _redraw: function()
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_redraw", 4832);
-_yuitest_coverline("build/charts-base/charts-base.js", 4834);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_redraw", 4835);
+_yuitest_coverline("build/charts-base/charts-base.js", 4837);
 var graph = this.get("graph"),
             w = this.get("width"),
             h = this.get("height"),
             dimension;
-        _yuitest_coverline("build/charts-base/charts-base.js", 4838);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4841);
 if(graph)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4840);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4843);
 dimension = Math.min(w, h);
-            _yuitest_coverline("build/charts-base/charts-base.js", 4841);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4844);
 graph.set("width", dimension);
-            _yuitest_coverline("build/charts-base/charts-base.js", 4842);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4845);
 graph.set("height", dimension);
         }
     },
@@ -6348,24 +6351,24 @@ graph.set("height", dimension);
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_tooltipLabelFunction", 4869);
-_yuitest_coverline("build/charts-base/charts-base.js", 4871);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_tooltipLabelFunction", 4872);
+_yuitest_coverline("build/charts-base/charts-base.js", 4874);
 var msg = DOCUMENT.createElement("div"),
             total = series.getTotalValues(),
             pct = Math.round((valueItem.value / total) * 10000)/100;
-        _yuitest_coverline("build/charts-base/charts-base.js", 4874);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4877);
 msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName +
         ": " + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")])));
-        _yuitest_coverline("build/charts-base/charts-base.js", 4876);
-msg.appendChild(DOCUMENT.createElement("br"));
-        _yuitest_coverline("build/charts-base/charts-base.js", 4877);
-msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName +
-        ": " + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")])));
         _yuitest_coverline("build/charts-base/charts-base.js", 4879);
 msg.appendChild(DOCUMENT.createElement("br"));
         _yuitest_coverline("build/charts-base/charts-base.js", 4880);
+msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName +
+        ": " + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")])));
+        _yuitest_coverline("build/charts-base/charts-base.js", 4882);
+msg.appendChild(DOCUMENT.createElement("br"));
+        _yuitest_coverline("build/charts-base/charts-base.js", 4883);
 msg.appendChild(DOCUMENT.createTextNode(pct + "%"));
-        _yuitest_coverline("build/charts-base/charts-base.js", 4881);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4884);
 return msg;
     },
 
@@ -6378,8 +6381,8 @@ return msg;
      */
     _getAriaMessage: function(key)
     {
-        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getAriaMessage", 4891);
-_yuitest_coverline("build/charts-base/charts-base.js", 4893);
+        _yuitest_coverfunc("build/charts-base/charts-base.js", "_getAriaMessage", 4894);
+_yuitest_coverline("build/charts-base/charts-base.js", 4896);
 var msg = "",
             categoryItem,
             items,
@@ -6391,59 +6394,59 @@ var msg = "",
             total,
             pct,
             markers;
-        _yuitest_coverline("build/charts-base/charts-base.js", 4904);
-series = this.getSeries(parseInt(seriesIndex, 10));
-        _yuitest_coverline("build/charts-base/charts-base.js", 4905);
-markers = series.get("markers");
-        _yuitest_coverline("build/charts-base/charts-base.js", 4906);
-len = markers && markers.length ? markers.length : 0;
         _yuitest_coverline("build/charts-base/charts-base.js", 4907);
+series = this.getSeries(parseInt(seriesIndex, 10));
+        _yuitest_coverline("build/charts-base/charts-base.js", 4908);
+markers = series.get("markers");
+        _yuitest_coverline("build/charts-base/charts-base.js", 4909);
+len = markers && markers.length ? markers.length : 0;
+        _yuitest_coverline("build/charts-base/charts-base.js", 4910);
 if(key === 37)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4909);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4912);
 itemIndex = itemIndex > 0 ? itemIndex - 1 : len - 1;
         }
-        else {_yuitest_coverline("build/charts-base/charts-base.js", 4911);
+        else {_yuitest_coverline("build/charts-base/charts-base.js", 4914);
 if(key === 39)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4913);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4916);
 itemIndex = itemIndex >= len - 1 ? 0 : itemIndex + 1;
         }}
-        _yuitest_coverline("build/charts-base/charts-base.js", 4915);
-this._itemIndex = itemIndex;
-        _yuitest_coverline("build/charts-base/charts-base.js", 4916);
-items = this.getSeriesItems(series, itemIndex);
-        _yuitest_coverline("build/charts-base/charts-base.js", 4917);
-categoryItem = items.category;
         _yuitest_coverline("build/charts-base/charts-base.js", 4918);
-valueItem = items.value;
+this._itemIndex = itemIndex;
         _yuitest_coverline("build/charts-base/charts-base.js", 4919);
-total = series.getTotalValues();
+items = this.getSeriesItems(series, itemIndex);
         _yuitest_coverline("build/charts-base/charts-base.js", 4920);
-pct = Math.round((valueItem.value / total) * 10000)/100;
+categoryItem = items.category;
         _yuitest_coverline("build/charts-base/charts-base.js", 4921);
+valueItem = items.value;
+        _yuitest_coverline("build/charts-base/charts-base.js", 4922);
+total = series.getTotalValues();
+        _yuitest_coverline("build/charts-base/charts-base.js", 4923);
+pct = Math.round((valueItem.value / total) * 10000)/100;
+        _yuitest_coverline("build/charts-base/charts-base.js", 4924);
 if(categoryItem && valueItem)
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4923);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4926);
 msg += categoryItem.displayName +
                 ": " +
                 categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) +
                 ", ";
-            _yuitest_coverline("build/charts-base/charts-base.js", 4927);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4930);
 msg += valueItem.displayName +
                 ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) +
                 ", ";
-            _yuitest_coverline("build/charts-base/charts-base.js", 4930);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4933);
 msg += "Percent of total " + valueItem.displayName + ": " + pct + "%,";
         }
         else
         {
-            _yuitest_coverline("build/charts-base/charts-base.js", 4934);
+            _yuitest_coverline("build/charts-base/charts-base.js", 4937);
 msg += "No data available,";
         }
-        _yuitest_coverline("build/charts-base/charts-base.js", 4936);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4939);
 msg += (itemIndex + 1) + " of " + len + ". ";
-        _yuitest_coverline("build/charts-base/charts-base.js", 4937);
+        _yuitest_coverline("build/charts-base/charts-base.js", 4940);
 return msg;
     }
 }, {
@@ -6459,16 +6462,16 @@ return msg;
 
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4950);
-_yuitest_coverline("build/charts-base/charts-base.js", 4952);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4953);
+_yuitest_coverline("build/charts-base/charts-base.js", 4955);
 if(this._description)
                 {
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4954);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4957);
 this._description.setContent("");
-                    _yuitest_coverline("build/charts-base/charts-base.js", 4955);
+                    _yuitest_coverline("build/charts-base/charts-base.js", 4958);
 this._description.appendChild(DOCUMENT.createTextNode(val));
                 }
-                _yuitest_coverline("build/charts-base/charts-base.js", 4957);
+                _yuitest_coverline("build/charts-base/charts-base.js", 4960);
 return val;
             }
         },
@@ -6482,15 +6485,15 @@ return val;
         axes: {
             getter: function()
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4968);
-_yuitest_coverline("build/charts-base/charts-base.js", 4970);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4971);
+_yuitest_coverline("build/charts-base/charts-base.js", 4973);
 return this._axes;
             },
 
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4973);
-_yuitest_coverline("build/charts-base/charts-base.js", 4975);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4976);
+_yuitest_coverline("build/charts-base/charts-base.js", 4978);
 this._parseAxes(val);
             }
         },
@@ -6507,15 +6510,15 @@ this._parseAxes(val);
 
             getter: function()
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4989);
-_yuitest_coverline("build/charts-base/charts-base.js", 4991);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "getter", 4992);
+_yuitest_coverline("build/charts-base/charts-base.js", 4994);
 return this._getSeriesCollection();
             },
 
             setter: function(val)
             {
-                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4994);
-_yuitest_coverline("build/charts-base/charts-base.js", 4996);
+                _yuitest_coverfunc("build/charts-base/charts-base.js", "setter", 4997);
+_yuitest_coverline("build/charts-base/charts-base.js", 4999);
 return this._setSeriesCollection(val);
             }
         },
@@ -6538,23 +6541,23 @@ return this._setSeriesCollection(val);
  * @constructor
  * @submodule charts-base
  */
-_yuitest_coverline("build/charts-base/charts-base.js", 5018);
+_yuitest_coverline("build/charts-base/charts-base.js", 5021);
 function Chart(cfg)
 {
-    _yuitest_coverfunc("build/charts-base/charts-base.js", "Chart", 5018);
-_yuitest_coverline("build/charts-base/charts-base.js", 5020);
+    _yuitest_coverfunc("build/charts-base/charts-base.js", "Chart", 5021);
+_yuitest_coverline("build/charts-base/charts-base.js", 5023);
 if(cfg.type !== "pie")
     {
-        _yuitest_coverline("build/charts-base/charts-base.js", 5022);
+        _yuitest_coverline("build/charts-base/charts-base.js", 5025);
 return new Y.CartesianChart(cfg);
     }
     else
     {
-        _yuitest_coverline("build/charts-base/charts-base.js", 5026);
+        _yuitest_coverline("build/charts-base/charts-base.js", 5029);
 return new Y.PieChart(cfg);
     }
 }
-_yuitest_coverline("build/charts-base/charts-base.js", 5029);
+_yuitest_coverline("build/charts-base/charts-base.js", 5032);
 Y.Chart = Chart;
 
 
