@@ -666,7 +666,6 @@ treeSuite.add(new Y.Test.Case({
 
     'insertNode() should fire an `add` event with a custom src': function () {
         var node = this.tree.createNode({id: 'inserted'}),
-            test = this,
             fired;
 
         this.tree.once('add', function (e) {
@@ -713,7 +712,6 @@ treeSuite.add(new Y.Test.Case({
 
     'removeNode() should pass along a custom `src`': function () {
         var node = this.tree.children[1],
-            test = this,
             fired;
 
         this.tree.once('remove', function (e) {
@@ -1228,8 +1226,7 @@ lazySuite.add(new Y.Test.Case({
     },
 
     '`beforeLoad` event should be preventable': function () {
-        var test = this,
-            fired,
+        var fired,
             loadCalled;
 
         this.lazy.on('beforeLoad', function (e) {
