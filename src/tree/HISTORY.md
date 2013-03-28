@@ -1,6 +1,18 @@
 Tree Change History
 ===================
 
+@VERSION@
+-----
+
+* Added `Tree#findNode()` and `Tree.Node#find()` methods, which pass the
+  specified node and each of its descendants to a callback function and returns
+  the first node for which the callback returns a truthy value. [Ryan Grove]
+
+* Added `Tree#traverseNode()` and `Tree.Node#traverse()` methods, which pass the
+  specified node and each of its descendants to a callback function in
+  depth-first order. [Ryan Grove]
+
+
 3.9.1
 -----
 
