@@ -700,6 +700,21 @@ WidgetButtons.prototype = {
     },
 
     /**
+    Inserts the button container `buttonContainer` node into this widget's DOM
+    at the specified `section`.
+
+    @method _insertButtonContainer
+    @param {String} section The `WidgetStdMod` section (header/body/footer).
+    @param {Node} buttonContainer The button container node to insert into this
+        widget's DOM.
+    @protected
+    @since 3.9.1
+    **/
+    _insertButtonContainer: function(section, buttonContainer) {
+        this.setStdModContent(section, buttonContainer, 'after');
+    },
+
+    /**
     Adds the specified `button` to the buttons map (both name -> button and
     section:name -> button), and sets the button as the default if it is
     configured as the default button.
@@ -939,7 +954,7 @@ WidgetButtons.prototype = {
         buttonContainer.insertBefore(button, sectionButtons.item(index));
 
         // Adds the button container to the section content.
-        this.setStdModContent(section, buttonContainer, 'after');
+        this._insertButtonContainer(section, buttonContainer);
     },
 
     /**
@@ -1071,7 +1086,7 @@ WidgetButtons.prototype = {
 
             // Adds the button container to the section content.
             if (buttonsUpdated) {
-                this.setStdModContent(section, buttonContainer, 'after');
+                this._insertButtonContainer(section, buttonContainer);
             }
         }, this);
     },
