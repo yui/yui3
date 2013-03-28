@@ -1,7 +1,7 @@
 // Constants to refer to the parts of the date array
 var YR = 0, MO = 1, D = 2, H = 3, MI = 4, S = 5;
-    digitsRegExp = /\s*(\d+)/g,
-    spaceRegExp = /\s/,
+    digitsRegExp = /^\s*(\d+)/,
+    spaceRegExp = /(\s+)/g,
 /**
  * Parse number submodule.
  *
@@ -20,15 +20,6 @@ Y.mix(Y.namespace("Date"), {
      */
     _data:null,
 
-    /**
-     * Position of the next character to be read from [_data](#property__data),
-     * @property _index
-     * @type Integer
-     * @default 0
-     * @private
-     */
-    _index:0,
-
 
     /**
      * Turns a sequence of digits into a number.
@@ -40,11 +31,10 @@ Y.mix(Y.namespace("Date"), {
      * @private
      */
     _parseDigits: function (maxLen, max) {
-
-        digitsRegExp.lastIndex = this._index;
         var m = digitsRegExp.exec(this._data),
             val = m[1].substr(0, maxLen);
-        this._index += val.length;
+
+        this._data = this._data.substr(m[0].length);
         val = parseInt(val, 10);
 
         if (val < 0 || max && val > max) {
@@ -64,8 +54,7 @@ Y.mix(Y.namespace("Date"), {
     _parseStrings: function (key) {
         var i,l,
             options = this._resources[key],
-            index = this._index,
-            data = this._data.substr(index),
+            data = Y.Lang.trimLeft(this._data),
             len = 0, winner = NaN ;
         for (i = 0; i < options.length; i += 1) {
             if (data.indexOf(options[i].toLowerCase()) === 0) {
@@ -76,7 +65,7 @@ Y.mix(Y.namespace("Date"), {
                 }
             }
         }
-        this._index += len;
+        this._data = data.substr(len);
         return winner;
     },
     /**
@@ -112,7 +101,7 @@ Y.mix(Y.namespace("Date"), {
             return d[MO] = this._parseStrings('B');
         },
         C: function (d) {
-            return d[YR] += this._parseDigits(2);
+            return d[YR] += this._parseDigits(2) * 100;
         },
         d: function (d) {
             return d[D] = this._parseDigits(2, 31);
@@ -131,7 +120,7 @@ Y.mix(Y.namespace("Date"), {
             return d[H] += this._parseDigits(2, 23);
         },
         I: function (d) {
-            return d[H] += this._parseDigits(2, 12) - 1;
+            return d[H] += this._parseDigits(2, 12);
         },
         j: function () {
             // The year might not be in yet, so I leave it pending
@@ -142,7 +131,7 @@ Y.mix(Y.namespace("Date"), {
             return d[H] += this._parseDigits(2, 23);
         },
         l: function (d) {
-           return  d[H] +=  this._parseDigits(2, 12) - 1;
+           return  d[H] +=  this._parseDigits(2, 12);
         },
         m: function (d) {
             return d[MO] = this._parseDigits(2, 12) - 1;
@@ -158,7 +147,7 @@ Y.mix(Y.namespace("Date"), {
         },
         s: function () {
             // The seconds by themselves provide all that is needed
-            return this._pending.s = parseInt(this._data.substr(this._index), 10);
+            return this._pending.s = this._parseDigits(999);
         },
         S: function (d) {
             return d[S] = this._parseDigits(2, 59);
@@ -192,7 +181,7 @@ Y.mix(Y.namespace("Date"), {
         z: function (d) {
 
             var more = false, sign = 1, h = 0, m = 0,
-                data = this._data.substr(this._index),
+                data = this._data,
                 code = data[0],
                 offset = new Date().getTimezoneOffset();
             switch (code) {
@@ -215,13 +204,13 @@ Y.mix(Y.namespace("Date"), {
                         sign = -1;
                     }
             }
-            this._index += 1;
+            this._data = this._data.substr(1);
             if (more) {
 
                 if (isNaN(h = this._parseDigits(4))) {
                     return NaN;
                 }
-                if (h < 100 && data[this._index] === ':') {
+                if (h < 100 && data[0] === ':') {
                     if (isNaN(m = this._parseDigits(2))) {
                         return NaN;
                     }
@@ -250,7 +239,8 @@ Y.mix(Y.namespace("Date"), {
 
         },
         '%': function () {
-            this._index +=1;
+            this._data = this._data.substr(1);
+            return true;
         }
 
 
@@ -258,6 +248,15 @@ Y.mix(Y.namespace("Date"), {
     /**
      * Converts data to type Date. If `format` is specified and `data` is a string
      * it will parse it according to that spec, otherwise, it will try `Date.parse`.
+     *
+     * The parser tries to be tolerant.  Whitespace is mostly ignored and leading zeros
+     * are not required.  The `%Z` format is not supported as well as those derived
+     * from it (such as %c in the `en` locale).
+     *
+     * Some formats, such as
+     * the day of the week, are ignored for the calculation, since they don't provide
+     * enough information on their own, but are required to be present in the input
+     * string.
      *
      *
      * @method parse
@@ -272,7 +271,8 @@ Y.mix(Y.namespace("Date"), {
         var val,
             d = [0,0,0,0,0,0,0],
             parsers = this.parsers,
-            i, p = false, c;
+            i, p = false, c,
+            L = Y.Lang;
 
         cutoff = (cutoff === undefined ? 30 : cutoff);
 
@@ -280,10 +280,10 @@ Y.mix(Y.namespace("Date"), {
         if (data && format && typeof(data) === 'string' && +data != data) {
         /*jshint eqeqeq:true */
 
-            this._data = data = data.toLowerCase();
-            this._index = 0;
-            format = this._expandAggregates(format);
+            this._data = data.toLowerCase();
+            format = this._expandAggregates(format).replace(spaceRegExp, '');
 
+            this._pending = {};
 
             scan: for (i = 0; i < format.length; i+=1) {
                 c = format[i];
@@ -296,16 +296,14 @@ Y.mix(Y.namespace("Date"), {
 
                     }
                 } else {
-                    if (spaceRegExp.test(c)) {
-
-                    }
-                    if (c === '%') {
+                    if (c ==='%') {
                         p = true;
                     } else {
-                        if (data[this._index] !== c.toLowerCase()) {
+                        data = L.trimLeft(this._data);
+                        if (data[0] !== c.toLowerCase()) {
                             break scan;
                         }
-                        this._index += 1;
+                        this._data = data.substr(1);
                     }
                 }
             }
@@ -334,7 +332,7 @@ Y.mix(Y.namespace("Date"), {
         } else {
 
             val = new Date(+data || data);
-            if (Y.Lang.isDate(val)) {
+            if (L.isDate(val)) {
                 return val;
             } else {
                 Y.log("Could not convert data " + Y.dump(val) + " to type Date", "warn", "date");
