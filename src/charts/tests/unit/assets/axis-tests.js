@@ -128,6 +128,14 @@ YUI.add('axis-tests', function(Y) {
             return direction + "_" + i;t
         },
 
+        _getDataFromLabelValues: function() {
+            this._bucket._getDataFromLabelValues = true;
+            return {
+                points: [],
+                values: []
+            };
+        },
+
         _rotate: function() {
             //dummy method
         },
@@ -967,6 +975,40 @@ YUI.add('axis-tests', function(Y) {
             matrix.translate(transformX, transformY);
             matrix.rotate(rot);
             matrix.translate(-transformX, -transformY);
+        },
+    
+        _getPoints: function(startPoint, len, edgeOffset, majorUnitDistance, direction, padding)
+        {
+            var points = [],
+                i,
+                staticCoord,
+                dynamicCoord,
+                constantVal,
+                newPoint,
+                coord;
+            if(direction === "vertical")
+            {
+                staticCoord = "x";
+                dynamicCoord = "y";
+                padding = padding.top;
+            }
+            else
+            {
+                staticCoord = "y";
+                dynamicCoord = "x";
+                padding = padding.left;
+            }
+            constantVal = startPoint[staticCoord];
+            coord = edgeOffset + padding;
+            for(i = 0; i < len; i = i + 1)
+            {
+                newPoint = {};
+                newPoint[staticCoord] = constantVal;
+                newPoint[dynamicCoord] = coord;
+                points.push(newPoint);
+                coord = coord + majorUnitDistance;
+            }
+            return points;
         },
 
         setUp: function() {
@@ -1962,8 +2004,17 @@ YUI.add('axis-tests', function(Y) {
             mockAxis._titleTextField = mockLabel;
             this.axis._drawAxis.apply(mockAxis);
             Y.Assert.areEqual(2, mockAxis._bucket.shapes.length, "There should be two path instances if the majorTicks.style.position is not equal to none.");
+        
+            //The mockaxis' _getDataFromLabelValues method returns an empty array after setting the bucket _getDataFromLabelValues property to true. 
+            //The empty array forces the code to hit the len < 0 branch.
+            mockAxis.set("labelValues", [
+                "label1", 
+                "label2",
+                "label3"
+            ]);
+            this.axis._drawAxis.apply(mockAxis);
+            Y.Assert.isTrue(mockAxis._bucket._getDataFromLabelValues, "The _getDataFromLabelValues should have been called.");
         },
-
         
         "test: _setTotalTitleSize(styles)" : function() {
             var axis = this.axis,
@@ -2499,6 +2550,21 @@ YUI.add('axis-tests', function(Y) {
             Y.Assert.areEqual(none, this.axis.get("position"), "The axis position should be " + none + ".");
         },
 
+        "test: get/set('labelValues')" : function() {
+            var axis = this.axis,
+                testLabelValues = ["label1", "label2", "label3"],
+                testLabelValues2 = ["label4", "label5", "label6", "label7"];
+            Y.Assert.isUndefined(axis.get("labelValues"), "The should not be a value for the labelValues attribute.");
+            axis.set("labelValues", testLabelValues);
+            Y.Assert.areEqual(testLabelValues, axis.get("labelValues"), "The labelValues attribute should have been set.");
+            Y.Assert.isTrue(axis._labelValuesExplicitlySet, "The value of the _labelValuesExplicitlySet should bet true.");
+            axis.set("labelValues", testLabelValues2, {src: "internal"});
+            Y.Assert.areEqual(testLabelValues2, axis.get("labelValues"), "The labelValues attribute should have been set.");
+            //Don't run this test until fix for #2533172 is available  
+            //Y.Assert.isFalse(axis._labelValuesExplicitlySet, "The value of the _labelValuesExplicitlySet should be false.");
+
+        },
+
         "test: getTotalMajorUnits()" : function() {
             var position = this.position,
                 vertical = position === "left" || position === "right",
@@ -2523,6 +2589,52 @@ YUI.add('axis-tests', function(Y) {
                 }
            });
            Y.Assert.areEqual(8, this.axis.getTotalMajorUnits(), "The getTotalMajorUnits method should return 8.");
+        },
+
+        "test: _getPoints()" : function() {
+            var axis = this.axis,
+                styles = axis.get("styles"),
+                i,
+                len = axis.getTotalMajorUnits(), 
+                position = this.position,
+                direction = position === "left" || position === "right" ? "vertical" : "horizontal",
+                layouts = {
+                    left: Y.LeftAxisLayout,
+                    top: Y.TopAxisLayout,
+                    right: Y.RightAxisLayout,
+                    bottom: Y.BottomAxisLayout
+                },
+                startPoint = axis.getFirstPoint(layouts[position].prototype.getLineStart.apply(axis)),
+                edgeOffset = 0,
+                majorUnitDistance = axis.getMajorUnitDistance(len, axis.getLength(), styles.majorUnit),
+                axisPoints,
+                testPoints,
+                axisPoint,
+                testPoint,
+                assertFn = function() {
+                    axisPoints = axis._getPoints.apply(axis, [
+                        startPoint,
+                        len,
+                        edgeOffset,
+                        majorUnitDistance,
+                        direction
+                    ]);
+                    testPoints = this._getPoints(
+                        startPoint,
+                        len,
+                        edgeOffset,
+                        majorUnitDistance,
+                        direction,
+                        styles.padding
+                    );
+                    for(i = 0; i < len; i = i + 1) {
+                        testPoint = testPoints[i];
+                        axisPoint = axisPoints[i];
+                        Y.Assert.areEqual(testPoint.x, axisPoint.x, "The x value for the " + i + " index of the axis points should be " + testPoint.x + "."); 
+                        Y.Assert.areEqual(testPoint.y, axisPoint.y, "The y value for the " + i + " index of the axis points should be " + testPoint.y + "."); 
+                    }
+                };
+            assertFn.apply(this);
         }
     });
 

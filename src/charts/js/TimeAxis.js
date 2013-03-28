@@ -43,6 +43,64 @@ Y.TimeAxis = Y.Base.create("timeAxis", Y.Axis, [Y.TimeImpl], {
             label = min + increm;
         }
         return label;
+    },
+
+    /**
+     * Calculates the position of ticks and labels based on an array of specified label values. Returns
+     * an object containing an array of values to be used for labels and an array of objects containing
+     * x and y coordinates for each label.
+     *
+     * @method _getDataFromLabelValues
+     * @param {Object} startPoint An object containing the x and y coordinates for the start of the axis.
+     * @param {Array} labelValues An array containing values to be used for determining the number and
+     * position of labels and ticks on the axis.
+     * @param {Number} edgeOffset The distance, in pixels, on either edge of the axis.
+     * @param {Number} layoutLength The length, in pixels, of the axis. If the axis is vertical, the length
+     * is equal to the height. If the axis is horizontal, the length is equal to the width.
+     * @return Object
+     * @private
+     */
+    _getDataFromLabelValues: function(startPoint, labelValues, edgeOffset, layoutLength, direction)
+    {
+        var points = [],
+            labelValue,
+            i,
+            len = labelValues.length,
+            staticCoord,
+            dynamicCoord,
+            constantVal,
+            newPoint,
+            max = this.get("maximum"),
+            min = this.get("minimum"),
+            values = [],
+            scaleFactor = (layoutLength - (edgeOffset * 2)) / (max - min);
+        if(direction === "vertical")
+        {
+            staticCoord = "x";
+            dynamicCoord = "y";
+        }
+        else
+        {
+            staticCoord = "y";
+            dynamicCoord = "x";
+        }
+        constantVal = startPoint[staticCoord];
+        for(i = 0; i < len; i = i + 1)
+        {
+            labelValue = this._getNumber(labelValues[i]);
+            if(Y.Lang.isNumber(labelValue) && labelValue >= min && labelValue <= max)
+            {
+                newPoint = {};
+                newPoint[staticCoord] = constantVal;
+                newPoint[dynamicCoord] = edgeOffset + ((labelValue - min) * scaleFactor);
+                points.push(newPoint);
+                values.push(labelValue);
+            }
+        }
+        return {
+            points: points,
+            values: values
+        };
     }
 });
 
