@@ -1,6 +1,12 @@
 Tree Change History
 ===================
 
+@VERSION@
+-----
+
+* Fixed: The number returned by `Tree#size()` didn't include the root node.
+  [Ryan Grove]
+
 3.9.1
 -----
 
