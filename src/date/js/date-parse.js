@@ -1,5 +1,7 @@
 // Constants to refer to the parts of the date array
 var YR = 0, MO = 1, D = 2, H = 3, MI = 4, S = 5;
+    digitsRegExp = /\s*(\d+)/g,
+    spaceRegExp = /\s/,
 /**
  * Parse number submodule.
  *
@@ -8,151 +10,190 @@ var YR = 0, MO = 1, D = 2, H = 3, MI = 4, S = 5;
  * @for Date
  */
 Y.mix(Y.namespace("Date"), {
+
     /**
-     * Turns a sequence of digits into a number.
-     * Returns an array containing the value parsed and the number of characters read.
-     *
+     * Local copy of the data to be parsed.
+     * @property _data
+     * @type String
+     * @default null
+     * @private
      */
     _data:null,
+
+    /**
+     * Position of the next character to be read from [_data](#property__data),
+     * @property _index
+     * @type Integer
+     * @default 0
+     * @private
+     */
     _index:0,
-    _errorFlag: false,
-    _parseDigits: function (maxLen, max, skipSpace) {
-        var i, digit, val = 0,
-            index = this._index,
-            data = this._data;
-        for (i = 0; i < maxLen; i += 1, index += 1) {
-            if (!(skipSpace && data[index] === ' ')) {
-                digit = parseInt(data[index],10);
-                if (isNaN(digit)) {
-                    if (i === 0) {
-                        this._errorFlag = true;
-                        return NaN;
-                    }
-                    break;
-                }
-                val = val * 10 + digit;
-            }
-        }
+
+
+    /**
+     * Turns a sequence of digits into a number.
+     * Returns the parsed value.
+     * @method _parseDigits
+     * @param maxLen {Integer} Maximum number of characters to read
+     * @param [max] {Integer} Maximum acceptable value, such as 59 for minutes.
+     * @return {Integer} Value parsed.
+     * @private
+     */
+    _parseDigits: function (maxLen, max) {
+
+        digitsRegExp.lastIndex = this._index;
+        var m = digitsRegExp.exec(this._data),
+            val = m[1].substr(0, maxLen);
+        this._index += val.length;
+        val = parseInt(val, 10);
+
         if (val < 0 || max && val > max) {
-            this._errorFlag = true;
             return NaN;
         }
-        this._index = index;
         return val;
     },
-    _parseStrings: function (options) {
-        var i,
+    /**
+     * Returns the index position of the value in the array of localized strings that
+     * matches the most characters of the string being parsed at the current index position.
+     * @method _parseStrings
+     * @param key {String} Key within the language resources used to retrieve the
+     *          array of localized strings to look for in the parsed string.
+     * @return {Integer} Index of the first string that matches.
+     * @private
+     */
+    _parseStrings: function (key) {
+        var i,l,
+            options = this._resources[key],
             index = this._index,
-            data = this._data.substr(index);
+            data = this._data.substr(index),
+            len = 0, winner = NaN ;
         for (i = 0; i < options.length; i += 1) {
             if (data.indexOf(options[i].toLowerCase()) === 0) {
-                this._index += options[i].length;
-                return i;
+                l = options[i].length;
+                if (l > len) {
+                    len = l;
+                    winner = i;
+                }
             }
         }
-        this._errorFlag = true;
-        return NaN;
+        this._index += len;
+        return winner;
     },
+    /**
+     * Hash containing values that need further post-processing.
+     * The key serves as a clue as to what operation is expected
+     * while the value is anything that post-processor might need
+     * @property _pending
+     * @type Object
+     * @default {}
+     * @private
+     */
     _pending: {},
+    /**
+     * Table of parsers, indexed by the formatting code.
+     * Each one is a function.
+     * @property parsers
+     * @type Object
+     */
     parsers: {
         // Though some of the parts might not provide useful information,
         // such as the weekday
         // they need to be skipped over
-        a: function (d , resources) {
-            this._parseStrings(resources.a);
+        a: function () {
+            return this._parseStrings('a');
         },
-        A: function (d  , resources) {
-            this._parseStrings(resources.A);
+        A: function () {
+            return this._parseStrings('A');
         },
-        b: function (d , resources) {
-            d[MO] = this._parseStrings(resources.b);
+        b: function (d) {
+            return d[MO] = this._parseStrings('b');
         },
-        B: function (d , resources) {
-            d[MO] = this._parseStrings(resources.B);
+        B: function (d) {
+            return d[MO] = this._parseStrings('B');
         },
         C: function (d) {
-            d[YR] += this._parseDigits(2);
+            return d[YR] += this._parseDigits(2);
         },
         d: function (d) {
-            d[D] = this._parseDigits(2, 31);
+            return d[D] = this._parseDigits(2, 31);
         },
         e: function (d) {
-            d[D] = this._parseDigits(2, 31, true);
+            return d[D] = this._parseDigits(2, 31);
         },
         g: function (d) {
-            d[YR] = this._parseDigits(2);
+            return d[YR] = this._parseDigits(2);
         },
         G: function (d) {
-            d[YR] = this._parseDigits(4);
+            return d[YR] = this._parseDigits(4);
 
         },
         H: function (d) {
-            d[H] += this._parseDigits(2, 23);
+            return d[H] += this._parseDigits(2, 23);
         },
         I: function (d) {
-            d[H] += this._parseDigits(2, 12) - 1;
+            return d[H] += this._parseDigits(2, 12) - 1;
         },
         j: function () {
             // The year might not be in yet, so I leave it pending
-            this._pending.j = this._parseDigits(3);
+            return this._pending.j = this._parseDigits(3);
 
         },
         k: function (d) {
-            d[H] += this._parseDigits(2, 23, true);
+            return d[H] += this._parseDigits(2, 23);
         },
         l: function (d) {
-            d[H] +=  this._parseDigits(2, 12, true) - 1;
+           return  d[H] +=  this._parseDigits(2, 12) - 1;
         },
         m: function (d) {
-            d[MO] = this._parseDigits(2, 12) - 1;
+            return d[MO] = this._parseDigits(2, 12) - 1;
         },
         M: function (d) {
-            d[MI] +=  this._parseDigits(2, 59);
+            return d[MI] +=  this._parseDigits(2, 59);
         },
-        p: function (d , resources) {
-            d[H] += this._parseStrings(resources.p) ? 12 : 0;
+        p: function (d) {
+            return d[H] += this._parseStrings('p') ? 12 : 0;
         },
-        P: function (d , resources) {
-            d[H] +=  this._parseStrings(resources.P) ? 12 : 0;
+        P: function (d) {
+            return d[H] +=  this._parseStrings('P') ? 12 : 0;
         },
         s: function () {
             // The seconds by themselves provide all that is needed
-            this._pending.s = parseInt(this._data.substr(this._index), 10);
+            return this._pending.s = parseInt(this._data.substr(this._index), 10);
         },
         S: function (d) {
-            d[S] = this._parseDigits(2, 59);
+            return d[S] = this._parseDigits(2, 59);
         },
         u: function () {
             // No useful information, just skip over
-            this._parseDigits(1);
+            return this._parseDigits(1);
         },
         U: function () {
             // No useful information, just skip over
-            this._parseDigits(2);
+            return this._parseDigits(2);
         },
         V: function () {
             // No useful information, just skip over
-            this._parseDigits(2);
+            return this._parseDigits(2);
         },
         w: function () {
             // No useful information, just skip over
-            this._parseDigits(1);
+            return this._parseDigits(1);
         },
         W: function () {
             // No useful information, just skip over
-            this._parseDigits(2);
+            return this._parseDigits(2);
         },
         y: function (d) {
-            d[YR] = this._parseDigits(4);
+            return d[YR] = this._parseDigits(4);
         },
         Y: function (d) {
-            d[YR] = this._parseDigits(4);
+            return d[YR] = this._parseDigits(4);
         },
         z: function (d) {
 
-            var len = 1, more = false, sign = 1, h = 0, m = 0,
+            var more = false, sign = 1, h = 0, m = 0,
                 data = this._data.substr(this._index),
-                code = data[0], val,
+                code = data[0],
                 offset = new Date().getTimezoneOffset();
             switch (code) {
                 case '+':
@@ -167,7 +208,6 @@ Y.mix(Y.namespace("Date"), {
                 default:
                     h = code.charCodeAt() - 'A'.charCodeAt();
                     if (h > 24) {
-                        this._errorFlag = true;
                         return NaN;
                     }
                     if (h > 12) {
@@ -178,9 +218,13 @@ Y.mix(Y.namespace("Date"), {
             this._index += 1;
             if (more) {
 
-                h = this._parseDigits(4);
+                if (isNaN(h = this._parseDigits(4))) {
+                    return NaN;
+                }
                 if (h < 100 && data[this._index] === ':') {
-                    m = this._parseDigits(2);
+                    if (isNaN(m = this._parseDigits(2))) {
+                        return NaN;
+                    }
                 } else {
                     m = h % 100;
                     h = Math.floor(h / 100);
@@ -199,9 +243,9 @@ Y.mix(Y.namespace("Date"), {
             }
             d[H] = h;
             d[MI] = m;
+            return true;
         },
         Z: function () {
-            this._errorFlag = true;
             return NaN;
 
         },
@@ -228,7 +272,6 @@ Y.mix(Y.namespace("Date"), {
         var val,
             d = [0,0,0,0,0,0,0],
             parsers = this.parsers,
-            resources = this._resources,
             i, p = false, c;
 
         cutoff = (cutoff === undefined ? 30 : cutoff);
@@ -247,18 +290,19 @@ Y.mix(Y.namespace("Date"), {
                 if (p) {
                     p = false;
                     if (parsers[c]) {
-                        parsers[c].call(this, d , resources);
-                        if (this._errorFlag) {
+                        if (isNaN(parsers[c].call(this, d))) {
                             break scan;
                         }
 
                     }
                 } else {
+                    if (spaceRegExp.test(c)) {
+
+                    }
                     if (c === '%') {
                         p = true;
                     } else {
                         if (data[this._index] !== c.toLowerCase()) {
-                            this._errorFlag = true;
                             break scan;
                         }
                         this._index += 1;

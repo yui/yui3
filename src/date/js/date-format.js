@@ -61,6 +61,18 @@ var xPad=function (x, pad, r)
 };
 
 var Dt = {
+    /**
+     * Hash of formatting functions keyed by the formatting character.
+     * The values can be: <ul>
+     * <li>functions</li>
+     * <li>the names of methods to call the Date instance to be formatted</li>
+     * <li>an array with the name of the method (like in the previous)
+     * and character to use to pad it.</li>
+     * </ul>
+     * @property formats
+     * @type Object
+     */
+
 	formats: {
 		a: function (d, l) {return l.a[d.getDay()];},
 		A: function (d, l) {return l.A[d.getDay()];},
@@ -151,7 +163,13 @@ var Dt = {
 		},
 		"%": function (d) {return "%";}
 	},
-
+    /**
+     * Replacement table for composite formats.
+     * The keys correspond to the codes to be expanded and the value
+     * to their replacement.
+     * @property aggregates
+     * @type Object
+     */
 	aggregates: {
 		c: "locale",
 		D: "%m/%d/%y",
@@ -166,9 +184,26 @@ var Dt = {
 		X: "locale"
 		//"+": "%a %b %e %T %Z %Y"
 	},
+    /**
+     * Local language dependent strings (names of months, days of week).
+     * Loads the `datatype-date-format` module corresponding to the
+     * configured language.
+     * @property _resources
+     * @type Object
+     * @private
+     */
     _resources: Y.Intl.get('datatype-date-format'),
+    /**
+     * Expands the composite formatting codes using the [aggregates](#property_aggregates)
+     * hash.   If the table contains the test `locale` it will replace
+     * it with the formatting codes from the language-dependent resource strings.
+     * @method _expandAggregates
+     * @param format {String} Formatting spec with codes to be expanded
+     * @return {String} Formatting spec with primitive codes.
+     * @private
+     */
     _expandAggregates: function (format) {
-		var resources = this._resources,
+		var resources = Dt._resources,
             replace_aggs = function (m0, m1) {
                 var f = Dt.aggregates[m1];
                 return (f === "locale" ? resources[m1] : f);
@@ -261,7 +296,7 @@ var Dt = {
 			return Y.Lang.isValue(oDate) ? oDate : "";
 		}
 
-		var format, resources = this._resources;
+		var format, resources = Dt._resources;
 
         format = oConfig.format || "%Y-%m-%d";
 
@@ -283,7 +318,7 @@ var Dt = {
 			}
 		};
 
-        format = this._expandAggregates(format);
+        format = Dt._expandAggregates(format);
 		// Now replace formats (do not run in a loop otherwise %%a will be replace with the value of %a)
 		var str = format.replace(/%([aAbBCdegGHIjklmMpPsSuUVwWyYzZ%])/g, replace_formats);
 

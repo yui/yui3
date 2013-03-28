@@ -274,14 +274,14 @@ YUI.add('date-tests', function(Y) {
                 ["01 - March - 2003","%d - %B - %Y",2003,2,1],
                 ["Sat, March 01, 2003", "%a, %B %d, %Y",2003,2,1],
                 ["Saturday, March 01, 2003", "%A, %B %d, %Y",2003,2,1],
-                ["Wed Mar 27 2013 17:56:13 GMT+0100 (CET)","%a %b %d %Y %T GMT%z", 2013, 2, 27, 17, 56, 13]
+                [new Date(2013, 2, 27, 17, 56, 13).toString(),"%a %b %d %Y %T GMT%z", 2013, 2, 27, 17, 56, 13]
             ];
             for (var i = 0; i < values.length; i++) {
                 var v = values[i];
                 ASSERT.areSame(
                     (new Date(v[2] || 0, v[3] || 0, v[4] || 0,v[5] || 0,v[6] || 0,v[7] || 0,v[8] || 0)).getTime(),
                     Y.Date.parse(v[0], v[1]).getTime(),
-                    v[0] + ', ' + v[1] + ' at ' + i
+                    v[0] + ', ' + v[1]
                 );
             }
         },
@@ -301,7 +301,7 @@ YUI.add('date-tests', function(Y) {
                 ASSERT.areSame(
                     (new Date(v[2] || 0, v[3] || 0, v[4] || 0,v[5] || 0,v[6] || 0,v[7] || 0,v[8] || 0)).getTime(),
                     dateFR.parse(v[0], v[1]).getTime(),
-                    v[0] + ', ' + v[1] + ' at ' + i
+                    v[0] + ', ' + v[1]
                 );
             }
         }
