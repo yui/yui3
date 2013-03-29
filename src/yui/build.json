@@ -10,9 +10,6 @@
     "exec": [
         "./scripts/build.js"
     ],
-    "postexec": [
-        "grunt npm"
-    ],
     "builds": {
         "features": {
             "jsfiles": [
