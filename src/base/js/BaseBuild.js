@@ -18,7 +18,7 @@
         build;
 
     // Utility function used in `_buildCfg` to aggregate array values into a new
-    // array from the sender constructor to the reciver constructor.
+    // array from the sender constructor to the receiver constructor.
     function arrayAggregator(prop, r, s) {
         if (s[prop]) {
             r[prop] = (r[prop] || []).concat(s[prop]);
@@ -26,35 +26,21 @@
     }
 
     // Utility function used in `_buildCfg` to aggregate `_ATTR_CFG` array
-    // values from the sender constructor into a new array on reciver's
+    // values from the sender constructor into a new array on receiver's
     // constructor, and clear the cached hash.
     function attrCfgAggregator(prop, r, s) {
         if (s._ATTR_CFG) {
-            arrayAggregator.apply(null, arguments);
-
             // Clear cached hash.
             r._ATTR_CFG_HASH = null;
+
+            arrayAggregator.apply(null, arguments);
         }
     }
 
     // Utility function used in `_buildCfg` to aggregate ATTRS configs from one
-    // the sender constructor to the reciver constructor.
+    // the sender constructor to the receiver constructor.
     function attrsAggregator(prop, r, s) {
-        var sAttrs, rAttrs, a;
-
-        r.ATTRS = r.ATTRS || {};
-
-        if (s.ATTRS) {
-            sAttrs = s.ATTRS;
-            rAttrs = r.ATTRS;
-
-            for (a in sAttrs) {
-                if (sAttrs.hasOwnProperty(a)) {
-                    rAttrs[a] = rAttrs[a] || {};
-                    Y.mix(rAttrs[a], sAttrs[a], true);
-                }
-            }
-        }
+        BaseCore.modifyAttrs(r, s.ATTRS);
     }
 
     Base._build = function(name, main, extensions, px, sx, cfg) {
@@ -114,6 +100,9 @@
         if (dynamic) {
             builtClass.NAME = name;
             builtClass.prototype.constructor = builtClass;
+
+            // Carry along the reference to `modifyAttrs()` from `main`.
+            builtClass.modifyAttrs = main.modifyAttrs;
         }
 
         return builtClass;
@@ -366,7 +355,7 @@
      *           "CustomProperty" : function(property, Receiver, Supplier) {
      *              ...
      *              var triggers = Receiver.CustomProperty.triggers;
-     *               Receiver.CustomProperty.triggers = triggers.concat(Supplier.CustomProperty.triggers);
+     *              Receiver.CustomProperty.triggers = triggers.concat(Supplier.CustomProperty.triggers);
      *              ...
      *           }
      *        }
@@ -438,22 +427,22 @@
      * @private
      */
     BaseCore._buildCfg = {
+        aggregates: AGGREGATES.concat(),
+
         custom: {
             ATTRS         : attrsAggregator,
             _ATTR_CFG     : attrCfgAggregator,
             _NON_ATTRS_CFG: arrayAggregator
-        },
-
-        aggregates: AGGREGATES.concat()
+        }
     };
 
     // Makes sure Base and BaseCore use separate `_buildCfg` objects.
     Base._buildCfg = {
+        aggregates: AGGREGATES.concat(),
+
         custom: {
             ATTRS         : attrsAggregator,
             _ATTR_CFG     : attrCfgAggregator,
             _NON_ATTRS_CFG: arrayAggregator
-        },
-
-        aggregates: AGGREGATES.concat()
+        }
     };
