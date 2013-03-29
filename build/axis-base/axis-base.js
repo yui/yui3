@@ -433,7 +433,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     {
         var edgeOffset;
         if(this.get("calculateEdgeOffset")) {
-            edgeOffset = l/ct;
+            edgeOffset = (l/ct)/2;
         } else {
             edgeOffset = 0;
         }
