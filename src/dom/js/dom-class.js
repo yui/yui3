@@ -1,5 +1,8 @@
 var addClass, hasClass, removeClass;
 
+// Some old browers don't support classList, fallbacks use className property
+var _hasClassList = Y.config.doc && 'classList' in Y.config.doc.body;
+
 Y.mix(Y.DOM, {
     /**
      * Determines whether a DOM element has the given className.
@@ -9,7 +12,9 @@ Y.mix(Y.DOM, {
      * @param {String} className the class name to search for
      * @return {Boolean} Whether or not the element has the given class. 
      */
-    hasClass: function(node, className) {
+    hasClass: _hasClassList ? function (node, className) {
+        return node.classList.contains(className);
+    } : function (node, className) {
         var re = Y.DOM._getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
         return re.test(node.className);
     },
@@ -21,8 +26,12 @@ Y.mix(Y.DOM, {
      * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to add to the class attribute
      */
-    addClass: function(node, className) {
-        if (!Y.DOM.hasClass(node, className)) { // skip if already present 
+    addClass: _hasClassList ? function (node, className) {
+        if (!Y.DOM.hasClass(node, className)){ // skip if already present
+            node.classList.add(className);
+        }
+    } : function (node, className) {
+        if (!Y.DOM.hasClass(node, className)){ // skip if already present
             node.className = Y.Lang.trim([node.className, className].join(' '));
         }
     },
@@ -34,15 +43,20 @@ Y.mix(Y.DOM, {
      * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to remove from the class attribute
      */
-    removeClass: function(node, className) {
+    removeClass: _hasClassList ? function (node, className) {  
         if (className && hasClass(node, className)) {
-            node.className = Y.Lang.trim(node.className.replace(Y.DOM._getRegExp('(?:^|\\s+)' +
-                            className + '(?:\\s+|$)'), ' '));
-
-            if ( hasClass(node, className) ) { // in case of multiple adjacent
-                removeClass(node, className);
-            }
-        }                 
+            node.classList.remove(className);
+        }
+        if ( hasClass(node, className) ) { // in case of multiple adjacent
+            removeClass(node, className);
+        }
+    } : function (node, className) {
+        if (className && hasClass(node, className)) {
+            node.className = Y.Lang.trim(node.className.replace(Y.DOM._getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)'), ' '));
+        }
+        if ( hasClass(node, className) ) { // in case of multiple adjacent
+            removeClass(node, className);
+        }
     },
 
     /**
