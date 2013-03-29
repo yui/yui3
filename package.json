@@ -17,8 +17,8 @@
     "devDependencies": {
         "yogi": "*",
         "parserlib": "~0.2.2",
-        "grunt": "~0.4.0",
-        "grunt-yui-contrib": "*",
+        "grunt": "~0.4.1",
+        "grunt-yui-contrib": "~0.0.4",
         "grunt-lib-contrib": "~0.5.3",
         "grunt-contrib-compress": "~0.4.1"
     },
