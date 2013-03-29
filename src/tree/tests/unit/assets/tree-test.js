@@ -574,6 +574,8 @@ treeSuite.add(new Y.Test.Case({
     },
 
     'clear() should pass along a custom `src`': function () {
+        var fired;
+
         this.tree.once('clear', function (e) {
             fired = true;
             Assert.areSame('foo', e.src, 'src should be set');
@@ -940,7 +942,7 @@ nodeSuite.add(new Y.Test.Case({
     },
 
     'index() should return the numerical index of this node within its parent node': function () {
-        Assert.areSame(0, this.node.index(), 'index should be 0')
+        Assert.areSame(0, this.node.index(), 'index should be 0');
     },
 
     'index() should return -1 if this node has no parent': function () {
