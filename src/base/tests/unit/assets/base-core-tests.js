@@ -1199,6 +1199,7 @@ YUI.add('base-core-tests', function(Y) {
         },
 
         testStateForPerfSwitches : function() {
+            var t;
 
             // Lazy
             t = new Test();
@@ -1215,7 +1216,7 @@ YUI.add('base-core-tests', function(Y) {
             Y.Assert.areEqual(Y.dump(x), Y.dump(y), "Lazy vs. Upfront: attr state is not equal");
             Y.Assert.areEqual(Y.dump(y), Y.dump(z), "Upfront vs. Lazy and Silent: attr state is not equal");
         }
-    }
+    };
 
     var suite = new Y.Test.Suite("Base Core");
 
