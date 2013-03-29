@@ -1,10 +1,16 @@
 YUI Loader Change History
 =========================
 
+3.9.1
+-----
+
+* No changes.
+
 3.9.0
 -----
 
 * Fixed gallery update method for override group configs
+* Fixed #2533138, added a missing `hasOwnProperty` check in `Loader.resolve` to help harden the config processing
 
 3.8.1
 -----

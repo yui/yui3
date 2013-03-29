@@ -635,7 +635,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         res = self._getResponse(req);
 
         req.next = function (err) {
-            var callback, route;
+            var callback, name, route;
 
             if (err) {
                 // Special case "route" to skip to the next route handler
@@ -649,10 +649,16 @@ Y.Router = Y.extend(Router, Y.Base, {
 
             } else if ((callback = callbacks.shift())) {
                 if (typeof callback === 'string') {
-                    callback = self[callback];
+                    name     = callback;
+                    callback = self[name];
+
+                    if (!callback) {
+                        Y.error('Router: Callback not found: ' + name, null, 'router');
+                    }
                 }
 
-                // Allow access to the num or remaining callbacks for the route.
+                // Allow access to the number of remaining callbacks for the
+                // route.
                 req.pendingCallbacks = callbacks.length;
 
                 callback.call(self, req, res, req.next);
@@ -674,7 +680,8 @@ Y.Router = Y.extend(Router, Y.Base, {
                     req.params = matches.concat();
                 }
 
-                // Allow access to the num of remaining routes for this request.
+                // Allow access to the number of remaining routes for this
+                // request.
                 req.pendingRoutes = routes.length;
 
                 // Execute this route's `callbacks`.

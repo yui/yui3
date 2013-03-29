@@ -172,8 +172,18 @@
 .yui3-g-r {
     letter-spacing: -0.31em;
     *letter-spacing: normal;
+    *word-spacing: -0.43em;
+}
+
+/* Opera as of 12 on Windows needs word-spacing.
+   The ".opera-only" selector is used to prevent actual prefocus styling
+   and is not required in markup.
+*/
+.opera-only :-o-prefocus,
+.yui3-g-r {
     word-spacing: -0.43em;
 }
+
 .yui3-g-r img {
     max-width: 100%;
 }

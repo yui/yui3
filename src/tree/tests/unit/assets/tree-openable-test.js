@@ -145,6 +145,21 @@ suite.add(new Y.Test.Case({
         this.tree.closeNode(node);
     },
 
+    'closeNode() should pass along a custom `src`': function () {
+        var node = this.tree.children[0],
+            fired;
+
+        this.tree.openNode(node);
+
+        this.tree.once('close', function (e) {
+            fired = true;
+            Assert.areSame('foo', e.src, 'src should be set');
+        });
+
+        this.tree.closeNode(node, {src: 'foo'});
+        Assert.isTrue(fired, 'event should fire');
+    },
+
     'openNode() should fire an `open` event': function () {
         var node = this.tree.children[0],
             fired;
@@ -197,6 +212,21 @@ suite.add(new Y.Test.Case({
         this.tree.openNode(node);
     },
 
+    'openNode() should pass along a custom `src`': function () {
+        var node = this.tree.children[0],
+            fired;
+
+        this.tree.closeNode(node);
+
+        this.tree.once('open', function (e) {
+            fired = true;
+            Assert.areSame('foo', e.src, 'src should be set');
+        });
+
+        this.tree.openNode(node, {src: 'foo'});
+        Assert.isTrue(fired, 'event should fire');
+    },
+
     'toggleOpenNode() should not fire any events if options.silent is truthy': function () {
         var node = this.tree.children[0];
 
@@ -210,6 +240,19 @@ suite.add(new Y.Test.Case({
 
         this.tree.toggleOpenNode(node, {silent: true});
         this.tree.toggleOpenNode(node, {silent: true});
+    },
+
+    'toggleOpenNode() should pass along a custom `src`': function () {
+        var node = this.tree.children[0],
+            fired;
+
+        this.tree.once('open', function (e) {
+            fired = true;
+            Assert.areSame('foo', e.src, 'src should be set');
+        });
+
+        this.tree.toggleOpenNode(node, {src: 'foo'});
+        Assert.isTrue(fired, 'event should fire');
     },
 
     '`close` event should be preventable': function () {
@@ -334,9 +377,7 @@ nodeSuite.add(new Y.Test.Case({
 
     'toggleOpen() should be chainable': function () {
         Assert.areSame(this.node, this.node.toggleOpen());
-    },
-
-
+    }
 }));
 
 }, '@VERSION@', {
