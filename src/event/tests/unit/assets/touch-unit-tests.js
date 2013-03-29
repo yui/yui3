@@ -1,4 +1,4 @@
-YUI.add('touch-tests', function(Y) {
+YUI.add('touch-unit-tests', function(Y) {
 
     var suite = new Y.Test.Suite('Event: Touch'),
     Assert = Y.Assert,
