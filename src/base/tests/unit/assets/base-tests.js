@@ -921,6 +921,62 @@ YUI.add('base-tests', function(Y) {
             Y.ArrayAssert.itemsAreEqual(expectedMethodCalls, actualMethodCalls, "Unexpected method calls");
         },
 
+        "test:builtin-statics": function () {
+            Y.Assert.isFunction(Y.BaseCore.modifyAttrs, 'Static `modifyAttrs()` method does not exist on Y.BaseCore.');
+            Y.Assert.isFunction(Y.Base.modifyAttrs, 'Static `modifyAttrs()` method does not exist on Y.Base.');
+
+            var MyBaseCore, MyBase;
+
+            MyBaseCore = Y.Base.create('myBaseCore', Y.BaseCore, [], {}, {
+                ATTRS: {
+                    foo: {value: 'foo'},
+                    bar: {value: 'bar'}
+                }
+            });
+
+            MyBase = Y.Base.create('myBase', Y.Base, [], {}, {
+                ATTRS: {
+                    foo: {value: 'foo'},
+                    bar: {value: 'bar'}
+                }
+            });
+
+            Y.Assert.isFunction(MyBaseCore.modifyAttrs, 'Static `modifyAttrs()` method does not exist on MyBaseCore.');
+            Y.Assert.isFunction(MyBase.modifyAttrs, 'Static `modifyAttrs()` method does not exist on MyBase.');
+
+            var myBaseCore = new MyBaseCore();
+            Y.Assert.areSame('foo', myBaseCore.get('foo'));
+            Y.Assert.areSame('bar', myBaseCore.get('bar'));
+            Y.Assert.isUndefined(myBaseCore.get('baz'));
+
+            // Modify the ATTRS via the API.
+            MyBaseCore.modifyAttrs({
+                foo: {value: 'FOO'},
+                baz: {value: 'baz'}
+            });
+
+            myBaseCore = new MyBaseCore();
+            Y.Assert.areSame('FOO', myBaseCore.get('foo'));
+            Y.Assert.areSame('bar', myBaseCore.get('bar'));
+            Y.Assert.areSame('baz', myBaseCore.get('baz'));
+
+            var myBase = new MyBase();
+            Y.Assert.areSame('foo', myBase.get('foo'));
+            Y.Assert.areSame('bar', myBase.get('bar'));
+            Y.Assert.isUndefined(myBase.get('baz'));
+
+            // Modify the ATTRS via the API.
+            MyBase.modifyAttrs({
+                foo: {value: 'FOO'},
+                baz: {value: 'baz'}
+            });
+
+            myBase = new MyBase();
+            Y.Assert.areSame('FOO', myBase.get('foo'));
+            Y.Assert.areSame('bar', myBase.get('bar'));
+            Y.Assert.areSame('baz', myBase.get('baz'));
+        },
+
         "test:mainclass-statics" : function() {
 
             function Ext1() {}
