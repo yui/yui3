@@ -1,4 +1,4 @@
-YUI.add('event-tap-tests', function(Y) {
+YUI.add('event-tap-functional-tests', function(Y) {
 
     var suite = new Y.Test.Suite('Event: Tap'),
     Assert = Y.Assert,
