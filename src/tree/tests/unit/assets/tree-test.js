@@ -477,8 +477,8 @@ treeSuite.add(new Y.Test.Case({
         Assert.isTrue(node.state.destroyed, 'node should be destroyed');
     },
 
-    'size() should return the total number of nodes in the tree': function () {
-        Assert.areSame(6, this.tree.size());
+    'size() should return the total number of nodes in the tree, including the root node': function () {
+        Assert.areSame(7, this.tree.size());
     },
 
     'toJSON() should return a serializable object representing the tree': function () {
@@ -731,7 +731,7 @@ treeSuite.add(new Y.Test.Case({
         });
 
         this.tree.insertNode(this.tree.rootNode, {id: 'added'});
-        Assert.areSame(6, this.tree.size(), 'node should not have been added');
+        Assert.areSame(7, this.tree.size(), 'node should not have been added');
     },
 
     '`clear` event should be preventable': function () {
@@ -740,7 +740,7 @@ treeSuite.add(new Y.Test.Case({
         });
 
         this.tree.clear();
-        Assert.areSame(6, this.tree.size(), 'tree should not have been cleared');
+        Assert.areSame(7, this.tree.size(), 'tree should not have been cleared');
     },
 
     '`remove` event should be preventable': function () {
@@ -749,7 +749,7 @@ treeSuite.add(new Y.Test.Case({
         });
 
         this.tree.removeNode(this.tree.children[0]);
-        Assert.areSame(6, this.tree.size(), 'node should not have been removed');
+        Assert.areSame(7, this.tree.size(), 'node should not have been removed');
     }
 }));
 
