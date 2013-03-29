@@ -132,6 +132,27 @@
      */
     Base.ATTRS = AttributeCore.protectAttrs(BaseCore.ATTRS);
 
+    /**
+    Provides a way to safely modify a `Y.Base` subclass' static `ATTRS` after
+    the class has been defined or created.
+
+    Base-based classes cache information about the class hierarchy in order to
+    efficiently create instances. This cache includes includes the aggregated
+    `ATTRS` configs. If the static `ATTRS` configs need to be modified after the
+    class has been defined or create, then use this method which will make sure
+    to clear any cached data before making any modifications.
+
+    @method modifyAttrs
+    @param {Function} [ctor] The constructor function whose `ATTRS` should be
+        modified. If a `ctor` function is not specified, then `this` is assumed
+        to be the constructor which hosts the `ATTRS`.
+    @param {Object} configs The collection of `ATTRS` configs to mix with the
+        existing attribute configurations.
+    @static
+    @since @SINCE@
+    **/
+    Base.modifyAttrs = BaseCore.modifyAttrs;
+
     Y.mix(Base, BaseCore, false, null, 1);
     Y.mix(Base, AttributeExtras, false, null, 1);
 

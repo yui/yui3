@@ -169,6 +169,51 @@
         }
     };
 
+    /**
+    Provides a way to safely modify a `Y.BaseCore` subclass' static `ATTRS`
+    after the class has been defined or created.
+
+    BaseCore-based classes cache information about the class hierarchy in order
+    to efficiently create instances. This cache includes includes the aggregated
+    `ATTRS` configs. If the static `ATTRS` configs need to be modified after the
+    class has been defined or create, then use this method which will make sure
+    to clear any cached data before making any modifications.
+
+    @method modifyAttrs
+    @param {Function} [ctor] The constructor function whose `ATTRS` should be
+        modified. If a `ctor` function is not specified, then `this` is assumed
+        to be the constructor which hosts the `ATTRS`.
+    @param {Object} configs The collection of `ATTRS` configs to mix with the
+        existing attribute configurations.
+    @static
+    @since @SINCE@
+    **/
+    BaseCore.modifyAttrs = function (ctor, configs) {
+        // When called without a constructor, assume `this` is the constructor.
+        if (typeof ctor !== 'function') {
+            configs = ctor;
+            ctor    = this;
+        }
+
+        var attrs, attr, name;
+
+        // Eagerly create the `ATTRS` object if it doesn't already exist.
+        attrs = ctor.ATTRS || (ctor.ATTRS = {});
+
+        if (configs) {
+            // Clear cache because it has ATTRS aggregation data which is about
+            // to be modified.
+            ctor._CACHED_CLASS_DATA = null;
+
+            for (name in configs) {
+                if (configs.hasOwnProperty(name)) {
+                    attr = attrs[name] || (attrs[name] = {});
+                    Y.mix(attr, configs[name], true);
+                }
+            }
+        }
+    };
+
     BaseCore.prototype = {
 
         /**

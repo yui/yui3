@@ -899,6 +899,39 @@ YUI.add('base-core-tests', function(Y) {
             q.A.value = "modified value";
 
             Y.Assert.areNotEqual(Y.dump(AttrHost.ATTRS), Y.dump(q));
+        },
+
+        testModifyAttrs: function () {
+            Y.Assert.isFunction(Y.BaseCore.modifyAttrs, 'Static `modifyAttrs()` method does not exist.');
+
+            function MyBaseCore() {
+                MyBaseCore.superclass.constructor.apply(this, arguments);
+            }
+
+            MyBaseCore.NAME = 'myBaseCore';
+
+            MyBaseCore.ATTRS = {
+                foo: {value: 'foo'},
+                bar: {value: 'bar'}
+            };
+
+            Y.extend(MyBaseCore, Y.BaseCore);
+
+            var myBaseCore = new MyBaseCore();
+            Y.Assert.areSame('foo', myBaseCore.get('foo'));
+            Y.Assert.areSame('bar', myBaseCore.get('bar'));
+            Y.Assert.isUndefined(myBaseCore.get('baz'));
+
+            // Modify the ATTRS via the API.
+            Y.BaseCore.modifyAttrs(MyBaseCore, {
+                foo: {value: 'FOO'},
+                baz: {value: 'baz'}
+            });
+
+            myBaseCore = new MyBaseCore();
+            Y.Assert.areSame('FOO', myBaseCore.get('foo'));
+            Y.Assert.areSame('bar', myBaseCore.get('bar'));
+            Y.Assert.areSame('baz', myBaseCore.get('baz'));
         }
     };
 
@@ -1199,6 +1232,7 @@ YUI.add('base-core-tests', function(Y) {
         },
 
         testStateForPerfSwitches : function() {
+            var t;
 
             // Lazy
             t = new Test();
@@ -1215,7 +1249,7 @@ YUI.add('base-core-tests', function(Y) {
             Y.Assert.areEqual(Y.dump(x), Y.dump(y), "Lazy vs. Upfront: attr state is not equal");
             Y.Assert.areEqual(Y.dump(y), Y.dump(z), "Upfront vs. Lazy and Silent: attr state is not equal");
         }
-    }
+    };
 
     var suite = new Y.Test.Suite("Base Core");
 
