@@ -530,7 +530,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @return {Number} Total number of nodes in this tree.
     **/
     size: function () {
-        return this.rootNode.size();
+        return this.rootNode.size() + 1;
     },
 
     /**
