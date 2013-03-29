@@ -181,7 +181,7 @@ YUI.add('axis-category-base-tests', function(Y) {
         "test: getEdgeOffset()" : function() {
             var len = 100,
                 count = this.dataProvider.length,
-                offset = len/count;
+                offset = (len/count)/2;
             Y.Assert.areEqual(offset, this.axis.getEdgeOffset(count, len), "The edgeOffset should be " + offset + ".");
         },
 

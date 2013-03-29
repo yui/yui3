@@ -28,11 +28,9 @@ Y.NumericAxis = Y.Base.create("numericAxis", Y.Axis, [Y.NumericImpl], {
      * @return String
      * @private
      */
-    _getLabelByIndex: function()
+    _getLabelByIndex: function(i, l)
     {
-        var i = arguments[0],
-            l = arguments[1],
-            min = this.get("minimum"),
+        var min = this.get("minimum"),
             max = this.get("maximum"),
             increm = (max - min)/(l-1),
             label,
@@ -57,6 +55,87 @@ Y.NumericAxis = Y.Base.create("numericAxis", Y.Axis, [Y.NumericImpl], {
             label += min;
         }
         return parseFloat(label);
+    },
+
+    /**
+     * Calculates points based off the majorUnit count or distance of the Axis.
+     *
+     * @method _getPoints
+     * @param {Object} startPoint An object literal containing the x and y coordinates of the first
+     * point on the axis.
+     * @param {Number} len The number of points on an axis.
+     * @param {Number} edgeOffset The distance from the start of the axis and the point.
+     * @param {Number} majorUnitDistance The distance between points on an axis.
+     * @param {String} direction Indicates whether the axis is horizontal or vertical.
+     * @return Array
+     * @private
+     */
+    _getPoints: function(startPoint, len, edgeOffset, majorUnitDistance, direction)
+    {
+        var points = Y.NumericAxis.superclass._getPoints.apply(this, arguments);
+        if(direction === "vertical")
+        {
+            points.reverse();
+        }
+        return points;
+    },
+
+    /**
+     * Calculates the position of ticks and labels based on an array of specified label values. Returns
+     * an object containing an array of values to be used for labels and an array of objects containing
+     * x and y coordinates for each label.
+     *
+     * @method _getDataFromLabelValues
+     * @param {Object} startPoint An object containing the x and y coordinates for the start of the axis.
+     * @param {Array} labelValues An array containing values to be used for determining the number and
+     * position of labels and ticks on the axis.
+     * @param {Number} edgeOffset The distance, in pixels, on either edge of the axis.
+     * @param {Number} layoutLength The length, in pixels, of the axis. If the axis is vertical, the length
+     * is equal to the height. If the axis is horizontal, the length is equal to the width.
+     * @return Object
+     * @private
+     */
+    _getDataFromLabelValues: function(startPoint, labelValues, edgeOffset, layoutLength, direction)
+    {
+        var points = [],
+            labelValue,
+            i,
+            len = labelValues.length,
+            staticCoord,
+            dynamicCoord,
+            constantVal,
+            newPoint,
+            max = this.get("maximum"),
+            min = this.get("minimum"),
+            values = [],
+            scaleFactor = (layoutLength - (edgeOffset * 2)) / (max - min);
+        if(direction === "vertical")
+        {
+            staticCoord = "x";
+            dynamicCoord = "y";
+        }
+        else
+        {
+            staticCoord = "y";
+            dynamicCoord = "x";
+        }
+        constantVal = startPoint[staticCoord];
+        for(i = 0; i < len; i = i + 1)
+        {
+            labelValue = labelValues[i];
+            if(Y.Lang.isNumber(labelValue) && labelValue >= min && labelValue <= max)
+            {
+                newPoint = {};
+                newPoint[staticCoord] = constantVal;
+                newPoint[dynamicCoord] = (layoutLength - edgeOffset) - (labelValue - min) * scaleFactor;
+                points.push(newPoint);
+                values.push(labelValue);
+            }
+        }
+        return {
+            points: points,
+            values: values
+        };
     },
 
     /**
