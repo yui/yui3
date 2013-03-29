@@ -32,7 +32,11 @@ Y.mix(Y.namespace("Date"), {
      */
     _parseDigits: function (maxLen, max) {
         var m = digitsRegExp.exec(this._data),
-            val = m[1].substr(0, maxLen);
+            val;
+        if (!m) {
+            return NaN;
+        }
+        val = m[1].substr(0, maxLen);
 
         this._data = this._data.substr(m[0].length);
         val = parseInt(val, 10);
