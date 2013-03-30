@@ -85,14 +85,6 @@ var parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400
             Y.Assert.areEqual(this.path, this.path.drawWedge(175, 175, -3, 365, 175), "The drawWedge method should return a reference to the path.");
             //hit 0 segs branch
             Y.Assert.areEqual(this.path, this.path.drawWedge(175, 175, -3, 0, 175), "The drawWedge method should return a reference to the path.");
-        
-        },
-
-        "test: _closePath()" : function() {
-            this.path._closePath();
-            Y.Assert.areEqual("", this.path._path, "There _path property should be an empty string.");
-            this.path._pathArray = [];
-            Y.Assert.areEqual("", this.path._path, "There _path property should be an empty string.");
         }
     });
     
