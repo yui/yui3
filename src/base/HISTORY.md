@@ -35,7 +35,17 @@ Base Change History
   [!] If you are modifying static `ATTRS` collection directly after an instance is
   created (e.g. if an optional module comes in and updates the collection dynamically),
   you will need to change the implementation to use the static `Y.Base.modifyAttrs()`
-  method, so we can mark the cached aggregation dirty, and recompute it.
+  or `Y.BaseCore.modifyAttrs()` method, so we can mark the cached aggregation 
+  dirty, and recompute it.
+
+      `Y.Base.modifyAttrs(MyClass, {..changes to merge..})`
+
+  `Base.create` and `Base.mix` will take care of this internally, so you only need 
+  to use the above methods if your own code is touching the ATTRS object on a class.
+  Additionaly, `Base.create` and `Base.mix` will add the `modifyAttrs` to your created
+  class, so you can also call it directly on the class. e.g. 
+
+      `MyCreatedClass.modifyAttrs({..changes to merge..})`
 
 3.9.1
 -----
