@@ -1,6 +1,6 @@
 YUI.add('gesture-functional-tests', function(Y) {
     
-    var suite = new Y.Test.Suite('swipe-example test suite'),
+    var suite = new Y.Test.Suite('gesture functional test suite'),
         SWIPE_DURATION = 0,
         SWIPE_WAIT_DURATION = 100,
         box = Y.one('#box'),
