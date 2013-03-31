@@ -1,6 +1,11 @@
 Node Change History
 ===================
 
+@VERSION@
+-----
+
+* Removed `node-deprecated` module.
+
 3.9.1
 -----
 
