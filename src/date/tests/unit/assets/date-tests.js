@@ -17,6 +17,18 @@ YUI.add('date-tests', function(Y) {
         return h;
     };
 
+    var getMidday = function(date, lang) {
+        var hour = getHours(date, false, false),
+            ampm = {
+                "en-US": ["AM", "PM"],
+                "fr-FR": ["AM", "PM"],
+                "ko-KR": ["오전","오후"],
+                "pa-IN": ["ਸਵੇਰੇ", "ਸ਼ਾਮ"]
+            };
+
+        return hour < 12 ? ampm[lang][0] : ampm[lang][1];
+    };
+
     // Set up the page
     var LANG = Y.Lang,
         ASSERT = Y.Assert,
@@ -74,12 +86,10 @@ YUI.add('date-tests', function(Y) {
 
         testFormats: function() {
             var date = new Date(819199440000),
-                ampm,
                 output;
 
             //Must set this here because other tests are "resetting" the default lang.
             Y.Intl.setLang("datatype-date-format", "en-US");
-            ampm = Y.Date.format(date, {format: "%p"});
 
             output = Y.Date.format(date);
             ASSERT.areSame("1995-12-17", output, "Expected default format (%F)");
@@ -136,10 +146,10 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame("Dec December", output, "Expected %b %B format.");
 
             output = Y.Date.format(date, {format:"%r"});
-            ASSERT.areSame(getHours(date) + ":24:00 " + ampm, output, "Expected %r format.");
+            ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "en-US"), output, "Expected %r format.");
 
             output = Y.Date.format(date, {format:"%P"});
-            ASSERT.areSame(ampm.toLowerCase(), output, 'Expected %P format.');
+            ASSERT.areSame(getMidday(date, "en-US").toLowerCase(), output, 'Expected %P format.');
 
         }
     });
@@ -151,7 +161,6 @@ YUI.add('date-tests', function(Y) {
             ASSERT.isNotNull(dateUS, "Expected U.S. Date to be loaded.");
 
             var date = new Date(819199440000),
-                ampm = dateUS.format(date, {format: "%p"}),
                 output;
 
             output = dateUS.format(date);
@@ -167,7 +176,7 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame("12/17/95", output, "Expected %x format.");
 
             output = dateUS.format(date, {format:"%r"});
-            ASSERT.areSame(getHours(date) + ":24:00 " + ampm, output, "Expected %r format.");
+            ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "en-US"), output, "Expected %r format.");
         }
     });
 
@@ -178,7 +187,6 @@ YUI.add('date-tests', function(Y) {
             ASSERT.isNotNull(dateFR, "Expected French Date to be loaded.");
 
             var date = new Date(819199440000),
-                ampm = dateFR.format(date, {format: "%p"}),
                 output;
 
             output = dateFR.format(date);
@@ -194,7 +202,7 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame("17/12/95", output, "Expected %x format.");
 
             output = dateFR.format(date, {format:"%r"});
-            ASSERT.areSame(getHours(date) + ":24:00 " + ampm, output, "Expected %r format.");
+            ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "fr-FR"), output, "Expected %r format.");
         }
     });
 
@@ -205,7 +213,6 @@ YUI.add('date-tests', function(Y) {
             ASSERT.isNotNull(dateKR, "Expected Korean Date to be loaded.");
 
             var date = new Date(819199440000),
-                ampm = dateKR.format(date, {format: "%p"}),
                 output;
 
             output = dateKR.format(date);
@@ -221,7 +228,7 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame("95. 12. 17.", output, "Expected %x format.");
 
             output = dateKR.format(date, {format:"%r"});
-            ASSERT.areSame(getHours(date) + ":24:00 " + ampm, output, "Expected %r format.");
+            ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "ko-KR"), output, "Expected %r format.");
         }
     });
 
@@ -250,7 +257,6 @@ YUI.add('date-tests', function(Y) {
             ASSERT.isNotNull(dateIN, "Expected Punjabi Date to be loaded.");
 
             var date = new Date(819199440000),
-                ampm = dateIN.format(date, {format: "%p"}),
                 output;
 
             output = dateIN.format(date);
@@ -266,7 +272,7 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame("17/12/1995", output, "Expected %x format.");
 
             output = dateIN.format(date, {format:"%r"});
-            ASSERT.areSame(getHours(date) + ":24:00 " + ampm, output, "Expected %r format.");
+            ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "pa-IN"), output, "Expected %r format.");
         }
     });
 
