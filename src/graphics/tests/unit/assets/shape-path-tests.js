@@ -428,10 +428,13 @@ setPathDataTest = function(name, attrs, pathData)
 
         testDefault: function()
         {
-            var pathData = this.pathData,
-                mypath = this.path,
+            var mypath = this.path,
                 pathAttr = mypath.get("path");
             Y.Assert.areEqual(pathData, mypath.get("data"), "The path data should be " + pathData);
+            mypath.set("data", pathData2);
+            Y.Assert.areEqual(pathData2, mypath.get("data"), "The path data should be " + pathData2 + ".");
+            mypath.set("data", "");
+            Y.Assert.areEqual("", mypath.get("data"), "The path data should be an empty string.");
         }
     });
 };
@@ -476,7 +479,6 @@ suite.add(drawWedgeTest("DrawWedgeTestStrokeAndFill", strokeAndFill));
 suite.add(drawWedgeTest("DrawWedgeTestStrokeNoFill", strokeNoFill));
 suite.add(drawWedgeTest("DrawWedgeTestFillNoStroke", fillNoStroke));
 suite.add(setPathDataTest("TestPathDataAttr", {data: pathData}, pathData));
-suite.add(setPathDataTest("TestPathDataAttr", {data: pathData2}, pathData2));
 
 
 Y.Test.Runner.add( suite );

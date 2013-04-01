@@ -1,40 +1,22 @@
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta charset='utf-8'>
     <meta name = "viewport" content = "width = device-width">
-    <link rel="stylesheet" type="text/css" href="http://necolas.github.com/normalize.css/2.0.1/normalize.css">
+    <link rel="stylesheet" type="text/css" href="{{yuiBuildUrl}}/cssnormalize/cssnormalize-min.css">
     <link rel="stylesheet" href="{{yuiBuildUrl}}/cssgrids-responsive/cssgrids-responsive.css" type="text/css">
     <script src="{{yuiSeedUrl}}"></script>
     <style>
 
+        /* 
+
+        NATIVE HTML ELEMENT STYLES 
+
+        */
+
         body {
             font-family: serif;
         }
-        .header {
-            font-family: sans-serif;
-            background: black;
-            min-height: 150px;
-            margin: 0;
-            color:white;
-            padding: 30px 20px;
-        }
-            .header h2 {
-                font-weight:300;
-                color: #666;
-                margin:0;
-                font-family: sans-serif;
-            }
-
-        .blurb {
-            font-family: sans-serif;
-            border-bottom:1px solid #ccc;
-        }
-            .blurb p {
-                line-height: 1.6em;
-                font-size: 1em;
-            }
 
         p {
             color: #333;
@@ -54,30 +36,68 @@
             text-transform: uppercase;
             margin-bottom: .4em;
         }
+        
+        /* 
+
+        MODULE STYLES - CONTENT
+        The content module is a wrapper class for each column on the site.
+        We add some padding to act as a gutter between columns.
+
+        */
+
         .content {
             padding: 15px;
         }
+
+        /* 
+
+        MODULE STYLES - ARTICLE
+        The article class is applied to every news article on the site.
+
+        */
 
         .article {
             border-bottom: 1px solid #ddd;
             padding: 0 5px 15px 5px;
         }
+            .article img {
+                margin-right: 10px;
+                border-radius: 5px;
+            }
 
-        .floatLeft {
-            float:left;
-            margin: 25px 10px 3px 0;
-        }
+            .article p {
+                margin-top: 0;
+            }
+
+        
+        /* 
+
+        MODULE STYLES - RIGHT BAR
+        The right-bar class is applied to the right-column. This lets
+        us set specificity for styling those articles differently. 
+
+        */
 
         .right-bar .article {
             text-align: center;
             padding:15px;
         }
-        .right-bar h3 {
-            color: #333;
-            font-family: 1em;
-            font-weight: normal;
-            margin-top:0.3em;
-        }
+            .right-bar h3 {
+                color: #333;
+                font-family: 1em;
+                font-weight: normal;
+                margin-top:0.3em;
+            }
+
+
+        /* 
+
+        FONT STYLES - RIGHT BAR
+        The section-header class is applied to the red section headers
+        for each column. 
+
+        */
+
         .section-header {
             color: #AA0016;
             font-family: Arial, Helvetica, sans-serif;
@@ -90,11 +110,31 @@
             font-variant: normal;
         }
 
+        /* 
+
+        FONT STYLE - PHOTO CREDIT
+        We are just right-aligning the little photo-credit link here.
+
+        */
+        .photo-credit {
+            text-align: right;
+        }
+
+
+
+        /* 
+
+        MEDIA QUERY FOR 767px AND BELOW
+        On smaller screen sizes, we do the following:
+
+        - Make the headline text bigger.
+        - Collapse the right-column articles so that they
+          become a grid instead of being stacked. We do this
+          by setting width: 30%; display: inline-block;
+
+        */
         @media (max-width: 767px) {
 
-            .header {
-                text-align: center;
-            }
 
             .headline h3 {
                 font-size:180%;
@@ -106,6 +146,7 @@
                 padding:0;
                 border:none;
             }
+
         }
     </style>
 </head>
@@ -115,17 +156,20 @@
             <div class="yui3-u-1 content">
 
                 <div class='yui3-u-1 headline article'>
-                    <img src="http://c.o0bg.com/rf/image_585w/Boston/2011-2020/2012/11/19/BostonGlobe.com/Lifestyle/Images/Credit_Hilda_Grahnat.jpg">
-                    <h3 class='yui3-u-1'>The unstyled look of hipster food magazines</h3>
-                    <p>The latest trendy food and lifestyle magazines are driven by a desire to exist outside the mainstream food world and all that goes with it.</p>
+                    <img src="http://farm9.staticflickr.com/8391/8544074541_29a2c7a292_b_d.jpg">
+                    <small class="yui3-u-1 photo-credit">
+                        Photo Credit: <a href="http://www.flickr.com/photos/37010090@N04/8544074541/">Sprengben</a> /<a href="http://creativecommons.org/licenses/by-nc-sa/2.0/">cc</a>
+                    </small>
+                    <h3 class='yui3-u-1'>Lorem ipsum dolor sit amet</h3>
+                    <p>Aliquam viverra, ipsum vitae sollicitudin posuere, lacus odio tincidunt nisi, ac tristique ante massa ut libero. Aliquam id nunc dui, in pretium turpis.</p>
                 </div>
 
                 <div class='yui3-u-1 article'>
                     <div class='yui3-g'>
-                        <h3 class='yui3-u'>A free market will help fix health care</h3>
-                        <img class='floatLeft' src="http://c.o0bg.com/rf/image_90x90/Boston/2011-2020/2012/11/28/BostonGlobe.com/EditorialOpinion/Images/jacoby-280.jpg">
-                        <div class='yui3-u-1'>
-                            <p>What Medicare needs is not more top-down control, but the flexibility and competition of a consumer-driven free market.</p>
+                        <h3 class='yui3-u-1'>Aenean tempor, felis id bibendum consectetur.</h3>
+                        <img class='yui3-u' src="http://placehold.it/90x90">
+                        <div class='yui3-u-2-3'>
+                            <p>Donec aliquam interdum massa, ac vehicula augue pellentesque eget. Aenean tempor, felis id bibendum consectetur, purus urna ultricies orci.</p>
                         </div>
                     </div>
                 </div>
@@ -133,10 +177,10 @@
 
                 <div class='yui3-u-1 article'>
                     <div class='yui3-g'>
-                        <h3 class='yui3-u'>Boston's last great unsolved mystery</h3>
-                        <img class='floatLeft' src="http://c.o0bg.com/rf/image_90x90/Boston/2011-2020/2012/11/16/BostonGlobe.com/Arts/Images/ryan_gardner-museum14_trave-1399.jpg">
-                        <div class='yui3-u-1'>
-                            <p>In 1990, Boston’s Isabella Stewart Gardner Museum was robbed of 13 works of art. In this special section, delve into the Globe’s re-examination of the case.</p>
+                        <h3 class='yui3-u-1'>Fusce non nibh mi.</h3>
+                        <img class='yui3-u' src="http://placehold.it/90x90">
+                        <div class='yui3-u-2-3'>
+                            <p>Proin vitae condimentum elit. Sed mattis consequat mi vitae ornare. Nam bibendum.</p>
                         </div>
                     </div>
                 </div>
@@ -147,12 +191,12 @@
             <div class='yui3-u-1 content'>
                 <h1 class='yui3-u-1 section-header'>Latest News</h1>
                 <div class='yui3-u-1 article'>
-                    <h2>Health chief cites 'serious lapses' at state drug lab</h2>
-                    <p>The health secretary said lab management failed to alert the state after discovering a “serious breach of protocol” by a chemist.</p>
+                    <h2>Curabitur egestas velit nec purus</h2>
+                    <p>uspendisse euismod facilisis pharetra. Suspendisse dignissim eros nec neque aliquam sit.</p>
                 </div>
                 <div class='yui3-u-1 article'>
-                    <h2>Patrick addresses controversies on drug lab, hiring</h2>
-                    <p>Governor Patrick said a former highway safety chief with a bad driving record made his administration look “ridiculous.”</p>
+                    <h2>Nam eget massa ut nibh porta.</h2>
+                    <p>Etiam urna magna, porta id consequat at, aliquam nec nisi. Donec luctus libero vitae diam convallis in aliquet mauris tempor.</p>
                 </div>
                 <div class='yui3-u-1 article'>
                     <h2>Powerball jackpot up to $550m</h2>
@@ -162,23 +206,22 @@
         </div>
         <div class="yui3-u-1-4 right-bar">
             <div class='yui3-u-1 content'>
-                <h1 class='yui3-u-1 section-header'>Globe Exclusives</h1>
+                <h1 class='yui3-u-1 section-header'>Exclusives</h1>
                 <div class='yui3-u-1 article'>
-                    <img src="http://c.o0bg.com/rf/image_150x150/Boston/Library/Staff/Caricatures/lehigh.png">
-                    <h4>Scot Lehigh</h4>
-                    <h3>End of the Menino era?</h3>
+                    <img src="http://placehold.it/160x160">
+                    <h4>John Smith</h4>
+                    <h3>Nunc in ipsum nec massa?</h3>
                 </div>
                 <div class='yui3-u-1 article'>
-                    <img src="http://c.o0bg.com/rf/image_150x150/Boston/2011-2020/2012/11/28/BostonGlobe.com/Business/Images/Suffolk%20Classroom%20Building--150x150.jpg">
-                    <h3>Suffolk shifts core of campus downtown</h3>
+                    <img src="http://placehold.it/160x160">
+                    <h3>Duis dignissim augue vel lacus tincidunt</h3>
                 </div>
                 <div class='yui3-u-1 article'>
-                    <img src="http://c.o0bg.com/rf/image_150x150/Boston/2011-2020/2011/12/08/BostonGlobe.com/Metro/Images/GlobeSantaLogoNew--150x150.jpg">
-                    <h3>How to donate to Globe Santa</h3>
+                    <img src="http://placehold.it/160x160">
+                    <h3>Hed scelerisque eros a sem dictum</h3>
                 </div>
             </div>
         </div>
     </div>
-
 </body>
 </html>
