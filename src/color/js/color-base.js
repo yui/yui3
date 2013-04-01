@@ -324,6 +324,11 @@ Y.Color = {
     @since 3.8.0
     **/
     _convertTo: function(clr, to) {
+
+        if (clr === 'transparent') {
+            return clr;
+        }
+
         var from = Y.Color.findType(clr),
             originalTo = to,
             needsAlpha,
