@@ -1,6 +1,11 @@
 OOP Change History
 ==================
 
+@VERSION@
+-----
+
+* Updated `Y.clone()` to always quit early and not try to clone DOM nodes.
+
 3.9.1
 -----
 
