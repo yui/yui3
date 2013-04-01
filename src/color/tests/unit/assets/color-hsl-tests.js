@@ -1,6 +1,7 @@
 YUI.add('color-hsl-tests', function(Y) {
 
     var areSame = Y.Assert.areSame,
+        TRANSPARENT = 'transparent',
         testBasic = new Y.Test.Case({
             name: "Color HSL Convertion Tests",
 
@@ -136,6 +137,11 @@ YUI.add('color-hsl-tests', function(Y) {
                 areSame('#5d4bc3', med, 'med luminance is not preserved');
                 areSame('#cbc6ec', high, 'high luminance is not preserved');
                 areSame('#ffffff', full, 'full luminance is not preserved');
+            },
+
+            'test for trasnparent': function () {
+                Y.Assert.areSame(TRANSPARENT, Y.Color.toHSL(TRANSPARENT), 'trasnparent to hsl');
+                Y.Assert.areSame(TRANSPARENT, Y.Color.toHSLA(TRANSPARENT), 'trasnparent to hsla');
             }
 
         });
