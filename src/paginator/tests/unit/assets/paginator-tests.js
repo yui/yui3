@@ -199,13 +199,18 @@ suite.add(new Y.Test.Case({
     },
 
     'test to json method': function () {
-        var pg = new Y.Paginator({
+        var pgConfig = {
                 itemsPerPage: 10,
                 totalItems: 100,
-                page: 5
-            });
+                page: 5,
+                view: Y.View
+            },
+            pg = new Y.Paginator(pgConfig),
+            json = pg.toJSON();
 
-        console.log(pg.toJSON());
+        Y.Assert.areSame(pgConfig.itemsPerPage, json.itemsPerPage, 'Items Per Page has changed.');
+        Y.Assert.areSame(pgConfig.totalItems, json.totalItems, 'Total items has changed.');
+        Y.Assert.areSame(pgConfig.page, json.page, 'Current page has changed.');
     }
 }));
 
@@ -213,4 +218,4 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{ requires:['paginator', 'base-build', 'widget'] });
+}, '@VERSION@' ,{ requires:['paginator', 'base-build', 'widget', 'view'] });
