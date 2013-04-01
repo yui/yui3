@@ -295,7 +295,7 @@ Y.mix(Sortable.prototype, {
     @protected
     @since 3.5.0
     **/
-    _afterSortByChange: function (e) {
+    _afterSortByChange: function () {
         // Can't use a setter because it's a chicken and egg problem. The
         // columns need to be set up to translate, but columns are initialized
         // from Core's initializer.  So construction-time assignment would
@@ -575,7 +575,7 @@ Y.mix(Sortable.prototype, {
                             sortBy[i] = {};
                         }
 
-                        sortBy[i][id] = -(column.sortDir|0) || 1;
+                        sortBy[i][id] = -(column.sortDir||0) || 1;
                         break;
                     }
                 }
@@ -584,7 +584,7 @@ Y.mix(Sortable.prototype, {
                     sortBy.push(column._id);
                 }
             } else {
-                sortBy[0][id] = -(column.sortDir|0) || 1;
+                sortBy[0][id] = -(column.sortDir||0) || 1;
             }
 
             this.fire('sort', {
@@ -893,4 +893,4 @@ Y.DataTable.Sortable = Sortable;
 Y.Base.mix(Y.DataTable, [Sortable]);
 
 
-}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr"], "skinnable": true});
+}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es"], "skinnable": true});

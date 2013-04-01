@@ -1,10 +1,24 @@
 Focus Manager Change History
 ============================
 
-3.8.1
+3.9.1
 -----
 
 * No changes.
+
+3.9.0
+-----
+
+* [!] DEPRECATED: The FocusManager Node Plugin has been deprecated as of
+  YUI 3.9.0.  This module will be removed from the library in a future version.
+  If you require functionality similar to the one provided by this module,
+  consider taking a look  at the various modules in the
+  [YUI Gallery](http://yuilibrary.com/gallery/).
+
+3.8.1
+-----
+
+  * No changes.
 
 3.8.0
 -----

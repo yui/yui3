@@ -1,6 +1,17 @@
 Event Infrastructure Change History
 ===================================
 
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* `delegate()` now silences events originating from disabled form controls in
+  IE, like it does natively in other browsers. [#2532677]
+
 3.8.1
 -----
 
@@ -9,7 +20,7 @@ Event Infrastructure Change History
 3.8.0
 -----
 
-  * No changes.
+* No changes.
 
 3.7.3
 -----

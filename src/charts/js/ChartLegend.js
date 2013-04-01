@@ -71,7 +71,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @param {Object} e Event object
      * @private
      */
-    _updateHandler: function(e)
+    _updateHandler: function()
     {
         if(this.get("rendered"))
         {
@@ -86,7 +86,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @param {Object} e Event object
      * @private
      */
-    _positionChangeHandler: function(e)
+    _positionChangeHandler: function()
     {
         var chart = this.get("chart"),
             parentNode = this._parentNode;
@@ -111,9 +111,9 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
     {
         var attrName = e.attrName,
             pos = this.get(POSITION),
-            vert = pos == LEFT || pos == RIGHT,
-            hor = pos == BOTTOM || pos == TOP;
-        if((hor && attrName == WIDTH) || (vert && attrName == HEIGHT))
+            vert = pos === LEFT || pos === RIGHT,
+            hor = pos === BOTTOM || pos === TOP;
+        if((hor && attrName === WIDTH) || (vert && attrName === HEIGHT))
         {
             this._drawLegend();
         }
@@ -148,12 +148,12 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             seriesStyles,
             hSpacing = itemStyles.hSpacing,
             vSpacing = itemStyles.vSpacing,
-            hAlign = styles.hAlign,
-            vAlign = styles.vAlign,
+            direction = this.get("direction"),
+            align = direction === "vertical" ? styles.vAlign : styles.hAlign,
             marker = styles.marker,
             labelStyles = itemStyles.label,
             displayName,
-            layout = this._layout[this.get("direction")],
+            layout = this._layout[direction],
             i,
             len,
             isArray,
@@ -229,7 +229,16 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                     }
                 }
                 shapeClass = Y.Lang.isArray(shape) ? shape[i] : shape;
-                item = this._getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.border, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
+                item = this._getLegendItem(
+                    node,
+                    this._getShapeClass(shape),
+                    seriesStyles.fill,
+                    seriesStyles.border,
+                    labelStyles,
+                    markerWidth,
+                    markerHeight,
+                    series.get("valueDisplayName")
+                );
                 itemWidth = item.width;
                 itemHeight = item.height;
                 maxWidth = Math.max(maxWidth, itemWidth);
@@ -246,7 +255,10 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         }
         else
         {
-            layout._positionLegendItems.apply(this, [items, maxWidth, maxHeight, totalWidth, totalHeight, padding, hSpacing, vSpacing, hAlign, vAlign]);
+            layout._positionLegendItems.apply(
+                this,
+                [items, maxWidth, maxHeight, totalWidth, totalHeight, padding, hSpacing, vSpacing, align]
+            );
             this._updateBackground(styles);
             this.fire("legendRendered");
         }
@@ -365,7 +377,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             dimension,
             padding,
             left,
-            item;
+            item,
+            ShapeClass = shapeClass;
         containerNode.setStyle(POSITION, "absolute");
         textField.setStyle(POSITION, "absolute");
         textField.setStyles(labelStyles);
@@ -378,7 +391,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         textField.setStyle("left", left + PX);
         containerNode.setStyle("height", dimension + PX);
         containerNode.setStyle("width", (left + textField.get("offsetWidth")) + PX);
-        shape = new shapeClass({
+        shape = new ShapeClass({
             fill: fill,
             stroke: border,
             width: w,
@@ -574,8 +587,9 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * Indicates the position and direction of the legend. Possible values are `left`, `top`, `right` and `bottom`. Values of `left` and
-         * `right` values have a `direction` of `vertical`. Values of `top` and `bottom` values have a `direction` of `horizontal`.
+         * Indicates the position and direction of the legend. Possible values are `left`, `top`, `right` and `bottom`.
+         * Values of `left` and `right` values have a `direction` of `vertical`. Values of `top` and `bottom` values have
+         * a `direction` of `horizontal`.
          *
          * @attribute position
          * @type String
@@ -587,11 +601,11 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
 
             setter: function(val)
             {
-                if(val == TOP || val == BOTTOM)
+                if(val === TOP || val === BOTTOM)
                 {
                     this.set("direction", HORIZONTAL);
                 }
-                else if(val == LEFT || val == RIGHT)
+                else if(val === LEFT || val === RIGHT)
                 {
                     this.set("direction", VERTICAL);
                 }
