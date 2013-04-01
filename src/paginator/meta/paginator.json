@@ -1,0 +1,54 @@
+{
+    "paginator": {
+
+        "submodules": {
+            "paginator": {
+                "requires": [
+                    "widget",
+                    "paginator-view",
+                    "paginator-core",
+                    "base-build",
+                    "intl"
+                ]
+            },
+            "paginator-view": {
+                "requires": [
+                    "view",
+                    "paginator-templates",
+                    "classnamemanager",
+                    "intl"
+                ],
+                "skinnable": true
+            },
+            "paginator-core": {
+                "requires": []
+            },
+            "paginator-list": {
+                "requires": [
+                    "paginator-view",
+                    "paginator-url"
+                ],
+                "skinnable": true
+            },
+            "paginator-table": {
+                "requires": [
+                    "paginator-view"
+                ],
+                "skinnable": true
+            },
+            "paginator-templates": {
+                "requires": [
+                    "template",
+                    "intl"
+                ],
+                "lang": [
+                    "en"
+                ]
+            },
+            "paginator-url": {
+                "requires": []
+            }
+        }
+    }
+}
+
