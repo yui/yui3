@@ -1,0 +1,10 @@
+{
+    "name"       : "cssform",
+    "displayName": "CSS Forms",
+    "description": "Simple CSS for HTML Form Elements",
+    "author"     : "tilomitra",
+
+    "tags": [ "css", "beta" ],
+    "use": ["cssform"],
+    "hideAPILink": true
+}
