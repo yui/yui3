@@ -15,7 +15,7 @@
         "request": "~2.14.0"
     },
     "devDependencies": {
-        "yogi": "*",
+        "yogi": "~0.1.0",
         "parserlib": "~0.2.2",
         "grunt": "~0.4.1",
         "grunt-yui-contrib": "~0.0.4",
