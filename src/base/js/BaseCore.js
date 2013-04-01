@@ -309,35 +309,62 @@
         },
 
         /**
-         * A helper method used when processing ATTRS across the class hierarchy during
-         * initialization. Returns a disposable object with the attributes defined for
-         * the provided class, extracted from the set of all attributes passed in.
-         *
-         * @method _filterAttrCfs
-         * @private
-         *
-         * @param {Function} clazz The class for which the desired attributes are required.
-         * @param {Object} allCfgs The set of all attribute configurations for this instance.
-         * Attributes will be removed from this set, if they belong to the filtered class, so
-         * that by the time all classes are processed, allCfgs will be empty.
-         *
-         * @return {Object} The set of attributes belonging to the class passed in, in the form
-         * of an object with attribute name/configuration pairs.
-         */
-        _filterAttrCfgs : function(clazz, allCfgs) {
-            var cfgs = null, attr, attrs = clazz.ATTRS;
+        Returns a copy of the aggregated set of attribute configurations
+        protecting the static configs and cloning any default value objects.
 
-            if (attrs) {
-                for (attr in attrs) {
-                    if (allCfgs[attr]) {
-                        cfgs = cfgs || {};
-                        cfgs[attr] = allCfgs[attr];
-                        allCfgs[attr] = null;
+        This method is used internally to prep the attribute configurations
+        before they are applied to a new instnace.
+
+        @method _protectAttrCfgs
+        @param {Object} attrCfgs The aggregated static attribute configurations.
+        @return {Object} A copy of `attrCfgs` which can be safely appied to a
+            new instance by passing it to `addAttrs()`.
+        @private
+        @since @VERSION@
+        **/
+        _protectAttrCfgs : function (attrCfgs) {
+            var attrCfgHash   = this._attrCfgHash(),
+                protectedCfgs = {},
+                attr,
+                cfg,
+                pCfg,
+                val;
+
+            for (attr in attrCfgs) {
+                cfg  = attrCfgs[attr];
+                path = null;
+
+                if (attr.indexOf(DOT) !== -1) {
+                    path = attr.split(DOT);
+                    attr = path.shift();
+                }
+
+                // When we have a `path` we have a complex attribute, something
+                // like: "foo.bar". In this case, it's assumed that the "root"
+                // attribute has already been setup. If it hasn't, then that's a
+                // user error. This will apply the sub-attribute value to the
+                // main attribute.
+                if (path) {
+
+                    pCfg = protectedCfgs[attr];
+                    val  = pCfg && pCfg.value;
+
+                    if (val) {
+                        O.setValue(val, path, cfg.value);
+                    }
+
+                } else {
+
+                    pCfg = protectedCfgs[attr] = _wlmix({}, cfg, attrCfgHash);
+                    val  = pCfg.value;
+
+                    if (val && (typeof val === 'object')) {
+                        this._cloneDefaultValue(attr, pCfg);
                     }
                 }
             }
 
-            return cfgs;
+            return protectedCfgs;
         },
 
         /**
@@ -379,7 +406,9 @@
          * @private
          */
         _initHierarchyData : function() {
+
             var ctor = this.constructor,
+                cachedClassData = ctor._CACHED_CLASS_DATA,
                 c,
                 i,
                 l,
@@ -387,65 +416,103 @@
                 attrCfgHash,
                 needsAttrCfgHash = !ctor._ATTR_CFG_HASH,
                 nonAttrsCfg,
-                nonAttrs = (this._allowAdHocAttrs) ? {} : null,
+                nonAttrs = {},
                 classes = [],
                 attrs = [];
 
             // Start with `this` instance's constructor.
             c = ctor;
 
-            while (c) {
-                // Add to classes
-                classes[classes.length] = c;
+            if (!cachedClassData) {
 
-                // Add to attributes
-                if (c.ATTRS) {
-                    attrs[attrs.length] = c.ATTRS;
+                while (c) {
+                    // Add to classes
+                    classes[classes.length] = c;
+
+                    // Add to attributes
+                    if (c.ATTRS) {
+                        attrs[attrs.length] = c.ATTRS;
+                    }
+
+                    // Aggregate ATTR cfg whitelist.
+                    if (needsAttrCfgHash) {
+                        attrCfg     = c._ATTR_CFG;
+                        attrCfgHash = attrCfgHash || {};
+
+                        if (attrCfg) {
+                            for (i = 0, l = attrCfg.length; i < l; i += 1) {
+                                attrCfgHash[attrCfg[i]] = true;
+                            }
+                        }
+                    }
+
+                    // Commenting out the if. We always aggregate, since we don't
+                    // know if we'll be needing this on the instance or not.
+                    // if (this._allowAdHocAttrs) {
+                        nonAttrsCfg = c._NON_ATTRS_CFG;
+                        if (nonAttrsCfg) {
+                            for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
+                                nonAttrs[nonAttrsCfg[i]] = true;
+                            }
+                        }
+                    //}
+
+                    c = c.superclass ? c.superclass.constructor : null;
                 }
 
-                // Aggregate ATTR cfg whitelist.
+                // Cache computed `_ATTR_CFG_HASH` on the constructor.
                 if (needsAttrCfgHash) {
-                    attrCfg     = c._ATTR_CFG;
-                    attrCfgHash = attrCfgHash || {};
-
-                    if (attrCfg) {
-                        for (i = 0, l = attrCfg.length; i < l; i += 1) {
-                            attrCfgHash[attrCfg[i]] = true;
-                        }
-                    }
+                    ctor._ATTR_CFG_HASH = attrCfgHash;
                 }
 
-                if (this._allowAdHocAttrs) {
-                    nonAttrsCfg = c._NON_ATTRS_CFG;
-                    if (nonAttrsCfg) {
-                        for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
-                            nonAttrs[nonAttrsCfg[i]] = true;
-                        }
-                    }
-                }
+                cachedClassData = ctor._CACHED_CLASS_DATA = {
+                    classes : classes,
+                    nonAttrs : nonAttrs,
+                    attrs : this._aggregateAttrs(attrs)
+                };
 
-                c = c.superclass ? c.superclass.constructor : null;
             }
 
-            // Cache computed `_ATTR_CFG_HASH` on the constructor.
-            if (needsAttrCfgHash) {
-                ctor._ATTR_CFG_HASH = attrCfgHash;
-            }
-
-            this._classes = classes;
-            this._nonAttrs = nonAttrs;
-            this._attrs = this._aggregateAttrs(attrs);
+            this._classes = cachedClassData.classes;
+            this._attrs = cachedClassData.attrs;
+            this._nonAttrs = cachedClassData.nonAttrs;
         },
 
         /**
          * Utility method to define the attribute hash used to filter/whitelist property mixes for
-         * this class.
+         * this class for iteration performance reasons.
          *
          * @method _attrCfgHash
          * @private
          */
         _attrCfgHash: function() {
             return this.constructor._ATTR_CFG_HASH;
+        },
+
+        /**
+         * This method assumes that the value has already been checked to be an object.
+         * Since it's on a critical path, we don't want to re-do the check.
+         *
+         * @method _cloneDefaultValue
+         * @param {Object} cfg
+         * @private
+         */
+        _cloneDefaultValue : function(attr, cfg) {
+
+            var val = cfg.value,
+                clone = cfg.cloneDefaultValue;
+
+            if (clone === DEEP || clone === true) {
+                Y.log('Cloning default value for attribute:' + attr, 'info', 'base');
+                cfg.value = Y.clone(val);
+            } else if (clone === SHALLOW) {
+                Y.log('Merging default value for attribute:' + attr, 'info', 'base');
+                cfg.value = Y.merge(val);
+            } else if ((clone === undefined && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val)))) {
+                cfg.value = Y.clone(val);
+            }
+            // else if (clone === false), don't clone the static default value.
+            // It's intended to be used by reference.
         },
 
         /**
@@ -463,60 +530,43 @@
          * @return {Object} The aggregate set of ATTRS definitions for the instance
          */
         _aggregateAttrs : function(allAttrs) {
-            var attr,
+            var cfgPropsHash = this._attrCfgHash(),
+                aggAttrs = {},
+                protectedAttrs = {},
+                attr,
                 attrs,
                 cfg,
-                val,
-                path,
                 i,
-                clone,
-                cfgPropsHash = this._attrCfgHash(),
-                aggAttr,
-                aggAttrs = {};
+                aggAttr;
 
             if (allAttrs) {
                 for (i = allAttrs.length-1; i >= 0; --i) {
+
                     attrs = allAttrs[i];
 
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            // Protect config passed in
-                            cfg = _wlmix({}, attrs[attr], cfgPropsHash);
-
-                            val = cfg.value;
-                            clone = cfg.cloneDefaultValue;
-
-                            if (val) {
-                                if ( (clone === undefined && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) || clone === DEEP || clone === true) {
-                                    Y.log('Cloning default value for attribute:' + attr, 'info', 'base');
-                                    cfg.value = Y.clone(val);
-                                } else if (clone === SHALLOW) {
-                                    Y.log('Merging default value for attribute:' + attr, 'info', 'base');
-                                    cfg.value = Y.merge(val);
-                                }
-                                // else if (clone === false), don't clone the static default value.
-                                // It's intended to be used by reference.
-                            }
-
-                            path = null;
-                            if (attr.indexOf(DOT) !== -1) {
-                                path = attr.split(DOT);
-                                attr = path.shift();
-                            }
-
+                            cfg     = attrs[attr];
                             aggAttr = aggAttrs[attr];
-                            if (path && aggAttr && aggAttr.value) {
-                                O.setValue(aggAttr.value, path, val);
-                            } else if (!path) {
-                                if (!aggAttr) {
-                                    aggAttrs[attr] = cfg;
-                                } else {
-                                    if (aggAttr.valueFn && VALUE in cfg) {
-                                        aggAttr.valueFn = null;
-                                    }
-                                    _wlmix(aggAttr, cfg, cfgPropsHash);
+
+                            if (!aggAttr) {
+                                aggAttrs[attr] = cfg;
+                            } else {
+                                if (!protectedAttrs[attr]) {
+                                    // Protect static atttribute configuration.
+                                    aggAttr = _wlmix({}, aggAttr, cfgPropsHash);
+
+                                    aggAttrs[attr]       = aggAttr;
+                                    protectedAttrs[attr] = true;
                                 }
+
+                                if (aggAttr.valueFn && VALUE in cfg) {
+                                    aggAttr.valueFn = null;
+                                }
+
+                                // Mix into existing config.
+                                _wlmix(aggAttr, cfg, cfgPropsHash);
                             }
                         }
                     }
@@ -549,6 +599,15 @@
                 attrCfgs = this._getAttrCfgs(),
                 cl = classes.length - 1;
 
+            // Protect attribute configs.
+            attrCfgs = this._protectAttrCfgs(attrCfgs);
+
+            this.addAttrs(attrCfgs, userVals, lazy);
+
+            if (this._allowAdHocAttrs) {
+                this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
+            }
+
             for (ci = cl; ci >= 0; ci--) {
 
                 constr = classes[ci];
@@ -559,12 +618,6 @@
                     for (ei = 0, el = exts.length; ei < el; ei++) {
                         exts[ei].apply(this, arguments);
                     }
-                }
-
-                this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
-
-                if (this._allowAdHocAttrs && ci === cl) {
-                    this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
                 }
 
                 // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
