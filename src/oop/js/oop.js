@@ -237,9 +237,9 @@ returned untouched. Optionally, a function can be provided to handle other data
 types, filter keys, validate values, etc.
 
 **Note:** Cloning a non-trivial object is a reasonably heavy operation, due to
-the need to recurrsively iterate down non-primitive properties. Clone should be
+the need to recursively iterate down non-primitive properties. Clone should be
 used only when a deep clone down to leaf level properties is explicitly
-required.
+required. This method will also
 
 In many cases (for example, when trying to isolate objects used as hashes for
 configuration properties), a shallow copy, using `Y.merge()` is normally
@@ -270,17 +270,24 @@ Y.clone = function(o, safe, f, c, owner, cloned) {
     var o2, marked = cloned || {}, stamp,
         yeach = Y.each;
 
-    if (!L.isObject(o)) {
-        return o;
-    }
+    // Does not attempt to clone:
+    //
+    // * Non-typeof-object values, "primitive" values don't need cloning.
+    //
+    // * YUI instances, cloning complex object like YUI instances is not
+    //   advised, this is like cloning the world.
+    //
+    // * DOM nodes (#2528250), common host objects like DOM nodes cannot be
+    //   "subclassed" in Firefox and old versions of IE. Trying to use
+    //   `Object.create()` or `Y.extend()` on a DOM node will throw an error in
+    //   these browsers.
+    //
+    // Instad, the passed-in `o` will be return as-is when it matches one of the
+    // above criteria.
+    if (!L.isObject(o) ||
+            Y.instanceOf(o, YUI) ||
+            (o.addEventListener || o.attachEvent)) {
 
-    // TODO: cloning YUI instances doesn't currently work.
-    if (Y.instanceOf(o, YUI)) {
-        return o;
-    }
-
-    // 2528250 don't try to clone element properties.
-    if (o.addEventListener || o.attachEvent) {
         return o;
     }
 

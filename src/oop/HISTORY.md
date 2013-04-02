@@ -5,6 +5,9 @@ OOP Change History
 -----
 
 * Updated `Y.clone()` to always quit early and not try to clone DOM nodes.
+  Common host objects like DOM nodes cannot be "subclassed" in Firefox and old
+  versions of IE. Trying to use `Object.create()` or `Y.extend()` on a DOM node
+  will throw an error in these browsers.
 
 3.9.1
 -----
