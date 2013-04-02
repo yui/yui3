@@ -17,5 +17,20 @@
 	"charts/tests/perf/noaxes-benchmark.js",
 	"charts/tests/perf/noaxes-legend-benchmark.js",
 	"charts/tests/perf/pie-benchmark.js",
-	"charts/tests/perf/series-benchmark.js"
+	"charts/tests/perf/series-benchmark.js",
+	"graphics/tests/perf/circle-benchmark.js",
+	"graphics/tests/perf/circlenofill-benchmark.js",
+	"graphics/tests/perf/circlenostroke-benchmark.js",
+	"graphics/tests/perf/ellipse-benchmark.js",
+	"graphics/tests/perf/ellipsenofill-benchmark.js",
+	"graphics/tests/perf/ellipsenostroke-benchmark.js",
+	"graphics/tests/perf/multipleshapes-benchmark.js",
+	"graphics/tests/perf/multipleshapesnofill-benchmark.js",
+	"graphics/tests/perf/multipleshapesnostroke-benchmark.js",
+	"graphics/tests/perf/path-benchmark.js",
+	"graphics/tests/perf/pathnofill-benchmark.js",
+	"graphics/tests/perf/pathnostroke-benchmark.js",
+	"graphics/tests/perf/rect-benchmark.js",
+	"graphics/tests/perf/rectnofill-benchmark.js",
+	"graphics/tests/perf/rectnostroke-benchmark.js"
 ]

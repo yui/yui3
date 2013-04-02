@@ -1,6 +1,6 @@
 YUI.add('app-benchmark-view', function (Y, NAME) {
 
-    var suite = Y.Benchmark.suite;
+    var suite = Y.BenchmarkSuite = new Benchmark.Suite;
 
     // -- Y.View -------------------------------------------------------------------
     suite.add('Y.View: Instantiate a bare view', function () {
