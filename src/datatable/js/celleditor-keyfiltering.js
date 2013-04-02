@@ -96,6 +96,7 @@ Y.mix( KF.prototype, {
                     this._keyFilteringSubscr.detach();
                 }
                 this._keyFilter = null;
+                return;
             } else if (typeof value === 'function') {
                 this._keyFilter = value;
             } else if (value instanceof RegExp) {
