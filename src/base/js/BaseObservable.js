@@ -85,7 +85,15 @@
 
             this._preInitEventCfg(config);
 
-            this.fire(type, {cfg: config});
+            if (e._hasPotentialSubscribers()) {
+                this.fire(type, {cfg: config});
+            } else {
+                this._baseInit(config);
+
+                // Since it's fireOnce. subscribers may come along later.
+                e.fired = true;
+                e.firedWith = [{cfg:config}];
+            }
 
             return this;
         },

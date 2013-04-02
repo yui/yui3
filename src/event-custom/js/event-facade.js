@@ -130,7 +130,6 @@ Y.mix(Y.EventFacade.prototype, {
         this.prevented = 1;
         this.stopped = (immediate) ? 2 : 1;
     }
-
 });
 
 CEProto.fireComplex = function(args) {
@@ -154,11 +153,9 @@ CEProto.fireComplex = function(args) {
         host = self.host || self,
         next,
         oldbubble,
-        stack,
+        stack = self.stack,
         yuievt = host._yuievt,
         hasPotentialSubscribers;
-
-    stack = self.stack;
 
     if (stack) {
 
@@ -591,6 +588,34 @@ ETProto.bubble = function(evt, args, target, es) {
     }
 
     return ret;
+};
+
+/**
+ * @method _hasPotentialSubscribers
+ * @for CustomEvent
+ * @private
+ * @return {boolean} Whether the event has potential subscribers or not
+ */
+CEProto._hasPotentialSubscribers = function() {
+    return this.hasSubs() || this.host._yuievt.hasTargets || this.broadcast;
+};
+
+/**
+ * @method _hasPotentialSubscribers
+ * @for EventTarget
+ * @private
+ * @param {String} fullType The fully prefixed type name
+ * @return {boolean} Whether the event has potential subscribers or not
+ */
+ETProto._hasPotentialSubscribers = function(fullType) {
+    var etState = this._yuievt,
+        e = etState.events[fullType];
+
+    if (e) {
+        return e.hasSubs() || etState.hasTargets  || e.broadcast;
+    } else {
+        return false;
+    }
 };
 
 FACADE = new Y.EventFacade();
