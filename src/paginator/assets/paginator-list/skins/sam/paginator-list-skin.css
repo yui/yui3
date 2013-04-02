@@ -13,7 +13,9 @@
 
 .yui3-skin-sam .yui3-paginator-list .yui3-paginator-control {
     background-color: #E6E6E6;
-    border-radius: 4px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;    
+    border-radius: 3px;
 }
 
 .yui3-skin-sam .yui3-paginator-list .yui3-paginator-page {
