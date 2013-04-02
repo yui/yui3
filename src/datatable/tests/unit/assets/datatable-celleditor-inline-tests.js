@@ -139,11 +139,11 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
         },
 
         'each inline should be an object': function() {
-            Assert.isObject(Y.DataTable.EditorOptions);
-            Assert.isObject(Y.DataTable.EditorOptions.inline);
-            Assert.isObject(Y.DataTable.EditorOptions.inlineNumber);
-            Assert.isObject(Y.DataTable.EditorOptions.inlineDate);
-            Assert.isObject(Y.DataTable.EditorOptions.inlineAC);
+            Assert.isObject(Y.DataTable.Editors);
+            Assert.isObject(Y.DataTable.Editors.inline);
+            Assert.isObject(Y.DataTable.Editors.inlineNumber);
+            Assert.isObject(Y.DataTable.Editors.inlineDate);
+            Assert.isObject(Y.DataTable.Editors.inlineAC);
         },
 
         'inline editor should be a View': function() {
@@ -195,7 +195,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             Assert.areSame(7, Y.Object.size(dt.getCellEditors()), 'there should be 7 cell editors');
 
             Assert.isNull( dt.getCellEditor('sid'),'column 0 (sid) editor should be null');
-            Assert.areSame( Y.DataTable.EditorOptions.inline, dt.getCellEditor('sopen').constructor,'column 1 (sopen) editor name should be inline');
+            Assert.areSame( Y.DataTable.Editors.inline, dt.getCellEditor('sopen').constructor,'column 1 (sopen) editor name should be inline');
 
         },
         'check inline editor - row 0 column 6 (sprice) : showeditor' : function(){
@@ -531,8 +531,11 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
 
             inputKey(inp,'abcdefg',13);
-            Assert.isFalse(oe.get('active'),'cell editor col 6 should be closed');
+            Assert.isTrue(oe.get('active'),'cell editor col 6 should have refused to close');
+            Assert.isTrue(inp.ancestor().hasClass('yui3-datatable-celleditor-error'), 'input box should show error');
             Assert.areSame(1.29,oe.get('value'));
+            fireKey(inp, 27);
+            Assert.isFalse(oe.get('active'),'cell editor col 6 should close when escaped');
         },
 
         'row index 2, column 6 (sprice) - inlineNumber invalid via saveEditor' : function(){
@@ -549,8 +552,11 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
             //inputKey(inp,'abcdefg',13);
             oe.saveEditor('abcdefg');
-            Assert.isFalse(oe.get('active'),'cell editor col 6 should be closed');
+            Assert.isTrue(oe.get('active'),'cell editor col 6 should have refused to close');
+            Assert.isTrue(inp.ancestor().hasClass('yui3-datatable-celleditor-error'), 'input box should show error');
             Assert.areSame(1.29,oe.get('value'));
+            fireKey(inp, 27);
+            Assert.isFalse(oe.get('active'),'cell editor col 6 should close when escaped');
         }
 
     }));
