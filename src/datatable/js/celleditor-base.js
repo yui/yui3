@@ -10,13 +10,7 @@ var returnUnchanged = function (value) {
         Y.log('(private) returnUnchanged: ' + value);
         return value;
     },
-    KEYC_ESC = 27,
-    KEYC_ENTER = 13,
-    KEYC_TAB = 9,
-    KEYC_UP  = 38,
-    KEYC_DOWN  = 40,
-    KEYC_RIGHT  = 39,
-    KEYC_LEFT  = 37,
+
 /**
 @class DataTable.BaseCellEditor
 @extends Y.View
@@ -191,8 +185,9 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @method render
     @chainable
     */
-    render: function () {
+    render: function (where) {
         Y.log('DataTable.BaseCellEditor.render');
+        where.append(this.get('container'));
         this.fire('render');
         this._bindUI();
         return this;
@@ -227,23 +222,13 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     _bindUI: function () {
         Y.log('DataTable.BaseCellEditor._bindUI');
 
-        var input = this._inputNode,
-            subscr;
 
-        subscr = [
+        this._subscr = [
             // This is here to support "scrolling" of the underlying DT ...
             this.after('xyChange',this._afterXYChange),
             this.after('visibleChange', this._afterVisibleChange)
         ];
 
-        if (input) {
-            subscr.push(
-
-                input.on('keydown',    this._onKeyDown, this),
-                input.on('click',      this._onClick, this)
-            );
-        }
-        this._subscr.push(subscr);
     },
 
     /**
@@ -406,84 +391,6 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     },
 
 
-    /**
-    Key listener for the input element `keydown` event.
-    It handles navigation, Enter or Esc.
-    It is automatically attached if [_inputNode](#property__inputNode) is set.
-
-    @method _onKeyDown
-    @param e {EventFacade} Keydown event facade
-    @protected
-    */
-    /**
-    Fires when the navigation keys are pressed to move to another cell.
-    @event keyNav
-    @param e {EventFacade} event facade including:
-    @param e.dx {Integer} number of cells to move in the x direction. (usually -1: left, 0 or 1: right)
-    @param e.dy {Integer} number of cells to move in the y direction. (usually -1: up, 0 or 1: down)
-    */
-    _onKeyDown : function (e) {
-        Y.log('DataTable.BaseCellEditor._onKeyDown');
-        var keyc = e.keyCode,
-            dx = 0, dy = 0;
-
-        switch(keyc) {
-            case KEYC_ENTER:
-                if (this.get('saveOnEnterKey')) {
-                    e.preventDefault();
-                    this.saveEditor(e.target.get('value'));
-                    return;
-                }
-                break;
-            case KEYC_ESC:
-                e.preventDefault();
-                this.cancelEditor();
-                return;
-        }
-        if(this.get('navigationEnabled')) {
-            switch(keyc) {
-                case KEYC_UP:
-                    dy = (e.ctrlKey) ? -1 : 0;
-                    break;
-
-                case KEYC_DOWN:
-                    dy = (e.ctrlKey) ? 1 : 0;
-                    break;
-
-                case KEYC_LEFT:
-                    dx = (e.ctrlKey) ? -1 : 0;
-                    break;
-
-                case KEYC_RIGHT:
-                    dx = (e.ctrlKey) ? 1 : 0;
-                    break;
-
-                case KEYC_TAB: // tab
-                    dx = (e.shiftKey) ? -1 : 1;
-                    break;
-            }
-
-            if(dx || dy) {
-                this.fire('keyNav', {dx:dx, dy:dy});
-                e.preventDefault();
-            }
-        }
-    },
-
-
-
-    /**
-    Listener to INPUT "click" events that will stop bubbling to the DT TD listener,
-    to prevent closing editing while clicking within an INPUT.
-
-    @method _onClick
-    @param e {EventFacade}
-    @private
-    */
-    _onClick: function(e) {
-        Y.log('DataTable.BaseCellEditor._onClick');
-        e.stopPropagation();
-    },
 
     /**
     Event listener for the [xy](#attr_xy) change event.

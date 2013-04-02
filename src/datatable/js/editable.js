@@ -17,6 +17,13 @@ var Lang = Y.Lang,
     COL = 'col',
     COLUMNS = 'columns',
 
+    KEYC_ESC = 27,
+    KEYC_ENTER = 13,
+    KEYC_TAB = 9,
+    KEYC_UP  = 38,
+    KEYC_DOWN  = 40,
+    KEYC_RIGHT  = 39,
+    KEYC_LEFT  = 37,
 
 
 /**
@@ -209,6 +216,17 @@ Y.mix( DtEditable.prototype, {
      */
     _columnEditors: null,
 
+    /**
+    Container for all cell editors.  Serves to keep them all together and to
+    listen for common events.
+
+    @property _editorsContainer
+    @type Node
+    @default null
+    @private
+    */
+    _editorsContainer: null,
+
 
     //==========================  LIFECYCLE METHODS  =============================
 
@@ -227,6 +245,9 @@ Y.mix( DtEditable.prototype, {
 
         this._UI_ATTRS.SYNC = this._UI_ATTRS.SYNC.concat(EDITABLE, EDITOR_OPEN_ACTION);
         this._UI_ATTRS.BIND.push(EDITABLE, EDITOR_OPEN_ACTION);
+
+        this._editorsContainer = Y.one('body').appendChild('<div class="yui3-datatable-editors"></div>');
+
     },
 
     /**
@@ -239,6 +260,7 @@ Y.mix( DtEditable.prototype, {
         // detach the "editableChange" listener on the DT
         this.set(EDITABLE, false);
         this._unbindEditable();
+        this._editorsContainer.remove(true);
     },
 
     //==========================  PUBLIC METHODS  =============================
@@ -264,12 +286,7 @@ Y.mix( DtEditable.prototype, {
             return;
         }
 
-        if(this._xScroll && this._xScrollNode) {
-            this._subscrEditable.push(this._xScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
-        }
-        if(this._yScroll && this._yScrollNode) {
-            this._subscrEditable.push(this._yScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
-        }
+
 
         //
         // Bailout if column is null, has editable:false or no editor assigned ...
@@ -445,6 +462,15 @@ Y.mix( DtEditable.prototype, {
      */
     _bindEditable: function () {
         Y.log('DataTable.Editable._bindEditable');
+        var attachScrollUpdate = function () {
+            if(this._xScroll && this._xScrollNode) {
+                this._subscrEditable.push(this._xScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
+            }
+            if(this._yScroll && this._yScrollNode) {
+                this._subscrEditable.push(this._yScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
+            }
+        };
+
 
         if(this._subscrEditable) {
             Y.log('Check: DataTable.Editable._bindEditable: there should not be subscribers leftover', 'warn');
@@ -458,16 +484,21 @@ Y.mix( DtEditable.prototype, {
         this._subscrEditable = [
             Y.Do.after(this._updateAllEditableColumnsCSS, this, 'syncUI'),
             this.after('sort', this._afterEditableSort),
+
             this.after(DEF_EDITOR + CHANGE, this._afterDefaultEditorChange),
 
             this.after(CELL_EDITOR + ':save', this._afterCellEditorSave),
-
             this.after(CELL_EDITOR + ':cancel', this._afterCellEditorCancel),
 
-            this.after(CELL_EDITOR + ':keyNav', this._afterkeyNav)
+            //this._editorsContainer.on('click',      this._onClick, this),
+            this._editorsContainer.on('keydown',    this._onKeyDown, this)
         ];
+        if (this.get('rendered')) {
+            attachScrollUpdate.call(this);
 
-
+        } else {
+            this.onceAfter('render', attachScrollUpdate);
+        }
         this._uiSetEditorOpenAction(this.get(EDITOR_OPEN_ACTION));
     },
 
@@ -500,16 +531,6 @@ Y.mix( DtEditable.prototype, {
         if(this._openEditor && this._openEditor.destroy) {
             this._openEditor.destroy();
         }
-
-        // Detach scrolling listeners
-        arrEach(this._subscrCellEditorScrolls, function (dh){
-            if(dh && dh.detach) {
-                dh.detach();
-            }
-        });
-        this._subscrCellEditorScrolls = [];
-
-        this.detach(CELL_EDITOR + ':*');
 
         this._unsetEditor();
 
@@ -682,7 +703,7 @@ Y.mix( DtEditable.prototype, {
             editor = null;
 
         if (Editor) {
-            editor = new Editor(column.editorConfig).render();
+            editor = new Editor(column.editorConfig).render(this._editorsContainer);
             editor.addTarget(this);
         }
         return editor;
@@ -706,6 +727,7 @@ Y.mix( DtEditable.prototype, {
             }
         });
 
+        this._editorsContainer.empty();
         this._commonEditors = null;
         this._columnEditors = null;
 
@@ -901,21 +923,96 @@ Y.mix( DtEditable.prototype, {
     },
 
     /**
-    Listens to the editor's "keyNav" event, which results from the user
-    pressing "ctrl-" arrow key while in an editor to navigate to an cell.
+    Key listener for the `keydown` event.
+    It handles navigation, Enter or Esc.
+
+    @method _onKeyDown
+    @param e {EventFacade} Keydown event facade
+    @protected
+    */
+    _onKeyDown : function (e) {
+        Y.log('DataTable.Editable._onKeyDown');
+        var keyc = e.keyCode,
+            dx = 0, dy = 0,
+            oe = this._openEditor;
+
+        if (!oe) {
+            return;
+        }
+        switch(keyc) {
+            case KEYC_ENTER:
+                if (oe.get('saveOnEnterKey')) {
+                    e.preventDefault();
+                    oe.saveEditor(e.target.get('value'));
+                    return;
+                }
+                break;
+            case KEYC_ESC:
+                e.preventDefault();
+                oe.cancelEditor();
+                return;
+        }
+        if(oe.get('navigationEnabled')) {
+            switch(keyc) {
+                case KEYC_UP:
+                    dy = (e.ctrlKey) ? -1 : 0;
+                    break;
+
+                case KEYC_DOWN:
+                    dy = (e.ctrlKey) ? 1 : 0;
+                    break;
+
+                case KEYC_LEFT:
+                    dx = (e.ctrlKey) ? -1 : 0;
+                    break;
+
+                case KEYC_RIGHT:
+                    dx = (e.ctrlKey) ? 1 : 0;
+                    break;
+
+                case KEYC_TAB: // tab
+                    dx = (e.shiftKey) ? -1 : 1;
+                    break;
+            }
+
+            if(dx || dy) {
+                this._navigate(dx, dy);
+                e.preventDefault();
+            }
+        }
+    },
 
 
-    @method _afterkeyNav
-    @param e {EventFacade} Event facade, including:
-    @param e.dx {integer} the 'x' displacement
-    @param e.dy {integer} the 'y' displacement
+
+    /**
+    Listener to INPUT "click" events that will stop bubbling to the DT TD listener,
+    to prevent closing editing while clicking within an INPUT.
+
+    @method _onClick
+    @param e {EventFacade}
+    @private
+    */
+   /*
+    _onClick: function(e) {
+        Y.log('DataTable.Editable._onClick');
+        e.stopPropagation();
+    },
+*/
+
+    /**
+    Moves to the cell editor at relative position `dx` and  `dy` from the current
+    open one.
+    Wraps around if [wrapAroundNavigation](#attr_wrapAroundNavigation) is set.
+
+
+    @method _navigate
+    @param dx {integer} the 'x' displacement
+    @param dy {integer} the 'y' displacement
     @private
      */
-    _afterkeyNav : function (e) {
-        Y.log('DataTable.Editable._afterkeyNav');
-        var dx = e.dx,
-            dy = e.dy,
-            td = this._editorTd,
+    _navigate : function (dx, dy) {
+        Y.log('DataTable.Editable._navigate');
+        var td = this._editorTd,
             colIndex = td.get('cellIndex'),
             tr = td.ancestor('tr'),
             tbody = tr.ancestor('tbody'),
