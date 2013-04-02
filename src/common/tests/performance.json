@@ -8,5 +8,14 @@
 	"node/tests/perf/node-core-benchmark.html",
 	"node/tests/perf/node-create-benchmark.html",
 	"node/tests/perf/node-data-benchmark.html",
-	"node/tests/perf/node-screen-benchmark.html"
+	"node/tests/perf/node-screen-benchmark.html",
+	"charts/tests/perf/axis-benchmark.js",
+	"charts/tests/perf/axisredraw-benchmark.js",
+	"charts/tests/perf/combo-benchmark.js",
+	"charts/tests/perf/combo-legend-benchmark.js",
+	"charts/tests/perf/marker-benchmark.js",
+	"charts/tests/perf/noaxes-benchmark.js",
+	"charts/tests/perf/noaxes-legend-benchmark.js",
+	"charts/tests/perf/pie-benchmark.js",
+	"charts/tests/perf/series-benchmark.js"
 ]
