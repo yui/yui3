@@ -8,9 +8,11 @@
   font-style: normal;
 }
 
-.yui3-paginator-table {
-    padding: 3px;
+.yui3-paginator-table ul {
+    margin: 0; /* needed for IE */
+    padding: 0;
 }
+
 .yui3-paginator-table .yui3-paginator-content {
     position: relative;
 }
@@ -26,8 +28,6 @@
     text-align: center;
     text-decoration: none;
     line-height: 1.5;
-    border: 1px solid transparent;
-    border-radius: 3px;
 }
 .yui3-paginator-table .yui3-paginator-control-disabled,
 .yui3-paginator-table .yui3-paginator-control-disabled:hover {

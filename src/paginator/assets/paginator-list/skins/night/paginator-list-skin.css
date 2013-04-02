@@ -1,3 +1,47 @@
-.yui3-paginator-list {
+.yui3-skin-night .yui3-paginator-list .yui3-paginator-control,
+.yui3-skin-night .yui3-paginator-list .yui3-paginator-page {
+    border: solid 1px #000;
     display: block;
+    margin: 0 3px;
+    padding: 0 .5em;
+    text-align: center;
+    text-decoration: none;
+    line-height: 1.7em;
+    color: #DCDCDC;
+    font-family: arial,san-serif;
+}
+
+.yui3-skin-night .yui3-paginator-list .yui3-paginator-control {
+    background-color: #434343;
+    border-radius: 4px;
+}
+
+.yui3-skin-night .yui3-paginator-list .yui3-paginator-page {
+    margin: 0;
+    border: none;
+}
+
+.yui3-skin-night .yui3-paginator-list .yui3-paginator-page:hover {
+    background-color: #262727;
+    color: #fff;
+}
+
+.yui3-skin-night .yui3-paginator-list .yui3-paginator-control:hover {
+    background-color: #303132;
+    color: #DCDCDC;
+}
+
+.yui3-skin-night .yui3-paginator-list .yui3-paginator-control-selected,
+.yui3-skin-night .yui3-paginator-list .yui3-paginator-control-selected:hover {
+    cursor: default;
+    font-weight: bold;
+    background-color: #2f3030;
+    color: #fff;
+}
+
+.yui3-skin-night .yui3-paginator-list .yui3-paginator-control-disabled,
+.yui3-skin-night .yui3-paginator-list .yui3-paginator-control-disabled:hover {
+    cursor: default;
+    opacity: 0.55;
+    filter: alpha(opacity=55);
 }

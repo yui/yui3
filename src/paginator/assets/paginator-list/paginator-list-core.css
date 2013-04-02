@@ -1,17 +1,14 @@
 .yui3-paginator-list .yui3-paginator-control,
 .yui3-paginator-list .yui3-paginator-page {
-    border-width: 1px;
-    border-style: solid;
     display: block;
-    margin: 0 3px;
     padding: 0 .5em;
     text-align: center;
     text-decoration: none;
-    line-height: 1.7em;
 }
 
-.yui3-paginator-list .yui3-paginator-page {
-    margin: 0 2px;
+.yui3-paginator-list ul {
+    margin: 0; /* needed for IE */
+    padding: 0;
 }
 
 .yui3-paginator-list .yui3-paginator-control-selected,
@@ -23,36 +20,4 @@
 .yui3-paginator-list .yui3-paginator-control-disabled,
 .yui3-paginator-list .yui3-paginator-control-disabled:hover {
     cursor: default;
-}
-
-.yui3-paginator-list .yui3-paginator-control,
-.yui3-paginator-list .yui3-paginator-page {
-    border-color: hsl(203,31%,85%);
-    color: hsl(222,65%,52%);
-    background: transparent;
-}
-
-.yui3-paginator-list .yui3-paginator-control:hover,
-.yui3-paginator-list .yui3-paginator-page:hover {
-    border-color: hsl(203,30%,50%);
-    background: hsl(222,65%,52%);
-    color: hsl(222,65%,98%);
-}
-
-.yui3-paginator-list .yui3-paginator-control-selected,
-.yui3-paginator-list .yui3-paginator-control-selected:hover {
-    border-color: transparent;
-    background: transparent;
-    color: hsl(220,30%,30%);
-}
-
-.yui3-paginator-list .yui3-paginator-control-disabled,
-.yui3-paginator-list .yui3-paginator-control-disabled:hover {
-    border-color: hsl(220,30%,80%);
-    color: hsl(220,30%,80%);
-    background: transparent;
-}
-.yui3-paginator-page-input {
-    width: 3em;
-    text-align: right;
 }
