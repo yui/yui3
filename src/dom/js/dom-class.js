@@ -13,7 +13,13 @@ Y.mix(Y.DOM, {
      * @return {Boolean} Whether or not the element has the given class. 
      */
     hasClass: _hasClassList ? function (node, className) {
-        return node.classList.contains(className);
+        return className.trim().split(' ').every( function(c) {
+            if (c.trim().length > 0){
+                return node.classList.contains(c);
+            } else {
+                return true;
+            }
+        });
     } : function (node, className) {
         var re = Y.DOM._getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
         return re.test(node.className);
@@ -27,8 +33,11 @@ Y.mix(Y.DOM, {
      * @param {String} className the class name to add to the class attribute
      */
     addClass: _hasClassList ? function (node, className) {
-        if (!Y.DOM.hasClass(node, className)){ // skip if already present
-            node.classList.add(className);
+        var classes = className.trim().split(' ');
+        for (var i=0; i < classes.length; i++){
+            if (!Y.DOM.hasClass(node, classes[i].trim())){ // skip if already present
+                node.classList.add(classes[i].trim());
+            }
         }
     } : function (node, className) {
         if (!Y.DOM.hasClass(node, className)){ // skip if already present
@@ -43,12 +52,15 @@ Y.mix(Y.DOM, {
      * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to remove from the class attribute
      */
-    removeClass: _hasClassList ? function (node, className) {  
-        if (className && hasClass(node, className)) {
-            node.classList.remove(className);
-        }
-        if ( hasClass(node, className) ) { // in case of multiple adjacent
-            removeClass(node, className);
+    removeClass: _hasClassList ? function (node, className) {
+        var classes = className.trim().split(' ');
+        for (var i=0; i < classes.length; i++){
+            if (classes[i] && hasClass(node, classes[i].trim())) {
+                node.classList.remove(classes[i].trim());
+            }
+            if ( hasClass(node, classes[i].trim()) ) { // in case of multiple adjacent
+                removeClass(node, classes[i].trim());
+            }
         }
     } : function (node, className) {
         if (className && hasClass(node, className)) {
