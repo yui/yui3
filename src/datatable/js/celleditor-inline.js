@@ -356,7 +356,7 @@ Editors.inlineDate = Y.Base.create('celleditor', IEd, [],
             parser: {
                 value: function(v){
                     Y.log('inlineDate.parser: ' + v);
-                    return Y.DataType.Date.parse(v) || undefined;
+                    return Y.DataType.Date.parse(v) || Y.Attribute.INVALID_VALUE;
                 }
             }
         }
