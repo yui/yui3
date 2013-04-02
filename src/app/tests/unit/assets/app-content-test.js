@@ -345,6 +345,8 @@ appContentSuite.add(new Y.Test.Case({
 
     '`Y.App.Content.route` should default the document `title` to `<title>`': function () {
         // There's a known issue that this won't work in IE < 9!
+        // Older IEs parse the HTML document and strip away the `<head>` and
+        // `<body>` elements.
 
         var test = this,
             app  = this.app = new Y.App({contentSelector: '#content > *'});
