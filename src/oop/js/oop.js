@@ -267,8 +267,7 @@ without going all the way to leaf properties.
 @return {Array|Object} the cloned object.
 **/
 Y.clone = function(o, safe, f, c, owner, cloned) {
-    var o2, marked = cloned || {}, stamp,
-        yeach = Y.each;
+    var o2, marked, stamp;
 
     // Does not attempt to clone:
     //
@@ -290,6 +289,8 @@ Y.clone = function(o, safe, f, c, owner, cloned) {
 
         return o;
     }
+
+    marked = cloned || {};
 
     switch (L.type(o)) {
         case 'date':
@@ -320,7 +321,7 @@ Y.clone = function(o, safe, f, c, owner, cloned) {
             marked[stamp] = o;
     }
 
-    yeach(o, function(v, k) {
+    Y.each(o, function(v, k) {
         if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
             if (k !== CLONE_MARKER) {
                 if (k == 'prototype') {
@@ -350,7 +351,6 @@ Y.clone = function(o, safe, f, c, owner, cloned) {
 
     return o2;
 };
-
 
 /**
  * Returns a function that will execute the supplied function in the
