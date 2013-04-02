@@ -1,34 +1,55 @@
-.yui3-paginator-table {
-    background: white url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
-    background-image: -webkit-linear-gradient(transparent 40%, hsla(0, 0%, 0%, 0.21));
-    background-image: -moz-linear-gradient(top, transparent 40%, hsla(0, 0%, 0%, 0.21));
-    background-image: -ms-linear-gradient(transparent 40%, hsla(0, 0%, 0%, 0.21));
-    background-image: -o-linear-gradient(transparent 40%, hsla(0, 0%, 0%, 0.21));
-    background-image: linear-gradient(transparent 40%, hsla(0, 0%, 0%, 0.21));
+.yui3-skin-sam .yui3-paginator-table {
+    background-color: #F3f3f3;
+    border: solid 1px #CBCBCB;
+    padding: 0;
+    font-family: arial,san-serif;
 }
 
-.yui3-paginator-table .yui3-paginator-control {
-    color: hsl(222, 30%, 20%);
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control {
+    margin: 0.2em 0.1em;
+    padding: 0 0.5em;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    color: #4A4A4A; /* color of labels */
 }
 
-.yui3-paginator-table .yui3-paginator-control-first:hover,
-.yui3-paginator-table .yui3-paginator-control-last:hover,
-.yui3-paginator-table .yui3-paginator-control-prev:hover,
-.yui3-paginator-table .yui3-paginator-control-next:hover {
-    box-shadow: 0 1px 2px hsl(250, 30%, 20%);
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-first,
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-last,
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-prev,
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-next {
+    color: #AFB0B0;
 }
 
-.yui3-paginator-table .yui3-paginator-control-first:active,
-.yui3-paginator-table .yui3-paginator-control-last:active,
-.yui3-paginator-table .yui3-paginator-control-prev:active,
-.yui3-paginator-table .yui3-paginator-control-next:active {
-    box-shadow: inset 0 1px 1px hsl(250, 30%, 20%);
-    background: hsla(250, 30%, 90%, 0.3);
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-first {
+    margin-left: 0.4em;
 }
 
-.yui3-paginator-table .yui3-paginator-control-disabled,
-.yui3-paginator-table .yui3-paginator-control-disabled:hover {
-    color: hsl(220,30%,80%);
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-first:hover,
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-last:hover,
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-prev:hover,
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-next:hover {
+    border: solid 1px #ddd;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-first:active,
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-last:active,
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-prev:active,
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-next:active {
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #808080;
+}
+
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-disabled,
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-control-disabled:hover {
+    color: #dddddd;
     border-color: transparent;
+    background-color: transparent;
     box-shadow: none;
+}
+
+.yui3-skin-sam .yui3-paginator-table .yui3-paginator-page-input {
+    width: 3em;
+    text-align: right;
 }
