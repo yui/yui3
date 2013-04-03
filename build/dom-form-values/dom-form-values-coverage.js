@@ -26,8 +26,8 @@ _yuitest_coverage["build/dom-form-values/dom-form-values.js"] = {
     path: "build/dom-form-values/dom-form-values.js",
     code: []
 };
-_yuitest_coverage["build/dom-form-values/dom-form-values.js"].code=["YUI.add('dom-form-values', function (Y, NAME) {","","/**","Adds a `Y.DOM.formToObject(identifier)` method to extract the values from a","`<form>` element and return an object map of element name to value(s).","","@module dom","@submodule dom-form-values","@since @SINCE@","**/","var isArray = Y.Lang.isArray;","","/**","Return an object with form values from `<input>`s, `<select>`s, and","`<textarea>`s, keyed by field name. Fields with multiple values will have those","values in an array.","","* Disabled fields will be ignored unless the _includeDisabled_ param is truthy.","* If no radio or checkbox is checked, the returned object will not contain a","    reference to it.","* If no option is selected in a single select, the first option value will be","    used.","* if no option is selected in a multi-select, it will be omitted from the","    returned object.","","@method formToObject","@param {Element|Node|String} identifier The DOM element, Node, or selector for","                                the `<form>`","@param {Boolean} includeDisabled","@return {Object}","**/","Y.DOM.formToObject = function (identifier, includeDisabled) {","    var skipDisabled = !includeDisabled, // so I don't have to ! it in loop","        form, fields, field, type, values, name, value,","        selectedIndex, i, len, j, jlen;","","    if (identifier.nodeType) {","        form = identifier;","    } else if (identifier._node) {","        form = identifier._node;","    } else if (typeof identifier === 'string') {","        if (/^#([\\w\\-]+)$/.test(identifier)) {","            form = Y.config.doc.getElementById(RegExp.$1);","        } else if (Y.Selector) {","            form = Y.Selector.query(identifier, null, true);","        }","    }","","    function optionValue(opt) {","        return (opt.attributes.value && opt.attributes.value.specified) ?","                 opt.value : opt.text;","    }","","    if (form && form.elements) {","        values = {};","        fields = form.elements;","","        for (i = 0, len = fields.length; i < len; ++i) {","            field = fields[i];","","            name  = field.name;","","            if (!name || (skipDisabled && field.disabled)) {","                continue;","            }","","            type  = field.tagName;","","            if (type === 'input' || type === 'textarea') {","                switch (field.type) {","                    case 'button':","                    case 'image':","                    case 'submit':","                    case 'reset':","                    case 'file': continue; // don't capture buttons or files","","                    case 'radio':","                    case 'checkbox':","                        if (!field.checked) {","                            break;","                        } // else fall through","","                    default: value = field.value;","                }","            } else if (type === 'select') {","                type = field.type;","","                if (field.type === 'select-multiple') {","                    j = field.selectedIndex;","","                    if (j > -1) {","                        value = [];","                        for (jlen = field.options.length; j < jlen; ++j) {","                            if (field.options[j].selected) {","                                value.push(optionValue(field.options[j]));","                            }","                        }","                    }","                } else {","                    // For browsers that allow no selectedIndex or -1","                    // TODO: Is this right?","                    selectedIndex = Math.max(field.selectedIndex, 0);","","                    value = optionValue(field.options[selectedIndex]);","                }","            }","","            if (value !== undefined) {","                if (name in values) {","                    if (!isArray(values[name])) {","                        values[name] = [values[name]];","                    }","                    values[name].push(value);","                } else {","                    values[name] = value;","                }","            }","        }","    }","","    return values || null;","};","","","}, '@VERSION@', {\"requires\": [\"selector-native\"]});"];
-_yuitest_coverage["build/dom-form-values/dom-form-values.js"].lines = {"1":0,"11":0,"32":0,"33":0,"37":0,"38":0,"39":0,"40":0,"41":0,"42":0,"43":0,"44":0,"45":0,"49":0,"50":0,"54":0,"55":0,"56":0,"58":0,"59":0,"61":0,"63":0,"64":0,"67":0,"69":0,"70":0,"75":0,"79":0,"80":0,"83":0,"85":0,"86":0,"88":0,"89":0,"91":0,"92":0,"93":0,"94":0,"95":0,"102":0,"104":0,"108":0,"109":0,"110":0,"111":0,"113":0,"115":0,"121":0};
+_yuitest_coverage["build/dom-form-values/dom-form-values.js"].code=["YUI.add('dom-form-values', function (Y, NAME) {","","/**","Adds a `Y.DOM.formToObject(identifier)` method to extract the values from a","`<form>` element and return an object map of element name to value(s).","","@module dom","@submodule dom-form-values","@since @SINCE@","**/","var isArray = Y.Lang.isArray;","","/**","Return an object with form values from `<input>`s, `<select>`s, and","`<textarea>`s, keyed by field name. Fields with multiple values will have those","values in an array.","","* Disabled fields will be ignored unless the _includeDisabled_ param is truthy.","* If no radio or checkbox is checked, the returned object will not contain a","    reference to it.","* If no option is selected in a single select, the first option value will be","    used.","* if no option is selected in a multi-select, it will be omitted from the","    returned object.","","@method formToObject","@param {Element|Node|String} identifier The DOM element, Node, or selector for","                                the `<form>`","@param {Boolean} includeDisabled","@return {Object}","**/","Y.DOM.formToObject = function (identifier, includeDisabled) {","    var skipDisabled = !includeDisabled, // so I don't have to ! it in loop","        form, fields, field, type, values, name, value,","        selectedIndex, i, len, j, jlen;","","    if (identifier.nodeType) {","        form = identifier;","    } else if (identifier._node) {","        form = identifier._node;","    } else if (typeof identifier === 'string') {","        if (/^#([\\w\\-]+)$/.test(identifier)) {","            form = Y.config.doc.getElementById(RegExp.$1);","        } else if (Y.Selector) {","            form = Y.Selector.query(identifier, null, true);","        }","    }","","    function optionValue(opt) {","        return (opt.attributes.value && opt.attributes.value.specified) ?","                 opt.value : opt.text;","    }","","    if (form && form.elements) {","        values = {};","        fields = form.elements;","","        for (i = 0, len = fields.length; i < len; ++i) {","            field = fields[i];","            name  = field.name;","","            if (!name || (skipDisabled && field.disabled)) {","                continue;","            }","","            type = (field.tagName || '').toLowerCase();","","            if (type === 'input' || type === 'textarea') {","                switch ((field.type || '').toLowerCase()) {","                    case 'button':","                    case 'image':","                    case 'submit':","                    case 'reset':","                    case 'file': continue; // don't capture buttons or files","","                    case 'radio':","                    case 'checkbox':","                        if (!field.checked) {","                            break;","                        } // else fall through","","                    default: value = field.value;","                }","            } else if (type === 'select') {","                type = field.type;","","                if (field.type === 'select-multiple') {","                    j = field.selectedIndex;","","                    if (j > -1) {","                        value = [];","                        for (jlen = field.options.length; j < jlen; ++j) {","                            if (field.options[j].selected) {","                                value.push(optionValue(field.options[j]));","                            }","                        }","                    }","                } else {","                    // For browsers that allow no selectedIndex or -1","                    // TODO: Is this right?","                    selectedIndex = Math.max(field.selectedIndex, 0);","","                    value = optionValue(field.options[selectedIndex]);","                }","            }","","            if (value !== undefined) {","                if (name in values) {","                    if (!isArray(values[name])) {","                        values[name] = [values[name]];","                    }","                    values[name].push(value);","                } else {","                    values[name] = value;","                }","            }","        }","    }","","    return values || null;","};","","","}, '@VERSION@', {\"requires\": [\"selector-native\"]});"];
+_yuitest_coverage["build/dom-form-values/dom-form-values.js"].lines = {"1":0,"11":0,"32":0,"33":0,"37":0,"38":0,"39":0,"40":0,"41":0,"42":0,"43":0,"44":0,"45":0,"49":0,"50":0,"54":0,"55":0,"56":0,"58":0,"59":0,"60":0,"62":0,"63":0,"66":0,"68":0,"69":0,"74":0,"78":0,"79":0,"82":0,"84":0,"85":0,"87":0,"88":0,"90":0,"91":0,"92":0,"93":0,"94":0,"101":0,"103":0,"107":0,"108":0,"109":0,"110":0,"112":0,"114":0,"120":0};
 _yuitest_coverage["build/dom-form-values/dom-form-values.js"].functions = {"optionValue:49":0,"formToObject:32":0,"(anonymous 1):1":0};
 _yuitest_coverage["build/dom-form-values/dom-form-values.js"].coveredLines = 48;
 _yuitest_coverage["build/dom-form-values/dom-form-values.js"].coveredFunctions = 3;
@@ -113,60 +113,59 @@ fields = form.elements;
 for (i = 0, len = fields.length; i < len; ++i) {
             _yuitest_coverline("build/dom-form-values/dom-form-values.js", 59);
 field = fields[i];
-
-            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 61);
+            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 60);
 name  = field.name;
 
-            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 63);
+            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 62);
 if (!name || (skipDisabled && field.disabled)) {
-                _yuitest_coverline("build/dom-form-values/dom-form-values.js", 64);
+                _yuitest_coverline("build/dom-form-values/dom-form-values.js", 63);
 continue;
             }
 
-            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 67);
-type  = field.tagName;
+            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 66);
+type = (field.tagName || '').toLowerCase();
 
-            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 69);
+            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 68);
 if (type === 'input' || type === 'textarea') {
-                _yuitest_coverline("build/dom-form-values/dom-form-values.js", 70);
-switch (field.type) {
+                _yuitest_coverline("build/dom-form-values/dom-form-values.js", 69);
+switch ((field.type || '').toLowerCase()) {
                     case 'button':
                     case 'image':
                     case 'submit':
                     case 'reset':
-                    case 'file': _yuitest_coverline("build/dom-form-values/dom-form-values.js", 75);
+                    case 'file': _yuitest_coverline("build/dom-form-values/dom-form-values.js", 74);
 continue; // don't capture buttons or files
 
                     case 'radio':
                     case 'checkbox':
-                        _yuitest_coverline("build/dom-form-values/dom-form-values.js", 79);
+                        _yuitest_coverline("build/dom-form-values/dom-form-values.js", 78);
 if (!field.checked) {
-                            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 80);
+                            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 79);
 break;
                         } // else fall through
 
-                    default: _yuitest_coverline("build/dom-form-values/dom-form-values.js", 83);
+                    default: _yuitest_coverline("build/dom-form-values/dom-form-values.js", 82);
 value = field.value;
                 }
-            } else {_yuitest_coverline("build/dom-form-values/dom-form-values.js", 85);
+            } else {_yuitest_coverline("build/dom-form-values/dom-form-values.js", 84);
 if (type === 'select') {
-                _yuitest_coverline("build/dom-form-values/dom-form-values.js", 86);
+                _yuitest_coverline("build/dom-form-values/dom-form-values.js", 85);
 type = field.type;
 
-                _yuitest_coverline("build/dom-form-values/dom-form-values.js", 88);
+                _yuitest_coverline("build/dom-form-values/dom-form-values.js", 87);
 if (field.type === 'select-multiple') {
-                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 89);
+                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 88);
 j = field.selectedIndex;
 
-                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 91);
+                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 90);
 if (j > -1) {
-                        _yuitest_coverline("build/dom-form-values/dom-form-values.js", 92);
+                        _yuitest_coverline("build/dom-form-values/dom-form-values.js", 91);
 value = [];
-                        _yuitest_coverline("build/dom-form-values/dom-form-values.js", 93);
+                        _yuitest_coverline("build/dom-form-values/dom-form-values.js", 92);
 for (jlen = field.options.length; j < jlen; ++j) {
-                            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 94);
+                            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 93);
 if (field.options[j].selected) {
-                                _yuitest_coverline("build/dom-form-values/dom-form-values.js", 95);
+                                _yuitest_coverline("build/dom-form-values/dom-form-values.js", 94);
 value.push(optionValue(field.options[j]));
                             }
                         }
@@ -174,34 +173,34 @@ value.push(optionValue(field.options[j]));
                 } else {
                     // For browsers that allow no selectedIndex or -1
                     // TODO: Is this right?
-                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 102);
+                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 101);
 selectedIndex = Math.max(field.selectedIndex, 0);
 
-                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 104);
+                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 103);
 value = optionValue(field.options[selectedIndex]);
                 }
             }}
 
-            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 108);
+            _yuitest_coverline("build/dom-form-values/dom-form-values.js", 107);
 if (value !== undefined) {
-                _yuitest_coverline("build/dom-form-values/dom-form-values.js", 109);
+                _yuitest_coverline("build/dom-form-values/dom-form-values.js", 108);
 if (name in values) {
-                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 110);
+                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 109);
 if (!isArray(values[name])) {
-                        _yuitest_coverline("build/dom-form-values/dom-form-values.js", 111);
+                        _yuitest_coverline("build/dom-form-values/dom-form-values.js", 110);
 values[name] = [values[name]];
                     }
-                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 113);
+                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 112);
 values[name].push(value);
                 } else {
-                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 115);
+                    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 114);
 values[name] = value;
                 }
             }
         }
     }
 
-    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 121);
+    _yuitest_coverline("build/dom-form-values/dom-form-values.js", 120);
 return values || null;
 };
 
