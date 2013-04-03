@@ -9711,6 +9711,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "dom-base"
         ]
     },
+    "dom-form-values": {
+        "requires": [
+            "selector-native"
+        ]
+    },
     "dom-screen": {
         "requires": [
             "dom-base",
@@ -11443,7 +11448,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '6cdd510ca2f2e60a7da3609e2e89d687';
+YUI.Env[Y.version].md5 = '825dc655de7f134abacc4e19b3445e6f';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

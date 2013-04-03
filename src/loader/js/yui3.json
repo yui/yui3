@@ -1171,6 +1171,11 @@
             "dom-base"
         ]
     },
+    "dom-form-values": {
+        "requires": [
+            "selector-native"
+        ]
+    },
     "dom-screen": {
         "requires": [
             "dom-base",
