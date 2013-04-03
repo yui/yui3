@@ -211,6 +211,38 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(pgConfig.itemsPerPage, json.itemsPerPage, 'Items Per Page has changed.');
         Y.Assert.areSame(pgConfig.totalItems, json.totalItems, 'Total items has changed.');
         Y.Assert.areSame(pgConfig.page, json.page, 'Current page has changed.');
+    },
+
+    'test UI events': function () {
+        function Publisher (bubbleTo) {
+            this.init(bubbleTo);
+        }
+        Publisher.prototype = {
+            init: function (bubbleTo) {
+                this.addTarget(bubbleTo);
+                this.attachEvents();
+            }
+        };
+        Y.augment(Publisher, Y.EventTarget);
+
+        var pg = new Y.Paginator({
+                itemsPerPage: 10,
+                totalItems: 100,
+                page: 5,
+                view: Y.View
+            }),
+
+            pub = new Publisher(pg);
+
+        // wire up asserts
+        pg.after('pageChange', function (e) {
+            alert(pg.get('page'));
+        });
+
+
+        // fire controller events
+        pub.fire('first');
+
     }
 }));
 
