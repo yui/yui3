@@ -432,8 +432,8 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         {
             cfg.visible = false;
         }
-        var shapeClass = this._getShapeClass(cfg.type),
-            shape = new shapeClass(cfg);
+        var ShapeClass = this._getShapeClass(cfg.type),
+            shape = new ShapeClass(cfg);
         this._appendShape(shape);
         return shape;
     },
@@ -662,14 +662,14 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             node = this.get("node");
         if(autoSize)
         {
-            if(autoSize == "sizeContentToGraphic")
+            if(autoSize === "sizeContentToGraphic")
             {
                 contentWidth = box.right - box.left;
                 contentHeight = box.bottom - box.top;
                 w = parseFloat(Y_DOM.getComputedStyle(node, "width"));
                 h = parseFloat(Y_DOM.getComputedStyle(node, "height"));
                 matrix = new Y.Matrix();
-                if(preserveAspectRatio == "none")
+                if(preserveAspectRatio === "none")
                 {
                     xScale = w/contentWidth;
                     yScale = h/contentHeight;

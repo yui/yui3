@@ -260,7 +260,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "autocomplete-sources"
         ],
         "lang": [
-            "en"
+            "en",
+            "es"
         ],
         "requires": [
             "autocomplete-base",
@@ -911,7 +912,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "datatable-message": {
         "lang": [
             "en",
-            "fr"
+            "fr",
+            "es"
         ],
         "requires": [
             "datatable-base"
@@ -934,7 +936,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "datatable-sort": {
         "lang": [
             "en",
-            "fr"
+            "fr",
+            "es"
         ],
         "requires": [
             "datatable-base"
@@ -2558,8 +2561,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     "tabview-base": {
         "requires": [
             "node-event-delegate",
-            "classnamemanager",
-            "skin-sam-tabview"
+            "classnamemanager"
         ]
     },
     "tabview-plugin": {
@@ -2907,7 +2909,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '5e3711de438f84e75215b4ab99ccd852';
+YUI.Env[Y.version].md5 = '6d43bc92fc4f84b4141d123e32cdc9f1';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

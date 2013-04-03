@@ -329,6 +329,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         } else if (scrollbarPos < 0) {
             scrollbarSize = scrollbarPos + scrollbarSize;
             scrollbarPos = 0;
+        } else if (isNaN(scrollbarPos)) {
+            scrollbarPos = 0;
         }
 
         middleChildSize = (scrollbarSize - (firstChildSize + lastChildSize));

@@ -239,7 +239,8 @@
             "autocomplete-sources"
         ],
         "lang": [
-            "en"
+            "en",
+            "es"
         ],
         "requires": [
             "autocomplete-base",
@@ -877,7 +878,8 @@
     "datatable-message": {
         "lang": [
             "en",
-            "fr"
+            "fr",
+            "es"
         ],
         "requires": [
             "datatable-base"
@@ -900,7 +902,8 @@
     "datatable-sort": {
         "lang": [
             "en",
-            "fr"
+            "fr",
+            "es"
         ],
         "requires": [
             "datatable-base"
@@ -2414,8 +2417,7 @@
     "tabview-base": {
         "requires": [
             "node-event-delegate",
-            "classnamemanager",
-            "skin-sam-tabview"
+            "classnamemanager"
         ]
     },
     "tabview-plugin": {

@@ -351,7 +351,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			props = {};
 			linecap = stroke.linecap || "flat";
 			linejoin = stroke.linejoin || "round";
-            if(linecap != "round" && linecap != "square")
+            if(linecap !== "round" && linecap !== "square")
             {
                 linecap = "flat";
             }
@@ -375,7 +375,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 					dash[i] = val / stroke.weight;
 				}
 			}
-			if(linejoin == "round" || linejoin == "bevel")
+			if(linejoin === "round" || linejoin === "bevel")
 			{
 				props.joinstyle = linejoin;
 			}
@@ -419,7 +419,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 		{
 			linecap = stroke.linecap || "flat";
 			linejoin = stroke.linejoin || "round";
-			if(linecap != "round" && linecap != "square")
+			if(linecap !== "round" && linecap !== "square")
 			{
 				linecap = "flat";
 			}
@@ -448,7 +448,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 					dash[i] = val / stroke.weight;
 				}
 			}
-			if(linejoin == "round" || linejoin == "bevel")
+			if(linejoin === "round" || linejoin === "bevel")
 			{
 				this._strokeNode.joinstyle = linejoin;
 			}
@@ -496,7 +496,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 		{
 			props = {};
 
-			if(fill.type == "radial" || fill.type == "linear")
+			if(fill.type === "radial" || fill.type === "linear")
 			{
 				fillOpacity = parseFloat(fill.opacity);
 				fillOpacity = IS_NUM(fillOpacity) ? fillOpacity : 1;
@@ -558,7 +558,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             gradient;
 		if(fill)
 		{
-			if(fill.type == "radial" || fill.type == "linear")
+			if(fill.type === "radial" || fill.type === "linear")
 			{
 				filled = true;
 				gradient = this._getGradientFill(fill);
@@ -1505,7 +1505,7 @@ VMLShape.ATTRS = {
 			fill = tmpl;
 			if(fill && fill.color)
 			{
-				if(fill.color === undefined || fill.color == "none")
+				if(fill.color === undefined || fill.color === "none")
 				{
 					fill.color = null;
 				}

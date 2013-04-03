@@ -440,8 +440,8 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         {
             cfg.visible = false;
         }
-        var shapeClass = this._getShapeClass(cfg.type),
-            shape = new shapeClass(cfg);
+        var ShapeClass = this._getShapeClass(cfg.type),
+            shape = new ShapeClass(cfg);
         this._appendShape(shape);
         return shape;
     },
@@ -675,7 +675,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
             node;
         if(autoSize)
         {
-            if(autoSize == "sizeContentToGraphic")
+            if(autoSize === "sizeContentToGraphic")
             {
                 node = Y.one(this._node);
                 computedWidth = parseFloat(node.getComputedStyle("width"));
@@ -821,7 +821,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
     {
         var node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + type),
             v = pe || "none";
-        if(type !== "defs" && type !== "stop" && type !== "linearGradient" && type != "radialGradient")
+        if(type !== "defs" && type !== "stop" && type !== "linearGradient" && type !== "radialGradient")
         {
             node.setAttribute("pointer-events", v);
         }

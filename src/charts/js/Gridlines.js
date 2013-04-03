@@ -9,7 +9,6 @@ var CONFIG = Y.config,
     DOCUMENT = CONFIG.doc,
     Y_Lang = Y.Lang,
     IS_STRING = Y_Lang.isString,
-    Y_DOM = Y.DOM,
     _getClassName = Y.ClassNameManager.getClassName,
     SERIES_MARKER = _getClassName("seriesmarker");
 
@@ -85,14 +84,15 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
             weight = line.weight,
             alpha = line.alpha,
             count = this.get("count"),
-            lineFunction = direction == "vertical" ? this._verticalLine : this._horizontalLine;
+            length,
+            lineFunction;
         if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
         {
             if(count && Y.Lang.isNumber(count))
             {
                 points = this._getPoints(count, w, h);
             }
-            else if(axisPosition != "none" && axis && axis.get("tickPoints"))
+            else if(axisPosition !== "none" && axis && axis.get("tickPoints"))
             {
                 points = axis.get("tickPoints");
             }
@@ -109,9 +109,19 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
                 color: color,
                 opacity: alpha
             });
+            if(direction === "vertical")
+            {
+                lineFunction = this._verticalLine;
+                length = h;
+            }
+            else
+            {
+                lineFunction = this._horizontalLine;
+                length = w;
+            }
             for(i = 0; i < l; i = i + 1)
             {
-                lineFunction(path, points[i], w, h);
+                lineFunction(path, points[i], length);
             }
             path.end();
         }
@@ -149,10 +159,9 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
      * @param {Path} path Reference to path element
      * @param {Object} pt Coordinates corresponding to a major unit of an axis.
      * @param {Number} w Width of the Graph
-     * @param {Number} h Height of the Graph
      * @private
      */
-    _horizontalLine: function(path, pt, w, h)
+    _horizontalLine: function(path, pt, w)
     {
         path.moveTo(0, pt.y);
         path.lineTo(w, pt.y);
@@ -164,11 +173,10 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
      * @method _verticalLine
      * @param {Path} path Reference to path element
      * @param {Object} pt Coordinates corresponding to a major unit of an axis.
-     * @param {Number} w Width of the Graph
      * @param {Number} h Height of the Graph
      * @private
      */
-    _verticalLine: function(path, pt, w, h)
+    _verticalLine: function(path, pt, h)
     {
         path.moveTo(pt.x, 0);
         path.lineTo(pt.x, h);
