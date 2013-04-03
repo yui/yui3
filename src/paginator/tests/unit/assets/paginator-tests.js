@@ -220,7 +220,6 @@ suite.add(new Y.Test.Case({
         Publisher.prototype = {
             init: function (bubbleTo) {
                 this.addTarget(bubbleTo);
-                this.attachEvents();
             }
         };
         Y.augment(Publisher, Y.EventTarget);
@@ -229,9 +228,9 @@ suite.add(new Y.Test.Case({
                 itemsPerPage: 10,
                 totalItems: 100,
                 page: 5,
-                view: Y.View
+                view: 'View',
+                render: true
             }),
-
             pub = new Publisher(pg);
 
         // wire up asserts
@@ -239,9 +238,8 @@ suite.add(new Y.Test.Case({
             alert(pg.get('page'));
         });
 
-
         // fire controller events
-        pub.fire('first');
+        pub.fire('foo:first');
 
     }
 }));
