@@ -21,15 +21,15 @@ var Y = YUI({
     filter : 'raw',
 
     modules: {
-        'base-benchmark': {
-            fullpath: 'base-benchmark.js',
-            requires: ['base']
+        'base-core-benchmark': {
+            fullpath: 'base-core-benchmark.js',
+            requires: ['base-core']
         }
     },
 
     useBrowserConsole: false
 
-}).use('base-benchmark', 'node-base', 'test-console', function (Y) {
+}).use('base-core-benchmark', 'node-base', 'test-console', function (Y) {
 
     var suite = Y.BenchmarkSuite,
         start = Y.one('#start');

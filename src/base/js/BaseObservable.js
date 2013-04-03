@@ -39,7 +39,7 @@
          * @method _initAttribute
          * @private
          */
-        _initAttribute: function(cfg) {
+        _initAttribute: function() {
             BaseCore.prototype._initAttribute.apply(this, arguments);
             AttributeObservable.call(this);
 
@@ -76,7 +76,6 @@
              * refers to the configuration object passed to the constructor.
              */
             this.publish(INIT, {
-                queuable:false,
                 fireOnce:true,
                 defaultTargetOnly:true,
                 defaultFn:this._defInitFn
@@ -113,6 +112,7 @@
 
             if (userTargets || _BUBBLETARGETS in this) {
                 target = userTargets ? (config && config.bubbleTargets) : this._bubbleTargets;
+
                 if (L.isArray(target)) {
                     for (i = 0, l = target.length; i < l; i++) {
                         this.addTarget(target[i]);
@@ -158,7 +158,6 @@
              * @param {EventFacade} e Event object
              */
             this.publish(DESTROY, {
-                queuable:false,
                 fireOnce:true,
                 defaultTargetOnly:true,
                 defaultFn: this._defDestroyFn
