@@ -55,17 +55,16 @@ Y.DOM.formToObject = function (identifier, includeDisabled) {
 
         for (i = 0, len = fields.length; i < len; ++i) {
             field = fields[i];
-
             name  = field.name;
 
             if (!name || (skipDisabled && field.disabled)) {
                 continue;
             }
 
-            type  = field.tagName;
+            type = (field.tagName || '').toLowerCase();
 
             if (type === 'input' || type === 'textarea') {
-                switch (field.type) {
+                switch ((field.type || '').toLowerCase()) {
                     case 'button':
                     case 'image':
                     case 'submit':
