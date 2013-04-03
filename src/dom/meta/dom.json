@@ -74,6 +74,11 @@
                 "requires": [
                     "selector-native"
                 ]
+            },
+            "dom-form-values": {
+                "requires": [
+                    "selector-native"
+                ]
             }
         }
     }
