@@ -1,6 +1,11 @@
 Node Change History
 ===================
 
+3.9.2
+-----
+
+* Fix node.all() to return an empty NodeList if the node was destroyed - Fixes #580 (hat tip Dallas Wheeler)
+
 3.9.1
 -----
 
