@@ -6,6 +6,8 @@ Tree Change History
 
 * Added a `Tree.Sortable` extension, which can be mixed into any Tree class to
   provide customizable sorting logic for nodes. [Ryan Grove]
+* Fixed: The number returned by `Tree#size()` didn't include the root node.
+  [Ryan Grove]
 
 
 3.9.1
