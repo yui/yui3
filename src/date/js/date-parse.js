@@ -1,9 +1,12 @@
 // Constants to refer to the parts of the date array
-var YR = 0, MO = 1, D = 2, H = 3, MI = 4, S = 5;
+var L = Y.Lang,
+    YR = 0, MO = 1, D = 2, H = 3, MI = 4, S = 5, TZh = 6, TZm = 7, AP = 8;
     digitsRegExp = /^\s*(\d+)/,
     spaceRegExp = /(\s+)/g,
+    gmtUtcRegExp = /^\s*(gmt)|(utc)/i,
+    tzRegExp = /^\s*([a-z]+(\/[a-z]+)?)/i,
 /**
- * Parse number submodule.
+ * Parse date submodule.
  *
  * @module datatype-date
  * @submodule datatype-date-parse
@@ -16,6 +19,7 @@ Y.mix(Y.namespace("Date"), {
      * @property _data
      * @type String
      * @default null
+     * @static
      * @private
      */
     _data:null,
@@ -28,6 +32,7 @@ Y.mix(Y.namespace("Date"), {
      * @param maxLen {Integer} Maximum number of characters to read
      * @param [max] {Integer} Maximum acceptable value, such as 59 for minutes.
      * @return {Integer} Value parsed.
+     * @static
      * @private
      */
     _parseDigits: function (maxLen, max) {
@@ -53,12 +58,13 @@ Y.mix(Y.namespace("Date"), {
      * @param key {String} Key within the language resources used to retrieve the
      *          array of localized strings to look for in the parsed string.
      * @return {Integer} Index of the first string that matches.
+     * @static
      * @private
      */
     _parseStrings: function (key) {
         var i,l,
             options = this._resources[key],
-            data = Y.Lang.trimLeft(this._data),
+            data = L.trimLeft(this._data),
             len = 0, winner = NaN ;
         for (i = 0; i < options.length; i += 1) {
             if (data.indexOf(options[i].toLowerCase()) === 0) {
@@ -79,6 +85,7 @@ Y.mix(Y.namespace("Date"), {
      * @property _pending
      * @type Object
      * @default {}
+     * @static
      * @private
      */
     _pending: {},
@@ -87,6 +94,8 @@ Y.mix(Y.namespace("Date"), {
      * Each one is a function.
      * @property parsers
      * @type Object
+     * @static
+     * @protected
      */
     parsers: {
         // Though some of the parts might not provide useful information,
@@ -104,8 +113,9 @@ Y.mix(Y.namespace("Date"), {
         B: function (d) {
             return d[MO] = this._parseStrings('B');
         },
-        C: function (d) {
-            return d[YR] += this._parseDigits(2) * 100;
+        C: function () {
+            // The century will have to be added to whatever the year in the century might be
+            return this._pending.C = this._parseDigits(2) * 100;
         },
         d: function (d) {
             return d[D] = this._parseDigits(2, 31);
@@ -121,10 +131,14 @@ Y.mix(Y.namespace("Date"), {
 
         },
         H: function (d) {
-            return d[H] += this._parseDigits(2, 23);
+            return d[H] = this._parseDigits(2, 23);
         },
         I: function (d) {
-            return d[H] += this._parseDigits(2, 12);
+            var h = this._parseDigits(2, 12);
+            if (h === 12) {
+                h = 0;
+            }
+           return  d[H] = h;
         },
         j: function () {
             // The year might not be in yet, so I leave it pending
@@ -132,22 +146,26 @@ Y.mix(Y.namespace("Date"), {
 
         },
         k: function (d) {
-            return d[H] += this._parseDigits(2, 23);
+            return d[H] = this._parseDigits(2, 23);
         },
         l: function (d) {
-           return  d[H] +=  this._parseDigits(2, 12);
+            var h = this._parseDigits(2, 12);
+            if (h === 12) {
+                h = 0;
+            }
+           return  d[H] = h;
         },
         m: function (d) {
             return d[MO] = this._parseDigits(2, 12) - 1;
         },
         M: function (d) {
-            return d[MI] +=  this._parseDigits(2, 59);
+            return d[MI] =  this._parseDigits(2, 59);
         },
         p: function (d) {
-            return d[H] += this._parseStrings('p') ? 12 : 0;
+            return d[AP] = this._parseStrings('p') ? 12 : 0;
         },
         P: function (d) {
-            return d[H] +=  this._parseStrings('P') ? 12 : 0;
+            return d[AP] =  this._parseStrings('P') ? 12 : 0;
         },
         s: function () {
             // The seconds by themselves provide all that is needed
@@ -185,9 +203,8 @@ Y.mix(Y.namespace("Date"), {
         z: function (d) {
 
             var more = false, sign = 1, h = 0, m = 0,
-                data = this._data,
-                code = data[0],
-                offset = new Date().getTimezoneOffset();
+                data = this._data.replace(gmtUtcRegExp,''),
+                code = data[0];
             switch (code) {
                 case '+':
                     more = true;
@@ -208,7 +225,7 @@ Y.mix(Y.namespace("Date"), {
                         sign = -1;
                     }
             }
-            this._data = this._data.substr(1);
+            this._data = data.substr(1);
             if (more) {
 
                 if (isNaN(h = this._parseDigits(4))) {
@@ -224,23 +241,26 @@ Y.mix(Y.namespace("Date"), {
                 }
 
             }
-            m = d[MI] - sign * m - offset;
-            h = d[H] - sign * h;
-            while (m < 0) {
-                h -=1;
-                m += 60;
-            }
-            while (m > 59) {
-                h += 1;
-                m -= 60;
-            }
-            d[H] = h;
-            d[MI] = m;
+            d[TZh] = sign * h;
+            d[TZm] = sign * m;
             return true;
         },
-        Z: function () {
-            return NaN;
-
+        Z: function (d) {
+            var data = this._data,
+                m = tzRegExp.exec(data),
+                h = this._timezones[m[1]],
+                sign;
+            if (h === undefined) {
+                return NaN;
+            }
+            this._data = data.substr(m[0].length);
+            sign = (h < 0 ? -1 : 1);
+            h = Math.abs(h);
+            m = (h % 1) * 60;
+            h = Math.floor(h);
+            d[TZh] = sign * h;
+            d[TZm] = sign * m;
+            return true;
         },
         '%': function () {
             this._data = this._data.substr(1);
@@ -250,16 +270,60 @@ Y.mix(Y.namespace("Date"), {
 
     },
     /**
+     * Table of time zone abbreviations  and their offset in hours.
+     * The keys should be in lowercase and the value the offset in hours
+     * to UTC time.
+     *
+     * The table is pre-loaded with the values for GMT and UTC (0) and the
+     * timezones for North America (Canada, USA and México) and Europe.
+     *
+     * For timezones with offsets in hours and minutes use decimal fractions: IST: 5.5
+     *
+     * @property _timezones
+     * @type Object
+     * @protected
+     */
+    _timezones: {
+        eet:2,
+        eest:3,
+        cet:1,
+        cest:2,
+        wet:0,
+        west:1,
+        bst:1,
+        ist:1,
+        gmt:0,
+        uct:0,
+        ast:-4,
+        adt:-3,
+        est:-5,
+        edt:-4,
+        cst:-6,
+        cdt:-5,
+        mst:-7,
+        mdt:-6,
+        pst:-8,
+        pdt:-7,
+        akst:-9,
+        akdt:-8,
+        hst:-10
+
+
+    },
+    /**
      * Converts data to type Date. If `format` is specified and `data` is a string
      * it will parse it according to that spec, otherwise, it will try `Date.parse`.
      *
      * The parser tries to be tolerant.  Whitespace is mostly ignored and leading zeros
-     * are not required.  The `%Z` format is not supported as well as those derived
-     * from it (such as %c in the `en` locale).
+     * are not required.
      *
-     * Some formats, such as
-     * the day of the week, are ignored for the calculation, since they don't provide
-     * enough information on their own, but are required to be present in the input
+     * Parsing of the `%Z` format as well as those derived
+     * from it (such as `%c` in the `en` locale) depend on the
+     * [_timezones](#property__timezones) table which is not an exhaustive list.
+     *
+     * Some formats, such as the day of the week, are ignored for the calculation
+     * since they don't provide enough information on their own.
+     * However, if specified in the format, they are required to be present in the input
      * string.
      *
      *
@@ -270,13 +334,14 @@ Y.mix(Y.namespace("Date"), {
      *         cutoff value will be assumed to be in the XXI century, values below in the XX century.
      *         If `cutoff` is null, no century will be assumed.
      * @return {Date} a Date object or null if unable to parse
+     * @static
      */
     parse: function(data, format, cutoff) {
         var val,
-            d = [0,0,0,0,0,0,0],
+            //   YR MO D   H  MI S  TZh   TZm    AP
+            d = [0, 0, 0,  0, 0, 0, null, null , 0],
             parsers = this.parsers,
-            i, p = false, c,
-            L = Y.Lang;
+            i, p = false, c;
 
         cutoff = (cutoff === undefined ? 30 : cutoff);
 
@@ -316,9 +381,6 @@ Y.mix(Y.namespace("Date"), {
                 return null;
 
             }
-            if (cutoff !== null && d[YR] < 100) {
-                d[YR] += (d[YR] < cutoff ? 2000 : 1900);
-            }
             for (c in this._pending) {
                 switch (c) {
                     case 'j':
@@ -328,10 +390,20 @@ Y.mix(Y.namespace("Date"), {
                         break;
                     case 's':
                         return new Date(this._pending.s * 1000);
-
+                    case 'C':
+                        d[YR] = (d[YR] || 0) + this._pending.C;
+                        break;
                 }
             }
-            return new Date(d[YR],d[MO],d[D],d[H],d[MI],d[S]);
+            if (cutoff !== null && d[YR] < 100) {
+                d[YR] += (d[YR] < cutoff ? 2000 : 1900);
+            }
+            d[H] = d[H] + d[AP];
+            if (d[TZh] === null) {
+                return new Date(d[YR], d[MO], d[D], d[H], d[MI], d[S]);
+            } else {
+                return new Date(Date.UTC(d[YR], d[MO], d[D],d[H] - d[TZh], d[MI] - d[TZm],d[S]));
+            }
 
         } else {
 
