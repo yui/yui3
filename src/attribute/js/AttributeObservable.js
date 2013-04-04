@@ -144,6 +144,8 @@
 
             if (!cfg.published) {
 
+                // PERF: Using lower level _publish() for
+                // critical path performance
                 e = host._publish(eventName);
 
                 e.emitFacade = true;

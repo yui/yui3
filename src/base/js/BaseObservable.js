@@ -58,6 +58,7 @@
          * @return {Base} A reference to this object
          */
         init: function(config) {
+
             /**
              * <p>
              * Lifecycle event for the init phase, fired prior to initialization.
@@ -75,6 +76,10 @@
              * @param {EventFacade} e Event object, with a cfg property which
              * refers to the configuration object passed to the constructor.
              */
+
+            // PERF: Using lower level _publish() for
+            // critical path performance
+
             var type = this._getFullType(INIT),
                 e = this._publish(type);
 
