@@ -1,6 +1,12 @@
 Handlebars Change History
 =========================
 
+3.9.1
+-----
+
+* Upgraded Handlebars.js to v1.0.10 to fix regression with nested blocks.
+
+
 3.9.0
 -----
 

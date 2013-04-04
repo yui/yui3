@@ -58,6 +58,7 @@ var Lang = Y.Lang,
     @event clear
     @param {Tree.Node} rootNode New root node of this tree (the old root node is
         always destroyed when a tree is cleared).
+    @param {String} src Source of the event.
     @preventable _defClearFn
     **/
     EVT_CLEAR = 'clear',
@@ -70,6 +71,7 @@ var Lang = Y.Lang,
         being removed from this tree.
     @param {Tree.Node} node Node being removed.
     @param {Tree.Node} parent Parent node from which the node will be removed.
+    @param {String} src Source of the event.
     @preventable _defRemoveFn
     **/
     EVT_REMOVE = 'remove';
@@ -239,11 +241,16 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `clear` event
             will be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     clear: function (rootNode, options) {
         return this._fireTreeEvent(EVT_CLEAR, {
-            rootNode: this.createNode(rootNode || this._rootNodeConfig)
+            rootNode: this.createNode(rootNode || this._rootNodeConfig),
+            src     : options && options.src
         }, {
             defaultFn: this._defClearFn,
             silent   : options && options.silent
@@ -262,6 +269,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @return {Tree.Node} New node.
     **/
     createNode: function (config) {
+        /*jshint boss:true */
         config || (config = {});
 
         // If `config` is already a node, just ensure it's in the node map and
@@ -297,6 +305,10 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, `remove` events will
             be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting events. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     destroyNode: function (node, options) {
@@ -344,6 +356,10 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             and means they can't be reused.
         @param {Boolean} [options.silent=false] If `true`, `remove` events will
             be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting events. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @return {Tree.Node[]} Array of removed child nodes.
     **/
     emptyNode: function (node, options) {
@@ -354,6 +370,52 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
         }
 
         return removed;
+    },
+
+    /**
+    Performs a depth-first traversal of _node_, passing it and each of its
+    descendants to the specified _callback_, and returning the first node for
+    which the callback returns a truthy value.
+
+    Traversal will stop as soon as a truthy value is returned from the callback.
+
+    See `traverseNode()` for more details on how depth-first traversal works.
+
+    @method findNode
+    @param {Tree.Node} node Node to traverse.
+    @param {Object} [options] Options.
+        @param {Number} [options.depth] Depth limit. If specified, descendants
+            will only be traversed to this depth before backtracking and moving
+            on.
+    @param {Function} callback Callback function to call with the traversed
+        node and each of its descendants. If this function returns a truthy
+        value, traversal will be stopped and the current node will be returned.
+
+        @param {Tree.Node} callback.node Node being traversed.
+
+    @param {Object} [thisObj] `this` object to use when executing _callback_.
+    @return {Tree.Node|null} Returns the first node for which the _callback_
+        returns a truthy value, or `null` if the callback never returns a truthy
+        value.
+    **/
+    findNode: function (node, options, callback, thisObj) {
+        var match = null;
+
+        // Allow callback as second argument.
+        if (typeof options === 'function') {
+            thisObj  = callback;
+            callback = options;
+            options  = {};
+        }
+
+        this.traverseNode(node, options, function (descendant) {
+            if (callback.call(thisObj, descendant)) {
+                match = descendant;
+                return Tree.STOP_TRAVERSAL;
+            }
+        });
+
+        return match;
     },
 
     /**
@@ -388,18 +450,16 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             parent.
         @param {Boolean} [options.silent=false] If `true`, the `add` event will
             be suppressed.
+        @param {String} [options.src='insert'] Source of the change, to be
+            passed along to the event facade of the resulting event. This can be
+            used to distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
 
     @return {Tree.Node[]} Node or array of nodes that were inserted.
     **/
     insertNode: function (parent, node, options) {
         options || (options = {});
         parent  || (parent = this.rootNode);
-
-        var index = options.index;
-
-        if (typeof index === 'undefined') {
-            index = parent.children.length;
-        }
 
         // If `node` is an array, recurse to insert each node it contains.
         //
@@ -428,6 +488,12 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
         }
 
         node = this.createNode(node);
+
+        var index = options.index;
+
+        if (typeof index === 'undefined') {
+            index = this._getDefaultNodeIndex(parent, node, options);
+        }
 
         this._fireTreeEvent(EVT_ADD, {
             index : index,
@@ -480,6 +546,10 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             garbage collection and means they can't be reused.
         @param {Boolean} [options.silent=false] If `true`, the `remove` event
             will be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @return {Tree.Node} Node that was removed.
     **/
     removeNode: function (node, options) {
@@ -507,7 +577,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @return {Number} Total number of nodes in this tree.
     **/
     size: function () {
-        return this.rootNode.size();
+        return this.rootNode.size() + 1;
     },
 
     /**
@@ -518,6 +588,70 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     **/
     toJSON: function () {
         return this.rootNode.toJSON();
+    },
+
+    /**
+    Performs a depth-first traversal of _node_, passing it and each of its
+    descendants to the specified _callback_.
+
+    If the callback function returns `Tree.STOP_TRAVERSAL`, traversal will be
+    stopped immediately. Otherwise, it will continue until the deepest
+    descendant of _node_ has been traversed, or until each branch has been
+    traversed to the optional maximum depth limit.
+
+    Since traversal is depth-first, that means nodes are traversed like this:
+
+                1
+              / | \
+             2  8  9
+            / \     \
+           3   7    10
+         / | \      / \
+        4  5  6    11 12
+
+    @method traverseNode
+    @param {Tree.Node} node Node to traverse.
+    @param {Object} [options] Options.
+        @param {Number} [options.depth] Depth limit. If specified, descendants
+            will only be traversed to this depth before backtracking and moving
+            on.
+    @param {Function} callback Callback function to call with the traversed
+        node and each of its descendants.
+
+        @param {Tree.Node} callback.node Node being traversed.
+
+    @param {Object} [thisObj] `this` object to use when executing _callback_.
+    @return {Mixed} Returns `Tree.STOP_TRAVERSAL` if traversal was stopped;
+        otherwise returns `undefined`.
+    **/
+    traverseNode: function (node, options, callback, thisObj) {
+        // Allow callback as second argument.
+        if (typeof options === 'function') {
+            thisObj  = callback;
+            callback = options;
+            options  = {};
+        }
+
+        options || (options = {});
+
+        var stop      = Tree.STOP_TRAVERSAL,
+            unlimited = typeof options.depth === 'undefined';
+
+        if (callback.call(thisObj, node) === stop) {
+            return stop;
+        }
+
+        var children = node.children;
+
+        if (unlimited || options.depth > 0) {
+            var childOptions = unlimited ? options : {depth: options.depth - 1};
+
+            for (var i = 0, len = children.length; i < len; i++) {
+                if (this.traverseNode(children[i], childOptions, callback, thisObj) === stop) {
+                    return stop;
+                }
+            }
+        }
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -645,6 +779,25 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     },
 
     /**
+    Returns the default insertion index that should be used when _node_ is
+    inserted as a child of _parent_ without an explicit index.
+
+    The primary purpose of this method is to serve as a hook point for
+    extensions and plugins that need to customize insertion order.
+
+    @method _getDefaultNodeIndex
+    @param {Tree.Node} parent Parent node.
+    @param {Tree.Node} node Node being inserted.
+    @param {Object} [options] Options passed to `insertNode()`.
+    @return {Number} Index at which _node_ should be inserted into _parent_'s
+        `children` array.
+    @protected
+    **/
+    _getDefaultNodeIndex: function (parent/*, node, options*/) {
+        return parent.children.length;
+    },
+
+    /**
     Removes the specified node from its parent node if it has one.
 
     @method _removeNodeFromParent
@@ -711,6 +864,15 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             this.children = this.rootNode.children;
         }
     }
+}, {
+    /**
+    Return this value from a `Tree#traverseNode()` or `Tree.Node#traverse()`
+    callback to immediately stop traversal.
+
+    @property STOP_TRAVERSAL
+    @static
+    **/
+    STOP_TRAVERSAL: {}
 });
 
 Y.Tree = Y.mix(Tree, Y.Tree);

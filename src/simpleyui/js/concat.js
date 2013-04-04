@@ -6195,56 +6195,66 @@ Y.some = function(o, f, c, proto) {
 };
 
 /**
- * Deep object/array copy.  Function clones are actually
- * wrappers around the original function.
- * Array-like objects are treated as arrays.
- * Primitives are returned untouched.  Optionally, a
- * function can be provided to handle other data types,
- * filter keys, validate values, etc.
- *
- * NOTE: Cloning a non-trivial object is a reasonably heavy operation, due to
- * the need to recurrsively iterate down non-primitive properties. Clone
- * should be used only when a deep clone down to leaf level properties
- * is explicitly required.
- *
- * In many cases (for example, when trying to isolate objects used as 
- * hashes for configuration properties), a shallow copy, using Y.merge is 
- * normally sufficient. If more than one level of isolation is required, 
- * Y.merge can be used selectively at each level which needs to be 
- * isolated from the original without going all the way to leaf properties.
- *
- * @method clone
- * @param {object} o what to clone.
- * @param {boolean} safe if true, objects will not have prototype
- * items from the source.  If false, they will.  In this case, the
- * original is initially protected, but the clone is not completely
- * immune from changes to the source object prototype.  Also, cloned
- * prototype items that are deleted from the clone will result
- * in the value of the source prototype being exposed.  If operating
- * on a non-safe clone, items should be nulled out rather than deleted.
- * @param {function} f optional function to apply to each item in a
- * collection; it will be executed prior to applying the value to
- * the new object.  Return false to prevent the copy.
- * @param {object} c optional execution context for f.
- * @param {object} owner Owner object passed when clone is iterating
- * an object.  Used to set up context for cloned functions.
- * @param {object} cloned hash of previously cloned objects to avoid
- * multiple clones.
- * @return {Array|Object} the cloned object.
- */
+Deep object/array copy. Function clones are actually wrappers around the
+original function. Array-like objects are treated as arrays. Primitives are
+returned untouched. Optionally, a function can be provided to handle other data
+types, filter keys, validate values, etc.
+
+**Note:** Cloning a non-trivial object is a reasonably heavy operation, due to
+the need to recursively iterate down non-primitive properties. Clone should be
+used only when a deep clone down to leaf level properties is explicitly
+required. This method will also
+
+In many cases (for example, when trying to isolate objects used as hashes for
+configuration properties), a shallow copy, using `Y.merge()` is normally
+sufficient. If more than one level of isolation is required, `Y.merge()` can be
+used selectively at each level which needs to be isolated from the original
+without going all the way to leaf properties.
+
+@method clone
+@param {object} o what to clone.
+@param {boolean} safe if true, objects will not have prototype items from the
+    source. If false, they will. In this case, the original is initially
+    protected, but the clone is not completely immune from changes to the source
+    object prototype. Also, cloned prototype items that are deleted from the
+    clone will result in the value of the source prototype being exposed. If
+    operating on a non-safe clone, items should be nulled out rather than
+    deleted.
+@param {function} f optional function to apply to each item in a collection; it
+    will be executed prior to applying the value to the new object.
+    Return false to prevent the copy.
+@param {object} c optional execution context for f.
+@param {object} owner Owner object passed when clone is iterating an object.
+    Used to set up context for cloned functions.
+@param {object} cloned hash of previously cloned objects to avoid multiple
+    clones.
+@return {Array|Object} the cloned object.
+**/
 Y.clone = function(o, safe, f, c, owner, cloned) {
+    var o2, marked, stamp;
 
-    if (!L.isObject(o)) {
+    // Does not attempt to clone:
+    //
+    // * Non-typeof-object values, "primitive" values don't need cloning.
+    //
+    // * YUI instances, cloning complex object like YUI instances is not
+    //   advised, this is like cloning the world.
+    //
+    // * DOM nodes (#2528250), common host objects like DOM nodes cannot be
+    //   "subclassed" in Firefox and old versions of IE. Trying to use
+    //   `Object.create()` or `Y.extend()` on a DOM node will throw an error in
+    //   these browsers.
+    //
+    // Instad, the passed-in `o` will be return as-is when it matches one of the
+    // above criteria.
+    if (!L.isObject(o) ||
+            Y.instanceOf(o, YUI) ||
+            (o.addEventListener || o.attachEvent)) {
+
         return o;
     }
 
-    // @todo cloning YUI instances doesn't currently work
-    if (Y.instanceOf(o, YUI)) {
-        return o;
-    }
-
-    var o2, marked = cloned || {}, stamp,
-        yeach = Y.each;
+    marked = cloned || {};
 
     switch (L.type(o)) {
         case 'date':
@@ -6275,23 +6285,20 @@ Y.clone = function(o, safe, f, c, owner, cloned) {
             marked[stamp] = o;
     }
 
-    // #2528250 don't try to clone element properties
-    if (!o.addEventListener && !o.attachEvent) {
-        yeach(o, function(v, k) {
-if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
-                if (k !== CLONE_MARKER) {
-                    if (k == 'prototype') {
-                        // skip the prototype
-                    // } else if (o[k] === o) {
-                    //     this[k] = this;
-                    } else {
-                        this[k] =
-                            Y.clone(v, safe, f, c, owner || o, marked);
-                    }
+    Y.each(o, function(v, k) {
+        if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
+            if (k !== CLONE_MARKER) {
+                if (k == 'prototype') {
+                    // skip the prototype
+                // } else if (o[k] === o) {
+                //     this[k] = this;
+                } else {
+                    this[k] =
+                        Y.clone(v, safe, f, c, owner || o, marked);
                 }
             }
-        }, o2);
-    }
+        }
+    }, o2);
 
     if (!cloned) {
         Y.Object.each(marked, function(v, k) {
@@ -6308,7 +6315,6 @@ if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
 
     return o2;
 };
-
 
 /**
  * Returns a function that will execute the supplied function in the
@@ -13605,7 +13611,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the last from the NodeList and returns it.
           * @for NodeList
           * @method pop
-          * @return {Node} The last item in the NodeList.
+          * @return {Node | null} The last item in the NodeList, or null if the list is empty.
           */
         'pop': 0,
         /** Adds the given Node(s) to the end of the NodeList.
@@ -13617,7 +13623,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the first item from the NodeList and returns it.
           * @for NodeList
           * @method shift
-          * @return {Node} The first item in the NodeList.
+          * @return {Node | null} The first item in the NodeList, or null if the NodeList is empty.
           */
         'shift': 0,
         /** Returns a new NodeList comprising the Nodes in the given range.
@@ -18607,6 +18613,10 @@ IO.prototype = {
             }
         }
 
+        // Convert falsy values to an empty string. This way IE can't be
+        // rediculous and translate `undefined` to "undefined".
+        data || (data = '');
+
         if (data) {
             switch (method) {
                 case 'GET':
@@ -18950,9 +18960,10 @@ YUI.add('json-parse', function (Y, NAME) {
 
 var _JSON = Y.config.global.JSON;
 
-Y.namespace('JSON').parse = function () {
-    return _JSON.parse.apply(_JSON, arguments);
+Y.namespace('JSON').parse = function (obj, reviver, space) {
+    return _JSON.parse((typeof obj === 'string' ? obj : obj + ''), reviver, space);
 };
+
 
 }, '@VERSION@', {"requires": ["yui-base"]});
 YUI.add('transition', function (Y, NAME) {
@@ -18969,9 +18980,9 @@ var CAMEL_VENDOR_PREFIX = '',
     VENDOR_PREFIX = '',
     DOCUMENT = Y.config.doc,
     DOCUMENT_ELEMENT = 'documentElement',
+    DOCUMENT_STYLE = DOCUMENT[DOCUMENT_ELEMENT].style,
     TRANSITION_CAMEL = 'transition',
     TRANSITION_PROPERTY_CAMEL = 'transitionProperty',
-    TRANSFORM_CAMEL = 'transform',
     TRANSITION_PROPERTY,
     TRANSITION_DURATION,
     TRANSITION_TIMING_FUNCTION,
@@ -19001,6 +19012,9 @@ Transition = function() {
     this.init.apply(this, arguments);
 };
 
+// One off handling of transform-prefixing.
+Transition._TRANSFORM = 'transform';
+
 Transition._toCamel = function(property) {
     property = property.replace(/-([a-z])/gi, function(m0, m1) {
         return m1.toUpperCase();
@@ -19028,7 +19042,12 @@ Transition.HIDE_TRANSITION = 'fadeOut';
 
 Transition.useNative = false;
 
-if ('transition' in DOCUMENT[DOCUMENT_ELEMENT].style) {
+// Map transition properties to vendor-specific versions.
+if ('transition' in DOCUMENT_STYLE 
+    && 'transitionProperty' in DOCUMENT_STYLE 
+    && 'transitionDuration' in DOCUMENT_STYLE
+    && 'transitionTimingFunction' in DOCUMENT_STYLE
+    && 'transitionDelay' in DOCUMENT_STYLE) {
     Transition.useNative = true;
     Transition.supported = true; // TODO: remove
 } else {
@@ -19045,10 +19064,20 @@ if ('transition' in DOCUMENT[DOCUMENT_ELEMENT].style) {
     });
 }
 
+// Map transform property to vendor-specific versions.
+// One-off required for cssText injection.
+if (typeof DOCUMENT_STYLE.transform === 'undefined') {
+    Y.Array.each(VENDORS, function(val) { // then vendor specific
+        var property = val + 'Transform';
+        if (typeof DOCUMENT_STYLE[property] !== 'undefined') {
+            Transition._TRANSFORM = property;
+        }
+    });
+}
+
 if (CAMEL_VENDOR_PREFIX) {
     TRANSITION_CAMEL          = CAMEL_VENDOR_PREFIX + 'Transition';
     TRANSITION_PROPERTY_CAMEL = CAMEL_VENDOR_PREFIX + 'TransitionProperty';
-    TRANSFORM_CAMEL           = CAMEL_VENDOR_PREFIX + 'Transform';
 }
 
 TRANSITION_PROPERTY        = VENDOR_PREFIX + 'transition-property';
@@ -19186,8 +19215,8 @@ Transition.prototype = {
         var attr,
             node = this._node;
 
-        if (config.transform && !config[TRANSFORM_CAMEL]) {
-            config[TRANSFORM_CAMEL] = config.transform;
+        if (config.transform && !config[Transition._TRANSFORM]) {
+            config[Transition._TRANSFORM] = config.transform;
             delete config.transform; // TODO: copy
         }
 
