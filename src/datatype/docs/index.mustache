@@ -117,8 +117,10 @@ provide sufficient information on their own such as the names of the day of the 
 However, they are required to be present in the input string.
 </p>
 <p>
-The `%Z` format is not supported (`parser` will always return `null` when found),
-nor the composite formats that use it, such as `%c` in the `en` locale.
+The `%Z` format or the composite formats that use it, such as `%c` in the `en` locale
+have limited support.  It relies on a table of time zone names and abbreviations
+which would be too heavy to fully load.  The module has the table filled with
+a minimal set of North American and European abbreviations.
 </p>
 <p>
 It is suggested that the developer uses different formatting specifications when
