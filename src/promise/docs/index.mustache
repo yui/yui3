@@ -252,7 +252,7 @@ uiUpdated.then(stopSpinner);
 
 // Concise form (more common)
 // Note Y.Promise can be called without 'new'
-Y.Promise(function (resolve, reject) { Y.io(...); })
+Promise(function (resolve, reject) { Y.io(...); })
     .then(renderTemplates, showError) // returns another promise
     .then(stopSpinner);               // returns another promise
 ```
@@ -297,7 +297,7 @@ userDataLoaded
 
 <p>
     When a promise is rejected, the `onRejected` callback (the second argument
-    to `then()`) is executed. Like `onFulfilled`, it is called with whatever is
+    to `then()`) is executed. Like `onFulfilled`, it is called with whatever is 
     passed to the executor function's `reject()` function.
 </p>
 

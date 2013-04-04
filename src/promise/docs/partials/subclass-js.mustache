@@ -1,0 +1,25 @@
+<script type="text/javascript">
+YUI().use('promise', 'jsonp', 'node', 'array-extras', function (Y) {
+
+function ArrayPromise() {
+    ArrayPromise.superclass.constructor.apply(this, arguments);
+}
+Y.extend(ArrayPromise, Y.Promise);
+
+{{>subclass-array-methods}}
+{{>subclass-toarray-fn}}
+
+{{>github-cache}}
+
+var demoNode = Y.one('#demo');
+
+function log(text) {
+    demoNode.append('<div>' + text + '</div>');
+}
+function showError(message) {
+    demoNode.append('<div class="error">' + message + '</div>');
+}
+
+{{>subclass-array-operations}}
+});
+</script>
