@@ -1,6 +1,860 @@
-if (typeof __coverage__ === 'undefined') { __coverage__ = {}; }
-if (!__coverage__['build/event-custom-complex/event-custom-complex.js']) {
-   __coverage__['build/event-custom-complex/event-custom-complex.js'] = {"path":"build/event-custom-complex/event-custom-complex.js","s":{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"24":0,"25":0,"26":0,"27":0,"28":0,"29":0,"30":0,"31":0,"32":0,"33":0,"34":0,"35":0,"36":0,"37":0,"38":0,"39":0,"40":0,"41":0,"42":0,"43":0,"44":0,"45":0,"46":0,"47":0,"48":0,"49":0,"50":0,"51":0,"52":0,"53":0,"54":0,"55":0,"56":0,"57":0,"58":0,"59":0,"60":0,"61":0,"62":0,"63":0,"64":0,"65":0,"66":0,"67":0,"68":0,"69":0,"70":0,"71":0,"72":0,"73":0,"74":0,"75":0,"76":0,"77":0,"78":0,"79":0,"80":0,"81":0,"82":0,"83":0,"84":0,"85":0,"86":0,"87":0,"88":0,"89":0,"90":0,"91":0,"92":0,"93":0,"94":0,"95":0,"96":0,"97":0,"98":0,"99":0,"100":0,"101":0,"102":0,"103":0,"104":0,"105":0,"106":0,"107":0,"108":0,"109":0,"110":0,"111":0,"112":0,"113":0,"114":0,"115":0,"116":0,"117":0,"118":0,"119":0,"120":0,"121":0,"122":0,"123":0,"124":0,"125":0,"126":0,"127":0,"128":0,"129":0,"130":0,"131":0,"132":0,"133":0,"134":0,"135":0,"136":0,"137":0,"138":0,"139":0,"140":0,"141":0,"142":0,"143":0,"144":0,"145":0,"146":0,"147":0,"148":0,"149":0,"150":0,"151":0,"152":0,"153":0,"154":0,"155":0,"156":0,"157":0,"158":0,"159":0,"160":0,"161":0,"162":0,"163":0,"164":0,"165":0,"166":0,"167":0,"168":0,"169":0,"170":0,"171":0,"172":0},"b":{"1":[0,0],"2":[0,0],"3":[0,0],"4":[0,0],"5":[0,0],"6":[0,0],"7":[0,0],"8":[0,0],"9":[0,0],"10":[0,0],"11":[0,0],"12":[0,0],"13":[0,0],"14":[0,0],"15":[0,0],"16":[0,0,0],"17":[0,0],"18":[0,0],"19":[0,0],"20":[0,0],"21":[0,0,0,0],"22":[0,0],"23":[0,0,0],"24":[0,0],"25":[0,0],"26":[0,0],"27":[0,0],"28":[0,0],"29":[0,0],"30":[0,0],"31":[0,0],"32":[0,0],"33":[0,0],"34":[0,0],"35":[0,0],"36":[0,0],"37":[0,0],"38":[0,0],"39":[0,0],"40":[0,0],"41":[0,0],"42":[0,0,0,0],"43":[0,0],"44":[0,0,0],"45":[0,0],"46":[0,0],"47":[0,0],"48":[0,0],"49":[0,0],"50":[0,0],"51":[0,0,0],"52":[0,0]},"f":{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0},"fnMap":{"1":{"name":"(anonymous_1)","line":1,"loc":{"start":{"line":1,"column":32},"end":{"line":1,"column":51}}},"2":{"name":"(anonymous_2)","line":18,"loc":{"start":{"line":18,"column":21},"end":{"line":18,"column":47}}},"3":{"name":"(anonymous_3)","line":36,"loc":{"start":{"line":36,"column":16},"end":{"line":36,"column":43}}},"4":{"name":"(anonymous_4)","line":95,"loc":{"start":{"line":95,"column":21},"end":{"line":95,"column":32}}},"5":{"name":"(anonymous_5)","line":106,"loc":{"start":{"line":106,"column":30},"end":{"line":106,"column":41}}},"6":{"name":"(anonymous_6)","line":115,"loc":{"start":{"line":115,"column":20},"end":{"line":115,"column":31}}},"7":{"name":"(anonymous_7)","line":127,"loc":{"start":{"line":127,"column":10},"end":{"line":127,"column":30}}},"8":{"name":"(anonymous_8)","line":135,"loc":{"start":{"line":135,"column":22},"end":{"line":135,"column":37}}},"9":{"name":"(anonymous_9)","line":245,"loc":{"start":{"line":245,"column":34},"end":{"line":245,"column":46}}},"10":{"name":"(anonymous_10)","line":250,"loc":{"start":{"line":250,"column":30},"end":{"line":250,"column":41}}},"11":{"name":"(anonymous_11)","line":288,"loc":{"start":{"line":288,"column":21},"end":{"line":288,"column":32}}},"12":{"name":"(anonymous_12)","line":332,"loc":{"start":{"line":332,"column":26},"end":{"line":332,"column":37}}},"13":{"name":"(anonymous_13)","line":347,"loc":{"start":{"line":347,"column":35},"end":{"line":347,"column":46}}},"14":{"name":"(anonymous_14)","line":361,"loc":{"start":{"line":361,"column":25},"end":{"line":361,"column":36}}},"15":{"name":"(anonymous_15)","line":377,"loc":{"start":{"line":377,"column":15},"end":{"line":377,"column":35}}},"16":{"name":"(anonymous_16)","line":399,"loc":{"start":{"line":399,"column":20},"end":{"line":399,"column":32}}},"17":{"name":"(anonymous_17)","line":409,"loc":{"start":{"line":409,"column":21},"end":{"line":409,"column":32}}},"18":{"name":"(anonymous_18)","line":419,"loc":{"start":{"line":419,"column":23},"end":{"line":419,"column":35}}},"19":{"name":"(anonymous_19)","line":430,"loc":{"start":{"line":430,"column":17},"end":{"line":430,"column":49}}}},"statementMap":{"1":{"start":{"line":1,"column":0},"end":{"line":502,"column":53}},"2":{"start":{"line":11,"column":0},"end":{"line":26,"column":6}},"3":{"start":{"line":19,"column":8},"end":{"line":19,"column":14}},"4":{"start":{"line":21,"column":8},"end":{"line":25,"column":9}},"5":{"start":{"line":22,"column":12},"end":{"line":24,"column":13}},"6":{"start":{"line":23,"column":16},"end":{"line":23,"column":39}},"7":{"start":{"line":36,"column":0},"end":{"line":87,"column":2}},"8":{"start":{"line":38,"column":4},"end":{"line":38,"column":19}},"9":{"start":{"line":40,"column":4},"end":{"line":40,"column":20}},"10":{"start":{"line":47,"column":4},"end":{"line":47,"column":29}},"11":{"start":{"line":54,"column":4},"end":{"line":54,"column":23}},"12":{"start":{"line":62,"column":4},"end":{"line":62,"column":24}},"13":{"start":{"line":71,"column":4},"end":{"line":71,"column":27}},"14":{"start":{"line":78,"column":4},"end":{"line":78,"column":39}},"15":{"start":{"line":85,"column":4},"end":{"line":85,"column":41}},"16":{"start":{"line":89,"column":0},"end":{"line":133,"column":3}},"17":{"start":{"line":96,"column":8},"end":{"line":96,"column":38}},"18":{"start":{"line":97,"column":8},"end":{"line":97,"column":25}},"19":{"start":{"line":107,"column":8},"end":{"line":107,"column":47}},"20":{"start":{"line":108,"column":8},"end":{"line":108,"column":25}},"21":{"start":{"line":116,"column":8},"end":{"line":116,"column":37}},"22":{"start":{"line":117,"column":8},"end":{"line":117,"column":27}},"23":{"start":{"line":128,"column":8},"end":{"line":128,"column":36}},"24":{"start":{"line":129,"column":8},"end":{"line":129,"column":27}},"25":{"start":{"line":130,"column":8},"end":{"line":130,"column":43}},"26":{"start":{"line":135,"column":0},"end":{"line":286,"column":2}},"27":{"start":{"line":137,"column":4},"end":{"line":138,"column":63}},"28":{"start":{"line":140,"column":4},"end":{"line":146,"column":5}},"29":{"start":{"line":142,"column":8},"end":{"line":145,"column":9}},"30":{"start":{"line":143,"column":12},"end":{"line":143,"column":48}},"31":{"start":{"line":144,"column":12},"end":{"line":144,"column":24}},"32":{"start":{"line":148,"column":4},"end":{"line":161,"column":6}},"33":{"start":{"line":163,"column":4},"end":{"line":163,"column":26}},"34":{"start":{"line":165,"column":4},"end":{"line":165,"column":60}},"35":{"start":{"line":166,"column":4},"end":{"line":166,"column":64}},"36":{"start":{"line":168,"column":4},"end":{"line":168,"column":38}},"37":{"start":{"line":170,"column":4},"end":{"line":179,"column":5}},"38":{"start":{"line":171,"column":8},"end":{"line":174,"column":11}},"39":{"start":{"line":176,"column":8},"end":{"line":176,"column":29}},"40":{"start":{"line":178,"column":8},"end":{"line":178,"column":45}},"41":{"start":{"line":181,"column":4},"end":{"line":181,"column":30}},"42":{"start":{"line":183,"column":4},"end":{"line":183,"column":32}},"43":{"start":{"line":186,"column":4},"end":{"line":186,"column":24}},"44":{"start":{"line":188,"column":4},"end":{"line":188,"column":31}},"45":{"start":{"line":190,"column":4},"end":{"line":194,"column":5}},"46":{"start":{"line":191,"column":8},"end":{"line":191,"column":21}},"47":{"start":{"line":193,"column":8},"end":{"line":193,"column":25}},"48":{"start":{"line":196,"column":4},"end":{"line":198,"column":5}},"49":{"start":{"line":197,"column":8},"end":{"line":197,"column":42}},"50":{"start":{"line":201,"column":4},"end":{"line":218,"column":5}},"51":{"start":{"line":203,"column":8},"end":{"line":203,"column":32}},"52":{"start":{"line":205,"column":8},"end":{"line":205,"column":32}},"53":{"start":{"line":207,"column":8},"end":{"line":210,"column":9}},"54":{"start":{"line":208,"column":12},"end":{"line":208,"column":27}},"55":{"start":{"line":209,"column":12},"end":{"line":209,"column":29}},"56":{"start":{"line":212,"column":8},"end":{"line":212,"column":48}},"57":{"start":{"line":214,"column":8},"end":{"line":214,"column":58}},"58":{"start":{"line":215,"column":8},"end":{"line":215,"column":64}},"59":{"start":{"line":217,"column":8},"end":{"line":217,"column":32}},"60":{"start":{"line":220,"column":4},"end":{"line":228,"column":5}},"61":{"start":{"line":221,"column":8},"end":{"line":223,"column":9}},"62":{"start":{"line":222,"column":12},"end":{"line":222,"column":47}},"63":{"start":{"line":224,"column":11},"end":{"line":228,"column":5}},"64":{"start":{"line":227,"column":8},"end":{"line":227,"column":41}},"65":{"start":{"line":232,"column":4},"end":{"line":232,"column":26}},"66":{"start":{"line":235,"column":4},"end":{"line":254,"column":5}},"67":{"start":{"line":236,"column":8},"end":{"line":253,"column":9}},"68":{"start":{"line":237,"column":12},"end":{"line":237,"column":46}},"69":{"start":{"line":238,"column":12},"end":{"line":240,"column":13}},"70":{"start":{"line":239,"column":16},"end":{"line":239,"column":23}},"71":{"start":{"line":242,"column":12},"end":{"line":242,"column":32}},"72":{"start":{"line":243,"column":12},"end":{"line":248,"column":13}},"73":{"start":{"line":244,"column":16},"end":{"line":244,"column":47}},"74":{"start":{"line":245,"column":16},"end":{"line":247,"column":19}},"75":{"start":{"line":246,"column":20},"end":{"line":246,"column":39}},"76":{"start":{"line":250,"column":12},"end":{"line":252,"column":15}},"77":{"start":{"line":251,"column":16},"end":{"line":251,"column":52}},"78":{"start":{"line":256,"column":4},"end":{"line":256,"column":23}},"79":{"start":{"line":258,"column":4},"end":{"line":270,"column":5}},"80":{"start":{"line":259,"column":8},"end":{"line":259,"column":25}},"81":{"start":{"line":261,"column":8},"end":{"line":267,"column":9}},"82":{"start":{"line":262,"column":12},"end":{"line":262,"column":28}},"83":{"start":{"line":263,"column":12},"end":{"line":263,"column":22}},"84":{"start":{"line":265,"column":12},"end":{"line":265,"column":25}},"85":{"start":{"line":266,"column":12},"end":{"line":266,"column":36}},"86":{"start":{"line":269,"column":8},"end":{"line":269,"column":26}},"87":{"start":{"line":272,"column":4},"end":{"line":272,"column":26}},"88":{"start":{"line":274,"column":4},"end":{"line":279,"column":5}},"89":{"start":{"line":275,"column":8},"end":{"line":275,"column":23}},"90":{"start":{"line":276,"column":8},"end":{"line":276,"column":25}},"91":{"start":{"line":277,"column":8},"end":{"line":277,"column":25}},"92":{"start":{"line":278,"column":8},"end":{"line":278,"column":27}},"93":{"start":{"line":283,"column":4},"end":{"line":283,"column":24}},"94":{"start":{"line":285,"column":4},"end":{"line":285,"column":15}},"95":{"start":{"line":288,"column":0},"end":{"line":325,"column":2}},"96":{"start":{"line":290,"column":4},"end":{"line":291,"column":24}},"97":{"start":{"line":293,"column":4},"end":{"line":295,"column":5}},"98":{"start":{"line":294,"column":8},"end":{"line":294,"column":57}},"99":{"start":{"line":299,"column":4},"end":{"line":299,"column":24}},"100":{"start":{"line":301,"column":4},"end":{"line":309,"column":5}},"101":{"start":{"line":304,"column":8},"end":{"line":304,"column":30}},"102":{"start":{"line":308,"column":8},"end":{"line":308,"column":36}},"103":{"start":{"line":313,"column":4},"end":{"line":313,"column":30}},"104":{"start":{"line":316,"column":4},"end":{"line":316,"column":51}},"105":{"start":{"line":318,"column":4},"end":{"line":318,"column":42}},"106":{"start":{"line":319,"column":4},"end":{"line":319,"column":19}},"107":{"start":{"line":320,"column":4},"end":{"line":320,"column":21}},"108":{"start":{"line":322,"column":4},"end":{"line":322,"column":22}},"109":{"start":{"line":324,"column":4},"end":{"line":324,"column":24}},"110":{"start":{"line":332,"column":0},"end":{"line":340,"column":2}},"111":{"start":{"line":333,"column":4},"end":{"line":333,"column":21}},"112":{"start":{"line":334,"column":4},"end":{"line":336,"column":5}},"113":{"start":{"line":335,"column":8},"end":{"line":335,"column":31}},"114":{"start":{"line":337,"column":4},"end":{"line":339,"column":5}},"115":{"start":{"line":338,"column":8},"end":{"line":338,"column":42}},"116":{"start":{"line":347,"column":0},"end":{"line":355,"column":2}},"117":{"start":{"line":348,"column":4},"end":{"line":348,"column":21}},"118":{"start":{"line":349,"column":4},"end":{"line":351,"column":5}},"119":{"start":{"line":350,"column":8},"end":{"line":350,"column":31}},"120":{"start":{"line":352,"column":4},"end":{"line":354,"column":5}},"121":{"start":{"line":353,"column":8},"end":{"line":353,"column":42}},"122":{"start":{"line":361,"column":0},"end":{"line":368,"column":2}},"123":{"start":{"line":362,"column":4},"end":{"line":367,"column":5}},"124":{"start":{"line":363,"column":8},"end":{"line":363,"column":27}},"125":{"start":{"line":364,"column":8},"end":{"line":366,"column":9}},"126":{"start":{"line":365,"column":12},"end":{"line":365,"column":37}},"127":{"start":{"line":377,"column":0},"end":{"line":384,"column":2}},"128":{"start":{"line":378,"column":4},"end":{"line":382,"column":5}},"129":{"start":{"line":379,"column":8},"end":{"line":379,"column":40}},"130":{"start":{"line":381,"column":8},"end":{"line":381,"column":31}},"131":{"start":{"line":383,"column":4},"end":{"line":383,"column":26}},"132":{"start":{"line":399,"column":0},"end":{"line":402,"column":2}},"133":{"start":{"line":400,"column":4},"end":{"line":400,"column":41}},"134":{"start":{"line":401,"column":4},"end":{"line":401,"column":35}},"135":{"start":{"line":409,"column":0},"end":{"line":411,"column":2}},"136":{"start":{"line":410,"column":4},"end":{"line":410,"column":49}},"137":{"start":{"line":419,"column":0},"end":{"line":421,"column":2}},"138":{"start":{"line":420,"column":4},"end":{"line":420,"column":44}},"139":{"start":{"line":430,"column":0},"end":{"line":492,"column":2}},"140":{"start":{"line":432,"column":4},"end":{"line":435,"column":18}},"141":{"start":{"line":437,"column":4},"end":{"line":489,"column":5}},"142":{"start":{"line":439,"column":8},"end":{"line":488,"column":9}},"143":{"start":{"line":440,"column":12},"end":{"line":487,"column":13}},"144":{"start":{"line":441,"column":16},"end":{"line":441,"column":29}},"145":{"start":{"line":442,"column":16},"end":{"line":442,"column":44}},"146":{"start":{"line":443,"column":16},"end":{"line":443,"column":45}},"147":{"start":{"line":445,"column":16},"end":{"line":447,"column":17}},"148":{"start":{"line":446,"column":20},"end":{"line":446,"column":41}},"149":{"start":{"line":449,"column":16},"end":{"line":449,"column":47}},"150":{"start":{"line":450,"column":16},"end":{"line":450,"column":42}},"151":{"start":{"line":454,"column":16},"end":{"line":484,"column":17}},"152":{"start":{"line":455,"column":20},"end":{"line":457,"column":21}},"153":{"start":{"line":456,"column":24},"end":{"line":456,"column":64}},"154":{"start":{"line":460,"column":20},"end":{"line":460,"column":37}},"155":{"start":{"line":464,"column":20},"end":{"line":464,"column":47}},"156":{"start":{"line":465,"column":20},"end":{"line":465,"column":55}},"157":{"start":{"line":466,"column":20},"end":{"line":466,"column":41}},"158":{"start":{"line":467,"column":20},"end":{"line":467,"column":38}},"159":{"start":{"line":468,"column":20},"end":{"line":468,"column":41}},"160":{"start":{"line":472,"column":20},"end":{"line":472,"column":41}},"161":{"start":{"line":474,"column":20},"end":{"line":474,"column":34}},"162":{"start":{"line":476,"column":20},"end":{"line":476,"column":78}},"163":{"start":{"line":477,"column":20},"end":{"line":477,"column":38}},"164":{"start":{"line":478,"column":20},"end":{"line":478,"column":45}},"165":{"start":{"line":481,"column":20},"end":{"line":483,"column":21}},"166":{"start":{"line":482,"column":24},"end":{"line":482,"column":30}},"167":{"start":{"line":486,"column":16},"end":{"line":486,"column":47}},"168":{"start":{"line":491,"column":4},"end":{"line":491,"column":15}},"169":{"start":{"line":494,"column":0},"end":{"line":494,"column":29}},"170":{"start":{"line":495,"column":0},"end":{"line":495,"column":17}},"171":{"start":{"line":498,"column":0},"end":{"line":500,"column":1}},"172":{"start":{"line":499,"column":4},"end":{"line":499,"column":28}}},"branchMap":{"1":{"line":22,"type":"if","locations":[{"start":{"line":22,"column":12},"end":{"line":22,"column":12}},{"start":{"line":22,"column":12},"end":{"line":22,"column":12}}]},"2":{"line":38,"type":"binary-expr","locations":[{"start":{"line":38,"column":8},"end":{"line":38,"column":9}},{"start":{"line":38,"column":13},"end":{"line":38,"column":18}}]},"3":{"line":130,"type":"cond-expr","locations":[{"start":{"line":130,"column":37},"end":{"line":130,"column":38}},{"start":{"line":130,"column":41},"end":{"line":130,"column":42}}]},"4":{"line":138,"type":"binary-expr","locations":[{"start":{"line":138,"column":28},"end":{"line":138,"column":37}},{"start":{"line":138,"column":41},"end":{"line":138,"column":45}}]},"5":{"line":140,"type":"if","locations":[{"start":{"line":140,"column":4},"end":{"line":140,"column":4}},{"start":{"line":140,"column":4},"end":{"line":140,"column":4}}]},"6":{"line":142,"type":"if","locations":[{"start":{"line":142,"column":8},"end":{"line":142,"column":8}},{"start":{"line":142,"column":8},"end":{"line":142,"column":8}}]},"7":{"line":142,"type":"binary-expr","locations":[{"start":{"line":142,"column":12},"end":{"line":142,"column":25}},{"start":{"line":142,"column":29},"end":{"line":142,"column":62}}]},"8":{"line":148,"type":"binary-expr","locations":[{"start":{"line":148,"column":9},"end":{"line":148,"column":19}},{"start":{"line":148,"column":23},"end":{"line":161,"column":5}}]},"9":{"line":165,"type":"cond-expr","locations":[{"start":{"line":165,"column":45},"end":{"line":165,"column":46}},{"start":{"line":165,"column":49},"end":{"line":165,"column":59}}]},"10":{"line":166,"type":"cond-expr","locations":[{"start":{"line":166,"column":47},"end":{"line":166,"column":48}},{"start":{"line":166,"column":51},"end":{"line":166,"column":63}}]},"11":{"line":168,"type":"binary-expr","locations":[{"start":{"line":168,"column":18},"end":{"line":168,"column":29}},{"start":{"line":168,"column":33},"end":{"line":168,"column":37}}]},"12":{"line":170,"type":"if","locations":[{"start":{"line":170,"column":4},"end":{"line":170,"column":4}},{"start":{"line":170,"column":4},"end":{"line":170,"column":4}}]},"13":{"line":190,"type":"if","locations":[{"start":{"line":190,"column":4},"end":{"line":190,"column":4}},{"start":{"line":190,"column":4},"end":{"line":190,"column":4}}]},"14":{"line":196,"type":"if","locations":[{"start":{"line":196,"column":4},"end":{"line":196,"column":4}},{"start":{"line":196,"column":4},"end":{"line":196,"column":4}}]},"15":{"line":201,"type":"if","locations":[{"start":{"line":201,"column":4},"end":{"line":201,"column":4}},{"start":{"line":201,"column":4},"end":{"line":201,"column":4}}]},"16":{"line":201,"type":"binary-expr","locations":[{"start":{"line":201,"column":8},"end":{"line":201,"column":20}},{"start":{"line":201,"column":24},"end":{"line":201,"column":35}},{"start":{"line":201,"column":39},"end":{"line":201,"column":52}}]},"17":{"line":207,"type":"if","locations":[{"start":{"line":207,"column":8},"end":{"line":207,"column":8}},{"start":{"line":207,"column":8},"end":{"line":207,"column":8}}]},"18":{"line":220,"type":"if","locations":[{"start":{"line":220,"column":4},"end":{"line":220,"column":4}},{"start":{"line":220,"column":4},"end":{"line":220,"column":4}}]},"19":{"line":221,"type":"if","locations":[{"start":{"line":221,"column":8},"end":{"line":221,"column":8}},{"start":{"line":221,"column":8},"end":{"line":221,"column":8}}]},"20":{"line":224,"type":"if","locations":[{"start":{"line":224,"column":11},"end":{"line":224,"column":11}},{"start":{"line":224,"column":11},"end":{"line":224,"column":11}}]},"21":{"line":224,"type":"binary-expr","locations":[{"start":{"line":224,"column":15},"end":{"line":224,"column":29}},{"start":{"line":225,"column":16},"end":{"line":225,"column":39}},{"start":{"line":225,"column":43},"end":{"line":225,"column":64}},{"start":{"line":226,"column":16},"end":{"line":226,"column":34}}]},"22":{"line":235,"type":"if","locations":[{"start":{"line":235,"column":4},"end":{"line":235,"column":4}},{"start":{"line":235,"column":4},"end":{"line":235,"column":4}}]},"23":{"line":235,"type":"binary-expr","locations":[{"start":{"line":235,"column":8},"end":{"line":235,"column":15}},{"start":{"line":235,"column":19},"end":{"line":235,"column":34}},{"start":{"line":235,"column":38},"end":{"line":235,"column":54}}]},"24":{"line":236,"type":"if","locations":[{"start":{"line":236,"column":8},"end":{"line":236,"column":8}},{"start":{"line":236,"column":8},"end":{"line":236,"column":8}}]},"25":{"line":236,"type":"binary-expr","locations":[{"start":{"line":236,"column":12},"end":{"line":236,"column":29}},{"start":{"line":236,"column":33},"end":{"line":236,"column":67}}]},"26":{"line":243,"type":"if","locations":[{"start":{"line":243,"column":12},"end":{"line":243,"column":12}},{"start":{"line":243,"column":12},"end":{"line":243,"column":12}}]},"27":{"line":258,"type":"if","locations":[{"start":{"line":258,"column":4},"end":{"line":258,"column":4}},{"start":{"line":258,"column":4},"end":{"line":258,"column":4}}]},"28":{"line":274,"type":"if","locations":[{"start":{"line":274,"column":4},"end":{"line":274,"column":4}},{"start":{"line":274,"column":4},"end":{"line":274,"column":4}}]},"29":{"line":293,"type":"if","locations":[{"start":{"line":293,"column":4},"end":{"line":293,"column":4}},{"start":{"line":293,"column":4},"end":{"line":293,"column":4}}]},"30":{"line":299,"type":"binary-expr","locations":[{"start":{"line":299,"column":8},"end":{"line":299,"column":12}},{"start":{"line":299,"column":16},"end":{"line":299,"column":23}}]},"31":{"line":301,"type":"if","locations":[{"start":{"line":301,"column":4},"end":{"line":301,"column":4}},{"start":{"line":301,"column":4},"end":{"line":301,"column":4}}]},"32":{"line":308,"type":"binary-expr","locations":[{"start":{"line":308,"column":18},"end":{"line":308,"column":24}},{"start":{"line":308,"column":28},"end":{"line":308,"column":35}}]},"33":{"line":316,"type":"binary-expr","locations":[{"start":{"line":316,"column":16},"end":{"line":316,"column":35}},{"start":{"line":316,"column":39},"end":{"line":316,"column":50}}]},"34":{"line":334,"type":"if","locations":[{"start":{"line":334,"column":4},"end":{"line":334,"column":4}},{"start":{"line":334,"column":4},"end":{"line":334,"column":4}}]},"35":{"line":337,"type":"if","locations":[{"start":{"line":337,"column":4},"end":{"line":337,"column":4}},{"start":{"line":337,"column":4},"end":{"line":337,"column":4}}]},"36":{"line":349,"type":"if","locations":[{"start":{"line":349,"column":4},"end":{"line":349,"column":4}},{"start":{"line":349,"column":4},"end":{"line":349,"column":4}}]},"37":{"line":352,"type":"if","locations":[{"start":{"line":352,"column":4},"end":{"line":352,"column":4}},{"start":{"line":352,"column":4},"end":{"line":352,"column":4}}]},"38":{"line":362,"type":"if","locations":[{"start":{"line":362,"column":4},"end":{"line":362,"column":4}},{"start":{"line":362,"column":4},"end":{"line":362,"column":4}}]},"39":{"line":364,"type":"if","locations":[{"start":{"line":364,"column":8},"end":{"line":364,"column":8}},{"start":{"line":364,"column":8},"end":{"line":364,"column":8}}]},"40":{"line":378,"type":"if","locations":[{"start":{"line":378,"column":4},"end":{"line":378,"column":4}},{"start":{"line":378,"column":4},"end":{"line":378,"column":4}}]},"41":{"line":433,"type":"binary-expr","locations":[{"start":{"line":433,"column":18},"end":{"line":433,"column":21}},{"start":{"line":433,"column":25},"end":{"line":433,"column":33}}]},"42":{"line":434,"type":"binary-expr","locations":[{"start":{"line":434,"column":25},"end":{"line":434,"column":31}},{"start":{"line":434,"column":36},"end":{"line":434,"column":39}},{"start":{"line":434,"column":43},"end":{"line":434,"column":53}},{"start":{"line":434,"column":58},"end":{"line":434,"column":62}}]},"43":{"line":437,"type":"if","locations":[{"start":{"line":437,"column":4},"end":{"line":437,"column":4}},{"start":{"line":437,"column":4},"end":{"line":437,"column":4}}]},"44":{"line":437,"type":"binary-expr","locations":[{"start":{"line":437,"column":8},"end":{"line":437,"column":12}},{"start":{"line":437,"column":18},"end":{"line":437,"column":30}},{"start":{"line":437,"column":35},"end":{"line":437,"column":40}}]},"45":{"line":440,"type":"if","locations":[{"start":{"line":440,"column":12},"end":{"line":440,"column":12}},{"start":{"line":440,"column":12},"end":{"line":440,"column":12}}]},"46":{"line":445,"type":"if","locations":[{"start":{"line":445,"column":16},"end":{"line":445,"column":16}},{"start":{"line":445,"column":16},"end":{"line":445,"column":16}}]},"47":{"line":445,"type":"binary-expr","locations":[{"start":{"line":445,"column":20},"end":{"line":445,"column":23}},{"start":{"line":445,"column":27},"end":{"line":445,"column":30}}]},"48":{"line":454,"type":"if","locations":[{"start":{"line":454,"column":16},"end":{"line":454,"column":16}},{"start":{"line":454,"column":16},"end":{"line":454,"column":16}}]},"49":{"line":455,"type":"if","locations":[{"start":{"line":455,"column":20},"end":{"line":455,"column":20}},{"start":{"line":455,"column":20},"end":{"line":455,"column":20}}]},"50":{"line":476,"type":"binary-expr","locations":[{"start":{"line":476,"column":26},"end":{"line":476,"column":29}},{"start":{"line":476,"column":33},"end":{"line":476,"column":77}}]},"51":{"line":476,"type":"binary-expr","locations":[{"start":{"line":476,"column":51},"end":{"line":476,"column":55}},{"start":{"line":476,"column":59},"end":{"line":476,"column":70}},{"start":{"line":476,"column":74},"end":{"line":476,"column":76}}]},"52":{"line":481,"type":"if","locations":[{"start":{"line":481,"column":20},"end":{"line":481,"column":20}},{"start":{"line":481,"column":20},"end":{"line":481,"column":20}}]}},"code":["(function () { YUI.add('event-custom-complex', function (Y, NAME) {","","","/**"," * Adds event facades, preventable default behavior, and bubbling."," * events."," * @module event-custom"," * @submodule event-custom-complex"," */","","var FACADE,","    FACADE_KEYS,","    key,","    EMPTY = {},","    CEProto = Y.CustomEvent.prototype,","    ETProto = Y.EventTarget.prototype, ","","    mixFacadeProps = function(facade, payload) {","        var p;","","        for (p in payload) {","            if (!(FACADE_KEYS.hasOwnProperty(p))) {","                facade[p] = payload[p];","            }","        }","    };","","/**"," * Wraps and protects a custom event for use when emitFacade is set to true."," * Requires the event-custom-complex module"," * @class EventFacade"," * @param e {Event} the custom event"," * @param currentTarget {HTMLElement} the element the listener was attached to"," */","","Y.EventFacade = function(e, currentTarget) {","","    e = e || EMPTY;","","    this._event = e;","","    /**","     * The arguments passed to fire","     * @property details","     * @type Array","     */","    this.details = e.details;","","    /**","     * The event type, this can be overridden by the fire() payload","     * @property type","     * @type string","     */","    this.type = e.type;","","    /**","     * The real event type","     * @property _type","     * @type string","     * @private","     */","    this._type = e.type;","","    //////////////////////////////////////////////////////","","    /**","     * Node reference for the targeted eventtarget","     * @property target","     * @type Node","     */","    this.target = e.target;","","    /**","     * Node reference for the element that the listener was attached to.","     * @property currentTarget","     * @type Node","     */","    this.currentTarget = currentTarget;","","    /**","     * Node reference to the relatedTarget","     * @property relatedTarget","     * @type Node","     */","    this.relatedTarget = e.relatedTarget;","","};","","Y.mix(Y.EventFacade.prototype, {","","    /**","     * Stops the propagation to the next bubble target","     * @method stopPropagation","     */","    stopPropagation: function() {","        this._event.stopPropagation();","        this.stopped = 1;","    },","","    /**","     * Stops the propagation to the next bubble target and","     * prevents any additional listeners from being exectued","     * on the current target.","     * @method stopImmediatePropagation","     */","    stopImmediatePropagation: function() {","        this._event.stopImmediatePropagation();","        this.stopped = 2;","    },","","    /**","     * Prevents the event's default behavior","     * @method preventDefault","     */","    preventDefault: function() {","        this._event.preventDefault();","        this.prevented = 1;","    },","","    /**","     * Stops the event propagation and prevents the default","     * event behavior.","     * @method halt","     * @param immediate {boolean} if true additional listeners","     * on the current target will not be executed","     */","    halt: function(immediate) {","        this._event.halt(immediate);","        this.prevented = 1;","        this.stopped = (immediate) ? 2 : 1;","    }","","});","","CEProto.fireComplex = function(args) {","","    var es, ef, q, queue, ce, ret, events, subs, postponed,","        self = this, host = self.host || self, next, oldbubble;","","    if (self.stack) {","        // queue this event if the current item in the queue bubbles","        if (self.queuable && self.type != self.stack.next.type) {","            self.stack.queue.push([self, args]);","            return true;","        }","    }","","    es = self.stack || {","       // id of the first event in the stack","       id: self.id,","       next: self,","       silent: self.silent,","       stopped: 0,","       prevented: 0,","       bubbling: null,","       type: self.type,","       // defaultFnQueue: new Y.Queue(),","       afterQueue: new Y.Queue(),","       defaultTargetOnly: self.defaultTargetOnly,","       queue: []","    };","","    subs = self.getSubs();","","    self.stopped = (self.type !== es.type) ? 0 : es.stopped;","    self.prevented = (self.type !== es.type) ? 0 : es.prevented;","","    self.target = self.target || host;","","    if (self.stoppedFn) {","        events = new Y.EventTarget({","            fireOnce: true,","            context: host","        });","        ","        self.events = events;","","        events.on('stopped', self.stoppedFn);","    }","","    self.currentTarget = host;","","    self.details = args.slice(); // original arguments in the details","","","    self._facade = null; // kill facade to eliminate stale properties","","    ef = self._getFacade(args);","","    if (Y.Lang.isObject(args[0])) {","        args[0] = ef;","    } else {","        args.unshift(ef);","    }","","    if (subs[0]) {","        self._procSubs(subs[0], args, ef);","    }","","    // bubble if this is hosted in an event target and propagation has not been stopped","    if (self.bubbles && host.bubble && !self.stopped) {","","        oldbubble = es.bubbling;","","        es.bubbling = self.type;","","        if (es.type != self.type) {","            es.stopped = 0;","            es.prevented = 0;","        }","","        ret = host.bubble(self, args, null, es);","","        self.stopped = Math.max(self.stopped, es.stopped);","        self.prevented = Math.max(self.prevented, es.prevented);","","        es.bubbling = oldbubble;","    }","","    if (self.prevented) {","        if (self.preventedFn) {","            self.preventedFn.apply(host, args);","        }","    } else if (self.defaultFn &&","              ((!self.defaultTargetOnly && !es.defaultTargetOnly) ||","                host === ef.target)) {","        self.defaultFn.apply(host, args);","    }","","    // broadcast listeners are fired as discreet events on the","    // YUI instance and potentially the YUI global.","    self._broadcast(args);","","    // Queue the after","    if (subs[1] && !self.prevented && self.stopped < 2) {","        if (es.id === self.id || self.type != host._yuievt.bubbling) {","            self._procSubs(subs[1], args, ef);","            while ((next = es.afterQueue.last())) {","                next();","            }","        } else {","            postponed = subs[1];","            if (es.execDefaultCnt) {","                postponed = Y.merge(postponed);","                Y.each(postponed, function(s) {","                    s.postponed = true;","                });","            }","","            es.afterQueue.add(function() {","                self._procSubs(postponed, args, ef);","            });","        }","    }","","    self.target = null;","","    if (es.id === self.id) {","        queue = es.queue;","","        while (queue.length) {","            q = queue.pop();","            ce = q[0];","            // set up stack to allow the next item to be processed","            es.next = ce;","            ce.fire.apply(ce, q[1]);","        }","","        self.stack = null;","    }","","    ret = !(self.stopped);","","    if (self.type != host._yuievt.bubbling) {","        es.stopped = 0;","        es.prevented = 0;","        self.stopped = 0;","        self.prevented = 0;","    }","","    // Kill the cached facade to free up memory.","    // Otherwise we have the facade from the last fire, sitting around forever.","    self._facade = null;","","    return ret;","};","","CEProto._getFacade = function() {","","    var ef = this._facade, o,","    args = this.details;","","    if (!ef) {","        ef = new Y.EventFacade(this, this.currentTarget);","    }","","    // if the first argument is an object literal, apply the","    // properties to the event facade","    o = args && args[0];","","    if (Y.Lang.isObject(o, true)) {","","        // protect the event facade properties","        mixFacadeProps(ef, o);","","        // Allow the event type to be faked","        // http://yuilibrary.com/projects/yui3/ticket/2528376","        ef.type = o.type || ef.type;","    }","","    // update the details field with the arguments","    // ef.type = this.type;","    ef.details = this.details;","","    // use the original target when the event bubbled to this target","    ef.target = this.originalTarget || this.target;","","    ef.currentTarget = this.currentTarget;","    ef.stopped = 0;","    ef.prevented = 0;","","    this._facade = ef;","","    return this._facade;","};","","/**"," * Stop propagation to bubble targets"," * @for CustomEvent"," * @method stopPropagation"," */","CEProto.stopPropagation = function() {","    this.stopped = 1;","    if (this.stack) {","        this.stack.stopped = 1;","    }","    if (this.events) {","        this.events.fire('stopped', this);","    }","};","","/**"," * Stops propagation to bubble targets, and prevents any remaining"," * subscribers on the current target from executing."," * @method stopImmediatePropagation"," */","CEProto.stopImmediatePropagation = function() {","    this.stopped = 2;","    if (this.stack) {","        this.stack.stopped = 2;","    }","    if (this.events) {","        this.events.fire('stopped', this);","    }","};","","/**"," * Prevents the execution of this event's defaultFn"," * @method preventDefault"," */","CEProto.preventDefault = function() {","    if (this.preventable) {","        this.prevented = 1;","        if (this.stack) {","            this.stack.prevented = 1;","        }","    }","};","","/**"," * Stops the event propagation and prevents the default"," * event behavior."," * @method halt"," * @param immediate {boolean} if true additional listeners"," * on the current target will not be executed"," */","CEProto.halt = function(immediate) {","    if (immediate) {","        this.stopImmediatePropagation();","    } else {","        this.stopPropagation();","    }","    this.preventDefault();","};","","/**"," * Registers another EventTarget as a bubble target.  Bubble order"," * is determined by the order registered.  Multiple targets can"," * be specified."," *"," * Events can only bubble if emitFacade is true."," *"," * Included in the event-custom-complex submodule."," *"," * @method addTarget"," * @param o {EventTarget} the target to add"," * @for EventTarget"," */","ETProto.addTarget = function(o) {","    this._yuievt.targets[Y.stamp(o)] = o;","    this._yuievt.hasTargets = true;","};","","/**"," * Returns an array of bubble targets for this object."," * @method getTargets"," * @return EventTarget[]"," */","ETProto.getTargets = function() {","    return Y.Object.values(this._yuievt.targets);","};","","/**"," * Removes a bubble target"," * @method removeTarget"," * @param o {EventTarget} the target to remove"," * @for EventTarget"," */","ETProto.removeTarget = function(o) {","    delete this._yuievt.targets[Y.stamp(o)];","};","","/**"," * Propagate an event.  Requires the event-custom-complex module."," * @method bubble"," * @param evt {CustomEvent} the custom event to propagate"," * @return {boolean} the aggregated return value from Event.Custom.fire"," * @for EventTarget"," */","ETProto.bubble = function(evt, args, target, es) {","","    var targs = this._yuievt.targets, ret = true,","        t, type = evt && evt.type, ce, i, bc, ce2,","        originalTarget = target || (evt && evt.target) || this,","        oldbubble;","","    if (!evt || ((!evt.stopped) && targs)) {","","        for (i in targs) {","            if (targs.hasOwnProperty(i)) {","                t = targs[i];","                ce = t.getEvent(type, true);","                ce2 = t.getSibling(type, ce);","","                if (ce2 && !ce) {","                    ce = t.publish(type);","                }","","                oldbubble = t._yuievt.bubbling;","                t._yuievt.bubbling = type;","","                // if this event was not published on the bubble target,","                // continue propagating the event.","                if (!ce) {","                    if (t._yuievt.hasTargets) {","                        t.bubble(evt, args, originalTarget, es);","                    }","                } else {","","                    ce.sibling = ce2;","","                    // set the original target to that the target payload on the","                    // facade is correct.","                    ce.target = originalTarget;","                    ce.originalTarget = originalTarget;","                    ce.currentTarget = t;","                    bc = ce.broadcast;","                    ce.broadcast = false;","","                    // default publish may not have emitFacade true -- that","                    // shouldn't be what the implementer meant to do","                    ce.emitFacade = true;","","                    ce.stack = es;","","                    ret = ret && ce.fire.apply(ce, args || evt.details || []);","                    ce.broadcast = bc;","                    ce.originalTarget = null;","","                    // stopPropagation() was called","                    if (ce.stopped) {","                        break;","                    }","                }","","                t._yuievt.bubbling = oldbubble;","            }","        }","    }","","    return ret;","};","","FACADE = new Y.EventFacade();","FACADE_KEYS = {};","","// Flatten whitelist","for (key in FACADE) {","    FACADE_KEYS[key] = true;","}","","}, '@VERSION@', {\"requires\": [\"event-custom-base\"]});","","}());"]};
+if (typeof _yuitest_coverage == "undefined"){
+    _yuitest_coverage = {};
+    _yuitest_coverline = function(src, line){
+        var coverage = _yuitest_coverage[src];
+        if (!coverage.lines[line]){
+            coverage.calledLines++;
+        }
+        coverage.lines[line]++;
+    };
+    _yuitest_coverfunc = function(src, name, line){
+        var coverage = _yuitest_coverage[src],
+            funcId = name + ":" + line;
+        if (!coverage.functions[funcId]){
+            coverage.calledFunctions++;
+        }
+        coverage.functions[funcId]++;
+    };
 }
-var __cov_AHka9rIHdg7kTEMummHmBw = __coverage__['build/event-custom-complex/event-custom-complex.js'];
-__cov_AHka9rIHdg7kTEMummHmBw.s['1']++;YUI.add('event-custom-complex',function(Y,NAME){__cov_AHka9rIHdg7kTEMummHmBw.f['1']++;__cov_AHka9rIHdg7kTEMummHmBw.s['2']++;var FACADE,FACADE_KEYS,key,EMPTY={},CEProto=Y.CustomEvent.prototype,ETProto=Y.EventTarget.prototype,mixFacadeProps=function(facade,payload){__cov_AHka9rIHdg7kTEMummHmBw.f['2']++;__cov_AHka9rIHdg7kTEMummHmBw.s['3']++;var p;__cov_AHka9rIHdg7kTEMummHmBw.s['4']++;for(p in payload){__cov_AHka9rIHdg7kTEMummHmBw.s['5']++;if(!FACADE_KEYS.hasOwnProperty(p)){__cov_AHka9rIHdg7kTEMummHmBw.b['1'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['6']++;facade[p]=payload[p];}else{__cov_AHka9rIHdg7kTEMummHmBw.b['1'][1]++;}}};__cov_AHka9rIHdg7kTEMummHmBw.s['7']++;Y.EventFacade=function(e,currentTarget){__cov_AHka9rIHdg7kTEMummHmBw.f['3']++;__cov_AHka9rIHdg7kTEMummHmBw.s['8']++;e=(__cov_AHka9rIHdg7kTEMummHmBw.b['2'][0]++,e)||(__cov_AHka9rIHdg7kTEMummHmBw.b['2'][1]++,EMPTY);__cov_AHka9rIHdg7kTEMummHmBw.s['9']++;this._event=e;__cov_AHka9rIHdg7kTEMummHmBw.s['10']++;this.details=e.details;__cov_AHka9rIHdg7kTEMummHmBw.s['11']++;this.type=e.type;__cov_AHka9rIHdg7kTEMummHmBw.s['12']++;this._type=e.type;__cov_AHka9rIHdg7kTEMummHmBw.s['13']++;this.target=e.target;__cov_AHka9rIHdg7kTEMummHmBw.s['14']++;this.currentTarget=currentTarget;__cov_AHka9rIHdg7kTEMummHmBw.s['15']++;this.relatedTarget=e.relatedTarget;};__cov_AHka9rIHdg7kTEMummHmBw.s['16']++;Y.mix(Y.EventFacade.prototype,{stopPropagation:function(){__cov_AHka9rIHdg7kTEMummHmBw.f['4']++;__cov_AHka9rIHdg7kTEMummHmBw.s['17']++;this._event.stopPropagation();__cov_AHka9rIHdg7kTEMummHmBw.s['18']++;this.stopped=1;},stopImmediatePropagation:function(){__cov_AHka9rIHdg7kTEMummHmBw.f['5']++;__cov_AHka9rIHdg7kTEMummHmBw.s['19']++;this._event.stopImmediatePropagation();__cov_AHka9rIHdg7kTEMummHmBw.s['20']++;this.stopped=2;},preventDefault:function(){__cov_AHka9rIHdg7kTEMummHmBw.f['6']++;__cov_AHka9rIHdg7kTEMummHmBw.s['21']++;this._event.preventDefault();__cov_AHka9rIHdg7kTEMummHmBw.s['22']++;this.prevented=1;},halt:function(immediate){__cov_AHka9rIHdg7kTEMummHmBw.f['7']++;__cov_AHka9rIHdg7kTEMummHmBw.s['23']++;this._event.halt(immediate);__cov_AHka9rIHdg7kTEMummHmBw.s['24']++;this.prevented=1;__cov_AHka9rIHdg7kTEMummHmBw.s['25']++;this.stopped=immediate?(__cov_AHka9rIHdg7kTEMummHmBw.b['3'][0]++,2):(__cov_AHka9rIHdg7kTEMummHmBw.b['3'][1]++,1);}});__cov_AHka9rIHdg7kTEMummHmBw.s['26']++;CEProto.fireComplex=function(args){__cov_AHka9rIHdg7kTEMummHmBw.f['8']++;__cov_AHka9rIHdg7kTEMummHmBw.s['27']++;var es,ef,q,queue,ce,ret,events,subs,postponed,self=this,host=(__cov_AHka9rIHdg7kTEMummHmBw.b['4'][0]++,self.host)||(__cov_AHka9rIHdg7kTEMummHmBw.b['4'][1]++,self),next,oldbubble;__cov_AHka9rIHdg7kTEMummHmBw.s['28']++;if(self.stack){__cov_AHka9rIHdg7kTEMummHmBw.b['5'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['29']++;if((__cov_AHka9rIHdg7kTEMummHmBw.b['7'][0]++,self.queuable)&&(__cov_AHka9rIHdg7kTEMummHmBw.b['7'][1]++,self.type!=self.stack.next.type)){__cov_AHka9rIHdg7kTEMummHmBw.b['6'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['30']++;self.stack.queue.push([self,args]);__cov_AHka9rIHdg7kTEMummHmBw.s['31']++;return true;}else{__cov_AHka9rIHdg7kTEMummHmBw.b['6'][1]++;}}else{__cov_AHka9rIHdg7kTEMummHmBw.b['5'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['32']++;es=(__cov_AHka9rIHdg7kTEMummHmBw.b['8'][0]++,self.stack)||(__cov_AHka9rIHdg7kTEMummHmBw.b['8'][1]++,{id:self.id,next:self,silent:self.silent,stopped:0,prevented:0,bubbling:null,type:self.type,afterQueue:new Y.Queue(),defaultTargetOnly:self.defaultTargetOnly,queue:[]});__cov_AHka9rIHdg7kTEMummHmBw.s['33']++;subs=self.getSubs();__cov_AHka9rIHdg7kTEMummHmBw.s['34']++;self.stopped=self.type!==es.type?(__cov_AHka9rIHdg7kTEMummHmBw.b['9'][0]++,0):(__cov_AHka9rIHdg7kTEMummHmBw.b['9'][1]++,es.stopped);__cov_AHka9rIHdg7kTEMummHmBw.s['35']++;self.prevented=self.type!==es.type?(__cov_AHka9rIHdg7kTEMummHmBw.b['10'][0]++,0):(__cov_AHka9rIHdg7kTEMummHmBw.b['10'][1]++,es.prevented);__cov_AHka9rIHdg7kTEMummHmBw.s['36']++;self.target=(__cov_AHka9rIHdg7kTEMummHmBw.b['11'][0]++,self.target)||(__cov_AHka9rIHdg7kTEMummHmBw.b['11'][1]++,host);__cov_AHka9rIHdg7kTEMummHmBw.s['37']++;if(self.stoppedFn){__cov_AHka9rIHdg7kTEMummHmBw.b['12'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['38']++;events=new Y.EventTarget({fireOnce:true,context:host});__cov_AHka9rIHdg7kTEMummHmBw.s['39']++;self.events=events;__cov_AHka9rIHdg7kTEMummHmBw.s['40']++;events.on('stopped',self.stoppedFn);}else{__cov_AHka9rIHdg7kTEMummHmBw.b['12'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['41']++;self.currentTarget=host;__cov_AHka9rIHdg7kTEMummHmBw.s['42']++;self.details=args.slice();__cov_AHka9rIHdg7kTEMummHmBw.s['43']++;self._facade=null;__cov_AHka9rIHdg7kTEMummHmBw.s['44']++;ef=self._getFacade(args);__cov_AHka9rIHdg7kTEMummHmBw.s['45']++;if(Y.Lang.isObject(args[0])){__cov_AHka9rIHdg7kTEMummHmBw.b['13'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['46']++;args[0]=ef;}else{__cov_AHka9rIHdg7kTEMummHmBw.b['13'][1]++;__cov_AHka9rIHdg7kTEMummHmBw.s['47']++;args.unshift(ef);}__cov_AHka9rIHdg7kTEMummHmBw.s['48']++;if(subs[0]){__cov_AHka9rIHdg7kTEMummHmBw.b['14'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['49']++;self._procSubs(subs[0],args,ef);}else{__cov_AHka9rIHdg7kTEMummHmBw.b['14'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['50']++;if((__cov_AHka9rIHdg7kTEMummHmBw.b['16'][0]++,self.bubbles)&&(__cov_AHka9rIHdg7kTEMummHmBw.b['16'][1]++,host.bubble)&&(__cov_AHka9rIHdg7kTEMummHmBw.b['16'][2]++,!self.stopped)){__cov_AHka9rIHdg7kTEMummHmBw.b['15'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['51']++;oldbubble=es.bubbling;__cov_AHka9rIHdg7kTEMummHmBw.s['52']++;es.bubbling=self.type;__cov_AHka9rIHdg7kTEMummHmBw.s['53']++;if(es.type!=self.type){__cov_AHka9rIHdg7kTEMummHmBw.b['17'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['54']++;es.stopped=0;__cov_AHka9rIHdg7kTEMummHmBw.s['55']++;es.prevented=0;}else{__cov_AHka9rIHdg7kTEMummHmBw.b['17'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['56']++;ret=host.bubble(self,args,null,es);__cov_AHka9rIHdg7kTEMummHmBw.s['57']++;self.stopped=Math.max(self.stopped,es.stopped);__cov_AHka9rIHdg7kTEMummHmBw.s['58']++;self.prevented=Math.max(self.prevented,es.prevented);__cov_AHka9rIHdg7kTEMummHmBw.s['59']++;es.bubbling=oldbubble;}else{__cov_AHka9rIHdg7kTEMummHmBw.b['15'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['60']++;if(self.prevented){__cov_AHka9rIHdg7kTEMummHmBw.b['18'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['61']++;if(self.preventedFn){__cov_AHka9rIHdg7kTEMummHmBw.b['19'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['62']++;self.preventedFn.apply(host,args);}else{__cov_AHka9rIHdg7kTEMummHmBw.b['19'][1]++;}}else{__cov_AHka9rIHdg7kTEMummHmBw.b['18'][1]++;__cov_AHka9rIHdg7kTEMummHmBw.s['63']++;if((__cov_AHka9rIHdg7kTEMummHmBw.b['21'][0]++,self.defaultFn)&&((__cov_AHka9rIHdg7kTEMummHmBw.b['21'][1]++,!self.defaultTargetOnly)&&(__cov_AHka9rIHdg7kTEMummHmBw.b['21'][2]++,!es.defaultTargetOnly)||(__cov_AHka9rIHdg7kTEMummHmBw.b['21'][3]++,host===ef.target))){__cov_AHka9rIHdg7kTEMummHmBw.b['20'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['64']++;self.defaultFn.apply(host,args);}else{__cov_AHka9rIHdg7kTEMummHmBw.b['20'][1]++;}}__cov_AHka9rIHdg7kTEMummHmBw.s['65']++;self._broadcast(args);__cov_AHka9rIHdg7kTEMummHmBw.s['66']++;if((__cov_AHka9rIHdg7kTEMummHmBw.b['23'][0]++,subs[1])&&(__cov_AHka9rIHdg7kTEMummHmBw.b['23'][1]++,!self.prevented)&&(__cov_AHka9rIHdg7kTEMummHmBw.b['23'][2]++,self.stopped<2)){__cov_AHka9rIHdg7kTEMummHmBw.b['22'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['67']++;if((__cov_AHka9rIHdg7kTEMummHmBw.b['25'][0]++,es.id===self.id)||(__cov_AHka9rIHdg7kTEMummHmBw.b['25'][1]++,self.type!=host._yuievt.bubbling)){__cov_AHka9rIHdg7kTEMummHmBw.b['24'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['68']++;self._procSubs(subs[1],args,ef);__cov_AHka9rIHdg7kTEMummHmBw.s['69']++;while(next=es.afterQueue.last()){__cov_AHka9rIHdg7kTEMummHmBw.s['70']++;next();}}else{__cov_AHka9rIHdg7kTEMummHmBw.b['24'][1]++;__cov_AHka9rIHdg7kTEMummHmBw.s['71']++;postponed=subs[1];__cov_AHka9rIHdg7kTEMummHmBw.s['72']++;if(es.execDefaultCnt){__cov_AHka9rIHdg7kTEMummHmBw.b['26'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['73']++;postponed=Y.merge(postponed);__cov_AHka9rIHdg7kTEMummHmBw.s['74']++;Y.each(postponed,function(s){__cov_AHka9rIHdg7kTEMummHmBw.f['9']++;__cov_AHka9rIHdg7kTEMummHmBw.s['75']++;s.postponed=true;});}else{__cov_AHka9rIHdg7kTEMummHmBw.b['26'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['76']++;es.afterQueue.add(function(){__cov_AHka9rIHdg7kTEMummHmBw.f['10']++;__cov_AHka9rIHdg7kTEMummHmBw.s['77']++;self._procSubs(postponed,args,ef);});}}else{__cov_AHka9rIHdg7kTEMummHmBw.b['22'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['78']++;self.target=null;__cov_AHka9rIHdg7kTEMummHmBw.s['79']++;if(es.id===self.id){__cov_AHka9rIHdg7kTEMummHmBw.b['27'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['80']++;queue=es.queue;__cov_AHka9rIHdg7kTEMummHmBw.s['81']++;while(queue.length){__cov_AHka9rIHdg7kTEMummHmBw.s['82']++;q=queue.pop();__cov_AHka9rIHdg7kTEMummHmBw.s['83']++;ce=q[0];__cov_AHka9rIHdg7kTEMummHmBw.s['84']++;es.next=ce;__cov_AHka9rIHdg7kTEMummHmBw.s['85']++;ce.fire.apply(ce,q[1]);}__cov_AHka9rIHdg7kTEMummHmBw.s['86']++;self.stack=null;}else{__cov_AHka9rIHdg7kTEMummHmBw.b['27'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['87']++;ret=!self.stopped;__cov_AHka9rIHdg7kTEMummHmBw.s['88']++;if(self.type!=host._yuievt.bubbling){__cov_AHka9rIHdg7kTEMummHmBw.b['28'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['89']++;es.stopped=0;__cov_AHka9rIHdg7kTEMummHmBw.s['90']++;es.prevented=0;__cov_AHka9rIHdg7kTEMummHmBw.s['91']++;self.stopped=0;__cov_AHka9rIHdg7kTEMummHmBw.s['92']++;self.prevented=0;}else{__cov_AHka9rIHdg7kTEMummHmBw.b['28'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['93']++;self._facade=null;__cov_AHka9rIHdg7kTEMummHmBw.s['94']++;return ret;};__cov_AHka9rIHdg7kTEMummHmBw.s['95']++;CEProto._getFacade=function(){__cov_AHka9rIHdg7kTEMummHmBw.f['11']++;__cov_AHka9rIHdg7kTEMummHmBw.s['96']++;var ef=this._facade,o,args=this.details;__cov_AHka9rIHdg7kTEMummHmBw.s['97']++;if(!ef){__cov_AHka9rIHdg7kTEMummHmBw.b['29'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['98']++;ef=new Y.EventFacade(this,this.currentTarget);}else{__cov_AHka9rIHdg7kTEMummHmBw.b['29'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['99']++;o=(__cov_AHka9rIHdg7kTEMummHmBw.b['30'][0]++,args)&&(__cov_AHka9rIHdg7kTEMummHmBw.b['30'][1]++,args[0]);__cov_AHka9rIHdg7kTEMummHmBw.s['100']++;if(Y.Lang.isObject(o,true)){__cov_AHka9rIHdg7kTEMummHmBw.b['31'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['101']++;mixFacadeProps(ef,o);__cov_AHka9rIHdg7kTEMummHmBw.s['102']++;ef.type=(__cov_AHka9rIHdg7kTEMummHmBw.b['32'][0]++,o.type)||(__cov_AHka9rIHdg7kTEMummHmBw.b['32'][1]++,ef.type);}else{__cov_AHka9rIHdg7kTEMummHmBw.b['31'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['103']++;ef.details=this.details;__cov_AHka9rIHdg7kTEMummHmBw.s['104']++;ef.target=(__cov_AHka9rIHdg7kTEMummHmBw.b['33'][0]++,this.originalTarget)||(__cov_AHka9rIHdg7kTEMummHmBw.b['33'][1]++,this.target);__cov_AHka9rIHdg7kTEMummHmBw.s['105']++;ef.currentTarget=this.currentTarget;__cov_AHka9rIHdg7kTEMummHmBw.s['106']++;ef.stopped=0;__cov_AHka9rIHdg7kTEMummHmBw.s['107']++;ef.prevented=0;__cov_AHka9rIHdg7kTEMummHmBw.s['108']++;this._facade=ef;__cov_AHka9rIHdg7kTEMummHmBw.s['109']++;return this._facade;};__cov_AHka9rIHdg7kTEMummHmBw.s['110']++;CEProto.stopPropagation=function(){__cov_AHka9rIHdg7kTEMummHmBw.f['12']++;__cov_AHka9rIHdg7kTEMummHmBw.s['111']++;this.stopped=1;__cov_AHka9rIHdg7kTEMummHmBw.s['112']++;if(this.stack){__cov_AHka9rIHdg7kTEMummHmBw.b['34'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['113']++;this.stack.stopped=1;}else{__cov_AHka9rIHdg7kTEMummHmBw.b['34'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['114']++;if(this.events){__cov_AHka9rIHdg7kTEMummHmBw.b['35'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['115']++;this.events.fire('stopped',this);}else{__cov_AHka9rIHdg7kTEMummHmBw.b['35'][1]++;}};__cov_AHka9rIHdg7kTEMummHmBw.s['116']++;CEProto.stopImmediatePropagation=function(){__cov_AHka9rIHdg7kTEMummHmBw.f['13']++;__cov_AHka9rIHdg7kTEMummHmBw.s['117']++;this.stopped=2;__cov_AHka9rIHdg7kTEMummHmBw.s['118']++;if(this.stack){__cov_AHka9rIHdg7kTEMummHmBw.b['36'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['119']++;this.stack.stopped=2;}else{__cov_AHka9rIHdg7kTEMummHmBw.b['36'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['120']++;if(this.events){__cov_AHka9rIHdg7kTEMummHmBw.b['37'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['121']++;this.events.fire('stopped',this);}else{__cov_AHka9rIHdg7kTEMummHmBw.b['37'][1]++;}};__cov_AHka9rIHdg7kTEMummHmBw.s['122']++;CEProto.preventDefault=function(){__cov_AHka9rIHdg7kTEMummHmBw.f['14']++;__cov_AHka9rIHdg7kTEMummHmBw.s['123']++;if(this.preventable){__cov_AHka9rIHdg7kTEMummHmBw.b['38'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['124']++;this.prevented=1;__cov_AHka9rIHdg7kTEMummHmBw.s['125']++;if(this.stack){__cov_AHka9rIHdg7kTEMummHmBw.b['39'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['126']++;this.stack.prevented=1;}else{__cov_AHka9rIHdg7kTEMummHmBw.b['39'][1]++;}}else{__cov_AHka9rIHdg7kTEMummHmBw.b['38'][1]++;}};__cov_AHka9rIHdg7kTEMummHmBw.s['127']++;CEProto.halt=function(immediate){__cov_AHka9rIHdg7kTEMummHmBw.f['15']++;__cov_AHka9rIHdg7kTEMummHmBw.s['128']++;if(immediate){__cov_AHka9rIHdg7kTEMummHmBw.b['40'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['129']++;this.stopImmediatePropagation();}else{__cov_AHka9rIHdg7kTEMummHmBw.b['40'][1]++;__cov_AHka9rIHdg7kTEMummHmBw.s['130']++;this.stopPropagation();}__cov_AHka9rIHdg7kTEMummHmBw.s['131']++;this.preventDefault();};__cov_AHka9rIHdg7kTEMummHmBw.s['132']++;ETProto.addTarget=function(o){__cov_AHka9rIHdg7kTEMummHmBw.f['16']++;__cov_AHka9rIHdg7kTEMummHmBw.s['133']++;this._yuievt.targets[Y.stamp(o)]=o;__cov_AHka9rIHdg7kTEMummHmBw.s['134']++;this._yuievt.hasTargets=true;};__cov_AHka9rIHdg7kTEMummHmBw.s['135']++;ETProto.getTargets=function(){__cov_AHka9rIHdg7kTEMummHmBw.f['17']++;__cov_AHka9rIHdg7kTEMummHmBw.s['136']++;return Y.Object.values(this._yuievt.targets);};__cov_AHka9rIHdg7kTEMummHmBw.s['137']++;ETProto.removeTarget=function(o){__cov_AHka9rIHdg7kTEMummHmBw.f['18']++;__cov_AHka9rIHdg7kTEMummHmBw.s['138']++;delete this._yuievt.targets[Y.stamp(o)];};__cov_AHka9rIHdg7kTEMummHmBw.s['139']++;ETProto.bubble=function(evt,args,target,es){__cov_AHka9rIHdg7kTEMummHmBw.f['19']++;__cov_AHka9rIHdg7kTEMummHmBw.s['140']++;var targs=this._yuievt.targets,ret=true,t,type=(__cov_AHka9rIHdg7kTEMummHmBw.b['41'][0]++,evt)&&(__cov_AHka9rIHdg7kTEMummHmBw.b['41'][1]++,evt.type),ce,i,bc,ce2,originalTarget=(__cov_AHka9rIHdg7kTEMummHmBw.b['42'][0]++,target)||(__cov_AHka9rIHdg7kTEMummHmBw.b['42'][1]++,evt)&&(__cov_AHka9rIHdg7kTEMummHmBw.b['42'][2]++,evt.target)||(__cov_AHka9rIHdg7kTEMummHmBw.b['42'][3]++,this),oldbubble;__cov_AHka9rIHdg7kTEMummHmBw.s['141']++;if((__cov_AHka9rIHdg7kTEMummHmBw.b['44'][0]++,!evt)||(__cov_AHka9rIHdg7kTEMummHmBw.b['44'][1]++,!evt.stopped)&&(__cov_AHka9rIHdg7kTEMummHmBw.b['44'][2]++,targs)){__cov_AHka9rIHdg7kTEMummHmBw.b['43'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['142']++;for(i in targs){__cov_AHka9rIHdg7kTEMummHmBw.s['143']++;if(targs.hasOwnProperty(i)){__cov_AHka9rIHdg7kTEMummHmBw.b['45'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['144']++;t=targs[i];__cov_AHka9rIHdg7kTEMummHmBw.s['145']++;ce=t.getEvent(type,true);__cov_AHka9rIHdg7kTEMummHmBw.s['146']++;ce2=t.getSibling(type,ce);__cov_AHka9rIHdg7kTEMummHmBw.s['147']++;if((__cov_AHka9rIHdg7kTEMummHmBw.b['47'][0]++,ce2)&&(__cov_AHka9rIHdg7kTEMummHmBw.b['47'][1]++,!ce)){__cov_AHka9rIHdg7kTEMummHmBw.b['46'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['148']++;ce=t.publish(type);}else{__cov_AHka9rIHdg7kTEMummHmBw.b['46'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['149']++;oldbubble=t._yuievt.bubbling;__cov_AHka9rIHdg7kTEMummHmBw.s['150']++;t._yuievt.bubbling=type;__cov_AHka9rIHdg7kTEMummHmBw.s['151']++;if(!ce){__cov_AHka9rIHdg7kTEMummHmBw.b['48'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['152']++;if(t._yuievt.hasTargets){__cov_AHka9rIHdg7kTEMummHmBw.b['49'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['153']++;t.bubble(evt,args,originalTarget,es);}else{__cov_AHka9rIHdg7kTEMummHmBw.b['49'][1]++;}}else{__cov_AHka9rIHdg7kTEMummHmBw.b['48'][1]++;__cov_AHka9rIHdg7kTEMummHmBw.s['154']++;ce.sibling=ce2;__cov_AHka9rIHdg7kTEMummHmBw.s['155']++;ce.target=originalTarget;__cov_AHka9rIHdg7kTEMummHmBw.s['156']++;ce.originalTarget=originalTarget;__cov_AHka9rIHdg7kTEMummHmBw.s['157']++;ce.currentTarget=t;__cov_AHka9rIHdg7kTEMummHmBw.s['158']++;bc=ce.broadcast;__cov_AHka9rIHdg7kTEMummHmBw.s['159']++;ce.broadcast=false;__cov_AHka9rIHdg7kTEMummHmBw.s['160']++;ce.emitFacade=true;__cov_AHka9rIHdg7kTEMummHmBw.s['161']++;ce.stack=es;__cov_AHka9rIHdg7kTEMummHmBw.s['162']++;ret=(__cov_AHka9rIHdg7kTEMummHmBw.b['50'][0]++,ret)&&(__cov_AHka9rIHdg7kTEMummHmBw.b['50'][1]++,ce.fire.apply(ce,(__cov_AHka9rIHdg7kTEMummHmBw.b['51'][0]++,args)||(__cov_AHka9rIHdg7kTEMummHmBw.b['51'][1]++,evt.details)||(__cov_AHka9rIHdg7kTEMummHmBw.b['51'][2]++,[])));__cov_AHka9rIHdg7kTEMummHmBw.s['163']++;ce.broadcast=bc;__cov_AHka9rIHdg7kTEMummHmBw.s['164']++;ce.originalTarget=null;__cov_AHka9rIHdg7kTEMummHmBw.s['165']++;if(ce.stopped){__cov_AHka9rIHdg7kTEMummHmBw.b['52'][0]++;__cov_AHka9rIHdg7kTEMummHmBw.s['166']++;break;}else{__cov_AHka9rIHdg7kTEMummHmBw.b['52'][1]++;}}__cov_AHka9rIHdg7kTEMummHmBw.s['167']++;t._yuievt.bubbling=oldbubble;}else{__cov_AHka9rIHdg7kTEMummHmBw.b['45'][1]++;}}}else{__cov_AHka9rIHdg7kTEMummHmBw.b['43'][1]++;}__cov_AHka9rIHdg7kTEMummHmBw.s['168']++;return ret;};__cov_AHka9rIHdg7kTEMummHmBw.s['169']++;FACADE=new Y.EventFacade();__cov_AHka9rIHdg7kTEMummHmBw.s['170']++;FACADE_KEYS={};__cov_AHka9rIHdg7kTEMummHmBw.s['171']++;for(key in FACADE){__cov_AHka9rIHdg7kTEMummHmBw.s['172']++;FACADE_KEYS[key]=true;}},'@VERSION@',{'requires':['event-custom-base']});
+_yuitest_coverage["build/event-custom-complex/event-custom-complex.js"] = {
+    lines: {},
+    functions: {},
+    coveredLines: 0,
+    calledLines: 0,
+    coveredFunctions: 0,
+    calledFunctions: 0,
+    path: "build/event-custom-complex/event-custom-complex.js",
+    code: []
+};
+_yuitest_coverage["build/event-custom-complex/event-custom-complex.js"].code=["YUI.add('event-custom-complex', function (Y, NAME) {","","","/**"," * Adds event facades, preventable default behavior, and bubbling."," * events."," * @module event-custom"," * @submodule event-custom-complex"," */","","var FACADE,","    FACADE_KEYS,","    YObject = Y.Object,","    key,","    EMPTY = {},","    CEProto = Y.CustomEvent.prototype,","    ETProto = Y.EventTarget.prototype,","","    mixFacadeProps = function(facade, payload) {","        var p;","","        for (p in payload) {","            if (!(FACADE_KEYS.hasOwnProperty(p))) {","                facade[p] = payload[p];","            }","        }","    };","","/**"," * Wraps and protects a custom event for use when emitFacade is set to true."," * Requires the event-custom-complex module"," * @class EventFacade"," * @param e {Event} the custom event"," * @param currentTarget {HTMLElement} the element the listener was attached to"," */","","Y.EventFacade = function(e, currentTarget) {","","    if (!e) {","        e = EMPTY;","    }","","    this._event = e;","","    /**","     * The arguments passed to fire","     * @property details","     * @type Array","     */","    this.details = e.details;","","    /**","     * The event type, this can be overridden by the fire() payload","     * @property type","     * @type string","     */","    this.type = e.type;","","    /**","     * The real event type","     * @property _type","     * @type string","     * @private","     */","    this._type = e.type;","","    //////////////////////////////////////////////////////","","    /**","     * Node reference for the targeted eventtarget","     * @property target","     * @type Node","     */","    this.target = e.target;","","    /**","     * Node reference for the element that the listener was attached to.","     * @property currentTarget","     * @type Node","     */","    this.currentTarget = currentTarget;","","    /**","     * Node reference to the relatedTarget","     * @property relatedTarget","     * @type Node","     */","    this.relatedTarget = e.relatedTarget;","","};","","Y.mix(Y.EventFacade.prototype, {","","    /**","     * Stops the propagation to the next bubble target","     * @method stopPropagation","     */","    stopPropagation: function() {","        this._event.stopPropagation();","        this.stopped = 1;","    },","","    /**","     * Stops the propagation to the next bubble target and","     * prevents any additional listeners from being exectued","     * on the current target.","     * @method stopImmediatePropagation","     */","    stopImmediatePropagation: function() {","        this._event.stopImmediatePropagation();","        this.stopped = 2;","    },","","    /**","     * Prevents the event's default behavior","     * @method preventDefault","     */","    preventDefault: function() {","        this._event.preventDefault();","        this.prevented = 1;","    },","","    /**","     * Stops the event propagation and prevents the default","     * event behavior.","     * @method halt","     * @param immediate {boolean} if true additional listeners","     * on the current target will not be executed","     */","    halt: function(immediate) {","        this._event.halt(immediate);","        this.prevented = 1;","        this.stopped = (immediate) ? 2 : 1;","    }","","});","","CEProto.fireComplex = function(args) {","","    var es,","        ef,","        q,","        queue,","        ce,","        ret = true,","        events,","        subs,","        ons,","        afters,","        afterQueue,","        postponed,","        prevented,","        preventedFn,","        defaultFn,","        self = this,","        host = self.host || self,","        next,","        oldbubble,","        stack,","        yuievt = host._yuievt,","        hasPotentialSubscribers;","","    stack = self.stack;","","    if (stack) {","","        // queue this event if the current item in the queue bubbles","        if (self.queuable && self.type !== stack.next.type) {","","            if (!stack.queue) {","                stack.queue = [];","            }","            stack.queue.push([self, args]);","","            return true;","        }","    }","","    hasPotentialSubscribers = self.hasSubs() || yuievt.hasTargets || self.broadcast;","","    self.target = self.target || host;","    self.currentTarget = host;","","    self.details = args.concat();","","    if (hasPotentialSubscribers) {","","        es = stack || {","","           id: self.id, // id of the first event in the stack","           next: self,","           silent: self.silent,","           stopped: 0,","           prevented: 0,","           bubbling: null,","           type: self.type,","           // defaultFnQueue: new Y.Queue(),","           defaultTargetOnly: self.defaultTargetOnly","","        };","","        subs = self.getSubs();","        ons = subs[0];","        afters = subs[1];","","        self.stopped = (self.type !== es.type) ? 0 : es.stopped;","        self.prevented = (self.type !== es.type) ? 0 : es.prevented;","","        if (self.stoppedFn) {","            // PERF TODO: Can we replace with callback, like preventedFn. Look into history","            events = new Y.EventTarget({","                fireOnce: true,","                context: host","            });","            self.events = events;","            events.on('stopped', self.stoppedFn);","        }","","","        self._facade = null; // kill facade to eliminate stale properties","","        ef = self._getFacade(args);","","        if (ons) {","            self._procSubs(ons, args, ef);","        }","","        // bubble if this is hosted in an event target and propagation has not been stopped","        if (self.bubbles && host.bubble && !self.stopped) {","            oldbubble = es.bubbling;","","            es.bubbling = self.type;","","            if (es.type !== self.type) {","                es.stopped = 0;","                es.prevented = 0;","            }","","            ret = host.bubble(self, args, null, es);","","            self.stopped = Math.max(self.stopped, es.stopped);","            self.prevented = Math.max(self.prevented, es.prevented);","","            es.bubbling = oldbubble;","        }","","        prevented = self.prevented;","","        if (prevented) {","            preventedFn = self.preventedFn;","            if (preventedFn) {","                preventedFn.apply(host, args);","            }","        } else {","            defaultFn = self.defaultFn;","","            if (defaultFn && ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {","                defaultFn.apply(host, args);","            }","        }","","        // broadcast listeners are fired as discreet events on the","        // YUI instance and potentially the YUI global.","        if (self.broadcast) {","            self._broadcast(args);","        }","","        if (afters && !self.prevented && self.stopped < 2) {","","            // Queue the after","            afterQueue = es.afterQueue;","","            if (es.id === self.id || self.type !== yuievt.bubbling) {","","                self._procSubs(afters, args, ef);","","                if (afterQueue) {","                    while ((next = afterQueue.last())) {","                        next();","                    }","                }","            } else {","                postponed = afters;","","                if (es.execDefaultCnt) {","                    postponed = Y.merge(postponed);","","                    Y.each(postponed, function(s) {","                        s.postponed = true;","                    });","                }","","                if (!afterQueue) {","                    es.afterQueue = new Y.Queue();","                }","","                es.afterQueue.add(function() {","                    self._procSubs(postponed, args, ef);","                });","            }","","        }","","        self.target = null;","","        if (es.id === self.id) {","","            queue = es.queue;","","            if (queue) {","                while (queue.length) {","                    q = queue.pop();","                    ce = q[0];","                    // set up stack to allow the next item to be processed","                    es.next = ce;","                    ce._fire(q[1]);","                }","            }","","            self.stack = null;","        }","","        ret = !(self.stopped);","","        if (self.type !== yuievt.bubbling) {","            es.stopped = 0;","            es.prevented = 0;","            self.stopped = 0;","            self.prevented = 0;","        }","","        // Kill the cached facade to free up memory.","        // Otherwise we have the facade from the last fire, sitting around forever.","        self._facade = null;","","        return ret;","","    } else {","        defaultFn = self.defaultFn;","","        if(defaultFn) {","            ef = self._getFacade(args);","","            if ((!self.defaultTargetOnly) || (host === ef.target)) {","                defaultFn.apply(host, args);","            }","        }","","        return ret;","    }","","};","","CEProto._getFacade = function(fireArgs) {","","    var userArgs = this.details,","        firstArg = userArgs && userArgs[0],","        firstArgIsObj = (typeof firstArg === \"object\"),","        ef = this._facade;","","    if (!ef) {","        ef = new Y.EventFacade(this, this.currentTarget);","    }","","    if (firstArgIsObj) {","        // protect the event facade properties","        mixFacadeProps(ef, firstArg);","","        // Allow the event type to be faked http://yuilibrary.com/projects/yui3/ticket/2528376","        if (firstArg.type) {","            ef.type = firstArg.type;","        }","","        if (fireArgs) {","            fireArgs[0] = ef;","        }","    } else {","        if (fireArgs) {","            fireArgs.unshift(ef);","        }","    }","","    // update the details field with the arguments","    ef.details = this.details;","","    // use the original target when the event bubbled to this target","    ef.target = this.originalTarget || this.target;","","    ef.currentTarget = this.currentTarget;","    ef.stopped = 0;","    ef.prevented = 0;","","    this._facade = ef;","","    return this._facade;","};","","/**"," * Stop propagation to bubble targets"," * @for CustomEvent"," * @method stopPropagation"," */","CEProto.stopPropagation = function() {","    this.stopped = 1;","    if (this.stack) {","        this.stack.stopped = 1;","    }","    if (this.events) {","        this.events.fire('stopped', this);","    }","};","","/**"," * Stops propagation to bubble targets, and prevents any remaining"," * subscribers on the current target from executing."," * @method stopImmediatePropagation"," */","CEProto.stopImmediatePropagation = function() {","    this.stopped = 2;","    if (this.stack) {","        this.stack.stopped = 2;","    }","    if (this.events) {","        this.events.fire('stopped', this);","    }","};","","/**"," * Prevents the execution of this event's defaultFn"," * @method preventDefault"," */","CEProto.preventDefault = function() {","    if (this.preventable) {","        this.prevented = 1;","        if (this.stack) {","            this.stack.prevented = 1;","        }","    }","};","","/**"," * Stops the event propagation and prevents the default"," * event behavior."," * @method halt"," * @param immediate {boolean} if true additional listeners"," * on the current target will not be executed"," */","CEProto.halt = function(immediate) {","    if (immediate) {","        this.stopImmediatePropagation();","    } else {","        this.stopPropagation();","    }","    this.preventDefault();","};","","/**"," * Registers another EventTarget as a bubble target.  Bubble order"," * is determined by the order registered.  Multiple targets can"," * be specified."," *"," * Events can only bubble if emitFacade is true."," *"," * Included in the event-custom-complex submodule."," *"," * @method addTarget"," * @param o {EventTarget} the target to add"," * @for EventTarget"," */","ETProto.addTarget = function(o) {","    var etState = this._yuievt;","","    if (!etState.targets) {","        etState.targets = {};","    }","","    etState.targets[Y.stamp(o)] = o;","    etState.hasTargets = true;","};","","/**"," * Returns an array of bubble targets for this object."," * @method getTargets"," * @return EventTarget[]"," */","ETProto.getTargets = function() {","    return YObject.values(this._yuievt.targets);","};","","/**"," * Removes a bubble target"," * @method removeTarget"," * @param o {EventTarget} the target to remove"," * @for EventTarget"," */","ETProto.removeTarget = function(o) {","    var targets = this._yuievt.targets;","","    delete targets[Y.stamp(o, true)];","","    if (YObject.size(targets) === 0) {","        this._yuievt.hasTargets = false;","    }","};","","/**"," * Propagate an event.  Requires the event-custom-complex module."," * @method bubble"," * @param evt {CustomEvent} the custom event to propagate"," * @return {boolean} the aggregated return value from Event.Custom.fire"," * @for EventTarget"," */","ETProto.bubble = function(evt, args, target, es) {","","    var targs = this._yuievt.targets,","        ret = true,","        t,","        ce,","        i,","        bc,","        ce2,","        type = evt && evt.type,","        originalTarget = target || (evt && evt.target) || this,","        oldbubble;","","    if (!evt || ((!evt.stopped) && targs)) {","","        for (i in targs) {","            if (targs.hasOwnProperty(i)) {","","                t = targs[i];","","                ce = t._yuievt.events[type];","","                if (t._hasSiblings) {","                    ce2 = t.getSibling(type, ce);","                }","","                if (ce2 && !ce) {","                    ce = t.publish(type);","                }","","                oldbubble = t._yuievt.bubbling;","                t._yuievt.bubbling = type;","","                // if this event was not published on the bubble target,","                // continue propagating the event.","                if (!ce) {","                    if (t._yuievt.hasTargets) {","                        t.bubble(evt, args, originalTarget, es);","                    }","                } else {","","                    if (ce2) {","                        ce.sibling = ce2;","                    }","","                    // set the original target to that the target payload on the facade is correct.","                    ce.target = originalTarget;","                    ce.originalTarget = originalTarget;","                    ce.currentTarget = t;","                    bc = ce.broadcast;","                    ce.broadcast = false;","","                    // default publish may not have emitFacade true -- that","                    // shouldn't be what the implementer meant to do","                    ce.emitFacade = true;","","                    ce.stack = es;","","                    // TODO: See what's getting in the way of changing this to use","                    // the more performant ce._fire(args || evt.details || []).","","                    // Something in Widget Parent/Child tests is not happy if we","                    // change it - maybe evt.details related?","                    ret = ret && ce.fire.apply(ce, args || evt.details || []);","","                    ce.broadcast = bc;","                    ce.originalTarget = null;","","                    // stopPropagation() was called","                    if (ce.stopped) {","                        break;","                    }","                }","","                t._yuievt.bubbling = oldbubble;","            }","        }","    }","","    return ret;","};","","FACADE = new Y.EventFacade();","FACADE_KEYS = {};","","// Flatten whitelist","for (key in FACADE) {","    FACADE_KEYS[key] = true;","}","","","}, '@VERSION@', {\"requires\": [\"event-custom-base\"]});"];
+_yuitest_coverage["build/event-custom-complex/event-custom-complex.js"].lines = {"1":0,"11":0,"20":0,"22":0,"23":0,"24":0,"37":0,"39":0,"40":0,"43":0,"50":0,"57":0,"65":0,"74":0,"81":0,"88":0,"92":0,"99":0,"100":0,"110":0,"111":0,"119":0,"120":0,"131":0,"132":0,"133":0,"138":0,"140":0,"163":0,"165":0,"168":0,"170":0,"171":0,"173":0,"175":0,"179":0,"181":0,"182":0,"184":0,"186":0,"188":0,"202":0,"203":0,"204":0,"206":0,"207":0,"209":0,"211":0,"215":0,"216":0,"220":0,"222":0,"224":0,"225":0,"229":0,"230":0,"232":0,"234":0,"235":0,"236":0,"239":0,"241":0,"242":0,"244":0,"247":0,"249":0,"250":0,"251":0,"252":0,"255":0,"257":0,"258":0,"264":0,"265":0,"268":0,"271":0,"273":0,"275":0,"277":0,"278":0,"279":0,"283":0,"285":0,"286":0,"288":0,"289":0,"293":0,"294":0,"297":0,"298":0,"304":0,"306":0,"308":0,"310":0,"311":0,"312":0,"313":0,"315":0,"316":0,"320":0,"323":0,"325":0,"326":0,"327":0,"328":0,"329":0,"334":0,"336":0,"339":0,"341":0,"342":0,"344":0,"345":0,"349":0,"354":0,"356":0,"361":0,"362":0,"365":0,"367":0,"370":0,"371":0,"374":0,"375":0,"378":0,"379":0,"384":0,"387":0,"389":0,"390":0,"391":0,"393":0,"395":0,"403":0,"404":0,"405":0,"406":0,"408":0,"409":0,"418":0,"419":0,"420":0,"421":0,"423":0,"424":0,"432":0,"433":0,"434":0,"435":0,"436":0,"448":0,"449":0,"450":0,"452":0,"454":0,"470":0,"471":0,"473":0,"474":0,"477":0,"478":0,"486":0,"487":0,"496":0,"497":0,"499":0,"501":0,"502":0,"513":0,"515":0,"526":0,"528":0,"529":0,"531":0,"533":0,"535":0,"536":0,"539":0,"540":0,"543":0,"544":0,"548":0,"549":0,"550":0,"554":0,"555":0,"559":0,"560":0,"561":0,"562":0,"563":0,"567":0,"569":0,"576":0,"578":0,"579":0,"582":0,"583":0,"587":0,"592":0,"595":0,"596":0,"599":0,"600":0};
+_yuitest_coverage["build/event-custom-complex/event-custom-complex.js"].functions = {"mixFacadeProps:19":0,"EventFacade:37":0,"stopPropagation:98":0,"stopImmediatePropagation:109":0,"preventDefault:118":0,"halt:130":0,"(anonymous 2):288":0,"(anonymous 3):297":0,"fireComplex:138":0,"_getFacade:354":0,"stopPropagation:403":0,"stopImmediatePropagation:418":0,"preventDefault:432":0,"halt:448":0,"addTarget:470":0,"getTargets:486":0,"removeTarget:496":0,"bubble:513":0,"(anonymous 1):1":0};
+_yuitest_coverage["build/event-custom-complex/event-custom-complex.js"].coveredLines = 204;
+_yuitest_coverage["build/event-custom-complex/event-custom-complex.js"].coveredFunctions = 19;
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 1);
+YUI.add('event-custom-complex', function (Y, NAME) {
+
+
+/**
+ * Adds event facades, preventable default behavior, and bubbling.
+ * events.
+ * @module event-custom
+ * @submodule event-custom-complex
+ */
+
+_yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "(anonymous 1)", 1);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 11);
+var FACADE,
+    FACADE_KEYS,
+    YObject = Y.Object,
+    key,
+    EMPTY = {},
+    CEProto = Y.CustomEvent.prototype,
+    ETProto = Y.EventTarget.prototype,
+
+    mixFacadeProps = function(facade, payload) {
+        _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "mixFacadeProps", 19);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 20);
+var p;
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 22);
+for (p in payload) {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 23);
+if (!(FACADE_KEYS.hasOwnProperty(p))) {
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 24);
+facade[p] = payload[p];
+            }
+        }
+    };
+
+/**
+ * Wraps and protects a custom event for use when emitFacade is set to true.
+ * Requires the event-custom-complex module
+ * @class EventFacade
+ * @param e {Event} the custom event
+ * @param currentTarget {HTMLElement} the element the listener was attached to
+ */
+
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 37);
+Y.EventFacade = function(e, currentTarget) {
+
+    _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "EventFacade", 37);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 39);
+if (!e) {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 40);
+e = EMPTY;
+    }
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 43);
+this._event = e;
+
+    /**
+     * The arguments passed to fire
+     * @property details
+     * @type Array
+     */
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 50);
+this.details = e.details;
+
+    /**
+     * The event type, this can be overridden by the fire() payload
+     * @property type
+     * @type string
+     */
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 57);
+this.type = e.type;
+
+    /**
+     * The real event type
+     * @property _type
+     * @type string
+     * @private
+     */
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 65);
+this._type = e.type;
+
+    //////////////////////////////////////////////////////
+
+    /**
+     * Node reference for the targeted eventtarget
+     * @property target
+     * @type Node
+     */
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 74);
+this.target = e.target;
+
+    /**
+     * Node reference for the element that the listener was attached to.
+     * @property currentTarget
+     * @type Node
+     */
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 81);
+this.currentTarget = currentTarget;
+
+    /**
+     * Node reference to the relatedTarget
+     * @property relatedTarget
+     * @type Node
+     */
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 88);
+this.relatedTarget = e.relatedTarget;
+
+};
+
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 92);
+Y.mix(Y.EventFacade.prototype, {
+
+    /**
+     * Stops the propagation to the next bubble target
+     * @method stopPropagation
+     */
+    stopPropagation: function() {
+        _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "stopPropagation", 98);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 99);
+this._event.stopPropagation();
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 100);
+this.stopped = 1;
+    },
+
+    /**
+     * Stops the propagation to the next bubble target and
+     * prevents any additional listeners from being exectued
+     * on the current target.
+     * @method stopImmediatePropagation
+     */
+    stopImmediatePropagation: function() {
+        _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "stopImmediatePropagation", 109);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 110);
+this._event.stopImmediatePropagation();
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 111);
+this.stopped = 2;
+    },
+
+    /**
+     * Prevents the event's default behavior
+     * @method preventDefault
+     */
+    preventDefault: function() {
+        _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "preventDefault", 118);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 119);
+this._event.preventDefault();
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 120);
+this.prevented = 1;
+    },
+
+    /**
+     * Stops the event propagation and prevents the default
+     * event behavior.
+     * @method halt
+     * @param immediate {boolean} if true additional listeners
+     * on the current target will not be executed
+     */
+    halt: function(immediate) {
+        _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "halt", 130);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 131);
+this._event.halt(immediate);
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 132);
+this.prevented = 1;
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 133);
+this.stopped = (immediate) ? 2 : 1;
+    }
+
+});
+
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 138);
+CEProto.fireComplex = function(args) {
+
+    _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "fireComplex", 138);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 140);
+var es,
+        ef,
+        q,
+        queue,
+        ce,
+        ret = true,
+        events,
+        subs,
+        ons,
+        afters,
+        afterQueue,
+        postponed,
+        prevented,
+        preventedFn,
+        defaultFn,
+        self = this,
+        host = self.host || self,
+        next,
+        oldbubble,
+        stack,
+        yuievt = host._yuievt,
+        hasPotentialSubscribers;
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 163);
+stack = self.stack;
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 165);
+if (stack) {
+
+        // queue this event if the current item in the queue bubbles
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 168);
+if (self.queuable && self.type !== stack.next.type) {
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 170);
+if (!stack.queue) {
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 171);
+stack.queue = [];
+            }
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 173);
+stack.queue.push([self, args]);
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 175);
+return true;
+        }
+    }
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 179);
+hasPotentialSubscribers = self.hasSubs() || yuievt.hasTargets || self.broadcast;
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 181);
+self.target = self.target || host;
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 182);
+self.currentTarget = host;
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 184);
+self.details = args.concat();
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 186);
+if (hasPotentialSubscribers) {
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 188);
+es = stack || {
+
+           id: self.id, // id of the first event in the stack
+           next: self,
+           silent: self.silent,
+           stopped: 0,
+           prevented: 0,
+           bubbling: null,
+           type: self.type,
+           // defaultFnQueue: new Y.Queue(),
+           defaultTargetOnly: self.defaultTargetOnly
+
+        };
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 202);
+subs = self.getSubs();
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 203);
+ons = subs[0];
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 204);
+afters = subs[1];
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 206);
+self.stopped = (self.type !== es.type) ? 0 : es.stopped;
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 207);
+self.prevented = (self.type !== es.type) ? 0 : es.prevented;
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 209);
+if (self.stoppedFn) {
+            // PERF TODO: Can we replace with callback, like preventedFn. Look into history
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 211);
+events = new Y.EventTarget({
+                fireOnce: true,
+                context: host
+            });
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 215);
+self.events = events;
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 216);
+events.on('stopped', self.stoppedFn);
+        }
+
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 220);
+self._facade = null; // kill facade to eliminate stale properties
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 222);
+ef = self._getFacade(args);
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 224);
+if (ons) {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 225);
+self._procSubs(ons, args, ef);
+        }
+
+        // bubble if this is hosted in an event target and propagation has not been stopped
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 229);
+if (self.bubbles && host.bubble && !self.stopped) {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 230);
+oldbubble = es.bubbling;
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 232);
+es.bubbling = self.type;
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 234);
+if (es.type !== self.type) {
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 235);
+es.stopped = 0;
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 236);
+es.prevented = 0;
+            }
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 239);
+ret = host.bubble(self, args, null, es);
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 241);
+self.stopped = Math.max(self.stopped, es.stopped);
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 242);
+self.prevented = Math.max(self.prevented, es.prevented);
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 244);
+es.bubbling = oldbubble;
+        }
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 247);
+prevented = self.prevented;
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 249);
+if (prevented) {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 250);
+preventedFn = self.preventedFn;
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 251);
+if (preventedFn) {
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 252);
+preventedFn.apply(host, args);
+            }
+        } else {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 255);
+defaultFn = self.defaultFn;
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 257);
+if (defaultFn && ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 258);
+defaultFn.apply(host, args);
+            }
+        }
+
+        // broadcast listeners are fired as discreet events on the
+        // YUI instance and potentially the YUI global.
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 264);
+if (self.broadcast) {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 265);
+self._broadcast(args);
+        }
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 268);
+if (afters && !self.prevented && self.stopped < 2) {
+
+            // Queue the after
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 271);
+afterQueue = es.afterQueue;
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 273);
+if (es.id === self.id || self.type !== yuievt.bubbling) {
+
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 275);
+self._procSubs(afters, args, ef);
+
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 277);
+if (afterQueue) {
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 278);
+while ((next = afterQueue.last())) {
+                        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 279);
+next();
+                    }
+                }
+            } else {
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 283);
+postponed = afters;
+
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 285);
+if (es.execDefaultCnt) {
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 286);
+postponed = Y.merge(postponed);
+
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 288);
+Y.each(postponed, function(s) {
+                        _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "(anonymous 2)", 288);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 289);
+s.postponed = true;
+                    });
+                }
+
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 293);
+if (!afterQueue) {
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 294);
+es.afterQueue = new Y.Queue();
+                }
+
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 297);
+es.afterQueue.add(function() {
+                    _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "(anonymous 3)", 297);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 298);
+self._procSubs(postponed, args, ef);
+                });
+            }
+
+        }
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 304);
+self.target = null;
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 306);
+if (es.id === self.id) {
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 308);
+queue = es.queue;
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 310);
+if (queue) {
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 311);
+while (queue.length) {
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 312);
+q = queue.pop();
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 313);
+ce = q[0];
+                    // set up stack to allow the next item to be processed
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 315);
+es.next = ce;
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 316);
+ce._fire(q[1]);
+                }
+            }
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 320);
+self.stack = null;
+        }
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 323);
+ret = !(self.stopped);
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 325);
+if (self.type !== yuievt.bubbling) {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 326);
+es.stopped = 0;
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 327);
+es.prevented = 0;
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 328);
+self.stopped = 0;
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 329);
+self.prevented = 0;
+        }
+
+        // Kill the cached facade to free up memory.
+        // Otherwise we have the facade from the last fire, sitting around forever.
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 334);
+self._facade = null;
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 336);
+return ret;
+
+    } else {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 339);
+defaultFn = self.defaultFn;
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 341);
+if(defaultFn) {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 342);
+ef = self._getFacade(args);
+
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 344);
+if ((!self.defaultTargetOnly) || (host === ef.target)) {
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 345);
+defaultFn.apply(host, args);
+            }
+        }
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 349);
+return ret;
+    }
+
+};
+
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 354);
+CEProto._getFacade = function(fireArgs) {
+
+    _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "_getFacade", 354);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 356);
+var userArgs = this.details,
+        firstArg = userArgs && userArgs[0],
+        firstArgIsObj = (typeof firstArg === "object"),
+        ef = this._facade;
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 361);
+if (!ef) {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 362);
+ef = new Y.EventFacade(this, this.currentTarget);
+    }
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 365);
+if (firstArgIsObj) {
+        // protect the event facade properties
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 367);
+mixFacadeProps(ef, firstArg);
+
+        // Allow the event type to be faked http://yuilibrary.com/projects/yui3/ticket/2528376
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 370);
+if (firstArg.type) {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 371);
+ef.type = firstArg.type;
+        }
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 374);
+if (fireArgs) {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 375);
+fireArgs[0] = ef;
+        }
+    } else {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 378);
+if (fireArgs) {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 379);
+fireArgs.unshift(ef);
+        }
+    }
+
+    // update the details field with the arguments
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 384);
+ef.details = this.details;
+
+    // use the original target when the event bubbled to this target
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 387);
+ef.target = this.originalTarget || this.target;
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 389);
+ef.currentTarget = this.currentTarget;
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 390);
+ef.stopped = 0;
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 391);
+ef.prevented = 0;
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 393);
+this._facade = ef;
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 395);
+return this._facade;
+};
+
+/**
+ * Stop propagation to bubble targets
+ * @for CustomEvent
+ * @method stopPropagation
+ */
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 403);
+CEProto.stopPropagation = function() {
+    _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "stopPropagation", 403);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 404);
+this.stopped = 1;
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 405);
+if (this.stack) {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 406);
+this.stack.stopped = 1;
+    }
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 408);
+if (this.events) {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 409);
+this.events.fire('stopped', this);
+    }
+};
+
+/**
+ * Stops propagation to bubble targets, and prevents any remaining
+ * subscribers on the current target from executing.
+ * @method stopImmediatePropagation
+ */
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 418);
+CEProto.stopImmediatePropagation = function() {
+    _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "stopImmediatePropagation", 418);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 419);
+this.stopped = 2;
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 420);
+if (this.stack) {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 421);
+this.stack.stopped = 2;
+    }
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 423);
+if (this.events) {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 424);
+this.events.fire('stopped', this);
+    }
+};
+
+/**
+ * Prevents the execution of this event's defaultFn
+ * @method preventDefault
+ */
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 432);
+CEProto.preventDefault = function() {
+    _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "preventDefault", 432);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 433);
+if (this.preventable) {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 434);
+this.prevented = 1;
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 435);
+if (this.stack) {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 436);
+this.stack.prevented = 1;
+        }
+    }
+};
+
+/**
+ * Stops the event propagation and prevents the default
+ * event behavior.
+ * @method halt
+ * @param immediate {boolean} if true additional listeners
+ * on the current target will not be executed
+ */
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 448);
+CEProto.halt = function(immediate) {
+    _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "halt", 448);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 449);
+if (immediate) {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 450);
+this.stopImmediatePropagation();
+    } else {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 452);
+this.stopPropagation();
+    }
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 454);
+this.preventDefault();
+};
+
+/**
+ * Registers another EventTarget as a bubble target.  Bubble order
+ * is determined by the order registered.  Multiple targets can
+ * be specified.
+ *
+ * Events can only bubble if emitFacade is true.
+ *
+ * Included in the event-custom-complex submodule.
+ *
+ * @method addTarget
+ * @param o {EventTarget} the target to add
+ * @for EventTarget
+ */
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 470);
+ETProto.addTarget = function(o) {
+    _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "addTarget", 470);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 471);
+var etState = this._yuievt;
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 473);
+if (!etState.targets) {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 474);
+etState.targets = {};
+    }
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 477);
+etState.targets[Y.stamp(o)] = o;
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 478);
+etState.hasTargets = true;
+};
+
+/**
+ * Returns an array of bubble targets for this object.
+ * @method getTargets
+ * @return EventTarget[]
+ */
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 486);
+ETProto.getTargets = function() {
+    _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "getTargets", 486);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 487);
+return YObject.values(this._yuievt.targets);
+};
+
+/**
+ * Removes a bubble target
+ * @method removeTarget
+ * @param o {EventTarget} the target to remove
+ * @for EventTarget
+ */
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 496);
+ETProto.removeTarget = function(o) {
+    _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "removeTarget", 496);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 497);
+var targets = this._yuievt.targets;
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 499);
+delete targets[Y.stamp(o, true)];
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 501);
+if (YObject.size(targets) === 0) {
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 502);
+this._yuievt.hasTargets = false;
+    }
+};
+
+/**
+ * Propagate an event.  Requires the event-custom-complex module.
+ * @method bubble
+ * @param evt {CustomEvent} the custom event to propagate
+ * @return {boolean} the aggregated return value from Event.Custom.fire
+ * @for EventTarget
+ */
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 513);
+ETProto.bubble = function(evt, args, target, es) {
+
+    _yuitest_coverfunc("build/event-custom-complex/event-custom-complex.js", "bubble", 513);
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 515);
+var targs = this._yuievt.targets,
+        ret = true,
+        t,
+        ce,
+        i,
+        bc,
+        ce2,
+        type = evt && evt.type,
+        originalTarget = target || (evt && evt.target) || this,
+        oldbubble;
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 526);
+if (!evt || ((!evt.stopped) && targs)) {
+
+        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 528);
+for (i in targs) {
+            _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 529);
+if (targs.hasOwnProperty(i)) {
+
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 531);
+t = targs[i];
+
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 533);
+ce = t._yuievt.events[type];
+
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 535);
+if (t._hasSiblings) {
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 536);
+ce2 = t.getSibling(type, ce);
+                }
+
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 539);
+if (ce2 && !ce) {
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 540);
+ce = t.publish(type);
+                }
+
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 543);
+oldbubble = t._yuievt.bubbling;
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 544);
+t._yuievt.bubbling = type;
+
+                // if this event was not published on the bubble target,
+                // continue propagating the event.
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 548);
+if (!ce) {
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 549);
+if (t._yuievt.hasTargets) {
+                        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 550);
+t.bubble(evt, args, originalTarget, es);
+                    }
+                } else {
+
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 554);
+if (ce2) {
+                        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 555);
+ce.sibling = ce2;
+                    }
+
+                    // set the original target to that the target payload on the facade is correct.
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 559);
+ce.target = originalTarget;
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 560);
+ce.originalTarget = originalTarget;
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 561);
+ce.currentTarget = t;
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 562);
+bc = ce.broadcast;
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 563);
+ce.broadcast = false;
+
+                    // default publish may not have emitFacade true -- that
+                    // shouldn't be what the implementer meant to do
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 567);
+ce.emitFacade = true;
+
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 569);
+ce.stack = es;
+
+                    // TODO: See what's getting in the way of changing this to use
+                    // the more performant ce._fire(args || evt.details || []).
+
+                    // Something in Widget Parent/Child tests is not happy if we
+                    // change it - maybe evt.details related?
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 576);
+ret = ret && ce.fire.apply(ce, args || evt.details || []);
+
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 578);
+ce.broadcast = bc;
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 579);
+ce.originalTarget = null;
+
+                    // stopPropagation() was called
+                    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 582);
+if (ce.stopped) {
+                        _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 583);
+break;
+                    }
+                }
+
+                _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 587);
+t._yuievt.bubbling = oldbubble;
+            }
+        }
+    }
+
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 592);
+return ret;
+};
+
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 595);
+FACADE = new Y.EventFacade();
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 596);
+FACADE_KEYS = {};
+
+// Flatten whitelist
+_yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 599);
+for (key in FACADE) {
+    _yuitest_coverline("build/event-custom-complex/event-custom-complex.js", 600);
+FACADE_KEYS[key] = true;
+}
+
+
+}, '@VERSION@', {"requires": ["event-custom-base"]});
