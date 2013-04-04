@@ -11,23 +11,5 @@
     "use": ["promise"],
 
     "examples": [
-        {
-            "name": "basic",
-            "displayName": "Wrapping async transactions with promises",
-	        "description": "Wrapping async transactions with promises",
-	        "modules": ["promise", "jsonp"],
-	        "useModules": ["promise", "jsonp"],
-
-            "hideTableOfContents": true
-        },
-        {
-            "name": "subclass",
-	        "displayName": "Subclassing Y.Promise",
-	        "description": "Extend Y.Promise to create classes that encapsulate standard transaction logic in descriptive method names",
-	        "modules": ["promise", "jsonp"],
-	        "useModules": ["promise", "jsonp"],
-
-            "hideTableOfContents": true
-        }
     ]
 }
