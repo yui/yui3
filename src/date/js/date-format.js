@@ -187,15 +187,14 @@ var L = Y.Lang,
         //"+": "%a %b %e %T %Z %Y"
     },
     /**
-     * Local language dependent strings (names of months, days of week).
-     * Loads the `datatype-date-format` module corresponding to the
-     * configured language.
+     * Copy of local language dependent strings (names of months, days of week).
      * @property _resources
      * @type Object
+     * @default null
      * @private
      * @static
      */
-    _resources: Y.Intl.get('datatype-date-format'),
+    _resources: null,
     /**
      * Expands the composite formatting codes using the [aggregates](#property_aggregates)
      * hash.   If the table contains the test `locale` it will replace
@@ -305,7 +304,7 @@ var L = Y.Lang,
         }
 
         var format = (L.isString(oConfig) ? oConfig : (oConfig || {}).format) || "%Y-%m-%d",
-            resources = Dt._resources,
+            resources = Dt._resources = Y.Intl.get('datatype-date-format'),
 
 
             replace_formats = function (m0, m1) {

@@ -343,6 +343,7 @@ Y.mix(Y.namespace("Date"), {
             parsers = this.parsers,
             i, p = false, c;
 
+        this._resources = Y.Intl.get('datatype-date-format');
         cutoff = (cutoff === undefined ? 30 : cutoff);
 
         /*jshint eqeqeq:false */ // The simple != below is intentional
@@ -423,3 +424,4 @@ Y.namespace("Parsers").date = Y.Date.parse;
 
 Y.namespace("DataType");
 Y.DataType.Date = Y.Date;
+
