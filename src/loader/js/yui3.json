@@ -2533,6 +2533,11 @@
             "tree"
         ]
     },
+    "tree-sortable": {
+        "requires": [
+            "tree"
+        ]
+    },
     "uploader": {
         "requires": [
             "uploader-html5",
