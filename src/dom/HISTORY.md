@@ -1,6 +1,11 @@
 DOM Change History
 ==================
 
+@VERSION@
+-----
+
+* Removed `dom-deprecated` module.
+
 3.9.1
 -----
 

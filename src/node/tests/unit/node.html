@@ -193,10 +193,10 @@ button {
 <div id="yui-log"></div>
 <script type="text/javascript">
 YUI({
-    coverage: ['node', 'node-load', 'node-deprecated'],
+    coverage: ['node', 'node-load'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 
-}).use('selector-css3', 'node-deprecated', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-data-test', 'nodelist-test', 'node-attrs-test', 'node-traversal-test', function(Y) {
+}).use('selector-css3', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-data-test', 'nodelist-test', 'node-attrs-test', 'node-traversal-test', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         ObjectAssert = Y.ObjectAssert,
@@ -1132,11 +1132,6 @@ YUI({
 
         test_data: function() {
             var node = Y.one('body');
-
-            // deprecated usage
-            node.set('data', 'foo');
-            Assert.areEqual('foo', node.get('data'),
-                "node.set('data', 'foo')");
 
             node.setData('foo', 'foo');
             Assert.areEqual('foo', node.getData('foo'),
