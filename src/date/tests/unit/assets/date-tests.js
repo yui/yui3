@@ -147,7 +147,7 @@ YUI.add('date-tests', function(Y) {
         testUS: function() {
             ASSERT.isNotNull(dateUS, "Expected U.S. Date to be loaded.");
 
-            var date = new Date(819199440000),
+            var date = new Date("17 Dec 1995 00:24:00"),
                 output;
 
             output = dateUS.format(date);
@@ -173,7 +173,7 @@ YUI.add('date-tests', function(Y) {
         testFrench: function() {
             ASSERT.isNotNull(dateFR, "Expected French Date to be loaded.");
 
-            var date = new Date(819199440000),
+            var date = new Date("17 Dec 1995 00:24:00"),
                 output;
 
             output = dateFR.format(date);
@@ -199,7 +199,7 @@ YUI.add('date-tests', function(Y) {
         testKorean: function() {
             ASSERT.isNotNull(dateKR, "Expected Korean Date to be loaded.");
 
-            var date = new Date(819199440000),
+            var date = new Date("17 Dec 1995 00:24:00"),
                 output;
 
             output = dateKR.format(date);
@@ -243,9 +243,10 @@ YUI.add('date-tests', function(Y) {
 
             ASSERT.isNotNull(dateIN, "Expected Punjabi Date to be loaded.");
 
-            var date = new Date(819199440000),
+            var date = new Date("17 Dec 1995 00:24:00"),
                 output;
 
+                date = new Date("17 Dec 1995 00:24:00");
             output = dateIN.format(date);
             ASSERT.areSame("1995-12-17", output, "Expected default format (%F).");
 
