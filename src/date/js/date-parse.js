@@ -3,7 +3,7 @@ var L = Y.Lang,
     YR = 0, MO = 1, D = 2, H = 3, MI = 4, S = 5, TZh = 6, TZm = 7, AP = 8;
     digitsRegExp = /^\s*(\d+)/,
     spaceRegExp = /(\s+)/g,
-    gmtUtcRegExp = /^\s*(gmt)|(utc)/i,
+    gmtUtcRegExp = /^(\s*gmt)|(\s*utc)|(\s*)/i,
     tzRegExp = /^\s*([a-z]+(\/[a-z]+)?)/i,
 /**
  * Parse date submodule.
@@ -213,16 +213,20 @@ Y.mix(Y.namespace("Date"), {
                     sign = -1;
                     more = true;
                     break;
-                case 'Z':
+                case 'z':
                     break;
+                case 'j':
+                    return NaN;
                 default:
-                    h = code.charCodeAt() - 'A'.charCodeAt();
-                    if (h > 24) {
+                    h = code.charCodeAt() - 'a'.charCodeAt() + 1;
+                    if (h > 25) {
                         return NaN;
                     }
-                    if (h > 12) {
-                        h = h - 12;
+                    if (h > 13) {
+                        h = h - 13;
                         sign = -1;
+                    } else if (h > 9) {
+                        h -= 1;
                     }
             }
             this._data = data.substr(1);
@@ -231,7 +235,8 @@ Y.mix(Y.namespace("Date"), {
                 if (isNaN(h = this._parseDigits(4))) {
                     return NaN;
                 }
-                if (h < 100 && data[0] === ':') {
+                if (h < 100 && this._data[0] === ':') {
+                    this._data = this._data.substr(1);
                     if (isNaN(m = this._parseDigits(2))) {
                         return NaN;
                     }

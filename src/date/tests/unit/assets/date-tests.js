@@ -281,7 +281,15 @@ YUI.add('date-tests', function(Y) {
                 ["Saturday, March 01, 2003", "%A, %B %d, %Y","1 Mar 2003"],
                 [new Date(Date.UTC(2013, 2, 27, 17, 56, 13)).toString(),"%a %b %d %Y %T GMT%z", "27 Mar 2013 17:56:13 GMT+0000"],
                 [new Date(Date.UTC(2013, 2, 27, 17, 56, 13)).toString(),"%a %b %d %Y %T %z", "27 Mar 2013 17:56:13 GMT+0000"],
+                ["2012-11-10 10:11:12 -0100", "%F %T %z", "10 Nov 2012 10:11:12 -0100"],
+                ["2012-11-10 10:11:12 -01:00", "%F %T %z", "10 Nov 2012 10:11:12 -0100"],
+                ["2012-11-10 10:11:12 Z", "%F %T %z", "10 Nov 2012 10:11:12 +0000"],
+                ["2012-11-10 10:11:12 A", "%F %T %z", "10 Nov 2012 10:11:12 +0100"],
+                ["2012-11-10 10:11:12 Y", "%F %T %z", "10 Nov 2012 10:11:12 -1200"],
+                ["2012-11-10 10:11:12 N", "%F %T %z", "10 Nov 2012 10:11:12 -0100"],
+                ["2012-11-10 10:11:12 M", "%F %T %z", "10 Nov 2012 10:11:12 +1200"],
 
+                // Now I go for the whole alphabet one by one.
                 // I'm enclosing in between parenthesis the part that I'm testing
                 // the rest is filler
 
@@ -365,11 +373,17 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame(new Date(40,0,1).toString(), Y.Date.parse("40-1-1", "%F", null).toString(),3);
         },
         testParseErrors: function () {
-            ASSERT.isNull(Y.Date.parse("12:60:10", "%T"),1);
-            ASSERT.isNull(Y.Date.parse("25:50:10", "%T"),2);
-            ASSERT.isNull(Y.Date.parse("2:50:70", "%T"),3);
-            ASSERT.isNull(Y.Date.parse("daturdy", "%A"),4);
-            ASSERT.isNull(Y.Date.parse("2003/03/01", "%F"),5);
+            ASSERT.isNull(Y.Date.parse("12:60:10", "%T"),'1');
+            ASSERT.isNull(Y.Date.parse("25:50:10", "%T"),'2');
+            ASSERT.isNull(Y.Date.parse("2:50:70", "%T"),'3');
+            ASSERT.isNull(Y.Date.parse("daturdy", "%A"),'4');
+            ASSERT.isNull(Y.Date.parse("2003/03/01", "%F"),'5');
+            ASSERT.isNull(Y.Date.parse("2003-Mar-01", "%F"),'6');
+            ASSERT.isNull(Y.Date.parse("2012-11-10 10:11:12 J", "%F %T %z"),'7');
+            ASSERT.isNull(Y.Date.parse("2012-11-10 10:11:12 Ñ", "%F %T %z"),'8');
+            ASSERT.isNull(Y.Date.parse("2012-11-10 10:11:12 +lo:oo", "%F %T %z"),'9');
+            ASSERT.isNull(Y.Date.parse("2012-11-10 10:11:12 +10:oo", "%F %T %z"),'10');
+            ASSERT.isNull(Y.Date.parse("2012-11-10 10:11:12 XXX", "%F %T %Z"),'11');
         }
     });
 
