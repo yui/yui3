@@ -54,6 +54,7 @@ Y.DOM.formToObject = function (identifier, includeDisabled) {
         fields = form.elements;
 
         for (i = 0, len = fields.length; i < len; ++i) {
+            value = undefined; // reset for fields that may be skipped
             field = fields[i];
             name  = field.name;
 
