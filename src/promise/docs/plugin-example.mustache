@@ -41,10 +41,35 @@
 {{>node-plugin-plugin}}
 ```
 
+<h3>Using the plugin</h3>
+
+<p>Now that whe have the plugin ready, we can easily chain transitions from the plugin instance:</p>
+
+```
+var square = Y.one('#square');
+square.plug(PromisePlugin);
+
+// run a sequence of transitions
+square.promise.transition({
+        width: '300px'
+    })
+    .transition({
+        height: '300px'
+    })
+    .transition({
+        left: '200px'
+    });
+```
+
 <h3 id="fullcode">Full Code Listing</h3>
 <h4>HTML</h4>
 ```
 {{>node-plugin-markup}}
+```
+
+<h4>CSS</h4>
+```
+{{>node-plugin-css}}
 ```
 
 <h4>JavaScript</h4>

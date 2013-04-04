@@ -25,7 +25,7 @@ var GitHub = (function () {
     
     return {
         getUser: function (name) {
-            // ...
+            // This method will return a promise
         }
     };
 }());
@@ -51,7 +51,7 @@ getUser: function (name) {
 
 <h3>Resolving and returning promises</h3>
 
-<p>Our `fetch()` function will create a promise and fulfill it or reject it based on the result of the JSONP request. Following the steps described in the User Guide, we create a promise and call `Y.jsonp` inside its initialization function.</p>
+<p>Our `fetch()` function will create a promise and fulfill it or reject it based on the result of the JSONP request. Following the steps described in the <a href="index.html##creating-a-promise">User Guide</a>, we create a promise and call `Y.jsonp` inside its initialization function.</p>
 
 ```
 // Fetches a URL, stores a promise in the cache and returns it
@@ -66,7 +66,7 @@ function fetch(url) {
             if (meta.status >= 200 && meta.status < 300) {
                 fulfill(data);
             } else {
-                reject(data.message);
+                reject(new Error(data.message));
             }
         });
 
@@ -77,7 +77,7 @@ function fetch(url) {
             // change its state again, so we can safely call reject() after
             // some time. If it was already fulfilled or rejected, nothing will
             // happen
-            reject('Timeout');
+            reject(new Error('Timeout'));
         }, 10000);
     });
 
@@ -89,6 +89,9 @@ function fetch(url) {
 ```
 
 <h3>Wiring it all together</h3>
+
+<p>Here is the complete code for this example. You will notice that it contains a request for a user called "y u i" which likely does not exist. This illustrates how promises help you handle errors. While it may be tempting to skip adding an error callback, it is highly recommended that you add one and provide feedback to your users when things go wrong.</p>
+
 ```
 {{>github-cache-js}}
 ```
