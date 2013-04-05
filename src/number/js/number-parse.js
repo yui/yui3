@@ -6,7 +6,8 @@
  * @for Number
  */
 
-var LANG = Y.Lang;
+var LANG = Y.Lang,
+    safeRegExp = /(\\|\[|\]|\.|\+|\*|\?|\^|\$|\(|\)|\||\{|\})/g;
 
 Y.mix(Y.namespace("Number"), {
     /**
@@ -29,7 +30,6 @@ Y.mix(Y.namespace("Number"), {
      */
     parse: function(data, config) {
         var number, r,
-            safeRegExp = /(\\|\[|\]|\.|\+|\*|\?|\^|\$|\(|\)|\||\{|\})/g,
             safe = function(r) {
                 return r.replace(safeRegExp,'\\$1');
             };
