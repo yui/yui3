@@ -1,0 +1,19 @@
+<script type="text/javascript">
+YUI().use('node', 'jsonp', 'promise', function (Y) {
+
+{{>github-cache}}
+
+var demo = Y.one('#demo');
+function renderUser(user) {
+    demo.append('<div class="success">Loaded ' + user.login + '</a>\'s data! ' +
+        '<a href="' + user.html_url + '">Link to profile</a></div>');
+}
+function showError(err) {
+    demo.append('<div class="error">' + err.message + '</div>');
+}
+
+GitHub.getUser('yui').then(renderUser, showError);
+GitHub.getUser('y u i').then(renderUser, showError);
+
+});
+</script>
