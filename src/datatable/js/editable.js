@@ -189,6 +189,7 @@ Y.mix( DtEditable.prototype, {
     */
     _classEditing:  null,
 
+
     /**
      Hash that stores the "common" editors, i.e. standard editor names that occur
      within Y.DataTable.Editors and are used in this DataTable.
@@ -246,7 +247,7 @@ Y.mix( DtEditable.prototype, {
         this._UI_ATTRS.SYNC = this._UI_ATTRS.SYNC.concat(EDITABLE, EDITOR_OPEN_ACTION);
         this._UI_ATTRS.BIND.push(EDITABLE, EDITOR_OPEN_ACTION);
 
-        this._editorsContainer = Y.one('body').appendChild('<div class="yui3-datatable-editors"></div>');
+        this._editorsContainer = Y.one('body').appendChild('<div class="' + this.getClassName(COL, 'editors') + '"></div>');
 
     },
 
