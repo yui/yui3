@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 YUI().use('promise', 'transition', 'node-pluginhost', function (Y) {
 
 {{>node-plugin-subclass}}
@@ -18,27 +18,17 @@ function resetStyles() {
 
 Y.one('#without-plugin').on('click', function () {
     resetStyles();
-    square.transition({
-            width: '300px'
-        })
-        .transition({
-            height: '300px'
-        })
-        .transition({
-            left: '200px'
-        });
+    square
+        .transition({width: '300px'})
+        .transition({height: '300px'})
+        .transition({left: '200px'});
 });
 Y.one('#with-plugin').on('click', function () {
     resetStyles();
-    square.promise.transition({
-            width: '300px'
-        })
-        .transition({
-            height: '300px'
-        })
-        .transition({
-            left: '200px'
-        });
+    square.promise
+        .transition({width: '300px'})
+        .transition({height: '300px'})
+        .transition({left: '200px'});
 });
 
 });
