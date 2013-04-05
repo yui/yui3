@@ -1559,16 +1559,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dom-deprecated")) > -1, "Module (dom-deprecated) not found in sorted array");
         },
-     "Testing dom-form-values": function(data) {
-            var loader = new Y.Loader({
-                require: ["dom-form-values"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dom-form-values")) > -1, "Module (dom-form-values) not found in sorted array");
-        },
      "Testing dom-screen": function(data) {
             var loader = new Y.Loader({
                 require: ["dom-screen"],

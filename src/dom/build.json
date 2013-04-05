@@ -55,11 +55,6 @@
                 "dom-create.js",
                 "dom-size.js"
             ]
-        },
-        "dom-form-values": {
-            "jsfiles": [
-                "form-values.js"
-            ]
         }
     }
 }
