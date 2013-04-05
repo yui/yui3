@@ -134,6 +134,7 @@ PositionConstrain.prototype = {
      * @method constrain 
      * @param {Array} xy Optional. The xy values to constrain
      * @param {Node | boolean} node Optional. The node to constrain to, or true for the viewport
+     * @chainable
      */
     constrain : function(xy, node) {
         var currentXY, 
@@ -148,6 +149,7 @@ PositionConstrain.prototype = {
                 this.set(XY, constrainedXY, { constrained:true });
             }
         }
+        return this;
     },
 
     /**

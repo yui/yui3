@@ -164,11 +164,13 @@
          * <p>Or</p>
          * @param {Array} x, y values passed as an array ([x, y]), to support
          * simple pass through of Node.getXY results
+         * @chainable
          */
         move: function () {
             var args = arguments,
                 coord = (Lang.isArray(args[0])) ? args[0] : [args[0], args[1]];
                 this.set(XY_COORD, coord);
+            return this;
         },
 
         /**
@@ -176,9 +178,10 @@
          * Widget's position in the DOM.
          *
          * @method syncXY
+         * @chainable
          */
         syncXY : function () {
-            this.set(XY_COORD, this._posNode.getXY(), {src: UI});
+            return this.set(XY_COORD, this._posNode.getXY(), {src: UI});
         },
 
         /**
