@@ -891,37 +891,6 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
         Assert.areSame(1, saveCallbacks);
         Assert.areSame(1, errors);
-    },
-
-    'validate() should be backwards compatible with the 3.4.x synchronous style': function () {
-        var errors = 0,
-            saves  = 0,
-            model  = new this.TestModel();
-
-        model.on('error', function (e) {
-            errors += 1;
-
-        });
-
-        model.on('save', function (e) {
-            saves += 1;
-        });
-
-        model.validate = function (attrs) {
-            if (attrs.foo !== 'bar') {
-                return 'No no no!';
-            }
-        };
-
-        model.set('foo', 'bar');
-        model.save();
-        Assert.areSame(0, errors);
-        Assert.areSame(1, saves);
-
-        model.set('foo', 'baz');
-        model.save();
-        Assert.areSame(1, errors);
-        Assert.areSame(1, saves);
     }
 }));
 

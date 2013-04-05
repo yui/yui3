@@ -3,6 +3,10 @@ YUI.add('app-benchmark', function (Y) {
 var suite = Y.BenchmarkSuite = new Benchmark.Suite();
 
 // -- Y.Model ------------------------------------------------------------------
+suite.add('Y.Model.Base: Instantiate a basic model', function () {
+    var model = new Y.Model.Base();
+});
+
 suite.add('Y.Model: Instantiate a bare model', function () {
     var model = new Y.Model();
 });
