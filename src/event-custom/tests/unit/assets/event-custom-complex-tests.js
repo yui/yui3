@@ -265,7 +265,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
             };
 
             // configure chaining via global default or on the event target
-            YUI({ 
+            YUI({
                 base:'../../../build/',
                 logInclude: {
                     test: true
@@ -960,6 +960,27 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.Assert.areEqual('onfooafterfooonbarafterbar', result);
         },
 
+        testDefaultFnWithoutSubscribers : function() {
+            var a = new Y.EventTarget(),
+                count = 0;
+
+            a.publish("foo", {
+                emitFacade: true,
+                defaultFn : function(e) {
+                    Y.Assert.areEqual(1, e.bar, "incorrect payload");
+                    Y.Assert.areSame(a, e.target, "incorrect target");
+                    Y.Assert.areSame(a, e.currentTarget, "incorrect currentTarget");
+                    count = 1;
+                }
+            });
+
+            a.fire("foo", {
+                bar:1
+            });
+
+            Y.Assert.areEqual(1, count);
+        },
+
         test_bubble_config: function() {
 
             var a = new Y.EventTarget(),
@@ -1013,9 +1034,9 @@ YUI.add("event-custom-complex-tests", function(Y) {
         },
 
         testIndividualCustomEventMonitoring: function () {
-            var target = new Y.EventTarget({ 
-                    emitFacade: true, 
-                    prefix: 'a' 
+            var target = new Y.EventTarget({
+                    emitFacade: true,
+                    prefix: 'a'
                 }),
                 actual = [],
                 expected = ["a:foo_publish", "et-a:foo_publish", "a:foo_attach", "et-a:foo_attach", "a:foo_attach", "et-a:foo_attach", "a:foo_fire", "et-a:foo_fire", "a:foo_detach", "et-a:foo_detach", "a:foo_detach", "et-a:foo_detach"],
@@ -1094,10 +1115,10 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
         'ignore: Does not work currently due to infinite recursion - testEventTargetMonitoring': function () {
 
-            var target = new Y.EventTarget({ 
+            var target = new Y.EventTarget({
                     monitored:true, // Doesn't work currently. Causes infinite recursion
-                    emitFacade: true, 
-                    prefix: 'a' 
+                    emitFacade: true,
+                    prefix: 'a'
                 }),
                 actual = [],
                 expected = ["a:foo_publish", "a:foo_attach", "a:foo_attach", "a:foo_fire", "a:foo_detach", "a:foo_detach"],
@@ -1174,4 +1195,4 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
     Y.Test.Runner.add(suite);
 
-}, '@VERSION@' ,{requires:['event-custom', 'test']}); 
+}, '@VERSION@' ,{requires:['event-custom', 'test']});

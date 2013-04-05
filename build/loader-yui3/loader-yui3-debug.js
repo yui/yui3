@@ -2561,8 +2561,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     "tabview-base": {
         "requires": [
             "node-event-delegate",
-            "classnamemanager",
-            "skin-sam-tabview"
+            "classnamemanager"
         ]
     },
     "tabview-plugin": {
@@ -2684,6 +2683,11 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "tree-selectable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-sortable": {
         "requires": [
             "tree"
         ]
@@ -2910,7 +2914,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '660f328e92276f36e9abfafb02169183';
+YUI.Env[Y.version].md5 = '0d7d2a0e035eea28a698fdd28db1e2e6';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
