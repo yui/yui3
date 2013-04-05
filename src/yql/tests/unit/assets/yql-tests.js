@@ -177,7 +177,7 @@ YUI.add('yql-tests', function(Y) {
             var q = Y.YQL('select * from weather.forecast where location=62896', function(r) {
                 var context = this;
                 test.resume(function() {
-                    Y.Assert.isInstanceOf(YUI, context, 'Context object not YUI');
+                    Y.Assert.isTrue(YUI.instanceOf(context), 'Context object not YUI');
                     Y.Assert.isObject(r, 'Query Failure');
                     Y.Assert.isObject(r.query, 'Query object not present');
                 });
@@ -200,7 +200,7 @@ YUI.add('yql-tests', function(Y) {
             var q = Y.YQL('select * from weather.forecast where location=62896', function(r) {
                 var context = this;
                 test.resume(function() {
-                    Y.Assert.isInstanceOf(YUI, context, 'Context object not YUI');
+                    Y.Assert.isTrue(YUI.instanceOf(context), 'Context object not YUI');
                     Y.Assert.isObject(r, 'Query Failure');
                     Y.Assert.isObject(r.query, 'Query object not present');
                 });
