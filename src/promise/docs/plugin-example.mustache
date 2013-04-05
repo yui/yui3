@@ -11,7 +11,7 @@
     {{>node-plugin-js}}
 </div>
 
-<h2>Using promises to chain CSS transitions</h2>
+<h2>Using Promises to Chain CSS Transitions</h2>
 
 <h3>The plan</h3>
 
@@ -19,21 +19,21 @@
 
 <p>The plan is to create a Promise subclass that represents a Node and store one of these promises in the plugin instance. Then the plugin's `transition` method will return a new promise based on the one already stored.</p>
 
-<h3>Creating a Promise subclass</h3>
+<h3>Creating a Promise Subclass</h3>
 
-<p>Promises represent a value. Since we want to chain transitions on a Node we need to create a Promise sublcass that represents a Node. Promises can be extended the same way as any other YUI class by using <a href="">Y.extend</a>.</p>
+<p>Promises represent a value. Since we want to chain transitions on a Node we need to create a Promise sublcass that represents a Node. Promises can be extended the same way as any other YUI class by using <a href="{{apiDocs}}//classes/YUI.html#method_extend">`Y.extend`</a>.</p>
 
 ```
 {{>node-plugin-subclass}}
 ```
 
-<p>The next step is to add the `transition^ method to this promise and have it return a promise that is fulfilled when the transition is completed.</p>
+<p>The next step is to add the `transition()` method to this promise and have it return a promise that is fulfilled when the transition is completed.</p>
 
 ```
 {{>node-plugin-transition}}
 ```
 
-<h3>Creating the plugin</h3>
+<h3>Creating the Plugin</h3>
 
 <p>Our plugin is a very simple class that contains a NodePromise. In order for it to let us write chains of transitions like `node.promise.transition(config1).transition(config2)` we will add a `transition` method to it that simply points to the NodePromise's same method.</p>
 
@@ -41,24 +41,19 @@
 {{>node-plugin-plugin}}
 ```
 
-<h3>Using the plugin</h3>
+<h3>Using the Plugin</h3>
 
-<p>Now that whe have the plugin ready, we can easily chain transitions from the plugin instance:</p>
+<p>Now that we have the plugin ready, we can easily chain transitions from the plugin instance:</p>
 
 ```
 var square = Y.one('#square');
 square.plug(PromisePlugin);
 
 // run a sequence of transitions
-square.promise.transition({
-        width: '300px'
-    })
-    .transition({
-        height: '300px'
-    })
-    .transition({
-        left: '200px'
-    });
+square.promise
+    .transition({width: '300px'})
+    .transition({height: '300px'})
+    .transition({left: '200px'});
 ```
 
 <h3 id="fullcode">Full Code Listing</h3>

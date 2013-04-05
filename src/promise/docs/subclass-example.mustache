@@ -24,7 +24,7 @@ function ArrayPromise() {
 Y.extend(ArrayPromise, Y.Promise);
 ```
 
-<h2>Method chaining</h2>
+<h2>Method Chaining</h2>
 
 <p>
     Chaining promise methods is done by returning the result of calling the promise's `then()` method. `then()` <strong>always returns a promise of its same kind</strong>, so this will allow us to chain array operations as if they were real arrays.
@@ -45,7 +45,7 @@ Y.extend(ArrayPromise, Y.Promise);
 {{>subclass-toarray-fn}}
 ```
 
-<h3>Putting our class to action</h3>
+<h3>Putting our Class to Action</h3>
 
 <p>
     There are many cases in which you would want to work on asynchronous array values. Performing more than one async operation at a time and dealing with the result is one common use case. `Y.batch` waits for many operations and returns a promise representing an array with the result of all the operations, so you could wrap it in an ArrayPromise to modify all those results.
@@ -59,7 +59,7 @@ Y.extend(ArrayPromise, Y.Promise);
 {{>subclass-array-operations}}
 ```
 
-<h2>Full example code</h2>
+<h2>Full Example Code</h2>
 
 ```
 {{>subclass-js}}

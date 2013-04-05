@@ -11,7 +11,7 @@
     {{>github-cache-js}}
 </div>
 
-<h3>Creating a cache</h3>
+<h3>Creating a Cache</h3>
 
 <p>
     A cache is an object that keeps track of which operations have already been performed, stores the results and returns the stored result if the operation was already performed. In this case, since we are fetching content with JSONP, the operations are asynchronous so we will store promises representing them.
@@ -49,7 +49,7 @@ getUser: function (name) {
 }
 ```
 
-<h3>Resolving and returning promises</h3>
+<h3>Resolving and Returning Promises</h3>
 
 <p>Our `fetch()` function will create a promise and fulfill it or reject it based on the result of the JSONP request. Following the steps described in the <a href="index.html##creating-a-promise">User Guide</a>, we create a promise and call `Y.jsonp` inside its initialization function.</p>
 
@@ -88,7 +88,7 @@ function fetch(url) {
 }
 ```
 
-<h3>Wiring it all together</h3>
+<h3>Wiring It All Together</h3>
 
 <p>Here is the complete code for this example. You will notice that it contains a request for a user called "y u i" which likely does not exist. This illustrates how promises help you handle errors. While it may be tempting to skip adding an error callback, it is highly recommended that you add one and provide feedback to your users when things go wrong.</p>
 
