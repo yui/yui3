@@ -30,7 +30,7 @@ YUI.add('config-test', function(Y) {
                 YUI().use('oop', function(Y2) {
                     Y.Assert.isUndefined(Y2.config.logExclude);
                     Y.Assert.isUndefined(Y2.config.filter);
-                    Y.Assert.isTrue(Y2.config.globalConfig);
+                    Y.Assert.isTrue(Y2.config.globalConfig, 'globalConfig one');
                 });
 
                 var o1 = { a: 1 };
@@ -41,8 +41,8 @@ YUI.add('config-test', function(Y) {
                 var o6 = { f: 1 };
 
                 YUI(o1, o2, o3, o4, o5, o6).use('oop', function(Y2) {
-                    Y.Assert.areEqual(1, Y2.config.f);
-                    Y.Assert.isTrue(Y2.config.globalConfig);
+                    Y.Assert.areEqual(1, Y2.config.f, 'Multiple config objects failed');
+                    Y.Assert.isTrue(Y2.config.globalConfig, 'globalConfig two');
                 });
             }
         });
