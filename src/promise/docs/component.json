@@ -5,7 +5,7 @@
     "author"     : ["lsmith", "juandopazo"],
 
     "tags": [
-        "promise", "async"
+        "utility", "beta", "promise", "async"
     ],
 
     "use": ["promise"],
