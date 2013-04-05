@@ -634,10 +634,15 @@ Y.mix(Y_Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     all: function(selector) {
-        var nodelist = Y.all(Y.Selector.query(selector, this._node));
-        nodelist._query = selector;
-        nodelist._queryRoot = this._node;
-        return nodelist;
+        var nodelist;
+        
+        if (this._node) {
+            nodelist = Y.all(Y.Selector.query(selector, this._node));
+            nodelist._query = selector;
+            nodelist._queryRoot = this._node;
+        }
+
+        return nodelist || Y.all([]);
     },
 
     // TODO: allow fn test
