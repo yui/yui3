@@ -12,29 +12,29 @@
 
     "examples": [
         {
-            "name": "basic-example",
+            "name"       : "basic-example",
             "displayName": "Wrapping async transactions with promises",
-	        "description": "Wrapping async transactions with promises",
-	        "modules": ["promise", "jsonp"],
-	        "useModules": ["promise", "jsonp"],
+            "description": "Wrapping async transactions with promises",
+            "modules"    : ["promise", "jsonp"],
+            "useModules" : ["promise", "jsonp", "node"],
 
             "hideTableOfContents": true
         },
         {
-            "name": "subclass-example",
-	        "displayName": "Subclassing Y.Promise",
-	        "description": "Extend Y.Promise to create classes that encapsulate standard transaction logic in descriptive method names",
-	        "modules": ["promise", "jsonp"],
-	        "useModules": ["promise", "jsonp"],
+            "name"       : "subclass-example",
+            "displayName": "Subclassing Y.Promise",
+            "description": "Extend Y.Promise to create classes that encapsulate standard transaction logic in descriptive method names",
+            "modules"    : ["promise", "jsonp", "array-extras"],
+            "useModules" : ["promise", "jsonp", "node", "array-extras"],
 
             "hideTableOfContents": true
         },
         {
-            "name": "plugin-example",
+            "name"       : "plugin-example",
             "displayName": "Creating a Node Plugin that chains transitions",
             "description": "Extend the Promise class to create your own Node plugin that chains transitions",
-            "modules": ["promise", "transition", "node-pluginhost"],
-            "useModules": ["promise", "transition", "node-pluginhost"],
+            "modules"    : ["promise", "transition", "node"],
+            "useModules" : ["promise", "transition", "node-pluginhost"],
 
             "hideTableOfContents": true
         }
