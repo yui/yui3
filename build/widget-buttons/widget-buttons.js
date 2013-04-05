@@ -707,11 +707,13 @@ WidgetButtons.prototype = {
     @param {String} section The `WidgetStdMod` section (header/body/footer).
     @param {Node} buttonContainer The button container node to insert into this
         widget's DOM.
+    @param {String} where. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or
+        WidgetStdMod.REPLACE.
     @protected
     @since 3.9.1
     **/
-    _insertButtonContainer: function(section, buttonContainer) {
-        this.setStdModContent(section, buttonContainer, 'after');
+    _insertButtonContainer: function(section, buttonContainer, where) {
+        this.setStdModContent(section, buttonContainer, where);
     },
 
     /**
@@ -954,7 +956,7 @@ WidgetButtons.prototype = {
         buttonContainer.insertBefore(button, sectionButtons.item(index));
 
         // Adds the button container to the section content.
-        this._insertButtonContainer(section, buttonContainer);
+        this._insertButtonContainer(section, buttonContainer, 'after');
     },
 
     /**
@@ -1086,7 +1088,7 @@ WidgetButtons.prototype = {
 
             // Adds the button container to the section content.
             if (buttonsUpdated) {
-                this._insertButtonContainer(section, buttonContainer);
+                this._insertButtonContainer(section, buttonContainer, 'after');
             }
         }, this);
     },
