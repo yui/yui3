@@ -1,0 +1,40 @@
+
+
+<div class="yui3-g">
+    <div class="yui3-u-1-2">
+      <form>
+        <fieldset>
+           <label for="demo_config_input">Value to parse: <input type="text" id="demo_config_input" value="€123.456,78 (EUR)"></label>
+           <input type="button" id="demo_config_btn" value="Report parsed number">
+        </fieldset>
+      </form>
+    </div>
+    <div class="yui3-u-1-2">
+        The parsed number is: <span id="parsed_config_number"></span>
+    </div>
+</div>
+
+<script>
+YUI().use("node", "datatype-number", function (Y) {
+    Y.on("click", function(e){
+
+        var input = Y.one("#demo_config_input").get("value"),
+            output = Y.Number.parse(input, {
+                decimalSeparator: ',',
+                thousandsSeparator: '.',
+                prefix: '€',
+                suffix: '(EUR)'
+            });
+
+        if(output === "") {
+            output += "(Invalid value)"
+        }
+
+        if (output == null) {
+            output = "null";
+        }
+
+        Y.one("#parsed_config_number").set("text", output);
+    }, "#demo_config_btn");
+});
+</script>

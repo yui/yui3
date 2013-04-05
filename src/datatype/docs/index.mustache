@@ -1,15 +1,15 @@
 <div class="intro component">
     <p>
-        The DataType Utility is a collection of classes that provide type-conversion and 
+        The DataType Utility is a collection of classes that provide type-conversion and
         string-formatting convenience methods for numbers, dates, and XML documents.
     </p>
 
 </div>
-				
+
 {{>getting-started}}
-				
+
 <h2 id="using">Using the DataType utility</h2>
-			
+
 <h3 id="dates">Dates</h3>
 
 <h4 id="formattingdates">Formatting dates</h4>
@@ -37,7 +37,7 @@ YUI({lang:"ko-KR"}).use("datatype-date", function(Y) {
     href="{{apiDocs}}/classes/Date.html#method_format"> strftime format
     specifiers</a>:
 </p>
-                
+
 <ul>
     <li><b>a:</b> list of abbreviated weekday names, from Sunday to Saturday
     <li><b>A:</b> list of full weekday names, from Sunday to Saturday
@@ -117,7 +117,21 @@ Y.log(Y.Number.format(123123123.176,{
 ```
 var number = Y.Number.parse("123123");
 ```
-
+<p>
+An optional configuration can be added, compatible with that of `Y.Number.format`.
+If found, any prefix, suffix, thousands separators and whitespaces will be deleted,
+the decimal separator will be replaced by a dot and the resulting string parsed.
+The `decimalPlaces` property is ignored and is meant for compatibility with `format`.
+</p>
+```
+Y.log(Y.Number.parse(" € 123.123.123,176 (EUR) ",{
+    prefix: "€",
+    thousandsSeparator: ".",
+    decimalSeparator: ",",
+    decimalPlaces: 2,
+    suffix: " (EUR)"
+}));
+```
 <h3 id="xml">XML</h3>
 
 <h4 id="formattingxml">Formatting XML</h4>
