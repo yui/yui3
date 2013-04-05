@@ -1,7 +1,12 @@
 Event Infrastructure Change History
 ===================================
 
-@VERSION@
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
 -----
 
 * `delegate()` now silences events originating from disabled form controls in

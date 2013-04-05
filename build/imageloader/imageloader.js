@@ -618,7 +618,7 @@ YUI.add('imageloader', function (Y, NAME) {
 		/**
 		 * Gets the object (as a <code>Y.Node</code>) of the DOM element indicated by "<code>domId</code>".
 		 * @method _getImgEl
-		 * @returns {Object} DOM element of the image as a <code>Y.Node</code> object
+		 * @return {Object} DOM element of the image as a <code>Y.Node</code> object
 		 * @private
 		 */
 		_getImgEl: function() {
@@ -632,7 +632,7 @@ YUI.add('imageloader', function (Y, NAME) {
 		 * Gets the Y position of the node in page coordinates.
 		 * Expects that the page-coordinate position of the image won't change.
 		 * @method _getYPos
-		 * @returns {Object} The Y position of the image
+		 * @return {Object} The Y position of the image
 		 * @private
 		 */
 		_getYPos: function() {

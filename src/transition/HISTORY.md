@@ -1,6 +1,19 @@
 Transition Change History
 =========================
 
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* Fixed `transitionend` event issues in Android 4.1 which claims it supports
+  non-prefixed transition properties, when it doesn't.
+
+* `transform` prefix is now handled separately from `transition` prefix.
+
 3.8.1
 -----
 
@@ -10,7 +23,7 @@ Transition Change History
 -----
 
   * No changes.
- 
+
 3.7.3
 -----
 

@@ -10,6 +10,7 @@ if (!YUI.Env[Y.version]) {
         var VERSION = Y.version,
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
+            ROOT = VERSION + '/',
             CDN_BASE = 'http://yui.yahooapis.com/',
             GALLERY_VERSION = '@GALLERY@',
             TNT = '2in3',

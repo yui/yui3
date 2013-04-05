@@ -280,4 +280,4 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
 
 
 
-}, '@VERSION@', {"requires": ["series-line-util", "series-plot-util", "series-fill-util"]});
+}, '@VERSION@', {"requires": ["series-cartesian", "series-line-util", "series-plot-util", "series-fill-util"]});

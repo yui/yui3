@@ -75,7 +75,7 @@ Escape = {
      *
      * @method _htmlReplacer
      * @param {String} match Matched character (must exist in HTML_CHARS).
-     * @returns {String} HTML entity.
+     * @return {String} HTML entity.
      * @static
      * @protected
      */

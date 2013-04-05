@@ -3851,6 +3851,9 @@ YUI.Env.parseUA = function(subUA) {
                         m = ua.match(/rv:([^\s\)]*)/);
                         if (m && m[1]) {
                             o.gecko = numberify(m[1]);
+                            if (/Mobile|Tablet/.test(ua)) {
+                                o.mobile = "ffos";
+                            }
                         }
                     }
                 }
@@ -3974,8 +3977,6 @@ YUI.Env.aliases = {
     "querystring": ["querystring-parse","querystring-stringify"],
     "recordset": ["recordset-base","recordset-sort","recordset-filter","recordset-indexer"],
     "resize": ["resize-base","resize-proxy","resize-constrain"],
-    "series-cartesian": ["series-line","series-marker","series-area","series-spline","series-column","series-bar","series-areaspline","series-combo","series-combospline"],
-    "series-cartesian-stacked": ["series-line-stacked","series-marker-stacked","series-area-stacked","series-spline-stacked","series-column-stacked","series-bar-stacked","series-areaspline-stacked","series-combo-stacked","series-combospline-stacked"],
     "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
     "template": ["template-base","template-micro"],
     "text": ["text-accentfold","text-wordbreak"],

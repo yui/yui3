@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+    <title>StackedComboSplineSeries Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+<script src="../../../../build/yui/yui.js"></script>
+<script src="./assets/chart-test-template.js"></script>
+<script src="./assets/series-combospline-stacked-tests.js"></script>
+<script>
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    coverage: ['series-combospline-stacked']
+}).use(
+    'test-console', 
+    'chart-test-template',
+    'series-combospline-stacked-tests',
+    function (Y) {
+
+    (new Y.Test.Console()).render('#log');
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

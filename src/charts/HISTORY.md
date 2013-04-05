@@ -1,18 +1,30 @@
 Charts Change History
 =====================
 
-@VERSION@
+3.9.1
+-----
+
+  * #2533120 Removed all lint warnings.
+
+3.9.0
 -----
 
   * #2533050 Addressed issue in which stacked histograms failed to render properly when there was less available space than specified dimensions.
   * #2533052 Addressed issue in which CartesianSeries.getTotalValues threw an error.
   * #2533053 Addressed issue in which CartesianSeries._getDefaultColor threw an error when the type argument was not given.
   * #2532883 Refactored code to be more modular.
+  * #2533101 Addressed issue in which the area attribute of the combo series was clobbered by the Fills class.
+  * #2532025 Addressed issue in which the pie chart slices were not clickable in Canvas implementations.
+  * #2528811 Created Candlestick series. (not yet integrated into Charts application)
+  * #2528812 Created OHLC series. (not yet integrated into Charts application)
+  * #2533079 Created SeriesBase class to allow for more modularity of different series types.
+  * #2530500 Added ability for Time and Numeric axes to calculate an edgeOffset similar to CategoryAxis.
+  * #2533066 Allow for standalone axes to draw automatically.
 
 3.8.1
 -----
 
-* #2533048 Addressed issue in which styles.majorUnit.determinant was not honored when set to distance.
+  * #2533048 Addressed issue in which styles.majorUnit.determinant was not honored when set to distance.
 
 3.8.0
 -----
@@ -22,17 +34,17 @@ Charts Change History
 3.7.3
 -----
 
-* No changes.
+  * No changes.
 
 3.7.2
 -----
 
-* No changes.
+  * No changes.
 
 3.7.1
 -----
 
-* No changes.
+  * No changes.
 
 3.7.0
 -----

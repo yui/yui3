@@ -6,7 +6,7 @@ var Assert = Y.Assert,
     suite;
 
 suite = new Y.Test.Suite({
-    name: 'Handlebars',
+    name: 'Handlebars'
 });
 
 // -- Sanity -------------------------------------------------------------------
@@ -114,7 +114,11 @@ suite.add(new Y.Test.Case({
     },
 
     'isEmpty() should be false for all strings': function () {
-        Assert.isFalse(H.Utils.isEmpty(''));
+        // Ignoring this test to match the following change in Handlebars:
+        // https://github.com/wycats/handlebars.js/commit/5f56d6
+        //
+        // Assert.isFalse(H.Utils.isEmpty(''));
+
         Assert.isFalse(H.Utils.isEmpty('foo'));
         Assert.isFalse(H.Utils.isEmpty(new String('')));
         Assert.isFalse(H.Utils.isEmpty(new String('foo')));
@@ -181,6 +185,21 @@ suite.add(new Y.Test.Case({
         });
         Assert.areSame(expectedOutput, H.render('{{#with author}}{{formatName this}}{{/with}}', data));
         Assert.areSame(expectedOutput, H.render('{{#with author}}{{formatName .}}{{/with}}', data));
+    },
+
+    'Arrays as context objects should be supported': function () {
+        var data           = [1, 2, 3],
+            expectedOutput = "123";
+
+        Assert.areSame(expectedOutput, H.render('{{#each .}}{{.}}{{/each}}', data));
+    },
+
+    'Nested blocks should be rendered correctly with the correct scope': function () {
+        var template =
+                '{{#with this}}{{#with this}}FOO{{/with}}{{/with}}' +
+                '{{#with this}}{{#with this}}BAR{{/with}}{{/with}}';
+
+        Assert.areSame('FOOBAR', H.render(template));
     }
 }));
 

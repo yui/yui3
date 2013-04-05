@@ -667,6 +667,10 @@ IO.prototype = {
             }
         }
 
+        // Convert falsy values to an empty string. This way IE can't be
+        // rediculous and translate `undefined` to "undefined".
+        data || (data = '');
+
         if (data) {
             switch (method) {
                 case 'GET':

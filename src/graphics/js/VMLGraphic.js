@@ -267,9 +267,10 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function(attr, value)
+	set: function()
 	{
 		var host = this,
+            attr = arguments[0],
             redrawAttrs = {
                 autoDraw: true,
                 autoSize: true,
@@ -352,7 +353,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @method initializer
      * @private
      */
-    initializer: function(config) {
+    initializer: function() {
         var render = this.get("render"),
             visibility = this.get("visible") ? "visible" : "hidden";
         this._shapes = {};
@@ -416,8 +417,8 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         {
             cfg.visible = false;
         }
-        var shapeClass = this._getShapeClass(cfg.type),
-            shape = new shapeClass(cfg);
+        var ShapeClass = this._getShapeClass(cfg.type),
+            shape = new ShapeClass(cfg);
         this._appendShape(shape);
         shape._appendStrokeAndFill();
         return shape;
@@ -434,7 +435,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
     {
         var node = shape.node,
             parentNode = this._frag || this._node;
-        if(this.get("autoDraw") || this.get("autoSize") == "sizeContentToGraphic")
+        if(this.get("autoDraw") || this.get("autoSize") === "sizeContentToGraphic")
         {
             parentNode.appendChild(node);
         }
@@ -589,7 +590,11 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @private
      */
     _createGraphic: function() {
-        var group = DOCUMENT.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);padding:0px 0px 0px 0px;display:block;position:absolute;top:0px;left:0px;zoom:1;" />');
+        var group = DOCUMENT.createElement(
+            '<group xmlns="urn:schemas-microsft.com:vml"' +
+            ' style="behavior:url(#default#VML);padding:0px 0px 0px 0px;display:block;position:absolute;top:0px;left:0px;zoom:1;"' +
+            '/>'
+        );
         return group;
     },
 
@@ -604,7 +609,13 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     _createGraphicNode: function(type)
     {
-        return DOCUMENT.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;zoom:1;" />');
+        return DOCUMENT.createElement(
+            '<' +
+            type +
+            ' xmlns="urn:schemas-microsft.com:vml"' +
+            ' style="behavior:url(#default#VML);display:inline-block;zoom:1;"' +
+            '/>'
+        );
 
     },
 
@@ -744,10 +755,10 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         this._node.style.visibility = "hidden";
         if(autoSize)
         {
-            if(autoSize == "sizeContentToGraphic")
+            if(autoSize === "sizeContentToGraphic")
             {
                 preserveAspectRatio = this.get("preserveAspectRatio");
-                if(preserveAspectRatio == "none" || contentWidth/contentHeight === nodeWidth/nodeHeight)
+                if(preserveAspectRatio === "none" || contentWidth/contentHeight === nodeWidth/nodeHeight)
                 {
                     xCoordOrigin = left;
                     yCoordOrigin = top;

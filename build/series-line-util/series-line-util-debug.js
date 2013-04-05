@@ -126,7 +126,7 @@ Lines.prototype = {
             }
             else if(lastPointValid)
             {
-                if(lineType != "dashed")
+                if(lineType !== "dashed")
                 {
                     path.lineTo(nextX, nextY);
                 }
@@ -143,7 +143,7 @@ Lines.prototype = {
             }
             else
             {
-                if(discontinuousType != "solid")
+                if(discontinuousType !== "solid")
                 {
                     this.drawDashedLine(path, lastValidX, lastValidY, nextX, nextY,
                                                 discontinuousDashLength,
@@ -284,4 +284,4 @@ Y.augment(Lines, Y.Attribute);
 Y.Lines = Lines;
 
 
-}, '@VERSION@', {"requires": ["series-base"]});
+}, '@VERSION@');

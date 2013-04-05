@@ -1,6 +1,22 @@
 YUI Loader Change History
 =========================
 
+@VERSION@
+------
+
+* Removed the default `build` directories from Loader generated combo URL's
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* Fixed gallery update method for override group configs
+* Fixed #2533138, added a missing `hasOwnProperty` check in `Loader.resolve` to help harden the config processing
+
 3.8.1
 -----
 
@@ -69,7 +85,7 @@ all of them asynchronously, then return to loader for post processing of the inj
    * 2530343 Loader.sorted does not contain conditional modules
    * 2530565 Slider one-off skins not being loaded
    * 2530958 Loader.resolve not properly handling CSS modules
-   * 2531319 The aliased modules are reported as missing 
+   * 2531319 The aliased modules are reported as missing
    * 2531324 Support regular expressions in the patterns configuration
    * 2531281 specify ID when injecting CSS via loader
    * 2530077 'force' ignored for on-page modules unless 'allowRollup' is true
@@ -90,7 +106,7 @@ all of them asynchronously, then return to loader for post processing of the inj
 
 3.4.0
 -----
-    
+
    * Added Alias support and flattened the module structure.
    * Alias support: When asking for: "dd"
         Loader actually asks for: "dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin"

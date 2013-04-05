@@ -1,7 +1,8 @@
 {
     "series-pie": {
         "requires":[
-            "series-marker"
+            "series-base",
+            "series-plot-util"
         ]
     }
 }

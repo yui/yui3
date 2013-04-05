@@ -48,7 +48,7 @@
         table such as sorting and scrolling.
     </p>
 </div>
-				
+
 {{>getting-started}}
 
 {{>need-skin-note}}
@@ -60,7 +60,7 @@
         DataTable was refactored for 3.5.0.  Some APIs were changed in backward
         incompatible ways.
     </p>
-    
+
     <p>
         Read the <a href="migration.html">3.5.0 Migration Guide</a> for tips to
         avoid unpleasant surprises.  If you still run into issues, please
@@ -323,7 +323,28 @@ var table = new Y.DataTable({
 </ul>
 
 <p>
-    `formatter`s are expected to return the string content to populate each
+    When the `formatter` configuration setting contains a string it will be assumed
+    to be the key into the hash of formatting functions at `Y.DataTable.BodyView.Formatters`.
+    If any such function is found, it will be used, otherwise, the string will be
+    presumed to be a template which may contain placeholders for data enclosed
+    in curly braces.   The `{value}` placeholder would use the value destined for
+    the current cell.  The values of other fields in the record corresponding
+    to the current row can be shown by providing their name enclosed in curly braces.
+    These other fields
+    don't need to have column definitions of their own, they will simply be read
+    from the underlying Model instance.
+</p>
+<p>
+    The `Y.DataTable.BodyView.Formatters` is empty for the developers to provide
+    their own formatting functions.  A basic set is provided in module
+    `datatable-formatters` that has to be explicitly loaded.  Some of these
+    named formatters accept extra configuration settings in the column definition,
+    as described in their
+    <a href="{{apiDocs}}/classes/DataTable.BodyView.Formatters.html">
+        API docs</a>.
+</p>
+<p>
+    `formatter` functions are expected to return the string content to populate each
     cell in that column, and `nodeFormatter`s are provided with the cell Nodes
     and expected to populate them using the Node API.
 </p>
@@ -524,7 +545,45 @@ var cols = [
     { key: "price", formatter: currency, decimalPlaces: 3 },
     ...
 ```
-
+<p>
+    If such a formatter will be used regularly, it is best to store it in the
+    `Y.DataTable.BodyView.Formatters` hash. The formatter can later be used
+    by its name.
+</p>
+<p>
+    Named formatters are structured slightly differently in
+    order to improve performance:
+</p>
+```
+Y.DataTable.BodyView.Formatters.currency = function (col) {
+    // This is done just once per rendering cycle:
+    var fn = Y.DataType.Number.format,
+        format = {
+            prefix            : col.currencySymbol     || '$',
+            decimalPlaces     : col.decimalPlaces      || 2,
+            decimalSeparator  : col.decimalSeparator   || '.',
+            thousandsSeparator: col.thousandsSeparator || ','
+        };
+    return function (o) {
+        // This is done once per row:
+        return fn(o.value, format);
+    }
+}
+```
+<p>
+    The function stored in the `Formatters` table is not the formatter function
+    itself, instead, it returns the formatting function.  The outer function is called just
+    once per rendering cycle and does any preliminary setup usually based on the
+    column configuration which it receives as its only argument, storing any
+    information in local variables.  The returned formatting function is then
+    run once per row accessing all the setup information via closure.
+</p>
+<p>
+    An optional `datatable-formatters` module provides
+    a collection of such formatters.
+    See the <a href="../api/classes/DataTable.BodyView.Formatters.html">API docs</a>
+    for more information on them.
+</p>
 <p>
     See <a href="#formatter-props">Appendix B</a> for a list of all properties
     passed to `formatter` functions.
@@ -557,7 +616,7 @@ var cols = [
     the record data, the record Model instance, and the column configuration
     object.
 </p>
-    
+
 <p>
     See <a href="#nodeformatter-props">Appendix C</a> for a list of all
     properties passed to `nodeFormatter` functions.
@@ -952,7 +1011,7 @@ table.datasource.load({
     <tr>
         <td><a href="{{apiDocs}}/modules/datatable-column-widths.html">`datatable-column-widths`</a></td>
         <td>
-            Creates the `Y.DataTable.ColumnWidths` class extension, and adds 
+            Creates the `Y.DataTable.ColumnWidths` class extension, and adds
             support for the `width` property in column configuration objects
             to `Y.DataTable`.
         </td>
@@ -990,6 +1049,14 @@ table.datasource.load({
             Creates the `Y.DataTable.Scroll` class extension and adds attribute
             `scrollable` to `Y.DataTable`.  Adds support for vertically and/or
             horizontally scrolling table rows within fixed table dimensions.
+        </td>
+        <td>no</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-formatters.html">`datatable-formatters`</a></td>
+        <td>
+            Populates `Y.DataTable.BodyView.Formatters` with a collection of
+            cell formatting functions.
         </td>
         <td>no</td>
     </tr>
@@ -1497,7 +1564,7 @@ pies.data.load(function () {
 ```
 
 <h3 id="scrolling">Scrolling</h3>
-				
+
 <p>
     <strong>Note:</strong> Scrolling is not currently supported on the Android
     WebKit browser.
@@ -1720,11 +1787,11 @@ pies.on('pie:slicesChange', function (e) {
                 ```
                 { name: 'fullname', formatter: ... }
                 ```
-                
+
                 <p>
                     Use this to assign a name to pass to `table.getColumn(NAME)`
                     or style columns with class "yui3-datatable-col-NAME" if a
-                    column isn't assigned a `key`.  
+                    column isn't assigned a `key`.
                 </p>
                 <p>
                     The value is used for the `_id` property.
@@ -1738,7 +1805,7 @@ pies.on('pie:slicesChange', function (e) {
                 ```
                 { field: 'fullname', formatter: ... }
                 ```
-                
+
                 <p>An alias for `name` for backward compatibility.</p>
             </td>
             <td>`datatable-base`</td>
@@ -1879,7 +1946,7 @@ pies.on('pie:slicesChange', function (e) {
                 <p>
                     Overrides the default
                     <a href="{{apiDocs}}/classes/DataTable.BodyView.html#property_CELL_TEMPLATE">CELL_TEMPLATE</a>
-                    used by `Y.DataTable.BodyView` to render the data cells 
+                    used by `Y.DataTable.BodyView` to render the data cells
                     for this column.  This is necessary when more control is
                     needed over the markup for the `<td>` itself, rather than
                     its content.
@@ -1894,7 +1961,7 @@ pies.on('pie:slicesChange', function (e) {
                     Used to customize the content of the data cells for this
                     column.
                 </p>
-                
+
                 <p>
                     <a href="#formatters">See the example above</a>
                 </p>
@@ -1908,7 +1975,7 @@ pies.on('pie:slicesChange', function (e) {
                     Used to customize the content of the data cells for this
                     column.
                 </p>
-                
+
                 <p>
                     <a href="#formatters">See the example above</a>
                 </p>
@@ -2229,7 +2296,7 @@ pies.on('pie:slicesChange', function (e) {
                     return o.data.lname + ', ' + o.data.fname;
                 }
                 ```
-                
+
                 <p>
                     The Model data for this row in simple object format.
                 </p>
@@ -2244,7 +2311,7 @@ pies.on('pie:slicesChange', function (e) {
                         o.value + '</a>';
                 }
                 ```
-                
+
                 <p>
                     The Model for this row.
                 </p>
@@ -2261,7 +2328,7 @@ pies.on('pie:slicesChange', function (e) {
                     return Y.DataType.Data.format(o.value, format);
                 }
                 ```
-                
+
                 <p>
                     The column configuration object.
                 </p>
@@ -2277,7 +2344,7 @@ pies.on('pie:slicesChange', function (e) {
                     }
                 }
                 ```
-                
+
                 <p>
                     A string of class names to add `<td class="HERE">` in
                     addition to the column class and any classes in the
@@ -2293,7 +2360,7 @@ pies.on('pie:slicesChange', function (e) {
                     return (o.rowIndex + 1) + ' - ' + o.value;
                 }
                 ```
-                
+
                 <p>
                     The index of the current Model in the ModelList.
                     <em>Typically</em> correlates to the row index as well.
@@ -2310,7 +2377,7 @@ pies.on('pie:slicesChange', function (e) {
                     }
                 }
                 ```
-                
+
                 <p>
                     A string of css classes to add `<tr class="HERE"><td...`.
                 </p>
@@ -2429,7 +2496,7 @@ YUI.add('datatable-node', function (Y) {
                 count   = columns.length,
                 data    = [],
                 i;
-                
+
             config.host.all('tbody td').each(function (node, i) {
                 var record = (i % count) ?
                         data[data.length - 1] :

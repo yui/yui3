@@ -1,6 +1,7 @@
 {
     "series-bar": {
         "requires":[
+            "series-marker",
             "series-histogram-base"
         ]
     }

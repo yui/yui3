@@ -26,6 +26,16 @@ CategoryImpl.NAME = "categoryImpl";
 
 CategoryImpl.ATTRS = {
     /**
+     * Determines whether and offset is automatically calculated for the edges of the axis.
+     *
+     * @attribute calculateEdgeOffset
+     * @type Boolean
+     */
+    calculateEdgeOffset: {
+        value: true
+    }
+
+    /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
      * The method use would need to implement the arguments below and return a `String` or `HTMLElement`.
      * <dl>
@@ -44,10 +54,9 @@ CategoryImpl.prototype = {
      *
      * @method formatLabel
      * @param {Object} value
-     * @param {Object} format Pattern used to format the value.
      * @return String
      */
-    formatLabel: function(val, format)
+    formatLabel: function(val)
     {
         return val;
     },
@@ -149,23 +158,9 @@ CategoryImpl.prototype = {
      * @param {Number} len Length of the axis.
      * @return Number
      */
-    getTotalMajorUnits: function(majorUnit, len)
+    getTotalMajorUnits: function()
     {
         return this.get("data").length;
-    },
-
-    /**
-     * Gets the distance that the first and last ticks are offset from there respective
-     * edges.
-     *
-     * @method getEdgeOffset
-     * @param {Number} ct Number of ticks on the axis.
-     * @param {Number} l Length (in pixels) of the axis.
-     * @return Number
-     */
-    getEdgeOffset: function(ct, l)
-    {
-        return l/ct;
     },
 
     /**
