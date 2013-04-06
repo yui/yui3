@@ -20,8 +20,8 @@ function WebSQLStore(config) {
     });
 }
 Y.mix(WebSQLStore.prototype, {
-    _executeSql: function (query, values, formatter) {
-        return this._table.then(function (db) {
+    _executeSql: function (query, values, formatter, callback) {
+        var promise = this._table.then(function (db) {
             return new Y.Promise(function (fulfill, reject) {
                 db.transaction(function (tx) {
                     tx.executeSql(query, values, function (tx, result) {
@@ -32,8 +32,7 @@ Y.mix(WebSQLStore.prototype, {
                 });
             });
         });
-    },
-    _addCallback: function (promise, callback) {
+
         if (callback) {
             promise.done(function (result) {
                 callback(undefined, result);
@@ -45,41 +44,47 @@ Y.mix(WebSQLStore.prototype, {
         return Y.JSON.parse(results.rows.item(0).value);
     },
     get: function (key, callback) {
-        return this._addCallback(this._executeSql(
+        return this._executeSql(
             'SELECT value FROM ' + this.name + ' WHERE key=?',
             [key],
-            this._getFormatter
-        ), callback);
+            this._getFormatter,
+            callback
+        );
     },
     _putFormatter: function (results) {
         return results.rowsAffected;
     },
     put: function (key, value, callback) {
-        this._addCallback(this._executeSql(
+        this._executeSql(
             'REPLACE INTO ' + this.name + ' (key, value) VALUES (?, ?);',
             [key, Y.JSON.stringify(value)],
-            this._putFormatter
-        ), callback);
+            this._putFormatter,
+            callback
+        );
     },
     remove: function (key, callback) {
-        this._addCallback(this._executeSql(
+        this._executeSql(
             'DELETE FROM ' + this.name + ' WHERE key=?',
             [key],
-            this._putFormatter
-        ), callback);
+            this._putFormatter,
+            callback
+        );
     },
     _countFormatter: function (result) {
         return result.rows.item(0)['COUNT(1)'];
     },
     count: function (callback) {
-        return this._addCallback(this._executeSql(
-            'SELECT COUNT(1) FROM ' + this.name, [], this._countFormatter
-        ), callback);
+        return this._executeSql(
+            'SELECT COUNT(1) FROM ' + this.name,
+            [],
+            this._countFormatter,
+            callback
+        );
     },
     clear: function (callback) {
-        this._addCallback(this._executeSql(
-            'DELETE FROM ' + this.name, [], this._putFormatter
-        ), callback);
+        this._executeSql(
+            'DELETE FROM ' + this.name, [], this._putFormatter, callback
+        );
     }
 });
 
