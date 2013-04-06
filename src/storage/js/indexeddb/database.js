@@ -1,5 +1,8 @@
-var win = Y.config.win,
-        indexedDB = win.indexedDB || win.webkitIndexedDB || win.mozIndexedDB || win.oIndexedDB || win.msIndexedDB;
+var win        = Y.config.win,
+    indexedDB  = win.indexedDB || win.webkitIndexedDB || win.mozIndexedDB ||
+                 win.oIndexedDB || win.msIndexedDB,
+    READ_ONLY  = IDBTransaction.READ_ONLY || "readonly",
+    READ_WRITE = IDBTransaction.READ_WRITE || "readwrite";
 
 function IndexedDBStorage(config) {
     this.name = config.name;

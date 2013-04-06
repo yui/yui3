@@ -7,42 +7,79 @@ function WebSQLStore(config) {
 
     this._table = new Y.Promise(function (fulfill, reject) {
         db.transaction(function (tx) {
-            tx.executeSQL('CREATE TABLE IF NOT EXISTS ? (key unique, value);',
-                [name]);
-        }, function () {
-            fulfill(db);
-        }, reject);
+            tx.executeSql(
+                'CREATE TABLE IF NOT EXISTS ' + name + ' (key unique, value);',
+                [],
+                function () {
+                    fulfill(db);
+                }, function (tx, err) {
+                    reject(err);
+                }
+            );
+        });
     });
 }
 Y.mix(WebSQLStore.prototype, {
-    _transaction: function (fn) {
-        return this_table.then(function (db) {
+    _executeSql: function (query, values, formatter) {
+        return this._table.then(function (db) {
             return new Y.Promise(function (fulfill, reject) {
                 db.transaction(function (tx) {
-                    fn(tx, fulfill);
-                }, undefined, reject);
+                    tx.executeSql(query, values, function (tx, result) {
+                        fulfill(formatter(result));
+                    }, function (tx, err) {
+                        reject(err);
+                    });
+                });
             });
         });
     },
-    get: function (key) {
-        var name = this.name;
-
-        return this._transaction(function (tx, fulfill) {
-            tx.executeSQL('SELECT value FROM ? WHERE key=?', [name, key],
-                fulfill);
-        });
+    _addCallback: function (promise, callback) {
+        if (callback) {
+            promise.done(function (result) {
+                callback(undefined, result);
+            }, callback);
+        }
+        return promise;
     },
-    put: function (key, value) {
-        var name = this.name;
-
-        return this._transaction(function (tx, fulfill) {
-            tx.executeSQL(
-                'INSERT OR IGNORE INTO ? VALUES (?, ?);' +
-                'UPDATE ? SET value=? WHERE key=?;',
-                [name, key, value, name, value, key],
-                fulfill
-            );
-        });
+    _getFormatter: function (results) {
+        return Y.JSON.parse(results.rows.item(0).value);
+    },
+    get: function (key, callback) {
+        return this._addCallback(this._executeSql(
+            'SELECT value FROM ' + this.name + ' WHERE key=?',
+            [key],
+            this._getFormatter
+        ), callback);
+    },
+    _putFormatter: function (results) {
+        return results.rowsAffected;
+    },
+    put: function (key, value, callback) {
+        this._addCallback(this._executeSql(
+            'REPLACE INTO ' + this.name + ' (key, value) VALUES (?, ?);',
+            [key, Y.JSON.stringify(value)],
+            this._putFormatter
+        ), callback);
+    },
+    remove: function (key, callback) {
+        this._addCallback(this._executeSql(
+            'DELETE FROM ' + this.name + ' WHERE key=?',
+            [key],
+            this._putFormatter
+        ), callback);
+    },
+    _countFormatter: function (result) {
+        return result.rows.item(0)['COUNT(1)'];
+    },
+    count: function (callback) {
+        return this._addCallback(this._executeSql(
+            'SELECT COUNT(1) FROM ' + this.name, [], this._countFormatter
+        ), callback);
+    },
+    clear: function (callback) {
+        this._addCallback(this._executeSql(
+            'DELETE FROM ' + this.name, [], this._putFormatter
+        ), callback);
     }
 });
 

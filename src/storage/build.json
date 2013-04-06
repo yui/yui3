@@ -14,7 +14,8 @@
         },
         "storage-websql": {
             "jsfiles": [
-            	"websql/database.js"
+            	"websql/database.js",
+                "websql/store.js"
             ]
         },
         "storage-local": {

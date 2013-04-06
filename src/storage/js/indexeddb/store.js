@@ -1,7 +1,3 @@
-var READ_ONLY  = IDBTransaction.READ_ONLY || "readonly",
-    READ_WRITE = IDBTransaction.READ_WRITE || "readwrite",
-    Lang       = Y.Lang;
-
 function Store(config) {
     this.name = config.name;
     this.db = config.db;
@@ -13,7 +9,7 @@ Y.mix(Store.prototype, {
             var request = fn(db.transaction([name],
                             write ? READ_WRITE : READ_ONLY).objectStore(name));
             return new Y.Promise(function (resolve, reject) {
-                request.onsuccess = function (e) {
+                request.onsuccess = function () {
                     resolve(request.result);
                 };
                 request.onerror = reject;
@@ -46,15 +42,15 @@ Y.mix(Store.prototype, {
             return store['delete'](index);
         }), fn);
     },
-    count: function (key, fn) {
+    count: function (fn) {
         return this._addCallback(this._transaction(function (store) {
-            return store.count(key);
+            return store.count();
         }), fn);
     },
     clear: function (fn) {
         this._addCallback(this._transactionRW(function (store) {
             return store.clear();
-        }));
+        }), fn);
     }
 });
 

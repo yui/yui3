@@ -5,12 +5,12 @@
         ],
 
         "plugins": {
-        	"storage-indexeddb": {
-	            "condition": {
+            "storage-indexeddb": {
+                "condition": {
                     "trigger": "storage",
                     "test"   : "indexeddb.js"
                 }
-        	},
+            },
             "storage-websql": {
                 "condition": {
                     "trigger": "storage",
@@ -26,15 +26,15 @@
                     "test"   : "localstorage.js"
                 }
             },
-        	"storage-js": {
-	            "condition": {
+            "storage-js": {
+                "condition": {
                     "trigger": "storage",
                     "test"   : "memory.js"
                 },
                 "requires": [
                     "json"
                 ]
-        	}
+            }
         }
     }
 }
