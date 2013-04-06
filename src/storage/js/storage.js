@@ -37,8 +37,6 @@ An asynchronous database abstraction layer. The Storage class implementation
 will vary based on the environment in which YUI is running. It may be one of
 IndexedDBStorage, WebSQLStorage, LocalStorage or MemoryStorage.
 
-
-
 @class Storage
 @constructor
 @param {Object} config Object literal specifying configuration properties
@@ -77,4 +75,58 @@ IndexedDBStorage, WebSQLStorage, LocalStorage or MemoryStorage.
     doing any operation on them.
 
     @method close
+    **/
+
+/**
+An asynchronous object store that saves values by keys. This class is not
+intended to be instantiated by the user, but instead internally by Y.Storage.
+
+@class Storage.Store
+@constructor
+@param {Object} config Object literal specifying configuration properties
+@param {String} config.name Name of the database
+@param {Object} config.db Corresponding database object
+**/
+    /**
+    The name of the object store
+
+    @property name
+    @type String
+    **/
+    /**
+    Gets a value by key
+
+    @method get
+    @param {String} key The key that points to the desired value
+    @param {Function} callback Callback receiving an optional error object and
+                        the stored value
+    @return {Promise} promise Promise representing the requested value
+    **/
+    /**
+    Inserts or updates a value by key
+
+    @method put
+    @param {String} key The key that points to the desired value
+    @param {Any} value The value to store
+    @param {Function} callback Callback receiving an optional error object
+    **/
+    /**
+    Removes the value from the store
+
+    @method remove
+    @param {String} key The key that points to the removed value
+    @param {Function} callback Callback receiving an optional error object
+    **/
+    /**
+    Counts the number of values in the store
+
+    @method count
+    @param {Function} callback Callback receiving an optional error object and
+                        a number with the number of values in the store
+    **/
+    /**
+    Removes all values from the store
+
+    @method clear
+    @param {Function} callback Callback receiving an optional error object
     **/
