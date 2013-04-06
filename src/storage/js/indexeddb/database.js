@@ -2,8 +2,6 @@ var win = Y.config.win,
         indexedDB = win.indexedDB || win.webkitIndexedDB || win.mozIndexedDB || win.oIndexedDB || win.msIndexedDB;
 
 function IndexedDBStorage(config) {
-    config = config || {};
-    
     this.name = config.name;
     this.version = config.version;
     this._stores = config.stores;
