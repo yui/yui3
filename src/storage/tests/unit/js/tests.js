@@ -59,20 +59,41 @@ YUI.add('module-tests', function(Y) {
 
             test.wait(1000);
         },
-        'count rows': function () {
+        'count keys': function () {
             var test = this;
 
             storage.test.count(function (err, count) {
                 test.resume(function () {
                     if (err) throw err;
 
-                    Assert.areEqual(2, count, 'Unexpected number of rows');
+                    Assert.areEqual(2, count, 'Unexpected number of keys');
                 });
             });
 
             test.wait(1000);
         },
-        'delete all rows': function () {
+        'remove a key': function () {
+            var test = this;
+
+            storage.test.remove('testObj', function (err) {
+                if (err) {
+                    test.resume(function () {
+                        throw err;
+                    });
+                    return;
+                }
+                storage.test.count(function (err, count) {
+                    test.resume(function () {
+                        if (err) throw err;
+
+                        Assert.areEqual(1, count, 'Unexpected number of keys after removing one key');
+                    });
+                });
+            });
+
+            test.wait(1000);
+        },
+        'delete all keys': function () {
             var test = this;
 
             storage.test.clear(function (err) {
