@@ -1,0 +1,11 @@
+{
+    "name"       : "storage",
+    "displayName": "Gallery: storage",
+    "description": "*Summary Goes Here*",
+    "author"     : [ "jdopazo" ],
+    "use"        : [ "storage" ],
+
+    "tags": [ "gallery" ],
+
+    "examples": []
+}
