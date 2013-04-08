@@ -3512,6 +3512,9 @@ YUI.Env.parseUA = function(subUA) {
                         m = ua.match(/rv:([^\s\)]*)/);
                         if (m && m[1]) {
                             o.gecko = numberify(m[1]);
+                            if (/Mobile|Tablet/.test(ua)) {
+                                o.mobile = "ffos";
+                            }
                         }
                     }
                 }
@@ -5627,7 +5630,7 @@ if (!YUI.Env[Y.version]) {
     (function() {
         var VERSION = Y.version,
             BUILD = '/build/',
-            ROOT = VERSION + BUILD,
+            ROOT = VERSION + '/',
             CDN_BASE = Y.Env.base,
             GALLERY_VERSION = 'gallery-2013.04.03-19-53',
             TNT = '2in3',
@@ -11180,6 +11183,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "tree"
         ]
     },
+    "tree-sortable": {
+        "requires": [
+            "tree"
+        ]
+    },
     "uploader": {
         "requires": [
             "uploader-html5",
@@ -11402,7 +11410,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '6d43bc92fc4f84b4141d123e32cdc9f1';
+YUI.Env[Y.version].md5 = '0d7d2a0e035eea28a698fdd28db1e2e6';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
