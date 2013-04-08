@@ -16,9 +16,6 @@ var DOT = '.',
      * @uses WidgetParent
      */
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
-    LIST_TEMPLATE: '<ul></ul>',
-    PANEL_TEMPLATE: '<div></div>',
-
     _afterChildAdded: function() {
         this.get('contentBox').focusManager.refresh();
     },
@@ -187,7 +184,15 @@ var DOT = '.',
         panelNode: function(srcNode) {
             return srcNode.one(Y.TabviewBase._queries.tabviewPanel);
         }
-    }
+    },
+
+    // Static for legacy support.
+    LIST_TEMPLATE: '<ul></ul>',
+    PANEL_TEMPLATE: '<div></div>'
 });
+
+// Map to static values by default.
+TabView.prototype.LIST_TEMPLATE = TabView.LIST_TEMPLATE;
+TabView.prototype.PANEL_TEMPLATE = TabView.PANEL_TEMPLATE;
 
 Y.TabView = TabView;
