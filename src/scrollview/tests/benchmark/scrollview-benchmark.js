@@ -1,55 +1,24 @@
-YUI.add('scrollview-benchmark', function (Y) {
+YUI.add('scrollview-benchmark', function (Y, NAME) {
 
-    var suite = Y.BenchmarkSuite = new Benchmark.Suite();
+    var suite = Y.BenchmarkSuite = new Benchmark.Suite,
+        container,
+        scrollview;
+    
+    container = document.createElement('div')
+    container.id = "container";
+    document.body.appendChild(container);
 
-    function reset() {
-    	Y.one('#container').empty(true).setHTML('<div id="sv-horiz-content" class="horiz-content yui3-scrollview-loading"><ul><li>1</li><li>2</li><li>3</li><li>4</li></ul></div>');
-    }
-
-
-    suite.add('Y.ScrollView: Instantiate a bare ScrollView', function () {
-        
-        reset();
-          
-        var config = {
-                id:"svHorizPaged",
-                srcNode:"#sv-horiz-content",
-                height:200,
-                width:300,
-                flick: {
-                    minDistance: 10,
-                    minVelocity:0.3,
-                    axis:"x"
-                },
-                render:true
-            },
-            model = new Y.ScrollView(config);
+    suite.add('ScrollView: Create', function () {
+        scrollview = new Y.ScrollView({
+            render: container
+        });
+    });
+    
+    suite.add('ScrollView: Create & Destroy', function () {
+        scrollview = new Y.ScrollView({
+            render: container
+        });
+        scrollview.destroy();
     });
 
-
-    suite.add('Y.ScrollView: Instantiate a paginated ScrollView', function () {
-
-        reset();
-          
-        var config = {
-                id:"svHorizPaged",
-                srcNode:"#sv-horiz-content",
-                height:200,
-                width:300,
-                flick: {
-                    minDistance: 10,
-                    minVelocity:0.3,
-                    axis:"x"
-                },
-                plugins: [{
-                    fn:Y.Plugin.ScrollViewPaginator, 
-                    cfg:{
-                        selector:">ul>li"
-                    }
-                }],    
-                render:true
-            },
-            model = new Y.ScrollView(config);
-    });
-
-}, '@VERSION@', {requires: ['scrollview-base', 'scrollview-paginator']});
+}, '@VERSION@', {requires: ['scrollview-base']});
