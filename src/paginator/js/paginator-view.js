@@ -53,12 +53,16 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
        Binds the container change event
      @method initializer
      */
-    initializer: function () {
+    initializer: function (config) {
         if (this.template && typeof this.template !== 'function') {
             this.template = Y.Paginator.Templates.compile(this.template);
         }
 
-        this.after('containerChange', this._afterContainerChanged, this);
+        if (config.container) {
+            this._afterContainerChanged({newVal: this.get('container')});
+        } else {
+            this.after('containerChange', this._afterContainerChanged, this);
+        }
     },
 
     /**
@@ -73,7 +77,12 @@ PaginatorView = Y.Base.create('paginator', Y.View, [], {
             mainClass = getClassName('paginator');
 
         if(!container.hasClass(mainClass)) {
+
             container = container.ancestor('.' + mainClass);
+
+            if (!container) {
+                container = e.newVal.addClass(mainClass);
+            }
         }
 
         container.addClass(getClassName(this._classes[0].NAME));

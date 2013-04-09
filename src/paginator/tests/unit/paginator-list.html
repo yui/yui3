@@ -9,12 +9,12 @@
     <div id="testbed"></div>
 
     <script src="../../../../build/yui/yui.js"></script>
-    <script src="./assets/paginator-tests.js"></script>
+    <script src="./assets/paginator-list-tests.js"></script>
     <script>
         YUI({
-            coverage: ['paginator', 'paginator-core'],
+            coverage: ['paginator-view', 'paginator-url', 'paginator-template', 'paginator-list'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-        }).use('test-console', 'paginator-tests', function (Y) {
+        }).use('test-console', 'paginator-list-tests', function (Y) {
 
             new Y.Test.Console().render();
 

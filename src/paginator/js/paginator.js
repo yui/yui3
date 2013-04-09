@@ -149,6 +149,14 @@ Paginator = Y.Base.create('paginator', Y.Widget, [Y.Paginator.Core], {
     _viewSetterFn: function (view) {
         if (typeof view === 'string') {
             view = this._createView(view);
+        } else {
+            if (!view.get('container')) {
+                view.set('container', this.get('contentBox'));
+            }
+
+            if (!view.get('model')) {
+                view.set('model', this);
+            }
         }
 
         return view;

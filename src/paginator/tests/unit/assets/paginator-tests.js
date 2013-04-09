@@ -1,6 +1,18 @@
 YUI.add('paginator-tests', function (Y) {
 
+function Publisher (bubbleTo) {
+    this.init(bubbleTo);
+}
+Publisher.prototype = {
+    init: function (bubbleTo) {
+        this.addTarget(bubbleTo);
+    }
+};
+Y.augment(Publisher, Y.EventTarget);
+
+
 var suite = new Y.Test.Suite("Paginator: Base");
+
 
 suite.add(new Y.Test.Case({
     name: "Class extension",
@@ -194,16 +206,13 @@ suite.add(new Y.Test.Case({
         pg.render();
     },
 
-    'test paging event listeners': function () {
-
-    },
-
     'test to json method': function () {
-        var pgConfig = {
+        var MyView = new Y.View,
+            pgConfig = {
                 itemsPerPage: 10,
                 totalItems: 100,
                 page: 5,
-                view: Y.View
+                view: MyView
             },
             pg = new Y.Paginator(pgConfig),
             json = pg.toJSON();
@@ -213,18 +222,10 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(pgConfig.page, json.page, 'Current page has changed.');
     },
 
-    'test UI events': function () {
-        function Publisher (bubbleTo) {
-            this.init(bubbleTo);
-        }
-        Publisher.prototype = {
-            init: function (bubbleTo) {
-                this.addTarget(bubbleTo);
-            }
-        };
-        Y.augment(Publisher, Y.EventTarget);
+    'test UI event: first': function () {
 
-        var pg = new Y.Paginator({
+        var test = this,
+            pg = new Y.Paginator({
                 itemsPerPage: 10,
                 totalItems: 100,
                 page: 5,
@@ -235,11 +236,121 @@ suite.add(new Y.Test.Case({
 
         // wire up asserts
         pg.after('pageChange', function (e) {
-            alert(pg.get('page'));
+            Y.Assert.areSame(1, pg.get('page'));
         });
 
-        // fire controller events
-        pub.fire('foo:first');
+        pub.fire('pub:first');
+
+
+    },
+
+    'test UI event: last': function () {
+
+        var test = this,
+            pg = new Y.Paginator({
+                itemsPerPage: 10,
+                totalItems: 100,
+                page: 5,
+                view: 'View',
+                render: true
+            }),
+            pub = new Publisher(pg);
+
+        // wire up asserts
+        pg.after('pageChange', function (e) {
+            Y.Assert.areSame(10, pg.get('page'));
+        });
+
+        pub.fire('pub:last');
+
+
+    },
+
+    'test UI event: prev': function () {
+
+        var test = this,
+            pg = new Y.Paginator({
+                itemsPerPage: 10,
+                totalItems: 100,
+                page: 5,
+                view: 'View',
+                render: true
+            }),
+            pub = new Publisher(pg);
+
+        // wire up asserts
+        pg.after('pageChange', function (e) {
+            Y.Assert.areSame(4, pg.get('page'));
+        });
+
+        pub.fire('pub:prev');
+
+
+    },
+
+    'test UI event: next': function () {
+
+        var test = this,
+            pg = new Y.Paginator({
+                itemsPerPage: 10,
+                totalItems: 100,
+                page: 5,
+                view: 'View',
+                render: true
+            }),
+            pub = new Publisher(pg);
+
+        // wire up asserts
+        pg.after('pageChange', function (e) {
+            Y.Assert.areSame(6, pg.get('page'));
+        });
+
+        pub.fire('pub:next');
+
+
+    },
+
+    'test UI event: page': function () {
+
+        var test = this,
+            pg = new Y.Paginator({
+                itemsPerPage: 10,
+                totalItems: 100,
+                page: 5,
+                view: 'View',
+                render: true
+            }),
+            pub = new Publisher(pg);
+
+        // wire up asserts
+        pg.after('pageChange', function (e) {
+            Y.Assert.areSame(2, pg.get('page'));
+        });
+
+        pub.fire('pub:page', { val: 2});
+
+
+    },
+
+    'test UI event: perPage': function () {
+
+        var test = this,
+            pg = new Y.Paginator({
+                itemsPerPage: 10,
+                totalItems: 100,
+                page: 5,
+                view: 'View',
+                render: true
+            }),
+            pub = new Publisher(pg);
+
+        // wire up asserts
+        pg.after('perPageChange', function (e) {
+            Y.Assert.areSame(5, pg.get('perPage'));
+            Y.Assert.areSame(20, pg.get('pages'));
+        });
+
+        pub.fire('pub:perPage', {val: 5});
 
     }
 }));
@@ -248,4 +359,4 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{ requires:['paginator', 'base-build', 'widget', 'view'] });
+}, '@VERSION@' ,{ requires:['paginator', 'base-build', 'view'] });
