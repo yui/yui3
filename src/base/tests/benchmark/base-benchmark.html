@@ -10,53 +10,55 @@
 
 <div id="log"></div>
 
-<applet code="nano" archive="http://localhost/benchmark/nano.jar" style="display: none;"></applet>
-<script src="http://localhost/benchmark/benchmark.js"></script>
+<applet code="nano" archive="https://github.com/bestiejs/benchmark.js/raw/v1.0.0/nano.jar" style="display: none;"></applet>
+<script src="https://raw.github.com/bestiejs/benchmark.js/v1.0.0/benchmark.js"></script>
 
+<!--script src="http://yui.yahooapis.com/3.8.1/build/yui/yui.js"></script-->
 <script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
-    modules: {
+    combine: false,
+    filter : 'raw',
 
+    modules: {
         'base-benchmark': {
             fullpath: 'base-benchmark.js',
-            requires: ['dump', 'base']
-        },
-
-        'test-console': {
-            fullpath : '../../../common/tests/assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '../../../common/tests/assets/test-console.css',
-            type    : 'css'
+            requires: ['base']
         }
     },
 
     useBrowserConsole: false
+
 }).use('base-benchmark', 'node-base', 'test-console', function (Y) {
+
     var suite = Y.BenchmarkSuite,
         start = Y.one('#start');
 
     suite.on('start', function () {
         start.set('disabled', true);
-        Y.log('Starting benchmarks.');
+        Y.log('Starting benchmarks.', 'status', 'benchmark');
     });
 
-    suite.on('cycle', function (ev, bench) {
-        Y.log(String(bench));
+    suite.on('cycle', function (e) {
+        Y.log(String(e.target), 'info', 'benchmark');
     });
 
     suite.on('complete', function () {
         start.set('disabled', false);
-        Y.log('Finished.');
+        Y.log('Finished.', 'status', 'benchmark');
     });
 
     start.on('click', function () {
-        suite.run(true);
+        suite.run({async: true});
     });
+
+    new Y.Test.Console({render: '#log'}).filter.setAttrs({
+        'category.fail'    : false,
+        'category.status'  : true,
+        'source.benchmark' : true,
+        'source.TestRunner': false
+    });
+
 });
 </script>
 

@@ -1105,6 +1105,16 @@ YUI({
             Assert.isTrue(Y.DOM.isWindow(Y.all(window)._nodes[0], "Y.all(window)"));
         },
 
+        test_all_after_destroy: function () {
+            var node = Y.one('#test-form');
+
+            Assert.isTrue((node.all('*').size() > 0), "node.all('*').size() should be > 0");
+
+            node.destroy();
+
+            Assert.areSame(0, node.all('*').size(), "destroyed node.all('*').size() should be 0");
+        },
+
         test_isEmpty: function() {
             Assert.isFalse(Y.all('input').isEmpty());
             Assert.isTrue(Y.all('.nomatch').isEmpty());
