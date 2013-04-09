@@ -14,10 +14,12 @@ Y.extend(ArrayPromise, Y.Promise);
 var demoNode = Y.one('#demo');
 
 function log(text) {
-    demoNode.append('<div>' + text + '</div>');
+    demoNode.append(Y.Node.create('<div></div>').set('text', text));
 }
 function showError(message) {
-    demoNode.append('<div class="error">' + message + '</div>');
+    demoNode.append(
+        Y.Node.create('<div></div>').addClass('error').set('text', message)
+    );
 }
 
 {{>subclass-array-operations}}
