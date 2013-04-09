@@ -60,6 +60,11 @@
             "jsfiles": [
                 "formatters.js"
             ]
+        },
+        "datatable-keynav": {
+            "jsfiles": [
+                "keynav.js"
+            ]
         }
     }
 }

@@ -56,7 +56,7 @@
             },
             "datatable-column-widths": {
                 "requires": [
-                    "datatable-base"
+                "datatable-base"
                 ]
             },
             "datatable-message": {
@@ -76,7 +76,7 @@
                     "datatable-base",
                     "plugin",
                     "datasource-local"
-                ]
+                    ]
             },
             "datatable-sort": {
                 "requires": [
@@ -85,20 +85,25 @@
                 "lang": ["en", "fr", "es"],
                 "skinnable": true
             },
-			"datatable-scroll": {
-				"requires": [
-					"datatable-base",
-					"datatable-column-widths",
-					"dom-screen"
-				],
+            "datatable-scroll": {
+                "requires": [
+                    "datatable-base",
+                    "datatable-column-widths",
+                    "dom-screen"
+                ],
                 "skinnable": true
-			},
+            },
             "datatable-formatters": {
                 "requires": [
                     "datatable-body",
                     "datatype-number-format",
                     "datatype-date-format",
                     "escape"
+                ]
+            },
+            "datatable-keynav": {
+                "requires": [
+                    "datatable-base"
                 ]
             }
         }
