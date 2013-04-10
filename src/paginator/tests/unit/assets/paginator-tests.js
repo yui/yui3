@@ -1,17 +1,7 @@
 YUI.add('paginator-tests', function (Y) {
 
-function Publisher (bubbleTo) {
-    this.init(bubbleTo);
-}
-Publisher.prototype = {
-    init: function (bubbleTo) {
-        this.addTarget(bubbleTo);
-    }
-};
-Y.augment(Publisher, Y.EventTarget);
 
-
-var suite = new Y.Test.Suite("Paginator: Base");
+var suite = new Y.Test.Suite("Paginator");
 
 
 suite.add(new Y.Test.Case({
@@ -46,19 +36,19 @@ suite.add(new Y.Test.Case({
             totalItems: 100
         });
 
-        pg.last();
+        pg.lastPage();
 
         Y.Assert.areSame(10, pg.get('page'), 'last() did not go to 10');
 
-        pg.last();
+        pg.lastPage();
 
         Y.Assert.areSame(10, pg.get('page'), 'last() did not go to 10');
 
-        pg.first();
+        pg.firstPage();
 
         Y.Assert.areSame(1, pg.get('page'), 'first() did not go to one');
 
-        pg.first();
+        pg.firstPage();
 
         Y.Assert.areSame(1, pg.get('page'), 'first() did not go to one');
     },
@@ -71,11 +61,11 @@ suite.add(new Y.Test.Case({
             }),
             currentPage = pg.get('page');
 
-        pg.next();
+        pg.nextPage();
 
         Y.Assert.areSame(currentPage + 1, pg.get('page'), 'next() did not go to current + 1');
 
-        pg.prev();
+        pg.prevPage();
 
         Y.Assert.areSame(currentPage, pg.get('page'), 'prev() did not go back to starting page');
 
@@ -88,17 +78,14 @@ suite.add(new Y.Test.Case({
                 page: 5
             });
 
-        pg.page(6);
+        pg.set('page', 6);
         Y.Assert.areSame(6, pg.get('page'), 'did not page to 6');
 
-        pg.page(2);
+        pg.set('page', 2);
         Y.Assert.areSame(2, pg.get('page'), 'did not page to 2');
 
-        pg.page(8);
+        pg.set('page', 8);
         Y.Assert.areSame(8, pg.get('page'), 'did not page to 8');
-
-        pg.page();
-        Y.Assert.areSame(8, pg.get('page'), 'did not stay at page 8');
 
     },
 
@@ -109,66 +96,33 @@ suite.add(new Y.Test.Case({
                 page: 5
             });
 
-        pg.first();
+        pg.firstPage();
         Y.Assert.areSame(1, pg.get('page'), 'did not page to 1');
-        pg.prev();
+
+        pg.prevPage();
         Y.Assert.areSame(1, pg.get('page'), 'did not stay at page 1')
 
 
-        pg.last();
+        pg.lastPage();
         Y.Assert.areSame(10, pg.get('page'), 'did not page to 10');
-        pg.next();
+
+        pg.nextPage();
         Y.Assert.areSame(10, pg.get('page'), 'did not stay at page 10');
     },
 
-    'test circular paging': function () {
+    'test continuous paging': function () {
         var pg = new Y.Paginator({
-                itemsPerPage: 10,
-                totalItems: 100,
-                page: 5,
-                circular: true
+                itemsPerPage: 10
             });
 
-        // go to last page
-        pg.last();
-        Y.Assert.areSame(10, pg.get('page'), 'did not page to 10');
-        // go to next page from last ... page 1
-        pg.next();
-        Y.Assert.areSame(1, pg.get('page'), 'did not wrap to 1');
-        // go to previous page from first ... page 10
-        pg.prev();
-        Y.Assert.areSame(10, pg.get('page'), 'did not wrap backwards to 10');
-    },
+        pg.firstPage();
+        Y.Assert.areSame(1, pg.get('page'), 'did no page to 1');
 
-    'test perPage should set page number': function () {
-        var pg = new Y.Paginator({
-                itemsPerPage: 10,
-                totalItems: 100,
-                page: 5
-            });
+        pg.nextPage();
+        Y.Assert.areSame(2, pg.get('page'), 'did no page to 2');
 
-        Y.Assert.areSame(5, pg.get('page'), 'Page is not currently set correctly.');
-
-        pg.perPage();
-
-        Y.Assert.areSame(10, pg.get('itemsPerPage'), 'itemsPerPage was updated');
-        Y.Assert.areSame(5, pg.get('page'), 'current page was updated.');
-
-        pg.perPage(2);
-
-        Y.Assert.areSame(2, pg.get('itemsPerPage'), 'itemsPerPage did not update');
-        Y.Assert.areSame(1, pg.get('page'), 'current page did not get updated to 1');
-    },
-
-    'test index count to page': function () {
-        var pg = new Y.Paginator({
-                itemsPerPage: 10,
-                totalItems: 100,
-                page: 5
-            });
-
-        Y.Assert.areSame(40, pg.get('index'));
-        Y.Assert.areSame(41, pg.get('itemIndex'));
+        pg.lastPage();
+        Y.Assert.areSame(3, pg.get('page'), 'did not page to 3');
     },
 
     'test all items per page has 1 page': function () {
@@ -178,7 +132,7 @@ suite.add(new Y.Test.Case({
                 page: 1
             });
 
-        Y.Assert.areSame(1, pg.get('pages'));
+        Y.Assert.areSame(1, pg.get('totalPages'));
         Y.Assert.areSame(-1, pg.get('itemsPerPage'));
 
         // null should fail and keep same
@@ -189,174 +143,7 @@ suite.add(new Y.Test.Case({
 }));
 
 
-suite.add(new Y.Test.Case({
-    name: 'Paginator Widget methods',
-
-    'test widget extending': function () {
-        var pg = new Y.Paginator();
-
-        Y.Assert.isTrue(pg instanceof Y.Widget);
-    },
-
-    'test paginator can render': function () {
-        var pg = new Y.Paginator();
-
-        Y.Assert.areSame('function', typeof pg.render);
-
-        pg.render();
-    },
-
-    'test to json method': function () {
-        var MyView = new Y.View,
-            pgConfig = {
-                itemsPerPage: 10,
-                totalItems: 100,
-                page: 5,
-                view: MyView
-            },
-            pg = new Y.Paginator(pgConfig),
-            json = pg.toJSON();
-
-        Y.Assert.areSame(pgConfig.itemsPerPage, json.itemsPerPage, 'Items Per Page has changed.');
-        Y.Assert.areSame(pgConfig.totalItems, json.totalItems, 'Total items has changed.');
-        Y.Assert.areSame(pgConfig.page, json.page, 'Current page has changed.');
-    },
-
-    'test UI event: first': function () {
-
-        var test = this,
-            pg = new Y.Paginator({
-                itemsPerPage: 10,
-                totalItems: 100,
-                page: 5,
-                view: 'View',
-                render: true
-            }),
-            pub = new Publisher(pg);
-
-        // wire up asserts
-        pg.after('pageChange', function (e) {
-            Y.Assert.areSame(1, pg.get('page'));
-        });
-
-        pub.fire('pub:first');
-
-
-    },
-
-    'test UI event: last': function () {
-
-        var test = this,
-            pg = new Y.Paginator({
-                itemsPerPage: 10,
-                totalItems: 100,
-                page: 5,
-                view: 'View',
-                render: true
-            }),
-            pub = new Publisher(pg);
-
-        // wire up asserts
-        pg.after('pageChange', function (e) {
-            Y.Assert.areSame(10, pg.get('page'));
-        });
-
-        pub.fire('pub:last');
-
-
-    },
-
-    'test UI event: prev': function () {
-
-        var test = this,
-            pg = new Y.Paginator({
-                itemsPerPage: 10,
-                totalItems: 100,
-                page: 5,
-                view: 'View',
-                render: true
-            }),
-            pub = new Publisher(pg);
-
-        // wire up asserts
-        pg.after('pageChange', function (e) {
-            Y.Assert.areSame(4, pg.get('page'));
-        });
-
-        pub.fire('pub:prev');
-
-
-    },
-
-    'test UI event: next': function () {
-
-        var test = this,
-            pg = new Y.Paginator({
-                itemsPerPage: 10,
-                totalItems: 100,
-                page: 5,
-                view: 'View',
-                render: true
-            }),
-            pub = new Publisher(pg);
-
-        // wire up asserts
-        pg.after('pageChange', function (e) {
-            Y.Assert.areSame(6, pg.get('page'));
-        });
-
-        pub.fire('pub:next');
-
-
-    },
-
-    'test UI event: page': function () {
-
-        var test = this,
-            pg = new Y.Paginator({
-                itemsPerPage: 10,
-                totalItems: 100,
-                page: 5,
-                view: 'View',
-                render: true
-            }),
-            pub = new Publisher(pg);
-
-        // wire up asserts
-        pg.after('pageChange', function (e) {
-            Y.Assert.areSame(2, pg.get('page'));
-        });
-
-        pub.fire('pub:page', { val: 2});
-
-
-    },
-
-    'test UI event: perPage': function () {
-
-        var test = this,
-            pg = new Y.Paginator({
-                itemsPerPage: 10,
-                totalItems: 100,
-                page: 5,
-                view: 'View',
-                render: true
-            }),
-            pub = new Publisher(pg);
-
-        // wire up asserts
-        pg.after('perPageChange', function (e) {
-            Y.Assert.areSame(5, pg.get('perPage'));
-            Y.Assert.areSame(20, pg.get('pages'));
-        });
-
-        pub.fire('pub:perPage', {val: 5});
-
-    }
-}));
-
-
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{ requires:['paginator', 'base-build', 'view'] });
+}, '@VERSION@' ,{ requires:['paginator'] });

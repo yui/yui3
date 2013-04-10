@@ -22,28 +22,28 @@ PaginatorUrl.ATTRS = {
 PaginatorUrl.prototype = {
     /**
      Returns a formated URL for the previous page.
-     @method prevUrl
+     @method prevPageUrl
      @return String | NULL
      */
-    prevUrl: function () {
-        return (this.hasPrev() && this.formatUrl(this.get('page') - 1)) || null;
+    prevPageUrl: function () {
+        return (this.hasPrevPage() && this.formatPageUrl(this.get('page') - 1)) || null;
     },
 
     /**
      Returns a formated URL for the next page.
-     @method nextUrl
+     @method nextPageUrl
      @return String | NULL
      */
-    nextUrl: function () {
-        return (this.hasNext() && this.formatUrl(this.get('page') + 1)) || null;
+    nextPageUrl: function () {
+        return (this.hasNextPage() && this.formatPageUrl(this.get('page') + 1)) || null;
     },
 
     /**
      Returns a formated URL for the provided page number.
-     @method formatUrl
+     @method formatPageUrl
      @return String | NULL
      */
-    formatUrl: function (page) {
+    formatPageUrl: function (page) {
         var url = this.get('url');
         if (url) {
             return Y.Lang.sub(url, {
@@ -55,3 +55,5 @@ PaginatorUrl.prototype = {
 };
 
 Y.namespace('Paginator').Url = PaginatorUrl;
+
+Y.Base.mix(Y.Paginator, [PaginatorUrl]);

@@ -1,7 +1,7 @@
 Paginator Change History
 ====================
 
-3.9.0
+3.10.0
 -----
 
 * Initial release.

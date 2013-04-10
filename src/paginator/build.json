@@ -6,34 +6,9 @@
                 "paginator.js"
             ]
         },
-        "paginator-core": {
-            "jsfiles": [
-                "paginator-core.js"
-            ]
-        },
-        "paginator-view": {
-            "jsfiles": [
-                "paginator-view.js"
-            ]
-        },
-        "paginator-table": {
-            "jsfiles": [
-                "paginator-table.js"
-            ]
-        },
-        "paginator-list": {
-            "jsfiles": [
-                "paginator-list.js"
-            ]
-        },
         "paginator-url": {
             "jsfiles": [
                 "paginator-url.js"
-            ]
-        },
-        "paginator-templates": {
-            "jsfiles": [
-                "paginator-templates.js"
             ]
         }
     }
