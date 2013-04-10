@@ -20,12 +20,14 @@
         },
         "storage-local": {
             "jsfiles": [
-                "localstorage/database.js"
+                "localstorage/database.js",
+                "localstorage/store.js"
             ]
         },
-        "storage-js": {
+        "storage-memory": {
             "jsfiles": [
-            	"memory/database.js"
+            	"memory/database.js",
+                "memory/store.js"
             ]
         }
     }

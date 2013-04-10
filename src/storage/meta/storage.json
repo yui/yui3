@@ -24,9 +24,12 @@
                 "condition": {
                     "trigger": "storage",
                     "test"   : "localstorage.js"
-                }
+                },
+                "requires": [
+                    "json"
+                ]
             },
-            "storage-js": {
+            "storage-memory": {
                 "condition": {
                     "trigger": "storage",
                     "test"   : "memory.js"
