@@ -1,6 +1,16 @@
 App Framework Change History
 ============================
 
+@VERSION@
+-----
+
+### Model
+
+* Fixed: Modifying the `options` passed Model's `setAttrs()` method. A shallow
+  copy of this object is now created so the `_transaction` property is added to
+  the copy and not he passed-in object.
+
+
 3.9.1
 -----
 
