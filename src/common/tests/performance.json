@@ -1,8 +1,7 @@
 [
 	"scrollview/tests/benchmark/scrollview-benchmark.js",
 	"base/tests/benchmark/base-benchmark.js",
-	"app/tests/benchmark/app-benchmark-model.js",
-	"app/tests/benchmark/app-benchmark-view.js",
+	"app/tests/benchmark/app-benchmark.js",
 	"event-custom/tests/benchmark/event-custom-benchmark.js",
 	"node/tests/perf/node-attrs-benchmark.html",
 	"node/tests/perf/node-core-benchmark.html",
