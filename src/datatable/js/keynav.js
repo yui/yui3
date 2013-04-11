@@ -13,7 +13,7 @@ var arrEach = Y.Array.each,
 
 
  @class DataTable.KeyNav
- @extends Y.DataTable
+ @for DataTable
  @author Daniel Barreiro
 */
     DtKeyNav = function (){};
@@ -115,6 +115,7 @@ Y.mix( DtKeyNav.prototype, {
     @private
      */
     _keyNavSubscr: null,
+
     /**
     Reference to the THead section that holds the headers for the datatable.
     For a Scrolling DataTable, it is the one visible to the user.
@@ -124,12 +125,42 @@ Y.mix( DtKeyNav.prototype, {
     @private
      */
     _keyNavTHead: null,
+
+    /**
+    Indicates if the headers of the table are nested or not.
+    Nested headers makes navigation in the headers much harder.
+    @property _keyNavNestedHeaders
+    @default false
+    @private
+     */
+    _keyNavNestedHeaders: false,
+
+    /**
+    CSS class name prefix for columns, used to search for a cell by key.
+    @property _keyNavColPrefix
+    @type String
+    @default null (initialized via getClassname() )
+    @private
+     */
+    _keyNavColPrefix:null,
+
+    /**
+    Regular expression to extract the column key from a cell via its CSS class name.
+    @property _keyNavColRegExp
+    @type RegExp
+    @default null (initialized based on _keyNavColPrefix)
+    @private
+     */
+    _keyNavColRegExp:null,
+
     initializer: function () {
         this.onceAfter('render', this._afterKeyNavRender);
         this._keyNavSubscr = [
             this.after('focusedCellChange', this._afterKeyNavFocusedCellChange),
             this.after('focusedChange', this._afterKeyNavFocusedChange)
         ];
+        this._keyNavColPrefix = this.getClassName('col', '');
+        this._keyNavColRegExp = new RegExp(this._keyNavColPrefix + '(.+?)(\\s|$)');
 
     },
     destructor: function () {
@@ -341,9 +372,25 @@ Y.mix( DtKeyNav.prototype, {
                 return;
             }
             section = this._keyNavTHead;
-            row = section.get('lastChild');
+
+            if (this._keyNavNestedHeaders) {
+                key = this._keyNavColRegExp.exec(cell.get('className'))[1];
+                cell = section.one('.' + this._keyNavColPrefix + key);
+            } else {
+                row = section.get('firstChild');
+                cell = row.get('cells').item(cellIndex);
+            }
         } else {
-            row = section.get('rows').item(rowIndex -1);
+            if (inHead && this._keyNavNestedHeaders) {
+                key = this._keyNavColRegExp.exec(cell.get('className'))[1];
+                parent = this._columnMap[key]._parent;
+                if (parent) {
+                    cell = section.one('#' + parent.id);
+                }
+            } else {
+                row = section.get('rows').item(rowIndex -1);
+                cell = row.get('cells').item(cellIndex);
+            }
         }
         this.set('focusedCell', row.get('cells').item(cellIndex));
     },
@@ -361,9 +408,23 @@ Y.mix( DtKeyNav.prototype, {
             row = cell.ancestor(),
             rowIndex = row.get('rowIndex') + 1,
             section = row.ancestor(),
-            inHead = section === this._keyNavTHead;
+            inHead = section === this._keyNavTHead,
+            key, children;
 
-        if (!inHead) {
+        if (inHead) {
+            if (this._keyNavNestedHeaders) {
+                key = this._keyNavColRegExp.exec(cell.get('className'))[1];
+                children = this._columnMap[key].children;
+                if (children) {
+                    cell = section.one('#' + children[0].id);
+                } else {
+                    cell = this._tbodyNode.one('.' + this._keyNavColPrefix + key);
+                }
+            } else {
+                row = this._tbodyNode.get('firstChild');
+                cell = row.get('cells').item(cellIndex);
+            }
+        } else {
             rowIndex -= section.get('firstChild').get('rowIndex');
         }
         if (rowIndex === section.get('rows').size()) {
@@ -406,9 +467,21 @@ Y.mix( DtKeyNav.prototype, {
      */
     _keyMoveColTop: function () {
         var cell = this.get('focusedCell'),
-            cellIndex = cell.get('cellIndex');
+            cellIndex = cell.get('cellIndex'),
+            key, header;
 
-        this.set('focusedCell', this._keyNavTHead.get('firstChild').get('cells').item(cellIndex));
+        if (this._keyNavNestedHeaders) {
+            key = this._keyNavColRegExp.exec(cell.get('className'))[1];
+            header = this._columnMap[key];
+            while (header._parent) {
+                header = header._parent;
+            }
+            cell = this._keyNavTHead.one('#' + header.id);
+
+        } else {
+            cell = this._keyNavTHead.get('firstChild').get('cells').item(cellIndex);
+        }
+        this.set('focusedCell', cell , {src:'keyNav'});
     },
     /**
     Sets the focus on the last cell of the column containing the currently focused cell.
