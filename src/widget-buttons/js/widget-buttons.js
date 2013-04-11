@@ -601,7 +601,7 @@ WidgetButtons.prototype = {
             containerSelector, container;
 
         // Search for an existing buttons container within the section.
-        containerSelector = '.' + sectionClassName + ' .' + buttonsClassName;
+        containerSelector = '> .' + sectionClassName + ' > .' + buttonsClassName;
         container         = contentBox.one(containerSelector);
 
         // Create the `container` if it doesn't already exist.
