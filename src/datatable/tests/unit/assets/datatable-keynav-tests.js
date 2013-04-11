@@ -250,6 +250,16 @@ YUI.add('datatable-keynav-tests', function(Y) {
             check('c',13);
             fireKey(UP);
             check('abc',14);
+            fireKey(RIGHT);
+            check('de',15);
+            fireKey(DOWN);
+            check('d',16);
+            fireKey(DOWN);
+            check('d1', 17);
+            fireKey(DOWN);
+            check('d2',18);
+            fireKey(PGUP);
+            check('de', 19);
             dt.destroy();
         }
     }));
