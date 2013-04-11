@@ -28,20 +28,17 @@ YUI.add('datatable-keynav-tests', function(Y) {
         doc.simulate('keyup', opts);
     };
 
-    var check = function (row, col) {
+    var check = function (content, step) {
         var cell = document.activeElement;
-        isNotNull(cell, col + row);
+        isNotNull(cell, content + ' ' + step);
         if (cell.tagName.toUpperCase() === 'TH') {
-            areSame(col, cell.textContent || cell.innerText, 'col ' + col + row);
-            areSame(0,row, 'row ' + col + row);
+            areSame(content, cell.textContent || cell.innerText,  content + ' ' + step);
         } else {
-            var val = cell.innerHTML;
-            areSame(row, parseInt(val.substr(1), 10), 'row ' + col + row);
-            areSame(col, val[0], 'col ' + col + row);
+            areSame(content, cell.innerHTML,  content + ' ' + step);
         }
     };
     var data = [];
-    for (var i = 1; i < 100; ++i) {
+    for (var i = 1; i < 20; ++i) {
         data.push({a: 'a' + i , b: 'b' + i, c: 'c' + i, d: 'd' + i, e: 'e' + i});
     }
     var makeDTScroll = function (config_arg ) {
@@ -75,39 +72,39 @@ YUI.add('datatable-keynav-tests', function(Y) {
 
         _moveAbout: function (dt) {
             dt.focus();
-            check(0, 'a');
+            check('a',1);
             fireKey(UP);  // shouldn't move'
-            check(0, 'a');
+            check('a',2);
             fireKey(LEFT);// shouldn't move
-            check(0, 'a');
+            check('a',3);
             fireKey(DOWN); // should cross to the data rows
-            check(1, 'a');
+            check('a1',4);
             fireKey(RIGHT);
-            check(1,'b');
+            check('b1',5);
             fireKey(END);
-            check(1,'e');
+            check('e1',6);
             fireKey(RIGHT); // shouldn't move
-            check(1,'e');
+            check('e1',7);
             fireKey(DOWN);
-            check(2, 'e');
+            check('e2',8);
             fireKey(HOME);
-            check(2,'a');
+            check('a2',9);
             fireKey(END);
-            check(2,'e');
+            check('e2',10);
             fireKey(LEFT);
-            check(2,'d')
+            check('d2',11)
             fireKey(UP);
-            check(1,'d')
+            check('d1',12)
             fireKey(PGUP);
-            check(0,'d')
+            check('d',13)
             fireKey(DOWN);
-            check(1,'d')
+            check('d1',14)
             fireKey(UP); // should cross to the header section
-            check(0,'d')
+            check('d',15)
             fireKey(PGDN);
-            check(99,'d');
+            check('d19',16);
             fireKey(DOWN);// shouldn't move
-            check(99,'d');
+            check('d19',17);
 
         },
 
@@ -204,7 +201,59 @@ YUI.add('datatable-keynav-tests', function(Y) {
             areSame(dt, self);
         }
     }));
+    suite.add(new Y.Test.Case({
+        name: "nested headers",
+        'test nested headers': function () {
+        var DT = Y.Base.create('datatable', Y.DataTable.Base, [Y.DataTable.KeyNav]),
+
+            dt =  new DT({
+                columns: [
+                    {key:'abc', children: [
+                        {key:'ab', children: [
+                            'a',
+                            'b'
+                        ]},
+                    'c'
+                    ]},
+                    {key: 'de', children: [
+                       'd',
+                       'e'
+                    ]}
+                ],
+                data: data
+            }).render('#dtable');
+            dt.focus();
+            check('abc',1);
+            fireKey(DOWN);
+            check('ab',2);
+            fireKey(DOWN);
+            check('a',3);
+            fireKey(DOWN);
+            check('a1',4);
+            fireKey(RIGHT);
+            check('b1',5);
+            fireKey(UP);
+            check('b',6);
+            fireKey(UP);
+            check('ab',7);
+            fireKey(UP);
+            check('abc',8);
+            fireKey(RIGHT);
+            check('de',9);
+            fireKey(DOWN);
+            check('d',10);
+            fireKey(DOWN);
+            check('d1',11);
+            fireKey(LEFT);
+            check('c1',12);
+            fireKey(UP);
+            check('c',13);
+            fireKey(UP);
+            check('abc',14);
+            dt.destroy();
+        }
+    }));
     Y.Test.Runner.add(suite);
 
 
-},'', {requires: [ 'test', 'datatable-keynav', 'node-event-simulate','datatable-scroll']});
+},'', {requires: [ 'test', 'datatable-keynav', 'node-event-simulate','datatable-scroll', "base-build"]});
