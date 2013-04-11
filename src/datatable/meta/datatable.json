@@ -125,7 +125,7 @@
             },
             "datatable-keynav": {
                 "requires": [
-                    "datatable-base"
+                    "yui-base", "datatable-base", "base-base", "oop"
                 ]
             }
         }
