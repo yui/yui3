@@ -5,6 +5,8 @@
  @submodule datatable-keynav
 */
 var arrEach = Y.Array.each,
+// /yui3-datatable-col-(.+?)(\s|$)/.exec(Y.one('th').get('className'))[1]
+    colKeyRegExp = /yui3-datatable-col-(.+?)(\s|$)/,
 
 /**
  A DataTable class extension that provides navigation via keyboard, based on
@@ -90,7 +92,7 @@ DtKeyNav.ATTRS = {
     If the value is a string and it cannot be resolved into a method,
     it will be assumed to be the name of an event to fire. The listener to that
     event will receive an EventFacade containing references to the cell that has the focus,
-    the row, column and, unless it is a header row, the record it corresponds to.
+    the row, column and, if it is a data row, the record it corresponds to, otherwise `null`.
     The second argument will be the original EventFacade for the keyboard event.
 
      @attribute keyActions
@@ -124,6 +126,15 @@ Y.mix( DtKeyNav.prototype, {
     @private
      */
     _keyNavTHead: null,
+    /**
+    Indicates if the headers of the table are nested or not.
+    Nested headers makes navigation in the headers much harder.
+    @property _keyNavNestedHeaders
+    @default false
+    @private
+     */
+    _keyNavNestedHeaders: false,
+
     initializer: function () {
         this.onceAfter('render', this._afterKeyNavRender);
         this._keyNavSubscr = [
@@ -149,7 +160,6 @@ Y.mix( DtKeyNav.prototype, {
     @private
     */
     _afterKeyNavFocusedCellChange: function (e) {
-         console.log('_afterKeyNavFocusedCellChange',e);
         var newVal  = e.newVal,
             prevVal = e.prevVal;
 
@@ -174,11 +184,14 @@ Y.mix( DtKeyNav.prototype, {
     @private
      */
     _afterKeyNavFocusedChange: function (e) {
-         console.log('_afterKeyNavFocusedChange',e);
          if (e.newVal) {
              var cell = this.get('focusedCell');
-             cell.focus();
-             cell.scrollIntoView();
+             if (cell) {
+                 cell.focus();
+                 cell.scrollIntoView();
+             } else {
+                 this._keyMoveFirst();
+             }
          }
 
     },
@@ -189,13 +202,13 @@ Y.mix( DtKeyNav.prototype, {
     @private
      */
     _afterKeyNavRender: function () {
-         console.log('_afterKeyNavRender');
         var cbx = this.get('contentBox');
         this._keyNavSubscr.push(
             cbx.on('keydown', this._onKeyNavKeyDown, this),
             cbx.on('click', this._onKeyNavClick, this)
         );
         this._keyNavTHead = (this._yScrollHeader || this._tableNode).one('thead');
+        this._keyNavNestedHeaders = Y.Object.size(this._columnMap) !== this._displayColumns.length;
         this._keyMoveFirst();
     },
     /**
@@ -219,7 +232,6 @@ Y.mix( DtKeyNav.prototype, {
     @private
     */
     _onKeyNavKeyDown: function (e) {
-         console.log('_onKeyNavKeyDown',e);
         var key    = DtKeyNav.keyNames[e.keyCode] || e.keyCode,
             action;
 
@@ -276,7 +288,6 @@ Y.mix( DtKeyNav.prototype, {
     @private
      */
     _keyMoveFirst: function () {
-        console.log('first');
         this.set('focusedCell' , this._keyNavTHead.one('th'), {src:'keyNav'});
 
     },
@@ -287,7 +298,6 @@ Y.mix( DtKeyNav.prototype, {
     @private
     */
     _keyMoveLeft: function () {
-        console.log('left');
         var cell = this.get('focusedCell'),
             index = cell.get('cellIndex'),
             row = cell.ancestor();
@@ -295,7 +305,8 @@ Y.mix( DtKeyNav.prototype, {
         if (index === 0) {
             return;
         }
-        this.set('focusedCell', row.get('cells').item(index - 1), {src:'keyNav'});
+         cell = row.get('cells').item(index - 1);
+        this.set('focusedCell', cell , {src:'keyNav'});
 
     },
     /**
@@ -305,7 +316,6 @@ Y.mix( DtKeyNav.prototype, {
     @private
     */
     _keyMoveRight: function () {
-        console.log('right');
         var cell = this.get('focusedCell'),
             index = cell.get('cellIndex') + 1,
             row = cell.ancestor(),
@@ -325,13 +335,13 @@ Y.mix( DtKeyNav.prototype, {
     @private
     */
     _keyMoveUp: function () {
-        console.log('up');
         var cell = this.get('focusedCell'),
             cellIndex = cell.get('cellIndex'),
             row = cell.ancestor(),
             rowIndex = row.get('rowIndex'),
             section = row.ancestor(),
-            inHead = section === this._keyNavTHead;
+            inHead = section === this._keyNavTHead,
+            key, parent;
 
         if (!inHead) {
             rowIndex -= section.get('firstChild').get('rowIndex');
@@ -341,11 +351,26 @@ Y.mix( DtKeyNav.prototype, {
                 return;
             }
             section = this._keyNavTHead;
-            row = section.get('lastChild');
+            if (this._keyNavNestedHeaders) {
+                key = colKeyRegExp.exec(cell.get('className'))[1];
+                cell = section.one('.yui3-datatable-col-' + key);
+            } else {
+                row = section.get('firstChild');
+                cell = row.get('cells').item(cellIndex);
+            }
         } else {
-            row = section.get('rows').item(rowIndex -1);
+            if (inHead && this._keyNavNestedHeaders) {
+                key = colKeyRegExp.exec(cell.get('className'))[1];
+                parent = this._columnMap[key]._parent;
+                if (parent) {
+                    cell = section.one('#' + parent.id);
+                }
+            } else {
+                row = section.get('rows').item(rowIndex -1);
+                cell = row.get('cells').item(cellIndex);
+            }
         }
-        this.set('focusedCell', row.get('cells').item(cellIndex));
+        this.set('focusedCell', cell, {src:'keyNav'});
     },
     /**
     Sets the focus on the cell below the currently focused one.
@@ -355,28 +380,36 @@ Y.mix( DtKeyNav.prototype, {
     @private
     */
     _keyMoveDown: function () {
-        console.log('down');
         var cell = this.get('focusedCell'),
             cellIndex = cell.get('cellIndex'),
             row = cell.ancestor(),
             rowIndex = row.get('rowIndex') + 1,
             section = row.ancestor(),
-            inHead = section === this._keyNavTHead;
+            inHead = section === this._keyNavTHead,
+            key, children;
 
-        if (!inHead) {
+        if (inHead) {
+            if (this._keyNavNestedHeaders) {
+                key = colKeyRegExp.exec(cell.get('className'))[1];
+                children = this._columnMap[key].children;
+                if (children) {
+                    cell = section.one('#' + children[0].id);
+                } else {
+                    cell = this._tbodyNode.one('.yui3-datatable-col-' + key);
+                }
+            } else {
+                row = this._tbodyNode.get('firstChild');
+                cell = row.get('cells').item(cellIndex);
+            }
+        } else {
             rowIndex -= section.get('firstChild').get('rowIndex');
-        }
-        if (rowIndex === section.get('rows').size()) {
-            if (!inHead) {
+            if (rowIndex === section.get('rows').size()) {
                 return;
             }
-            section = this._tbodyNode;
-            row = section.get('firstChild');
-
-        } else {
             row = section.get('rows').item(rowIndex);
+            cell = row.get('cells').item(cellIndex);
         }
-        this.set('focusedCell', row.get('cells').item(cellIndex));
+        this.set('focusedCell', cell, {src:'keyNav'});
     },
     /**
     Sets the focus on the left-most cell of the row containing the currently focused cell.
@@ -385,7 +418,7 @@ Y.mix( DtKeyNav.prototype, {
      */
     _keyMoveRowStart: function () {
         var row = this.get('focusedCell').ancestor();
-        this.set('focusedCell', row.get('firstChild'));
+        this.set('focusedCell', row.get('firstChild'), {src:'keyNav'});
 
     },
     /**
@@ -395,7 +428,7 @@ Y.mix( DtKeyNav.prototype, {
      */
     _keyMoveRowEnd: function () {
         var row = this.get('focusedCell').ancestor();
-        this.set('focusedCell', row.get('lastChild'));
+        this.set('focusedCell', row.get('lastChild'), {src:'keyNav'});
 
     },
     /**
@@ -408,7 +441,7 @@ Y.mix( DtKeyNav.prototype, {
         var cell = this.get('focusedCell'),
             cellIndex = cell.get('cellIndex');
 
-        this.set('focusedCell', this._keyNavTHead.get('firstChild').get('cells').item(cellIndex));
+        this.set('focusedCell', this._keyNavTHead.get('firstChild').get('cells').item(cellIndex), {src:'keyNav'});
     },
     /**
     Sets the focus on the last cell of the column containing the currently focused cell.
@@ -419,7 +452,7 @@ Y.mix( DtKeyNav.prototype, {
         var cell = this.get('focusedCell'),
             cellIndex = cell.get('cellIndex');
 
-        this.set('focusedCell', this._tbodyNode.get('lastChild').get('cells').item(cellIndex));
+        this.set('focusedCell', this._tbodyNode.get('lastChild').get('cells').item(cellIndex), {src:'keyNav'});
 
     }
 });
