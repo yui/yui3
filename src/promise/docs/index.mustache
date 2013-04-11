@@ -191,6 +191,11 @@ promise.then(function (stuffValue) {
 console.log("Stuff value is " + stuff); // => "Stuff value is undefined"
 ```
 
+<p>
+    You can call `then()` on the promise as many times as you like. The same
+    value will be passed to each `then()` callback.
+</p>
+
 <h4>Always Asynchronous</h4>
 
 <p>
@@ -471,7 +476,7 @@ MyDatabase.prototype.save = function (key, data) {
 };
 ```
 
-<h3>Non-serial Operatation Batching</h3>
+<h3>Non-serial Operation Batching</h3>
 
 <p>
     Promise chaining works great to serialize synchronous and asynchronous
