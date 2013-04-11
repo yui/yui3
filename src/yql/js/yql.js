@@ -91,7 +91,7 @@ YQLRequest.prototype = {
     send: function () {
         var qs = [], url = ((this._opts && this._opts.proto) ? this._opts.proto : Y.YQLRequest.PROTO), o;
 
-        Y.each(this._params, function (v, k) {
+        Y.Object.each(this._params, function (v, k) {
             qs.push(k + '=' + encodeURIComponent(v));
         });
 
@@ -117,19 +117,8 @@ YQLRequest.prototype = {
     * @param {String} url The URL to request
     * @param {Object} o The config object
     */
-    _send: function(url, o) {
-        if (o.allowCache !== false) {
-            o.allowCache = true;
-        }
-        if (!this._jsonp) {
-            this._jsonp = Y.jsonp(url, o);
-        } else {
-            this._jsonp.url = url;
-            if (o.on && o.on.success) {
-                this._jsonp._config.on.success = o.on.success;
-            }
-            this._jsonp.send();
-        }
+    _send: function() {
+        //Overwritten in plugins
     }
 };
 

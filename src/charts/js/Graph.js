@@ -2,12 +2,11 @@
  * Graph manages and contains series instances for a `CartesianChart`
  * instance.
  *
- * @module charts
- * @submodule charts-base
  * @class Graph
  * @constructor
  * @extends Widget
  * @uses Renderer
+ * @submodule charts-base
  */
 Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     /**
@@ -55,7 +54,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         for(; i < len; ++i)
         {
             series = sc[i];
-            if(series instanceof Y.CartesianSeries)
+            if(series instanceof Y.SeriesBase)
             {
                 series.render();
             }
@@ -184,7 +183,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         for(i = 0; i < len; ++i)
         {
             series = this.get("seriesCollection")[i];
-            seriesKey = series.get("direction") == "horizontal" ? "yKey" : "xKey";
+            seriesKey = series.get("direction") === "horizontal" ? "yKey" : "xKey";
             this._seriesDictionary[series.get(seriesKey)] = series;
         }
     },
@@ -216,6 +215,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         series.set("graphOrder", graphSeriesLength);
         series.set("order", typeSeriesCollection.length);
         typeSeriesCollection.push(series);
+        series.set("seriesTypeCollection", typeSeriesCollection);
         this.addDispatcher(series);
         series.after("drawingComplete", Y.bind(this._drawingCompleteHandler, this));
         this.fire("seriesAdded", series);
@@ -235,7 +235,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             seriesCollection = this.get("seriesCollection"),
             seriesTypes = this.seriesTypes,
             typeSeriesCollection,
-            seriesType,
+            SeriesClass,
             series;
             seriesData.graph = this;
         if(!seriesTypes.hasOwnProperty(type))
@@ -246,12 +246,13 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         seriesData.graph = this;
         seriesData.order = typeSeriesCollection.length;
         seriesData.graphOrder = seriesCollection.length;
-        seriesType = this._getSeries(seriesData.type);
-        series = new seriesType(seriesData);
+        SeriesClass = this._getSeries(seriesData.type);
+        series = new SeriesClass(seriesData);
         this.addDispatcher(series);
         series.after("drawingComplete", Y.bind(this._drawingCompleteHandler, this));
         typeSeriesCollection.push(series);
         seriesCollection.push(series);
+        series.set("seriesTypeCollection", typeSeriesCollection);
         if(this.get("rendered"))
         {
             series.render();
@@ -388,7 +389,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      * @param {Object} e Event object.
      * @private
      */
-    _sizeChangeHandler: function(e)
+    _sizeChangeHandler: function()
     {
         var hgl = this.get("horizontalGridlines"),
             vgl = this.get("verticalGridlines"),
@@ -443,6 +444,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             len,
             graphic = this.get("graphic");
         graphic.set("autoDraw", false);
+        graphic.set("width", this.get("width"));
+        graphic.set("height", this.get("height"));
         this._callLater = false;
         this._drawing = true;
         sc = this.get("seriesCollection");
@@ -579,7 +582,12 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
          * @type ChartBase
          * @readOnly
          */
-        chart: {},
+        chart: {
+            getter: function() {
+                var chart = this._state.chart || this;
+                return chart;
+            }
+        },
 
         /**
          * Collection of series. When setting the `seriesCollection` the array can contain a combination of either
@@ -640,7 +648,9 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 
             setter: function(val)
             {
-                var gl = this.get("horizontalGridlines");
+                var cfg,
+                    key,
+                    gl = this.get("horizontalGridlines");
                 if(gl && gl instanceof Y.Gridlines)
                 {
                     gl.remove();
@@ -651,9 +661,20 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                     val.set("graph", this);
                     return val;
                 }
-                else if(val && val.axis)
+                else if(val)
                 {
-                    gl = new Y.Gridlines({direction:"horizontal", axis:val.axis, graph:this, styles:val.styles});
+                    cfg = {
+                        direction: "horizonal",
+                        graph: this
+                    };
+                    for(key in val)
+                    {
+                        if(val.hasOwnProperty(key))
+                        {
+                            cfg[key] = val[key];
+                        }
+                    }
+                    gl = new Y.Gridlines(cfg);
                     return gl;
                 }
             }
@@ -671,7 +692,9 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 
             setter: function(val)
             {
-                var gl = this.get("verticalGridlines");
+                var cfg,
+                    key,
+                    gl = this.get("verticalGridlines");
                 if(gl && gl instanceof Y.Gridlines)
                 {
                     gl.remove();
@@ -682,9 +705,20 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                     val.set("graph", this);
                     return val;
                 }
-                else if(val && val.axis)
+                else if(val)
                 {
-                    gl = new Y.Gridlines({direction:"vertical", axis:val.axis, graph:this, styles:val.styles});
+                    cfg = {
+                        direction: "vertical",
+                        graph: this
+                    };
+                    for(key in val)
+                    {
+                        if(val.hasOwnProperty(key))
+                        {
+                            cfg[key] = val[key];
+                        }
+                    }
+                    gl = new Y.Gridlines(cfg);
                     return gl;
                 }
             }

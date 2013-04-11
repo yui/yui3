@@ -1,5 +1,5 @@
 {
     "charts": {
-        "requires":["charts-base"]
+        "use":["charts-base"]
     }
 }

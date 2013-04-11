@@ -1,14 +1,20 @@
 /**
+ * Provides functionality for creating a bar series.
+ *
+ * @module charts
+ * @submodule series-bar
+ */
+/**
  * The BarSeries class renders bars positioned vertically along a category or time axis. The bars'
  * lengths are proportional to the values they represent along a horizontal axis.
  * and the relevant data points.
  *
- * @module charts
- * @submodule charts-base
  * @class BarSeries
  * @extends MarkerSeries
  * @uses Histogram
  * @constructor
+ * @param {Object} config (optional) Configuration parameters.
+ * @submodule series-bar
  */
 Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     /**
@@ -59,8 +65,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
                 markers,
-                graph = this.get("graph"),
-                seriesCollection = graph.seriesTypes[this.get("type")],
+                seriesCollection = this.get("seriesTypeCollection"),
                 seriesLen = seriesCollection.length,
                 seriesStyles,
                 seriesSize = 0,
@@ -70,7 +75,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 ys = [],
                 order = this.get("order"),
                 config;
-            markerStyles = state == "off" || !styles[state] ? styles : styles[state];
+            markerStyles = state === "off" || !styles[state] ? styles : styles[state];
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.height, offset);

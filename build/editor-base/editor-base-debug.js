@@ -793,7 +793,7 @@ YUI.add('editor-base', function (Y, NAME) {
         * @property USE
         * @type Array
         */
-        USE: ['substitute', 'node', 'selector-css3', 'editor-selection', 'stylesheet'],
+        USE: ['node', 'selector-css3', 'editor-selection', 'stylesheet'],
         /**
         * The Class Name: editorBase
         * @static

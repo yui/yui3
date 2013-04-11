@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+    <title>Touch Unit Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<div id="tester"></div>
+
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script>
+YUI({
+    coverage: ['event-touch'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'touch-unit-tests': {
+            fullpath: './assets/touch-unit-tests.js',
+            requires: [ 'event-touch', 'test-console', 'test' ]
+        }
+    }
+}).use('touch-unit-tests', 'event-touch', function(Y) {
+    
+    (new Y.Test.Console()).render('#log');
+    Y.Test.Runner.setName('Event: Touch');
+    Y.Test.Runner.run();
+    
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+    "series-combo": {
+        "requires":[
+            "series-cartesian",
+            "series-line-util",
+            "series-plot-util",
+            "series-fill-util"
+        ]
+    }
+}

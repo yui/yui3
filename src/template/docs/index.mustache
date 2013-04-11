@@ -456,7 +456,7 @@ To execute arbitrary JavaScript code within the template without rendering its o
 
                 <ul class="<%= this.classNames.list %>">
                   <% Y.Array.each(this.animals, function (animal, i) { %>
-                    <li class="<% i % 2 ? 'odd' : 'even' %>">
+                    <li class="<%= i % 2 ? 'odd' : 'even' %>">
                         <%= animal %>
                     </li>
                   <% }); %>

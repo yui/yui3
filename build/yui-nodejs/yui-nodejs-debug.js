@@ -8,6 +8,7 @@ utilities for the library.
 @submodule yui-base
 **/
 
+/*jshint eqeqeq: false*/
 if (typeof YUI != 'undefined') {
     YUI._YUI = YUI;
 }
@@ -505,7 +506,7 @@ proto = {
     @method _setup
     @private
     **/
-    _setup: function(o) {
+    _setup: function() {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
@@ -909,7 +910,6 @@ with any configuration info required for the module.
             callback = args[args.length - 1],
             Y = this,
             i = 0,
-            a = [],
             name,
             Env = Y.Env,
             provisioned = true;
@@ -1001,7 +1001,7 @@ with any configuration info required for the module.
             this._attach(['yui-base']);
         }
 
-        var len, loader, handleBoot, handleRLS,
+        var len, loader, handleBoot,
             Y = this,
             G_ENV = YUI.Env,
             mods = G_ENV.mods,
@@ -1494,6 +1494,30 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     // Support the CommonJS method for exporting our single global
     if (typeof exports == 'object') {
         exports.YUI = YUI;
+        /**
+        * Set a method to be called when `Get.script` is called in Node.js
+        * `Get` will open the file, then pass it's content and it's path
+        * to this method before attaching it. Commonly used for code coverage
+        * instrumentation. <strong>Calling this multiple times will only
+        * attach the last hook method</strong>. This method is only
+        * available in Node.js.
+        * @method setLoadHook
+        * @static
+        * @param {Function} fn The function to set
+        * @param {String} fn.data The content of the file
+        * @param {String} fn.path The file path of the file
+        */
+        YUI.setLoadHook = function(fn) {
+            YUI._getLoadHook = fn;
+        };
+        /**
+        * Load hook for `Y.Get.script` in Node.js, see `YUI.setLoadHook`
+        * @method _getLoadHook
+        * @private
+        * @param {String} data The content of the file
+        * @param {String} path The file path of the file
+        */
+        YUI._getLoadHook = null;
     }
 
 }());
@@ -2010,18 +2034,34 @@ relying on ES5 functionality, even when ES5 functionality is available.
 **/
 
 /**
-Event to wait for before executing the `use()` callback.
+ * Leverage native JSON stringify if the browser has a native
+ * implementation.  In general, this is a good idea.  See the Known Issues
+ * section in the JSON user guide for caveats.  The default value is true
+ * for browsers with native JSON support.
+ *
+ * @property useNativeJSONStringify
+ * @type Boolean
+ * @default true
+ * @since 3.8.0
+ */
 
-The following events are supported:
+ /**
+ * Leverage native JSON parse if the browser has a native implementation.
+ * In general, this is a good idea.  See the Known Issues section in the
+ * JSON user guide for caveats.  The default value is true for browsers with
+ * native JSON support.
+ *
+ * @property useNativeJSONParse
+ * @type Boolean
+ * @default true
+ * @since 3.8.0
+ */
 
-  - available
-  - contentready
-  - domready
-  - load
-
-The event may be specified as a string or as an object hash that provides
-additional event configuration, as illustrated in the example below.
-
+/**
+Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
+@property delayUntil
+@type String|Object
+@since 3.6.0
 @example
 
 You can use `load` or `domready` strings by default:
@@ -2419,6 +2459,7 @@ pass `true` as the value of the _force_ parameter.
 function YArray(thing, startIndex, force) {
     var len, result;
 
+    /*jshint expr: true*/
     startIndex || (startIndex = 0);
 
     if (force || YArray.test(thing)) {
@@ -2791,13 +2832,15 @@ string `[object Object]` when used as a cache key.
 @for YUI
 **/
 Y.cached = function (source, cache, refetch) {
+    /*jshint expr: true*/
     cache || (cache = {});
 
     return function (arg) {
         var key = arguments.length > 1 ?
                 Array.prototype.join.call(arguments, CACHED_DELIMITER) :
                 String(arg);
-
+        
+        /*jshint eqeqeq: false*/
         if (!(key in cache) || (refetch && cache[key] == refetch)) {
             cache[key] = source.apply(source, arguments);
         }
@@ -3877,6 +3920,7 @@ Y.UA.compareVersions = function (a, b) {
         aPart = parseInt(aParts[i], 10);
         bPart = parseInt(bParts[i], 10);
 
+        /*jshint expr: true*/
         isNaN(aPart) && (aPart = 0);
         isNaN(bPart) && (bPart = 0);
 
@@ -3898,15 +3942,17 @@ YUI.Env.aliases = {
     "attribute": ["attribute-base","attribute-complex"],
     "attribute-events": ["attribute-observable"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
+    "axes": ["axis-numeric","axis-category","axis-time","axis-stacked"],
+    "axes-base": ["axis-numeric-base","axis-category-base","axis-time-base","axis-stacked-base"],
     "base": ["base-base","base-pluginhost","base-build"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
+    "charts": ["charts-base"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "color": ["color-base","color-hsl","color-harmony"],
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
     "datatable": ["datatable-core","datatable-table","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
-    "datatable-deprecated": ["datatable-base-deprecated","datatable-datasource-deprecated","datatable-sort-deprecated","datatable-scroll-deprecated"],
     "datatype": ["datatype-date","datatype-number","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format","datatype-date-math"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
@@ -3952,16 +3998,36 @@ YUI.Env.aliases = {
 YUI.add('get', function (Y, NAME) {
 
     /**
-    * NodeJS specific Get module used to load remote resources. It contains the same signature as the default Get module so there is no code change needed.
+    * NodeJS specific Get module used to load remote resources.
+    * It contains the same signature as the default Get module so there is no code change needed.
     * @module get-nodejs
     * @class GetNodeJS
     */
-        
-    var path = require('path'),
-        vm = require('vm'),
+
+    var Module = require('module'),
+
+        path = require('path'),
         fs = require('fs'),
         request = require('request'),
-        existsSync = fs.existsSync || path.existsSync;
+        end = function(cb, msg, result) {
+            //Y.log('Get end: ' + cb.onEnd);
+            if (Y.Lang.isFunction(cb.onEnd)) {
+                cb.onEnd.call(Y, msg, result);
+            }
+        }, pass = function(cb) {
+            //Y.log('Get pass: ' + cb.onSuccess);
+            if (Y.Lang.isFunction(cb.onSuccess)) {
+                cb.onSuccess.call(Y, cb);
+            }
+            end(cb, 'success', 'success');
+        }, fail = function(cb, er) {
+            //Y.log('Get fail: ' + er);
+            er.errors = [er];
+            if (Y.Lang.isFunction(cb.onFailure)) {
+                cb.onFailure.call(Y, er, cb);
+            }
+            end(cb, er, 'fail');
+        };
 
 
     Y.Get = function() {
@@ -3972,17 +4038,6 @@ YUI.add('get', function (Y, NAME) {
 
     YUI.require = require;
     YUI.process = process;
-    
-    /**
-    * Escape the path for Windows, they need to be double encoded when used as `__dirname` or `__filename`
-    * @method escapeWinPath
-    * @protected
-    * @param {String} p The path to modify
-    * @return {String} The encoded path
-    */
-    var escapeWinPath = function(p) {
-        return p.replace(/\\/g, '\\\\');
-    };
 
     /**
     * Takes the raw JS files and wraps them to be executed in the YUI context so they can be loaded
@@ -3997,30 +4052,26 @@ YUI.add('get', function (Y, NAME) {
     */
 
     Y.Get._exec = function(data, url, cb) {
-        var dirName = escapeWinPath(path.dirname(url));
-        var fileName = escapeWinPath(url);
-
-        if (dirName.match(/^https?:\/\//)) {
-            dirName = '.';
-            fileName = 'remoteResource';
+        if (data.charCodeAt(0) === 0xFEFF) {
+            data = data.slice(1);
         }
 
-        var mod = "(function(YUI) { var __dirname = '" + dirName + "'; "+
-            "var __filename = '" + fileName + "'; " +
-            "var process = YUI.process;" +
-            "var require = function(file) {" +
-            " if (file.indexOf('./') === 0) {" +
-            "   file = __dirname + file.replace('./', '/'); }" +
-            " return YUI.require(file); }; " +
-            data + " ;return YUI; })";
-    
-        //var mod = "(function(YUI) { " + data + ";return YUI; })";
-        var script = vm.createScript(mod, url);
-        var fn = script.runInThisContext(mod);
-        YUI = fn(YUI);
+        var mod = new Module(url, module);
+        mod.filename = url;
+        mod.paths = Module._nodeModulePaths(path.dirname(url));
+        if (typeof YUI._getLoadHook === 'function') {
+            data = YUI._getLoadHook(data, url);
+        }
+        mod._compile('module.exports = function (YUI) {' + data + '\n;return YUI;};', url);
+
+        /*global YUI:true */
+        YUI = mod.exports(YUI);
+
+        mod.loaded = true;
+
         cb(null, url);
     };
-    
+
     /**
     * Fetches the content from a remote URL or a file from disc and passes the content
     * off to `_exec` for parsing
@@ -4029,11 +4080,13 @@ YUI.add('get', function (Y, NAME) {
     * @param {String} url The URL/File path to fetch the content from
     * @param {Callback} cb The callback to fire once the content has been executed via `_exec`
     */
-    Y.Get._include = function(url, cb) {
-        var self = this;
+    Y.Get._include = function (url, cb) {
+        var cfg,
+            mod,
+            self = this;
 
         if (url.match(/^https?:\/\//)) {
-            var cfg = {
+            cfg = {
                 url: url,
                 timeout: self.timeout
             };
@@ -4046,46 +4099,30 @@ YUI.add('get', function (Y, NAME) {
                 }
             });
         } else {
-            if (Y.config.useSync) {
-                //Needs to be in useSync
-                if (existsSync(url)) {
-                    var mod = fs.readFileSync(url,'utf8');
-                    Y.Get._exec(mod, url, cb);
+            try {
+                // Try to resolve paths relative to the module that required yui.
+                url = Module._findPath(url, Module._resolveLookupPaths(url, module.parent.parent)[1]);
+
+                if (Y.config.useSync) {
+                    //Needs to be in useSync
+                    mod = fs.readFileSync(url,'utf8');
                 } else {
-                    cb('Path does not exist: ' + url, url);
+                    fs.readFile(url, 'utf8', function (err, mod) {
+                        if (err) {
+                            cb(err, url);
+                        } else {
+                            Y.Get._exec(mod, url, cb);
+                        }
+                    });
+                    return;
                 }
-            } else {
-                fs.readFile(url, 'utf8', function(err, mod) {
-                    if (err) {
-                        cb(err, url);
-                    } else {
-                        Y.Get._exec(mod, url, cb);
-                    }
-                });
+            } catch (err) {
+                cb(err, url);
+                return;
             }
-        }
-        
-    };
 
-
-    var end = function(cb, msg, result) {
-        //Y.log('Get end: ' + cb.onEnd);
-        if (Y.Lang.isFunction(cb.onEnd)) {
-            cb.onEnd.call(Y, msg, result);
+            Y.Get._exec(mod, url, cb);
         }
-    }, pass = function(cb) {
-        //Y.log('Get pass: ' + cb.onSuccess);
-        if (Y.Lang.isFunction(cb.onSuccess)) {
-            cb.onSuccess.call(Y, cb);
-        }
-        end(cb, 'success', 'success');
-    }, fail = function(cb, er) {
-        //Y.log('Get fail: ' + er);
-        er.errors = [er];
-        if (Y.Lang.isFunction(cb.onFailure)) {
-            cb.onFailure.call(Y, er, cb);
-        }
-        end(cb, er, 'fail');
     };
 
 
@@ -4096,9 +4133,7 @@ YUI.add('get', function (Y, NAME) {
     * @param {Object} options Transaction options
     */
     Y.Get.js = function(s, options) {
-        var A = Y.Array,
-            self = this,
-            urls = A(s), url, i, l = urls.length, c= 0,
+        var urls = Y.Array(s), url, i, l = urls.length, c= 0,
             check = function() {
                 if (c === l) {
                     pass(options);
@@ -4106,7 +4141,7 @@ YUI.add('get', function (Y, NAME) {
             };
 
 
-
+        /*jshint loopfunc: true */
         for (i=0; i<l; i++) {
             url = urls[i];
             if (Y.Lang.isObject(url)) {
@@ -4136,14 +4171,19 @@ YUI.add('get', function (Y, NAME) {
                 }
             });
         }
+        
+        //Keeping Signature in the browser.
+        return {
+            execute: function() {}
+        };
     };
-    
+
     /**
     * Alias for `Y.Get.js`
     * @method script
     */
     Y.Get.script = Y.Get.js;
-    
+
     //Place holder for SS Dom access
     Y.Get.css = function(s, cb) {
         Y.log('Y.Get.css is not supported, just reporting that it has loaded but not fetching.', 'warn', 'get');
@@ -4169,21 +4209,21 @@ Contains the core of YUI's feature test architecture.
 */
 
 Y.mix(Y.namespace('Features'), {
-    
+
     /**
     * Object hash of all registered feature tests
     * @property tests
     * @type Object
     */
     tests: feature_tests,
-    
+
     /**
     * Add a test to the system
-    * 
+    *
     *   ```
     *   Y.Features.add("load", "1", {});
     *   ```
-    * 
+    *
     * @method add
     * @param {String} cat The category, right now only 'load' is supported
     * @param {String} name The number sequence of the test, how it's reported in the URL or config: 1, 2, 3
@@ -4445,14 +4485,64 @@ add('load', '13', {
     "trigger": "io-base",
     "ua": "nodejs"
 });
-// scrollview-base-ie
+// json-parse-shim
 add('load', '14', {
+    "name": "json-parse-shim",
+    "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONParse !== false && !!Native;
+
+    function workingNative( k, v ) {
+        return k === "ok" ? true : v;
+    }
+    
+    // Double check basic functionality.  This is mainly to catch early broken
+    // implementations of the JSON API in Firefox 3.1 beta1 and beta2
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
+        }
+        catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+    return !nativeSupport;
+},
+    "trigger": "json-parse"
+});
+// json-stringify-shim
+add('load', '15', {
+    "name": "json-stringify-shim",
+    "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONStringify !== false && !!Native;
+
+    // Double check basic native functionality.  This is primarily to catch broken
+    // early JSON API implementations in Firefox 3.1 beta1 and beta2.
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( '0' === Native.stringify(0) );
+        } catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+
+    return !nativeSupport;
+},
+    "trigger": "json-stringify"
+});
+// scrollview-base-ie
+add('load', '16', {
     "name": "scrollview-base-ie",
     "trigger": "scrollview-base",
     "ua": "ie"
 });
 // selector-css2
-add('load', '15', {
+add('load', '17', {
     "name": "selector-css2",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -4463,7 +4553,7 @@ add('load', '15', {
     "trigger": "selector"
 });
 // transition-timer
-add('load', '16', {
+add('load', '18', {
     "name": "transition-timer",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -4479,20 +4569,32 @@ add('load', '16', {
     "trigger": "transition"
 });
 // widget-base-ie
-add('load', '17', {
+add('load', '19', {
     "name": "widget-base-ie",
     "trigger": "widget-base",
     "ua": "ie"
 });
+// yql-jsonp
+add('load', '20', {
+    "name": "yql-jsonp",
+    "test": function (Y) {
+    /* Only load the JSONP module when not in nodejs or winjs
+    TODO Make the winjs module a CORS module
+    */
+    return (!Y.UA.nodejs && !Y.UA.winjs);
+},
+    "trigger": "yql",
+    "when": "after"
+});
 // yql-nodejs
-add('load', '18', {
+add('load', '21', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '19', {
+add('load', '22', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
@@ -4592,7 +4694,8 @@ YUI.add('yui-log', function (Y, NAME) {
 
 /**
  * Provides console log capability and exposes a custom event for
- * console implementations. This module is a `core` YUI module, <a href="../classes/YUI.html#method_log">it's documentation is located under the YUI class</a>.
+ * console implementations. This module is a `core` YUI module,
+ * <a href="../classes/YUI.html#method_log">it's documentation is located under the YUI class</a>.
  *
  * @module yui
  * @submodule yui-log
@@ -4651,17 +4754,17 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 m = (src) ? src + ': ' + msg : msg;
                 if (Y.Lang.isFunction(c.logFn)) {
                     c.logFn.call(Y, msg, cat, src);
-                } else if (typeof console != UNDEFINED && console.log) {
+                } else if (typeof console !== UNDEFINED && console.log) {
                     f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
                     console[f](m);
-                } else if (typeof opera != UNDEFINED) {
+                } else if (typeof opera !== UNDEFINED) {
                     opera.postError(m);
                 }
             }
 
             if (publisher && !silent) {
 
-                if (publisher == Y && (!publisher.getEvent(LOGEVENT))) {
+                if (publisher === Y && (!publisher.getEvent(LOGEVENT))) {
                     publisher.publish(LOGEVENT, {
                         broadcast: 2
                     });
@@ -4724,13 +4827,13 @@ Y.consoleColor = function(str, num) {
 
 
 var logFn = function(str, t, m) {
-    var id = '';
+    var id = '', lvl, mLvl;
     if (this.id) {
         id = '[' + this.id + ']:';
     }
     t = t || 'info';
     m = (m) ? this.consoleColor(' (' +  m.toLowerCase() + '):', 35) : '';
-    
+
     if (str === null) {
         str = 'null';
     }
@@ -4748,7 +4851,8 @@ var logFn = function(str, t, m) {
         }
     }
 
-    var lvl = '37;40', mLvl = ((str) ? '' : 31);
+    lvl = '37;40';
+    mLvl = ((str) ? '' : 31);
     t = t+''; //Force to a string..
     switch (t.toLowerCase()) {
         case 'error':
@@ -4781,7 +4885,8 @@ if (!Y.config.logFn) {
 YUI.add('yui-later', function (Y, NAME) {
 
 /**
- * Provides a setTimeout/setInterval wrapper. This module is a `core` YUI module, <a href="../classes/YUI.html#method_later">it's documentation is located under the YUI class</a>.
+ * Provides a setTimeout/setInterval wrapper. This module is a `core` YUI module,
+ * <a href="../classes/YUI.html#method_later">it's documentation is located under the YUI class</a>.
  *
  * @module yui
  * @submodule yui-later
@@ -4870,7 +4975,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.02.13-21-08',
+            GALLERY_VERSION = 'gallery-2013.04.10-22-48',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -5746,9 +5851,13 @@ Y.Loader.prototype = {
                             }
                         }
                     } else if (i === 'gallery') {
-                        this.groups.gallery.update(val, o);
+                        if (this.groups.gallery.update) {
+                            this.groups.gallery.update(val, o);
+                        }
                     } else if (i === 'yui2' || i === '2in3') {
-                        this.groups.yui2.update(o['2in3'], o.yui2, o);
+                        if (this.groups.yui2.update) {
+                            this.groups.yui2.update(o['2in3'], o.yui2, o);
+                        }
                     } else {
                         self[i] = val;
                     }
@@ -7063,16 +7172,18 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     /**
     * The default Loader onTimeout handler, calls this.onTimeout with a payload
     * @method _onTimeout
+    * @param {Get.Transaction} transaction The Transaction object from `Y.Get`
     * @private
     */
-    _onTimeout: function() {
+    _onTimeout: function(transaction) {
         Y.log('loader timeout: ' + Y.id, 'error', 'loader');
         var f = this.onTimeout;
         if (f) {
             f.call(this.context, {
                 msg: 'timeout',
                 data: this.data,
-                success: false
+                success: false,
+                transaction: transaction
             });
         }
     },
@@ -7574,49 +7685,51 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
 
         for (j in resCombos) {
-            base = j;
-            comboSep = resCombos[base].comboSep || self.comboSep;
-            maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
-            Y.log('Using maxURLLength of ' + maxURLLength, 'info', 'loader');
-            for (type in resCombos[base]) {
-                if (type === JS || type === CSS) {
-                    urls = resCombos[base][type];
-                    mods = resCombos[base][type + 'Mods'];
-                    len = urls.length;
-                    tmpBase = base + urls.join(comboSep);
-                    baseLen = tmpBase.length;
-                    if (maxURLLength <= base.length) {
-                        Y.log('maxURLLength (' + maxURLLength + ') is lower than the comboBase length (' + base.length + '), resetting to default (' + MAX_URL_LENGTH + ')', 'error', 'loader');
-                        maxURLLength = MAX_URL_LENGTH;
-                    }
+            if (resCombos.hasOwnProperty(j)) {
+                base = j;
+                comboSep = resCombos[base].comboSep || self.comboSep;
+                maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
+                Y.log('Using maxURLLength of ' + maxURLLength, 'info', 'loader');
+                for (type in resCombos[base]) {
+                    if (type === JS || type === CSS) {
+                        urls = resCombos[base][type];
+                        mods = resCombos[base][type + 'Mods'];
+                        len = urls.length;
+                        tmpBase = base + urls.join(comboSep);
+                        baseLen = tmpBase.length;
+                        if (maxURLLength <= base.length) {
+                            Y.log('maxURLLength (' + maxURLLength + ') is lower than the comboBase length (' + base.length + '), resetting to default (' + MAX_URL_LENGTH + ')', 'error', 'loader');
+                            maxURLLength = MAX_URL_LENGTH;
+                        }
 
-                    if (len) {
-                        if (baseLen > maxURLLength) {
-                            Y.log('Exceeded maxURLLength (' + maxURLLength + ') for ' + type + ', splitting', 'info', 'loader');
-                            u = [];
-                            for (s = 0; s < len; s++) {
-                                u.push(urls[s]);
-                                tmpBase = base + u.join(comboSep);
-
-                                if (tmpBase.length > maxURLLength) {
-                                    m = u.pop();
+                        if (len) {
+                            if (baseLen > maxURLLength) {
+                                Y.log('Exceeded maxURLLength (' + maxURLLength + ') for ' + type + ', splitting', 'info', 'loader');
+                                u = [];
+                                for (s = 0; s < len; s++) {
+                                    u.push(urls[s]);
                                     tmpBase = base + u.join(comboSep);
-                                    resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
-                                    u = [];
-                                    if (m) {
-                                        u.push(m);
+
+                                    if (tmpBase.length > maxURLLength) {
+                                        m = u.pop();
+                                        tmpBase = base + u.join(comboSep);
+                                        resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                        u = [];
+                                        if (m) {
+                                            u.push(m);
+                                        }
                                     }
                                 }
-                            }
-                            if (u.length) {
-                                tmpBase = base + u.join(comboSep);
+                                if (u.length) {
+                                    tmpBase = base + u.join(comboSep);
+                                    resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                }
+                            } else {
                                 resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
                             }
-                        } else {
-                            resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
                         }
+                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
                     }
-                    resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
                 }
             }
         }
@@ -8030,7 +8143,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "autocomplete-sources"
         ],
         "lang": [
-            "en"
+            "en",
+            "es"
         ],
         "requires": [
             "autocomplete-base",
@@ -8083,6 +8197,85 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "requires": [
             "autocomplete-base"
+        ]
+    },
+    "axes": {
+        "use": [
+            "axis-numeric",
+            "axis-category",
+            "axis-time",
+            "axis-stacked"
+        ]
+    },
+    "axes-base": {
+        "use": [
+            "axis-numeric-base",
+            "axis-category-base",
+            "axis-time-base",
+            "axis-stacked-base"
+        ]
+    },
+    "axis": {
+        "requires": [
+            "dom",
+            "widget",
+            "widget-position",
+            "widget-stack",
+            "graphics",
+            "axis-base"
+        ]
+    },
+    "axis-base": {
+        "requires": [
+            "classnamemanager",
+            "datatype-number",
+            "datatype-date",
+            "base",
+            "event-custom"
+        ]
+    },
+    "axis-category": {
+        "requires": [
+            "axis",
+            "axis-category-base"
+        ]
+    },
+    "axis-category-base": {
+        "requires": [
+            "axis-base"
+        ]
+    },
+    "axis-numeric": {
+        "requires": [
+            "axis",
+            "axis-numeric-base"
+        ]
+    },
+    "axis-numeric-base": {
+        "requires": [
+            "axis-base"
+        ]
+    },
+    "axis-stacked": {
+        "requires": [
+            "axis-numeric",
+            "axis-stacked-base"
+        ]
+    },
+    "axis-stacked-base": {
+        "requires": [
+            "axis-numeric-base"
+        ]
+    },
+    "axis-time": {
+        "requires": [
+            "axis",
+            "axis-time-base"
+        ]
+    },
+    "axis-time-base": {
+        "requires": [
+            "axis-base"
         ]
     },
     "base": {
@@ -8210,7 +8403,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "requires": [
             "widget",
-            "substitute",
             "datatype-date",
             "datatype-date-math",
             "cssgrids"
@@ -8222,28 +8414,41 @@ Y.mix(YUI.Env[Y.version].modules, {
             "plugin",
             "classnamemanager",
             "datatype-date",
-            "node",
-            "substitute"
+            "node"
         ],
         "skinnable": true
     },
     "charts": {
-        "requires": [
+        "use": [
             "charts-base"
         ]
     },
     "charts-base": {
         "requires": [
             "dom",
-            "datatype-number",
-            "datatype-date",
-            "event-custom",
             "event-mouseenter",
             "event-touch",
-            "widget",
-            "widget-position",
-            "widget-stack",
-            "graphics"
+            "graphics-group",
+            "axes",
+            "series-pie",
+            "series-line",
+            "series-marker",
+            "series-area",
+            "series-spline",
+            "series-column",
+            "series-bar",
+            "series-areaspline",
+            "series-combo",
+            "series-combospline",
+            "series-line-stacked",
+            "series-marker-stacked",
+            "series-area-stacked",
+            "series-spline-stacked",
+            "series-column-stacked",
+            "series-bar-stacked",
+            "series-areaspline-stacked",
+            "series-combo-stacked",
+            "series-combospline-stacked"
         ]
     },
     "charts-legend": {
@@ -8376,6 +8581,17 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "type": "css"
     },
+    "cssgrids-responsive": {
+        "optional": [
+            "cssreset",
+            "cssfonts"
+        ],
+        "requires": [
+            "cssgrids",
+            "cssgrids-responsive-base"
+        ],
+        "type": "css"
+    },
     "cssgrids-units": {
         "optional": [
             "cssreset",
@@ -8384,6 +8600,12 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "cssgrids-base"
         ],
+        "type": "css"
+    },
+    "cssnormalize": {
+        "type": "css"
+    },
+    "cssnormalize-context": {
         "type": "css"
     },
     "cssreset": {
@@ -8529,15 +8751,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
-    "datatable-base-deprecated": {
-        "requires": [
-            "recordset-base",
-            "widget",
-            "substitute",
-            "event-mouseenter"
-        ],
-        "skinnable": true
-    },
     "datatable-body": {
         "requires": [
             "datatable-core",
@@ -8564,19 +8777,12 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datasource-local"
         ]
     },
-    "datatable-datasource-deprecated": {
+    "datatable-formatters": {
         "requires": [
-            "datatable-base-deprecated",
-            "plugin",
-            "datasource-local"
-        ]
-    },
-    "datatable-deprecated": {
-        "use": [
-            "datatable-base-deprecated",
-            "datatable-datasource-deprecated",
-            "datatable-sort-deprecated",
-            "datatable-scroll-deprecated"
+            "datatable-body",
+            "datatype-number-format",
+            "datatype-date-format",
+            "escape"
         ]
     },
     "datatable-head": {
@@ -8589,7 +8795,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "datatable-message": {
         "lang": [
             "en",
-            "fr"
+            "fr",
+            "es"
         ],
         "requires": [
             "datatable-base"
@@ -8609,31 +8816,16 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
-    "datatable-scroll-deprecated": {
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin"
-        ]
-    },
     "datatable-sort": {
         "lang": [
             "en",
-            "fr"
+            "fr",
+            "es"
         ],
         "requires": [
             "datatable-base"
         ],
         "skinnable": true
-    },
-    "datatable-sort-deprecated": {
-        "lang": [
-            "en"
-        ],
-        "requires": [
-            "datatable-base-deprecated",
-            "plugin",
-            "recordset-sort"
-        ]
     },
     "datatable-table": {
         "requires": [
@@ -9263,6 +9455,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "trigger": "graphics"
         }
     },
+    "graphics-group": {
+        "requires": [
+            "graphics"
+        ]
+    },
     "graphics-svg": {
         "condition": {
             "name": "graphics-svg",
@@ -9325,9 +9522,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "handlebars-base": {
-        "requires": [
-            "escape"
-        ]
+        "requires": []
     },
     "handlebars-compiler": {
         "requires": [
@@ -9481,9 +9676,67 @@ Y.mix(YUI.Env[Y.version].modules, {
             "yui-base"
         ]
     },
+    "json-parse-shim": {
+        "condition": {
+            "name": "json-parse-shim",
+            "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONParse !== false && !!Native;
+
+    function workingNative( k, v ) {
+        return k === "ok" ? true : v;
+    }
+    
+    // Double check basic functionality.  This is mainly to catch early broken
+    // implementations of the JSON API in Firefox 3.1 beta1 and beta2
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
+        }
+        catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+    return !nativeSupport;
+},
+            "trigger": "json-parse"
+        },
+        "requires": [
+            "json-parse"
+        ]
+    },
     "json-stringify": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "json-stringify-shim": {
+        "condition": {
+            "name": "json-stringify-shim",
+            "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONStringify !== false && !!Native;
+
+    // Double check basic native functionality.  This is primarily to catch broken
+    // early JSON API implementations in Firefox 3.1 beta1 and beta2.
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( '0' === Native.stringify(0) );
+        } catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+
+    return !nativeSupport;
+},
+            "trigger": "json-stringify"
+        },
+        "requires": [
+            "json-stringify"
         ]
     },
     "jsonp": {
@@ -9749,6 +10002,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "yui-base"
         ]
     },
+    "promise": {
+        "requires": [
+            "timers"
+        ]
+    },
     "querystring": {
         "use": [
             "querystring-parse",
@@ -9949,6 +10207,163 @@ Y.mix(YUI.Env[Y.version].modules, {
             "dom-base"
         ]
     },
+    "series-area": {
+        "requires": [
+            "series-cartesian",
+            "series-fill-util"
+        ]
+    },
+    "series-area-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-area"
+        ]
+    },
+    "series-areaspline": {
+        "requires": [
+            "series-area",
+            "series-curve-util"
+        ]
+    },
+    "series-areaspline-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-areaspline"
+        ]
+    },
+    "series-bar": {
+        "requires": [
+            "series-marker",
+            "series-histogram-base"
+        ]
+    },
+    "series-bar-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-bar"
+        ]
+    },
+    "series-base": {
+        "requires": [
+            "graphics",
+            "axis-base"
+        ]
+    },
+    "series-candlestick": {
+        "requires": [
+            "series-range"
+        ]
+    },
+    "series-cartesian": {
+        "requires": [
+            "series-base"
+        ]
+    },
+    "series-column": {
+        "requires": [
+            "series-marker",
+            "series-histogram-base"
+        ]
+    },
+    "series-column-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-column"
+        ]
+    },
+    "series-combo": {
+        "requires": [
+            "series-cartesian",
+            "series-line-util",
+            "series-plot-util",
+            "series-fill-util"
+        ]
+    },
+    "series-combo-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-combo"
+        ]
+    },
+    "series-combospline": {
+        "requires": [
+            "series-combo",
+            "series-curve-util"
+        ]
+    },
+    "series-combospline-stacked": {
+        "requires": [
+            "series-combo-stacked",
+            "series-curve-util"
+        ]
+    },
+    "series-curve-util": {},
+    "series-fill-util": {},
+    "series-histogram-base": {
+        "requires": [
+            "series-cartesian",
+            "series-plot-util"
+        ]
+    },
+    "series-line": {
+        "requires": [
+            "series-cartesian",
+            "series-line-util"
+        ]
+    },
+    "series-line-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-line"
+        ]
+    },
+    "series-line-util": {},
+    "series-marker": {
+        "requires": [
+            "series-cartesian",
+            "series-plot-util"
+        ]
+    },
+    "series-marker-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-marker"
+        ]
+    },
+    "series-ohlc": {
+        "requires": [
+            "series-range"
+        ]
+    },
+    "series-pie": {
+        "requires": [
+            "series-base",
+            "series-plot-util"
+        ]
+    },
+    "series-plot-util": {},
+    "series-range": {
+        "requires": [
+            "series-cartesian"
+        ]
+    },
+    "series-spline": {
+        "requires": [
+            "series-line",
+            "series-curve-util"
+        ]
+    },
+    "series-spline-stacked": {
+        "requires": [
+            "series-stacked",
+            "series-spline"
+        ]
+    },
+    "series-stacked": {
+        "requires": [
+            "axis-stacked"
+        ]
+    },
     "shim-plugin": {
         "requires": [
             "node-style",
@@ -10029,8 +10444,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     "tabview-base": {
         "requires": [
             "node-event-delegate",
-            "classnamemanager",
-            "skin-sam-tabview"
+            "classnamemanager"
         ]
     },
     "tabview-plugin": {
@@ -10097,6 +10511,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "text-data-wordbreak"
         ]
     },
+    "timers": {
+        "requires": [
+            "yui-base"
+        ]
+    },
     "transition": {
         "requires": [
             "node-style"
@@ -10122,25 +10541,45 @@ Y.mix(YUI.Env[Y.version].modules, {
             "transition"
         ]
     },
+    "tree": {
+        "requires": [
+            "base-build",
+            "tree-node"
+        ]
+    },
+    "tree-labelable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-lazy": {
+        "requires": [
+            "base-pluginhost",
+            "plugin",
+            "tree"
+        ]
+    },
+    "tree-node": {},
+    "tree-openable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-selectable": {
+        "requires": [
+            "tree"
+        ]
+    },
     "uploader": {
         "requires": [
             "uploader-html5",
             "uploader-flash"
         ]
     },
-    "uploader-deprecated": {
-        "requires": [
-            "event-custom",
-            "node",
-            "base",
-            "swf"
-        ]
-    },
     "uploader-flash": {
         "requires": [
             "swf",
             "widget",
-            "substitute",
             "base",
             "cssbutton",
             "node",
@@ -10153,7 +10592,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "widget",
             "node-event-simulate",
-            "substitute",
             "file-html5",
             "uploader-queue"
         ]
@@ -10300,6 +10738,22 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "yql": {
         "requires": [
+            "oop"
+        ]
+    },
+    "yql-jsonp": {
+        "condition": {
+            "name": "yql-jsonp",
+            "test": function (Y) {
+    /* Only load the JSONP module when not in nodejs or winjs
+    TODO Make the winjs module a CORS module
+    */
+    return (!Y.UA.nodejs && !Y.UA.winjs);
+},
+            "trigger": "yql",
+            "when": "after"
+        },
+        "requires": [
             "jsonp",
             "jsonp-url"
         ]
@@ -10338,7 +10792,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '94eedda504937a40f7cb6369adfcd937';
+YUI.Env[Y.version].md5 = '6d43bc92fc4f84b4141d123e32cdc9f1';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

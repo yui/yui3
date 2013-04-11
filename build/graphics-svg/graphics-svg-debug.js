@@ -3,7 +3,7 @@ YUI.add('graphics-svg', function (Y, NAME) {
 var IMPLEMENTATION = "svg",
     SHAPE = "shape",
 	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
-    SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
+    SPLITARGSPATTERN = /[\-]?[0-9]*[0-9|\.][0-9]*/g,
     Y_LANG = Y.Lang,
 	AttributeLite = Y.AttributeLite,
 	SVGGraphic,
@@ -87,9 +87,11 @@ SVGDrawing.prototype = {
      * @param {Number} cp2y y-coordinate for the second control point.
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     curveTo: function() {
         this._curveTo.apply(this, [Y.Array(arguments), false]);
+        return this;
     },
 
     /**
@@ -102,9 +104,11 @@ SVGDrawing.prototype = {
      * @param {Number} cp2y y-coordinate for the second control point.
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     relativeCurveTo: function() {
         this._curveTo.apply(this, [Y.Array(arguments), true]);
+        return this;
     },
 
     /**
@@ -184,9 +188,11 @@ SVGDrawing.prototype = {
      * @param {Number} cpy y-coordinate for the control point.
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     quadraticCurveTo: function() {
         this._quadraticCurveTo.apply(this, [Y.Array(arguments), false]);
+        return this;
     },
 
     /**
@@ -197,9 +203,11 @@ SVGDrawing.prototype = {
      * @param {Number} cpy y-coordinate for the control point.
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     relativeQuadraticCurveTo: function() {
         this._quadraticCurveTo.apply(this, [Y.Array(arguments), true]);
+        return this;
     },
 
     /**
@@ -229,6 +237,7 @@ SVGDrawing.prototype = {
             command = relative ? "q" : "Q",
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
+        this._pathArray = this._pathArray || [];
         if(this._pathType !== command)
         {
             this._pathType = command;
@@ -274,6 +283,7 @@ SVGDrawing.prototype = {
      * @param {Number} y y-coordinate
      * @param {Number} w width
      * @param {Number} h height
+     * @chainable
      */
     drawRect: function(x, y, w, h) {
         this.moveTo(x, y);
@@ -281,18 +291,20 @@ SVGDrawing.prototype = {
         this.lineTo(x + w, y + h);
         this.lineTo(x, y + h);
         this.lineTo(x, y);
+        return this;
     },
 
     /**
      * Draws a rectangle with rounded corners.
      *
-     * @method drawRect
+     * @method drawRoundRect
      * @param {Number} x x-coordinate
      * @param {Number} y y-coordinate
      * @param {Number} w width
      * @param {Number} h height
      * @param {Number} ew width of the ellipse used to draw the rounded corners
      * @param {Number} eh height of the ellipse used to draw the rounded corners
+     * @chainable
      */
     drawRoundRect: function(x, y, w, h, ew, eh) {
         this.moveTo(x, y + eh);
@@ -304,6 +316,7 @@ SVGDrawing.prototype = {
         this.quadraticCurveTo(x + w, y, x + w - ew, y);
         this.lineTo(x + ew, y);
         this.quadraticCurveTo(x, y, x, y + eh);
+        return this;
 	},
 
     /**
@@ -313,6 +326,7 @@ SVGDrawing.prototype = {
      * @param {Number} x y-coordinate
      * @param {Number} y x-coordinate
      * @param {Number} r radius
+     * @chainable
      * @protected
      */
 	drawCircle: function(x, y, radius) {
@@ -337,6 +351,7 @@ SVGDrawing.prototype = {
      * @param {Number} y y-coordinate
      * @param {Number} w width
      * @param {Number} h height
+     * @chainable
      * @protected
      */
 	drawEllipse: function(x, y, w, h) {
@@ -362,6 +377,7 @@ SVGDrawing.prototype = {
      * @param {Number} y x-coordinate
      * @param {Number} width width
      * @param {Number} height height
+     * @chainable
      * @protected
      */
     drawDiamond: function(x, y, width, height)
@@ -386,6 +402,7 @@ SVGDrawing.prototype = {
      * @param {Number} arc sweep of the wedge. Negative values draw clockwise.
      * @param {Number} radius radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
      * @param {Number} yRadius [optional] y radius for wedge.
+     * @chainable
      * @private
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
@@ -405,8 +422,9 @@ SVGDrawing.prototype = {
             diameter = radius * 2,
             currentArray,
             pathArrayLen;
+        this._pathArray = this._pathArray || [];
         yRadius = yRadius || radius;
-        if(this._pathType != "M")
+        if(this._pathType !== "M")
         {
             this._pathType = "M";
             currentArray = ["M"];
@@ -478,10 +496,12 @@ SVGDrawing.prototype = {
      * @method lineTo
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
+     * @chainable
      */
     lineTo: function()
     {
         this._lineTo.apply(this, [Y.Array(arguments), false]);
+        return this;
     },
 
     /**
@@ -490,10 +510,12 @@ SVGDrawing.prototype = {
      * @method relativeLineTo
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
+     * @chainable
      */
     relativeLineTo: function()
     {
         this._lineTo.apply(this, [Y.Array(arguments), true]);
+        return this;
     },
 
     /**
@@ -564,10 +586,12 @@ SVGDrawing.prototype = {
      * @method moveTo
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     moveTo: function()
     {
         this._moveTo.apply(this, [Y.Array(arguments), false]);
+        return this;
     },
 
     /**
@@ -576,10 +600,12 @@ SVGDrawing.prototype = {
      * @method relativeMoveTo
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
+     * @chainable
      */
     relativeMoveTo: function()
     {
         this._moveTo.apply(this, [Y.Array(arguments), true]);
+        return this;
     },
 
     /**
@@ -615,16 +641,19 @@ SVGDrawing.prototype = {
      * Completes a drawing operation.
      *
      * @method end
+     * @chainable
      */
     end: function()
     {
         this._closePath();
+        return this;
     },
 
     /**
      * Clears the path.
      *
      * @method clear
+     * @chainable
      */
     clear: function()
     {
@@ -638,6 +667,8 @@ SVGDrawing.prototype = {
         this._bottom = 0;
         this._pathArray = [];
         this._path = "";
+        this._pathType = "";
+        return this;
     },
 
     /**
@@ -653,7 +684,6 @@ SVGDrawing.prototype = {
             pathType,
             len,
             val,
-            val2,
             i,
             path = "",
             node = this.node,
@@ -672,11 +702,11 @@ SVGDrawing.prototype = {
                 {
                     path += pathType + segmentArray[1] + "," + segmentArray[2];
                 }
-                else if(pathType == "z" || pathType == "Z")
+                else if(pathType === "z" || pathType === "Z")
                 {
                     path += " z ";
                 }
-                else if(pathType == "C" || pathType == "c")
+                else if(pathType === "C" || pathType === "c")
                 {
                     path += pathType + (segmentArray[1] - left)+ "," + (segmentArray[2] - top);
                 }
@@ -689,6 +719,7 @@ SVGDrawing.prototype = {
                     case "L" :
                     case "l" :
                     case "M" :
+                    case "m" :
                     case "Q" :
                     case "q" :
                         for(i = 2; i < len; ++i)
@@ -737,10 +768,12 @@ SVGDrawing.prototype = {
      * Ends a fill and stroke
      *
      * @method closePath
+     * @chainable
      */
     closePath: function()
     {
         this._pathArray.push(["z"]);
+        return this;
     },
 
     /**
@@ -864,7 +897,7 @@ Y.SVGDrawing = SVGDrawing;
  * @constructor
  * @param {Object} cfg (optional) Attribute configs
  */
-SVGShape = function(cfg)
+SVGShape = function()
 {
     this._transforms = [];
     this.matrix = new Y.Matrix();
@@ -1098,7 +1131,15 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             concat = host._camelCaseConcat,
 			pointerEvents = host.get("pointerEvents");
 		host.node = node;
-		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)));
+		host.addClass(
+            _getClassName(SHAPE) +
+            " " +
+            _getClassName(concat(IMPLEMENTATION, SHAPE)) +
+            " " +
+            _getClassName(name) +
+            " " +
+            _getClassName(concat(IMPLEMENTATION, name))
+        );
         if(id)
 		{
 			node.setAttribute("id", id);
@@ -1138,7 +1179,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method _strokeChangeHandler
 	 * @private
 	 */
-	_strokeChangeHandler: function(e)
+	_strokeChangeHandler: function()
 	{
 		var node = this.node,
 			stroke = this.get("stroke"),
@@ -1161,7 +1202,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			node.setAttribute("stroke-linecap", stroke.linecap);
 			node.setAttribute("stroke-width",  stroke.weight);
 			node.setAttribute("stroke-opacity", stroke.opacity);
-			if(linejoin == "round" || linejoin == "bevel")
+			if(linejoin === "round" || linejoin === "bevel")
 			{
 				node.setAttribute("stroke-linejoin", linejoin);
 			}
@@ -1187,7 +1228,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method _fillChangeHandler
 	 * @private
 	 */
-	_fillChangeHandler: function(e)
+	_fillChangeHandler: function()
 	{
 		var node = this.node,
 			fill = this.get("fill"),
@@ -1196,7 +1237,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 		if(fill)
 		{
 			type = fill.type;
-			if(type == "linear" || type == "radial")
+			if(type === "linear" || type === "radial")
 			{
 				this._setGradientFill(fill);
 				node.setAttribute("fill", "url(#grad" + this.get("id") + ")");
@@ -1256,7 +1297,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			fy = fill.fy,
 			r = fill.r,
             stopNodes = [];
-		if(type == "linear")
+		if(type === "linear")
 		{
             cx = w/2;
             cy = h/2;
@@ -1385,7 +1426,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @param {Number} x The value to transate on the x-axis.
 	 * @param {Number} y The value to translate on the y-axis.
 	 */
-	translate: function(x, y)
+	translate: function()
 	{
 		this._addTransform("translate", arguments);
 	},
@@ -1397,7 +1438,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method translateX
 	 * @param {Number} x The value to translate.
 	 */
-	translateX: function(x)
+	translateX: function()
     {
         this._addTransform("translateX", arguments);
     },
@@ -1409,7 +1450,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method translateY
 	 * @param {Number} y The value to translate.
 	 */
-	translateY: function(y)
+	translateY: function()
     {
         this._addTransform("translateY", arguments);
     },
@@ -1421,7 +1462,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
      * @param {Number} x The value to skew on the x-axis.
      * @param {Number} y The value to skew on the y-axis.
      */
-    skew: function(x, y)
+    skew: function()
     {
         this._addTransform("skew", arguments);
     },
@@ -1432,7 +1473,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method skewX
 	 * @param {Number} x x-coordinate
 	 */
-    skewX: function(x)
+    skewX: function()
     {
         this._addTransform("skewX", arguments);
     },
@@ -1443,7 +1484,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method skewY
 	 * @param {Number} y y-coordinate
 	 */
-    skewY: function(y)
+    skewY: function()
     {
         this._addTransform("skewY", arguments);
     },
@@ -1454,7 +1495,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method rotate
 	 * @param {Number} deg The degree of the rotation.
 	 */
-    rotate: function(deg)
+    rotate: function()
     {
         this._addTransform("rotate", arguments);
     },
@@ -1465,7 +1506,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method scale
 	 * @param {Number} val
 	 */
-    scale: function(x, y)
+    scale: function()
     {
         this._addTransform("scale", arguments);
     },
@@ -1498,8 +1539,8 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 */
 	_updateTransform: function()
 	{
-		var isPath = this._type == "path",
-		    node = this.node,
+		var isPath = this._type === "path",
+            node = this.node,
 			key,
 			transform,
 			transformOrigin,
@@ -1589,7 +1630,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
      * @method _updateHandler
 	 * @private
 	 */
-	_updateHandler: function(e)
+	_updateHandler: function()
 	{
 		this._draw();
 	},
@@ -1618,10 +1659,10 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			stroke = this.get("stroke"),
             w = this.get("width"),
 			h = this.get("height"),
-			x = type == "path" ? 0 : this._x,
-			y = type == "path" ? 0 : this._y,
+			x = type === "path" ? 0 : this._x,
+			y = type === "path" ? 0 : this._y,
             wt = 0;
-        if(type != "path")
+        if(type !== "path")
         {
             if(stroke && stroke.weight)
             {
@@ -1968,7 +2009,7 @@ SVGShape.ATTRS = {
 			fill = (val) ? Y.merge(tmpl, val) : null;
 			if(fill && fill.color)
 			{
-				if(fill.color === undefined || fill.color == "none")
+				if(fill.color === undefined || fill.color === "none")
 				{
 					fill.color = null;
 				}
@@ -2118,7 +2159,7 @@ Y.SVGShape = SVGShape;
  * @extends SVGShape
  * @constructor
  */
-SVGPath = function(cfg)
+SVGPath = function()
 {
 	SVGPath.superclass.constructor.apply(this, arguments);
 };
@@ -2262,7 +2303,7 @@ Y.SVGRect = SVGRect;
  * @class SVGEllipse
  * @constructor
  */
-SVGEllipse = function(cfg)
+SVGEllipse = function()
 {
 	SVGEllipse.superclass.constructor.apply(this, arguments);
 };
@@ -2365,7 +2406,7 @@ Y.SVGEllipse = SVGEllipse;
  * @class SVGCircle
  * @constructor
  */
- SVGCircle = function(cfg)
+ SVGCircle = function()
  {
     SVGCircle.superclass.constructor.apply(this, arguments);
  };
@@ -2484,7 +2525,7 @@ Y.extend(SVGPieSlice, Y.SVGShape, Y.mix({
 	 * @private
 	 * @method _updateHandler
 	 */
-	_draw: function(e)
+	_draw: function()
 	{
         var x = this.get("cx"),
             y = this.get("cy"),
@@ -2545,7 +2586,7 @@ Y.SVGPieSlice = SVGPieSlice;
  * @class SVGGraphic
  * @constructor
  */
-SVGGraphic = function(cfg) {
+SVGGraphic = function() {
     SVGGraphic.superclass.constructor.apply(this, arguments);
 };
 
@@ -2816,9 +2857,10 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
      * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function(attr, value)
+	set: function()
 	{
 		var host = this,
+            attr = arguments[0],
             redrawAttrs = {
                 autoDraw: true,
                 autoSize: true,
@@ -2976,8 +3018,8 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         {
             cfg.visible = false;
         }
-        var shapeClass = this._getShapeClass(cfg.type),
-            shape = new shapeClass(cfg);
+        var ShapeClass = this._getShapeClass(cfg.type),
+            shape = new ShapeClass(cfg);
         this._appendShape(shape);
         return shape;
     },
@@ -3211,7 +3253,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
             node;
         if(autoSize)
         {
-            if(autoSize == "sizeContentToGraphic")
+            if(autoSize === "sizeContentToGraphic")
             {
                 node = Y.one(this._node);
                 computedWidth = parseFloat(node.getComputedStyle("width"));
@@ -3357,7 +3399,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
     {
         var node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + type),
             v = pe || "none";
-        if(type !== "defs" && type !== "stop" && type !== "linearGradient" && type != "radialGradient")
+        if(type !== "defs" && type !== "stop" && type !== "linearGradient" && type !== "radialGradient")
         {
             node.setAttribute("pointer-events", v);
         }
