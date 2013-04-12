@@ -22,13 +22,13 @@ YUI.add("event-custom-complex-tests", function(Y) {
             var O = function(id) {
                 this.id = id;
                 Y.log('O constructor executed ' + id);
-            }
+            };
 
             O.prototype = {
                 oOo: function(ok) {
                     Y.log('oOo');
                 }
-            }
+            };
 
             // pass configuration info into EventTarget with the following
             // construct
@@ -72,7 +72,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
             var Base = function() {
                 Y.log('Base constructor executed');
                 arguments.callee.superclass.constructor.apply(this, arguments);
-            }
+            };
 
             Y.extend(Base, Y.EventTarget, {
                 base: function() {
@@ -101,13 +101,13 @@ YUI.add("event-custom-complex-tests", function(Y) {
             var O = function(id) {
                 this.id = id;
                 Y.log('O constructor executed ' + id);
-            }
+            };
 
             O.prototype = {
                 oOo: function(ok) {
                     Y.log('oOo');
                 }
-            }
+            };
 
             // pass configuration info into EventTarget with the following
             // construct
@@ -265,7 +265,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
             };
 
             // configure chaining via global default or on the event target
-            YUI({ 
+            YUI({
                 base:'../../../build/',
                 logInclude: {
                     test: true
@@ -298,8 +298,8 @@ YUI.add("event-custom-complex-tests", function(Y) {
         testObjType: function() {
             var f1, f2;
             Y.on({
-                'y:click': function() {f1 = true},
-                'y:clack': function() {f2 = true}
+                'y:click': function() {f1 = true;},
+                'y:clack': function() {f2 = true;}
             });
 
             Y.fire('y:click');
@@ -572,7 +572,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
             Y.Assert.areEqual(0, count);
 
-            var handle3 = Y.on('y:click', function() {
+            handle3 = Y.on('y:click', function() {
                 count++;
             });
 
@@ -657,8 +657,8 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
             Y.on('fireonce', function(arg1, arg2) {
                 notified++;
-                Y.Assert.areEqual('foo', arg1, 'arg1 not correct for lazy fireOnce listener')
-                Y.Assert.areEqual('bar', arg2, 'arg2 not correct for lazy fireOnce listener')
+                Y.Assert.areEqual('foo', arg1, 'arg1 not correct for lazy fireOnce listener');
+                Y.Assert.areEqual('bar', arg2, 'arg2 not correct for lazy fireOnce listener');
             });
 
             Y.fire('fireonce', 'foo2', 'bar2');
@@ -960,6 +960,27 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.Assert.areEqual('onfooafterfooonbarafterbar', result);
         },
 
+        testDefaultFnWithoutSubscribers : function() {
+            var a = new Y.EventTarget(),
+                count = 0;
+
+            a.publish("foo", {
+                emitFacade: true,
+                defaultFn : function(e) {
+                    Y.Assert.areEqual(1, e.bar, "incorrect payload");
+                    Y.Assert.areSame(a, e.target, "incorrect target");
+                    Y.Assert.areSame(a, e.currentTarget, "incorrect currentTarget");
+                    count = 1;
+                }
+            });
+
+            a.fire("foo", {
+                bar:1
+            });
+
+            Y.Assert.areEqual(1, count);
+        },
+
         test_bubble_config: function() {
 
             var a = new Y.EventTarget(),
@@ -979,6 +1000,37 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
             Y.Assert.isTrue(result);
 
+        },
+
+        test_get_targets: function () {
+            var a = new Y.EventTarget(),
+                b = new Y.EventTarget();
+
+            Y.Assert.isArray(a.getTargets());
+
+            a.addTarget(b);
+            Y.ArrayAssert.itemsAreSame([b], a.getTargets());
+        },
+
+        test_remove_target_after_add: function () {
+            var a = new Y.EventTarget(),
+                b = new Y.EventTarget();
+
+            a.addTarget(b);
+            Y.ArrayAssert.contains(b, a.getTargets());
+
+            a.removeTarget(b);
+            Y.ArrayAssert.doesNotContain(b, a.getTargets());
+        },
+
+        test_remove_target_no_add: function () {
+            var a = new Y.EventTarget(),
+                b = new Y.EventTarget();
+
+            Y.ArrayAssert.doesNotContain(b, a.getTargets());
+
+            a.removeTarget(b);
+            Y.ArrayAssert.doesNotContain(b, a.getTargets());
         },
 
         test_onceAfter: function () {
@@ -1013,9 +1065,9 @@ YUI.add("event-custom-complex-tests", function(Y) {
         },
 
         testIndividualCustomEventMonitoring: function () {
-            var target = new Y.EventTarget({ 
-                    emitFacade: true, 
-                    prefix: 'a' 
+            var target = new Y.EventTarget({
+                    emitFacade: true,
+                    prefix: 'a'
                 }),
                 actual = [],
                 expected = ["a:foo_publish", "et-a:foo_publish", "a:foo_attach", "et-a:foo_attach", "a:foo_attach", "et-a:foo_attach", "a:foo_fire", "et-a:foo_fire", "a:foo_detach", "et-a:foo_detach", "a:foo_detach", "et-a:foo_detach"],
@@ -1094,10 +1146,10 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
         'ignore: Does not work currently due to infinite recursion - testEventTargetMonitoring': function () {
 
-            var target = new Y.EventTarget({ 
+            var target = new Y.EventTarget({
                     monitored:true, // Doesn't work currently. Causes infinite recursion
-                    emitFacade: true, 
-                    prefix: 'a' 
+                    emitFacade: true,
+                    prefix: 'a'
                 }),
                 actual = [],
                 expected = ["a:foo_publish", "a:foo_attach", "a:foo_attach", "a:foo_fire", "a:foo_detach", "a:foo_detach"],
@@ -1174,4 +1226,4 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
     Y.Test.Runner.add(suite);
 
-}, '@VERSION@' ,{requires:['event-custom', 'test']}); 
+}, '@VERSION@' ,{requires:['event-custom', 'test']});
