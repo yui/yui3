@@ -20,14 +20,29 @@ var arrEach = Y.Array.each,
 
 /**
 Mapping of key codes to friendly key names that can be used in the
-[keyActions](#attr_keyActions) attribute and [ARIA_ACTIONS](#property_ARIA_ACTIONS)
-property
+[keyActions](#property_keyActions) property and [ARIA_ACTIONS](#property_ARIA_ACTIONS)
+property.
 
-@property keyNames
+It contains aliases for the following keys:
+    <ul>
+    <li>enter</li>
+    <li>space</li>
+    <li>pgup</li>
+    <li>pgdown</li>
+    <li>end</li>
+    <li>home</li>
+    <li>left</li>
+    <li>up</li>
+    <li>right</li>
+    <li>down</li>
+    </ul>
+
+
+@property KEY_NAMES
 @type {Object}
 @static
 **/
-DtKeyNav.keyNames = {
+DtKeyNav.KEY_NAMES = {
     13: 'enter',
     32: 'space',
     33: 'pgup',
@@ -44,7 +59,7 @@ DtKeyNav.keyNames = {
 Mapping of key codes to actions according to the WAI-ARIA suggestion for the
 [Grid Widget](http://www.w3.org/WAI/PF/aria-practices/#grid).
 
-The key for each entry is a key-code or [keyName](#property_keyNames) while the
+The key for each entry is a key-code or [keyName](#property_KEY_NAMES) while the
 value can be a function that performs the action or a string.  If a string,
 it can either correspond to the name of a method in this module (or  any
 method in a DataTable instance) or the name of an event to fire.
@@ -60,9 +75,7 @@ DtKeyNav.ARIA_ACTIONS = {
     home: '_keyMoveRowStart',
     end: '_keyMoveRowEnd',
     pgup: '_keyMoveColTop',
-    pgdown: '_keyMoveColBottom',
-    enter: 'enterActiveMode',
-    113: 'enterActiveMode' // F2
+    pgdown: '_keyMoveColBottom'
 };
 
 DtKeyNav.ATTRS = {
@@ -70,17 +83,42 @@ DtKeyNav.ATTRS = {
     Cell that's currently either focused or
     focusable when the DataTable gets the focus.
 
-    @attribute {Node|null} focusedCell
+    @attribute focusedCell
+    @type Node
+    @default first cell in the table.
     **/
-    focusedCell: {   },
+    focusedCell: {
+        setter: '_focusedCellSetter'
+
+    },
+
+
+
+    /**
+    Determines whether it is possible to navigate into the header area.
+    The examples referenced in the document show both behaviors so it seems
+    it is optional.
+
+    @attribute keyIntoHeaders
+    @type Boolean
+    @default true
+     */
+
+    keyIntoHeaders: {
+        value: true
+    }
+
+};
+
+Y.mix( DtKeyNav.prototype, {
 
     /**
     Table of actions to be performed for each key.  It is loaded with a clone
     of [ARIA_ACTIONS](#property_ARIA_ACTIONS) by default.
 
     The key for each entry is either a key-code or an alias from the
-    [keyNames](#property_keyNames) table. They can be prefixed with any combination
-    of the modifier keys `alt`, `ctrl`, `meta` or `shift` followed by a hyphen,
+    [KEY_NAMES](#property_KEY_NAMES) table. They can be prefixed with any combination
+    of the modifier keys `alt`, `ctrl`, `meta` or `shift` each followed by a hyphen,
     such as `"ctrl-shift-up"` (modifiers, if more than one, should appear in alphabetical order).
 
     The value for each entry should be a function or the name of a method in
@@ -93,19 +131,13 @@ DtKeyNav.ATTRS = {
     the row, column and, unless it is a header row, the record it corresponds to.
     The second argument will be the original EventFacade for the keyboard event.
 
-     @attribute keyActions
+     @property keyActions
      @type {Object}
-     @default ARIA_ACTIONS
+     @default Y.DataTable.keyNav.ARIA_ACTIONS
      */
 
-    keyActions: {
-        valueFn: function () {
-            return Y.clone(DtKeyNav.ARIA_ACTIONS);
-        }
-    }
-};
+    keyActions: null,
 
-Y.mix( DtKeyNav.prototype, {
     /**
     Array containing the event handles to any event that might need to be detached
     on destruction.
@@ -161,8 +193,10 @@ Y.mix( DtKeyNav.prototype, {
         ];
         this._keyNavColPrefix = this.getClassName('col', '');
         this._keyNavColRegExp = new RegExp(this._keyNavColPrefix + '(.+?)(\\s|$)');
+        this.keyActions = Y.clone(DtKeyNav.ARIA_ACTIONS);
 
     },
+
     destructor: function () {
         arrEach(this._keyNavSubscr, function (evHandle) {
             if (evHandle && evHandle.detach) {
@@ -171,6 +205,7 @@ Y.mix( DtKeyNav.prototype, {
         });
 
     },
+
     /**
     Sets the tabIndex on the focused cell and, if the DataTable has the focus,
     sets the focus on it.
@@ -197,9 +232,11 @@ Y.mix( DtKeyNav.prototype, {
             }
         }
     },
+
     /**
     When the DataTable gets the focus, it ensures the correct cell regains
     the focus.
+
     @method _afterKeyNavFocusedChange
     @param e {EventFacade}
     @private
@@ -213,9 +250,11 @@ Y.mix( DtKeyNav.prototype, {
          }
 
     },
+
     /**
     Subscribes to the events on the DataTable elements once they have been rendered,
     finds out the header section and makes the top-left element focusable.
+
     @method _afterKeyNavRender
     @private
      */
@@ -229,29 +268,32 @@ Y.mix( DtKeyNav.prototype, {
         this._keyNavTHead = (this._yScrollHeader || this._tableNode).one('thead');
         this._keyMoveFirst();
     },
+
     /**
     In response to a click event, it sets the focus on the clicked cell
+
     @method _onKeyNavClick
     @param e {EventFacade}
     @private
      */
     _onKeyNavClick: function (e) {
-        var cell = e.target.ancestor('td, th', true);
+        var cell = e.target.ancestor((this.get('keyIntoHeaders') ? 'td, th': 'td'), true);
         if (cell) {
             this.focus();
             this.set('focusedCell', cell);
         }
     },
+
     /**
     Responds to a key down event by executing the action set in the
-    [keyActions](#attr_keyActions) table.
+    [keyActions](#property_keyActions) table.
+
     @method _onKeyNavKeyDown
     @param e {EventFacade}
     @private
     */
     _onKeyNavKeyDown: function (e) {
-         console.log('_onKeyNavKeyDown',e);
-        var key    = DtKeyNav.keyNames[e.keyCode] || e.keyCode,
+        var key    = DtKeyNav.KEY_NAMES[e.keyCode] || e.keyCode,
             action;
 
         arrEach(['alt', 'ctrl', 'meta', 'shift'], function (modifier) {
@@ -260,7 +302,7 @@ Y.mix( DtKeyNav.prototype, {
 
             }
         });
-        action = this.get('keyActions')[key];
+        action = this.keyActions[key];
 
         switch (typeof action) {
             case 'string':
@@ -276,8 +318,8 @@ Y.mix( DtKeyNav.prototype, {
             default:
                 return;
         }
-        e.preventDefault();
     },
+
     /**
     If the action associated to a key combination is a string and no method
     by that name was found in this instance, this method will
@@ -288,7 +330,6 @@ Y.mix( DtKeyNav.prototype, {
     @param action {String} Name of the event to fire
     @param e {EventFacade} Original facade from the keydown event.
     @private
-
      */
     _keyNavFireEvent: function (action, e) {
         var cell = e.target.ancestor('td, th', true);
@@ -301,46 +342,54 @@ Y.mix( DtKeyNav.prototype, {
             }, e);
         }
     },
+
     /**
     Sets the focus on the very first cell in the header of the table.
+
     @method _keyMoveFirst
     @private
      */
     _keyMoveFirst: function () {
-        console.log('first');
-        this.set('focusedCell' , this._keyNavTHead.one('th'), {src:'keyNav'});
-
+        this.set('focusedCell' , (this.get('keyIntoHeaders') ? this._keyNavTHead.one('th') : this._tbodyNode.one('td')), {src:'keyNav'});
     },
+
     /**
     Sets the focus on the cell to the left of the currently focused one.
     Does not wrap, following the WAI-ARIA recommendation.
+
     @method _keyMoveLeft
+    @param e {EventFacade} Event Facade for the keydown event
     @private
     */
-    _keyMoveLeft: function () {
-        console.log('left');
+    _keyMoveLeft: function (e) {
         var cell = this.get('focusedCell'),
             index = cell.get('cellIndex'),
             row = cell.ancestor();
 
+        e.preventDefault();
+
         if (index === 0) {
             return;
         }
-        this.set('focusedCell', row.get('cells').item(index - 1), {src:'keyNav'});
-
+        cell = row.get('cells').item(index - 1);
+        this.set('focusedCell', cell , {src:'keyNav'});
     },
+
     /**
     Sets the focus on the cell to the right of the currently focused one.
     Does not wrap, following the WAI-ARIA recommendation.
+
     @method _keyMoveRight
+    @param e {EventFacade} Event Facade for the keydown event
     @private
     */
-    _keyMoveRight: function () {
-        console.log('right');
+    _keyMoveRight: function (e) {
         var cell = this.get('focusedCell'),
             index = cell.get('cellIndex') + 1,
             row = cell.ancestor(),
             cells = row.get('cells');
+
+        e.preventDefault();
 
         if (index === cells.size()) {
             return;
@@ -348,15 +397,17 @@ Y.mix( DtKeyNav.prototype, {
         this.set('focusedCell', cells.item(index), {src:'keyNav'});
 
     },
+
     /**
     Sets the focus on the cell above the currently focused one.
     It will move into the headers when the top of the data rows is reached.
     Does not wrap, following the WAI-ARIA recommendation.
+
     @method _keyMoveUp
+    @param e {EventFacade} Event Facade for the keydown event
     @private
     */
-    _keyMoveUp: function () {
-        console.log('up');
+    _keyMoveUp: function (e) {
         var cell = this.get('focusedCell'),
             cellIndex = cell.get('cellIndex'),
             row = cell.ancestor(),
@@ -364,11 +415,13 @@ Y.mix( DtKeyNav.prototype, {
             section = row.ancestor(),
             inHead = section === this._keyNavTHead;
 
+        e.preventDefault();
+
         if (!inHead) {
             rowIndex -= section.get('firstChild').get('rowIndex');
         }
         if (rowIndex === 0) {
-            if (inHead) {
+            if (inHead || !this.get('keyIntoHeaders')) {
                 return;
             }
             section = this._keyNavTHead;
@@ -394,15 +447,17 @@ Y.mix( DtKeyNav.prototype, {
         }
         this.set('focusedCell', row.get('cells').item(cellIndex));
     },
+
     /**
     Sets the focus on the cell below the currently focused one.
     It will move into the data rows when the bottom of the header rows is reached.
     Does not wrap, following the WAI-ARIA recommendation.
+
     @method _keyMoveDown
+    @param e {EventFacade} Event Facade for the keydown event
     @private
     */
-    _keyMoveDown: function () {
-        console.log('down');
+    _keyMoveDown: function (e) {
         var cell = this.get('focusedCell'),
             cellIndex = cell.get('cellIndex'),
             row = cell.ancestor(),
@@ -410,6 +465,8 @@ Y.mix( DtKeyNav.prototype, {
             section = row.ancestor(),
             inHead = section === this._keyNavTHead,
             key, children;
+
+        e.preventDefault();
 
         if (inHead) {
             if (this._keyNavNestedHeaders) {
@@ -439,38 +496,49 @@ Y.mix( DtKeyNav.prototype, {
         }
         this.set('focusedCell', row.get('cells').item(cellIndex));
     },
+
     /**
     Sets the focus on the left-most cell of the row containing the currently focused cell.
+
     @method _keyMoveRowStart
+    @param e {EventFacade} Event Facade for the keydown event
     @private
      */
-    _keyMoveRowStart: function () {
+    _keyMoveRowStart: function (e) {
         var row = this.get('focusedCell').ancestor();
-        this.set('focusedCell', row.get('firstChild'));
-
+        this.set('focusedCell', row.get('firstChild'), {src:'keyNav'});
+        e.preventDefault();
     },
+
     /**
     Sets the focus on the right-most cell of the row containing the currently focused cell.
+
     @method _keyMoveRowEnd
+    @param e {EventFacade} Event Facade for the keydown event
     @private
      */
-    _keyMoveRowEnd: function () {
+    _keyMoveRowEnd: function (e) {
         var row = this.get('focusedCell').ancestor();
-        this.set('focusedCell', row.get('lastChild'));
-
+        this.set('focusedCell', row.get('lastChild'), {src:'keyNav'});
+        e.preventDefault();
     },
+
     /**
     Sets the focus on the top-most cell of the column containing the currently focused cell.
     It would normally be a header cell.
+
     @method _keyMoveColTop
+    @param e {EventFacade} Event Facade for the keydown event
     @private
      */
-    _keyMoveColTop: function () {
+    _keyMoveColTop: function (e) {
         var cell = this.get('focusedCell'),
             cellIndex = cell.get('cellIndex'),
             key, header;
 
-        if (this._keyNavNestedHeaders) {
+        e.preventDefault();
+
+        if (this._keyNavNestedHeaders && this.get('keyIntoHeaders')) {
             key = this._keyNavColRegExp.exec(cell.get('className'))[1];
             header = this._columnMap[key];
             while (header._parent) {
@@ -479,21 +547,45 @@ Y.mix( DtKeyNav.prototype, {
             cell = this._keyNavTHead.one('#' + header.id);
 
         } else {
-            cell = this._keyNavTHead.get('firstChild').get('cells').item(cellIndex);
+            cell = (this.get('keyIntoHeaders') ? this._keyNavTHead: this._tbodyNode).get('firstChild').get('cells').item(cellIndex);
         }
         this.set('focusedCell', cell , {src:'keyNav'});
     },
+
     /**
     Sets the focus on the last cell of the column containing the currently focused cell.
+
     @method _keyMoveColBottom
+    @param e {EventFacade} Event Facade for the keydown event
     @private
      */
-    _keyMoveColBottom: function () {
+    _keyMoveColBottom: function (e) {
         var cell = this.get('focusedCell'),
             cellIndex = cell.get('cellIndex');
 
-        this.set('focusedCell', this._tbodyNode.get('lastChild').get('cells').item(cellIndex));
+        this.set('focusedCell', this._tbodyNode.get('lastChild').get('cells').item(cellIndex), {src:'keyNav'});
+        e.preventDefault();
 
+    },
+
+    /**
+    Setter method for the [focusedCell](#attr_focusedCell) attribute.
+    Checks that the passed value is a Node, either a TD or TH and is
+    contained within the DataTable contentBox.
+
+    @method _focusedCellSetter
+    @param cell {Node} DataTable cell to receive the focus
+    @return cell or Y.Attribute.INVALID_VALUE
+    @private
+     */
+    _focusedCellSetter: function (cell) {
+        if (cell instanceof Y.Node) {
+            var tag = cell.get('tagName').toUpperCase();
+            if ((tag === 'TD' || tag === 'TH') && this.get('contentBox').contains(cell) ) {
+                return cell;
+            }
+        }
+        return Y.Attribute.INVALID_VALUE;
     }
 });
 
