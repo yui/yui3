@@ -92,8 +92,10 @@ var L = Y.Lang,
 
         if (!etState) {
             etState = this._yuievt = {
-                events: {},    // PERF: Not much point instantiating lazily. We're bound to have events
-                targets: null, // PERF: Instantiate lazily, if user actually adds target,
+                // PERF: Not much point instantiating lazily. We're bound to have events
+                events: {},
+
+                targets: {},
                 config: {
                     host: this,
                     context: this
