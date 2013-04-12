@@ -125,6 +125,20 @@ YUI.add('datatable-keynav-tests', function(Y) {
 
             this._moveAbout(dt);
             dt.destroy();
+        },
+
+        "test moving about excluding headers": function () {
+            var dt = makeDT({keyIntoHeaders: false});
+            dt.focus();
+            check('a1',1);
+            fireKey(UP);
+            check('a1',2);
+            fireKey(PGDN);
+            check('a19',3);
+            fireKey(PGUP);
+            check('a1',4)
+            dt.destroy();
+
         }
     }));
     suite.add(new Y.Test.Case({
@@ -154,7 +168,7 @@ YUI.add('datatable-keynav-tests', function(Y) {
                 eventFacade = null,
                 self = null,
                 ch = 'a'.charCodeAt(0);
-            dt.get('keyActions')[ch] = function (e) {
+            dt.keyActions[ch] = function (e) {
                 eventFacade = e;
                 self = this;
             };
@@ -170,7 +184,7 @@ YUI.add('datatable-keynav-tests', function(Y) {
                 ev1 = null,
                 self = null,
                 ch = 'a'.charCodeAt(0);
-            dt.get('keyActions')[ch] = 'someEvent';
+            dt.keyActions[ch] = 'someEvent';
 
             dt.on('someEvent', function (e,e1) {
                 ev = e;
@@ -190,7 +204,7 @@ YUI.add('datatable-keynav-tests', function(Y) {
             var dt = this.dt,
                 eventFacade = null,
                 self = null;
-            dt.get('keyActions')['shift-space'] = function (e) {
+            dt.keyActions['shift-space'] = function (e) {
                 eventFacade = e;
                 self = this;
             };
