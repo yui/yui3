@@ -2,9 +2,8 @@
  A collection of generic paginator methods and properties.
 
  @module paginator
- @submodule paginator
- @class Core
- @namespace Paginator
+ @main paginator
+ @class Paginator
  @since 3.10.0
  */
  var Paginator = Y.Base.create('paginator', Y.Base, [], {
@@ -15,11 +14,12 @@
      */
     firstPage: function () {
         this.set('page', 1);
+        return this;
     },
 
     /**
      Sets the page to the last page in the set.
-     Goes to next page if totalItems is not set
+     Goes to next page if totalItems is not set.
      @method lastPage
      */
     lastPage: function () {
@@ -30,6 +30,7 @@
                 this.nextPage();
             }
         }
+        return this;
     },
 
     /**
@@ -40,6 +41,7 @@
         if (this.hasPrevPage()) {
             this.set('page', this.get('page') - 1);
         }
+        return this;
     },
 
     /**
@@ -50,24 +52,25 @@
         if (this.hasNextPage()) {
             this.set('page', this.get('page') + 1);
         }
+        return this;
     },
 
     /**
      Returns True if there is a previous page in the set.
      @method hasPrevPage
-     @return Boolean
+     @return {Boolean} `true` if there is a previous page, `false` otherwise.
      */
     hasPrevPage: function () {
         return this.get('page') > 1;
     },
 
     /**
-     Returns True if there is a previous page in the set.
+     Returns True if there is a next page in the set.
 
      If totalItems isn't set, assume there is always next page;
 
      @method hasNextPage
-     @return Boolean
+     @return {Boolean} `true` if there is a next page, `false` otherwise.
      */
     hasNextPage: function () {
         return (!this.get('totalItems') || this.get('page') < this.get('totalPages'));
@@ -75,17 +78,6 @@
 
 
     //--- P R O T E C T E D
-
-    /**
-     Sets the current page to the value provided.
-     @protected
-     @method _setPageFn
-     @param {Number} val
-     @return Number
-     */
-    _setPageFn: function (val) {
-        return parseInt(val, 10);
-    },
 
     /**
      Returns the total number of pages based on the total number of
@@ -98,48 +90,19 @@
         var itemsPerPage = this.get('itemsPerPage');
 
         return (itemsPerPage < 1) ? 1 : Math.ceil(this.get('totalItems') / itemsPerPage);
-    },
-
-    /**
-     Sets the number of items to be displayed per page
-     @protected
-     @method _setItemsPerPageFn
-     @param {Number} val
-     @return Number
-     */
-    _setItemsPerPageFn: function (val) {
-        if (!val) {
-            return Y.Attribute.INVALID_VALUE;
-        }
-
-        if (val.toString().toLowerCase() === 'all' || val === '*') {
-            val = -1;
-        }
-
-        return parseInt(val, 10);
-    },
-
-    /**
-     Sets the total number of items in the set.
-     @protected
-     @method _setTotalItemsFn
-     @param {Number} val
-     @return Number
-     */
-    _setTotalItemsFn: function (val) {
-        return parseInt(val, 10);
     }
+
 
 }, {
     ATTRS: {
         /**
-         Current page count. First page is 1
+         Current page count. First page is 1.
          @attribute page
          @type Number
+         @default 1
          **/
         page: {
-            value: 1,
-            setter: '_setPageFn'
+            value: 1
         },
 
         /**
@@ -158,20 +121,20 @@
              all items on one page.
          @attribute itemsPerPage
          @type Number
+         @default 10
          **/
         itemsPerPage: {
-            value: 1,
-            setter: '_setItemsPerPageFn'
+            value: 10
         },
 
         /**
          Total number of items in all pages.
          @attribute totalItems
          @type Number
+         @default 0
          **/
         totalItems: {
-            value: null,
-            setter: '_setTotalItemsFn'
+            value: 0
         }
     }
 });

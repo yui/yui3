@@ -5,29 +5,6 @@ var suite = new Y.Test.Suite("Paginator");
 
 
 suite.add(new Y.Test.Case({
-    name: "Class extension",
-
-    testClassExtension: function () {
-        var Class = Y.Paginator,
-            instance = new Class(),
-            props = Y.Object.keys(Y.Paginator.prototype),
-            attrs = Y.Object.keys(Y.Paginator.ATTRS),
-            i;
-
-        instance = new Class();
-
-        for (i = props.length - 1; i >= 0; --i) {
-            Y.Assert.isNotUndefined(instance[props[i]]);
-        }
-
-        for (i = attrs.length - 1; i >= 0; --i) {
-            Y.Assert.isTrue(instance.attrAdded(attrs[i]));
-        }
-    }
-
-}));
-
-suite.add(new Y.Test.Case({
     name: 'Paginator Core methods',
 
     'test first last paging': function () {

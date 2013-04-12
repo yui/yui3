@@ -1,18 +1,13 @@
 {
     "paginator": {
-
-        "submodules": {
-            "paginator": {
-                "requires": [
-                    "base"
-                ]
-            },
-            "paginator-url": {
-                "requires": [
-                    "paginator"
-                ]
-            }
-        }
+        "requires": [
+            "base"
+        ],
+    },
+    "paginator-url": {
+        "requires": [
+            "paginator"
+        ]
     }
 }
 

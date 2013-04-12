@@ -3,8 +3,7 @@
 
  @module paginator
  @submodule paginator-url
- @class Url
- @namespace Paginator
+ @class Paginator.Url
  @since 3.10.0
  */
 
@@ -12,18 +11,21 @@ function PaginatorUrl () {}
 
 PaginatorUrl.ATTRS = {
     /**
-    Index of the first item on the page.
-    @attribute index
+    URL to return formatted with the page number. URL uses `Y.Lang.sub` for page number stubstitutions.
+
+    For example, if the page number is `3`, setting the `url` to `?pg={page}`, will result in `?pg=3`
+
+    @attribute pageUrl
     @type String
     **/
-    url: {}
+    pageUrl: {}
 };
 
 PaginatorUrl.prototype = {
     /**
      Returns a formated URL for the previous page.
      @method prevPageUrl
-     @return String | NULL
+     @return {String | null} Formatted URL for the previous page, or `null` if there is no previous page.
      */
     prevPageUrl: function () {
         return (this.hasPrevPage() && this.formatPageUrl(this.get('page') - 1)) || null;
@@ -32,7 +34,7 @@ PaginatorUrl.prototype = {
     /**
      Returns a formated URL for the next page.
      @method nextPageUrl
-     @return String | NULL
+     @return {String | null} Formatted URL for the next page or `null` if there is no next page.
      */
     nextPageUrl: function () {
         return (this.hasNextPage() && this.formatPageUrl(this.get('page') + 1)) || null;
@@ -41,7 +43,8 @@ PaginatorUrl.prototype = {
     /**
      Returns a formated URL for the provided page number.
      @method formatPageUrl
-     @return String | NULL
+     @param {Number} [page] Page value to be used in the formatted URL. If empty, page will be the value of the `page` ATTRS.
+     @return {String | null} Formatted URL for the page or `null` if there is not a `pageUrl` set.
      */
     formatPageUrl: function (page) {
         var url = this.get('url');
@@ -56,4 +59,3 @@ PaginatorUrl.prototype = {
 
 Y.namespace('Paginator').Url = PaginatorUrl;
 
-Y.Base.mix(Y.Paginator, [PaginatorUrl]);
