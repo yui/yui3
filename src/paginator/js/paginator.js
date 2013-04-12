@@ -10,33 +10,9 @@
  var Paginator = Y.Base.create('paginator', Y.Base, [], {
 
     /**
-     Sets the page to the first page in the set.
-     @method firstPage
-     */
-    firstPage: function () {
-        this.set('page', 1);
-        return this;
-    },
-
-    /**
-     Sets the page to the last page in the set.
-     Goes to next page if totalItems is not set.
-     @method lastPage
-     */
-    lastPage: function () {
-        if (this.hasNextPage()) {
-            if (this.get('totalItems')) {
-                this.set('page', this.get('totalPages'));
-            } else {
-                this.nextPage();
-            }
-        }
-        return this;
-    },
-
-    /**
      Sets the page to the previous page in the set.
      @method prevPage
+     @chainable
      */
     prevPage: function () {
         if (this.hasPrevPage()) {
@@ -48,6 +24,7 @@
     /**
      Sets the page to the next page in the set.
      @method nextPage
+     @chainable
      */
     nextPage: function () {
         if (this.hasNextPage()) {
@@ -83,9 +60,11 @@
     /**
      Returns the total number of pages based on the total number of
        items provided and the number of items per page
+
      @protected
      @method _getTotalPagesFn
-     @return Number
+     @return {Number} total number of pages based on total number of items and
+       items per page or one if itemsPerPage is less than one
      */
     _getTotalPagesFn: function () {
         var itemsPerPage = this.get('itemsPerPage');
@@ -140,4 +119,9 @@
     }
 });
 
-Y.Paginator = Paginator;
+Y.namespace('Paginator').Core = Paginator;
+
+Y.Paginator = Y.mix(
+    Y.Base.create('pagiantor', Y.Paginator.Core, []),
+    Y.Paginator
+);

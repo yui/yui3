@@ -47,9 +47,9 @@ PaginatorUrl.prototype = {
      @return {String | null} Formatted URL for the page or `null` if there is not a `pageUrl` set.
      */
     formatPageUrl: function (page) {
-        var url = this.get('url');
-        if (url) {
-            return Y.Lang.sub(url, {
+        var pageUrl = this.get('pageUrl');
+        if (pageUrl) {
+            return Y.Lang.sub(pageUrl, {
                 page: page || this.get('page')
             });
         }
@@ -59,3 +59,4 @@ PaginatorUrl.prototype = {
 
 Y.namespace('Paginator').Url = PaginatorUrl;
 
+Y.Base.mix(Y.Paginator, [PaginatorUrl]);
