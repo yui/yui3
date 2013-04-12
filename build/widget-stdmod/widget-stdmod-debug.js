@@ -275,7 +275,7 @@ YUI.add('widget-stdmod', function (Y, NAME) {
                     content = this.get(section + CONTENT_SUFFIX);
 
                     if (content) {
-                        this._uiSetStdMod(section, content, null);
+                        this._uiSetStdMod(section, content, this._getStdModContent(section) ? Y.WidgetStdMod.BEFORE : false);
                     }
                 }
             }, this);
