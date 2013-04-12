@@ -2,7 +2,10 @@ YUI.add('profiler', function (Y, NAME) {
 
     /**
      * The YUI JavaScript profiler.
+     * DEPRECATED: The Javascript Profiler comonent has been deprecated as of YUI 3.10.0. 
+     * The module will be removed from the library in a future version.
      * @module profiler
+     * @deprecated 3.10.0
      */
      
     //-------------------------------------------------------------------------
@@ -101,6 +104,7 @@ YUI.add('profiler', function (Y, NAME) {
          * @static
          */
         clear: function(name){
+
             if (L.isString(name)){
                 delete report[name];
                 delete stopwatches[name];
@@ -157,6 +161,7 @@ YUI.add('profiler', function (Y, NAME) {
             
             //create the report
             createReport(name);
+
 
             //return the new method
             return newMethod;
@@ -346,7 +351,6 @@ YUI.add('profiler', function (Y, NAME) {
                         fullReport[name] = report[name];    
                     }
                 }
-                
                 return fullReport;
             }
         },
@@ -363,7 +367,7 @@ YUI.add('profiler', function (Y, NAME) {
          * @method registerConstructor
          * @static
          */
-        registerConstructor : function (name /*:String*/, owner /*:Object*/) /*:Void*/ {    
+        registerConstructor : function (name /*:String*/, owner /*:Object*/) /*:Void*/ {
             this.registerFunction(name, owner, true);
         },
     
@@ -385,7 +389,6 @@ YUI.add('profiler', function (Y, NAME) {
          * @static
          */     
         registerFunction : function(name /*:String*/, owner /*:Object*/, registerPrototype /*:Boolean*/) /*:Void*/{
-        
             //figure out the function name without namespacing
             var funcName = (name.indexOf(".") > -1 ? 
                     name.substring(name.lastIndexOf(".")+1) : name),
@@ -438,7 +441,6 @@ YUI.add('profiler', function (Y, NAME) {
          * @static
          */
         registerObject : function (name /*:String*/, object /*:Object*/, recurse /*:Boolean*/) /*:Void*/{
-        
             //get the object
             object = (L.isObject(object) ? object : eval(name));
         
@@ -466,7 +468,6 @@ YUI.add('profiler', function (Y, NAME) {
          * @static
          */     
         unregisterConstructor : function(name /*:String*/) /*:Void*/{
-                
             //see if the method has been registered
             if (L.isFunction(container[name])){
                 this.unregisterFunction(name, true);
@@ -482,7 +483,6 @@ YUI.add('profiler', function (Y, NAME) {
          * @static
          */     
         unregisterFunction : function(name /*:String*/, unregisterPrototype /*:Boolean*/) /*:Void*/{
-                
             //see if the method has been registered
             if (L.isFunction(container[name])){
             
@@ -522,7 +522,6 @@ YUI.add('profiler', function (Y, NAME) {
          * @static
          */
         unregisterObject : function (name /*:String*/, recurse /*:Boolean*/) /*:Void*/{
-        
             //get the object
             if (L.isObject(container[name])){            
                 var object = container[name];    
