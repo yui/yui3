@@ -14,24 +14,10 @@
 <script>
 YUI({
     coverage: ['datatable-keynav'],
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'/* ,
     filters: {
         'datatable-keynav': (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'debug'
-    },
-    // The following should go away once loader learns about them:
-    groups: {
-        builds: {
-            base: '../../../build/',
-            modules: {
-                'datatable-keynav': {
-                    path: 'datatable-keynav/datatable-keynav-min.js',
-                    requires:[
-                        "datatable-base"
-                    ]
-                }
-            }
-        }
-    }
+    },*/
  }).use( 'test-console', 'test', 'datatable-keynav-tests',  "node-event-simulate",
         "datatable-keynav",  "datatable", "datatable-scroll","base-build",
         function(Y) {
