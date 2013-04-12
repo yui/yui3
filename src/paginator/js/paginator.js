@@ -4,6 +4,7 @@
  @module paginator
  @main paginator
  @class Paginator
+ @constructor
  @since 3.10.0
  */
  var Paginator = Y.Base.create('paginator', Y.Base, [], {
