@@ -23,9 +23,14 @@ Mapping of key codes to friendly key names that can be used in the
 [keyActions](#property_keyActions) property and [ARIA_ACTIONS](#property_ARIA_ACTIONS)
 property.
 
+When a keycode has an alias in this table, the alias must be used.
+
 It contains aliases for the following keys:
     <ul>
+    <li>backspace</li>
+    <li>tab</li>
     <li>enter</li>
+    <li>esc</li>
     <li>space</li>
     <li>pgup</li>
     <li>pgdown</li>
@@ -35,6 +40,7 @@ It contains aliases for the following keys:
     <li>up</li>
     <li>right</li>
     <li>down</li>
+    <li>f1 .. f12</li>
     </ul>
 
 
@@ -43,7 +49,10 @@ It contains aliases for the following keys:
 @static
 **/
 DtKeyNav.KEY_NAMES = {
+     8: 'backspace',
+     9: 'tab',
     13: 'enter',
+    27: 'esc',
     32: 'space',
     33: 'pgup',
     34: 'pgdown',
@@ -52,7 +61,19 @@ DtKeyNav.KEY_NAMES = {
     37: 'left',
     38: 'up',
     39: 'right',
-    40: 'down'
+    40: 'down',
+    112:'f1',
+    113:'f2',
+    114:'f3',
+    115:'f4',
+    116:'f5',
+    117:'f6',
+    118:'f7',
+    119:'f8',
+    120:'f9',
+    121:'f10',
+    122:'f11',
+    123:'f12'
 };
 
 /**
@@ -68,13 +89,13 @@ method in a DataTable instance) or the name of an event to fire.
 @static
  */
 DtKeyNav.ARIA_ACTIONS = {
-    left:'_keyMoveLeft',
-    right:'_keyMoveRight',
-    up: '_keyMoveUp',
-    down: '_keyMoveDown',
-    home: '_keyMoveRowStart',
-    end: '_keyMoveRowEnd',
-    pgup: '_keyMoveColTop',
+    left:   '_keyMoveLeft',
+    right:  '_keyMoveRight',
+    up:     '_keyMoveUp',
+    down:   '_keyMoveDown',
+    home:   '_keyMoveRowStart',
+    end:    '_keyMoveRowEnd',
+    pgup:   '_keyMoveColTop',
     pgdown: '_keyMoveColBottom'
 };
 
