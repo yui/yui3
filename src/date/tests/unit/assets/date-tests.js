@@ -29,6 +29,17 @@ YUI.add('date-tests', function(Y) {
         return hour < 12 ? ampm[lang][0] : ampm[lang][1];
     };
 
+    var xPad=function(x, pad, r) {
+        if (typeof r === "undefined") {
+            r = 10;
+        }
+        pad = pad + "";
+        for (; parseInt(x, 10) < r && r > 1; r /= 10) {
+            x = pad + x;
+        }
+        return x.toString();
+    };
+
     // Set up the page
     var LANG = Y.Lang,
         ASSERT = Y.Assert,
@@ -134,6 +145,12 @@ YUI.add('date-tests', function(Y) {
 
             output = Y.Date.format(date, {format:"%Z"});
             var tz = date.toString().replace(/^.*:\d\d( GMT[+-]\d+)? \(?([A-Za-z ]+)\)?\d*$/, "$2").replace(/[a-z ]/g, "");
+            if (tz.length > 4) {
+                var o = date.getTimezoneOffset();
+                var H = xPad(parseInt(Math.abs(o/60), 10), 0);
+                var M = xPad(Math.abs(o%60), 0);
+                tz = (o > 0 ? "-" : "+") + H + M;
+            }
             ASSERT.areSame(tz, output, 'Expected %Z format.');
 
             output = Y.Date.format(date, {format:"%"});
