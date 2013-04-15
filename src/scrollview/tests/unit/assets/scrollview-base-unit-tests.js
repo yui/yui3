@@ -161,7 +161,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
             scrollview.scrollTo(distance, null, DURATION);
 
-            Test.wait(2000);
+            Test.wait(WAIT);
         },
 
         "scrollTo on Y should scroll": function () {
@@ -177,7 +177,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
             scrollview.scrollTo(null, distance, DURATION);
 
-            Test.wait(2000);
+            Test.wait(WAIT);
         },
 
         /*
@@ -200,7 +200,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
                 scrollview.scrollTo(2700, null, DURATION);
             
-            Test.wait(2000);
+            Test.wait(WAIT);
         },
         
         "scrollTo above the max height should move it to max Y": function () {
@@ -219,7 +219,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
             scrollview.scrollTo(null, max+1, DURATION);
             
-            Test.wait(2000);
+            Test.wait(WAIT);
         },
 
         */
@@ -419,7 +419,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
                 axis: 'x'
             });
 
-            Test.wait(4000);
+            Test.wait(LONG_WAIT);
         },
 
         "Disabled flick should not scroll": function () {
@@ -439,7 +439,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
                 });
             });
 
-            Test.wait(2000);
+            Test.wait(WAIT);
         },
 // end Gesture:flick
 
