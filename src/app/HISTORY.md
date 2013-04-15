@@ -4,6 +4,17 @@ App Framework Change History
 @VERSION@
 -----
 
+### Model
+
+* Fixed: The `options` object passed to Model's `setAttrs()` method was being
+  modified. Now a shallow copy of this object is now created so that the
+  `_transaction` property is added to the copy and not the passed-in object.
+  [#598]
+
+
+3.9.1
+-----
+
 ### LazyModelList
 
 * Fixed: Changing an attribute on a revived model did not update the
@@ -11,6 +22,11 @@ App Framework Change History
 
 * Fixed: Revived models didn't have the same `clientId` as the original object.
   [#530] [Ryan Grove]
+
+### Router
+
+* Added a more helpful error when a named route callback function doesn't exist.
+  [#513] [Ryan Grove]
 
 
 3.9.0

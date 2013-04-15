@@ -121,7 +121,25 @@ YUI.add('gesture-tests', function(Y) {
                     Assert.areEqual(1, e.button, 'e.button is not set');
                 }
             });
+        },
+
+        'test: _onMove() delegate': function() {
+            eventData.move._onMove(event,node, {
+                _extra: {
+                    minTime: 5,
+                    minDistance: 5
+                }
+            }, {
+                fire: function(e) {
+                    Assert.areSame(event.target, e.target, 'Targets are not the same');
+                    Assert.areSame('gesturemove', e.type, 'Event type not correct');
+                    Assert.areEqual(1, e.button, 'e.button is not set');
+                }
+                
+            }, Y.one('doc'));
         }
+
+
     }));
 
     suite.add(new Y.Test.Case({

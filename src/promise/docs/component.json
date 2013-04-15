@@ -1,0 +1,15 @@
+{
+    "name"       : "promise",
+    "displayName": "Promise",
+    "description": "Promises allow you to chain asynchronous operations, write synchronous looking code and handle errors throughout the process.",
+    "author"     : ["lsmith", "juandopazo"],
+
+    "tags": [
+        "utility", "beta", "promise", "async"
+    ],
+
+    "use": ["promise"],
+
+    "examples": [
+    ]
+}

@@ -12941,10 +12941,15 @@ Y.mix(Y_Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     all: function(selector) {
-        var nodelist = Y.all(Y.Selector.query(selector, this._node));
-        nodelist._query = selector;
-        nodelist._queryRoot = this._node;
-        return nodelist;
+        var nodelist;
+        
+        if (this._node) {
+            nodelist = Y.all(Y.Selector.query(selector, this._node));
+            nodelist._query = selector;
+            nodelist._queryRoot = this._node;
+        }
+
+        return nodelist || Y.all([]);
     },
 
     // TODO: allow fn test
@@ -13605,7 +13610,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the last from the NodeList and returns it.
           * @for NodeList
           * @method pop
-          * @return {Node} The last item in the NodeList.
+          * @return {Node | null} The last item in the NodeList, or null if the list is empty.
           */
         'pop': 0,
         /** Adds the given Node(s) to the end of the NodeList.
@@ -13617,7 +13622,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the first item from the NodeList and returns it.
           * @for NodeList
           * @method shift
-          * @return {Node} The first item in the NodeList.
+          * @return {Node | null} The first item in the NodeList, or null if the NodeList is empty.
           */
         'shift': 0,
         /** Returns a new NodeList comprising the Nodes in the given range.

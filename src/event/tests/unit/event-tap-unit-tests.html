@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Test Page</title>
+    <title>Event Tap Unit Tests</title>
 </head>
 <body class="yui3-skin-sam">
     <div id="clickcontainer">
@@ -10,13 +10,13 @@
     </div>
     <div id="log"></div>
     <script src="../../../../build/yui/yui.js"></script>
-    <script src="./assets/event-tap-tests.js"></script>
+    <script src="./assets/event-tap-unit-tests.js"></script>
     <script>
         YUI({
             coverage: ['event-tap'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             lazyEventFacade: true
-        }).use('test-console', 'event-tap-tests', 'json', function (Y) {
+        }).use('test-console', 'event-tap-unit-tests', 'json', function (Y) {
 
             (new Y.Test.Console()).render( "#log" );
 

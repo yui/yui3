@@ -596,7 +596,9 @@ Y.Model = Y.extend(Model, Y.Base, {
         var idAttribute = this.idAttribute,
             changed, e, key, lastChange, transaction;
 
-        options || (options = {});
+        // Makes a shallow copy of the `options` object before adding the
+        // `_transaction` object to it so we don't modify someone else's object.
+        options     = Y.merge(options);
         transaction = options._transaction = {};
 
         // When a custom id attribute is in use, always keep the default `id`
@@ -644,7 +646,9 @@ Y.Model = Y.extend(Model, Y.Base, {
                     });
                 }
 
-                this.fire(EVT_CHANGE, Y.merge(options, {changed: lastChange}));
+                options.changed = lastChange;
+
+                this.fire(EVT_CHANGE, options);
             }
         }
 

@@ -1,4 +1,5 @@
 build-npm/
+release/
 build_docs/
 build_rollup_tmp*/
 build_tmp*/
