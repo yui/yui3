@@ -26,7 +26,7 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * The implementation for showing nodes.
-     * Default is to remove the hidden attribute.
+     * Default is to remove the hidden attribute and reset the CSS style.display property.
      * @method _show
      * @protected
      * @chainable
@@ -101,7 +101,7 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * The implementation for hiding nodes.
-     * Default is to set the hidden attribute to true.
+     * Default is to set the hidden attribute to true and set the CSS style.display to 'none'.
      * @method _hide
      * @protected
      * @chainable
