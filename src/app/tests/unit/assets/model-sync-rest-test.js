@@ -72,6 +72,14 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         Assert.areSame('', modelList.root);
     },
 
+    '`resourcePrefix` property should be an null by default': function () {
+        var model     = new Y.TestModel(),
+            modelList = new Y.TestModelList();
+
+        Assert.areSame(null, model.resourcePrefix);
+        Assert.areSame(null, modelList.resourcePrefix);
+    },
+
     '`url` property should be an empty string by default': function () {
         var model     = new Y.TestModel(),
             modelList = new Y.TestModelList();
@@ -309,6 +317,55 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
+    'parse() should receive the response without the resourcePrefix when defined': function () {
+        var model = new Y.TestModel(),
+            responseText = '{"pie": {"id":1, "name":"Simon"}}',
+            result;
+
+        model.resourcePrefix = 'pie';
+        model.parse = function (res) {
+            result = res;
+        };
+
+        // Overrides because `Y.io()` is too hard to test!
+        model._sendSyncIORequest = function (config) {
+            this._onSyncIOSuccess(0, {
+                responseText: responseText
+            }, {
+                callback: config.callback
+            });
+        };
+
+        model.save();
+
+        ObjectAssert.ownsKeys(['id', 'name'], result);
+        Assert.isFalse(Y.Object.owns('pie'));
+    },
+
+    'parse() should receive the response when no resourcePrefix is defined': function () {
+        var model = new Y.TestModel(),
+            responseText = '{"pie": {"id":1, "name":"Simon"}}',
+            result;
+
+        model.resourcePrefix = 'pie';
+        model.parse = function (res) {
+            result = res;
+        };
+
+        // Overrides because `Y.io()` is too hard to test!
+        model._sendSyncIORequest = function (config) {
+            this._onSyncIOSuccess(0, {
+                responseText: responseText
+            }, {
+                callback: config.callback
+            });
+        };
+
+        model.save();
+
+        ObjectAssert.ownsKeys(['id', 'name'], result);
+    },
+
     'parseIOResponse() should alter the response passed to `parse()`': function () {
         var calls = 0,
             model = new Y.TestModel({name: 'Eric'});
@@ -364,7 +421,6 @@ modelSyncRESTSuite.add(new Y.Test.Case({
 
         Assert.areSame(1, called);
     }
-
 }));
 
 // -- ModelSync.REST: Sync -----------------------------------------------------
@@ -505,6 +561,24 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         Assert.isFalse(model.isNew());
 
         model.set('name', 'Eric');
+        model.save();
+    },
+
+    "save() should include the resourcePrefix in it's entity": function () {
+        var model = new Y.TestModel({name: 'Simon'});
+
+        // setup the resourcePrefix
+        model.resourcePrefix = 'pie';
+
+        // Overrides because `Y.io()` is too hard to test!
+        model._sendSyncIORequest = function (config) {
+            Assert.areSame('{"pie":{"name":"Simon"}}', config.entity);
+            this._onSyncIOSuccess(0, {
+                responseText: ''
+            }, {
+                callback: config.callback
+            });
+        };
         model.save();
     },
 

@@ -289,6 +289,13 @@ RESTSync.prototype = {
     **/
     url: '',
 
+    /**
+    @property resourcePrefix
+    @type {Null|String}
+    @default null
+    **/
+    resourcePrefix: null,
+
     // -- Lifecycle Methods ----------------------------------------------------
 
     initializer: function (config) {
@@ -455,7 +462,7 @@ RESTSync.prototype = {
 
         // Prepare the content if we are sending data to the server.
         if (method === 'POST' || method === 'PUT') {
-            entity = this.serialize(action);
+            entity = this._serialize(action);
         } else {
             // Remove header, no content is being sent.
             delete headers['Content-Type'];
@@ -494,6 +501,23 @@ RESTSync.prototype = {
     // -- Protected Methods ----------------------------------------------------
 
     /**
+    @method _serialize
+    @param {String} [action] Optional `sync()` action for which to generate the
+        the serialized representation of this model.
+    @return {String} serialized HTTP request entity body.
+    @protected
+    **/
+    _serialize: function (action) {
+        var serialized = this.serialize(action);
+
+        if (typeof this.resourcePrefix === 'string') {
+            serialized = this._addResourcePrefix(serialized);
+        }
+
+        return serialized;
+    },
+
+    /**
     Joins the `root` URL to the specified `url`, normalizing leading/trailing
     "/" characters.
 
@@ -530,7 +554,6 @@ RESTSync.prototype = {
                 root + '/' + url;
     },
 
-
     /**
     Calls both public, overrideable methods: `parseIOResponse()`, then `parse()`
     and returns the result.
@@ -554,7 +577,52 @@ RESTSync.prototype = {
             response = this.parseIOResponse(response);
         }
 
+        if (typeof this.resourcePrefix === 'string') {
+            response = this._removeResourcePrefix(response);
+        }
+
         return this.parse(response);
+    },
+
+    /**
+    parse the response using Y.Model's parse method.
+    If a resourcePrefix is defined and in the response,
+    return the nested object.
+
+    @method _removeResourcePrefix
+    @param {Any} response Server response.
+    @return {Object} Attribute hash.
+    **/
+    _removeResourcePrefix: function (response) {
+        var prefix = this.resourcePrefix,
+            result;
+
+        // Get the nested object inside the prefix if it exists
+        if (response) {
+            result = Y.Model.prototype.parse.call(this, response);
+            if (prefix && (prefix in result)) {
+                return result[prefix];
+            }
+        }
+
+        return response;
+    },
+
+    /**
+    Add the resourcePrefix to the serialized string
+
+    @method _addResourcePrefix
+    @param {String} serialized the serialized object
+    @return {String} serialized object nested with a resourcePrefix
+    **/
+    _addResourcePrefix: function (serialized) {
+        var prefix = this.resourcePrefix;
+
+        if (typeof prefix === 'string') {
+            serialized = '{"' + prefix + '":'+ serialized + '}';
+        }
+
+        return serialized;
     },
 
     /**
