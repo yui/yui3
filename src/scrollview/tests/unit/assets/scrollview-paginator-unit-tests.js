@@ -37,7 +37,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
             // this.scrollview.destroy();
             Y.one('#container').empty(true);
         },
-    
+
         //---------------------------------------------
         // Instantiation
         //---------------------------------------------
@@ -64,8 +64,8 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
             sv.once('scrollEnd', function () {
                 Test.resume(function () {
                     Y.Assert.areEqual(300, sv.get('scrollX'));
-                })
-            })
+                });
+            });
 
             sv.pages.next();
             Test.wait(WAIT);
@@ -160,7 +160,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
             Test.wait(WAIT);
         },
 
-        
+
         /*
         The default anim duration is 300ms so this test is designed to
         check that the duration can be changed
@@ -192,7 +192,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
                     Y.Assert.areEqual(1, scrollview.pages.get('index'));
                     Y.Assert.areEqual(0, scrollview.get('scrollY'));
                     Y.Assert.areEqual(300, scrollview.get('scrollX'));
-                })
+                });
             });
 
             scrollview.get('contentBox').simulateGesture('move', {
@@ -213,13 +213,13 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
             var Test = this,
                 scrollview = renderNewScrollview('x'),
                 distance = 100;
-                
+
             scrollview.once('scrollEnd', function(){
                 Test.resume(function(){
                     Y.Assert.areEqual(0, scrollview.pages.get('index'));
                     Y.Assert.areEqual(0, scrollview.get('scrollY'));
                     Y.Assert.areEqual(0, scrollview.get('scrollX'));
-                })
+                });
             });
 
             scrollview.get('contentBox').simulateGesture('move', {
@@ -259,7 +259,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
                         });
                         Test.wait(1000);
                     }
-                })
+                });
             });
 
             scrollview.get('contentBox').simulateGesture('move', {
@@ -273,14 +273,14 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         },
 
         "mousewheel down should move the SV down": function () {
-            
+
             var Test = this,
                 scrollview = renderNewScrollview('y');
 
             scrollview.once('scrollEnd', function(){
                 Test.resume(function(){
                     Y.Assert.areEqual(1, scrollview.pages.get('index'));
-                })
+                });
             });
 
             Y.later(100, null, function () {
@@ -345,7 +345,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
                             Y.Assert.areEqual(1, scrollview.pages.get('index'));
                             Y.Assert.areEqual(0, scrollview.get('scrollY'));
                             Y.Assert.areEqual(300, scrollview.get('scrollX'));
-                        })
+                        });
                     });
 
                     Y.Assert.areEqual(0, scrollview.pages.get('index'));
@@ -360,7 +360,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
                     });
 
                     Test.wait(WAIT);
-                })
+                });
             });
 
             scrollview.get('contentBox').simulateGesture('move', {
@@ -396,7 +396,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
             scrollview,
             widgetClass,
             axis;
-                        
+
         config.srcNode = '#' + guid;
 
         if (axis === 'y') {

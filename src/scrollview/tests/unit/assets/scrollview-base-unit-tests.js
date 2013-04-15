@@ -6,7 +6,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         LONG_WAIT = 4000,
         suite = new Y.Test.Suite("Scrollview: Base"),
         simulateMousewheel = Y.simulateMousewheel;
-    
+
     suite.add(new Y.Test.Case({
         name: "API Tests",
         _should: {
@@ -17,7 +17,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
                 //"Move left on X should snap back": (Y.UA.phantomjs || Y.UA.ie),
                 //"Move down on Y should move the content at least that distance": (Y.UA.phantomjs || Y.UA.ie),
                 //"Move up on Y should bounce back": (Y.UA.phantomjs || Y.UA.ie),
-                
+
                 // Mousewheel emulation is currently only supported in Chrome
                 "mousewheel down should move the SV down" : (Y.UA.phantomjs || Y.UA.ie || Y.UA.gecko || Y.UA.android)
             }
@@ -35,7 +35,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             // this.scrollview.destroy();
             Y.one('#container').empty(true);
         },
-    
+
         // ---------------------------------------------
         // Instantiation
         // ---------------------------------------------
@@ -132,7 +132,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Y.Assert.areEqual(0, scrollview.get('scrollX'));
             scrollview.set('scrollX', distance);
             Y.Assert.areEqual(distance, scrollview.get('scrollX'));
-        },  
+        },
 
         "set('scrollY') to a positive distance should move it that distance": function () {
             var Test = this,
@@ -152,7 +152,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             var Test = this,
                 scrollview = renderNewScrollview(false),
                 distance = 500;
-                
+
             scrollview.on('scrollEnd', function () {
                 Test.resume(function () {
                     Y.Assert.areEqual(distance, scrollview.get('scrollX'));
@@ -168,7 +168,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             var Test = this,
                 scrollview = renderNewScrollview(false),
                 distance = 500;
-                
+
             scrollview.on('scrollEnd', function () {
                 Test.resume(function () {
                     Y.Assert.areEqual(distance, scrollview.get('scrollY'));
@@ -188,7 +188,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             var Test = this,
                 scrollview = renderNewScrollview(false),
                 bounds = scrollview._getBounds();
-            
+
             scrollview.on('scrollEnd', function () {
                 Test.resume(function () {
                     Y.Assert.areEqual(2700, scrollview.get('scrollX'));
@@ -199,15 +199,15 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
                 Y.Assert.areEqual(0, scrollview.get('scrollX'));
 
                 scrollview.scrollTo(2700, null, DURATION);
-            
+
             Test.wait(WAIT);
         },
-        
+
         "scrollTo above the max height should move it to max Y": function () {
             var Test = this,
                 scrollview = renderNewScrollview(false),
                 max = scrollview._maxScrollY;
-                
+
             scrollview.on('scrollEnd', function () {
                 Test.resume(function () {
                     Y.Assert.areEqual(max, scrollview.get('scrollX'));
@@ -218,7 +218,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Y.Assert.areEqual(0, scrollview.get('scrollY'));
 
             scrollview.scrollTo(null, max+1, DURATION);
-            
+
             Test.wait(WAIT);
         },
 
@@ -273,7 +273,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
 // Properties
         "lastScrolledAmt should be correct": function () {
-            
+
             var Test = this,
                 scrollview = renderNewScrollview(false),
                 distance = 500;
@@ -283,7 +283,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
                     Y.Assert.areEqual(distance, scrollview.lastScrolledAmt);
                 });
             });
-            
+
             scrollview.set('scrollX', distance, {duration: 10});
 
             Test.wait(WAIT);
@@ -292,11 +292,11 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
 // Gesture: move
         "Move right on X should move the content right": function () {
-            
+
             var Test = this,
                 scrollview = renderNewScrollview(false),
                 distance = 1000;
-                
+
             scrollview.once('scrollEnd', function () {
                 Test.resume(function () {
                     if (scrollview.get('scrollX') >= 50) {
@@ -320,11 +320,11 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         },
 
         "Move left on X should snap back": function () {
-            
+
             var Test = this,
                 scrollview = renderNewScrollview(false),
                 distance = 1000;
-                
+
             scrollview.on('scrollEnd', function () {
                 Test.resume(function () {
                     Y.Assert.areEqual(0, scrollview.get('scrollY'));
@@ -343,11 +343,11 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         },
 
         "Move down on Y should move the content at least that distance": function () {
-            
+
             var Test = this,
                 scrollview = renderNewScrollview(true),
                 distance = 500;
-                
+
             scrollview.once('scrollEnd', function () {
                 Test.resume(function () {
                     if (scrollview.get('scrollY') >= distance) {
@@ -371,7 +371,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         },
 
         "Move up on Y should bounce back": function () {
-            
+
             var Test = this,
                 scrollview = renderNewScrollview(true),
                 distance = 500;
@@ -398,7 +398,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
 // Gesture: flick
         "Flick x should provide the correct reaction": function () {
-            
+
             var Test = this,
                 scrollview = renderNewScrollview(false),
                 expected = 1400,
@@ -407,7 +407,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             scrollview.on('scrollEnd', function () {
                 Test.resume(function () {
                     scrollX = scrollview.get('scrollX');
-                    
+
                     // depending on browser activity, scrollX won't always be exactly at the end (sometimes a few pixels shy), so we'll give it a large buffer
                     (scrollX > expected) ? Y.Assert.pass() : Y.Assert.fail('scrollX - expected: ' + expected + ', actual: ' + scrollX);
                     Y.Assert.areEqual(0, scrollview.get('scrollY'));
@@ -423,7 +423,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         },
 
         "Disabled flick should not scroll": function () {
-            
+
             var Test = this,
                 scrollview = renderNewScrollview(false);
 
@@ -640,7 +640,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             html,
             scrollview,
             widgetClass;
-                        
+
         config.srcNode = '#' + guid;
 
         if (vertical) {
