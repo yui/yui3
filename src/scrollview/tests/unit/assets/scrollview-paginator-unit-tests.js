@@ -2,8 +2,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
     var DURATION = 1,
         SLOW_DURATION = 1000,
-        WAIT = 2000,
-        LONG_WAIT = 4000,
+        WAIT = 5000,
         suite = new Y.Test.Suite({name:"Scrollview: Paginator"}),
         simulateMousewheel = Y.simulateMousewheel;
 
@@ -183,7 +182,6 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
         "Move x should advance 1 page right": function() {
 
-
             var Test = this,
                 scrollview = renderNewScrollview('x');
 
@@ -229,7 +227,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
                 duration: SLOW_DURATION
             });
 
-            Test.wait(LONG_WAIT);
+            Test.wait(WAIT);
         },
 
         "optimizeMemory should hide nodes not near the viewport": function() {

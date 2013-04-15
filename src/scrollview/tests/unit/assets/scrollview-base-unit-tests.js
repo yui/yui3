@@ -2,8 +2,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
     var DURATION = 1,
         SLOW_DURATION = 1000,
-        WAIT = 2000,
-        LONG_WAIT = 4000,
+        WAIT = 5000,
         suite = new Y.Test.Suite("Scrollview: Base"),
         simulateMousewheel = Y.simulateMousewheel;
 
@@ -90,7 +89,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
                 Y.Assert.isTrue(bb.hasClass('yui3-scrollview'), "BoundingBox does not contain class 'yui3-scrollview'");
                 Y.Assert.isTrue(cb.hasClass('yui3-scrollview-content'), "ContentBox does not contain class 'yui3-scrollview-content'");
                 Y.Assert.isTrue(bb.hasClass('yui3-scrollview-horiz'), "BoundingBox does not contain class 'yui3-scrollview-horiz'");
-
         },
 // end Initialization
 
@@ -265,7 +263,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
                 scrollview.set('height', 123);
             });
 
-            Test.wait(LONG_WAIT);
+            Test.wait(WAIT);
         },
 // end Events
 
@@ -316,7 +314,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
                 duration: SLOW_DURATION
             });
 
-            Test.wait(LONG_WAIT);
+            Test.wait(WAIT);
         },
 
         "Move left on X should snap back": function () {
@@ -419,7 +417,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
                 axis: 'x'
             });
 
-            Test.wait(LONG_WAIT);
+            Test.wait(WAIT);
         },
 
         "Disabled flick should not scroll": function () {
@@ -581,7 +579,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
                 });
             });
 
-            Test.wait(LONG_WAIT);
+            Test.wait(WAIT);
         },
 
         "mousewheel down should move the SV down": function () {
