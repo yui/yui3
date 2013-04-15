@@ -149,7 +149,7 @@ Sortable.prototype = {
 
     Values are assumed to be the result of calling a sortComparator function.
 
-    @method _sort
+    @method _compare
     @param {Mixed} a First value to compare.
     @param {Mixed} b Second value to compare.
     @return {Number} `-1` if _a_ should come before _b_, `0` if they're

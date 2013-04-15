@@ -22,13 +22,13 @@ YUI.add("event-custom-complex-tests", function(Y) {
             var O = function(id) {
                 this.id = id;
                 Y.log('O constructor executed ' + id);
-            }
+            };
 
             O.prototype = {
                 oOo: function(ok) {
                     Y.log('oOo');
                 }
-            }
+            };
 
             // pass configuration info into EventTarget with the following
             // construct
@@ -72,7 +72,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
             var Base = function() {
                 Y.log('Base constructor executed');
                 arguments.callee.superclass.constructor.apply(this, arguments);
-            }
+            };
 
             Y.extend(Base, Y.EventTarget, {
                 base: function() {
@@ -101,13 +101,13 @@ YUI.add("event-custom-complex-tests", function(Y) {
             var O = function(id) {
                 this.id = id;
                 Y.log('O constructor executed ' + id);
-            }
+            };
 
             O.prototype = {
                 oOo: function(ok) {
                     Y.log('oOo');
                 }
-            }
+            };
 
             // pass configuration info into EventTarget with the following
             // construct
@@ -298,8 +298,8 @@ YUI.add("event-custom-complex-tests", function(Y) {
         testObjType: function() {
             var f1, f2;
             Y.on({
-                'y:click': function() {f1 = true},
-                'y:clack': function() {f2 = true}
+                'y:click': function() {f1 = true;},
+                'y:clack': function() {f2 = true;}
             });
 
             Y.fire('y:click');
@@ -572,7 +572,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
             Y.Assert.areEqual(0, count);
 
-            var handle3 = Y.on('y:click', function() {
+            handle3 = Y.on('y:click', function() {
                 count++;
             });
 
@@ -657,8 +657,8 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
             Y.on('fireonce', function(arg1, arg2) {
                 notified++;
-                Y.Assert.areEqual('foo', arg1, 'arg1 not correct for lazy fireOnce listener')
-                Y.Assert.areEqual('bar', arg2, 'arg2 not correct for lazy fireOnce listener')
+                Y.Assert.areEqual('foo', arg1, 'arg1 not correct for lazy fireOnce listener');
+                Y.Assert.areEqual('bar', arg2, 'arg2 not correct for lazy fireOnce listener');
             });
 
             Y.fire('fireonce', 'foo2', 'bar2');
@@ -1000,6 +1000,37 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
             Y.Assert.isTrue(result);
 
+        },
+
+        test_get_targets: function () {
+            var a = new Y.EventTarget(),
+                b = new Y.EventTarget();
+
+            Y.Assert.isArray(a.getTargets());
+
+            a.addTarget(b);
+            Y.ArrayAssert.itemsAreSame([b], a.getTargets());
+        },
+
+        test_remove_target_after_add: function () {
+            var a = new Y.EventTarget(),
+                b = new Y.EventTarget();
+
+            a.addTarget(b);
+            Y.ArrayAssert.contains(b, a.getTargets());
+
+            a.removeTarget(b);
+            Y.ArrayAssert.doesNotContain(b, a.getTargets());
+        },
+
+        test_remove_target_no_add: function () {
+            var a = new Y.EventTarget(),
+                b = new Y.EventTarget();
+
+            Y.ArrayAssert.doesNotContain(b, a.getTargets());
+
+            a.removeTarget(b);
+            Y.ArrayAssert.doesNotContain(b, a.getTargets());
         },
 
         test_onceAfter: function () {

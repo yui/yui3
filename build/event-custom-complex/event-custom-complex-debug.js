@@ -487,7 +487,8 @@ ETProto.addTarget = function(o) {
  * @return EventTarget[]
  */
 ETProto.getTargets = function() {
-    return YObject.values(this._yuievt.targets);
+    var targets = this._yuievt.targets;
+    return targets ? YObject.values(targets) : [];
 };
 
 /**
@@ -499,10 +500,12 @@ ETProto.getTargets = function() {
 ETProto.removeTarget = function(o) {
     var targets = this._yuievt.targets;
 
-    delete targets[Y.stamp(o, true)];
+    if (targets) {
+        delete targets[Y.stamp(o, true)];
 
-    if (YObject.size(targets) === 0) {
-        this._yuievt.hasTargets = false;
+        if (YObject.size(targets) === 0) {
+            this._yuievt.hasTargets = false;
+        }
     }
 };
 

@@ -501,7 +501,7 @@
                     if (!Y.Lang.isObject(config)) {
                         config = {};
                     }
-                    config.bubbleTargets = config.bubbleTargets || Y.Object.values(this._yuievt.targets);
+                    config.bubbleTargets = config.bubbleTargets || this.getTargets();
                     config.node = this.get(NODE);
                     config.groups = config.groups || this.get('groups');
                     this.target = new Y.DD.Drop(config);
