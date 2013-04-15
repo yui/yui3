@@ -50,8 +50,7 @@
 
             var DURATION = 1,
                 SLOW_DURATION = 1000,
-                WAIT = 2000,
-                LONG_WAIT = 4000,
+                WAIT = 5000,
                 suite = new Y.Test.Suite("Scrollview: Base");
             
             new Y.Test.Console().render();
@@ -211,7 +210,7 @@
 
                     scrollview.scrollTo(distance, null, DURATION);
 
-                    Test.wait(2000);
+                    Test.wait(WAIT);
                 },
 
                 "scrollTo on Y should scroll": function() {
@@ -227,7 +226,7 @@
 
                     scrollview.scrollTo(null, distance, DURATION);
 
-                    Test.wait(2000);
+                    Test.wait(WAIT);
                 },
 
                 /*
@@ -250,7 +249,7 @@
 
                         scrollview.scrollTo(2700, null, DURATION);
                     
-                    Test.wait(2000);
+                    Test.wait(WAIT);
                 },
                 
                 "scrollTo above the max height should move it to max Y": function() {
@@ -269,7 +268,7 @@
 
                     scrollview.scrollTo(null, max+1, DURATION);
                     
-                    Test.wait(2000);
+                    Test.wait(WAIT);
                 },
 
                 */
@@ -315,7 +314,7 @@
                         scrollview.set('height', 123);
                     })
 
-                    Test.wait(LONG_WAIT);
+                    Test.wait(WAIT);
                 },
 // end Events
 
@@ -386,7 +385,7 @@
                         duration: SLOW_DURATION
                     });
 
-                    Test.wait(LONG_WAIT);
+                    Test.wait(WAIT);
                 },
 
                 "Move left on X should snap back": function() {
@@ -489,7 +488,7 @@
                         axis: 'x'
                     });
 
-                    Test.wait(4000);
+                    Test.wait(WAIT);
                 },
 
                 "Disabled flick should not scroll": function() {
@@ -509,7 +508,7 @@
                         })
                     });
 
-                    Test.wait(2000);
+                    Test.wait(WAIT);
                 },
 // end Gesture:flick
 
@@ -651,7 +650,7 @@
                         });
                     });
 
-                    Test.wait(LONG_WAIT);
+                    Test.wait(WAIT);
                 },
 
                 "mousewheel down should move the SV down": function () {
