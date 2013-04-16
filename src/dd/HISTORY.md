@@ -4,7 +4,7 @@ Drag and Drop Change History
 3.10.0
 ------
 
-* No changes.
+* Make DD use EventTarget's public `getTargets()` method.
 
 3.9.1
 -----
