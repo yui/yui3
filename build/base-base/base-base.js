@@ -151,7 +151,7 @@ YUI.add('base-base', function (Y, NAME) {
     @param {Object} configs The collection of `ATTRS` configs to mix with the
         existing attribute configurations.
     @static
-    @since @SINCE@
+    @since 3.10.0
     **/
     Base.modifyAttrs = BaseCore.modifyAttrs;
 
