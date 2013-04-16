@@ -630,7 +630,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
     }));
 
     Y.Test.Runner.add(suite);
-    Y.Test.Runner.run();
 
     function renderNewScrollview (vertical, axis) {
         var config = {},

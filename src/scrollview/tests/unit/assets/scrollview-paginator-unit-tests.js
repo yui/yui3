@@ -382,9 +382,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
     }));
 
-    Y.Test.Runner.setName("Scrollview Test Runner");
     Y.Test.Runner.add(suite);
-    Y.Test.Runner.run();
 
     function renderNewScrollview (axis, startIndex, optimizeMemory) {
 
