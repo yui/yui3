@@ -1,6 +1,11 @@
 DataTable Change History
 ========================
 
+3.10.0
+------
+
+* Fix renderBody in the docs and in table-message. [albertosantini]
+
 3.9.1
 -----
 
