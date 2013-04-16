@@ -1,0 +1,73 @@
+{{>node-plugin-css}}
+
+<div class="intro">
+    <p>
+        In order to run transitions sequentially, you would normally have to use the callback provided by `node.transition()`. This example shows how to create your own Node plugin based on promises that lets you chain CSS transitions.
+    </p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>node-plugin-markup}}
+    {{>node-plugin-js}}
+</div>
+
+<h2>Using Promises to Chain CSS Transitions</h2>
+
+<h3>The plan</h3>
+
+<p>Plugins are a way to add functionality to Node without modifying its existing methods. They also are usually subclasses of Plugin.Base that contain various methods to interact with in a different way with a node. In our case we will skip the use of Plugin.Base to focus on returning promises from a plugin method.</p>
+
+<p>The plan is to create a Promise subclass that represents a Node and store one of these promises in the plugin instance. Then the plugin's `transition` method will return a new promise based on the one already stored.</p>
+
+<h3>Creating a Promise Subclass</h3>
+
+<p>Promises represent a value. Since we want to chain transitions on a Node we need to create a Promise sublcass that represents a Node. Promises can be extended the same way as any other YUI class by using <a href="{{apiDocs}}//classes/YUI.html#method_extend">`Y.extend`</a>.</p>
+
+```
+{{>node-plugin-subclass}}
+```
+
+<p>The next step is to add the `transition()` method to this promise and have it return a promise that is fulfilled when the transition is completed.</p>
+
+```
+{{>node-plugin-transition}}
+```
+
+<h3>Creating the Plugin</h3>
+
+<p>Our plugin is a very simple class that contains a NodePromise. In order for it to let us write chains of transitions like `node.promise.transition(config1).transition(config2)` we will add a `transition` method to it that simply points to the NodePromise's same method.</p>
+
+```
+{{>node-plugin-plugin}}
+```
+
+<h3>Using the Plugin</h3>
+
+<p>Now that we have the plugin ready, we can easily chain transitions from the plugin instance:</p>
+
+```
+var square = Y.one('#square');
+square.plug(PromisePlugin);
+
+// run a sequence of transitions
+square.promise
+    .transition({width: '300px'})
+    .transition({height: '300px'})
+    .transition({left: '200px'});
+```
+
+<h3 id="fullcode">Full Code Listing</h3>
+<h4>HTML</h4>
+```
+{{>node-plugin-markup}}
+```
+
+<h4>CSS</h4>
+```
+{{>node-plugin-css}}
+```
+
+<h4>JavaScript</h4>
+```
+{{>node-plugin-js}}
+```
