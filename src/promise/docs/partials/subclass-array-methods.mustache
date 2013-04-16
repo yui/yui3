@@ -1,7 +1,9 @@
-// Y.Array.each does not return an array, so we return nothing
+// Although Y.Array.each does not return an array, for the purpose of this
+// example we make it chainable by returning the same array
 ArrayPromise.prototype.each = function (fn, thisObj) {
-    this.then(function (array) {
+    return this.then(function (array) {
         Y.Array.each(array, fn, thisObj);
+        return array;
     });
 };
 
