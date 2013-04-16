@@ -4,7 +4,7 @@ Handlebars Change History
 3.10.0
 ------
 
-* No changes.
+* Remove "BEGIN/END(BROWSER)" comments from imported Handlebars source.
 
 3.9.1
 -----
