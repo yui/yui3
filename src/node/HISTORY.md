@@ -4,6 +4,8 @@ Node Change History
 3.10.0
 ------
 
+* [!] Removed `node-deprecated` module. [Ryuichi Okumura]
+
 * Fix node.all() to return an empty NodeList if the node was destroyed - Fixes #580 (hat tip Dallas Wheeler)
 
 3.9.1
