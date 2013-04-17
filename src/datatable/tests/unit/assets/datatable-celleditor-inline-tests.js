@@ -1,5 +1,6 @@
 YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
+
     var suite = new Y.Test.Suite('datatable-celleditor-inline'),
         Assert = Y.Test.Assert;
 
@@ -39,12 +40,12 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
         config_arg = config_arg || {};
 
         var someData = [
-            {sid:10, sname:'Sneakers', sopen:0, stype:0, stock:0, sprice:59.93, shipst:'s', sdate:new Date(2009,3,11) },
-            {sid:11, sname:'Varnished Cane Toads', sopen:1,  stype:10, stock:2, shipst:'u', sprice:17.49, sdate:new Date(2009,4,12) },
-            {sid:12, sname:'JuJu Beans', sopen:0,  stype:20, stock:1, sprice:1.29, shipst:'s', sdate:new Date(2009,5,13) },
-            {sid:13, sname:'Tent Stakes', sopen:1,  stype:30, stock:1, sprice:7.99, shipst:'n', sdate:new Date(2010,6,14) },
-            {sid:14, sname:'Peanut Butter', sopen:0,  stype:40, stock:0, sprice:3.29, shipst:'e', sdate:new Date(2011,7,15) },
-            {sid:15, sname:'Garbage Bags', sopen:1, stype:50,  stock:2, sprice:17.95, shipst:'r', sdate:new Date(2012,8,18) }
+            {sid:10, sname:'Sneakers', sopen:0, stype:0, stock:0, sprice:59.93, shipst:'s', sdate:new Date(2009,3,11)},
+            {sid:11, sname:'Varnished Cane Toads', sopen:1,  stype:10, stock:2, shipst:'u', sprice:17.49, sdate:new Date(2009,4,12)},
+            {sid:12, sname:'JuJu Beans', sopen:0,  stype:20, stock:1, sprice:1.29, shipst:'s', sdate:new Date(2009,5,13)},
+            {sid:13, sname:'Tent Stakes', sopen:1,  stype:30, stock:1, sprice:7.99, shipst:'n', sdate:new Date(2010,6,14)},
+            {sid:14, sname:'Peanut Butter', sopen:0,  stype:40, stock:0, sprice:3.29, shipst:'e', sdate:new Date(2011,7,15)},
+            {sid:15, sname:'Garbage Bags', sopen:1, stype:50,  stock:2, sprice:17.95, shipst:'r', sdate:new Date(2012,8,18)}
         ];
 
         // enlarge the dataset
@@ -65,40 +66,40 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             {value:50, text:'Junk'}
         ];
 
-        var shipTypes = { s:'Shipped', u:'Unknown', n:'Not Shipped', e:'Expedited', r:'Returned' };
+        var shipTypes = {s:'Shipped', u:'Unknown', n:'Not Shipped', e:'Expedited', r:'Returned'};
 
         var stypesObj = {};
         Y.Array.each(stypes,function(r){
             stypesObj[r.value] = r.text;
         });
 
-        var stock = { 0:'No ', 1:'Yes ', 2:'B/O ' };
-        var sopen = { 0:'No', 1:'Yes'};
+        var stock = {0:'No ', 1:'Yes ', 2:'B/O '};
+        var sopen = {0:'No', 1:'Yes'};
 
     //
     // We use pre-named editors on the "editor" property of the Columns,
     //   in some cases, editorConfig are added to provide stuff to pass to the editor Instance ...
 
        var colsNoEditors = [
-            { key:'sid',  editable:false },
-            { key:'sopen' },
-            { key:'sname' },
-            { key:'sdesc' },
-            { key:'stype' },
-            { key:'stock' },
-            { key:'sprice' },
-            { key:'sdate' }
+            {key:'sid',  editable:false},
+            {key:'sopen'},
+            {key:'sname'},
+            {key:'sdesc'},
+            {key:'stype'},
+            {key:'stock'},
+            {key:'sprice'},
+            {key:'sdate'}
         ];
 
        var colsEditors = [
-            { key:'sid',  editable:false },
-            { key:'sopen' },
-            { key:'sname' },
-            { key:'sdesc' },
-            { key:'stype' },
-            { key:'stock' },
-            { key:'sprice', editor:'inlineNumber' },
-            { key:'sdate', editor:'inlineDate' }
+            {key:'sid',  editable:false},
+            {key:'sopen'},
+            {key:'sname'},
+            {key:'sdesc'},
+            {key:'stype', editor:'inlineAC', editorConfig: {autocompleteConfig: {source:stypes, queryDelay:0}}},
+            {key:'stock'},
+            {key:'sprice', editor:'inlineNumber'},
+            {key:'sdate', editor:'inlineDate'}
         ];
 
         var cols = [ colsNoEditors, colsEditors ];
@@ -202,7 +203,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr0 = dt.getRow(0),
                 td6 = tr0.all('td').item(6),
-                oe,val,inp;
+                oe;
 
             // open the editor
             td6.simulate('click');
@@ -214,7 +215,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr0 = dt.getRow(0),
                 td6 = tr0.all('td').item(6),
-                oe,val,inp;
+                oe;
 
             // open the editor
             td6.simulate('click');
@@ -222,7 +223,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             Assert.isTrue(oe.get('active'),'cell editor col 6 should be active');
 
             // hideEditor
-            oe.hideEditor();
+            oe._hideEditor();
             Assert.isFalse(oe.get('active'),'cell editor col 1 should be closed');
             Assert.isFalse(dt.getCellEditor('sprice').get('active'),'cell editor col 1 should be closed');
         },
@@ -231,7 +232,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr0 = dt.getRow(0),
                 td6 = tr0.all('td').item(6),
-                oe,val,inp;
+                oe,inp;
 
             // open the editor
             td6.simulate('click');
@@ -254,7 +255,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr0 = dt.getRow(0),
                 td6 = tr0.all('td').item(6),
-                oe,val,inp;
+                oe;
 
             // cancelEditor
             td6.simulate('click');
@@ -269,7 +270,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr0 = dt.getRow(0),
                 td6 = tr0.all('td').item(6),
-                oe,val,inp;
+                oe;
 
             // saveEditor
             td6.simulate('click');
@@ -283,7 +284,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr0 = dt.getRow(0),
                 td6 = tr0.all('td').item(6),
-                oe,val,inp;
+                oe,inp;
 
             td6.simulate('click');
             oe = dt._openEditor;
@@ -297,7 +298,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr0 = dt.getRow(0),
                 td6 = tr0.all('td').item(6),
-                oe,val,inp;
+                oe,inp;
 
             td6.simulate('click');
             oe = dt._openEditor;
@@ -311,7 +312,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr0 = dt.getRow(0),
                 td6 = tr0.all('td').item(6),
-                oe,val,inp;
+                oe;
 
             td6.simulate('click');
             oe = dt._openEditor;
@@ -367,7 +368,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
                 tr2 = dt.getRow(2),
                 tds = tr2.all('td'),
                 td3 = tds.item(3),
-                oe,val,inp;
+                oe,inp;
 
             // open cell 3
             td3.simulate('click');
@@ -388,7 +389,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
                 tr2 = dt.getRow(2),
                 tds = tr2.all('td'),
                 td3 = tds.item(3),
-                oe,val,inp;
+                oe,inp;
 
             // open cell 3
             td3.simulate('click');
@@ -408,7 +409,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
                 tr2 = dt.getRow(2),
                 tds = tr2.all('td'),
                 td3 = tds.item(3),
-                oe,val,inp;
+                oe,inp;
 
             // open cell 3
             td3.simulate('click');
@@ -428,7 +429,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
                 tr2 = dt.getRow(2),
                 tds = tr2.all('td'),
                 td3 = tds.item(3),
-                oe,val,inp;
+                oe,inp;
 
             // open cell 3
             td3.simulate('click');
@@ -448,7 +449,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
                 tr2 = dt.getRow(2),
                 tds = tr2.all('td'),
                 td3 = tds.item(3),
-                oe,val,inp;
+                oe,inp;
 
             // open cell 3
             td3.simulate('click');
@@ -484,7 +485,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr2 = dt.getRow(2),
                 td6 = tr2.all('td').item(6),
-                oe,val,inp;
+                oe,inp;
 
             // open the editor
             td6.simulate('click');
@@ -502,7 +503,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr2 = dt.getRow(2),
                 td6 = tr2.all('td').item(6),
-                oe,val,inp;
+                oe;
 
             // open the editor
             td6.simulate('click');
@@ -521,7 +522,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr2 = dt.getRow(2),
                 td6 = tr2.all('td').item(6),
-                oe,val,inp;
+                oe,inp;
 
             // open the editor
             td6.simulate('click');
@@ -542,7 +543,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr2 = dt.getRow(2),
                 td6 = tr2.all('td').item(6),
-                oe,val,inp;
+                oe,inp;
 
             // open the editor
             td6.simulate('click');
@@ -581,7 +582,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr2 = dt.getRow(2),
                 td6 = tr2.all('td').item(7),
-                oe,val,inp;
+                oe,inp;
 
             // open the editor
             td6.simulate('click');
@@ -601,7 +602,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr2 = dt.getRow(2),
                 td6 = tr2.all('td').item(7),
-                oe,val,inp;
+                oe,inp;
 
             // open the editor
             td6.simulate('click');
@@ -622,7 +623,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             var dt = this.dt,
                 tr2 = dt.getRow(2),
                 td6 = tr2.all('td').item(7),
-                oe,val,inp;
+                oe,inp;
 
             // open the editor
             td6.simulate('click');
@@ -634,14 +635,40 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             Assert.areSame('06/13/09',inp.get('value'),'prepfn did not work');
 
             inputKey(inp,'abc2013-01-12',13);
-            Assert.isFalse(oe.get('active'),'cell editor col 7 should be closed');
+            Assert.isTrue(oe.get('active'),'cell editor col 7 should remain open until fixed');
             Assert.areSame('06/13/2009',Y.Date.format(oe.get('value'),{format:'%m/%d/%Y'}));
         }
 
 
     }));
+    suite.add(new Y.Test.Case({
+        name: 'Gallery DataTable-Celleditor-Inline : check inlineAC',
+
+        setUp : function () {
+            this.dt = makeDT(1);
+        },
+
+        tearDown : function () {
+            if(this.dt) {
+                this.dt.destroy();
+                delete this.dt;
+            }
+        },
+        'check selecting item from list': function () {
+            var dt = this.dt,
+                td =  dt.getCell([0,4]);
+
+                dt.openCellEditor(td);
+                var ed = Y.one('.yui3-aclist-input');
+                ed.set('value', 'Im');
+                ed.ac._onInputValueChange({newVal: 'Im'});
+                ed.ac.selectItem(Y.all('.yui3-aclist-item').item(2));
+                Assert.areSame('20', ed.get('value'));
+
+        }
+    }));
 
 
     Y.Test.Runner.add(suite);
 
-},'', { requires: [ 'test', 'node-event-simulate', 'datatable-celleditor-inline'] });
+},'', {requires: [ 'test', 'node-event-simulate', 'datatable-celleditor-inline']});
