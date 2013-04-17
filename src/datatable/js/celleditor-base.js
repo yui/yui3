@@ -183,6 +183,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     but [_defRenderFn](#method__defRenderFn) instead.
 
     @method render
+    @param where {Node} Container where the editor should be rendered into.
     @chainable
     */
     render: function (where) {
@@ -257,7 +258,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     _defSaveFn: function (e) {
         Y.log('DataTable.BaseCellEditor._defSaveFn');
         this.set('value', e.newValue);
-        this.hideEditor();
+        this._hideEditor();
     },
 
     /**
@@ -268,7 +269,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     */
     _defCancelFn: function () {
         Y.log('DataTable.BaseCellEditor._defCancelFn');
-        this.hideEditor();
+        this._hideEditor();
     },
 
     /**
@@ -289,6 +290,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         if (input) {
             input.focus();
             input.set('value',value);
+            input.select();
         }
 
         this._set('active', true);
@@ -325,47 +327,69 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         }));
 
     },
+
+    /**
+    Returns the raw value as entered into the editor.
+    Meant to be overriden by each editor.
+    The default implementation assumes that [_inputNode](#property__inputNode)
+    has a `value` attribute.
+
+    @method _getValue
+    @return value {mixed} Value as entered in the editor
+    @protected
+     */
+    _getValue: function () {
+        return this._inputNode.get('value');
+    },
+
     /**
     Saves the value provided after validating and parsing it.
 
     @method saveEditor
-    @param value {Any} Raw value (not yet parsed) to be saved.
+    @param [value] {Any} Raw value (not yet parsed) to be saved.
+            If missing, [_getValue](#method__getValue) is used.
     @public
     */
     saveEditor: function (value) {
-        Y.log('DataTable.BaseCellEditor.saveEditor: ' + value);
-
+        if (value === undefined) {
+            value = this._getValue();
+        }
         //
         //  Only save the edited data if it is valid ...
         //
-        var validator = this.get('validator'), parsedValue;
-        if(validator instanceof RegExp ? validator.test(value) : true) {
+        var validator = this.get('validator'),
+            parsedValue;
+
+        Y.log('DataTable.BaseCellEditor.saveEditor: ' + value);
+
+        if (validator instanceof RegExp ? validator.test(value) : true) {
 
             // If a "save" function was defined, run thru it and update the "value" setting
             parsedValue = this._parser(value);
 
             // So value was initially okay, but didn't pass _parser validation call ...
-            if (parsedValue === Y.Attribute.INVALID_VALUE) {
-                this.cancelEditor();
+            if (parsedValue !== Y.Attribute.INVALID_VALUE) {
+
+                this.fire("save", Y.merge(this._cellInfo, {
+                    formattedValue:   value,
+                    newValue:   parsedValue
+                }));
                 return;
             }
-
-            this.fire("save", Y.merge(this._cellInfo, {
-                formattedValue:   value,
-                newValue:   parsedValue
-            }));
-        } else {
-            this.get('container').addClass(this._classError);
         }
+        // If everything was Ok, it should have returned earlier.
+        // If it got here, things went wrong
+        this.get('container').addClass(this._classError);
+
     },
 
     /**
     Hides the current editor View instance.
-    @method hideEditor
-    @public
+    @method _hideEditor
+    @protected
     */
-    hideEditor: function () {
-        Y.log('DataTable.BaseCellEditor.hideEditor');
+    _hideEditor: function () {
+        Y.log('DataTable.BaseCellEditor._hideEditor');
         var cont  = this.get('container');
         if(cont && cont.hide) {
             cont.hide();
@@ -410,6 +434,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     /**
     Responds to changes in the [visible](#attr_visible) attribute by showing/hiding the
     cell editor
+
     @method _afterVisibleChange
     @param e {EventFacade} Standard Attribute change event facade
     @private
@@ -426,8 +451,6 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
    }
 },{
     ATTRS:{
-
-
 
         /**
         Value being edited.  It should be a copy of the value stored in the record.
