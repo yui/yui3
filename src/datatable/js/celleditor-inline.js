@@ -35,11 +35,15 @@ var Editors = {},
     _cssInput: 'yui3-datatable-inline-input',
 
 
-
-
+    destructor: function () {
+        var inputNode = this._inputNode;
+        if (inputNode) {
+            inputNode.destroy();
+            this._inputNode = null;
+        }
+    },
     /**
     The default action for the `show` event which should make the editor visible.
-
 
     @method _defShowFn
     @param ev {EventFacade}
@@ -76,17 +80,11 @@ var Editors = {},
         // set the View container contents
         container.setHTML(html);
 
-        // Append the container element to the DOM if it's not on the page already.
-        if (!container.inDoc()) {
-          Y.one('body').append(container);
-        }
-
         container.setStyle('zIndex',999);
 
         container.hide();
 
-        // set a static placeholder for the input ...
-        this._inputNode = container.one('input');
+        this._inputNode = container.one('.' + this._cssInput);
         if(this.get('className')) {
             this._inputNode.addClass(this.get('className'));
         }
@@ -143,7 +141,7 @@ var Editors = {},
     _onMouseLeave : function () {
         Y.log('DataTable.BaseCellInlineEditor._onMouseLeave');
         if(this.get('hideMouseLeave')){
-            this.hideEditor();
+            this.cancelEditor();
         }
     },
 
@@ -165,7 +163,7 @@ var Editors = {},
         //}
 
         //TODO: Worst case, if this doesn't work just hide this sucker on scrolling !
-        this.hideEditor();
+        this.cancelEditor();
     }
 
 
@@ -382,7 +380,7 @@ This cell editor has the AutoComplete plugin attached to the input node.
                on: {
                    select: function (r) {
                        var val = r.result.display;
-                       this.editor.saveEditor(val);
+                       this.editor.saveEditor();
                    }
                }
             }
@@ -398,25 +396,29 @@ This cell editor has the AutoComplete plugin attached to the input node.
 **/
 Editors.inlineAC = Y.Base.create('celleditor', IEd, [],
     {
-        render: function () {
-            Y.log('inlineAC.render');
-            Editors.inlineAC.superclass.render.apply(this, arguments);
+        _defRenderFn: function () {
+            Y.log('inlineAC._defRenderFn');
+            Editors.inlineAC.superclass._defRenderFn.apply(this, arguments);
             var inputNode = this._inputNode,
                // Get the users's editorConfig "autocompleteConfig" settings
-               acConfig = this.get('autocompleteConfig') || {},
-               editor = this;
+               acConfig = this.get('autocompleteConfig') || {};
 
             if(inputNode && Y.Plugin.AutoComplete) {
                // merge user settings with these required settings ...
-               acConfig = Y.merge(acConfig,{
+               acConfig = Y.merge({
+                   resultTextLocator:'text',
                    alwaysShowList: true,
+                   resultHighlighter: 'startsWith',
+                   // resultFilters    : 'startsWith',
                    render: true
-               });
+               }, acConfig);
                // plug in the autocomplete and we're done ...
                inputNode.plug(Y.Plugin.AutoComplete, acConfig);
-
                // add this View class as a static prop on the ac plugin
-               inputNode.ac.editor = editor;
+               // why? inputNode.ac.editor = editor;
+               inputNode.ac.after('select', function (e) {
+                   this.saveEditor(e.result.raw.value);
+               }, this);
             }
             return this;
 
@@ -426,6 +428,9 @@ Editors.inlineAC = Y.Base.create('celleditor', IEd, [],
         ATTRS: {
 
             hideMouseLeave: {
+                value: false
+            },
+            saveOnEnterKey: {
                 value: false
             }
 
