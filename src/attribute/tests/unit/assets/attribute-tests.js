@@ -1418,6 +1418,52 @@ YUI.add('attribute-tests', function(Y) {
             var o = new MyClass();
 
             Y.Assert.areEqual("bar", o.get("testValueFn"));
+        },
+
+        testSuperClassToSubClassSetterWithLazyAddFalse : function() {
+
+            // CandleStickSeries use case, where graphic === a, upcandle = b
+
+            function MySubClass() {
+                MySubClass.superclass.constructor.apply(this, arguments);
+            }
+
+            function MySuperClass() {
+                MySuperClass.superclass.constructor.apply(this, arguments);
+            }
+
+            Y.extend(MySuperClass, Y.Base, null, {
+                NAME : "mySuperClass",
+                ATTRS : {
+                    a : {
+                        lazyAdd : false,
+                        setter : function(val) {
+                            return val;
+                        }
+                    }
+                }
+            });
+
+            Y.extend(MySubClass, MySuperClass, null, {
+                NAME : "mySubClass",
+                ATTRS : {
+                    a : {
+                        lazyAdd : false,
+                        setter : function(val) {
+                            this.set("b", 10);
+                            return val;
+                        }
+                    },
+                    b : {}
+                }
+            });
+
+            var o = new MySubClass({
+                a:20
+            });
+
+            Y.Assert.areEqual(20, o.get("a"));
+            Y.Assert.areEqual(10, o.get("b"));
         }
     };
 
