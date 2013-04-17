@@ -9,7 +9,7 @@ var fs = require('fs'),
 
 http.get({
     host: 'yuilibrary.com',
-    path: '/gallery/api/oncdn'
+    path: '/api/v1/cdn/logs'
 }, function(res) {
     var body = '';
     res.on('data', function(d) {
@@ -17,10 +17,10 @@ http.get({
     });
     res.on('end', function() {
         try {
-            mod = JSON.parse(body).modules[0];
-            console.log('Found latest gallery build tag: ', mod.buildtag);
-            patch(mod.buildtag);
-            patchJSON(mod.buildtag);
+            mod = JSON.parse(body)[0];
+            console.log('Found latest gallery build tag: ', mod);
+            patch(mod);
+            patchJSON(mod);
             console.log('Patch File Complete, Gallery Build Updated');
         } catch (e) {
             console.log('Failed to fetch latest gallery build tag.');
