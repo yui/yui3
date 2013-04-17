@@ -91,7 +91,7 @@ DtEditable.ATTRS = {
     */
     defaultEditor : {
         value:      null,
-        validator:  function (v){
+        validator:  function (v) {
             return Lang.isString(v) || v === null;
         }
     },
@@ -243,9 +243,12 @@ Y.mix( DtEditable.prototype, {
         this._classColEditable = this.getClassName(COL, EDITABLE);
         this._classEditing = this.getClassName(COL, 'editing');
 
+        var u = this._UI_ATTRS;
 
-        this._UI_ATTRS.SYNC = this._UI_ATTRS.SYNC.concat(EDITABLE, EDITOR_OPEN_ACTION);
-        this._UI_ATTRS.BIND.push(EDITABLE, EDITOR_OPEN_ACTION);
+        this._UI_ATTRS = {
+            SYNC: u.SYNC.concat(EDITABLE, EDITOR_OPEN_ACTION),
+            BIND: u.BIND.concat(EDITABLE, EDITOR_OPEN_ACTION)
+        };
 
         this._editorsContainer = Y.one('body').appendChild('<div class="' + this.getClassName(COL, 'editors') + '"></div>');
 
@@ -298,11 +301,7 @@ Y.mix( DtEditable.prototype, {
 
         // Hide any editor that may currently be open ... unless it is the currently visible one
         if(this._openEditor) {
-            if ( this._openEditor === editorInstance ) {
-                this._openEditor.hideEditor();
-            } else {
-                this.hideCellEditor();
-            }
+            this.hideCellEditor();
         }
 
         //
@@ -311,9 +310,6 @@ Y.mix( DtEditable.prototype, {
         //TODO:  fix this to rebuild new editors if user changes a column definition on the fly
         //
         if(editorInstance) {
-            if (this._editorTd) {
-                this._editorTd.removeClass(this._classEditing);
-            }
             td.addClass(this._classEditing);
 
             //
@@ -346,27 +342,14 @@ Y.mix( DtEditable.prototype, {
     hideCellEditor: function () {
         Y.log('DataTable.Editable.hideCellEditor');
         if(this._openEditor) {
-            this._openEditor.hideEditor();
+            this._openEditor._hideEditor();
+            if (this._editorTd) {
+                this._editorTd.removeClass(this._classEditing);
+            }
+
             this._unsetEditor();
         }
     },
-
-    /**
-    Utility method that scans through all editor instances and hides them
-    @method hideAllCellEditors
-    @private
-     * / //TODO: Can there be more than one at a time??
-    hideAllCellEditors: function (){
-        Y.log('DataTable.Editable.hideAllCellEditors');
-        this.hideCellEditor();
-        var ces = this._getAllCellEditors();
-        arrEach(ces, function (editor){
-            if(editor && editor.hideEditor) {
-                editor.hideEditor();
-            }
-        });
-    },
-    */
 
     /**
     Returns all cell editor instances for the editable columns of the current DT instance
@@ -856,12 +839,12 @@ Y.mix( DtEditable.prototype, {
     @param e
     @private
      */
-    _handleCellClick:  function (e){
+    _handleCellClick:  function (e) {
         Y.log('DataTable.Editable._handleCellClick');
         var td = e.currentTarget,
             cn = this.getColumnNameByTd(td);
 
-        if (cn && this._openEditor &&  this._openEditor.get('colKey')!==cn) {
+        if (cn && this._openEditor &&  this._openEditor.get('colKey') !== cn) {
             this.hideCellEditor();
         }
     },
@@ -944,7 +927,7 @@ Y.mix( DtEditable.prototype, {
             case KEYC_ENTER:
                 if (oe.get('saveOnEnterKey')) {
                     e.preventDefault();
-                    oe.saveEditor(e.target.get('value'));
+                    oe.saveEditor();
                     return;
                 }
                 break;
