@@ -391,6 +391,7 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: "default format specs",
     setUp: function () {
+        this.dateFormatTime = new Date();
         this.dt = new Y.DataTable({
             columns:[
                 {key: 'a', formatter:'currency', currencyFormat: {
@@ -423,8 +424,8 @@ suite.add(new Y.Test.Case({
             ],
             data: [
                 {
-                    a: 123.45, b: 123.45, button:'btn', 'boolean': true, 'date': new Date(),
-                    localDate: new Date(), localTime: new Date(), localDateTime: new Date(),
+                    a: 123.45, b: 123.45, button:'btn', 'boolean': true, 'date': this.dateFormatTime,
+                    localDate: this.dateFormatTime, localTime: this.dateFormatTime, localDateTime: this.dateFormatTime,
                     email: 'me', link: 'site', linkSrc: 'there', number: 987654
                 },
                 {a: 6789,   b: 6789  , email: 'me', link: 'site',              'boolean': false },
@@ -491,19 +492,19 @@ suite.add(new Y.Test.Case({
             };
         
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
-        Y.Assert.areEqual(getTestText(Y.Date.format(new Date())), node.getHTML());
+        Y.Assert.areEqual(getTestText(Y.Date.format(this.dateFormatTime)), node.getHTML());
         
         node = dt.getCell([0,5]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
-        Y.Assert.areEqual(getTestText(Y.Date.format(new Date(),{format:'%x'})), node.getHTML());
+        Y.Assert.areEqual(getTestText(Y.Date.format(this.dateFormatTime,{format:'%x'})), node.getHTML());
         
         node = dt.getCell([0,6]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
-        Y.Assert.areEqual(getTestText(Y.Date.format(new Date(),{format:'%X'})), node.getHTML());
+        Y.Assert.areEqual(getTestText(Y.Date.format(this.dateFormatTime,{format:'%X'})), node.getHTML());
         
         node = dt.getCell([0,7]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
-        Y.Assert.areEqual(getTestText(Y.Date.format(new Date(),{format:'%c'})), node.getHTML());
+        Y.Assert.areEqual(getTestText(Y.Date.format(this.dateFormatTime,{format:'%c'})), node.getHTML());
 
         node = dt.getCell([2,4]);
         Y.Assert.areEqual('', node.getHTML());
