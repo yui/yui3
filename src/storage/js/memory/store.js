@@ -28,31 +28,23 @@ Y.mix(MemoryStore.prototype, {
     @method _resetData
     @private
     **/
-    _transaction: function (action, callback) {
-        var promise = this._data.then(action);
-
-        if (callback) {
-            promise.done(function (result) {
-                callback(undefined, result);
-            }, callback);
-        }
-        return promise;
-
+    _transaction: function (action) {
+        return this._data.then(action);
     },
-    get: function (key, callback) {
+    get: function (key) {
         return this._transaction(function (data) {
             return data[key];
-        }, callback);
+        });
     },
-    put: function (key, value, callback) {
-        this._transaction(function (data) {
+    put: function (key, value) {
+        return this._transaction(function (data) {
             data[key] = value;
-        }, callback);
+        });
     },
-    remove: function (key, callback) {
-        this._transaction(function (data) {
+    remove: function (key) {
+        return this._transaction(function (data) {
             delete data[key];
-        }, callback);
+        });
     },
     _countKeys: function (data) {
         // Counting own properties is faster than using Object.keys(data).length
@@ -67,17 +59,17 @@ Y.mix(MemoryStore.prototype, {
         
         return count;
     },
-    count: function (callback) {
-        return this._transaction(this._countKeys, callback);
+    count: function () {
+        return this._transaction(this._countKeys);
     },
     _createData: function () {
         return {};
     },
-    clear: function (callback) {
+    clear: function () {
         // Returning a new object from the then() callback of the previous data
         // object ensures that we maintain the rejected state if there was one
         this._data = this._data.then(this._createData);
-        this._transaction(noop, callback);
+        return this._transaction(noop);
     },
     _close: function () {
         this._data = new Y.Promise(function (fulfill, reject) {

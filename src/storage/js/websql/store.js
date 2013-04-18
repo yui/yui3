@@ -33,10 +33,9 @@ Y.mix(WebSQLStore.prototype, {
     @param {String*} values Values to safely inject into the query
     @param {Function} Formatter function that translates the reqsult of the
                     query into the value expected by the user
-    @param {Function} [callback] Node.js-style callback for this operation
     **/
-    _executeSql: function (query, values, formatter, callback) {
-        var promise = this._db.then(function (db) {
+    _executeSql: function (query, values, formatter) {
+        return this._db.then(function (db) {
             return new Y.Promise(function (fulfill, reject) {
                 db.transaction(function (tx) {
                     // Use the 
@@ -48,13 +47,6 @@ Y.mix(WebSQLStore.prototype, {
                 });
             });
         });
-
-        if (callback) {
-            promise.done(function (result) {
-                callback(undefined, result);
-            }, callback);
-        }
-        return promise;
     },
     /**
     Formatterfor the SELECT operation.
@@ -99,12 +91,11 @@ Y.mix(WebSQLStore.prototype, {
     @return {Promise} Promise representing the value retrieved from the
                         database
     **/
-    get: function (key, callback) {
+    get: function (key) {
         return this._executeSql(
             'SELECT value FROM ' + this.name + ' WHERE key=?',
             [key],
-            this._selectFormatter,
-            callback
+            this._selectFormatter
         );
     },
     /**
@@ -114,15 +105,12 @@ Y.mix(WebSQLStore.prototype, {
     @method put
     @param {String} key Key for the value to update
     @param {Any} value Value to store in the database
-    @param {Function} [callback] Optional callback receiving an error as first
-                        parameter if something went wrong
     **/
-    put: function (key, value, callback) {
-        this._executeSql(
+    put: function (key, value) {
+        return this._executeSql(
             'REPLACE INTO ' + this.name + ' (key, value) VALUES (?, ?);',
             [key, Y.JSON.stringify(value)],
-            this._putFormatter,
-            callback
+            this._putFormatter
         );
     },
     /**
@@ -130,45 +118,36 @@ Y.mix(WebSQLStore.prototype, {
 
     @method remove
     @param {String} key Key to remove its value
-    @param {Function} [callback] Optional callback receiving an error as first
-                        parameter if something went wrong
+    @return {Promise} Promise representing the success of the operation
     **/
-    remove: function (key, callback) {
-        this._executeSql(
+    remove: function (key) {
+        return this._executeSql(
             'DELETE FROM ' + this.name + ' WHERE key=?',
             [key],
-            this._putFormatter,
-            callback
+            this._putFormatter
         );
     },
     /**
     Gets the number of objects stored in this store
 
     @method count
-    @param {Function} [callback] Optional callback receiving an error as first
-                        parameter if something went wrong, and the result as
-                        second parameter if everything went well
     @return {Promise} Promise representing the value number of object in the
                         store
     **/
-    count: function (callback) {
+    count: function () {
         return this._executeSql(
-            'SELECT COUNT(1) FROM ' + this.name,
-            [],
-            this._countFormatter,
-            callback
+            'SELECT COUNT(1) FROM ' + this.name, [], this._countFormatter
         );
     },
     /**
     Clears the object store, removing all objects from it
 
     @method clear
-    @param {Function} [callback] Optional callback receiving an error as first
-                        parameter if something went wrong
+    @return {Promise} Promise representing the success of the operation
     **/
-    clear: function (callback) {
-        this._executeSql(
-            'DELETE FROM ' + this.name, [], this._putFormatter, callback
+    clear: function () {
+        return this._executeSql(
+            'DELETE FROM ' + this.name, [], this._putFormatter
         );
     }
 });
