@@ -479,21 +479,31 @@ suite.add(new Y.Test.Case({
     },
     "test date formats": function () {
         var dt = this.dt,
-            node = dt.getCell([0,4]);
+            node = dt.getCell([0,4]),
+            testNode = document.createElement('td'),
+            isIE = Y.UA.ie && Y.UA.ie < 9,
+            getTestText = function(val) {
+                if(isIE) {
+                    testNode.innerHTML = Y.Escape.html(val);
+                    val = testNode.innerHTML;
+                }
+                return val;
+            };
+        
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
-        Y.Assert.areEqual(Y.Date.format(new Date()), node.getHTML());
-
+        Y.Assert.areEqual(getTestText(Y.Date.format(new Date())), node.getHTML());
+        
         node = dt.getCell([0,5]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
-        Y.Assert.areEqual(Y.Date.format(new Date(),{format:'%x'}), node.getHTML());
-
+        Y.Assert.areEqual(getTestText(Y.Date.format(new Date(),{format:'%x'})), node.getHTML());
+        
         node = dt.getCell([0,6]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
-        Y.Assert.areEqual(Y.Date.format(new Date(),{format:'%X'}), node.getHTML());
-
+        Y.Assert.areEqual(getTestText(Y.Date.format(new Date(),{format:'%X'})), node.getHTML());
+        
         node = dt.getCell([0,7]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
-        Y.Assert.areEqual(Y.Date.format(new Date(),{format:'%c'}), node.getHTML());
+        Y.Assert.areEqual(getTestText(Y.Date.format(new Date(),{format:'%c'})), node.getHTML());
 
         node = dt.getCell([2,4]);
         Y.Assert.areEqual('', node.getHTML());
