@@ -10,12 +10,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
     unitTestSuite.add(new Y.Test.Case({
         name: "Lifecycle",
-        _should: {
-            ignore: {
-                // Mousewheel emulation is currently only supported in Chrome
-                "mousewheel down should move the SV down" : (Y.UA.phantomjs || Y.UA.ie || Y.UA.gecko || Y.UA.android)
-            }
-        },
 
         setUp : function () { /* Empty */ },
         tearDown : function () {
