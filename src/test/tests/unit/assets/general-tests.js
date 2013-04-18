@@ -88,7 +88,7 @@ YUI.add('general-tests', function(Y) {
         },
         _should: {
             error: {
-                'test: resume without wait': true,
+                'test: resume without wait': true
             },
             fail: {
                 'test: wait without function': true
