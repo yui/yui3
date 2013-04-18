@@ -3,43 +3,26 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
     var DURATION = 1,
         SLOW_DURATION = 1000,
         WAIT = 5000,
-        suite = new Y.Test.Suite("Scrollview: Base"),
-        simulateMousewheel = Y.simulateMousewheel;
+        simulateMousewheel = Y.simulateMousewheel,
+        baseTestSuite = new Y.Test.Suite("Scrollview Base Tests"),
+        unitTestSuite = new Y.Test.Suite("Unit Tests"),
+        functionalTestSuite = new Y.Test.Suite("Functional Tests");
 
-    suite.add(new Y.Test.Case({
-        name: "API Tests",
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Lifecycle",
         _should: {
             ignore: {
-                // Ignore PhantomJS and IE because lack of gesture simulation support/issues
-                //"Flick x should provide the correct reaction": (Y.UA.phantomjs || Y.UA.ie),
-                //"Move right on X should move the content right": (Y.UA.phantomjs || Y.UA.ie),
-                //"Move left on X should snap back": (Y.UA.phantomjs || Y.UA.ie),
-                //"Move down on Y should move the content at least that distance": (Y.UA.phantomjs || Y.UA.ie),
-                //"Move up on Y should bounce back": (Y.UA.phantomjs || Y.UA.ie),
-
                 // Mousewheel emulation is currently only supported in Chrome
                 "mousewheel down should move the SV down" : (Y.UA.phantomjs || Y.UA.ie || Y.UA.gecko || Y.UA.android)
             }
         },
 
-        //---------------------------------------------
-        // Setup and tear down
-        //---------------------------------------------
-
-        setUp : function () {
-            // Empty
-        },
-
+        setUp : function () { /* Empty */ },
         tearDown : function () {
             // this.scrollview.destroy();
             Y.one('#container').empty(true);
         },
 
-        // ---------------------------------------------
-        // Instantiation
-        // ---------------------------------------------
-
-// Initialization
         "Ensure initial state is correct": function () {
             var scrollview = renderNewScrollview(false),
                 attrs = Y.ScrollView.ATTRS;
@@ -58,6 +41,17 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
                     }
                 }
             });
+        }
+    }));
+
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Attributes",
+
+        setUp : function () { /* Empty */ },
+        tearDown : function () {
+            // this.scrollview.destroy();
+            Y.one('#container').empty(true);
         },
 
         "Deprecated static values should set appropriate ATTRs": function () {
@@ -76,22 +70,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Y.Assert.areEqual(Y.ScrollView.EASING, scrollview.get('easing'));
             Y.Assert.areEqual(Y.ScrollView.BOUNCE_RANGE, scrollview.get('bounceRange'));
         },
-
-        "Ensure initial rendering is correct": function () {
-            var scrollview = renderNewScrollview(false),
-                bb = scrollview.get('boundingBox'),
-                cb = scrollview.get('contentBox'),
-                id = cb.get('id'),
-                ul = cb.all('> ul'),
-                li = cb.all('> ul > li');
-
-                Y.Assert.areEqual(10, li.size());
-                Y.Assert.isTrue(bb.hasClass('yui3-scrollview'), "BoundingBox does not contain class 'yui3-scrollview'");
-                Y.Assert.isTrue(cb.hasClass('yui3-scrollview-content'), "ContentBox does not contain class 'yui3-scrollview-content'");
-                Y.Assert.isTrue(bb.hasClass('yui3-scrollview-horiz'), "BoundingBox does not contain class 'yui3-scrollview-horiz'");
-        },
-// end Initialization
-
 
 // Axis setters
         "Forced axis to X should evaluate properly 1": function () {
@@ -116,9 +94,48 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
             Y.Assert.areEqual(true, scrollview.get('axis').x);
             Y.Assert.areEqual(true, scrollview.get('axis').y);
-        },
+        }
 // end Axis setters
+    }));
 
+
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Rendering",
+
+        setUp : function () { /* Empty */ },
+        tearDown : function () {
+            // this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+
+        "Ensure initial rendering is correct": function () {
+            var scrollview = renderNewScrollview(false),
+                bb = scrollview.get('boundingBox'),
+                cb = scrollview.get('contentBox'),
+                id = cb.get('id'),
+                ul = cb.all('> ul'),
+                li = cb.all('> ul > li');
+
+                Y.Assert.areEqual(10, li.size());
+                Y.Assert.isTrue(bb.hasClass('yui3-scrollview'), "BoundingBox does not contain class 'yui3-scrollview'");
+                Y.Assert.isTrue(cb.hasClass('yui3-scrollview-content'), "ContentBox does not contain class 'yui3-scrollview-content'");
+                Y.Assert.isTrue(bb.hasClass('yui3-scrollview-horiz'), "BoundingBox does not contain class 'yui3-scrollview-horiz'");
+        }
+// end Initialization
+
+    }));
+
+
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Public API",
+
+        setUp : function () { /* Empty */ },
+        tearDown : function () {
+            // this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
 
 // Scroll{X/Y} setters
         "set('scrollX') to a positive distance should move it that distance": function () {
@@ -178,6 +195,44 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Test.wait(WAIT);
         },
 
+
+// Properties
+        "lastScrolledAmt should be correct": function () {
+
+            var Test = this,
+                scrollview = renderNewScrollview(false),
+                distance = 500;
+
+            scrollview.once('scrollEnd', function () {
+                Test.resume(function () {
+                    Y.Assert.areEqual(distance, scrollview.lastScrolledAmt);
+                });
+            });
+
+            scrollview.set('scrollX', distance, {duration: 10});
+
+            Test.wait(WAIT);
+        },
+
+        "Disabled scrollview should not scroll with scrollTo": function () {
+            var Test = this,
+                scrollview = renderNewScrollview(false),
+                distance = 500;
+
+            scrollview.set('disabled', true);
+            scrollview.scrollTo(distance, null);
+            scrollview.set('scrollY', distance);
+
+            Y.later(100, this, function () {
+                Test.resume(function () {
+                    Y.Assert.areEqual(0, scrollview.get('scrollX'));
+                });
+            });
+            Test.wait(WAIT);
+        }
+// end Properties
+    }));
+
         /*
         Not possible until (if) bounding constraints are added to scrollTo.  Difficult because
         that is also an internal API that needs to be able to overscroll at times (drags, then snapback)
@@ -226,7 +281,15 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
 
 
-// Events
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Events",
+
+        setUp : function () { /* Empty */ },
+        tearDown : function () {
+            // this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+
         "Ensure the 'scrollEnd' event fires": function () {
             var Test = this,
                 scrollview = renderNewScrollview(false),
@@ -264,29 +327,36 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             });
 
             Test.wait(WAIT);
+        }
+    })); // end events
+
+    /**
+     * The following tests would qualify as functional tests and should
+     * probably be moved into a different (non-CI) directory.
+     * They currently pass, so leaving here until better coverage can
+     * be obtained in the -unit- tests (above).
+     */
+    functionalTestSuite.add(new Y.Test.Case({
+        name: "Movement",
+        _should: {
+            ignore: {
+                // Ignore PhantomJS and IE because lack of gesture simulation support/issues
+                "Flick x should provide the correct reaction": (Y.UA.phantomjs || Y.UA.ie),
+                "Move right on X should move the content right": (Y.UA.phantomjs || Y.UA.ie),
+                "Move left on X should snap back": (Y.UA.phantomjs || Y.UA.ie),
+                "Move down on Y should move the content at least that distance": (Y.UA.phantomjs || Y.UA.ie),
+                "Move up on Y should bounce back": (Y.UA.phantomjs || Y.UA.ie),
+
+                // Mousewheel emulation is currently only supported in Chrome
+                "mousewheel down should move the SV down" : (Y.UA.phantomjs || Y.UA.ie || Y.UA.gecko || Y.UA.android)
+            }
         },
-// end Events
 
-
-
-// Properties
-        "lastScrolledAmt should be correct": function () {
-
-            var Test = this,
-                scrollview = renderNewScrollview(false),
-                distance = 500;
-
-            scrollview.once('scrollEnd', function () {
-                Test.resume(function () {
-                    Y.Assert.areEqual(distance, scrollview.lastScrolledAmt);
-                });
-            });
-
-            scrollview.set('scrollX', distance, {duration: 10});
-
-            Test.wait(WAIT);
+        setUp : function () { /* Empty */ },
+        tearDown : function () {
+            // this.scrollview.destroy();
+            Y.one('#container').empty(true);
         },
-// end Properties
 
 // Gesture: move
         "Move right on X should move the content right": function () {
@@ -467,23 +537,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Test.wait(WAIT);
         },
 
-        "Disabled scrollview should not scroll with scrollTo": function () {
-            var Test = this,
-                scrollview = renderNewScrollview(false),
-                distance = 500;
-
-            scrollview.set('disabled', true);
-            scrollview.scrollTo(distance, null);
-            scrollview.set('scrollY', distance);
-
-            Y.later(100, this, function () {
-                Test.resume(function () {
-                    Y.Assert.areEqual(0, scrollview.get('scrollX'));
-                });
-            });
-            Test.wait(WAIT);
-        },
-
         "Disabled scrollview should not scroll with gesture": function () {
             var Test = this,
                 scrollview = renderNewScrollview(false),
@@ -527,23 +580,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             });
 
             Test.wait(WAIT);
-        },
-
-        "Deprecated static values should register": function () {
-
-            Y.ScrollView.SNAP_DURATION = 3;
-            Y.ScrollView.SNAP_EASING = 3;
-            Y.ScrollView.EASING = 3;
-            Y.ScrollView.FRAME_STEP = 3;
-            Y.ScrollView.BOUNCE_RANGE = 3;
-
-            var scrollview = renderNewScrollview(false);
-
-            Y.Assert.areEqual(Y.ScrollView.SNAP_DURATION, scrollview.get('snapDuration'));
-            Y.Assert.areEqual(Y.ScrollView.SNAP_EASING, scrollview.get('snapEasing'));
-            Y.Assert.areEqual(Y.ScrollView.EASING, scrollview.get('easing'));
-            Y.Assert.areEqual(Y.ScrollView.FRAME_STEP, scrollview.get('frameDuration'));
-            Y.Assert.areEqual(Y.ScrollView.BOUNCE_RANGE, scrollview.get('bounceRange'));
         },
 
         "Move gesture while flicking should stop flick": function () {
@@ -600,22 +636,27 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Test.wait(WAIT);
         }
 // end Disabled
+    }));
 
+    baseTestSuite.add(unitTestSuite);
+    baseTestSuite.add(functionalTestSuite);
 
+    Y.Test.Runner.add(baseTestSuite);
 
-/* These tests are not possible until mousewheel simulation is available
+    /*
+    unitTestSuiteDev = new Y.Test.Suite();
+    Y.Test.Runner.add(unitTestSuiteDev);
+    unitTestSuiteDev.add(new Y.Test.Case({
+        name: "In Development",
+        tearDown : function () {
+            this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+    }));
+    */
 
-        "Mousewheel event provides the correct reaction": function () {
-            var Test = this,
-                scrollview = renderNewScrollview(true);
-
-            scrollview.get('contentBox').simulate('mousewheel');
-            Y.Assert.isTrue(true, "is true");
-        }
-*/
-
-/*
-        Additional tests
+    /*
+        Additional test ideas:
         - Don't scroll Y if a X axis
         - Don't scroll X if a Y axis
         - sv._prevent.start
@@ -626,10 +667,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         - setScroll after disabling
         - Flick while flicking
         - swipe to OOB
-*/
-    }));
-
-    Y.Test.Runner.add(suite);
+    */
 
     function renderNewScrollview (vertical, axis) {
         var config = {},
