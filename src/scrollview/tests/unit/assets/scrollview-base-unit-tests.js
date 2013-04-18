@@ -71,8 +71,8 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Y.Assert.areEqual(Y.ScrollView.BOUNCE_RANGE, scrollview.get('bounceRange'));
         },
 
-// Axis setters
-        "Forced axis to X should evaluate properly 1": function () {
+        // Axis setters
+        "Forced axis to X should evaluate properly": function () {
             var Test = this,
                 scrollview = renderNewScrollview(false, 'x');
 
@@ -80,7 +80,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Y.Assert.areEqual(false, scrollview.get('axis').y);
         },
 
-        "Forced axis to Y should evaluate properly 2": function () {
+        "Forced axis to Y should evaluate properly": function () {
             var Test = this,
                 scrollview = renderNewScrollview(true, 'y');
 
@@ -88,17 +88,14 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Y.Assert.areEqual(true, scrollview.get('axis').y);
         },
 
-        "Forced axis to XY should evaluate properly 3": function () {
+        "Forced axis to XY should evaluate properly": function () {
             var Test = this,
                 scrollview = renderNewScrollview(true, 'xy');
 
             Y.Assert.areEqual(true, scrollview.get('axis').x);
             Y.Assert.areEqual(true, scrollview.get('axis').y);
         }
-// end Axis setters
     }));
-
-
 
     unitTestSuite.add(new Y.Test.Case({
         name: "Rendering",
@@ -122,11 +119,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
                 Y.Assert.isTrue(cb.hasClass('yui3-scrollview-content'), "ContentBox does not contain class 'yui3-scrollview-content'");
                 Y.Assert.isTrue(bb.hasClass('yui3-scrollview-horiz'), "BoundingBox does not contain class 'yui3-scrollview-horiz'");
         }
-// end Initialization
-
     }));
-
-
 
     unitTestSuite.add(new Y.Test.Case({
         name: "Public API",
@@ -137,7 +130,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Y.one('#container').empty(true);
         },
 
-// Scroll{X/Y} setters
+        // Scroll{X/Y} setters
         "set('scrollX') to a positive distance should move it that distance": function () {
             var Test = this,
                 scrollview = renderNewScrollview(false),
@@ -159,10 +152,8 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             scrollview.set('scrollY', distance);
             Y.Assert.areEqual(distance, scrollview.get('scrollY'));
         },
-// end Scroll{X/Y} setters
 
-
-// scrollTo
+        // scrollTo
         "scrollTo on X should scroll": function () {
             var Test = this,
                 scrollview = renderNewScrollview(false),
@@ -195,8 +186,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Test.wait(WAIT);
         },
 
-
-// Properties
+        // Properties
         "lastScrolledAmt should be correct": function () {
 
             var Test = this,
@@ -230,56 +220,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             });
             Test.wait(WAIT);
         }
-// end Properties
     }));
-
-        /*
-        Not possible until (if) bounding constraints are added to scrollTo.  Difficult because
-        that is also an internal API that needs to be able to overscroll at times (drags, then snapback)
-
-        "scrollTo above the max width should move it to max X": function () {
-            var Test = this,
-                scrollview = renderNewScrollview(false),
-                bounds = scrollview._getBounds();
-
-            scrollview.on('scrollEnd', function () {
-                Test.resume(function () {
-                    Y.Assert.areEqual(2700, scrollview.get('scrollX'));
-                })
-            });
-
-                // Assume it starts @ 0
-                Y.Assert.areEqual(0, scrollview.get('scrollX'));
-
-                scrollview.scrollTo(2700, null, DURATION);
-
-            Test.wait(WAIT);
-        },
-
-        "scrollTo above the max height should move it to max Y": function () {
-            var Test = this,
-                scrollview = renderNewScrollview(false),
-                max = scrollview._maxScrollY;
-
-            scrollview.on('scrollEnd', function () {
-                Test.resume(function () {
-                    Y.Assert.areEqual(max, scrollview.get('scrollX'));
-                })
-            });
-
-            // Assume it starts @ 0
-            Y.Assert.areEqual(0, scrollview.get('scrollY'));
-
-            scrollview.scrollTo(null, max+1, DURATION);
-
-            Test.wait(WAIT);
-        },
-
-        */
-
-// end scrollTo
-
-
 
     unitTestSuite.add(new Y.Test.Case({
         name: "Events",
@@ -328,7 +269,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
             Test.wait(WAIT);
         }
-    })); // end events
+    }));
 
     /**
      * The following tests would qualify as functional tests and should
@@ -358,7 +299,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Y.one('#container').empty(true);
         },
 
-// Gesture: move
+        // Gesture: move
         "Move right on X should move the content right": function () {
 
             var Test = this,
@@ -460,11 +401,8 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
             Test.wait(WAIT);
         },
-// Gesture: move
 
-
-
-// Gesture: flick
+        // Gesture: flick
         "Flick x should provide the correct reaction": function () {
 
             var Test = this,
@@ -509,12 +447,8 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
             Test.wait(WAIT);
         },
-// end Gesture:flick
 
-
-
-
-// Disabled
+        // Disabled
         "Disabled drag should not scroll": function () {
             var Test = this,
                 scrollview = renderNewScrollview(true),
@@ -635,7 +569,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
             Test.wait(WAIT);
         }
-// end Disabled
     }));
 
     baseTestSuite.add(unitTestSuite);
@@ -699,5 +632,48 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         return scrollview;
     }
+
+    /*
+    Not possible until (if) bounding constraints are added to scrollTo.  Difficult because
+    that is also an internal API that needs to be able to overscroll at times (drags, then snapback)
+
+    "scrollTo above the max width should move it to max X": function () {
+        var Test = this,
+            scrollview = renderNewScrollview(false),
+            bounds = scrollview._getBounds();
+
+        scrollview.on('scrollEnd', function () {
+            Test.resume(function () {
+                Y.Assert.areEqual(2700, scrollview.get('scrollX'));
+            })
+        });
+
+            // Assume it starts @ 0
+            Y.Assert.areEqual(0, scrollview.get('scrollX'));
+
+            scrollview.scrollTo(2700, null, DURATION);
+
+        Test.wait(WAIT);
+    },
+
+    "scrollTo above the max height should move it to max Y": function () {
+        var Test = this,
+            scrollview = renderNewScrollview(false),
+            max = scrollview._maxScrollY;
+
+        scrollview.on('scrollEnd', function () {
+            Test.resume(function () {
+                Y.Assert.areEqual(max, scrollview.get('scrollX'));
+            })
+        });
+
+        // Assume it starts @ 0
+        Y.Assert.areEqual(0, scrollview.get('scrollY'));
+
+        scrollview.scrollTo(null, max+1, DURATION);
+
+        Test.wait(WAIT);
+    },
+    */
 
 }, null, {requires: ['test', 'node-event-simulate', 'scrollview-base', 'scrollview-mousewheel-simulate']});
