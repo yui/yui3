@@ -29,6 +29,15 @@ YUI.add('color-tests', function(Y) {
                 Assert.areEqual('rgba(0, 255, 0, 1)', Y.Color.convert('lime', Types.RGBA), 'Keyword to RGBa');
             },
 
+            'test conversion with various strings': function () {
+                Assert.areEqual('#ffffff', Y.Color.convert('fff', 'hex'));
+                Assert.areEqual('#ffffff', Y.Color.convert('fff', 'HEX'));
+
+                // invalid conversion types
+                Assert.areEqual('fff', Y.Color.convert('fff', 'foo'));
+                Assert.areEqual('FFF', Y.Color.convert('FFF', 'foo'));
+            },
+
             'test original Y.DOM color conversons': function() {
                 var rgb = 'rgb(97, 11, 11)', // #610b0b
                     rgba = 'rgba(97, 11, 11, 1)',

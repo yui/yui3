@@ -150,7 +150,7 @@ YUI.add('promise-tests', function (Y) {
                 });
             });
 
-            test.wait(50);
+            test.wait(100);
         }
     }));
 

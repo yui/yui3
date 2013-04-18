@@ -7,9 +7,9 @@
 
 <script type="text/javascript">
     YUI({
-        coverage: ['dom', 'dom-deprecated'],
+        coverage: ['dom'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-    }).use('dom', 'dom-deprecated', 'console', 'test', function(Y) {
+    }).use('dom', 'console', 'test', function(Y) {
         var Assert = Y.Assert,
             ArrayAssert = Y.ArrayAssert,
             suite = new Y.Test.Suite("Dom");
@@ -81,19 +81,6 @@
                 Y.DOM.setText(node, content);
                 Assert.areEqual(content, Y.DOM.getText(node, content), 'setText("' + content + '")');
             },
-
-            test_children: function() {
-                ArrayAssert.itemsAreEqual([], Y.DOM.children(tmp), 'children(tmp)');
-                ArrayAssert.itemsAreEqual([], Y.DOM.children(null), 'children(null)');
-                ArrayAssert.itemsAreEqual([], Y.DOM.children(), 'children()');
-                ArrayAssert.itemsAreEqual([hd, bd, ft], Y.DOM.children(doc), 'children(doc)');
-
-/*
-                ArrayAssert.itemsAreEqual([mod1, mod2], Y.DOM.children(main, function(node) {
-                    return node.className === 'mod';
-                }), 'children(main, fn)');
-*/
-            },           
 
             test_getStyle: function() {
                 Assert.areEqual('left',
@@ -650,31 +637,6 @@
 
                 Y.DOM.addHTML(node, Y.DOM.create('<p>this is a <em>test</em></p>'));
                 Assert.areEqual('P', node.lastChild.nodeName, "Y.DOM.create('<p>this is a <em>test</em></p>')");
-            },
-
-            testFirstByTag: function() {
-                var tag = 'div',
-                    root = document;
-
-                Assert.areEqual(root.getElementsByTagName(tag)[0],
-                    Y.DOM.firstByTag(tag, root),
-                    "Y.DOM.firstByTag(" + tag + " , " + root + ")"
-                );
-
-                tag = 'input';
-                root = document.getElementById('test-form');
-
-                Assert.areEqual(root.getElementsByTagName(tag)[0],
-                    Y.DOM.firstByTag(tag, root),
-                    "Y.DOM.firstByTag(" + tag + " , " + root + ")"
-                );
-
-                tag = null;
-                root = null;
-
-                Assert.isNull(Y.DOM.firstByTag(tag, root),
-                    "Y.DOM.firstByTag(" + tag + " , " + root + ")"
-                );
             },
 
             testToHex: function() {
