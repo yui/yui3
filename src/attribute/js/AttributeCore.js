@@ -258,6 +258,8 @@
 
             var host = this, // help compression
                 state = host._state,
+                data = state.data,
+                storedCfg = data[name],
                 value,
                 added,
                 hasValue;
@@ -271,10 +273,26 @@
             added = state.get(name, ADDED);
 
             if (lazy && !added) {
-                state.data[name] = {
-                    lazy : config,
-                    added : true
-                };
+
+                // LAST MINUTE PRE 3.10.0 RELEASE WORKAROUND.
+
+                // Revisit for 3.11.0 with the planned change to add all attributes
+                // at once, instead of filtering for each class which is the root
+                // of the issue.
+
+                // This is to account for the case when an attribute value gets set,
+                // before it's actual config is added formally. We end up blowing away
+                // the previously set value in that case, with the config. Prior to
+                // the performance fixes, we just used to merge, so we didn't see the
+                // issue.
+
+                if (!storedCfg) {
+                    storedCfg = data[name] = {};
+                }
+
+                storedCfg.lazy = config;
+                storedCfg.added = true;
+
             } else {
 
                 if (added && !config.isLazyAdd) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
@@ -296,12 +314,17 @@
 
                         value = config.value;
                         config.value = undefined;
+                    } else {
+                        // LAST MINUTE PRE 3.10.0 RELEASE WORKAROUND.
+                        if (storedCfg && (VALUE in storedCfg)) {
+                            config.value = storedCfg.value;
+                        }
                     }
 
                     config.added = true;
                     config.initializing = true;
 
-                    state.data[name] = config;
+                    data[name] = config;
 
                     if (hasValue) {
                         // Go through set, so that raw values get normalized/validated
@@ -371,6 +394,7 @@
             lazyCfg = lazyCfg || state.get(name, LAZY);
 
             if (lazyCfg) {
+
                 // PERF TODO: For App's id override, otherwise wouldn't be
                 // needed. It expects to find it in the cfg for it's
                 // addAttr override. Would like to remove, once App override is
@@ -378,6 +402,7 @@
                 state.data[name].lazy = undefined;
 
                 lazyCfg.isLazyAdd = true;
+
                 this.addAttr(name, lazyCfg);
             }
         },

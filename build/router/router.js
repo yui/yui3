@@ -219,9 +219,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         this.once(EVT_READY, function () {
             this._ready = true;
 
-            if (this._html5 && this.upgrade()) {
-                return;
-            } else {
+            if (!this.upgrade()) {
                 this._dispatch(this._getPath(), this._getURL());
             }
         });

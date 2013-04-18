@@ -188,7 +188,7 @@ YUI.add('base-core', function (Y, NAME) {
     @param {Object} configs The collection of `ATTRS` configs to mix with the
         existing attribute configurations.
     @static
-    @since @SINCE@
+    @since 3.10.0
     **/
     BaseCore.modifyAttrs = function (ctor, configs) {
         // When called without a constructor, assume `this` is the constructor.
