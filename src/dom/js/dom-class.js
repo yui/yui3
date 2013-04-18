@@ -13,13 +13,18 @@ Y.mix(Y.DOM, {
      * @return {Boolean} Whether or not the element has the given class. 
      */
     hasClass: _hasClassList ? function (node, className) {
-        return className.trim().split(' ').every( function(c) {
-            if (c.trim().length > 0){
-                return node.classList.contains(c);
-            } else {
-                return true;
+        var re = Y.DOM._getRegExp('[^\\s]+(?:\\s+|$)','g');
+        if (className && re.test(className)){
+            re.lastIndex = 0;
+            var classes = className.match(re);
+            for (var i=0; i < classes.length; i++){
+                if (!node.classList.contains(classes[i].trim())){
+                    return false;
+                }
             }
-        });
+            return true;
+        }
+        return false
     } : function (node, className) {
         var re = Y.DOM._getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
         return re.test(node.className);
@@ -33,10 +38,15 @@ Y.mix(Y.DOM, {
      * @param {String} className the class name to add to the class attribute
      */
     addClass: _hasClassList ? function (node, className) {
-        var classes = className.trim().split(' ');
-        for (var i=0; i < classes.length; i++){
-            if (!Y.DOM.hasClass(node, classes[i].trim())){ // skip if already present
-                node.classList.add(classes[i].trim());
+        var re = Y.DOM._getRegExp('[^\\s]+(?:\\s+|$)','g');
+        if (className && re.test(className)){
+            re.lastIndex = 0;
+            var classes = className.match(re);
+            for (var i=0; i < classes.length; i++){
+                classes[i] = classes[i].trim();
+                if (!Y.DOM.hasClass(node, classes[i])){ // skip if already present
+                    node.classList.add(classes[i]);
+                }
             }
         }
     } : function (node, className) {
@@ -53,13 +63,15 @@ Y.mix(Y.DOM, {
      * @param {String} className the class name to remove from the class attribute
      */
     removeClass: _hasClassList ? function (node, className) {
-        var classes = className.trim().split(' ');
-        for (var i=0; i < classes.length; i++){
-            if (classes[i] && hasClass(node, classes[i].trim())) {
-                node.classList.remove(classes[i].trim());
-            }
-            if ( hasClass(node, classes[i].trim()) ) { // in case of multiple adjacent
-                removeClass(node, classes[i].trim());
+        var re = Y.DOM._getRegExp('[^\\s]+(?:\\s+|$)','g');
+        if (className && re.test(className)){
+            re.lastIndex = 0;
+            var classes = className.match(re);
+            for (var i=0; i < classes.length; i++){
+                classes[i] = classes[i].trim();
+                if (classes[i] && hasClass(node, classes[i])) {
+                    node.classList.remove(classes[i]);
+                }
             }
         }
     } : function (node, className) {
