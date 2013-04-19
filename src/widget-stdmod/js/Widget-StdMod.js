@@ -266,7 +266,7 @@
         _syncUIStdMod : function() {
             var stdModParsed = this._stdModParsed;
 
-            Y.each([STD_HEADER, STD_BODY, STD_FOOTER], function(section) {
+            Y.Array.each([STD_HEADER, STD_BODY, STD_FOOTER], function(section) {
                 var content;
 
                 if (!stdModParsed || !stdModParsed[section + CONTENT_SUFFIX]) {
