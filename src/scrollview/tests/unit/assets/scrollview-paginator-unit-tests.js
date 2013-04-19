@@ -6,6 +6,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         simulateMousewheel = Y.simulateMousewheel, /* Only supported in Chrome */
         paginatorTestSuite = new Y.Test.Suite({name:"Scrollview Paginator Tests"}),
         unitTestSuite = new Y.Test.Suite({name:"Unit Tests"}),
+        unitTestSuiteDev = new Y.Test.Suite({name:"Tests In Development"}),
         functionalTestSuite = new Y.Test.Suite({name:"Functional Tests"});
 
     unitTestSuite.add(new Y.Test.Case({
@@ -15,7 +16,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         tearDown : function () { Y.one('#container').empty(true); },
 
         "Ensure rendering & initial state are correct": function() {
-            var scrollview = renderNewScrollview('x'),
+            var scrollview = renderNewScrollview('x', 'x'),
                 bb = scrollview.get('boundingBox'),
                 cb = scrollview.get('contentBox'),
                 id = cb.get('id'),
@@ -38,7 +39,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
         "sv.next() should advance to the next page" : function () {
             var Test = this,
-                sv = renderNewScrollview('x');
+                sv = renderNewScrollview('x', 'x');
 
             sv.once('scrollEnd', function () {
                 Test.resume(function () {
@@ -52,7 +53,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
         "sv.next() on last index should do nothing" : function () {
             var Test = this,
-                sv = renderNewScrollview('x', 9),
+                sv = renderNewScrollview('x', undefined, 9),
                 eventsFired = 0;
 
             sv.once('scrollEnd', function () {
@@ -73,7 +74,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
         "sv.prev() should advance to the previous page" : function () {
             var Test = this,
-                sv = renderNewScrollview('y', 2);
+                sv = renderNewScrollview('y', 'y', 2);
 
             sv.once('scrollEnd', function () {
                 Test.resume(function () {
@@ -88,7 +89,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
         "sv.prev() on index 0 should do nothing" : function () {
             var Test = this,
-                sv = renderNewScrollview('y'),
+                sv = renderNewScrollview('y', 'y'),
                 eventsFired = 0;
 
             sv.once('scrollEnd', function () {
@@ -109,7 +110,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
         "scrollTo (deprecated) should animate to the specified index" : function () {
             var Test = this,
-                sv = renderNewScrollview('y');
+                sv = renderNewScrollview('y', 'y');
 
             sv.once('scrollEnd', function () {
                 Test.resume(function () {
@@ -125,7 +126,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
         "scrollToIndex should animate to the specified index" : function () {
             var Test = this,
-                sv = renderNewScrollview('y');
+                sv = renderNewScrollview('y', 'y');
 
             sv.once('scrollEnd', function () {
                 Test.resume(function () {
@@ -139,15 +140,82 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
             Test.wait(WAIT);
         },
 
-        "Disabled scrollviews should not be able to paginate": function () {
+        "Disabled scrollviews should not be able to paginate next": function () {
             var Test = this,
-                scrollview = this.scrollview = renderNewScrollview('x'),
+                scrollview = this.scrollview = renderNewScrollview('x', 'x'),
                 paginator = this.scrollview.pages;
 
             scrollview.set('disabled', true);
             Y.Assert.areEqual(0, paginator.get('index'));
             paginator.next();
             Y.Assert.areEqual(0, paginator.get('index'));
+        },
+
+        "Disabled scrollviews should not be able to paginate prev": function () {
+            var Test = this,
+                scrollview = this.scrollview = renderNewScrollview('x', 'x', 1),
+                paginator = this.scrollview.pages;
+
+            scrollview.set('disabled', true);
+            Y.Assert.areEqual(1, paginator.get('index'));
+            paginator.prev();
+            Y.Assert.areEqual(1, paginator.get('index'));
+        }
+    }));
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Mock event - indexChange on X paginator",
+
+        setUp : function () {
+            this.scrollview = renderNewScrollview('xy', 'x');
+            this.mockEvent = new Y.Test.Mock();
+            this.mockEvent.newVal = 3;
+            this.mockEvent.src = 'ui';
+        },
+
+        tearDown : function () {
+            this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+
+        "Changing the index on a dual axis instance with X pagination will update the host's _maxScrollY" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                paginator = scrollview.pages,
+                mockEvent = this.mockEvent,
+                response;
+
+            paginator._afterIndexChange(mockEvent);
+            Y.Assert.areEqual(2700, scrollview._maxScrollX);
+            Y.Assert.areEqual(0, scrollview.get('scrollX'));
+        }
+    }));
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Mock event - indexChange on Y paginator",
+
+        setUp : function () {
+            this.scrollview = renderNewScrollview('xy', 'y');
+            this.mockEvent = new Y.Test.Mock();
+            this.mockEvent.newVal = 3;
+            this.mockEvent.src = 'ui';
+        },
+
+        tearDown : function () {
+            this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+
+        "Changing the index on a dual axis instance with Y pagination will update the host's _maxScrollY" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                paginator = scrollview.pages,
+                mockEvent = this.mockEvent,
+                response;
+
+            paginator._afterIndexChange(mockEvent);
+            Y.Assert.areEqual(100, scrollview._maxScrollY);
+            Y.Assert.areEqual(0, scrollview.get('scrollY'));
         }
     }));
 
@@ -155,7 +223,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         name: "Mock event - flick",
 
         setUp : function () {
-            this.scrollview = renderNewScrollview('x');
+            this.scrollview = renderNewScrollview('x', 'x');
             this.mockEvent = new Y.Test.Mock();
             this.mockEvent.flick = {velocity: '-1', axis:'x'};
         },
@@ -214,7 +282,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
         "Mousewheel on x instances should do nothing" : function ( ) {
             var Test = this,
-                scrollview = this.scrollview = renderNewScrollview('x'),
+                scrollview = this.scrollview = renderNewScrollview('x', 'x'),
                 paginator = scrollview.pages,
                 Mock = Y.Test.Mock,
                 eventMock = new Mock(),
@@ -231,7 +299,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
         "Up mousewheels on y instances should" : function ( ) {
             var Test = this,
-                scrollview = this.scrollview = renderNewScrollview('y', 2),
+                scrollview = this.scrollview = renderNewScrollview('y', 'y', 2),
                 paginator = scrollview.pages,
                 Mock = Y.Test.Mock,
                 eventMock = new Mock(),
@@ -254,7 +322,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
         "Down mousewheels on y instances should" : function ( ) {
             var Test = this,
-                scrollview = this.scrollview = renderNewScrollview('y'),
+                scrollview = this.scrollview = renderNewScrollview('y', 'y'),
                 paginator = scrollview.pages,
                 Mock = Y.Test.Mock,
                 eventMock = new Mock(),
@@ -280,7 +348,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         name: "Mock event - gesture",
 
         setUp : function () {
-            this.scrollview = renderNewScrollview('x');
+            this.scrollview = renderNewScrollview('x', 'x');
             this.mockEvent = new Y.Test.Mock();
             this.mockEvent.flick = {velocity: '-1', axis:'x'};
         },
@@ -356,7 +424,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         },
 
         '_beforeHostScrollTo without a gesture should return the input args' : function () {
-            var scrollview = this.scrollview = renderNewScrollview('x'),
+            var scrollview = this.scrollview = renderNewScrollview('x', 'x'),
                 args = [2 /*x*/, 2  /*y*/, undefined, undefined, undefined],
                 response = scrollview.pages._beforeHostScrollTo.apply(scrollview.pages, args);
 
@@ -364,7 +432,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         },
 
         '_beforeHostScrollTo on an x-axis should null the y-value' : function () {
-            var scrollview = this.scrollview = renderNewScrollview('x'),
+            var scrollview = this.scrollview = renderNewScrollview('x', 'x'),
                 response;
 
             scrollview._gesture = { axis: 'x' };
@@ -373,7 +441,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         },
 
         '_beforeHostScrollTo on an y-axis should null a y-value' : function () {
-            var scrollview = this.scrollview = renderNewScrollview('y'),
+            var scrollview = this.scrollview = renderNewScrollview('y', 'y'),
                 response;
 
             scrollview._gesture = { axis: 'y' };
@@ -382,13 +450,42 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         },
 
         "Gestures against the grain should select the index page's node to transition" : function () {
-            var scrollview = this.scrollview = renderNewScrollview('y'),
+            var scrollview = this.scrollview = renderNewScrollview('y', 'y'),
                 paginator = this.scrollview.pages,
                 response;
 
             scrollview._gesture = { axis: 'x' };
             response = scrollview.pages._beforeHostScrollTo(2 /*x*/, 2  /*y*/);
             Y.Assert.isNotNull(response.newArgs[4]);
+        }
+    }));
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "optimizeMemory",
+
+        setUp : function () {
+            this.scrollview = renderNewScrollview(undefined, undefined, 0, true);
+        },
+
+        tearDown : function () {
+            this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+
+        'Optimized instances should hide nodes outside the buffer' : function () {
+            var scrollview = this.scrollview,
+                paginator = scrollview.pages,
+                stage, pageNodes;
+
+            pageNodes = paginator._getPageNodes();
+            pageNodes.each(function (node, i) {
+                if (i < 2) {
+                    Y.Assert.isFalse(node.hasClass('yui3-scrollview-hidden'));
+                }
+                else {
+                    Y.Assert.isTrue(node.hasClass('yui3-scrollview-hidden'));
+                }
+            });
         }
     }));
 
@@ -425,7 +522,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
          */
         "scrollToIndex should animate with a longer anim duration": function () {
             var Test = this,
-                sv = renderNewScrollview('y'),
+                sv = renderNewScrollview('y', 'y'),
                 startTime = Y.Lang.now();
 
             sv.once('scrollEnd', function () {
@@ -441,7 +538,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         "Move x should advance 1 page right": function() {
 
             var Test = this,
-                scrollview = renderNewScrollview('x');
+                scrollview = renderNewScrollview('x', 'x');
 
             scrollview.once('scrollEnd', function(){
                 Test.resume(function(){
@@ -464,7 +561,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         "Move left on X should snap back": function() {
 
             var Test = this,
-                scrollview = renderNewScrollview('x'),
+                scrollview = renderNewScrollview('x', 'x'),
                 distance = 100;
 
             scrollview.once('scrollEnd', function(){
@@ -488,7 +585,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         "optimizeMemory should hide nodes not near the viewport": function() {
 
             var Test = this,
-                scrollview = renderNewScrollview('x', 0, true),
+                scrollview = renderNewScrollview('x', undefined, 0, true),
                 distance = 100;
 
             scrollview.on('scrollEnd', function(){
@@ -528,7 +625,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         "mousewheel down should move the SV down": function () {
 
             var Test = this,
-                scrollview = renderNewScrollview('y');
+                scrollview = renderNewScrollview('y', 'y');
 
             scrollview.once('scrollEnd', function(){
                 Test.resume(function(){
@@ -545,7 +642,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
         "Dual axis should allow scrolling on both X & Y axes": function () {
             var Test = this,
-                scrollview = renderNewScrollview('xy'),
+                scrollview = renderNewScrollview('xy', 'x'),
                 scrollToX = 300,
                 scrollToY = 20;
 
@@ -583,7 +680,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         "Disabled scrollviews should not advance page index on flick": function() {
 
             var Test = this,
-                scrollview = renderNewScrollview('x');
+                scrollview = renderNewScrollview('x', 'x');
 
             scrollview.set('disabled', true);
 
@@ -625,8 +722,15 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         }
     }));
 
-    paginatorTestSuite.add(unitTestSuite);
-    paginatorTestSuite.add(functionalTestSuite);
+    /** To aid development */
+    console.log(unitTestSuiteDev.items);
+    if (unitTestSuiteDev.items.length > 0) {
+        paginatorTestSuite.add(unitTestSuiteDev);
+    }
+    else {
+        paginatorTestSuite.add(unitTestSuite);
+        paginatorTestSuite.add(functionalTestSuite);
+    }
 
     Y.Test.Runner.add(paginatorTestSuite);
 
@@ -639,7 +743,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         - Make sure scrollEnd only fires once
     */
 
-    function renderNewScrollview (axis, startIndex, optimizeMemory) {
+    function renderNewScrollview (scrollViewAxis, paginatorAxis, startIndex, optimizeMemory) {
 
         var config = {},
             guid = Y.guid(),
@@ -648,23 +752,23 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
             widgetClass;
 
         config.srcNode = '#' + guid;
+        config.axis = scrollViewAxis;
 
-        if (axis === 'y') {
-            config.height = "100px";
-            widgetClass = 'vertical';
-            pAxis = axis;
-        }
-        else if (axis === 'x') {
-            config.width = "300px";
-            widgetClass = 'horizontal';
-            pAxis = axis;
-        }
-        else if (axis === 'xy') {
-            config.height = "100px";
-            config.width = "300px";
-            widgetClass = 'horizontal';
-            config.axis = 'xy';
-            pAxis = 'x';
+        switch(scrollViewAxis) {
+            case 'x':
+                config.width = "300px";
+                widgetClass = 'horizontal';
+                break;
+            case 'y':
+                config.height = "100px";
+                widgetClass = 'vertical';
+                break;
+            case 'xy':
+            default:
+                config.height = "100px";
+                config.width = "300px";
+                widgetClass = 'horizontal';
+                break;
         }
 
         config.plugins = [{
@@ -672,7 +776,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
             cfg:{
                 index: startIndex || 0,
                 _optimizeMemory: optimizeMemory || false,
-                axis: pAxis,
+                axis: paginatorAxis,
                 selector:">ul>li"
             }
         }];
