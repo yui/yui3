@@ -5,7 +5,7 @@
 
 /*global Y */
 /**
- * <p>Provides Y.QueryString.parse method for converting objects to Query Strings.
+ * <p>Provides Y.QueryString.parse method for converting Query Strings to an object.
  * This is a simpler implementation than the full querystring-parse.</p>
  * <p>Because some things may require basic query string escaping functionality,
  * this module provides the bare minimum functionality (decoding a hash of simple values),
