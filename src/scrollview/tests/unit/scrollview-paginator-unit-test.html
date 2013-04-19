@@ -54,8 +54,7 @@
 
             var DURATION = 1,
                 SLOW_DURATION = 1000,
-                WAIT = 2000,
-                LONG_WAIT = 4000,
+                WAIT = 5000,
                 suite = new Y.Test.Suite({name:"Scrollview: Paginator"});
 
             new Y.Test.Console().render();
@@ -282,7 +281,7 @@
                         duration: SLOW_DURATION
                     });
 
-                    Test.wait(LONG_WAIT);
+                    Test.wait(WAIT);
                 },
 
                 "optimizeMemory should hide nodes not near the viewport": function() {
@@ -310,7 +309,7 @@
                                     },
                                     duration: DURATION
                                 });
-                                Test.wait(1000);
+                                Test.wait(WAIT);
                             }
                         })
                     });
@@ -322,7 +321,7 @@
                         duration: DURATION
                     });
 
-                    Test.wait(1000);
+                    Test.wait(WAIT);
                 },
 
                 "mousewheel down should move the SV down": function () {
