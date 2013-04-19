@@ -48,7 +48,7 @@ Y.mix(Y.namespace("Number"), {
             val = val.replace(regex, '');
 
             return decimal ? val.replace(decimal, '.') : val;
-        }
+        };
     }),
     /**
      * Converts data to type Number.
