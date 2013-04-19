@@ -6,6 +6,7 @@
         ]
     },
     "datatype-number-parse": {
+        "requires": ["escape"]
     },
     "datatype-number-format": {
     }

@@ -6,16 +6,56 @@
  * @for Number
  */
 
-var LANG = Y.Lang,
-    safeRegExp = /(\\|\[|\]|\.|\+|\*|\?|\^|\$|\(|\)|\||\{|\})/g;
+var safe = Y.Escape.regex,
+    SPACES = '\\s*';
 
 Y.mix(Y.namespace("Number"), {
+    /**
+     * Returns a parsing function for the given configuration.
+     * It uses `Y.cached` so it expects the format spec separated into
+     * individual values.
+     * The method further uses closure to put together and save the
+     * regular expresssion just once in the outer function.
+     *
+     * @method _buildParser
+     * @param [prefix] {String} Prefix string to be stripped out.
+     * @param [suffix] {String} Suffix string to be stripped out.
+     * @param [separator] {String} Thousands separator to be stripped out.
+     * @param [decimal] {String} Decimal separator to be replaced by a dot.
+     * @return {Function} Parsing function.
+     * @private
+     */
+    _buildParser: Y.cached(function (prefix, suffix, separator, decimal) {
+        var regexBits = [],
+            regex;
+
+        if (prefix) {
+            regexBits.push('^' + SPACES + safe(prefix) + SPACES);
+        }
+        if (suffix) {
+            regexBits.push(SPACES + safe(suffix) + SPACES + '$');
+        }
+        if (separator) {
+            regexBits.push(safe(separator) + '(?=\\d)');
+        }
+
+        regex = new RegExp('(?:' + regexBits.join('|') + ')', 'g');
+
+        if (decimal === '.') {
+            decimal = null;
+        }
+        return function (val) {
+            val = val.replace(regex, '');
+
+            return decimal ? val.replace(decimal, '.') : val;
+        }
+    }),
     /**
      * Converts data to type Number.
      * If a `config` argument is used, it will strip the `data` of the prefix,
      * the suffix and the thousands separator, if any of them are found,
      * replace the decimal separator by a dot and parse the resulting string.
-     * Extra whitespace will be ignored.
+     * Extra whitespace around the prefix and suffix will be ignored.
      *
      * @method parse
      * @param data {String | Number | Boolean} Data to convert. The following
@@ -28,39 +68,31 @@ Y.mix(Y.namespace("Number"), {
      * @param [config.suffix] {HTML} String to be removed from the end of the number, like " items".
      * @return {Number} A number, or null.
      */
-    parse: function(data, config) {
-        var number, r,
-            safe = function(r) {
-                return r.replace(safeRegExp,'\\$1');
-            };
-        if (LANG.isString(data) && LANG.isObject(config)) {
-            data = data.replace(/\s+/g, '');
-            r = config.prefix;
 
-            if (r) {
-                data = data.replace(new RegExp('^(\\s*' + safe(r) + ')') , '');
-            }
-            r = config.suffix;
-            if (r) {
-                data = data.replace(new RegExp('(' + safe(r) + '\\s*)$'),'');
-            }
-            r = config.thousandsSeparator;
-            if (r) {
-                data = data.replace(new RegExp(safe(r),'g'),'');
-            }
-            r = config.decimalSeparator;
-            if (r && r !== '.') {
-                data = data.replace(new RegExp(safe(r)),'.');
-            }
+    parse: function(data, config) {
+        var parser;
+
+        if (config && typeof data === 'string') {
+            parser = this._buildParser(config.prefix, config.suffix, config.thousandsSeparator, config.decimalSeparator);
+
+            data = parser(data);
         }
-        number = (data === null || data === "") ? data : +data;
-        if(LANG.isNumber(number)) {
-            return number;
+
+        if (data !== null && data !== "") {
+            data = +data;
+
+            // catch NaN and ±Infinity
+            if (!isFinite(data)) {
+                data = null;
+            }
+        } else {
+            data = null;
         }
-        else {
-            Y.log("Could not parse data to type Number", "warn", "number");
-            return null;
-        }
+
+        // on the same line to get stripped for raw/min.js by build system
+        if (data === null) { Y.log("Could not parse data to type Number", "warn", "number"); }
+
+        return data;
     }
 });
 

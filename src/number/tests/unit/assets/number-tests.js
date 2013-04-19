@@ -49,6 +49,9 @@ YUI.add('number-tests', function(Y) {
             tests: function () {
                 var i, v, values = [
                     ["1234.5", {}, 1234.5],
+                    ["1234.5", {
+                            decimalSeparator: '.'
+                    }, 1234.5],
                     ["$1.234,50", {
                             prefix: '$',
                             decimalSeparator:',',
