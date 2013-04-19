@@ -653,7 +653,10 @@ Y.Model = Y.extend(Model, Y.Base, {
     Override this method to provide a custom persistence implementation for this
     model. The default just calls the callback without actually doing anything.
 
-    This method is called internally by `load()`, `save()`, and `destroy()`.
+    This method is called internally by `load()`, `save()`, and `destroy()`, and
+    their implementations rely on the callback being called. This effectively
+    means that when a callback is provided, it must be called at some point for
+    the class to operate correctly.
 
     @method sync
     @param {String} action Sync action to perform. May be one of the following:
