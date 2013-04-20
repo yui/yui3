@@ -204,29 +204,42 @@ YUI.add('number-tests', function(Y) {
             },
 
             testThousandsSeparator: function() {
-                var output = Y.Number.format(123123123, {thousandsSeparator:","});
-                ASSERT.areSame("123,123,123", output, "Incorrect thousands separation.");
+                var output = Y.Number.format(123456789, {thousandsSeparator:","});
+                ASSERT.areSame("123,456,789", output, "Incorrect thousands separation.");
 
-                output = Y.Number.format(-123123123, {thousandsSeparator:","});
-                ASSERT.areSame("-123,123,123", output, "Incorrect thousands separation neg.");
+                output = Y.Number.format(-123456789, {thousandsSeparator:","});
+                ASSERT.areSame("-123,456,789", output, "Incorrect thousands separation neg.");
+
+                output = Y.Number.format(12345678, {thousandsSeparator:","});
+                ASSERT.areSame("12,345,678", output, "Incorrect thousands separation when (number-of-digits % 3) == 2");
+
+                output = Y.Number.format(1234567, {thousandsSeparator:","});
+                ASSERT.areSame("1,234,567", output, "Incorrect thousands separation when (number-of-digits % 3) == 1");
+
+                output = Y.Number.format(-12345678, {thousandsSeparator:","});
+                ASSERT.areSame("-12,345,678", output, "Incorrect thousands separation neg. when (number-of-digits % 3) == 2");
+
+                var output = Y.Number.format(12.34, {thousandsSeparator:","});
+                ASSERT.areSame("12.34", output, "Incorrect thousands separation when number is short.");
+
             },
 
             testComplex: function() {
-                var output = Y.Number.format(123123123.176,{
+                var output = Y.Number.format(123456789.176,{
                         prefix: "&#165;",
                         decimalPlaces:2,
                         thousandsSeparator:".",
                         decimalSeparator:","
                     });
-                ASSERT.areSame("&#165;123.123.123,18", output, "Incorrect Yen formatting neg.");
+                ASSERT.areSame("&#165;123.456.789,18", output, "Incorrect Yen formatting neg.");
 
-                output = Y.Number.format(-123123123.176,{
+                output = Y.Number.format(-123456789.176,{
                         prefix: "&#165;",
                         decimalPlaces:2,
                         thousandsSeparator:".",
                         decimalSeparator:","
                     });
-                ASSERT.areSame("&#165;-123.123.123,18", output, "Incorrect Yen formatting neg.");
+                ASSERT.areSame("&#165;-123.456.789,18", output, "Incorrect Yen formatting neg.");
             }
         });
 
