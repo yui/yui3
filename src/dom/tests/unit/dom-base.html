@@ -7,17 +7,6 @@
 <script type="text/javascript" src="./assets/dom-core-test.js"></script>
 <script type="text/javascript" src="./assets/dom-class-test.js"></script>
 <script type="text/javascript" src="./assets/dom-size-test.js"></script>
-<script type="text/javascript" src="./assets/dom-deprecated-test.js"></script>
-<script type="text/javascript">
-YUI({
-    coverage: ['dom-core', 'dom-class', 'dom-size', 'dom-deprecated'],
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-}).use('test-console', 'test', 'dom-core-test', 'dom-class-test', 'dom-size-test', 'dom-deprecated-test', function (Y) {
-    new Y.Test.Console().render();
-    Y.Test.Runner.masterSuite.name = 'Dom: Base';
-    Y.Test.Runner.run();
-});
-</script>
 <style>
 
 h1, h2, h3, h4, h5, h6, p, ul, ol, li {
@@ -158,5 +147,15 @@ form {
     <strong>baz</strong>
 </div>
 </div>
+<script type="text/javascript">
+YUI({
+    coverage: ['dom-core', 'dom-class', 'dom-size'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+}).use('test-console', 'test', 'dom-core-test', 'dom-class-test', 'dom-size-test', function (Y) {
+    new Y.Test.Console().render();
+    Y.Test.Runner.masterSuite.name = 'Dom: Base';
+    Y.Test.Runner.run();
+});
+</script>
 </body>
 </html>

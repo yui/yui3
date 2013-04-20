@@ -86,7 +86,7 @@ YUI.add('format-tests', function(Y) {
                         }
                     }
                 }
-            }
+            };
         },
 
         tearDown : function(){
