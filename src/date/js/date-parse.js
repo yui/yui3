@@ -1,7 +1,13 @@
 // Constants to refer to the parts of the date array
 var L = Y.Lang,
     YR = 0, MO = 1, D = 2, H = 3, MI = 4, S = 5, TZh = 6, TZm = 7, AP = 8;
-    digitsRegExp = /^\s*(\d+)/,
+    digitsRegExp = [
+        /^\s*(\d+)/,
+        /^\s*(\d{1,1})/,
+        /^\s*(\d{1,2})/,
+        /^\s*(\d{1,3})/,
+        /^\s*(\d{1,4})/
+    ],
     spaceRegExp = /(\s+)/g,
     gmtUtcRegExp = /^(\s*gmt)|(\s*utc)|(\s*)/i,
     tzRegExp = /^\s*([a-z]+(\/[a-z]+)?)/i,
@@ -14,16 +20,6 @@ var L = Y.Lang,
  */
 Y.mix(Y.namespace("Date"), {
 
-    /**
-     * Local copy of the data to be parsed.
-     * @property _data
-     * @type String
-     * @default null
-     * @static
-     * @private
-     */
-    _data:null,
-
 
     /**
      * Turns a sequence of digits into a number.
@@ -35,21 +31,20 @@ Y.mix(Y.namespace("Date"), {
      * @static
      * @private
      */
-    _parseDigits: function (maxLen, max) {
-        var m = digitsRegExp.exec(this._data),
+    _parseDigits: function (data, d, part, maxLen, max) {
+        var m = digitsRegExp[maxLen].exec(data),
             val;
         if (!m) {
-            return NaN;
+            return null;
         }
-        val = m[1].substr(0, maxLen);
 
-        this._data = this._data.substr(m[0].length);
-        val = parseInt(val, 10);
+        val = parseInt(m[1], 10);
 
         if (val < 0 || max && val > max) {
-            return NaN;
+            return null;
         }
-        return val;
+        d[part] = val;
+        return data.substr(m[0].length);
     },
     /**
      * Returns the index position of the value in the array of localized strings that
@@ -61,11 +56,12 @@ Y.mix(Y.namespace("Date"), {
      * @static
      * @private
      */
-    _parseStrings: function (key) {
+    _parseStrings: function (data, d, key, part) {
         var i,l,
             options = this._resources[key],
-            data = L.trimLeft(this._data),
-            len = 0, winner = NaN ;
+            len = 0, winner = null ;
+
+        data = L.trimLeft(data);
         for (i = 0; i < options.length; i += 1) {
             if (data.indexOf(options[i].toLowerCase()) === 0) {
                 l = options[i].length;
@@ -75,8 +71,25 @@ Y.mix(Y.namespace("Date"), {
                 }
             }
         }
-        this._data = data.substr(len);
-        return winner;
+        if (winner === null) {
+            return null;
+        }
+        d[part] = winner;
+        return data.substr(len);
+    },
+    _skipChars: function (data, d, chars) {
+        data = L.trimLeft(data);
+        if (data.indexOf(chars) === 0) {
+            return data.substr(chars.length);
+        }
+        return null;
+    },
+    _skipDigits: function (data, d, maxLen) {
+        var m = digitsRegExp[maxLen].exec(data);
+        if (!m) {
+            return null;
+        }
+        return data.substr(m[0].length);
     },
     /**
      * Hash containing values that need further post-processing.
@@ -101,109 +114,79 @@ Y.mix(Y.namespace("Date"), {
         // Though some of the parts might not provide useful information,
         // such as the weekday
         // they need to be skipped over
-        a: function () {
-            return this._parseStrings('a');
-        },
-        A: function () {
-            return this._parseStrings('A');
-        },
-        b: function (d) {
-            return d[MO] = this._parseStrings('b');
-        },
-        B: function (d) {
-            return d[MO] = this._parseStrings('B');
-        },
-        C: function () {
+        a: ['_parseStrings','a'],
+        A: ['_parseStrings','A'],
+        b: ['_parseStrings','b',MO],
+        B: ['_parseStrings','B',MO],
+        C: function (data) {
+            var d1 = [];
             // The century will have to be added to whatever the year in the century might be
-            return this._pending.C = this._parseDigits(2) * 100;
+            data = this._parseDigits(data, d1, 0 , 2);
+            this._pending.C = d1[0] * 100;
+            return data;
         },
-        d: function (d) {
-            return d[D] = this._parseDigits(2, 31);
-        },
-        e: function (d) {
-            return d[D] = this._parseDigits(2, 31);
-        },
-        g: function (d) {
-            return d[YR] = this._parseDigits(2);
-        },
-        G: function (d) {
-            return d[YR] = this._parseDigits(4);
-
-        },
-        H: function (d) {
-            return d[H] = this._parseDigits(2, 23);
-        },
-        I: function (d) {
-            var h = this._parseDigits(2, 12);
-            if (h === 12) {
-                h = 0;
+        d: ['_parseDigits', D, 2, 31],
+        e: ['_parseDigits', D, 2, 31],
+        g: ['_parseDigits', YR, 2],
+        G: ['_parseDigits', YR, 4],
+        H: ['_parseDigits', H, 2, 23],
+        I: function (data, d) {
+            data = this._parseDigits(data, d, H, 2, 12);
+            if (d[H] === 12) {
+                d[H] = 0;
             }
-           return  d[H] = h;
+           return  data;
         },
-        j: function () {
+        j: function (data) {
+            var d1 = [];
             // The year might not be in yet, so I leave it pending
-            return this._pending.j = this._parseDigits(3);
-
+            data = this._parseDigits(data, d1, 0 , 3);
+            this._pending.j = d1[0];
+            return data;
         },
-        k: function (d) {
-            return d[H] = this._parseDigits(2, 23);
-        },
-        l: function (d) {
-            var h = this._parseDigits(2, 12);
-            if (h === 12) {
-                h = 0;
+        k: ['_parseDigits', H, 2, 23],
+        l: function (data, d) {
+            data = this._parseDigits(data, d, H, 2, 12);
+            if (d[H] === 12) {
+                d[H] = 0;
             }
-           return  d[H] = h;
+            return  data;
         },
-        m: function (d) {
-            return d[MO] = this._parseDigits(2, 12) - 1;
+        m: function (data, d) {
+            data = this._parseDigits(data, d, MO, 2, 12);
+            d[MO] -= 1;
+            return  data;
         },
-        M: function (d) {
-            return d[MI] =  this._parseDigits(2, 59);
+        M: ['_parseDigits', MI, 2, 59],
+        p: function (data, d) {
+            data = this._parseStrings(data, d, 'p', AP);
+            d[AP] = d[AP] ? 12 : 0;
+            return data;
         },
-        p: function (d) {
-            return d[AP] = this._parseStrings('p') ? 12 : 0;
+        P: function (data, d) {
+            data = this._parseStrings(data, d, 'P', AP);
+            d[AP] = d[AP] ? 12 : 0;
+            return data;
         },
-        P: function (d) {
-            return d[AP] =  this._parseStrings('P') ? 12 : 0;
-        },
-        s: function () {
+        s: function (data) {
+            var d1 = [];
+            data = this._parseDigits(data, d1, 0, 0);
             // The seconds by themselves provide all that is needed
-            return this._pending.s = this._parseDigits(999);
+            this._pending.s = d1[0];
+            return data;
         },
-        S: function (d) {
-            return d[S] = this._parseDigits(2, 59);
-        },
-        u: function () {
-            // No useful information, just skip over
-            return this._parseDigits(1);
-        },
-        U: function () {
-            // No useful information, just skip over
-            return this._parseDigits(2);
-        },
-        V: function () {
-            // No useful information, just skip over
-            return this._parseDigits(2);
-        },
-        w: function () {
-            // No useful information, just skip over
-            return this._parseDigits(1);
-        },
-        W: function () {
-            // No useful information, just skip over
-            return this._parseDigits(2);
-        },
-        y: function (d) {
-            return d[YR] = this._parseDigits(4);
-        },
-        Y: function (d) {
-            return d[YR] = this._parseDigits(4);
-        },
-        z: function (d) {
+        S: ['_parseDigits', S, 2, 59],
+        u: ['_skipDigits', 1],
+        U: ['_skipDigits', 2],
+        V: ['_skipDigits', 2],
+        w: ['_skipDigits', 1],
+        W: ['_skipDigits', 2],
+        y: ['_parseDigits', YR, 4],
+        Y: ['_parseDigits', YR, 4],
+        z: function (data, d) {
+            data = data.replace(gmtUtcRegExp,'');
 
-            var more = false, sign = 1, h = 0, m = 0,
-                data = this._data.replace(gmtUtcRegExp,''),
+            var more = false, sign = 1, h = 0, m = 0, d1=[],
                 code = data[0];
             switch (code) {
                 case '+':
@@ -216,11 +199,11 @@ Y.mix(Y.namespace("Date"), {
                 case 'z':
                     break;
                 case 'j':
-                    return NaN;
+                    return null;
                 default:
                     h = code.charCodeAt() - 'a'.charCodeAt() + 1;
                     if (h > 25) {
-                        return NaN;
+                        return null;
                     }
                     if (h > 13) {
                         h = h - 13;
@@ -229,17 +212,20 @@ Y.mix(Y.namespace("Date"), {
                         h -= 1;
                     }
             }
-            this._data = data.substr(1);
+            data = data.substr(1);
             if (more) {
-
-                if (isNaN(h = this._parseDigits(4))) {
-                    return NaN;
+                data = this._parseDigits(data, d1, 0, 4);
+                if (data === null) {
+                    return null;
                 }
-                if (h < 100 && this._data[0] === ':') {
-                    this._data = this._data.substr(1);
-                    if (isNaN(m = this._parseDigits(2))) {
-                        return NaN;
+                h = d1[0];
+                if (h < 100 && data[0] === ':') {
+                    data = data.substr(1);
+                    data = this._parseDigits(data, d1, 0, 2);
+                    if (data === null) {
+                        return null;
                     }
+                    m = d1[0];
                 } else {
                     m = h % 100;
                     h = Math.floor(h / 100);
@@ -248,28 +234,26 @@ Y.mix(Y.namespace("Date"), {
             }
             d[TZh] = sign * h;
             d[TZm] = sign * m;
-            return true;
+            return data;
         },
-        Z: function (d) {
-            var data = this._data,
-                m = tzRegExp.exec(data),
-                h = this._timezones[m[1]],
+        Z: function (data, d) {
+            var m,
+                matches = tzRegExp.exec(data),
+                h = this._timezones[matches[1]],
                 sign;
             if (h === undefined) {
-                return NaN;
+                return null;
             }
-            this._data = data.substr(m[0].length);
             sign = (h < 0 ? -1 : 1);
             h = Math.abs(h);
             m = (h % 1) * 60;
             h = Math.floor(h);
             d[TZh] = sign * h;
             d[TZm] = sign * m;
-            return true;
+            return data.substr(matches[0].length);
         },
-        '%': function () {
-            this._data = this._data.substr(1);
-            return true;
+        '%': function (data) {
+            return data.substr(1);
         }
 
 
@@ -315,6 +299,92 @@ Y.mix(Y.namespace("Date"), {
 
 
     },
+    cutoff: 30,
+    _buildParser: Y.cached(function (format, cutoff) {
+        var DT = Y.Date, i, inPerc = false, c,
+            ps = DT.parsers,
+            parsers = [], skip = '';
+
+        if (cutoff === undefined) {
+            cutoff = DT.cutoff;
+        }
+
+        format = DT._expandAggregates(format).replace(spaceRegExp, '');
+        for (i = 0; i < format.length; i++) {
+            c = format[i];
+            if (inPerc) {
+                inPerc = false;
+                if (ps[c]) {
+                    parsers.push(ps[c]);
+                } else {
+                    return null;
+                }
+
+            } else {
+                if (c === '%') {
+                    inPerc = true;
+                    if (skip.length) {
+                        parsers.push(['_skipChars', skip.toLowerCase()]);
+                        skip = '';
+                    }
+                } else {
+                    skip += c;
+                }
+            }
+        }
+
+        return function (data) {
+            var i, val, p, fn, c,
+                //   YR MO D   H  MI S  TZh   TZm    AP
+                d = [0, 0, 0,  0, 0, 0, null, null , 0];
+
+            for (i = 0; i < parsers.length; i++) {
+                p = parsers[i];
+                if (typeof p === 'function') {
+                    fn = p;
+                    p = [data, d];
+                } else {
+                    fn = this[p[0]];
+                    p = [data, d].concat(p.slice(1));
+                }
+                if (fn) {
+                    data = fn.apply(DT, p);
+                    if (data === null) {
+                        return null;
+                    }
+                }
+            }
+
+            for (c in this._pending) {
+                switch (c) {
+                    case 'j':
+                        val = new Date(d[YR], 0, this._pending.j);
+                        d[MO] = val.getMonth();
+                        d[D] = val.getDate();
+                        break;
+                    case 's':
+                        return new Date(this._pending.s * 1000);
+                    case 'C':
+                        d[YR] = (d[YR] || 0) + this._pending.C;
+                        break;
+                }
+            }
+
+            if (cutoff !== null && d[YR] < 100) {
+                d[YR] += (d[YR] < cutoff ? 2000 : 1900);
+            }
+
+            d[H] = d[H] + d[AP];
+
+            if (d[TZh] === null) {
+                return new Date(d[YR], d[MO], d[D], d[H], d[MI], d[S]);
+            } else {
+                return new Date(Date.UTC(d[YR], d[MO], d[D],d[H] - d[TZh], d[MI] - d[TZm],d[S]));
+            }
+
+        };
+    }),
+
     /**
      * Converts data to type Date. If `format` is specified and `data` is a string
      * it will parse it according to that spec, otherwise, it will try `Date.parse`.
@@ -342,74 +412,20 @@ Y.mix(Y.namespace("Date"), {
      * @static
      */
     parse: function(data, format, cutoff) {
-        var val,
-            //   YR MO D   H  MI S  TZh   TZm    AP
-            d = [0, 0, 0,  0, 0, 0, null, null , 0],
-            parsers = this.parsers,
-            i, p = false, c;
-
+        var val, parser;
         this._resources = Y.Intl.get('datatype-date-format');
-        cutoff = (cutoff === undefined ? 30 : cutoff);
 
         /*jshint eqeqeq:false */ // The simple != below is intentional
         if (data && format && typeof(data) === 'string' && +data != data) {
         /*jshint eqeqeq:true */
 
-            this._data = data.toLowerCase();
-            format = this._expandAggregates(format).replace(spaceRegExp, '');
+            data = data.toLowerCase();
 
             this._pending = {};
 
-            scan: for (i = 0; i < format.length; i+=1) {
-                c = format[i];
-                if (p) {
-                    p = false;
-                    if (parsers[c]) {
-                        if (isNaN(parsers[c].call(this, d))) {
-                            break scan;
-                        }
+            parser = this._buildParser(format, cutoff);
 
-                    }
-                } else {
-                    if (c ==='%') {
-                        p = true;
-                    } else {
-                        data = L.trimLeft(this._data);
-                        if (data[0] !== c.toLowerCase()) {
-                            break scan;
-                        }
-                        this._data = data.substr(1);
-                    }
-                }
-            }
-            if (i < format.length) {
-                Y.log("Could not convert data " + Y.dump(val) + " to type Date using format " + format + " at format position " + i, "warn", "date");
-                return null;
-
-            }
-            for (c in this._pending) {
-                switch (c) {
-                    case 'j':
-                        val = new Date(d[YR], 0, this._pending.j);
-                        d[MO] = val.getMonth();
-                        d[D] = val.getDate();
-                        break;
-                    case 's':
-                        return new Date(this._pending.s * 1000);
-                    case 'C':
-                        d[YR] = (d[YR] || 0) + this._pending.C;
-                        break;
-                }
-            }
-            if (cutoff !== null && d[YR] < 100) {
-                d[YR] += (d[YR] < cutoff ? 2000 : 1900);
-            }
-            d[H] = d[H] + d[AP];
-            if (d[TZh] === null) {
-                return new Date(d[YR], d[MO], d[D], d[H], d[MI], d[S]);
-            } else {
-                return new Date(Date.UTC(d[YR], d[MO], d[D],d[H] - d[TZh], d[MI] - d[TZm],d[S]));
-            }
+            return parser && parser.call(this, data);
 
         } else {
 
@@ -421,6 +437,8 @@ Y.mix(Y.namespace("Date"), {
                 return null;
             }
         }
+
+
     }
 });
 
