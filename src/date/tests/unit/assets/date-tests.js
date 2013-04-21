@@ -300,6 +300,7 @@ YUI.add('date-tests', function(Y) {
             var values = [
                 ["01/02/2003","%d/%m/%Y", "1 Feb 2003"],
                 ["1/2/3","%d/%m/%Y", "1 Feb 2003"],
+                ["20030201","%Y%m%d", "1 Feb 2003"],
                 ["1%2%3","%d%%%m%%%Y", "1 Feb 2003"],
                 ["01/Mar/2003","%d/%b/%Y","1 Mar 2003"],
                 ["01/March/2003","%d/%B/%Y","1 Mar 2003"],
@@ -414,6 +415,8 @@ YUI.add('date-tests', function(Y) {
             ASSERT.isNull(Y.Date.parse("2012-11-10 10:11:12 +lo:oo", "%F %T %z"),'9');
             ASSERT.isNull(Y.Date.parse("2012-11-10 10:11:12 +10:oo", "%F %T %z"),'10');
             ASSERT.isNull(Y.Date.parse("2012-11-10 10:11:12 XXX", "%F %T %Z"),'11');
+            ASSERT.isNull(Y.Date.parse("xxxx", "%u"),'12');
+            ASSERT.isNull(Y.Date.parse("xxxx", "%&"),'13');
         }
     });
 
