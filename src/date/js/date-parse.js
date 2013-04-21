@@ -15,20 +15,20 @@ var L = Y.Lang,
     // Each entry in the array corresponds to a maximum number of digits
     // to extract, 0 being no limits.  Leading whitespace is ommitted.
     digitsRegExp = [
-        /^\s*(\d+)/,
-        /^\s*(\d{1,1})/,
-        /^\s*(\d{1,2})/,
-        /^\s*(\d{1,3})/,
-        /^\s*(\d{1,4})/
+        /^(\d+)/,
+        /^(\d{1,1})/,
+        /^(\d{1,2})/,
+        /^(\d{1,3})/,
+        /^(\d{1,4})/
     ],
     // Removes all whitespaces
     spaceRegExp = /(\s+)/g,
 
     // Removes the GMT or UTC timezone prefix
-    gmtUtcRegExp = /^(\s*gmt)|(\s*utc)|(\s*)/i,
+    gmtUtcRegExp = /^(gmt)|(utc)|(\s*)/i,
 
     // extracts a timezone abbreviation
-    tzRegExp = /^\s*([a-z]+(\/[a-z]+)?)/i,
+    tzRegExp = /^([a-z]+(\/[a-z]+)?)/i,
 /**
  * Parse date submodule.
  *
@@ -93,7 +93,6 @@ var L = Y.Lang,
                 options = Y.Date._resources[key],
                 len = 0, winner = null ;
 
-            data = trimLeft(data);
             for (i = 0; i < options.length; i += 1) {
                 if (data.indexOf(options[i].toLowerCase()) === 0) {
                     l = options[i].length;
@@ -123,7 +122,6 @@ var L = Y.Lang,
          * @private
          */
         _skipChars: function (data, d, chars) {
-            data = trimLeft(data);
             if (data.indexOf(chars) === 0) {
                 return data.substr(chars.length);
             }
@@ -444,24 +442,27 @@ var L = Y.Lang,
 
             for (i = 0; i < parsers.length; i++) {
                 p = parsers[i];
-                data = p[0].apply(DP, [data, d].concat(p.slice(1)));
+                data = p[0].apply(DP, [trimLeft(data), d].concat(p.slice(1)));
                 if (data === null) {
                     return null;
                 }
             }
 
-            for (c in DP._pending) {
-                switch (c) {
-                    case 'j':
-                        val = new Date(d[YR], 0, DP._pending.j);
-                        d[MO] = val.getMonth();
-                        d[D] = val.getDate();
-                        break;
-                    case 's':
-                        return new Date(DP._pending.s * 1000);
-                    case 'C':
-                        d[YR] = (d[YR] || 0) + DP._pending.C;
-                        break;
+            p = DP._pending;
+            for (c in p) {
+                if (p.hasOwnProperty(c)) {
+                    switch (c) {
+                        case 'j':
+                            val = new Date(d[YR], 0, p.j);
+                            d[MO] = val.getMonth();
+                            d[D] = val.getDate();
+                            break;
+                        case 's':
+                            return new Date(p.s * 1000);
+                        case 'C':
+                            d[YR] = (d[YR] || 0) + p.C;
+                            break;
+                    }
                 }
             }
 
