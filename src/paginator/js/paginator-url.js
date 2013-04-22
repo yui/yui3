@@ -13,7 +13,7 @@ PaginatorUrl.ATTRS = {
     /**
     URL to return formatted with the page number. URL uses `Y.Lang.sub` for page number stubstitutions.
 
-    For example, if the page number is `3`, setting the `url` to `?pg={page}`, will result in `?pg=3`
+    For example, if the page number is `3`, setting the `pageUrl` to `"?pg={page}"`, will result in `?pg=3`
 
     @attribute pageUrl
     @type String
