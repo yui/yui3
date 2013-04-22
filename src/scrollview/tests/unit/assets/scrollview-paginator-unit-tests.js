@@ -585,7 +585,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
                             },
                             duration: DURATION
                         });
-                        Test.wait(1000);
+                        Test.wait(WAIT);
                     }
                 });
             });
@@ -597,7 +597,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
                 duration: DURATION
             });
 
-            Test.wait(1000);
+            Test.wait(WAIT);
         },
 
         "mousewheel down should move the SV down": function () {
