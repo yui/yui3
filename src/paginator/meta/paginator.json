@@ -1,7 +1,12 @@
 {
-    "paginator": {
+    "paginator-core": {
         "requires": [
             "base"
+        ]
+    },
+    "paginator": {
+        "requires": [
+            "paginator-core"
         ]
     },
     "paginator-url": {
