@@ -1,6 +1,11 @@
 YUI Core Change History
 =======================
 
+3.10.0
+------
+
+* Add ability to filter log messages by threshold [andrewnicols]
+
 3.9.1
 -----
 
