@@ -845,7 +845,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     list. The default method just calls the callback without actually doing
     anything.
 
-    This method is called internally by `load()`.
+    This method is called internally by `load()` and its implementations relies
+    on the callback being called. This effectively means that when a callback is
+    provided, it must be called at some point for the class to operate correctly.
 
     @method sync
     @param {String} action Sync action to perform. May be one of the following:
