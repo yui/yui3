@@ -24,15 +24,64 @@ YUI.add('get-test', function (Y) {
 
             // True if this browser should call an onFailure callback on a script that 404s.
             jsFailure: !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0))
-        };
+        },
+
+        // JS content
+        JS_A = 'G_SCRIPTS.push("a.js")',
+        JS_B = 'G_SCRIPTS.push("b.js")',
+        JS_C = 'G_SCRIPTS.push("c.js")';
+
 
     function areObjectsReallyEqual(o1, o2, msg) {
         Y.ObjectAssert.areEqual(o1, o2, msg);
         Y.ObjectAssert.areEqual(o2, o1, msg);
     }
 
+    // Appends a counter to the timestamp for when we generate timestamps too
+    // fast.
+    function unique() {
+        if (!unique.counter) {
+            unique.counter = 0;
+        }
+        unique.counter += 1;
+        return new Date().getTime() + '-' + unique.counter;
+    }
+
+    // Adds a cache-busting param to the given url.
     function randUrl(url) {
-        return url + ((url.indexOf("?") !== -1) ? "&" : "?") + "dt=" + new Date().getTime();
+        url += (url.indexOf('?') !== -1) ? '&' : '?';
+        return url + 'bust=' + unique();
+    }
+
+    function addRandomQueryParam(urls) {
+        var len,
+            i;
+
+        if (typeof urls === 'string') {
+            urls = randUrl(urls);
+        } else {
+            for (i = 0, len = urls.length; i < len; i += 1) {
+                urls[i] = randUrl(urls[i]);
+            }
+        }
+
+        return urls;
+    }
+
+    function getUniqueEchoechoJs(content, config) {
+        var delay,
+            url;
+
+        config  = config || {};
+        delay   = config.delay || 0;
+        time    = new Date().getTime();
+        content = content || 'console.log("' + unique() + '")';
+
+        url = 'echo/delay/' + delay + '/get'
+                  + '?response=' + content
+                  + '&type=js';
+
+        return randUrl(url);
     }
 
     function path(urls, guid) {
@@ -99,8 +148,9 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var url = getUniqueEchoechoJs(JS_A);
 
-            var trans = Y.Get.script(path("a.js"), {
+            var trans = Y.Get.script(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -144,13 +194,13 @@ YUI.add('get-test', function (Y) {
 
         'test: single script, failure': function() {
             var test = this;
-
             var counts = {
                 success:0,
                 failure:0
             };
+            var url = 'echo/status/404';
 
-            var trans = Y.Get.script(path("bogus.js"), {
+            var trans = Y.Get.script(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -185,8 +235,9 @@ YUI.add('get-test', function (Y) {
 
         'test: single script timeout callback': function() {
             var test = this,
+                url = getUniqueEchoechoJs(null, { delay: 1 });
 
-            trans = Y.Get.script(path("bogussinglescripttimeoutcallback.js"), { // funky name is to try and avoid a cached response, giving us a little more time to timeout
+            trans = Y.Get.load(url, {
 
                 timeout: 1,
 
@@ -220,8 +271,9 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
+            var url = getUniqueEchoechoJs(JS_A);
 
-            var trans = Y.Get.script(path("a.js"), {
+            var trans = Y.Get.script(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -265,8 +317,9 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
+            var url = 'echo/status/404';
 
-            var trans = Y.Get.script(path("bogus.js"), {
+            var trans = Y.Get.script(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -308,8 +361,13 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_B, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_C, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.script(path(["b.js", "a.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -356,8 +414,13 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
+                'echo/status/404',
+                getUniqueEchoechoJs(JS_C, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "bogus.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -398,8 +461,13 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_C, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_B, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_A, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.script(path(["c.js", "b.js", "a.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -450,8 +518,13 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
+                'echo/status/404',
+                getUniqueEchoechoJs(JS_C, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "bogus.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -494,8 +567,13 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_B, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_C, { delay: '0-1' })
+            ];
 
-                var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+                var trans = Y.Get.script(urls, {
                     data: {a:1, b:2, c:3},
                     context: {bar:"foo"},
 
@@ -543,8 +621,13 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_B, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_C, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.script(path(["c.js", "a.js", "b.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -589,8 +672,13 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
+                'echo/status/404',
+                getUniqueEchoechoJs(JS_C, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "bogus.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -629,10 +717,11 @@ YUI.add('get-test', function (Y) {
 
         'test: insertBefore, single' : function() {
             var test = this;
+            var url = getUniqueEchoechoJs();
 
             test.createInsertBeforeNode();
 
-            var trans = Y.Get.script(path("a.js"), {
+            var trans = Y.Get.script(url, {
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -659,10 +748,15 @@ YUI.add('get-test', function (Y) {
 
         'test: insertBefore, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(null, { delay: '0-1' }),
+                getUniqueEchoechoJs(null, { delay: '0-1' }),
+                getUniqueEchoechoJs(null, { delay: '0-1' })
+            ];
 
             test.createInsertBeforeNode();
 
-            var trans = Y.Get.script(path(["a.js", "b.js"]), {
+            var trans = Y.Get.script(urls, {
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -692,10 +786,14 @@ YUI.add('get-test', function (Y) {
 
         'test: async, insertBefore, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(null, { delay: '0-1' }),
+                getUniqueEchoechoJs(null, { delay: '0-1' })
+            ];
 
             test.createInsertBeforeNode();
 
-            var trans = Y.Get.script(path(["a.js", "b.js"]), {
+            var trans = Y.Get.script(urls, {
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -727,8 +825,9 @@ YUI.add('get-test', function (Y) {
 
         'test: charset, single' : function() {
             var test = this;
+            var url = getUniqueEchoechoJs();
 
-            var trans = Y.Get.script(path("a.js"), {
+            var trans = Y.Get.script(url, {
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
@@ -756,8 +855,13 @@ YUI.add('get-test', function (Y) {
 
         'test: charset, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_B, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_C, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
@@ -788,8 +892,13 @@ YUI.add('get-test', function (Y) {
 
         'test: async, charset, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_B, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_C, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
@@ -822,8 +931,9 @@ YUI.add('get-test', function (Y) {
 
         'test: attributes, single' : function() {
             var test = this;
+            var url = getUniqueEchoechoJs();
 
-            var trans = Y.Get.script(path("a.js"), {
+            var trans = Y.Get.script(url, {
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title"  : "myscripts",
@@ -859,8 +969,13 @@ YUI.add('get-test', function (Y) {
 
         'test: attributes, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_B, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_C, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title"  : "myscripts"
@@ -897,8 +1012,13 @@ YUI.add('get-test', function (Y) {
 
         'test: async, attributes, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_B, { delay: '0-1' }),
+                getUniqueEchoechoJs(JS_C, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title"  : "myscripts"
@@ -950,7 +1070,9 @@ YUI.add('get-test', function (Y) {
                 i;
 
             for (i = 0; i < 30; ++i) {
-                urls.push(path('a.js'));
+                urls.push(
+                    getUniqueEchoechoJs()
+                );
             }
 
             Y.Get.script(urls, {attributes: {'class': 'purge-test'}}, function (err, tx) {
@@ -969,13 +1091,13 @@ YUI.add('get-test', function (Y) {
             var nodeIds = [];
 
             // Purge only happens at the start of a queue call.
-            Y.Get.script(path("a.js"), {
+            Y.Get.script(getUniqueEchoechoJs(), {
                 purgethreshold: 1000, // Just to make sure we're not purged as part of the default 20 script purge.
 
                 onSuccess: function(o) {
                     nodes = nodes.concat(o.nodes);
 
-                    Y.Get.script(path("b.js"), {
+                    Y.Get.script(getUniqueEchoechoJs(), {
                         purgethreshold: 1000, // Just to make sure we're not purged as part of the default 20 script purge.
 
                         onSuccess: function(o) {
@@ -991,7 +1113,7 @@ YUI.add('get-test', function (Y) {
                                 nodeIds[i] = node.get("id");
                             }
 
-                            Y.Get.script(path("c.js"), {
+                            Y.Get.script(getUniqueEchoechoJs(), {
                                 purgethreshold: 1,
 
                                 onSuccess: function(o) {
@@ -1027,8 +1149,13 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_A),
+                'echo/status/404',
+                getUniqueEchoechoJs(JS_C)
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "bogus.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
