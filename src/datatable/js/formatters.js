@@ -1,8 +1,7 @@
 /**
 Adds predefined cell formatters to `Y.DataTable.BodyView`.
 
-@module datatable
-@submodule datatable-formatters
+@module datatable-formatters
 @since 3.8.0
 **/
 var Lang = Y.Lang,
@@ -350,7 +349,7 @@ var Lang = Y.Lang,
             ]}
 
         Applies the CSS className `yui3-datatable-lookup` to the cell.
-        
+
         @method lookup
         @param col {Object} The column definition
         @return {Function} A formatter function that returns the `text`
