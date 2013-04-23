@@ -526,11 +526,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             target = index + 1,
             total = paginator.get(TOTAL);
 
-        // If the widget is disabled
+        // If the widget is disabled, ignore
         if (scrollview.get(DISABLED)) {
-            return false;
+            return;
         }
 
+        // If the target index is greater than the page count, ignore
         if (target >= total) {
             return;
         }
@@ -550,11 +551,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             index = paginator._cIndex,
             target = index - 1;
 
-        // If the widget is disabled
+        // If the widget is disabled, ignore
         if (scrollview.get(DISABLED)) {
-            return false;
+            return;
         }
 
+        // If the target index is before the first page, ignore
         if (target < 0) {
             return;
         }
