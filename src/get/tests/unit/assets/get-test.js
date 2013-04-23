@@ -1694,8 +1694,13 @@ YUI.add('get-test', function (Y) {
 
         'abort() should abort a transaction when given a transaction object': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(null, { delay: '0-1' }),
+                getUniqueEchoechoJs(null, { delay: '0-1' }),
+                getUniqueEchoechoJs(null, { delay: '0-1' })
+            ];
 
-            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+            test.t = Y.Get.js(urls, {
                 onFailure: function () {
                     test.resume(function () {
                         ArrayAssert.containsMatch(function (item) {
@@ -1720,8 +1725,13 @@ YUI.add('get-test', function (Y) {
 
         'abort() should abort a transaction when given a transaction id': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(null, { delay: '0-1' }),
+                getUniqueEchoechoJs(null, { delay: '0-1' }),
+                getUniqueEchoechoJs(null, { delay: '0-1' })
+            ];
 
-            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+            test.t = Y.Get.js(urls, {
                 onFailure: function () {
                     test.resume(function () {
                         ArrayAssert.containsMatch(function (item) {
@@ -1746,8 +1756,8 @@ YUI.add('get-test', function (Y) {
 
         // -- css() ------------------------------------------------------------
         'css() should accept a URL': function () {
-            var test = this,
-                url  = path('a.css');
+            var test = this;
+            var url = getUniqueEchoechoCss();
 
             setTimeout(function () {
                 test.t = Y.Get.css(url);
@@ -1772,10 +1782,11 @@ YUI.add('get-test', function (Y) {
         },
 
         'css() should accept a URL, options object, and callback function': function () {
-            var test = this,
-                callbackCalled;
+            var test = this;
+            var callbackCalled;
+            var url = getUniqueEchoechoCss();
 
-            test.t = Y.Get.css(path('a.css'), {
+            test.t = Y.Get.css(url, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1806,8 +1817,9 @@ YUI.add('get-test', function (Y) {
 
         'css() should allow the callback function as the second parameter': function () {
             var test = this;
+            var url = getUniqueEchoechoCss();
 
-            test.t = Y.Get.css(path('a.css'), function (err, transaction) {
+            test.t = Y.Get.css(url, function (err, transaction) {
                 var self = this;
 
                 test.resume(function () {
@@ -1822,8 +1834,13 @@ YUI.add('get-test', function (Y) {
 
         'css() should accept an array of URLs': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(null, { delay: '0-1' }),
+                getUniqueEchoechoCss(null, { delay: '0-1' }),
+                getUniqueEchoechoCss(null, { delay: '0-1' })
+            ];
 
-            test.t = Y.Get.css([path('a.css'), path('b.css'), path('c.css')], {
+            test.t = Y.Get.css(urls, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1843,8 +1860,9 @@ YUI.add('get-test', function (Y) {
 
         'css() should accept a request object': function () {
             var test = this;
+            var url = getUniqueEchoechoCss();
 
-            test.t = Y.Get.css({url: path('a.css')}, {
+            test.t = Y.Get.css({url: url}, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1864,8 +1882,13 @@ YUI.add('get-test', function (Y) {
 
         'css() should accept an array of request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(null, { delay: '0-1' }),
+                getUniqueEchoechoCss(null, { delay: '0-1' }),
+                getUniqueEchoechoCss(null, { delay: '0-1' })
+            ];
 
-            test.t = Y.Get.css([{url: path('a.css')}, {url: path('b.css')}, {url: path('c.css')}], {
+            test.t = Y.Get.css([{url: urls[0]}, {url: urls[1]}, {url: urls[2]}], {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1885,8 +1908,13 @@ YUI.add('get-test', function (Y) {
 
         'css() should accept a mixed array of URLs and request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, { delay: '0-1' }),
+                getUniqueEchoechoCss(CSS_B, { delay: '0-1' }),
+                getUniqueEchoechoCss(CSS_C, { delay: '0-1' })
+            ];
 
-            test.t = Y.Get.css([path('a.css'), {url: path('b.css')}, path('c.css')], {
+            test.t = Y.Get.css([urls[0], {url: urls[1]}, urls[2]], {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1906,8 +1934,8 @@ YUI.add('get-test', function (Y) {
 
         // -- js() -------------------------------------------------------------
         'js() should accept a URL': function () {
-            var test = this,
-                url  = path('a.js');
+            var test = this;
+            var url = getUniqueEchoechoJs();
 
             setTimeout(function () {
                 test.t = Y.Get.js(url);
@@ -1932,10 +1960,11 @@ YUI.add('get-test', function (Y) {
         },
 
         'js() should accept a URL, options object, and callback function': function () {
-            var test = this,
-                callbackCalled;
+            var test = this;
+            var callbackCalled;
+            var url = getUniqueEchoechoJs();
 
-            test.t = Y.Get.js(path('a.js'), {
+            test.t = Y.Get.js(url, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1966,8 +1995,9 @@ YUI.add('get-test', function (Y) {
 
         'js() should allow the callback function as the second parameter': function () {
             var test = this;
+            var url = getUniqueEchoechoJs();
 
-            test.t = Y.Get.js(path('a.js'), function (err, transaction) {
+            test.t = Y.Get.js(url, function (err, transaction) {
                 var self = this;
 
                 test.resume(function () {
@@ -1982,8 +2012,13 @@ YUI.add('get-test', function (Y) {
 
         'js() should accept an array of URLs': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(null, { name: 'a.js' }),
+                getUniqueEchoechoJs(null, { name: 'b.js' }),
+                getUniqueEchoechoJs(null, { name: 'c.js' })
+            ];
 
-            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+            test.t = Y.Get.js(urls, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2003,8 +2038,9 @@ YUI.add('get-test', function (Y) {
 
         'js() should accept a request object': function () {
             var test = this;
+            var url = getUniqueEchoechoJs();
 
-            test.t = Y.Get.js({url: path('a.js')}, {
+            test.t = Y.Get.js({url: url}, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2024,8 +2060,13 @@ YUI.add('get-test', function (Y) {
 
         'js() should accept an array of request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(null, { delay: '0-1' }),
+                getUniqueEchoechoJs(null, { delay: '0-1' }),
+                getUniqueEchoechoJs(null, { delay: '0-1' })
+            ];
 
-            test.t = Y.Get.js([{url: path('a.js')}, {url: path('b.js')}, {url: path('c.js')}], {
+            test.t = Y.Get.js(urls, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2045,8 +2086,13 @@ YUI.add('get-test', function (Y) {
 
         'js() should accept a mixed array of URLs and request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(null, { delay: '0-1' }),
+                getUniqueEchoechoJs(null, { delay: '0-1' }),
+                getUniqueEchoechoJs(null, { delay: '0-1' })
+            ];
 
-            test.t = Y.Get.js([path('a.js'), {url: path('b.js')}, path('c.js')], {
+            test.t = Y.Get.js([urls[0], {url: urls[1]}, urls[2]], {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2066,8 +2112,8 @@ YUI.add('get-test', function (Y) {
 
         // -- load() -----------------------------------------------------------
         'load() should accept a URL': function () {
-            var test = this,
-                url  = path('a.js');
+            var test = this;
+            var url = getUniqueEchoechoJs();
 
             setTimeout(function () {
                 test.t = Y.Get.load(url);
@@ -2094,10 +2140,11 @@ YUI.add('get-test', function (Y) {
         },
 
         'load() should accept a URL, options object, and callback function': function () {
-            var test = this,
-                callbackCalled;
+            var test = this;
+            var callbackCalled;
+            var url = getUniqueEchoechoCss();
 
-            test.t = Y.Get.load(path('a.css'), {
+            test.t = Y.Get.load(url, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2129,8 +2176,9 @@ YUI.add('get-test', function (Y) {
 
         'load() should allow the callback function as the second parameter': function () {
             var test = this;
+            var url = getUniqueEchoechoJs();
 
-            test.t = Y.Get.load(path('a.js'), function (err, transaction) {
+            test.t = Y.Get.load(url, function (err, transaction) {
                 var self = this;
 
                 test.resume(function () {
@@ -2145,8 +2193,13 @@ YUI.add('get-test', function (Y) {
 
         'load() should accept an array of URLs': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoCss(),
+                getUniqueEchoechoJs()
+            ];
 
-            test.t = Y.Get.load([path('a.js'), path('b.css'), path('c.js')], {
+            test.t = Y.Get.load(urls, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2169,8 +2222,9 @@ YUI.add('get-test', function (Y) {
 
         'load() should accept a request object': function () {
             var test = this;
+            var url = getUniqueEchoechoJs();
 
-            test.t = Y.Get.load({url: path('a.js')}, {
+            test.t = Y.Get.load({url: url}, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2191,8 +2245,13 @@ YUI.add('get-test', function (Y) {
 
         'load() should accept an array of request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(),
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoCss()
+            ];
 
-            test.t = Y.Get.load([{url: path('a.css')}, {url: path('b.js')}, {url: path('c.css')}], {
+            test.t = Y.Get.load([{url: urls[0]}, {url: urls[1]}, {url: urls[2]}], {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2215,8 +2274,13 @@ YUI.add('get-test', function (Y) {
 
         'load() should accept a mixed array of URLs and request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoCss()
+            ];
 
-            test.t = Y.Get.load([path('a.js'), {url: path('b.js')}, path('c.css')], {
+            test.t = Y.Get.load([urls[0], {url: urls[1]}, urls[2]], {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
