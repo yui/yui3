@@ -333,10 +333,16 @@ var Lang = Y.Lang,
         Returns a formatter function that returns texts from a lookup table
         based on the stored value.
 
-        It looks for the format to apply in the `lookupTable` property of the
-        column.
+        It looks for the translation to apply in the `lookupTable` property of the
+        column in either of these two formats:
 
-            {key: "status", formatter: "lookup", lookupTable: [
+            {key: "status", formatter: "lookup", lookupTable: {
+                0: "unknown",
+                1: "requested",
+                2: "approved",
+                3: "delivered"
+            }},
+            {key: "otherStatus", formatter: "lookup", lookupTable: [
                 {value:0, text: "unknown"},
                 {value:1, text: "requested"},
                 {value:2, text: "approved"},
@@ -344,6 +350,7 @@ var Lang = Y.Lang,
             ]}
 
         Applies the CSS className `yui3-datatable-lookup` to the cell.
+        
         @method lookup
         @param col {Object} The column definition
         @return {Function} A formatter function that returns the `text`
@@ -352,10 +359,18 @@ var Lang = Y.Lang,
          */
         lookup: function (col) {
             var className = cName('lookup'),
-                lookup = {};
-            Y.Array.each(col.lookupTable, function (entry) {
-                lookup[entry.value] = entry.text;
-            });
+                lookup = {},
+                lt = col.lookupTable;
+            switch(Lang.type(lt)) {
+                case 'array':
+                    Y.Array.each(lt, function (entry) {
+                        lookup[entry.value] = entry.text;
+                    });
+                    break;
+                case 'object':
+                    lookup = lt;
+                    break;
+            }
             return function (o) {
                 o.className = className;
                 return lookup[o.value];
