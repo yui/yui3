@@ -6,8 +6,6 @@ Node Change History
 
 * [!] Removed `node-deprecated` module. [Ryuichi Okumura]
 
-* [!] Removed `node-deprecated` module. [Ryuichi Okumura]
-
 * Fix node.all() to return an empty NodeList if the node was destroyed - Fixes #580 (hat tip Dallas Wheeler)
 
 3.9.1
