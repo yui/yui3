@@ -1,10 +1,32 @@
 IO Utility Change History
 =========================
 
-3.9.0
+3.10.0
+------
+
+* No changes.
+
+3.9.1
 -----
 
 * No changes.
+
+3.9.0
+-----
+
+* Normalized IO's handling of falsy request and response bodies. A majority of
+  the environments want request/response bodies to always be a string, so they
+  use an empty string instead of undefined, null, etc.
+
+  This specifically fixes two issues:
+
+  * IE 10 converts a response body of `undefined` to the literal string:
+    `"undefined"`. No other environments do this, so a change has been made to
+    default the request body to `""` unless it has a non-falsy value.
+
+  * IO's node.js transport uses the Request npm module, which returns
+    `undefined` when a response has no body. This normalize IO's `responseText`
+    to an empty string when Request returns a false response body.
 
 
 3.8.1

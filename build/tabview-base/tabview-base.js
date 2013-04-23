@@ -8,35 +8,31 @@ var getClassName = Y.ClassNameManager.getClassName,
     EMPTY_OBJ = {},
     DOT = '.',
 
-    _classNames = {
-        tabview: getClassName(TABVIEW),
-        tabviewPanel: getClassName(TABVIEW, PANEL),
-        tabviewList: getClassName(TABVIEW, 'list'),
-        tab: getClassName(TAB),
-        tabLabel: getClassName(TAB, 'label'),
-        tabPanel: getClassName(TAB, PANEL),
-        selectedTab: getClassName(TAB, SELECTED),
-        selectedPanel: getClassName(TAB, PANEL, SELECTED)
-    },
-
-    _queries = {
-        tabview: DOT + _classNames.tabview,
-        tabviewList: '> ul',
-        tab: '> ul > li',
-        tabLabel: '> ul > li > a',
-        tabviewPanel: '> div',
-        tabPanel: '> div > div',
-        selectedTab: '> ul > ' + DOT + _classNames.selectedTab,
-        selectedPanel: '> div ' + DOT + _classNames.selectedPanel
-    },
-
     TabviewBase = function() {
         this.init.apply(this, arguments);
     };
 
 TabviewBase.NAME = 'tabviewBase';
-TabviewBase._queries = _queries;
-TabviewBase._classNames = _classNames;
+TabviewBase._classNames = {
+    tabview: getClassName(TABVIEW),
+    tabviewPanel: getClassName(TABVIEW, PANEL),
+    tabviewList: getClassName(TABVIEW, 'list'),
+    tab: getClassName(TAB),
+    tabLabel: getClassName(TAB, 'label'),
+    tabPanel: getClassName(TAB, PANEL),
+    selectedTab: getClassName(TAB, SELECTED),
+    selectedPanel: getClassName(TAB, PANEL, SELECTED)
+};
+TabviewBase._queries = {
+    tabview: DOT + TabviewBase._classNames.tabview,
+    tabviewList: '> ul',
+    tab: '> ul > li',
+    tabLabel: '> ul > li > a',
+    tabviewPanel: '> div',
+    tabPanel: '> div > div',
+    selectedTab: '> ul > ' + DOT + TabviewBase._classNames.selectedTab,
+    selectedPanel: '> div ' + DOT + TabviewBase._classNames.selectedPanel
+};
 
 Y.mix(TabviewBase.prototype, {
     init: function(config) {
@@ -47,11 +43,13 @@ Y.mix(TabviewBase.prototype, {
     },
 
     initClassNames: function(index) {
-        Y.Object.each(_queries, function(query, name) {
+        var _classNames = Y.TabviewBase._classNames;
+
+        Y.Object.each(Y.TabviewBase._queries, function(query, name) {
             // this === tabview._node
             if (_classNames[name]) {
                 var result = this.all(query);
-                
+
                 if (index !== undefined) {
                     result = result.item(index);
                 }
@@ -66,7 +64,9 @@ Y.mix(TabviewBase.prototype, {
     },
 
     _select: function(index) {
-        var node = this._node,
+        var _classNames = Y.TabviewBase._classNames,
+            _queries = Y.TabviewBase._queries,
+            node = this._node,
             oldItem = node.one(_queries.selectedTab),
             oldContent = node.one(_queries.selectedPanel),
             newItem = node.all(_queries.tab).item(index),
@@ -90,7 +90,8 @@ Y.mix(TabviewBase.prototype, {
     },
 
     initState: function() {
-        var node = this._node,
+        var _queries = Y.TabviewBase._queries,
+            node = this._node,
             activeNode = node.one(_queries.selectedTab),
             activeIndex = activeNode ?
                     node.all(_queries.tab).indexOf(activeNode) : 0;
@@ -100,7 +101,7 @@ Y.mix(TabviewBase.prototype, {
 
     // collapse extra space between list-items
     _scrubTextNodes: function() {
-        this._node.one(_queries.tabviewList).get('childNodes').each(function(node) {
+        this._node.one(Y.TabviewBase._queries.tabviewList).get('childNodes').each(function(node) {
             if (node.get('nodeType') === 3) { // text node
                 node.remove();
             }
@@ -122,14 +123,14 @@ Y.mix(TabviewBase.prototype, {
         // this._node.delegate('tabview|' + this.tabEventName),
         this._node.delegate(this.tabEventName,
             this.onTabEvent,
-            _queries.tab,
+            Y.TabviewBase._queries.tab,
             this
         );
     },
 
     onTabEvent: function(e) {
         e.preventDefault();
-        this._select(this._node.all(_queries.tab).indexOf(e.currentTarget));
+        this._select(this._node.all(Y.TabviewBase._queries.tab).indexOf(e.currentTarget));
     },
 
     destroy: function() {
@@ -140,4 +141,4 @@ Y.mix(TabviewBase.prototype, {
 Y.TabviewBase = TabviewBase;
 
 
-}, '@VERSION@', {"requires": ["node-event-delegate", "classnamemanager", "skin-sam-tabview"]});
+}, '@VERSION@', {"requires": ["node-event-delegate", "classnamemanager"]});

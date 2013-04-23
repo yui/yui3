@@ -1,6 +1,9 @@
     /**
      * The YUI JavaScript profiler.
+     * DEPRECATED: The Javascript Profiler comonent has been deprecated as of YUI 3.10.0. 
+     * The module will be removed from the library in a future version.
      * @module profiler
+     * @deprecated 3.10.0
      */
      
     //-------------------------------------------------------------------------
@@ -33,6 +36,7 @@
             avg: 0,
             points: []
         };
+        Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
         return report[name];
     }
     
@@ -99,6 +103,8 @@
          * @static
          */
         clear: function(name){
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
+
             if (L.isString(name)){
                 delete report[name];
                 delete stopwatches[name];
@@ -116,6 +122,7 @@
          * @static
          */    
         getOriginal: function(name){
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             return container[name];
         },
     
@@ -156,6 +163,8 @@
             //create the report
             createReport(name);
 
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
+
             //return the new method
             return newMethod;
         },    
@@ -172,6 +181,7 @@
          * @static
          */        
         pause: function(name){
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             var now = new Date(),
                 stopwatch = stopwatches[name];
                 
@@ -193,6 +203,7 @@
          * @static
          */
         start: function(name){
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             if(container[name]){
                 throw new Error("Cannot use '" + name + "' for profiling through start(), name is already in use.");
             } else {
@@ -227,6 +238,7 @@
          * @static
          */
         stop: function(name){
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             var now = new Date(),
                 stopwatch = stopwatches[name];
                 
@@ -259,6 +271,7 @@
          * @static
          */
         getAverage : function (name /*:String*/) /*:float*/ {
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             return report[name].avg;
         },
     
@@ -270,6 +283,7 @@
          * @static
          */
         getCallCount : function (name /*:String*/) /*:int*/ {
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             return report[name].calls;    
         },
         
@@ -284,6 +298,7 @@
          * @static
          */
         getMax : function (name /*:String*/) /*:int*/ {
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             return report[name].max;
         },
         
@@ -298,6 +313,7 @@
          * @static
          */
         getMin : function (name /*:String*/) /*:int*/ {
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             return report[name].min;
         },
     
@@ -310,6 +326,7 @@
          * @deprecated Use getReport() instead.
          */
         getFunctionReport : function (name /*:String*/) /*:Object*/ {
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             return report[name];
         },
     
@@ -321,6 +338,7 @@
          * @static
          */
         getReport : function (name /*:String*/) /*:Object*/ {
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             return report[name];
         },
     
@@ -344,7 +362,7 @@
                         fullReport[name] = report[name];    
                     }
                 }
-                
+                Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
                 return fullReport;
             }
         },
@@ -361,7 +379,8 @@
          * @method registerConstructor
          * @static
          */
-        registerConstructor : function (name /*:String*/, owner /*:Object*/) /*:Void*/ {    
+        registerConstructor : function (name /*:String*/, owner /*:Object*/) /*:Void*/ {
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");    
             this.registerFunction(name, owner, true);
         },
     
@@ -383,7 +402,7 @@
          * @static
          */     
         registerFunction : function(name /*:String*/, owner /*:Object*/, registerPrototype /*:Boolean*/) /*:Void*/{
-        
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             //figure out the function name without namespacing
             var funcName = (name.indexOf(".") > -1 ? 
                     name.substring(name.lastIndexOf(".")+1) : name),
@@ -436,7 +455,7 @@
          * @static
          */
         registerObject : function (name /*:String*/, object /*:Object*/, recurse /*:Boolean*/) /*:Void*/{
-        
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             //get the object
             object = (L.isObject(object) ? object : eval(name));
         
@@ -464,7 +483,7 @@
          * @static
          */     
         unregisterConstructor : function(name /*:String*/) /*:Void*/{
-                
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");    
             //see if the method has been registered
             if (L.isFunction(container[name])){
                 this.unregisterFunction(name, true);
@@ -480,7 +499,7 @@
          * @static
          */     
         unregisterFunction : function(name /*:String*/, unregisterPrototype /*:Boolean*/) /*:Void*/{
-                
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");     
             //see if the method has been registered
             if (L.isFunction(container[name])){
             
@@ -520,7 +539,7 @@
          * @static
          */
         unregisterObject : function (name /*:String*/, recurse /*:Boolean*/) /*:Void*/{
-        
+            Y.log("WARNING: Profiler is a deprecated module as of YUI 3.10.0. This module will be removed from a later version of the library.","warn");
             //get the object
             if (L.isObject(container[name])){            
                 var object = container[name];    

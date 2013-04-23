@@ -391,6 +391,7 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: "default format specs",
     setUp: function () {
+        this.dateFormatTime = new Date();
         this.dt = new Y.DataTable({
             columns:[
                 {key: 'a', formatter:'currency', currencyFormat: {
@@ -426,16 +427,26 @@ suite.add(new Y.Test.Case({
                     {value: 2, text: 'two'},
                     {value: 3, text: 'three'},
                     {value: 4, text: 'four'}
-                ]}
+                ]},
+                {key: 'lookup1', formatter: 'lookup', lookupTable: {
+                    undefined: 'unknown',
+                    0: 'zero',
+                    1: 'one',
+                    2: 'two',
+                    3: 'three',
+                    4: 'four'
+                }}
 
             ],
             data: [
                 {
                     a: 123.45, b: 123.45, button:'btn', 'boolean': true, 'date': new Date(),
                     localDate: new Date(), localTime: new Date(), localDateTime: new Date(),
-                    email: 'me', link: 'site', linkSrc: 'there', number: 987654, lookup: 1
+                    email: 'me', link: 'site', linkSrc: 'there', number: 987654,
+                    lookup: 1, lookup1: 1
                 },
-                {a: 6789,   b: 6789  , email: 'me', link: 'site',              'boolean': false, lookup:3 },
+                {a: 6789,   b: 6789  , email: 'me', link: 'site',              'boolean': false,
+                    lookup:3, lookup1:3 },
                 {}
             ],
             currencyFormat: {
@@ -487,21 +498,31 @@ suite.add(new Y.Test.Case({
     },
     "test date formats": function () {
         var dt = this.dt,
-            node = dt.getCell([0,4]);
+            node = dt.getCell([0,4]),
+            testNode = document.createElement('td'),
+            isIE = Y.UA.ie && Y.UA.ie < 9,
+            getTestText = function(val) {
+                if(isIE) {
+                    testNode.innerHTML = Y.Escape.html(val);
+                    val = testNode.innerHTML;
+                }
+                return val;
+            };
+
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
-        Y.Assert.areEqual(Y.Date.format(new Date()), node.getHTML());
+        Y.Assert.areEqual(getTestText(Y.Date.format(this.dateFormatTime)), node.getHTML());
 
         node = dt.getCell([0,5]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
-        Y.Assert.areEqual(Y.Date.format(new Date(),{format:'%x'}), node.getHTML());
+        Y.Assert.areEqual(getTestText(Y.Date.format(this.dateFormatTime,{format:'%x'})), node.getHTML());
 
         node = dt.getCell([0,6]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
-        Y.Assert.areEqual(Y.Date.format(new Date(),{format:'%X'}), node.getHTML());
+        Y.Assert.areEqual(getTestText(Y.Date.format(this.dateFormatTime,{format:'%X'})), node.getHTML());
 
         node = dt.getCell([0,7]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
-        Y.Assert.areEqual(Y.Date.format(new Date(),{format:'%c'}), node.getHTML());
+        Y.Assert.areEqual(getTestText(Y.Date.format(this.dateFormatTime,{format:'%c'})), node.getHTML());
 
         node = dt.getCell([2,4]);
         Y.Assert.areEqual('', node.getHTML());
@@ -546,6 +567,14 @@ suite.add(new Y.Test.Case({
     "test lookup format": function () {
         var dt = this.dt,
             node = dt.getCell([0,11]);
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-lookup'));
+        Y.Assert.areEqual('one', node.getHTML());
+        node = dt.getCell(node, 'below');
+        Y.Assert.areEqual('three', node.getHTML());
+        node = dt.getCell(node, 'below');
+        Y.Assert.areEqual('unknown', node.getHTML());
+
+        node = dt.getCell([0,12]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-lookup'));
         Y.Assert.areEqual('one', node.getHTML());
         node = dt.getCell(node, 'below');

@@ -2,12 +2,6 @@
 * This file was assembled by ../scripts/build_loader_tests.js
 */
 
-if (process.versions.node < '0.5.0') {
-    //This is a hack for global modules in npm 1.0
-    require.paths.push(process.env.NODE_ENV);
-}
-
-
 var path = require('path'),
     YUI = require(path.join(__dirname, '../../../../', 'build/yui/yui.js')).YUI;
     Y = YUI(),
@@ -3623,6 +3617,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("tree-selectable")) > -1, "Module (tree-selectable) not found in sorted array");
+        },
+     "Testing tree-sortable": function(data) {
+            var loader = new Y.Loader({
+                require: ["tree-sortable"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("tree-sortable")) > -1, "Module (tree-sortable) not found in sorted array");
         },
      "Testing uploader": function(data) {
             var loader = new Y.Loader({

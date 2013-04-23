@@ -88,7 +88,7 @@ YUI.add('general-tests', function(Y) {
         },
         _should: {
             error: {
-                'test: resume without wait': true,
+                'test: resume without wait': true
             },
             fail: {
                 'test: wait without function': true
@@ -337,19 +337,27 @@ YUI.add('general-tests', function(Y) {
     suite.add(new Y.Test.Case({
         name: 'Reporter',
         'test: report': function() {
-            var url = "http://foobar.com/";
-            var reporter = new Y.Test.Reporter(url, Y.Test.Format.JSON);
+            var url = "http://foobar.com/",
+                reporter = new Y.Test.Reporter(url, Y.Test.Format.JSON),
+                form,
+                foo,
+                results,
+                json;
             reporter.addField('foo', 'bar');
 
-
-            var json = Y.Test.Format.JSON(simpleReport);
+            json = Y.Test.Format.JSON(simpleReport);
             reporter.report(simpleReport, false);
-
+            
             Assert.isNotNull(reporter._form);
             Assert.areEqual(url, reporter.url);
-            Assert.areEqual(json, reporter._form.results.value);
-            Assert.areEqual('bar', reporter._form.foo.value);
-
+            
+            form = Y.one(reporter._form);
+            foo = form.one('input[name=foo]');
+            results = form.one('input[name=results]');
+            
+            Assert.areEqual("bar", foo.get('value'));
+            Assert.areEqual(json, results.get('value'));
+            
             reporter.clearFields();
 
             reporter.destroy();

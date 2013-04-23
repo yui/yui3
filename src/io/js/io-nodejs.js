@@ -130,7 +130,7 @@
                             statusCode: data.statusCode,
                             statusText: codes[data.statusCode],
                             headers: data.headers,
-                            responseText: data.body,
+                            responseText: data.body || '',
                             responseXML: null,
                             getResponseHeader: function(name) {
                                 return this.headers[name];

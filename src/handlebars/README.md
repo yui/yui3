@@ -45,10 +45,10 @@ Handlebars.js repo. Here are the steps (you need `Node.js`, `npm`, `Ruby` and
 
 This should compile the `parser.js` file required to import into YUI.
 
-Code from this Handlebars.js repo is imported into the YUI 3 repo by a Makefile
-in the `src/handlebars` directory. Running `make import` will copy Handlebars
-source files from the separate Handlebars repo into the `src/handlebars/js`
-directory in the YUI 3 repo.
+Code from this Handlebars.js repo is imported into the YUI 3 repo by a
+`Gruntfile` in the `src/handlebars` directory. Running `grunt` will copy
+Handlebars source files from the separate Handlebars repo into the
+`src/handlebars/js` directory in the YUI 3 repo.
 
 Handlebars files imported into `src/handlebars/js` are prefixed with
 `handlebars-` and should not be edited, while YUI-specific files that live in

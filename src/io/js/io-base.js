@@ -554,6 +554,8 @@ IO.prototype = {
     *       <dt>dataType</dt>
     *         <dd>Set the value to 'XML' if that is the expected response
     *         content type.</dd>
+    *       <dt>credentials</dt>
+    *         <dd>Set the value to 'true' to set XHR.withCredentials property to true.</dd>
     *     </dl></dd>
     *
     *   <dt>form</dt>
@@ -664,6 +666,10 @@ IO.prototype = {
                 data = io._serialize(config.form, data);
             }
         }
+
+        // Convert falsy values to an empty string. This way IE can't be
+        // rediculous and translate `undefined` to "undefined".
+        data || (data = '');
 
         if (data) {
             switch (method) {

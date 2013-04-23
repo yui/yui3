@@ -100,7 +100,7 @@ YUI.add('tabview-test', function(Y) {
                 node = Y.Node.create(html);
 
             tab.set('label', node);
-            Y.Assert.areEqual(html, tab.get('label'));
+            Y.Assert.areEqual(html, tab.get('label').toLowerCase());
         },
 
         'should return the content from existing HTML': function() {
@@ -138,7 +138,7 @@ YUI.add('tabview-test', function(Y) {
                 node = Y.Node.create(html);
 
             tab.set('content', node);
-            Y.Assert.areEqual(html, tab.get('content'));
+            Y.Assert.areEqual(html, tab.get('content').toLowerCase());
         },
 
         'should preserve existing content events post render()': function() {

@@ -33,6 +33,10 @@ NodeSelectable.prototype = {
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `select` event
             will be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     select: function (options) {
@@ -47,6 +51,10 @@ NodeSelectable.prototype = {
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `unselect` event
             will be suppressed.
+        @param {String} [options.src] Source of the change, to be passed along
+            to the event facade of the resulting event. This can be used to
+            distinguish between changes triggered by a user and changes
+            triggered programmatically, for example.
     @chainable
     **/
     unselect: function (options) {
