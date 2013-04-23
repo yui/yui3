@@ -98,21 +98,6 @@ YUI.add('get-test', function (Y) {
         return url + 'bust=' + unique();
     }
 
-    function addRandomQueryParam(urls) {
-        var len,
-            i;
-
-        if (typeof urls === 'string') {
-            urls = randUrl(urls);
-        } else {
-            for (i = 0, len = urls.length; i < len; i += 1) {
-                urls[i] = randUrl(urls[i]);
-            }
-        }
-
-        return urls;
-    }
-
     function getUniqueEchoechoJs(content, config) {
         var delay,
             url;
@@ -143,19 +128,6 @@ YUI.add('get-test', function (Y) {
 
         // Get.load() only loads CSS if the URL ends with '.css'
         return randUrl(url) + '&hacky=.css';
-    }
-
-    function path(urls, guid) {
-        var base = Y.GetTests.TEST_FILES_BASE;
-
-        if (typeof urls === "string") {
-            urls = base + randUrl(urls);
-        } else {
-            for (var i = 0; i < urls.length; i++) {
-                urls[i] = base + randUrl(urls[i]);
-            }
-        }
-        return urls;
     }
 
     // -- Basic JS loading -----------------------------------------------------
