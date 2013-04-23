@@ -29,8 +29,53 @@ YUI.add('get-test', function (Y) {
         // JS content
         JS_A = 'G_SCRIPTS.push("a.js")',
         JS_B = 'G_SCRIPTS.push("b.js")',
-        JS_C = 'G_SCRIPTS.push("c.js")';
+        JS_C = 'G_SCRIPTS.push("c.js")',
 
+        // CSS content
+        CSS_A = encodeURIComponent(
+            '.get_test_a {' +
+                'position: absolute;' +
+                'z-index: 1111;' +
+                '/* Just for eyeballing, not used to test */' +
+                'background-color: #ff0000;' +
+            '}'
+        ),
+        CSS_B = encodeURIComponent(
+            '.get_test_b {' +
+                'position:absolute;' +
+                'z-index:1234;' +
+                '/* Just for eyeballing, not used to test */' +
+                'background-color:#00ff00;' +
+            '}'
+        ),
+        CSS_C = encodeURIComponent(
+            '.get_test_c {' +
+                'position:absolute;' +
+                'z-index:4321;' +
+                '/* Just for eyeballing, not used to test */' +
+                'background-color:#0000ff;' +
+            '}'
+        ),
+        CSS_IB = encodeURIComponent(
+            '.get_test_a {' +
+                'position:absolute;' +
+                'z-index:9991;' +
+                '/* Just for eyeballing, not used to test */' +
+                'background-color:#cccccc;' +
+            '}' +
+            '.get_test_b {' +
+                'position:absolute;' +
+                'z-index:9992;' +
+                '/* Just for eyeballing, not used to test */' +
+                'background-color:#cccccc;' +
+            '}' +
+            '.get_test_c {' +
+                'position:absolute;' +
+                'z-index:9993;' +
+                '/* Just for eyeballing, not used to test */' +
+                'background-color:#cccccc;' +
+            '}'
+        );
 
     function areObjectsReallyEqual(o1, o2, msg) {
         Y.ObjectAssert.areEqual(o1, o2, msg);
@@ -82,6 +127,22 @@ YUI.add('get-test', function (Y) {
                   + '&type=js';
 
         return randUrl(url);
+    }
+
+    function getUniqueEchoechoCss(content, config) {
+        var delay,
+            url;
+
+        config  = config || {};
+        delay   = config.delay || 0;
+        content = content || '.foo{}';
+
+        url = 'echo/delay/' + delay + '/get'
+                  + '?response=' + content
+                  + '&type=css';
+
+        // Get.load() only loads CSS if the URL ends with '.css'
+        return randUrl(url) + '&hacky=.css';
     }
 
     function path(urls, guid) {
@@ -1198,8 +1259,6 @@ YUI.add('get-test', function (Y) {
             this.nb = Y.Node.create('<div class="get_test_b">get_test_b</div>');
             this.nc = Y.Node.create('<div class="get_test_c">get_test_c</div>');
 
-            var naa = this.na;
-
             var b = Y.Node.one("body");
             b.append(this.na);
             b.append(this.nb);
@@ -1217,14 +1276,14 @@ YUI.add('get-test', function (Y) {
 
         createInsertBeforeNode: function() {
 
-            // Not using innerHTML because of WinJS RT. 
+            // Not using innerHTML because of WinJS RT.
 
             var link = Y.config.doc.createElement("link");
             link.setAttribute("id", "insertBeforeMe");
             link.setAttribute("rel", "stylesheet");
             link.setAttribute("type", "text/css");
             link.setAttribute("charset", "utf-8");
-            link.setAttribute("href", path("ib.css?delay=0"));
+            link.setAttribute("href", getUniqueEchoechoCss(CSS_IB));
 
             this.ib = Y.Node.one(link);
 
@@ -1243,8 +1302,9 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var url = getUniqueEchoechoCss(CSS_A);
 
-            var trans = Y.Get.css(path("a.css?delay=50"), {
+            var trans = Y.Get.css(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1283,8 +1343,13 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, { delay: '0-1' }),
+                getUniqueEchoechoCss(CSS_B, { delay: '0-1' }),
+                getUniqueEchoechoCss(CSS_C, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.css(path(["a.css?delay=50", "b.css?delay=100", "c.css?delay=75"]), {
+            var trans = Y.Get.css(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1321,10 +1386,11 @@ YUI.add('get-test', function (Y) {
 
         'test: insertBefore, single' : function() {
             var test = this;
+            var url = getUniqueEchoechoCss(CSS_A);
 
             test.createInsertBeforeNode();
 
-            var trans = Y.Get.css(path("a.css?delay=30"), {
+            var trans = Y.Get.css(url, {
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -1352,10 +1418,15 @@ YUI.add('get-test', function (Y) {
 
         'test: insertBefore, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, { delay: '0-1' }),
+                getUniqueEchoechoCss(CSS_B, { delay: '0-1' }),
+                getUniqueEchoechoCss(CSS_C, { delay: '0-1' })
+            ];
 
             test.createInsertBeforeNode();
 
-            var trans = Y.Get.css(path(["a.css?delay=20", "b.css?delay=75", "c.css?delay=10"]), {
+            var trans = Y.Get.css(urls, {
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -1388,8 +1459,9 @@ YUI.add('get-test', function (Y) {
 
         'test: charset, single' : function() {
             var test = this;
+            var url = getUniqueEchoechoCss(CSS_A);
 
-            var trans = Y.Get.css(path("a.css?delay=20"), {
+            var trans = Y.Get.css(url, {
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
@@ -1408,8 +1480,13 @@ YUI.add('get-test', function (Y) {
 
         'test: charset, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, { delay: '0-1' }),
+                getUniqueEchoechoCss(CSS_B, { delay: '0-1' }),
+                getUniqueEchoechoCss(CSS_C, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
+            var trans = Y.Get.css(urls, {
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
@@ -1433,8 +1510,9 @@ YUI.add('get-test', function (Y) {
 
         'test: attributes, single' : function() {
             var test = this;
+            var url = getUniqueEchoechoCss(CSS_A);
 
-            var trans = Y.Get.css(path("a.css?delay=10"), {
+            var trans = Y.Get.css(url, {
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title": "myscripts"
@@ -1458,8 +1536,13 @@ YUI.add('get-test', function (Y) {
 
         'test: attributes, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, { delay: '0-1' }),
+                getUniqueEchoechoCss(CSS_B, { delay: '0-1' }),
+                getUniqueEchoechoCss(CSS_C, { delay: '0-1' })
+            ];
 
-            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
+            var trans = Y.Get.css(urls, {
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title": "myscripts"
@@ -1493,8 +1576,9 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var url = 'echo/status/404';
 
-            Y.Get.css(path("bogus.css"), {
+            Y.Get.css(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1527,8 +1611,13 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, { delay: '0-1' }),
+                'echo/status/404',
+                getUniqueEchoechoCss(CSS_C, { delay: '0-1' })
+            ];
 
-            Y.Get.css(path(["a.css", "bogus.css", "c.css"]), {
+            Y.Get.css(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1549,7 +1638,7 @@ YUI.add('get-test', function (Y) {
 
                         if (!Y.UA.ie) {
                             // Let the CSS kick in?
-                            test.wait(function() { 
+                            test.wait(function() {
                                 Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
                                 Assert.areNotEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css was loaded when it shouldn't have been");
                                 Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
@@ -1569,11 +1658,16 @@ YUI.add('get-test', function (Y) {
 
         'CSS nodes should be inserted in order': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, { delay: '0-1' }),
+                getUniqueEchoechoCss(CSS_B, { delay: '0-1' }),
+                getUniqueEchoechoCss(CSS_C, { delay: '0-1' })
+            ];
 
             test.o = Y.Get.css([
-                {url: path('a.css'), attributes: {id: 'a'}},
-                {url: path('b.css'), attributes: {id: 'b'}},
-                {url: path('c.css'), attributes: {id: 'c'}}
+                {url: urls[0], attributes: {id: 'a'}},
+                {url: urls[1], attributes: {id: 'b'}},
+                {url: urls[2], attributes: {id: 'c'}}
             ], function (err, transaction) {
                 test.resume(function () {
                     var nodes = transaction.nodes;
