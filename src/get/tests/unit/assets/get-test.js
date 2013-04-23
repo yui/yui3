@@ -2313,10 +2313,16 @@ YUI.add('get-test', function (Y) {
 
         'transactions should always execute one at a time by default': function () {
             var test = this,
+                urls = [
+                    getUniqueEchoechoJs(),
+                    getUniqueEchoechoJs(),
+                    getUniqueEchoechoCss(),
+                    getUniqueEchoechoJs()
+                ],
 
-                t1 = Y.Get.js(path(['a.js', 'b.js']), finish),
-                t2 = Y.Get.css(path('a.css'), finish),
-                t3 = Y.Get.load(path('c.js'), function (err, t) {
+                t1 = Y.Get.js([urls[0], urls[1]], finish),
+                t2 = Y.Get.css(urls[2], finish),
+                t3 = Y.Get.load(urls[3], function (err, t) {
                     finish(err, t);
 
                     test.resume(function () {
@@ -2353,10 +2359,15 @@ YUI.add('get-test', function (Y) {
 
         'abort() should abort the transaction': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoJs()
+            ];
 
             // Progress is called async, followed by a sync call to failure
 
-            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+            test.t = Y.Get.js(urls, {
                 onFailure: function () {
                     ArrayAssert.containsMatch(function (item) {
                         return item.error === 'Aborted'
@@ -2381,10 +2392,15 @@ YUI.add('get-test', function (Y) {
 
         'abort() should accept a custom error message': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoJs()
+            ];
 
             // Progress is called async, followed by a sync call to failure
 
-            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+            test.t = Y.Get.js(urls, {
                 onFailure: function () {
                     ArrayAssert.containsMatch(function (item) {
                         return item.error === 'monkey britches!'
@@ -2408,10 +2424,12 @@ YUI.add('get-test', function (Y) {
         },
 
         'execute() should queue callbacks': function () {
-            var test = this,
-                callbackOne, callbackTwo;
+            var test = this;
+            var url = getUniqueEchoechoJs();
+            var callbackOne;
+            var callbackTwo;
 
-            test.t = Y.Get.js(path('a.js'));
+            test.t = Y.Get.js(url);
 
             test.t.execute(function (err, transaction) {
                 callbackOne = true;
@@ -2440,8 +2458,9 @@ YUI.add('get-test', function (Y) {
 
         'execute() should call the callback immediately if the transaction has already finished': function () {
             var test = this;
+            var url = getUniqueEchoechoJs();
 
-            test.t = Y.Get.js(path('a.js'), function (err, transaction) {
+            test.t = Y.Get.js(url, function (err, transaction) {
 
                 test.resume(function () {
                     var callbackOne, callbackTwo;
@@ -2475,8 +2494,13 @@ YUI.add('get-test', function (Y) {
 
         'purge() should purge any nodes inserted by the transaction': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoJs()
+            ];
 
-            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], function (err, t) {
+            test.t = Y.Get.js(urls, function (err, t) {
                 test.resume(function () {
                     var ids = [];
 
@@ -2509,9 +2533,9 @@ YUI.add('get-test', function (Y) {
 
         _should : {
             ignore : {
-                // Need to look into this for IE10 support: Currently if we issue a Get transaction 
-                // with [bogus.js, bogus.js], we get 2 onerror callbacks and we call onFailure correctly, 
-                // but subsequent Get transactions for 304 resources don't fire the onload handler. 
+                // Need to look into this for IE10 support: Currently if we issue a Get transaction
+                // with [bogus.js, bogus.js], we get 2 onerror callbacks and we call onFailure correctly,
+                // but subsequent Get transactions for 304 resources don't fire the onload handler.
                 // I can't replicate this outside of Get yet.
                 '`errors` property should contain an array of error objects' : Y.UA.ie && Y.UA.ie >= 10
             }
@@ -2522,8 +2546,12 @@ YUI.add('get-test', function (Y) {
         },
 
         'transactions should have a unique `id` property': function () {
-            var t1 = Y.Get.js('getfiles/a.js'),
-                t2 = Y.Get.js('getfiles/b.js');
+            var urls = [
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoJs()
+            ];
+            var t1 = Y.Get.js(urls[0]);
+            var t2 = Y.Get.js(urls[1]);
 
             Assert.isNotUndefined(t1.id, 'id property should not be undefined');
             Assert.isNotUndefined(t2.id, 'id property should not be undefined');
@@ -2535,15 +2563,20 @@ YUI.add('get-test', function (Y) {
 
         'transactions should have a `data` property when a data object is provided': function () {
             var data = {};
+            var url = getUniqueEchoechoJs();
 
-            this.t = Y.Get.js('getfiles/a.js', {data: data});
+            this.t = Y.Get.js(url, { data: data });
             Assert.areSame(data, this.t.data);
         },
 
         '`errors` property should contain an array of error objects': function () {
             var test = this;
+            var urls = [
+                'echo/status/404',
+                'echo/status/404'
+            ];
 
-            this.t = Y.Get.js(['bogus.js', 'bogus.js'], function (err, t) {
+            this.t = Y.Get.js(urls, function (err, t) {
                 test.resume(function () {
                     Assert.isArray(t.errors, '`errors` should be an array');
 
@@ -2557,11 +2590,15 @@ YUI.add('get-test', function (Y) {
 
             this.wait();
         },
- 
+
         '`nodes` property should contain an array of injected nodes': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoJs()
+            ];
 
-            this.t = Y.Get.js(['getfiles/a.js', 'getfiles/b.js'], function (err, t) {
+            this.t = Y.Get.js(urls, function (err, t) {
 
                 test.resume(function () {
                     Assert.isArray(t.nodes, '`nodes` should be an array');
@@ -2575,7 +2612,9 @@ YUI.add('get-test', function (Y) {
         },
 
         '`options` property should contain transaction options': function () {
-            this.t = Y.Get.js('getfiles/a.js', {
+            var url = getUniqueEchoechoJs();
+
+            this.t = Y.Get.js(url, {
                 attributes: {'class': 'testing'},
                 data: 'foo',
                 bar: 'baz'
@@ -2589,13 +2628,17 @@ YUI.add('get-test', function (Y) {
 
         '`requests` property should contain an array of request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(),
+                getUniqueEchoechoJs()
+            ];
 
-            this.t = Y.Get.js(['getfiles/a.js', 'getfiles/b.js'], function (err, t) {
+            this.t = Y.Get.js(urls, function (err, t) {
                 test.resume(function () {
                     Assert.isArray(t.requests, '`requests` should be an array');
                     Assert.areSame(2, t.requests.length, '`requests` array should contain two items');
-                    Assert.areSame('getfiles/a.js', t.requests[0].url);
-                    Assert.areSame('getfiles/b.js', t.requests[1].url);
+                    Assert.areSame(urls[0], t.requests[0].url);
+                    Assert.areSame(urls[1], t.requests[1].url);
 
                     Assert.isTrue(t.requests[0].finished);
                     Assert.isTrue(t.requests[0].finished);
@@ -2612,8 +2655,9 @@ YUI.add('get-test', function (Y) {
 
         '`class` attribute should be set correctly in all browsers': function () {
             var test = this;
+            var url = getUniqueEchoechoJs();
 
-            this.t = Y.Get.js('getfiles/a.js', {
+            this.t = Y.Get.js(url, {
                 attributes: {'class': 'get-class-test'}
             }, function (err, t) {
                 test.resume(function () {
