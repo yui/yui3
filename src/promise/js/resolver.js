@@ -177,11 +177,6 @@ Y.mix(Resolver.prototype, {
     _wrap: function (thenFulfill, thenReject, fn) {
         // callbacks and errbacks only get one argument
         return function (valueOrReason) {
-            // Call the callback/errback with promise as `this` to
-            // preserve the contract that access to the deferred is
-            // only for code that may resolve/reject it.
-            // Another option would be call the function from the
-            // global context, but it seemed less useful.
             var result;
 
             // Promises model exception handling through callbacks

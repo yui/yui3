@@ -118,6 +118,15 @@ YUI.add('promise-tests', function (Y) {
     suite.add(new Y.Test.Case({
         name: 'Behavior of the then() callbacks',
 
+        _should: {
+            ignore: {
+                '|this| inside a callback must be undefined in strict mode': (function () {
+                    'use strict';
+                    return typeof this !== 'undefined';
+                }())
+            }
+        },
+
         'throwing inside a callback should turn into a rejection': function () {
             var test = this,
                 error = new Error('Arbitrary error');
@@ -184,8 +193,7 @@ YUI.add('promise-tests', function (Y) {
             
             var test = this,
                 fulfilled, rejected,
-                fulfilledThis, rejectedThis,
-                inStrictMode;
+                fulfilledThis, rejectedThis;
 
             fulfilled = new Y.Promise(function (fulfill) {
                 fulfill('value');
@@ -194,22 +202,13 @@ YUI.add('promise-tests', function (Y) {
                 reject('reason');
             });
 
-            inStrictMode = (function () {
-                return typeof this === 'undefined';
-            }());
-
             fulfilled.then(function () {
                 fulfilledThis = this;
                 rejected.then(null, function () {
                     rejectedThis = this;
                     test.resume(function () {
-                        if (inStrictMode) {
-                            Assert.isUndefined(fulfilledThis, 'in strict mode |this| in the success callback must be undefined');
-                            Assert.isUndefined(rejectedThis, 'in strict mode |this| in the failure callback must be undefined');
-                        } else {
-                            Assert.areSame(Y.config.global, fulfilledThis, 'when not in strict mode |this| in the success callback must be the global object');
-                            Assert.areSame(Y.config.global, rejectedThis, 'when not in strict mode |this| in the failure callback must be the global object');
-                        }
+                        Assert.isUndefined(fulfilledThis, 'in strict mode |this| in the success callback must be undefined');
+                        Assert.isUndefined(rejectedThis, 'in strict mode |this| in the failure callback must be undefined');
                     });
                 });
             });
