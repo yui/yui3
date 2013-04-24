@@ -228,17 +228,22 @@ Y.mix(Resolver.prototype, {
     @protected
     **/
     _notify: function (subs, result) {
-        // Calling all callbacks after Y.soon to guarantee
-        // asynchronicity. Because setTimeout can cause unnecessary
-        // delays that *can* become noticeable in some situations
-        // (especially in Node.js)
-        Y.soon(function () {
-            var i, len;
+        // Since callback lists are reset synchronously, the subs list never
+        // changes after _notify() receives it. Avoid calling Y.soon() for
+        // an empty list
+        if (subs.length) {
+            // Calling all callbacks after Y.soon to guarantee
+            // asynchronicity. Because setTimeout can cause unnecessary
+            // delays that *can* become noticeable in some situations
+            // (especially in Node.js)
+            Y.soon(function () {
+                var i, len;
 
-            for (i = 0, len = subs.length; i < len; ++i) {
-                subs[i](result);
-            }
-        });
+                for (i = 0, len = subs.length; i < len; ++i) {
+                    subs[i](result);
+                }
+            });
+        }
     }
 
 }, true);
