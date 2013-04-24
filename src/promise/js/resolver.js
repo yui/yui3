@@ -178,43 +178,36 @@ Y.mix(Resolver.prototype, {
         var promise = this.promise;
 
         return function () {
-            // The args coming in to the callback/errback from the
-            // resolution of the parent promise.
-            var args = arguments;
+            // Call the callback/errback with promise as `this` to
+            // preserve the contract that access to the deferred is
+            // only for code that may resolve/reject it.
+            // Another option would be call the function from the
+            // global context, but it seemed less useful.
+            var result;
 
-            // Wrapping all callbacks in Y.soon to guarantee
-            // asynchronicity. Because setTimeout can cause unnecessary
-            // delays that *can* become noticeable in some situations
-            // (especially in Node.js)
-            Y.soon(function () {
-                // Call the callback/errback with promise as `this` to
-                // preserve the contract that access to the deferred is
-                // only for code that may resolve/reject it.
-                // Another option would be call the function from the
-                // global context, but it seemed less useful.
-                var result;
+            // Promises model exception handling through callbacks
+            // making both synchronous and asynchronous errors behave
+            // the same way
+            try {
+                // Use the args coming in to the callback/errback from the
+                // resolution of the parent promise.
+                result = fn.apply(promise, arguments);
+            } catch (e) {
+                // calling return to stop the behavior of 
+                return thenReject(e);
+            }
 
-                // Promises model exception handling through callbacks
-                // making both synchronous and asynchronous errors behave
-                // the same way
-                try {
-                    result = fn.apply(promise, args);
-                } catch (e) {
-                    return thenReject(e);
-                }
-
-                if (Promise.isPromise(result)) {
-                    // Returning a promise from a callback makes the current
-                    // promise sync up with the returned promise
-                    result.then(thenFulfill, thenReject);
-                } else {
-                    // Non-promise return values always trigger resolve()
-                    // because callback is affirmative, and errback is
-                    // recovery.  To continue on the rejection path, errbacks
-                    // must return rejected promises or throw.
-                    thenFulfill(result);
-                }
-            });
+            if (Promise.isPromise(result)) {
+                // Returning a promise from a callback makes the current
+                // promise sync up with the returned promise
+                result.then(thenFulfill, thenReject);
+            } else {
+                // Non-promise return values always trigger resolve()
+                // because callback is affirmative, and errback is
+                // recovery.  To continue on the rejection path, errbacks
+                // must return rejected promises or throw.
+                thenFulfill(result);
+            }
         };
     },
 
@@ -239,11 +232,17 @@ Y.mix(Resolver.prototype, {
     @protected
     **/
     _notify: function (subs, result) {
-        var i, len;
+        // Calling all callbacks after Y.soon to guarantee
+        // asynchronicity. Because setTimeout can cause unnecessary
+        // delays that *can* become noticeable in some situations
+        // (especially in Node.js)
+        Y.soon(function () {
+            var i, len;
 
-        for (i = 0, len = subs.length; i < len; ++i) {
-            subs[i](result);
-        }
+            for (i = 0, len = subs.length; i < len; ++i) {
+                subs[i](result);
+            }
+        });
     }
 
 }, true);
