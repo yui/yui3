@@ -11,5 +11,5 @@ it will be wrapped in a new promise.
 @deprecated
 **/
 Y.batch = function () {
-    return Promise.every.apply(Promise, arguments);
+    return Promise.every(slice.call(arguments));
 };

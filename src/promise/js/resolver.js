@@ -80,17 +80,28 @@ Y.mix(Resolver.prototype, {
         }
     },
 
+    /**
+    Resolves the promise with the provided value. If the value is a promise
+    `resolve()` will call its `then()` method to adopt its state.
+
+    @method resolve
+    @param {Any} value Either a promise or a value. If value is a promise,
+                    `resolve()` will adopt its state
+    **/
     resolve: function (value) {
         var self = this;
 
         if (Promise.isPromise(value)) {
             value.then(function (x) {
+                // This essentially makes the process recursive, flattening
+                // promises for promises. This is still a topic of discussion
+                // in the community
                 self.resolve(x);
             }, function (e) {
                 self.reject(e);
             });
         } else {
-            this.accept();
+            this.accept(value);
         }
     },
 
@@ -127,7 +138,7 @@ Y.mix(Resolver.prototype, {
     `functionA().then(functionB).then(functionC)` where `functionA` returns
     a promise, and `functionB` and `functionC` _may_ return promises.
 
-    @method append
+    @method then
     @param {Function} [callback] function to execute if the Resolver
                 resolves successfully
     @param {Function} [errback] function to execute if the Resolver
@@ -135,7 +146,7 @@ Y.mix(Resolver.prototype, {
     @return {Promise} The promise of a new Resolver wrapping the resolution
                 of either "resolve" or "reject" callback
     **/
-    append: function (callback, errback) {
+    then: function (callback, errback) {
         var self = this,
             callbackList = this._callbacks || [],
             errbackList  = this._errbacks  || [],
@@ -171,7 +182,7 @@ Y.mix(Resolver.prototype, {
     returned from the `then` callback.
 
     @method _wrap
-    @param {Function} thenFulfill Fulfillment function of the resolver that
+    @param {Function} thenResolve `resolve()` function of the resolver that
                         handles this promise
     @param {Function} thenReject Rejection function of the resolver that
                         handles this promise
@@ -179,7 +190,7 @@ Y.mix(Resolver.prototype, {
     @return {Function}
     @private
     **/
-    _wrap: function (thenFulfill, thenReject, fn) {
+    _wrap: function (thenResolve, thenReject, fn) {
         // callbacks and errbacks only get one argument
         return function (valueOrReason) {
             var result;
@@ -201,13 +212,13 @@ Y.mix(Resolver.prototype, {
             if (Promise.isPromise(result)) {
                 // Returning a promise from a callback makes the current
                 // promise sync up with the returned promise
-                result.then(thenFulfill, thenReject);
+                result.then(thenResolve, thenReject);
             } else {
                 // Non-promise return values always trigger resolve()
                 // because callback is affirmative, and errback is
                 // recovery.  To continue on the rejection path, errbacks
                 // must return rejected promises or throw.
-                thenFulfill(result);
+                thenResolve(result);
             }
         };
     },

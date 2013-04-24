@@ -1,11 +1,3 @@
-/**
-Extra utilities for YUI3 promises
-
-@module promise-extras
-**/
-
-var Promise = Y.Promise;
-
 Y.mix(Promise.Resolver.prototype, {
     /**
     Returns the current status of the Resolver as a string "pending",

@@ -1,4 +1,13 @@
 /**
+Extra utilities for YUI3 promises
+
+@module promise-extras
+**/
+
+var Promise = Y.Promise,
+    slice = [].slice;
+
+/**
 Abstraction API allowing you to interact with promises or raw values as if they
 were promises. If a non-promise object is passed in, a new Resolver is created
 and scheduled to resolve asynchronously with the provided value.
