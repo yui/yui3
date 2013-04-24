@@ -154,6 +154,32 @@ YUI.add('promise-tests', function (Y) {
         },
 
         '|this| inside a callback must not be special': function () {
+            var test = this,
+                fulfilled, rejected,
+                fulfilledThis, rejectedThis;
+
+            fulfilled = new Y.Promise(function (fulfill) {
+                fulfill('value');
+            });
+            rejected = new Y.Promise(function (fulfill, reject) {
+                reject('reason');
+            });
+
+            fulfilled.then(function () {
+                fulfilledThis = this;
+                rejected.then(null, function () {
+                    rejectedThis = this;
+                    test.resume(function () {
+                        Assert.areSame(Y.config.global, fulfilledThis, 'when not in strict mode |this| in the success callback must be the global object');
+                        Assert.areSame(Y.config.global, rejectedThis, 'when not in strict mode |this| in the failure callback must be the global object');
+                    });
+                });
+            });
+
+            test.wait(300);
+        },
+
+        '|this| inside a callback must be undefined in strict mode': function () {
             'use strict';
             
             var test = this,
