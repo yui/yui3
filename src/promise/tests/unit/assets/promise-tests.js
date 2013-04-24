@@ -154,6 +154,8 @@ YUI.add('promise-tests', function (Y) {
         },
 
         '|this| inside a callback must not be special': function () {
+            'use strict';
+            
             var test = this,
                 fulfilled, rejected,
                 fulfilledThis, rejectedThis,
