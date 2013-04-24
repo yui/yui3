@@ -151,6 +151,42 @@ YUI.add('promise-tests', function (Y) {
             });
 
             test.wait(100);
+        },
+
+        '|this| inside a callback must not be special': function () {
+            var test = this,
+                fulfilled, rejected,
+                fulfilledThis, rejectedThis,
+                inStrictMode;
+
+            fulfilled = new Y.Promise(function (fulfill) {
+                fulfill('value');
+            });
+            rejected = new Y.Promise(function (fulfill, reject) {
+                reject('reason');
+            });
+
+            inStrictMode = (function () {
+                return typeof this === 'undefined';
+            }());
+
+            fulfilled.then(function () {
+                fulfilledThis = this;
+                rejected.then(null, function () {
+                    rejectedThis = this;
+                    test.resume(function () {
+                        if (inStrictMode) {
+                            Assert.isUndefined(fulfilledThis, 'in strict mode |this| in the success callback must be undefined');
+                            Assert.isUndefined(rejectedThis, 'in strict mode |this| in the failure callback must be undefined');
+                        } else {
+                            Assert.areSame(Y.config.global, fulfilledThis, 'when not in strict mode |this| in the success callback must be the global object');
+                            Assert.areSame(Y.config.global, rejectedThis, 'when not in strict mode |this| in the failure callback must be the global object');
+                        }
+                    });
+                });
+            });
+
+            test.wait(300);
         }
     }));
 

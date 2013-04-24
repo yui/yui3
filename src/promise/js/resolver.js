@@ -175,9 +175,8 @@ Y.mix(Resolver.prototype, {
     @private
     **/
     _wrap: function (thenFulfill, thenReject, fn) {
-        var promise = this.promise;
-
-        return function () {
+        // callbacks and errbacks only get one argument
+        return function (valueOrReason) {
             // Call the callback/errback with promise as `this` to
             // preserve the contract that access to the deferred is
             // only for code that may resolve/reject it.
@@ -189,11 +188,13 @@ Y.mix(Resolver.prototype, {
             // making both synchronous and asynchronous errors behave
             // the same way
             try {
-                // Use the args coming in to the callback/errback from the
+                // Use the argument coming in to the callback/errback from the
                 // resolution of the parent promise.
-                result = fn.apply(promise, arguments);
+                // The function must be called as a normal function, with no
+                // special value for |this|, as per Promises A+
+                result = fn(valueOrReason);
             } catch (e) {
-                // calling return to stop the behavior of 
+                // calling return only to stop here
                 return thenReject(e);
             }
 
