@@ -5,20 +5,6 @@
 
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script type="text/javascript" src="./assets/dom-region-test.js"></script>
-<script type="text/javascript">
-YUI({
-    coverage: ['dom-screen'],
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-}).use('console', 'test', 'dom-region-test', function (Y) {
-    //create the logger
-
-    var logger = new Y.Console({
-        height: '800px'
-    }).render();
-    
-    Y.Test.Runner.run();
-});
-</script>
 <style>
 #ft {
     opacity: 0.75;
@@ -52,5 +38,19 @@ YUI({
 
 </head>
 <body class="yui3-skin-sam">
+<script type="text/javascript">
+YUI({
+    coverage: ['dom-screen'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+}).use('console', 'test', 'dom-region-test', function (Y) {
+    //create the logger
+
+    var logger = new Y.Console({
+        height: '800px'
+    }).render();
+
+    Y.Test.Runner.run();
+});
+</script>
 </body>
 </html>

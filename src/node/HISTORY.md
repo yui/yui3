@@ -1,8 +1,8 @@
 Node Change History
 ===================
 
-@VERSION@
------
+3.10.0
+------
 
 * [!] Removed `node-deprecated` module. [Ryuichi Okumura]
 
