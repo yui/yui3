@@ -142,12 +142,11 @@ Y.mix(Resolver.prototype, {
         // chaining, the execution of either function needs to be represented
         // by a Resolver (the same Resolver can represent both flow paths), and
         // its promise returned.
-        var promise = this.promise,
-            thenFulfill, thenReject,
+        var thenFulfill, thenReject,
 
             // using promise constructor allows for customized promises to be
             // returned instead of plain ones
-            then = new promise.constructor(function (fulfill, reject) {
+            then = new Promise(function (fulfill, reject) {
                 thenFulfill = fulfill;
                 thenReject = reject;
             }),
