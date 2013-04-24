@@ -2,7 +2,7 @@
 Wraps the execution of asynchronous operations, providing a promise object that
 can be used to subscribe to the various ways the operation may terminate.
 
-@module promise-code
+@module promise-core
 @since 3.11.0
 **/
 
@@ -70,11 +70,11 @@ Y.mix(Promise.prototype, {
                 resolves successfully
     @param {Function} [errback] function to execute if the promise
                 resolves unsuccessfully
-    @return {Promise} A promise wrapping the resolution of either "resolve" or
+    @return {Promise} A promise wrapping the resolution of either "accept" or
                 "reject" callback
     **/
     then: function (callback, errback) {
-        return this._resolver._then(callback, errback);
+        return this._resolver.append(callback, errback);
     }
 });
 
