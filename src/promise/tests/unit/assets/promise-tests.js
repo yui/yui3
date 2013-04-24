@@ -123,6 +123,9 @@ YUI.add('promise-tests', function (Y) {
                 '|this| inside a callback must be undefined in strict mode': (function () {
                     'use strict';
                     return typeof this !== 'undefined';
+                }()),
+                '|this| inside a callback must be the global object': (function () {
+                    return typeof this === 'undefined';
                 }())
             }
         },
@@ -162,7 +165,8 @@ YUI.add('promise-tests', function (Y) {
             test.wait(100);
         },
 
-        '|this| inside a callback must not be special': function () {
+        // This test is run only when not in strict mode
+        '|this| inside a callback must be the global object': function () {
             var test = this,
                 fulfilled, rejected,
                 fulfilledThis, rejectedThis;
@@ -188,6 +192,7 @@ YUI.add('promise-tests', function (Y) {
             test.wait(300);
         },
 
+        // This test is run only in strict mode
         '|this| inside a callback must be undefined in strict mode': function () {
             'use strict';
             
