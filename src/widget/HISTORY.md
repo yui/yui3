@@ -1,8 +1,8 @@
 Widget Change History
 =====================
 
-@VERSION@
------
+3.10.0
+------
 
   * Added custom prefix support to widget.getSkinName,
     derived https://github.com/yui/yui3/pull/327

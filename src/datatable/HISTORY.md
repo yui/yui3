@@ -1,6 +1,13 @@
 DataTable Change History
 ========================
 
+3.10.0
+------
+
+* Fix renderBody in the docs and in table-message. [albertosantini]
+
+* Add italian language files to the components. [albertosantini]  
+
 3.9.1
 -----
 
