@@ -10,10 +10,10 @@
 		},
 		"promise-extras": {
 			"jsfiles": [
+				"when.js",
 				"extras/methods.js",
 				"extras/factories.js",
 				"extras/combinators.js",
-				"when.js",
 				"batch.js"
 			]
 		}

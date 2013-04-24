@@ -75,7 +75,7 @@ Promise.some = function (values) {
         length    = values.length,
         results   = [];
 
-    // Basically a mirror implementation of Y.batch
+    // Basically a mirror implementation of Promise.every
     return new Promise(function (resolve, reject) {
         function oneRejected(index) {
             return function (value) {
