@@ -50,13 +50,13 @@ Y.mix(Resolver.prototype, {
     /**
     Resolves the promise, signaling successful completion of the
     represented operation. All "onFulfilled" subscriptions are executed and passed
-    the value provided to this method. After calling `fulfill()`, `reject()` and
-    `notify()` are disabled.
+    the value provided to this method. After calling `accept()`, `reject()` is
+    disabled.
 
-    @method fulfill
+    @method accept
     @param {Any} value Value to pass along to the "onFulfilled" subscribers
     **/
-    fulfill: function (value) {
+    accept: function (value) {
         if (this._status === 'pending') {
             this._result = value;
         }
@@ -77,6 +77,20 @@ Y.mix(Resolver.prototype, {
             this._errbacks = null;
 
             this._status = 'fulfilled';
+        }
+    },
+
+    resolve: function (value) {
+        var self = this;
+
+        if (Promise.isPromise(value)) {
+            value.then(function (x) {
+                self.resolve(x);
+            }, function (e) {
+                self.reject(e);
+            });
+        } else {
+            this.accept();
         }
     },
 
@@ -113,7 +127,7 @@ Y.mix(Resolver.prototype, {
     `functionA().then(functionB).then(functionC)` where `functionA` returns
     a promise, and `functionB` and `functionC` _may_ return promises.
 
-    @method then
+    @method _then
     @param {Function} [callback] function to execute if the Resolver
                 resolves successfully
     @param {Function} [errback] function to execute if the Resolver
@@ -121,7 +135,7 @@ Y.mix(Resolver.prototype, {
     @return {Promise} The promise of a new Resolver wrapping the resolution
                 of either "resolve" or "reject" callback
     **/
-    then: function (callback, errback) {
+    _then: function (callback, errback) {
         // When the current promise is fulfilled or rejected, either the
         // callback or errback will be executed via the function pushed onto
         // this._callbacks or this._errbacks.  However, to allow then()
@@ -208,17 +222,6 @@ Y.mix(Resolver.prototype, {
     },
 
     /**
-    Returns the current status of the Resolver as a string "pending",
-    "fulfilled", or "rejected".
-
-    @method getStatus
-    @return {String}
-    **/
-    getStatus: function () {
-        return this._status;
-    },
-
-    /**
     Executes an array of callbacks from a specified context, passing a set of
     arguments.
 
@@ -246,6 +249,6 @@ Y.mix(Resolver.prototype, {
         }
     }
 
-}, true);
+});
 
 Y.Promise.Resolver = Resolver;

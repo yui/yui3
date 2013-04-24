@@ -2,10 +2,17 @@
 	"name": "promise",
 	
 	"builds": {
-		"promise": {
+		"promise-core": {
 			"jsfiles": [
 				"promise.js",
-				"resolver.js",
+				"resolver.js"
+			]
+		},
+		"promise-extras": {
+			"jsfiles": [
+				"extras/methods.js",
+				"extras/factories.js",
+				"extras/combinators.js",
 				"when.js",
 				"batch.js"
 			]
