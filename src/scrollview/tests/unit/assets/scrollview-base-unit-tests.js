@@ -6,6 +6,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         simulateMousewheel = Y.simulateMousewheel,
         baseTestSuite = new Y.Test.Suite("Scrollview Base Tests"),
         unitTestSuite = new Y.Test.Suite("Unit Tests"),
+        unitTestSuiteDev = new Y.Test.Suite("In development tests"),
         functionalTestSuite = new Y.Test.Suite("Functional Tests");
 
     unitTestSuite.add(new Y.Test.Case({
@@ -18,7 +19,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         },
 
         "Ensure initial state is correct": function () {
-            var scrollview = renderNewScrollview(false),
+            var scrollview = renderNewScrollview('x'),
                 attrs = Y.ScrollView.ATTRS;
 
             // Loop through each ATTR and ensure its value matches the default to ensure any setters work properly.
@@ -56,7 +57,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             Y.ScrollView.EASING = 'cubic-bezier(0, 0, 0, 0)';
             Y.ScrollView.BOUNCE_RANGE = 5;
 
-            var scrollview = renderNewScrollview(false);
+            var scrollview = renderNewScrollview('x');
 
             Y.Assert.areEqual(Y.ScrollView.FRAME_STEP, scrollview.get('frameDuration'));
             Y.Assert.areEqual(Y.ScrollView.SNAP_DURATION, scrollview.get('snapDuration'));
@@ -68,7 +69,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         // Axis setters
         "Forced axis to X should evaluate properly": function () {
             var Test = this,
-                scrollview = renderNewScrollview(false, 'x');
+                scrollview = renderNewScrollview('x');
 
             Y.Assert.areEqual(true, scrollview.get('axis').x);
             Y.Assert.areEqual(false, scrollview.get('axis').y);
@@ -76,7 +77,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         "Forced axis to Y should evaluate properly": function () {
             var Test = this,
-                scrollview = renderNewScrollview(true, 'y');
+                scrollview = renderNewScrollview('y');
 
             Y.Assert.areEqual(false, scrollview.get('axis').x);
             Y.Assert.areEqual(true, scrollview.get('axis').y);
@@ -84,7 +85,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         "Forced axis to XY should evaluate properly": function () {
             var Test = this,
-                scrollview = renderNewScrollview(true, 'xy');
+                scrollview = renderNewScrollview('xy');
 
             Y.Assert.areEqual(true, scrollview.get('axis').x);
             Y.Assert.areEqual(true, scrollview.get('axis').y);
@@ -101,7 +102,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         },
 
         "Ensure initial rendering is correct": function () {
-            var scrollview = renderNewScrollview(false),
+            var scrollview = renderNewScrollview('x'),
                 bb = scrollview.get('boundingBox'),
                 cb = scrollview.get('contentBox'),
                 id = cb.get('id'),
@@ -127,7 +128,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         // Scroll{X/Y} setters
         "set('scrollX') to a positive distance should move it that distance": function () {
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 distance = 20;
 
             // Assume it starts @ 0
@@ -138,7 +139,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         "set('scrollY') to a positive distance should move it that distance": function () {
             var Test = this,
-                scrollview = renderNewScrollview(true),
+                scrollview = renderNewScrollview('y'),
                 distance = 20;
 
             // Assume it starts @ 0
@@ -150,7 +151,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         // scrollTo
         "scrollTo on X should scroll": function () {
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 distance = 500;
 
             scrollview.on('scrollEnd', function () {
@@ -166,7 +167,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         "scrollTo on Y should scroll": function () {
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 distance = 500;
 
             scrollview.on('scrollEnd', function () {
@@ -184,7 +185,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         "lastScrolledAmt should be correct": function () {
 
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 distance = 500;
 
             scrollview.once('scrollEnd', function () {
@@ -200,7 +201,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         "Disabled scrollview should not scroll with scrollTo": function () {
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 distance = 500;
 
             scrollview.set('disabled', true);
@@ -227,7 +228,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         "Ensure the 'scrollEnd' event fires": function () {
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 distance = scrollview._maxScrollX,
                 eventsFired = 0;
 
@@ -244,7 +245,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         "Widget resize should trigger heightChange": function () {
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 eventsFired = 0;
 
             // Ensure scrollEnd fires
@@ -297,7 +298,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         "Move right on X should move the content right": function () {
 
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 distance = 1000;
 
             scrollview.once('scrollEnd', function () {
@@ -325,7 +326,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         "Move left on X should snap back": function () {
 
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 distance = 1000;
 
             scrollview.on('scrollEnd', function () {
@@ -348,7 +349,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         "Move down on Y should move the content at least that distance": function () {
 
             var Test = this,
-                scrollview = renderNewScrollview(true),
+                scrollview = renderNewScrollview('y'),
                 distance = 500;
 
             scrollview.once('scrollEnd', function () {
@@ -376,7 +377,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         "Move up on Y should bounce back": function () {
 
             var Test = this,
-                scrollview = renderNewScrollview(true),
+                scrollview = renderNewScrollview('y'),
                 distance = 500;
 
             scrollview.once('scrollEnd', function () {
@@ -400,7 +401,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         "Flick x should provide the correct reaction": function () {
 
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 expected = 1400,
                 scrollX;
 
@@ -425,7 +426,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         "Disabled flick should not scroll": function () {
 
             var Test = this,
-                scrollview = renderNewScrollview(false);
+                scrollview = renderNewScrollview('x');
 
             scrollview.set('flick', false);
             scrollview.get('contentBox').simulateGesture('flick', {
@@ -445,7 +446,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         // Disabled
         "Disabled drag should not scroll": function () {
             var Test = this,
-                scrollview = renderNewScrollview(true),
+                scrollview = renderNewScrollview('y'),
                 distance = 500;
 
             scrollview.set('drag', false);
@@ -467,7 +468,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         "Disabled scrollview should not scroll with gesture": function () {
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 distance = 500;
 
             scrollview.set('disabled', true);
@@ -489,7 +490,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         "Disabled scrollview should not move on gesture": function () {
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 distance = 100;
 
             scrollview.set('disabled', true);
@@ -512,7 +513,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         "Move gesture while flicking should stop flick": function () {
             var Test = this,
-                scrollview = renderNewScrollview(false),
+                scrollview = renderNewScrollview('x'),
                 stop1, stop2;
 
             // flick example from the center of the node, move 50 pixels down for 50ms)
@@ -548,7 +549,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         "mousewheel down should move the SV down": function () {
             var Test = this,
-                scrollview = renderNewScrollview(true);
+                scrollview = renderNewScrollview('x');
 
             scrollview.once('scrollEnd', function () {
                 Test.resume(function () {
@@ -565,8 +566,389 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         }
     }));
 
-    baseTestSuite.add(unitTestSuite);
-    baseTestSuite.add(functionalTestSuite);
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Mock event - gesture start",
+
+        setUp : function () {
+            this.scrollview = renderNewScrollview('x');
+            this.mockEvent = getMockGestureEvent(0, 0);
+        },
+
+        tearDown : function () {
+            this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+
+        "Disabled scrollviews should do nothing" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                mockEvent = this.mockEvent,
+                response;
+
+            scrollview.set('disabled', true);
+
+            response = scrollview._onGestureMoveStart(mockEvent);
+            Y.Assert.isFalse(response);
+        },
+
+        "Gesture start should create a _gesture object" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                mockEvent = this.mockEvent,
+                response;
+
+            response = scrollview._onGestureMoveStart(mockEvent);
+
+            gesture = scrollview._gesture;
+
+            Y.Assert.isNull(null, gesture.axis);
+            Y.Assert.areEqual(0, gesture.startX);
+            Y.Assert.areEqual(0, gesture.startY);
+            Y.Assert.areEqual(0, gesture.startClientX);
+            Y.Assert.isNull(gesture.endClientX);
+            Y.Assert.isNull(gesture.endClientY);
+            Y.Assert.isNull(gesture.deltaX);
+            Y.Assert.isNull(gesture.deltaY);
+            Y.Assert.isNull(gesture.flick);
+            Y.Assert.isObject(gesture.onGestureMove);
+            Y.Assert.isObject(gesture.onGestureMoveEnd);
+        },
+
+        "scrollview._prevent.start should preventDefault" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                mockEvent = this.mockEvent,
+                response;
+
+            Y.Mock.expect(mockEvent, {
+                method: 'preventDefault'
+            });
+
+            scrollview._prevent.start = true;
+
+            response = scrollview._onGestureMoveStart(mockEvent);
+
+            Y.Mock.verify(mockEvent);
+        },
+
+        "Flicks should cancel any flicks in progress" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                mockEvent = this.mockEvent,
+                canceledFlicks = 0,
+                response;
+
+            scrollview._flickAnim = {
+                cancel: function () {
+                    canceledFlicks += 1;
+                }
+            };
+
+            response = scrollview._onGestureMoveStart(mockEvent);
+            Y.Assert.isUndefined(scrollview._flickAnim);
+            Y.Assert.areEqual(1, canceledFlicks);
+        }
+    }));
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Mock event - gesture X",
+
+        setUp : function () {
+            this.scrollview = renderNewScrollview('x');
+            this.mockEvent = getMockGestureEvent(2, 0);
+            this.scrollview._gesture = getMockGestureObject(null, 5, 0);
+        },
+
+        tearDown : function () {
+            this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+
+        "scrollview._prevent.start should preventDefault" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                mockEvent = this.mockEvent,
+                response;
+
+            Y.Mock.expect(mockEvent, {
+                method: 'preventDefault'
+            });
+
+            scrollview._prevent.start = true;
+
+            response = scrollview._onGestureMove(mockEvent);
+
+            Y.Mock.verify(mockEvent);
+        },
+
+        "gesture on X should update the scrollX values" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                mockEvent = this.mockEvent,
+                response;
+            response = scrollview._onGestureMove(mockEvent);
+
+            Y.Assert.areEqual(3, scrollview._gesture.deltaX);
+            Y.Assert.areEqual(0, scrollview._gesture.deltaY);
+            Y.Assert.areEqual(8, scrollview.get('scrollX'));
+            Y.Assert.areEqual(0, scrollview.get('scrollY'));
+        }
+    }));
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Mock event - gesture Y",
+
+        setUp : function () {
+            this.scrollview = renderNewScrollview('y');
+            this.mockEvent = getMockGestureEvent(0, 3);
+            this.scrollview._gesture = getMockGestureObject('y', 0, 6);
+        },
+
+        tearDown : function () {
+            this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+
+        "scrollview._prevent.start should preventDefault" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                mockEvent = this.mockEvent,
+                response;
+
+            Y.Mock.expect(mockEvent, {
+                method: 'preventDefault'
+            });
+
+            scrollview._prevent.end = true;
+
+            response = scrollview._onGestureMoveEnd(mockEvent);
+
+            Y.Mock.verify(mockEvent);
+        }
+    }));
+
+
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Mock event - gesture end",
+
+        setUp : function () {
+            this.scrollview = renderNewScrollview('x');
+            this.mockEvent = getMockGestureEvent(3, 0);
+            this.scrollview._gesture = getMockGestureObject(null, 6, 0);
+        },
+
+        tearDown : function () {
+            this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+
+        "gesture on X should update the scrollX values" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                mockEvent = this.mockEvent,
+                response;
+
+            scrollview.once('scrollEnd', function () {
+                Test.resume(function () {
+                    // If the test gets here, everything passed.
+                    Y.Assert.isTrue(true);
+                });
+            });
+
+            Y.later(1, null, function () {
+                response = scrollview._onGestureMoveEnd(mockEvent);
+            });
+
+            Test.wait(WAIT);
+        }
+    }));
+
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Mock event - flick",
+
+        setUp : function () {
+            this.scrollview = renderNewScrollview('x');
+        },
+
+        tearDown : function () {
+            this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+
+        "flick on a disabled instance should do nothing" : function () {
+            var Test = this,
+                scrollview = this.scrollview = renderNewScrollview('x');
+
+            scrollview.set('disabled', true);
+
+            response = scrollview._flick();
+
+            Y.Assert.isFalse(response);
+        },
+
+        "flick should bar" : function () {
+            var Test = this,
+                scrollview = this.scrollview = renderNewScrollview('x');
+
+
+            response = scrollview._flick({
+                flick: {
+                    axis: 'x',
+                    velocity: '-1'
+                }
+            });
+
+            Y.later(100, this, function () {
+                Test.resume(function () {
+                    Y.Assert.areNotEqual(0, scrollview.get('scrollX'));
+                });
+            });
+
+            Test.wait(WAIT);
+        },
+
+        "_flickFrame on X should set scrollX with the correct value" : function () {
+            var Test = this,
+                scrollview = this.scrollview = renderNewScrollview('x');
+
+            scrollview._flickFrame(-0.02, 'x', 0);
+            Y.Assert.areNotEqual(0, scrollview.get('scrollX'));
+            Y.Assert.areEqual(0, scrollview.get('scrollY'));
+
+            Y.later(100, this, function () {
+                Test.resume(function () {
+                    Y.Assert.areNotEqual(0, scrollview.get('scrollX'));
+                });
+            });
+
+            Test.wait(WAIT);
+        },
+
+        "_flickFrame on Y should set scrollX with the correct value" : function () {
+            var Test = this,
+                scrollview = this.scrollview = renderNewScrollview('y');
+
+            scrollview._flickFrame(-0.02, 'y', 0);
+            Y.Assert.areEqual(0, scrollview.get('scrollX'));
+            Y.Assert.areNotEqual(0, scrollview.get('scrollY'));
+
+            Y.later(100, this, function () {
+                Test.resume(function () {
+                    Y.Assert.areNotEqual(0, scrollview.get('scrollY'));
+                });
+            });
+
+            Test.wait(WAIT);
+        }
+    }));
+
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Mock event - snap",
+
+        setUp : function () {
+            this.scrollview = renderNewScrollview('x');
+        },
+
+        tearDown : function () {
+            this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+
+        "snapBack on X should work properly" : function () {
+            var Test = this,
+                scrollview = this.scrollview = renderNewScrollview('x');
+
+            scrollview.set('scrollX', -100);
+            Y.Assert.areEqual(-100, scrollview.get('scrollX'));
+            scrollview._snapBack();
+            Y.Assert.areEqual(0, scrollview.get('scrollX'));
+        },
+
+        "snapBack on Y should work properly" : function () {
+            var Test = this,
+                scrollview = this.scrollview = renderNewScrollview('y');
+
+            scrollview.set('scrollY', -100);
+            Y.Assert.areEqual(-100, scrollview.get('scrollY'));
+            scrollview._snapBack();
+            Y.Assert.areEqual(0, scrollview.get('scrollY'));
+        }
+    }));
+
+
+    unitTestSuite.add(new Y.Test.Case({
+        name: "Mock event - mousewheel",
+
+        setUp : function () {
+            this.scrollview = renderNewScrollview('y');
+        },
+
+        tearDown : function () {
+            this.scrollview.destroy();
+            Y.one('#container').empty(true);
+        },
+
+        "mousewheel up from 0 should do nothing" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                mockEvent = getMockMousewheelEvent(1, this.scrollview.get('boundingBox'));
+
+            Y.Mock.expect(mockEvent, {
+                method: 'preventDefault'
+            });
+
+            Y.Assert.areEqual(0, scrollview.get('scrollY'));
+            scrollview._mousewheel(mockEvent);
+            Y.Assert.areEqual(0, scrollview.get('scrollY'));
+            Y.Mock.verify(mockEvent);
+        },
+
+        "mousewheel up from 10 should move the Y offset to 0" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                mockEvent = getMockMousewheelEvent(1, this.scrollview.get('boundingBox'));
+
+            Y.Mock.expect(mockEvent, {
+                method: 'preventDefault'
+            });
+
+            scrollview.set('scrollY', 10);
+            Y.Assert.areEqual(10, scrollview.get('scrollY'));
+            scrollview._mousewheel(mockEvent);
+            Y.Assert.areEqual(0, scrollview.get('scrollY'));
+            Y.Mock.verify(mockEvent);
+        },
+
+        "mousewheel down from 0 should move the Y offset down" : function () {
+            var Test = this,
+                scrollview = this.scrollview,
+                mockEvent = getMockMousewheelEvent(-1, this.scrollview.get('boundingBox'));
+
+            Y.Mock.expect(mockEvent, {
+                method: 'preventDefault'
+            });
+
+            Y.Assert.areEqual(0, scrollview.get('scrollY'));
+            scrollview._mousewheel(mockEvent);
+            Y.Assert.areEqual(10, scrollview.get('scrollY'));
+            Y.Mock.verify(mockEvent);
+        }
+    }));
+
+
+
+
+    if (unitTestSuiteDev.items.length > 0) {
+        baseTestSuite.add(unitTestSuiteDev);
+    }
+    else {
+        baseTestSuite.add(unitTestSuite);
+        baseTestSuite.add(functionalTestSuite);
+    }
 
     Y.Test.Runner.add(baseTestSuite);
 
@@ -596,7 +978,40 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         - swipe to OOB
     */
 
-    function renderNewScrollview (vertical, axis) {
+    function getMockMousewheelEvent (delta, target) {
+        var mock = new Y.Test.Mock();
+        mock.wheelDelta = delta;
+        mock.target = target;
+        mock.preventDefault = function () {};
+        return mock;
+    }
+
+    function getMockGestureEvent (x, y) {
+        var mock = new Y.Test.Mock();
+        mock.clientX = x;
+        mock.clientY = y;
+        mock.preventDefault = function () {};
+
+        return mock;
+    }
+
+    function getMockGestureObject (axis, x, y) {
+        return {
+            axis: axis,
+            startX: x,
+            startY: y,
+            startClientX: x,
+            startClientY: y,
+            onGestureMove: {
+                detach: function () {}
+            },
+            onGestureMoveEnd: {
+                detach: function () {}
+            }
+        };
+    }
+
+    function renderNewScrollview (axis) {
         var config = {},
             guid = Y.guid(),
             html,
@@ -605,17 +1020,20 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
 
         config.srcNode = '#' + guid;
 
-        if (vertical) {
+        if (axis === 'y') {
+            config.axis = axis;
             config.height = "100px";
             widgetClass = 'vertical';
         }
-        else {
+        else if (axis === 'x') {
+            config.axis = axis;
             config.width = "300px";
             widgetClass = 'horizontal';
         }
-
-        if (axis) {
-            config.axis = axis;
+        else {
+            config.height = "100px";
+            config.width = "300px";
+            widgetClass = 'horizontal';
         }
 
         html = "<div class='" + widgetClass + "'><div id='" + guid + "'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>",

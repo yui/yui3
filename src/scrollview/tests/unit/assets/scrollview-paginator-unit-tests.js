@@ -701,7 +701,6 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
     }));
 
     /** To aid development */
-    console.log(unitTestSuiteDev.items);
     if (unitTestSuiteDev.items.length > 0) {
         paginatorTestSuite.add(unitTestSuiteDev);
     }
