@@ -157,7 +157,7 @@ Y.mix(Resolver.prototype, {
         // callback or errback will be executed via the function pushed onto
         // this._callbacks or this._errbacks.  However, to allow then()
         // chaining, it must return a new promise
-        return new Promise(function (resolve, reject) { 
+        return new Promise(function (resolve, reject) {
             // Because the callback and errback are represented by a Resolver, it
             // must be fulfilled or rejected to propagate through the then() chain.
             // The same logic applies to resolve() and reject() for fulfillment.

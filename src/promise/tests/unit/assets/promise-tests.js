@@ -7,7 +7,7 @@ YUI.add('promise-tests', function (Y) {
 
     // -- Suite --------------------------------------------------------------------
     var suite = new Y.Test.Suite({
-        name: 'Promise tests'
+        name: 'Promise core tests'
     });
 
     // -- Lifecycle ----------------------------------------------------------------
@@ -28,31 +28,31 @@ YUI.add('promise-tests', function (Y) {
 
         'promise state should change only once': function () {
             var fulfilled = new Promise(function (fulfill, reject) {
-                    Assert.areEqual('pending', this.getStatus(), 'before fulfillment the resolver status should be "pending"');
+                    Assert.areEqual('pending', this._resolver.getStatus(), 'before fulfillment the resolver status should be "pending"');
 
                     fulfill(5);
 
-                    Assert.areEqual('fulfilled', this.getStatus(), 'once fulfilled the resolver status should be "fulfilled"');
+                    Assert.areEqual('fulfilled', this._resolver.getStatus(), 'once fulfilled the resolver status should be "fulfilled"');
 
                     reject(new Error('reject'));
 
-                    Assert.areEqual('fulfilled', this.getStatus(), 'rejecting a fulfilled promise should not change its status');
+                    Assert.areEqual('fulfilled', this._resolver.getStatus(), 'rejecting a fulfilled promise should not change its status');
                 }),
 
                 rejected = new Promise(function (fulfill, reject) {
-                    Assert.areEqual('pending', this.getStatus(), 'before rejection the resolver status should be "pending"');
+                    Assert.areEqual('pending', this._resolver.getStatus(), 'before rejection the resolver status should be "pending"');
 
                     reject(new Error('reject'));
 
-                    Assert.areEqual('rejected', this.getStatus(), 'once rejected the resolver status should be "rejected"');
+                    Assert.areEqual('rejected', this._resolver.getStatus(), 'once rejected the resolver status should be "rejected"');
 
                     fulfill(5);
 
-                    Assert.areEqual('rejected', this.getStatus(), 'fulfilling a rejected promise should not change its status');
+                    Assert.areEqual('rejected', this._resolver.getStatus(), 'fulfilling a rejected promise should not change its status');
                 });
 
-            Assert.areEqual('fulfilled', fulfilled.getStatus(), 'status of a fulfilled promise should be "fulfilled"');
-            Assert.areEqual('rejected', rejected.getStatus(), 'status of a rejected promise should be "rejected"');
+            Assert.areEqual('fulfilled', fulfilled._resolver.getStatus(), 'status of a fulfilled promise should be "fulfilled"');
+            Assert.areEqual('rejected', rejected._resolver.getStatus(), 'status of a rejected promise should be "rejected"');
         },
 
         'fulfilling more than once should not change the promise value': function () {
@@ -144,7 +144,7 @@ YUI.add('promise-tests', function (Y) {
                 });
             });
 
-            test.wait(50);
+            test.wait();
         },
 
         'returning a promise from a callback should link both promises': function () {
@@ -162,7 +162,7 @@ YUI.add('promise-tests', function (Y) {
                 });
             });
 
-            test.wait(100);
+            test.wait();
         },
 
         // This test is run only when not in strict mode
@@ -189,7 +189,7 @@ YUI.add('promise-tests', function (Y) {
                 });
             });
 
-            test.wait(300);
+            test.wait();
         },
 
         // This test is run only in strict mode
@@ -218,7 +218,7 @@ YUI.add('promise-tests', function (Y) {
                 });
             });
 
-            test.wait(300);
+            test.wait();
         }
     }));
 
@@ -262,7 +262,7 @@ YUI.add('promise-tests', function (Y) {
 
 }, '@VERSION@', {
     requires: [
-        'promise',
+        'promise-core',
         'test'
     ]
 });
