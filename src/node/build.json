@@ -37,11 +37,6 @@
                 "node-event-delegate.js"
             ]
         },
-        "node-deprecated": {
-            "jsfiles": [
-                "node-deprecated.js"
-            ]
-        },
         "node-core": {
             "jsfiles": [
                 "node-core.js",

@@ -1975,6 +1975,22 @@ supported native console. This function is executed with the YUI instance as its
 **/
 
 /**
+The minimum log level to log messages for. Log levels are defined
+incrementally. Messages greater than or equal to the level specified will
+be shown. All others will be discarded. The order of log levels in
+increasing priority is:
+
+    debug
+    info
+    warn
+    error
+
+@property {String} logLevel
+@default 'debug'
+@since 3.10.0
+**/
+
+/**
 Callback to execute when `Y.error()` is called. It receives the error message
 and a JavaScript error object if one was provided.
 
@@ -3851,6 +3867,9 @@ YUI.Env.parseUA = function(subUA) {
                         m = ua.match(/rv:([^\s\)]*)/);
                         if (m && m[1]) {
                             o.gecko = numberify(m[1]);
+                            if (/Mobile|Tablet/.test(ua)) {
+                                o.mobile = "ffos";
+                            }
                         }
                     }
                 }
@@ -5785,9 +5804,9 @@ var INSTANCE = Y,
     LOGEVENT = 'yui:log',
     UNDEFINED = 'undefined',
     LEVELS = { debug: 1,
-               info: 1,
-               warn: 1,
-               error: 1 };
+               info: 2,
+               warn: 4,
+               error: 8 };
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -5809,7 +5828,7 @@ var INSTANCE = Y,
  * @return {YUI}      YUI instance.
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var bail, excl, incl, m, f,
+    var bail, excl, incl, m, f, minlevel,
         Y = INSTANCE,
         c = Y.config,
         publisher = (Y.fire) ? Y : YUI.Env.globalEvents;
@@ -5827,6 +5846,15 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 bail = !incl[src];
             } else if (excl && (src in excl)) {
                 bail = excl[src];
+            }
+
+            // Determine the current minlevel as defined in configuration
+            Y.config.logLevel = Y.config.logLevel || 'debug';
+            minlevel = LEVELS[Y.config.logLevel.toLowerCase()];
+
+            if (cat in LEVELS && LEVELS[cat] < minlevel) {
+                // Skip this message if the we don't meet the defined minlevel
+                bail = 1;
             }
         }
         if (!bail) {
@@ -6195,56 +6223,66 @@ Y.some = function(o, f, c, proto) {
 };
 
 /**
- * Deep object/array copy.  Function clones are actually
- * wrappers around the original function.
- * Array-like objects are treated as arrays.
- * Primitives are returned untouched.  Optionally, a
- * function can be provided to handle other data types,
- * filter keys, validate values, etc.
- *
- * NOTE: Cloning a non-trivial object is a reasonably heavy operation, due to
- * the need to recurrsively iterate down non-primitive properties. Clone
- * should be used only when a deep clone down to leaf level properties
- * is explicitly required.
- *
- * In many cases (for example, when trying to isolate objects used as 
- * hashes for configuration properties), a shallow copy, using Y.merge is 
- * normally sufficient. If more than one level of isolation is required, 
- * Y.merge can be used selectively at each level which needs to be 
- * isolated from the original without going all the way to leaf properties.
- *
- * @method clone
- * @param {object} o what to clone.
- * @param {boolean} safe if true, objects will not have prototype
- * items from the source.  If false, they will.  In this case, the
- * original is initially protected, but the clone is not completely
- * immune from changes to the source object prototype.  Also, cloned
- * prototype items that are deleted from the clone will result
- * in the value of the source prototype being exposed.  If operating
- * on a non-safe clone, items should be nulled out rather than deleted.
- * @param {function} f optional function to apply to each item in a
- * collection; it will be executed prior to applying the value to
- * the new object.  Return false to prevent the copy.
- * @param {object} c optional execution context for f.
- * @param {object} owner Owner object passed when clone is iterating
- * an object.  Used to set up context for cloned functions.
- * @param {object} cloned hash of previously cloned objects to avoid
- * multiple clones.
- * @return {Array|Object} the cloned object.
- */
+Deep object/array copy. Function clones are actually wrappers around the
+original function. Array-like objects are treated as arrays. Primitives are
+returned untouched. Optionally, a function can be provided to handle other data
+types, filter keys, validate values, etc.
+
+**Note:** Cloning a non-trivial object is a reasonably heavy operation, due to
+the need to recursively iterate down non-primitive properties. Clone should be
+used only when a deep clone down to leaf level properties is explicitly
+required. This method will also
+
+In many cases (for example, when trying to isolate objects used as hashes for
+configuration properties), a shallow copy, using `Y.merge()` is normally
+sufficient. If more than one level of isolation is required, `Y.merge()` can be
+used selectively at each level which needs to be isolated from the original
+without going all the way to leaf properties.
+
+@method clone
+@param {object} o what to clone.
+@param {boolean} safe if true, objects will not have prototype items from the
+    source. If false, they will. In this case, the original is initially
+    protected, but the clone is not completely immune from changes to the source
+    object prototype. Also, cloned prototype items that are deleted from the
+    clone will result in the value of the source prototype being exposed. If
+    operating on a non-safe clone, items should be nulled out rather than
+    deleted.
+@param {function} f optional function to apply to each item in a collection; it
+    will be executed prior to applying the value to the new object.
+    Return false to prevent the copy.
+@param {object} c optional execution context for f.
+@param {object} owner Owner object passed when clone is iterating an object.
+    Used to set up context for cloned functions.
+@param {object} cloned hash of previously cloned objects to avoid multiple
+    clones.
+@return {Array|Object} the cloned object.
+**/
 Y.clone = function(o, safe, f, c, owner, cloned) {
+    var o2, marked, stamp;
 
-    if (!L.isObject(o)) {
+    // Does not attempt to clone:
+    //
+    // * Non-typeof-object values, "primitive" values don't need cloning.
+    //
+    // * YUI instances, cloning complex object like YUI instances is not
+    //   advised, this is like cloning the world.
+    //
+    // * DOM nodes (#2528250), common host objects like DOM nodes cannot be
+    //   "subclassed" in Firefox and old versions of IE. Trying to use
+    //   `Object.create()` or `Y.extend()` on a DOM node will throw an error in
+    //   these browsers.
+    //
+    // Instad, the passed-in `o` will be return as-is when it matches one of the
+    // above criteria.
+    if (!L.isObject(o) ||
+            Y.instanceOf(o, YUI) ||
+            (o.addEventListener || o.attachEvent)) {
+
         return o;
     }
 
-    // @todo cloning YUI instances doesn't currently work
-    if (Y.instanceOf(o, YUI)) {
-        return o;
-    }
-
-    var o2, marked = cloned || {}, stamp,
-        yeach = Y.each;
+    marked = cloned || {};
 
     switch (L.type(o)) {
         case 'date':
@@ -6275,23 +6313,20 @@ Y.clone = function(o, safe, f, c, owner, cloned) {
             marked[stamp] = o;
     }
 
-    // #2528250 don't try to clone element properties
-    if (!o.addEventListener && !o.attachEvent) {
-        yeach(o, function(v, k) {
-if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
-                if (k !== CLONE_MARKER) {
-                    if (k == 'prototype') {
-                        // skip the prototype
-                    // } else if (o[k] === o) {
-                    //     this[k] = this;
-                    } else {
-                        this[k] =
-                            Y.clone(v, safe, f, c, owner || o, marked);
-                    }
+    Y.each(o, function(v, k) {
+        if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
+            if (k !== CLONE_MARKER) {
+                if (k == 'prototype') {
+                    // skip the prototype
+                // } else if (o[k] === o) {
+                //     this[k] = this;
+                } else {
+                    this[k] =
+                        Y.clone(v, safe, f, c, owner || o, marked);
                 }
             }
-        }, o2);
-    }
+        }
+    }, o2);
 
     if (!cloned) {
         Y.Object.each(marked, function(v, k) {
@@ -6308,7 +6343,6 @@ if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
 
     return o2;
 };
-
 
 /**
  * Returns a function that will execute the supplied function in the
@@ -9521,12 +9555,12 @@ DO = {
      * Cache of objects touched by the utility
      * @property objs
      * @static
-     * @deprecated Since 3.6.0. The `_yuiaop` property on the AOP'd object 
-     * replaces the role of this property, but is considered to be private, and 
+     * @deprecated Since 3.6.0. The `_yuiaop` property on the AOP'd object
+     * replaces the role of this property, but is considered to be private, and
      * is only mentioned to provide a migration path.
-     * 
-     * If you have a use case which warrants migration to the _yuiaop property, 
-     * please file a ticket to let us know what it's used for and we can see if 
+     *
+     * If you have a use case which warrants migration to the _yuiaop property,
+     * please file a ticket to let us know what it's used for and we can see if
      * we need to expose hooks for that functionality more formally.
      */
     objs: null,
@@ -9661,9 +9695,6 @@ DO = {
         if (handle.detach) {
             handle.detach();
         }
-    },
-
-    _unload: function(e, me) {
     }
 };
 
@@ -9790,10 +9821,10 @@ DO.Method.prototype.exec = function () {
         if (af.hasOwnProperty(i)) {
             newRet = af[i].apply(this.obj, args);
             // Stop processing if a Halt object is returned
-            if (newRet && newRet.constructor == DO.Halt) {
+            if (newRet && newRet.constructor === DO.Halt) {
                 return newRet.retVal;
             // Check for a new return value
-            } else if (newRet && newRet.constructor == DO.AlterReturn) {
+            } else if (newRet && newRet.constructor === DO.AlterReturn) {
                 ret = newRet.newRetVal;
                 // Update the static retval state
                 DO.currentRetVal = ret;
@@ -9878,9 +9909,6 @@ DO.Error = DO.Halt;
 
 //////////////////////////////////////////////////////////////////////////
 
-// Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
-
-
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
@@ -9918,7 +9946,7 @@ var YArray = Y.Array,
 
     CONFIGS_HASH = YArray.hash(CONFIGS),
 
-    nativeSlice = Array.prototype.slice, 
+    nativeSlice = Array.prototype.slice,
 
     YUI3_SIGNATURE = 9,
     YUI_LOG = 'yui:log',
@@ -9927,7 +9955,7 @@ var YArray = Y.Array,
         var p;
 
         for (p in s) {
-            if (CONFIGS_HASH[p] && (ov || !(p in r))) { 
+            if (CONFIGS_HASH[p] && (ov || !(p in r))) {
                 r[p] = s[p];
             }
         }
@@ -9941,258 +9969,69 @@ var YArray = Y.Array,
  *
  * @param {String} type The type of event, which is passed to the callback
  * when the event fires.
- * @param {object} o configuration object.
+ * @param {object} defaults configuration object.
  * @class CustomEvent
  * @constructor
  */
-Y.CustomEvent = function(type, o) {
+
+ /**
+ * The type of event, returned to subscribers when the event fires
+ * @property type
+ * @type string
+ */
+
+/**
+ * By default all custom events are logged in the debug build, set silent
+ * to true to disable debug outpu for this event.
+ * @property silent
+ * @type boolean
+ */
+
+Y.CustomEvent = function(type, defaults) {
 
     this._kds = Y.CustomEvent.keepDeprecatedSubs;
 
-    o = o || {};
+    this.id = Y.guid();
 
-    this.id = Y.stamp(this);
-
-    /**
-     * The type of event, returned to subscribers when the event fires
-     * @property type
-     * @type string
-     */
     this.type = type;
+    this.silent = this.logSystem = (type === YUI_LOG);
 
-    /**
-     * The context the the event will fire from by default.  Defaults to the YUI
-     * instance.
-     * @property context
-     * @type object
-     */
-    this.context = Y;
-
-    /**
-     * Monitor when an event is attached or detached.
-     *
-     * @property monitored
-     * @type boolean
-     */
-    // this.monitored = false;
-
-    this.logSystem = (type == YUI_LOG);
-
-    /**
-     * If 0, this event does not broadcast.  If 1, the YUI instance is notified
-     * every time this event fires.  If 2, the YUI instance and the YUI global
-     * (if event is enabled on the global) are notified every time this event
-     * fires.
-     * @property broadcast
-     * @type int
-     */
-    // this.broadcast = 0;
-
-    /**
-     * By default all custom events are logged in the debug build, set silent
-     * to true to disable debug outpu for this event.
-     * @property silent
-     * @type boolean
-     */
-    this.silent = this.logSystem;
-
-    /**
-     * Specifies whether this event should be queued when the host is actively
-     * processing an event.  This will effect exectution order of the callbacks
-     * for the various events.
-     * @property queuable
-     * @type boolean
-     * @default false
-     */
-    // this.queuable = false;
-
-    /**
-     * The subscribers to this event
-     * @property subscribers
-     * @type Subscriber {}
-     * @deprecated
-     */
     if (this._kds) {
+        /**
+         * The subscribers to this event
+         * @property subscribers
+         * @type Subscriber {}
+         * @deprecated
+         */
+
+        /**
+         * 'After' subscribers
+         * @property afters
+         * @type Subscriber {}
+         * @deprecated
+         */
         this.subscribers = {};
-    }
-
-    /**
-     * The subscribers to this event
-     * @property _subscribers
-     * @type Subscriber []
-     * @private
-     */
-    this._subscribers = [];
-
-    /**
-     * 'After' subscribers
-     * @property afters
-     * @type Subscriber {}
-     */
-    if (this._kds) {
         this.afters = {};
     }
 
-    /**
-     * 'After' subscribers
-     * @property _afters
-     * @type Subscriber []
-     * @private
-     */
-    this._afters = [];
-
-    /**
-     * This event has fired if true
-     *
-     * @property fired
-     * @type boolean
-     * @default false;
-     */
-    // this.fired = false;
-
-    /**
-     * An array containing the arguments the custom event
-     * was last fired with.
-     * @property firedWith
-     * @type Array
-     */
-    // this.firedWith;
-
-    /**
-     * This event should only fire one time if true, and if
-     * it has fired, any new subscribers should be notified
-     * immediately.
-     *
-     * @property fireOnce
-     * @type boolean
-     * @default false;
-     */
-    // this.fireOnce = false;
-
-    /**
-     * fireOnce listeners will fire syncronously unless async
-     * is set to true
-     * @property async
-     * @type boolean
-     * @default false
-     */
-    //this.async = false;
-
-    /**
-     * Flag for stopPropagation that is modified during fire()
-     * 1 means to stop propagation to bubble targets.  2 means
-     * to also stop additional subscribers on this target.
-     * @property stopped
-     * @type int
-     */
-    // this.stopped = 0;
-
-    /**
-     * Flag for preventDefault that is modified during fire().
-     * if it is not 0, the default behavior for this event
-     * @property prevented
-     * @type int
-     */
-    // this.prevented = 0;
-
-    /**
-     * Specifies the host for this custom event.  This is used
-     * to enable event bubbling
-     * @property host
-     * @type EventTarget
-     */
-    // this.host = null;
-
-    /**
-     * The default function to execute after event listeners
-     * have fire, but only if the default action was not
-     * prevented.
-     * @property defaultFn
-     * @type Function
-     */
-    // this.defaultFn = null;
-
-    /**
-     * The function to execute if a subscriber calls
-     * stopPropagation or stopImmediatePropagation
-     * @property stoppedFn
-     * @type Function
-     */
-    // this.stoppedFn = null;
-
-    /**
-     * The function to execute if a subscriber calls
-     * preventDefault
-     * @property preventedFn
-     * @type Function
-     */
-    // this.preventedFn = null;
-
-    /**
-     * Specifies whether or not this event's default function
-     * can be cancelled by a subscriber by executing preventDefault()
-     * on the event facade
-     * @property preventable
-     * @type boolean
-     * @default true
-     */
-    this.preventable = true;
-
-    /**
-     * Specifies whether or not a subscriber can stop the event propagation
-     * via stopPropagation(), stopImmediatePropagation(), or halt()
-     *
-     * Events can only bubble if emitFacade is true.
-     *
-     * @property bubbles
-     * @type boolean
-     * @default true
-     */
-    this.bubbles = true;
-
-    /**
-     * Supports multiple options for listener signatures in order to
-     * port YUI 2 apps.
-     * @property signature
-     * @type int
-     * @default 9
-     */
-    this.signature = YUI3_SIGNATURE;
-
-    // this.subCount = 0;
-    // this.afterCount = 0;
-
-    // this.hasSubscribers = false;
-    // this.hasAfters = false;
-
-    /**
-     * If set to true, the custom event will deliver an EventFacade object
-     * that is similar to a DOM event object.
-     * @property emitFacade
-     * @type boolean
-     * @default false
-     */
-    // this.emitFacade = false;
-
-    this.applyConfig(o, true);
-
-    // this.log("Creating " + this.type);
-
+    if (defaults) {
+        mixConfigs(this, defaults, true);
+    }
 };
 
 /**
  * Static flag to enable population of the <a href="#property_subscribers">`subscribers`</a>
  * and  <a href="#property_subscribers">`afters`</a> properties held on a `CustomEvent` instance.
- * 
- * These properties were changed to private properties (`_subscribers` and `_afters`), and 
- * converted from objects to arrays for performance reasons. 
  *
- * Setting this property to true will populate the deprecated `subscribers` and `afters` 
+ * These properties were changed to private properties (`_subscribers` and `_afters`), and
+ * converted from objects to arrays for performance reasons.
+ *
+ * Setting this property to true will populate the deprecated `subscribers` and `afters`
  * properties for people who may be using them (which is expected to be rare). There will
  * be a performance hit, compared to the new array based implementation.
  *
  * If you are using these deprecated properties for a use case which the public API
- * does not support, please file an enhancement request, and we can provide an alternate 
+ * does not support, please file an enhancement request, and we can provide an alternate
  * public implementation which doesn't have the performance cost required to maintiain the
  * properties as objects.
  *
@@ -10212,6 +10051,169 @@ Y.CustomEvent.prototype = {
     constructor: Y.CustomEvent,
 
     /**
+     * Monitor when an event is attached or detached.
+     *
+     * @property monitored
+     * @type boolean
+     */
+
+    /**
+     * If 0, this event does not broadcast.  If 1, the YUI instance is notified
+     * every time this event fires.  If 2, the YUI instance and the YUI global
+     * (if event is enabled on the global) are notified every time this event
+     * fires.
+     * @property broadcast
+     * @type int
+     */
+
+    /**
+     * Specifies whether this event should be queued when the host is actively
+     * processing an event.  This will effect exectution order of the callbacks
+     * for the various events.
+     * @property queuable
+     * @type boolean
+     * @default false
+     */
+
+    /**
+     * This event has fired if true
+     *
+     * @property fired
+     * @type boolean
+     * @default false;
+     */
+
+    /**
+     * An array containing the arguments the custom event
+     * was last fired with.
+     * @property firedWith
+     * @type Array
+     */
+
+    /**
+     * This event should only fire one time if true, and if
+     * it has fired, any new subscribers should be notified
+     * immediately.
+     *
+     * @property fireOnce
+     * @type boolean
+     * @default false;
+     */
+
+    /**
+     * fireOnce listeners will fire syncronously unless async
+     * is set to true
+     * @property async
+     * @type boolean
+     * @default false
+     */
+
+    /**
+     * Flag for stopPropagation that is modified during fire()
+     * 1 means to stop propagation to bubble targets.  2 means
+     * to also stop additional subscribers on this target.
+     * @property stopped
+     * @type int
+     */
+
+    /**
+     * Flag for preventDefault that is modified during fire().
+     * if it is not 0, the default behavior for this event
+     * @property prevented
+     * @type int
+     */
+
+    /**
+     * Specifies the host for this custom event.  This is used
+     * to enable event bubbling
+     * @property host
+     * @type EventTarget
+     */
+
+    /**
+     * The default function to execute after event listeners
+     * have fire, but only if the default action was not
+     * prevented.
+     * @property defaultFn
+     * @type Function
+     */
+
+    /**
+     * The function to execute if a subscriber calls
+     * stopPropagation or stopImmediatePropagation
+     * @property stoppedFn
+     * @type Function
+     */
+
+    /**
+     * The function to execute if a subscriber calls
+     * preventDefault
+     * @property preventedFn
+     * @type Function
+     */
+
+    /**
+     * The subscribers to this event
+     * @property _subscribers
+     * @type Subscriber []
+     * @private
+     */
+
+    /**
+     * 'After' subscribers
+     * @property _afters
+     * @type Subscriber []
+     * @private
+     */
+
+    /**
+     * If set to true, the custom event will deliver an EventFacade object
+     * that is similar to a DOM event object.
+     * @property emitFacade
+     * @type boolean
+     * @default false
+     */
+
+    /**
+     * Supports multiple options for listener signatures in order to
+     * port YUI 2 apps.
+     * @property signature
+     * @type int
+     * @default 9
+     */
+    signature : YUI3_SIGNATURE,
+
+    /**
+     * The context the the event will fire from by default.  Defaults to the YUI
+     * instance.
+     * @property context
+     * @type object
+     */
+    context : Y,
+
+    /**
+     * Specifies whether or not this event's default function
+     * can be cancelled by a subscriber by executing preventDefault()
+     * on the event facade
+     * @property preventable
+     * @type boolean
+     * @default true
+     */
+    preventable : true,
+
+    /**
+     * Specifies whether or not a subscriber can stop the event propagation
+     * via stopPropagation(), stopImmediatePropagation(), or halt()
+     *
+     * Events can only bubble if emitFacade is true.
+     *
+     * @property bubbles
+     * @type boolean
+     * @default true
+     */
+    bubbles : true,
+
+    /**
      * Returns the number of subscribers for this event as the sum of the on()
      * subscribers and after() subscribers.
      *
@@ -10219,15 +10221,35 @@ Y.CustomEvent.prototype = {
      * @return Number
      */
     hasSubs: function(when) {
-        var s = this._subscribers.length, a = this._afters.length, sib = this.sibling;
+        var s = 0,
+            a = 0,
+            subs = this._subscribers,
+            afters = this._afters,
+            sib = this.sibling;
+
+        if (subs) {
+            s = subs.length;
+        }
+
+        if (afters) {
+            a = afters.length;
+        }
 
         if (sib) {
-            s += sib._subscribers.length;
-            a += sib._afters.length;
+            subs = sib._subscribers;
+            afters = sib._afters;
+
+            if (subs) {
+                s += subs.length;
+            }
+
+            if (afters) {
+                a += afters.length;
+            }
         }
 
         if (when) {
-            return (when == 'after') ? a : s;
+            return (when === 'after') ? a : s;
         }
 
         return (s + a);
@@ -10255,12 +10277,47 @@ Y.CustomEvent.prototype = {
      * @return {Array} first item is the on subscribers, second the after.
      */
     getSubs: function() {
-        var s = this._subscribers, a = this._afters, sib = this.sibling;
 
-        s = (sib) ? s.concat(sib._subscribers) : s.concat();
-        a = (sib) ? a.concat(sib._afters) : a.concat();
+        var sibling = this.sibling,
+            subs = this._subscribers,
+            afters = this._afters,
+            siblingSubs,
+            siblingAfters;
 
-        return [s, a];
+        if (sibling) {
+            siblingSubs = sibling._subscribers;
+            siblingAfters = sibling._afters;
+        }
+
+        if (siblingSubs) {
+            if (subs) {
+                subs = subs.concat(siblingSubs);
+            } else {
+                subs = siblingSubs.concat();
+            }
+        } else {
+            if (subs) {
+                subs = subs.concat();
+            } else {
+                subs = [];
+            }
+        }
+
+        if (siblingAfters) {
+            if (afters) {
+                afters = afters.concat(siblingAfters);
+            } else {
+                afters = siblingAfters.concat();
+            }
+        } else {
+            if (afters) {
+                afters = afters.concat();
+            } else {
+                afters = [];
+            }
+        }
+
+        return [subs, afters];
     },
 
     /**
@@ -10276,7 +10333,7 @@ Y.CustomEvent.prototype = {
 
     /**
      * Create the Subscription for subscribing function, context, and bound
-     * arguments.  If this is a fireOnce event, the subscriber is immediately 
+     * arguments.  If this is a fireOnce event, the subscriber is immediately
      * notified.
      *
      * @method _on
@@ -10301,14 +10358,22 @@ Y.CustomEvent.prototype = {
             }
         }
 
-        if (when == AFTER) {
+        if (when === AFTER) {
+            if (!this._afters) {
+                this._afters = [];
+                this._hasAfters = true;
+            }
             this._afters.push(s);
         } else {
+            if (!this._subscribers) {
+                this._subscribers = [];
+                this._hasSubs = true;
+            }
             this._subscribers.push(s);
         }
 
         if (this._kds) {
-            if (when == AFTER) {
+            if (when === AFTER) {
                 this.afters[s.id] = s;
             } else {
                 this.subscribers[s.id] = s;
@@ -10330,7 +10395,7 @@ Y.CustomEvent.prototype = {
         var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
         return this._on(fn, context, a, true);
     },
- 
+
     /**
      * Listen for this event
      * @method on
@@ -10380,25 +10445,29 @@ Y.CustomEvent.prototype = {
         if (fn && fn.detach) {
             return fn.detach();
         }
-        
+
         var i, s,
             found = 0,
             subs = this._subscribers,
             afters = this._afters;
 
-        for (i = subs.length; i >= 0; i--) {
-            s = subs[i];
-            if (s && (!fn || fn === s.fn)) {
-                this._delete(s, subs, i);
-                found++;
+        if (subs) {
+            for (i = subs.length; i >= 0; i--) {
+                s = subs[i];
+                if (s && (!fn || fn === s.fn)) {
+                    this._delete(s, subs, i);
+                    found++;
+                }
             }
         }
 
-        for (i = afters.length; i >= 0; i--) {
-            s = afters[i];
-            if (s && (!fn || fn === s.fn)) {
-                this._delete(s, afters, i);
-                found++;
+        if (afters) {
+            for (i = afters.length; i >= 0; i--) {
+                s = afters[i];
+                if (s && (!fn || fn === s.fn)) {
+                    this._delete(s, afters, i);
+                    found++;
+                }
             }
         }
 
@@ -10469,12 +10538,33 @@ Y.CustomEvent.prototype = {
      *
      */
     fire: function() {
+
+        // push is the fastest way to go from arguments to arrays
+        // for most browsers currently
+        // http://jsperf.com/push-vs-concat-vs-slice/2
+
+        var args = [];
+        args.push.apply(args, arguments);
+
+        return this._fire(args);
+    },
+
+    /**
+     * Private internal implementation for `fire`, which is can be used directly by
+     * `EventTarget` and other event module classes which have already converted from
+     * an `arguments` list to an array, to avoid the repeated overhead.
+     *
+     * @method _fire
+     * @private
+     * @param {Array} args The array of arguments passed to be passed to handlers.
+     * @return {boolean} false if one of the subscribers returned false, true otherwise.
+     */
+    _fire: function(args) {
+
         if (this.fireOnce && this.fired) {
             this.log('fireOnce event: ' + this.type + ' already fired');
             return true;
         } else {
-
-            var args = nativeSlice.call(arguments, 0);
 
             // this doesn't happen if the event isn't published
             // this.host._monitor('fire', this.type, args);
@@ -10509,7 +10599,9 @@ Y.CustomEvent.prototype = {
             this._procSubs(subs[0], args);
             this._procSubs(subs[1], args);
         }
-        this._broadcast(args);
+        if (this.broadcast) {
+            this._broadcast(args);
+        }
         return this.stopped ? false : true;
     },
 
@@ -10541,7 +10633,7 @@ Y.CustomEvent.prototype = {
                 if (false === this._notify(s, args, ef)) {
                     this.stopped = 2;
                 }
-                if (this.stopped == 2) {
+                if (this.stopped === 2) {
                     return false;
                 }
             }
@@ -10568,7 +10660,7 @@ Y.CustomEvent.prototype = {
                 Y.fire.apply(Y, a);
             }
 
-            if (this.broadcast == 2) {
+            if (this.broadcast === 2) {
                 Y.Global.fire.apply(Y.Global, a);
             }
         }
@@ -10607,12 +10699,22 @@ Y.CustomEvent.prototype = {
         var when = s._when;
 
         if (!subs) {
-            subs = (when === AFTER) ? this._afters : this._subscribers; 
+            subs = (when === AFTER) ? this._afters : this._subscribers;
             i = YArray.indexOf(subs, s, 0);
         }
 
-        if (s && subs[i] === s) {
-            subs.splice(i, 1);
+        if (subs) {
+            if (s && subs[i] === s) {
+                subs.splice(i, 1);
+
+                if (subs.length === 0) {
+                    if (when === AFTER) {
+                        this._hasAfters = false;
+                    } else {
+                        this._hasSubs = false;
+                    }
+                }
+            }
         }
 
         if (this._kds) {
@@ -10666,7 +10768,7 @@ Y.Subscriber = function(fn, context, args, when) {
      * @property id
      * @type String
      */
-    this.id = Y.stamp(this);
+    this.id = Y.guid();
 
     /**
      * Additional arguments to propagate to the subscriber
@@ -10770,12 +10872,12 @@ Y.Subscriber.prototype = {
      */
     contains: function(fn, context) {
         if (context) {
-            return ((this.fn == fn) && this.context == context);
+            return ((this.fn === fn) && this.context === context);
         } else {
-            return (this.fn == fn);
+            return (this.fn === fn);
         }
     },
-    
+
     valueOf : function() {
         return this.id;
     }
@@ -10894,14 +10996,14 @@ var L = Y.Lang,
      * @method _getType
      * @private
      */
-    _getType = Y.cached(function(type, pre) {
+    _getType = function(type, pre) {
 
-        if (!pre || (typeof type !== "string") || type.indexOf(PREFIX_DELIMITER) > -1) {
+        if (!pre || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
         }
 
         return pre + PREFIX_DELIMITER + type;
-    }),
+    },
 
     /**
      * Returns an array with the detach key (if provided),
@@ -10923,7 +11025,6 @@ var L = Y.Lang,
         if (i > -1) {
             after = true;
             t = t.substr(AFTER_PREFIX.length);
-            // Y.log(t);
         }
 
         i = t.indexOf(CATEGORY_DELIMITER);
@@ -10931,7 +11032,7 @@ var L = Y.Lang,
         if (i > -1) {
             detachcategory = t.substr(0, (i));
             t = t.substr(i+1);
-            if (t == '*') {
+            if (t === '*') {
                 t = null;
             }
         }
@@ -10942,40 +11043,38 @@ var L = Y.Lang,
 
     ET = function(opts) {
 
-        // Y.log('EventTarget constructor executed: ' + this._yuid);
+        var etState = this._yuievt,
+            etConfig;
 
-        var o = (L.isObject(opts)) ? opts : {};
+        if (!etState) {
+            etState = this._yuievt = {
+                events: {},    // PERF: Not much point instantiating lazily. We're bound to have events
+                targets: null, // PERF: Instantiate lazily, if user actually adds target,
+                config: {
+                    host: this,
+                    context: this
+                },
+                chain: Y.config.chain
+            };
+        }
 
-        this._yuievt = this._yuievt || {
+        etConfig = etState.config;
 
-            id: Y.guid(),
+        if (opts) {
+            mixConfigs(etConfig, opts, true);
 
-            events: {},
-
-            targets: {},
-
-            config: o,
-
-            chain: ('chain' in o) ? o.chain : Y.config.chain,
-
-            bubbling: false,
-
-            defaults: {
-                context: o.context || this,
-                host: this,
-                emitFacade: o.emitFacade,
-                fireOnce: o.fireOnce,
-                queuable: o.queuable,
-                monitored: o.monitored,
-                broadcast: o.broadcast,
-                defaultTargetOnly: o.defaultTargetOnly,
-                bubbles: ('bubbles' in o) ? o.bubbles : true
+            if (opts.chain !== undefined) {
+                etState.chain = opts.chain;
             }
-        };
+
+            if (opts.prefix) {
+                etConfig.prefix = opts.prefix;
+            }
+        }
     };
 
-
 ET.prototype = {
+
     constructor: ET,
 
     /**
@@ -11173,6 +11272,11 @@ ET.prototype = {
         if (!handle) {
             ce = yuievt.events[type] || this.publish(type);
             handle = ce._on(fn, context, (arguments.length > 3) ? nativeSlice.call(arguments, 3) : null, (after) ? 'after' : true);
+
+            // TODO: More robust regex, accounting for category
+            if (type.indexOf("*:") !== -1) {
+                this._hasSiblings = true;
+            }
         }
 
         if (detachcategory) {
@@ -11212,8 +11316,11 @@ ET.prototype = {
      * @return {EventTarget} the host
      */
     detach: function(type, fn, context) {
-        var evts = this._yuievt.events, i,
-            Node = Y.Node, isNode = Node && (Y.instanceOf(this, Node));
+
+        var evts = this._yuievt.events,
+            i,
+            Node = Y.Node,
+            isNode = Node && (Y.instanceOf(this, Node));
 
         // detachAll disabled on the Y instance.
         if (!type && (this !== Y)) {
@@ -11406,53 +11513,102 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *
      */
     publish: function(type, opts) {
-        var events, ce, ret, defaults,
-            edata = this._yuievt,
-            pre = edata.config.prefix;
 
-        if (L.isObject(type)) {
+        var ret,
+            etState = this._yuievt,
+            etConfig = etState.config,
+            pre = etConfig.prefix;
+
+        if (typeof type === "string")  {
+            if (pre) {
+                type = _getType(type, pre);
+            }
+            ret = this._publish(type, etConfig, opts);
+        } else {
             ret = {};
+
             Y.each(type, function(v, k) {
-                ret[k] = this.publish(k, v || opts);
+                if (pre) {
+                    k = _getType(k, pre);
+                }
+                ret[k] = this._publish(k, etConfig, v || opts);
             }, this);
 
-            return ret;
         }
 
-        type = (pre) ? _getType(type, pre) : type;
+        return ret;
+    },
 
-        events = edata.events;
-        ce = events[type];
+    /**
+     * Returns the fully qualified type, given a short type string.
+     * That is, returns "foo:bar" when given "bar" if "foo" is the configured prefix.
+     *
+     * NOTE: This method, unlike _getType, does no checking of the value passed in, and
+     * is designed to be used with the low level _publish() method, for critical path
+     * implementations which need to fast-track publish for performance reasons.
+     *
+     * @method _getFullType
+     * @private
+     * @param {String} type The short type to prefix
+     * @return {String} The prefixed type, if a prefix is set, otherwise the type passed in
+     */
+    _getFullType : function(type) {
 
-        this._monitor('publish', type, {
-            args: arguments
-        });
+        var pre = this._yuievt.config.prefix;
 
-        if (ce) {
-            // ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
-            if (opts) {
-                ce.applyConfig(opts, true);
-            }
+        if (pre) {
+            return pre + PREFIX_DELIMITER + type;
         } else {
-            // TODO: Lazy publish goes here.
-            defaults = edata.defaults;
+            return type;
+        }
+    },
 
-            // apply defaults
-            ce = new Y.CustomEvent(type, defaults);
-            if (opts) {
-                ce.applyConfig(opts, true);
-            }
+    /**
+     * The low level event publish implementation. It expects all the massaging to have been done
+     * outside of this method. e.g. the `type` to `fullType` conversion. It's designed to be a fast
+     * path publish, which can be used by critical code paths to improve performance.
+     *
+     * @method _publish
+     * @private
+     * @param {String} fullType The prefixed type of the event to publish.
+     * @param {Object} etOpts The EventTarget specific configuration to mix into the published event.
+     * @param {Object} ceOpts The publish specific configuration to mix into the published event.
+     * @return {CustomEvent} The published event. If called without `etOpts` or `ceOpts`, this will
+     * be the default `CustomEvent` instance, and can be configured independently.
+     */
+    _publish : function(fullType, etOpts, ceOpts) {
 
-            events[type] = ce;
+        var ce,
+            etState = this._yuievt,
+            etConfig = etState.config,
+            host = etConfig.host,
+            context = etConfig.context,
+            events = etState.events;
+
+        ce = events[fullType];
+
+        // PERF: Hate to pull the check out of monitor, but trying to keep critical path tight.
+        if ((etConfig.monitored && !ce) || (ce && ce.monitored)) {
+            this._monitor('publish', fullType, {
+                args: arguments
+            });
         }
 
-        // make sure we turn the broadcast flag off if this
-        // event was published as a result of bubbling
-        // if (opts instanceof Y.CustomEvent) {
-          //   events[type].broadcast = false;
-        // }
+        if (!ce) {
+            // Publish event
+            ce = events[fullType] = new Y.CustomEvent(fullType, etOpts);
 
-        return events[type];
+            if (!etOpts) {
+                ce.host = host;
+                ce.context = context;
+            }
+        }
+
+        if (ceOpts) {
+            mixConfigs(ce, ceOpts, true);
+        }
+
+        return ce;
     },
 
     /**
@@ -11492,7 +11648,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         }
     },
 
-   /**
+    /**
      * Fire a custom event by name.  The callback functions will be executed
      * from the context specified when the event was created, and with the
      * following parameters.
@@ -11521,26 +11677,55 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     fire: function(type) {
 
-        var typeIncluded = L.isString(type),
-            t = (typeIncluded) ? type : (type && type.type),
+        var typeIncluded = (typeof type === "string"),
+            argCount = arguments.length,
+            t = type,
             yuievt = this._yuievt,
-            pre = yuievt.config.prefix, 
-            ce, ret, 
+            etConfig = yuievt.config,
+            pre = etConfig.prefix,
+            ret,
+            ce,
             ce2,
-            args = (typeIncluded) ? nativeSlice.call(arguments, 1) : arguments;
+            args;
 
-        t = (pre) ? _getType(t, pre) : t;
+        if (typeIncluded && argCount <= 2) {
 
-        ce = this.getEvent(t, true);
-        ce2 = this.getSibling(t, ce);
+            // PERF: Try to avoid slice/iteration for the common signatures
 
-        if (ce2 && !ce) {
-            ce = this.publish(t);
+            if (argCount === 2) {
+                args = [arguments[1]]; // fire("foo", {})
+            } else {
+                args = []; // fire("foo")
+            }
+
+        } else {
+            args = nativeSlice.call(arguments, ((typeIncluded) ? 1 : 0));
         }
 
-        this._monitor('fire', (ce || t), {
-            args: args
-        });
+        if (!typeIncluded) {
+            t = (type && type.type);
+        }
+
+        if (pre) {
+            t = _getType(t, pre);
+        }
+
+        ce = yuievt.events[t];
+
+        if (this._hasSiblings) {
+            ce2 = this.getSibling(t, ce);
+
+            if (ce2 && !ce) {
+                ce = this.publish(t);
+            }
+        }
+
+        // PERF: trying to avoid function call, since this is a critical path
+        if ((etConfig.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
+            this._monitor('fire', (ce || t), {
+                args: args
+            });
+        }
 
         // this event has not been published or subscribed to
         if (!ce) {
@@ -11551,8 +11736,12 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             // otherwise there is nothing to be done
             ret = true;
         } else {
-            ce.sibling = ce2;
-            ret = ce.fire.apply(ce, args);
+
+            if (ce2) {
+                ce.sibling = ce2;
+            }
+
+            ret = ce._fire(args);
         }
 
         return (yuievt.chain) ? this : ret;
@@ -11560,17 +11749,15 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
     getSibling: function(type, ce) {
         var ce2;
+
         // delegate to *:type events if there are subscribers
         if (type.indexOf(PREFIX_DELIMITER) > -1) {
             type = _wildType(type);
-            // console.log(type);
             ce2 = this.getEvent(type, true);
             if (ce2) {
-                // console.log("GOT ONE: " + type);
                 ce2.applyConfig(ce);
                 ce2.bubbles = false;
                 ce2.broadcast = 0;
-                // ret = ce2.fire.apply(ce2, a);
             }
         }
 
@@ -11587,6 +11774,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     getEvent: function(type, prefixed) {
         var pre, e;
+
         if (!prefixed) {
             pre = this._yuievt.config.prefix;
             type = (pre) ? _getType(type, pre) : type;
@@ -11685,7 +11873,9 @@ Y.Global = YUI.Env.globalEvents;
     treating that method as an event</li>
 </ul>
 
-For custom event subscriptions, pass the custom event name as the first argument and callback as the second. The `this` object in the callback will be `Y` unless an override is passed as the third argument.
+For custom event subscriptions, pass the custom event name as the first argument
+and callback as the second. The `this` object in the callback will be `Y` unless
+an override is passed as the third argument.
 
     Y.on('io:complete', function () {
         Y.MyApp.updateStatus('Transaction complete');
@@ -11711,7 +11901,7 @@ selector or other identifier.
 `defaultFn` can prevent the default behavior with `e.preventDefault()` from the
 event object passed as the first parameter to the subscription callback.
 
-To subscribe to the execution of an object method, pass arguments corresponding to the call signature for 
+To subscribe to the execution of an object method, pass arguments corresponding to the call signature for
 <a href="../classes/Do.html#methods_before">`Y.Do.before(...)`</a>.
 
 NOTE: The formal parameter list below is for events, not for function
@@ -11809,10 +11999,11 @@ YUI.add('event-custom-complex', function (Y, NAME) {
 
 var FACADE,
     FACADE_KEYS,
+    YObject = Y.Object,
     key,
     EMPTY = {},
     CEProto = Y.CustomEvent.prototype,
-    ETProto = Y.EventTarget.prototype, 
+    ETProto = Y.EventTarget.prototype,
 
     mixFacadeProps = function(facade, payload) {
         var p;
@@ -11834,7 +12025,9 @@ var FACADE,
 
 Y.EventFacade = function(e, currentTarget) {
 
-    e = e || EMPTY;
+    if (!e) {
+        e = EMPTY;
+    }
 
     this._event = e;
 
@@ -11933,185 +12126,253 @@ Y.mix(Y.EventFacade.prototype, {
 
 CEProto.fireComplex = function(args) {
 
-    var es, ef, q, queue, ce, ret, events, subs, postponed,
-        self = this, host = self.host || self, next, oldbubble;
+    var es,
+        ef,
+        q,
+        queue,
+        ce,
+        ret = true,
+        events,
+        subs,
+        ons,
+        afters,
+        afterQueue,
+        postponed,
+        prevented,
+        preventedFn,
+        defaultFn,
+        self = this,
+        host = self.host || self,
+        next,
+        oldbubble,
+        stack,
+        yuievt = host._yuievt,
+        hasPotentialSubscribers;
 
-    if (self.stack) {
+    stack = self.stack;
+
+    if (stack) {
+
         // queue this event if the current item in the queue bubbles
-        if (self.queuable && self.type != self.stack.next.type) {
+        if (self.queuable && self.type !== stack.next.type) {
             self.log('queue ' + self.type);
-            self.stack.queue.push([self, args]);
+
+            if (!stack.queue) {
+                stack.queue = [];
+            }
+            stack.queue.push([self, args]);
+
             return true;
         }
     }
 
-    es = self.stack || {
-       // id of the first event in the stack
-       id: self.id,
-       next: self,
-       silent: self.silent,
-       stopped: 0,
-       prevented: 0,
-       bubbling: null,
-       type: self.type,
-       // defaultFnQueue: new Y.Queue(),
-       afterQueue: new Y.Queue(),
-       defaultTargetOnly: self.defaultTargetOnly,
-       queue: []
-    };
-
-    subs = self.getSubs();
-
-    self.stopped = (self.type !== es.type) ? 0 : es.stopped;
-    self.prevented = (self.type !== es.type) ? 0 : es.prevented;
+    hasPotentialSubscribers = self.hasSubs() || yuievt.hasTargets || self.broadcast;
 
     self.target = self.target || host;
-
-    if (self.stoppedFn) {
-        events = new Y.EventTarget({
-            fireOnce: true,
-            context: host
-        });
-        
-        self.events = events;
-
-        events.on('stopped', self.stoppedFn);
-    }
-
     self.currentTarget = host;
 
-    self.details = args.slice(); // original arguments in the details
+    self.details = args.concat();
 
-    // self.log("Firing " + self  + ", " + "args: " + args);
-    self.log("Firing " + self.type);
+    if (hasPotentialSubscribers) {
 
-    self._facade = null; // kill facade to eliminate stale properties
+        es = stack || {
 
-    ef = self._getFacade(args);
+           id: self.id, // id of the first event in the stack
+           next: self,
+           silent: self.silent,
+           stopped: 0,
+           prevented: 0,
+           bubbling: null,
+           type: self.type,
+           // defaultFnQueue: new Y.Queue(),
+           defaultTargetOnly: self.defaultTargetOnly
 
-    if (Y.Lang.isObject(args[0])) {
-        args[0] = ef;
-    } else {
-        args.unshift(ef);
-    }
+        };
 
-    if (subs[0]) {
-        self._procSubs(subs[0], args, ef);
-    }
+        subs = self.getSubs();
+        ons = subs[0];
+        afters = subs[1];
 
-    // bubble if this is hosted in an event target and propagation has not been stopped
-    if (self.bubbles && host.bubble && !self.stopped) {
+        self.stopped = (self.type !== es.type) ? 0 : es.stopped;
+        self.prevented = (self.type !== es.type) ? 0 : es.prevented;
 
-        oldbubble = es.bubbling;
-
-        es.bubbling = self.type;
-
-        if (es.type != self.type) {
-            es.stopped = 0;
-            es.prevented = 0;
+        if (self.stoppedFn) {
+            // PERF TODO: Can we replace with callback, like preventedFn. Look into history
+            events = new Y.EventTarget({
+                fireOnce: true,
+                context: host
+            });
+            self.events = events;
+            events.on('stopped', self.stoppedFn);
         }
 
-        ret = host.bubble(self, args, null, es);
+        // self.log("Firing " + self  + ", " + "args: " + args);
+        self.log("Firing " + self.type);
 
-        self.stopped = Math.max(self.stopped, es.stopped);
-        self.prevented = Math.max(self.prevented, es.prevented);
+        self._facade = null; // kill facade to eliminate stale properties
 
-        es.bubbling = oldbubble;
-    }
+        ef = self._getFacade(args);
 
-    if (self.prevented) {
-        if (self.preventedFn) {
-            self.preventedFn.apply(host, args);
+        if (ons) {
+            self._procSubs(ons, args, ef);
         }
-    } else if (self.defaultFn &&
-              ((!self.defaultTargetOnly && !es.defaultTargetOnly) ||
-                host === ef.target)) {
-        self.defaultFn.apply(host, args);
-    }
 
-    // broadcast listeners are fired as discreet events on the
-    // YUI instance and potentially the YUI global.
-    self._broadcast(args);
+        // bubble if this is hosted in an event target and propagation has not been stopped
+        if (self.bubbles && host.bubble && !self.stopped) {
+            oldbubble = es.bubbling;
 
-    // Queue the after
-    if (subs[1] && !self.prevented && self.stopped < 2) {
-        if (es.id === self.id || self.type != host._yuievt.bubbling) {
-            self._procSubs(subs[1], args, ef);
-            while ((next = es.afterQueue.last())) {
-                next();
+            es.bubbling = self.type;
+
+            if (es.type !== self.type) {
+                es.stopped = 0;
+                es.prevented = 0;
+            }
+
+            ret = host.bubble(self, args, null, es);
+
+            self.stopped = Math.max(self.stopped, es.stopped);
+            self.prevented = Math.max(self.prevented, es.prevented);
+
+            es.bubbling = oldbubble;
+        }
+
+        prevented = self.prevented;
+
+        if (prevented) {
+            preventedFn = self.preventedFn;
+            if (preventedFn) {
+                preventedFn.apply(host, args);
             }
         } else {
-            postponed = subs[1];
-            if (es.execDefaultCnt) {
-                postponed = Y.merge(postponed);
-                Y.each(postponed, function(s) {
-                    s.postponed = true;
+            defaultFn = self.defaultFn;
+
+            if (defaultFn && ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {
+                defaultFn.apply(host, args);
+            }
+        }
+
+        // broadcast listeners are fired as discreet events on the
+        // YUI instance and potentially the YUI global.
+        if (self.broadcast) {
+            self._broadcast(args);
+        }
+
+        if (afters && !self.prevented && self.stopped < 2) {
+
+            // Queue the after
+            afterQueue = es.afterQueue;
+
+            if (es.id === self.id || self.type !== yuievt.bubbling) {
+
+                self._procSubs(afters, args, ef);
+
+                if (afterQueue) {
+                    while ((next = afterQueue.last())) {
+                        next();
+                    }
+                }
+            } else {
+                postponed = afters;
+
+                if (es.execDefaultCnt) {
+                    postponed = Y.merge(postponed);
+
+                    Y.each(postponed, function(s) {
+                        s.postponed = true;
+                    });
+                }
+
+                if (!afterQueue) {
+                    es.afterQueue = new Y.Queue();
+                }
+
+                es.afterQueue.add(function() {
+                    self._procSubs(postponed, args, ef);
                 });
             }
 
-            es.afterQueue.add(function() {
-                self._procSubs(postponed, args, ef);
-            });
-        }
-    }
-
-    self.target = null;
-
-    if (es.id === self.id) {
-        queue = es.queue;
-
-        while (queue.length) {
-            q = queue.pop();
-            ce = q[0];
-            // set up stack to allow the next item to be processed
-            es.next = ce;
-            ce.fire.apply(ce, q[1]);
         }
 
-        self.stack = null;
+        self.target = null;
+
+        if (es.id === self.id) {
+
+            queue = es.queue;
+
+            if (queue) {
+                while (queue.length) {
+                    q = queue.pop();
+                    ce = q[0];
+                    // set up stack to allow the next item to be processed
+                    es.next = ce;
+                    ce._fire(q[1]);
+                }
+            }
+
+            self.stack = null;
+        }
+
+        ret = !(self.stopped);
+
+        if (self.type !== yuievt.bubbling) {
+            es.stopped = 0;
+            es.prevented = 0;
+            self.stopped = 0;
+            self.prevented = 0;
+        }
+
+        // Kill the cached facade to free up memory.
+        // Otherwise we have the facade from the last fire, sitting around forever.
+        self._facade = null;
+
+        return ret;
+
+    } else {
+        defaultFn = self.defaultFn;
+
+        if(defaultFn) {
+            ef = self._getFacade(args);
+
+            if ((!self.defaultTargetOnly) || (host === ef.target)) {
+                defaultFn.apply(host, args);
+            }
+        }
+
+        return ret;
     }
 
-    ret = !(self.stopped);
-
-    if (self.type != host._yuievt.bubbling) {
-        es.stopped = 0;
-        es.prevented = 0;
-        self.stopped = 0;
-        self.prevented = 0;
-    }
-
-    // Kill the cached facade to free up memory.
-    // Otherwise we have the facade from the last fire, sitting around forever.
-    self._facade = null;
-
-    return ret;
 };
 
-CEProto._getFacade = function() {
+CEProto._getFacade = function(fireArgs) {
 
-    var ef = this._facade, o,
-    args = this.details;
+    var userArgs = this.details,
+        firstArg = userArgs && userArgs[0],
+        firstArgIsObj = (typeof firstArg === "object"),
+        ef = this._facade;
 
     if (!ef) {
         ef = new Y.EventFacade(this, this.currentTarget);
     }
 
-    // if the first argument is an object literal, apply the
-    // properties to the event facade
-    o = args && args[0];
-
-    if (Y.Lang.isObject(o, true)) {
-
+    if (firstArgIsObj) {
         // protect the event facade properties
-        mixFacadeProps(ef, o);
+        mixFacadeProps(ef, firstArg);
 
-        // Allow the event type to be faked
-        // http://yuilibrary.com/projects/yui3/ticket/2528376
-        ef.type = o.type || ef.type;
+        // Allow the event type to be faked http://yuilibrary.com/projects/yui3/ticket/2528376
+        if (firstArg.type) {
+            ef.type = firstArg.type;
+        }
+
+        if (fireArgs) {
+            fireArgs[0] = ef;
+        }
+    } else {
+        if (fireArgs) {
+            fireArgs.unshift(ef);
+        }
     }
 
     // update the details field with the arguments
-    // ef.type = this.type;
     ef.details = this.details;
 
     // use the original target when the event bubbled to this target
@@ -12199,8 +12460,14 @@ CEProto.halt = function(immediate) {
  * @for EventTarget
  */
 ETProto.addTarget = function(o) {
-    this._yuievt.targets[Y.stamp(o)] = o;
-    this._yuievt.hasTargets = true;
+    var etState = this._yuievt;
+
+    if (!etState.targets) {
+        etState.targets = {};
+    }
+
+    etState.targets[Y.stamp(o)] = o;
+    etState.hasTargets = true;
 };
 
 /**
@@ -12209,7 +12476,8 @@ ETProto.addTarget = function(o) {
  * @return EventTarget[]
  */
 ETProto.getTargets = function() {
-    return Y.Object.values(this._yuievt.targets);
+    var targets = this._yuievt.targets;
+    return targets ? YObject.values(targets) : [];
 };
 
 /**
@@ -12219,7 +12487,15 @@ ETProto.getTargets = function() {
  * @for EventTarget
  */
 ETProto.removeTarget = function(o) {
-    delete this._yuievt.targets[Y.stamp(o)];
+    var targets = this._yuievt.targets;
+
+    if (targets) {
+        delete targets[Y.stamp(o, true)];
+
+        if (YObject.size(targets) === 0) {
+            this._yuievt.hasTargets = false;
+        }
+    }
 };
 
 /**
@@ -12231,19 +12507,29 @@ ETProto.removeTarget = function(o) {
  */
 ETProto.bubble = function(evt, args, target, es) {
 
-    var targs = this._yuievt.targets, ret = true,
-        t, type = evt && evt.type, ce, i, bc, ce2,
+    var targs = this._yuievt.targets,
+        ret = true,
+        t,
+        ce,
+        i,
+        bc,
+        ce2,
+        type = evt && evt.type,
         originalTarget = target || (evt && evt.target) || this,
         oldbubble;
 
     if (!evt || ((!evt.stopped) && targs)) {
 
-        // Y.log('Bubbling ' + evt.type);
         for (i in targs) {
             if (targs.hasOwnProperty(i)) {
+
                 t = targs[i];
-                ce = t.getEvent(type, true);
-                ce2 = t.getSibling(type, ce);
+
+                ce = t._yuievt.events[type];
+
+                if (t._hasSiblings) {
+                    ce2 = t.getSibling(type, ce);
+                }
 
                 if (ce2 && !ce) {
                     ce = t.publish(type);
@@ -12260,10 +12546,11 @@ ETProto.bubble = function(evt, args, target, es) {
                     }
                 } else {
 
-                    ce.sibling = ce2;
+                    if (ce2) {
+                        ce.sibling = ce2;
+                    }
 
-                    // set the original target to that the target payload on the
-                    // facade is correct.
+                    // set the original target to that the target payload on the facade is correct.
                     ce.target = originalTarget;
                     ce.originalTarget = originalTarget;
                     ce.currentTarget = t;
@@ -12276,7 +12563,13 @@ ETProto.bubble = function(evt, args, target, es) {
 
                     ce.stack = es;
 
+                    // TODO: See what's getting in the way of changing this to use
+                    // the more performant ce._fire(args || evt.details || []).
+
+                    // Something in Widget Parent/Child tests is not happy if we
+                    // change it - maybe evt.details related?
                     ret = ret && ce.fire.apply(ce, args || evt.details || []);
+
                     ce.broadcast = bc;
                     ce.originalTarget = null;
 
@@ -12301,6 +12594,7 @@ FACADE_KEYS = {};
 for (key in FACADE) {
     FACADE_KEYS[key] = true;
 }
+
 
 }, '@VERSION@', {"requires": ["event-custom-base"]});
 YUI.add('node-core', function (Y, NAME) {
@@ -12941,10 +13235,15 @@ Y.mix(Y_Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     all: function(selector) {
-        var nodelist = Y.all(Y.Selector.query(selector, this._node));
-        nodelist._query = selector;
-        nodelist._queryRoot = this._node;
-        return nodelist;
+        var nodelist;
+        
+        if (this._node) {
+            nodelist = Y.all(Y.Selector.query(selector, this._node));
+            nodelist._query = selector;
+            nodelist._queryRoot = this._node;
+        }
+
+        return nodelist || Y.all([]);
     },
 
     // TODO: allow fn test
@@ -13605,7 +13904,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the last from the NodeList and returns it.
           * @for NodeList
           * @method pop
-          * @return {Node} The last item in the NodeList.
+          * @return {Node | null} The last item in the NodeList, or null if the list is empty.
           */
         'pop': 0,
         /** Adds the given Node(s) to the end of the NodeList.
@@ -13617,7 +13916,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the first item from the NodeList and returns it.
           * @for NodeList
           * @method shift
-          * @return {Node} The first item in the NodeList.
+          * @return {Node | null} The first item in the NodeList, or null if the NodeList is empty.
           */
         'shift': 0,
         /** Returns a new NodeList comprising the Nodes in the given range.
@@ -18496,6 +18795,8 @@ IO.prototype = {
     *       <dt>dataType</dt>
     *         <dd>Set the value to 'XML' if that is the expected response
     *         content type.</dd>
+    *       <dt>credentials</dt>
+    *         <dd>Set the value to 'true' to set XHR.withCredentials property to true.</dd>
     *     </dl></dd>
     *
     *   <dt>form</dt>
@@ -20324,9 +20625,9 @@ var INSTANCE = Y,
     LOGEVENT = 'yui:log',
     UNDEFINED = 'undefined',
     LEVELS = { debug: 1,
-               info: 1,
-               warn: 1,
-               error: 1 };
+               info: 2,
+               warn: 4,
+               error: 8 };
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -20348,7 +20649,7 @@ var INSTANCE = Y,
  * @return {YUI}      YUI instance.
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var bail, excl, incl, m, f,
+    var bail, excl, incl, m, f, minlevel,
         Y = INSTANCE,
         c = Y.config,
         publisher = (Y.fire) ? Y : YUI.Env.globalEvents;
@@ -20366,6 +20667,15 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 bail = !incl[src];
             } else if (excl && (src in excl)) {
                 bail = excl[src];
+            }
+
+            // Determine the current minlevel as defined in configuration
+            Y.config.logLevel = Y.config.logLevel || 'debug';
+            minlevel = LEVELS[Y.config.logLevel.toLowerCase()];
+
+            if (cat in LEVELS && LEVELS[cat] < minlevel) {
+                // Skip this message if the we don't meet the defined minlevel
+                bail = 1;
             }
         }
         if (!bail) {

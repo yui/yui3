@@ -63,7 +63,7 @@
                 "requires": [
                     "datatable-base"
                 ],
-                "lang": ["en", "fr", "es"],
+                "lang": ["en", "fr", "es", "it"],
                 "skinnable": true
             },
             "datatable-mutable": {
