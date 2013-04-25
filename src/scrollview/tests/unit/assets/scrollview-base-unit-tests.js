@@ -7,7 +7,11 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         baseTestSuite = new Y.Test.Suite("Scrollview Base Tests"),
         unitTestSuite = new Y.Test.Suite("Unit Tests"),
         unitTestSuiteDev = new Y.Test.Suite("In development tests"),
-        functionalTestSuite = new Y.Test.Suite("Functional Tests");
+        functionalTestSuite = new Y.Test.Suite("Functional Tests"),
+        renderNewScrollview = Y.renderNewScrollview,
+        getMockMousewheelEvent = Y.getMockMousewheelEvent,
+        getMockGestureEvent = Y.getMockGestureEvent,
+        getMockGestureObject = Y.getMockGestureObject;
 
     unitTestSuite.add(new Y.Test.Case({
         name: "Lifecycle",
@@ -939,9 +943,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         }
     }));
 
-
-
-
     if (unitTestSuiteDev.items.length > 0) {
         baseTestSuite.add(unitTestSuiteDev);
     }
@@ -951,18 +952,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
     }
 
     Y.Test.Runner.add(baseTestSuite);
-
-    /*
-    unitTestSuiteDev = new Y.Test.Suite();
-    Y.Test.Runner.add(unitTestSuiteDev);
-    unitTestSuiteDev.add(new Y.Test.Case({
-        name: "In Development",
-        tearDown : function () {
-            this.scrollview.destroy();
-            Y.one('#container').empty(true);
-        },
-    }));
-    */
 
     /*
         Additional test ideas:
@@ -977,74 +966,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         - Flick while flicking
         - swipe to OOB
     */
-
-    function getMockMousewheelEvent (delta, target) {
-        var mock = new Y.Test.Mock();
-        mock.wheelDelta = delta;
-        mock.target = target;
-        mock.preventDefault = function () {};
-        return mock;
-    }
-
-    function getMockGestureEvent (x, y) {
-        var mock = new Y.Test.Mock();
-        mock.clientX = x;
-        mock.clientY = y;
-        mock.preventDefault = function () {};
-
-        return mock;
-    }
-
-    function getMockGestureObject (axis, x, y) {
-        return {
-            axis: axis,
-            startX: x,
-            startY: y,
-            startClientX: x,
-            startClientY: y,
-            onGestureMove: {
-                detach: function () {}
-            },
-            onGestureMoveEnd: {
-                detach: function () {}
-            }
-        };
-    }
-
-    function renderNewScrollview (axis) {
-        var config = {},
-            guid = Y.guid(),
-            html,
-            scrollview,
-            widgetClass;
-
-        config.srcNode = '#' + guid;
-
-        if (axis === 'y') {
-            config.axis = axis;
-            config.height = "100px";
-            widgetClass = 'vertical';
-        }
-        else if (axis === 'x') {
-            config.axis = axis;
-            config.width = "300px";
-            widgetClass = 'horizontal';
-        }
-        else {
-            config.height = "100px";
-            config.width = "300px";
-            widgetClass = 'horizontal';
-        }
-
-        html = "<div class='" + widgetClass + "'><div id='" + guid + "'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>",
-        Y.one('#container').append(html);
-
-        scrollview = new Y.ScrollView(config);
-        scrollview.render();
-
-        return scrollview;
-    }
-
     /*
     Not possible until (if) bounding constraints are added to scrollTo.  Difficult because
     that is also an internal API that needs to be able to overscroll at times (drags, then snapback)
@@ -1088,4 +1009,4 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
     },
     */
 
-}, null, {requires: ['test', 'node-event-simulate', 'scrollview-base', 'scrollview-mousewheel-simulate']});
+}, null, {requires: ['test', 'node-event-simulate', 'scrollview-base', 'scrollview-test-utils']});

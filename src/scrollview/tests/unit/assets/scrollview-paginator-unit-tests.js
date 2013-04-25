@@ -7,7 +7,8 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         paginatorTestSuite = new Y.Test.Suite({name:"Scrollview Paginator Tests"}),
         unitTestSuite = new Y.Test.Suite({name:"Unit Tests"}),
         unitTestSuiteDev = new Y.Test.Suite({name:"Tests In Development"}),
-        functionalTestSuite = new Y.Test.Suite({name:"Functional Tests"});
+        functionalTestSuite = new Y.Test.Suite({name:"Functional Tests"}),
+        renderNewScrollview = Y.renderNewScrollview;
 
     unitTestSuite.add(new Y.Test.Case({
         name: "Lifecycle",
@@ -720,50 +721,4 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
         - Make sure scrollEnd only fires once
     */
 
-    function renderNewScrollview (scrollViewAxis, paginatorAxis, startIndex, optimizeMemory) {
-
-        var config = {},
-            guid = Y.guid(),
-            html,
-            scrollview,
-            widgetClass;
-
-        config.srcNode = '#' + guid;
-        config.axis = scrollViewAxis;
-
-        switch(scrollViewAxis) {
-            case 'x':
-                config.width = "300px";
-                widgetClass = 'horizontal';
-                break;
-            case 'y':
-                config.height = "100px";
-                widgetClass = 'vertical';
-                break;
-            case 'xy':
-            default:
-                config.height = "100px";
-                config.width = "300px";
-                widgetClass = 'horizontal';
-                break;
-        }
-
-        config.plugins = [{
-            fn:Y.Plugin.ScrollViewPaginator,
-            cfg:{
-                index: startIndex || 0,
-                _optimizeMemory: optimizeMemory || false,
-                axis: paginatorAxis,
-                selector:">ul>li"
-            }
-        }];
-        html = "<div class='" + widgetClass + "'><div id='" + guid + "'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>",
-        Y.one('#container').append(html);
-
-        scrollview = new Y.ScrollView(config);
-        scrollview.render();
-
-        return scrollview;
-    }
-
-}, null, {requires: ['test', 'node-event-simulate', 'scrollview-base', 'scrollview-paginator', 'scrollview-mousewheel-simulate']});
+}, null, {requires: ['test', 'node-event-simulate', 'scrollview-base', 'scrollview-paginator', 'scrollview-test-utils']});
