@@ -42,8 +42,8 @@
 }
 #demo .results li:hover img {
     position: absolute;
-    left: -10px;
-    top: -10px;
+    left: -7px;
+    top: -9px;
     width: 160px;
     height: 160px;
     z-index: 10;
@@ -84,6 +84,11 @@
     display: none;
 }
 
+#demo .paginator {
+    margin-top: 15px;
+    text-align: center;
+}
+
 #demo .paginator .control {
     display: block;
     padding: 0 .5em;
@@ -116,6 +121,7 @@
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
+    cursor: pointer;
 }
 
 #demo .paginator .control:hover {
@@ -232,7 +238,7 @@ YUI({
                 '<li class="{control} last" data-type="last">Last</li>'
             , this.classes);
 
-            this.get('contentBox').setContent(controls);
+            this.get('contentBox').setHTML(controls);
         },
 
         bindUI: function () {
@@ -287,6 +293,8 @@ YUI({
                 case 'page':
                     this.set('page', e.currentTarget.getData('page'));
                     break;
+                default:
+                    return;
             }
 
         },
@@ -313,7 +321,7 @@ YUI({
                 });
             }
 
-            this.get('contentBox').one('.pages').setContent(pagesNode)
+            this.get('contentBox').one('.pages').setHTML(pagesNode)
 
             if (pagesNode) {
                 this.get('contentBox').one('.page-' + page).addClass(this.classes.selected);
@@ -335,16 +343,9 @@ YUI({
 
         _pages: [],
 
-        paginator: new FlickrSearch.Paginator(),
+        paginator: null,
 
-        api: {
-            api_key: '0c13dc70aa7eb3df87b3fee5caf37080',
-            method: 'flickr.photos.search',
-            safe_search: 1,
-            sort: 'relevance',
-            format: 'json',
-            license: 4
-        },
+        _api: null,
 
         events: {
             'form': {
@@ -353,16 +354,14 @@ YUI({
         },
 
         initializer: function () {
-            this.api.per_page = this.get('perPage');
+            this._api = this.get('apiConfig');
+
+            this.paginator = new FlickrSearch.Paginator();
+            this.paginator.after('pageChange', this._afterPageChange, this);
         },
 
         render: function () {
             this.paginator.render(this.get('container').one('.paginator'));
-            this.bind();
-        },
-
-        bind: function () {
-            this.paginator.after('pageChange', this._afterPageChange, this);
         },
 
         handleQuery: function (e) {
@@ -372,7 +371,7 @@ YUI({
                 this._pages.shift().destroy({ remove: true });
             }
 
-            this.api.text = this.get('container').one('form input').get('value');
+            this._api.text = this.get('container').one('form input').get('value');
 
             if (this.paginator.get('page') !== 1) {
                 this.paginator.set('page', 1);
@@ -386,7 +385,7 @@ YUI({
             this.setLoading(true);
 
             var self = this,
-                api = this.api,
+                api = this._api,
                 url = this.url;
 
             api.page = page || 1;
@@ -420,7 +419,7 @@ YUI({
             var container = this.get('container');
 
             if (msg) {
-                container.one('.results').setContent('<div class="msg">' + msg + '</div>');
+                container.one('.results').setHTML('<div class="msg">' + msg + '</div>');
                 container.removeClass('hide-pg');
                 this.setLoading(false);
             } else {
@@ -432,7 +431,7 @@ YUI({
 
         _processResults: function (resp) {
             if (resp.pages < 1) {
-                return this.setMessage('There are no images for "' + this.api.text + '"');
+                return this.setMessage('There are no images for "' + this._api.text + '"');
             } else {
                 this.setMessage();
             }
@@ -469,12 +468,15 @@ YUI({
                     var prevPage = (this._pages.length > 1) ? this._pages.shift() : null;
 
                     page.get('container').transition({
-                        opacity: 1
+                        opacity: 1,
+                        duration: 1,
+                        delay: (prevPage) ? 0.3 : 0
                     });
 
                     if (prevPage) {
                         prevPage.get('container').transition({
-                            opacity: 0
+                            opacity: 0,
+                            duration: 1
                         }, function (e) {
                             prevPage.destroy({
                                 remove: true
@@ -500,8 +502,16 @@ YUI({
                 value: true
             },
 
-            perPage: {
-                value: 20
+            apiConfig: {
+                value: {
+                    api_key: '0c13dc70aa7eb3df87b3fee5caf37080',
+                    method: 'flickr.photos.search',
+                    safe_search: 1,
+                    sort: 'relevance',
+                    format: 'json',
+                    license: 4,
+                    per_page: 20
+                }
             }
         }
     });
