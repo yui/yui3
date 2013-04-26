@@ -621,18 +621,17 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
         matchingRules = this._getRulesForDate(date);
         if (matchingRules.length > 0) {
-            dateNode = this._dateToNode(date);
             if ((enRule && iOf(matchingRules, enRule) < 0) || (!enRule && disRule && iOf(matchingRules, disRule) >= 0)) {
-                dateNode.addClass(SELECTION_DISABLED).setAttribute("aria-disabled", true);
+                this._disableDate(date);
             }
 
             if (L.isFunction(this._filterFunction)) {
+                dateNode = this._dateToNode(date);
                 this._storedDateCells[dateNode.get("id")] = dateNode.cloneNode(true);
                 this._filterFunction (date, dateNode, matchingRules);
             }
         } else if (enRule) {
-             dateNode = this._dateToNode(date);
-             dateNode.addClass(SELECTION_DISABLED).setAttribute("aria-disabled", true);
+            this._disableDate(date);
         }
     },
 
@@ -667,6 +666,18 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     */
     _renderSelectedDatesHelper: function (date) {
         this._dateToNode(date).addClass(CAL_DAY_SELECTED).setAttribute("aria-selected", true);
+    },
+
+    /**
+     * Add the selection-disabled class and aria-disabled attribute to a node corresponding
+     * to a given date.
+     *
+     * @method _disableDate
+     * @param {Date} date The date to disable
+     * @private
+     */
+    _disableDate: function (date) {
+       this._dateToNode(date).addClass(SELECTION_DISABLED).setAttribute("aria-disabled", true);
     },
 
     /**
@@ -776,6 +787,22 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     _normalizeDate : function (date) {
         if (date) {
             return new Date(date.getFullYear(), date.getMonth(), 1, 12, 0, 0, 0);
+        } else {
+            return null;
+        }
+    },
+
+    /**
+     * A utility method that normalizes a given date by setting its time to noon.
+     * @method _normalizeTime
+     * @param {Date} oDate The date to normalize
+     * @protected
+     * @return {Date} The normalized date
+     * set to noon.
+     */
+    _normalizeTime : function (date) {
+        if (date) {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0);
         } else {
             return null;
         }
