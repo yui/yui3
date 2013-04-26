@@ -223,7 +223,7 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
-            var url = 'echo/status/404';
+            var url = 'bogus.js';
 
             var trans = Y.Get.script(url, {
                 data: {a:1, b:2, c:3},
@@ -342,7 +342,7 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
-            var url = 'echo/status/404';
+            var url = 'bogus.js';
 
             var trans = Y.Get.script(url, {
                 data: {a:1, b:2, c:3},
@@ -441,7 +441,7 @@ YUI.add('get-test', function (Y) {
             };
             var urls = [
                 getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
-                'echo/status/404',
+                'bogus.js',
                 getUniqueEchoechoJs(JS_C, { delay: '0-1' })
             ];
 
@@ -545,7 +545,7 @@ YUI.add('get-test', function (Y) {
             };
             var urls = [
                 getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
-                'echo/status/404',
+                'bogus.js',
                 getUniqueEchoechoJs(JS_C, { delay: '0-1' })
             ];
 
@@ -699,7 +699,7 @@ YUI.add('get-test', function (Y) {
             };
             var urls = [
                 getUniqueEchoechoJs(JS_A, { delay: '0-1' }),
-                'echo/status/404',
+                'bogus.js',
                 getUniqueEchoechoJs(JS_C, { delay: '0-1' })
             ];
 
@@ -1176,7 +1176,7 @@ YUI.add('get-test', function (Y) {
             };
             var urls = [
                 getUniqueEchoechoJs(JS_A),
-                'echo/status/404',
+                'bogus.js',
                 getUniqueEchoechoJs(JS_C)
             ];
 
@@ -1540,7 +1540,7 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
-            var url = 'echo/status/404';
+            var url = 'bogus.css';
 
             Y.Get.css(url, {
                 data: {a:1, b:2, c:3},
@@ -1577,7 +1577,7 @@ YUI.add('get-test', function (Y) {
             };
             var urls = [
                 getUniqueEchoechoCss(CSS_A, { delay: '0-1' }),
-                'echo/status/404',
+                'bogus.css',
                 getUniqueEchoechoCss(CSS_C, { delay: '0-1' })
             ];
 
@@ -2536,8 +2536,8 @@ YUI.add('get-test', function (Y) {
         '`errors` property should contain an array of error objects': function () {
             var test = this;
             var urls = [
-                'echo/status/404',
-                'echo/status/404'
+                'bogus.js',
+                'bogus.js'
             ];
 
             this.t = Y.Get.js(urls, function (err, t) {
