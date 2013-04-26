@@ -7,6 +7,35 @@
     "tags": ["utility", "beta", "paginator"],
     "use" : ["paginator"],
 
-    "examples": []
+    "examples": [
+        {
+            "name": "slideshow",
+            "displayName": "Slideshow",
+            "description": "A slideshow controlled via paginator.",
+            "modules": ["paginator", "slideshow"],
+            "tags": ["paginator", "slideshow"]
+        },
+        {
+            "name": "table",
+            "displayName": "Tables",
+            "description": "An HTML table containing 50 states and their population with an attached paginator to view the information in small sections.",
+            "modules": ["paginator", "table"],
+            "tags": ["paginator", "table", "states"]
+        },
+        {
+            "name": "search",
+            "displayName": "Search Results",
+            "description": "Continuous pagining using image searching usings Flickr's API.",
+            "modules": ["paginator", "search"],
+            "tags": ["paginator", "search", "flickr"]
+        },
+        {
+            "name": "auto-search",
+            "displayName": "Auto Search Results",
+            "description": "Continuous scrolling with image searching using Flickr's API.",
+            "modules": ["paginator", "search"],
+            "tags": ["paginator", "search", "flickr"]
+        }
+    ]
 
 }

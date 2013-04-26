@@ -1,0 +1,176 @@
+<style>
+#demo.busy .controls {
+    background: #efefef;
+}
+#demo.busy .controls a {
+    opacity: 0;
+}
+#demo form {
+    border: 1px solid #cbcbcb;
+    border-radius: 3px;
+    padding: 10px;
+    background: #fff;
+}
+#demo form input {
+    font-size: 180%;
+    padding: 3px 7px;
+}
+#demo .results {
+    padding: 10px;
+}
+#demo ol {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+#demo li {
+    list-style: none;
+    display: inline-block;
+    zoom: 1; *display: inline;
+    padding: 0 3px;
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+#demo li img {
+    background: #efefef;
+    width: 150px;
+    height: 150px;
+}
+#demo li:hover img {
+    position: absolute;
+    left: -5px;
+    top: -5px;
+    width: 160px;
+    height: 160px;
+    z-index: 10;
+    border: 3px solid #fff;
+    box-shadow: 3px 3px 4px hsla(250, 40%, 30%, 0.5);
+}
+#demo .controls {
+    clear: both;
+    padding: 10px 0;
+    text-align: center;
+}
+#demo .controls a {
+    text-align: center;
+    display: inline-block;
+    zoom: 1; *display: inline;
+    margin-top: 5px;
+    border: solid 1px #CBCBCB;
+    text-decoration: none;
+    line-height: 1.7em;
+    color: #4A4A4A;
+    font-size: 1.4em;
+    font-family: arial,san-serif;
+    border-radius: 4px;
+    padding: 0 10px;
+    background: #fff;
+}
+#demo .controls a:hover {
+    background-color: #bfdaff;
+    color: #000;
+}
+#demo .controls a:active {
+    background: #2647a0;
+    color: #ffffff;
+}
+</style>
+<div id="demo" class="yui3-skin-sam">
+    <form>
+        <input type="text" name="q" value="kitten">
+        <input type="submit" value="Search" class="yui3-button">
+    </form>
+    <div class="results">
+        <ol></ol>
+        <div class="controls">
+            <a href="#">Load Moar!</a>
+        </div>
+    </div>
+</div>
+<script>
+YUI({
+    combine: false,
+    filter: 'raw'
+}).use('paginator', 'node', 'jsonp', 'querystring', 'cssbutton', function (Y) {
+
+
+    var flickrUrl = 'http://api.flickr.com/services/rest/?',
+        flickrApi = {
+            api_key: '0c13dc70aa7eb3df87b3fee5caf37080',
+            method: 'flickr.photos.search',
+            safe_search: 1,
+            sort: 'relevance',
+            format: 'json',
+            license: 4
+        },
+        pg = new Y.Paginator({
+            itemsPerPage: 20
+        });
+
+    function reqPhotos () {
+        flickrApi.page = pg.get('page');
+        flickrApi.per_page = pg.get('itemsPerPage');
+        flickrApi.text = Y.one('#demo input').get('value');
+
+        var url = flickrUrl + Y.QueryString.stringify(flickrApi);
+
+        Y.one('#demo').addClass('busy');
+
+        Y.jsonp(url, {
+            format: function (url, proxy) {
+                return url + '&jsoncallback=' + proxy;
+            },
+            on: {
+                failure: function () {
+                    removeLoading();
+                    console.log('oops!! something broke');
+                },
+
+                success: function (resp) {
+                    removeLoading();
+                    showPhotos(resp.photos.photo);
+                }
+            }
+        });
+    }
+
+    function showPhotos (photos) {
+        var srcTemplate = 'http://farm{farm}.staticflickr.com/{server}/{id}_{secret}_q.jpg',
+            images = '',
+            i,
+            l;
+
+        for (i = 0, l = photos.length; i < l; i++) {
+            images += '<li><img src="' + Y.Lang.sub(srcTemplate, photos[i]) + '"></li>';
+        }
+
+
+        if (pg.get('page') === 1) {
+            Y.one('#demo .results ol').setContent(images);
+        } else {
+            Y.one('#demo .results ol').append(images);
+        }
+
+    }
+
+    function removeLoading () {
+        Y.one('#demo').removeClass('busy');
+    }
+
+    Y.one('#demo form').on('submit', function (e) {
+        e.preventDefault();
+        pg.set('page', 1);
+        reqPhotos();
+    });
+
+    Y.one('#demo .controls a').on('click', function (e) {
+        e.preventDefault();
+        pg.nextPage();
+        reqPhotos();
+    });
+
+    reqPhotos();
+
+});
+</script>

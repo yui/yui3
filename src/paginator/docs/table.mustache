@@ -1,0 +1,201 @@
+<style>
+#demo .controls {
+    padding-top: 10px;
+}
+#demo .controls ul {
+    margin: 0;
+    padding: 0;
+}
+#demo .controls li {
+    list-style: none;
+    display: inline-block;
+    zoom: 1; *display: inline;
+}
+#demo .controls ul,
+#demo .controls div {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    vertical-align: middle;
+}
+#demo button {
+    border: solid 1px #CBCBCB;
+    text-decoration: none;
+    line-height: 1.7em;
+    color: #4A4A4A;
+    background: #fff;
+    cursor: pointer;
+    font-family: arial,san-serif;
+}
+#demo button:hover {
+    background-color: #bfdaff;
+    color: #000;
+}
+#demo button:active {
+    background: #2647a0;
+    color: #ffffff;
+}
+#demo .currentPage {
+    margin-left: 20px;
+}
+#demo .rowsPerPage {
+    float: right;
+}
+</style>
+
+<div id="demo">
+    <table>
+        <caption>
+            2010 US Population <em>(according to <a href="http://www.census.gov/2010census/" target="_blank">census.gov</a>)</em>
+        </caption>
+        <thead>
+            <tr>
+                <th></th>
+                <th>State</th>
+                <th>Abbr</th>
+                <th>Population</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class="controls">
+        <ul>
+            <li><button class="control" data-type="first">First</button></li>
+            <li><button class="control" data-type="prev">Prev</button></li>
+            <li><button class="control" data-type="next">Next</button></li>
+            <li><button class="control" data-type="last">Last</button></li>
+        </ul>
+        <div class="currentPage"></div>
+        <div class="rowsPerPage">
+            Display:
+            <select class="perPage">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="-1">Show All</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+YUI().use('paginator', 'node', 'datatype-number-format', function (Y) {
+    var tbody = Y.one('#demo tbody'),
+        rowTemplate = '<tr><td>{count}</td><td>{state}</td><td>{abbr}</td><td align="right">{population}</td></tr>',
+        currentPageTemplate = 'Page {page} of {totalPages}',
+        data = [
+            { state: "Alabama",        abbr: "AL", population: 4447100  },
+            { state: "Alaska",         abbr: "AK", population: 626932   },
+            { state: "Arizona",        abbr: "AZ", population: 5130632  },
+            { state: "Arkansas",       abbr: "AR", population: 2673400  },
+            { state: "California",     abbr: "CA", population: 33871648 },
+            { state: "Colorado",       abbr: "CO", population: 4301261  },
+            { state: "Connecticut",    abbr: "CT", population: 3405565  },
+            { state: "Delaware",       abbr: "DE", population: 783600   },
+            { state: "Florida",        abbr: "FL", population: 15982378 },
+            { state: "Georgia",        abbr: "GA", population: 8186453  },
+            { state: "Hawaii",         abbr: "HI", population: 1211537  },
+            { state: "Idaho",          abbr: "ID", population: 1293953  },
+            { state: "Illinois",       abbr: "IL", population: 12419293 },
+            { state: "Indiana",        abbr: "IN", population: 6080485  },
+            { state: "Iowa",           abbr: "IA", population: 2926324  },
+            { state: "Kansas",         abbr: "KS", population: 2688418  },
+            { state: "Kentucky",       abbr: "KY", population: 4041769  },
+            { state: "Louisiana",      abbr: "LA", population: 4468976  },
+            { state: "Maine",          abbr: "ME", population: 1274923  },
+            { state: "Maryland",       abbr: "MD", population: 5296486  },
+            { state: "Massachusetts",  abbr: "MA", population: 6349097  },
+            { state: "Michigan",       abbr: "MI", population: 9938444  },
+            { state: "Minnesota",      abbr: "MN", population: 4919479  },
+            { state: "Mississippi",    abbr: "MS", population: 2844658  },
+            { state: "Missouri",       abbr: "MO", population: 5595211  },
+            { state: "Montana",        abbr: "MT", population: 902195   },
+            { state: "Nebraska",       abbr: "NE", population: 1711263  },
+            { state: "Nevada",         abbr: "NV", population: 1998257  },
+            { state: "New Hampshire",  abbr: "NH", population: 1235786  },
+            { state: "New Jersey",     abbr: "NJ", population: 8414350  },
+            { state: "New Mexico",     abbr: "NM", population: 1819046  },
+            { state: "New York",       abbr: "NY", population: 18976457 },
+            { state: "North Carolina", abbr: "NC", population: 8049313  },
+            { state: "North Dakota",   abbr: "ND", population: 642200   },
+            { state: "Ohio",           abbr: "OH", population: 11353140 },
+            { state: "Oklahoma",       abbr: "OK", population: 3450654  },
+            { state: "Oregon",         abbr: "OR", population: 3421399  },
+            { state: "Pennsylvania",   abbr: "PA", population: 12281054 },
+            { state: "Rhode Island",   abbr: "RI", population: 1048319  },
+            { state: "South Carolina", abbr: "SC", population: 4012012  },
+            { state: "South Dakota",   abbr: "SD", population: 754844   },
+            { state: "Tennessee",      abbr: "TN", population: 5689283  },
+            { state: "Texas",          abbr: "TX", population: 20851820 },
+            { state: "Utah",           abbr: "UH", population: 2233169  },
+            { state: "Vermont",        abbr: "VT", population: 608827   },
+            { state: "Virginia",       abbr: "VA", population: 7078515  },
+            { state: "Washington",     abbr: "WA", population: 5894121  },
+            { state: "West Virginia",  abbr: "WV", population: 1808344  },
+            { state: "Wisconsin",      abbr: "WI", population: 5363675  },
+            { state: "Wyoming",        abbr: "WY", population: 493782   }
+        ],
+        pg = new Y.Paginator({
+            itemsPerPage: 10,
+            totalItems: data.length - 1
+        });
+
+        // lets to a one time pass through to format the population numbers
+        for (d in data) {
+            data[d].population = Y.Number.format(data[d].population, {thousandsSeparator: ','});
+        }
+
+        function showPage(page) {
+            page || (page = pg.get('page'));
+
+            var itemsPerPage = pg.get('itemsPerPage'),
+                min = (page - 1 ) * itemsPerPage,
+                max = Math.min( page * itemsPerPage - 1, pg.get('totalItems')),
+                rows = '',
+                i;
+
+            if (max < 0) {
+                max = pg.get('totalItems');
+            }
+
+            for (i = min; i <= max; i++ ) {
+                rows += Y.Lang.sub(rowTemplate, Y.mix({count: i + 1}, data[i]));
+            }
+
+            tbody.setContent(rows);
+
+            Y.all('.currentPage').setContent(
+                Y.Lang.sub(currentPageTemplate, pg.getAttrs())
+            );
+        }
+
+        showPage();
+
+        Y.one('#demo').delegate('click', function (e) {
+            e.preventDefault();
+
+            var control = e.currentTarget,
+                type = control.getData('type');
+
+            switch (type) {
+                case 'first': pg.set('page', 1); break;
+                case 'prev': pg.prevPage(); break;
+                case 'next': pg.nextPage(); break;
+                case 'last': pg.set('page', pg.get('totalPages')); break;
+            }
+
+        }, '.control');
+
+        Y.one('#demo .perPage').on('change', function (e) {
+            pg.set('itemsPerPage', e.currentTarget.get('value'));
+            pg.set('page', 1);
+        });
+
+        pg.after('pageChange', function (e) {
+            showPage(e.newVal);
+        });
+
+        pg.after('itemsPerPageChange', function () {
+            showPage();
+        });
+});
+</script>
