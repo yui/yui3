@@ -32,50 +32,42 @@ YUI.add('get-test', function (Y) {
         JS_C = 'G_SCRIPTS.push("c.js")',
 
         // CSS content
-        CSS_A = encodeURIComponent(
-            '.get_test_a {' +
-                'position: absolute;' +
-                'z-index: 1111;' +
-                '/* Just for eyeballing, not used to test */' +
-                'background-color: #ff0000;' +
-            '}'
-        ),
-        CSS_B = encodeURIComponent(
-            '.get_test_b {' +
-                'position:absolute;' +
-                'z-index:1234;' +
-                '/* Just for eyeballing, not used to test */' +
-                'background-color:#00ff00;' +
-            '}'
-        ),
-        CSS_C = encodeURIComponent(
-            '.get_test_c {' +
-                'position:absolute;' +
-                'z-index:4321;' +
-                '/* Just for eyeballing, not used to test */' +
-                'background-color:#0000ff;' +
-            '}'
-        ),
-        CSS_IB = encodeURIComponent(
-            '.get_test_a {' +
-                'position:absolute;' +
-                'z-index:9991;' +
-                '/* Just for eyeballing, not used to test */' +
-                'background-color:#cccccc;' +
-            '}' +
-            '.get_test_b {' +
-                'position:absolute;' +
-                'z-index:9992;' +
-                '/* Just for eyeballing, not used to test */' +
-                'background-color:#cccccc;' +
-            '}' +
-            '.get_test_c {' +
-                'position:absolute;' +
-                'z-index:9993;' +
-                '/* Just for eyeballing, not used to test */' +
-                'background-color:#cccccc;' +
-            '}'
-        );
+        CSS_A = '.get_test_a {' +
+                    'position: absolute;' +
+                    'z-index: 1111;' +
+                    '/* Just for eyeballing, not used to test */' +
+                    'background-color: #ff0000;' +
+                '}';
+        CSS_B = '.get_test_b {' +
+                    'position:absolute;' +
+                    'z-index:1234;' +
+                    '/* Just for eyeballing, not used to test */' +
+                    'background-color:#00ff00;' +
+                '}';
+        CSS_C = '.get_test_c {' +
+                    'position:absolute;' +
+                    'z-index:4321;' +
+                    '/* Just for eyeballing, not used to test */' +
+                    'background-color:#0000ff;' +
+                '}';
+        CSS_IB = '.get_test_a {' +
+                     'position:absolute;' +
+                     'z-index:9991;' +
+                     '/* Just for eyeballing, not used to test */' +
+                     'background-color:#cccccc;' +
+                 '}' +
+                 '.get_test_b {' +
+                     'position:absolute;' +
+                     'z-index:9992;' +
+                     '/* Just for eyeballing, not used to test */' +
+                     'background-color:#cccccc;' +
+                 '}' +
+                 '.get_test_c {' +
+                     'position:absolute;' +
+                     'z-index:9993;' +
+                     '/* Just for eyeballing, not used to test */' +
+                     'background-color:#cccccc;' +
+                 '}';
 
     function areObjectsReallyEqual(o1, o2, msg) {
         Y.ObjectAssert.areEqual(o1, o2, msg);
@@ -108,7 +100,7 @@ YUI.add('get-test', function (Y) {
         content = content || 'console.log("' + unique() + '")';
 
         url = 'echo/delay/' + delay + '/get'
-                  + '?response=' + content
+                  + '?response=' + encodeURIComponent(content)
                   + '&type=js';
 
         return randUrl(url);
@@ -123,7 +115,7 @@ YUI.add('get-test', function (Y) {
         content = content || '.foo{}';
 
         url = 'echo/delay/' + delay + '/get'
-                  + '?response=' + content
+                  + '?response=' + encodeURIComponent(content)
                   + '&type=css';
 
         // Get.load() only loads CSS if the URL ends with '.css'
