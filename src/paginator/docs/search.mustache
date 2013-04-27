@@ -1,30 +1,34 @@
 <style>
-#demo.busy .controls {
-    background: #efefef;
-}
-#demo.busy .controls a {
-    opacity: 0;
+#demo {
+    position: relative;
+    border: 1px solid #cbcbcb;
+    border-radius: 6px;
+    padding: 8px;
+    background: #fafafa;
 }
 #demo form {
     border: 1px solid #cbcbcb;
     border-radius: 3px;
-    padding: 10px;
-    background: #fff;
+    padding: 8px;
+    background: #fefefe;
 }
 #demo form input {
     font-size: 180%;
     padding: 3px 7px;
 }
 #demo .results {
-    padding: 10px;
     position: relative;
+    margin: 8px 0;
+}
+#demo.hide-pg .results {
+    margin: 0;
 }
 #demo .results ol {
     margin: 0;
     padding: 0;
     text-align: center;
     position: absolute;
-    opacity: 0.3;
+    opacity: 0;
 }
 #demo .results li {
     list-style: none;
@@ -42,8 +46,8 @@
 }
 #demo .results li:hover img {
     position: absolute;
-    left: -7px;
-    top: -9px;
+    left: -5px;
+    top: -8px;
     width: 160px;
     height: 160px;
     z-index: 10;
@@ -78,6 +82,23 @@
     background: #2647a0;
     color: #ffffff;
 }
+#demo.loading .loading {
+    display: block;
+}
+#demo .loading {
+    background: url('../assets/paginator/images/loading.gif') left center repeat-x;
+    height: 15px;
+    width: 150px;
+    border: 1px solid #3b4f93;
+    border-radius: 4px;
+    box-shadow: 3px 3px 3px hsla(40, 40%, 30%, 0.5);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -75px;
+    display: none;
+    z-index: 100;
+}
 
 /** PAGINATOR CSS **/
 #demo.hide-pg .paginator {
@@ -85,8 +106,13 @@
 }
 
 #demo .paginator {
-    margin-top: 15px;
+    margin-top: 8px;
     text-align: center;
+}
+#demo .yui3-pager {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    margin: 0 10px;
 }
 
 #demo .paginator .control {
@@ -159,6 +185,7 @@
     </form>
     <div class="results"></div>
     <div class="paginator"></div>
+    <div class="loading"></div>
 </div>
 <script>
 YUI({
@@ -306,6 +333,7 @@ YUI({
                 display = this.get('display'),
                 min = Math.max(1, page - Math.floor(display / 2)),
                 max = min + display - 1;
+console.log(pages);
 
             if (max > pages) {
                 min -= max - pages;
@@ -356,7 +384,10 @@ YUI({
         initializer: function () {
             this._api = this.get('apiConfig');
 
-            this.paginator = new FlickrSearch.Paginator();
+            this.paginator = new FlickrSearch.Paginator({
+                itemsPerPage: this._api.per_page
+            });
+
             this.paginator.after('pageChange', this._afterPageChange, this);
         },
 
@@ -373,10 +404,11 @@ YUI({
 
             this._api.text = this.get('container').one('form input').get('value');
 
+            this._isNewQuery = true;
+
             if (this.paginator.get('page') !== 1) {
                 this.paginator.set('page', 1);
             } else {
-                this._isNewQuery = true;
                 this.requestPhotos();
             }
         },
@@ -399,11 +431,10 @@ YUI({
                 on: {
                     failure: Y.bind(function () {
                         this.setLoading(false);
-                        console.log('oops!! something broke');
+                        this.setMessage('oops!! something broke :(');
                     }, self),
 
                     success: Y.bind(function (resp) {
-                        this.setLoading(false);
                         this._processResults(resp.photos);
                         this._isNewQuery = false;
                     }, self)
@@ -416,15 +447,18 @@ YUI({
         },
 
         setMessage: function (msg) {
-            var container = this.get('container');
+            var container = this.get('container'),
+                msgNode;
 
             if (msg) {
                 container.one('.results').setHTML('<div class="msg">' + msg + '</div>');
                 container.removeClass('hide-pg');
                 this.setLoading(false);
             } else {
-                if (container.one('.results .msg')) {
-                    container.one('.results .msg').remove();
+                msgNode = container.one('.results .msg');
+
+                if (msgNode) {
+                    msgNode.remove();
                 }
             }
         },
@@ -435,8 +469,11 @@ YUI({
             } else {
                 this.setMessage();
             }
+
             if (this._isNewQuery) {
-                this.paginator.set('totalItems', resp.pages);
+                console.log('new query');
+                console.log(parseInt(resp.total, 10));
+                this.paginator.set('totalItems', parseInt(resp.total, 10));
             }
 
             this._createNewPage(resp.photo);
@@ -461,16 +498,15 @@ YUI({
 
             images.after('load', function (e) {
 
-                imagesLeft--;
-
                 if (!(--imagesLeft)) {
 
                     var prevPage = (this._pages.length > 1) ? this._pages.shift() : null;
 
+                    this.setLoading(false);
                     page.get('container').transition({
                         opacity: 1,
                         duration: 1,
-                        delay: (prevPage) ? 0.3 : 0
+                        delay: (prevPage) ? 0.5 : 0
                     });
 
                     if (prevPage) {
@@ -487,8 +523,8 @@ YUI({
             }, this);
 
             this._pages.push(page);
-            this.get('container').removeClass('hide-pg');
 
+            this.get('container').removeClass('hide-pg');
 
         },
 
