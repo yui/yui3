@@ -20,31 +20,26 @@
 ```
 
 <h3>Setting Up the YUI Instance</h3>
-<p>Now we need to create our YUI instance and tell it to load the `color` and `slider` modules.</p>
+<p>Now we need to create our YUI instance and tell it to load the modules.</p>
 
 ```
 {{>slideshow-js-setup}}
 ```
 
 <h3>Defining our variables</h3>
-<p>The first bit of YUI we need to implement is creating our slider instances. We set the initial value of the sliders to a random position between `0` and `255`.</p>
-<p>We follow that up by assigning nodes to variables. This helps prevent multiple look ups of the same node as we move the sliders.</p>
-<p>Next we render our slider instances into their containers.</p>
+<p></p>
 ```
 {{>slideshow-js-vars}}
 ```
 
 <h3>Binding Paginator's `pageChange`</h3>
-<p>After we have our UI built and ready, we need to bind events to the `slider` instances for R, G, and B values.</p>
-<p>In each event callback we update the text value in the UI, then call `updateColors()` to update the color strings.</p>
-<p>In `updateColors()` we get to see the use of `Y.Color`. We create `rgbStr` from an array of color values. We can then create the hex and hsl value strings with `toHex()` and `toHSL()` respectively.</p>
+<p></p>
 ```
 {{>slideshow-js-pageChange}}
 ```
 
 <h3>Binding clicks on page controls</h3>
-<p>Now that we have our UI built and events bound, we need to do an initial update to the UI.</p>
-<p>First we display the each `slider`'s current value. Next we update the color strings with `updateColors()`.</p>
+<p></p>
 ```
 {{>slideshow-js-click}}
 ```
