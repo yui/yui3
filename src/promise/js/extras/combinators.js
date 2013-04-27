@@ -11,6 +11,9 @@ resolved or rejected.
 **/
 Promise.any = function (values) {
     return new Promise(function (resolve, reject) {
+        if (values.length < 1) {
+            return resolve();
+        }
         // just go through the list and resolve and reject at the first change
         for (var i = 0, count = values.length; i < count; i++) {
             Y.when(values[i], resolve, reject);
@@ -24,7 +27,7 @@ any is rejected.
 
 @for Promise
 @method every
-@param {Any[]} values A list of either promises or any JavaScript value
+@param {Any[]} values An Array of either promises or any JavaScript value
 @return {Promise} A promise with the list of all resolved values or the
                     rejection reason of the first rejected promise
 @static
@@ -49,7 +52,7 @@ Promise.every = function (values) {
         }
 
         if (length < 1) {
-            return resolve(results);
+            return resolve();
         }
 
         for (; i < length; i++) {
@@ -90,7 +93,7 @@ Promise.some = function (values) {
         }
 
         if (length < 1) {
-            return reject(results);
+            return resolve();
         }
 
         for (; i < length; i++) {

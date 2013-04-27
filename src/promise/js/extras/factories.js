@@ -1,19 +1,4 @@
 /**
-Creates an accepted promise for a certain value, including other promises.
-
-@for Promise
-@method accept
-@param {Any} value Any value to wrap in a promise
-@return {Promise} A new promise for the provided value
-@static
-**/
-Promise.accept = function (value) {
-    return new Promise(function () {
-        this._resolver.accept(value);
-    });
-};
-
-/**
 Creates an accepted promise for a certain value. If the value is a promise, the
 new promise will be accepted or rejected based on the provided promise
 
