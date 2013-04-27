@@ -38,7 +38,8 @@ Y.mix(Promise.Resolver.prototype, {
         
         if (this._status === 'fulfilled') {
             this.accept(this._result);
-        } else if (this._status === 'rejected') {
+        }
+        if (this._status === 'rejected') {
             this.reject(this._result);
         }
     }
