@@ -1,6 +1,11 @@
 Widget Anim Change History
 ==========================
 
+3.10.0
+------
+
+* No changes.
+
 3.9.1
 -----
 

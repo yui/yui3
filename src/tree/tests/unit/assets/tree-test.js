@@ -1,3 +1,5 @@
+/* jshint newcap:false */
+
 YUI.add('tree-test', function (Y) {
 
 var Assert      = Y.Assert,
@@ -353,6 +355,59 @@ treeSuite.add(new Y.Test.Case({
         Assert.isTrue(nodes[2].state.destroyed, 'third node should be destroyed');
     },
 
+    'findNode() should return the first node for which the callback returns a truthy value': function () {
+        var calls = 0,
+            result;
+
+        result = this.tree.findNode(this.tree.rootNode, function (node) {
+            calls += 1;
+            Assert.areSame(Y.config.global, this, '`this` should be the global object');
+            return node.id === 'two';
+        });
+
+        Assert.areSame(this.tree.children[1], result, 'should find node "two"');
+        Assert.areSame(6, calls, 'should traverse 6 nodes');
+    },
+
+    'findNode() should return `null` when it doesn\'t find anything': function () {
+        var calls = 0,
+            result;
+
+        result = this.tree.findNode(this.tree.rootNode, function () {
+            calls += 1;
+            return false;
+        });
+
+        Assert.isNull(result, 'result should be null');
+        Assert.areSame(7, calls, 'should traverse all nodes');
+    },
+
+    'findNode() should pass options along to traverseNode()': function () {
+        var calls = 0,
+            result;
+
+        result = this.tree.findNode(this.tree.rootNode, {depth: 1}, function (node) {
+            calls += 1;
+            Assert.areSame(Y.config.global, this, '`this` should be the global object');
+            return node.id === 'one-one';
+        });
+
+        Assert.isNull(result, 'should not find anything');
+        Assert.areSame(4, calls, 'should traverse 4 nodes');
+    },
+
+    'findNode() should support a custom `this` object': function () {
+        var thisObj = {},
+            called;
+
+        this.tree.findNode(this.tree.rootNode, function () {
+            called = true;
+            Assert.areSame(thisObj, this, 'should have a custom `this` object');
+        }, thisObj);
+
+        Assert.isTrue(called, 'callback should be called');
+    },
+
     'getNodeById() should return the node with the given id': function () {
         var node = this.tree.children[0];
         Assert.areSame(node, this.tree.getNodeById(node.id));
@@ -477,8 +532,8 @@ treeSuite.add(new Y.Test.Case({
         Assert.isTrue(node.state.destroyed, 'node should be destroyed');
     },
 
-    'size() should return the total number of nodes in the tree': function () {
-        Assert.areSame(6, this.tree.size());
+    'size() should return the total number of nodes in the tree, including the root node': function () {
+        Assert.areSame(7, this.tree.size());
     },
 
     'toJSON() should return a serializable object representing the tree': function () {
@@ -507,6 +562,105 @@ treeSuite.add(new Y.Test.Case({
         }
 
         verifyNode(this.tree.rootNode, obj);
+    },
+
+    'traverseNode() should traverse the specified node and its descendants in depth-first order': function () {
+        var traversed = [],
+            tree;
+
+        tree = new Tree({
+            rootNode: {id: 'root'},
+
+            nodes: [
+                {id: 'a', children: [
+                    {id: 'a-a'}
+                ]},
+                {id: 'b', children: [
+                    {id: 'b-a', children: [
+                        {id: 'b-a-a'},
+                        {id: 'b-a-b'},
+                        {id: 'b-a-c'}
+                    ]},
+                    {id: 'b-b'}
+                ]},
+                {id: 'c'}
+            ]
+        });
+
+        tree.traverseNode(tree.rootNode, function (node) {
+            traversed.push(node.id);
+
+            Assert.isTrue(node._isYUITreeNode, 'node should be passed to the callback');
+            Assert.areSame(Y.config.global, this, '`this` object should be the global object');
+        });
+
+        Assert.areSame(10, traversed.length, 'should have traversed 10 nodes');
+        Assert.areSame('root a a-a b b-a b-a-a b-a-b b-a-c b-b c',
+            traversed.join(' '), 'should traverse nodes in depth-first order');
+    },
+
+    'traverseNode() should use the specified `this` object': function () {
+        var thisObj = {},
+            called;
+
+        this.tree.traverseNode(this.tree.rootNode, function () {
+            called = true;
+            Assert.areSame(thisObj, this, 'should use custom `this` object');
+        }, thisObj);
+
+        Assert.isTrue(called, 'callback should be called');
+    },
+
+    'traverseNode() should limit the maximum depth when `options.depth` is set': function () {
+        var traversed = [],
+            called, tree;
+
+        tree = new Tree({
+            rootNode: {id: 'root'},
+            nodes   : [
+                {id: 'a'},
+                {id: 'b', children: [
+                    {id: 'b-a', children: [
+                        {id: 'b-a-a', children: [
+                            {id: 'b-a-a-a'},
+                            {id: 'b-a-a-b'}
+                        ]}
+                    ]}
+                ]},
+                {id: 'c', children: [
+                    {id: 'c-a', children: [
+                        {id: 'c-a-a', children: [
+                            {id: 'c-a-a-a'},
+                            {id: 'c-a-a-b'}
+                        ]}
+                    ]}
+                ]},
+                {id: 'd'}
+            ]
+        });
+
+        tree.traverseNode(tree.rootNode, {depth: 2}, function (node) {
+            called = true;
+            traversed.push(node.id);
+        });
+
+        Assert.isTrue(called, 'callback should be called');
+        Assert.areSame('root a b b-a c c-a d', traversed.join(' '),
+            'should limit traversal to a depth of 2');
+    },
+
+    'traverseNode() should stop traversing if the callback returns `Tree.STOP_TRAVERSAL`': function () {
+        var calls = 0;
+
+        this.tree.traverseNode(this.tree.rootNode, function () {
+            calls += 1;
+
+            if (calls === 3) {
+                return Tree.STOP_TRAVERSAL;
+            }
+        });
+
+        Assert.areSame(3, calls, 'should stop traversal after three nodes');
     }
 }));
 
@@ -666,7 +820,6 @@ treeSuite.add(new Y.Test.Case({
 
     'insertNode() should fire an `add` event with a custom src': function () {
         var node = this.tree.createNode({id: 'inserted'}),
-            test = this,
             fired;
 
         this.tree.once('add', function (e) {
@@ -713,7 +866,6 @@ treeSuite.add(new Y.Test.Case({
 
     'removeNode() should pass along a custom `src`': function () {
         var node = this.tree.children[1],
-            test = this,
             fired;
 
         this.tree.once('remove', function (e) {
@@ -731,7 +883,7 @@ treeSuite.add(new Y.Test.Case({
         });
 
         this.tree.insertNode(this.tree.rootNode, {id: 'added'});
-        Assert.areSame(6, this.tree.size(), 'node should not have been added');
+        Assert.areSame(7, this.tree.size(), 'node should not have been added');
     },
 
     '`clear` event should be preventable': function () {
@@ -740,7 +892,7 @@ treeSuite.add(new Y.Test.Case({
         });
 
         this.tree.clear();
-        Assert.areSame(6, this.tree.size(), 'tree should not have been cleared');
+        Assert.areSame(7, this.tree.size(), 'tree should not have been cleared');
     },
 
     '`remove` event should be preventable': function () {
@@ -749,7 +901,7 @@ treeSuite.add(new Y.Test.Case({
         });
 
         this.tree.removeNode(this.tree.children[0]);
-        Assert.areSame(6, this.tree.size(), 'node should not have been removed');
+        Assert.areSame(7, this.tree.size(), 'node should not have been removed');
     }
 }));
 
@@ -934,6 +1086,24 @@ nodeSuite.add(new Y.Test.Case({
         Mock.verify(mock);
     },
 
+    'find() should wrap Tree#findNode()': function () {
+        var mock     = Mock(),
+            callback = function () {},
+            options  = {},
+            thisObj  = {};
+
+        Mock.expect(mock, {
+            method : 'findNode',
+            args   : [this.node, options, callback, thisObj],
+            run    : Y.bind(this.tree.findNode, this.tree)
+        });
+
+        this.node.tree = mock;
+        this.node.find(options, callback, thisObj);
+
+        Mock.verify(mock);
+    },
+
     'hasChildren() should return `true` if the node has children, `false` otherwise': function () {
         Assert.isFalse(this.node.hasChildren(), 'should be false when empty');
 
@@ -1090,6 +1260,24 @@ nodeSuite.add(new Y.Test.Case({
         }
 
         verifyNode(this.node, obj);
+    },
+
+    'traverse() should wrap Tree#traverseNode()': function () {
+        var mock     = Mock(),
+            callback = function () {},
+            options  = {},
+            thisObj  = {};
+
+        Mock.expect(mock, {
+            method : 'traverseNode',
+            args   : [this.node, options, callback, thisObj],
+            run    : Y.bind(this.tree.traverseNode, this.tree)
+        });
+
+        this.node.tree = mock;
+        this.node.traverse(options, callback, thisObj);
+
+        Mock.verify(mock);
     }
 }));
 
@@ -1228,8 +1416,7 @@ lazySuite.add(new Y.Test.Case({
     },
 
     '`beforeLoad` event should be preventable': function () {
-        var test = this,
-            fired,
+        var fired,
             loadCalled;
 
         this.lazy.on('beforeLoad', function (e) {

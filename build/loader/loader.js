@@ -11,9 +11,9 @@ if (!YUI.Env[Y.version]) {
     (function() {
         var VERSION = Y.version,
             BUILD = '/build/',
-            ROOT = VERSION + BUILD,
+            ROOT = VERSION + '/',
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.04.03-19-53',
+            GALLERY_VERSION = 'gallery-2013.04.24-22-00',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -3138,7 +3138,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "lang": [
             "en",
-            "es"
+            "es",
+            "it"
         ],
         "requires": [
             "autocomplete-base",
@@ -3500,6 +3501,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         "lang": [
             "en",
             "es",
+            "it",
             "ja"
         ],
         "requires": [
@@ -3790,7 +3792,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "lang": [
             "en",
             "fr",
-            "es"
+            "es",
+            "it"
         ],
         "requires": [
             "datatable-base"
@@ -5460,8 +5463,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     "tabview-base": {
         "requires": [
             "node-event-delegate",
-            "classnamemanager",
-            "skin-sam-tabview"
+            "classnamemanager"
         ]
     },
     "tabview-plugin": {
@@ -5814,7 +5816,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '6cdd510ca2f2e60a7da3609e2e89d687';
+YUI.Env[Y.version].md5 = 'ea7c49066d71ca273e02f7b4cd3d31eb';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

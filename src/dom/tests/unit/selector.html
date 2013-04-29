@@ -23,9 +23,8 @@ onload = function() {
 
     var SELECTOR_MODULE = 'selector-css3';
     YUI({
-        coverage: ['dom-deprecated'], //Selector fails in YUITestCoverage
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-    }).use('node', SELECTOR_MODULE, 'test-console', 'test', 'dom-deprecated', function(Y) {
+    }).use('node', SELECTOR_MODULE, 'test-console', 'test', function(Y) {
         String.prototype.test = function() {
             // simulate Moo monkey-patch
             return false;
@@ -329,7 +328,6 @@ onload = function() {
                 Assert.areEqual(Y.DOM.byId('test-rel-div'), $("div[rel^='foo2']", null, true), "($('[rel^=\'foo2\']), null, true)");
                 Assert.areEqual(Y.DOM.byId('foo-bar'), $("input[name='foo.bar']", null, true), "input[name='foo.bar'], null, true)");
 
-                ArrayAssert.itemsAreEqual([demoFirstChild, Y.DOM.next(demoFirstChild)], $('#demo > p:not(.last)'), '#demo > p:not(.last)');
                 Assert.areEqual(Y.DOM.byId('foo-bar'), $("[id^='foo-']", null, true), "[id^='foo-'], null, true");
                 Assert.areEqual(Y.DOM.byId('test-custom-attr'), $("#test-custom-attr[foo=bar]", null, true), "#test-custom-attr[foo=bar], null, true");
                 Assert.areEqual(Y.DOM.byId('test-custom-attr'), $("div[foo=bar]", null, true), "div[foo=bar], null, true");

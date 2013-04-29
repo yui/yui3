@@ -240,7 +240,8 @@
         ],
         "lang": [
             "en",
-            "es"
+            "es",
+            "it"
         ],
         "requires": [
             "autocomplete-base",
@@ -589,6 +590,7 @@
         "lang": [
             "en",
             "es",
+            "it",
             "ja"
         ],
         "requires": [
@@ -879,7 +881,8 @@
         "lang": [
             "en",
             "fr",
-            "es"
+            "es",
+            "it"
         ],
         "requires": [
             "datatable-base"
@@ -2433,8 +2436,7 @@
     "tabview-base": {
         "requires": [
             "node-event-delegate",
-            "classnamemanager",
-            "skin-sam-tabview"
+            "classnamemanager"
         ]
     },
     "tabview-plugin": {

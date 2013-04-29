@@ -215,27 +215,27 @@ YUI.add('series-planar-tests', function(Y) {
         interactionType: "planar",
         dataProvider: [
                 {
-                    "Time":new Date(2011,09,01,19,00,00,000),
+                    "Time":new Date(2011,9,1,19,00,00,000),
                     "miscellaneous":0
                 },
                 {
-                    "Time":new Date(2011,09,01,20,00,00,000),
+                    "Time":new Date(2011,9,1,20,00,00,000),
                     "miscellaneous":5
                 },
                 {
-                    "Time":new Date(2011,09,01,21,00,00,000),
+                    "Time":new Date(2011,9,01,21,00,00,000),
                     "miscellaneous":0
                 },
                 {
-                    "Time":new Date(2011,09,01,22,00,00,000),
+                    "Time":new Date(2011,9,01,22,00,00,000),
                     "miscellaneous":0
                 },
                 {
-                    "Time":new Date(2011,09,01,23,00,00,000),
+                    "Time":new Date(2011,9,01,23,00,00,000),
                     "miscellaneous":0
                 },
                 {
-                    "Time":new Date(2011,09,02,00,00,00,000),
+                    "Time":new Date(2011,9,02,00,00,00,000),
                     "miscellaneous":0
                 }
         ],
@@ -395,7 +395,6 @@ YUI.add('series-planar-tests', function(Y) {
         render: "#mychart"
     });
    
-    
     suite.add(zeroValueColumnMouseOverTests);
     suite.add(zeroValueBarMouseOverTests);
     suite.add(zeroValueStackedColumnMouseOverTests);

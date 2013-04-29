@@ -11,9 +11,9 @@ if (!YUI.Env[Y.version]) {
     (function() {
         var VERSION = Y.version,
             BUILD = '/build/',
-            ROOT = VERSION + BUILD,
+            ROOT = VERSION + '/',
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.04.03-19-53',
+            GALLERY_VERSION = 'gallery-2013.04.24-22-00',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',

@@ -1,0 +1,6 @@
+// Takes any promise and returns an ArrayPromise
+function toArrayPromise(promise) {
+    return new ArrayPromise(function (fulfill, reject) {
+        promise.then(fulfill, reject);
+    });
+}

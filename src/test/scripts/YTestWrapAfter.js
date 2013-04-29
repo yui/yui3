@@ -142,7 +142,7 @@ if (!YUI.YUITest) {
                 break;
             default:
                 message = "Unexpected event " + event.type;
-                message = "info";
+                messageType = "info";
         }
         
         if (Y.Test.Runner._log) {
