@@ -63,8 +63,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
      * @method initializer
      */
     initializer : function () {
-        this.plug(Y.Plugin.CalendarNavigator);
-
+        this.plug(this.get('navigatorPlugin'));
         this._keyEvents = [];
         this._highlightedDateNode = null;
         this._lastSelectedDate = null;
@@ -80,6 +79,12 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
         var contentBox = this.get('contentBox'),
             pane       = contentBox.one("." + CAL_PANE);
 
+
+
+        this.after('navigatorPluginChange', function (e) {
+            e.prevVal && this.unplug(e.prevVal);
+            this.plug(e.newVal);
+        });
         pane.on("selectstart", this._preventSelectionStart);
         pane.delegate("click", this._clickCalendar, "." + CAL_DAY + ", ." + CAL_PREVMONTH_DAY + ", ." + CAL_NEXTMONTH_DAY, this);
         pane.delegate("keydown", this._keydownCalendar, "." + CAL_GRID, this);
@@ -536,6 +541,27 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
                     return newMaxDate;
                 } else {
                     return val;
+                }
+            }
+        },
+
+        /**
+         * The plugin to use for Calendar navigation controls
+         * allow dates later than this one to be set, and will reset any later date to
+         * this date. Should be `null` if no maximum date is needed.
+         *
+         * @attribute navigatorPlugin
+         * @type Function
+         * @default Y.Plugin.CalendarNavigator
+         */
+
+        navigatorPlugin: {
+            value: Y.Plugin.CalendarNavigator,
+            setter: function (val) {
+                if (Y.Lang.isFunction(val)) {
+                    return val;
+                } else {
+                    return Y.Attribute.INVALID_VALUE;
                 }
             }
         }
