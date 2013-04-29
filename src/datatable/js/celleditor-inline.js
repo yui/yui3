@@ -163,7 +163,7 @@ var Editors = {},
         //}
 
         //TODO: Worst case, if this doesn't work just hide this sucker on scrolling !
-        this.cancelEditor();
+        // this.cancelEditor();
     }
 
 
@@ -181,7 +181,7 @@ var Editors = {},
          * @default true
          */
         hideMouseLeave : {
-            value:      true,
+            value:      false,
             validator:  Y.Lang.isBoolean
         },
 
@@ -369,24 +369,31 @@ This cell editor has the AutoComplete plugin attached to the input node.
 
     // Column definition
     {
-        key:'degreeProgram',
-        editor:"inlineAC",
-        editorConfig:{
+        key: 'degreeProgram',
+        editor: "inlineAC",
+        editorConfig: {
 
             // The following object is passed to "autocomplete" plugin when this
             //   editor is instantiated
             autocompleteConfig: {
                source:  [ "Bachelor of Science", "Master of Science", "PhD" ]
-               on: {
-                   select: function (r) {
-                       var val = r.result.display;
-                       this.editor.saveEditor();
-                   }
-               }
             }
         }
     }
 
+Alternatively, the editor can take the lookup table from the same source
+as the `lookup` formatter
+
+    {
+        key: 'degreeProgram',
+        formatter: "lookup",
+        editor: "inlineAC",
+        lookupTable: [
+            {value: 1, text: "Bachelor of Science"},
+            {value: 2, text: "Master of Science"}
+            {value: 3, text: "PhD"}
+         ]
+    }
 
 @property inlineAC
 @type DataTable.BaseCellEditor
@@ -410,7 +417,8 @@ Editors.inlineAC = Y.Base.create('celleditor', IEd, [],
                    alwaysShowList: true,
                    resultHighlighter: 'startsWith',
                    // resultFilters    : 'startsWith',
-                   render: true
+                   render: true,
+                   source: this.get('lookupTable')
                }, acConfig);
                // plug in the autocomplete and we're done ...
                inputNode.plug(Y.Plugin.AutoComplete, acConfig);
@@ -432,21 +440,24 @@ Editors.inlineAC = Y.Base.create('celleditor', IEd, [],
             },
             saveOnEnterKey: {
                 value: false
-            }
+            },
 
             /**
              * A user-supplied set of configuration parameters to be passed into this View's Y.Plugin.AutoComplete
              * configuration object.
              *
-             * At a bare minimum, the user MUST provide the "source" of data for the AutoComplete !!
+             * The most important property is the `source` of data for the AutoComplete.
+             * If it is missing, it will try to use the `lookupTable` that is used by the
+             * `lookup` formatter.
              *
-             * For this control to save anything, the user needs to define an "on:select" listener in the AC's
-             * "autocompleteConfig" in order to saveEditor when the select action occurs.
              *
              * @attribute autocompleteConfig
              * @type Object
              * @default {}
              */
+            autocompleteConfig: {
+                value: {}
+            }
 
             // Define listener to this editor View's events
         }

@@ -1,74 +1,96 @@
 <!doctype html>
 <html>
-<head>
-    <title>datatable-celleditor-inline</title>
-    <script src="/build/yui/yui.js"></script>
-</head>
-<body class="yui3-skin-sam">
-<script src="/build/datatable-editable/datatable-editable.js"></script>
-<div id="dtable"></div>
-<div id="logger"></div>
+    <head>
+        <title>datatable-celleditor-inline</title>
+        <script src="/build/yui/yui.js"></script>
+    </head>
+    <body class="yui3-skin-sam">
+        <script src="/build/datatable-editable/datatable-editable.js"></script>
+        <div id="dtable"></div>
+        <div id="logger"></div>
 
-<script src="assets/datatable-celleditor-inline-tests.js"></script>
+        <script src="assets/datatable-celleditor-inline-tests.js"></script>
 
-<script>
-YUI({
-    coverage: ['datatable-celleditor-inline'],
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-    // The following should go away once loader learns about them:
-    groups: {
-        builds: {
-            base: '../../../build/',
-            modules: {
-                'datatable-editable': {
-                    path: 'datatable-editable/datatable-editable-min.js',
-                    requires:[
-                        "datatable-base",
-                        "datatype",
-                        "node-screen"
-                    ],
-                    skinnable:true
-                },
-                'datatable-celleditor-inline': {
-                    path: 'datatable-celleditor-inline/datatable-celleditor-inline-min.js',
-                    requires:[
-                        "datatable-editable",
-                        "view",
-                        "base-build",
-                        "event-mouseenter"
-                    ],
-                    skinnable:true
-                },
-                'datatable-celleditor-popup': {
-                    path: 'datatable-celleditor-popup/datatable-celleditor-popup-min.js',
-                    requires:[
-                        "datatable-editable",
-                        "base-build",
-                        "view",
-                        "cssbutton",
-                        "event-outside",
-                        "overlay",
-                        "dd-plugin",
-                        "template"
-                    ],
-                    skinnable:true
+        <script>
+            YUI({
+                coverage: ['datatable-celleditor-inline'],
+                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+                // The following should go away once loader learns about them:
+                groups: {
+                    builds: {
+                        base: '../../../build/',
+                        modules: {
+                            'datatable-editable': {
+                                path: 'datatable-editable/datatable-editable-min.js',
+                                requires:[
+                                    "datatable-base",
+                                    "datatype",
+                                    "node-screen"
+                                ],
+                                skinnable:true
+                            },
+                            'datatable-celleditor-inline': {
+                                path: 'datatable-celleditor-inline/datatable-celleditor-inline-min.js',
+                                requires:[
+                                    "datatable-editable",
+                                    "view",
+                                    "base-build",
+                                    "event-mouseenter"
+                                ],
+                                skinnable:true
+                            },
+                            'datatable-celleditor-popup': {
+                                path: 'datatable-celleditor-popup/datatable-celleditor-popup-min.js',
+                                requires:[
+                                    "datatable-editable",
+                                    "base-build",
+                                    "view",
+                                    "cssbutton",
+                                    "event-outside",
+                                    "overlay",
+                                    "dd-plugin",
+                                    "template"
+                                ],
+                                skinnable:true
+                            }
+                        }
+                    },
+                    leaks: {
+                        base:'assets/',
+                        modules: {
+                            'leak-utils': {
+                                path: 'leakutils.js',
+                                requires: ['test','node']
+                            }
+                        }
+                    }
                 }
-            }
-        }
-    }
-}).use( 'test-console', 'test', 'datatable-celleditor-inline-tests',  "node-event-simulate",
-        "datatable-editable",  "datatable",
-        "datatable-celleditor-inline",
-        'datatable',
-        'datatable-editable',
-        function(Y) {
+            }).use(
+                'base-core',
+                'test',
+                'leak-utils',
+                function (Y) {
+                    if (/[?&]leak=([^&]+)/.test(window.location.search)) {
+                        Y.Test.Runner.setDOMIgnore('#logger','script');
+                        Y.Test.Runner.enableLeakDetector();
+                    }
+                Y.use(
+                'test-console',
+                'datatable-celleditor-inline-tests',  "node-event-simulate",
+                "datatable-editable",  "datatable",
+                "datatable-celleditor-inline",
+                'datatable',
+                'datatable-editable',
+                'autocomplete',
+                function(Y) {
 
-    (new Y.Test.Console()).render('#logger');
+                    (new Y.Test.Console()).render('#logger');
 
-    Y.Test.Runner.setName('datatable-celleditor-inline');
+                    Y.Test.Runner.setName('datatable-celleditor-inline');
 
-    Y.Test.Runner.run();
-});
-</script>
-</body>
+                    Y.Test.Runner.run();
+                })
+            });;
+        </script>
+    </body>
 </html>
