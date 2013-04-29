@@ -247,7 +247,7 @@ Y.mix( DtEditable.prototype, {
 
         this._UI_ATTRS = {
             SYNC: u.SYNC.concat(EDITABLE, EDITOR_OPEN_ACTION),
-            BIND: u.BIND.concat(EDITABLE, EDITOR_OPEN_ACTION)
+            BIND: u.BIND.concat(EDITABLE, EDITOR_OPEN_ACTION, 'columns')
         };
 
         this._editorsContainer = Y.one('body').appendChild('<div class="' + this.getClassName(COL, 'editors') + '"></div>');
@@ -481,7 +481,7 @@ Y.mix( DtEditable.prototype, {
             attachScrollUpdate.call(this);
 
         } else {
-            this.onceAfter('render', attachScrollUpdate);
+            this.onceAfter('renderedChange', attachScrollUpdate);
         }
         this._uiSetEditorOpenAction(this.get(EDITOR_OPEN_ACTION));
     },
@@ -565,6 +565,21 @@ Y.mix( DtEditable.prototype, {
 
         // if a valid editor is given AND we are in editing mode, toggle off/on ...
         if ( defeditor && this.get(EDITABLE) ) {
+            this._uiSetEditable(false);
+            this._uiSetEditable(true);
+        }
+    },
+
+    /**
+    Responds to changes in the columns definition by dropping all the current
+    editors and creating them again.
+
+    @method _uiSetColumns
+    @private
+     */
+    _uiSetColumns: function () {
+        Y.log('DataTable.Editable._uiSetColumns');
+        if (this.get(EDITABLE)) {
             this._uiSetEditable(false);
             this._uiSetEditable(true);
         }
@@ -863,6 +878,13 @@ Y.mix( DtEditable.prototype, {
         //
         if(this.get(EDITABLE) && this.get('scrollable') && this._openEditor && this._openEditor.get('active') ) {
 
+            var rt = this._editorTd.get('region'),
+                rx = this._xScrollNode.get('region'),
+                ry = this._yScrollNode.get('region'),
+                rsn = this._scrollbarNode.get('region');
+//            console.log(/*'left', rt.left, rx.left, ry.left,'right', rt.right, rx.right, ry.right, rsn.right ,*/'top', rt.top, rx.top, ry.top, rsn.top,'bottom', rt.bottom, rx.bottom, ry.bottom, rsn.bottom);
+            console.log('visible left', rt.left > rx.left, 'right', rt.right < rsn.left, 'top', rt.top > rsn.top, 'bottom', rt.bottom < rsn.bottom);
+            console.log(rx.left, this._xScrollNode.getXY());
             var oe = this._openEditor,
                 scrollBar    = e.target,
                 scrollBarClassName  = scrollBar.get('className') || '',
