@@ -6,6 +6,9 @@
             "datatype-date",
             "node"
         ],
+        "lang" : [
+            "en"
+        ],
         "skinnable": true
     }
 }
