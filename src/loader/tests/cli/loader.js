@@ -1973,36 +1973,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("exec-command")) > -1, "Module (exec-command) not found in sorted array");
         },
-     "Testing file": function(data) {
-            var loader = new Y.Loader({
-                require: ["file"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("file")) > -1, "Module (file) not found in sorted array");
-        },
-     "Testing file-flash": function(data) {
-            var loader = new Y.Loader({
-                require: ["file-flash"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("file-flash")) > -1, "Module (file-flash) not found in sorted array");
-        },
-     "Testing file-html5": function(data) {
-            var loader = new Y.Loader({
-                require: ["file-html5"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("file-html5")) > -1, "Module (file-html5) not found in sorted array");
-        },
      "Testing frame": function(data) {
             var loader = new Y.Loader({
                 require: ["frame"],
@@ -3406,26 +3376,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("substitute")) > -1, "Module (substitute) not found in sorted array");
         },
-     "Testing swf": function(data) {
-            var loader = new Y.Loader({
-                require: ["swf"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("swf")) > -1, "Module (swf) not found in sorted array");
-        },
-     "Testing swfdetect": function(data) {
-            var loader = new Y.Loader({
-                require: ["swfdetect"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("swfdetect")) > -1, "Module (swfdetect) not found in sorted array");
-        },
      "Testing tabview": function(data) {
             var loader = new Y.Loader({
                 require: ["tabview"],
@@ -3657,46 +3607,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("tree-sortable")) > -1, "Module (tree-sortable) not found in sorted array");
-        },
-     "Testing uploader": function(data) {
-            var loader = new Y.Loader({
-                require: ["uploader"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("uploader")) > -1, "Module (uploader) not found in sorted array");
-        },
-     "Testing uploader-flash": function(data) {
-            var loader = new Y.Loader({
-                require: ["uploader-flash"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("uploader-flash")) > -1, "Module (uploader-flash) not found in sorted array");
-        },
-     "Testing uploader-html5": function(data) {
-            var loader = new Y.Loader({
-                require: ["uploader-html5"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("uploader-html5")) > -1, "Module (uploader-html5) not found in sorted array");
-        },
-     "Testing uploader-queue": function(data) {
-            var loader = new Y.Loader({
-                require: ["uploader-queue"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("uploader-queue")) > -1, "Module (uploader-queue) not found in sorted array");
         },
      "Testing view": function(data) {
             var loader = new Y.Loader({

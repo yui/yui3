@@ -4422,22 +4422,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "yui-base"
         ]
     },
-    "file": {
-        "requires": [
-            "file-flash",
-            "file-html5"
-        ]
-    },
-    "file-flash": {
-        "requires": [
-            "base"
-        ]
-    },
-    "file-html5": {
-        "requires": [
-            "base"
-        ]
-    },
     "frame": {
         "requires": [
             "base",
@@ -5480,19 +5464,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "yui-base"
         ]
     },
-    "swf": {
-        "requires": [
-            "event-custom",
-            "node",
-            "swfdetect",
-            "escape"
-        ]
-    },
-    "swfdetect": {
-        "requires": [
-            "yui-base"
-        ]
-    },
     "tabview": {
         "requires": [
             "widget",
@@ -5636,37 +5607,6 @@ Y.mix(YUI.Env[Y.version].modules, {
     "tree-sortable": {
         "requires": [
             "tree"
-        ]
-    },
-    "uploader": {
-        "requires": [
-            "uploader-html5",
-            "uploader-flash"
-        ]
-    },
-    "uploader-flash": {
-        "requires": [
-            "swf",
-            "widget",
-            "base",
-            "cssbutton",
-            "node",
-            "event-custom",
-            "file-flash",
-            "uploader-queue"
-        ]
-    },
-    "uploader-html5": {
-        "requires": [
-            "widget",
-            "node-event-simulate",
-            "file-html5",
-            "uploader-queue"
-        ]
-    },
-    "uploader-queue": {
-        "requires": [
-            "base"
         ]
     },
     "view": {
@@ -5860,7 +5800,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'ea7c49066d71ca273e02f7b4cd3d31eb';
+YUI.Env[Y.version].md5 = '0afffda1f107cbeb18ea034ae8d9a8a0';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

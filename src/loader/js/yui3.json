@@ -1439,22 +1439,6 @@
             "yui-base"
         ]
     },
-    "file": {
-        "requires": [
-            "file-flash",
-            "file-html5"
-        ]
-    },
-    "file-flash": {
-        "requires": [
-            "base"
-        ]
-    },
-    "file-html5": {
-        "requires": [
-            "base"
-        ]
-    },
     "frame": {
         "requires": [
             "base",
@@ -2409,19 +2393,6 @@
             "yui-base"
         ]
     },
-    "swf": {
-        "requires": [
-            "event-custom",
-            "node",
-            "swfdetect",
-            "escape"
-        ]
-    },
-    "swfdetect": {
-        "requires": [
-            "yui-base"
-        ]
-    },
     "tabview": {
         "requires": [
             "widget",
@@ -2555,37 +2526,6 @@
     "tree-sortable": {
         "requires": [
             "tree"
-        ]
-    },
-    "uploader": {
-        "requires": [
-            "uploader-html5",
-            "uploader-flash"
-        ]
-    },
-    "uploader-flash": {
-        "requires": [
-            "swf",
-            "widget",
-            "base",
-            "cssbutton",
-            "node",
-            "event-custom",
-            "file-flash",
-            "uploader-queue"
-        ]
-    },
-    "uploader-html5": {
-        "requires": [
-            "widget",
-            "node-event-simulate",
-            "file-html5",
-            "uploader-queue"
-        ]
-    },
-    "uploader-queue": {
-        "requires": [
-            "base"
         ]
     },
     "view": {
