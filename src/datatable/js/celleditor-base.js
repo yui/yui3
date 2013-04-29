@@ -95,6 +95,14 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
    */
    _classError: 'yui3-datatable-celleditor-error',
 
+    /**
+    Disallow ad-hoc attributes
+
+    @property _allowAdHocAttrs {Boolean}
+    @default false
+    @protected
+     */
+    _allowAdHocAttrs: false,
 
     /**
     Creates the View instance and sets the container and bindings
