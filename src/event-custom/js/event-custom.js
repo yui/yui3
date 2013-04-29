@@ -790,10 +790,11 @@ Y.CustomEvent.prototype = {
 
         if (!subs) {
             subs = (when === AFTER) ? this._afters : this._subscribers;
-            i = YArray.indexOf(subs, s, 0);
         }
 
         if (subs) {
+            i = YArray.indexOf(subs, s, 0);
+
             if (s && subs[i] === s) {
                 subs.splice(i, 1);
 
