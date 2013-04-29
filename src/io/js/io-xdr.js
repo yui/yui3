@@ -53,16 +53,6 @@ Method that creates the Flash transport swf.
 @param {String} yid - IO instance id.
 **/
 function _swf(uri, yid, uid) {
-    var o = '<object id="io_swf" type="application/x-shockwave-flash" data="' +
-            uri + '" width="0" height="0">' +
-            '<param name="movie" value="' + uri + '">' +
-            '<param name="FlashVars" value="yid=' + yid + '&uid=' + uid + '">' +
-            '<param name="allowScriptAccess" value="always">' +
-            '</object>',
-        c = d.createElement('div');
-
-    d.body.appendChild(c);
-    c.innerHTML = o;
 }
 
 /**
@@ -78,9 +68,6 @@ and failure cases.
 @return {Object}
 **/
 function _data(o, u, d) {
-    if (u === 'flash') {
-        o.c.responseText = decodeURI(o.c.responseText);
-    }
     if (d === 'xml') {
         o.c.responseXML = Y.DataType.XML.parse(o.c.responseText);
     }
@@ -166,22 +153,7 @@ Y.mix(Y.IO.prototype, {
         var io = this;
 
         if (c.xdr.use === 'flash') {
-            // The configuration object cannot be serialized safely
-            // across Flash's ExternalInterface.
-            _cB[o.id] = c;
-            w.setTimeout(function() {
-                try {
-                    o.c.send(uri, { id: o.id,
-                                    uid: o.uid,
-                                    method: c.method,
-                                    data: c.data,
-                                    headers: c.headers });
-                }
-                catch(e) {
-                    io.xdrResponse('transport error', o, c);
-                    delete _cB[o.id];
-                }
-            }, Y.io.xdr.delay);
+            throw new Error('Y.io.xdr: Flash XDR is not supported in this build of YUI.');
         }
         else if (xdr) {
             io._ieEvt(o, c);
@@ -268,8 +240,7 @@ Y.mix(Y.IO.prototype, {
     **/
     transport: function(c) {
         if (c.id === 'flash') {
-            _swf(Y.UA.ie ? c.src + '?d=' + new Date().valueOf().toString() : c.src, Y.id, c.uid);
-            Y.IO.transports.flash = function() { return d.getElementById('io_swf'); };
+            throw new Error('Y.io.xdr: Flash XDR is not supported in this build of YUI.');
         }
     }
 });
