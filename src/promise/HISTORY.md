@@ -10,6 +10,8 @@ Promise Change History
 * The first function received as parameter of the Promise init function is now
   a reference to resolve() instead of accept()
 * Changing the use of fulfill() to accept() to follow the naming of DOMFuture
+* Changed the value of |this| inside callbacks to undefined to match the
+Promises A+ spec
 
 3.10.0
 ------
