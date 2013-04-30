@@ -10700,10 +10700,11 @@ Y.CustomEvent.prototype = {
 
         if (!subs) {
             subs = (when === AFTER) ? this._afters : this._subscribers;
-            i = YArray.indexOf(subs, s, 0);
         }
 
         if (subs) {
+            i = YArray.indexOf(subs, s, 0);
+
             if (s && subs[i] === s) {
                 subs.splice(i, 1);
 
@@ -15006,18 +15007,23 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * The implementation for showing nodes.
-     * Default is to toggle the style.display property.
+     * Default is to remove the hidden attribute and reset the CSS style.display property.
      * @method _show
      * @protected
      * @chainable
      */
     _show: function() {
+        this.removeAttribute('hidden');
+
+        // For back-compat we need to leave this in for browsers that
+        // do not visually hide a node via the hidden attribute
+        // and for users that check visibility based on style display.
         this.setStyle('display', '');
 
     },
 
     _isHidden: function() {
-        return Y.DOM.getStyle(this._node, 'display') === 'none';
+        return Y.DOM.getAttribute(this._node, 'hidden') === 'true';
     },
 
     /**
@@ -15076,12 +15082,17 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * The implementation for hiding nodes.
-     * Default is to toggle the style.display property.
+     * Default is to set the hidden attribute to true and set the CSS style.display to 'none'.
      * @method _hide
      * @protected
      * @chainable
      */
     _hide: function() {
+        this.setAttribute('hidden', true);
+
+        // For back-compat we need to leave this in for browsers that
+        // do not visually hide a node via the hidden attribute
+        // and for users that check visibility based on style display.
         this.setStyle('display', 'none');
     }
 });
