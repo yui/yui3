@@ -23,7 +23,7 @@ package
         private var vars:Object = root.loaderInfo.parameters;
 
         public function io() {
-			var jsCheck:RegExp = /[^A-Za-z0-9._:]/; 
+            var jsCheck:RegExp = /[^A-Za-z0-9._:-]/; 
             if(jsCheck.test(vars.yid)) {
                 vars.yid = '';
             }
