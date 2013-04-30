@@ -22,7 +22,7 @@ package com.yahoo.util
 				flashvars = _stage.loaderInfo.parameters;
 				
 				if (flashvars["yId"] && flashvars["YUIBridgeCallback"] && flashvars["YUISwfId"] && ExternalInterface.available) {
-					var jsCheck:RegExp = /[^A-Za-z0-9._]/; 
+                    var jsCheck:RegExp = /[^A-Za-z0-9._:]/; 
                     _jsHandler = flashvars["YUIBridgeCallback"];
 					_swfID = flashvars["YUISwfId"];
 					_yId = flashvars["yId"];
