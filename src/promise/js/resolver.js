@@ -209,17 +209,9 @@ Y.mix(Resolver.prototype, {
                 return thenReject(e);
             }
 
-            if (Promise.isPromise(result)) {
-                // Returning a promise from a callback makes the current
-                // promise sync up with the returned promise
-                result.then(thenResolve, thenReject);
-            } else {
-                // Non-promise return values always trigger resolve()
-                // because callback is affirmative, and errback is
-                // recovery.  To continue on the rejection path, errbacks
-                // must return rejected promises or throw.
-                thenResolve(result);
-            }
+            // resolve() checks if the result is a promise or a thenable and
+            // adopts it or assimilates it
+            thenResolve(result);
         };
     },
 
