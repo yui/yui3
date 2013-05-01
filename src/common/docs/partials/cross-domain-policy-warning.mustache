@@ -1,0 +1,22 @@
+<div class="warn">
+<h2>Cross-domain Policy</h2>
+
+<h4>What is it?</h4>
+<p>A cross-domain policy file is an XML document that grants a web client permission to handle data across multiple domains</p>
+
+<h4>Why do you need it?</h4>
+<p>To grant access through a web client to other domains. This is used to allow access to domains you trust and helps prevent potential malicious attacks to those web clients.</p>
+
+<h4>What does it look like?</h4>
+<p>It should look like something:</p>
+```
+<?xml version="1.0"?>
+<cross-domain-policy>
+    <allow-access-from domain="www.mydomain.com" />
+    <allow-access-from domain="www.friend-domain.com" />
+</cross-domain-policy>
+```
+
+<h4>When do you need it?</h4>
+<p>If you are hosting a web client file, such as an SWF, you need a cross-domain policy file located on your domain. If you are using these files from other domains, those domains should have the policy file in place.</p>
+</div>
