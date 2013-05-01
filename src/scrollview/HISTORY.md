@@ -4,7 +4,7 @@ ScrollView Change History
 @VERSION@
 -----
 
-* Paginator API methods now respect the host's `disabled` ATTR
+* Paginator API methods now respect the widget's `disabled` ATTR
 
 3.9.1
 -----
