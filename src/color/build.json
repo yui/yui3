@@ -1,0 +1,26 @@
+{
+    "name": "color",
+    "builds": {
+        "color-base": {
+            "jsfiles": [
+                "color-base.js"
+            ]
+        },
+        "color-hsl": {
+            "jsfiles": [
+                "color-hsl.js"
+            ]
+        },
+        "color-hsv": {
+            "jsfiles": [
+                "color-hsv.js"
+            ]
+        },
+        "color-harmony": {
+            "jsfiles": [
+                "color-harmony.js"
+            ]
+        }
+    }
+}
+

@@ -1,0 +1,261 @@
+<style>
+.color {
+    border: 1px solid rgba(0,0,0,0.5);
+    box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.3);
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+    width: 12px;
+    height: 12px;
+    vertical-align: top;
+    margin: 0 0.3em;
+}
+</style>
+<div class="intro">
+<p> The {{displayName}} Utility will give you the ability to convert colors to and from RGB and Hex. {{displayName}} also provides submodules to convert to and from HSL with `color-hsl` and HSV with `color-hsv`.</p>
+<p>`Y.Color` also provides a very useful way to find colors that work together. `color-harmony` provides the ability to get harmony colors such as complementary, triads, analogous, and more! You can even match a color to the perceived brightness of another color.</p>
+</div>
+
+{{>getting-started}}
+
+<h2 id="using">Using {{displayName}}</h2>
+<p>{{displayName}} allows you to convert a color from and to hexadecimal and RGB. {{displayName}} conversion methods take a string value and return a string value.</p>
+
+<h3 id="basic">Basic Conversion</h3>
+<p>{{displayName}} takes color values as strings. {{displayName}} values may consist of hexadecimal `"#ff00ff"`, RGB `"rgb(255, 0, 255)"`, or RGBA `"rgba(255, 0, 255, 1)"`.</p>
+<p>As with taking in these values, you can also convert to any of these values.</p>
+<pre class="code prettyprint">
+var color = 'f00';{{>color-s}}#ff0000{{>color-e}}
+
+Y.Color.toHex(color); // #ff0000
+Y.Color.toRGB(color); // rgb(255, 0, 0)
+Y.Color.toRGBA(color); // rgba(255, 0, 0, 1)
+</pre>
+
+<p>{{displayName}} also provides a sugar method, `convert()`. It takes color value as the first param and the `to` type as the second value.</p>
+<pre class="code prettyprint">
+var color = 'f00';{{>color-s}}#ff0000{{>color-e}}
+
+Y.Color.convert(color, Y.Color.TYPES.HEX); // #ff0000
+Y.Color.convert(color, Y.Color.TYPES.RGB); // rgb(255, 0, 0)
+Y.Color.convert(color, Y.Color.TYPES.RGBA); // rgba(255, 0, 0, 1)
+</pre>
+
+<h3 id="arrays">Working with Arrays</h3>
+<p>If you wish to get the values back in an array, you can use the `toArray` method.</p>
+<pre class="code prettyprint">
+Y.Color.toArray('f00'); // ['ff', '00', '00']
+Y.Color.toArray('rgb(255, 0, 0)'); // [255, 0, 0]
+Y.Color.toArray('rgba(255, 0, 0, 1)'); // [255, 0, 0, 1]
+</pre>
+
+<p>{{displayName}} also provides an easy way to convert from an array to a color string value with `fromArray`. `fromArray` takes an Array as the first param and template string as the second param.</p>
+<p>There are default templates defined in {{displayName}} for you to use.</p>
+<pre class="code prettyprint">
+Y.Color.fromArray(['ff', '00', '00'], Y.Color.TYPES.HEX); // #ff0000
+Y.Color.fromArray([255, 0, 0], Y.Color.TYPES.RGB); // rgb(255, 0, 0)
+Y.Color.fromArray([255, 0, 0, 1], Y.Color.TYPES.RGBA); // rgba(255, 0, 0, 1)
+</pre>
+
+<h2 id="hsl">HSL Color</h2>
+<p>You can get access to HSL color values and conversion methods by using the `color-hsl` submodule.</p>
+<pre class="code prettyprint">
+var color = 'f00';{{>color-s}}#ff0000{{>color-e}}
+
+// direct conversion methods
+Y.Color.toHSL(color); // hsl(0, 100%, 50%)
+Y.Color.toHSLA(color); // hsla(0, 100%, 50%, 1)
+
+// convertion sugar with `convert()` and `to` specification
+Y.Color.convert(color, Y.Color.TYPES.HSL); // hsl(0, 100%, 50%)
+Y.Color.convert(color, Y.Color.TYPES.HSLA); // hsla(0, 100%, 50%, 1)
+
+// convert string to an array
+Y.Color.toArray('hsl(0, 100%, 50%)'); // [0, 100, 50]
+Y.Color.toArray('hsla(0, 100%, 50%, 1)'); // [0, 100, 50, 1]
+
+// convert to string from an array
+Y.Color.fromArray([0, 100, 50], Y.Color.TYPES.HSL); // hsl(0, 100%, 50%)
+Y.Color.fromArray([0, 100, 50, 1], Y.Color.TYPES.HSLA); // hsl(0, 100%, 50%, 1)
+</pre>
+
+
+<h2 id="hsv">HSV Color</h2>
+<p>You can get access to HSV color values and conversion methods by using the `color-hsv` submodule.</p>
+<p>By default, hsv strings are represented as `hsv( hue, saturation%, value%)` even though these are not directly supported with CSS as hsl strings are.</p>
+<pre class="code prettyprint">
+var color = 'f00';{{>color-s}}#ff0000{{>color-e}}
+
+// direct conversion methods
+Y.Color.toHSV(color); // hsv(0, 100%, 100%)
+Y.Color.toHSVA(color); // hsva(0, 100%, 100%, 1)
+
+// convertion sugar with `convert()` and `to` specification
+Y.Color.convert(color, Y.Color.TYPES.HSV); // hsv(0, 100%, 100%)
+Y.Color.convert(color, Y.Color.TYPES.HSVA); // hsva(0, 100%, 100%, 1)
+
+// convert string to an array
+Y.Color.toArray('hsv(0, 100%, 100%)'); // [0, 100, 100]
+Y.Color.toArray('hsva(0, 100%, 100%, 1)'); // [0, 100, 100, 1]
+
+// convert to string from an array
+Y.Color.fromArray([0, 100, 100], Y.Color.TYPES.HSV); // hsv(0, 100%, 100%)
+Y.Color.fromArray([0, 100, 100, 1], Y.Color.TYPES.HSVA); // hsv(0, 100%, 100%, 1)
+</pre>
+
+
+
+<h2 id="harmony">Harmony Colors</h2>
+<p>Color also makes it easy to get complementary, triads, tetrads, or offsets of a color through `color-harmony`. Harmony methods that return colors, will return an Array with the color provided (converted, if requested) as the first index.</p>
+```
+<script>
+// Create a new YUI instance and populate it with the required modules.
+YUI().use('color-harmony', function (Y) {
+    // Color is available and ready for use with harmony methods added on.
+    // Add implementation code here.
+});
+</script>
+```
+<p>Color harmony methods can also do a conversion for you on the colors that are returned with the optional `to` param. When no `to` value is provided, the return values will match the string type initially provided.</p>
+<p>For the following examples, we will use these color options to keep the examples easy to read.</p>
+<pre class="code prettyprint">
+var white =  "#ffffff"{{>color-s}}#ffffff{{>color-e}},
+    black =  "#000000"{{>color-s}}#000000{{>color-e}},
+    red  =   "#ff0000"{{>color-s}}#ff0000{{>color-e}},
+    orange = "#ff7700"{{>color-s}}#ff7700{{>color-e}},
+    yellow = "#ffff00"{{>color-s}}#ffff00{{>color-e}},
+    green =  "#00ff00"{{>color-s}}#00ff00{{>color-e}},
+    blue =   "#0000ff"{{>color-s}}#0000ff{{>color-e}},
+    purple = "#ff00ff"{{>color-s}}#ff00ff{{>color-e}};
+</pre>
+
+
+<h3 id="complementary">Complementary</h3>
+<p>A complementary color is the opposite color on the subtractive color wheel.</p>
+<p>`getComplementary` will return an Array of two color values. The first being the color provided. The second being the complementary color.</p>
+<img src="../assets/color/complementary-red-w.png">
+<pre class="code prettyprint">
+// getComplementary(color, to)
+
+Y.Color.getComplementary(red); // [ "#ff0000"{{>color-s}}#ff0000{{>color-e}}, "#00ff00"{{>color-s}}#00ff00{{>color-e}}]
+</pre>
+
+<h3 id="split">Split Complementary</h3>
+<p>Split complementary is similar to complementary, with the exception of getting one color opposite the starting color, you get two colors adjacent to the complementary color.</p>
+<p>`getSplit` will return an Array of three color values. The first being the color provided. The second being a 30 degree offset from the complementary color. The third being a -30 degree offset from the complementary color.</p>
+<p>If you wish, you can provide a custom offset distance as the second parameter.</p>
+<img src="../assets/color/split-red-w.png">
+<pre class="code prettyprint">
+// getSplit(color, offset, to)
+
+Y.Color.getSplit(red); //["#ff0000"{{>color-s}}#ff0000{{>color-e}}, "#00ffff"{{>color-s}}#00ffff{{>color-e}}, "#55ff00"{{>color-s}}#55ff00{{>color-e}}]
+</pre>
+
+<h3 id="analogous">Analogous</h3>
+<p>Analogous colors are colors adjacent to each other. Color will return an Array of colors.</p>
+<p>The first color is the color you provided. The next to colors are clockwise from the start color. The last two are counter clockwise from the start color.</p>
+<p>The offset distance can be set with a `Number` representing the degree between each color as the second parameter. The offset by default is `10`.</p>
+<img src="../assets/color/analogous-orange-w.png">
+<pre class="code prettyprint">
+// getAnalogous(color, offset, to)
+
+Y.Color.getAnalogous(orange);
+// ["#ff7700"{{>color-s}}#ff7700{{>color-e}}, "#ff9100"{{>color-s}}#ff9100{{>color-e}}, "#ffae00"{{>color-s}}#ffae00{{>color-e}}, "#ff5900"{{>color-s}}#ff5900{{>color-e}}, "#ff3c00"{{>color-s}}#ff3c00{{>color-e}}]
+</pre>
+
+<h3 id="triad">Triad</h3>
+<p>A triad will return three evenly spaced colors. The first being the color provided, the next two will be 120 degree offsets clockwise.</p>
+<img src="../assets/color/triad-purple-w.png">
+<pre class="code prettyprint">
+// getTriad(color, to)
+
+Y.Color.getTriad(purple); // ["#ff00ff"{{>color-s}}#ff00ff{{>color-e}}, "#ffaa00"{{>color-s}}#ffaa00{{>color-e}}, "#00ff00"{{>color-s}}#00ff00{{>color-e}}]
+</pre>
+
+<h3 id="square">Square</h3>
+<p>A square will return four evenly spaced colors. The first being the color provided, the remaining three will be 90 degree offsets clockwise.</p>
+<img src="../assets/color/square-blue-w.png">
+<pre class="code prettyprint">
+// getSquare(color, to)
+
+Y.Color.getSquare(blue);
+// ["#0000ff"{{>color-s}}#0000ff{{>color-e}}, "#ff0080"{{>color-s}}#ff0080{{>color-e}}, "#ffaa00"{{>color-s}}#ffaa00{{>color-e}}, "#55ff00"{{>color-s}}#55ff00{{>color-e}}]
+</pre>
+
+<h3 id="tretrad">Tetrad</h3>
+<p>Tetrad is similar to square although the offsets are not equal. Tetrad is comprised of the complementary color and an offset from the original and the complementary color.</p>
+<p>The offset distance can be set with a `Number` representing the degree between each color as the second parameter. The offset by default is `60`.</p>
+<img src="../assets/color/tetrad-blue-w.png">
+<pre class="code prettyprint">
+// getTetrad(color, offset, to)
+
+Y.Color.getTetrad(blue);
+// ["#0000ff"{{>color-s}}#0000ff{{>color-e}}, "#ff00ff"{{>color-s}}#ff00ff{{>color-e}}, "#ffaa00"{{>color-s}}#ffaa00{{>color-e}}, "#aaff00"{{>color-s}}#aaff00{{>color-e}}]
+</pre>
+
+<h3 id="monochrome">Monochromatic</h3>
+<p>A monochromatic harmony set takes the hue and saturation of the provided color and returns an Array of colors with adjusted luminance from zero to one hundred percent.</p>
+<p>The number of colors returned can be set with a `Number` specifying the total number of items to be returned as the second parameter. The default is `5` resulting in five items returned.</p>
+<img src="../assets/color/monochrome-green.png">
+<pre class="code prettyprint">
+// getMonochrome(color, count, to)
+
+Y.Color.getMonochrome(green);
+// ["#000000"{{>color-s}}#000000{{>color-e}}, "#008000"{{>color-s}}#008000{{>color-e}}, "#00ff00"{{>color-s}}#00ff00{{>color-e}}, "#80ff80"{{>color-s}}#80ff80{{>color-e}}, "#ffffff"{{>color-s}}#ffffff{{>color-e}}]
+</pre>
+
+<h3 id="similar">Similar Colors</h3>
+<p>You can also get a set of colors similar to provided color. A similar color is a color with a similar hue, saturation, and/or luminance.</p>
+<p>To change the maximum offset, set the second param with a Number. The offset by default is `10`.</p>
+<p>You can specify the number of similar colors returned with the third param as a Number. By default `5` similar colors are returned in addition to the provided color.</p>
+<pre class="code prettyprint">
+// getSimilar(color, offset, count, to)
+
+Y.Color.getSimilar(purple);
+// ["#ff00ff"{{>color-s}}#ff00ff{{>color-e}}, "#f429ff"{{>color-s}}#f429ff{{>color-e}}, "#bb03d3"{{>color-s}}#bb03d3{{>color-e}}, "#c405d6"{{>color-s}}#c405d6{{>color-e}}, "#e01ff9"{{>color-s}}#e01ff9{{>color-e}}, "#e402e8"{{>color-s}}#e402e8{{>color-e}}]
+</pre>
+
+<h3 id="offset">Hue, Saturation, Luminance Offsets</h3>
+<p>You adjust hue, saturation, or luminance individually using `getOffset`. The offset is plus or minus the current value. Saturation and luminance can only go as high as `100` and as low as `0`.</p>
+<p>To set the amount to adjust, supply an Object as the second parameter. This object may contain any combination of `h`, `s`, and `l` representing hue, saturation, and luminance respectively.</p>
+<pre class="code prettyprint">
+// getOffset(color, adjust, to)
+
+Y.Color.getOffset(red, {h: 40}); // #ff6e00{{>color-s}}#ff6e00{{>color-e}}
+
+Y.Color.getOffset(red, {l: 20}); // #ff6666{{>color-s}}#ff6666{{>color-e}}
+
+Y.Color.getOffset(red, {s: -50}); // #bf4040{{>color-s}}#bf4040{{>color-e}}
+</pre>
+<p>You can also offset multiple factors at the same time.</p>
+<pre class="code prettyprint">
+Y.Color.getOffset(red, {h: 40, l: 20, s: -50}); // #d9ad8c{{>color-s}}#d9ad8c{{>color-e}}
+</pre>
+
+<h3 id="brightness">Perceived Brightness</h3>
+<p>Different hues at the same saturation and luminance can be perceived brighter or darker than each other (such as blue and yellow). Brightness is represented as a value from `0` to `100` &mdash; where `0` is darkest (black) and `100` is brightest (white).</p>
+
+<p>Note: `getBrightness` uses a weighted distance in 3D space algorithm. Traditionally these values are `{r: 0.241, g: 0.691, b: 0.068 }`. These values were adjusted during tests to `{ r: 0.221, g: 0.711, b: 0.068 }`. You can override these values with `Y.Color._brightnessWeights`.</p>
+<pre class="code prettyprint">
+// getBrightness(color)
+
+Y.Color.getBrightness(white); // 100
+
+Y.Color.getBrightness(black); // 0
+
+Y.Color.getBrightness(yellow); // 97
+</pre>
+
+<h3 id="similar-brightness">Match Brightness</h3>
+<p>You may wish to match one color to the preceived brightness of another color. This process will keep the hue and saturation the same, and only adjust the luminance to a color that is the same, or nearly the same, perceived brightness.</p>
+<p>`getSimiliarBrightness` takes two parameters. The first is the color you wish to adjust. The second is the color to which you wish to match the perceived brightness.</p>
+<p>It will return a single color value string.</p>
+<pre class="code prettyprint">
+//getSimilarBrightness(color, match, to)
+
+Y.Color.getSimilarBrightness(orange, blue);
+// adjust orange{{>color-s}}#ff7700{{>color-e}} to match the brightness of blue{{>color-s}}#0000ff{{>color-e}}, returns #703800{{>color-s}}#703800{{>color-e}}
+
+Y.Color.getSimilarBrightness(white, green);
+// adjust white{{>color-s}}#ffffff{{>color-e}} to match the brightness of green{{>color-s}}#00ff00{{>color-e}}, returns #d9d9d9{{>color-s}}#d9d9d9{{>color-e}}
+</pre>

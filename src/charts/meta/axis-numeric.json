@@ -1,0 +1,8 @@
+{
+    "axis-numeric": {
+        "requires":[
+            "axis",
+            "axis-numeric-base"
+        ]
+    }
+}

@@ -100,7 +100,7 @@ To add a liner to all columns, either provide a custom `bodyView` to the
 DataTable constructor or update the default `bodyView`'s `CELL_TEMPLATE` like
 so:
 
-<pre><code>table.on('renderBody', function (e) {
+<pre><code>table.on('table:renderBody', function (e) {
     e.view.CELL_TEMPLATE = e.view.CELL_TEMPLATE.replace(/\{content\}/,
             '&lt;div class="yui3-datatable-liner">{content}&lt;/div>');
 });
@@ -193,7 +193,7 @@ Y.mix(ColumnWidths.prototype, {
     @protected
     @since 3.5.0
     **/
-    initializer: function (config) {
+    initializer: function () {
         this.after(['renderView', 'columnsChange'], this._uiSetColumnWidths);
     },
 
@@ -234,10 +234,10 @@ Y.mix(ColumnWidths.prototype, {
             // td.style.width === col.style.width
             if  (width && Y.Features.test('table', 'badColWidth')) {
                 cell = this.getCell([0, colIndex]);
-                
+
                 if (cell) {
                     getCStyle = function (prop) {
-                        return parseInt(cell.getComputedStyle(prop), 10)|0;
+                        return parseInt(cell.getComputedStyle(prop), 10)||0;
                     };
 
                     col.setStyle('width',

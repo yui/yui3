@@ -12,16 +12,16 @@ YUI.add('dd-ddm', function (Y, NAME) {
      */
     Y.mix(Y.DD.DDM, {
         /**
+        * The shim placed over the screen to track the mousemove event.
         * @private
         * @property _pg
-        * @description The shim placed over the screen to track the mousemove event.
         * @type {Node}
         */
         _pg: null,
         /**
+        * Set this to true to set the shims opacity to .5 for debugging it, default: false.
         * @private
         * @property _debugShim
-        * @description Set this to true to set the shims opacity to .5 for debugging it, default: false.
         * @type {Boolean}
         */
         _debugShim: false,
@@ -39,17 +39,17 @@ YUI.add('dd-ddm', function (Y, NAME) {
             this._deactivateTargets();
         },
         /**
+        * Deactivates the shim
         * @private
         * @method _pg_deactivate
-        * @description Deactivates the shim
         */
         _pg_deactivate: function() {
             this._pg.setStyle('display', 'none');
         },
         /**
+        * Activates the shim
         * @private
         * @method _pg_activate
-        * @description Activates the shim
         */
         _pg_activate: function() {
             if (!this._pg) {
@@ -73,9 +73,9 @@ YUI.add('dd-ddm', function (Y, NAME) {
             });
         },
         /**
+        * Sizes the shim on: activatation, window:scroll, window:resize
         * @private
         * @method _pg_size
-        * @description Sizes the shim on: activatation, window:scroll, window:resize
         */
         _pg_size: function() {
             if (this.activeDrag) {
@@ -89,9 +89,9 @@ YUI.add('dd-ddm', function (Y, NAME) {
             }
         },
         /**
+        * Creates the shim and adds it's listeners to it.
         * @private
         * @method _createPG
-        * @description Creates the shim and adds it's listeners to it.
         */
         _createPG: function() {
             var pg = Y.Node.create('<div></div>'),

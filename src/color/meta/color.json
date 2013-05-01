@@ -1,0 +1,28 @@
+{
+    "color": {
+        "use": [
+            "color-base", "color-hsl", "color-harmony"
+        ]
+    },
+    "color-base": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "color-hsl": {
+        "requires": [
+            "color-base"
+        ]
+    },
+    "color-hsv": {
+        "requires": [
+            "color-base"
+        ]
+    },
+    "color-harmony": {
+        "requires": [
+            "color-hsl"
+        ]
+    }
+}
+

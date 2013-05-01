@@ -1,11 +1,17 @@
 /**
- * Utility class used for drawing lines.
+ * Provides functionality for drawing lines in a series.
  *
  * @module charts
- * @submodule charts-base
+ * @submodule series-line-util
+ */
+/**
+ * Utility class used for drawing lines.
+ *
  * @class Lines
  * @constructor
+ * @submodule series-line-util
  */
+var Y_Lang = Y.Lang;
 function Lines(){}
 
 Lines.prototype = {
@@ -118,7 +124,7 @@ Lines.prototype = {
             }
             else if(lastPointValid)
             {
-                if(lineType != "dashed")
+                if(lineType !== "dashed")
                 {
                     path.lineTo(nextX, nextY);
                 }
@@ -135,7 +141,7 @@ Lines.prototype = {
             }
             else
             {
-                if(discontinuousType != "solid")
+                if(discontinuousType !== "solid")
                 {
                     this.drawDashedLine(path, lastValidX, lastValidY, nextX, nextY,
                                                 discontinuousDashLength,

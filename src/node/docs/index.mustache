@@ -13,11 +13,9 @@
     </p>
 
     <p>
-        <strong>Note:</strong> The <em>`Y.get()`, `node.query()`, and
-        `node.queryAll()` methods have been removed.  Use `Y.one()`,
-        `node.one()`, and `node.all()` or include the
-        "<a href="{{apiDocs}}/modules/node-deprecated.html">node-deprecated</a>"
-        module in your `use()` statement to restore them</em>.
+        <strong>Note:</strong><em>The `Y.get()`, `node.query()`, and
+        `node.queryAll()` methods have been removed. Use `Y.one()`,
+        `node.one()`, and `node.all()`.</em>
     </p>
 
 </div>
@@ -202,7 +200,7 @@ var firstPara = node.one('p');
 
 if (firstPara) { // might be null
     // adds "bar" to the first paragraph descendant of #demo
-    firstPara.addClass('intro');
+    firstPara.addClass('bar');
 }
 
 // adds class "syntax-highlight" to all <pre> descendants of #demo

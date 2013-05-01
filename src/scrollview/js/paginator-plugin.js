@@ -12,12 +12,9 @@ var getClassName = Y.ClassNameManager.getClassName,
     SCROLL_X = 'scrollX',
     SCROLL_Y = 'scrollY',
     TOTAL = 'total',
+    DISABLED = 'disabled',
     HOST = 'host',
-    BOUNDING_BOX = 'boundingBox',
-    CONTENT_BOX = 'contentBox',
     SELECTOR = 'selector',
-    FLICK = 'flick',
-    DRAG = 'drag',
     AXIS = 'axis',
     DIM_X = 'x',
     DIM_Y = 'y';
@@ -72,7 +69,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
 
     /**
-     * 
+     *
      *
      * @method _bindAttrs
      * @private
@@ -103,10 +100,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * After host render
      *
      * @method _afterHostRender
-     * @param {Event.Facade}
+     * @param e {Event.Facade} The event facade
      * @protected
      */
-    _afterHostRender: function (e) {
+    _afterHostRender: function () {
         var paginator = this,
             bb = paginator._bb,
             host = paginator._host,
@@ -114,14 +111,13 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             paginatorAxis = paginator._cAxis,
             pageNodes = paginator._getPageNodes(),
             size = pageNodes.size(),
-            maxScrollX = paginator._pageDims[index].maxScrollX,
-            maxScrollY = paginator._pageDims[index].maxScrollY;
+            pageDim = paginator._pageDims[index];
 
         if (paginatorAxis[DIM_Y]) {
-            host._maxScrollX = maxScrollX;
+            host._maxScrollX = pageDim.maxScrollX;
         }
         else if (paginatorAxis[DIM_X]) {
-            host._maxScrollY = maxScrollY;
+            host._maxScrollY = pageDim.maxScrollY;
         }
 
         // Set the page count
@@ -143,16 +139,14 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * After host syncUI
      *
      * @method _afterHostSyncUI
-     * @param {Event.Facade}
+     * @param e {Event.Facade} The event facade
      * @protected
      */
-    _afterHostSyncUI: function (e) {
+    _afterHostSyncUI: function () {
         var paginator = this,
             host = paginator._host,
-            hostFlick = host.get(FLICK),
             pageNodes = paginator._getPageNodes(),
-            size = pageNodes.size(),
-            paginatorAxis;
+            size = pageNodes.size();
 
         // Set the page count
         paginator.set(TOTAL, size);
@@ -167,10 +161,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * After host _uiDimensionsChange
      *
      * @method _afterHostUIDimensionsChange
-     * @param {Event.Facade}
+     * @param e {Event.Facade} The event facade
      * @protected
      */
-    _afterHostUIDimensionsChange: function (e) {
+    _afterHostUIDimensionsChange: function () {
 
         var paginator = this,
             host = paginator._host,
@@ -195,13 +189,13 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
                     scrollX: 0,
                     scrollY: 0,
 
-                    // Minimum scrollable values
-                    _minScrollX: 0,
-                    _minScrollY: 0,
-
                     // Maximum scrollable values
                     maxScrollX: maxScrollX,
-                    maxScrollY: maxScrollY
+                    maxScrollY: maxScrollY,
+
+                    // Height & width of the page
+                    width: scrollWidth,
+                    height: scrollHeight
                 };
 
             } else {
@@ -229,7 +223,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             gesture = host._gesture,
             index = paginator._cIndex,
             paginatorAxis = paginator._cAxis,
-            pageNodes = this._getPageNodes(),
+            pageNodes = paginator._getPageNodes(),
             gestureAxis;
 
         if (gesture) {
@@ -258,21 +252,39 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Determines if the gesture should page prev or next (if at all)
      *
      * @method _afterHostGestureMoveEnd
-     * @param {Event.Facade}
+     * @param e {Event.Facade} The event facade
      * @protected
      */
-    _afterHostGestureMoveEnd: function (e) {
+    _afterHostGestureMoveEnd: function () {
+
+        // This was a flick, so we don't need to do anything here
+        if (this._host._gesture.flick) {
+            return;
+        }
+
         var paginator = this,
             host = paginator._host,
             gesture = host._gesture,
+            index = paginator._cIndex,
             paginatorAxis = paginator._cAxis,
-            gestureAxis = gesture && gesture.axis;
+            gestureAxis = gesture.axis,
+            isHorizontal = (gestureAxis === DIM_X),
+            delta = gesture[(isHorizontal ? 'deltaX' : 'deltaY')],
+            isForward = (delta > 0),
+            pageDims = paginator._pageDims[index],
+            halfway = pageDims[(isHorizontal ? 'width' : 'height')] / 2,
+            isHalfway = (Math.abs(delta) >= halfway),
+            canScroll = paginatorAxis[gestureAxis],
+            rtl = host.rtl;
 
-        if (paginatorAxis[gestureAxis]) {
-            if (gesture[(gestureAxis === DIM_X ? 'deltaX' : 'deltaY')] > 0) {
-                paginator[host.rtl ? 'prev' : 'next']();
-            } else {
-                paginator[host.rtl ? 'next' : 'prev']();
+        if (canScroll) {
+            if (isHalfway) { // TODO: This condition should probably be configurable
+                // Fire next()/prev()
+                paginator[(rtl === isForward ? 'prev' : 'next')]();
+            }
+            // Scrollback
+            else {
+                paginator.scrollToIndex(paginator.get(INDEX));
             }
         }
     },
@@ -282,30 +294,21 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Prevents mousewheel events in some conditions
      *
      * @method _beforeHostMousewheel
-     * @param {Event.Facade}
+     * @param e {Event.Facade} The event facade
      * @protected
      */
     _beforeHostMousewheel: function (e) {
         var paginator = this,
             host = paginator._host,
             bb = host._bb,
-            isForward = e.wheelDelta < 0, // down (negative) is forward. @TODO Should revisit.
+            isForward = (e.wheelDelta < 0),
             paginatorAxis = paginator._cAxis;
-
-        // Set the axis for this event.
-        // @TODO: This is hacky, it's not a gesture. Find a better way
-        host._gesture = {
-            axis: DIM_Y
-        };
 
         // Only if the mousewheel event occurred on a DOM node inside the BB
         if (bb.contains(e.target) && paginatorAxis[DIM_Y]) {
 
-            if (isForward) {
-                paginator.next();
-            } else {
-                paginator.prev();
-            }
+            // Fire next()/prev()
+            paginator[(isForward ? 'next' : 'prev')]();
 
             // prevent browser default behavior on mousewheel
             e.preventDefault();
@@ -320,17 +323,47 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Prevents flick events in some conditions
      *
      * @method _beforeHostFlick
-     * @param {Event.Facade}
+     * @param e {Event.Facade} The event facade
      * @protected
      */
     _beforeHostFlick: function (e) {
-        var paginator = this,
-            paginatorAxis = paginator.get(AXIS),
-            flickAxis = e.flick.axis || false;
+        
+        // If the widget is disabled
+        if (this._host.get(DISABLED)) {
+            return false;
+        }
 
-        // Prevent flicks on the paginated axis
-        if (paginatorAxis[flickAxis]) {
+        // The drag was out of bounds, so do nothing (which will cause a snapback)
+        if (this._host._isOutOfBounds()){
             return new Y.Do.Prevent();
+        }
+        
+        var paginator = this,
+            host = paginator._host,
+            gesture = host._gesture,
+            paginatorAxis = paginator.get(AXIS),
+            flick = e.flick,
+            velocity = flick.velocity,
+            flickAxis = flick.axis || false,
+            isForward = (velocity < 0),
+            canScroll = paginatorAxis[flickAxis],
+            rtl = host.rtl;
+
+        // Store the flick data in the this._host._gesture object so it knows this was a flick
+        if (gesture) {
+            gesture.flick = flick;
+        }
+
+        // Can we scroll along this axis?
+        if (canScroll) {
+
+            // Fire next()/prev()
+            paginator[(rtl === isForward ? 'prev' : 'next')]();
+
+            // Prevent flicks on the paginated axis
+            if (paginatorAxis[flickAxis]) {
+                return new Y.Do.Prevent();
+            }
         }
     },
 
@@ -339,10 +372,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Runs cleanup operations
      *
      * @method _afterHostScrollEnded
-     * @param {Event.Facade}
+     * @param e {Event.Facade} The event facade
      * @protected
      */
-    _afterHostScrollEnded: function (e) {
+    _afterHostScrollEnded: function () {
         var paginator = this,
             host = paginator._host,
             index = paginator._cIndex,
@@ -363,7 +396,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * index attr change handler
      *
      * @method _afterIndexChange
-     * @param {Event.Facade}
+     * @param e {Event.Facade} The event facade
      * @protected
      */
     _afterIndexChange: function (e) {
@@ -421,15 +454,16 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      *
      * @method _getStage
      * @param index {Number} The page index # intended to be in focus.
-     * @returns {object}
+     * @return {object}
      * @protected
      */
     _getStage: function (index) {
-        var _pageBuffer = this._pageBuffer,
-            pageCount = this.get(TOTAL),
-            pageNodes = this._getPageNodes(),
-            start = Math.max(0, index - _pageBuffer),
-            end = Math.min(pageCount, index + 1 + _pageBuffer); // noninclusive
+        var paginator = this,
+            pageBuffer = paginator._pageBuffer,
+            pageCount = paginator.get(TOTAL),
+            pageNodes = paginator._getPageNodes(),
+            start = Math.max(0, index - pageBuffer),
+            end = Math.min(pageCount, index + 1 + pageBuffer); // noninclusive
 
         return {
             visible: pageNodes.splice(start, end - start),
@@ -468,14 +502,14 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      *
      * @method _getPageNodes
      * @protected
-     * @returns {nodeList}
+     * @return {nodeList}
      */
     _getPageNodes: function () {
         var paginator = this,
             host = paginator._host,
             cb = host._cb,
             pageSelector = paginator.get(SELECTOR),
-            pageNodes = pageSelector ? cb.all(pageSelector) : cb.get('children');
+            pageNodes = (pageSelector ? cb.all(pageSelector) : cb.get('children'));
 
         return pageNodes;
     },
@@ -489,7 +523,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             index = paginator._cIndex,
             target = index + 1,
-            total = this.get(TOTAL);
+            total = paginator.get(TOTAL);
 
         if (target >= total) {
             return;
@@ -517,8 +551,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         paginator.set(INDEX, target);
     },
     
-    /** 
+    /**
      * Deprecated for 3.7.0.
+     * @method scrollTo
      * @deprecated
      */
     scrollTo: function () {
@@ -529,6 +564,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Scroll to a given page in the scrollview
      *
      * @method scrollToIndex
+     * @since 3.7.0
      * @param index {Number} The index of the page to scroll to
      * @param {Number} [duration] The number of ms the animation should last
      * @param {String} [easing] The timing function to use in the animation
@@ -544,7 +580,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         easing = (easing !== undefined) ? easing : PaginatorPlugin.TRANSITION.easing;
 
         // Set the index ATTR to the specified index value
-        paginator.set(INDEX, index);
+        paginator.set(INDEX, index, { src: UI });
 
         // Makes sure the viewport nodes are visible
         paginator._showNodes(pageNode);
@@ -563,16 +599,16 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @param val {Mixed} A string ('x', 'y', 'xy') to specify which axis/axes to allow scrolling on
      * @param name {String} The attribute name
      * @return {Object} An object to specify scrollability on the x & y axes
-     * 
+     *
      * @protected
      */
-    _axisSetter: function (val, name) {
+    _axisSetter: function (val) {
 
         // Turn a string into an axis object
         if (Y.Lang.isString(val)) {
             return {
-                x: val.match(/x/i) ? true : false,
-                y: val.match(/y/i) ? true : false
+                x: (val.match(/x/i) ? true : false),
+                y: (val.match(/y/i) ? true : false)
             };
         }
     },
@@ -627,8 +663,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     ATTRS: {
 
         /**
-         * Specifies ability to scroll on x, y, or x and y axis/axes. 
-         * If unspecified, it inherits from the host instance.
+         * Specifies ability to scroll on x, y, or x and y axis/axes.
+         *  If unspecified, it inherits from the host instance.
          *
          * @attribute axis
          * @type String
@@ -658,12 +694,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
          * @default 0
          */
         index: {
-            value: 0,
-            validator: function (val) {
-                // TODO: Remove this?
-                // return val >= 0 && val < this.get(TOTAL);
-                return true;
-            }
+            value: 0
         },
 
         /**

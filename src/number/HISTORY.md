@@ -1,6 +1,31 @@
 Number Change History
 =====================
 
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* PR #433 (ticket #2533028) - Fix incorrectly parsing empty string as 0. [okuryu]
+
+3.8.1
+-----
+
+* No changes.
+
+3.8.0
+-----
+
+  * No changes.
+
 3.7.3
 -----
 

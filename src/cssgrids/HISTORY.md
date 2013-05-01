@@ -1,6 +1,37 @@
 CSS Grids Change History
 ========================
 
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* [!] Fixed over-collapsing spaces between grid units in Chrome 25, which has
+  added support for `word-spacing`. The `word-spacing` rules are now only
+  targeted at IE < 8.
+
+* Added Responsive Grids ("cssgrids-responsive") which builds on top of the
+  existing CSS Grids. It adds `.yui3-g-r`, which can be used in place of
+  `.yui3-g` and will make all units responsive automatically.
+
+3.8.1
+-----
+
+* No changes.
+
+3.8.0
+-----
+
+* No changes.
+
 3.7.3
 -----
 

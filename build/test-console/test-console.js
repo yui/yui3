@@ -64,7 +64,7 @@ Y.namespace('Test').Console = Y.extend(TestConsole, Y.Console, {
     * @return {Boolean} True if this is Istanbul Coverage
     */
     _isIstanbul: function(json) {
-        var first = Object.keys(json)[0],
+        var first = Y.Object.keys(json)[0],
             ret = false;
 
         if (json[first].s !== undefined && json[first].fnMap !== undefined) {

@@ -1,6 +1,35 @@
 MenuNav Change History
 ======================
 
+3.10.0
+------
+
+* No changes.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* [!] DEPRECATED: The MenuNav Node Plugin has been deprecated as of YUI 3.9.0.
+  This module will be removed from the library in a future version. If you
+  require functionality similar to the one provided by this module, consider
+  taking a look at the various modules in the
+  [YUI Gallery](http://yuilibrary.com/gallery/).
+
+3.8.1
+-----
+
+* No changes.
+
+3.8.0
+-----
+
+* No changes.
+
 3.7.3
 -----
 

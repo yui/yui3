@@ -11,9 +11,9 @@ if (!YUI.Env[Y.version]) {
     (function() {
         var VERSION = Y.version,
             BUILD = '/build/',
-            ROOT = VERSION + BUILD,
+            ROOT = VERSION + '/',
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.11.09-01-41',
+            GALLERY_VERSION = 'gallery-2013.04.24-22-00',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -887,9 +887,13 @@ Y.Loader.prototype = {
                             }
                         }
                     } else if (i === 'gallery') {
-                        this.groups.gallery.update(val, o);
+                        if (this.groups.gallery.update) {
+                            this.groups.gallery.update(val, o);
+                        }
                     } else if (i === 'yui2' || i === '2in3') {
-                        this.groups.yui2.update(o['2in3'], o.yui2, o);
+                        if (this.groups.yui2.update) {
+                            this.groups.yui2.update(o['2in3'], o.yui2, o);
+                        }
                     } else {
                         self[i] = val;
                     }
@@ -2182,15 +2186,17 @@ Y.Loader.prototype = {
     /**
     * The default Loader onTimeout handler, calls this.onTimeout with a payload
     * @method _onTimeout
+    * @param {Get.Transaction} transaction The Transaction object from `Y.Get`
     * @private
     */
-    _onTimeout: function() {
+    _onTimeout: function(transaction) {
         var f = this.onTimeout;
         if (f) {
             f.call(this.context, {
                 msg: 'timeout',
                 data: this.data,
-                success: false
+                success: false,
+                transaction: transaction
             });
         }
     },
@@ -2680,46 +2686,48 @@ Y.Loader.prototype = {
 
 
         for (j in resCombos) {
-            base = j;
-            comboSep = resCombos[base].comboSep || self.comboSep;
-            maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
-            for (type in resCombos[base]) {
-                if (type === JS || type === CSS) {
-                    urls = resCombos[base][type];
-                    mods = resCombos[base][type + 'Mods'];
-                    len = urls.length;
-                    tmpBase = base + urls.join(comboSep);
-                    baseLen = tmpBase.length;
-                    if (maxURLLength <= base.length) {
-                        maxURLLength = MAX_URL_LENGTH;
-                    }
+            if (resCombos.hasOwnProperty(j)) {
+                base = j;
+                comboSep = resCombos[base].comboSep || self.comboSep;
+                maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
+                for (type in resCombos[base]) {
+                    if (type === JS || type === CSS) {
+                        urls = resCombos[base][type];
+                        mods = resCombos[base][type + 'Mods'];
+                        len = urls.length;
+                        tmpBase = base + urls.join(comboSep);
+                        baseLen = tmpBase.length;
+                        if (maxURLLength <= base.length) {
+                            maxURLLength = MAX_URL_LENGTH;
+                        }
 
-                    if (len) {
-                        if (baseLen > maxURLLength) {
-                            u = [];
-                            for (s = 0; s < len; s++) {
-                                u.push(urls[s]);
-                                tmpBase = base + u.join(comboSep);
-
-                                if (tmpBase.length > maxURLLength) {
-                                    m = u.pop();
+                        if (len) {
+                            if (baseLen > maxURLLength) {
+                                u = [];
+                                for (s = 0; s < len; s++) {
+                                    u.push(urls[s]);
                                     tmpBase = base + u.join(comboSep);
-                                    resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
-                                    u = [];
-                                    if (m) {
-                                        u.push(m);
+
+                                    if (tmpBase.length > maxURLLength) {
+                                        m = u.pop();
+                                        tmpBase = base + u.join(comboSep);
+                                        resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                        u = [];
+                                        if (m) {
+                                            u.push(m);
+                                        }
                                     }
                                 }
-                            }
-                            if (u.length) {
-                                tmpBase = base + u.join(comboSep);
+                                if (u.length) {
+                                    tmpBase = base + u.join(comboSep);
+                                    resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                }
+                            } else {
                                 resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
                             }
-                        } else {
-                            resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
                         }
+                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
                     }
-                    resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
                 }
             }
         }

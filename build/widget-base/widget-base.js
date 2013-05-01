@@ -548,7 +548,7 @@ Y.extend(Widget, Y.Base, {
               * after rendering is complete.
               * </p>
               *
-              * @event widget:render
+              * @event render
               * @preventable _defRenderFn
               * @param {EventFacade} e The Event Facade
               */
@@ -1258,4 +1258,15 @@ Y.extend(Widget, Y.Base, {
 Y.Widget = Widget;
 
 
-}, '@VERSION@', {"requires": ["attribute", "base-base", "base-pluginhost", "classnamemanager", "event-focus", "node-base", "node-style"], "skinnable": true});
+}, '@VERSION@', {
+    "requires": [
+        "attribute",
+        "base-base",
+        "base-pluginhost",
+        "classnamemanager",
+        "event-focus",
+        "node-base",
+        "node-style"
+    ],
+    "skinnable": true
+});

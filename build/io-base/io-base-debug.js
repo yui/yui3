@@ -556,6 +556,8 @@ IO.prototype = {
     *       <dt>dataType</dt>
     *         <dd>Set the value to 'XML' if that is the expected response
     *         content type.</dd>
+    *       <dt>credentials</dt>
+    *         <dd>Set the value to 'true' to set XHR.withCredentials property to true.</dd>
     *     </dl></dd>
     *
     *   <dt>form</dt>
@@ -645,10 +647,15 @@ IO.prototype = {
         sync = config.sync;
         data = config.data;
 
-        // Serialize an map object into a key-value string using
+        // Serialize a map object into a key-value string using
         // querystring-stringify-simple.
         if ((Y.Lang.isObject(data) && !data.nodeType) && !transaction.upload) {
-            data = Y.QueryString.stringify(data);
+            if (Y.QueryString && Y.QueryString.stringify) {
+                Y.log('Stringifying config.data for request', 'info', 'io');
+                config.data = data = Y.QueryString.stringify(data);
+            } else {
+                Y.log('Failed to stringify config.data object, likely because `querystring-stringify-simple` is missing.', 'warn', 'io');
+            }
         }
 
         if (config.form) {
@@ -661,6 +668,10 @@ IO.prototype = {
                 data = io._serialize(config.form, data);
             }
         }
+
+        // Convert falsy values to an empty string. This way IE can't be
+        // rediculous and translate `undefined` to "undefined".
+        data || (data = '');
 
         if (data) {
             switch (method) {
