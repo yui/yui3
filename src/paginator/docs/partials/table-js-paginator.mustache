@@ -1,0 +1,9 @@
+    pg.after('pageChange', function (e) {
+        showPage(e.newVal);
+        updateControls();
+    });
+
+    pg.after('itemsPerPageChange', function () {
+        showPage();
+        updateControls();
+    });

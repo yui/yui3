@@ -1,0 +1,22 @@
+    FlickrSearch.PageView = Y.Base.create('page-view', Y.View, [], {
+
+        containerTemplate: '<ol></ol>',
+
+        initializer: function () {
+            var items = this.items = new FlickrSearch.ImageList();
+
+            items.after('add', this.add, this);
+        },
+
+        add: function (e) {
+            var view = new FlickrSearch.ImageView({
+                model: e.model
+            });
+
+            this.get('container').append(
+                view.render().get('container')
+            );
+
+        }
+    });
+

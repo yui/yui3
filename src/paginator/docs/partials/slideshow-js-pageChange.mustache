@@ -5,7 +5,12 @@
         // paginator is 1 based
         page--;
 
-        slides.removeClass(selectedClass).item(page).addClass(selectedClass);
-        controls.all('li').removeClass(selectedClass).item(page).addClass(selectedClass);
+        // clear anything active
+        slides.removeClass(selectedClass);
+        controls.removeClass(selectedClass);
+
+        // make the new item active
+        slides.item(page).addClass(selectedClass);
+        controls.item(page).addClass(selectedClass);
     });
 

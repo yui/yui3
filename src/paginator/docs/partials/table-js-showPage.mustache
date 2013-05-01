@@ -1,0 +1,23 @@
+    function showPage(page) {
+        page || (page = pg.get('page'));
+
+        var itemsPerPage = pg.get('itemsPerPage'),
+            min = (page - 1 ) * itemsPerPage,
+            max = Math.min( page * itemsPerPage - 1, pg.get('totalItems')),
+            rows = '',
+            i;
+
+        if (max < 0) {
+            max = pg.get('totalItems');
+        }
+
+        for (i = min; i <= max; i++ ) {
+            rows += Y.Lang.sub(rowTemplate, Y.mix({count: i + 1}, data[i]));
+        }
+
+        tbody.setContent(rows);
+
+        Y.all('.currentPage').setContent(
+            Y.Lang.sub(currentPageTemplate, pg.getAttrs())
+        );
+    }

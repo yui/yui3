@@ -11,7 +11,7 @@
         {
             "name": "slideshow",
             "displayName": "Slideshow",
-            "description": "A slideshow controlled via paginator.",
+            "description": "This example illustrates how to create a slideshow using paginator to control the slides.",
             "modules": ["paginator", "slideshow"],
             "tags": ["paginator", "slideshow"]
         },
@@ -26,13 +26,6 @@
             "name": "search",
             "displayName": "Search Results",
             "description": "Continuous pagining using image searching usings Flickr's API.",
-            "modules": ["paginator", "search"],
-            "tags": ["paginator", "search", "flickr"]
-        },
-        {
-            "name": "auto-search",
-            "displayName": "Auto Search Results",
-            "description": "Continuous scrolling with image searching using Flickr's API.",
             "modules": ["paginator", "search"],
             "tags": ["paginator", "search", "flickr"]
         }

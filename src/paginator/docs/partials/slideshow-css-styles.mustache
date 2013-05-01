@@ -1,18 +1,17 @@
+<style scoped>
 #spiffySlides {
     position: relative;
     overflow: hidden;
     display: inline-block;
     zoom: 1; *display: inline;
 }
-#spiffySlides ul {
+
+
+/* - S L I D E S - */
+
+#spiffySlides .slides {
     margin: 0;
     padding: 0;
-}
-#spiffySlides li {
-    list-style: none;
-    display: inline;
-}
-#spiffySlides .slides {
     width: 630px;
     height: 350px;
     position: relative;
@@ -22,6 +21,8 @@
     position: absolute;
     left: 0;
     top: 0;
+    list-style: none;
+    display: inline;
     opacity: 0;
     -webkit-transition: opacity 0.3s ease-out;
     -moz-transition:    opacity 0.3s ease-out;
@@ -35,12 +36,21 @@
     -o-transition:      opacity 0.3s ease-out;
     transition:         opacity 0.3s ease-out;
 }
+
+
+/* - C O N T R O L S - */
+
 #spiffySlides .controls {
     width: 630px;
     text-align: right;
-    margin-top: 3px;
-    padding-top: 8px;
+    margin: 3px 0 0;
+    padding: 8px 0 0;
     position: relative;
+    z-index: 1;
+}
+#spiffySlides .controls li {
+    list-style: none;
+    display: inline;
 }
 #spiffySlides .controls a {
     display: inline-block;
@@ -70,6 +80,10 @@
     background: #2647a0;
     color: #ffffff;
 }
+
+
+/* - P A U S E   M E S S A G E - */
+
 #spiffySlides .paused {
     opacity: 0;
     bottom: 5px;
@@ -93,3 +107,4 @@
     -o-transition:      all 0.3s ease-out;
     transition:         all 0.3s ease-out;
 }
+</style>

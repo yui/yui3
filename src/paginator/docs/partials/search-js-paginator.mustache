@@ -1,0 +1,118 @@
+    FlickrSearch.Paginator = Y.Base.create('pager', Y.Widget, [Y.Paginator], {
+
+        CONTENT_TEMPLATE: '<ul></ul>',
+
+        PAGE_TEMPLATE: '<li class="{control} page page-{page}" data-type="page" data-page="{page}">{page}</li>',
+
+        classes: {
+            control: 'control',
+            disabled: 'disabled',
+            selected: 'selected'
+        },
+
+        renderUI: function () {
+            var controls = Y.Lang.sub(
+                '<li class="{control} first" data-type="first">First</li>' +
+                '<li class="{control} prev" data-type="prev">Previous</li>' +
+                '<li><ul class="pages"></ul></li>' +
+                '<li class="{control} next" data-type="next">Next</li>' +
+                '<li class="{control} last" data-type="last">Last</li>'
+            , this.classes);
+
+            this.get('contentBox').setHTML(controls);
+        },
+
+        bindUI: function () {
+            this.get('boundingBox').delegate('click', this._afterControlClick, '.' + this.classes.control, this);
+
+            this.after('pageChange', this.syncUI, this);
+
+            this.after('totalItemsChange', function (e) {
+                this.set('page', 1);
+            }, this);
+        },
+
+        syncUI: function() {
+            // disable controls
+            var hasPrev = this.hasPrevPage(),
+                hasNext = this.hasNextPage(),
+                classes = this.classes,
+                controls = this.get('contentBox');
+
+            controls.one('.first').toggleClass(classes.disabled, !hasPrev);
+            controls.one('.prev').toggleClass(classes.disabled, !hasPrev);
+            controls.one('.next').toggleClass(classes.disabled, !hasNext);
+            controls.one('.last').toggleClass(classes.disabled, !hasNext);
+
+            // update page controls list
+            this._buildPageList();
+
+        },
+
+        _afterControlClick: function (e) {
+            e.preventDefault();
+
+            var control = e.currentTarget.getData('type');
+
+            if (e.currentTarget.hasClass('disabled')) {
+                return;
+            }
+
+            switch (control) {
+                case 'first':
+                    this.set('page', 1);
+                    break;
+                case 'prev':
+                    this.set('page', +this.get('page') - 1);
+                    break;
+                case 'next':
+                    this.set('page', +this.get('page') + 1);
+                    break;
+                case 'last':
+                    this.set('page', this.get('totalPages'));
+                    break;
+                case 'page':
+                    this.set('page', e.currentTarget.getData('page'));
+                    break;
+                default:
+                    return;
+            }
+
+        },
+
+        _buildPageList: function () {
+            var pages = this.get('totalPages'),
+                page = this.get('page'),
+                pagesNode = '',
+                display = this.get('display'),
+                min = Math.max(1, page - Math.floor(display / 2)),
+                max = min + display - 1;
+
+            if (max > pages) {
+                min -= max - pages;
+            }
+
+            min = Math.max(1, min);
+            max = Math.min(pages, max);
+
+            for (; min <= max; min++) {
+                pagesNode += Y.Lang.sub(this.PAGE_TEMPLATE, {
+                    control: this.classes.control,
+                    page: min
+                });
+            }
+
+            this.get('contentBox').one('.pages').setHTML(pagesNode)
+
+            if (pagesNode) {
+                this.get('contentBox').one('.page-' + page).addClass(this.classes.selected);
+            }
+        }
+    }, {
+        ATTRS: {
+            display: {
+                value: 10
+            }
+        }
+    });
+

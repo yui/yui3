@@ -1,0 +1,164 @@
+        url: 'http://api.flickr.com/services/rest/?',
+
+        _isNewQuery: false,
+
+        _pages: [],
+
+        paginator: null,
+
+        _api: null,
+
+        events: {
+            'form': {
+                'submit': 'handleQuery'
+            }
+        },
+
+        initializer: function () {
+            this._api = this.get('apiConfig');
+
+            this.paginator = new FlickrSearch.Paginator({
+                itemsPerPage: this._api.per_page
+            });
+
+            this.paginator.after('pageChange', this._afterPageChange, this);
+        },
+
+        render: function () {
+            this.paginator.render(this.get('container').one('.paginator'));
+        },
+
+        handleQuery: function (e) {
+            e.preventDefault();
+
+            while (this._pages.length) {
+                this._pages.shift().destroy({ remove: true });
+            }
+
+            this._api.text = this.get('container').one('form input').get('value');
+
+            this._isNewQuery = true;
+
+            if (this.paginator.get('page') !== 1) {
+                this.paginator.set('page', 1);
+            } else {
+                this.requestPhotos();
+            }
+        },
+
+        requestPhotos: function (page) {
+            this.setLoading(true);
+
+            var self = this,
+                api = this._api,
+                url = this.url;
+
+            api.page = page || 1;
+
+            url += Y.QueryString.stringify(api);
+
+            Y.jsonp(url, {
+                format: function (url, proxy) {
+                    return url + '&jsoncallback=' + proxy;
+                },
+                on: {
+                    failure: Y.bind(function () {
+                        this.setLoading(false);
+                        this.setMessage('oops!! something broke :(');
+                    }, self),
+
+                    success: Y.bind(function (resp) {
+                        this._processResults(resp.photos);
+                        this._isNewQuery = false;
+                    }, self)
+                }
+            });
+        },
+
+        setLoading: function (status) {
+            this.get('container').toggleClass('loading', status);
+        },
+
+        setMessage: function (msg) {
+            var container = this.get('container'),
+                msgNode;
+
+            if (msg) {
+                container.one('.results').setHTML('<div class="msg">' + msg + '</div>');
+                container.removeClass('hide-pg');
+                this.setLoading(false);
+            } else {
+                msgNode = container.one('.results .msg');
+
+                if (msgNode) {
+                    msgNode.remove();
+                }
+            }
+        },
+
+        _processResults: function (resp) {
+            if (resp.pages < 1) {
+                return this.setMessage('There are no images for "' + this._api.text + '"');
+            } else {
+                this.setMessage();
+            }
+
+            if (this._isNewQuery) {
+                this.paginator.set('totalItems', parseInt(resp.total, 10));
+            }
+
+            this._createNewPage(resp.photo);
+
+            this.paginator.syncUI();
+        },
+
+        _createNewPage: function (photos) {
+            var page = new FlickrSearch.PageView(),
+                resultsNode = this.get('container').one('.results'),
+                pageContainer;
+
+            page.items.add(photos);
+
+            pageContainer = page.get('container');
+
+            resultsNode.append(pageContainer);
+            resultsNode.setStyle('height', pageContainer.get('offsetHeight'));
+
+            var images = pageContainer.all('img'),
+                imagesLeft = images.size();
+
+            images.after('load', function (e) {
+
+                if (!(--imagesLeft)) {
+
+                    var prevPage = (this._pages.length > 1) ? this._pages.shift() : null;
+
+                    this.setLoading(false);
+                    page.get('container').transition({
+                        opacity: 1,
+                        duration: 1,
+                        delay: (prevPage) ? 0.5 : 0
+                    });
+
+                    if (prevPage) {
+                        prevPage.get('container').transition({
+                            opacity: 0,
+                            duration: 1
+                        }, function (e) {
+                            prevPage.destroy({
+                                remove: true
+                            });
+                        });
+                    }
+                }
+            }, this);
+
+            this._pages.push(page);
+
+            this.get('container').removeClass('hide-pg');
+
+        },
+
+        _afterPageChange: function (e) {
+            this.requestPhotos(e.newVal);
+        }

@@ -2,22 +2,16 @@
     // we use timer to obtain a pause/resume relationship
     autoPlay = new Y.Timer({
         length: 2500,
-        repeatCount: 0,
-        callback: function (t) {
-            if (pg.hasNextPage()) {
-                pg.nextPage();
-            } else {
-                pg.set('page', 1);
-            }
+        repeatCount: 0});
+
+    autoPlay.after('timer', function (e) {
+        if (pg.hasNextPage()) {
+            pg.nextPage();
+        } else {
+            pg.set('page', 1);
         }
     });
+
     // start the autoPlay timer
     autoPlay.start();
 
-    // we want to pause when we mouse over the slide show
-    // and resume when we mouse out
-    spiffy.on('hover', function (e) {
-        autoPlay.pause()
-    }, function (e) {
-        autoPlay.resume()
-    });
