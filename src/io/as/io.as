@@ -1,4 +1,4 @@
-package com.yui.util
+package
 {
     import flash.display.Sprite;
     import flash.events.Event;
@@ -23,6 +23,10 @@ package com.yui.util
 
         public function io() {
             yId = root.loaderInfo.parameters.yid;
+            var jsCheck:RegExp = /[^A-Za-z0-9._:-]/; 
+            if(jsCheck.test(yId)) {
+                yId = '';
+            }
             ExternalInterface.addCallback("send", send);
             ExternalInterface.addCallback("abort", ioAbort);
             ExternalInterface.addCallback("isInProgress", isInProgress);
