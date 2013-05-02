@@ -39,9 +39,7 @@ YUI.add('calendar-tests', function(Y) {
 
                 //calendar date is normalized correctly
                 var calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(11, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2011,11,1), calendarDate);
 
                 // Test that the first and last days of the month render correctly
 
@@ -64,9 +62,7 @@ YUI.add('calendar-tests', function(Y) {
 
                 //calendar date is normalized correctly
                 var calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(11, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2011,11,1), calendarDate);
 
                 // Test that the first and last days of the month render correctly
 
@@ -89,88 +85,72 @@ YUI.add('calendar-tests', function(Y) {
 
                 //calendar date is normalized correctly
                 var calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(11, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2011,11,1), calendarDate);
 
                 Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.subtractMonth());   // check @chainable
                 this.firstcalendar.subtractMonth();
 
                 calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(9, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2011,9,1), calendarDate);
 
                 Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.addMonth());        // check @chainable
 
                 calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(10, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2011,10,1), calendarDate);
 
                 Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.addYear());         // check @chainable
 
                 calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2012, calendarDate.getFullYear());
-                Y.Assert.areEqual(10, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2012,10,1), calendarDate);
 
                 Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.subtractYear());    // check @chainable
                 this.firstcalendar.subtractYear();
 
                 calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2010, calendarDate.getFullYear());
-                Y.Assert.areEqual(10, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2010,10,1), calendarDate);
             },
 
             testMaxMinDates : function() {
                 var cfg = {
                     contentBox: "#firstcontainer",
-                    date: new Date(2011,5,1),
-                    minimumDate: new Date (2011,6,1),
-                    maximumDate: new Date (2011,7,1)
+                    date: new Date(2011,5,10),
+                    minimumDate: new Date (2011,6,12),
+                    maximumDate: new Date (2011,7,12)
                 };
 
                 this.firstcalendar = new Y.Calendar(cfg);
                 this.firstcalendar.render();
 
+                Y.DateAssert.datesAreEqual(new Date(2011,6,12), this.firstcalendar.get('minimumDate'));
+                Y.DateAssert.datesAreEqual(new Date(2011,7,12), this.firstcalendar.get('maximumDate'));
+
                 //calendar is visible
                 Y.Assert.areEqual(this.firstcalendar.get('visible'), true);
 
-                //calendar date is reset correclty when minimum date is set
-                var calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(6, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                //calendar date is reset correctly when minimum date is set
+                Y.DateAssert.datesAreEqual(new Date(2011,6,1), this.firstcalendar.get("date"), "minimumDate reset date");
+                Y.Assert.isTrue (this.firstcalendar._dateToNode(new Date(2011,6,11)).hasClass("yui3-calendar-selection-disabled"), "2011-07-11 should be disabled");
+                Y.Assert.isFalse(this.firstcalendar._dateToNode(new Date(2011,6,12)).hasClass("yui3-calendar-selection-disabled"), "2011-07-12 should be enabled");
 
-                this.firstcalendar.set("minimumDate", new Date (2011,2,1));
-                this.firstcalendar.set("maximumDate", new Date (2011,5,1));
+                this.firstcalendar.set("minimumDate", new Date (2011,2,12));
+                this.firstcalendar.set("maximumDate", new Date (2011,5,12));
+                Y.DateAssert.datesAreEqual(new Date(2011,2,12), this.firstcalendar.get('minimumDate'), "min date should be correctly set");
+                Y.DateAssert.datesAreEqual(new Date(2011,5,12), this.firstcalendar.get('maximumDate'), "max date should be correctly set");
+                Y.DateAssert.datesAreEqual(new Date(2011,5,1), this.firstcalendar.get("date"), "minimumDate reset date");
+                Y.Assert.isFalse(this.firstcalendar._dateToNode(new Date(2011,5,12)).hasClass("yui3-calendar-selection-disabled"), "2011-06-12 should be enabled");
+                Y.Assert.isTrue (this.firstcalendar._dateToNode(new Date(2011,5,13)).hasClass("yui3-calendar-selection-disabled"), "2011-06-13 should be disabled");
 
-                calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(5, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
-
-                this.firstcalendar.set("maximumDate", new Date (2011,8,1));
-                this.firstcalendar.set("minimumDate", new Date (2011,7,1));
-
-                calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(7, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                this.firstcalendar.set("maximumDate", new Date (2011,8,15));
+                this.firstcalendar.set("minimumDate", new Date (2011,7,15));
+                Y.DateAssert.datesAreEqual(new Date(2011,7,1), this.firstcalendar.get("date"), "minimumDate reset date again");
+                Y.Assert.isTrue (this.firstcalendar._dateToNode(new Date(2011,7,14)).hasClass("yui3-calendar-selection-disabled"), "2011-08-14 should be disabled");
+                Y.Assert.isFalse(this.firstcalendar._dateToNode(new Date(2011,7,15)).hasClass("yui3-calendar-selection-disabled"), "2011-08-15 should be enabled");
 
                 this.firstcalendar.set("date", new Date (2011, 9, 1));
-                calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(8, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2011,8,1), this.firstcalendar.get("date"), "set date later than max date");
 
                 this.firstcalendar.set("date", new Date (2011, 6, 1));
-                calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(7, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2011,7,1), this.firstcalendar.get("date"), "set date earlier than min date");
             },
 
             testSelection : function() {
@@ -191,9 +171,7 @@ YUI.add('calendar-tests', function(Y) {
 
                 //calendar date is normalized correctly
                 var calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(11, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2011,11,1), calendarDate);
 
                 //Selected dates are highlighted correctly
                 var calendarId = "#" + this.firstcalendar._calendarId;
@@ -381,18 +359,14 @@ YUI.add('calendar-tests', function(Y) {
                 Y.one("#" + calendarid + "_pane_0_6_15").simulate("click");
 
                 var currentDate = this.firstcalendar.get("selectedDates")[0];
-                Y.Assert.areEqual(currentDate.getFullYear(), 2011);
-                Y.Assert.areEqual(currentDate.getMonth(), 11);
-                Y.Assert.areEqual(currentDate.getDate(), 15);
+                Y.DateAssert.datesAreEqual(currentDate, new Date(2011,11,15));
 
                 // Click on a different calendar cell
 
                 Y.one("#" + calendarid + "_pane_0_8_31").simulate("click");
 
                 currentDate = this.firstcalendar.get("selectedDates")[0];
-                Y.Assert.areEqual(currentDate.getFullYear(), 2011);
-                Y.Assert.areEqual(currentDate.getMonth(), 11);
-                Y.Assert.areEqual(currentDate.getDate(), 31);
+                Y.DateAssert.datesAreEqual(currentDate, new Date(2011,11,31));
 
                 // Click to advance the month
                 Y.one(".yui3-calendarnav-nextmonth").simulate("click");
@@ -400,9 +374,7 @@ YUI.add('calendar-tests', function(Y) {
                 Y.one("#" + calendarid + "_pane_0_8_17").simulate("click");
 
                 currentDate = this.firstcalendar.get("selectedDates")[0];
-                Y.Assert.areEqual(currentDate.getFullYear(), 2012);
-                Y.Assert.areEqual(currentDate.getMonth(), 0);
-                Y.Assert.areEqual(currentDate.getDate(), 17);
+                Y.DateAssert.datesAreEqual(currentDate, new Date(2012,0,17));
 
             },
 
@@ -672,51 +644,33 @@ YUI.add('calendar-tests', function(Y) {
 
                 Y.one(".yui3-calendarnav-nextmonth").simulate("click");
                 var calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2012, calendarDate.getFullYear());
-                Y.Assert.areEqual(0, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2012,0,1), calendarDate);
                 Y.one(".yui3-calendarnav-nextmonth").simulate("click");
                 calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2012, calendarDate.getFullYear());
-                Y.Assert.areEqual(1, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2012,1,1), calendarDate);
                 Y.one(".yui3-calendarnav-nextmonth").simulate("click");
                 calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2012, calendarDate.getFullYear());
-                Y.Assert.areEqual(2, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2012,2,1), calendarDate);
                 Y.one(".yui3-calendarnav-nextmonth").simulate("click");
                 calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2012, calendarDate.getFullYear());
-                Y.Assert.areEqual(3, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2012,3,1), calendarDate);
                 Y.one(".yui3-calendarnav-nextmonth").simulate("click");
                 calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2012, calendarDate.getFullYear());
-                Y.Assert.areEqual(4, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2012,4,1), calendarDate);
 
                 this.firstcalendar.set("date", new Date(2011, 3, 1));
                 Y.one(".yui3-calendarnav-prevmonth").simulate("click");
                 calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(2, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2011,2,1), calendarDate);
                 Y.one(".yui3-calendarnav-prevmonth").simulate("click");
                 calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(1, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2011,1,1), calendarDate);
                 Y.one(".yui3-calendarnav-prevmonth").simulate("click");
                 calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2011, calendarDate.getFullYear());
-                Y.Assert.areEqual(0, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2011,0,1), calendarDate);
                 Y.one(".yui3-calendarnav-prevmonth").simulate("click");
                 calendarDate = this.firstcalendar.get("date");
-                Y.Assert.areEqual(2010, calendarDate.getFullYear());
-                Y.Assert.areEqual(11, calendarDate.getMonth());
-                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.DateAssert.datesAreEqual(new Date(2010,11,1), calendarDate);
             },
 
             testCustomHeader : function() {
@@ -782,25 +736,32 @@ YUI.add('calendar-tests', function(Y) {
                var date3 = this.firstcalendar.get("selectedDates")[3];
                var date4 = this.firstcalendar.get("selectedDates")[4];
 
-                Y.Assert.areEqual(date0.getFullYear(), 2011);
-                Y.Assert.areEqual(date0.getMonth(), 11);
-                Y.Assert.areEqual(date0.getDate(), 29);
 
-                Y.Assert.areEqual(date1.getFullYear(), 2011);
-                Y.Assert.areEqual(date1.getMonth(), 11);
-                Y.Assert.areEqual(date1.getDate(), 30);
+                Y.DateAssert.datesAreEqual(date0, new Date(2011,11,29));
+                Y.DateAssert.datesAreEqual(date1, new Date(2011,11,30));
+                Y.DateAssert.datesAreEqual(date2, new Date(2011,11,31));
+                Y.DateAssert.datesAreEqual(date3, new Date(2012,0,1));
+                Y.DateAssert.datesAreEqual(date4, new Date(2012,0,2));
+            },
 
-                Y.Assert.areEqual(date2.getFullYear(), 2011);
-                Y.Assert.areEqual(date2.getMonth(), 11);
-                Y.Assert.areEqual(date2.getDate(), 31);
+            testMultiplePanesLimits : function () {
+                 var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(2011,4,5),
+                    minimumDate: new Date(2011,5,10),
+                    maximumDate: new Date(2011,6,15),
+                    selectionMode: "multiple"
+                };
+                // Set the content template to a two-pane template
+                Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
+                this.firstcalendar = new Y.Calendar(cfg);
+                this.firstcalendar.render();
 
-                Y.Assert.areEqual(date3.getFullYear(), 2012);
-                Y.Assert.areEqual(date3.getMonth(), 0);
-                Y.Assert.areEqual(date3.getDate(), 1);
-
-                Y.Assert.areEqual(date4.getFullYear(), 2012);
-                Y.Assert.areEqual(date4.getMonth(), 0);
-                Y.Assert.areEqual(date4.getDate(), 2);
+                Y.DateAssert.datesAreEqual(new Date(2011,5,1), this.firstcalendar.get("date"));
+                Y.Assert.isTrue (this.firstcalendar._dateToNode(new Date(2011,5, 9)).hasClass("yui3-calendar-selection-disabled"), "2011-08-14 should be disabled");
+                Y.Assert.isFalse(this.firstcalendar._dateToNode(new Date(2011,5,10)).hasClass("yui3-calendar-selection-disabled"), "2011-08-15 should be enabled");
+                Y.Assert.isTrue (this.firstcalendar._dateToNode(new Date(2011,6,16)).hasClass("yui3-calendar-selection-disabled"), "2011-08-14 should be disabled");
+                Y.Assert.isFalse(this.firstcalendar._dateToNode(new Date(2011,6,15)).hasClass("yui3-calendar-selection-disabled"), "2011-08-15 should be enabled");
             }
         });
 
