@@ -1,8 +1,8 @@
 OOP Change History
 ==================
 
-@VERSION@
------
+3.10.0
+------
 
 * Updated `Y.clone()` to always quit early and not try to clone DOM nodes.
   Common host objects like DOM nodes cannot be "subclassed" in Firefox and old
