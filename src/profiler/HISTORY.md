@@ -1,8 +1,8 @@
 Profiler Change History
 ==========================
 
-@VERSION@
------
+3.10.0
+------
 
 * [!] DEPRECATED: This module will be removed from the library in a future version.
 
