@@ -1,0 +1,31 @@
+.horizontal {
+    width:300px;
+    height:200px;
+    overflow:hidden;
+    white-space: nowrap;
+}
+
+.horizontal li {
+    width:300px;
+    height:200px;
+    display: inline-block;
+    background-image: -webkit-linear-gradient(left, red, white, blue);
+    color:black;
+    font-size:5em;
+    opacity: 0.4;
+    text-align:center;
+
+    /* IE 6/7 needs inline block hack */
+    *display:inline;
+    *zoom:1;
+}
+
+.vertical li {
+    height: 100px;
+    width:300px;
+    color:black;
+    font-size:5em;
+    opacity: 0.4;
+    text-align:center;
+    background-image: -webkit-linear-gradient(top, green, white, blue);
+}

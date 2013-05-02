@@ -1636,6 +1636,22 @@ supported native console. This function is executed with the YUI instance as its
 **/
 
 /**
+The minimum log level to log messages for. Log levels are defined
+incrementally. Messages greater than or equal to the level specified will
+be shown. All others will be discarded. The order of log levels in
+increasing priority is:
+
+    debug
+    info
+    warn
+    error
+
+@property {String} logLevel
+@default 'debug'
+@since 3.10.0
+**/
+
+/**
 Callback to execute when `Y.error()` is called. It receives the error message
 and a JavaScript error object if one was provided.
 
@@ -5431,9 +5447,9 @@ var INSTANCE = Y,
     LOGEVENT = 'yui:log',
     UNDEFINED = 'undefined',
     LEVELS = { debug: 1,
-               info: 1,
-               warn: 1,
-               error: 1 };
+               info: 2,
+               warn: 4,
+               error: 8 };
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -5455,7 +5471,7 @@ var INSTANCE = Y,
  * @return {YUI}      YUI instance.
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var bail, excl, incl, m, f,
+    var bail, excl, incl, m, f, minlevel,
         Y = INSTANCE,
         c = Y.config,
         publisher = (Y.fire) ? Y : YUI.Env.globalEvents;
@@ -5473,6 +5489,15 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 bail = !incl[src];
             } else if (excl && (src in excl)) {
                 bail = excl[src];
+            }
+
+            // Determine the current minlevel as defined in configuration
+            Y.config.logLevel = Y.config.logLevel || 'debug';
+            minlevel = LEVELS[Y.config.logLevel.toLowerCase()];
+
+            if (cat in LEVELS && LEVELS[cat] < minlevel) {
+                // Skip this message if the we don't meet the defined minlevel
+                bail = 1;
             }
         }
         if (!bail) {
@@ -10295,10 +10320,11 @@ Y.CustomEvent.prototype = {
 
         if (!subs) {
             subs = (when === AFTER) ? this._afters : this._subscribers;
-            i = YArray.indexOf(subs, s, 0);
         }
 
         if (subs) {
+            i = YArray.indexOf(subs, s, 0);
+
             if (s && subs[i] === s) {
                 subs.splice(i, 1);
 
@@ -12065,7 +12091,8 @@ ETProto.addTarget = function(o) {
  * @return EventTarget[]
  */
 ETProto.getTargets = function() {
-    return YObject.values(this._yuievt.targets);
+    var targets = this._yuievt.targets;
+    return targets ? YObject.values(targets) : [];
 };
 
 /**
@@ -12077,10 +12104,12 @@ ETProto.getTargets = function() {
 ETProto.removeTarget = function(o) {
     var targets = this._yuievt.targets;
 
-    delete targets[Y.stamp(o, true)];
+    if (targets) {
+        delete targets[Y.stamp(o, true)];
 
-    if (YObject.size(targets) === 0) {
-        this._yuievt.hasTargets = false;
+        if (YObject.size(targets) === 0) {
+            this._yuievt.hasTargets = false;
+        }
     }
 };
 
@@ -14588,18 +14617,23 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * The implementation for showing nodes.
-     * Default is to toggle the style.display property.
+     * Default is to remove the hidden attribute and reset the CSS style.display property.
      * @method _show
      * @protected
      * @chainable
      */
     _show: function() {
+        this.removeAttribute('hidden');
+
+        // For back-compat we need to leave this in for browsers that
+        // do not visually hide a node via the hidden attribute
+        // and for users that check visibility based on style display.
         this.setStyle('display', '');
 
     },
 
     _isHidden: function() {
-        return Y.DOM.getStyle(this._node, 'display') === 'none';
+        return Y.DOM.getAttribute(this._node, 'hidden') === 'true';
     },
 
     /**
@@ -14658,12 +14692,17 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * The implementation for hiding nodes.
-     * Default is to toggle the style.display property.
+     * Default is to set the hidden attribute to true and set the CSS style.display to 'none'.
      * @method _hide
      * @protected
      * @chainable
      */
     _hide: function() {
+        this.setAttribute('hidden', true);
+
+        // For back-compat we need to leave this in for browsers that
+        // do not visually hide a node via the hidden attribute
+        // and for users that check visibility based on style display.
         this.setStyle('display', 'none');
     }
 });
@@ -18358,6 +18397,8 @@ IO.prototype = {
     *       <dt>dataType</dt>
     *         <dd>Set the value to 'XML' if that is the expected response
     *         content type.</dd>
+    *       <dt>credentials</dt>
+    *         <dd>Set the value to 'true' to set XHR.withCredentials property to true.</dd>
     *     </dl></dd>
     *
     *   <dt>form</dt>
@@ -20177,9 +20218,9 @@ var INSTANCE = Y,
     LOGEVENT = 'yui:log',
     UNDEFINED = 'undefined',
     LEVELS = { debug: 1,
-               info: 1,
-               warn: 1,
-               error: 1 };
+               info: 2,
+               warn: 4,
+               error: 8 };
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -20201,7 +20242,7 @@ var INSTANCE = Y,
  * @return {YUI}      YUI instance.
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var bail, excl, incl, m, f,
+    var bail, excl, incl, m, f, minlevel,
         Y = INSTANCE,
         c = Y.config,
         publisher = (Y.fire) ? Y : YUI.Env.globalEvents;
@@ -20219,6 +20260,15 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 bail = !incl[src];
             } else if (excl && (src in excl)) {
                 bail = excl[src];
+            }
+
+            // Determine the current minlevel as defined in configuration
+            Y.config.logLevel = Y.config.logLevel || 'debug';
+            minlevel = LEVELS[Y.config.logLevel.toLowerCase()];
+
+            if (cat in LEVELS && LEVELS[cat] < minlevel) {
+                // Skip this message if the we don't meet the defined minlevel
+                bail = 1;
             }
         }
         if (!bail) {

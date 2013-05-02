@@ -1,8 +1,8 @@
 Attribute Change History
 ========================
 
-@VERSION@
------
+3.10.0
+------
 
 * Significant performance improvements in common Attribute operations.
 

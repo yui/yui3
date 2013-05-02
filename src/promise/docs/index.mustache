@@ -20,7 +20,7 @@
     <p>
         The `Y.Promise` class is compatible with the
         <a href="http://promises-aplus.github.com/promises-spec/">Promises/A+</a>
-        specifiation.
+        specification.
     </p>
 
 </div>
@@ -270,8 +270,8 @@ Y.Promise(function (resolve, reject) { Y.io(...); })
 <p>
     Note that functions will return `undefined` if no explicit `return`
     statement is included. That will result in the promise being fulfilled with
-    a value of `undefined`. Sometimes that's ok, but it's often helpful to pass
-    along _some_ data.
+    a value of `undefined`. Sometimes that's okay, but it's often helpful to pass
+    along <em>some</em> data.
 </p>
 
 ```
@@ -307,10 +307,10 @@ userDataLoaded
 </p>
 
 <p>
-    The `onRejected` callback can then rethrow the error to propagate the
+    The `onRejected` callback can then re-throw the error to propagate the
     failed state, or recover from the failure by returning a value. Again,
     without an explicit `throw` or `return`, the callback will return
-    `undefined` _which will mark the failure as recovered_, but with a resolved
+    `undefined` <em>which will mark the failure as recovered</em>, but with a resolved
     value of `undefined`. This may not be what you want!
 </p>
 
@@ -321,7 +321,7 @@ function showError(reason) {
     Y.one('#message .details').setHTML(reason.message || reason);
     Y.one('#message').show();
 
-    // Choosing not to rethrow the error, but consider it recovered from for
+    // Choosing not to re-throw the error, but consider it recovered from for
     // the sake of this transaction. Returning false as resolved value to send
     // to stopSpinner.
     return false;
@@ -333,7 +333,7 @@ userDataLoaded
 ```
 
 <p>
-    Because `showError` returned a value, and didn't rethrow the `reason`,
+    Because `showError` returned a value, and didn't re-throw the `reason`,
     the promise wrapping `renderTemplates` and `showError` was resolved to a
     "fulfilled" state with a value of `false`. Since the promise was fulfilled,
     not rejected, that promise's `onFulfilled` callback (`stopSpinner`) is
@@ -420,7 +420,7 @@ Y.Promise(function (resolve, reject) {
     })
     // Chain another async operation by returning a promise.
     // Don't worry, we'll wait for you.
-    .then(function (url) {
+    .then(function (data) {
         return new Y.Promise(function (resolve, reject) {
             // Do another async operation
             Y.jsonp(data.url, {
@@ -481,7 +481,7 @@ MyDatabase.prototype.save = function (key, data) {
 <p>
     Promise chaining works great to serialize synchronous and asynchronous
     operations, but often several asynchronous operations can be performed
-    simulataneously. This is where `Y.batch()` comes in.
+    simultaneously. This is where `Y.batch()` comes in.
 </p>
 
 <p>
