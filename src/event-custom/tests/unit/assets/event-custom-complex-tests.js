@@ -1066,7 +1066,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
                 }
             });
 
-            a.after("foo", function(e) {
+            a.on("foo", function(e) {
                 listenerPayload.push(e);
             });
 
