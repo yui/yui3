@@ -9,13 +9,17 @@ YUI.add('scrollview-test-utils', function(Y, NAME) {
     Y.renderNewScrollview = function (scrollViewAxis, paginatorAxis, startIndex, optimizeMemory) {
 
         var config = {},
+            paginatorConfig = {},
             guid = Y.guid(),
             html,
             scrollview,
             widgetClass;
 
         config.srcNode = '#' + guid;
-        config.axis = scrollViewAxis;
+
+        if (scrollViewAxis) {
+            config.axis = scrollViewAxis;
+        }
 
         switch(scrollViewAxis) {
             case 'x':
@@ -35,15 +39,19 @@ YUI.add('scrollview-test-utils', function(Y, NAME) {
         }
 
         if (paginatorAxis !== undefined) {
+            paginatorConfig = {
+                index: startIndex || 0,
+                _optimizeMemory: optimizeMemory || false,
+                selector:">ul>li"
+            };
+
+            if (paginatorAxis) {
+                paginatorConfig.axis = paginatorAxis;
+            }
 
             config.plugins = [{
                 fn:Y.Plugin.ScrollViewPaginator,
-                cfg:{
-                    index: startIndex || 0,
-                    _optimizeMemory: optimizeMemory || false,
-                    axis: paginatorAxis,
-                    selector:">ul>li"
-                }
+                cfg:paginatorConfig
             }];
         }
 
@@ -89,4 +97,4 @@ YUI.add('scrollview-test-utils', function(Y, NAME) {
         };
     };
 
-}, '', {requires: []});
+});

@@ -1,13 +1,13 @@
 YUI.add('scrollview-scroll-tests', function(Y) {
-    
+
     var suite = new Y.Test.Suite('scrollview test suite');
 
     suite.add(new Y.Test.Case({
 
         name : 'Example Tests',
 
-        'test should probably fail' : function () {
-            Y.Assert.pass();
+        'example needs tests' : function () {
+            Y.Assert.fail();
         }
 
         // 'Flick on <a> should offset scrollview to the bottom and suppress click' : function () {
@@ -21,7 +21,7 @@ YUI.add('scrollview-scroll-tests', function(Y) {
         //     Test.wait(function () {
         //         var transform = Y.one('#scrollview-content').getStyle('transform'),
         //             offset = transform.split(',')[5].replace(')', '').trim();
-                    
+
         //         if (offset == -1581 /*Chrome, Safari*/ || offset == -1613 /*FF*/) {
         //             Y.Assert.pass();
         //         }
