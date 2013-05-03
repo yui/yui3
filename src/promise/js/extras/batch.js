@@ -8,7 +8,7 @@ it will be wrapped in a new promise.
 @param {Function|Promise} operation* Any number of functions or Y.Promise
             objects
 @return {Promise}
-@deprecated
+@deprecated @SINCE@
 **/
 Y.batch = function () {
     return Promise.every(slice.call(arguments));
