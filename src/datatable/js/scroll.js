@@ -92,10 +92,17 @@ Y.mix(Scrollable.prototype, {
     @since 3.5.0
     **/
     scrollTo: function (id) {
-        var target = this._locateTarget(id);
+        var target = this._locateTarget(id),
+            xsn = this._xScrollNode, ysn = this._yScrollNode;
 
-        if(target) {
+        if (target) {
             target.scrollIntoView();
+            this.fire('scroll', {
+                scroll: (xsn ? 'x' : '') + (ysn ? 'y' : ''),
+                scrollTop: ysn && ysn.get('scrollTop'),
+                scrollLeft: xsn && xsn.get('scrollLeft')
+
+            });
         }
 
         return this;
@@ -124,7 +131,7 @@ Y.mix(Scrollable.prototype, {
             or partially hidden, null if the element was not found.
     **/
 
-    isHidden: function(id, partially) {
+    isHidden: function (id, partially) {
         var target = this._locateTarget(id),
             region, left, right, top, bottom,
             r;
@@ -414,6 +421,9 @@ Y.mix(Scrollable.prototype, {
                 scroller.on('scroll', this._syncScrollPosition, this)
             ]);
         }
+        if (this._xScrollNode && !this._xScrollEventHandle) {
+            this._xScrollEventHandle = this._xScrollNode.on('scroll', this._fireXScroll, this);
+        }
     },
 
     /**
@@ -667,6 +677,11 @@ Y.mix(Scrollable.prototype, {
         this.after('renderView', Y.bind('_syncScrollUI', this));
 
         Y.Do.after(this._bindScrollUI, this, 'bindUI');
+
+        this.publish('scroll', {
+            emitFacade: false,
+            preventable: false
+        });
     },
 
     /**
@@ -774,11 +789,7 @@ Y.mix(Scrollable.prototype, {
 
             delete this._scrollbarNode;
         }
-        if (this._scrollbarEventHandle) {
-            this._scrollbarEventHandle.detach();
-
-            delete this._scrollbarEventHandle;
-        }
+        this._unbindScrollbar();
     },
 
     /**
@@ -847,10 +858,29 @@ Y.mix(Scrollable.prototype, {
             this._clearScrollLock();
             this._scrollLock = Y.later(300, this, this._clearScrollLock);
             this._scrollLock.source = source;
-
             other = (source === scrollbar) ? scroller : scrollbar;
             other.set('scrollTop', source.get('scrollTop'));
+
+            this.fire('scroll', {
+                scroll: 'y',
+                scrollTop: source.get('scrollTop')
+            });
         }
+    },
+
+    /**
+    Reports scrolling in the x direction.
+
+    @method _fireXScroll
+    @param e {EventFacade} Event facade from the original DOM scroll event
+    @private
+    */
+    _fireXScroll: function (e) {
+        this.fire('scroll', {
+            scroll: 'x',
+            scrollLeft: e.currentTarget.get('scrollLeft')
+        });
+
     },
 
     /**
@@ -1354,6 +1384,13 @@ Y.mix(Scrollable.prototype, {
     _unbindScrollbar: function () {
         if (this._scrollbarEventHandle) {
             this._scrollbarEventHandle.detach();
+
+            delete this._scrollbarEventHandle;
+        }
+        if (this._xScrollEventHandle) {
+            this._xScrollEventHandle.detach();
+
+            delete this._xScrollEventHandle;
         }
     },
 
@@ -1462,6 +1499,20 @@ Y.mix(Scrollable.prototype, {
     @since 3.5.0
     **/
     //_xScrollNode: null
+
+    /**
+    Fires when the table is scrolled in either direction.  The `scroll` value
+    provides a hint on the direction of the movement.  If the movement was
+    caused by a call to the [scrollTo](#method_scrollTo) it might have moved
+    diagonally, hence, in the x and y directions at once.
+
+    @event scroll
+    @param scroll {String} The values x, y or xy according to the axis of scroll
+    @param scrollTop {Integer} New value of the scrollTop attribute of the scrollbar
+        when the scrolling is in the vertical direction.
+    @param scrollLeft {Integer} Value of the scrollLeft attribute of the scrollbar
+        when the scrolling is in the horizontal direction.
+     */
 }, true);
 
 Y.Base.mix(Y.DataTable, [Scrollable]);
