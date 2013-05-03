@@ -71,6 +71,46 @@ Scrollable.ATTRS = {
     scrollable: {
         value: false,
         setter: '_setScrollable'
+    },
+
+    /**
+    Number of pixels the contents has been scrolled up.
+
+    @attribute scrollTop
+    @type Integer
+    @default 0
+     */
+    scrollTop: {
+        getter: function () {
+            return (this._yScrollNode && this._yScrollNode.get('scrollTop')) || 0;
+        },
+        setter: function (value) {
+            if (this._yScrollNode && this._scrollbarNode) {
+                this._yScrollNode.set('scrollTop', value);
+                return value;
+            }
+            return Y.Attribute.INVALID_VALUE;
+        }
+    },
+
+    /**
+    Number of pixels the contents has been scrolled left.
+
+    @attribute scrollLeft
+    @type Integer
+    @default 0
+     */
+    scrollLeft: {
+        getter: function () {
+            return (this._xScrollNode && this._xScrollNode.get('scrollLeft')) || 0;
+        },
+        setter: function (value) {
+            if (this._xScrollNode) {
+                this._xScrollNode.set('scrollLeft', value);
+                this.fire('scroll');
+            }
+            return Y.Attribute.INVALID_VALUE;
+        }
     }
 };
 
@@ -92,17 +132,11 @@ Y.mix(Scrollable.prototype, {
     @since 3.5.0
     **/
     scrollTo: function (id) {
-        var target = this._locateTarget(id),
-            xsn = this._xScrollNode, ysn = this._yScrollNode;
+        var target = this._locateTarget(id);
 
         if (target) {
             target.scrollIntoView();
-            this.fire('scroll', {
-                scroll: (xsn ? 'x' : '') + (ysn ? 'y' : ''),
-                scrollTop: ysn && ysn.get('scrollTop'),
-                scrollLeft: xsn && xsn.get('scrollLeft')
-
-            });
+            this.fire('scroll');
         }
 
         return this;
@@ -422,7 +456,9 @@ Y.mix(Scrollable.prototype, {
             ]);
         }
         if (this._xScrollNode && !this._xScrollEventHandle) {
-            this._xScrollEventHandle = this._xScrollNode.on('scroll', this._fireXScroll, this);
+            this._xScrollEventHandle = this._xScrollNode.on('scroll', function () {
+               this.fire('scroll');
+            }, this);
         }
     },
 
@@ -861,26 +897,8 @@ Y.mix(Scrollable.prototype, {
             other = (source === scrollbar) ? scroller : scrollbar;
             other.set('scrollTop', source.get('scrollTop'));
 
-            this.fire('scroll', {
-                scroll: 'y',
-                scrollTop: source.get('scrollTop')
-            });
+            this.fire('scroll');
         }
-    },
-
-    /**
-    Reports scrolling in the x direction.
-
-    @method _fireXScroll
-    @param e {EventFacade} Event facade from the original DOM scroll event
-    @private
-    */
-    _fireXScroll: function (e) {
-        this.fire('scroll', {
-            scroll: 'x',
-            scrollLeft: e.currentTarget.get('scrollLeft')
-        });
-
     },
 
     /**
@@ -1501,17 +1519,9 @@ Y.mix(Scrollable.prototype, {
     //_xScrollNode: null
 
     /**
-    Fires when the table is scrolled in either direction.  The `scroll` value
-    provides a hint on the direction of the movement.  If the movement was
-    caused by a call to the [scrollTo](#method_scrollTo) it might have moved
-    diagonally, hence, in the x and y directions at once.
+    Fires when the table is scrolled.
 
     @event scroll
-    @param scroll {String} The values x, y or xy according to the axis of scroll
-    @param scrollTop {Integer} New value of the scrollTop attribute of the scrollbar
-        when the scrolling is in the vertical direction.
-    @param scrollLeft {Integer} Value of the scrollLeft attribute of the scrollbar
-        when the scrolling is in the horizontal direction.
      */
 }, true);
 

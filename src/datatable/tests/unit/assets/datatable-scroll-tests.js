@@ -727,16 +727,35 @@ suite.add(new Y.Test.Case({
         Y.Assert.isFalse(this.table.isHidden([0,0]), 'top left cell should not be hidden any longer');
     },
     "scroll event": function () {
-        var ev;
+        var test = this,
+            fired = 0,
+            sbar = test.table._scrollbarNode,
+            yNode = test.table._yScrollNode,
+            top;
         this.table.on('scroll', function (e) {
-            ev = e;
+            fired++;
         });
+
         this.table.scrollTo([3,0]);
-        Y.Assert.areSame('y', ev.scroll, 'It should have scrolled in the Y direction');
-        Y.Assert.isTrue(ev.scrollTop > 0, 'Some positive value of scrollTop should have been reported');
-        Y.Assert.isUndefined(ev.scrollLeft, 'There should be no scrollLeft');
-        this.table.scrollTo([0,0]);
-        Y.Assert.isTrue(ev.scrollTop === 0, 'scrollTop should now be zero');
+        this.wait(function () {
+            Y.Assert.areSame(2, fired, 'The scroll event fires twice when there is a vertical scroll bar');
+            Y.Assert.areSame(sbar.get('scrollTop'), yNode.get('scrollTop'), 'contents and bar should always be in sync');
+
+            top = test.table.get('scrollTop');
+            Y.Assert.areSame(sbar.get('scrollTop'), top, 'contents and bar should always be in sync');
+            top += 50;
+            this.table.set('scrollTop', top);
+            this.wait( function () {
+
+                Y.Assert.areSame(3, fired, 'The scroll event should have been fired once more');
+                Y.Assert.areSame(top, sbar.get('scrollTop'), 'scroll bar should be scrolled');
+                Y.Assert.areSame(top, yNode.get('scrollTop'), 'contents should be scrolled');
+
+            },100);
+        },100);
+
+
+
 
     }
 
@@ -801,17 +820,27 @@ suite.add(new Y.Test.Case({
         Y.Assert.isNull(this.table.isHidden([999,999]),'non existing cell should fail');
     },
     "scroll event": function () {
-        var ev;
-        this.table.on('scroll', function (e) {
-            ev = e;
+        var test = this,
+            fired = 0,
+            xNode = test.table._xScrollNode,
+            left;
+        this.table.on('scroll', function () {
+            fired++;
         });
+
         this.table.scrollTo([3,3]);
-        Y.Assert.areSame('x', ev.scroll, 'It should have scrolled in the X direction');
-        Y.Assert.isTrue(ev.scrollLeft > 0, 'Some positive value of scrollLeft should have been reported');
-        Y.Assert.isUndefined(ev.scrollTop, 'There should be no scrollTop');
-        this.table.scrollTo([0,0]);
-        Y.Assert.isTrue(ev.scrollLeft === 0, 'scrollLeft should now be zero');
-    }
+        this.wait(function () {
+            Y.Assert.areSame(1, fired, 'The scroll event should have been fired once');
+            left = test.table.get('scrollLeft');
+            Y.Assert.areSame(xNode.get('scrollLeft'), left, 'contents and bar should always be in sync');
+            left += 50;
+            this.table.set('scrollLeft', left);
+            this.wait( function () {
+                Y.Assert.areSame(2, fired, 'The scroll event should have been fired twice');
+                Y.Assert.areSame(left, xNode.get('scrollLeft'));
+
+            },100);
+        },100);    }
 }));
 suite.add(new Y.Test.Case({
     name: "xy scrollTo and isHidden",
@@ -879,17 +908,32 @@ suite.add(new Y.Test.Case({
         Y.Assert.isFalse(this.table.isHidden([0,0]), 'top left cell should not be hidden any longer');
     },
     "scroll event": function () {
-        var ev;
+        var test = this,
+            fired = 0,
+            sbar = test.table._scrollbarNode,
+            yNode = test.table._yScrollNode,
+            top;
         this.table.on('scroll', function (e) {
-            ev = e;
+            fired++;
         });
-        this.table.scrollTo([3,3]);
-        Y.Assert.areSame('xy', ev.scroll, 'It should have scrolled in the X and Y directions');
-        Y.Assert.isTrue(ev.scrollLeft > 0, 'Some positive value of scrollLeft should have been reported');
-        Y.Assert.isTrue(ev.scrollTop > 0, 'Some positive value of scrollTop should have been reported');
-        this.table.scrollTo([0,0]);
-        Y.Assert.isTrue(ev.scrollLeft === 0, 'scrollLeft should now be zero');
-        Y.Assert.isTrue(ev.scrollTop === 0, 'scrollTop should now be zero');
+
+        this.table.scrollTo([3,0]);
+        this.wait(function () {
+            Y.Assert.areSame(2, fired, 'The scroll event fires twice when there is a vertical scroll bar');
+            Y.Assert.areSame(sbar.get('scrollTop'), yNode.get('scrollTop'), 'contents and bar should always be in sync');
+
+            top = test.table.get('scrollTop');
+            Y.Assert.areSame(sbar.get('scrollTop'), top, 'contents and bar should always be in sync');
+            top += 50;
+            this.table.set('scrollTop', top);
+            this.wait( function () {
+
+                Y.Assert.areSame(3, fired, 'The scroll event should have been fired once more');
+                Y.Assert.areSame(top, sbar.get('scrollTop'), 'scroll bar should be scrolled');
+                Y.Assert.areSame(top, yNode.get('scrollTop'), 'contents should be scrolled');
+
+            },100);
+        },100);
 
     }
 
