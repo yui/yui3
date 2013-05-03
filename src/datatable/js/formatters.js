@@ -358,17 +358,16 @@ var Lang = Y.Lang,
          */
         lookup: function (col) {
             var className = cName('lookup'),
-                lookup = {},
-                lt = col.lookupTable;
-            switch(Lang.type(lt)) {
-                case 'array':
-                    Y.Array.each(lt, function (entry) {
-                        lookup[entry.value] = entry.text;
-                    });
-                    break;
-                case 'object':
-                    lookup = lt;
-                    break;
+                lookup = col.lookupTable || {},
+                entries, i, len;
+
+            if (Lang.isArray(lookup)) {
+                entries = lookup;
+                lookup = {};
+
+                for (i = 0, len = entries.length; i < len; ++i) {
+                    lookup[entries[i].value] = entries[i].text;
+                }
             }
             return function (o) {
                 o.className = className;
