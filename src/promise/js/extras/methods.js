@@ -59,6 +59,7 @@ Y.mix(Promise.prototype, {
     @method done
     @param {Function} [callback] Callback for the success case
     @param {Function} [errback] Callback for the failure case
+    @since @SINCE@
     **/
     done: function (callback, errback) {
         this._resolver._done(callback, errback);
@@ -72,6 +73,7 @@ Y.mix(Promise.prototype, {
     @param {Function} errback Callback for rejections
     @return {Promise} A new promise that will be resolved or rejected based
                         on the result of the errback
+    @since @SINCE@
     **/
     fail: function (errback) {
         return this.then(null, errback);

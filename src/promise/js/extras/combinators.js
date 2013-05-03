@@ -8,6 +8,7 @@ resolved or rejected.
 @return {Promise} A promise with the value or reason of the first resolved or
                     rejected promise
 @static
+@since @SINCE@
 **/
 Promise.any = function (values) {
     return new Promise(function (resolve, reject) {
@@ -31,6 +32,7 @@ any is rejected.
 @return {Promise} A promise with the list of all resolved values or the
                     rejection reason of the first rejected promise
 @static
+@since @SINCE@
 **/
 Promise.every = function (values) {
     var remaining = values.length,
@@ -71,6 +73,7 @@ or all are rejected.
 @return {Promise} A promise with the value of the first resolved promise or a
                     list of all the rejection reasons
 @static
+@since @SINCE@
 **/
 Promise.some = function (values) {
     var remaining = values.length,

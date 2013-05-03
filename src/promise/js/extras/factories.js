@@ -7,6 +7,7 @@ new promise will be accepted or rejected based on the provided promise
 @param {Any} valueOrPromise Any value to wrap in a promise
 @return {Promise} A new promise for the provided value
 @static
+@since @SINCE@
 **/
 Promise.resolve = function (valueOrPromise) {
     return new Promise(function (resolve) {
@@ -22,6 +23,7 @@ Creates a rejected promise based on a certain reason
 @param {Any} reason Any reason to reject a promise with
 @return {Promise} A new reject promise for the provided reason
 @static
+@since @SINCE@
 **/
 Promise.reject = function (reason) {
     return new Promise(function (resolve, reject) {

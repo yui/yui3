@@ -1,7 +1,7 @@
 Promise Change History
 ======================
 
-3.11.0
+@VERSION@
 ------
 
 * Split the module into promise-core and promise-extras
