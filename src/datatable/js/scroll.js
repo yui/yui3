@@ -71,6 +71,46 @@ Scrollable.ATTRS = {
     scrollable: {
         value: false,
         setter: '_setScrollable'
+    },
+
+    /**
+    Number of pixels the contents has been scrolled up.
+
+    @attribute scrollTop
+    @type Integer
+    @default 0
+     */
+    scrollTop: {
+        getter: function () {
+            return (this._yScrollNode && this._yScrollNode.get('scrollTop')) || 0;
+        },
+        setter: function (value) {
+            if (this._yScrollNode && this._scrollbarNode) {
+                this._yScrollNode.set('scrollTop', value);
+                return value;
+            }
+            return Y.Attribute.INVALID_VALUE;
+        }
+    },
+
+    /**
+    Number of pixels the contents has been scrolled left.
+
+    @attribute scrollLeft
+    @type Integer
+    @default 0
+     */
+    scrollLeft: {
+        getter: function () {
+            return (this._xScrollNode && this._xScrollNode.get('scrollLeft')) || 0;
+        },
+        setter: function (value) {
+            if (this._xScrollNode) {
+                this._xScrollNode.set('scrollLeft', value);
+                this.fire('scroll');
+            }
+            return Y.Attribute.INVALID_VALUE;
+        }
     }
 };
 
@@ -96,6 +136,7 @@ Y.mix(Scrollable.prototype, {
 
         if(target) {
             target.scrollIntoView();
+            this.fire('scroll');
         }
 
         return this;
@@ -414,6 +455,13 @@ Y.mix(Scrollable.prototype, {
                 scroller.on('scroll', this._syncScrollPosition, this)
             ]);
         }
+
+        if (this._xScrollNode && !this._xScrollEventHandle) {
+            this._xScrollEventHandle = this._xScrollNode.on('scroll', function () {
+               this.fire('scroll');
+            }, this);
+        }
+
     },
 
     /**
@@ -850,6 +898,8 @@ Y.mix(Scrollable.prototype, {
 
             other = (source === scrollbar) ? scroller : scrollbar;
             other.set('scrollTop', source.get('scrollTop'));
+
+            this.fire('scroll');
         }
     },
 
@@ -1462,6 +1512,12 @@ Y.mix(Scrollable.prototype, {
     @since 3.5.0
     **/
     //_xScrollNode: null
+
+    /**
+    Fires when the table is scrolled.
+
+    @event scroll
+     */
 }, true);
 
 Y.Base.mix(Y.DataTable, [Scrollable]);
