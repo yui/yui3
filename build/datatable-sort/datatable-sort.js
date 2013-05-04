@@ -88,7 +88,7 @@ function nameSort(a, b, desc) {
     var aa = a.get('lastName') + a.get('firstName'),
         bb = a.get('lastName') + b.get('firstName'),
         order = (aa > bb) ? 1 : -(aa < bb);
-        
+
     return desc ? -order : order;
 }
 
@@ -226,7 +226,7 @@ Y.mix(Sortable.prototype, {
     @value '<div class="{className}" tabindex="0"><span class="{indicatorClass}"></span></div>'
     @since 3.5.0
     **/
-    SORTABLE_HEADER_TEMPLATE: '<div class="{className}" tabindex="0"><span class="{indicatorClass}"></span></div>',
+    SORTABLE_HEADER_TEMPLATE: '<div class="{className}" tabindex="0" unselectable="on"><span class="{indicatorClass}"></span></div>',
 
     /**
     Reverse the current sort direction of one or more fields currently being
@@ -295,7 +295,7 @@ Y.mix(Sortable.prototype, {
     @protected
     @since 3.5.0
     **/
-    _afterSortByChange: function (e) {
+    _afterSortByChange: function () {
         // Can't use a setter because it's a chicken and egg problem. The
         // columns need to be set up to translate, but columns are initialized
         // from Core's initializer.  So construction-time assignment would
@@ -361,7 +361,7 @@ Y.mix(Sortable.prototype, {
     **/
     _bindSortUI: function () {
         var handles = this._eventHandles;
-        
+
         if (!handles.sortAttrs) {
             handles.sortAttrs = this.after(
                 ['sortableChange', 'sortByChange', 'columnsChange'],
@@ -389,7 +389,7 @@ Y.mix(Sortable.prototype, {
 
     /**
     Getter for the `sortBy` attribute.
-    
+
     Supports the special subattribute "sortBy.state" to get a normalized JSON
     version of the current sort state.  Otherwise, returns the last assigned
     value.
@@ -419,7 +419,7 @@ Y.mix(Sortable.prototype, {
     _getSortBy: function (val, detail) {
         var state, i, len, col;
 
-        // "sortBy." is 7 characters. Used to catch 
+        // "sortBy." is 7 characters. Used to catch
         detail = detail.slice(7);
 
         // TODO: table.get('sortBy.asObject')? table.get('sortBy.json')?
@@ -495,11 +495,12 @@ Y.mix(Sortable.prototype, {
         // extra function hop during sorting. Lesser of three evils?
         this.data._compare = function (a, b) {
             var cmp = 0,
-                i, len, col, dir, aa, bb;
+                i, len, col, dir, cs, aa, bb;
 
             for (i = 0, len = self._sortBy.length; !cmp && i < len; ++i) {
                 col = self._sortBy[i];
-                dir = col.sortDir;
+                dir = col.sortDir,
+                cs = col.caseSensitive;
 
                 if (col.sortFn) {
                     cmp = col.sortFn(a, b, (dir === -1));
@@ -507,7 +508,10 @@ Y.mix(Sortable.prototype, {
                     // FIXME? Requires columns without sortFns to have key
                     aa = a.get(col.key) || '';
                     bb = b.get(col.key) || '';
-
+                    if (!cs && typeof(aa) === "string" && typeof(bb) === "string"){// Not case sensitive
+                        aa = aa.toLowerCase();
+                        bb = bb.toLowerCase();
+                    }
                     cmp = (aa > bb) ? dir : ((aa < bb) ? -dir : 0);
                 }
             }
@@ -529,14 +533,14 @@ Y.mix(Sortable.prototype, {
 
     /**
     Add the sort related strings to the `strings` map.
-    
+
     @method _initSortStrings
     @protected
     @since 3.5.0
     **/
     _initSortStrings: function () {
         // Not a valueFn because other class extensions will want to add to it
-        this.set('strings', Y.mix((this.get('strings') || {}), 
+        this.set('strings', Y.mix((this.get('strings') || {}),
             Y.Intl.get('datatable-sort')));
     },
 
@@ -566,12 +570,12 @@ Y.mix(Sortable.prototype, {
         if (column) {
             if (e.shiftKey) {
                 for (i = 0, len = sortBy.length; i < len; ++i) {
-                    if (id === sortBy[i] || Math.abs(sortBy[i][id] === 1)) {
+                    if (id === sortBy[i]  || Math.abs(sortBy[i][id]) === 1) {
                         if (!isObject(sortBy[i])) {
                             sortBy[i] = {};
                         }
 
-                        sortBy[i][id] = -(column.sortDir|0) || 1;
+                        sortBy[i][id] = -(column.sortDir||0) || 1;
                         break;
                     }
                 }
@@ -580,7 +584,7 @@ Y.mix(Sortable.prototype, {
                     sortBy.push(column._id);
                 }
             } else {
-                sortBy[0][id] = -(column.sortDir|0) || 1;
+                sortBy[0][id] = -(column.sortDir||0) || 1;
             }
 
             this.fire('sort', {
@@ -889,4 +893,4 @@ Y.DataTable.Sortable = Sortable;
 Y.Base.mix(Y.DataTable, [Sortable]);
 
 
-}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en"], "skinnable": true});
+}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es"], "skinnable": true});

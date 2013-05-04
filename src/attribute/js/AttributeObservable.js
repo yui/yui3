@@ -1,3 +1,7 @@
+    /*For log lines*/
+    /*jshint maxlen:200*/
+
+
     /**
      * The attribute module provides an augmentable Attribute implementation, which
      * adds configurable attributes and attribute change events to the class being
@@ -18,8 +22,7 @@
     var EventTarget = Y.EventTarget,
 
         CHANGE = "Change",
-        BROADCAST = "broadcast",
-        PUBLISHED = "published";
+        BROADCAST = "broadcast";
 
     /**
      * Provides an augmentable implementation of attribute change events for
@@ -125,32 +128,36 @@
          * @param {Any} currVal The current value of the attribute
          * @param {Any} newVal The new value of the attribute
          * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
+         * @param {Object} [cfg] The attribute config stored in State, if already available.
          */
-        _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts) {
+        _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts, cfg) {
             var host = this,
-                eventName = attrName + CHANGE,
+                eventName = this._getFullType(attrName + CHANGE),
                 state = host._state,
                 facade,
                 broadcast,
-                evtCfg;
+                e;
 
-            if (!state.get(attrName, PUBLISHED)) {
+            if (!cfg) {
+                cfg = state.data[attrName] || {};
+            }
 
-                evtCfg = {
-                    queuable:false,
-                    defaultTargetOnly: true,
-                    defaultFn:host._defAttrChangeFn,
-                    silent:true
-                };
+            if (!cfg.published) {
 
-                broadcast = state.get(attrName, BROADCAST);
+                // PERF: Using lower level _publish() for
+                // critical path performance
+                e = host._publish(eventName);
+
+                e.emitFacade = true;
+                e.defaultTargetOnly = true;
+                e.defaultFn = host._defAttrChangeFn;
+
+                broadcast = cfg.broadcast;
                 if (broadcast !== undefined) {
-                    evtCfg.broadcast = broadcast;
+                    e.broadcast = broadcast;
                 }
 
-                host.publish(eventName, evtCfg);
-
-                state.add(attrName, PUBLISHED, true);
+                cfg.published = true;
             }
 
             facade = (opts) ? Y.merge(opts) : host._ATTR_E_FACADE;
@@ -176,8 +183,9 @@
          * @param {EventFacade} e The event object for attribute change events.
          */
         _defAttrChangeFn : function(e) {
-            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
+            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, e.opts)) {
                 Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
+
                 // Prevent "after" listeners from being invoked since nothing changed.
                 e.stopImmediatePropagation();
             } else {

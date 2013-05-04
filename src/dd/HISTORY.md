@@ -1,6 +1,26 @@
 Drag and Drop Change History
 ============================
 
+3.10.0
+------
+
+* Make DD use EventTarget's public `getTargets()` method.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* No changes.
+
+3.8.1
+-----
+
+* No changes.
+
 3.8.0
 -----
 

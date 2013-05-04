@@ -4,7 +4,7 @@
     "description": "Easily transform a list into an accessible and customizable drop-down menu.",
     "author"     : "drgath",
 
-    "tags": ["widget", "plugin", "beta", "menu", "menunav", "node", "dropdown"],
+    "tags": ["widget", "plugin", "beta", "menu", "menunav", "node", "dropdown", "deprecated"],
     "use" : ["node-menunav"],
 
     "examples": [

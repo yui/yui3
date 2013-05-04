@@ -2,7 +2,7 @@
 
 var path = require('path'),
     fs = require('fs'),
-    base = path.join(__dirname, '../../../build/json-parse/');
+    base = path.join(__dirname, '../../../build/json-parse-shim/');
 
 console.log('');
 console.log('Fixing json issue with eval');

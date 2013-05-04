@@ -38,9 +38,10 @@ YUI.add('core-tests', function(Y) {
     YUI.GlobalConfig.useSync = true;
 
     var resolvePath = function(p) {
-        if (Y.UA.nodejs) {
+        if (Y.UA.nodejs || typeof __dirname !== 'undefined') {
             var path = require('path');
-            p = path.join(__dirname, p);
+            //Shifting up a dir, then back down since we live in assets and so does the include
+            p = path.join(__dirname, '../', p);
         }
         return p;
     };
@@ -271,7 +272,9 @@ YUI.add('core-tests', function(Y) {
                 Assert = Y.Assert,
                 last;
 
-            console.info = function(str) {
+            // Override all of the console functions so that we can check
+            // their return values.
+            console.error = console.log = console.warn = console.debug = console.info = function(str) {
                 last = str.split(':')[0];
             };
 
@@ -315,6 +318,123 @@ YUI.add('core-tests', function(Y) {
                 Assert.isUndefined(last, 'Failed to exclude log param with empty string');
                 Y.log('This should NOT be ignored', 'info', 'davglass');
                 Assert.areEqual(last, 'davglass', 'Failed to include log param');
+
+                // Default logLevel is debug
+                Y.applyConfig({
+                    logInclude: {
+                        'logleveltest': true
+                    }
+                });
+                last = undefined;
+                Y.log('This should be logged', 'debug', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+                last = undefined;
+                Y.log('This should be logged', 'info', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+                last = undefined;
+                Y.log('This should be logged', 'warn', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+                last = undefined;
+                Y.log('This should be logged', 'error', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+
+                // Debug should also take effect when actively specified
+                Y.applyConfig({
+                    logLevel: 'debug'
+                });
+                last = undefined;
+                Y.log('This should be logged', 'debug', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+                last = undefined;
+                Y.log('This should be logged', 'info', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+                last = undefined;
+                Y.log('This should be logged', 'warn', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+                last = undefined;
+                Y.log('This should be logged', 'error', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+
+                // An invalid log level has the same effect as 'debug'
+                Y.applyConfig({
+                    logLevel: 'invalidloglevel'
+                });
+                last = undefined;
+                Y.log('This should be logged', 'debug', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+                last = undefined;
+                Y.log('This should be logged', 'info', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+                last = undefined;
+                Y.log('This should be logged', 'warn', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+                last = undefined;
+                Y.log('This should be logged', 'error', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+
+                Y.applyConfig({
+                    logLevel: 'info'
+                });
+                last = undefined;
+                Y.log('This should NOT be logged', 'debug', 'logleveltest');
+                Assert.isUndefined(last, 'Failed to exclude log level below threshold');
+                last = undefined;
+                Y.log('This should be logged', 'info', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+                last = undefined;
+                Y.log('This should be logged', 'warn', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+                last = undefined;
+                Y.log('This should be logged', 'error', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+
+                Y.applyConfig({
+                    logLevel: 'warn'
+                });
+                last = undefined;
+                Y.log('This should NOT be logged', 'debug', 'logleveltest');
+                Assert.isUndefined(last, 'Failed to exclude log level below threshold');
+                last = undefined;
+                Y.log('This should NOT be logged', 'info', 'logleveltest');
+                Assert.isUndefined(last, 'Failed to exclude log level below threshold');
+                last = undefined;
+                Y.log('This should be logged', 'warn', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+                last = undefined;
+                Y.log('This should be logged', 'error', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+
+                Y.applyConfig({
+                    logLevel: 'error'
+                });
+                last = undefined;
+                Y.log('This should NOT be logged', 'debug', 'logleveltest');
+                Assert.isUndefined(last, 'Failed to exclude log level below threshold');
+                last = undefined;
+                Y.log('This should NOT be logged', 'info', 'logleveltest');
+                Assert.isUndefined(last, 'Failed to exclude log level below threshold');
+                last = undefined;
+                Y.log('This should NOT be ignored', 'warn', 'logleveltest');
+                Assert.isUndefined(last, 'Failed to exclude log level below threshold');
+                last = undefined;
+                Y.log('This should NOT be ignored', 'error', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
+
+                Y.applyConfig({
+                    logLevel: 'ERROR'
+                });
+                last = undefined;
+                Y.log('This should NOT be logged', 'debug', 'logleveltest');
+                Assert.isUndefined(last, 'Failed to exclude log level below threshold - case insensitivty possibly ignored');
+                last = undefined;
+                Y.log('This should NOT be logged', 'info', 'logleveltest');
+                Assert.isUndefined(last, 'Failed to exclude log level below threshold - case insensitivty possibly ignored');
+                last = undefined;
+                Y.log('This should NOT be ignored', 'warn', 'logleveltest');
+                Assert.isUndefined(last, 'Failed to exclude log level below threshold - case insensitivty possibly ignored');
+                last = undefined;
+                Y.log('This should NOT be ignored', 'error', 'logleveltest');
+                Assert.areEqual(last, 'logleveltest', 'Failed to include log param');
             });
             console.info = l;
         },

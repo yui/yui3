@@ -8,6 +8,7 @@ utilities for the library.
 @submodule yui-base
 **/
 
+/*jshint eqeqeq: false*/
 if (typeof YUI != 'undefined') {
     YUI._YUI = YUI;
 }
@@ -505,7 +506,7 @@ proto = {
     @method _setup
     @private
     **/
-    _setup: function(o) {
+    _setup: function() {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
@@ -902,7 +903,6 @@ with any configuration info required for the module.
             callback = args[args.length - 1],
             Y = this,
             i = 0,
-            a = [],
             name,
             Env = Y.Env,
             provisioned = true;
@@ -993,7 +993,7 @@ with any configuration info required for the module.
             this._attach(['yui-base']);
         }
 
-        var len, loader, handleBoot, handleRLS,
+        var len, loader, handleBoot,
             Y = this,
             G_ENV = YUI.Env,
             mods = G_ENV.mods,
@@ -1474,6 +1474,30 @@ with any configuration info required for the module.
     // Support the CommonJS method for exporting our single global
     if (typeof exports == 'object') {
         exports.YUI = YUI;
+        /**
+        * Set a method to be called when `Get.script` is called in Node.js
+        * `Get` will open the file, then pass it's content and it's path
+        * to this method before attaching it. Commonly used for code coverage
+        * instrumentation. <strong>Calling this multiple times will only
+        * attach the last hook method</strong>. This method is only
+        * available in Node.js.
+        * @method setLoadHook
+        * @static
+        * @param {Function} fn The function to set
+        * @param {String} fn.data The content of the file
+        * @param {String} fn.path The file path of the file
+        */
+        YUI.setLoadHook = function(fn) {
+            YUI._getLoadHook = fn;
+        };
+        /**
+        * Load hook for `Y.Get.script` in Node.js, see `YUI.setLoadHook`
+        * @method _getLoadHook
+        * @private
+        * @param {String} data The content of the file
+        * @param {String} path The file path of the file
+        */
+        YUI._getLoadHook = null;
     }
 
 }());
@@ -1612,6 +1636,22 @@ supported native console. This function is executed with the YUI instance as its
 **/
 
 /**
+The minimum log level to log messages for. Log levels are defined
+incrementally. Messages greater than or equal to the level specified will
+be shown. All others will be discarded. The order of log levels in
+increasing priority is:
+
+    debug
+    info
+    warn
+    error
+
+@property {String} logLevel
+@default 'debug'
+@since 3.10.0
+**/
+
+/**
 Callback to execute when `Y.error()` is called. It receives the error message
 and a JavaScript error object if one was provided.
 
@@ -1671,18 +1711,34 @@ relying on ES5 functionality, even when ES5 functionality is available.
 **/
 
 /**
-Event to wait for before executing the `use()` callback.
+ * Leverage native JSON stringify if the browser has a native
+ * implementation.  In general, this is a good idea.  See the Known Issues
+ * section in the JSON user guide for caveats.  The default value is true
+ * for browsers with native JSON support.
+ *
+ * @property useNativeJSONStringify
+ * @type Boolean
+ * @default true
+ * @since 3.8.0
+ */
 
-The following events are supported:
+ /**
+ * Leverage native JSON parse if the browser has a native implementation.
+ * In general, this is a good idea.  See the Known Issues section in the
+ * JSON user guide for caveats.  The default value is true for browsers with
+ * native JSON support.
+ *
+ * @property useNativeJSONParse
+ * @type Boolean
+ * @default true
+ * @since 3.8.0
+ */
 
-  - available
-  - contentready
-  - domready
-  - load
-
-The event may be specified as a string or as an object hash that provides
-additional event configuration, as illustrated in the example below.
-
+/**
+Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
+@property delayUntil
+@type String|Object
+@since 3.6.0
 @example
 
 You can use `load` or `domready` strings by default:
@@ -2080,6 +2136,7 @@ pass `true` as the value of the _force_ parameter.
 function YArray(thing, startIndex, force) {
     var len, result;
 
+    /*jshint expr: true*/
     startIndex || (startIndex = 0);
 
     if (force || YArray.test(thing)) {
@@ -2452,13 +2509,15 @@ string `[object Object]` when used as a cache key.
 @for YUI
 **/
 Y.cached = function (source, cache, refetch) {
+    /*jshint expr: true*/
     cache || (cache = {});
 
     return function (arg) {
         var key = arguments.length > 1 ?
                 Array.prototype.join.call(arguments, CACHED_DELIMITER) :
                 String(arg);
-
+        
+        /*jshint eqeqeq: false*/
         if (!(key in cache) || (refetch && cache[key] == refetch)) {
             cache[key] = source.apply(source, arguments);
         }
@@ -3469,6 +3528,9 @@ YUI.Env.parseUA = function(subUA) {
                         m = ua.match(/rv:([^\s\)]*)/);
                         if (m && m[1]) {
                             o.gecko = numberify(m[1]);
+                            if (/Mobile|Tablet/.test(ua)) {
+                                o.mobile = "ffos";
+                            }
                         }
                     }
                 }
@@ -3538,6 +3600,7 @@ Y.UA.compareVersions = function (a, b) {
         aPart = parseInt(aParts[i], 10);
         bPart = parseInt(bParts[i], 10);
 
+        /*jshint expr: true*/
         isNaN(aPart) && (aPart = 0);
         isNaN(bPart) && (bPart = 0);
 
@@ -3559,15 +3622,17 @@ YUI.Env.aliases = {
     "attribute": ["attribute-base","attribute-complex"],
     "attribute-events": ["attribute-observable"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
+    "axes": ["axis-numeric","axis-category","axis-time","axis-stacked"],
+    "axes-base": ["axis-numeric-base","axis-category-base","axis-time-base","axis-stacked-base"],
     "base": ["base-base","base-pluginhost","base-build"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
+    "charts": ["charts-base"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "color": ["color-base","color-hsl","color-harmony"],
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
     "datatable": ["datatable-core","datatable-table","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
-    "datatable-deprecated": ["datatable-base-deprecated","datatable-datasource-deprecated","datatable-sort-deprecated","datatable-scroll-deprecated"],
     "datatype": ["datatype-date","datatype-number","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format","datatype-date-math"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
@@ -4590,7 +4655,7 @@ Transaction.prototype = {
     _getInsertBefore: function (req) {
         var doc = req.doc,
             el  = req.insertBefore,
-            cache, cachedNode, docStamp;
+            cache, docStamp;
 
         if (el) {
             return typeof el === 'string' ? doc.getElementById(el) : el;
@@ -4720,11 +4785,12 @@ Transaction.prototype = {
 
             if (ua.ie >= 10) {
 
-                // We currently need to introduce a timeout for IE10, since it 
+                // We currently need to introduce a timeout for IE10, since it
                 // calls onerror/onload synchronously for 304s - messing up existing
-                // program flow. 
+                // program flow.
 
                 // Remove this block if the following bug gets fixed by GA
+                /*jshint maxlen: 1500 */
                 // https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload
                 node.onerror = function() { setTimeout(onError, 0); };
                 node.onload  = function() { setTimeout(onLoad, 0); };
@@ -4886,21 +4952,21 @@ Contains the core of YUI's feature test architecture.
 */
 
 Y.mix(Y.namespace('Features'), {
-    
+
     /**
     * Object hash of all registered feature tests
     * @property tests
     * @type Object
     */
     tests: feature_tests,
-    
+
     /**
     * Add a test to the system
-    * 
+    *
     *   ```
     *   Y.Features.add("load", "1", {});
     *   ```
-    * 
+    *
     * @method add
     * @param {String} cat The category, right now only 'load' is supported
     * @param {String} name The number sequence of the test, how it's reported in the URL or config: 1, 2, 3
@@ -4984,7 +5050,8 @@ Y.mix(Y.namespace('Features'), {
 // Y.Features.test("load", "1");
 // caps=1:1;2:0;3:1;
 
-/* This file is auto-generated by src/loader/scripts/meta_join.js */
+/* This file is auto-generated by (yogi loader --yes --mix --start ../) */
+/*jshint maxlen:900, eqeqeq: false */
 var add = Y.Features.add;
 // app-transitions-native
 add('load', '0', {
@@ -5160,14 +5227,64 @@ add('load', '13', {
     "trigger": "io-base",
     "ua": "nodejs"
 });
-// scrollview-base-ie
+// json-parse-shim
 add('load', '14', {
+    "name": "json-parse-shim",
+    "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONParse !== false && !!Native;
+
+    function workingNative( k, v ) {
+        return k === "ok" ? true : v;
+    }
+    
+    // Double check basic functionality.  This is mainly to catch early broken
+    // implementations of the JSON API in Firefox 3.1 beta1 and beta2
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
+        }
+        catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+    return !nativeSupport;
+},
+    "trigger": "json-parse"
+});
+// json-stringify-shim
+add('load', '15', {
+    "name": "json-stringify-shim",
+    "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONStringify !== false && !!Native;
+
+    // Double check basic native functionality.  This is primarily to catch broken
+    // early JSON API implementations in Firefox 3.1 beta1 and beta2.
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( '0' === Native.stringify(0) );
+        } catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+
+    return !nativeSupport;
+},
+    "trigger": "json-stringify"
+});
+// scrollview-base-ie
+add('load', '16', {
     "name": "scrollview-base-ie",
     "trigger": "scrollview-base",
     "ua": "ie"
 });
 // selector-css2
-add('load', '15', {
+add('load', '17', {
     "name": "selector-css2",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5178,7 +5295,7 @@ add('load', '15', {
     "trigger": "selector"
 });
 // transition-timer
-add('load', '16', {
+add('load', '18', {
     "name": "transition-timer",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5194,20 +5311,32 @@ add('load', '16', {
     "trigger": "transition"
 });
 // widget-base-ie
-add('load', '17', {
+add('load', '19', {
     "name": "widget-base-ie",
     "trigger": "widget-base",
     "ua": "ie"
 });
+// yql-jsonp
+add('load', '20', {
+    "name": "yql-jsonp",
+    "test": function (Y) {
+    /* Only load the JSONP module when not in nodejs or winjs
+    TODO Make the winjs module a CORS module
+    */
+    return (!Y.UA.nodejs && !Y.UA.winjs);
+},
+    "trigger": "yql",
+    "when": "after"
+});
 // yql-nodejs
-add('load', '18', {
+add('load', '21', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '19', {
+add('load', '22', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
@@ -5307,7 +5436,8 @@ YUI.add('yui-log', function (Y, NAME) {
 
 /**
  * Provides console log capability and exposes a custom event for
- * console implementations. This module is a `core` YUI module, <a href="../classes/YUI.html#method_log">it's documentation is located under the YUI class</a>.
+ * console implementations. This module is a `core` YUI module,
+ * <a href="../classes/YUI.html#method_log">it's documentation is located under the YUI class</a>.
  *
  * @module yui
  * @submodule yui-log
@@ -5317,9 +5447,9 @@ var INSTANCE = Y,
     LOGEVENT = 'yui:log',
     UNDEFINED = 'undefined',
     LEVELS = { debug: 1,
-               info: 1,
-               warn: 1,
-               error: 1 };
+               info: 2,
+               warn: 4,
+               error: 8 };
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -5341,7 +5471,7 @@ var INSTANCE = Y,
  * @return {YUI}      YUI instance.
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var bail, excl, incl, m, f,
+    var bail, excl, incl, m, f, minlevel,
         Y = INSTANCE,
         c = Y.config,
         publisher = (Y.fire) ? Y : YUI.Env.globalEvents;
@@ -5360,23 +5490,32 @@ INSTANCE.log = function(msg, cat, src, silent) {
             } else if (excl && (src in excl)) {
                 bail = excl[src];
             }
+
+            // Determine the current minlevel as defined in configuration
+            Y.config.logLevel = Y.config.logLevel || 'debug';
+            minlevel = LEVELS[Y.config.logLevel.toLowerCase()];
+
+            if (cat in LEVELS && LEVELS[cat] < minlevel) {
+                // Skip this message if the we don't meet the defined minlevel
+                bail = 1;
+            }
         }
         if (!bail) {
             if (c.useBrowserConsole) {
                 m = (src) ? src + ': ' + msg : msg;
                 if (Y.Lang.isFunction(c.logFn)) {
                     c.logFn.call(Y, msg, cat, src);
-                } else if (typeof console != UNDEFINED && console.log) {
+                } else if (typeof console !== UNDEFINED && console.log) {
                     f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
                     console[f](m);
-                } else if (typeof opera != UNDEFINED) {
+                } else if (typeof opera !== UNDEFINED) {
                     opera.postError(m);
                 }
             }
 
             if (publisher && !silent) {
 
-                if (publisher == Y && (!publisher.getEvent(LOGEVENT))) {
+                if (publisher === Y && (!publisher.getEvent(LOGEVENT))) {
                     publisher.publish(LOGEVENT, {
                         broadcast: 2
                     });
@@ -5416,7 +5555,8 @@ INSTANCE.message = function() {
 YUI.add('yui-later', function (Y, NAME) {
 
 /**
- * Provides a setTimeout/setInterval wrapper. This module is a `core` YUI module, <a href="../classes/YUI.html#method_later">it's documentation is located under the YUI class</a>.
+ * Provides a setTimeout/setInterval wrapper. This module is a `core` YUI module,
+ * <a href="../classes/YUI.html#method_later">it's documentation is located under the YUI class</a>.
  *
  * @module yui
  * @submodule yui-later
@@ -5726,56 +5866,66 @@ Y.some = function(o, f, c, proto) {
 };
 
 /**
- * Deep object/array copy.  Function clones are actually
- * wrappers around the original function.
- * Array-like objects are treated as arrays.
- * Primitives are returned untouched.  Optionally, a
- * function can be provided to handle other data types,
- * filter keys, validate values, etc.
- *
- * NOTE: Cloning a non-trivial object is a reasonably heavy operation, due to
- * the need to recurrsively iterate down non-primitive properties. Clone
- * should be used only when a deep clone down to leaf level properties
- * is explicitly required.
- *
- * In many cases (for example, when trying to isolate objects used as 
- * hashes for configuration properties), a shallow copy, using Y.merge is 
- * normally sufficient. If more than one level of isolation is required, 
- * Y.merge can be used selectively at each level which needs to be 
- * isolated from the original without going all the way to leaf properties.
- *
- * @method clone
- * @param {object} o what to clone.
- * @param {boolean} safe if true, objects will not have prototype
- * items from the source.  If false, they will.  In this case, the
- * original is initially protected, but the clone is not completely
- * immune from changes to the source object prototype.  Also, cloned
- * prototype items that are deleted from the clone will result
- * in the value of the source prototype being exposed.  If operating
- * on a non-safe clone, items should be nulled out rather than deleted.
- * @param {function} f optional function to apply to each item in a
- * collection; it will be executed prior to applying the value to
- * the new object.  Return false to prevent the copy.
- * @param {object} c optional execution context for f.
- * @param {object} owner Owner object passed when clone is iterating
- * an object.  Used to set up context for cloned functions.
- * @param {object} cloned hash of previously cloned objects to avoid
- * multiple clones.
- * @return {Array|Object} the cloned object.
- */
+Deep object/array copy. Function clones are actually wrappers around the
+original function. Array-like objects are treated as arrays. Primitives are
+returned untouched. Optionally, a function can be provided to handle other data
+types, filter keys, validate values, etc.
+
+**Note:** Cloning a non-trivial object is a reasonably heavy operation, due to
+the need to recursively iterate down non-primitive properties. Clone should be
+used only when a deep clone down to leaf level properties is explicitly
+required. This method will also
+
+In many cases (for example, when trying to isolate objects used as hashes for
+configuration properties), a shallow copy, using `Y.merge()` is normally
+sufficient. If more than one level of isolation is required, `Y.merge()` can be
+used selectively at each level which needs to be isolated from the original
+without going all the way to leaf properties.
+
+@method clone
+@param {object} o what to clone.
+@param {boolean} safe if true, objects will not have prototype items from the
+    source. If false, they will. In this case, the original is initially
+    protected, but the clone is not completely immune from changes to the source
+    object prototype. Also, cloned prototype items that are deleted from the
+    clone will result in the value of the source prototype being exposed. If
+    operating on a non-safe clone, items should be nulled out rather than
+    deleted.
+@param {function} f optional function to apply to each item in a collection; it
+    will be executed prior to applying the value to the new object.
+    Return false to prevent the copy.
+@param {object} c optional execution context for f.
+@param {object} owner Owner object passed when clone is iterating an object.
+    Used to set up context for cloned functions.
+@param {object} cloned hash of previously cloned objects to avoid multiple
+    clones.
+@return {Array|Object} the cloned object.
+**/
 Y.clone = function(o, safe, f, c, owner, cloned) {
+    var o2, marked, stamp;
 
-    if (!L.isObject(o)) {
+    // Does not attempt to clone:
+    //
+    // * Non-typeof-object values, "primitive" values don't need cloning.
+    //
+    // * YUI instances, cloning complex object like YUI instances is not
+    //   advised, this is like cloning the world.
+    //
+    // * DOM nodes (#2528250), common host objects like DOM nodes cannot be
+    //   "subclassed" in Firefox and old versions of IE. Trying to use
+    //   `Object.create()` or `Y.extend()` on a DOM node will throw an error in
+    //   these browsers.
+    //
+    // Instad, the passed-in `o` will be return as-is when it matches one of the
+    // above criteria.
+    if (!L.isObject(o) ||
+            Y.instanceOf(o, YUI) ||
+            (o.addEventListener || o.attachEvent)) {
+
         return o;
     }
 
-    // @todo cloning YUI instances doesn't currently work
-    if (Y.instanceOf(o, YUI)) {
-        return o;
-    }
-
-    var o2, marked = cloned || {}, stamp,
-        yeach = Y.each;
+    marked = cloned || {};
 
     switch (L.type(o)) {
         case 'date':
@@ -5806,23 +5956,20 @@ Y.clone = function(o, safe, f, c, owner, cloned) {
             marked[stamp] = o;
     }
 
-    // #2528250 don't try to clone element properties
-    if (!o.addEventListener && !o.attachEvent) {
-        yeach(o, function(v, k) {
-if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
-                if (k !== CLONE_MARKER) {
-                    if (k == 'prototype') {
-                        // skip the prototype
-                    // } else if (o[k] === o) {
-                    //     this[k] = this;
-                    } else {
-                        this[k] =
-                            Y.clone(v, safe, f, c, owner || o, marked);
-                    }
+    Y.each(o, function(v, k) {
+        if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
+            if (k !== CLONE_MARKER) {
+                if (k == 'prototype') {
+                    // skip the prototype
+                // } else if (o[k] === o) {
+                //     this[k] = this;
+                } else {
+                    this[k] =
+                        Y.clone(v, safe, f, c, owner || o, marked);
                 }
             }
-        }, o2);
-    }
+        }
+    }, o2);
 
     if (!cloned) {
         Y.Object.each(marked, function(v, k) {
@@ -5839,7 +5986,6 @@ if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
 
     return o2;
 };
-
 
 /**
  * Returns a function that will execute the supplied function in the
@@ -5908,21 +6054,21 @@ Contains the core of YUI's feature test architecture.
 */
 
 Y.mix(Y.namespace('Features'), {
-    
+
     /**
     * Object hash of all registered feature tests
     * @property tests
     * @type Object
     */
     tests: feature_tests,
-    
+
     /**
     * Add a test to the system
-    * 
+    *
     *   ```
     *   Y.Features.add("load", "1", {});
     *   ```
-    * 
+    *
     * @method add
     * @param {String} cat The category, right now only 'load' is supported
     * @param {String} name The number sequence of the test, how it's reported in the URL or config: 1, 2, 3
@@ -6006,7 +6152,8 @@ Y.mix(Y.namespace('Features'), {
 // Y.Features.test("load", "1");
 // caps=1:1;2:0;3:1;
 
-/* This file is auto-generated by src/loader/scripts/meta_join.js */
+/* This file is auto-generated by (yogi loader --yes --mix --start ../) */
+/*jshint maxlen:900, eqeqeq: false */
 var add = Y.Features.add;
 // app-transitions-native
 add('load', '0', {
@@ -6182,14 +6329,64 @@ add('load', '13', {
     "trigger": "io-base",
     "ua": "nodejs"
 });
-// scrollview-base-ie
+// json-parse-shim
 add('load', '14', {
+    "name": "json-parse-shim",
+    "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONParse !== false && !!Native;
+
+    function workingNative( k, v ) {
+        return k === "ok" ? true : v;
+    }
+    
+    // Double check basic functionality.  This is mainly to catch early broken
+    // implementations of the JSON API in Firefox 3.1 beta1 and beta2
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
+        }
+        catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+    return !nativeSupport;
+},
+    "trigger": "json-parse"
+});
+// json-stringify-shim
+add('load', '15', {
+    "name": "json-stringify-shim",
+    "test": function (Y) {
+    var _JSON = Y.config.global.JSON,
+        Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
+        nativeSupport = Y.config.useNativeJSONStringify !== false && !!Native;
+
+    // Double check basic native functionality.  This is primarily to catch broken
+    // early JSON API implementations in Firefox 3.1 beta1 and beta2.
+    if ( nativeSupport ) {
+        try {
+            nativeSupport = ( '0' === Native.stringify(0) );
+        } catch ( e ) {
+            nativeSupport = false;
+        }
+    }
+
+
+    return !nativeSupport;
+},
+    "trigger": "json-stringify"
+});
+// scrollview-base-ie
+add('load', '16', {
     "name": "scrollview-base-ie",
     "trigger": "scrollview-base",
     "ua": "ie"
 });
 // selector-css2
-add('load', '15', {
+add('load', '17', {
     "name": "selector-css2",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -6200,7 +6397,7 @@ add('load', '15', {
     "trigger": "selector"
 });
 // transition-timer
-add('load', '16', {
+add('load', '18', {
     "name": "transition-timer",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -6216,20 +6413,32 @@ add('load', '16', {
     "trigger": "transition"
 });
 // widget-base-ie
-add('load', '17', {
+add('load', '19', {
     "name": "widget-base-ie",
     "trigger": "widget-base",
     "ua": "ie"
 });
+// yql-jsonp
+add('load', '20', {
+    "name": "yql-jsonp",
+    "test": function (Y) {
+    /* Only load the JSONP module when not in nodejs or winjs
+    TODO Make the winjs module a CORS module
+    */
+    return (!Y.UA.nodejs && !Y.UA.winjs);
+},
+    "trigger": "yql",
+    "when": "after"
+});
 // yql-nodejs
-add('load', '18', {
+add('load', '21', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '19', {
+add('load', '22', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
@@ -8970,12 +9179,12 @@ DO = {
      * Cache of objects touched by the utility
      * @property objs
      * @static
-     * @deprecated Since 3.6.0. The `_yuiaop` property on the AOP'd object 
-     * replaces the role of this property, but is considered to be private, and 
+     * @deprecated Since 3.6.0. The `_yuiaop` property on the AOP'd object
+     * replaces the role of this property, but is considered to be private, and
      * is only mentioned to provide a migration path.
-     * 
-     * If you have a use case which warrants migration to the _yuiaop property, 
-     * please file a ticket to let us know what it's used for and we can see if 
+     *
+     * If you have a use case which warrants migration to the _yuiaop property,
+     * please file a ticket to let us know what it's used for and we can see if
      * we need to expose hooks for that functionality more formally.
      */
     objs: null,
@@ -9109,9 +9318,6 @@ DO = {
         if (handle.detach) {
             handle.detach();
         }
-    },
-
-    _unload: function(e, me) {
     }
 };
 
@@ -9237,10 +9443,10 @@ DO.Method.prototype.exec = function () {
         if (af.hasOwnProperty(i)) {
             newRet = af[i].apply(this.obj, args);
             // Stop processing if a Halt object is returned
-            if (newRet && newRet.constructor == DO.Halt) {
+            if (newRet && newRet.constructor === DO.Halt) {
                 return newRet.retVal;
             // Check for a new return value
-            } else if (newRet && newRet.constructor == DO.AlterReturn) {
+            } else if (newRet && newRet.constructor === DO.AlterReturn) {
                 ret = newRet.newRetVal;
                 // Update the static retval state
                 DO.currentRetVal = ret;
@@ -9325,9 +9531,6 @@ DO.Error = DO.Halt;
 
 //////////////////////////////////////////////////////////////////////////
 
-// Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
-
-
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM
  * events.
@@ -9365,7 +9568,7 @@ var YArray = Y.Array,
 
     CONFIGS_HASH = YArray.hash(CONFIGS),
 
-    nativeSlice = Array.prototype.slice, 
+    nativeSlice = Array.prototype.slice,
 
     YUI3_SIGNATURE = 9,
     YUI_LOG = 'yui:log',
@@ -9374,7 +9577,7 @@ var YArray = Y.Array,
         var p;
 
         for (p in s) {
-            if (CONFIGS_HASH[p] && (ov || !(p in r))) { 
+            if (CONFIGS_HASH[p] && (ov || !(p in r))) {
                 r[p] = s[p];
             }
         }
@@ -9388,258 +9591,69 @@ var YArray = Y.Array,
  *
  * @param {String} type The type of event, which is passed to the callback
  * when the event fires.
- * @param {object} o configuration object.
+ * @param {object} defaults configuration object.
  * @class CustomEvent
  * @constructor
  */
-Y.CustomEvent = function(type, o) {
+
+ /**
+ * The type of event, returned to subscribers when the event fires
+ * @property type
+ * @type string
+ */
+
+/**
+ * By default all custom events are logged in the debug build, set silent
+ * to true to disable debug outpu for this event.
+ * @property silent
+ * @type boolean
+ */
+
+Y.CustomEvent = function(type, defaults) {
 
     this._kds = Y.CustomEvent.keepDeprecatedSubs;
 
-    o = o || {};
+    this.id = Y.guid();
 
-    this.id = Y.stamp(this);
-
-    /**
-     * The type of event, returned to subscribers when the event fires
-     * @property type
-     * @type string
-     */
     this.type = type;
+    this.silent = this.logSystem = (type === YUI_LOG);
 
-    /**
-     * The context the the event will fire from by default.  Defaults to the YUI
-     * instance.
-     * @property context
-     * @type object
-     */
-    this.context = Y;
-
-    /**
-     * Monitor when an event is attached or detached.
-     *
-     * @property monitored
-     * @type boolean
-     */
-    // this.monitored = false;
-
-    this.logSystem = (type == YUI_LOG);
-
-    /**
-     * If 0, this event does not broadcast.  If 1, the YUI instance is notified
-     * every time this event fires.  If 2, the YUI instance and the YUI global
-     * (if event is enabled on the global) are notified every time this event
-     * fires.
-     * @property broadcast
-     * @type int
-     */
-    // this.broadcast = 0;
-
-    /**
-     * By default all custom events are logged in the debug build, set silent
-     * to true to disable debug outpu for this event.
-     * @property silent
-     * @type boolean
-     */
-    this.silent = this.logSystem;
-
-    /**
-     * Specifies whether this event should be queued when the host is actively
-     * processing an event.  This will effect exectution order of the callbacks
-     * for the various events.
-     * @property queuable
-     * @type boolean
-     * @default false
-     */
-    // this.queuable = false;
-
-    /**
-     * The subscribers to this event
-     * @property subscribers
-     * @type Subscriber {}
-     * @deprecated
-     */
     if (this._kds) {
+        /**
+         * The subscribers to this event
+         * @property subscribers
+         * @type Subscriber {}
+         * @deprecated
+         */
+
+        /**
+         * 'After' subscribers
+         * @property afters
+         * @type Subscriber {}
+         * @deprecated
+         */
         this.subscribers = {};
-    }
-
-    /**
-     * The subscribers to this event
-     * @property _subscribers
-     * @type Subscriber []
-     * @private
-     */
-    this._subscribers = [];
-
-    /**
-     * 'After' subscribers
-     * @property afters
-     * @type Subscriber {}
-     */
-    if (this._kds) {
         this.afters = {};
     }
 
-    /**
-     * 'After' subscribers
-     * @property _afters
-     * @type Subscriber []
-     * @private
-     */
-    this._afters = [];
-
-    /**
-     * This event has fired if true
-     *
-     * @property fired
-     * @type boolean
-     * @default false;
-     */
-    // this.fired = false;
-
-    /**
-     * An array containing the arguments the custom event
-     * was last fired with.
-     * @property firedWith
-     * @type Array
-     */
-    // this.firedWith;
-
-    /**
-     * This event should only fire one time if true, and if
-     * it has fired, any new subscribers should be notified
-     * immediately.
-     *
-     * @property fireOnce
-     * @type boolean
-     * @default false;
-     */
-    // this.fireOnce = false;
-
-    /**
-     * fireOnce listeners will fire syncronously unless async
-     * is set to true
-     * @property async
-     * @type boolean
-     * @default false
-     */
-    //this.async = false;
-
-    /**
-     * Flag for stopPropagation that is modified during fire()
-     * 1 means to stop propagation to bubble targets.  2 means
-     * to also stop additional subscribers on this target.
-     * @property stopped
-     * @type int
-     */
-    // this.stopped = 0;
-
-    /**
-     * Flag for preventDefault that is modified during fire().
-     * if it is not 0, the default behavior for this event
-     * @property prevented
-     * @type int
-     */
-    // this.prevented = 0;
-
-    /**
-     * Specifies the host for this custom event.  This is used
-     * to enable event bubbling
-     * @property host
-     * @type EventTarget
-     */
-    // this.host = null;
-
-    /**
-     * The default function to execute after event listeners
-     * have fire, but only if the default action was not
-     * prevented.
-     * @property defaultFn
-     * @type Function
-     */
-    // this.defaultFn = null;
-
-    /**
-     * The function to execute if a subscriber calls
-     * stopPropagation or stopImmediatePropagation
-     * @property stoppedFn
-     * @type Function
-     */
-    // this.stoppedFn = null;
-
-    /**
-     * The function to execute if a subscriber calls
-     * preventDefault
-     * @property preventedFn
-     * @type Function
-     */
-    // this.preventedFn = null;
-
-    /**
-     * Specifies whether or not this event's default function
-     * can be cancelled by a subscriber by executing preventDefault()
-     * on the event facade
-     * @property preventable
-     * @type boolean
-     * @default true
-     */
-    this.preventable = true;
-
-    /**
-     * Specifies whether or not a subscriber can stop the event propagation
-     * via stopPropagation(), stopImmediatePropagation(), or halt()
-     *
-     * Events can only bubble if emitFacade is true.
-     *
-     * @property bubbles
-     * @type boolean
-     * @default true
-     */
-    this.bubbles = true;
-
-    /**
-     * Supports multiple options for listener signatures in order to
-     * port YUI 2 apps.
-     * @property signature
-     * @type int
-     * @default 9
-     */
-    this.signature = YUI3_SIGNATURE;
-
-    // this.subCount = 0;
-    // this.afterCount = 0;
-
-    // this.hasSubscribers = false;
-    // this.hasAfters = false;
-
-    /**
-     * If set to true, the custom event will deliver an EventFacade object
-     * that is similar to a DOM event object.
-     * @property emitFacade
-     * @type boolean
-     * @default false
-     */
-    // this.emitFacade = false;
-
-    this.applyConfig(o, true);
-
-    // this.log("Creating " + this.type);
-
+    if (defaults) {
+        mixConfigs(this, defaults, true);
+    }
 };
 
 /**
  * Static flag to enable population of the <a href="#property_subscribers">`subscribers`</a>
  * and  <a href="#property_subscribers">`afters`</a> properties held on a `CustomEvent` instance.
- * 
- * These properties were changed to private properties (`_subscribers` and `_afters`), and 
- * converted from objects to arrays for performance reasons. 
  *
- * Setting this property to true will populate the deprecated `subscribers` and `afters` 
+ * These properties were changed to private properties (`_subscribers` and `_afters`), and
+ * converted from objects to arrays for performance reasons.
+ *
+ * Setting this property to true will populate the deprecated `subscribers` and `afters`
  * properties for people who may be using them (which is expected to be rare). There will
  * be a performance hit, compared to the new array based implementation.
  *
  * If you are using these deprecated properties for a use case which the public API
- * does not support, please file an enhancement request, and we can provide an alternate 
+ * does not support, please file an enhancement request, and we can provide an alternate
  * public implementation which doesn't have the performance cost required to maintiain the
  * properties as objects.
  *
@@ -9659,6 +9673,169 @@ Y.CustomEvent.prototype = {
     constructor: Y.CustomEvent,
 
     /**
+     * Monitor when an event is attached or detached.
+     *
+     * @property monitored
+     * @type boolean
+     */
+
+    /**
+     * If 0, this event does not broadcast.  If 1, the YUI instance is notified
+     * every time this event fires.  If 2, the YUI instance and the YUI global
+     * (if event is enabled on the global) are notified every time this event
+     * fires.
+     * @property broadcast
+     * @type int
+     */
+
+    /**
+     * Specifies whether this event should be queued when the host is actively
+     * processing an event.  This will effect exectution order of the callbacks
+     * for the various events.
+     * @property queuable
+     * @type boolean
+     * @default false
+     */
+
+    /**
+     * This event has fired if true
+     *
+     * @property fired
+     * @type boolean
+     * @default false;
+     */
+
+    /**
+     * An array containing the arguments the custom event
+     * was last fired with.
+     * @property firedWith
+     * @type Array
+     */
+
+    /**
+     * This event should only fire one time if true, and if
+     * it has fired, any new subscribers should be notified
+     * immediately.
+     *
+     * @property fireOnce
+     * @type boolean
+     * @default false;
+     */
+
+    /**
+     * fireOnce listeners will fire syncronously unless async
+     * is set to true
+     * @property async
+     * @type boolean
+     * @default false
+     */
+
+    /**
+     * Flag for stopPropagation that is modified during fire()
+     * 1 means to stop propagation to bubble targets.  2 means
+     * to also stop additional subscribers on this target.
+     * @property stopped
+     * @type int
+     */
+
+    /**
+     * Flag for preventDefault that is modified during fire().
+     * if it is not 0, the default behavior for this event
+     * @property prevented
+     * @type int
+     */
+
+    /**
+     * Specifies the host for this custom event.  This is used
+     * to enable event bubbling
+     * @property host
+     * @type EventTarget
+     */
+
+    /**
+     * The default function to execute after event listeners
+     * have fire, but only if the default action was not
+     * prevented.
+     * @property defaultFn
+     * @type Function
+     */
+
+    /**
+     * The function to execute if a subscriber calls
+     * stopPropagation or stopImmediatePropagation
+     * @property stoppedFn
+     * @type Function
+     */
+
+    /**
+     * The function to execute if a subscriber calls
+     * preventDefault
+     * @property preventedFn
+     * @type Function
+     */
+
+    /**
+     * The subscribers to this event
+     * @property _subscribers
+     * @type Subscriber []
+     * @private
+     */
+
+    /**
+     * 'After' subscribers
+     * @property _afters
+     * @type Subscriber []
+     * @private
+     */
+
+    /**
+     * If set to true, the custom event will deliver an EventFacade object
+     * that is similar to a DOM event object.
+     * @property emitFacade
+     * @type boolean
+     * @default false
+     */
+
+    /**
+     * Supports multiple options for listener signatures in order to
+     * port YUI 2 apps.
+     * @property signature
+     * @type int
+     * @default 9
+     */
+    signature : YUI3_SIGNATURE,
+
+    /**
+     * The context the the event will fire from by default.  Defaults to the YUI
+     * instance.
+     * @property context
+     * @type object
+     */
+    context : Y,
+
+    /**
+     * Specifies whether or not this event's default function
+     * can be cancelled by a subscriber by executing preventDefault()
+     * on the event facade
+     * @property preventable
+     * @type boolean
+     * @default true
+     */
+    preventable : true,
+
+    /**
+     * Specifies whether or not a subscriber can stop the event propagation
+     * via stopPropagation(), stopImmediatePropagation(), or halt()
+     *
+     * Events can only bubble if emitFacade is true.
+     *
+     * @property bubbles
+     * @type boolean
+     * @default true
+     */
+    bubbles : true,
+
+    /**
      * Returns the number of subscribers for this event as the sum of the on()
      * subscribers and after() subscribers.
      *
@@ -9666,15 +9843,35 @@ Y.CustomEvent.prototype = {
      * @return Number
      */
     hasSubs: function(when) {
-        var s = this._subscribers.length, a = this._afters.length, sib = this.sibling;
+        var s = 0,
+            a = 0,
+            subs = this._subscribers,
+            afters = this._afters,
+            sib = this.sibling;
+
+        if (subs) {
+            s = subs.length;
+        }
+
+        if (afters) {
+            a = afters.length;
+        }
 
         if (sib) {
-            s += sib._subscribers.length;
-            a += sib._afters.length;
+            subs = sib._subscribers;
+            afters = sib._afters;
+
+            if (subs) {
+                s += subs.length;
+            }
+
+            if (afters) {
+                a += afters.length;
+            }
         }
 
         if (when) {
-            return (when == 'after') ? a : s;
+            return (when === 'after') ? a : s;
         }
 
         return (s + a);
@@ -9702,12 +9899,47 @@ Y.CustomEvent.prototype = {
      * @return {Array} first item is the on subscribers, second the after.
      */
     getSubs: function() {
-        var s = this._subscribers, a = this._afters, sib = this.sibling;
 
-        s = (sib) ? s.concat(sib._subscribers) : s.concat();
-        a = (sib) ? a.concat(sib._afters) : a.concat();
+        var sibling = this.sibling,
+            subs = this._subscribers,
+            afters = this._afters,
+            siblingSubs,
+            siblingAfters;
 
-        return [s, a];
+        if (sibling) {
+            siblingSubs = sibling._subscribers;
+            siblingAfters = sibling._afters;
+        }
+
+        if (siblingSubs) {
+            if (subs) {
+                subs = subs.concat(siblingSubs);
+            } else {
+                subs = siblingSubs.concat();
+            }
+        } else {
+            if (subs) {
+                subs = subs.concat();
+            } else {
+                subs = [];
+            }
+        }
+
+        if (siblingAfters) {
+            if (afters) {
+                afters = afters.concat(siblingAfters);
+            } else {
+                afters = siblingAfters.concat();
+            }
+        } else {
+            if (afters) {
+                afters = afters.concat();
+            } else {
+                afters = [];
+            }
+        }
+
+        return [subs, afters];
     },
 
     /**
@@ -9723,7 +9955,7 @@ Y.CustomEvent.prototype = {
 
     /**
      * Create the Subscription for subscribing function, context, and bound
-     * arguments.  If this is a fireOnce event, the subscriber is immediately 
+     * arguments.  If this is a fireOnce event, the subscriber is immediately
      * notified.
      *
      * @method _on
@@ -9748,14 +9980,22 @@ Y.CustomEvent.prototype = {
             }
         }
 
-        if (when == AFTER) {
+        if (when === AFTER) {
+            if (!this._afters) {
+                this._afters = [];
+                this._hasAfters = true;
+            }
             this._afters.push(s);
         } else {
+            if (!this._subscribers) {
+                this._subscribers = [];
+                this._hasSubs = true;
+            }
             this._subscribers.push(s);
         }
 
         if (this._kds) {
-            if (when == AFTER) {
+            if (when === AFTER) {
                 this.afters[s.id] = s;
             } else {
                 this.subscribers[s.id] = s;
@@ -9776,7 +10016,7 @@ Y.CustomEvent.prototype = {
         var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
         return this._on(fn, context, a, true);
     },
- 
+
     /**
      * Listen for this event
      * @method on
@@ -9826,25 +10066,29 @@ Y.CustomEvent.prototype = {
         if (fn && fn.detach) {
             return fn.detach();
         }
-        
+
         var i, s,
             found = 0,
             subs = this._subscribers,
             afters = this._afters;
 
-        for (i = subs.length; i >= 0; i--) {
-            s = subs[i];
-            if (s && (!fn || fn === s.fn)) {
-                this._delete(s, subs, i);
-                found++;
+        if (subs) {
+            for (i = subs.length; i >= 0; i--) {
+                s = subs[i];
+                if (s && (!fn || fn === s.fn)) {
+                    this._delete(s, subs, i);
+                    found++;
+                }
             }
         }
 
-        for (i = afters.length; i >= 0; i--) {
-            s = afters[i];
-            if (s && (!fn || fn === s.fn)) {
-                this._delete(s, afters, i);
-                found++;
+        if (afters) {
+            for (i = afters.length; i >= 0; i--) {
+                s = afters[i];
+                if (s && (!fn || fn === s.fn)) {
+                    this._delete(s, afters, i);
+                    found++;
+                }
             }
         }
 
@@ -9914,12 +10158,33 @@ Y.CustomEvent.prototype = {
      *
      */
     fire: function() {
+
+        // push is the fastest way to go from arguments to arrays
+        // for most browsers currently
+        // http://jsperf.com/push-vs-concat-vs-slice/2
+
+        var args = [];
+        args.push.apply(args, arguments);
+
+        return this._fire(args);
+    },
+
+    /**
+     * Private internal implementation for `fire`, which is can be used directly by
+     * `EventTarget` and other event module classes which have already converted from
+     * an `arguments` list to an array, to avoid the repeated overhead.
+     *
+     * @method _fire
+     * @private
+     * @param {Array} args The array of arguments passed to be passed to handlers.
+     * @return {boolean} false if one of the subscribers returned false, true otherwise.
+     */
+    _fire: function(args) {
+
         if (this.fireOnce && this.fired) {
             this.log('fireOnce event: ' + this.type + ' already fired');
             return true;
         } else {
-
-            var args = nativeSlice.call(arguments, 0);
 
             // this doesn't happen if the event isn't published
             // this.host._monitor('fire', this.type, args);
@@ -9954,7 +10219,9 @@ Y.CustomEvent.prototype = {
             this._procSubs(subs[0], args);
             this._procSubs(subs[1], args);
         }
-        this._broadcast(args);
+        if (this.broadcast) {
+            this._broadcast(args);
+        }
         return this.stopped ? false : true;
     },
 
@@ -9986,7 +10253,7 @@ Y.CustomEvent.prototype = {
                 if (false === this._notify(s, args, ef)) {
                     this.stopped = 2;
                 }
-                if (this.stopped == 2) {
+                if (this.stopped === 2) {
                     return false;
                 }
             }
@@ -10013,7 +10280,7 @@ Y.CustomEvent.prototype = {
                 Y.fire.apply(Y, a);
             }
 
-            if (this.broadcast == 2) {
+            if (this.broadcast === 2) {
                 Y.Global.fire.apply(Y.Global, a);
             }
         }
@@ -10052,12 +10319,23 @@ Y.CustomEvent.prototype = {
         var when = s._when;
 
         if (!subs) {
-            subs = (when === AFTER) ? this._afters : this._subscribers; 
-            i = YArray.indexOf(subs, s, 0);
+            subs = (when === AFTER) ? this._afters : this._subscribers;
         }
 
-        if (s && subs[i] === s) {
-            subs.splice(i, 1);
+        if (subs) {
+            i = YArray.indexOf(subs, s, 0);
+
+            if (s && subs[i] === s) {
+                subs.splice(i, 1);
+
+                if (subs.length === 0) {
+                    if (when === AFTER) {
+                        this._hasAfters = false;
+                    } else {
+                        this._hasSubs = false;
+                    }
+                }
+            }
         }
 
         if (this._kds) {
@@ -10111,7 +10389,7 @@ Y.Subscriber = function(fn, context, args, when) {
      * @property id
      * @type String
      */
-    this.id = Y.stamp(this);
+    this.id = Y.guid();
 
     /**
      * Additional arguments to propagate to the subscriber
@@ -10215,12 +10493,12 @@ Y.Subscriber.prototype = {
      */
     contains: function(fn, context) {
         if (context) {
-            return ((this.fn == fn) && this.context == context);
+            return ((this.fn === fn) && this.context === context);
         } else {
-            return (this.fn == fn);
+            return (this.fn === fn);
         }
     },
-    
+
     valueOf : function() {
         return this.id;
     }
@@ -10338,14 +10616,14 @@ var L = Y.Lang,
      * @method _getType
      * @private
      */
-    _getType = Y.cached(function(type, pre) {
+    _getType = function(type, pre) {
 
-        if (!pre || (typeof type !== "string") || type.indexOf(PREFIX_DELIMITER) > -1) {
+        if (!pre || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
         }
 
         return pre + PREFIX_DELIMITER + type;
-    }),
+    },
 
     /**
      * Returns an array with the detach key (if provided),
@@ -10374,7 +10652,7 @@ var L = Y.Lang,
         if (i > -1) {
             detachcategory = t.substr(0, (i));
             t = t.substr(i+1);
-            if (t == '*') {
+            if (t === '*') {
                 t = null;
             }
         }
@@ -10385,39 +10663,38 @@ var L = Y.Lang,
 
     ET = function(opts) {
 
+        var etState = this._yuievt,
+            etConfig;
 
-        var o = (L.isObject(opts)) ? opts : {};
+        if (!etState) {
+            etState = this._yuievt = {
+                events: {},    // PERF: Not much point instantiating lazily. We're bound to have events
+                targets: null, // PERF: Instantiate lazily, if user actually adds target,
+                config: {
+                    host: this,
+                    context: this
+                },
+                chain: Y.config.chain
+            };
+        }
 
-        this._yuievt = this._yuievt || {
+        etConfig = etState.config;
 
-            id: Y.guid(),
+        if (opts) {
+            mixConfigs(etConfig, opts, true);
 
-            events: {},
-
-            targets: {},
-
-            config: o,
-
-            chain: ('chain' in o) ? o.chain : Y.config.chain,
-
-            bubbling: false,
-
-            defaults: {
-                context: o.context || this,
-                host: this,
-                emitFacade: o.emitFacade,
-                fireOnce: o.fireOnce,
-                queuable: o.queuable,
-                monitored: o.monitored,
-                broadcast: o.broadcast,
-                defaultTargetOnly: o.defaultTargetOnly,
-                bubbles: ('bubbles' in o) ? o.bubbles : true
+            if (opts.chain !== undefined) {
+                etState.chain = opts.chain;
             }
-        };
+
+            if (opts.prefix) {
+                etConfig.prefix = opts.prefix;
+            }
+        }
     };
 
-
 ET.prototype = {
+
     constructor: ET,
 
     /**
@@ -10613,6 +10890,11 @@ ET.prototype = {
         if (!handle) {
             ce = yuievt.events[type] || this.publish(type);
             handle = ce._on(fn, context, (arguments.length > 3) ? nativeSlice.call(arguments, 3) : null, (after) ? 'after' : true);
+
+            // TODO: More robust regex, accounting for category
+            if (type.indexOf("*:") !== -1) {
+                this._hasSiblings = true;
+            }
         }
 
         if (detachcategory) {
@@ -10651,8 +10933,11 @@ ET.prototype = {
      * @return {EventTarget} the host
      */
     detach: function(type, fn, context) {
-        var evts = this._yuievt.events, i,
-            Node = Y.Node, isNode = Node && (Y.instanceOf(this, Node));
+
+        var evts = this._yuievt.events,
+            i,
+            Node = Y.Node,
+            isNode = Node && (Y.instanceOf(this, Node));
 
         // detachAll disabled on the Y instance.
         if (!type && (this !== Y)) {
@@ -10843,53 +11128,102 @@ ET.prototype = {
      *
      */
     publish: function(type, opts) {
-        var events, ce, ret, defaults,
-            edata = this._yuievt,
-            pre = edata.config.prefix;
 
-        if (L.isObject(type)) {
+        var ret,
+            etState = this._yuievt,
+            etConfig = etState.config,
+            pre = etConfig.prefix;
+
+        if (typeof type === "string")  {
+            if (pre) {
+                type = _getType(type, pre);
+            }
+            ret = this._publish(type, etConfig, opts);
+        } else {
             ret = {};
+
             Y.each(type, function(v, k) {
-                ret[k] = this.publish(k, v || opts);
+                if (pre) {
+                    k = _getType(k, pre);
+                }
+                ret[k] = this._publish(k, etConfig, v || opts);
             }, this);
 
-            return ret;
         }
 
-        type = (pre) ? _getType(type, pre) : type;
+        return ret;
+    },
 
-        events = edata.events;
-        ce = events[type];
+    /**
+     * Returns the fully qualified type, given a short type string.
+     * That is, returns "foo:bar" when given "bar" if "foo" is the configured prefix.
+     *
+     * NOTE: This method, unlike _getType, does no checking of the value passed in, and
+     * is designed to be used with the low level _publish() method, for critical path
+     * implementations which need to fast-track publish for performance reasons.
+     *
+     * @method _getFullType
+     * @private
+     * @param {String} type The short type to prefix
+     * @return {String} The prefixed type, if a prefix is set, otherwise the type passed in
+     */
+    _getFullType : function(type) {
 
-        this._monitor('publish', type, {
-            args: arguments
-        });
+        var pre = this._yuievt.config.prefix;
 
-        if (ce) {
-            // ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
-            if (opts) {
-                ce.applyConfig(opts, true);
-            }
+        if (pre) {
+            return pre + PREFIX_DELIMITER + type;
         } else {
-            // TODO: Lazy publish goes here.
-            defaults = edata.defaults;
+            return type;
+        }
+    },
 
-            // apply defaults
-            ce = new Y.CustomEvent(type, defaults);
-            if (opts) {
-                ce.applyConfig(opts, true);
-            }
+    /**
+     * The low level event publish implementation. It expects all the massaging to have been done
+     * outside of this method. e.g. the `type` to `fullType` conversion. It's designed to be a fast
+     * path publish, which can be used by critical code paths to improve performance.
+     *
+     * @method _publish
+     * @private
+     * @param {String} fullType The prefixed type of the event to publish.
+     * @param {Object} etOpts The EventTarget specific configuration to mix into the published event.
+     * @param {Object} ceOpts The publish specific configuration to mix into the published event.
+     * @return {CustomEvent} The published event. If called without `etOpts` or `ceOpts`, this will
+     * be the default `CustomEvent` instance, and can be configured independently.
+     */
+    _publish : function(fullType, etOpts, ceOpts) {
 
-            events[type] = ce;
+        var ce,
+            etState = this._yuievt,
+            etConfig = etState.config,
+            host = etConfig.host,
+            context = etConfig.context,
+            events = etState.events;
+
+        ce = events[fullType];
+
+        // PERF: Hate to pull the check out of monitor, but trying to keep critical path tight.
+        if ((etConfig.monitored && !ce) || (ce && ce.monitored)) {
+            this._monitor('publish', fullType, {
+                args: arguments
+            });
         }
 
-        // make sure we turn the broadcast flag off if this
-        // event was published as a result of bubbling
-        // if (opts instanceof Y.CustomEvent) {
-          //   events[type].broadcast = false;
-        // }
+        if (!ce) {
+            // Publish event
+            ce = events[fullType] = new Y.CustomEvent(fullType, etOpts);
 
-        return events[type];
+            if (!etOpts) {
+                ce.host = host;
+                ce.context = context;
+            }
+        }
+
+        if (ceOpts) {
+            mixConfigs(ce, ceOpts, true);
+        }
+
+        return ce;
     },
 
     /**
@@ -10929,7 +11263,7 @@ ET.prototype = {
         }
     },
 
-   /**
+    /**
      * Fire a custom event by name.  The callback functions will be executed
      * from the context specified when the event was created, and with the
      * following parameters.
@@ -10958,26 +11292,55 @@ ET.prototype = {
      */
     fire: function(type) {
 
-        var typeIncluded = L.isString(type),
-            t = (typeIncluded) ? type : (type && type.type),
+        var typeIncluded = (typeof type === "string"),
+            argCount = arguments.length,
+            t = type,
             yuievt = this._yuievt,
-            pre = yuievt.config.prefix, 
-            ce, ret, 
+            etConfig = yuievt.config,
+            pre = etConfig.prefix,
+            ret,
+            ce,
             ce2,
-            args = (typeIncluded) ? nativeSlice.call(arguments, 1) : arguments;
+            args;
 
-        t = (pre) ? _getType(t, pre) : t;
+        if (typeIncluded && argCount <= 2) {
 
-        ce = this.getEvent(t, true);
-        ce2 = this.getSibling(t, ce);
+            // PERF: Try to avoid slice/iteration for the common signatures
 
-        if (ce2 && !ce) {
-            ce = this.publish(t);
+            if (argCount === 2) {
+                args = [arguments[1]]; // fire("foo", {})
+            } else {
+                args = []; // fire("foo")
+            }
+
+        } else {
+            args = nativeSlice.call(arguments, ((typeIncluded) ? 1 : 0));
         }
 
-        this._monitor('fire', (ce || t), {
-            args: args
-        });
+        if (!typeIncluded) {
+            t = (type && type.type);
+        }
+
+        if (pre) {
+            t = _getType(t, pre);
+        }
+
+        ce = yuievt.events[t];
+
+        if (this._hasSiblings) {
+            ce2 = this.getSibling(t, ce);
+
+            if (ce2 && !ce) {
+                ce = this.publish(t);
+            }
+        }
+
+        // PERF: trying to avoid function call, since this is a critical path
+        if ((etConfig.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
+            this._monitor('fire', (ce || t), {
+                args: args
+            });
+        }
 
         // this event has not been published or subscribed to
         if (!ce) {
@@ -10988,8 +11351,12 @@ ET.prototype = {
             // otherwise there is nothing to be done
             ret = true;
         } else {
-            ce.sibling = ce2;
-            ret = ce.fire.apply(ce, args);
+
+            if (ce2) {
+                ce.sibling = ce2;
+            }
+
+            ret = ce._fire(args);
         }
 
         return (yuievt.chain) ? this : ret;
@@ -10997,17 +11364,15 @@ ET.prototype = {
 
     getSibling: function(type, ce) {
         var ce2;
+
         // delegate to *:type events if there are subscribers
         if (type.indexOf(PREFIX_DELIMITER) > -1) {
             type = _wildType(type);
-            // console.log(type);
             ce2 = this.getEvent(type, true);
             if (ce2) {
-                // console.log("GOT ONE: " + type);
                 ce2.applyConfig(ce);
                 ce2.bubbles = false;
                 ce2.broadcast = 0;
-                // ret = ce2.fire.apply(ce2, a);
             }
         }
 
@@ -11024,6 +11389,7 @@ ET.prototype = {
      */
     getEvent: function(type, prefixed) {
         var pre, e;
+
         if (!prefixed) {
             pre = this._yuievt.config.prefix;
             type = (pre) ? _getType(type, pre) : type;
@@ -11122,7 +11488,9 @@ Y.Global = YUI.Env.globalEvents;
     treating that method as an event</li>
 </ul>
 
-For custom event subscriptions, pass the custom event name as the first argument and callback as the second. The `this` object in the callback will be `Y` unless an override is passed as the third argument.
+For custom event subscriptions, pass the custom event name as the first argument
+and callback as the second. The `this` object in the callback will be `Y` unless
+an override is passed as the third argument.
 
     Y.on('io:complete', function () {
         Y.MyApp.updateStatus('Transaction complete');
@@ -11148,7 +11516,7 @@ selector or other identifier.
 `defaultFn` can prevent the default behavior with `e.preventDefault()` from the
 event object passed as the first parameter to the subscription callback.
 
-To subscribe to the execution of an object method, pass arguments corresponding to the call signature for 
+To subscribe to the execution of an object method, pass arguments corresponding to the call signature for
 <a href="../classes/Do.html#methods_before">`Y.Do.before(...)`</a>.
 
 NOTE: The formal parameter list below is for events, not for function
@@ -11246,10 +11614,11 @@ YUI.add('event-custom-complex', function (Y, NAME) {
 
 var FACADE,
     FACADE_KEYS,
+    YObject = Y.Object,
     key,
     EMPTY = {},
     CEProto = Y.CustomEvent.prototype,
-    ETProto = Y.EventTarget.prototype, 
+    ETProto = Y.EventTarget.prototype,
 
     mixFacadeProps = function(facade, payload) {
         var p;
@@ -11271,7 +11640,9 @@ var FACADE,
 
 Y.EventFacade = function(e, currentTarget) {
 
-    e = e || EMPTY;
+    if (!e) {
+        e = EMPTY;
+    }
 
     this._event = e;
 
@@ -11370,185 +11741,253 @@ Y.mix(Y.EventFacade.prototype, {
 
 CEProto.fireComplex = function(args) {
 
-    var es, ef, q, queue, ce, ret, events, subs, postponed,
-        self = this, host = self.host || self, next, oldbubble;
+    var es,
+        ef,
+        q,
+        queue,
+        ce,
+        ret = true,
+        events,
+        subs,
+        ons,
+        afters,
+        afterQueue,
+        postponed,
+        prevented,
+        preventedFn,
+        defaultFn,
+        self = this,
+        host = self.host || self,
+        next,
+        oldbubble,
+        stack,
+        yuievt = host._yuievt,
+        hasPotentialSubscribers;
 
-    if (self.stack) {
+    stack = self.stack;
+
+    if (stack) {
+
         // queue this event if the current item in the queue bubbles
-        if (self.queuable && self.type != self.stack.next.type) {
+        if (self.queuable && self.type !== stack.next.type) {
             self.log('queue ' + self.type);
-            self.stack.queue.push([self, args]);
+
+            if (!stack.queue) {
+                stack.queue = [];
+            }
+            stack.queue.push([self, args]);
+
             return true;
         }
     }
 
-    es = self.stack || {
-       // id of the first event in the stack
-       id: self.id,
-       next: self,
-       silent: self.silent,
-       stopped: 0,
-       prevented: 0,
-       bubbling: null,
-       type: self.type,
-       // defaultFnQueue: new Y.Queue(),
-       afterQueue: new Y.Queue(),
-       defaultTargetOnly: self.defaultTargetOnly,
-       queue: []
-    };
-
-    subs = self.getSubs();
-
-    self.stopped = (self.type !== es.type) ? 0 : es.stopped;
-    self.prevented = (self.type !== es.type) ? 0 : es.prevented;
+    hasPotentialSubscribers = self.hasSubs() || yuievt.hasTargets || self.broadcast;
 
     self.target = self.target || host;
-
-    if (self.stoppedFn) {
-        events = new Y.EventTarget({
-            fireOnce: true,
-            context: host
-        });
-        
-        self.events = events;
-
-        events.on('stopped', self.stoppedFn);
-    }
-
     self.currentTarget = host;
 
-    self.details = args.slice(); // original arguments in the details
+    self.details = args.concat();
 
-    // self.log("Firing " + self  + ", " + "args: " + args);
-    self.log("Firing " + self.type);
+    if (hasPotentialSubscribers) {
 
-    self._facade = null; // kill facade to eliminate stale properties
+        es = stack || {
 
-    ef = self._getFacade(args);
+           id: self.id, // id of the first event in the stack
+           next: self,
+           silent: self.silent,
+           stopped: 0,
+           prevented: 0,
+           bubbling: null,
+           type: self.type,
+           // defaultFnQueue: new Y.Queue(),
+           defaultTargetOnly: self.defaultTargetOnly
 
-    if (Y.Lang.isObject(args[0])) {
-        args[0] = ef;
-    } else {
-        args.unshift(ef);
-    }
+        };
 
-    if (subs[0]) {
-        self._procSubs(subs[0], args, ef);
-    }
+        subs = self.getSubs();
+        ons = subs[0];
+        afters = subs[1];
 
-    // bubble if this is hosted in an event target and propagation has not been stopped
-    if (self.bubbles && host.bubble && !self.stopped) {
+        self.stopped = (self.type !== es.type) ? 0 : es.stopped;
+        self.prevented = (self.type !== es.type) ? 0 : es.prevented;
 
-        oldbubble = es.bubbling;
-
-        es.bubbling = self.type;
-
-        if (es.type != self.type) {
-            es.stopped = 0;
-            es.prevented = 0;
+        if (self.stoppedFn) {
+            // PERF TODO: Can we replace with callback, like preventedFn. Look into history
+            events = new Y.EventTarget({
+                fireOnce: true,
+                context: host
+            });
+            self.events = events;
+            events.on('stopped', self.stoppedFn);
         }
 
-        ret = host.bubble(self, args, null, es);
+        // self.log("Firing " + self  + ", " + "args: " + args);
+        self.log("Firing " + self.type);
 
-        self.stopped = Math.max(self.stopped, es.stopped);
-        self.prevented = Math.max(self.prevented, es.prevented);
+        self._facade = null; // kill facade to eliminate stale properties
 
-        es.bubbling = oldbubble;
-    }
+        ef = self._getFacade(args);
 
-    if (self.prevented) {
-        if (self.preventedFn) {
-            self.preventedFn.apply(host, args);
+        if (ons) {
+            self._procSubs(ons, args, ef);
         }
-    } else if (self.defaultFn &&
-              ((!self.defaultTargetOnly && !es.defaultTargetOnly) ||
-                host === ef.target)) {
-        self.defaultFn.apply(host, args);
-    }
 
-    // broadcast listeners are fired as discreet events on the
-    // YUI instance and potentially the YUI global.
-    self._broadcast(args);
+        // bubble if this is hosted in an event target and propagation has not been stopped
+        if (self.bubbles && host.bubble && !self.stopped) {
+            oldbubble = es.bubbling;
 
-    // Queue the after
-    if (subs[1] && !self.prevented && self.stopped < 2) {
-        if (es.id === self.id || self.type != host._yuievt.bubbling) {
-            self._procSubs(subs[1], args, ef);
-            while ((next = es.afterQueue.last())) {
-                next();
+            es.bubbling = self.type;
+
+            if (es.type !== self.type) {
+                es.stopped = 0;
+                es.prevented = 0;
+            }
+
+            ret = host.bubble(self, args, null, es);
+
+            self.stopped = Math.max(self.stopped, es.stopped);
+            self.prevented = Math.max(self.prevented, es.prevented);
+
+            es.bubbling = oldbubble;
+        }
+
+        prevented = self.prevented;
+
+        if (prevented) {
+            preventedFn = self.preventedFn;
+            if (preventedFn) {
+                preventedFn.apply(host, args);
             }
         } else {
-            postponed = subs[1];
-            if (es.execDefaultCnt) {
-                postponed = Y.merge(postponed);
-                Y.each(postponed, function(s) {
-                    s.postponed = true;
+            defaultFn = self.defaultFn;
+
+            if (defaultFn && ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {
+                defaultFn.apply(host, args);
+            }
+        }
+
+        // broadcast listeners are fired as discreet events on the
+        // YUI instance and potentially the YUI global.
+        if (self.broadcast) {
+            self._broadcast(args);
+        }
+
+        if (afters && !self.prevented && self.stopped < 2) {
+
+            // Queue the after
+            afterQueue = es.afterQueue;
+
+            if (es.id === self.id || self.type !== yuievt.bubbling) {
+
+                self._procSubs(afters, args, ef);
+
+                if (afterQueue) {
+                    while ((next = afterQueue.last())) {
+                        next();
+                    }
+                }
+            } else {
+                postponed = afters;
+
+                if (es.execDefaultCnt) {
+                    postponed = Y.merge(postponed);
+
+                    Y.each(postponed, function(s) {
+                        s.postponed = true;
+                    });
+                }
+
+                if (!afterQueue) {
+                    es.afterQueue = new Y.Queue();
+                }
+
+                es.afterQueue.add(function() {
+                    self._procSubs(postponed, args, ef);
                 });
             }
 
-            es.afterQueue.add(function() {
-                self._procSubs(postponed, args, ef);
-            });
-        }
-    }
-
-    self.target = null;
-
-    if (es.id === self.id) {
-        queue = es.queue;
-
-        while (queue.length) {
-            q = queue.pop();
-            ce = q[0];
-            // set up stack to allow the next item to be processed
-            es.next = ce;
-            ce.fire.apply(ce, q[1]);
         }
 
-        self.stack = null;
+        self.target = null;
+
+        if (es.id === self.id) {
+
+            queue = es.queue;
+
+            if (queue) {
+                while (queue.length) {
+                    q = queue.pop();
+                    ce = q[0];
+                    // set up stack to allow the next item to be processed
+                    es.next = ce;
+                    ce._fire(q[1]);
+                }
+            }
+
+            self.stack = null;
+        }
+
+        ret = !(self.stopped);
+
+        if (self.type !== yuievt.bubbling) {
+            es.stopped = 0;
+            es.prevented = 0;
+            self.stopped = 0;
+            self.prevented = 0;
+        }
+
+        // Kill the cached facade to free up memory.
+        // Otherwise we have the facade from the last fire, sitting around forever.
+        self._facade = null;
+
+        return ret;
+
+    } else {
+        defaultFn = self.defaultFn;
+
+        if(defaultFn) {
+            ef = self._getFacade(args);
+
+            if ((!self.defaultTargetOnly) || (host === ef.target)) {
+                defaultFn.apply(host, args);
+            }
+        }
+
+        return ret;
     }
 
-    ret = !(self.stopped);
-
-    if (self.type != host._yuievt.bubbling) {
-        es.stopped = 0;
-        es.prevented = 0;
-        self.stopped = 0;
-        self.prevented = 0;
-    }
-
-    // Kill the cached facade to free up memory.
-    // Otherwise we have the facade from the last fire, sitting around forever.
-    self._facade = null;
-
-    return ret;
 };
 
-CEProto._getFacade = function() {
+CEProto._getFacade = function(fireArgs) {
 
-    var ef = this._facade, o,
-    args = this.details;
+    var userArgs = this.details,
+        firstArg = userArgs && userArgs[0],
+        firstArgIsObj = (typeof firstArg === "object"),
+        ef = this._facade;
 
     if (!ef) {
         ef = new Y.EventFacade(this, this.currentTarget);
     }
 
-    // if the first argument is an object literal, apply the
-    // properties to the event facade
-    o = args && args[0];
-
-    if (Y.Lang.isObject(o, true)) {
-
+    if (firstArgIsObj) {
         // protect the event facade properties
-        mixFacadeProps(ef, o);
+        mixFacadeProps(ef, firstArg);
 
-        // Allow the event type to be faked
-        // http://yuilibrary.com/projects/yui3/ticket/2528376
-        ef.type = o.type || ef.type;
+        // Allow the event type to be faked http://yuilibrary.com/projects/yui3/ticket/2528376
+        if (firstArg.type) {
+            ef.type = firstArg.type;
+        }
+
+        if (fireArgs) {
+            fireArgs[0] = ef;
+        }
+    } else {
+        if (fireArgs) {
+            fireArgs.unshift(ef);
+        }
     }
 
     // update the details field with the arguments
-    // ef.type = this.type;
     ef.details = this.details;
 
     // use the original target when the event bubbled to this target
@@ -11636,8 +12075,14 @@ CEProto.halt = function(immediate) {
  * @for EventTarget
  */
 ETProto.addTarget = function(o) {
-    this._yuievt.targets[Y.stamp(o)] = o;
-    this._yuievt.hasTargets = true;
+    var etState = this._yuievt;
+
+    if (!etState.targets) {
+        etState.targets = {};
+    }
+
+    etState.targets[Y.stamp(o)] = o;
+    etState.hasTargets = true;
 };
 
 /**
@@ -11646,7 +12091,8 @@ ETProto.addTarget = function(o) {
  * @return EventTarget[]
  */
 ETProto.getTargets = function() {
-    return Y.Object.values(this._yuievt.targets);
+    var targets = this._yuievt.targets;
+    return targets ? YObject.values(targets) : [];
 };
 
 /**
@@ -11656,7 +12102,15 @@ ETProto.getTargets = function() {
  * @for EventTarget
  */
 ETProto.removeTarget = function(o) {
-    delete this._yuievt.targets[Y.stamp(o)];
+    var targets = this._yuievt.targets;
+
+    if (targets) {
+        delete targets[Y.stamp(o, true)];
+
+        if (YObject.size(targets) === 0) {
+            this._yuievt.hasTargets = false;
+        }
+    }
 };
 
 /**
@@ -11668,8 +12122,14 @@ ETProto.removeTarget = function(o) {
  */
 ETProto.bubble = function(evt, args, target, es) {
 
-    var targs = this._yuievt.targets, ret = true,
-        t, type = evt && evt.type, ce, i, bc, ce2,
+    var targs = this._yuievt.targets,
+        ret = true,
+        t,
+        ce,
+        i,
+        bc,
+        ce2,
+        type = evt && evt.type,
         originalTarget = target || (evt && evt.target) || this,
         oldbubble;
 
@@ -11677,9 +12137,14 @@ ETProto.bubble = function(evt, args, target, es) {
 
         for (i in targs) {
             if (targs.hasOwnProperty(i)) {
+
                 t = targs[i];
-                ce = t.getEvent(type, true);
-                ce2 = t.getSibling(type, ce);
+
+                ce = t._yuievt.events[type];
+
+                if (t._hasSiblings) {
+                    ce2 = t.getSibling(type, ce);
+                }
 
                 if (ce2 && !ce) {
                     ce = t.publish(type);
@@ -11696,10 +12161,11 @@ ETProto.bubble = function(evt, args, target, es) {
                     }
                 } else {
 
-                    ce.sibling = ce2;
+                    if (ce2) {
+                        ce.sibling = ce2;
+                    }
 
-                    // set the original target to that the target payload on the
-                    // facade is correct.
+                    // set the original target to that the target payload on the facade is correct.
                     ce.target = originalTarget;
                     ce.originalTarget = originalTarget;
                     ce.currentTarget = t;
@@ -11712,7 +12178,13 @@ ETProto.bubble = function(evt, args, target, es) {
 
                     ce.stack = es;
 
+                    // TODO: See what's getting in the way of changing this to use
+                    // the more performant ce._fire(args || evt.details || []).
+
+                    // Something in Widget Parent/Child tests is not happy if we
+                    // change it - maybe evt.details related?
                     ret = ret && ce.fire.apply(ce, args || evt.details || []);
+
                     ce.broadcast = bc;
                     ce.originalTarget = null;
 
@@ -11737,6 +12209,7 @@ FACADE_KEYS = {};
 for (key in FACADE) {
     FACADE_KEYS[key] = true;
 }
+
 
 }, '@VERSION@', {"requires": ["event-custom-base"]});
 YUI.add('node-core', function (Y, NAME) {
@@ -12376,10 +12849,15 @@ Y.mix(Y_Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     all: function(selector) {
-        var nodelist = Y.all(Y.Selector.query(selector, this._node));
-        nodelist._query = selector;
-        nodelist._queryRoot = this._node;
-        return nodelist;
+        var nodelist;
+        
+        if (this._node) {
+            nodelist = Y.all(Y.Selector.query(selector, this._node));
+            nodelist._query = selector;
+            nodelist._queryRoot = this._node;
+        }
+
+        return nodelist || Y.all([]);
     },
 
     // TODO: allow fn test
@@ -13038,7 +13516,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the last from the NodeList and returns it.
           * @for NodeList
           * @method pop
-          * @return {Node} The last item in the NodeList.
+          * @return {Node | null} The last item in the NodeList, or null if the list is empty.
           */
         'pop': 0,
         /** Adds the given Node(s) to the end of the NodeList.
@@ -13050,7 +13528,7 @@ var Y_NodeList = Y.NodeList,
         /** Removes the first item from the NodeList and returns it.
           * @for NodeList
           * @method shift
-          * @return {Node} The first item in the NodeList.
+          * @return {Node | null} The first item in the NodeList, or null if the NodeList is empty.
           */
         'shift': 0,
         /** Returns a new NodeList comprising the Nodes in the given range.
@@ -14139,27 +14617,32 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * The implementation for showing nodes.
-     * Default is to toggle the style.display property.
+     * Default is to remove the hidden attribute and reset the CSS style.display property.
      * @method _show
      * @protected
      * @chainable
      */
     _show: function() {
+        this.removeAttribute('hidden');
+
+        // For back-compat we need to leave this in for browsers that
+        // do not visually hide a node via the hidden attribute
+        // and for users that check visibility based on style display.
         this.setStyle('display', '');
 
     },
 
     _isHidden: function() {
-        return Y.DOM.getStyle(this._node, 'display') === 'none';
+        return Y.DOM.getAttribute(this._node, 'hidden') === 'true';
     },
 
     /**
      * Displays or hides the node.
      * If the "transition" module is loaded, toggleView optionally
-     * animates the toggling of the node using either the default
-     * transition effect ('fadeIn'), or the given named effect.
+     * animates the toggling of the node using given named effect.
      * @method toggleView
      * @for Node
+     * @param {String} [name] An optional string value to use as transition effect.
      * @param {Boolean} [on] An optional boolean value to force the node to be shown or hidden
      * @param {Function} [callback] An optional function to run after the transition completes.
      * @chainable
@@ -14209,12 +14692,17 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * The implementation for hiding nodes.
-     * Default is to toggle the style.display property.
+     * Default is to set the hidden attribute to true and set the CSS style.display to 'none'.
      * @method _hide
      * @protected
      * @chainable
      */
     _hide: function() {
+        this.setAttribute('hidden', true);
+
+        // For back-compat we need to leave this in for browsers that
+        // do not visually hide a node via the hidden attribute
+        // and for users that check visibility based on style display.
         this.setStyle('display', 'none');
     }
 });
@@ -14250,9 +14738,9 @@ Y.NodeList.importMethod(Y.Node.prototype, [
     /**
      * Displays or hides each node.
      * If the "transition" module is loaded, toggleView optionally
-     * animates the toggling of the nodes using either the default
-     * transition effect ('fadeIn'), or the given named effect.
+     * animates the toggling of the nodes using given named effect.
      * @method toggleView
+     * @param {String} [name] An optional string value to use as transition effect.
      * @param {Boolean} [on] An optional boolean value to force the nodes to be shown or hidden
      * @param {Function} [callback] An optional function to run after the transition completes.
      * @chainable
@@ -16686,6 +17174,23 @@ delegate.compileFilter = Y.cached(function (selector) {
 });
 
 /**
+Regex to test for disabled elements during filtering. This is only relevant to
+IE to normalize behavior with other browsers, which swallow events that occur
+to disabled elements. IE fires the event from the parent element instead of the
+original target, though it does preserve `event.srcElement` as the disabled
+element. IE also supports disabled on `<a>`, but the event still bubbles, so it
+acts more like `e.preventDefault()` plus styling. That issue is not handled here
+because other browsers fire the event on the `<a>`, so delegate is supported in
+both cases.
+
+@property _disabledRE
+@type {RegExp}
+@protected
+@since 3.8.1
+**/
+delegate._disabledRE = /^(?:button|input|select|textarea)$/i;
+
+/**
 Walks up the parent axis of an event's target, and tests each element
 against a supplied filter function.  If any Nodes, including the container,
 satisfy the filter, the delegated callback will be triggered for each.
@@ -16711,6 +17216,14 @@ delegate._applyFilter = function (filter, args, ce) {
     // Resolve text nodes to their containing element
     if (target.nodeType === 3) {
         target = target.parentNode;
+    }
+
+    // For IE. IE propagates events from the parent element of disabled
+    // elements, where other browsers swallow the event entirely. To normalize
+    // this in IE, filtering for matching elements should abort if the target
+    // is a disabled form control.
+    if (target.disabled && delegate._disabledRE.test(target.nodeName)) {
+        return match;
     }
 
     // passing target as the first arg rather than leaving well enough alone
@@ -17884,6 +18397,8 @@ IO.prototype = {
     *       <dt>dataType</dt>
     *         <dd>Set the value to 'XML' if that is the expected response
     *         content type.</dd>
+    *       <dt>credentials</dt>
+    *         <dd>Set the value to 'true' to set XHR.withCredentials property to true.</dd>
     *     </dl></dd>
     *
     *   <dt>form</dt>
@@ -17973,10 +18488,13 @@ IO.prototype = {
         sync = config.sync;
         data = config.data;
 
-        // Serialize an map object into a key-value string using
+        // Serialize a map object into a key-value string using
         // querystring-stringify-simple.
         if ((Y.Lang.isObject(data) && !data.nodeType) && !transaction.upload) {
-            data = Y.QueryString.stringify(data);
+            if (Y.QueryString && Y.QueryString.stringify) {
+                config.data = data = Y.QueryString.stringify(data);
+            } else {
+            }
         }
 
         if (config.form) {
@@ -17989,6 +18507,10 @@ IO.prototype = {
                 data = io._serialize(config.form, data);
             }
         }
+
+        // Convert falsy values to an empty string. This way IE can't be
+        // rediculous and translate `undefined` to "undefined".
+        data || (data = '');
 
         if (data) {
             switch (method) {
@@ -18327,232 +18849,11 @@ Y.mix(Y.IO.prototype, {
 }, '@VERSION@', {"requires": ["event-custom-base", "querystring-stringify-simple"]});
 YUI.add('json-parse', function (Y, NAME) {
 
-/**
- * <p>The JSON module adds support for serializing JavaScript objects into
- * JSON strings and parsing JavaScript objects from strings in JSON format.</p>
- *
- * <p>The JSON namespace is added to your YUI instance including static methods
- * Y.JSON.parse(..) and Y.JSON.stringify(..).</p>
- *
- * <p>The functionality and method signatures follow the ECMAScript 5
- * specification.  In browsers with native JSON support, the native
- * implementation is used.</p>
- *
- * <p>The <code>json</code> module is a rollup of <code>json-parse</code> and
- * <code>json-stringify</code>.</p>
- *
- * <p>As their names suggest, <code>json-parse</code> adds support for parsing
- * JSON data (Y.JSON.parse) and <code>json-stringify</code> for serializing
- * JavaScript data into JSON strings (Y.JSON.stringify).  You may choose to
- * include either of the submodules individually if you don't need the
- * complementary functionality, or include the rollup for both.</p>
- *
- * @module json
- * @main json
- * @class JSON
- * @static
- */
+var _JSON = Y.config.global.JSON;
 
-/**
- * Provides Y.JSON.parse method to accept JSON strings and return native
- * JavaScript objects.
- *
- * @module json
- * @submodule json-parse
- * @for JSON
- * @static
- */
-
-
-// All internals kept private for security reasons
-function fromGlobal(ref) {
-    var g = ((typeof global === 'object') ? global : undefined);
-    return ((Y.UA.nodejs && g) ? g : (Y.config.win || {}))[ref];
-}
-
-
-    /**
-     * Alias to native browser implementation of the JSON object if available.
-     *
-     * @property Native
-     * @type {Object}
-     * @private
-     */
-var _JSON  = fromGlobal('JSON'),
-
-    Native = (Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON),
-    useNative = !!Native,
-
-    /**
-     * Replace certain Unicode characters that JavaScript may handle incorrectly
-     * during eval--either by deleting them or treating them as line
-     * endings--with escape sequences.
-     * IMPORTANT NOTE: This regex will be used to modify the input if a match is
-     * found.
-     *
-     * @property _UNICODE_EXCEPTIONS
-     * @type {RegExp}
-     * @private
-     */
-    _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-
-
-    /**
-     * First step in the safety evaluation.  Regex used to replace all escape
-     * sequences (i.e. "\\", etc) with '@' characters (a non-JSON character).
-     *
-     * @property _ESCAPES
-     * @type {RegExp}
-     * @private
-     */
-    _ESCAPES = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,
-
-    /**
-     * Second step in the safety evaluation.  Regex used to replace all simple
-     * values with ']' characters.
-     *
-     * @property _VALUES
-     * @type {RegExp}
-     * @private
-     */
-    _VALUES  = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
-
-    /**
-     * Third step in the safety evaluation.  Regex used to remove all open
-     * square brackets following a colon, comma, or at the beginning of the
-     * string.
-     *
-     * @property _BRACKETS
-     * @type {RegExp}
-     * @private
-     */
-    _BRACKETS = /(?:^|:|,)(?:\s*\[)+/g,
-
-    /**
-     * Final step in the safety evaluation.  Regex used to test the string left
-     * after all previous replacements for invalid characters.
-     *
-     * @property _UNSAFE
-     * @type {RegExp}
-     * @private
-     */
-    _UNSAFE = /[^\],:{}\s]/,
-
-    /**
-     * Replaces specific unicode characters with their appropriate \unnnn
-     * format. Some browsers ignore certain characters during eval.
-     *
-     * @method escapeException
-     * @param c {String} Unicode character
-     * @return {String} the \unnnn escapement of the character
-     * @private
-     */
-    _escapeException = function (c) {
-        return '\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
-    },
-
-    /**
-     * Traverses nested objects, applying a reviver function to each (key,value)
-     * from the scope if the key:value's containing object.  The value returned
-     * from the function will replace the original value in the key:value pair.
-     * If the value returned is undefined, the key will be omitted from the
-     * returned object.
-     *
-     * @method _revive
-     * @param data {MIXED} Any JavaScript data
-     * @param reviver {Function} filter or mutation function
-     * @return {MIXED} The results of the filtered data
-     * @private
-     */
-    _revive = function (data, reviver) {
-        var walk = function (o,key) {
-            var k,v,value = o[key];
-            if (value && typeof value === 'object') {
-                for (k in value) {
-                    if (value.hasOwnProperty(k)) {
-                        v = walk(value, k);
-                        if (v === undefined) {
-                            delete value[k];
-                        } else {
-                            value[k] = v;
-                        }
-                    }
-                }
-            }
-            return reviver.call(o,key,value);
-        };
-
-        return typeof reviver === 'function' ? walk({'':data},'') : data;
-    },
-
-    /**
-     * Parse a JSON string, returning the native JavaScript representation.
-     *
-     * @param s {string} JSON string data
-     * @param reviver {function} (optional) function(k,v) passed each key value
-     *          pair of object literals, allowing pruning or altering values
-     * @return {MIXED} the native JavaScript representation of the JSON string
-     * @throws SyntaxError
-     * @method parse
-     * @static
-     */
-    // JavaScript implementation in lieu of native browser support.  Based on
-    // the json2.js library from http://json.org
-    _parse = function (s,reviver) {
-        // Replace certain Unicode characters that are otherwise handled
-        // incorrectly by some browser implementations.
-        // NOTE: This modifies the input if such characters are found!
-        s = s.replace(_UNICODE_EXCEPTIONS, _escapeException);
-
-        // Test for any remaining invalid characters
-        if (!_UNSAFE.test(s.replace(_ESCAPES,'@').
-                            replace(_VALUES,']').
-                            replace(_BRACKETS,''))) {
-
-            // Eval the text into a JavaScript data structure, apply any
-            // reviver function, and return
-            return _revive( eval('(' + s + ')'), reviver );
-        }
-
-        throw new SyntaxError('JSON.parse');
-    };
-
-Y.namespace('JSON').parse = function (s,reviver) {
-        if (typeof s !== 'string') {
-            s += '';
-        }
-
-        return Native && Y.JSON.useNativeParse ?
-            Native.parse(s,reviver) : _parse(s,reviver);
+Y.namespace('JSON').parse = function (obj, reviver, space) {
+    return _JSON.parse((typeof obj === 'string' ? obj : obj + ''), reviver, space);
 };
-
-function workingNative( k, v ) {
-    return k === "ok" ? true : v;
-}
-
-// Double check basic functionality.  This is mainly to catch early broken
-// implementations of the JSON API in Firefox 3.1 beta1 and beta2
-if ( Native ) {
-    try {
-        useNative = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
-    }
-    catch ( e ) {
-        useNative = false;
-    }
-}
-
-/**
- * Leverage native JSON parse if the browser has a native implementation.
- * In general, this is a good idea.  See the Known Issues section in the
- * JSON user guide for caveats.  The default value is true for browsers with
- * native JSON support.
- *
- * @property useNativeParse
- * @type Boolean
- * @default true
- * @static
- */
-Y.JSON.useNativeParse = useNative;
 
 
 }, '@VERSION@', {"requires": ["yui-base"]});
@@ -18570,10 +18871,9 @@ var CAMEL_VENDOR_PREFIX = '',
     VENDOR_PREFIX = '',
     DOCUMENT = Y.config.doc,
     DOCUMENT_ELEMENT = 'documentElement',
-    TRANSITION = 'transition',
+    DOCUMENT_STYLE = DOCUMENT[DOCUMENT_ELEMENT].style,
     TRANSITION_CAMEL = 'transition',
     TRANSITION_PROPERTY_CAMEL = 'transitionProperty',
-    TRANSFORM_CAMEL = 'transform',
     TRANSITION_PROPERTY,
     TRANSITION_DURATION,
     TRANSITION_TIMING_FUNCTION,
@@ -18603,6 +18903,9 @@ Transition = function() {
     this.init.apply(this, arguments);
 };
 
+// One off handling of transform-prefixing.
+Transition._TRANSFORM = 'transform';
+
 Transition._toCamel = function(property) {
     property = property.replace(/-([a-z])/gi, function(m0, m1) {
         return m1.toUpperCase();
@@ -18630,7 +18933,12 @@ Transition.HIDE_TRANSITION = 'fadeOut';
 
 Transition.useNative = false;
 
-if ('transition' in DOCUMENT[DOCUMENT_ELEMENT].style) {
+// Map transition properties to vendor-specific versions.
+if ('transition' in DOCUMENT_STYLE 
+    && 'transitionProperty' in DOCUMENT_STYLE 
+    && 'transitionDuration' in DOCUMENT_STYLE
+    && 'transitionTimingFunction' in DOCUMENT_STYLE
+    && 'transitionDelay' in DOCUMENT_STYLE) {
     Transition.useNative = true;
     Transition.supported = true; // TODO: remove
 } else {
@@ -18647,10 +18955,20 @@ if ('transition' in DOCUMENT[DOCUMENT_ELEMENT].style) {
     });
 }
 
+// Map transform property to vendor-specific versions.
+// One-off required for cssText injection.
+if (typeof DOCUMENT_STYLE.transform === 'undefined') {
+    Y.Array.each(VENDORS, function(val) { // then vendor specific
+        var property = val + 'Transform';
+        if (typeof DOCUMENT_STYLE[property] !== 'undefined') {
+            Transition._TRANSFORM = property;
+        }
+    });
+}
+
 if (CAMEL_VENDOR_PREFIX) {
     TRANSITION_CAMEL          = CAMEL_VENDOR_PREFIX + 'Transition';
     TRANSITION_PROPERTY_CAMEL = CAMEL_VENDOR_PREFIX + 'TransitionProperty';
-    TRANSFORM_CAMEL           = CAMEL_VENDOR_PREFIX + 'Transform';
 }
 
 TRANSITION_PROPERTY        = VENDOR_PREFIX + 'transition-property';
@@ -18743,13 +19061,13 @@ Transition.prototype = {
         anim._count++; // properties per transition
 
         // make 0 async and fire events
-        dur = ((typeof config.duration != 'undefined') ? config.duration :
+        dur = ((typeof config.duration !== 'undefined') ? config.duration :
                     anim._duration) || 0.0001;
 
         attrs[prop] = {
             value: val,
             duration: dur,
-            delay: (typeof config.delay != 'undefined') ? config.delay :
+            delay: (typeof config.delay !== 'undefined') ? config.delay :
                     anim._delay,
 
             easing: config.easing || anim._easing,
@@ -18788,8 +19106,8 @@ Transition.prototype = {
         var attr,
             node = this._node;
 
-        if (config.transform && !config[TRANSFORM_CAMEL]) {
-            config[TRANSFORM_CAMEL] = config.transform;
+        if (config.transform && !config[Transition._TRANSFORM]) {
+            config[Transition._TRANSFORM] = config.transform;
             delete config.transform; // TODO: copy
         }
 
@@ -18850,7 +19168,7 @@ Transition.prototype = {
         return dur + 'ms';
     },
 
-    _runNative: function(time) {
+    _runNative: function() {
         var anim = this,
             node = anim._node,
             uid = Y.stamp(node),
@@ -19092,12 +19410,26 @@ Y.Node.prototype.show = function(name, config, callback) {
     return this;
 };
 
+Y.NodeList.prototype.show = function(name, config, callback) {
+    var nodes = this._nodes,
+        i = 0,
+        node;
+
+    while ((node = nodes[i++])) {
+        Y.one(node).show(name, config, callback);
+    }
+
+    return this;
+};
+
+
+
 var _wrapCallBack = function(anim, fn, callback) {
     return function() {
         if (fn) {
             fn.call(anim);
         }
-        if (callback) {
+        if (callback && typeof callback === 'function') {
             callback.apply(anim._node, arguments);
         }
     };
@@ -19122,6 +19454,18 @@ Y.Node.prototype.hide = function(name, config, callback) {
     } else {
         this._hide();
     }
+    return this;
+};
+
+Y.NodeList.prototype.hide = function(name, config, callback) {
+    var nodes = this._nodes,
+        i = 0,
+        node;
+
+    while ((node = nodes[i++])) {
+        Y.one(node).hide(name, config, callback);
+    }
+
     return this;
 };
 
@@ -19167,14 +19511,17 @@ Y.Node.prototype.toggleView = function(name, on, callback) {
     this._toggles = this._toggles || [];
     callback = arguments[arguments.length - 1];
 
-    if (typeof name == 'boolean') { // no transition, just toggle
+    if (typeof name !== 'string') { // no transition, just toggle
         on = name;
-        name = null;
+        this._toggleView(on, callback); // call original _toggleView in Y.Node
+        return;
     }
 
-    name = name || Y.Transition.DEFAULT_TOGGLE;
+    if (typeof on === 'function') { // Ignore "on" if used for callback argument.
+        on = undefined;
+    }
 
-    if (typeof on == 'undefined' && name in this._toggles) { // reverse current toggle
+    if (typeof on === 'undefined' && name in this._toggles) { // reverse current toggle
         on = ! this._toggles[name];
     }
 
@@ -19197,7 +19544,8 @@ Y.NodeList.prototype.toggleView = function(name, on, callback) {
         node;
 
     while ((node = nodes[i++])) {
-        Y.one(node).toggleView(name, on, callback);
+        node = Y.one(node);
+        node.toggleView.apply(node, arguments);
     }
 
     return this;
@@ -19256,9 +19604,6 @@ Y.mix(Transition.toggles, {
     size: ['sizeOut', 'sizeIn'],
     fade: ['fadeOut', 'fadeIn']
 });
-
-Transition.DEFAULT_TOGGLE = 'fade';
-
 
 
 }, '@VERSION@', {"requires": ["node-style"]});
@@ -19862,7 +20207,8 @@ YUI.add('yui-log', function (Y, NAME) {
 
 /**
  * Provides console log capability and exposes a custom event for
- * console implementations. This module is a `core` YUI module, <a href="../classes/YUI.html#method_log">it's documentation is located under the YUI class</a>.
+ * console implementations. This module is a `core` YUI module,
+ * <a href="../classes/YUI.html#method_log">it's documentation is located under the YUI class</a>.
  *
  * @module yui
  * @submodule yui-log
@@ -19872,9 +20218,9 @@ var INSTANCE = Y,
     LOGEVENT = 'yui:log',
     UNDEFINED = 'undefined',
     LEVELS = { debug: 1,
-               info: 1,
-               warn: 1,
-               error: 1 };
+               info: 2,
+               warn: 4,
+               error: 8 };
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -19896,7 +20242,7 @@ var INSTANCE = Y,
  * @return {YUI}      YUI instance.
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var bail, excl, incl, m, f,
+    var bail, excl, incl, m, f, minlevel,
         Y = INSTANCE,
         c = Y.config,
         publisher = (Y.fire) ? Y : YUI.Env.globalEvents;
@@ -19915,23 +20261,32 @@ INSTANCE.log = function(msg, cat, src, silent) {
             } else if (excl && (src in excl)) {
                 bail = excl[src];
             }
+
+            // Determine the current minlevel as defined in configuration
+            Y.config.logLevel = Y.config.logLevel || 'debug';
+            minlevel = LEVELS[Y.config.logLevel.toLowerCase()];
+
+            if (cat in LEVELS && LEVELS[cat] < minlevel) {
+                // Skip this message if the we don't meet the defined minlevel
+                bail = 1;
+            }
         }
         if (!bail) {
             if (c.useBrowserConsole) {
                 m = (src) ? src + ': ' + msg : msg;
                 if (Y.Lang.isFunction(c.logFn)) {
                     c.logFn.call(Y, msg, cat, src);
-                } else if (typeof console != UNDEFINED && console.log) {
+                } else if (typeof console !== UNDEFINED && console.log) {
                     f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
                     console[f](m);
-                } else if (typeof opera != UNDEFINED) {
+                } else if (typeof opera !== UNDEFINED) {
                     opera.postError(m);
                 }
             }
 
             if (publisher && !silent) {
 
-                if (publisher == Y && (!publisher.getEvent(LOGEVENT))) {
+                if (publisher === Y && (!publisher.getEvent(LOGEVENT))) {
                     publisher.publish(LOGEVENT, {
                         broadcast: 2
                     });
@@ -20157,7 +20512,7 @@ Y.mix(Transition.prototype, {
 
                 if (!delay || time >= delay) {
                     setter(anim, name, attribute.from, attribute.to, t - delay, d - delay,
-                        attribute.easing, attribute.unit); 
+                        attribute.easing, attribute.unit);
 
                     if (done) {
                         delete attrs[name];
@@ -20266,7 +20621,7 @@ Y.mix(Y.Transition, {
     DEFAULT_UNIT: 'px',
 
     /*
-     * Time in milliseconds passed to setInterval for frame processing 
+     * Time in milliseconds passed to setInterval for frame processing
      *
      * @property intervalTime
      * @default 20
@@ -20346,7 +20701,7 @@ Y.mix(Y.Transition, {
      * @method _runFrame
      * @private
      * @static
-     */    
+     */
     _runFrame: function() {
         var done = true,
             anim;
@@ -20399,7 +20754,7 @@ Y.mix(Y.Transition, {
     _timer: null,
 
     RE_UNITS: /^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/
-}, true); 
+}, true);
 
 Transition.behaviors.top = Transition.behaviors.bottom = Transition.behaviors.right = Transition.behaviors.left;
 

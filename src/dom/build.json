@@ -38,11 +38,6 @@
                 "dom-region.js"
             ]
         },
-        "dom-deprecated": {
-            "jsfiles": [
-                "dom-deprecated.js"
-            ]
-        },
         "dom-core": {
             "jsfiles": [
                 "dom-core.js"

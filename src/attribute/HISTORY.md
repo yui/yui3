@@ -1,6 +1,51 @@
 Attribute Change History
 ========================
 
+3.10.0
+------
+
+* Significant performance improvements in common Attribute operations.
+
+  For example, on Chrome:
+
+      `get()` is 4 times faster
+      `set()` is 3 times faster
+
+  Major performance related changes are listed below.
+
+  Commit messages have detailed descriptions of incremental changes, and the
+  benefits introduced.
+
+* We retrieve and pass the internally stored attribute configuration in State
+  by reference in a lot more places, across methods, results in less function
+  hops, and removing the need for each method to go and ask for the configuration.
+
+* Avoid the delete operator for transient configuration properties, and just set
+  to null or other falsey values as appropriate.
+
+* Store final attribute config in State by reference, as opposed to merging
+  since it's isolated already higher up in the call stack.
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* No changes.
+
+3.8.1
+-----
+
+* Invalid values supplied during Attribute initialization that fail setter
+  validation will now fallback the default value defined in `ATTRS`.
+  [Ticket #2528732] [redbat]
+
+* Attribute validators and setters now receive set's `options` argument. This is
+  now a part of `AttributeCore`. [Ticket #2532810] [Satyam]
+
 3.8.0
 -----
 

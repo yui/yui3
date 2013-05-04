@@ -1,0 +1,8 @@
+{
+    "series-column-stacked": {
+        "requires":[
+            "series-stacked",
+            "series-column"
+        ]
+    }
+}

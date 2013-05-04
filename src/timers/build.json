@@ -1,0 +1,10 @@
+{
+    "builds": {
+        "timers": {
+            "jsfiles": [
+                "js/timers.js"
+            ]
+        }
+    },
+    "name": "timers"
+}

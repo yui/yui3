@@ -1,6 +1,26 @@
 YUI Core Change History
 =======================
 
+3.10.0
+------
+
+* Add ability to filter log messages by threshold [andrewnicols]
+
+3.9.1
+-----
+
+* No changes.
+
+3.9.0
+-----
+
+* Setup YUI.setLoadHook and its docs  (used for Node.js injection)
+
+3.8.1
+-----
+
+* Fixed issue with cssstamp element not being assigned if YUI is loaded twice on the page.
+
 3.8.0
 -----
 

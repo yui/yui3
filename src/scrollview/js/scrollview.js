@@ -1,8 +1,8 @@
 /**
  * <p>
- * The scrollview module does not add any new classes. It simply plugs the ScrollViewScrollbars plugin into the 
- * base ScrollView class implementation provided by the scrollview-base module, so that all scrollview instances 
- * have scrollbars enabled.
+ * The scrollview module does not add any new classes. It simply plugs the ScrollViewScrollbars plugin into the
+ *  base ScrollView class implementation provided by the scrollview-base module, so that all scrollview instances
+ *  have scrollbars enabled.
  * </p>
  *
  * <ul>

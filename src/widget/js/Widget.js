@@ -550,7 +550,7 @@ Y.extend(Widget, Y.Base, {
               * after rendering is complete.
               * </p>
               *
-              * @event widget:render
+              * @event render
               * @preventable _defRenderFn
               * @param {EventFacade} e The Event Facade
               */

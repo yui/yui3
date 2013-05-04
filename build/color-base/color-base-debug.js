@@ -10,8 +10,7 @@ Color provides static methods for color conversion.
 
 @module color
 @submodule color-base
-@class Base
-@namespace Color
+@class Color
 @since 3.8.0
 **/
 
@@ -115,20 +114,26 @@ Y.Color = {
     CONVERTS: CONVERTS,
 
     /**
-    @public
-    @method convert
-    @param {String} str
-    @param {String} to
-    @return {String}
-    @since 3.8.0
-    **/
-    convert: function (str, to) {
-        // check for a toXXX conversion method first
-        // if it doesn't exist, use the toXxx conversion method
-        var convert = Y.Color.CONVERTS[to],
-            clr = Y.Color[convert](str);
+     Converts the provided string to the provided type.
+     You can use the `Y.Color.TYPES` to get a valid `to` type.
+     If the color cannot be converted, the original color will be returned.
 
-        return clr.toLowerCase();
+     @public
+     @method convert
+     @param {String} str
+     @param {String} to
+     @return {String}
+     @since 3.8.0
+     **/
+    convert: function (str, to) {
+        var convert = Y.Color.CONVERTS[to.toLowerCase()],
+            clr = str;
+
+        if (convert && Y.Color[convert]) {
+            clr = Y.Color[convert](str).toLowerCase();
+        }
+
+        return clr;
     },
 
     /**
@@ -184,24 +189,30 @@ Y.Color = {
         // parse with regex and return "matches" array
         var type = Y.Color.findType(str).toUpperCase(),
             regex,
-            arr;
+            arr,
+            length,
+            lastItem;
 
         if (type === 'HEX' && str.length < 5) {
             type = 'HEX3';
         }
 
-        if (type[type.length - 1] === 'A') {
+        if (type.charAt(type.length - 1) === 'A') {
             type = type.slice(0, -1);
         }
         regex = Y.Color['REGEX_' + type];
         if (regex) {
             arr = regex.exec(str) || [];
+            length = arr.length;
 
-            if (arr.length) {
+            if (length) {
+
                 arr.shift();
+                length--;
 
-                if (typeof arr[arr.length - 1] === 'undefined') {
-                    arr[arr.length - 1] = 1;
+                lastItem = arr[length - 1];
+                if (!lastItem) {
+                    arr[length - 1] = 1;
                 }
             }
         }
@@ -328,28 +339,30 @@ Y.Color = {
         }
 
         if (from === 'hex' && clr.length < 5) {
-            if (clr[0] === '#') {
+            if (clr.charAt(0) === '#') {
                 clr = clr.substr(1);
             }
 
-            clr = '#' + clr[0] + clr[0] + clr[1] + clr[1] + clr[2] + clr[2];
+            clr = '#' + clr.charAt(0) + clr.charAt(0) +
+                        clr.charAt(1) + clr.charAt(1) +
+                        clr.charAt(2) + clr.charAt(2);
         }
 
         if (from === to) {
             return clr;
         }
 
-        if (from[from.length - 1] === 'a') {
+        if (from.charAt(from.length - 1) === 'a') {
             from = from.slice(0, -1);
         }
 
-        needsAlpha = (to[to.length - 1] === 'a');
+        needsAlpha = (to.charAt(to.length - 1) === 'a');
         if (needsAlpha) {
             to = to.slice(0, -1);
             alpha = Y.Color._getAlpha(clr);
         }
 
-        ucTo = to[0].toUpperCase() + to.substr(1).toLowerCase();
+        ucTo = to.charAt(0).toUpperCase() + to.substr(1).toLowerCase();
         method = Y.Color['_' + from + 'To' + ucTo ];
 
         // check to see if need conversion to rgb first
