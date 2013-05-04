@@ -519,7 +519,6 @@ suite.add(new Y.Test.Case({
             A.diff([1, 3, 2, 4], [3, 4], [5, 6])
         );
     }
-    
 }));
 
 Y.Test.Runner.add(suite);

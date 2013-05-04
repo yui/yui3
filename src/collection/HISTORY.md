@@ -1,6 +1,13 @@
 Collection Change History
 =========================
 
+3.x
+-----
+
+* Added `Y.Array.intersect()`, which returns the intersection of two or more arrays.
+* Added `Y.Array.diff()`, which returns the difference between the first and subsequent
+  arrays.
+
 3.10.0
 ------
 

@@ -394,10 +394,6 @@ A.flatten = function(a) {
     return result;
 };
 
-
-
-
-
 /**
 Intersection of two or more arrays.
 
@@ -438,9 +434,6 @@ A.intersect = function (arr1, arr2) {
 
 };
 
-
-
-
 /**
 Computes the difference of two or more arrays: that is, the values
 in arr1 that are not contained in arr2 (or any subsequent arrays
@@ -471,4 +464,5 @@ A.diff = function (arr1, arr2) {
     return A.filter(arr1, function (val1) {
         return (A.indexOf(arr2, val1) === -1);
     });
+
 };
