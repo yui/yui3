@@ -416,7 +416,110 @@ suite.add(new Y.Test.Case({
             ['foo', 'bar', null],
             A.flatten([[[[['foo']], [['bar'], [null]]]]])
         );
-    }
+    },
+
+
+    'intersect() should find common elements in two arrays': function () {
+
+        Assert.isArray(A.intersect([],[]));
+
+        ArrayAssert.itemsAreSame(
+            [1,2,3],
+            A.intersect([1,2,3], [1,2,3])
+        );
+
+    },
+
+    'intersect() should find common elements when faced with all sorts of items in the arrays': function () {
+
+     /*   ArrayAssert.itemsAreSame(
+            [1],
+            A.intersect(["a", {1}, "1", 1, true], [1, 2, 3, false])
+        );
+*/
+    },
+
+    'intersect() should return an empty array when there is nothing in common': function () {
+
+        ArrayAssert.itemsAreSame(
+            [],
+            A.intersect([1,2,3], [4,5,6])
+        );
+
+    },
+
+    'intersect should return repeated items if they feature repeatedly in the input arrays': function () {
+
+        ArrayAssert.itemsAreSame(
+            [1, 1, 1],
+            A.intersect([1, 1, 1, 3], [2, 1, 2])
+        );
+
+        Assert.areEqual(
+            3,
+            A.intersect([1, 1, 1, 3], [2, 1, 2]).length
+        );
+
+
+        // This might be problematic: same arguments, different
+        // order (as previous two tests): results are different.
+        // Because we're not calling unique()
+        ArrayAssert.itemsAreSame(
+            [1],
+            A.intersect([2, 1, 2], [1, 1, 1, 3])
+        );
+
+        Assert.areEqual(
+            1,
+            A.intersect([2, 1, 2], [1, 1, 1, 3]).length
+        );
+
+    },
+
+    'intersect should work with three arguments and find the intersect of them all': function () {
+
+        ArrayAssert.itemsAreSame(
+            [1, 2],
+            A.intersect([1, 2, 3], [4, 2, 1, 3], [5, 1, 2])
+        );
+        ArrayAssert.itemsAreSame(
+            [1,2,3,4],
+            A.intersect([1, 2, 3, 4, 6, 7, 8], [41, 42, 1, 2, 3, 4], [1, 2, 3, 4, 5, 6, 7, 8, 41])
+        );
+
+  
+    },
+
+
+    'diff should return empty array when passed empty arrays': function () {
+        ArrayAssert.itemsAreSame(
+            [], A.diff([],[])
+        );
+    },
+
+    'diff() should find values in first that are not in second - simple values': function () {
+        ArrayAssert.itemsAreSame(
+            [1, 2],
+            A.diff([1, 2], [3, 4])
+        );
+
+        ArrayAssert.itemsAreSame(
+            [1, 2],
+            A.diff([1, 2, 3], [3, 4])
+        );
+    },
+
+    'diff() should work with more than 2 arrays': function () {
+        ArrayAssert.itemsAreSame(
+            [1, 2],
+            A.diff([1, 2], [3, 4], [5, 6])
+        );
+
+        ArrayAssert.itemsAreSame(
+            [1, 2],
+            A.diff([1, 3, 2, 4], [3, 4], [5, 6])
+        );
+    }    
 }));
 
 Y.Test.Runner.add(suite);
