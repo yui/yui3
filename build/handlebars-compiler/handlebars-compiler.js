@@ -1916,8 +1916,7 @@ handlebars module is loaded in "debug" mode.
 @param {String} message Message to log.
 @for Handlebars
 */
-Handlebars.logger.log = function (level, message) {
-
+Handlebars.logger.log = function (level, message) {
 };
 
 /**
