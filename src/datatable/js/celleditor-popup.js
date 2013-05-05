@@ -368,11 +368,11 @@ var Editors = {},
     This method can be used to quickly reset the current View editor's position,
     used for scrollable DataTables.
 
-    @method _afterXYChange
+    @method move
     @param e {EventFacade} The xy attribute change event facade
     @private
     */
-    _afterXYChange: function(e) {
+    move: function(e) {
         if(this._overlay && e.newVal) {
             this._overlay.set('xy', e.newVal);
         }

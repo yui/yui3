@@ -21,9 +21,9 @@ var Editors = {},
      * Defines the INPUT HTML content "template" for this editor's View container
      * @property template
      * @type String
-     * @default '<input type="text" class="{cssInput}" />'
+     * @default '<input type="text"  />'
      */
-    template: '<input type="text" class="{cssInput}" />',
+    containerTemplate: '<input type="text"  />',
 
     /**
      * CSS classname to identify the editor's INPUT Node
@@ -34,14 +34,16 @@ var Editors = {},
      */
     _cssInput: 'yui3-datatable-inline-input',
 
+    _extraWidth: 0,
+    _extraHeight: 0,
 
-    destructor: function () {
-        var inputNode = this._inputNode;
-        if (inputNode) {
-            inputNode.destroy();
-            this._inputNode = null;
-        }
-    },
+//    destructor: function () {
+//        var inputNode = this._inputNode;
+//        if (inputNode) {
+//            inputNode.destroy();
+//            this._inputNode = null;
+//        }
+//    },
     /**
     The default action for the `show` event which should make the editor visible.
 
@@ -51,19 +53,14 @@ var Editors = {},
     */
     _defShowFn: function (ev) {
         Y.log('DataTable.BaseCellInlineEditor._defShowFn');
-        var cont = this.get('container'),
-            td = ev.td,
-            xy = td.getXY();
-        //
-        // Get the TD Node's XY position, and resize/position the container
-        //   over the TD
-        //
 
-        cont.show();
-        this._resizeCont(cont, td);
-        cont.setXY(xy);
+        var container = this.get('container');
 
         IEd.superclass._defShowFn.apply(this, arguments);
+        container.focus();
+        container.set('value', ev.formattedValue);
+        container.select();
+
     },
 
     /**
@@ -74,20 +71,20 @@ var Editors = {},
      */
     _defRenderFn: function () {
         Y.log('DataTable.BaseCellInlineEditor._defRenderFn');
+
         var container = this.get('container'),
-            html      = Y.Lang.sub(this.template, {cssInput:this._cssInput});
+            getStyle = function (attr) {
+                return parseInt(container.getComputedStyle(attr), 10) || 0;
+            };
 
-        // set the View container contents
-        container.setHTML(html);
 
-        container.setStyle('zIndex',999);
+
+        container.addClass(this._cssInput + ' ' + this.get('className'));
+
+        this._extraHeight = getStyle('borderTopWidth') + getStyle('borderBottomWidth') + getStyle('paddingTop') + getStyle('paddingBottom');
+        this._extraWidth = getStyle('borderLeftWidth') + getStyle('borderRightWidth') + getStyle('paddingLeft') + getStyle('paddingRight') - 1;
 
         container.hide();
-
-        this._inputNode = container.one('.' + this._cssInput);
-        if(this.get('className')) {
-            this._inputNode.addClass(this.get('className'));
-        }
 
     },
 
@@ -99,39 +96,10 @@ var Editors = {},
 
     _bindUI: function () {
         Y.log('DataTable.BaseCellInlineEditor._bindUI');
+
         IEd.superclass._bindUI.apply(this, arguments);
-        this._subscr.push(this._inputNode.on('mouseleave', this._onMouseLeave, this));
+        this._subscr.push(this.get('container').on('mouseleave', this._onMouseLeave, this));
     },
-
-    /**
-     * Resizes the view "container" to match the dimensions of the TD cell that is
-     *  being edited.
-     *
-     * @method _resizeCont
-     * @param {Node} cont The Node instance of the "container" of this view
-     * @param {Node} td The Node instance for the TD to match dimensions of
-     * @private
-     */
-    _resizeCont: function (cont, td) {
-        Y.log('DataTable.BaseCellInlineEditor._resizeCont');
-        var parseStyle = function (v) {
-               return parseFloat(td.getComputedStyle(v));
-            },
-            w   = parseStyle('width'),
-            h   = parseStyle('height'),
-            pl  = parseStyle('paddingLeft'),
-            pt  = parseStyle('paddingTop'),
-            blw = parseStyle('borderLeftWidth');
-
-        //  resize the INPUT width and height based upon the TD's styles
-        w += pl + blw - 1;
-        h += pt;
-
-        cont.setStyle('width', w + 'px');
-        cont.setStyle('height', h + 'px');
-
-    },
-
 
     /**
      * Listener to mouseleave event that will hide the editor if attribute "hideMouseLeave" is true
@@ -140,30 +108,40 @@ var Editors = {},
      */
     _onMouseLeave : function () {
         Y.log('DataTable.BaseCellInlineEditor._onMouseLeave');
+
         if(this.get('hideMouseLeave')){
             this.cancelEditor();
         }
     },
 
     /**
-     * This method can be used to quickly reset the current View editor's position,
-     *  used for scrollable DataTables.
+     * Moves and resizes the editor container to fit on top of the cell being edited
      *
-     * NOTE: Scrollable inline editing is a little "rough" right now
-     *
-     * @method _afterXYChange
-     * @param e {EventFacade} The xy attribute change event facade
-     * @private
+     * @method move
      */
-    _afterXYChange: function () {
-        Y.log('DataTable.BaseCellInlineEditor._afterXYChange');
+    move: function () {
+        Y.log('DataTable.BaseCellInlineEditor.move');
 
-        //if(this._inputNode && e.newVal) {
-        //    this._inputNode.setXY(e.newVal);
-        //}
+        if (this.get('visible')) {
+            var td = this._cellInfo.td,
+                region = td.get('region'),
+                container = this.get('container');
+            console.log(region.left, region.top,region.width - this._extraWidth + 'px',region.height - this._extraHeight + 'px' );
+            container.setStyle('width', region.width - this._extraWidth + 'px');
+            container.setStyle('height', region.height - this._extraHeight + 'px');
+            container.setXY([region.left, region.top]);
+        }
+    },
+    /**
+    Returns the raw value as entered into the editor.
 
-        //TODO: Worst case, if this doesn't work just hide this sucker on scrolling !
-        // this.cancelEditor();
+    @method _getValue
+    @return value {mixed} Value as entered in the editor
+    @protected
+     */
+    _getValue: function () {
+        Y.log('DataTable.BaseCellInlineEditor._getValue');
+        return this.get('container').get('value');
     }
 
 
@@ -189,10 +167,10 @@ var Editors = {},
          * Prescribes a CSS class name to be added to the editor's INPUT node after creation.
          * @attribute className
          * @type String
-         * @default null
+         * @default ""
          */
         className: {
-            value:      null,
+            value:      '',
             validator:  Y.Lang.isString
         }
 

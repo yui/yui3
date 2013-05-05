@@ -279,6 +279,7 @@ Y.mix( DtEditable.prototype, {
      */
     openCellEditor: function (td) {
         Y.log('DataTable.Editable.openCellEditor');
+
         td        = td.currentTarget || td;
         var col       = this.getColumnByTd(td),
             colKey    = col.key || col.name,
@@ -310,6 +311,11 @@ Y.mix( DtEditable.prototype, {
         //TODO:  fix this to rebuild new editors if user changes a column definition on the fly
         //
         if(editorInstance) {
+            if (this.scrollTo) {
+                this.scrollTo(td);
+            }
+
+
             td.addClass(this._classEditing);
 
             //
@@ -446,14 +452,6 @@ Y.mix( DtEditable.prototype, {
      */
     _bindEditable: function () {
         Y.log('DataTable.Editable._bindEditable');
-        var attachScrollUpdate = function () {
-            if(this._xScroll && this._xScrollNode) {
-                this._subscrEditable.push(this._xScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
-            }
-            if(this._yScroll && this._yScrollNode) {
-                this._subscrEditable.push(this._yScrollNode.on('scroll', this._onScrollUpdateCellEditor, this));
-            }
-        };
 
 
         if(this._subscrEditable) {
@@ -475,14 +473,9 @@ Y.mix( DtEditable.prototype, {
             this.after(CELL_EDITOR + ':cancel', this._afterCellEditorCancel),
 
             //this._editorsContainer.on('click',      this._onClick, this),
-            this._editorsContainer.on('keydown',    this._onKeyDown, this)
+            this._editorsContainer.on('keydown',    this._onKeyDown, this),
+            this.after('scroll', this._onScrollUpdateCellEditor)
         ];
-        if (this.get('rendered')) {
-            attachScrollUpdate.call(this);
-
-        } else {
-            this.onceAfter('renderedChange', attachScrollUpdate);
-        }
         this._uiSetEditorOpenAction(this.get(EDITOR_OPEN_ACTION));
     },
 
@@ -750,7 +743,7 @@ Y.mix( DtEditable.prototype, {
         var rtn = [];
 
         if( this._commonEditors ) {
-            Y.Object.each(this._commonEditors,function (ce){
+            Y.Object.each(this._commonEditors, function (ce){
                 if(ce && ce instanceof Y.View){
                     rtn.push(ce);
                 }
@@ -758,7 +751,7 @@ Y.mix( DtEditable.prototype, {
         }
 
         if( this._columnEditors ) {
-            Y.Object.each(this._columnEditors,function (ce){
+            Y.Object.each(this._columnEditors, function (ce){
                 if(ce && ce instanceof Y.View){
                     rtn.push(ce);
                 }
@@ -787,7 +780,7 @@ Y.mix( DtEditable.prototype, {
     @method _unsetEditor
     @private
      */
-    _unsetEditor: function (){
+    _unsetEditor: function () {
         Y.log('DataTable.Editable._unsetEditor');
         // Finally, null out static props on this extension
         this._openEditor = null;
@@ -804,7 +797,7 @@ Y.mix( DtEditable.prototype, {
     _updateAllEditableColumnsCSS : function () {
         Y.log('DataTable.Editable._updateAllEditableColumnsCSS');
         var ckey, editable = this.get(EDITABLE);
-        arrEach(this.get(COLUMNS),function (col){
+        arrEach(this.get(COLUMNS), function (col) {
             ckey = col.key || col.name;
             if(ckey) {
                 this._updateEditableColumnCSS(ckey, editable && col.editable !== false);
@@ -871,60 +864,16 @@ Y.mix( DtEditable.prototype, {
     @method _onScrollUpdateCellEditor
     @private
      */
-    _onScrollUpdateCellEditor: function (e) {
+    _onScrollUpdateCellEditor: function () {
         Y.log('DataTable.Editable._onScrollUpdateCellEditor');
         //
         //  Only go into this dark realm if we have a TD and an editor is open ...
         //
-        if(this.get(EDITABLE) && this.get('scrollable') && this._openEditor && this._openEditor.get('active') ) {
+        var oe = this._openEditor;
 
-            var rt = this._editorTd.get('region'),
-                rx = this._xScrollNode.get('region'),
-                ry = this._yScrollNode.get('region'),
-                rsn = this._scrollbarNode.get('region');
-//            console.log(/*'left', rt.left, rx.left, ry.left,'right', rt.right, rx.right, ry.right, rsn.right ,*/'top', rt.top, rx.top, ry.top, rsn.top,'bottom', rt.bottom, rx.bottom, ry.bottom, rsn.bottom);
-            console.log('visible left', rt.left > rx.left, 'right', rt.right < rsn.left, 'top', rt.top > rsn.top, 'bottom', rt.bottom < rsn.bottom);
-            console.log(rx.left, this._xScrollNode.getXY());
-            var oe = this._openEditor,
-                scrollBar    = e.target,
-                scrollBarClassName  = scrollBar.get('className') || '',
-                tr1    = this.getRow(0),
-                trh    = (tr1) ? parseFloat(tr1.getComputedStyle('height')) : 0,
-                tdxy   = (this._editorTd) ? this._editorTd.getXY() : null,
-                xmin, xmax, ymin, ymax, offLimits = false;
-
-            //
-            // For vertical scrolling - check vertical 'y' limits
-            //
-            if( scrollBarClassName.search(/-y-/) !==-1 ) {
-
-                ymin = this._yScrollNode.getY() + trh - 5;
-                ymax = ymin + parseFloat(this._yScrollNode.getComputedStyle('height')) - 2 * trh;
-
-                if(tdxy[1] < ymin || tdxy[1] > ymax ) {
-                    offLimits = true;
-                }
-            }
-
-            //
-            // For horizontal scrolling - check horizontal 'x' limits
-            //
-            if( scrollBarClassName.search(/-x-/) !==-1 ) {
-
-                xmin = this._xScrollNode.getX();
-                xmax = xmin + parseFloat(this._xScrollNode.getComputedStyle('width'));
-                xmax -= parseFloat(this._editorTd.getComputedStyle('width'));
-
-                if(tdxy[0] < xmin || tdxy[0] > xmax ) {
-                    offLimits = true;
-                }
-            }
-
-            oe.set('visible', !offLimits);
-            if(!offLimits) {
-                oe.set('xy', tdxy);
-            }
-
+        if(oe && oe.get('active') ) {
+            oe.set('visible', !this.isHidden(this._editorTd, true));
+            oe.move();
         }
     },
 

@@ -21,29 +21,6 @@ var returnUnchanged = function (value) {
 BCE =  Y.Base.create('celleditor', Y.View, [], {
 
 /*jshint onevar:true*/
-    /**
-    Defines the INPUT HTML content "template" for the editor's View container.
-
-    To be defined by the subclass.
-
-    @property template
-    @type String
-    @default ''
-    */
-    template: '',
-
-    /**
-    Placeholder for the input or textarea Node created within the View container.
-    For input widgets that don't have any, such as Calendar, this can be left null.
-    In such cases, code must be provided for navigation and to display and update
-    the [value](#attr_value) attribute with the entered value.
-
-    @property _inputNode
-    @type Node
-    @default null
-    @protected
-    */
-    _inputNode: null,
 
     /**
     Array of generic event listener handles created by this class to be
@@ -208,11 +185,6 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
     It must be defined by the subclass.
 
-    If a particular cell editor has an input or textarea control,
-    a reference to it should be stored in the [_inputNode](#property__inputNode)
-    property to enable keyboard navigation, setting and updating the value and
-    a few other actions.
-
     @method _defRenderFn
     @protected
     */
@@ -223,10 +195,9 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
     /**
     Sets the event listeners.
-    If [_inputNode](#property__inputNode) is set it will also set listeners for it.
 
     @method _bindUI
-    @private
+    @protected
     */
     _bindUI: function () {
         Y.log('DataTable.BaseCellEditor._bindUI');
@@ -234,7 +205,6 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
         this._subscr = [
             // This is here to support "scrolling" of the underlying DT ...
-            this.after('xyChange',this._afterXYChange),
             this.after('visibleChange', this._afterVisibleChange)
         ];
 
@@ -244,7 +214,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     Detaches all event listeners.
 
     @method _unbindUI
-    @private
+    @protected
     */
     _unbindUI: function () {
         Y.log('DataTable.BaseCellEditor._unbindUI');
@@ -261,7 +231,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
     @method _defSaveFn
     @param e {EventFacade} For [save](#event_save) event
-    @private
+    @protected
     */
     _defSaveFn: function (e) {
         Y.log('DataTable.BaseCellEditor._defSaveFn');
@@ -273,7 +243,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     The default action for the [cancel](#event_cancel) event.
 
     @method _defCancelFn
-    @private
+    @protected
     */
     _defCancelFn: function () {
         Y.log('DataTable.BaseCellEditor._defCancelFn');
@@ -283,23 +253,17 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     /**
     The default action for the [show](#event_show) event which should make the editor visible.
 
-    The default implementation expects [_inputNode](#property__inputNode) to be
-    a reference to an input or textarea with a `focus` method and a `value` attribute.
 
     @method _defShowFn
     @param e {EventFacade} for the [show](#event_show) event.
     @protected
     */
-    _defShowFn: function (e) {
+    _defShowFn: function () {
         Y.log('DataTable.BaseCellEditor._defShowFn');
-        var value = e.formattedValue,
-            input = this._inputNode;
 
-        if (input) {
-            input.focus();
-            input.set('value',value);
-            input.select();
-        }
+        this.set('visible', true);
+
+        this.move();
 
         this._set('active', true);
     },
@@ -330,7 +294,6 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         value = this._formatter(value);
 
         this.fire('show', Y.merge(cellInfo, {
-            inputNode:  this._inputNode,
             formattedValue: value
         }));
 
@@ -338,16 +301,14 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
     /**
     Returns the raw value as entered into the editor.
-    Meant to be overriden by each editor.
-    The default implementation assumes that [_inputNode](#property__inputNode)
-    has a `value` attribute.
+    To be implemented by each editor.
 
     @method _getValue
     @return value {mixed} Value as entered in the editor
     @protected
      */
     _getValue: function () {
-        return this._inputNode.get('value');
+        Y.log('DataTable.BaseCellEditor._getValue');
     },
 
     /**
@@ -359,6 +320,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @public
     */
     saveEditor: function (value) {
+
         if (value === undefined) {
             value = this._getValue();
         }
@@ -398,11 +360,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     */
     _hideEditor: function () {
         Y.log('DataTable.BaseCellEditor._hideEditor');
-        var cont  = this.get('container');
-        if(cont && cont.hide) {
-            cont.hide();
-        }
-        cont.removeClass(this._classError);
+        this.set('visible', false);
+        this.get('container').removeClass(this._classError);
 
         this._cellInfo = null;
         this._set('active', false);
@@ -431,12 +390,12 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
     To be implemented by the subclasses.
 
-    @method _afterXYChange
+    @method move
     @param e {EventFacade} Standard attribute change event facade
     @protected
     */
-    _afterXYChange: function() {
-        Y.log('DataTable.BaseCellEditor._afterXYChange');
+    move: function() {
+        Y.log('DataTable.BaseCellEditor.move');
     },
 
     /**
@@ -448,6 +407,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @private
     */
    _afterVisibleChange: function (e) {
+        Y.log('DataTable.BaseCellEditor._afterVisibleChange: ' + e.newVal);
+
         var container  = this.get('container');
         if(container) {
             if (e.newVal) {
@@ -543,19 +504,6 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         visible: {
             value: false,
             validator: Lang.isBoolean
-        },
-
-
-        /**
-        XY coordinate position of the editor View container (INPUT).
-
-        @attribute xy
-        @type Array
-        @default null
-        */
-        xy : {
-            value:      null,
-            validator:  Lang.isArray
         },
 
 
