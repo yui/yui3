@@ -1,23 +1,30 @@
     function showPage(page) {
+        // get the page number from the paginator if there isn't one provided
         page || (page = pg.get('page'));
 
+        // number of items to display
         var itemsPerPage = pg.get('itemsPerPage'),
-            min = (page - 1 ) * itemsPerPage,
-            max = Math.min( page * itemsPerPage - 1, pg.get('totalItems')),
+            totalItems = pg.get('totalItems') - 1,
+            min = (page - 1) * itemsPerPage,
+            max = Math.min( (page * itemsPerPage) - 1, totalItems),
             rows = '',
             i;
 
-        if (max < 0) {
-            max = pg.get('totalItems');
+        // if our math left us with less than the minimum, use the total number of items
+        if (max < min) {
+            max = totalItems;
         }
 
+        // loop through the data and build the templates
         for (i = min; i <= max; i++ ) {
             rows += Y.Lang.sub(rowTemplate, Y.mix({count: i + 1}, data[i]));
         }
 
-        tbody.setContent(rows);
+        // set the table's body to the new rows
+        tbody.setHTML(rows);
 
-        Y.all('.currentPage').setContent(
+        // update the paginator's display
+        Y.all('.currentPage').setHTML(
             Y.Lang.sub(currentPageTemplate, pg.getAttrs())
         );
     }
