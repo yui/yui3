@@ -914,8 +914,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     _createRowTemplate: function (columns) {
-        console.log('_createRowTemplate');
-        console.log(columns);
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
             F = Y.DataTable.BodyView.Formatters,
@@ -959,8 +957,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         this._rowTemplate = fromTemplate(this.ROW_TEMPLATE, {
             content: html
         });
-
-        console.log(columns);
     },
     /**
     Cleans up temporary values created during rendering.
