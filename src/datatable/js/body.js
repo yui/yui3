@@ -484,11 +484,53 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     @since 3.5.0
     **/
-    _afterDataChange: function () {
-        //var type = e.type.slice(e.type.lastIndexOf(':') + 1);
+    _afterDataChange: function (e) {
+        var type = (e.type.match(/:(add|change|remove)$/) || [])[1],
+            index = e.index,
+            row;
 
-        // TODO: Isolate changes
-        this.render();
+        switch (type) {
+            case 'change':
+                index = this.get('data').indexOf(e.target);
+                row = this._createRowHTML(e.target, index, this.get('columns'));
+                this.getRow(e.target).replace(row);
+                break;
+            case 'add':
+                // we need to make sure we don't have an index larger than the data we have
+                index =  Math.min(index, this.get('data').size() - 1);
+                row = Y.Node.create(this._createRowHTML(e.model, index, this.get('columns')));
+                this.tbodyNode.insert(row, index);
+                this._toggleStripes(index);
+                break;
+            case 'remove':
+                this.getRow(index).remove(true);
+                // we removed a row, so we need to back up our index to stripe
+                this._toggleStripes(index - 1);
+                break;
+            default:
+                this.render();
+        }
+    },
+
+    /**
+     Toggles the odd/even classname of the row after the given index. This method
+     is used to update rows after a row is inserted into or removed from the table.
+
+     @protected
+     @method _toggleStripes
+     @param {Number} [index]
+     @since @SINCE@
+     */
+    _toggleStripes: function (index) {
+        var odd = [this.CLASS_ODD, this.CLASS_EVEN],
+            even = [this.CLASS_EVEN, this.CLASS_ODD];
+
+        // if no initial index, do the whole table
+        index || (index = -1);
+
+        this.tbodyNode.get('childNodes').slice(index + 1).each(function (node, i) {
+            node.replaceClass.apply(node, (index + i) % 2 ? odd : even);
+        });
     },
 
     /**
