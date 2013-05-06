@@ -508,10 +508,11 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             // TODO: copy logic invoking the node formatters
 
         } else if (col.formatter) {
-            // TODO: See about storing the _formatterFn the first go around and updating internally
-            formatterFn = col._formatterFn ||
-                            (typeof col.formatter === 'function') ? col.formatter :
-                                Y.DataTable.BodyView.Formatters[col.formatter] || null;
+
+            // TODO: See about storing the _formatterFn the first go around and updating internally and skip this mess
+            formatterFn = col._formatterFn || // use existing _formatterFn
+                            (typeof col.formatter === 'function') ? col.formatter : // else, if we have a formatter function use it
+                                Y.DataTable.BodyView.Formatters[col.formatter] || null; // else, use a predefined formatter. else, null
 
             if (formatterFn) {
                 formatterData = {
@@ -604,6 +605,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             }
         }
 
+        // TODO: if multiple rows are being added/remove/swapped, can we avoid the restriping?
         switch (type) {
             case 'change':
                 this.refreshRow(this.getRow(e.target), e.target, Y.Object.keys(changed));
