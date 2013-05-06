@@ -118,6 +118,18 @@ YUI.add('promise-tests', function (Y) {
     suite.add(new Y.Test.Case({
         name: 'Behavior of the then() callbacks',
 
+        _should: {
+            ignore: {
+                '|this| inside a callback must be undefined in strict mode': (function () {
+                    'use strict';
+                    return typeof this !== 'undefined';
+                }()),
+                '|this| inside a callback must be the global object': (function () {
+                    return typeof this === 'undefined';
+                }())
+            }
+        },
+
         'throwing inside a callback should turn into a rejection': function () {
             var test = this,
                 error = new Error('Arbitrary error');
@@ -151,6 +163,62 @@ YUI.add('promise-tests', function (Y) {
             });
 
             test.wait(100);
+        },
+
+        // This test is run only when not in strict mode
+        '|this| inside a callback must be the global object': function () {
+            var test = this,
+                fulfilled, rejected,
+                fulfilledThis, rejectedThis;
+
+            fulfilled = new Y.Promise(function (fulfill) {
+                fulfill('value');
+            });
+            rejected = new Y.Promise(function (fulfill, reject) {
+                reject('reason');
+            });
+
+            fulfilled.then(function () {
+                fulfilledThis = this;
+                rejected.then(null, function () {
+                    rejectedThis = this;
+                    test.resume(function () {
+                        Assert.areSame(Y.config.global, fulfilledThis, 'when not in strict mode |this| in the success callback must be the global object');
+                        Assert.areSame(Y.config.global, rejectedThis, 'when not in strict mode |this| in the failure callback must be the global object');
+                    });
+                });
+            });
+
+            test.wait(300);
+        },
+
+        // This test is run only in strict mode
+        '|this| inside a callback must be undefined in strict mode': function () {
+            'use strict';
+            
+            var test = this,
+                fulfilled, rejected,
+                fulfilledThis, rejectedThis;
+
+            fulfilled = new Y.Promise(function (fulfill) {
+                fulfill('value');
+            });
+            rejected = new Y.Promise(function (fulfill, reject) {
+                reject('reason');
+            });
+
+            fulfilled.then(function () {
+                fulfilledThis = this;
+                rejected.then(null, function () {
+                    rejectedThis = this;
+                    test.resume(function () {
+                        Assert.isUndefined(fulfilledThis, 'in strict mode |this| in the success callback must be undefined');
+                        Assert.isUndefined(rejectedThis, 'in strict mode |this| in the failure callback must be undefined');
+                    });
+                });
+            });
+
+            test.wait(300);
         }
     }));
 
