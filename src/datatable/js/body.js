@@ -469,11 +469,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         var host = this.get('host'),
             key,
             cell,
-            l = columns.length,
+            len = columns.length,
             i;
 
-        // TODO: Rerun columns with formatters again?
-        for (i = 0; i < l; i++) {
+        for (i = 0; i < len; i++) {
             key = columns[i];
             cell = row.one('.' + this.getClassName('col', key));
             this.refreshCell(cell, model, host.getColumn(key));
@@ -588,9 +587,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             key,
             row,
             i,
-            j;
+            len;
 
-        for (i = 0, l = columns.length; i < l; i++ ) {
+        for (i = 0, len = columns.length; i < len; i++ ) {
             col = columns[i];
             // we need to see if there are any columns that have a nodeFormatter
             // and if so re-render and exit
@@ -973,9 +972,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             formatter,
             col,
             i,
-            l;
+            len;
 
-        for (i = 0, l = columns.length; i < l; i++) {
+        for (i = 0, l = columns.length; i < len; i++) {
             col = columns[i];
             formatter = col.formatter;
 
