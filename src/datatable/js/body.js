@@ -613,7 +613,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             case 'add':
                 // we need to make sure we don't have an index larger than the data we have
                 index =  Math.min(index, this.get('data').size() - 1);
-                row = Y.Node.create(this._createRowHTML(e.model, index, this.get('columns')));
+
+                // updates the columns to for formatter functions
+                this._setColumnsFormatterFn(columns);
+                row = Y.Node.create(this._createRowHTML(e.model, index, columns));
                 this.tbodyNode.insert(row, index);
                 this._toggleStripes(index);
                 break;
@@ -919,11 +922,13 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             F = Y.DataTable.BodyView.Formatters,
             i, len, col, key, token, headers, tokenValues, formatter;
 
+        this._setColumnsFormatterFn(columns);
+
         for (i = 0, len = columns.length; i < len; ++i) {
             col     = columns[i];
             key     = col.key;
             token   = col._id || key;
-            formatter = col.formatter;
+            formatter = col._formatterFn;
             // Only include headers if there are more than one
             headers = (col._headers || []).length > 1 ?
                         'headers="' + col._headers.join(' ') + '"' : '';
@@ -936,14 +941,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                            this.getClassName('cell') +
                            ' {' + token + '-className}'
             };
-            if (formatter) {
-                if (Lang.isFunction(formatter)) {
-                    col._formatterFn = formatter;
-                } else if (formatter in F) {
-                    col._formatterFn = F[formatter].call(this.host || this, col);
-                } else {
-                    tokenValues.content = formatter.replace(valueRegExp, tokenValues.content);
-                }
+            if (!formatter && col.formatter) {
+                tokenValues.content = formatter.replace(valueRegExp, tokenValues.content);
             }
 
             if (col.nodeFormatter) {
@@ -958,6 +957,36 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             content: html
         });
     },
+
+    /**
+     Parses the columns array and defines the column's _formatterFn if there
+     is a formatter available on the column
+     @protected
+     @method _setColumnsFormatterFn
+     @param {Array} columns
+     */
+    _setColumnsFormatterFn: function (columns) {
+        var F = Y.DataTable.BodyView.Formatters,
+            formatter,
+            col,
+            i,
+            l;
+
+        for (i = 0, l = columns.length; i < l; i++) {
+            col = columns[i];
+            formatter = col.formatter;
+
+            if (!col._formatterFn && formatter) {
+                if (Lang.isFunction(formatter)) {
+                    col._formatterFn = formatter;
+                } else if (formatter in F) {
+                    col._formatterFn = F[formatter].call(this.host || this, col);
+                }
+            }
+        }
+
+    },
+
     /**
     Cleans up temporary values created during rendering.
     @method _afterRenderCleanup
