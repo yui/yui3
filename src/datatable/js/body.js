@@ -22,7 +22,7 @@ View class responsible for rendering the `<tbody>` section of a table. Used as
 the default `bodyView` for `Y.DataTable.Base` and `Y.DataTable` classes.
 
 Translates the provided `modelList` into a rendered `<tbody>` based on the data
-in the constituent Models, altered or ammended by any special column
+in the constituent Models, altered or amended by any special column
 configurations.
 
 The `columns` configuration, passed to the constructor, determines which
@@ -198,7 +198,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     // Next cell
     var cell = table.getCell(e.target, 'next');
-    var cell = table.getCell(e.taregt, [0, 1];</pre></code>
+    var cell = table.getCell(e.target, [0, 1];</pre></code>
 
     @method getCell
     @param {Number[]|Node} seed Array of row and column indexes, or a Node that
@@ -347,7 +347,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     1. A row template is assembled from the `columns` attribute (see
        `_createRowTemplate`)
 
-    2. An HTML string is built up by concatening the application of the data in
+    2. An HTML string is built up by concatenating the application of the data in
        each Model in the `modelList` to the row template. For cells with
        `formatter`s, the function is called to generate cell content. Cells
        with `nodeFormatter`s are ignored. For all other cells, the data value
@@ -460,8 +460,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
      @method refreshRow
      @param {Y.Node} row
-     @param {Y.Model} model
-     @param {Object} columns
+     @param {Y.Model} model Y.Model representation of the row
+     @param {Object[]} columns Array of column configuration objects
 
      @chainable
      */
@@ -508,11 +508,12 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             // TODO: copy logic invoking the node formatters
 
         } else if (col.formatter) {
+            // TODO: See about storing the _formatterFn the first go around and updating internally
+            if (!col._formatterFn) {
+                col = this._setColumnsFormatterFn([col])[0]
+            }
 
-            // TODO: See about storing the _formatterFn the first go around and updating internally and skip this mess
-            formatterFn = col._formatterFn || // use existing _formatterFn
-                            (typeof col.formatter === 'function') ? col.formatter : // else, if we have a formatter function use it
-                                Y.DataTable.BodyView.Formatters[col.formatter] || null; // else, use a predefined formatter. else, null
+            formatterFn = col._formatterFn || null;
 
             if (formatterFn) {
                 formatterData = {
@@ -963,7 +964,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
      is a formatter available on the column
      @protected
      @method _setColumnsFormatterFn
-     @param {Array} columns
+     @param {Object[]} columns Array of column configuration objects
+
+     @return {Object[]} Returns modified columns configuration Array
      */
     _setColumnsFormatterFn: function (columns) {
         var F = Y.DataTable.BodyView.Formatters,
@@ -984,6 +987,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 }
             }
         }
+
+        return columns;
 
     },
 
