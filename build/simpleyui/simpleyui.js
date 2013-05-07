@@ -9983,13 +9983,11 @@ Y.CustomEvent.prototype = {
         if (when === AFTER) {
             if (!this._afters) {
                 this._afters = [];
-                this._hasAfters = true;
             }
             this._afters.push(s);
         } else {
             if (!this._subscribers) {
                 this._subscribers = [];
-                this._hasSubs = true;
             }
             this._subscribers.push(s);
         }
@@ -10327,14 +10325,6 @@ Y.CustomEvent.prototype = {
 
             if (s && subs[i] === s) {
                 subs.splice(i, 1);
-
-                if (subs.length === 0) {
-                    if (when === AFTER) {
-                        this._hasAfters = false;
-                    } else {
-                        this._hasSubs = false;
-                    }
-                }
             }
         }
 
@@ -17677,7 +17667,7 @@ Y.Node.prototype.intersect = function(node2, altRegion) {
  * @param {Node|Object} node2 The node or region to compare with.
  * @param {Boolean} all Whether or not all of the node must be in the region.
  * @param {Object} altRegion An alternate region to use (rather than this node's).
- * @return {Object} An object representing the intersection of the regions.
+ * @return {Boolean} True if in region, false if not.
  */
 Y.Node.prototype.inRegion = function(node2, all, altRegion) {
     var node1 = Y.Node.getDOMNode(this);
