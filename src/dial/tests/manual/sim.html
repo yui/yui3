@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>sim</title>
@@ -30,10 +30,10 @@
     YUI({filter:'raw'}).use("dial", function(Y) {          //, filter:'raw'  this make it really hard to clear cache on iPad
         var dial = new Y.Dial({
 			min: 0,
-			max: 100,
+			max: 200,
 			stepsPerRevolution: 100,
-			value: 0,
-			diameter: 100,
+			value: 50,
+			diameter: 200,
 			decimalPlaces:0
         });
         dial.render(".dial-container");
