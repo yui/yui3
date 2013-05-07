@@ -604,16 +604,14 @@ WidgetButtons.prototype = {
         containerSelector = '.' + sectionClassName + ' .' + buttonsClassName;
 
         // Search only inside the current widget
-        contentBox.all(containerSelector).each(function(node, index) {
-            var widget;
+        contentBox.all(containerSelector).some(function(node){
+            var widget = Y.Widget.getByNode(node),
+                isBelongs = !widget || widget === this;
 
-            if (!container) {
-                widget = Y.Widget.getByNode(node);
-
-                if (!widget || widget === this) {
-                    container = node;
-                }
+            if (isBelongs) {
+                container = node;
             }
+            return isBelongs;
         }, this);
 
         // Create the `container` if it doesn't already exist.
