@@ -1,4 +1,5 @@
 (function() {
+
 /**
  * The event utility provides functions to add and remove event listeners,
  * event cleansing.  It also tries to automatically remove listeners it
@@ -933,6 +934,7 @@ if (Y.UA.ie) {
 try {
     add(win, "unload", onUnload);
 } catch(e) {
+    /*jshint maxlen:300*/
     Y.log("Registering unload listener failed. This is known to happen in Chrome Packaged Apps and Extensions, which don't support unload, and don't provide a way to test for support", "warn", "event-base");
 }
 
