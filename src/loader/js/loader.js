@@ -995,6 +995,7 @@ Y.Loader.prototype = {
      * @param {Object} [config.condition] Specifies that the module should be loaded automatically if a condition is met.  This is an object with up to three fields:
      * @param {String} [config.condition.trigger] The name of a module that can trigger the auto-load
      * @param {Function} [config.condition.test] A function that returns true when the module is to be loaded.
+     * @param {String} [config.condition.ua] The UA name of <a href="UA.html">Y.UA</a> object that returns true when the module is to be loaded. e.g., `"ie"`, `"nodejs"`.
      * @param {String} [config.condition.when] Specifies the load order of the conditional module
      *  with regard to the position of the trigger module.
      *  This should be one of three values: `before`, `after`, or `instead`.  The default is `after`.
