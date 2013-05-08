@@ -366,8 +366,8 @@ suite.add(new Y.Test.Case({
         Y.Assert.isArray(sortBy);
         Y.Assert.areSame(1, sortBy.length, 'shift-click initial sort missing sort column');
         Y.Assert.isFalse(th.hasClass('yui3-datatable-sorted-desc'));
-        Y.Assert.isNumber(1, sortBy[0].a, 'Shift-click initial sort assigned incorrect column');
-        Y.Assert.areSame(1, sortBy[0].a, 'Shift-click initial sort resulted in wrong sort direction');
+        Y.Assert.isString(sortBy[0], 'Shift-click initial sort assigned incorrect column');
+        Y.Assert.areSame('a', sortBy[0], 'Shift-click initial sort resulted in wrong sort direction');
     }
 
     // test sort state classes
