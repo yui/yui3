@@ -1,6 +1,11 @@
 Console Change History
 ======================
 
+3.10.0
+------
+
+* Add italian language files to the components. [albertosantini]
+
 3.9.1
 -----
 

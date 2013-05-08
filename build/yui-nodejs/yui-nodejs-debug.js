@@ -3867,6 +3867,9 @@ YUI.Env.parseUA = function(subUA) {
                         m = ua.match(/rv:([^\s\)]*)/);
                         if (m && m[1]) {
                             o.gecko = numberify(m[1]);
+                            if (/Mobile|Tablet/.test(ua)) {
+                                o.mobile = "ffos";
+                            }
                         }
                     }
                 }
@@ -4998,9 +5001,9 @@ if (!YUI.Env[Y.version]) {
     (function() {
         var VERSION = Y.version,
             BUILD = '/build/',
-            ROOT = VERSION + BUILD,
+            ROOT = VERSION + '/',
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.04.17-18-52',
+            GALLERY_VERSION = 'gallery-2013.05.02-22-59',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -8169,7 +8172,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "lang": [
             "en",
-            "es"
+            "es",
+            "it"
         ],
         "requires": [
             "autocomplete-base",
@@ -8531,6 +8535,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         "lang": [
             "en",
             "es",
+            "it",
             "ja"
         ],
         "requires": [
@@ -8821,7 +8826,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "lang": [
             "en",
             "fr",
-            "es"
+            "es",
+            "it"
         ],
         "requires": [
             "datatable-base"
@@ -10595,6 +10601,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "tree"
         ]
     },
+    "tree-sortable": {
+        "requires": [
+            "tree"
+        ]
+    },
     "uploader": {
         "requires": [
             "uploader-html5",
@@ -10817,7 +10828,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '6d43bc92fc4f84b4141d123e32cdc9f1';
+YUI.Env[Y.version].md5 = '12bd02dfcbc39e6eebb7a8d96ada727c';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

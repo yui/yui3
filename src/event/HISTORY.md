@@ -1,6 +1,26 @@
 Event Infrastructure Change History
 ===================================
 
+@VERSION@
+------
+
+* Fixed `nodelist.on()` for rare custom module use cases.
+
+  In certain rare custom module loading circumstances [#2533242, 
+  https://github.com/yui/yui3/pull/689] dom-core is attached after 
+  event-base, which resulted in the `YDOM = Y.DOM` module level reference
+  being undefined [1].
+
+  This would break things like `nodelist.on()` which used the reference 
+  under the hood.
+
+  [1] Added in 3.7.3, as part of the Win8 `isWindow()` fix.
+
+3.10.0
+------
+
+* No changes.
+
 3.9.1
 -----
 

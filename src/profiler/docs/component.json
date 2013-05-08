@@ -4,7 +4,7 @@
     "description": "The YUI Profiler is a simple JavaScript code profiler suitable for reviewing the performance of most JavaScript applications.",
     "author"     : ["nzakas"],
 
-    "tags": ["devtool", "profile", "performance"],
+    "tags": ["devtool", "profile", "performance", "deprecated"],
     "use" : ["profiler"],
 
     "examples": [
