@@ -163,6 +163,12 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: "DataTable.Sortable tests",
 
+    tearDown: function () {
+        if (this.table) {
+            this.table.destroy();
+        }
+    },
+
     "test ui triggered sort": function () {
         var table, link, th;
 
@@ -334,6 +340,34 @@ suite.add(new Y.Test.Case({
         Y.Assert.isFalse(td.hasClass('yui3-datatable-sorted'), 'first cell should not have sorted class any longer.');
 
         table.destroy();
+    },
+
+    "shift clicking an unsorted table should primary sort by that column": function () {
+        var table = this.table = new Y.DataTable({
+                columns: ['a', 'b'],
+                data: [
+                    { a: 'a1', b: null },
+                    { a: null, b: 'b1' },
+                    { a: null, b: 'b4' },
+                    { a: 'a6', b: 'b3' },
+                    { a: 'a4', b: null },
+                    { a: 'a5', b: 'b6' }
+                ],
+                sortable: true
+            }).render(),
+
+            th = table._theadNode.one('th'),
+            sortBy;
+
+        th.simulate('click', { shiftKey: true });
+
+        sortBy = table.get('sortBy');
+
+        Y.Assert.isArray(sortBy);
+        Y.Assert.areSame(1, sortBy.length, 'shift-click initial sort missing sort column');
+        Y.Assert.isFalse(th.hasClass('yui3-datatable-sorted-desc'));
+        Y.Assert.isNumber(1, sortBy[0].a, 'Shift-click initial sort assigned incorrect column');
+        Y.Assert.areSame(1, sortBy[0].a, 'Shift-click initial sort resulted in wrong sort direction');
     }
 
     // test sort state classes

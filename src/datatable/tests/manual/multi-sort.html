@@ -2,16 +2,13 @@
 <html>
 <head>
 <title>Datatable Tests</title>
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css">
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssbase/base-min.css">
-<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui-debug.js"></script>
 
 <style>
     html {
         font-family: sans-serif;
         font-size: smaller;
     }
-
 </style>
 </head>
 
@@ -85,7 +82,7 @@ YUI({
                 }
             }
         },
-        sortable: ['company']
+        sortable: true
     });
 
     dt.render("#dtable");
