@@ -63,14 +63,23 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     */
    _cellInfo: null,
 
-   /**
-   CSS class name to add to an input box when it fails validation.
-   @property _classError
-   @type String
-   @default "yui3-datatable-celleditor-error"
-   @private
-   */
-   _classError: 'yui3-datatable-celleditor-error',
+    /**
+    CSS classname to identify the editor's INPUT Node
+    @property _classInput
+    @type String
+    @default 'yui3-datatable-inline-input'
+    @protected
+    */
+    _classInput: 'yui3-datatable-inline-input',
+
+    /**
+    CSS class name to add to an input box when it fails validation.
+    @property _classError
+    @type String
+    @default "yui3-datatable-celleditor-error"
+    @private
+    */
+    _classError: 'yui3-datatable-celleditor-error',
 
     /**
     Disallow ad-hoc attributes
@@ -258,12 +267,12 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @param e {EventFacade} for the [show](#event_show) event.
     @protected
     */
-    _defShowFn: function () {
+    _defShowFn: function (e) {
         Y.log('DataTable.BaseCellEditor._defShowFn');
 
         this.set('visible', true);
 
-        this.move();
+        this._attach(e.td);
 
         this._set('active', true);
     },
@@ -384,18 +393,16 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
 
     /**
-    Event listener for the [xy](#attr_xy) change event.
-    It can be used to quickly reset the cell editor's position,
-    used for scrollable DataTables.
+    Moves and resizes the editor container to fit on top of the cell being edited.
 
     To be implemented by the subclasses.
 
-    @method move
-    @param e {EventFacade} Standard attribute change event facade
+    @method _attach
+    @param td {Node} cell to attach this editor to
     @protected
     */
-    move: function() {
-        Y.log('DataTable.BaseCellEditor.move');
+    _attach: function (/* td */) {
+        Y.log('DataTable.BaseCellEditor._attach');
     },
 
     /**

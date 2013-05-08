@@ -227,7 +227,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             td6.simulate('click');
             oe = dt._openEditor;
 
-            inp = oe._inputNode;
+            inp = oe.get('container');
 
             // ESC cancelEditor
             td6.simulate('click');
@@ -274,7 +274,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
             td6.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             inputKey(inp, 'abcdefg', 13);
             Assert.isFalse(oe.get('active'), 'cell editor col 1 should be closed');
             Assert.areSame('abcdefg', oe.get('value'), 'after save lastvalue should be abcdefg');
@@ -287,7 +287,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
             td6.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             inputKey(inp, undefined, 13);
             Assert.isFalse(oe.get('active'), 'cell editor col 1 should be closed');
             //      Assert.areSame(59.93, oe.get('value'),'after save value should be 59.93');
@@ -300,7 +300,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
             td6.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             //inputKey(inp,undefined,13);
             oe.saveEditor(undefined);
             Assert.isFalse(oe.get('active'), 'cell editor col 1 should be closed');
@@ -330,7 +330,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open cell 3
             td3.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor should be active');
             Assert.areSame(td3, oe._cellInfo.td);
 
@@ -349,7 +349,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open cell 3
             td3.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor should be active');
             Assert.areSame(td3, oe._cellInfo.td);
 
@@ -369,7 +369,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open cell 3
             td3.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor should be active');
             Assert.areSame(td3, oe._cellInfo.td);
 
@@ -388,7 +388,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open cell 3
             td3.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor should be active');
             Assert.areSame(td3, oe._cellInfo.td);
 
@@ -407,7 +407,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open cell 3
             td3.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor should be active');
             Assert.areSame(td3, oe._cellInfo.td);
 
@@ -426,7 +426,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open cell 3
             td3.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor should be active');
             Assert.areSame(td3, oe._cellInfo.td);
 
@@ -456,7 +456,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             td6.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor col 6 should be active');
 
 
@@ -473,7 +473,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             td6.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor col 6 should be active');
 
 
@@ -491,13 +491,13 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             td6.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor col 6 should be active');
 
 
             inputKey(inp, 'abcdefg', 13);
             Assert.isTrue(oe.get('active'), 'cell editor col 6 should have refused to close');
-            Assert.isTrue(inp.ancestor().hasClass('yui3-datatable-celleditor-error'), 'input box should show error');
+            Assert.isTrue(inp.hasClass('yui3-datatable-celleditor-error'), 'input box should show error');
             Assert.areSame(1.29, oe.get('value'));
             fireKey(inp, 27);
             Assert.isFalse(oe.get('active'), 'cell editor col 6 should close when escaped');
@@ -511,13 +511,13 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             td6.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor col 6 should be active');
 
             //inputKey(inp,'abcdefg',13);
             oe.saveEditor('abcdefg');
             Assert.isTrue(oe.get('active'), 'cell editor col 6 should have refused to close');
-            Assert.isTrue(inp.ancestor().hasClass('yui3-datatable-celleditor-error'), 'input box should show error');
+            Assert.isTrue(inp.hasClass('yui3-datatable-celleditor-error'), 'input box should show error');
             Assert.areSame(1.29, oe.get('value'));
             fireKey(inp, 27);
             Assert.isFalse(oe.get('active'), 'cell editor col 6 should close when escaped');
@@ -544,7 +544,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             td6.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor col 7 should be active');
 
             // prepFn should format as 06/13/09
@@ -563,7 +563,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             td6.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor col 7 should be active');
 
             // prepFn should format as 06/13/09
@@ -583,7 +583,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             td6.simulate('click');
             oe = dt._openEditor;
-            inp = oe._inputNode;
+            inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor col 7 should be active');
 
             // prepFn should format as 06/13/09

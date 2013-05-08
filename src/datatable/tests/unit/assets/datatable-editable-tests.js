@@ -72,7 +72,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         if (nextCell) {
             regTd = nextCell.get('region');
             areSame(Math.round(regTd.top), Math.round(regEd.bottom), 'bottom should match top of next: [' + row + ':' + col + ']');
-            areSame(Math.round(regTd.left), Math.round(regEd.right), 'right edge should match left edge of next: [' + row + ':' + col + ']');
+            areSame(Math.round(regTd.left + 1), Math.round(regEd.right), 'right edge should overlap left edge of next: [' + row + ':' + col + ']');
         } else isTrue(skip, 'there should be a further cell to the right or bottom');
     },
     openEditorAt = function (dt, row, col) {
@@ -85,7 +85,7 @@ YUI.add('datatable-editable-tests', function(Y) {
     };
 
     suite.add(new Y.Test.Case({
-        name: 'Gallery DataTable-Editable : basic setup and instance',
+        name: 'DataTable-Editable : basic setup and instance',
 
         setUp : function () {
             // {sid: sname: sdesc: sopen:0, stype:0, stock:0, sprice:, shipst:'s', sdate: },
@@ -106,10 +106,6 @@ YUI.add('datatable-editable-tests', function(Y) {
         'should instantiate as a DT instance': function() {
             var dt = this.dt;
             Assert.isInstanceOf( Y.DataTable, dt, 'Not an instanceof Y.DataTable');
-        },
-
-        'listeners are set' : function(){
-            //areSame( 3, this.m._subscr.length, "Didn't find 3 listeners" );
         },
 
         'check ATTR default values' : function(){
@@ -206,7 +202,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
 
     suite.add(new Y.Test.Case({
-        name: 'Gallery DataTable-Editable : check public methods ~ default as inline',
+        name: 'DataTable-Editable : check public methods ~ default as inline',
 
         setUp : function () {
             // {sid: sname: sdesc: sopen:0, stype:0, stock:0, sprice:, shipst:'s', sdate: },
@@ -238,8 +234,13 @@ YUI.add('datatable-editable-tests', function(Y) {
         },
 
         'check public methods - open/hide cell editors' : function(){
-            var dt = this.dt,
-                td = dt.getCell([0,1]);
+            var dt = this.dt;
+
+            dt.getCell([0,0]).simulate('click');
+            isNull(dt._openEditor, 'editor should not open on non-editable cell');
+
+            dt.openCellEditor(dt.getCell([0,0]));
+            isNull(dt._openEditor, 'editor should not open on non-editable cell');
 
             // on column 1, open an editor, then hide it
             openEditorAt(dt, 0,1);
@@ -250,7 +251,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             isFalse(dt.getCellEditor('sopen').get('active'),'cell editor col 1 should be closed');
 
             // open column 1 again, then click another cell ... col 1 should hide, col 6 should be active
-            td.simulate('click');
+            dt.getCell([0,1]).simulate('click');
             isTrue(dt._openEditor.get('active'),'cell editor col 1 should be active');
             var ce = dt.getCellEditor('sopen');
             isTrue(ce.get('active'),'cell editor col 1 should be active');
@@ -304,7 +305,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(0,dt._openEditor.get('value'),'initial editor value of col 1 should be 0');
 
             // ESC should close
-            fireKey(dt._openEditor._inputNode, 27);
+            fireKey(dt._openEditor.get('container'), 27);
             isNull(dt._openEditor,'cell editor col 1 should be closed');
 
         },
@@ -375,7 +376,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             areSame('abc', dt.getRecord(0).get('sopen'), 'record should have changed');
             areSame('abc', dt.getCell([0,1]).getHTML(), 'check cell after saving');
-            areSame('none', ed.ancestor().getStyle('display') ,'editor should be hidden');
+            areSame('none', ed.getStyle('display') ,'editor should be hidden');
         },
         'check editing canceled via event': function () {
             var dt = this.dt,
@@ -437,7 +438,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             areSame(0, dt.getRecord(0).get('sopen'), 'record should not have changed');
             areSame('0', dt.getCell([0,1]).getHTML(), 'check cell remains unchanged');
-            areSame('none', ed.ancestor().getStyle('display') ,'editor should be hidden');
+            areSame('none', ed.getStyle('display') ,'editor should be hidden');
         },
         'check destructor' : function(){
             var dt = this.dt;

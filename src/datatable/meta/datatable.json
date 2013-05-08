@@ -128,7 +128,8 @@
                     "event-outside",
                     "overlay",
                     "dd-plugin",
-                    "template"
+                    "template",
+                    "array-extras"
                 ]
             },
             "datatable-celleditor-keyfiltering": {

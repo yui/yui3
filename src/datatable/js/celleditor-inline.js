@@ -25,25 +25,8 @@ var Editors = {},
      */
     containerTemplate: '<input type="text"  />',
 
-    /**
-     * CSS classname to identify the editor's INPUT Node
-     * @property _classInput
-     * @type String
-     * @default 'yui3-datatable-inline-input'
-     * @protected
-     */
-    _cssInput: 'yui3-datatable-inline-input',
 
-    _extraWidth: 0,
-    _extraHeight: 0,
 
-//    destructor: function () {
-//        var inputNode = this._inputNode;
-//        if (inputNode) {
-//            inputNode.destroy();
-//            this._inputNode = null;
-//        }
-//    },
     /**
     The default action for the `show` event which should make the editor visible.
 
@@ -72,17 +55,9 @@ var Editors = {},
     _defRenderFn: function () {
         Y.log('DataTable.BaseCellInlineEditor._defRenderFn');
 
-        var container = this.get('container'),
-            getStyle = function (attr) {
-                return parseInt(container.getComputedStyle(attr), 10) || 0;
-            };
+        var container = this.get('container');
 
-
-
-        container.addClass(this._cssInput + ' ' + this.get('className'));
-
-        this._extraHeight = getStyle('borderTopWidth') + getStyle('borderBottomWidth') + getStyle('paddingTop') + getStyle('paddingBottom');
-        this._extraWidth = getStyle('borderLeftWidth') + getStyle('borderRightWidth') + getStyle('paddingLeft') + getStyle('paddingRight') - 1;
+        container.addClass(this._classInput + ' ' + this.get('className'));
 
         container.hide();
 
@@ -115,20 +90,22 @@ var Editors = {},
     },
 
     /**
-     * Moves and resizes the editor container to fit on top of the cell being edited
-     *
-     * @method move
+    Moves and resizes the editor container to fit on top of the cell being edited.
+
+    To be implemented by the subclasses.
+
+    @method _attach
+    @param td {Node} cell to attach this editor to
+    @protected
      */
-    move: function () {
-        Y.log('DataTable.BaseCellInlineEditor.move');
+    _attach: function (td) {
+        Y.log('DataTable.BaseCellInlineEditor._attach');
 
         if (this.get('visible')) {
-            var td = this._cellInfo.td,
-                region = td.get('region'),
+            var region = td.get('region'),
                 container = this.get('container');
-            console.log(region.left, region.top,region.width - this._extraWidth + 'px',region.height - this._extraHeight + 'px' );
-            container.setStyle('width', region.width - this._extraWidth + 'px');
-            container.setStyle('height', region.height - this._extraHeight + 'px');
+            container.set('offsetWidth', region.width + 1);
+            container.set('offsetHeight', region.height);
             container.setXY([region.left, region.top]);
         }
     },
@@ -383,8 +360,9 @@ Editors.inlineAC = Y.Base.create('celleditor', IEd, [],
     {
         _defRenderFn: function () {
             Y.log('inlineAC._defRenderFn');
+
             Editors.inlineAC.superclass._defRenderFn.apply(this, arguments);
-            var inputNode = this._inputNode,
+            var inputNode = this.get('container'),
                // Get the users's editorConfig "autocompleteConfig" settings
                acConfig = this.get('autocompleteConfig') || {};
 

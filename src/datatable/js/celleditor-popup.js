@@ -17,7 +17,7 @@
 var Editors = {},
     PEd =  Y.Base.create('celleditor', Y.DataTable.BaseCellEditor, [], {
 
-
+    template: '<input type="text" title="inline cell editor" class="{classInput}" />',
     /**
     Defines the HTML content "template" for BUTTON elements that are added to the Overlay
     via the overlayButtons attribute.
@@ -26,7 +26,7 @@ var Editors = {},
     @type String
     @default See Code
     */
-    btnTemplate:    '<button class="yui3-button {classButton}" data-button="{name}">{value}</button>',
+    btnTemplate:    '<button class="yui3-button {classButton}">{label}</button>',
 
     /**
     Placeholder property for the Overlay created by this class.
@@ -42,39 +42,6 @@ var Editors = {},
 
 
     /**
-    CSS classname to identify the input HTML node within the View container
-
-    @property _classInput
-    @type String
-    @default 'yui3-datatable-editor-input'
-    @protected
-    */
-    _classInput:    'yui3-datatable-editor-input',
-
-    /**
-    CSS classname to identify the individual input collection HTML nodes within
-    the View container.
-
-    @property _classItem
-    @type String
-    @default 'yui3-datatable-editor-input-item'
-    @protected
-    */
-    _classItem:     'yui3-datatable-editor-input-item',
-
-    /**
-    CSS classname used for Overlay BUTTON elements within the View container
-
-    @property _classOverlayBtn
-    @type String
-    @default 'yui3-datatable-editor-overlay-button'
-    @protected
-    */
-    _classOverlayBtn:  'yui3-datatable-editor-overlay-button',
-
-
-
-    /**
     Creates this View's container, including instantiating the Overlay widget within
     the container, incorporating user-supplied overlay configs, creating buttons and
     creating the internal HTML content within the Overlay (using a Template-based
@@ -85,9 +52,7 @@ var Editors = {},
     @private
     */
     _defRenderFn: function () {
-       var ocfg  = this.get('overlayConfig'),
-           tobj  = this.get('templateObject'),
-           overlay;
+       var overlay;
 
         //
         //  Create containing Overlay
@@ -98,18 +63,15 @@ var Editors = {},
         //  Add buttons in the Overlay footer section
         //  (we aren't using overlay, so have to add these manually ...)
         //
-        if( ocfg && ocfg.buttons ) {
+        if( this.get('buttons')) {
             this._createOverlayButtons(overlay);
         }
 
-        if( tobj && Y.Lang.isObject(tobj) ) {
-            this._createTemplateContent(overlay);
-        }
-
-        //
-        this._inputNode = overlay.get('contentBox').one('.' + this._classInput);
+        overlay.set('bodyContent', Y.Lang.sub(this.template, {classInput: this._classInput}));
 
         overlay.render(this.get('container'));
+
+        this._inputNode = overlay.get('contentBox').one('.' + this._classInput);
 
         this._overlay = overlay;
 
@@ -127,9 +89,6 @@ var Editors = {},
 
         PEd.superclass._unbindUI.apply(this, arguments);
 
-        if(this.widget) {
-            this.widget.destroy({remove:true});
-        }
 
         if(this._overlay) {
             this._overlay.destroy({remove:true});
@@ -150,37 +109,18 @@ var Editors = {},
     @param e {EventFacade}
     @protected
    */
-    _defShowFn: function (ev) {
-
-        var cell   = this.get('cell'),
-            td = cell.td || ev.td,
-            td_xy  = td.getXY(),
-            off_xy = this.get('offsetXY'),
-            td_w   = parseFloat(td.getComputedStyle('width'));
-            //(rec && coln) ? rec.get(coln) : null;
-
-
+    _defShowFn: function (e ) {
+        var input = this._inputNode;
         this._overlay.show();
 
         // clear up browser "selected" stuff
         this._clearDOMSelection();
 
-    //
-    //  Position and resize the Overlay and input ...
-    //
-        if(off_xy) {
-            td_xy[0] += off_xy[0];
-            td_xy[1] += off_xy[1];
-        }
-
-        this._overlay.set('xy',td_xy);
-
-        td_w = this.get('inputWidth') || td_w;
-        if(this._inputNode) {
-            this._inputNode.setStyle('width', td_w );
-        }
         PEd.superclass._defShowFn.apply(this, arguments);
 
+        input.focus();
+        input.set('value', e.formattedValue);
+        input.select();
     },
 
 
@@ -198,25 +138,18 @@ var Editors = {},
         var ocfg  = this.get('overlayConfig'),
             overlay;
 
-        // Merge the user-supplied Config object with some defaults
-        if(this.get('overlayWidth')) {
-            ocfg.width = this.get('overlayWidth');
-        }
 
-        ocfg = Y.merge(ocfg,{
+        ocfg = Y.merge(ocfg, {
             bodyContent: ' ',
             zIndex:     99,
             visible:    false
         });
 
-        // Create the Overlay, plugin the drag-drop
         overlay = new Y.Overlay(ocfg);
+
         if(Y.Plugin.Drag) {
             overlay.plug(Y.Plugin.Drag);
         }
-
-        // Set the inputNode property ... point to INPUT or TEXTAREA, SELECT, etc..
-        this._inputNode = overlay.get('contentBox').one('.' + this._classInput);
 
         return overlay;
     },
@@ -224,171 +157,112 @@ var Editors = {},
 
     /**
     Method creates a footer section within the Overlay and adds the buttons entered
-    as the "buttons" config property of "overlayConfig".
+    as the `buttons` config property of `editorConfig`. The `buttons` property should be
+    an array containing the configuration options for the buttons:
+    <ul>
+        <li>`label` The label shown to the user</li>
+        <li>`className` A css class name to assign to the button</li>
+        <li>`save` A non-null value indicates this is the save button,
+          equivalent to pressing the `Enter` key. It will be highlighted accordingly</li>
+        <li>`cancel` A non-null value indicates this is cancel button, equivalent to pressing the `Esc` key</li>
+        <li>`action` An action to be associated with this button</li>
+    </ul>
+    The `action` property can be a string or a function.
+    If a function, it will be called when the button is clicked.  The function will
+    receive the button configuration entry as its first argument and an object containing
+    information about the cell being edited.
+    If `action` is a string, an event will be fired using that string.  The event
+    can be listened to by subscribing to `celleditor:<i>&lt;action string&gt;</i>`
+    and it will receive the button configuration and the cell info object.
 
+    The cell information object contains:
+    <ul>
+        <li>td {Node} Reference to the table cell</li>
+        <li>record {Model} Reference to the model containing the underlying data</li>
+        <li>colKey {String} Key of the column for the cell to be edited</li>
+        <li>initialValue {Any} The underlying value of the cell to be edited</li>
+    </ul>
     @method _createOverlayButtons
     @param {Widget} overlay
     @private
     */
-    _createOverlayButtons: function(overlay){
-        var ov_cfg  = this.get('overlayConfig'),
-            ov_btns = ov_cfg.buttons, // value, action
-            ov_cbox = overlay.get('contentBox'),
-            ov_ftr  = ov_cbox.appendChild(Y.Node.create('<div class="yui3-widget-ft"></div>')),
-            btn_html, btn_node;
+    _createOverlayButtons: function (overlay) {
+        var buttons = Y.Array.map(this.get('buttons'), function (btn) {
 
-        // Loop over all Buttons in the configs, creating them one at a time
-        //  button config is expected to have {name,value,action} members
-        Y.Array.each(ov_btns, function(btn){
+                return Y.Lang.sub(this.btnTemplate,{
+                    classButton: (btn.className || '')  + (btn.save ? ' yui3-button-primary' : ''),
+                    label:       btn.label || 'unknown label'
+                });
 
-            // build the button HTML ...
-            btn_html = Y.Lang.sub(this.btnTemplate,{
-                classButton: this._classOverlayBtn + ( (btn.name) ? '-' + btn.name : ''),
-                name:        btn.name || 'btn',
-                value:       btn.value || 'unknown label'
+            }, this);
+        if (buttons.length) {
+            overlay.set('footerContent', buttons.join('\n'));
+            this._subscr.push(this.get('container').delegate('click', this._afterButtonClick, 'button.yui3-button', this));
+        }
+
+    },
+
+    _afterButtonClick: function (ev) {
+        var btnCfg = null,
+            action;
+
+        if (ev.target.ancestor().get('children').some(function(button, index) {
+            if (button === ev.target) {
+                btnCfg = this.get('buttons')[index];
+                return true;
+            }
+        }, this)) {
+            if (btnCfg.save) {
+                this.saveEditor();
+            }
+            if (btnCfg.cancel) {
+                this.cancelEditor();
+            }
+            action = btnCfg.action;
+            switch (Y.Lang.type(action)) {
+                case 'string':
+                    this.fire(action, btnCfg, this._cellInfo);
+                    break;
+                case 'function':
+                    action(btnCfg, this._cellInfo);
+                    break;
+            }
+        }
+    },
+
+
+    /**
+    Moves and resizes the editor container to fit on top of the cell being edited.
+
+    To be implemented by the subclasses.
+
+    @method _attach
+    @param td {Node} cell to attach this editor to
+    @protected
+    */
+    _attach: function (td) {
+         if (this.get('visible')) {
+            var region = td.get('region');
+
+            this._overlay.set('xy', [region.left, region.top]);
+            this._inputNode.setAttrs({
+                offsetWidth: region.width,
+                offsetHeight: region.height
             });
-
-            // create the BUTTON, appending to footer section of the Overlay ...
-            btn_node = ov_ftr.appendChild( Y.Node.create(btn_html) );
-
-            // and add it's click handler ...
-            if(btn_node && btn.action && Y.Lang.isFunction(btn.action) ) {
-                this._subscr.push( btn_node.on('click', Y.bind( btn.action,this) )  );
-            }
-
-        },this);
-
+         }
     },
 
     /**
-    Method used to process the [templateObject](#attr_templateObject) attribute and generate the
-    Overlay's `bodyContent`.  This method uses the `Y.Template` module to prepare the HTML, which
-    is passed in via [templateObject](#attr_templateObject)'s `html` property.
+    Returns the raw value as entered into the editor.
 
-    This method uses the `Y.Template.Micro` module by default to process the template.  Implementers
-    can pass in any different Y.Template supported-template engine via the [templateEngine](#attr_templateEngine)
-    attribute (i.e. `templateEngine: Y.Handlebars`) but will have to modify the `html` property of templateObject
-    appropriately for that engine.
-
-    Implementers can pass in "options" and other properties to the [templateObject](#attr_templateObject) ATTR and
-    this function will normalize the `this.options` to an Object with keys {value,text,title,raw} which can be
-    used more directly within HTML construction.
-
-    The templateObject ATTR `options` property can be either an Array or an Object, this function converts and
-    normalizes the content to an output Array as `this.options` within the template definitions.
-
-    @method _createTemplateContent
-    @param overlay {Widget} Overlay instance for this View
-    @private
-    */
-    _createTemplateContent: function(overlay) {
-        var tmplObj  = Y.merge(this.get('templateObject')),
-            ename    = this.get('name'),
-            tmplOpts = this.get( ename + 'Options') || tmplObj.options,
-            tmplEng,tmicro,compiledHTML,robj,html;
-
-        // use a Template "engine" if defined, otherwise Template.Micro
-        tmplEng  = this.get('templateEngine');
-        tmicro   = new Y.Template(tmplEng);
-
-
-        // check for template-type strings ...
-        html = tmplObj.html;
-
-
-        if( /<%|\{\{/.test(html) ) {
-            //
-            //  Setup template object properties
-            //
-            tmplObj.classInput = this._classInput;
-            tmplObj.propValue  = this.get('propValue') || tmplObj.propValue || 'value';
-            tmplObj.propText   = this.get('propText') || tmplObj.propText || 'text';
-            tmplObj.propTitle  = this.get('propTitle') || tmplObj.propTitle;
-
-            //
-            //  Typecheck for the template "options", if an Object hash, then convert to
-            //   an array.
-            //
-
-            // Normalize options array to {value: text: title: format}
-            if(Y.Lang.isArray(tmplOpts)) {
-                tmplObj.options = [];
-                Y.Array.each(tmplOpts,function(r){
-                    robj = {};
-                    if(Y.Lang.isObject(r)) {
-                        robj = {
-                            value: r[tmplObj.propValue],
-                            text: r[tmplObj.propText],
-                            title: (tmplObj.propTitle) ? r[tmplObj.propTitle] || tmplObj.propTitle : null,
-                            raw: r
-                        };
-                    } else {
-                        robj = {value:r, text:r, title:null, raw:r};
-                    }
-                    tmplObj.options.push(robj);
-                },this);
-
-            } else if ( Y.Lang.isObject(tmplOpts) ) {
-                tmplOpts = Y.merge(tmplOpts);
-                tmplObj.options = [];
-                Y.Object.each(tmplOpts,function(v,k,obj){
-                    if(Lang.isValue(v) && this._isZeroOr(k)) {
-                        robj = {
-                            value: (Y.Lang.isString(k) && /^\d*$/.test(k) ) ? +k : k,
-                            text: v,
-                            title: (tmplObj.propTitle) ? tmplObj.propTitle : null,
-                            raw: obj
-                        };
-                        tmplObj.options.push( robj );
-                    }
-                },this);
-            }
-
-            //
-            //  Run thru and compile the template and execute it and set the HTML to the Overlay's "body"
-            //
-            compiledHTML = tmicro.compile(tmplObj.html);
-            if(compiledHTML) {
-                html = compiledHTML(tmplObj);
-            }
-
-        }
-
-        //
-        //  Set the html for the Overlay ...
-        //    if no Template tags are present, it just puts templateObject.html inside
-        //
-        if(html) {
-            overlay.set('bodyContent', html );
-        }
-
+    @method _getValue
+    @return value {mixed} Value as entered in the editor
+    @protected
+     */
+    _getValue: function () {
+        Y.log('DataTable.BaseCellInlineEditor._getValue');
+        return this._inputNode.get('value');
     },
-
-    /**
-    This method can be used to quickly reset the current View editor's position,
-    used for scrollable DataTables.
-
-    @method move
-    @param e {EventFacade} The xy attribute change event facade
-    @private
-    */
-    move: function(e) {
-        if(this._overlay && e.newVal) {
-            this._overlay.set('xy', e.newVal);
-        }
-    },
-
-
-    /**
-    Listener to mouseleave event that closes the active editor.
-
-    @method _mouseLeave
-    @private
-    */
-    _mouseLeave: function () {
-        this.cancelEditor();
-    },
-
 
     /**
     Helper method to clear DOM "selected" text or ranges
@@ -457,6 +331,9 @@ var Editors = {},
             validator:  Y.Lang.isObject
         },
 
+        buttons: {
+            value: null
+        },
 
         /**
         Specifies a width attribute style to set the `_classInput` Node element to upon rendering.
@@ -466,18 +343,6 @@ var Editors = {},
         @default null
         */
         inputWidth: {
-            value:  null
-        },
-
-        /**
-        Defines the `width` parameter to set the Overlay widget to upon rendering, can also be overridden
-        by setting `overlayConfig.width`.
-
-        @attribute overlayWidth
-        @type String|Number
-        @default null
-        */
-        overlayWidth:{
             value:  null
         },
 
@@ -579,34 +444,6 @@ var Editors = {},
         },
 
 
-        /**
-        Setting for checking the visibility status of this Editor
-
-        @attribute visible
-        @type Boolean
-        @default false
-        @readOnly
-        */
-        visible: {
-            value:      false,
-            readOnly:   true,
-            validator:  Y.Lang.isBoolean
-        },
-
-        /**
-        Setting to check if the editor is "still open" but just hidden, created in order to support
-        scrolling datatables when an editor scrolls out of open window.
-
-        @attribute hidden
-        @type Boolean
-        @default false
-        @readOnly
-        */
-        hidden: {
-            value:      false,
-            readOnly:   true,
-            validator:  Y.Lang.isBoolean
-        },
 
         /**
         Sets an offset of the XY coordinates that will be used for positioning the Overlay upon
@@ -972,6 +809,12 @@ Editors.date = Y.Base.create('celleditor', PEd, [],
 */
 Editors.calendar = Y.Base.create('celleditor', PEd, [],
     {
+destructor: function () {
+            if(this.widget) {
+            this.widget.destroy({remove:true});
+        }
+
+}
 /*
     //
     // cell editor View instance event listeners ...
@@ -1265,7 +1108,7 @@ Produces a group of INPUT[type=radio] controls within the view's Overlay
  @since 3.8.0
  @public
  **/
-Editors.autocomplete = Y.Base.create('celleditor', PEd, [],
+Editors.radio = Y.Base.create('celleditor', PEd, [],
     {
     // cell editor View instance listeners ...
         after: {

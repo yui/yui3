@@ -311,7 +311,7 @@ Y.mix( DtEditable.prototype, {
         //TODO:  fix this to rebuild new editors if user changes a column definition on the fly
         //
         if(editorInstance) {
-            if (this.scrollTo) {
+            if (this.scrollTo && this.isHidden(td, true)) {
                 this.scrollTo(td);
             }
 
@@ -873,7 +873,7 @@ Y.mix( DtEditable.prototype, {
 
         if(oe && oe.get('active') ) {
             oe.set('visible', !this.isHidden(this._editorTd, true));
-            oe.move();
+            oe._attach(this._editorTd);
         }
     },
 
