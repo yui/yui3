@@ -4,7 +4,7 @@ IO Utility Change History
 3.10.1
 ------
 
-* No changes.
+* Filter input passed to ExternalInterface.call().
 
 3.10.0
 ------
