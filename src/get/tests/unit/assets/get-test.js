@@ -2,8 +2,6 @@ YUI.add('get-test', function (Y) {
 
     Y.GetTests = new Y.Test.Suite("Get");
 
-    Y.GetTests.TEST_FILES_BASE = "getfiles/";
-
     var ArrayAssert  = Y.ArrayAssert,
         Assert       = Y.Assert,
         ObjectAssert = Y.ObjectAssert,
@@ -91,19 +89,6 @@ YUI.add('get-test', function (Y) {
     function randUrl(url) {
         url += (url.indexOf('?') !== -1) ? '&' : '?';
         return url + 'bust=' + unique();
-    }
-
-    function path(urls, guid) {
-        var base = Y.GetTests.TEST_FILES_BASE;
-
-        if (typeof urls === "string") {
-            urls = base + randUrl(urls);
-        } else {
-            for (var i = 0; i < urls.length; i++) {
-                urls[i] = base + randUrl(urls[i]);
-            }
-        }
-        return urls;
     }
 
     /**
@@ -1252,8 +1237,6 @@ YUI.add('get-test', function (Y) {
             this.nb = Y.Node.create('<div class="get_test_b">get_test_b</div>');
             this.nc = Y.Node.create('<div class="get_test_c">get_test_c</div>');
 
-            var naa = this.na;
-
             var b = Y.Node.one("body");
             b.append(this.na);
             b.append(this.nb);
@@ -1633,7 +1616,7 @@ YUI.add('get-test', function (Y) {
 
                         if (!Y.UA.ie) {
                             // Let the CSS kick in?
-                            test.wait(function() { 
+                            test.wait(function() {
                                 Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
                                 Assert.areNotEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css was loaded when it shouldn't have been");
                                 Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");

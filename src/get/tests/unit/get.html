@@ -104,11 +104,6 @@ var Y = YUI({
         }
     }
 }).use('*', function(Y) {
-    if (/[?&]delay=true/.test(window.location.search)) {
-        // Hit the default 'node ./delay.js port'
-        Y.GetTests.TEST_FILES_BASE = (window.location.protocol + "//" + window.location.hostname + ":" + "8014/");
-    }
-
     Y.GetTests.add(Y.GetTests.BasicJS);
     Y.GetTests.add(Y.GetTests.BasicCSS);
     Y.GetTests.add(Y.GetTests.GetMethods);
