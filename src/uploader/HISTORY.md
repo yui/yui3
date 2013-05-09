@@ -4,7 +4,7 @@ Uploader Utility (New) Change History
 3.10.1
 ------
 
-* Filter input passed to ExternalInterface.call().
+* Hardened SWF file by filtering all data passed through ExternalInterface to fix XSS vulnerability.
 
 3.10.0
 ------
