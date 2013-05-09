@@ -992,7 +992,7 @@ Y.Loader.prototype = {
      * @param {Object} [config.submodules] Hash of submodules
      * @param {String} [config.group] The group the module belongs to -- this is set automatically when it is added as part of a group configuration.
      * @param {Array} [config.lang] Array of BCP 47 language tags of languages for which this module has localized resource bundles, e.g., `["en-GB", "zh-Hans-CN"]`
-     * @param {Object} [config.condition] Specifies that the module should be loaded automatically if a condition is met.  This is an object with up to three fields:
+     * @param {Object} [config.condition] Specifies that the module should be loaded automatically if a condition is met. This is an object with up to four fields:
      * @param {String} [config.condition.trigger] The name of a module that can trigger the auto-load
      * @param {Function} [config.condition.test] A function that returns true when the module is to be loaded.
      * @param {String} [config.condition.ua] The UA name of <a href="UA.html">Y.UA</a> object that returns true when the module is to be loaded. e.g., `"ie"`, `"nodejs"`.
