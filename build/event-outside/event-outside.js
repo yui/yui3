@@ -65,7 +65,7 @@ Y.Event.defineOutside = function (event, name) {
     name = name || (event + 'outside');
 
     var config = {
-    
+
         on: function (node, sub, notifier) {
             sub.handle = Y.one('doc').on(event, function(e) {
                 if (this.isOutside(node, e.target)) {
@@ -74,11 +74,11 @@ Y.Event.defineOutside = function (event, name) {
                 }
             }, this);
         },
-        
+
         detach: function (node, sub, notifier) {
             sub.handle.detach();
         },
-        
+
         delegate: function (node, sub, notifier, filter) {
             sub.handle = Y.one('doc').delegate(event, function (e) {
                 if (this.isOutside(node, e.target)) {
@@ -86,7 +86,7 @@ Y.Event.defineOutside = function (event, name) {
                 }
             }, filter, this);
         },
-        
+
         isOutside: function (node, target) {
             return target !== node && !target.ancestor(function (p) {
                     return p === node;

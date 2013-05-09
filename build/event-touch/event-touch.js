@@ -2,7 +2,7 @@ YUI.add('event-touch', function (Y, NAME) {
 
 /**
 Adds touch event facade normalization properties (touches, changedTouches, targetTouches etc.) to the DOM event facade. Adds
-touch events to the DOM events whitelist. 
+touch events to the DOM events whitelist.
 
 @example
     YUI().use('event-touch', function (Y) {
@@ -69,7 +69,7 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
             etCached = touchCache && touchCache[Y.stamp(et, true)];
 
             this.targetTouches[i] = etCached || new Y.DOMEventFacade(et, currentTarget, wrapper);
-            
+
         }
     }
 
@@ -83,7 +83,7 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
 
         For `touchmove`, the touch points that have changed since the last
         event.
-        
+
         For `touchend`, the touch points that have been removed from the touch
         surface.
 
@@ -97,7 +97,7 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
             etCached = touchCache && touchCache[Y.stamp(et, true)];
 
             this.changedTouches[i] = etCached || new Y.DOMEventFacade(et, currentTarget, wrapper);
-            
+
         }
     }
 
@@ -125,7 +125,7 @@ if (Y.Node.DOM_EVENTS) {
         gesturestart:1,
         gesturechange:1,
         gestureend:1,
-        MSPointerDown:1, 
+        MSPointerDown:1,
         MSPointerUp:1,
         MSPointerMove:1
     });
