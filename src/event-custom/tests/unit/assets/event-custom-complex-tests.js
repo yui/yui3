@@ -971,13 +971,17 @@ YUI.add("event-custom-complex-tests", function(Y) {
             a.fire("foo", null);
 
             Y.Assert.areEqual(2, args.length);
+
             Y.Assert.isTrue(args[0] instanceof Y.EventFacade);
+            Y.Assert.isNull(args[1]);
+
             Y.Assert.areEqual(1, args[0].details.length);
             Y.Assert.isNull(args[0].details[0]);
 
             a.fire("foo", null, 10);
 
             Y.Assert.areEqual(3, args.length);
+
             Y.Assert.isTrue(args[0] instanceof Y.EventFacade);
             Y.Assert.isNull(args[1]);
             Y.Assert.areEqual(10, args[2]);
