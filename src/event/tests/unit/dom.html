@@ -9,6 +9,7 @@
             <p id="clicker1" class="clickers"><a id='clicka'>click1</a></p>
             <p id="clicker2" class="clickers">click2</p>
         </div>
+        <a href="#" id="focusme">Used for YInstanceEmitFacade test</a>
     </div>
     <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
     <script type="text/javascript">
@@ -713,6 +714,53 @@
                     });
 
                     test.wait();
+                },
+
+                testYInstanceEmitFacade : function() {
+
+                    var clickFacade,
+                        focusFacade,
+                        fooFacade;
+
+                    Y._yuievt.config.emitFacade = true;
+
+                    // Regular DOM
+                    Y.one("#clicker1").on('click', function(e) {
+                        clickFacade = e;
+                    });
+
+                    // Synthetic
+                    Y.one("document").on('focus', function(e) {
+                        focusFacade = e;
+                    });
+
+                    // Regular Facade
+                    Y.on("foo", function(e) {
+                        fooFacade = e;
+                    });
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    document.getElementById('focusme').focus();
+                    Y.fire("foo", {a:1, b:2});
+
+                    Y.Assert.isTrue(clickFacade instanceof Y.DOMEventFacade);
+                    Y.Assert.areSame(Y.one("#clicker1"), clickFacade.target);
+                    Y.Assert.areSame(Y.one("#clicker1"), clickFacade.currentTarget);
+                    Y.Assert.isTrue(!!clickFacade._event);
+                    Y.Assert.isFalse(clickFacade._event instanceof Y.CustomEvent);
+
+                    Y.Assert.isTrue(focusFacade instanceof Y.DOMEventFacade);
+                    Y.Assert.areSame(Y.one("#focusme"), focusFacade.target);
+                    Y.Assert.areSame(Y.one("document"), focusFacade.currentTarget);
+                    Y.Assert.isTrue(!!clickFacade._event);
+                    Y.Assert.isFalse(focusFacade._event instanceof Y.CustomEvent);
+
+                    Y.Assert.isTrue(fooFacade instanceof Y.EventFacade);
+                    Y.Assert.areSame(Y, fooFacade.target);
+                    Y.Assert.areSame(Y, fooFacade.currentTarget);
+                    Y.Assert.isTrue(fooFacade._event instanceof Y.CustomEvent);
+                    Y.Assert.areEqual(1, fooFacade.a);
+                    Y.Assert.areEqual(2, fooFacade.b);
                 }
 
             }));
