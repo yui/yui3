@@ -5,6 +5,7 @@ Custom Event Infrastructure Change History
 ------
 
 * Fixed issue with facade carrying stale data for the "no subscriber" case.
+* Fixed exception with fire(type, null) with emitFacade:true.
 
 3.10.0
 ------

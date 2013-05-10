@@ -960,6 +960,37 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.Assert.areEqual('onfooafterfooonbarafterbar', result);
         },
 
+        testFireWithFacadeAndNull : function() {
+            var a = new Y.EventTarget({emitFacade:true}),
+                args;
+
+            a.after("foo", function() {
+                args = Y.Array(arguments);
+            });
+
+            a.fire("foo", null);
+
+            Y.Assert.areEqual(2, args.length);
+
+            Y.Assert.isTrue(args[0] instanceof Y.EventFacade);
+            Y.Assert.isNull(args[1]);
+
+            Y.Assert.areEqual(1, args[0].details.length);
+            Y.Assert.isNull(args[0].details[0]);
+
+            a.fire("foo", null, 10);
+
+            Y.Assert.areEqual(3, args.length);
+
+            Y.Assert.isTrue(args[0] instanceof Y.EventFacade);
+            Y.Assert.isNull(args[1]);
+            Y.Assert.areEqual(10, args[2]);
+
+            Y.Assert.areEqual(2, args[0].details.length);
+            Y.Assert.isNull(args[0].details[0]);
+            Y.Assert.areEqual(10, args[0].details[1]);
+        },
+
         testDefaultFnWithoutSubscribers : function() {
             var a = new Y.EventTarget(),
                 count = 0;
