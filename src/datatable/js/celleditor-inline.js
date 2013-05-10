@@ -362,25 +362,20 @@ Editors.inlineAC = Y.Base.create('celleditor', IEd, [],
             Y.log('inlineAC._defRenderFn');
 
             Editors.inlineAC.superclass._defRenderFn.apply(this, arguments);
-            var inputNode = this.get('container'),
-               // Get the users's editorConfig "autocompleteConfig" settings
-               acConfig = this.get('autocompleteConfig') || {};
+            var inputNode = this.get('container');
 
             if(inputNode && Y.Plugin.AutoComplete) {
-               // merge user settings with these required settings ...
-               acConfig = Y.merge({
-                   resultTextLocator:'text',
-                   alwaysShowList: true,
-                   resultHighlighter: 'startsWith',
-                   // resultFilters    : 'startsWith',
-                   render: true,
-                   source: this.get('lookupTable')
-               }, acConfig);
-               // plug in the autocomplete and we're done ...
-               inputNode.plug(Y.Plugin.AutoComplete, acConfig);
-               // add this View class as a static prop on the ac plugin
-               // why? inputNode.ac.editor = editor;
-               inputNode.ac.after('select', function (e) {
+
+                inputNode.plug(Y.Plugin.AutoComplete,
+                    Y.merge({
+                        resultTextLocator:'text',
+                        alwaysShowList: true,
+                        resultHighlighter: 'startsWith',
+                        render: true
+                    }, this.get('autocompleteConfig'))
+                );
+
+                inputNode.ac.after('select', function (e) {
                    this.saveEditor(e.result.raw.value);
                }, this);
             }
