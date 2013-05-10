@@ -179,6 +179,8 @@
         <url>imageloader/tests/unit/imageloader.html</url>
         <url>intl/tests/unit/intl.html</url>
         <url>json/tests/unit/json.html</url>
+        <url>jsonp/tests/unit/jsonp.html</url>
+        <url>jsonp/tests/unit/jsonp-url.html</url>
         <url>loader/tests/unit/index-full.html</url>
         <url>loader/tests/unit/index-loader.html</url>
         <url>loader/tests/unit/index-static.html</url>
