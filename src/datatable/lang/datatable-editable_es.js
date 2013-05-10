@@ -1,0 +1,4 @@
+{
+    save: 'Guardar',
+    cancel: 'Cancelar'
+}

@@ -98,6 +98,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     */
     initializer: function () {
         Y.log('DataTable.BaseCellEditor.initializer');
+
         this._subscr = [];
         this.publish({
             /**
@@ -426,6 +427,13 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         }
    }
 },{
+    /**
+    Single copy of all localized strings to be used across all the editors.
+
+    @property localizedStrings
+    @type Object
+    */
+    localizedStrings:  Y.Intl.get('datatable-editable'),
     ATTRS:{
 
         /**
