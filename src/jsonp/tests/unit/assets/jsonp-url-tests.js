@@ -1,6 +1,6 @@
 YUI.add('jsonp-url-tests', function(Y) {
 
-var suite = new Y.Test.Suite("JSONP: URL's"),
+var suite = new Y.Test.Suite("jsonp-url"),
 
     // For the tests, replace Y.Get.js with an object that calls the
     // appropriate callback based on the url and sets a _getConfig property
