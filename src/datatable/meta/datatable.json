@@ -103,6 +103,7 @@
             },
             "datatable-editable": {
                 "skinnable": "true",
+                "lang": ["en", "es"],
                 "requires": [
                     "datatable-base",
                     "datatype",
