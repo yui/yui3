@@ -164,6 +164,18 @@ suite.add(new Y.Test.Case({
         service.send().send().send();
 
         Y.Assert.areSame(count, 3);
+    },
+
+    "test otherparam={callback}": function () {
+        var url, called;
+
+        Y.jsonp("echo/jsonp?foo={callback}", function (data) {
+            called = true;
+            url = data.url;
+        });
+
+        Y.Assert.isTrue(called);
+        Y.Assert.areSame(-1, url.indexOf('callback'));
     }
 
     // failure for bogus response data (not yet implemented)
