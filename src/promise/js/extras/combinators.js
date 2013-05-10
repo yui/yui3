@@ -24,7 +24,8 @@ Promise.any = function (values) {
 
 /**
 Returns a promise that is resolved or rejected when all values are resolved or
-any is rejected.
+any is rejected. If the array passed is empty, the returned promise will be
+resolved witn `undefined`.
 
 @for Promise
 @method every
@@ -65,7 +66,8 @@ Promise.every = function (values) {
 
 /**
 Returns a promise that is resolved or rejected when one of values is resolved
-or all are rejected.
+or all are rejected. If the array passed is empty, the returned promise will be
+resolved witn `undefined`.
 
 @for Promise
 @method some
