@@ -33,7 +33,7 @@ Y.throttle = function(fn, ms) {
 
     if (ms === -1) {
         return function() {
-            fn.apply(null, arguments);
+            fn.apply(this, arguments);
         };
     }
 
@@ -43,7 +43,7 @@ Y.throttle = function(fn, ms) {
         var now = Y.Lang.now();
         if (now - last > ms) {
             last = now;
-            fn.apply(null, arguments);
+            fn.apply(this, arguments);
         }
     };
 };
