@@ -18,18 +18,26 @@ var KF = function () {};
 
 KF.ATTRS = {
     /**
-    Provides a input filtering capability to restrict input into the editing area
-    checked via the event-valuechange module.
+    Provides an input filtering capability to restrict input into the editing area
+    checked via the `event-valuechange` module.
+
     This attribute is set to either a RegEx or a function that confirms if the entry
     was valid for this editor.
 
     If a function is provided, the single argument is the current input value and if
     it is valid it should return true.
 
+    ##### keyFiltering requires the `datatable-celleditor-keyfiltering` module to be loaded
+
     @example
           /^\d*$/            // for numeric digit-only input
           /^(\d|\-|\.)*$/      // for floating point numeric input
           /^(\d|\/)*$/         // for Date field entry in MM/DD/YYYY format
+
+    The cell editors for dates and numbers already have key filters defined,
+    which are ignored when this module is not loaded.
+    Those default key filters are very simple-minded and might not be applicable
+    for any but the most basic dates, numbers and locales.
 
     @attribute keyFiltering
     @type RegExp | Function
