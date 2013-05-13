@@ -1697,7 +1697,7 @@ var table = new Y.DataTable({
 
     </ul>
     Neither of these modules are included in the `datatable` rollup module,
-    so they <strong>must</strong> be included separately.
+    so they <strong>must</strong> be loaded explicitly.
 </p>
 
 <h4 id="celleditor-config">Cell editor configuration</h4>
@@ -1705,11 +1705,11 @@ var table = new Y.DataTable({
 <p>
     After including either of the cell-editing modules, editing is enabled on each individual
     datatable by setting the `editable` attribute in the datatable configuration.
-    All cells in the table become editable unless explicitly disabled in the column
-    configuration by setting the `editable` configuration attribute to `false`.
+    All cells in the table become editable unless explicitly disabled in a specific column
+    configuration by setting its `editable` configuration attribute to `false`.
 </p>
 <p>
-    Specific editing widgets can be specified by setting the `editor` property
+    The various cell editors can be specified by setting the `editor` property
     for each column to any of the named editors listed above.
     If no editor is specified then the default editor is used
     which is a plain input box either in-line or in a popup.
@@ -1744,16 +1744,117 @@ Further options can be specified in any of the columns as properties in the
 {key: 'date_of_claim', editor: 'inlineDate', editorConfig: {dateformat: '%Y-%m-%d'}}
 ```
 <p>
+Several cell editors use lookup tables that translate values as stored internally
+to texts to be shown to the user.  Since such lookup tables would most likely be
+the same as used by the cell formatter, the same table can be shared.
+Thus, if a `lookupTable` column attribute is provided for the cell formatter,
+the same table will be used by the editor.
+</p>
+```
+{
+    key: 'degreeProgram',
+    formatter: "lookup",
+    lookupTable: [
+        {value: 1, text: "Bachelor of Science"},
+        {value: 2, text: "Master of Science"},
+        {value: 3, text: "PhD"}
+    ],
+    editor: "dropdown"
+}
+```
+<p>
+The formatter allows two formats for the `lookupTable`,
+an object map and an array of value/text sets.
+Only the latter format can be shared by both the formatter and the editor,
+since the editor needs to know the order of the options to be displayed.
+If different lookup tables are needed for the formatter and editor,
+a separate one can be provided in the `editorConfig` attribute.
+</p>
+
+<p>
+For editors using complex components, extra configuration options can be
+provided that are passed on to those components, such as `overlayConfig`,
+`autocompleteConfig` or `calendarConfig`.  For example, the popup cell editors
+don't use the header section.  A title can easily be added:
+</p>
+```
+{
+    key:    "dob",
+    editor: "calendar",
+    editorConfig: {
+         buttons: [{cancel: true}],
+         overlayConfig: {
+            headerContent: "Date of Birth"
+         },
+         calendarConfig: {
+            showNextMonth: true,
+            showPreviousMonth: true
+         }
+    }
+}
+```
+<p>
+Popup cell editors are provided with a standard set of buttons to save or close
+the editor.  They can be overridden by the `buttons` attribute as shown in the
+example above.  The calendar editor has the standard `Save` and `Cancel` buttons
+(actually, the texts are taken from the current locale). In the example above,
+the buttons have been redefined and only the cancel button is left since saving is
+automatic when a date is clicked.
+</p>
+
+<p>
+The `buttons` attribute is an array (since the order of the buttons is important)
+containing properties for each of the buttons:
+</p>
+<ul>
+    <li>`label`: The label shown to the user.</li>
+    <li>`className`: An optional css class name to assign to the button.</li>
+    <li>`save`: A non-null value indicates this is the save button,
+        equivalent to pressing the `Enter` key.
+        It will be highlighted accordingly.
+        If no `label` was explicitly assigned,
+        'Save' or its localized equivalent will be shown</li>
+    <li>`cancel`: A non-null value indicates this is cancel button,
+        equivalent to pressing the `Esc` key.</li>
+        If no `label` was explicitly assigned,
+        'Cancel' or its localized equivalent will be shown</li>
+    <li>`action`: An action to be associated with this button.
+        No `action` is required for `save` or `cancel` buttons.</li>
+</ul>
+<p>
+The `action` property can be a string or a function.
+If a function, it will be called when the button is clicked.  The function will
+receive the button configuration entry as its first argument and an object containing
+information about the cell being edited.
+If `action` is a string, an event will be fired using that string as its name.  The event
+can be listened to by subscribing from the datatable using
+<code>"celleditor:<i>&lt;action string&gt;</i>"</code> as the event type
+and it will receive the button configuration and the cell info object.
+</p>
+<p>
+The cell information object contains:
+<ul>
+    <li>value {Any} The value from the input element or widget.
+        Usually a string, it might be other types for complex widgets such as Calendar.</li>
+    <li>td {Node} Reference to the table cell.</li>
+    <li>record {Model} Reference to the model containing the underlying data.</li>
+    <li>colKey {String} Key of the column for the cell to be edited.</li>
+    <li>initialValue {Any} The underlying value of the cell to be edited.</li>
+</ul>
+
+</p>
+<p>
 See the <a href="{{apiDocs}}/classes/DataTable.Editors.html">API docs</a> of the
-cell editors themselves for the applicable options.
+cell editors themselves for other applicable options.
 </p>
 
 <h4 id="celleditor-show-save">Showing and Saving</h4>
 
 <p>The cell editors read the values from the underlying model, not from the displayed
 values. All cell editors have a `formatter` attribute which, if not null, should be a function
-to format the raw value into the one the user edits.  This is provided because
-the value as displayed by the regular formatter might be decorated in ways that
+to format the raw value into the one the user edits.  A separate formatter
+from the regular formatter used for displaying the cell is provided because
+the value as displayed by the cell formatter might be decorated in ways that
 might make editing harder.
 </p>
 
