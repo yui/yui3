@@ -4,7 +4,7 @@ YUI.add('throttle-tests', function(Y) {
 
     var suite = new Y.Test.Suite("Throttle");
 
-    var testCase = new Y.Test.Case({
+    suite.add(new Y.Test.Case({
         name: "Throttle Tests",
         test_throttle: function() {
             var counter = 0,
@@ -86,33 +86,44 @@ YUI.add('throttle-tests', function(Y) {
             Assert.areEqual(counter, 0, 'Y.Throttle DID NOT throttle the function call');
         },
         'test `this` in throttled function': function () {
-            var test = this;
-
             var obj = {
-                fn1: Y.throttle(function () {
+                fn: Y.throttle(function () {
                     Assert.areSame(obj, this, 'wrong value for `this` in function with canceled throttle');
-                }, -1),
-                fn2: Y.throttle(function () {
-                    var that = this;
+                }, -1)
+            };
 
-                    test.resume(function () {
-                        Assert.areSame(obj, that, 'wrong value for `this` in throttled function');
-                    });
+            obj.fn();
+        }
+
+    }));
+    
+    suite.add(new Y.Test.Case({
+        name: 'Throttle tests with mock Lang.now()',
+
+        setUp: function () {
+            var time = Y.Lang.now();
+
+            this._now = Y.Lang.now;
+
+            Y.Lang.now = function () {
+                return time += 50;
+            };
+        },
+
+        tearDown: function () {
+            Y.Lang.now = this._now;
+        },
+
+        '`this` is not modified': function () {
+            var obj = {
+                fn: Y.throttle(function () {
+                    Assert.areSame(obj, this, 'wrong value for `this` in function with canceled throttle');
                 }, 10)
             };
 
-            obj.fn1();
-
-            setTimeout(function () {
-                obj.fn2();
-            }, 15);
-
-            test.wait();
+            obj.fn();
         }
-
-    });
-    
-    suite.add(testCase);
+    }));
 
     Y.Test.Runner.add(suite);
 });
