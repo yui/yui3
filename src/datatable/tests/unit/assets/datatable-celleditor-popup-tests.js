@@ -200,10 +200,10 @@ YUI.add('datatable-celleditor-popup-tests', function(Y) {
             areSame( 'text', dt.get('defaultEditor'), "defaultEditor not text" );
 
             var ed = dt._commonEditors[dt.get('defaultEditor')];
-            areSame( 'text', ed.get('name'), "common editor 0 should be text");
+            isTrue(ed instanceof Y.DataTable.Editors.text, "common editor 0 should be text");
 
             var ces = dt.getCellEditors();
-            areSame( 7, ces.length,'there are not 7 columns editable');
+            areSame( 7, Y.Object.size(ces),'there are not 7 columns editable');
 
             isNull( dt.getCellEditor('sid'));
         },
@@ -272,7 +272,6 @@ YUI.add('datatable-celleditor-popup-tests', function(Y) {
             inputKey(inp,"hi",13);
             isFalse(oe.get('visible'),'col 1 not open on dblclick');
             areSame('hi',oe.get('value'));
-            areSame(1,oe.get('lastValue'));
 
         },
 
@@ -310,12 +309,12 @@ YUI.add('datatable-celleditor-popup-tests', function(Y) {
 
             inputKey(inp,"hi",9);
             isTrue(oe.get('visible'),'col 1 not open on dblclick');
-            areSame(oe.get('cell').td,td2);
+            areSame(oe._cellInfo.td,td2);
             areSame("1",td1.getHTML(),'old cell should not have saved')
 
             inputKey(inp,"hi",9);
             isTrue(oe.get('visible'),'col 1 not open on dblclick');
-            areSame(oe.get('cell').td,tds.item(3));
+            areSame(oe._cellInfo.td,tds.item(3));
 
         }
 

@@ -537,22 +537,23 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
         },
         'row index 2, column 7 (sdate) - inlineDate valid': function() {
             var dt = this.dt,
-                    tr2 = dt.getRow(2),
-                    td6 = tr2.all('td').item(7),
-                    oe, inp;
+                    oe, inp,
+                    date = new Date(2013,5,13);
 
             // open the editor
-            td6.simulate('click');
+            dt.getCell([2, 7]).simulate('click');
             oe = dt._openEditor;
             inp = oe.get('container');
             Assert.isTrue(oe.get('active'), 'cell editor col 7 should be active');
 
-            // prepFn should format as 06/13/09
-            Assert.areSame('06/13/09', inp.get('value'), 'prepfn did not work');
+            Assert.areSame('06/13/09', inp.get('value'), 'formatter did not work');
 
-            inputKey(inp, '2013-01-12', 13);
+            inputKey(inp, Y.DataType.Date.format(date, {format: '%x'}), 13);
             Assert.isFalse(oe.get('active'), 'cell editor col 7 should be closed');
             Assert.isTrue(Y.Lang.isDate(oe.get('value')));
+            Assert.isTrue(Y.Date.areEqual(date , oe.get('value')), 'Value should be in table cell');
+            Assert.isTrue(Y.Date.areEqual(date, dt.getRecord(2).get('sdate')), 'Value should have been stored');
+
         },
         'row index 2, column 7 (sdate) - inlineDate valid via saveEditor': function() {
             var dt = this.dt,
@@ -567,7 +568,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             Assert.isTrue(oe.get('active'), 'cell editor col 7 should be active');
 
             // prepFn should format as 06/13/09
-            Assert.areSame('06/13/09', inp.get('value'), 'prepfn did not work');
+            Assert.areSame('06/13/09', inp.get('value'), 'formatter did not work');
 
             //inputKey(inp,'2013-01-12',13);
             oe.saveEditor('09/11/2011');
@@ -587,7 +588,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             Assert.isTrue(oe.get('active'), 'cell editor col 7 should be active');
 
             // prepFn should format as 06/13/09
-            Assert.areSame('06/13/09', inp.get('value'), 'prepfn did not work');
+            Assert.areSame('06/13/09', inp.get('value'), 'formatter did not work');
 
             inputKey(inp, 'abc2013-01-12', 13);
             Assert.isTrue(oe.get('active'), 'cell editor col 7 should remain open until fixed');

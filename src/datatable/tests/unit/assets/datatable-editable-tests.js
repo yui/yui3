@@ -60,7 +60,7 @@ YUI.add('datatable-editable-tests', function(Y) {
     var checkPosition = function(dt, row, col, skip ) {
 
         var td = dt.getCell([row, col]),
-            ed = Y.one('.yui3-datatable-inline-input'),
+            ed = Y.one('.yui3-datatable-celleditor-input'),
             regEd = ed.get('region'),
             regTd = td.get('region'),
             nextCell;
@@ -80,7 +80,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         td.simulate('click');
 
         isTrue(dt._openEditor.get('active'),'cell editor col 1 should be active: [' + row + ':' + col + ']')
-        areSame(1, Y.all('.yui3-datatable-inline-input').size(),'There should be one editor: [' + row + ':' + col + ']');
+        areSame(1, Y.all('.yui3-datatable-celleditor-input').size(),'There should be one editor: [' + row + ':' + col + ']');
         checkPosition(dt, row, col);
     };
 
@@ -193,7 +193,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(0, Y.Object.size(dt._columnEditors), "_columnEditors not {}" );
             isNull( dt._openEditor, "_openEditor not null" );
             isNull( dt._editorTd, "_editorTd not null" );
-            areSame(0, Y.all('.yui3-datatable-inline-input').size(),'There should be no editors left behind');
+            areSame(0, Y.all('.yui3-datatable-celleditor-input').size(),'There should be no editors left behind');
 
         }
 
@@ -320,7 +320,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         'check navigation': function () {
             var dt = this.dt;
             openEditorAt(dt, 0, 1);
-            var ed = Y.one('.yui3-datatable-inline-input')
+            var ed = Y.one('.yui3-datatable-celleditor-input')
 
 
 
@@ -352,7 +352,7 @@ YUI.add('datatable-editable-tests', function(Y) {
                 td =  dt.getCell([0,1]),
                 evFac = {}, fail = false;
             td.simulate('click');
-            var ed = Y.one('.yui3-datatable-inline-input');
+            var ed = Y.one('.yui3-datatable-celleditor-input');
             dt.after('celleditor:save', function (ev) {
                 evFac = ev;
             });
@@ -383,7 +383,7 @@ YUI.add('datatable-editable-tests', function(Y) {
                 td =  dt.getCell([0,1]),
                 evFac = {}, fail = false;
             td.simulate('click');
-            var ed = Y.one('.yui3-datatable-inline-input');
+            var ed = Y.one('.yui3-datatable-celleditor-input');
             dt.on('celleditor:save', function (ev) {
                 evFac = ev;
                 ev.halt();
@@ -417,7 +417,7 @@ YUI.add('datatable-editable-tests', function(Y) {
                 td =  dt.getCell([0,1]),
                 evFac = {}, fail = false;
             td.simulate('click');
-            var ed = Y.one('.yui3-datatable-inline-input');
+            var ed = Y.one('.yui3-datatable-celleditor-input');
             dt.after('celleditor:save', function (ev) {
                 fail = true;
             });
@@ -452,7 +452,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(0, Y.Object.size(dt._columnEditors), "_columnEditors not {}" );
             isNull( dt._openEditor, "_openEditor not null" );
             isNull( dt._editorTd, "_editorTd not null" );
-            areSame(0, Y.all('.yui3-datatable-inline-input').size(),'There should be no editors left behind');
+            areSame(0, Y.all('.yui3-datatable-celleditor-input').size(),'There should be no editors left behind');
 
         }
 
