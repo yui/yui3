@@ -1,6 +1,6 @@
 /**
-Creates an accepted promise for a certain value. If the value is a promise, the
-new promise will be accepted or rejected based on the provided promise
+Creates a fulfilled promise for a certain value. If the value is a promise, the
+new promise will be fulfilled or rejected based on the provided promise
 
 @for Promise
 @method resolve

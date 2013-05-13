@@ -70,7 +70,7 @@ Y.mix(Promise.prototype, {
                 resolves successfully
     @param {Function} [errback] function to execute if the promise
                 resolves unsuccessfully
-    @return {Promise} A promise wrapping the resolution of either "accept" or
+    @return {Promise} A promise wrapping the resolution of either "fulfill" or
                 "reject" callback
     **/
     then: function (callback, errback) {

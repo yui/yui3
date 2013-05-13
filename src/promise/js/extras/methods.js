@@ -37,7 +37,7 @@ Y.mix(Promise.Resolver.prototype, {
         );
         
         if (this._status === 'fulfilled') {
-            this.accept(this._result);
+            this.fulfill(this._result);
         }
         if (this._status === 'rejected') {
             this.reject(this._result);

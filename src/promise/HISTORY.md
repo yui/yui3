@@ -9,8 +9,7 @@ Promise Change History
 * Added combinators, factories and extra methods
 * [!] Deprecated Y.batch() in favor of Y.Promise.every()
 * The first function received as parameter of the Promise init function is now
-  a reference to resolve() instead of accept()
-* Changing the use of fulfill() to accept() to follow the naming of DOMFuture
+  a reference to resolve() instead of fulfill()
 * Changed the value of |this| inside callbacks to undefined to match the
 Promises A+ spec
 
