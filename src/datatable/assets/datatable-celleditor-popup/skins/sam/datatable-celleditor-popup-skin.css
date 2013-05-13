@@ -1,8 +1,9 @@
-.yui3-skin-sam .yui3-datatable .yui3-datatable-col-editing {
+.yui3-skin-sam .yui3-datatable .yui3-datatable-celleditor-editing {
     background-color: #f0cf53;
 }
 
-.yui3-datatable-editor-cell {
+/* Probably no longer in use
+.yui3-skin-sam .yui3-datatable-editor-cell {
     background-color: #fffed4;
     border: 1px solid #8b8b8b;
     -webkit-border-radius: 2px;
@@ -12,16 +13,13 @@
     z-index:99;
     box-shadow: 1px 1px 1px rgba(128,128,128, 0.3);
 }
+*/
 
-.yui3-skin-sam .yui3-calendar-content {
+.yui3-skin-sam  .yui3-datatable-cell-editors .yui3-calendar-content {
     font-size: 11px;
 }
 
-.yui3-widget-ft {
-   text-align: right;
-}
-
-.yui3-datatable-col-editors .yui3-overlay-content {
+.yui3-skin-sam .yui3-datatable-cell-editors .yui3-overlay-content {
    padding: 4px;
    background-color: #e6e6e6;
    border: 1px solid #a0a0a0;
@@ -31,19 +29,21 @@
    z-index: 99;
 }
 
-.yui3-datatable-col-editors .yui3-overlay-content .yui3-button {
-    height:     22px;
+.yui3-skin-sam .yui3-datatable-cell-editors .yui3-overlay-content .yui3-button {
     font-size:  11px;
-    width:      auto;
-    margin-top: 5px;
-    margin-left: 5px;
 }
 
-.yui3-datatable-col-editors .yui3-overlay-content .yui3-datatable-editor-overlay-button-save {
-    background-color:#1B7AE0;
-    color: #ebebeb;
+.yui3-skin-sam .yui3-datatable-cell-editors .yui3-datatable-editor-checkbox {
+    height: 1em;
 }
 
-.yui3-datatable-editor-checkbox {
-    height: 13px;
+.yui3-skin-sam .yui3-datatable-cell-editors .yui3-widget-bd {
+    text-align: center;
+}
+.yui3-skin-sam .yui3-datatable-cell-editors .yui3-widget-ft {
+    text-align: center;
+    padding-top: 3px;
+}
+.yui3-skin-sam .yui3-datatable-cell-editors .yui3-datatable-celleditor-radio .yui3-widget-bd {
+    text-align: left;
 }
