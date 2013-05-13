@@ -107,7 +107,8 @@
                 "requires": [
                     "datatable-base",
                     "datatype",
-                    "node-screen"
+                    "node-screen",
+                    "event-resize"
                 ]
             },
             "datatable-celleditor-inline": {

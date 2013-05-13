@@ -460,7 +460,8 @@ Y.mix( DtEditable.prototype, {
 
             //this._editorsContainer.on('click',      this._onClick, this),
             this._editorsContainer.on('keydown',    this._onKeyDown, this),
-            this.after('scroll', this._onScrollUpdateCellEditor)
+            this.after('scroll', this._onScrollUpdateCellEditor),
+            Y.on("windowresize", Y.bind(this._onScrollUpdateCellEditor, this))
         ];
         this._uiSetEditorOpenAction(this.get(EDITOR_OPEN_ACTION));
     },
@@ -470,7 +471,7 @@ Y.mix( DtEditable.prototype, {
 
     @method _unbindEditable
     @private
-     */
+    */
     _unbindEditable: function () {
         Y.log('DataTable.Editable._unbindEditable', 'info', 'datatable-editable');
 
