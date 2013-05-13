@@ -1,6 +1,6 @@
 /**
  * Adds bubbling and delegation support to DOM events focus and blur.
- * 
+ *
  * @module event
  * @submodule event-focus
  */
@@ -66,7 +66,7 @@ function define(type, proxy, directEvent) {
                 yuid          = Y.stamp(currentTarget._node),
                 defer         = (useActivate || target !== currentTarget),
                 directSub;
-                
+
             notifier.currentTarget = (delegate) ? target : currentTarget;
             notifier.container     = (delegate) ? currentTarget : null;
 
@@ -193,7 +193,7 @@ function define(type, proxy, directEvent) {
                             break;
                         }
                     }
-                    
+
                     delete notifiers[yuid];
                     count--;
                 }
