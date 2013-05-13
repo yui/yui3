@@ -276,7 +276,115 @@ suite.add(new Y.Test.Case({
         // contains a collection of HTMLElements.
         // Y.Assert.areEqual(3, Y.Array.test(Y.all('#btnRun')), 'nodelists should be specifically identified as a special collection'); // NodeList
         Y.Assert.areEqual(0, Y.Array.test(Y.all('span')), 'nodelists are not currently considered arraylike'); // NodeList
+    },
+
+    'test map()': function () {
+        var data = this.data;
+        var results = Y.Array.map(data, function (item, i, array) {
+            Assert.isNumber(item);
+            Assert.isNumber(i);
+            Assert.areSame(data, array);
+            return item * 2;
+        });
+        Assert.isArray(results);
+        ArrayAssert.itemsAreEqual([2, 4, 6, 8, 10], results);
+    },
+
+    'test map() context': function() {
+        var data = this.data;
+        var results = Y.Array.map(data, function(item) {
+            Assert.areEqual(5, this.x);
+            Assert.areNotEqual(6, this.x);
+        }, { x: 5 });
+    },
+
+    'map() should handle sparse arrays correctly': function () {
+        var calls = 0,
+            foo   = Array(5);
+
+        foo.push('foo');
+
+        Y.Array.map(foo, function () {
+            calls += 1;
+        });
+
+        Assert.areSame(1, calls);
+    },
+
+    'map() should work on array-like objects': function () {
+        var calls = 0;
+
+        (function () {
+            var results = Y.Array.map(arguments, function () {
+                    calls += 1;
+                    return 'z';
+                });
+
+            Y.ArrayAssert.itemsAreSame(['z', 'z', 'z'], results);
+        }('a', 'b', 'c'));
+
+        Assert.areSame(3, calls);
+    },
+
+    'test filter()': function () {
+        var data   = this.data,
+            obj    = {},
+            result = Y.Array.filter(data, function (item, i, array) {
+                Assert.isNumber(item);
+                Assert.isNumber(i);
+                Assert.areSame(data, array);
+                if (Y.config.win) {
+                    Assert.areSame(this, Y.config.win);
+                }
+
+                return item % 2 == 0;
+            });
+
+        Assert.isArray(result);
+        ArrayAssert.itemsAreEqual([2, 4], result);
+
+        Y.Array.filter(data, function () {
+            Assert.areSame(obj, this);
+        }, obj);
+    },
+
+    'test filter() no match': function () {
+        var data = this.data;
+        var result = Y.Array.filter(data, function (item) {
+            return item % 7 == 0;
+        });
+        Assert.isArray(result);
+        ArrayAssert.isEmpty(result);
+    },
+
+    'filter() should handle sparse arrays correctly': function () {
+        var calls = 0,
+            foo   = Array(5);
+
+        foo.push('foo');
+
+        Y.Array.filter(foo, function () {
+            calls += 1;
+        });
+
+        Assert.areSame(1, calls);
+    },
+
+    'filter() should work on array-like objects': function () {
+        var calls = 0;
+
+        (function () {
+            var results = Y.Array.filter(arguments, function (value) {
+                    calls += 1;
+                    return value === 'a';
+                });
+
+            Y.ArrayAssert.itemsAreSame(['a'], results);
+        }('a', 'b', 'c'));
+
+        Assert.areSame(3, calls);
     }
+
 }));
 
 Y.Test.Runner.add(suite);

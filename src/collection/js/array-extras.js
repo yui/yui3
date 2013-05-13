@@ -121,6 +121,7 @@ containing the items for which the supplied function returned a truthy value.
 @return {Array} Array of items for which the supplied function returned a
   truthy value (empty if it never returned a truthy value).
 @static
+@deprecated
 */
 A.filter = L._isNative(ArrayProto.filter) ?
     function(a, f, o) {
@@ -208,6 +209,7 @@ containing all the values returned by the supplied function.
 @return {Array} A new array containing the return value of the supplied function
   for each item in the original array.
 @static
+@deprecated
 */
 A.map = L._isNative(ArrayProto.map) ?
     function(a, f, o) {

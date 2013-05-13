@@ -251,6 +251,76 @@ YArray.some = Lang._isNative(Native.some) ? function (array, fn, thisObj) {
 };
 
 /**
+Executes the supplied function on each item in the array. Returns a new array
+containing the items for which the supplied function returned a truthy value.
+
+@method filter
+@param {Array} a Array to filter.
+@param {Function} f Function to execute on each item.
+@param {Object} [o] Optional context object.
+@return {Array} Array of items for which the supplied function returned a
+  truthy value (empty if it never returned a truthy value).
+@static
+*/
+YArray.filter = Lang._isNative(Native.filter) ? function(a, f, o) {
+    return Native.filter.call(a, f, o);
+} :
+function(a, f, o) {
+    var i       = 0,
+        len     = a.length,
+        results = [],
+        item;
+
+    for (; i < len; ++i) {
+        if (i in a) {
+            item = a[i];
+
+            if (f.call(o, item, i, a)) {
+                results.push(item);
+            }
+        }
+    }
+
+    return results;
+};
+
+/**
+Executes the supplied function on each item in the array and returns a new array
+containing all the values returned by the supplied function.
+
+@example
+
+    // Convert an array of numbers into an array of strings.
+    Y.Array.map([1, 2, 3, 4], function (item) {
+      return '' + item;
+    });
+    // => ['1', '2', '3', '4']
+
+@method map
+@param {Array} a the array to iterate.
+@param {Function} f the function to execute on each item.
+@param {object} [o] Optional context object.
+@return {Array} A new array containing the return value of the supplied function
+  for each item in the original array.
+@static
+*/
+YArray.map = Lang._isNative(Native.map) ? function(a, f, o) {
+    return Native.map.call(a, f, o);
+} : function(a, f, o) {
+    var i       = 0,
+        len     = a.length,
+        results = Native.concat.call(a);
+
+    for (; i < len; ++i) {
+        if (i in a) {
+            results[i] = f.call(o, a[i], i, a);
+        }
+    }
+
+    return results;
+};
+
+/**
 Evaluates _obj_ to determine if it's an array, an array-like collection, or
 something else. This is useful when working with the function `arguments`
 collection and `HTMLElement` collections.
