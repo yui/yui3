@@ -50,13 +50,13 @@ Y.mix(Resolver.prototype, {
     /**
     Resolves the promise, signaling successful completion of the
     represented operation. All "onFulfilled" subscriptions are executed and passed
-    the value provided to this method. After calling `accept()`, `reject()` is
+    the value provided to this method. After calling `fulfill()`, `reject()` is
     disabled.
 
-    @method accept
+    @method fulfill
     @param {Any} value Value to pass along to the "onFulfilled" subscribers
     **/
-    accept: function (value) {
+    fulfill: function (value) {
         if (this._status === 'pending') {
             this._result = value;
         }
@@ -101,7 +101,7 @@ Y.mix(Resolver.prototype, {
                 self.reject(e);
             });
         } else {
-            this.accept(value);
+            this.fulfill(value);
         }
     },
 
@@ -169,7 +169,7 @@ Y.mix(Resolver.prototype, {
             // If a promise is already fulfilled or rejected, notify the newly added
             // callbacks by calling fulfill() or reject()
             if (status === 'fulfilled') {
-                self.accept(result);
+                self.fulfill(result);
             } else if (status === 'rejected') {
                 self.reject(result);
             }
