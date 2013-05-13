@@ -1,25 +1,32 @@
 /**
  Provides cell editors contained in an overlay that pops on top of the cell to be edited.
+
  @module datatable
  @submodule datatable-celleditor-popup
 */
 /**
  Base implementation for all popup editors.
- Includes an editor with HTML inserted into an Overlay widget directly over the TD cell.
- Positioning, event management, creation/destruction and attribute changes are managed by this class.
+ It creates an `Overlay` instance containing the editing element,
+ allowing for more complex types of editors that would not fit inline.
 
  @class DataTable.BaseCellPopupEditor
  @extends DataTable.BaseCellEditor
- @author Todd Smith
- @since 3.8.0
  **/
 
-var Editors = {},
-    PEd =  Y.Base.create('celleditor', Y.DataTable.BaseCellEditor, [], {
+var arrMap = Y.Array.map,
+    Lang = Y.Lang,
+    substitute = Lang.sub,
+    YDate = Y.DataType.Date,
+    YNumber = Y.DataType.Number,
+    Plugins = Y.Plugin,
+    baseCreate = Y.Base.create,
+
+    Editors = {},
+    PEd =  baseCreate('celleditor', Y.DataTable.BaseCellEditor, [], {
 
     /**
     Defines the HTML content "template" for BUTTON elements that are added to the Overlay
-    via the overlayButtons attribute.
+    via the [buttons](#attr_buttons) attribute.
 
     @property btnTemplate
     @type String
@@ -41,32 +48,24 @@ var Editors = {},
 
 
     /**
-    Creates this View's container, including instantiating the Overlay widget within
+    Creates the Overlay widget within
     the container, incorporating user-supplied overlay configs, creating buttons and
-    creating the internal HTML content within the Overlay (using a Template-based
-    method)
+    creating the internal HTML content within the Overlay from the [template](#attr_template)
+    attribute.
 
     @method _defRenderFn
-    @return {Y.Overlay} Overlay instance for this View
-    @private
+    @protected
     */
     _defRenderFn: function () {
-       var overlay;
+        Y.log('BaseCellPopupEditor._defRenderFn','info','celleditor-popup');
 
-        //
-        //  Create containing Overlay
-        //
-        overlay = this._createOverlay();
+       var overlay = this._createOverlay();
 
-        //
-        //  Add buttons in the Overlay footer section
-        //  (we aren't using overlay, so have to add these manually ...)
-        //
         if( this.get('buttons')) {
             this._createOverlayButtons(overlay);
         }
 
-        overlay.set('bodyContent', Y.Lang.sub(this.get('template'), {classInput: this._classInput}));
+        overlay.set('bodyContent', substitute(this.get('template'), {classInput: this._classInput}));
 
         overlay.render(this.get('container'));
 
@@ -76,13 +75,13 @@ var Editors = {},
 
 
     /**
-    Detaches the listeners that were set on this view, any widgets that were created
-    and on the View's Overlay instance.
+    Detaches the event listeners and destroys the overlay.
 
     @method _unbindUI
     @private
     */
     _unbindUI: function () {
+        Y.log('BaseCellPopupEditor._unbindUI','info','celleditor-popup');
 
         PEd.superclass._unbindUI.apply(this, arguments);
 
@@ -95,17 +94,16 @@ var Editors = {},
     },
 
 
-
-//======================   PUBLIC METHODS   ===========================
-
     /**
-    The default action for the `show` event which should make the editor visible.
+    The default action for the [show](#event_show) event which should make the editor visible.
 
 
     @method _defShowFn
     @protected
    */
     _defShowFn: function () {
+        Y.log('BaseCellPopupEditor._defShowFn','info','celleditor-popup');
+
         this._overlay.show();
 
         // clear up browser "selected" stuff
@@ -115,18 +113,17 @@ var Editors = {},
 
     },
 
-
-
-//======================   PRIVATE METHODS   ===========================
-
     /**
-    Method that creates the Editor's Overlay instance and populates the base content.
+    Method that creates the Editor's Overlay instance and attaches the
+    drag plugin, if available.
 
     @method _createOverlay
-    @return {Y.Overlay}
+    @return {Overlay}
     @private
     */
     _createOverlay: function () {
+        Y.log('BaseCellPopupEditor._createOverlay','info','celleditor-popup');
+
         var ocfg  = this.get('overlayConfig'),
             overlay;
 
@@ -139,8 +136,8 @@ var Editors = {},
 
         overlay = new Y.Overlay(ocfg);
 
-        if(Y.Plugin.Drag) {
-            overlay.plug(Y.Plugin.Drag);
+        if(Plugins.Drag) {
+            overlay.plug(Plugins.Drag);
         }
 
         return overlay;
@@ -148,29 +145,32 @@ var Editors = {},
 
 
     /**
-    Creates a footer section within the Overlay and adds the buttons entered
+    Adds to the footer of the overlay the buttons entered
     as the [buttons](#attr_buttons) config property of `editorConfig`
     column definition.
-    Sets the listeners for the actions to be dispatched when clicked.
+    Sets the click listener on them.
 
     @method _createOverlayButtons
     @param {Widget} overlay
     @private
     */
     _createOverlayButtons: function (overlay) {
-        var buttons = Y.Array.map(this.get('buttons'), function (btn) {
+        Y.log('BaseCellPopupEditor._createOverlayButtons','info','celleditor-popup');
 
-                return Y.Lang.sub(this.btnTemplate,{
+        var strings = Y.DataTable.BaseCellEditor.localizedStrings,
+            buttons = arrMap(this.get('buttons'), function (btn) {
+
+                return substitute(this.btnTemplate,{
                     classButton: (btn.className || '')  + (btn.save ? ' yui3-button-primary' : ''),
                     label:       btn.label ||
-                                (btn.save ? Y.DataTable.BaseCellEditor.localizedStrings.save :
-                                (btn.cancel ? Y.DataTable.BaseCellEditor.localizedStrings.cancel : 'unknown label'))
+                                (btn.save ? strings.save :
+                                (btn.cancel ? strings.cancel : 'unknown label'))
                 });
 
             }, this);
         if (buttons.length) {
             overlay.set('footerContent', buttons.join('\n'));
-            this._subscr.push(this.get('container').delegate('click', this._afterButtonClick, 'button.yui3-button', this));
+            this._subscr.push(overlay.getStdModNode('footer').delegate('click', this._afterButtonClick, 'button.yui3-button', this));
         }
 
     },
@@ -180,9 +180,11 @@ var Editors = {},
     @method _afterButtonClick
     @param ev {EventFacade} Event facade for the click event
     @private
-     */
+    */
 
     _afterButtonClick: function (ev) {
+        Y.log('BaseCellPopupEditor._afterButtonClick','info','celleditor-popup');
+
         var btnCfg = null,
             action;
 
@@ -199,7 +201,7 @@ var Editors = {},
                 this.cancelEditor();
             }
             action = btnCfg.action;
-            switch (Y.Lang.type(action)) {
+            switch (Lang.type(action)) {
                 case 'string':
                     this.fire(action, btnCfg, this._cellInfo);
                     break;
@@ -213,10 +215,9 @@ var Editors = {},
 
     /**
     Moves and resizes the editor container to fit on top of the cell being edited.
-    It aligns the top-left corner of the pop up window to the cell and makes
-    the input element the same size as the cell.  The frame of the pop up window
-    as well as any [buttons](#attr_buttons) added will make the overall popup window
-    cover neighboring cells.
+    It aligns the top-left corner of the pop up window to the cell.
+    Since the input elements available for the popup editors are more varied, the
+    resizing function is broken apart to the [_resize](#method__resize) method.
 
 
     @method _attach
@@ -224,6 +225,8 @@ var Editors = {},
     @protected
     */
     _attach: function (td) {
+        Y.log('BaseCellPopupEditor._attach','info','celleditor-popup');
+
          if (this.get('visible')) {
             var region = td.get('region');
 
@@ -231,7 +234,19 @@ var Editors = {},
             this._resize(region.width, region.height);
          }
     },
+
+    /**
+    Resizes the editor based on the size of the cell being edited.
+
+    Must be overriden by the individual editors
+
+    @method _resize
+    @param width {Integer}  Width of the cell
+    @param height {Integer}  Height of the cell
+    @protected
+     */
     _resize: function (/* width, height */) {
+        Y.log('BaseCellPopupEditor._resize should have been overriden','warn','celleditor-popup');
 
     },
 
@@ -243,6 +258,8 @@ var Editors = {},
     @private
     */
     _clearDOMSelection: function () {
+        Y.log('BaseCellPopupEditor._clearDOMSelection','info','celleditor-popup');
+
         var sel = (Y.config.win.getSelection) ? Y.config.win.getSelection()
             : (Y.config.doc.selection) ? Y.config.doc.selection : null;
 
@@ -256,7 +273,7 @@ var Editors = {},
     }
 
 },{
-    ATTRS:{
+    ATTRS: {
 
         /**
         Defines the template for the input element in the body of the popup window.
@@ -267,12 +284,25 @@ var Editors = {},
         */
         template:{
             value: '-- none --',
-            validator:  Y.Lang.isString
+            validator:  Lang.isString
         },
 
         /**
         Additional config parameters for the Overlay to be used in constructing the Editor.
         These configs are merged with the defaults required by the Editor.
+
+        The following would add a text to the header of the popup editor,
+        which is otherwise unused by this module.
+
+            {
+                key: 'name',
+                editor: 'text',
+                editorConfig: {
+                    overlayConfig: {
+                        headerContent: 'Enter name of applicant'
+                    }
+                }
+            }
 
         @attribute overlayConfig
         @type Object
@@ -280,7 +310,7 @@ var Editors = {},
         */
         overlayConfig:{
             value:      {},
-            validator:  Y.Lang.isObject
+            validator:  Lang.isObject
         },
 
         /**
@@ -343,36 +373,36 @@ Produces a basic textbox type popup cell editor.
 ##### Basic Usage
 
     // Column definition
-    { key:'firstName', editor:"text"}
+    { key: 'firstName', editor: "text"}
 
-    // Column definition ... disabling inputKeys navigation and setting offsetXY
-    { key:'firstName',
-      editor:"text", editorConfig:{ inputKeys:false, offsetXY: [5,7] }
+    // Column definition ... disabling the Save and Cancel buttons
+    { key: 'firstName',
+        editor: "text", editorConfig: { buttons: null }
     }
+
+For a complete list of configuration attributes, see the
+[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
 
 @property text
 @for DataTable.Editors
 @type DataTable.BaseCellEditor
-@since 3.8.0
 @public
 */
 // There is an open var declarationcoming from above.
-PlainText = Y.Base.create('celleditor', PEd, [],
+PlainText = baseCreate('celleditor', PEd, [],
     {
         _inputNode: null,
+
         _defRenderFn: function () {
+            Y.log('Editors.text._defRenderFn','info','celleditor-popup');
+
             PlainText.superclass._defRenderFn.apply(this, arguments);
             this._inputNode = this._overlay.get('contentBox').one('.' + this._classInput);
         },
-        /**
-        The default action for the `show` event which should make the editor visible.
 
-
-        @method _defShowFn
-        @param e {EventFacade}
-        @protected
-        */
         _defShowFn: function (e) {
+            Y.log('Editors.text._defShowFn','info','celleditor-popup');
+
             PlainText.superclass._defShowFn.apply(this, arguments);
 
             var input = this._inputNode;
@@ -380,7 +410,10 @@ PlainText = Y.Base.create('celleditor', PEd, [],
             input.set('value', e.formattedValue);
             input.select();
         },
+
         _resize: function (width, height) {
+            Y.log('Editors.text._resize [' + width + ':' + height + ']','info','celleditor-popup');
+
             this._inputNode.setAttrs({
                 offsetWidth: width,
                 offsetHeight: height
@@ -388,15 +421,9 @@ PlainText = Y.Base.create('celleditor', PEd, [],
 
         },
 
-        /**
-        Returns the raw value as entered into the editor.
-
-        @method _getValue
-        @return value {mixed} Value as entered in the editor
-        @protected
-         */
         _getValue: function () {
-            Y.log('DataTable.BaseCellInlineEditor._getValue');
+            Y.log('Editors.text._getValue','info','celleditor-popup');
+
             return this._inputNode.get('value');
         }
 
@@ -416,7 +443,10 @@ PlainText = Y.Base.create('celleditor', PEd, [],
         }
     }
 );
+
 Editors.text = PlainText;
+
+
 /**
 Produces a "textarea"  popup  cell editor.
 
@@ -425,24 +455,28 @@ Produces a "textarea"  popup  cell editor.
     // Column definition
     { key:'experience', editor:"textarea"}
 
-    // Column definition ... disabling inputKeys navigation and setting offsetXY
     {
-        key:'firstName',
-        editor:"JobDescription",
+        key:'experience',
+        editor:"textarea",
         editorConfig:{
-             // disables the buttons below the TEXTAREA
-             overlayConfig:{ buttons: null }
+             // redefines the buttons to just the Save button (drops Cancel)
+             buttons: [{save:true}],
+             overlayConfig: {
+                headerContent: 'Enter experience'
+             }
         }
     }
+
+For a complete list of configuration attributes, see the
+[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
 
 
 @property textarea
 @for DataTable.Editors
 @type DataTable.BaseCellEditor
-@since 3.8.0
 @public
 */
-Editors.textarea = Y.Base.create('celleditor', PlainText, [],
+Editors.textarea = baseCreate('celleditor', PlainText, [],
     {},
     {
         ATTRS: {
@@ -467,52 +501,81 @@ Editors.textarea = Y.Base.create('celleditor', PlainText, [],
 
 /**
 Produces  a basic numeric editor as a popup-type cell editor.
- A `parser` is prescribed that handles validation and converting the input text to numeric format.
+It requires the `datatype-number` module to perform the validation,
+otherwise it uses `parseFloat` for parsing and regular typecasting to show.
 
  ##### Basic Usage
     // Column definition
     { key:'salary', editor:"number" }
 
-    // Column definition ... disabling keyfiltering and setting a CSS class
+    // Column definition ... to use a comma as the decimal separator
     {
-        key:'firstName',
-        editor:"text",
-        editorConfig:{ className:'align-right', keyFiltering:null }
+        key:'unit_price',
+        editor:"number",
+        editorConfig: {
+            numberFormat: {
+                decimalSeparator: ','
+            }
+        }
     }
 
+For a complete list of configuration attributes, see the
+[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
 
 @property number
 @for DataTable.Editors
 @type DataTable.BaseCellEditor
-@since 3.8.0
 @public
 */
-Editors.number = Y.Base.create('celleditor', PlainText, [],
+Editors.number = baseCreate('celleditor', PlainText, [],
     {},
     {
         ATTRS: {
-
             /**
-            A validation regular expression object used to check validity of the input floating point number.
-            This can be defined by the user to accept other numeric input, or set to "null" to disable regex checks.
+            Format specification used both when showing the value in the
+            [number](DataTable.Editors.html#property_number) editor and
+            when parsing the entered value.
+            See [Number.format](Number.html#method_format) for details.
 
-            It assumes the dot to be the decimal separator.
+            ##### Used only in the [number](DataTable.Editors.html#property_number) editor.
 
-            @attribute validator
-            @type RegExp
-            @default /^\s*(\+|-)?((\d+(\.\d+)?)|(\.\d+))\s*$/
-            */
+            @attribute numberFormat
+            @type Object
+            @default null
+            @for DataTable.BaseCellPopupEditor
+             */
+
+            numberFormat: {
+                value: null
+            },
+            keyFiltering:   {
+                    value : /^(\.\,|\d|\-)*$/
+            },
+
             validator: {
-                value:  /^\s*(\+|-)?((\d+(\.\d+)?)|(\.\d+))\s*$/
+                    value: /^\s*(\+|-)?((\d+((\.|\,)\d*)?)|((\.|\,)\d*))\s*$/
             },
 
-            keyFiltering: {
-                value:   /^(\.|\d|\-)*$/
-            },
+            formatter: {
+                value: function (value) {
+                    Y.log('number.formatter: ' + v,'info','celleditor-popup');
 
+                    var fmt = this.get('numberFormat');
+                    if (fmt && YNumber) {
+                        return YNumber.format(value, fmt);
+                    }
+                    return value;
+                }
+            },
             parser: {
-                value: function(value){
-                    return +value;
+                value: function (value) {
+                    Y.log('number.parser: ' + value,'info','celleditor-popup');
+
+                    var fmt = this.get('numberFormat');
+                    if (fmt && YNumber) {
+                        return YNumber.parse(value, fmt) || Y.Attribute.INVALID_VALUE;
+                    }
+                    return parseFloat(value) || 0;
                 }
             }
         }
@@ -521,32 +584,53 @@ Editors.number = Y.Base.create('celleditor', PlainText, [],
 
 
 /**
- Produces a bare-bones date editor as a popup-type cell editor.
- Configuration is setup with both `formatter` and `parser` to convert the Date object.
+Produces a bare-bones text input for dates.
+Configuration is setup with both `formatter` and `parser` to convert the Date object.
+It requires the `datatype-date` module to perform the validation,
+otherwise it will use the native JavaScript functions `toString()` and `Date.parse()`.
+The default date format is `"%x"` which is the prefered date format for the current locale.
 
  ##### Basic Usage
 
     // Column definition
     { key:'firstName', editor:"date"}
 
-    // Column definition ... with user-defined dateFormat and disabling keyfiltering
+    // Column definition with user-specified 'dateFormat' to display Date in text box on display
     {
-        key:'firstName',
-        editor:"text",
-        editorConfig:{ dateFormat: '%Y-%m-%d', keyFiltering:null }
+        key:'date_of_claim',
+        editor:"date",
+        editorConfig:{ dateFormat:'%Y-%m-%d'}
     }
 
+For a complete list of configuration attributes, see the
+[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
 
 @property date
 @for DataTable.Editors
 @type DataTable.BaseCellEditor
-@since 3.8.0
 @public
 */
-Editors.date = Y.Base.create('celleditor', PlainText, [],
+Editors.date = baseCreate('celleditor', PlainText, [],
     {},
     {
         ATTRS: {
+            /**
+            Format specification used both to display the date in the
+            [date](DataTable.Editors.html#property_date) editor
+            and to parse it back.
+            See [Date.format](Date.html#method_format) for details.
+
+            ##### Used only in the [date](DataTable.Editors.html#property_date)
+            and [calendar](DataTable.Editors.html#property_date) editors.
+
+            @attribute dateFormat
+            @type String
+            @default "%x"  (prefered local format)
+            @for DataTable.BaseCellPopupEditor
+             */
+            dateFormat: {
+                value:"%x"
+            },
             // only allow keyboard input of digits or '/' or '-' within the editor ...
             keyFiltering: {
                 value:   /^(\/|\d|\-)*$/
@@ -556,9 +640,11 @@ Editors.date = Y.Base.create('celleditor', PlainText, [],
             //  the INPUT box initially ...
             formatter: {
                 value: function (value) {
+                    Y.log('Editors.date.formatter: ' + value,'info','celleditor-popup');
+
                     return (
-                        Y.DataType.Date ?
-                        Y.DataType.Date.format(value, this.get('dateFormat') || "%x") :
+                        YDate ?
+                        YDate.format(value, this.get('dateFormat')) :
                         value.toString()
                     );
                 }
@@ -568,9 +654,11 @@ Editors.date = Y.Base.create('celleditor', PlainText, [],
             //  i.e. converts back to "Date" format that DT expects ...
             parser: {
                 value: function(value){
+                    Y.log('Editors.date.parser: ' + value,'info','celleditor-popup');
+
                     return (
-                        Y.DataType.Date ?
-                        Y.DataType.Date.parse(value, this.get('dateFormat') || "%x") :
+                        YDate ?
+                        YDate.parse(value, this.get('dateFormat')) :
                         Date.parse(value)
                     ) || Y.Attribute.INVALID_VALUE;
                 }
@@ -582,7 +670,8 @@ Editors.date = Y.Base.create('celleditor', PlainText, [],
 
 /**
  Produces a "calendar" popup cell editor that
- includes a Y.Calendar widget incorporated within the View container.
+ includes a Y.Calendar widget plus a regular textbox for pasting or typing in
+ the date.
 
  ##### Basic Usage
 
@@ -593,28 +682,28 @@ Editors.date = Y.Base.create('celleditor', PlainText, [],
     {
         key:'birthdate',
         label:'Employee DOB',
-        formatter:"shortDate",
+        formatter:"localDate",
         editor:"calendar",
-        editorConfig:{
-            inputKeys:false,
-        }
+        editorConfig:{ dateFormat:'%Y/%m/%d'}
     }
 
+For a complete list of configuration attributes, see the
+[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
 
 @property calendar
 @for DataTable.Editors
 @type DataTable.BaseCellEditor
-@since 3.8.0
 @public
 */
-Editors.calendar = Y.Base.create('celleditor', PlainText, [],
+Editors.calendar = baseCreate('celleditor', Editors.date, [],
     {
         _defRenderFn: function () {
+            Y.log('Editors.calendar._defRenderFn','info','celleditor-popup');
+
             Editors.calendar.superclass._defRenderFn.apply(this, arguments);
-            var calNode = this.get('container').one('.yui3-dt-editor-calendar'),
+            var calNode = this.get('container').one('.yui3-datatable-celleditor-calendar'),
                 calendar;
 
-                // Define a basic config object for Y.Calendar ...
 
             if (calNode && Y.Calendar) {
                 calendar = new Y.Calendar(
@@ -626,40 +715,45 @@ Editors.calendar = Y.Base.create('celleditor', PlainText, [],
                                 showPrevMonth: true,
                                 showNextMonth: true
                             },
-                            this.get('calendarConfig')
+                            this.get('calendarConfig') || {}
                         )
                 ).render();
 
-                // Attach a plugin to the Widget instance, if it is available
-                if(Y.Plugin.Calendar && Y.Plugin.Calendar.JumpNav) {
-                    this.plug( Y.Plugin.Calendar.JumpNav, {
+                if(Plugins.Calendar && Plugins.Calendar.JumpNav) {
+                    this.plug( Plugins.Calendar.JumpNav, {
                         yearStart: 1988, yearEnd:   2021
                     });
                 }
-                this._subscr.push(calendar.on("dateClick", function (ev) {
-
-                      var value = ev.date;
-                      this._inputNode.set('value',
-                            Y.DataType.Date ?
-                            Y.DataType.Date.format(value, this.get('dateFormat') || "%x") :
-                            value.toString()
-                      );
-                      if (this.get('saveOnSelectDate')) {
-                          this.saveEditor();
-                      }
-                }, this));
+                this._subscr.push(calendar.on("dateClick", this._afterCalendarClick, this));
 
                 this._calendar = calendar;
 
             }
         },
+        _afterCalendarClick:function (ev) {
+            Y.log('Editors.calendar._afterCalendarClick','info','celleditor-popup');
+
+              var value = ev.date;
+              this._inputNode.set('value',
+                    YDate ?
+                    YDate.format(value, this.get('dateFormat') || "%x") :
+                    value.toString()
+              );
+              if (this.get('saveOnSelectDate')) {
+                  this.saveEditor();
+              }
+        },
         destructor: function () {
+            Y.log('Editors.calendar.destructor','info','celleditor-popup');
+
             if(this._calendar) {
                 this._calendar.destroy({remove:true});
             }
 
         },
         _defShowFn: function (ev) {
+            Y.log('Editors.calendar._defShowFn','info','celleditor-popup');
+
             Editors.calendar.superclass._defShowFn.apply(this, arguments);
             var cal = this._calendar;
             if (cal) {
@@ -673,7 +767,7 @@ Editors.calendar = Y.Base.create('celleditor', PlainText, [],
         ATTRS: {
             template: {
                 value:'<input type="text" class="{classInput}"  />'
-                        + '<br/><div class="yui3-dt-editor-calendar"></div>'
+                        + '<br/><div class="yui3-datatable-celleditor-calendar"></div>'
             },
 
             // setup two buttons "Save" and "Cancel" for the containing overlay
@@ -694,9 +788,11 @@ Editors.calendar = Y.Base.create('celleditor', PlainText, [],
             //  the INPUT box initially ...
             formatter: {
                 value: function (value) {
+                    Y.log('Editors.calendar.formatter: ' + value,'info','celleditor-popup');
+
                     return (
-                        Y.DataType.Date ?
-                        Y.DataType.Date.format(value, this.get('dateFormat') || "%x") :
+                        YDate ?
+                        YDate.format(value, this.get('dateFormat') || "%x") :
                         value.toString()
                     );
                 }
@@ -706,19 +802,46 @@ Editors.calendar = Y.Base.create('celleditor', PlainText, [],
             //  i.e. converts back to "Date" format that DT expects ...
             parser: {
                 value: function(value){
+                    Y.log('Editors.calendar.parser: ' + value,'info','celleditor-popup');
+
                     return (
-                        Y.DataType.Date ?
-                        Y.DataType.Date.parse(value, this.get('dateFormat') || "%x") :
+                        YDate ?
+                        YDate.parse(value, this.get('dateFormat') || "%x") :
                         Date.parse(value)
                     ) || Y.Attribute.INVALID_VALUE;
                 }
             },
+
+            /**
+            Additional configuration attributes for the Calendar widget,
+            used in the [calendar](DataTable.Editors.html#property_calendar)
+            editor to be merged along the defaults this editor needs.
+
+            ##### Used only in the [calendar](DataTable.Editors.html#property_calendar) editor.
+
+            @attribute calendarConfig
+            @type Object
+            @default null
+            @for DataTable.BaseCellPopupEditor
+             */
             calendarConfig: {
-                value: {}   // I know, it will point to the same static copy, but then, what's wrong with that?
+                value: null
             },
+
+            /**
+            If true, clicking on a date in the calendar will automatically save
+            that date.
+
+            ##### Used only in the [calendar](DataTable.Editors.html#property_calendar) editor.
+
+            @attribute saveOnSelectDate
+            @type Boolean
+            @default true
+            @for DataTable.BaseCellPopupEditor
+             */
             saveOnSelectDate: {
                 value: true,
-                validator: Y.Lang.isBoolean
+                validator: Lang.isBoolean
             }
         }
     }
@@ -729,26 +852,68 @@ plugin attached to the INPUT[text] node.
 
  ##### Basic Usage
 
-    // Column definition
     {
-        key:'state',
-        editor:"autocomplete",
-        editorConfig:{
-            autocompleteConfig:{
-                source:  myStateArray,
-                alwaysShowList: true
+        key: 'degreeProgram',
+        editor: "autocomplete",
+        editorConfig: {
+            lookupTable: [
+                {value: 1, text: "Bachelor of Science"},
+                {value: 2, text: "Master of Science"},
+                {value: 3, text: "PhD"}
+             ]
+        }
+    }
+
+Since the column is likely to use a compatible formatter and the same lookup table
+to show the information, if there is a `lookupTable` column property set, the
+editor will use it.
+
+    {
+        key: 'degreeProgram',
+        formatter: "lookup",
+        lookupTable: [
+            {value: 1, text: "Bachelor of Science"},
+            {value: 2, text: "Master of Science"},
+            {value: 3, text: "PhD"}
+        ],
+        editor: "autocomplete"
+    }
+
+Both the formatter and the editor will use the same translation table.
+The [lookup](DataTable.BodyView.Formatters.html#method_lookup)
+formatter accepts two formats for the lookupTable, an object map
+and an array of value/text sets, as shown above.
+Only the latter is valid for this editor.
+
+Additional configuration attributes for the AutoComplete widget can be passed
+through the `autocompleteConfig` property:
+
+    {
+        key: 'degreeProgram',
+        formatter: "lookup",
+        lookupTable: [
+            {value: 1, text: "Bachelor of Science"},
+            {value: 2, text: "Master of Science"},
+            {value: 3, text: "PhD"}
+        ],
+        editor: "autocomplete",
+        editorConfig: {
+            autocompleteConfig: {
+                resultHighlighter: 'phraseMatch'
             }
         }
     }
 
 
+For a complete list of configuration attributes, see the
+[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
+
 @property autocomplete
 @for DataTable.Editors
 @type DataTable.BaseCellEditor
-@since 3.8.0
 @public
 */
-Editors.autocomplete = Y.Base.create('celleditor', PlainText, [],
+Editors.autocomplete = baseCreate('celleditor', PlainText, [],
     {
 
         //---------
@@ -756,13 +921,16 @@ Editors.autocomplete = Y.Base.create('celleditor', PlainText, [],
         //    get the INPUT node and plugin the AutoComplete to it
         //---------
         _defRenderFn: function () {
+            Y.log('Editors.autocomplete._defRenderFn','info','celleditor-popup');
+
             Editors.autocomplete.superclass._defRenderFn.apply(this, arguments);
             var inputNode = this._inputNode;
 
-            if(inputNode && Y.Plugin.AutoComplete) {
+            if(inputNode && Plugins.AutoComplete) {
 
-               inputNode.plug(Y.Plugin.AutoComplete,
+               inputNode.plug(Plugins.AutoComplete,
                     Y.merge({
+                        source: this.get('lookupTable'),
                         resultTextLocator:'text',
                         alwaysShowList: true,
                         resultHighlighter: 'startsWith',
@@ -779,6 +947,54 @@ Editors.autocomplete = Y.Base.create('celleditor', PlainText, [],
     },
     {
         ATTRS: {
+            /**
+            Source of data for the [AutoComplete](Plugin.AutoComplete.html) plugin.
+            If missing the `lookupTable` column attribute, such as it
+            is used in the [lookup](DataTable.BodyView.Formatters.html#method_lookup)
+            formatter, will be used instead.
+
+            It should be an array of objects containing `value` and `text` properties:
+
+                lookupTable: [
+                    {value:0, text: "unknown"},
+                    {value:1, text: "requested"},
+                    {value:2, text: "approved"},
+                    {value:3, text: "delivered"}
+                ]}
+
+            ##### Notes:
+
+            Used only in the following editors: <ul>
+            <li>[autocomplete](DataTable.Editors.html#property_autocomplete)</li>
+            <li>[autocomplete](DataTable.Editors.html#property_radio)</li>
+            <li>[autocomplete](DataTable.Editors.html#property_dropdown)</li>
+           </ul>
+
+            The [lookup](DataTable.BodyView.Formatters.html#method_lookup)
+            formatter accepts two formats for the lookupTable, an object map
+            and an array of value/text sets, only the latter is valid for this
+            editor.
+
+            @attribute lookupTable
+            @type Array
+            @default null
+            @for DataTable.BaseCellPopupEditor
+             */
+            lookupTable: {
+                value: null
+            },
+
+            /**
+            Configuration parameters to be merged along the default for the
+            [AutoComplete](Plugin.AutoComplete.html) plugin.
+
+            ##### Used only in the [autocomplete](DataTable.Editors.html#property_autocomplete) editor.
+
+            @attribute autocompleteConfig
+            @type Object
+            @default {}
+            @for DataTable.BaseCellPopupEditor
+             */
             autocompleteConfig: {
                 value: null
             }
@@ -787,7 +1003,7 @@ Editors.autocomplete = Y.Base.create('celleditor', PlainText, [],
 );
 
 /**
-Produces a group of INPUT[type=radio] controls within the view's Overlay
+Produces a group of mutually exclusive radio buttons.
 
  ##### Basic Usage
 
@@ -796,49 +1012,57 @@ Produces a group of INPUT[type=radio] controls within the view's Overlay
         key:"size",
         editor:"radio",
         editorConfig:{
-            radioOptions:[ {value:0, text:"S"}, {value:1, text:"M"}, {value:2, text:"L"} ]
-        }
-    }
-    // Column definition via Object type options
-    {
-        key:"size",
-        editor:"radio",
-        editorConfig:{
-            radioOptions:{ S:"Small", M:"Medium", L:"Large" }
+            lookupTable:[ {value:0, text:"S"}, {value:1, text:"M"}, {value:2, text:"L"} ]
         }
     }
 
+    // The lookupTable can be shared with the formatter
+    {
+        key:"size",
+        formatter: "lookup",
+        lookupTable: [ {value:0, text:"S"}, {value:1, text:"M"}, {value:2, text:"L"} ],
+        editor:"radio",
+    }
+
+
+For a complete list of configuration attributes, see the
+[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
 
 @property radio
 @for DataTable.Editors
 @type DataTable.BaseCellEditor
- @since 3.8.0
- @public
+  @public
  **/
-Editors.radio = Y.Base.create('celleditor', PEd, [],
+Editors.radio = baseCreate('celleditor', PEd, [],
     {
         _defRenderFn:function () {
+            Y.log('Editors.radio._defRenderFn','info','celleditor-popup');
+
             Editors.radio.superclass._defRenderFn.apply(this, arguments);
             var tmpl = this.get('template').replace('{name}', Y.guid()),
                 ov = this._overlay,
-                radios = Y.Array.map(this.get('radioOptions'), function (item) {
-                    return Y.Lang.sub(tmpl, item);
+                radios = arrMap(this.get('lookupTable'), function (item) {
+                    return substitute(tmpl, item);
                 }, this);
 
             ov.set('bodyContent', radios.join('\n'));
 
             this._subscr.push(
-                ov.get('contentBox').delegate('click', function (e) {
-                    var value = e.target.get('value');
-
-                    if (Y.Lang.isValue(value)) {
-                        this.saveEditor(value);
-                    }
-                }, 'input[type="radio"]', this)
+                ov.get('contentBox').delegate('click',this._afterRadioClick , 'input[type="radio"]', this)
             );
 
         },
+        _afterRadioClick: function (e) {
+            Y.log('Editors.radio._afterRadioClick','info','celleditor-popup');
+            var value = e.target.get('value');
+
+            if (Lang.isValue(value)) {
+                this.saveEditor(value);
+            }
+        },
         _defShowFn:function(e){
+            Y.log('Editors.radio._defShowFn','info','celleditor-popup');
+
             Editors.radio.superclass._defShowFn.apply(this, arguments);
             var radio  = this._overlay.get('contentBox').one('input[type="radio"][value="' + e.initialValue + '"]');
             if (radio) {
@@ -854,7 +1078,7 @@ Editors.radio = Y.Base.create('celleditor', PEd, [],
             template: {
                 value: '<div class="yui3-datatable-celleditor-radio"><input type="radio" name="{name}" value="{value}"/>{text}</div>'
             },
-            radioOptions: {
+            lookupTable: {
                 value: null
             }
         }
@@ -865,75 +1089,80 @@ Editors.radio = Y.Base.create('celleditor', PEd, [],
 /**
  Produces a popup cell editor containing a single SELECT control within
  the Overlay.
+ `select` and `combobox` are aliases for this editor.
 
  ##### Basic Usage
-// Column definition ... simple Array data
+// Column definition
 {
-    key:"inTheForest",
-    editor:"dropdown",
-    editorConfig: { dropdownOptions:[ "lions", "tigers", "bears", "oh my!" ] }
+    key: "inTheForest",
+    editor: "dropdown",
+    editorConfig: {lookupTable: [
+        {value: "lions",   text: "Lions"},
+        {value: "tigers",  text: "Tigers"},
+        {value: "bears",   text: "Bears"},
+        {value: "unknown", text: "oh my!"}
+    ] }
 }
 
-// Column definition ... options via Object type data
+// Column definition
+// `select` is an alias for `dropdown`
+// The lookup table can be shared with the formatter
 {
     key:"color",
-    formatter:"custom",
-    formatConfig:stypesObj,
+    formatter:"lookup",
     editor:"select",
-    editorConfig:{
-        selectOptions:{ 0:'Red', 1:'Green', 2:'Fuschia', 3:'Blue' }
-    }
+    lookupTable: [
+        { value: 0, text: 'Red'},
+        { value: 1, text: 'Green'},
+        { value: 2, text: 'Fuschia'},
+        { value: 3, text: 'Blue'}
+    ]
 }
 
-// Column definition ... options via Array of Objects, non-trivial!
-{
-    key:"firstTopping",
-    editor:"dropdown",
-    editorConfig:{
-        dropdownOptions:[
-           {controlUnit:'a7',  descr:'Pepperoni'},    {controlUnit:'f3', descr:'Anchovies'},
-           {controlUnit:'b114',descr:'Extra Cheese'}, {controlUnit:'7', descr:'Mushrooms'}
-        ],
-        template:{ propValue:'controlUnit', propText:'descr' }
-    }
-}
 
+For a complete list of configuration attributes, see the
+[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
 
 @property dropdown
 @for DataTable.Editors
 @type DataTable.BaseCellEditor
- @since 3.8.0
- @public
+  @public
  **/
-Editors.dropdown = Y.Base.create('celleditor', PEd, [],
+Editors.dropdown = baseCreate('celleditor', PEd, [],
     {
         _dropdownNode: null,
         _defRenderFn:function () {
+            Y.log('Editors.dropdown._defRenderFn','info','celleditor-popup');
+
             Editors.dropdown.superclass._defRenderFn.apply(this, arguments);
             var tmpl = this.get('optionTemplate'),
                 ov = this._overlay,
                 dropdown,
-                options = Y.Array.map(this.get('dropdownOptions'), function (item) {
-                    return Y.Lang.sub(tmpl, item);
+                options = arrMap(this.get('lookupTable'), function (item) {
+                    return substitute(tmpl, item);
                 }, this);
 
-            ov.set('bodyContent', Y.Lang.sub(this.get('template'), {
+            ov.set('bodyContent', substitute(this.get('template'), {
                 options: options.join('\n'),
                 classInput: this._classInput
             }));
             this._dropdownNode = dropdown = ov.get('contentBox').one('.' + this._classInput);
             this._subscr.push(
-                dropdown.on('change', function (e) {
-                    var value = e.target.get('value');
-
-                    if (Y.Lang.isValue(value)) {
-                        this.saveEditor(value);
-                    }
-                },  this)
+                dropdown.on('change', this._afterDropdownChange,  this)
             );
 
         },
-        _defShowFn:function(e){
+        _afterDropdownChange:function (e) {
+            Y.log('Editors.dropdown._afterDropdownChange','info','celleditor-popup');
+            var value = e.target.get('value');
+
+            if (Lang.isValue(value)) {
+                this.saveEditor(value);
+            }
+        },
+        _defShowFn: function (e) {
+            Y.log('Editors.dropdown._defShowFn','info','celleditor-popup');
+
             Editors.dropdown.superclass._defShowFn.apply(this, arguments);
             this._dropdownNode.set('value',  e.initialValue ).focus();
         }
@@ -944,10 +1173,22 @@ Editors.dropdown = Y.Base.create('celleditor', PEd, [],
             template: {
                 value: '<select class="{classInput}">{options}</select>'
             },
+            /**
+            Template for the `option` elements in the dropdown.
+            The template for the `select` element is in the
+            [template](DataTable.BaseCellPopupEditor#attr_template) attribute.
+
+            ##### Used only in the [dropdown](DataTable.Editors.html#dropdown) editor.
+
+            @attribute optionTemplate
+            @type String
+            @default (see code)
+            @for DataTable.BaseCellPopupEditor
+             */
             optionTemplate: {
                 value: '<option value="{value}">{text}</option>'
             },
-            dropdownOptions: {
+            lookupTable: {
                 value: null
             },
             buttons: {
@@ -959,57 +1200,67 @@ Editors.dropdown = Y.Base.create('celleditor', PEd, [],
     }
 );
 
-Y.DataTable.Editors.select = Y.DataTable.Editors.dropdown;
-Y.DataTable.Editors.combobox = Y.DataTable.Editors.dropdown;
-
+Editors.combobox = Editors.select = Editors.dropdown;
 
 /**
 Produces a simple checkbox (i.e. on/off, yes/no, true/false) popup cell editor
- within the popup Overlay.
+within the popup Overlay.
+
 
  ##### Basic Usage
-    // Column definition
-    {
-        key:'arrived',
-        editor:"checkbox",
-        editorConfig:{ checkboxHash:{ 'true':'Y', 'false':'N' } }
-    }
 
+    // Column definition
+    {key: "arrived", editor: "checkbox"}
+
+    // If the values in the record are not Boolean values,
+    // a `formatter` and `parser` can be provided to convert them
+
+    {key: "arrived", editor: "checkbox",
+        formatter: function (value) {
+            return value.toLowerCase() === 'yes';
+        },
+        parser: function (value) {
+            return value ? 'yes': 'no';
+        }
+    }
 
 @property checkbox
 @for DataTable.Editors
 @type DataTable.BaseCellEditor
- @since 3.8.0
- @public
  **/
-Editors.checkbox = Y.Base.create('celleditor', PEd, [],
+Editors.checkbox = baseCreate('celleditor', PEd, [],
     {
         _checkbox: null,
         _defRenderFn: function () {
+            Y.log('Editors.checkbox._defRenderFn','info','celleditor-popup');
+
             Editors.checkbox.superclass._defRenderFn.apply(this, arguments);
 
             var ov = this._overlay,
                 checkbox;
-            ov.set('bodyContent', Y.Lang.sub(this.get('template'), { classInput: this._classInput}));
+            ov.set('bodyContent', substitute(this.get('template'), { classInput: this._classInput}));
 
             this._checkbox = checkbox = ov.get('contentBox').one('.' + this._classInput);
 
             this._subscr.push(
-                checkbox.on('click',function () {
-                    this.saveEditor(!!checkbox.get('checked'));
-                }, this)
+                checkbox.on('click', this._afterCheckboxClick, this)
             );
         },
+        _afterCheckboxClick:function () {
+            Y.log('Editors.checkbox._afterCheckboxClick','info','celleditor-popup');
 
-            //---------
-            // After this editor is displayed,
-            //   update the "checked" status based on the underlying o.value
-            //---------
-         _defShowFn: function (e) {
+            this.saveEditor(!!checkbox.get('checked'));
+        },
+
+        _defShowFn: function (e) {
+            Y.log('Editors.checkbox._defRenderFn','info','celleditor-popup');
+
             Editors.checkbox.superclass._defShowFn.apply(this, arguments);
-            this._checkbox.set('checked', e.formattedValue);
+            this._checkbox.set('checked', !!e.formattedValue).focus();
         },
         _resize: function (width) {
+            Y.log('Editors.checkbox._resize: ' + width,'info','celleditor-popup');
+
             this._overlay.set('width', width);
         }
     },
@@ -1018,27 +1269,6 @@ Editors.checkbox = Y.Base.create('celleditor', PEd, [],
             template: {
                 value:'<input type="checkbox" class="{classInput}" />'
             },
-            formatter: {
-                value: function (value) {
-                    var opts = this.get('checkboxOptions');
-                    if (opts) {
-                        return !!opts.indexOf(value);
-                    }
-                    return value;
-                }
-            },
-            parser: {
-                value: function (value) {
-                    var opts = this.get('checkboxOptions');
-                    if (opts) {
-                        return opts[value ? 1 : 0];
-                    }
-                    return value;
-                }
-            },
-            checkboxOptions: {
-                value: null
-            },
             buttons: {
                 value: [
                     {cancel:true}
@@ -1046,8 +1276,8 @@ Editors.checkbox = Y.Base.create('celleditor', PEd, [],
             }
         }
 
-    // Define listeners to this View instance ...
     }
 );
+
 Y.DataTable.BaseCellPopupEditor = PEd;
 Y.mix(Y.DataTable.Editors, Editors);

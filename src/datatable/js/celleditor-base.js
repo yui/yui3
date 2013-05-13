@@ -1,21 +1,24 @@
 /**
-Provides the base services for cell editors. This class is meant to be subclassed
-by actual implementations of cell editors
-@module datatable
-@submodule datatable-celleditor-base
+ Allows the cells on a DataTable to be edited. Requires either the inline or popup cell editors.
+
+ @module datatable
+ @submodule datatable-editable
 */
 
+// Needs the following JSHint declaration because this file is appended to
+// editable.js which already has a var declaration.
 /*jshint onevar:false*/
 var returnUnchanged = function (value) {
-        Y.log('(private) returnUnchanged: ' + value);
+        Y.log('(private) returnUnchanged: ' + value, 'info', 'celleditor-base');
         return value;
     },
 
 /**
+Provides the base services for cell editors. This class is meant to be subclassed
+by actual implementations of cell editors.
+
 @class DataTable.BaseCellEditor
 @extends Y.View
-@author Todd Smith
-@since 3.8.0
 */
 
 BCE =  Y.Base.create('celleditor', Y.View, [], {
@@ -37,6 +40,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
     /**
     Copy of the [formatter](#attr_formatter) attribute for internal use.
+
     @method _formatter
     @type Function
     @default (returns value unchanged)
@@ -46,6 +50,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
     /**
     Copy of the [parser](#attr_parser) attribute for internal use.
+
     @method _parser
     @type Function
     @default (returns value unchanged)
@@ -56,6 +61,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
    /**
     Collection of information related to the cell being edited.
     It is used mostly to provide context information when firing events.
+
     @property _cellInfo
     @type Object
     @default null
@@ -64,16 +70,18 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
    _cellInfo: null,
 
     /**
-    CSS classname to identify the editor's INPUT Node
+    CSS classname to identify the editor's INPUT Node.
+
     @property _classInput
     @type String
-    @default 'yui3-datatable-inline-input'
+    @default 'yui3-datatable-celleditor-input'
     @protected
     */
-    _classInput: 'yui3-datatable-inline-input',
+    _classInput: 'yui3-datatable-celleditor-input',
 
     /**
     CSS class name to add to an input box when it fails validation.
+
     @property _classError
     @type String
     @default "yui3-datatable-celleditor-error"
@@ -97,7 +105,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     initializer: function () {
-        Y.log('DataTable.BaseCellEditor.initializer');
+        Y.log('DataTable.BaseCellEditor.initializer', 'info', 'celleditor-base');
 
         this._subscr = [];
         this.publish({
@@ -164,7 +172,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     destructor: function () {
-        Y.log('DataTable.BaseCellEditor.destructor');
+        Y.log('DataTable.BaseCellEditor.destructor', 'info', 'celleditor-base');
+
         if (this.get('active')) {
             this.cancelEditor();
         }
@@ -182,7 +191,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @chainable
     */
     render: function (where) {
-        Y.log('DataTable.BaseCellEditor.render');
+        Y.log('DataTable.BaseCellEditor.render', 'info', 'celleditor-base');
+
         where.append(this.get('container'));
         this.fire('render');
         this._bindUI();
@@ -199,7 +209,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     _defRenderFn: function () {
-        Y.log('DataTable.BaseCellEditor._defRenderFn');
+        Y.log('DataTable.BaseCellEditor._defRenderFn should have been overriden', 'warn', 'celleditor-base');
 
     },
 
@@ -210,7 +220,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     _bindUI: function () {
-        Y.log('DataTable.BaseCellEditor._bindUI');
+        Y.log('DataTable.BaseCellEditor._bindUI', 'info', 'celleditor-base');
 
 
         this._subscr = [
@@ -227,7 +237,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     _unbindUI: function () {
-        Y.log('DataTable.BaseCellEditor._unbindUI');
+        Y.log('DataTable.BaseCellEditor._unbindUI', 'info', 'celleditor-base');
+
         arrEach(this._subscr, function(e){
             if(e && e.detach) {
                 e.detach();
@@ -244,7 +255,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     _defSaveFn: function (e) {
-        Y.log('DataTable.BaseCellEditor._defSaveFn');
+        Y.log('DataTable.BaseCellEditor._defSaveFn', 'info', 'celleditor-base');
+
         this.set('value', e.newValue);
         this._hideEditor();
     },
@@ -256,7 +268,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     _defCancelFn: function () {
-        Y.log('DataTable.BaseCellEditor._defCancelFn');
+        Y.log('DataTable.BaseCellEditor._defCancelFn', 'info', 'celleditor-base');
+
         this._hideEditor();
     },
 
@@ -269,7 +282,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     _defShowFn: function (e) {
-        Y.log('DataTable.BaseCellEditor._defShowFn');
+        Y.log('DataTable.BaseCellEditor._defShowFn', 'info', 'celleditor-base');
 
         this.set('visible', true);
 
@@ -293,7 +306,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @public
     */
     showEditor: function (cellInfo) {
-        Y.log('DataTable.BaseCellEditor.showEditor');
+        Y.log('DataTable.BaseCellEditor.showEditor', 'info', 'celleditor-base');
 
         this._cellInfo = cellInfo;
 
@@ -318,7 +331,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @protected
      */
     _getValue: function () {
-        Y.log('DataTable.BaseCellEditor._getValue');
+        Y.log('DataTable.BaseCellEditor._getValue should have been overriden', 'warn', 'celleditor-base');
     },
 
     /**
@@ -334,20 +347,16 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         if (value === undefined) {
             value = this._getValue();
         }
-        //
-        //  Only save the edited data if it is valid ...
-        //
+
         var validator = this.get('validator'),
             parsedValue;
 
-        Y.log('DataTable.BaseCellEditor.saveEditor: ' + value);
+        Y.log('DataTable.BaseCellEditor.saveEditor: ' + value, 'info', 'celleditor-base');
 
         if (validator instanceof RegExp ? validator.test(value) : true) {
 
-            // If a "save" function was defined, run thru it and update the "value" setting
             parsedValue = this._parser(value);
 
-            // So value was initially okay, but didn't pass _parser validation call ...
             if (parsedValue !== Y.Attribute.INVALID_VALUE) {
 
                 this.fire("save", Y.merge(this._cellInfo, {
@@ -357,19 +366,20 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
                 return;
             }
         }
-        // If everything was Ok, it should have returned earlier.
-        // If it got here, things went wrong
+
         this.get('container').addClass(this._classError);
 
     },
 
     /**
     Hides the current editor View instance.
+
     @method _hideEditor
     @protected
     */
     _hideEditor: function () {
-        Y.log('DataTable.BaseCellEditor._hideEditor');
+        Y.log('DataTable.BaseCellEditor._hideEditor', 'info', 'celleditor-base');
+
         this.set('visible', false);
         this.get('container').removeClass(this._classError);
 
@@ -386,7 +396,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @public
     */
     cancelEditor: function () {
-        Y.log('DataTable.BaseCellEditor.cancelEditor');
+        Y.log('DataTable.BaseCellEditor.cancelEditor', 'info', 'celleditor-base');
 
         this.fire("cancel", this._cellInfo);
     },
@@ -403,7 +413,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     _attach: function (/* td */) {
-        Y.log('DataTable.BaseCellEditor._attach');
+        Y.log('DataTable.BaseCellEditor._attach should have been overriden', 'warn', 'celleditor-base');
     },
 
     /**
@@ -415,7 +425,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @private
     */
    _afterVisibleChange: function (e) {
-        Y.log('DataTable.BaseCellEditor._afterVisibleChange: ' + e.newVal);
+        Y.log('DataTable.BaseCellEditor._afterVisibleChange: ' + e.newVal, 'info', 'celleditor-base');
 
         var container  = this.get('container');
         if(container) {
@@ -431,9 +441,11 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     Single copy of all localized strings to be used across all the editors.
 
     @property localizedStrings
+    @static
     @type Object
     */
     localizedStrings:  Y.Intl.get('datatable-editable'),
+
     ATTRS:{
 
         /**
@@ -561,6 +573,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         /**
         A flag to indicate if cell-to-cell navigation should be implemented (currently setup for CTRL-arrow
         key, TAB and Shift-TAB) capability
+
         @attribute navigationEnabled
         @type Boolean
         @default true
