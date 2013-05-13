@@ -14,8 +14,8 @@
  @extends DataTable.BaseCellEditor
  **/
 
-var YNumber = Y.DataType.Number,
-    YDate = Y.DataType.Date,
+var YNumber = Y.Number,
+    YDate = Y.Date,
     Editors = {},
     IEd =  Y.Base.create('celleditor',Y.DataTable.BaseCellEditor,[],{
 
@@ -169,8 +169,7 @@ Y.DataTable.BaseCellInlineEditor = IEd;
 /**
 Produces a simple simple inline-type cell editor.
 
-##### Basic Usage:
-
+@example
     // Column definition
     { key:'surName', editor:"inline" }
 
@@ -194,8 +193,7 @@ numeric formatting and validation prior to saving.
 It requires the `datatype-number` module to perform the validation,
 otherwise it uses `parseFloat` for parsing and regular typecasting to show.
 
-##### Basic Usage:
-
+@example
     // Column definition
     { key:'unit_price', editor:"inlineNumber" }
 
@@ -210,7 +208,6 @@ otherwise it uses `parseFloat` for parsing and regular typecasting to show.
         }
     }
 
-(note: keyFiltering requires the `datatable-celleditor-keyfiltering` module to be active)
 
 For a complete list of configuration attributes, see the
 [DataTable.BaseCellInlineEditor](DataTable.BaseCellInlineEditor.html) class.
@@ -249,9 +246,6 @@ Editors.inlineNumber = Y.Base.create('celleditor', IEd, [],
                     value : /^(\.\,|\d|\-)*$/
             },
 
-            validator: {
-                    value: /^\s*(\+|-)?((\d+((\.|\,)\d*)?)|((\.|\,)\d*))\s*$/
-            },
             formatter: {
                 value: function (value) {
                     Y.log('inlineNumber.formatter: ' + v,'info','celleditor-inline');
@@ -269,9 +263,14 @@ Editors.inlineNumber = Y.Base.create('celleditor', IEd, [],
 
                     var fmt = this.get('numberFormat');
                     if (fmt && YNumber) {
-                        return YNumber.parse(value, fmt) || Y.Attribute.INVALID_VALUE;
+                        value = YNumber.parse(value, fmt);
+                    } else {
+                        value = parseFloat(value);
                     }
-                    return parseFloat(value) || 0;
+                    if (Lang.isValue(value)) {
+                        return value;
+                    }
+                    return Y.Attribute.INVALID_VALUE;
                 }
             }
 
@@ -287,8 +286,7 @@ It requires the `datatype-date` module to perform the validation,
 otherwise it will use the native JavaScript functions `toString()` and `Date.parse()`.
 The default date format is `"%x"` which is the prefered date format for the current locale.
 
-##### Basic Usage:
-
+@example
     // Column definition
     { key:'weddingDate', editor:"inlineDate" }
 
@@ -364,10 +362,7 @@ Editors.inlineDate = Y.Base.create('celleditor', IEd, [],
 /**
 This cell editor has the AutoComplete plugin attached to the input node.
 
-##### Basic Usage:
-
-
-
+@example
     {
         key: 'degreeProgram',
         editor: "inlineAC",
