@@ -1329,6 +1329,17 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.Assert.areEqual(2, heard);
 
             node.remove(true);
+        },
+
+        // Ticket #676 - this was throwing an error in 3.10.0
+        "test sibling once() subscriptions - once('*:type')": function () {
+            var target = new Y.EventTarget({ emitFacade: true });
+
+            target.once('*:foo', function (e) {
+                Y.Assert.isTrue(true);
+            });
+
+            target.fire('x:foo');
         }
 
     }));
