@@ -16,8 +16,8 @@
 var arrMap = Y.Array.map,
     Lang = Y.Lang,
     substitute = Lang.sub,
-    YDate = Y.DataType.Date,
-    YNumber = Y.DataType.Number,
+    YDate = Y.Date,
+    YNumber = Y.Number,
     Plugins = Y.Plugin,
     baseCreate = Y.Base.create,
 
@@ -61,13 +61,14 @@ var arrMap = Y.Array.map,
 
        var overlay = this._createOverlay();
 
-        if( this.get('buttons')) {
-            this._createOverlayButtons(overlay);
-        }
 
         overlay.set('bodyContent', substitute(this.get('template'), {classInput: this._classInput}));
 
         overlay.render(this.get('container'));
+
+        if( this.get('buttons')) {
+            this._createOverlayButtons(overlay);
+        }
 
         this._overlay = overlay;
 
@@ -186,7 +187,8 @@ var arrMap = Y.Array.map,
         Y.log('BaseCellPopupEditor._afterButtonClick','info','celleditor-popup');
 
         var btnCfg = null,
-            action;
+            action,
+            cellInfo;
 
         if (ev.target.ancestor().get('children').some(function(button, index) {
             if (button === ev.target) {
@@ -201,12 +203,13 @@ var arrMap = Y.Array.map,
                 this.cancelEditor();
             }
             action = btnCfg.action;
+            cellInfo = Y.merge(this._cellInfo, {value: this._getValue()});
             switch (Lang.type(action)) {
                 case 'string':
-                    this.fire(action, btnCfg, this._cellInfo);
+                    this.fire(action, btnCfg, cellInfo);
                     break;
                 case 'function':
-                    action(btnCfg, this._cellInfo);
+                    action(btnCfg, cellInfo);
                     break;
             }
         }
@@ -344,6 +347,8 @@ var arrMap = Y.Array.map,
 
         The cell information object contains:
         <ul>
+            <li>value {Any} The value from the input element or widget.
+                Usually a string, it might be other types for complex widgets such as Calendar.</li>
             <li>td {Node} Reference to the table cell.</li>
             <li>record {Model} Reference to the model containing the underlying data.</li>
             <li>colKey {String} Key of the column for the cell to be edited.</li>
@@ -370,8 +375,7 @@ var arrMap = Y.Array.map,
 /**
 Produces a basic textbox type popup cell editor.
 
-##### Basic Usage
-
+@example
     // Column definition
     { key: 'firstName', editor: "text"}
 
@@ -450,8 +454,7 @@ Editors.text = PlainText;
 /**
 Produces a "textarea"  popup  cell editor.
 
- ##### Basic Usage:
-
+@example
     // Column definition
     { key:'experience', editor:"textarea"}
 
@@ -459,7 +462,7 @@ Produces a "textarea"  popup  cell editor.
         key:'experience',
         editor:"textarea",
         editorConfig:{
-             // redefines the buttons to just the Save button (drops Cancel)
+             // redefines the buttons to just the Cancel button (drops Save)
              buttons: [{save:true}],
              overlayConfig: {
                 headerContent: 'Enter experience'
@@ -504,7 +507,7 @@ Produces  a basic numeric editor as a popup-type cell editor.
 It requires the `datatype-number` module to perform the validation,
 otherwise it uses `parseFloat` for parsing and regular typecasting to show.
 
- ##### Basic Usage
+@example
     // Column definition
     { key:'salary', editor:"number" }
 
@@ -552,10 +555,6 @@ Editors.number = baseCreate('celleditor', PlainText, [],
                     value : /^(\.\,|\d|\-)*$/
             },
 
-            validator: {
-                    value: /^\s*(\+|-)?((\d+((\.|\,)\d*)?)|((\.|\,)\d*))\s*$/
-            },
-
             formatter: {
                 value: function (value) {
                     Y.log('number.formatter: ' + v,'info','celleditor-popup');
@@ -573,9 +572,11 @@ Editors.number = baseCreate('celleditor', PlainText, [],
 
                     var fmt = this.get('numberFormat');
                     if (fmt && YNumber) {
-                        return YNumber.parse(value, fmt) || Y.Attribute.INVALID_VALUE;
+                        value = YNumber.parse(value, fmt);
+                    } else {
+                        value = parseFloat(value);
                     }
-                    return parseFloat(value) || 0;
+                    return (Lang.isValue(value) ? value : Y.Attribute.INVALID_VALUE);
                 }
             }
         }
@@ -590,8 +591,7 @@ It requires the `datatype-date` module to perform the validation,
 otherwise it will use the native JavaScript functions `toString()` and `Date.parse()`.
 The default date format is `"%x"` which is the prefered date format for the current locale.
 
- ##### Basic Usage
-
+@example
     // Column definition
     { key:'firstName', editor:"date"}
 
@@ -620,8 +620,10 @@ Editors.date = baseCreate('celleditor', PlainText, [],
             and to parse it back.
             See [Date.format](Date.html#method_format) for details.
 
-            ##### Used only in the [date](DataTable.Editors.html#property_date)
-            and [calendar](DataTable.Editors.html#property_date) editors.
+            ##### Used only in the following editors:<ul>
+            <li>[date](DataTable.Editors.html#property_date)</li>
+            <li>[calendar](DataTable.Editors.html#property_date)</li>
+            </ul>
 
             @attribute dateFormat
             @type String
@@ -669,12 +671,11 @@ Editors.date = baseCreate('celleditor', PlainText, [],
 
 
 /**
- Produces a "calendar" popup cell editor that
- includes a Y.Calendar widget plus a regular textbox for pasting or typing in
- the date.
+Produces a "calendar" popup cell editor that
+includes a Y.Calendar widget plus a regular textbox for pasting or typing in
+the date.
 
- ##### Basic Usage
-
+@example
     // Column definition
     { key:'startDate', editor:"calendar" }
 
@@ -850,8 +851,7 @@ Editors.calendar = baseCreate('celleditor', Editors.date, [],
 Produces a textbox-type popup cell editor that has an Autocomplete
 plugin attached to the INPUT[text] node.
 
- ##### Basic Usage
-
+@example
     {
         key: 'degreeProgram',
         editor: "autocomplete",
@@ -966,8 +966,8 @@ Editors.autocomplete = baseCreate('celleditor', PlainText, [],
 
             Used only in the following editors: <ul>
             <li>[autocomplete](DataTable.Editors.html#property_autocomplete)</li>
-            <li>[autocomplete](DataTable.Editors.html#property_radio)</li>
-            <li>[autocomplete](DataTable.Editors.html#property_dropdown)</li>
+            <li>[radio](DataTable.Editors.html#property_radio)</li>
+            <li>[dropdown](DataTable.Editors.html#property_dropdown)</li>
            </ul>
 
             The [lookup](DataTable.BodyView.Formatters.html#method_lookup)
@@ -1005,8 +1005,7 @@ Editors.autocomplete = baseCreate('celleditor', PlainText, [],
 /**
 Produces a group of mutually exclusive radio buttons.
 
- ##### Basic Usage
-
+@example
     // Column definition via Array options
     {
         key:"size",
@@ -1087,37 +1086,37 @@ Editors.radio = baseCreate('celleditor', PEd, [],
 
 
 /**
- Produces a popup cell editor containing a single SELECT control within
- the Overlay.
- `select` and `combobox` are aliases for this editor.
+Produces a popup cell editor containing a single SELECT control within
+the Overlay.
+`select` and `combobox` are aliases for this editor.
 
- ##### Basic Usage
-// Column definition
-{
-    key: "inTheForest",
-    editor: "dropdown",
-    editorConfig: {lookupTable: [
-        {value: "lions",   text: "Lions"},
-        {value: "tigers",  text: "Tigers"},
-        {value: "bears",   text: "Bears"},
-        {value: "unknown", text: "oh my!"}
-    ] }
-}
+@example
+    // Column definition
+    {
+        key: "inTheForest",
+        editor: "dropdown",
+        editorConfig: {lookupTable: [
+            {value: "lions",   text: "Lions"},
+            {value: "tigers",  text: "Tigers"},
+            {value: "bears",   text: "Bears"},
+            {value: "unknown", text: "oh my!"}
+        ] }
+    }
 
-// Column definition
-// `select` is an alias for `dropdown`
-// The lookup table can be shared with the formatter
-{
-    key:"color",
-    formatter:"lookup",
-    editor:"select",
-    lookupTable: [
-        { value: 0, text: 'Red'},
-        { value: 1, text: 'Green'},
-        { value: 2, text: 'Fuschia'},
-        { value: 3, text: 'Blue'}
-    ]
-}
+    // Column definition
+    // `select` is an alias for `dropdown`
+    // The lookup table can be shared with the formatter
+    {
+        key:"color",
+        formatter:"lookup",
+        editor:"select",
+        lookupTable: [
+            { value: 0, text: 'Red'},
+            { value: 1, text: 'Green'},
+            { value: 2, text: 'Fuschia'},
+            { value: 3, text: 'Blue'}
+        ]
+    }
 
 
 For a complete list of configuration attributes, see the
@@ -1207,8 +1206,7 @@ Produces a simple checkbox (i.e. on/off, yes/no, true/false) popup cell editor
 within the popup Overlay.
 
 
- ##### Basic Usage
-
+@example
     // Column definition
     {key: "arrived", editor: "checkbox"}
 
