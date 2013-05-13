@@ -498,6 +498,7 @@ var suite = Y.BenchmarkSuite = new Benchmark.Suite();
 
 var GLOBAL_MY_BASE_10 = new MyBase10();
 var UNIQUE_VALUE = 10;
+var OPTS = {src:'internal'};
 
 suite.add('Base', function () {
    var b = new Y.Base();
@@ -517,6 +518,10 @@ suite.add('MyBase with 20 varied attributes', function () {
 
 suite.add('MyBase with 10 simple value attributes - set', function () {
     GLOBAL_MY_BASE_10.set("attr4", UNIQUE_VALUE++);
+});
+
+suite.add('MyBase with 10 simple value attributes - set with opts', function () {
+    GLOBAL_MY_BASE_10.set("attr4", UNIQUE_VALUE++, OPTS);
 });
 
 suite.add('MyBase with 10 simple value attributes - get', function () {
