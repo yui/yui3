@@ -38,12 +38,12 @@ YUI.add('batch-tests', function (Y) {
             Assert.areNotSame(somePromise, Y.batch(somePromise), 'when passed a promise, batch should return a new promise');
         },
 
-        'empty parameter list should resolve to undefined': function () {
+        'empty parameter list should return an empty array': function () {
             var test = this;
 
             Y.batch().then(function (result) {
                 test.resume(function () {
-                    Assert.isUndefined(result, 'with no parameters batch() should resolve to undefined');
+                    Assert.areSame(0, result.length, 'with no parameters, batch should result in an empty array');
                 });
             });
 
