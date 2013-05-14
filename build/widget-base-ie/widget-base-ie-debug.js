@@ -23,7 +23,7 @@ Y.Widget.prototype._uiSizeCB = function(expand) {
         borderBoxSupported = this._bbs;
 
     if (borderBoxSupported === undefined) {
-        this._bbs = borderBoxSupported = !(IE && IE < 8 && bb.get("ownerDocument").get("compatMode") != "BackCompat"); 
+        this._bbs = borderBoxSupported = !(IE && IE < 8 && bb.get("ownerDocument").get("compatMode") != "BackCompat");
     }
 
     if (borderBoxSupported) {

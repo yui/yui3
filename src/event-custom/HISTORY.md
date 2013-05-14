@@ -1,6 +1,13 @@
 Custom Event Infrastructure Change History
 ==========================================
 
+@VERSION@
+------
+
+* Fixed issue with facade carrying stale data for the "no subscriber" case.
+* Fixed regression where `once()` and `onceAfter()` subscriptions using the
+  `*` prefix threw a TypeError [#676]. `target.once('*:fooChange', callback)`
+
 3.10.0
 ------
 
