@@ -11,6 +11,11 @@ Custom Event Infrastructure Change History
 
 * Fixed exception with fire(type, null) with emitFacade:true.
 
+3.10.1
+------
+
+* No changes.
+
 3.10.0
 ------
 
@@ -86,8 +91,8 @@ Custom Event Infrastructure Change History
   know what they're doing. That's why its private for now, but its 5x faster than `publish()`
   for a comparable event configuration. `publish()` leverages `_publish()`, also ends up being
   faster after this change, but not by such a big factor.
-  
-* Revert EventTarget back to lazily creating `targets`.   
+
+* Revert EventTarget back to lazily creating `targets`.
 
 3.9.1
 -----

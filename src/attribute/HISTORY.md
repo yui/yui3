@@ -5,9 +5,14 @@ Attribute Change History
 ------
 
 * opts now passed to setter correctly, when using AttributeObservable.
-  
-  This feature was added in 3.8.1 (below), but didn't work for 
+
+  This feature was added in 3.8.1 (below), but didn't work for
   AttributeObservable.
+
+3.10.1
+------
+
+* No changes.
 
 3.10.0
 ------
