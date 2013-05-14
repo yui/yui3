@@ -30,9 +30,13 @@ YUI({
                     requires:[
                         "datatable-base",
                         "datatype",
-                        "node-screen"
+                        "node-screen",
+                        "datatable-keynav",
+                        "event-resize",
+                        "event-outside"
                     ],
-                    skinnable:true
+                    skinnable:true,
+                    lang: ['es', 'en']
                 },
                 'datatable-celleditor-inline': {
                     path: 'datatable-celleditor-inline/datatable-celleditor-inline-min.js',
@@ -57,6 +61,20 @@ YUI({
                         "template"
                     ],
                     skinnable:true
+                },
+                'datatable-celleditor-keyfiltering': {
+                    path: 'datatable-celleditor-keyfiltering/datatable-celleditor-keyfiltering-min.js',
+                    requires: [
+                       "datatable-editable",
+                       "event-valuechange",
+                       "base-build"
+                   ]
+                },
+                "datatable-keynav": {
+                    path: 'datatable-keynav/datatable-keynav-min.js',
+                    "requires": [
+                        "yui-base", "datatable-base", "base-base", "oop"
+                    ]
                 }
             }
         }

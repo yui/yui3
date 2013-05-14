@@ -108,7 +108,9 @@
                     "datatable-base",
                     "datatype",
                     "node-screen",
-                    "event-resize"
+                    "datatable-keynav",
+                    "event-resize",
+                    "event-outside"
                 ]
             },
             "datatable-celleditor-inline": {
@@ -140,6 +142,11 @@
                    "event-valuechange",
                    "base-build"
                ]
+            },
+            "datatable-keynav": {
+                "requires": [
+                    "yui-base", "datatable-base", "base-base", "oop"
+                ]
             }
         }
     }

@@ -73,6 +73,33 @@ DtEditable.ATTRS = {
     },
 
     /**
+    Defines the keys that will open the editor when pressed while an editable cell
+    has the focus.
+
+    It can be set to a keyCode or an alias from the [KEY_NAMES](#property_KEY_NAMES)
+    table plus modifiers as described in [keyActions](#property_keyActions) or an array of them
+    to enable multiple keys to open the editor.  A null value will disable the
+    use of keystrokes to open the editor.
+
+    The default follows the W3C recommendations: http://www.w3.org/WAI/PF/aria-practices/#grid
+
+
+    @attribute editorOpenKey
+    @type [String | Integer] | String | Integer | null
+    @default F2 and Enter
+    */
+    editorOpenKey: {
+        value: [13, 113],
+        setter: function (value) {
+             Y.log('DataTable.Editable.editorOpenKey setter: ' + value, 'info', 'datatable-editable');
+           if (value) {
+                return Y.Array(value);
+            }
+            return value;
+        }
+    },
+
+    /**
     Specifies a default editor name to respond to an editing event defined in
     [_editorOpenAction](#attr_editorOpenAction) attribute.
     The default editor is used if the DataTable is in editing mode (i.e. "editable:true") and if
@@ -291,7 +318,7 @@ Y.mix( DtEditable.prototype, {
 
         // Hide any editor that may currently be open ... unless it is the currently visible one
         if(this._openEditor) {
-            this.hideCellEditor();
+            this._openEditor.cancelEditor();
         }
 
         if(editorInstance) {
@@ -329,11 +356,19 @@ Y.mix( DtEditable.prototype, {
     */
     hideCellEditor: function () {
         Y.log('DataTable.Editable.hideCellEditor', 'info', 'datatable-editable');
+        var oe = this._openEditor,
+            td = this._editorTd;
 
-        if(this._openEditor) {
-            this._openEditor._hideEditor();
-            if (this._editorTd) {
-                this._editorTd.removeClass(this._classCellEditing);
+        if(oe) {
+            if (oe.get('active')) {
+                oe._hideEditor();
+            }
+            if (td) {
+                td.removeClass(this._classCellEditing);
+
+                // Return the focus to the cell just edited
+                this.set('focusedCell', td);
+                this.focus();
             }
 
             this._unsetEditor();
@@ -461,9 +496,12 @@ Y.mix( DtEditable.prototype, {
             //this._editorsContainer.on('click',      this._onClick, this),
             this._editorsContainer.on('keydown',    this._onKeyDown, this),
             this.after('scroll', this._onScrollUpdateCellEditor),
-            Y.on("windowresize", Y.bind(this._onScrollUpdateCellEditor, this))
+            Y.on("windowresize", Y.bind(this._onScrollUpdateCellEditor, this)),
+            this._editorsContainer.on('clickoutside', this._afterClickOutside, this),
+            this.after('editorOpenKeyChange', this._afterEditorOpenKeyChange)
         ];
         this._uiSetEditorOpenAction(this.get(EDITOR_OPEN_ACTION));
+        this._setEditorOpenKeys(this.get('editorOpenKey'));
     },
 
     /**
@@ -598,11 +636,63 @@ Y.mix( DtEditable.prototype, {
      */
 
     _afterEditorOpenAction: function (ev) {
+        Y.log('DataTable.Editable._afterEditorOpenAction', 'info', 'datatable-editable');
+
         // If not completely halted, the cell underneath will get the focus thanks to datatable-keynav
         ev.halt(true);
         this.openCellEditor(ev.currentTarget);
     },
 
+    /**
+    Listener for changes in the [editorOpenKey](#attr_editorOpenKey) attribute.
+    Adds the given key codes to the [keyActions](#property_keyActions) map
+    of the `datatable-keynav` module.
+
+    @method _afterEditorOpenKeyChange
+    @param ev {EventFacade} Event facade for the attribute change event.
+    @private
+    */
+    _afterEditorOpenKeyChange: function (ev) {
+        Y.log('DataTable.Editable._afterEditorOpenKeyChange: ' + ev.newVal, 'info', 'datatable-editable');
+
+        arrEach(ev.prevVal, function (keyCode) {
+            delete this.keyActions[keyCode];
+        }, this);
+        if (ev.newVal) {
+            this._setEditorOpenKeys(ev.newVal);
+        }
+    },
+
+    /**
+    Sets the keys that will open the editor.
+
+    @method _setEditorOpenKeys
+    @param keys {[String | Integer]} Array of keys that will open the editor.
+    @private
+    */
+    _setEditorOpenKeys: function(keys) {
+        Y.log('DataTable.Editable._setEditorOpenKeys: ' + keys, 'info', 'datatable-editable');
+        arrEach(keys, function (keyCode) {
+            this.keyActions[keyCode] = '_afterEditorOpenKey';
+        }, this);
+
+    },
+
+    /**
+    Listener for the keystrokes set at the [editorOpenAction](#attr_editorOpenKey) attribute.
+    Opens a cell editor on the target cell.
+
+    It is called from the `datatable-keynav` module.
+
+    @method _afterEditorOpenKey
+    @param ev {EventFacade} Event Facade for the corresponding event.
+    @private
+    */
+    _afterEditorOpenKey: function (ev) {
+        Y.log('DataTable.Editable._afterEditorOpenKey', 'info', 'datatable-editable');
+
+        this.openCellEditor(ev.target);
+    },
 
 
     /**
@@ -898,6 +988,19 @@ Y.mix( DtEditable.prototype, {
         }
     },
 
+    /*
+    Closes any open editor if the user clicks outside the editor.
+
+    @method _afterClickOutside
+    @private
+    */
+    _afterClickOutside: function () {
+        Y.log('DataTable.Editable._afterClickOutside', 'info', 'datatable-editable');
+
+        if(this._openEditor) {
+            this._openEditor.cancelEditor();
+        }
+    },
     /**
     Key listener for the `keydown` event.
     It handles navigation, Enter or Esc.
@@ -1079,7 +1182,7 @@ Y.mix( DtEditable.prototype, {
             this._editorTd.removeClass(this._classCellEditing);
         }
 
-        if(this._openEditor && !this._openEditor.get('hidden')) {
+        if(this._openEditor) {
             this.hideCellEditor();
         }
     },

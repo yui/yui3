@@ -267,7 +267,7 @@ Editors.inlineNumber = Y.Base.create('celleditor', IEd, [],
                     } else {
                         value = parseFloat(value);
                     }
-                    if (Lang.isValue(value)) {
+                    if (Y.Lang.isValue(value)) {
                         return value;
                     }
                     return Y.Attribute.INVALID_VALUE;

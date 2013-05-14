@@ -198,9 +198,11 @@ var arrMap = Y.Array.map,
         }, this)) {
             if (btnCfg.save) {
                 this.saveEditor();
+                return;
             }
             if (btnCfg.cancel) {
                 this.cancelEditor();
+                return;
             }
             action = btnCfg.action;
             cellInfo = Y.merge(this._cellInfo, {value: this._getValue()});
