@@ -620,7 +620,7 @@
                     Y.on("load", function() {
                         var thisWin = this;
 
-                        // setTimeout to make sure we don't hit resume w/o wait, because we don't have absolute control over whether this 
+                        // setTimeout to make sure we don't hit resume w/o wait, because we don't have absolute control over whether this
                         // fires async or sync - based on whether or not the window.load event has fired already.
 
                         setTimeout(function() {
@@ -656,10 +656,60 @@
                             });
                         }
                     }, null, true);
-    
+
                     Y.later(25, {}, function () {
                         Y.one('#clickcontainer')
                             .append('<p id="infinite-poll">THIS SHOULD NOT BE LEFT OVER</p>');
+                    });
+
+                    test.wait();
+                },
+
+                test_nodelist_on_with_custom_deps: function() {
+
+                    // See: http://yuilibrary.com/projects/yui3/ticket/2533242
+
+                    // NOTE: To reproduce the bug, you need to avoid having
+                    // 'requires' in the loader meta-data for testA, testB
+                    // below [which is not a good idea, but still a bug]
+
+                    var config = {
+                        groups: {
+                            'local-modules': {
+                                base: './',
+                                modules: {
+                                    'testA': {
+                                        path: 'assets/testA.js'
+                                    },
+                                    'testB': {
+                                        path: 'assets/testB.js'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    test = this,
+                    actualClicked = [],
+
+                    assertResults = function() {
+                        Y.ArrayAssert.itemsAreEqual(["clicker1", "clicker2"], actualClicked);
+                    }
+
+                    // Create a YUI instance
+                    YUI(config).use('node-base', 'testA', function(Y2) {
+
+                        function onClick(e) {
+                            actualClicked.push(e.target.get("id"));
+                        }
+
+                        var nodelist = Y2.all(".clickers");
+                        nodelist.on("click", onClick);
+
+                        Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                        Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                        test.resume(assertResults);
+
                     });
 
                     test.wait();

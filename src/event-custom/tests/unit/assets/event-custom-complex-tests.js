@@ -981,6 +981,115 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.Assert.areEqual(1, count);
         },
 
+        testFreshPayloadWithoutSubscribers : function() {
+
+            var a = new Y.EventTarget(),
+                payload,
+                defaultPayload = [];
+
+            a.publish("foo", {
+                emitFacade: true,
+
+                defaultFn : function(e) {
+                    defaultPayload.push(e);
+                }
+            });
+
+            a.fire("foo", {
+                foo:1
+            });
+
+            a.fire("foo", {
+                bar:2
+            });
+
+            Y.Assert.areEqual(defaultPayload[0].foo, 1);
+            Y.Assert.isFalse("bar" in defaultPayload[0]);
+
+            Y.Assert.isFalse("foo" in defaultPayload[1]);
+            Y.Assert.areEqual(defaultPayload[1].bar, 2);
+        },
+
+        testFreshPayloadWithAfterSubscriber : function() {
+
+            var a = new Y.EventTarget(),
+                payload,
+
+                listenerPayload = [],
+                defaultPayload = [];
+
+            a.publish("foo", {
+                emitFacade: true,
+
+                defaultFn : function(e) {
+                    defaultPayload.push(e);
+                }
+            });
+
+            a.after("foo", function(e) {
+                listenerPayload.push(e);
+            });
+
+            a.fire("foo", {
+                foo:1
+            });
+
+            a.fire("foo", {
+                bar:2
+            });
+
+            Y.Assert.areEqual(defaultPayload[0].foo, 1);
+            Y.Assert.isFalse("bar" in defaultPayload[0]);
+
+            Y.Assert.isFalse("foo" in defaultPayload[1]);
+            Y.Assert.areEqual(defaultPayload[1].bar, 2);
+
+            Y.Assert.areSame(defaultPayload[0], listenerPayload[0]);
+
+            Y.ObjectAssert.areEqual(defaultPayload[0], listenerPayload[0]);
+            Y.ObjectAssert.areEqual(defaultPayload[1], listenerPayload[1]);
+        },
+
+        testFreshPayloadWithOnSubscriber : function() {
+
+            var a = new Y.EventTarget(),
+                payload,
+
+                listenerPayload = [],
+                defaultPayload = [];
+
+            a.publish("foo", {
+                emitFacade: true,
+
+                defaultFn : function(e) {
+                    defaultPayload.push(e);
+                }
+            });
+
+            a.on("foo", function(e) {
+                listenerPayload.push(e);
+            });
+
+            a.fire("foo", {
+                foo:1
+            });
+
+            a.fire("foo", {
+                bar:2
+            });
+
+            Y.Assert.areEqual(defaultPayload[0].foo, 1);
+            Y.Assert.isFalse("bar" in defaultPayload[0]);
+
+            Y.Assert.isFalse("foo" in defaultPayload[1]);
+            Y.Assert.areEqual(defaultPayload[1].bar, 2);
+
+            Y.Assert.areSame(defaultPayload[0], listenerPayload[0]);
+
+            Y.ObjectAssert.areEqual(defaultPayload[0], listenerPayload[0]);
+            Y.ObjectAssert.areEqual(defaultPayload[1], listenerPayload[1]);
+        },
+
         test_bubble_config: function() {
 
             var a = new Y.EventTarget(),
@@ -1220,6 +1329,17 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.Assert.areEqual(2, heard);
 
             node.remove(true);
+        },
+
+        // Ticket #676 - this was throwing an error in 3.10.0
+        "test sibling once() subscriptions - once('*:type')": function () {
+            var target = new Y.EventTarget({ emitFacade: true });
+
+            target.once('*:foo', function (e) {
+                Y.Assert.isTrue(true);
+            });
+
+            target.fire('x:foo');
         }
 
     }));
