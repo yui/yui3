@@ -8,6 +8,11 @@ Widget Change History
     widget hasn't been rendered, and `widget.destroy(true)` [deep destroy]
     is used.
 
+3.10.1
+------
+
+* No changes.
+
 3.10.0
 ------
 
