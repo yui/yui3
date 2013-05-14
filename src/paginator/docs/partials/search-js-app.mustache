@@ -1,12 +1,20 @@
+    FlickrSearch.App = Y.Base.create('search', Y.View, [], {
+
+        // This is the Flickr API URL
         url: 'http://api.flickr.com/services/rest/?',
 
+        // This is a flag that will determin if we are performing a new query
+        // or simply going to a new page of the previous query
         _isNewQuery: false,
 
+        // An array of pages that are being displayed. This will adjust as
+        // the paginator is being interacted with, but should result in only
+        // one item being persistent
         _pages: [],
 
-        paginator: null,
-
         _api: null,
+
+        paginator: null,
 
         events: {
             'form': {
@@ -18,15 +26,48 @@
             this._api = this.get('apiConfig');
 
             this.paginator = new FlickrSearch.Paginator({
-                itemsPerPage: this._api.per_page
+                model:  new FlickrSearch.PaginatorModel({
+                    itemsPerPage: this._api.per_page
+                })
             });
 
-            this.paginator.after('pageChange', this._afterPageChange, this);
+            this.paginator.get('model').after('pageChange', this._afterPageChange, this);
         },
 
+        // We need to append our paginator to the bottom of the app container
         render: function () {
-            this.paginator.render(this.get('container').one('.paginator'));
+            this.get('container').one('.paginator').append(
+                this.paginator.render().get('container')
+            );
         },
+
+        // We need to update the app based on our loading process
+        //
+        // If status is true, we add the "loading" class
+        // If status is false, we remove the "loading" class
+        setLoading: function (status) {
+            this.get('container').toggleClass('loading', status);
+        },
+
+        // Our app needs a way to display a message to the user where there's
+        // an error or remove an error message if there is no longer a
+        // message that needs to be displayed
+        setMessage: function (msg) {
+            var container = this.get('container'),
+                msgNode = container.one('.results .msg');
+
+            if (msg) {
+                container.one('.results').setHTML('<div class="msg">' + msg + '</div>');
+                container.removeClass('hide-pg');
+                this.setLoading(false);
+            } else {
+                if (msgNode) {
+                    msgNode.remove();
+                }
+            }
+        },
+
+        // Flickr API Request
 
         handleQuery: function (e) {
             e.preventDefault();
@@ -75,41 +116,17 @@
             });
         },
 
-        setLoading: function (status) {
-            this.get('container').toggleClass('loading', status);
-        },
-
-        setMessage: function (msg) {
-            var container = this.get('container'),
-                msgNode;
-
-            if (msg) {
-                container.one('.results').setHTML('<div class="msg">' + msg + '</div>');
-                container.removeClass('hide-pg');
-                this.setLoading(false);
-            } else {
-                msgNode = container.one('.results .msg');
-
-                if (msgNode) {
-                    msgNode.remove();
-                }
-            }
-        },
-
         _processResults: function (resp) {
-            if (resp.pages < 1) {
-                return this.setMessage('There are no images for "' + this._api.text + '"');
-            } else {
-                this.setMessage();
-            }
+            this.setMessage( !resp.pages ?
+                'There are no images for "' + this._api.text + '"' :
+                ''
+            );
 
             if (this._isNewQuery) {
                 this.paginator.set('totalItems', parseInt(resp.total, 10));
             }
 
             this._createNewPage(resp.photo);
-
-            this.paginator.syncUI();
         },
 
         _createNewPage: function (photos) {
@@ -117,7 +134,7 @@
                 resultsNode = this.get('container').one('.results'),
                 pageContainer;
 
-            page.items.add(photos);
+            page.addPhotos(photos);
 
             pageContainer = page.get('container');
 
@@ -127,7 +144,7 @@
             var images = pageContainer.all('img'),
                 imagesLeft = images.size();
 
-            images.after('load', function (e) {
+            images.after(['load', 'error', 'abort'], function (e) {
 
                 if (!(--imagesLeft)) {
 
@@ -159,6 +176,24 @@
 
         },
 
+        // After our page changes, we need to request that page's photos
         _afterPageChange: function (e) {
             this.requestPhotos(e.newVal);
         }
+
+    }, {
+        ATTRS: {
+            // This will contain our settings for the Flickr API
+            apiConfig: {
+                value: {
+                    api_key: FLICKR_API_KEY,
+                    method: 'flickr.photos.search',
+                    safe_search: 1,
+                    sort: 'relevance',
+                    format: 'json',
+                    license: 4,
+                    per_page: 20
+                }
+            }
+        }
+    });

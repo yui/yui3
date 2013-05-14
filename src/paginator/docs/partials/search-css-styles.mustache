@@ -1,4 +1,5 @@
 <style scoped>
+/** DEMO BOX **/
 #demo {
     position: relative;
     border: 1px solid #cbcbcb;
@@ -6,6 +7,8 @@
     padding: 8px;
     background: #fafafa;
 }
+
+/** SEARCH FORM **/
 #demo form {
     border: 1px solid #cbcbcb;
     border-radius: 3px;
@@ -16,6 +19,8 @@
     font-size: 180%;
     padding: 3px 7px;
 }
+
+/** SEARCH RESULTS **/
 #demo .results {
     position: relative;
     margin: 8px 0;
@@ -23,7 +28,7 @@
 #demo.hide-pg .results {
     margin: 0;
 }
-#demo .results ol {
+#demo .results ul {
     margin: 0;
     padding: 0;
     text-align: center;
@@ -52,42 +57,12 @@
     height: 160px;
     z-index: 10;
     border: 3px solid #fff;
-    box-shadow: 3px 3px 4px hsla(250, 40%, 30%, 0.5);
+    -webkit-box-shadow: 3px 3px 5px hsla(250, 40%, 30%, 0.5);
+    -moz-box-shadow: 3px 3px 5px hsla(250, 40%, 30%, 0.5);
+    box-shadow: 3px 3px 5px hsla(250, 40%, 30%, 0.5);
 }
-#demo .controls {
-    clear: both;
-    padding: 10px 0;
-    text-align: center;
-}
-#demo .controls a {
-    text-align: center;
-    display: inline-block;
-    zoom: 1; *display: inline;
-    margin-top: 5px;
-    border: solid 1px #CBCBCB;
-    text-decoration: none;
-    line-height: 1.7em;
-    color: #4A4A4A;
-    font-size: 1.4em;
-    font-family: arial,san-serif;
-    border-radius: 4px;
-    padding: 0 10px;
-    background: #fff;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-#demo .controls a:hover {
-    background-color: #bfdaff;
-    color: #000;
-}
-#demo .controls a:active {
-    background: #2647a0;
-    color: #ffffff;
-}
+
+/** LOADING INDICATOR **/
 #demo.loading .loading {
     display: block;
 }
@@ -104,6 +79,9 @@
     margin-left: -75px;
     display: none;
     z-index: 100;
+    -webkit-box-shadow: 0 0 0 6px hsla(226, 10%, 40%, 0.4);
+    -moz-box-shadow: 0 0 0 6px hsla(226, 10%, 40%, 0.4);
+    box-shadow: 0 0 0 6px hsla(226, 10%, 40%, 0.4);
 }
 
 /** PAGINATOR CSS **/
@@ -114,8 +92,6 @@
 #demo .paginator {
     margin-top: 8px;
     text-align: center;
-}
-#demo .yui3-pager {
     border-top: 1px solid #eee;
     padding-top: 10px;
     margin: 0 10px;
@@ -127,17 +103,17 @@
     text-align: center;
     text-decoration: none;
 }
-
 #demo .paginator ul {
-    margin: 0; /* needed for IE */
+    margin: 0;
     padding: 0;
+    display: inline-block;
+    zoom: 1; *display: inline;
 }
 #demo .paginator ul li {
     display: inline-block;
     zoom: 1; *display: inline;
     list-style: none;
 }
-
 #demo .paginator .control {
     border: solid 1px #CBCBCB;
     display: inline-block;
@@ -150,17 +126,17 @@
     color: #4A4A4A;
     font-family: arial,san-serif;
     background-color: #E6E6E6;
-    -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ie-border-radius: 3px;
+    -o-border-radius: 3px;
     border-radius: 3px;
     cursor: pointer;
 }
-
 #demo .paginator .control:hover {
     background-color: #d6d6d6;
     color: #3a3a3a;
 }
-
 #demo .paginator .control.selected,
 #demo .paginator .control.selected:hover {
     cursor: default;
@@ -169,7 +145,6 @@
     background-color: #2647a0;
     color: #fff;
 }
-
 #demo .paginator .control.disabled,
 #demo .paginator .control.disabled:hover {
     background-color: #E6E6E6;
@@ -177,11 +152,8 @@
     opacity: 0.55;
     filter: alpha(opacity=55);
 }
-
 #demo .paginator .page:hover {
     background-color: #bfdaff;
     color: #000;
 }
-
-
 </style>

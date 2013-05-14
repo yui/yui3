@@ -25,9 +25,9 @@
         {
             "name": "search",
             "displayName": "Search Results",
-            "description": "Continuous pagining using image searching usings Flickr's API.",
-            "modules": ["paginator", "search"],
-            "tags": ["paginator", "search", "flickr"]
+            "description": "An application using the Flickr API to display images with a paginator control to step through the results.",
+            "modules": ["paginator", "transition", "view", "model"],
+            "tags": ["paginator", "search", "flickr", "model", "view"]
         }
     ]
 

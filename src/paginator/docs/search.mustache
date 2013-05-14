@@ -1,3 +1,11 @@
+<style>
+.scrollable pre {
+    overflow-y: auto;
+    max-height: 40em;
+    -webkit-overflow-scrolling: touch;
+}
+</style><script>var FLICKR_API_KEY = '0c13dc70aa7eb3df87b3fee5caf37080';</script>
+
 <div class="intro">
 <p>{{description}}</p>
 </div>
@@ -11,17 +19,75 @@
 ```
 
 <p>Now let's jazz it up a bit with some CSS.</p>
+<div class="scrollable">
 ```
 {{>search-css-styles}}
 ```
+</div>
 
 
 <h2>JavaScript</h2>
+<p>Our Flickr Search application will have {number} main parts:</p>
+<ul>
+    <li>Our paginator with navigation controls and direct page number options</li>
+    <li></li>
+</ul>
+
 <h3>Setting Up the YUI Instance</h3>
 <p>Now we need to create our YUI instance and tell it to load the modules.</p>
 ```
 {{>search-js-startup}}
 ```
+<p>There are a number of modules we will need to use:</p>
+<ul>
+    <li><b>paginator-core:</b> Gives us the core part of paginator to mix into a model.</li>
+    <li><b>model:</b> Gives us a model structure to use with our paginator views</li>
+    <li><b>view:</b> Let's us abstract our view logic into a more focused component</li>
+    <li><b>transition:</b> Gives us the ability to fade pages in and out when swapping pages</li>
+    <li><b>jsonp:</b> Let's us make a JSONP request to the Flickr API</li>
+    <li><b>querystring-stringify-simple:</b> Gives us the ability to convert a simple object to a URL to pass to the Flickr API</li>
+    <li><b>cssbutton:</b> Dresses up our search form's submit button</li>
+</ul>
+
+<p>We also go ahead and define our `FlickrSearch` object that will house our models and views for our application.</p>
+
+<h3>Paginator</h3>
+<p>The paginator we will create will consist of four control buttons (First, Previous, Next, Last) and a collection of buttons representing each page.</p>
+<p>Our paginator will consist of one `Y.Model` and two `Y.View`s.</p>
+
+<h4>Paginator Model</h4>
+<p>First we'll set up the model.</p>
+```
+{{>search-js-paginator-model}}
+```
+<p>Since `paginator-core` contains our logic, and is built to be mixed into a `Base`-based component, we do not need to add any new logic. Just mix in and our model is complete!
+
+<h4>Paginator Pages View</h4>
+```
+{{>search-js-paginator-pages}}
+```
+<h4>Paginator View</h4>
+```
+{{>search-js-paginator}}
+```
+
+<h3>Page View</h3>
+```
+{{>search-js-page}}
+```
+
+<h3>Search App View</h3>
+```
+{{>search-js-app}}
+```
+
+
+<h4>Get it on</h4>
+```
+{{>search-js-begin}}
+```
+
+
 
 <h3>The Whole Example</h3>
 <p>Now let's see it all together!</p>

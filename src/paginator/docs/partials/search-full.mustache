@@ -1,16 +1,14 @@
 {{>search-css-styles}}
 {{>search-html-markup}}
 <script>
-YUI().use('model', 'model-list', 'view', 'widget', 'paginator', 'node', 'jsonp', 'querystring', 'cssbutton', 'transition', function (Y) {
+YUI().use('paginator-core', 'model', 'view', 'transition', 'jsonp', 'querystring-stringify-simple', 'cssbutton', function (Y) {
+
 {{>search-js-vars}}
-{{>search-js-image}}
-{{>search-js-page}}
+{{>search-js-paginator-model}}
+{{>search-js-paginator-pages}}
 {{>search-js-paginator}}
-{{>search-js-app-start}}
-{{>search-js-app-prot}}
-{{>search-js-app-middle}}
-{{>search-js-app-attrs}}
-{{>search-js-app-end}}
+{{>search-js-page}}
+{{>search-js-app}}
 {{>search-js-begin}}
 });
 </script>
