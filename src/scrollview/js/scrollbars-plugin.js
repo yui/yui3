@@ -20,8 +20,6 @@ var getClassName = Y.ClassNameManager.getClassName,
 
     TOP = "top",
     LEFT = "left",
-    WIDTH = "width",
-    HEIGHT = "height",
 
     HORIZ_CACHE = "_sbh",
     VERT_CACHE = "_sbv",
@@ -34,7 +32,7 @@ var getClassName = Y.ClassNameManager.getClassName,
 
     SCALE_X = "scaleX(",
     SCALE_Y = "scaleY(",
-    
+
     SCROLL_X = "scrollX",
     SCROLL_Y = "scrollY",
 
@@ -78,7 +76,7 @@ _classNames = ScrollbarsPlugin.CLASS_NAMES;
  * @static
  */
 ScrollbarsPlugin.NAME = 'pluginScrollViewScrollbars';
-    
+
 /**
  * The namespace on which the plugin will reside.
  *
@@ -112,7 +110,7 @@ ScrollbarsPlugin.SCROLLBAR_TEMPLATE = [
  * @static
  */
 ScrollbarsPlugin.ATTRS = {
-    
+
     /**
      * Vertical scrollbar node
      *
@@ -214,7 +212,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             bb.append(bar);
             bar.toggleClass(className, this._basic);
             this._setChildCache(bar);
-        } else if(!add && inDoc) {
+        }
+        else if(!add && inDoc) {
             bar.remove();
             this._clearChildCache(bar);
         }
@@ -286,134 +285,105 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             middleChildSize,
             lastChildPosition,
 
-            transition,
-            translate,
-            scale,
-
-            dim,
-            dimOffset,
             dimCache,
             widgetSize,
             contentSize;
 
         if (horiz) {
-            dim = WIDTH;
-            dimOffset = LEFT;
             dimCache = HORIZ_CACHE;
             widgetSize = this._dims.offsetWidth;
             contentSize = this._dims.scrollWidth;
-            translate = TRANSLATE_X;
-            scale = SCALE_X;
             current = (current !== undefined) ? current : host.get(SCROLL_X);
-        } else {
-            dim = HEIGHT;
-            dimOffset = TOP;
+        }
+        else {
             dimCache = VERT_CACHE;
             widgetSize = this._dims.offsetHeight;
             contentSize = this._dims.scrollHeight;
-            translate = TRANSLATE_Y;
-            scale = SCALE_Y;
             current = (current !== undefined) ? current : host.get(SCROLL_Y);
         }
 
-        scrollbarSize = Math.floor(widgetSize * (widgetSize/contentSize));
-        scrollbarPos = Math.floor((current/(contentSize - widgetSize)) * (widgetSize - scrollbarSize));
-        if (scrollbarSize > widgetSize) {
-            scrollbarSize = 1;
-        }
+        // Calculate the scrollbar size, and constrain it to within the widget boundaries
+        scrollbarSize = (widgetSize * (widgetSize/contentSize));
+        scrollbarSize = Math.min(Math.max(scrollbarSize, 0), widgetSize);
 
+        // Calculate the scrollbar position
+        scrollbarPos = (current/(contentSize - widgetSize) * (widgetSize - scrollbarSize));
+
+        // Dragged beyond the right boundary
         if (scrollbarPos > (widgetSize - scrollbarSize)) {
             scrollbarSize = scrollbarSize - (scrollbarPos - (widgetSize - scrollbarSize));
-        } else if (scrollbarPos < 0) {
+        }
+        // Dragged beyond the left boundary
+        else if (scrollbarPos < 0) {
             scrollbarSize = scrollbarPos + scrollbarSize;
-            scrollbarPos = 0;
-        } else if (isNaN(scrollbarPos)) {
-            scrollbarPos = 0;
         }
 
+        // Constrain the scrollbar position to the widget boundaries
+        scrollbarPos = Math.min(Math.max(scrollbarPos, 0), contentSize);
+
+        // Calculate the middle child size, and ensure it is >= 0
         middleChildSize = (scrollbarSize - (firstChildSize + lastChildSize));
+        middleChildSize = Math.max(middleChildSize, 0);
 
-        if (middleChildSize < 0) {
-            middleChildSize = 0;
-        }
-
+        // Dead code?
         if (middleChildSize === 0 && scrollbarPos !== 0) {
             scrollbarPos = widgetSize - (firstChildSize + lastChildSize) - 1;
         }
 
-        if (duration !== 0) {
-            // Position Scrollbar
-            transition = {
-                duration : duration
-            };
+        // Floor the size & position
+        scrollbarSize = Math.floor(scrollbarSize);
+        scrollbarPos = Math.floor(scrollbarPos);
 
-            if (NATIVE_TRANSITIONS) {
-                transition.transform = translate + scrollbarPos + PX_CLOSE;
-            } else {
-                transition[dimOffset] = scrollbarPos + PX;
-            }
-
-            scrollbar.transition(transition);
-
-        } else {
-            if (NATIVE_TRANSITIONS) {
-                scrollbar.setStyle(TRANSFORM, translate + scrollbarPos + PX_CLOSE);
-            } else {
-                scrollbar.setStyle(dimOffset, scrollbarPos + PX);
-            }
-        }
+        // Scroll the container
+        this._updateNode(scrollbar, scrollbarPos, duration, true, horiz);
 
         // Resize Scrollbar Middle Child
         if (this[dimCache] !== middleChildSize) {
             this[dimCache] = middleChildSize;
 
             if (middleChildSize > 0) {
+                this._updateNode(middleChild, middleChildSize, duration, false, horiz);
 
-                if (duration !== 0) {
-                    transition = {
-                        duration : duration
-                    };
-
-                    if(NATIVE_TRANSITIONS) {
-                        transition.transform = scale + middleChildSize + CLOSE;
-                    } else {
-                        transition[dim] = middleChildSize + PX;
-                    }
-
-                    middleChild.transition(transition);
-                } else {
-                    if (NATIVE_TRANSITIONS) {
-                        middleChild.setStyle(TRANSFORM, scale + middleChildSize + CLOSE);
-                    } else {
-                        middleChild.setStyle(dim, middleChildSize + PX);
-                    }
-                }
-    
                 // Position Last Child
                 if (!horiz || !basic) {
-
                     lastChildPosition = scrollbarSize - lastChildSize;
-    
-                    if(duration !== 0) {
-                        transition = {
-                            duration : duration
-                        };
-                
-                        if (NATIVE_TRANSITIONS) {
-                            transition.transform = translate + lastChildPosition + PX_CLOSE;
-                        } else {
-                            transition[dimOffset] = lastChildPosition;
-                        }
-
-                        lastChild.transition(transition);
-                    } else {
-                        if (NATIVE_TRANSITIONS) {
-                            lastChild.setStyle(TRANSFORM, translate + lastChildPosition + PX_CLOSE);
-                        } else {
-                            lastChild.setStyle(dimOffset, lastChildPosition + PX);
-                        }
-                    }
+                    this._updateNode(lastChild, lastChildPosition, duration, true, horiz);
                 }
+            }
+        }
+    },
+
+    _updateNode: function (node, modifierValue, duration, isTranslate, horiz) {
+        var dimOffset = (horiz ? LEFT : TOP),
+            translate = (horiz ? TRANSLATE_X : TRANSLATE_Y),
+            scale = (horiz ? SCALE_X : SCALE_Y),
+            modifierType = (isTranslate ? translate : scale),
+            close = ((modifierType === translate) ? PX_CLOSE : CLOSE),
+            transition;
+
+        // Animate it
+        if(duration !== 0) {
+            transition = {
+                duration : duration
+            };
+
+            if (NATIVE_TRANSITIONS) {
+                transition.transform = modifierType + modifierValue + close;
+            }
+            else {
+                transition[dimOffset] = modifierValue + ((modifierType === translate) ? '' : PX);
+            }
+
+            node.transition(transition);
+        }
+
+        // Move it
+        else {
+            if (NATIVE_TRANSITIONS) {
+                node.setStyle(TRANSFORM, modifierType + modifierValue + close);
+            }
+            else {
+                node.setStyle(dimOffset, modifierValue + PX);
             }
         }
     },
