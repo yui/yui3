@@ -91,7 +91,7 @@ var domEventProxies = Y.Env.evt.dom_wrappers,
 
             if (currentTarget) {
                 currentTarget = toArray(currentTarget);
-                
+
                 for (i = 0, len = currentTarget.length && (!e || !e.stopped); i < len; ++i) {
                     ct = currentTarget[0];
                     if (!contains(ct, related)) {

@@ -1736,8 +1736,8 @@ relying on ES5 functionality, even when ES5 functionality is available.
 
 /**
 Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
-@property delayUntil
-@type String|Object
+
+@property {Object|String} delayUntil
 @since 3.6.0
 @example
 
@@ -1761,8 +1761,6 @@ Or you can delay until a node is available (with `available` or `contentready`):
         // available in the DOM.
     });
 
-@property {Object|String} delayUntil
-@since 3.6.0
 **/
 YUI.add('yui-base', function (Y, NAME) {
 
@@ -10346,10 +10344,11 @@ Y.CustomEvent.prototype = {
 
         if (!subs) {
             subs = (when === AFTER) ? this._afters : this._subscribers;
-            i = YArray.indexOf(subs, s, 0);
         }
 
         if (subs) {
+            i = YArray.indexOf(subs, s, 0);
+
             if (s && subs[i] === s) {
                 subs.splice(i, 1);
 
@@ -11328,12 +11327,15 @@ ET.prototype = {
             ce2,
             args;
 
-        if (typeIncluded && argCount <= 2) {
+        if (typeIncluded && argCount <= 3) {
 
             // PERF: Try to avoid slice/iteration for the common signatures
 
+            // Most common
             if (argCount === 2) {
                 args = [arguments[1]]; // fire("foo", {})
+            } else if (argCount === 3) {
+                args = [arguments[1], arguments[2]]; // fire("foo", {}, opts)
             } else {
                 args = []; // fire("foo")
             }
@@ -11961,12 +11963,6 @@ CEProto.fireComplex = function(args) {
             self.prevented = 0;
         }
 
-        // Kill the cached facade to free up memory.
-        // Otherwise we have the facade from the last fire, sitting around forever.
-        self._facade = null;
-
-        return ret;
-
     } else {
         defaultFn = self.defaultFn;
 
@@ -11977,17 +11973,20 @@ CEProto.fireComplex = function(args) {
                 defaultFn.apply(host, args);
             }
         }
-
-        return ret;
     }
 
+    // Kill the cached facade to free up memory.
+    // Otherwise we have the facade from the last fire, sitting around forever.
+    self._facade = null;
+
+    return ret;
 };
 
 CEProto._getFacade = function(fireArgs) {
 
     var userArgs = this.details,
         firstArg = userArgs && userArgs[0],
-        firstArgIsObj = (typeof firstArg === "object"),
+        firstArgIsObj = (firstArg && (typeof firstArg === "object")),
         ef = this._facade;
 
     if (!ef) {
@@ -15166,7 +15165,7 @@ Y.extend(DOMEventFacade, Object, {
         // Webkit and IE9+? duplicate charCode in keyCode.
         // Opera never sets charCode, always keyCode (though with the charCode).
         // IE6-8 don't set charCode or which.
-        // All browsers other than IE6-8 set which=keyCode in keydown, keyup, and 
+        // All browsers other than IE6-8 set which=keyCode in keydown, keyup, and
         // which=charCode in keypress.
         //
         // Moral of the story: (e.which || e.keyCode) will always return the
@@ -15385,6 +15384,7 @@ Y.DOMEventFacade = DOMEventFacade;
      * on the current target will not be executed
      */
 (function() {
+
 /**
  * The event utility provides functions to add and remove event listeners,
  * event cleansing.  It also tries to automatically remove listeners it
@@ -15406,8 +15406,7 @@ Y.DOMEventFacade = DOMEventFacade;
 Y.Env.evt.dom_wrappers = {};
 Y.Env.evt.dom_map = {};
 
-var YDOM = Y.DOM,
-    _eventenv = Y.Env.evt,
+var _eventenv = Y.Env.evt,
     config = Y.config,
     win = config.win,
     add = YUI.Env.add,
@@ -15430,7 +15429,7 @@ var YDOM = Y.DOM,
     shouldIterate = function(o) {
         try {
             // TODO: See if there's a more performant way to return true early on this, for the common case
-            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !YDOM.isWindow(o));
+            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !Y.DOM.isWindow(o));
         } catch(ex) {
             return false;
         }
@@ -15713,6 +15712,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 cewrapper = Y.publish(key, {
                     silent: true,
                     bubbles: false,
+                    emitFacade:false,
                     contextFn: function() {
                         if (compat) {
                             return cewrapper.el;
@@ -15797,7 +15797,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 // oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
 
                 if (compat) {
-                    oEl = YDOM.byId(el);
+                    oEl = Y.DOM.byId(el);
                 } else {
 
                     oEl = Y.Selector.query(el);
@@ -15911,7 +15911,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
 
                 // el = (compat) ? Y.DOM.byId(el) : Y.all(el);
                 if (compat) {
-                    el = YDOM.byId(el);
+                    el = Y.DOM.byId(el);
                 } else {
                     el = Y.Selector.query(el);
                     l = el.length;
@@ -15985,7 +15985,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
          * @static
          */
         generateId: function(el) {
-            return YDOM.generateID(el);
+            return Y.DOM.generateID(el);
         },
 
         /**
@@ -16092,7 +16092,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 if (item && !item.checkReady) {
 
                     // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
-                    el = (item.compat) ? YDOM.byId(item.id) : Y.Selector.query(item.id, null, true);
+                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         executeItem(el, item);
@@ -16109,7 +16109,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 if (item && item.checkReady) {
 
                     // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
-                    el = (item.compat) ? YDOM.byId(item.id) : Y.Selector.query(item.id, null, true);
+                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         // The element is available, but not necessarily ready
@@ -16309,6 +16309,7 @@ if (Y.UA.ie) {
 try {
     add(win, "unload", onUnload);
 } catch(e) {
+    /*jshint maxlen:300*/
 }
 
 Event.Custom = Y.CustomEvent;
@@ -16596,7 +16597,7 @@ IELazyFacade._lazyProperties = {
         var e = this._event,
             val = e.pageX,
             doc, bodyScroll, docScroll;
-                
+
         if (val === undefined) {
             doc = Y.config.doc;
             bodyScroll = doc.body && doc.body.scrollLeft;
@@ -16611,7 +16612,7 @@ IELazyFacade._lazyProperties = {
         var e = this._event,
             val = e.pageY,
             doc, bodyScroll, docScroll;
-                
+
         if (val === undefined) {
             doc = Y.config.doc;
             bodyScroll = doc.body && doc.body.scrollTop;
@@ -16672,7 +16673,7 @@ if (imp && (!imp.hasFeature('Events', '2.0'))) {
             useLazyFacade = false;
         }
     }
-        
+
     Y.DOMEventFacade = (useLazyFacade) ? IELazyFacade : IEEventFacade;
 }
 
@@ -17702,7 +17703,7 @@ Y.Node.prototype.intersect = function(node2, altRegion) {
  * @param {Node|Object} node2 The node or region to compare with.
  * @param {Boolean} all Whether or not all of the node must be in the region.
  * @param {Object} altRegion An alternate region to use (rather than this node's).
- * @return {Object} An object representing the intersection of the regions.
+ * @return {Boolean} True if in region, false if not.
  */
 Y.Node.prototype.inRegion = function(node2, all, altRegion) {
     var node1 = Y.Node.getDOMNode(this);

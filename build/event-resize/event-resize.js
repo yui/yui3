@@ -11,7 +11,7 @@ YUI.add('event-resize', function (Y, NAME) {
 /**
  * Old firefox fires the window resize event once when the resize action
  * finishes, other browsers fire the event periodically during the
- * resize.  This code uses timeout logic to simulate the Firefox 
+ * resize.  This code uses timeout logic to simulate the Firefox
  * behavior in other browsers.
  * @event windowresize
  * @for YUI
