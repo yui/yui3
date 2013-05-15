@@ -6,6 +6,11 @@ ScrollView Change History
 
   * Paginator API methods now respect the widget's `disabled` ATTR
 
+3.10.1
+------
+
+* No changes.
+
 3.10.0
 ------
 
