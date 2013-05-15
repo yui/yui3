@@ -405,10 +405,6 @@ Y.extend(Widget, Y.Base, {
          * @preventable false
          * @param {EventFacade} e The Event Facade
          */
-
-        if (this._applyParser) {
-            this._applyParser(config);
-        }
     },
 
     /**
@@ -566,6 +562,27 @@ Y.extend(Widget, Y.Base, {
             this.fire(RENDER, {parentNode: (parentNode) ? Node.one(parentNode) : null});
         }
         return this;
+    },
+
+    _preAddAttrs : function(attrs, userVals, lazy) {
+
+        var preAttrs = {
+            id : attrs.id,
+            boundingBox : attrs.boundingBox,
+            contentBox : attrs.contentBox,
+            srcNode : attrs.srcNode
+        };
+
+        this.addAttrs(preAttrs, userVals, lazy);
+
+        delete attrs.boundingBox;
+        delete attrs.contentBox;
+        delete attrs.srcNode;
+        delete attrs.id;
+
+        if (this._applyParser) {
+            this._applyParser(userVals);
+        }
     },
 
     /**
