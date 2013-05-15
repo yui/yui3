@@ -83,12 +83,19 @@ YUI.add('general-tests', function(Y) {
             });
 
         },
+        'test: next() without wait': function () {
+            var callback = this.next(function () {
+                //Nothing
+            });
+            callback();
+        },
         'test: wait without function': function() {
             this.wait(100);
         },
         _should: {
             error: {
-                'test: resume without wait': true
+                'test: resume without wait': true,
+                'test: next() without wait': true
             },
             fail: {
                 'test: wait without function': true

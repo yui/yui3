@@ -60,6 +60,36 @@ YUITest.TestCase.prototype = {
     },
 
     /**
+    Wraps a function so that when it is called the test is automatically
+    resumed. This is a shorthand for calling `resume()` with less intermediate
+    callbacks.
+
+    @param {Function} segment The function to run.
+    @return {Function} a callback to pass around
+    @method next
+    @example
+    <pre><code>
+    'test something asynchronously': function () {
+        this.wait();
+        
+        Y.jsonp('/foo?callback={callback}', this.next(function (data) {
+            Y.Test.Assert.isObject(data);
+        }));
+    }
+    </code></pre>
+    **/
+    next: function (callback) {
+        var self = this;
+
+        return function () {
+            var args = arguments;
+            self.resume(function () {
+                callback.apply(this, args);
+            });
+        }
+    },
+
+    /**
      * Causes the test case to wait a specified amount of time and then
      * continue executing the given code.
      * @param {Function} segment (Optional) The function to run after the delay.
