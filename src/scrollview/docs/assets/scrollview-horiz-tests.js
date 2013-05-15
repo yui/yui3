@@ -7,7 +7,7 @@ YUI.add('scrollview-horiz-tests', function(Y) {
 
     suite.add(new Y.Test.Case({
 
-        name : 'Example Tests',
+        name : 'ScrollView Horiz Example Tests',
 
         setUp : function () {
             this.container = Y.one('#scrollview');
