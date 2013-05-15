@@ -3,6 +3,7 @@ YUI.add('datatable-scroll-tests', function(Y) {
 var suite = new Y.Test.Suite("DataTable: Scroll"),
     keys = Y.Object.keys;
 
+
 suite.add(new Y.Test.Case({
     name: "lifecycle and instantiation",
 
@@ -713,7 +714,7 @@ suite.add(new Y.Test.Case({
 
         test.wait();
     },
-    "are Hidden": function () {
+    "are Hidden y": function () {
         Y.Assert.isFalse(this.table.isHidden([0,0]), 'top cell should not be hidden');
         Y.Assert.isFalse(this.table.isHidden([1,0]), 'next down-right cell should not be hidden');
         Y.Assert.isFalse(this.table.isHidden([2,0]), 'third cell should not be totally hidden');
@@ -726,7 +727,7 @@ suite.add(new Y.Test.Case({
         this.table.scrollTo([0,0]);
         Y.Assert.isFalse(this.table.isHidden([0,0]), 'top left cell should not be hidden any longer');
     },
-    "scroll event": function () {
+    "scroll event y": function () {
         var test = this,
             fired = 0,
             sbar = test.table._scrollbarNode,
@@ -804,7 +805,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.isNull(this.table._locateTarget(Y.one('body')),'locating element outside of table should return null');
         Y.Assert.isNull(this.table._locateTarget({}), 'passing a bad argument should return null');
     },
-    "are Hidden": function () {
+    "are Hidden x": function () {
         Y.Assert.isFalse(this.table.isHidden([0,0]), 'top left cell should not be hidden');
         Y.Assert.isFalse(this.table.isHidden([1,1]), 'next diagonal down-right cell [1,1] should not be hidden');
         Y.Assert.isFalse(this.table.isHidden([2,2]), 'next [2,2] cell should not be totally hidden');
@@ -818,7 +819,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.isFalse(this.table.isHidden([0,0]), 'top left cell should not be hidden any longer');
         Y.Assert.isNull(this.table.isHidden([999,999]),'non existing cell should fail');
     },
-    "scroll event": function () {
+    "scroll event x": function () {
         var test = this,
             fired = 0,
             xNode = test.table._xScrollNode,
@@ -829,17 +830,18 @@ suite.add(new Y.Test.Case({
 
         this.table.scrollTo([3,3]);
         this.wait(function () {
-            Y.Assert.areSame(1, fired, 'The scroll event should have been fired once');
+            Y.Assert.areSame(2, fired, 'The scroll event should have been fired once');
             left = test.table.get('scrollLeft');
             Y.Assert.areSame(xNode.get('scrollLeft'), left, 'contents and bar should always be in sync');
             left += 50;
             this.table.set('scrollLeft', left);
             this.wait( function () {
-                Y.Assert.areSame(2, fired, 'The scroll event should have been fired twice');
+                Y.Assert.areSame(3, fired, 'The scroll event should have been fired twice');
                 Y.Assert.areSame(left, xNode.get('scrollLeft'));
 
             },100);
-        },100);    }
+        },100);
+    }
 }));
 suite.add(new Y.Test.Case({
     name: "xy scrollTo and isHidden",
@@ -879,12 +881,10 @@ suite.add(new Y.Test.Case({
         Y.Assert.isTrue(this.table.isHidden([0,1], true), '[0,1] cell should be partially hidden');
         Y.Assert.isTrue(this.table.isHidden([0,2]), '[0,2] cell should be totally hidden');
         this.table.scrollTo([0,3]);
-        Y.log('The scrollTo method doesn\'t fully show the cell under the vertical scroll bar when there is one.\n' +
-                'A couple of conditions have been commented out because of this', 'info','TestRunner');
-        //Y.Assert.isFalse(this.table.isHidden([0,3]),'[0,3] should not be hidden after scrolling to it');
-        // Y.Assert.isFalse(this.table.isHidden([0,3], true),'[0,3] should not be even partially hidden after scrolling to it');
+        Y.Assert.isFalse(this.table.isHidden([0,3]),'[0,3] should not be hidden after scrolling to it');
+        Y.Assert.isFalse(this.table.isHidden([0,3], true),'[0,3] should not be even partially hidden after scrolling to it');
 
-        Y.Assert.isFalse(this.table.isHidden([0,2],true), '[0,2] should not be hidden');
+        Y.Assert.isFalse(this.table.isHidden([0,2]), '[0,2] should not be hidden');
         Y.Assert.isTrue(this.table.isHidden([0,0]), 'top left cell should now be hidden');
         this.table.scrollTo([0,0]);
         Y.Assert.isFalse(this.table.isHidden([0,0]), 'top left cell should not be hidden any longer');
@@ -904,7 +904,7 @@ suite.add(new Y.Test.Case({
         this.table.scrollTo([0,0]);
         Y.Assert.isFalse(this.table.isHidden([0,0]), 'top left cell should not be hidden any longer');
     },
-    "scroll event": function () {
+    "scroll event xy": function () {
         var test = this,
             fired = 0,
             sbar = test.table._scrollbarNode,

@@ -81,16 +81,8 @@ Scrollable.ATTRS = {
     @default 0
      */
     scrollTop: {
-        getter: function () {
-            return (this._yScrollNode && this._yScrollNode.get('scrollTop')) || 0;
-        },
-        setter: function (value) {
-            if (this._yScrollNode && this._scrollbarNode) {
-                this._yScrollNode.set('scrollTop', value);
-                return value;
-            }
-            return Y.Attribute.INVALID_VALUE;
-        }
+        getter: '_scrollTopGetter',
+        setter: '_scrollTopSetter'
     },
 
     /**
@@ -101,16 +93,24 @@ Scrollable.ATTRS = {
     @default 0
      */
     scrollLeft: {
-        getter: function () {
-            return (this._xScrollNode && this._xScrollNode.get('scrollLeft')) || 0;
-        },
-        setter: function (value) {
-            if (this._xScrollNode) {
-                this._xScrollNode.set('scrollLeft', value);
-                this.fire('scroll');
-            }
-            return Y.Attribute.INVALID_VALUE;
-        }
+        getter: '_scrollLeftGetter',
+        setter: '_scrollLeftSetter'
+    },
+
+    /**
+    Returns a region object with `left`, `right`, `top` and `bottom` properties
+    for the visible window of the datatable that is visible.
+
+    This area does not correspond to an actual screen element it is the hole
+    left by the other components.
+
+    @attribute scrollRegion
+    @type Object
+    @readonly
+     */
+    scrollRegion: {
+        getter: '_getScrollRegion',
+        readOnly: true
     }
 };
 
@@ -132,10 +132,31 @@ Y.mix(Scrollable.prototype, {
     @since 3.5.0
     **/
     scrollTo: function (id) {
-        var target = this._locateTarget(id);
+        var target = this._locateTarget(id),
+            tReg, sReg, offset;
 
-        if(target) {
-            target.scrollIntoView();
+        if (target) {
+            tReg = target.get('region');
+            sReg = this._getScrollRegion();
+
+            offset = tReg.bottom - sReg.bottom;
+            if (offset > 0) {
+                this._scrollTopSetter(this._scrollTopGetter() + offset);
+                tReg.top -= offset;
+                tReg.bottom -= offset;
+            }
+            if (tReg.top < sReg.top) {
+                this._scrollTopSetter(this._scrollTopGetter() - (sReg.top - tReg.top));
+            }
+            offset = tReg.right - sReg.right;
+            if (offset > 0) {
+                this._scrollLeftSetter(this._scrollLeftGetter() + offset);
+                tReg.left -= offset;
+                tReg.right -= offset;
+            }
+            if (tReg.left < sReg.left) {
+                this._scrollLeftSetter(this._scrollLeftGetter() - (sReg.left - tReg.left));
+            }
             this.fire('scroll');
         }
 
@@ -167,37 +188,31 @@ Y.mix(Scrollable.prototype, {
 
     isHidden: function(id, partially) {
         var target = this._locateTarget(id),
-            region, left, right, top, bottom,
-            r;
+            tReg, sReg;
+
         if (target) {
-            region = target.get('region');
-            if (this._scrollbarNode) {
-                r = this._scrollbarNode.get('region');
-                right = r.left;
-                top = r.top;
-                bottom = r.bottom;
-            }
+            tReg = target.get('region');
+            sReg = this._getScrollRegion();
+
+
             if (this._xScrollNode) {
-                r = this._xScrollNode.get('region');
-                left = r.left;
-                right = right || r.right;
                 if (partially) {
-                    if (region.left < left || region.right > right) {
+                    if (tReg.left < sReg.left || tReg.right > sReg.right) {
                         return true;
                     }
                 } else {
-                    if (region.right < left || region.left > right) {
+                    if (tReg.right < sReg.left || tReg.left > sReg.right) {
                         return true;
                     }
                 }
             }
             if (this._yScrollNode) {
                 if (partially) {
-                    if (region.top < top || region.bottom > bottom) {
+                    if (tReg.top < sReg.top || tReg.bottom > sReg.bottom) {
                         return true;
                     }
                 } else {
-                    if (region.bottom < top || region.top > bottom) {
+                    if (tReg.bottom < sReg.top || tReg.top > sReg.bottom) {
                         return true;
                     }
                 }
@@ -1455,7 +1470,106 @@ Y.mix(Scrollable.prototype, {
             }
         }
         return null;
+    },
+
+    /**
+    Getter for the [scrollRegion](#attribute_scrollRegion) attribute.
+    Returns an object with `left`, `right`, `top` and `bottom` properties
+    corresponding to the visible area of the scrolling table.
+
+    @method _getScrollRegion
+    @return {Object} The region object for the scroll window
+    @private
+     */
+    _getScrollRegion: function () {
+        var left, right, top, bottom,
+            r = this._tbodyNode;
+
+        if (!r) {
+            // table not rendered yet
+            return null;
+        }
+        r = r.get('region');
+
+        left = r.left;
+        right = r.right;
+        top = r.top;
+        bottom = r.bottom;
+        if (this._scrollbarNode) {
+            r = this._scrollbarNode.get('region');
+            right = r.left + 1;
+            top = r.top;
+            bottom = r.bottom;
+        }
+        if (this._xScrollNode) {
+            r = this._xScrollNode.get('region');
+            left = r.left;
+            right = Math.min(right, r.right);
+        }
+        return {
+            0: left,
+            1: top,
+            left: left,
+            right: right,
+            top: top,
+            bottom: bottom,
+            width: right - left,
+            height: bottom - top
+        };
+    },
+
+    /**
+    Getter for the [scrollTop](#attr_scrollTop) attribute.
+
+    @method _scrollTopGetter
+    @return {Number} Value, in pixels, of the scrollTop attribute for the scrolling area
+    @private
+    */
+    _scrollTopGetter: function () {
+        return (this._yScrollNode && this._yScrollNode.get('scrollTop')) || 0;
+    },
+
+    /**
+    Setter for the [scrollTop](#attr_scrollTop) attribute.
+
+    @method _scrollTopSetter
+    @param value {Number} Value, in pixels, to set the scrollTop attribute for the scrolling area
+    @private
+    */
+    _scrollTopSetter: function (value) {
+        if (this._yScrollNode && this._scrollbarNode) {
+            this._yScrollNode.set('scrollTop', value);
+            return value;
+        }
+        return Y.Attribute.INVALID_VALUE;
+    },
+
+    /**
+    Getter for the [scrollLeft](#attr_scrollLeft) attribute.
+
+    @method _scrollLeftGetter
+    @return {Number} Value, in pixels, of the scrollLeft attribute for the scrolling area
+    @private
+    */
+    _scrollLeftGetter: function () {
+        return (this._xScrollNode && this._xScrollNode.get('scrollLeft')) || 0;
+    },
+
+    /**
+    Setter for the [scrollLeft](#attr_scrollLeft) attribute.
+
+    @method _scrollLeftSetter
+    @param value {Number} Value, in pixels, to set the scrollTop attribute for the scrolling area
+    @private
+    */
+    _scrollLeftSetter: function (value) {
+        if (this._xScrollNode) {
+            this._xScrollNode.set('scrollLeft', value);
+            this.fire('scroll');
+        }
+        return Y.Attribute.INVALID_VALUE;
     }
+
 
     /**
     Indicates horizontal table scrolling is enabled.
