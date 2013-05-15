@@ -13,7 +13,9 @@ YUI.add('scrollview-test-utils', function(Y, NAME) {
             guid = Y.guid(),
             html,
             scrollview,
-            widgetClass;
+            widgetClass,
+            widgetWidth = (Y.SCROLLVIEW_TEST_UTIL_WIDGET_WIDTH || 300) + 'px',
+            widgetHeight = (Y.SCROLLVIEW_TEST_UTIL_WIDGET_HEIGHT || 100) + 'px';
 
         config.srcNode = '#' + guid;
 
@@ -23,17 +25,17 @@ YUI.add('scrollview-test-utils', function(Y, NAME) {
 
         switch(scrollViewAxis) {
             case 'x':
-                config.width = "300px";
+                config.width = widgetWidth;
                 widgetClass = 'horizontal';
                 break;
             case 'y':
-                config.height = "100px";
+                config.height = widgetHeight;
                 widgetClass = 'vertical';
                 break;
             case 'xy':
             default:
-                config.height = "100px";
-                config.width = "300px";
+                config.height = widgetHeight;
+                config.width = widgetWidth;
                 widgetClass = 'horizontal';
                 break;
         }
@@ -96,5 +98,4 @@ YUI.add('scrollview-test-utils', function(Y, NAME) {
             }
         };
     };
-
 });
