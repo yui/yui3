@@ -139,6 +139,28 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
             sv.pages.scrollToIndex(5);
 
             Test.wait(WAIT);
+        },
+
+        "Disabled scrollviews should not be able to paginate next": function () {
+            var Test = this,
+                scrollview = this.scrollview = renderNewScrollview('x', 'x'),
+                paginator = this.scrollview.pages;
+
+            scrollview.set('disabled', true);
+            Y.Assert.areEqual(0, paginator.get('index'));
+            paginator.next();
+            Y.Assert.areEqual(0, paginator.get('index'));
+        },
+
+        "Disabled scrollviews should not be able to paginate prev": function () {
+            var Test = this,
+                scrollview = this.scrollview = renderNewScrollview('x', 'x', 1),
+                paginator = this.scrollview.pages;
+
+            scrollview.set('disabled', true);
+            Y.Assert.areEqual(1, paginator.get('index'));
+            paginator.prev();
+            Y.Assert.areEqual(1, paginator.get('index'));
         }
     }));
 

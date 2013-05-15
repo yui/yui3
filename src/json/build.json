@@ -1,8 +1,5 @@
 {
     "name": "json",
-    "postexec": [
-        "./scripts/eval_fix.js"
-    ],
     "builds": {
         "json-stringify": {
             "jsfiles": [
