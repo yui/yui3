@@ -4,22 +4,20 @@ FlickrSearch.PaginatorPages = Y.Base.create('pager-pages', Y.View, [], {
     // their proper parent
     containerTemplate: '<ul/>',
 
-    // Our page number are in a list element (<li>) and contain data about the
-    // page and control type
-    // `data-type` is the control type and in this case it is a "page"
-    // `data-page` is the page number it should go to
+    // Our page numbers are in a list element (<li>) and contain data about
+    // the page (`data-page`) and control type (`data-type`)
     pageTemplate: '<li class="control page page-{page}{selected}"' +
                   ' data-type="page" data-page="{page}">{page}</li>',
 
-    // delegate our page element clicks
+    // We delegate our .page element clicks
     events: {
         '.page': {
             'click': '_pageClick'
         }
     },
 
-    // We listent to our model's `change` event to know what pages to display
-    // and which item to activate
+    // We listen to our model's `change` event to know what page controls to
+    // display and which page item to activate
     initializer: function () {
         this.get('model').after('change', this._afterChange, this);
     },
@@ -73,8 +71,8 @@ FlickrSearch.PaginatorPages = Y.Base.create('pager-pages', Y.View, [], {
         this.get('model').set('page', parseInt(page, 10));
     },
 
-    // When the model's page or totalItems changes, we need to re-render all
-    // the page nodes to ensure we are displaying the correct number
+    // When the model's `page` or `totalItems` changes, we need to re-render
+    // all the page nodes to ensure we are displaying the correct number
     _afterChange: function (e) {
         this.render();
     }

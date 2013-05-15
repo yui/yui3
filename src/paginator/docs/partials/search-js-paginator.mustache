@@ -5,7 +5,7 @@ FlickrSearch.Paginator = Y.Base.create('pager', Y.View, [], {
     containerTemplate: '<ul/>',
 
     // Our controls are list items we bind click events to. Based on the given
-    // control type - stored in `data-type` - we will be able to determin the
+    // control type - stored in `data-type` - we will be able to determine the
     // course of action we need to take
     controlTemplate: '<li class="control {type}" data-type="{type}">' +
                         '{label}' +
@@ -21,7 +21,7 @@ FlickrSearch.Paginator = Y.Base.create('pager', Y.View, [], {
     // Our paginator will consist of a few controls as well as a list of pages
     // To get the list of pages, we need to instantiate a `PaginatorPages`
     // view. We also pass our model to the pages view to keep our controls and
-    // pages in sync with each other
+    // page items in sync with each other
     initializer: function () {
         var model = this.get('model'),
             pages = this.pages = new FlickrSearch.PaginatorPages({
@@ -47,7 +47,7 @@ FlickrSearch.Paginator = Y.Base.create('pager', Y.View, [], {
         lastControls = this._makeControl('next');
         lastControls += this._makeControl('last');
 
-        // add the controls to the container
+        // add the controls and page items to the container
         container.append(firstControls);
         container.append(this.pages.render().get('container'));
         container.append(lastControls);
@@ -64,16 +64,14 @@ FlickrSearch.Paginator = Y.Base.create('pager', Y.View, [], {
         });
     },
 
-    // After our model is changed, we only need to update the controls. We can
-    // do this because our pages model is the same, so our pages instance can
-    // listen to those events as it likes.
+    // After our model is changed, we only need to update our controls
     _afterModelChange: function (e) {
         this._updateControls();
     },
 
-    // We can update whether our controls are disabled or not by checking if
-    // there is a previous page (for first and previous controls) and a next
-    // page (for the next and last controls)
+    // We can know whether our controls should be disabled or not by checking
+    // if there is a previous page (for first and previous controls) and a
+    // next page (for the next and last controls)
     _updateControls: function () {
         var model = this.get('model'),
             hasPrev = model.hasPrevPage(),
@@ -118,7 +116,7 @@ FlickrSearch.Paginator = Y.Base.create('pager', Y.View, [], {
     },
 
 
-    // ATTRS passthrough to internal model for external gets and sets
+    // ATTRS passthrough to our internal model for external gets and sets
     _setPageFn: function (val) {
         this.get('model').set('page', parseInt(val, 10));
         return val;
