@@ -84,6 +84,30 @@ YUI.add('throttle-tests', function(Y) {
             Assert.isFunction(fn, 'Y.Throttle failed to return a function');
             Assert.areNotSame(fn1, fn, 'Y.Throttle failed to return a new function');
             Assert.areEqual(counter, 0, 'Y.Throttle DID NOT throttle the function call');
+        },
+        'test `this` in throttled function': function () {
+            var test = this;
+
+            var obj = {
+                fn1: Y.throttle(function () {
+                    Assert.areSame(obj, this, 'wrong value for `this` in function with canceled throttle');
+                }, -1),
+                fn2: Y.throttle(function () {
+                    var that = this;
+
+                    test.resume(function () {
+                        Assert.areSame(obj, that, 'wrong value for `this` in throttled function');
+                    });
+                }, 10)
+            };
+
+            obj.fn1();
+
+            setTimeout(function () {
+                obj.fn2();
+            }, 15);
+
+            test.wait();
         }
 
     });
