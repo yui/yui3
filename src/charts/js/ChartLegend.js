@@ -158,6 +158,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             i,
             len,
             isArray,
+            legendShape,
             shape,
             shapeClass,
             item,
@@ -177,7 +178,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             itemHeight;
         if(marker && marker.shape)
         {
-            shape = marker.shape;
+            legendShape = marker.shape;
         }
         this._destroyLegendItems();
         if(chart instanceof Y.PieChart)
@@ -190,7 +191,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             borderWeight = seriesStyles.border.weight;
             i = 0;
             len = displayName.length;
-            shape = shape || Y.Circle;
+            shape = legendShape || Y.Circle;
             isArray = Y.Lang.isArray(shape);
             for(; i < len; ++i)
             {
@@ -221,7 +222,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             {
                 series = seriesCollection[i];
                 seriesStyles = this._getStylesBySeriesType(series, shape);
-                if(!shape)
+                if(!legendShape)
                 {
                     shape = seriesStyles.shape;
                     if(!shape)
