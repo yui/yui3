@@ -1,7 +1,7 @@
 /*jshint expr:true, onevar:false */
 
 /**
-Provides a comparator functions useful for sorting arrays.
+Provides comparator functions useful for sorting arrays.
 
 @module arraysort
 **/
