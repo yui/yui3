@@ -19,13 +19,6 @@
 	        "useModules": ["promise", "jsonp"]
         },
         {
-            "name": "subclass-example",
-	        "displayName": "Subclassing Y.Promise",
-	        "description": "Extend Y.Promise to create classes that encapsulate standard transaction logic in descriptive method names",
-	        "modules": ["promise", "jsonp"],
-	        "useModules": ["promise", "jsonp"]
-        },
-        {
             "name"       : "plugin-example",
             "displayName": "Creating a Node Plugin that chains transitions",
             "description": "Extend the Promise class to create your own Node plugin that chains transitions",

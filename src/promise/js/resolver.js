@@ -50,8 +50,8 @@ Y.mix(Resolver.prototype, {
     /**
     Resolves the promise, signaling successful completion of the
     represented operation. All "onFulfilled" subscriptions are executed and passed
-    the value provided to this method. After calling `fulfill()`, `reject()` and
-    `notify()` are disabled.
+    the value provided to this method. After calling `fulfill()`, `reject()` is
+    disabled.
 
     @method fulfill
     @param {Any} value Value to pass along to the "onFulfilled" subscribers
@@ -77,6 +77,31 @@ Y.mix(Resolver.prototype, {
             this._errbacks = null;
 
             this._status = 'fulfilled';
+        }
+    },
+
+    /**
+    Resolves the promise with the provided value. If the value is a promise
+    `resolve()` will call its `then()` method to adopt its state.
+
+    @method resolve
+    @param {Any} value Either a promise or a value. If value is a promise,
+                    `resolve()` will adopt its state
+    **/
+    resolve: function (value) {
+        var self = this;
+
+        if (Promise.isPromise(value)) {
+            value.then(function (x) {
+                // This essentially makes the process recursive, flattening
+                // promises for promises. This is still a topic of discussion
+                // in the community
+                self.resolve(x);
+            }, function (e) {
+                self.reject(e);
+            });
+        } else {
+            this.fulfill(value);
         }
     },
 
@@ -122,42 +147,33 @@ Y.mix(Resolver.prototype, {
                 of either "resolve" or "reject" callback
     **/
     then: function (callback, errback) {
+        var self = this,
+            callbackList = this._callbacks || [],
+            errbackList  = this._errbacks  || [],
+            status       = this._status,
+            result       = this._result;
+
         // When the current promise is fulfilled or rejected, either the
         // callback or errback will be executed via the function pushed onto
         // this._callbacks or this._errbacks.  However, to allow then()
-        // chaining, the execution of either function needs to be represented
-        // by a Resolver (the same Resolver can represent both flow paths), and
-        // its promise returned.
-        var promise = this.promise,
-            thenFulfill, thenReject,
+        // chaining, it must return a new promise
+        return new Promise(function (resolve, reject) {
+            // Because the callback and errback are represented by a Resolver, it
+            // must be fulfilled or rejected to propagate through the then() chain.
+            // The same logic applies to resolve() and reject() for fulfillment.
+            callbackList.push(typeof callback === 'function' ?
+                self._wrap(resolve, reject, callback) : resolve);
+            errbackList.push(typeof errback === 'function' ?
+                self._wrap(resolve, reject, errback) : reject);
 
-            // using promise constructor allows for customized promises to be
-            // returned instead of plain ones
-            then = new promise.constructor(function (fulfill, reject) {
-                thenFulfill = fulfill;
-                thenReject = reject;
-            }),
-
-            callbackList = this._callbacks || [],
-            errbackList  = this._errbacks  || [];
-
-        // Because the callback and errback are represented by a Resolver, it
-        // must be fulfilled or rejected to propagate through the then() chain.
-        // The same logic applies to resolve() and reject() for fulfillment.
-        callbackList.push(typeof callback === 'function' ?
-            this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
-        errbackList.push(typeof errback === 'function' ?
-            this._wrap(thenFulfill, thenReject, errback) : thenReject);
-
-        // If a promise is already fulfilled or rejected, notify the newly added
-        // callbacks by calling fulfill() or reject()
-        if (this._status === 'fulfilled') {
-            this.fulfill(this._result);
-        } else if (this._status === 'rejected') {
-            this.reject(this._result);
-        }
-
-        return then;
+            // If a promise is already fulfilled or rejected, notify the newly added
+            // callbacks by calling fulfill() or reject()
+            if (status === 'fulfilled') {
+                self.fulfill(result);
+            } else if (status === 'rejected') {
+                self.reject(result);
+            }
+        });
     },
 
     /**
@@ -166,7 +182,7 @@ Y.mix(Resolver.prototype, {
     returned from the `then` callback.
 
     @method _wrap
-    @param {Function} thenFulfill Fulfillment function of the resolver that
+    @param {Function} thenResolve `resolve()` function of the resolver that
                         handles this promise
     @param {Function} thenReject Rejection function of the resolver that
                         handles this promise
@@ -174,7 +190,7 @@ Y.mix(Resolver.prototype, {
     @return {Function}
     @private
     **/
-    _wrap: function (thenFulfill, thenReject, fn) {
+    _wrap: function (thenResolve, thenReject, fn) {
         // callbacks and errbacks only get one argument
         return function (valueOrReason) {
             var result;
@@ -193,29 +209,10 @@ Y.mix(Resolver.prototype, {
                 return thenReject(e);
             }
 
-            if (Promise.isPromise(result)) {
-                // Returning a promise from a callback makes the current
-                // promise sync up with the returned promise
-                result.then(thenFulfill, thenReject);
-            } else {
-                // Non-promise return values always trigger resolve()
-                // because callback is affirmative, and errback is
-                // recovery.  To continue on the rejection path, errbacks
-                // must return rejected promises or throw.
-                thenFulfill(result);
-            }
+            // resolve() checks if the result is a promise or a thenable and
+            // adopts it or assimilates it
+            thenResolve(result);
         };
-    },
-
-    /**
-    Returns the current status of the Resolver as a string "pending",
-    "fulfilled", or "rejected".
-
-    @method getStatus
-    @return {String}
-    **/
-    getStatus: function () {
-        return this._status;
     },
 
     /**
@@ -246,6 +243,6 @@ Y.mix(Resolver.prototype, {
         }
     }
 
-}, true);
+});
 
 Y.Promise.Resolver = Resolver;
