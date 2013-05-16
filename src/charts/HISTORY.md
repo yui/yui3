@@ -1,10 +1,9 @@
 Charts Change History
 =====================
 
-3.10.1
+@VERSION@
 ------
-
-* No changes.
+  * #706 Addressed issue in which the legend did not honor specified series marker style for shape. 
 
 3.10.0
 ------
