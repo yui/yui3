@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Promises Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+
+<script type="text/javascript">
+YUI({
+    coverage: ['promise-extras'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'extras-tests': {
+            fullpath: './assets/extras-tests.js',
+            requires: ['promise', 'test']
+        },
+        'batch-tests': {
+            fullpath: './assets/batch-tests.js',
+            requires: ['promise', 'test']
+        },
+        'when-tests': {
+            fullpath: './assets/when-tests.js',
+            requires: ['promise', 'test']
+        }
+    }
+}).use('when-tests', 'extras-tests', 'batch-tests', 'test-console', function(Y) {
+
+    (new Y.Test.Console()).render('#log');
+    Y.Test.Runner.setName('Promise extras');
+    Y.Test.Runner.run();
+
+});
+</script>
+</body>
+</html>
