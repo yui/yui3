@@ -932,7 +932,163 @@ YUI.add('base-core-tests', function(Y) {
             Y.Assert.areSame('FOO', myBaseCore.get('foo'));
             Y.Assert.areSame('bar', myBaseCore.get('bar'));
             Y.Assert.areSame('baz', myBaseCore.get('baz'));
+        },
+
+        testSubClassAttrOverrideLazyAddTrue : function() {
+
+            function MyBaseCore() {
+                MyBaseCore.superclass.constructor.apply(this, arguments);
+            }
+
+            Y.extend(MyBaseCore, Y.BaseCore, null, {
+
+                ATTRS : {
+                    foo : {
+                        value: 10,
+                        setter: function(val) {
+                            return (val < 0) ? 0 : val;
+                        }
+                    },
+                    bar : {
+                        valueFn: function() {
+                            return 20;
+                        }
+                    },
+                    baz : {
+                        value: 30,
+                        getter: function(val) {
+                            return val + 100;
+                        }
+                    }
+                },
+
+                NAME: 'myBaseCore'
+
+            });
+
+            function MyExtendedBaseCore() {
+                MyExtendedBaseCore.superclass.constructor.apply(this, arguments);
+            }
+
+            Y.extend(MyExtendedBaseCore, MyBaseCore, null, {
+
+                ATTRS : {
+                    one : {
+                        value : 1
+                    },
+                    two : {
+                        value : 2
+                    },
+                    three : {
+                        value : 3
+                    },
+                    foo : {
+                        setter: function(val) {
+                            return this.get("one");
+                        }
+                    },
+                    bar : {
+                        valueFn: function() {
+                            return this.get("two");
+                        }
+                    },
+                    baz : {
+                        getter : function() {
+                            return this.get("three");
+                        }
+                    }
+                },
+
+                NAME: 'myExtendedBaseCore'
+
+            });
+
+            var o = new MyExtendedBaseCore();
+
+            Y.Assert.areEqual(1, o.get("foo"), "setter not able to see subclass attrs");
+            Y.Assert.areEqual(2, o.get("bar"), "valueFn not able to see subclass attrs");
+            Y.Assert.areEqual(3, o.get("baz"), "getter not able to see subclass attrs");
+        },
+
+        testSubClassAttrOverrideLazyAddFalse : function() {
+
+            function MyBaseCore() {
+                MyBaseCore.superclass.constructor.apply(this, arguments);
+            }
+
+            Y.extend(MyBaseCore, Y.BaseCore, null, {
+
+                ATTRS : {
+                    foo : {
+                        lazyAdd: false,
+                        value: 10,
+                        setter: function(val) {
+                            return (val < 0) ? 0 : val;
+                        }
+                    },
+                    bar : {
+                        lazyAdd: false,
+                        valueFn: function() {
+                            return 20;
+                        }
+                    },
+                    baz : {
+                        lazyAdd: false,
+                        value: 30,
+                        getter: function(val) {
+                            return val + 100;
+                        }
+                    }
+                },
+
+                NAME: 'myBaseCore'
+
+            });
+
+            function MyExtendedBaseCore() {
+                MyExtendedBaseCore.superclass.constructor.apply(this, arguments);
+            }
+
+            Y.extend(MyExtendedBaseCore, MyBaseCore, null, {
+
+                ATTRS : {
+                    one : {
+                        value : 1
+                    },
+                    two : {
+                        value : 2
+                    },
+                    three : {
+                        value : 3
+                    },
+                    foo : {
+                        setter: function(val) {
+                            return this.get("one");
+                        }
+                    },
+                    bar : {
+                        valueFn: function() {
+                            return this.get("two");
+                        }
+                    },
+                    baz : {
+                        getter : function() {
+                            return this.get("three");
+                        }
+                    }
+                },
+
+                NAME: 'myExtendedBaseCore'
+
+            });
+
+            var o = new MyExtendedBaseCore();
+
+            Y.Assert.areEqual(1, o.get("foo"), "setter not able to see subclass attrs");
+            Y.Assert.areEqual(2, o.get("bar"), "valueFn not able to see subclass attrs");
+            Y.Assert.areEqual(3, o.get("baz"), "getter not able to see subclass attrs");
         }
+
     };
 
     var extendedTemplate = {
