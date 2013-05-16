@@ -56,7 +56,7 @@ getUser: function (name) {
 ```
 // Fetches a URL, stores a promise in the cache and returns it
 function fetch(url) {
-    var promise = new Y.Promise(function (fulfill, reject) {
+    var promise = new Y.Promise(function (resolve, reject) {
         Y.jsonp(url, function (res) {
             var meta = res.meta,
                 data = res.data;
@@ -64,7 +64,7 @@ function fetch(url) {
             // Check for a successful response, otherwise reject the
             // promise with the message returned by the GitHub API.
             if (meta.status >= 200 && meta.status < 300) {
-                fulfill(data);
+                resolve(data);
             } else {
                 reject(new Error(data.message));
             }

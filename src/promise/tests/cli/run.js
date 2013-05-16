@@ -30,6 +30,10 @@ YUI({useSync: true }).use('test', function(Y) {
             },
             'promise-tests':  {
                 fullpath: path.join(__dirname, '../unit/assets/promise-tests.js'),
+                requires: ['promise-core', 'test']
+            },
+            'extras-tests': {
+                fullpath: path.join(__dirname, '../unit/assets/extras-tests.js'),
                 requires: ['promise', 'test']
             },
             'aplus-tests': {
@@ -39,7 +43,7 @@ YUI({useSync: true }).use('test', function(Y) {
         }
     });
 
-    Y.use('batch-tests', 'when-tests', 'promise-tests', 'aplus-tests');
+    Y.use('promise-tests', 'batch-tests', 'when-tests', 'extras-tests', 'aplus-tests');
     
     Y.Test.Runner.setName('yql cli tests');
     

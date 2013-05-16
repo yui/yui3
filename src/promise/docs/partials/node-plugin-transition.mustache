@@ -1,19 +1,17 @@
 // This method takes the same "config" parameter as Node's transition method
 // but returns a NodePromise instead
 NodePromise.prototype.transition = function (config) {
-    // We call this.then to ensure the promise is fulfilled.
-    // Since we will be creating a chain of transitions this means we will be
-    // waiting for the previous transition to end
-    return this.then(function (node) {
-        // As noted in the user guide, returning a promise inside the then()
-        // callback causes the promise returned by then() to be synced with this
-        // new promise. This is a way to control when the returned promise is
-        // fulfilled
-        return new Y.Promise(function (fulfill, reject) {
+    var promise = this;
+
+    // Return a new NodePromise so that chaining calls to transition()
+    // results in transition executed sequentially
+    return new NodePromise(function (resolve, reject) {
+        // Call promise.then to the previous transition ended
+        promise.then(function (node) {
             node.transition(config, function () {
                 // The transition is done, signal the promise that all is ready
                 // by fulfilling it with the same node
-                fulfill(node);
+                resolve(node);
             });
         });
     });

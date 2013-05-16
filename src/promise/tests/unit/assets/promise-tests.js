@@ -7,7 +7,7 @@ YUI.add('promise-tests', function (Y) {
 
     // -- Suite --------------------------------------------------------------------
     var suite = new Y.Test.Suite({
-        name: 'Promise tests'
+        name: 'Promise core tests'
     });
 
     // -- Lifecycle ----------------------------------------------------------------
@@ -24,35 +24,6 @@ YUI.add('promise-tests', function (Y) {
             });
 
             Assert.isInstanceOf(Y.Promise, promise.then(), 'promise.then returns a promise');
-        },
-
-        'promise state should change only once': function () {
-            var fulfilled = new Promise(function (fulfill, reject) {
-                    Assert.areEqual('pending', this.getStatus(), 'before fulfillment the resolver status should be "pending"');
-
-                    fulfill(5);
-
-                    Assert.areEqual('fulfilled', this.getStatus(), 'once fulfilled the resolver status should be "fulfilled"');
-
-                    reject(new Error('reject'));
-
-                    Assert.areEqual('fulfilled', this.getStatus(), 'rejecting a fulfilled promise should not change its status');
-                }),
-
-                rejected = new Promise(function (fulfill, reject) {
-                    Assert.areEqual('pending', this.getStatus(), 'before rejection the resolver status should be "pending"');
-
-                    reject(new Error('reject'));
-
-                    Assert.areEqual('rejected', this.getStatus(), 'once rejected the resolver status should be "rejected"');
-
-                    fulfill(5);
-
-                    Assert.areEqual('rejected', this.getStatus(), 'fulfilling a rejected promise should not change its status');
-                });
-
-            Assert.areEqual('fulfilled', fulfilled.getStatus(), 'status of a fulfilled promise should be "fulfilled"');
-            Assert.areEqual('rejected', rejected.getStatus(), 'status of a rejected promise should be "rejected"');
         },
 
         'fulfilling more than once should not change the promise value': function () {
@@ -96,7 +67,7 @@ YUI.add('promise-tests', function (Y) {
             Assert.areSame(promiseA, promiseB, 'the return value of Y.Promise and "this" inside the init function should be the same');
         },
 
-        'callbacks passed to then should be called asynchronously': function () {
+        'callbacks passed to then() should be called asynchronously': function () {
             var test = this;
 
             var foo = false;
@@ -111,7 +82,52 @@ YUI.add('promise-tests', function (Y) {
             Assert.areEqual(false, foo, 'callback should not modify local variable in this turn of the event loop');
 
             test.wait();
+        },
+
+        'resolving with a fulfilled promise creates a fulfilled promise': function () {
+            var test = this,
+                expected = {};
+                fulfilled = new Y.Promise(function (resolve) {
+                    resolve(expected);
+                });
+
+            Y.Promise(function (resolve) {
+                resolve(fulfilled);
+            }).then(function (value) {
+                test.resume(function () {
+                    Assert.areSame(expected, value, 'value of the resolved promise should be the same as the previous promise');
+                });
+            }, function (err) {
+                test.resume(function () {
+                    throw err;
+                });
+            });
+
+            test.wait();
+        },
+
+        'resolving with a rejected promise creates a rejected promise': function () {
+            var test = this,
+                expected = new Error('foo');
+                rejected = new Y.Promise(function (resolve, reject) {
+                    reject(expected);
+                });
+
+            Y.Promise(function (resolve) {
+                resolve(rejected);
+            }).then(function (value) {
+                test.resume(function () {
+                    throw new Error('Y.Promise failed to resolve a rejected promise');
+                });
+            }, function (err) {
+                test.resume(function () {
+                    Assert.areSame(expected, err, 'value of the resolved promise should be the same as the previous promise');
+                });
+            });
+
+            test.wait();
         }
+
 
     }));
 
@@ -144,7 +160,7 @@ YUI.add('promise-tests', function (Y) {
                 });
             });
 
-            test.wait(50);
+            test.wait();
         },
 
         'returning a promise from a callback should link both promises': function () {
@@ -162,7 +178,7 @@ YUI.add('promise-tests', function (Y) {
                 });
             });
 
-            test.wait(100);
+            test.wait();
         },
 
         // This test is run only when not in strict mode
@@ -189,7 +205,7 @@ YUI.add('promise-tests', function (Y) {
                 });
             });
 
-            test.wait(300);
+            test.wait();
         },
 
         // This test is run only in strict mode
@@ -218,7 +234,7 @@ YUI.add('promise-tests', function (Y) {
                 });
             });
 
-            test.wait(300);
+            test.wait();
         }
     }));
 
@@ -262,7 +278,7 @@ YUI.add('promise-tests', function (Y) {
 
 }, '@VERSION@', {
     requires: [
-        'promise',
+        'promise-core',
         'test'
     ]
 });

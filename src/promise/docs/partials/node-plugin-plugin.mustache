@@ -1,8 +1,8 @@
 function PromisePlugin(config) {
     // Create a private NodePromise instance that points to the plugin host
-    this._promise = new NodePromise(function (fulfill) {
+    this._promise = new NodePromise(function (resolve) {
         // Since this is a Node plugin, config.host will be an instance of Node
-        fulfill(config.host);
+        resolve(config.host);
     });
 }
 

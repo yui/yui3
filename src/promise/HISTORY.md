@@ -4,6 +4,12 @@ Promise Change History
 @VERSION@
 ------
 
+* Split the module into promise-core and promise-extras
+* then() no longer returns an instance of this.constructor
+* Added combinators, factories and extra methods
+* [!] Deprecated Y.batch() in favor of Y.Promise.every()
+* The first function received as parameter of the Promise init function is now
+  a reference to resolve() instead of fulfill()
 * Changed the value of |this| inside callbacks to undefined to match the
   Promises A+ spec
 
