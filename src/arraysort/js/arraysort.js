@@ -78,11 +78,12 @@ var ArraySort = Y.ArraySort = {
     @param {Number|String} a First value to compare.
     @param {Number|String} b Second value to compare.
     @param {Object} [options] Options.
-        @param [options.caseSensitive=false] If `true`, a case-sensitive
-            comparison will be performed. By default the comparison is
-            case-insensitive.
-        @param [options.descending=false] If `true`, the sort order will be
-            reversed so that larger values are sorted before smaller values.
+        @param {Boolean} [options.caseSensitive=false] If `true`, a
+            case-sensitive comparison will be performed. By default the
+            comparison is case-insensitive.
+        @param {Boolean} [options.descending=false] If `true`, the sort order
+            will be reversed so that larger values are sorted before smaller
+            values.
     @return {Number} `0` if the two items are equal, a negative number if _a_
         should be sorted before _b_, or a positive number if _b_ should be
         sorted before _a_.
