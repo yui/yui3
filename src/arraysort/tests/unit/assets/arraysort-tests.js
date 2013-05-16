@@ -1,33 +1,30 @@
 YUI.add('arraysort-tests', function(Y) {
+    var Assert      = Y.Assert,
+        ArrayAssert = Y.ArrayAssert,
 
-    var ASSERT = Y.Assert,
-        ARRAYASSERT = Y.ArrayAssert;
+        suite = new Y.Test.Suite('ArraySort');
 
-    var testBasic = new Y.Test.Case({
-        name: "Basic Tests",
-    
-        testNumbers: function() {
+    suite.add(new Y.Test.Case({
+        name: 'compare()',
+
+        'should compare numbers': function () {
             var array = [2,1,3,5,4];
             array.sort(Y.ArraySort.compare)
-            ARRAYASSERT.itemsAreSame([1,2,3,4,5], array, "Expected sorted numbers.");
+            ArrayAssert.itemsAreSame([1,2,3,4,5], array, "Expected sorted numbers.");
         },
 
-        testStrings: function() {
+        'should compare strings': function () {
             var array = ["caa", "baa", "bba", "aba", "cba", "aaa", "abc"];
             array.sort(Y.ArraySort.compare)
-            ARRAYASSERT.itemsAreSame(["aaa","aba","abc","baa","bba","caa","cba"], array, "Expected sorted strings.");
+            ArrayAssert.itemsAreSame(["aaa","aba","abc","baa","bba","caa","cba"], array, "Expected sorted strings.");
         },
-        
-        testMixedStrings: function() {
+
+        'should compare mixed alpha and numeric strings': function() {
             var array = ["attic", "Aardvark", "1", "0", "Zoo", "zebra"];
             array.sort(Y.ArraySort.compare)
-            ARRAYASSERT.itemsAreSame(["0", "1", "Aardvark","attic","zebra","Zoo"], array, "Expected sorted mixed strings.");
+            ArrayAssert.itemsAreSame(["0", "1", "Aardvark","attic","zebra","Zoo"], array, "Expected sorted mixed strings.");
         }
-    });
-
-    var suite = new Y.Test.Suite("ArraySort");
-    suite.add(testBasic);
+    }));
 
     Y.Test.Runner.add(suite);
-
 });
