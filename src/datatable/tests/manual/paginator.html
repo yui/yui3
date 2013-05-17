@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Datatable Paginator Tests</title>
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssbase/base-min.css">
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+
+<style>
+    html {
+        font-family: sans-serif;
+        font-size: smaller;
+    }
+
+    .message {
+        padding: 5px;
+        font-size:120%;
+        background: #FFFCB6;
+        border:1px solid #C9C675;
+    }
+
+    #results dt {
+        font-weight:bold;
+        padding:3px;
+        display:block;
+    }
+    #results dd {
+        font-weight:normal;
+        color:grey;
+    }
+    #results dd span {
+        color: red;
+        font-weight:bold;
+    }
+    #table {
+        width: 500px;
+        margin: 50px;
+    }
+</style>
+</head>
+
+<body class="yui3-skin-sam">
+
+<div id="table"></div>
+
+
+<script type="text/javascript">
+
+
+
+
+YUI({
+    filter: 'raw',
+    allowRollup: false,
+    combine: false,
+    useBrowserConsole: true
+}).use("console", "test", "dump", "datatable","datatable-paginator","node","json-parse", function(Y) {
+
+    var data = [];
+
+    while (data.length < 10000) {
+        data.push({
+            id: data.length + 1,
+            name: ['a','b', 'c','d','e','f','g'][data.length % 7].toUpperCase() + ':' + data.length,
+            qty: Math.ceil(data.length * Math.random() + Math.random())
+        });
+    }
+
+    var table = new Y.DataTable({
+        columns: [ 'id', 'name', 'qty' ],
+        data: data,
+        render: '#table',
+        pageSizes: [3, 10, 50, 100, { label: 'Show All', value: -1 }],
+        rowsPerPage: 10,
+        width: '100%'
+    });
+
+
+});
+
+</script>
+</body>
+</html>
