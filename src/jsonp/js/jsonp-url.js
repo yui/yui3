@@ -104,8 +104,14 @@ Y.mix(JSONPRequest.prototype, {
      * @protected
      */
     _format: function (url, proxy) {
-        var callback = this._template.replace(/\{callback\}/, proxy),
-            lastChar;
+        var callbackRE = /\{callback\}/,
+            callback, lastChar;
+
+        if (callbackRE.test(url)) {
+            return url.replace(callbackRE, proxy);
+        }
+
+        callback = this._template.replace(callbackRE, proxy);
 
         if (this._pattern.test(url)) {
             return url.replace(this._pattern, callback);

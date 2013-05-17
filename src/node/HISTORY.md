@@ -8,6 +8,11 @@ Node Change History
   attribute, which provides a semantic indication of hidden content and improves
   accessibility. [Gerard Cohen]
 
+3.10.1
+------
+
+* No changes.
+
 3.10.0
 ------
 
