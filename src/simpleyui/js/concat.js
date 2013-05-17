@@ -11677,12 +11677,15 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             ce2,
             args;
 
-        if (typeIncluded && argCount <= 2) {
+        if (typeIncluded && argCount <= 3) {
 
             // PERF: Try to avoid slice/iteration for the common signatures
 
+            // Most common
             if (argCount === 2) {
                 args = [arguments[1]]; // fire("foo", {})
+            } else if (argCount === 3) {
+                args = [arguments[1], arguments[2]]; // fire("foo", {}, opts)
             } else {
                 args = []; // fire("foo")
             }
@@ -12333,7 +12336,7 @@ CEProto._getFacade = function(fireArgs) {
 
     var userArgs = this.details,
         firstArg = userArgs && userArgs[0],
-        firstArgIsObj = (typeof firstArg === "object"),
+        firstArgIsObj = (firstArg && (typeof firstArg === "object")),
         ef = this._facade;
 
     if (!ef) {
@@ -16067,6 +16070,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 cewrapper = Y.publish(key, {
                     silent: true,
                     bubbles: false,
+                    emitFacade:false,
                     contextFn: function() {
                         if (compat) {
                             return cewrapper.el;

@@ -353,7 +353,7 @@ CEProto._getFacade = function(fireArgs) {
 
     var userArgs = this.details,
         firstArg = userArgs && userArgs[0],
-        firstArgIsObj = (typeof firstArg === "object"),
+        firstArgIsObj = (firstArg && (typeof firstArg === "object")),
         ef = this._facade;
 
     if (!ef) {
