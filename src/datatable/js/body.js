@@ -22,7 +22,7 @@ View class responsible for rendering the `<tbody>` section of a table. Used as
 the default `bodyView` for `Y.DataTable.Base` and `Y.DataTable` classes.
 
 Translates the provided `modelList` into a rendered `<tbody>` based on the data
-in the constituent Models, altered or ammended by any special column
+in the constituent Models, altered or amended by any special column
 configurations.
 
 The `columns` configuration, passed to the constructor, determines which
@@ -198,7 +198,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     // Next cell
     var cell = table.getCell(e.target, 'next');
-    var cell = table.getCell(e.taregt, [0, 1];</pre></code>
+    var cell = table.getCell(e.target, [0, 1];</pre></code>
 
     @method getCell
     @param {Number[]|Node} seed Array of row and column indexes, or a Node that
@@ -347,7 +347,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     1. A row template is assembled from the `columns` attribute (see
        `_createRowTemplate`)
 
-    2. An HTML string is built up by concatening the application of the data in
+    2. An HTML string is built up by concatenating the application of the data in
        each Model in the `modelList` to the row template. For cells with
        `formatter`s, the function is called to generate cell content. Cells
        with `nodeFormatter`s are ignored. For all other cells, the data value
@@ -454,6 +454,100 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         return this;
     },
 
+    /**
+     Refreshes the provided row against the provided model and the Array of
+     columns to be updated.
+
+     @method refreshRow
+     @param {Y.Node} row
+     @param {Y.Model} model Y.Model representation of the row
+     @param {Object[]} columns Array of column configuration objects
+
+     @chainable
+     */
+    refreshRow: function (row, model, columns) {
+        var host = this.get('host'),
+            key,
+            cell,
+            len = columns.length,
+            i;
+
+        for (i = 0; i < len; i++) {
+            key = columns[i];
+            cell = row.one('.' + this.getClassName('col', key));
+            this.refreshCell(cell, model, host.getColumn(key));
+        }
+
+        return this;
+    },
+
+    /**
+     Refreshes the given cell with the provided model data and the provided
+     column configuration.
+
+     Uses the provided column formatter if aviable.
+
+     @method refreshCell
+     @param {Y.Node} cell Y.Node pointer to the cell element to be updated
+     @param {Y.Model} model Y.Model representation of the row
+     @param {Object} col Column configuration object for the cell
+
+     @chainable
+     */
+     // TODO: make column optional?
+    refreshCell: function (cell, model, col) {
+        var content,
+            formatterFn,
+            formatterData,
+            data = model.toJSON();
+
+        if (col.nodeFormatter) {
+            // TODO: Remove this check. If we have a nodeFormatter, just re-render whole table?
+            console.log('has nodeFormatter');
+            // TODO: copy logic invoking the node formatters
+
+        } else if (col.formatter) {
+            // TODO: See about storing the _formatterFn the first go around and updating internally
+            if (!col._formatterFn) {
+                col = this._setColumnsFormatterFn([col])[0]
+            }
+
+            formatterFn = col._formatterFn || null;
+
+            if (formatterFn) {
+                formatterData = {
+                    value    : data[col.key],
+                    data     : data,
+                    column   : col,
+                    record   : model,
+                    className: '',
+                    rowClass : '',
+                    // TODO: Provide a real row index
+                    rowIndex : -1
+                };
+
+                // Formatters can either return a value ...
+                content = formatterFn.call(this.get('host'), formatterData);
+
+                // ... or update the value property of the data obj passed
+                if (content === undefined) {
+                    content = formatterData.value;
+                }
+            }
+
+            if (content === undefined || content === null || content === '') {
+                content = col.emptyCellValue || '';
+            }
+
+        } else {
+            content = data[col.key] || col.emptyCellValue || '';
+        }
+
+        cell.setHTML(col.allowHTML ? content : Y.Escape.html(content));
+
+        return this;
+    },
+
     // -- Protected and private methods ---------------------------------------
     /**
     Handles changes in the source's columns attribute.  Redraws the table data.
@@ -484,11 +578,100 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     @since 3.5.0
     **/
-    _afterDataChange: function () {
-        //var type = e.type.slice(e.type.lastIndexOf(':') + 1);
+    _afterDataChange: function (e) {
+        var type = (e.type.match(/:(add|change|remove)$/) || [])[1],
+            index = e.index,
+            columns = this.get('columns'),
+            col,
+            changed = e.changed || {},
+            key,
+            row,
+            i,
+            len;
 
-        // TODO: Isolate changes
-        this.render();
+        for (i = 0, len = columns.length; i < len; i++ ) {
+            col = columns[i];
+            // we need to see if there are any columns that have a nodeFormatter
+            // and if so re-render and exit
+            if (col.hasOwnProperty('nodeFormatter')) {
+                this.render();
+                return;
+            }
+
+            // we need to see if there are any columns that have formatters that are not part of the changed array
+            key = col.key || col.name;
+            if (col.hasOwnProperty('formatter')) {
+                changed[key] || (changed[key] = 1);
+            }
+        }
+
+        // TODO: if multiple rows are being added/remove/swapped, can we avoid the restriping?
+        switch (type) {
+            case 'change':
+                this.refreshRow(this.getRow(e.target), e.target, Y.Object.keys(changed));
+                break;
+            case 'add':
+                // we need to make sure we don't have an index larger than the data we have
+                index =  Math.min(index, this.get('data').size() - 1);
+
+                // updates the columns to for formatter functions
+                this._setColumnsFormatterFn(columns);
+                row = Y.Node.create(this._createRowHTML(e.model, index, columns));
+                this.tbodyNode.insert(row, index);
+                this._toggleStripes(index);
+                break;
+            case 'remove':
+                this.getRow(index).remove(true);
+                // we removed a row, so we need to back up our index to stripe
+                this._toggleStripes(index - 1);
+                break;
+            default:
+                this.render();
+        }
+    },
+
+    /**
+     Toggles the odd/even classname of the row after the given index. This method
+     is used to update rows after a row is inserted into or removed from the table.
+     Note this event is delayed so the table is only restriped once when multiple
+     rows are updated at one time.
+
+     @protected
+     @method _toggleStripes
+     @param {Number} [index] Index of row to start restriping after
+     @param {Number} [ms] Number of milliseconds to delay the striping. Defaults
+                          to 15 ms if a time is not provided.
+     @since @SINCE@
+     */
+    _toggleStripes: function (index, ms) {
+        var odd = [this.CLASS_ODD, this.CLASS_EVEN],
+            even = [this.CLASS_EVEN, this.CLASS_ODD],
+            delay = this._toggleStripesDelay || {};
+
+        // if no initial index, do the whole table
+        index || (index = -1);
+
+        // if no ms provided, set to default of 30
+        ms || (ms = 15);
+
+        if (delay && delay.fn) {
+            delay.fn.cancel();
+        }
+
+        this._toggleStripesDelay = {
+            fn: Y.later(ms, this, function (t) {
+                var index = this._toggleStripesDelay.index;
+
+                this.tbodyNode.get('childNodes').slice(index + 1).each(function (node, i) {
+                    node.replaceClass.apply(node, (index + i) % 2 ? odd : even);
+                });
+
+                this._toggleStripesDelay = null;
+            }),
+
+            index: (typeof delay.index !== 'undefined') ? Math.min(delay.index, index) : index
+        };
+
     },
 
     /**
@@ -739,11 +922,13 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             F = Y.DataTable.BodyView.Formatters,
             i, len, col, key, token, headers, tokenValues, formatter;
 
+        this._setColumnsFormatterFn(columns);
+
         for (i = 0, len = columns.length; i < len; ++i) {
             col     = columns[i];
             key     = col.key;
             token   = col._id || key;
-            formatter = col.formatter;
+            formatter = col._formatterFn;
             // Only include headers if there are more than one
             headers = (col._headers || []).length > 1 ?
                         'headers="' + col._headers.join(' ') + '"' : '';
@@ -756,14 +941,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                            this.getClassName('cell') +
                            ' {' + token + '-className}'
             };
-            if (formatter) {
-                if (Lang.isFunction(formatter)) {
-                    col._formatterFn = formatter;
-                } else if (formatter in F) {
-                    col._formatterFn = F[formatter].call(this.host || this, col);
-                } else {
-                    tokenValues.content = formatter.replace(valueRegExp, tokenValues.content);
-                }
+            if (!formatter && col.formatter) {
+                tokenValues.content = formatter.replace(valueRegExp, tokenValues.content);
             }
 
             if (col.nodeFormatter) {
@@ -778,6 +957,40 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             content: html
         });
     },
+
+    /**
+     Parses the columns array and defines the column's _formatterFn if there
+     is a formatter available on the column
+     @protected
+     @method _setColumnsFormatterFn
+     @param {Object[]} columns Array of column configuration objects
+
+     @return {Object[]} Returns modified columns configuration Array
+     */
+    _setColumnsFormatterFn: function (columns) {
+        var F = Y.DataTable.BodyView.Formatters,
+            formatter,
+            col,
+            i,
+            len;
+
+        for (i = 0, l = columns.length; i < len; i++) {
+            col = columns[i];
+            formatter = col.formatter;
+
+            if (!col._formatterFn && formatter) {
+                if (Lang.isFunction(formatter)) {
+                    col._formatterFn = formatter;
+                } else if (formatter in F) {
+                    col._formatterFn = F[formatter].call(this.host || this, col);
+                }
+            }
+        }
+
+        return columns;
+
+    },
+
     /**
     Cleans up temporary values created during rendering.
     @method _afterRenderCleanup
