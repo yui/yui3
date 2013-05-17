@@ -1,0 +1,53 @@
+.yui3-table-paginator {
+    padding: 3px;
+    border-style: solid;
+    border-width: 0 1px 1px;
+}
+.yui3-table-paginator .yui3-paginator-content {
+    position: relative;
+}
+.yui3-table-paginator .yui3-paginator-page-select {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.yui3-table-paginator .group {
+    display: inline-block;
+    zoom: 1; *display: inline;
+}
+.yui3-table-paginator .control {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    margin: 0 3px;
+    padding: 0 0.2em;
+    text-align: center;
+    text-decoration: none;
+    line-height: 1.5;
+    border: 1px solid transparent;
+    border-radius: 3px;
+}
+.yui3-table-paginator .control-disabled,
+.yui3-table-paginator .control-disabled:hover {
+    cursor: default;
+}
+.yui3-table-paginator .group input {
+    width: 3em;
+}
+.yui3-table-paginator form {
+    margin: 0 1em;
+}
+.yui3-table-paginator .per-page {
+    float: right;
+}
+/* FOR USE WHEN DISPLAY ICONS
+.yui3-table-paginator .control-first,
+.yui3-table-paginator .control-last,
+.yui3-table-paginator .control-prev,
+.yui3-table-paginator .control-next {
+    text-indent: -999px;
+    direction: ltr;
+    overflow: hidden;
+    position: relative;
+    width: 1em;
+}
+*/
