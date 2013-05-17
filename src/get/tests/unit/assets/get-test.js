@@ -38,19 +38,19 @@ YUI.add('get-test', function (Y) {
                     'z-index: 1111;' +
                     '/* Just for eyeballing, not used to test */' +
                     'background-color: #ff0000;' +
-                '}';
+                '}',
         CSS_B = '.get_test_b {' +
                     'position:absolute;' +
                     'z-index:1234;' +
                     '/* Just for eyeballing, not used to test */' +
                     'background-color:#00ff00;' +
-                '}';
+                '}',
         CSS_C = '.get_test_c {' +
                     'position:absolute;' +
                     'z-index:4321;' +
                     '/* Just for eyeballing, not used to test */' +
                     'background-color:#0000ff;' +
-                '}';
+                '}',
         CSS_IB = '.get_test_a {' +
                      'position:absolute;' +
                      'z-index:9991;' +
@@ -92,10 +92,20 @@ YUI.add('get-test', function (Y) {
     }
 
     /**
+    Generates a unique echoecho 404 URL.
+
+    @return A unique echoecho 404 URL.
+    **/
+    function getUniqueEchoecho404() {
+        return randUrl('echo/status/404');
+    }
+
+    /**
     Generates a unique echoecho JavaScript URL.
 
     @param {String} content The JavaScript to respond with.
     @param {String} delay The number of seconds to delay the response.
+    @return A unique echoecho JavaScript URL.
     **/
     function getUniqueEchoechoJs(content, delay) {
         var url;
@@ -115,6 +125,7 @@ YUI.add('get-test', function (Y) {
 
     @param {String} content The CSS to respond with.
     @param {String} delay The number of seconds to delay the response.
+    @return A unique echoecho CSS URL.
     **/
     function getUniqueEchoechoCss(content, delay) {
         var url;
@@ -232,7 +243,7 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
-            var url = randUrl('echo/status/404');
+            var url = getUniqueEchoecho404();
 
             var trans = Y.Get.script(url, {
                 data: {a:1, b:2, c:3},
@@ -357,7 +368,7 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
-            var url = randUrl('echo/status/404');
+            var url = getUniqueEchoecho404();
 
             var trans = Y.Get.script(url, {
                 data: {a:1, b:2, c:3},
@@ -456,7 +467,7 @@ YUI.add('get-test', function (Y) {
             };
             var urls = [
                 getUniqueEchoechoJs(JS_A, DELAY),
-                randUrl('echo/status/404'),
+                getUniqueEchoecho404(),
                 getUniqueEchoechoJs(JS_C, DELAY)
             ];
 
@@ -560,7 +571,7 @@ YUI.add('get-test', function (Y) {
             };
             var urls = [
                 getUniqueEchoechoJs(JS_A, DELAY),
-                randUrl('echo/status/404'),
+                getUniqueEchoecho404(),
                 getUniqueEchoechoJs(JS_C, DELAY)
             ];
 
@@ -714,7 +725,7 @@ YUI.add('get-test', function (Y) {
             };
             var urls = [
                 getUniqueEchoechoJs(JS_A, DELAY),
-                randUrl('echo/status/404'),
+                getUniqueEchoecho404(),
                 getUniqueEchoechoJs(JS_C, DELAY)
             ];
 
@@ -1190,7 +1201,7 @@ YUI.add('get-test', function (Y) {
             };
             var urls = [
                 getUniqueEchoechoJs(JS_A, DELAY),
-                randUrl('echo/status/404'),
+                getUniqueEchoecho404(),
                 getUniqueEchoechoJs(JS_C, DELAY)
             ];
 
@@ -1554,7 +1565,7 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
-            var url = randUrl('echo/status/404');
+            var url = getUniqueEchoecho404();
 
             Y.Get.css(url, {
                 data: {a:1, b:2, c:3},
@@ -1591,7 +1602,7 @@ YUI.add('get-test', function (Y) {
             };
             var urls = [
                 getUniqueEchoechoCss(CSS_A, DELAY),
-                randUrl('echo/status/404'),
+                getUniqueEchoecho404(),
                 getUniqueEchoechoCss(CSS_C, DELAY)
             ];
 
@@ -2565,8 +2576,8 @@ YUI.add('get-test', function (Y) {
         '`errors` property should contain an array of error objects': function () {
             var test = this;
             var urls = [
-                randUrl('echo/status/404'),
-                randUrl('echo/status/404')
+                getUniqueEchoecho404(),
+                getUniqueEchoecho404()
             ];
 
             this.t = Y.Get.js(urls, function (err, t) {
