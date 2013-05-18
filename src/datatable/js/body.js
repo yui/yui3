@@ -447,8 +447,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             table.appendChild(tbody);
         }
 
-        this._afterRenderCleanup();
-
         this.bindUI();
 
         return this;
@@ -494,15 +492,17 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
      @chainable
      */
-     // TODO: make column optional?
     refreshCell: function (cell, model, col) {
         var content,
             formatterFn,
             formatterData,
             data = model.toJSON();
 
+        cell = this.getCell(cell);
+        model || (model = this.getRecord(cell));
+        col || (col = this.getColumn(cell.get('key')));
+
         if (col.nodeFormatter) {
-            // TODO: Remove this check. If we have a nodeFormatter, just re-render whole table?
             console.log('has nodeFormatter');
             // TODO: copy logic invoking the node formatters
 
@@ -522,8 +522,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                     record   : model,
                     className: '',
                     rowClass : '',
-                    // TODO: Provide a real row index
-                    rowIndex : -1
+                    rowIndex : this._getRowIndex(cell.ancestor('tr'))
                 };
 
                 // Formatters can either return a value ...
@@ -583,7 +582,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             index = e.index,
             columns = this.get('columns'),
             col,
-            changed = e.changed || {},
+            changed = e.changed && Y.Object.keys(e.changed),
             key,
             row,
             i,
@@ -591,39 +590,42 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         for (i = 0, len = columns.length; i < len; i++ ) {
             col = columns[i];
-            // we need to see if there are any columns that have a nodeFormatter
-            // and if so re-render and exit
+
+            // since nodeFormatters typcially make changes outside of it's
+            // cell, we need to see if there are any columns that have a
+            // nodeFormatter and if so, we need to do a full render() of the
+            // tbody
             if (col.hasOwnProperty('nodeFormatter')) {
                 this.render();
                 return;
-            }
-
-            // we need to see if there are any columns that have formatters that are not part of the changed array
-            key = col.key || col.name;
-            if (col.hasOwnProperty('formatter')) {
-                changed[key] || (changed[key] = 1);
             }
         }
 
         // TODO: if multiple rows are being added/remove/swapped, can we avoid the restriping?
         switch (type) {
             case 'change':
-                this.refreshRow(this.getRow(e.target), e.target, Y.Object.keys(changed));
+                for (i = 0, len = columns.length; i < len; i++) {
+                    key = col.key || col.name;
+                    if (col.formatter && !e.changed[key]) {
+                        changed.push(key);
+                    }
+                }
+                this.refreshRow(this.getRow(e.target), e.target, changed);
                 break;
             case 'add':
                 // we need to make sure we don't have an index larger than the data we have
                 index =  Math.min(index, this.get('data').size() - 1);
 
-                // updates the columns to for formatter functions
+                // updates the columns with formatter functions
                 this._setColumnsFormatterFn(columns);
                 row = Y.Node.create(this._createRowHTML(e.model, index, columns));
                 this.tbodyNode.insert(row, index);
-                this._toggleStripes(index);
+                this._restripe(index);
                 break;
             case 'remove':
                 this.getRow(index).remove(true);
                 // we removed a row, so we need to back up our index to stripe
-                this._toggleStripes(index - 1);
+                this._restripe(index - 1);
                 break;
             default:
                 this.render();
@@ -637,40 +639,47 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
      rows are updated at one time.
 
      @protected
-     @method _toggleStripes
+     @method _restripe
      @param {Number} [index] Index of row to start restriping after
-     @param {Number} [ms] Number of milliseconds to delay the striping. Defaults
-                          to 15 ms if a time is not provided.
      @since @SINCE@
      */
-    _toggleStripes: function (index, ms) {
-        var odd = [this.CLASS_ODD, this.CLASS_EVEN],
-            even = [this.CLASS_EVEN, this.CLASS_ODD],
-            delay = this._toggleStripesDelay || {};
+    _restripe: function (index) {
+        var task = this._restripeTask,
+            self;
 
-        // if no initial index, do the whole table
-        index || (index = -1);
+        // index|0 to force int, avoid NaN. Math.max() to avoid neg indexes.
+        index = Math.max((index|0), 0);
 
-        // if no ms provided, set to default of 30
-        ms || (ms = 15);
+        if (!task) {
+            self = this;
 
-        if (delay && delay.fn) {
-            delay.fn.cancel();
+            this._restripeTask = {
+                timer: setTimeout(function () {
+                    // Check for self existence before continuing
+                    if (!self || self.get('destroy') || !self.tbodyNode || !self.tbodyNode.inDoc()) {
+                        self._restripeTask = null;
+                        return;
+                    }
+
+
+                    var odd  = [self.CLASS_ODD, self.CLASS_EVEN],
+                        even = [self.CLASS_EVEN, self.CLASS_ODD],
+                        index = self._restripeTask.index;
+
+                    self.tbodyNode.get('childNodes')
+                        .slice(index)
+                        .each(function (row, i) { // TODO: each vs batch
+                            row.replaceClass.apply(row, (index + i) % 2 ? even : odd);
+                        });
+
+                    self._restripeTask = null;
+                }, 0),
+
+                index: index
+            }
+        } else {
+            task.index = Math.min(task.index, index);
         }
-
-        this._toggleStripesDelay = {
-            fn: Y.later(ms, this, function (t) {
-                var index = this._toggleStripesDelay.index;
-
-                this.tbodyNode.get('childNodes').slice(index + 1).each(function (node, i) {
-                    node.replaceClass.apply(node, (index + i) % 2 ? odd : even);
-                });
-
-                this._toggleStripesDelay = null;
-            }),
-
-            index: (typeof delay.index !== 'undefined') ? Math.min(delay.index, index) : index
-        };
 
     },
 
@@ -905,6 +914,30 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     /**
+     @param {Y.Node} row
+     @return {Number} Index of row in tbodyNode
+     */
+    _getRowIndex: function (row) {
+        var tbody = this.tbodyNode,
+            index = 1;
+
+        if (tbody && row) {
+
+            //if row is not in the tbody, return
+            if (row.ancestor('tbody') !== tbody) {
+                return null;
+            }
+
+            // increment until we no longer have a previous node
+            while (row = row.previous()) { // NOTE: assignment
+                index++;
+            }
+        }
+
+        return index;
+    },
+
+    /**
     Creates a custom HTML template string for use in generating the markup for
     individual table rows with {placeholder}s to capture data from the Models
     in the `modelList` attribute or from column `formatter`s.
@@ -919,7 +952,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _createRowTemplate: function (columns) {
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
-            F = Y.DataTable.BodyView.Formatters,
             i, len, col, key, token, headers, tokenValues, formatter;
 
         this._setColumnsFormatterFn(columns);
@@ -968,42 +1000,26 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
      @return {Object[]} Returns modified columns configuration Array
      */
     _setColumnsFormatterFn: function (columns) {
-        var F = Y.DataTable.BodyView.Formatters,
+        var Formatters = Y.DataTable.BodyView.Formatters,
             formatter,
             col,
             i,
             len;
 
-        for (i = 0, l = columns.length; i < len; i++) {
+        for (i = 0, len = columns.length; i < len; i++) {
             col = columns[i];
             formatter = col.formatter;
 
             if (!col._formatterFn && formatter) {
                 if (Lang.isFunction(formatter)) {
                     col._formatterFn = formatter;
-                } else if (formatter in F) {
-                    col._formatterFn = F[formatter].call(this.host || this, col);
+                } else if (formatter in Formatters) {
+                    col._formatterFn = Formatters[formatter].call(this.host || this, col);
                 }
             }
         }
 
         return columns;
-
-    },
-
-    /**
-    Cleans up temporary values created during rendering.
-    @method _afterRenderCleanup
-    @private
-    */
-    _afterRenderCleanup: function () {
-        var columns = this.get('columns'),
-            i, len = columns.length;
-
-        for (i = 0;i < len; i+=1) {
-            delete columns[i]._formatterFn;
-        }
-
     },
 
     /**
