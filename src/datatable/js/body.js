@@ -464,8 +464,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
      @chainable
      */
     refreshRow: function (row, model, columns) {
-        var host = this.get('host'),
-            key,
+        var key,
             cell,
             len = columns.length,
             i;
@@ -473,7 +472,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         for (i = 0; i < len; i++) {
             key = columns[i];
             cell = row.one('.' + this.getClassName('col', key));
-            this.refreshCell(cell, model, host.getColumn(key));
+            this.refreshCell(cell, model);
         }
 
         return this;
@@ -500,7 +499,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         cell = this.getCell(cell);
         model || (model = this.getRecord(cell));
-        col || (col = this.getColumn(cell.get('key')));
+        col || (col = this.getColumn(cell));
 
         if (col.nodeFormatter) {
             console.log('has nodeFormatter');
@@ -509,7 +508,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         } else if (col.formatter) {
             // TODO: See about storing the _formatterFn the first go around and updating internally
             if (!col._formatterFn) {
-                col = this._setColumnsFormatterFn([col])[0]
+                col = this._setColumnsFormatterFn([col])[0];
             }
 
             formatterFn = col._formatterFn || null;
@@ -545,6 +544,34 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         cell.setHTML(col.allowHTML ? content : Y.Escape.html(content));
 
         return this;
+    },
+
+    /**
+     Returns column data from this.get('columns'). If a Y.Node is provided as
+     the key, will try to determine the key from the classname
+     @method getColumn
+     @param {String|Y.Node} key
+     @return {Object} Returns column configuration
+     */
+    getColumn: function (key) {
+        if (Y.instanceOf(key, Y.Node)) {
+            // get column name from node
+            key = key.get('className').match(
+                new RegExp( this.getClassName('col') +'-([^ ]*)' )
+            )[1];
+        }
+
+        var cols = this.get('columns'),
+            col = null;
+
+        Y.Array.some(cols, function (_col) {
+            if (_col.key === key) {
+                col = _col;
+                return true;
+            }
+        });
+
+        return col;
     },
 
     // -- Protected and private methods ---------------------------------------
@@ -614,7 +641,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 break;
             case 'add':
                 // we need to make sure we don't have an index larger than the data we have
-                index =  Math.min(index, this.get('data').size() - 1);
+                index =  Math.min(index, this.get('modelList').size() - 1);
 
                 // updates the columns with formatter functions
                 this._setColumnsFormatterFn(columns);
@@ -676,7 +703,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 }, 0),
 
                 index: index
-            }
+            };
         } else {
             task.index = Math.min(task.index, index);
         }
@@ -914,6 +941,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     /**
+     Locates the row within the tbodyNode and returns the found index, or Null
+     if it is not found in the tbodyNode
      @param {Y.Node} row
      @return {Number} Index of row in tbodyNode
      */
@@ -974,7 +1003,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                            ' {' + token + '-className}'
             };
             if (!formatter && col.formatter) {
-                tokenValues.content = formatter.replace(valueRegExp, tokenValues.content);
+                tokenValues.content = col.formatter.replace(valueRegExp, tokenValues.content);
             }
 
             if (col.nodeFormatter) {
