@@ -1,5 +1,5 @@
 YUI.add('scrollview-paging-tests', function(Y) {
-    
+
     var suite = new Y.Test.Suite('scrollview-paging test suite');
 
     suite.add(new Y.Test.Case({
@@ -21,7 +21,7 @@ YUI.add('scrollview-paging-tests', function(Y) {
         //     Test.wait(function () {
         //         var transform = Y.one('#scrollview-content').getStyle('transform'),
         //             offset = transform.split(',')[4].replace(')', '').trim();
-                    
+
         //         if (offset == -328) {
         //             Y.Assert.pass();
         //         }
@@ -31,7 +31,7 @@ YUI.add('scrollview-paging-tests', function(Y) {
         //     }, 3000);
         // }
     }));
-    
+
     Y.Test.Runner.add(suite);
 
 }, '', {requires:[]});

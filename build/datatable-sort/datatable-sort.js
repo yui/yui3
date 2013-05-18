@@ -555,9 +555,8 @@ Y.mix(Sortable.prototype, {
     **/
     _onUITriggerSort: function (e) {
         var id = e.currentTarget.getAttribute('data-yui3-col-id'),
-            sortBy = e.shiftKey ? this.get('sortBy') : [{}],
             column = id && this.getColumn(id),
-            i, len;
+            sortBy, i, len;
 
         if (e.type === 'keydown' && e.keyCode !== 32) {
             return;
@@ -569,6 +568,8 @@ Y.mix(Sortable.prototype, {
 
         if (column) {
             if (e.shiftKey) {
+                sortBy = this.get('sortBy') || [];
+
                 for (i = 0, len = sortBy.length; i < len; ++i) {
                     if (id === sortBy[i]  || Math.abs(sortBy[i][id]) === 1) {
                         if (!isObject(sortBy[i])) {
@@ -584,6 +585,8 @@ Y.mix(Sortable.prototype, {
                     sortBy.push(column._id);
                 }
             } else {
+                sortBy = [{}];
+
                 sortBy[0][id] = -(column.sortDir||0) || 1;
             }
 

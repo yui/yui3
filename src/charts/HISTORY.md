@@ -1,8 +1,13 @@
 Charts Change History
 =====================
 
-@VERSION@
------
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
 
   * #2533184 Addressed issue in which Axis.getEdgeOffset was returning an incorrect value.
   * #2533130 Added hideFirstMajorUnit and hideLastMajorUnit attributes to axis classes allowing for suppression of rendering the first/last label and tick on an axis.

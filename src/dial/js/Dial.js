@@ -726,9 +726,23 @@
                     }
                 }
 
-                // Now that _timesWrapped is set value .......................................................................
+                // Now that _timesWrapped is set, set newValue .......................................................................
                 newValue = this._getValueFromAngle(ang); // This function needs the correct, current _timesWrapped value.
-                this._prevAng = ang;
+
+
+                /* updating _prevAng (previous angle)
+                 * When past min or max, _prevAng is set to the angle of min or max
+                 * Don't do this in a drag method, or it will affect wrapping,
+                 * causing the marker to stick at min, when min is 0 degrees (north)
+                 * #2532878
+                 */
+                if (newValue > this._maxValue) {
+                    this._prevAng = this._getAngleFromValue(this._maxValue);  // #2530766 need for mousedown on the ring; causes prob for drag
+                } else if (newValue < this._minValue) {
+                    this._prevAng = this._getAngleFromValue(this._minValue);
+                } else {
+                    this._prevAng = ang;
+                }
 
                 this._handleValuesBeyondMinMax(e, newValue);
             }
@@ -736,6 +750,7 @@
 
         /**
          * handles the case where the value is less than min or greater than max
+         * This is used both when handle is dragged and when the ring is clicked
          *
          * @method _handleValuesBeyondMinMax
          * @param e {DOMEvent} the event object
@@ -752,12 +767,10 @@
                     // Delegate to DD's natural behavior
                     this._dd1._handleMouseDownEvent(e);
                 }
-            } else if(newValue > this._maxValue){
+            } else if (newValue > this._maxValue) {
                 this.set('value', this._maxValue);
-                this._prevAng = this._getAngleFromValue(this._maxValue);  // #2530766 need for mousedown on the ring; causes prob for drag
-            } else if(newValue < this._minValue){
+            } else if (newValue < this._minValue) {
                 this.set('value', this._minValue);
-               this._prevAng = this._getAngleFromValue(this._minValue);
             }
         },
 

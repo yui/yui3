@@ -1,10 +1,25 @@
 ScrollView Change History
 =========================
 
+@VERSION@
+-----
+
+  * Paginator API methods now respect the widget's `disabled` ATTR
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+  * No changes.
+
 3.9.1
 -----
 
-* No changes.
+  * No changes.
 
 3.9.0
 -----
@@ -21,7 +36,7 @@ ScrollView Change History
 -----
 
   * Linting cleanup.
-  
+
   * Improvements to ScrollView's unit tests. PR #361
 
 3.8.0
@@ -31,10 +46,10 @@ ScrollView Change History
 
   * Fixed issue where Mousewheel could prevent next()/prev() API interaction on horizontally paginated instances (#2532815)
 
-  * scrollToIndex now sets correct default value for easing (#2532895) 
+  * scrollToIndex now sets correct default value for easing (#2532895)
 
   * ScrollViewPaginator#scrollToIndex now properly respects animation duration and easing arguments (thanks juandopazo)
-  
+
   * General cleanup
 
 3.7.3

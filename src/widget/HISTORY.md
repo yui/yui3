@@ -2,7 +2,19 @@ Widget Change History
 =====================
 
 @VERSION@
------
+------
+
+  * Fixed contentBox remaining in Y.Node _instances cache, when
+    widget hasn't been rendered, and `widget.destroy(true)` [deep destroy]
+    is used.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
 
   * Added custom prefix support to widget.getSkinName,
     derived https://github.com/yui/yui3/pull/327
