@@ -91,8 +91,8 @@ DtEditable.ATTRS = {
     editorOpenKey: {
         value: [13, 113],
         setter: function (value) {
-             Y.log('DataTable.Editable.editorOpenKey setter: ' + value, 'info', 'datatable-editable');
-           if (value) {
+            Y.log('DataTable.Editable.editorOpenKey setter: ' + value, 'info', 'datatable-editable');
+            if (value) {
                 return Y.Array(value);
             }
             return value;
@@ -708,8 +708,7 @@ Y.mix( DtEditable.prototype, {
     _buildColumnEditors: function () {
         Y.log('DataTable.Editable._buildColumnEditors', 'info', 'datatable-editable');
 
-        var cols     = this.get(COLUMNS),
-            defEditor = this.get(DEF_EDITOR),
+        var defEditor = this.get(DEF_EDITOR),
             editorName, colKey, editorInstance;
 
         if( !Y.DataTable.Editors ) {
@@ -723,16 +722,15 @@ Y.mix( DtEditable.prototype, {
         this._commonEditors = {};
         this._columnEditors = {};
 
-        arrEach(cols,function (c) {
-            if(!c) {
-                return;
-            }
+        arrEach(this.get(COLUMNS), function (col) {
+            var hasConfig = Lang.isObject(col.editorConfig),
+                edConfig = col.editorConfig || {};
 
-            colKey = c.key || c.name;
+            colKey = col.key || col.name;
 
-            if(colKey && c.editable !== false) {
+            if(colKey && col.editable !== false) {
 
-                editorName = c.editor || defEditor;
+                editorName = col.editor || defEditor;
 
                 this._updateEditableColumnCSS(colKey, true);
 
@@ -743,17 +741,21 @@ Y.mix( DtEditable.prototype, {
 
                 // check for common editor ....
                 if (editorName && Y.DataTable.Editors[editorName]) {
+                    if (col.lookupTable && edConfig.lookupTable === undefined) {
+                        edConfig.lookupTable = col.lookupTable;
+                        hasConfig = true;
+                    }
 
-                    if(Lang.isObject(c.editorConfig) ) {
+                    if(hasConfig) {
 
-                        editorInstance = this._createCellEditorInstance(editorName, c);
+                        editorInstance = this._createCellEditorInstance(editorName, edConfig);
 
                         this._columnEditors[colKey] = editorInstance || null;
 
                     } else {
 
                         if( !this._commonEditors[editorName] ) {
-                            editorInstance = this._createCellEditorInstance(editorName, c);
+                            editorInstance = this._createCellEditorInstance(editorName, edConfig);
                             this._commonEditors[editorName] = editorInstance;
                         }
 
@@ -776,20 +778,16 @@ Y.mix( DtEditable.prototype, {
 
     @method _createCellEditorInstance
     @param editorName {String} Editor name
-    @param column {Object} Column object
+    @param config {Object} reference to column's editorConfig attribute
     @return {DataTable.BaseCellEditor} A newly created editor instance
     @private
      */
-    _createCellEditorInstance: function (editorName, column) {
+    _createCellEditorInstance: function (editorName, config) {
         Y.log('DataTable.Editable._createCellEditorInstance: ' + editorName + ' for ' + column.key, 'info', 'datatable-editable');
 
         var Editor = Y.DataTable.Editors[editorName],
-            editor = null,
-            config = column.editorConfig || {};
+            editor = null;
 
-        if (column.lookupTable && config.lookupTable === undefined) {
-            config.lookupTable = column.lookupTable;
-        }
         if (Editor) {
             editor = new Editor(config).render(this._editorsContainer);
             editor.get('container').addClass(this.getClassName('celleditor', editorName));
@@ -952,23 +950,6 @@ Y.mix( DtEditable.prototype, {
 
     },
 
-    /**
-    Listener to TD "click" events that hides a popup editor if not in the current cell.
-
-    @method _handleCellClick
-    @param e
-    @private
-     */
-    _handleCellClick:  function (e) {
-        Y.log('DataTable.Editable._handleCellClick', 'info', 'datatable-editable');
-
-        var td = e.currentTarget,
-            cn = this.getColumnNameByTd(td);
-
-        if (cn && this._openEditor &&  this._openEditor.get('colKey') !== cn) {
-            this.hideCellEditor();
-        }
-    },
 
     /**
     Listener that fires on a scrollable DT scrollbar "scroll" event, and updates

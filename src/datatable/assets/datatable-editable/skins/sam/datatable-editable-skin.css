@@ -2,10 +2,8 @@
     cursor: pointer;
 }
 
-.yui3-skin-sam .yui3-datatable-celleditor-error input,
-
-.yui3-skin-sam .yui3-datatable-celleditor-error textarea {
-    background-color: orange;
+.yui3-skin-sam .yui3-datatable-celleditor-error {
+    background-color: orange !important;
 }
 
 .yui3-skin-sam .yui3-datatable-celleditor-editing {

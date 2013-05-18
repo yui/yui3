@@ -110,9 +110,11 @@ YUI.add('datatable-editable-tests', function(Y) {
 
         'check ATTR default values' : function(){
             var dt = this.dt;
-            isFalse( dt.get('editable'), "editable default not false" );
-            isNull( dt.get('defaultEditor'), "default editor not null" );
-            areSame( 'dblclick', dt.get('editorOpenAction'), "default editorOpenAction not 'dblclick'" );
+            isFalse(dt.get('editable'), "editable default not false" );
+            isNull(dt.get('defaultEditor'), "default editor not null" );
+            areSame('dblclick', dt.get('editorOpenAction'), "default editorOpenAction not 'dblclick'" );
+            Y.ArrayAssert.itemsAreSame([13, 113] , dt.get('editorOpenKey'), "default open keys should be 13 (enter) and 113 (F2)");
+            isTrue(dt.get('wrapAroundNavigation'), "wrapAroundNavigation should be true");
         },
 
         'check ATTR editable setting' : function(){
@@ -151,7 +153,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             dt.set('editorOpenAction',null);
             isNull(dt.get('editorOpenAction'), "set editorOpenAction failed on null" );
 
-            dt.set('editorOpenAction',1);
+            dt.set('editorOpenAction', 1);
             isNull(dt.get('editorOpenAction'), "set editorOpenAction failed on 1" );
 
             dt.set('editorOpenAction','click');
@@ -178,6 +180,17 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(1, Y.Object.size(dt._commonEditors), "There should be only one common editor" );
             var inl = dt._commonEditors.inline;
             areSame( Y.DataTable.Editors.inline , inl.constructor, "common editor 0 should be inline");
+
+        },
+        'check ATTR editorOpenKey setting': function () {
+            var dt = this.dt;
+            dt.set('editable',true);
+
+            Y.ArrayAssert.itemsAreSame([13, 113] , dt.get('editorOpenKey'), "default open keys should be 13 (enter) and 113 (F2)");
+            dt.set('editorOpenKey', 13);
+            Y.ArrayAssert.itemsAreSame([13] , dt.get('editorOpenKey'), "default open keys should only be 13 (enter)");
+            dt.set('editorOpenKey', false);
+            isFalse(dt.get('editorOpenKey'), 'editor open by key should be disabled');
 
         },
 
@@ -227,9 +240,11 @@ YUI.add('datatable-editable-tests', function(Y) {
             isTrue( dt.get('editable'), "set editable to true" );
 
             areSame(7, Y.Object.size(dt.getCellEditors()), 'there should be 7 cell editors');
+            areSame(1, Y.Object.size(dt._commonEditors) , 'there should be only one (the default) editor for all');
 
             isNull( dt.getCellEditor('sid'),'column 0 (sid) editor should be null');
             areSame( Y.DataTable.Editors.inline , dt.getCellEditor('sopen').constructor, "common editor 0 should be inline");
+
 
         },
 
@@ -378,6 +393,38 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame('abc', dt.getCell([0,1]).getHTML(), 'check cell after saving');
             areSame('none', ed.getStyle('display') ,'editor should be hidden');
         },
+        'check editing via keyboard': function () {
+            var dt = this.dt,
+                td =  dt.getCell([0,1]),
+                evFac = {}, fail = false;
+            td.focus();
+            fireKey(td, 13);
+            var ed = Y.one('.yui3-datatable-celleditor-input');
+            dt.after('celleditor:save', function (ev) {
+                evFac = ev;
+            });
+            dt.after('celleditor:cancel', function (ev) {
+                fail = true;
+            });
+
+            areSame('0', ed.get('value'), 'check input box');
+            areSame('0', td.getHTML(), 'check current cell');
+            areSame(0, dt.getRecord(0).get('sopen'), 'check value on record');
+
+            inputKey(ed, 'abc', 13);
+                isFalse(fail, 'cancel should never fire');
+                areSame('sopen',evFac.colKey, 'ev.colKey');
+                areSame(td,evFac.td,'ev.td');
+                areSame(0,evFac.initialValue,'ev.initialValue');
+                areSame('abc',evFac.newValue,'ev.newValue');
+                fail = false;
+                evFac = null;
+            areSame('abc', ed.get('value'), 'check changed input');
+
+            areSame('abc', dt.getRecord(0).get('sopen'), 'record should have changed');
+            areSame('abc', dt.getCell([0,1]).getHTML(), 'check cell after saving');
+            areSame('none', ed.getStyle('display') ,'editor should be hidden');
+        },
         'check editing canceled via event': function () {
             var dt = this.dt,
                 td =  dt.getCell([0,1]),
@@ -430,15 +477,44 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(0, dt.getRecord(0).get('sopen'), 'check value on record');
 
             inputKey(ed, 'abc', 27);
-                isFalse(fail, 'save event should not fire');
-                areSame('sopen',evFac.colKey, 'ev.colKey');
-                areSame(td,evFac.td,'ev.td');
-                areSame(0,evFac.initialValue,'ev.initialValue');
+            isFalse(fail, 'save event should not fire');
+            areSame('sopen',evFac.colKey, 'ev.colKey');
+            areSame(td,evFac.td,'ev.td');
+            areSame(0,evFac.initialValue,'ev.initialValue');
             areSame('abc', ed.get('value'), 'check changed input');
 
             areSame(0, dt.getRecord(0).get('sopen'), 'record should not have changed');
             areSame('0', dt.getCell([0,1]).getHTML(), 'check cell remains unchanged');
             areSame('none', ed.getStyle('display') ,'editor should be hidden');
+        },
+
+        'check clicking outside': function () {
+            var dt = this.dt,
+                td =  dt.getCell([0,1]),
+                evFac = {}, fail = false;
+            td.simulate('click');
+            var ed = Y.one('.yui3-datatable-celleditor-input');
+            dt.after('celleditor:save', function (ev) {
+                fail = true;
+            });
+            dt.after('celleditor:cancel', function (ev) {
+                evFac = ev;
+            });
+
+            areSame('0', ed.get('value'), 'check input box');
+            areSame('0', td.getHTML(), 'check current cell');
+            areSame(0, dt.getRecord(0).get('sopen'), 'check value on record');
+
+            Y.one('#logger').simulate('click');
+            isFalse(fail, 'save event should not fire');
+            areSame('sopen',evFac.colKey, 'ev.colKey');
+            areSame(td,evFac.td,'ev.td');
+            areSame(0,evFac.initialValue,'ev.initialValue');
+
+            areSame(0, dt.getRecord(0).get('sopen'), 'record should not have changed');
+            areSame('0', dt.getCell([0,1]).getHTML(), 'check cell remains unchanged');
+            areSame('none', ed.getStyle('display') ,'editor should be hidden');
+
         },
         'check destructor' : function(){
             var dt = this.dt;
@@ -455,6 +531,129 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(0, Y.all('.yui3-datatable-celleditor-input').size(),'There should be no editors left behind');
 
         }
+
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: "assorted tests without a standard setup",
+        "check editors types and count with assorted settings": function () {
+            var dt = makeDT({
+                columns: [
+                    {key:'sid',  editable:false},
+                    {key:'sopen', editorConfig: {whatever:"doesn't really matter, the existence of an editorConfig should be enough"}},
+                    {key:'sname'},
+                    {key:'sdesc'},
+                    {key:'stype'},
+                    {key:'stock', editor: 'inlineNumber'},
+                    {key:'sprice'},
+                    {key:'sdate', editor: 'inlineDate'}
+                ],
+                defaultEditor:  'inline',
+                editorOpenAction:   'click',
+                editable:       true
+            });
+            areSame(7, Y.Object.size(dt.getCellEditors()), 'there should be 7 cell editors');
+            // Editors with an editorConfig cannot be shared so there is going to be just three of them.
+            areSame(3, Y.Object.size(dt._commonEditors) , 'there should be three (one per shared type) editors');
+            isTrue(dt._columnEditors['sopen'] instanceof Y.DataTable.Editors.inline, 'The first one should have an editor instance');
+            areSame('inline', dt._columnEditors['sname'], 'sname should point to an instance in _commonEditors');
+            areSame('inline', dt._columnEditors['sdesc'], 'sname should point to an instance in _commonEditors');
+            areSame('inline', dt._columnEditors['stype'], 'sname should point to an instance in _commonEditors');
+            areSame('inlineNumber', dt._columnEditors['stock'], 'sname should point to an instance in _commonEditors');
+            areSame('inline', dt._columnEditors['sprice'], 'sname should point to an instance in _commonEditors');
+            areSame('inlineDate', dt._columnEditors['sdate'], 'sname should point to an instance in _commonEditors');
+            dt.destroy();
+        },
+        "check passing the lookupTable": function () {
+            var dt = makeDT({
+                columns: [
+                    {key:'sopen', editor: 'inlineAC', lookupTable: [
+                        {value:0, text: 'no'},
+                        {value:1, text: 'yes'}
+                    ]}
+                ],
+                defaultEditor:  'inline',
+                editorOpenAction:   'click',
+                editable:       true
+            });
+            isTrue(dt._columnEditors['sopen'] instanceof Y.DataTable.Editors.inlineAC, 'It should be an instance, because it has an editorConfig');
+            isTrue(Y.Lang.isObject(dt.getCellEditor('sopen').get('lookupTable')),'it should have received the lookupTable');
+            dt.destroy();
+        },
+        "check changing the column def": function () {
+            var dt = makeDT({
+                columns: [
+                    {key:'sopen'}
+                ],
+                defaultEditor:  'inline',
+                editorOpenAction:   'click',
+                editable:       true
+            });
+            areSame(1, Y.Object.size(dt._commonEditors) , 'there should be three (one per shared type) editors');
+            areSame('inline', dt._columnEditors['sopen'], 'It should be a reference to a common editor');
+            dt.set('columns',[
+                {key:'sopen', editor: 'inlineAC', lookupTable: [
+                    {value:0, text: 'no'},
+                    {value:1, text: 'yes'}
+                ]}
+            ] );
+            areSame(0, Y.Object.size(dt._commonEditors) , 'there should be three (one per shared type) editors');
+            isTrue(dt._columnEditors['sopen'] instanceof Y.DataTable.Editors.inlineAC, 'It should be an instance, because it has an editorConfig');
+            isTrue(Y.Lang.isObject(dt.getCellEditor('sopen').get('lookupTable')),'it should have received the lookupTable');
+            dt.destroy();
+        },
+        'check invalid input': function () {
+            var dt = makeDT({
+                    columns: [
+                        {key: 'sopen', editorConfig: {parser: function (value) {
+                             return (value.length < 4 ? value : Y.Attribute.INVALID_VALUE);
+                        }}}
+                    ],
+                     defaultEditor:  'inline',
+                     editorOpenAction:   'click',
+                     editable:       true
+                 }),
+                td =  dt.getCell([0,0]),
+                evFac = null, fail = false;
+
+            td.simulate('click');
+            var ed = Y.one('.yui3-datatable-celleditor-input');
+            dt.after('celleditor:save', function (ev) {
+                evFac = ev;
+            });
+            dt.after('celleditor:cancel', function (ev) {
+                fail = true;
+            });
+
+            areSame('0', ed.get('value'), 'check input box');
+            areSame('0', td.getHTML(), 'check current cell');
+            areSame(0, dt.getRecord(0).get('sopen'), 'check value on record');
+
+            inputKey(ed, 'abcde', 13);
+
+            isFalse(fail, 'cancel should never fire');
+            isNull(evFac, 'no save event yet');
+            areSame('inline', ed.getStyle('display') ,'editor should still be visible');
+            isTrue(ed.hasClass('yui3-datatable-celleditor-error'), 'cell should be in error')
+
+            inputKey(ed, 'abc', 13);
+            areSame('sopen',evFac.colKey, 'ev.colKey');
+            areSame(td,evFac.td,'ev.td');
+            areSame(0,evFac.initialValue,'ev.initialValue');
+            areSame('abc',evFac.newValue,'ev.newValue');
+            fail = false;
+            evFac = null;
+
+            areSame('abc', ed.get('value'), 'check changed input');
+
+            areSame('abc', dt.getRecord(0).get('sopen'), 'record should have changed');
+            areSame('abc', dt.getCell([0,0]).getHTML(), 'check cell after saving');
+            areSame('none', ed.getStyle('display') ,'editor should be hidden');
+            dt.destroy();
+
+        }
+
+
 
     }));
 
