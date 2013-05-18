@@ -1,11 +1,16 @@
 Promise Change History
 ======================
 
-3.11.0
+@VERSION@
 ------
 
 * Changed the value of |this| inside callbacks to undefined to match the
-Promises A+ spec
+  Promises A+ spec
+
+3.10.1
+------
+
+* No changes.
 
 3.10.0
 ------
