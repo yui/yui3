@@ -33,27 +33,27 @@ Y.Color = {
     },
 
     /**
-        NOTE: `(☯)?` is added to the Regular Expression to carve out a
+        NOTE: `(\ufffe)?` is added to the Regular Expression to carve out a
         place for the alpha channel that is returned from toArray
         without compromising any usage of the Regular Expression
 
     @static
     @property REGEX_HEX
     @type RegExp
-    @default /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})(☯)?/
+    @default /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})(\ufffe)?/
     @since 3.8.0
     **/
     REGEX_HEX: REGEX_HEX,
 
     /**
-        NOTE: `(☯)?` is added to the Regular Expression to carve out a
+        NOTE: `(\ufffe)?` is added to the Regular Expression to carve out a
         place for the alpha channel that is returned from toArray
         without compromising any usage of the Regular Expression
 
     @static
     @property REGEX_HEX3
     @type RegExp
-    @default /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})(☯)?/
+    @default /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})(\ufffe)?/
     @since 3.8.0
     **/
     REGEX_HEX3: REGEX_HEX3,
@@ -185,7 +185,7 @@ Y.Color = {
         last value is the alpha value. Will return an empty array if
         the provided string is not able to be parsed.
 
-        NOTE: `(☯)?` is added to `HEX` and `HEX3` Regular Expressions to
+        NOTE: `(\ufffe)?` is added to `HEX` and `HEX3` Regular Expressions to
         carve out a place for the alpha channel that is returned from
         toArray without compromising any usage of the Regular Expression
 
