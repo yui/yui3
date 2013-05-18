@@ -1736,8 +1736,8 @@ relying on ES5 functionality, even when ES5 functionality is available.
 
 /**
 Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
-@property delayUntil
-@type String|Object
+
+@property {Object|String} delayUntil
 @since 3.6.0
 @example
 
@@ -1761,8 +1761,6 @@ Or you can delay until a node is available (with `available` or `contentready`):
         // available in the DOM.
     });
 
-@property {Object|String} delayUntil
-@since 3.6.0
 **/
 YUI.add('yui-base', function (Y, NAME) {
 
@@ -3528,6 +3526,9 @@ YUI.Env.parseUA = function(subUA) {
                         m = ua.match(/rv:([^\s\)]*)/);
                         if (m && m[1]) {
                             o.gecko = numberify(m[1]);
+                            if (/Mobile|Tablet/.test(ua)) {
+                                o.mobile = "ffos";
+                            }
                         }
                     }
                 }

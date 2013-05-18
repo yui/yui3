@@ -2,7 +2,21 @@ Node Change History
 ===================
 
 @VERSION@
------
+------
+
+* The `show()` and `hide()` methods now set and remove a node's `hidden`
+  attribute, which provides a semantic indication of hidden content and improves
+  accessibility. [Gerard Cohen]
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* [!] Removed `node-deprecated` module. [Ryuichi Okumura]
 
 * Fix node.all() to return an empty NodeList if the node was destroyed - Fixes #580 (hat tip Dallas Wheeler)
 

@@ -1,6 +1,16 @@
 YUI Loader Change History
 =========================
 
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Removed the default `build` directories from Loader generated combo URL's
+
 3.9.1
 -----
 

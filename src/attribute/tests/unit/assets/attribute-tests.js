@@ -1188,6 +1188,8 @@ YUI.add('attribute-tests', function(Y) {
         testGetAttrCfg : function() {
 
             var h = this.createHost(),
+                expected,
+                val,
                 attrCfg = h._getAttrCfg("testGetCfg");
 
             Y.Assert.areEqual(2, Y.Object.keys(attrCfg).length, "getAttrCfg returned unexpected initial lazy state");
@@ -1197,22 +1199,27 @@ YUI.add('attribute-tests', function(Y) {
                 added : true
             }, attrCfg);
 
-            var val = h.get("testGetCfg");
+            val = h.get("testGetCfg");
 
             attrCfg = h._getAttrCfg("testGetCfg");
 
-            Y.Assert.areEqual(8, Y.Object.keys(attrCfg).length, "getAttrCfg returned unexpected populated state");
-
-            Y.ObjectAssert.ownsKeys({
+            expected = {
                 added: true,
                 defaultValue: "foo",
                 getter: function (val) { return val; },
                 initValue: "foo",
-                isLazyAdd: true,
                 readOnly: true,
                 setter: function (val) { return val; },
-                value: "foo"
-            }, attrCfg);
+                value: "foo",
+
+                // Internals. Left in for performance, to avoid delete
+                initializing: false,
+                isLazyAdd: true
+            };
+
+            Y.Assert.areEqual(Y.Object.size(expected), Y.Object.size(attrCfg), "getAttrCfg returned unexpected populated state");
+
+            Y.ObjectAssert.ownsKeys(expected, attrCfg);
         },
 
         testGetAllAttrCfgs : function () {
@@ -1411,6 +1418,52 @@ YUI.add('attribute-tests', function(Y) {
             var o = new MyClass();
 
             Y.Assert.areEqual("bar", o.get("testValueFn"));
+        },
+
+        testSuperClassToSubClassSetterWithLazyAddFalse : function() {
+
+            // CandleStickSeries use case, where graphic === a, upcandle = b
+
+            function MySubClass() {
+                MySubClass.superclass.constructor.apply(this, arguments);
+            }
+
+            function MySuperClass() {
+                MySuperClass.superclass.constructor.apply(this, arguments);
+            }
+
+            Y.extend(MySuperClass, Y.Base, null, {
+                NAME : "mySuperClass",
+                ATTRS : {
+                    a : {
+                        lazyAdd : false,
+                        setter : function(val) {
+                            return val;
+                        }
+                    }
+                }
+            });
+
+            Y.extend(MySubClass, MySuperClass, null, {
+                NAME : "mySubClass",
+                ATTRS : {
+                    a : {
+                        lazyAdd : false,
+                        setter : function(val) {
+                            this.set("b", 10);
+                            return val;
+                        }
+                    },
+                    b : {}
+                }
+            });
+
+            var o = new MySubClass({
+                a:20
+            });
+
+            Y.Assert.areEqual(20, o.get("a"));
+            Y.Assert.areEqual(10, o.get("b"));
         }
     };
 
@@ -2007,6 +2060,49 @@ YUI.add('attribute-tests', function(Y) {
             h.set("Z", "MYZ");
 
             Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+        },
+
+        testSetterWithOpts : function() {
+            var h = this.createHost(),
+                actualOpts,
+                actualFacades;
+
+            h.addAttr("setterWithOpts", {
+                setter: function(val, name, opts) {
+                    if (actualOpts) {
+                        actualOpts.push(opts);
+                    }
+                },
+                value: "X"
+            });
+
+            h.after("setterWithOptsChange", function(e) {
+                actualFacades.push(e);
+            });
+
+            actualOpts = [];
+            actualFacades = [];
+
+            h.set("setterWithOpts", "A");
+
+            Y.Assert.isUndefined(actualOpts[0]);
+            Y.Assert.isFalse("foo" in actualFacades[0]);
+
+            h.set("setterWithOpts", "B", {foo: 10});
+
+            Y.ObjectAssert.areEqual({foo:10}, actualOpts[1]);
+            Y.Assert.areEqual(10, actualFacades[1].foo);
+
+            h.set("setterWithOpts", "C", {foo: 20});
+
+            Y.ObjectAssert.areEqual({foo:20}, actualOpts[2]);
+            Y.Assert.areEqual(20, actualFacades[2].foo);
+
+            h.set("setterWithOpts", "D", {bar: 30});
+
+            Y.ObjectAssert.areEqual({bar:30}, actualOpts[3]);
+            Y.Assert.areEqual(30, actualFacades[3].bar);
+            Y.Assert.isFalse("foo" in actualFacades[3]);
         }
     };
 

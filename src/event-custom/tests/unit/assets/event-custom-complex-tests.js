@@ -22,13 +22,13 @@ YUI.add("event-custom-complex-tests", function(Y) {
             var O = function(id) {
                 this.id = id;
                 Y.log('O constructor executed ' + id);
-            }
+            };
 
             O.prototype = {
                 oOo: function(ok) {
                     Y.log('oOo');
                 }
-            }
+            };
 
             // pass configuration info into EventTarget with the following
             // construct
@@ -72,7 +72,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
             var Base = function() {
                 Y.log('Base constructor executed');
                 arguments.callee.superclass.constructor.apply(this, arguments);
-            }
+            };
 
             Y.extend(Base, Y.EventTarget, {
                 base: function() {
@@ -101,13 +101,13 @@ YUI.add("event-custom-complex-tests", function(Y) {
             var O = function(id) {
                 this.id = id;
                 Y.log('O constructor executed ' + id);
-            }
+            };
 
             O.prototype = {
                 oOo: function(ok) {
                     Y.log('oOo');
                 }
-            }
+            };
 
             // pass configuration info into EventTarget with the following
             // construct
@@ -265,7 +265,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
             };
 
             // configure chaining via global default or on the event target
-            YUI({ 
+            YUI({
                 base:'../../../build/',
                 logInclude: {
                     test: true
@@ -298,8 +298,8 @@ YUI.add("event-custom-complex-tests", function(Y) {
         testObjType: function() {
             var f1, f2;
             Y.on({
-                'y:click': function() {f1 = true},
-                'y:clack': function() {f2 = true}
+                'y:click': function() {f1 = true;},
+                'y:clack': function() {f2 = true;}
             });
 
             Y.fire('y:click');
@@ -572,7 +572,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
             Y.Assert.areEqual(0, count);
 
-            var handle3 = Y.on('y:click', function() {
+            handle3 = Y.on('y:click', function() {
                 count++;
             });
 
@@ -582,6 +582,114 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.fire('y:click');
 
             Y.Assert.areEqual(1, count);
+        },
+
+        testFireArgsWithFacade : function() {
+
+            var o = new Y.EventTarget({emitFacade:true}),
+                args,
+                facade,
+                fired = [];
+
+            o.after("foo", function() {
+                fired.push(Y.Array(arguments));
+            });
+
+            o.fire("foo");
+            o.fire("foo", {a:1, b:2});
+            o.fire("foo", {a:10, b:20}, {c:30});
+            o.fire("foo", {a:100, b:200}, {c:300}, {d:400});
+
+            args = fired[0];
+            facade = args[0];
+
+            Y.Assert.areEqual(1, args.length);
+            Y.Assert.isTrue(facade instanceof Y.EventFacade);
+            Y.Assert.areEqual("foo", facade.type);
+            Y.Assert.areEqual(0, facade.details.length);
+
+            args = fired[1];
+            facade = args[0];
+
+            Y.Assert.areEqual(1, args.length);
+            Y.Assert.isTrue(facade instanceof Y.EventFacade);
+            Y.Assert.areEqual("foo", facade.type);
+            Y.Assert.areEqual(1, facade.details.length);
+            Y.ObjectAssert.areEqual({a:1, b:2}, facade.details[0]);
+            Y.Assert.areEqual(1, facade.a);
+            Y.Assert.areEqual(2, facade.b);
+
+            args = fired[2];
+            facade = args[0];
+
+            Y.Assert.areEqual(2, args.length);
+            Y.ObjectAssert.areEqual({c:30}, args[1]);
+
+            Y.Assert.isTrue(facade instanceof Y.EventFacade);
+            Y.Assert.areEqual("foo", facade.type);
+            Y.Assert.areEqual(2, facade.details.length);
+            Y.ObjectAssert.areEqual({a:10, b:20}, facade.details[0]);
+            Y.ObjectAssert.areEqual({c:30}, facade.details[1]);
+            Y.Assert.areEqual(10, facade.a);
+            Y.Assert.areEqual(20, facade.b);
+            Y.Assert.isFalse("c" in facade);
+
+            args = fired[3];
+            facade = args[0];
+
+            Y.Assert.areEqual(3, args.length);
+            Y.ObjectAssert.areEqual({c:300}, args[1]);
+            Y.ObjectAssert.areEqual({d:400}, args[2]);
+
+            Y.Assert.isTrue(facade instanceof Y.EventFacade);
+            Y.Assert.areEqual("foo", facade.type);
+            Y.Assert.areEqual(3, facade.details.length);
+            Y.ObjectAssert.areEqual({a:100, b:200}, facade.details[0]);
+            Y.ObjectAssert.areEqual({c:300}, facade.details[1]);
+            Y.ObjectAssert.areEqual({d:400}, facade.details[2]);
+            Y.Assert.areEqual(100, facade.a);
+            Y.Assert.areEqual(200, facade.b);
+            Y.Assert.isFalse("c" in facade);
+            Y.Assert.isFalse("d" in facade);
+        },
+
+        testFireArgsWithoutFacade : function() {
+
+            var o = new Y.EventTarget({emitFacade:false}),
+                args,
+                facade,
+                fired = [];
+
+            o.after("foo", function() {
+                fired.push(Y.Array(arguments));
+            });
+
+            o.fire("foo");
+            o.fire("foo", {a:1, b:2});
+            o.fire("foo", {a:10, b:20}, {c:30});
+            o.fire("foo", {a:100, b:200}, {c:300}, {d:400});
+
+            args = fired[0];
+
+            Y.Assert.areEqual(0, args.length);
+
+            args = fired[1];
+
+            Y.Assert.areEqual(1, args.length);
+            Y.ObjectAssert.areEqual({a:1, b:2}, args[0]);
+
+            args = fired[2];
+
+            Y.Assert.areEqual(2, args.length);
+            Y.ObjectAssert.areEqual({a:10, b:20}, args[0]);
+            Y.ObjectAssert.areEqual({c:30}, args[1]);
+
+            args = fired[3];
+
+            Y.Assert.areEqual(3, args.length);
+            Y.ObjectAssert.areEqual({a:100, b:200}, args[0]);
+            Y.ObjectAssert.areEqual({c:300}, args[1]);
+            Y.ObjectAssert.areEqual({d:400}, args[2]);
         },
 
         testBroadcast: function() {
@@ -657,8 +765,8 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
             Y.on('fireonce', function(arg1, arg2) {
                 notified++;
-                Y.Assert.areEqual('foo', arg1, 'arg1 not correct for lazy fireOnce listener')
-                Y.Assert.areEqual('bar', arg2, 'arg2 not correct for lazy fireOnce listener')
+                Y.Assert.areEqual('foo', arg1, 'arg1 not correct for lazy fireOnce listener');
+                Y.Assert.areEqual('bar', arg2, 'arg2 not correct for lazy fireOnce listener');
             });
 
             Y.fire('fireonce', 'foo2', 'bar2');
@@ -960,6 +1068,167 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.Assert.areEqual('onfooafterfooonbarafterbar', result);
         },
 
+        testFireWithFacadeAndNull : function() {
+            var a = new Y.EventTarget({emitFacade:true}),
+                args;
+
+            a.after("foo", function() {
+                args = Y.Array(arguments);
+            });
+
+            a.fire("foo", null);
+
+            Y.Assert.areEqual(2, args.length);
+
+            Y.Assert.isTrue(args[0] instanceof Y.EventFacade);
+            Y.Assert.isNull(args[1]);
+
+            Y.Assert.areEqual(1, args[0].details.length);
+            Y.Assert.isNull(args[0].details[0]);
+
+            a.fire("foo", null, 10);
+
+            Y.Assert.areEqual(3, args.length);
+
+            Y.Assert.isTrue(args[0] instanceof Y.EventFacade);
+            Y.Assert.isNull(args[1]);
+            Y.Assert.areEqual(10, args[2]);
+
+            Y.Assert.areEqual(2, args[0].details.length);
+            Y.Assert.isNull(args[0].details[0]);
+            Y.Assert.areEqual(10, args[0].details[1]);
+        },
+
+        testDefaultFnWithoutSubscribers : function() {
+            var a = new Y.EventTarget(),
+                count = 0;
+
+            a.publish("foo", {
+                emitFacade: true,
+                defaultFn : function(e) {
+                    Y.Assert.areEqual(1, e.bar, "incorrect payload");
+                    Y.Assert.areSame(a, e.target, "incorrect target");
+                    Y.Assert.areSame(a, e.currentTarget, "incorrect currentTarget");
+                    count = 1;
+                }
+            });
+
+            a.fire("foo", {
+                bar:1
+            });
+
+            Y.Assert.areEqual(1, count);
+        },
+
+        testFreshPayloadWithoutSubscribers : function() {
+
+            var a = new Y.EventTarget(),
+                payload,
+                defaultPayload = [];
+
+            a.publish("foo", {
+                emitFacade: true,
+
+                defaultFn : function(e) {
+                    defaultPayload.push(e);
+                }
+            });
+
+            a.fire("foo", {
+                foo:1
+            });
+
+            a.fire("foo", {
+                bar:2
+            });
+
+            Y.Assert.areEqual(defaultPayload[0].foo, 1);
+            Y.Assert.isFalse("bar" in defaultPayload[0]);
+
+            Y.Assert.isFalse("foo" in defaultPayload[1]);
+            Y.Assert.areEqual(defaultPayload[1].bar, 2);
+        },
+
+        testFreshPayloadWithAfterSubscriber : function() {
+
+            var a = new Y.EventTarget(),
+                payload,
+
+                listenerPayload = [],
+                defaultPayload = [];
+
+            a.publish("foo", {
+                emitFacade: true,
+
+                defaultFn : function(e) {
+                    defaultPayload.push(e);
+                }
+            });
+
+            a.after("foo", function(e) {
+                listenerPayload.push(e);
+            });
+
+            a.fire("foo", {
+                foo:1
+            });
+
+            a.fire("foo", {
+                bar:2
+            });
+
+            Y.Assert.areEqual(defaultPayload[0].foo, 1);
+            Y.Assert.isFalse("bar" in defaultPayload[0]);
+
+            Y.Assert.isFalse("foo" in defaultPayload[1]);
+            Y.Assert.areEqual(defaultPayload[1].bar, 2);
+
+            Y.Assert.areSame(defaultPayload[0], listenerPayload[0]);
+
+            Y.ObjectAssert.areEqual(defaultPayload[0], listenerPayload[0]);
+            Y.ObjectAssert.areEqual(defaultPayload[1], listenerPayload[1]);
+        },
+
+        testFreshPayloadWithOnSubscriber : function() {
+
+            var a = new Y.EventTarget(),
+                payload,
+
+                listenerPayload = [],
+                defaultPayload = [];
+
+            a.publish("foo", {
+                emitFacade: true,
+
+                defaultFn : function(e) {
+                    defaultPayload.push(e);
+                }
+            });
+
+            a.on("foo", function(e) {
+                listenerPayload.push(e);
+            });
+
+            a.fire("foo", {
+                foo:1
+            });
+
+            a.fire("foo", {
+                bar:2
+            });
+
+            Y.Assert.areEqual(defaultPayload[0].foo, 1);
+            Y.Assert.isFalse("bar" in defaultPayload[0]);
+
+            Y.Assert.isFalse("foo" in defaultPayload[1]);
+            Y.Assert.areEqual(defaultPayload[1].bar, 2);
+
+            Y.Assert.areSame(defaultPayload[0], listenerPayload[0]);
+
+            Y.ObjectAssert.areEqual(defaultPayload[0], listenerPayload[0]);
+            Y.ObjectAssert.areEqual(defaultPayload[1], listenerPayload[1]);
+        },
+
         test_bubble_config: function() {
 
             var a = new Y.EventTarget(),
@@ -979,6 +1248,37 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
             Y.Assert.isTrue(result);
 
+        },
+
+        test_get_targets: function () {
+            var a = new Y.EventTarget(),
+                b = new Y.EventTarget();
+
+            Y.Assert.isArray(a.getTargets());
+
+            a.addTarget(b);
+            Y.ArrayAssert.itemsAreSame([b], a.getTargets());
+        },
+
+        test_remove_target_after_add: function () {
+            var a = new Y.EventTarget(),
+                b = new Y.EventTarget();
+
+            a.addTarget(b);
+            Y.ArrayAssert.contains(b, a.getTargets());
+
+            a.removeTarget(b);
+            Y.ArrayAssert.doesNotContain(b, a.getTargets());
+        },
+
+        test_remove_target_no_add: function () {
+            var a = new Y.EventTarget(),
+                b = new Y.EventTarget();
+
+            Y.ArrayAssert.doesNotContain(b, a.getTargets());
+
+            a.removeTarget(b);
+            Y.ArrayAssert.doesNotContain(b, a.getTargets());
         },
 
         test_onceAfter: function () {
@@ -1013,9 +1313,9 @@ YUI.add("event-custom-complex-tests", function(Y) {
         },
 
         testIndividualCustomEventMonitoring: function () {
-            var target = new Y.EventTarget({ 
-                    emitFacade: true, 
-                    prefix: 'a' 
+            var target = new Y.EventTarget({
+                    emitFacade: true,
+                    prefix: 'a'
                 }),
                 actual = [],
                 expected = ["a:foo_publish", "et-a:foo_publish", "a:foo_attach", "et-a:foo_attach", "a:foo_attach", "et-a:foo_attach", "a:foo_fire", "et-a:foo_fire", "a:foo_detach", "et-a:foo_detach", "a:foo_detach", "et-a:foo_detach"],
@@ -1094,10 +1394,10 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
         'ignore: Does not work currently due to infinite recursion - testEventTargetMonitoring': function () {
 
-            var target = new Y.EventTarget({ 
+            var target = new Y.EventTarget({
                     monitored:true, // Doesn't work currently. Causes infinite recursion
-                    emitFacade: true, 
-                    prefix: 'a' 
+                    emitFacade: true,
+                    prefix: 'a'
                 }),
                 actual = [],
                 expected = ["a:foo_publish", "a:foo_attach", "a:foo_attach", "a:foo_fire", "a:foo_detach", "a:foo_detach"],
@@ -1168,10 +1468,21 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.Assert.areEqual(2, heard);
 
             node.remove(true);
+        },
+
+        // Ticket #676 - this was throwing an error in 3.10.0
+        "test sibling once() subscriptions - once('*:type')": function () {
+            var target = new Y.EventTarget({ emitFacade: true });
+
+            target.once('*:foo', function (e) {
+                Y.Assert.isTrue(true);
+            });
+
+            target.fire('x:foo');
         }
 
     }));
 
     Y.Test.Runner.add(suite);
 
-}, '@VERSION@' ,{requires:['event-custom', 'test']}); 
+}, '@VERSION@' ,{requires:['event-custom', 'test']});

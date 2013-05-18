@@ -521,6 +521,6 @@ YUI.add('anim-core-test', function(Y) {
             anim.run();
             anim.pause();
             anim.run(); 
-        },
+        }
     }));
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen', 'test']});

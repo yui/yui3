@@ -1,6 +1,16 @@
 DOM Change History
 ==================
 
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* [!] Removed `dom-deprecated` module. [Ryuichi Okumura]
+
 3.9.1
 -----
 
