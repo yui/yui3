@@ -1,6 +1,22 @@
 Handlebars Change History
 =========================
 
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Remove "BEGIN/END(BROWSER)" comments from imported Handlebars source.
+
+3.9.1
+-----
+
+* Upgraded Handlebars.js to v1.0.10 to fix regression with nested blocks.
+
+
 3.9.0
 -----
 

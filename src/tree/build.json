@@ -39,6 +39,13 @@
                 "js/extensions/tree-selectable.js",
                 "js/extensions/tree-node-selectable.js"
             ]
+        },
+
+        "tree-sortable": {
+            "jsfiles": [
+                "js/extensions/tree-sortable.js",
+                "js/extensions/tree-node-sortable.js"
+            ]
         }
     }
 }

@@ -1,6 +1,21 @@
 TabView Change History
 ======================
 
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Revert static templates and map prototype templates to statics by default.
+
+3.9.1
+-----
+
+* No changes.
+
 3.9.0
 -----
 

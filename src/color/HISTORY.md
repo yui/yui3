@@ -1,6 +1,21 @@
 Color Change History
 ====================
 
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Allow upper and lowercase strings for `convert()` method. Also return original value if an invalid to value is provided. Fixes #583
+
+3.9.1
+-----
+
+* No changes.
+
 3.9.0
 -----
 

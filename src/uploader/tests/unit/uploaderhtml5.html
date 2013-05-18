@@ -24,7 +24,7 @@
         coverage: ['uploader-html5'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
     }).use("console", "test", "dump", "uploader-html5", function(Y) {
-        
+
 
 
         // Set up the page
@@ -32,7 +32,7 @@
             ARRAYASSERT = Y.ArrayAssert,
             btnRun = Y.one("#btnRun"),
             myConsole = new Y.Console().render();
-            
+
         btnRun.set("disabled", false);
         Y.on("click", function(){
             Y.Test.Runner.run();
@@ -43,7 +43,7 @@
             name: "Basic Uploader HTML5 Tests",
 
             setUp : function () {
-                
+
                 var basicuploader = "<div id='basicuploader'></div>";
                 Y.one('#container').appendChild(Y.Node.create(basicuploader));
                 this.basicuploader = null;
@@ -150,10 +150,10 @@
                 this.basicuploader.render("#basicuploader");
 
                 this.basicuploader.set("multipleFiles", true);
-                Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), true); 
+                Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), true);
 
                 this.basicuploader.set("multipleFiles", false);
-                Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), false);   
+                Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), false);
             },
 
             testUpdateList : function () {
@@ -280,7 +280,8 @@
 
                 this.basicuploader._updateFileList(e);
 
-                if (!Y.UA.ie || Y.UA.ie >= 10) {
+                // Only start the uploads if the browser actually supports HTML5 file upload
+                if (Y.config.win.FormData) {
                     this.basicuploader.uploadAll("testurl.html");
                     this.basicuploader.upload(new Y.FileHTML5(filearray[0]), "testurl.html", {foo: "bar"});
                 }
