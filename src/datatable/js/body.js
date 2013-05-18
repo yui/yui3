@@ -486,8 +486,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
      @method refreshCell
      @param {Y.Node} cell Y.Node pointer to the cell element to be updated
-     @param {Y.Model} model Y.Model representation of the row
-     @param {Object} col Column configuration object for the cell
+     @param {Y.Model} [model] Y.Model representation of the row
+     @param {Object} [col] Column configuration object for the cell
 
      @chainable
      */
@@ -502,11 +502,28 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         col || (col = this.getColumn(cell));
 
         if (col.nodeFormatter) {
-            console.log('has nodeFormatter');
-            // TODO: copy logic invoking the node formatters
+            formatterData = {
+                cell: cell.one('.' + this.getClassName('liner')) || cell,
+                column: col,
+                data: data,
+                record: model,
+                rowIndex: this._getRowIndex(cell.ancestor('tr')),
+                td: cell,
+                value: data[col.key]
+            };
+
+            keep = col.nodeFormatter.call(host,formatterData);
+
+            if (keep === false) {
+                // Remove from the Node cache to reduce
+                // memory footprint.  This also purges events,
+                // which you shouldn't be scoping to a cell
+                // anyway.  You've been warned.  Incidentally,
+                // you should always return false. Just sayin.
+                cell.destroy(true);
+            }
 
         } else if (col.formatter) {
-            // TODO: See about storing the _formatterFn the first go around and updating internally
             if (!col._formatterFn) {
                 col = this._setColumnsFormatterFn([col])[0];
             }
@@ -688,7 +705,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                         return;
                     }
 
-
                     var odd  = [self.CLASS_ODD, self.CLASS_EVEN],
                         even = [self.CLASS_EVEN, self.CLASS_ODD],
                         index = self._restripeTask.index;
@@ -745,7 +761,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     _applyNodeFormatters: function (tbody, columns) {
-        var host = this.host,
+        var host = this.host || this,
             data = this.get('modelList'),
             formatters = [],
             linerQuery = '.' + this.getClassName('liner'),
