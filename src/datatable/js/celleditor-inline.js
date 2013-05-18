@@ -358,7 +358,6 @@ Editors.inlineDate = Y.Base.create('celleditor', IEd, [],
     }
 );
 
-
 /**
 This cell editor has the AutoComplete plugin attached to the input node.
 
@@ -429,28 +428,39 @@ Editors.inlineAC = Y.Base.create('celleditor', IEd, [],
             Y.log('inlineAC._defRenderFn','info','celleditor-inline');
 
             Editors.inlineAC.superclass._defRenderFn.apply(this, arguments);
-            var inputNode = this.get('container');
+            var inputNode = this.get('container'),
+                acConfig = this.get('autocompleteConfig') || {},
+                lookupTable = this.get('lookupTable') || acConfig.source;
 
             if(inputNode && Y.Plugin.AutoComplete) {
 
                 inputNode.plug(Y.Plugin.AutoComplete,
                     Y.merge({
-                        source: this.get('lookupTable'),
+                        source: lookupTable,
                         resultTextLocator:'text',
-                        alwaysShowList: true,
                         resultHighlighter: 'startsWith',
                         render: true
-                    }, this.get('autocompleteConfig'))
+                    }, acConfig)
                 );
 
                 inputNode.ac.after('select', this._afterACSelect, this);
+                this.set('formatter', (function () {
+                    var table = {};
+                    Y.Array.each(lookupTable, function (item) {
+                        table[item.value] = item.text;
+                    });
+                    return function (value) {
+                        return table[value];
+                    };
+
+                })());
             }
             return this;
 
         },
         _afterACSelect:function (e) {
             Y.log('inlineAC._afterACSelect','info','celleditor-inline');
-           this.saveEditor(e.result.raw.value);
+            this.saveEditor(e.result.raw.value);
        }
     },
     {
@@ -501,6 +511,9 @@ Editors.inlineAC = Y.Base.create('celleditor', IEd, [],
             [AutoComplete](Plugin.AutoComplete.html) plugin.
 
             ##### Used only in the [inlineAC](DataTable.Editors.html#property_inlineAC) editor.
+
+            Though it is possible to set the `source` attribute in `autocompleteConfig`,
+            it is better to use [lookupTable](#attr_lookupTable) instead.
 
             @attribute autocompleteConfig
             @type Object

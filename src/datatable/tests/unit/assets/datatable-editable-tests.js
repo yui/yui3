@@ -5,84 +5,85 @@ YUI.add('datatable-editable-tests', function(Y) {
         areSame = Assert.areSame,
         isFalse = Assert.isFalse,
         isTrue = Assert.isTrue,
-        isNull = Assert.isNull;
+        isNull = Assert.isNull,
 
-    var fireKey = function(ceditor, key, opts) {
-        opts = Y.merge({keyCode: key}, opts);
+        fireKey = function(ceditor, key, opts) {
+            opts = Y.merge({keyCode: key}, opts);
 
-        ceditor.simulate('keydown', opts);
+            ceditor.simulate('keydown', opts);
+            ceditor.simulate('keypress', opts);
+            ceditor.simulate('keyup', opts);
+        },
 
-        ceditor.simulate('keypress', opts);
+        inputKey = function(ceditor,value,key) {
+            ceditor.focus();
+            ceditor.set('value',value);
+            fireKey(ceditor,key);
+        },
 
-        ceditor.simulate('keyup', opts);
-    };
+        checkPosition = function(dt, row, col, skip ) {
 
-    var inputKey = function(ceditor,value,key) {
-        ceditor.focus();
-        ceditor.set('value',value);
-        fireKey(ceditor,key);
-    };
-    var makeDT = function (config_arg ) {
-        config_arg = config_arg || {};
+            var td = dt.getCell([row, col]),
+                ed = Y.one('.yui3-datatable-celleditor-input'),
+                regEd = ed.get('region'),
+                regTd = td.get('region'),
+                nextCell;
+            areSame('block', ed.ancestor().getStyle('display'), 'Editor should be visible.: [' + row + ':' + col + ']');
 
-        var someData = [
-            {sid:10, sname:'Sneakers', sopen:0, stype:0, stock:0, sprice:59.93, shipst:'s', sdate:new Date(2009,3,11)},
-            {sid:11, sname:'Varnished Cane Toads', sopen:1,  stype:10, stock:2, shipst:'u', sprice:17.49, sdate:new Date(2009,4,12)},
-            {sid:12, sname:'JuJu Beans', sopen:0,  stype:20, stock:1, sprice:1.29, shipst:'s', sdate:new Date(2009,5,13)},
-            {sid:13, sname:'Tent Stakes', sopen:1,  stype:30, stock:1, sprice:7.99, shipst:'n', sdate:new Date(2010,6,14)},
-            {sid:14, sname:'Peanut Butter', sopen:0,  stype:40, stock:0, sprice:3.29, shipst:'e', sdate:new Date(2011,7,15)},
-            {sid:15, sname:'Garbage Bags', sopen:1, stype:50,  stock:2, sprice:17.95, shipst:'r', sdate:new Date(2012,8,18)}
-        ];
+            areSame(Math.round(regTd.top), Math.round(regEd.top), 'tops should match: [' + row + ':' + col + ']');
+            areSame(Math.round(regTd.left), Math.round(regEd.left), 'lefts should match: [' + row + ':' + col + ']');
+            nextCell = dt.getCell(td,[1,1]);
+            if (nextCell) {
+                regTd = nextCell.get('region');
+                areSame(Math.round(regTd.top), Math.round(regEd.bottom), 'bottom should match top of next: [' + row + ':' + col + ']');
+                areSame(Math.round(regTd.left + 1), Math.round(regEd.right), 'right edge should overlap left edge of next: [' + row + ':' + col + ']');
+            } else isTrue(skip, 'there should be a further cell to the right or bottom');
+        },
 
-        // enlarge the dataset
-        Y.Array.each(someData,function(d,di){
-            d.sdesc = 'Description for Item ' + d.sid + ' : ' + d.sname;
-        });
+        openEditorAt = function (dt, row, col) {
+            var td = dt.getCell([row, col]);
+            td.simulate('click');
 
-        var basic_config = {
-            columns: [
-                {key:'sid',  editable:false},
-                {key:'sopen'},
-                {key:'sname'},
-                {key:'sdesc'},
-                {key:'stype'},
-                {key:'stock'},
-                {key:'sprice'},
-                {key:'sdate'}
-            ],
-            data:    someData
+            isTrue(dt._openEditor.get('active'),'cell editor col 1 should be active: [' + row + ':' + col + ']')
+            areSame(1, Y.all('.yui3-datatable-celleditor-input').size(),'There should be one editor: [' + row + ':' + col + ']');
+            checkPosition(dt, row, col);
+        },
+
+        makeDT = function (config_arg ) {
+            config_arg = config_arg || {};
+
+            var someData = [
+                {sid:10, sname:'Sneakers', sopen:0, stype:0, stock:0, sprice:59.93, shipst:'s', sdate:new Date(2009,3,11)},
+                {sid:11, sname:'Varnished Cane Toads', sopen:1,  stype:10, stock:2, shipst:'u', sprice:17.49, sdate:new Date(2009,4,12)},
+                {sid:12, sname:'JuJu Beans', sopen:0,  stype:20, stock:1, sprice:1.29, shipst:'s', sdate:new Date(2009,5,13)},
+                {sid:13, sname:'Tent Stakes', sopen:1,  stype:30, stock:1, sprice:7.99, shipst:'n', sdate:new Date(2010,6,14)},
+                {sid:14, sname:'Peanut Butter', sopen:0,  stype:40, stock:0, sprice:3.29, shipst:'e', sdate:new Date(2011,7,15)},
+                {sid:15, sname:'Garbage Bags', sopen:1, stype:50,  stock:2, sprice:17.95, shipst:'r', sdate:new Date(2012,8,18)}
+            ];
+
+            // enlarge the dataset
+            Y.Array.each(someData,function(d){
+                d.sdesc = 'Description for Item ' + d.sid + ' : ' + d.sname;
+            });
+
+            var basic_config = {
+                columns: [
+                    {key:'sid',  editable:false},
+                    {key:'sopen'},
+                    {key:'sname'},
+                    {key:'sdesc'},
+                    {key:'stype'},
+                    {key:'stock'},
+                    {key:'sprice'},
+                    {key:'sdate'}
+                ],
+                data:    someData
+            };
+
+
+            return new Y.DataTable(Y.merge(basic_config,config_arg)).render('#dtable');
         };
 
-
-        return new Y.DataTable(Y.merge(basic_config,config_arg)).render('#dtable');
-    };
-
-    var checkPosition = function(dt, row, col, skip ) {
-
-        var td = dt.getCell([row, col]),
-            ed = Y.one('.yui3-datatable-celleditor-input'),
-            regEd = ed.get('region'),
-            regTd = td.get('region'),
-            nextCell;
-        areSame('block', ed.ancestor().getStyle('display'), 'Editor should be visible.: [' + row + ':' + col + ']')
-
-        areSame(Math.round(regTd.top), Math.round(regEd.top), 'tops should match: [' + row + ':' + col + ']');
-        areSame(Math.round(regTd.left), Math.round(regEd.left), 'lefts should match: [' + row + ':' + col + ']');
-        nextCell = dt.getCell(td,[1,1]);
-        if (nextCell) {
-            regTd = nextCell.get('region');
-            areSame(Math.round(regTd.top), Math.round(regEd.bottom), 'bottom should match top of next: [' + row + ':' + col + ']');
-            areSame(Math.round(regTd.left + 1), Math.round(regEd.right), 'right edge should overlap left edge of next: [' + row + ':' + col + ']');
-        } else isTrue(skip, 'there should be a further cell to the right or bottom');
-    },
-    openEditorAt = function (dt, row, col) {
-        var td = dt.getCell([row, col]);
-        td.simulate('click');
-
-        isTrue(dt._openEditor.get('active'),'cell editor col 1 should be active: [' + row + ':' + col + ']')
-        areSame(1, Y.all('.yui3-datatable-celleditor-input').size(),'There should be one editor: [' + row + ':' + col + ']');
-        checkPosition(dt, row, col);
-    };
 
     suite.add(new Y.Test.Case({
         name: 'DataTable-Editable : basic setup and instance',
