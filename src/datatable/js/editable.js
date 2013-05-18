@@ -783,7 +783,7 @@ Y.mix( DtEditable.prototype, {
     @private
      */
     _createCellEditorInstance: function (editorName, config) {
-        Y.log('DataTable.Editable._createCellEditorInstance: ' + editorName + ' for ' + column.key, 'info', 'datatable-editable');
+        Y.log('DataTable.Editable._createCellEditorInstance: ' + editorName, 'info', 'datatable-editable');
 
         var Editor = Y.DataTable.Editors[editorName],
             editor = null;
