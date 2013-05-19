@@ -24,6 +24,7 @@
     list-style: none;
     display: inline;
     opacity: 0;
+    filter: alpha(opacity=0);
     -webkit-transition: opacity 0.3s ease-out;
     -moz-transition:    opacity 0.3s ease-out;
     -o-transition:      opacity 0.3s ease-out;
@@ -31,6 +32,7 @@
 }
 #spiffySlides .slides .active {
     opacity: 1;
+    filter: alpha(opacity=100);
     -webkit-transition: opacity 0.3s ease-out;
     -moz-transition:    opacity 0.3s ease-out;
     -o-transition:      opacity 0.3s ease-out;
@@ -86,6 +88,7 @@
 
 #spiffySlides .paused {
     opacity: 0;
+    filter: alpha(opacity=0);
     bottom: 5px;
     left: -130px;
     letter-spacing: 18px;
@@ -100,6 +103,7 @@
 }
 #spiffySlides:hover .paused {
     opacity: 1;
+    filter: alpha(opacity=100);
     left: 30px;
     letter-spacing: 1px;
     -webkit-transition: all 0.3s ease-out;

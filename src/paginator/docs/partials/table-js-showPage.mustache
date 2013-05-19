@@ -24,7 +24,7 @@
         tbody.setHTML(rows);
 
         // update the paginator's display
-        Y.all('.currentPage').setHTML(
+        Y.all('.currentPage').set('text',
             Y.Lang.sub(currentPageTemplate, pg.getAttrs())
         );
     }

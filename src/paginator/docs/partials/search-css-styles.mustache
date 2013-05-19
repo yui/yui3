@@ -37,9 +37,8 @@
 }
 #demo .results li {
     list-style: none;
-    display: inline-block;
-    zoom: 1; *display: inline;
-    padding: 0 3px;
+    float: left;
+    padding: 3px;
     position: relative;
     width: 150px;
     height: 150px;
@@ -49,10 +48,13 @@
     width: 150px;
     height: 150px;
 }
+#demo .results li:hover {
+    z-index: 10;
+}
 #demo .results li:hover img {
     position: absolute;
     left: -5px;
-    top: -8px;
+    top: -5px;
     width: 160px;
     height: 160px;
     z-index: 10;

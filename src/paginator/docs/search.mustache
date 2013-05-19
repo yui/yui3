@@ -22,41 +22,7 @@
     border-top: none;
 }
 </style><script>var FLICKR_API_KEY = '0c13dc70aa7eb3df87b3fee5caf37080';</script>
-<script>YUI().use('node', function(Y){
-    Y.on('domready', function (){
-        Y.all('.doc .pln').each(function (node) {
-            var prev = node.previous(),
-                next = node.next();
 
-            if (prev) {
-                prev = prev.hasClass('com');
-            }
-            if (next) {
-                next = next.hasClass('com');
-            }
-            if (prev && next) {
-                node.remove();
-            }
-        });
-
-        var coms = Y.all('.doc .com'),
-            count = coms.size(),
-            first = true,
-            wrap;
-
-        coms.each(function (node) {
-            var next = node.next();
-            if (first) {
-                wrap = Y.Node.create('<div class="coms"/>');
-                node.insert(wrap,'before');
-            }
-
-            wrap.append(node);
-
-            first = !(next && next.hasClass('com'));
-        });
-    });
-});</script>
 
 <div class="intro">
 <p>{{description}}</p>
@@ -188,5 +154,42 @@
 ```
 {{>search-full}}
 ```
+<script>YUI().use('node', function(Y){
+    Y.on('domready', function (){
+        Y.all('.doc .pln').each(function (node) {
+            var prev = node.previous(),
+                next = node.next();
 
+            if (prev) {
+                prev = prev.hasClass('com');
+            }
+            if (next) {
+                next = next.hasClass('com');
+            }
+            if (prev && next) {
+                node.remove();
+            }
+        });
+
+        setTimeout(function() {
+            var coms = Y.all('.doc .com'),
+                count = coms.size(),
+                first = true,
+                wrap;
+
+            coms.each(function (node) {
+                var next = node.next();
+                if (first) {
+                    wrap = Y.Node.create('<div class="coms"/>');
+                    node.insert(wrap,'before');
+                }
+
+                wrap.append(node);
+
+                first = !(next && next.hasClass('com'));
+            });
+
+        }, 0);
+        });
+});</script>
 

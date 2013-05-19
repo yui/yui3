@@ -16,8 +16,8 @@
 
         // When our form is submitted, we run a new query on it
         events: {
-            'form': {
-                'submit': '_afterFormSubmit'
+            'form .yui3-button': {
+                'click': '_afterFormSubmit'
             }
         },
 

@@ -5,6 +5,8 @@
     font-family: 'Segoe UI Semilight', 'Open Sans', 'Helvetica Neue', Verdana, Arial, Helvetica, sans-serif;
     font-weight: 300;
 }
+
+/** TABLE **/
 #demo table {
     border-bottom: 1px solid #ddd;
 }
@@ -27,7 +29,7 @@
 #demo td + td {
     border-left: 1px solid #ddd;
 }
-#demo tbody tr {
+#demo tbody tr td {
     border-top: 1px solid #ddd;
 }
 #demo td {
@@ -37,9 +39,11 @@
     background: #eee;
 }
 
+/** CONTROLS **/
 #demo .controls {
     padding-top: 15px;
     padding-bottom: 10px;
+    position: relative;
 }
 #demo .controls ul {
     margin: 0;
@@ -101,9 +105,11 @@
     width: 85px;
 }
 #demo .currentPage {
-    margin-left: 20px;
+    padding-left: 20px;
 }
 #demo .rowsPerPage {
-    float: right;
+    position: absolute;
+    right: 0;
+    line-height: 1.8em;
 }
 </style>
