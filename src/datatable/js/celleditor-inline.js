@@ -28,7 +28,13 @@ var YNumber = Y.Number,
     */
     containerTemplate: '<input type="text"  />',
 
-
+    initializer: function (config) {
+        config = config || {};
+        this._subscr.push(
+            this.after('hideMouseLeaveChange', this._afterHideMouseLeaveChange)
+        );
+        this._afterHideMouseLeaveChange({newVal:config.hideMouseLeave});
+    },
 
     /**
     The default action for the `show` event which should make the editor visible.
@@ -68,21 +74,25 @@ var YNumber = Y.Number,
     },
 
     /**
-    Overrides the base _bindUI method to add a its own event listeners.
+    Listener for changes in the  [hideMouseLeave](#attr_hideMouseLeave)
+    attribute, subscribes to the `mouseleave` event if set,
+    unsubscribes when false.
 
-    @method _bindUI
-    @protected
+    @method _afterHideMouseLeaveChange
+    @param ev {EventFacade}  Event facade for the attribute change event
+    @private
     */
-
-    _bindUI: function () {
-        Y.log('DataTable.BaseCellInlineEditor._bindUI','info','celleditor-inline');
-
-        IEd.superclass._bindUI.apply(this, arguments);
-        this._subscr.push(this.get('container').on('mouseleave', this._onMouseLeave, this));
+    _afterHideMouseLeaveChange: function (ev) {
+        if (ev.newVal) {
+            this._subscrMouseLeave = this.get('container').on('mouseleave', this._onMouseLeave, this);
+        } else if (this._subscrMouseLeave) {
+            this._subscrMouseLeave.detach();
+        }
     },
 
     /**
-    Listener to mouseleave event that will hide the editor if attribute "hideMouseLeave" is true.
+    Listener to mouseleave event that will hide the editor if attribute
+    [hideMouseLeave](#attr_hideMouseLeave) is true.
 
     @method _onMouseLeave
     @private
@@ -90,9 +100,7 @@ var YNumber = Y.Number,
     _onMouseLeave : function () {
         Y.log('DataTable.BaseCellInlineEditor._onMouseLeave','info','celleditor-inline');
 
-        if(this.get('hideMouseLeave')){
-            this.cancelEditor();
-        }
+        this.cancelEditor();
     },
 
     /**
