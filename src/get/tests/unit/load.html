@@ -27,7 +27,7 @@ href=https://github.com/yui/yeti>yeti</a>.
 <script src="../../../../build/yui-log/yui-log.js" charset="utf-8"></script>
 <script src="../../../../build/yui-later/yui-later.js" charset="utf-8"></script>
 
-<script src="../../../../build/get/get-coverage.js" charset="utf-8"></script>
+<script src="../../../../build/get/get.js" charset="utf-8"></script>
 
 <script src="../../../../build/loader/loader.js" charset="utf-8"></script>
 <script src="../../../../build/features/features.js" charset="utf-8"></script>
@@ -102,7 +102,8 @@ var Y = YUI({
             fullpath: './assets/get-test.js',
             requires: ['test', 'node']
         }
-    }
+    },
+    echoechoDelay: '0-1'
 }).use('*', function(Y) {
     Y.GetTests.add(Y.GetTests.BasicJS);
     Y.GetTests.add(Y.GetTests.BasicCSS);
