@@ -22,7 +22,7 @@ ChartBase.ATTRS = {
             var defDataProvider = [];
             if(!this._seriesKeysExplicitlySet)
             {
-                this._seriesKeys = this._buildSeriesKeys(defDataProvider);
+                this.set("seriesKeys", this._buildSeriesKeys(defDataProvider), {src: "internal"});
             }
             return defDataProvider;
         },
@@ -32,7 +32,7 @@ ChartBase.ATTRS = {
             var dataProvider = this._setDataValues(val);
             if(!this._seriesKeysExplicitlySet)
             {
-                this._seriesKeys = this._buildSeriesKeys(dataProvider);
+                this.set("seriesKeys", this._buildSeriesKeys(dataProvider), {src: "internal"});
             }
             return dataProvider;
         }
@@ -47,15 +47,19 @@ ChartBase.ATTRS = {
      * @type Array
      */
     seriesKeys: {
-        getter: function()
-        {
-            return this._seriesKeys;
-        },
+        lazyAdd: false,
 
         setter: function(val)
         {
-            this._seriesKeysExplicitlySet = true;
-            this._seriesKeys = val;
+            var opts = arguments[2];
+            if(!val || (opts && opts.src && opts.src === "internal"))
+            {
+                this._seriesKeysExplicitlySet = false;
+            }
+            else
+            {
+                this._seriesKeysExplicitlySet = true;
+            }
             return val;
         }
     },
