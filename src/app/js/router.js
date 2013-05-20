@@ -1178,7 +1178,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             // Determine if the `root` already exists in the current location's
             // `pathname`, and if it does then we can exclude it from the
             // hash-based path. No need to duplicate the info in the URL.
-            if (root === currentPath || root === this._getPathRoot()) {
+            if (url && (root === currentPath || root === this._getPathRoot())) {
                 url = this.removeRoot(url);
             }
 
@@ -1188,7 +1188,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             if (url === HistoryHash.getHash()) {
                 Y.Router.dispatch();
             } else {
-                HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
+                HistoryHash[replace ? 'replaceHash' : 'setHash'](url || '');
             }
         }
 
