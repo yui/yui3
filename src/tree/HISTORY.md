@@ -1,6 +1,14 @@
 Tree Change History
 ===================
 
+@VERSION@
+------
+
+* The `Tree#createNode()`, `Tree#insertNode()`, and `Tree#traverseNode()`
+  methods now throw or log informative error messages when given a destroyed
+  node instead of failing cryptically (or succeeding when they shouldn't).
+  [Ryan Grove]
+
 3.10.1
 ------
 
