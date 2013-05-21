@@ -2,9 +2,10 @@
 
 YUI.add('tree-test', function (Y) {
 
-var Assert      = Y.Assert,
-    ArrayAssert = Y.ArrayAssert,
-    Mock        = Y.Mock,
+var Assert       = Y.Assert,
+    ArrayAssert  = Y.ArrayAssert,
+    ObjectAssert = Y.ObjectAssert,
+    Mock         = Y.Mock,
 
     Tree     = Y.Tree,
     LazyTree = Y.Base.create('lazyTree', Tree, [Tree.Openable]),
@@ -315,12 +316,11 @@ treeSuite.add(new Y.Test.Case({
 
         this.tree.destroyNode(node);
 
-        Assert.isNull(node.children, 'node.children should be null');
-        Assert.isNull(node.data, 'node.data should be null');
+        ArrayAssert.isEmpty(node.children, 'node.children should be an empty array');
+        ObjectAssert.ownsNoKeys(node.data, 'node.data should be an empty object');
         Assert.isNull(node.parent, 'node.parent should be null');
         Assert.isNull(node.tree, 'node.tree should be null');
-        Assert.isNull(node._htmlNode, 'node._htmlNode should be null');
-        Assert.isNull(node._indexMap, 'node._indexMap should be null');
+        ObjectAssert.ownsNoKeys(node._indexMap, 'node._indexMap should be an empty object');
 
         Assert.isUndefined(this.tree.getNodeById(node.id), 'node should be removed from the id map');
 

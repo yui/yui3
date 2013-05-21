@@ -330,12 +330,11 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             this.removeNode(node, options);
         }
 
-        node.children  = null;
-        node.data      = null;
+        node.children  = [];
+        node.data      = {};
         node.state     = {destroyed: true};
         node.tree      = null;
-        node._htmlNode = null;
-        node._indexMap = null;
+        node._indexMap = {};
 
         delete this._nodeMap[node.id];
 
