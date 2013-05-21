@@ -204,6 +204,13 @@ treeSuite.add(new Y.Test.Case({
 treeSuite.add(new Y.Test.Case({
     name: 'Methods',
 
+    _should: {
+        error: {
+            'createNode() should throw when given a destroyed node': true,
+            'traverseNode() should throw when given a destroyed node': true
+        }
+    },
+
     setUp: function () {
         this.tree = new Tree({nodes: [
             {id: 'one', children: [{id: 'one-one'}, {id: 'one-two'}, {id: 'one-three'}]},
@@ -309,6 +316,13 @@ treeSuite.add(new Y.Test.Case({
         ArrayAssert.isEmpty(otherTree.children, 'node should no longer be in its original tree');
         Assert.isUndefined(otherTree.getNodeById(node.id), 'node should no longer be associated with its original tree');
         Assert.areSame(node, this.tree.getNodeById(node.id), 'node should be associated with this tree');
+    },
+
+    'createNode() should throw when given a destroyed node': function () {
+        var node = this.tree.createNode();
+
+        this.tree.destroyNode(node);
+        this.tree.createNode(node);
     },
 
     'destroyNode() should destroy the specified node': function () {
@@ -661,6 +675,15 @@ treeSuite.add(new Y.Test.Case({
         });
 
         Assert.areSame(3, calls, 'should stop traversal after three nodes');
+    },
+
+    'traverseNode() should throw when given a destroyed node': function () {
+        var node = this.tree.createNode();
+
+        this.tree.destroyNode(node);
+        this.tree.traverseNode(node, function () {
+            Assert.fail('callback should not be called');
+        });
     }
 }));
 
