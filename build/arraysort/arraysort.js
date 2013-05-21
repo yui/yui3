@@ -66,7 +66,7 @@ var ArraySort = Y.ArraySort = {
 
     /**
     Performs a natural-order comparison of two strings or numbers (or a string
-    and a number). This ensures that a value like 'foo1' will be sorted before
+    and a number). This ensures that a value like 'foo2' will be sorted before
     'foo10', whereas a standard ASCII sort would sort 'foo10' first.
 
     @example
