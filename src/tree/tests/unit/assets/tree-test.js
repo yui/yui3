@@ -2,9 +2,10 @@
 
 YUI.add('tree-test', function (Y) {
 
-var Assert      = Y.Assert,
-    ArrayAssert = Y.ArrayAssert,
-    Mock        = Y.Mock,
+var Assert       = Y.Assert,
+    ArrayAssert  = Y.ArrayAssert,
+    ObjectAssert = Y.ObjectAssert,
+    Mock         = Y.Mock,
 
     Tree     = Y.Tree,
     LazyTree = Y.Base.create('lazyTree', Tree, [Tree.Openable]),
@@ -203,6 +204,13 @@ treeSuite.add(new Y.Test.Case({
 treeSuite.add(new Y.Test.Case({
     name: 'Methods',
 
+    _should: {
+        error: {
+            'createNode() should throw when given a destroyed node': true,
+            'traverseNode() should throw when given a destroyed node': true
+        }
+    },
+
     setUp: function () {
         this.tree = new Tree({nodes: [
             {id: 'one', children: [{id: 'one-one'}, {id: 'one-two'}, {id: 'one-three'}]},
@@ -310,17 +318,23 @@ treeSuite.add(new Y.Test.Case({
         Assert.areSame(node, this.tree.getNodeById(node.id), 'node should be associated with this tree');
     },
 
+    'createNode() should throw when given a destroyed node': function () {
+        var node = this.tree.createNode();
+
+        this.tree.destroyNode(node);
+        this.tree.createNode(node);
+    },
+
     'destroyNode() should destroy the specified node': function () {
         var node = this.tree.children[0];
 
         this.tree.destroyNode(node);
 
-        Assert.isNull(node.children, 'node.children should be null');
-        Assert.isNull(node.data, 'node.data should be null');
+        ArrayAssert.isEmpty(node.children, 'node.children should be an empty array');
+        ObjectAssert.ownsNoKeys(node.data, 'node.data should be an empty object');
         Assert.isNull(node.parent, 'node.parent should be null');
         Assert.isNull(node.tree, 'node.tree should be null');
-        Assert.isNull(node._htmlNode, 'node._htmlNode should be null');
-        Assert.isNull(node._indexMap, 'node._indexMap should be null');
+        ObjectAssert.ownsNoKeys(node._indexMap, 'node._indexMap should be an empty object');
 
         Assert.isUndefined(this.tree.getNodeById(node.id), 'node should be removed from the id map');
 
@@ -661,6 +675,15 @@ treeSuite.add(new Y.Test.Case({
         });
 
         Assert.areSame(3, calls, 'should stop traversal after three nodes');
+    },
+
+    'traverseNode() should throw when given a destroyed node': function () {
+        var node = this.tree.createNode();
+
+        this.tree.destroyNode(node);
+        this.tree.traverseNode(node, function () {
+            Assert.fail('callback should not be called');
+        });
     }
 }));
 
