@@ -41,12 +41,8 @@ YUI.add('number-tests', function(Y) {
 
                 number = Y.Number.parse(-1);
                 ASSERT.areSame(-1, number, "Incorrect number -1.");
-            }
-        });
-
-        var testParseWithConfig = new Y.Test.Case({
-            name: "Number Parse w/ Config Tests",
-            tests: function () {
+            },
+            testWithConfig: function () {
                 var i, v, values = [
                     ["1234.5", {}, 1234.5],
                     ["1234.5", {
@@ -95,7 +91,7 @@ YUI.add('number-tests', function(Y) {
                 ];
                 for (i = 0; i < values.length; i +=1) {
                     v = values[i];
-                    ASSERT.areSame(v[2],Y.Number.parse(v[0], v[1]),v.join(' - '));
+                    ASSERT.areSame(v[2],Y.Number.parse(v[0], v[1]),i + ': ' + v[1]  + Y.dump(v[1]));
 
                 }
 
@@ -246,7 +242,6 @@ YUI.add('number-tests', function(Y) {
 
         var suite = new Y.Test.Suite("Number");
         suite.add(testParse);
-        suite.add(testParseWithConfig);
         suite.add(testFormat);
 
         Y.Test.Runner.add(suite);
