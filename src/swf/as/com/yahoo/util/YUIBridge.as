@@ -22,9 +22,19 @@ package com.yahoo.util
 				flashvars = _stage.loaderInfo.parameters;
 				
 				if (flashvars["yId"] && flashvars["YUIBridgeCallback"] && flashvars["YUISwfId"] && ExternalInterface.available) {
-					_jsHandler = flashvars["YUIBridgeCallback"];
+                    var jsCheck:RegExp = /[^A-Za-z0-9._:]/; 
+                    _jsHandler = flashvars["YUIBridgeCallback"];
 					_swfID = flashvars["YUISwfId"];
 					_yId = flashvars["yId"];
+                    if(jsCheck.test(_jsHandler)) {
+                        _jsHandler = '';
+                    }
+                    if(jsCheck.test(_swfID)) {
+                        _swfID = '';
+                    }
+                    if(jsCheck.test(_yId)) {
+                        _yId = '';
+                    }
 				}
 				
 				ExternalInterface.addCallback("createInstance", createInstance);
@@ -87,24 +97,19 @@ package com.yahoo.util
 			}
 
 			public function addCallbacks (callbacks:Object) : void {
-					if (ExternalInterface.available) {
-						for (var callback:String in callbacks) {
-							trace("Added callback for " + callback + ", function " + callbacks[callback]);
-		 					ExternalInterface.addCallback(callback, callbacks[callback]);
-		 				}
-		 				sendEvent({type:"swfReady"});
-		 			}
-				}
+                if (ExternalInterface.available) {
+                    for (var callback:String in callbacks) {
+                        trace("Added callback for " + callback + ", function " + callbacks[callback]);
+                        ExternalInterface.addCallback(callback, callbacks[callback]);
+                    }
+                    sendEvent({type:"swfReady"});
+                }
+            }
 
-				public function sendEvent (evt:Object) : void {
-					if (ExternalInterface.available) {
-					trace("Sending event -- " + evt);
-					trace("Sending to " + _yId);
-					trace("Calling " + _jsHandler);
-					
-					ExternalInterface.call("YUI.applyTo", _yId, _jsHandler, [_swfID, evt]);
-					}
-
+            public function sendEvent (evt:Object) : void {
+                if (ExternalInterface.available) {
+                    ExternalInterface.call("YUI.applyTo", _yId, _jsHandler, [_swfID, evt]);
+                }
 			}		
 		}
 	}

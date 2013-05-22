@@ -1,6 +1,12 @@
 Charts Change History
 =====================
 
+@VERSION@
+------
+
+  * #743 Addressed issue in which styles don't map correctly to a legend when series are styled using a global style object. 
+  * #706 Addressed issue in which the legend did not honor specified series marker style for shape. 
+
 3.10.0
 ------
 
