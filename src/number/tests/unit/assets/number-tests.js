@@ -95,6 +95,11 @@ YUI.add('number-tests', function(Y) {
 
                 }
 
+            },
+            testWithConfigFails: function () {
+                ASSERT.isNull(Y.Number.parse(null, {}), 'nulls should return null');
+                ASSERT.isNull(Y.Number.parse(undefined, {}), 'undefined should return null');
+                ASSERT.isNull(Y.Number.parse("", {}), 'empty string should return null');
             }
         });
 
