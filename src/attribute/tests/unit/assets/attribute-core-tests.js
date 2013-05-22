@@ -236,40 +236,38 @@ YUI.add('attribute-core-tests', function(Y) {
         },
 
         testSetterWithOpts : function() {
-            var h = this.createHost();
 
+            var h = this.createHost(),
+                actualOpts;
 
-            h.addAttr("tri", {
+            h.addAttr("setterWithOpts", {
                 setter: function(val, name, opts) {
-                    opts = opts || {};
-                    if (opts.src === 'internal') {
-                        if (parseInt(val,10) == val && val >= 0 && val <=2) {
-                            return val;
-                        } else {
-                            return Y.AttributeCore.INVALID_VALUE;
-                        }
-                    } else {
-                        return (val?2:0)
+                    if (actualOpts) {
+                        actualOpts.push(opts);
                     }
-                }
+                },
+                value: "X"
             });
 
-            h.set("tri", "whatever");
-            Y.Assert.areEqual(2, h.get("tri"),"1");
-            h.set("tri", false);
-            Y.Assert.areEqual(0, h.get("tri"),"2");
-            h.set("tri", 1);
-            Y.Assert.areEqual(2, h.get("tri"),"3");
-            h.set("tri", 1, {src: 'internal'});
-            Y.Assert.areEqual(1, h.get("tri"),"4");
-            h.set("tri", "whatever", {src: 'internal'});
-            Y.Assert.areEqual(1, h.get("tri"),"5");
-            h.set("tri", false);
-            Y.Assert.areEqual(0, h.get("tri"),"6");
+            actualOpts = [];
 
+            h.set("setterWithOpts", "A");
 
+            Y.Assert.isUndefined(actualOpts[0]);
 
+            h.set("setterWithOpts", "B", {foo: 10});
+
+            Y.ObjectAssert.areEqual({foo:10}, actualOpts[1]);
+
+            h.set("setterWithOpts", "C", {foo: 20});
+
+            Y.ObjectAssert.areEqual({foo:20}, actualOpts[2]);
+
+            h.set("setterWithOpts", "D", {bar: 30});
+
+            Y.ObjectAssert.areEqual({bar:30}, actualOpts[3]);
         },
+
         testMassSetGet : function() {
             var h = this.createHost();
 

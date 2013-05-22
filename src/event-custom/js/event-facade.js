@@ -330,12 +330,6 @@ CEProto.fireComplex = function(args) {
             self.prevented = 0;
         }
 
-        // Kill the cached facade to free up memory.
-        // Otherwise we have the facade from the last fire, sitting around forever.
-        self._facade = null;
-
-        return ret;
-
     } else {
         defaultFn = self.defaultFn;
 
@@ -346,17 +340,20 @@ CEProto.fireComplex = function(args) {
                 defaultFn.apply(host, args);
             }
         }
-
-        return ret;
     }
 
+    // Kill the cached facade to free up memory.
+    // Otherwise we have the facade from the last fire, sitting around forever.
+    self._facade = null;
+
+    return ret;
 };
 
 CEProto._getFacade = function(fireArgs) {
 
     var userArgs = this.details,
         firstArg = userArgs && userArgs[0],
-        firstArgIsObj = (typeof firstArg === "object"),
+        firstArgIsObj = (firstArg && (typeof firstArg === "object")),
         ef = this._facade;
 
     if (!ef) {

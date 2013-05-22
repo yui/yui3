@@ -105,7 +105,7 @@ Y.extend(DOMEventFacade, Object, {
         // Webkit and IE9+? duplicate charCode in keyCode.
         // Opera never sets charCode, always keyCode (though with the charCode).
         // IE6-8 don't set charCode or which.
-        // All browsers other than IE6-8 set which=keyCode in keydown, keyup, and 
+        // All browsers other than IE6-8 set which=keyCode in keydown, keyup, and
         // which=charCode in keypress.
         //
         // Moral of the story: (e.which || e.keyCode) will always return the
