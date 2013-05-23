@@ -91,6 +91,15 @@ Y.mix(Resolver.prototype, {
     resolve: function (value) {
         var self = this;
 
+        // If the resolver is already resolved, return early to avoid
+        // unnecessary calls to isPromise() and then().
+        // It is safe to return early only because then() does not call
+        // resolve() to notify callbacks when already resolved (it uses
+        // fulfill() instead)
+        if (this._status !== 'pending') {
+            return;
+        }
+
         if (Promise.isPromise(value)) {
             value.then(function (x) {
                 // This essentially makes the process recursive, flattening
