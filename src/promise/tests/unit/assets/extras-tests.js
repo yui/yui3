@@ -458,7 +458,7 @@ YUI.add('extras-tests', function (Y) {
                 });
             }, function (err) {
                 test.resume(function () {
-                    throw err;
+                    Assert.fail(err);
                 });
             });
 
