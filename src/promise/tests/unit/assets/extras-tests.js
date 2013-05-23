@@ -72,7 +72,7 @@ YUI.add('extras-tests', function (Y) {
                 });
             });
 
-            test.wait(250);
+            test.wait();
         },
 
         'done() does not return a promise': function () {
@@ -136,7 +136,7 @@ YUI.add('extras-tests', function (Y) {
                 });
             });
 
-            test.wait(250);
+            test.wait();
         },
 
         'promise state should change synchronously': function () {
