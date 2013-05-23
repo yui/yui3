@@ -117,7 +117,7 @@ YUI.add('promise-tests', function (Y) {
                 resolve(rejected);
             }).then(function (value) {
                 test.resume(function () {
-                    throw new Error('Y.Promise failed to resolve a rejected promise');
+                    Assert.fail('Y.Promise failed to resolve a rejected promise');
                 });
             }, function (err) {
                 test.resume(function () {
