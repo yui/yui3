@@ -96,7 +96,8 @@ suite.add(new Y.Test.Case({
             render: '#test'
         });
 
-        Assert.areSame('7', modal1.get('maskNode').getStyle('zIndex'), 'widget mask got wrong zIndex.');
+        /* IE7 returns a string, whereas Chrome returns a number. */
+        Assert.areEqual(7, modal1.get('maskNode').getStyle('zIndex'), 'widget mask got wrong zIndex.');
 
         modal1.destroy();
         modal2.destroy();
