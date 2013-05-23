@@ -36,6 +36,12 @@
                     "classnamemanager"
                 ]
             },
+            "datatable-foot": {
+                "requires": [
+                    "datatable-core",
+                    "view"
+                ]
+            },
             "datatable-body": {
                 "requires": [
                     "datatable-core",
@@ -105,7 +111,8 @@
                 "requires": [
                     "model",
                     "view",
-                    "paginator-core"
+                    "paginator-core",
+                    "datatable-foot"
                 ],
                 "lang": ["en"],
                 "skinnable": true

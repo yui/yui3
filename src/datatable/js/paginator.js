@@ -1,39 +1,56 @@
 var Model,
     View,
     sub = Y.Lang.sub,
-    CLASS_DISABLED = 'control-disabled'
+    CLASS_DISABLED = 'control-disabled',
     EVENT_UI = 'paginator:ui';
 
 Model = Y.Base.create('dt-pg-model', Y.Model, [Y.Paginator.Core]),
 
 View = Y.Base.create('dt-pg-view', Y.View, [], {
 
-    containerTemplate: '<div class="yui3-table-paginator"/>',
+    _eventHandles: [],
+
+    containerTemplate: '<div class="yui3-datatable-paginator"/>',
 
     buttonTemplate: '<a href="#{type}" class="control control-{type}" data-type="{type}">{label}</a>',
 
+    contentTemplate: '{buttons}{goto}{perPage}',
+
     initializer: function () {
-        var container = this.get('container');
+        var container = this.get('container'),
+            events = this._eventHandles;
 
         this._initStrings();
 
         container.delegate('click', this._controlClick, '.control', this);
-        container.delegate('change', this._controlChange, 'select', this);
-        container.delegate('submit', this._controlSubmit, 'form', this);
 
-        this.get('model').after('change', this._modelChange, this);
+        events.push(
+            container.after('change', this._controlChange, this, 'select'),
+            container.after('submit', this._controlSubmit, this, 'form'),
+            this.get('model').after('change', this._modelChange, this)
+        );
+    },
+
+    destructor: function () {
+        while( this._eventHandles.length) {
+            this._eventHandles.shift().detach();
+        }
+        if (this._wrapper) {
+            this._wrapper.remove(true);
+        }
     },
 
     render: function () {
-        this.get('container').append(
-            this._buildButtonsGroup() +
-            this._buildGotoGroup() +
-            this._buildPerPageGroup()
-        );
+        var model = this.get('model'),
+            content = Y.Lang.sub(this.contentTemplate, {
+                'buttons': this._buildButtonsGroup(),
+                'goto': this._buildGotoGroup(),
+                'perPage': this._buildPerPageGroup()
+            });
+
+        this.get('container').append(content);
 
         this._rendered = true;
-
-        var model = this.get('model');
 
         this._updateControlsUI(model.get('page'));
         this._updateItemsPerPageUI(model.get('itemsPerPage'));
@@ -69,7 +86,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         var strings = this.get('strings'),
             select = '<div class="group per-page">' +
                         '<label>' + strings.perPage + ' <select>',
-            options = this.get('perPage'),
+            options = this.get('pageSizes'),
             i,
             len;
 
@@ -129,32 +146,53 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         this.get('container').one('select').set('value', val);
     },
 
-    _controlClick: function (e) {
+    _controlClick: function (e) { // buttons
         e.preventDefault();
+        var control = e.currentTarget;
         // register click events from the four control buttons
-        if (e.currentTarget.hasClass(CLASS_DISABLED)) {
+        if (control.hasClass(CLASS_DISABLED)) {
             return;
         }
-        this.fire(EVENT_UI, { type: e.currentTarget.getData('type') });
+        this.fire(EVENT_UI, {
+            type: control.getData('type'),
+            val: control.getData('page') || null
+        });
     },
 
-    _controlChange: function (e) {
+    _controlChange: function (e, selector) {
+
+        var control = e.target;
         // register change events from the perPage select
-        if (e.currentTarget.hasClass(CLASS_DISABLED)) {
+        if (
+            control.hasClass(CLASS_DISABLED) ||
+            (
+                selector &&
+                !Y.Selector.test(control.getDOMNode(), selector)
+            )
+        ) {
             return;
         }
 
-        var val = e.currentTarget.get('value');
+        var val = e.target.get('value');
         this.fire(EVENT_UI, { type: 'perPage', val: parseInt(val, 10) });
     },
 
-    _controlSubmit: function (e) {
-        // the only form we have is the go to page form
-        e.preventDefault();
-        if (e.currentTarget.hasClass(CLASS_DISABLED)) {
+    _controlSubmit: function (e, selector) {
+        var control = e.target;
+        if (
+            control.hasClass(CLASS_DISABLED) ||
+            (
+                selector &&
+                !Y.Selector.test(control.getDOMNode(), selector)
+            )
+        ) {
             return;
         }
-        var input = e.currentTarget.one('input');
+
+        // the only form we have is the go to page form
+        e.preventDefault();
+
+        var input = e.target.one('input');
         this.fire(EVENT_UI, { type: 'page', val: input.get('value') });
     },
 
@@ -165,12 +203,9 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
     }
 }, {
     ATTRS: {
-        strings: {},
-
-        perPage: {
+        pageSizes: {
             value: [10, 50, 100, { label: 'Show All', value: -1 }]
         }
-
     }
 });
 
@@ -190,11 +225,6 @@ Controller.ATTRS = {
     },
 
     paginatorView: {
-        setter: '_setPaginatorView',
-        value: null
-    },
-
-    paginatorViewType: {
         getter: '_getConstructor',
         value: 'DataTable.Paginator.View',
         writeOnce: 'initOnly'
@@ -203,21 +233,28 @@ Controller.ATTRS = {
     // PAGINATOR CONFIGS
     pageSizes: {
         setter: '_setPageSizesFn',
-        getter: '_getPageSizesFn'
+        value: [10, 50, 100, { label: 'Show All', value: -1 }]
     },
     rowsPerPage: {
-        setter: '_setRowsPerPageFn',
-        getter: '_getRowsPerPageFn'
+
     },
-    location: {
+    paginatorLocation: {
         value: 'footer'
     }
 };
 
 Y.mix(Controller.prototype, {
 
-    /// Sugar
+    // Sugar
     // would like to abstract this into something like table.page.next()
+    page: function () {
+        return {
+            go: function (num) {
+                console.log(num);
+            }
+        };
+    },
+
     firstPage: function () {
         this.get('paginatorModel').set('page', 1);
         return this;
@@ -238,27 +275,114 @@ Y.mix(Controller.prototype, {
 
 
     /// Init and protected
-
     initializer: function () {
-        var view = this.get('paginatorView'),
-            model = this.get('paginatorModel');
+        var ModelClass = this.get('paginatorModel'),
+            model;
 
-        view.on('*:ui', this._uiPgHandler, this);
+        if (!Y.Lang.isObject(ModelClass, true)) {
+            model = new ModelClass();
+            this.set('paginatorModel', model);
+        } else {
+            model = ModelClass;
+        }
 
-        this._augmentModelList();
+        // allow DT to use paged data
+        this._augmentData();
 
+        // ensure our model has the correct totalItems set
         model.set('totalItems', this.get('data').size());
-        model.after('change', this._afterModelChange, this);
 
-        this.after('render', this._renderPg, this);
-        this.after('dataChange', this._renderPg, this);
+        if (!this._eventHandles.paginatorRender) {
+            this._eventHandles.paginatorRender = Y.Do.after(this._paginatorRender, this, 'render');
+        }
     },
 
-    _renderPg: function () {
-        var container = this.get('paginatorView').render().get('container');
+    _paginatorRender: function () {
+        this._paginatorRenderUI();
+        this.get('paginatorModel').after('change', this._afterModelChange, this);
+        this.after('dataChange', this._renderPg, this);
+        this.after('rowsPerPageChange', this._afterRowsPerPageChange, this);
+    },
 
-        // TODO: respect `location` config for
-        this.get('contentBox').append(container);
+    _afterRowsPerPageChange: function (e) {
+        var data = this.get('data'),
+            model = this.get('paginatorModel'),
+            view;
+
+        if (e.newVal !== null) {
+            // turning on
+            this._paginatorRenderUI();
+
+            if (!(data._paged)) {
+                this._augmentData();
+            }
+
+            data._paged.index = (model.get('page') - 1) * model.get('itemsPerPage');
+            data._paged.length = model.get('itemsPerPage');
+
+        } else if (e.newVal === null) {
+            // destroy!
+            while(this._pgViews.length) {
+                view = this._pgViews.shift();
+                view.destroy({ remove: true });
+                view = null;
+            }
+
+            data._paged.index = 0;
+            data._paged.length = undefined;
+        }
+
+        console.log(this._pgViews);
+        this.get('paginatorModel').set('itemsPerPage', parseInt(e.newVal, 10));
+    },
+
+    _paginatorRenderUI: function () {
+        var views = this._pgViews,
+            ViewClass = this.get('paginatorView'),
+            viewConfig = {
+                pageSizes: this.get('pageSizes'),
+                model: this.get('paginatorModel')
+            },
+            locations = this.get('paginatorLocation');
+
+        if (!Y.Lang.isArray(locations)) {
+            locations = [locations];
+        }
+
+        if (!views) { // set up initial rendering of views
+            views = this._pgViews = [];
+            // for each placement area, push to views
+        }
+
+        Y.Array.each(locations, function (location) {
+            var view = new ViewClass(viewConfig),
+                container = view.render().get('container'),
+                row;
+
+            view.after('*:ui', this._uiPgHandler, this);
+            views.push(view);
+
+            if (location._node) { // assume Y.Node
+                location.append(container);
+            } else if (location === 'footer') {
+                if (!this.foot) {
+                    this.foot = new Y.DataTable.FooterView({ host: this });
+                    this.foot.render();
+                    this.fire('renderFooter', { view: this.foot });
+                }
+                row = Y.Node.create('<tr><td class="yui3-datatable-paginator-wrapper" colspan="' + this.get('columns').length + '"/></tr>');
+                view._wrapper = row;
+                row.one('td').append(container);
+                this.foot.tfootNode.append(row);
+            } else if (location === 'header') {
+                if (this.view && this.view.tableNode) {
+                    this.view.tableNode.insert(container, 'before');
+                } else {
+                    this.get('contentBox').prepend(container);
+                }
+            }
+        }, this);
+
     },
 
     _uiPgHandler: function (e) {
@@ -291,6 +415,10 @@ Y.mix(Controller.prototype, {
         var model = this.get('paginatorModel'),
             data = this.get('data');
 
+        if (!data._paged) {
+            this._augmentData();
+        }
+
         data._paged.index = (model.get('page') - 1) * model.get('itemsPerPage');
         data._paged.length = model.get('itemsPerPage');
 
@@ -300,7 +428,8 @@ Y.mix(Controller.prototype, {
         });
     },
 
-    _augmentModelList: function () {
+    // TODO: re run if data is changed... after data change check for _paged
+    _augmentData: function () {
         var model = this.get('paginatorModel');
 
         Y.mix(this.get('data'), {
@@ -336,16 +465,37 @@ Y.mix(Controller.prototype, {
                 return this;
             }
         }, true);
-
     },
 
-    _getConstructor: function (type) {
-        return typeof type === 'string' ?
-            Y.Object.getValue(Y, type.split('.')) :
-            type;
+    _setPageSizesFn: function (val) {
+        var i,
+            len = val.length,
+            label,
+            value;
+
+        if (!Y.Lang.isArray(val)) {
+            val = [val];
+            len = val.length;
+        }
+
+        for ( i = 0; i < len; i++ ) {
+            if (typeof val[i] !== 'object') {
+                label = val[i];
+                value = val[i];
+
+                // we want to check to see if we have a number or a string
+                // of a number. if we do not, we want the value to be -1 to
+                // indicate "all rows"
+                if (parseInt(value, 10) != value) {
+                    value = -1;
+                }
+                val[i] = { label: label, value: value };
+            }
+        }
+
+        return val;
     },
 
-    // Model
     _setPaginatorModel: function (model) {
         var ModelConstructor = this.get('paginatorModelType');
 
@@ -356,64 +506,10 @@ Y.mix(Controller.prototype, {
         return model;
     },
 
-    // View
-    _setPaginatorView: function (view) {
-        var ViewConstructor = this.get('paginatorViewType'),
-            viewConfig;
-
-        if (!(view instanceof Y.View)) {
-            viewConfig = Y.merge(view);
-
-            viewConfig.container = this.get('container');
-            viewConfig.model = this.get('paginatorModel');
-
-            view = new ViewConstructor(viewConfig);
-        } else {
-            view.setAttrs({
-                container: this.get('container'),
-                model: this.get('paginatorModel')
-            });
-        }
-
-        return view;
-    },
-
-    _setPageSizesFn: function (val) {
-        var i,
-            len = val.length,
-            label,
-            value;
-
-        for ( i = 0; i < len; i++ ) {
-            if (typeof val !== 'object') {
-                label = val;
-                value = val;
-
-                // we want to check to see if we have a number or a string
-                // of a number. if we do not, we want the value to be -1 to
-                // indicate "all rows"
-                if (parseInt(value, 10) != val) {
-                    val = -1;
-                }
-                val = { label: val, value: val };
-            }
-        }
-
-        this.get('paginatorView').set('perPage', val);
-        return val;
-    },
-
-    _getPageSizesFn: function () {
-        return this.get('paginatorView').get('perPage');
-    },
-
-    _setRowsPerPageFn: function (val) {
-        this.get('paginatorModel').set('itemsPerPage', val);
-        return val;
-    },
-
-    _getRowsPerPageFn: function () {
-        return this.get('paginatorModel').get('itemsPerPage');
+    _getConstructor: function (type) {
+        return typeof type === 'string' ?
+            Y.Object.getValue(Y, type.split('.')) :
+            type;
     }
 
 }, true);

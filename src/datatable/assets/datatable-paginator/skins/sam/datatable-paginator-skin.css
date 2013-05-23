@@ -1,4 +1,4 @@
-.yui3-table-paginator {
+.yui3-datatable-paginator {
     background: white url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
     background-image: -webkit-linear-gradient(transparent 40%, hsla(0, 0%, 0%, 0.21));
     background-image: -moz-linear-gradient(top, transparent 40%, hsla(0, 0%, 0%, 0.21));
@@ -8,27 +8,27 @@
     border-color: #cbcbcb;
 }
 
-.yui3-table-paginator .control {
+.yui3-datatable-paginator .control {
     color: hsl(222, 30%, 20%);
 }
 
-.yui3-table-paginator .control-first:hover,
-.yui3-table-paginator .control-last:hover,
-.yui3-table-paginator .control-prev:hover,
-.yui3-table-paginator .control-next:hover {
+.yui3-datatable-paginator .control-first:hover,
+.yui3-datatable-paginator .control-last:hover,
+.yui3-datatable-paginator .control-prev:hover,
+.yui3-datatable-paginator .control-next:hover {
     box-shadow: 0 1px 2px hsl(250, 30%, 20%);
 }
 
-.yui3-table-paginator .control-first:active,
-.yui3-table-paginator .control-last:active,
-.yui3-table-paginator .control-prev:active,
-.yui3-table-paginator .control-next:active {
+.yui3-datatable-paginator .control-first:active,
+.yui3-datatable-paginator .control-last:active,
+.yui3-datatable-paginator .control-prev:active,
+.yui3-datatable-paginator .control-next:active {
     box-shadow: inset 0 1px 1px hsl(250, 30%, 20%);
     background: hsla(250, 30%, 90%, 0.3);
 }
 
-.yui3-table-paginator .control-disabled,
-.yui3-table-paginator .control-disabled:hover {
+.yui3-datatable-paginator .control-disabled,
+.yui3-datatable-paginator .control-disabled:hover {
     color: hsl(220,30%,80%);
     border-color: transparent;
     box-shadow: none;

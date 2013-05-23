@@ -2,8 +2,9 @@
 <html>
 <head>
 <title>Datatable Paginator Tests</title>
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css">
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssbase/base-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.10.1/build/cssgrids/cssgrids-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.10.1/build/cssreset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.10.1/build/cssbase/base-min.css">
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 
 <style>
@@ -33,14 +34,15 @@
         font-weight:bold;
     }
     #table {
-        width: 500px;
+        display: inline-block;
         margin: 50px;
+        vertical-align: top;
     }
 </style>
 </head>
 
 <body class="yui3-skin-sam">
-
+<button>Toggle Paginator</button>
 <div id="table"></div>
 
 
@@ -54,27 +56,57 @@ YUI({
     allowRollup: false,
     combine: false,
     useBrowserConsole: true
-}).use("console", "test", "dump", "datatable","datatable-paginator","node","json-parse", function(Y) {
+}).use("console", "test", "dump", "datatable","datatable-paginator","node","json-parse", 'datatype-number', function(Y) {
 
     var data = [];
 
-    while (data.length < 10000) {
+    while (data.length < 100) {
         data.push({
             id: data.length + 1,
             name: ['a','b', 'c','d','e','f','g'][data.length % 7].toUpperCase() + ':' + data.length,
+            price: Math.round((Math.random() + Math.random()) * 500) / 500,
             qty: Math.ceil(data.length * Math.random() + Math.random())
         });
     }
 
     var table = new Y.DataTable({
-        columns: [ 'id', 'name', 'qty' ],
+        columns: [ 'id', 'name', {
+            key: 'price',
+            formatter: function (o) {
+                return Y.Number.format(o.data.price, {
+                    prefix: "$",
+                    thousandsSeparator: ",",
+                    decimalSeparator: ".",
+                    decimalPlaces: 2
+                })
+            }
+        }, 'qty', {
+            key: 'fn',
+            formatter: function(o) {
+                return Y.Number.format(o.data.price * o.data.qty, {
+                    prefix: "$",
+                    thousandsSeparator: ",",
+                    decimalSeparator: ".",
+                    decimalPlaces: 2
+                });
+            }
+        } ],
         data: data,
         render: '#table',
-        pageSizes: [3, 10, 50, 100, { label: 'Show All', value: -1 }],
+        // rows per page turns on/off paginator
         rowsPerPage: 10,
-        width: '100%'
+        paginatorLocation: ['header', 'footer']
     });
 
+    Y.one('button').on('click', function (e) {
+        if (table.get('rowsPerPage') === null) {
+            // turn it on
+            table.set('rowsPerPage', 10);
+        } else {
+            table.set('rowsPerPage', null);
+        }
+        console.log(table.get('rowsPerPage'));
+    });
 
 });
 
