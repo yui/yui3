@@ -99,7 +99,7 @@ YUI.add('promise-tests', function (Y) {
                 });
             }, function (err) {
                 test.resume(function () {
-                    throw err;
+                    Assert.fail(err);
                 });
             });
 
