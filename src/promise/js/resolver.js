@@ -243,6 +243,6 @@ Y.mix(Resolver.prototype, {
         }
     }
 
-});
+}, true);
 
 Y.Promise.Resolver = Resolver;
