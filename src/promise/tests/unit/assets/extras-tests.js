@@ -208,7 +208,7 @@ YUI.add('extras-tests', function (Y) {
             test.wait();
         },
 
-        'Promise.reject() should wrap fulfilled promises': function () {
+        'Promise.reject(fulfilledPromise) should allow created promise\'s rejection reason to be fulfilledPromise': function () {
             var test = this,
                 value = new Promise(function (resolve) {
                     resolve('foo');
@@ -225,7 +225,7 @@ YUI.add('extras-tests', function (Y) {
             test.wait();
         },
 
-        'Promise.reject() should wrap rejected promises': function () {
+        'Promise.reject(rejectedPromise) should allow created promise\'s rejection reason to be rejectedPromise': function () {
             var test = this,
                 value = new Promise(function (resolve, reject) {
                     reject('foo');
@@ -293,7 +293,7 @@ YUI.add('extras-tests', function (Y) {
     suite.add(new Y.Test.Case({
         name: 'Promise.every() tests',
 
-        'Promise.empty() should return a promise': function () {
+        'Promise.every() should return a promise': function () {
             var somePromise = new Promise(function () {});
 
             Assert.isInstanceOf(Promise, Promise.every([5]), 'when passed a value, Promise.every() should return a promise');
@@ -373,7 +373,7 @@ YUI.add('extras-tests', function (Y) {
     suite.add(new Y.Test.Case({
         name: 'Promise.any() tests',
 
-        'empty list shoudl resolve to undefined': function () {
+        'empty list should resolve to undefined': function () {
             var test = this;
 
             Promise.any([]).then(function (result) {
