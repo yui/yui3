@@ -65,6 +65,11 @@
             "jsfiles": [
                 "paginator.js"
             ]
+        },
+        "datatable-foot": {
+            "jsfiles": [
+                "foot.js"
+            ]
         }
     }
 }
