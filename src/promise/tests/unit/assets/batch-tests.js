@@ -101,7 +101,7 @@ YUI.add('batch-tests', function (Y) {
 
             Y.batch(rejectedAfter(20), rejectedAfter(10), rejectedAfter(15)).then(null, function (reason) {
                 test.resume(function () {
-                    Assert.areEqual('10', reason, 'reason should be the one from the first promise to be rejected');
+                    Assert.areSame(10, reason, 'reason should be the one from the first promise to be rejected');
                 });
             });
 
