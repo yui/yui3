@@ -53,12 +53,6 @@ YUI.add('extras-tests', function (Y) {
     suite.add(new Y.Test.Case({
         name: 'Promise extra methods tests',
 
-        _should: {
-            ignore: {
-                'errors thrown inside done() are not caught': !Y.config.win
-            }
-        },
-
         'fail() adds an errback to a rejected promise': function () {
             var test = this,
                 expected = new Error('foo'),
@@ -69,70 +63,6 @@ YUI.add('extras-tests', function (Y) {
                 test.resume(function () {
                     Assert.areSame(expected, err, 'Promise rejected with the wrong reason');
                     Assert.isTrue(isPromise(returnValue), 'fail() should return a promise');
-                });
-            });
-
-            test.wait();
-        },
-
-        'done() does not return a promise': function () {
-            Assert.isUndefined(Promise.resolve('foo').done(), 'done() should return undefined');
-        },
-
-        'done() treats resolution the same way as then()': function () {
-            var test = this,
-                value = {},
-                promise = Promise.resolve(value);
-
-            function next(fulfilled, result) {
-                test.resume(function () {
-                    Assert.isTrue(fulfilled, 'done() should respect the success path');
-                    Assert.areSame(value, result, 'done() should respect the promise value');
-                });
-            }
-
-            promise.done(function (x) {
-                next(true, x);
-            }, function (e) {
-                next(false, e);
-            });
-
-            test.wait();
-        },
-
-        'done() treats rejection the same way as then()': function () {
-            var test = this,
-                value = {},
-                promise = Promise.reject(value);
-
-            function next(fulfilled, result) {
-                test.resume(function () {
-                    Assert.isFalse(fulfilled, 'done() should respect the failure path');
-                    Assert.areSame(value, result, 'done() should respect the promise value');
-                });
-            }
-
-            promise.done(function (x) {
-                next(true, x);
-            }, function (e) {
-                next(false, e);
-            });
-
-            test.wait();
-        },
-
-        'errors thrown inside done() are not caught': function () {
-            var test = this,
-                message = 'foo',
-                value = new Error(message),
-                promise = Promise.reject(value);
-
-            promise.done();
-
-            Y.one('win').once('error', function (e) {
-                e.halt();
-                test.resume(function () {
-                    Assert.isTrue(e._event.message.indexOf(message) > -1, 'empty done() should send an uncaught error');
                 });
             });
 
@@ -184,6 +114,73 @@ YUI.add('extras-tests', function (Y) {
 
             Assert.areEqual('fulfilled', fulfilled.getStatus(), 'status of a fulfilled promise should be "fulfilled"');
             Assert.areEqual('rejected', rejected.getStatus(), 'status of a rejected promise should be "rejected"');
+        }
+
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'promise.done() tests',
+
+        // These tests rely on Y.soon being synchronous
+        setUp: function () {
+            this._soon = Y.soon;
+
+            Y.soon = function (fn) {
+                fn();
+            };
+        },
+
+        tearDown: function () {
+            Y.soon = this._soon;
+        },
+
+        'done() does not return a promise': function () {
+            Assert.isUndefined(Promise.resolve('foo').done(), 'done() should return undefined');
+        },
+
+        'done() treats resolution the same way as then()': function () {
+            var value = {},
+                promise = Promise.resolve(value);
+
+            function next(fulfilled, result) {
+                Assert.isTrue(fulfilled, 'done() should respect the success path');
+                Assert.areSame(value, result, 'done() should respect the promise value');
+            }
+
+            promise.done(function (x) {
+                next(true, x);
+            }, function (e) {
+                next(false, e);
+            });
+        },
+
+        'done() treats rejection the same way as then()': function () {
+            var value = {},
+                promise = Promise.reject(value);
+
+            function next(fulfilled, result) {
+                Assert.isFalse(fulfilled, 'done() should respect the failure path');
+                Assert.areSame(value, result, 'done() should respect the promise value');
+            }
+
+            promise.done(function (x) {
+                next(true, x);
+            }, function (e) {
+                next(false, e);
+            });
+        },
+
+        'errors thrown inside done() are not caught': function () {
+            var message = 'foo',
+                value = new Error(message),
+                promise = Promise.reject(value);
+
+            // relies on setUp and tearDown replacing Y.soon with a synchronous version
+            try {
+                promise.done();
+            } catch (err) {
+                Assert.areSame(value, err, 'empty done() should send an uncaught error');
+            }
         }
 
     }));
