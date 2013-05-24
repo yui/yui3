@@ -122,6 +122,10 @@ YUI.add('extras-tests', function (Y) {
         name: 'promise.done() tests',
 
         // These tests rely on Y.soon being synchronous
+        // In particular promises are being made synchronous to be able to
+        // test if promise.done() does not catch errors, by using a try...catch
+        // block over it. If they were asynchronous then the try...catch block
+        // would do nothing
         setUp: function () {
             this._soon = Y.soon;
 
@@ -290,6 +294,18 @@ YUI.add('extras-tests', function (Y) {
     suite.add(new Y.Test.Case({
         name: 'Promise.every() tests',
 
+        setUp: function () {
+            this._soon = Y.soon;
+
+            Y.soon = function (fn) {
+                fn();
+            };
+        },
+
+        tearDown: function () {
+            Y.soon = this._soon;
+        },
+
         'Promise.every() should return a promise': function () {
             var somePromise = new Promise(function () {});
 
@@ -300,15 +316,9 @@ YUI.add('extras-tests', function (Y) {
         },
 
         'empty list should resolve to undefined': function () {
-            var test = this;
-
             Promise.every([]).then(function (result) {
-                test.resume(function () {
-                    Assert.isUndefined(result, 'with an empty list Promise.every() should resolve to undefined');
-                });
+                Assert.isUndefined(result, 'with an empty list Promise.every() should resolve to undefined');
             });
-
-            test.wait();
         },
 
         'order of promises should be preserved': function () {
@@ -324,45 +334,39 @@ YUI.add('extras-tests', function (Y) {
         },
 
         'values should be wrapped in a promise': function () {
-            var test = this,
-                obj = {
+            var obj = {
                     hello: 'world'
                 };
 
             Promise.every(['foo', 5, obj]).then(function (result) {
-                test.resume(function () {
-                    ArrayAssert.itemsAreSame(['foo', 5, obj], result, 'values passed to Promise.every() should be wrapped in promises, not ignored');
-                });
+                ArrayAssert.itemsAreSame(['foo', 5, obj], result, 'values passed to Promise.every() should be wrapped in promises, not ignored');
             });
-
-            test.wait();
         },
 
         'correct handling of function parameters': function () {
-            var test = this;
-
             function testFn() {}
 
             Promise.every([testFn]).then(function (values) {
-                test.resume(function () {
-                    Assert.isFunction(values[0], 'promise value should be a function');
-                    Assert.areSame(testFn, values[0], 'promise value should be the passed function');
-                });
+                Assert.isFunction(values[0], 'promise value should be a function');
+                Assert.areSame(testFn, values[0], 'promise value should be the passed function');
             });
-
-            test.wait();
         },
 
         'Promise.every() should fail as fast as possible': function () {
-            var test = this;
+            var sync = false;
 
-            Promise.every([rejectedAfter(20), rejectedAfter(10), rejectedAfter(15)]).then(null, function (reason) {
-                test.resume(function () {
-                    Assert.areEqual(10, reason, 'reason should be the one from the first promise to be rejected');
-                });
+            Promise.every([rejectedAfter(20), Promise.reject(0), rejectedAfter(15)]).then(null, function (reason) {
+                sync = true;
+                Assert.areSame(0, reason, 'reason should be the one from the first promise to be rejected');
             });
 
-            test.wait();
+            // This is a consequence of the test being run synchronously, not
+            // a property of the function itself. This assertion is present here
+            // to check if the promise returned by every() was rejected
+            // synchronously or if it is waiting for the delayed rejections
+            // If it waits for the rejection no assertions would be run and no
+            // errors would appear because the test is not using test.wait()
+            Assert.areSame(true, sync, 'every() should be rejected synchronously');
         }
 
     }));
