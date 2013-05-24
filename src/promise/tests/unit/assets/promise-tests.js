@@ -56,6 +56,61 @@ YUI.add('promise-tests', function (Y) {
             test.wait(100);
         },
 
+        'rejecting a fulfilled promise does not do anything': function () {
+            var test = this,
+                expected = {hello: 'world'},
+                promise = new Promise(function (resolve, reject) {
+                    resolve(expected);
+                    reject(new Error('ouch'));
+                });
+
+            promise.then(function (value) {
+                test.resume(function () {
+                    Assert.areSame(expected, value, 'fulfilled promise did not take the correct value');
+                });
+            }, function () {
+                test.resume(function () {
+                    Assert.fail('fulfilled promise when through the rejection branch');
+                });
+            });
+
+            test.wait();
+        },
+
+        'fulfilling a rejected promise does not do anything': function () {
+            var test = this,
+                expected = new Error('foo'),
+                promise = new Promise(function (resolve, reject) {
+                    reject(expected);
+                    resolve(true);
+                });
+
+            function fail() {
+                test.resume(function () {
+                    Assert.fail('rejected promise when through the fulfill branch');
+                });
+            }
+
+            promise.then(fail, function (reason) {
+                return new Promise(function (resolve, reject) {
+                    reject(reason);
+                    // Faking going through fulfill to test the possibility of
+                    // someone calling it directly even if YUI does not approve
+                    // The goal is to test the branch that protects the promise
+                    // from being fulfilled after being rejected but since
+                    // resolver.resolve() already returns early if the promise
+                    // is already rejected then this branch was never hit
+                    this._resolver.fulfill(true);
+                });
+            }).then(fail, function (reason) {
+                test.resume(function () {
+                    Assert.areSame(expected, reason, 'rejected promise did not take the correct reason');
+                });
+            });
+
+            test.wait();
+        },
+
         'correct value for "this" inside the promise init function': function () {
             var promiseA,
                 promiseB = Y.Promise(function () {
