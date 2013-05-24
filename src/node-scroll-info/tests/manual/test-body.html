@@ -79,7 +79,7 @@
 <script src="../../../../build/yui/yui.js"></script>
 
 <script>
-var Y = YUI().use('lazy-model-list', 'node-scroll-info', function (Y) {
+var Y = YUI({filter: 'raw'}).use('node-scroll-info', function (Y) {
 
 var body    = Y.one('body'),
     content = Y.one('#content'),
@@ -114,22 +114,18 @@ function refresh() {
     clearTimeout(showTimeout);
 
     showTimeout = setTimeout(function () {
-        Y.log('show');
-
-        var nodes = body.scrollInfo.getOnscreenNodes('.image', 1000);
+        var nodes = body.scrollInfo.getOnscreenNodes('.image');
 
         nodes.removeClass('offscreen');
         updateInfo({onscreen: nodes.size()});
     }, 20);
 
     hideTimeout = setTimeout(function () {
-        Y.log('hide');
-
-        var nodes = body.scrollInfo.getOffscreenNodes('.image', 1000)
+        var nodes = body.scrollInfo.getOffscreenNodes('.image')
 
         nodes.addClass('offscreen');
         updateInfo({offscreen: nodes.size()});
-    }, 1000);
+    }, 500);
 }
 
 function updateInfo(info) {
@@ -149,7 +145,7 @@ for (var i = 0; i < 5000; i++) {
 loadNext(50);
 refresh();
 
-body.plug(Y.Plugin.ScrollInfo, {scrollMargin: 200});
+window.scrollInfo = body.plug(Y.Plugin.ScrollInfo, {scrollMargin: 1000}).scrollInfo;
 
 Y.one('win').on('windowresize', refresh);
 
@@ -161,7 +157,6 @@ if (body.scrollInfo.getScrollInfo().atBottom) {
 body.scrollInfo.on({
     scroll: function (e) {
         Y.log('scroll');
-        console.dir(e);
         refresh();
     },
 

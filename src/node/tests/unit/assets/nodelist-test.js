@@ -91,9 +91,8 @@ YUI.add('nodelist-test', function(Y) {
             Assert.areEqual(3, Y.all('#test-select option').size());
         },
 
-        'should find 2 FORMs via form query': function() {
-            Assert.areEqual(2, Y.all('form').size());
-            Assert.areEqual('FORM', Y.all('form').item(1).get('tagName').toUpperCase());
+        'should find all FORMs via form query': function() {
+            Assert.areEqual(document.getElementsByTagName('form').length, Y.all('form').size());
         },
 
         'should find all elements with bar className': function() {
