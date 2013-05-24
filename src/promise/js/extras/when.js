@@ -1,7 +1,8 @@
 /**
 Extra utilities for YUI3 promises
 
-@module promise-extras
+@module promise
+@submodule promise-extras
 **/
 
 var Promise = Y.Promise,
