@@ -1,6 +1,11 @@
 Substitute Utility Change History
 =================================
 
+3.10.1
+------
+
+* No changes.
+
 3.10.0
 ------
 
