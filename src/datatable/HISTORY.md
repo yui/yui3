@@ -1,5 +1,9 @@
 DataTable Change History
 ========================
+3.10.2
+------
+
+* Added datatable-keynav module, providing keyboard navigation within the datatable.
 
 3.10.1
 ------
@@ -11,7 +15,7 @@ DataTable Change History
 
 * Fix renderBody in the docs and in table-message. [albertosantini]
 
-* Add italian language files to the components. [albertosantini]  
+* Add italian language files to the components. [albertosantini]
 
 3.9.1
 -----
@@ -26,7 +30,7 @@ DataTable Change History
 
 * French translations for the DataTable [Pull Request #454] [ArnaudD] [davglass]
 
-* Merged in #392: Named cell formatters [satyam] 
+* Merged in #392: Named cell formatters [satyam]
 
 3.8.1
 -----
