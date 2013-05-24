@@ -459,6 +459,23 @@ YUI.add('extras-tests', function (Y) {
             });
 
             test.wait();
+        },
+
+        'Promise.some() should resolve as fast as possible': function () {
+            var sync = false;
+
+            Promise.some([wait(20), Promise.resolve(0), wait(15)]).then(function (value) {
+                sync = true;
+                Assert.areSame(0, value, 'value should be the one from the first promise to be resolved');
+            });
+
+            // This is a consequence of the test being run synchronously, not
+            // a property of the function itself. This assertion is present here
+            // to check if the promise returned by some() was resolved
+            // synchronously or if it is waiting for the delayed resolutions
+            // If it has to wait for the resolution no assertions would be run
+            // and no errors would appear because the test is not using test.wait()
+            Assert.areSame(true, sync, 'some() should be resolved synchronously');
         }
     })));
 
