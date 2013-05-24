@@ -1,3 +1,8 @@
+// A promise already resolved to "undefined"
+// Used in combinator functions to avoid creating new promises when passed an
+// empty list
+RESOLVED_PROMISE = Promise.resolve();
+
 /**
 Returns a promise that is resolved or rejected when any of values is either
 resolved or rejected.
@@ -11,15 +16,17 @@ resolved or rejected.
 @since @SINCE@
 **/
 Promise.any = function (values) {
-    return new Promise(function (resolve, reject) {
-        if (values.length < 1) {
-            return resolve();
-        }
-        // just go through the list and resolve and reject at the first change
-        for (var i = 0, count = values.length; i < count; i++) {
-            Y.when(values[i], resolve, reject);
-        }
-    });
+    // When values is an empty list any() should resolve to undefined
+    // This is spec'd in DOMFuture
+    return values.length < 1 ? RESOLVED_PROMISE :
+        new Promise(function (resolve, reject) {
+            // Go through the list and resolve and reject at the first change
+            // Abuses the fact that fulfilling or rejecting an already resolved
+            // promise does not throw or do anything else
+            for (var i = 0, count = values.length; i < count; i++) {
+                Y.when(values[i], resolve, reject);
+            }
+        });
 };
 
 /**
@@ -41,27 +48,25 @@ Promise.every = function (values) {
         length    = values.length,
         results   = [];
 
-    return new Promise(function (resolve, reject) {
-        function oneDone(index) {
-            return function (value) {
-                results[index] = value;
+    // Follows the DOMFuture spec like any()
+    return length < 1 ? RESOLVED_PROMISE :
+        new Promise(function (resolve, reject) {
+            function oneDone(index) {
+                return function (value) {
+                    results[index] = value;
 
-                remaining--;
+                    remaining--;
 
-                if (!remaining) {
-                    resolve(results);
-                }
-            };
-        }
+                    if (!remaining) {
+                        resolve(results);
+                    }
+                };
+            }
 
-        if (length < 1) {
-            return resolve();
-        }
-
-        for (; i < length; i++) {
-            Y.when(values[i], oneDone(i), reject);
-        }
-    });
+            for (; i < length; i++) {
+                Y.when(values[i], oneDone(i), reject);
+            }
+        });
 };
 
 /**
@@ -83,26 +88,26 @@ Promise.some = function (values) {
         length    = values.length,
         results   = [];
 
-    // Basically a mirror implementation of Promise.every
-    return new Promise(function (resolve, reject) {
-        function oneRejected(index) {
-            return function (value) {
-                results[index] = value;
+    // Follows the DOMFuture spec like any()
+    return length < 1 ? RESOLVED_PROMISE :
+        new Promise(function (resolve, reject) {
+            // This is a mirror implementation of Promise.every()
+            // Instead of keeping a list of fulfill values,
+            // keep a list of rejection reasons
+            function oneRejected(index) {
+                return function (value) {
+                    results[index] = value;
 
-                remaining--;
+                    remaining--;
 
-                if (!remaining) {
-                    reject(results);
-                }
-            };
-        }
+                    if (!remaining) {
+                        reject(results);
+                    }
+                };
+            }
 
-        if (length < 1) {
-            return resolve();
-        }
-
-        for (; i < length; i++) {
-            Y.when(values[i], resolve, oneRejected(i));
-        }
-    });
+            for (; i < length; i++) {
+                Y.when(values[i], resolve, oneRejected(i));
+            }
+        });
 };

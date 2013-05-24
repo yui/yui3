@@ -5,7 +5,8 @@ Extra utilities for YUI3 promises
 **/
 
 var Promise = Y.Promise,
-    slice = [].slice;
+    slice = [].slice,
+    RESOLVED_PROMISE;
 
 /**
 Abstraction API allowing you to interact with promises or raw values as if they
