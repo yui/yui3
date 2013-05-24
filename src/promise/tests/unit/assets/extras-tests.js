@@ -3,7 +3,19 @@ YUI.add('extras-tests', function (Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.Test.ArrayAssert,
         Promise = Y.Promise,
-        isPromise = Promise.isPromise;
+        isPromise = Promise.isPromise,
+        SynchronousSoon = {
+            setUp: function () {
+                this._soon = Y.soon;
+
+                Y.soon = function (fn) {
+                    fn();
+                };
+            },
+            tearDown: function () {
+                Y.soon = this._soon;
+            }
+        };
 
     /**
     Takes a promise and a callback. Calls the callback with a boolean parameter
@@ -118,25 +130,13 @@ YUI.add('extras-tests', function (Y) {
 
     }));
 
-    suite.add(new Y.Test.Case({
+    // These tests rely on Y.soon being synchronous
+    // In particular promises are being made synchronous to be able to
+    // test if promise.done() does not catch errors, by using a try...catch
+    // block over it. If they were asynchronous then the try...catch block
+    // would do nothing
+    suite.add(new Y.Test.Case(Y.merge(SynchronousSoon, {
         name: 'promise.done() tests',
-
-        // These tests rely on Y.soon being synchronous
-        // In particular promises are being made synchronous to be able to
-        // test if promise.done() does not catch errors, by using a try...catch
-        // block over it. If they were asynchronous then the try...catch block
-        // would do nothing
-        setUp: function () {
-            this._soon = Y.soon;
-
-            Y.soon = function (fn) {
-                fn();
-            };
-        },
-
-        tearDown: function () {
-            Y.soon = this._soon;
-        },
 
         'done() does not return a promise': function () {
             Assert.isUndefined(Promise.resolve('foo').done(), 'done() should return undefined');
@@ -187,7 +187,7 @@ YUI.add('extras-tests', function (Y) {
             }
         }
 
-    }));
+    })));
 
     suite.add(new Y.Test.Case({
         name: 'Promise factories tests',
@@ -291,20 +291,8 @@ YUI.add('extras-tests', function (Y) {
         }
     }));
 
-    suite.add(new Y.Test.Case({
+    suite.add(new Y.Test.Case(Y.merge(SynchronousSoon, {
         name: 'Promise.every() tests',
-
-        setUp: function () {
-            this._soon = Y.soon;
-
-            Y.soon = function (fn) {
-                fn();
-            };
-        },
-
-        tearDown: function () {
-            Y.soon = this._soon;
-        },
 
         'Promise.every() should return a promise': function () {
             var somePromise = new Promise(function () {});
@@ -369,7 +357,7 @@ YUI.add('extras-tests', function (Y) {
             Assert.areSame(true, sync, 'every() should be rejected synchronously');
         }
 
-    }));
+    })));
 
     suite.add(new Y.Test.Case({
         name: 'Promise.any() tests',
@@ -435,19 +423,13 @@ YUI.add('extras-tests', function (Y) {
         }
     }));
 
-    suite.add(new Y.Test.Case({
+    suite.add(new Y.Test.Case(Y.merge(SynchronousSoon, {
         name: 'Promise.some() tests',
 
         'empty list should resolve to undefined': function () {
-            var test = this;
-
             Promise.some([]).then(function (result) {
-                test.resume(function () {
-                    Assert.isUndefined(result, 'Promise.some() with an empty list should resolve to undefined');
-                });
+                Assert.isUndefined(result, 'Promise.some() with an empty list should resolve to undefined');
             });
-
-            test.wait();
         },
 
         'one fulfilled promise should fulfill the returned promise': function () {
@@ -478,7 +460,7 @@ YUI.add('extras-tests', function (Y) {
 
             test.wait();
         }
-    }));
+    })));
 
     Y.Test.Runner.add(suite);
 
