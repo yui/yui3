@@ -79,7 +79,7 @@ Y.mix(Y.namespace("Number"), {
         }
 
         if (data !== null && data !== "") {
-            data = +data;
+            data = parseFloat(data);
 
             // catch NaN and ±Infinity
             if (!isFinite(data)) {

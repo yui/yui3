@@ -86,8 +86,7 @@ YUI.add('number-tests', function(Y) {
                             suffix: ']',
                             decimalSeparator:'|',
                             thousandsSeparator: '*'
-                    }, 123456789],
-                    ["     ", {}, 0]  // zero is what the pre-3.10.x version returned for a string with blanks
+                    }, 123456789]
 
                 ];
                 for (i = 0; i < values.length; i +=1) {
@@ -101,6 +100,7 @@ YUI.add('number-tests', function(Y) {
                 ASSERT.isNull(Y.Number.parse(null, {}), 'nulls should return null');
                 ASSERT.isNull(Y.Number.parse(undefined, {}), 'undefined should return null');
                 ASSERT.isNull(Y.Number.parse("", {}), 'empty string should return null');
+                ASSERT.isNull(Y.Number.parse("    ", {}), 'non-empty blank string should return null');
                 ASSERT.isNull(Y.Number.parse(" asdfa ", {}), 'random characters should return null');
                 ASSERT.isNull(Y.Number.parse("$ (USD)", { prefix: '$', suffix: '(USD)' }),'format resulting in empty string should return null');
                 ASSERT.isNull(Y.Number.parse("boom,boom", { decimal: ',' }), ' format resulting in random characters should return null');
