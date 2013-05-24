@@ -402,84 +402,86 @@ lexer.performAction = function anonymous(yy,yy_,$avoiding_name_collisions,YY_STA
 
 var YYSTATE=YY_START
 switch($avoiding_name_collisions) {
-case 0:
+case 0: yy_.yytext = "\\"; return 14; 
+break;
+case 1:
                                    if(yy_.yytext.slice(-1) !== "\\") this.begin("mu");
                                    if(yy_.yytext.slice(-1) === "\\") yy_.yytext = yy_.yytext.substr(0,yy_.yyleng-1), this.begin("emu");
                                    if(yy_.yytext) return 14;
                                  
 break;
-case 1: return 14; 
+case 2: return 14; 
 break;
-case 2:
+case 3:
                                    if(yy_.yytext.slice(-1) !== "\\") this.popState();
                                    if(yy_.yytext.slice(-1) === "\\") yy_.yytext = yy_.yytext.substr(0,yy_.yyleng-1);
                                    return 14;
                                  
 break;
-case 3: yy_.yytext = yy_.yytext.substr(0, yy_.yyleng-4); this.popState(); return 15; 
+case 4: yy_.yytext = yy_.yytext.substr(0, yy_.yyleng-4); this.popState(); return 15; 
 break;
-case 4: this.begin("par"); return 24; 
+case 5: this.begin("par"); return 24; 
 break;
-case 5: return 16; 
+case 6: return 16; 
 break;
-case 6: return 20; 
-break;
-case 7: return 19; 
+case 7: return 20; 
 break;
 case 8: return 19; 
 break;
-case 9: return 23; 
+case 9: return 19; 
 break;
 case 10: return 23; 
 break;
-case 11: this.popState(); this.begin('com'); 
+case 11: return 23; 
 break;
-case 12: yy_.yytext = yy_.yytext.substr(3,yy_.yyleng-5); this.popState(); return 15; 
+case 12: this.popState(); this.begin('com'); 
 break;
-case 13: return 22; 
+case 13: yy_.yytext = yy_.yytext.substr(3,yy_.yyleng-5); this.popState(); return 15; 
 break;
-case 14: return 36; 
+case 14: return 22; 
 break;
-case 15: return 35; 
+case 15: return 36; 
 break;
 case 16: return 35; 
 break;
-case 17: return 39; 
+case 17: return 35; 
 break;
-case 18: /*ignore whitespace*/ 
+case 18: return 39; 
 break;
-case 19: this.popState(); return 18; 
+case 19: /*ignore whitespace*/ 
 break;
 case 20: this.popState(); return 18; 
 break;
-case 21: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2).replace(/\\"/g,'"'); return 30; 
+case 21: this.popState(); return 18; 
 break;
-case 22: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2).replace(/\\'/g,"'"); return 30; 
+case 22: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2).replace(/\\"/g,'"'); return 30; 
 break;
-case 23: yy_.yytext = yy_.yytext.substr(1); return 28; 
+case 23: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2).replace(/\\'/g,"'"); return 30; 
 break;
-case 24: return 32; 
+case 24: yy_.yytext = yy_.yytext.substr(1); return 28; 
 break;
 case 25: return 32; 
 break;
-case 26: return 31; 
+case 26: return 32; 
 break;
-case 27: return 35; 
+case 27: return 31; 
 break;
-case 28: yy_.yytext = yy_.yytext.substr(1, yy_.yyleng-2); return 35; 
+case 28: return 35; 
 break;
-case 29: return 'INVALID'; 
+case 29: yy_.yytext = yy_.yytext.substr(1, yy_.yyleng-2); return 35; 
 break;
-case 30: /*ignore whitespace*/ 
+case 30: return 'INVALID'; 
 break;
-case 31: this.popState(); return 37; 
+case 31: /*ignore whitespace*/ 
 break;
-case 32: return 5; 
+case 32: this.popState(); return 37; 
+break;
+case 33: return 5; 
 break;
 }
 };
-lexer.rules = [/^(?:[^\x00]*?(?=(\{\{)))/,/^(?:[^\x00]+)/,/^(?:[^\x00]{2,}?(?=(\{\{|$)))/,/^(?:[\s\S]*?--\}\})/,/^(?:\{\{>)/,/^(?:\{\{#)/,/^(?:\{\{\/)/,/^(?:\{\{\^)/,/^(?:\{\{\s*else\b)/,/^(?:\{\{\{)/,/^(?:\{\{&)/,/^(?:\{\{!--)/,/^(?:\{\{![\s\S]*?\}\})/,/^(?:\{\{)/,/^(?:=)/,/^(?:\.(?=[} ]))/,/^(?:\.\.)/,/^(?:[\/.])/,/^(?:\s+)/,/^(?:\}\}\})/,/^(?:\}\})/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:@[a-zA-Z]+)/,/^(?:true(?=[}\s]))/,/^(?:false(?=[}\s]))/,/^(?:-?[0-9]+(?=[}\s]))/,/^(?:[a-zA-Z0-9_$-]+(?=[=}\s\/.]))/,/^(?:\[[^\]]*\])/,/^(?:.)/,/^(?:\s+)/,/^(?:[a-zA-Z0-9_$-/]+)/,/^(?:$)/];
-lexer.conditions = {"mu":{"rules":[4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,32],"inclusive":false},"emu":{"rules":[2],"inclusive":false},"com":{"rules":[3],"inclusive":false},"par":{"rules":[30,31],"inclusive":false},"INITIAL":{"rules":[0,1,32],"inclusive":true}};
+lexer.rules = [/^(?:\\\\(?=(\{\{)))/,/^(?:[^\x00]*?(?=(\{\{)))/,/^(?:[^\x00]+)/,/^(?:[^\x00]{2,}?(?=(\{\{|$)))/,/^(?:[\s\S]*?--\}\})/,/^(?:\{\{>)/,/^(?:\{\{#)/,/^(?:\{\{\/)/,/^(?:\{\{\^)/,/^(?:\{\{\s*else\b)/,/^(?:\{\{\{)/,/^(?:\{\{&)/,/^(?:\{\{!--)/,/^(?:\{\{![\s\S]*?\}\})/,/^(?:\{\{)/,/^(?:=)/,/^(?:\.(?=[}/ ]))/,/^(?:\.\.)/,/^(?:[\/.])/,/^(?:\s+)/,/^(?:\}\}\})/,/^(?:\}\})/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:@[a-zA-Z]+)/,/^(?:true(?=[}\s]))/,/^(?:false(?=[}\s]))/,/^(?:-?[0-9]+(?=[}\s]))/,/^(?:[a-zA-Z0-9_$:\-]+(?=[=}\s\/.]))/,/^(?:\[[^\]]*\])/,/^(?:.)/,/^(?:\s+)/,/^(?:[a-zA-Z0-9_$\-\/]+)/,/^(?:$)/];
+lexer.conditions = {"mu":{"rules":[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,33],"inclusive":false},"emu":{"rules":[3],"inclusive":false},"com":{"rules":[4],"inclusive":false},"par":{"rules":[31,32],"inclusive":false},"INITIAL":{"rules":[0,1,2,33],"inclusive":true}};
 return lexer;})()
 parser.lexer = lexer;
 function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Parser;
@@ -808,6 +810,10 @@ Compiler.prototype = {
       val  = pair[1];
 
       if (this.options.stringParams) {
+        if(val.depth) {
+          this.addDepth(val.depth);
+        }
+        this.opcode('getContext', val.depth || 0);
         this.opcode('pushStringParam', val.stringModeValue, val.type);
       } else {
         this.accept(val);
@@ -891,7 +897,7 @@ Compiler.prototype = {
 
     if (this.options.knownHelpers[name]) {
       this.opcode('invokeKnownHelper', params.length, name);
-    } else if (this.knownHelpersOnly) {
+    } else if (this.options.knownHelpersOnly) {
       throw new Error("You specified knownHelpersOnly, but used the unknown helper " + name);
     } else {
       this.opcode('invokeHelper', params.length, name);
@@ -1392,16 +1398,18 @@ JavaScriptCompiler.prototype = {
 
     if (this.options.stringParams) {
       this.register('hashTypes', '{}');
+      this.register('hashContexts', '{}');
     }
   },
   pushHash: function() {
-    this.hash = {values: [], types: []};
+    this.hash = {values: [], types: [], contexts: []};
   },
   popHash: function() {
     var hash = this.hash;
     this.hash = undefined;
 
     if (this.options.stringParams) {
+      this.register('hashContexts', '{' + hash.contexts.join(',') + '}');
       this.register('hashTypes', '{' + hash.types.join(',') + '}');
     }
     this.push('{\n    ' + hash.values.join(',\n    ') + '\n  }');
@@ -1544,14 +1552,18 @@ JavaScriptCompiler.prototype = {
   // and pushes the hash back onto the stack.
   assignToHash: function(key) {
     var value = this.popStack(),
+        context,
         type;
 
     if (this.options.stringParams) {
       type = this.popStack();
-      this.popStack();
+      context = this.popStack();
     }
 
     var hash = this.hash;
+    if (context) {
+      hash.contexts.push("'" + key + "': " + context);
+    }
     if (type) {
       hash.types.push("'" + key + "': " + type);
     }
@@ -1612,12 +1624,7 @@ JavaScriptCompiler.prototype = {
       else { programParams.push("depth" + (depth - 1)); }
     }
 
-    if(depths.length === 0) {
-      return "self.program(" + programParams.join(", ") + ")";
-    } else {
-      programParams.shift();
-      return "self.programWithDepth(" + programParams.join(", ") + ")";
-    }
+    return (depths.length === 0 ? "self.program(" : "self.programWithDepth(") + programParams.join(", ") + ")";
   },
 
   register: function(name, val) {
@@ -1749,7 +1756,9 @@ JavaScriptCompiler.prototype = {
       .replace(/\\/g, '\\\\')
       .replace(/"/g, '\\"')
       .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r') + '"';
+      .replace(/\r/g, '\\r')
+      .replace(/\u2028/g, '\\u2028')   // Per Ecma-262 7.3 + 7.8.4
+      .replace(/\u2029/g, '\\u2029') + '"';
   },
 
   setupHelper: function(paramSize, name, missingParams) {
@@ -1805,6 +1814,7 @@ JavaScriptCompiler.prototype = {
     if (this.options.stringParams) {
       options.push("contexts:[" + contexts.join(",") + "]");
       options.push("types:[" + types.join(",") + "]");
+      options.push("hashContexts:hashContexts");
       options.push("hashTypes:hashTypes");
     }
 
@@ -1855,7 +1865,7 @@ JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
 };
 
 Handlebars.precompile = function(input, options) {
-  if (!input || (typeof input !== 'string' && input.constructor !== Handlebars.AST.ProgramNode)) {
+  if (input == null || (typeof input !== 'string' && input.constructor !== Handlebars.AST.ProgramNode)) {
     throw new Handlebars.Exception("You must pass a string or Handlebars AST to Handlebars.precompile. You passed " + input);
   }
 
@@ -1869,7 +1879,7 @@ Handlebars.precompile = function(input, options) {
 };
 
 Handlebars.compile = function(input, options) {
-  if (!input || (typeof input !== 'string' && input.constructor !== Handlebars.AST.ProgramNode)) {
+  if (input == null || (typeof input !== 'string' && input.constructor !== Handlebars.AST.ProgramNode)) {
     throw new Handlebars.Exception("You must pass a string or Handlebars AST to Handlebars.compile. You passed " + input);
   }
 
