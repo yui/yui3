@@ -217,9 +217,14 @@ treeSuite.add(new Y.Test.Case({
             {id: 'two'},
             {id: 'three'}
         ]});
+
+        // Save the errorFn config so we can restore it later.
+        this._configErrorFn = Y.config.errorFn;
     },
 
     tearDown: function () {
+        Y.config.errorFn = this._configErrorFn;
+
         this.tree.destroy();
         delete this.tree;
     },
@@ -323,6 +328,18 @@ treeSuite.add(new Y.Test.Case({
 
         this.tree.destroyNode(node);
         this.tree.createNode(node);
+    },
+
+    'createNode() should return `null` when given a destroyed node if an errorFn handles the error': function () {
+
+        Y.config.errorFn = function () {
+            return true;
+        };
+
+        var node = this.tree.createNode();
+
+        this.tree.destroyNode(node);
+        Assert.isNull(this.tree.createNode(node));
     },
 
     'destroyNode() should destroy the specified node': function () {
@@ -485,6 +502,38 @@ treeSuite.add(new Y.Test.Case({
         Assert.areSame(0, newParent.indexOf(node), 'node should actually be a child of its new parent');
         Assert.areSame(2, this.tree.children.length, 'root node should have two children');
         Assert.areSame(-1, this.tree.rootNode.indexOf(node), 'node should no longer be a child of the root node');
+    },
+
+    'insertNode() should return `null` if a destroyed node is inserted and an errorFn handles the error': function () {
+        Y.config.errorFn = function () {
+            return true;
+        };
+
+        var node = this.tree.createNode();
+
+        this.tree.destroyNode(node);
+        Assert.isNull(this.tree.insertNode(this.tree.rootNode, node));
+    },
+
+    'insertNode() should only return actual inserted nodes if a destroyed node is inserted as part of an array and an errorFn handles the error': function () {
+        Y.config.errorFn = function () {
+            return true;
+        };
+
+        var nodes = [
+            this.tree.createNode(),
+            this.tree.createNode(),
+            this.tree.createNode()
+        ];
+
+        this.tree.destroyNode(nodes[1]);
+
+        var inserted = this.tree.insertNode(this.tree.rootNode, nodes);
+
+        Assert.isArray(inserted, 'should return an array of inserted nodes');
+        Assert.areSame(2, inserted.length, 'only two nodes should have been inserted');
+        Assert.areSame(nodes[0], inserted[0], 'node 0 should be inserted');
+        Assert.areSame(nodes[2], inserted[1], 'node 2 should be inserted');
     },
 
     'prependNode() should prepend a node to the beginning of the specified parent node': function () {
@@ -684,6 +733,20 @@ treeSuite.add(new Y.Test.Case({
         this.tree.traverseNode(node, function () {
             Assert.fail('callback should not be called');
         });
+    },
+
+    'traverseNode() should not traverse a destroyed node if an errorFn handles the error': function () {
+        Y.config.errorFn = function () {
+            return true;
+        };
+
+        var node = this.tree.createNode();
+
+        this.tree.destroyNode(node);
+
+        Assert.isUndefined(this.tree.traverseNode(node, function () {
+            Assert.fail('callback should not be called');
+        }), 'should return undefined');
     }
 }));
 
@@ -1180,6 +1243,11 @@ nodeSuite.add(new Y.Test.Case({
         Assert.isTrue(this.tree.rootNode.isRoot(), 'should be true for root node');
         Assert.isFalse(this.node.isRoot(), 'should be false for non-root node');
         Assert.isFalse(this.unattachedNode.isRoot(), 'should be false for an unattached node');
+    },
+
+    'isRoot() should return `false` on destroyed nodes': function () {
+        this.node.remove({destroy: true});
+        Assert.isFalse(this.node.isRoot());
     },
 
     'next() should return the next sibling': function () {
