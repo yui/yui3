@@ -1,6 +1,7 @@
 /**
  Provides keyboard navigation of DataTable cells and support for adding other
  keyboard actions.
+
  @module datatable
  @submodule datatable-keynav
 */
@@ -14,7 +15,6 @@ var arrEach = Y.Array.each,
 
  @class DataTable.KeyNav
  @for DataTable
- @author Daniel Barreiro
 */
     DtKeyNav = function (){};
 
@@ -22,8 +22,6 @@ var arrEach = Y.Array.each,
 Mapping of key codes to friendly key names that can be used in the
 [keyActions](#property_keyActions) property and [ARIA_ACTIONS](#property_ARIA_ACTIONS)
 property.
-
-When a keycode has an alias in this table, the alias must be used.
 
 It contains aliases for the following keys:
     <ul>
@@ -147,7 +145,7 @@ Y.mix( DtKeyNav.prototype, {
     EventFacade as its only argument.
 
     If the value is a string and it cannot be resolved into a method,
-    it will be assumed to be the name of an event to fire. The listener to that
+    it will be assumed to be the name of an event to fire. The listener for that
     event will receive an EventFacade containing references to the cell that has the focus,
     the row, column and, unless it is a header row, the record it corresponds to.
     The second argument will be the original EventFacade for the keyboard event.
@@ -314,16 +312,17 @@ Y.mix( DtKeyNav.prototype, {
     @private
     */
     _onKeyNavKeyDown: function (e) {
-        var key    = DtKeyNav.KEY_NAMES[e.keyCode] || e.keyCode,
+        var keyCode = e.keyCode,
+            keyName = DtKeyNav.KEY_NAMES[keyCode] || keyCode,
             action;
 
         arrEach(['alt', 'ctrl', 'meta', 'shift'], function (modifier) {
             if (e[modifier + 'Key']) {
-                key = modifier + '-' + key;
-
+                keyCode = modifier + '-' + keyCode;
+                keyName = modifier + '-' + keyName;
             }
         });
-        action = this.keyActions[key];
+        action = this.keyActions[keyCode] || this.keyActions[keyName];
 
         switch (typeof action) {
             case 'string':
