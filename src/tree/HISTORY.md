@@ -9,10 +9,15 @@ Tree Change History
   node instead of failing cryptically (or succeeding when they shouldn't).
   [Ryan Grove]
 
+* The `Tree.Node#isRoot()` method now returns `false` on destroyed nodes instead
+  of causing an exception. [Ryan Grove]
+
+
 3.10.1
 ------
 
 * No changes.
+
 
 3.10.0
 ------

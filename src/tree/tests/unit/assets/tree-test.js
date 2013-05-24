@@ -1245,6 +1245,11 @@ nodeSuite.add(new Y.Test.Case({
         Assert.isFalse(this.unattachedNode.isRoot(), 'should be false for an unattached node');
     },
 
+    'isRoot() should return `false` on destroyed nodes': function () {
+        this.node.remove({destroy: true});
+        Assert.isFalse(this.node.isRoot());
+    },
+
     'next() should return the next sibling': function () {
         var nextNode = this.tree.rootNode.append({});
         Assert.areSame(nextNode, this.node.next(), 'should be the next sibling');
