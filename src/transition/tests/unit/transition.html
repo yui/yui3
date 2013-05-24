@@ -910,12 +910,15 @@ YUI({
                     count = 0;
 
                 nodes.toggleView('fade', function() {
-                    test.resume(function () {
-                        Y.Assert.areEqual('none', nodes.item(0).getStyle('display'));
-                        Y.Assert.areEqual('none', nodes.item(1).getStyle('display'));
-                        Y.Assert.areEqual('0', nodes.item(0).getStyle('opacity'));
-                        Y.Assert.areEqual('0', nodes.item(1).getStyle('opacity'));
-                    });
+                    if (!count) {
+                        count++;
+                        test.resume(function () {
+                            Y.Assert.areEqual('none', nodes.item(0).getStyle('display'));
+                            Y.Assert.areEqual('none', nodes.item(1).getStyle('display'));
+                            Y.Assert.areEqual('0', nodes.item(0).getStyle('opacity'));
+                            Y.Assert.areEqual('0', nodes.item(1).getStyle('opacity'));
+                        });
+                    }
                 });
 
                 test.wait(1000);
