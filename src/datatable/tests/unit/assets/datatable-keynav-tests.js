@@ -92,15 +92,15 @@ YUI.add('datatable-keynav-tests', function(Y) {
             fireKey(END);
             check('e2',10);
             fireKey(LEFT);
-            check('d2',11)
+            check('d2',11);
             fireKey(UP);
-            check('d1',12)
+            check('d1',12);
             fireKey(PGUP);
-            check('d',13)
+            check('d',13);
             fireKey(DOWN);
-            check('d1',14)
+            check('d1',14);
             fireKey(UP); // should cross to the header section
-            check('d',15)
+            check('d',15);
             fireKey(PGDN);
             check('d19',16);
             fireKey(DOWN);// shouldn't move
@@ -136,7 +136,7 @@ YUI.add('datatable-keynav-tests', function(Y) {
             fireKey(PGDN);
             check('a19',3);
             fireKey(PGUP);
-            check('a1',4)
+            check('a1',4);
             dt.destroy();
 
         }
