@@ -199,7 +199,12 @@ suite.add(new Y.Test.Case({
                 '{{#with this}}{{#with this}}FOO{{/with}}{{/with}}' +
                 '{{#with this}}{{#with this}}BAR{{/with}}{{/with}}';
 
-        Assert.areSame('FOOBAR', H.render(template));
+        // NOTE: As of v1.0.11, a context object must not be empty for the body
+        // of a `{{#with}}` statement to be executed.
+        // See: https://github.com/wycats/handlebars.js/issues/518
+        //
+        // Assert.areSame('FOOBAR', H.render(template));
+        Assert.areSame('FOOBAR', H.render(template, {}));
     }
 }));
 

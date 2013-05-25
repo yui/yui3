@@ -1,10 +1,23 @@
 Tree Change History
 ===================
 
+@VERSION@
+------
+
+* The `Tree#createNode()`, `Tree#insertNode()`, and `Tree#traverseNode()`
+  methods now throw or log informative error messages when given a destroyed
+  node instead of failing cryptically (or succeeding when they shouldn't).
+  [Ryan Grove]
+
+* The `Tree.Node#isRoot()` method now returns `false` on destroyed nodes instead
+  of causing an exception. [Ryan Grove]
+
+
 3.10.1
 ------
 
 * No changes.
+
 
 3.10.0
 ------

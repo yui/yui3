@@ -262,7 +262,6 @@ var WIDGET       = 'widget',
             //var host = this.get(HOST);
 
             this._uiSetHostVisibleModal(this.get(VISIBLE));
-            this._uiSetHostZIndexModal(this.get(Z_INDEX));
 
         },
 

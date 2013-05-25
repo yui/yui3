@@ -14,3 +14,6 @@ If you've used DocumentCloud's excellent Backbone.js framework, many of the
 classes and APIs provided by the app framework will look familiar to you. There
 are important differences, though, and the YUI app framework takes full
 advantage of YUI's powerful component and event infrastructure under the hood.
+
+
+[app]: http://yuilibrary.com/yui/docs/app/

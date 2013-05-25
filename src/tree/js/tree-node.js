@@ -326,7 +326,7 @@ TreeNode.prototype = {
         otherwise.
     **/
     isInTree: function () {
-        if (this.tree.rootNode === this) {
+        if (this.tree && this.tree.rootNode === this) {
             return true;
         }
 
@@ -341,7 +341,7 @@ TreeNode.prototype = {
         otherwise.
     **/
     isRoot: function () {
-        return this.tree.rootNode === this;
+        return !!(this.tree && this.tree.rootNode === this);
     },
 
     /**
