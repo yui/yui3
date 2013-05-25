@@ -1,0 +1,209 @@
+<div class="intro">
+<p>{{description}}</p>
+</div>
+
+{{>getting-started}}
+
+<h3 id="creating">Creating a {{displayName}} Object</h3>
+
+<p>A continuous paginator is one that has no number of items to display. This is created by simply instantiating a new paginator.</p>
+```
+var continuous = new Y.Paginator();
+```
+
+<p>If you know the total number of items you have avilable, you can create a paginator that can tell you the total number of pages and allow you to go to a specific page within that range.</p>
+```
+var pg = new Y.Paginator({
+    totalItems: 100
+});
+```
+
+<h3>Creating a Paginator UI</h3>
+<p>It is important to remember that {{displayName}} does not have any associated interface designs, so you will need to do this yourself. This could be as simple as having a list of numbers that adjust the paginator's page when they are clicked.</p>
+```
+<ul class="spiffy-paging">
+    <li><a href="?pg=1" data-page="1">1</a></li>
+    <li><a href="?pg=2" data-page="2">2</a></li>
+    <li><a href="?pg=3" data-page="3">3</a></li>
+    <li><a href="?pg=4" data-page="4">4</a></li>
+    <li><a href="?pg=5" data-page="5">5</a></li>
+</ul>
+
+<script>
+YUI().use('paginator', 'node', function (Y) {
+    var pageUI = Y.one('.spiffy-paging'),
+        pg = new Y.Paginator({
+            totalItems: 5,
+            itemsPerPage: 1
+        });
+
+    pg.after('pageChange', function (e) {
+        // fetch new page data
+    });
+
+    pageUI.delegate('click', function (e) {
+        e.preventDefault();
+        pg.set('page', parseInt(e.currentTarget.getData('page'), 10));
+    }, 'a');
+});
+</script>
+```
+
+<h2 id="understanding">Understanding {{displayName}}</h2>
+<p>Paginators are very useful when you have more information avialable than you wish to show at one time.</p>
+
+<p>This could be something as simple as a <a href="./slideshow.html">slideshow</a>, where you have a few panels but only wish to show one at a time, a <a href="./table.html">table</a> of the fifty states and their population displaying 10 at a time, or a <a href="./search.html">search results page</a> displaying 20 items of millions.</p>
+
+<p>To get started, let's look at the attributes available to us that allow a paginator to work.</p>
+
+<h3>Y.Paginator: Attributes</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Attribute</th>
+            <th>Data type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>itemsPerPage</td>
+            <td>Number</td>
+            <td>
+                Maximum number of items per page. A value of negative one (-1) indicates all items on one page.
+            </td>
+        </tr>
+        <tr>
+            <td>page</td>
+            <td>Number</td>
+            <td>
+                Current page count. First page is 1.
+            </td>
+        </tr>
+        <tr>
+            <td>totalItems</td>
+            <td>Number</td>
+            <td>
+                Total number of items in all pages.
+            </td>
+        </tr>
+        <tr>
+            <td>totalPages</td>
+            <td>Number</td>
+            <td>
+                <b>Read Only</b> Total number of pages to display.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<h3>Y.Paginator: Methods</h3>
+<p>Paginator also comes with a few methods to help us traverse through the pages in order.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Returns</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>hasNextPage</td>
+            <td>Boolean</td>
+            <td>
+                <p><em>True</em> if there is a next page, otherwise <em>false</em>.</p>
+                <p>If totalItems isn't set, assume there is always next page.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>hasPrevPage</td>
+            <td>Boolean</td>
+            <td>
+                <em>True</em> if there is a previous page, otherwise <em>false</em>.
+            </td>
+        </tr>
+        <tr>
+            <td>nextPage</td>
+            <td><i>chainable</i></td>
+            <td>
+                Sets the page to the next page in the set, if there is a next page.
+            </td>
+        </tr>
+        <tr>
+            <td>prevPage</td>
+            <td><i>chainable</i></td>
+            <td>
+                Sets the page to the previous page in the set, if there is a previous page.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Paging URLs</h2>
+<p>Paginator also has the ability to format urls for you based on the given page number and a provided URL template.</p>
+
+<p>To get these features, you need only `use()` '<em>paginator-url</em>'. Adding '<em>paginator-url</em>' to your `use()` statement will add the following attributes and methods:</p>
+
+<h3>Y.Paginator.Url: Attributes</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Attribute</th>
+            <th>Data type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>pageUrl</td>
+            <td>String</td>
+            <td>
+                <p>URL to return formatted with the page number. URL uses Y.Lang.sub for page number stubstitutions.</p>
+                <p>For example, if the page number is `3`, setting the `pageUrl` to `"?pg={page}"`, will result in `"?pg=3"`</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<h3>Y.Paginator.Url: Methods</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Returns</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>formatPageUrl</td>
+            <td>String | null</td>
+            <td>
+                <p>Returns a formated URL for the provided page number.</p>
+                <p>You can provide a page number to format if you choose. If you do not provide a page number, the current page will be used.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>nextPageUrl</td>
+            <td>String | null</td>
+            <td>
+                Returns a formated URL for the next page.
+            </td>
+        </tr>
+        <tr>
+            <td>prevPageUrl</td>
+            <td>String | null</td>
+            <td>
+                Returns a formated URL for the previous page.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+

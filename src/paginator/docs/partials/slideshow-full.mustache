@@ -1,0 +1,18 @@
+{{>slideshow-css-styles}}
+
+{{>slideshow-html-markup}}
+
+<script>
+YUI().use('node', 'paginator',  'event-hover', 'gallery-timer', function (Y) {
+{{>slideshow-js-vars}}
+
+{{>slideshow-js-pageChange}}
+
+{{>slideshow-js-click}}
+
+{{>slideshow-js-timer}}
+
+{{>slideshow-js-pause}}
+
+});
+</script>

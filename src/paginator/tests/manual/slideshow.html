@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Paginator Demo</title>
+<link rel="stylesheet" type="text/css" href="http://localhost:5000/build/cssreset/cssreset-min.css">
+<link rel="stylesheet" type="text/css" href="http://localhost:5000/build/cssfonts/cssfonts-min.css">
+<style>
+body {
+    margin: 30px;
+}
+.slides {
+    width: 700px;
+    height: 400px;
+    position: relative;
+    overflow: hidden;;
+}
+.slides li {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.slides img {
+    top: 0;
+    opacity: 0;
+    -webkit-filter: grayscale(0%);
+    -webkit-transition: opacity 0.4s 0.3s cubic-bezier(.05, .16, .15, .95),
+                        -webkit-filter 1s 0 ease;
+}
+.slides img:hover {
+    -webkit-filter: grayscale(100%);
+    -webkit-transition: -webkit-filter 1s ease-in;
+}
+.slides .caption {
+    position: absolute;
+    bottom: -50px;
+    right: -100%;
+    line-height: 2;
+    font-size: 24px;
+    background: hsla(250, 50%, 10%, 0.4);
+    padding: 0 1em;
+    color: hsl(15, 50%, 96%);
+    border-top-left-radius: 10px;
+    text-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5);
+    opacity: 0;
+    -webkit-transition: opacity 0.4s 0s cubic-bezier(.05, .16, .15, .95),
+                        right 0.4s 0.3s cubic-bezier(.05, .54, 0, .39),
+                        bottom 0.4s 0s cubic-bezier(.41, .03, .76, .14);
+}
+.slides .active img {
+    opacity: 1;
+    -webkit-transition: opacity 0.4s 0s cubic-bezier(.18, .06, .95, .32);
+}
+.slides .active .caption {
+    opacity: 1;
+    bottom: 0px;
+    right: 0%;
+    -webkit-transition: opacity 0.4s 0.3s cubic-bezier(.18, .06, .95, .32),
+                        right 0.4s 0.3s cubic-bezier(.05, .54, 0, .39);
+}
+
+.yui3-paginator {
+    width: 700px;
+    text-align: right;
+    margin-top: 5px;
+}
+.yui3-paginator .yui3-paginator-content .yui3-paginator-page {
+    border-radius: 10px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    padding: 0;
+    overflow: hidden;
+    text-indent: -999px;
+}
+.yui3-paginator .yui3-paginator-content .yui3-paginator-page:hover,
+.yui3-paginator .yui3-paginator-content .yui3-paginator-control-selected,
+.yui3-paginator .yui3-paginator-content .yui3-paginator-control-selected:hover {
+    box-shadow: inset 0 0 0 3px #fff;
+    background: hsl(222, 65%, 52%);
+}
+
+</style>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+
+    <div class="slideshow">
+        <ul class="slides">
+            <li>
+                <img src="assets/slides/1.png">
+                <p class="caption">Birds and the bees?</p>
+            </li>
+            <li>
+                <img src="assets/slides/2.png">
+                <p class="caption">Yeah, I didn't think so either.</p>
+            </li>
+            <li class="active">
+                <img src="assets/slides/3.png">
+                <p class="caption">Because the internet needs more kittens.</p>
+            </li>
+            <li>
+                <img src="assets/slides/4.png">
+                <p class="caption">... and bears, oh my!</p>
+            </li>
+        </ul>
+    </div>
+
+
+
+<script type="text/javascript">
+YUI({
+    fiter: 'raw',
+    combine: false
+}).use("paginator", 'paginator-list', function (Y) {
+
+    Y.Paginator.Slideshow = Y.Base.create('paginator-slideshow', Y.Paginator.List, [], {
+
+        template:   '<ul class="<%= data.classNames.list %>"><%== data.pages %></ul>',
+
+    });
+
+// SLIDESHOW
+    var slideshow = Y.one('.slideshow'),
+        slides = slideshow.all('li');
+
+// PAGINATOR
+    var pg = new Y.Paginator({
+                        totalItems: slides.size(),
+                        itemsPerPage: 1,
+                        page: slides.indexOf(slideshow.one('.active')) + 1,
+                        view: 'Paginator.Slideshow',
+                        circular: true
+                    });
+    var pgTimer = null;
+
+    pg.render(slideshow);
+
+    pg.after('pageChange', function(e) {
+        slides.item(e.prevVal - 1).removeClass('active');
+        slides.item(e.newVal - 1).addClass('active');
+        if (pgTimer) {
+            pgTimer.cancel();
+        }
+        pgTimer = Y.later(4000, this, function(t) {
+            pg.next();
+        });
+    });
+
+    pgTimer = Y.later(5000, this, function (t) {
+        pg.next();
+    });
+
+});
+</script>
+</body>
+</html>
+
