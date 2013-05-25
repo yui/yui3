@@ -1696,6 +1696,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         "es",
         "es-AR",
         "fr",
+        "hu",
         "it",
         "ja",
         "nb-NO",
