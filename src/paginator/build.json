@@ -1,0 +1,21 @@
+{
+    "name": "paginator",
+    "builds": {
+        "paginator": {
+            "jsfiles": [
+                "paginator.js"
+            ]
+        },
+        "paginator-core": {
+            "jsfiles": [
+                "paginator-core.js"
+            ]
+        },
+        "paginator-url": {
+            "jsfiles": [
+                "paginator-url.js"
+            ]
+        }
+    }
+}
+

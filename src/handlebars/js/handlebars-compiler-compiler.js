@@ -183,6 +183,10 @@ Compiler.prototype = {
       val  = pair[1];
 
       if (this.options.stringParams) {
+        if(val.depth) {
+          this.addDepth(val.depth);
+        }
+        this.opcode('getContext', val.depth || 0);
         this.opcode('pushStringParam', val.stringModeValue, val.type);
       } else {
         this.accept(val);
@@ -266,7 +270,7 @@ Compiler.prototype = {
 
     if (this.options.knownHelpers[name]) {
       this.opcode('invokeKnownHelper', params.length, name);
-    } else if (this.knownHelpersOnly) {
+    } else if (this.options.knownHelpersOnly) {
       throw new Error("You specified knownHelpersOnly, but used the unknown helper " + name);
     } else {
       this.opcode('invokeHelper', params.length, name);
@@ -767,16 +771,18 @@ JavaScriptCompiler.prototype = {
 
     if (this.options.stringParams) {
       this.register('hashTypes', '{}');
+      this.register('hashContexts', '{}');
     }
   },
   pushHash: function() {
-    this.hash = {values: [], types: []};
+    this.hash = {values: [], types: [], contexts: []};
   },
   popHash: function() {
     var hash = this.hash;
     this.hash = undefined;
 
     if (this.options.stringParams) {
+      this.register('hashContexts', '{' + hash.contexts.join(',') + '}');
       this.register('hashTypes', '{' + hash.types.join(',') + '}');
     }
     this.push('{\n    ' + hash.values.join(',\n    ') + '\n  }');
@@ -919,14 +925,18 @@ JavaScriptCompiler.prototype = {
   // and pushes the hash back onto the stack.
   assignToHash: function(key) {
     var value = this.popStack(),
+        context,
         type;
 
     if (this.options.stringParams) {
       type = this.popStack();
-      this.popStack();
+      context = this.popStack();
     }
 
     var hash = this.hash;
+    if (context) {
+      hash.contexts.push("'" + key + "': " + context);
+    }
     if (type) {
       hash.types.push("'" + key + "': " + type);
     }
@@ -987,12 +997,7 @@ JavaScriptCompiler.prototype = {
       else { programParams.push("depth" + (depth - 1)); }
     }
 
-    if(depths.length === 0) {
-      return "self.program(" + programParams.join(", ") + ")";
-    } else {
-      programParams.shift();
-      return "self.programWithDepth(" + programParams.join(", ") + ")";
-    }
+    return (depths.length === 0 ? "self.program(" : "self.programWithDepth(") + programParams.join(", ") + ")";
   },
 
   register: function(name, val) {
@@ -1124,7 +1129,9 @@ JavaScriptCompiler.prototype = {
       .replace(/\\/g, '\\\\')
       .replace(/"/g, '\\"')
       .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r') + '"';
+      .replace(/\r/g, '\\r')
+      .replace(/\u2028/g, '\\u2028')   // Per Ecma-262 7.3 + 7.8.4
+      .replace(/\u2029/g, '\\u2029') + '"';
   },
 
   setupHelper: function(paramSize, name, missingParams) {
@@ -1180,6 +1187,7 @@ JavaScriptCompiler.prototype = {
     if (this.options.stringParams) {
       options.push("contexts:[" + contexts.join(",") + "]");
       options.push("types:[" + types.join(",") + "]");
+      options.push("hashContexts:hashContexts");
       options.push("hashTypes:hashTypes");
     }
 
@@ -1230,7 +1238,7 @@ JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
 };
 
 Handlebars.precompile = function(input, options) {
-  if (!input || (typeof input !== 'string' && input.constructor !== Handlebars.AST.ProgramNode)) {
+  if (input == null || (typeof input !== 'string' && input.constructor !== Handlebars.AST.ProgramNode)) {
     throw new Handlebars.Exception("You must pass a string or Handlebars AST to Handlebars.precompile. You passed " + input);
   }
 
@@ -1244,7 +1252,7 @@ Handlebars.precompile = function(input, options) {
 };
 
 Handlebars.compile = function(input, options) {
-  if (!input || (typeof input !== 'string' && input.constructor !== Handlebars.AST.ProgramNode)) {
+  if (input == null || (typeof input !== 'string' && input.constructor !== Handlebars.AST.ProgramNode)) {
     throw new Handlebars.Exception("You must pass a string or Handlebars AST to Handlebars.compile. You passed " + input);
   }
 

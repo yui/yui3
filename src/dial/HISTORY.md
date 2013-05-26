@@ -3,9 +3,10 @@ Dial Change History
 
 @VERSION@
 ------
-  * Fixed GitHub Issue #591: Dial was intermittently sticking at min when
+* Fixed GitHub Issue #591: Dial was intermittently sticking at min when
   drag below min, and then back above min. This was only happenening when
   min/max was at a position of North on the dial.
+* Added Hungarian language support [Gábor Kovács]
 
 3.10.1
 ------

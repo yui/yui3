@@ -1,0 +1,9 @@
+    function updateControls() {
+        var hasNext = pg.hasNextPage(),
+            hasPrev = pg.hasPrevPage();
+
+        controls.one('.control-first a').toggleClass('disabled', !hasPrev);
+        controls.one('.control-prev a').toggleClass('disabled', !hasPrev);
+        controls.one('.control-next a').toggleClass('disabled', !hasNext);
+        controls.one('.control-last a').toggleClass('disabled', !hasNext);
+    }

@@ -1,0 +1,32 @@
+    FlickrSearch.PageView = Y.Base.create('page-view', Y.View, [], {
+
+        // We will be displaying the images in list elements, so we need to
+        // ensure the parent element is semantically correct
+        containerTemplate: '<ul></ul>',
+
+        // Our image template is dictated from the Flickr API. Here we set up
+        // placeholders that will be substitued by the photo's API data in
+        // order to display the correct photo
+        imageTemplate: '<img src="http://farm{farm}.staticflickr.com/{server}/{id}_{secret}_q.jpg">',
+
+        // In order to add photos to the container, they are expected to be in
+        // the format from the API, this would mean an Array of photos.
+        //
+        // We loop through each of these photo data objects and generate an
+        // image element. Then we append all the image elements to our
+        // container
+        addPhotos: function (photos) {
+            var container = this.get('container'),
+                photoItems = '',
+                i,
+                len;
+
+            for (i = 0, len = photos.length; i < len; i++) {
+                photoItems += Y.Lang.sub('<li>' + this.imageTemplate + '</li>', photos[i]);
+            }
+
+            this.get('container').append(photoItems)
+        }
+
+    });
+

@@ -616,6 +616,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
         "es",
         "es-AR",
         "fr",
+        "hu",
         "it",
         "ja",
         "nb-NO",

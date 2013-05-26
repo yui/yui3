@@ -1,0 +1,29 @@
+    // node references
+    var demo = Y.one('#demo'),
+        tbody = demo.one('tbody'),
+        controls = demo.one('.controls'),
+
+        // templates
+        rowTemplate = '<tr><td>{count}</td><td>{state}</td><td>{abbr}</td><td align="right">{population}</td></tr>',
+        currentPageTemplate = 'Page {page} of {totalPages}',
+
+        // data to display
+        data = [
+            { state: "Alabama",        abbr: "AL", population: 4447100  },
+            { state: "Alaska",         abbr: "AK", population: 626932   },
+            // ...
+            { state: "Wisconsin",      abbr: "WI", population: 5363675  },
+            { state: "Wyoming",        abbr: "WY", population: 493782   }
+        ],
+
+        // paginator
+        pg = new Y.Paginator({
+            itemsPerPage: 10,
+            totalItems: data.length
+        });
+
+    // let's do a one time pass through the data to format the population numbers
+    Y.Array.each(data, function (val, key) {
+        val.population = Y.Number.format(val.population, {thousandsSeparator: ','});
+    });
+

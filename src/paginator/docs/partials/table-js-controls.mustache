@@ -1,0 +1,23 @@
+    Y.one('#demo').delegate('click', function (e) {
+        e.preventDefault();
+
+        var control = e.currentTarget,
+            type = control.getData('type');
+
+        if (control.hasClass('disabled')) {
+            return;
+        }
+
+        switch (type) {
+            case 'first': pg.set('page', 1); break;
+            case 'prev': pg.prevPage(); break;
+            case 'next': pg.nextPage(); break;
+            case 'last': pg.set('page', pg.get('totalPages')); break;
+        }
+
+    }, '.control');
+
+    Y.one('#demo .perPage').on('change', function (e) {
+        pg.set('itemsPerPage', e.currentTarget.get('value'));
+    });
+
