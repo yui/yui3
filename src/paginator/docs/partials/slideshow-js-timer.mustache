@@ -1,0 +1,17 @@
+    // create a timer to go to the next slide automatically
+    // we use timer to obtain a pause/resume relationship
+    autoPlay = new Y.Timer({
+        length: 2500,
+        repeatCount: 0});
+
+    autoPlay.after('timer', function (e) {
+        if (pg.hasNextPage()) {
+            pg.nextPage();
+        } else {
+            pg.set('page', 1);
+        }
+    });
+
+    // start the autoPlay timer
+    autoPlay.start();
+

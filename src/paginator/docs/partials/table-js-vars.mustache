@@ -1,0 +1,74 @@
+    // node references
+    var demo = Y.one('#demo'),
+        tbody = demo.one('tbody'),
+        controls = demo.one('.controls'),
+
+        // templates
+        rowTemplate = '<tr><td>{count}</td><td>{state}</td><td>{abbr}</td><td align="right">{population}</td></tr>',
+        currentPageTemplate = 'Page {page} of {totalPages}',
+
+        // data to display
+        data = [
+            { state: "Alabama",        abbr: "AL", population: 4447100  },
+            { state: "Alaska",         abbr: "AK", population: 626932   },
+            { state: "Arizona",        abbr: "AZ", population: 5130632  },
+            { state: "Arkansas",       abbr: "AR", population: 2673400  },
+            { state: "California",     abbr: "CA", population: 33871648 },
+            { state: "Colorado",       abbr: "CO", population: 4301261  },
+            { state: "Connecticut",    abbr: "CT", population: 3405565  },
+            { state: "Delaware",       abbr: "DE", population: 783600   },
+            { state: "Florida",        abbr: "FL", population: 15982378 },
+            { state: "Georgia",        abbr: "GA", population: 8186453  },
+            { state: "Hawaii",         abbr: "HI", population: 1211537  },
+            { state: "Idaho",          abbr: "ID", population: 1293953  },
+            { state: "Illinois",       abbr: "IL", population: 12419293 },
+            { state: "Indiana",        abbr: "IN", population: 6080485  },
+            { state: "Iowa",           abbr: "IA", population: 2926324  },
+            { state: "Kansas",         abbr: "KS", population: 2688418  },
+            { state: "Kentucky",       abbr: "KY", population: 4041769  },
+            { state: "Louisiana",      abbr: "LA", population: 4468976  },
+            { state: "Maine",          abbr: "ME", population: 1274923  },
+            { state: "Maryland",       abbr: "MD", population: 5296486  },
+            { state: "Massachusetts",  abbr: "MA", population: 6349097  },
+            { state: "Michigan",       abbr: "MI", population: 9938444  },
+            { state: "Minnesota",      abbr: "MN", population: 4919479  },
+            { state: "Mississippi",    abbr: "MS", population: 2844658  },
+            { state: "Missouri",       abbr: "MO", population: 5595211  },
+            { state: "Montana",        abbr: "MT", population: 902195   },
+            { state: "Nebraska",       abbr: "NE", population: 1711263  },
+            { state: "Nevada",         abbr: "NV", population: 1998257  },
+            { state: "New Hampshire",  abbr: "NH", population: 1235786  },
+            { state: "New Jersey",     abbr: "NJ", population: 8414350  },
+            { state: "New Mexico",     abbr: "NM", population: 1819046  },
+            { state: "New York",       abbr: "NY", population: 18976457 },
+            { state: "North Carolina", abbr: "NC", population: 8049313  },
+            { state: "North Dakota",   abbr: "ND", population: 642200   },
+            { state: "Ohio",           abbr: "OH", population: 11353140 },
+            { state: "Oklahoma",       abbr: "OK", population: 3450654  },
+            { state: "Oregon",         abbr: "OR", population: 3421399  },
+            { state: "Pennsylvania",   abbr: "PA", population: 12281054 },
+            { state: "Rhode Island",   abbr: "RI", population: 1048319  },
+            { state: "South Carolina", abbr: "SC", population: 4012012  },
+            { state: "South Dakota",   abbr: "SD", population: 754844   },
+            { state: "Tennessee",      abbr: "TN", population: 5689283  },
+            { state: "Texas",          abbr: "TX", population: 20851820 },
+            { state: "Utah",           abbr: "UH", population: 2233169  },
+            { state: "Vermont",        abbr: "VT", population: 608827   },
+            { state: "Virginia",       abbr: "VA", population: 7078515  },
+            { state: "Washington",     abbr: "WA", population: 5894121  },
+            { state: "West Virginia",  abbr: "WV", population: 1808344  },
+            { state: "Wisconsin",      abbr: "WI", population: 5363675  },
+            { state: "Wyoming",        abbr: "WY", population: 493782   }
+        ],
+
+        // paginator
+        pg = new Y.Paginator({
+            itemsPerPage: 10,
+            totalItems: data.length
+        });
+
+    // let's do a one time pass through the data to format the population numbers
+    Y.Array.each(data, function (val, key) {
+        val.population = Y.Number.format(val.population, {thousandsSeparator: ','});
+    });
+
