@@ -72,12 +72,12 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         Assert.areSame('', modelList.root);
     },
 
-    '`resourcePrefix` property should be an null by default': function () {
+    '`entityLocator` property should be an null by default': function () {
         var model     = new Y.TestModel(),
             modelList = new Y.TestModelList();
 
-        Assert.areSame(null, model.resourcePrefix);
-        Assert.areSame(null, modelList.resourcePrefix);
+        Assert.areSame(null, model.entityLocator);
+        Assert.areSame(null, modelList.entityLocator);
     },
 
     '`url` property should be an empty string by default': function () {
@@ -317,12 +317,12 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
-    'parse() should receive the response without the resourcePrefix when defined': function () {
+    'parse() should receive the response without the entityLocator when defined': function () {
         var model = new Y.TestModel(),
             responseText = '{"pie": {"id":1, "name":"Simon"}}',
             result;
 
-        model.resourcePrefix = 'pie';
+        model.entityLocator = 'pie';
         model.parse = function (res) {
             result = res;
         };
@@ -342,12 +342,12 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         Assert.isFalse(Y.Object.owns('pie'));
     },
 
-    'parse() should receive the response when no resourcePrefix is defined': function () {
+    'parse() should receive the response when no entityLocator is defined': function () {
         var model = new Y.TestModel(),
             responseText = '{"pie": {"id":1, "name":"Simon"}}',
             result;
 
-        model.resourcePrefix = 'pie';
+        model.entityLocator = 'pie';
         model.parse = function (res) {
             result = res;
         };
@@ -564,11 +564,11 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         model.save();
     },
 
-    "save() should include the resourcePrefix in it's entity": function () {
+    "save() should include the entityLocator in it's entity": function () {
         var model = new Y.TestModel({name: 'Simon'});
 
-        // setup the resourcePrefix
-        model.resourcePrefix = 'pie';
+        // setup the entityLocator
+        model.entityLocator = 'pie';
 
         // Overrides because `Y.io()` is too hard to test!
         model._sendSyncIORequest = function (config) {

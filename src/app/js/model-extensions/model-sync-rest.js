@@ -290,11 +290,21 @@ RESTSync.prototype = {
     url: '',
 
     /**
-    @property resourcePrefix
+    indicate where the model data is located within the json returned by the
+    server and sent to the server.
+
+    Example:
+    {
+      "user": { "username": "hojberg", name: "Simon Hojberg" }
+    }
+
+    In the above example the `entityLocator` would be `'user'`
+
+    @property entityLocator
     @type {Null|String}
     @default null
     **/
-    resourcePrefix: null,
+    entityLocator: null,
 
     // -- Lifecycle Methods ----------------------------------------------------
 
@@ -510,8 +520,8 @@ RESTSync.prototype = {
     _serialize: function (action) {
         var serialized = this.serialize(action);
 
-        if (typeof this.resourcePrefix === 'string') {
-            serialized = this._addResourcePrefix(serialized);
+        if (typeof this.entityLocator === 'string') {
+            serialized = this._addEntityLocator(serialized);
         }
 
         return serialized;
@@ -577,8 +587,8 @@ RESTSync.prototype = {
             response = this.parseIOResponse(response);
         }
 
-        if (typeof this.resourcePrefix === 'string') {
-            response = this._removeResourcePrefix(response);
+        if (typeof this.entityLocator === 'string') {
+            response = this._removeEntityLocator(response);
         }
 
         return this.parse(response);
@@ -586,22 +596,22 @@ RESTSync.prototype = {
 
     /**
     parse the response using Y.Model's parse method.
-    If a resourcePrefix is defined and in the response,
+    If an entityLocator is defined and in the response,
     return the nested object.
 
-    @method _removeResourcePrefix
+    @method _removeEntityLocator
     @param {Any} response Server response.
     @return {Object} Attribute hash.
     **/
-    _removeResourcePrefix: function (response) {
-        var prefix = this.resourcePrefix,
+    _removeEntityLocator: function (response) {
+        var locator = this.entityLocator,
             result;
 
-        // Get the nested object inside the prefix if it exists
+        // Get the nested object inside the entity locator if it exists
         if (response) {
             result = Y.Model.prototype.parse.call(this, response);
-            if (prefix && (prefix in result)) {
-                return result[prefix];
+            if (locator && (locator in result)) {
+                return result[locator];
             }
         }
 
@@ -609,17 +619,17 @@ RESTSync.prototype = {
     },
 
     /**
-    Add the resourcePrefix to the serialized string
+    Add the entityLocator to the serialized string
 
-    @method _addResourcePrefix
+    @method _addEntityLocator
     @param {String} serialized the serialized object
-    @return {String} serialized object nested with a resourcePrefix
+    @return {String} serialized object nested with a entityLocator
     **/
-    _addResourcePrefix: function (serialized) {
-        var prefix = this.resourcePrefix;
+    _addEntityLocator: function (serialized) {
+        var locator = this.entityLocator;
 
-        if (typeof prefix === 'string') {
-            serialized = '{"' + prefix + '":'+ serialized + '}';
+        if (typeof locator === 'string') {
+            serialized = '{"' + locator + '":'+ serialized + '}';
         }
 
         return serialized;
