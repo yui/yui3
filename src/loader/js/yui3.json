@@ -1182,7 +1182,8 @@
     },
     "dom-style": {
         "requires": [
-            "dom-base"
+            "dom-base",
+            "color-base"
         ]
     },
     "dom-style-ie": {
