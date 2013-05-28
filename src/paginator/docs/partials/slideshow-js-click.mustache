@@ -1,0 +1,13 @@
+    // when we click the control links we want to go to that slide
+    spiffy.delegate('click', function (e) {
+        e.preventDefault();
+        var control = e.currentTarget;
+
+        // if it's already active, do nothing
+        if (control.ancestor('li').hasClass(selectedClass)) {
+            return;
+        }
+
+        pg.set('page', parseInt(control.getHTML(), 10));
+    }, '.controls a');
+

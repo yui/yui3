@@ -1,6 +1,11 @@
 Date Change History
 ===================
 
+@VERSION@
+-------
+
+* Added Hungarian language support [Gábor Kovács]
+
 3.10.1
 ------
 

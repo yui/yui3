@@ -2,6 +2,7 @@ YUI.add('color-tests', function(Y) {
 
     var Assert = Y.Assert,
         Types = Y.Color.TYPES,
+        TRANSPARENT = 'transparent',
         testBasic = new Y.Test.Case({
             name: "Color Base Convertion Tests",
 
@@ -66,9 +67,9 @@ YUI.add('color-tests', function(Y) {
             },
 
             'test direct toArray conversions': function() {
-                Assert.areEqual(['f','f','f'].join(', '), Y.Color.toArray('fff').join(', '), 'toArray with hex3');
+                Assert.areEqual(['ff','00','00', 1].join(', '), Y.Color.toArray('f00').join(', '), 'toArray with hex3');
 
-                Assert.areEqual(['ff','00','00'].join(', '), Y.Color.toArray('#ff0000').join(', '), 'toArray with hex');
+                Assert.areEqual(['ff','00','00', 1].join(', '), Y.Color.toArray('#ff0000').join(', '), 'toArray with hex');
 
                 Assert.areEqual(['0','255','0', '1'].join(', '), Y.Color.toArray('rgb(0, 255, 0)').join(', '), 'toArray with rgb');
 
@@ -128,6 +129,12 @@ YUI.add('color-tests', function(Y) {
                 hex = Y.Color.toHex(rgb);
                 Assert.areSame(hex, "#610b38", "9. shoudl be #610B38");
                 Assert.areEqual(rgb, Y.Color.toRGB(hex), '9. toRGB(' + hex + ')');
+            },
+
+            'test for trasnparent': function () {
+                Y.Assert.areSame(TRANSPARENT, Y.Color.toHex(TRANSPARENT), 'trasnparent to hex');
+                Y.Assert.areSame(TRANSPARENT, Y.Color.toRGB(TRANSPARENT), 'trasnparent to rgb');
+                Y.Assert.areSame(TRANSPARENT, Y.Color.toRGBA(TRANSPARENT), 'transparent to rgba');
             }
 
     });

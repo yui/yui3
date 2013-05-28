@@ -1,0 +1,14 @@
+{{>search-css-styles}}
+{{>search-html-markup}}
+<script>
+YUI().use('paginator-core', 'model', 'view', 'transition', 'jsonp', 'querystring-stringify-simple', 'cssbutton', function (Y) {
+
+{{>search-js-vars}}
+{{>search-js-paginator-model}}
+{{>search-js-paginator-pages}}
+{{>search-js-paginator}}
+{{>search-js-page}}
+{{>search-js-app}}
+{{>search-js-begin}}
+});
+</script>
