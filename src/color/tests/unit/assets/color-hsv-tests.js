@@ -1,6 +1,7 @@
 YUI.add('color-hsv-tests', function(Y) {
 
     var areSame = Y.Assert.areSame,
+        TRANSPARENT = 'transparent',
         testBasic = new Y.Test.Case({
             name: "Color HSV Convertion Tests",
 
@@ -136,6 +137,11 @@ YUI.add('color-hsv-tests', function(Y) {
                 areSame('#5847bb', med, 'med luminance is not preserved');
                 areSame('#cdc8ee', high, 'high luminance is not preserved');
                 areSame('#ffffff', full, 'full luminance is not preserved');
+            },
+
+            'test for trasnparent': function () {
+                Y.Assert.areSame(TRANSPARENT, Y.Color.toHSV(TRANSPARENT), 'trasnparent to hsv');
+                Y.Assert.areSame(TRANSPARENT, Y.Color.toHSVA(TRANSPARENT), 'trasnparent to hsva');
             }
 
         });
