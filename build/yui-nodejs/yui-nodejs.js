@@ -7778,6 +7778,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         "lang": [
             "en",
             "es",
+            "hu",
             "it"
         ],
         "requires": [
@@ -8006,6 +8007,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "es",
             "es-AR",
             "fr",
+            "hu",
             "it",
             "ja",
             "nb-NO",
@@ -8027,6 +8029,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "es",
             "es-AR",
             "fr",
+            "hu",
             "it",
             "ja",
             "nb-NO",
@@ -8140,6 +8143,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         "lang": [
             "en",
             "es",
+            "hu",
             "it",
             "ja"
         ],
@@ -8432,6 +8436,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "en",
             "fr",
             "es",
+            "hu",
             "it"
         ],
         "requires": [
@@ -8456,7 +8461,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "lang": [
             "en",
             "fr",
-            "es"
+            "es",
+            "hu"
         ],
         "requires": [
             "datatable-base"
@@ -8532,6 +8538,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "fr-FR",
             "hi",
             "hi-IN",
+            "hu",
             "id",
             "id-ID",
             "it",
@@ -8686,7 +8693,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "dial": {
         "lang": [
             "en",
-            "es"
+            "es",
+            "hu"
         ],
         "requires": [
             "widget",
@@ -10449,7 +10457,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'eea485c4a08f236cbefb3722fb3e7276';
+YUI.Env[Y.version].md5 = 'e1fe3ded31490ce8af0bf1d9f7105624';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

@@ -889,6 +889,7 @@ Y.AutoComplete = List;
     "lang": [
         "en",
         "es",
+        "hu",
         "it"
     ],
     "requires": [

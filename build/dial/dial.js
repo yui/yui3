@@ -1320,7 +1320,8 @@ YUI.add('dial', function (Y, NAME) {
     ],
     "lang": [
         "en",
-        "es"
+        "es",
+        "hu"
     ],
     "skinnable": true
 });
