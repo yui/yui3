@@ -1214,7 +1214,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "dom-style": {
         "requires": [
-            "dom-base"
+            "dom-base",
+            "color-base"
         ]
     },
     "dom-style-ie": {
@@ -2915,4 +2916,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '12bd02dfcbc39e6eebb7a8d96ada727c';
+YUI.Env[Y.version].md5 = '3d12f1513239db8e2ba60dc472a4dcaf';
