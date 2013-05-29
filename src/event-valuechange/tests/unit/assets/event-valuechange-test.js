@@ -49,7 +49,7 @@ suite.add(new Y.Test.Case({
         this.textInput.simulate('mousedown');
         this.textInput.set('value', 'foo');
 
-        this.wait(200);
+        this.wait();
     },
 
     'valuechange should support textareas as well': function () {
@@ -67,20 +67,22 @@ suite.add(new Y.Test.Case({
         this.textArea.simulate('mousedown');
         this.textArea.set('value', 'foo');
 
-        this.wait(200);
+        this.wait();
     },
 
     'valuechange should start polling on keydown': function () {
         var test = this;
 
         this.textInput.once('valuechange', function (e) {
-            test.resume();
+            test.resume(function() {
+                Y.Assert.pass();
+            });
         });
 
         this.textInput.simulate('keydown');
         this.textInput.set('value', 'foo');
 
-        this.wait(200);
+        this.wait();
     },
 
     'valuechange should stop polling on blur': function () {
@@ -141,7 +143,7 @@ suite.add(new Y.Test.Case({
         this.textInput.simulate('focus');
         this.textInput.set('value', 'foo');
 
-        this.wait(200);
+        this.wait();
     },
 
     'valuechange should start polling on focus - with focus()': function () {
@@ -154,7 +156,7 @@ suite.add(new Y.Test.Case({
         this.textInput.focus();
         this.textInput.set('value', 'foo');
 
-        this.wait(200);
+        this.wait();
     },
 
     'valuechange should not report stale changes that occurred while a node was not focused': function () {
@@ -268,7 +270,7 @@ suite.add(new Y.Test.Case({
         this.textInput.simulate('mousedown');
         this.textInput.set('value', 'monkeys');
 
-        this.wait(200);
+        this.wait();
     }
 }));
 
