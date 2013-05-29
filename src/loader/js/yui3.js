@@ -2116,11 +2116,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "pluginhost-base"
         ]
     },
-    "profiler": {
-        "requires": [
-            "yui-base"
-        ]
-    },
     "promise": {
         "requires": [
             "timers"
@@ -2916,4 +2911,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '3d12f1513239db8e2ba60dc472a4dcaf';
+YUI.Env[Y.version].md5 = 'd7ced98e3907d3c3c0655a93c6ac6867';
