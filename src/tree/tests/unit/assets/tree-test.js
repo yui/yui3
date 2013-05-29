@@ -1156,6 +1156,26 @@ nodeSuite.add(new Y.Test.Case({
         Mock.verify(mock);
     },
 
+    'depth() should return the depth of a node': function () {
+        var one   = this.tree.rootNode.append({}),
+            two   = one.append({}),
+            three = two.append({}),
+            four  = three.append({});
+
+        Assert.areSame(1, one.depth(), 'node one should have a depth of 1');
+        Assert.areSame(2, two.depth(), 'node two should have a depth of 2');
+        Assert.areSame(3, three.depth(), 'node three should have a depth of 3');
+        Assert.areSame(4, four.depth(), 'node four should have a depth of 4');
+    },
+
+    'depth() should return 0 for the root node': function () {
+        Assert.areSame(0, this.tree.rootNode.depth());
+    },
+
+    'depth() should return 0 for an unattached node': function () {
+        Assert.areSame(0, this.tree.createNode().depth());
+    },
+
     'empty() should wrap Tree#emptyNode()': function () {
         var mock    = Mock(),
             options = {};
