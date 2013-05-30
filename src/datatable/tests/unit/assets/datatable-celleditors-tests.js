@@ -1,7 +1,7 @@
-YUI.add('datatable-celleditor-inline-tests', function(Y) {
+YUI.add('datatable-celleditors-tests', function(Y) {
 
 
-    var suite = new Y.Test.Suite('datatable-celleditor-inline'),
+    var suite = new Y.Test.Suite('datatable-celleditors'),
         Assert = Y.Test.Assert,
         areSame = Assert.areSame,
         isFalse = Assert.isFalse,
@@ -94,7 +94,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
 
     suite.add(new Y.Test.Case({
-        name: 'Gallery DataTable-Celleditor-Inline : basic setup and configuration of inlines',
+        name: 'datatable-celleditors : basic setup and configuration of inlines',
 
         setUp: function() {
             this.dt = makeDT();
@@ -135,7 +135,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
 
     suite.add(new Y.Test.Case({
-        name: 'Gallery DataTable-Celleditor-Inline : check inlineNumber',
+        name: 'datatable-celleditors : check inlineNumber',
         setUp: function() {
             this.dt = makeDT();
         },
@@ -148,7 +148,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
             dt.getCell([2,6]).simulate('click');
             oe = dt._openEditor;
-            inp = oe.get('container');
+            inp = oe._inputNode;
             isTrue(oe.get('active'), 'cell editor col 6 should be active');
 
 
@@ -163,7 +163,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             dt.getCell([2,6]).simulate('click');
             oe = dt._openEditor;
-            inp = oe.get('container');
+            inp = oe._inputNode;
             isTrue(oe.get('active'), 'cell editor col 6 should be active');
 
 
@@ -179,13 +179,13 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             dt.getCell([2,6]).simulate('click');
             oe = dt._openEditor;
-            inp = oe.get('container');
+            inp = oe._inputNode;
             isTrue(oe.get('active'), 'cell editor col 6 should be active');
 
 
             inputKey(inp, 'abcdefg', 13);
             isTrue(oe.get('active'), 'cell editor col 6 should have refused to close');
-            isTrue(inp.hasClass('yui3-datatable-celleditor-error'), 'input box should show error');
+            isTrue(inp.ancestor().hasClass('yui3-datatable-celleditor-error'), 'input box should show error');
             areSame(1.29, oe.get('value'));
             fireKey(inp, 27);
             isFalse(oe.get('active'), 'cell editor col 6 should close when escaped');
@@ -197,13 +197,13 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             dt.getCell([2,6]).simulate('click');
             oe = dt._openEditor;
-            inp = oe.get('container');
+            inp = oe._inputNode;
             isTrue(oe.get('active'), 'cell editor col 6 should be active');
 
             //inputKey(inp,'abcdefg',13);
             oe.saveEditor('abcdefg');
             isTrue(oe.get('active'), 'cell editor col 6 should have refused to close');
-            isTrue(inp.hasClass('yui3-datatable-celleditor-error'), 'input box should show error');
+            isTrue(inp.ancestor().hasClass('yui3-datatable-celleditor-error'), 'input box should show error');
             areSame(1.29, oe.get('value'));
             fireKey(inp, 27);
             isFalse(oe.get('active'), 'cell editor col 6 should close when escaped');
@@ -213,7 +213,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
 
     suite.add(new Y.Test.Case({
-        name: 'Gallery DataTable-Celleditor-Inline : check inlineDate',
+        name: 'datatable-celleditors : check inlineDate',
         setUp: function() {
             this.dt = makeDT();
         },
@@ -228,7 +228,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             dt.getCell([2, 8]).simulate('click');
             oe = dt._openEditor;
-            inp = oe.get('container');
+            inp = oe._inputNode;
             isTrue(oe.get('active'), 'cell editor col 8 should be active');
 
             areSame('06/13/09', inp.get('value'), 'formatter did not work');
@@ -247,7 +247,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             dt.getCell([2, 8]).simulate('click');
             oe = dt._openEditor;
-            inp = oe.get('container');
+            inp = oe._inputNode;
             isTrue(oe.get('active'), 'cell editor col 8 should be active');
 
             // prepFn should format as 06/13/09
@@ -265,7 +265,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
             // open the editor
             dt.getCell([2, 8]).simulate('click');
             oe = dt._openEditor;
-            inp = oe.get('container');
+            inp = oe._inputNode;
             isTrue(oe.get('active'), 'cell editor col 8 should be active');
 
             // prepFn should format as 06/13/09
@@ -279,7 +279,7 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
     }));
     suite.add(new Y.Test.Case({
-        name: 'Gallery DataTable-Celleditor-Inline : check inlineAC',
+        name: 'datatable-celleditors : check inlineAC',
         setUp: function() {
             this.dt = makeDT();
         },
@@ -329,4 +329,4 @@ YUI.add('datatable-celleditor-inline-tests', function(Y) {
 
     Y.Test.Runner.add(suite);
 
-}, '', {requires: ['test', 'node-event-simulate', 'datatable-celleditor-inline']});
+}, '', {requires: ['test', 'node-event-simulate', 'datatable-celleditors']});

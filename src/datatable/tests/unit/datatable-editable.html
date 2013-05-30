@@ -17,8 +17,7 @@ YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
 //    filters: {
 //        'datatable-editable': (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'debug',
-//        'datatable-celleditor-inline': (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'debug',
-//        'datatable-celleditor-popup': (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'debug'
+//        'datatable-celleditors': (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'debug',
 //    },
     // The following should go away once loader learns about them:
     groups: {
@@ -28,6 +27,7 @@ YUI({
                 'datatable-editable': {
                     path: 'datatable-editable/datatable-editable-min.js',
                     requires:[
+                        "overlay",
                         "datatable-base",
                         "datatype",
                         "node-screen",
@@ -38,27 +38,15 @@ YUI({
                     skinnable:true,
                     lang: ['es', 'en']
                 },
-                'datatable-celleditor-inline': {
-                    path: 'datatable-celleditor-inline/datatable-celleditor-inline-min.js',
+                'datatable-celleditors': {
+                    path: 'datatable-celleditors/datatable-celleditors-min.js',
                     requires:[
                         "datatable-editable",
                         "view",
                         "base-build",
-                        "event-mouseenter"
-                    ],
-                    skinnable:true
-                },
-                'datatable-celleditor-popup': {
-                    path: 'datatable-celleditor-popup/datatable-celleditor-popup-min.js',
-                    requires:[
-                        "datatable-editable",
-                        "base-build",
-                        "view",
+                        "event-mouseenter",
                         "cssbutton",
                         "event-outside",
-                        "overlay",
-                        "dd-plugin",
-                        "template"
                     ],
                     skinnable:true
                 },
@@ -81,7 +69,7 @@ YUI({
     }
  }).use( 'test-console', 'test', 'datatable-editable-tests',  "node-event-simulate",
         "datatable-editable",  "datatable",'datatable-scroll',
-        "datatable-celleditor-inline",
+        "datatable-celleditors",
         function(Y) {
 
     (new Y.Test.Console()).render('#logger');

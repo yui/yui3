@@ -381,18 +381,18 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(0, dt.getRecord(0).get('sopen'), 'check value on record');
 
             inputKey(ed, 'abc', 13);
-                isFalse(fail, 'cancel should never fire');
-                areSame('sopen',evFac.colKey, 'ev.colKey');
-                areSame(td,evFac.td,'ev.td');
-                areSame(0,evFac.initialValue,'ev.initialValue');
-                areSame('abc',evFac.newValue,'ev.newValue');
-                fail = false;
-                evFac = null;
+            isFalse(fail, 'cancel should never fire');
+            areSame('sopen',evFac.colKey, 'ev.colKey');
+            areSame(td,evFac.td,'ev.td');
+            areSame(0,evFac.initialValue,'ev.initialValue');
+            areSame('abc',evFac.newValue,'ev.newValue');
+            fail = false;
+            evFac = null;
             areSame('abc', ed.get('value'), 'check changed input');
 
             areSame('abc', dt.getRecord(0).get('sopen'), 'record should have changed');
             areSame('abc', dt.getCell([0,1]).getHTML(), 'check cell after saving');
-            areSame('none', ed.getStyle('display') ,'editor should be hidden');
+            areSame('none', ed.ancestor().getStyle('display') ,'editor should be hidden');
         },
         'check editing via keyboard': function () {
             var dt = this.dt,
@@ -424,7 +424,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             areSame('abc', dt.getRecord(0).get('sopen'), 'record should have changed');
             areSame('abc', dt.getCell([0,1]).getHTML(), 'check cell after saving');
-            areSame('none', ed.getStyle('display') ,'editor should be hidden');
+            areSame('none', ed.ancestor().getStyle('display') ,'editor should be hidden');
         },
         'check editing canceled via event': function () {
             var dt = this.dt,
@@ -486,7 +486,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             areSame(0, dt.getRecord(0).get('sopen'), 'record should not have changed');
             areSame('0', dt.getCell([0,1]).getHTML(), 'check cell remains unchanged');
-            areSame('none', ed.getStyle('display') ,'editor should be hidden');
+            areSame('none', ed.ancestor().getStyle('display') ,'editor should be hidden');
         },
 
         'check clicking outside': function () {
@@ -514,7 +514,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             areSame(0, dt.getRecord(0).get('sopen'), 'record should not have changed');
             areSame('0', dt.getCell([0,1]).getHTML(), 'check cell remains unchanged');
-            areSame('none', ed.getStyle('display') ,'editor should be hidden');
+            areSame('none', ed.ancestor().getStyle('display') ,'editor should be hidden');
 
         },
         'check destructor' : function(){
@@ -635,7 +635,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             isFalse(fail, 'cancel should never fire');
             isNull(evFac, 'no save event yet');
             areSame('inline', ed.getStyle('display') ,'editor should still be visible');
-            isTrue(ed.hasClass('yui3-datatable-celleditor-error'), 'cell should be in error')
+            isTrue(ed.ancestor().hasClass('yui3-datatable-celleditor-error'), 'cell should be in error')
 
             inputKey(ed, 'abc', 13);
             areSame('sopen',evFac.colKey, 'ev.colKey');
@@ -649,7 +649,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             areSame('abc', dt.getRecord(0).get('sopen'), 'record should have changed');
             areSame('abc', dt.getCell([0,0]).getHTML(), 'check cell after saving');
-            areSame('none', ed.getStyle('display') ,'editor should be hidden');
+            areSame('none', ed.ancestor().getStyle('display') ,'editor should be hidden');
             dt.destroy();
 
         }
@@ -712,4 +712,4 @@ YUI.add('datatable-editable-tests', function(Y) {
     Y.Test.Runner.add(suite);
 
 
-},'', {requires: [ 'test', 'datatable-editable', 'datatable-scroll','node-event-simulate', 'datatable-celleditor-inline' ]});
+},'', {requires: [ 'test', 'datatable-editable', 'datatable-scroll','node-event-simulate', 'datatable-celleditors' ]});

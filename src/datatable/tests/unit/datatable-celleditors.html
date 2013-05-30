@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>datatable-celleditor-inline</title>
+        <title>datatable-celleditors</title>
         <script src="/build/yui/yui.js"></script>
     </head>
     <body class="yui3-skin-sam">
@@ -9,11 +9,11 @@
         <div id="dtable"></div>
         <div id="logger"></div>
 
-        <script src="assets/datatable-celleditor-inline-tests.js"></script>
+        <script src="assets/datatable-celleditors-tests.js"></script>
 
         <script>
             YUI({
-                coverage: ['datatable-celleditor-inline'],
+                coverage: ['datatable-celleditors'],
                 filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
                 // The following should go away once loader learns about them:
                 groups: {
@@ -23,6 +23,7 @@
                             'datatable-editable': {
                                 path: 'datatable-editable/datatable-editable-min.js',
                                 requires:[
+                                    "overlay",
                                     "datatable-base",
                                     "datatype",
                                     "node-screen",
@@ -33,27 +34,15 @@
                                 skinnable:true,
                                 lang: ['es', 'en']
                             },
-                            'datatable-celleditor-inline': {
-                                path: 'datatable-celleditor-inline/datatable-celleditor-inline-min.js',
+                            'datatable-celleditors': {
+                                path: 'datatable-celleditors/datatable-celleditors-min.js',
                                 requires:[
                                     "datatable-editable",
                                     "view",
                                     "base-build",
-                                    "event-mouseenter"
-                                ],
-                                skinnable:true
-                            },
-                            'datatable-celleditor-popup': {
-                                path: 'datatable-celleditor-popup/datatable-celleditor-popup-min.js',
-                                requires:[
-                                    "datatable-editable",
-                                    "base-build",
-                                    "view",
+                                    "event-mouseenter",
                                     "cssbutton",
                                     "event-outside",
-                                    "overlay",
-                                    "dd-plugin",
-                                    "template"
                                 ],
                                 skinnable:true
                             },
@@ -94,9 +83,9 @@
                     }
                 Y.use(
                 'test-console',
-                'datatable-celleditor-inline-tests',  "node-event-simulate",
+                'datatable-celleditors-tests',  "node-event-simulate",
                 "datatable-editable",  "datatable",
-                "datatable-celleditor-inline",
+                "datatable-celleditors",
                 'datatable',
                 'datatable-editable',
                 'autocomplete',
@@ -104,7 +93,7 @@
 
                     (new Y.Test.Console()).render('#logger');
 
-                    Y.Test.Runner.setName('datatable-celleditor-inline');
+                    Y.Test.Runner.setName('datatable-celleditors');
 
                     Y.Test.Runner.run();
                 })

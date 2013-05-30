@@ -110,30 +110,20 @@
                     "node-screen",
                     "datatable-keynav",
                     "event-resize",
-                    "event-outside"
-                ]
-            },
-            "datatable-celleditor-inline": {
-                "skinnable": "true",
-                "requires": [
-                    "datatable-editable",
-                    "view",
-                    "base-build",
-                    "event-mouseenter"
-                ]
-            },
-            "datatable-celleditor-popup": {
-                "skinnable": "true",
-                "requires": [
-                    "datatable-editable",
-                    "base-build",
-                    "view",
-                    "cssbutton",
                     "event-outside",
                     "overlay",
-                    "dd-plugin",
-                    "template",
-                    "array-extras"
+                    "dd-plugin"
+                ]
+            },
+            "datatable-celleditors": {
+                "skinnable": "true",
+                "requires": [
+                    "datatable-editable",
+                    "view",
+                    "base-build",
+                    "event-mouseenter",
+                    "cssbutton",
+                    "event-outside"
                 ]
             },
             "datatable-celleditor-keyfiltering": {

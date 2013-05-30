@@ -90,6 +90,23 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     _classError: 'yui3-datatable-celleditor-error',
 
     /**
+    Optionally holds a reference to the element that serves as input, usually
+    an input textbox, textarea or similar and automates a few tasks.
+
+    The default implementation tries to locate such element by searching for an
+    element with the CSS class set in [_classInput](#property__classInput) property.
+
+    If such element exists and can be located, the default implementations of
+    [_defShowFn](#method__defShowFn) and [_getValue](#method__getValue) will
+    show and retrieve the value from it.
+
+    @property _inputNode
+    @type Node
+    @default null
+     */
+    _inputNode: null,
+
+    /**
     Disallow ad-hoc attributes
 
     @property _allowAdHocAttrs {Boolean}
@@ -177,9 +194,13 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         if (this.get('active')) {
             this.cancelEditor();
         }
+        if (this._overlay){
+            this._overlay.destroy();
+        }
         this._unbindUI();
-        this._destroyContainer();
     },
+
+
 
     /**
     Renders the editor and binds several event listeners.
@@ -192,8 +213,17 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     */
     render: function (where) {
         Y.log('DataTable.BaseCellEditor.render', 'info', 'celleditor-base');
+        var cfg = this.get('overlayConfig') || {};
 
-        where.append(this.get('container'));
+        if (this.get('popup')) {
+            cfg.host = this;
+            cfg.buttons = this.get('buttons');
+            this._overlay = new Y.DataTable.CellEditorPopupPlugin(cfg).render(where);
+            this.set('container', this._overlay.getStdModNode('body', true));
+
+        } else {
+            where.append(this.get('container'));
+        }
         this.fire('render');
         this._bindUI();
         return this;
@@ -209,8 +239,15 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @protected
     */
     _defRenderFn: function () {
-        Y.log('DataTable.BaseCellEditor._defRenderFn should have been overriden', 'warn', 'celleditor-base');
-
+        Y.log('DataTable.BaseCellEditor._defRenderFn', 'info', 'celleditor-base');
+        var container = this.get('container'),
+             classInput = this._classInput;
+        container.setHTML(Y.Lang.sub(this.get('template'), {
+            classInput:classInput
+        }));
+        this._inputNode = container.one('.' + classInput);
+        container.addClass(this.get('className') + ' yui3-datatable-celleditor');
+        container.hide();
     },
 
     /**
@@ -239,7 +276,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     _unbindUI: function () {
         Y.log('DataTable.BaseCellEditor._unbindUI', 'info', 'celleditor-base');
 
-        arrEach(this._subscr, function(e){
+        arrEach(this._subscr, function (e) {
             if(e && e.detach) {
                 e.detach();
             }
@@ -276,17 +313,25 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     /**
     The default action for the [show](#event_show) event which should make the editor visible.
 
+    It shows the editor, positions it over the edited cell and if the
+    [_inputNode](#property__inputNode) property is a `Node` instance,
+    it will set its `value` property and focus on it.
 
     @method _defShowFn
-    @param e {EventFacade} for the [show](#event_show) event.
+    @param ev {EventFacade} for the [show](#event_show) event.
     @protected
     */
-    _defShowFn: function (e) {
+    _defShowFn: function (ev) {
         Y.log('DataTable.BaseCellEditor._defShowFn', 'info', 'celleditor-base');
 
         this.set('visible', true);
+        this._attach(ev.td);
+        
+        var inputNode = this._inputNode;
+        if (inputNode instanceof Y.Node) {
+            inputNode.focus().set('value', ev.formattedValue).select();
+        }
 
-        this._attach(e.td);
 
         this._set('active', true);
     },
@@ -324,14 +369,19 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
     /**
     Returns the raw value as entered into the editor.
-    To be implemented by each editor.
+    The default implementation assumes the [_inputNode](#property__inputNode)
+    property points to a Node with a `value` attribute that returns the value.
+
 
     @method _getValue
     @return value {mixed} Value as entered in the editor
     @protected
      */
     _getValue: function () {
-        Y.log('DataTable.BaseCellEditor._getValue should have been overriden', 'warn', 'celleditor-base');
+        Y.log('DataTable.BaseCellEditor._getValue', 'info', 'celleditor-base');
+        if (this._inputNode) {
+            return this._inputNode.get('value');
+        }
     },
 
     /**
@@ -343,6 +393,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @public
     */
     saveEditor: function (value) {
+        Y.log('DataTable.BaseCellEditor.saveEditor', 'info', 'celleditor-base');
 
         if (value === undefined) {
             value = this._getValue();
@@ -412,10 +463,35 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @param td {Node} cell to attach this editor to
     @protected
     */
-    _attach: function (/* td */) {
-        Y.log('DataTable.BaseCellEditor._attach should have been overriden', 'warn', 'celleditor-base');
+    _attach: function (td) {
+        Y.log('DataTable.BaseCellEditor._attach', 'info', 'celleditor-base');
+        if (this.get('visible')) {
+            var region = td.get('region');
+            this._move(region.left, region.top);
+            this._resize(region.width, region.height);
+        }
     },
+    _move: function (left, top) {
+        Y.log('DataTable.BaseCellEditor._move: [' + left + ':' + top + ']', 'info', 'celleditor-base');
+        (this._overlay || this.get('container')).setXY([left, top]);
+    },
+    /**
+    Resizes the editor container to fit on top of the cell being edited.
 
+    To be implemented by the subclasses.
+
+    @method _resize
+    @param width {Integer} width of the cell being edited
+    @param height {Integer} height of the cell being edited
+    @protected
+     */
+    _resize: function (width, height) {
+        Y.log('DataTable.BaseCellEditor._resize [' + width + ':' + height + ']','info','celleditor-base');
+
+        var container = this._inputNode || this.get('container');
+        container.set('offsetWidth', width + 1);
+        container.set('offsetHeight', height);
+    },
     /**
     Responds to changes in the [visible](#attr_visible) attribute by showing/hiding the
     cell editor
@@ -427,8 +503,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
    _afterVisibleChange: function (e) {
         Y.log('DataTable.BaseCellEditor._afterVisibleChange: ' + e.newVal, 'info', 'celleditor-base');
 
-        var container  = this.get('container');
-        if(container) {
+        var container  = this._overlay || this.get('container');
+        if (container) {
             if (e.newVal) {
                 container.show();
             } else {
@@ -447,6 +523,9 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     localizedStrings:  Y.Intl.get('datatable-editable'),
 
     ATTRS:{
+        className: {
+            value: null
+        },
 
         /**
         Value being edited.  It should be a copy of the value stored in the record.
@@ -581,6 +660,88 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         navigationEnabled:{
             value:      true,
             validator:  Lang.isBoolean
+        },
+
+        /**
+        Additional config parameters for the Overlay to be used in constructing the Editor.
+        These configs are merged with the defaults required by the Editor.
+
+        The following would add a text to the header of the popup editor,
+        which is otherwise unused by this module.
+
+            {
+                key: 'name',
+                editor: 'text',
+                editorConfig: {
+                    overlayConfig: {
+                        headerContent: 'Enter name of applicant'
+                    }
+                }
+            }
+
+        @attribute overlayConfig
+        @type Object
+        @default {}
+        */
+        overlayConfig:{
+            value:      {},
+            validator:  Lang.isObject
+        },
+
+        /**
+        Array of buttons to be added to the popup window below the input element.
+        Each entry is an object containing the configuration options for the buttons:
+
+        <ul>
+            <li>`label`: The label shown to the user.</li>
+            <li>`className`: An optional css class name to assign to the button.</li>
+            <li>`save`: A non-null value indicates this is the save button,
+                equivalent to pressing the `Enter` key.
+                It will be highlighted accordingly.
+                If no `label` was explicitly assigned,
+                'Save' or its localized equivalent will be shown</li>
+            <li>`cancel`: A non-null value indicates this is cancel button,
+                equivalent to pressing the `Esc` key.</li>
+                If no `label` was explicitly assigned,
+                'Cancel' or its localized equivalent will be shown</li>
+            <li>`action`: An action to be associated with this button.
+                No `action` is required for `save` or `cancel` buttons.</li>
+        </ul>
+
+        The `action` property can be a string or a function.
+        If a function, it will be called when the button is clicked.  The function will
+        receive the button configuration entry as its first argument and an object containing
+        information about the cell being edited.
+        If `action` is a string, an event will be fired using that string as its name.  The event
+        can be listened to by subscribing from the datatable using
+        <code>"celleditor:<i>&lt;action string&gt;</i>"</code> as the event type
+        and it will receive the button configuration and the cell info object.
+
+        The cell information object contains:
+        <ul>
+            <li>value {Any} The value from the input element or widget.
+                Usually a string, it might be other types for complex widgets such as Calendar.</li>
+            <li>td {Node} Reference to the table cell.</li>
+            <li>record {Model} Reference to the model containing the underlying data.</li>
+            <li>colKey {String} Key of the column for the cell to be edited.</li>
+            <li>initialValue {Any} The underlying value of the cell to be edited.</li>
+        </ul>
+
+        @attribute buttons
+        @type Array|null
+        @default null
+        */
+        buttons: {
+            value: null
+        },
+
+
+
+        title: {
+            value: null
+        },
+        popup: {
+            value: false
         }
 
 

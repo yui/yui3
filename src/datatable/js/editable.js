@@ -34,7 +34,7 @@ var Lang = Y.Lang,
  This module is essentially a base wrapper-class to setup a DataTable
  for editing with the appropriate attributes and
  listener creation / detachment.  The actual editors are within
- the datatable-celleditor-inline and datatable-celleditor-popup modules.
+ the datatable-celleditors module.
 
  @class DataTable.Editable
  @extends Y.DataTable
@@ -272,12 +272,12 @@ Y.mix( DtEditable.prototype, {
         var u = this._UI_ATTRS;
 
         this._UI_ATTRS = {
-            SYNC: u.SYNC.concat(EDITABLE, EDITOR_OPEN_ACTION),
+            SYNC: u.SYNC.concat(EDITOR_OPEN_ACTION),
             BIND: u.BIND.concat(EDITABLE, EDITOR_OPEN_ACTION, 'columns')
         };
 
-        // It is not worth a template nor a property to store the className for the editor container.
-        this._editorsContainer = Y.one('body').appendChild('<div class="' + this.getClassName('cell', 'editors') + '"></div>');
+        this.after('render', this._afterEditableRender);
+        
 
     },
 
@@ -295,6 +295,16 @@ Y.mix( DtEditable.prototype, {
         this._editorsContainer.remove(true);
     },
 
+    _afterEditableRender: function () {
+        Y.log('DataTable.Editable._afterEditableRender', 'info', 'datatable-editable');
+        // It is not worth a template nor a property to store the className for the editor container.
+        this._editorsContainer = Y.one('body').appendChild('<div class="' + this.getClassName('cell', 'editors') + '"></div>');
+        
+        if (this.get(EDITABLE)) {
+            this._bindEditable();
+            this._buildColumnEditors();
+        }
+    },
     /**
     Opens a cell editor on the given DataTable cell.
     It also accepts an EventFacade resulting from a user action.
@@ -320,6 +330,10 @@ Y.mix( DtEditable.prototype, {
         if(this._openEditor) {
             this._openEditor.cancelEditor();
         }
+        
+        // Set the focus on the cell about to be edited
+        this.set('focusedCell', td);
+        this.blur();
 
         if(editorInstance) {
             if (this.scrollTo && this.isHidden(td, true)) {
@@ -366,8 +380,6 @@ Y.mix( DtEditable.prototype, {
             if (td) {
                 td.removeClass(this._classCellEditing);
 
-                // Return the focus to the cell just edited
-                this.set('focusedCell', td);
                 this.focus();
             }
 
@@ -485,7 +497,7 @@ Y.mix( DtEditable.prototype, {
         }
 
         this._subscrEditable = [
-            Y.Do.after(this._updateAllEditableColumnsCSS, this, 'syncUI'),
+            //Y.Do.after(this._updateAllEditableColumnsCSS, this, 'syncUI'),
             this.after('sort', this._afterEditableSort),
 
             this.after(DEF_EDITOR + CHANGE, this._afterDefaultEditorChange),
@@ -732,7 +744,6 @@ Y.mix( DtEditable.prototype, {
 
                 editorName = col.editor || defEditor;
 
-                this._updateEditableColumnCSS(colKey, true);
 
                 //
                 // If an editor is named, check if its definition exists, and that it is
@@ -741,6 +752,8 @@ Y.mix( DtEditable.prototype, {
 
                 // check for common editor ....
                 if (editorName && Y.DataTable.Editors[editorName]) {
+
+                    this._updateEditableColumnCSS(colKey, true);
                     if (col.lookupTable && edConfig.lookupTable === undefined) {
                         edConfig.lookupTable = col.lookupTable;
                         hasConfig = true;
@@ -789,8 +802,8 @@ Y.mix( DtEditable.prototype, {
             editor = null;
 
         if (Editor) {
+            config.className = config.className || this.getClassName('celleditor', editorName);
             editor = new Editor(config).render(this._editorsContainer);
-            editor.get('container').addClass(this.getClassName('celleditor', editorName));
             editor.addTarget(this);
         }
         return editor;
@@ -812,7 +825,7 @@ Y.mix( DtEditable.prototype, {
 
         arrEach(this._getAllCellEditors(),function (ce) {
             if(ce && ce.destroy) {
-                ce.destroy();
+                ce.destroy({remove: true});
             }
         });
 
@@ -820,12 +833,9 @@ Y.mix( DtEditable.prototype, {
         this._commonEditors = null;
         this._columnEditors = null;
 
-        // remove editing class from all editable columns ...
-        arrEach( this.get(COLUMNS), function (c){
-            if(c.editable === undefined || c.editable === true) {
-                this._updateEditableColumnCSS(c.key || c.name,false);
-            }
-        },this);
+        if (this._tbodyNode) {
+            this._tbodyNode.all('.' + this._classColEditable).removeClass(this._classColEditable);
+        }
 
     },
 
@@ -842,7 +852,7 @@ Y.mix( DtEditable.prototype, {
         var rtn = [];
 
         if( this._commonEditors ) {
-            Y.Object.each(this._commonEditors, function (ce){
+            Y.Object.each(this._commonEditors, function (ce) {
                 if(ce && ce instanceof Y.View){
                     rtn.push(ce);
                 }
@@ -850,7 +860,7 @@ Y.mix( DtEditable.prototype, {
         }
 
         if( this._columnEditors ) {
-            Y.Object.each(this._columnEditors, function (ce){
+            Y.Object.each(this._columnEditors, function (ce) {
                 if(ce && ce instanceof Y.View){
                     rtn.push(ce);
                 }
@@ -922,32 +932,10 @@ Y.mix( DtEditable.prototype, {
     _updateEditableColumnCSS : function (colKey, editable) {
         Y.log('DataTable.Editable._updateEditableColumnCSS: ' + colKey + ' editable: ' + editable, 'info', 'datatable-editable');
 
-        var tbody = this._tbodyNode,
-            col   = (colKey) ? this.getColumn(colKey) : null,
-            colEditable = col && col.editable !== false,
-            tdCol;
-        if(!tbody || !colKey || !col || !colEditable) {
-            return;
+        var tbody = this._tbodyNode;
+        if(tbody) {
+            tbody.all('td.' + this.getClassName(COL, colKey)).toggleClass(this._classColEditable, editable);
         }
-
-        colEditable = col.editor || this.get(DEF_EDITOR);
-
-        if( !colEditable) {
-            /*jshint maxlen:200 */
-
-            Y.log('DataTable.Editable._updateEditableColumnCSS (should not be here 1): ' + colKey + ' editable: ' + editable, 'error', 'datatable-editable');
-            /*jshint maxlen:120 */
-            editable = false;
-        }
-
-        tdCol = tbody.all('td.' + this.getClassName(COL, colKey));
-        if (tdCol) {
-            tdCol.toggleClass(this._classColEditable, editable);
-        }
-        /*jshint maxlen:200 */
-        else  {Y.log('DataTable.Editable._updateEditableColumnCSS (should not be here 2): ' + colKey + ' editable: ' + editable, 'error', 'datatable-editable');}
-        /*jshint maxlen:120 */
-
     },
 
 
