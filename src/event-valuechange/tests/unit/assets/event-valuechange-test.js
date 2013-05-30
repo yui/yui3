@@ -9,25 +9,26 @@ var Assert = Y.Assert,
     // event-focus and event-blur rely on focusin/focusout for all IE
     // versions - so simulating focus doesn't invoke the event-focus or
     // event-blur listeners.
-    simulateFocusNotSupported = Y.UA.ie;
 
-suite.add(new Y.Test.Case({
-    name: 'Basic',
+    simulateFocusNotSupported = Y.UA.ie,
 
-    _should: {
-        ignore: {
-            'valuechange should start polling on focus': simulateFocusNotSupported
+    setUpInputFieldTests = function() {
+        try {
+            window.focus();
+        } catch(e) {
+            // Ignore. Just trying to help with tests
+            // which require the window to be focused
+            // in IE8. Won't help with FF window focus(),
+            // which I believe needs perms. to bring-to-front.
         }
-    },
 
-    setUp: function () {
         this.textArea  = Y.Node.create('<textarea></textarea>');
         this.textInput = Y.Node.create('<input type="text">');
 
         Y.one('#test').append(this.textArea).append(this.textInput);
     },
 
-    tearDown: function () {
+    tearDownInputFieldTests = function() {
 
         // Just to avoid any test-to-test bleedthrough.
 
@@ -40,7 +41,20 @@ suite.add(new Y.Test.Case({
 
         this.textArea.remove().destroy(true);
         this.textInput.remove().destroy(true);
+    };
+
+suite.add(new Y.Test.Case({
+    name: 'Basic',
+
+    _should: {
+        ignore: {
+            'valuechange should start polling on focus': simulateFocusNotSupported
+        }
     },
+
+    setUp: setUpInputFieldTests,
+
+    tearDown: tearDownInputFieldTests,
 
     'valuechange event should start polling on mousedown and fire an event when the value changes': function () {
         var test = this;
@@ -88,32 +102,6 @@ suite.add(new Y.Test.Case({
         });
 
         this.textInput.simulate('keydown');
-        this.textInput.set('value', 'foo');
-
-        this.wait();
-    },
-
-    'valuechange should start polling on focus': function () {
-        var test = this;
-
-        this.textInput.once('valuechange', function (e) {
-            test.resume();
-        });
-
-        this.textInput.simulate('focus');
-        this.textInput.set('value', 'foo');
-
-        this.wait();
-    },
-
-    'valuechange should start polling on focus - with focus()': function () {
-        var test = this;
-
-        this.textInput.once('valuechange', function (e) {
-            test.resume();
-        });
-
-        this.textInput.focus();
         this.textInput.set('value', 'foo');
 
         this.wait();
@@ -170,8 +158,37 @@ suite.add(new Y.Test.Case({
         this.textInput.set('value', 'monkeys');
 
         this.wait();
-    }
+    },
 
+    'valuechange should start polling on focus': function () {
+        var test = this;
+
+        this.textInput.once('valuechange', function (e) {
+            test.resume(function() {
+                Assert.pass();
+            });
+        });
+
+        this.textInput.simulate('focus');
+        this.textInput.set('value', 'foo');
+
+        this.wait();
+    },
+
+    'valuechange should start polling on focus - with focus()': function () {
+        var test = this;
+
+        this.textInput.once('valuechange', function (e) {
+            test.resume(function() {
+                Assert.pass();
+            });
+        });
+
+        this.textInput.focus();
+        this.textInput.set('value', 'foo');
+
+        this.wait();
+    }
 }));
 
 suite.add(new Y.Test.Case({
@@ -187,24 +204,13 @@ suite.add(new Y.Test.Case({
         }
     },
 
+    setUp: setUpInputFieldTests,
+
+    tearDown: tearDownInputFieldTests,
+
     // Make sure we're well beyond the polling interval, providing a bit
     // more room on browsers we're having flakiness issues with under CI
     WAIT_FOR_POLL : Y.ValueChange.POLL_INTERVAL + ((Y.UA.ie) ? 500 : 150),
-
-    setUp: function () {
-        this.textArea  = Y.Node.create('<textarea></textarea>');
-        this.textInput = Y.Node.create('<input type="text">');
-
-        Y.one('#test').append(this.textArea).append(this.textInput);
-    },
-
-    tearDown: function () {
-        Y.ValueChange._stopPolling(this.textArea);
-        Y.ValueChange._stopPolling(this.textInput);
-
-        this.textArea.remove().destroy(true);
-        this.textInput.remove().destroy(true);
-    },
 
     'valuechange should stop polling on blur': function () {
 
