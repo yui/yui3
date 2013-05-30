@@ -1,24 +1,22 @@
 YUI.add('event-valuechange-test', function (Y) {
 
-var Assert      = Y.Assert,
+var Assert = Y.Assert,
     ArrayAssert = Y.ArrayAssert,
+    suite = new Y.Test.Suite('Event: ValueChange'),
 
-    ignoreFocus = Y.UA.ie,
-    suite       = new Y.Test.Suite('Event: ValueChange');
+    // Ignoring these tests for now, until we can look into simulating focusin/focusout.
+    //
+    // event-focus and event-blur rely on focusin/focusout for all IE
+    // versions - so simulating focus doesn't invoke the event-focus or
+    // event-blur listeners.
+    simulateFocusNotSupported = Y.UA.ie;
 
-// -- Basic Subscriptions ------------------------------------------------------
 suite.add(new Y.Test.Case({
     name: 'Basic',
 
     _should: {
         ignore: {
-            // TODO: Ignoring these tests for now, until we can look
-            // into simulating focusin/focusout event-focus and event-blur
-            // rely on focusin/focusout for all IE versions - so simulating
-            // focus doesn't invoke the event-focus or event-blur listeners.
-            'valuechange should stop polling on blur': ignoreFocus,
-            'valuechange should start polling on focus': ignoreFocus,
-            'valuechange should not report stale changes that occurred while a node was not focused': ignoreFocus
+            'valuechange should start polling on focus': simulateFocusNotSupported
         }
     },
 
@@ -30,6 +28,16 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
+
+        // Just to avoid any test-to-test bleedthrough.
+
+        // The next time the _poll is called, it'll do the same thing,
+        // and return early, but want to avoid that hanging around,
+        // and bleeding into the next test.
+
+        Y.ValueChange._stopPolling(this.textArea);
+        Y.ValueChange._stopPolling(this.textInput);
+
         this.textArea.remove().destroy(true);
         this.textInput.remove().destroy(true);
     },
@@ -75,7 +83,7 @@ suite.add(new Y.Test.Case({
 
         this.textInput.once('valuechange', function (e) {
             test.resume(function() {
-                Y.Assert.pass();
+                Assert.pass();
             });
         });
 
@@ -83,54 +91,6 @@ suite.add(new Y.Test.Case({
         this.textInput.set('value', 'foo');
 
         this.wait();
-    },
-
-    'valuechange should stop polling on blur': function () {
-        var fired;
-
-        this.textInput.on('valuechange', function (e) {
-            fired = true;
-        });
-
-        this.textInput.simulate('mousedown');
-        this.textInput.set('value', 'foo');
-
-        this.wait(function () {
-            Assert.isTrue(fired);
-            fired = false;
-
-            this.textInput.simulate('blur');
-            this.textInput.set('value', 'bar');
-
-            this.wait(function () {
-                Assert.isFalse(fired);
-            }, 200);
-        }, 200);
-    },
-
-    'valuechange should stop polling on blur - with blur()': function () {
-        var fired;
-
-        this.textInput.on('valuechange', function (e) {
-            fired = true;
-        });
-
-        this.textInput.focus(); // must focus in order to blur
-        this.textInput.simulate('mousedown');
-        this.textInput.set('value', 'foo');
-
-        this.wait(function () {
-            Assert.isTrue(fired);
-            fired = false;
-
-            this.textInput.blur();
-
-            this.textInput.set('value', 'bar');
-
-            this.wait(function () {
-                Assert.isFalse(fired);
-            }, 200);
-        }, 200);
     },
 
     'valuechange should start polling on focus': function () {
@@ -159,7 +119,147 @@ suite.add(new Y.Test.Case({
         this.wait();
     },
 
+    'valuechange should start polling on keyup for IME keystrokes': function () {
+        var called = 0,
+            test = this;
+
+        this.textInput.on('valuechange', function (e) {
+
+            called++;
+
+            if (called === 1) {
+                test.resume(function() {
+
+                    Assert.areEqual("", e.prevVal);
+                    Assert.areEqual("bar", e.newVal);
+
+                    this.textInput.simulate('blur');
+                    this.textInput.simulate('keyup', {keyCode: 229});
+                    this.textInput.set('value', 'baz');
+
+                    this.wait();
+                });
+            } else if (called === 2) {
+                test.resume(function() {
+                    Assert.areEqual("bar", e.prevVal);
+                    Assert.areEqual("baz", e.newVal);
+                });
+            } else {
+                Assert.fail("Called an unexpected number of times");
+            }
+        });
+
+        this.textInput.simulate('keyup', {keyCode: 123}); // should not trigger IME behavior
+        this.textInput.set('value', 'foo');
+
+        this.textInput.simulate('blur'); // stop polling
+        this.textInput.simulate('keyup', {keyCode: 197});
+        this.textInput.set('value', 'bar');
+
+        this.wait();
+    },
+
+    'valueChange should be an alias for valuechange for backcompat': function () {
+        var test = this;
+
+        this.textInput.on('valueChange', function () {
+            test.resume();
+        });
+
+        this.textInput.simulate('mousedown');
+        this.textInput.set('value', 'monkeys');
+
+        this.wait();
+    }
+
+}));
+
+suite.add(new Y.Test.Case({
+
+    // Tests which require arbitrary timeouts, since they depend on the absence of an event
+
+    name: 'Stop Polling',
+
+    _should: {
+        ignore: {
+            'valuechange should stop polling on blur': simulateFocusNotSupported,
+            'valuechange should not report stale changes that occurred while a node was not focused': simulateFocusNotSupported
+        }
+    },
+
+    // Make sure we're well beyond the polling interval, providing a bit
+    // more room on browsers we're having flakiness issues with under CI
+    WAIT_FOR_POLL : Y.ValueChange.POLL_INTERVAL + ((Y.UA.ie) ? 500 : 150),
+
+    setUp: function () {
+        this.textArea  = Y.Node.create('<textarea></textarea>');
+        this.textInput = Y.Node.create('<input type="text">');
+
+        Y.one('#test').append(this.textArea).append(this.textInput);
+    },
+
+    tearDown: function () {
+        Y.ValueChange._stopPolling(this.textArea);
+        Y.ValueChange._stopPolling(this.textInput);
+
+        this.textArea.remove().destroy(true);
+        this.textInput.remove().destroy(true);
+    },
+
+    'valuechange should stop polling on blur': function () {
+
+        var test = this,
+            called = 0;
+
+        this.textInput.on('valuechange', function (e) {
+
+            called++;
+
+            test.resume(function() {
+
+                test.textInput.simulate('blur');
+                test.textInput.set('value', 'bar');
+
+                test.wait(function () {
+                    Y.Assert.areEqual(1, called, "valuechange listener should only have been called once");
+                }, test.WAIT_FOR_POLL);
+
+            });
+        });
+
+        this.textInput.simulate('mousedown');
+        this.textInput.set('value', 'foo');
+
+        this.wait();
+    },
+
+    'valuechange should stop polling on blur - with blur()': function () {
+        var test = this,
+            called = 0;
+
+        this.textInput.on('valuechange', function (e) {
+            called++;
+
+            test.resume(function() {
+
+                test.textInput.blur();
+                test.textInput.set('value', 'bar');
+
+                test.wait(function () {
+                    Y.Assert.areEqual(1, called, "valuechange listener should only have been called once");
+                }, test.WAIT_FOR_POLL);
+            });
+        });
+
+        this.textInput.focus(); // must focus in order to blur
+        this.textInput.simulate('mousedown');
+        this.textInput.set('value', 'foo');
+
+        this.wait();
+    },
+
     'valuechange should not report stale changes that occurred while a node was not focused': function () {
+
         var fired = false;
 
         this.textInput.simulate('mousedown');
@@ -176,105 +276,68 @@ suite.add(new Y.Test.Case({
 
         this.wait(function () {
             Assert.isFalse(fired);
-        }, 200);
+        }, this.WAIT_FOR_POLL);
     },
 
     'valuechange should not report stale changes that occurred while a node was not focused - with focus() and blur()': function () {
-        this.wait(function () {
-            var fired = false;
 
-            this.textInput.simulate('mousedown');
-            this.textInput.set('value', 'foo');
-
-            this.textInput.on('valuechange', function (e) {
-                fired = true;
-            });
-
-            this.textInput.blur();
-            this.textInput.set('value', 'bar');
-            this.textInput.focus();
-            this.textInput.simulate('mousedown');
-
-            Assert.isFalse(fired);
-        }, 200);
-    },
-
-    'valuechange should start polling on keyup for IME keystrokes': function () {
         var fired = false;
+
+        this.textInput.simulate('mousedown');
+        this.textInput.set('value', 'foo');
 
         this.textInput.on('valuechange', function (e) {
             fired = true;
         });
 
-        this.textInput.simulate('keyup', {keyCode: 123}); // should not trigger IME behavior
-        this.textInput.set('value', 'foo');
+        this.textInput.blur();
+        this.textInput.set('value', 'bar');
+        this.textInput.focus();
+        this.textInput.simulate('mousedown');
 
         this.wait(function () {
             Assert.isFalse(fired);
-
-            this.textInput.simulate('blur'); // stop polling
-            this.textInput.simulate('keyup', {keyCode: 197});
-            this.textInput.set('value', 'bar');
-
-            this.wait(function () {
-                Assert.isTrue(fired);
-
-                fired = false;
-
-                this.textInput.simulate('blur');
-                this.textInput.simulate('keyup', {keyCode: 229});
-                this.textInput.set('value', 'baz');
-
-                this.wait(function () {
-                    Assert.isTrue(fired);
-                }, 200);
-            }, 200);
-        }, 200);
+        }, this.WAIT_FOR_POLL);
     },
 
     'valuechange should stop polling after timeout': function () {
         var oldTimeout = Y.ValueChange.TIMEOUT,
+            test = this,
+            called = 0,
             fired;
 
         this.textInput.on('valuechange', function (e) {
-            fired = true;
-        });
 
-        Y.ValueChange.TIMEOUT = 70;
+            called++;
+
+            test.resume(function() {
+
+                Y.ValueChange.TIMEOUT = 100;
+
+                // Make sure we're well beyond the timeout interval.
+                this.wait(function () {
+
+                    this.textInput.set('value', 'bar');
+
+                    // Make sure we're well beyond the polling interval
+                    this.wait(function() {
+
+                        Y.Assert.areEqual(1, called, "valuechange listener should only have been called once");
+                        Y.ValueChange.TIMEOUT = oldTimeout;
+
+                    }, test.WAIT_FOR_POLL);
+
+                }, 500);
+            });
+
+        });
 
         this.textInput.simulate('mousedown');
         this.textInput.set('value', 'foo');
 
-        this.wait(function () {
-            Assert.isTrue(fired);
-            fired = false;
-
-            this.wait(function () {
-                this.textInput.set('value', 'bar');
-
-                this.wait(function () {
-                    Assert.isFalse(fired);
-                    Y.ValueChange.TIMEOUT = oldTimeout;
-                }, 60);
-            }, 71);
-        }, 60);
-    },
-
-    'valueChange should be an alias for valuechange for backcompat': function () {
-        var test = this;
-
-        this.textInput.on('valueChange', function () {
-            test.resume();
-        });
-
-        this.textInput.simulate('mousedown');
-        this.textInput.set('value', 'monkeys');
-
         this.wait();
     }
 }));
-
-// -- Delegation ---------------------------------------------------------------
 
 suite.add(new Y.Test.Case({
     name: 'Delegation',
@@ -297,6 +360,7 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
+        Y.ValueChange._stopPolling(this.container);
         this.container.purge().empty();
     },
 
@@ -315,7 +379,7 @@ suite.add(new Y.Test.Case({
         this.a.simulate('mousedown');
         this.a.set('value', 'foo');
 
-        this.wait(200);
+        this.wait();
     },
 
     'delegation should be supported on textareas': function () {
@@ -333,14 +397,16 @@ suite.add(new Y.Test.Case({
         this.f.simulate('mousedown');
         this.f.set('value', 'foo');
 
-        this.wait(200);
+        this.wait();
     },
 
     'delegate filters should work properly': function () {
         var test = this;
 
         this.container.delegate('valuechange', function (e) {
-            test.resume();
+            test.resume(function() {
+                Assert.pass();
+            });
         }, '.even');
 
         this.container.delegate('valuechange', function (e) {
@@ -352,7 +418,7 @@ suite.add(new Y.Test.Case({
         this.b.simulate('mousedown');
         this.b.set('value', 'foo');
 
-        this.wait(200);
+        this.wait();
     },
 
     'multiple delegated handlers should be supported': function () {
@@ -360,7 +426,10 @@ suite.add(new Y.Test.Case({
             test  = this;
 
         this.container.delegate('valuechange', function (e) {
-            calls.push('one');
+            test.resume(function() {
+                calls.push('one');
+                test.wait();
+            });
         }, '.odd');
 
         this.container.delegate('valuechange', function (e) {
@@ -370,19 +439,24 @@ suite.add(new Y.Test.Case({
         }, '.even');
 
         this.container.delegate('valuechange', function (e) {
-            calls.push('two');
-        }, '.odd,.even');
+            test.resume(function() {
+                calls.push('two');
+                test.wait();
+            });
+        }, '.odd, .even');
 
         this.container.delegate('valuechange', function (e) {
-            calls.push('three');
+            test.resume(function() {
+                calls.push('three');
+
+                ArrayAssert.itemsAreSame(['one', 'two', 'three'], calls, 'delegated handlers should all be called in the correct order');
+            });
         }, 'input');
 
         this.c.simulate('mousedown');
         this.c.set('value', 'foo');
 
-        this.wait(function () {
-            ArrayAssert.itemsAreSame(['one', 'two', 'three'], calls, 'delegated handlers should all be called in the correct order');
-        }, 200);
+        test.wait();
     }
 }));
 
