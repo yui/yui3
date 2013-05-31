@@ -137,6 +137,7 @@ YUI.add('upload-iframe-tests', function(Y, NAME) {
                 timeout = this.timeout,
                 then = Y.Lang.now(),
                 completesFired = 0,
+                expected = timeout * 1.2,
                 request, now, elapsed;
 
             config.on['complete'] = function (id, transaction) {
@@ -145,11 +146,11 @@ YUI.add('upload-iframe-tests', function(Y, NAME) {
                     now = Y.Lang.now();
                     elapsed = now - then;
                     // Now make sure it timed out beneath the threshold, plus a small buffer
-                    if (elapsed < (timeout * 1.1)) {
+                    if (elapsed < expected) {
                         Y.Assert.pass();
                     }
                     else {
-                        Y.Assert.fail('Transaction did not timeout underneath the requested threshold. Expected ' + timeout + ', got ' + elapsed);
+                        Y.Assert.fail('Transaction did not timeout underneath the requested threshold. Expected ' + expected + ', got ' + elapsed);
                     }
                 });
             };
