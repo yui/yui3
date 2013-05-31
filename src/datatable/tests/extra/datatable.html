@@ -38,16 +38,34 @@
 <body class="yui3-skin-sam">
 <h1>Datatable Tests</h1>
 
-<p>Toggle <code>data</code> from <code>large</code> to <code>small</code> in the test code to get a different sized dataset.
+<p>
+<!--
+To test the performance of various datatables, look at the following sections in the code:
 
     <pre>
 //large or small dataset.
 data: large,
 
+//---------------------------------------------
+// Special instructions
+//---------------------------------------------
 
+_should: {
+    ignore: {
+    //ignore following tests (good to do if you are doing a large dataset)
+        testBaseDatatable: true,
+        testXYDatatable: true,
+        testXDatatable: true,
+        testYDatatable_FixedCol: true,
+        testYDatatable_AutoCol: true,
+        testXYDatatable_BigHeaders: false
+    }
+}
     </pre>
 
-     </p>
+    Toggle <code>data</code> from <code>large</code> to <code>small</code> to get a different sized dataset. The <code>ignore</code> object determines which table to load. If testing performance, it is recommended that you only enable 1 table at a time.
+-->
+</p>
     <hr>
 <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
     <hr>
@@ -86,13 +104,17 @@ data: large,
 <script type="text/javascript">
 
 
+// NOTE: Removed "dump" and "profiler" in use() statement as Profiler has been removed from YUI.
+// Tests using profiler have been commented out instead of removed completely
+// to stand as a reminder to update them (see @jenny).
+// See github pull request #808.
 
 (function() {
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         allowRollup: false,
         useBrowserConsole: false
-    }).use("console", "test", "datatable","node","json-parse", function(Y) {
+    }).use("console", "test", "datatable", "node","json-parse", function(Y) {
 
 
         // Set up the page
@@ -160,6 +182,15 @@ data: large,
                 _should: {
                     ignore: {
                         //ignore following tests (good to do if you are doing a large dataset)
+                        // NOTE: tests below depended on Profiler which has been removed from YUI and are
+                        // commented out for now pending future update.
+                        //testBaseDatatable:                 true,
+                        //testXYDatatable:                 false,
+                        //testXDatatable:                 false,
+                        //testYDatatable_FixedCol:         false,
+                        //testYDatatable_AutoCol:         false,
+                        //testXYDatatable_BigHeaders:     false,
+                        //testNoScrollDatatablekey:         false
                     }
                 },
 
@@ -216,6 +247,142 @@ data: large,
             /////////////////////////////////////////////////////////////////////////////
 
 
+            /*
+            testBaseDatatable: function() {
+                var sel = "#base";
+                Y.Profiler.start('dtBase');
+                this.dt = new Y.DataTable.Base({columnset:this.cols, recordset:this.data, caption:"Base"});
+                Y.Profiler.registerObject('dt', this.dt);
+                this.dt.render(sel);
+                Y.Profiler.stop('dtBase');
+                var msg = Y.Profiler.getAverage('dtBase') + 'ms taken to display';
+                var report = Y.Profiler.getFullReport(this.reportParser);
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                Y.log(msg, "time");
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+            },
+
+            testXYDatatable: function() {
+                var sel = '#scrolling-xy';
+                Y.Profiler.start('dtXY');
+                this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption: "ScrollingDataTable"});
+                Y.Profiler.registerObject('dt', this.dt);
+                this.dt.plug(Y.Plugin.DataTableScroll, {width:"200px", height:"300px"});
+                this.dt.render(sel);
+                Y.Profiler.stop('dtXY');
+                var msg = Y.Profiler.getAverage('dtXY') + 'ms taken to display';
+
+                var report = Y.Profiler.getFullReport(this.reportParser);
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                Y.log(msg, "time");
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+
+            },
+
+            testXDatatable: function() {
+                var sel = "#scrolling-x";
+
+                Y.Profiler.start('dtX');
+                this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, caption:"ScrollingDataTable"});
+                Y.Profiler.registerObject('dt', this.dt);
+                this.dt.plug(Y.Plugin.DataTableScroll, {width:"150px"});
+
+                this.dt.render(sel);
+                Y.Profiler.stop('dtX');
+
+                var msg = Y.Profiler.getAverage('dtX') + 'ms taken to display';
+                var report = Y.Profiler.getFullReport(this.reportParser);
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                Y.log(msg, "time");
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+
+            },
+
+            testYDatatable_FixedCol: function() {
+                var sel = "#scrolling-y";
+
+                Y.Profiler.start('dtY1');
+                this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+                Y.Profiler.registerObject('dt', this.dt);
+                this.dt.plug(Y.Plugin.DataTableScroll, {height:"300px"});
+                this.dt.render(sel);
+
+
+                Y.Profiler.stop('dtY1');
+                var msg = Y.Profiler.getAverage('dtY1') + 'ms taken to display';
+
+
+                var report = Y.Profiler.getFullReport(this.reportParser);
+
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+
+                Y.log(msg, 'time');
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+            },
+
+            testYDatatable_AutoCol: function() {
+                var sel = "#scrolling-colwidth";
+
+                Y.Profiler.start('dtY2');
+                this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+                Y.Profiler.registerObject('dt', this.dt);
+                this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px"});
+                this.dt.render(sel);
+                Y.Profiler.stop('dtY2');
+
+                var msg = Y.Profiler.getAverage('dtY2') + 'ms taken to display';
+                var report = Y.Profiler.getFullReport(this.reportParser);
+
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                Y.log(msg, 'time');
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+            },
+
+            testXYDatatable_BigHeaders: function() {
+                var sel = "#scrolling-bigcols";
+
+                Y.Profiler.start('dtHeaders');
+                this.dt =  new Y.DataTable.Base({columnset:this.cols3, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+                Y.Profiler.registerObject('dt', this.dt);
+                this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", width:"400px"});
+                this.dt.render(sel);
+                Y.Profiler.stop('dtHeaders');
+
+                var msg = Y.Profiler.getAverage('dtHeaders') + 'ms taken to display';
+                var report = Y.Profiler.getFullReport(this.reportParser);
+
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                Y.log(msg, 'time');
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+            },
+
+            testNoScrollDatatable: function() {
+                var sel = "#scrolling-noscroll";
+
+                Y.Profiler.start('dtNoScroll');
+                this.dt =  new Y.DataTable.Base({columnset:this.cols3, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+                Y.Profiler.registerObject('dt', this.dt);
+                this.dt.plug(Y.Plugin.DataTableScroll);
+                this.dt.render(sel);
+                Y.Profiler.stop('dtNoScroll');
+
+                var msg = Y.Profiler.getAverage('dtNoScroll') + 'ms taken to display';
+                var report = Y.Profiler.getFullReport(this.reportParser);
+
+                this.displayReport(report);
+                Y.Profiler.unregisterObject('dt');
+                Y.log(msg, 'time');
+                Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+
+                this.dt.scroll.set('width', '200px');
+            },
+            */
 
             test_uniqueRecordset: function () {
                 // Ticket #2529980
