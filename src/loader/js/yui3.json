@@ -1979,11 +1979,6 @@
             "pluginhost-base"
         ]
     },
-    "profiler": {
-        "requires": [
-            "yui-base"
-        ]
-    },
     "promise": {
         "requires": [
             "timers"
