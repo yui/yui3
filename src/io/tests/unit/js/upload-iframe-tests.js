@@ -161,6 +161,11 @@ YUI.add('upload-iframe-tests', function(Y, NAME) {
         }
     }));
 
+/*
+
+    Removing these tests until the following pull request is merged
+    https://github.com/yui/yui3/pull/519
+
     suite.add(new Y.Test.Case({
         name: 'Attribute tests',
         setUp: function() {
@@ -216,7 +221,7 @@ YUI.add('upload-iframe-tests', function(Y, NAME) {
         }
 
     }));
-
+*/
     suite.add(new Y.Test.Case({
         name: 'Abort tests',
         setUp: function() {
