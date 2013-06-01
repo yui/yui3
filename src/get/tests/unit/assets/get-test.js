@@ -1119,9 +1119,12 @@ YUI.add('get-test', function (Y) {
                 urls = [],
                 i;
 
+            // Hardcoding to use 0 delay, so that when run under load.html, we're not
+            // taking 30s or more to get all files. Not really worth adding the
+            // load variance for this test.
             for (i = 0; i < 30; ++i) {
                 urls.push(
-                    getUniqueEchoechoJs(JS_A, DELAY)
+                    getUniqueEchoechoJs(JS_A, 0)
                 );
             }
 
@@ -1294,6 +1297,7 @@ YUI.add('get-test', function (Y) {
             var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
             var trans = Y.Get.css(url, {
+                timeout:30000,
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1339,6 +1343,7 @@ YUI.add('get-test', function (Y) {
             ];
 
             var trans = Y.Get.css(urls, {
+                timeout:30000,
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1381,7 +1386,7 @@ YUI.add('get-test', function (Y) {
 
             var trans = Y.Get.css(url, {
                 insertBefore: "insertBeforeMe",
-
+                timeout:30000,
                 onSuccess: function(o) {
                     test.resume(function() {
                         var n = Y.Node.one(o.nodes[0]);
@@ -1417,7 +1422,7 @@ YUI.add('get-test', function (Y) {
 
             var trans = Y.Get.css(urls, {
                 insertBefore: "insertBeforeMe",
-
+                timeout:30000,
                 onSuccess: function(o) {
                     test.resume(function() {
                         var insertBefore = Y.Node.one("#insertBeforeMe");
@@ -1452,7 +1457,7 @@ YUI.add('get-test', function (Y) {
 
             var trans = Y.Get.css(url, {
                 charset: "ISO-8859-1",
-
+                timeout:30000,
                 onSuccess: function(o) {
                     test.resume(function() {
                         var node = document.getElementById(o.nodes[0].id);
@@ -1477,7 +1482,7 @@ YUI.add('get-test', function (Y) {
 
             var trans = Y.Get.css(urls, {
                 charset: "ISO-8859-1",
-
+                timeout:30000,
                 onSuccess: function(o) {
                     test.resume(function() {
 
@@ -1506,7 +1511,7 @@ YUI.add('get-test', function (Y) {
                     "charset": "ISO-8859-1",
                     "title": "myscripts"
                 },
-
+                timeout:30000,
                 onSuccess: function(o) {
                     test.resume(function() {
                         var node = document.getElementById(o.nodes[0].id);
@@ -1536,7 +1541,7 @@ YUI.add('get-test', function (Y) {
                     "charset": "ISO-8859-1",
                     "title": "myscripts"
                 },
-
+                timeout:30000,
                 onSuccess: function(o) {
                     test.resume(function() {
 
@@ -1570,7 +1575,7 @@ YUI.add('get-test', function (Y) {
             Y.Get.css(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-
+                timeout:30000,
                 onSuccess: function(o) {
                     test.resume(function () {
                         if (supports.cssFailure) {
@@ -1609,7 +1614,7 @@ YUI.add('get-test', function (Y) {
             Y.Get.css(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-
+                timeout:30000,
                 onSuccess: function(o) {
                     test.resume(function() {
                         if (supports.cssFailure) {
@@ -1657,7 +1662,9 @@ YUI.add('get-test', function (Y) {
                 {url: urls[0], attributes: {id: 'a'}},
                 {url: urls[1], attributes: {id: 'b'}},
                 {url: urls[2], attributes: {id: 'c'}}
-            ], function (err, transaction) {
+            ], {
+                timeout:30000
+            }, function (err, transaction) {
                 test.resume(function () {
                     var nodes = transaction.nodes;
 
@@ -1780,6 +1787,7 @@ YUI.add('get-test', function (Y) {
                 callbackCalled;
 
             test.t = Y.Get.css(url, {
+                timeout:30000,
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1801,7 +1809,7 @@ YUI.add('get-test', function (Y) {
                     Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
                     Assert.areSame(test.t, self, '`this` object should be the transaction');
 
-                    test.wait(100);
+                    test.wait();
                 });
             });
 
@@ -1812,7 +1820,9 @@ YUI.add('get-test', function (Y) {
             var test = this;
             var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
-            test.t = Y.Get.css(url, function (err, transaction) {
+            test.t = Y.Get.css(url, {
+                timeout:30000
+            }, function (err, transaction) {
                 var self = this;
 
                 test.resume(function () {
@@ -1834,6 +1844,8 @@ YUI.add('get-test', function (Y) {
             ];
 
             test.t = Y.Get.css(urls, {
+                timeout:30000,
+
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1856,6 +1868,7 @@ YUI.add('get-test', function (Y) {
             var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
             test.t = Y.Get.css({url: url}, {
+                timeout:30000,
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1882,6 +1895,7 @@ YUI.add('get-test', function (Y) {
             ];
 
             test.t = Y.Get.css([{url: urls[0]}, {url: urls[1]}, {url: urls[2]}], {
+                timeout:30000,
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1908,6 +1922,7 @@ YUI.add('get-test', function (Y) {
             ];
 
             test.t = Y.Get.css([urls[0], {url: urls[1]}, urls[2]], {
+                timeout:30000,
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2138,6 +2153,7 @@ YUI.add('get-test', function (Y) {
                 callbackCalled;
 
             test.t = Y.Get.load(url, {
+                timeout:30000,
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2193,6 +2209,7 @@ YUI.add('get-test', function (Y) {
             ];
 
             test.t = Y.Get.load(urls, {
+                timeout:30000,
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2245,6 +2262,7 @@ YUI.add('get-test', function (Y) {
             ];
 
             test.t = Y.Get.load([{url: urls[0]}, {url: urls[1]}, {url: urls[2]}], {
+                timeout:30000,
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2274,6 +2292,7 @@ YUI.add('get-test', function (Y) {
             ];
 
             test.t = Y.Get.load([urls[0], {url: urls[1]}, urls[2]], {
+                timeout:30000,
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2318,8 +2337,8 @@ YUI.add('get-test', function (Y) {
                 ],
 
                 t1 = Y.Get.js([urls[0], urls[1]], finish),
-                t2 = Y.Get.css(urls[2], finish),
-                t3 = Y.Get.load(urls[3], function (err, t) {
+                t2 = Y.Get.css(urls[2], {timeout:30000},finish),
+                t3 = Y.Get.load(urls[3], {timeout:30000}, function (err, t) {
                     finish(err, t);
 
                     test.resume(function () {
