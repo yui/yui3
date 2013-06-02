@@ -1,19 +1,22 @@
 /**
- Provides cell editors that appear to make the cell itself editable by occupying the same region.
+ Provides cell editors for DataTable
 
  @module datatable
  @submodule datatable-celleditors
 */
-
 /**
- Serves as the base class for a cell inline editor, i.e. an editor that
- completely overlies the cell being edited.  This editor is intended to replicate
- the familiar "spreadsheet" type of input.
+Collection of cell editors for DataTable.
 
- @class DataTable.BaseCellInlineEditor
- @extends DataTable.BaseCellEditor
- **/
+This class contains subclasses of [DataTable.BaseCellEditor](DataTable.BaseCellEditor.html)
+keyed by the name of the editor.
 
+See [DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) for the API of the classes
+contained as properties in this class.
+
+@class DataTable.Editors
+@type {Object}
+@static
+*/
 var arrMap = Y.Array.map,
     Lang = Y.Lang,
     substitute = Lang.sub,
@@ -23,40 +26,30 @@ var arrMap = Y.Array.map,
     baseCreate = Y.Base.create,
     Editors = {},
     BCE =  Y.DataTable.BaseCellEditor;
-    IEd =  baseCreate('celleditor', BCE,[],{},{
-        ATTRS:{
-            template: {
-                value:'<input class="{classInput}" type="text"  />'
-            },
-            popup: {
-                value: false
-            }
-        }
-    });
 
 /**
 Produces a simple simple inline-type cell editor.
 
 @example
     // Column definition
-    { key:'surName', editor:"inline" }
+    { key: 'surName', editor: "inline" }
 
-Since the `defaultEditor` attribute defaults to `"inline"`, any cell that
-doesn't have editing disable will use this editor.
+Since the [defaultEditor](DataTable.html#attr_defaultEditor) attribute defaults to `"inline"`, any cell that
+doesn't have editing disabled and has no `editor` explicitly declared will use this editor.
 
 For a complete list of configuration attributes, see the
-[DataTable.BaseCellInlineEditor](DataTable.BaseCellInlineEditor.html) class.
+[DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) class.
 
 @property inline
 @type DataTable.BaseCellEditor
 @for DataTable.Editors
 @public
 **/
-Editors.inline = IEd;
+Editors.inline = BCE;
 
 
 /**
-This cell editor is identical to the [inline](#property_inline) textual editor but incorporates
+This cell editor is identical to the [inline](#property_inline) text editor but incorporates
 numeric formatting and validation prior to saving.
 It requires the `datatype-number` module to perform the validation,
 otherwise it uses `parseFloat` for parsing and regular typecasting to show.
@@ -78,14 +71,14 @@ otherwise it uses `parseFloat` for parsing and regular typecasting to show.
 
 
 For a complete list of configuration attributes, see the
-[DataTable.BaseCellInlineEditor](DataTable.BaseCellInlineEditor.html) class.
+[DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) class.
 
 @property inlineNumber
 @type DataTable.BaseCellEditor
 @for DataTable.Editors
 @public
 **/
-Editors.inlineNumber = baseCreate('celleditor', IEd, [],
+Editors.inlineNumber = baseCreate('celleditor', BCE, [],
     {},
     {
         ATTRS: {
@@ -100,16 +93,11 @@ Editors.inlineNumber = baseCreate('celleditor', IEd, [],
             @attribute numberFormat
             @type Object
             @default null
-            @for DataTable.BaseCellInlineEditor
+            @for DataTable.BaseCellEditor
              */
             numberFormat: {
                 value: null
             },
-
-            hideMouseLeave: {
-                value: false
-            },
-
             keyFiltering:   {
                     value : /^(\.\,|\d|\-)*$/
             },
@@ -147,7 +135,7 @@ Editors.inlineNumber = baseCreate('celleditor', IEd, [],
 );
 
 /**
-This cell editor is identical to the [inline](#property_inline) textual editor but incorporates date
+This cell editor is identical to the [inline](#property_inline) text editor but incorporates date
 formatting and validation.  By default, it uses the prefered local format for dates.
 
 It requires the `datatype-date` module to perform the validation,
@@ -166,18 +154,17 @@ The default date format is `"%x"` which is the prefered date format for the curr
     }
 
 For a complete list of configuration attributes, see the
-[DataTable.BaseCellInlineEditor](DataTable.BaseCellInlineEditor.html) class.
+[DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) class.
 
 @property inlineDate
 @type DataTable.BaseCellEditor
 @for DataTable.Editors
 @public
 **/
-Editors.inlineDate = baseCreate('celleditor', IEd, [],
+Editors.inlineDate = baseCreate('celleditor', BCE, [],
     {},
     {
         ATTRS: {
-
             /**
             Format specification used both to display the date in the
             [inlineDate](DataTable.Editors.html#property_inlineDate) editor
@@ -189,7 +176,7 @@ Editors.inlineDate = baseCreate('celleditor', IEd, [],
             @attribute dateFormat
             @type String
             @default "%x"  (prefered local format)
-            @for DataTable.BaseCellInlineEditor
+            @for DataTable.BaseCellEditor
              */
             dateFormat: {
                 value:"%x"
@@ -201,7 +188,7 @@ Editors.inlineDate = baseCreate('celleditor', IEd, [],
 
             formatter: {
                 value: function (value) {
-                    Y.log('Editors.inlineDate.formatter: ' + value,'info','celleditor-popup');
+                    Y.log('Editors.inlineDate.formatter: ' + value,'info','celleditors');
 
                     return (
                         YDate ?
@@ -213,7 +200,7 @@ Editors.inlineDate = baseCreate('celleditor', IEd, [],
 
             parser: {
                 value: function(value){
-                    Y.log('Editors.inlineDate.parser: ' + value,'info','celleditor-popup');
+                    Y.log('Editors.inlineDate.parser: ' + value,'info','celleditors');
 
                     return (
                         YDate ?
@@ -283,14 +270,14 @@ through the `autocompleteConfig` property:
     }
 
 For a complete list of configuration attributes, see the
-[DataTable.BaseCellInlineEditor](DataTable.BaseCellInlineEditor.html) class.
+[DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) class.
 
 @property inlineAC
 @type DataTable.BaseCellEditor
 @for DataTable.Editors
 @public
 **/
-Editors.inlineAC = baseCreate('celleditor', IEd, [],
+Editors.inlineAC = baseCreate('celleditor', BCE, [],
     {
         _defRenderFn: function () {
             Y.log('inlineAC._defRenderFn','info','celleditor-inline');
@@ -326,17 +313,13 @@ Editors.inlineAC = baseCreate('celleditor', IEd, [],
             return this;
 
         },
-        _afterACSelect:function (e) {
+        _afterACSelect:function (ev) {
             Y.log('inlineAC._afterACSelect','info','celleditor-inline');
-            this.saveEditor(e.result.raw.value);
+            this.saveEditor(ev.result.raw.value);
        }
     },
     {
         ATTRS: {
-
-            hideMouseLeave: {
-                value: false
-            },
             saveOnEnterKey: {
                 value: false
             },
@@ -368,7 +351,7 @@ Editors.inlineAC = baseCreate('celleditor', IEd, [],
             @attribute lookupTable
             @type Array
             @default null
-            @for DataTable.BaseCellInlineEditor
+            @for DataTable.BaseCellEditor
              */
             lookupTable: {
                 value: null
@@ -386,7 +369,7 @@ Editors.inlineAC = baseCreate('celleditor', IEd, [],
             @attribute autocompleteConfig
             @type Object
             @default {}
-            @for DataTable.BaseCellInlineEditor
+            @for DataTable.BaseCellEditor
              */
             autocompleteConfig: {
                 value: {}
@@ -413,7 +396,7 @@ Produces a basic textbox type popup cell editor.
     }
 
 For a complete list of configuration attributes, see the
-[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
+[DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) class.
 
 @property text
 @for DataTable.Editors
@@ -425,9 +408,6 @@ PlainText = baseCreate('celleditor', BCE, [],
     {},
     {
         ATTRS: {
-            template: {
-                value: '<input type="text" class="{classInput}" />'
-            },
             popup: {
                 value: true
             },
@@ -465,7 +445,7 @@ Produces a "textarea"  popup  cell editor.
     }
 
 For a complete list of configuration attributes, see the
-[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
+[DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) class.
 
 
 @property textarea
@@ -482,13 +462,6 @@ Editors.textarea = baseCreate('celleditor', PlainText, [],
             },
             saveOnEnterKey: {
                 value:false
-            },
-
-            buttons: {
-                value:[
-                    {save: true},
-                    {cancel: true}
-                ]
             }
         }
     }
@@ -516,61 +489,19 @@ otherwise it uses `parseFloat` for parsing and regular typecasting to show.
     }
 
 For a complete list of configuration attributes, see the
-[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
+[DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) class.
 
 @property number
 @for DataTable.Editors
 @type DataTable.BaseCellEditor
 @public
 */
-Editors.number = baseCreate('celleditor', PlainText, [],
+Editors.number = baseCreate('celleditor', Editors.inlineNumber, [],
     {},
     {
         ATTRS: {
-            /**
-            Format specification used both when showing the value in the
-            [number](DataTable.Editors.html#property_number) editor and
-            when parsing the entered value.
-            See [Number.format](Number.html#method_format) for details.
-
-            ##### Used only in the [number](DataTable.Editors.html#property_number) editor.
-
-            @attribute numberFormat
-            @type Object
-            @default null
-            @for DataTable.BaseCellPopupEditor
-             */
-
-            numberFormat: {
-                value: null
-            },
-            keyFiltering:   {
-                    value : /^(\.\,|\d|\-)*$/
-            },
-
-            formatter: {
-                value: function (value) {
-                    Y.log('number.formatter: ' + v,'info','celleditor-popup');
-
-                    var fmt = this.get('numberFormat');
-                    if (fmt && YNumber) {
-                        return YNumber.format(value, fmt);
-                    }
-                    return value;
-                }
-            },
-            parser: {
-                value: function (value) {
-                    Y.log('number.parser: ' + value,'info','celleditor-popup');
-
-                    var fmt = this.get('numberFormat');
-                    if (fmt && YNumber) {
-                        value = YNumber.parse(value, fmt);
-                    } else {
-                        value = parseFloat(value);
-                    }
-                    return (Lang.isValue(value) ? value : Y.Attribute.INVALID_VALUE);
-                }
+            popup: {
+                value: true
             }
         }
     }
@@ -596,67 +527,19 @@ The default date format is `"%x"` which is the prefered date format for the curr
     }
 
 For a complete list of configuration attributes, see the
-[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
+[DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) class.
 
 @property date
 @for DataTable.Editors
 @type DataTable.BaseCellEditor
 @public
 */
-Editors.date = baseCreate('celleditor', PlainText, [],
+Editors.date = baseCreate('celleditor', Editors.inlineDate, [],
     {},
     {
         ATTRS: {
-            /**
-            Format specification used both to display the date in the
-            [date](DataTable.Editors.html#property_date) editor
-            and to parse it back.
-            See [Date.format](Date.html#method_format) for details.
-
-            ##### Used only in the following editors:<ul>
-            <li>[date](DataTable.Editors.html#property_date)</li>
-            <li>[calendar](DataTable.Editors.html#property_date)</li>
-            </ul>
-
-            @attribute dateFormat
-            @type String
-            @default "%x"  (prefered local format)
-            @for DataTable.BaseCellPopupEditor
-             */
-            dateFormat: {
-                value:"%x"
-            },
-            // only allow keyboard input of digits or '/' or '-' within the editor ...
-            keyFiltering: {
-                value:   /^(\/|\d|\-)*$/
-            },
-
-            // Function to call prior to displaying editor, to put a human-readable Date into
-            //  the INPUT box initially ...
-            formatter: {
-                value: function (value) {
-                    Y.log('Editors.date.formatter: ' + value,'info','celleditor-popup');
-
-                    return (
-                        YDate ?
-                        YDate.format(value, this.get('dateFormat')) :
-                        value.toString()
-                    );
-                }
-            },
-
-            // Function to call after Date editing is complete, prior to saving to DataTable ...
-            //  i.e. converts back to "Date" format that DT expects ...
-            parser: {
-                value: function(value){
-                    Y.log('Editors.date.parser: ' + value,'info','celleditor-popup');
-
-                    return (
-                        YDate ?
-                        YDate.parse(value, this.get('dateFormat')) :
-                        Date.parse(value)
-                    ) || Y.Attribute.INVALID_VALUE;
-                }
+            popup: {
+                value: true
             }
         }
     }
@@ -682,7 +565,7 @@ the date.
     }
 
 For a complete list of configuration attributes, see the
-[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
+[DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) class.
 
 @property calendar
 @for DataTable.Editors
@@ -692,7 +575,7 @@ For a complete list of configuration attributes, see the
 Editors.calendar = baseCreate('celleditor', Editors.date, [],
     {
         _defRenderFn: function () {
-            Y.log('Editors.calendar._defRenderFn','info','celleditor-popup');
+            Y.log('Editors.calendar._defRenderFn','info','celleditors');
 
             Editors.calendar.superclass._defRenderFn.apply(this, arguments);
             var calNode = this.get('container').one('.yui3-datatable-celleditor-calendar'),
@@ -725,7 +608,7 @@ Editors.calendar = baseCreate('celleditor', Editors.date, [],
             }
         },
         _afterCalendarClick:function (ev) {
-            Y.log('Editors.calendar._afterCalendarClick','info','celleditor-popup');
+            Y.log('Editors.calendar._afterCalendarClick','info','celleditors');
 
               var value = ev.date;
               this._inputNode.set('value',
@@ -738,7 +621,7 @@ Editors.calendar = baseCreate('celleditor', Editors.date, [],
               }
         },
         destructor: function () {
-            Y.log('Editors.calendar.destructor','info','celleditor-popup');
+            Y.log('Editors.calendar.destructor','info','celleditors');
 
             if(this._calendar) {
                 this._calendar.destroy({remove:true});
@@ -746,7 +629,7 @@ Editors.calendar = baseCreate('celleditor', Editors.date, [],
 
         },
         _defShowFn: function (ev) {
-            Y.log('Editors.calendar._defShowFn','info','celleditor-popup');
+            Y.log('Editors.calendar._defShowFn','info','celleditors');
 
             Editors.calendar.superclass._defShowFn.apply(this, arguments);
             var cal = this._calendar;
@@ -781,7 +664,7 @@ Editors.calendar = baseCreate('celleditor', Editors.date, [],
             //  the INPUT box initially ...
             formatter: {
                 value: function (value) {
-                    Y.log('Editors.calendar.formatter: ' + value,'info','celleditor-popup');
+                    Y.log('Editors.calendar.formatter: ' + value,'info','celleditors');
 
                     return (
                         YDate ?
@@ -795,7 +678,7 @@ Editors.calendar = baseCreate('celleditor', Editors.date, [],
             //  i.e. converts back to "Date" format that DT expects ...
             parser: {
                 value: function(value){
-                    Y.log('Editors.calendar.parser: ' + value,'info','celleditor-popup');
+                    Y.log('Editors.calendar.parser: ' + value,'info','celleditors');
 
                     return (
                         YDate ?
@@ -815,7 +698,7 @@ Editors.calendar = baseCreate('celleditor', Editors.date, [],
             @attribute calendarConfig
             @type Object
             @default null
-            @for DataTable.BaseCellPopupEditor
+            @for DataTable.BaseCellEditor
              */
             calendarConfig: {
                 value: null
@@ -830,7 +713,7 @@ Editors.calendar = baseCreate('celleditor', Editors.date, [],
             @attribute saveOnSelectDate
             @type Boolean
             @default true
-            @for DataTable.BaseCellPopupEditor
+            @for DataTable.BaseCellEditor
              */
             saveOnSelectDate: {
                 value: true,
@@ -898,97 +781,19 @@ through the `autocompleteConfig` property:
 
 
 For a complete list of configuration attributes, see the
-[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
+[DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) class.
 
 @property autocomplete
 @for DataTable.Editors
 @type DataTable.BaseCellEditor
 @public
 */
-Editors.autocomplete = baseCreate('celleditor', PlainText, [],
-    {
-
-        //---------
-        //  After the cell editor View is instantiated,
-        //    get the INPUT node and plugin the AutoComplete to it
-        //---------
-        _defRenderFn: function () {
-            Y.log('Editors.autocomplete._defRenderFn','info','celleditor-popup');
-
-            Editors.autocomplete.superclass._defRenderFn.apply(this, arguments);
-            var inputNode = this._inputNode;
-
-            if(inputNode && Plugins.AutoComplete) {
-
-               inputNode.plug(Plugins.AutoComplete,
-                    Y.merge({
-                        source: this.get('lookupTable'),
-                        resultTextLocator:'text',
-                        alwaysShowList: true,
-                        resultHighlighter: 'startsWith',
-                        render: true
-                    }, this.get('autocompleteConfig'))
-                );
-               //
-               inputNode.ac.after('select', function (e) {
-                   this.saveEditor(e.result.raw.value);
-               }, this);
-            }
-
-        }
-    },
+Editors.autocomplete = baseCreate('celleditor', Editors.inlineAC, [],
+    {},
     {
         ATTRS: {
-            /**
-            Source of data for the [AutoComplete](Plugin.AutoComplete.html) plugin.
-            If missing the `lookupTable` column attribute, such as it
-            is used in the [lookup](DataTable.BodyView.Formatters.html#method_lookup)
-            formatter, will be used instead.
-
-            It should be an array of objects containing `value` and `text` properties:
-
-                lookupTable: [
-                    {value:0, text: "unknown"},
-                    {value:1, text: "requested"},
-                    {value:2, text: "approved"},
-                    {value:3, text: "delivered"}
-                ]}
-
-            ##### Notes:
-
-            Used only in the following editors: <ul>
-            <li>[autocomplete](DataTable.Editors.html#property_autocomplete)</li>
-            <li>[radio](DataTable.Editors.html#property_radio)</li>
-            <li>[dropdown](DataTable.Editors.html#property_dropdown)</li>
-           </ul>
-
-            The [lookup](DataTable.BodyView.Formatters.html#method_lookup)
-            formatter accepts two formats for the lookupTable, an object map
-            and an array of value/text sets, only the latter is valid for this
-            editor.
-
-            @attribute lookupTable
-            @type Array
-            @default null
-            @for DataTable.BaseCellPopupEditor
-             */
-            lookupTable: {
-                value: null
-            },
-
-            /**
-            Configuration parameters to be merged along the default for the
-            [AutoComplete](Plugin.AutoComplete.html) plugin.
-
-            ##### Used only in the [autocomplete](DataTable.Editors.html#property_autocomplete) editor.
-
-            @attribute autocompleteConfig
-            @type Object
-            @default {}
-            @for DataTable.BaseCellPopupEditor
-             */
-            autocompleteConfig: {
-                value: null
+            popup: {
+                value: true
             }
         }
     }
@@ -1017,7 +822,7 @@ Produces a group of mutually exclusive radio buttons.
 
 
 For a complete list of configuration attributes, see the
-[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
+[DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) class.
 
 @property radio
 @for DataTable.Editors
@@ -1027,7 +832,7 @@ For a complete list of configuration attributes, see the
 Editors.radio = baseCreate('celleditor', BCE, [],
     {
         _defRenderFn:function () {
-            Y.log('Editors.radio._defRenderFn','info','celleditor-popup');
+            Y.log('Editors.radio._defRenderFn','info','celleditors');
 
             Editors.radio.superclass._defRenderFn.apply(this, arguments);
             var tmpl = this.get('template').replace('{name}', Y.guid()),
@@ -1043,31 +848,34 @@ Editors.radio = baseCreate('celleditor', BCE, [],
             );
 
         },
-        _afterRadioClick: function (e) {
-            Y.log('Editors.radio._afterRadioClick','info','celleditor-popup');
-            var value = e.target.get('value');
+        _afterRadioClick: function (ev) {
+            Y.log('Editors.radio._afterRadioClick','info','celleditors');
+            var value = ev.target.get('value');
 
             if (Lang.isValue(value)) {
                 this.saveEditor(value);
             }
         },
-        _defShowFn:function(e){
-            Y.log('Editors.radio._defShowFn','info','celleditor-popup');
+        _defShowFn:function(ev){
+            Y.log('Editors.radio._defShowFn','info','celleditors');
 
             Editors.radio.superclass._defShowFn.apply(this, arguments);
-            var radio  = this.get('container').one('input[type="radio"][value="' + e.initialValue + '"]');
+            var radio  = this.get('container').one('input[type="radio"][value="' + ev.initialValue + '"]');
             if (radio) {
 
                 radio.set('checked', true);
                 radio.focus();
             }
+        },
+        _resize: function () {
+            // Just let it adapt to the size of the contents.
         }
 
     },
     {
         ATTRS: {
             template: {
-                value:'<div class="yui3-datatable-celleditor-radio"><input type="radio" name="{name}" value="{value}"/>{text}</div>'
+                value:'<div class="yui3-datatable-celleditor-radio-button"><input type="radio" name="{name}" value="{value}"/>{text}</div>'
             },
             popup: {
                 value: true
@@ -1115,7 +923,7 @@ the Overlay.
 
 
 For a complete list of configuration attributes, see the
-[DataTable.BaseCellPopupEditor](DataTable.BaseCellPopupEditor.html) class.
+[DataTable.BaseCellEditor](DataTable.BaseCellEditor.html) class.
 
 @property dropdown
 @for DataTable.Editors
@@ -1125,7 +933,7 @@ For a complete list of configuration attributes, see the
 Editors.dropdown = baseCreate('celleditor', BCE, [],
     {
         _defRenderFn:function () {
-            Y.log('Editors.dropdown._defRenderFn','info','celleditor-popup');
+            Y.log('Editors.dropdown._defRenderFn','info','celleditors');
 
             Editors.dropdown.superclass._defRenderFn.apply(this, arguments);
             var tmpl = this.get('optionTemplate'),
@@ -1140,19 +948,19 @@ Editors.dropdown = baseCreate('celleditor', BCE, [],
             );
 
         },
-        _afterDropdownChange:function (e) {
-            Y.log('Editors.dropdown._afterDropdownChange','info','celleditor-popup');
-            var value = e.target.get('value');
+        _afterDropdownChange:function (ev) {
+            Y.log('Editors.dropdown._afterDropdownChange','info','celleditors');
+            var value = ev.target.get('value');
 
             if (Lang.isValue(value)) {
                 this.saveEditor(value);
             }
         },
-        _defShowFn: function (e) {
-            Y.log('Editors.dropdown._defShowFn','info','celleditor-popup');
+        _defShowFn: function (ev) {
+            Y.log('Editors.dropdown._defShowFn','info','celleditors');
 
             Editors.dropdown.superclass._defShowFn.apply(this, arguments);
-            this._inputNode.set('value',  e.initialValue ).focus();
+            this._inputNode.set('value',  ev.initialValue ).focus();
         }
     },
     {
@@ -1166,14 +974,14 @@ Editors.dropdown = baseCreate('celleditor', BCE, [],
             /**
             Template for the `option` elements in the dropdown.
             The template for the `select` element is in the
-            [template](DataTable.BaseCellPopupEditor#attr_template) attribute.
+            [template](DataTable.BaseCellEditor#attr_template) attribute.
 
             ##### Used only in the [dropdown](DataTable.Editors.html#dropdown) editor.
 
             @attribute optionTemplate
             @type String
             @default (see code)
-            @for DataTable.BaseCellPopupEditor
+            @for DataTable.BaseCellEditor
              */
             optionTemplate: {
                 value: '<option value="{value}">{text}</option>'
@@ -1220,25 +1028,26 @@ within the popup Overlay.
 Editors.checkbox = baseCreate('celleditor', BCE, [],
     {
         _defRenderFn: function () {
-            Y.log('Editors.checkbox._defRenderFn','info','celleditor-popup');
+            Y.log('Editors.checkbox._defRenderFn','info','celleditors');
 
             Editors.checkbox.superclass._defRenderFn.apply(this, arguments);
 
             this._subscr.push(
                 this._inputNode.on('click', this._afterCheckboxClick, this)
             );
+            this._xyReference = this.get('container');
         },
         _afterCheckboxClick:function () {
-            Y.log('Editors.checkbox._afterCheckboxClick','info','celleditor-popup');
+            Y.log('Editors.checkbox._afterCheckboxClick','info','celleditors');
 
             this.saveEditor(!!this._inputNode.get('checked'));
         },
 
-        _defShowFn: function (e) {
-            Y.log('Editors.checkbox._defRenderFn','info','celleditor-popup');
+        _defShowFn: function (ev) {
+            Y.log('Editors.checkbox._defRenderFn','info','celleditors');
 
             Editors.checkbox.superclass._defShowFn.apply(this, arguments);
-            this._inputNode.set('checked', !!e.formattedValue).focus();
+            this._inputNode.set('checked', !!ev.formattedValue).focus();
         }
     },
     {

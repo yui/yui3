@@ -112,7 +112,7 @@ YUI.add('datatable-editable-tests', function(Y) {
         'check ATTR default values' : function(){
             var dt = this.dt;
             isFalse(dt.get('editable'), "editable default not false" );
-            isNull(dt.get('defaultEditor'), "default editor not null" );
+            areSame('inline', dt.get('defaultEditor'), "default editor not inline" );
             areSame('dblclick', dt.get('editorOpenAction'), "default editorOpenAction not 'dblclick'" );
             Y.ArrayAssert.itemsAreSame([13, 113] , dt.get('editorOpenKey'), "default open keys should be 13 (enter) and 113 (F2)");
             isTrue(dt.get('wrapAroundNavigation'), "wrapAroundNavigation should be true");
@@ -126,17 +126,13 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             dt.set('editable',true);
             isTrue( dt.get('editable'), "set editable to true" );
-            areSame( 0, Y.Object.size(dt.getCellEditors()), "Still no editors (no default editor set)" );
-
-            dt.set('editable',null);
-            isTrue( dt.get('editable'), "set editable to null" );
-
-            dt.set('editable','none');
-            isTrue( dt.get('editable'), "set editable to 'none'" );
+            areSame( 7, Y.Object.size(dt.getCellEditors()), "All columns should have the default editor set" );
+            areSame(1, Y.Object.size(dt._commonEditors), "There should be only one common editor" );
 
             dt.set('editable',false);
             isFalse( dt.get('editable'), "set editable false" );
             areSame( 0, Y.Object.size(dt.getCellEditors()), "No editors initially" );
+            areSame( 0, Y.Object.size(dt._commonEditors), "There should be no common editor" );
 
         },
 
@@ -165,10 +161,10 @@ YUI.add('datatable-editable-tests', function(Y) {
         'check ATTR defaultEditor setting' : function(){
             var dt = this.dt;
             isFalse( dt.get('editable'), "editable not initially false" );
-            isNull(dt.get('defaultEditor'), "default defaultEditor not none" );
+            areSame('inline', dt.get('defaultEditor'), "default defaultEditor not inline" );
 
             dt.set('editable',true);
-            areSame( 0, Y.Object.size(dt.getCellEditors()), "No editors yet" );
+            areSame( 7, Y.Object.size(dt.getCellEditors()), "No editors yet" );
 
             dt.set('defaultEditor',null);
             isNull( dt.get('defaultEditor'), "set defaultEditor not null" );
@@ -177,10 +173,9 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame( 'inline', dt.get('defaultEditor'), "set defaultEditor failed on inline" );
 
             areSame( 7, Y.Object.size(dt.getCellEditors()), "setup default editors count not 7" );
-
             areSame(1, Y.Object.size(dt._commonEditors), "There should be only one common editor" );
-            var inl = dt._commonEditors.inline;
-            areSame( Y.DataTable.Editors.inline , inl.constructor, "common editor 0 should be inline");
+
+            Assert.isInstanceOf( Y.DataTable.Editors.inline , dt._commonEditors.inline, "common editor 0 should be inline");
 
         },
         'check ATTR editorOpenKey setting': function () {

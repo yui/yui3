@@ -1,5 +1,5 @@
 /**
- Allows the cells on a DataTable to be edited. Requires either the inline or popup cell editors.
+ Allows the cells on a DataTable to be edited. Supports either the cell or row editors.
 
  @module datatable
  @submodule datatable-editable
@@ -94,7 +94,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     an input textbox, textarea or similar and automates a few tasks.
 
     The default implementation tries to locate such element by searching for an
-    element with the CSS class set in [_classInput](#property__classInput) property.
+    element with the CSS class set in the [_classInput](#property__classInput) property.
 
     If such element exists and can be located, the default implementations of
     [_defShowFn](#method__defShowFn) and [_getValue](#method__getValue) will
@@ -103,8 +103,20 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @property _inputNode
     @type Node
     @default null
+    @protected
      */
     _inputNode: null,
+
+    /**
+    Reference to the element that is meant to overlap the cell being edited.
+    It usually is the [input element](#property__inputNode) itself or its container.
+
+    @property _xyReference
+    @type Node
+    @default null
+    @protected
+     */
+    _xyReference: null,
 
     /**
     Disallow ad-hoc attributes
@@ -116,7 +128,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     _allowAdHocAttrs: false,
 
     /**
-    Creates the View instance and sets the container and bindings
+    Lifecycle method.  Initializes the [_subscr](#property__subscr) property to
+    hold the event listeners and publishes the events it fires.
 
     @method initializer
     @protected
@@ -185,6 +198,9 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     },
 
     /**
+    Lifecycle method.  Closes any active editor and its popup window, if any,
+    and unbinds all events.
+
     @method destructor
     @protected
     */
@@ -200,8 +216,6 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         this._unbindUI();
     },
 
-
-
     /**
     Renders the editor and binds several event listeners.
     Developers writing specific cell editors should not override this method
@@ -216,9 +230,9 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         var cfg = this.get('overlayConfig') || {};
 
         if (this.get('popup')) {
-            cfg.host = this;
+            cfg.guest = this;
             cfg.buttons = this.get('buttons');
-            this._overlay = new Y.DataTable.CellEditorPopupPlugin(cfg).render(where);
+            this._overlay = new Y.DataTable.CellEditorOverlay(cfg).render(where);
             this.set('container', this._overlay.getStdModNode('body', true));
 
         } else {
@@ -230,115 +244,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     },
 
     /**
-    It should insert the HTML for this editor into the container.
-    The default implementation does nothing.
-
-    It must be defined by the subclass.
-
-    @method _defRenderFn
-    @protected
-    */
-    _defRenderFn: function () {
-        Y.log('DataTable.BaseCellEditor._defRenderFn', 'info', 'celleditor-base');
-        var container = this.get('container'),
-             classInput = this._classInput;
-        container.setHTML(Y.Lang.sub(this.get('template'), {
-            classInput:classInput
-        }));
-        this._inputNode = container.one('.' + classInput);
-        container.addClass(this.get('className') + ' yui3-datatable-celleditor');
-        container.hide();
-    },
-
-    /**
-    Sets the event listeners.
-
-    @method _bindUI
-    @protected
-    */
-    _bindUI: function () {
-        Y.log('DataTable.BaseCellEditor._bindUI', 'info', 'celleditor-base');
-
-
-        this._subscr = [
-            // This is here to support "scrolling" of the underlying DT ...
-            this.after('visibleChange', this._afterVisibleChange)
-        ];
-
-    },
-
-    /**
-    Detaches all event listeners.
-
-    @method _unbindUI
-    @protected
-    */
-    _unbindUI: function () {
-        Y.log('DataTable.BaseCellEditor._unbindUI', 'info', 'celleditor-base');
-
-        arrEach(this._subscr, function (e) {
-            if(e && e.detach) {
-                e.detach();
-            }
-        });
-        this._subscr = null;
-    },
-
-    /**
-    The default action for the [save](#event_save) event.
-
-    @method _defSaveFn
-    @param e {EventFacade} For [save](#event_save) event
-    @protected
-    */
-    _defSaveFn: function (e) {
-        Y.log('DataTable.BaseCellEditor._defSaveFn', 'info', 'celleditor-base');
-
-        this.set('value', e.newValue);
-        this._hideEditor();
-    },
-
-    /**
-    The default action for the [cancel](#event_cancel) event.
-
-    @method _defCancelFn
-    @protected
-    */
-    _defCancelFn: function () {
-        Y.log('DataTable.BaseCellEditor._defCancelFn', 'info', 'celleditor-base');
-
-        this._hideEditor();
-    },
-
-    /**
-    The default action for the [show](#event_show) event which should make the editor visible.
-
-    It shows the editor, positions it over the edited cell and if the
-    [_inputNode](#property__inputNode) property is a `Node` instance,
-    it will set its `value` property and focus on it.
-
-    @method _defShowFn
-    @param ev {EventFacade} for the [show](#event_show) event.
-    @protected
-    */
-    _defShowFn: function (ev) {
-        Y.log('DataTable.BaseCellEditor._defShowFn', 'info', 'celleditor-base');
-
-        this.set('visible', true);
-        this._attach(ev.td);
-        
-        var inputNode = this._inputNode;
-        if (inputNode instanceof Y.Node) {
-            inputNode.focus().set('value', ev.formattedValue).select();
-        }
-
-
-        this._set('active', true);
-    },
-
-
-    /**
     Displays, positions and resizes the cell editor over the edited TD element.
+    Fires the [show](#event_show) event.
 
     Sets the initial value after formatting.
 
@@ -368,24 +275,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     },
 
     /**
-    Returns the raw value as entered into the editor.
-    The default implementation assumes the [_inputNode](#property__inputNode)
-    property points to a Node with a `value` attribute that returns the value.
-
-
-    @method _getValue
-    @return value {mixed} Value as entered in the editor
-    @protected
-     */
-    _getValue: function () {
-        Y.log('DataTable.BaseCellEditor._getValue', 'info', 'celleditor-base');
-        if (this._inputNode) {
-            return this._inputNode.get('value');
-        }
-    },
-
-    /**
-    Saves the value provided after validating and parsing it.
+    Validates and parses the entered value and fires the [save](#event_save) event
+    to save it.
 
     @method saveEditor
     @param [value] {Any} Raw value (not yet parsed) to be saved.
@@ -393,8 +284,6 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @public
     */
     saveEditor: function (value) {
-        Y.log('DataTable.BaseCellEditor.saveEditor', 'info', 'celleditor-base');
-
         if (value === undefined) {
             value = this._getValue();
         }
@@ -423,6 +312,156 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     },
 
     /**
+    Called when the user has requested to cancel and abort any changes to the DT cell,
+    usually signified by a keyboard ESC or "Cancel" button, etc..
+    Fires the [cancel](#event_cancel) event.
+
+    @method cancelEditor
+    @public
+    */
+    cancelEditor: function () {
+        Y.log('DataTable.BaseCellEditor.cancelEditor', 'info', 'celleditor-base');
+
+        this.fire("cancel", this._cellInfo);
+    },
+
+    /**
+    Creates the input element(s) using the [template](#attr_template) attribute
+    and inserts them into this view's [container](#attr_container).
+    It tries to locate the [_inputNode](#property__inputNode) and the
+    [_xyReference](#property__xyReference).
+
+    Cell editors may override this method.
+
+    @method _defRenderFn
+    @param ev {EventFacade} event facade for the [render](#event_render)
+    @protected
+    */
+
+    _defRenderFn: function (/* ev */) {
+        Y.log('DataTable.BaseCellEditor._defRenderFn', 'info', 'celleditor-base');
+
+        var container = this.get('container'),
+             classInput = this._classInput;
+        container.setHTML(Y.Lang.sub(this.get('template'), {
+            classInput:classInput
+        }));
+        this._inputNode = container.one('.' + classInput);
+        this._xyReference = this._inputNode || container;
+        container.addClass(this.get('className') + ' yui3-datatable-celleditor');
+        if (!this._overlay) {
+            container.hide();
+        }
+    },
+
+    /**
+    Sets the event listeners.
+
+    @method _bindUI
+    @protected
+    */
+    _bindUI: function () {
+        Y.log('DataTable.BaseCellEditor._bindUI', 'info', 'celleditor-base');
+
+
+        this._subscr = [
+            // This is here to support "scrolling" of the underlying DT ...
+            this.after('visibleChange', this._afterVisibleChange)
+        ];
+
+    },
+
+    /**
+    Detaches all event listeners.
+
+    @method _unbindUI
+    @protected
+    */
+    _unbindUI: function () {
+        Y.log('DataTable.BaseCellEditor._unbindUI', 'info', 'celleditor-base');
+
+        arrEach(this._subscr, function (ev) {
+            if(ev && ev.detach) {
+                ev.detach();
+            }
+        });
+        this._subscr = null;
+    },
+
+    /**
+    The default action for the [save](#event_save) event.
+    Saves the value already validated and parsed and hides the editor.
+
+    @method _defSaveFn
+    @param ev {EventFacade} For [save](#event_save) event
+    @protected
+    */
+    _defSaveFn: function (ev) {
+        Y.log('DataTable.BaseCellEditor._defSaveFn', 'info', 'celleditor-base');
+
+        this.set('value', ev.newValue);
+        this._hideEditor();
+    },
+
+    /**
+    The default action for the [cancel](#event_cancel) event.
+    It hides the editor.
+
+    @method _defCancelFn
+    @param ev {EventFacade} event facade for the [cancel](#event_cancel)
+    @protected
+    */
+    _defCancelFn: function (/* ev */) {
+        Y.log('DataTable.BaseCellEditor._defCancelFn', 'info', 'celleditor-base');
+
+        this._hideEditor();
+    },
+
+    /**
+    The default action for the [show](#event_show) event which should make the editor visible.
+
+    It shows the editor, positions it over the edited cell and if the
+    [_inputNode](#property__inputNode) property is a `Node` instance,
+    it will set its `value` property and focus on it.
+
+    @method _defShowFn
+    @param ev {EventFacade} for the [show](#event_show) event.
+    @protected
+    */
+    _defShowFn: function (ev) {
+        Y.log('DataTable.BaseCellEditor._defShowFn', 'info', 'celleditor-base');
+
+        this.set('visible', true);
+        this._attach(ev.td);
+
+        var inputNode = this._inputNode;
+        if (inputNode instanceof Y.Node) {
+            inputNode.focus().set('value', ev.formattedValue).select();
+        }
+
+
+        this._set('active', true);
+    },
+
+    /**
+    Returns the raw value as entered into the editor.
+    The default implementation assumes the [_inputNode](#property__inputNode)
+    property points to a Node with a `value` attribute that returns the value
+    as entered.
+
+
+    @method _getValue
+    @return value {mixed} Value as entered in the editor
+    @protected
+     */
+    _getValue: function () {
+        Y.log('DataTable.BaseCellEditor._getValue', 'info', 'celleditor-base');
+        if (this._inputNode) {
+            return this._inputNode.get('value');
+        }
+    },
+
+    /**
     Hides the current editor View instance.
 
     @method _hideEditor
@@ -438,26 +477,13 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         this._set('active', false);
     },
 
-
     /**
-    Called when the user has requested to cancel and abort any changes to the DT cell,
-    usually signified by a keyboard ESC or "Cancel" button, etc..
+    Resizes and moves the element referenced in the
+    [_xyReference](#property__xyReference) property
+    to fit on top of the cell being edited.
 
-    @method cancelEditor
-    @public
-    */
-    cancelEditor: function () {
-        Y.log('DataTable.BaseCellEditor.cancelEditor', 'info', 'celleditor-base');
-
-        this.fire("cancel", this._cellInfo);
-    },
-
-
-
-    /**
-    Moves and resizes the editor container to fit on top of the cell being edited.
-
-    To be implemented by the subclasses.
+    The default implementation reads the `region` the cell occupies and
+    calls [_resize](#method__resize) and [_move](#method__move).
 
     @method _attach
     @param td {Node} cell to attach this editor to
@@ -467,45 +493,57 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         Y.log('DataTable.BaseCellEditor._attach', 'info', 'celleditor-base');
         if (this.get('visible')) {
             var region = td.get('region');
-            this._move(region.left, region.top);
             this._resize(region.width, region.height);
+            this._move(region.left, region.top);
         }
     },
-    _move: function (left, top) {
-        Y.log('DataTable.BaseCellEditor._move: [' + left + ':' + top + ']', 'info', 'celleditor-base');
-        (this._overlay || this.get('container')).setXY([left, top]);
-    },
-    /**
-    Resizes the editor container to fit on top of the cell being edited.
 
-    To be implemented by the subclasses.
+    /**
+    Resizes the  element referenced in the [_xyReference](#property__xyReference)
+    property to fit on top of the cell being edited.
 
     @method _resize
-    @param width {Integer} width of the cell being edited
-    @param height {Integer} height of the cell being edited
+    @param width {Number} width of the cell being edited
+    @param height {Number} height of the cell being edited
     @protected
      */
     _resize: function (width, height) {
         Y.log('DataTable.BaseCellEditor._resize [' + width + ':' + height + ']','info','celleditor-base');
 
-        var container = this._inputNode || this.get('container');
-        container.set('offsetWidth', width + 1);
-        container.set('offsetHeight', height);
+        var node = this._xyReference;
+        node.set('offsetWidth', width + 1);
+        node.set('offsetHeight', height);
     },
+
     /**
-    Responds to changes in the [visible](#attr_visible) attribute by showing/hiding the
-    cell editor
+    Moves the [_xyRefenrece](#property__xyReference) element to the given position
+    or, if it is a popup editor, it  asks the [_overlay](#property__overlay) to do it.
+
+    @method _move
+    @param left {Number} left edge of the cell being edited.
+    @param top {Number} top edge of the cell being edited.
+    @protected
+     */
+    _move: function (left, top) {
+        Y.log('DataTable.BaseCellEditor._move: [' + left + ':' + top + ']', 'info', 'celleditor-base');
+
+        (this._overlay || this._xyReference).setXY([left, top]);
+    },
+
+    /**
+    Responds to changes in the [visible](#attr_visible) attribute by
+    showing/hiding the cell editor
 
     @method _afterVisibleChange
-    @param e {EventFacade} Standard Attribute change event facade
+    @param ev {EventFacade} Standard Attribute change event facade
     @private
     */
-   _afterVisibleChange: function (e) {
-        Y.log('DataTable.BaseCellEditor._afterVisibleChange: ' + e.newVal, 'info', 'celleditor-base');
+   _afterVisibleChange: function (ev) {
+        Y.log('DataTable.BaseCellEditor._afterVisibleChange: ' + ev.newVal, 'info', 'celleditor-base');
 
         var container  = this._overlay || this.get('container');
         if (container) {
-            if (e.newVal) {
+            if (ev.newVal) {
                 container.show();
             } else {
                 container.hide();
@@ -523,12 +561,41 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     localizedStrings:  Y.Intl.get('datatable-editable'),
 
     ATTRS:{
+
+        /**
+        Template to use in creating the cell editor content.
+
+        If the template contains an input element, i.e. a focusable Node with a
+        `value`  property, the base editor will automatically show the value
+        and retrieve the user input.   This node should be marked with the
+        `{classInput}` placeholder as its className.
+
+        The default uses a simple textbox.
+
+       @attribute template
+       @type String
+       @default plain input box
+         */
+        template: {
+            value:'<input class="{classInput}" type="text"  />',
+            validator: Lang.isString
+        },
+        /**
+        Optional CSS className added to the [container](#attr_container) of
+        this editor in addition to the defaults.
+
+        @attribute className
+        @type String
+        @default ''
+         */
         className: {
-            value: null
+            validator: Lang.isString,
+            value: ''
         },
 
         /**
-        Value being edited.  It should be a copy of the value stored in the record.
+        Value being edited.  It should be a copy of the value stored
+        or about to be stored in the record.
 
         @attribute value
         @type Any
@@ -542,10 +609,14 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         /**
         Function to execute on the [value](#attr_value) just prior to displaying in the
         editor's input element.
-        (i.e. typically used for pre-formatting Date information from JS to mm/dd/YYYY format)
-
-        This function will receive the value from the record as its only argument
+        The formatting function will receive the value from the record as its only argument
         and should return the formatted version to be shown to the user.
+        Setting this property to `null` (the default) will simply pass the value through.
+
+        This formatter is separate from the column formatter since it is expected
+        that the value to be edited will be stripped of extra decoration or formatting
+        to make it easier on the user.
+
 
         @attribute formatter
         @type Function || null
@@ -563,7 +634,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         /**
         Function to execute prior to saving the data to the record (Model).
 
-        This function will receive the raw value from the INPUT element as
+
+        This function will receive the raw value as entered by the user as
         its only argument and should return the value to be stored in the record.
 
         This method can also be used for input validation prior to saving.
@@ -584,7 +656,9 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
 
         /**
-        Signals whether the editor is open and active.
+        Signals whether the editor is open and active, however it might not be
+        [visible](#attr_visible) as it might have scrolled off the visible area
+        of the datatable.
 
         @attribute active
         @type Boolean
@@ -618,14 +692,13 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         This attribute can be a RegEx that operates on the entire
         `value` setting of the editor input element.
 
-        Further validation can be provided by the method set in the [parser](#attr_parser)
-        attribute.
-        //TODO: shouldn't they be enclosed in between $ and ^ ?
+        Further validation can be provided by the method set in the
+        [parser](#attr_parser) attribute.
 
         @example
-             /\d/            // for numeric digit-only input
-             /\d|\-|\.|\+/   // for floating point numeric input
-             /\d|\//         // for Date field entry in MM/DD/YYYY format
+             /^\d$/            // for numeric digit-only input
+             // for Date field entry as MM/DD/YYYY or MM-DD-YYYY
+             /^\d{1,2}(\/|\-)d{1,2}(\/|\-)d{1,4}$/
 
         @attribute validator
         @type RegExp
@@ -636,7 +709,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         },
 
         /**
-        A flag to signify whether the editor View should be "saved" upon detecting the Enter keystroke
+        A flag to signal whether the editor should be saved upon detecting the Enter keystroke
         within the INPUT area.
 
         For example, textarea typically will not, to allow a newline to be added.
@@ -649,6 +722,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
             value:      true,
             validator:  Lang.isBoolean
         },
+
         /**
         A flag to indicate if cell-to-cell navigation should be implemented (currently setup for CTRL-arrow
         key, TAB and Shift-TAB) capability
@@ -663,11 +737,24 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
         },
 
         /**
-        Additional config parameters for the Overlay to be used in constructing the Editor.
+        Wraps the editor in an overlay, optionally adding [buttons](@attr_buttons)
+        and [title](#attr_title)
+
+        @attribute popup
+        @type Boolean
+        @default false
+        */
+        popup: {
+            value: false,
+            validator: Lang.isBoolean
+        },
+
+        /**
+        Additional config parameters for the Overlay to be used in popup editors.
         These configs are merged with the defaults required by the Editor.
 
         The following would add a text to the header of the popup editor,
-        which is otherwise unused by this module.
+        (the [title](#attr_title) attribute can be used for that purpose).
 
             {
                 key: 'name',
@@ -735,19 +822,18 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
             value: null
         },
 
+        /**
+        For popup editors, text to be shown in the header area of the overlay.
 
+        @attribute title
+        @type text | null
+        @default null
+        */
 
         title: {
             value: null
-        },
-        popup: {
-            value: false
         }
 
-
     }
-
-
-
 });
 Y.DataTable.BaseCellEditor = BCE;

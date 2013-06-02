@@ -1,25 +1,69 @@
+// This file gets chained after others that already have var declarations
 /*jshint onevar:false*/
 var substitute = Y.Lang.sub,
     Plugins = Y.Plugins || {},
-    arrMap = Y.Array.map,
-    POP = Y.Base.create('celleditor-overlay', Y.Overlay, [],
+    arrMap = Y.Array.map;
 /*jshint onevar:true*/
+
+Y.DataTable.CellEditorOverlay = Y.Base.create('celleditor-overlay', Y.Overlay, [],
     {
         /**
-        Defines the HTML content "template" for BUTTON elements that are added to the Overlay
+        Defines the template for BUTTON elements that are added to the Overlay
         via the [buttons](#attr_buttons) attribute.
 
         @property btnTemplate
         @type String
         @default See Code
         */
+       // the `yui3-button` className is there to benefit from the CSSButton module.
         btnTemplate:    '<button class="yui3-button {classButton}">{label}</button>',
-        host: null,
-        offsetX: null,
-        offsetY: null,
+
+        /**
+        Reference to the cell editor that this overlay is hosting.
+
+        @property _guest
+        @type Datatable.BaseCellEditor
+        @default null
+        @private
+         */
+        _guest: null,
+
+        /**
+        Offset from the left edge of the element to be positioned to the left
+        edge of this overlay.
+
+        @property _offsetX
+        @type Number
+        @default 0
+        @private
+         */
+        _offsetX: null,
+
+        /**
+        Offset from the top edge of the element to be positioned to the top
+        edge of this overlay.
+
+        @property _offsetY
+        @type Number
+        @default 0
+        @private
+         */
+        _offsetY: null,
+
+        /**
+        Lifecycle method.  Setys the title and buttons and makes the overlay draggable
+        if the drag and drop plugin is available.
+
+        @method initializer
+        @param config {Object} Initial configuration options resulting from
+            the merge of the OverlayConfig attributes in the column definitions.
+        @protected
+         */
         initializer: function (config) {
-            var host = (this.host = config.host),
-                title = host.get('title');
+            Y.log('CellEditorOverlay.initializer','info','CellEditorOverlay');
+
+            var guest = (this._guest = config.guest),
+                title = guest.get('title');
 
 
             if(Plugins.Drag) {
@@ -28,8 +72,9 @@ var substitute = Y.Lang.sub,
             if (title) {
                 this.set('headerContent', title);
             }
-            this._createOverlayButtons(host.get('buttons'));
+            this._createOverlayButtons(guest.get('buttons'));
         },
+
         /**
         Adds to the footer of the overlay the buttons entered
         as the [buttons](#attr_buttons) config property of `editorConfig`
@@ -37,10 +82,11 @@ var substitute = Y.Lang.sub,
         Sets the click listener on them.
 
         @method _createOverlayButtons
+        @param btnCfg {Array}  Array of button definition objects
         @private
         */
         _createOverlayButtons: function (btnCfg) {
-            Y.log('BaseCellPopupEditor._createOverlayButtons','info','celleditor-popup');
+            Y.log('CellEditorOverlay._createOverlayButtons','info','CellEditorOverlay');
 
             var strings = Y.DataTable.BaseCellEditor.localizedStrings,
                 footer,
@@ -58,9 +104,10 @@ var substitute = Y.Lang.sub,
                 }, this);
                 this.set('footerContent', buttons.join('\n'));
                 footer = this.getStdModNode('footer', true);
-                this.host._subscr.push(footer.delegate('click', this._afterButtonClick, 'button.yui3-button', this));
+                this._guest._subscr.push(footer.delegate('click', this._afterButtonClick, 'button.yui3-button', this));
             }
         },
+
         /**
         Listener for clicks on the buttons defined in the [buttons](#attr_buttons) attribute.
 
@@ -68,62 +115,87 @@ var substitute = Y.Lang.sub,
         @param ev {EventFacade} Event facade for the click event
         @private
         */
-
         _afterButtonClick: function (ev) {
-            Y.log('BaseCellPopupEditor._afterButtonClick','info','celleditor-popup');
+            Y.log('CellEditorOverlay._afterButtonClick','info','CellEditorOverlay');
 
             var btnCfg = null,
                 action,
                 cellInfo,
-                host = this.host;
+                guest = this._guest;
 
             if (ev.target.ancestor().get('children').some(function(button, index) {
                 if (button === ev.target) {
-                    btnCfg = host.get('buttons')[index];
+                    btnCfg = guest.get('buttons')[index];
                     return true;
                 }
             })) {
                 if (btnCfg.save) {
-                    host.saveEditor();
+                    guest.saveEditor();
                     return;
                 }
                 if (btnCfg.cancel) {
-                    host.cancelEditor();
+                    guest.cancelEditor();
                     return;
                 }
                 action = btnCfg.action;
-                cellInfo = Y.merge(host._cellInfo, {value: host._getValue()});
+                cellInfo = Y.merge(guest._cellInfo, {value: guest._getValue()});
                 switch (Lang.type(action)) {
                     case 'string':
-                        if (host[action]) {
-                            host[action].call(host, btnCfg, cellInfo);
+                        if (guest[action]) {
+                            guest[action].call(guest, btnCfg, cellInfo);
                         } else {
-                            host.fire(action, btnCfg, cellInfo);
+                            guest.fire(action, btnCfg, cellInfo);
                         }
                         break;
                     case 'function':
-                        action.call(host, btnCfg, cellInfo);
+                        action.call(guest, btnCfg, cellInfo);
                         break;
                 }
             }
         },
+
+        /**
+        Moves the overlay to the given xy position so that the
+        [_guest](#property__guest) element ends on top of the cell being
+        edited.
+
+        @method setXY
+        @param xy {Array} Array of X and Y position for the guest element.
+         */
         setXY: function (xy) {
-            var offsetX = this.offsetX,
-                bbxy, bdxy;
+            Y.log('CellEditorOverlay.setXY','info','CellEditorOverlay');
+
+            var offsetX = this._offsetX,
+                bbxy, contentxy, guest = this._guest;
             if (offsetX === null) {
                 bbxy = this.get('boundingBox').getXY();
-                bdxy = this.getStdModNode('body').getXY();
-                offsetX = this.offsetX = bbxy[0] - bdxy[0];
-                this.offsetY = bbxy[1] - bdxy[1];
+                contentxy = guest._xyReference.getXY();
+                offsetX = this._offsetX = bbxy[0] - contentxy[0];
+                this._offsetY = bbxy[1] - contentxy[1];
             }
-            this.set('xy', [xy[0] + offsetX, xy[1] + this.offsetY]);
+            this.set('xy', [xy[0] + offsetX, xy[1] + this._offsetY]);
         }
     },
     {
         ATTRS: {
+            /**
+            Overrides the value of Overlay's `zIndex` attribute
+
+            @attribute zIndex
+            @type Integer
+            @default 99
+             */
             zIndex: {
                 value: 99
             },
+
+            /**
+            Overrides the value of Overlay's `visible` attribute.
+
+            @attribute visible
+            @type Boolean
+            @default false
+             */
             visible: {
                 value: false
             }
@@ -132,5 +204,3 @@ var substitute = Y.Lang.sub,
     }
 
 );
-
-Y.DataTable.CellEditorPopupPlugin = POP;
