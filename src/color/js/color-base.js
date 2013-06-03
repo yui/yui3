@@ -1,6 +1,10 @@
 /**
 Color provides static methods for color conversion.
 
+
+    NOTE: All conversion values will be returned in Lowercase
+
+
     Y.Color.toRGB('f00'); // rgb(255, 0, 0)
 
     Y.Color.toHex('rgb(255, 255, 0)'); // #ffff00
@@ -143,6 +147,9 @@ Y.Color = {
 
     /**
     Converts provided color value to a hex value string
+
+        NOTE: All `toHex()` values will be returned in Lowercase
+
     @public
     @method toHex
     @param {String} str Hex or RGB value string
