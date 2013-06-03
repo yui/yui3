@@ -151,6 +151,11 @@ Y.Color = {
     **/
     toHex: function (str) {
         var clr = Y.Color._convertTo(str, 'hex');
+
+        if (clr.charAt(0) !== '#' ) {
+            clr = '#' + clr;
+        }
+
         return clr.toLowerCase();
     },
 

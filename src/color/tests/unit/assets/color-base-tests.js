@@ -128,6 +128,16 @@ YUI.add('color-tests', function(Y) {
                 hex = Y.Color.toHex(rgb);
                 Assert.areSame(hex, "#610b38", "9. shoudl be #610B38");
                 Assert.areEqual(rgb, Y.Color.toRGB(hex), '9. toRGB(' + hex + ')');
+            },
+
+            'test toHex preceeds with `#`': function () {
+                Assert.areSame('#', Y.Color.toHex('olive').charAt(0), 'olive');
+                Assert.areSame('#', Y.Color.toHex('fff').charAt(0), 'fff');
+                Assert.areSame('#', Y.Color.toHex('#fff').charAt(0), '#fff');
+                Assert.areSame('#', Y.Color.toHex('rgb(255, 255, 255)').charAt(0), 'rgb');
+                Assert.areSame('#', Y.Color.toHex('rgba(255, 255, 255, 1)').charAt(0), 'rgba');
+                Assert.areSame('#', Y.Color.toHex('hsl(0, 0%, 0%)').charAt(0), 'hsl');
+                Assert.areSame('#', Y.Color.toHex('hsla(0, 0%, 0%, 1)').charAt(0), 'hsla');
             }
 
     });
