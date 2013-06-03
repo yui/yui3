@@ -31,17 +31,18 @@ YUI.add('recordset-indexer-tests', function(Y){
 			isNull(htContainer.one('table'), 'HTContainer is not empty.');
 
 			hashBtn.simulate('click');
-			viewBtn.simulate('click');
 
 			this.wait(function() {
-				isNotNull(htContainer.one('table'), 'Table was not created.');
+				viewBtn.simulate('click');
 
-				var htTable = htContainer.one('table');
+				this.wait(function() {
+					isNotNull(htContainer.one('table'), 'Table was not created.');
 
-				areSame(rowCount, htTable.all('tbody tr').size(), 'Rows do not match.');
+					var htTable = htContainer.one('table');
+
+					areSame(rowCount, htTable.all('tbody tr').size(), 'Rows do not match.');
+				}, 200);
 			}, 200);
-
-
 		}
 
 
