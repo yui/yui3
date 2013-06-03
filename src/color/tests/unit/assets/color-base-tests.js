@@ -135,6 +135,16 @@ YUI.add('color-tests', function(Y) {
                 Y.Assert.areSame(TRANSPARENT, Y.Color.toHex(TRANSPARENT), 'trasnparent to hex');
                 Y.Assert.areSame(TRANSPARENT, Y.Color.toRGB(TRANSPARENT), 'trasnparent to rgb');
                 Y.Assert.areSame(TRANSPARENT, Y.Color.toRGBA(TRANSPARENT), 'transparent to rgba');
+            },
+
+            'test toHex preceeds with `#`': function () {
+                Assert.areSame('#', Y.Color.toHex('olive').charAt(0), 'olive');
+                Assert.areSame('#', Y.Color.toHex('fff').charAt(0), 'fff');
+                Assert.areSame('#', Y.Color.toHex('#fff').charAt(0), '#fff');
+                Assert.areSame('#', Y.Color.toHex('rgb(255, 255, 255)').charAt(0), 'rgb');
+                Assert.areSame('#', Y.Color.toHex('rgba(255, 255, 255, 1)').charAt(0), 'rgba');
+                Assert.areSame('#', Y.Color.toHex('hsl(0, 0%, 0%)').charAt(0), 'hsl');
+                Assert.areSame('#', Y.Color.toHex('hsla(0, 0%, 0%, 1)').charAt(0), 'hsla');
             }
 
     });
