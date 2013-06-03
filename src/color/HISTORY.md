@@ -1,6 +1,6 @@
 Color Change History
 ====================
-@VERSION@
+3.10.2
 ------
 
 * Move Y.Color out of DOM [Pull Request #576] [apipkin]
