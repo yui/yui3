@@ -10,9 +10,11 @@ YUI.add('datatable-masterdetail-tests', function(Y) {
         name: 'Example tests',
         'test first table elements': function() {
             var tableSelector = '#mtable ',
-                th = Y.all(tableSelector + 'th'),
-                td = Y.all(tableSelector + 'td'),
-                tr = Y.all(tableSelector + 'tr'),
+                tableHeaderSelector = tableSelector + '.yui3-datatable-columns ',
+                tableDataSelector = tableSelector + '.yui3-datatable-data ',
+                th = Y.all(tableHeaderSelector + 'th'),
+                td = Y.all(tableDataSelector + 'td'),
+                tr = Y.all(tableHeaderSelector + 'tr, ' + tableDataSelector + 'tr'),
                 cap = Y.one(tableSelector + 'caption');
 
             Assert.areEqual(2, th.size(), ' - Wrong number of th');
@@ -26,9 +28,11 @@ YUI.add('datatable-masterdetail-tests', function(Y) {
         'test detail table after clicking master table': function() {
             clickedNodeTiggers.simulate('click');
             var tableSelector = '#dtable ',
-                th = Y.all(tableSelector + 'th'),
-                td = Y.all(tableSelector + 'td'),
-                tr = Y.all(tableSelector + 'tr'),
+                tableHeaderSelector = tableSelector + '.yui3-datatable-columns ',
+                tableDataSelector = tableSelector + '.yui3-datatable-data ',
+                th = Y.all(tableHeaderSelector + 'th'),
+                td = Y.all(tableDataSelector + 'td'),
+                tr = Y.all(tableHeaderSelector + 'tr, ' + tableDataSelector + 'tr'),
                 cap = Y.one(tableSelector + 'caption');
 
             Assert.areEqual(2, th.size(), ' - Wrong number of th');
@@ -43,18 +47,18 @@ YUI.add('datatable-masterdetail-tests', function(Y) {
         'test detail table after clicking master table': function() {
             clickedNodeBears.simulate('click');
             var tableSelector = '#dtable ',
-                th = Y.all(tableSelector + 'th'),
-                td = Y.all(tableSelector + 'td'),
-                tr = Y.all(tableSelector + 'tr'),
+                tableHeaderSelector = tableSelector + '.yui3-datatable-columns ',
+                tableDataSelector = tableSelector + '.yui3-datatable-data ',
+                th = Y.all(tableHeaderSelector + 'th'),
+                td = Y.all(tableDataSelector + 'td'),
+                tr = Y.all(tableHeaderSelector + 'tr, ' + tableDataSelector + 'tr'),
                 cap = Y.one(tableSelector + 'caption');
 
             Assert.areEqual(2, th.size(), ' - Wrong number of th');
-            // one is hidden "No critter characters were found!"
-            // so all the numbers below here will seem off
-            Assert.areEqual(11, td.size(), ' - Wrong number of td'); // one is hidden "No critter characters were found!"
-            Assert.areEqual(7, tr.size(), ' - Wrong number of tr');
-            Assert.isTrue((tr.item(3).hasClass('yui3-datatable-odd')), ' - Failed to assign odd row class');
-            Assert.areEqual('Yogi', td.item(10).getHTML(), ' - Failed to find "Yogi" in detail table');
+            Assert.areEqual(10, td.size(), ' - Wrong number of td');
+            Assert.areEqual(6, tr.size(), ' - Wrong number of tr');
+            Assert.isTrue((tr.item(2).hasClass('yui3-datatable-odd')), ' - Failed to assign odd row class');
+            Assert.areEqual('Yogi', td.item(9).getHTML(), ' - Failed to find "Yogi" in detail table');
             Assert.isTrue((cap.getHTML().indexOf('Bears') > -1),  ' - Wrong or no caption');
         }
     }));
