@@ -158,7 +158,7 @@ Y.Color = {
             clr = '#' + clr;
         }
 
-        return isTransparent ? clr : clr.toUpperCase();
+        return isTransparent ? clr.toLowerCase() : clr.toUpperCase();
     },
 
     /**
