@@ -1,10 +1,6 @@
 /**
 Color provides static methods for color conversion.
 
-
-    NOTE: All conversion values will be returned in Lowercase
-
-
     Y.Color.toRGB('f00'); // rgb(255, 0, 0)
 
     Y.Color.toHex('rgb(255, 255, 0)'); // #ffff00
@@ -139,7 +135,7 @@ Y.Color = {
             clr = str;
 
         if (convert && Y.Color[convert]) {
-            clr = Y.Color[convert](str).toLowerCase();
+            clr = Y.Color[convert](str);
         }
 
         return clr;
@@ -148,8 +144,6 @@ Y.Color = {
     /**
     Converts provided color value to a hex value string
 
-        NOTE: All `toHex()` values will be returned in Lowercase
-
     @public
     @method toHex
     @param {String} str Hex or RGB value string
@@ -157,13 +151,14 @@ Y.Color = {
     @since 3.8.0
     **/
     toHex: function (str) {
-        var clr = Y.Color._convertTo(str, 'hex');
+        var clr = Y.Color._convertTo(str, 'hex'),
+            isTransparent = clr.toLowerCase() === 'transparent';
 
-        if (clr.charAt(0) !== '#' ) {
+        if (clr.charAt(0) !== '#' && !isTransparent) {
             clr = '#' + clr;
         }
 
-        return clr.toLowerCase();
+        return isTransparent ? clr : clr.toUpperCase();
     },
 
     /**
