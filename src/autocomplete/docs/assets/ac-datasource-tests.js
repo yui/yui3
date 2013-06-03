@@ -11,7 +11,7 @@ YUI.add('ac-datasource-tests', function(Y) {
             Assert.isNotNull(Y.one('.example #demo .yui3-aclist-list'));
         },
 
-        'test type "san francisco" into ac list' : function() {
+        'test type "flanders" into ac list' : function() {
             var input =  Y.one('.example #demo #ac-input'),
                 list = Y.one('.example #demo .yui3-aclist-list'),
                 inputStr = "flanders";
