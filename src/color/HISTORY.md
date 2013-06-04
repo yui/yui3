@@ -1,6 +1,6 @@
 Color Change History
 ====================
-@VERSION@
+3.10.2
 ------
 
 * Ensure `toHex()` values are uppercase unless the return value is transparent
