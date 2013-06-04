@@ -4,7 +4,7 @@ Anim Change History
 3.10.2
 ------
 
-* Remove unnecessary <code> tag [zenorocha]
+* Remove unnecessary `code` tag [zenorocha]
 
 3.10.1
 ------
