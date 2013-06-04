@@ -12,7 +12,7 @@ var parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400
                 render: parentDiv 
             });
             this.shape = this.graphic.addShape({
-                type: "path",
+                type: "path"
             });
         },
 
@@ -76,7 +76,7 @@ var parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400
                 get: function() {
                     return this.mockGraphic;
                 }
-            }
+            };
             var shape = this.shape,
                 mockShape = new MockToFrontShape(),
                 graphicToFrontCalled = false;
@@ -98,7 +98,7 @@ var parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400
                 get: function() {
                     return this.mockGraphic;
                 }
-            }
+            };
             var shape = this.shape,
                 mockShape = new MockToBackShape(),
                 graphicToBackCalled = false;

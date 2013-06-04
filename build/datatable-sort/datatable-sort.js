@@ -902,4 +902,4 @@ Y.DataTable.Sortable = Sortable;
 Y.Base.mix(Y.DataTable, [Sortable]);
 
 
-}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es"], "skinnable": true});
+}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es", "hu"], "skinnable": true});

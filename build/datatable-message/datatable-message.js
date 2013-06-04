@@ -287,4 +287,4 @@ if (Y.Lang.isFunction(Y.DataTable)) {
 }
 
 
-}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es", "it"], "skinnable": true});
+}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es", "hu", "it"], "skinnable": true});
