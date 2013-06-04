@@ -8,7 +8,7 @@ This example demonstrates how to provide autocomplete suggestions using a <a hre
 </p>
 
 <p>
-Type the name of a band or musician to see results from <a href="http://music.yahoo.com/">Yahoo! Music</a>. Can't think of one? Try some of my favorites: Dandy Warhols, Black Rebel Motorcycle Club, The Morning After Girls, Dr. Theopolis, or Echo &amp; the Bunnymen.
+Type in the name of a city in the US to see the suggestions. Ex. New York, Chicago, etc.
 </p>
 </div>
 
@@ -20,7 +20,7 @@ Type the name of a band or musician to see results from <a href="http://music.ya
 {{>need-skin-note}}
 ```
 <div id="demo" class="yui3-skin-sam"> {{>need-skin-comment}}
-  <label for="ac-input">Music artist:</label><br>
+  <label for="ac-input">US city:</label><br>
   <input id="ac-input" type="text">
 </div>
 ```
@@ -36,23 +36,24 @@ YUI().use('autocomplete', 'autocomplete-highlighters', 'datasource-get', functio
 
   Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
     maxResults: 10,
-    resultHighlighter: 'wordMatch',
-    resultTextLocator: 'name',
+    resultHighlighter: 'phraseMatch',
+    resultTextLocator: function (result) {
+      return result.name + ', ' + result.admin1.content + ', ' + result.country.content;
+    },
 
     // Use the DataSource instance as the result source.
     source: ds,
 
-    // YQL query to use for each request (URL-encoded, except for the
-    // {query} placeholder). This will be appended to the URL that was supplied
-    // to the DataSource's "source" config above.
-    requestTemplate: '&q=select%20*%20from%20music.artist.search%20where%20keyword%3D%22{query}%22',
+    // YQL query to use for each request. This will be appended to the URL 
+    // that was supplied to the DataSource's "source" config above.
+    requestTemplate: '&q=select * from geo.places where text="{query}" and placeTypeName.content="Town" and country.content="United States"',
 
     // Custom result list locator to parse the results out of the YQL response.
     // This is necessary because YQL sometimes returns an array of results, and
     // sometimes just a single result that isn't in an array.
     resultListLocator: function (response) {
       var results = response[0].query.results &&
-            response[0].query.results.Artist;
+            response[0].query.results.place;
 
       if (results && !Y.Lang.isArray(results)) {
         results = [results];
