@@ -27,7 +27,7 @@ YUI().use("datasource-get", "datasource-jsonschema", function(Y) {
     });
 
     myDataSource.sendRequest({
-        request: "q=select%20*%20from%20upcoming.events.bestinplace...",
+        request: 'q=select * from geo.states where place="United States"',
         callback: {
             success: function (e) { /* output to screen */ },
             failure: function (e) { /* output to screen */ }
