@@ -3,12 +3,9 @@ Color Change History
 3.10.2
 ------
 
-* Ensure `toHex()` values are uppercase unless the return value is transparent
-  [Pull Request #822] [Bug #821] [apipkin]
-* Ensure `#` is at the beginning of `toHex()` returns
-  [Pull Request #822] [Bug #819] [apipkin]
-* Move Y.Color out of DOM
-  [Pull Request #576] [apipkin]
+* Ensure `toHex()` values are uppercase unless the return value is transparent [Pull Request #822] [Bug #821] [apipkin]
+* Ensure `#` is at the beginning of `toHex()` returns [Pull Request #822] [Bug #819] [apipkin]
+* Move Y.Color out of DOM [Pull Request #576] [apipkin]
 
 3.10.1
 ------
