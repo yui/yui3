@@ -8,7 +8,7 @@ var path = require('path'),
 
 var Y = YUI();
 
-//Tell the UA we are not in Node.js so that 
+//Tell the UA we are not in Node.js so that
 //Node.js modules are not resolved and loaded
 
 Y.UA.nodejs = false;
@@ -44,3 +44,4 @@ out.js.forEach(function(f) {
 
 fs.writeFileSync(outFile, str, 'utf8');
 console.log('Wrote (' + out.js.length + ') files to js/concat.js');
+console.log("WARNING: Simple YUI is deprecated as of YUI 3.10.2. The component may be removed in a future release.");
