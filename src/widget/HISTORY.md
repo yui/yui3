@@ -1,7 +1,7 @@
 Widget Change History
 =====================
 
-@VERSION@
+3.10.2
 ------
 
   * Fixed contentBox remaining in Y.Node _instances cache, when

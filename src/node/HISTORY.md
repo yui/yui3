@@ -1,7 +1,7 @@
 Node Change History
 ===================
 
-@VERSION@
+3.10.2
 ------
 
 * The `show()` and `hide()` methods now set and remove a node's `hidden`

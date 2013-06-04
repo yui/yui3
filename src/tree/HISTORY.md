@@ -16,6 +16,12 @@ Tree Change History
   of causing an exception. [Ryan Grove]
 
 
+3.10.2
+------
+
+* No changes.
+
+
 3.10.1
 ------
 

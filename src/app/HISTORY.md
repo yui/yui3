@@ -1,7 +1,7 @@
 App Framework Change History
 ============================
 
-@VERSION@
+3.10.2
 ------
 
 ### Router
