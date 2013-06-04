@@ -1274,7 +1274,7 @@ YUI.add('get-test', function (Y) {
             link.setAttribute("rel", "stylesheet");
             link.setAttribute("type", "text/css");
             link.setAttribute("charset", "utf-8");
-            link.setAttribute("href", getUniqueEchoechoCss(CSS_IB, DELAY));
+            link.setAttribute("href", getUniqueEchoechoCss(CSS_IB, 0));
 
             this.ib = Y.Node.one(link);
 
