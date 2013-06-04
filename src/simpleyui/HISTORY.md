@@ -1,7 +1,7 @@
 Simple YUI Change History
 =========================
 
-@VERSION@
+3.10.2
 ------
 
 * [!] DEPRECATED: Simple YUI has been deprecated as of YUI 3.10.2.  This module will be removed from the library in a future version.
