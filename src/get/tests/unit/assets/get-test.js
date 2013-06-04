@@ -1123,7 +1123,7 @@ YUI.add('get-test', function (Y) {
 
             for (i = 0; i < 30; ++i) {
                 urls.push(
-                    getUniqueEchoechoJs(JS_A, DELAY)
+                    getUniqueEchoechoJs(JS_A, 0)
                 );
             }
 
