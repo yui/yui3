@@ -1803,7 +1803,7 @@ YUI.add('get-test', function (Y) {
                     Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
                     Assert.areSame(test.t, self, '`this` object should be the transaction');
 
-                    test.wait(100);
+                    test.wait();
                 });
             });
 
@@ -1981,7 +1981,7 @@ YUI.add('get-test', function (Y) {
                     Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
                     Assert.areSame(test.t, self, '`this` object should be the transaction');
 
-                    test.wait(100);
+                    test.wait();
                 });
             });
 
@@ -2162,7 +2162,7 @@ YUI.add('get-test', function (Y) {
                     Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
                     Assert.areSame(test.t, self, '`this` object should be the transaction');
 
-                    test.wait(100);
+                    test.wait();
                 });
             });
 
