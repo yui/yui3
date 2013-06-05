@@ -27,6 +27,10 @@ YUI.add('get-test', function (Y) {
         // echoecho delay in seconds
         DELAY = Y.config.echoechoDelay || 0,
 
+        // Tests that involve 3+ JavaScript assets need a conservative timeout
+        // to avoid timeout-based failures on slow CI environments.
+        TIMEOUT = 35 * 1000,
+
         // JS content
         JS_A = 'G_SCRIPTS.push("a.js")',
         JS_B = 'G_SCRIPTS.push("b.js")',
@@ -456,7 +460,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: multiple scripts, one failure': function() {
@@ -559,7 +563,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: multiple scripts, failure, end': function() {
@@ -662,7 +666,7 @@ YUI.add('get-test', function (Y) {
                     async:true
                 });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: async multiple scripts, success, end': function() {
@@ -713,7 +717,7 @@ YUI.add('get-test', function (Y) {
                 async:true
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: async multiple script, failure, end': function() {
@@ -937,7 +941,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: async, charset, multiple' : function() {
@@ -976,7 +980,7 @@ YUI.add('get-test', function (Y) {
                 async :true
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: attributes, single' : function() {
@@ -1057,7 +1061,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: async, attributes, multiple' : function() {
@@ -1103,7 +1107,7 @@ YUI.add('get-test', function (Y) {
                 async :true
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'ignore: abort' : function() {
@@ -1132,7 +1136,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: purgethreshold' : function() {
@@ -1183,7 +1187,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         // THE ASYNC FAILURE TESTS NEED TO BE AT THE END,
@@ -1713,7 +1717,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait();
+            test.wait(TIMEOUT);
         },
 
         'abort() should abort a transaction when given a transaction id': function () {
@@ -1744,7 +1748,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         // -- css() ------------------------------------------------------------
@@ -2026,7 +2030,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'js() should accept a request object': function () {
@@ -2074,7 +2078,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'js() should accept a mixed array of URLs and request objects': function () {
@@ -2100,7 +2104,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         // -- load() -----------------------------------------------------------
@@ -2342,7 +2346,7 @@ YUI.add('get-test', function (Y) {
                 t.finish = Y.Lang.now();
             }
 
-            this.wait();
+            this.wait(TIMEOUT);
         }
     });
 
@@ -2388,7 +2392,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait();
+            test.wait(TIMEOUT);
         },
 
         'abort() should accept a custom error message': function () {
@@ -2421,7 +2425,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait();
+            test.wait(TIMEOUT);
         },
 
         'execute() should queue callbacks': function () {
@@ -2522,7 +2526,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            test.wait();
+            test.wait(TIMEOUT);
         }
     });
 
