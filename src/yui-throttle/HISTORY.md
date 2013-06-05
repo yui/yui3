@@ -1,7 +1,7 @@
 YUI Throttle Change History
 ===========================
 
-@VERSION@
+3.10.2
 ------
 
 * Throttle no longer changes the value of `this` inside the throttled function.
