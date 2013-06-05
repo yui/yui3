@@ -6,8 +6,6 @@ YUI.add('get-test', function (Y) {
         Assert       = Y.Assert,
         ObjectAssert = Y.ObjectAssert,
 
-        TIMEOUT = 30 * 1000,
-
         FILENAME = /[abc]\.js/,
 
         ua       = Y.UA,
@@ -240,7 +238,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: single script, failure': function() {
@@ -282,7 +280,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: single script timeout callback': function() {
@@ -302,7 +300,7 @@ YUI.add('get-test', function (Y) {
                 onTimeout: function(e) {
                     test.resume(function() {
                         Assert.areSame('Timeout', e.errors[0].error, 'Failure message is not a timeout message');
-                        test.wait(TIMEOUT);
+                        test.wait();
                     });
                 },
 
@@ -319,7 +317,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'test: single script success, end': function() {
@@ -365,7 +363,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: single script failure, end': function() {
@@ -409,7 +407,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: multiple scripts, success': function() {
@@ -463,7 +461,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: multiple scripts, one failure': function() {
@@ -508,7 +506,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: multiple scripts, success, end': function() {
@@ -566,7 +564,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: multiple scripts, failure, end': function() {
@@ -615,7 +613,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: async multiple scripts, success': function() {
@@ -669,7 +667,7 @@ YUI.add('get-test', function (Y) {
                     async:true
                 });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: async multiple scripts, success, end': function() {
@@ -720,7 +718,7 @@ YUI.add('get-test', function (Y) {
                 async:true
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: async multiple script, failure, end': function() {
@@ -770,7 +768,7 @@ YUI.add('get-test', function (Y) {
                 async:true
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: insertBefore, single' : function() {
@@ -801,7 +799,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: insertBefore, multiple' : function() {
@@ -838,7 +836,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: async, insertBefore, multiple' : function() {
@@ -877,7 +875,7 @@ YUI.add('get-test', function (Y) {
                 async:true
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: charset, single' : function() {
@@ -907,7 +905,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: charset, multiple' : function() {
@@ -944,7 +942,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: async, charset, multiple' : function() {
@@ -983,7 +981,7 @@ YUI.add('get-test', function (Y) {
                 async :true
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: attributes, single' : function() {
@@ -1021,7 +1019,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: attributes, multiple' : function() {
@@ -1064,7 +1062,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: async, attributes, multiple' : function() {
@@ -1110,7 +1108,7 @@ YUI.add('get-test', function (Y) {
                 async :true
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'ignore: abort' : function() {
@@ -1139,7 +1137,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: purgethreshold' : function() {
@@ -1190,7 +1188,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         // THE ASYNC FAILURE TESTS NEED TO BE AT THE END,
@@ -1242,7 +1240,7 @@ YUI.add('get-test', function (Y) {
                 async:true
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         }
     });
 
@@ -1331,7 +1329,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'test: multiple css, success': function() {
@@ -1379,7 +1377,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'test: insertBefore, single' : function() {
@@ -1412,7 +1410,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'test: insertBefore, multiple' : function() {
@@ -1454,7 +1452,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'test: charset, single' : function() {
@@ -1476,7 +1474,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'test: charset, multiple' : function() {
@@ -1507,7 +1505,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'test: attributes, single' : function() {
@@ -1534,7 +1532,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'test: attributes, multiple' : function() {
@@ -1571,7 +1569,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'test: single css, failure': function() {
@@ -1606,7 +1604,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'test: multiple css, failure': function() {
@@ -1658,7 +1656,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'CSS nodes should be inserted in order': function () {
@@ -1686,7 +1684,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         }
     });
 
@@ -1731,7 +1729,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'abort() should abort a transaction when given a transaction id': function () {
@@ -1762,7 +1760,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         // -- css() ------------------------------------------------------------
@@ -1789,7 +1787,7 @@ YUI.add('get-test', function (Y) {
                 }
             }, 20);
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'css() should accept a URL, options object, and callback function': function () {
@@ -1825,7 +1823,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'css() should allow the callback function as the second parameter': function () {
@@ -1845,7 +1843,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'css() should accept an array of URLs': function () {
@@ -1873,7 +1871,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'css() should accept a request object': function () {
@@ -1897,7 +1895,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'css() should accept an array of request objects': function () {
@@ -1925,7 +1923,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'css() should accept a mixed array of URLs and request objects': function () {
@@ -1953,7 +1951,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         // -- js() -------------------------------------------------------------
@@ -1980,7 +1978,7 @@ YUI.add('get-test', function (Y) {
                 }
             }, 20);
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'js() should accept a URL, options object, and callback function': function () {
@@ -2014,7 +2012,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'js() should allow the callback function as the second parameter': function () {
@@ -2031,7 +2029,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'js() should accept an array of URLs': function () {
@@ -2057,7 +2055,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'js() should accept a request object': function () {
@@ -2079,7 +2077,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'js() should accept an array of request objects': function () {
@@ -2105,7 +2103,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'js() should accept a mixed array of URLs and request objects': function () {
@@ -2131,7 +2129,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         // -- load() -----------------------------------------------------------
@@ -2160,7 +2158,7 @@ YUI.add('get-test', function (Y) {
                 }
             }, 20);
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'load() should accept a URL, options object, and callback function': function () {
@@ -2197,7 +2195,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'load() should allow the callback function as the second parameter': function () {
@@ -2214,7 +2212,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'load() should accept an array of URLs': function () {
@@ -2245,7 +2243,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'load() should accept a request object': function () {
@@ -2268,7 +2266,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'load() should accept an array of request objects': function () {
@@ -2299,7 +2297,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'load() should accept a mixed array of URLs and request objects': function () {
@@ -2330,7 +2328,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         // -- script() ---------------------------------------------------------
@@ -2381,7 +2379,7 @@ YUI.add('get-test', function (Y) {
                 t.finish = Y.Lang.now();
             }
 
-            this.wait(TIMEOUT);
+            this.wait();
         }
     });
 
@@ -2427,7 +2425,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'abort() should accept a custom error message': function () {
@@ -2460,7 +2458,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         },
 
         'execute() should queue callbacks': function () {
@@ -2478,7 +2476,7 @@ YUI.add('get-test', function (Y) {
                     Assert.isNull(err, '`err` should be null');
                     Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
 
-                    test.wait(TIMEOUT);
+                    test.wait();
                 });
             });
 
@@ -2492,7 +2490,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'execute() should call the callback immediately if the transaction has already finished': function () {
@@ -2528,7 +2526,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'purge() should purge any nodes inserted by the transaction': function () {
@@ -2561,7 +2559,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            test.wait(TIMEOUT);
+            test.wait();
         }
     });
 
@@ -2631,7 +2629,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         '`nodes` property should contain an array of injected nodes': function () {
@@ -2651,7 +2649,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         '`options` property should contain transaction options': function () {
@@ -2688,7 +2686,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         }
     });
 
@@ -2720,7 +2718,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         }
 
     });
@@ -2738,7 +2736,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         },
 
         'test: Loader, Autocomplete' : function() {
@@ -2750,7 +2748,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait(TIMEOUT);
+            this.wait();
         }
     });
 }, '3.5.0', {
