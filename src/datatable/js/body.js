@@ -686,7 +686,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
             values[token + '-className'] = '';
 
-            if (col._formatterFn) {
+            if (value === undefined || value === null || value === '') {
+                value = col.emptyCellValue || '';
+            } else if (col._formatterFn) {
                 formatterData = {
                     value    : value,
                     data     : data,
@@ -707,10 +709,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
                 values[token + '-className'] = formatterData.className;
                 values.rowClass += ' ' + formatterData.rowClass;
-            }
-
-            if (value === undefined || value === null || value === '') {
-                value = col.emptyCellValue || '';
+            } else if (col.formatter) {
+                value = col.formatter.replace(valueRegExp, value);
             }
 
             values[token] = col.allowHTML ? value : htmlEscape(value);
@@ -761,8 +761,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                     col._formatterFn = formatter;
                 } else if (formatter in F) {
                     col._formatterFn = F[formatter].call(this.host || this, col);
-                } else {
-                    tokenValues.content = formatter.replace(valueRegExp, tokenValues.content);
                 }
             }
 
