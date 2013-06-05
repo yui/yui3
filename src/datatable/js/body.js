@@ -949,14 +949,13 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             //   columns and the clientId is not provided via toJSON off of
             //   the model
             // if the token exists AND the value is undefined > skip
-            if (!values[token] || value !== undefined) {
+            if (!values[token] || data.hasOwnProperty(col.key)) {
 
                 if (value === undefined || value === null || value === '') {
                     value = col.emptyCellValue || '';
                 }
 
                 values[token] = col.allowHTML ? value : htmlEscape(value);
-
             }
 
             values.rowClass = values.rowClass.replace(/\s+/g, ' ');
