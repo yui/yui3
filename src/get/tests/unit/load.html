@@ -104,6 +104,7 @@ var Y = YUI({
             requires: ['test', 'node']
         }
     },
+    cssTimeout: 10 * 1000,
     echoechoDelay: '0-1'
 }).use('*', function(Y) {
     Y.GetTests.add(Y.GetTests.BasicJS);

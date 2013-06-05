@@ -8,8 +8,6 @@ YUI.add('get-test', function (Y) {
 
         TIMEOUT = 30 * 1000,
 
-        CSS_TIMEOUT,
-
         FILENAME = /[abc]\.js/,
 
         ua       = Y.UA,
@@ -30,6 +28,11 @@ YUI.add('get-test', function (Y) {
 
         // echoecho delay in seconds
         DELAY = Y.config.echoechoDelay || 0,
+
+        // If this browser does not fire an event when CSS fails to load, we
+        // allow for the configuring of a generous transaction timeout to
+        // prevent flaky test results when testing against remote device labs.
+        CSS_TIMEOUT = !supports.cssFailure && Y.config.cssTimeout,
 
         // JS content
         JS_A = 'G_SCRIPTS.push("a.js")',
@@ -73,13 +76,6 @@ YUI.add('get-test', function (Y) {
                      '/* Just for eyeballing, not used to test */' +
                      'background-color:#cccccc;' +
                  '}';
-
-    // If this browser does not fire an event when CSS fails to load, we set
-    // a generous transaction timeout to prevent flaky test results when
-    // testing against remote device labs.
-    if (!supports.cssFailure) {
-        CSS_TIMEOUT = 30 * 1000;
-    }
 
     function areObjectsReallyEqual(o1, o2, msg) {
         Y.ObjectAssert.areEqual(o1, o2, msg);
