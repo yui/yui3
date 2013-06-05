@@ -27,11 +27,6 @@ YUI.add('get-test', function (Y) {
         // echoecho delay in seconds
         DELAY = Y.config.echoechoDelay || 0,
 
-        // If this browser does not fire an event when CSS fails to load, we
-        // allow for the configuring of a generous transaction timeout to
-        // prevent flaky test results when testing against remote device labs.
-        CSS_TIMEOUT = !supports.cssFailure && Y.config.cssTimeout,
-
         // JS content
         JS_A = 'G_SCRIPTS.push("a.js")',
         JS_B = 'G_SCRIPTS.push("b.js")',
@@ -1299,7 +1294,6 @@ YUI.add('get-test', function (Y) {
             var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
             var trans = Y.Get.css(url, {
-                timeout: CSS_TIMEOUT,
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1345,7 +1339,6 @@ YUI.add('get-test', function (Y) {
             ];
 
             var trans = Y.Get.css(urls, {
-                timeout: CSS_TIMEOUT,
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1387,7 +1380,6 @@ YUI.add('get-test', function (Y) {
             test.createInsertBeforeNode();
 
             var trans = Y.Get.css(url, {
-                timeout: CSS_TIMEOUT,
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -1424,7 +1416,6 @@ YUI.add('get-test', function (Y) {
             test.createInsertBeforeNode();
 
             var trans = Y.Get.css(urls, {
-                timeout: CSS_TIMEOUT,
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -1460,7 +1451,6 @@ YUI.add('get-test', function (Y) {
             var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
             var trans = Y.Get.css(url, {
-                timeout: CSS_TIMEOUT,
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
@@ -1486,7 +1476,6 @@ YUI.add('get-test', function (Y) {
             ];
 
             var trans = Y.Get.css(urls, {
-                timeout: CSS_TIMEOUT,
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
@@ -1513,7 +1502,6 @@ YUI.add('get-test', function (Y) {
             var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
             var trans = Y.Get.css(url, {
-                timeout: CSS_TIMEOUT,
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title": "myscripts"
@@ -1544,7 +1532,6 @@ YUI.add('get-test', function (Y) {
             ];
 
             var trans = Y.Get.css(urls, {
-                timeout: CSS_TIMEOUT,
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title": "myscripts"
@@ -1620,7 +1607,6 @@ YUI.add('get-test', function (Y) {
             ];
 
             Y.Get.css(urls, {
-                timeout: CSS_TIMEOUT,
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1671,9 +1657,7 @@ YUI.add('get-test', function (Y) {
                 {url: urls[0], attributes: {id: 'a'}},
                 {url: urls[1], attributes: {id: 'b'}},
                 {url: urls[2], attributes: {id: 'c'}}
-            ], {
-                timeout: CSS_TIMEOUT
-            }, function (err, transaction) {
+            ], function (err, transaction) {
                 test.resume(function () {
                     var nodes = transaction.nodes;
 
@@ -1796,8 +1780,6 @@ YUI.add('get-test', function (Y) {
                 callbackCalled;
 
             test.t = Y.Get.css(url, {
-                timeout: CSS_TIMEOUT,
-
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1830,10 +1812,7 @@ YUI.add('get-test', function (Y) {
             var test = this;
             var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
-            test.t = Y.Get.css([{
-                url: url,
-                timeout: CSS_TIMEOUT
-            }], function (err, transaction) {
+            test.t = Y.Get.css(url, function (err, transaction) {
                 var self = this;
 
                 test.resume(function () {
@@ -1855,8 +1834,6 @@ YUI.add('get-test', function (Y) {
             ];
 
             test.t = Y.Get.css(urls, {
-                timeout: CSS_TIMEOUT,
-
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1879,8 +1856,6 @@ YUI.add('get-test', function (Y) {
             var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
             test.t = Y.Get.css({url: url}, {
-                timeout: CSS_TIMEOUT,
-
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1907,8 +1882,6 @@ YUI.add('get-test', function (Y) {
             ];
 
             test.t = Y.Get.css([{url: urls[0]}, {url: urls[1]}, {url: urls[2]}], {
-                timeout: CSS_TIMEOUT,
-
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1935,8 +1908,6 @@ YUI.add('get-test', function (Y) {
             ];
 
             test.t = Y.Get.css([urls[0], {url: urls[1]}, urls[2]], {
-                timeout: CSS_TIMEOUT,
-
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2167,8 +2138,6 @@ YUI.add('get-test', function (Y) {
                 callbackCalled;
 
             test.t = Y.Get.load(url, {
-                timeout: CSS_TIMEOUT,
-
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2224,8 +2193,6 @@ YUI.add('get-test', function (Y) {
             ];
 
             test.t = Y.Get.load(urls, {
-                timeout: CSS_TIMEOUT,
-
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2278,8 +2245,6 @@ YUI.add('get-test', function (Y) {
             ];
 
             test.t = Y.Get.load([{url: urls[0]}, {url: urls[1]}, {url: urls[2]}], {
-                timeout: CSS_TIMEOUT,
-
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2309,8 +2274,6 @@ YUI.add('get-test', function (Y) {
             ];
 
             test.t = Y.Get.load([urls[0], {url: urls[1]}, urls[2]], {
-                timeout: CSS_TIMEOUT,
-
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2355,7 +2318,7 @@ YUI.add('get-test', function (Y) {
                 ],
 
                 t1 = Y.Get.js([urls[0], urls[1]], finish),
-                t2 = Y.Get.css(urls[2], {timeout: CSS_TIMEOUT}, finish),
+                t2 = Y.Get.css(urls[2], finish),
                 t3 = Y.Get.load(urls[3], function (err, t) {
                     finish(err, t);
 
