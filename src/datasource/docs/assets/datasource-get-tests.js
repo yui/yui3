@@ -30,15 +30,8 @@ YUI.add('datasource-get-tests', function(Y) {
             // failure is optional. Will default to "wait() without resume()" error
             this.poll(condition, interval, timeout, success, failure);
 
-        },
-
-
-
-
-
-
-
-}));
+        }
+    }));
 
     Y.Test.Runner.add(suite);
 
