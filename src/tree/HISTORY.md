@@ -15,7 +15,6 @@ Tree Change History
 * The `Tree.Node#isRoot()` method now returns `false` on destroyed nodes instead
   of causing an exception. [Ryan Grove]
 
-
 3.10.2
 ------
 
