@@ -1,7 +1,7 @@
 Calendar Change History
 =======================
 
-@VERSION@
+3.10.3
 ------
 
 * Setting `minimumDate` or `maximumDate` now correctly disables nodes before or

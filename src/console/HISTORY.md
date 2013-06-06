@@ -1,7 +1,7 @@
 Console Change History
 ======================
 
-@VERSION@
+3.10.3
 ------
 
 * Added Hungarian language support [Gábor Kovács]
