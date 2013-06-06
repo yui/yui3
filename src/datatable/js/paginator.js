@@ -4,18 +4,46 @@ var Model,
     CLASS_DISABLED = 'control-disabled',
     EVENT_UI = 'paginator:ui';
 
+/**
+ @class DataTable.Paginator.Model
+ */
 Model = Y.Base.create('dt-pg-model', Y.Model, [Y.Paginator.Core]),
 
+/**
+ @class DataTable.Paginator.View
+ */
 View = Y.Base.create('dt-pg-view', Y.View, [], {
 
+    /**
+     Array of event handles to keep track of what should be destroyed later
+     @protected
+     @property _eventHandles
+     @type {Array}
+     */
     _eventHandles: [],
 
+    /**
+     Template for this view's container.
+     @property containerTemplate
+     @type {String}
+     */
     containerTemplate: '<div class="yui3-datatable-paginator"/>',
 
+    /**
+     @property buttonTemplate
+     @type {String}
+     */
     buttonTemplate: '<a href="#{type}" class="control control-{type}" data-type="{type}">{label}</a>',
 
+    /**
+     @property contentTemplate
+     @type {String}
+     */
     contentTemplate: '{buttons}{goto}{perPage}',
 
+    /**
+     @method initializer
+     */
     initializer: function () {
         var container = this.get('container'),
             events = this._eventHandles;
@@ -31,15 +59,19 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         );
     },
 
+    /**
+     @method destructor
+     */
     destructor: function () {
         while( this._eventHandles.length) {
             this._eventHandles.shift().detach();
         }
-        if (this._wrapper) {
-            this._wrapper.remove(true);
-        }
     },
 
+    /**
+     @method render
+     @chainable
+     */
     render: function () {
         var model = this.get('model'),
             content = Y.Lang.sub(this.contentTemplate, {
@@ -58,6 +90,10 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         return this;
     },
 
+    /**
+     @protected
+     @method _buildButtonsGroup
+     */
     _buildButtonsGroup: function () {
         var temp = this.buttonTemplate,
             strings = this.get('strings');
@@ -70,6 +106,10 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
                 '</div>';
     },
 
+    /**
+     @protected
+     @method _buildGotoGroup
+     */
     _buildGotoGroup: function () {
         var strings = this.get('strings');
 
@@ -81,6 +121,10 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
                 '</form>';
     },
 
+    /**
+     @protected
+     @method _buildPerPageGroup
+     */
     _buildPerPageGroup: function () {
         // return {string} div containing a label and select of options
         var strings = this.get('strings'),
@@ -102,8 +146,11 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
     },
 
+    /**
+     @protected
+     @method _modelChange
+     */
     _modelChange: function (e) {
-        // update control states based on changes
         var changed = e.changed,
             page = (changed && changed.page),
             itemsPerPage = (changed && changed.itemsPerPage);
@@ -120,6 +167,10 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
     },
 
+    /**
+     @protected
+     @method _updateControlsUI
+     */
     _updateControlsUI: function (val) {
         if (!this._rendered) {
             return;
@@ -138,6 +189,10 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         container.one('form input').set('value', val);
     },
 
+    /**
+     @protected
+     @method _updateItemsPerPageUI
+     */
     _updateItemsPerPageUI: function (val) {
         if (!this._rendered) {
             return;
@@ -146,6 +201,10 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         this.get('container').one('select').set('value', val);
     },
 
+    /**
+     @protected
+     @method _controlClick
+     */
     _controlClick: function (e) { // buttons
         e.preventDefault();
         var control = e.currentTarget;
@@ -159,6 +218,10 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         });
     },
 
+    /**
+     @protected
+     @method _controlChange
+     */
     _controlChange: function (e, selector) {
 
         var control = e.target;
@@ -177,6 +240,10 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         this.fire(EVENT_UI, { type: 'perPage', val: parseInt(val, 10) });
     },
 
+    /**
+     @protected
+     @method _controlSubmit
+     */
     _controlSubmit: function (e, selector) {
         var control = e.target;
         if (
@@ -196,34 +263,61 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         this.fire(EVENT_UI, { type: 'page', val: input.get('value') });
     },
 
+    /**
+     @protected
+     @method _initStrings
+     */
     _initStrings: function () {
-        // Not a valueFn because other class extensions will want to add to it
+        // Not a valueFn because other class extensions may want to add to it
         this.set('strings', Y.mix((this.get('strings') || {}),
             Y.Intl.get('datatable-paginator')));
     }
 }, {
     ATTRS: {
+        /**
+         @attribute pageSizes
+         @type {Array}
+         @default [10, 50, 100, { label: 'Show All', value: -1 }]
+         */
         pageSizes: {
             value: [10, 50, 100, { label: 'Show All', value: -1 }]
         }
     }
 });
 
+/**
+ @class DataTable.Paginator
+ */
 function Controller () {}
 
 Controller.ATTRS = {
+    /**
+     @attribute paginatorModel
+     @type {Y.Model}
+     @default null
+     */
     paginatorModel: {
         setter: '_setPaginatorModel',
         value: null,
         writeOnce: 'initOnly'
     },
 
+    /**
+     @attribute paginatorModelType
+     @type {Y.Model | String}
+     @default 'DataTable.Paginator.Model'
+     */
     paginatorModelType: {
         getter: '_getConstructor',
         value: 'DataTable.Paginator.Model',
         writeOnce: 'initOnly'
     },
 
+    /**
+     @attribute paginatorView
+     @type {Y.View | String}
+     @default 'DataTable.Paginator.View'
+     */
     paginatorView: {
         getter: '_getConstructor',
         value: 'DataTable.Paginator.View',
@@ -231,13 +325,28 @@ Controller.ATTRS = {
     },
 
     // PAGINATOR CONFIGS
+    /**
+     @attribute pageSizes
+     @type {Array}
+     @default [10, 50, 100, { label: 'Show All', value: -1 }]
+     */
     pageSizes: {
         setter: '_setPageSizesFn',
         value: [10, 50, 100, { label: 'Show All', value: -1 }]
     },
-    rowsPerPage: {
 
-    },
+    /**
+     @attribute rowsPerPage
+     @type {Number | null}
+     @default null
+     */
+    rowsPerPage: {},
+
+    /**
+     @attribute paginatorLocation
+     @type {String | Y.Node}
+     @default footer
+     */
     paginatorLocation: {
         value: 'footer'
     }
@@ -245,29 +354,35 @@ Controller.ATTRS = {
 
 Y.mix(Controller.prototype, {
 
-    // Sugar
-    // would like to abstract this into something like table.page.next()
-    page: function () {
-        return {
-            go: function (num) {
-                console.log(num);
-            }
-        };
-    },
-
+    /**
+     @method firstPage
+     @chainable
+     */
     firstPage: function () {
         this.get('paginatorModel').set('page', 1);
         return this;
     },
+    /**
+     @method lastPage
+     @chainable
+     */
     lastPage: function () {
         var model = this.get('paginatorModel');
         model.set('page', model.get('totalPages'));
         return this;
     },
+    /**
+     @method previousPage
+     @chainable
+     */
     previousPage: function () {
         this.get('paginatorModel').prevPage();
         return this;
     },
+    /**
+     @method nextPage
+     @chainable
+     */
     nextPage: function () {
         this.get('paginatorModel').nextPage();
         return this;
@@ -275,6 +390,9 @@ Y.mix(Controller.prototype, {
 
 
     /// Init and protected
+    /**
+     @method initializer
+     */
     initializer: function () {
         var ModelClass = this.get('paginatorModel'),
             model;
@@ -297,13 +415,42 @@ Y.mix(Controller.prototype, {
         }
     },
 
+    /**
+     @protected
+     @method _paginatorRender
+     */
     _paginatorRender: function () {
         this._paginatorRenderUI();
-        this.get('paginatorModel').after('change', this._afterModelChange, this);
-        this.after('dataChange', this._renderPg, this);
+        this.get('paginatorModel').after('change', this._afterPaginatorModelChange, this);
+        this.after('dataChange', this._afterDataChangeWithPaginator, this);
         this.after('rowsPerPageChange', this._afterRowsPerPageChange, this);
     },
 
+    /**
+     @protected
+     @method _afterDataChangeWithPaginator
+     */
+    _afterDataChangeWithPaginator: function () {
+        var data = this.get('data'),
+            model = this.get('paginatorModel');
+
+        if (model.get('page') !== 1) {
+            this.firstPage();
+        } else {
+            this._augmentData();
+
+            data.fire.call(data, 'reset', {
+                src: 'reset',
+                models: data._items.concat()
+            });
+        }
+    },
+
+    /**
+     @protected
+     @method _afterRowsPerPageChange
+     @param {EventFacade} e
+     */
     _afterRowsPerPageChange: function (e) {
         var data = this.get('data'),
             model = this.get('paginatorModel'),
@@ -332,10 +479,13 @@ Y.mix(Controller.prototype, {
             data._paged.length = undefined;
         }
 
-        console.log(this._pgViews);
         this.get('paginatorModel').set('itemsPerPage', parseInt(e.newVal, 10));
     },
 
+    /**
+     @protected
+     @method _paginatorRenderUI
+     */
     _paginatorRenderUI: function () {
         var views = this._pgViews,
             ViewClass = this.get('paginatorView'),
@@ -351,9 +501,9 @@ Y.mix(Controller.prototype, {
 
         if (!views) { // set up initial rendering of views
             views = this._pgViews = [];
-            // for each placement area, push to views
         }
 
+        // for each placement area, push to views
         Y.Array.each(locations, function (location) {
             var view = new ViewClass(viewConfig),
                 container = view.render().get('container'),
@@ -364,17 +514,27 @@ Y.mix(Controller.prototype, {
 
             if (location._node) { // assume Y.Node
                 location.append(container);
-            } else if (location === 'footer') {
+            } else if (location === 'footer') { // DT Footer
+                // Render a table footer if there isn't one
                 if (!this.foot) {
                     this.foot = new Y.DataTable.FooterView({ host: this });
                     this.foot.render();
                     this.fire('renderFooter', { view: this.foot });
                 }
+
+                // create a row for the paginator to sit in
                 row = Y.Node.create('<tr><td class="yui3-datatable-paginator-wrapper" colspan="' + this.get('columns').length + '"/></tr>');
-                view._wrapper = row;
+
                 row.one('td').append(container);
                 this.foot.tfootNode.append(row);
+
+                // remove this container row if the view is ever destroyed
+                view.after('destroy', function (/* e */) {
+                    row.remove(true);
+                });
             } else if (location === 'header') {
+                // 'header' means insert before the table
+                // placement with the caption may need to be addressed
                 if (this.view && this.view.tableNode) {
                     this.view.tableNode.insert(container, 'before');
                 } else {
@@ -385,6 +545,11 @@ Y.mix(Controller.prototype, {
 
     },
 
+    /**
+     @protected
+     @method _uiPgHandler
+     @param {EventFacade} e
+     */
     _uiPgHandler: function (e) {
         // e.type = control type (first|prev|next|last|page|perPage)
         // e.val = value based on the control type to pass to the model
@@ -411,7 +576,12 @@ Y.mix(Controller.prototype, {
         }
     },
 
-    _afterModelChange: function (e) {
+    /**
+     @protected
+     @method _afterPaginatorModelChange
+     @param {EventFacade} e
+     */
+    _afterPaginatorModelChange: function (/* e */) {
         var model = this.get('paginatorModel'),
             data = this.get('data');
 
@@ -428,9 +598,16 @@ Y.mix(Controller.prototype, {
         });
     },
 
-    // TODO: re run if data is changed... after data change check for _paged
+    /**
+     @protected
+     @method _augmentData
+     */
     _augmentData: function () {
         var model = this.get('paginatorModel');
+
+        if (this.get('rowsPerPage') === null) {
+            return;
+        }
 
         Y.mix(this.get('data'), {
 
@@ -467,6 +644,11 @@ Y.mix(Controller.prototype, {
         }, true);
     },
 
+    /**
+     @protected
+     @method _setPageSizesFn
+     @param {Array} val
+     */
     _setPageSizesFn: function (val) {
         var i,
             len = val.length,
@@ -483,8 +665,8 @@ Y.mix(Controller.prototype, {
                 label = val[i];
                 value = val[i];
 
-                // we want to check to see if we have a number or a string
-                // of a number. if we do not, we want the value to be -1 to
+                // We want to check to see if we have a number or a string
+                // of a number. If we do not, we want the value to be -1 to
                 // indicate "all rows"
                 if (parseInt(value, 10) != value) {
                     value = -1;
@@ -496,6 +678,11 @@ Y.mix(Controller.prototype, {
         return val;
     },
 
+    /**
+     @protected
+     @method _setPaginatorModel
+     @param {Y.Model | Object} model
+     */
     _setPaginatorModel: function (model) {
         var ModelConstructor = this.get('paginatorModelType');
 
@@ -506,6 +693,12 @@ Y.mix(Controller.prototype, {
         return model;
     },
 
+    /**
+     @protected
+     @method _getConstructor
+     @param {Object | String} type Type of Object to contruct. If `type` is a
+       String, we assume it is a namespace off the Y object
+     */
     _getConstructor: function (type) {
         return typeof type === 'string' ?
             Y.Object.getValue(Y, type.split('.')) :
