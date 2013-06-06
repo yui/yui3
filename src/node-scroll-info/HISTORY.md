@@ -1,7 +1,7 @@
 ScrollInfo Node Plugin Change History
 =====================================
 
-@VERSION@
+3.10.3
 ------
 
 * Added an `isNodeOnscreen()` method that returns `true` if the given node is
@@ -13,6 +13,11 @@ ScrollInfo Node Plugin Change History
 * Fixed a bug that caused `getOffscreenNodes()` and `getOnscreenNodes()` to
   return incorrect information when used on a scrollable node rather than the
   body. [Ryan Grove]
+
+3.10.2
+------
+
+* No changes.
 
 3.10.1
 ------

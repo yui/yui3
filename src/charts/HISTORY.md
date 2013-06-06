@@ -1,7 +1,12 @@
 Charts Change History
 =====================
 
-@VERSION@
+3.10.3
+------
+
+* No changes.
+
+3.10.2
 ------
 
   * #743 Addressed issue in which styles don't map correctly to a legend when series are styled using a global style object. 

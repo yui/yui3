@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + '/',
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.05.15-21-12',
+            GALLERY_VERSION = 'gallery-2013.06.05-22-14',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -5048,11 +5048,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "pluginhost-base"
         ]
     },
-    "profiler": {
-        "requires": [
-            "yui-base"
-        ]
-    },
     "promise": {
         "requires": [
             "timers"
@@ -5826,7 +5821,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '8159bd6110b1ec4f60c779f477a0a647';
+YUI.Env[Y.version].md5 = 'c1bd1fcbab7bb992e814ebb99e7599f9';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

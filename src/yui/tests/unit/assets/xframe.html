@@ -3,12 +3,13 @@
 <head>
 <title>xframe tester</title>
 <script type="text/javascript">
+
     function FakeArray() {
         // ok, if we put the index in the prototype we could fool
         // YAHOO.lang.isArray as long as the index is never
         // updated.  This isn't likely to happen unless someone
         // is trying very hard to break it.
-        this.index=0; 
+        this.index=0;
     }
 
     FakeArray.prototype.splice = function() {
@@ -26,12 +27,25 @@
         nul = null,
         el  = document.createElement('div'),
         und;
-        window.onload = function() {
-            window._xframeLoaded = true;
-        };
 </script>
 </head>
 <body>
 <h1></h1>
+
+<script type="text/javascript">
+window.onload = function() {
+
+    // Try and avoid intermittent failures in IE, when running through
+    // YETI, under load, by having the child iframe tell the parent when it's
+    // ready, as opposed to having the parent check the child.
+
+    // In past lives, I've seen IE think an iframe is ready onload, when it's
+    // not, and accessing stuff from the parent through contentWindow fails.
+
+    setTimeout(function() {
+        window.parent.YUI.Env._StartFrameTests();
+    }, 500);
+};
+</script>
 </body>
 </html>
