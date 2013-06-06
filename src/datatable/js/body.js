@@ -945,21 +945,18 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 values.rowClass += ' ' + formatterData.rowClass;
             }
 
-            // Addresses Github 712 where clientId is removed if it's in the
-            //   columns and the clientId is not provided via toJSON off of
-            //   the model
-            // if the token exists AND the value is undefined > skip
-            if (!values[token] || data.hasOwnProperty(col.key)) {
-
+            // if the token missing OR is the value a legit value
+            if (!values.hasOwnProperty(token) || data.hasOwnProperty(col.key)) {
                 if (value === undefined || value === null || value === '') {
                     value = col.emptyCellValue || '';
                 }
 
                 values[token] = col.allowHTML ? value : htmlEscape(value);
             }
-
-            values.rowClass = values.rowClass.replace(/\s+/g, ' ');
         }
+
+        // replace consecutive whitespace with a single space
+        values.rowClass = values.rowClass.replace(/\s+/g, ' ');
 
         return fromTemplate(this._rowTemplate, values);
     },
