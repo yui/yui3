@@ -66,7 +66,7 @@ each of these code branches represents:
      `master` or `3.x` directly.
 
 
-### Source Tree
+## Source Tree
 
 The YUI source tree includes the following directories:
 
