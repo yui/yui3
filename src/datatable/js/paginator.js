@@ -1,6 +1,7 @@
 var Model,
     View,
     sub = Y.Lang.sub,
+    getClassName = Y.ClassNameManager.getClassName,
     CLASS_DISABLED = 'control-disabled',
     EVENT_UI = 'paginator:ui';
 
@@ -26,40 +27,57 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      Template for this view's container.
      @property containerTemplate
      @type {String}
+     @default '<div class="yui3-datatable-paginator"/>'
      */
-    containerTemplate: '<div class="yui3-datatable-paginator"/>',
+    containerTemplate: '<div class="{paginator}"/>',
 
     /**
+     Template used for control buttons
      @property buttonTemplate
      @type {String}
+     @default '<a href="#{type}" class="control control-{type}" data-type="{type}">{label}</a>'
      */
-    buttonTemplate: '<a href="#{type}" class="control control-{type}" data-type="{type}">{label}</a>',
+    buttonTemplate: '<a href="#{type}" class="{control} {control}-{type}" data-type="{type}">{label}</a>',
 
     /**
+     Template for content. Helps maintain order of controls.
      @property contentTemplate
      @type {String}
+     @default '{buttons}{goto}{perPage}'
      */
     contentTemplate: '{buttons}{goto}{perPage}',
 
     /**
+     Sets classnames on the templates and bind events
      @method initializer
      */
     initializer: function () {
+        this.containerTemplate = sub(this.containerTemplate, {
+            paginator: getClassName(NAME)
+        });
+
         var container = this.get('container'),
             events = this._eventHandles;
 
         this._initStrings();
+        this._initClassNames();
 
-        container.delegate('click', this._controlClick, '.control', this);
+        container.delegate('click', this._controlClick, '.' + this.classNames.control, this);
 
         events.push(
             container.after('change', this._controlChange, this, 'select'),
             container.after('submit', this._controlSubmit, this, 'form'),
             this.get('model').after('change', this._modelChange, this)
         );
+
+
+        this.buttonTemplate = sub(this.buttonTemplate, {
+            control: this.classNames.control
+        });
     },
 
     /**
+     Removes events created in the initializer
      @method destructor
      */
     destructor: function () {
@@ -98,12 +116,12 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         var temp = this.buttonTemplate,
             strings = this.get('strings');
 
-        return '<div class="controls group">' +
+        return sub('<div class="{controls} {group}">' +
                     sub(temp, { type: 'first', label: strings.first} ) +
                     sub(temp, { type: 'prev', label: strings.prev }) +
                     sub(temp, { type: 'next', label: strings.next }) +
                     sub(temp, { type: 'last', label: strings.last }) +
-                '</div>';
+                '</div>', this.classNames);
     },
 
     /**
@@ -113,12 +131,12 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
     _buildGotoGroup: function () {
         var strings = this.get('strings');
 
-        return '<form action="#" class="group">' +
+        return sub('<form action="#" class="{group}">' +
                     '<label>' + strings.goToLabel +
                     '<input type="text" value="' + this.get('model').get('page') + '">' +
                     '<button>' + strings.goToAction + '</button>' +
                     '</label>' +
-                '</form>';
+                '</form>', this.classNames);
     },
 
     /**
@@ -128,7 +146,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
     _buildPerPageGroup: function () {
         // return {string} div containing a label and select of options
         var strings = this.get('strings'),
-            select = '<div class="group per-page">' +
+            select = '<div class="{group} {perPage}">' +
                         '<label>' + strings.perPage + ' <select>',
             options = this.get('pageSizes'),
             i,
@@ -142,7 +160,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
         select += '</select></label></div>';
 
-        return select;
+        return sub(select, this.classNames);
 
     },
 
@@ -177,14 +195,15 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         }
 
         var model = this.get('model'),
+            controlClass = '.' + this.classNames.control,
             container = this.get('container'),
             hasPrev = model.hasPrevPage(),
             hasNext = model.hasNextPage();
 
-        container.one('.control-first').toggleClass(CLASS_DISABLED, !hasPrev);
-        container.one('.control-prev').toggleClass(CLASS_DISABLED, !hasPrev);
-        container.one('.control-next').toggleClass(CLASS_DISABLED, !hasNext);
-        container.one('.control-last').toggleClass(CLASS_DISABLED, !hasNext);
+        container.one(controlClass + '-first').toggleClass(CLASS_DISABLED, !hasPrev);
+        container.one(controlClass + '-prev').toggleClass(CLASS_DISABLED, !hasPrev);
+        container.one(controlClass + '-next').toggleClass(CLASS_DISABLED, !hasNext);
+        container.one(controlClass + '-last').toggleClass(CLASS_DISABLED, !hasNext);
 
         container.one('form input').set('value', val);
     },
@@ -261,6 +280,20 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
         var input = e.target.one('input');
         this.fire(EVENT_UI, { type: 'page', val: input.get('value') });
+    },
+
+    /**
+     Initializes classnames to be used with the templates
+     @protected
+     @method _initClassNames
+     */
+    _initClassNames: function () {
+        this.classNames = {
+            control: getClassName(NAME, 'control'),
+            controls: getClassName(NAME, 'controls'),
+            group: getClassName(NAME, 'group'),
+            perPage: getClassName(NAME, 'per-page')
+        };
     },
 
     /**
