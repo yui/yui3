@@ -202,6 +202,12 @@ available.
                 remove(window, 'load', handleLoad);
             }
         },
+        handleReady = function() {
+            YUI.Env.DOMReady = true;
+            if (hasWin) {
+                remove(doc, 'DOMContentLoaded', handleReady);
+            }
+        },
         getLoader = function(Y, o) {
             var loader = Y.Env._loader,
                 lCore = [ 'loader-base' ],
@@ -1459,11 +1465,16 @@ with any configuration info required for the module.
     YUI._init();
 
     if (hasWin) {
+        
+        // add a document content loaded event
+        add(doc, 'DOMContentLoaded', handleReady);
+        
         // add a window load event at load time so we can capture
         // the case where it fires before dynamic loading is
         // complete.
         add(window, 'load', handleLoad);
     } else {
+        handleReady();
         handleLoad();
     }
 
