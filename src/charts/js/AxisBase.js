@@ -223,12 +223,34 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     getKeyValueAt: function(key, index)
     {
         var value = NaN,
-            keys = this.get("keys");
-        if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
+            keys = this.get("keys"),
+            i,
+            len;
+        if(Y.Lang.isArray(key))
         {
-            value = keys[key][index];
+            len = key.length;
+            value = [];
+            for(i = 0; i < len; i = i + 1)
+            {
+                if(keys[key[i]] && Y_Lang.isNumber(parseFloat(keys[key[i]][index])))
+                {
+                    value.push(parseFloat(keys[key[i]][index]));
+                }
+                else
+                {
+                    value.push(NaN);
+                }
+            }
         }
-        return parseFloat(value);
+        else
+        {
+            if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
+            {
+                value = keys[key][index];
+                value = parseFloat(value);
+            }
+        }
+        return value;
     },
 
     /**

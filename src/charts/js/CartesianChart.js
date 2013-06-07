@@ -269,6 +269,49 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
     },
 
     /**
+     * Checks to see if key in a series is included in the seriesKeys array.
+     *
+     * @method _containsSeriesKey
+     * @param {Array} seriesKeys Array of keys to check against.
+     * @param {Array} tempKeys Array that stores valid keys.
+     * @param {String|Array} key The key that is being validated.
+     * @return Boolean
+     * @private
+     */
+    _containsSeriesKey: function(seriesKeys, tempKeys, key)
+    {
+        var i,
+            index,
+            len,
+            containsKey = false;
+        if(Y.Lang.isArray(key))
+        {
+            len = key.length;
+            for(i = 0; i < len; i = i + 1)
+            {
+                index = Y.Array.indexOf(seriesKeys, key[i]);
+                if(index > -1)
+                {
+                    seriesKeys.splice(index, 1);
+                    tempKeys.push(key[i]);
+                    containsKey = true;
+                }
+            }
+        }
+        else
+        {
+            index = Y.Array.indexOf(seriesKeys, key);
+            if(index > -1)
+            {
+                seriesKeys.splice(index, 1);
+                tempKeys.push(key);
+                containsKey = true;
+            }
+        }
+        return containsKey;
+    },
+     
+    /**
      * Parses and returns a series collection from an object and default properties.
      *
      * @method _parseSeriesCollection
@@ -285,13 +328,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
             setStyles,
             globalStyles,
             sc = [],
+            seriesCollection = [],
             catAxis,
             valAxis,
             tempKeys = [],
             series,
             seriesKeys = this.get("seriesKeys").concat(),
             i,
-            index,
             l,
             type = this.get("type"),
             key,
@@ -325,11 +368,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
             key = this._getBaseAttribute(series, seriesKey);
             if(key)
             {
-                index = Y.Array.indexOf(seriesKeys, key);
-                if(index > -1)
+                if(this._containsSeriesKey(seriesKeys, tempKeys, key))
                 {
-                    seriesKeys.splice(index, 1);
-                    tempKeys.push(key);
                     sc.push(series);
                 }
                 else
@@ -362,17 +402,37 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
             tempKeys = tempKeys.concat(seriesKeys);
         }
         l = tempKeys.length;
-        for(i = 0; i < l; ++i)
+        while(tempKeys.length > 0)
         {
-            series = sc[i] || {type:type};
+            series = sc && sc.length > 0 ? sc.shift() : {type:type};
             if(series instanceof Y.CartesianSeries)
             {
                 this._parseSeriesAxes(series);
             }
             else
             {
+                key = series[seriesKey];
+                if(key)
+                {
+                    if(Y.Lang.isArray(key))
+                    {
+                        l = key.length;
+                        for(i = 0; i < l; i = i + 1)
+                        {
+                            tempKeys.splice(tempKeys.indexOf(key));
+                        }
+                    }
+                    else
+                    {
+                        tempKeys.splice(tempKeys.indexOf(key));
+                    }
+                }
+                else
+                {
+                    key = seriesKeys.shift();
+                }
                 series[catKey] = series[catKey] || categoryKey;
-                series[seriesKey] = series[seriesKey] || seriesKeys.shift();
+                series[seriesKey] = key;
                 series[catAxis] = this._getCategoryAxis();
                 series[valAxis] = this._getSeriesAxis(series[seriesKey]);
 
@@ -415,16 +475,16 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
                         }
                     }
                 }
-                sc[i] = series;
+                seriesCollection.push(series);
             }
         }
-        if(sc)
+        if(seriesCollection)
         {
             graph = this.get("graph");
-            graph.set("seriesCollection", sc);
-            sc = graph.get("seriesCollection");
+            graph.set("seriesCollection", seriesCollection);
+            seriesCollection = graph.get("seriesCollection");
         }
-        return sc;
+        return seriesCollection;
     },
 
     /**
@@ -488,6 +548,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
     {
         var axes = this.get("axes"),
             i,
+            iter,
+            len,
             keys,
             axis;
         if(axes)
@@ -503,10 +565,25 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
                     if(axes.hasOwnProperty(i))
                     {
                         keys = axes[i].get("keys");
-                        if(keys && keys.hasOwnProperty(key))
+                        if(keys)
                         {
-                            axis = axes[i];
-                            break;
+                            if(Y.Lang.isArray(key))
+                            {
+                                len = key.length;
+                                for(iter = 0; iter < len; iter = iter + 1)
+                                {
+                                    if(keys.hasOwnProperty(key[iter]))
+                                    {
+                                        axis = axes[i];
+                                        break;
+                                    }
+                                }
+                            }
+                            else if(keys.hasOwnProperty(key))
+                            {
+                                axis = axes[i];
+                                break;
+                            }
                         }
                     }
                 }

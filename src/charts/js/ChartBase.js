@@ -257,7 +257,6 @@ ChartBase.ATTRS = {
 };
 
 ChartBase.prototype = {
-
     /**
      * Utility method to determine if `seriesKeys` was explicitly provided
      * (for example during construction, or set by the user), as opposed to
@@ -1181,7 +1180,9 @@ ChartBase.prototype = {
      */
     _tooltipLabelFunction: function(categoryItem, valueItem)
     {
-        var msg = DOCUMENT.createElement("div"),
+        var i,
+            len,
+            msg = DOCUMENT.createElement("div"),
             categoryValue = categoryItem.axis.get("labelFunction").apply(
                 this,
                 [categoryItem.value, categoryItem.axis.get("labelFormat")]
@@ -1197,14 +1198,28 @@ ChartBase.prototype = {
             categoryValue = DOCUMENT.createTextNode(categoryValue);
         }
         msg.appendChild(categoryValue);
-        msg.appendChild(DOCUMENT.createElement("br"));
-        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));
-        msg.appendChild(DOCUMENT.createTextNode(": "));
-        if(!Y_Lang.isObject(seriesValue))
+        if(Y.Lang.isArray(valueItem.displayName))
         {
-            seriesValue = DOCUMENT.createTextNode(seriesValue);
+            len = valueItem.displayName.length;
+            for(i = 0; i < len; i = i + 1)
+            {
+                msg.appendChild(DOCUMENT.createElement("br"));
+                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName[i]));
+                msg.appendChild(DOCUMENT.createTextNode(": "));
+                msg.appendChild(DOCUMENT.createTextNode(valueItem.value[i]));
+            }
         }
-        msg.appendChild(seriesValue);
+        else
+        {
+            msg.appendChild(DOCUMENT.createElement("br"));
+            msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));
+            msg.appendChild(DOCUMENT.createTextNode(": "));
+            if(!Y_Lang.isObject(seriesValue))
+            {
+                seriesValue = DOCUMENT.createTextNode(seriesValue);
+            }
+            msg.appendChild(seriesValue);
+        }
         return msg;
     },
 
