@@ -1,0 +1,8 @@
+{
+    "calendar-selection": {
+        "requires": [
+            "base-build",
+            "calendar-base"
+        ]
+    }
+}

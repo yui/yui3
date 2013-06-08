@@ -2,6 +2,7 @@
     "calendar": {
         "requires": [
             "calendar-base",
+            "calendar-selection",
             "calendarnavigator"
         ],
         "lang" : [

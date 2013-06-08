@@ -6,6 +6,11 @@
                 "calendar-base.js"
             ]
         },
+        "calendar-selection": {
+            "jsfiles": [
+                "calendar-selection.js"
+            ]
+        },
         "calendarnavigator": {
             "jsfiles": [
                 "calendarnavigator.js"
