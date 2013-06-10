@@ -112,10 +112,16 @@
                     "model",
                     "view",
                     "paginator-core",
-                    "datatable-foot"
+                    "datatable-foot",
+                    "datatable-paginator-templates"
                 ],
-                "lang": ["en"],
+                "lang": [ "en" ],
                 "skinnable": true
+            },
+            "datatable-paginator-templates": {
+                "requires": [
+                    "template"
+                ]
             }
         }
     }
