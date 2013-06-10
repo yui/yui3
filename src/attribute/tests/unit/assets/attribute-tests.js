@@ -2110,6 +2110,8 @@ YUI.add('attribute-tests', function(Y) {
             var h = this.createHost(),
                 onArgs,
                 afterArgs,
+                onContext,
+                afterContext,
                 subscriberArgs = [];
 
             h.addAttr("setterWithOpts", {
@@ -2118,28 +2120,34 @@ YUI.add('attribute-tests', function(Y) {
 
             h.on("setterWithOptsChange", function() {
                 subscriberArgs.push(Y.Array(arguments));
+                subscriberArgs.push(this);
             }, {context:"on"}, {argsA:10}, {argsB:20});
 
             h.after("setterWithOptsChange", function() {
                 subscriberArgs.push(Y.Array(arguments));
+                subscriberArgs.push(this);
             }, {context:"after"}, {argsA:30}, {argsB:40});
 
             h.set("setterWithOpts", "A", {myopts:50});
 
             onArgs = subscriberArgs[0];
-            afterArgs = subscriberArgs[1];
+            onContext = subscriberArgs[1]
+            afterArgs = subscriberArgs[2];
+            afterContext = subscriberArgs[3];
 
             Y.Assert.areEqual(3, onArgs.length, "Expected 3 args to the on subscriber");
             Y.Assert.isTrue(onArgs[0] instanceof Y.EventFacade, "on subscriber didn't get opts");
             Y.Assert.areEqual(50, onArgs[0].myopts, "on subscriber didn't get opts");
             Y.ObjectAssert.areEqual({argsA:10}, onArgs[1], "on subscriber didn't get first subscriber arg");
             Y.ObjectAssert.areEqual({argsB:20}, onArgs[2], "on subscriber didn't get second subscriber arg");
+            Y.ObjectAssert.areEqual({context:"on"}, onContext, "on context not set correctly");
 
             Y.Assert.areEqual(3, afterArgs.length, "Expected 3 args to the after subscriber");
             Y.Assert.isTrue(afterArgs[0] instanceof Y.EventFacade, "after subscriber didn't get opts");
             Y.Assert.areEqual(50, afterArgs[0].myopts, "after subscriber didn't get opts");
             Y.ObjectAssert.areEqual({argsA:30}, afterArgs[1], "after subscriber didn't get first subscriber arg");
             Y.ObjectAssert.areEqual({argsB:40}, afterArgs[2], "after subscriber didn't get second subscriber arg");
+            Y.ObjectAssert.areEqual({context:"after"}, afterContext, "after context not set correctly");
         }
     };
 
