@@ -1,5 +1,6 @@
 var Model,
     View,
+    PaginatorTemplates = Y.DataTable.Templates.Paginator,
     sub = Y.Lang.sub,
     getClassName = Y.ClassNameManager.getClassName,
     CLASS_DISABLED = getClassName(NAME, 'control-disabled'),
@@ -97,6 +98,8 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         this._updateControlsUI(model.get('page'));
         this._updateItemsPerPageUI(model.get('itemsPerPage'));
 
+        console.log(Y.namespace('DataTable.Templates').Paginator);
+
         return this;
     },
 
@@ -126,15 +129,28 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @method _buildButtonsGroup
      */
     _buildButtonsGroup: function () {
-        var temp = this.buttonTemplate,
-            strings = this.get('strings');
+        var strings = this.get('strings'),
+            classNames = this.classNames,
+            buttons;
 
-        return sub('<div class="{controls} {group}">' +
-                    sub(temp, { type: 'first', label: strings.first} ) +
-                    sub(temp, { type: 'prev', label: strings.prev }) +
-                    sub(temp, { type: 'next', label: strings.next }) +
-                    sub(temp, { type: 'last', label: strings.last }) +
-                '</div>', this.classNames);
+        buttons = PaginatorTemplates.button({
+                    type: 'first', label: strings.first, classNames: classNames
+                }) +
+                PaginatorTemplates.button({
+                    type: 'prev',  label: strings.prev,  classNames: classNames
+                }) +
+                PaginatorTemplates.button({
+                    type: 'next',  label: strings.next,  classNames: classNames
+                }) +
+                PaginatorTemplates.button({
+                    type: 'last',  label: strings.last,  classNames: classNames
+                });
+
+        return PaginatorTemplates.buttons({
+            classNames: classNames,
+            buttons: buttons
+        });
+
     },
 
     /**
@@ -142,14 +158,12 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @method _buildGotoGroup
      */
     _buildGotoGroup: function () {
-        var strings = this.get('strings');
 
-        return sub('<form action="#" class="{group}">' +
-                    '<label>' + strings.goToLabel +
-                    '<input type="text" value="' + this.get('model').get('page') + '">' +
-                    '<button>' + strings.goToAction + '</button>' +
-                    '</label>' +
-                '</form>', this.classNames);
+        return PaginatorTemplates.gotoPage({
+            classNames: this.classNames,
+            strings: this.get('strings'),
+            page: this.get('model').get('page')
+        });
     },
 
     /**
@@ -157,23 +171,29 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @method _buildPerPageGroup
      */
     _buildPerPageGroup: function () {
-        // return {string} div containing a label and select of options
-        var strings = this.get('strings'),
-            select = '<div class="{group} {perPage}">' +
-                        '<label>' + strings.perPage + ' <select>',
-            options = this.get('pageSizes'),
-            i,
-            len;
+        var options = this.get('pageSizes'),
+            rowsPerPage = this.get('model').get('rowsPerPage'),
+            option,
+            len,
+            i;
 
-        for (i=0, len = options.length; i < len; i++) {
-            select += '<option value="' +
-                        ( options[i].value || options[i] ) + '">' +
-                        ( options[i].label || options[i] ) + '</option>';
+        for (i = 0, len = options.length; i < len; i++ ) {
+            option = options[i];
+
+            if (typeof option !== 'object') {
+                option = {
+                    value: option,
+                    label: option
+                }
+            }
+            options.selected = (options.value === rowsPerPage) ? ' selected' : '';
         }
 
-        select += '</select></label></div>';
-
-        return sub(select, this.classNames);
+        return PaginatorTemplates.perPage({
+            classNames: this.classNames,
+            strings: this.get('strings'),
+            options: this.get('pageSizes')
+        });
 
     },
 
@@ -288,10 +308,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         var control = e.target;
         if (
             control.hasClass(CLASS_DISABLED) ||
-            (
-                selector &&
-                !Y.Selector.test(control.getDOMNode(), selector)
-            )
+            ( selector && !(control.test(selector)) )
         ) {
             return;
         }
@@ -326,6 +343,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         this.set('strings', Y.mix((this.get('strings') || {}),
             Y.Intl.get('datatable-paginator')));
     }
+
 }, {
     ATTRS: {
         /**
@@ -409,15 +427,6 @@ Controller.ATTRS = {
 };
 
 Y.mix(Controller.prototype, {
-
-    /**
-     Used to wrap the paginator into a safe row when the location is defined
-       as "footer"
-     @property rowWrapperTemplate
-     @type String
-     @default '<tr><td class="{wrapperClass}" colspan="{numOfCols}"/></tr>'
-     */
-    rowWrapperTemplate: '<tr><td class="{wrapperClass}" colspan="{numOfCols}"/></tr>',
 
     /**
      @method firstPage
@@ -529,6 +538,7 @@ Y.mix(Controller.prototype, {
             while(this._pgViews.length) {
                 view = this._pgViews.shift();
                 view.destroy({ remove: true });
+                view._rendered = null;
             }
 
             data._paged.index = 0;
@@ -579,7 +589,7 @@ Y.mix(Controller.prototype, {
                 }
 
                 // create a row for the paginator to sit in
-                row = Y.Node.create(sub(this.rowWrapperTemplate, {
+                row = Y.Node.create(PaginatorTemplates.rowWrapper({
                     wrapperClass: getClassName(NAME, 'wrapper'),
                     numOfCols: this.get('columns').length
                 }));
@@ -685,8 +695,8 @@ Y.mix(Controller.prototype, {
 
             size: function (paged) {
                 return (paged && this._paged.length >=0 ) ?
-                            this._paged.length :
-                            this._items.length;
+                    this._paged.length :
+                    this._items.length;
             },
 
             each: function () {
