@@ -14,11 +14,11 @@
     right: 0;
     top: 0;
 }
-.yui3-datatable-paginator .group {
+.yui3-datatable-paginator .yui3-datatable-paginator-group {
     display: inline-block;
     zoom: 1; *display: inline;
 }
-.yui3-datatable-paginator .control {
+.yui3-datatable-paginator .yui3-datatable-paginator-control {
     display: inline-block;
     zoom: 1; *display: inline;
     margin: 0 3px;
@@ -28,22 +28,23 @@
     line-height: 1.5;
     border: 1px solid transparent;
     border-radius: 3px;
+    background: transparent;
 }
-.yui3-datatable-paginator .control-disabled,
-.yui3-datatable-paginator .control-disabled:hover {
+.yui3-datatable-paginator .yui3-datatable-paginator-control-disabled,
+.yui3-datatable-paginator .yui3-datatable-paginator-control-disabled:hover {
     cursor: default;
 }
-.yui3-datatable-paginator .group input {
+.yui3-datatable-paginator .yui3-datatable-paginator-group input {
     width: 3em;
 }
 .yui3-datatable-paginator form {
     text-align: center;
     margin: 0 2em;
 }
-.yui3-datatable-paginator .per-page {
+.yui3-datatable-paginator .yui3-datatable-paginator-per-page {
     text-align: right;
 }
-/* FOR USE WHEN DISPLAY ICONS
+/* FOR USE WHEN DISPLAYING ICONS
 .yui3-datatable-paginator .control-first,
 .yui3-datatable-paginator .control-last,
 .yui3-datatable-paginator .control-prev,
