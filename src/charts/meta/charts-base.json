@@ -13,6 +13,7 @@
             "series-spline",
             "series-column",
             "series-bar",
+            "series-gantt",
             "series-areaspline",
             "series-combo",
             "series-combospline",

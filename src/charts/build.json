@@ -126,6 +126,11 @@
                 "MarkerSeries.js"
             ]
         },
+        "series-gantt" : {
+            "jsfiles" : [
+                "GanttSeries.js"
+            ]
+        },
         "series-marker-stacked" : {
             "jsfiles" : [
                 "StackedMarkerSeries.js"
