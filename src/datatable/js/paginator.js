@@ -2,7 +2,7 @@ var Model,
     View,
     sub = Y.Lang.sub,
     getClassName = Y.ClassNameManager.getClassName,
-    CLASS_DISABLED = 'control-disabled',
+    CLASS_DISABLED = getClassName(NAME, 'control-disabled'),
     EVENT_UI = 'paginator:ui';
 
 /**
@@ -37,7 +37,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @type {String}
      @default '<a href="#{type}" class="control control-{type}" data-type="{type}">{label}</a>'
      */
-    buttonTemplate: '<a href="#{type}" class="{control} {control}-{type}" data-type="{type}">{label}</a>',
+    buttonTemplate: '<button class="{control} {control}-{type}" data-type="{type}">{label}</a>',
 
     /**
      Template for content. Helps maintain order of controls.
@@ -46,6 +46,15 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @default '{buttons}{goto}{perPage}'
      */
     contentTemplate: '{buttons}{goto}{perPage}',
+
+    /**
+     Disables ad-hoc ATTRS for our view.
+     @protected
+     @property _allowAdHocAttrs
+     @type {Boolean}
+     @default false
+     */
+    _allowAdHocAttrs: false,
 
     /**
      Sets classnames on the templates and bind events
@@ -62,28 +71,11 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         this._initStrings();
         this._initClassNames();
 
-        container.delegate('click', this._controlClick, '.' + this.classNames.control, this);
-
-        events.push(
-            container.after('change', this._controlChange, this, 'select'),
-            container.after('submit', this._controlSubmit, this, 'form'),
-            this.get('model').after('change', this._modelChange, this)
-        );
-
+        this.attachEvents();
 
         this.buttonTemplate = sub(this.buttonTemplate, {
             control: this.classNames.control
         });
-    },
-
-    /**
-     Removes events created in the initializer
-     @method destructor
-     */
-    destructor: function () {
-        while( this._eventHandles.length) {
-            this._eventHandles.shift().detach();
-        }
     },
 
     /**
@@ -106,6 +98,27 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         this._updateItemsPerPageUI(model.get('itemsPerPage'));
 
         return this;
+    },
+
+    /**
+     @method attachEvents
+     */
+    attachEvents: function () {
+        var container = this.get('container');
+
+        View.superclass.attachEvents.apply(this, arguments);
+
+        if (!this.classNames) {
+            this._initClassNames();
+        }
+
+        this._attachedViewEvents.push(
+            container.delegate('click', this._controlClick, '.' + this.classNames.control, this),
+            container.after('change', this._controlChange, this, 'select'),
+            container.after('submit', this._controlSubmit, this, 'form'),
+            this.get('model').after('change', this._modelChange, this)
+        );
+
     },
 
     /**
@@ -200,10 +213,21 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
             hasPrev = model.hasPrevPage(),
             hasNext = model.hasNextPage();
 
-        container.one(controlClass + '-first').toggleClass(CLASS_DISABLED, !hasPrev);
-        container.one(controlClass + '-prev').toggleClass(CLASS_DISABLED, !hasPrev);
-        container.one(controlClass + '-next').toggleClass(CLASS_DISABLED, !hasNext);
-        container.one(controlClass + '-last').toggleClass(CLASS_DISABLED, !hasNext);
+        container.one(controlClass + '-first')
+                 .toggleClass(CLASS_DISABLED, !hasPrev)
+                 .set('disabled', !hasPrev);
+
+        container.one(controlClass + '-prev')
+                 .toggleClass(CLASS_DISABLED, !hasPrev)
+                 .set('disabled', !hasPrev);
+
+        container.one(controlClass + '-next')
+                 .toggleClass(CLASS_DISABLED, !hasNext)
+                 .set('disabled', !hasNext);
+
+        container.one(controlClass + '-last')
+                 .toggleClass(CLASS_DISABLED, !hasNext)
+                 .set('disabled', !hasNext);
 
         container.one('form input').set('value', val);
     },
@@ -247,10 +271,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         // register change events from the perPage select
         if (
             control.hasClass(CLASS_DISABLED) ||
-            (
-                selector &&
-                !Y.Selector.test(control.getDOMNode(), selector)
-            )
+            ( selector && !(control.test(selector)) )
         ) {
             return;
         }
@@ -314,7 +335,9 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
          */
         pageSizes: {
             value: [10, 50, 100, { label: 'Show All', value: -1 }]
-        }
+        },
+
+        model: {}
     }
 });
 
@@ -377,7 +400,7 @@ Controller.ATTRS = {
 
     /**
      @attribute paginatorLocation
-     @type {String | Y.Node}
+     @type {String | Array | Y.Node}
      @default footer
      */
     paginatorLocation: {
@@ -386,6 +409,15 @@ Controller.ATTRS = {
 };
 
 Y.mix(Controller.prototype, {
+
+    /**
+     Used to wrap the paginator into a safe row when the location is defined
+       as "footer"
+     @property rowWrapperTemplate
+     @type String
+     @default '<tr><td class="{wrapperClass}" colspan="{numOfCols}"/></tr>'
+     */
+    rowWrapperTemplate: '<tr><td class="{wrapperClass}" colspan="{numOfCols}"/></tr>',
 
     /**
      @method firstPage
@@ -427,15 +459,7 @@ Y.mix(Controller.prototype, {
      @method initializer
      */
     initializer: function () {
-        var ModelClass = this.get('paginatorModel'),
-            model;
-
-        if (!Y.Lang.isObject(ModelClass, true)) {
-            model = new ModelClass();
-            this.set('paginatorModel', model);
-        } else {
-            model = ModelClass;
-        }
+        var model = this.get('paginatorModel')
 
         // allow DT to use paged data
         this._augmentData();
@@ -505,11 +529,10 @@ Y.mix(Controller.prototype, {
             while(this._pgViews.length) {
                 view = this._pgViews.shift();
                 view.destroy({ remove: true });
-                view = null;
             }
 
             data._paged.index = 0;
-            data._paged.length = undefined;
+            data._paged.length = null;
         }
 
         this.get('paginatorModel').set('itemsPerPage', parseInt(e.newVal, 10));
@@ -556,7 +579,10 @@ Y.mix(Controller.prototype, {
                 }
 
                 // create a row for the paginator to sit in
-                row = Y.Node.create('<tr><td class="yui3-datatable-paginator-wrapper" colspan="' + this.get('columns').length + '"/></tr>');
+                row = Y.Node.create(sub(this.rowWrapperTemplate, {
+                    wrapperClass: getClassName(NAME, 'wrapper'),
+                    numOfCols: this.get('columns').length
+                }));
 
                 row.one('td').append(container);
                 this.foot.tfootNode.append(row);
@@ -663,14 +689,11 @@ Y.mix(Controller.prototype, {
                             this._items.length;
             },
 
-            each: function (callback, thisObj) {
-                var items = this.getPage(),
-                    i, item, len;
+            each: function () {
+                var args = Array.prototype.slice.call(arguments);
+                args.unshift(this.getPage());
 
-                for (i = 0, len = items.length; i < len; i++) {
-                    item = items[i];
-                    callback.call(thisObj || item, item, i, this);
-                }
+                Y.Array.each.apply(null, args);
 
                 return this;
             }
@@ -717,9 +740,8 @@ Y.mix(Controller.prototype, {
      @param {Y.Model | Object} model
      */
     _setPaginatorModel: function (model) {
-        var ModelConstructor = this.get('paginatorModelType');
-
         if (!(model && model._isYUIModel)) {
+            var ModelConstructor = this.get('paginatorModelType');
             model = new ModelConstructor(model);
         }
 
