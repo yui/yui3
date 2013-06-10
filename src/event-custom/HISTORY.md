@@ -1,7 +1,12 @@
 Custom Event Infrastructure Change History
 ==========================================
 
-@VERSION@
+3.10.3
+------
+
+* No changes.
+
+3.10.2
 ------
 
 * Fixed issue with facade carrying stale data for the "no subscriber" case.

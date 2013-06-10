@@ -7656,7 +7656,7 @@ Y.Color = {
             clr = str;
 
         if (convert && Y.Color[convert]) {
-            clr = Y.Color[convert](str).toLowerCase();
+            clr = Y.Color[convert](str);
         }
 
         return clr;
@@ -7664,6 +7664,7 @@ Y.Color = {
 
     /**
     Converts provided color value to a hex value string
+
     @public
     @method toHex
     @param {String} str Hex or RGB value string
@@ -7671,8 +7672,14 @@ Y.Color = {
     @since 3.8.0
     **/
     toHex: function (str) {
-        var clr = Y.Color._convertTo(str, 'hex');
-        return clr.toLowerCase();
+        var clr = Y.Color._convertTo(str, 'hex'),
+            isTransparent = clr.toLowerCase() === 'transparent';
+
+        if (clr.charAt(0) !== '#' && !isTransparent) {
+            clr = '#' + clr;
+        }
+
+        return isTransparent ? clr.toLowerCase() : clr.toUpperCase();
     },
 
     /**

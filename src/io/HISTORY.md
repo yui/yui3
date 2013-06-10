@@ -1,6 +1,16 @@
 IO Utility Change History
 =========================
 
+3.10.3
+------
+
+* [security] Hardened SWF file by filtering all data passed through ExternalInterface to fix XSS vulnerability.
+
+3.10.2
+------
+
+* No changes.
+
 3.10.1
 ------
 

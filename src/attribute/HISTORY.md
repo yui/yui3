@@ -1,7 +1,12 @@
 Attribute Change History
 ========================
 
-@VERSION@
+3.10.3
+------
+
+* No changes.
+
+3.10.2
 ------
 
 * opts now passed to setter correctly, when using AttributeObservable.

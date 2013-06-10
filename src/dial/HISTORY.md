@@ -1,7 +1,12 @@
 Dial Change History
 ===================
 
-@VERSION@
+3.10.3
+------
+
+* No changes.
+
+3.10.2
 ------
 * Fixed GitHub Issue #591: Dial was intermittently sticking at min when
   drag below min, and then back above min. This was only happenening when

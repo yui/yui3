@@ -649,6 +649,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         switch (type) {
             case 'change':
                 for (i = 0, len = columns.length; i < len; i++) {
+                    col = columns[i];
                     key = col.key || col.name;
                     if (col.formatter && !e.changed[key]) {
                         changed.push(key);
