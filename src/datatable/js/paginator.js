@@ -33,14 +33,6 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
     containerTemplate: '<div class="{paginator}"/>',
 
     /**
-     Template used for control buttons
-     @property buttonTemplate
-     @type {String}
-     @default '<a href="#{type}" class="control control-{type}" data-type="{type}">{label}</a>'
-     */
-    buttonTemplate: '<button class="{control} {control}-{type}" data-type="{type}">{label}</a>',
-
-    /**
      Template for content. Helps maintain order of controls.
      @property contentTemplate
      @type {String}
@@ -73,10 +65,6 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         this._initClassNames();
 
         this.attachEvents();
-
-        this.buttonTemplate = sub(this.buttonTemplate, {
-            control: this.classNames.control
-        });
     },
 
     /**
@@ -85,7 +73,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      */
     render: function () {
         var model = this.get('model'),
-            content = Y.Lang.sub(this.contentTemplate, {
+            content = sub(this.contentTemplate, {
                 'buttons': this._buildButtonsGroup(),
                 'goto': this._buildGotoGroup(),
                 'perPage': this._buildPerPageGroup()
@@ -97,8 +85,6 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
         this._updateControlsUI(model.get('page'));
         this._updateItemsPerPageUI(model.get('itemsPerPage'));
-
-        console.log(Y.namespace('DataTable.Templates').Paginator);
 
         return this;
     },
