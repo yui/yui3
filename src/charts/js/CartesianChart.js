@@ -401,7 +401,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
         {
             tempKeys = tempKeys.concat(seriesKeys);
         }
-        l = tempKeys.length;
+        stylesIndex = 0;
         while(tempKeys.length > 0)
         {
             series = sc && sc.length > 0 ? sc.shift() : {type:type};
@@ -419,17 +419,17 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
                         l = key.length;
                         for(i = 0; i < l; i = i + 1)
                         {
-                            tempKeys.splice(tempKeys.indexOf(key));
+                            tempKeys.splice(tempKeys.indexOf(key), 1);
                         }
                     }
                     else
                     {
-                        tempKeys.splice(tempKeys.indexOf(key));
+                        tempKeys.splice(tempKeys.indexOf(key), 1);
                     }
                 }
                 else
                 {
-                    key = seriesKeys.shift();
+                    key = tempKeys.shift();
                 }
                 series[catKey] = series[catKey] || categoryKey;
                 series[seriesKey] = key;
@@ -460,8 +460,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
                 }
                 if(seriesStyles)
                 {
-                    stylesIndex = stylesAreArray ? i : series[seriesKey];
-                    globalStyles = seriesStyles[stylesIndex];
+                    globalStyles = stylesAreArray ? seriesStyles[stylesIndex] : seriesStyles[series[seriesKey]];
                     if(globalStyles)
                     {
                         setStyles = series.styles;
@@ -475,6 +474,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
                         }
                     }
                 }
+                stylesIndex = stylesIndex + 1;
                 seriesCollection.push(series);
             }
         }

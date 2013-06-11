@@ -166,6 +166,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             i = 0,
             series,
             seriesKey;
+        this._dispatchers = [];
         this._seriesCollection = [];
         this._seriesDictionary = {};
         this.seriesTypes = [];
@@ -287,7 +288,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         combo : Y.ComboSeries,
         stackedcombo : Y.StackedComboSeries,
         combospline : Y.ComboSplineSeries,
-        stackedcombospline : Y.StackedComboSplineSeries
+        stackedcombospline : Y.StackedComboSplineSeries,
+        gantt: Y.GanttSeries
     },
 
     /**
