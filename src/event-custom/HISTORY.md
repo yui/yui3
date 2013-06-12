@@ -4,6 +4,16 @@ Custom Event Infrastructure Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
 * Fixed issue with facade carrying stale data for the "no subscriber" case.
 
 * Fixed regression where `once()` and `onceAfter()` subscriptions using the

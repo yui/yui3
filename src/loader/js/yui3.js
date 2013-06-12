@@ -1222,7 +1222,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "dom-style": {
         "requires": [
-            "dom-base"
+            "dom-base",
+            "color-base"
         ]
     },
     "dom-style-ie": {
@@ -2139,11 +2140,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "pluginhost-base"
         ]
     },
-    "profiler": {
-        "requires": [
-            "yui-base"
-        ]
-    },
     "promise": {
         "requires": [
             "timers"
@@ -2939,4 +2935,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'e1fe3ded31490ce8af0bf1d9f7105624';
+YUI.Env[Y.version].md5 = '0ef57f597d6d83db16c9127b46f6150b';

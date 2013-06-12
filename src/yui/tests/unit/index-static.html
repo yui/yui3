@@ -15,13 +15,10 @@
 
 <span id="test"></span>
 
-<iframe name="xframe" id="xframe" src="assets/xframe.html" style="visibility: hidden;"></iframe>
-
-
 <script>
 var YUI = {};
 </script>
-<!-- This is the main test file, notice it's using the `yui-base` seed file 
+<!-- This is the main test file, notice it's using the `yui-base` seed file
 without Loader on the page, so Loader is fetched before tests are executed. -->
 <script type="text/javascript" src="../../../../build/yui-core/yui-core.js"></script>
 <script type="text/javascript" src="../../../../build/get/get.js"></script>
@@ -62,7 +59,7 @@ var TestName = 'YUI: All';
 
 YUI({
     allowRollup: false,
-    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
+    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },
     filter: YUI_config.gfilter,
     modules: {
         'array-test': {
@@ -76,14 +73,25 @@ YUI({
         'lang-test': {
             fullpath: './assets/lang-test.js',
             requires: ['test']
-        },        
+        },
+        'lang-xframe-test' : {
+            fullpath: './assets/lang-xframe-test.js',
+            condition: {
+                name : 'lang-xframe-test',
+                trigger : 'lang-test',
+                test : function(Y) {
+                    return !(Y.UA.nodejs);
+                }
+            },
+            requires: ['test']
+        },
         'seed-tests': {
             fullpath: './assets/seed-tests.js',
             requires: [ 'test']
         },
         'core-tests': {
             fullpath: './assets/core-tests.js',
-            requires: [ 'classnamemanager']
+            requires: ['classnamemanager', 'node']
         },
 
         'config-test': {
@@ -111,28 +119,12 @@ YUI({
             fullpath: './assets/ua-tests.js',
             requires: [ 'ua-data', 'ua-yui-data', 'test' ]
         }
-        
+
     }
 }).use('ua-tests', 'seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'array-test', 'object-test', 'lang-test', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
-    
     Y.Test.Runner.setName(TestName);
-    if (window && window.$yetify) {
-        var timer,
-            check = function() {
-                var f = document.getElementById('xframe');
-                if (f && f.contentWindow && f.contentWindow._xframeLoaded) {
-                    clearInterval(timer);
-                    Y.Test.Runner.run();
-                    return true;
-                }
-                return false;
-            };
-
-        timer = setInterval(check, 100);
-    } else {
-        Y.Test.Runner.run();
-    }
+    Y.Test.Runner.run();
 });
 
 </script>

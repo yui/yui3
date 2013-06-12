@@ -4,6 +4,14 @@ Tree Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.10.3
+------
+
+* Added `Tree.Node#depth()`, which returns the depth of the node, starting at 0
+  for the root node. [Ryan Grove]
+
 * The `Tree#createNode()`, `Tree#insertNode()`, and `Tree#traverseNode()`
   methods now throw or log informative error messages when given a destroyed
   node instead of failing cryptically (or succeeding when they shouldn't).
@@ -11,6 +19,11 @@ Tree Change History
 
 * The `Tree.Node#isRoot()` method now returns `false` on destroyed nodes instead
   of causing an exception. [Ryan Grove]
+
+3.10.2
+------
+
+* No changes.
 
 
 3.10.1

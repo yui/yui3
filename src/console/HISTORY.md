@@ -2,9 +2,19 @@ Console Change History
 ======================
 
 @VERSION@
--------
+------
+
+* No changes.
+
+3.10.3
+------
 
 * Added Hungarian language support [Gábor Kovács]
+
+3.10.2
+------
+
+* No changes.
 
 3.10.1
 ------

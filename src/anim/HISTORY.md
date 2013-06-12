@@ -1,6 +1,21 @@
 Anim Change History
 ===================
 
+@VERSION@
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* Remove unnecessary `code` tag [zenorocha]
+
 3.10.1
 ------
 
