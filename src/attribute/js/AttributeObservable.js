@@ -21,8 +21,6 @@
      */
     var EventTarget = Y.EventTarget,
 
-        FN = function() {},
-
         CHANGE = "Change",
         BROADCAST = "broadcast";
 
@@ -180,11 +178,7 @@
             if (host._hasPotentialSubscribers(eventName)) {
                 host.fire(eventName, facade);
             } else {
-
-                // PERF TODO: Remove once Model _defAttrChangeFn override is no longer
-                // required, we can just go to _setAttrVal, which is much cleaner (matches the "initialization" flow).
-                facade.stopImmediatePropagation = FN;
-                this._defAttrChangeFn(facade, true);
+                this._setAttrVal(attrName, subAttrName, currVal, newVal, opts, cfg);
             }
         },
 
