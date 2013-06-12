@@ -134,7 +134,6 @@
             var host = this,
                 eventName = this._getFullType(attrName + CHANGE),
                 state = host._state,
-                hasOpts = false,
                 facade,
                 broadcast,
                 e;
@@ -163,7 +162,7 @@
 
             if (opts) {
                 facade = Y.merge(opts);
-                hasOpts = true;
+                facade._attrOpts = opts;
             } else {
                 facade = host._ATTR_E_FACADE;
             }
@@ -176,11 +175,7 @@
             facade.prevVal = currVal;
             facade.newVal = newVal;
 
-            if (hasOpts) {
-                host.fire(eventName, facade, opts);
-            } else {
-                host.fire(eventName, facade);
-            }
+            host.fire(eventName, facade);
         },
 
         /**
@@ -192,7 +187,12 @@
          */
         _defAttrChangeFn : function(e) {
 
-            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, e.details[1])) {
+            var opts = e._attrOpts;
+            if (opts) {
+                delete e._attrOpts;
+            }
+
+            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, opts)) {
                 // Prevent "after" listeners from being invoked since nothing changed.
                 e.stopImmediatePropagation();
 
