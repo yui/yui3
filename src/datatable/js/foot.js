@@ -5,7 +5,7 @@ classes.
 
 @module datatable
 @submodule datatable-foot
-@since 3.5.0
+@since @SINCE@
 **/
 
 
@@ -18,7 +18,7 @@ Y.namespace('DataTable').FooterView = Y.Base.create('tableFooter', Y.View, [], {
     @property TFOOT_TEMPLATE
     @type {HTML}
     @default '<tfoot class="{className}"/>'
-    @since @since@
+    @since @SINCE@
     **/
     TFOOT_TEMPLATE: '<tfoot class="{className}"/>',
 
@@ -37,6 +37,7 @@ Y.namespace('DataTable').FooterView = Y.Base.create('tableFooter', Y.View, [], {
         classname from.
     @return {String}
     @protected
+    @since @SINCE@
     **/
     getClassName: function () {
         // TODO: add attribute with setter? to host to use property this.host
@@ -60,7 +61,7 @@ Y.namespace('DataTable').FooterView = Y.Base.create('tableFooter', Y.View, [], {
     @method render
     @return {FooterView} The instance
     @chainable
-    @since @since@
+    @since @SINCE@
     **/
     render: function () {
         var tfoot    = this.tfootNode ||
@@ -79,7 +80,7 @@ Y.namespace('DataTable').FooterView = Y.Base.create('tableFooter', Y.View, [], {
     @method _createTFootNode
     @return {Node}
     @protected
-    @since @since@
+    @since @SINCE@
     **/
     _createTFootNode: function () {
         return Y.Node.create(Y.Lang.sub(this.TFOOT_TEMPLATE, {
@@ -95,7 +96,7 @@ Y.namespace('DataTable').FooterView = Y.Base.create('tableFooter', Y.View, [], {
     @method initializer
     @param {Object} config Configuration data
     @protected
-    @since 3.5.0
+    @since @SINCE@
     **/
     initializer: function (config) {
         this.host  = (config && config.host);
