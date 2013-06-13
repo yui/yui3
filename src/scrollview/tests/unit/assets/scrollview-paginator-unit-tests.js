@@ -44,7 +44,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
 
             sv.once('scrollEnd', function () {
                 Test.resume(function () {
-                    Y.Assert.areEqual(300, sv.get('scrollX'));
+                    Y.Assert.areEqual(340, sv.get('scrollX'));
                 });
             });
 
@@ -64,7 +64,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
             Y.later(500, this, function () {
                 Test.resume(function () {
                     Y.Assert.areEqual(0, eventsFired);
-                    Y.Assert.areEqual(2700, sv.get('scrollX'));
+                    Y.Assert.areEqual(2740, sv.get('scrollX'));
                 });
             });
 
@@ -187,7 +187,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
                 response;
 
             paginator._afterIndexChange(mockEvent);
-            Y.Assert.areEqual(2700, scrollview._maxScrollX);
+            Y.Assert.areEqual(2740, scrollview._maxScrollX);
             Y.Assert.areEqual(0, scrollview.get('scrollX'));
         }
     }));
@@ -215,7 +215,7 @@ YUI.add('scrollview-paginator-unit-tests', function (Y, NAME) {
                 response;
 
             paginator._afterIndexChange(mockEvent);
-            Y.Assert.areEqual(100, scrollview._maxScrollY);
+            Y.Assert.areEqual(116, scrollview._maxScrollY);
             Y.Assert.areEqual(0, scrollview.get('scrollY'));
         }
     }));
