@@ -50,6 +50,7 @@ Openable.prototype = {
     Closes the specified node if it isn't already closed.
 
     @method closeNode
+    @param {Tree.Node} node Node to close.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `close` event
             will be suppressed.
@@ -77,6 +78,7 @@ Openable.prototype = {
     Opens the specified node if it isn't already open.
 
     @method openNode
+    @param {Tree.Node} node Node to open.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `open` event
             will be suppressed.
