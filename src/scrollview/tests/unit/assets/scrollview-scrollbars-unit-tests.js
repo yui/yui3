@@ -25,7 +25,7 @@ YUI.add('scrollview-scrollbars-unit-tests', function (Y, NAME) {
 
         "_updateBars should correctly position horizontal scrollbars": function() {
 
-            var width = 29,
+            var width = 30,
                 duration = 3,
                 axis = 'X',
                 scrollview = renderNewScrollview(axis),
@@ -144,9 +144,9 @@ YUI.add('scrollview-scrollbars-unit-tests', function (Y, NAME) {
                 transitionSteps = [
                     {
                         duration: '0.5',
-                        transform: 'translateX(271px)',
+                        transform: 'translateX(270px)',
                         opacity: undefined,
-                        left: '271px'
+                        left: '270px'
                     },
                     {
                         duration: '0.6',
@@ -202,9 +202,9 @@ YUI.add('scrollview-scrollbars-unit-tests', function (Y, NAME) {
                 transitionSteps = [
                     {
                         duration: '0.5',
-                        transform: 'translateY(91px)',
+                        transform: 'translateY(90px)',
                         opacity: undefined,
-                        top: '91px'
+                        top: '90px'
                     },
                     {
                         duration: '0.6',
