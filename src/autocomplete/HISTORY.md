@@ -1,6 +1,31 @@
 AutoComplete Change History
 ===========================
 
+@VERSION@
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Add italian language files to the components. [albertosantini]
+
 3.9.1
 -----
 

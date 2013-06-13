@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <title>scrollview unit tests</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <script type="text/javascript" charset="utf-8" src="../../../../build/yui/yui.js"></script>
+        <script type="text/javascript" charset="utf-8">
+
+        YUI({
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+            coverage: ['scrollview']
+        }).use('test-console', 'scrollview', function(Y) {
+
+            (new Y.Test.Console()).render();
+
+            var scrollview = new Y.ScrollView();
+
+            var suite = new Y.Test.Suite('ScrollView Unit Tests');
+
+            suite.add(new Y.Test.Case({
+                name: 'Tests',
+                'scrollbars should be pluggins into scrollview': function () {
+                    Y.Assert.isNotUndefined(scrollview.scrollbars);
+                },
+                'scrollbars should exist on the plugin namespace': function () {
+                    Y.Assert.isNotUndefined(Y.Plugin.ScrollViewScrollbars);
+                }
+            }));
+
+            Y.Test.Runner.add(suite);
+            Y.Test.Runner.run();
+        });
+
+        </script>
+    </head>
+
+    <body class="yui3-skin-sam">
+
+        <div id="container"></div>
+
+    </body>
+</html>

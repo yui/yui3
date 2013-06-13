@@ -2,8 +2,6 @@ YUI.add('get-test', function (Y) {
 
     Y.GetTests = new Y.Test.Suite("Get");
 
-    Y.GetTests.TEST_FILES_BASE = "getfiles/";
-
     var ArrayAssert  = Y.ArrayAssert,
         Assert       = Y.Assert,
         ObjectAssert = Y.ObjectAssert,
@@ -24,28 +22,127 @@ YUI.add('get-test', function (Y) {
 
             // True if this browser should call an onFailure callback on a script that 404s.
             jsFailure: !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0))
-        };
+        },
+
+        // echoecho delay in seconds
+        DELAY = Y.config.echoechoDelay || 0,
+
+        // Tests that involve 3+ JavaScript assets need a conservative timeout
+        // to avoid timeout-based failures on slow CI environments.
+        TIMEOUT = 35 * 1000,
+
+        // JS content
+        JS_A = 'G_SCRIPTS.push("a.js")',
+        JS_B = 'G_SCRIPTS.push("b.js")',
+        JS_C = 'G_SCRIPTS.push("c.js")',
+
+        // CSS content
+        CSS_A = '.get_test_a {' +
+                    'position: absolute;' +
+                    'z-index: 1111;' +
+                    '/* Just for eyeballing, not used to test */' +
+                    'background-color: #ff0000;' +
+                '}',
+        CSS_B = '.get_test_b {' +
+                    'position:absolute;' +
+                    'z-index:1234;' +
+                    '/* Just for eyeballing, not used to test */' +
+                    'background-color:#00ff00;' +
+                '}',
+        CSS_C = '.get_test_c {' +
+                    'position:absolute;' +
+                    'z-index:4321;' +
+                    '/* Just for eyeballing, not used to test */' +
+                    'background-color:#0000ff;' +
+                '}',
+        CSS_IB = '.get_test_a {' +
+                     'position:absolute;' +
+                     'z-index:9991;' +
+                     '/* Just for eyeballing, not used to test */' +
+                     'background-color:#cccccc;' +
+                 '}' +
+                 '.get_test_b {' +
+                     'position:absolute;' +
+                     'z-index:9992;' +
+                     '/* Just for eyeballing, not used to test */' +
+                     'background-color:#cccccc;' +
+                 '}' +
+                 '.get_test_c {' +
+                     'position:absolute;' +
+                     'z-index:9993;' +
+                     '/* Just for eyeballing, not used to test */' +
+                     'background-color:#cccccc;' +
+                 '}';
 
     function areObjectsReallyEqual(o1, o2, msg) {
         Y.ObjectAssert.areEqual(o1, o2, msg);
         Y.ObjectAssert.areEqual(o2, o1, msg);
     }
 
-    function randUrl(url) {
-        return url + ((url.indexOf("?") !== -1) ? "&" : "?") + "dt=" + new Date().getTime();
+    function unique() {
+        if (!unique.counter) {
+            unique.counter = 0;
+        }
+        // Append a simple counter to guarantee uniqueness in case we invoke
+        // this function too fast.
+        unique.counter += 1;
+        return new Date().getTime() + '-' + unique.counter;
     }
 
-    function path(urls, guid) {
-        var base = Y.GetTests.TEST_FILES_BASE;
+    // Adds a cache-busting param to the given url.
+    function randUrl(url) {
+        url += (url.indexOf('?') !== -1) ? '&' : '?';
+        return url + 'bust=' + unique();
+    }
 
-        if (typeof urls === "string") {
-            urls = base + randUrl(urls);
-        } else {
-            for (var i = 0; i < urls.length; i++) {
-                urls[i] = base + randUrl(urls[i]);
-            }
-        }
-        return urls;
+    /**
+    Generates a unique echoecho 404 URL.
+
+    @return A unique echoecho 404 URL.
+    **/
+    function getUniqueEchoecho404() {
+        return randUrl('echo/status/404');
+    }
+
+    /**
+    Generates a unique echoecho JavaScript URL.
+
+    @param {String} content The JavaScript to respond with.
+    @param {String} delay The number of seconds to delay the response.
+    @return A unique echoecho JavaScript URL.
+    **/
+    function getUniqueEchoechoJs(content, delay) {
+        var url;
+
+        delay   = delay || 0;
+        content = content || 'console.log("' + unique() + '")';
+
+        url = 'echo/delay/' + delay + '/get'
+                  + '?response=' + encodeURIComponent(content)
+                  + '&type=js';
+
+        return randUrl(url);
+    }
+
+    /**
+    Generates a unique echoecho CSS URL.
+
+    @param {String} content The CSS to respond with.
+    @param {String} delay The number of seconds to delay the response.
+    @return A unique echoecho CSS URL.
+    **/
+    function getUniqueEchoechoCss(content, delay) {
+        var url;
+
+        delay   = delay || 0;
+        content = content || '.foo{}';
+
+        url = 'echo/delay/' + delay + '/get'
+                  + '?response=' + encodeURIComponent(content)
+                  + '&type=css';
+
+        // Get.load() only loads CSS if the URL ends with '.css'
+        return randUrl(url) + '&hacky=.css';
     }
 
     // -- Basic JS loading -----------------------------------------------------
@@ -99,8 +196,9 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
-            var trans = Y.Get.script(path("a.js"), {
+            var trans = Y.Get.script(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -149,8 +247,9 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var url = getUniqueEchoecho404();
 
-            var trans = Y.Get.script(path("bogus.js"), {
+            var trans = Y.Get.script(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -186,9 +285,16 @@ YUI.add('get-test', function (Y) {
         'test: single script timeout callback': function() {
             var test = this,
 
-            trans = Y.Get.script(path("bogussinglescripttimeoutcallback.js"), { // funky name is to try and avoid a cached response, giving us a little more time to timeout
+                // The following delayed JS response should not have any
+                // side-effects to avoid interfering with other tests.
+                url = getUniqueEchoechoJs(
+                    'console.log("1s delayed response")',
+                    1  // 1s
+                );
 
-                timeout: 1,
+            trans = Y.Get.script(url, {
+
+                timeout: 1, // 1ms
 
                 onTimeout: function(e) {
                     test.resume(function() {
@@ -220,8 +326,9 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
-            var trans = Y.Get.script(path("a.js"), {
+            var trans = Y.Get.script(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -265,8 +372,9 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
+            var url = getUniqueEchoecho404();
 
-            var trans = Y.Get.script(path("bogus.js"), {
+            var trans = Y.Get.script(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -308,8 +416,13 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            var trans = Y.Get.script(path(["b.js", "a.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -347,7 +460,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: multiple scripts, one failure': function() {
@@ -356,8 +469,13 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoecho404(),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "bogus.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -398,8 +516,13 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_C, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_A, DELAY)
+            ];
 
-            var trans = Y.Get.script(path(["c.js", "b.js", "a.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -440,7 +563,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: multiple scripts, failure, end': function() {
@@ -450,8 +573,13 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoecho404(),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "bogus.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -494,8 +622,13 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-                var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+                var trans = Y.Get.script(urls, {
                     data: {a:1, b:2, c:3},
                     context: {bar:"foo"},
 
@@ -533,7 +666,7 @@ YUI.add('get-test', function (Y) {
                     async:true
                 });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: async multiple scripts, success, end': function() {
@@ -543,8 +676,13 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_C, DELAY),
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY)
+            ];
 
-            var trans = Y.Get.script(path(["c.js", "a.js", "b.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -579,7 +717,7 @@ YUI.add('get-test', function (Y) {
                 async:true
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: async multiple script, failure, end': function() {
@@ -589,8 +727,13 @@ YUI.add('get-test', function (Y) {
                 failure:0,
                 end:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoecho404(),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "bogus.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -629,10 +772,11 @@ YUI.add('get-test', function (Y) {
 
         'test: insertBefore, single' : function() {
             var test = this;
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
             test.createInsertBeforeNode();
 
-            var trans = Y.Get.script(path("a.js"), {
+            var trans = Y.Get.script(url, {
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -659,10 +803,14 @@ YUI.add('get-test', function (Y) {
 
         'test: insertBefore, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY)
+            ];
 
             test.createInsertBeforeNode();
 
-            var trans = Y.Get.script(path(["a.js", "b.js"]), {
+            var trans = Y.Get.script(urls, {
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -692,10 +840,14 @@ YUI.add('get-test', function (Y) {
 
         'test: async, insertBefore, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY)
+            ];
 
             test.createInsertBeforeNode();
 
-            var trans = Y.Get.script(path(["a.js", "b.js"]), {
+            var trans = Y.Get.script(urls, {
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -727,8 +879,9 @@ YUI.add('get-test', function (Y) {
 
         'test: charset, single' : function() {
             var test = this;
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
-            var trans = Y.Get.script(path("a.js"), {
+            var trans = Y.Get.script(url, {
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
@@ -756,8 +909,13 @@ YUI.add('get-test', function (Y) {
 
         'test: charset, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
@@ -783,13 +941,18 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: async, charset, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
@@ -817,13 +980,14 @@ YUI.add('get-test', function (Y) {
                 async :true
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: attributes, single' : function() {
             var test = this;
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
-            var trans = Y.Get.script(path("a.js"), {
+            var trans = Y.Get.script(url, {
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title"  : "myscripts",
@@ -859,8 +1023,13 @@ YUI.add('get-test', function (Y) {
 
         'test: attributes, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title"  : "myscripts"
@@ -892,13 +1061,18 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: async, attributes, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title"  : "myscripts"
@@ -933,7 +1107,7 @@ YUI.add('get-test', function (Y) {
                 async :true
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'ignore: abort' : function() {
@@ -950,7 +1124,9 @@ YUI.add('get-test', function (Y) {
                 i;
 
             for (i = 0; i < 30; ++i) {
-                urls.push(path('a.js'));
+                urls.push(
+                    getUniqueEchoechoJs(JS_A, 0)
+                );
             }
 
             Y.Get.script(urls, {attributes: {'class': 'purge-test'}}, function (err, tx) {
@@ -960,7 +1136,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'test: purgethreshold' : function() {
@@ -969,13 +1145,13 @@ YUI.add('get-test', function (Y) {
             var nodeIds = [];
 
             // Purge only happens at the start of a queue call.
-            Y.Get.script(path("a.js"), {
+            Y.Get.script(getUniqueEchoechoJs(JS_A, DELAY), {
                 purgethreshold: 1000, // Just to make sure we're not purged as part of the default 20 script purge.
 
                 onSuccess: function(o) {
                     nodes = nodes.concat(o.nodes);
 
-                    Y.Get.script(path("b.js"), {
+                    Y.Get.script(getUniqueEchoechoJs(JS_B, DELAY), {
                         purgethreshold: 1000, // Just to make sure we're not purged as part of the default 20 script purge.
 
                         onSuccess: function(o) {
@@ -991,7 +1167,7 @@ YUI.add('get-test', function (Y) {
                                 nodeIds[i] = node.get("id");
                             }
 
-                            Y.Get.script(path("c.js"), {
+                            Y.Get.script(getUniqueEchoechoJs(JS_C, DELAY), {
                                 purgethreshold: 1,
 
                                 onSuccess: function(o) {
@@ -1011,7 +1187,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         // THE ASYNC FAILURE TESTS NEED TO BE AT THE END,
@@ -1027,8 +1203,13 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoecho404(),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            var trans = Y.Get.script(path(["a.js", "bogus.js", "c.js"]), {
+            var trans = Y.Get.script(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1071,8 +1252,6 @@ YUI.add('get-test', function (Y) {
             this.nb = Y.Node.create('<div class="get_test_b">get_test_b</div>');
             this.nc = Y.Node.create('<div class="get_test_c">get_test_c</div>');
 
-            var naa = this.na;
-
             var b = Y.Node.one("body");
             b.append(this.na);
             b.append(this.nb);
@@ -1090,14 +1269,14 @@ YUI.add('get-test', function (Y) {
 
         createInsertBeforeNode: function() {
 
-            // Not using innerHTML because of WinJS RT. 
+            // Not using innerHTML because of WinJS RT.
 
             var link = Y.config.doc.createElement("link");
             link.setAttribute("id", "insertBeforeMe");
             link.setAttribute("rel", "stylesheet");
             link.setAttribute("type", "text/css");
             link.setAttribute("charset", "utf-8");
-            link.setAttribute("href", path("ib.css?delay=0"));
+            link.setAttribute("href", getUniqueEchoechoCss(CSS_IB, 0));
 
             this.ib = Y.Node.one(link);
 
@@ -1116,8 +1295,9 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
-            var trans = Y.Get.css(path("a.css?delay=50"), {
+            var trans = Y.Get.css(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1156,8 +1336,13 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, DELAY),
+                getUniqueEchoechoCss(CSS_B, DELAY),
+                getUniqueEchoechoCss(CSS_C, DELAY)
+            ];
 
-            var trans = Y.Get.css(path(["a.css?delay=50", "b.css?delay=100", "c.css?delay=75"]), {
+            var trans = Y.Get.css(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1194,10 +1379,11 @@ YUI.add('get-test', function (Y) {
 
         'test: insertBefore, single' : function() {
             var test = this;
+            var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
             test.createInsertBeforeNode();
 
-            var trans = Y.Get.css(path("a.css?delay=30"), {
+            var trans = Y.Get.css(url, {
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -1214,7 +1400,7 @@ YUI.add('get-test', function (Y) {
                             // Let the CSS kick in ??
                             test.wait(function() {
                                 Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
-                            }, 100);
+                            }, 5000);
                         }
                     });
                 }
@@ -1225,10 +1411,15 @@ YUI.add('get-test', function (Y) {
 
         'test: insertBefore, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, DELAY),
+                getUniqueEchoechoCss(CSS_B, DELAY),
+                getUniqueEchoechoCss(CSS_C, DELAY)
+            ];
 
             test.createInsertBeforeNode();
 
-            var trans = Y.Get.css(path(["a.css?delay=20", "b.css?delay=75", "c.css?delay=10"]), {
+            var trans = Y.Get.css(urls, {
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -1250,7 +1441,7 @@ YUI.add('get-test', function (Y) {
                                 Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
                                 Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
                                 Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
-                            }, 100);
+                            }, 5000);
                         }
                     });
                 }
@@ -1261,8 +1452,9 @@ YUI.add('get-test', function (Y) {
 
         'test: charset, single' : function() {
             var test = this;
+            var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
-            var trans = Y.Get.css(path("a.css?delay=20"), {
+            var trans = Y.Get.css(url, {
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
@@ -1281,8 +1473,13 @@ YUI.add('get-test', function (Y) {
 
         'test: charset, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, DELAY),
+                getUniqueEchoechoCss(CSS_B, DELAY),
+                getUniqueEchoechoCss(CSS_C, DELAY)
+            ];
 
-            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
+            var trans = Y.Get.css(urls, {
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
@@ -1306,8 +1503,9 @@ YUI.add('get-test', function (Y) {
 
         'test: attributes, single' : function() {
             var test = this;
+            var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
-            var trans = Y.Get.css(path("a.css?delay=10"), {
+            var trans = Y.Get.css(url, {
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title": "myscripts"
@@ -1331,8 +1529,13 @@ YUI.add('get-test', function (Y) {
 
         'test: attributes, multiple' : function() {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, DELAY),
+                getUniqueEchoechoCss(CSS_B, DELAY),
+                getUniqueEchoechoCss(CSS_C, DELAY)
+            ];
 
-            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
+            var trans = Y.Get.css(urls, {
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title": "myscripts"
@@ -1366,8 +1569,9 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var url = getUniqueEchoecho404();
 
-            Y.Get.css(path("bogus.css"), {
+            Y.Get.css(url, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1400,8 +1604,13 @@ YUI.add('get-test', function (Y) {
                 success:0,
                 failure:0
             };
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, DELAY),
+                getUniqueEchoecho404(),
+                getUniqueEchoechoCss(CSS_C, DELAY)
+            ];
 
-            Y.Get.css(path(["a.css", "bogus.css", "c.css"]), {
+            Y.Get.css(urls, {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1422,11 +1631,11 @@ YUI.add('get-test', function (Y) {
 
                         if (!Y.UA.ie) {
                             // Let the CSS kick in?
-                            test.wait(function() { 
+                            test.wait(function() {
                                 Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
                                 Assert.areNotEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css was loaded when it shouldn't have been");
                                 Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
-                            }, 100);
+                            }, 5000);
                         }
 
                     });
@@ -1442,11 +1651,16 @@ YUI.add('get-test', function (Y) {
 
         'CSS nodes should be inserted in order': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, DELAY),
+                getUniqueEchoechoCss(CSS_B, DELAY),
+                getUniqueEchoechoCss(CSS_C, DELAY)
+            ];
 
             test.o = Y.Get.css([
-                {url: path('a.css'), attributes: {id: 'a'}},
-                {url: path('b.css'), attributes: {id: 'b'}},
-                {url: path('c.css'), attributes: {id: 'c'}}
+                {url: urls[0], attributes: {id: 'a'}},
+                {url: urls[1], attributes: {id: 'b'}},
+                {url: urls[2], attributes: {id: 'c'}}
             ], function (err, transaction) {
                 test.resume(function () {
                     var nodes = transaction.nodes;
@@ -1466,6 +1680,10 @@ YUI.add('get-test', function (Y) {
     Y.GetTests.GetMethods = new Y.Test.Case({
         name: 'Y.Get methods',
 
+        setUp: function () {
+            G_SCRIPTS = [];
+        },
+
         tearDown: function () {
             this.t && this.t.purge();
             this.interval && clearInterval(this.interval);
@@ -1473,8 +1691,13 @@ YUI.add('get-test', function (Y) {
 
         'abort() should abort a transaction when given a transaction object': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+            test.t = Y.Get.js(urls, {
                 onFailure: function () {
                     test.resume(function () {
                         ArrayAssert.containsMatch(function (item) {
@@ -1494,13 +1717,18 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait();
+            test.wait(TIMEOUT);
         },
 
         'abort() should abort a transaction when given a transaction id': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+            test.t = Y.Get.js(urls, {
                 onFailure: function () {
                     test.resume(function () {
                         ArrayAssert.containsMatch(function (item) {
@@ -1520,13 +1748,13 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         // -- css() ------------------------------------------------------------
         'css() should accept a URL': function () {
-            var test = this,
-                url  = path('a.css');
+            var test = this;
+            var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
             setTimeout(function () {
                 test.t = Y.Get.css(url);
@@ -1552,9 +1780,10 @@ YUI.add('get-test', function (Y) {
 
         'css() should accept a URL, options object, and callback function': function () {
             var test = this,
+                url  = getUniqueEchoechoCss(CSS_A, DELAY),
                 callbackCalled;
 
-            test.t = Y.Get.css(path('a.css'), {
+            test.t = Y.Get.css(url, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1576,7 +1805,7 @@ YUI.add('get-test', function (Y) {
                     Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
                     Assert.areSame(test.t, self, '`this` object should be the transaction');
 
-                    test.wait(100);
+                    test.wait();
                 });
             });
 
@@ -1585,8 +1814,9 @@ YUI.add('get-test', function (Y) {
 
         'css() should allow the callback function as the second parameter': function () {
             var test = this;
+            var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
-            test.t = Y.Get.css(path('a.css'), function (err, transaction) {
+            test.t = Y.Get.css(url, function (err, transaction) {
                 var self = this;
 
                 test.resume(function () {
@@ -1601,8 +1831,13 @@ YUI.add('get-test', function (Y) {
 
         'css() should accept an array of URLs': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, DELAY),
+                getUniqueEchoechoCss(CSS_B, DELAY),
+                getUniqueEchoechoCss(CSS_C, DELAY)
+            ];
 
-            test.t = Y.Get.css([path('a.css'), path('b.css'), path('c.css')], {
+            test.t = Y.Get.css(urls, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1622,8 +1857,9 @@ YUI.add('get-test', function (Y) {
 
         'css() should accept a request object': function () {
             var test = this;
+            var url = getUniqueEchoechoCss(CSS_A, DELAY);
 
-            test.t = Y.Get.css({url: path('a.css')}, {
+            test.t = Y.Get.css({url: url}, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1643,8 +1879,13 @@ YUI.add('get-test', function (Y) {
 
         'css() should accept an array of request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, DELAY),
+                getUniqueEchoechoCss(CSS_B, DELAY),
+                getUniqueEchoechoCss(CSS_C, DELAY)
+            ];
 
-            test.t = Y.Get.css([{url: path('a.css')}, {url: path('b.css')}, {url: path('c.css')}], {
+            test.t = Y.Get.css([{url: urls[0]}, {url: urls[1]}, {url: urls[2]}], {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1664,8 +1905,13 @@ YUI.add('get-test', function (Y) {
 
         'css() should accept a mixed array of URLs and request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, DELAY),
+                getUniqueEchoechoCss(CSS_B, DELAY),
+                getUniqueEchoechoCss(CSS_C, DELAY)
+            ];
 
-            test.t = Y.Get.css([path('a.css'), {url: path('b.css')}, path('c.css')], {
+            test.t = Y.Get.css([urls[0], {url: urls[1]}, urls[2]], {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1685,8 +1931,8 @@ YUI.add('get-test', function (Y) {
 
         // -- js() -------------------------------------------------------------
         'js() should accept a URL': function () {
-            var test = this,
-                url  = path('a.js');
+            var test = this;
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
             setTimeout(function () {
                 test.t = Y.Get.js(url);
@@ -1712,9 +1958,10 @@ YUI.add('get-test', function (Y) {
 
         'js() should accept a URL, options object, and callback function': function () {
             var test = this,
+                url  = getUniqueEchoechoJs(JS_A, DELAY),
                 callbackCalled;
 
-            test.t = Y.Get.js(path('a.js'), {
+            test.t = Y.Get.js(url, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1736,7 +1983,7 @@ YUI.add('get-test', function (Y) {
                     Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
                     Assert.areSame(test.t, self, '`this` object should be the transaction');
 
-                    test.wait(100);
+                    test.wait();
                 });
             });
 
@@ -1745,8 +1992,9 @@ YUI.add('get-test', function (Y) {
 
         'js() should allow the callback function as the second parameter': function () {
             var test = this;
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
-            test.t = Y.Get.js(path('a.js'), function (err, transaction) {
+            test.t = Y.Get.js(url, function (err, transaction) {
                 var self = this;
 
                 test.resume(function () {
@@ -1761,8 +2009,13 @@ YUI.add('get-test', function (Y) {
 
         'js() should accept an array of URLs': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+            test.t = Y.Get.js(urls, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1777,13 +2030,14 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'js() should accept a request object': function () {
             var test = this;
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
-            test.t = Y.Get.js({url: path('a.js')}, {
+            test.t = Y.Get.js({url: url}, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1803,8 +2057,13 @@ YUI.add('get-test', function (Y) {
 
         'js() should accept an array of request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            test.t = Y.Get.js([{url: path('a.js')}, {url: path('b.js')}, {url: path('c.js')}], {
+            test.t = Y.Get.js(urls, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1819,13 +2078,18 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         'js() should accept a mixed array of URLs and request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            test.t = Y.Get.js([path('a.js'), {url: path('b.js')}, path('c.js')], {
+            test.t = Y.Get.js([urls[0], {url: urls[1]}, urls[2]], {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1840,13 +2104,13 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            this.wait();
+            this.wait(TIMEOUT);
         },
 
         // -- load() -----------------------------------------------------------
         'load() should accept a URL': function () {
-            var test = this,
-                url  = path('a.js');
+            var test = this;
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
             setTimeout(function () {
                 test.t = Y.Get.load(url);
@@ -1874,9 +2138,10 @@ YUI.add('get-test', function (Y) {
 
         'load() should accept a URL, options object, and callback function': function () {
             var test = this,
+                url = getUniqueEchoechoCss(CSS_A, DELAY),
                 callbackCalled;
 
-            test.t = Y.Get.load(path('a.css'), {
+            test.t = Y.Get.load(url, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1899,7 +2164,7 @@ YUI.add('get-test', function (Y) {
                     Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
                     Assert.areSame(test.t, self, '`this` object should be the transaction');
 
-                    test.wait(100);
+                    test.wait();
                 });
             });
 
@@ -1908,8 +2173,9 @@ YUI.add('get-test', function (Y) {
 
         'load() should allow the callback function as the second parameter': function () {
             var test = this;
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
-            test.t = Y.Get.load(path('a.js'), function (err, transaction) {
+            test.t = Y.Get.load(url, function (err, transaction) {
                 var self = this;
 
                 test.resume(function () {
@@ -1924,8 +2190,13 @@ YUI.add('get-test', function (Y) {
 
         'load() should accept an array of URLs': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoCss(CSS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            test.t = Y.Get.load([path('a.js'), path('b.css'), path('c.js')], {
+            test.t = Y.Get.load(urls, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1948,8 +2219,9 @@ YUI.add('get-test', function (Y) {
 
         'load() should accept a request object': function () {
             var test = this;
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
-            test.t = Y.Get.load({url: path('a.js')}, {
+            test.t = Y.Get.load({url: url}, {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1970,8 +2242,13 @@ YUI.add('get-test', function (Y) {
 
         'load() should accept an array of request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoCss(CSS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoCss(CSS_C, DELAY)
+            ];
 
-            test.t = Y.Get.load([{url: path('a.css')}, {url: path('b.js')}, {url: path('c.css')}], {
+            test.t = Y.Get.load([{url: urls[0]}, {url: urls[1]}, {url: urls[2]}], {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -1994,8 +2271,13 @@ YUI.add('get-test', function (Y) {
 
         'load() should accept a mixed array of URLs and request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoCss(CSS_C, DELAY)
+            ];
 
-            test.t = Y.Get.load([path('a.js'), {url: path('b.js')}, path('c.css')], {
+            test.t = Y.Get.load([urls[0], {url: urls[1]}, urls[2]], {
                 onFailure: function () {
                     test.resume(function () {
                         Assert.fail('onFailure should not be called');
@@ -2026,12 +2308,22 @@ YUI.add('get-test', function (Y) {
     Y.GetTests.TransactionBehavior = new Y.Test.Case({
         name: 'Transaction behavior',
 
+        setUp: function () {
+            G_SCRIPTS = [];
+        },
+
         'transactions should always execute one at a time by default': function () {
             var test = this,
+                urls = [
+                    getUniqueEchoechoJs(JS_A, DELAY),
+                    getUniqueEchoechoJs(JS_B, DELAY),
+                    getUniqueEchoechoCss(CSS_A, DELAY),
+                    getUniqueEchoechoJs(JS_C, DELAY)
+                ],
 
-                t1 = Y.Get.js(path(['a.js', 'b.js']), finish),
-                t2 = Y.Get.css(path('a.css'), finish),
-                t3 = Y.Get.load(path('c.js'), function (err, t) {
+                t1 = Y.Get.js([urls[0], urls[1]], finish),
+                t2 = Y.Get.css(urls[2], finish),
+                t3 = Y.Get.load(urls[3], function (err, t) {
                     finish(err, t);
 
                     test.resume(function () {
@@ -2054,7 +2346,7 @@ YUI.add('get-test', function (Y) {
                 t.finish = Y.Lang.now();
             }
 
-            this.wait();
+            this.wait(TIMEOUT);
         }
     });
 
@@ -2062,16 +2354,25 @@ YUI.add('get-test', function (Y) {
     Y.GetTests.TransactionMethods = new Y.Test.Case({
         name: 'Transaction methods',
 
+        setUp: function () {
+            G_SCRIPTS = [];
+        },
+
         tearDown: function () {
             this.t && this.t.purge();
         },
 
         'abort() should abort the transaction': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
             // Progress is called async, followed by a sync call to failure
 
-            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+            test.t = Y.Get.js(urls, {
                 onFailure: function () {
                     ArrayAssert.containsMatch(function (item) {
                         return item.error === 'Aborted'
@@ -2091,15 +2392,20 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait();
+            test.wait(TIMEOUT);
         },
 
         'abort() should accept a custom error message': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
             // Progress is called async, followed by a sync call to failure
 
-            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+            test.t = Y.Get.js(urls, {
                 onFailure: function () {
                     ArrayAssert.containsMatch(function (item) {
                         return item.error === 'monkey britches!'
@@ -2119,14 +2425,15 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait();
+            test.wait(TIMEOUT);
         },
 
         'execute() should queue callbacks': function () {
             var test = this,
+                url  = getUniqueEchoechoJs(JS_A, DELAY),
                 callbackOne, callbackTwo;
 
-            test.t = Y.Get.js(path('a.js'));
+            test.t = Y.Get.js(url);
 
             test.t.execute(function (err, transaction) {
                 callbackOne = true;
@@ -2155,8 +2462,9 @@ YUI.add('get-test', function (Y) {
 
         'execute() should call the callback immediately if the transaction has already finished': function () {
             var test = this;
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
-            test.t = Y.Get.js(path('a.js'), function (err, transaction) {
+            test.t = Y.Get.js(url, function (err, transaction) {
 
                 test.resume(function () {
                     var callbackOne, callbackTwo;
@@ -2190,8 +2498,13 @@ YUI.add('get-test', function (Y) {
 
         'purge() should purge any nodes inserted by the transaction': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY),
+                getUniqueEchoechoJs(JS_C, DELAY)
+            ];
 
-            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], function (err, t) {
+            test.t = Y.Get.js(urls, function (err, t) {
                 test.resume(function () {
                     var ids = [];
 
@@ -2213,7 +2526,7 @@ YUI.add('get-test', function (Y) {
                 });
             });
 
-            test.wait();
+            test.wait(TIMEOUT);
         }
     });
 
@@ -2224,12 +2537,16 @@ YUI.add('get-test', function (Y) {
 
         _should : {
             ignore : {
-                // Need to look into this for IE10 support: Currently if we issue a Get transaction 
-                // with [bogus.js, bogus.js], we get 2 onerror callbacks and we call onFailure correctly, 
-                // but subsequent Get transactions for 304 resources don't fire the onload handler. 
+                // Need to look into this for IE10 support: Currently if we issue a Get transaction
+                // with [bogus.js, bogus.js], we get 2 onerror callbacks and we call onFailure correctly,
+                // but subsequent Get transactions for 304 resources don't fire the onload handler.
                 // I can't replicate this outside of Get yet.
                 '`errors` property should contain an array of error objects' : Y.UA.ie && Y.UA.ie >= 10
             }
+        },
+
+        setUp: function () {
+            G_SCRIPTS = [];
         },
 
         tearDown: function () {
@@ -2237,8 +2554,12 @@ YUI.add('get-test', function (Y) {
         },
 
         'transactions should have a unique `id` property': function () {
-            var t1 = Y.Get.js('getfiles/a.js'),
-                t2 = Y.Get.js('getfiles/b.js');
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY)
+            ];
+            var t1 = Y.Get.js(urls[0]);
+            var t2 = Y.Get.js(urls[1]);
 
             Assert.isNotUndefined(t1.id, 'id property should not be undefined');
             Assert.isNotUndefined(t2.id, 'id property should not be undefined');
@@ -2250,15 +2571,20 @@ YUI.add('get-test', function (Y) {
 
         'transactions should have a `data` property when a data object is provided': function () {
             var data = {};
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
-            this.t = Y.Get.js('getfiles/a.js', {data: data});
+            this.t = Y.Get.js(url, { data: data });
             Assert.areSame(data, this.t.data);
         },
 
         '`errors` property should contain an array of error objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoecho404(),
+                getUniqueEchoecho404()
+            ];
 
-            this.t = Y.Get.js(['bogus.js', 'bogus.js'], function (err, t) {
+            this.t = Y.Get.js(urls, function (err, t) {
                 test.resume(function () {
                     Assert.isArray(t.errors, '`errors` should be an array');
 
@@ -2272,11 +2598,15 @@ YUI.add('get-test', function (Y) {
 
             this.wait();
         },
- 
+
         '`nodes` property should contain an array of injected nodes': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY)
+            ];
 
-            this.t = Y.Get.js(['getfiles/a.js', 'getfiles/b.js'], function (err, t) {
+            this.t = Y.Get.js(urls, function (err, t) {
 
                 test.resume(function () {
                     Assert.isArray(t.nodes, '`nodes` should be an array');
@@ -2290,7 +2620,9 @@ YUI.add('get-test', function (Y) {
         },
 
         '`options` property should contain transaction options': function () {
-            this.t = Y.Get.js('getfiles/a.js', {
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
+
+            this.t = Y.Get.js(url, {
                 attributes: {'class': 'testing'},
                 data: 'foo',
                 bar: 'baz'
@@ -2304,13 +2636,17 @@ YUI.add('get-test', function (Y) {
 
         '`requests` property should contain an array of request objects': function () {
             var test = this;
+            var urls = [
+                getUniqueEchoechoJs(JS_A, DELAY),
+                getUniqueEchoechoJs(JS_B, DELAY)
+            ];
 
-            this.t = Y.Get.js(['getfiles/a.js', 'getfiles/b.js'], function (err, t) {
+            this.t = Y.Get.js(urls, function (err, t) {
                 test.resume(function () {
                     Assert.isArray(t.requests, '`requests` should be an array');
                     Assert.areSame(2, t.requests.length, '`requests` array should contain two items');
-                    Assert.areSame('getfiles/a.js', t.requests[0].url);
-                    Assert.areSame('getfiles/b.js', t.requests[1].url);
+                    Assert.areSame(urls[0], t.requests[0].url);
+                    Assert.areSame(urls[1], t.requests[1].url);
 
                     Assert.isTrue(t.requests[0].finished);
                     Assert.isTrue(t.requests[0].finished);
@@ -2325,15 +2661,27 @@ YUI.add('get-test', function (Y) {
     Y.GetTests.Options = new Y.Test.Case({
         name: 'Options',
 
+        setUp: function () {
+            G_SCRIPTS = [];
+        },
+
+        tearDown: function () {
+            if (this.t) {
+                this.t.purge();
+            }
+        },
+
         '`class` attribute should be set correctly in all browsers': function () {
             var test = this;
+            var url = getUniqueEchoechoJs(JS_A, DELAY);
 
-            this.t = Y.Get.js('getfiles/a.js', {
+            this.t = Y.Get.js(url, {
                 attributes: {'class': 'get-class-test'}
             }, function (err, t) {
                 test.resume(function () {
                     Assert.areSame('get-class-test', t.nodes[0].className, 'className should be set');
                     Assert.areSame(1, Y.all('.get-class-test').size(), 'selector should return one node');
+                    test.t = t;
                 });
             });
 

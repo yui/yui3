@@ -240,7 +240,8 @@
         ],
         "lang": [
             "en",
-            "es"
+            "es",
+            "it"
         ],
         "requires": [
             "autocomplete-base",
@@ -589,6 +590,7 @@
         "lang": [
             "en",
             "es",
+            "it",
             "ja"
         ],
         "requires": [
@@ -879,7 +881,8 @@
         "lang": [
             "en",
             "fr",
-            "es"
+            "es",
+            "it"
         ],
         "requires": [
             "datatable-base"
@@ -1179,7 +1182,8 @@
     },
     "dom-style": {
         "requires": [
-            "dom-base"
+            "dom-base",
+            "color-base"
         ]
     },
     "dom-style-ie": {
@@ -1975,11 +1979,6 @@
             "pluginhost-base"
         ]
     },
-    "profiler": {
-        "requires": [
-            "yui-base"
-        ]
-    },
     "promise": {
         "requires": [
             "timers"
@@ -2529,6 +2528,11 @@
         ]
     },
     "tree-selectable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-sortable": {
         "requires": [
             "tree"
         ]

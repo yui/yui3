@@ -39,7 +39,7 @@
          * @method _initAttribute
          * @private
          */
-        _initAttribute: function(cfg) {
+        _initAttribute: function() {
             BaseCore.prototype._initAttribute.apply(this, arguments);
             AttributeObservable.call(this);
 
@@ -58,6 +58,7 @@
          * @return {Base} A reference to this object
          */
         init: function(config) {
+
             /**
              * <p>
              * Lifecycle event for the init phase, fired prior to initialization.
@@ -75,16 +76,21 @@
              * @param {EventFacade} e Event object, with a cfg property which
              * refers to the configuration object passed to the constructor.
              */
-            this.publish(INIT, {
-                queuable:false,
-                fireOnce:true,
-                defaultTargetOnly:true,
-                defaultFn:this._defInitFn
-            });
+
+            // PERF: Using lower level _publish() for
+            // critical path performance
+
+            var type = this._getFullType(INIT),
+                e = this._publish(type);
+
+            e.emitFacade = true;
+            e.fireOnce = true;
+            e.defaultTargetOnly = true;
+            e.defaultFn = this._defInitFn;
 
             this._preInitEventCfg(config);
 
-            this.fire(INIT, {cfg: config});
+            this.fire(type, {cfg: config});
 
             return this;
         },
@@ -113,6 +119,7 @@
 
             if (userTargets || _BUBBLETARGETS in this) {
                 target = userTargets ? (config && config.bubbleTargets) : this._bubbleTargets;
+
                 if (L.isArray(target)) {
                     for (i = 0, l = target.length; i < l; i++) {
                         this.addTarget(target[i]);
@@ -158,7 +165,6 @@
              * @param {EventFacade} e Event object
              */
             this.publish(DESTROY, {
-                queuable:false,
                 fireOnce:true,
                 defaultTargetOnly:true,
                 defaultFn: this._defDestroyFn

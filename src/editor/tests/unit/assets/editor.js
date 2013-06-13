@@ -540,10 +540,26 @@ YUI.add('editor-tests', function(Y) {
                 test_bidi_plug: (Y.UA.ie && Y.UA.ie >= 9),
                 test_selection_methods: ((Y.UA.ie || Y.UA.webkit) ? true : false),
                 test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie >= 9) || Y.UA.chrome) ? true : false)
-
             },
             ignore: {
-                test_br_plugin: Y.UA.phantomjs
+                /* gh issue #653 Editor test failures in Android 4
+                 * These failing tests will be run again when Adnroid reaches 5
+                 */
+                test_editor: (Y.UA.android && Y.UA.android < 5),
+                test_copy_styles: (Y.UA.android && Y.UA.android < 5),
+                test_resolve_node: (Y.UA.android && Y.UA.android < 5),
+                test_get_content: (Y.UA.android && Y.UA.android < 5),
+                test_selection_font_removal: (Y.UA.android && Y.UA.android < 5),
+                test_gettext: (Y.UA.android && Y.UA.android < 5),
+                test_selection_general: (Y.UA.android && Y.UA.android < 5),
+                test_window: (Y.UA.android && Y.UA.android < 5),
+                test_doc: (Y.UA.android && Y.UA.android < 5),
+                'test: selection.remove()': (Y.UA.android && Y.UA.android < 5),
+                test_destroy: (Y.UA.android && Y.UA.android < 5),
+                test_br_plugin: (Y.UA.phantomjs || (Y.UA.android && Y.UA.android < 5)), // note phantomjs was being ignored for test_br_plugin previous to issue #653
+                test_para_plugin: (Y.UA.android && Y.UA.android < 5),
+                test_double_down: (Y.UA.android && Y.UA.android < 5),
+                test_double_down2: (Y.UA.android && Y.UA.android < 5)
             },
             error: { //These tests should error
                 'test: EditorSelection': (Y.UA.chrome || Y.UA.webkit),

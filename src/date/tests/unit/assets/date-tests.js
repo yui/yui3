@@ -1,10 +1,11 @@
 YUI.add('date-tests', function(Y) {
 
     //Helper function to normalize timezone dependent hours.
-    var getHours = function(date, pad) {
+    var getHours = function(date, pad, ampm) {
         pad = (pad === false) ? false : true;
+        ampm = (ampm === false) ? false : true;
         var h = date.getHours();
-        if (h > 12) {
+        if (h > 12 & ampm) {
             h = (h - 12);
         }
         if (h === 0) {
@@ -14,6 +15,29 @@ YUI.add('date-tests', function(Y) {
             h = '0' + h;
         }
         return h;
+    };
+
+    var getMidday = function(date, lang) {
+        var hour = getHours(date, false, false),
+            ampm = {
+                "en-US": ["AM", "PM"],
+                "fr-FR": ["AM", "PM"],
+                "ko-KR": ["오전","오후"],
+                "pa-IN": ["ਸਵੇਰੇ", "ਸ਼ਾਮ"]
+            };
+
+        return hour < 12 ? ampm[lang][0] : ampm[lang][1];
+    };
+
+    var xPad=function(x, pad, r) {
+        if (typeof r === "undefined") {
+            r = 10;
+        }
+        pad = pad + "";
+        for (; parseInt(x, 10) < r && r > 1; r /= 10) {
+            x = pad + x;
+        }
+        return x.toString();
     };
 
     // Set up the page
@@ -85,7 +109,7 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame("12/17/95", output, "Expected %D format.");
 
             output = Y.Date.format(date, {format:"%R"});
-            ASSERT.areSame(getHours(date) + ":24", output, "Expected %R format.");
+            ASSERT.areSame(getHours(date, true, false) + ":24", output, "Expected %R format.");
 
             output = Y.Date.format(date, {format:"%C"});
             ASSERT.areSame(19, parseInt(output, 10), 'Expected %C format.');
@@ -121,6 +145,12 @@ YUI.add('date-tests', function(Y) {
 
             output = Y.Date.format(date, {format:"%Z"});
             var tz = date.toString().replace(/^.*:\d\d( GMT[+-]\d+)? \(?([A-Za-z ]+)\)?\d*$/, "$2").replace(/[a-z ]/g, "");
+            if (tz.length > 4) {
+                var o = date.getTimezoneOffset();
+                var H = xPad(parseInt(Math.abs(o/60), 10), 0);
+                var M = xPad(Math.abs(o%60), 0);
+                tz = (o > 0 ? "-" : "+") + H + M;
+            }
             ASSERT.areSame(tz, output, 'Expected %Z format.');
 
             output = Y.Date.format(date, {format:"%"});
@@ -133,10 +163,10 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame("Dec December", output, "Expected %b %B format.");
 
             output = Y.Date.format(date, {format:"%r"});
-            ASSERT.areSame(getHours(date) + ":24:00 AM", output, "Expected %r format.");
+            ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "en-US"), output, "Expected %r format.");
 
             output = Y.Date.format(date, {format:"%P"});
-            ASSERT.areSame('am', output, 'Expected %P format.');
+            ASSERT.areSame(getMidday(date, "en-US").toLowerCase(), output, 'Expected %P format.');
 
         }
     });
@@ -163,7 +193,7 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame("12/17/95", output, "Expected %x format.");
 
             output = dateUS.format(date, {format:"%r"});
-            ASSERT.areSame(getHours(date) + ":24:00 AM", output, "Expected %r format.");
+            ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "en-US"), output, "Expected %r format.");
         }
     });
 
@@ -189,7 +219,7 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame("17/12/95", output, "Expected %x format.");
 
             output = dateFR.format(date, {format:"%r"});
-            ASSERT.areSame(getHours(date) + ":24:00 AM", output, "Expected %r format.");
+            ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "fr-FR"), output, "Expected %r format.");
         }
     });
 
@@ -215,7 +245,7 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame("95. 12. 17.", output, "Expected %x format.");
 
             output = dateKR.format(date, {format:"%r"});
-            ASSERT.areSame(getHours(date) + ":24:00 오전", output, "Expected %r format.");
+            ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "ko-KR"), output, "Expected %r format.");
         }
     });
 
@@ -259,7 +289,7 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame("17/12/1995", output, "Expected %x format.");
 
             output = dateIN.format(date, {format:"%r"});
-            ASSERT.areSame(getHours(date) + ":24:00 ਸਵੇਰੇ", output, "Expected %r format.");
+            ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "pa-IN"), output, "Expected %r format.");
         }
     });
 

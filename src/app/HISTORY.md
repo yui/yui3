@@ -1,6 +1,42 @@
 App Framework Change History
 ============================
 
+@VERSION@
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+### Router
+
+* Router now properly dispatches when using hash-based URLs and calling
+  `replace()` without arguments; before it would throw an error. [#739]
+
+
+3.10.1
+------
+
+* No changes.
+
+
+3.10.0
+------
+
+### Model
+
+* Fixed: The `options` object passed to Model's `setAttrs()` method was being
+  modified. Now a shallow copy of this object is now created so that the
+  `_transaction` property is added to the copy and not the passed-in object.
+  [#598]
+
+
 3.9.1
 -----
 

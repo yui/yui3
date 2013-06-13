@@ -90,7 +90,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         paginator.afterHostMethod('_onGestureMoveEnd', paginator._afterHostGestureMoveEnd);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._afterHostUIDimensionsChange);
         paginator.afterHostMethod('syncUI', paginator._afterHostSyncUI);
-        
+
         // Host event listeners
         paginator.afterHostEvent('render', paginator._afterHostRender);
         paginator.afterHostEvent('scrollEnd', paginator._afterHostScrollEnded);
@@ -172,7 +172,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             widgetWidth = dims.offsetWidth,
             widgetHeight = dims.offsetHeight,
             pageNodes = paginator._getPageNodes();
-            
+
         // Inefficient. Should not reinitialize every page every syncUI
         pageNodes.each(function (node, i) {
             var scrollWidth = node.get('scrollWidth'),
@@ -327,7 +327,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @protected
      */
     _beforeHostFlick: function (e) {
-        
+
         // If the widget is disabled
         if (this._host.get(DISABLED)) {
             return false;
@@ -337,7 +337,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         if (this._host._isOutOfBounds()){
             return new Y.Do.Prevent();
         }
-        
+
         var paginator = this,
             host = paginator._host,
             gesture = host._gesture,
@@ -521,10 +521,17 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     next: function () {
         var paginator = this,
+            scrollview = paginator._host,
             index = paginator._cIndex,
             target = index + 1,
             total = paginator.get(TOTAL);
 
+        // If the widget is disabled, ignore
+        if (scrollview.get(DISABLED)) {
+            return;
+        }
+
+        // If the target index is greater than the page count, ignore
         if (target >= total) {
             return;
         }
@@ -540,9 +547,16 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     prev: function () {
         var paginator = this,
+            scrollview = paginator._host,
             index = paginator._cIndex,
             target = index - 1;
 
+        // If the widget is disabled, ignore
+        if (scrollview.get(DISABLED)) {
+            return;
+        }
+
+        // If the target index is before the first page, ignore
         if (target < 0) {
             return;
         }
@@ -550,7 +564,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         // Update the index
         paginator.set(INDEX, target);
     },
-    
+
     /**
      * Deprecated for 3.7.0.
      * @method scrollTo
@@ -612,7 +626,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             };
         }
     },
- 
+
 
     /**
      * After listener for the axis attribute
@@ -628,7 +642,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     // End prototype properties
 
 }, {
-    
+
     // Static properties
 
     /**
@@ -708,7 +722,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             value: 0
         }
     },
-        
+
     /**
      * The default snap to current duration and easing values used on scroll end.
      *

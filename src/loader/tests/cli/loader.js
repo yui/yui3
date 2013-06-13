@@ -2707,16 +2707,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("pluginhost-config")) > -1, "Module (pluginhost-config) not found in sorted array");
         },
-     "Testing profiler": function(data) {
-            var loader = new Y.Loader({
-                require: ["profiler"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("profiler")) > -1, "Module (profiler) not found in sorted array");
-        },
      "Testing promise": function(data) {
             var loader = new Y.Loader({
                 require: ["promise"],
@@ -3617,6 +3607,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("tree-selectable")) > -1, "Module (tree-selectable) not found in sorted array");
+        },
+     "Testing tree-sortable": function(data) {
+            var loader = new Y.Loader({
+                require: ["tree-sortable"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("tree-sortable")) > -1, "Module (tree-sortable) not found in sorted array");
         },
      "Testing uploader": function(data) {
             var loader = new Y.Loader({

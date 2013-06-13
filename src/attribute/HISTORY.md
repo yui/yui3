@@ -1,6 +1,60 @@
 Attribute Change History
 ========================
 
+@VERSION@
+------
+
+* Fixed regression introduced with the solution for setter opts, added in
+  3.10.2, for cases where user subscribed to attribute change events, with
+  additional arguments to be passed to the subscriber, for example: 
+
+    host.after("myattrChange", fn(e, custArg){}, context, custArgValue);
+    ...
+    host.set("myattr", 10, {src:"foo"});
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* opts now passed to setter correctly, when using AttributeObservable.
+
+  This feature was added in 3.8.1 (below), but didn't work for
+  AttributeObservable.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Significant performance improvements in common Attribute operations.
+
+  For example, on Chrome:
+
+      `get()` is 4 times faster
+      `set()` is 3 times faster
+
+  Major performance related changes are listed below.
+
+  Commit messages have detailed descriptions of incremental changes, and the
+  benefits introduced.
+
+* We retrieve and pass the internally stored attribute configuration in State
+  by reference in a lot more places, across methods, results in less function
+  hops, and removing the need for each method to go and ask for the configuration.
+
+* Avoid the delete operator for transient configuration properties, and just set
+  to null or other falsey values as appropriate.
+
+* Store final attribute config in State by reference, as opposed to merging
+  since it's isolated already higher up in the call stack.
+
 3.9.1
 -----
 
