@@ -1466,8 +1466,9 @@ YUI.add("event-custom-complex-tests", function(Y) {
                 notified.push("before");
 
                 Y.Assert.isTrue(e instanceof Y.EventFacade);
-                Y.Assert.areEqual('bar', e.foo);
-                Y.Assert.areEqual('baz', arg, 'arg not correct for lazy fireOnce listener');
+                Y.Assert.areEqual('bar', e.foo, 'first arg not correct for early fireOnce listener');
+                Y.Assert.areSame(et, e.target);
+                Y.Assert.areEqual('baz', arg, 'second arg not correct for early fireOnce listener');
             });
 
             et.fire('fireonce', {foo:'bar'}, 'baz');
@@ -1477,8 +1478,9 @@ YUI.add("event-custom-complex-tests", function(Y) {
                 notified.push("after");
 
                 Y.Assert.isTrue(e instanceof Y.EventFacade);
-                Y.Assert.areEqual('bar', e.foo);
-                Y.Assert.areEqual('baz', arg, 'arg not correct for lazy fireOnce listener');
+                Y.Assert.areEqual('bar', e.foo, 'first arg not correct for late fireOnce listener');
+                Y.Assert.areSame(et, e.target);
+                Y.Assert.areEqual('baz', arg, 'second arg not correct for late fireOnce listener');
             });
 
             Y.ArrayAssert.itemsAreEqual(["before", "after"], notified);
@@ -1503,7 +1505,8 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
                 Y.Assert.isTrue(e instanceof Y.EventFacade);
                 Y.Assert.areEqual('bar', e.foo);
-                Y.Assert.areEqual('baz', arg, 'arg not correct for lazy fireOnce listener');
+                Y.Assert.areSame(et, e.target);
+                Y.Assert.areEqual('baz', arg);
             });
 
             Y.Assert.areEqual(1, notified);
@@ -1523,9 +1526,9 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
                 notified.push("before");
 
-                Y.Assert.areEqual(1, arguments.length);
-                Y.Assert.isTrue(e instanceof Y.EventFacade);
-                Y.Assert.areSame(et, e.target);
+                Y.Assert.areEqual(1, arguments.length, 'arg length not correct for early listener');
+                Y.Assert.isTrue(e instanceof Y.EventFacade, 'facade not found for early listener');
+                Y.Assert.areSame(et, e.target, 'target not correct for early listener');
             });
 
             et.fire('fireonce');
@@ -1534,9 +1537,9 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
                 notified.push("after");
 
-                Y.Assert.areEqual(1, arguments.length);
-                Y.Assert.isTrue(e instanceof Y.EventFacade);
-                Y.Assert.areSame(et, e.target);
+                Y.Assert.areEqual(1, arguments.length, 'arg length not correct for late listener');
+                Y.Assert.isTrue(e instanceof Y.EventFacade, 'facade not found for late listener');
+                Y.Assert.areSame(et, e.target, 'target not correct for late listener');
             });
 
             Y.ArrayAssert.itemsAreEqual(["before", "after"], notified);
@@ -1580,9 +1583,9 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
                 notified.push("before");
 
-                Y.Assert.areEqual(2, arguments.length);
-                Y.ObjectAssert.areEqual({foo:'bar'}, arg1);
-                Y.Assert.areEqual('baz', arg2);
+                Y.Assert.areEqual(2, arguments.length, 'arg length not correct for early listener');
+                Y.ObjectAssert.areEqual({foo:'bar'}, arg1, 'first arg not correct for early listener');
+                Y.Assert.areEqual('baz', arg2, 'second arg not correct for early listener');
             });
 
             et.fire('fireonce', {foo:'bar'}, 'baz');
@@ -1591,9 +1594,9 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
                 notified.push("after");
 
-                Y.Assert.areEqual(2, arguments.length);
-                Y.ObjectAssert.areEqual({foo:'bar'}, arg1);
-                Y.Assert.areEqual('baz', arg2);
+                Y.Assert.areEqual(2, arguments.length, 'arg length not correct for late listener');
+                Y.ObjectAssert.areEqual({foo:'bar'}, arg1, 'first arg not correct for late listener');
+                Y.Assert.areEqual('baz', arg2, 'second arg not correct for late listener');
             });
 
             Y.ArrayAssert.itemsAreEqual(["before", "after"], notified);
@@ -1636,14 +1639,14 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
             et.on('fireonce', function() {
                 notified.push("before");
-                Y.Assert.areEqual(0, arguments.length);
+                Y.Assert.areEqual(0, arguments.length, 'arg length not correct for early listener');
             });
 
             et.fire('fireonce');
 
             et.on('fireonce', function() {
                 notified.push("after");
-                Y.Assert.areEqual(0, arguments.length);
+                Y.Assert.areEqual(0, arguments.length, 'arg length not correct for late listener');
             });
 
             Y.ArrayAssert.itemsAreEqual(["before", "after"], notified);
