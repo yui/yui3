@@ -938,7 +938,7 @@ Y.Model = Y.extend(Model, Y.Base, {
      * @param {Object} [attrCfg] Optional config hash for the attribute. This is added for performance along the critical path,
      * where the calling method has already obtained the config from state.
      *
-     * @return {booolean} true if the new attribute value was stored, false if not.
+     * @return {boolean} true if the new attribute value was stored, false if not.
      */
     _setAttrVal : function(attrName, subAttrName, prevVal, newVal, opts, attrCfg) {
 
