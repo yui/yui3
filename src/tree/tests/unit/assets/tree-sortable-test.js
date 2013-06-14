@@ -261,6 +261,22 @@ suite.add(new Y.Test.Case({
         Assert.areSame(8, tree.children[3].foo, 'fourth node should be 8');
     },
 
+    'node-specific sortComparator should be executed with the node as the `this` object': function () {
+        var tree = new Tree(),
+            called;
+
+        tree.rootNode.sortComparator = function (node) {
+            called = true;
+            Assert.areSame(tree.rootNode, this, '`this` should be `tree.rootNode`');
+            return node.foo;
+        };
+
+        tree.insertNode(tree.rootNode, {foo: 5});
+        tree.insertNode(tree.rootNode, {foo: 1});
+
+        Assert.isTrue(called, 'sortComparator should be called');
+    },
+
     'node-specific sortReverse should be used if defined': function () {
         var tree = new Tree();
 
@@ -278,6 +294,41 @@ suite.add(new Y.Test.Case({
         Assert.areSame(5, tree.children[1].foo, 'second node should be 5');
         Assert.areSame(2, tree.children[2].foo, 'third node should be 2');
         Assert.areSame(1, tree.children[3].foo, 'fourth node should be 1');
+    },
+
+    'tree-specific sortComparator should be executed with the tree as the `this` object': function () {
+        var tree = new Tree(),
+            called;
+
+        tree.sortComparator = function (node) {
+            called = true;
+            Assert.areSame(tree, this, '`this` should be the tree');
+            return node.foo;
+        };
+
+        tree.insertNode(tree.rootNode, {foo: 5});
+        tree.insertNode(tree.rootNode, {foo: 1});
+
+        Assert.isTrue(called, 'sortComparator should be called');
+    },
+
+    'options-specific sortComparator should be executed with the global object as the `this` object': function () {
+        var global = (function () { return this; }()),
+            tree   = new Tree(),
+            called;
+
+        tree.insertNode(tree.rootNode, {foo: 5});
+        tree.insertNode(tree.rootNode, {foo: 1});
+
+        tree.sortNode(tree.rootNode, {
+            sortComparator: function (node) {
+                called = true;
+                Assert.areSame(global, this, '`this` should be the global object');
+                return node.foo;
+            }
+        });
+
+        Assert.isTrue(called, 'sortComparator should be called');
     }
 }));
 

@@ -109,15 +109,8 @@ Sortable.prototype = {
 
         options || (options = {});
 
-        var comparator;
-
-        if (options.sortComparator) {
-            comparator = node.sortComparator = options.sortComparator;
-        } else {
-            comparator = node.sortComparator || this.sortComparator;
-        }
-
-        var reverse;
+        var comparator = this._getSortComparator(node, options),
+            reverse;
 
         if ('sortReverse' in options) {
             reverse = node.sortReverse = options.sortReverse;
@@ -191,7 +184,7 @@ Sortable.prototype = {
         /*jshint bitwise:false */
 
         var children   = parent.children,
-            comparator = parent.sortComparator || this.sortComparator,
+            comparator = this._getSortComparator(parent),
             max        = children.length,
             min        = 0,
             reverse    = 'sortReverse' in parent ? parent.sortReverse : this.sortReverse;
@@ -205,7 +198,7 @@ Sortable.prototype = {
         //
         // This is necessary because the default sortComparator relies on
         // the node's index, which is always -1 for uninserted nodes.
-        if (comparator === Sortable.prototype.sortComparator) {
+        if (comparator._unboundComparator === Sortable.prototype.sortComparator) {
             return reverse ? 0 : max;
         }
 
@@ -227,6 +220,42 @@ Sortable.prototype = {
         }
 
         return min;
+    },
+
+    /**
+    Returns a sort comparator function derived from the given _node_ and
+    _options_, and bound to the correct `thisObj` based on where it was found.
+
+    @method _getSortComparator
+    @param {Tree.Node} node Node on which to look for a `sortComparator`
+        function.
+    @param {Object} [options] Options object on which to look for a
+        `sortComparator` function.
+    @return {Function} Properly bound sort comparator function.
+    @protected
+    **/
+    _getSortComparator: function (node, options) {
+        var boundComparator,
+            comparator,
+            thisObj;
+
+        if (options && options.sortComparator) {
+            comparator = node.sortComparator = options.sortComparator;
+        } else if (node.sortComparator) {
+            comparator = node.sortComparator;
+            thisObj    = node;
+        } else {
+            comparator = this.sortComparator;
+            thisObj    = this;
+        }
+
+        boundComparator = function () {
+            return comparator.apply(thisObj, arguments);
+        };
+
+        boundComparator._unboundComparator = comparator;
+
+        return boundComparator;
     },
 
     /**
