@@ -1002,7 +1002,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _createRowTemplate: function (columns) {
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
-            i, len, col, key, token, headers, tokenValues, formatter;
+            i, len, col, key, token, headers, tokenValues;
 
         this._setColumnsFormatterFn(columns);
 
@@ -1010,7 +1010,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             col     = columns[i];
             key     = col.key;
             token   = col._id || key;
-            formatter = col._formatterFn;
             // Only include headers if there are more than one
             headers = (col._headers || []).length > 1 ?
                         'headers="' + col._headers.join(' ') + '"' : '';
@@ -1023,9 +1022,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                            this.getClassName('cell') +
                            ' {' + token + '-className}'
             };
-            if (!formatter && col.formatter) {
-                tokenValues.content = col.formatter.replace(valueRegExp, tokenValues.content);
-            }
+
 
             if (col.nodeFormatter) {
                 // Defer all node decoration to the formatter
@@ -1039,6 +1036,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             content: html
         });
     },
+
 
     /**
      Parses the columns array and defines the column's _formatterFn if there
@@ -1063,7 +1061,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             if (!col._formatterFn && formatter) {
                 if (Lang.isFunction(formatter)) {
                     col._formatterFn = formatter;
-                } else if (formatter in Formatters) {
+                } else {
+                    if (!(formatter in Formatters)) {
+                        formatter = 'stringTemplate';
+                    }
                     col._formatterFn = Formatters[formatter].call(this.host || this, col);
                 }
             }
@@ -1071,6 +1072,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         return columns;
     },
+
+
 
     /**
     Creates the `<tbody>` node that will store the data rows.
@@ -1169,18 +1172,47 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     //_rowTemplate: null
-},{
+});
+/**
+Hash of formatting functions for cell contents.
+
+This property can be populated with a hash of formatting functions by the developer
+or a set of pre-defined functions can be loaded via the `datatable-formatters` module.
+
+See: [DataTable.BodyView.Formatters](./DataTable.BodyView.Formatters.html)
+@property Formatters
+@type Object
+@since 3.8.0
+@static
+**/
+Y.DataTable.BodyView.Formatters = Y.DataTable.BodyView.Formatters || {};
+
+Y.mix(Y.DataTable.BodyView.Formatters, {
     /**
-    Hash of formatting functions for cell contents.
+    Returns a formatter for string templates which may contain the placeholder
+    `{value}` for the value in the current field.  The values of other fields
+    in the current record can also be included by using their field names
+    enclosed in curly braces.  It is only used when the value of the current
+    field is not `undefined`.
 
-    This property can be populated with a hash of formatting functions by the developer
-    or a set of pre-defined functions can be loaded via the `datatable-formatters` module.
+    It is used when the `formatter`
+    attribute is a string which does not correspond to a named formatter function.
+    In other words, this is the catch-all formatter for any `formatter`
+    attribute that cannot be found and might result from misspelled formatter name
+    or because the `datatable-formatters` module was not loaded.
 
-    See: [DataTable.BodyView.Formatters](./DataTable.BodyView.Formatters.html)
-    @property Formatters
-    @type Object
-    @since 3.8.0
-    @static
-    **/
-    Formatters: {}
+    @method stringTemplate
+    @param col {Object} Column definition
+    @return {Function} Formatting function for string templates.
+    @for DataTable.BodyView.Formatters
+    */
+    stringTemplate: function (col) {
+        var formatter = col.formatter.replace(valueRegExp, '{' + col.key + '}');
+        return function (o) {
+            if (o.value !== undefined) {
+                return Lang.sub(formatter, o.record.toJSON());
+            }
+            // return undefined;
+        };
+    }
 });
