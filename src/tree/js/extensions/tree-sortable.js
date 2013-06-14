@@ -67,6 +67,33 @@ Sortable.prototype = {
     // -- Public Methods -------------------------------------------------------
 
     /**
+    Sorts the children of every node in this tree.
+
+    A `sort` event will be fired for each node whose children are sorted, which
+    can get very noisy. If this is a large tree, you may want to set the
+    `silent` option to `true` to suppress these events.
+
+    @method sort
+    @param {Object} [options] Options.
+        @param {Boolean} [options.silent] If `true`, no `sort` events will be
+            fired.
+        @param {Function} [options.sortComparator] Custom comparator function to
+            use. If specified, this will become the new comparator function for
+            each node, overwriting any previous comparator function that was set
+            for the node.
+        @param {Boolean} [options.sortReverse] If `true`, children will be
+            sorted in reverse (descending) order. Otherwise they'll be sorted in
+            ascending order. This will become each node's new sort order,
+            overwriting any previous sort order that was set for the node.
+        @param {String} [options.src] Source of the sort operation. Will be
+            passed along to the `sort` event facade.
+    @chainable
+    **/
+    sort: function (options) {
+        return this.sortNode(this.rootNode, Y.merge(options, {deep: true}));
+    },
+
+    /**
     Default comparator function to use when sorting a node's children if the
     node itself doesn't have a custom comparator function.
 
@@ -84,9 +111,17 @@ Sortable.prototype = {
     /**
     Sorts the children of the specified node.
 
+    By default, only the node's direct children are sorted. To sort all nodes in
+    the hierarchy (children, children's children, etc.), set the `deep` option
+    to `true`. If this is a very deep hierarchy, you may also want to set
+    `silent` to true to avoid generating a flood of `sort` events.
+
     @method sortNode
     @param {Tree.Node} node Node whose children should be sorted.
     @param {Object} [options] Options.
+        @param {Boolean} [options.deep=false] If `true`, all of this node's
+            children (and their children, and so on) will be traversed and
+            re-sorted as well.
         @param {Boolean} [options.silent] If `true`, no `sort` event will be
             fired.
         @param {Function} [options.sortComparator] Custom comparator function to
@@ -108,6 +143,20 @@ Sortable.prototype = {
         }
 
         options || (options = {});
+
+        if (options.deep) {
+            // Unset the `deep` option so we don't cause an infinite loop.
+            options = Y.merge(options, {deep: false});
+
+            var self = this;
+
+            // Traverse and sort all nodes (including this one).
+            this.traverseNode(node, function (nodeToSort) {
+                self.sortNode(nodeToSort, options);
+            });
+
+            return this;
+        }
 
         var comparator;
 
