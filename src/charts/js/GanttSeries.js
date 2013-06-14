@@ -28,7 +28,6 @@ Y.GanttSeries = Y.Base.create("ganttSeries", Y.CartesianSeries, [Y.Plots], {
             styles = this._copyObject(this.get("styles")),
             markerStyles = styles.marker,
             markerHeight = markerStyles.height,
-            padding = styles.padding,
             len = ycoords.length,
             keys = this.get("ganttkeys"),
             startcoords = xcoords[keys.start],
@@ -39,11 +38,11 @@ Y.GanttSeries = Y.Base.create("ganttSeries", Y.CartesianSeries, [Y.Plots], {
             i;
         if(Y.Lang.isArray(markerStyles.fill.color))
         {
-            fillColors = markerStyles.fill.color;   
+            fillColors = markerStyles.fill.color;
         }
         if(Y.Lang.isArray(markerStyles.border.color))
         {
-            borderColors = markerStyles.border.color;   
+            borderColors = markerStyles.border.color;
         }
         this._createMarkerCache();
         for(i = 0; i < len; i = i + 1)
@@ -70,7 +69,7 @@ Y.GanttSeries = Y.Base.create("ganttSeries", Y.CartesianSeries, [Y.Plots], {
         }
         this._clearMarkerCache();
     },
-     
+
     /**
      * Resizes and positions markers based on a mouse interaction.
      *
@@ -82,9 +81,7 @@ Y.GanttSeries = Y.Base.create("ganttSeries", Y.CartesianSeries, [Y.Plots], {
     updateMarkerState: function(type, i) {
         if(this._markers && this._markers[i])
         {
-            var w,
-                h,
-                styles = this._copyObject(this.get("styles").marker),
+            var styles = this._copyObject(this.get("styles").marker),
                 state = this._getState(type),
                 marker = this._markers[i],
                 markerStyles = state === "off" || !styles[state] ? styles : styles[state];
@@ -99,7 +96,7 @@ Y.GanttSeries = Y.Base.create("ganttSeries", Y.CartesianSeries, [Y.Plots], {
         }
     },
 
-    /**   
+    /**
      * Gets the default style values for the markers.
      *
      * @method _getPlotDefaults
@@ -150,7 +147,7 @@ Y.GanttSeries = Y.Base.create("ganttSeries", Y.CartesianSeries, [Y.Plots], {
         /**
          * Values to be used for start and end keys.
          *
-         * @attribute gantkeys 
+         * @attribute gantkeys
          * @type Object
          */
         ganttkeys: {
