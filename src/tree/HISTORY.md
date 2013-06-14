@@ -4,13 +4,11 @@ Tree Change History
 @VERSION@
 ------
 
-* No changes.
-
-3.10.3
-------
-
 * Added `Tree.Node#depth()`, which returns the depth of the node, starting at 0
   for the root node. [Ryan Grove]
+
+* Added `Tree.Sortable#sort()`, which sorts the children of every node in a
+  sortable tree. [Ryan Grove]
 
 * The `Tree#createNode()`, `Tree#insertNode()`, and `Tree#traverseNode()`
   methods now throw or log informative error messages when given a destroyed
@@ -19,6 +17,17 @@ Tree Change History
 
 * The `Tree.Node#isRoot()` method now returns `false` on destroyed nodes instead
   of causing an exception. [Ryan Grove]
+
+* The `Tree.Sortable#sortNode()` and `Tree.Sortable.Node#sort()` methods now
+  accept a `deep` option. If set to `true`, the entire hierarchy will be sorted
+  (children, children's children, etc.). [Ryan Grove]
+
+
+3.10.3
+------
+
+* No changes.
+
 
 3.10.2
 ------
