@@ -448,7 +448,7 @@ Y.CustomEvent.prototype = {
             // It's a little ugly for this to know about facades,
             // but given the current breakup, not much choice without
             // moving a whole lot of stuff around.
-            if (this.emitFacade) {
+            if (this.emitFacade && this._addFacadeToArgs) {
                 this._addFacadeToArgs(firedWith);
             }
 
