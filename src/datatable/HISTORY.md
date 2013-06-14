@@ -4,11 +4,6 @@ DataTable Change History
 @VERSION@
 ------
 
-* No changes.
-
-3.10.3
-------
-
 * Update `_afterDataChange()` to only change the row modified.
   [Pull Request #695] [Ticket #2532962]
 
@@ -16,6 +11,11 @@ DataTable Change History
   more flexibility with column titles. [Pull Request #703] [Ticket #2533220]
 
 * Added Hungarian language support [Gábor Kovács]
+
+3.10.3
+------
+
+* No changes.
 
 3.10.2
 ------
