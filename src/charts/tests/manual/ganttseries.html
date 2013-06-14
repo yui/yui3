@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Gantt Example</title>
+    <style>
+        /* size the chart container */
+        #mychart {
+            width: 700px;
+            height: 350px;
+        }
+        /* styles for the item labels */
+        .yui3-charts-ganttseriesItemLabel {
+            font-size: 75%;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="../../../../build/cssfonts/fonts-min.css">
+</head>		
+<body class="yui3-skin-sam">
+    <h4>Gantt Example</h4>
+<div id="mychart"></div>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="./modules/graphics-roundrect.js"></script>
+<script type="text/javascript" src="./modules/charts-ganttutils.js"></script>
+<script type="text/javascript">            
+    YUI({
+        defaultGraphicEngine: (window.location.search.match(/[?&]defaultGraphicEngine=([^&]+)/) || [])[1] || 'svg',
+		filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    }).use('graphics-roundrect', 'charts', 'charts-ganttutils', function (Y) {
+        var myDataValues = [{
+              "execution-start-time": "1",
+              "execution-stop-time": "58",
+              "execution-time": "57",
+              "content": "http://where.yahooapis.com/v1/places.q(North%20Beach);start=0;count=10"
+            }, {
+              "execution-start-time": "59",
+              "execution-stop-time": "507",
+              "execution-time": "448",
+              "content": "http://upcoming.yahooapis.com/services/rest/?method=event.search&woeid=2460633&page=1&per_page=10"
+            }, {
+              "execution-start-time": "59",
+              "execution-stop-time": "527",
+              "execution-time": "468",
+              "content": "http://upcoming.yahooapis.com/services/rest/?method=event.search&woeid=23499175&page=1&per_page=10"
+            }, {
+              "execution-start-time": "59",
+              "execution-stop-time": "532",
+              "execution-time": "473",
+              "content": "http://upcoming.yahooapis.com/services/rest/?method=event.search&woeid=23417381&page=1&per_page=10"
+            }, {
+              "execution-start-time": "59",
+              "execution-stop-time": "549",
+              "execution-time": "490",
+              "content": "http://upcoming.yahooapis.com/services/rest/?method=event.search&woeid=23511188&page=1&per_page=10"
+            }, {
+              "execution-start-time": "59",
+              "execution-stop-time": "556",
+              "execution-time": "497",
+              "content": "http://upcoming.yahooapis.com/services/rest/?method=event.search&woeid=2460640&page=1&per_page=10"
+            }, {
+              "execution-start-time": "528",
+              "execution-stop-time": "950",
+              "execution-time": "422",
+              "content": "http://upcoming.yahooapis.com/services/rest/?method=event.search&woeid=2460634&page=1&per_page=10"
+            }, {
+              "execution-start-time": "533",
+              "execution-stop-time": "1019",
+              "execution-time": "486",
+              "content": "http://upcoming.yahooapis.com/services/rest/?method=event.search&woeid=1097818&page=1&per_page=10"
+            }, {
+              "execution-start-time": "550",
+              "execution-stop-time": "1062",
+              "execution-time": "512",
+              "content": "http://upcoming.yahooapis.com/services/rest/?method=event.search&woeid=28746208&page=1&per_page=10"
+            }, {
+              "execution-start-time": "556",
+              "execution-stop-time": "1098",
+              "execution-time": "542",
+              "content": "http://upcoming.yahooapis.com/services/rest/?method=event.search&woeid=2460636&page=1&per_page=10"
+            }, {
+              "execution-start-time": "508",
+              "execution-stop-time": "2385",
+              "execution-time": "1877",
+              "content": "http://upcoming.yahooapis.com/services/rest/?method=event.search&woeid=2460639&page=1&per_page=10"
+            }],
+            //extracts the domain from the full url
+            //this method is used for the category axis' labelFunction and 
+            //it is also used for mapping colors to a domain
+            trimToDomain = function(val) {
+                var startIndex = val.indexOf('http://') + 7,
+                    endIndex;
+                val = val.slice(startIndex);
+                endIndex = val.indexOf('/');
+                val = val.slice(0, endIndex);
+                return val;
+            },
+            //mapping of colors to different domains
+            colorMap = {
+                'where.yahooapis.com' : '#00f',
+                'upcoming.yahooapis.com' : '#f00'
+            },
+            //gets an arry of colors to use for the series.styles.marker.fill.color value
+            getColors = function(data) {
+                var i,
+                    len = data.length,
+                    colors = [];
+                for(i = 0; i < len; i = i + 1) {
+                    colors.push(colorMap[trimToDomain(data[i].content)]);
+                }
+                return colors;
+            },
+            //seriesKeys to populate the charts seriesKeys attribute. The seriesKeys attribute is used to limit
+            //the keys used for autogenerating series instances in a chart.
+            seriesKeys = ["execution-start-time", "execution-stop-time"], 
+            mychart = new Y.Chart({
+                direction: "vertical",
+                seriesKeys: seriesKeys,
+                seriesCollection: [{
+                    type: "gantt",
+                    xKey: seriesKeys,
+                    //attribute of the GanttSeries that defines the dataProvider keys that will be used for start and end values
+                    ganttkeys: {
+                        start: "execution-start-time",
+                        end: "execution-stop-time"   
+                    },
+                    //styles for the marker
+                    styles: {
+                        marker: {
+                            fill: {
+                                color: getColors(myDataValues) 
+                            },
+                            height: 8, 
+                            ellipseWidth: 4,
+                            ellipseHeight: 4,
+                            shape: Y.RoundRect
+                        }
+                    }
+                }],
+                //define the category axis so we can assign a custom label function
+                axes: {
+                    category: {
+                        type: "category",
+                        position: "left",
+                        keys: ["content"],
+                        labelFunction: trimToDomain,
+                        styles: {
+                            majorTicks: {
+                                display: "none"
+                            }
+                        }
+                    }
+                },
+                //specify the categoryKey so the chart knows which value to use for generating a category axis
+                categoryKey: "content",
+                dataProvider:myDataValues, 
+                render:"#mychart"
+            }),
+            //instantiate a GanttUtils instance for drawing the background indicator line and labels
+            ganttUtils = new Y.GanttUtils(mychart),
+            //create the alternate colored background.
+            backgroundGrid = ganttUtils.addBackgroundGrid({
+                color: "#D3D3E4"
+            }, {
+                color: "#DEDEEF"
+            }),
+            //create the indicator line
+            indicatorLine = ganttUtils.addIndicatorLine(mychart.getAxisByKey("values"), 1500, {
+                color: "#22AF2B",
+                weight: 2
+            }),
+            //add start and end labels
+            itemLabels = ganttUtils.addItemLabels(mychart.getSeries(0), Y.ClassNameManager.getClassName("charts-ganttseriesItemLabel"), 2);
+    });
+</script>
+</body>
+</html>
