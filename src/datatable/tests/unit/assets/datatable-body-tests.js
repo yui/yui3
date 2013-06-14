@@ -299,7 +299,7 @@ suite.add(new Y.Test.Case({
                 },
                 { key: 'd' },
                 { key: 'e',
-                  formatter:'{a},{b}'
+                  formatter:'{e},{a},{b}'
                 },
                 { key: 'f', formatter:'currency'},
                 { key: 'g', formatter:'currency', currencyFormat: {
@@ -307,11 +307,12 @@ suite.add(new Y.Test.Case({
                     decimalSeparator: ",",
                     thousandsSeparator: ",",
                     suffix: "€"
-                }}
+                }},
+                { key: 'h', formatter: '(({value}))', emptyCellValue: 'nothing'}
             ],
             modelList: new Y.ModelList().reset([
-                { a: 'a1', b: 'b1', c: 'c1', d: 'd1', f: 123.45 , g: 123.45},
-                { a: 'a2',          c: 'c2', d: 'd2', f: 678    , g: 678   }
+                { a: 'a1', b: 'b1', c: 'c1', d: 'd1',  e: 'e1',  f: 123.45 , g: 123.45, h: null},
+                { a: 'a2',          c: 'c2', d: 'd2',  e: 'e2',  f: 678    , g: 678            }
             ])
         }).render();
     },
@@ -326,7 +327,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame('ema1', content.get('id'));
         Y.Assert.areSame('a1', content.getHTML());
         node = view.getCell([0,4]);
-        Y.Assert.areSame('a1,b1', node.getHTML());
+        Y.Assert.areSame('e1,a1,b1', node.getHTML());
     },
 
     "formatter adding to o.className should add to cell classes": function () {
@@ -364,14 +365,17 @@ suite.add(new Y.Test.Case({
                     .item(1);
 
         Y.Assert.areSame('EMPTY', node.get('text'));
+        Y.Assert.areSame('((null))', view.getCell([0, 7]).get('text'));
+        Y.Assert.areSame('nothing', view.getCell([1, 7]).get('text'));
     },
+            
 
     "changing columns config propagates to the UI": function () {
         var view      = this.view,
             tbody     = view.tbodyNode,
             className = '.' + view.getClassName('cell');
 
-        Y.Assert.areSame(14, tbody.all(className).size());
+        Y.Assert.areSame(16, tbody.all(className).size());
 
         this.view.set('columns', [{ key: 'd' }]);
 

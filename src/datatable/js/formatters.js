@@ -26,7 +26,7 @@ var Lang = Y.Lang,
     automatically called when their names are used as values for the `formatter`
     property in a columnd definition.
     They will be called just once per rendering cycle and will receive
-    the column configuration.  They are expected to return a function that will
+    the column configuration.  They must return a function that will
     then be called once per row and will do the actual formatting.
     They are expected to do all the preparatory once-per-render work
     so that the actual formatting function doesn't need to repeat it.
