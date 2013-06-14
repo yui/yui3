@@ -1,6 +1,17 @@
 Attribute Change History
 ========================
 
+@VERSION@
+------
+
+* Fixed regression introduced with the solution for setter opts, added in
+  3.10.2, for cases where user subscribed to attribute change events, with
+  additional arguments to be passed to the subscriber, for example: 
+
+    host.after("myattrChange", fn(e, custArg){}, context, custArgValue);
+    ...
+    host.set("myattr", 10, {src:"foo"});
+
 3.10.3
 ------
 
