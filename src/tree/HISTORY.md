@@ -18,7 +18,7 @@ Tree Change History
 * Tree.Sortable: Sort comparator functions are now executed in their original
   context. When the sort comparator lives on the tree, its `this` object will be
   the tree instance. When it lives on a node, its `this` object will be the
-  node. When specific as an anonymous function in an options object, its `this`
+  node. When specified as an anonymous function in an options object, its `this`
   object will be the global object. [Ryan Grove]
 
 
