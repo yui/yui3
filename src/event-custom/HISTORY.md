@@ -4,7 +4,13 @@ Custom Event Infrastructure Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed issue with fireOnce subscribers not receiving the facade,
+  if subscription came in after the fire, and the initial fire had
+  no listeners (the bug was introduced in 3.10.0, with the no listener 
+  perf. optimizations).
+
+  The subscribers in the broken code would have received the raw payload 
+  instead (e.g. {opts:foo}).
 
 3.10.3
 ------
