@@ -666,13 +666,14 @@ Y.DataTable.BodyView.Formatters.currency = function (col) {
 
 <p>
     The `emptyCellValue` configuration is useful to provide fallback content in
-    the case of missing or empty column data, but it interacts with each type of
-    formatter differently.
+    the case of missing (`undefined` or `null`) or empty (`""`) column data, 
+    but it interacts with each type of  formatter differently.
 </p>
 
 <p>
-    String formatters will only be applied if the field data for that cell is
-    not `undefined`.  This allows the `emptyCellValue` to populate the cell.
+    String formatters are exclusive with respect to `emptyCellValue`. 
+    They will only be applied if the field data for that cell is
+    not `undefined`, `null` nor an empty string.  
 </p>
 
 <p>
