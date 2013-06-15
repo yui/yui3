@@ -311,8 +311,10 @@ suite.add(new Y.Test.Case({
                 { key: 'h', formatter: '(({value}))', emptyCellValue: 'nothing'}
             ],
             modelList: new Y.ModelList().reset([
-                { a: 'a1', b: 'b1', c: 'c1', d: 'd1',  e: 'e1',  f: 123.45 , g: 123.45, h: null},
-                { a: 'a2',          c: 'c2', d: 'd2',  e: 'e2',  f: 678    , g: 678            }
+                { a: 'a1', b: 'b1', c: 'c1', d: 'd1',  e: 'e1',  f: 123.45 , g: 123.45, h: "something" },
+                { a: 'a2',          c: 'c2', d: 'd2',  e: 'e2',  f: 678    , g: 678,    h: null},
+                {h:""},
+                {}
             ])
         }).render();
     },
@@ -365,8 +367,10 @@ suite.add(new Y.Test.Case({
                     .item(1);
 
         Y.Assert.areSame('EMPTY', node.get('text'));
-        Y.Assert.areSame('((null))', view.getCell([0, 7]).get('text'));
+        Y.Assert.areSame('((something))', view.getCell([0, 7]).get('text'));
         Y.Assert.areSame('nothing', view.getCell([1, 7]).get('text'));
+        Y.Assert.areSame('nothing', view.getCell([2, 7]).get('text'));
+        Y.Assert.areSame('nothing', view.getCell([3, 7]).get('text'));
     },
             
 
@@ -375,11 +379,11 @@ suite.add(new Y.Test.Case({
             tbody     = view.tbodyNode,
             className = '.' + view.getClassName('cell');
 
-        Y.Assert.areSame(16, tbody.all(className).size());
+        Y.Assert.areSame(32, tbody.all(className).size());
 
         this.view.set('columns', [{ key: 'd' }]);
 
-        Y.Assert.areSame(2, tbody.all(className).size());
+        Y.Assert.areSame(4, tbody.all(className).size());
     },
     "testing node formatters": function () {
         var view = this.view,
