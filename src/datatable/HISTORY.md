@@ -4,7 +4,12 @@ DataTable Change History
 @VERSION@
 ------
 
-* No changes.
+* String formatter and the use of the `emptyCellValue` are now exclusive
+  of one another and the evaluation of the cell `value` is delayed until each
+  row is rendered [Issue #843].
+
+* A protected property `emptyValues` has been added to avoid hard-coding of
+  what should be considered empty values.
 
 3.11.0
 ------
