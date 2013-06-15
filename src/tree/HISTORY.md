@@ -15,6 +15,13 @@ Tree Change History
 * The `Tree.Node#isRoot()` method now returns `false` on destroyed nodes instead
   of causing an exception. [Ryan Grove]
 
+* Tree.Sortable: Sort comparator functions are now executed in their original
+  context. When the sort comparator lives on the tree, its `this` object will be
+  the tree instance. When it lives on a node, its `this` object will be the
+  node. When specified as an anonymous function in an options object, its `this`
+  object will be the global object. [Ryan Grove]
+
+
 3.10.3
 ------
 
