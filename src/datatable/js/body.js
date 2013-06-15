@@ -180,6 +180,17 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     **/
     TBODY_TEMPLATE: '<tbody class="{className}"></tbody>',
 
+    /**
+    Array of values to be considered empty for the purpose of showing the
+    `emptyCellValue` column attribute value in a cell.
+
+    @property _emptyValues
+    @type Array
+    @default null, undefined, ""
+    @protected
+     */
+    _emptyValues: null,
+
     // -- Public methods ------------------------------------------------------
 
     /**
@@ -913,7 +924,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 rowClass: (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN
             },
             host = this.host || this,
-            i, len, col, token, value, formatterData;
+            i, len, col, token, value, formatterData,
+            emptyValues = this._emptyValues;
 
         for (i = 0, len = columns.length; i < len; ++i) {
             col   = columns[i];
@@ -945,14 +957,11 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 values.rowClass += ' ' + formatterData.rowClass;
             }
 
-            // if the token missing OR is the value a legit value
-            if (!values.hasOwnProperty(token) || data.hasOwnProperty(col.key)) {
-                if (value === undefined || value === null || value === '') {
-                    value = col.emptyCellValue || '';
-                }
-
-                values[token] = col.allowHTML ? value : htmlEscape(value);
+            if (emptyValues.indexOf(value) !== -1) {
+                value = col.emptyCellValue || '';
             }
+
+            values[token] = col.allowHTML ? value : htmlEscape(value);
         }
 
         // replace consecutive whitespace with a single space
@@ -1154,6 +1163,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 bind('_afterModelListChange', this))
         };
         this._idMap = {};
+        this._emptyValues = [null, undefined, ""];
 
         this.CLASS_ODD  = this.getClassName('odd');
         this.CLASS_EVEN = this.getClassName('even');
@@ -1207,10 +1217,11 @@ Y.mix(Y.DataTable.BodyView.Formatters, {
     @for DataTable.BodyView.Formatters
     */
     stringTemplate: function (col) {
-        var formatter = col.formatter.replace(valueRegExp, '{' + col.key + '}');
+        var formatter = col.formatter.replace(valueRegExp, '{' + col.key + '}'),
+             emptyValues = ((this.view && this.view.body) || this)._emptyValues;
         return function (o) {
-            if (o.value !== undefined) {
-                return Lang.sub(formatter, o.record.toJSON());
+            if (emptyValues.indexOf(o.value) === -1) {
+                return fromTemplate(formatter, o.record.toJSON());
             }
             // return undefined;
         };
