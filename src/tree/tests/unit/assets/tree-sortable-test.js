@@ -51,15 +51,56 @@ suite.add(new Y.Test.Case({
 
     setUp: function () {
         this.tree = new Tree({nodes: [
-            {id: 'b'},
+            {id: 'b', children: [
+                {id: 'b.b'},
+                {id: 'b.a'},
+
+                {id: 'b.c', children: [
+                    {id: 'b.c.b'},
+                    {id: 'b.c.a'},
+                    {id: 'b.c.c'}
+                ]}
+            ]},
+
             {id: 'a'},
-            {id: 'c'}
+
+            {id: 'c', children: [
+                {id: 'c.b', children: [
+                    {id: 'c.b.b'},
+                    {id: 'c.b.a'},
+                    {id: 'c.b.c'}
+                ]},
+
+                {id: 'c.a'},
+                {id: 'c.c'}
+            ]}
         ]});
     },
 
     tearDown: function () {
         this.tree.destroy();
         delete this.tree;
+    },
+
+    'sort() should wrap sortNode() for the root node': function () {
+        var called;
+
+        // Tree.Sortable#sort() is just a simple wrapper around
+        // Tree.Sortable#sortNode(), which is tested heavily later. Instead of
+        // duplicating those tests here, just verify that sortNode() is being
+        // called as expected.
+
+        this.tree.sortNode = function (node, options) {
+            called = true;
+
+            Assert.areSame(this.rootNode, node, 'sortNode() should be called with the root node');
+            Assert.isTrue(options.deep, 'sortNode() should be called with `{deep: true}`');
+            Assert.areSame('bar', options.foo, 'sortNode() should be called with custom options');
+        };
+
+        this.tree.sort({foo: 'bar'});
+
+        Assert.isTrue(called, 'sortNode() should be called');
     },
 
     'sortComparator() should return the node\'s index by default': function () {
@@ -84,6 +125,71 @@ suite.add(new Y.Test.Case({
         Assert.areSame('c', this.tree.children[0].id, 'first node should be "c" when reversed');
         Assert.areSame('b', this.tree.children[1].id, 'second node should be "b" when reversed');
         Assert.areSame('a', this.tree.children[2].id, 'third node should be "a" when reversed');
+    },
+
+    'sortNode() should not sort the entire hierarchy by default': function () {
+        this.tree.sortComparator = function (node) {
+            return node.id;
+        };
+
+        this.tree.sortNode(this.tree.rootNode);
+
+        var b = this.tree.getNodeById('b');
+
+        Assert.areSame('b.b', b.children[0].id, 'first node should be "b.b"');
+        Assert.areSame('b.a', b.children[1].id, 'second node should be "b.a"');
+        Assert.areSame('b.c', b.children[2].id, 'third node should be "b.c"');
+    },
+
+    'sortNode() should sort the entire hierarchy when the `deep` option is truthy': function () {
+        this.tree.sortComparator = function (node) {
+            return node.id;
+        };
+
+        this.tree.sortNode(this.tree.rootNode, {deep: true});
+
+        Assert.areSame('a', this.tree.children[0].id, 'first node should be "a"');
+        Assert.areSame('b', this.tree.children[1].id, 'second node should be "b"');
+        Assert.areSame('c', this.tree.children[2].id, 'third node should be "c"');
+
+        var b = this.tree.getNodeById('b');
+
+        Assert.areSame('b.a', b.children[0].id, 'first node should be "b.a"');
+        Assert.areSame('b.b', b.children[1].id, 'second node should be "b.b"');
+        Assert.areSame('b.c', b.children[2].id, 'third node should be "b.c"');
+
+        var bC = this.tree.getNodeById('b.c');
+
+        Assert.areSame('b.c.a', bC.children[0].id, 'first node should be "b.c.a"');
+        Assert.areSame('b.c.b', bC.children[1].id, 'second node should be "b.c.b"');
+        Assert.areSame('b.c.c', bC.children[2].id, 'third node should be "b.c.c"');
+
+        var c = this.tree.getNodeById('c');
+
+        Assert.areSame('c.a', c.children[0].id, 'first node should be "c.a"');
+        Assert.areSame('c.b', c.children[1].id, 'second node should be "c.b"');
+        Assert.areSame('c.c', c.children[2].id, 'third node should be "c.c"');
+
+        var cB = this.tree.getNodeById('c.b');
+
+        Assert.areSame('c.b.a', cB.children[0].id, 'first node should be "c.b.a"');
+        Assert.areSame('c.b.b', cB.children[1].id, 'second node should be "c.b.b"');
+        Assert.areSame('c.b.c', cB.children[2].id, 'third node should be "c.b.c"');
+
+        this.tree.sortReverse = true;
+        this.tree.sortNode(this.tree.rootNode, {deep: true});
+
+        Assert.areSame('c', this.tree.children[0].id, 'first node should be "c" when reversed');
+        Assert.areSame('b', this.tree.children[1].id, 'second node should be "b" when reversed');
+        Assert.areSame('a', this.tree.children[2].id, 'third node should be "a" when reversed');
+
+        Assert.areSame('b.c', b.children[0].id, 'first node should be "b.c" when reversed');
+        Assert.areSame('b.b', b.children[1].id, 'second node should be "b.b" when reversed');
+        Assert.areSame('b.a', b.children[2].id, 'third node should be "b.a" when reversed');
+
+        Assert.areSame('c.b.c', cB.children[0].id, 'first node should be "c.b.c" when reversed');
+        Assert.areSame('c.b.b', cB.children[1].id, 'second node should be "c.b.b" when reversed');
+        Assert.areSame('c.b.a', cB.children[2].id, 'third node should be "c.b.a" when reversed');
     },
 
     'sortNode() should support a `sortComparator` option': function () {
