@@ -33,7 +33,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @property _eventHandles
      @type {Array}
-     @since @SINCE@
+     @SINCE@
      */
     _eventHandles: [],
 
@@ -42,7 +42,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @property containerTemplate
      @type {String}
      @default '<div class="yui3-datatable-paginator"/>'
-     @since @SINCE@
+     @SINCE@
      */
     containerTemplate: '<div class="{paginator}"/>',
 
@@ -51,7 +51,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @property contentTemplate
      @type {String}
      @default '{buttons}{goto}{perPage}'
-     @since @SINCE@
+     @SINCE@
      */
     contentTemplate: '{buttons}{goto}{perPage}',
 
@@ -61,14 +61,14 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @property _allowAdHocAttrs
      @type {Boolean}
      @default false
-     @since @SINCE@
+     @SINCE@
      */
     _allowAdHocAttrs: false,
 
     /**
      Sets classnames on the templates and bind events
      @method initializer
-     @since @SINCE@
+     @SINCE@
      */
     initializer: function () {
         this.containerTemplate = sub(this.containerTemplate, {
@@ -87,7 +87,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
     /**
      @method render
      @chainable
-     @since @SINCE@
+     @SINCE@
      */
     render: function () {
         var model = this.get('model'),
@@ -109,7 +109,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
     /**
      @method attachEvents
-     @since @SINCE@
+     @SINCE@
      */
     attachEvents: function () {
         View.superclass.attachEvents.apply(this, arguments);
@@ -134,7 +134,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _buildButtonsGroup
      @return {String}
-     @since @SINCE@
+     @SINCE@
      */
     _buildButtonsGroup: function () {
         var strings = this.get('strings'),
@@ -166,7 +166,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _buildGotoGroup
      @return {String}
-     @since @SINCE@
+     @SINCE@
      */
     _buildGotoGroup: function () {
 
@@ -182,7 +182,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _buildPerPageGroup
      @return {String}
-     @since @SINCE@
+     @SINCE@
      */
     _buildPerPageGroup: function () {
         var options = this.get('pageSizes'),
@@ -200,7 +200,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
                     label: option
                 }
             }
-            options.selected = (options.value === rowsPerPage) ? ' selected' : '';
+            option.selected = (option.value === rowsPerPage) ? ' selected' : '';
         }
 
         return PaginatorTemplates.perPage({
@@ -216,7 +216,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _modelChange
      @param {EventFacade} e
-     @since @SINCE@
+     @SINCE@
      */
     _modelChange: function (e) {
         var changed = e.changed,
@@ -240,7 +240,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _updateControlsUI
      @param {Number} val Page number to set the UI input to
-     @since @SINCE@
+     @SINCE@
      */
     _updateControlsUI: function (val) {
         if (!this._rendered) {
@@ -277,7 +277,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _updateItemsPerPageUI
      @param {Number} val Number of items to display per page
-     @since @SINCE@
+     @SINCE@
      */
     _updateItemsPerPageUI: function (val) {
         if (!this._rendered) {
@@ -292,7 +292,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _controlClick
      @param {EventFacade} e
-     @since @SINCE@
+     @SINCE@
      */
     _controlClick: function (e) { // buttons
         e.preventDefault();
@@ -313,7 +313,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @method _controlChange
      @param {EventFacade} e
      @param {String} selector
-     @since @SINCE@
+     @SINCE@
      */
     _controlChange: function (e, selector) {
 
@@ -336,7 +336,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @method _controlSubmit
      @param {EventFacade} e
      @param {String} selector
-     @since @SINCE@
+     @SINCE@
      */
     _controlSubmit: function (e, selector) {
         var control = e.target;
@@ -358,7 +358,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      Initializes classnames to be used with the templates
      @protected
      @method _initClassNames
-     @since @SINCE@
+     @SINCE@
      */
     _initClassNames: function () {
         this.classNames = {
@@ -373,7 +373,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      Initializes strings used for internationalization
      @protected
      @method _initStrings
-     @since @SINCE@
+     @SINCE@
      */
     _initStrings: function () {
         // Not a valueFn because other class extensions may want to add to it
@@ -387,7 +387,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
          @attribute pageSizes
          @type {Array}
          @default [ 10, 50, 100, { label: 'Show All', value: -1 } ]
-         @since @SINCE@
+         @SINCE@
          */
         pageSizes: {
             value: [ 10, 50, 100, { label: 'Show All', value: -1 } ]
@@ -478,7 +478,9 @@ Controller.ATTRS = {
      @default null
      @since @SINCE@
      */
-    rowsPerPage: {},
+    rowsPerPage: {
+        value: null
+    },
 
     /**
      String of `footer` or `header`, a Y.Node, or an Array or any combination
@@ -548,13 +550,11 @@ Y.mix(Controller.prototype, {
      @since @SINCE@
      */
     initializer: function () {
+console.log('initializer');
         var model = this.get('paginatorModel')
 
         // allow DT to use paged data
         this._augmentData();
-
-        // ensure our model has the correct totalItems set
-        model.set('totalItems', this.get('data').size());
 
         if (!this._eventHandles.paginatorRender) {
             this._eventHandles.paginatorRender = Y.Do.after(this._paginatorRender, this, 'render');
@@ -568,10 +568,17 @@ Y.mix(Controller.prototype, {
      @since @SINCE@
      */
     _paginatorRender: function () {
+console.log('_paginatorRender');
+        var model = this.get('paginatorModel');
+
         this._paginatorRenderUI();
-        this.get('paginatorModel').after('change', this._afterPaginatorModelChange, this);
+        model.after('change', this._afterPaginatorModelChange, this);
         this.after('dataChange', this._afterDataChangeWithPaginator, this);
         this.after('rowsPerPageChange', this._afterRowsPerPageChange, this);
+
+        // ensure our model has the correct totalItems set
+        model.set('itemsPerPage', this.get('rowsPerPage'));
+        model.set('totalItems', this.get('data').size());
     },
 
     /**
@@ -582,6 +589,7 @@ Y.mix(Controller.prototype, {
      @since @SINCE@
      */
     _afterDataChangeWithPaginator: function () {
+console.log('_afterDataChangeWithPaginator');
         var data = this.get('data'),
             model = this.get('paginatorModel');
 
@@ -607,6 +615,7 @@ Y.mix(Controller.prototype, {
      @since @SINCE@
      */
     _afterRowsPerPageChange: function (e) {
+console.log('_afterRowsPerPageChange');
         var data = this.get('data'),
             model = this.get('paginatorModel'),
             view;
@@ -622,7 +631,7 @@ Y.mix(Controller.prototype, {
             data._paged.index = (model.get('page') - 1) * model.get('itemsPerPage');
             data._paged.length = model.get('itemsPerPage');
 
-        } else if (e.newVal === null) {
+        } else { // e.newVal === null
             // destroy!
             while(this._pgViews.length) {
                 view = this._pgViews.shift();
@@ -644,6 +653,11 @@ Y.mix(Controller.prototype, {
      @since @SINCE@
      */
     _paginatorRenderUI: function () {
+console.log('_paginatorRenderUI');
+        if (!this.get('rowsPerPage')) {
+            return;
+        }
+console.log(this.get('rowsPerPage'));
         var views = this._pgViews,
             ViewClass = this.get('paginatorView'),
             viewConfig = {
@@ -671,6 +685,10 @@ Y.mix(Controller.prototype, {
 
             if (location._node) { // assume Y.Node
                 location.append(container);
+                // remove this container row if the view is ever destroyed
+                this.after('destroy', function (/* e */) {
+                    view.destroy({ remove: true });
+                });
             } else if (location === 'footer') { // DT Footer
                 // Render a table footer if there isn't one
                 if (!this.foot) {
@@ -714,6 +732,7 @@ Y.mix(Controller.prototype, {
      @since @SINCE@
      */
     _uiPgHandler: function (e) {
+console.log('_uiPgHandler');
         // e.type = control type (first|prev|next|last|page|perPage)
         // e.val = value based on the control type to pass to the model
         var model = this.get('paginatorModel');
@@ -748,6 +767,7 @@ Y.mix(Controller.prototype, {
      @since @SINCE@
      */
     _afterPaginatorModelChange: function () {
+console.log('_afterPaginatorModelChange');
         var model = this.get('paginatorModel'),
             data = this.get('data');
 
@@ -776,6 +796,7 @@ Y.mix(Controller.prototype, {
      @since @SINCE@
      */
     _augmentData: function () {
+console.log('_augmentData');
         var model = this.get('paginatorModel');
 
         if (this.get('rowsPerPage') === null) {
@@ -824,6 +845,7 @@ Y.mix(Controller.prototype, {
      @since @SINCE@
      */
     _setPageSizesFn: function (val) {
+console.log('_setPageSizesFn');
         var i,
             len = val.length,
             label,
