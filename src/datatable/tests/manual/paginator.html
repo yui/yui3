@@ -58,7 +58,8 @@ YUI({
     useBrowserConsole: true
 }).use("console", "test", "dump", "datatable","datatable-paginator","node","json-parse", 'datatype-number', function(Y) {
 
-    var data = [];
+    var data = [],
+        data2 = [];
 
     while (data.length < 100) {
         data.push({
@@ -66,6 +67,12 @@ YUI({
             name: ['a','b', 'c','d','e','f','g'][data.length % 7].toUpperCase() + ':' + data.length,
             price: Math.round((Math.random() + Math.random()) * 500) / 500,
             qty: Math.ceil(data.length * Math.random() + Math.random())
+        });
+        data2.push({
+            id: data2.length + 1,
+            name: ['a','b', 'c','d','e','f','g'][data2.length % 7].toUpperCase() + ':' + data2.length,
+            price: Math.round((Math.random() + Math.random()) * 500) / 500,
+            qty: Math.ceil(data2.length * Math.random() + Math.random())
         });
     }
 
@@ -94,7 +101,7 @@ YUI({
         data: data,
         render: '#table',
         // rows per page turns on/off paginator
-        rowsPerPage: 10,
+        rowsPerPage: null,
         paginatorLocation: ['header', 'footer']
     });
 
@@ -106,7 +113,13 @@ YUI({
             table.set('rowsPerPage', null);
         }
         console.log(table.get('rowsPerPage'));
+
     });
+
+    Y.later(3000, this, function () {
+        table.set('data', new Y.ModelList().reset(data2));
+    });
+
 
 });
 
