@@ -61,6 +61,27 @@ suite.add(new Y.Test.Case({
         Assert.isNotNull(this.widget.getStdModNode('header', true), 'Header node was null.');
     },
 
+    'getStdModNode() should create the section node in `renderUI` when `forceCreate` is truthy' : function() {
+        var TestWidget,
+            header,
+            stdHeader;
+
+        TestWidget = Y.Base.create('testWidget', Y.Widget, [Y.WidgetStdMod], {
+            renderUI : function() {
+                header = this.getStdModNode('header', true);
+
+                header.set('text', 'foo');
+            }
+        });
+
+        this.widget = new TestWidget({render: '#test'});
+
+        stdHeader = this.widget.getStdModNode('header', true);
+
+        Assert.areSame(header, stdHeader, 'Header section created in `renderUI` is not correct');
+        Assert.areSame('foo', stdHeader.get('text', 'foo'), 'Header section created in `renderUI` did not have "foo" text');
+    },
+
     'setStdModContent() should update the body section of the standard module': function () {
         this.widget = new TestWidget({
             headerContent: 'foo',
