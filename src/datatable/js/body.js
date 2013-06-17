@@ -945,14 +945,18 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 values.rowClass += ' ' + formatterData.rowClass;
             }
 
-            if (value === undefined || value === null || value === '') {
-                value = col.emptyCellValue || '';
+            // if the token missing OR is the value a legit value
+            if (!values.hasOwnProperty(token) || data.hasOwnProperty(col.key)) {
+                if (value === undefined || value === null || value === '') {
+                    value = col.emptyCellValue || '';
+                }
+
+                values[token] = col.allowHTML ? value : htmlEscape(value);
             }
-
-            values[token] = col.allowHTML ? value : htmlEscape(value);
-
-            values.rowClass = values.rowClass.replace(/\s+/g, ' ');
         }
+
+        // replace consecutive whitespace with a single space
+        values.rowClass = values.rowClass.replace(/\s+/g, ' ');
 
         return fromTemplate(this._rowTemplate, values);
     },
