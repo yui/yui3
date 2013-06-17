@@ -550,7 +550,6 @@ Y.mix(Controller.prototype, {
      @since @SINCE@
      */
     initializer: function () {
-console.log('initializer');
         var model = this.get('paginatorModel')
 
         // allow DT to use paged data
@@ -568,7 +567,6 @@ console.log('initializer');
      @since @SINCE@
      */
     _paginatorRender: function () {
-console.log('_paginatorRender');
         var model = this.get('paginatorModel');
 
         this._paginatorRenderUI();
@@ -589,7 +587,6 @@ console.log('_paginatorRender');
      @since @SINCE@
      */
     _afterDataChangeWithPaginator: function () {
-console.log('_afterDataChangeWithPaginator');
         var data = this.get('data'),
             model = this.get('paginatorModel');
 
@@ -615,7 +612,6 @@ console.log('_afterDataChangeWithPaginator');
      @since @SINCE@
      */
     _afterRowsPerPageChange: function (e) {
-console.log('_afterRowsPerPageChange');
         var data = this.get('data'),
             model = this.get('paginatorModel'),
             view;
@@ -653,11 +649,10 @@ console.log('_afterRowsPerPageChange');
      @since @SINCE@
      */
     _paginatorRenderUI: function () {
-console.log('_paginatorRenderUI');
         if (!this.get('rowsPerPage')) {
             return;
         }
-console.log(this.get('rowsPerPage'));
+
         var views = this._pgViews,
             ViewClass = this.get('paginatorView'),
             viewConfig = {
@@ -732,7 +727,6 @@ console.log(this.get('rowsPerPage'));
      @since @SINCE@
      */
     _uiPgHandler: function (e) {
-console.log('_uiPgHandler');
         // e.type = control type (first|prev|next|last|page|perPage)
         // e.val = value based on the control type to pass to the model
         var model = this.get('paginatorModel');
@@ -767,7 +761,6 @@ console.log('_uiPgHandler');
      @since @SINCE@
      */
     _afterPaginatorModelChange: function () {
-console.log('_afterPaginatorModelChange');
         var model = this.get('paginatorModel'),
             data = this.get('data');
 
@@ -796,7 +789,6 @@ console.log('_afterPaginatorModelChange');
      @since @SINCE@
      */
     _augmentData: function () {
-console.log('_augmentData');
         var model = this.get('paginatorModel');
 
         if (this.get('rowsPerPage') === null) {
@@ -845,7 +837,6 @@ console.log('_augmentData');
      @since @SINCE@
      */
     _setPageSizesFn: function (val) {
-console.log('_setPageSizesFn');
         var i,
             len = val.length,
             label,
