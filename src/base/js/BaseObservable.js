@@ -90,7 +90,19 @@
 
             this._preInitEventCfg(config);
 
-            this.fire(type, {cfg: config});
+            if (e._hasPotentialSubscribers()) {
+                this.fire(type, {cfg: config});
+            } else {
+
+                this._baseInit(config);
+
+                // HACK. Major hack actually. But really fast for no-listeners.
+                // Since it's fireOnce, subscribers may come along later, so since we're
+                // bypassing the event stack the first time, we need to tell the published
+                // event that it's been "fired". Could extract it into a CE method?
+                e.fired = true;
+                e.firedWith = [{cfg:config}];
+            }
 
             return this;
         },
