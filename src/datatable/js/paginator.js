@@ -652,7 +652,6 @@ Y.mix(Controller.prototype, {
         if (!this.get('rowsPerPage')) {
             return;
         }
-
         var views = this._pgViews,
             ViewClass = this.get('paginatorView'),
             viewConfig = {
