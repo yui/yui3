@@ -921,25 +921,27 @@ Y.Model = Y.extend(Model, Y.Base, {
         }
     },
 
+    // -- Private Methods ----------------------------------------------------
+
     /**
-     * Overrides AttributeCore's `_setAttrVal`, to register the changed value if it's part
-     * of a Model `setAttrs` transaction.
-     *
-     * NOTE: AttributeCore's `_setAttrVal` is currently private, but until we support coalesced
-     * change events in attribute, we need this override.
-     *
-     * @method _setAttrVal
-     * @private
-     * @param {String} attrName The attribute name.
-     * @param {String} subAttrName The sub-attribute name, if setting a sub-attribute property ("x.y.z").
-     * @param {Any} prevVal The currently stored value of the attribute.
-     * @param {Any} newVal The value which is going to be stored.
-     * @param {Object} [opts] Optional data providing the circumstances for the change.
-     * @param {Object} [attrCfg] Optional config hash for the attribute. This is added for performance along the critical path,
-     * where the calling method has already obtained the config from state.
-     *
-     * @return {boolean} true if the new attribute value was stored, false if not.
-     */
+     Overrides AttributeCore's `_setAttrVal`, to register the changed value if it's part
+     of a Model `setAttrs` transaction.
+
+     NOTE: AttributeCore's `_setAttrVal` is currently private, but until we support coalesced
+     change events in attribute, we need this override.
+
+     @method _setAttrVal
+     @private
+     @param {String} attrName The attribute name.
+     @param {String} subAttrName The sub-attribute name, if setting a sub-attribute property ("x.y.z").
+     @param {Any} prevVal The currently stored value of the attribute.
+     @param {Any} newVal The value which is going to be stored.
+     @param {Object} [opts] Optional data providing the circumstances for the change.
+     @param {Object} [attrCfg] Optional config hash for the attribute. This is added for performance along the critical path,
+     where the calling method has already obtained the config from state.
+
+     @return {boolean} true if the new attribute value was stored, false if not.
+     **/
     _setAttrVal : function(attrName, subAttrName, prevVal, newVal, opts, attrCfg) {
 
         var didChange = Model.superclass._setAttrVal.apply(this, arguments),
