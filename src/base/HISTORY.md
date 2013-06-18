@@ -4,7 +4,8 @@ Base Change History
 @VERSION@
 ------
 
-* No changes.
+* BaseObservable now bypasses the event sub-system if there are no listeners for
+  the `init` event, during construction, to optimize performance.
 
 3.10.3
 ------
