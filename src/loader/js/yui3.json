@@ -866,6 +866,12 @@
             "datasource-local"
         ]
     },
+    "datatable-foot": {
+        "requires": [
+            "datatable-core",
+            "view"
+        ]
+    },
     "datatable-formatters": {
         "requires": [
             "datatable-body",
@@ -897,6 +903,24 @@
     "datatable-mutable": {
         "requires": [
             "datatable-base"
+        ]
+    },
+    "datatable-paginator": {
+        "lang": [
+            "en"
+        ],
+        "requires": [
+            "model",
+            "view",
+            "paginator-core",
+            "datatable-foot",
+            "datatable-paginator-templates"
+        ],
+        "skinnable": true
+    },
+    "datatable-paginator-templates": {
+        "requires": [
+            "template"
         ]
     },
     "datatable-scroll": {
