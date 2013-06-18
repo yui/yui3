@@ -3,8 +3,6 @@ YUI.add('datatable-paginator-tests', function(Y) {
 var suite = new Y.Test.Suite("DataTable: Paginator"),
     data = [];
 
-var consoleStyles = 'color: orange;font-size: 150%;';
-
 while (data.length < 100) {
     data.push({
         id: data.length + 1,
@@ -19,7 +17,6 @@ suite.add(new Y.Test.Case({
     name: "Paginator",
 
     "test rowsPerPage === null shows all rows": function () {
-        console.log("%ctest rowsPerPage === null shows all rows", consoleStyles);
         var dt = new Y.DataTable({
             columns: ['id', 'name', 'price', 'qty'],
             data: data
@@ -28,7 +25,6 @@ suite.add(new Y.Test.Case({
         dt.render();
 
         // get number of items in the table
-        console.log(dt.get('rowsPerPage'));
         Y.Assert.areSame(100, dt.get('data').size(), 'There are not 100 rows in the table data');
         Y.Assert.areSame(100, dt.body.tbodyNode.all('tr').size(), 'There are not 100 rows in the table');
 
@@ -57,7 +53,6 @@ suite.add(new Y.Test.Case({
     },
 
     "test paging directing functions should update table": function () {
-        console.log("%ctest paging directing functions should update table", consoleStyles);
         var dt = new Y.DataTable({
             columns: ['fruit'],
             data: [
