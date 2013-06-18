@@ -1032,7 +1032,7 @@ YUI({
                 }, true);
 
                 test.wait(function(){
-                    Y.Assert.areEqual(1, callbackCount, 'callback was called on an element that wasn\'t the last');
+                    Y.Assert.areEqual(1, callbackCount, 'callback was called more than once');
                 },1000);//this should fire half a second after the transitions
                         //have ended since they should all transition at the same time
             }
