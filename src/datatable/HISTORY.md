@@ -3,6 +3,9 @@ DataTable Change History
 
 @VERSION@
 ------
+* Release Paginator for DataTable.
+
+* Release a default footer view.
 
 * Update `_afterDataChange()` to only change the row modified.
   [Pull Request #695] [Ticket #2532962]
