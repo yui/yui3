@@ -983,6 +983,24 @@ YUI({
                 test.wait();
             },
 
+            'nodelist should fire callback once when all nodes have transitioned': function() {
+                var test = this,
+                    resumed = false,
+                    callbackCount = 0;
+
+                Y.all('.demo').transition({duration: 0.5, opacity: 0}, function(e) {
+					callbackCount++;
+                    if (!resumed) {
+                        test.resume(function() {
+                            resumed = true;
+							Y.Assert.areEqual(1,callbackCount);
+						});
+					}
+                }, true);
+
+                test.wait();
+            },
+
             'should show the nodes with the default transition': function() {
                 var nodes = Y.all('.demo'),
                     test = this;
