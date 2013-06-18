@@ -30,6 +30,7 @@
     <h1>Transition Tests</h1>
     <div class="demo"><div></div></div>
     <div class="demo"><div></div></div>
+    <div class="demo last"><div></div></div>
 
     <div id="yui-log"></div>
 <script type="text/javascript">
@@ -1023,20 +1024,17 @@ YUI({
 
             'nodelist should fire callback once when all nodes have transitioned': function() {
                 var test = this,
-                    resumed = false,
+                    nodes = Y.all('.demo'),
                     callbackCount = 0;
 
-                Y.all('.demo').transition({duration: 0.5, opacity: 0}, function(e) {
+                nodes.transition({duration: 0.5, opacity: 0}, function(e) {
                     callbackCount++;
-                    if (!resumed) {
-                        test.resume(function() {
-                            resumed = true;
-                            Y.Assert.areEqual(1,callbackCount);
-                        });
-                    }
                 }, true);
 
-                test.wait();
+                test.wait(function(){
+                    Y.Assert.areEqual(1, callbackCount, 'callback was called on an element that wasn\'t the last');
+                },1000);//this should fire half a second after the transitions
+                        //have ended since they should all transition at the same time
             }
         }));
         //return it
