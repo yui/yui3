@@ -10790,13 +10790,24 @@ Y.CustomEvent.prototype = {
 
         if (!fn) { this.log('Invalid callback for CE: ' + this.type); }
 
-        var s = new Y.Subscriber(fn, context, args, when);
+        var s = new Y.Subscriber(fn, context, args, when),
+            firedWith;
 
         if (this.fireOnce && this.fired) {
+
+            firedWith = this.firedWith;
+
+            // It's a little ugly for this to know about facades,
+            // but given the current breakup, not much choice without
+            // moving a whole lot of stuff around.
+            if (this.emitFacade && this._addFacadeToArgs) {
+                this._addFacadeToArgs(firedWith);
+            }
+
             if (this.async) {
-                setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
+                setTimeout(Y.bind(this._notify, this, s, firedWith), 0);
             } else {
-                this._notify(s, this.firedWith);
+                this._notify(s, firedWith);
             }
         }
 
@@ -12581,11 +12592,9 @@ CEProto.fireComplex = function(args) {
         host = self.host || self,
         next,
         oldbubble,
-        stack,
+        stack = self.stack,
         yuievt = host._yuievt,
         hasPotentialSubscribers;
-
-    stack = self.stack;
 
     if (stack) {
 
@@ -12647,7 +12656,7 @@ CEProto.fireComplex = function(args) {
 
         self._facade = null; // kill facade to eliminate stale properties
 
-        ef = self._getFacade(args);
+        ef = self._createFacade(args);
 
         if (ons) {
             self._procSubs(ons, args, ef);
@@ -12761,7 +12770,7 @@ CEProto.fireComplex = function(args) {
         defaultFn = self.defaultFn;
 
         if(defaultFn) {
-            ef = self._getFacade(args);
+            ef = self._createFacade(args);
 
             if ((!self.defaultTargetOnly) || (host === ef.target)) {
                 defaultFn.apply(host, args);
@@ -12776,7 +12785,33 @@ CEProto.fireComplex = function(args) {
     return ret;
 };
 
-CEProto._getFacade = function(fireArgs) {
+/**
+ * @method _hasPotentialSubscribers
+ * @for CustomEvent
+ * @private
+ * @return {boolean} Whether the event has potential subscribers or not
+ */
+CEProto._hasPotentialSubscribers = function() {
+    return this.hasSubs() || this.host._yuievt.hasTargets || this.broadcast;
+};
+
+/**
+ * Internal utility method to create a new facade instance and
+ * insert it into the fire argument list, accounting for any payload
+ * merging which needs to happen.
+ *
+ * This used to be called `_getFacade`, but the name seemed inappropriate
+ * when it was used without a need for the return value.
+ *
+ * @method _createFacade
+ * @private
+ * @param fireArgs {Array} The arguments passed to "fire", which need to be
+ * shifted (and potentially merged) when the facade is added.
+ * @return {EventFacade} The event facade created.
+ */
+
+// TODO: Remove (private) _getFacade alias, once synthetic.js is updated.
+CEProto._createFacade = CEProto._getFacade = function(fireArgs) {
 
     var userArgs = this.details,
         firstArg = userArgs && userArgs[0],
@@ -12818,6 +12853,23 @@ CEProto._getFacade = function(fireArgs) {
     this._facade = ef;
 
     return this._facade;
+};
+
+/**
+ * Utility method to manipulate the args array passed in, to add the event facade,
+ * if it's not already the first arg.
+ *
+ * @method _addFacadeToArgs
+ * @private
+ * @param {Array} The arguments to manipulate
+ */
+CEProto._addFacadeToArgs = function(args) {
+    var e = args[0];
+
+    // Trying not to use instanceof, just to avoid potential cross Y edge case issues.
+    if (!(e && e.halt && e.stopImmediatePropagation && e.stopPropagation && e._event)) {
+        this._createFacade(args);
+    }
 };
 
 /**
@@ -13018,6 +13070,25 @@ ETProto.bubble = function(evt, args, target, es) {
     }
 
     return ret;
+};
+
+/**
+ * @method _hasPotentialSubscribers
+ * @for EventTarget
+ * @private
+ * @param {String} fullType The fully prefixed type name
+ * @return {boolean} Whether the event has potential subscribers or not
+ */
+ETProto._hasPotentialSubscribers = function(fullType) {
+
+    var etState = this._yuievt,
+        e = etState.events[fullType];
+
+    if (e) {
+        return e.hasSubs() || etState.hasTargets  || e.broadcast;
+    } else {
+        return false;
+    }
 };
 
 FACADE = new Y.EventFacade();

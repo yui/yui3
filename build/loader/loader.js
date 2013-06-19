@@ -3778,6 +3778,12 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datasource-local"
         ]
     },
+    "datatable-foot": {
+        "requires": [
+            "datatable-core",
+            "view"
+        ]
+    },
     "datatable-formatters": {
         "requires": [
             "datatable-body",
@@ -3809,6 +3815,24 @@ Y.mix(YUI.Env[Y.version].modules, {
     "datatable-mutable": {
         "requires": [
             "datatable-base"
+        ]
+    },
+    "datatable-paginator": {
+        "lang": [
+            "en"
+        ],
+        "requires": [
+            "model",
+            "view",
+            "paginator-core",
+            "datatable-foot",
+            "datatable-paginator-templates"
+        ],
+        "skinnable": true
+    },
+    "datatable-paginator-templates": {
+        "requires": [
+            "template"
         ]
     },
     "datatable-scroll": {
@@ -5777,7 +5801,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'c1bd1fcbab7bb992e814ebb99e7599f9';
+YUI.Env[Y.version].md5 = '1eeb2a29e326b52edc83af936a5edabb';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

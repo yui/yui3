@@ -759,6 +759,43 @@ suite.add(new Y.Test.Case({
 
 }));
 
+
+suite.add(new Y.Test.Case({
+    name: "clientId",
+
+    "Row 'record' should match the clientId of the model": function () {
+        var container = Y.Node.create('<table/>'),
+
+            table = new Y.DataTable.BodyView({
+                columns: [
+                    { key: 'a' },
+                    { key: 'clientId' }
+                ],
+                container: container,
+                modelList: new Y.ModelList().reset([
+                    { a: 1, b: 1 },
+                    { a: 2, b: 2 }
+                ])
+            });
+
+        table.render();
+
+        Y.one('body').append(container);
+
+        container.all('tr').each(function (row, index) {
+            var record = row.getData('yui3-record'),
+                model = table.get('modelList').item(index);
+
+            // check model clientIds against row's stored record
+            Y.Assert.areSame(model.get('clientId'), record);
+        });
+
+        table.destroy({ remove: true });
+    }
+}));
+
+
+
 /*
 suite.add(new Y.Test.Case({
     name: "destroy",

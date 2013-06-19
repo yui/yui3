@@ -4,10 +4,8 @@ Base Change History
 @VERSION@
 ------
 
-* No changes.
-
-3.10.3
-------
+* BaseObservable now bypasses the event sub-system if there are no listeners for
+  the `init` event, during construction, to optimize performance.
 
 * Base and BaseCore now add all ATTRS definitions, across the hierarchy,
   in a single shot. Prior to this change, they used to be added a class
@@ -34,6 +32,11 @@ Base Change History
 
   See the Base and BaseCore API docs and the base-core unit tests for more 
   details.
+
+3.10.3
+------
+
+* No changes.
 
 3.10.2
 ------
