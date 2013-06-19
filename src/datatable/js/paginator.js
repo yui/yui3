@@ -803,10 +803,12 @@ Y.mix(Controller.prototype, {
 
             getPage: function () {
                 var _pg = this._paged,
-                    min = _pg.index,
-                    max = (_pg.length >= 0) ? min + _pg.length : undefined;
+                    min = _pg.index;
 
-                return this._items.slice(min, max);
+                // IE LTE 8 doesn't allow "undefined" as a second param - gh890
+                return (_pg.length >= 0) ?
+                        this._items.slice(min, min + _pg.length) :
+                        this._items.slice(min);
             },
 
             size: function (paged) {
