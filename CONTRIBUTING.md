@@ -70,3 +70,16 @@ Join the [mailing list](https://groups.google.com/forum/?fromgroups=#!forum/yui-
 
 **Other Resources**
    * [Contribute Code to YUI](http://yuilibrary.com/yui/docs/tutorials/contribute/)
+
+Pull Request Requirements
+-------------------------
+**If you are making a pull request now please take note of the following
+requirements that your pull request needs (from Contribution Standards, above):**
+
+   * Complete API Docs and inline code comments
+   * Unit tests with 80% line coverage
+   * User Guide (Components only)
+   * Functional examples, written up in Selleck format and with test automation
+   (https://github.com/yui/yui3/wiki/Selleck-Example-Tests)
+   * Proper commit logs
+   * Proper updates to HISTORY.md
