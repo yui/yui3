@@ -42,7 +42,8 @@ Y.mix(Y_Node.prototype, {
     },
 
     _isHidden: function() {
-        return Y.DOM.getAttribute(this._node, 'hidden') === 'true';
+        return Y.DOM.getAttribute(this._node, 'hidden') === 'true'
+            || Y.DOM.getStyle(this._node, 'display') === 'none';
     },
 
     /**
