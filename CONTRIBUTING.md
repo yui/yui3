@@ -17,7 +17,7 @@ Create a free account on
 [YUILibrary.com](http://yuilibrary.com/forum/ucp.php?mode=register) account so
 you can:
 
-  * [Create bugs](http://yuilibrary.com/projects/yui3/newticket/) and
+  * [Create bugs](https://github.com/yui/yui3/issues/new) and
   enhancement requests.
   * Post on the [support forum](http://yuilibrary.com/forum/).
   * Contribute modules to the [Gallery](http://yuilibrary.com/gallery/).
