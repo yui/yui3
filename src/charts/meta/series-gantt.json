@@ -2,7 +2,8 @@
     "series-gantt": {
         "requires":[
             "series-cartesian",
-            "series-plot-util"
+            "series-plot-util",
+            "charts-labelcache"
         ]
     }
 }

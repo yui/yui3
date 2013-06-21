@@ -18,7 +18,7 @@
  * @param {Object} config (optional) Configuration parameters.
  * @submodule axis
  */
-Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
+Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase, Y.ChartsLabelCache], {
     /**
      * Calculates and returns a value based on the number of labels and the index of
      * the current label.
@@ -733,52 +733,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             }
         }
         return label;
-    },
-
-    /**
-     * Creates a cache of labels that can be re-used when the axis redraws.
-     *
-     * @method _createLabelCache
-     * @private
-     */
-    _createLabelCache: function()
-    {
-        if(this._labels)
-        {
-            while(this._labels.length > 0)
-            {
-                this._labelCache.push(this._labels.shift());
-            }
-        }
-        else
-        {
-            this._clearLabelCache();
-        }
-        this._labels = [];
-    },
-
-    /**
-     * Removes axis labels from the dom and clears the label cache.
-     *
-     * @method _clearLabelCache
-     * @private
-     */
-    _clearLabelCache: function()
-    {
-        if(this._labelCache)
-        {
-            var len = this._labelCache.length,
-                i = 0,
-                label;
-            for(; i < len; ++i)
-            {
-                label = this._labelCache[i];
-                this._removeChildren(label);
-                Y.Event.purgeElement(label, true);
-                label.parentNode.removeChild(label);
-            }
-        }
-        this._labelCache = [];
     },
 
     /**

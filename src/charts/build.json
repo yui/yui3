@@ -1,6 +1,11 @@
 {
     "name": "charts",
     "builds": {
+        "charts-labelcache" : {
+            "jsfiles" : [
+                "ChartsLabelCache.js"
+            ]
+        },
         "axis-base" : {
             "jsfiles": [
                 "Renderer.js",

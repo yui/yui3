@@ -405,32 +405,32 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
         while(tempKeys.length > 0)
         {
             series = sc && sc.length > 0 ? sc.shift() : {type:type};
-            if(series instanceof Y.CartesianSeries)
+            key = this._getBaseAttribute(series, seriesKey);
+            if(key)
             {
-                this._parseSeriesAxes(series);
-            }
-            else
-            {
-                key = series[seriesKey];
-                if(key)
+                if(Y.Lang.isArray(key))
                 {
-                    if(Y.Lang.isArray(key))
-                    {
-                        l = key.length;
-                        for(i = 0; i < l; i = i + 1)
-                        {
-                            tempKeys.splice(tempKeys.indexOf(key), 1);
-                        }
-                    }
-                    else
+                    l = key.length;
+                    for(i = 0; i < l; i = i + 1)
                     {
                         tempKeys.splice(tempKeys.indexOf(key), 1);
                     }
                 }
                 else
                 {
-                    key = tempKeys.shift();
+                    tempKeys.splice(tempKeys.indexOf(key), 1);
                 }
+            }
+            else
+            {
+                key = tempKeys.shift();
+            }
+            if(series instanceof Y.CartesianSeries)
+            {
+                this._parseSeriesAxes(series);
+            }
+            else
+            {
                 series[catKey] = series[catKey] || categoryKey;
                 series[seriesKey] = key;
                 series[catAxis] = this._getCategoryAxis();
@@ -475,8 +475,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
                     }
                 }
                 stylesIndex = stylesIndex + 1;
-                seriesCollection.push(series);
             }
+            seriesCollection.push(series);
         }
         if(seriesCollection)
         {

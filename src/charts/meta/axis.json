@@ -6,7 +6,8 @@
             "widget-position", 
             "widget-stack",
             "graphics", 
-            "axis-base"
+            "axis-base",
+            "charts-labelcache"
         ]
     }
 }

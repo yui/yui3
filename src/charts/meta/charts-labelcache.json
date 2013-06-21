@@ -1,0 +1,7 @@
+{
+    "charts-labelcache": {
+        "requires":[
+            "event" 
+        ]
+    }
+}
