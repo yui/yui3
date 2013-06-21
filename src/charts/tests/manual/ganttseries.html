@@ -14,7 +14,6 @@
             font-size: 75%;
         }
     </style>
-    <link rel="stylesheet" type="text/css" href="../../../../build/cssfonts/fonts-min.css">
 </head>		
 <body class="yui3-skin-sam">
     <h4>Gantt Example</h4>
@@ -167,9 +166,7 @@
             indicatorLine = ganttUtils.addIndicatorLine(mychart.getAxisByKey("values"), 1500, {
                 color: "#22AF2B",
                 weight: 2
-            }),
-            //add start and end labels
-            itemLabels = ganttUtils.addItemLabels(mychart.getSeries(0), Y.ClassNameManager.getClassName("charts-ganttseriesItemLabel"), 2);
+            });
     });
 </script>
 </body>

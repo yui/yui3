@@ -24,12 +24,33 @@ YUI.add('series-gantt-tests', function(Y) {
             },
             
             "test: drawSeries()" : function() {
-                var startcoords = [0.25, 15, 15, 15, 15, 15, 135.5, 136.8, 141.25, 142.75, 130,5],
+                var startdata = [1, 59, 59, 59, 59, 59, 528, 533, 550, 556, 508],
+                    enddata = [58, 507, 527, 532, 549, 556, 950, 1019, 1062, 1098,2385],
+                    ydata = [0, 1, 2, 3, 4, 5, 6, null, 8, 9, 10],
+                    startcoords = [0.25, 15, 15, 15, 15, 15, 135.5, 136.8, 141.25, 142.75, 130,5],
                     endcoords = [15, 130, 135.3, 136.5, 141, 142.75, 244, 261.7, 272.75, 282, 612.5],
                     ycoords = [15.1, 45.27, 75.45, 105.64, 135.82, 166, 196.18, NaN, 256.55, 286.73, 316.91],
+                    MockGraphic = Y.Base.create("drawSeriesMockGraphic", Y.Base, [], {}, {
+                        ATTRS: {
+                            node: {
+                                valueFn: function() {
+                                    return {};
+                                }
+                            }
+                        }
+                    }),
                     DrawSeriesMock = Y.Base.create("drawSeriesMock", Y.GanttSeries, [], {
                         prepMock: function() {
                             this._markerStyles = [];
+                        },
+                        _createLabelCache: function() {
+                            //only need to check and see if the method has been called. 
+                            this._labels = [];
+                            this._labelCacheCreated = true;
+                        },
+                        _clearLabelCache: function() {
+                            //only need to check and see if the method has been called. 
+                            this._labelCacheCleared = true;
                         },
                         _createMarkerCache: function() {
                             //only need to check and see if the method has been called. 
@@ -68,6 +89,29 @@ YUI.add('series-gantt-tests', function(Y) {
                             ycoords: {
                                 valueFn: function() {
                                     return ycoords;
+                                }
+                            },
+                            xData: {
+                                valueFn: function() {
+                                    return {
+                                        start: startdata,
+                                        end: enddata
+                                    }
+                                }
+                            },
+                            yData: {
+                                valueFn: function() {
+                                    return ydata;
+                                }
+                            },
+                            graphic: {
+                                valueFn: function() {
+                                    return new MockGraphic();
+                                }
+                            },
+                            labelFunction: {
+                                value: function() {
+                                    this._args = arguments;
                                 }
                             }
                         }
@@ -133,6 +177,8 @@ YUI.add('series-gantt-tests', function(Y) {
                 markerHeight = seriesMarkerStyles.height;
                 Y.Assert.isTrue(mockSeries._markerCacheCreated, "The _createMarkerCache method should have been called.");
                 Y.Assert.isTrue(mockSeries._markerCacheCleared, "The _clearMarkerCache method should have been called.");  
+                Y.Assert.isTrue(mockSeries._labelCacheCreated, "The _createLabelCache method should have been called.");
+                Y.Assert.isTrue(mockSeries._labelCacheCleared, "The _clearLabelCache method should have been called.");  
                 testStyles();
                 mockSeries.prepMock();
                 mockSeries.set("styles", {

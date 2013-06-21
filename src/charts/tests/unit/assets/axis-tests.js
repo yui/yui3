@@ -2493,25 +2493,6 @@ YUI.add('axis-tests', function(Y) {
     
         },
 
-        "test: _clearLabelCache()" : function() {
-            var axis = this.axis,
-                label,
-                labels = [],
-                axis = this.axis,
-                i,
-                len = 11;
-            this.axis._clearLabelCache();
-            Y.Assert.areEqual(0, axis._labelCache.length, "The should not be any labels in the cache.");
-            for(i = 0; i < len; i = i + 1) {
-                label = document.createElement('span');
-                label.appendChild(document.createTextNode("label # " + (i + 1)));
-                document.body.appendChild(label);
-                labels.push(label);
-            }
-            this.axis._labelCache = labels;
-            this.axis._clearLabelCache();
-            Y.Assert.areEqual(0, axis._labelCache.length, "The should not be any labels in the cache.");
-        },
         "test: getMajorUnitDistance()" : function() {
             var position = this.position,
                 vertical = position === "left" || position === "right",
