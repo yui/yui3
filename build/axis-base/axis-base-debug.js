@@ -113,6 +113,36 @@ Renderer.prototype = {
     },
 
     /**
+     * Copies an object literal.
+     *
+     * @method _copyObject
+     * @param {Object} obj Object literal to be copied.
+     * @return Object
+     * @private
+     */
+    _copyObject: function(obj) {
+        var newObj = {},
+            key,
+            val;
+        for(key in obj)
+        {
+            if(obj.hasOwnProperty(key))
+            {
+                val = obj[key];
+                if(Y_Lang.isObject(val) && !Y_Lang.isFunction(val) && !Y_Lang.isArray(val))
+                {
+                    newObj[key] = this._copyObject(val);
+                }
+                else
+                {
+                    newObj[key] = val;
+                }
+            }
+        }
+        return newObj;
+    },
+
+    /**
      * Gets the default value for the `styles` attribute.
      *
      * @method _getDefaultStyles
@@ -358,12 +388,34 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     getKeyValueAt: function(key, index)
     {
         var value = NaN,
-            keys = this.get("keys");
-        if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
+            keys = this.get("keys"),
+            i,
+            len;
+        if(Y.Lang.isArray(key))
         {
-            value = keys[key][index];
+            len = key.length;
+            value = [];
+            for(i = 0; i < len; i = i + 1)
+            {
+                if(keys[key[i]] && Y_Lang.isNumber(parseFloat(keys[key[i]][index])))
+                {
+                    value.push(parseFloat(keys[key[i]][index]));
+                }
+                else
+                {
+                    value.push(NaN);
+                }
+            }
         }
-        return parseFloat(value);
+        else
+        {
+            if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
+            {
+                value = keys[key][index];
+                value = parseFloat(value);
+            }
+        }
+        return value;
     },
 
     /**

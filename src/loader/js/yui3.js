@@ -339,7 +339,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-position",
             "widget-stack",
             "graphics",
-            "axis-base"
+            "axis-base",
+            "charts-labelcache"
         ]
     },
     "axis-base": {
@@ -556,6 +557,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "series-spline",
             "series-column",
             "series-bar",
+            "series-gantt",
             "series-areaspline",
             "series-combo",
             "series-combospline",
@@ -568,6 +570,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "series-areaspline-stacked",
             "series-combo-stacked",
             "series-combospline-stacked"
+        ]
+    },
+    "charts-labelcache": {
+        "requires": [
+            "event"
         ]
     },
     "charts-legend": {
@@ -2461,6 +2468,13 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "series-curve-util": {},
     "series-fill-util": {},
+    "series-gantt": {
+        "requires": [
+            "series-cartesian",
+            "series-plot-util",
+            "charts-labelcache"
+        ]
+    },
     "series-histogram-base": {
         "requires": [
             "series-cartesian",
@@ -2959,4 +2973,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '1fa99d183d9018a5624c480a73fa23ad';
+YUI.Env[Y.version].md5 = '8ee2b46e692eb581c2c168f8a18bbdb2';

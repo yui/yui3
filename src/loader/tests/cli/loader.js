@@ -776,6 +776,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("charts-base")) > -1, "Module (charts-base) not found in sorted array");
         },
+     "Testing charts-labelcache": function(data) {
+            var loader = new Y.Loader({
+                require: ["charts-labelcache"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("charts-labelcache")) > -1, "Module (charts-labelcache) not found in sorted array");
+        },
      "Testing charts-legend": function(data) {
             var loader = new Y.Loader({
                 require: ["charts-legend"],
@@ -3212,6 +3222,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("series-fill-util")) > -1, "Module (series-fill-util) not found in sorted array");
+        },
+     "Testing series-gantt": function(data) {
+            var loader = new Y.Loader({
+                require: ["series-gantt"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("series-gantt")) > -1, "Module (series-gantt) not found in sorted array");
         },
      "Testing series-histogram-base": function(data) {
             var loader = new Y.Loader({

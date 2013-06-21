@@ -411,6 +411,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             i = 0,
             series,
             seriesKey;
+        this._dispatchers = [];
         this._seriesCollection = [];
         this._seriesDictionary = {};
         this.seriesTypes = [];
@@ -532,7 +533,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         combo : Y.ComboSeries,
         stackedcombo : Y.StackedComboSeries,
         combospline : Y.ComboSplineSeries,
-        stackedcombospline : Y.StackedComboSplineSeries
+        stackedcombospline : Y.StackedComboSplineSeries,
+        gantt: Y.GanttSeries
     },
 
     /**
@@ -1331,7 +1333,6 @@ ChartBase.ATTRS = {
 };
 
 ChartBase.prototype = {
-
     /**
      * Utility method to determine if `seriesKeys` was explicitly provided
      * (for example during construction, or set by the user), as opposed to
@@ -2255,7 +2256,9 @@ ChartBase.prototype = {
      */
     _tooltipLabelFunction: function(categoryItem, valueItem)
     {
-        var msg = DOCUMENT.createElement("div"),
+        var i,
+            len,
+            msg = DOCUMENT.createElement("div"),
             categoryValue = categoryItem.axis.get("labelFunction").apply(
                 this,
                 [categoryItem.value, categoryItem.axis.get("labelFormat")]
@@ -2271,14 +2274,28 @@ ChartBase.prototype = {
             categoryValue = DOCUMENT.createTextNode(categoryValue);
         }
         msg.appendChild(categoryValue);
-        msg.appendChild(DOCUMENT.createElement("br"));
-        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));
-        msg.appendChild(DOCUMENT.createTextNode(": "));
-        if(!Y_Lang.isObject(seriesValue))
+        if(Y.Lang.isArray(valueItem.displayName))
         {
-            seriesValue = DOCUMENT.createTextNode(seriesValue);
+            len = valueItem.displayName.length;
+            for(i = 0; i < len; i = i + 1)
+            {
+                msg.appendChild(DOCUMENT.createElement("br"));
+                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName[i]));
+                msg.appendChild(DOCUMENT.createTextNode(": "));
+                msg.appendChild(DOCUMENT.createTextNode(valueItem.value[i]));
+            }
         }
-        msg.appendChild(seriesValue);
+        else
+        {
+            msg.appendChild(DOCUMENT.createElement("br"));
+            msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));
+            msg.appendChild(DOCUMENT.createTextNode(": "));
+            if(!Y_Lang.isObject(seriesValue))
+            {
+                seriesValue = DOCUMENT.createTextNode(seriesValue);
+            }
+            msg.appendChild(seriesValue);
+        }
         return msg;
     },
 
@@ -2663,6 +2680,49 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
     },
 
     /**
+     * Checks to see if key in a series is included in the seriesKeys array.
+     *
+     * @method _containsSeriesKey
+     * @param {Array} seriesKeys Array of keys to check against.
+     * @param {Array} tempKeys Array that stores valid keys.
+     * @param {String|Array} key The key that is being validated.
+     * @return Boolean
+     * @private
+     */
+    _containsSeriesKey: function(seriesKeys, tempKeys, key)
+    {
+        var i,
+            index,
+            len,
+            containsKey = false;
+        if(Y.Lang.isArray(key))
+        {
+            len = key.length;
+            for(i = 0; i < len; i = i + 1)
+            {
+                index = Y.Array.indexOf(seriesKeys, key[i]);
+                if(index > -1)
+                {
+                    seriesKeys.splice(index, 1);
+                    tempKeys.push(key[i]);
+                    containsKey = true;
+                }
+            }
+        }
+        else
+        {
+            index = Y.Array.indexOf(seriesKeys, key);
+            if(index > -1)
+            {
+                seriesKeys.splice(index, 1);
+                tempKeys.push(key);
+                containsKey = true;
+            }
+        }
+        return containsKey;
+    },
+     
+    /**
      * Parses and returns a series collection from an object and default properties.
      *
      * @method _parseSeriesCollection
@@ -2679,13 +2739,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
             setStyles,
             globalStyles,
             sc = [],
+            seriesCollection = [],
             catAxis,
             valAxis,
             tempKeys = [],
             series,
             seriesKeys = this.get("seriesKeys").concat(),
             i,
-            index,
             l,
             type = this.get("type"),
             key,
@@ -2719,11 +2779,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
             key = this._getBaseAttribute(series, seriesKey);
             if(key)
             {
-                index = Y.Array.indexOf(seriesKeys, key);
-                if(index > -1)
+                if(this._containsSeriesKey(seriesKeys, tempKeys, key))
                 {
-                    seriesKeys.splice(index, 1);
-                    tempKeys.push(key);
                     sc.push(series);
                 }
                 else
@@ -2755,10 +2812,30 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
         {
             tempKeys = tempKeys.concat(seriesKeys);
         }
-        l = tempKeys.length;
-        for(i = 0; i < l; ++i)
+        stylesIndex = 0;
+        while(tempKeys.length > 0)
         {
-            series = sc[i] || {type:type};
+            series = sc && sc.length > 0 ? sc.shift() : {type:type};
+            key = this._getBaseAttribute(series, seriesKey);
+            if(key)
+            {
+                if(Y.Lang.isArray(key))
+                {
+                    l = key.length;
+                    for(i = 0; i < l; i = i + 1)
+                    {
+                        tempKeys.splice(tempKeys.indexOf(key), 1);
+                    }
+                }
+                else
+                {
+                    tempKeys.splice(tempKeys.indexOf(key), 1);
+                }
+            }
+            else
+            {
+                key = tempKeys.shift();
+            }
             if(series instanceof Y.CartesianSeries)
             {
                 this._parseSeriesAxes(series);
@@ -2766,7 +2843,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
             else
             {
                 series[catKey] = series[catKey] || categoryKey;
-                series[seriesKey] = series[seriesKey] || seriesKeys.shift();
+                series[seriesKey] = key;
                 series[catAxis] = this._getCategoryAxis();
                 series[valAxis] = this._getSeriesAxis(series[seriesKey]);
 
@@ -2794,8 +2871,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
                 }
                 if(seriesStyles)
                 {
-                    stylesIndex = stylesAreArray ? i : series[seriesKey];
-                    globalStyles = seriesStyles[stylesIndex];
+                    globalStyles = stylesAreArray ? seriesStyles[stylesIndex] : seriesStyles[series[seriesKey]];
                     if(globalStyles)
                     {
                         setStyles = series.styles;
@@ -2809,16 +2885,17 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
                         }
                     }
                 }
-                sc[i] = series;
+                stylesIndex = stylesIndex + 1;
             }
+            seriesCollection.push(series);
         }
-        if(sc)
+        if(seriesCollection)
         {
             graph = this.get("graph");
-            graph.set("seriesCollection", sc);
-            sc = graph.get("seriesCollection");
+            graph.set("seriesCollection", seriesCollection);
+            seriesCollection = graph.get("seriesCollection");
         }
-        return sc;
+        return seriesCollection;
     },
 
     /**
@@ -2882,6 +2959,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
     {
         var axes = this.get("axes"),
             i,
+            iter,
+            len,
             keys,
             axis;
         if(axes)
@@ -2897,10 +2976,25 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
                     if(axes.hasOwnProperty(i))
                     {
                         keys = axes[i].get("keys");
-                        if(keys && keys.hasOwnProperty(key))
+                        if(keys)
                         {
-                            axis = axes[i];
-                            break;
+                            if(Y.Lang.isArray(key))
+                            {
+                                len = key.length;
+                                for(iter = 0; iter < len; iter = iter + 1)
+                                {
+                                    if(keys.hasOwnProperty(key[iter]))
+                                    {
+                                        axis = axes[i];
+                                        break;
+                                    }
+                                }
+                            }
+                            else if(keys.hasOwnProperty(key))
+                            {
+                                axis = axes[i];
+                                break;
+                            }
                         }
                     }
                 }
@@ -5112,6 +5206,7 @@ Y.Chart = Chart;
         "series-spline",
         "series-column",
         "series-bar",
+        "series-gantt",
         "series-areaspline",
         "series-combo",
         "series-combospline",

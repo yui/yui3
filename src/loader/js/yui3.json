@@ -307,7 +307,8 @@
             "widget-position",
             "widget-stack",
             "graphics",
-            "axis-base"
+            "axis-base",
+            "charts-labelcache"
         ]
     },
     "axis-base": {
@@ -524,6 +525,7 @@
             "series-spline",
             "series-column",
             "series-bar",
+            "series-gantt",
             "series-areaspline",
             "series-combo",
             "series-combospline",
@@ -536,6 +538,11 @@
             "series-areaspline-stacked",
             "series-combo-stacked",
             "series-combospline-stacked"
+        ]
+    },
+    "charts-labelcache": {
+        "requires": [
+            "event"
         ]
     },
     "charts-legend": {
@@ -2319,6 +2326,13 @@
     },
     "series-curve-util": {},
     "series-fill-util": {},
+    "series-gantt": {
+        "requires": [
+            "series-cartesian",
+            "series-plot-util",
+            "charts-labelcache"
+        ]
+    },
     "series-histogram-base": {
         "requires": [
             "series-cartesian",

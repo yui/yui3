@@ -588,7 +588,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
         var w = this.get("width"),
             h = this.get("height"),
             xcoords,
-            ycoords;
+            ycoords,
+            direction = this.get("direction"),
+            categorycoords;
         if(this.get("rendered"))
         {
             if((isFinite(w) && isFinite(h) && w > 0 && h > 0) &&
@@ -605,7 +607,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
                 this.setAreaData();
                 xcoords = this.get("xcoords");
                 ycoords = this.get("ycoords");
-                if(xcoords && ycoords && xcoords.length > 0)
+                categorycoords = direction === "vertical" ? ycoords : xcoords;
+                if(xcoords && ycoords && categorycoords.length > 0)
                 {
                     this.drawSeries();
                 }
