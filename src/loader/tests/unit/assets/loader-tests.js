@@ -31,6 +31,7 @@ YUI.add('loader-tests', function(Y) {
                 test_async: Y.UA.nodejs,
                 test_css_stamp: Y.UA.nodejs,
                 test_group_filters: Y.UA.nodejs,
+                test_early_module_meta: Y.UA.nodejs || !Y.config.earlyModuleMeta,
                 test_cond_no_test_or_ua: Y.UA.nodejs,
                 test_condpattern: Y.UA.nodejs,
                 test_cond_with_test_function: Y.UA.nodejs,
@@ -392,6 +393,19 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
 
+        },
+        test_early_module_meta: function() {
+            var test = this;
+
+            YUI().use('mod1', 'node', function(Y) {
+                test.resume(function() {
+                    var script = Y.one('#early-module-meta');
+                    Assert.isNotNull(script, 'Failed to load module');
+                    Assert.isTrue(Y.MOD1, 'Failed to add module');
+                });
+            });
+
+            test.wait();
         },
         test_module_attrs: function() {
             var test = this;

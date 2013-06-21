@@ -15,10 +15,27 @@
 without Loader on the page, so Loader is fetched before tests are executed. -->
 <script type="text/javascript" src="../../../../build/yui-base/yui-base.js"></script>
 <script type="text/javascript">
+var Y = YUI();
+YUI.Env[Y.version].modules = {
+    mod1: {
+        fullpath: '../assets/mod1.js',
+        attributes: {
+            id: 'early-module-meta'
+        }
+    }
+};
+</script>
+<script type="text/javascript">
 
 var filter = (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw';
 
+// Below, `earlyModuleMeta` indicates that module metadata was provided before
+// the loader was fetched. This configuration is used to include/exclude the
+// `test_early_module_meta` test when module metadata was not provided before
+// the loader was fetched.
+
 var YUI_config = {
+    earlyModuleMeta: true,
     loaderPath: 'loader/loader' + ((filter !== 'raw') ? '-' + filter : '') + '.js',
     gconfig: true,
     gfilter: filter
