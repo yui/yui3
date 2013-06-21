@@ -108,7 +108,7 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     _hide: function() {
-        this.setAttribute('hidden', true);
+        this.setAttribute('hidden', '');
 
         // For back-compat we need to leave this in for browsers that
         // do not visually hide a node via the hidden attribute
