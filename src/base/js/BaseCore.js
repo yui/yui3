@@ -669,6 +669,7 @@
          * @private
          */
         _initHierarchy : function(userVals) {
+
             var lazy = this._lazyAddAttrs,
                 constr,
                 constrProto,
@@ -685,7 +686,6 @@
             for (ci = cl; ci >= 0; ci--) {
 
                 constr = classes[ci];
-                constrProto = constr.prototype;
                 exts = constr._yuibuild && constr._yuibuild.exts;
 
                 if (exts) {
@@ -693,21 +693,25 @@
                         exts[ei].apply(this, arguments);
                     }
                 }
+            }
 
-                if (ci === cl) {
+            instanceAttrs = this._getInstanceAttrCfgs(attrCfgs);
 
-                    instanceAttrs = this._getInstanceAttrCfgs(attrCfgs);
+            if (this._preAddAttrs) {
+                this._preAddAttrs(instanceAttrs, userVals, lazy);
+            }
 
-                    if (this._preAddAttrs) {
-                        this._preAddAttrs(instanceAttrs, userVals, lazy);
-                    }
+            this.addAttrs(instanceAttrs, userVals, lazy);
 
-                    this.addAttrs(instanceAttrs, userVals, lazy);
+            if (this._allowAdHocAttrs) {
+                this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
+            }
 
-                    if (this._allowAdHocAttrs) {
-                        this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
-                    }
-                }
+            for (ci = cl; ci >= 0; ci--) {
+
+                constr = classes[ci];
+                constrProto = constr.prototype;
+                exts = constr._yuibuild && constr._yuibuild.exts;
 
                 // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
                 // referencing string literals). Not using it in apply, again, for performance "." is faster.
@@ -716,7 +720,7 @@
                 }
 
                 if (exts) {
-                    for (ei = 0; ei < el; ei++) {
+                    for (ei = 0, el = exts.length; ei < el; ei++) {
                         extProto = exts[ei].prototype;
                         if (extProto.hasOwnProperty(INITIALIZER)) {
                             extProto.initializer.apply(this, arguments);
