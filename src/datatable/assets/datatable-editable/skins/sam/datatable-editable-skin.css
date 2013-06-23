@@ -2,7 +2,30 @@
     background-color: orange !important;
 }
 
-.yui3-skin-sam .yui3-datatable-celleditor-editing {
+.yui3-skin-sam tr.yui3-datatable-celleditor-editing {
     background-color: blueviolet !important;
+    z-index: 98;
+    position: relative;
 }
 
+.yui3-skin-sam .yui3-roweditor-overlay-content {
+   padding: 4px;
+   background-color: #e6e6e6;
+   border: 1px solid #a0a0a0;
+   -moz-border-radius: 2px;
+   -webkit-border-radius: 2px;
+   border-radius: 3px;
+   z-index: 97;
+}
+
+.yui3-skin-sam  .yui3-roweditor-overlay-content .yui3-button {
+    font-size:  11px;
+}
+
+.yui3-skin-sam  .yui3-roweditor-overlay-content .yui3-widget-bd {
+    text-align: center;
+}
+.yui3-skin-sam  .yui3-roweditor-overlay-content .yui3-widget-ft {
+    text-align: center;
+    padding-top: 3px;
+}
