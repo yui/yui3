@@ -65,7 +65,8 @@
             "jsfiles":[
                 "editable.js",
                 "celleditor-base.js",
-                "celleditor-overlay.js"
+                "celleditor-overlay.js",
+                "roweditor.js"
             ]
         },
         "datatable-celleditors": {

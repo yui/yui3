@@ -1,11 +1,11 @@
 // This file gets chained after others that already have var declarations
-/*jshint onevar:false*/
-var substitute = Y.Lang.sub,
-    Plugins = Y.Plugins || {},
-    arrMap = Y.Array.map;
-/*jshint onevar:true*/
+/*jshint onevar:false */
+//var substitute = Y.Lang.sub,
+//    Plugins = Y.Plugins || {},
+//    arrMap = Y.Array.map;
+/* jshint onevar:true*/
 
-Y.DataTable.CellEditorOverlay = Y.Base.create('celleditor-overlay', Y.Overlay, [],
+Y.DataTable.RowEditorOverlay = Y.Base.create('roweditor-overlay', Y.Overlay, [],
     {
         /**
         Defines the template for BUTTON elements that are added to the Overlay
@@ -19,14 +19,14 @@ Y.DataTable.CellEditorOverlay = Y.Base.create('celleditor-overlay', Y.Overlay, [
         btnTemplate:    '<button class="yui3-button {classButton}">{label}</button>',
 
         /**
-        Reference to the cell editor that this overlay is hosting.
+        Reference to the datatable whose editors this overlay is hosting.
 
-        @property _guest
-        @type Datatable.BaseCellEditor
+        @property _dt
+        @type Datatable
         @default null
         @private
          */
-        _guest: null,
+        _dt: null,
 
         /**
         Offset from the left edge of the element to be positioned to the left
@@ -60,19 +60,29 @@ Y.DataTable.CellEditorOverlay = Y.Base.create('celleditor-overlay', Y.Overlay, [
         @protected
          */
         initializer: function (config) {
-            Y.log('CellEditorOverlay.initializer','info','CellEditorOverlay');
+            Y.log('RowEditorOverlay.initializer','info','RowEditorOverlay');
+            this._subscr = [];
+            var title = config.title;
 
-            var guest = (this._guest = config.guest),
-                title = guest.get('title');
-
-
+            this._dt = config.dt;
             if(Plugins.Drag) {
                 this.plug(Plugins.Drag);
             }
             if (title) {
                 this.set('headerContent', title);
             }
-            this._createOverlayButtons(guest.get('buttons'));
+            this._createOverlayButtons(config.buttons);
+        },
+        destructor: function () {
+            arrEach(this._subscr, function (subscr) {
+                if (subscr.destroy) {
+                    subscr.destroy();
+                }
+            });
+        },
+        showEditor: function (config) {
+            this.show();
+            this._attach(config.tr);
         },
 
         /**
@@ -86,7 +96,7 @@ Y.DataTable.CellEditorOverlay = Y.Base.create('celleditor-overlay', Y.Overlay, [
         @private
         */
         _createOverlayButtons: function (btnCfg) {
-            Y.log('CellEditorOverlay._createOverlayButtons','info','CellEditorOverlay');
+            Y.log('RowEditorOverlay._createOverlayButtons','info','RowEditorOverlay');
 
             var strings = Y.DataTable.BaseCellEditor.localizedStrings,
                 footer,
@@ -104,7 +114,7 @@ Y.DataTable.CellEditorOverlay = Y.Base.create('celleditor-overlay', Y.Overlay, [
                 }, this);
                 this.set('footerContent', buttons.join('\n'));
                 footer = this.getStdModNode('footer', true);
-                this._guest._subscr.push(footer.delegate('click', this._afterButtonClick, 'button.yui3-button', this));
+                this._subscr.push(footer.delegate('click', this._afterButtonClick, 'button.yui3-button', this));
             }
         },
 
@@ -116,68 +126,100 @@ Y.DataTable.CellEditorOverlay = Y.Base.create('celleditor-overlay', Y.Overlay, [
         @private
         */
         _afterButtonClick: function (ev) {
-            Y.log('CellEditorOverlay._afterButtonClick','info','CellEditorOverlay');
+            Y.log('RowEditorOverlay._afterButtonClick','info','RowEditorOverlay');
 
             var btnCfg = null,
                 action,
                 cellInfo,
-                guest = this._guest;
+                dt = this._dt;
 
             if (ev.target.ancestor().get('children').some(function(button, index) {
                 if (button === ev.target) {
-                    btnCfg = guest.get('buttons')[index];
+                    btnCfg = this.get('buttons')[index];
                     return true;
                 }
             })) {
                 if (btnCfg.save) {
-                    guest.saveEditor();
+                    dt.saveRowEditor();
                     return;
                 }
                 if (btnCfg.cancel) {
-                    guest.cancelEditor();
+                    dt.cancelRowEditor();
                     return;
                 }
                 action = btnCfg.action;
                 cellInfo = Y.merge(guest._cellInfo, {value: guest._getValue()});
                 switch (Lang.type(action)) {
                     case 'string':
-                        if (guest[action]) {
-                            guest[action].call(guest, btnCfg, cellInfo);
+                        if (dt[action]) {
+                            dt[action].call(dt, btnCfg, cellInfo);
                         } else {
-                            guest.fire(action, btnCfg, cellInfo);
+                            dt.fire(action, btnCfg, cellInfo);
                         }
                         break;
                     case 'function':
-                        action.call(guest, btnCfg, cellInfo);
+                        action.call(dt, btnCfg, cellInfo);
                         break;
                 }
             }
         },
 
         /**
-        Moves the overlay to the given xy position so that the
-        [_guest](#property__guest) element ends on top of the cell being
-        edited.
+        Resizes and moves the body section
+        to fit on top of the row being edited.
 
-        It has been defined with this name to make it behave as the node used
-        with inline editors.  That is why it is private but has no leading
-        underscore.
+        The default implementation reads the `region` the row occupies and
+        calls [_resize](#method__resize) and [_move](#method__move).
 
-        @method setXY
-        @param xy {Array} Array of X and Y position for the guest element.
+        @method _attach
+        @param tr {Node} cell to attach this editor to
+        @protected
+        */
+        _attach: function (tr) {
+            Y.log('DataTable.RowEditorOverlay._attach', 'info', 'celleditor-base');
+            if (this.get('visible')) {
+                var region = tr.get('region');
+                this._resize(region.width, region.height);
+                this._move(region.left, region.top);
+            }
+        },
+
+        /**
+        Resizes the  body section to fit on top of the row being edited.
+
+        @method _resize
+        @param width {Number} width of the cell being edited
+        @param height {Number} height of the cell being edited
+        @protected
          */
-        setXY: function (xy) {
-            Y.log('CellEditorOverlay.setXY','info','CellEditorOverlay');
+        _resize: function (width, height) {
+            Y.log('DataTable.RowEditorOverlay._resize [' + width + ':' + height + ']','info','celleditor-base');
+
+            var node = this.getStdModNode('body',true);
+            node.set('offsetWidth', width + 1);
+            node.set('offsetHeight', height);
+        },
+
+        /**
+        Moves the overlay so that the body section fits on top of the row being edited.
+
+        @method _move
+        @param left {Number} left edge of the cell being edited.
+        @param top {Number} top edge of the cell being edited.
+        @protected
+         */
+        _move: function (left, top) {
+            Y.log('DataTable.RowEditorOverlay._move: [' + left + ':' + top + ']', 'info', 'celleditor-base');
 
             var offsetX = this._offsetX,
-                bbxy, contentxy, guest = this._guest;
+                bbxy, contentxy;
             if (offsetX === null) {
                 bbxy = this.get('boundingBox').getXY();
-                contentxy = guest._xyReference.getXY();
+                contentxy = this.getStdModNode('body',true).getXY();
                 offsetX = this._offsetX = bbxy[0] - contentxy[0];
                 this._offsetY = bbxy[1] - contentxy[1];
             }
-            this.set('xy', [xy[0] + offsetX, xy[1] + this._offsetY]);
+            this.set('xy', [left + offsetX, top + this._offsetY]);
         }
     },
     {
@@ -190,7 +232,7 @@ Y.DataTable.CellEditorOverlay = Y.Base.create('celleditor-overlay', Y.Overlay, [
             @default 99
              */
             zIndex: {
-                value: 99
+                value: 97
             },
 
             /**
@@ -202,9 +244,11 @@ Y.DataTable.CellEditorOverlay = Y.Base.create('celleditor-overlay', Y.Overlay, [
              */
             visible: {
                 value: false
+            },
+            buttons: {
+
             }
         }
 
     }
-
 );
