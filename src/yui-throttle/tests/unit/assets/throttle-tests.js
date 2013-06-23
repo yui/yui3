@@ -109,15 +109,21 @@ YUI.add('throttle-tests', function(Y) {
             Assert.areEqual(0, counter, 'throttled function called before throttle time');
         },
         '`this` is not modified in throttled function': function () {
-            var obj = {
-                fn: Y.throttle(function () {
-                    Assert.areSame(obj, this, 'wrong value for `this` in function with canceled throttle');
-                }, 1)
-            };
+            var counter = 0,
+                obj = {
+                    fn: Y.throttle(function () {
+                        counter++;
+                        Assert.areSame(obj, this, 'wrong value for `this` in function with canceled throttle');
+                    }, 1)
+                };
 
             // Adjust delta to be larger the throttle time so the function is called
             this.tDelta = 10;
             obj.fn();
+            obj.fn();
+
+            // Ensure the test function is called and we do not get a false positive
+            Assert.areSame(1, counter, 'throttled function was never called');
         },
         'test `this` in function with disabled throttle': function () {
             var obj = {
