@@ -47,10 +47,10 @@
     height: 1em;
 }
 
-.yui3-skin-sam .yui3-datatable-cell-editors .yui3-widget-bd {
+.yui3-skin-sam .yui3-datatable-cell-editors .yui3-celleditor-overlay-content .yui3-widget-bd {
     text-align: center;
 }
-.yui3-skin-sam .yui3-datatable-cell-editors .yui3-widget-ft {
+.yui3-skin-sam .yui3-datatable-cell-editors .yui3-celleditor-overlay-content .yui3-widget-ft {
     text-align: center;
     padding-top: 3px;
 }
