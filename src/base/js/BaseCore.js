@@ -673,28 +673,53 @@
             var lazy = this._lazyAddAttrs,
                 constr,
                 constrProto,
+                i,
+                l,
                 ci,
                 ei,
                 el,
+                ext,
                 extProto,
                 exts,
                 instanceAttrs,
+                initializers = [],
                 classes = this._getClasses(),
                 attrCfgs = this._getAttrCfgs(),
                 cl = classes.length - 1;
 
+            // Constructors
             for (ci = cl; ci >= 0; ci--) {
 
                 constr = classes[ci];
+                constrProto = constr.prototype;
                 exts = constr._yuibuild && constr._yuibuild.exts;
+
+                // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
+                // referencing string literals). Not using it in apply, again, for performance "." is faster.
+
+                if (constrProto.hasOwnProperty(INITIALIZER)) {
+                    // Store initializer while we're here and looping
+                    initializers[initializers.length] = constrProto.initializer;
+                }
 
                 if (exts) {
                     for (ei = 0, el = exts.length; ei < el; ei++) {
-                        exts[ei].apply(this, arguments);
+
+                        ext = exts[ei];
+
+                        // Ext Constructor
+                        ext.apply(this, arguments);
+
+                        extProto = ext.prototype;
+                        if (extProto.hasOwnProperty(INITIALIZER)) {
+                            // Store initializer while we're here and looping
+                            initializers[initializers.length] = extProto.initializer;
+                        }
                     }
                 }
             }
 
+            // ATTRS
             instanceAttrs = this._getInstanceAttrCfgs(attrCfgs);
 
             if (this._preAddAttrs) {
@@ -707,26 +732,9 @@
                 this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
             }
 
-            for (ci = cl; ci >= 0; ci--) {
-
-                constr = classes[ci];
-                constrProto = constr.prototype;
-                exts = constr._yuibuild && constr._yuibuild.exts;
-
-                // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
-                // referencing string literals). Not using it in apply, again, for performance "." is faster.
-                if (constrProto.hasOwnProperty(INITIALIZER)) {
-                    constrProto.initializer.apply(this, arguments);
-                }
-
-                if (exts) {
-                    for (ei = 0, el = exts.length; ei < el; ei++) {
-                        extProto = exts[ei].prototype;
-                        if (extProto.hasOwnProperty(INITIALIZER)) {
-                            extProto.initializer.apply(this, arguments);
-                        }
-                    }
-                }
+            // Initializers
+            for (i = 0, l = initializers.length; i < l; i++) {
+                initializers[i].apply(this, arguments);
             }
         },
 
