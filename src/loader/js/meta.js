@@ -4,8 +4,6 @@
  * @submodule loader-base
  */
 
-if (!YUI.Env[Y.version]) {
-
     (function() {
         var VERSION = Y.version,
             BUILD = '/build/',
@@ -91,8 +89,7 @@ if (!YUI.Env[Y.version]) {
         galleryUpdate();
         yui2Update();
 
-        YUI.Env[VERSION] = META;
+        YUI.Env[VERSION] = Y.merge(YUI.Env[VERSION], META);
     }());
-}
 
 
