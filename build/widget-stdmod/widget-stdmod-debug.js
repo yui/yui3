@@ -268,17 +268,17 @@ YUI.add('widget-stdmod', function (Y, NAME) {
         _syncUIStdMod : function() {
             var stdModParsed = this._stdModParsed;
 
-            if (!stdModParsed || !stdModParsed[HEADER_CONTENT]) {
-                this._uiSetStdMod(STD_HEADER, this.get(HEADER_CONTENT));
-            }
+            Y.Array.each([STD_HEADER, STD_BODY, STD_FOOTER], function(section) {
+                var content;
 
-            if (!stdModParsed || !stdModParsed[BODY_CONTENT]) {
-                this._uiSetStdMod(STD_BODY, this.get(BODY_CONTENT));
-            }
+                if (!stdModParsed || !stdModParsed[section + CONTENT_SUFFIX]) {
+                    content = this.get(section + CONTENT_SUFFIX);
 
-            if (!stdModParsed || !stdModParsed[FOOTER_CONTENT]) {
-                this._uiSetStdMod(STD_FOOTER, this.get(FOOTER_CONTENT));
-            }
+                    if (content) {
+                        this._uiSetStdMod(section, content, this._getStdModContent(section) ? Y.WidgetStdMod.BEFORE : false);
+                    }
+                }
+            }, this);
 
             this._uiSetFillHeight(this.get(FILL_HEIGHT));
         },
@@ -460,7 +460,10 @@ YUI.add('widget-stdmod', function (Y, NAME) {
 
                 this.set(section + CONTENT_SUFFIX, this._getStdModContent(section), {src:UI});
             } else {
-                this._eraseStdMod(section);
+                if (!this._getStdModContent(section)) {
+                    //remove the section if it is empty
+                    this._eraseStdMod(section);
+                }
             }
             this.fire(ContentUpdate);
         },

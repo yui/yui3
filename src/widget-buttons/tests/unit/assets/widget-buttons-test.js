@@ -1155,6 +1155,128 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+suite.add(new Y.Test.Case({
+    name: 'Nested rendering',
+
+    tearDown : function() {
+        if (this.widget) {
+            this.widget.destroy();
+        }
+        if (this.child) {
+            this.child.destroy();
+        }
+        Y.one('#test').empty();
+    },
+    'Child widget should be rendered into existing sections in `renderUI` of main widget' : function() {
+        var Main,
+            buttons,
+            test = this;
+
+        Main = Y.Base.create('main', Y.Widget, [Y.WidgetStdMod, Y.WidgetButtons], {
+            renderUI : function() {
+                var body = this.getStdModNode('body', true);
+
+                test.child = new TestWidget({
+                    render : body,
+                    buttons : [{
+                        label: 'CB:Body',
+                        section: 'body'
+                    }]
+                });
+            }
+        });
+
+        this.main = new Main({
+            render: '#test',
+            buttons : [{
+                label: 'Main:Body',
+                section: 'body'
+            }]
+        });
+
+        buttons = this.main.get('boundingBox').all('.yui3-button');
+
+        Assert.areSame(2, buttons.size(), '2 buttons should be created in total');
+        Assert.areSame(this.main.getButton(0, 'body'), buttons.item(1), 'Main body button placed incorrectly');
+        Assert.areSame('Main:Body', this.main.getButton(0, 'body').get('text'), 'Main body button did not have the text "Main:Body"');
+
+        Assert.areSame(this.child.getButton(0, 'body'), buttons.item(0), 'Child body button placed incorrectly');
+        Assert.areSame('CB:Body', this.child.getButton(0, 'body').get('text'), 'Child body button did not have the text "CB:Body"');
+    },
+    'Child widget should be rendered into newly created header section in `renderUI` of main widget' : function() {
+        var Main,
+            buttons,
+            test = this;
+
+        Main = Y.Base.create('main', Y.Widget, [Y.WidgetStdMod, Y.WidgetButtons], {
+            renderUI : function() {
+                var header = this.getStdModNode('header', true);
+
+                test.child = new TestWidget({
+                    render : header,
+                    buttons : [{
+                        label: 'CH:Body',
+                        section: 'body'
+                    }]
+                });
+            }
+        });
+
+        this.main = new Main({
+            render: '#test',
+            buttons : [{
+                label: 'Main:Body',
+                section: 'body'
+            }]
+        });
+
+        buttons = this.main.get('boundingBox').all('.yui3-button');
+
+        Assert.areSame(2, buttons.size(), '2 buttons should be created in total');
+        Assert.areSame(this.main.getButton(0, 'body'), buttons.item(1), 'Main body button placed incorrectly');
+        Assert.areSame('Main:Body', this.main.getButton(0, 'body').get('text'), 'Main body button did not have the text "Main:Body"');
+
+        Assert.areSame(this.child.getButton(0, 'body'), buttons.item(0), 'Child body button placed incorrectly');
+        Assert.areSame('CH:Body', this.child.getButton(0, 'body').get('text'), 'Child body button did not have the text "CB:Body"');
+    },
+    'Child widget should be rendered into newly created footer section in `renderUI` of main widget' : function() {
+        var Main,
+            buttons,
+            test = this;
+
+        Main = Y.Base.create('main', Y.Widget, [Y.WidgetStdMod, Y.WidgetButtons], {
+            renderUI : function() {
+                var footer = this.getStdModNode('footer', true);
+
+                test.child = new TestWidget({
+                    render : footer,
+                    buttons : [{
+                        label: 'CF:Body',
+                        section: 'body'
+                    }]
+                })
+            }
+        });
+
+        this.main = new Main({
+            render: '#test',
+            buttons : [{
+                label: 'Main:Body',
+                section: 'body'
+            }]
+        });
+
+        buttons = this.main.get('boundingBox').all('.yui3-button');
+
+        Assert.areSame(2, buttons.size(), '2 buttons should be created in total');
+        Assert.areSame(this.main.getButton(0, 'body'), buttons.item(0), 'Main body button placed incorrectly');
+        Assert.areSame('Main:Body', this.main.getButton(0, 'body').get('text'), 'Main body button did not have the text "Main:Body"');
+
+        Assert.areSame(this.child.getButton(0, 'body'), buttons.item(1), 'Child body button placed incorrectly');
+        Assert.areSame('CF:Body', this.child.getButton(0, 'body').get('text'), 'Child body button did not have the text "CB:Body"');
+    }
+}));
+
 // -- Events -------------------------------------------------------------------
 suite.add(new Y.Test.Case({
     name: 'Events',

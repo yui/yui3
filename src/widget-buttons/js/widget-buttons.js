@@ -602,7 +602,17 @@ WidgetButtons.prototype = {
 
         // Search for an existing buttons container within the section.
         containerSelector = '.' + sectionClassName + ' .' + buttonsClassName;
-        container         = contentBox.one(containerSelector);
+
+        // Search only inside the current widget
+        contentBox.all(containerSelector).some(function(node){
+            var widget = Y.Widget.getByNode(node),
+                isBelongs = !widget || widget === this;
+
+            if (isBelongs) {
+                container = node;
+            }
+            return isBelongs;
+        }, this);
 
         // Create the `container` if it doesn't already exist.
         if (!container && create) {
