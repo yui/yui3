@@ -95,7 +95,7 @@ var PARENT_NODE = 'parentNode',
                             // IE 6-7 considers comment nodes as element nodes, and gives them the tagName "!".
                             // We can filter them out by checking if its tagName is > "@". 
                             // This also avoids a superflous nodeType === 1 check.
-                            if (child.tagName && child.tagName > "@" && (isUniversal || child.tagName === tagName)) {
+                            if (child.tagName > "@" && (isUniversal || child.tagName === tagName)) {
                                 nodes.push(child);
                             }
 
@@ -104,12 +104,9 @@ var PARENT_NODE = 'parentNode',
                             child = child.firstChild;
                         }
 
-                        // Find the most recently visted node who has a next sibling.
-                        while (visited.length > 0) {
+                        // Find the most recently visited node who has a next sibling.
+                        while (visited.length > 0 && !child) {
                             child = visited.pop().nextSibling;
-                            if (child) {
-                                break;
-                            } 
                         }
                     }
                 }
