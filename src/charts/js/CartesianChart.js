@@ -413,12 +413,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
                     l = key.length;
                     for(i = 0; i < l; i = i + 1)
                     {
-                        tempKeys.splice(tempKeys.indexOf(key), 1);
+                        tempKeys.splice(Y.Array.indexOf(tempKeys, key), 1);
                     }
                 }
                 else
                 {
-                    tempKeys.splice(tempKeys.indexOf(key), 1);
+                    tempKeys.splice(Y.Array.indexOf(tempKeys, key), 1);
                 }
             }
             else

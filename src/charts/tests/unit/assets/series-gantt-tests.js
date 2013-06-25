@@ -46,6 +46,7 @@ YUI.add('series-gantt-tests', function(Y) {
                         _createLabelCache: function() {
                             //only need to check and see if the method has been called. 
                             this._labels = [];
+                            this._labelFunctionArgs = [];
                             this._labelCacheCreated = true;
                         },
                         _clearLabelCache: function() {
@@ -110,8 +111,20 @@ YUI.add('series-gantt-tests', function(Y) {
                                 }
                             },
                             labelFunction: {
-                                value: function() {
-                                    this._args = arguments;
+                                value: function(parentNode, startValue, endValue, startX, startY, endX, endY, width, styles, className) {
+                                    var data = {
+                                        startValue: startValue,
+                                        endValue: endValue, 
+                                        startX: startX,
+                                        startY: startY,
+                                        endX: endX,
+                                        endY: endY 
+                                    };
+                                    //account for out of sync arrays due to bad data (for test comparisons)
+                                    if(!Y.Lang.isNumber(ycoords[this._labelFunctionArgs.length])) {
+                                        this._labelFunctionArgs.push(null);
+                                    }
+                                    this._labelFunctionArgs.push(data);
                                 }
                             }
                         }
@@ -134,7 +147,8 @@ YUI.add('series-gantt-tests', function(Y) {
                             mockBorderColors,
                             i,
                             markerX,
-                            markerY;
+                            markerY,
+                            labelFunctionArgs;
                         for(i = 0; i < ycoords.length; i = i + 1) {
                             if(Y.Lang.isNumber(ycoords[i]) && Y.Lang.isNumber(startcoords[i])) {
                                 mockMarkerStyles = mockSeries._markerStyles[i];
@@ -168,6 +182,14 @@ YUI.add('series-gantt-tests', function(Y) {
                                     mockBorderColor,
                                     "The border color of the marker should be " + borderColor + "."
                                 );
+                                if(mockSeries._labelFunctionArgs[i]) {
+                                    Y.Assert.areEqual(startdata[i], mockSeries._labelFunctionArgs[i].startValue, "The start value should be " + startdata[i] + ".");
+                                    Y.Assert.areEqual(enddata[i], mockSeries._labelFunctionArgs[i].endValue, "The end value should be " + enddata[i] + ".");
+                                    Y.Assert.areEqual(startcoords[i], mockSeries._labelFunctionArgs[i].startX, "The start x-coordinate should be " + startcoords[i] + ".");
+                                    Y.Assert.areEqual(ycoords[i], mockSeries._labelFunctionArgs[i].startY, "The start y-coordinate should be " + ycoords[i] + ".");
+                                    Y.Assert.areEqual(endcoords[i], mockSeries._labelFunctionArgs[i].endX, "The end x-coordinate should be " + endcoords[i] + ".");
+                                    Y.Assert.areEqual(ycoords[i], mockSeries._labelFunctionArgs[i].endY, "The end y-coordinate should be " + ycoords[i] + ".");
+                                }
                             }
                         }
                     };
@@ -196,6 +218,10 @@ YUI.add('series-gantt-tests', function(Y) {
                 seriesMarkerStyles = mockSeries.get("styles").marker,
                 markerHeight = seriesMarkerStyles.height;
                 testStyles();
+                mockSeries.prepMock();
+                mockSeries.set("showLabels", false);
+                //hit the else branch
+                series.drawSeries.apply(mockSeries); 
             },
             
             "test: updateMarkerState()" : function() {
@@ -238,17 +264,126 @@ YUI.add('series-gantt-tests', function(Y) {
                     mockMarker = new MockMarker();
 
                 mockSeries._markers = [mockMarker];
-                series.updateMarkerState.apply(mockSeries, ["off", 0]);
+                series.updateMarkerState.apply(mockSeries, ["mouseout", 0]);
                 Y.Assert.areEqual(fillColor, mockMarker._markerStyles.fill.color, "The fill color should be " + fillColor + ".");
                 Y.Assert.areEqual(borderColor, mockMarker._markerStyles.border.color, "The border color should be " + borderColor + ".");  
-                series.updateMarkerState.apply(mockSeries, ["over", 0]);
-                Y.Assert.areEqual(overFillColor, mockMarker._markerStyles.over.fill.color, "The over fill color should be " + overFillColor + ".");
-                Y.Assert.areEqual(overBorderColor, mockMarker._markerStyles.over.border.color, "The over border color should be " + overBorderColor + ".");  
-                series.updateMarkerState.apply(mockSeries, ["down", 0]);
-                Y.Assert.areEqual(downFillColor, mockMarker._markerStyles.down.fill.color, "The down fill color should be " + downFillColor + ".");
-                Y.Assert.areEqual(downBorderColor, mockMarker._markerStyles.down.border.color, "The down border color should be " + downBorderColor + ".");  
+                series.updateMarkerState.apply(mockSeries, ["mouseover", 0]);
+                Y.Assert.areEqual(overFillColor, mockMarker._markerStyles.fill.color, "The over fill color should be " + overFillColor + ".");
+                Y.Assert.areEqual(overBorderColor, mockMarker._markerStyles.border.color, "The over border color should be " + overBorderColor + ".");  
+                series.updateMarkerState.apply(mockSeries, ["mousedown", 0]);
+                Y.Assert.areEqual(downFillColor, mockMarker._markerStyles.fill.color, "The down fill color should be " + downFillColor + ".");
+                Y.Assert.areEqual(downBorderColor, mockMarker._markerStyles.border.color, "The down border color should be " + downBorderColor + ".");  
                 //hit the else branch.
-                series.updateMarkerState.apply(mockSeries, ["down", 5]);
+                series.updateMarkerState.apply(mockSeries, ["mousedown", 5]);
+            },
+
+            "test: _applyLabelStyles()" : function() {
+                var series = this.series,
+                    styles = {
+                        gutter: 5,
+                        fontSize : "85%",
+                        color: "#f00"
+                    },
+                    label = Y.Node.create('<span>'),
+                    color = Y.Color.toRGB(styles.color),
+                    key;
+                series._applyLabelStyles(label, styles);
+                Y.Assert.areEqual(color, Y.Color.toRGB(label.getStyle("color")), "The color of the label should be " + color + ".");
+                Y.Assert.areEqual(styles.fontSize, label.getStyle("fontSize"), "The fontSize of the label should be " + styles.fontSize + ".");
+            },
+
+            "test: _defaultLabelFunction()" : function() {
+                var DefaultLabelFunctionMockSeries = Y.Base.create("defaultLabelFunctionMockSeries", Y.GanttSeries, [], {
+                        _applyLabelStyles: function(label, styles) {
+                            this._labelStyles = this._labelStyles || [];
+                            this._labelStyles.push(styles);
+                        }
+                    }),
+                    mockSeries = new DefaultLabelFunctionMockSeries(),
+                    mockStartValue = "startvalue",
+                    mockEndValue = "endvalue",
+                    mockParentNode = Y.Node.create('<div>'),
+                    mockStartX = 100,
+                    mockStartY = 15,
+                    mockEndX = 130,
+                    mockEndY = 15,
+                    mockClassName = "mockclass",
+                    mockStyles = {
+                        startlabel: {
+                            gutter: 4
+                        },
+                        endlabel: {
+                            gutter: 6
+                        }
+                    },
+                    mockWidth = 400,
+                    series = this.series,
+                    startLabel,
+                    endLabel,
+                    startLabelX,
+                    startLabelY,
+                    endLabelX,
+                    endLabelY,
+                    closeEnough = function(expected, actual) { // compensates for rounding that occurs in IE 
+                        return (Math.abs(expected - actual) < 2);
+                    };
+                    runTests = function(visibility) {
+                        startLabel = Y.one(mockSeries._labels[0]);
+                        endLabel = Y.one(mockSeries._labels[1]);
+                        startLabelX = (mockStartX - startLabel.get("offsetWidth") - mockStyles.startlabel.gutter);
+                        startLabelY = (mockStartY - startLabel.get("offsetHeight")/2);
+                        endLabelX = (mockEndX + mockStyles.endlabel.gutter);
+                        endLabelY = (mockEndY - endLabel.get("offsetHeight")/2);
+                        Y.Assert.areEqual(mockParentNode, startLabel.get("parentNode"), "The parent node of the label should be the same as the argument passed to the method.");
+                        Y.Assert.areEqual(mockParentNode, endLabel.get("parentNode"), "The parent node of the label should be the same as the argument passed to the method.");
+                        Y.Assert.areEqual(mockStyles.startlabel, mockSeries._labelStyles[0], "The styles should be the same.");
+                        Y.Assert.areEqual(mockStyles.endlabel, mockSeries._labelStyles[1], "The styles should be the same.");
+                        Y.Assert.areEqual(mockStartValue, startLabel.get("innerHTML"), "The text value in the start label should be " + mockStartValue + ".");
+                        Y.Assert.areEqual(mockEndValue, endLabel.get("innerHTML"), "The text value in the end label should be " + mockEndValue + ".");
+                        Y.Assert.areEqual(visibility, startLabel.getStyle("visibility"), "The start label should be " + visibility + ".");
+                        Y.Assert.areEqual(visibility, endLabel.getStyle("visibility"), "The start label should be " + visibility + ".");
+                        Y.Assert.isTrue(closeEnough(startLabelX, parseFloat(startLabel.getStyle("left"))), "The left style of the start label should be " + startLabelX + ".");
+                        Y.Assert.isTrue(closeEnough(startLabelY, parseFloat(startLabel.getStyle("top"))), "The top style of the start label should be " + startLabelY + ".");
+                        Y.Assert.isTrue(closeEnough(endLabelX, parseFloat(endLabel.getStyle("left"))), "The left style of the end label should be " + endLabelX + ".");
+                        Y.Assert.isTrue(closeEnough(endLabelY, parseFloat(endLabel.getStyle("top"))), "The top style of the end label should be " + endLabelY + ".");
+                    };
+                Y.one('body').append(mockParentNode);
+                mockParentNode.setStyle("width", mockWidth + "px");
+                mockParentNode.setStyle("height", "300px");
+                mockSeries._labels = [];
+                series._defaultLabelFunction.apply(mockSeries, [
+                    mockParentNode,
+                    mockStartValue,
+                    mockEndValue,
+                    mockStartX,
+                    mockStartY,
+                    mockEndX,
+                    mockEndY,
+                    mockWidth,
+                    mockStyles,
+                    mockClassName
+                ]);
+                runTests("visible"); 
+                mockStartX = 5;
+                mockEndX = 395;
+                //just to get the branches
+                mockStyles.startlabel.gutter = 0;
+                mockStyles.endlabel.gutter = 0;
+                mockSeries._labels = [];
+                series._defaultLabelFunction.apply(mockSeries, [
+                    mockParentNode,
+                    mockStartValue,
+                    mockEndValue,
+                    mockStartX,
+                    mockStartY,
+                    mockEndX,
+                    mockEndY,
+                    mockWidth,
+                    mockStyles,
+                    mockClassName
+                ]);
+                runTests("hidden");
+                mockParentNode.remove(true);
             },
 
             "test: _getPlotDefaults()" : function() {

@@ -139,7 +139,7 @@ Y.GanttSeries = Y.Base.create("ganttSeries", Y.CartesianSeries, [Y.Plots, Y.Char
             {
                 if(style !== "gutter")
                 {
-                    label.setStyles(styles, styles[style]);
+                    label.setStyle(style, styles[style]);
                 }
             }
         }

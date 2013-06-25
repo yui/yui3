@@ -484,21 +484,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "calendar": {
-        "lang": [
-            "de",
-            "en",
-            "es",
-            "es-AR",
-            "fr",
-            "hu",
-            "it",
-            "ja",
-            "nb-NO",
-            "nl",
-            "pt-BR",
-            "ru",
-            "zh-HANT-TW"
-        ],
         "requires": [
             "calendar-base",
             "calendarnavigator"
@@ -2973,4 +2958,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '8ee2b46e692eb581c2c168f8a18bbdb2';
+YUI.Env[Y.version].md5 = '5212e8c20f23f94cc53bfdbc95fe7a01';
