@@ -36,6 +36,12 @@
                     "classnamemanager"
                 ]
             },
+            "datatable-foot": {
+                "requires": [
+                    "datatable-core",
+                    "view"
+                ]
+            },
             "datatable-body": {
                 "requires": [
                     "datatable-core",
@@ -136,6 +142,22 @@
             "datatable-keynav": {
                 "requires": [
                     "yui-base", "datatable-base", "base-base", "oop"
+                ]
+            },
+            "datatable-paginator": {
+                "requires": [
+                    "model",
+                    "view",
+                    "paginator-core",
+                    "datatable-foot",
+                    "datatable-paginator-templates"
+                ],
+                "lang": [ "en" ],
+                "skinnable": true
+            },
+            "datatable-paginator-templates": {
+                "requires": [
+                    "template"
                 ]
             }
         }

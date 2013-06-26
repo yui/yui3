@@ -1,0 +1,10 @@
+.yui3-skin-sam .yui3-datatable-celleditor-input:focus {
+    outline: none;
+}
+
+.yui3-skin-sam .yui3-datatable-celleditor-input {
+    border: 1px solid #cbcbcb;
+    background-color: #FFFEBB;
+    margin: 0;
+    padding-left:	9px;
+}

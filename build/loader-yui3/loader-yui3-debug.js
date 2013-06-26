@@ -485,21 +485,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "calendar": {
-        "lang": [
-            "de",
-            "en",
-            "es",
-            "es-AR",
-            "fr",
-            "hu",
-            "it",
-            "ja",
-            "nb-NO",
-            "nl",
-            "pt-BR",
-            "ru",
-            "zh-HANT-TW"
-        ],
         "requires": [
             "calendar-base",
             "calendarnavigator"
@@ -881,6 +866,24 @@ Y.mix(YUI.Env[Y.version].modules, {
             "classnamemanager"
         ]
     },
+    "datatable-celleditor-keyfiltering": {
+        "requires": [
+            "datatable-editable",
+            "event-valuechange",
+            "base-build"
+        ]
+    },
+    "datatable-celleditors": {
+        "requires": [
+            "datatable-editable",
+            "view",
+            "base-build",
+            "event-mouseenter",
+            "cssbutton",
+            "event-outside"
+        ],
+        "skinnable": "true"
+    },
     "datatable-column-widths": {
         "requires": [
             "datatable-base"
@@ -900,6 +903,29 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datasource-local"
         ]
     },
+    "datatable-editable": {
+        "lang": [
+            "en",
+            "es"
+        ],
+        "requires": [
+            "datatable-base",
+            "datatype",
+            "node-screen",
+            "datatable-keynav",
+            "event-resize",
+            "event-outside",
+            "overlay",
+            "dd-plugin"
+        ],
+        "skinnable": "true"
+    },
+    "datatable-foot": {
+        "requires": [
+            "datatable-core",
+            "view"
+        ]
+    },
     "datatable-formatters": {
         "requires": [
             "datatable-body",
@@ -913,6 +939,14 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datatable-core",
             "view",
             "classnamemanager"
+        ]
+    },
+    "datatable-keynav": {
+        "requires": [
+            "yui-base",
+            "datatable-base",
+            "base-base",
+            "oop"
         ]
     },
     "datatable-message": {
@@ -931,6 +965,24 @@ Y.mix(YUI.Env[Y.version].modules, {
     "datatable-mutable": {
         "requires": [
             "datatable-base"
+        ]
+    },
+    "datatable-paginator": {
+        "lang": [
+            "en"
+        ],
+        "requires": [
+            "model",
+            "view",
+            "paginator-core",
+            "datatable-foot",
+            "datatable-paginator-templates"
+        ],
+        "skinnable": true
+    },
+    "datatable-paginator-templates": {
+        "requires": [
+            "template"
         ]
     },
     "datatable-scroll": {
@@ -1074,7 +1126,11 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "datatype-number-format": {},
-    "datatype-number-parse": {},
+    "datatype-number-parse": {
+        "requires": [
+            "escape"
+        ]
+    },
     "datatype-xml": {
         "use": [
             "datatype-xml-parse",
@@ -2937,7 +2993,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '0ef57f597d6d83db16c9127b46f6150b';
+YUI.Env[Y.version].md5 = '845fc28626e8ab2ec56a43509279ad5b';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

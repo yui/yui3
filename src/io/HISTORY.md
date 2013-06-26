@@ -4,7 +4,7 @@ IO Utility Change History
 @VERSION@
 ------
 
-* No changes.
+* Restore form attributes after successful upload in io-upload-iframe. [Ticket #2533186] [ipeychev]
 
 3.10.3
 ------
