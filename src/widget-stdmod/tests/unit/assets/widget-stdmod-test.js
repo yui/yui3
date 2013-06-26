@@ -140,6 +140,18 @@ suite.add(new Y.Test.Case({
         Assert.areSame('150px', body.getStyle('height'), 'body is not 150px in height after fill.');
     },
 
+    'fillHeight() should fill up the widget even if section content is set after render()': function () {
+        this.widget = new TestWidget({
+            headerContent:    'header',
+            // no body content, so no section node will be created
+            render:            '#test',
+            height:            100
+        });
+
+        this.widget.set('bodyContent', '<div style="height: 200px;">body</div>');
+        Assert.isTrue(this.widget.getStdModNode('body').get('offsetHeight') < 100);
+    },
+
     'HTML_PARSER rules should return the proper inner HTML contents from markup': function () {
         var src, headerMarkup, footerMarkup, bodyMarkup;
         
