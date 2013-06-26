@@ -4,7 +4,10 @@ Tree Change History
 @VERSION@
 ------
 
-* No changes.
+* `Tree#emptyNode()` now removes nodes without triggering a node map reindex for
+  each node, which makes it significantly faster when emptying a node with lots
+  of children. [Ryan Grove]
+
 
 3.10.3
 ------
