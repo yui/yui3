@@ -199,9 +199,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             isFalse( dt.get('editable'), "editable not false" );
 
             areSame(0, Y.Object.size(dt._commonEditors), "_commonEditors not {}" );
-            Y.Object.each(dt._columnMap, function (col, colKey) {
-                Assert.isUndefined(col._editorInstance, 'Editor instance for ' + colKey + ' still there');
-            });
+            areSame(0, Y.Object.size(dt._columnEditors), "_columnEditors not {}" );
             isNull( dt._openEditor, "_openEditor not null" );
             isNull( dt._editorNode, "_editorNode not null" );
             areSame(0, Y.all('.yui3-datatable-celleditor-input').size(),'There should be no editors left behind');
@@ -259,7 +257,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             openEditorAt(dt, 0,1);
 
 
-            dt.hideCellEditor();
+            dt.hideEditor();
             isNull(dt._openEditor,'cell editor col 1 should be closed');
             isFalse(dt.getCellEditor('sopen').get('active'),'cell editor col 1 should be closed');
 
@@ -523,9 +521,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             isFalse( dt.get('editable'), "editable not false" );
 
             areSame(0, Y.Object.size(dt._commonEditors), "_commonEditors not {}" );
-            Y.Object.each(dt._columnMap, function (col, colKey) {
-                Assert.isUndefined(col._editorInstance, 'Editor instance for ' + colKey + ' still there');
-            });
+            areSame(0, Y.Object.size(dt._columnEditors), "_columnEditors not {}" );
             isNull( dt._openEditor, "_openEditor not null" );
             isNull( dt._editorNode, "_editorNode not null" );
             areSame(0, Y.all('.yui3-datatable-celleditor-input').size(),'There should be no editors left behind');
@@ -555,13 +551,13 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(7, Y.Object.size(dt.getCellEditors()), 'there should be 7 cell editors');
             // Editors with an editorConfig cannot be shared so there is going to be just three of them.
             areSame(3, Y.Object.size(dt._commonEditors) , 'there should be three (one per shared type) editors');
-            isTrue(dt.getColumn('sopen')._editorInstance instanceof Y.DataTable.Editors.inline, 'The first one should have an editor instance');
-            areSame('inline', dt.getColumn('sname')._editorInstance, 'sname should point to an instance in _commonEditors');
-            areSame('inline', dt.getColumn('sdesc')._editorInstance, 'sname should point to an instance in _commonEditors');
-            areSame('inline', dt.getColumn('stype')._editorInstance, 'sname should point to an instance in _commonEditors');
-            areSame('inlineNumber', dt.getColumn('stock')._editorInstance, 'sname should point to an instance in _commonEditors');
-            areSame('inline', dt.getColumn('sprice')._editorInstance, 'sname should point to an instance in _commonEditors');
-            areSame('inlineDate', dt.getColumn('sdate')._editorInstance, 'sname should point to an instance in _commonEditors');
+            isTrue(dt._columnEditors['sopen'] instanceof Y.DataTable.Editors.inline, 'The first one should have an editor instance');
+            areSame('inline', dt._columnEditors['sname'], 'sname should point to an instance in _commonEditors');
+            areSame('inline', dt._columnEditors['sdesc'], 'sname should point to an instance in _commonEditors');
+            areSame('inline', dt._columnEditors['stype'], 'sname should point to an instance in _commonEditors');
+            areSame('inlineNumber', dt._columnEditors['stock'], 'sname should point to an instance in _commonEditors');
+            areSame('inline', dt._columnEditors['sprice'], 'sname should point to an instance in _commonEditors');
+            areSame('inlineDate', dt._columnEditors['sdate'], 'sname should point to an instance in _commonEditors');
             dt.destroy();
         },
         "check passing the lookupTable": function () {
@@ -576,7 +572,7 @@ YUI.add('datatable-editable-tests', function(Y) {
                 editorOpenAction:   'click',
                 editable:       true
             });
-            isTrue(dt.getColumn('sopen')._editorInstance instanceof Y.DataTable.Editors.inlineAC, 'It should be an instance, because it has an editorConfig');
+            isTrue(dt._columnEditors['sopen'] instanceof Y.DataTable.Editors.inlineAC, 'It should be an instance, because it has an editorConfig');
             isTrue(Y.Lang.isObject(dt.getCellEditor('sopen').get('lookupTable')),'it should have received the lookupTable');
             dt.destroy();
         },
@@ -589,16 +585,16 @@ YUI.add('datatable-editable-tests', function(Y) {
                 editorOpenAction:   'click',
                 editable:       true
             });
-            areSame(1, Y.Object.size(dt._commonEditors) , 'there should be three (one per shared type) editors');
-            areSame('inline', dt.getColumn('sopen')._editorInstance, 'It should be a reference to a common editor');
+            areSame(1, Y.Object.size(dt._commonEditors) , 'there should be one editor');
+            areSame('inline', dt._columnEditors['sopen'], 'It should be a reference to a common editor');
             dt.set('columns',[
                 {key:'sopen', editor: 'inlineAC', lookupTable: [
                     {value:0, text: 'no'},
                     {value:1, text: 'yes'}
                 ]}
             ] );
-            areSame(0, Y.Object.size(dt._commonEditors) , 'there should be three (one per shared type) editors');
-            isTrue(dt.getColumn('sopen')._editorInstance instanceof Y.DataTable.Editors.inlineAC, 'It should be an instance, because it has an editorConfig');
+            areSame(0, Y.Object.size(dt._commonEditors) , 'there should be no common editors');
+            isTrue(dt._columnEditors['sopen'] instanceof Y.DataTable.Editors.inlineAC, 'It should be an instance, because it has an editorConfig');
             isTrue(Y.Lang.isObject(dt.getCellEditor('sopen').get('lookupTable')),'it should have received the lookupTable');
             dt.destroy();
         },
@@ -633,7 +629,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             isFalse(fail, 'cancel should never fire');
             isNull(evFac, 'no save event yet');
-            areSame('inline', ed.getStyle('display') ,'editor should still be visible');
+            isTrue(/inline/.test(ed.getStyle('display')) ,'editor should still be visible');
             isTrue(ed.ancestor().hasClass('yui3-datatable-celleditor-error'), 'cell should be in error')
 
             inputKey(ed, 'abc', 13);

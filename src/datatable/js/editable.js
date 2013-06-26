@@ -288,6 +288,21 @@ Y.mix( DtEditable.prototype, {
      */
     _commonEditors:  null,
 
+    /**
+     Hash that stores cell editors keyed by column key (or column name) where the value
+     for the associated key is either:<ul>
+    <li>`String` which references an editor name in the [_commonEditors](#property__commonEditors) hash</li>
+    <li>`DataTable.BaseCellEditor` instance for a customized editor instance
+      (typically one with specified `editorConfig` in the column definition
+      and thus cannot be shared)</li>
+    </ul>
+
+     @property _columnEditors
+     @type Object
+     @default null
+     @private
+     */
+    _columnEditors: null,
 
     /**
     Container for all cell editors.  Serves to keep them all together and to
@@ -369,17 +384,17 @@ Y.mix( DtEditable.prototype, {
         Y.log('DataTable.Editable.openCellEditor', 'info', 'datatable-editable');
 
         var col       = this.getColumnByTd(td),
-            colKey    = col.key || col.name,
+            colKey    = col.key,
             record    = this.getRecord(td),
-            editorRef = col._editorInstance,
+            editorRef = (colKey) ? this._columnEditors[colKey] : null,
             editorInstance = editorRef && (typeof editorRef === 'string'  ? this._commonEditors[editorRef] : editorRef);
 
         if(!td || (col && col.editable === false && !editorInstance)) {
             return;
         }
 
-        if(this._openEditor) {
-            this._openEditor.cancelEditor();
+        if (!this.hideEditor()) {
+            return;
         }
 
         // Set the focus on the cell about to be edited
@@ -422,15 +437,15 @@ Y.mix( DtEditable.prototype, {
             editorInstance = this._rowEditorOverlay,
             opts, cePool = this._commonEditors;
 
-        if(this._openEditor) {
-            this._openEditor.cancelEditor();
+        if (!this.hideEditor()) {
+            return;
         }
 
         // Common, pooled editor instances cannot be used because they all have
         // to be shown at once so, first, dereference all editors to actual instances.
         if (cePool) {
-            objEach(this._columnMap, function (col) {
-               var ce = col._editorInstance;
+            objEach(this._columnMap, function (col, colKey) {
+               var ce = this._columnEditors[colKey];
                if (typeof ce === 'string') {
                    if (cePool[ce]) {
                        ce = cePool[ce];
@@ -441,9 +456,9 @@ Y.mix( DtEditable.prototype, {
                        // extra editorConfig options
                        ce = this._createCellEditorInstance(ce, {});
                    }
-                   col._editorInstance = ce;
+                   this._columnEditors[colKey] = ce;
                }
-            });
+            }, this);
             this._commonEditors = null;
         }
 
@@ -476,30 +491,60 @@ Y.mix( DtEditable.prototype, {
 
 
     /**
-    Deactivates and hides a currently open cell editor and returns the focus
-    to the underlying cell.
+    Deactivates and hides a currently open row or cell editor..
 
-    @method hideCellEditor
+    It will return true if it succeeded, which includes not having any actual
+    editor to hide (the consequence being the same: no editor visible).
+
+    It will return false if any listener for the
+    [celleditor:cancel](#event_celleditor:cancel) event has stopped the event,
+    unless the `force` argument is truish, which will force the closing without
+    even firing any event.
+
+    @method hideEditor
+    @param force {Boolean} Close even if a listener to the
+           [celleditor:cancel](#event_celleditor:cancel) event has stopped the event.
+    @return {Boolean} True if successful, false if prevented by an event listener.
     @public
     */
-    hideCellEditor: function () {
-        Y.log('DataTable.Editable.hideCellEditor', 'info', 'datatable-editable');
+    hideEditor: function (force) {
+        Y.log('DataTable.Editable.hideEditor', 'info', 'datatable-editable');
 
-        var oe = this._openEditor,
-            td = this._editorNode;
+        var oe = this._openEditor;
 
-        if(oe) {
+        if (oe) {
             if (oe.get('active')) {
-                oe._hideEditor();
+                if (force) {
+                    oe._hideEditor();
+                    this._hideEditorCntd();
+                } else {
+                    if (!oe.cancelEditor()) {
+                        return false;
+                    }
+                }
             }
-            if (td) {
-                td.removeClass(this._classCellEditing);
-
-                this.focus();
-            }
-
-            this._unsetEditor();
         }
+        return true;
+    },
+    /**
+    Finishes up the work of [hideEditor](#method_hideEditor).
+
+    @method _hideEditorCntd
+    @private
+     */
+    _hideEditorCntd: function () {
+        var td = this._editorNode;
+        if (td) {
+            td.removeClass(this._classCellEditing);
+
+            this.focus();
+        }
+
+        this._openEditor = null;
+        this._editorRecord = null;
+        this._editorColKey = null;
+        this._editorNode = null;
+
     },
 
     /**
@@ -511,13 +556,9 @@ Y.mix( DtEditable.prototype, {
     getCellEditors: function () {
         Y.log('DataTable.Editable.getCellEditors', 'info', 'datatable-editable');
 
-        var rtn = {}, ce;
-        objEach(this._columnMap, function (col, colKey) {
-            ce = col._editorInstance;
-            if (ce) {
-                ce = this._commonEditors[ce] || ce;
-                rtn[colKey] =  ce;
-            }
+        var rtn = {};
+        objEach(this._columnEditors, function (editor, colKey){
+            rtn[colKey] =  typeof editor === 'string' ? this._commonEditors[editor] : editor;
         }, this);
         return rtn;
     },
@@ -536,14 +577,17 @@ Y.mix( DtEditable.prototype, {
     getCellEditor: function (col) {
         Y.log('DataTable.Editable.getCellEditor: ' + col, 'info', 'datatable-editable');
 
-        if (col && typeof col !== "object") {
-            col =  this.getColumn(col);
+        col = this.getColumn(col);
+        if (!col) {
+            return null;
         }
-        var ce = col._editorInstance;
+        var ce = this._columnEditors[col.key];
         if (typeof ce === 'string') {
             ce = this._commonEditors[ce];
         }
+
         return ce || null;
+
     },
 
     /**
@@ -574,8 +618,8 @@ Y.mix( DtEditable.prototype, {
         Y.log('DataTable.Editable.getColumnNameByTd', 'info', 'datatable-editable');
 
         var classes = cell.get('className').split(" "),
-        regCol  = new RegExp(this.getClassName(COL) + '-(.*)'),
-        colName;
+            regCol  = new RegExp(this.getClassName(COL) + '-(.*)'),
+            colName = null;
 
         Y.Array.some(classes, function (item){
             var colmatch =  item.match(regCol);
@@ -585,7 +629,7 @@ Y.mix( DtEditable.prototype, {
             }
         });
 
-        return colName || null;
+        return colName;
     },
 
 
@@ -637,6 +681,7 @@ Y.mix( DtEditable.prototype, {
     _unbindEditable: function () {
         Y.log('DataTable.Editable._unbindEditable', 'info', 'datatable-editable');
 
+        this.hideEditor(true);
         // Detach EDITABLE related listeners
         if(this._subscrEditable) {
             arrEach(this._subscrEditable, function (eh) {
@@ -653,16 +698,10 @@ Y.mix( DtEditable.prototype, {
         }
         this._subscrEditOpen = null;
 
-        // destroy any currently open editor
-        if(this._openEditor && this._openEditor.destroy) {
-            this._openEditor.destroy();
-        }
         if (this._rowEditorOverlay) {
             this._rowEditorOverlay.destroy();
             this._rowEditorOverlay = null;
         }
-
-        this._unsetEditor();
 
         // run through all instantiated editors and destroy them
         this._destroyColumnEditors();
@@ -846,10 +885,10 @@ Y.mix( DtEditable.prototype, {
     in the `editor` column property.  It passes the `editorConfig` column attribute
     to the constructor of each editor.
 
-    It adds them to an `_editorInstance` property to the columns definition object.
+    It adds them to the  [_columnEditors](#property__columnEditors) hash.
     For editors without special `editorConfig` attributes, it stores a shared instance
     in [_commonEditors](#property__commonEditors) keyed by editor name while placing
-    the editor name in `_editorInstance` instead.
+    the editor name in [_columnEditors](#property__columnEditors) instead.
 
     @method _buildColumnEditors
     @private
@@ -867,6 +906,7 @@ Y.mix( DtEditable.prototype, {
         this._destroyColumnEditors();
 
         this._commonEditors = {};
+        this._columnEditors = {};
 
         objEach(this._columnMap, function (col, colKey) {
             var hasConfig = Lang.isObject(col.editorConfig),
@@ -891,7 +931,7 @@ Y.mix( DtEditable.prototype, {
 
                     editorInstance = this._createCellEditorInstance(editorName, edConfig);
 
-                    col._editorInstance = editorInstance;
+                    this._columnEditors[colKey] = editorInstance || null;
 
                 } else {
 
@@ -899,14 +939,12 @@ Y.mix( DtEditable.prototype, {
                         editorInstance = this._createCellEditorInstance(editorName, edConfig);
                         this._commonEditors[editorName] = editorInstance;
                     }
-
-                    col._editorInstance = editorName;
-
+                    this._columnEditors[colKey] = editorName;
                 }
 
             }
 
-        },this);
+        }, this);
 
     },
 
@@ -945,10 +983,9 @@ Y.mix( DtEditable.prototype, {
      */
     _destroyColumnEditors: function () {
         Y.log('DataTable.Editable._destroyColumnEditors', 'info', 'datatable-editable');
-        var ce;
 
         if (this._commonEditors) {
-            Y.Object.each(this._commonEditors, function (ce) {
+            objEach(this._commonEditors, function (ce) {
                 if(ce && ce instanceof BCE){
                     ce.destroy({remove: true});
                 }
@@ -956,16 +993,15 @@ Y.mix( DtEditable.prototype, {
         }
         this._commonEditors = null;
 
-        objEach(this._columnMap, function (col) {
-            ce = col._editorInstance;
-            if (ce) {
-                if (ce instanceof BCE) {
+        if (this._columnEditors) {
+            objEach(this._columnEditors, function (ce) {
+                if(ce && ce instanceof BCE){
                     ce.destroy({remove: true});
-                }                 
-                delete col._editorInstance;
-            }
-        });
+                }
+            });
+        }
 
+        this._columnEditors = null;
         this._editorsContainer.empty();
 
         if (this._tbodyNode) {
@@ -985,25 +1021,9 @@ Y.mix( DtEditable.prototype, {
         Y.log('DataTable.Editable._afterEditableSort', 'info', 'datatable-editable');
 
         if(this.get(EDITABLE)) {
-            this.hideCellEditor();
+            this.hideEditor(true);
             this._updateAllEditableColumnsCSS();
         }
-    },
-
-    /**
-    Re-initializes the cell-dependent properties to null.
-
-    @method _unsetEditor
-    @private
-     */
-    _unsetEditor: function () {
-        Y.log('DataTable.Editable._unsetEditor', 'info', 'datatable-editable');
-
-        // Finally, null out static props on this extension
-        this._openEditor = null;
-        this._editorRecord = null;
-        this._editorColKey = null;
-        this._editorNode = null;
     },
 
     /**
@@ -1069,9 +1089,7 @@ Y.mix( DtEditable.prototype, {
     _afterClickOutside: function () {
         Y.log('DataTable.Editable._afterClickOutside', 'info', 'datatable-editable');
 
-        if(this._openEditor) {
-            this._openEditor.cancelEditor();
-        }
+        this.hideEditor();
     },
     /**
     Key listener for the `keydown` event.
@@ -1158,7 +1176,9 @@ Y.mix( DtEditable.prototype, {
             numRows = tbody.get('children').size(),
             wrap = this.get(WRAP_AROUND_NAV), wrappedOnce = false;
 
-        this.hideCellEditor();
+        if (!this.hideEditor()) {
+            return;
+        }
 
         while (true) {
             rowIndex += dy;
@@ -1250,7 +1270,7 @@ Y.mix( DtEditable.prototype, {
     _afterCellEditorCancel: function () {
         Y.log('DataTable.Editable._afterCellEditorCancel', 'info', 'datatable-editable');
 
-        this.hideCellEditor();
+        this._hideEditorCntd();
     },
 
 
@@ -1269,7 +1289,7 @@ Y.mix( DtEditable.prototype, {
         if(ev.record){
             ev.record.set(ev.colKey, ev.newValue);
         }
-        this.hideCellEditor();
+        this.hideEditor();
     }
 });
 

@@ -276,11 +276,13 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
     /**
     Validates and parses the entered value and fires the [save](#event_save) event
-    to save it.
+    to save it.  It returns true if successful, false if either the validation or
+    parsing failed or if the [save](#event_save) was stopped.
 
     @method saveEditor
     @param [value] {Any} Raw value (not yet parsed) to be saved.
             If missing, [_getValue](#method__getValue) is used.
+    @return {Boolean} True if succesful
     @public
     */
     saveEditor: function (value) {
@@ -299,16 +301,15 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
 
             if (parsedValue !== Y.Attribute.INVALID_VALUE) {
 
-                this.fire("save", Y.merge(this._cellInfo, {
+                return this.fire("save", Y.merge(this._cellInfo, {
                     formattedValue:   value,
                     newValue:   parsedValue
                 }));
-                return;
             }
         }
 
         this.get('container').addClass(this._classError);
-
+        return false;
     },
 
     /**
@@ -317,12 +318,13 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     Fires the [cancel](#event_cancel) event.
 
     @method cancelEditor
+    @return {Boolean} True if successful, false if the [cancel](#event_cancel) was stopped.
     @public
     */
     cancelEditor: function () {
         Y.log('DataTable.BaseCellEditor.cancelEditor', 'info', 'celleditor-base');
 
-        this.fire("cancel", this._cellInfo);
+        return this.fire("cancel", this._cellInfo);
     },
 
     /**
