@@ -10,6 +10,10 @@ Tree Change History
 * Added `Tree.Sortable#sort()`, which sorts the children of every node in a
   sortable tree. [Ryan Grove]
 
+* `Tree#emptyNode()` now removes nodes without triggering a node map reindex for
+  each node, which makes it significantly faster when emptying a node with lots
+  of children. [Ryan Grove]
+
 * The `Tree#createNode()`, `Tree#insertNode()`, and `Tree#traverseNode()`
   methods now throw or log informative error messages when given a destroyed
   node instead of failing cryptically (or succeeding when they shouldn't).
