@@ -234,6 +234,16 @@ PositionAlign.prototype = {
 
     // -- Lifecycle Methods ----------------------------------------------------
 
+    initializer: function() {
+        if ( ! this._posNode) {
+            Y.error('WidgetPosition needs to be added to the Widget, ' +
+                'before WidgetPositionAlign is added');
+        }
+
+        Y.after(this._bindUIPosAlign, this, 'bindUI');
+        Y.after(this._syncUIPosAlign, this, 'syncUI');
+    },
+
     destructor: function () {
         this._detachPosAlignUIHandles();
     },
@@ -328,16 +338,101 @@ PositionAlign.prototype = {
     // -- Protected Methods ----------------------------------------------------
 
     /**
-    Returns coordinates realative to the `Node` alignment.
+    Returns coordinates realative to the passed `Node` alignment.
 
-    @method _getNodePointXY
+    @method _getAlignToXY
+    @param {Node} 'Node' The node to align to.
+    @param {Array} [point] The node alignment points.
+    @param {Number} 'Node' x coordinate.
+    @param {Number} 'Node' y coordinate.
+    @return {Array} the coordinates.
+    @private
+    **/
+    _getAlignToXY: function (node, point, x, y) {
+        var xy;
+
+        switch (point) {
+        case PositionAlign.TL:
+            xy = [x, y];
+            break;
+
+        case PositionAlign.TR:
+            xy = [
+                x - node.get(OFFSET_WIDTH),
+                y
+            ];
+            break;
+
+        case PositionAlign.BL:
+            xy = [
+                x,
+                y - node.get(OFFSET_HEIGHT)
+            ];
+            break;
+
+        case PositionAlign.BR:
+            xy = [
+                x - node.get(OFFSET_WIDTH),
+                y - node.get(OFFSET_HEIGHT)
+            ];
+            break;
+
+        case PositionAlign.TC:
+            xy = [
+                x - (node.get(OFFSET_WIDTH) / 2),
+                y
+            ];
+            break;
+
+        case PositionAlign.BC:
+            xy = [
+                x - (node.get(OFFSET_WIDTH) / 2),
+                y - node.get(OFFSET_HEIGHT)
+            ];
+            break;
+
+        case PositionAlign.LC:
+            xy = [
+                x,
+                y - (node.get(OFFSET_HEIGHT) / 2)
+            ];
+            break;
+
+        case PositionAlign.RC:
+            xy = [
+                x - node.get(OFFSET_WIDTH),
+                y - (node.get(OFFSET_HEIGHT) / 2)
+            ];
+            break;
+
+        case PositionAlign.CC:
+            xy = [
+                x - (node.get(OFFSET_WIDTH) / 2),
+                y - (node.get(OFFSET_HEIGHT) / 2)
+            ];
+            break;
+
+        default:
+            Y.log('align: Invalid Points Argument', 'info',
+                'widget-position-align');
+            break;
+
+        }
+
+        return xy;
+    },
+
+    /**
+    Returns `Widget` alignment coordinates realative to the given `Node`.
+
+    @method _getAlignedXY
     @param {Node|String|null} [node] The node to align to, or null to indicate
       the viewport.
     @param {Array} points The alignment points.
     @return {Array} the coordinates.
     @protected
     **/
-    _getNodePointXY: function (node, points) {
+    _getAlignedXY: function (node, points) {
         if ( ! Lang.isArray(points) || points.length !== 2) {
             Y.error('align: Invalid Points Arguments');
             return;
@@ -406,11 +501,13 @@ PositionAlign.prototype = {
             break;
 
         default:
+            Y.log('align: Invalid Points Argument', 'info',
+                'widget-position-align');
             break;
 
         }
 
-        return xy;
+        return this._getAlignToXY(this._posNode, points[0], xy[0], xy[1]);
     },
 
     /**
@@ -446,10 +543,10 @@ PositionAlign.prototype = {
     @protected
     **/
     _uiSetAlign: function (node, points) {
-        var xy = this._getNodePointXY(node, points);
+        var xy = this._getAlignedXY(node, points);
 
         if (xy) {
-            this._doAlign(points[0], xy[0], xy[1]);
+            this._doAlign(xy);
         }
     },
 
@@ -515,102 +612,14 @@ PositionAlign.prototype = {
     // -- Private Methods ------------------------------------------------------
 
     /**
-    Returns coordinates realative to the `Widget` alignment.
-
-    @method _getWidgetPointXY
-    @param {Array} [widgetPoint] The widget alignment points.
-    @param {Number} 'Node' x coordinate.
-    @param {Number} 'Node' y coordinate.
-    @return {Array} the coordinates.
-    @private
-    **/
-    _getWidgetPointXY: function (widgetPoint, x, y) {
-        var widgetNode = this._posNode,
-            xy;
-
-        switch (widgetPoint) {
-        case PositionAlign.TL:
-            xy = [x, y];
-            break;
-
-        case PositionAlign.TR:
-            xy = [
-                x - widgetNode.get(OFFSET_WIDTH),
-                y
-            ];
-            break;
-
-        case PositionAlign.BL:
-            xy = [
-                x,
-                y - widgetNode.get(OFFSET_HEIGHT)
-            ];
-            break;
-
-        case PositionAlign.BR:
-            xy = [
-                x - widgetNode.get(OFFSET_WIDTH),
-                y - widgetNode.get(OFFSET_HEIGHT)
-            ];
-            break;
-
-        case PositionAlign.TC:
-            xy = [
-                x - (widgetNode.get(OFFSET_WIDTH) / 2),
-                y
-            ];
-            break;
-
-        case PositionAlign.BC:
-            xy = [
-                x - (widgetNode.get(OFFSET_WIDTH) / 2),
-                y - widgetNode.get(OFFSET_HEIGHT)
-            ];
-            break;
-
-        case PositionAlign.LC:
-            xy = [
-                x,
-                y - (widgetNode.get(OFFSET_HEIGHT) / 2)
-            ];
-            break;
-
-        case PositionAlign.RC:
-            xy = [
-                x - widgetNode.get(OFFSET_WIDTH),
-                y - (widgetNode.get(OFFSET_HEIGHT) / 2)
-            ];
-            break;
-
-        case PositionAlign.CC:
-            xy = [
-                x - (widgetNode.get(OFFSET_WIDTH) / 2),
-                y - (widgetNode.get(OFFSET_HEIGHT) / 2)
-            ];
-            break;
-
-        default:
-            break;
-
-        }
-
-        return xy;
-    },
-
-    /**
     Helper method, used to align the given point on the widget, with the XY page
     coordinates provided.
 
     @method _doAlign
-    @param {String} widgetPoint Supported point constant
-      (e.g. WidgetPositionAlign.TL)
-    @param {Number} x X page coordinate to align to.
-    @param {Number} y Y page coordinate to align to.
+    @param {Array} xy XY page coordinates to align to.
     @private
     **/
-    _doAlign: function(widgetPoint, x, y) {
-        var xy = this._getWidgetPointXY(widgetPoint, x, y);
-
+    _doAlign: function(xy) {
         if (xy) {
             this.move(xy);
         }
