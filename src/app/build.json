@@ -21,6 +21,11 @@
                 "model.js"
             ]
         },
+        "model-sync-local": {
+            "jsfiles": [
+                "model-extensions/model-sync-local.js"
+            ]
+        },
         "model-sync-rest": {
             "jsfiles": [
                 "model-extensions/model-sync-rest.js"
