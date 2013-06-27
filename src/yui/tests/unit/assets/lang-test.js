@@ -5,6 +5,9 @@ var Assert = Y.Assert,
 
     doc = Y.config.doc,
 
+    // A string comprised of only whitespace, as defined by ES 5.
+    WHITESPACE = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF",
+
     suite = new Y.Test.Suite('YUI: Lang');
 
 suite.add(new Y.Test.Case({
@@ -113,6 +116,7 @@ suite.add(new Y.Test.Case({
         Assert.areEqual(Lang.trim("  My String"), "My String");
         Assert.areEqual(Lang.trim("My String  "), "My String");
         Assert.areEqual(Lang.trim("  My String  "), "My String");
+        Assert.areEqual(Lang.trim(WHITESPACE).length, 0);
         Assert.areEqual(Lang.trim(null), null);
         Assert.areEqual(Lang.trim(undefined), undefined);
         Assert.areEqual(Lang.trim({}), "[object Object]");
@@ -122,12 +126,14 @@ suite.add(new Y.Test.Case({
         Assert.areEqual(Lang.trimLeft("  My String"), "My String");
         Assert.areEqual(Lang.trimLeft("My String  "), "My String  ");
         Assert.areEqual(Lang.trimLeft("  My String  "), "My String  ");
+        Assert.areEqual(Lang.trimLeft(WHITESPACE + "My String"), "My String");
     },
 
     test_trim_right: function() {
         Assert.areEqual(Lang.trimRight("  My String"), "  My String");
         Assert.areEqual(Lang.trimRight("My String  "), "My String");
         Assert.areEqual(Lang.trimRight("  My String  "), "  My String");
+        Assert.areEqual(Lang.trimRight("My String" + WHITESPACE), "My String");
     },
 
     test_is_value: function() {
