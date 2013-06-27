@@ -5,9 +5,8 @@ successfully (`fulfill()`) or unsuccessfully (`reject()`).
 
 @class Promise.Resolver
 @constructor
-@param {Promise} promise The promise instance this resolver will be handling
 **/
-function Resolver(promise) {
+function Resolver() {
     /**
     List of success callbacks
 
@@ -31,8 +30,8 @@ function Resolver(promise) {
 
     @property promise
     @type Promise
+    @deprecated
     **/
-    this.promise = promise;
 
     /**
     The status of the operation. This property may take only one of the following

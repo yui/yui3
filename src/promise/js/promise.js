@@ -37,7 +37,7 @@ function Promise(fn) {
         return new Promise(fn);
     }
 
-    var resolver = new Promise.Resolver(this);
+    var resolver = new Promise.Resolver();
 
     /**
     A reference to the resolver object that handles this promise
