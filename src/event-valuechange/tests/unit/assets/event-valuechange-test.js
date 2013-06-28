@@ -486,25 +486,33 @@ suite.add(new Y.Test.Case({
             count = 0;
 
         this.container.delegate('valuechange', function (e) {
-            count++;
-            e.stopPropagation();
+            test.resume(function () {
+                count++;
+                e.stopPropagation();
+                test.wait();
+            });
         }, 'input');
 
         this.container.delegate('valuechange', function (e) {
-            count++;
+            test.resume(function () {
+                count++;
+                test.wait(function () {
+                    Assert.areSame(2, count, 'Incorrect # of valuechange events were intercepted.');
+                }, 100);
+            });
         }, 'input');
 
         this.outerContainer.delegate('valuechange', function (e) {
-            count++;
-            Assert.fail('Propagation could not be stopped.');
+            test.resume(function () {
+                count++;
+                Assert.fail('Propagation could not be stopped.');
+            });
         }, 'input');
 
         this.f.simulate('mousedown');
         this.f.set('value', 'foo');
 
-        test.wait(function () {
-            Assert.areSame(2, count, 'Incorrect number of valuechange events were intercepted.');
-        }, 100);
+        test.wait();
     },
 
     'e.stopImmediatePropagation() should work': function () {
@@ -512,27 +520,64 @@ suite.add(new Y.Test.Case({
             count = 0;
 
         this.container.delegate('valuechange', function (e) {
-            count++;
-            e.stopImmediatePropagation();
+            test.resume(function () {
+                count++;
+                e.stopImmediatePropagation();
+                test.wait(function () {
+                    Assert.areSame(1, count, 'Incorrect # of valuechange events were intercepted.');
+                }, 100);
+            });
         }, 'input');
 
         this.container.delegate('valuechange', function (e) {
-            count++;
-            Assert.fail('Immediate Propagation could not be stopped.');
+            test.resume(function () {
+                count++;
+                Assert.fail('Immediate Propagation could not be stopped.');
+            });
         }, 'input');
 
         this.outerContainer.delegate('valuechange', function (e) {
-            count++;
-            Assert.fail('Propagation to next bubble target could not be stopped.');
+            test.resume(function () {
+                count++;
+                Assert.fail('Propagation to next bubble target could not be stopped.');
+            });
         }, 'input');
 
         this.f.simulate('mousedown');
         this.f.set('value', 'foo');
 
-        test.wait(function () {
-            Assert.areSame(1, count, 'Incorrect number of valuechange events were intercepted.');
-        }, 100);
+        test.wait();
+    },
 
+    'call e.stopPropagation and then e.stopImmediatePropagation on next listener': function () {
+        var test = this;
+
+        this.container.delegate('valuechange', function (e) {
+            test.resume(function () {
+                e.stopPropagation();
+                test.wait();
+            });
+        }, 'input');
+
+        this.container.delegate('valuechange', function (e) {
+            test.resume(function () {
+                e.stopImmediatePropagation();
+                test.wait(function () {
+                    Assert.pass();
+                },100);
+            });
+        }, 'input');
+
+        this.container.delegate('valuechange', function (e) {
+            test.resume(function () {
+                Assert.fail('Immediate Propagation could not be stopped.');
+            });
+        }, 'input');
+
+        this.f.simulate('mousedown');
+        this.f.set('value', 'foo');
+
+        test.wait();
     }
 }));
 
