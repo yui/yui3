@@ -2,7 +2,6 @@
 
 var fs = require('fs'),
     path = require('path'),
-    exists = fs.existsSync || path.existsSync,
     base = path.join(__dirname, '../../');
 
 
@@ -16,7 +15,7 @@ var parse = function(filter) {
         }
         var testBase = path.join(dir, 'tests/unit');
         var unit = path.join(base, testBase);
-        if (exists(unit)) {
+        if (fs.existsSync(unit)) {
             var files = fs.readdirSync(unit);
             files.forEach(function(file) {
                 var ext = path.extname(file);
