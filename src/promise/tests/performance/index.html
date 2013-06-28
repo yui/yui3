@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8">
-    <title>Benchmarks</title>
+    <title>Promise benchmarks</title>
 </head>
 <body class="yui3-skin-sam">
+    <p><button id="start">Start Benchmarks</button></p>
 
-<p><button id="start">Start Benchmarks</button></p>
+    <div id="log"></div>
 
-<div id="log"></div>
-<applet code="nano" archive="../../../vendor/benchmarkjs/nano.jar" style="display: none;"></applet>
-<script src="../../../common/vendor/benchmarkjs/benchmark.js"></script>
+    <applet code="nano" archive="../../../common/vendor/benchmarkjs/nano.jar" style="display: none;"></applet>
+    <script src="../../../common/vendor/benchmarkjs/benchmark.js"></script>
+    <script src="../../../../build/yui/yui.js"></script>
+    <script>
 
-<script src="../../../../build/yui/yui.js"></script>
-<script>
-var Y = YUI({
+YUI({
+    filter: 'raw',
     modules: {
-        'tabview-benchmark': {
-            fullpath: 'tabview-benchmark.js',
-            requires: ['tabview']
+        'promise-benchmark': {
+            fullpath: 'promise-benchmark.js',
+            requires: ['promise', 'array-extras']
         },
 
         'test-console': {
@@ -34,7 +34,8 @@ var Y = YUI({
     },
 
     useBrowserConsole: false
-}).use('tabview-benchmark', 'test-console', function (Y) {
+}).use('promise-benchmark', 'node-base', 'test-console', function (Y) {
+
     var suite = Y.BenchmarkSuite,
         start = Y.one('#start');
 
@@ -43,8 +44,8 @@ var Y = YUI({
         Y.log('Starting benchmarks.');
     });
 
-    suite.on('cycle', function (e) {
-        Y.log(String(e.target));
+    suite.on('cycle', function (ev) {
+        Y.log(String(ev.target));
     });
 
     suite.on('complete', function () {
@@ -55,8 +56,8 @@ var Y = YUI({
     start.on('click', function () {
         suite.run({async:true});
     });
-});
-</script>
 
+});
+    </script>
 </body>
 </html>
