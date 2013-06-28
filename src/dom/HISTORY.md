@@ -4,7 +4,8 @@ DOM Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed: In Opera, `Y.Selector` failed to include selected `<option>` elements
+  when the `:checked` pseudo-selector was used. [Jeroen Versteeg]
 
 3.10.3
 ------
