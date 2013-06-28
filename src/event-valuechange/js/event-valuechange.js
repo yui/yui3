@@ -85,7 +85,7 @@ VC = {
             event   = options.e,
             newVal  = domNode && domNode.value,
             vcData  = node._data && node._data[DATA_KEY], // another perf cheat
-            facade, prevVal;
+            facade, prevVal, stopped, stopElement;
 
         if (!domNode || !vcData) {
             Y.log('_poll: node #' + node.get('id') + ' disappeared; stopping polling and removing all notifiers.', 'warn', 'event-valuechange');
@@ -106,8 +106,24 @@ VC = {
                 target       : (event && event.target) || node
             };
 
-            Y.Object.each(vcData.notifiers, function (notifier) {
-                notifier.fire(facade);
+            Y.Object.some(vcData.notifiers, function (notifier) {
+                var evt = notifier.handle.evt;
+
+                // support e.stopPropagation()
+                if (stopped !== 1) {
+                    notifier.fire(facade);
+                } else if (evt.el === stopElement) {
+                    notifier.fire(facade);
+                    return false;
+                }
+
+                stopped = evt && evt._facade ? evt._facade.stopped : 0;
+                stopElement = stopped === 1 ? evt.el : null;
+
+                // support e.stopImmediatePropagation()
+                if (stopped === 2) {
+                    return true;
+                }
             });
 
             VC._refreshTimeout(node);
@@ -196,7 +212,7 @@ VC = {
         vcData.notifiers[Y.stamp(notifier)] = notifier;
 
         vcData.interval = setInterval(function () {
-            VC._poll(node, vcData, options);
+            VC._poll(node, options);
         }, VC.POLL_INTERVAL);
 
         Y.log('_startPolling: #' + node.get('id'), 'info', 'event-valuechange');

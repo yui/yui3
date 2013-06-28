@@ -4,7 +4,8 @@ ValueChange Change History
 @VERSION@
 ------
 
-* No changes.
+* 'valuechange' event now supports e.stopPropagation() and
+  e.stopImmediatePropagation() on the facade.
 
 3.10.3
 ------

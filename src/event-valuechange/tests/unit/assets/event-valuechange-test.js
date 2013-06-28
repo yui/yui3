@@ -466,6 +466,76 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+suite.add(new Y.Test.Case({
+    name: 'Using EventFacade Methods',
+
+    setUp: function () {
+        this.outerContainer = Y.one('#test');
+        this.container = this.outerContainer.appendChild('<div></div>');
+        this.f = this.container.appendChild('<input type="text">');
+    },
+
+    tearDown: function () {
+        Y.ValueChange._stopPolling(this.container);
+        Y.ValueChange._stopPolling(this.outerContainer);
+        this.outerContainer.purge().empty();
+    },
+
+    'e.stopPropagation() should work': function () {
+        var test = this,
+            count = 0;
+
+        this.container.delegate('valuechange', function (e) {
+            count++;
+            e.stopPropagation();
+        }, 'input');
+
+        this.container.delegate('valuechange', function (e) {
+            count++;
+        }, 'input');
+
+        this.outerContainer.delegate('valuechange', function (e) {
+            count++;
+            Assert.fail('Propagation could not be stopped.');
+        }, 'input');
+
+        this.f.simulate('mousedown');
+        this.f.set('value', 'foo');
+
+        test.wait(function () {
+            Assert.areSame(2, count, 'Incorrect number of valuechange events were intercepted.');
+        }, 100);
+    },
+
+    'e.stopImmediatePropagation() should work': function () {
+        var test = this,
+            count = 0;
+
+        this.container.delegate('valuechange', function (e) {
+            count++;
+            e.stopImmediatePropagation();
+        }, 'input');
+
+        this.container.delegate('valuechange', function (e) {
+            count++;
+            Assert.fail('Immediate Propagation could not be stopped.');
+        }, 'input');
+
+        this.outerContainer.delegate('valuechange', function (e) {
+            count++;
+            Assert.fail('Propagation to next bubble target could not be stopped.');
+        }, 'input');
+
+        this.f.simulate('mousedown');
+        this.f.set('value', 'foo');
+
+        test.wait(function () {
+            Assert.areSame(1, count, 'Incorrect number of valuechange events were intercepted.');
+        }, 100);
+
+    }
+}));
+
 Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {requires:['event-valuechange', 'node-base', 'node-event-simulate', 'test']});
