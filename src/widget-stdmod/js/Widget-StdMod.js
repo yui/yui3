@@ -432,7 +432,7 @@
             if (this.get(FILL_HEIGHT)) {
                 var height = this.get(HEIGHT);
                 if (height != EMPTY && height != AUTO) {
-                    this.fillHeight(this._currFillNode);
+                    this.fillHeight(this.getStdModNode(this.get(FILL_HEIGHT)));
                 }
             }
         },

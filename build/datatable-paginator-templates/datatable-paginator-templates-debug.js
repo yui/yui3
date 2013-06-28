@@ -8,14 +8,16 @@ var engine = new Y.Template(),
     numOfCols
 }
 */
-rowWrapper = '<tr><td class="<%= this.wrapperClass %>" colspan="<%= this.numOfCols %>"/></tr>',
+rowWrapper = '<tr><td class="<%= this.wrapperClass %>" colspan="' +
+             '<%= this.numOfCols %>"/></tr>',
 
 /*
 {
     classNames: {}
 }
 */
-content = '<%= buttons %><%= this.classNames.gotoPage %><%= this.classNames.perPage %>',
+content = '<%= buttons %><%= this.classNames.gotoPage %>' +
+          '<%= this.classNames.perPage %>',
 
 /*
 {
@@ -24,7 +26,9 @@ content = '<%= buttons %><%= this.classNames.gotoPage %><%= this.classNames.perP
     label
 }
 */
-button = '<button class="<%= this.classNames.control %> <%= this.classNames.control %>-<%= this.type %>" data-type="<%= this.type %>"><%= this.label %></button>',
+button = '<button class="<%= this.classNames.control %> ' +
+         '<%= this.classNames.control %>-<%= this.type %>" ' +
+         'data-type="<%= this.type %>"><%= this.label %></button>',
 
 /*
 {
@@ -62,7 +66,8 @@ gotoPage = '<form action="#" class="<%= this.classNames.group %>">' +
 perPage = '<div class="<%= this.classNames.group %> <%= this.classNames.perPage %>">' +
                 '<label><%= this.strings.perPage %> <select>' +
                 '<% Y.Array.each(this.options, function (option, i) { %>' +
-                    '<option value="<%= option.value %>" <%= option.selected %>><%= option.label %></option>'+
+                    '<option value="<%= option.value %>" <%= option.selected %>>' +
+                    '<%= option.label %></option>'+
                 '<% }); %>' +
             '</select></label></div>';
 
