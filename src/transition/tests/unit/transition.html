@@ -64,7 +64,7 @@ YUI({
                     }
                 });
 
-                test.wait(1000);
+                test.wait();
             }
 
         }));
@@ -96,7 +96,7 @@ YUI({
                     });
                 });
 
-                test.wait(1000);
+                test.wait();
             }
 
         }));
@@ -121,7 +121,7 @@ YUI({
                     }
                 });
 
-                test.wait(1000);
+                test.wait();
             },
 
             'should run the onend before callback': function() {
@@ -132,7 +132,7 @@ YUI({
                         test.resume(function() {
                             Y.Assert.areEqual(h, node.getComputedStyle('height'));
                             node.setStyle('height', h);
-                            test.wait(1000);
+                            test.wait();
                         });
                     };
 
@@ -152,7 +152,7 @@ YUI({
                     });
                 });
 
-                test.wait(1000);
+                test.wait();
             }
 
         }));
@@ -168,13 +168,13 @@ YUI({
                 node.setStyle('opacity', '0');
                 node.show(true);
 
-                Y.later(750, null, function() {
+                Y.later(2000, null, function() {
                     test.resume(function() {
                         Y.Assert.areEqual(1, node.getStyle('opacity'));
                         Y.Assert.areEqual('block', node.getStyle('display'));
                     });
                 });
-                test.wait(1000);
+                test.wait();
             },
 
             'should show the node with the default transition and fire callback': function() {
@@ -189,7 +189,7 @@ YUI({
                         Y.Assert.areEqual('block', node.getStyle('display'));
                     });
                 });
-                test.wait(1000);
+                test.wait();
             },
 
             'should show the node with the named transition': function() {
@@ -205,13 +205,13 @@ YUI({
 
                 node.show('sizeIn');
 
-                Y.later(600, null, function() {
+                Y.later(1000, null, function() {
                     test.resume(function() {
                         Y.Assert.areEqual(h, node.getComputedStyle('height'));
                         Y.Assert.areEqual(w, node.getComputedStyle('width'));
                     });
                 });
-                test.wait(1000);
+                test.wait();
             },
 
             'should show the node with the named transition using passed config': function() {
@@ -233,14 +233,14 @@ YUI({
                     opacity: 1
                 });
 
-                Y.later(300, null, function() {
+                Y.later(1000, null, function() {
                     test.resume(function() {
                         Y.Assert.areEqual(h, node.getComputedStyle('height'));
                         Y.Assert.areEqual(w, node.getComputedStyle('width'));
                         Y.Assert.areEqual(1, node.getComputedStyle('opacity'));
                     });
                 });
-                test.wait(1000);
+                test.wait();
             },
 
             'should show the node with the named transition and fire callback': function() {
@@ -259,7 +259,7 @@ YUI({
                         Y.Assert.areEqual(w, node.getComputedStyle('width'));
                     });
                 });
-                test.wait(1000);
+                test.wait();
             },
 
             'should override the default duration': function() {
@@ -273,7 +273,7 @@ YUI({
                         Y.Assert.areEqual(2, parseInt(e.elapsedTime * 10));
                     });
                 });
-                test.wait(2000);
+                test.wait();
             }
         }));
 
@@ -294,7 +294,7 @@ YUI({
                 });
 
                 Y.Assert.areEqual('block', node.getStyle('display'));
-                test.wait(1000);
+                test.wait();
             }
 
         }));
@@ -309,13 +309,13 @@ YUI({
 
                 node.transition('fadeOut');
 
-                Y.later(550, null, function(e) {
+                Y.later(800, null, function(e) {
                     test.resume(function() {
                         Y.Assert.areEqual(0, node.getStyle('opacity'));
                     });
                 });
 
-                test.wait(1000);
+                test.wait();
             },
 
             'should run named effect with passed config': function() {
@@ -324,7 +324,7 @@ YUI({
 
                 node.transition('fadeOut', {duration: 0.2, height: '0px'});
 
-                Y.later(250, null, function(e) {
+                Y.later(500, null, function(e) {
                     test.resume(function() {
                         Y.Assert.areEqual(0, node.getStyle('opacity'));
                         Y.Assert.areEqual('0px', node.getStyle('height'));
@@ -333,7 +333,7 @@ YUI({
                 });
 
 
-                test.wait(1000);
+                test.wait();
             },
 
             'should run named effect and fire callback': function() {
@@ -346,7 +346,7 @@ YUI({
                     });
                 });
 
-                test.wait(1000);
+                test.wait();
             },
 
             'should override effect duration': function() {
@@ -360,7 +360,7 @@ YUI({
                     });
                 });
 
-                test.wait(1000);
+                test.wait();
             }
 
         }));
@@ -391,11 +391,11 @@ YUI({
                                 Y.Assert.areEqual('0px', node.getComputedStyle('height'));
                             });
                         });
-                        test.wait(1000);
+                        test.wait();
                     });
                 });
 
-                test.wait(1000);
+                test.wait();
             },
             'setStyle should not transition 1': function() {
                 var node = Y.one('.demo'),
@@ -433,7 +433,7 @@ YUI({
                     });
                 });
 
-                test.wait(2000);
+                test.wait();
             },
 
             'setStyle should not transition 2': function() {
@@ -463,11 +463,11 @@ YUI({
                 }, function(e) {
                     test.resume(function() {
                         Y.Assert.areEqual('0px', node.getComputedStyle('height'));
-                        test.wait(2000);
+                        test.wait();
                     });
                 });
 
-                test.wait(2000);
+                test.wait();
             },
 
             'setStyle should not transition 3': function() {
@@ -488,7 +488,7 @@ YUI({
                 }, function(e) {
                     test.resume(function() {
                         Y.Assert.areEqual('0px', node.getComputedStyle('width'));
-                        test.wait(2000);
+                        test.wait();
                     });
                 });
 
@@ -501,7 +501,7 @@ YUI({
                     });
                 });
 
-                test.wait(2000);
+                test.wait();
             },
 
             'setStyle should not transition 4': function() {
@@ -521,7 +521,7 @@ YUI({
                 }, function(e) { // should never fire
                     test.resume(function() {
                         Y.Assert.isNull(1);
-                        test.wait(2000);
+                        test.wait();
                     });
 
                 });
@@ -535,7 +535,7 @@ YUI({
                     });
                 });
 
-                test.wait(2000);
+                test.wait();
             },
 
             'setStyle should not transition 5': function() {
@@ -572,11 +572,11 @@ YUI({
                     test.resume(function() {
                         Y.Assert.areEqual('0', node.getComputedStyle('opacity'));
                         Y.Assert.areEqual(1, parseInt(e.elapsedTime * 10));
-                        test.wait(2000);
+                        test.wait();
                     });
                 });
 
-                test.wait(2500);
+                test.wait();
             },
 
             'setStyle should not transition 6': function() {
@@ -618,7 +618,7 @@ YUI({
                     });
                 });
 
-                test.wait(2500);
+                test.wait();
             }
 
         }));
@@ -646,7 +646,7 @@ YUI({
                     });
                 });
 
-                test.wait(2000);
+                test.wait();
             },
 
             'should end at both final values': function() {
@@ -671,7 +671,7 @@ YUI({
                     });
                 });
 
-                test.wait(2000);
+                test.wait();
             },
 
             'callback should fire when transitioning to current value': function() {
@@ -689,7 +689,7 @@ YUI({
                     });
                 });
 
-                test.wait(2000);
+                test.wait();
 
             },
 
@@ -708,7 +708,7 @@ YUI({
                     });
                 });
 
-                test.wait(2000);
+                test.wait();
 
             },
 
@@ -734,7 +734,7 @@ YUI({
                     });
                 });
 
-                test.wait(2000);
+                test.wait();
             },
 
             'callback should fire after longest duration': function() {
@@ -760,7 +760,7 @@ YUI({
                     });
                 });
 
-                test.wait(3000);
+                test.wait();
             },
 
             'native transform should map to vendor prefix': function() {
@@ -779,7 +779,7 @@ YUI({
                     });
                 });
 
-                test.wait(2000);
+                test.wait();
             },
 
             'setStyle should not transition': function() {
@@ -805,7 +805,7 @@ YUI({
                     });
                 });
                 node.destroy();
-                test.wait(2000);
+                test.wait();
             },
 
             'should clean up style object': function() {
@@ -834,7 +834,7 @@ YUI({
 
                 Y.Assert.areSame(0, called);
 
-                test.wait(1000);
+                test.wait();
             },
 
             'A 0ms `duration` should call the callback async': function() {
@@ -855,7 +855,7 @@ YUI({
 
                 Y.Assert.areSame(0, called);
 
-                test.wait(1000);
+                test.wait();
             }
 
         }));
@@ -921,7 +921,7 @@ YUI({
                     }
                 });
 
-                test.wait(1000);
+                test.wait();
             },
 
             'should hide using the named toggle': function() {
@@ -980,7 +980,7 @@ YUI({
                         });
                     }
                 });
-                test.wait(2000);
+                test.wait();
             },
 
             'should show the nodes with the default transition': function() {
@@ -991,7 +991,7 @@ YUI({
                 nodes.setStyle('opacity', '0');
                 nodes.show(true);
 
-                Y.later(550, null, function() {
+                Y.later(800, null, function() {
                     test.resume(function() {
                         Y.Assert.areEqual(1, nodes.item(0).getStyle('opacity'));
                         Y.Assert.areEqual('block', nodes.item(0).getStyle('display'));
@@ -999,7 +999,7 @@ YUI({
                         Y.Assert.areEqual('block', nodes.item(1).getStyle('display'));
                     });
                 });
-                test.wait(1000);
+                test.wait();
             },
 
             'should hide the nodes with the default transition': function() {
@@ -1018,7 +1018,7 @@ YUI({
                         Y.Assert.areEqual('none', nodes.item(1).getStyle('display'));
                     });
                 });
-                test.wait(1000);
+                test.wait();
             }
 
         }));

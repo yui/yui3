@@ -365,10 +365,11 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @return {Tree.Node[]} Array of removed child nodes.
     **/
     emptyNode: function (node, options) {
-        var removed = [];
+        var children = node.children,
+            removed  = [];
 
-        while (node.children.length) {
-            removed.push(this.removeNode(node.children[0], options));
+        for (var i = children.length - 1; i > -1; --i) {
+            removed[i] = this.removeNode(children[i], options);
         }
 
         return removed;
@@ -827,8 +828,15 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             index = parent.indexOf(node);
 
             if (index > -1) {
-                parent.children.splice(index, 1);
-                parent._isIndexStale = true;
+                var children = parent.children;
+
+                if (index === children.length - 1) {
+                    children.pop();
+                } else {
+                    children.splice(index, 1);
+                    parent._isIndexStale = true;
+                }
+
                 node.parent = null;
             }
         }

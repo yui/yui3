@@ -3,6 +3,16 @@ Dial Change History
 
 @VERSION@
 ------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
 * Fixed GitHub Issue #591: Dial was intermittently sticking at min when
   drag below min, and then back above min. This was only happenening when
   min/max was at a position of North on the dial.

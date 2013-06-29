@@ -52,13 +52,13 @@ YUI.add('color-hsl-tests', function(Y) {
             'convert hsl to hex': function() {
                 var c = Y.Color.toHex('hsl(0, 100%, 50%)');
 
-                areSame('#ff0000', c);
+                areSame('#FF0000', c);
             },
 
             'convert hsla to hex': function() {
                 var c = Y.Color.toHex('hsla(200, 50%, 50%)');
 
-                areSame('#4095bf', c);
+                areSame('#4095BF', c);
             },
 
             'convert hsl to rgb': function() {
@@ -121,8 +121,8 @@ YUI.add('color-hsl-tests', function(Y) {
                     high = Y.Color.toHex('hsl(154, 87%, 50%)');
 
                 areSame('#679883', low, 'low saturation is not preserved');
-                areSame('#3cc389', med, 'med saturation is not preserved');
-                areSame('#11ee8e', high, 'high saturation is not preserved');
+                areSame('#3CC389', med, 'med saturation is not preserved');
+                areSame('#11EE8E', high, 'high saturation is not preserved');
             },
 
             'test varying luminance toHex conversions': function() {
@@ -133,10 +133,10 @@ YUI.add('color-hsl-tests', function(Y) {
                     full = Y.Color.toHex('hsl(0, 0%, 100%)');
 
                 areSame('#000000', no, 'no luminance is not preserved');
-                areSame('#1b143e', low, 'low luminance is not preserved');
-                areSame('#5d4bc3', med, 'med luminance is not preserved');
-                areSame('#cbc6ec', high, 'high luminance is not preserved');
-                areSame('#ffffff', full, 'full luminance is not preserved');
+                areSame('#1B143E', low, 'low luminance is not preserved');
+                areSame('#5D4BC3', med, 'med luminance is not preserved');
+                areSame('#CBC6EC', high, 'high luminance is not preserved');
+                areSame('#FFFFFF', full, 'full luminance is not preserved');
             },
 
             'test for trasnparent': function () {

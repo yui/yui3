@@ -14,6 +14,16 @@ ScrollInfo Node Plugin Change History
   return incorrect information when used on a scrollable node rather than the
   body. [Ryan Grove]
 
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
 3.10.1
 ------
 

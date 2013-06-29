@@ -1,6 +1,24 @@
 YUI Core Change History
 =======================
 
+@VERSION@
+------
+
+* Brought `Y.Lang.trim()`, `trimLeft()`, and `trimRight()` into compliance with
+  ES5, and added feature tests to ensure that native implementations are only
+  used if they work properly. [Ezequiel Rodriguez]
+
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
 3.10.1
 ------
 

@@ -1801,9 +1801,15 @@ TYPES = {
     '[object Error]'   : 'error'
 },
 
-SUBREGEX        = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
-TRIMREGEX       = /^\s+|\s+$/g,
-NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
+SUBREGEX         = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
+
+WHITESPACE       = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF",
+WHITESPACE_CLASS = "[\x09-\x0D\x20\xA0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]+",
+TRIM_LEFT_REGEX  = new RegExp("^" + WHITESPACE_CLASS),
+TRIM_RIGHT_REGEX = new RegExp(WHITESPACE_CLASS + "$"),
+TRIMREGEX        = new RegExp(TRIM_LEFT_REGEX.source + "|" + TRIM_RIGHT_REGEX.source, "g"),
+
+NATIVE_FN_REGEX  = /\{\s*\[(?:native code|function)\]\s*\}/i;
 
 // -- Protected Methods --------------------------------------------------------
 
@@ -2027,7 +2033,7 @@ L.sub = function(s, o) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trim = STRING_PROTO.trim ? function(s) {
+L.trim = L._isNative(STRING_PROTO.trim) && !WHITESPACE.trim() ? function(s) {
     return s && s.trim ? s.trim() : s;
 } : function (s) {
     try {
@@ -2044,10 +2050,10 @@ L.trim = STRING_PROTO.trim ? function(s) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
+L.trimLeft = L._isNative(STRING_PROTO.trimLeft) && !WHITESPACE.trimLeft() ? function (s) {
     return s.trimLeft();
 } : function (s) {
-    return s.replace(/^\s+/, '');
+    return s.replace(TRIM_LEFT_REGEX, '');
 };
 
 /**
@@ -2057,10 +2063,10 @@ L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimRight = STRING_PROTO.trimRight ? function (s) {
+L.trimRight = L._isNative(STRING_PROTO.trimRight) && !WHITESPACE.trimRight() ? function (s) {
     return s.trimRight();
 } : function (s) {
-    return s.replace(/\s+$/, '');
+    return s.replace(TRIM_RIGHT_REGEX, '');
 };
 
 /**
@@ -7656,7 +7662,7 @@ Y.Color = {
             clr = str;
 
         if (convert && Y.Color[convert]) {
-            clr = Y.Color[convert](str).toLowerCase();
+            clr = Y.Color[convert](str);
         }
 
         return clr;
@@ -7664,6 +7670,7 @@ Y.Color = {
 
     /**
     Converts provided color value to a hex value string
+
     @public
     @method toHex
     @param {String} str Hex or RGB value string
@@ -7671,8 +7678,14 @@ Y.Color = {
     @since 3.8.0
     **/
     toHex: function (str) {
-        var clr = Y.Color._convertTo(str, 'hex');
-        return clr.toLowerCase();
+        var clr = Y.Color._convertTo(str, 'hex'),
+            isTransparent = clr.toLowerCase() === 'transparent';
+
+        if (clr.charAt(0) !== '#' && !isTransparent) {
+            clr = '#' + clr;
+        }
+
+        return isTransparent ? clr.toLowerCase() : clr.toUpperCase();
     },
 
     /**
@@ -10379,13 +10392,24 @@ Y.CustomEvent.prototype = {
 
         if (!fn) { this.log('Invalid callback for CE: ' + this.type); }
 
-        var s = new Y.Subscriber(fn, context, args, when);
+        var s = new Y.Subscriber(fn, context, args, when),
+            firedWith;
 
         if (this.fireOnce && this.fired) {
+
+            firedWith = this.firedWith;
+
+            // It's a little ugly for this to know about facades,
+            // but given the current breakup, not much choice without
+            // moving a whole lot of stuff around.
+            if (this.emitFacade && this._addFacadeToArgs) {
+                this._addFacadeToArgs(firedWith);
+            }
+
             if (this.async) {
-                setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
+                setTimeout(Y.bind(this._notify, this, s, firedWith), 0);
             } else {
-                this._notify(s, this.firedWith);
+                this._notify(s, firedWith);
             }
         }
 
@@ -12162,11 +12186,9 @@ CEProto.fireComplex = function(args) {
         host = self.host || self,
         next,
         oldbubble,
-        stack,
+        stack = self.stack,
         yuievt = host._yuievt,
         hasPotentialSubscribers;
-
-    stack = self.stack;
 
     if (stack) {
 
@@ -12228,7 +12250,7 @@ CEProto.fireComplex = function(args) {
 
         self._facade = null; // kill facade to eliminate stale properties
 
-        ef = self._getFacade(args);
+        ef = self._createFacade(args);
 
         if (ons) {
             self._procSubs(ons, args, ef);
@@ -12342,7 +12364,7 @@ CEProto.fireComplex = function(args) {
         defaultFn = self.defaultFn;
 
         if(defaultFn) {
-            ef = self._getFacade(args);
+            ef = self._createFacade(args);
 
             if ((!self.defaultTargetOnly) || (host === ef.target)) {
                 defaultFn.apply(host, args);
@@ -12357,7 +12379,33 @@ CEProto.fireComplex = function(args) {
     return ret;
 };
 
-CEProto._getFacade = function(fireArgs) {
+/**
+ * @method _hasPotentialSubscribers
+ * @for CustomEvent
+ * @private
+ * @return {boolean} Whether the event has potential subscribers or not
+ */
+CEProto._hasPotentialSubscribers = function() {
+    return this.hasSubs() || this.host._yuievt.hasTargets || this.broadcast;
+};
+
+/**
+ * Internal utility method to create a new facade instance and
+ * insert it into the fire argument list, accounting for any payload
+ * merging which needs to happen.
+ *
+ * This used to be called `_getFacade`, but the name seemed inappropriate
+ * when it was used without a need for the return value.
+ *
+ * @method _createFacade
+ * @private
+ * @param fireArgs {Array} The arguments passed to "fire", which need to be
+ * shifted (and potentially merged) when the facade is added.
+ * @return {EventFacade} The event facade created.
+ */
+
+// TODO: Remove (private) _getFacade alias, once synthetic.js is updated.
+CEProto._createFacade = CEProto._getFacade = function(fireArgs) {
 
     var userArgs = this.details,
         firstArg = userArgs && userArgs[0],
@@ -12399,6 +12447,23 @@ CEProto._getFacade = function(fireArgs) {
     this._facade = ef;
 
     return this._facade;
+};
+
+/**
+ * Utility method to manipulate the args array passed in, to add the event facade,
+ * if it's not already the first arg.
+ *
+ * @method _addFacadeToArgs
+ * @private
+ * @param {Array} The arguments to manipulate
+ */
+CEProto._addFacadeToArgs = function(args) {
+    var e = args[0];
+
+    // Trying not to use instanceof, just to avoid potential cross Y edge case issues.
+    if (!(e && e.halt && e.stopImmediatePropagation && e.stopPropagation && e._event)) {
+        this._createFacade(args);
+    }
 };
 
 /**
@@ -12599,6 +12664,25 @@ ETProto.bubble = function(evt, args, target, es) {
     }
 
     return ret;
+};
+
+/**
+ * @method _hasPotentialSubscribers
+ * @for EventTarget
+ * @private
+ * @param {String} fullType The fully prefixed type name
+ * @return {boolean} Whether the event has potential subscribers or not
+ */
+ETProto._hasPotentialSubscribers = function(fullType) {
+
+    var etState = this._yuievt,
+        e = etState.events[fullType];
+
+    if (e) {
+        return e.hasSubs() || etState.hasTargets  || e.broadcast;
+    } else {
+        return false;
+    }
 };
 
 FACADE = new Y.EventFacade();

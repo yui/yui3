@@ -11,7 +11,8 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         renderNewScrollview = Y.renderNewScrollview,
         getMockMousewheelEvent = Y.getMockMousewheelEvent,
         getMockGestureEvent = Y.getMockGestureEvent,
-        getMockGestureObject = Y.getMockGestureObject;
+        getMockGestureObject = Y.getMockGestureObject,
+        isIE = (Y.UA.ie > 0);
 
     unitTestSuite.add(new Y.Test.Case({
         name: "Lifecycle",
@@ -44,7 +45,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
             });
         }
     }));
-
 
     unitTestSuite.add(new Y.Test.Case({
         name: "Attributes",
@@ -736,7 +736,35 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         }
     }));
 
+    unitTestSuite.add(new Y.Test.Case({
+        name: "IE tests",
+        _should: {
+            ignore: {
+                '_iePreventSelect should return false' : !isIE,
+                '_ieRestoreSelect should exist' : !isIE,
+                '_fixIESelect should exist' : !isIE
+            }
+        },
 
+        "_iePreventSelect should return false": function () {
+            var scrollview = renderNewScrollview('x');
+            var result = scrollview._iePreventSelect();
+
+            Y.Assert.isFalse(result);
+        },
+
+        "_ieRestoreSelect should exist": function () {
+            var scrollview = renderNewScrollview('x');
+
+            Y.Assert.isFunction(scrollview._ieRestoreSelect);
+        },
+
+        "_fixIESelect should exist": function () {
+            var scrollview = renderNewScrollview('x');
+
+            Y.Assert.isFunction(scrollview._fixIESelect);
+        }
+    }));
 
 
 
