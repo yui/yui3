@@ -156,7 +156,7 @@ DtEditable.ATTRS = {
     Besides the options for [Overlay](Overlay.html) such as `headerContent`,
     you may use the `buttons` option which defaults to Save and Cancel buttons.
     See BaseCellEditor [buttons](DataTable.BaseCellEditor.html#attr_buttons) to change.
-    Do not set neither the body or the footer contents.
+    Do not set neither the body nor the footer contents.
 
     @attribute rowEditorOptions
     @type Object
@@ -195,12 +195,12 @@ Y.mix( DtEditable.prototype, {
     Once one is created, it holds a reference to a row editor instance,
     to be reused later.
 
-    @property _rowEditorOverlay
-    @type DataTable.RowEditorOverlay
+    @property _rowEditor
+    @type DataTable.RowEditor
     @default null
     @private
      */
-    _rowEditorOverlay: null,
+    _rowEditor: null,
 
     /**
      Holds the current record (i.e. a Model class) of the TD being edited
@@ -213,15 +213,15 @@ Y.mix( DtEditable.prototype, {
     _editorRecord:        null,
 
     /**
-    Holds the column key (or name) of the cell being edited.
+    Holds the column name (or key) of the cell being edited.
     Valid only for cell (not row) editing.
 
-     @property _editorColKey
+     @property _editorColName
      @type String
      @default null
      @private
      */
-    _editorColKey:        null,
+    _editorColName:        null,
 
     /**
      Holds the TD or TR Node currently being edited
@@ -289,8 +289,8 @@ Y.mix( DtEditable.prototype, {
     _commonEditors:  null,
 
     /**
-     Hash that stores cell editors keyed by column key (or column name) where the value
-     for the associated key is either:<ul>
+     Hash that stores cell editors keyed by column name (or column key)
+     where the value is either:<ul>
     <li>`String` which references an editor name in the [_commonEditors](#property__commonEditors) hash</li>
     <li>`DataTable.BaseCellEditor` instance for a customized editor instance
       (typically one with specified `editorConfig` in the column definition
@@ -383,10 +383,10 @@ Y.mix( DtEditable.prototype, {
     openCellEditor: function (td) {
         Y.log('DataTable.Editable.openCellEditor', 'info', 'datatable-editable');
 
-        var col       = this.getColumnByTd(td),
-            colKey    = col.key,
+        var col       = this.getColumn(td),
+            colName    = col.name || col.key,
             record    = this.getRecord(td),
-            editorRef = (colKey) ? this._columnEditors[colKey] : null,
+            editorRef = (colName) ? this._columnEditors[colName] : null,
             editorInstance = editorRef && (typeof editorRef === 'string'  ? this._commonEditors[editorRef] : editorRef);
 
         if(!td || (col && col.editable === false && !editorInstance)) {
@@ -412,14 +412,15 @@ Y.mix( DtEditable.prototype, {
             this._openEditor   = editorInstance;
             this._editorNode   = td;
             this._editorRecord = record;
-            this._editorColKey = colKey;
+            this._editorColName = colName;
 
 
             editorInstance.showEditor({
                 td:     td,
                 record: record,
-                colKey: colKey,
-                initialValue:  record.get(colKey)
+                colName: colName,
+                recordKey: col.key,
+                initialValue:  record.get(col.key)
             });
 
         }
@@ -433,8 +434,9 @@ Y.mix( DtEditable.prototype, {
      */
     openRowEditor: function (node) {
         var tr = node.ancestor('tr', true),
+            focusOn,
             record = this.getRecord(tr),
-            editorInstance = this._rowEditorOverlay,
+            editorInstance = this._rowEditor,
             opts, cePool = this._commonEditors;
 
         if (!this.hideEditor()) {
@@ -444,37 +446,49 @@ Y.mix( DtEditable.prototype, {
         // Common, pooled editor instances cannot be used because they all have
         // to be shown at once so, first, dereference all editors to actual instances.
         if (cePool) {
-            objEach(this._columnMap, function (col, colKey) {
-               var ce = this._columnEditors[colKey];
-               if (typeof ce === 'string') {
-                   if (cePool[ce]) {
-                       ce = cePool[ce];
-                       delete cePool[ce];
+            arrEach(this._displayColumns, function (col) {
+                var colName = col.name || col.key,
+                    ce = this._columnEditors[colName],
+                    name, move = !!ce;
+
+                if (typeof ce === 'string') {
+                   name = ce;
+                   if (cePool[name]) {
+                       ce = cePool[name];
+                       delete cePool[name];
                    } else {
                        // If the editor was in the pool,
                        // it was because it didn't have
                        // extra editorConfig options
-                       ce = this._createCellEditorInstance(ce, {});
+                       ce = this._createCellEditorInstance(name, {});
+                       move = false;
                    }
-                   this._columnEditors[colKey] = ce;
-               }
+                   this._columnEditors[colName] = ce;
+                }
+                if (move) {
+                    // Editors need to be reshuffled within their container
+                    // so they get into their proper tab order.
+                    this._editorsContainer.append(ce.get('container'));
+                }
             }, this);
             this._commonEditors = null;
         }
 
         if (node.get('tagName').toLowerCase() === 'tr') {
-            this.set('focusedCell', node.get('firstChild'));
+             focusOn = node.get('firstChild');
         } else {
-            this.set('focusedCell', node.ancestor('td', true));
+            focusOn = node.ancestor('td', true);
         }
+        this.set('focusedCell',focusOn);
         this.blur();
         tr.scrollIntoView();
         tr.addClass(this._classCellEditing);
 
         if (!editorInstance) {
             opts = this.get('rowEditorOptions');
-            opts.guest = this;
-            this._rowEditorOverlay = editorInstance = new Y.DataTable.RowEditorOverlay(opts).render(this._editorsContainer);
+            opts.dt = this;
+            this._rowEditor = editorInstance = new Y.DataTable.RowEditor(opts).render();
+            editorInstance.addTarget(this);
         }
 
         this._openEditor = editorInstance;
@@ -484,6 +498,7 @@ Y.mix( DtEditable.prototype, {
 
 
         editorInstance.showEditor({
+            focusOn:this.getColumn(focusOn),
             tr:     tr,
             record: record
         });
@@ -533,34 +548,18 @@ Y.mix( DtEditable.prototype, {
     @private
      */
     _hideEditorCntd: function () {
-        var td = this._editorNode;
-        if (td) {
-            td.removeClass(this._classCellEditing);
+        var node = this._editorNode;
+        if (node) {
+            node.removeClass(this._classCellEditing);
 
             this.focus();
         }
 
         this._openEditor = null;
         this._editorRecord = null;
-        this._editorColKey = null;
+        this._editorColName = null;
         this._editorNode = null;
 
-    },
-
-    /**
-    Returns all cell editor instances for the editable columns of the current DT instance
-
-    @method getCellEditors
-    @return {Object} Hash containing all the cell editors instances indexed by the column key.
-    */
-    getCellEditors: function () {
-        Y.log('DataTable.Editable.getCellEditors', 'info', 'datatable-editable');
-
-        var rtn = {};
-        objEach(this._columnEditors, function (editor, colKey){
-            rtn[colKey] =  typeof editor === 'string' ? this._commonEditors[editor] : editor;
-        }, this);
-        return rtn;
     },
 
     /**
@@ -581,55 +580,13 @@ Y.mix( DtEditable.prototype, {
         if (!col) {
             return null;
         }
-        var ce = this._columnEditors[col.key];
+        var ce = this._columnEditors[col.name || col.key];
         if (typeof ce === 'string') {
             ce = this._commonEditors[ce];
         }
 
         return ce || null;
 
-    },
-
-    /**
-    Returns the Column object (from the original "columns") associated with the input TD Node.
-
-    @method getColumnByTd
-    @param cell {Node} Node of TD for which column object is desired
-    @return column {Object} The column object entry associated with the desired cell
-    @public
-     */
-    getColumnByTd:  function (cell) {
-        Y.log('DataTable.Editable.getColumnByTd', 'info', 'datatable-editable');
-
-        var colName = this.getColumnNameByTd(cell);
-        return (colName) ? this.getColumn(colName) : null;
-    },
-
-
-    /**
-    Returns the column "key" or "name" string for the requested TD Node
-
-    @method getColumnNameByTd
-    @param cell {Node} Node of TD for which column name is desired
-    @return colName {String} Column key or name
-    @public
-     */
-    getColumnNameByTd: function (cell){
-        Y.log('DataTable.Editable.getColumnNameByTd', 'info', 'datatable-editable');
-
-        var classes = cell.get('className').split(" "),
-            regCol  = new RegExp(this.getClassName(COL) + '-(.*)'),
-            colName = null;
-
-        Y.Array.some(classes, function (item){
-            var colmatch =  item.match(regCol);
-            if ( colmatch && Lang.isArray(colmatch) && colmatch[1] ) {
-                colName = colmatch[1];
-                return true;
-            }
-        });
-
-        return colName;
     },
 
 
@@ -660,6 +617,8 @@ Y.mix( DtEditable.prototype, {
 
             this.after(CELL_EDITOR + ':save', this._afterCellEditorSave),
             this.after(CELL_EDITOR + ':cancel', this._afterCellEditorCancel),
+            this.after('roweditor:save', this._afterRowEditorSave),
+            this.after('roweditor:cancel', this._afterRowEditorCancel),
 
             //this._editorsContainer.on('click',      this._onClick, this),
             this._editorsContainer.on('keydown',    this._onKeyDown, this),
@@ -698,9 +657,9 @@ Y.mix( DtEditable.prototype, {
         }
         this._subscrEditOpen = null;
 
-        if (this._rowEditorOverlay) {
-            this._rowEditorOverlay.destroy();
-            this._rowEditorOverlay = null;
+        if (this._rowEditor) {
+            this._rowEditor.destroy();
+            this._rowEditor = null;
         }
 
         // run through all instantiated editors and destroy them
@@ -799,8 +758,8 @@ Y.mix( DtEditable.prototype, {
     created with the new options.
      */
     _uiSetRowEditorOptions: function () {
-        this._rowEditorOverlay.destroy();
-        this._rowEditorOverlay = null;
+        this._rowEditor.destroy();
+        this._rowEditor = null;
     },
     /**
     Listener for the event set at the [editorOpenAction](#attr_editorOpenAction) attribute.
@@ -908,11 +867,11 @@ Y.mix( DtEditable.prototype, {
         this._commonEditors = {};
         this._columnEditors = {};
 
-        objEach(this._columnMap, function (col, colKey) {
+        objEach(this._columnMap, function (col, colName) {
             var hasConfig = Lang.isObject(col.editorConfig),
                 edConfig = col.editorConfig || {};
 
-            if(col.editable === false || col.children) {
+            if(col.editable === false || col.children || (col.name && col.name !== colName)) {
                 return;
             }
 
@@ -920,7 +879,7 @@ Y.mix( DtEditable.prototype, {
 
             if (editorName && Y.DataTable.Editors[editorName]) {
 
-                this._updateEditableColumnCSS(colKey, true);
+                this._updateEditableColumnCSS(colName, true);
 
                 if (col.lookupTable && edConfig.lookupTable === undefined) {
                     edConfig.lookupTable = col.lookupTable;
@@ -931,7 +890,7 @@ Y.mix( DtEditable.prototype, {
 
                     editorInstance = this._createCellEditorInstance(editorName, edConfig);
 
-                    this._columnEditors[colKey] = editorInstance || null;
+                    this._columnEditors[colName] = editorInstance || null;
 
                 } else {
 
@@ -939,7 +898,7 @@ Y.mix( DtEditable.prototype, {
                         editorInstance = this._createCellEditorInstance(editorName, edConfig);
                         this._commonEditors[editorName] = editorInstance;
                     }
-                    this._columnEditors[colKey] = editorName;
+                    this._columnEditors[colName] = editorName;
                 }
 
             }
@@ -1036,9 +995,9 @@ Y.mix( DtEditable.prototype, {
         Y.log('DataTable.Editable._updateAllEditableColumnsCSS', 'info', 'datatable-editable');
 
         var editable = this.get(EDITABLE);
-        objEach(this._columnMap, function (col, colKey) {
-            if (!col.children) {
-                this._updateEditableColumnCSS(colKey, editable && col.editable !== false);
+        objEach(this._columnMap, function (col, colName) {
+            if (!(col.children || (col.name && col.name !== colName))) {
+                this._updateEditableColumnCSS(colName, editable && col.editable !== false);
             }
         }, this);
     },
@@ -1048,16 +1007,16 @@ Y.mix( DtEditable.prototype, {
     based on whether the column is editable.
 
     @method _updateEditableColumnCSS
-    @param colKey {String}  Column key or name to alter
+    @param colName {String}  Column name to alter
     @param editable {Boolean} The column is editable.
     @private
      */
-    _updateEditableColumnCSS : function (colKey, editable) {
-        Y.log('DataTable.Editable._updateEditableColumnCSS: ' + colKey + ' editable: ' + editable, 'info', 'datatable-editable');
+    _updateEditableColumnCSS : function (colName, editable) {
+        Y.log('DataTable.Editable._updateEditableColumnCSS: ' + colName + ' editable: ' + editable, 'info', 'datatable-editable');
 
         var tbody = this._tbodyNode;
         if(tbody) {
-            tbody.all('td.' + this.getClassName(COL, colKey)).toggleClass(this._classColEditable, editable);
+            tbody.all('td.' + this.getClassName(COL, colName)).toggleClass(this._classColEditable, editable);
         }
     },
 
@@ -1217,62 +1176,31 @@ Y.mix( DtEditable.prototype, {
             }
         }
     },
-
-
-    /**
-    Fired when the the cell editor is about to be opened.
-
-    @event celleditor:show
-    @param ev {Event Facade} Event facade, including:
-     @param ev.editor {DataTable.BaseCellEditor} Editor instance used to edit this cell.
-     @param ev.td {Node} The TD Node that was edited
-     @param ev.record {Model} Model instance of the record data for the edited cell
-     @param ev.colKey {String} Column key (or name) of the edited cell
-     @param ev.initialValue {Any} The original value of the underlying data for the cell
-     @param ev.formattedValue {any} Value as shown to the user
-     @param ev.inputNode {Node} Input element for the editor
-     */
-
-    /**
-    Fired when the open Cell Editor has sent an 'cancel' event, typically from
-    a user cancelling editing via ESC key or "Cancel Button"
-
-    @event celleditor:cancel
-    @param ev {Event Facade} Event facade, including:
-     @param ev.editor {DataTable.BaseCellEditor} Editor instance used to edit this cell.
-     @param ev.td {Node} The TD Node that was edited
-     @param ev.record {Model} Model instance of the record data for the edited cell
-     @param ev.colKey {String} Column key (or name) of the edited cell
-     @param ev.initialValue {Any} The original value of the underlying data for the cell
-     */
-
-    /**
-    Event fired after a Cell Editor has sent the `save` event, closing an editing session.
-
-    @event celleditor:save
-    @param ev {Event Facade} Event facade, including:
-     @param ev.editor {DataTable.BaseCellEditor} Editor instance used to edit this cell.
-     @param ev.td {Node} The TD Node that was edited
-     @param ev.record {Model} Model instance of the record data for the edited cell
-     @param ev.colKey {String} Column key (or name) of the edited cell
-     @param ev.initialValue {Any} The original value of the underlying data for the cell
-     @param ev.formattedValue {any} Value as entered by the user
-     @param ev.newValue {Any} The value to be saved
-      */
-
     /**
     After listener for the cell editor `cancel` event. If no other listener
     has halted the event, this method will finally hide the editor.
 
     @method _afterCellEditorCancel
     @private
-     */
+    */
     _afterCellEditorCancel: function () {
         Y.log('DataTable.Editable._afterCellEditorCancel', 'info', 'datatable-editable');
 
         this._hideEditorCntd();
     },
 
+    /**
+    After listener for the row editor `cancel` event. If no other listener
+    has halted the event, this method will finally hide the editor.
+
+    @method _afterRowEditorCancel
+    @private
+     */
+    _afterRowEditorCancel: function () {
+        Y.log('DataTable.Editable._afterRowEditorCancel', 'info', 'datatable-editable');
+
+        this._hideEditorCntd();
+    },
 
     /**
     After listener for the cell editor `save` event. If no other listener
@@ -1286,13 +1214,109 @@ Y.mix( DtEditable.prototype, {
     _afterCellEditorSave: function (ev) {
         Y.log('DataTable.Editable._afterCellEditorSave', 'info', 'datatable-editable');
 
-        if(ev.record){
-            ev.record.set(ev.colKey, ev.newValue);
+        if (ev.recordKey) {
+            ev.record.set(ev.recordKey, ev.newValue);
         }
-        this.hideEditor();
-    }
-});
+        this._hideEditorCntd();
+    },
 
+    /**
+    After listener for the row editor `save` event. If no other listener
+    has halted the event, this method will finally save the new values
+    and hide the editor.
+
+    @method _afterRowEditorSave
+    @param ev {Event Facade} Event facade (see: [roweditor:save](#event_roweditor:save) event.
+    @private
+     */
+
+    _afterRowEditorSave: function (ev) {
+        Y.log('DataTable.Editable._afterRowEditorSave', 'info', 'datatable-editable');
+
+        var record = ev.record,
+            map = this._columnMap;
+        objEach(ev.values, function (field) {
+            if (field.recordKey) {
+                record.set(field.recordKey, field.newValue);
+            }
+        });
+        this._hideEditorCntd();
+    }
+
+
+    /**
+    Fired when the the cell editor is about to be opened.
+
+    @event celleditor:show
+    @param ev {Event Facade} Event facade, including:
+    @param ev.editor {DataTable.BaseCellEditor} Editor instance used to edit this cell.
+    @param ev.td {Node} The TD Node that was edited
+    @param ev.record {Model} Model instance of the record data for the edited cell
+    @param ev.colName {String} Column name (or key) of the edited cell
+    @param ev.initialValue {Any} The original value of the underlying data for the cell
+    @param ev.formattedValue {any} Value as shown to the user
+    @param ev.inputNode {Node} Input element for the editor
+    */
+
+    /**
+    Fired when the open Cell Editor has sent an 'cancel' event, typically from
+    a user cancelling editing via ESC key or "Cancel Button"
+
+    @event celleditor:cancel
+    @param ev {Event Facade} Event facade, including:
+    @param ev.editor {DataTable.BaseCellEditor} Editor instance used to edit this cell.
+    @param ev.td {Node} The TD Node that was edited
+    @param ev.record {Model} Model instance of the record data for the edited cell
+    @param ev.colName {String} Column name (or key) of the edited cell
+    @param ev.initialValue {Any} The original value of the underlying data for the cell
+    */
+
+    /**
+    Event fired after a Cell Editor has sent the `save` event, closing an editing session.
+
+    @event celleditor:save
+    @param ev {Event Facade} Event facade, including:
+    @param ev.editor {DataTable.BaseCellEditor} Editor instance used to edit this cell.
+    @param ev.td {Node} The TD Node that was edited
+    @param ev.record {Model} Model instance of the record data for the edited cell
+    @param ev.colName {String} Column name (or key) of the edited cell
+    @param ev.initialValue {Any} The original value of the underlying data for the cell
+    @param ev.formattedValue {any} Value as entered by the user
+    @param ev.newValue {Any} The value to be saved
+    */
+    /**
+    Event fired when the row editor is displayed and becomes visible.
+    @event roweditor:show
+    @param ev {EventFacade} Event Facade including:
+    @param ev.tr {Node} The TR Node that will be edited
+    @param ev.record {Model} Model instance of the record data for the edited row
+    @param ev.focusOn {Node} Column whose cell had the focus or first editable column.
+    */
+
+    /**
+    Event that is fired when the user has finished editing the View's cell contents
+
+    @event roweditor:save
+    @param ev {Object} Event facade, including:
+    @param ev.tr {Node} The TR Node that was edited
+    @param ev.record {Model} Model instance of the record data for the edited row
+    @param ev.values {Object} Hash of cell information indexed by column name or key, including:
+    @param ev.values.td {Node} The TD Node that was edited
+    @param ev.values.initialValue {Any} The original value of the underlying data for the cell
+    @param ev.values.newValue {Any} Parsed value ready to be saved
+    @param ev.values.recordKey {String} Key to the record field
+    */
+
+    /**
+    Fired when editing is cancelled (without saving) on this cell editor.
+
+    @event roweditor:cancel
+    @param ev {Object}  Event facade, including:
+    @param ev.tr {Node} The TR Node that was edited
+    @param ev.record {Model} Model instance of the record data for the edited row
+    */
+
+});
 Y.DataTable.Editable = DtEditable;
 Y.Base.mix(Y.DataTable, [DtEditable]);
 

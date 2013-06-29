@@ -4,7 +4,14 @@ var substitute = Y.Lang.sub,
     Plugins = Y.Plugins || {},
     arrMap = Y.Array.map;
 /*jshint onevar:true*/
+/**
+Frame that surrounds editors when they are of the `popup` variety.
+It can host any of the cell editors by just setting the `popup` attribute true.
+It can also provide standard save and cancel buttons plus custom ones.
 
+@class DataTable.CellEditorOverlay
+@extends Overlay
+ */
 Y.DataTable.CellEditorOverlay = Y.Base.create('celleditor-overlay', Y.Overlay, [],
     {
         /**

@@ -152,9 +152,10 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
             Event fired when the cell editor is displayed and becomes visible.
             @event show
             @param ev {EventFacade} Event Facade including:
-            @param ev.td {Node} The TD Node that was edited
-            @param ev.record {Model} Model instance of the record data for the edited cell
-            @param ev.colKey {String} Column key (or name) of the edited cell
+            @param ev.td {Node} The TD Node that will be edited
+            @param ev.record {Model} Model instance of the record data for the cell to be edited
+            @param ev.colName {String} Column name (or key) of the cell to be edited
+            @param ev.recordKey {String} Key of the data field within the record
             @param ev.initialValue {Any} The original value of the underlying data for the cell
             @param ev.inputNode {Node} The editor's INPUT / TEXTAREA Node
             @param ev.formattedValue {String} The value as shown to the user.
@@ -171,7 +172,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
             @param ev {Object} Event facade, including:
             @param ev.td {Node} The TD Node that was edited
             @param ev.record {Model} Model instance of the record data for the edited cell
-            @param ev.colKey {String} Column key (or name) of the edited cell
+            @param ev.colName {String} Column name (or key) of the edited cell
+            @param ev.recordKey {String} Key of the data field within the record
             @param ev.initialValue {Any} The original value of the underlying data for the cell
             @param ev.formattedValue {Any} Data value as entered by the user
             @param ev.newValue {Any} Parsed value ready to be saved
@@ -187,7 +189,8 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
             @param ev {Object}  Event facade, including:
             @param ev.td {Node} The TD Node that was edited
             @param ev.record {Model} Model instance of the record data for the edited cell
-            @param ev.colKey {String} Column key (or name) of the edited cell
+            @param ev.colName {String} Column name (or key) of the edited cell
+            @param ev.recordKey {String} Key of the data field within the record
             @param ev.initialValue {Any} The original value of the underlying data for the cell
             */
             cancel: {
@@ -252,24 +255,17 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @method showEditor
     @param cellInfo {Object} Information about the cell that is to be edited, including:
     @param cellInfo.td {Node} Reference to the table cell
-    @param cellInfo.record {Model} Reference to the model containing the underlying data
-    @param cellInfo.colKey {String} Key of the column for the cell to be edited
+    @param cellInfo.record {Model} Reference to the model containing the underlying datai
+    @param cellInfo.colName {String} Name of the column for the cell to be edited
     @param cellInfo.initialValue {Any} The underlying value of the cell to be edited
     @public
     */
     showEditor: function (cellInfo) {
         Y.log('DataTable.BaseCellEditor.showEditor', 'info', 'celleditor-base');
 
-        this._cellInfo = cellInfo;
-
-        var value  = cellInfo.initialValue;
-
-        this.set('value', value);
-
-        value = this._formatter(value);
 
         this.fire('show', Y.merge(cellInfo, {
-            formattedValue: value
+            formattedValue: this._formatter(cellInfo.initialValue)
         }));
 
     },
@@ -282,29 +278,36 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     @method saveEditor
     @param [value] {Any} Raw value (not yet parsed) to be saved.
             If missing, [_getValue](#method__getValue) is used.
+    @param _quiet {Boolean} Do not fire the [save](#event_save) event
+            (for internal use)
     @return {Boolean} True if succesful
     @public
     */
-    saveEditor: function (value) {
+    saveEditor: function (value, _quiet) {
+        Y.log('DataTable.BaseCellEditor.saveEditor: ' + value, 'info', 'celleditor-base');
+
         if (value === undefined) {
             value = this._getValue();
         }
 
         var validator = this.get('validator'),
-            parsedValue;
-
-        Y.log('DataTable.BaseCellEditor.saveEditor: ' + value, 'info', 'celleditor-base');
+            parsedValue,
+            facade;
 
         if (validator instanceof RegExp ? validator.test(value) : true) {
 
             parsedValue = this._parser(value);
 
             if (parsedValue !== Y.Attribute.INVALID_VALUE) {
-
-                return this.fire("save", Y.merge(this._cellInfo, {
+                facade = Y.merge(this._cellInfo, {
                     formattedValue:   value,
                     newValue:   parsedValue
-                }));
+                });
+                if (_quiet) {
+                    this._defSaveFn(facade);
+                    return true;
+                }
+                return this.fire("save", facade);
             }
         }
 
@@ -433,12 +436,15 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
     _defShowFn: function (ev) {
         Y.log('DataTable.BaseCellEditor._defShowFn', 'info', 'celleditor-base');
 
-        this.set('visible', true);
-        this._attach(ev.td);
+        var cellInfo = (this._cellInfo = ev.details[0]),
+            inputNode = this._inputNode;
 
-        var inputNode = this._inputNode;
+        this.set('value', cellInfo.initialValue);
+        this.set('visible', true);
+        this._attach(cellInfo.td);
+
         if (inputNode instanceof Y.Node) {
-            inputNode.focus().set('value', ev.formattedValue).select();
+            inputNode.focus().set('value', cellInfo.formattedValue).select();
         }
 
 
@@ -812,7 +818,7 @@ BCE =  Y.Base.create('celleditor', Y.View, [], {
                 Usually a string, it might be other types for complex widgets such as Calendar.</li>
             <li>td {Node} Reference to the table cell.</li>
             <li>record {Model} Reference to the model containing the underlying data.</li>
-            <li>colKey {String} Key of the column for the cell to be edited.</li>
+            <li>colName {String} Name of the column for the cell to be edited.</li>
             <li>initialValue {Any} The underlying value of the cell to be edited.</li>
         </ul>
 

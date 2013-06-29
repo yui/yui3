@@ -8,7 +8,7 @@
     position: relative;
 }
 
-.yui3-skin-sam .yui3-roweditor-overlay-content {
+.yui3-skin-sam .yui3-roweditor-content {
    padding: 4px;
    background-color: #e6e6e6;
    border: 1px solid #a0a0a0;
@@ -18,14 +18,14 @@
    z-index: 97;
 }
 
-.yui3-skin-sam  .yui3-roweditor-overlay-content .yui3-button {
+.yui3-skin-sam  .yui3-roweditor-content .yui3-button {
     font-size:  11px;
 }
 
-.yui3-skin-sam  .yui3-roweditor-overlay-content .yui3-widget-bd {
+.yui3-skin-sam  .yui3-roweditor-content .yui3-widget-bd {
     text-align: center;
 }
-.yui3-skin-sam  .yui3-roweditor-overlay-content .yui3-widget-ft {
+.yui3-skin-sam  .yui3-roweditor-content .yui3-widget-ft {
     text-align: center;
     padding-top: 3px;
 }

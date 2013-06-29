@@ -122,16 +122,16 @@ YUI.add('datatable-editable-tests', function(Y) {
             var dt = this.dt;
             isFalse( dt.get('editable'), "editable not initially false" );
 
-            areSame( 0, Y.Object.size(dt.getCellEditors()), "No editors initially" );
+            isNull(dt._columnEditors, "No editors initially" );
 
             dt.set('editable',true);
             isTrue( dt.get('editable'), "set editable to true" );
-            areSame( 7, Y.Object.size(dt.getCellEditors()), "All columns should have the default editor set" );
+            areSame( 7, Y.Object.size(dt._columnEditors), "All columns should have the default editor set" );
             areSame(1, Y.Object.size(dt._commonEditors), "There should be only one common editor" );
 
             dt.set('editable',false);
             isFalse( dt.get('editable'), "set editable false" );
-            areSame( 0, Y.Object.size(dt.getCellEditors()), "No editors initially" );
+            isNull(dt._columnEditors, "No editors initially" );
             areSame( 0, Y.Object.size(dt._commonEditors), "There should be no common editor" );
 
         },
@@ -164,7 +164,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame('inline', dt.get('defaultEditor'), "default defaultEditor not inline" );
 
             dt.set('editable',true);
-            areSame( 7, Y.Object.size(dt.getCellEditors()), "No editors yet" );
+            areSame( 7, Y.Object.size(dt._columnEditors), "No editors yet" );
 
             dt.set('defaultEditor',null);
             isNull( dt.get('defaultEditor'), "set defaultEditor not null" );
@@ -172,7 +172,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             dt.set('defaultEditor','inline');
             areSame( 'inline', dt.get('defaultEditor'), "set defaultEditor failed on inline" );
 
-            areSame( 7, Y.Object.size(dt.getCellEditors()), "setup default editors count not 7" );
+            areSame( 7, Y.Object.size(dt._columnEditors), "setup default editors count not 7" );
             areSame(1, Y.Object.size(dt._commonEditors), "There should be only one common editor" );
 
             Assert.isInstanceOf( Y.DataTable.Editors.inline , dt._commonEditors.inline, "common editor 0 should be inline");
@@ -235,7 +235,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             isTrue( dt.get('editable'), "set editable to true" );
 
-            areSame(7, Y.Object.size(dt.getCellEditors()), 'there should be 7 cell editors');
+            areSame(7, Y.Object.size(dt._columnEditors || {}), 'there should be 7 cell editors');
             areSame(1, Y.Object.size(dt._commonEditors) , 'there should be only one (the default) editor for all');
 
             isNull( dt.getCellEditor('sid'),'column 0 (sid) editor should be null');
@@ -290,13 +290,10 @@ YUI.add('datatable-editable-tests', function(Y) {
             areSame(td4.get('text'),dt._editorNode.getHTML());
 
             // check getColumnXXX methods
-            areSame('stype',dt.getColumnByTd(td4).key,'getColumnByTd should be sdesc');
+            areSame('stype',dt.getColumn(td4).key,'getColumn should be sdesc');
             areSame(Y.Object.size(dt.get('columns')[4]),
-                Y.Object.size(dt.getColumnByTd(td4)),'getColumnByTd should be same as columns def');
-            areSame('stype',dt.getColumnNameByTd(td4),'getColumnByTd should be sdesc');
-
-
-        },
+                Y.Object.size(dt.getColumn(td4)),'getColumn should be same as columns def');
+        },  
 
 
 
@@ -377,7 +374,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             inputKey(ed, 'abc', 13);
             isFalse(fail, 'cancel should never fire');
-            areSame('sopen',evFac.colKey, 'ev.colKey');
+            areSame('sopen',evFac.colName, 'ev.colName');
             areSame(td,evFac.td,'ev.td');
             areSame(0,evFac.initialValue,'ev.initialValue');
             areSame('abc',evFac.newValue,'ev.newValue');
@@ -409,7 +406,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             inputKey(ed, 'abc', 13);
                 isFalse(fail, 'cancel should never fire');
-                areSame('sopen',evFac.colKey, 'ev.colKey');
+                areSame('sopen',evFac.colName, 'ev.colName');
                 areSame(td,evFac.td,'ev.td');
                 areSame(0,evFac.initialValue,'ev.initialValue');
                 areSame('abc',evFac.newValue,'ev.newValue');
@@ -442,7 +439,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             inputKey(ed, 'abc', 13);
 
                 isFalse(fail, 'cancel should never fire');
-                areSame('sopen',evFac.colKey, 'ev.colKey');
+                areSame('sopen',evFac.colName, 'ev.colName');
                 areSame(td,evFac.td,'ev.td');
                 areSame(0,evFac.initialValue,'ev.initialValue');
                 areSame('abc',evFac.newValue,'ev.newValue');
@@ -474,7 +471,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             inputKey(ed, 'abc', 27);
             isFalse(fail, 'save event should not fire');
-            areSame('sopen',evFac.colKey, 'ev.colKey');
+            areSame('sopen',evFac.colName, 'ev.colName');
             areSame(td,evFac.td,'ev.td');
             areSame(0,evFac.initialValue,'ev.initialValue');
             areSame('abc', ed.get('value'), 'check changed input');
@@ -503,7 +500,7 @@ YUI.add('datatable-editable-tests', function(Y) {
 
             Y.one('#logger').simulate('click');
             isFalse(fail, 'save event should not fire');
-            areSame('sopen',evFac.colKey, 'ev.colKey');
+            areSame('sopen',evFac.colName, 'ev.colName');
             areSame(td,evFac.td,'ev.td');
             areSame(0,evFac.initialValue,'ev.initialValue');
 
@@ -548,7 +545,7 @@ YUI.add('datatable-editable-tests', function(Y) {
                 editorOpenAction:   'click',
                 editable:       true
             });
-            areSame(7, Y.Object.size(dt.getCellEditors()), 'there should be 7 cell editors');
+            areSame(7, Y.Object.size(dt._columnEditors || {}), 'there should be 7 cell editors');
             // Editors with an editorConfig cannot be shared so there is going to be just three of them.
             areSame(3, Y.Object.size(dt._commonEditors) , 'there should be three (one per shared type) editors');
             isTrue(dt._columnEditors['sopen'] instanceof Y.DataTable.Editors.inline, 'The first one should have an editor instance');
@@ -633,7 +630,7 @@ YUI.add('datatable-editable-tests', function(Y) {
             isTrue(ed.ancestor().hasClass('yui3-datatable-celleditor-error'), 'cell should be in error')
 
             inputKey(ed, 'abc', 13);
-            areSame('sopen',evFac.colKey, 'ev.colKey');
+            areSame('sopen',evFac.colName, 'ev.colName');
             areSame(td,evFac.td,'ev.td');
             areSame(0,evFac.initialValue,'ev.initialValue');
             areSame('abc',evFac.newValue,'ev.newValue');
