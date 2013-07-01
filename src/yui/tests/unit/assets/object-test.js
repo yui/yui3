@@ -141,6 +141,16 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame(['toString', 'valueOf'], Y.Object.keys({toString: 1, valueOf: 1}), 'should include toString, valueOf, etc.');
 
     },
+
+    test_keys_function: function () {
+        // Android 2.3.x and Opera 11.50 bug that considers `prototype` to be a key.
+        var func = function () {};
+        func.foo = 'bar';
+        func.prototype.baz = 'qux';
+
+        Y.ArrayAssert.itemsAreSame(['foo'], Y.Object.keys(func), 'should only return enumerable keys on functions');
+    },
+
     test_keys_dom: function() {
         var el = doc.createElement('span');
         el.foo = 'bar';
