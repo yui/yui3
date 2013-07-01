@@ -230,11 +230,11 @@ Y.mix(Table.prototype, {
         var col, columns, i, len, cols;
 
         if (isObject(name) && !isArray(name)) {
-            // TODO: support getting a column from a DOM node - this will cross
-            // the line into the View logic, so it should be relayed
-
-            // Assume an object passed in is already a column def
-            col = name;
+            if (name instanceof Y.Node) {
+                col = this.body.getColumn(name);
+            } else {
+                col = name;
+            }
         } else {
             col = this.get('columns.' + name);
         }
@@ -719,7 +719,7 @@ Y.mix(Table.prototype, {
                     if (isArray(val)) {
                         copy[key] = val.slice();
                     } else if (isObject(val, true)) {
-                        i = arrayIndex(val, known);
+                        i = arrayIndex(known, val);
 
                         copy[key] = i === -1 ? copyObj(val) : knownCopies[i];
                     } else {
