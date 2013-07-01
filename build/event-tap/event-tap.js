@@ -7,7 +7,7 @@ to build input device agnostic components which behave the same in response to e
 interaction.
 
 'tap' is like a touchscreen 'click', only it requires much less finger-down time since it listens to touch events,
-but reverts to mouse events if touch is not supported. 
+but reverts to mouse events if touch is not supported.
 
 @example
 
@@ -19,7 +19,7 @@ but reverts to mouse events if touch is not supported.
 @module event
 @submodule event-tap
 @author Andres Garza, matuzak and tilo mitra
-@since 3.7.0 
+@since 3.7.0
 
 */
 var doc = Y.config.doc,
@@ -69,7 +69,7 @@ Y.Event.define(EVT_TAP, {
     /**
     This function should set up the node that will eventually fire the event.
 
-    Usage: 
+    Usage:
 
         node.on('tap', function (e) {
         });
@@ -100,11 +100,11 @@ Y.Event.define(EVT_TAP, {
     },
 
     /**
-    Event delegation for the 'tap' event. The delegated event will use a 
-    supplied selector or filtering function to test if the event references at least one 
+    Event delegation for the 'tap' event. The delegated event will use a
+    supplied selector or filtering function to test if the event references at least one
     node that should trigger the subscription callback.
 
-    Usage: 
+    Usage:
 
         node.delegate('tap', function (e) {
         }, 'li a');

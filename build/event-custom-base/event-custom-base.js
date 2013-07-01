@@ -825,26 +825,35 @@ Y.CustomEvent.prototype = {
     _on: function(fn, context, args, when) {
 
 
-        var s = new Y.Subscriber(fn, context, args, when);
+        var s = new Y.Subscriber(fn, context, args, when),
+            firedWith;
 
         if (this.fireOnce && this.fired) {
+
+            firedWith = this.firedWith;
+
+            // It's a little ugly for this to know about facades,
+            // but given the current breakup, not much choice without
+            // moving a whole lot of stuff around.
+            if (this.emitFacade && this._addFacadeToArgs) {
+                this._addFacadeToArgs(firedWith);
+            }
+
             if (this.async) {
-                setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
+                setTimeout(Y.bind(this._notify, this, s, firedWith), 0);
             } else {
-                this._notify(s, this.firedWith);
+                this._notify(s, firedWith);
             }
         }
 
         if (when === AFTER) {
             if (!this._afters) {
                 this._afters = [];
-                this._hasAfters = true;
             }
             this._afters.push(s);
         } else {
             if (!this._subscribers) {
                 this._subscribers = [];
-                this._hasSubs = true;
             }
             this._subscribers.push(s);
         }
@@ -1178,14 +1187,6 @@ Y.CustomEvent.prototype = {
 
             if (s && subs[i] === s) {
                 subs.splice(i, 1);
-
-                if (subs.length === 0) {
-                    if (when === AFTER) {
-                        this._hasAfters = false;
-                    } else {
-                        this._hasSubs = false;
-                    }
-                }
             }
         }
 
@@ -2154,12 +2155,15 @@ ET.prototype = {
             ce2,
             args;
 
-        if (typeIncluded && argCount <= 2) {
+        if (typeIncluded && argCount <= 3) {
 
             // PERF: Try to avoid slice/iteration for the common signatures
 
+            // Most common
             if (argCount === 2) {
                 args = [arguments[1]]; // fire("foo", {})
+            } else if (argCount === 3) {
+                args = [arguments[1], arguments[2]]; // fire("foo", {}, opts)
             } else {
                 args = []; // fire("foo")
             }

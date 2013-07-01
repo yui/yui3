@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <title>scrollview-scrollbars unit tests</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <link rel="stylesheet" href="../../../../build/cssreset/cssreset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="./assets/scrollview-test-styles.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <script type="text/javascript" charset="utf-8" src="../../../../build/yui/yui.js"></script>
+        <script type="text/javascript" charset="utf-8">
+
+        YUI({
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+            coverage: ['scrollview-scrollbars'],
+            modules: {
+                'scrollview-scrollbars-unit-tests': {
+                    fullpath: './assets/scrollview-scrollbars-unit-tests.js'
+                },
+                'scrollview-test-utils': {
+                    fullpath: './assets/scrollview-test-utils.js'
+                }
+            }
+        }).use('test-console', 'scrollview-scrollbars-unit-tests', function(Y) {
+
+            (new Y.Test.Console()).render();
+
+            Y.Test.Runner.run();
+
+        });
+
+        </script>
+    </head>
+
+    <body class="yui3-skin-sam">
+
+        <div id="container"></div>
+
+    </body>
+</html>

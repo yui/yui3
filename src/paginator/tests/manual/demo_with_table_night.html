@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pg with Table - night</title>
+<link rel="stylesheet" type="text/css" href="http://localhost:5000/build/cssreset/cssreset-min.css">
+<link rel="stylesheet" type="text/css" href="http://localhost:5000/build/cssfonts/cssfonts-min.css">
+<style>
+html {
+    background-color: #000;/**/
+}
+body {
+    margin: 30px;
+
+}
+.table-container {
+    width: 500px;
+    margin-bottom: 3em;
+}
+html .yui3-skin-night .yui3-datatable-table {
+    width: 100%;
+    margin-bottom: 2em;
+}
+/* simulate header from yuicss table */
+html .yui3-skin-sam .yui3-datatable-header {
+    background: none;
+    background-color: #E0E0E0;
+    font-weight: bold;
+}
+#pg-alt {
+    margin-top: 3em;
+}
+
+#pg-alt .yui3-paginator-list .yui3-paginator-control {
+    margin: 0;
+    border-radius: 0;
+}
+#pg-alt .yui3-paginator-list .yui3-paginator-control-first {
+    border-radius: 4px 0 0 4px;
+}
+#pg-alt .yui3-paginator-list .yui3-paginator-control-prev {
+    margin-right: 0.5em;
+}
+#pg-alt .yui3-paginator-list .yui3-paginator-control-last {
+    border-radius: 0 4px 4px 0;
+    margin-right: 0.5em;
+}
+</style>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+</head>
+
+<body class="yui3-skin-night">
+<div class="table-container">
+    <div id="datatable"></div>
+    <div id="pg-table"></div>
+</div>
+
+<div id="pg"></div>
+
+
+<div id="pg-alt">
+    <div id="yui_3_5_0_1_1364922856036_88" class="yui3-widget yui3-paginator yui3-paginator-list">
+        <div id="yui_3_5_0_1_1364922856036_90" class="yui3-paginator-content"><ul class=""><li class="yui3-paginator-control-wrapper"><a data-type="first" class="yui3-paginator-control yui3-paginator-control-first yui3-paginator-control-disabled" title="First Page" href="?pg=1">First</a></li><li class="yui3-paginator-control-wrapper"><a data-type="prev" class="yui3-paginator-control yui3-paginator-control-prev yui3-paginator-control-disabled" title="Previous Page" href="?pg={page}">Prev</a></li><li class="yui3-paginator-control-wrapper"><a data-type="next" class="yui3-paginator-control yui3-paginator-control-next" title="Next Page" href="?pg=2">Next</a></li><li class="yui3-paginator-control-wrapper"><a data-type="last" class="yui3-paginator-control yui3-paginator-control-last" title="Last Page" href="?pg=100">Last</a></li><li class="yui3-paginator-control-wrapper"><ul class="yui3-paginator-pages"><li class="yui3-paginator-control-wrapper"><a class="yui3-paginator-page yui3-paginator-control-selected" title="Page 1" data-page="1" href="?pg=1">1</a></li><li class="yui3-paginator-control-wrapper"><a class="yui3-paginator-page" title="Page 2" data-page="2" href="?pg=2">2</a></li><li class="yui3-paginator-control-wrapper"><a class="yui3-paginator-page" title="Page 3" data-page="3" href="?pg=3">3</a></li><li class="yui3-paginator-control-wrapper"><a class="yui3-paginator-page" title="Page 4" data-page="4" href="?pg=4">4</a></li><li class="yui3-paginator-control-wrapper"><a class="yui3-paginator-page" title="Page 5" data-page="5" href="?pg=5">5</a></li><li class="yui3-paginator-control-wrapper"><a class="yui3-paginator-page" title="Page 6" data-page="6" href="?pg=6">6</a></li><li class="yui3-paginator-control-wrapper"><a class="yui3-paginator-page" title="Page 7" data-page="7" href="?pg=7">7</a></li><li class="yui3-paginator-control-wrapper"><a class="yui3-paginator-page" title="Page 8" data-page="8" href="?pg=8">8</a></li><li class="yui3-paginator-control-wrapper"><a class="yui3-paginator-page" title="Page 9" data-page="9" href="?pg=9">9</a></li><li class="yui3-paginator-control-wrapper"><a class="yui3-paginator-page" title="Page 10" data-page="10" href="?pg=10">10</a></li></ul></li></ul></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+YUI({
+    filter: 'raw',
+    combine: false,
+    skin: 'night'
+}).use("paginator", "paginator-list", "paginator-table", "datatable", function (Y) {
+
+// PAGINATOR
+    var pgList = new Y.Paginator({
+                        totalItems: 1000,
+                        itemsPerPage: 10,
+                        view: 'Paginator.List',
+                        viewConfig: {
+                            url: '?pg={page}',
+                            displayRange: 10
+                        }
+                    });
+
+    pgList.render("#pg");
+
+    var pgDT = new Y.Paginator({
+                        totalItems: 1000,
+                        itemsPerPage: 10,
+                        view: 'Paginator.Table',
+                        viewConfig: {
+                            pageSizes: [10, 25, { value: -1, display: '*' }]
+                        }
+                    });
+
+    pgDT.render("#pg-table");
+
+
+
+// Datatable instance ///////////////////////////////////////////////////////
+    var cols = [
+        {key:"Company", label:"Sortable", sortable:true},
+        {key:"Phone", label:"Not Sortable"},
+        {key:"Contact", label:"Sortable", sortable:true}
+    ],
+    data = [
+        {Company:"Cabs", Phone:"415-555-1234", Contact:"Smith, S."},
+        {Company:"Concrete", Phone:"650-887-9000", Contact:"Barthow, J."},
+        {Company:"Cabs", Phone:"415-333-4531", Contact:"Weston, S."},
+        {Company:"Acme", Phone:"650-555-2391", Contact:"Jones, J."},
+        {Company:"Apples", Phone:"415-785-1234", Contact:"Walters, S."},
+        {Company:"Boats", Phone:"909-211-4444", Contact:"Jones, J."},
+        {Company:"Wagons", Phone:"415-294-1234", Contact:"Richards, S."},
+        {Company:"Acme", Phone:"650-555-9821", Contact:"Bolten, J."},
+        {Company:"Washers", Phone:"408-555-5678", Contact:"Ward, R."}
+    ],
+    table = new Y.DataTable({
+        columns: cols,
+        data   : data,
+        summary: "Contacts list",
+        caption: "Table with simple column sorting"
+    }).render("#datatable");
+
+
+
+});
+</script>
+</body>
+</html>
+

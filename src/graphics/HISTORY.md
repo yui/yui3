@@ -1,6 +1,26 @@
 Graphics Change History
 =======================
 
+@VERSION@
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+  * #701 Addressed rounding issue in svg implementation. This bug surfaces in edge cases of the PieChart in the charts module.
+
+3.10.1
+------
+
+* No changes.
+
 3.10.0
 ------
 

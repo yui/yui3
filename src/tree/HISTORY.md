@@ -1,6 +1,56 @@
 Tree Change History
 ===================
 
+@VERSION@
+------
+
+* Added `Tree.Node#depth()`, which returns the depth of the node, starting at 0
+  for the root node. [Ryan Grove]
+
+* Added `Tree.Sortable#sort()`, which sorts the children of every node in a
+  sortable tree. [Ryan Grove]
+
+* `Tree#emptyNode()` now removes nodes without triggering a node map reindex for
+  each node, which makes it significantly faster when emptying a node with lots
+  of children. [Ryan Grove]
+
+* The `Tree#createNode()`, `Tree#insertNode()`, and `Tree#traverseNode()`
+  methods now throw or log informative error messages when given a destroyed
+  node instead of failing cryptically (or succeeding when they shouldn't).
+  [Ryan Grove]
+
+* The `Tree.Node#isRoot()` method now returns `false` on destroyed nodes instead
+  of causing an exception. [Ryan Grove]
+
+* The `Tree.Sortable#sortNode()` and `Tree.Sortable.Node#sort()` methods now
+  accept a `deep` option. If set to `true`, the entire hierarchy will be sorted
+  (children, children's children, etc.). [Ryan Grove]
+
+* Tree.Sortable: Sort comparator functions are now executed in their original
+  context. When the sort comparator lives on the tree, its `this` object will be
+  the tree instance. When it lives on a node, its `this` object will be the
+  node. When specified as an anonymous function in an options object, its `this`
+  object will be the global object. [Ryan Grove]
+
+
+3.10.3
+------
+
+* No changes.
+
+
+3.10.2
+------
+
+* No changes.
+
+
+3.10.1
+------
+
+* No changes.
+
+
 3.10.0
 ------
 

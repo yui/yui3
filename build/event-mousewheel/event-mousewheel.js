@@ -26,7 +26,7 @@ var DOM_MOUSE_SCROLL = 'DOMMouseScroll',
 
 /**
  * Mousewheel event.  This listener is automatically attached to the
- * correct target, so one should not be supplied.  Mouse wheel 
+ * correct target, so one should not be supplied.  Mouse wheel
  * direction and velocity is stored in the 'wheelDelta' field.
  * @event mousewheel
  * @param type {string} 'mousewheel'

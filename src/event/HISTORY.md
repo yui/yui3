@@ -1,6 +1,43 @@
 Event Infrastructure Change History
 ===================================
 
+@VERSION@
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* Fixed `nodelist.on()` for rare custom module use cases.
+
+  In certain rare custom module loading circumstances [#2533242,
+  https://github.com/yui/yui3/pull/689] dom-core is attached after
+  event-base, which resulted in the `YDOM = Y.DOM` module level reference
+  being undefined [1].
+
+  This would break things like `nodelist.on()` which used the reference
+  under the hood.
+
+  [1] Added in 3.7.3, as part of the Win8 `isWindow()` fix.
+
+* Fixed DOM event facade, when Y instance was set to emitFacade:true.
+
+  With the Y instance's emitFacade set to true, DOM event subscriptions
+  would receive a Y.EventFacade instance instead of a Y.DOMEventFacade
+  instance, and as a result target and currentTarget would be set to
+  the Y instance, instead of a Y.Node instance.
+
+3.10.1
+------
+
+* No changes.
+
 3.10.0
 ------
 

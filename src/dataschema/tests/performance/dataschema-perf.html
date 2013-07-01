@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>DataSchema Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -14,7 +14,7 @@ YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     allowRollup: false,
     useBrowserConsole: false
-}).use("console", "profiler", "dump", "datatype", "dataschema", function(Y) {
+}).use("console", "datatype", "dataschema", function(Y) {
 
     // Set up the page
     var btnRun = Y.one("#btnRun"),

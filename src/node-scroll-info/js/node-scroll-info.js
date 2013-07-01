@@ -176,8 +176,8 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
     },
 
     destructor: function () {
-        (new Y.EventHandle(this._events)).detach();
-        delete this._events;
+        new Y.EventHandle(this._events).detach();
+        this._events = null;
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -202,45 +202,11 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
             margin = this._scrollMargin;
         }
 
-        var lastScroll = this._lastScroll,
-            nodes      = this._host.all(selector || '*'),
+        var elements = Y.Selector.query(selector || '*', this._host._node);
 
-            scrollBottom = lastScroll.scrollBottom + margin,
-            scrollLeft   = lastScroll.scrollLeft - margin,
-            scrollRight  = lastScroll.scrollRight + margin,
-            scrollTop    = lastScroll.scrollTop - margin,
-
-            self = this;
-
-        return nodes.filter(function (el) {
-            var xy     = Y.DOM.getXY(el),
-                elLeft = xy[0] - self._left,
-                elTop  = xy[1] - self._top,
-                elBottom, elRight;
-
-            // Check whether the element's top left point is within the
-            // viewport. This is the least expensive check.
-            if (elLeft >= scrollLeft && elLeft < scrollRight &&
-                    elTop >= scrollTop && elTop < scrollBottom) {
-
-                return false;
-            }
-
-            // Check whether the element's bottom right point is within the
-            // viewport. This check is more expensive since we have to get the
-            // element's height and width.
-            elBottom = elTop + el.offsetHeight;
-            elRight  = elLeft + el.offsetWidth;
-
-            if (elRight < scrollRight && elRight >= scrollLeft &&
-                    elBottom < scrollBottom && elBottom >= scrollTop) {
-
-                return false;
-            }
-
-            // If we get here, the element isn't within the viewport.
-            return true;
-        });
+        return new Y.NodeList(Y.Array.filter(elements, function (el) {
+            return !this._isElementOnscreen(el, margin);
+        }, this));
     },
 
     /**
@@ -263,45 +229,11 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
             margin = this._scrollMargin;
         }
 
-        var lastScroll = this._lastScroll,
-            nodes      = this._host.all(selector || '*'),
+        var elements = Y.Selector.query(selector || '*', this._host._node);
 
-            scrollBottom = lastScroll.scrollBottom + margin,
-            scrollLeft   = lastScroll.scrollLeft - margin,
-            scrollRight  = lastScroll.scrollRight + margin,
-            scrollTop    = lastScroll.scrollTop - margin,
-
-            self = this;
-
-        return nodes.filter(function (el) {
-            var xy     = Y.DOM.getXY(el),
-                elLeft = xy[0] - self._left,
-                elTop  = xy[1] - self._top,
-                elBottom, elRight;
-
-            // Check whether the element's top left point is within the
-            // viewport. This is the least expensive check.
-            if (elLeft >= scrollLeft && elLeft < scrollRight &&
-                    elTop >= scrollTop && elTop < scrollBottom) {
-
-                return true;
-            }
-
-            // Check whether the element's bottom right point is within the
-            // viewport. This check is more expensive since we have to get the
-            // element's height and width.
-            elBottom = elTop + el.offsetHeight;
-            elRight  = elLeft + el.offsetWidth;
-
-            if (elRight < scrollRight && elRight >= scrollLeft &&
-                    elBottom < scrollBottom && elBottom >= scrollTop) {
-
-                return true;
-            }
-
-            // If we get here, the element isn't within the viewport.
-            return false;
-        });
+        return new Y.NodeList(Y.Array.filter(elements, function (el) {
+            return this._isElementOnscreen(el, margin);
+        }, this));
     },
 
     /**
@@ -346,6 +278,24 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
             scrollTop   : scrollTop,
             scrollWidth : scrollWidth
         };
+    },
+
+    /**
+    Returns `true` if _node_ is at least partially onscreen within the host
+    node, `false` otherwise.
+
+    @method isNodeOnscreen
+    @param {HTMLElement|Node|String} node Node or selector to check.
+    @param {Number} [margin] Additional margin in pixels beyond the actual
+        onscreen region that should be considered "onscreen" for the purposes of
+        this query. Defaults to the value of the `scrollMargin` attribute.
+    @return {Boolean} `true` if _node_ is at least partially onscreen within the
+        host node, `false` otherwise.
+    @since @SINCE@
+    **/
+    isNodeOnscreen: function (node, margin) {
+        node = Y.one(node);
+        return !!(node && this._isElementOnscreen(node._node, margin));
     },
 
     /**
@@ -432,6 +382,31 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
     },
 
     /**
+    Underlying element-based implementation for `isNodeOnscreen()`.
+
+    @method _isElementOnscreen
+    @param {HTMLElement} el HTML element.
+    @param {Number} [margin] Additional margin in pixels beyond the actual
+        onscreen region that should be considered "onscreen" for the purposes of
+        this query. Defaults to the value of the `scrollMargin` attribute.
+    @return {Boolean} `true` if _el_ is at least partially onscreen within the
+        host node, `false` otherwise.
+    @since @SINCE@
+    **/
+    _isElementOnscreen: function (el, margin) {
+        var rect = el.getBoundingClientRect();
+
+        if (typeof margin === 'undefined') {
+            margin = this._scrollMargin;
+        }
+
+        return (rect.top < this._height + margin
+            && rect.bottom >= -margin
+            && rect.right >= -margin
+            && rect.left < this._width + margin);
+    },
+
+    /**
     Mixes detailed scroll information into the given DOM `scroll` event facade
     and fires appropriate local events.
 
@@ -487,10 +462,9 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
     Handles browser resize events.
 
     @method _afterResize
-    @param {EventFacade} e
     @protected
     **/
-    _afterResize: function (e) {
+    _afterResize: function () {
         this.refreshDimensions();
     },
 

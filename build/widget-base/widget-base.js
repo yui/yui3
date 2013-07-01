@@ -70,11 +70,11 @@ var L = Y.Lang,
 /**
  * A base class for widgets, providing:
  * <ul>
- *    <li>The render lifecycle method, in addition to the init and destroy 
+ *    <li>The render lifecycle method, in addition to the init and destroy
  *        lifecycle methods provide by Base</li>
- *    <li>Abstract methods to support consistent MVC structure across 
+ *    <li>Abstract methods to support consistent MVC structure across
  *        widgets: renderer, renderUI, bindUI, syncUI</li>
- *    <li>Support for common widget attributes, such as boundingBox, contentBox, visible, 
+ *    <li>Support for common widget attributes, such as boundingBox, contentBox, visible,
  *        disabled, focused, strings</li>
  * </ul>
  *
@@ -89,8 +89,8 @@ function Widget(config) {
     // kweight
     var widget = this,
         parentNode,
-        render, 
-        constructor = widget.constructor; 
+        render,
+        constructor = widget.constructor;
 
     widget._strs = {};
     widget._cssPrefix = constructor.CSS_PREFIX || _getClassName(constructor.NAME.toLowerCase());
@@ -114,7 +114,7 @@ function Widget(config) {
 /**
  * Static property provides a string to identify the class.
  * <p>
- * Currently used to apply class identifiers to the bounding box 
+ * Currently used to apply class identifiers to the bounding box
  * and to classify events fired by the widget.
  * </p>
  *
@@ -136,9 +136,9 @@ Widget.NAME = "widget";
 UI = Widget.UI_SRC = "ui";
 
 /**
- * Static property used to define the default attribute 
+ * Static property used to define the default attribute
  * configuration for the Widget.
- * 
+ *
  * @property ATTRS
  * @type Object
  * @static
@@ -175,8 +175,8 @@ ATTRS[RENDERED] = {
 
 /**
  * @attribute boundingBox
- * @description The outermost DOM node for the Widget, used for sizing and positioning 
- * of a Widget as well as a containing element for any decorator elements used 
+ * @description The outermost DOM node for the Widget, used for sizing and positioning
+ * of a Widget as well as a containing element for any decorator elements used
  * for skinning.
  * @type String | Node
  * @writeOnce
@@ -189,7 +189,7 @@ ATTRS[BOUNDING_BOX] = {
 
 /**
  * @attribute contentBox
- * @description A DOM node that is a direct descendant of a Widget's bounding box that 
+ * @description A DOM node that is a direct descendant of a Widget's bounding box that
  * houses its content.
  * @type String | Node
  * @writeOnce
@@ -202,11 +202,11 @@ ATTRS[CONTENT_BOX] = {
 
 /**
  * @attribute tabIndex
- * @description Number (between -32767 to 32767) indicating the widget's 
- * position in the default tab flow.  The value is used to set the 
+ * @description Number (between -32767 to 32767) indicating the widget's
+ * position in the default tab flow.  The value is used to set the
  * "tabIndex" attribute on the widget's bounding box.  Negative values allow
  * the widget to receive DOM focus programmatically (by calling the focus
- * method), while being removed from the default tab flow.  A value of 
+ * method), while being removed from the default tab flow.  A value of
  * null removes the "tabIndex" attribute from the widget's bounding box.
  * @type Number
  * @default null
@@ -218,7 +218,7 @@ ATTRS[TAB_INDEX] = {
 
 /**
  * @attribute focused
- * @description Boolean indicating if the Widget, or one of its descendants, 
+ * @description Boolean indicating if the Widget, or one of its descendants,
  * has focus.
  * @readOnly
  * @default false
@@ -309,8 +309,8 @@ Widget.CSS_PREFIX = _getClassName(Widget.NAME.toLowerCase());
 
 /**
  * Generate a standard prefixed classname for the Widget, prefixed by the default prefix defined
- * by the <code>Y.config.classNamePrefix</code> attribute used by <code>ClassNameManager</code> and 
- * <code>Widget.NAME.toLowerCase()</code> (e.g. "yui-widget-xxxxx-yyyyy", based on default values for 
+ * by the <code>Y.config.classNamePrefix</code> attribute used by <code>ClassNameManager</code> and
+ * <code>Widget.NAME.toLowerCase()</code> (e.g. "yui-widget-xxxxx-yyyyy", based on default values for
  * the prefix and widget class name).
  * <p>
  * The instance based version of this method can be used to generate standard prefixed classnames,
@@ -328,7 +328,7 @@ Widget.getClassName = function() {
 _getWidgetClassName = Widget.getClassName;
 
 /**
- * Returns the widget instance whose bounding box contains, or is, the given node. 
+ * Returns the widget instance whose bounding box contains, or is, the given node.
  * <p>
  * In the case of nested widgets, the nearest bounding box ancestor is used to
  * return the widget instance.
@@ -357,10 +357,10 @@ Widget.getByNode = function(node) {
 Y.extend(Widget, Y.Base, {
 
     /**
-     * Returns a class name prefixed with the the value of the 
+     * Returns a class name prefixed with the the value of the
      * <code>YUI.config.classNamePrefix</code> attribute + the instances <code>NAME</code> property.
      * Uses <code>YUI.config.classNameDelimiter</code> attribute to delimit the provided strings.
-     * e.g. 
+     * e.g.
      * <code>
      * <pre>
      *    // returns "yui-slider-foo-bar", for a slider instance
@@ -379,8 +379,8 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Initializer lifecycle implementation for the Widget class. Registers the 
-     * widget instance, and runs through the Widget's HTML_PARSER definition. 
+     * Initializer lifecycle implementation for the Widget class. Registers the
+     * widget instance, and runs through the Widget's HTML_PARSER definition.
      *
      * @method initializer
      * @protected
@@ -398,23 +398,19 @@ Y.extend(Widget, Y.Base, {
          * Notification event, which widget implementations can fire, when
          * they change the content of the widget. This event has no default
          * behavior and cannot be prevented, so the "on" or "after"
-         * moments are effectively equivalent (with on listeners being invoked before 
+         * moments are effectively equivalent (with on listeners being invoked before
          * after listeners).
          *
          * @event widget:contentUpdate
          * @preventable false
          * @param {EventFacade} e The Event Facade
          */
-
-        if (this._applyParser) {
-            this._applyParser(config);
-        }
     },
 
     /**
-     * Utility method used to add an entry to the boundingBox id to instance map. 
+     * Utility method used to add an entry to the boundingBox id to instance map.
      *
-     * This method can be used to populate the instance with lazily created boundingBox Node references. 
+     * This method can be used to populate the instance with lazily created boundingBox Node references.
      *
      * @method _mapInstance
      * @param {String} The boundingBox id
@@ -426,7 +422,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Destructor lifecycle implementation for the Widget class. Purges events attached
-     * to the bounding box and content box, removes them from the DOM and removes 
+     * to the bounding box and content box, removes them from the DOM and removes
      * the Widget from the list of registered widgets.
      *
      * @method destructor
@@ -462,7 +458,8 @@ Y.extend(Widget, Y.Base, {
      * from proceeding.
      * </p>
      * @method destroy
-     * @param destroyAllNodes {Boolean} If true, all nodes contained within the Widget are removed and destroyed. Defaults to false due to potentially high run-time cost. 
+     * @param destroyAllNodes {Boolean} If true, all nodes contained within the Widget are
+     * removed and destroyed. Defaults to false due to potentially high run-time cost.
      * @return {Widget} A reference to this object
      * @chainable
      */
@@ -476,7 +473,7 @@ Y.extend(Widget, Y.Base, {
      * and detaches bound UI events.
      *
      * @method _destroyBox
-     * @protected 
+     * @protected
      */
     _destroyBox : function() {
 
@@ -493,24 +490,25 @@ Y.extend(Widget, Y.Base, {
 
         this._unbindUI(boundingBox);
 
-        if (deep) {
-            // Removes and destroys all child nodes.
-            boundingBox.empty();
+        if (contentBox) {
+            if (deep) {
+                contentBox.empty();
+            }
+            contentBox.remove(TRUE);
+        }
+
+        if (!same) {
+            if (deep) {
+                boundingBox.empty();
+            }
             boundingBox.remove(TRUE);
-        } else {
-            if (contentBox) {
-                contentBox.remove(TRUE);
-            }
-            if (!same) {
-                boundingBox.remove(TRUE);
-            }
         }
     },
 
     /**
      * Establishes the initial DOM for the widget. Invoking this
      * method will lead to the creating of all DOM elements for
-     * the widget (or the manipulation of existing DOM elements 
+     * the widget (or the manipulation of existing DOM elements
      * for the progressive enhancement use case).
      * <p>
      * This method should only be invoked once for an initialized
@@ -523,11 +521,11 @@ Y.extend(Widget, Y.Base, {
      *
      * @method render
      * @chainable
-     * @final 
-     * @param  parentNode {Object | String} Optional. The Node under which the 
-     * Widget is to be rendered. This can be a Node instance or a CSS selector string. 
+     * @final
+     * @param  parentNode {Object | String} Optional. The Node under which the
+     * Widget is to be rendered. This can be a Node instance or a CSS selector string.
      * <p>
-     * If the selector string returns more than one Node, the first node will be used 
+     * If the selector string returns more than one Node, the first node will be used
      * as the parentNode. NOTE: This argument is required if both the boundingBox and contentBox
      * are not currently in the document. If it's not provided, the Widget will be rendered
      * to the body of the current document in this case.
@@ -537,10 +535,10 @@ Y.extend(Widget, Y.Base, {
 
         if (!this.get(DESTROYED) && !this.get(RENDERED)) {
              /**
-              * Lifecycle event for the render phase, fired prior to rendering the UI 
+              * Lifecycle event for the render phase, fired prior to rendering the UI
               * for the widget (prior to invoking the widget's renderer method).
               * <p>
-              * Subscribers to the "on" moment of this event, will be notified 
+              * Subscribers to the "on" moment of this event, will be notified
               * before the widget is rendered.
               * </p>
               * <p>
@@ -565,6 +563,44 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
+     * Implement the BaseCore _preAddAttrs method hook, to add
+     * the srcNode and related attributes, so that HTML_PARSER
+     * (which relies on `this.get("srcNode")`) can merge in it's
+     * results before the rest of the attributes are added.
+     *
+     * @method _preAddAttrs
+     * @protected
+     *
+     * @param attrs {Object} The full hash of statically defined ATTRS
+     * attributes being added for this instance
+     *
+     * @param userVals {Object} The hash of user values passed to
+     * the constructor
+     *
+     * @param lazy {boolean} Whether or not to add the attributes lazily
+     */
+    _preAddAttrs : function(attrs, userVals, lazy) {
+
+        var preAttrs = {
+            id : attrs.id,
+            boundingBox : attrs.boundingBox,
+            contentBox : attrs.contentBox,
+            srcNode : attrs.srcNode
+        };
+
+        this.addAttrs(preAttrs, userVals, lazy);
+
+        delete attrs.boundingBox;
+        delete attrs.contentBox;
+        delete attrs.srcNode;
+        delete attrs.id;
+
+        if (this._applyParser) {
+            this._applyParser(userVals);
+        }
+    },
+
+    /**
      * Default render handler
      *
      * @method _defRenderFn
@@ -574,7 +610,7 @@ Y.extend(Widget, Y.Base, {
      */
     _defRenderFn : function(e) {
         this._parentNode = e.parentNode;
-         
+
         this.renderer();
         this._set(RENDERED, TRUE);
 
@@ -583,8 +619,8 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Creates DOM (or manipulates DOM for progressive enhancement)
-     * This method is invoked by render() and is not chained 
-     * automatically for the class hierarchy (unlike initializer, destructor) 
+     * This method is invoked by render() and is not chained
+     * automatically for the class hierarchy (unlike initializer, destructor)
      * so it should be chained manually for subclasses if required.
      *
      * @method renderer
@@ -606,21 +642,21 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Configures/Sets up listeners to bind Widget State to UI/DOM
-     * 
-     * This method is not called by framework and is not chained 
+     *
+     * This method is not called by framework and is not chained
      * automatically for the class hierarchy.
-     * 
+     *
      * @method bindUI
      * @protected
      */
     bindUI: EMPTY_FN,
 
     /**
-     * Adds nodes to the DOM 
-     * 
-     * This method is not called by framework and is not chained 
+     * Adds nodes to the DOM
+     *
+     * This method is not called by framework and is not chained
      * automatically for the class hierarchy.
-     * 
+     *
      * @method renderUI
      * @protected
      */
@@ -628,7 +664,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Refreshes the rendered UI, based on Widget State
-     * 
+     *
      * This method is not called by framework and is not chained
      * automatically for the class hierarchy.
      *
@@ -658,7 +694,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * @method focus
-     * @description Causes the Widget to receive the focus by setting the "focused" 
+     * @description Causes the Widget to receive the focus by setting the "focused"
      * attribute to "true".
      * @chainable
      */
@@ -668,7 +704,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * @method blur
-     * @description Causes the Widget to lose focus by setting the "focused" attribute 
+     * @description Causes the Widget to lose focus by setting the "focused" attribute
      * to "false"
      * @chainable
      */
@@ -700,14 +736,14 @@ Y.extend(Widget, Y.Base, {
      * @param {boolean} expand
      */
     _uiSizeCB : function(expand) {
-        this.get(CONTENT_BOX).toggleClass(_getWidgetClassName(CONTENT, "expanded"), expand);        
+        this.get(CONTENT_BOX).toggleClass(_getWidgetClassName(CONTENT, "expanded"), expand);
     },
 
     /**
      * Helper method to collect the boundingBox and contentBox and append to the provided parentNode, if not
-     * already a child. The owner document of the boundingBox, or the owner document of the contentBox will be used 
+     * already a child. The owner document of the boundingBox, or the owner document of the contentBox will be used
      * as the document into which the Widget is rendered if a parentNode is node is not provided. If both the boundingBox and
-     * the contentBox are not currently in the document, and no parentNode is provided, the widget will be rendered 
+     * the contentBox are not currently in the document, and no parentNode is provided, the widget will be rendered
      * to the current document's body.
      *
      * @method _renderBox
@@ -774,7 +810,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Returns the default value for the contentBox attribute. 
+     * Returns the default value for the contentBox attribute.
      *
      * For the Widget class, this will be the srcNode if provided, otherwise null (resulting in
      * a new contentBox node instance being created)
@@ -856,7 +892,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Removes class names representative of the widget's loading state from 
+     * Removes class names representative of the widget's loading state from
      * the boundingBox.
      *
      * @method _removeLoadingClassNames
@@ -897,7 +933,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Sets up DOM listeners, on elements rendered by the widget.
-     * 
+     *
      * @method _bindDOM
      * @protected
      */
@@ -917,8 +953,8 @@ Y.extend(Widget, Y.Base, {
         focusHandle.listeners.count++;
 
         //	Fix for Webkit:
-        //	Document doesn't receive focus in Webkit when the user mouses 
-        //	down on it, so the "focused" attribute won't get set to the 
+        //	Document doesn't receive focus in Webkit when the user mouses
+        //	down on it, so the "focused" attribute won't get set to the
         //	correct value. Keeping this instance based for now, potential better performance.
         //  Otherwise we'll end up looking up widgets from the DOM on every mousedown.
         if (WEBKIT){
@@ -929,7 +965,7 @@ Y.extend(Widget, Y.Base, {
     /**
      * @method _unbindDOM
      * @protected
-     */   
+     */
     _unbindDOM : function(boundingBox) {
 
         var focusHandle = Widget._hDocFocus,
@@ -1002,7 +1038,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Sets the visible state for the UI
-     * 
+     *
      * @method _uiSetVisible
      * @protected
      * @param {boolean} val
@@ -1028,8 +1064,8 @@ Y.extend(Widget, Y.Base, {
      * @method _uiSetFocused
      * @protected
      * @param {boolean} val
-     * @param {string} src String representing the source that triggered an update to 
-     * the UI.     
+     * @param {string} src String representing the source that triggered an update to
+     * the UI.
      */
     _uiSetFocused: function(val, src) {
          var boundingBox = this.get(BOUNDING_BOX);
@@ -1037,7 +1073,7 @@ Y.extend(Widget, Y.Base, {
 
          if (src !== UI) {
             if (val) {
-                boundingBox.focus();  
+                boundingBox.focus();
             } else {
                 boundingBox.blur();
             }
@@ -1063,7 +1099,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * @method _onDocMouseDown
-     * @description "mousedown" event handler for the owner document of the 
+     * @description "mousedown" event handler for the owner document of the
      * widget's bounding box.
      * @protected
      * @param {EventFacade} evt The event facade for the DOM focus event
@@ -1076,7 +1112,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * DOM focus event handler, used to sync the state of the Widget with the DOM
-     * 
+     *
      * @method _onDocFocus
      * @protected
      * @param {EventFacade} evt The event facade for the DOM focus event
@@ -1113,25 +1149,25 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Default unit to use for dimension values
-     * 
+     *
      * @property DEF_UNIT
      * @type String
      */
     DEF_UNIT : "px",
 
-    /** 
+    /**
      * Default node to render the bounding box to. If not set,
      * will default to the current document body.
-     * 
+     *
      * @property DEF_PARENT_NODE
      * @type String | Node
-     */ 
+     */
     DEF_PARENT_NODE : null,
 
     /**
      * Property defining the markup template for content box. If your Widget doesn't
      * need the dual boundingBox/contentBox structure, set CONTENT_TEMPLATE to null,
-     * and contentBox and boundingBox will both point to the same Node. 
+     * and contentBox and boundingBox will both point to the same Node.
      *
      * @property CONTENT_TEMPLATE
      * @type String
@@ -1165,14 +1201,14 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Binds after listeners for the list of attributes provided
-     * 
+     *
      * @method _bindAttrUI
      * @private
      * @param {Array} attrs
      */
     _bindAttrUI : function(attrs) {
-        var i, 
-            l = attrs.length; 
+        var i,
+            l = attrs.length;
 
         for (i = 0; i < l; i++) {
             this.after(attrs[i] + CHANGE, this._setAttrUI);
@@ -1180,7 +1216,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Invokes the _uiSet&#61;ATTR NAME&#62; method for the list of attributes provided  
+     * Invokes the _uiSet&#61;ATTR NAME&#62; method for the list of attributes provided
      *
      * @method _syncAttrUI
      * @private
@@ -1207,7 +1243,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * The default setter for the strings attribute. Merges partial sets
-     * into the full string set, to allow users to partial sets of strings  
+     * into the full string set, to allow users to partial sets of strings
      *
      * @method _strSetter
      * @protected
@@ -1221,7 +1257,7 @@ Y.extend(Widget, Y.Base, {
     /**
      * Helper method to get a specific string value
      *
-     * @deprecated Used by deprecated WidgetLocale implementations. 
+     * @deprecated Used by deprecated WidgetLocale implementations.
      * @method getString
      * @param {String} key
      * @return {String} The string

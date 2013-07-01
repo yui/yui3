@@ -1,6 +1,27 @@
 ValueChange Change History
 ==========================
 
+@VERSION@
+------
+
+* Added support for `stopPropagation()` and `stopImmediatePropagation()` on the
+  `valuechange` event facade. [Wei Wang]
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
 3.10.0
 ------
 

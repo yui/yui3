@@ -1,6 +1,31 @@
 App Framework Change History
 ============================
 
+@VERSION@
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+### Router
+
+* Router now properly dispatches when using hash-based URLs and calling
+  `replace()` without arguments; before it would throw an error. [#739]
+
+
+3.10.1
+------
+
+* No changes.
+
+
 3.10.0
 ------
 

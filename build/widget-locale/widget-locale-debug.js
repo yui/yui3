@@ -1,10 +1,13 @@
 YUI.add('widget-locale', function (Y, NAME) {
 
 /**
- * Provides string support for widget with BCP 47 language tag lookup. This module has been deprecated. It's replaced by the "intl" module which provides generic internationalization and BCP 47 language tag support with externalization.
+ * Provides string support for widget with BCP 47 language tag lookup. This module has been deprecated.
+ * It's replaced by the "intl" module which provides generic internationalization and BCP 47 language tag
+ * support with externalization.
  *
  * @module widget-locale
- * @deprecated This module has been deprecated. It's replaced by the "intl" module which provides generic internationalization and BCP 47 language tag support with externalization.
+ * @deprecated This module has been deprecated. It's replaced by the "intl" module which provides
+ * generic internationalization and BCP 47 language tag support with externalization.
  */
 var TRUE = true,
     LOCALE = "locale",
@@ -66,7 +69,7 @@ Y.mix(Widget.prototype, {
     /**
      * Gets the entire strings hash for a particular locale, performing locale lookup.
      * <p>
-     * If no values of the key are defined for a particular locale the value for the 
+     * If no values of the key are defined for a particular locale the value for the
      * default locale (in initial locale set for the class) is returned.
      * </p>
      * @method getStrings
@@ -74,11 +77,11 @@ Y.mix(Widget.prototype, {
      */
     // TODO: Optimize/Cache. Clear cache on _setStrings call.
     getStrings : function(locale) {
-    
+
         locale = (locale || this.get(LOCALE)).toLowerCase();
-    
-        Y.log("getStrings: For " + locale, "info", "widget"); 
-    
+
+        Y.log("getStrings: For " + locale, "info", "widget");
+
         var defLocale = this.getDefaultLocale().toLowerCase(),
             defStrs = this._getStrings(defLocale),
             strs = (defStrs) ? Y.merge(defStrs) : {},
@@ -86,15 +89,15 @@ Y.mix(Widget.prototype, {
             localeStrs,
             i, l,
             lookup;
-    
+
         // If locale is different than the default, or needs lookup support
         if (locale !== defLocale || localeSegments.length > 1) {
             lookup = EMPTY_STR;
             for (i = 0, l = localeSegments.length; i < l; ++i) {
                 lookup += localeSegments[i];
-    
-                Y.log("getStrings: Merging in strings from: " + lookup, "info", "widget"); 
-    
+
+                Y.log("getStrings: Merging in strings from: " + lookup, "info", "widget");
+
                 localeStrs = this._getStrings(lookup);
                 if (localeStrs) {
                     Y.aggregate(strs, localeStrs, TRUE);
@@ -102,14 +105,14 @@ Y.mix(Widget.prototype, {
                 lookup += HYPHEN;
             }
         }
-    
+
         return strs;
     },
-    
+
     /**
      * Gets the string for a particular key, for a particular locale, performing locale lookup.
      * <p>
-     * If no values if defined for the key, for the given locale, the value for the 
+     * If no values if defined for the key, for the given locale, the value for the
      * default locale (in initial locale set for the class) is returned.
      * </p>
      * @method getString
@@ -119,19 +122,19 @@ Y.mix(Widget.prototype, {
     getString : function(key, locale) {
 
         locale = (locale || this.get(LOCALE)).toLowerCase();
-    
-        Y.log("getString: For " + locale, "info", "widget"); 
-    
+
+        Y.log("getString: For " + locale, "info", "widget");
+
         var defLocale = (this.getDefaultLocale()).toLowerCase(),
             strs = this._getStrings(defLocale) || {},
             str = strs[key],
             idx = locale.lastIndexOf(HYPHEN);
-    
+
         // If locale is different than the default, or needs lookup support
         if (locale !== defLocale || idx != -1) {
             do {
-                Y.log("getString: Performing lookup for: " + locale, "info", "widget"); 
-    
+                Y.log("getString: Performing lookup for: " + locale, "info", "widget");
+
                 strs = this._getStrings(locale);
                 if (strs && key in strs) {
                     str = strs[key];
@@ -142,10 +145,10 @@ Y.mix(Widget.prototype, {
                 if (idx != -1) {
                     locale = locale.substring(0, idx);
                 }
-    
+
             } while (idx != -1);
         }
-    
+
         return str;
     },
 
@@ -159,7 +162,7 @@ Y.mix(Widget.prototype, {
     getDefaultLocale : function() {
         return this._state.get(LOCALE, INIT_VALUE);
     },
-    
+
     _strSetter : function(val) {
         return this._setStrings(val, this.get(LOCALE));
     },

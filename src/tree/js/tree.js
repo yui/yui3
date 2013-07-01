@@ -1,4 +1,4 @@
-/*jshint expr:true, onevar:false */
+/*jshint boss:true, expr:true, onevar:false */
 
 /**
 Provides a generic tree data structure and related functionality.
@@ -264,15 +264,20 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
         instance is specified instead of a config object, that node will be
         adopted into this tree (if it doesn't already belong to this tree) and
         removed from any other tree to which it belongs.
-    @return {Tree.Node} New node.
+    @return {Tree.Node|null} New node, or `null` if a node could not be created
+        from the given _config_.
     **/
     createNode: function (config) {
-        /*jshint boss:true */
         config || (config = {});
 
-        // If `config` is already a node, just ensure it's in the node map and
-        // return it.
+        // If `config` is already a node, just ensure it hasn't been destroyed
+        // and is in the node map, then return it.
         if (config._isYUITreeNode) {
+            if (config.state.destroyed) {
+                Y.error('Cannot insert a node that has already been destroyed.', null, 'tree');
+                return null;
+            }
+
             this._adoptNode(config);
             return config;
         }
@@ -330,12 +335,11 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             this.removeNode(node, options);
         }
 
-        node.children  = null;
-        node.data      = null;
+        node.children  = [];
+        node.data      = {};
         node.state     = {destroyed: true};
         node.tree      = null;
-        node._htmlNode = null;
-        node._indexMap = null;
+        node._indexMap = {};
 
         delete this._nodeMap[node.id];
 
@@ -361,10 +365,11 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @return {Tree.Node[]} Array of removed child nodes.
     **/
     emptyNode: function (node, options) {
-        var removed = [];
+        var children = node.children,
+            removed  = [];
 
-        while (node.children.length) {
-            removed.push(this.removeNode(node.children[0], options));
+        for (var i = children.length - 1; i > -1; --i) {
+            removed[i] = this.removeNode(children[i], options);
         }
 
         return removed;
@@ -453,7 +458,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             used to distinguish between changes triggered by a user and changes
             triggered programmatically, for example.
 
-    @return {Tree.Node[]} Node or array of nodes that were inserted.
+    @return {Tree.Node|Tree.Node[]} Node or array of nodes that were inserted.
     **/
     insertNode: function (parent, node, options) {
         options || (options = {});
@@ -472,36 +477,44 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
         // impact on performance, so you're on your own since this is such a
         // rare edge case.
         if ('length' in node && Lang.isArray(node)) {
-            var inserted = [];
+            var hasIndex      = 'index' in options,
+                insertedNodes = [],
+                insertedNode;
 
             for (var i = 0, len = node.length; i < len; i++) {
-                inserted.push(this.insertNode(parent, node[i], options));
+                insertedNode = this.insertNode(parent, node[i], options);
 
-                if ('index' in options) {
-                    options.index += 1;
+                if (insertedNode) {
+                    insertedNodes.push(insertedNode);
+
+                    if (hasIndex) {
+                        options.index += 1;
+                    }
                 }
             }
 
-            return inserted;
+            return insertedNodes;
         }
 
         node = this.createNode(node);
 
-        var index = options.index;
+        if (node) {
+            var index = options.index;
 
-        if (typeof index === 'undefined') {
-            index = this._getDefaultNodeIndex(parent, node, options);
+            if (typeof index === 'undefined') {
+                index = this._getDefaultNodeIndex(parent, node, options);
+            }
+
+            this._fireTreeEvent(EVT_ADD, {
+                index : index,
+                node  : node,
+                parent: parent,
+                src   : options.src || 'insert'
+            }, {
+                defaultFn: this._defAddFn,
+                silent   : options.silent
+            });
         }
-
-        this._fireTreeEvent(EVT_ADD, {
-            index : index,
-            node  : node,
-            parent: parent,
-            src   : options.src || 'insert'
-        }, {
-            defaultFn: this._defAddFn,
-            silent   : options.silent
-        });
 
         return node;
     },
@@ -623,6 +636,11 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
         otherwise returns `undefined`.
     **/
     traverseNode: function (node, options, callback, thisObj) {
+        if (node.state.destroyed) {
+            Y.error('Cannot traverse a node that has been destroyed.', null, 'tree');
+            return;
+        }
+
         // Allow callback as second argument.
         if (typeof options === 'function') {
             thisObj  = callback;
@@ -714,7 +732,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             if (nodeClass) {
                 this.nodeClass = nodeClass;
             } else {
-                Y.error('Tree: Node class not found: ' + nodeClass);
+                Y.error('Node class not found: ' + nodeClass, null, 'tree');
                 return;
             }
         }
@@ -810,8 +828,15 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             index = parent.indexOf(node);
 
             if (index > -1) {
-                parent.children.splice(index, 1);
-                parent._isIndexStale = true;
+                var children = parent.children;
+
+                if (index === children.length - 1) {
+                    children.pop();
+                } else {
+                    children.splice(index, 1);
+                    parent._isIndexStale = true;
+                }
+
                 node.parent = null;
             }
         }

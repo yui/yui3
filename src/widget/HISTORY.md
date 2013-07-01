@@ -1,6 +1,28 @@
 Widget Change History
 =====================
 
+@VERSION@
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+  * Fixed contentBox remaining in Y.Node _instances cache, when
+    widget hasn't been rendered, and `widget.destroy(true)` [deep destroy]
+    is used.
+
+3.10.1
+------
+
+* No changes.
+
 3.10.0
 ------
 

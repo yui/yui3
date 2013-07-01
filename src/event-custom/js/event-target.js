@@ -732,12 +732,15 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             ce2,
             args;
 
-        if (typeIncluded && argCount <= 2) {
+        if (typeIncluded && argCount <= 3) {
 
             // PERF: Try to avoid slice/iteration for the common signatures
 
+            // Most common
             if (argCount === 2) {
                 args = [arguments[1]]; // fire("foo", {})
+            } else if (argCount === 3) {
+                args = [arguments[1], arguments[2]]; // fire("foo", {}, opts)
             } else {
                 args = []; // fire("foo")
             }

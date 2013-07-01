@@ -1736,8 +1736,8 @@ relying on ES5 functionality, even when ES5 functionality is available.
 
 /**
 Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
-@property delayUntil
-@type String|Object
+
+@property {Object|String} delayUntil
 @since 3.6.0
 @example
 
@@ -1761,8 +1761,6 @@ Or you can delay until a node is available (with `available` or `contentready`):
         // available in the DOM.
     });
 
-@property {Object|String} delayUntil
-@since 3.6.0
 **/
 YUI.add('yui-base', function (Y, NAME) {
 
@@ -1803,9 +1801,15 @@ TYPES = {
     '[object Error]'   : 'error'
 },
 
-SUBREGEX        = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
-TRIMREGEX       = /^\s+|\s+$/g,
-NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
+SUBREGEX         = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
+
+WHITESPACE       = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF",
+WHITESPACE_CLASS = "[\x09-\x0D\x20\xA0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]+",
+TRIM_LEFT_REGEX  = new RegExp("^" + WHITESPACE_CLASS),
+TRIM_RIGHT_REGEX = new RegExp(WHITESPACE_CLASS + "$"),
+TRIMREGEX        = new RegExp(TRIM_LEFT_REGEX.source + "|" + TRIM_RIGHT_REGEX.source, "g"),
+
+NATIVE_FN_REGEX  = /\{\s*\[(?:native code|function)\]\s*\}/i;
 
 // -- Protected Methods --------------------------------------------------------
 
@@ -2029,7 +2033,7 @@ L.sub = function(s, o) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trim = STRING_PROTO.trim ? function(s) {
+L.trim = L._isNative(STRING_PROTO.trim) && !WHITESPACE.trim() ? function(s) {
     return s && s.trim ? s.trim() : s;
 } : function (s) {
     try {
@@ -2046,10 +2050,10 @@ L.trim = STRING_PROTO.trim ? function(s) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
+L.trimLeft = L._isNative(STRING_PROTO.trimLeft) && !WHITESPACE.trimLeft() ? function (s) {
     return s.trimLeft();
 } : function (s) {
-    return s.replace(/^\s+/, '');
+    return s.replace(TRIM_LEFT_REGEX, '');
 };
 
 /**
@@ -2059,10 +2063,10 @@ L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimRight = STRING_PROTO.trimRight ? function (s) {
+L.trimRight = L._isNative(STRING_PROTO.trimRight) && !WHITESPACE.trimRight() ? function (s) {
     return s.trimRight();
 } : function (s) {
-    return s.replace(/\s+$/, '');
+    return s.replace(TRIM_RIGHT_REGEX, '');
 };
 
 /**
@@ -7519,6 +7523,498 @@ Y.mix(Y.DOM, {
 
 
 }, '@VERSION@', {"requires": ["dom-core"]});
+YUI.add('color-base', function (Y, NAME) {
+
+/**
+Color provides static methods for color conversion.
+
+    Y.Color.toRGB('f00'); // rgb(255, 0, 0)
+
+    Y.Color.toHex('rgb(255, 255, 0)'); // #ffff00
+
+@module color
+@submodule color-base
+@class Color
+@since 3.8.0
+**/
+
+var REGEX_HEX = /^#?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})(\ufffe)?/,
+    REGEX_HEX3 = /^#?([\da-fA-F]{1})([\da-fA-F]{1})([\da-fA-F]{1})(\ufffe)?/,
+    REGEX_RGB = /rgba?\(([\d]{1,3}), ?([\d]{1,3}), ?([\d]{1,3}),? ?([.\d]*)?\)/,
+    TYPES = { 'HEX': 'hex', 'RGB': 'rgb', 'RGBA': 'rgba' },
+    CONVERTS = { 'hex': 'toHex', 'rgb': 'toRGB', 'rgba': 'toRGBA' };
+
+
+Y.Color = {
+    /**
+    @static
+    @property KEYWORDS
+    @type Object
+    @since 3.8.0
+    **/
+    KEYWORDS: {
+        'black': '000', 'silver': 'c0c0c0', 'gray': '808080', 'white': 'fff',
+        'maroon': '800000', 'red': 'f00', 'purple': '800080', 'fuchsia': 'f0f',
+        'green': '008000', 'lime': '0f0', 'olive': '808000', 'yellow': 'ff0',
+        'navy': '000080', 'blue': '00f', 'teal': '008080', 'aqua': '0ff'
+    },
+
+    /**
+        NOTE: `(\ufffe)?` is added to the Regular Expression to carve out a
+        place for the alpha channel that is returned from toArray
+        without compromising any usage of the Regular Expression
+
+    @static
+    @property REGEX_HEX
+    @type RegExp
+    @default /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})(\ufffe)?/
+    @since 3.8.0
+    **/
+    REGEX_HEX: REGEX_HEX,
+
+    /**
+        NOTE: `(\ufffe)?` is added to the Regular Expression to carve out a
+        place for the alpha channel that is returned from toArray
+        without compromising any usage of the Regular Expression
+
+    @static
+    @property REGEX_HEX3
+    @type RegExp
+    @default /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})(\ufffe)?/
+    @since 3.8.0
+    **/
+    REGEX_HEX3: REGEX_HEX3,
+
+    /**
+    @static
+    @property REGEX_RGB
+    @type RegExp
+    @default /rgba?\(([0-9]{1,3}), ?([0-9]{1,3}), ?([0-9]{1,3}),? ?([.0-9]{1,3})?\)/
+    @since 3.8.0
+    **/
+    REGEX_RGB: REGEX_RGB,
+
+    re_RGB: REGEX_RGB,
+
+    re_hex: REGEX_HEX,
+
+    re_hex3: REGEX_HEX3,
+
+    /**
+    @static
+    @property STR_HEX
+    @type String
+    @default #{*}{*}{*}
+    @since 3.8.0
+    **/
+    STR_HEX: '#{*}{*}{*}',
+
+    /**
+    @static
+    @property STR_RGB
+    @type String
+    @default rgb({*}, {*}, {*})
+    @since 3.8.0
+    **/
+    STR_RGB: 'rgb({*}, {*}, {*})',
+
+    /**
+    @static
+    @property STR_RGBA
+    @type String
+    @default rgba({*}, {*}, {*}, {*})
+    @since 3.8.0
+    **/
+    STR_RGBA: 'rgba({*}, {*}, {*}, {*})',
+
+    /**
+    @static
+    @property TYPES
+    @type Object
+    @default {'rgb':'rgb', 'rgba':'rgba'}
+    @since 3.8.0
+    **/
+    TYPES: TYPES,
+
+    /**
+    @static
+    @property CONVERTS
+    @type Object
+    @default {}
+    @since 3.8.0
+    **/
+    CONVERTS: CONVERTS,
+
+    /**
+     Converts the provided string to the provided type.
+     You can use the `Y.Color.TYPES` to get a valid `to` type.
+     If the color cannot be converted, the original color will be returned.
+
+     @public
+     @method convert
+     @param {String} str
+     @param {String} to
+     @return {String}
+     @since 3.8.0
+     **/
+    convert: function (str, to) {
+        var convert = Y.Color.CONVERTS[to.toLowerCase()],
+            clr = str;
+
+        if (convert && Y.Color[convert]) {
+            clr = Y.Color[convert](str);
+        }
+
+        return clr;
+    },
+
+    /**
+    Converts provided color value to a hex value string
+
+    @public
+    @method toHex
+    @param {String} str Hex or RGB value string
+    @return {String} returns array of values or CSS string if options.css is true
+    @since 3.8.0
+    **/
+    toHex: function (str) {
+        var clr = Y.Color._convertTo(str, 'hex'),
+            isTransparent = clr.toLowerCase() === 'transparent';
+
+        if (clr.charAt(0) !== '#' && !isTransparent) {
+            clr = '#' + clr;
+        }
+
+        return isTransparent ? clr.toLowerCase() : clr.toUpperCase();
+    },
+
+    /**
+    Converts provided color value to an RGB value string
+    @public
+    @method toRGB
+    @param {String} str Hex or RGB value string
+    @return {String}
+    @since 3.8.0
+    **/
+    toRGB: function (str) {
+        var clr = Y.Color._convertTo(str, 'rgb');
+        return clr.toLowerCase();
+    },
+
+    /**
+    Converts provided color value to an RGB value string
+    @public
+    @method toRGBA
+    @param {String} str Hex or RGB value string
+    @return {String}
+    @since 3.8.0
+    **/
+    toRGBA: function (str) {
+        var clr = Y.Color._convertTo(str, 'rgba' );
+        return clr.toLowerCase();
+    },
+
+    /**
+    Converts the provided color string to an array of values where the
+        last value is the alpha value. Will return an empty array if
+        the provided string is not able to be parsed.
+
+        NOTE: `(\ufffe)?` is added to `HEX` and `HEX3` Regular Expressions to
+        carve out a place for the alpha channel that is returned from
+        toArray without compromising any usage of the Regular Expression
+
+        Y.Color.toArray('fff');              // ['ff', 'ff', 'ff', 1]
+        Y.Color.toArray('rgb(0, 0, 0)');     // ['0', '0', '0', 1]
+        Y.Color.toArray('rgba(0, 0, 0, 0)'); // ['0', '0', '0', 1]
+
+
+
+    @public
+    @method toArray
+    @param {String} str
+    @return {Array}
+    @since 3.8.0
+    **/
+    toArray: function(str) {
+        // parse with regex and return "matches" array
+        var type = Y.Color.findType(str).toUpperCase(),
+            regex,
+            arr,
+            length,
+            lastItem;
+
+        if (type === 'HEX' && str.length < 5) {
+            type = 'HEX3';
+        }
+
+        if (type.charAt(type.length - 1) === 'A') {
+            type = type.slice(0, -1);
+        }
+
+        regex = Y.Color['REGEX_' + type];
+
+        if (regex) {
+            arr = regex.exec(str) || [];
+            length = arr.length;
+
+            if (length) {
+
+                arr.shift();
+                length--;
+
+                if (type === 'HEX3') {
+                    arr[0] += arr[0];
+                    arr[1] += arr[1];
+                    arr[2] += arr[2];
+                }
+
+                lastItem = arr[length - 1];
+                if (!lastItem) {
+                    arr[length - 1] = 1;
+                }
+            }
+        }
+
+        return arr;
+
+    },
+
+    /**
+    Converts the array of values to a string based on the provided template.
+    @public
+    @method fromArray
+    @param {Array} arr
+    @param {String} template
+    @return {String}
+    @since 3.8.0
+    **/
+    fromArray: function(arr, template) {
+        arr = arr.concat();
+
+        if (typeof template === 'undefined') {
+            return arr.join(', ');
+        }
+
+        var replace = '{*}';
+
+        template = Y.Color['STR_' + template.toUpperCase()];
+
+        if (arr.length === 3 && template.match(/\{\*\}/g).length === 4) {
+            arr.push(1);
+        }
+
+        while ( template.indexOf(replace) >= 0 && arr.length > 0) {
+            template = template.replace(replace, arr.shift());
+        }
+
+        return template;
+    },
+
+    /**
+    Finds the value type based on the str value provided.
+    @public
+    @method findType
+    @param {String} str
+    @return {String}
+    @since 3.8.0
+    **/
+    findType: function (str) {
+        if (Y.Color.KEYWORDS[str]) {
+            return 'keyword';
+        }
+
+        var index = str.indexOf('('),
+            key;
+
+        if (index > 0) {
+            key = str.substr(0, index);
+        }
+
+        if (key && Y.Color.TYPES[key.toUpperCase()]) {
+            return Y.Color.TYPES[key.toUpperCase()];
+        }
+
+        return 'hex';
+
+    }, // return 'keyword', 'hex', 'rgb'
+
+    /**
+    Retrives the alpha channel from the provided string. If no alpha
+        channel is present, `1` will be returned.
+    @protected
+    @method _getAlpha
+    @param {String} clr
+    @return {Number}
+    @since 3.8.0
+    **/
+    _getAlpha: function (clr) {
+        var alpha,
+            arr = Y.Color.toArray(clr);
+
+        if (arr.length > 3) {
+            alpha = arr.pop();
+        }
+
+        return +alpha || 1;
+    },
+
+    /**
+    Returns the hex value string if found in the KEYWORDS object
+    @protected
+    @method _keywordToHex
+    @param {String} clr
+    @return {String}
+    @since 3.8.0
+    **/
+    _keywordToHex: function (clr) {
+        var keyword = Y.Color.KEYWORDS[clr];
+
+        if (keyword) {
+            return keyword;
+        }
+    },
+
+    /**
+    Converts the provided color string to the value type provided as `to`
+    @protected
+    @method _convertTo
+    @param {String} clr
+    @param {String} to
+    @return {String}
+    @since 3.8.0
+    **/
+    _convertTo: function(clr, to) {
+
+        if (clr === 'transparent') {
+            return clr;
+        }
+
+        var from = Y.Color.findType(clr),
+            originalTo = to,
+            needsAlpha,
+            alpha,
+            method,
+            ucTo;
+
+        if (from === 'keyword') {
+            clr = Y.Color._keywordToHex(clr);
+            from = 'hex';
+        }
+
+        if (from === 'hex' && clr.length < 5) {
+            if (clr.charAt(0) === '#') {
+                clr = clr.substr(1);
+            }
+
+            clr = '#' + clr.charAt(0) + clr.charAt(0) +
+                        clr.charAt(1) + clr.charAt(1) +
+                        clr.charAt(2) + clr.charAt(2);
+        }
+
+        if (from === to) {
+            return clr;
+        }
+
+        if (from.charAt(from.length - 1) === 'a') {
+            from = from.slice(0, -1);
+        }
+
+        needsAlpha = (to.charAt(to.length - 1) === 'a');
+        if (needsAlpha) {
+            to = to.slice(0, -1);
+            alpha = Y.Color._getAlpha(clr);
+        }
+
+        ucTo = to.charAt(0).toUpperCase() + to.substr(1).toLowerCase();
+        method = Y.Color['_' + from + 'To' + ucTo ];
+
+        // check to see if need conversion to rgb first
+        // check to see if there is a direct conversion method
+        // convertions are: hex <-> rgb <-> hsl
+        if (!method) {
+            if (from !== 'rgb' && to !== 'rgb') {
+                clr = Y.Color['_' + from + 'ToRgb'](clr);
+                from = 'rgb';
+                method = Y.Color['_' + from + 'To' + ucTo ];
+            }
+        }
+
+        if (method) {
+            clr = ((method)(clr, needsAlpha));
+        }
+
+        // process clr from arrays to strings after conversions if alpha is needed
+        if (needsAlpha) {
+            if (!Y.Lang.isArray(clr)) {
+                clr = Y.Color.toArray(clr);
+            }
+            clr.push(alpha);
+            clr = Y.Color.fromArray(clr, originalTo.toUpperCase());
+        }
+
+        return clr;
+    },
+
+    /**
+    Processes the hex string into r, g, b values. Will return values as
+        an array, or as an rgb string.
+    @protected
+    @method _hexToRgb
+    @param {String} str
+    @param {Boolean} [toArray]
+    @return {String|Array}
+    @since 3.8.0
+    **/
+    _hexToRgb: function (str, toArray) {
+        var r, g, b;
+
+        /*jshint bitwise:false*/
+        if (str.charAt(0) === '#') {
+            str = str.substr(1);
+        }
+
+        str = parseInt(str, 16);
+
+        r = str >> 16;
+        g = str >> 8 & 0xFF;
+        b = str & 0xFF;
+
+        if (toArray) {
+            return [r, g, b];
+        }
+
+        return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+    },
+
+    /**
+    Processes the rgb string into r, g, b values. Will return values as
+        an array, or as a hex string.
+    @protected
+    @method _rgbToHex
+    @param {String} str
+    @param {Boolean} [toArray]
+    @return {String|Array}
+    @since 3.8.0
+    **/
+    _rgbToHex: function (str) {
+        /*jshint bitwise:false*/
+        var rgb = Y.Color.toArray(str),
+            hex = rgb[2] | (rgb[1] << 8) | (rgb[0] << 16);
+
+        hex = (+hex).toString(16);
+
+        while (hex.length < 6) {
+            hex = '0' + hex;
+        }
+
+        return '#' + hex;
+    }
+
+};
+
+
+
+}, '@VERSION@', {"requires": ["yui-base"]});
 YUI.add('dom-style', function (Y, NAME) {
 
 (function(Y) {
@@ -7782,83 +8278,9 @@ Y_DOM.CUSTOM_STYLES.transformOrigin = {
 
 
 })(Y);
-(function(Y) {
-var PARSE_INT = parseInt,
-    RE = RegExp;
-
-Y.Color = {
-    KEYWORDS: {
-        black: '000',
-        silver: 'c0c0c0',
-        gray: '808080',
-        white: 'fff',
-        maroon: '800000',
-        red: 'f00',
-        purple: '800080',
-        fuchsia: 'f0f',
-        green: '008000',
-        lime: '0f0',
-        olive: '808000',
-        yellow: 'ff0',
-        navy: '000080',
-        blue: '00f',
-        teal: '008080',
-        aqua: '0ff'
-    },
-
-    re_RGB: /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i,
-    re_hex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
-    re_hex3: /([0-9A-F])/gi,
-
-    toRGB: function(val) {
-        if (!Y.Color.re_RGB.test(val)) {
-            val = Y.Color.toHex(val);
-        }
-
-        if(Y.Color.re_hex.exec(val)) {
-            val = 'rgb(' + [
-                PARSE_INT(RE.$1, 16),
-                PARSE_INT(RE.$2, 16),
-                PARSE_INT(RE.$3, 16)
-            ].join(', ') + ')';
-        }
-        return val;
-    },
-
-    toHex: function(val) {
-        val = Y.Color.KEYWORDS[val] || val;
-        if (Y.Color.re_RGB.exec(val)) {
-            val = [
-                Number(RE.$1).toString(16),
-                Number(RE.$2).toString(16),
-                Number(RE.$3).toString(16)
-            ];
-
-            for (var i = 0; i < val.length; i++) {
-                if (val[i].length < 2) {
-                    val[i] = '0' + val[i];
-                }
-            }
-
-            val = val.join('');
-        }
-
-        if (val.length < 6) {
-            val = val.replace(Y.Color.re_hex3, '$1$1');
-        }
-
-        if (val !== 'transparent' && val.indexOf('#') < 0) {
-            val = '#' + val;
-        }
-
-        return val.toUpperCase();
-    }
-};
-})(Y);
 
 
-
-}, '@VERSION@', {"requires": ["dom-base"]});
+}, '@VERSION@', {"requires": ["dom-base", "color-base"]});
 YUI.add('dom-style-ie', function (Y, NAME) {
 
 (function(Y) {
@@ -9970,26 +10392,35 @@ Y.CustomEvent.prototype = {
 
         if (!fn) { this.log('Invalid callback for CE: ' + this.type); }
 
-        var s = new Y.Subscriber(fn, context, args, when);
+        var s = new Y.Subscriber(fn, context, args, when),
+            firedWith;
 
         if (this.fireOnce && this.fired) {
+
+            firedWith = this.firedWith;
+
+            // It's a little ugly for this to know about facades,
+            // but given the current breakup, not much choice without
+            // moving a whole lot of stuff around.
+            if (this.emitFacade && this._addFacadeToArgs) {
+                this._addFacadeToArgs(firedWith);
+            }
+
             if (this.async) {
-                setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
+                setTimeout(Y.bind(this._notify, this, s, firedWith), 0);
             } else {
-                this._notify(s, this.firedWith);
+                this._notify(s, firedWith);
             }
         }
 
         if (when === AFTER) {
             if (!this._afters) {
                 this._afters = [];
-                this._hasAfters = true;
             }
             this._afters.push(s);
         } else {
             if (!this._subscribers) {
                 this._subscribers = [];
-                this._hasSubs = true;
             }
             this._subscribers.push(s);
         }
@@ -10327,14 +10758,6 @@ Y.CustomEvent.prototype = {
 
             if (s && subs[i] === s) {
                 subs.splice(i, 1);
-
-                if (subs.length === 0) {
-                    if (when === AFTER) {
-                        this._hasAfters = false;
-                    } else {
-                        this._hasSubs = false;
-                    }
-                }
             }
         }
 
@@ -11303,12 +11726,15 @@ ET.prototype = {
             ce2,
             args;
 
-        if (typeIncluded && argCount <= 2) {
+        if (typeIncluded && argCount <= 3) {
 
             // PERF: Try to avoid slice/iteration for the common signatures
 
+            // Most common
             if (argCount === 2) {
                 args = [arguments[1]]; // fire("foo", {})
+            } else if (argCount === 3) {
+                args = [arguments[1], arguments[2]]; // fire("foo", {}, opts)
             } else {
                 args = []; // fire("foo")
             }
@@ -11760,11 +12186,9 @@ CEProto.fireComplex = function(args) {
         host = self.host || self,
         next,
         oldbubble,
-        stack,
+        stack = self.stack,
         yuievt = host._yuievt,
         hasPotentialSubscribers;
-
-    stack = self.stack;
 
     if (stack) {
 
@@ -11826,7 +12250,7 @@ CEProto.fireComplex = function(args) {
 
         self._facade = null; // kill facade to eliminate stale properties
 
-        ef = self._getFacade(args);
+        ef = self._createFacade(args);
 
         if (ons) {
             self._procSubs(ons, args, ef);
@@ -11936,33 +12360,56 @@ CEProto.fireComplex = function(args) {
             self.prevented = 0;
         }
 
-        // Kill the cached facade to free up memory.
-        // Otherwise we have the facade from the last fire, sitting around forever.
-        self._facade = null;
-
-        return ret;
-
     } else {
         defaultFn = self.defaultFn;
 
         if(defaultFn) {
-            ef = self._getFacade(args);
+            ef = self._createFacade(args);
 
             if ((!self.defaultTargetOnly) || (host === ef.target)) {
                 defaultFn.apply(host, args);
             }
         }
-
-        return ret;
     }
 
+    // Kill the cached facade to free up memory.
+    // Otherwise we have the facade from the last fire, sitting around forever.
+    self._facade = null;
+
+    return ret;
 };
 
-CEProto._getFacade = function(fireArgs) {
+/**
+ * @method _hasPotentialSubscribers
+ * @for CustomEvent
+ * @private
+ * @return {boolean} Whether the event has potential subscribers or not
+ */
+CEProto._hasPotentialSubscribers = function() {
+    return this.hasSubs() || this.host._yuievt.hasTargets || this.broadcast;
+};
+
+/**
+ * Internal utility method to create a new facade instance and
+ * insert it into the fire argument list, accounting for any payload
+ * merging which needs to happen.
+ *
+ * This used to be called `_getFacade`, but the name seemed inappropriate
+ * when it was used without a need for the return value.
+ *
+ * @method _createFacade
+ * @private
+ * @param fireArgs {Array} The arguments passed to "fire", which need to be
+ * shifted (and potentially merged) when the facade is added.
+ * @return {EventFacade} The event facade created.
+ */
+
+// TODO: Remove (private) _getFacade alias, once synthetic.js is updated.
+CEProto._createFacade = CEProto._getFacade = function(fireArgs) {
 
     var userArgs = this.details,
         firstArg = userArgs && userArgs[0],
-        firstArgIsObj = (typeof firstArg === "object"),
+        firstArgIsObj = (firstArg && (typeof firstArg === "object")),
         ef = this._facade;
 
     if (!ef) {
@@ -12000,6 +12447,23 @@ CEProto._getFacade = function(fireArgs) {
     this._facade = ef;
 
     return this._facade;
+};
+
+/**
+ * Utility method to manipulate the args array passed in, to add the event facade,
+ * if it's not already the first arg.
+ *
+ * @method _addFacadeToArgs
+ * @private
+ * @param {Array} The arguments to manipulate
+ */
+CEProto._addFacadeToArgs = function(args) {
+    var e = args[0];
+
+    // Trying not to use instanceof, just to avoid potential cross Y edge case issues.
+    if (!(e && e.halt && e.stopImmediatePropagation && e.stopPropagation && e._event)) {
+        this._createFacade(args);
+    }
 };
 
 /**
@@ -12200,6 +12664,25 @@ ETProto.bubble = function(evt, args, target, es) {
     }
 
     return ret;
+};
+
+/**
+ * @method _hasPotentialSubscribers
+ * @for EventTarget
+ * @private
+ * @param {String} fullType The fully prefixed type name
+ * @return {boolean} Whether the event has potential subscribers or not
+ */
+ETProto._hasPotentialSubscribers = function(fullType) {
+
+    var etState = this._yuievt,
+        e = etState.events[fullType];
+
+    if (e) {
+        return e.hasSubs() || etState.hasTargets  || e.broadcast;
+    } else {
+        return false;
+    }
 };
 
 FACADE = new Y.EventFacade();
@@ -15141,7 +15624,7 @@ Y.extend(DOMEventFacade, Object, {
         // Webkit and IE9+? duplicate charCode in keyCode.
         // Opera never sets charCode, always keyCode (though with the charCode).
         // IE6-8 don't set charCode or which.
-        // All browsers other than IE6-8 set which=keyCode in keydown, keyup, and 
+        // All browsers other than IE6-8 set which=keyCode in keydown, keyup, and
         // which=charCode in keypress.
         //
         // Moral of the story: (e.which || e.keyCode) will always return the
@@ -15360,6 +15843,7 @@ Y.DOMEventFacade = DOMEventFacade;
      * on the current target will not be executed
      */
 (function() {
+
 /**
  * The event utility provides functions to add and remove event listeners,
  * event cleansing.  It also tries to automatically remove listeners it
@@ -15381,8 +15865,7 @@ Y.DOMEventFacade = DOMEventFacade;
 Y.Env.evt.dom_wrappers = {};
 Y.Env.evt.dom_map = {};
 
-var YDOM = Y.DOM,
-    _eventenv = Y.Env.evt,
+var _eventenv = Y.Env.evt,
     config = Y.config,
     win = config.win,
     add = YUI.Env.add,
@@ -15405,7 +15888,7 @@ var YDOM = Y.DOM,
     shouldIterate = function(o) {
         try {
             // TODO: See if there's a more performant way to return true early on this, for the common case
-            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !YDOM.isWindow(o));
+            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !Y.DOM.isWindow(o));
         } catch(ex) {
             return false;
         }
@@ -15688,6 +16171,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 cewrapper = Y.publish(key, {
                     silent: true,
                     bubbles: false,
+                    emitFacade:false,
                     contextFn: function() {
                         if (compat) {
                             return cewrapper.el;
@@ -15772,7 +16256,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 // oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
 
                 if (compat) {
-                    oEl = YDOM.byId(el);
+                    oEl = Y.DOM.byId(el);
                 } else {
 
                     oEl = Y.Selector.query(el);
@@ -15886,7 +16370,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
 
                 // el = (compat) ? Y.DOM.byId(el) : Y.all(el);
                 if (compat) {
-                    el = YDOM.byId(el);
+                    el = Y.DOM.byId(el);
                 } else {
                     el = Y.Selector.query(el);
                     l = el.length;
@@ -15960,7 +16444,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
          * @static
          */
         generateId: function(el) {
-            return YDOM.generateID(el);
+            return Y.DOM.generateID(el);
         },
 
         /**
@@ -16067,7 +16551,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 if (item && !item.checkReady) {
 
                     // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
-                    el = (item.compat) ? YDOM.byId(item.id) : Y.Selector.query(item.id, null, true);
+                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         executeItem(el, item);
@@ -16084,7 +16568,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 if (item && item.checkReady) {
 
                     // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
-                    el = (item.compat) ? YDOM.byId(item.id) : Y.Selector.query(item.id, null, true);
+                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         // The element is available, but not necessarily ready
@@ -16284,6 +16768,7 @@ if (Y.UA.ie) {
 try {
     add(win, "unload", onUnload);
 } catch(e) {
+    /*jshint maxlen:300*/
 }
 
 Event.Custom = Y.CustomEvent;
@@ -16571,7 +17056,7 @@ IELazyFacade._lazyProperties = {
         var e = this._event,
             val = e.pageX,
             doc, bodyScroll, docScroll;
-                
+
         if (val === undefined) {
             doc = Y.config.doc;
             bodyScroll = doc.body && doc.body.scrollLeft;
@@ -16586,7 +17071,7 @@ IELazyFacade._lazyProperties = {
         var e = this._event,
             val = e.pageY,
             doc, bodyScroll, docScroll;
-                
+
         if (val === undefined) {
             doc = Y.config.doc;
             bodyScroll = doc.body && doc.body.scrollTop;
@@ -16647,7 +17132,7 @@ if (imp && (!imp.hasFeature('Events', '2.0'))) {
             useLazyFacade = false;
         }
     }
-        
+
     Y.DOMEventFacade = (useLazyFacade) ? IELazyFacade : IEEventFacade;
 }
 
@@ -17677,7 +18162,7 @@ Y.Node.prototype.intersect = function(node2, altRegion) {
  * @param {Node|Object} node2 The node or region to compare with.
  * @param {Boolean} all Whether or not all of the node must be in the region.
  * @param {Object} altRegion An alternate region to use (rather than this node's).
- * @return {Object} An object representing the intersection of the regions.
+ * @return {Boolean} True if in region, false if not.
  */
 Y.Node.prototype.inRegion = function(node2, all, altRegion) {
     var node1 = Y.Node.getDOMNode(this);

@@ -6,7 +6,7 @@
  * @constructor
  * @submodule charts-base
  */
-Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
+Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Renderer], {
     /**
      * @method renderUI
      * @private
@@ -28,8 +28,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         {
             this._addTooltip();
         }
-        //If there is a style definition. Force them to set.
-        this.get("styles");
         if(this.get("interactionType") === "planar")
         {
             overlay = DOCUMENT.createElement("div");
@@ -281,6 +279,11 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     _parseSeriesCollection: function(val)
     {
         var dir = this.get("direction"),
+            seriesStyles = this.get("styles").series,
+            stylesAreArray = seriesStyles && Y_Lang.isArray(seriesStyles),
+            stylesIndex,
+            setStyles,
+            globalStyles,
             sc = [],
             catAxis,
             valAxis,
@@ -365,36 +368,55 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             if(series instanceof Y.CartesianSeries)
             {
                 this._parseSeriesAxes(series);
-                continue;
             }
-
-            series[catKey] = series[catKey] || categoryKey;
-            series[seriesKey] = series[seriesKey] || seriesKeys.shift();
-            series[catAxis] = this._getCategoryAxis();
-            series[valAxis] = this._getSeriesAxis(series[seriesKey]);
-
-            series.type = series.type || type;
-            series.direction = series.direction || dir;
-
-            if(series.type === "combo" ||
-                series.type === "stackedcombo" ||
-                series.type === "combospline" ||
-                series.type === "stackedcombospline")
+            else
             {
-                if(showAreaFill !== null)
+                series[catKey] = series[catKey] || categoryKey;
+                series[seriesKey] = series[seriesKey] || seriesKeys.shift();
+                series[catAxis] = this._getCategoryAxis();
+                series[valAxis] = this._getSeriesAxis(series[seriesKey]);
+
+                series.type = series.type || type;
+                series.direction = series.direction || dir;
+
+                if(series.type === "combo" ||
+                    series.type === "stackedcombo" ||
+                    series.type === "combospline" ||
+                    series.type === "stackedcombospline")
                 {
-                    series.showAreaFill = (series.showAreaFill !== null && series.showAreaFill !== undefined) ? series.showAreaFill : showAreaFill;
+                    if(showAreaFill !== null)
+                    {
+                        series.showAreaFill = (series.showAreaFill !== null && series.showAreaFill !== undefined) ?
+                                               series.showAreaFill : showAreaFill;
+                    }
+                    if(showMarkers !== null)
+                    {
+                        series.showMarkers = (series.showMarkers !== null && series.showMarkers !== undefined) ? series.showMarkers : showMarkers;
+                    }
+                    if(showLines !== null)
+                    {
+                        series.showLines = (series.showLines !== null && series.showLines !== undefined) ? series.showLines : showLines;
+                    }
                 }
-                if(showMarkers !== null)
+                if(seriesStyles)
                 {
-                    series.showMarkers = (series.showMarkers !== null && series.showMarkers !== undefined) ? series.showMarkers : showMarkers;
+                    stylesIndex = stylesAreArray ? i : series[seriesKey];
+                    globalStyles = seriesStyles[stylesIndex];
+                    if(globalStyles)
+                    {
+                        setStyles = series.styles;
+                        if(setStyles)
+                        {
+                            series.styles = this._mergeStyles(setStyles, globalStyles);
+                        }
+                        else
+                        {
+                            series.styles = globalStyles;
+                        }
+                    }
                 }
-                if(showLines !== null)
-                {
-                    series.showLines = (series.showLines !== null && series.showLines !== undefined) ? series.showLines : showLines;
-                }
+                sc[i] = series;
             }
-            sc[i] = series;
         }
         if(sc)
         {
@@ -838,6 +860,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             keys,
             newAxes = {},
             claimedKeys = [],
+            newKeys = [],
             categoryAxisName = this.get("categoryAxisName") || this.get("categoryKey"),
             valueAxisName = this.get("valueAxisName"),
             seriesKeys = this.get("seriesKeys").concat(),
@@ -918,8 +941,18 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         {
             seriesKeys.splice(cIndex, 1);
         }
-        l = claimedKeys.length;
+        l = seriesKeys.length;
         for(i = 0; i < l; ++i)
+        {
+            cIndex = Y.Array.indexOf(claimedKeys, seriesKeys[i]);
+            if(cIndex > -1)
+            {
+                newKeys = newKeys.concat(claimedKeys.splice(cIndex, 1));
+            }
+        }
+        claimedKeys = newKeys.concat(claimedKeys);
+        l = claimedKeys.length;
+        for(i = 0; i < l; i = i + 1)
         {
             cIndex = Y.Array.indexOf(seriesKeys, claimedKeys[i]);
             if(cIndex > -1)
@@ -974,9 +1007,9 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._setBaseAttribute(newAxes[valueAxisName], "type", seriesAxis);
             this._setBaseAttribute(newAxes[valueAxisName], "keys", seriesKeys);
         }
-        if(!this._seriesKeysExplicitlySet)
+        if(!this._wereSeriesKeysExplicitlySet())
         {
-            this._seriesKeys = seriesKeys;
+            this.set("seriesKeys", seriesKeys, {src: "internal"});
         }
         return newAxes;
     },
@@ -1717,6 +1750,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          * @private
          */
         axesStyles: {
+            lazyAdd: false,
+
             getter: function()
             {
                 var axes = this.get("axes"),
@@ -1750,6 +1785,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                         this._setBaseAttribute(axes[i], "styles", val[i]);
                     }
                 }
+                return val;
             }
         },
 
@@ -1761,6 +1797,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          * @private
          */
         seriesStyles: {
+            lazyAdd: false,
+
             getter: function()
             {
                 var styles = this._seriesStyles,
@@ -1813,6 +1851,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                         }
                     }
                 }
+                return val;
             }
         },
 
@@ -1824,6 +1863,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          * @private
          */
         graphStyles: {
+            lazyAdd: false,
+
             getter: function()
             {
                 var graph = this.get("graph");
@@ -1838,6 +1879,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             {
                 var graph = this.get("graph");
                 this._setBaseAttribute(graph, "styles", val);
+                return val;
             }
 
         },
@@ -1867,6 +1909,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          * @type Object
          */
         styles: {
+            lazyAdd: false,
+
             getter: function()
             {
                 var styles = {
@@ -1915,6 +1959,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          * @type Object
          */
         axes: {
+            lazyAdd: false,
+
             valueFn: "_getDefaultAxes",
 
             setter: function(val)

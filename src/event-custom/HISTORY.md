@@ -1,6 +1,37 @@
 Custom Event Infrastructure Change History
 ==========================================
 
+@VERSION@
+------
+
+* Fixed issue with fireOnce subscribers not receiving the facade,
+  if subscription came in after the fire, and the initial fire had
+  no listeners (the bug was introduced in 3.10.0, with the no listener 
+  perf. optimizations).
+
+  The subscribers in the broken code would have received the raw payload 
+  instead (e.g. {opts:foo}).
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* Fixed issue with facade carrying stale data for the "no subscriber" case.
+
+* Fixed regression where `once()` and `onceAfter()` subscriptions using the
+  `*` prefix threw a TypeError [#676]. `target.once('*:fooChange', callback)`
+
+* Fixed exception with fire(type, null) with emitFacade:true.
+
+3.10.1
+------
+
+* No changes.
+
 3.10.0
 ------
 
@@ -76,8 +107,8 @@ Custom Event Infrastructure Change History
   know what they're doing. That's why its private for now, but its 5x faster than `publish()`
   for a comparable event configuration. `publish()` leverages `_publish()`, also ends up being
   faster after this change, but not by such a big factor.
-  
-* Revert EventTarget back to lazily creating `targets`.   
+
+* Revert EventTarget back to lazily creating `targets`.
 
 3.9.1
 -----

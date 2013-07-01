@@ -219,7 +219,7 @@ IELazyFacade._lazyProperties = {
         var e = this._event,
             val = e.pageX,
             doc, bodyScroll, docScroll;
-                
+
         if (val === undefined) {
             doc = Y.config.doc;
             bodyScroll = doc.body && doc.body.scrollLeft;
@@ -234,7 +234,7 @@ IELazyFacade._lazyProperties = {
         var e = this._event,
             val = e.pageY,
             doc, bodyScroll, docScroll;
-                
+
         if (val === undefined) {
             doc = Y.config.doc;
             bodyScroll = doc.body && doc.body.scrollTop;
@@ -295,7 +295,7 @@ if (imp && (!imp.hasFeature('Events', '2.0'))) {
             useLazyFacade = false;
         }
     }
-        
+
     Y.DOMEventFacade = (useLazyFacade) ? IELazyFacade : IEEventFacade;
 }
 
