@@ -473,7 +473,8 @@
         * @static
         */
         isValidFile: function (file) {
-            return (Win && Win.File && file instanceof File);
+            return (Win && (Win.File && file instanceof File) ||
+                    (Win.Blob && file instanceof Blob));
         },
 
        /**
