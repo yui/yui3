@@ -129,7 +129,7 @@ O.hasKey = owns;
  * This method is an alias for the native ES5 `Object.keys()` method if
  * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of 
  * `Object.keys()` have an inconsistency as they consider `prototype` to be 
- * enumerable.
+ * enumerable, so a non-native shim is used to rectify the difference.
  *
  * @example
  *
