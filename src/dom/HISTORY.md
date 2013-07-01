@@ -4,7 +4,12 @@ DOM Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed: `Y.Selector` could return an incorrect number of elements in browsers
+  that don't support support `getElementsByTagName()` or `querySelectorAll()` on
+  document fragments. [Ezequiel Rodriguez]
+
+* Fixed: In Opera, `Y.Selector` failed to include selected `<option>` elements
+  when the `:checked` pseudo-selector was used. [Jeroen Versteeg]
 
 3.10.3
 ------

@@ -22,6 +22,7 @@ YUI.add('perfbarseriesgroup-benchmark', function (Y) {
         var i,
             key,
             series,
+            seriesTypeCollection = [],
             len = seriesKeys.length;
          seriesObject = {};
         for(i = 0; i < len; i = i + 1)
@@ -34,8 +35,10 @@ YUI.add('perfbarseriesgroup-benchmark', function (Y) {
                 yAxis: yAxis,
                 graph: mockGraph,
                 xKey: key,
+                seriesTypeCollection: seriesTypeCollection,
                 yKey: "date"
             });
+            seriesTypeCollection.push(series);
             series.render();
             seriesObject[key] = series; 
         }
