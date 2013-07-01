@@ -131,8 +131,8 @@ suite.add(new Y.Test.Case({
 
         Y.ArrayAssert.itemsAreSame(['a1', 'b1', 'c1'], Y.Object.keys(this.o), 'should return an array of keys');
 
-        if (Object.keys) {
-            Assert.areSame(Object.keys, Y.Object.keys, 'when native Object.keys is present, Y.Object.keys should be an alias');
+        if (Object.keys && !Y.Object._hasProtoEnumBug) {
+            Assert.areSame(Object.keys, Y.Object.keys, 'when native Object.keys is present and non-buggy, Y.Object.keys should be an alias');
         }
 
         // IE bugs.
