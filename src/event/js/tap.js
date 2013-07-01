@@ -25,23 +25,19 @@ var doc = Y.config.doc,
     GESTURE_MAP = Y.Event._GESTURE_MAP,
     SUPPORTS_TOUCHES = !!(doc && doc.createTouch),
     EVT_START = GESTURE_MAP.start,
-    EVT_MOVE = GESTURE_MAP.move,
-    EVT_END = GESTURE_MAP.end,
-    EVT_CANCEL = GESTURE_MAP.cancel,
     EVT_TAP = 'tap',
 
     HANDLES = {
         START: 'Y_TAP_ON_START_HANDLE',
-        MOVE: 'Y_TAP_ON_MOVE_HANDLE',
         END: 'Y_TAP_ON_END_HANDLE',
         CANCEL: 'Y_TAP_ON_CANCEL_HANDLE'
     };
 
-function detachHelper(subscription, handles, subset, context) {
+function detachHelper(subscription, handles, subset) {
 
-    handles = subset ? handles : [ handles.START, handles.MOVE, handles.END, handles.CANCEL ];
+    handles = subset ? handles : [ handles.START, handles.END, handles.CANCEL ];
 
-    Y.Array.each(handles, function (item, index, array) {
+    Y.Array.each(handles, function (item) {
         var handle = subscription[item];
         if (handle) {
             handle.detach();
@@ -82,6 +78,42 @@ Y.Event.define(EVT_TAP, {
     @static
     **/
     on: function (node, subscription, notifier) {
+
+        /*
+            Patch synthetic event's fire method to allow for e.preventDefault()
+            or e.stopPropagation() on a subsequent click event
+
+            Check https://gist.github.com/4272500 for some more info
+            Check http://www.youtube.com/watch?v=v7Z6FlO1opU for the discussion.
+        */
+        notifier.handle.evt.fire = function (e) {
+          var subs = this._subscribers.concat(this._afters),
+              args = Y.Array(arguments, 0, true),
+              i, len, halt;
+
+          for (i = 0, len = subs.length; i < len; ++i) {
+            if (subs[i]) {
+
+                //notify all the subscribers
+                halt = subs[i].notify(args, this);
+
+                // stopImmediatePropagation
+                if (halt === false || e.stopped > 1) {
+                  break;
+                }
+            }
+          }
+
+          if (e.prevented || e.stopped) {
+            e.target.once('click', function (clickEvt) {
+                e.prevented && clickEvt.preventDefault();
+                e.stopped && clickEvt[e.stopped === 2 ? 'stopImmediatePropagation' : 'stopPropagation']();
+            });
+          }
+
+          return !!this.stopped;
+        };
+
         subscription[HANDLES.START] = node.on(EVT_START, this.touchStart, this, node, subscription, notifier);
     },
 
@@ -139,7 +171,6 @@ Y.Event.define(EVT_TAP, {
         detachHelper(subscription, HANDLES);
     },
 
-
     /**
     Called when the monitor(s) are tapped on, either through touchstart or mousedown.
 
@@ -155,8 +186,10 @@ Y.Event.define(EVT_TAP, {
     touchStart: function (event, node, subscription, notifier, delegate) {
 
         var context = {
-                canceled: false
-            };
+                canceled: false,
+                eventType: event.type
+            },
+            needToCancel = subscription.needToCancel || false;
         //move ways to quit early to the top.
 
         // no right clicks
@@ -180,31 +213,29 @@ Y.Event.define(EVT_TAP, {
           context.startXY = [ event.pageX, event.pageY ];
         }
 
-        //Possibly outdated issue: something is off with the move that it attaches it but never triggers the handler
-        subscription[HANDLES.MOVE] = node.once(EVT_MOVE, this.touchMove, this, node, subscription, notifier, delegate, context);
-        subscription[HANDLES.END] = node.once(EVT_END, this.touchEnd, this, node, subscription, notifier, delegate, context);
-        subscription[HANDLES.CANCEL] = node.once(EVT_CANCEL, this.touchMove, this, node, subscription, notifier, delegate, context);
-    },
+        //if `onTouchStart()` was called by a touch event, set up touch event subscriptions. Otherwise, set up mouse/pointer event event subscriptions.
+        if (context.eventType.indexOf('touch') !== -1 && !needToCancel) {
 
-    /**
-    Called when the monitor(s) fires a touchmove or touchcancel event (or the mouse equivalent).
-    This method detaches event handlers so that 'tap' is not fired.
+            subscription[HANDLES.END] = node.once('touchend', this.touchEnd, this, node, subscription, notifier, delegate, context);
+            subscription[HANDLES.CANCEL] = node.once('touchcancel', this.detach, this, node, subscription, notifier, delegate, context);
 
-    @method touchMove
-    @param {DOMEventFacade} event
-    @param {Y.Node} node
-    @param {Array} subscription
-    @param {Boolean} notifier
-    @param {Boolean} delegate
-    @param {Object} context
-    @protected
-    @static
-    **/
-    touchMove: function (event, node, subscription, notifier, delegate, context) {
-        detachHelper(subscription, [ HANDLES.MOVE, HANDLES.END, HANDLES.CANCEL ], true, context);
-        context.cancelled = true;
+            subscription.needToCancel = true;
+        }
+        else if (context.eventType.indexOf('mouse') !== -1 && !needToCancel) {
+            subscription[HANDLES.END] = node.once('mouseup', this.touchEnd, this, node, subscription, notifier, delegate, context);
+            subscription[HANDLES.CANCEL] = node.once('mousecancel', this.detach, this, node, subscription, notifier, delegate, context);
+
+            subscription.needToCancel = true;
+        }
+        else if (context.eventType.indexOf('MSPointer') !== -1 && !needToCancel) {
+            subscription[HANDLES.END] = node.once('MSPointerUp', this.touchEnd, this, node, subscription, notifier, delegate, context);
+            subscription[HANDLES.CANCEL] = node.once('MSPointerCancel', this.detach, this, node, subscription, notifier, delegate, context);
+
+            subscription.needToCancel = true;
+        }
 
     },
+
 
     /**
     Called when the monitor(s) fires a touchend event (or the mouse equivalent).
@@ -225,6 +256,8 @@ Y.Event.define(EVT_TAP, {
             endXY,
             clientXY;
 
+        subscription.needToCancel = false;
+
         //There is a double check in here to support event simulation tests, in which
         //event.touches can be undefined when simulating 'touchstart' on touch devices.
         if (SUPPORTS_TOUCHES && event.changedTouches) {
@@ -239,7 +272,7 @@ Y.Event.define(EVT_TAP, {
         detachHelper(subscription, [ HANDLES.MOVE, HANDLES.END, HANDLES.CANCEL ], true, context);
 
         // make sure mouse didn't move
-        if (Math.abs(endXY[0] - startXY[0]) === 0 && Math.abs(endXY[1] - startXY[1]) === 0) {
+        if (Math.abs(endXY[0] - startXY[0]) < 15 && Math.abs(endXY[1] - startXY[1]) < 15) {
 
             event.type = EVT_TAP;
             event.pageX = endXY[0];
@@ -250,5 +283,6 @@ Y.Event.define(EVT_TAP, {
 
             notifier.fire(event);
         }
+
     }
 });
