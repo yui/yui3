@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Tap Tests</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.2.0/pure-min.css">
+    <style>
+        body {
+            padding: 50px;
+        }
+        .tapper {
+            font-size: 120%;
+        }
+        #box {
+            width: 200px;
+            height: 200px;
+            background: #fcc400;
+            border: 3px solid #f7981d;
+            position: relative;
+            border-radius: 5px;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="box"></div>
+    <p>
+        <a class="tapper pure-button pure-button-primary" id="tapper1" href='#tapped'>Tap on me</a>
+    </p>
+    <p>
+        <a class="tapper pure-button pure-button-primary" id="tapper2" href='#gestured'>Tap on me too</a>
+    </p>
+
+    <ul id="ul"></ul>
+
+
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+    <script>
+
+        YUI({
+            filter: 'raw'
+        }).use('cssnormalize', 'event-tap', 'event-move', 'node', function (Y) {
+            var ta = Y.one('#ta'),
+                box = Y.one('#box'),
+                ul = Y.one('#ul');
+
+            //new FastClick(document.body);
+
+            setText = function (text) {
+
+                ul.appendChild('<li>' + text + '</li>');
+            }
+
+            Y.one('#tapper1').on('tap', function (e) {
+                e.preventDefault();
+                ul.appendChild('<li> ' + e._event.type + ' </li>');
+
+            });
+
+
+            Y.one('#tapper2').on('tap', function (e) {
+                e.preventDefault();
+                ul.appendChild('<li> ' + e._event.type + ' </li>');
+            });
+
+
+        });
+
+
+    </script>
+</body>
+</html>
