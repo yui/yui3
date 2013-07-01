@@ -578,11 +578,14 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             )[1];
         }
 
+        if (this.host) {
+            return this.host._columnMap[key];
+        }
         var cols = this.get('columns'),
             col = null;
 
         Y.Array.some(cols, function (_col) {
-            if (_col.key === key) {
+            if ((_col.name || _col.key) === key) {
                 col = _col;
                 return true;
             }
