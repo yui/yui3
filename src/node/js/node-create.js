@@ -166,12 +166,14 @@ Y.mix(Y_Node.prototype, {
      */
     getContent: function() {
         var node = this;
-        if (node.get("nodeType") === 11) {
+
+        if (node._node.nodeType === 11) { // 11 === Node.DOCUMENT_FRAGMENT_NODE
             // "this", when it is a document fragment, must be cloned because
-            // the nodes contained in the fragment actually disappear once 
+            // the nodes contained in the fragment actually disappear once
             // the fragment is appended anywhere
             node = node.create("<div/>").append(node.cloneNode(true));
         }
+
         return node.get("innerHTML");
     }
 });
