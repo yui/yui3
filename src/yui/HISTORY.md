@@ -8,6 +8,12 @@ YUI Core Change History
   ES5, and added feature tests to ensure that native implementations are only
   used if they work properly. [Ezequiel Rodriguez]
 
+* `Y.UA` now correctly identifies IE 11. [Ryan Grove]
+
+* `Y.UA` now identifies Opera 15+ as both Opera and WebKit. Previously it was
+  identified as Chrome, since it uses the same Blink rendering engine as
+  Chrome. [Ryan Grove]
+
 
 3.10.3
 ------
