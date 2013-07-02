@@ -1,0 +1,10 @@
+{
+    "name": "list",
+    "builds": {
+        "datatype-list-format": {
+            "jsfiles": [
+                "format-list.js"
+            ]
+        }
+    }
+}

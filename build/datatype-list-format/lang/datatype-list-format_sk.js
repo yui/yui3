@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_sk",function(e){e.Intl.add("datatype-list-format","sk",{listPatternEnd:"{0} a {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} a {1}"})},"@VERSION@");

@@ -10,6 +10,15 @@
             "jsfiles": [
                 "number-format.js"
             ]
+        },
+        "datatype-number-format-advanced": {
+            "jsfiles": [
+                "js/advanced/format-numbers-internal.js",
+                "js/advanced/format-numbers.js"
+            ]
+        },
+        "datatype-number-format-ecma": {
+            "jsfiles": ["js/advanced/format-numbers-ecma.js"]
         }
     }
 }

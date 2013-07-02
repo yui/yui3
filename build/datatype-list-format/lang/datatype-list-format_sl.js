@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_sl",function(e){e.Intl.add("datatype-list-format","sl",{listPatternEnd:"{0} in {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} in {1}"})},"@VERSION@");

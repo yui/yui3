@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_af",function(e){e.Intl.add("datatype-list-format","af",{listPatternEnd:"{0} en {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} en {1}"})},"@VERSION@");

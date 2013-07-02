@@ -4,5 +4,10 @@
 	        "intl-base",
             "event-custom"
        ]
+    },
+    "intl-common": {
+       "requires": [
+            "intl"
+        ]
     }
 }

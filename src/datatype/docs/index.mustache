@@ -71,6 +71,92 @@ YUI().use("intl", "datatype-date-format", function(Y) {
 });
 ```
 
+<h4 id="advanceddates">Using advanced date format</h4>
+
+<p>
+    <code>Y.Date.format()</code> also supports certain standard formats that use locale specific patterns.
+    To use these, include the <code>datatype-date-format-advanced</code> module.
+</p>
+
+```
+YUI().use("datatype-date-format-advanced", function(Y) {
+   Y.log(Y.Date.format(new Date(), {
+      dateFormat: "WYMD_LONG",
+      timeFormat: "HM_SHORT",
+      timezoneFormat: "Z_SHORT"
+   }));
+});
+```
+
+<p>
+    The <code>config</code> object can have the following parameters, all of which are optional:
+</p>
+
+<ul>
+   <li><b>timezone</b> the timezone to use when formatting the date. Defaults to Etc/GMT if omitted
+   <li><b>dateFormat</b> pattern to use for the date. Defaults to "NONE"
+   <li><b>timeFormat</b> pattern to use for the time. Defaults to "NONE"
+   <li><b>timezoneFormat</b> pattern to use for the timezone. Defaults to "NONE"
+</ul>
+
+<p>
+   The parameters <code>dateFormat</code>, <code>timeFormat</code> and <code>timezoneFormat</code> can be specified as a string, or a value from
+   <code>Y.Date.DATE_FORMATS</code>, <code>Y.Date.TIME_FORMATS</code> and
+   <code>Y.Date.TIMEZONE_FORMATS</code> respectively.
+</p>
+
+<p>
+   <code>dateFormat</code> can take the following values:
+</p>
+
+<ul>
+   <li>NONE
+   <li>WYMD_LONG
+   <li>WYMD_ABBREVIATED
+   <li>WYMD_SHORT
+   <li>WMD_LONG
+   <li>WMD_ABBREVIATED
+   <li>WMD_SHORT
+   <li>YMD_LONG
+   <li>YMD_ABBREVIATED
+   <li>YMD_SHORT
+   <li>YM_LONG
+   <li>MD_LONG
+   <li>MD_ABBREVIATED
+   <li>MD_SHORT
+   <li>W_LONG
+   <li>W_ABBREVIATED
+   <li>M_LONG
+   <li>M_ABBREVIATED
+   <li>YMD_FULL
+</ul>
+
+<p>
+   <code>timeFormat</code> can take the following values:
+</p>
+
+<ul>
+   <li>NONE
+   <li>HM_ABBREVIATED
+   <li>HM_SHORT
+   <li>H_ABBREVIATED
+</ul>
+
+<p>
+   <code>timezoneFormat</code> can take the following values:
+</p>
+
+<ul>
+   <li>NONE
+   <li>Z_ABBREVIATED
+   <li>Z_SHORT
+</ul>
+
+<p>
+   This module also supports the functionality described earlier from <code>datatype-date-format</code>.
+   The <code>config</code> object can still accept the strftime <code>format</code>.
+</p>
+
 <h4 id="parsingdates">Parsing dates</h4>
 
 <p>
@@ -116,6 +202,73 @@ Y.log(Y.Number.format(123123123.176,{
 
 ```
 var number = Y.Number.parse("123123");
+```
+
+<h4 id="advancednumbers">Using advanced number format</h4>
+
+<p>
+   <code>Y.Number.format</code> and <code>Y.Number.parse</code> also supports certain
+   standard formats that use locale specific patterns.
+   To use these, include the <code>datatype-number-format-advanced</code> module.
+</p>
+
+```
+YUI().use("datatype-number-format-advanced", function(Y) {
+   Y.log( Y.Number.format( 1000000, {
+       style: "CURRENCY_STYLE" 
+   }));
+
+   Y.log( Y.Number.parse( "$1,000,000", {
+       style: "CURRENCY_STYLE" 
+   }));
+});
+```
+
+<p>
+    The <code>config</code> object can accepts 3 parameters:
+</p>
+
+<ul>
+   <li><b>style</b> Pattern to format/parse number with. Defaults to NUMBER_STYLE.
+   <li><b>parseIntegerOnly</b> If set to true, will strip off the fractional part of the number
+   <li><b>currency</b> The currency code to use if a currency style was selected. Defaults to USD.
+</ul>
+
+<p>
+    The <code>style</code> parameter can take the following values, which can be specified as either strings
+    or as values from <code>Y.Number.STYLES</code>.
+</p>
+
+<ul>
+   <li>CURRENCY_STYLE
+   <li>ISO_CURRENCY_STYLE
+   <li>NUMBER_STYLE
+   <li>PERCENT_STYLE
+   <li>PLURAL_CURRENCY_STYLE
+   <li>SCIENTIFIC_STYLE
+</ul>
+
+<p>
+    This module internally uses <code>datatype-number-format</code> to get the results. The difference is
+    that the parameters like the separators, prefix and suffix are now automatically determined from
+    the current locale and the style specified. You can still specify the values as you would with
+    <code>datatype-number-format</code>, as this module simply extends, not replace the older one.
+</p>
+
+<h3 id="list">Lists</h3>
+
+<p>
+   <code>Y.Array.format()</code> is used to format lists in a locale-sensitive way.
+   Example: Input data ["Alice", "Bob", "Charlie", "Delta"] will be formatted as "Alice, Bob, Charlie and Delta" in English. 
+</p>
+
+```
+   YUI({lang:"en-GB"}).use("datatype-list-format", function(Y) {
+       Y.log( Y.Array.format(
+           ["US", "UK", "Canada"]
+       ));
+   });
+   //This code segment will output "US, UK and Canada".
 ```
 
 <h3 id="xml">XML</h3>
@@ -177,3 +330,4 @@ YUI().use("datatype", "dataschema", function(Y) {
         data_out = Y.DataSchema.JSON.apply(schema, data_in);
 });
 ```
+

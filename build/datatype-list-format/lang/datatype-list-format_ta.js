@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_ta",function(e){e.Intl.add("datatype-list-format","ta",{listPatternEnd:"{0} \u0bae\u0bb1\u0bcd\u0bb1\u0bc1\u0bae\u0bcd {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} \u0bae\u0bb1\u0bcd\u0bb1\u0bc1\u0bae\u0bcd {1}"})},"@VERSION@");

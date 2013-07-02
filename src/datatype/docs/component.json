@@ -40,6 +40,16 @@
         },
 
         {
+            "name": "datatype-numberformat-advanced",
+            "displayName": "Advanced number formatting",
+            "modules": ["datatype-number-format-advanced"],
+            "description": "Formatting numbers into strings.",
+	        "useModules": ["node", "datatype-number-format-advanced", "escape"],
+
+            "hideTableOfContents": true
+        },
+
+        {
             "name": "datatype-numberparse",
             "displayName": "Y.Number.parse()",
             "modules": ["datatype"],

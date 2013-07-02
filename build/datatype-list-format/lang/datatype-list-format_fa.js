@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_fa",function(e){e.Intl.add("datatype-list-format","fa",{listPatternEnd:"{0}\u060c \u0648 {1}",listPatternMiddle:"{0}\u060c\u200f {1}",listPatternStart:"{0}\u060c\u200f {1}",listPatternTwo:"{0} \u0648 {1}"})},"@VERSION@");

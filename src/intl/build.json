@@ -5,6 +5,11 @@
             "jsfiles": [
                 "Intl.js"
             ]
+        },
+        "intl-common": {
+            "jsfiles": [
+                "js/intl-common.js"
+            ]
         }
     }
 }

@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_ro",function(e){e.Intl.add("datatype-list-format","ro",{listPatternEnd:"{0} \u015fi {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} \u015fi {1}"})},"@VERSION@");

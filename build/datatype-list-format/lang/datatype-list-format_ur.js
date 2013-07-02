@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_ur",function(e){e.Intl.add("datatype-list-format","ur",{listPatternEnd:"{0}\u060c \u0627\u0648\u0631 {1}",listPatternMiddle:"{0}\u060c {1}",listPatternStart:"{0}\u060c {1}",listPatternTwo:"{0} \u0627\u0648\u0631 {1}"})},"@VERSION@");
