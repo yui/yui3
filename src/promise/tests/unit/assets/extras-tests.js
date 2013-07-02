@@ -65,22 +65,6 @@ YUI.add('extras-tests', function (Y) {
     suite.add(new Y.Test.Case({
         name: 'Promise extra methods tests',
 
-        'fail() adds an errback to a rejected promise': function () {
-            var test = this,
-                expected = new Error('foo'),
-                promise = Promise.reject(expected),
-                returnValue;
-
-            returnValue = promise.fail(function (err) {
-                test.resume(function () {
-                    Assert.areSame(expected, err, 'Promise rejected with the wrong reason');
-                    Assert.isTrue(isPromise(returnValue), 'fail() should return a promise');
-                });
-            });
-
-            test.wait();
-        },
-
         'promise state should change synchronously': function () {
             var pending = new Promise(function () {}),
                 fulfilled = new Promise(function (resolve) {
