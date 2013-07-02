@@ -78,18 +78,19 @@ Y.mix(Promise.prototype, {
     }
 });
 
-/**
-Checks if an object or value is a promise. This is cross-implementation
-compatible, so promises returned from other libraries or native components
-that are compatible with the Promises A+ spec should be recognized by this
-method.
+// Brand then() as an strategy for identifying YUI Promises
+Promise.prototype.then._isPromise = 1;
 
-@method isPromise
+/**
+Checks if an object is a thenable. A thenable is any object that has a method
+called `then` but may not be a true promise.
+
+@method isThenable
 @param {Any} obj The object to test
-@return {Boolean} Whether the object is a promise or not
+@return {Boolean} Whether the object is a thenable or not
 @static
 **/
-Promise.isPromise = function (obj) {
+Promise.isThenable = function (obj) {
     // We test promises by form to be able to identify other implementations
     // as promises. This is important for cross compatibility and in particular
     // Y.when which should take any kind of promise
@@ -102,6 +103,20 @@ Promise.isPromise = function (obj) {
         }
     }
     return false;
+};
+
+/**
+Checks if an object or value is a promise. Only recognizes YUI promises as such.
+
+@method isPromise
+@param {Any} obj The object to test
+@return {Boolean} Whether the object is a promise or not
+@static
+**/
+Promise.isPromise = function (obj) {
+    // Use stricter duck typing instead of instanceof to recognize promises
+    // from other windows and YUI instances
+    return Promise.isThenable(obj) && obj.then._isPromise === 1;
 };
 
 Y.Promise = Promise;

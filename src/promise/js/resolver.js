@@ -101,6 +101,14 @@ Y.mix(Resolver.prototype, {
 
         if (Promise.isPromise(value)) {
             value.then(function (x) {
+                // This "flattens" the promise only one level,
+                // allowing promises-for-promises
+                self.fulfill(x);
+            }, function (e) {
+                self.reject(e);
+            });
+        } else if (Promise.isThenable(value)) {
+            value.then(function (x) {
                 // This essentially makes the process recursive, flattening
                 // promises for promises. This is still a topic of discussion
                 // in the community
