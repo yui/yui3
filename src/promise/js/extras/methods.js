@@ -65,20 +65,6 @@ Y.mix(Promise.prototype, {
         this._resolver._done(callback, errback);
     },
     /**
-    Shorthand for subscribing to the rejection branch of a promise. Sugar for
-    `promise.then(null, errback)`
-
-    @for Promise
-    @method fail
-    @param {Function} errback Callback for rejections
-    @return {Promise} A new promise that will be resolved or rejected based
-                        on the result of the errback
-    @since @SINCE@
-    **/
-    fail: function (errback) {
-        return this.then(null, errback);
-    },
-    /**
     Returns the current status of the operation. Possible results are
     "pending", "fulfilled", and "rejected".
 
