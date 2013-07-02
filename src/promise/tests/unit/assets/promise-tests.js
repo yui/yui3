@@ -182,8 +182,57 @@ YUI.add('promise-tests', function (Y) {
             });
 
             test.wait();
-        }
+        },
 
+        'test fulfilled thenable assimilation': function () {
+            var test = this,
+                expected = {},
+                thenable = {
+                    then: function (onsuccess) {
+                        onsuccess(expected);
+                    }
+                },
+                promise = new Promise(function (resolve) {
+                    resolve(thenable);
+                });
+
+            promise.then(function (value) {
+                test.resume(function () {
+                    Assert.areSame(expected, value, 'value of the resolved promise did not match value provided by thenable');
+                });
+            }, function () {
+                test.resume(function () {
+                    Assert.fail('Promise rejected a promise when resolving with a fulfilled thenable');
+                });
+            });
+
+            test.wait();
+        },
+
+        'test rejected thenable assimilation': function () {
+            var test = this,
+                expected = {},
+                thenable = {
+                    then: function (onsuccess, onfailure) {
+                        onfailure(expected);
+                    }
+                },
+                promise = new Promise(function (resolve) {
+                    resolve(thenable);
+                });
+
+            promise.then(function () {
+                test.resume(function () {
+                    Assert.fail('Promise fulfilled a promise when resolving with a rejected thenable');
+                });
+            }, function (reason) {
+                test.resume(function () {
+                    Assert.areSame(expected, reason, 'value of the resolved promise did not match rejection reason provided by thenable');
+                });
+            });
+
+            test.wait();
+        }
 
     }));
 
