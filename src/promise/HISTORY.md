@@ -23,8 +23,6 @@ Promise Change History
 
 * No changes.
 
->>>>>>> upstream/dev-3.x
-
 3.10.1
 ------
 
