@@ -49,7 +49,7 @@ RepoListView = Y.Base.create('repoListView', Y.View, [], {
     },
 
     // Called when the user clicks anywhere on a repo line-item in our list
-    // of repos. This will retreive the corresponding Repo model instance
+    // of repos. This will retrieve the corresponding Repo model instance
     // from the RepoList via the `clientId`.
     selectRepo: function (e) {
         // Noop when the element clicked is an anchor, we'll let the link
@@ -60,7 +60,7 @@ RepoListView = Y.Base.create('repoListView', Y.View, [], {
 
         // Because we've rendered our list of repos with the `clientId` as the
         // `id` attribute for each repo node, we can use the client id to
-        // retreive the Repo model instance from the RepoList.
+        // retrieve the Repo model instance from the RepoList.
         var repos = this.get('modelList'),
             repo  = repos.getByClientId(e.currentTarget.get('id'));
 

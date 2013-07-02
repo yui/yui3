@@ -50,6 +50,20 @@
      * configured through the static <a href="#property_BaseCore.ATTRS">ATTRS</a>
      * property for each class in the hierarchy will be initialized by BaseCore.
      *
+     * <p>
+     * **NOTE:** Prior to version 3.11.0, ATTRS would get added a class at a time. That is,
+     * BaseCore would loop through each class in the hierarchy, and add the class' ATTRS, and
+     * then call it's initializer, and move on to the subclass' ATTRS and initializer. As of
+     * 3.11.0, ATTRS from all classes in the hierarchy are added in one `addAttrs` call before
+     * any initializers are called. This fixes subtle edge-case issues with subclass ATTRS overriding
+     * superclass `setter`, `getter` or `valueFn` definitions and being unable to get/set attributes
+     * defined by the subclass. This order of operation change may impact `setter`, `getter` or `valueFn`
+     * code which expects a superclass' initializer to have run. This is expected to be rare, but to support
+     * it, Base supports a `_preAddAttrs()`, method hook (same signature as `addAttrs`). Components can
+     * implement this method on their prototype for edge cases which do require finer control over
+     * the order in which attributes are added (see widget-htmlparser).
+     * </p>
+     *
      * Classes which require attribute support, but don't intend to use/expose attribute
      * change events can extend BaseCore instead of Base for optimal kweight and
      * runtime performance.
@@ -354,24 +368,22 @@
         },
 
         /**
-         * A helper method used when processing ATTRS across the class hierarchy during
-         * initialization. Returns a disposable object with the attributes defined for
-         * the provided class, extracted from the set of all attributes passed in.
+         * A helper method used to isolate the attrs config for this instance to pass to `addAttrs`,
+         * from the static cached ATTRS for the class.
          *
-         * @method _filterAttrCfgs
+         * @method _getInstanceAttrCfgs
          * @private
          *
-         * @param {Function} clazz The class for which the desired attributes are required.
          * @param {Object} allCfgs The set of all attribute configurations for this instance.
          * Attributes will be removed from this set, if they belong to the filtered class, so
          * that by the time all classes are processed, allCfgs will be empty.
          *
-         * @return {Object} The set of attributes belonging to the class passed in, in the form
-         * of an object with attribute name/configuration pairs.
+         * @return {Object} The set of attributes to be added for this instance, suitable
+         * for passing through to `addAttrs`.
          */
-        _filterAttrCfgs : function(clazz, allCfgs) {
+        _getInstanceAttrCfgs : function(allCfgs) {
 
-            var cfgs = null,
+            var cfgs = {},
                 cfg,
                 val,
                 subAttr,
@@ -379,42 +391,32 @@
                 subAttrPath,
                 attr,
                 attrCfg,
-                filtered = this._filteredAttrs,
-                attrs = clazz.ATTRS;
+                allSubAttrs = allCfgs._subAttrs,
+                attrCfgProperties = this._attrCfgHash();
 
-            if (attrs) {
-                for (attr in attrs) {
+            for (attr in allCfgs) {
+
+                if (allCfgs.hasOwnProperty(attr) && attr !== "_subAttrs") {
+
                     attrCfg = allCfgs[attr];
 
-                    // Using hasOwnProperty, since it's faster (for the 80% case where filtered doesn't have attr) for the majority
-                    // of browsers, FF being the major outlier. http://jsperf.com/in-vs-hasownproperty/6. May revisit.
-                    if (attrCfg && !filtered.hasOwnProperty(attr)) {
+                    // Need to isolate from allCfgs, because we're going to set values etc.
+                    cfg = cfgs[attr] = _wlmix({}, attrCfg, attrCfgProperties);
 
-                        if (!cfgs) {
-                            cfgs = {};
-                        }
+                    val = cfg.value;
 
-                        // PERF TODO:
-                        // Revisit once all unit tests pass for further optimizations. See if we really need to isolate this.
-                        cfg = cfgs[attr] = _wlmix({}, attrCfg, this._attrCfgHash());
+                    if (val && (typeof val === "object")) {
+                        this._cloneDefaultValue(attr, cfg);
+                    }
 
-                        filtered[attr] = true;
+                    if (allSubAttrs && allSubAttrs.hasOwnProperty(attr)) {
+                        subAttrs = allCfgs._subAttrs[attr];
 
-                        val = cfg.value;
+                        for (subAttrPath in subAttrs) {
+                            subAttr = subAttrs[subAttrPath];
 
-                        if (val && (typeof val === "object")) {
-                            this._cloneDefaultValue(attr, cfg);
-                        }
-
-                        if (allCfgs._subAttrs && allCfgs._subAttrs.hasOwnProperty(attr)) {
-                            subAttrs = allCfgs._subAttrs[attr];
-
-                            for (subAttrPath in subAttrs) {
-                                subAttr = subAttrs[subAttrPath];
-
-                                if (subAttr.path) {
-                                    O.setValue(cfg.value, subAttr.path, subAttr.value);
-                                }
+                            if (subAttr.path) {
+                                O.setValue(cfg.value, subAttr.path, subAttr.value);
                             }
                         }
                     }
@@ -606,7 +608,7 @@
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            // PERF TODO: Do we need to merge here, since we're merging later in filterAttrCfg
+                            // PERF TODO: Do we need to merge here, since we're merging later in getInstanceAttrCfgs
                             // Should we move this down to only merge if we hit the path or valueFn ifs below?
                             cfg = _wlmix({}, attrs[attr], cfgPropsHash);
 
@@ -675,11 +677,10 @@
                 el,
                 extProto,
                 exts,
+                instanceAttrs,
                 classes = this._getClasses(),
                 attrCfgs = this._getAttrCfgs(),
                 cl = classes.length - 1;
-
-            this._filteredAttrs = {};
 
             for (ci = cl; ci >= 0; ci--) {
 
@@ -693,10 +694,19 @@
                     }
                 }
 
-                this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
+                if (ci === cl) {
 
-                if (this._allowAdHocAttrs && ci === cl) {
-                    this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
+                    instanceAttrs = this._getInstanceAttrCfgs(attrCfgs);
+
+                    if (this._preAddAttrs) {
+                        this._preAddAttrs(instanceAttrs, userVals, lazy);
+                    }
+
+                    this.addAttrs(instanceAttrs, userVals, lazy);
+
+                    if (this._allowAdHocAttrs) {
+                        this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
+                    }
                 }
 
                 // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
@@ -714,8 +724,6 @@
                     }
                 }
             }
-
-            this._filteredAttrs = null;
         },
 
         /**

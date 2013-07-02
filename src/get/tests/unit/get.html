@@ -11,7 +11,17 @@
 
 <div id="log"></div>
 
-<p>You need to run 'node delay.js' if you pass delay=true in the querystring. Otherwise tests will fail.</p>
+<p>
+These tests depend on <a href=https://github.com/davglass/echoecho>echoecho</a>
+and will mostly fail when run manually.
+</p>
+
+<p>
+<a href=https://github.com/davglass/echoecho>echoecho</a> is
+automatically included when running these tests with <a
+href=https://github.com/yui/yogi>yogi</a> or <a
+href=https://github.com/yui/yeti>yeti</a>.
+</p>
 
 <script src="../../../../build/yui-core/yui-core.js" charset="utf-8"></script>
 <script src="../../../../build/yui-log/yui-log.js" charset="utf-8"></script>
@@ -23,6 +33,7 @@
 <script src="../../../../build/features/features.js" charset="utf-8"></script>
 
 <!-- Adding these manually and doing a use("*") so we don't need "get" to test "get" -->
+<script src="../../../../build/color-base/color-base.js" charset="utf-8"></script>
 <script src="../../../../build/oop/oop.js" charset="utf-8"></script>
 <script src="../../../../build/event-custom-base/event-custom-base.js" charset="utf-8"></script>
 <script src="../../../../build/event-custom-complex/event-custom-complex.js" charset="utf-8"></script>
@@ -33,6 +44,7 @@
 <script src="../../../../build/attribute-extras/attribute-extras.js" charset="utf-8"></script>
 <script src="../../../../build/attribute-base/attribute-base.js" charset="utf-8"></script>
 <script src="../../../../build/attribute-complex/attribute-complex.js" charset="utf-8"></script>
+<script src="../../../../build/array-extras/array-extras.js" charset="utf-8"></script>
 <script src="../../../../build/base-core/base-core.js" charset="utf-8"></script>
 <script src="../../../../build/base-observable/base-observable.js" charset="utf-8"></script>
 <script src="../../../../build/base-base/base-base.js" charset="utf-8"></script>
@@ -93,11 +105,6 @@ var Y = YUI({
         }
     }
 }).use('*', function(Y) {
-    if (/[?&]delay=true/.test(window.location.search)) {
-        // Hit the default 'node ./delay.js port'
-        Y.GetTests.TEST_FILES_BASE = (window.location.protocol + "//" + window.location.hostname + ":" + "8014/");
-    }
-
     Y.GetTests.add(Y.GetTests.BasicJS);
     Y.GetTests.add(Y.GetTests.BasicCSS);
     Y.GetTests.add(Y.GetTests.GetMethods);

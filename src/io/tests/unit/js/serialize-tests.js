@@ -1,18 +1,19 @@
 YUI.add('serialize-tests', function (Y) {
 
     var suite = new Y.Test.Suite('IO Serialize Tests'),
-        form  = Y.one('#test-form').remove();
+        form  = Y.one('#test-form');
 
     suite.add(new Y.Test.Case({
         name: 'Form Serialization',
 
         setUp: function () {
-            this.form = form.cloneNode(true).appendTo('body');
+            this.form = Y.one('#test-form');
         },
 
         tearDown: function () {
             this.form.remove();
             delete this.form;
+            form.cloneNode(true).appendTo('body');
         },
 
         'stringify should serialize the form': function () {

@@ -195,6 +195,32 @@ TreeNode.prototype = {
     },
 
     /**
+    Returns this node's depth.
+
+    The root node of a tree always has a depth of 0. A child of the root has a
+    depth of 1, a child of that child will have a depth of 2, and so on.
+
+    @method depth
+    @return {Number} This node's depth.
+    @since @SINCE@
+    **/
+    depth: function () {
+        if (this.isRoot()) {
+            return 0;
+        }
+
+        var depth  = 0,
+            parent = this.parent;
+
+        while (parent) {
+            depth += 1;
+            parent = parent.parent;
+        }
+
+        return depth;
+    },
+
+    /**
     Removes all children from this node. The removed children will still be
     reusable unless the `destroy` option is truthy.
 
@@ -328,7 +354,7 @@ TreeNode.prototype = {
         otherwise.
     **/
     isInTree: function () {
-        if (this.tree.rootNode === this) {
+        if (this.tree && this.tree.rootNode === this) {
             return true;
         }
 
@@ -343,7 +369,7 @@ TreeNode.prototype = {
         otherwise.
     **/
     isRoot: function () {
-        return this.tree.rootNode === this;
+        return !!(this.tree && this.tree.rootNode === this);
     },
 
     /**

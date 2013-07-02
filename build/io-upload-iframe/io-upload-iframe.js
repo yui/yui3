@@ -108,6 +108,12 @@ Y.mix(Y.IO.prototype, {
     * @param {Object} uri Qualified path to transaction resource.
     */
     _setAttrs: function(f, id, uri) {
+        // Track original HTML form attribute values.
+        this._originalFormAttrs = {
+            action: f.getAttribute('action'),
+            target: f.getAttribute('target')
+        };
+
         f.setAttribute('action', uri);
         f.setAttribute('method', 'POST');
         f.setAttribute('target', 'io_iframe' + id );
@@ -224,11 +230,6 @@ Y.mix(Y.IO.prototype, {
     _upload: function(o, uri, c) {
         var io = this,
             f = (typeof c.form.id === 'string') ? d.getElementById(c.form.id) : c.form.id,
-            // Track original HTML form attribute values.
-            attr = {
-                action: f.getAttribute('action'),
-                target: f.getAttribute('target')
-            },
             fields;
 
         // Initialize the HTML form properties in case they are
@@ -259,7 +260,7 @@ Y.mix(Y.IO.prototype, {
                 if (Y.one('#io_iframe' + o.id)) {
                     _dFrame(o.id);
                     io.complete(o, c);
-                    io.end(o, c, attr);
+                    io.end(o, c);
                 }
                 else {
                     return false;
@@ -277,16 +278,24 @@ Y.mix(Y.IO.prototype, {
         return this._upload(o, uri, c);
     },
 
-    end: function(transaction, config, attr) {
-        if (config && config.form && config.form.upload) {
-            var io = this;
-            // Restore HTML form attributes to their original values.
-            io._resetAttrs(f, attr);
+    end: function(transaction, config) {
+        var form, io;
+
+        if (config) {
+            form = config.form;
+
+            if (form && form.upload) {
+                io = this;
+
+                // Restore HTML form attributes to their original values.
+                form = (typeof form.id === 'string') ? d.getElementById(form.id) : form.id;
+
+                io._resetAttrs(form, this._originalFormAttrs);
+            }
         }
 
         return _end.call(this, transaction, config);
     }
-});
-
+}, true);
 
 }, '@VERSION@', {"requires": ["io-base", "node-base"]});

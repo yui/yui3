@@ -1,6 +1,29 @@
 YUI Core Change History
 =======================
 
+@VERSION@
+------
+
+* `Y.Array.dedupe()` is now slightly faster in ES5-compliant browsers.
+  [Ezequiel Rodriguez]
+
+* Brought `Y.Lang.trim()`, `trimLeft()`, and `trimRight()` into compliance with
+  ES5, and added feature tests to ensure that native implementations are only
+  used if they work properly. [Ezequiel Rodriguez]
+
+* `Y.Object.keys()` now falls back to the non-native shim for Android 2.3.x
+  because the native version incorrectly enumerates the `prototype` property.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
 3.10.1
 ------
 

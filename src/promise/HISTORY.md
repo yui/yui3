@@ -10,8 +10,20 @@ Promise Change History
 * [!] Deprecated Y.batch() in favor of Y.Promise.every()
 * The first function received as parameter of the Promise init function is now
   a reference to resolve() instead of fulfill()
-* Changed the value of |this| inside callbacks to undefined to match the
-  Promises A+ spec
+* Changed the value of `this` inside callbacks to `undefined` to match the
+  Promises A+ spec.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+>>>>>>> upstream/dev-3.x
 
 3.10.1
 ------

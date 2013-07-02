@@ -407,10 +407,6 @@ Y.extend(Widget, Y.Base, {
          * @preventable false
          * @param {EventFacade} e The Event Facade
          */
-
-        if (this._applyParser) {
-            this._applyParser(config);
-        }
     },
 
     /**
@@ -568,6 +564,44 @@ Y.extend(Widget, Y.Base, {
             this.fire(RENDER, {parentNode: (parentNode) ? Node.one(parentNode) : null});
         }
         return this;
+    },
+
+    /**
+     * Implement the BaseCore _preAddAttrs method hook, to add
+     * the srcNode and related attributes, so that HTML_PARSER
+     * (which relies on `this.get("srcNode")`) can merge in it's
+     * results before the rest of the attributes are added.
+     *
+     * @method _preAddAttrs
+     * @protected
+     *
+     * @param attrs {Object} The full hash of statically defined ATTRS
+     * attributes being added for this instance
+     *
+     * @param userVals {Object} The hash of user values passed to
+     * the constructor
+     *
+     * @param lazy {boolean} Whether or not to add the attributes lazily
+     */
+    _preAddAttrs : function(attrs, userVals, lazy) {
+
+        var preAttrs = {
+            id : attrs.id,
+            boundingBox : attrs.boundingBox,
+            contentBox : attrs.contentBox,
+            srcNode : attrs.srcNode
+        };
+
+        this.addAttrs(preAttrs, userVals, lazy);
+
+        delete attrs.boundingBox;
+        delete attrs.contentBox;
+        delete attrs.srcNode;
+        delete attrs.id;
+
+        if (this._applyParser) {
+            this._applyParser(userVals);
+        }
     },
 
     /**

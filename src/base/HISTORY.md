@@ -1,6 +1,48 @@
 Base Change History
 ===================
 
+@VERSION@
+------
+
+* BaseObservable now bypasses the event sub-system if there are no listeners for
+  the `init` event, during construction, to optimize performance.
+
+* Base and BaseCore now add all ATTRS definitions, across the hierarchy,
+  in a single shot. Prior to this change, they used to be added a class
+  at a time.
+
+  That is, for Foo extends Bar, the order of operations used to be:
+
+  1) Add Bar ATTRS
+  2) Call Bar initializer
+  3) Add Foo ATTRS
+  4) Call Foo initializer
+
+  Now it is:
+
+  1) Add Foo and Bar's ATTRS together
+  2) Call Bar initializer
+  3) Call Foo initializer
+
+  This means there's a subtle order of operation change. There may potentially
+  be setters/getters/valueFns in Foo, which expected Bar's initializer to have
+  been executed already. This is expected to be rare, and the change fixes
+  issues encountered in real-world code where setters/getters/valueFns in superclass
+  ATTRS overidden in a subclass, wouldn't be able to access the subclass' attributes.
+
+  See the Base and BaseCore API docs and the base-core unit tests for more 
+  details.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
 3.10.1
 ------
 

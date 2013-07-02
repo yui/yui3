@@ -36,6 +36,12 @@
                     "classnamemanager"
                 ]
             },
+            "datatable-foot": {
+                "requires": [
+                    "datatable-core",
+                    "view"
+                ]
+            },
             "datatable-body": {
                 "requires": [
                     "datatable-core",
@@ -63,7 +69,7 @@
                 "requires": [
                     "datatable-base"
                 ],
-                "lang": ["en", "fr", "es", "it"],
+                "lang": ["en", "fr", "es", "hu", "it"],
                 "skinnable": true
             },
             "datatable-mutable": {
@@ -82,7 +88,7 @@
                 "requires": [
                     "datatable-base"
                 ],
-                "lang": ["en", "fr", "es"],
+                "lang": ["en", "fr", "es", "hu"],
                 "skinnable": true
             },
 			"datatable-scroll": {
@@ -99,6 +105,22 @@
                     "datatype-number-format",
                     "datatype-date-format",
                     "escape"
+                ]
+            },
+            "datatable-paginator": {
+                "requires": [
+                    "model",
+                    "view",
+                    "paginator-core",
+                    "datatable-foot",
+                    "datatable-paginator-templates"
+                ],
+                "lang": [ "en" ],
+                "skinnable": true
+            },
+            "datatable-paginator-templates": {
+                "requires": [
+                    "template"
                 ]
             }
         }

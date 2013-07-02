@@ -605,24 +605,4 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
     }
 });
 
-}, '@VERSION@', {
-    "requires": [
-        "calendar-base",
-        "calendarnavigator"
-    ],
-    "lang": [
-        "de",
-        "en",
-        "es",
-        "es-AR",
-        "fr",
-        "it",
-        "ja",
-        "nb-NO",
-        "nl",
-        "pt-BR",
-        "ru",
-        "zh-HANT-TW"
-    ],
-    "skinnable": true
-});
+}, '@VERSION@', {"requires": ["calendar-base", "calendarnavigator"], "skinnable": true});

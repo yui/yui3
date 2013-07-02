@@ -62,7 +62,8 @@
             },
             "dom-style": {
                 "requires": [
-                    "dom-base"
+                    "dom-base",
+                    "color-base"
                 ]
             },
             "selector-native": {

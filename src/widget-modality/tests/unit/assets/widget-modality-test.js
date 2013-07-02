@@ -70,6 +70,37 @@ suite.add(new Y.Test.Case({
 
         modal1.destroy();
         modal2.destroy();
+    },
+
+    'WidgetModality should not set mask node zindex to its own when hidden': function () {
+        var modal1, modal2, StackedTestWidget;
+
+        StackedTestWidget = Y.Base.create('stackedTestWidget', Y.Widget, [Y.WidgetModality], {}, {
+                ATTRS: {
+                    zIndex: {value : 0}
+                }});
+
+        modal1 = new StackedTestWidget({
+            bodyContent: 'Content',
+            zIndex : 7,
+            modal : true,
+            visible : true,
+            render: '#test'
+        });
+
+        // A hidden modal instantiated after a visible modal shouldn't reset the mask z-index. It once did.
+        modal2 = new StackedTestWidget({
+            zIndex : 8,
+            modal: true,
+            visible : false,
+            render: '#test'
+        });
+
+        /* IE7 returns a string, whereas Chrome returns a number. */
+        Assert.areEqual(7, modal1.get('maskNode').getStyle('zIndex'), 'widget mask got wrong zIndex.');
+
+        modal1.destroy();
+        modal2.destroy();
     }
 }));
 
