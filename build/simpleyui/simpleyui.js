@@ -2819,7 +2819,7 @@ hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
 
 /**
  * `true` if this browser incorrectly considers the `prototype` property of
- * functions to be enumerable. Currently known to affect Opera 11.50.
+ * functions to be enumerable. Currently known to affect Opera 11.50 and Android 2.3.x.
  *
  * @property _hasProtoEnumBug
  * @type Boolean
@@ -2863,7 +2863,9 @@ O.hasKey = owns;
  * as the order in which they were defined.
  *
  * This method is an alias for the native ES5 `Object.keys()` method if
- * available.
+ * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of 
+ * `Object.keys()` have an inconsistency as they consider `prototype` to be 
+ * enumerable, so a non-native shim is used to rectify the difference.
  *
  * @example
  *
@@ -2875,7 +2877,7 @@ O.hasKey = owns;
  * @return {String[]} Array of keys.
  * @static
  */
-O.keys = Lang._isNative(Object.keys) ? Object.keys : function (obj) {
+O.keys = Lang._isNative(Object.keys) && !hasProtoEnumBug ? Object.keys : function (obj) {
     if (!Lang.isObject(obj)) {
         throw new TypeError('Object.keys called on a non-object');
     }
@@ -9429,8 +9431,11 @@ var Selector = {
     },
 
     _nativeQuery: function(selector, root, one) {
-        if (Y.UA.webkit && selector.indexOf(':checked') > -1 &&
-                (Y.Selector.pseudos && Y.Selector.pseudos.checked)) { // webkit (chrome, safari) fails to pick up "selected"  with "checked"
+        if (
+            (Y.UA.webkit || Y.UA.opera) &&          // webkit (chrome, safari) and Opera
+            selector.indexOf(':checked') > -1 &&    // fail to pick up "selected"  with ":checked"
+            (Y.Selector.pseudos && Y.Selector.pseudos.checked)
+        ) {
             return Y.Selector.query(selector, root, one, true); // redo with skipNative true to try brute query
         }
         try {
@@ -20093,13 +20098,15 @@ var PARENT_NODE = 'parentNode',
         _bruteQuery: function(selector, root, firstOnly) {
             var ret = [],
                 nodes = [],
+                visited,
                 tokens = Selector._tokenize(selector),
                 token = tokens[tokens.length - 1],
                 rootDoc = Y.DOM._getDoc(root),
                 child,
                 id,
                 className,
-                tagName;
+                tagName,
+                isUniversal;
 
             if (token) {
                 // prefilter nodes
@@ -20120,16 +20127,30 @@ var PARENT_NODE = 'parentNode',
                     }
 
                 } else { // brute getElementsByTagName()
+                    visited = [];
                     child = root.firstChild;
+                    isUniversal = tagName === "*";
                     while (child) {
-                        // only collect HTMLElements
-                        // match tag to supplement missing getElementsByTagName
-                        if (child.tagName && (tagName === '*' || child.tagName === tagName)) {
-                            nodes.push(child);
+                        while (child) {
+                            // IE 6-7 considers comment nodes as element nodes, and gives them the tagName "!".
+                            // We can filter them out by checking if its tagName is > "@". 
+                            // This also avoids a superflous nodeType === 1 check.
+                            if (child.tagName > "@" && (isUniversal || child.tagName === tagName)) {
+                                nodes.push(child);
+                            }
+
+                            // We may need to traverse back up the tree to find more unvisited subtrees.
+                            visited.push(child);
+                            child = child.firstChild;
                         }
-                        child = child.nextSibling || child.firstChild;
+
+                        // Find the most recently visited node who has a next sibling.
+                        while (visited.length > 0 && !child) {
+                            child = visited.pop().nextSibling;
+                        }
                     }
                 }
+
                 if (nodes.length) {
                     ret = Selector._filterNodes(nodes, tokens, firstOnly);
                 }
@@ -20471,7 +20492,6 @@ Y.Selector.getters.src = Y.Selector.getters.rel = Y.Selector.getters.href;
 if (Y.Selector.useNative && Y.config.doc.querySelector) {
     Y.Selector.shorthand['\\.(-?[_a-z]+[-\\w]*)'] = '[class~=$1]';
 }
-
 
 
 }, '@VERSION@', {"requires": ["selector-native"]});
