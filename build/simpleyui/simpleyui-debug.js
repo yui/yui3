@@ -2507,16 +2507,34 @@ Dedupes an array of strings, returning an array that's guaranteed to contain
 only one copy of a given string.
 
 This method differs from `Array.unique()` in that it's optimized for use only
-with strings, whereas `unique` may be used with other types (but is slower).
-Using `dedupe()` with non-string values may result in unexpected behavior.
+with arrays consisting entirely of strings or entirely of numbers, whereas
+`unique` may be used with other value types (but is slower).
+
+Using `dedupe()` with values other than strings or numbers, or with arrays
+containing a mix of strings and numbers, may result in unexpected behavior.
 
 @method dedupe
-@param {String[]} array Array of strings to dedupe.
-@return {Array} Deduped copy of _array_.
+@param {String[]|Number[]} array Array of strings or numbers to dedupe.
+@return {Array} Copy of _array_ containing no duplicate values.
 @static
 @since 3.4.0
 **/
-YArray.dedupe = function (array) {
+YArray.dedupe = Lang._isNative(Object.create) ? function (array) {
+    var hash    = Object.create(null),
+        results = [],
+        i, item, len;
+
+    for (i = 0, len = array.length; i < len; ++i) {
+        item = array[i];
+
+        if (!hash[item]) {
+            hash[item] = 1;
+            results.push(item);
+        }
+    }
+
+    return results;
+} : function (array) {
     var hash    = {},
         results = [],
         i, item, len;
@@ -9801,8 +9819,11 @@ var Selector = {
     },
 
     _nativeQuery: function(selector, root, one) {
-        if (Y.UA.webkit && selector.indexOf(':checked') > -1 &&
-                (Y.Selector.pseudos && Y.Selector.pseudos.checked)) { // webkit (chrome, safari) fails to pick up "selected"  with "checked"
+        if (
+            (Y.UA.webkit || Y.UA.opera) &&          // webkit (chrome, safari) and Opera
+            selector.indexOf(':checked') > -1 &&    // fail to pick up "selected"  with ":checked"
+            (Y.Selector.pseudos && Y.Selector.pseudos.checked)
+        ) {
             return Y.Selector.query(selector, root, one, true); // redo with skipNative true to try brute query
         }
         try {
@@ -20571,13 +20592,15 @@ var PARENT_NODE = 'parentNode',
         _bruteQuery: function(selector, root, firstOnly) {
             var ret = [],
                 nodes = [],
+                visited,
                 tokens = Selector._tokenize(selector),
                 token = tokens[tokens.length - 1],
                 rootDoc = Y.DOM._getDoc(root),
                 child,
                 id,
                 className,
-                tagName;
+                tagName,
+                isUniversal;
 
             if (token) {
                 // prefilter nodes
@@ -20598,16 +20621,30 @@ var PARENT_NODE = 'parentNode',
                     }
 
                 } else { // brute getElementsByTagName()
+                    visited = [];
                     child = root.firstChild;
+                    isUniversal = tagName === "*";
                     while (child) {
-                        // only collect HTMLElements
-                        // match tag to supplement missing getElementsByTagName
-                        if (child.tagName && (tagName === '*' || child.tagName === tagName)) {
-                            nodes.push(child);
+                        while (child) {
+                            // IE 6-7 considers comment nodes as element nodes, and gives them the tagName "!".
+                            // We can filter them out by checking if its tagName is > "@". 
+                            // This also avoids a superflous nodeType === 1 check.
+                            if (child.tagName > "@" && (isUniversal || child.tagName === tagName)) {
+                                nodes.push(child);
+                            }
+
+                            // We may need to traverse back up the tree to find more unvisited subtrees.
+                            visited.push(child);
+                            child = child.firstChild;
                         }
-                        child = child.nextSibling || child.firstChild;
+
+                        // Find the most recently visited node who has a next sibling.
+                        while (visited.length > 0 && !child) {
+                            child = visited.pop().nextSibling;
+                        }
                     }
                 }
+
                 if (nodes.length) {
                     ret = Selector._filterNodes(nodes, tokens, firstOnly);
                 }
@@ -20950,7 +20987,6 @@ Y.Selector.getters.src = Y.Selector.getters.rel = Y.Selector.getters.href;
 if (Y.Selector.useNative && Y.config.doc.querySelector) {
     Y.Selector.shorthand['\\.(-?[_a-z]+[-\\w]*)'] = '[class~=$1]';
 }
-
 
 
 }, '@VERSION@', {"requires": ["selector-native"]});
