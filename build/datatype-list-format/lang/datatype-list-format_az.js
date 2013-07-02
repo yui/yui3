@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_az",function(e){e.Intl.add("datatype-list-format","az",{listPatternEnd:"{0}, {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0}, {1}"})},"@VERSION@");

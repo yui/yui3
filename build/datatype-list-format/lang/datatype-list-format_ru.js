@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_ru",function(e){e.Intl.add("datatype-list-format","ru",{listPatternEnd:"{0} \u0438 {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} \u0438 {1}"})},"@VERSION@");

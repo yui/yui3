@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_ka",function(e){e.Intl.add("datatype-list-format","ka",{listPatternEnd:"{0} \u10d3\u10d0 {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} \u10d3\u10d0 {1}"})},"@VERSION@");

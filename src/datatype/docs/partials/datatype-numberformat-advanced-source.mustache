@@ -1,0 +1,48 @@
+<form id="demo">
+    <fieldset>
+        <label for="demo_number">Number to format: <input type="text" id="demo_number"></label>
+    </fieldset>
+    <fieldset class="medium">
+        <label for="demo_lang">Locale:</label>
+        <input type="text" id="demo_lang" value="en"></input>
+    </fieldset>
+    <fieldset>
+        <label for="demo_numberStyle">Style:</label>
+        <select id="demo_numberStyle">
+            <option>CURRENCY_STYLE</option>
+            <option>ISO_CURRENCY_STYLE</option>
+            <option selected>NUMBER_STYLE</option>
+            <option>PERCENT_STYLE</option>
+            <option>PLURAL_CURRENCY_STYLE</option>
+            <option>SCIENTIFIC_STYLE</option>
+        </select>
+    </fieldset>
+    <fieldset>
+        <input type="button" id="demo_btn" value="Show formatted string">: <span id="demo_output">&nbsp;</span>
+    </fieldset>
+</form>
+
+<script>
+YUI().use("node", "escape", "datatype-number-format-advanced", function (Y) {
+
+    function updateNumber (e) {
+        e.preventDefault();
+        var locale = Y.one("#demo_lang").get("value") || "en";
+
+        YUI({lang: locale}).use("node", "escape", "datatype-number-format-advanced", function(Y) {
+             var number = Y.Number.parse(Y.one("#demo_number").get("value")),
+	            output = Y.Number.format(number, {
+                style: Y.one("#demo_numberStyle").get("value")
+            });
+
+	        if(output === "") {
+	            output += "(Invalid number)"
+	        }
+
+	        Y.one("#demo_output").setHTML(Y.Escape.html(output));
+        });
+    }
+
+    Y.one("#demo_btn").on("click", updateNumber);
+});
+</script>

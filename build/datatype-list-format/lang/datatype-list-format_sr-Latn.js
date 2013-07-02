@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_sr-Latn",function(e){e.Intl.add("datatype-list-format","sr-Latn",{listPatternEnd:"{0} i {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} i {1}"})},"@VERSION@");

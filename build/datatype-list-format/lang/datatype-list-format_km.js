@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_km",function(e){e.Intl.add("datatype-list-format","km",{listPatternEnd:"{0}, {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} \u1793\u17b7\u1784 {1}"})},"@VERSION@");

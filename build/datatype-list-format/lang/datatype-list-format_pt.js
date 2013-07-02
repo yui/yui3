@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_pt",function(e){e.Intl.add("datatype-list-format","pt",{listPatternEnd:"{0} e {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} e {1}"})},"@VERSION@");

@@ -1,0 +1,1 @@
+YUI.add("lang/datatype-list-format_ml",function(e){e.Intl.add("datatype-list-format","ml",{listPatternEnd:"{0}, {1} \u0d0e\u0d28\u0d4d\u0d28\u0d3f\u0d35",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} \u0d15\u0d42\u0d1f\u0d3e\u0d24\u0d46 {1}"})},"@VERSION@");
