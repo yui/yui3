@@ -8,6 +8,8 @@ YUI Core Change History
   ES5, and added feature tests to ensure that native implementations are only
   used if they work properly. [Ezequiel Rodriguez]
 
+* `Y.Object.keys()` now falls back to the non-native shim for Android 2.3.x
+  because the native version incorrectly enumerates the `prototype` property.
 
 3.10.3
 ------
