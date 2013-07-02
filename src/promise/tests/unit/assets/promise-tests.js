@@ -192,11 +192,11 @@ YUI.add('promise-tests', function (Y) {
 
         _should: {
             ignore: {
-                '|this| inside a callback must be undefined in strict mode': (function () {
+                '`this` inside a callback must be undefined in strict mode': (function () {
                     'use strict';
                     return typeof this !== 'undefined';
                 }()),
-                '|this| inside a callback must be the global object': (function () {
+                '`this` inside a callback must be the global object': (function () {
                     return typeof this === 'undefined';
                 }())
             }
@@ -238,7 +238,7 @@ YUI.add('promise-tests', function (Y) {
         },
 
         // This test is run only when not in strict mode
-        '|this| inside a callback must be the global object': function () {
+        '`this` inside a callback must be the global object': function () {
             var test = this,
                 fulfilled, rejected,
                 fulfilledThis, rejectedThis;
@@ -255,8 +255,8 @@ YUI.add('promise-tests', function (Y) {
                 rejected.then(null, function () {
                     rejectedThis = this;
                     test.resume(function () {
-                        Assert.areSame(Y.config.global, fulfilledThis, 'when not in strict mode |this| in the success callback must be the global object');
-                        Assert.areSame(Y.config.global, rejectedThis, 'when not in strict mode |this| in the failure callback must be the global object');
+                        Assert.areSame(Y.config.global, fulfilledThis, 'when not in strict mode `this` in the success callback must be the global object');
+                        Assert.areSame(Y.config.global, rejectedThis, 'when not in strict mode `this` in the failure callback must be the global object');
                     });
                 });
             });
@@ -265,7 +265,7 @@ YUI.add('promise-tests', function (Y) {
         },
 
         // This test is run only in strict mode
-        '|this| inside a callback must be undefined in strict mode': function () {
+        '`this` inside a callback must be undefined in strict mode': function () {
             'use strict';
             
             var test = this,
@@ -284,8 +284,8 @@ YUI.add('promise-tests', function (Y) {
                 rejected.then(null, function () {
                     rejectedThis = this;
                     test.resume(function () {
-                        Assert.isUndefined(fulfilledThis, 'in strict mode |this| in the success callback must be undefined');
-                        Assert.isUndefined(rejectedThis, 'in strict mode |this| in the failure callback must be undefined');
+                        Assert.isUndefined(fulfilledThis, 'in strict mode `this` in the success callback must be undefined');
+                        Assert.isUndefined(rejectedThis, 'in strict mode `this` in the failure callback must be undefined');
                     });
                 });
             });
