@@ -4,6 +4,9 @@ YUI Core Change History
 @VERSION@
 ------
 
+* Removed all instances of `path.existsSync()` from YUI core, as part of 
+  node.js target environments being brought up to v0.8. [Clarence Leung]
+
 * Brought `Y.Lang.trim()`, `trimLeft()`, and `trimRight()` into compliance with
   ES5, and added feature tests to ensure that native implementations are only
   used if they work properly. [Ezequiel Rodriguez]
