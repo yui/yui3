@@ -4,7 +4,7 @@ Node Change History
 @VERSION@
 ------
 
-* No changes.
+* Added: `Node#getHTML()` now works when used against document fragments. [Ezequiel Rodriguez]
 
 3.10.3
 ------
