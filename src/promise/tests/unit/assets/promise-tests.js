@@ -3,7 +3,8 @@ YUI.add('promise-tests', function (Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.Test.ArrayAssert,
         Promise = Y.Promise,
-        isPromise = Promise.isPromise;
+        isPromise = Promise.isPromise,
+        isThenable = Promise.isThenable;
 
     // -- Suite --------------------------------------------------------------------
     var suite = new Y.Test.Suite({
@@ -297,18 +298,24 @@ YUI.add('promise-tests', function (Y) {
         name: 'Promise detection with Promise.isPromise',
 
         'detecting YUI promises': function () {
-            Assert.isTrue(isPromise(new Promise(function () {})), 'a YUI promise should be identified as a promise');
+            var promise = new Promise(function () {});
+
+            Assert.isTrue(isThenable(promise), 'a YUI promise should be identified as a thenable');
+            Assert.isTrue(isPromise(promise), 'a YUI promise should be identified as a promise');
         },
 
         'detecting pseudo promises': function () {
-            Assert.isTrue(isPromise({
+            var thenable = {
                 then: function () {
                     return 5;
                 }
-            }), 'a pseudo promise should be identified as a promise');
+            };
+
+            Assert.isTrue(isThenable(thenable), 'a pseudo promise should be identified as a thenable');
+            Assert.isFalse(isPromise(thenable), 'a pseudo promise should not be identified as a promise');
         },
 
-        'failing for values and almost promises': function () {
+        'isPromise() failing for values and almost promises': function () {
             // truthy values
             Assert.isFalse(isPromise(5), 'numbers should not be identified as promises');
             Assert.isFalse(isPromise('foo'), 'strings should not be identified as promises');
@@ -324,6 +331,26 @@ YUI.add('promise-tests', function (Y) {
 
             // almost promises
             Assert.isFalse(isPromise({
+                then: 5
+            }), 'almost promises should not be identified as promises');
+        },
+
+        'isThenable() failing for values and almost promises': function () {
+            // truthy values
+            Assert.isFalse(isThenable(5), 'numbers should not be identified as promises');
+            Assert.isFalse(isThenable('foo'), 'strings should not be identified as promises');
+            Assert.isFalse(isThenable(true), 'true booleans should not be identified as promises');
+            Assert.isFalse(isThenable({}), 'objects should not be identified as promises');
+
+            // false values
+            Assert.isFalse(isThenable(0), 'zero should not be identified as a promise');
+            Assert.isFalse(isThenable(''), 'empty strings should not be identified as promises');
+            Assert.isFalse(isThenable(false), 'false booleans should not be identified as promises');
+            Assert.isFalse(isThenable(null), 'null should not be identified as a promise');
+            Assert.isFalse(isThenable(undefined), 'undefined should not be identified as a promise');
+
+            // almost promises
+            Assert.isFalse(isThenable({
                 then: 5
             }), 'almost promises should not be identified as promises');
         }
