@@ -4,6 +4,9 @@ YUI Core Change History
 @VERSION@
 ------
 
+* `Y.Array.dedupe()` is now slightly faster in ES5-compliant browsers.
+  [Ezequiel Rodriguez]
+
 * Brought `Y.Lang.trim()`, `trimLeft()`, and `trimRight()` into compliance with
   ES5, and added feature tests to ensure that native implementations are only
   used if they work properly. [Ezequiel Rodriguez]
