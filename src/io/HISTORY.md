@@ -4,7 +4,7 @@ IO Utility Change History
 @VERSION@
 ------
 
-* No changes.
+* Upgraded `request` module dependency for `io-nodejs` for compatibility with node.js v0.10. [Pull Request #940]
 
 3.10.3
 ------
