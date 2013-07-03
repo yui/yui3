@@ -4,12 +4,17 @@ App Framework Change History
 @VERSION@
 ------
 
-* No changes.
+### Router
+
+* Fixed issue with trying to URL-decode matching path segments that are
+  `undefined`.
+
 
 3.10.3
 ------
 
 * No changes.
+
 
 3.10.2
 ------
