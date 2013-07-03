@@ -14,6 +14,12 @@ YUI Core Change History
 * `Y.Object.keys()` now falls back to the non-native shim for Android 2.3.x
   because the native version incorrectly enumerates the `prototype` property.
 
+* `Y.UA` now correctly identifies IE 11. [Ryan Grove]
+
+* `Y.UA` now identifies Opera 15+ as both Opera and WebKit. Previously it was
+  identified as Chrome, since it uses the same Blink rendering engine as
+  Chrome. [Ryan Grove]
+
 3.10.3
 ------
 
