@@ -20,6 +20,10 @@ YUI Core Change History
   identified as Chrome, since it uses the same Blink rendering engine as
   Chrome. [Ryan Grove]
 
+* Removed all instances of `path.existsSync()` from YUI core, as part of
+  node.js target environments being brought up to v0.8. [Clarence Leung]
+
+
 3.10.3
 ------
 
