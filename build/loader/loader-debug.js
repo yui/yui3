@@ -3599,22 +3599,19 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-base": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-responsive": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids",
@@ -3624,8 +3621,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids-units": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids-base"
@@ -5868,7 +5864,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'b71ea9b1fa73cb478a0251d7a63a2fd0';
+YUI.Env[Y.version].md5 = 'b48f48e0499b41d980deaefd4100d336';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
