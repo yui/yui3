@@ -48,13 +48,6 @@ function PositionConstrain(config) {}
  */
 PositionConstrain.ATTRS = {
 
-    initializer : function() {
-        if (!this._posNode) {
-            Y.error("WidgetPosition needs to be added to the Widget, before WidgetPositionConstrain is added");
-        }
-        Y.after(this._bindUIPosConstrained, this, BINDUI);
-    },
-
     /**
      * @attribute constrain
      * @type boolean | Node
@@ -104,6 +97,13 @@ PREVENT_OVERLAP_MAP = PositionConstrain._PREVENT_OVERLAP = {
 };
 
 PositionConstrain.prototype = {
+
+    initializer : function() {
+        if (!this._posNode) {
+            Y.error("WidgetPosition needs to be added to the Widget, before WidgetPositionConstrain is added");
+        }
+        Y.after(this._bindUIPosConstrained, this, BINDUI);
+    },
 
     /**
      * Calculates the constrained positions for the XY positions provided, using
