@@ -1,8 +1,6 @@
 {
+    "exec": ["../../../build/lib/wf2_prebuild_compass.js"],
     "name": "loader",
-    "exec": [
-        "./scripts/fetch_gallery_version.js"
-    ],
     "postexec": [
         "./scripts/build_loader_tests.js"
     ],
