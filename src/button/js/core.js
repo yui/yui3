@@ -242,7 +242,7 @@ ButtonCore.CLASS_NAMES = {
 /**
  * Array of static constants used to for applying ARIA states
  *
- * @property CLASS_NAMES
+ * @property ARIA_STATES
  * @type {Object}
  * @private
  * @static
@@ -255,7 +255,7 @@ ButtonCore.ARIA_STATES = {
 /**
  * Array of static constants used to for applying ARIA roles
  *
- * @property CLASS_NAMES
+ * @property ARIA_ROLES
  * @type {Object}
  * @private
  * @static
