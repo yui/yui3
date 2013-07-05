@@ -116,6 +116,41 @@ YUI.add('button-core-test', function (Y) {
             Assert.areEqual(button.get('label'), 'foo');
             Assert.isInstanceOf(Y.ButtonCore, button);
         },
+
+        'New ButtonCores nodes should get proper type attribute': function () {
+            Assert.areEqual('submit', new Y.ButtonCore({}).get('type'));
+            Assert.areEqual('submit', new Y.ButtonCore({type: 'submit'}).get('type'));
+            Assert.areEqual('submit', new Y.ButtonCore({type: 'submit'}).get('type'));
+
+            Assert.areEqual('button', new Y.ButtonCore({type: 'button'}).get('type'));   // sensible
+            Assert.areEqual('reset', new Y.ButtonCore({type: 'reset'}).get('type'));   // sensible
+
+            Assert.areEqual('submit', new Y.ButtonCore({type: 'foo'}).get('type'));      // ridiculous value, fall back to default
+        },
+
+        'ButtonCore should respect host node\'s type': function () {
+            function getButtonType () {
+                return new Y.ButtonCore({
+                    host: Y.one("#testButton")
+                }).get('type');
+            }
+
+            Y.one("#container").setContent('<button id="testButton">Hoi</button>');
+            Assert.areEqual('submit', getButtonType());
+            Y.one("#container").setContent('<button id="testButton" type="submit">Hoi</button>');
+            Assert.areEqual('submit', getButtonType());
+
+            Y.one("#container").setContent('<button id="testButton" type="button">Hoi</button>');
+            Assert.areEqual('button', getButtonType());
+
+            Y.one("#container").setContent('<button id="testButton" type="reset">Hoi</button>');
+            Assert.areEqual('reset', getButtonType());
+
+            Y.one("#container").setContent('<input id="testButton" type="submit">Hoi</button>');
+            Assert.areEqual('submit', getButtonType());
+            Y.one("#container").setContent('<input id="testButton" type="button">Hoi</button>');
+            Assert.areEqual('button', getButtonType());
+        },
     
         'Modifying the label of a nested button structure should not modify the non-label elements': function () {
             Y.one("#container").setContent('<button id="testButton">**<span class="yui3-button-label">Hello</span>**</button>');

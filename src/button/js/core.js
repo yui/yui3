@@ -83,7 +83,7 @@ ButtonCore.prototype = {
      * @param config {Object} Config object.
      * @private
      */
-    _renderUI: function() {
+    _renderUI: function(config) {
         var node = this.getNode(),
             tagName = node.get('tagName').toLowerCase();
 
@@ -92,6 +92,8 @@ ButtonCore.prototype = {
         
         if (tagName !== 'button' && tagName !== 'input') {
             node.set('role', 'button');
+        } else if (config.type) {
+            node.set('type', config.type);
         }
     },
 
@@ -142,6 +144,10 @@ ButtonCore.prototype = {
         return label;
     },
     
+    _getType: function () {
+        return this.getNode().get('type');
+    },
+
     /**
      * @method _uiSetLabel
      * @description Setter for a button's 'label' ATTR
@@ -211,6 +217,22 @@ ButtonCore.ATTRS = {
     disabled: {
         value: false,
         setter: '_uiSetDisabled',
+        lazyAdd: false
+    },
+
+    /**
+     * The host node's type
+     * 
+     * If instantiated without a host, defaults 'submit', but can be set to 'button' or 'reset'
+     * Else, type is the host's type
+     * 
+     * @attribute
+     * @type String
+     */
+    type: {
+        value: 'submit',
+        getter: '_getType',
+        writeOnce: 'initOnly',
         lazyAdd: false
     }
 };
