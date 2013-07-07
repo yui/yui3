@@ -666,7 +666,8 @@ Y.mix(Table.prototype, {
                 if (key && !map[key]) {
                     map[key] = col;
                 }
-
+                else {Y.log('Key of column matches existing key or name: ' + key, 'warn', NAME);}
+                if (map[col_id]) {Y.log('Key of column matches existing key or name: ' + col._id, 'warn', NAME);}
                 //TODO: named columns can conflict with keyed columns
                 map[col._id] = col;
 
