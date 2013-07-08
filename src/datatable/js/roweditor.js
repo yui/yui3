@@ -57,15 +57,15 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
         @private
          */
         _offsetY: null,
-        
+
         /**
         Information passed on to the editor about what is being edited.
         It has properties:
-    
-        * tr: TR node for the row being edited
-        * record: Model instance containing the data being edited  
 
-        @property _rowInfo {Object} 
+        * tr: TR node for the row being edited
+        * record: Model instance containing the data being edited
+
+        @property _rowInfo {Object}
         @private
          */
 
@@ -135,7 +135,6 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
         },
         /**
         Lifecycle method.  Detaches all subscriptions.
-        
         @method destructor
         @protected
          */
@@ -147,13 +146,13 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
             });
         },
         /**
-        Shows the row editor.  It simply fires the [show](#event_show) event. 
-        
+        Shows the row editor.  It simply fires the [show](#event_show) event.
+
         @method showEditor
         @param config {Object} Including:
         @param config.tr {Node} TR Node of the row to be edited.
         @param config.record {Model} Record to be edited.
-        @param config.focusOn {Column Definition} Column that had the focus 
+        @param config.focusOn {Column Definition} Column that had the focus
             when the editor was requested, or first column in the row
         @return False if the event was stopped.
         */
@@ -163,12 +162,11 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
         },
         /**
         Default action for the [show](#event_show) event.
-        
         @method _defShowFn
         @param ev {EventFacade} Including:
         @param ev.tr {Node} TR Node of the row to be edited.
         @param ev.record {Model} Record to be edited.
-        @param ev.focusOn {Column Definition} Column that had the focus 
+        @param ev.focusOn {Column Definition} Column that had the focus
             when the editor was requested, or first column in the row
          */
         _defShowFn: function (ev) {
@@ -176,7 +174,8 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
                 tr = ev.tr,
                 colPrefix = '.' + dt.getClassName('col') + '-',
                 record = ev.record,
-                focusOn = ev.focusOn.name || ev.focusOn.key;
+                focusOn = ev.focusOn.name,
+                sanitize = Y.DataTable.Core._sanitizeId;
 
             this._rowInfo = {
                 tr: tr,
@@ -206,7 +205,7 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
 
         /**
         Adds to the footer of the overlay the buttons entered
-        as the [buttons](#attr_buttons) config property of the 
+        as the [buttons](#attr_buttons) config property of the
         [rowEditorOptions](DataTable.html#attr_rowEditorOptions)
         datatable attribute.
         Sets the click listener on them.
@@ -269,7 +268,6 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
                     return;
                 }
                 action = btnCfg.action;
-                
                 objEach(this._dt._columnEditors, function (editor, colName) {
                     var info = editor._cellInfo,
                         value = {
@@ -281,7 +279,6 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
                     values[colName] = value;
                 });
                 rowInfo = Y.merge(this._rowInfo, {values: values});
-                
                 switch (Lang.type(action)) {
                     case 'string':
                         if (dt[action]) {
@@ -296,15 +293,13 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
                 }
             }
         },
-                
         /**
         Calls the (saveEditor)[DataTable.BaseCellEditor.html#method_saveEditor]
         to validate and parse each of the fields (quietly, without firing each
         cell `save` event) and if it passes all validations, it fires the
         [save](#event_save) to do the actual saving all at once.
-                
         @method saveEditor
-        @return {Boolean} True if all fields validated.        
+        @return {Boolean} True if all fields validated.
         */
         saveEditor: function () {
             var success = true,
@@ -325,12 +320,12 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
             }
             return success;
         },
-                
+
         /**
-        Default action for the [save](#event_save) event.  
-        It simply hides the editor since the actual saving is done 
+        Default action for the [save](#event_save) event.
+        It simply hides the editor since the actual saving is done
         [elsewhere}(DataTable.html#method__afterRowEditorSave).
-        
+
         @method _defSaveFn
         @param ev {EventFacade} Event facade for the save event.
         @protected
@@ -338,21 +333,21 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
         _defSaveFn: function (/* ev */) {
             this._hideEditor();
         },
-                
+
         /**
         Closes the editor. Fires the [cancel](#event_cancel) event.
-        
+
         @method cancelEditor
         @return False if the event was stopped.
-         */        
+         */
         cancelEditor: function () {
             return this.fire('cancel', this._rowInfo);
         },
-                
+
         /**
-        Default action for the [cancel](#event_cancel) event.  
+        Default action for the [cancel](#event_cancel) event.
         It simply hides the editor.
-        
+
         @method _defCancelFn
         @param ev {EventFacade} Event facade for the cancel event.
         @protected
@@ -360,10 +355,10 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
         _defCancelFn: function (/* ev */) {
             this._hideEditor();
         },
-                
+
         /**
         Does the actual hiding of the editor and the cell editors contained within.
-        
+
         @method _hideEditor
         @private
          */
@@ -456,7 +451,6 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
             visible: {
                 value: false
             },
-                    
             /**
             Array of buttons to be added to the footer of the overlay.
             Each entry is an object containing the configuration options for the buttons:
@@ -502,7 +496,6 @@ Y.DataTable.RowEditor = Y.Base.create('roweditor', Y.Overlay, [],
             @type Array|null
             @default null
             */
-                    
             buttons: {
 
             },

@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
 var fs = require('fs'),
-    path = require('path'),
-    exists = fs.existsSync || path.existsSync;
+    path = require('path');
 
 var base = path.join(__dirname, '../../');
 
@@ -46,7 +45,7 @@ var parseJSON = function(file) {
 };
 
 var walk = function(dir) {
-    if (!exists(dir)) {
+    if (!fs.existsSync(dir)) {
         return;
     }
     var dirs = fs.readdirSync(dir);

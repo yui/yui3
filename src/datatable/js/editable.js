@@ -1233,8 +1233,7 @@ Y.mix( DtEditable.prototype, {
     _afterRowEditorSave: function (ev) {
         Y.log('DataTable.Editable._afterRowEditorSave', 'info', 'datatable-editable');
 
-        var record = ev.record,
-            map = this._columnMap;
+        var record = ev.record;
         objEach(ev.values, function (field) {
             if (field.recordKey) {
                 record.set(field.recordKey, field.newValue);

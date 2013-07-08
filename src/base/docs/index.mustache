@@ -5,6 +5,23 @@
     initialization (`initializer`) and destruction (`destructor`) methods for the class hierarchy.</p>
 
     <p>It also provides a way for classes to reuse implementation code through plugins, or through extensions.</p>
+
+    <p><strong>3.11.0 Upgrade Note:</strong></p>
+
+    <p>Prior to 3.11.0, Base would invoke Extension constructors, add attributes,
+    and invoke initializers one class at a time, which means Extension constructors would have been called after
+    superclass attributes were set up.</p>
+
+    <p>As of 3.11.0, Base adds all attributes in one shot, <em>after all</em> Extension constructors are called, and
+    before any `initializers` are called.</p>
+
+    <p>As a result, if you've created custom Extensions which have initialization code in the constructor
+    which accesses attributes, you'll need to move this code to the Extension's `initializer`, to make sure
+    attributes are available when this code is hit.</p>
+
+    <p>Base's <a href="https://github.com/yui/yui3/blob/master/src/base/HISTORY.md">HISTORY.md</a>, and the
+    originating <a href="https://github.com/yui/yui3/pull/917">pull request</a>, have more details about the
+    need for this change.</p>
 </div>
 
 {{>getting-started}}
