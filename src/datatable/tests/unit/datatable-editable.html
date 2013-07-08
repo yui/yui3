@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+    <title>datatable-editor</title>
+    <script src="/build/yui/yui.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="dtable"></div>
+<div id="logger"></div>
+
+<script src="assets/datatable-editable-tests.js"></script>
+
+<script>
+YUI({
+    coverage: ['datatable-editable'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+//    filters: {
+//        'datatable-editable': (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'debug',
+//        'datatable-celleditors': (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'debug',
+//    },
+    // The following should go away once loader learns about them:
+/*    groups: {
+        builds: {
+            base: '../../../build/',
+            modules: {
+                'datatable-editable': {
+                    path: 'datatable-editable/datatable-editable-min.js',
+                    requires:[
+                        "overlay",
+                        "datatable-base",
+                        "datatype",
+                        "node-screen",
+                        "datatable-keynav",
+                        "event-resize",
+                        "event-outside"
+                    ],
+                    skinnable:true,
+                    lang: ['es', 'en']
+                },
+                'datatable-celleditors': {
+                    path: 'datatable-celleditors/datatable-celleditors-min.js',
+                    requires:[
+                        "datatable-editable",
+                        "view",
+                        "base-build",
+                        "event-mouseenter",
+                        "cssbutton",
+                        "event-outside",
+                    ],
+                    skinnable:true
+                },
+                'datatable-celleditor-keyfiltering': {
+                    path: 'datatable-celleditor-keyfiltering/datatable-celleditor-keyfiltering-min.js',
+                    requires: [
+                       "datatable-editable",
+                       "event-valuechange",
+                       "base-build"
+                   ]
+                },
+                "datatable-keynav": {
+                    path: 'datatable-keynav/datatable-keynav-min.js',
+                    "requires": [
+                        "yui-base", "datatable-base", "base-base", "oop"
+                    ]
+                }
+            }
+        }
+    }*/
+ }).use( 'test-console', 'test', 'datatable-editable-tests',  "node-event-simulate",
+        "datatable-editable",  "datatable",'datatable-scroll',
+        "datatable-celleditors",
+        function(Y) {
+
+    (new Y.Test.Console()).render('#logger');
+
+    Y.Test.Runner.setName('datatable-editable');
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

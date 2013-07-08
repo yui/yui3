@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+    <head>
+        <title>datatable-celleditors</title>
+        <script src="/build/yui/yui.js"></script>
+    </head>
+    <body class="yui3-skin-sam">
+        <script src="/build/datatable-editable/datatable-editable.js"></script>
+        <div id="dtable"></div>
+        <div id="logger"></div>
+
+        <script src="assets/datatable-celleditors-tests.js"></script>
+
+        <script>
+            YUI({
+                coverage: ['datatable-celleditors'],
+                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+                // The following should go away once loader learns about them:
+                /*groups: {
+                    builds: {
+                        base: '../../../build/',
+                        modules: {
+                            'datatable-editable': {
+                                path: 'datatable-editable/datatable-editable-min.js',
+                                requires:[
+                                    "overlay",
+                                    "datatable-base",
+                                    "datatype",
+                                    "node-screen",
+                                    "datatable-keynav",
+                                    "event-resize",
+                                    "event-outside"
+                                ],
+                                skinnable:true,
+                                lang: ['es', 'en']
+                            },
+                            'datatable-celleditors': {
+                                path: 'datatable-celleditors/datatable-celleditors-min.js',
+                                requires:[
+                                    "datatable-editable",
+                                    "view",
+                                    "base-build",
+                                    "event-mouseenter",
+                                    "cssbutton",
+                                    "event-outside",
+                                ],
+                                skinnable:true
+                            },
+                            'datatable-celleditor-keyfiltering': {
+                                path: 'datatable-celleditor-keyfiltering/datatable-celleditor-keyfiltering-min.js',
+                                requires: [
+                                   "datatable-editable",
+                                   "event-valuechange",
+                                   "base-build"
+                               ]
+                            },
+                            "datatable-keynav": {
+                                path: 'datatable-keynav/datatable-keynav-min.js',
+                                "requires": [
+                                    "yui-base", "datatable-base", "base-base", "oop"
+                                ]
+                            }
+                        }
+                    },
+                    leaks: {
+                        base:'assets/',
+                        modules: {
+                            'leak-utils': {
+                                path: 'leakutils.js',
+                                requires: ['test','node']
+                            }
+                        }
+                    }
+                }*/
+            }).use(
+                'base-core',
+                'test',
+                'leak-utils',
+                function (Y) {
+                    if (/[?&]leak=([^&]+)/.test(window.location.search)) {
+                        Y.Test.Runner.setDOMIgnore('#logger','script');
+                        Y.Test.Runner.enableLeakDetector();
+                    }
+                Y.use(
+                'test-console',
+                'datatable-celleditors-tests',  "node-event-simulate",
+                "datatable-editable",  "datatable",
+                "datatable-celleditors",
+                'datatable',
+                'datatable-editable',
+                'autocomplete',
+                function(Y) {
+
+                    (new Y.Test.Console()).render('#logger');
+
+                    Y.Test.Runner.setName('datatable-celleditors');
+
+                    Y.Test.Runner.run();
+                })
+            });;
+        </script>
+    </body>
+</html>
