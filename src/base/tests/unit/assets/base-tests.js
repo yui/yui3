@@ -862,9 +862,9 @@ YUI.add('base-tests', function(Y) {
             var actualMethodCalls = [],
                 expectedMethodCalls = [
                     "ext1::constructor",
+                    "ext2::constructor",
                     "myClassOne::initializer",
                     "ext1::initializer",
-                    "ext2::constructor",
                     "myClassTwo::initializer",
                     "ext2::initializer",
                     "myClassOne::methodOne",

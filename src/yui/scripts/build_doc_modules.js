@@ -2,12 +2,11 @@
 
 var path = require('path'),
     fs = require('fs'),
-    exists = fs.existsSync || path.existsSync,
     base = path.join(__dirname, '../../../api-js/data.json'),
     alias_json = path.join(__dirname, '../../loader/js/yui3.json'),
     out = path.join(__dirname, '../docs/partials/modules.mustache');
 
-if (!exists(base)) {
+if (!fs.existsSync(base)) {
     console.error('\n[error] Please run `yuidoc` first to generate API documentation!');
     process.exit();
 }
