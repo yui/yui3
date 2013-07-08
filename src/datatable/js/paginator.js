@@ -75,9 +75,6 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
             paginator: getClassName(NAME)
         });
 
-        var container = this.get('container'),
-            events = this._eventHandles;
-
         this._initStrings();
         this._initClassNames();
 
@@ -209,7 +206,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
                 option = {
                     value: option,
                     label: option
-                }
+                };
             }
             option.selected = (option.value === rowsPerPage) ? ' selected' : '';
         }
@@ -332,7 +329,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
             return;
         }
 
-        var val = e.target.get('value');
+        val = e.target.get('value');
         this.fire(EVENT_UI, { type: 'perPage', val: parseInt(val, 10) });
     },
 
@@ -351,7 +348,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
         // the only form we have is the go to page form
         e.preventDefault();
 
-        var input = e.target.one('input');
+        input = e.target.one('input');
         this.fire(EVENT_UI, { type: 'page', val: input.get('value') });
     },
 
@@ -551,8 +548,6 @@ Y.mix(Controller.prototype, {
      @since @SINCE@
      */
     initializer: function () {
-        var model = this.get('paginatorModel')
-
         // allow DT to use paged data
         this._augmentData();
 
@@ -857,9 +852,11 @@ Y.mix(Controller.prototype, {
                 // We want to check to see if we have a number or a string
                 // of a number. If we do not, we want the value to be -1 to
                 // indicate "all rows"
+                /*jshint eqeqeq:false */
                 if (parseInt(value, 10) != value) {
                     value = -1;
                 }
+                /*jshint eqeqeq:true */
                 val[i] = { label: label, value: value };
             }
         }

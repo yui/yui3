@@ -485,21 +485,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "calendar": {
-        "lang": [
-            "de",
-            "en",
-            "es",
-            "es-AR",
-            "fr",
-            "hu",
-            "it",
-            "ja",
-            "nb-NO",
-            "nl",
-            "pt-BR",
-            "ru",
-            "zh-HANT-TW"
-        ],
         "requires": [
             "calendar-base",
             "calendarnavigator"
@@ -692,22 +677,19 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-base": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-responsive": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids",
@@ -717,8 +699,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids-units": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids-base"
@@ -2961,7 +2942,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '1fa99d183d9018a5624c480a73fa23ad';
+YUI.Env[Y.version].md5 = 'b48f48e0499b41d980deaefd4100d336';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
