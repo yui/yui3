@@ -11,6 +11,13 @@ var ArrayAssert  = Y.ArrayAssert,
     originalURL   = (win && win.location.toString()) || '',
     originalTitle = (doc && doc.title) || '',
 
+    hasInnerHTMLBug = (function(){
+        var responseHTML = "<html><head><title>Hello</title></head><body><div>Hello World!</div></body></html>",
+            node = Y.Node.create(responseHTML);
+
+        return node.get('children').size() <= 1;
+    })(),
+
     suite,
     appContentSuite;
 
@@ -291,10 +298,13 @@ appContentSuite.add(new Y.Test.Case({
 appContentSuite.add(new Y.Test.Case({
     name: 'Routes',
 
+    // Known bug in node.innerHTML implementation found in <IE9 and Android
+    // 2.3.x.  See PjaxContent documentation on appropriate server-side
+    // solutions for addressing this issue.
     _should: {
         ignore: {
             '`Y.App.Content.route` should set the document `title`': !doc,
-            '`Y.App.Content.route` should default the document `title` to `<title>`': Y.UA.ie && Y.UA.ie < 9
+            '`Y.App.Content.route` should default the document `title` to `<title>`': hasInnerHTMLBug
         }
     },
 
@@ -344,9 +354,10 @@ appContentSuite.add(new Y.Test.Case({
     },
 
     '`Y.App.Content.route` should default the document `title` to `<title>`': function () {
-        // There's a known issue that this won't work in IE < 9!
-        // Older IEs parse the HTML document and strip away the `<head>` and
-        // `<body>` elements.
+        // There's a known issue that this won't work in IE < 9 and old Android!
+        // These browsers parse the HTML document and strip away the `<head>`
+        // and `<body>` elements. See PjaxContent documentation for better
+        // server-side solutions for addressing this problem.
 
         var test = this,
             app  = this.app = new Y.App({contentSelector: '#content > *'});
