@@ -90,7 +90,10 @@ var table = new Y.DataTable({
         {   key:        'select',
             allowHTML:  true, // to avoid HTML escaping
             label:      '<input type="checkbox" class="protocol-select-all" title="Toggle ALL records"/>',
-            formatter:      '<input type="checkbox" checked/>',
+            formatter:   function(o) {
+                    var checked = o.record.get('select') ? 'checked' : '';
+                    return '<input type="checkbox"'+ checked +'/>';
+            },
             emptyCellValue: '<input type="checkbox"/>'
         },
         {   key: 'port',   label: 'Port No.' },
@@ -129,7 +132,7 @@ table.delegate("click", function(e){
     // undefined to trigger the emptyCellValue
     var checked = e.target.get('checked') || undefined;
 
-    this.getRecord(e.target).set('select', checked);
+    this.getRecord(e.target).set('select', checked, { silent: true });
 
     // Uncheck the header checkbox
     this.get('contentBox')
