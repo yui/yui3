@@ -24,6 +24,18 @@ YUI.Env[Y.version].modules = {
         }
     }
 };
+YUI.Env[Y.version].groups = {
+    foo: {
+        modules: {
+            mod2: {
+                fullpath: '../assets/mod2.js',
+                attributes: {
+                    id: 'early-group-meta'
+                }
+            }
+        }
+    }
+};
 </script>
 <script type="text/javascript">
 

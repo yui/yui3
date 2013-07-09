@@ -89,7 +89,16 @@
         galleryUpdate();
         yui2Update();
 
-        YUI.Env[VERSION] = Y.merge(YUI.Env[VERSION], META);
+        if (YUI.Env[VERSION]) {
+            Y.mix(META, YUI.Env[VERSION], false, [
+                'modules',
+                'groups',
+                'skin',
+                'patterns'
+            ], 0, true);
+        }
+
+        YUI.Env[VERSION] = META;
     }());
 
 

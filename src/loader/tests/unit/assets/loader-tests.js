@@ -397,11 +397,19 @@ YUI.add('loader-tests', function(Y) {
         test_early_module_meta: function() {
             var test = this;
 
-            YUI().use('mod1', 'node', function(Y) {
+            // mod1 loaded via `modules` config and mod2 loaded via `groups` config.
+            YUI().use('mod1', 'mod2', 'node', function(Y) {
                 test.resume(function() {
-                    var script = Y.one('#early-module-meta');
-                    Assert.isNotNull(script, 'Failed to load module');
-                    Assert.isTrue(Y.MOD1, 'Failed to add module');
+                    var mod1,
+                        mod2;
+
+                    mod1 = Y.one('#early-module-meta');
+                    Assert.isNotNull(mod1, 'Failed to load module via module meta');
+                    Assert.isTrue(Y.MOD1, 'Failed to add module via module meta');
+
+                    mod2 = Y.one('#early-group-meta');
+                    Assert.isNotNull(mod2, 'Failed to load module via group meta');
+                    Assert.isTrue(Y.MOD2, 'Failed to add module via group meta');
                 });
             });
 
