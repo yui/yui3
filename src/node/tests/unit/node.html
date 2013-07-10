@@ -1947,7 +1947,7 @@ YUI({
                 node = Y.one(Y.config.doc.createDocumentFragment());
 
             node.setHTML(html);
-            Assert.areEqual(html, node.getHTML().toLowerCase());
+            Assert.areEqual(html, node.getHTML().toLowerCase().replace(/\s+/g, ''));
 
             // make sure node's contents have not disappeared 
             Assert.areEqual(node.get("children").size(), 1);
