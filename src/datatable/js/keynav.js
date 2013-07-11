@@ -223,7 +223,6 @@ Y.mix( DtKeyNav.prototype, {
                 evHandle.detach();
             }
         });
-
     },
 
     /**
@@ -237,7 +236,7 @@ Y.mix( DtKeyNav.prototype, {
     _afterKeyNavFocusedCellChange: function (e) {
         var newVal  = e.newVal,
             prevVal = e.prevVal;
-
+       
         if (prevVal) {
             prevVal.set('tabIndex', -1);
         }
@@ -259,17 +258,21 @@ Y.mix( DtKeyNav.prototype, {
     @method _afterKeyNavFocusedChange
     @param e {EventFacade}
     @private
-     */
+    */
     _afterKeyNavFocusedChange: function (e) {
-         if (e.newVal) {
-             var cell = this.get('focusedCell');
-             if (cell) {
-                 cell.focus();
-                 cell.scrollIntoView();
-             } else {
-                 this._keyMoveFirst();
-             }
-         }
+        var cell = this.get('focusedCell');
+        if (e.newVal) {
+            if (cell) {
+                cell.scrollIntoView();
+                cell.focus();
+            } else {
+                this._keyMoveFirst();
+            }
+        } else {
+            if (cell) {
+                cell.blur();
+            }
+        }
 
     },
 

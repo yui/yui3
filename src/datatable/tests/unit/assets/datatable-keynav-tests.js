@@ -1,5 +1,8 @@
 YUI.add('datatable-keynav-tests', function(Y) {
-
+/*
+ * ****   IMPORTANT *** 
+ * Please READ the note below about activeElement before doing any changes to these tests.
+ */
     var suite = new Y.Test.Suite('datatable-keynav'),
         Assert = Y.Test.Assert,
         areSame = Assert.areSame,
@@ -17,27 +20,45 @@ YUI.add('datatable-keynav-tests', function(Y) {
         UP = 38,
         RIGHT = 39,
         DOWN = 40;
+        
+/***********  Please Read ****************************
 
-    var fireKey = function( key, opts) {
-        opts = Y.merge({keyCode: key}, opts);
-        var doc = Y.one(Y.config.doc.activeElement);
-        doc.simulate('keydown', opts);
+It happens that the native DOM property `document.activeElement` is not always
+reliable, not in all browsers (guess which?).  The only reliable way to
+find out which element has the focus is to set listeners for the `focus` event.
+    
+Since `focus` does not bubble and since this is a test suite and not a final product,
+individual listeners are set on each individual cell that might get the focus.
+    
+Also, some browsers (yes the same ones) don't fire `focus` synchronously
+but do so at the first idle moment.  This means that you have to pause execution
+so the event can fire.  It can be done via `window.setTimeout` or, within a test
+suite, using method `wait`.
+    
+That is why this `activeElement` variable exists.  It replaces the native
+`document.activeElement`.
+    
+For any test that has to check which cell got the focus, you have to call
+`setFocusListeners` first which will set all the listeners to track the cell 
+with the focus.  
+    
+`setFocusListeners` is an asynchronous method since its first task is to 
+force the first `focus` event to get fired. To do that it calls the `blur`
+method of the datatable instance before setting the listeners 
+and the`focus` method  after so as to pick the initial focused element.
+Since the `focus` event is asynchronous, the `setFocusListeners` is forced
+to be asynchronous as well.  
+    
+Note that `fireKey` also needs to know which element has the focus so even
+if the test doesn't directly need to check the focused element, if you use
+`fireKey` you also need to call `setFocusListeners.
 
-        doc.simulate('keypress', opts);
-
-        doc.simulate('keyup', opts);
-    };
-
-    var check = function (content, step) {
-        var cell = document.activeElement;
-        isNotNull(cell, content + ' ' + step);
-        if (cell.tagName.toUpperCase() === 'TH') {
-            areSame(content, cell.textContent || cell.innerText,  content + ' ' + step);
-        } else {
-            areSame(content, cell.innerHTML,  content + ' ' + step);
-        }
-    };
-    var data = [];
+*/        
+        
+    var activeElement, 
+        eventHandles,
+        data = [];
+        
     for (var i = 1; i < 20; ++i) {
         data.push({a: 'a' + i , b: 'b' + i, c: 'c' + i, d: 'd' + i, e: 'e' + i});
     }
@@ -63,48 +84,92 @@ YUI.add('datatable-keynav-tests', function(Y) {
 
         return new DT(Y.merge(basic_config,config_arg)).render('#dtable');
     };
+    
+    var fireKey = function( key, opts) {
+        opts = Y.merge({keyCode: key}, opts);
+        
+        activeElement.simulate('keydown', opts);
+        activeElement.simulate('keypress', opts);
+        activeElement.simulate('keyup', opts);
+    };
+
+    
+    var setFocusListeners = function (dt, callback) {
+        var self = this;
+        dt.blur();
+        if (eventHandles) {
+            dropFocusListeners();
+        }
+        eventHandles = Y.all('#dtable td , #dtable th').on('focus', function (ev) {
+            activeElement = ev.target;
+        });
+        self.wait(function () {
+            dt.focus();
+            self.wait(callback, 1);
+        }, 1);
+    };
+    
+    var dropFocusListeners = function () {
+        eventHandles && eventHandles.detach && eventHandles.detach();
+        eventHandles = null;
+    };
+    
+    var moveAndCheck = function (dt, sequence) {
+        var seq = sequence.slice(0), 
+            step = seq.shift(),
+            self = this,
+            doStep = function () {
+                areSame(step[1], activeElement.get('text'), step[1] + ' ' + step[2]);
+                step = seq.shift();
+                if (step) {
+                    fireKey(step[0]);
+                    self.wait(doStep, 1);
+                } else {
+                    dropFocusListeners();
+                    dt.destroy();
+                }
+            };
+        setFocusListeners.call(this, dt, doStep);
+    };
+
 
 
 
 
     suite.add(new Y.Test.Case({
         name: "Moving about",
-
+        
         _moveAbout: function (dt) {
-            dt.focus();
-            check('a',1);
-            fireKey(UP);  // shouldn't move'
-            check('a',2);
-            fireKey(LEFT);// shouldn't move
-            check('a',3);
-            fireKey(DOWN); // should cross to the data rows
-            check('a1',4);
-            fireKey(RIGHT);
-            check('b1',5);
-            fireKey(END);
-            check('e1',6);
-            fireKey(RIGHT); // shouldn't move
-            check('e1',7);
-            fireKey(DOWN);
-            check('e2',8);
-            fireKey(HOME);
-            check('a2',9);
-            fireKey(END);
-            check('e2',10);
-            fireKey(LEFT);
-            check('d2',11);
-            fireKey(UP);
-            check('d1',12);
-            fireKey(PGUP);
-            check('d',13);
-            fireKey(DOWN);
-            check('d1',14);
-            fireKey(UP); // should cross to the header section
-            check('d',15);
-            fireKey(PGDN);
-            check('d19',16);
-            fireKey(DOWN);// shouldn't move
-            check('d19',17);
+            moveAndCheck.call(this, dt,[
+                /*
+                 moveAndCheck takes a sequence of arrays each of them containing 
+                 - a keycode,
+                 - the content of the cell where it should have landed
+                 - a value to identify the step that failed.
+                The first entry does not have a keycode because it is meant
+                to check the initial focus, when the datatable gets the focus.
+                Obviously, it expects that all cells have unique values so that
+                it can easily be checked.  Header cells have a simple 
+                alphabetic name, cells have the column content plus a row index.
+                 */
+                [null, 'a',1],
+                [UP,'a',2],
+                [LEFT,'a',3],
+                [DOWN,'a1',4],
+                [RIGHT,'b1',5],
+                [END,'e1',6],
+                [RIGHT,'e1',7],
+                [DOWN,'e2',8],
+                [HOME,'a2',9],
+                [END,'e2',10],
+                [LEFT,'d2',11],
+                [UP,'d1',12],
+                [PGUP,'d',13],
+                [DOWN,'d1',14],
+                [UP,'d',15],
+                [PGDN,'d19',16],
+                [DOWN,'d19',17]
+            ]);
 
         },
 
@@ -112,7 +177,6 @@ YUI.add('datatable-keynav-tests', function(Y) {
             var dt = makeDT();
 
             this._moveAbout(dt);
-            dt.destroy();
         },
 
 
@@ -122,30 +186,26 @@ YUI.add('datatable-keynav-tests', function(Y) {
                 width: '100px',
                 height: '150px'
             });
-
             this._moveAbout(dt);
-            dt.destroy();
         },
 
         "test moving about excluding headers": function () {
             var dt = makeDT({keyIntoHeaders: false});
-            dt.focus();
-            check('a1',1);
-            fireKey(UP);
-            check('a1',2);
-            fireKey(PGDN);
-            check('a19',3);
-            fireKey(PGUP);
-            check('a1',4);
-            dt.destroy();
-
+            moveAndCheck.call(this, dt,[
+                [null,'a1',1],
+                [UP,'a1',2],
+                [PGDN,'a19',3],
+                [PGUP,'a1',4]
+            ]);
         }
     }));
+    
+    
     suite.add(new Y.Test.Case({
         name: "Various features",
+                
         setUp: function () {
             this.dt = makeDT();
-
         },
         tearDown: function () {
             var dt = this.dt;
@@ -153,16 +213,21 @@ YUI.add('datatable-keynav-tests', function(Y) {
                 dt.destroy();
                 delete this.dt;
             }
+            dropFocusListeners();
         },
+                
         'test click on cells': function () {
             var dt = this.dt;
 
             var td = Y.all('.yui3-datatable-col-c').item(2);
             isNotNull(td);
-            td.simulate('click');
-            areSame(td, dt.get('focusedCell'));
-            areSame(td, Y.one(document.activeElement));
+            setFocusListeners.call(this, dt, function () {
+                td.simulate('click');
+                areSame(td, dt.get('focusedCell'),'clicked cell should be focusedCell');
+                areSame(td, activeElement, 'clicked cell should be activeElement');
+            });
         },
+                
         'test add function to keyActions': function () {
             var dt = this.dt,
                 eventFacade = null,
@@ -172,12 +237,14 @@ YUI.add('datatable-keynav-tests', function(Y) {
                 eventFacade = e;
                 self = this;
             };
-            dt.focus();
-            fireKey(ch);
-            isNotNull(eventFacade);
-            areSame(ch, eventFacade.keyCode);
-            areSame(dt, self);
+            setFocusListeners.call(this, dt, function () {
+                fireKey(ch);
+                isNotNull(eventFacade);
+                areSame(ch, eventFacade.keyCode);
+                areSame(dt, self);
+            });
         },
+                
         'test add event to keyActions': function () {
             var dt = this.dt,
                 ev = null,
@@ -191,15 +258,17 @@ YUI.add('datatable-keynav-tests', function(Y) {
                 ev1 = e1;
                 self = this;
             });
-            dt.focus();
-            fireKey(DOWN);
-            fireKey(ch);
-            isNotNull(ev);
-            areSame(ch, ev1.keyCode);
-            areSame(dt.getCell([0,0]), ev.cell);
-            areSame('a1', ev.record.get(ev.column.key));
-            areSame(dt, self);
+            setFocusListeners.call(this, dt, function () {
+                fireKey(DOWN);
+                fireKey(ch);
+                isNotNull(ev);
+                areSame(ch, ev1.keyCode);
+                areSame(dt.getCell([0,0]), ev.cell);
+                areSame('a1', ev.record.get(ev.column.key));
+                areSame(dt, self);
+            });
         },
+                
         'test add to keyActions with modifier': function () {
             var dt = this.dt,
                 eventFacade = null,
@@ -208,19 +277,21 @@ YUI.add('datatable-keynav-tests', function(Y) {
                 eventFacade = e;
                 self = this;
             };
-            dt.focus();
-            fireKey(32, {shiftKey:true});
-            isNotNull(eventFacade);
-            areSame(32, eventFacade.keyCode);
-            areSame(dt, self);
+            setFocusListeners.call(this, dt, function () {
+                fireKey(SPACE, {shiftKey:true});
+                isNotNull(eventFacade);
+                areSame(SPACE, eventFacade.keyCode);
+                areSame(dt, self);
+            });
         }
     }));
+    
+    
     suite.add(new Y.Test.Case({
         name: "nested headers",
+                
         'test nested headers': function () {
-        var DT = Y.Base.create('datatable', Y.DataTable.Base, [Y.DataTable.KeyNav]),
-
-            dt =  new DT({
+            var dt =  makeDT({
                 columns: [
                     {key:'abc', children: [
                         {key:'ab', children: [
@@ -233,51 +304,34 @@ YUI.add('datatable-keynav-tests', function(Y) {
                        'd',
                        'e'
                     ]}
-                ],
-                data: data
-            }).render('#dtable');
-            dt.focus();
-            check('abc',1);
-            fireKey(DOWN);
-            check('ab',2);
-            fireKey(DOWN);
-            check('a',3);
-            fireKey(DOWN);
-            check('a1',4);
-            fireKey(RIGHT);
-            check('b1',5);
-            fireKey(UP);
-            check('b',6);
-            fireKey(UP);
-            check('ab',7);
-            fireKey(UP);
-            check('abc',8);
-            fireKey(RIGHT);
-            check('de',9);
-            fireKey(DOWN);
-            check('d',10);
-            fireKey(DOWN);
-            check('d1',11);
-            fireKey(LEFT);
-            check('c1',12);
-            fireKey(UP);
-            check('c',13);
-            fireKey(UP);
-            check('abc',14);
-            fireKey(RIGHT);
-            check('de',15);
-            fireKey(DOWN);
-            check('d',16);
-            fireKey(DOWN);
-            check('d1', 17);
-            fireKey(DOWN);
-            check('d2',18);
-            fireKey(PGUP);
-            check('de', 19);
-            dt.destroy();
+                ]
+            });
+            moveAndCheck.call(this, dt,[
+                [null,'abc',1], 
+                [DOWN,'ab',2], 
+                [DOWN,'a',3], 
+                [DOWN,'a1',4], 
+                [RIGHT,'b1',5], 
+                [UP,'b',6], 
+                [UP,'ab',7], 
+                [UP,'abc',8], 
+                [RIGHT,'de',9], 
+                [DOWN,'d',10], 
+                [DOWN,'d1',11], 
+                [LEFT,'c1',12], 
+                [UP,'c',13], 
+                [UP,'abc',14], 
+                [RIGHT,'de',15], 
+                [DOWN,'d',16], 
+                [DOWN,'d1', 17], 
+                [DOWN,'d2',18], 
+                [PGUP,'de', 19]
+            ]);
         }
     }));
+    
+    
     Y.Test.Runner.add(suite);
+ 
 
-
-},'', {requires: [ 'test', 'datatable-keynav', 'node-event-simulate','datatable-scroll', "base-build"]});
+},'', {requires: [ 'test', 'datatable-keynav', 'node-event-simulate','datatable-scroll', "base-build", 'event']});
