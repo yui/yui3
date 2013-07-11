@@ -201,8 +201,6 @@ Y.Event.define(EVT_TAP, {
     @static
     **/
     touchMove: function (event, node, subscription, notifier, delegate, context) {
-        detachHelper(subscription, [ HANDLES.MOVE, HANDLES.END, HANDLES.CANCEL ], true, context);
-        context.cancelled = true;
 
     },
 
@@ -238,8 +236,8 @@ Y.Event.define(EVT_TAP, {
 
         detachHelper(subscription, [ HANDLES.MOVE, HANDLES.END, HANDLES.CANCEL ], true, context);
 
-        // make sure mouse didn't move
-        if (Math.abs(endXY[0] - startXY[0]) === 0 && Math.abs(endXY[1] - startXY[1]) === 0) {
+        // make sure mouse didn't move to much
+        if (Math.abs(endXY[0] - startXY[0]) < 15 && Math.abs(endXY[1] - startXY[1]) < 15) {
 
             event.type = EVT_TAP;
             event.pageX = endXY[0];
