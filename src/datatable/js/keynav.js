@@ -222,7 +222,6 @@ Y.mix( DtKeyNav.prototype, {
                 evHandle.detach();
             }
         });
-
     },
 
     /**
@@ -259,15 +258,21 @@ Y.mix( DtKeyNav.prototype, {
     @method _afterKeyNavFocusedChange
     @param e {EventFacade}
     @private
-     */
+    */
     _afterKeyNavFocusedChange: function (e) {
-         console.log('_afterKeyNavFocusedChange',e);
-         if (e.newVal) {
-             var cell = this.get('focusedCell');
-             cell.focus();
-             cell.scrollIntoView();
-         }
-
+        var cell = this.get('focusedCell');
+        if (e.newVal) {
+            if (cell) {
+                cell.scrollIntoView();
+                cell.focus();
+            } else {
+                this._keyMoveFirst();
+            }
+        } else {
+            if (cell) {
+                cell.blur();
+            }
+        }
     },
 
     /**
