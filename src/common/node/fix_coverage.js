@@ -2,6 +2,7 @@
 
 var fs = require('fs'),
     path = require('path'),
+    exists = fs.existsSync || path.existsSync,
     xmlFile = path.join(__dirname, '../tests/coverage.xml');
 
 var xml = fs.readFileSync(xmlFile, 'utf8');
@@ -15,7 +16,7 @@ xml.forEach(function(line, key) {
     if (line.indexOf('<url>') > -1) {
         line = line.replace('<url>', '').replace('</url>', '');
         var file = path.join(base, line);
-        if (!fs.existsSync(file)) {
+        if (!exists(file)) {
             remove[key] = true;
         }
     }
