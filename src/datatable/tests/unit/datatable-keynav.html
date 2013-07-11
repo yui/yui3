@@ -3,6 +3,11 @@
 <head>
     <title>datatable-editor</title>
     <script src="/build/yui/yui.js"></script>
+    <style>
+        td:focus, th:focus {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body class="yui3-skin-sam">
 
@@ -14,10 +19,10 @@
 <script>
 YUI({
     coverage: ['datatable-keynav'],
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'/* ,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw' ,
     filters: {
         'datatable-keynav': (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'debug'
-    },*/
+    }
  }).use( 'test-console', 'test', 'datatable-keynav-tests',  "node-event-simulate",
         "datatable-keynav",  "datatable", "datatable-scroll","base-build",
         function(Y) {
@@ -25,8 +30,9 @@ YUI({
     (new Y.Test.Console()).render('#logger');
 
     Y.Test.Runner.setName('datatable-keynav');
-
+    
     Y.Test.Runner.run();
+
 });
 </script>
 </body>
