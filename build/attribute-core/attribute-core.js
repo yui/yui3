@@ -407,6 +407,7 @@ YUI.add('attribute-core', function (Y, NAME) {
             var host = this, // help compression
                 state = host._state,
                 data = state.data,
+                storedCfg = data[name],
                 value,
                 added,
                 hasValue;
@@ -420,10 +421,26 @@ YUI.add('attribute-core', function (Y, NAME) {
             added = state.get(name, ADDED);
 
             if (lazy && !added) {
-                state.data[name] = {
-                    lazy : config,
-                    added : true
-                };
+
+                // LAST MINUTE PRE 3.10.0 RELEASE WORKAROUND.
+
+                // Revisit for 3.11.0 with the planned change to add all attributes
+                // at once, instead of filtering for each class which is the root
+                // of the issue.
+
+                // This is to account for the case when an attribute value gets set,
+                // before it's actual config is added formally. We end up blowing away
+                // the previously set value in that case, with the config. Prior to
+                // the performance fixes, we just used to merge, so we didn't see the
+                // issue.
+
+                if (!storedCfg) {
+                    storedCfg = data[name] = {};
+                }
+
+                storedCfg.lazy = config;
+                storedCfg.added = true;
+
             } else {
 
 
@@ -443,6 +460,11 @@ YUI.add('attribute-core', function (Y, NAME) {
 
                         value = config.value;
                         config.value = undefined;
+                    } else {
+                        // LAST MINUTE PRE 3.10.0 RELEASE WORKAROUND.
+                        if (storedCfg && (VALUE in storedCfg)) {
+                            config.value = storedCfg.value;
+                        }
                     }
 
                     config.added = true;
@@ -585,7 +607,6 @@ YUI.add('attribute-core', function (Y, NAME) {
             var allowSet = true,
                 state = this._state,
                 stateProxy = this._stateProxy,
-                tCfgs = this._tCfgs,
                 cfg,
                 initialSet,
                 strPath,
@@ -599,11 +620,6 @@ YUI.add('attribute-core', function (Y, NAME) {
 
                 path = name.split(DOT);
                 name = path.shift();
-            }
-
-            // On Demand - Should be rare - handles out of order valueFn, setter, getter references
-            if (tCfgs && tCfgs[name]) {
-                this._addOutOfOrder(name, tCfgs[name]);
             }
 
             cfg = state.data[name] || {};
@@ -667,43 +683,6 @@ YUI.add('attribute-core', function (Y, NAME) {
         },
 
         /**
-         * Utility method used by get/set to add attributes
-         * encountered out of order when calling addAttrs().
-         *
-         * For example, if:
-         *
-         *     this.addAttrs({
-         *          foo: {
-         *              setter: function() {
-         *                 // make sure this bar is available when foo is added
-         *                 this.get("bar");
-         *              }
-         *          },
-         *          bar: {
-         *              value: ...
-         *          }
-         *     });
-         *
-         * @method _addOutOfOrder
-         * @private
-         * @param name {String} attribute name
-         * @param cfg {Object} attribute configuration
-         */
-        _addOutOfOrder : function(name, cfg) {
-
-            var attrs = {};
-            attrs[name] = cfg;
-
-            delete this._tCfgs[name];
-
-            // TODO: The original code went through addAttrs, so
-            // sticking with it for this pass. Seems like we could
-            // just jump straight to _addAttr() and get some perf
-            // improvement.
-            this._addAttrs(attrs, this._tVals);
-        },
-
-        /**
          * Provides the common implementation for the public get method,
          * allowing Attribute hosts to over-ride either method.
          *
@@ -718,21 +697,24 @@ YUI.add('attribute-core', function (Y, NAME) {
          */
         _getAttr : function(name) {
             var fullName = name,
-                tCfgs = this._tCfgs,
+                tCfgs    = this._tCfgs,
                 path,
                 getter,
                 val,
-                attrCfg;
+                attrCfg,
+                cfg;
 
             if (name.indexOf(DOT) !== -1) {
                 path = name.split(DOT);
                 name = path.shift();
             }
 
-            // On Demand - Should be rare - handles out of
-            // order valueFn, setter, getter references
+            // On Demand - Should be rare - handles out of order valueFn references
             if (tCfgs && tCfgs[name]) {
-                this._addOutOfOrder(name, tCfgs[name]);
+                cfg = {};
+                cfg[name] = tCfgs[name];
+                delete tCfgs[name];
+                this._addAttrs(cfg, this._tVals);
             }
 
             attrCfg = this._state.data[name] || {};

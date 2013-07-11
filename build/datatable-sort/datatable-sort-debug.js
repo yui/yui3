@@ -847,16 +847,10 @@ Y.mix(Sortable.prototype, {
                 }
 
                 title = sub(this.getString(
-                    (col.sortDir === 1) ? 'reverseSortBy' : 'sortBy'), // get string
-                    {
-                        title:  col.title || '',
-                        key:    col.key || '',
-                        abbr:   col.abbr || '',
-                        label:  col.label || '',
+                    (col.sortDir === 1) ? 'reverseSortBy' : 'sortBy'), {
                         column: col.abbr || col.label ||
                                 col.key  || ('column ' + i)
-                    }
-                );
+                });
 
                 node.setAttribute('title', title);
                 // To combat VoiceOver from reading the sort title as the
@@ -902,4 +896,4 @@ Y.DataTable.Sortable = Sortable;
 Y.Base.mix(Y.DataTable, [Sortable]);
 
 
-}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es", "hu"], "skinnable": true});
+}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en", "fr", "es"], "skinnable": true});

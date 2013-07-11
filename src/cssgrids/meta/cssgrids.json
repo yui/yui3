@@ -1,8 +1,9 @@
 {
     "cssgrids-base": {
         "optional": [
-            "cssnormalize"
-        ],
+            "cssreset",
+            "cssfonts"
+        ], 
         "type": "css"
     },
 
@@ -12,8 +13,9 @@
         ],
 
         "optional": [
-            "cssnormalize"
-        ],
+            "cssreset",
+            "cssfonts"
+        ], 
         "type": "css"
     },
 
@@ -24,15 +26,17 @@
         ],
 
         "optional": [
-            "cssnormalize"
-        ],
+            "cssreset",
+            "cssfonts"
+        ], 
         "type": "css"
     },
 
     "cssgrids": {
         "optional": [
-            "cssnormalize"
-        ],
+            "cssreset",
+            "cssfonts"
+        ], 
         "type": "css"
     }
 }

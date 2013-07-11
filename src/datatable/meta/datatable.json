@@ -36,12 +36,6 @@
                     "classnamemanager"
                 ]
             },
-            "datatable-foot": {
-                "requires": [
-                    "datatable-core",
-                    "view"
-                ]
-            },
             "datatable-body": {
                 "requires": [
                     "datatable-core",
@@ -62,14 +56,14 @@
             },
             "datatable-column-widths": {
                 "requires": [
-                    "datatable-base"
+                "datatable-base"
                 ]
             },
             "datatable-message": {
                 "requires": [
                     "datatable-base"
                 ],
-                "lang": ["en", "fr", "es", "hu", "it"],
+                "lang": ["en", "fr", "es", "it"],
                 "skinnable": true
             },
             "datatable-mutable": {
@@ -82,23 +76,23 @@
                     "datatable-base",
                     "plugin",
                     "datasource-local"
-                ]
+                    ]
             },
             "datatable-sort": {
                 "requires": [
                     "datatable-base"
                 ],
-                "lang": ["en", "fr", "es", "hu"],
+                "lang": ["en", "fr", "es"],
                 "skinnable": true
             },
-			"datatable-scroll": {
-				"requires": [
-					"datatable-base",
-					"datatable-column-widths",
-					"dom-screen"
-				],
+            "datatable-scroll": {
+                "requires": [
+                    "datatable-base",
+                    "datatable-column-widths",
+                    "dom-screen"
+                ],
                 "skinnable": true
-			},
+            },
             "datatable-formatters": {
                 "requires": [
                     "datatable-body",
@@ -107,20 +101,9 @@
                     "escape"
                 ]
             },
-            "datatable-paginator": {
+            "datatable-keynav": {
                 "requires": [
-                    "model",
-                    "view",
-                    "paginator-core",
-                    "datatable-foot",
-                    "datatable-paginator-templates"
-                ],
-                "lang": [ "en" ],
-                "skinnable": true
-            },
-            "datatable-paginator-templates": {
-                "requires": [
-                    "template"
+                    "yui-base", "datatable-base", "base-base", "oop"
                 ]
             }
         }

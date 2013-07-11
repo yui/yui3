@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>DataSource Tests</title>
-<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -15,22 +15,22 @@
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         allowRollup: false,
         useBrowserConsole: false
-    }).use("console", "datasource", function(Y) {
-
+    }).use("console", "profiler", "dump", "datasource", function(Y) {
+        
         // Set up the page
         var BTNRUN = Y.one("#btnRun"),
             myConsole = new Y.Console().render();
-
+            
 
         BTNRUN.set("disabled", false);
         Y.on("click", function(e){
             Y.example.Perf.run();
         }, BTNRUN);
-
+        
         Y.namespace("example").Perf = function() {
             var selectNode = Y.one("#testSelector"),
                 allTests = [];
-
+                
             return {
                 init: function() {
                     this.register("Test DataSource.Local", function() {
@@ -49,7 +49,7 @@
                     });
 
                 },
-
+                
                 register: function(testName, testFn) {
                     var index = allTests.length;
                     allTests[index] = testFn;
@@ -67,7 +67,7 @@
                 }
             }
         }();
-
+        
         Y.example.Perf.init();
     });
 })();

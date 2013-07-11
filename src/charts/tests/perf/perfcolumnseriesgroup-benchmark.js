@@ -22,7 +22,6 @@ YUI.add('perfcolumnseriesgroup-benchmark', function (Y) {
         var i,
             key,
             series,
-            seriesTypeCollection = [],
             len = seriesKeys.length;
          seriesObject = {};
         for(i = 0; i < len; i = i + 1)
@@ -35,10 +34,8 @@ YUI.add('perfcolumnseriesgroup-benchmark', function (Y) {
                 yAxis: yAxis,
                 graph: mockGraph,
                 xKey: "date",
-                seriesTypeCollection: seriesTypeCollection,
                 yKey: key
             });
-            seriesTypeCollection.push(series);
             series.render();
             seriesObject[key] = series; 
         }

@@ -542,6 +542,8 @@ YUI.add('editor-tests', function(Y) {
                 test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie >= 9) || Y.UA.chrome) ? true : false)
             },
             ignore: {
+                test_br_plugin: Y.UA.phantomjs,
+                
                 /* gh issue #653 Editor test failures in Android 4
                  * These failing tests will be run again when Adnroid reaches 5
                  */
@@ -556,7 +558,7 @@ YUI.add('editor-tests', function(Y) {
                 test_doc: (Y.UA.android && Y.UA.android < 5),
                 'test: selection.remove()': (Y.UA.android && Y.UA.android < 5),
                 test_destroy: (Y.UA.android && Y.UA.android < 5),
-                test_br_plugin: (Y.UA.phantomjs || (Y.UA.android && Y.UA.android < 5)), // note phantomjs was being ignored for test_br_plugin previous to issue #653
+                test_br_plugin: (Y.UA.android && Y.UA.android < 5),
                 test_para_plugin: (Y.UA.android && Y.UA.android < 5),
                 test_double_down: (Y.UA.android && Y.UA.android < 5),
                 test_double_down2: (Y.UA.android && Y.UA.android < 5)

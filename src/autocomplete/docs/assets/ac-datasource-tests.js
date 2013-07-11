@@ -11,10 +11,10 @@ YUI.add('ac-datasource-tests', function(Y) {
             Assert.isNotNull(Y.one('.example #demo .yui3-aclist-list'));
         },
 
-        'test type "flanders" into ac list' : function() {
+        'test type "taylor" into ac list' : function() {
             var input =  Y.one('.example #demo #ac-input'),
                 list = Y.one('.example #demo .yui3-aclist-list'),
-                inputStr = "flanders";
+                inputStr = "taylor";
             input.focus();
             input.set('value', inputStr);
 
@@ -45,8 +45,8 @@ YUI.add('ac-datasource-tests', function(Y) {
 
                 var listItems = list.all('li');
 
-                listItems.item(4).simulate('click');
-                Assert.areEqual('Flanders, Louisiana, United States', input.get('value'), ' - Failed to find selected item text in input')
+                listItems.item(5).simulate('click');
+                Assert.areEqual('James Taylor', input.get('value'), ' - Failed to find selected item text in input')
 
         }
 

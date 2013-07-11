@@ -19,22 +19,6 @@ over the `Chart`. Suppose you want to place your value axis on the right or you 
 an axis or series directly or define them with an object literal and allow the `Chart` instance to build them for you. In this example, we are going to define our axes and series with
 object literals. This will allow us to place our value axis on the right and build a chart with columns and lines.</p>
 
-<h4>CSS</h4>
-```
-#mychart {
-    margin:10px 10px 10px 10px;
-    width:90%;
-    max-width: 800px;
-    height:400px;
-}
-```
-
-<h4>HTML</h4>
-```
-<div id="mychart"></div>
-```
-
-<h4>JavaScript</h4>
 ```
 YUI().use('charts', function (Y) 
 { 
@@ -85,6 +69,7 @@ YUI().use('charts', function (Y)
             xKey:"date",
             xDisplayName:"Date",
             yKey:"miscellaneous",
+            xDisplayName:"Date",
             yDisplayName:"Miscellaneous",
             styles: {
                 border: {
@@ -130,6 +115,7 @@ YUI().use('charts', function (Y)
             xKey:"date",
             xDisplayName:"Date",
             yKey:"revenue",
+            xDisplayName:"Date",
             yDisplayName:"Deductions",
                 line: {
                     color: "#ff7200"

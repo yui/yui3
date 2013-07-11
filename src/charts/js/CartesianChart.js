@@ -1007,7 +1007,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
             this._setBaseAttribute(newAxes[valueAxisName], "type", seriesAxis);
             this._setBaseAttribute(newAxes[valueAxisName], "keys", seriesKeys);
         }
-        if(!this._wereSeriesKeysExplicitlySet())
+        if(!this._seriesKeysExplicitlySet)
         {
             this.set("seriesKeys", seriesKeys, {src: "internal"});
         }

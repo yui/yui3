@@ -7,14 +7,15 @@ Color provides static methods for color conversion.
 
     Y.Color.toHex('rgb(255, 255, 0)'); // #ffff00
 
+
 @module color
 @submodule color-base
 @class Color
 @since 3.8.0
 **/
 
-var REGEX_HEX = /^#?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})(\ufffe)?/,
-    REGEX_HEX3 = /^#?([\da-fA-F]{1})([\da-fA-F]{1})([\da-fA-F]{1})(\ufffe)?/,
+var REGEX_HEX = /^#?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/,
+    REGEX_HEX3 = /^#?([\da-fA-F]{1})([\da-fA-F]{1})([\da-fA-F]{1})/,
     REGEX_RGB = /rgba?\(([\d]{1,3}), ?([\d]{1,3}), ?([\d]{1,3}),? ?([.\d]*)?\)/,
     TYPES = { 'HEX': 'hex', 'RGB': 'rgb', 'RGBA': 'rgba' },
     CONVERTS = { 'hex': 'toHex', 'rgb': 'toRGB', 'rgba': 'toRGBA' };
@@ -35,27 +36,19 @@ Y.Color = {
     },
 
     /**
-        NOTE: `(\ufffe)?` is added to the Regular Expression to carve out a
-        place for the alpha channel that is returned from toArray
-        without compromising any usage of the Regular Expression
-
     @static
     @property REGEX_HEX
     @type RegExp
-    @default /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})(\ufffe)?/
+    @default /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/
     @since 3.8.0
     **/
     REGEX_HEX: REGEX_HEX,
 
     /**
-        NOTE: `(\ufffe)?` is added to the Regular Expression to carve out a
-        place for the alpha channel that is returned from toArray
-        without compromising any usage of the Regular Expression
-
     @static
     @property REGEX_HEX3
     @type RegExp
-    @default /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})(\ufffe)?/
+    @default /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})/
     @since 3.8.0
     **/
     REGEX_HEX3: REGEX_HEX3,
@@ -137,7 +130,7 @@ Y.Color = {
             clr = str;
 
         if (convert && Y.Color[convert]) {
-            clr = Y.Color[convert](str);
+            clr = Y.Color[convert](str).toLowerCase();
         }
 
         return clr;
@@ -145,7 +138,6 @@ Y.Color = {
 
     /**
     Converts provided color value to a hex value string
-
     @public
     @method toHex
     @param {String} str Hex or RGB value string
@@ -153,14 +145,8 @@ Y.Color = {
     @since 3.8.0
     **/
     toHex: function (str) {
-        var clr = Y.Color._convertTo(str, 'hex'),
-            isTransparent = clr.toLowerCase() === 'transparent';
-
-        if (clr.charAt(0) !== '#' && !isTransparent) {
-            clr = '#' + clr;
-        }
-
-        return isTransparent ? clr.toLowerCase() : clr.toUpperCase();
+        var clr = Y.Color._convertTo(str, 'hex');
+        return clr.toLowerCase();
     },
 
     /**
@@ -190,20 +176,9 @@ Y.Color = {
     },
 
     /**
-    Converts the provided color string to an array of values where the
-        last value is the alpha value. Will return an empty array if
-        the provided string is not able to be parsed.
-
-        NOTE: `(\ufffe)?` is added to `HEX` and `HEX3` Regular Expressions to
-        carve out a place for the alpha channel that is returned from
-        toArray without compromising any usage of the Regular Expression
-
-        Y.Color.toArray('fff');              // ['ff', 'ff', 'ff', 1]
-        Y.Color.toArray('rgb(0, 0, 0)');     // ['0', '0', '0', 1]
-        Y.Color.toArray('rgba(0, 0, 0, 0)'); // ['0', '0', '0', 1]
-
-
-
+    Converts the provided color string to an array of values. Will
+        return an empty array if the provided string is not able
+        to be parsed.
     @public
     @method toArray
     @param {String} str
@@ -225,9 +200,7 @@ Y.Color = {
         if (type.charAt(type.length - 1) === 'A') {
             type = type.slice(0, -1);
         }
-
         regex = Y.Color['REGEX_' + type];
-
         if (regex) {
             arr = regex.exec(str) || [];
             length = arr.length;
@@ -236,12 +209,6 @@ Y.Color = {
 
                 arr.shift();
                 length--;
-
-                if (type === 'HEX3') {
-                    arr[0] += arr[0];
-                    arr[1] += arr[1];
-                    arr[2] += arr[2];
-                }
 
                 lastItem = arr[length - 1];
                 if (!lastItem) {
@@ -359,11 +326,6 @@ Y.Color = {
     @since 3.8.0
     **/
     _convertTo: function(clr, to) {
-
-        if (clr === 'transparent') {
-            return clr;
-        }
-
         var from = Y.Color.findType(clr),
             originalTo = to,
             needsAlpha,

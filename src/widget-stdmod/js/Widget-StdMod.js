@@ -57,7 +57,14 @@
      * @class WidgetStdMod
      * @param {Object} The user configuration object
      */
-    function StdMod(config) {}
+    function StdMod(config) {
+
+        this._stdModNode = this.get(CONTENT_BOX);
+
+        Y.before(this._renderUIStdMod, this, RENDERUI);
+        Y.before(this._bindUIStdMod, this, BINDUI);
+        Y.before(this._syncUIStdMod, this, SYNCUI);
+    }
 
     /**
      * Constant used to refer the the standard module header, in methods which expect a section specifier
@@ -247,14 +254,6 @@
 
     StdMod.prototype = {
 
-        initializer : function() {
-            this._stdModNode = this.get(CONTENT_BOX);
-
-            Y.before(this._renderUIStdMod, this, RENDERUI);
-            Y.before(this._bindUIStdMod, this, BINDUI);
-            Y.before(this._syncUIStdMod, this, SYNCUI);
-        },
-
         /**
          * Synchronizes the UI to match the Widgets standard module state.
          * <p>
@@ -432,7 +431,7 @@
             if (this.get(FILL_HEIGHT)) {
                 var height = this.get(HEIGHT);
                 if (height != EMPTY && height != AUTO) {
-                    this.fillHeight(this.getStdModNode(this.get(FILL_HEIGHT)));
+                    this.fillHeight(this._currFillNode);
                 }
             }
         },

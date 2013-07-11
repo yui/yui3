@@ -4,16 +4,6 @@ Event Infrastructure Change History
 @VERSION@
 ------
 
-* No changes.
-
-3.10.3
-------
-
-* No changes.
-
-3.10.2
-------
-
 * Fixed `nodelist.on()` for rare custom module use cases.
 
   In certain rare custom module loading circumstances [#2533242,

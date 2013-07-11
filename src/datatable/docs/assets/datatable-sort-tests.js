@@ -3,11 +3,9 @@ YUI.add('datatable-sort-tests', function(Y) {
     var suite = new Y.Test.Suite('datatable-sort example test suite'),
         Assert = Y.Assert;
             var tableSelector = '#sort ',
-                tableHeaderSelector = tableSelector + '.yui3-datatable-columns ',
-                tableDataSelector = tableSelector + '.yui3-datatable-data ',
-                th = Y.all(tableHeaderSelector + 'th'),
-                td = Y.all(tableDataSelector + 'td'),
-                tr = Y.all(tableHeaderSelector + 'tr, ' + tableDataSelector + 'tr'),
+                th = Y.all(tableSelector + 'th'),
+                td = Y.all(tableSelector + 'td'),
+                tr = Y.all(tableSelector + 'tr'),
                 cap = Y.one(tableSelector + 'caption');
 
 

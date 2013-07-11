@@ -2140,15 +2140,9 @@ TYPES = {
     '[object Error]'   : 'error'
 },
 
-SUBREGEX         = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
-
-WHITESPACE       = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF",
-WHITESPACE_CLASS = "[\x09-\x0D\x20\xA0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]+",
-TRIM_LEFT_REGEX  = new RegExp("^" + WHITESPACE_CLASS),
-TRIM_RIGHT_REGEX = new RegExp(WHITESPACE_CLASS + "$"),
-TRIMREGEX        = new RegExp(TRIM_LEFT_REGEX.source + "|" + TRIM_RIGHT_REGEX.source, "g"),
-
-NATIVE_FN_REGEX  = /\{\s*\[(?:native code|function)\]\s*\}/i;
+SUBREGEX        = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
+TRIMREGEX       = /^\s+|\s+$/g,
+NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
 
 // -- Protected Methods --------------------------------------------------------
 
@@ -2372,7 +2366,7 @@ L.sub = function(s, o) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trim = L._isNative(STRING_PROTO.trim) && !WHITESPACE.trim() ? function(s) {
+L.trim = STRING_PROTO.trim ? function(s) {
     return s && s.trim ? s.trim() : s;
 } : function (s) {
     try {
@@ -2389,10 +2383,10 @@ L.trim = L._isNative(STRING_PROTO.trim) && !WHITESPACE.trim() ? function(s) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimLeft = L._isNative(STRING_PROTO.trimLeft) && !WHITESPACE.trimLeft() ? function (s) {
+L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
     return s.trimLeft();
 } : function (s) {
-    return s.replace(TRIM_LEFT_REGEX, '');
+    return s.replace(/^\s+/, '');
 };
 
 /**
@@ -2402,10 +2396,10 @@ L.trimLeft = L._isNative(STRING_PROTO.trimLeft) && !WHITESPACE.trimLeft() ? func
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimRight = L._isNative(STRING_PROTO.trimRight) && !WHITESPACE.trimRight() ? function (s) {
+L.trimRight = STRING_PROTO.trimRight ? function (s) {
     return s.trimRight();
 } : function (s) {
-    return s.replace(TRIM_RIGHT_REGEX, '');
+    return s.replace(/\s+$/, '');
 };
 
 /**
@@ -2507,34 +2501,16 @@ Dedupes an array of strings, returning an array that's guaranteed to contain
 only one copy of a given string.
 
 This method differs from `Array.unique()` in that it's optimized for use only
-with arrays consisting entirely of strings or entirely of numbers, whereas
-`unique` may be used with other value types (but is slower).
-
-Using `dedupe()` with values other than strings or numbers, or with arrays
-containing a mix of strings and numbers, may result in unexpected behavior.
+with strings, whereas `unique` may be used with other types (but is slower).
+Using `dedupe()` with non-string values may result in unexpected behavior.
 
 @method dedupe
-@param {String[]|Number[]} array Array of strings or numbers to dedupe.
-@return {Array} Copy of _array_ containing no duplicate values.
+@param {String[]} array Array of strings to dedupe.
+@return {Array} Deduped copy of _array_.
 @static
 @since 3.4.0
 **/
-YArray.dedupe = Lang._isNative(Object.create) ? function (array) {
-    var hash    = Object.create(null),
-        results = [],
-        i, item, len;
-
-    for (i = 0, len = array.length; i < len; ++i) {
-        item = array[i];
-
-        if (!hash[item]) {
-            hash[item] = 1;
-            results.push(item);
-        }
-    }
-
-    return results;
-} : function (array) {
+YArray.dedupe = function (array) {
     var hash    = {},
         results = [],
         i, item, len;
@@ -3176,7 +3152,7 @@ hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
 
 /**
  * `true` if this browser incorrectly considers the `prototype` property of
- * functions to be enumerable. Currently known to affect Opera 11.50 and Android 2.3.x.
+ * functions to be enumerable. Currently known to affect Opera 11.50.
  *
  * @property _hasProtoEnumBug
  * @type Boolean
@@ -3220,9 +3196,7 @@ O.hasKey = owns;
  * as the order in which they were defined.
  *
  * This method is an alias for the native ES5 `Object.keys()` method if
- * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of 
- * `Object.keys()` have an inconsistency as they consider `prototype` to be 
- * enumerable, so a non-native shim is used to rectify the difference.
+ * available.
  *
  * @example
  *
@@ -3234,7 +3208,7 @@ O.hasKey = owns;
  * @return {String[]} Array of keys.
  * @static
  */
-O.keys = Lang._isNative(Object.keys) && !hasProtoEnumBug ? Object.keys : function (obj) {
+O.keys = Lang._isNative(Object.keys) ? Object.keys : function (obj) {
     if (!Lang.isObject(obj)) {
         throw new TypeError('Object.keys called on a non-object');
     }
@@ -3841,25 +3815,17 @@ YUI.Env.parseUA = function(subUA) {
                 }
             }
 
-            m = ua.match(/OPR\/(\d+\.\d+)/);
-
-            if (m && m[1]) {
-                // Opera 15+ with Blink (pretends to be both Chrome and Safari)
-                o.opera = numberify(m[1]);
+            m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
+            if (m && m[1] && m[2]) {
+                o.chrome = numberify(m[2]); // Chrome
+                o.safari = 0; //Reset safari back to 0
+                if (m[1] === 'CrMo') {
+                    o.mobile = 'chrome';
+                }
             } else {
-                m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
-
-                if (m && m[1] && m[2]) {
-                    o.chrome = numberify(m[2]); // Chrome
-                    o.safari = 0; //Reset safari back to 0
-                    if (m[1] === 'CrMo') {
-                        o.mobile = 'chrome';
-                    }
-                } else {
-                    m = ua.match(/AdobeAIR\/([^\s]*)/);
-                    if (m) {
-                        o.air = m[0]; // Adobe AIR 1.0 or better
-                    }
+                m = ua.match(/AdobeAIR\/([^\s]*)/);
+                if (m) {
+                    o.air = m[0]; // Adobe AIR 1.0 or better
                 }
             }
         }
@@ -3889,13 +3855,11 @@ YUI.Env.parseUA = function(subUA) {
                     o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
                 }
             } else { // not opera or webkit
-                m = ua.match(/MSIE ([^;]*)|Trident.*; rv ([0-9.]+)/);
-
-                if (m && (m[1] || m[2])) {
-                    o.ie = numberify(m[1] || m[2]);
+                m = ua.match(/MSIE\s([^;]*)/);
+                if (m && m[1]) {
+                    o.ie = numberify(m[1]);
                 } else { // not opera, webkit, or ie
                     m = ua.match(/Gecko\/([^\s]*)/);
-
                     if (m) {
                         o.gecko = 1; // Gecko detected, look for revision
                         m = ua.match(/rv:([^\s\)]*)/);
@@ -7915,498 +7879,6 @@ Y.mix(Y.DOM, {
 
 
 }, '@VERSION@', {"requires": ["dom-core"]});
-YUI.add('color-base', function (Y, NAME) {
-
-/**
-Color provides static methods for color conversion.
-
-    Y.Color.toRGB('f00'); // rgb(255, 0, 0)
-
-    Y.Color.toHex('rgb(255, 255, 0)'); // #ffff00
-
-@module color
-@submodule color-base
-@class Color
-@since 3.8.0
-**/
-
-var REGEX_HEX = /^#?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})(\ufffe)?/,
-    REGEX_HEX3 = /^#?([\da-fA-F]{1})([\da-fA-F]{1})([\da-fA-F]{1})(\ufffe)?/,
-    REGEX_RGB = /rgba?\(([\d]{1,3}), ?([\d]{1,3}), ?([\d]{1,3}),? ?([.\d]*)?\)/,
-    TYPES = { 'HEX': 'hex', 'RGB': 'rgb', 'RGBA': 'rgba' },
-    CONVERTS = { 'hex': 'toHex', 'rgb': 'toRGB', 'rgba': 'toRGBA' };
-
-
-Y.Color = {
-    /**
-    @static
-    @property KEYWORDS
-    @type Object
-    @since 3.8.0
-    **/
-    KEYWORDS: {
-        'black': '000', 'silver': 'c0c0c0', 'gray': '808080', 'white': 'fff',
-        'maroon': '800000', 'red': 'f00', 'purple': '800080', 'fuchsia': 'f0f',
-        'green': '008000', 'lime': '0f0', 'olive': '808000', 'yellow': 'ff0',
-        'navy': '000080', 'blue': '00f', 'teal': '008080', 'aqua': '0ff'
-    },
-
-    /**
-        NOTE: `(\ufffe)?` is added to the Regular Expression to carve out a
-        place for the alpha channel that is returned from toArray
-        without compromising any usage of the Regular Expression
-
-    @static
-    @property REGEX_HEX
-    @type RegExp
-    @default /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})(\ufffe)?/
-    @since 3.8.0
-    **/
-    REGEX_HEX: REGEX_HEX,
-
-    /**
-        NOTE: `(\ufffe)?` is added to the Regular Expression to carve out a
-        place for the alpha channel that is returned from toArray
-        without compromising any usage of the Regular Expression
-
-    @static
-    @property REGEX_HEX3
-    @type RegExp
-    @default /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})(\ufffe)?/
-    @since 3.8.0
-    **/
-    REGEX_HEX3: REGEX_HEX3,
-
-    /**
-    @static
-    @property REGEX_RGB
-    @type RegExp
-    @default /rgba?\(([0-9]{1,3}), ?([0-9]{1,3}), ?([0-9]{1,3}),? ?([.0-9]{1,3})?\)/
-    @since 3.8.0
-    **/
-    REGEX_RGB: REGEX_RGB,
-
-    re_RGB: REGEX_RGB,
-
-    re_hex: REGEX_HEX,
-
-    re_hex3: REGEX_HEX3,
-
-    /**
-    @static
-    @property STR_HEX
-    @type String
-    @default #{*}{*}{*}
-    @since 3.8.0
-    **/
-    STR_HEX: '#{*}{*}{*}',
-
-    /**
-    @static
-    @property STR_RGB
-    @type String
-    @default rgb({*}, {*}, {*})
-    @since 3.8.0
-    **/
-    STR_RGB: 'rgb({*}, {*}, {*})',
-
-    /**
-    @static
-    @property STR_RGBA
-    @type String
-    @default rgba({*}, {*}, {*}, {*})
-    @since 3.8.0
-    **/
-    STR_RGBA: 'rgba({*}, {*}, {*}, {*})',
-
-    /**
-    @static
-    @property TYPES
-    @type Object
-    @default {'rgb':'rgb', 'rgba':'rgba'}
-    @since 3.8.0
-    **/
-    TYPES: TYPES,
-
-    /**
-    @static
-    @property CONVERTS
-    @type Object
-    @default {}
-    @since 3.8.0
-    **/
-    CONVERTS: CONVERTS,
-
-    /**
-     Converts the provided string to the provided type.
-     You can use the `Y.Color.TYPES` to get a valid `to` type.
-     If the color cannot be converted, the original color will be returned.
-
-     @public
-     @method convert
-     @param {String} str
-     @param {String} to
-     @return {String}
-     @since 3.8.0
-     **/
-    convert: function (str, to) {
-        var convert = Y.Color.CONVERTS[to.toLowerCase()],
-            clr = str;
-
-        if (convert && Y.Color[convert]) {
-            clr = Y.Color[convert](str);
-        }
-
-        return clr;
-    },
-
-    /**
-    Converts provided color value to a hex value string
-
-    @public
-    @method toHex
-    @param {String} str Hex or RGB value string
-    @return {String} returns array of values or CSS string if options.css is true
-    @since 3.8.0
-    **/
-    toHex: function (str) {
-        var clr = Y.Color._convertTo(str, 'hex'),
-            isTransparent = clr.toLowerCase() === 'transparent';
-
-        if (clr.charAt(0) !== '#' && !isTransparent) {
-            clr = '#' + clr;
-        }
-
-        return isTransparent ? clr.toLowerCase() : clr.toUpperCase();
-    },
-
-    /**
-    Converts provided color value to an RGB value string
-    @public
-    @method toRGB
-    @param {String} str Hex or RGB value string
-    @return {String}
-    @since 3.8.0
-    **/
-    toRGB: function (str) {
-        var clr = Y.Color._convertTo(str, 'rgb');
-        return clr.toLowerCase();
-    },
-
-    /**
-    Converts provided color value to an RGB value string
-    @public
-    @method toRGBA
-    @param {String} str Hex or RGB value string
-    @return {String}
-    @since 3.8.0
-    **/
-    toRGBA: function (str) {
-        var clr = Y.Color._convertTo(str, 'rgba' );
-        return clr.toLowerCase();
-    },
-
-    /**
-    Converts the provided color string to an array of values where the
-        last value is the alpha value. Will return an empty array if
-        the provided string is not able to be parsed.
-
-        NOTE: `(\ufffe)?` is added to `HEX` and `HEX3` Regular Expressions to
-        carve out a place for the alpha channel that is returned from
-        toArray without compromising any usage of the Regular Expression
-
-        Y.Color.toArray('fff');              // ['ff', 'ff', 'ff', 1]
-        Y.Color.toArray('rgb(0, 0, 0)');     // ['0', '0', '0', 1]
-        Y.Color.toArray('rgba(0, 0, 0, 0)'); // ['0', '0', '0', 1]
-
-
-
-    @public
-    @method toArray
-    @param {String} str
-    @return {Array}
-    @since 3.8.0
-    **/
-    toArray: function(str) {
-        // parse with regex and return "matches" array
-        var type = Y.Color.findType(str).toUpperCase(),
-            regex,
-            arr,
-            length,
-            lastItem;
-
-        if (type === 'HEX' && str.length < 5) {
-            type = 'HEX3';
-        }
-
-        if (type.charAt(type.length - 1) === 'A') {
-            type = type.slice(0, -1);
-        }
-
-        regex = Y.Color['REGEX_' + type];
-
-        if (regex) {
-            arr = regex.exec(str) || [];
-            length = arr.length;
-
-            if (length) {
-
-                arr.shift();
-                length--;
-
-                if (type === 'HEX3') {
-                    arr[0] += arr[0];
-                    arr[1] += arr[1];
-                    arr[2] += arr[2];
-                }
-
-                lastItem = arr[length - 1];
-                if (!lastItem) {
-                    arr[length - 1] = 1;
-                }
-            }
-        }
-
-        return arr;
-
-    },
-
-    /**
-    Converts the array of values to a string based on the provided template.
-    @public
-    @method fromArray
-    @param {Array} arr
-    @param {String} template
-    @return {String}
-    @since 3.8.0
-    **/
-    fromArray: function(arr, template) {
-        arr = arr.concat();
-
-        if (typeof template === 'undefined') {
-            return arr.join(', ');
-        }
-
-        var replace = '{*}';
-
-        template = Y.Color['STR_' + template.toUpperCase()];
-
-        if (arr.length === 3 && template.match(/\{\*\}/g).length === 4) {
-            arr.push(1);
-        }
-
-        while ( template.indexOf(replace) >= 0 && arr.length > 0) {
-            template = template.replace(replace, arr.shift());
-        }
-
-        return template;
-    },
-
-    /**
-    Finds the value type based on the str value provided.
-    @public
-    @method findType
-    @param {String} str
-    @return {String}
-    @since 3.8.0
-    **/
-    findType: function (str) {
-        if (Y.Color.KEYWORDS[str]) {
-            return 'keyword';
-        }
-
-        var index = str.indexOf('('),
-            key;
-
-        if (index > 0) {
-            key = str.substr(0, index);
-        }
-
-        if (key && Y.Color.TYPES[key.toUpperCase()]) {
-            return Y.Color.TYPES[key.toUpperCase()];
-        }
-
-        return 'hex';
-
-    }, // return 'keyword', 'hex', 'rgb'
-
-    /**
-    Retrives the alpha channel from the provided string. If no alpha
-        channel is present, `1` will be returned.
-    @protected
-    @method _getAlpha
-    @param {String} clr
-    @return {Number}
-    @since 3.8.0
-    **/
-    _getAlpha: function (clr) {
-        var alpha,
-            arr = Y.Color.toArray(clr);
-
-        if (arr.length > 3) {
-            alpha = arr.pop();
-        }
-
-        return +alpha || 1;
-    },
-
-    /**
-    Returns the hex value string if found in the KEYWORDS object
-    @protected
-    @method _keywordToHex
-    @param {String} clr
-    @return {String}
-    @since 3.8.0
-    **/
-    _keywordToHex: function (clr) {
-        var keyword = Y.Color.KEYWORDS[clr];
-
-        if (keyword) {
-            return keyword;
-        }
-    },
-
-    /**
-    Converts the provided color string to the value type provided as `to`
-    @protected
-    @method _convertTo
-    @param {String} clr
-    @param {String} to
-    @return {String}
-    @since 3.8.0
-    **/
-    _convertTo: function(clr, to) {
-
-        if (clr === 'transparent') {
-            return clr;
-        }
-
-        var from = Y.Color.findType(clr),
-            originalTo = to,
-            needsAlpha,
-            alpha,
-            method,
-            ucTo;
-
-        if (from === 'keyword') {
-            clr = Y.Color._keywordToHex(clr);
-            from = 'hex';
-        }
-
-        if (from === 'hex' && clr.length < 5) {
-            if (clr.charAt(0) === '#') {
-                clr = clr.substr(1);
-            }
-
-            clr = '#' + clr.charAt(0) + clr.charAt(0) +
-                        clr.charAt(1) + clr.charAt(1) +
-                        clr.charAt(2) + clr.charAt(2);
-        }
-
-        if (from === to) {
-            return clr;
-        }
-
-        if (from.charAt(from.length - 1) === 'a') {
-            from = from.slice(0, -1);
-        }
-
-        needsAlpha = (to.charAt(to.length - 1) === 'a');
-        if (needsAlpha) {
-            to = to.slice(0, -1);
-            alpha = Y.Color._getAlpha(clr);
-        }
-
-        ucTo = to.charAt(0).toUpperCase() + to.substr(1).toLowerCase();
-        method = Y.Color['_' + from + 'To' + ucTo ];
-
-        // check to see if need conversion to rgb first
-        // check to see if there is a direct conversion method
-        // convertions are: hex <-> rgb <-> hsl
-        if (!method) {
-            if (from !== 'rgb' && to !== 'rgb') {
-                clr = Y.Color['_' + from + 'ToRgb'](clr);
-                from = 'rgb';
-                method = Y.Color['_' + from + 'To' + ucTo ];
-            }
-        }
-
-        if (method) {
-            clr = ((method)(clr, needsAlpha));
-        }
-
-        // process clr from arrays to strings after conversions if alpha is needed
-        if (needsAlpha) {
-            if (!Y.Lang.isArray(clr)) {
-                clr = Y.Color.toArray(clr);
-            }
-            clr.push(alpha);
-            clr = Y.Color.fromArray(clr, originalTo.toUpperCase());
-        }
-
-        return clr;
-    },
-
-    /**
-    Processes the hex string into r, g, b values. Will return values as
-        an array, or as an rgb string.
-    @protected
-    @method _hexToRgb
-    @param {String} str
-    @param {Boolean} [toArray]
-    @return {String|Array}
-    @since 3.8.0
-    **/
-    _hexToRgb: function (str, toArray) {
-        var r, g, b;
-
-        /*jshint bitwise:false*/
-        if (str.charAt(0) === '#') {
-            str = str.substr(1);
-        }
-
-        str = parseInt(str, 16);
-
-        r = str >> 16;
-        g = str >> 8 & 0xFF;
-        b = str & 0xFF;
-
-        if (toArray) {
-            return [r, g, b];
-        }
-
-        return 'rgb(' + r + ', ' + g + ', ' + b + ')';
-    },
-
-    /**
-    Processes the rgb string into r, g, b values. Will return values as
-        an array, or as a hex string.
-    @protected
-    @method _rgbToHex
-    @param {String} str
-    @param {Boolean} [toArray]
-    @return {String|Array}
-    @since 3.8.0
-    **/
-    _rgbToHex: function (str) {
-        /*jshint bitwise:false*/
-        var rgb = Y.Color.toArray(str),
-            hex = rgb[2] | (rgb[1] << 8) | (rgb[0] << 16);
-
-        hex = (+hex).toString(16);
-
-        while (hex.length < 6) {
-            hex = '0' + hex;
-        }
-
-        return '#' + hex;
-    }
-
-};
-
-
-
-}, '@VERSION@', {"requires": ["yui-base"]});
 YUI.add('dom-style', function (Y, NAME) {
 
 (function(Y) {
@@ -8670,9 +8142,83 @@ Y_DOM.CUSTOM_STYLES.transformOrigin = {
 
 
 })(Y);
+(function(Y) {
+var PARSE_INT = parseInt,
+    RE = RegExp;
+
+Y.Color = {
+    KEYWORDS: {
+        black: '000',
+        silver: 'c0c0c0',
+        gray: '808080',
+        white: 'fff',
+        maroon: '800000',
+        red: 'f00',
+        purple: '800080',
+        fuchsia: 'f0f',
+        green: '008000',
+        lime: '0f0',
+        olive: '808000',
+        yellow: 'ff0',
+        navy: '000080',
+        blue: '00f',
+        teal: '008080',
+        aqua: '0ff'
+    },
+
+    re_RGB: /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i,
+    re_hex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
+    re_hex3: /([0-9A-F])/gi,
+
+    toRGB: function(val) {
+        if (!Y.Color.re_RGB.test(val)) {
+            val = Y.Color.toHex(val);
+        }
+
+        if(Y.Color.re_hex.exec(val)) {
+            val = 'rgb(' + [
+                PARSE_INT(RE.$1, 16),
+                PARSE_INT(RE.$2, 16),
+                PARSE_INT(RE.$3, 16)
+            ].join(', ') + ')';
+        }
+        return val;
+    },
+
+    toHex: function(val) {
+        val = Y.Color.KEYWORDS[val] || val;
+        if (Y.Color.re_RGB.exec(val)) {
+            val = [
+                Number(RE.$1).toString(16),
+                Number(RE.$2).toString(16),
+                Number(RE.$3).toString(16)
+            ];
+
+            for (var i = 0; i < val.length; i++) {
+                if (val[i].length < 2) {
+                    val[i] = '0' + val[i];
+                }
+            }
+
+            val = val.join('');
+        }
+
+        if (val.length < 6) {
+            val = val.replace(Y.Color.re_hex3, '$1$1');
+        }
+
+        if (val !== 'transparent' && val.indexOf('#') < 0) {
+            val = '#' + val;
+        }
+
+        return val.toUpperCase();
+    }
+};
+})(Y);
 
 
-}, '@VERSION@', {"requires": ["dom-base", "color-base"]});
+
+}, '@VERSION@', {"requires": ["dom-base"]});
 YUI.add('dom-style-ie', function (Y, NAME) {
 
 (function(Y) {
@@ -9831,11 +9377,8 @@ var Selector = {
     },
 
     _nativeQuery: function(selector, root, one) {
-        if (
-            (Y.UA.webkit || Y.UA.opera) &&          // webkit (chrome, safari) and Opera
-            selector.indexOf(':checked') > -1 &&    // fail to pick up "selected"  with ":checked"
-            (Y.Selector.pseudos && Y.Selector.pseudos.checked)
-        ) {
+        if (Y.UA.webkit && selector.indexOf(':checked') > -1 &&
+                (Y.Selector.pseudos && Y.Selector.pseudos.checked)) { // webkit (chrome, safari) fails to pick up "selected"  with "checked"
             return Y.Selector.query(selector, root, one, true); // redo with skipNative true to try brute query
         }
         try {
@@ -10803,24 +10346,13 @@ Y.CustomEvent.prototype = {
 
         if (!fn) { this.log('Invalid callback for CE: ' + this.type); }
 
-        var s = new Y.Subscriber(fn, context, args, when),
-            firedWith;
+        var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-
-            firedWith = this.firedWith;
-
-            // It's a little ugly for this to know about facades,
-            // but given the current breakup, not much choice without
-            // moving a whole lot of stuff around.
-            if (this.emitFacade && this._addFacadeToArgs) {
-                this._addFacadeToArgs(firedWith);
-            }
-
             if (this.async) {
-                setTimeout(Y.bind(this._notify, this, s, firedWith), 0);
+                setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
             } else {
-                this._notify(s, firedWith);
+                this._notify(s, this.firedWith);
             }
         }
 
@@ -12110,17 +11642,17 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      * from the context specified when the event was created, and with the
      * following parameters.
      *
-     * The first argument is the event type, and any additional arguments are
-     * passed to the listeners as parameters.  If the first of these is an
-     * object literal, and the event is configured to emit an event facade,
-     * that object is mixed into the event facade and the facade is provided
-     * in place of the original object.
-     *
      * If the custom event object hasn't been created, then the event hasn't
      * been published and it has no subscribers.  For performance sake, we
      * immediate exit in this case.  This means the event won't bubble, so
      * if the intention is that a bubble target be notified, the event must
      * be published on this object first.
+     *
+     * The first argument is the event type, and any additional arguments are
+     * passed to the listeners as parameters.  If the first of these is an
+     * object literal, and the event is configured to emit an event facade,
+     * that object is mixed into the event facade and the facade is provided
+     * in place of the original object.
      *
      * @method fire
      * @param type {String|Object} The type of the event, or an object that contains
@@ -12130,8 +11662,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      * configured to emit an event facade, the event facade will replace that
      * parameter after the properties the object literal contains are copied to
      * the event facade.
-     * @return {Boolean} True if the whole lifecycle of the event went through,
-     * false if at any point the event propagation was halted.
+     * @return {EventTarget} the event host
      */
     fire: function(type) {
 
@@ -12606,9 +12137,11 @@ CEProto.fireComplex = function(args) {
         host = self.host || self,
         next,
         oldbubble,
-        stack = self.stack,
+        stack,
         yuievt = host._yuievt,
         hasPotentialSubscribers;
+
+    stack = self.stack;
 
     if (stack) {
 
@@ -12670,7 +12203,7 @@ CEProto.fireComplex = function(args) {
 
         self._facade = null; // kill facade to eliminate stale properties
 
-        ef = self._createFacade(args);
+        ef = self._getFacade(args);
 
         if (ons) {
             self._procSubs(ons, args, ef);
@@ -12784,7 +12317,7 @@ CEProto.fireComplex = function(args) {
         defaultFn = self.defaultFn;
 
         if(defaultFn) {
-            ef = self._createFacade(args);
+            ef = self._getFacade(args);
 
             if ((!self.defaultTargetOnly) || (host === ef.target)) {
                 defaultFn.apply(host, args);
@@ -12799,33 +12332,7 @@ CEProto.fireComplex = function(args) {
     return ret;
 };
 
-/**
- * @method _hasPotentialSubscribers
- * @for CustomEvent
- * @private
- * @return {boolean} Whether the event has potential subscribers or not
- */
-CEProto._hasPotentialSubscribers = function() {
-    return this.hasSubs() || this.host._yuievt.hasTargets || this.broadcast;
-};
-
-/**
- * Internal utility method to create a new facade instance and
- * insert it into the fire argument list, accounting for any payload
- * merging which needs to happen.
- *
- * This used to be called `_getFacade`, but the name seemed inappropriate
- * when it was used without a need for the return value.
- *
- * @method _createFacade
- * @private
- * @param fireArgs {Array} The arguments passed to "fire", which need to be
- * shifted (and potentially merged) when the facade is added.
- * @return {EventFacade} The event facade created.
- */
-
-// TODO: Remove (private) _getFacade alias, once synthetic.js is updated.
-CEProto._createFacade = CEProto._getFacade = function(fireArgs) {
+CEProto._getFacade = function(fireArgs) {
 
     var userArgs = this.details,
         firstArg = userArgs && userArgs[0],
@@ -12867,23 +12374,6 @@ CEProto._createFacade = CEProto._getFacade = function(fireArgs) {
     this._facade = ef;
 
     return this._facade;
-};
-
-/**
- * Utility method to manipulate the args array passed in, to add the event facade,
- * if it's not already the first arg.
- *
- * @method _addFacadeToArgs
- * @private
- * @param {Array} The arguments to manipulate
- */
-CEProto._addFacadeToArgs = function(args) {
-    var e = args[0];
-
-    // Trying not to use instanceof, just to avoid potential cross Y edge case issues.
-    if (!(e && e.halt && e.stopImmediatePropagation && e.stopPropagation && e._event)) {
-        this._createFacade(args);
-    }
 };
 
 /**
@@ -13084,25 +12574,6 @@ ETProto.bubble = function(evt, args, target, es) {
     }
 
     return ret;
-};
-
-/**
- * @method _hasPotentialSubscribers
- * @for EventTarget
- * @private
- * @param {String} fullType The fully prefixed type name
- * @return {boolean} Whether the event has potential subscribers or not
- */
-ETProto._hasPotentialSubscribers = function(fullType) {
-
-    var etState = this._yuievt,
-        e = etState.events[fullType];
-
-    if (e) {
-        return e.hasSubs() || etState.hasTargets  || e.broadcast;
-    } else {
-        return false;
-    }
 };
 
 FACADE = new Y.EventFacade();
@@ -14985,17 +14456,8 @@ Y.mix(Y_Node.prototype, {
      * @deprecated Use getHTML
      * @return {String} The current content
      */
-    getContent: function() {
-        var node = this;
-
-        if (node._node.nodeType === 11) { // 11 === Node.DOCUMENT_FRAGMENT_NODE
-            // "this", when it is a document fragment, must be cloned because
-            // the nodes contained in the fragment actually disappear once
-            // the fragment is appended anywhere
-            node = node.create("<div/>").append(node.cloneNode(true));
-        }
-
-        return node.get("innerHTML");
+    getContent: function(content) {
+        return this.get('innerHTML');
     }
 });
 
@@ -20614,15 +20076,13 @@ var PARENT_NODE = 'parentNode',
         _bruteQuery: function(selector, root, firstOnly) {
             var ret = [],
                 nodes = [],
-                visited,
                 tokens = Selector._tokenize(selector),
                 token = tokens[tokens.length - 1],
                 rootDoc = Y.DOM._getDoc(root),
                 child,
                 id,
                 className,
-                tagName,
-                isUniversal;
+                tagName;
 
             if (token) {
                 // prefilter nodes
@@ -20643,30 +20103,16 @@ var PARENT_NODE = 'parentNode',
                     }
 
                 } else { // brute getElementsByTagName()
-                    visited = [];
                     child = root.firstChild;
-                    isUniversal = tagName === "*";
                     while (child) {
-                        while (child) {
-                            // IE 6-7 considers comment nodes as element nodes, and gives them the tagName "!".
-                            // We can filter them out by checking if its tagName is > "@". 
-                            // This also avoids a superflous nodeType === 1 check.
-                            if (child.tagName > "@" && (isUniversal || child.tagName === tagName)) {
-                                nodes.push(child);
-                            }
-
-                            // We may need to traverse back up the tree to find more unvisited subtrees.
-                            visited.push(child);
-                            child = child.firstChild;
+                        // only collect HTMLElements
+                        // match tag to supplement missing getElementsByTagName
+                        if (child.tagName && (tagName === '*' || child.tagName === tagName)) {
+                            nodes.push(child);
                         }
-
-                        // Find the most recently visited node who has a next sibling.
-                        while (visited.length > 0 && !child) {
-                            child = visited.pop().nextSibling;
-                        }
+                        child = child.nextSibling || child.firstChild;
                     }
                 }
-
                 if (nodes.length) {
                     ret = Selector._filterNodes(nodes, tokens, firstOnly);
                 }
@@ -21009,6 +20455,7 @@ Y.Selector.getters.src = Y.Selector.getters.rel = Y.Selector.getters.href;
 if (Y.Selector.useNative && Y.config.doc.querySelector) {
     Y.Selector.shorthand['\\.(-?[_a-z]+[-\\w]*)'] = '[class~=$1]';
 }
+
 
 
 }, '@VERSION@', {"requires": ["selector-native"]});

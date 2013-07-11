@@ -1,42 +1,9 @@
 DataTable Change History
 ========================
-
-@VERSION@
-------
-* Release Paginator for DataTable. DataTable's Paginator consists of a few
-  files and components each with a single purpose in mind.
-    Model- Mixes in Paginator-Core to provide a model for the DataTable
-      Paginator
-    View- Sets up a view of controls that is associated with a single model
-    Controller- Binds and maintains the state between the model and the view
-      as well as the interaction with DataTables other components.
-    Templates- A collection of templates used by the view and the controller
-      to add mark up to the layout in a unified manner. The template is
-      created using `Y.Template.Micro` but can be updated to use any
-      precompiled templating language.
-    Skins- Night and Sam skins for the default paginator view.
-
-* Release a default footer view that will create an empty `<tfoot>` for row
-  placement in the footer node. This is optionally added by the Paginator when
-  the location is specified for the footer if it is not already in place.
-
-* Update `_afterDataChange()` to only change the row modified.
-  [Pull Request #695] [Ticket #2532962]
-
-* Expand the title change to allow for a columns title, key, abbr and label for
-  more flexibility with column titles. [Pull Request #703] [Ticket #2533220]
-
-* Added Hungarian language support [Gábor Kovács]
-
-3.10.3
-------
-
-* No changes.
-
 3.10.2
 ------
 
-* No changes.
+* Added datatable-keynav module, providing keyboard navigation within the datatable.
 
 3.10.1
 ------

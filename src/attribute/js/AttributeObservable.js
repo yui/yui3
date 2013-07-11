@@ -134,6 +134,7 @@
             var host = this,
                 eventName = this._getFullType(attrName + CHANGE),
                 state = host._state,
+                hasOpts = false,
                 facade,
                 broadcast,
                 e;
@@ -162,7 +163,7 @@
 
             if (opts) {
                 facade = Y.merge(opts);
-                facade._attrOpts = opts;
+                hasOpts = true;
             } else {
                 facade = host._ATTR_E_FACADE;
             }
@@ -175,10 +176,10 @@
             facade.prevVal = currVal;
             facade.newVal = newVal;
 
-            if (host._hasPotentialSubscribers(eventName)) {
-                host.fire(eventName, facade);
+            if (hasOpts) {
+                host.fire(eventName, facade, opts);
             } else {
-                this._setAttrVal(attrName, subAttrName, currVal, newVal, opts, cfg);
+                host.fire(eventName, facade);
             }
         },
 
@@ -188,28 +189,16 @@
          * @private
          * @method _defAttrChangeFn
          * @param {EventFacade} e The event object for attribute change events.
-         * @param {boolean} eventFastPath Whether or not we're using this as a fast path in the case of no listeners or not
          */
-        _defAttrChangeFn : function(e, eventFastPath) {
+        _defAttrChangeFn : function(e) {
 
-            var opts = e._attrOpts;
-            if (opts) {
-                delete e._attrOpts;
-            }
-
-            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, opts)) {
+            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, e.details[1])) {
+                // Prevent "after" listeners from being invoked since nothing changed.
+                e.stopImmediatePropagation();
 
                 Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
-
-                if (!eventFastPath) {
-                    // Prevent "after" listeners from being invoked since nothing changed.
-                    e.stopImmediatePropagation();
-                }
-
             } else {
-                if (!eventFastPath) {
-                    e.newVal = this.get(e.attrName);
-                }
+                e.newVal = this.get(e.attrName);
             }
         }
     };

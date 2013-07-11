@@ -9,7 +9,7 @@
 			"transition",
 			"intl"
 		], 
-		"lang": ["en", "es", "hu"],
+		"lang": ["en", "es"],
 		"skinnable": true
 	}
 }

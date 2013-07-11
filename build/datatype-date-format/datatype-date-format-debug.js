@@ -346,7 +346,6 @@ Y.DataType.Date = Y.Date;
         "fr-FR",
         "hi",
         "hi-IN",
-        "hu",
         "id",
         "id-ID",
         "it",

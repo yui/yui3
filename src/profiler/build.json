@@ -1,0 +1,10 @@
+{
+    "name": "profiler",
+    "builds": {
+        "profiler": {
+            "jsfiles": [
+                "Profiler.js"
+            ]
+        }
+    }
+}

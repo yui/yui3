@@ -3,7 +3,8 @@
     "builds": {
         "dom-style": {
             "jsfiles": [
-                "dom-style.js"
+                "dom-style.js",
+                "color.js"
             ]
         },
         "dom-style-ie": {

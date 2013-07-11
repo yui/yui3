@@ -13,16 +13,6 @@ AsyncQueue Change History
 * Fixed a bug in which the 'complete' event would not be fired if stop was
   called from inside a callback.
 
-3.10.3
-------
-
-* No changes.
-
-3.10.2
-------
-
-* No changes.
-
 3.10.1
 ------
 

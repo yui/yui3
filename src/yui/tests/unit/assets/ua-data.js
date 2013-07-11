@@ -418,14 +418,6 @@ Y.UAData = {
 	],
 	"IE": [
 		{
-			"ua": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv 11.0) like Gecko",
-			"data": {
-				"ie"   : 11,
-				"gecko": 0,
-				"os"   : "windows"
-			}
-		},
-		{
 			"ua": "Mozilla/4.0 (Windows; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)",
 			"data": {
 				"ie": 6,
@@ -539,15 +531,6 @@ Y.UAData = {
 		}
 	],
 	"Opera": [
-		{
-			"ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.52 Safari/537.36 OPR/15.0.1147.132",
-			"data": {
-				"chrome": 0,
-				"opera": 15.0,
-				"webkit": 537.36,
-				"os": "macintosh"
-			}
-		},
 		{
 			"ua": "Opera/9.80 (X11; Linux i686; U; ru) Presto/2.8.131 Version/11.11",
 			"data": {

@@ -38,7 +38,7 @@
                         }
                     }
                     if (Y.UA.webkit) {
-                        if (!sel.anchorNode || (!sel.anchorNode.test(LI) && !sel.anchorNode.ancestor(LI))) {
+                        if (!sel.anchorNode.test(LI) && !sel.anchorNode.ancestor(LI)) {
                             host.frame._execCommand('insertlinebreak', null);
                             e.halt();
                         }

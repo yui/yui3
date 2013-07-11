@@ -397,5 +397,3 @@ th {
 
 /* List with extra vertical spacing between items. */
 .spaced li { margin: 0.8em 0; }
-
-.deprecated { color: #ff2200; }

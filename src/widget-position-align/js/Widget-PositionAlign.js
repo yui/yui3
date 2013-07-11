@@ -33,7 +33,15 @@ passed to `Base.build`).
 @param {Object} config User configuration object.
 @constructor
 **/
-function PositionAlign (config) {}
+function PositionAlign (config) {
+    if ( ! this._posNode) {
+        Y.error('WidgetPosition needs to be added to the Widget, ' + 
+            'before WidgetPositionAlign is added'); 
+    }
+
+    Y.after(this._bindUIPosAlign, this, 'bindUI');
+    Y.after(this._syncUIPosAlign, this, 'syncUI');
+}
 
 PositionAlign.ATTRS = {
 
@@ -46,20 +54,20 @@ PositionAlign.ATTRS = {
 
       * __`node`__: The `Node` to which the widget is to be aligned. If set to
         `null`, or not provided, the widget is aligned to the viewport.
-
+    
       * __`points`__: A two element Array, defining the two points on the widget
         and `Node`/viewport which are to be aligned. The first element is the
         point on the widget, and the second element is the point on the
         `Node`/viewport. Supported alignment points are defined as static
         properties on `WidgetPositionAlign`.
-
-    @example Aligns the top-right corner of the widget with the top-left corner
+    
+    @example Aligns the top-right corner of the widget with the top-left corner 
     of the viewport:
 
         myWidget.set('align', {
             points: [Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TL]
         });
-
+    
     @attribute align
     @type Object
     @default null
@@ -69,11 +77,11 @@ PositionAlign.ATTRS = {
     },
 
     /**
-    A convenience Attribute, which can be used as a shortcut for the `align`
+    A convenience Attribute, which can be used as a shortcut for the `align` 
     Attribute.
-
-    If set to `true`, the widget is centered in the viewport. If set to a `Node`
-    reference or valid selector String, the widget will be centered within the
+    
+    If set to `true`, the widget is centered in the viewport. If set to a `Node` 
+    reference or valid selector String, the widget will be centered within the 
     `Node`. If set to `false`, no center positioning is applied.
 
     @attribute centered
@@ -90,13 +98,13 @@ PositionAlign.ATTRS = {
     An Array of Objects corresponding to the `Node`s and events that will cause
     the alignment of this widget to be synced to the DOM.
 
-    The `alignOn` Attribute is expected to be an Array of Objects with the
+    The `alignOn` Attribute is expected to be an Array of Objects with the 
     following properties:
 
       * __`eventName`__: The String event name to listen for.
 
-      * __`node`__: The optional `Node` that will fire the event, it can be a
-        `Node` reference or a selector String. This will default to the widget's
+      * __`node`__: The optional `Node` that will fire the event, it can be a 
+        `Node` reference or a selector String. This will default to the widget's 
         `boundingBox`.
 
     @example Sync this widget's alignment on window resize:
@@ -130,7 +138,7 @@ PositionAlign.TL = 'tl';
 
 /**
 Constant used to specify the top-right corner for alignment
-
+ 
 @property TR
 @type String
 @value 'tr'
@@ -140,7 +148,7 @@ PositionAlign.TR = 'tr';
 
 /**
 Constant used to specify the bottom-left corner for alignment
-
+ 
 @property BL
 @type String
 @value 'bl'
@@ -170,7 +178,7 @@ PositionAlign.TC = 'tc';
 
 /**
 Constant used to specify the right edge, center point for alignment
-
+ 
 @property RC
 @type String
 @value 'rc'
@@ -180,7 +188,7 @@ PositionAlign.RC = 'rc';
 
 /**
 Constant used to specify the bottom edge, center point for alignment
-
+ 
 @property BC
 @type String
 @value 'bc'
@@ -190,7 +198,7 @@ PositionAlign.BC = 'bc';
 
 /**
 Constant used to specify the left edge, center point for alignment
-
+ 
 @property LC
 @type String
 @value 'lc'
@@ -210,17 +218,6 @@ PositionAlign.CC = 'cc';
 
 PositionAlign.prototype = {
     // -- Protected Properties -------------------------------------------------
-
-
-    initializer : function() {
-        if (!this._posNode) {
-            Y.error('WidgetPosition needs to be added to the Widget, ' +
-                'before WidgetPositionAlign is added');
-        }
-
-        Y.after(this._bindUIPosAlign, this, 'bindUI');
-        Y.after(this._syncUIPosAlign, this, 'syncUI');
-    },
 
     /**
     Holds the alignment-syncing event handles.
@@ -277,7 +274,7 @@ PositionAlign.prototype = {
 
     /**
     Aligns this widget to the provided `Node` (or viewport) using the provided
-    points. This method can be invoked with no arguments which will cause the
+    points. This method can be invoked with no arguments which will cause the 
     widget's current `align` Attribute value to be synced to the DOM.
 
     @example Aligning to the top-left corner of the `<body>`:
@@ -289,10 +286,10 @@ PositionAlign.prototype = {
     @param {Node|String|null} [node] A reference (or selector String) for the
       `Node` which with the widget is to be aligned. If null is passed in, the
       widget will be aligned with the viewport.
-    @param {Array[2]} [points] A two item array specifying the points on the
-      widget and `Node`/viewport which will to be aligned. The first entry is
-      the point on the widget, and the second entry is the point on the
-      `Node`/viewport. Valid point references are defined as static constants on
+    @param {Array[2]} [points] A two item array specifying the points on the 
+      widget and `Node`/viewport which will to be aligned. The first entry is 
+      the point on the widget, and the second entry is the point on the 
+      `Node`/viewport. Valid point references are defined as static constants on 
       the `WidgetPositionAlign` extension.
     @chainable
     **/
@@ -312,11 +309,11 @@ PositionAlign.prototype = {
     },
 
     /**
-    Centers the widget in the viewport, or if a `Node` is passed in, it will
+    Centers the widget in the viewport, or if a `Node` is passed in, it will 
     be centered to that `Node`.
 
     @method centered
-    @param {Node|String} [node] A `Node` reference or selector String defining
+    @param {Node|String} [node] A `Node` reference or selector String defining 
       the `Node` which the widget should be centered. If a `Node` is not  passed
       in, then the widget will be centered to the viewport.
     @chainable
@@ -365,7 +362,7 @@ PositionAlign.prototype = {
             return;
         }
 
-        var nodeRegion = this._getRegion(node),
+        var nodeRegion = this._getRegion(node), 
             widgetPoint, nodePoint, xy;
 
         if ( ! nodeRegion) {
@@ -477,7 +474,7 @@ PositionAlign.prototype = {
         Y.Array.each(this.get(ALIGN_ON), function (o) {
             var event = o.eventName,
                 node  = Y.one(o.node) || bb;
-
+            
             if (event) {
                 handles.push(node.on(event, syncAlign));
             }
@@ -627,7 +624,7 @@ PositionAlign.prototype = {
     _afterAlignChange: function (e) {
         var align = e.newVal;
         if (align) {
-            this._uiSetAlign(align.node, align.points);
+            this._uiSetAlign(align.node, align.points);               
         }
     },
 

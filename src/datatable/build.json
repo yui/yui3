@@ -61,19 +61,9 @@
                 "formatters.js"
             ]
         },
-        "datatable-paginator": {
+        "datatable-keynav": {
             "jsfiles": [
-                "paginator.js"
-            ]
-        },
-        "datatable-paginator-templates": {
-            "jsfiles": [
-                "paginator-templates.js"
-            ]
-        },
-        "datatable-foot": {
-            "jsfiles": [
-                "foot.js"
+                "keynav.js"
             ]
         }
     }

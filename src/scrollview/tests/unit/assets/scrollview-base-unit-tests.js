@@ -11,16 +11,12 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         renderNewScrollview = Y.renderNewScrollview,
         getMockMousewheelEvent = Y.getMockMousewheelEvent,
         getMockGestureEvent = Y.getMockGestureEvent,
-        getMockGestureObject = Y.getMockGestureObject,
-        isIE = (Y.UA.ie > 0);
+        getMockGestureObject = Y.getMockGestureObject;
 
     unitTestSuite.add(new Y.Test.Case({
         name: "Lifecycle",
 
-        setUp : function () {
-            cleanup();
-        },
-
+        setUp : function () { /* Empty */ },
         tearDown : function () {
             Y.one('#container').empty(true);
         },
@@ -46,13 +42,11 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         }
     }));
 
+
     unitTestSuite.add(new Y.Test.Case({
         name: "Attributes",
 
-        setUp : function () {
-            cleanup();
-        },
-
+        setUp : function () { /* Empty */ },
         tearDown : function () {
             Y.one('#container').empty(true);
         },
@@ -143,10 +137,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
     unitTestSuite.add(new Y.Test.Case({
         name: "Rendering",
 
-        setUp : function () {
-            cleanup();
-        },
-
+        setUp : function () { /* Empty */ },
         tearDown : function () {
             Y.one('#container').empty(true);
         },
@@ -169,10 +160,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
     unitTestSuite.add(new Y.Test.Case({
         name: "Public API",
 
-        setUp : function () {
-            cleanup();
-        },
-
+        setUp : function () { /* Empty */ },
         tearDown : function () {
             Y.one('#container').empty(true);
         },
@@ -272,10 +260,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
     unitTestSuite.add(new Y.Test.Case({
         name: "Events",
 
-        setUp : function () {
-            cleanup();
-        },
-
+        setUp : function () { /* Empty */ },
         tearDown : function () {
             Y.one('#container').empty(true);
         },
@@ -324,7 +309,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         name: "Mock event - gesture start",
 
         setUp : function () {
-            cleanup();
             this.scrollview = renderNewScrollview('x');
             this.mockEvent = getMockGestureEvent(0, 0);
         },
@@ -409,7 +393,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         name: "Mock event - gesture X",
 
         setUp : function () {
-            cleanup();
             this.scrollview = renderNewScrollview('x');
             this.mockEvent = getMockGestureEvent(2, 0);
             this.scrollview._gesture = getMockGestureObject(null, 5, 0);
@@ -455,7 +438,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         name: "Mock event - gesture Y",
 
         setUp : function () {
-            cleanup();
             this.scrollview = renderNewScrollview('y');
             this.mockEvent = getMockGestureEvent(0, 3);
             this.scrollview._gesture = getMockGestureObject('y', 0, 6);
@@ -490,7 +472,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         name: "Mock event - gesture end",
 
         setUp : function () {
-            cleanup();
             this.scrollview = renderNewScrollview('x');
             this.mockEvent = getMockGestureEvent(3, 0);
             this.scrollview._gesture = getMockGestureObject(null, 6, 0);
@@ -527,7 +508,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         name: "Mock event - flick",
 
         setUp : function () {
-            cleanup();
             this.scrollview = renderNewScrollview('x');
         },
 
@@ -608,7 +588,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         name: "Mock event - snap",
 
         setUp : function () {
-            cleanup();
             this.scrollview = renderNewScrollview('x');
         },
 
@@ -643,7 +622,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         name: "Mock event - mousewheel",
 
         setUp : function () {
-            cleanup();
             this.scrollview = renderNewScrollview('y');
         },
 
@@ -704,7 +682,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         name: "Misc methods",
 
         setUp : function () {
-            cleanup();
             this.scrollview = renderNewScrollview('y');
         },
 
@@ -736,35 +713,7 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
         }
     }));
 
-    unitTestSuite.add(new Y.Test.Case({
-        name: "IE tests",
-        _should: {
-            ignore: {
-                '_iePreventSelect should return false' : !isIE,
-                '_ieRestoreSelect should exist' : !isIE,
-                '_fixIESelect should exist' : !isIE
-            }
-        },
 
-        "_iePreventSelect should return false": function () {
-            var scrollview = renderNewScrollview('x');
-            var result = scrollview._iePreventSelect();
-
-            Y.Assert.isFalse(result);
-        },
-
-        "_ieRestoreSelect should exist": function () {
-            var scrollview = renderNewScrollview('x');
-
-            Y.Assert.isFunction(scrollview._ieRestoreSelect);
-        },
-
-        "_fixIESelect should exist": function () {
-            var scrollview = renderNewScrollview('x');
-
-            Y.Assert.isFunction(scrollview._fixIESelect);
-        }
-    }));
 
 
 
@@ -777,14 +726,6 @@ YUI.add('scrollview-base-unit-tests', function (Y, NAME) {
     }
 
     Y.Test.Runner.add(baseTestSuite);
-
-    function cleanup() {
-        delete Y.ScrollView.FRAME_STEP;
-        delete Y.ScrollView.SNAP_DURATION;
-        delete Y.ScrollView.SNAP_EASING;
-        delete Y.ScrollView.EASING;
-        delete Y.ScrollView.BOUNCE_RANGE;
-    }
 
     /*
         Additional test ideas:

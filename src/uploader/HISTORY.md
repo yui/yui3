@@ -1,21 +1,6 @@
 Uploader Utility (New) Change History
 =====================================
 
-@VERSION@
-------
-
-* No changes.
-
-3.10.3
-------
-
-* No changes.
-
-3.10.2
-------
-
-* No changes.
-
 3.10.1
 ------
 

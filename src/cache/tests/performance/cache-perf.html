@@ -16,22 +16,22 @@
         filter: "debug",
         logInclude:{"perf":true, "cache":true},
         useConsole: true
-    }).use("console", "cache", function(Y) {
-
+    }).use("console", "profiler", "dump", "cache", function(Y) {
+        
         // Set up the page
         var BTNRUN = Y.one("#btnRun"),
             myConsole = new Y.Console().render();
-
+            
 
         BTNRUN.set("disabled", false);
         Y.on("click", function(e){
             Y.example.Perf.run();
         }, BTNRUN);
-
+        
         Y.namespace("example").Perf = function() {
             var selectNode = Y.one("#testSelector"),
                 allTests = [];
-
+                
             return {
                 init: function() {
                     this.register("Test 'max' upper boundary", function() {
@@ -50,7 +50,7 @@
                             i++;
                         }
                     });
-
+                    
                     this.register("Test large item size", function() {
                         var max = 5,
                             cache = new Y.Cache({max:max}),
@@ -69,16 +69,16 @@
                         }
                     });
                 },
-
+                
                 register: function(testName, testFn) {
                     var index = allTests.length;
                     allTests[index] = testFn;
-
+                    
                     var optionEl = document.createElement("option");
                     optionEl.innerHTML = "Test " + index + ": " + testName;
                     selectNode.appendChild(optionEl);
                 },
-
+                
                 run: function() {
                     var whichTest = selectNode.get("selectedIndex");
                     Y.log("Starting Test " + whichTest, "info", "perf");
@@ -87,7 +87,7 @@
                 }
             }
         }();
-
+        
         Y.example.Perf.init();
     });
 })();

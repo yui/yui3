@@ -42,10 +42,6 @@ var testModules = {
     "xdr-tests": {
         "fullpath": "./js/xdr-tests.js",
         "requires": ["io-xdr", "test"]
-    },
-    "upload-iframe-tests": {
-        "fullpath": "./js/upload-iframe-tests.js",
-        "requires": ["io-upload-iframe", "test"]
     }
 };
 
@@ -55,5 +51,4 @@ if (typeof exports !== 'undefined') {
     delete testModules['transport-tests'];
     delete testModules['serialize-tests'];
     delete testModules['xdr-tests'];
-    delete testModules['upload-iframe-tests'];
 }

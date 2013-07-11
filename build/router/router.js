@@ -1151,7 +1151,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _save: function (url, replace) {
         var urlIsString = typeof url === 'string',
-            currentPath, root, hash;
+            currentPath, root;
 
         // Perform same-origin check on the specified URL.
         if (urlIsString && !this._hasSameOrigin(url)) {
@@ -1173,11 +1173,6 @@ Y.Router = Y.extend(Router, Y.Base, {
         } else {
             currentPath = Y.getLocation().pathname;
             root        = this.get('root');
-            hash        = HistoryHash.getHash();
-
-            if (!urlIsString) {
-                url = hash;
-            }
 
             // Determine if the `root` already exists in the current location's
             // `pathname`, and if it does then we can exclude it from the
@@ -1189,7 +1184,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             // The `hashchange` event only fires when the new hash is actually
             // different. This makes sure we'll always dequeue and dispatch
             // _all_ router instances, mimicking the HTML5 behavior.
-            if (url === hash) {
+            if (url === HistoryHash.getHash()) {
                 Y.Router.dispatch();
             } else {
                 HistoryHash[replace ? 'replaceHash' : 'setHash'](url);

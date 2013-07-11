@@ -922,45 +922,30 @@ Y.Model = Y.extend(Model, Y.Base, {
         }
     },
 
-    // -- Private Methods ----------------------------------------------------
+    // -- Protected Event Handlers ---------------------------------------------
 
     /**
-     Overrides AttributeCore's `_setAttrVal`, to register the changed value if it's part
-     of a Model `setAttrs` transaction.
+    Duckpunches the `_defAttrChangeFn()` provided by `Y.Attribute` so we can
+    have a single global notification when a change event occurs.
 
-     NOTE: AttributeCore's `_setAttrVal` is currently private, but until we support coalesced
-     change events in attribute, we need this override.
+    @method _defAttrChangeFn
+    @param {EventFacade} e
+    @protected
+    **/
+    _defAttrChangeFn: function (e) {
+        var attrName = e.attrName;
 
-     @method _setAttrVal
-     @private
-     @param {String} attrName The attribute name.
-     @param {String} subAttrName The sub-attribute name, if setting a sub-attribute property ("x.y.z").
-     @param {Any} prevVal The currently stored value of the attribute.
-     @param {Any} newVal The value which is going to be stored.
-     @param {Object} [opts] Optional data providing the circumstances for the change.
-     @param {Object} [attrCfg] Optional config hash for the attribute. This is added for performance along the critical path,
-     where the calling method has already obtained the config from state.
+        if (!this._setAttrVal(attrName, e.subAttrName, e.prevVal, e.newVal)) {
+            // Prevent "after" listeners from being invoked since nothing changed.
+            e.stopImmediatePropagation();
+        } else {
+            e.newVal = this.get(attrName);
 
-     @return {boolean} true if the new attribute value was stored, false if not.
-     **/
-    _setAttrVal : function(attrName, subAttrName, prevVal, newVal, opts, attrCfg) {
-
-        var didChange = Model.superclass._setAttrVal.apply(this, arguments),
-            transaction = opts && opts._transaction,
-            initializing = attrCfg && attrCfg.initializing;
-
-        // value actually changed inside a model setAttrs transaction
-        if (didChange && transaction && !initializing) {
-            transaction[attrName] = {
-                newVal: this.get(attrName), // newVal may be impacted by getter
-                prevVal: prevVal,
-                src: opts.src || null
-            };
+            if (e._transaction) {
+                e._transaction[attrName] = e;
+            }
         }
-
-        return didChange;
     }
-
 }, {
     NAME: 'model',
 

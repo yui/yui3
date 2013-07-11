@@ -476,50 +476,6 @@ routerSuite.add(new Y.Test.Case({
         this.wait(1000);
     },
 
-    'replace() should be able to be called with no args using html5': function () {
-        var test   = this,
-            router = this.router = new Y.Router(),
-            path   = '/replace';
-
-        router.save(path);
-        router.route(path, function (req) {
-            test.resume(function () {
-                Assert.areSame(path, req.path);
-                Assert.isObject(req.query);
-            });
-        });
-
-        // Wrapped in a setTimeout to make the async test work on iOS<5, which
-        // performs this action synchronously.
-        setTimeout(function () {
-            router.replace();
-        }, 1);
-
-        this.wait(1000);
-    },
-
-    'replace() should be able to be called with no args using not html5': function () {
-        var test   = this,
-            router = this.router = new Y.Router({html5: false}),
-            path   = '/replace';
-
-        router.save(path);
-        router.route(path, function (req) {
-            test.resume(function () {
-                Assert.areSame(path, req.path);
-                Assert.isObject(req.query);
-            });
-        });
-
-        // Wrapped in a setTimeout to make the async test work on iOS<5, which
-        // performs this action synchronously.
-        setTimeout(function () {
-            router.replace();
-        }, 1);
-
-        this.wait(1000);
-    },
-
     'save() should create a new history entry': function () {
         var test   = this,
             router = this.router = new Y.Router();
@@ -615,7 +571,7 @@ routerSuite.add(new Y.Test.Case({
         this.wait(1000);
     },
 
-    'save() should dispatch in non HTML5 browsers even when the `hash` does not change': function () {
+    'save() should dispath in non HTML5 browsers even when the `hash` does not change': function () {
         var test = this,
             router;
 

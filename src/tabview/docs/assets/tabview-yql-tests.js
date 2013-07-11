@@ -15,9 +15,9 @@ YUI.add('tabview-yql-tests', function(Y) {
                 test.resume(function() {
                     test.assert(Y.one('#demo .yui3-tabview-panel div + div ul'));
                 });
-            }, 2000);
+            }, 500);
 
-            test.wait();
+            test.wait(1000);
 
         }
     }));

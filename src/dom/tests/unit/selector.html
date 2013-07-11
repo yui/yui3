@@ -33,8 +33,6 @@ onload = function() {
 
         Y.Test.Runner.setName('Dom: Selector');
 
-        var isXHTML = document.createElement("Div").nodeName === "Div";
-
         Y.Dom = {
             get: function (id) {
                 return document.getElementById(id);
@@ -71,35 +69,6 @@ onload = function() {
                 }
 
                 return nodes;
-            },
-            getElementsByTagName: function(element, tagName) {
-                var result, visited, isUniversal;
-
-                result = [];
-                visited = [];
-                element = element.firstChild;
-                isUniversal = tagName === "*";
-
-                if (!(isUniversal || isXHTML)) {
-                    tagName = tagName.toUpperCase();
-                }
-
-                while (element) {
-                    while (element) {
-                        if (element.tagName > "@" && (isUniversal || element.tagName === tagName)) {
-                            result.push(element);
-                        }
-
-                        visited.push(element);
-                        element = element.firstChild;
-                    }
-
-                    while (visited.length > 0 && !element) {
-                        element = visited.pop().nextSibling;
-                    }
-                }
-
-                return result;
             },
             getFirstChild: function (el) {
                 el = typeof el === 'string' ? document.getElementById(el) : el;
@@ -530,57 +499,6 @@ onload = function() {
                 Assert.areEqual(node, Y.Selector.ancestor(node, 'p', true));
                 Assert.areEqual(document.body, Y.Selector.ancestor(node, 'body', true));
                 Assert.areEqual(node.parentNode, Y.Selector.ancestor(node, 'div'));
-            },
-
-            testFragment: function() {
-                /*
-                    <div>
-                        <p></p>
-                        <div>
-                            <p></p>
-                            <div>
-                                <p></p>
-                            </div>
-                            <p></p>
-                        </div>
-                        <div></div>
-                        <p></p>
-                        <p></p>
-                        <p></p>
-                    </div>
-                    
-                    This is the tree in which the horror below results in. 
-                */
-                var fragment, div, div2, div3;
-
-                fragment = document.createDocumentFragment();
-            
-                div = document.createElement("div");
-                div.appendChild(document.createElement("p"));
-
-                div2 = document.createElement("div");
-                div2.appendChild(document.createElement("p"));
-
-                div3 = document.createElement("div");
-                div3.appendChild(document.createElement("p"));
-
-                div2.appendChild(div3);
-                div2.appendChild(document.createElement("p"));
-
-                div.appendChild(div2);
-                
-                div.appendChild(document.createElement("div"));
-                div.appendChild(document.createElement("p"));
-                div.appendChild(document.createElement("p"));
-                div.appendChild(document.createElement("p"));
-
-                fragment.appendChild(div);
-
-                // NOTE: skipNative is passed in as true.
-                // Why? We want to simulate browsers who do not support QSA on document fragments.
-                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByTagName(fragment, "*"), $("*", fragment, false, true), "*");                
-                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByTagName(fragment, "div"), $("div", fragment, false, true), "div");
-                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByTagName(fragment, "p"), $("p", fragment, false, true), "p");
             },
 
             'should return all checked inputs': function() {

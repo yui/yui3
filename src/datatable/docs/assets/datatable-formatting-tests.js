@@ -7,11 +7,9 @@ YUI.add('datatable-formatting-tests', function(Y) {
         name: 'Example tests',
         'test template strings table': function() {
             var tableSelector = '#template ',
-                tableHeaderSelector = tableSelector + '.yui3-datatable-columns ',
-                tableDataSelector = tableSelector + '.yui3-datatable-data ',
-                th = Y.all(tableHeaderSelector + 'th'),
-                td = Y.all(tableDataSelector + 'td'),
-                tr = Y.all(tableHeaderSelector + 'tr, ' + tableDataSelector + 'tr'),
+                th = Y.all(tableSelector + 'th'),
+                td = Y.all(tableSelector + 'td'),
+                tr = Y.all(tableSelector + 'tr'),
                 cap = Y.one(tableSelector + 'caption');
 
             Assert.areEqual(3, th.size(), ' - Wrong number of th');
@@ -23,11 +21,9 @@ YUI.add('datatable-formatting-tests', function(Y) {
         },
         'test function formatting table': function() {
             var tableSelector = '#function ',
-                tableHeaderSelector = tableSelector + '.yui3-datatable-columns ',
-                tableDataSelector = tableSelector + '.yui3-datatable-data ',
-                th = Y.all(tableHeaderSelector + 'th'),
-                td = Y.all(tableDataSelector + 'td'),
-                tr = Y.all(tableHeaderSelector + 'tr, ' + tableDataSelector + 'tr'),
+                th = Y.all(tableSelector + 'th'),
+                td = Y.all(tableSelector + 'td'),
+                tr = Y.all(tableSelector + 'tr'),
                 cap = Y.one(tableSelector + 'caption');
 
             Assert.areEqual(3, th.size(), ' - Wrong number of th');
@@ -39,11 +35,9 @@ YUI.add('datatable-formatting-tests', function(Y) {
         },
         'test populating with HTML table': function() {
             var tableSelector = '#allowhtml ',
-                tableHeaderSelector = tableSelector + '.yui3-datatable-columns ',
-                tableDataSelector = tableSelector + '.yui3-datatable-data ',
-                th = Y.all(tableHeaderSelector + 'th'),
-                td = Y.all(tableDataSelector + 'td'),
-                tr = Y.all(tableHeaderSelector + 'tr, ' + tableDataSelector + 'tr'),
+                th = Y.all(tableSelector + 'th'),
+                td = Y.all(tableSelector + 'td'),
+                tr = Y.all(tableSelector + 'tr'),
                 cap = Y.one(tableSelector + 'caption');
 
             Assert.areEqual(3, th.size(), ' - Wrong number of th');
@@ -55,11 +49,9 @@ YUI.add('datatable-formatting-tests', function(Y) {
         },
         'test empty cell and dates table': function() {
             var tableSelector = '#dates ',
-                tableHeaderSelector = tableSelector + '.yui3-datatable-columns ',
-                tableDataSelector = tableSelector + '.yui3-datatable-data ',
-                th = Y.all(tableHeaderSelector + 'th'),
-                td = Y.all(tableDataSelector + 'td'),
-                tr = Y.all(tableHeaderSelector + 'tr, ' + tableDataSelector + 'tr'),
+                th = Y.all(tableSelector + 'th'),
+                td = Y.all(tableSelector + 'td'),
+                tr = Y.all(tableSelector + 'tr'),
                 cap = Y.one(tableSelector + 'caption');
 
             Assert.areEqual(3, th.size(), ' - Wrong number of th');

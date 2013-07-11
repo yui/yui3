@@ -7,18 +7,19 @@ YUI().use('cookie', 'node', function (Y) {
         log = function(str) {
             results.append(str + '<br>');
         };
-
-    //set subcookie values
-    Y.Cookie.setSub("example", "name", "Yahoo!");
-    Y.Cookie.setSub("example", "today", (new Date()).toString());
-    Y.Cookie.setSub("example", "count", Math.round(Math.random() * 30));
-
+    
     //get subcookie values
     var name = Y.Cookie.getSub("example", "name");
     var today = Y.Cookie.getSub("example", "today", function (value) {
         return new Date(value);
     });
     var count = Y.Cookie.getSub("example", "count", Number);
+
+    //set subcookie values
+    Y.Cookie.setSub("example", "name", "Yahoo!");
+    Y.Cookie.setSub("example", "today", (new Date()).toString());
+    Y.Cookie.setSub("example", "count", Math.round(Math.random() * 30));
+    
     
     log("The subcookie 'name' is '" + name + "' (" + (typeof name) + ")");
     log("The subcookie 'today' is '" + today + "' (" + (typeof today) + ")");

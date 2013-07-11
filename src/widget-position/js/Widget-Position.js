@@ -22,17 +22,23 @@
         XYChange = "xyChange";
 
     /**
-     * Widget extension, which can be used to add positioning support to the base Widget class,
+     * Widget extension, which can be used to add positioning support to the base Widget class, 
      * through the <a href="Base.html#method_build">Base.build</a> method.
      *
      * @class WidgetPosition
      * @param {Object} config User configuration object
      */
     function Position(config) {
+        this._posNode = this.get(BOUNDING_BOX);
+
+        // WIDGET METHOD OVERLAP
+        Y.after(this._renderUIPosition, this, RENDERUI);
+        Y.after(this._syncUIPosition, this, SYNCUI);
+        Y.after(this._bindUIPosition, this, BINDUI);
     }
 
     /**
-     * Static property used to define the default attribute
+     * Static property used to define the default attribute 
      * configuration introduced by WidgetPosition.
      *
      * @property ATTRS
@@ -46,7 +52,7 @@
          * @type number
          * @default 0
          *
-         * @description Page X co-ordinate for the widget. This attribute acts as a facade for the
+         * @description Page X co-ordinate for the widget. This attribute acts as a facade for the 
          * xy attribute. Changes in position can be monitored by listening for xyChange events.
          */
         x: {
@@ -64,7 +70,7 @@
          * @type number
          * @default 0
          *
-         * @description Page Y co-ordinate for the widget. This attribute acts as a facade for the
+         * @description Page Y co-ordinate for the widget. This attribute acts as a facade for the 
          * xy attribute. Changes in position can be monitored by listening for xyChange events.
          */
         y: {
@@ -104,15 +110,6 @@
 
     Position.prototype = {
 
-        initializer : function() {
-            this._posNode = this.get(BOUNDING_BOX);
-
-            // WIDGET METHOD OVERLAP
-            Y.after(this._renderUIPosition, this, RENDERUI);
-            Y.after(this._syncUIPosition, this, SYNCUI);
-            Y.after(this._bindUIPosition, this, BINDUI);
-        },
-
         /**
          * Creates/Initializes the DOM to support xy page positioning.
          * <p>
@@ -144,7 +141,7 @@
         },
 
         /**
-         * Binds event listeners responsible for updating the UI state in response to
+         * Binds event listeners responsible for updating the UI state in response to 
          * Widget position related state changes.
          * <p>
          * This method in invoked after bindUI is invoked for the Widget class
@@ -175,7 +172,7 @@
         },
 
         /**
-         * Synchronizes the Panel's "xy", "x", and "y" properties with the
+         * Synchronizes the Panel's "xy", "x", and "y" properties with the 
          * Widget's position in the DOM.
          *
          * @method syncXY
@@ -221,11 +218,11 @@
         },
 
         /**
-         * Default getter for the X attribute. The value is retrieved from
+         * Default getter for the X attribute. The value is retrieved from 
          * the XY attribute, which is the sole store for the XY state.
          *
          * @method _getX
-         * @protected
+         * @protected 
          * @return {Number} The X page co-ordinate value
          */
         _getX : function() {
@@ -233,11 +230,11 @@
         },
 
         /**
-         * Default getter for the Y attribute. The value is retrieved from
+         * Default getter for the Y attribute. The value is retrieved from 
          * the XY attribute, which is the sole store for the XY state.
          *
          * @method _getY
-         * @protected
+         * @protected 
          * @return {Number} The Y page co-ordinate value
          */
         _getY : function() {
@@ -247,7 +244,7 @@
         /**
          * Default attribute change listener for the xy attribute, responsible
          * for updating the UI, in response to attribute changes.
-         *
+         * 
          * @method _afterXYChange
          * @protected
          * @param {EventFacade} e The event facade for the attribute change
@@ -260,7 +257,7 @@
 
         /**
          * Updates the UI to reflect the XY page co-ordinates passed in.
-         *
+         * 
          * @method _uiSetXY
          * @protected
          * @param {String} val The XY page co-ordinates value to be reflected in the UI

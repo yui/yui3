@@ -678,17 +678,19 @@ YUI.add('core-tests', function(Y) {
 
             test.wait();
         },
-        // This test does not require a `wait()` and `resume()` because it is
-        // completely synchronous (i.e., `load` has already fired and `node`
-        // has already loaded).
         'test: window.onload delay': function() {
-            var Assert = Y.Assert;
+            var test = this,
+            Assert = Y.Assert;
 
             YUI({
                 delayUntil: 'load'
-            }).use('node', function(Y, status) {
-                Assert.areSame('load', status.delayUntil, 'load did not trigger this callback');
+            }).use('dd-drag', function(Y, status) {
+                test.resume(function() {
+                    Assert.areSame('load', status.delayUntil, 'load did not trigger this callback');
+                });
             });
+
+            test.wait();
         },
         'test: available delay': function() {
             var test = this,
@@ -707,8 +709,8 @@ YUI.add('core-tests', function(Y) {
                     event: 'available',
                     args: '#foobar'
                 }
-            }).use('node', function(Y, status) {
-                test.resume(function() {
+            }).use('dd-drop', function(Y, status) {
+              test.resume(function() {
                     Assert.isNotNull(Y.one('#foobar'), 'Failed to find trigger #foobar');
                     Assert.areSame('available', status.delayUntil, 'available did not trigger this callback');
                 });
@@ -733,8 +735,8 @@ YUI.add('core-tests', function(Y) {
                     event: 'contentready',
                     args: '#foobar2'
                 }
-            }).use('node', function(Y, status) {
-                test.resume(function() {
+            }).use('dd-drop', function(Y, status) {
+              test.resume(function() {
                     Assert.isNotNull(Y.one('#foobar2'), 'Failed to find trigger #foobar2');
                     Assert.areSame('contentready', status.delayUntil, 'contentready did not trigger this callback');
                 });
