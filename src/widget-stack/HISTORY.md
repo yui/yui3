@@ -4,7 +4,7 @@ Widget Stack Change History
 @VERSION@
 ------
 
-* Moved implementation code from the Constructor to the `intiailizer`
+* Moved implementation code from the Constructor to the `initializer`
   to account for Base order of operation changes in this release.
 
   This is one of the older extensions which needed to be upgraded

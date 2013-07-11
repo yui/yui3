@@ -97,6 +97,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
             });
 
         this.get('container').append(content);
+        this.attachEvents();
 
         this._rendered = true;
 
@@ -121,10 +122,20 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
         this._attachedViewEvents.push(
             container.delegate('click', this._controlClick, '.' + this.classNames.control, this),
-            container.after('change', this._controlChange, this, 'select'),
-            container.after('submit', this._controlSubmit, this, 'form'),
             this.get('model').after('change', this._modelChange, this)
         );
+
+        container.all('form').each(Y.bind(function (frm) {
+            this._attachedViewEvents.push(
+                frm.after('submit', this._controlSubmit, this)
+            );
+        }, this));
+
+        container.all('select').each(Y.bind(function (sel) {
+            this._attachedViewEvents.push(
+                sel.after('change', this._controlChange, this)
+            );
+        }, this));
 
     },
 
@@ -311,18 +322,12 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _controlChange
      @param {EventFacade} e
-     @param {String} selector
      @SINCE@
      */
-    _controlChange: function (e, selector) {
-        var control = e.target,
-            val;
+    _controlChange: function (e) {
 
         // register change events from the perPage select
-        if (
-            control.hasClass(CLASS_DISABLED) ||
-            ( selector && !(control.test(selector)) )
-        ) {
+        if ( e.target.hasClass(CLASS_DISABLED) ) {
             return;
         }
 
@@ -335,17 +340,10 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _controlSubmit
      @param {EventFacade} e
-     @param {String} selector
      @SINCE@
      */
-    _controlSubmit: function (e, selector) {
-        var control = e.target,
-            input;
-
-        if (
-            control.hasClass(CLASS_DISABLED) ||
-            ( selector && !(control.test(selector)) )
-        ) {
+    _controlSubmit: function (e) {
+        if ( e.target.hasClass(CLASS_DISABLED) ) {
             return;
         }
 
@@ -803,10 +801,12 @@ Y.mix(Controller.prototype, {
 
             getPage: function () {
                 var _pg = this._paged,
-                    min = _pg.index,
-                    max = (_pg.length >= 0) ? min + _pg.length : undefined;
+                    min = _pg.index;
 
-                return this._items.slice(min, max);
+                // IE LTE 8 doesn't allow "undefined" as a second param - gh890
+                return (_pg.length >= 0) ?
+                        this._items.slice(min, min + _pg.length) :
+                        this._items.slice(min);
             },
 
             size: function (paged) {

@@ -288,41 +288,43 @@ suite.add(new Y.Test.Case({
         nextBtn.simulate('click');
 
         // test cell data
-        Y.Assert.areSame(data[10].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'));
+        Y.Assert.areSame(data[10].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'), 'a');
 
         // click prev
         prevBtn.simulate('click');
 
         // test cell data
-        Y.Assert.areSame(data[0].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'));
+        Y.Assert.areSame(data[0].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'), 'b');
 
         // click last
         lastBtn.simulate('click');
 
         // test cell data
-        Y.Assert.areSame(data[90].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'));
+        Y.Assert.areSame(data[90].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'), 'c');
 
         // click first
         firstBtn.simulate('click');
 
         // test cell data
-        Y.Assert.areSame(data[0].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'));
+        Y.Assert.areSame(data[0].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'), 'd');
 
         // change input number and submit
         submitBtn.previous('input').set('value', 4);
-        submitBtn.simulate('click');
+        submitBtn.ancestor('form').simulate('submit');
 
         // test cell data
-        Y.Assert.areSame(data[30].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'));
+        Y.Assert.areSame(data[30].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'), 'e');
 
         // change rows per page
+        selectNode.focus();
         selectNode.set('selectedIndex', 1);
         selectNode.simulate('change');
+        selectNode.blur();
 
         // test number of rows per page
-        Y.Assert.areSame(50, dt.body.tbodyNode.all('tr').size());
+        Y.Assert.areSame(50, dt.body.tbodyNode.all('tr').size(), 'f');
         // test cell data
-        Y.Assert.areSame(data[0].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'));
+        Y.Assert.areSame(data[0].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'), 'g');
 
 
         dt.destroy();
