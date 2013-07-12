@@ -2,6 +2,7 @@
 
 var fs = require('fs'),
     path = require('path'),
+    exists = fs.existsSync || path.existsSync,
     base = path.join(__dirname, '../../'),
     jsonOut = path.join(__dirname, '../', 'js', 'yui3.json'),
     jsOut = path.join(__dirname, '../', 'js', 'yui3.js'),
@@ -20,7 +21,7 @@ var metaFiles = [];
 
 dirs.forEach(function(d) {
     var p = path.join(base, d, 'meta');
-    if (fs.existsSync(p)) {
+    if (exists(p)) {
         var files = fs.readdirSync(p);
         files.forEach(function(f) {
             f = path.join(p, f);
@@ -118,7 +119,7 @@ Object.keys(out).forEach(function(name) {
         if (conds[mod.condition.name]) {
             var cName = mod.condition.name;
             file = conds[cName];
-            if (fs.existsSync(file)) {
+            if (exists(file)) {
                 var test = fs.readFileSync(file, 'utf8');
                 mod.condition.test = md5(file);
                 cond.test = test;
