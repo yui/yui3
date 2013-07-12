@@ -179,11 +179,11 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.6.0
     **/
     TBODY_TEMPLATE: '<tbody class="{className}"></tbody>',
-    
+
     /**
     Array of values to be considered empty for the purpose of showing the
     `emptyCellValue` column attribute value in a cell.
-    
+
     @property _emptyValues
     @type Array
     @default null, undefined, ""
@@ -925,7 +925,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             },
             host = this.host || this,
             i, len, col, token, value, formatterData,
-            emptyValues = this._emptyValues;
+            emptyValues = this._emptyValues, e;
 
         for (i = 0, len = columns.length; i < len; ++i) {
             col   = columns[i];
@@ -956,9 +956,17 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 values[token + '-className'] = formatterData.className;
                 values.rowClass += ' ' + formatterData.rowClass;
             }
-
-            if (emptyValues.indexOf(value) !== -1) {
-                value = col.emptyCellValue || '';
+            if (emptyValues.indexOf) {
+                if (emptyValues.indexOf(value) !== -1) {
+                    value = col.emptyCellValue || '';
+                }
+            } else {
+                for (e = 0; e < emptyValues.length; e++) {
+                    if (emptyValues[e] === value) {
+                        value = col.emptyCellValue || '';
+                        break;
+                    }
+                }
             }
 
             values[token] = col.allowHTML ? value : htmlEscape(value);
@@ -1031,7 +1039,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                            ' {' + token + '-className}'
             };
 
-
             if (col.nodeFormatter) {
                 // Defer all node decoration to the formatter
                 tokenValues.content = '';
@@ -1044,7 +1051,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             content: html
         });
     },
-
 
     /**
      Parses the columns array and defines the column's _formatterFn if there
@@ -1080,8 +1086,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         return columns;
     },
-
-
 
     /**
     Creates the `<tbody>` node that will store the data rows.
@@ -1218,11 +1222,22 @@ Y.mix(Y.DataTable.BodyView.Formatters, {
     stringTemplate: function (col) {
         var formatter = col.formatter.replace(valueRegExp, '{' + col.key + '}'),
              emptyValues = ((this.view && this.view.body) || this)._emptyValues;
-        return function (o) {
-            if (emptyValues.indexOf(o.value) === -1) {
+        return (
+            emptyValues.indexOf ?
+            function (o) {
+                if (emptyValues.indexOf(o.value) === -1) {
+                    return fromTemplate(formatter, o.record.toJSON());
+                }
+                // return undefined;
+            } :
+            function (o) {
+                for (var i = 0; i < emptyValues.length; i++) {
+                    if (o.value === emptyValues[i]) {
+                        return /* undefined */;
+                    }
+                }
                 return fromTemplate(formatter, o.record.toJSON());
             }
-            // return undefined;
-        };
+        );
     }
 });
