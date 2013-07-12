@@ -25,7 +25,14 @@ YUI.add('graphics-roundrect', function (Y, NAME) {
                     ew = this.get("ellipseWidth"),
                     eh = this.get("ellipseHeight");
                 this.clear();
-                this.drawRoundRect(0, 0, w, h, ew, eh); 
+                if(w > (ew + ew) && h > (eh + eh))
+                {
+                    this.drawRoundRect(0, 0, w, h, ew, eh); 
+                }
+                else
+                {
+                    this.drawEllipse(0, 0, w, h);
+                }
                 this.end();
             }
         }, {

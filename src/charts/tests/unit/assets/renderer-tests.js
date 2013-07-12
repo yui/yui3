@@ -13,6 +13,41 @@ YUI.add('renderer-tests', function(Y) {
             this.renderer.destroy();
         },
 
+        "test: _copyObject" : function() {
+            var originalObject  = {
+                    x: 5,
+                    y: 6,
+                    child: {
+                        color: "#0ff",
+                        grandChild: {
+                            color: "#00f"   
+                        }
+                    }
+                },
+                newObject = this.renderer._copyObject(originalObject),
+                key;
+            Y.Assert.areEqual(originalObject.x, newObject.x, "The new object's x property should be " + originalObject.x + ".");
+            Y.Assert.areEqual(originalObject.y, newObject.y, "The new object's y property should be " + originalObject.y + ".");
+            Y.Assert.areEqual(
+                originalObject.child.color,
+                newObject.child.color,
+                "The color property of the newObject's child property should be " + originalObject.child.color + "."
+            );
+            Y.Assert.areEqual(
+                originalObject.child.grandChild.color,
+                newObject.child.grandChild.color,
+                "The color property of the newObject's child's grandChild property should be " + originalObject.child.grandChild.color + "."
+            );
+            newObject.x = 10;
+            newObject.y = 15;
+            newObject.child.color = "#9aa";
+            newObject.child.grandChild.color = "#9aa";
+            Y.Assert.areEqual(5, originalObject.x, "The originalObject's x property should still be 5.");
+            Y.Assert.areEqual(6, originalObject.y, "The originalObject's y property should still be 6.");
+            Y.Assert.areEqual("#0ff", originalObject.child.color, "The originalObject's child's color property should be #0ff.");
+            Y.Assert.areEqual("#00f", originalObject.child.grandChild.color, "The originalObject's child's grandChild's color property should be #00f.");
+        },
+
         testRenderer: function() {
             var renderer = this.renderer,
                 defaultPadding = 5,

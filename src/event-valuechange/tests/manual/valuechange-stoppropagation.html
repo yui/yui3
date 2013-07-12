@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>event-valuechange stop propagation test</title>
+</head>
+<body>
+
+<h1>event-valuechange stop propagation test</h1>
+
+<div id="outerOuterContainer">
+    <div id="outerContainer">
+        <div id="container">
+            <input type="text">
+            <input type="text">
+        </div>
+    </div>
+</div>
+
+<div id="log"></div>
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    filter: 'raw',
+    filters: {'event-valuechange': 'debug'}
+}).use('event-valuechange', 'node-event-delegate', function (Y) {
+
+    var ooc = Y.one('#outerOuterContainer'),
+        oc = Y.one('#outerContainer'),
+        c = Y.one('#container'),
+        l = Y.one('#log');
+
+    c.append('<p>YUI is running...</p>');
+
+    ooc.delegate('valuechange', function (e) {
+        l.append('<div>Propagation happened twice.</div>');
+    }, 'input');
+
+    oc.delegate('valuechange', function (e) {
+        l.append('<div>Propagation happened.</div>');
+    }, 'input');
+    
+    oc.delegate('valuechange', function (e) {
+        l.append('<div>Propagation should stop now.</div>');
+        e.stopImmediatePropagation();
+    }, 'input');
+
+    c.delegate('valuechange', function (e) {
+        l.empty();
+        l.appendChild('<div>Event has begun.</div>');
+        e.stopPropagation();
+    }, 'input');
+    
+    c.delegate('valuechange', function (e) {
+        l.appendChild('e.stopPropagation() does not prevent notifiers on the same element.');
+    }, 'input');
+  
+
+});
+</script>
+</body>
+</html>
