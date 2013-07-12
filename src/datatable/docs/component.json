@@ -75,6 +75,16 @@
         },
 
         {
+            "name": "datatable-colorsort",
+            "displayName": "Color Sorting and Filtering",
+            "modules": ["datatable", "color"],
+            "description": "Color Sorting with DataTable and Y.Color.",
+            "useModules": ["datatable-sort", "color-harmony"],
+
+            "hideTableOfContents": true
+        },
+
+        {
             "name": "datatable-scroll",
             "displayName": "Scrolling DataTable",
             "modules": ["datatable"],
