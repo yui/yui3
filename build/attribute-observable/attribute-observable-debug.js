@@ -162,19 +162,26 @@ YUI.add('attribute-observable', function (Y, NAME) {
                 cfg.published = true;
             }
 
-            facade = (opts) ? Y.merge(opts) : host._ATTR_E_FACADE;
+            if (opts) {
+                facade = Y.merge(opts);
+                facade._attrOpts = opts;
+            } else {
+                facade = host._ATTR_E_FACADE;
+            }
 
             // Not using the single object signature for fire({type:..., newVal:...}), since
             // we don't want to override type. Changed to the fire(type, {newVal:...}) signature.
 
-            // facade.type = eventName;
             facade.attrName = attrName;
             facade.subAttrName = subAttrName;
             facade.prevVal = currVal;
             facade.newVal = newVal;
 
-            // host.fire(facade);
-            host.fire(eventName, facade);
+            if (host._hasPotentialSubscribers(eventName)) {
+                host.fire(eventName, facade);
+            } else {
+                this._setAttrVal(attrName, subAttrName, currVal, newVal, opts, cfg);
+            }
         },
 
         /**
@@ -183,15 +190,28 @@ YUI.add('attribute-observable', function (Y, NAME) {
          * @private
          * @method _defAttrChangeFn
          * @param {EventFacade} e The event object for attribute change events.
+         * @param {boolean} eventFastPath Whether or not we're using this as a fast path in the case of no listeners or not
          */
-        _defAttrChangeFn : function(e) {
-            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, e.opts)) {
+        _defAttrChangeFn : function(e, eventFastPath) {
+
+            var opts = e._attrOpts;
+            if (opts) {
+                delete e._attrOpts;
+            }
+
+            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, opts)) {
+
                 Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
 
-                // Prevent "after" listeners from being invoked since nothing changed.
-                e.stopImmediatePropagation();
+                if (!eventFastPath) {
+                    // Prevent "after" listeners from being invoked since nothing changed.
+                    e.stopImmediatePropagation();
+                }
+
             } else {
-                e.newVal = this.get(e.attrName);
+                if (!eventFastPath) {
+                    e.newVal = this.get(e.attrName);
+                }
             }
         }
     };

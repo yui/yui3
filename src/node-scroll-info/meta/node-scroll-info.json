@@ -1,7 +1,12 @@
 {
     "node-scroll-info": {
         "requires": [
-            "base-build", "dom-screen", "event-resize", "node-pluginhost", "plugin"
+            "array-extras",
+            "base-build",
+            "event-resize",
+            "node-pluginhost",
+            "plugin",
+            "selector"
         ]
     }
 }

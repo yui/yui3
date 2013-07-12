@@ -916,6 +916,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
     bindUI: function()
     {
         this.get("chart").after("seriesCollectionChange", Y.bind(this._updateHandler, this));
+        this.get("chart").after("stylesChange", Y.bind(this._updateHandler, this));
         this.after("stylesChange", this._updateHandler);
         this.after("positionChange", this._positionChangeHandler);
         this.after("widthChange", this._handleSizeChange);
@@ -1029,6 +1030,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             i,
             len,
             isArray,
+            legendShape,
             shape,
             shapeClass,
             item,
@@ -1048,7 +1050,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             itemHeight;
         if(marker && marker.shape)
         {
-            shape = marker.shape;
+            legendShape = marker.shape;
         }
         this._destroyLegendItems();
         if(chart instanceof Y.PieChart)
@@ -1061,7 +1063,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             borderWeight = seriesStyles.border.weight;
             i = 0;
             len = displayName.length;
-            shape = shape || Y.Circle;
+            shape = legendShape || Y.Circle;
             isArray = Y.Lang.isArray(shape);
             for(; i < len; ++i)
             {
@@ -1092,7 +1094,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             {
                 series = seriesCollection[i];
                 seriesStyles = this._getStylesBySeriesType(series, shape);
-                if(!shape)
+                if(!legendShape)
                 {
                     shape = seriesStyles.shape;
                     if(!shape)

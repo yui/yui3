@@ -1,0 +1,227 @@
+    FlickrSearch.App = Y.Base.create('search', Y.View, [], {
+
+        // This is the Flickr API URL
+        url: 'http://api.flickr.com/services/rest/?',
+
+        // This is a flag that will determin if we are performing a new query
+        // or simply going to a new page of the previous query
+        _isNewQuery: false,
+
+        // An array of pages that are being displayed. This will adjust as
+        // the paginator is being interacted with, but should result in only
+        // one item being persistent
+        _pages: [],
+
+        paginator: null,
+
+        // When our form is submitted, we run a new query on it
+        events: {
+            'form .yui3-button': {
+                'click': '_afterFormSubmit'
+            }
+        },
+
+        // When we first initialize our application, we set up our paginator
+        // We also listen to it's page change event to get that page's images
+        initializer: function () {
+            this._api = this.get('apiConfig');
+
+            this.paginator = new FlickrSearch.Paginator({
+                model:  new FlickrSearch.PaginatorModel({
+                    itemsPerPage: this._api.per_page
+                })
+            });
+
+            this.paginator.get('model').after('pageChange', this._afterPageChange, this);
+        },
+
+        // We append our paginator to the paginator placeholder in our
+        // container
+        render: function () {
+            this.get('container').one('.paginator').append(
+                this.paginator.render().get('container')
+            );
+        },
+
+        // We update the app based on our loading process
+        //
+        // If status is true, we add the "loading" class
+        // If status is false, we remove the "loading" class
+        setLoading: function (status) {
+            this.get('container').toggleClass('loading', status);
+        },
+
+        // Our app needs a way to display a message to the user where there's
+        // an error or remove an error message if there is no longer a
+        // message that needs to be displayed
+        setMessage: function (msg) {
+            var container = this.get('container'),
+                msgNode = container.one('.results .msg');
+
+            if (msg) {
+                container.one('.results').setHTML('<div class="msg">' + msg + '</div>');
+                container.removeClass('hide-pg');
+                this.setLoading(false);
+            } else {
+                if (msgNode) {
+                    msgNode.remove();
+                }
+            }
+        },
+
+        // When we request a new photo, there are a few things that happen.
+        //
+        // * First we alert our app that something is loading
+        // * Then we construct our url based on the API configuration and the
+        //   page requested
+        // * Finally we request the API response through JSON-P
+        //
+        // If that request fails, we let the user know with a message
+        // If the requst succeeds, we process the response data
+        requestPhotos: function (page) {
+            this.setLoading(true);
+
+            var self = this,
+                api = this._api,
+                url = this.url;
+
+            api.page = page || 1;
+
+            url += Y.QueryString.stringify(api);
+
+            Y.jsonp(url, {
+                format: function (url, proxy) {
+                    return url + '&jsoncallback=' + proxy;
+                },
+                on: {
+                    failure: Y.bind(function () {
+                        this.setLoading(false);
+                        this.setMessage('Oops!! something broke :(');
+                    }, self),
+
+                    success: Y.bind(function (resp) {
+                        this._processResults(resp.photos);
+                        this._isNewQuery = false;
+                    }, self)
+                }
+            });
+        },
+
+        // When our form is submitted, we assume it's a new request. As a new
+        // request we remove our old pages, ensure our paginator is set to
+        // page 1 and request our new set of photos
+        _afterFormSubmit: function (e) {
+            e.preventDefault();
+
+            while (this._pages.length) {
+                this._pages.shift().destroy({ remove: true });
+            }
+
+            this._api.text = this.get('container').one('form input').get('value');
+
+            this._isNewQuery = true;
+
+            if (this.paginator.get('page') !== 1) {
+                this.paginator.set('page', 1);
+            } else {
+                this.requestPhotos();
+            }
+        },
+
+        // After we receive a response from the Flickr API, we check if we
+        // have any pages to process and send the
+        _processResults: function (resp) {
+            this.setMessage( !resp.pages ?
+                'There are no images for "' + this._api.text + '"' :
+                ''
+            );
+
+            if (this._isNewQuery) {
+                this.paginator.set('totalItems', parseInt(resp.total, 10));
+            }
+
+            this._createNewPage(resp.photo);
+        },
+
+        // Once our data have been received by the Flicker API and the
+        // results have been processed, we create a new page containing the
+        // new photos
+        _createNewPage: function (photos) {
+            var page = new FlickrSearch.PageView(),
+                resultsNode = this.get('container').one('.results'),
+                pageContainer;
+
+            // Add our photos to the new page
+            page.addPhotos(photos);
+
+            pageContainer = page.get('container');
+
+            // append our new page to the results node
+            resultsNode.append(pageContainer);
+            resultsNode.setStyle('height', pageContainer.get('offsetHeight'));
+
+
+            // We do not want to display the new page before all the images
+            // requested have had a chance to process.
+            var images = pageContainer.all('img'),
+                imagesLeft = images.size();
+
+            images.after(['load', 'error', 'abort'], function (e) {
+
+                if (!(--imagesLeft)) {
+
+                    // If there is more than one page, we have a previous page
+                    var prevPage = (this._pages.length > 1) ? this._pages.shift() : null;
+
+                    // Turn off the loading indicator
+                    this.setLoading(false);
+
+                    // Transition the new page in
+                    // If there is not a previous page, just display the new page
+                    pageContainer.transition({
+                        opacity: 1,
+                        duration: 1,
+                        delay: (prevPage) ? 0.5 : 0
+                    });
+
+                    // Transition the previous page out
+                    // Once the transition is complete, remove the previous page
+                    if (prevPage) {
+                        prevPage.get('container').transition({
+                            opacity: 0,
+                            duration: 1
+                        }, function (e) {
+                            prevPage.destroy({
+                                remove: true
+                            });
+                        });
+                    }
+                }
+            }, this);
+
+            // We now have a page to display, so let's show the paginator
+            this.get('container').removeClass('hide-pg');
+            this._pages.push(page);
+        },
+
+        // After our page changes, we request that page's photos
+        _afterPageChange: function (e) {
+            this.requestPhotos(e.newVal);
+        }
+
+    }, {
+        ATTRS: {
+            // This will contain our settings for the Flickr API
+            apiConfig: {
+                value: {
+                    api_key: FLICKR_API_KEY,
+                    method: 'flickr.photos.search',
+                    safe_search: 1,
+                    sort: 'relevance',
+                    format: 'json',
+                    license: 4,
+                    per_page: 20
+                }
+            }
+        }
+    });

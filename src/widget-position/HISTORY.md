@@ -1,6 +1,32 @@
 Widget Position Change History
 ==============================
 
+@VERSION@
+------
+
+* Moved implementation code from the Constructor to the `initializer`
+  to account for Base order of operation changes in this release.
+
+  This is one of the older extensions which needed to be upgraded
+  after `initializer` support was added for extensions.
+
+  This has no end user impact.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
 3.10.0
 ------
 
@@ -25,7 +51,7 @@ Widget Position Change History
 -----
 
   * No changes.
-  
+
 3.7.3
 -----
 

@@ -1,6 +1,26 @@
 Plugin Change History
 =====================
 
+@VERSION@
+------
+
+* Added `onceHostEvent` and `onceAfterHostEvent` methods.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
 3.10.0
 ------
 

@@ -1,7 +1,0 @@
-{
-    "profiler": {
-        "requires": [
-            "yui-base"
-        ]
-    }
-}

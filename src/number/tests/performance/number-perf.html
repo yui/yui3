@@ -16,22 +16,22 @@
         filter: "debug",
         logInclude:{"perf":true, "number":true},
         useConsole: true
-    }).use("console", "profiler", "dump", "datatype-number", function(Y) {
-        
+    }).use("console", "datatype-number", function(Y) {
+
         // Set up the page
         var BTNRUN = Y.one("#btnRun"),
             myConsole = new Y.Console().render();
-            
+
 
         BTNRUN.set("disabled", false);
         Y.on("click", function(e){
             Y.example.Perf.run();
         }, BTNRUN);
-        
+
         Y.namespace("example").Perf = function() {
             var selectNode = Y.one("#testSelector"),
                 allTests = [];
-                
+
             return {
                 init: function() {
                     this.register("Test number parsing", function() {
@@ -39,7 +39,7 @@
                             max = 250,
                             j=0,
                             number, string;
-                        
+
                         for(; i<max; i++) {
                             number = Y.Number.parse(i+"");
                             string = Y.Number.format(number,
@@ -48,7 +48,7 @@
                     });
 
                 },
-                
+
                 register: function(testName, testFn) {
                     var index = allTests.length;
                     allTests[index] = testFn;
@@ -66,7 +66,7 @@
                 }
             }
         }();
-        
+
         Y.example.Perf.init();
     });
 })();

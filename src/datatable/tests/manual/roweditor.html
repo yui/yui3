@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+    <head>
+        <title>datatable-editor</title>
+        <script src="/build/yui/yui.js"></script>
+    <style>
+
+
+.yui3-celleditor-popup-content {
+    background-color: #E6E6E6;
+    border: 1px solid #A0A0A0;
+    border-radius: 3px 3px 3px 3px;
+    padding: 4px;
+    z-index: 99;
+}
+.yui3-celleditor-popup-hidden {
+    display: none;
+}
+.yui3-celleditor-popup-content .yui3-widget-bd {
+    text-align: center;
+}
+    </style>
+    </head>
+    <body class="yui3-skin-sam">
+
+        <table width="100%">
+            <tr><td width="100px">&nbsp;x&nbsp;</td><td>&nbsp;x&nbsp;</td><td width="100px">&nbsp;x&nbsp;</td></tr>
+            <tr><td width="100px">&nbsp;x&nbsp;</td><td><div id="dtable"></div></td><td width="100px">&nbsp;x&nbsp;</td></tr>
+            <tr><td width="100px">&nbsp;x&nbsp;</td><td>&nbsp;x&nbsp;</td><td width="100px">&nbsp;x&nbsp;</td></tr>
+        </table>
+        <div id="dtable"></div>
+        <p>col=<input id="col"/>- y=<input id="row" /><button id="go">Go</button></p>
+        <script>
+            YUI({
+                filter:'raw',
+                filters: {
+                    'datatable-editable': 'debug',
+                    'datatable-celleditors': 'debug'
+                }/*,
+                groups: {
+                    builds: {
+                        base: '../../../build/',
+                        modules: {
+                            'datatable-editable': {
+                                path: 'datatable-editable/datatable-editable-min.js',
+                                requires:[
+                                    "overlay",
+                                    "datatable-base",
+                                    "datatype",
+                                    "node-screen",
+                                    "datatable-keynav",
+                                    "event-resize",
+                                    "event-outside"
+                                ],
+                                skinnable:true,
+                                lang: ['es', 'en']
+                            },
+                            'datatable-celleditors': {
+                                path: 'datatable-celleditors/datatable-celleditors-min.js',
+                                requires:[
+                                    "datatable-editable",
+                                    "view",
+                                    "base-build",
+                                    "event-mouseenter",
+                                    "cssbutton",
+                                    "event-outside",
+                                ],
+                                skinnable:true
+                            },
+                            'datatable-celleditor-keyfiltering': {
+                                path: 'datatable-celleditor-keyfiltering/datatable-celleditor-keyfiltering-min.js',
+                                requires: [
+                                   "datatable-editable",
+                                   "event-valuechange",
+                                   "base-build"
+                               ]
+                            },
+                            "datatable-keynav": {
+                                path: 'datatable-keynav/datatable-keynav-min.js',
+                                "requires": [
+                                    "yui-base", "datatable-base", "base-base", "oop"
+                                ]
+                            }
+                        }
+                    }
+                }*/
+            }).use("datatable-editable",  "datatable",'datatable-scroll','autocomplete-plugin', 'autocomplete-highlighters',
+            "datatable-celleditors","node-event-simulate","datatable-celleditor-keyfiltering","datatable-formatters",
+            "overlay",
+            function(Y) {
+                var someData = [
+                    {sid:10, sname:'Sneakers', sopen:0, stype:0, stock:0, sprice:59.93, shipst:'s', sdate:new Date(2009,3,11)},
+                    {sid:11, sname:'Varnished Cane Toads', sopen:1,  stype:10, stock:2, shipst:'u', sprice:17.49, sdate:new Date(2009,4,12)},
+                    {sid:12, sname:'JuJu Beans', sopen:0,  stype:20, stock:1, sprice:1.29, shipst:'s', sdate:new Date(2009,5,13)},
+                    {sid:13, sname:'Tent Stakes', sopen:1,  stype:30, stock:1, sprice:7.99, shipst:'n', sdate:new Date(2010,6,14)},
+                    {sid:14, sname:'Peanut Butter', sopen:0,  stype:40, stock:0, sprice:3.29, shipst:'e', sdate:new Date(2011,7,15)},
+                    {sid:15, sname:'Garbage Bags', sopen:1, stype:50,  stock:2, sprice:17.95, shipst:'r', sdate:new Date(2012,8,18)}
+                ];
+
+                // enlarge the dataset
+                Y.Array.each(someData,function(d,di){
+                    d.sdesc = 'Description for Item ' + d.sid + ' : ' + d.sname;
+                });
+
+                var stypes = [
+                    {value:0,  text:'Standard'},
+                    {value:10, text:'Improved'},
+                    {value:20, text:'Deluxe'},
+                    {value:30, text:'Better'},
+                    {value:40, text:'Subpar'},
+                    {value:50, text:'Junk'}
+                ];
+                
+                var dt = new Y.DataTable({
+                    columns: [
+                        {key:'sid',  editable:false},
+                        {name: 'cacho',key:'sopen', editor: 'inlineNumber', editorConfig: {title:'titulo'}},
+                        {key:'nest', children: [
+                            {key:'sname'},
+                            {key:'sdesc'}
+                        ]},
+                        {key:'stype', formatter: 'lookup', editor:'inlineAC', lookupTable: stypes},
+                        {key:'stock'},
+                        {key:'sprice'},
+                        {key:'sdate', editor: 'inlineDate'}
+                    ],
+                    data:    someData,
+
+//                    scrollable: 'xy',
+//                    width: '250px',
+//                    height: '150px',
+
+                    rowEditor: true,
+                    editorOpenAction:   'click',
+                    editable: true
+
+                }).render('#dtable');
+                dt.after('celleditor:save', function (ev) {
+                    console.log('celleditor:save');
+                    this.data.each(function (record) {
+                        console.log(record.get('stype'));
+                    });
+                });
+                var fireKey = function(ceditor, key, opts) {
+                    opts = Y.merge({keyCode: key}, opts);
+
+                    ceditor.simulate('keydown', opts);
+
+                    ceditor.simulate('keypress', opts);
+
+                    ceditor.simulate('keyup', opts);
+                };
+
+                var inputKey = function(ceditor,value,key) {
+                    ceditor.focus();
+                    ceditor.set('value',value);
+                    fireKey(ceditor,key);
+                };
+//                Y.one('#go').on('click', function () {
+//                    dt.scrollTo(dt.getCell([Y.one('#row').get('value'), Y.one('#col').get('value')]));
+//                });
+//                var td =  dt.getCell([0,4]);
+//                dt.openCellEditor(td);
+//                var ed = Y.one('.yui3-aclist-input');
+//                ed.set('value', 'Im');
+//                ed.ac._onInputValueChange({newVal: 'Im'});
+//                ed.ac.selectItem(Y.all('.yui3-aclist-item').item(2));
+//                Y.one('#editable').on('click', function (ev) {
+//                   dt.set('editable', !!ev.target.get('checked')) ;
+//                });
+            });
+        </script>
+    </body>
+</html>

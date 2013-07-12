@@ -22,9 +22,19 @@ package com.yahoo.util
 				flashvars = _stage.loaderInfo.parameters;
 				
 				if (flashvars["yId"] && flashvars["YUIBridgeCallback"] && flashvars["YUISwfId"] && ExternalInterface.available) {
-					_jsHandler = flashvars["YUIBridgeCallback"];
+					var jsCheck:RegExp = /[^A-Za-z0-9._:-]/; 
+                    _jsHandler = flashvars["YUIBridgeCallback"];
 					_swfID = flashvars["YUISwfId"];
 					_yId = flashvars["yId"];
+                    if(jsCheck.test(_jsHandler)) {
+                        _jsHandler = '';
+                    }
+                    if(jsCheck.test(_swfID)) {
+                        _swfID = '';
+                    }
+                    if(jsCheck.test(_yId)) {
+                        _yId = '';
+                    }
 				}
 			    
                 if(flashvars.hasOwnProperty("allowedDomain"))

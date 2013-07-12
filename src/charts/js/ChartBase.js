@@ -20,9 +20,9 @@ ChartBase.ATTRS = {
         valueFn: function()
         {
             var defDataProvider = [];
-            if(!this._seriesKeysExplicitlySet)
+            if(!this._wereSeriesKeysExplicitlySet())
             {
-                this._seriesKeys = this._buildSeriesKeys(defDataProvider);
+                this.set("seriesKeys", this._buildSeriesKeys(defDataProvider), {src: "internal"});
             }
             return defDataProvider;
         },
@@ -30,9 +30,9 @@ ChartBase.ATTRS = {
         setter: function(val)
         {
             var dataProvider = this._setDataValues(val);
-            if(!this._seriesKeysExplicitlySet)
+            if(!this._wereSeriesKeysExplicitlySet())
             {
-                this._seriesKeys = this._buildSeriesKeys(dataProvider);
+                this.set("seriesKeys", this._buildSeriesKeys(dataProvider), {src: "internal"});
             }
             return dataProvider;
         }
@@ -47,15 +47,19 @@ ChartBase.ATTRS = {
      * @type Array
      */
     seriesKeys: {
-        getter: function()
-        {
-            return this._seriesKeys;
-        },
+        lazyAdd: false,
 
         setter: function(val)
         {
-            this._seriesKeysExplicitlySet = true;
-            this._seriesKeys = val;
+            var opts = arguments[2];
+            if(!val || (opts && opts.src && opts.src === "internal"))
+            {
+                this._seriesKeysExplicitlySet = false;
+            }
+            else
+            {
+                this._seriesKeysExplicitlySet = true;
+            }
             return val;
         }
     },
@@ -253,6 +257,22 @@ ChartBase.ATTRS = {
 };
 
 ChartBase.prototype = {
+
+    /**
+     * Utility method to determine if `seriesKeys` was explicitly provided
+     * (for example during construction, or set by the user), as opposed to
+     * being derived from the dataProvider for example.
+     *
+     * @method _wereSeriesKeysExplicitlySet
+     * @private
+     * @return boolean true if the `seriesKeys` attribute was explicitly set.
+     */
+    _wereSeriesKeysExplicitlySet : function()
+    {
+        var seriesKeys = this.get("seriesKeys");
+        return seriesKeys && this._seriesKeysExplicitlySet;
+    },
+
     /**
      * Handles groupMarkers change event.
      *

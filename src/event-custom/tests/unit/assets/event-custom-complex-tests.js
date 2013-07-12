@@ -3,6 +3,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
     var suite = new Y.Test.Suite("Custom Event: Complex");
 
     suite.add(new Y.Test.Case({
+
         name: "Custom Event Complex",
 
         _should: {
@@ -584,6 +585,114 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.Assert.areEqual(1, count);
         },
 
+        testFireArgsWithFacade : function() {
+
+            var o = new Y.EventTarget({emitFacade:true}),
+                args,
+                facade,
+                fired = [];
+
+            o.after("foo", function() {
+                fired.push(Y.Array(arguments));
+            });
+
+            o.fire("foo");
+            o.fire("foo", {a:1, b:2});
+            o.fire("foo", {a:10, b:20}, {c:30});
+            o.fire("foo", {a:100, b:200}, {c:300}, {d:400});
+
+            args = fired[0];
+            facade = args[0];
+
+            Y.Assert.areEqual(1, args.length);
+            Y.Assert.isTrue(facade instanceof Y.EventFacade);
+            Y.Assert.areEqual("foo", facade.type);
+            Y.Assert.areEqual(0, facade.details.length);
+
+            args = fired[1];
+            facade = args[0];
+
+            Y.Assert.areEqual(1, args.length);
+            Y.Assert.isTrue(facade instanceof Y.EventFacade);
+            Y.Assert.areEqual("foo", facade.type);
+            Y.Assert.areEqual(1, facade.details.length);
+            Y.ObjectAssert.areEqual({a:1, b:2}, facade.details[0]);
+            Y.Assert.areEqual(1, facade.a);
+            Y.Assert.areEqual(2, facade.b);
+
+            args = fired[2];
+            facade = args[0];
+
+            Y.Assert.areEqual(2, args.length);
+            Y.ObjectAssert.areEqual({c:30}, args[1]);
+
+            Y.Assert.isTrue(facade instanceof Y.EventFacade);
+            Y.Assert.areEqual("foo", facade.type);
+            Y.Assert.areEqual(2, facade.details.length);
+            Y.ObjectAssert.areEqual({a:10, b:20}, facade.details[0]);
+            Y.ObjectAssert.areEqual({c:30}, facade.details[1]);
+            Y.Assert.areEqual(10, facade.a);
+            Y.Assert.areEqual(20, facade.b);
+            Y.Assert.isFalse("c" in facade);
+
+            args = fired[3];
+            facade = args[0];
+
+            Y.Assert.areEqual(3, args.length);
+            Y.ObjectAssert.areEqual({c:300}, args[1]);
+            Y.ObjectAssert.areEqual({d:400}, args[2]);
+
+            Y.Assert.isTrue(facade instanceof Y.EventFacade);
+            Y.Assert.areEqual("foo", facade.type);
+            Y.Assert.areEqual(3, facade.details.length);
+            Y.ObjectAssert.areEqual({a:100, b:200}, facade.details[0]);
+            Y.ObjectAssert.areEqual({c:300}, facade.details[1]);
+            Y.ObjectAssert.areEqual({d:400}, facade.details[2]);
+            Y.Assert.areEqual(100, facade.a);
+            Y.Assert.areEqual(200, facade.b);
+            Y.Assert.isFalse("c" in facade);
+            Y.Assert.isFalse("d" in facade);
+        },
+
+        testFireArgsWithoutFacade : function() {
+
+            var o = new Y.EventTarget({emitFacade:false}),
+                args,
+                facade,
+                fired = [];
+
+            o.after("foo", function() {
+                fired.push(Y.Array(arguments));
+            });
+
+            o.fire("foo");
+            o.fire("foo", {a:1, b:2});
+            o.fire("foo", {a:10, b:20}, {c:30});
+            o.fire("foo", {a:100, b:200}, {c:300}, {d:400});
+
+            args = fired[0];
+
+            Y.Assert.areEqual(0, args.length);
+
+            args = fired[1];
+
+            Y.Assert.areEqual(1, args.length);
+            Y.ObjectAssert.areEqual({a:1, b:2}, args[0]);
+
+            args = fired[2];
+
+            Y.Assert.areEqual(2, args.length);
+            Y.ObjectAssert.areEqual({a:10, b:20}, args[0]);
+            Y.ObjectAssert.areEqual({c:30}, args[1]);
+
+            args = fired[3];
+
+            Y.Assert.areEqual(3, args.length);
+            Y.ObjectAssert.areEqual({a:100, b:200}, args[0]);
+            Y.ObjectAssert.areEqual({c:300}, args[1]);
+            Y.ObjectAssert.areEqual({d:400}, args[2]);
+        },
+
         testBroadcast: function() {
             var o = new Y.EventTarget(), s1, s2, s3, s4;
 
@@ -642,43 +751,6 @@ YUI.add("event-custom-complex-tests", function(Y) {
 
             Y.Global.detachAll();
 
-        },
-
-        test_fire_once: function() {
-
-            var notified = 0,
-                test = this;
-
-            Y.publish('fireonce', {
-                fireOnce: true
-            });
-
-            Y.fire('fireonce', 'foo', 'bar');
-
-            Y.on('fireonce', function(arg1, arg2) {
-                notified++;
-                Y.Assert.areEqual('foo', arg1, 'arg1 not correct for lazy fireOnce listener');
-                Y.Assert.areEqual('bar', arg2, 'arg2 not correct for lazy fireOnce listener');
-            });
-
-            Y.fire('fireonce', 'foo2', 'bar2');
-            Y.fire('fireonce', 'foo3', 'bar3');
-
-            test.global_notified = false;
-
-            Y.on('fireonce', function(arg1, arg2) {
-                Y.log('the notification is asynchronous, so I need to wait for this test');
-                Y.Assert.areEqual(1, notified, 'listener notified more than once.');
-                test.global_notified = true;
-            });
-
-            // it is no longer asynchronous
-            // Y.Assert.isFalse(global_notified, 'notification was not asynchronous');
-
-        },
-
-        test_async_fireonce: function() {
-            Y.Assert.isTrue(this.global_notified, 'asynchronous notification did not seem to work.');
         },
 
         // SRC, ON
@@ -958,6 +1030,37 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.fire('bar', 'bar');
 
             Y.Assert.areEqual('onfooafterfooonbarafterbar', result);
+        },
+
+        testFireWithFacadeAndNull : function() {
+            var a = new Y.EventTarget({emitFacade:true}),
+                args;
+
+            a.after("foo", function() {
+                args = Y.Array(arguments);
+            });
+
+            a.fire("foo", null);
+
+            Y.Assert.areEqual(2, args.length);
+
+            Y.Assert.isTrue(args[0] instanceof Y.EventFacade);
+            Y.Assert.isNull(args[1]);
+
+            Y.Assert.areEqual(1, args[0].details.length);
+            Y.Assert.isNull(args[0].details[0]);
+
+            a.fire("foo", null, 10);
+
+            Y.Assert.areEqual(3, args.length);
+
+            Y.Assert.isTrue(args[0] instanceof Y.EventFacade);
+            Y.Assert.isNull(args[1]);
+            Y.Assert.areEqual(10, args[2]);
+
+            Y.Assert.areEqual(2, args[0].details.length);
+            Y.Assert.isNull(args[0].details[0]);
+            Y.Assert.areEqual(10, args[0].details[1]);
         },
 
         testDefaultFnWithoutSubscribers : function() {
@@ -1340,6 +1443,269 @@ YUI.add("event-custom-complex-tests", function(Y) {
             });
 
             target.fire('x:foo');
+        }
+
+    }));
+
+    suite.add(new Y.Test.Case({
+
+        name: "Fire Once",
+
+        test_fire_once_with_initial_listeners: function() {
+
+            var notified = [],
+                test = this,
+                et = new Y.EventTarget({emitFacade:true});
+
+            et.publish('fireonce', {
+                fireOnce: true
+            });
+
+            et.on('fireonce', function(e, arg) {
+
+                notified.push("before");
+
+                Y.Assert.isTrue(e instanceof Y.EventFacade);
+                Y.Assert.areEqual('bar', e.foo, 'first arg not correct for early fireOnce listener');
+                Y.Assert.areSame(et, e.target);
+                Y.Assert.areEqual('baz', arg, 'second arg not correct for early fireOnce listener');
+            });
+
+            et.fire('fireonce', {foo:'bar'}, 'baz');
+
+            et.on('fireonce', function(e, arg) {
+
+                notified.push("after");
+
+                Y.Assert.isTrue(e instanceof Y.EventFacade);
+                Y.Assert.areEqual('bar', e.foo, 'first arg not correct for late fireOnce listener');
+                Y.Assert.areSame(et, e.target);
+                Y.Assert.areEqual('baz', arg, 'second arg not correct for late fireOnce listener');
+            });
+
+            Y.ArrayAssert.itemsAreEqual(["before", "after"], notified);
+
+        },
+
+        test_fire_once_without_initial_listeners: function() {
+
+            var notified = 0,
+                test = this,
+                et = new Y.EventTarget({emitFacade:true});
+
+            et.publish('fireonce', {
+                fireOnce: true
+            });
+
+            et.fire('fireonce', {foo:'bar'}, 'baz');
+
+            et.on('fireonce', function(e, arg) {
+
+                notified++;
+
+                Y.Assert.isTrue(e instanceof Y.EventFacade);
+                Y.Assert.areEqual('bar', e.foo);
+                Y.Assert.areSame(et, e.target);
+                Y.Assert.areEqual('baz', arg);
+            });
+
+            Y.Assert.areEqual(1, notified);
+        },
+
+        test_fire_once_with_initial_listeners_and_no_args: function() {
+
+            var notified = [],
+                test = this,
+                et = new Y.EventTarget({emitFacade:true});
+
+            et.publish('fireonce', {
+                fireOnce: true
+            });
+
+            et.on('fireonce', function(e) {
+
+                notified.push("before");
+
+                Y.Assert.areEqual(1, arguments.length, 'arg length not correct for early listener');
+                Y.Assert.isTrue(e instanceof Y.EventFacade, 'facade not found for early listener');
+                Y.Assert.areSame(et, e.target, 'target not correct for early listener');
+            });
+
+            et.fire('fireonce');
+
+            et.on('fireonce', function(e) {
+
+                notified.push("after");
+
+                Y.Assert.areEqual(1, arguments.length, 'arg length not correct for late listener');
+                Y.Assert.isTrue(e instanceof Y.EventFacade, 'facade not found for late listener');
+                Y.Assert.areSame(et, e.target, 'target not correct for late listener');
+            });
+
+            Y.ArrayAssert.itemsAreEqual(["before", "after"], notified);
+        },
+
+        test_fire_once_without_initial_listeners_and_no_args: function() {
+
+            var notified = 0,
+                test = this,
+                et = new Y.EventTarget({emitFacade:true});
+
+            et.publish('fireonce', {
+                fireOnce: true
+            });
+
+            et.fire('fireonce');
+
+            et.on('fireonce', function(e) {
+
+                notified++;
+
+                Y.Assert.areEqual(1, arguments.length);
+                Y.Assert.isTrue(e instanceof Y.EventFacade);
+                Y.Assert.areSame(et, e.target);
+            });
+
+            Y.Assert.areEqual(1, notified);
+        },
+
+        test_fire_once_no_facade_with_initial_listeners: function() {
+
+            var notified = [],
+                test = this,
+                et = new Y.EventTarget();
+
+            et.publish('fireonce', {
+                fireOnce: true
+            });
+
+            et.on('fireonce', function(arg1, arg2) {
+
+                notified.push("before");
+
+                Y.Assert.areEqual(2, arguments.length, 'arg length not correct for early listener');
+                Y.ObjectAssert.areEqual({foo:'bar'}, arg1, 'first arg not correct for early listener');
+                Y.Assert.areEqual('baz', arg2, 'second arg not correct for early listener');
+            });
+
+            et.fire('fireonce', {foo:'bar'}, 'baz');
+
+            et.on('fireonce', function(arg1, arg2) {
+
+                notified.push("after");
+
+                Y.Assert.areEqual(2, arguments.length, 'arg length not correct for late listener');
+                Y.ObjectAssert.areEqual({foo:'bar'}, arg1, 'first arg not correct for late listener');
+                Y.Assert.areEqual('baz', arg2, 'second arg not correct for late listener');
+            });
+
+            Y.ArrayAssert.itemsAreEqual(["before", "after"], notified);
+
+        },
+
+        test_fire_once_no_facade_without_initial_listeners: function() {
+
+            var notified = 0,
+                test = this,
+                et = new Y.EventTarget();
+
+            et.publish('fireonce', {
+                fireOnce: true
+            });
+
+            et.fire('fireonce', {foo:'bar'}, 'baz');
+
+            et.on('fireonce', function(arg1, arg2) {
+
+                notified++;
+
+                Y.Assert.areEqual(2, arguments.length);
+                Y.ObjectAssert.areEqual({foo:'bar'}, arg1);
+                Y.Assert.areEqual('baz', arg2);
+            });
+
+            Y.Assert.areEqual(1, notified);
+        },
+
+        test_fire_once_no_facade_with_initial_listeners_and_no_args: function() {
+
+            var notified = [],
+                test = this,
+                et = new Y.EventTarget();
+
+            et.publish('fireonce', {
+                fireOnce: true
+            });
+
+            et.on('fireonce', function() {
+                notified.push("before");
+                Y.Assert.areEqual(0, arguments.length, 'arg length not correct for early listener');
+            });
+
+            et.fire('fireonce');
+
+            et.on('fireonce', function() {
+                notified.push("after");
+                Y.Assert.areEqual(0, arguments.length, 'arg length not correct for late listener');
+            });
+
+            Y.ArrayAssert.itemsAreEqual(["before", "after"], notified);
+        },
+
+        test_fire_once_no_facade_without_initial_listeners_and_no_args: function() {
+
+            var notified = 0,
+                test = this,
+                et = new Y.EventTarget();
+
+            et.publish('fireonce', {
+                fireOnce: true
+            });
+
+            et.fire('fireonce');
+
+            et.on('fireonce', function() {
+                notified++;
+                Y.Assert.areEqual(0, arguments.length);
+            });
+
+            Y.Assert.areEqual(1, notified);
+        },
+
+        test_Y_fire_once: function() {
+
+            var notified = 0,
+                test = this;
+
+            Y.publish('fireonce', {
+                fireOnce: true
+            });
+
+            Y.fire('fireonce', 'foo', 'bar');
+
+            Y.on('fireonce', function(arg1, arg2) {
+                notified++;
+                Y.Assert.areEqual('foo', arg1, 'arg1 not correct for lazy fireOnce listener');
+                Y.Assert.areEqual('bar', arg2, 'arg2 not correct for lazy fireOnce listener');
+            });
+
+            Y.fire('fireonce', 'foo2', 'bar2');
+            Y.fire('fireonce', 'foo3', 'bar3');
+
+            test.global_notified = false;
+
+            Y.on('fireonce', function(arg1, arg2) {
+                Y.log('the notification is asynchronous, so I need to wait for this test');
+                Y.Assert.areEqual(1, notified, 'listener notified more than once.');
+                test.global_notified = true;
+            });
+
+            // it is no longer asynchronous
+            // Y.Assert.isFalse(global_notified, 'notification was not asynchronous');
+        },
+
+        test_async_fireonce: function() {
+            Y.Assert.isTrue(this.global_notified, 'asynchronous notification did not seem to work.');
         }
 
     }));

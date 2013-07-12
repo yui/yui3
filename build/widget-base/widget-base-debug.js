@@ -407,10 +407,6 @@ Y.extend(Widget, Y.Base, {
          * @preventable false
          * @param {EventFacade} e The Event Facade
          */
-
-        if (this._applyParser) {
-            this._applyParser(config);
-        }
     },
 
     /**
