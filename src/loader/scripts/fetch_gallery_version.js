@@ -4,6 +4,7 @@
 var fs = require('fs'),
     http = require('http'),
     path = require('path'),
+    exists = fs.existsSync || path.existsSync,
     mod;
 
 http.get({
@@ -29,7 +30,7 @@ http.get({
 
 var patchJSON = function(tag) {
     var jsonFile = path.join(__dirname, '../', 'build.json');
-    if (fs.existsSync(jsonFile)) {
+    if (exists(jsonFile)) {
         console.log('patching build.json');
         var json = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
         json.builds['loader-base'].replace['@GALLERY@'] = tag;
@@ -39,7 +40,7 @@ var patchJSON = function(tag) {
 
 var patch = function(tag) {
     var prop = path.join(__dirname, '../', 'loader.meta.properties');
-    if (fs.existsSync(prop)) {
+    if (exists(prop)) {
         console.log('patching loader.meta.properties');
         var str = fs.readFileSync(prop, 'utf8'),
         nStr = [];
