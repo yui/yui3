@@ -111,6 +111,16 @@
             "useModules": ["datatable"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-celleditor",
+            "displayName": "Cell editing",
+            "modules": ["datatable"],
+            "description": "Cell editing.",
+            "useModules": ["datatable"],
+
+            "hideTableOfContents": true
         }
 
     ]

@@ -3294,8 +3294,14 @@ YUITest.ObjectAssert = {
      */    
     ownsNoKeys : function (object, message) {
         YUITest.Assert._increment();  
-        var count = YUITest.Object.keys(object).length;
-
+        var count = 0,
+            name;
+        for (name in object){
+            if (object.hasOwnProperty(name)){
+                count++;
+            }
+        }
+        
         if (count !== 0){
             YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Object owns " + count + " properties but should own none."));        
         }

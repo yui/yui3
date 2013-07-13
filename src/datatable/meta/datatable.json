@@ -62,7 +62,7 @@
             },
             "datatable-column-widths": {
                 "requires": [
-                    "datatable-base"
+                "datatable-base"
                 ]
             },
             "datatable-message": {
@@ -82,7 +82,7 @@
                     "datatable-base",
                     "plugin",
                     "datasource-local"
-                ]
+                    ]
             },
             "datatable-sort": {
                 "requires": [
@@ -91,20 +91,57 @@
                 "lang": ["en", "fr", "es", "hu"],
                 "skinnable": true
             },
-			"datatable-scroll": {
-				"requires": [
-					"datatable-base",
-					"datatable-column-widths",
-					"dom-screen"
-				],
+            "datatable-scroll": {
+                "requires": [
+                    "datatable-base",
+                    "datatable-column-widths",
+                    "dom-screen"
+                ],
                 "skinnable": true
-			},
+            },
             "datatable-formatters": {
                 "requires": [
                     "datatable-body",
                     "datatype-number-format",
                     "datatype-date-format",
                     "escape"
+                ]
+            },
+            "datatable-editable": {
+                "skinnable": "true",
+                "lang": ["en", "es"],
+                "requires": [
+                    "datatable-base",
+                    "datatype",
+                    "node-screen",
+                    "datatable-keynav",
+                    "event-resize",
+                    "event-outside",
+                    "overlay",
+                    "dd-plugin"
+                ]
+            },
+            "datatable-celleditors": {
+                "skinnable": "true",
+                "requires": [
+                    "datatable-editable",
+                    "view",
+                    "base-build",
+                    "event-mouseenter",
+                    "cssbutton",
+                    "event-outside"
+                ]
+            },
+            "datatable-celleditor-keyfiltering": {
+               "requires": [
+                   "datatable-editable",
+                   "event-valuechange",
+                   "base-build"
+               ]
+            },
+            "datatable-keynav": {
+                "requires": [
+                    "yui-base", "datatable-base", "base-base", "oop"
                 ]
             },
             "datatable-paginator": {

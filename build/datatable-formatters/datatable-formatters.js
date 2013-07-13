@@ -4,7 +4,6 @@ YUI.add('datatable-formatters', function (Y, NAME) {
 Adds predefined cell formatters to `Y.DataTable.BodyView`.
 
 @module datatable-formatters
-@since 3.8.0
 **/
 var Lang = Y.Lang,
     isValue = Lang.isValue,
@@ -34,7 +33,6 @@ var Lang = Y.Lang,
     so that the actual formatting function doesn't need to repeat it.
 
     @class DataTable.BodyView.Formatters
-    @since 3.8.0
     **/
     Formatters = {
 

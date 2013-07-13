@@ -61,6 +61,29 @@
                 "formatters.js"
             ]
         },
+        "datatable-editable": {
+            "jsfiles":[
+                "editable.js",
+                "celleditor-base.js",
+                "celleditor-overlay.js",
+                "roweditor.js"
+            ]
+        },
+        "datatable-celleditors": {
+            "jsfiles": [
+                "celleditors.js"
+            ]
+        },
+        "datatable-celleditor-keyfiltering": {
+            "jsfiles": [
+                "celleditor-keyfiltering.js"
+            ]
+        },
+        "datatable-keynav": {
+            "jsfiles": [
+                "keynav.js"
+            ]
+        },
         "datatable-paginator": {
             "jsfiles": [
                 "paginator.js"

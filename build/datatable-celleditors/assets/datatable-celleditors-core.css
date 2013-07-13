@@ -1,0 +1,14 @@
+.yui3-datatable-celleditor {
+    z-index: 999;
+    width: 10px;
+    position: relative;
+}
+.yui3-celleditor-overlay .yui3-datatable-celleditor {
+    z-index: auto;
+    width: auto;
+    position: static;
+}
+
+.yui3-celleditor-overlay-hidden {
+    display: none;
+}

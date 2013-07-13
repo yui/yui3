@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+    <title>datatable-celleditor-popup</title>
+    <script src="/build/yui/yui.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="dtable"></div>
+<div id="logger"></div>
+
+<script src="assets/datatable-celleditor-popup-tests.js"></script>
+
+<script>
+YUI({
+    coverage: ['datatable-celleditor-popup'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    // The following should go away once loader learns about them:
+    groups: {
+        builds: {
+            base: '../../../build/',
+            modules: {
+                'datatable-editable': {
+                    path: 'datatable-editable/datatable-editable-min.js',
+                    requires:[
+                        "datatable-base",
+                        "datatype",
+                        "node-screen",
+                        "datatable-keynav",
+                        "event-resize",
+                        "event-outside"
+                    ],
+                    skinnable:true,
+                    lang: ['es', 'en']
+                },
+                'datatable-celleditor-inline': {
+                    path: 'datatable-celleditor-inline/datatable-celleditor-inline-min.js',
+                    requires:[
+                        "datatable-editable",
+                        "view",
+                        "base-build",
+                        "event-mouseenter"
+                    ],
+                    skinnable:true
+                },
+                'datatable-celleditor-popup': {
+                    path: 'datatable-celleditor-popup/datatable-celleditor-popup-min.js',
+                    requires:[
+                        "datatable-editable",
+                        "base-build",
+                        "view",
+                        "cssbutton",
+                        "event-outside",
+                        "overlay",
+                        "dd-plugin",
+                        "template"
+                    ],
+                    skinnable:true
+                },
+                'datatable-celleditor-keyfiltering': {
+                    path: 'datatable-celleditor-keyfiltering/datatable-celleditor-keyfiltering-min.js',
+                    requires: [
+                       "datatable-editable",
+                       "event-valuechange",
+                       "base-build"
+                   ]
+                },
+                "datatable-keynav": {
+                    path: 'datatable-keynav/datatable-keynav-min.js',
+                    "requires": [
+                        "yui-base", "datatable-base", "base-base", "oop"
+                    ]
+                }
+            }
+        }
+    }
+}).use( 'test-console', 'test', 'datatable-celleditor-popup-tests',  "node-event-simulate",
+        "datatable-editable",  "datatable", "template",
+        "datatable-celleditor-popup",
+        function(Y) {
+
+    (new Y.Test.Console()).render('#logger');
+
+    Y.Test.Runner.setName('datatable-celleditor-popup');
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

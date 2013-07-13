@@ -1,0 +1,5 @@
+.yui3-datatable-celleditor {
+    z-index: 999;
+    width: 10px;
+    position: relative;
+}

@@ -52,64 +52,23 @@ YUI.add('base-core', function (Y, NAME) {
      * configured through the static <a href="#property_BaseCore.ATTRS">ATTRS</a>
      * property for each class in the hierarchy will be initialized by BaseCore.
      *
+     * <p>
+     * **NOTE:** Prior to version 3.11.0, ATTRS would get added a class at a time. That is,
+     * BaseCore would loop through each class in the hierarchy, and add the class' ATTRS, and
+     * then call it's initializer, and move on to the subclass' ATTRS and initializer. As of
+     * 3.11.0, ATTRS from all classes in the hierarchy are added in one `addAttrs` call before
+     * any initializers are called. This fixes subtle edge-case issues with subclass ATTRS overriding
+     * superclass `setter`, `getter` or `valueFn` definitions and being unable to get/set attributes
+     * defined by the subclass. This order of operation change may impact `setter`, `getter` or `valueFn`
+     * code which expects a superclass' initializer to have run. This is expected to be rare, but to support
+     * it, Base supports a `_preAddAttrs()`, method hook (same signature as `addAttrs`). Components can
+     * implement this method on their prototype for edge cases which do require finer control over
+     * the order in which attributes are added (see widget-htmlparser).
+     * </p>
+     *
      * Classes which require attribute support, but don't intend to use/expose attribute
      * change events can extend BaseCore instead of Base for optimal kweight and
      * runtime performance.
-     *
-     * **3.11.0 BACK COMPAT NOTE FOR COMPONENT DEVELOPERS**
-     *
-     * Prior to version 3.11.0, ATTRS would get added a class at a time. That is:
-     *
-     * <pre>
-     *    for each (class in the hierarchy) {
-     *       Call the class Extension constructors.
-     *
-     *       Add the class ATTRS.
-     *
-     *       Call the class initializer
-     *       Call the class Extension initializers.
-     *    }
-     * </pre>
-     *
-     * As of 3.11.0, ATTRS from all classes in the hierarchy are added in one `addAttrs` call
-     * before **any** initializers are called. That is, the flow becomes:
-     *
-     * <pre>
-     *    for each (class in the hierarchy) {
-     *       Call the class Extension constructors.
-     *    }
-     *
-     *    Add ATTRS for all classes
-     *
-     *    for each (class in the hierarchy) {
-     *       Call the class initializer.
-     *       Call the class Extension initializers.
-     *    }
-     * </pre>
-     *
-     * Adding all ATTRS at once fixes subtle edge-case issues with subclass ATTRS overriding
-     * superclass `setter`, `getter` or `valueFn` definitions and being unable to get/set attributes
-     * defined by the subclass. It also leaves us with a cleaner order of operation flow moving
-     * forward.
-     *
-     * However, it may require component developers to upgrade their components, for the following
-     * scenarios:
-     *
-     * 1. It impacts components which may have `setter`, `getter` or `valueFn` code which
-     * expects a superclass' initializer to have run.
-     *
-     * This is expected to be rare, but to support it, Base now supports a `_preAddAttrs()`, method
-     * hook (same signature as `addAttrs`). Components can implement this method on their prototype
-     * for edge cases which do require finer control over the order in which attributes are added
-     * (see widget-htmlparser for example).
-     *
-     * 2. Extension developers may need to move code from Extension constructors to `initializer`s
-     *
-     * Older extensions, which were written before `initializer` support was added, had a lot of
-     * initialization code in their constructors. For example, code which acccessed superclass
-     * attributes. With the new flow this code would not be able to see attributes. The recommendation
-     * is to move this initialization code to an `initializer` on the Extension, which was the
-     * recommendation for anything created after `initializer` support for Extensions was added.
      *
      * @class BaseCore
      * @constructor
@@ -706,72 +665,60 @@ YUI.add('base-core', function (Y, NAME) {
          * @private
          */
         _initHierarchy : function(userVals) {
-
             var lazy = this._lazyAddAttrs,
                 constr,
                 constrProto,
-                i,
-                l,
                 ci,
                 ei,
                 el,
-                ext,
                 extProto,
                 exts,
                 instanceAttrs,
-                initializers = [],
                 classes = this._getClasses(),
                 attrCfgs = this._getAttrCfgs(),
                 cl = classes.length - 1;
 
-            // Constructors
             for (ci = cl; ci >= 0; ci--) {
 
                 constr = classes[ci];
                 constrProto = constr.prototype;
                 exts = constr._yuibuild && constr._yuibuild.exts;
 
+                if (exts) {
+                    for (ei = 0, el = exts.length; ei < el; ei++) {
+                        exts[ei].apply(this, arguments);
+                    }
+                }
+
+                if (ci === cl) {
+
+                    instanceAttrs = this._getInstanceAttrCfgs(attrCfgs);
+
+                    if (this._preAddAttrs) {
+                        this._preAddAttrs(instanceAttrs, userVals, lazy);
+                    }
+
+                    this.addAttrs(instanceAttrs, userVals, lazy);
+
+                    if (this._allowAdHocAttrs) {
+                        this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
+                    }
+                }
+
                 // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
                 // referencing string literals). Not using it in apply, again, for performance "." is faster.
-
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
-                    // Store initializer while we're here and looping
-                    initializers[initializers.length] = constrProto.initializer;
+                    constrProto.initializer.apply(this, arguments);
                 }
 
                 if (exts) {
-                    for (ei = 0, el = exts.length; ei < el; ei++) {
-
-                        ext = exts[ei];
-
-                        // Ext Constructor
-                        ext.apply(this, arguments);
-
-                        extProto = ext.prototype;
+                    for (ei = 0; ei < el; ei++) {
+                        extProto = exts[ei].prototype;
                         if (extProto.hasOwnProperty(INITIALIZER)) {
-                            // Store initializer while we're here and looping
-                            initializers[initializers.length] = extProto.initializer;
+                            extProto.initializer.apply(this, arguments);
                         }
                     }
                 }
-            }
-
-            // ATTRS
-            instanceAttrs = this._getInstanceAttrCfgs(attrCfgs);
-
-            if (this._preAddAttrs) {
-                this._preAddAttrs(instanceAttrs, userVals, lazy);
-            }
-
-            if (this._allowAdHocAttrs) {
-                this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
-            }
-
-            this.addAttrs(instanceAttrs, userVals, lazy);
-
-            // Initializers
-            for (i = 0, l = initializers.length; i < l; i++) {
-                initializers[i].apply(this, arguments);
             }
         },
 

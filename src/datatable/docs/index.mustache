@@ -1662,6 +1662,237 @@ var table = new Y.DataTable({
 }).render("#scroll-example");
 });
 </script>
+<h3 id="cellediting">Cell Editing</h3>
+
+<p>
+    Editing of cell contents can be enabled by including either
+    of two cell-editing modules:  <ul>
+        <li>The `datatable-celleditor-inline` module
+        provides an editing box that overlaps the cell being edited so the user
+        perceives it as editing in the table cell itself.
+
+        It includes the following  editors:
+        <ul>
+            <li>inline (default)</li>
+            <li>inlineNumber</li>
+            <li>inlineDate</li>
+            <li>inlineAC (text with auto-complete)</li>
+        </ul></li>
+        <li>   The `datatable-celleditor-popup`
+        module creates an overlay aligned with the cell being edited, but with a potentially
+        larger area, allowing for richer input widgets.
+
+        It includes the following  editors:
+        <ul>
+            <li>text (default)</li>
+            <li>textarea</li>
+            <li>checkbox</li>
+            <li>radio</li>
+            <li>dropdown</li>
+            <li>autocomplete</li>
+            <li>calendar</li>
+            <li>date</li>
+            <li>number</li>
+        </ul></li>
+
+    </ul>
+    Neither of these modules are included in the `datatable` rollup module,
+    so they <strong>must</strong> be loaded explicitly.
+</p>
+
+<h4 id="celleditor-config">Cell editor configuration</h4>
+
+<p>
+    After including either of the cell-editing modules, editing is enabled on each individual
+    datatable by setting the `editable` attribute in the datatable configuration.
+    All cells in the table become editable unless explicitly disabled in a specific column
+    configuration by setting its `editable` configuration attribute to `false`.
+</p>
+<p>
+    The various cell editors can be specified by setting the `editor` property
+    for each column to any of the named editors listed above.
+    If no editor is specified then the default editor is used
+    which is a plain input box either in-line or in a popup.
+    The default editor can be changed by setting
+    the `defaultEditor` datatable attribute to any of the editor names provided.
+    The editor will open with the action specified in the `editorOpenAction`
+    which defaults to `dblclick`.
+</p>
+```
+var table = new Y.DataTable({
+    columns: [
+        {key: 'id', editable: false},
+        {key: 'name'},
+        {key: 'description', editor: 'textarea'}
+    ],
+    data: [ ... ],
+    editable: true,
+    editorOpenAction: 'click'
+}).render('#ce');
+```
+<p>
+In the datatable above, editing has been globally enabled except for the column `id`
+where it has been explicitly disabled.  The `description` column will use the
+`textarea` pop-up cell editor while the `name` column will use the default,
+single-line input box.  The editor will open by simply clicking on the cell.
+</p>
+<p>
+Further options can be specified in any of the columns as properties in the
+`editorConfig` object.
+</p>
+```
+{key: 'date_of_claim', editor: 'inlineDate', editorConfig: {dateformat: '%Y-%m-%d'}}
+```
+<p>
+Several cell editors use lookup tables that translate values as stored internally
+to texts to be shown to the user.  Since such lookup tables would most likely be
+the same as used by the cell formatter, the same table can be shared.
+Thus, if a `lookupTable` column attribute is provided for the cell formatter,
+the same table will be used by the editor.
+</p>
+```
+{
+    key: 'degreeProgram',
+    formatter: "lookup",
+    lookupTable: [
+        {value: 1, text: "Bachelor of Science"},
+        {value: 2, text: "Master of Science"},
+        {value: 3, text: "PhD"}
+    ],
+    editor: "dropdown"
+}
+```
+<p>
+The formatter allows two formats for the `lookupTable`,
+an object map and an array of value/text sets.
+Only the latter format can be shared by both the formatter and the editor,
+since the editor needs to know the order of the options to be displayed.
+If different lookup tables are needed for the formatter and editor,
+a separate one can be provided in the `editorConfig` attribute.
+</p>
+
+<p>
+For editors using complex components, extra configuration options can be
+provided that are passed on to those components, such as `overlayConfig`,
+`autocompleteConfig` or `calendarConfig`.  For example, the popup cell editors
+don't use the header section.  A title can easily be added:
+</p>
+```
+{
+    key:    "dob",
+    editor: "calendar",
+    editorConfig: {
+         buttons: [{cancel: true}],
+         overlayConfig: {
+            headerContent: "Date of Birth"
+         },
+         calendarConfig: {
+            showNextMonth: true,
+            showPreviousMonth: true
+         }
+    }
+}
+```
+<p>
+Popup cell editors are provided with a standard set of buttons to save or close
+the editor.  They can be overridden by the `buttons` attribute as shown in the
+example above.  The calendar editor has the standard `Save` and `Cancel` buttons
+(actually, the texts are taken from the current locale). In the example above,
+the buttons have been redefined and only the cancel button is left since saving is
+automatic when a date is clicked.
+</p>
+
+<p>
+The `buttons` attribute is an array (since the order of the buttons is important)
+containing properties for each of the buttons:
+</p>
+<ul>
+    <li>`label`: The label shown to the user.</li>
+    <li>`className`: An optional css class name to assign to the button.</li>
+    <li>`save`: A non-null value indicates this is the save button,
+        equivalent to pressing the `Enter` key.
+        It will be highlighted accordingly.
+        If no `label` was explicitly assigned,
+        'Save' or its localized equivalent will be shown</li>
+    <li>`cancel`: A non-null value indicates this is cancel button,
+        equivalent to pressing the `Esc` key.</li>
+        If no `label` was explicitly assigned,
+        'Cancel' or its localized equivalent will be shown</li>
+    <li>`action`: An action to be associated with this button.
+        No `action` is required for `save` or `cancel` buttons.</li>
+</ul>
+<p>
+The `action` property can be a string or a function.
+If a function, it will be called when the button is clicked.  The function will
+receive the button configuration entry as its first argument and an object containing
+information about the cell being edited.
+If `action` is a string, an event will be fired using that string as its name.  The event
+can be listened to by subscribing from the datatable using
+<code>"celleditor:<i>&lt;action string&gt;</i>"</code> as the event type
+and it will receive the button configuration and the cell info object.
+</p>
+<p>
+The cell information object contains:
+<ul>
+    <li>value {Any} The value from the input element or widget.
+        Usually a string, it might be other types for complex widgets such as Calendar.</li>
+    <li>td {Node} Reference to the table cell.</li>
+    <li>record {Model} Reference to the model containing the underlying data.</li>
+    <li>colKey {String} Key of the column for the cell to be edited.</li>
+    <li>initialValue {Any} The underlying value of the cell to be edited.</li>
+</ul>
+
+</p>
+<p>
+See the <a href="{{apiDocs}}/classes/DataTable.Editors.html">API docs</a> of the
+cell editors themselves for other applicable options.
+</p>
+
+<h4 id="celleditor-show-save">Showing and Saving</h4>
+
+<p>The cell editors read the values from the underlying model, not from the displayed
+values. All cell editors have a `formatter` attribute which, if not null, should be a function
+to format the raw value into the one the user edits.  A separate formatter
+from the regular formatter used for displaying the cell is provided because
+the value as displayed by the cell formatter might be decorated in ways that
+might make editing harder.
+</p>
+
+<p>
+The edited values will be saved when the `Enter` key is pressed, except in some
+editors such as `textarea` where a `Save` button is explicitly provided.
+The `saveOnEnterKey` attribute controls the effect of the `Enter` key.
+The `Esc` key will always cancel editing.
+</p>
+<p>
+Validation will be applied to the value before being saved.  If the `validator`
+attribute is set to a Regular Expression, the value will be first checked against it.
+The value is then passed to the function set in the `parser` attribute to reverse
+the effect of the `formatter` function.   The `parser` function may do further
+validation on the value, returning `Y.Attribute.INVALID_VALUE` to reject it.
+</p>
+<p>
+If a value is rejected the editor will not close, allowing the user to correct
+the entry or press the `Esc` key to cancel.  A CSS class name is applied to the
+container for the cell editor so that visual clue can be provided to the user.
+</p>
+
+
+<h4 id="celleditor-navigation">Navigation</h4>
+
+<p>
+The editor provides keyboard navigation in between the editing cells by using the
+arrow keys along with the `ctrl` key.  It will also move right and left by using the
+`tab` and shift-`tab` (backtab) keys.  When reaching any edge, navigation will
+continue on the first cell on the opposite edge when the `wrapAroundNavigation`
+attribute is set (the default).  Non-editable cells will be skipped over.
+</p>
+<p>
+Individual cell editors may disable navigation
+if these key combinations conflict with their operation by setting the `navigationEnabled`
+attribute to false.
+</p>
+
 
 <h2 id="events">DataTable Events</h2>
 

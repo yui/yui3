@@ -44,6 +44,11 @@ from those which already exist in its DOM.
 @since 3.4.0
 **/
 function WidgetButtons() {
+    // Require `Y.WidgetStdMod`.
+    if (!this._stdModNode) {
+        Y.error('WidgetStdMod must be added to a Widget before WidgetButtons.');
+    }
+
     // Has to be setup before the `initializer()`.
     this._buttonsHandles = {};
 }
@@ -251,11 +256,6 @@ WidgetButtons.prototype = {
     // -- Lifecycle Methods ----------------------------------------------------
 
     initializer: function () {
-        // Require `Y.WidgetStdMod`.
-        if (!this._stdModNode) {
-            Y.error('WidgetStdMod must be added to a Widget before WidgetButtons.');
-        }
-
         // Creates button mappings and sets the `defaultButton`.
         this._mapButtons(this.get('buttons'));
         this._updateDefaultButton();

@@ -1,0 +1,6 @@
+.yui3-datatable-col-editable {
+    cursor: pointer;
+}
+.yui3-roweditor-hidden {
+    display: none;
+} 

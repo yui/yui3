@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + '/',
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.07.03-22-52',
+            GALLERY_VERSION = 'gallery-2013.06.26-23-09',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -3555,19 +3555,22 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "type": "css"
     },
     "cssgrids-base": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "type": "css"
     },
     "cssgrids-responsive": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "requires": [
             "cssgrids",
@@ -3577,7 +3580,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids-units": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "requires": [
             "cssgrids-base"
@@ -3740,6 +3744,24 @@ Y.mix(YUI.Env[Y.version].modules, {
             "classnamemanager"
         ]
     },
+    "datatable-celleditor-keyfiltering": {
+        "requires": [
+            "datatable-editable",
+            "event-valuechange",
+            "base-build"
+        ]
+    },
+    "datatable-celleditors": {
+        "requires": [
+            "datatable-editable",
+            "view",
+            "base-build",
+            "event-mouseenter",
+            "cssbutton",
+            "event-outside"
+        ],
+        "skinnable": "true"
+    },
     "datatable-column-widths": {
         "requires": [
             "datatable-base"
@@ -3758,6 +3780,23 @@ Y.mix(YUI.Env[Y.version].modules, {
             "plugin",
             "datasource-local"
         ]
+    },
+    "datatable-editable": {
+        "lang": [
+            "en",
+            "es"
+        ],
+        "requires": [
+            "datatable-base",
+            "datatype",
+            "node-screen",
+            "datatable-keynav",
+            "event-resize",
+            "event-outside",
+            "overlay",
+            "dd-plugin"
+        ],
+        "skinnable": "true"
     },
     "datatable-foot": {
         "requires": [
@@ -3778,6 +3817,14 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datatable-core",
             "view",
             "classnamemanager"
+        ]
+    },
+    "datatable-keynav": {
+        "requires": [
+            "yui-base",
+            "datatable-base",
+            "base-base",
+            "oop"
         ]
     },
     "datatable-message": {
@@ -3957,7 +4004,11 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "datatype-number-format": {},
-    "datatype-number-parse": {},
+    "datatype-number-parse": {
+        "requires": [
+            "escape"
+        ]
+    },
     "datatype-xml": {
         "use": [
             "datatype-xml-parse",
@@ -5820,7 +5871,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'b48f48e0499b41d980deaefd4100d336';
+YUI.Env[Y.version].md5 = '845fc28626e8ab2ec56a43509279ad5b';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
