@@ -33,7 +33,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @property _eventHandles
      @type {Array}
-     @SINCE@
+     @since @SINCE@
      */
     _eventHandles: [],
 
@@ -42,7 +42,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @property containerTemplate
      @type {String}
      @default '<div class="yui3-datatable-paginator"/>'
-     @SINCE@
+     @since @SINCE@
      */
     containerTemplate: '<div class="{paginator}"/>',
 
@@ -51,7 +51,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @property contentTemplate
      @type {String}
      @default '{buttons}{goto}{perPage}'
-     @SINCE@
+     @since @SINCE@
      */
     contentTemplate: '{buttons}{goto}{perPage}',
 
@@ -61,14 +61,14 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @property _allowAdHocAttrs
      @type {Boolean}
      @default false
-     @SINCE@
+     @since @SINCE@
      */
     _allowAdHocAttrs: false,
 
     /**
      Sets classnames on the templates and bind events
      @method initializer
-     @SINCE@
+     @since @SINCE@
      */
     initializer: function () {
         this.containerTemplate = sub(this.containerTemplate, {
@@ -84,7 +84,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
     /**
      @method render
      @chainable
-     @SINCE@
+     @since @SINCE@
      */
     render: function () {
         var model = this.get('model'),
@@ -107,7 +107,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
     /**
      @method attachEvents
-     @SINCE@
+     @since @SINCE@
      */
     attachEvents: function () {
         View.superclass.attachEvents.apply(this, arguments);
@@ -142,7 +142,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _buildButtonsGroup
      @return {String}
-     @SINCE@
+     @since @SINCE@
      */
     _buildButtonsGroup: function () {
         var strings = this.get('strings'),
@@ -174,7 +174,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _buildGotoGroup
      @return {String}
-     @SINCE@
+     @since @SINCE@
      */
     _buildGotoGroup: function () {
 
@@ -190,7 +190,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _buildPerPageGroup
      @return {String}
-     @SINCE@
+     @since @SINCE@
      */
     _buildPerPageGroup: function () {
         var options = this.get('pageSizes'),
@@ -224,7 +224,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _modelChange
      @param {EventFacade} e
-     @SINCE@
+     @since @SINCE@
      */
     _modelChange: function (e) {
         var changed = e.changed,
@@ -248,7 +248,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _updateControlsUI
      @param {Number} val Page number to set the UI input to
-     @SINCE@
+     @since @SINCE@
      */
     _updateControlsUI: function (val) {
         if (!this._rendered) {
@@ -285,7 +285,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _updateItemsPerPageUI
      @param {Number} val Number of items to display per page
-     @SINCE@
+     @since @SINCE@
      */
     _updateItemsPerPageUI: function (val) {
         if (!this._rendered) {
@@ -300,7 +300,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _controlClick
      @param {EventFacade} e
-     @SINCE@
+     @since @SINCE@
      */
     _controlClick: function (e) { // buttons
         e.preventDefault();
@@ -320,7 +320,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _controlChange
      @param {EventFacade} e
-     @SINCE@
+     @since @SINCE@
      */
     _controlChange: function (e) {
 
@@ -338,7 +338,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _controlSubmit
      @param {EventFacade} e
-     @SINCE@
+     @since @SINCE@
      */
     _controlSubmit: function (e) {
         if ( e.target.hasClass(CLASS_DISABLED) ) {
@@ -356,7 +356,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      Initializes classnames to be used with the templates
      @protected
      @method _initClassNames
-     @SINCE@
+     @since @SINCE@
      */
     _initClassNames: function () {
         this.classNames = {
@@ -371,7 +371,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      Initializes strings used for internationalization
      @protected
      @method _initStrings
-     @SINCE@
+     @since @SINCE@
      */
     _initStrings: function () {
         // Not a valueFn because other class extensions may want to add to it
@@ -385,7 +385,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
          @attribute pageSizes
          @type {Array}
          @default [ 10, 50, 100, { label: 'Show All', value: -1 } ]
-         @SINCE@
+         @since @SINCE@
          */
         pageSizes: {
             value: [ 10, 50, 100, { label: 'Show All', value: -1 } ]
