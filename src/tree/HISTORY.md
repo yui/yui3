@@ -4,6 +4,14 @@ Tree Change History
 @VERSION@
 ------
 
+* Fixed: `Tree.Sortable` failed to reindex a node's children after sorting them,
+  which could result in `Tree#indexOf()` and `Tree.Node#index()` returning
+  incorrect indices. [Ryan Grove]
+
+
+3.11.0
+------
+
 * `Tree#emptyNode()` now removes nodes without triggering a node map reindex for
   each node, which makes it significantly faster when emptying a node with lots
   of children. [Ryan Grove]
