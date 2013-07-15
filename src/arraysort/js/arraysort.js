@@ -88,7 +88,7 @@ var ArraySort = Y.ArraySort = {
         should be sorted before _b_, or a positive number if _b_ should be
         sorted before _a_.
     @static
-    @since @SINCE@
+    @since 3.11.0
     **/
     naturalCompare: function (a, b, options) {
         // Coerce `a` and `b` to strings.
@@ -159,7 +159,7 @@ var ArraySort = Y.ArraySort = {
     @return {String[]} Array of alpha parts and digit parts.
     @protected
     @static
-    @since @SINCE@
+    @since 3.11.0
     **/
     _splitAlphaNum: function (string) {
         /*jshint boss:true */
