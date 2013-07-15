@@ -1,7 +1,7 @@
 DataTable Change History
 ========================
 
-@VERSION@
+3.11.0
 ------
 * Release Paginator for DataTable. DataTable's Paginator consists of a few
   files and components each with a single purpose in mind.

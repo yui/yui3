@@ -1,7 +1,7 @@
 YUI Test Change History
 =======================
 
-@VERSION@
+3.11.0
 ------
 
 * Modified YUITest.hasNoKeys() to bypass Android 2.3.x prototype

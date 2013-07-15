@@ -1,7 +1,7 @@
 ScrollInfo Node Plugin Change History
 =====================================
 
-@VERSION@
+3.11.0
 ------
 
 * Added an `isNodeOnscreen()` method that returns `true` if the given node is
