@@ -1,6 +1,11 @@
 DataTable Change History
 ========================
 
+@VERSION@
+------
+
+* No changes.
+
 3.11.0
 ------
 * Release Paginator for DataTable. DataTable's Paginator consists of a few
