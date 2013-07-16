@@ -989,11 +989,27 @@ routerSuite.add(new Y.Test.Case({
             ArrayAssert.itemsAreSame(['/baz/quux', 'baz', 'quux'], req.params);
         });
 
+        router.route(/^\/((fnord)|(fnarf))\/(quux)$/, function (req) {
+            calls += 1;
+
+            Assert.isArray(req.params);
+            ArrayAssert.itemsAreSame(['/fnord/quux', 'fnord', 'fnord', undefined, 'quux'], req.params);
+        });
+
+        router.route(/^\/((blorp)|(blerf))\/(quux)$/, function (req) {
+            calls += 1;
+
+            Assert.isArray(req.params);
+            ArrayAssert.itemsAreSame(['/blerf/quux', 'blerf', undefined, 'blerf', 'quux'], req.params);
+        });
+
         router._dispatch('/foo/one/two', {});
         router._dispatch('/bar/one/two', {});
         router._dispatch('/baz/quux', {});
+        router._dispatch('/fnord/quux', {});
+        router._dispatch('/blerf/quux', {});
 
-        Assert.areSame(3, calls);
+        Assert.areSame(5, calls);
     },
 
     'route parameters should be decoded': function () {

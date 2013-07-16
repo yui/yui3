@@ -4,7 +4,14 @@ App Framework Change History
 @VERSION@
 ------
 
-* No changes.
+### Router
+
+* Fixed issue with trying to URL-decode matching path segments that are
+  `undefined`. Routes defined as Regexps (instead of strings) can contain an
+  arbitrary number of captures; when executing the regex during dispatching, its
+  array of matches can contain `undefined` values. Router will now check that a
+  match is a truthy value before trying to URL-decode it.
+
 
 3.11.0
 ------
@@ -15,6 +22,7 @@ App Framework Change History
 ------
 
 * No changes.
+
 
 3.10.2
 ------
