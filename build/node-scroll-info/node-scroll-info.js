@@ -293,7 +293,7 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
         this query. Defaults to the value of the `scrollMargin` attribute.
     @return {Boolean} `true` if _node_ is at least partially onscreen within the
         host node, `false` otherwise.
-    @since @SINCE@
+    @since 3.11.0
     **/
     isNodeOnscreen: function (node, margin) {
         node = Y.one(node);
@@ -393,7 +393,7 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
         this query. Defaults to the value of the `scrollMargin` attribute.
     @return {Boolean} `true` if _el_ is at least partially onscreen within the
         host node, `false` otherwise.
-    @since @SINCE@
+    @since 3.11.0
     **/
     _isElementOnscreen: function (el, margin) {
         var rect = el.getBoundingClientRect();
