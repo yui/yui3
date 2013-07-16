@@ -1,7 +1,7 @@
 Calendar Change History
 =======================
 
-@VERSION@
+3.11.0
 ------
 
 * Cleaned up lang (see PR #878) [Jeroen Versteeg]:

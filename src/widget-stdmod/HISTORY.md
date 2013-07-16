@@ -1,7 +1,7 @@
 Widget Std Mod Change History
 =============================
 
-@VERSION@
+3.11.0
 ------
 
 * Fixed: `fillHeight` didn't work correctly when a section's content was set

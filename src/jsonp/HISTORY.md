@@ -1,7 +1,7 @@
 JSONP Change History
 ====================
 
-@VERSION@
+3.11.0
 ------
 
 * Preserve base jsonp _format if {callback} found. Fixes #700 [lsmith]

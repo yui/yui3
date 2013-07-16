@@ -1,7 +1,7 @@
 Tree Change History
 ===================
 
-@VERSION@
+3.11.0
 ------
 
 * Added `Tree.Node#depth()`, which returns the depth of the node, starting at 0

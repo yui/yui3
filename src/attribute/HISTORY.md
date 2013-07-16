@@ -1,7 +1,7 @@
 Attribute Change History
 ========================
 
-@VERSION@
+3.11.0
 ------
 
 * Fixed regression introduced with the solution for setter opts, added in

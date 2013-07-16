@@ -1,7 +1,7 @@
 Widget Position Change History
 ==============================
 
-@VERSION@
+3.11.0
 ------
 
 * Moved implementation code from the Constructor to the `initializer`

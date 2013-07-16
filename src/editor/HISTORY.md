@@ -1,7 +1,7 @@
 Rich Text Editor Change History
 ===============================
 
-@VERSION@
+3.11.0
 ------
 
 * Fix exception when sel.anchorNode doesn't exist. [rgrove]

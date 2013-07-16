@@ -1,7 +1,7 @@
 YUI Core Change History
 =======================
 
-@VERSION@
+3.11.0
 ------
 
 * `Y.Array.dedupe()` is now slightly faster in ES5-compliant browsers.
