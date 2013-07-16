@@ -7,6 +7,9 @@ Node Change History
 * Fixed: Node instances that were cached before `node-pluginhost` was loaded
   couldn't become plugin hosts. [Jeroen Versteeg]
 
+* Fixed: `Node#toggleView()` didn't show a node if that node's `hidden`
+  attribute wasn't set (this was a regression in 3.10.2). [Jeroen Versteeg]
+
 3.11.0
 ------
 
