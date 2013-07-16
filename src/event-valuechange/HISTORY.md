@@ -1,7 +1,7 @@
 ValueChange Change History
 ==========================
 
-@VERSION@
+3.11.0
 ------
 
 * Added support for `stopPropagation()` and `stopImmediatePropagation()` on the

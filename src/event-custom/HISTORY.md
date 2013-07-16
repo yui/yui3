@@ -1,7 +1,7 @@
 Custom Event Infrastructure Change History
 ==========================================
 
-@VERSION@
+3.11.0
 ------
 
 * Fixed issue with fireOnce subscribers not receiving the facade,

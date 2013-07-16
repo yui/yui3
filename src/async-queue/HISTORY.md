@@ -1,7 +1,7 @@
 AsyncQueue Change History
 =========================
 
-@VERSION@
+3.11.0
 ------
 
 * Fixed an issue that triggered an extra execution of a callback.
