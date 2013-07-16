@@ -1,6 +1,11 @@
 Gestures Change History
 =======================
 
+@VERSION@
+------
+
+* No changes.
+
 3.11.0
 ------
 
