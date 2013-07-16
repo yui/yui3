@@ -5,7 +5,7 @@ Widget Std Mod Change History
 ------
 
 * Fixed: `fillHeight` didn't work correctly when a section's content was set
-  after rendering. [Jeroen Versteeg]
+  after rendering. This fix has a known deficiency in IE6. [Jeroen Versteeg]
 
 * Moved implementation code from the Constructor to the `initializer`
   to account for Base order of operation changes in this release.
