@@ -573,7 +573,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _decode: function (string) {
-        return decodeURIComponent(string.replace(/\+/g, ' '));
+        return string ? decodeURIComponent(string.replace(/\+/g, ' ')) : string;
     },
 
     /**
