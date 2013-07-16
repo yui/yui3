@@ -4,7 +4,8 @@ Node Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed: Node instances that were cached before `node-pluginhost` was loaded
+  couldn't become plugin hosts. [Jeroen Versteeg]
 
 3.11.0
 ------
