@@ -1,24 +1,96 @@
-YUI.add('scrollview-benchmark', function (Y, NAME) {
+var fs = require('fs'),
+    path = require('path'),
+    html = fs.readFileSync(path.join(__dirname, 'assets/scrollview.html'));
 
-    var suite = Y.BenchmarkSuite = new Benchmark.Suite,
-        container,
-        scrollview;
-    
-    container = document.createElement('div')
-    container.id = "container";
-    document.body.appendChild(container);
-
-    suite.add('ScrollView: Create', function () {
-        scrollview = new Y.ScrollView({
-            render: container
-        });
-    });
-    
-    suite.add('ScrollView: Create & Destroy', function () {
-        scrollview = new Y.ScrollView({
-            render: container
-        });
-        scrollview.destroy();
-    });
-
-}, '@VERSION@', {requires: ['scrollview-base']});
+module.exports = [
+    {
+        title: 'ScrollView Performance: Create',
+        slug: 'scrollview-performance-create',
+        html: html,
+        yui: {
+            use: ['scrollview']
+        },
+        teardown: function () {
+            Y.one('#container').empty(true);
+        },
+        tests: [
+            {
+                title: 'ScrollView Create',
+                fn: function () {
+                    new Y.ScrollView();
+                }
+            },
+            {
+                title: 'ScrollView Create - getElementById',
+                fn: function () {
+                    new Y.ScrollView({
+                        srcNode: document.getElementById('container')
+                    });
+                }
+            },
+            {
+                title: 'ScrollView Create - YNode',
+                fn: function () {
+                    new Y.ScrollView({
+                        srcNode: Y.one('#container')
+                    });
+                }
+            },
+            {
+                title: 'ScrollView Create - YNode and render',
+                fn: function () {
+                    var scrollview = new Y.ScrollView({
+                        srcNode: Y.one('#container')
+                    });
+                    scrollview.render();
+                }
+            }
+        ]
+    },
+    {
+        title: 'ScrollView Performance: Render',
+        slug: 'scrollview-performance-render',
+        html: html,
+        yui: {
+            use: ['scrollview']
+        },
+        setup: function () {
+            var scrollview = new Y.ScrollView({
+                srcNode: Y.one('#container')
+            });
+        },
+        tests: [
+            {
+                title: 'ScrollView Render',
+                fn: function () {
+                    scrollview.render();
+                }
+            }
+        ]
+    },
+    {
+        title: 'ScrollView Performance: Create',
+        slug: 'scrollview-performance-destroy',
+        html: html,
+        yui: {
+            use: ['scrollview'],
+            config: {
+                foo: 'bar'
+            }
+        },
+        setup: function () {
+            var scrollview = new Y.ScrollView({
+                srcNode: Y.one('#container'),
+                render: true
+            });
+        },
+        tests: [
+            {
+                title: 'ScrollView: Create & Destroy',
+                fn: function () {
+                    scrollview.destroy();
+                }
+            }
+        ]
+    }
+];
