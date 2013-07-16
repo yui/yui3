@@ -170,6 +170,7 @@ Sortable.prototype = {
         }
 
         node.children.sort(Y.rbind(this._sort, this, comparator, reverse));
+        node._isIndexStale = true;
 
         if (!options.silent) {
             this.fire(EVT_SORT, {

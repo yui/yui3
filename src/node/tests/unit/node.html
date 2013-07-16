@@ -6,8 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="./assets/node-data-test.js"></script>
 <script type="text/javascript" src="./assets/node-attrs-test.js"></script>
+<script type="text/javascript" src="./assets/node-data-test.js"></script>
+<script type="text/javascript" src="./assets/node-pluginhost-test.js"></script>
 <script type="text/javascript" src="./assets/node-traversal-test.js"></script>
 <script type="text/javascript" src="./assets/nodelist-test.js"></script>
 
@@ -196,7 +197,7 @@ YUI({
     coverage: ['node', 'node-load'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 
-}).use('selector-css3', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-data-test', 'nodelist-test', 'node-attrs-test', 'node-traversal-test', function(Y) {
+}).use('selector-css3', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-attrs-test', 'node-data-test', 'node-pluginhost-test', 'node-traversal-test', 'nodelist-test', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         ObjectAssert = Y.ObjectAssert,
@@ -1356,7 +1357,7 @@ YUI({
         'should hide the node': function() {
             var node = Y.one('body');
             node.hide();
-            Assert.areEqual('true', node.getAttribute('hidden'));
+            Assert.isTrue(node.hasAttribute('hidden'));
             Assert.areEqual('none', node.getStyle('display'));
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
@@ -1364,10 +1365,10 @@ YUI({
 
         'should show the node': function() {
             var node = Y.one('body');
-            node.setAttribute('hidden', true);
+            node.setAttribute('hidden', '');
             node.setStyle('display', 'none');
             node.show(1);
-            Assert.areEqual('', node.getAttribute('hidden'));
+            Assert.isFalse(node.hasAttribute('hidden'));
             Assert.areEqual('block', node.getStyle('display'));
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
@@ -1377,7 +1378,7 @@ YUI({
             var node = Y.one('body'),
                 called = false;
 
-            node.setAttribute('hidden', true);
+            node.setAttribute('hidden', '');
             node.setStyle('display', 'none');
 
             node.show(function() {
@@ -1486,7 +1487,7 @@ YUI({
 
             node.toggleView(false);
 
-            Assert.areEqual('true', node.getAttribute('hidden'));
+            Assert.isTrue(node.hasAttribute('hidden'));
             Assert.areEqual('none', node.getStyle('display'));
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
@@ -1501,7 +1502,7 @@ YUI({
             });
 
             Assert.isTrue(called);
-            Assert.areEqual('true', node.getAttribute('hidden'));
+            Assert.isTrue(node.hasAttribute('hidden'));
             Assert.areEqual('none', node.getStyle('display'));
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
