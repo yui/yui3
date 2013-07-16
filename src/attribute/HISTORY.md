@@ -12,10 +12,6 @@ Attribute Change History
     ...
     host.set("myattr", 10, {src:"foo"});
 
-* For performance reasons, attribute now bypasses the event subsystem, if 
-  there are no listeners, and sets the attribute value directly (still going
-  through all the attribute infrastructure - setter, validator etc.).
-
 3.10.3
 ------
 

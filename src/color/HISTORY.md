@@ -4,12 +4,12 @@ Color Change History
 @VERSION@
 ------
 
-* `toArray()` always returns alpha values [Pull Request #548] [Ticket #2533111]
+* No changes.
 
 3.10.3
 ------
 
-* No changes.
+* `toArray()` always returns alpha values [Pull Request #548] [Ticket #2533111]
 
 3.10.2
 ------

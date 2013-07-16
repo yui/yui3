@@ -180,6 +180,17 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     **/
     TBODY_TEMPLATE: '<tbody class="{className}"></tbody>',
 
+    /**
+    Array of values to be considered empty for the purpose of showing the
+    `emptyCellValue` column attribute value in a cell.
+
+    @property _emptyValues
+    @type Array
+    @default null, undefined, ""
+    @protected
+     */
+    _emptyValues: null,
+
     // -- Public methods ------------------------------------------------------
 
     /**
@@ -913,7 +924,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 rowClass: (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN
             },
             host = this.host || this,
-            i, len, col, token, value, formatterData;
+            i, len, col, token, value, formatterData,
+            emptyValues = this._emptyValues, e;
 
         for (i = 0, len = columns.length; i < len; ++i) {
             col   = columns[i];
@@ -944,19 +956,23 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 values[token + '-className'] = formatterData.className;
                 values.rowClass += ' ' + formatterData.rowClass;
             }
-
-            // if the token missing OR is the value a legit value
-            if (!values.hasOwnProperty(token) || data.hasOwnProperty(col.key)) {
-                if (value === undefined || value === null || value === '') {
+            if (emptyValues.indexOf) {
+                if (emptyValues.indexOf(value) !== -1) {
                     value = col.emptyCellValue || '';
                 }
-
-                values[token] = col.allowHTML ? value : htmlEscape(value);
+            } else {
+                for (e = 0; e < emptyValues.length; e++) {
+                    if (emptyValues[e] === value) {
+                        value = col.emptyCellValue || '';
+                        break;
+                    }
+                }
             }
-        }
 
-        // replace consecutive whitespace with a single space
-        values.rowClass = values.rowClass.replace(/\s+/g, ' ');
+            values[token] = col.allowHTML ? value : htmlEscape(value);
+
+            values.rowClass = values.rowClass.replace(/\s+/g, ' ');
+        }
 
         return fromTemplate(this._rowTemplate, values);
     },
@@ -1002,7 +1018,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _createRowTemplate: function (columns) {
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
-            i, len, col, key, token, headers, tokenValues, formatter;
+            i, len, col, key, token, headers, tokenValues;
 
         this._setColumnsFormatterFn(columns);
 
@@ -1010,7 +1026,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             col     = columns[i];
             key     = col.key;
             token   = col._id || key;
-            formatter = col._formatterFn;
             // Only include headers if there are more than one
             headers = (col._headers || []).length > 1 ?
                         'headers="' + col._headers.join(' ') + '"' : '';
@@ -1023,9 +1038,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                            this.getClassName('cell') +
                            ' {' + token + '-className}'
             };
-            if (!formatter && col.formatter) {
-                tokenValues.content = col.formatter.replace(valueRegExp, tokenValues.content);
-            }
 
             if (col.nodeFormatter) {
                 // Defer all node decoration to the formatter
@@ -1063,7 +1075,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             if (!col._formatterFn && formatter) {
                 if (Lang.isFunction(formatter)) {
                     col._formatterFn = formatter;
-                } else if (formatter in Formatters) {
+                } else {
+                    if (!(formatter in Formatters)) {
+                        formatter = 'stringTemplate';
+                    }
                     col._formatterFn = Formatters[formatter].call(this.host || this, col);
                 }
             }
@@ -1151,6 +1166,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 bind('_afterModelListChange', this))
         };
         this._idMap = {};
+        this._emptyValues = [null, undefined, ""];
 
         this.CLASS_ODD  = this.getClassName('odd');
         this.CLASS_EVEN = this.getClassName('even');
@@ -1169,18 +1185,59 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     //_rowTemplate: null
-},{
+});
+/**
+Hash of formatting functions for cell contents.
+
+This property can be populated with a hash of formatting functions by the developer
+or a set of pre-defined functions can be loaded via the `datatable-formatters` module.
+
+See: [DataTable.BodyView.Formatters](./DataTable.BodyView.Formatters.html)
+@property Formatters
+@type Object
+@since 3.8.0
+@static
+**/
+Y.DataTable.BodyView.Formatters = Y.DataTable.BodyView.Formatters || {};
+
+Y.mix(Y.DataTable.BodyView.Formatters, {
     /**
-    Hash of formatting functions for cell contents.
+    Returns a formatter for string templates which may contain the placeholder
+    `{value}` for the value in the current field.  The values of other fields
+    in the current record can also be included by using their field names
+    enclosed in curly braces.  It is only used when the value of the current
+    field is not `undefined`.
 
-    This property can be populated with a hash of formatting functions by the developer
-    or a set of pre-defined functions can be loaded via the `datatable-formatters` module.
+    It is used when the `formatter`
+    attribute is a string which does not correspond to a named formatter function.
+    In other words, this is the catch-all formatter for any `formatter`
+    attribute that cannot be found and might result from misspelled formatter name
+    or because the `datatable-formatters` module was not loaded.
 
-    See: [DataTable.BodyView.Formatters](./DataTable.BodyView.Formatters.html)
-    @property Formatters
-    @type Object
-    @since 3.8.0
-    @static
-    **/
-    Formatters: {}
+    @method stringTemplate
+    @param col {Object} Column definition
+    @return {Function} Formatting function for string templates.
+    @for DataTable.BodyView.Formatters
+    */
+    stringTemplate: function (col) {
+        var formatter = col.formatter.replace(valueRegExp, '{' + col.key + '}'),
+             emptyValues = ((this.view && this.view.body) || this)._emptyValues;
+        return (
+            emptyValues.indexOf ?
+            function (o) {
+                if (emptyValues.indexOf(o.value) === -1) {
+                    return fromTemplate(formatter, o.record.toJSON());
+                }
+                // return undefined;
+            } :
+            function (o) {
+                for (var i = 0; i < emptyValues.length; i++) {
+                    if (o.value === emptyValues[i]) {
+                        return /* undefined */;
+                    }
+                }
+                return fromTemplate(formatter, o.record.toJSON());
+            }
+        );
+    }
 });

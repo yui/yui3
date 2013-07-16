@@ -66,11 +66,11 @@ Y.CalendarBase.CONTENT_TEMPLATE = '<div class="yui3-g {calendar_pane_class}" id=
 	     	return output;
 	     });
 			
-		Y.one("#setRandomDate").on('click', function () {
+		Y.one("#updateCalendar").on('click', function () {
 	      curDate = new Date(1950 + Math.round(Math.random()*100), 
 		                                Math.round(Math.random()*12.49), 1);
 		  calendar.set('date', curDate);	
-		  Y.one("#tehdate").setContent(calendar.get("date").toString());
+		  Y.one("#currentDate").setContent(calendar.get("date").toString());	
 		});
 
 		Y.one("#togglePrevMonth").on('click', function () {
@@ -81,11 +81,7 @@ Y.CalendarBase.CONTENT_TEMPLATE = '<div class="yui3-g {calendar_pane_class}" id=
 		});
 
 		Y.one("#toggleSelection").on('click', function () {
-            if (calendar.get('selectedDates').length) {
-                calendar.deselectDates();
-            } else {
-                calendar.selectDates(new Date(curDate.getFullYear(), curDate.getMonth(), 23));
-            }
+		  calendar.select(new Date (curDate.getFullYear(), curDate.getMonth(), 23));
 		});
 
 });

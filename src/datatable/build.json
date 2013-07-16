@@ -60,21 +60,6 @@
             "jsfiles": [
                 "formatters.js"
             ]
-        },
-        "datatable-paginator": {
-            "jsfiles": [
-                "paginator.js"
-            ]
-        },
-        "datatable-paginator-templates": {
-            "jsfiles": [
-                "paginator-templates.js"
-            ]
-        },
-        "datatable-foot": {
-            "jsfiles": [
-                "foot.js"
-            ]
         }
     }
 }

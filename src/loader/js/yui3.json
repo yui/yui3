@@ -451,6 +451,21 @@
         ]
     },
     "calendar": {
+        "lang": [
+            "de",
+            "en",
+            "es",
+            "es-AR",
+            "fr",
+            "hu",
+            "it",
+            "ja",
+            "nb-NO",
+            "nl",
+            "pt-BR",
+            "ru",
+            "zh-HANT-TW"
+        ],
         "requires": [
             "calendar-base",
             "calendarnavigator"
@@ -643,19 +658,22 @@
     },
     "cssgrids": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "type": "css"
     },
     "cssgrids-base": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "type": "css"
     },
     "cssgrids-responsive": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "requires": [
             "cssgrids",
@@ -665,7 +683,8 @@
     },
     "cssgrids-units": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "requires": [
             "cssgrids-base"
@@ -847,12 +866,6 @@
             "datasource-local"
         ]
     },
-    "datatable-foot": {
-        "requires": [
-            "datatable-core",
-            "view"
-        ]
-    },
     "datatable-formatters": {
         "requires": [
             "datatable-body",
@@ -884,24 +897,6 @@
     "datatable-mutable": {
         "requires": [
             "datatable-base"
-        ]
-    },
-    "datatable-paginator": {
-        "lang": [
-            "en"
-        ],
-        "requires": [
-            "model",
-            "view",
-            "paginator-core",
-            "datatable-foot",
-            "datatable-paginator-templates"
-        ],
-        "skinnable": true
-    },
-    "datatable-paginator-templates": {
-        "requires": [
-            "template"
         ]
     },
     "datatable-scroll": {

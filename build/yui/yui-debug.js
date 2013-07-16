@@ -2140,15 +2140,9 @@ TYPES = {
     '[object Error]'   : 'error'
 },
 
-SUBREGEX         = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
-
-WHITESPACE       = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF",
-WHITESPACE_CLASS = "[\x09-\x0D\x20\xA0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]+",
-TRIM_LEFT_REGEX  = new RegExp("^" + WHITESPACE_CLASS),
-TRIM_RIGHT_REGEX = new RegExp(WHITESPACE_CLASS + "$"),
-TRIMREGEX        = new RegExp(TRIM_LEFT_REGEX.source + "|" + TRIM_RIGHT_REGEX.source, "g"),
-
-NATIVE_FN_REGEX  = /\{\s*\[(?:native code|function)\]\s*\}/i;
+SUBREGEX        = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
+TRIMREGEX       = /^\s+|\s+$/g,
+NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
 
 // -- Protected Methods --------------------------------------------------------
 
@@ -2372,7 +2366,7 @@ L.sub = function(s, o) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trim = L._isNative(STRING_PROTO.trim) && !WHITESPACE.trim() ? function(s) {
+L.trim = STRING_PROTO.trim ? function(s) {
     return s && s.trim ? s.trim() : s;
 } : function (s) {
     try {
@@ -2389,10 +2383,10 @@ L.trim = L._isNative(STRING_PROTO.trim) && !WHITESPACE.trim() ? function(s) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimLeft = L._isNative(STRING_PROTO.trimLeft) && !WHITESPACE.trimLeft() ? function (s) {
+L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
     return s.trimLeft();
 } : function (s) {
-    return s.replace(TRIM_LEFT_REGEX, '');
+    return s.replace(/^\s+/, '');
 };
 
 /**
@@ -2402,10 +2396,10 @@ L.trimLeft = L._isNative(STRING_PROTO.trimLeft) && !WHITESPACE.trimLeft() ? func
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimRight = L._isNative(STRING_PROTO.trimRight) && !WHITESPACE.trimRight() ? function (s) {
+L.trimRight = STRING_PROTO.trimRight ? function (s) {
     return s.trimRight();
 } : function (s) {
-    return s.replace(TRIM_RIGHT_REGEX, '');
+    return s.replace(/\s+$/, '');
 };
 
 /**
@@ -2507,34 +2501,16 @@ Dedupes an array of strings, returning an array that's guaranteed to contain
 only one copy of a given string.
 
 This method differs from `Array.unique()` in that it's optimized for use only
-with arrays consisting entirely of strings or entirely of numbers, whereas
-`unique` may be used with other value types (but is slower).
-
-Using `dedupe()` with values other than strings or numbers, or with arrays
-containing a mix of strings and numbers, may result in unexpected behavior.
+with strings, whereas `unique` may be used with other types (but is slower).
+Using `dedupe()` with non-string values may result in unexpected behavior.
 
 @method dedupe
-@param {String[]|Number[]} array Array of strings or numbers to dedupe.
-@return {Array} Copy of _array_ containing no duplicate values.
+@param {String[]} array Array of strings to dedupe.
+@return {Array} Deduped copy of _array_.
 @static
 @since 3.4.0
 **/
-YArray.dedupe = Lang._isNative(Object.create) ? function (array) {
-    var hash    = Object.create(null),
-        results = [],
-        i, item, len;
-
-    for (i = 0, len = array.length; i < len; ++i) {
-        item = array[i];
-
-        if (!hash[item]) {
-            hash[item] = 1;
-            results.push(item);
-        }
-    }
-
-    return results;
-} : function (array) {
+YArray.dedupe = function (array) {
     var hash    = {},
         results = [],
         i, item, len;
@@ -3176,7 +3152,7 @@ hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
 
 /**
  * `true` if this browser incorrectly considers the `prototype` property of
- * functions to be enumerable. Currently known to affect Opera 11.50 and Android 2.3.x.
+ * functions to be enumerable. Currently known to affect Opera 11.50.
  *
  * @property _hasProtoEnumBug
  * @type Boolean
@@ -3220,9 +3196,7 @@ O.hasKey = owns;
  * as the order in which they were defined.
  *
  * This method is an alias for the native ES5 `Object.keys()` method if
- * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of 
- * `Object.keys()` have an inconsistency as they consider `prototype` to be 
- * enumerable, so a non-native shim is used to rectify the difference.
+ * available.
  *
  * @example
  *
@@ -3234,7 +3208,7 @@ O.hasKey = owns;
  * @return {String[]} Array of keys.
  * @static
  */
-O.keys = Lang._isNative(Object.keys) && !hasProtoEnumBug ? Object.keys : function (obj) {
+O.keys = Lang._isNative(Object.keys) ? Object.keys : function (obj) {
     if (!Lang.isObject(obj)) {
         throw new TypeError('Object.keys called on a non-object');
     }
@@ -3841,25 +3815,17 @@ YUI.Env.parseUA = function(subUA) {
                 }
             }
 
-            m = ua.match(/OPR\/(\d+\.\d+)/);
-
-            if (m && m[1]) {
-                // Opera 15+ with Blink (pretends to be both Chrome and Safari)
-                o.opera = numberify(m[1]);
+            m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
+            if (m && m[1] && m[2]) {
+                o.chrome = numberify(m[2]); // Chrome
+                o.safari = 0; //Reset safari back to 0
+                if (m[1] === 'CrMo') {
+                    o.mobile = 'chrome';
+                }
             } else {
-                m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
-
-                if (m && m[1] && m[2]) {
-                    o.chrome = numberify(m[2]); // Chrome
-                    o.safari = 0; //Reset safari back to 0
-                    if (m[1] === 'CrMo') {
-                        o.mobile = 'chrome';
-                    }
-                } else {
-                    m = ua.match(/AdobeAIR\/([^\s]*)/);
-                    if (m) {
-                        o.air = m[0]; // Adobe AIR 1.0 or better
-                    }
+                m = ua.match(/AdobeAIR\/([^\s]*)/);
+                if (m) {
+                    o.air = m[0]; // Adobe AIR 1.0 or better
                 }
             }
         }
@@ -3889,13 +3855,11 @@ YUI.Env.parseUA = function(subUA) {
                     o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
                 }
             } else { // not opera or webkit
-                m = ua.match(/MSIE ([^;]*)|Trident.*; rv ([0-9.]+)/);
-
-                if (m && (m[1] || m[2])) {
-                    o.ie = numberify(m[1] || m[2]);
+                m = ua.match(/MSIE\s([^;]*)/);
+                if (m && m[1]) {
+                    o.ie = numberify(m[1]);
                 } else { // not opera, webkit, or ie
                     m = ua.match(/Gecko\/([^\s]*)/);
-
                     if (m) {
                         o.gecko = 1; // Gecko detected, look for revision
                         m = ua.match(/rv:([^\s\)]*)/);
@@ -6048,7 +6012,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + '/',
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.07.03-22-52',
+            GALLERY_VERSION = 'gallery-2013.06.05-22-14',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -9442,6 +9406,21 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "calendar": {
+        "lang": [
+            "de",
+            "en",
+            "es",
+            "es-AR",
+            "fr",
+            "hu",
+            "it",
+            "ja",
+            "nb-NO",
+            "nl",
+            "pt-BR",
+            "ru",
+            "zh-HANT-TW"
+        ],
         "requires": [
             "calendar-base",
             "calendarnavigator"
@@ -9634,19 +9613,22 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "type": "css"
     },
     "cssgrids-base": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "type": "css"
     },
     "cssgrids-responsive": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "requires": [
             "cssgrids",
@@ -9656,7 +9638,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids-units": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "requires": [
             "cssgrids-base"
@@ -9838,12 +9821,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datasource-local"
         ]
     },
-    "datatable-foot": {
-        "requires": [
-            "datatable-core",
-            "view"
-        ]
-    },
     "datatable-formatters": {
         "requires": [
             "datatable-body",
@@ -9875,24 +9852,6 @@ Y.mix(YUI.Env[Y.version].modules, {
     "datatable-mutable": {
         "requires": [
             "datatable-base"
-        ]
-    },
-    "datatable-paginator": {
-        "lang": [
-            "en"
-        ],
-        "requires": [
-            "model",
-            "view",
-            "paginator-core",
-            "datatable-foot",
-            "datatable-paginator-templates"
-        ],
-        "skinnable": true
-    },
-    "datatable-paginator-templates": {
-        "requires": [
-            "template"
         ]
     },
     "datatable-scroll": {
@@ -11899,7 +11858,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'b48f48e0499b41d980deaefd4100d336';
+YUI.Env[Y.version].md5 = '0ef57f597d6d83db16c9127b46f6150b';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

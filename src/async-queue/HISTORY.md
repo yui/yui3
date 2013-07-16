@@ -4,6 +4,11 @@ AsyncQueue Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.10.3
+------
+
 * Fixed an issue that triggered an extra execution of a callback.
   [Ticket #2528602] [Ticket #2531758] [Ticket #2531844]
 
@@ -12,11 +17,6 @@ AsyncQueue Change History
 
 * Fixed a bug in which the 'complete' event would not be fired if stop was
   called from inside a callback.
-
-3.10.3
-------
-
-* No changes.
 
 3.10.2
 ------

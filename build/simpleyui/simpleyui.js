@@ -1801,15 +1801,9 @@ TYPES = {
     '[object Error]'   : 'error'
 },
 
-SUBREGEX         = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
-
-WHITESPACE       = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF",
-WHITESPACE_CLASS = "[\x09-\x0D\x20\xA0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]+",
-TRIM_LEFT_REGEX  = new RegExp("^" + WHITESPACE_CLASS),
-TRIM_RIGHT_REGEX = new RegExp(WHITESPACE_CLASS + "$"),
-TRIMREGEX        = new RegExp(TRIM_LEFT_REGEX.source + "|" + TRIM_RIGHT_REGEX.source, "g"),
-
-NATIVE_FN_REGEX  = /\{\s*\[(?:native code|function)\]\s*\}/i;
+SUBREGEX        = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
+TRIMREGEX       = /^\s+|\s+$/g,
+NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
 
 // -- Protected Methods --------------------------------------------------------
 
@@ -2033,7 +2027,7 @@ L.sub = function(s, o) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trim = L._isNative(STRING_PROTO.trim) && !WHITESPACE.trim() ? function(s) {
+L.trim = STRING_PROTO.trim ? function(s) {
     return s && s.trim ? s.trim() : s;
 } : function (s) {
     try {
@@ -2050,10 +2044,10 @@ L.trim = L._isNative(STRING_PROTO.trim) && !WHITESPACE.trim() ? function(s) {
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimLeft = L._isNative(STRING_PROTO.trimLeft) && !WHITESPACE.trimLeft() ? function (s) {
+L.trimLeft = STRING_PROTO.trimLeft ? function (s) {
     return s.trimLeft();
 } : function (s) {
-    return s.replace(TRIM_LEFT_REGEX, '');
+    return s.replace(/^\s+/, '');
 };
 
 /**
@@ -2063,10 +2057,10 @@ L.trimLeft = L._isNative(STRING_PROTO.trimLeft) && !WHITESPACE.trimLeft() ? func
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
-L.trimRight = L._isNative(STRING_PROTO.trimRight) && !WHITESPACE.trimRight() ? function (s) {
+L.trimRight = STRING_PROTO.trimRight ? function (s) {
     return s.trimRight();
 } : function (s) {
-    return s.replace(TRIM_RIGHT_REGEX, '');
+    return s.replace(/\s+$/, '');
 };
 
 /**
@@ -2168,34 +2162,16 @@ Dedupes an array of strings, returning an array that's guaranteed to contain
 only one copy of a given string.
 
 This method differs from `Array.unique()` in that it's optimized for use only
-with arrays consisting entirely of strings or entirely of numbers, whereas
-`unique` may be used with other value types (but is slower).
-
-Using `dedupe()` with values other than strings or numbers, or with arrays
-containing a mix of strings and numbers, may result in unexpected behavior.
+with strings, whereas `unique` may be used with other types (but is slower).
+Using `dedupe()` with non-string values may result in unexpected behavior.
 
 @method dedupe
-@param {String[]|Number[]} array Array of strings or numbers to dedupe.
-@return {Array} Copy of _array_ containing no duplicate values.
+@param {String[]} array Array of strings to dedupe.
+@return {Array} Deduped copy of _array_.
 @static
 @since 3.4.0
 **/
-YArray.dedupe = Lang._isNative(Object.create) ? function (array) {
-    var hash    = Object.create(null),
-        results = [],
-        i, item, len;
-
-    for (i = 0, len = array.length; i < len; ++i) {
-        item = array[i];
-
-        if (!hash[item]) {
-            hash[item] = 1;
-            results.push(item);
-        }
-    }
-
-    return results;
-} : function (array) {
+YArray.dedupe = function (array) {
     var hash    = {},
         results = [],
         i, item, len;
@@ -2837,7 +2813,7 @@ hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
 
 /**
  * `true` if this browser incorrectly considers the `prototype` property of
- * functions to be enumerable. Currently known to affect Opera 11.50 and Android 2.3.x.
+ * functions to be enumerable. Currently known to affect Opera 11.50.
  *
  * @property _hasProtoEnumBug
  * @type Boolean
@@ -2881,9 +2857,7 @@ O.hasKey = owns;
  * as the order in which they were defined.
  *
  * This method is an alias for the native ES5 `Object.keys()` method if
- * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of 
- * `Object.keys()` have an inconsistency as they consider `prototype` to be 
- * enumerable, so a non-native shim is used to rectify the difference.
+ * available.
  *
  * @example
  *
@@ -2895,7 +2869,7 @@ O.hasKey = owns;
  * @return {String[]} Array of keys.
  * @static
  */
-O.keys = Lang._isNative(Object.keys) && !hasProtoEnumBug ? Object.keys : function (obj) {
+O.keys = Lang._isNative(Object.keys) ? Object.keys : function (obj) {
     if (!Lang.isObject(obj)) {
         throw new TypeError('Object.keys called on a non-object');
     }
@@ -3502,25 +3476,17 @@ YUI.Env.parseUA = function(subUA) {
                 }
             }
 
-            m = ua.match(/OPR\/(\d+\.\d+)/);
-
-            if (m && m[1]) {
-                // Opera 15+ with Blink (pretends to be both Chrome and Safari)
-                o.opera = numberify(m[1]);
+            m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
+            if (m && m[1] && m[2]) {
+                o.chrome = numberify(m[2]); // Chrome
+                o.safari = 0; //Reset safari back to 0
+                if (m[1] === 'CrMo') {
+                    o.mobile = 'chrome';
+                }
             } else {
-                m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
-
-                if (m && m[1] && m[2]) {
-                    o.chrome = numberify(m[2]); // Chrome
-                    o.safari = 0; //Reset safari back to 0
-                    if (m[1] === 'CrMo') {
-                        o.mobile = 'chrome';
-                    }
-                } else {
-                    m = ua.match(/AdobeAIR\/([^\s]*)/);
-                    if (m) {
-                        o.air = m[0]; // Adobe AIR 1.0 or better
-                    }
+                m = ua.match(/AdobeAIR\/([^\s]*)/);
+                if (m) {
+                    o.air = m[0]; // Adobe AIR 1.0 or better
                 }
             }
         }
@@ -3550,13 +3516,11 @@ YUI.Env.parseUA = function(subUA) {
                     o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
                 }
             } else { // not opera or webkit
-                m = ua.match(/MSIE ([^;]*)|Trident.*; rv ([0-9.]+)/);
-
-                if (m && (m[1] || m[2])) {
-                    o.ie = numberify(m[1] || m[2]);
+                m = ua.match(/MSIE\s([^;]*)/);
+                if (m && m[1]) {
+                    o.ie = numberify(m[1]);
                 } else { // not opera, webkit, or ie
                     m = ua.match(/Gecko\/([^\s]*)/);
-
                     if (m) {
                         o.gecko = 1; // Gecko detected, look for revision
                         m = ua.match(/rv:([^\s\)]*)/);
@@ -9459,11 +9423,8 @@ var Selector = {
     },
 
     _nativeQuery: function(selector, root, one) {
-        if (
-            (Y.UA.webkit || Y.UA.opera) &&          // webkit (chrome, safari) and Opera
-            selector.indexOf(':checked') > -1 &&    // fail to pick up "selected"  with ":checked"
-            (Y.Selector.pseudos && Y.Selector.pseudos.checked)
-        ) {
+        if (Y.UA.webkit && selector.indexOf(':checked') > -1 &&
+                (Y.Selector.pseudos && Y.Selector.pseudos.checked)) { // webkit (chrome, safari) fails to pick up "selected"  with "checked"
             return Y.Selector.query(selector, root, one, true); // redo with skipNative true to try brute query
         }
         try {
@@ -10425,24 +10386,13 @@ Y.CustomEvent.prototype = {
 
         if (!fn) { this.log('Invalid callback for CE: ' + this.type); }
 
-        var s = new Y.Subscriber(fn, context, args, when),
-            firedWith;
+        var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-
-            firedWith = this.firedWith;
-
-            // It's a little ugly for this to know about facades,
-            // but given the current breakup, not much choice without
-            // moving a whole lot of stuff around.
-            if (this.emitFacade && this._addFacadeToArgs) {
-                this._addFacadeToArgs(firedWith);
-            }
-
             if (this.async) {
-                setTimeout(Y.bind(this._notify, this, s, firedWith), 0);
+                setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
             } else {
-                this._notify(s, firedWith);
+                this._notify(s, this.firedWith);
             }
         }
 
@@ -11724,17 +11674,17 @@ ET.prototype = {
      * from the context specified when the event was created, and with the
      * following parameters.
      *
-     * The first argument is the event type, and any additional arguments are
-     * passed to the listeners as parameters.  If the first of these is an
-     * object literal, and the event is configured to emit an event facade,
-     * that object is mixed into the event facade and the facade is provided
-     * in place of the original object.
-     *
      * If the custom event object hasn't been created, then the event hasn't
      * been published and it has no subscribers.  For performance sake, we
      * immediate exit in this case.  This means the event won't bubble, so
      * if the intention is that a bubble target be notified, the event must
      * be published on this object first.
+     *
+     * The first argument is the event type, and any additional arguments are
+     * passed to the listeners as parameters.  If the first of these is an
+     * object literal, and the event is configured to emit an event facade,
+     * that object is mixed into the event facade and the facade is provided
+     * in place of the original object.
      *
      * @method fire
      * @param type {String|Object} The type of the event, or an object that contains
@@ -11744,8 +11694,7 @@ ET.prototype = {
      * configured to emit an event facade, the event facade will replace that
      * parameter after the properties the object literal contains are copied to
      * the event facade.
-     * @return {Boolean} True if the whole lifecycle of the event went through,
-     * false if at any point the event propagation was halted.
+     * @return {EventTarget} the event host
      */
     fire: function(type) {
 
@@ -12220,9 +12169,11 @@ CEProto.fireComplex = function(args) {
         host = self.host || self,
         next,
         oldbubble,
-        stack = self.stack,
+        stack,
         yuievt = host._yuievt,
         hasPotentialSubscribers;
+
+    stack = self.stack;
 
     if (stack) {
 
@@ -12284,7 +12235,7 @@ CEProto.fireComplex = function(args) {
 
         self._facade = null; // kill facade to eliminate stale properties
 
-        ef = self._createFacade(args);
+        ef = self._getFacade(args);
 
         if (ons) {
             self._procSubs(ons, args, ef);
@@ -12398,7 +12349,7 @@ CEProto.fireComplex = function(args) {
         defaultFn = self.defaultFn;
 
         if(defaultFn) {
-            ef = self._createFacade(args);
+            ef = self._getFacade(args);
 
             if ((!self.defaultTargetOnly) || (host === ef.target)) {
                 defaultFn.apply(host, args);
@@ -12413,33 +12364,7 @@ CEProto.fireComplex = function(args) {
     return ret;
 };
 
-/**
- * @method _hasPotentialSubscribers
- * @for CustomEvent
- * @private
- * @return {boolean} Whether the event has potential subscribers or not
- */
-CEProto._hasPotentialSubscribers = function() {
-    return this.hasSubs() || this.host._yuievt.hasTargets || this.broadcast;
-};
-
-/**
- * Internal utility method to create a new facade instance and
- * insert it into the fire argument list, accounting for any payload
- * merging which needs to happen.
- *
- * This used to be called `_getFacade`, but the name seemed inappropriate
- * when it was used without a need for the return value.
- *
- * @method _createFacade
- * @private
- * @param fireArgs {Array} The arguments passed to "fire", which need to be
- * shifted (and potentially merged) when the facade is added.
- * @return {EventFacade} The event facade created.
- */
-
-// TODO: Remove (private) _getFacade alias, once synthetic.js is updated.
-CEProto._createFacade = CEProto._getFacade = function(fireArgs) {
+CEProto._getFacade = function(fireArgs) {
 
     var userArgs = this.details,
         firstArg = userArgs && userArgs[0],
@@ -12481,23 +12406,6 @@ CEProto._createFacade = CEProto._getFacade = function(fireArgs) {
     this._facade = ef;
 
     return this._facade;
-};
-
-/**
- * Utility method to manipulate the args array passed in, to add the event facade,
- * if it's not already the first arg.
- *
- * @method _addFacadeToArgs
- * @private
- * @param {Array} The arguments to manipulate
- */
-CEProto._addFacadeToArgs = function(args) {
-    var e = args[0];
-
-    // Trying not to use instanceof, just to avoid potential cross Y edge case issues.
-    if (!(e && e.halt && e.stopImmediatePropagation && e.stopPropagation && e._event)) {
-        this._createFacade(args);
-    }
 };
 
 /**
@@ -12698,25 +12606,6 @@ ETProto.bubble = function(evt, args, target, es) {
     }
 
     return ret;
-};
-
-/**
- * @method _hasPotentialSubscribers
- * @for EventTarget
- * @private
- * @param {String} fullType The fully prefixed type name
- * @return {boolean} Whether the event has potential subscribers or not
- */
-ETProto._hasPotentialSubscribers = function(fullType) {
-
-    var etState = this._yuievt,
-        e = etState.events[fullType];
-
-    if (e) {
-        return e.hasSubs() || etState.hasTargets  || e.broadcast;
-    } else {
-        return false;
-    }
 };
 
 FACADE = new Y.EventFacade();
@@ -14595,17 +14484,8 @@ Y.mix(Y_Node.prototype, {
      * @deprecated Use getHTML
      * @return {String} The current content
      */
-    getContent: function() {
-        var node = this;
-
-        if (node._node.nodeType === 11) { // 11 === Node.DOCUMENT_FRAGMENT_NODE
-            // "this", when it is a document fragment, must be cloned because
-            // the nodes contained in the fragment actually disappear once
-            // the fragment is appended anywhere
-            node = node.create("<div/>").append(node.cloneNode(true));
-        }
-
-        return node.get("innerHTML");
+    getContent: function(content) {
+        return this.get('innerHTML');
     }
 });
 
@@ -20197,15 +20077,13 @@ var PARENT_NODE = 'parentNode',
         _bruteQuery: function(selector, root, firstOnly) {
             var ret = [],
                 nodes = [],
-                visited,
                 tokens = Selector._tokenize(selector),
                 token = tokens[tokens.length - 1],
                 rootDoc = Y.DOM._getDoc(root),
                 child,
                 id,
                 className,
-                tagName,
-                isUniversal;
+                tagName;
 
             if (token) {
                 // prefilter nodes
@@ -20226,30 +20104,16 @@ var PARENT_NODE = 'parentNode',
                     }
 
                 } else { // brute getElementsByTagName()
-                    visited = [];
                     child = root.firstChild;
-                    isUniversal = tagName === "*";
                     while (child) {
-                        while (child) {
-                            // IE 6-7 considers comment nodes as element nodes, and gives them the tagName "!".
-                            // We can filter them out by checking if its tagName is > "@". 
-                            // This also avoids a superflous nodeType === 1 check.
-                            if (child.tagName > "@" && (isUniversal || child.tagName === tagName)) {
-                                nodes.push(child);
-                            }
-
-                            // We may need to traverse back up the tree to find more unvisited subtrees.
-                            visited.push(child);
-                            child = child.firstChild;
+                        // only collect HTMLElements
+                        // match tag to supplement missing getElementsByTagName
+                        if (child.tagName && (tagName === '*' || child.tagName === tagName)) {
+                            nodes.push(child);
                         }
-
-                        // Find the most recently visited node who has a next sibling.
-                        while (visited.length > 0 && !child) {
-                            child = visited.pop().nextSibling;
-                        }
+                        child = child.nextSibling || child.firstChild;
                     }
                 }
-
                 if (nodes.length) {
                     ret = Selector._filterNodes(nodes, tokens, firstOnly);
                 }
@@ -20591,6 +20455,7 @@ Y.Selector.getters.src = Y.Selector.getters.rel = Y.Selector.getters.href;
 if (Y.Selector.useNative && Y.config.doc.querySelector) {
     Y.Selector.shorthand['\\.(-?[_a-z]+[-\\w]*)'] = '[class~=$1]';
 }
+
 
 
 }, '@VERSION@', {"requires": ["selector-native"]});

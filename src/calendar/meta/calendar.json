@@ -4,7 +4,21 @@
             "calendar-base",
             "calendarnavigator"
         ],
-
+        "lang" : [
+            "de",
+            "en",
+            "es",
+            "es-AR",
+            "fr",
+            "hu",
+            "it",
+            "ja",
+            "nb-NO",
+            "nl",
+            "pt-BR",
+            "ru",
+            "zh-HANT-TW"
+        ],
         "skinnable": true
     }
 }

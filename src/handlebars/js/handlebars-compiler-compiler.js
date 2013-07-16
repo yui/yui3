@@ -295,15 +295,7 @@ Compiler.prototype = {
 
   DATA: function(data) {
     this.options.data = true;
-    if (data.id.isScoped || data.id.depth) {
-      throw new Handlebars.Exception('Scoped data references are not supported: ' + data.original);
-    }
-
-    this.opcode('lookupData');
-    var parts = data.id.parts;
-    for(var i=0, l=parts.length; i<l; i++) {
-      this.opcode('lookup', parts[i]);
-    }
+    this.opcode('lookupData', data.id);
   },
 
   STRING: function(string) {
@@ -502,9 +494,8 @@ JavaScriptCompiler.prototype = {
 
     if (!this.isChild) {
       var namespace = this.namespace;
-
-      var copies = "helpers = this.merge(helpers, " + namespace + ".helpers);";
-      if (this.environment.usePartial) { copies = copies + " partials = this.merge(partials, " + namespace + ".partials);"; }
+      var copies = "helpers = helpers || " + namespace + ".helpers;";
+      if (this.environment.usePartial) { copies = copies + " partials = partials || " + namespace + ".partials;"; }
       if (this.options.data) { copies = copies + " data = data || {};"; }
       out.push(copies);
     } else {
@@ -533,9 +524,7 @@ JavaScriptCompiler.prototype = {
     // Generate minimizer alias mappings
     if (!this.isChild) {
       for (var alias in this.context.aliases) {
-        if (this.context.aliases.hasOwnProperty(alias)) {
-          this.source[1] = this.source[1] + ', ' + alias + '=' + this.context.aliases[alias];
-        }
+        this.source[1] = this.source[1] + ', ' + alias + '=' + this.context.aliases[alias];
       }
     }
 
@@ -754,7 +743,7 @@ JavaScriptCompiler.prototype = {
   //
   // Push the result of looking up `id` on the current data
   lookupData: function(id) {
-    this.push('data');
+    this.push(this.nameLookup('data', id, 'data'));
   },
 
   // [pushStringParam]
@@ -861,9 +850,8 @@ JavaScriptCompiler.prototype = {
     this.context.aliases.helperMissing = 'helpers.helperMissing';
 
     var helper = this.lastHelper = this.setupHelper(paramSize, name, true);
-    var nonHelper = this.nameLookup('depth' + this.lastContext, name, 'context');
 
-    this.push(helper.name + ' || ' + nonHelper);
+    this.push(helper.name);
     this.replaceStack(function(name) {
       return name + ' ? ' + name + '.call(' +
           helper.callParams + ") " + ": helperMissing.call(" +

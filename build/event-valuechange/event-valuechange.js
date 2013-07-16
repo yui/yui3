@@ -83,8 +83,7 @@ VC = {
             event   = options.e,
             newVal  = domNode && domNode.value,
             vcData  = node._data && node._data[DATA_KEY], // another perf cheat
-            stopped = 0,
-            facade, prevVal, stopElement;
+            facade, prevVal;
 
         if (!domNode || !vcData) {
             VC._stopPolling(node);
@@ -104,35 +103,8 @@ VC = {
                 target       : (event && event.target) || node
             };
 
-            Y.Object.some(vcData.notifiers, function (notifier) {
-                var evt = notifier.handle.evt,
-                    newStopped;
-
-                // support e.stopPropagation()
-                if (stopped !== 1) {
-                    notifier.fire(facade);
-                } else if (evt.el === stopElement) {
-                    notifier.fire(facade);
-                }
-
-                newStopped = evt && evt._facade ? evt._facade.stopped : 0;
-
-                // need to consider the condition in which there are two
-                // listeners on the same element:
-                // listener 1 calls e.stopPropagation()
-                // listener 2 calls e.stopImmediatePropagation()
-                if (newStopped > stopped) {
-                    stopped = newStopped;
-
-                    if (stopped === 1) {
-                        stopElement = evt.el;
-                    }
-                }
-
-                // support e.stopImmediatePropagation()
-                if (stopped === 2) {
-                    return true;
-                }
+            Y.Object.each(vcData.notifiers, function (notifier) {
+                notifier.fire(facade);
             });
 
             VC._refreshTimeout(node);
@@ -217,7 +189,7 @@ VC = {
         vcData.notifiers[Y.stamp(notifier)] = notifier;
 
         vcData.interval = setInterval(function () {
-            VC._poll(node, options);
+            VC._poll(node, vcData, options);
         }, VC.POLL_INTERVAL);
 
 

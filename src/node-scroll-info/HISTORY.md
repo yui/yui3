@@ -4,6 +4,11 @@ ScrollInfo Node Plugin Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.10.3
+------
+
 * Added an `isNodeOnscreen()` method that returns `true` if the given node is
   within the visible bounds of the viewport, `false` otherwise. [Ryan Grove]
 
@@ -13,11 +18,6 @@ ScrollInfo Node Plugin Change History
 * Fixed a bug that caused `getOffscreenNodes()` and `getOnscreenNodes()` to
   return incorrect information when used on a scrollable node rather than the
   body. [Ryan Grove]
-
-3.10.3
-------
-
-* No changes.
 
 3.10.2
 ------

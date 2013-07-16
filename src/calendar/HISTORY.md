@@ -4,20 +4,15 @@ Calendar Change History
 @VERSION@
 ------
 
-* Cleaned up lang (see PR #878) [Jeroen Versteeg]:
-  * removed unused lang/calendar (only lang/calendar-base is used)
-  * removed unused short_weekdays strings from lang/calendar-base
-  * replaced weekdays strings from lang/calendar-base with datatype/date-format
+* No changes.
+
+3.10.3
+------
 
 * Setting `minimumDate` or `maximumDate` now correctly disables nodes before or
   after those dates. [Arnaud Didry]
 
 * Added Hungarian language support [Gábor Kovács]
-
-3.10.3
-------
-
-* No changes.
 
 3.10.2
 ------

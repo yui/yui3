@@ -11,6 +11,10 @@
  * configured logLevel.
  *
  * @module console
+ * @class Console
+ * @extends Widget
+ * @param conf {Object} Configuration object (see Configuration attributes)
+ * @constructor
  */
 var getCN = Y.ClassNameManager.getClassName,
     CHECKED        = 'checked',
@@ -84,14 +88,7 @@ var getCN = Y.ClassNameManager.getClassName,
     merge      = Y.merge,
     substitute = Y.Lang.sub;
     
-/**
-A basic console that displays messages logged throughout your application.
 
-@class Console
-@constructor
-@extends Widget
-@param [config] {Object} Object literal specifying widget configuration properties.
-**/
 function Console() {
     Console.superclass.constructor.apply(this,arguments);
 }

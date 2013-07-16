@@ -485,6 +485,21 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "calendar": {
+        "lang": [
+            "de",
+            "en",
+            "es",
+            "es-AR",
+            "fr",
+            "hu",
+            "it",
+            "ja",
+            "nb-NO",
+            "nl",
+            "pt-BR",
+            "ru",
+            "zh-HANT-TW"
+        ],
         "requires": [
             "calendar-base",
             "calendarnavigator"
@@ -677,19 +692,22 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "type": "css"
     },
     "cssgrids-base": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "type": "css"
     },
     "cssgrids-responsive": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "requires": [
             "cssgrids",
@@ -699,7 +717,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids-units": {
         "optional": [
-            "cssnormalize"
+            "cssreset",
+            "cssfonts"
         ],
         "requires": [
             "cssgrids-base"
@@ -881,12 +900,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datasource-local"
         ]
     },
-    "datatable-foot": {
-        "requires": [
-            "datatable-core",
-            "view"
-        ]
-    },
     "datatable-formatters": {
         "requires": [
             "datatable-body",
@@ -918,24 +931,6 @@ Y.mix(YUI.Env[Y.version].modules, {
     "datatable-mutable": {
         "requires": [
             "datatable-base"
-        ]
-    },
-    "datatable-paginator": {
-        "lang": [
-            "en"
-        ],
-        "requires": [
-            "model",
-            "view",
-            "paginator-core",
-            "datatable-foot",
-            "datatable-paginator-templates"
-        ],
-        "skinnable": true
-    },
-    "datatable-paginator-templates": {
-        "requires": [
-            "template"
         ]
     },
     "datatable-scroll": {
@@ -2942,7 +2937,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'b48f48e0499b41d980deaefd4100d336';
+YUI.Env[Y.version].md5 = '0ef57f597d6d83db16c9127b46f6150b';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

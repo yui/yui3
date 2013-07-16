@@ -177,11 +177,7 @@ YUI.add('attribute-observable', function (Y, NAME) {
             facade.prevVal = currVal;
             facade.newVal = newVal;
 
-            if (host._hasPotentialSubscribers(eventName)) {
-                host.fire(eventName, facade);
-            } else {
-                this._setAttrVal(attrName, subAttrName, currVal, newVal, opts, cfg);
-            }
+            host.fire(eventName, facade);
         },
 
         /**
@@ -190,9 +186,8 @@ YUI.add('attribute-observable', function (Y, NAME) {
          * @private
          * @method _defAttrChangeFn
          * @param {EventFacade} e The event object for attribute change events.
-         * @param {boolean} eventFastPath Whether or not we're using this as a fast path in the case of no listeners or not
          */
-        _defAttrChangeFn : function(e, eventFastPath) {
+        _defAttrChangeFn : function(e) {
 
             var opts = e._attrOpts;
             if (opts) {
@@ -200,17 +195,11 @@ YUI.add('attribute-observable', function (Y, NAME) {
             }
 
             if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal, opts)) {
-
-
-                if (!eventFastPath) {
-                    // Prevent "after" listeners from being invoked since nothing changed.
-                    e.stopImmediatePropagation();
-                }
+                // Prevent "after" listeners from being invoked since nothing changed.
+                e.stopImmediatePropagation();
 
             } else {
-                if (!eventFastPath) {
-                    e.newVal = this.get(e.attrName);
-                }
+                e.newVal = this.get(e.attrName);
             }
         }
     };

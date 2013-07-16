@@ -166,17 +166,20 @@ YUI.add('ua-tests', function(Y) {
         }
     }));
 
-    Y.Object.each(Y.UAData, function (tests, name) {
-        var testCase = {name: 'User Agent: ' + name};
+    Y.each(Y.UAData, function(info, name) {
+        var testCase = {
+            name: 'User Agent: ' + name
+        };
 
-        Y.Array.each(tests, function (test) {
-            testCase['test: ' + test.ua] = function () {
-                var ua = YUI.Env.parseUA(test.ua);
-
-                Y.Object.each(test.data, function (value, key) {
-                    Y.Assert.areEqual(value, ua[key], 'Key (' + key + ') for ' + test.ua);
-                });
-            };
+        Y.each(info, function(data) {
+            testCase['test: ' + data.ua] = (function(i) {
+                return function() {
+                    var ua = YUI.Env.parseUA(i.ua);
+                    Y.each(i.data, function(v, k) {
+                        Y.Assert.areEqual(v, ua[k], 'Key (' + k + ') for ' + i.ua);
+                    });
+                };
+            }(data));
         });
 
         suite.add(new Y.Test.Case(testCase));

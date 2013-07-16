@@ -36,12 +36,6 @@
                     "classnamemanager"
                 ]
             },
-            "datatable-foot": {
-                "requires": [
-                    "datatable-core",
-                    "view"
-                ]
-            },
             "datatable-body": {
                 "requires": [
                     "datatable-core",
@@ -105,22 +99,6 @@
                     "datatype-number-format",
                     "datatype-date-format",
                     "escape"
-                ]
-            },
-            "datatable-paginator": {
-                "requires": [
-                    "model",
-                    "view",
-                    "paginator-core",
-                    "datatable-foot",
-                    "datatable-paginator-templates"
-                ],
-                "lang": [ "en" ],
-                "skinnable": true
-            },
-            "datatable-paginator-templates": {
-                "requires": [
-                    "template"
                 ]
             }
         }

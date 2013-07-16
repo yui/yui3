@@ -4,9 +4,7 @@ Handlebars Change History
 @VERSION@
 ------
 
-* Upgraded Handlebars.js to v1.0.12. See [Handlebars' release notes][v1.0.12].
-
-[v1.0.12]: https://github.com/wycats/handlebars.js/blob/master/release-notes.md#v1012--100---may-31-2013
+* No changes.
 
 3.10.3
 ------

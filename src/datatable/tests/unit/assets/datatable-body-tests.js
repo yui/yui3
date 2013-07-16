@@ -299,7 +299,7 @@ suite.add(new Y.Test.Case({
                 },
                 { key: 'd' },
                 { key: 'e',
-                  formatter:'{a},{b}'
+                  formatter:'{e},{a},{b}'
                 },
                 { key: 'f', formatter:'currency'},
                 { key: 'g', formatter:'currency', currencyFormat: {
@@ -307,11 +307,14 @@ suite.add(new Y.Test.Case({
                     decimalSeparator: ",",
                     thousandsSeparator: ",",
                     suffix: "€"
-                }}
+                }},
+                { key: 'h', formatter: '(({value}))', emptyCellValue: 'nothing'}
             ],
             modelList: new Y.ModelList().reset([
-                { a: 'a1', b: 'b1', c: 'c1', d: 'd1', f: 123.45 , g: 123.45},
-                { a: 'a2',          c: 'c2', d: 'd2', f: 678    , g: 678   }
+                { a: 'a1', b: 'b1', c: 'c1', d: 'd1',  e: 'e1',  f: 123.45 , g: 123.45, h: "something" },
+                { a: 'a2',          c: 'c2', d: 'd2',  e: 'e2',  f: 678    , g: 678,    h: null},
+                {h:""},
+                {}
             ])
         }).render();
     },
@@ -326,7 +329,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame('ema1', content.get('id'));
         Y.Assert.areSame('a1', content.getHTML());
         node = view.getCell([0,4]);
-        Y.Assert.areSame('a1,b1', node.getHTML());
+        Y.Assert.areSame('e1,a1,b1', node.getHTML());
     },
 
     "formatter adding to o.className should add to cell classes": function () {
@@ -364,18 +367,23 @@ suite.add(new Y.Test.Case({
                     .item(1);
 
         Y.Assert.areSame('EMPTY', node.get('text'));
+        Y.Assert.areSame('((something))', view.getCell([0, 7]).get('text'));
+        Y.Assert.areSame('nothing', view.getCell([1, 7]).get('text'));
+        Y.Assert.areSame('nothing', view.getCell([2, 7]).get('text'));
+        Y.Assert.areSame('nothing', view.getCell([3, 7]).get('text'));
     },
+            
 
     "changing columns config propagates to the UI": function () {
         var view      = this.view,
             tbody     = view.tbodyNode,
             className = '.' + view.getClassName('cell');
 
-        Y.Assert.areSame(14, tbody.all(className).size());
+        Y.Assert.areSame(32, tbody.all(className).size());
 
         this.view.set('columns', [{ key: 'd' }]);
 
-        Y.Assert.areSame(2, tbody.all(className).size());
+        Y.Assert.areSame(4, tbody.all(className).size());
     },
     "testing node formatters": function () {
         var view = this.view,
@@ -758,43 +766,6 @@ suite.add(new Y.Test.Case({
 
 
 }));
-
-
-suite.add(new Y.Test.Case({
-    name: "clientId",
-
-    "Row 'record' should match the clientId of the model": function () {
-        var container = Y.Node.create('<table/>'),
-
-            table = new Y.DataTable.BodyView({
-                columns: [
-                    { key: 'a' },
-                    { key: 'clientId' }
-                ],
-                container: container,
-                modelList: new Y.ModelList().reset([
-                    { a: 1, b: 1 },
-                    { a: 2, b: 2 }
-                ])
-            });
-
-        table.render();
-
-        Y.one('body').append(container);
-
-        container.all('tr').each(function (row, index) {
-            var record = row.getData('yui3-record'),
-                model = table.get('modelList').item(index);
-
-            // check model clientIds against row's stored record
-            Y.Assert.areSame(model.get('clientId'), record);
-        });
-
-        table.destroy({ remove: true });
-    }
-}));
-
-
 
 /*
 suite.add(new Y.Test.Case({
