@@ -349,5 +349,5 @@ module.exports = {
                 var val = GLOBAL_MY_BASE_CORE_10.get("attr2");
             }
         }
-    }
-];
+    ]
+};
