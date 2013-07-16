@@ -15159,7 +15159,8 @@ Y.mix(Y_Node.prototype, {
     },
 
     _isHidden: function() {
-        return Y.DOM.getAttribute(this._node, 'hidden') === 'true';
+        return this._node.hasAttribute('hidden')
+            || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
     },
 
     /**
@@ -15224,7 +15225,7 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     _hide: function() {
-        this.setAttribute('hidden', true);
+        this.setAttribute('hidden', '');
 
         // For back-compat we need to leave this in for browsers that
         // do not visually hide a node via the hidden attribute
@@ -15507,7 +15508,7 @@ Y.mix(Y.NodeList.prototype, {
 });
 
 
-}, '@VERSION@', {"requires": ["event-base", "node-core", "dom-base"]});
+}, '@VERSION@', {"requires": ["event-base", "node-core", "dom-base", "dom-style"]});
 (function () {
 var GLOBAL_ENV = YUI.Env;
 
@@ -17933,6 +17934,11 @@ Y.Node.unplug = function() {
 };
 
 Y.mix(Y.Node, Y.Plugin.Host, false, null, 1);
+
+// run PluginHost constructor on cached Node instances
+Y.Object.each(Y.Node._instances, function (node) {
+    Y.Plugin.Host.apply(node);
+});
 
 // allow batching of plug/unplug via NodeList
 // doesn't use NodeList.importMethod because we need real Nodes (not tmpNode)
