@@ -60,6 +60,10 @@ Y.extend(Button, Y.Widget,  {
         }
     },
 
+    renderUI: function () {
+        this.getNode().set('type', this.get('type'));
+    },
+
     /**
      * bindUI implementation
      *
@@ -136,6 +140,17 @@ Y.extend(Button, Y.Widget,  {
          */
         label: {
             value: Y.ButtonCore.ATTRS.label.value
+        },
+
+        /**
+         * Type of button: 'submit', 'button' or 'reset'
+         */
+        type: {
+            value: 'submit',
+            validator: function (val) {
+                return val === 'submit' || val === 'button' || val === 'reset';
+            },
+            getter: null    // don't get type from node
         }
     },
 
@@ -153,6 +168,10 @@ Y.extend(Button, Y.Widget,  {
 
         disabled: function(node) {
             return node.getDOMNode().disabled;
+        },
+
+        type: function (node) {
+            return node.get('type');
         }
     },
 
@@ -208,8 +227,7 @@ Y.extend(ToggleButton, Button,  {
      */
     initializer: function (config) {
         var button = this,
-            type = button.get('type'),
-            selectedAttrName = (type === "checkbox" ? 'checked' : 'pressed'),
+            selectedAttrName = (config.type === "checkbox" ? 'checked' : 'pressed'),
             selectedState = config[selectedAttrName] || false;
         
         // Create the checked/pressed attribute
@@ -228,6 +246,10 @@ Y.extend(ToggleButton, Button,  {
         delete this.selectedAttrName;
     },
     
+    renderUI: function () {
+         this.getNode().set('type', 'button');  // toggles are buttons
+    },
+
     /**
      * @method bindUI
      * @description Hooks up events for the widget
@@ -319,14 +341,13 @@ Y.extend(ToggleButton, Button,  {
     ATTRS: {
 
        /**
-        *
-        *
-        * @attribute type
-        * @type String
+        * 'toggle' (default) or 'checkbox'
         */
         type: {
             value: 'toggle',
-            writeOnce: 'initOnly'
+            validator: function (val) {
+                return val === 'toggle' || val === 'checkbox';
+            }
         }
     },
     

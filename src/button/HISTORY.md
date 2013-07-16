@@ -4,7 +4,10 @@ Button Change History
 3.11.0
 ------
 
-* No changes.
+* Added type ATTR to ButtonCore to enable Button nodes to be rendered with "type" attribute
+  The default `type` for `<button>`s `submit`, which is not always desired, especially for ToggleButton.
+  * `Button` now supports `submit` (backwards-compatible default), `button` and `reset`
+  * `ToggleButton` is always rendered with `type="button"`
 
 3.10.3
 ------
