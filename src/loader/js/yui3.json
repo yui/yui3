@@ -1816,7 +1816,8 @@
         "requires": [
             "event-base",
             "node-core",
-            "dom-base"
+            "dom-base",
+            "dom-style"
         ]
     },
     "node-core": {
