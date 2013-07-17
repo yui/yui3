@@ -88,6 +88,9 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
         pane.delegate("focus", this._focusCalendarGrid, "." + CAL_GRID, this);
         pane.delegate("focus", this._focusCalendarCell, "." + CAL_DAY, this);
         pane.delegate("blur", this._blurCalendarGrid, "." + CAL_GRID + ",." + CAL_DAY, this);
+
+
+        this.after(['minimumDateChange', 'maximumDateChange'], this._afterCustomRendererChange);
     },
 
     /**
@@ -362,6 +365,69 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
     },
 
     /**
+     * Overrides CalendarBase.prototype._canBeSelected to disable
+     * nodes earlier than minimumDate and later than maximumDate
+     * @method _canBeSelected
+     * @private
+     */
+    _canBeSelected : function (date) {
+        var minDate = this.get('minimumDate'),
+            maxDate = this.get('maximumDate');
+
+        if ((minDate && !ydate.isGreaterOrEqual(date, minDate)) ||
+            (maxDate &&  ydate.isGreater(date, maxDate))) {
+            return false;
+        }
+
+        return Calendar.superclass._canBeSelected.call(this, date);
+    },
+
+    /**
+     * Overrides CalendarBase.prototype._renderCustomRules to disable
+     * nodes earlier than minimumDate and later than maximumDate
+     * @method _renderCustomRules
+     * @private
+     */
+    _renderCustomRules: function () {
+        Calendar.superclass._renderCustomRules.call(this);
+
+        var minDate = this.get('minimumDate'),
+            maxDate = this.get('maximumDate'),
+            dates = [],
+            i, l,
+            paneNum;
+
+        if (!minDate && !maxDate) {
+            return;
+        }
+
+        for (paneNum = 0; paneNum < this._paneNumber; paneNum++) {
+            paneDate = ydate.addMonths(this.get("date"), paneNum);
+            dates = dates.concat(ydate.listOfDatesInMonth(paneDate));
+        }
+
+        if (minDate) {
+            for (i = 0, l = dates.length; i < l; i++) {
+                if (!ydate.isGreaterOrEqual(dates[i], minDate)) {
+                    this._disableDate(dates[i]);
+                } else {
+                    break;
+                }
+            }
+        }
+
+        if (maxDate) {
+            for (i = dates.length - 1; i >= 0; i--) {
+                if (ydate.isGreater(dates[i], maxDate)) {
+                    this._disableDate(dates[i]);
+                } else {
+                    break;
+                }
+            }
+        }
+    },
+
+    /**
      * Subtracts one month from the current calendar view.
      * @method subtractMonth
      * @return {Calendar} A reference to this object
@@ -473,29 +539,25 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
             lazyAdd: false,
             setter: function (val) {
 
-                var newDate = this._normalizeDate(val),
-                    newTopDate = ydate.addMonths(newDate, this._paneNumber - 1),
-                    minDate = this.get("minimumDate"),
-                    maxDate = this.get("maximumDate"),
-                    actualMaxDate;
+                var newDate    = this._normalizeDate(val),
+                    newEndDate = ydate.addMonths(newDate, this._paneNumber - 1),
+                    minDate    = this.get("minimumDate"),
+                    maxDate    = this.get("maximumDate");
 
                 if ((!minDate || ydate.isGreaterOrEqual(newDate, minDate)) &&
-                        (!maxDate || ydate.isGreaterOrEqual(maxDate, newTopDate))
+                    (!maxDate || ydate.isGreaterOrEqual(maxDate, newEndDate))
                 ) {
                     return newDate;
                 } else if (minDate && ydate.isGreater(minDate, newDate)) {
-                    return minDate;
-                } else if (maxDate && ydate.isGreater(newTopDate, maxDate)) {
-                    actualMaxDate = ydate.addMonths(maxDate, -1*(this._paneNumber - 1));
-                    return actualMaxDate;
+                    return this._normalizeDate(minDate);
+                } else if (maxDate && ydate.isGreater(newEndDate, maxDate)) {
+                    return ydate.addMonths(this._normalizeDate(maxDate), 1 - this._paneNumber);
                 }
             }
         },
 
         /**
-         * The minimum date that can be displayed by the calendar. The calendar will not
-         * allow dates earlier than this one to be set, and will reset any earlier date to
-         * this date. Should be `null` if no minimum date is needed.
+         * Unless minimumDate is null, it will not be possible to display and select dates earlier than this one.
          *
          * @attribute minimumDate
          * @type Date
@@ -504,23 +566,21 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
         minimumDate: {
             value: null,
             setter: function (val) {
-                if (val) {
+                if (Y.Lang.isDate(val)) {
                     var curDate = this.get('date'),
-                        newMinDate = this._normalizeDate(val);
-                    if (curDate && !ydate.isGreaterOrEqual(curDate, newMinDate)) {
-                        this.set('date', newMinDate);
+                        newMin  = this._normalizeTime(val);
+                    if (curDate && !ydate.isGreaterOrEqual(curDate, newMin)) {
+                        this.set('date', val);
                     }
-                    return newMinDate;
+                    return newMin;
                 } else {
-                    return this._normalizeDate(val);
+                    return null;
                 }
             }
         },
 
         /**
-         * The maximum date that can be displayed by the calendar. The calendar will not
-         * allow dates later than this one to be set, and will reset any later date to
-         * this date. Should be `null` if no maximum date is needed.
+         * Unless maximumDate is null, it will not be possible to display and select dates later than this one.
          *
          * @attribute maximumDate
          * @type Date
@@ -529,39 +589,20 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
         maximumDate: {
             value: null,
             setter: function (val) {
-                if (val) {
-                    var curDate = this.get('date'),
-                        newMaxDate = this._normalizeDate(val);
+                if (Y.Lang.isDate(val)) {
+                    var curDate = this.get('date');
+
                     if (curDate && !ydate.isGreaterOrEqual(val, ydate.addMonths(curDate, this._paneNumber - 1))) {
-                        this.set('date', ydate.addMonths(newMaxDate, -1*(this._paneNumber -1)));
+                        this.set('date', ydate.addMonths(this._normalizeDate(val), 1 - this._paneNumber));
                     }
-                    return newMaxDate;
+
+                    return this._normalizeTime(val);
                 } else {
-                    return val;
+                    return null;
                 }
             }
         }
     }
 });
 
-}, '@VERSION@', {
-    "requires": [
-        "calendar-base",
-        "calendarnavigator"
-    ],
-    "lang": [
-        "de",
-        "en",
-        "es",
-        "es-AR",
-        "fr",
-        "it",
-        "ja",
-        "nb-NO",
-        "nl",
-        "pt-BR",
-        "ru",
-        "zh-HANT-TW"
-    ],
-    "skinnable": true
-});
+}, '@VERSION@', {"requires": ["calendar-base", "calendarnavigator"], "skinnable": true});

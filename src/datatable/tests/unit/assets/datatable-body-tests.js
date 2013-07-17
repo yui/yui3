@@ -419,16 +419,34 @@ suite.add(new Y.Test.Case({
                     thousandsSeparator: 't',
                     prefix: 'p',
                     suffix: 's'
+                }},
+                {key: 'lookup', formatter: 'lookup', lookupTable: [
+                    {value: undefined, text: 'unknown'},
+                    {value: 0, text: 'zero'},
+                    {value: 1, text: 'one'},
+                    {value: 2, text: 'two'},
+                    {value: 3, text: 'three'},
+                    {value: 4, text: 'four'}
+                ]},
+                {key: 'lookup1', formatter: 'lookup', lookupTable: {
+                    undefined: 'unknown',
+                    0: 'zero',
+                    1: 'one',
+                    2: 'two',
+                    3: 'three',
+                    4: 'four'
                 }}
 
             ],
             data: [
                 {
-                    a: 123.45, b: 123.45, button:'btn', 'boolean': true, 'date': this.dateFormatTime,
-                    localDate: this.dateFormatTime, localTime: this.dateFormatTime, localDateTime: this.dateFormatTime,
-                    email: 'me', link: 'site', linkSrc: 'there', number: 987654
+                    a: 123.45, b: 123.45, button:'btn', 'boolean': true, 'date': new Date(),
+                    localDate: new Date(), localTime: new Date(), localDateTime: new Date(),
+                    email: 'me', link: 'site', linkSrc: 'there', number: 987654,
+                    lookup: 1, lookup1: 1
                 },
-                {a: 6789,   b: 6789  , email: 'me', link: 'site',              'boolean': false },
+                {a: 6789,   b: 6789  , email: 'me', link: 'site',              'boolean': false,
+                    lookup:3, lookup1:3 },
                 {}
             ],
             currencyFormat: {
@@ -490,18 +508,18 @@ suite.add(new Y.Test.Case({
                 }
                 return val;
             };
-        
+
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
         Y.Assert.areEqual(getTestText(Y.Date.format(this.dateFormatTime)), node.getHTML());
-        
+
         node = dt.getCell([0,5]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
         Y.Assert.areEqual(getTestText(Y.Date.format(this.dateFormatTime,{format:'%x'})), node.getHTML());
-        
+
         node = dt.getCell([0,6]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
         Y.Assert.areEqual(getTestText(Y.Date.format(this.dateFormatTime,{format:'%X'})), node.getHTML());
-        
+
         node = dt.getCell([0,7]);
         Y.Assert.isTrue(node.hasClass('yui3-datatable-date'));
         Y.Assert.areEqual(getTestText(Y.Date.format(this.dateFormatTime,{format:'%c'})), node.getHTML());
@@ -545,6 +563,24 @@ suite.add(new Y.Test.Case({
         Y.Assert.areEqual('p987t654d00s', node.getHTML());
         node = dt.getCell([2, 0]);
         Y.Assert.areEqual('', node.getHTML());
+    },
+    "test lookup format": function () {
+        var dt = this.dt,
+            node = dt.getCell([0,11]);
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-lookup'));
+        Y.Assert.areEqual('one', node.getHTML());
+        node = dt.getCell(node, 'below');
+        Y.Assert.areEqual('three', node.getHTML());
+        node = dt.getCell(node, 'below');
+        Y.Assert.areEqual('unknown', node.getHTML());
+
+        node = dt.getCell([0,12]);
+        Y.Assert.isTrue(node.hasClass('yui3-datatable-lookup'));
+        Y.Assert.areEqual('one', node.getHTML());
+        node = dt.getCell(node, 'below');
+        Y.Assert.areEqual('three', node.getHTML());
+        node = dt.getCell(node, 'below');
+        Y.Assert.areEqual('unknown', node.getHTML());
     }
 }));
 
@@ -643,6 +679,122 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame('5', this.view.tbodyNode.one('td').get('text'));
     }
 }));
+
+suite.add(new Y.Test.Case({
+    name: "modelList changes should only refresh cell contents that are changed",
+
+    setUp: function () {
+        this.makeRow = function (index) {
+            return { a: index, b: index, c: index };
+        },
+        this.view = new Y.DataTable.BodyView({
+            columns: [{key:'a'}, {key:'b'}, {key:'c'}],
+            container: Y.Node.create('<table></table>'),
+            modelList: new Y.ModelList().reset([{ a: 1, b: 1, c: 2 }])
+        });
+        this.view.render();
+    },
+
+    tearDown: function () {
+        this.view.destroy();
+    },
+
+    "replacing the modelList should update UI": function () {
+        var td = this.view.tbodyNode.one('td');
+        this.view.set('modelList', new Y.ModelList().reset([this.makeRow(5)]));
+
+        Y.Assert.areNotSame(td, this.view.tbodyNode.one('td'));
+        Y.Assert.areSame('5', this.view.tbodyNode.one('td').get('text'));
+    },
+
+    "changes to the modelList after replacing it should update the UI but not change the nodes": function () {
+        this.view.set('modelList', new Y.ModelList().reset([this.makeRow(5)]));
+
+        Y.Assert.areSame('5', this.view.tbodyNode.one('td').get('text'));
+
+        var td = this.view.tbodyNode.one('td');
+        this.view.get('modelList').item(0).set('a', 10);
+
+        Y.Assert.areSame(td, this.view.tbodyNode.one('td'));
+        Y.Assert.areSame('10', this.view.tbodyNode.one('td').get('text'));
+    },
+
+    "reset()ing the modelList should update UI": function () {
+        var td = this.view.tbodyNode.one('td');
+        this.view.get('modelList').reset([this.makeRow(5)]);
+
+        Y.Assert.areNotSame(td, this.view.tbodyNode.one('td'));
+        Y.Assert.areSame('5', this.view.tbodyNode.one('td').get('text'));
+    },
+
+    "adding Models to the modelList should update UI but not change the existing cells": function () {
+        var td = this.view.tbodyNode.one('td');
+        this.view.get('modelList').add([this.makeRow(5)]);
+
+        Y.Assert.areSame(td, this.view.tbodyNode.one('td'));
+        Y.Assert.areSame('5', this.view.tbodyNode.all('td').item(4).get('text'));
+    },
+
+    "removing Models from the modelList should update UI but not change the existing cells": function () {
+        var td = this.view.tbodyNode.one('td');
+        var modelList = this.view.get('modelList'),
+            model;
+
+        modelList.add([ this.makeRow(2), this.makeRow(3), this.makeRow(4) ]);
+
+        modelList.item(2).destroy();
+
+        Y.Assert.areSame(td, this.view.tbodyNode.one('td'));
+        Y.Assert.areSame(3, this.view.tbodyNode.all('tr').size());
+    },
+
+    "changing Model attributes should update UI but not change the existing cells": function () {
+        var td = this.view.tbodyNode.one('td');
+        this.view.get('modelList').item(0).set('a', 5);
+
+        Y.Assert.areSame(td, this.view.tbodyNode.one('td'));
+        Y.Assert.areSame('5', this.view.tbodyNode.one('td').get('text'));
+    }
+
+
+}));
+
+
+suite.add(new Y.Test.Case({
+    name: "clientId",
+
+    "Row 'record' should match the clientId of the model": function () {
+        var container = Y.Node.create('<table/>'),
+
+            table = new Y.DataTable.BodyView({
+                columns: [
+                    { key: 'a' },
+                    { key: 'clientId' }
+                ],
+                container: container,
+                modelList: new Y.ModelList().reset([
+                    { a: 1, b: 1 },
+                    { a: 2, b: 2 }
+                ])
+            });
+
+        table.render();
+
+        Y.one('body').append(container);
+
+        container.all('tr').each(function (row, index) {
+            var record = row.getData('yui3-record'),
+                model = table.get('modelList').item(index);
+
+            // check model clientIds against row's stored record
+            Y.Assert.areSame(model.get('clientId'), record);
+        });
+
+        table.destroy({ remove: true });
+    }
+}));
+
+
 
 /*
 suite.add(new Y.Test.Case({

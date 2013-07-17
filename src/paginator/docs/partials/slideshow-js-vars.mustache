@@ -1,0 +1,8 @@
+    var spiffy = Y.one('#spiffySlides'),
+        slides = spiffy.all('.slides li'),
+        controls = spiffy.all('.controls li'),
+        selectedClass = 'active',
+        pg = new Y.Paginator({
+            itemsPerPage: 1,
+            totalItems: slides.size()
+        });

@@ -671,7 +671,9 @@ Y.Router = Y.extend(Router, Y.Base, {
 
                 // Decode each of the path matches so that the any URL-encoded
                 // path segments are decoded in the `req.params` object.
-                matches = YArray.map(route.regex.exec(path) || [], decode);
+                matches = YArray.map(route.regex.exec(path) || [], function (match) {
+                    return match && decode(match);
+                });
 
                 // Use named keys for parameter names if the route path contains
                 // named keys. Otherwise, use numerical match indices.

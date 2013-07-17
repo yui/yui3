@@ -6,6 +6,11 @@ AutoComplete Change History
 
 * No changes.
 
+3.11.0
+------
+
+* Added Hungarian language support
+
 3.10.3
 ------
 

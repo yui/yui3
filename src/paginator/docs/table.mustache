@@ -1,0 +1,100 @@
+<div class="intro">
+<p>{{description}}</p>
+</div>
+
+<div id="demo" class="example">
+{{>table-full}}
+</div>
+
+<h3>Setting Up the Interface</h3>
+<p>First we need to construct the HTML for the table and controls.</p>
+```
+{{>table-html-markup}}
+```
+
+<p>Now we can add some CSS to make it a little more presentable.</p>
+```
+{{>table-css-styles}}
+```
+
+
+<h2>JavaScript</h2>
+<p>Our small table application will have four main parts:</p>
+<ul>
+    <li>Showing the page requested</li>
+    <li>Updating the controls available</li>
+    <li>Wiring the controls</li>
+    <li>Wiring the paginator</li>
+</ul>
+
+<h3>Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the modules.</p>
+```
+{{>table-js-startup}}
+```
+<p>There are only a few modules we need to require:</p>
+<ul>
+    <li><b>paginator</b>: Gives us the paginator</li>
+    <li><b>node</b>: Allows us to access the elem ents on the page and gives us basic event attachment</li>
+    <li><b>datatype-number-format</b>: Let's us format the population numbers</li>
+</ul>
+
+<h3>Defining our variables</h3>
+<p>We start off by defining the variables we need for the app.</p>
+```
+{{>table-js-vars-abbr}}
+```
+<p>We have three references to `Node`s to prevent repetative look ups.</p>
+<p>We have created two template variables that will be used to populate rows (`rowTemplate`) and the current page (`currentPageTemplate`) in the paginator.</p>
+<p>We have an `Array` of data to be parsed through to build the table when we change pages or change how many rows are visible at one time.</p>
+<p>Finally, we define our paginator showing 10 items per page. We set the `totalItems` to the number of items in the `data` array.</p>
+<p>After we define our variables, we loop through the `data` array to format the population numbers.</p>
+
+<h3>`showPage` Method</h3>
+<p>Next, we need to define how we are going to get data from the `Array` to the table's body.</p>
+```
+{{>table-js-showPage}}
+```
+<p>The variable definition is pretty straight forward with the exception of `min` and `max`; that can look a little confusing, so let's take it step by step.</p>
+<p>First, we set `min` to the current page minus one and multiply it by the total number of items per page. This will give you a zero based index for the first item on the page &mdash; which is what we want when working with an `Array`.</p>
+<p>Next, we set `max` to the smallest of either the last "virtual" item on the page (`page * itemsPerPage - 1`) or the total number of items. Since our last page may not end exactly at the last item (think 20 items per page and 50 total items), this will ensure that max is never more than we have to show.</p>
+<p>Finally, we make sure `max` is greater than, or equal to, `min`.</p>
+<p></p>
+<p>The `for` loop starts at `min` and goes through `max` building a string of each row using `Y.Lang.sub` and the `rowTemplate`.</p>
+<p>Then we set the table's body to the rows we created, and update the paginator's display.</p>
+
+<h3>`updateControls` Method</h3>
+<p>When our paginator's page changes, we need to update the controls to set what is disabled, and what is not.</p>
+```
+{{>table-js-updateControls}}
+```
+<p>`Y.Paginator` has two methods that return boolean values about it's current state: `hasNextPage` and `hasPrevPage`. We use these methods to determin if the control buttons should be disabled or enabled.</p>
+<p>For example, if there is not a previous page (`false` returned from `hasPrevPage`), the first control has the `disabled` ClassName applied, otherwise it is removed.</p>
+
+<h3>Control Event Binding</h3>
+<p>Now we need to describe what happens when the controls are interacted with.</p>
+```
+{{>table-js-controls}}
+```
+<p>First off, when the "buttons" are clicked and are not disabled, we go to their respective page.</p>
+<p>When the `perPage` select element is changed, we set the `itemsPerPage` of our paginator to the new value. We also set our paginator's page to `1` to reset the table's view.</p>
+
+<h3>Binding Paginator</h3>
+<p>The last thing we need to do before we wrap this up is bind our paginator's change events.</p>
+```
+{{>table-js-paginator}}
+```
+<p>First, after our paginator fires the `itemsPerPageChange` event, we go to the first page unless it's already at the first page. If it is at the first page, we show the new page and update the controls.</p>
+<p>After our paginator fires the `pageChange` event, we show that page, then update the controls.</p>
+
+<h3>Show initial state!</h3>
+<p>Our last step is to show the initial page and set the initial state of the controls by updating them.</p>
+```
+{{>table-js-begin}}
+```
+
+<h2>The Whole Example</h2>
+<p>That's it! Now let's put it all together.</p>
+```
+{{>table-full}}
+```

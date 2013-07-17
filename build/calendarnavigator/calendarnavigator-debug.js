@@ -191,8 +191,13 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
 
     _updateControlState : function () {
 
-        var host = this.get(HOST);
-        if (ydate.areEqual(host.get("minimumDate"), host.get("date"))) {
+        var host      = this.get(HOST),
+            startDate = host.get('date'),
+            endDate   = ydate.addMonths(startDate, host._paneNumber - 1),
+            minDate   = host._normalizeDate(host.get("minimumDate")),
+            maxDate   = host._normalizeDate(host.get("maximumDate"));
+
+        if (ydate.areEqual(minDate, startDate)) {
             if (this._eventAttachments.prevMonth) {
                 this._eventAttachments.prevMonth.detach();
                 this._eventAttachments.prevMonth = false;
@@ -211,7 +216,7 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
             }
         }
 
-        if (ydate.areEqual(host.get("maximumDate"), ydate.addMonths(host.get("date"), host._paneNumber - 1))) {
+        if (ydate.areEqual(maxDate, endDate)) {
             if (this._eventAttachments.nextMonth) {
                 this._eventAttachments.nextMonth.detach();
                 this._eventAttachments.nextMonth = false;
@@ -283,9 +288,7 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
 
         this._updateControlState();
 
-        host.after("dateChange", this._updateControlState, this);
-        host.after("minimumDateChange", this._updateControlState, this);
-        host.after("maximumDateChange", this._updateControlState, this);
+        host.after(["dateChange", "minimumDateChange", "maximumDateChange"], this._updateControlState, this);
 
         headerCell.prepend(this._controls.prevMonth);
         headerCell.append(this._controls.nextMonth);

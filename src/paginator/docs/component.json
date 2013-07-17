@@ -1,0 +1,34 @@
+{
+    "name"       : "paginator",
+    "displayName": "Paginator",
+    "description": "The Paginator utility allows you to display an item or a group of items depending on the number of items you wish to display at one time. This allows you to increase your applicatoin response time by displaying a limited number of items for easy viewing and giving the user the ability to request additional items when they are ready.",
+    "author"     : "apipkin",
+
+    "tags": ["utility", "beta", "paginator"],
+    "use" : ["paginator"],
+
+    "examples": [
+        {
+            "name": "slideshow",
+            "displayName": "Slideshow",
+            "description": "This example illustrates how to create a slideshow using paginator to control the slides.",
+            "modules": ["paginator", "slideshow"],
+            "tags": ["paginator", "slideshow"]
+        },
+        {
+            "name": "table",
+            "displayName": "Tables",
+            "description": "An HTML table containing 50 states and their population with an attached paginator to view the information in small sections.",
+            "modules": ["paginator", "table"],
+            "tags": ["paginator", "table", "states"]
+        },
+        {
+            "name": "search",
+            "displayName": "Search Results",
+            "description": "An application using the Flickr API to display images with a paginator control to step through the results.",
+            "modules": ["paginator", "transition", "view", "model"],
+            "tags": ["paginator", "search", "flickr", "model", "view"]
+        }
+    ]
+
+}

@@ -59,5 +59,6 @@ function makeColorSwatches(hslString) {
 }
 
 function getColorSwatch(color) {
+    color = Y.Color.toHex(color);
     return '<span class="color swatch" style="background-color:' + color + '" title="' + color + '"></span>';
 }

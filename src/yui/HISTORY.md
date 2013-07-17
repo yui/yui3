@@ -4,8 +4,13 @@ YUI Core Change History
 @VERSION@
 ------
 
-* Removed all instances of `path.existsSync()` from YUI core, as part of 
-  node.js target environments being brought up to v0.8. [Clarence Leung]
+* No changes.
+
+3.11.0
+------
+
+* `Y.Array.dedupe()` is now slightly faster in ES5-compliant browsers.
+  [Ezequiel Rodriguez]
 
 * Brought `Y.Lang.trim()`, `trimLeft()`, and `trimRight()` into compliance with
   ES5, and added feature tests to ensure that native implementations are only
@@ -19,6 +24,10 @@ YUI Core Change History
 * `Y.UA` now identifies Opera 15+ as both Opera and WebKit. Previously it was
   identified as Chrome, since it uses the same Blink rendering engine as
   Chrome. [Ryan Grove]
+
+* Removed all instances of `path.existsSync()` from YUI core, as part of
+  node.js target environments being brought up to v0.8. [Clarence Leung]
+
 
 3.10.3
 ------

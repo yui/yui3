@@ -621,18 +621,17 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
         matchingRules = this._getRulesForDate(date);
         if (matchingRules.length > 0) {
-            dateNode = this._dateToNode(date);
             if ((enRule && iOf(matchingRules, enRule) < 0) || (!enRule && disRule && iOf(matchingRules, disRule) >= 0)) {
-                dateNode.addClass(SELECTION_DISABLED).setAttribute("aria-disabled", true);
+                this._disableDate(date);
             }
 
             if (L.isFunction(this._filterFunction)) {
+                dateNode = this._dateToNode(date);
                 this._storedDateCells[dateNode.get("id")] = dateNode.cloneNode(true);
                 this._filterFunction (date, dateNode, matchingRules);
             }
         } else if (enRule) {
-             dateNode = this._dateToNode(date);
-             dateNode.addClass(SELECTION_DISABLED).setAttribute("aria-disabled", true);
+            this._disableDate(date);
         }
     },
 
@@ -667,6 +666,18 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     */
     _renderSelectedDatesHelper: function (date) {
         this._dateToNode(date).addClass(CAL_DAY_SELECTED).setAttribute("aria-selected", true);
+    },
+
+    /**
+     * Add the selection-disabled class and aria-disabled attribute to a node corresponding
+     * to a given date.
+     *
+     * @method _disableDate
+     * @param {Date} date The date to disable
+     * @private
+     */
+    _disableDate: function (date) {
+       this._dateToNode(date).addClass(SELECTION_DISABLED).setAttribute("aria-disabled", true);
     },
 
     /**
@@ -776,6 +787,22 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     _normalizeDate : function (date) {
         if (date) {
             return new Date(date.getFullYear(), date.getMonth(), 1, 12, 0, 0, 0);
+        } else {
+            return null;
+        }
+    },
+
+    /**
+     * A utility method that normalizes a given date by setting its time to noon.
+     * @method _normalizeTime
+     * @param {Date} oDate The date to normalize
+     * @protected
+     * @return {Date} The normalized date
+     * set to noon.
+     */
+    _normalizeTime : function (date) {
+        if (date) {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0);
         } else {
             return null;
         }
@@ -1028,8 +1055,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      */
     _initCalendarPane : function (baseDate, pane_id) {
         // Get a list of short weekdays from the internationalization package, or else use default English ones.
-        var weekdays = this.get('strings.very_short_weekdays') || ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
-            fullweekdays = this.get('strings.weekdays') || ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        var shortWeekDays = this.get('strings.very_short_weekdays') || ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+            weekDays = Y.Intl.get('datatype-date-format').A,
             // Get the first day of the week from the internationalization package, or else use Sunday as default.
             firstday = this.get('strings.first_weekday') || 0,
             // Compute the cutoff column of the masked calendar table, based on the start date and the first day of week.
@@ -1057,8 +1084,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         for (day = firstday; day <= firstday + 6; day++) {
             partials.weekday_row +=
                 substitute(CalendarBase.WEEKDAY_TEMPLATE, {
-                    weekdayname: weekdays[day%7],
-                    full_weekdayname: fullweekdays[day%7]
+                    short_weekdayname: shortWeekDays[day%7],
+                    weekdayname: weekDays[day%7]
                 });
         }
 
@@ -1481,7 +1508,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         * @protected
         * @static
         */
-    WEEKDAY_TEMPLATE: '<th class="{calendar_weekday_class}" role="columnheader" aria-label="{full_weekdayname}">{weekdayname}</th>',
+    WEEKDAY_TEMPLATE: '<th class="{calendar_weekday_class}" role="columnheader" aria-label="{weekdayname}">{short_weekdayname}</th>',
 
      /**
         * A template for a single cell with a calendar day.

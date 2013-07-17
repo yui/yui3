@@ -4,8 +4,21 @@ Widget Std Mod Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.11.0
+------
+
 * Fixed: `fillHeight` didn't work correctly when a section's content was set
   after rendering. [Jeroen Versteeg]
+
+* Moved implementation code from the Constructor to the `initializer`
+  to account for Base order of operation changes in this release.
+
+  This is one of the older extensions which needed to be upgraded
+  after `initializer` support was added for extensions.
+
+  This has no end user impact.
 
 3.10.3
 ------

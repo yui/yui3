@@ -261,8 +261,17 @@ Y.mix(Y_Node.prototype, {
      * @deprecated Use getHTML
      * @return {String} The current content
      */
-    getContent: function(content) {
-        return this.get('innerHTML');
+    getContent: function() {
+        var node = this;
+
+        if (node._node.nodeType === 11) { // 11 === Node.DOCUMENT_FRAGMENT_NODE
+            // "this", when it is a document fragment, must be cloned because
+            // the nodes contained in the fragment actually disappear once
+            // the fragment is appended anywhere
+            node = node.create("<div/>").append(node.cloneNode(true));
+        }
+
+        return node.get("innerHTML");
     }
 });
 
@@ -816,7 +825,8 @@ Y.mix(Y_Node.prototype, {
     },
 
     _isHidden: function() {
-        return Y.DOM.getAttribute(this._node, 'hidden') === 'true';
+        return this._node.hasAttribute('hidden')
+            || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
     },
 
     /**
@@ -881,7 +891,7 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     _hide: function() {
-        this.setAttribute('hidden', true);
+        this.setAttribute('hidden', '');
 
         // For back-compat we need to leave this in for browsers that
         // do not visually hide a node via the hidden attribute
@@ -1164,4 +1174,4 @@ Y.mix(Y.NodeList.prototype, {
 });
 
 
-}, '@VERSION@', {"requires": ["event-base", "node-core", "dom-base"]});
+}, '@VERSION@', {"requires": ["event-base", "node-core", "dom-base", "dom-style"]});

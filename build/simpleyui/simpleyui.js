@@ -2168,16 +2168,34 @@ Dedupes an array of strings, returning an array that's guaranteed to contain
 only one copy of a given string.
 
 This method differs from `Array.unique()` in that it's optimized for use only
-with strings, whereas `unique` may be used with other types (but is slower).
-Using `dedupe()` with non-string values may result in unexpected behavior.
+with arrays consisting entirely of strings or entirely of numbers, whereas
+`unique` may be used with other value types (but is slower).
+
+Using `dedupe()` with values other than strings or numbers, or with arrays
+containing a mix of strings and numbers, may result in unexpected behavior.
 
 @method dedupe
-@param {String[]} array Array of strings to dedupe.
-@return {Array} Deduped copy of _array_.
+@param {String[]|Number[]} array Array of strings or numbers to dedupe.
+@return {Array} Copy of _array_ containing no duplicate values.
 @static
 @since 3.4.0
 **/
-YArray.dedupe = function (array) {
+YArray.dedupe = Lang._isNative(Object.create) ? function (array) {
+    var hash    = Object.create(null),
+        results = [],
+        i, item, len;
+
+    for (i = 0, len = array.length; i < len; ++i) {
+        item = array[i];
+
+        if (!hash[item]) {
+            hash[item] = 1;
+            results.push(item);
+        }
+    }
+
+    return results;
+} : function (array) {
     var hash    = {},
         results = [],
         i, item, len;
@@ -10407,26 +10425,35 @@ Y.CustomEvent.prototype = {
 
         if (!fn) { this.log('Invalid callback for CE: ' + this.type); }
 
-        var s = new Y.Subscriber(fn, context, args, when);
+        var s = new Y.Subscriber(fn, context, args, when),
+            firedWith;
 
         if (this.fireOnce && this.fired) {
+
+            firedWith = this.firedWith;
+
+            // It's a little ugly for this to know about facades,
+            // but given the current breakup, not much choice without
+            // moving a whole lot of stuff around.
+            if (this.emitFacade && this._addFacadeToArgs) {
+                this._addFacadeToArgs(firedWith);
+            }
+
             if (this.async) {
-                setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
+                setTimeout(Y.bind(this._notify, this, s, firedWith), 0);
             } else {
-                this._notify(s, this.firedWith);
+                this._notify(s, firedWith);
             }
         }
 
         if (when === AFTER) {
             if (!this._afters) {
                 this._afters = [];
-                this._hasAfters = true;
             }
             this._afters.push(s);
         } else {
             if (!this._subscribers) {
                 this._subscribers = [];
-                this._hasSubs = true;
             }
             this._subscribers.push(s);
         }
@@ -10764,14 +10791,6 @@ Y.CustomEvent.prototype = {
 
             if (s && subs[i] === s) {
                 subs.splice(i, 1);
-
-                if (subs.length === 0) {
-                    if (when === AFTER) {
-                        this._hasAfters = false;
-                    } else {
-                        this._hasSubs = false;
-                    }
-                }
             }
         }
 
@@ -12201,11 +12220,9 @@ CEProto.fireComplex = function(args) {
         host = self.host || self,
         next,
         oldbubble,
-        stack,
+        stack = self.stack,
         yuievt = host._yuievt,
         hasPotentialSubscribers;
-
-    stack = self.stack;
 
     if (stack) {
 
@@ -12267,7 +12284,7 @@ CEProto.fireComplex = function(args) {
 
         self._facade = null; // kill facade to eliminate stale properties
 
-        ef = self._getFacade(args);
+        ef = self._createFacade(args);
 
         if (ons) {
             self._procSubs(ons, args, ef);
@@ -12381,7 +12398,7 @@ CEProto.fireComplex = function(args) {
         defaultFn = self.defaultFn;
 
         if(defaultFn) {
-            ef = self._getFacade(args);
+            ef = self._createFacade(args);
 
             if ((!self.defaultTargetOnly) || (host === ef.target)) {
                 defaultFn.apply(host, args);
@@ -12396,7 +12413,33 @@ CEProto.fireComplex = function(args) {
     return ret;
 };
 
-CEProto._getFacade = function(fireArgs) {
+/**
+ * @method _hasPotentialSubscribers
+ * @for CustomEvent
+ * @private
+ * @return {boolean} Whether the event has potential subscribers or not
+ */
+CEProto._hasPotentialSubscribers = function() {
+    return this.hasSubs() || this.host._yuievt.hasTargets || this.broadcast;
+};
+
+/**
+ * Internal utility method to create a new facade instance and
+ * insert it into the fire argument list, accounting for any payload
+ * merging which needs to happen.
+ *
+ * This used to be called `_getFacade`, but the name seemed inappropriate
+ * when it was used without a need for the return value.
+ *
+ * @method _createFacade
+ * @private
+ * @param fireArgs {Array} The arguments passed to "fire", which need to be
+ * shifted (and potentially merged) when the facade is added.
+ * @return {EventFacade} The event facade created.
+ */
+
+// TODO: Remove (private) _getFacade alias, once synthetic.js is updated.
+CEProto._createFacade = CEProto._getFacade = function(fireArgs) {
 
     var userArgs = this.details,
         firstArg = userArgs && userArgs[0],
@@ -12438,6 +12481,23 @@ CEProto._getFacade = function(fireArgs) {
     this._facade = ef;
 
     return this._facade;
+};
+
+/**
+ * Utility method to manipulate the args array passed in, to add the event facade,
+ * if it's not already the first arg.
+ *
+ * @method _addFacadeToArgs
+ * @private
+ * @param {Array} The arguments to manipulate
+ */
+CEProto._addFacadeToArgs = function(args) {
+    var e = args[0];
+
+    // Trying not to use instanceof, just to avoid potential cross Y edge case issues.
+    if (!(e && e.halt && e.stopImmediatePropagation && e.stopPropagation && e._event)) {
+        this._createFacade(args);
+    }
 };
 
 /**
@@ -12638,6 +12698,25 @@ ETProto.bubble = function(evt, args, target, es) {
     }
 
     return ret;
+};
+
+/**
+ * @method _hasPotentialSubscribers
+ * @for EventTarget
+ * @private
+ * @param {String} fullType The fully prefixed type name
+ * @return {boolean} Whether the event has potential subscribers or not
+ */
+ETProto._hasPotentialSubscribers = function(fullType) {
+
+    var etState = this._yuievt,
+        e = etState.events[fullType];
+
+    if (e) {
+        return e.hasSubs() || etState.hasTargets  || e.broadcast;
+    } else {
+        return false;
+    }
 };
 
 FACADE = new Y.EventFacade();
@@ -14516,8 +14595,17 @@ Y.mix(Y_Node.prototype, {
      * @deprecated Use getHTML
      * @return {String} The current content
      */
-    getContent: function(content) {
-        return this.get('innerHTML');
+    getContent: function() {
+        var node = this;
+
+        if (node._node.nodeType === 11) { // 11 === Node.DOCUMENT_FRAGMENT_NODE
+            // "this", when it is a document fragment, must be cloned because
+            // the nodes contained in the fragment actually disappear once
+            // the fragment is appended anywhere
+            node = node.create("<div/>").append(node.cloneNode(true));
+        }
+
+        return node.get("innerHTML");
     }
 });
 
@@ -15071,7 +15159,8 @@ Y.mix(Y_Node.prototype, {
     },
 
     _isHidden: function() {
-        return Y.DOM.getAttribute(this._node, 'hidden') === 'true';
+        return this._node.hasAttribute('hidden')
+            || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
     },
 
     /**
@@ -15136,7 +15225,7 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     _hide: function() {
-        this.setAttribute('hidden', true);
+        this.setAttribute('hidden', '');
 
         // For back-compat we need to leave this in for browsers that
         // do not visually hide a node via the hidden attribute
@@ -15419,7 +15508,7 @@ Y.mix(Y.NodeList.prototype, {
 });
 
 
-}, '@VERSION@', {"requires": ["event-base", "node-core", "dom-base"]});
+}, '@VERSION@', {"requires": ["event-base", "node-core", "dom-base", "dom-style"]});
 (function () {
 var GLOBAL_ENV = YUI.Env;
 
@@ -17845,6 +17934,11 @@ Y.Node.unplug = function() {
 };
 
 Y.mix(Y.Node, Y.Plugin.Host, false, null, 1);
+
+// run PluginHost constructor on cached Node instances
+Y.Object.each(Y.Node._instances, function (node) {
+    Y.Plugin.Host.apply(node);
+});
 
 // allow batching of plug/unplug via NodeList
 // doesn't use NodeList.importMethod because we need real Nodes (not tmpNode)

@@ -553,9 +553,8 @@ Y.mix(Sortable.prototype, {
     **/
     _onUITriggerSort: function (e) {
         var id = e.currentTarget.getAttribute('data-yui3-col-id'),
-            sortBy = e.shiftKey ? this.get('sortBy') : [{}],
             column = id && this.getColumn(id),
-            i, len;
+            sortBy, i, len;
 
         if (e.type === 'keydown' && e.keyCode !== 32) {
             return;
@@ -567,6 +566,8 @@ Y.mix(Sortable.prototype, {
 
         if (column) {
             if (e.shiftKey) {
+                sortBy = this.get('sortBy') || [];
+
                 for (i = 0, len = sortBy.length; i < len; ++i) {
                     if (id === sortBy[i]  || Math.abs(sortBy[i][id]) === 1) {
                         if (!isObject(sortBy[i])) {
@@ -582,6 +583,8 @@ Y.mix(Sortable.prototype, {
                     sortBy.push(column._id);
                 }
             } else {
+                sortBy = [{}];
+
                 sortBy[0][id] = -(column.sortDir||0) || 1;
             }
 
@@ -842,10 +845,16 @@ Y.mix(Sortable.prototype, {
                 }
 
                 title = sub(this.getString(
-                    (col.sortDir === 1) ? 'reverseSortBy' : 'sortBy'), {
+                    (col.sortDir === 1) ? 'reverseSortBy' : 'sortBy'), // get string
+                    {
+                        title:  col.title || '',
+                        key:    col.key || '',
+                        abbr:   col.abbr || '',
+                        label:  col.label || '',
                         column: col.abbr || col.label ||
                                 col.key  || ('column ' + i)
-                });
+                    }
+                );
 
                 node.setAttribute('title', title);
                 // To combat VoiceOver from reading the sort title as the
