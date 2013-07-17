@@ -825,7 +825,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
         options || (options = {});
 
-        models.sort(Y.bind(this._sort, this));
+        models.sort(Y.rbind(this._sort, this, options));
 
         facade = Y.merge(options, {
             models: models,
@@ -1122,10 +1122,11 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @method _sort
     @param {Model} a First model to compare.
     @param {Model} b Second model to compare.
+    @param {Object} [options] Options passed from `sort()` function.
     @return {Number} `-1` if _a_ is less than _b_, `0` if equal, `1` if greater.
     @protected
     **/
-    _sort: function (a, b) {
+    _sort: function (a, b, options) {
         return this._compare(this.comparator(a), this.comparator(b));
     },
 
