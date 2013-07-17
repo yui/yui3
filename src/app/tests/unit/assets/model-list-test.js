@@ -867,6 +867,16 @@ modelListSuite.add(new Y.Test.Case({
             return model.get('foo');
         };
 
+        list._sort = function (a, b, options) {
+            var result = this._compare(this.comparator(a), this.comparator(b));
+
+            if (!result) {
+                return result;
+            }
+
+            return options && options.descending ? -result : result;
+        };
+
         Assert.areSame(list, list.sort({descending:true}), 'sort() should be chainable');
         ArrayAssert.itemsAreSame(['z', 'y', 'x', 'a'], list.get('foo'));
 
