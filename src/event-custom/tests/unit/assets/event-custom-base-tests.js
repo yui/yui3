@@ -3638,6 +3638,20 @@ baseSuite.add(new Y.Test.Case({
         Y.Assert.areSame(1, count);
     },
 
+    "test target.detach('cat|*') with configured prefix" : function() {
+        var target = new Y.EventTarget({
+            prefix: "bar"
+        });
+
+        target.publish('foo');
+
+        try {
+            target.detach('cat|*');
+        } catch (e) {
+            Y.Assert.fail("Failed to detach");
+        }
+    },
+
     "test target.on({...}) + target.detach(type)": function () {
         var count = 0,
             target = new Y.EventTarget();
