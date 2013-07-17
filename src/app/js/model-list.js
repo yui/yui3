@@ -813,6 +813,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         `reset` event.
       @param {Boolean} [options.silent=false] If `true`, no `reset` event will
           be fired.
+      @param {Boolean} [options.descending=false] If `true`, sorts in descending order
     @chainable
     **/
     sort: function (options) {
@@ -1123,11 +1124,18 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @param {Model} a First model to compare.
     @param {Model} b Second model to compare.
     @param {Object} [options] Options passed from `sort()` function.
-    @return {Number} `-1` if _a_ is less than _b_, `0` if equal, `1` if greater.
+    @param {Boolean} [options.descending=false] If `true`, sorts in descending order
+    @return {Number} `-1` if _a_ is less than _b_, `0` if equal, `1` if greater (for ascending).
     @protected
     **/
     _sort: function (a, b, options) {
-        return this._compare(this.comparator(a), this.comparator(b));
+        var result = this._compare(this.comparator(a), this.comparator(b));
+
+        if (!result) {
+            return result;
+        }
+
+        return options && options.descending ? -result : result;
     },
 
     // -- Event Handlers -------------------------------------------------------
