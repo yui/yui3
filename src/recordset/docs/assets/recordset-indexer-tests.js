@@ -30,8 +30,17 @@ YUI.add('recordset-indexer-tests', function(Y){
 			isNotNull(viewBtn, 'View Button does not exist.');
 			isNull(htContainer.one('table'), 'HTContainer is not empty.');
 
+			hashBtn.on('click', function (e) {
+				Y.log("hashBtn was clicked!");
+			});
+
+			viewBtn.on('click', function (e) {
+				Y.log("viewBtn was clicked!");
+			});
+
 			hashBtn.simulate('click');
 			viewBtn.simulate('click');
+
 
 			this.wait(function() {
 				isNotNull(htContainer.one('table'), 'Table was not created.');

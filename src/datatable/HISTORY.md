@@ -3,6 +3,11 @@ DataTable Change History
 
 @VERSION@
 ------
+
+* No changes.
+
+3.11.0
+------
 * Release Paginator for DataTable. DataTable's Paginator consists of a few
   files and components each with a single purpose in mind.
     Model- Mixes in Paginator-Core to provide a model for the DataTable

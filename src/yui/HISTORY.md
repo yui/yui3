@@ -4,6 +4,11 @@ YUI Core Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.11.0
+------
+
 * `Y.Array.dedupe()` is now slightly faster in ES5-compliant browsers.
   [Ezequiel Rodriguez]
 
@@ -13,6 +18,16 @@ YUI Core Change History
 
 * `Y.Object.keys()` now falls back to the non-native shim for Android 2.3.x
   because the native version incorrectly enumerates the `prototype` property.
+
+* `Y.UA` now correctly identifies IE 11. [Ryan Grove]
+
+* `Y.UA` now identifies Opera 15+ as both Opera and WebKit. Previously it was
+  identified as Chrome, since it uses the same Blink rendering engine as
+  Chrome. [Ryan Grove]
+
+* Removed all instances of `path.existsSync()` from YUI core, as part of
+  node.js target environments being brought up to v0.8. [Clarence Leung]
+
 
 3.10.3
 ------

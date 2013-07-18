@@ -140,7 +140,7 @@ YUI.add('rgb-slider-tests', function(Y) {
                 Assert.areSame(gv.toString(), gVal.get('text'), 'gVal is not ' + gv + '.');
                 Assert.areSame(bv.toString(), bVal.get('text'), 'bVal is not ' + bv + '.');
 
-                Assert.areSame('#ffffff', hexStr.get('text'), 'hexStr is not #ffffff.');
+                Assert.areSame('#FFFFFF', hexStr.get('text'), 'hexStr is not #FFFFFF.');
                 Assert.areSame('rgb(255, 255, 255)', rgbStr.get('text'), 'rgbStr is not rgb(255, 255, 255)');
                 Assert.areSame('hsl(0, 0%, 100%)', hslStr.get('text'), 'hexStr is not hsl(0, 0%, 100%)');
             }, 1500);

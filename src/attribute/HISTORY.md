@@ -4,6 +4,11 @@ Attribute Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.11.0
+------
+
 * Fixed regression introduced with the solution for setter opts, added in
   3.10.2, for cases where user subscribed to attribute change events, with
   additional arguments to be passed to the subscriber, for example: 

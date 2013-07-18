@@ -51,15 +51,7 @@
      * @class WidgetStack
      * @param {Object} User configuration object
      */
-    function Stack(config) {
-        this._stackNode = this.get(BOUNDING_BOX);
-        this._stackHandles = {};
-
-        // WIDGET METHOD OVERLAP
-        Y.after(this._renderUIStack, this, RENDER_UI);
-        Y.after(this._syncUIStack, this, SYNC_UI);
-        Y.after(this._bindUIStack, this, BIND_UI);
-    }
+    function Stack(config) {}
 
     // Static Properties
     /**
@@ -139,6 +131,16 @@
     Stack.SHIM_TEMPLATE = '<iframe class="' + Stack.SHIM_CLASS_NAME + '" frameborder="0" title="Widget Stacking Shim" src="javascript:false" tabindex="-1" role="presentation"></iframe>';
 
     Stack.prototype = {
+
+        initializer : function() {
+            this._stackNode = this.get(BOUNDING_BOX);
+            this._stackHandles = {};
+
+            // WIDGET METHOD OVERLAP
+            Y.after(this._renderUIStack, this, RENDER_UI);
+            Y.after(this._syncUIStack, this, SYNC_UI);
+            Y.after(this._bindUIStack, this, BIND_UI);
+        },
 
         /**
          * Synchronizes the UI to match the Widgets stack state. This method in
