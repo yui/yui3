@@ -1,17 +1,15 @@
 /**
 Returns a new promise that will be resolved when all operations have completed.
-Takes both callbacks and promises as arguments. If an argument is a callback,
-it will be wrapped in a new promise.
+Takes both promises and regular JavaScript values as arguments.
 
 @for YUI
 @method batch
-@param {Function|Promise} operation* Any number of functions or Y.Promise
-            objects
+@param {Any} values* Any number of promises or regular JavaScript values
 @return {Promise}
 @deprecated @SINCE@
 **/
 Y.batch = function () {
-    Y.log('batch() was deprecated in YUI @SINCE@. Use Promise.every()', 'warn');
+    Y.log('batch() was deprecated in YUI @VERSION@. Use Y.Promise.every()', 'warn');
 
     var funcs     = slice.call(arguments),
         remaining = funcs.length,
