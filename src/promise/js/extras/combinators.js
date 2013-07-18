@@ -5,17 +5,19 @@ RESOLVED_PROMISE = Promise.resolve();
 
 /**
 Returns a promise that is resolved or rejected when any of values is either
-resolved or rejected.
+resolved or rejected. If no values are passed the returned promise will be
+resolved witn `undefined`.
 
 @for Promise
 @method any
-@param {Any[]} values A list of either promises or any JavaScript value
+@param {Any} values* Any number of either promises or other JavaScript values
 @return {Promise} A promise with the value or reason of the first resolved or
                     rejected promise
 @static
 @since @SINCE@
 **/
-Promise.any = function (values) {
+Promise.any = function () {
+    var values = arguments;
     // When values is an empty list any() should resolve to undefined
     // This is spec'd in DOMFuture
     return values.length < 1 ? RESOLVED_PROMISE :
@@ -31,19 +33,20 @@ Promise.any = function (values) {
 
 /**
 Returns a promise that is resolved or rejected when all values are resolved or
-any is rejected. If the array passed is empty, the returned promise will be
+any is rejected. If no values are passed the returned promise will be
 resolved witn `undefined`.
 
 @for Promise
 @method every
-@param {Any[]} values An Array of either promises or any JavaScript value
+@param {Any} values* Any number of either promises or other JavaScript values
 @return {Promise} A promise with the list of all resolved values or the
                     rejection reason of the first rejected promise
 @static
 @since @SINCE@
 **/
-Promise.every = function (values) {
-    var remaining = values.length,
+Promise.every = function () {
+    var values    = arguments,
+        remaining = values.length,
         i         = 0,
         length    = values.length,
         results   = [];
@@ -71,19 +74,20 @@ Promise.every = function (values) {
 
 /**
 Returns a promise that is resolved or rejected when one of values is resolved
-or all are rejected. If the array passed is empty, the returned promise will be
+or all are rejected. If no values are passed the returned promise will be
 resolved witn `undefined`.
 
 @for Promise
 @method some
-@param {Any[]} values A list of either promises or any JavaScript value
+@param {Any} values* Any number of either promises or other JavaScript values
 @return {Promise} A promise with the value of the first resolved promise or a
                     list of all the rejection reasons
 @static
 @since @SINCE@
 **/
-Promise.some = function (values) {
-    var remaining = values.length,
+Promise.some = function () {
+    var values    = arguments,
+        remaining = values.length,
         i         = 0,
         length    = values.length,
         results   = [];
