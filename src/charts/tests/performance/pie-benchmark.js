@@ -1,45 +1,61 @@
-YUI.add('pie-benchmark', function (Y) {
-    Y.BenchmarkSuite = new Benchmark.Suite();
-    var suite = Y.BenchmarkSuite,
-        chart,
-        container,
-        pieDataProvider;
-    container = document.createElement('div');
-    pieDataProvider = [
-        {category:"5/1/2010", revenue:2200}, 
-        {category:"5/2/2010", revenue:100}, 
-        {category:"5/3/2010", revenue:1500}, 
-        {category:"5/4/2010", revenue:2800}, 
-        {category:"5/5/2010", revenue:2650}
-    ];
-    container.style.left = "10px";
-    container.style.top = "10px";
-    container.style.width = "600px";
-    container.style.height = "300px";
-    container.id = "container";
-    document.body.appendChild(container);
+{
+    title: 'Charts Pie',
+    yui: {
+        use: ['charts']
+    },
+    global: {
+        setup: function () {
+            var container = Y.Node.create('<div id="container">'),
+                chart,
+                pieDataProvider;
 
-    suite.add("PieChart", function() {
-        chart = new Y.Chart({
-            dataProvider: pieDataProvider,
-            type: "pie",
-            render: container,
-            categoryKey: "category"
-        });
-        chart.destroy(true);
-    });
+            pieDataProvider = [
+                {category:"5/1/2010", revenue:2200},
+                {category:"5/2/2010", revenue:100},
+                {category:"5/3/2010", revenue:1500},
+                {category:"5/4/2010", revenue:2800},
+                {category:"5/5/2010", revenue:2650}
+            ];
 
-    suite.add("PieChartLegend", function() {
-        chart = new Y.Chart({
-            legend: {
-                position: "right"
-            },
-            dataProvider: pieDataProvider,
-            type: "pie",
-            render: container,
-            categoryKey: "category"
-        });
-        chart.destroy(true);
-    });
-
-}, '@VERSION@', {requires: ['charts']});
+            container.setStyles({
+                'left': '10px',
+                'top': '10px',
+                'width': '600px',
+                'height': '300px'
+            }).appendTo(document.body);
+        },
+        teardown: function () {
+            chart.destroy(true);
+            container.empty(true);
+        }
+    },
+    tests: [
+        {
+            title: 'Pie Chart',
+            fn: function () {
+                chart = new Y.Chart({
+                    dataProvider: pieDataProvider,
+                    type: "pie",
+                    render: container,
+                    categoryKey: "category"
+                });
+                chart.destroy(true);
+            }
+        },
+        {
+            title: 'Pie Chart Legend',
+            fn: function () {
+                chart = new Y.Chart({
+                    legend: {
+                        position: "right"
+                    },
+                    dataProvider: pieDataProvider,
+                    type: "pie",
+                    render: container,
+                    categoryKey: "category"
+                });
+                chart.destroy(true);
+            }
+        }
+    ]
+};
