@@ -813,6 +813,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         `reset` event.
       @param {Boolean} [options.silent=false] If `true`, no `reset` event will
           be fired.
+      @param {Boolean} [options.descending=false] If `true`, sorts in descending order
     @chainable
     **/
     sort: function (options) {
@@ -825,7 +826,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
         options || (options = {});
 
-        models.sort(Y.bind(this._sort, this));
+        models.sort(Y.rbind(this._sort, this, options));
 
         facade = Y.merge(options, {
             models: models,
@@ -1122,11 +1123,19 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @method _sort
     @param {Model} a First model to compare.
     @param {Model} b Second model to compare.
-    @return {Number} `-1` if _a_ is less than _b_, `0` if equal, `1` if greater.
+    @param {Object} [options] Options passed from `sort()` function.
+    @param {Boolean} [options.descending=false] If `true`, sorts in descending order
+    @return {Number} `-1` if _a_ is less than _b_, `0` if equal, `1` if greater (for ascending).
     @protected
     **/
-    _sort: function (a, b) {
-        return this._compare(this.comparator(a), this.comparator(b));
+    _sort: function (a, b, options) {
+        var result = this._compare(this.comparator(a), this.comparator(b));
+
+        if (!result) {
+            return result;
+        }
+
+        return options && options.descending ? -result : result;
     },
 
     // -- Event Handlers -------------------------------------------------------
