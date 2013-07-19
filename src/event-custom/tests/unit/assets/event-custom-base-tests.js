@@ -4336,6 +4336,28 @@ baseSuite.add(new Y.Test.Case({
         Y.Assert.areSame(1, count);
     },
 
+    "test target.after('cat|__', fn) + target.detach('cat|*'), with prefix": function () {
+        var count = 0,
+            target = new Y.EventTarget({prefix:"foo"});
+
+        function increment() {
+            count++;
+        }
+
+        target.after('cat|test', increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('cat|*');
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+    },
+
+
     "test target.after({...}) + target.detach(type)": function () {
         var count = 0,
             target = new Y.EventTarget();

@@ -6,6 +6,12 @@ YUI Test Change History
 
 * No changes.
 
+3.11.0
+------
+
+* Modified YUITest.hasNoKeys() to bypass Android 2.3.x prototype
+  enumeration bug. (GH #949)
+
 3.10.3
 ------
 

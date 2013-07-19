@@ -675,22 +675,19 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-base": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-responsive": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids",
@@ -700,8 +697,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids-units": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids-base"
@@ -1957,7 +1953,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "event-base",
             "node-core",
-            "dom-base"
+            "dom-base",
+            "dom-style"
         ]
     },
     "node-core": {
@@ -2944,4 +2941,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'b71ea9b1fa73cb478a0251d7a63a2fd0';
+YUI.Env[Y.version].md5 = '01c0825e3bf756f3f11c0a8e3458a859';

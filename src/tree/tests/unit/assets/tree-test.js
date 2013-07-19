@@ -504,6 +504,22 @@ treeSuite.add(new Y.Test.Case({
         Assert.areSame(-1, this.tree.rootNode.indexOf(node), 'node should no longer be a child of the root node');
     },
 
+    'insertNode() should reinsert at the correct position relative to other nodes even when the inserted node already exists in the same parent': function () {
+
+        var one   = this.tree.children[0],
+            two   = this.tree.children[1],
+            three = this.tree.children[2];
+
+        this.tree.insertNode(this.tree.rootNode, one, {index: 2});
+
+        Assert.areSame(0, two.index(), 'node two should now be at index 0');
+        Assert.areSame(1, one.index(), 'node one should now be at index 1');
+        Assert.areSame(2, three.index(), 'node three should still be at index 2');
+        Assert.areSame(two, this.tree.children[0], 'node two should now be first');
+        Assert.areSame(one, this.tree.children[1], 'node one should now be second');
+        Assert.areSame(three, this.tree.children[2], 'node three should still be third');
+    },
+
     'insertNode() should return `null` if a destroyed node is inserted and an errorFn handles the error': function () {
         Y.config.errorFn = function () {
             return true;
@@ -923,6 +939,27 @@ treeSuite.add(new Y.Test.Case({
         });
 
         this.tree.insertNode(this.tree.rootNode, {id: 'inserted'}, {silent: true});
+    },
+
+    'insertNode() should fire a `remove` event if the inserted node is removed from another parent': function () {
+        var fired;
+
+        this.tree.once('remove', function (e) {
+            fired = true;
+            Assert.areSame('add', e.src, 'src should be "add"');
+        });
+
+        this.tree.insertNode(this.tree.rootNode, this.tree.children[0]);
+
+        Assert.isTrue(fired, 'remove event should fire');
+    },
+
+    'insertNode() should not fire a `remove` event when the inserted node is removed from another parent if options.silent is truthy': function () {
+        this.tree.once('remove', function (e) {
+            Assert.fail('remove event should not fire');
+        });
+
+        this.tree.insertNode(this.tree.rootNode, this.tree.children[0], {silent: true});
     },
 
     'removeNode() should fire a `remove` event': function () {

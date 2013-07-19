@@ -686,7 +686,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
      @protected
      @method _restripe
      @param {Number} [index] Index of row to start restriping after
-     @since @SINCE@
+     @since 3.11.0
      */
     _restripe: function (index) {
         var task = this._restripeTask,

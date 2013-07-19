@@ -4,6 +4,11 @@ Promise Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.11.0
+------
+
 * Changed the value of `this` inside callbacks to `undefined` to match the
   Promises A+ spec.
 

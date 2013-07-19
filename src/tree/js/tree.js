@@ -779,6 +779,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     _fireTreeEvent: function (name, facade, options) {
         if (options && options.silent) {
             if (options.defaultFn) {
+                facade.silent = true; // intentionally modifying the facade
                 options.defaultFn.call(this, facade);
             }
         } else {
@@ -844,17 +845,38 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
 
     // -- Default Event Handlers -----------------------------------------------
     _defAddFn: function (e) {
-        var node   = e.node,
-            parent = e.parent;
+        var index  = e.index,
+            node   = e.node,
+            parent = e.parent,
+            oldIndex;
 
         // Remove the node from its existing parent if it has one.
         if (node.parent) {
-            this._removeNodeFromParent(node);
+            // If the node's existing parent is the same parent it's being
+            // inserted into, adjust the index to avoid an off-by-one error.
+            if (node.parent === parent) {
+                oldIndex = parent.indexOf(node);
+
+                if (oldIndex === index) {
+                    // Old index is the same as the new index, so just don't do
+                    // anything.
+                    return;
+                } else if (oldIndex < index) {
+                    // Removing the node from its old index will affect the new
+                    // index, so decrement the new index by one.
+                    index -= 1;
+                }
+            }
+
+            this.removeNode(node, {
+                silent: e.silent,
+                src   : 'add'
+            });
         }
 
         // Add the node to its new parent at the desired index.
         node.parent = parent;
-        parent.children.splice(e.index, 0, node);
+        parent.children.splice(index, 0, node);
 
         parent.canHaveChildren = true;
         parent._isIndexStale   = true;

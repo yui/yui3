@@ -1,18 +1,18 @@
 {
     "name": "yui",
-    "version": "3.11.0pre",
+    "version": "3.12.0pre",
     "description": "YUI 3 Source",
     "author": "Dav Glass <davglass@gmail.com>",
     "bugs": { "url" : "https://github.com/yui/yui3/issues" },
     "engines": {
-        "node" : ">=0.4.0"
+        "node" : ">=0.8.0"
     },
     "directories": {
         "lib" : "."
     },
     "main": "./index.js",
     "dependencies": {
-        "request": "~2.14.0"
+        "request": "~2.21.0"
     },
     "devDependencies": {
         "yogi": "~0.1.0",

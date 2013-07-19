@@ -4,6 +4,14 @@ Tree Change History
 @VERSION@
 ------
 
+* Fixed: `Tree.Sortable` failed to reindex a node's children after sorting them,
+  which could result in `Tree#indexOf()` and `Tree.Node#index()` returning
+  incorrect indices. [Ryan Grove]
+
+
+3.11.0
+------
+
 * Added `Tree.Node#depth()`, which returns the depth of the node, starting at 0
   for the root node. [Ryan Grove]
 
@@ -13,6 +21,19 @@ Tree Change History
 * `Tree#emptyNode()` now removes nodes without triggering a node map reindex for
   each node, which makes it significantly faster when emptying a node with lots
   of children. [Ryan Grove]
+
+* When inserting a node that already exists in the same parent (which results in
+  that node being removed and then re-inserted), `Tree#insertNode()` now
+  adjusts the insertion index to ensure that the node is re-inserted at the
+  correct position after being removed, even if that position has shifted as a
+  result of the removal. [Ryan Grove]
+
+* The `remove` event is now fired when a node is removed and re-inserted as the
+  result of a `Tree#appendNode()`, `Tree#insertNode()`, or `Tree#prependNode()`
+  call. Previously, the node was removed silently with no event.
+
+  The `src` property of the `remove` event facade in this case will be set to
+  "add". Filter on this source if you want to ignore these events. [Ryan Grove]
 
 * The `Tree#createNode()`, `Tree#insertNode()`, and `Tree#traverseNode()`
   methods now throw or log informative error messages when given a destroyed

@@ -4,6 +4,12 @@ Event Infrastructure Change History
 @VERSION@
 ------
 
+* Fixed: YUI no longer breaks the browser back/forward cache by attaching an
+  unnecessary `unload` event handler. [Ryan Grove]
+
+3.11.0
+------
+
 * No changes.
 
 3.10.3

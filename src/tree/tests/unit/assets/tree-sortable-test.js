@@ -435,6 +435,30 @@ suite.add(new Y.Test.Case({
         });
 
         Assert.isTrue(called, 'sortComparator should be called');
+    },
+
+    'node children should be re-indexed after being sorted': function () {
+        var tree = new Tree();
+
+        tree.insertNode(tree.rootNode, [
+            {foo: 'z'},
+            {foo: 'a'},
+            {foo: 'b'}
+        ]);
+
+        Assert.areSame(0, tree.children[0].index(), 'first node should have index 0 before sort');
+        Assert.areSame(1, tree.children[1].index(), 'second node should have index 1 before sort');
+        Assert.areSame(2, tree.children[2].index(), 'third node should have index 2 before sort');
+
+        tree.rootNode.sortComparator = function (node) {
+            return node.foo;
+        };
+
+        tree.sortNode(tree.rootNode);
+
+        Assert.areSame(0, tree.children[0].index(), 'first node should have index 0 after sort');
+        Assert.areSame(1, tree.children[1].index(), 'second node should have index 1 after sort');
+        Assert.areSame(2, tree.children[2].index(), 'third node should have index 2 after sort');
     }
 }));
 
