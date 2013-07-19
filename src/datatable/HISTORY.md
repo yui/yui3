@@ -4,7 +4,8 @@ DataTable Change History
 @VERSION@
 ------
 
-* No changes.
+* Fix issue where recurssive nesting of objects was clone infinitely
+  [Pull Request #1008][Ticket #915]
 
 3.11.0
 ------
