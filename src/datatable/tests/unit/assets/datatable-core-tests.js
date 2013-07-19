@@ -517,7 +517,7 @@ suite.add(new Y.Test.Case({
                     { a: 4, b: 4, c: 4 }
                 ]
             });
-        
+
         Y.Assert.isInstanceOf(Y.ModelList, table.data);
         Y.Assert.isInstanceOf(Y.ModelList, table.get('data'));
         Y.Assert.areSame(2, table.data.size());
@@ -623,7 +623,7 @@ suite.add(new Y.Test.Case({
     "get('recordType') should return the data modelList.model": function () {
         var modelList = new Y.ModelList(),
             table;
-            
+
         modelList.model = Y.Base.create('testModel', Y.Model, [], {}, {
             ATTRS: {
                 a: { setter: function (val) { return +val; } },
@@ -674,6 +674,32 @@ suite.add(new Y.Test.Case({
             Y.Object.keys(table.get('recordType').ATTRS));
     }
 
+}));
+
+suite.add(new Y.Test.Case({
+    name: "recordType attribute",
+
+    setUp: function () {
+        this.Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core]);
+    },
+
+    "deep clones should not be recursive": function () {
+        var test = this,
+            table = new this.Table(),
+            data = { key: 'abc', self: {} },
+            cloned,
+            timer;
+
+        data.self = data;
+
+        try {
+            cloned = table._setColumns([data]);
+            Y.Assert.isTrue(true);
+        } catch (e) {
+            Y.Assert.isTrue(false, e);
+        }
+
+    }
 }));
 
 Y.Test.Runner.add(suite);
