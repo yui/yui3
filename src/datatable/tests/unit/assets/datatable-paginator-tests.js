@@ -213,7 +213,7 @@ suite.add(new Y.Test.Case({
         }),
         data2 = [];
 
-        while (data2.length < 100) {
+        while (data2.length < 50) {
             data2.push({
                 id: data2.length + 1,
                 name: ['a','b', 'c','d','e','f','g'][data2.length % 7].toUpperCase() + ':' + data.length,
@@ -247,6 +247,12 @@ suite.add(new Y.Test.Case({
 
         // check cell data
         Y.Assert.areSame(data2[10].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'));
+
+        // go to last page
+        dt.lastPage();
+
+        // check cell data
+        Y.Assert.areSame(data2[40].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'));
 
         // go to first page and change data
         dt.firstPage();
