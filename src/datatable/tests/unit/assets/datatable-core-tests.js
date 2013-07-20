@@ -677,26 +677,24 @@ suite.add(new Y.Test.Case({
 }));
 
 suite.add(new Y.Test.Case({
-    name: "recordType attribute",
+    name: "Test deep cloning for recursion.",
 
     setUp: function () {
         this.Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core]);
     },
 
     "deep clones should not be recursive": function () {
-        var test = this,
-            table = new this.Table(),
+        var table = new this.Table(),
             data = { key: 'abc', self: {} },
-            cloned,
-            timer;
+            cloned;
 
         data.self = data;
 
         try {
-            cloned = table._setColumns([data]);
+            table.set('columns', [data]);
             Y.Assert.isTrue(true);
         } catch (e) {
-            Y.Assert.isTrue(false, e);
+            Y.Assert.isTrue(false, e.message);
         }
 
     }
