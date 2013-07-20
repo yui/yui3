@@ -586,6 +586,8 @@ Y.mix(Controller.prototype, {
         var data = this.get('data'),
             model = this.get('paginatorModel');
 
+        model.set('totalItems', data.size());
+
         if (model.get('page') !== 1) {
             this.firstPage();
         } else {
