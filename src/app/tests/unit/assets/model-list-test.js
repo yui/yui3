@@ -856,6 +856,22 @@ modelListSuite.add(new Y.Test.Case({
 
     },
 
+    'sort({descending:true}) should re-sort the list': function () {
+        var list = this.createList();
+
+        list.add([{foo: 'z'}, {foo: 'a'}, {foo: 'x'}, {foo: 'y'}]);
+
+        ArrayAssert.itemsAreSame(['z', 'a', 'x', 'y'], list.get('foo'));
+
+        list.comparator = function (model) {
+            return model.get('foo');
+        };
+
+        Assert.areSame(list, list.sort({descending:true}), 'sort() should be chainable');
+        ArrayAssert.itemsAreSame(['z', 'y', 'x', 'a'], list.get('foo'));
+
+    },
+
     'sync() should just call the supplied callback by default': function () {
         var calls = 0,
             list  = this.createList();
