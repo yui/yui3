@@ -334,7 +334,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
                 self.add(model, options);
             }
 
-            callback && callback.apply(null, arguments);
+            if (callback) {
+                callback.apply(null, arguments);
+            }
         });
     },
 
@@ -613,7 +615,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
                 self.fire(EVT_LOAD, facade);
             }
 
-            callback && callback.apply(null, arguments);
+            if (callback) {
+                callback.apply(null, arguments);
+            }
         });
 
         return this;
@@ -953,7 +957,11 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             model: model
         });
 
-        options.silent ? this._defAddFn(facade) : this.fire(EVT_ADD, facade);
+        if (options.silent) {
+            this._defAddFn(facade);
+        } else {
+            this.fire(EVT_ADD, facade);
+        }
 
         return model;
     },
@@ -1115,8 +1123,11 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             model: model
         });
 
-        options.silent ? this._defRemoveFn(facade) :
-                this.fire(EVT_REMOVE, facade);
+        if (options.silent) {
+            this._defRemoveFn(facade);
+        } else {
+            this.fire(EVT_REMOVE, facade);
+        }
 
         return model;
     },
