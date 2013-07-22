@@ -813,7 +813,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         `reset` event.
       @param {Boolean} [options.silent=false] If `true`, no `reset` event will
           be fired.
-      @param {Boolean} [options.descending=false] If `true`, sorts in descending order
+      @param {Boolean} [options.descending=false] If `true`, the sort is
+          performed in descending order.
     @chainable
     **/
     sort: function (options) {
@@ -833,8 +834,11 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             src   : 'sort'
         });
 
-        options.silent ? this._defResetFn(facade) :
-                this.fire(EVT_RESET, facade);
+        if (options.silent) {
+            this._defResetFn(facade);
+        } else {
+            this.fire(EVT_RESET, facade);
+        }
 
         return this;
     },
@@ -1124,17 +1128,21 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @param {Model} a First model to compare.
     @param {Model} b Second model to compare.
     @param {Object} [options] Options passed from `sort()` function.
-    @param {Boolean} [options.descending=false] If `true`, sorts in descending order
-    @return {Number} `-1` if _a_ is less than _b_, `0` if equal, `1` if greater (for ascending).
+        @param {Boolean} [options.descending=false] If `true`, the sort is
+          performed in descending order.
+    @return {Number} `-1` if _a_ is less than _b_, `0` if equal, `1` if greater
+      (for ascending order, the reverse for descending order).
     @protected
     **/
     _sort: function (a, b, options) {
         var result = this._compare(this.comparator(a), this.comparator(b));
 
-        if (!result) {
+        // Early return when items are equal in their sort comparison.
+        if (result === 0) {
             return result;
         }
 
+        // Flips sign when the sort is to be peformed in descending order.
         return options && options.descending ? -result : result;
     },
 
