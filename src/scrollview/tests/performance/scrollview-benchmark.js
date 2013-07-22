@@ -1,17 +1,15 @@
-var fs = require('fs'),
-    path = require('path'),
-    html = fs.readFileSync(path.join(__dirname, 'assets/scrollview.html'));
-
-module.exports = [
+[
     {
         title: 'ScrollView Performance: Create',
         slug: 'scrollview-performance-create',
-        html: html,
+        html: 'assets/scrollview.html',
         yui: {
             use: ['scrollview']
         },
-        teardown: function () {
-            Y.one('#container').empty(true);
+        global: {
+            teardown: function () {
+                Y.one('#container').empty(true);
+            }
         },
         tests: [
             {
@@ -50,14 +48,16 @@ module.exports = [
     {
         title: 'ScrollView Performance: Render',
         slug: 'scrollview-performance-render',
-        html: html,
+        html: 'assets/scrollview.html',
         yui: {
             use: ['scrollview']
         },
-        setup: function () {
-            var scrollview = new Y.ScrollView({
-                srcNode: Y.one('#container')
-            });
+        global: {
+            setup: function () {
+                var scrollview = new Y.ScrollView({
+                    srcNode: Y.one('#container')
+                });
+            }
         },
         tests: [
             {
@@ -71,18 +71,20 @@ module.exports = [
     {
         title: 'ScrollView Performance: Create',
         slug: 'scrollview-performance-destroy',
-        html: html,
+        html: 'assets/scrollview.html',
         yui: {
             use: ['scrollview'],
             config: {
                 foo: 'bar'
             }
         },
-        setup: function () {
-            var scrollview = new Y.ScrollView({
-                srcNode: Y.one('#container'),
-                render: true
-            });
+        global: {
+            setup: function () {
+                var scrollview = new Y.ScrollView({
+                    srcNode: Y.one('#container'),
+                    render: true
+                });
+            }
         },
         tests: [
             {

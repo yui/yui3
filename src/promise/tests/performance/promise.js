@@ -1,27 +1,29 @@
-module.exports = {
+{
     title: 'Y.Promise performance tests',
     slug: 'promise-performance',
     yui: {
         use: ['promise', 'array-extras']
     },
-    setup: function () {
+    global: {
+        setup: function () {
 
-        var i, array = [];
+            var i, array = [];
 
-        Y.soon = function (fn) { fn(); };
+            Y.soon = function (fn) { fn(); };
 
-        function noop() {}
+            function noop() {}
 
-        function identity(x) {
-            return x;
-        }
+            function identity(x) {
+              return x;
+            }
 
-        function rethrow(e) {
-            throw e;
-        }
+            function rethrow(e) {
+              throw e;
+            }
 
-        for (i = 0; i < 100; i++) {
-            array[i] = i;
+            for (i = 0; i < 100; i++) {
+              array[i] = i;
+            }
         }
     },
     tests: [

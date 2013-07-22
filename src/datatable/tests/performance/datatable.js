@@ -1,19 +1,21 @@
-module.exports = {
+{
     title: 'DataTable performance tests',
     slug: 'datatable-performance',
     html:'<div id="container"></div>',
     yui: {
         use: ['datatable']
     },
-    setup: function () {
-        var data = [], i;
+    global: {
+        setup: function () {
+            var data = [], i;
 
-        for (i = 0; i < 1000; i++) {
-            data.push({ id: 'ga-3475' + i, name: 'gadget', price: '$6.99'});
+            for (i = 0; i < 1000; i++) {
+                data.push({ id: 'ga-3475' + i, name: 'gadget', price: '$6.99'});
+            }
+        },
+        teardown: function () {
+            Y.one('#container').empty(true);
         }
-    },
-    teardown: function () {
-        Y.one('#container').empty(true);
     },
     tests: [
         {

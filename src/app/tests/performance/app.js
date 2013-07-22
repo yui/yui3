@@ -1,4 +1,4 @@
-module.exports = [
+[
     {
         title: 'Y.Model performance tests',
         yui: {

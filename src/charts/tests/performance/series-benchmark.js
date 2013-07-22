@@ -70,10 +70,6 @@
                   }
                   return val;
             };
-        },
-        teardown: function () {
-            miscellaneous.destroy(true);
-            container.empty(true);
         }
     },
     tests: [
@@ -91,6 +87,10 @@
                 miscellaneous.render();
                 graphic._redraw();
                 miscellaneous.destroy(true);
+            },
+            teardown: function () {
+                miscellaneous.destroy(true);
+                container.empty(true);
             }
         },
         {
@@ -123,6 +123,9 @@
                         seriesObject[key].destroy(true);
                    }
                 }
+            },
+            teardown: function () {
+                container.empty(true);
             }
         }
     ]

@@ -1,6 +1,6 @@
 {
     title: 'Charts PerfArea',
-    assets: ['generatedataprovider.js'],
+    assets: ['assets/generatedataprovider.js'],
     yui: {
         config: {
             modules: {

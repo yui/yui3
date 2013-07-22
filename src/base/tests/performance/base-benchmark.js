@@ -1,508 +1,509 @@
-module.exports = {
+{
     title: 'Y.Base performance tests',
     slug: 'base-performance',
     yui: {
         use: ['base']
     },
-    setup: function () {
-        var MyBase20 = function() {
-            MyBase20.superclass.constructor.apply(this, arguments);
-        };
+    global: {
+        setup: function () {
+            var MyBase20 = function() {
+                MyBase20.superclass.constructor.apply(this, arguments);
+            };
 
-        Y.extend(MyBase20, Y.Base);
+            Y.extend(MyBase20, Y.Base);
 
-        MyBase20.NAME = 'myBase20';
+            MyBase20.NAME = 'myBase20';
 
-        MyBase20.ATTRS = {
+            MyBase20.ATTRS = {
 
-            attr1: {
-                value: "Foo",
-                setter: function(n) {
-                    return n;
-                }
-            },
-
-            attr2: {
-                value: "Bar",
-                setter: function(n) {
-                    return n;
-                }
-            },
-
-            attr3: {
-                value: true
-            },
-
-            attr4: {
-                value: 3
-            },
-
-            attr5: {
-                value: 3
-            },
-
-            attr6: {
-                value: false,
-                setter: function(lock) {
-                    return lock;
-                }
-            },
-
-            attr7: {
-                value: 10
-            },
-
-            attr8: {
-                value: {}
-            },
-
-            attr9: {
-                value: []
-            },
-
-            attr10: {
-                value: "Foobar"
-            },
-
-            attr11: {
-                value: 25
-            },
-
-            attr12: {
-                value: null
-            },
-
-            attr13: {
-                value: false
-            },
-
-            attr14: {
-                value: false,
-                setter: function(val) {
-                    return val;
-                }
-            },
-
-            attr15: {
-                value: null,
-                setter: function(val) {
-                    return false;
-                }
-            },
-
-            attr16: {
-                value: ['default'],
-
-                getter: function() {
-                    return false;
+                attr1: {
+                    value: "Foo",
+                    setter: function(n) {
+                        return n;
+                    }
                 },
 
-                setter: function(g) {
-                    return g;
-                }
-            },
-            attr17: {
-                value: null,
-                setter: function(g) {
-                    return g;
-                }
-            },
-            attr18: {
-                writeOnce: true,
-                value: null
-            },
-            attr19: {
-                writeOnce: true,
-                value: null
-            },
-            attr20: {
-                writeOnce: true,
-                value: null
-            }
-        };
-
-        var MyBase10 = function() {
-            MyBase10.superclass.constructor.apply(this, arguments);
-        };
-
-        Y.extend(MyBase10, Y.Base);
-
-        MyBase10.NAME = 'myBase10';
-
-        MyBase10.ATTRS = {
-
-            attr1: {
-                value: "Foo"
-            },
-
-            attr2: {
-                value: "Bar"
-            },
-
-            attr3: {
-                value: true
-            },
-
-            attr4: {
-                value: 3
-            },
-
-            attr5: {
-                value: 3
-            },
-
-            attr6: {
-                value: false
-            },
-
-            attr7: {
-                value: 10
-            },
-
-            attr8: {
-                value: true
-            },
-
-            attr9: {
-                value: false
-            },
-
-            attr10: {
-                value: null
-            }
-        };
-
-        var MyBase = function() {
-           MyBase.superclass.constructor.apply(this, arguments);
-        };
-
-        MyBase.NAME = "myBase";
-
-        Y.extend(MyBase, Y.Base);
-
-        // MyBaseCore
-
-        var MyBaseCore20 = function() {
-            MyBaseCore20.superclass.constructor.apply(this, arguments);
-        };
-
-        Y.extend(MyBaseCore20, Y.BaseCore);
-
-        MyBaseCore20.NAME = 'myBase20';
-
-        MyBaseCore20.ATTRS = {
-
-            attr1: {
-                value: "Foo",
-                setter: function(n) {
-                    return n;
-                }
-            },
-
-            attr2: {
-                value: "Bar",
-                setter: function(n) {
-                    return n;
-                }
-            },
-
-            attr3: {
-                value: true
-            },
-
-            attr4: {
-                value: 3
-            },
-
-            attr5: {
-                value: 3
-            },
-
-            attr6: {
-                value: false,
-                setter: function(lock) {
-                    return lock;
-                }
-            },
-
-            attr7: {
-                value: 10
-            },
-
-            attr8: {
-                value: {}
-            },
-
-            attr9: {
-                value: []
-            },
-
-            attr10: {
-                value: "Foobar"
-            },
-
-            attr11: {
-                value: 25
-            },
-
-            attr12: {
-                value: null
-            },
-
-            attr13: {
-                value: false
-            },
-
-            attr14: {
-                value: false,
-                setter: function(val) {
-                    return val;
-                }
-            },
-
-            attr15: {
-                value: null,
-                setter: function(val) {
-                    return false;
-                }
-            },
-
-            attr16: {
-                value: ['default'],
-
-                getter: function() {
-                    return false;
+                attr2: {
+                    value: "Bar",
+                    setter: function(n) {
+                        return n;
+                    }
                 },
 
-                setter: function(g) {
-                    return g;
-                }
-            },
-            attr17: {
-                value: null,
-                setter: function(g) {
-                    return g;
-                }
-            },
-            attr18: {
-                writeOnce: true,
-                value: null
-            },
-            attr19: {
-                writeOnce: true,
-                value: null
-            },
-            attr20: {
-                writeOnce: true,
-                value: null
-            }
-        };
-
-        var MyBaseCore20Ideal = function() {
-            MyBaseCore20Ideal.superclass.constructor.apply(this, arguments);
-        };
-
-        Y.extend(MyBaseCore20Ideal, Y.BaseCore);
-
-        MyBaseCore20Ideal.NAME = 'myBaseCore20Ideal';
-
-        MyBaseCore20Ideal.ATTRS = {
-
-            attr1: {
-                value: "Foo",
-                setter: function(n) {
-                    return n;
-                }
-            },
-
-            attr2: {
-                value: "Bar",
-                setter: function(n) {
-                    return n;
-                }
-            },
-
-            attr3: {
-                value: true
-            },
-
-            attr4: {
-                value: 3
-            },
-
-            attr5: {
-                value: 3
-            },
-
-            attr6: {
-                value: false,
-                setter: function(lock) {
-                    return lock;
-                }
-            },
-
-            attr7: {
-                value: 10
-            },
-
-            attr8: {
-                valueFn: function() {
-                    return {};
-                }
-            },
-
-            attr9: {
-                valueFn : function() {
-                    return [];
-                }
-            },
-
-            attr10: {
-                value: "Foobar"
-            },
-
-            attr11: {
-                value: 25
-            },
-
-            attr12: {
-                value: null
-            },
-
-            attr13: {
-                value: false
-            },
-
-            attr14: {
-                value: false,
-                setter: function(val) {
-                    return val;
-                }
-            },
-
-            attr15: {
-                value: null,
-                setter: function(val) {
-                    return false;
-                }
-            },
-
-            attr16: {
-                valueFn: function() {
-                    return ['default'];
+                attr3: {
+                    value: true
                 },
 
-                getter: function() {
-                    return false;
+                attr4: {
+                    value: 3
                 },
 
-                setter: function(g) {
-                    return g;
+                attr5: {
+                    value: 3
+                },
+
+                attr6: {
+                    value: false,
+                    setter: function(lock) {
+                        return lock;
+                    }
+                },
+
+                attr7: {
+                    value: 10
+                },
+
+                attr8: {
+                    value: {}
+                },
+
+                attr9: {
+                    value: []
+                },
+
+                attr10: {
+                    value: "Foobar"
+                },
+
+                attr11: {
+                    value: 25
+                },
+
+                attr12: {
+                    value: null
+                },
+
+                attr13: {
+                    value: false
+                },
+
+                attr14: {
+                    value: false,
+                    setter: function(val) {
+                        return val;
+                    }
+                },
+
+                attr15: {
+                    value: null,
+                    setter: function(val) {
+                        return false;
+                    }
+                },
+
+                attr16: {
+                    value: ['default'],
+
+                    getter: function() {
+                        return false;
+                    },
+
+                    setter: function(g) {
+                        return g;
+                    }
+                },
+                attr17: {
+                    value: null,
+                    setter: function(g) {
+                        return g;
+                    }
+                },
+                attr18: {
+                    writeOnce: true,
+                    value: null
+                },
+                attr19: {
+                    writeOnce: true,
+                    value: null
+                },
+                attr20: {
+                    writeOnce: true,
+                    value: null
                 }
-            },
-            attr17: {
-                value: null,
-                setter: function(g) {
-                    return g;
+            };
+
+            var MyBase10 = function() {
+                MyBase10.superclass.constructor.apply(this, arguments);
+            };
+
+            Y.extend(MyBase10, Y.Base);
+
+            MyBase10.NAME = 'myBase10';
+
+            MyBase10.ATTRS = {
+
+                attr1: {
+                    value: "Foo"
+                },
+
+                attr2: {
+                    value: "Bar"
+                },
+
+                attr3: {
+                    value: true
+                },
+
+                attr4: {
+                    value: 3
+                },
+
+                attr5: {
+                    value: 3
+                },
+
+                attr6: {
+                    value: false
+                },
+
+                attr7: {
+                    value: 10
+                },
+
+                attr8: {
+                    value: true
+                },
+
+                attr9: {
+                    value: false
+                },
+
+                attr10: {
+                    value: null
                 }
-            },
-            attr18: {
-                writeOnce: true,
-                value: null
-            },
-            attr19: {
-                writeOnce: true,
-                value: null
-            },
-            attr20: {
-                writeOnce: true,
-                value: null
-            }
-        };
+            };
 
-        var MyBaseCore10 = function() {
-            MyBaseCore10.superclass.constructor.apply(this, arguments);
-        };
+            var MyBase = function() {
+               MyBase.superclass.constructor.apply(this, arguments);
+            };
 
-        Y.extend(MyBaseCore10, Y.BaseCore);
+            MyBase.NAME = "myBase";
 
-        MyBaseCore10.NAME = 'myBaseCore10';
+            Y.extend(MyBase, Y.Base);
 
-        MyBaseCore10.ATTRS = {
+            // MyBaseCore
 
-            attr1: {
-                value: "Foo"
-            },
+            var MyBaseCore20 = function() {
+                MyBaseCore20.superclass.constructor.apply(this, arguments);
+            };
 
-            attr2: {
-                value: "Bar"
-            },
+            Y.extend(MyBaseCore20, Y.BaseCore);
 
-            attr3: {
-                value: true
-            },
+            MyBaseCore20.NAME = 'myBase20';
 
-            attr4: {
-                value: 3
-            },
+            MyBaseCore20.ATTRS = {
 
-            attr5: {
-                value: 3
-            },
+                attr1: {
+                    value: "Foo",
+                    setter: function(n) {
+                        return n;
+                    }
+                },
 
-            attr6: {
-                value: false
-            },
+                attr2: {
+                    value: "Bar",
+                    setter: function(n) {
+                        return n;
+                    }
+                },
 
-            attr7: {
-                value: 10
-            },
+                attr3: {
+                    value: true
+                },
 
-            attr8: {
-                value: true
-            },
+                attr4: {
+                    value: 3
+                },
 
-            attr9: {
-                value: false
-            },
+                attr5: {
+                    value: 3
+                },
 
-            attr10: {
-                value: null
-            }
-        };
+                attr6: {
+                    value: false,
+                    setter: function(lock) {
+                        return lock;
+                    }
+                },
 
-        var MyBaseCore = function() {
-           MyBaseCore.superclass.constructor.apply(this, arguments);
-        };
+                attr7: {
+                    value: 10
+                },
 
-        MyBaseCore.NAME = "myBaseCore";
+                attr8: {
+                    value: {}
+                },
 
-        Y.extend(MyBaseCore, Y.BaseCore);
+                attr9: {
+                    value: []
+                },
 
-        var MyModelCore = function() {
-            MyModelCore.superclass.constructor.apply(this, arguments);
-        };
+                attr10: {
+                    value: "Foobar"
+                },
 
-        MyModelCore.NAME = "myModel";
+                attr11: {
+                    value: 25
+                },
 
-        Y.extend(MyModelCore, Y.BaseCore, {
-            _allowAdHocAttrs : true
-        });
+                attr12: {
+                    value: null
+                },
 
-        var MyModel = function() {
-            MyModel.superclass.constructor.apply(this, arguments);
-        };
+                attr13: {
+                    value: false
+                },
 
-        MyModel.NAME = "myModel";
+                attr14: {
+                    value: false,
+                    setter: function(val) {
+                        return val;
+                    }
+                },
 
-        Y.extend(MyModel, Y.Base, {
-            _allowAdHocAttrs : true
-        });
+                attr15: {
+                    value: null,
+                    setter: function(val) {
+                        return false;
+                    }
+                },
 
-        var GLOBAL_MY_BASE_10 = new MyBase10();
-        var UNIQUE_VALUE = 10;
-        var OPTS = {src:'internal'};
+                attr16: {
+                    value: ['default'],
 
+                    getter: function() {
+                        return false;
+                    },
+
+                    setter: function(g) {
+                        return g;
+                    }
+                },
+                attr17: {
+                    value: null,
+                    setter: function(g) {
+                        return g;
+                    }
+                },
+                attr18: {
+                    writeOnce: true,
+                    value: null
+                },
+                attr19: {
+                    writeOnce: true,
+                    value: null
+                },
+                attr20: {
+                    writeOnce: true,
+                    value: null
+                }
+            };
+
+            var MyBaseCore20Ideal = function() {
+                MyBaseCore20Ideal.superclass.constructor.apply(this, arguments);
+            };
+
+            Y.extend(MyBaseCore20Ideal, Y.BaseCore);
+
+            MyBaseCore20Ideal.NAME = 'myBaseCore20Ideal';
+
+            MyBaseCore20Ideal.ATTRS = {
+
+                attr1: {
+                    value: "Foo",
+                    setter: function(n) {
+                        return n;
+                    }
+                },
+
+                attr2: {
+                    value: "Bar",
+                    setter: function(n) {
+                        return n;
+                    }
+                },
+
+                attr3: {
+                    value: true
+                },
+
+                attr4: {
+                    value: 3
+                },
+
+                attr5: {
+                    value: 3
+                },
+
+                attr6: {
+                    value: false,
+                    setter: function(lock) {
+                        return lock;
+                    }
+                },
+
+                attr7: {
+                    value: 10
+                },
+
+                attr8: {
+                    valueFn: function() {
+                        return {};
+                    }
+                },
+
+                attr9: {
+                    valueFn : function() {
+                        return [];
+                    }
+                },
+
+                attr10: {
+                    value: "Foobar"
+                },
+
+                attr11: {
+                    value: 25
+                },
+
+                attr12: {
+                    value: null
+                },
+
+                attr13: {
+                    value: false
+                },
+
+                attr14: {
+                    value: false,
+                    setter: function(val) {
+                        return val;
+                    }
+                },
+
+                attr15: {
+                    value: null,
+                    setter: function(val) {
+                        return false;
+                    }
+                },
+
+                attr16: {
+                    valueFn: function() {
+                        return ['default'];
+                    },
+
+                    getter: function() {
+                        return false;
+                    },
+
+                    setter: function(g) {
+                        return g;
+                    }
+                },
+                attr17: {
+                    value: null,
+                    setter: function(g) {
+                        return g;
+                    }
+                },
+                attr18: {
+                    writeOnce: true,
+                    value: null
+                },
+                attr19: {
+                    writeOnce: true,
+                    value: null
+                },
+                attr20: {
+                    writeOnce: true,
+                    value: null
+                }
+            };
+
+            var MyBaseCore10 = function() {
+                MyBaseCore10.superclass.constructor.apply(this, arguments);
+            };
+
+            Y.extend(MyBaseCore10, Y.BaseCore);
+
+            MyBaseCore10.NAME = 'myBaseCore10';
+
+            MyBaseCore10.ATTRS = {
+
+                attr1: {
+                    value: "Foo"
+                },
+
+                attr2: {
+                    value: "Bar"
+                },
+
+                attr3: {
+                    value: true
+                },
+
+                attr4: {
+                    value: 3
+                },
+
+                attr5: {
+                    value: 3
+                },
+
+                attr6: {
+                    value: false
+                },
+
+                attr7: {
+                    value: 10
+                },
+
+                attr8: {
+                    value: true
+                },
+
+                attr9: {
+                    value: false
+                },
+
+                attr10: {
+                    value: null
+                }
+            };
+
+            var MyBaseCore = function() {
+               MyBaseCore.superclass.constructor.apply(this, arguments);
+            };
+
+            MyBaseCore.NAME = "myBaseCore";
+
+            Y.extend(MyBaseCore, Y.BaseCore);
+
+            var MyModelCore = function() {
+                MyModelCore.superclass.constructor.apply(this, arguments);
+            };
+
+            MyModelCore.NAME = "myModel";
+
+            Y.extend(MyModelCore, Y.BaseCore, {
+                _allowAdHocAttrs : true
+            });
+
+            var MyModel = function() {
+                MyModel.superclass.constructor.apply(this, arguments);
+            };
+
+            MyModel.NAME = "myModel";
+
+            Y.extend(MyModel, Y.Base, {
+                _allowAdHocAttrs : true
+            });
+
+            var GLOBAL_MY_BASE_10 = new MyBase10();
+            var UNIQUE_VALUE = 10;
+            var OPTS = {src:'internal'};
+        }
     },
     tests: [
         {
