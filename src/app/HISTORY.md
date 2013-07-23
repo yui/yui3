@@ -4,6 +4,12 @@ App Framework Change History
 @VERSION@
 ------
 
+### ModelList
+
+* Added support for descending sort order via `sort({descending: true})`. In
+  order to support this, the `options` passed to `sort()` are now passed along
+  to the protected `_sort()` method. ([#1004][]: @rishabhm)
+
 ### Router
 
 * Fixed issue with trying to URL-decode matching path segments that are
@@ -11,6 +17,9 @@ App Framework Change History
   arbitrary number of captures; when executing the regex during dispatching, its
   array of matches can contain `undefined` values. Router will now check that a
   match is a truthy value before trying to URL-decode it.
+
+
+[#1004]: https://github.com/yui/yui3/issues/1004
 
 
 3.11.0
