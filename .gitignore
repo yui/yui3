@@ -15,3 +15,13 @@ src/out
 node_modules
 api-js/
 /*.project
+
+configurator
+docs
+pom.xml
+src/gallery-*
+src/.shifter.json
+src/wf2-*
+src/wt2-*
+src/yuidoc.json
+third
