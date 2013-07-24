@@ -364,6 +364,55 @@ The generic `Y.Template` interface is [[#Generic Template API|designed]] to work
     </dd>
 </dl>
 
+<h3>Abstracting Templates through Template Registration</h3>
+
+<p>
+By being able to pre-compile our templates ahead of time, we can use `Y.Template` as an abstraction layer so that we can create applications that can call templates without our application code having to know what the underlying template engine is.
+</p>
+
+<p>
+This lets us now create applications with a clear separation between our markup and our code, since we can just reference our templates by an abstracted template name that we can call as a dependency, like any other YUI module.  To do so, we have two main <em>static</em> methods on `Y.Template` that we can use to register pre-compiled templates, and to call them through a centralized system.
+</p>  
+
+<dl>
+    <dt>`Y.Template.register( templateName , template )`</dt>
+    <dd>
+        <p>
+        Registers a template function under a given template name, allowing it to be rendered by name with `Y.Template.render`
+        </p>
+    </dd>
+
+<dt>`Y.Template.render( templateName , [data] , [options] )`</dt>
+    <dd>
+        <p>
+        Renders a registered template under the given `templateName`, passing along any additional `data` or `options` values needed.
+        </p>
+    </dd>
+</dl>
+
+<p>
+Using template registration usually involves taking a pre-compiled template, and wrapping it inside a YUI module.  You can use packages such as <a href="https://github.com/yahoo/locator">locator</a> to do so automatically, by having it find the location of your existing templates.  The wrapped pre-compiled template should look something like this:
+```
+YUI.add('foo', function (Y, NAME) {
+  var compiled = function (data) {
+    /* compiled template */
+    return '<html fragment>';
+  };
+  Y.Template.register('foo', compiled);
+}, '', {requires: ['template-base']});
+```
+
+Then, once it's compiled and registered for you, you can simply call the template in the following way in your application code:
+```
+YUI.add('bar', function (Y, NAME) {
+  var html = Y.Template.render('foo', {
+    tagline: 'bar is now template language agnostic'
+  });
+}, '', {requires: ['foo']});
+```
+
+Our template can now be used as a dependency like any other YUI module, and rendered without needed the full template engine or even having to know which template engine is being used in the application code.
+
 <h2>Using `Template.Micro`</h2>
 
 <p>
