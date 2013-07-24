@@ -98,12 +98,8 @@ using `Y.Template.render`.
 @static
 **/
 Template.register = function(templateName, template) {
-    if (Y.Lang.isString(templateName)) {
-        Template._cache[templateName] = template;
-        return template;
-    } else {
-        throw new Error("Template name should be a string");
-    }
+    Template._cache[templateName] = template;
+    return template;
 };
 
 /**
@@ -116,10 +112,11 @@ to be interpolated. If the template name does not exist, it throws an error.
 @return {String} output The rendered result.
 **/
 Template.render = function(templateName, data, options) {
-    if (Y.Object.hasKey(Template._cache, templateName)) {
-        return Template._cache[templateName](data, options);
+    var template = Template._cache[templateName];
+    if (template) {
+        return template(data, options);
     } else {
-        throw new Error("Unregistered template: '" + templateName + "'");
+        Y.error("Unregistered template: '" + templateName + "'");
     }
 };
 
