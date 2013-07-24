@@ -71,6 +71,58 @@ function Template(engine, defaults) {
     }
 }
 
+/**
+Simple cache that maps a template name to the revived template functions.
+
+@property _cache
+@static
+@protected
+**/
+
+Template._cache = {};
+
+/**
+Registers a pre-compiled template into the central template cache with a given
+template string, allowing that template to be called and rendered by that name
+using `Y.Template.render`.
+
+@method register
+@param {String} templateName The abstracted name to reference the template.
+@param {Function} template The function that returns the rendered HTML. The 
+    function should take the following parameters. If a pre-compiled template
+    does not accept these parameters, it is up to the developer to normalize it.
+  @param {Object} [template.data]
+  @param {Object} [template.options]
+@return {Function} revivedTemplate This is the same function as in `template`, 
+    and is done to maintain compatibility with the `revive` API in Y.Template.
+@static
+**/
+Template.register = function(templateName, template) {
+    if (Y.Lang.isString(templateName)) {
+        Template._cache[templateName] = template;
+        return template;
+    } else {
+        throw new Error("Template name should be a string");
+    }
+};
+
+/**
+Renders a template into a string, given the registered template name and data 
+to be interpolated. If the template name does not exist, it throws an error.
+
+@param {String} templateName The abstracted name to reference the template.
+@param {Object} [data] The data to be interpolated into the template.
+@param {Object} [options] Any additional options to be passed into the template.
+@return {String} output The rendered result.
+**/
+Template.render = function(templateName, data, options) {
+    if (Y.Object.hasKey(Template._cache, templateName)) {
+        return Template._cache[templateName](data, options);
+    } else {
+        throw new Error("Unregistered template: '" + templateName + "'");
+    }
+};
+
 Template.prototype = {
     /**
     Compiles a template with the current template engine and returns a compiled
