@@ -29,7 +29,7 @@ Y.applyConfig({
   root: '',
   skin: {
     defaultSkin: 'sketch',
-    order: Y.UA.touchEnabled ? 'nxt' : 'nx',
+    // order: Y.UA.touchEnabled ? 'nxt' : 'nx',
     overrides: {        /*@DBG*/
       console: ['sam']  /*@DBG*/
     }                   /*@DBG*/
