@@ -93,8 +93,7 @@
             Y.mix(META, YUI.Env[VERSION], false, [
                 'modules',
                 'groups',
-                'skin',
-                'patterns'
+                'skin'
             ], 0, true);
         }
 

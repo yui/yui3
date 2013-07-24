@@ -410,6 +410,12 @@ YUI.add('loader-tests', function(Y) {
                     mod2 = Y.one('#early-group-meta');
                     Assert.isNotNull(mod2, 'Failed to load module via group meta');
                     Assert.isTrue(Y.MOD2, 'Failed to add module via group meta');
+
+                    Assert.areEqual(
+                        YUI.Env[YUI.version].skin['default'],
+                        'earlyDefaultSkin',
+                        'Configured default skin property was not as expected'
+                    );
                 });
             });
 
