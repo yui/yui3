@@ -1,4 +1,4 @@
-module.exports = {
+{
     title: 'Y.BaseCore performance tests',
     slug: 'base-core-performance',
     yui: {
