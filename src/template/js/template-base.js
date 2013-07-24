@@ -72,44 +72,47 @@ function Template(engine, defaults) {
 }
 
 /**
-Simple cache that maps a template name to the revived template functions.
+Registry that maps template names to revived template functions.
 
 @property _registry
 @static
 @protected
+@since @SINCE@
 **/
-
 Template._registry = {};
 
 /**
-Registers a pre-compiled template into the central template registry with a 
-given template string, allowing that template to be called and rendered by 
-that name using `Y.Template.render`.
+Registers a pre-compiled template into the central template registry with a
+given template string, allowing that template to be called and rendered by
+that name using the `Y.Template.render()` static method.
 
 @method register
 @param {String} templateName The abstracted name to reference the template.
-@param {Function} template The function that returns the rendered string. The 
+@param {Function} template The function that returns the rendered string. The
     function should take the following parameters. If a pre-compiled template
     does not accept these parameters, it is up to the developer to normalize it.
   @param {Object} [template.data]
   @param {Object} [template.options]
-@return {Function} revivedTemplate This is the same function as in `template`, 
-    and is done to maintain compatibility with the `revive` API in Y.Template.
+@return {Function} revivedTemplate This is the same function as in `template`,
+    and is done to maintain compatibility with the `Y.Template#revive()` method.
 @static
+@since @SINCE@
 **/
-Template.register = function(templateName, template) {
+Template.register = function (templateName, template) {
     Template._registry[templateName] = template;
     return template;
 };
 
 /**
-Renders a template into a string, given the registered template name and data 
-to be interpolated. If the template name does not exist, it throws an error.
+Renders a template into a string, given the registered template name and data
+to be interpolated. If the template name does not exist, an error is thrown.
 
 @param {String} templateName The abstracted name to reference the template.
 @param {Object} [data] The data to be interpolated into the template.
 @param {Object} [options] Any additional options to be passed into the template.
 @return {String} output The rendered result.
+@static
+@since @SINCE@
 **/
 Template.render = function (templateName, data, options) {
     var template = Template._registry[templateName],
