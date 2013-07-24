@@ -4,8 +4,6 @@
  * @submodule loader-base
  */
 
-if (!YUI.Env[Y.version]) {
-
     (function() {
         var VERSION = Y.version,
             BUILD = '/build/',
@@ -91,8 +89,13 @@ if (!YUI.Env[Y.version]) {
         galleryUpdate();
         yui2Update();
 
+        if (YUI.Env[VERSION]) {
+            Y.mix(META, YUI.Env[VERSION], false, [
+                'modules',
+                'groups',
+                'skin'
+            ], 0, true);
+        }
+
         YUI.Env[VERSION] = META;
     }());
-}
-
-
