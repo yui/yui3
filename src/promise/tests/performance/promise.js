@@ -1,6 +1,5 @@
 {
     title: 'Y.Promise performance tests',
-    slug: 'promise-performance',
     yui: {
         use: ['promise', 'array-extras']
     },

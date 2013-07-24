@@ -1,6 +1,5 @@
 {
     title: 'Y.BaseCore performance tests',
-    slug: 'base-core-performance',
     yui: {
         use: ['base-core']
     },

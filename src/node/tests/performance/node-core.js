@@ -1,6 +1,5 @@
 {
     title: 'Node Core',
-    slug: 'node-core-benchmark',
     html: 'assets/node-core.html',
     yui: {
         use: ['node-core', 'node-base'] // base is needed for node.purge

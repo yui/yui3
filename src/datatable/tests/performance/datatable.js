@@ -1,6 +1,5 @@
 {
     title: 'DataTable performance tests',
-    slug: 'datatable-performance',
     html:'<div id="container"></div>',
     yui: {
         use: ['datatable']

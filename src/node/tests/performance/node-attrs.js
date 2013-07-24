@@ -1,6 +1,5 @@
 {
     title: 'Node Attributes',
-    slug: 'node-attrs-benchmark',
     html: 'assets/node-attrs.html',
     yui: {
         use: ['node-base']

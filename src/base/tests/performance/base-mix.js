@@ -1,6 +1,5 @@
 {
     title: 'Y.Mix performance tests',
-    slug: 'mix-performance',
     yui: {
         use: ['base']
     },

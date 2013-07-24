@@ -1,6 +1,5 @@
 {
     title: 'Node Create',
-    slug: 'node-create-benchmark',
     html: '<div id="test-before"></div><div id="test-node"></div><div id="test-append"></div>',
     yui: {
         use: ['node-core', 'node-base']
