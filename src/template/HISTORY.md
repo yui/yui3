@@ -4,7 +4,12 @@ Template Change History
 @VERSION@
 ------
 
-* No changes.
+* Added central template registry. The template registry decouples making
+  templates available from invoking a template to render it. This central
+  registry and abstraction of templates to names separates concerns, creates a
+  level of indirection, and enables templates to be easily overridden.
+  ([#1021][])
+
 
 3.11.0
 ------
