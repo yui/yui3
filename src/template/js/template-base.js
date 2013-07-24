@@ -74,21 +74,21 @@ function Template(engine, defaults) {
 /**
 Simple cache that maps a template name to the revived template functions.
 
-@property _cache
+@property _registry
 @static
 @protected
 **/
 
-Template._cache = {};
+Template._registry = {};
 
 /**
-Registers a pre-compiled template into the central template cache with a given
-template string, allowing that template to be called and rendered by that name
-using `Y.Template.render`.
+Registers a pre-compiled template into the central template registry with a 
+given template string, allowing that template to be called and rendered by 
+that name using `Y.Template.render`.
 
 @method register
 @param {String} templateName The abstracted name to reference the template.
-@param {Function} template The function that returns the rendered HTML. The 
+@param {Function} template The function that returns the rendered string. The 
     function should take the following parameters. If a pre-compiled template
     does not accept these parameters, it is up to the developer to normalize it.
   @param {Object} [template.data]
@@ -98,7 +98,7 @@ using `Y.Template.render`.
 @static
 **/
 Template.register = function(templateName, template) {
-    Template._cache[templateName] = template;
+    Template._registry[templateName] = template;
     return template;
 };
 
@@ -112,7 +112,7 @@ to be interpolated. If the template name does not exist, it throws an error.
 @return {String} output The rendered result.
 **/
 Template.render = function(templateName, data, options) {
-    var template = Template._cache[templateName];
+    var template = Template._registry[templateName];
     if (template) {
         return template(data, options);
     } else {

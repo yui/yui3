@@ -353,12 +353,12 @@ templateSuite.add(new Y.Test.Case({
         delete this.templateFunction;
     },
 
-    'register() should attach a template to the cache and return it': function () {
+    'register() should attach a template to the registry and return it': function () {
         var revivedTmpl = Y.Template.register('tmpl', this.templateFunction);
 
-        ObjectAssert.ownsKey('tmpl', Y.Template._cache, 'did not have `tmpl` key inside the cache');
+        ObjectAssert.ownsKey('tmpl', Y.Template._registry, 'did not have `tmpl` key inside the registry');
 
-        Assert.areSame(this.templateFunction, Y.Template._cache['tmpl'], 'did not have the revived template inside the cache');
+        Assert.areSame(this.templateFunction, Y.Template._registry['tmpl'], 'did not have the revived template inside the registry');
 
         Assert.areSame(this.templateFunction, revivedTmpl, 'register() did not return the revived template');
     },
@@ -382,7 +382,7 @@ templateSuite.add(new Y.Test.Case({
         Y.Template.register('tmpl', this.templateFunction);
         var output = Y.Template.render('tmpl', {'a': 'bar'});
 
-        Assert.areSame(this.templateFunction, Y.Template._cache['tmpl'], 'new template function did not override the old one');
+        Assert.areSame(this.templateFunction, Y.Template._registry['tmpl'], 'new template function did not override the old one');
         Assert.areSame('foo bar', output, 'new template function did not generate correct string');
     }
 }));
