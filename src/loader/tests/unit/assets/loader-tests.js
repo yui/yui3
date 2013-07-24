@@ -1016,12 +1016,11 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
-
             Assert.areEqual(3, out.js.length, 'Number of JS modules is not correct');
             Assert.isTrue((out.js[2].indexOf('/yui/?yui-library') === 0), 'Combo URL is not correct');
             Assert.isTrue((out.jsMods.length === 5), 'Number of JS module data is not correct');
             Assert.areEqual(0, out.css.length, 'Number of CSS modules is not correct');
-            Assert.isTrue((out.js[0].indexOf('yahooapis') > 0), 'First JS file returned is not a YUI module');
+            Assert.isTrue((out.js[0].indexOf('yahooapis') > 0), 'First JS file returned is not a YUI module on the CDN');
             Assert.isTrue((out.js[0].indexOf('yui-base') > 0), 'First JS file is not the seed file');
 
         },

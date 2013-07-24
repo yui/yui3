@@ -31,7 +31,7 @@
 * @param {String} [subUA=navigator.userAgent] UA string to parse
 * @return {Object} The Y.UA object
 */
-YUI.Env.parseUA = function(subUA) {
+var parseUA = function(subUA) {
 
     var numberify = function(s) {
             var c = 0;
@@ -40,7 +40,7 @@ YUI.Env.parseUA = function(subUA) {
             }));
         },
 
-        win = Y.config.win,
+        win = window,
 
         nav = win && win.navigator,
 
@@ -456,7 +456,11 @@ YUI.Env.parseUA = function(subUA) {
             }
         }
 
-        YUI.Env.UA = o;
+        Factory.UA = o;
+        Factory.UA.parseUA = parseUA;
+        Factory.UA.compareVersions = compareVersions;
+        Factory.Env.parseUA = parseUA;
+        Factory.Env.UA = Factory.UA;
 
     }
 
@@ -464,7 +468,6 @@ YUI.Env.parseUA = function(subUA) {
 };
 
 
-Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 
 /**
 Performs a simple comparison between two version numbers, accounting for
@@ -486,7 +489,7 @@ non-numeric characters, like `"535.8.beta"`, may produce unexpected results.
 @return -1 if _a_ is lower than _b_, 0 if they're equivalent, 1 if _a_ is
     higher than _b_.
 **/
-Y.UA.compareVersions = function (a, b) {
+var compareVersions = function (a, b) {
     var aPart, aParts, bPart, bParts, i, len;
 
     if (a === b) {
@@ -515,3 +518,11 @@ Y.UA.compareVersions = function (a, b) {
 
     return 0;
 };
+
+
+Factory.UA = parseUA();
+Factory.UA.parseUA = parseUA;
+Factory.UA.compareVersions = compareVersions;
+Factory.Env.parseUA = parseUA;
+Factory.Env.UA = Factory.UA;
+

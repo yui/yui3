@@ -763,7 +763,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      */
     _getUseBrowserConsole: function () {
         var logSource = this.get('logSource');
-        return logSource instanceof YUI ?
+        return YUI.instanceOf(logSource) ?
             logSource.config.useBrowserConsole : null;
     },
 
@@ -781,7 +781,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      */
     _setUseBrowserConsole: function (v) {
         var logSource = this.get('logSource');
-        if (logSource instanceof YUI) {
+        if (YUI.instanceOf(logSource)) {
             v = !!v;
             logSource.config.useBrowserConsole = v;
             return v;

@@ -602,7 +602,9 @@
                     config = {
                         debug: false,
                         win: res.win,
-                        doc: res.doc
+                        doc: res.doc,
+                        scriptDoc: YUI.config.doc,
+                        linkDoc: YUI.config.doc
                     },
                     fn = Y.bind(function() {
                         Y.log('New Modules Loaded into main instance', 'info', 'frame');

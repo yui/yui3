@@ -207,7 +207,7 @@ Y.Loader = function(o) {
      * @type string
      * @default http://yui.yahooapis.com/[YUI VERSION]/build/
      */
-    self.base = Y.Env.meta.base + Y.Env.meta.root;
+    self.base = YUI.Env.defaults.base + YUI.Env.defaults.root;
 
     /**
      * Base path for the combo service
@@ -215,7 +215,7 @@ Y.Loader = function(o) {
      * @type string
      * @default http://yui.yahooapis.com/combo?
      */
-    self.comboBase = Y.Env.meta.comboBase;
+    self.comboBase = YUI.Env.defaults.comboBase;
 
     /*
      * Base path for language packs.
@@ -267,7 +267,7 @@ Y.Loader = function(o) {
      * @type string
      * @default [YUI VERSION]/build/
      */
-    self.root = Y.Env.meta.root;
+    self.root = Y.Env.root;
 
     /**
      * Timeout value in milliseconds.  If set, self value will be used by
@@ -366,7 +366,7 @@ Y.Loader = function(o) {
     // self.moduleInfo = Y.merge(Y.Env.meta.moduleInfo);
     self.moduleInfo = {};
 
-    self.groups = Y.merge(Y.Env.meta.groups);
+    self.groups = Y.merge(Y.Env.groups, Y.Env.meta.groups);
 
     /**
      * Provides the information used to skin the skinnable components.
@@ -396,7 +396,7 @@ Y.Loader = function(o) {
      * @property skin
      * @type {Object}
      */
-    self.skin = Y.merge(Y.Env.meta.skin);
+    self.skin = Y.merge(Y.Env.skin);
 
     /*
      * Map of conditional modules
@@ -1610,7 +1610,7 @@ Y.Loader.prototype = {
     */
     isCSSLoaded: function(name, skip) {
         //TODO - Make this call a batching call with name being an array
-        if (!name || !YUI.Env.cssStampEl || (!skip && this.ignoreRegistered)) {
+        if (!name || !YUI.Env.cssStampEl || (!skip && this.ignoreRegistered) || !Y.config.doc) {
             Y.log('isCSSLoaded was skipped for ' + name, 'warn', 'loader');
             return false;
         }

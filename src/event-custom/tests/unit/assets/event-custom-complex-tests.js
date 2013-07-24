@@ -353,7 +353,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
                 emitFacade: true,
                 preventedFn: function() {
                     count++;
-                    Y.Assert.isTrue(this instanceof YUI);
+                    Y.Assert.isTrue(YUI.instanceOf(this));
                 }
             });
 
