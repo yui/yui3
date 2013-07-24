@@ -69,7 +69,7 @@
         ]
     },
     {
-        title: 'ScrollView Performance: Create',
+        title: 'ScrollView Performance: Destroy',
         slug: 'scrollview-performance-destroy',
         html: 'assets/scrollview.html',
         yui: {
