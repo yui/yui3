@@ -1,6 +1,7 @@
 YUI.add('template-test', function (Y) {
 
 var Assert = Y.Assert,
+    ObjectAssert = Y.ObjectAssert,
     Micro  = Y.Template.Micro,
 
     templateSuite = Y.TemplateTestSuite = new Y.Test.Suite('Template'),
@@ -331,6 +332,58 @@ templateSuite.add(new Y.Test.Case({
     'revive() should merge `defaults` with the specified `options`': function () {
         eval('var precompiled = ' + this.microEngine.precompile('{{data.a}}') + ';');
         Assert.areSame('foo', this.microEngine.revive(precompiled, {})({a: 'foo'}));
+    }
+}));
+
+templateSuite.add(new Y.Test.Case({
+    name: 'Registration',
+
+    _should: {
+        error: {
+            '[static] render() on an unregistered template should throw an error': 'Unregistered template: \'fail\''
+        }
+    },
+
+    setUp: function () {
+        eval('var precompiled =' + Micro.precompile('foo <%= data.a %>') + ';');
+        this.templateFunction = Micro.revive(precompiled);
+    },
+
+    tearDown: function () {
+        delete this.templateFunction;
+    },
+
+    'register() should attach a template to the cache and return it': function () {
+        var revivedTmpl = Y.Template.register('tmpl', this.templateFunction);
+
+        ObjectAssert.ownsKey('tmpl', Y.Template._cache, 'did not have `tmpl` key inside the cache');
+
+        Assert.areSame(this.templateFunction, Y.Template._cache['tmpl'], 'did not have the revived template inside the cache');
+
+        Assert.areSame(this.templateFunction, revivedTmpl, 'register() did not return the revived template');
+    },
+
+    '[static] render() should use the correct template to generate the output': function () {
+        Y.Template.register('tmpl', this.templateFunction);
+        var output = Y.Template.render('tmpl', {'a': 'bar'});
+
+        Assert.areSame('foo bar', output, 'render() did not return the correct output');
+    },
+
+    '[static] render() on an unregistered template should throw an error': function () {
+        // Should throw an error
+        var output = Y.Template.render('fail', {'a': 'bar'}); 
+    },
+
+    'register() should override an existing template with the same name': function () {
+        Y.Template.register('tmpl', function (data) {
+            return 'baz qux';
+        });
+        Y.Template.register('tmpl', this.templateFunction);
+        var output = Y.Template.render('tmpl', {'a': 'bar'});
+
+        Assert.areSame(this.templateFunction, Y.Template._cache['tmpl'], 'new template function did not override the old one');
+        Assert.areSame('foo bar', output, 'new template function did not generate correct string');
     }
 }));
 
