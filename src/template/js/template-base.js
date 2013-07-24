@@ -111,13 +111,17 @@ to be interpolated. If the template name does not exist, it throws an error.
 @param {Object} [options] Any additional options to be passed into the template.
 @return {String} output The rendered result.
 **/
-Template.render = function(templateName, data, options) {
-    var template = Template._registry[templateName];
+Template.render = function (templateName, data, options) {
+    var template = Template._registry[templateName],
+        result   = '';
+
     if (template) {
-        return template(data, options);
+        result = template(data, options);
     } else {
-        Y.error("Unregistered template: '" + templateName + "'");
+        Y.error('Unregistered template: "' + templateName + '"');
     }
+
+    return result;
 };
 
 Template.prototype = {
