@@ -4,7 +4,7 @@ Calendar Change History
 @VERSION@
 ------
 
-* No changes.
+* Added language support for various Chinese regions.
 
 3.11.0
 ------
