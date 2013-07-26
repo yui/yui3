@@ -10,6 +10,7 @@ Template Change History
   level of indirection, and enables templates to be easily overridden.
   ([#1021][])
 
+[#1021]: https://github.com/yui/yui3/issues/1021
 
 3.11.0
 ------
