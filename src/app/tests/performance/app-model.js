@@ -1,21 +1,15 @@
-{
-    title: 'Y.Model performance tests',
+var suite = new Suite('Y.Model performance tests', {
     yui: {
         use: ['app']
+    }
+});
+
+suite.add({
+    'Y.Model: Instantiate a bare model': function () {
+        var model = new Y.Model();
     },
-    tests: [
-        {
-            title: 'Y.Model: Instantiate a bare model',
-            fn: function () {
-                var model = new Y.Model();
-            }
-        },
-        {
-            title: 'Y.Model: Subclass and instantiate a bare model',
-            fn: function () {
-                var MyModel = Y.Base.create('myModel', Y.Model, []),
-                    model   = new MyModel();
-            }
-        }
-    ]
-}
+    'Y.Model: Subclass and instantiate a bare model': function () {
+        var MyModel = Y.Base.create('myModel', Y.Model, []),
+            model   = new MyModel();
+    }
+});
