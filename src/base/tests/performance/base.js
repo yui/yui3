@@ -1,5 +1,5 @@
-{
-    title: 'Y.Base performance tests',
+var suite = new PerfSuite({
+    name: 'Y.Base performance tests',
     yui: {
         use: ['base']
     },
@@ -506,79 +506,79 @@
     },
     tests: [
         {
-            title: 'Base',
+            name: 'Base',
             fn: function () {
                 var b = new Y.Base();
             }
         },
         {
-            title: 'MyBase',
+            name: 'MyBase',
             fn: function () {
                 var b = new MyBase();
             }
         },
         {
-            title: 'MyBase with 10 simple value attributes',
+            name: 'MyBase with 10 simple value attributes',
             fn: function () {
                 var b = new MyBase10();
             }
         },
         {
-            title: 'MyBase with 20 varied attributes',
+            name: 'MyBase with 20 varied attributes',
             fn: function () {
                var b = new MyBase20();
             }
         },
         {
-            title: 'MyBase with 10 simple value attributes - set',
+            name: 'MyBase with 10 simple value attributes - set',
             fn: function () {
                 GLOBAL_MY_BASE_10.set("attr4", UNIQUE_VALUE++);
             }
         },
         {
-            title: 'MyBase with 10 simple value attributes - set with opts',
+            name: 'MyBase with 10 simple value attributes - set with opts',
             fn: function () {
                 GLOBAL_MY_BASE_10.set("attr4", UNIQUE_VALUE++, OPTS);
             }
         },
         {
-            title: 'MyBase with 10 simple value attributes - get',
+            name: 'MyBase with 10 simple value attributes - get',
             fn: function () {
                 var val = GLOBAL_MY_BASE_10.get("attr2");
             }
         },
         {
-            title: 'BaseCore',
+            name: 'BaseCore',
             fn: function () {
                 var b = new Y.BaseCore();
             }
         },
         {
-            title: 'MyBaseCore',
+            name: 'MyBaseCore',
             fn: function () {
                var b = new MyBaseCore();
             }
         },
         {
-            title: 'MyBaseCore with 10 simple value attributes',
+            name: 'MyBaseCore with 10 simple value attributes',
             fn: function () {
                var b = new MyBaseCore10();
             }
         },
         {
-            title: 'MyBaseCore with 20 varied attributes',
+            name: 'MyBaseCore with 20 varied attributes',
             fn: function () {
                var b = new MyBaseCore20();
             }
         },
         {
-            title: 'MyBaseCore with 20 varied attributes (using perf. best practices)',
+            name: 'MyBaseCore with 20 varied attributes (using perf. best practices)',
             fn: function () {
                var b = new MyBaseCore20Ideal();
             }
         },
         {
-            title: 'MyModelCore with 2 ad-hoc attrs',
+            name: 'MyModelCore with 2 ad-hoc attrs',
             fn: function () {
                 var b = new MyModelCore({
                     label : 1,
@@ -587,7 +587,7 @@
             }
         },
         {
-            title: 'MyModel with 2 ad-hoc attrs',
+            name: 'MyModel with 2 ad-hoc attrs',
             fn: function () {
                 var b = new MyModel({
                     label : 1,
@@ -596,4 +596,4 @@
             }
         }
     ]
-}
+});

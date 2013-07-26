@@ -1,5 +1,5 @@
-{
-    title: 'Node Core',
+var suite = new PerfSuite({
+    name: 'Node Core',
     html: 'assets/node-core.html',
     yui: {
         use: ['node-core', 'node-base'] // base is needed for node.purge
@@ -15,153 +15,153 @@
     },
     tests: [
         {
-            title: 'new Y.Node("#test-node")',
+            name: 'new Y.Node("#test-node")',
             fn: function () {
                 var node = new Y.Node('#test-node');
             }
         },
         {
-            title: 'new Y.Node("#test-node").destroy()',
+            name: 'new Y.Node("#test-node").destroy()',
             fn: function () {
                 var node = new Y.Node('#test-node');
                 node.destroy();
             }
         },
         {
-            title: 'new Y.Node("#test-node").destroy(true)',
+            name: 'new Y.Node("#test-node").destroy(true)',
             fn: function () {
                 var node = new Y.Node('#test-node');
                 node.destroy(true);
             }
         },
         {
-            title: 'node.get()',
+            name: 'node.get()',
             fn: function () {
                 testNode.get('nodeName');
             }
         },
         {
-            title: 'node.getAttrs()',
+            name: 'node.getAttrs()',
             fn: function () {
                 testNode.getAttrs(['nodeName', 'nodeType']);
             }
         },
         {
-            title: 'node.set()',
+            name: 'node.set()',
             fn: function () {
                 testNode.set('id', 'foo');
             }
         },
         {
-            title: 'node.setAttrs()',
+            name: 'node.setAttrs()',
             fn: function () {
                 testNode.setAttrs({
-                    title: 'foo',
+                    name: 'foo',
                     id: 'bar'
                 });
             }
         },
         {
-            title: 'node.compareTo()',
+            name: 'node.compareTo()',
             fn: function () {
                 testNode.compareTo(testNode);
             }
         },
         {
-            title: 'node.inDoc()',
+            name: 'node.inDoc()',
             fn: function () {
                 testNode.inDoc();
             }
         },
         {
-            title: 'node.getById()',
+            name: 'node.getById()',
             fn: function () {
                 bodyNode.getById('log');
             }
         },
         {
-            title: 'node.ancestor()',
+            name: 'node.ancestor()',
             fn: function () {
                 testNode.ancestor();
             }
         },
         {
-            title: 'node.ancestor(body)',
+            name: 'node.ancestor(body)',
             fn: function () {
                 testNode.ancestor('body');
             }
         },
         {
-            title: 'node.ancestors(html, body)',
+            name: 'node.ancestors(html, body)',
             fn: function () {
                 testNode.ancestors('html, body');
             }
         },
         {
-            title: 'node.previous()',
+            name: 'node.previous()',
             fn: function () {
                 testNode.previous();
             }
         },
         {
-            title: 'node.previous("div")',
+            name: 'node.previous("div")',
             fn: function () {
                 testNode.previous('div');
             }
         },
         {
-            title: 'node.next()',
+            name: 'node.next()',
             fn: function () {
                 testNode.next();
             }
         },
         {
-            title: 'node.next("div")',
+            name: 'node.next("div")',
             fn: function () {
                 testNode.next('div');
             }
         },
         {
-            title: 'node.siblings()',
+            name: 'node.siblings()',
             fn: function () {
                 testNode.siblings();
             }
         },
         {
-            title: 'node.siblings("div")',
+            name: 'node.siblings("div")',
             fn: function () {
                 testNode.siblings('div');
             }
         },
         {
-            title: 'node.one("div")',
+            name: 'node.one("div")',
             fn: function () {
                 bodyNode.one('div');
             }
         },
         {
-            title: 'node.all("div")',
+            name: 'node.all("div")',
             fn: function () {
                 bodyNode.all('div');
             }
         },
         {
-            title: 'node.test("div")',
+            name: 'node.test("div")',
             fn: function () {
                 testNode.test('div');
             }
         },
         {
-            title: 'node.remove()',
+            name: 'node.remove()',
             fn: function () {
                 testRemove.remove();
             }
         },
         {
-            title: 'node.empty()',
+            name: 'node.empty()',
             fn: function () {
                 testEmpty.empty(true);
             }
         }
     ]
-}
+});

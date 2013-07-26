@@ -1,5 +1,5 @@
-{
-    title: 'Charts Pie',
+var suite = new PerfSuite({
+    name: 'Charts Pie',
     yui: {
         use: ['charts']
     },
@@ -31,7 +31,7 @@
     },
     tests: [
         {
-            title: 'Pie Chart',
+            name: 'Pie Chart',
             fn: function () {
                 chart = new Y.Chart({
                     dataProvider: pieDataProvider,
@@ -43,7 +43,7 @@
             }
         },
         {
-            title: 'Pie Chart Legend',
+            name: 'Pie Chart Legend',
             fn: function () {
                 chart = new Y.Chart({
                     legend: {
@@ -58,4 +58,4 @@
             }
         }
     ]
-}
+});

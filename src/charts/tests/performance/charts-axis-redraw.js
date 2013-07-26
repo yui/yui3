@@ -1,11 +1,11 @@
-{
-    title: 'Charts Axis Redraw',
+var suite = new PerfSuite({
+    name: 'Charts Axis Redraw',
     yui: {
         use: ['charts']
     },
     tests: [
         {
-            title: 'RedrawAxis',
+            name: 'RedrawAxis',
             setup: function() {
                 var container = Y.Node.create('<div id="container">'),
                     seriesKeys = ["miscellaneous", "expenses", "revenue"],
@@ -46,4 +46,4 @@
             }
         }
     ]
-}
+});

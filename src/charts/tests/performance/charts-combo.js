@@ -1,5 +1,5 @@
-{
-    title: 'Charts Combo',
+var suite = new PerfSuite({
+    name: 'Charts Combo',
     yui: {
         use: ['charts']
     },
@@ -33,7 +33,7 @@
     },
     tests: [
         {
-            title: 'ComboChart',
+            name: 'ComboChart',
             fn: function () {
                 chart = new Y.Chart({
                     dataProvider: dataProvider,
@@ -45,7 +45,7 @@
             }
         },
         {
-            title: 'TimeAxisChart',
+            name: 'TimeAxisChart',
             fn: function () {
                 chart = new Y.Chart({
                     categoryType: "time",
@@ -58,7 +58,7 @@
             }
         },
         {
-            title: 'ShowAreaFillChart',
+            name: 'ShowAreaFillChart',
             fn: function () {
                 chart = new Y.Chart({
                     categoryType: "time",
@@ -72,4 +72,4 @@
             }
         }
     ]
-}
+});

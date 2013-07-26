@@ -1,5 +1,5 @@
-{
-    title: 'ScrollView Performance: Render',
+var suite = new PerfSuite({
+    name: 'ScrollView Performance: Render',
     html: 'assets/scrollview.html',
     yui: {
         use: ['scrollview']
@@ -13,10 +13,10 @@
     },
     tests: [
         {
-            title: 'ScrollView Render',
+            name: 'ScrollView Render',
             fn: function () {
                 scrollview.render();
             }
         }
     ]
-}
+});

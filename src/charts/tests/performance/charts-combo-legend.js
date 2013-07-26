@@ -1,5 +1,5 @@
-{
-    title: 'Charts Combo Legend',
+var suite = new PerfSuite({
+    name: 'Charts Combo Legend',
     yui: {
         use: ['charts']
     },
@@ -33,7 +33,7 @@
     },
     tests: [
         {
-            title: 'ComboChartLegend',
+            name: 'ComboChartLegend',
             fn: function () {
                 chart = new Y.Chart({
                     legend: {
@@ -48,7 +48,7 @@
             }
         },
         {
-            title: 'TimeAxisChartLegend',
+            name: 'TimeAxisChartLegend',
             fn: function () {
                 chart = new Y.Chart({
                     legend: {
@@ -64,7 +64,7 @@
             }
         },
         {
-            title: 'ShowAreaFillChartLegend',
+            name: 'ShowAreaFillChartLegend',
             fn: function () {
                 chart = new Y.Chart({
                     legend: {
@@ -81,4 +81,4 @@
             }
         }
     ]
-}
+});

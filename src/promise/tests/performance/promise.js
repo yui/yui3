@@ -1,5 +1,5 @@
-{
-    title: 'Y.Promise performance tests',
+var suite = new PerfSuite({
+    name: 'Y.Promise performance tests',
     yui: {
         use: ['promise', 'array-extras']
     },
@@ -27,13 +27,13 @@
     },
     tests: [
         {
-            title: 'Promise creation',
+            name: 'Promise creation',
             fn: function () {
                 var promise = new Y.Promise(noop);
             }
         },
         {
-            title: 'Single callback resolution',
+            name: 'Single callback resolution',
             fn: function () {
                 var promise = new Y.Promise(function (resolve) {
                     resolve(5);
@@ -42,7 +42,7 @@
             }
         },
         {
-            title: 'Single callback rejection',
+            name: 'Single callback rejection',
             fn: function () {
                 var promise = new Y.Promise(function (resolve, reject) {
                     reject(5);
@@ -51,7 +51,7 @@
             }
         },
         {
-            title: 'Multiple callback resolution',
+            name: 'Multiple callback resolution',
             fn: function () {
                 var resolve,
                     promise = new Y.Promise(function (_resolve) {
@@ -72,7 +72,7 @@
             }
         },
         {
-            title: 'Multiple callback rejection',
+            name: 'Multiple callback rejection',
             fn: function () {
                 var reject,
                     promise = new Y.Promise(function (_resolve, _reject) {
@@ -93,7 +93,7 @@
             }
         },
         {
-            title: 'Multiple callback rejection',
+            name: 'Multiple callback rejection',
             fn: function () {
                 var promise = new Y.Promise(function (resolve) {
                     resolve(5);
@@ -111,7 +111,7 @@
             }
         },
         {
-            title: 'Chaining rejected promises',
+            name: 'Chaining rejected promises',
             fn: function () {
                 var promise = new Y.Promise(function (resolve, reject) {
                     reject(5);
@@ -129,7 +129,7 @@
             }
         },
         {
-            title: 'Chaining fulfilled promises with reject callbacks',
+            name: 'Chaining fulfilled promises with reject callbacks',
             fn: function () {
                 var promise = new Y.Promise(function (resolve) {
                     resolve(5);
@@ -148,7 +148,7 @@
             }
         },
         {
-            title: 'Chaining rejected promises with resolve callbacks',
+            name: 'Chaining rejected promises with resolve callbacks',
             fn: function () {
                 var promise = new Y.Promise(function (resolve, reject) {
                     reject(5);
@@ -166,7 +166,7 @@
             }
         },
         {
-            title: 'Reducing a large array',
+            name: 'Reducing a large array',
             fn: function () {
                 Y.Array.reduce(array, new Y.Promise(function (resolve) {
                     resolve(0);
@@ -178,4 +178,4 @@
             }
         }
     ]
-}
+});

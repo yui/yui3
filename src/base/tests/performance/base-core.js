@@ -1,5 +1,5 @@
-{
-    title: 'Y.BaseCore performance tests',
+var suite = new PerfSuite({
+    name: 'Y.BaseCore performance tests',
     yui: {
         use: ['base-core']
     },
@@ -308,46 +308,46 @@
     },
     tests: [
         {
-            title: 'BaseCore',
+            name: 'BaseCore',
             fn: function () {
                var b = new Y.BaseCore();
             }
         },
         {
-            title: 'MyBaseCore',
+            name: 'MyBaseCore',
             fn: function () {
                var b = new MyBaseCore();
             }
         },
         {
-            title: 'MyBaseCore with 10 simple value attributes',
+            name: 'MyBaseCore with 10 simple value attributes',
             fn: function () {
                 var b = new MyBaseCore10();
             }
         },
         {
-            title: 'MyBaseCore with 20 varied attributes',
+            name: 'MyBaseCore with 20 varied attributes',
             fn: function () {
                 var b = new MyBaseCore20();
             }
         },
         {
-            title: 'MyBaseCore with 20 varied attributes (using perf. best practices)',
+            name: 'MyBaseCore with 20 varied attributes (using perf. best practices)',
             fn: function () {
                 var b = new MyBaseCore20Ideal();
             }
         },
         {
-            title: 'MyBaseCore with 10 simple value attributes - set',
+            name: 'MyBaseCore with 10 simple value attributes - set',
             fn: function () {
                 GLOBAL_MY_BASE_CORE_10.set("attr1", UNIQUE_VALUE++);
             }
         },
         {
-            title: 'MyBaseCore with 10 simple value attributes - get',
+            name: 'MyBaseCore with 10 simple value attributes - get',
             fn: function () {
                 var val = GLOBAL_MY_BASE_CORE_10.get("attr2");
             }
         }
     ]
-}
+});

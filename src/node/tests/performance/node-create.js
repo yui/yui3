@@ -1,5 +1,5 @@
-{
-    title: 'Node Create',
+var suite = new PerfSuite({
+    name: 'Node Create',
     html: '<div id="test-before"></div><div id="test-node"></div><div id="test-append"></div>',
     yui: {
         use: ['node-core', 'node-base']
@@ -15,59 +15,59 @@
     },
     tests: [
         {
-            title: 'Y.Node.create("<div/>")',
+            name: 'Y.Node.create("<div/>")',
             fn: function () {
                 var node = Y.Node.create('<div/>');
             }
         },
 
         {
-            title: 'node.append()',
+            name: 'node.append()',
             fn: function () {
                 bodyNode.append(testNode);
             }
         },
         {
-            title: 'node.insert())',
+            name: 'node.insert())',
             fn: function () {
                 bodyNode.insert(testNode);
             }
         },
         {
-            title: 'node.prepend()',
+            name: 'node.prepend()',
             fn: function () {
                 bodyNode.prepend(testNode);
             }
         },
         {
-            title: 'node.appendChild()',
+            name: 'node.appendChild()',
             fn: function () {
                 bodyNode.appendChild(testNode);
             }
         },
         {
-            title: 'node.insertBefore())',
+            name: 'node.insertBefore())',
             fn: function () {
                 bodyNode.insertBefore(testNode, testBefore);
             }
         },
         {
-            title: 'node.appendTo())',
+            name: 'node.appendTo())',
             fn: function () {
                 testAppendTo.appendTo(bodyNode);
             }
         },
         {
-            title: 'node.setHTML("<div/>"))',
+            name: 'node.setHTML("<div/>"))',
             fn: function () {
                 testNode.setHTML('<div/>');
             }
         },
         {
-            title: 'node.getHTML())',
+            name: 'node.getHTML())',
             fn: function () {
                 testNode.getHTML();
             }
         }
     ]
-}
+});

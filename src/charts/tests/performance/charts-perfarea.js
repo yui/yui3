@@ -1,5 +1,5 @@
-{
-    title: 'Charts PerfArea',
+var suite = new PerfSuite({
+    name: 'Charts PerfArea',
     assets: ['assets/generatedataprovider.js'],
     yui: {
         config: {
@@ -29,7 +29,7 @@
     },
     tests: [
         {
-            title: 'Create',
+            name: 'Create',
             fn: function () {
                 chart = new Y.Chart({
                     dataProvider: dataProvider,
@@ -41,4 +41,4 @@
             }
         }
     ]
-}
+});

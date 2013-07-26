@@ -1,5 +1,5 @@
-{
-    title: 'Charts Series',
+var suite = new PerfSuite({
+    name: 'Charts Series',
     yui: {
         use: ['charts']
     },
@@ -74,7 +74,7 @@
     },
     tests: [
         {
-            title: 'ComboSeries',
+            name: 'ComboSeries',
             fn: function () {
                 miscellaneous = new Y.ComboSeries({
                     graphOrder: 0,
@@ -94,7 +94,7 @@
             }
         },
         {
-            title: 'MultipleComboSeries',
+            name: 'MultipleComboSeries',
             fn: function () {
                 var i,
                     key,
@@ -129,4 +129,4 @@
             }
         }
     ]
-}
+});

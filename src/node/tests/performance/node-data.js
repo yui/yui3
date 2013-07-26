@@ -1,5 +1,5 @@
-{
-    title: 'Node Data',
+var suite = new PerfSuite({
+    name: 'Node Data',
     yui: {
         use: ['node-base']
     },
@@ -12,28 +12,28 @@
     },
     tests: [
         {
-            title: 'node.setData("foo", "foo data")',
+            name: 'node.setData("foo", "foo data")',
             fn: function () {
                 testNode.setData('foo', 'foo data');
             }
         },
         {
-            title: 'node.getData("foo")',
+            name: 'node.getData("foo")',
             fn: function () {
                 testNode.getData('foo');
             }
         },
         {
-            title: 'node.clearData("foo")',
+            name: 'node.clearData("foo")',
             fn: function () {
                 testNode.clearData('foo');
             }
         },
         {
-            title: 'node.clearData()',
+            name: 'node.clearData()',
             fn: function () {
                 testNode.clearData();
             }
         }
     ]
-}
+});

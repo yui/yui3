@@ -1,4 +1,4 @@
-var suite = new Suite('Y.Model performance tests', {
+var suite = new PerfSuite('Y.Model performance tests', {
     html: 'assets/scrollview.html',
     yui: {
         use: ['scrollview']

@@ -1,21 +1,15 @@
-{
-    title: 'Y.View performance tests',
+var suite = new PerfSuite('Y.View performance tests', {
     yui: {
         use: ['app']
+    }
+});
+
+suite.add({
+    'Y.View: Instantiate a bare view': function () {
+        var view = new Y.View();
     },
-    tests: [
-        {
-            title: 'Y.View: Instantiate a bare view',
-            fn: function () {
-                var view = new Y.View();
-            }
-        },
-        {
-            title: 'Y.View: Instantiate and subclass a bare view',
-            fn: function () {
-                var MyView = Y.Base.create('myView', Y.View, []),
-                    view   = new MyView();
-            }
-        }
-    ]
-}
+    'Y.View: Instantiate and subclass a bare view': function () {
+        var MyView = Y.Base.create('myView', Y.View, []),
+            view   = new MyView();
+    }
+});

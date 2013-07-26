@@ -1,5 +1,5 @@
-{
-    title: 'Charts Axis',
+var suite = new PerfSuite({
+    name: 'Charts Axis',
     yui: {
         use: ['charts']
     },
@@ -35,7 +35,7 @@
     },
     tests: [
         {
-            title: 'NumericAxis',
+            name: 'NumericAxis',
             fn: function () {
                 axis = new Y.NumericAxis({
                     width: 600,
@@ -48,7 +48,7 @@
             }
         },
         {
-            title: 'CategoryAxis',
+            name: 'CategoryAxis',
             fn: function () {
                 axis = new Y.CategoryAxis({
                     width: 600,
@@ -61,7 +61,7 @@
             }
         },
         {
-            title: 'TimeAxis',
+            name: 'TimeAxis',
             fn: function () {
                 axis = new Y.TimeAxis({
                     width: 600,
@@ -74,4 +74,4 @@
             }
         }
     ]
-}
+});

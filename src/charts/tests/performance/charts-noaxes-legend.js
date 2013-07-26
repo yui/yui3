@@ -1,5 +1,5 @@
-{
-    title: 'Charts No Axes Legend',
+var suite = new PerfSuite({
+    name: 'Charts No Axes Legend',
     yui: {
         use: ['charts']
     },
@@ -33,7 +33,7 @@
     },
     tests: [
         {
-            title: 'NoAxesChartLegend',
+            name: 'NoAxesChartLegend',
             fn: function () {
                 chart = new Y.Chart({
                     legend: {
@@ -57,7 +57,7 @@
             }
         },
         {
-            title: 'NoAxesMultipleSeriesChartLegend',
+            name: 'NoAxesMultipleSeriesChartLegend',
             fn: function () {
                 chart = new Y.Chart({
                     legend: {
@@ -80,4 +80,4 @@
             }
         }
     ]
-}
+});

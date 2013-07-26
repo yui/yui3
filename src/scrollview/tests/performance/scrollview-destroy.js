@@ -1,5 +1,5 @@
-{
-    title: 'ScrollView Performance: Destroy',
+var suite = new PerfSuite({
+    name: 'ScrollView Performance: Destroy',
     html: 'assets/scrollview.html',
     yui: {
         use: ['scrollview'],
@@ -17,10 +17,10 @@
     },
     tests: [
         {
-            title: 'ScrollView: Create & Destroy',
+            name: 'ScrollView: Create & Destroy',
             fn: function () {
                 scrollview.destroy();
             }
         }
     ]
-}
+});

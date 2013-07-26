@@ -1,5 +1,5 @@
-{
-    title: 'Y.Mix performance tests',
+var suite = new PerfSuite({
+    name: 'Y.Mix performance tests',
     yui: {
         use: ['base']
     },
@@ -71,40 +71,40 @@
     },
     tests: [
         {
-            title: 'Y.mix wl',
+            name: 'Y.mix wl',
             fn: function () {
                 var o = Y.mix({}, s, true, props);
             }
         },
         {
-            title: 'wlHash',
+            name: 'wlHash',
             fn: function () {
                 var o = _wlhash({}, s, hash);
             }
         },
         {
-            title: 'wlArr',
+            name: 'wlArr',
             fn: function () {
                 var o = _wlarr({}, s, props);
             }
         },
         {
-            title: 'wlArrCheck - in',
+            name: 'wlArrCheck - in',
             fn: function () {
                 var o = _wlarrcheck({}, s, props);
             }
         },
         {
-            title: 'wlArrCheck - hasOwnProp',
+            name: 'wlArrCheck - hasOwnProp',
             fn: function () {
                 var o = _wlarrcheck2({}, s, props);
             }
         },
         {
-            title: 'Y.Object',
+            name: 'Y.Object',
             fn: function () {
                 var o = Y.Object(s);
             }
         }
     ]
-}
+});

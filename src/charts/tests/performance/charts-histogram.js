@@ -1,5 +1,5 @@
-{
-    title: 'Charts Marker',
+var suite = new PerfSuite({
+    name: 'Charts Marker',
     yui: {
         use: ['charts']
     },
@@ -33,7 +33,7 @@
     },
     tests: [
         {
-            title: 'ColumnChart',
+            name: 'ColumnChart',
             fn: function () {
                 chart = new Y.Chart({
                     dataProvider: dataProvider,
@@ -45,7 +45,7 @@
             }
         },
         {
-            title: 'BarChart',
+            name: 'BarChart',
             fn: function () {
                 chart = new Y.Chart({
                     dataProvider: dataProvider,
@@ -57,7 +57,7 @@
             }
         },
         {
-            title: 'ColumnChartLegend',
+            name: 'ColumnChartLegend',
             fn: function () {
                 chart = new Y.Chart({
                     legend: {
@@ -72,7 +72,7 @@
             }
         },
         {
-            title: 'BarChartLegend',
+            name: 'BarChartLegend',
             fn: function () {
                 chart = new Y.Chart({
                     legend: {
@@ -87,4 +87,4 @@
             }
         }
     ]
-}
+});

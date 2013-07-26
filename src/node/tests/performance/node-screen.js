@@ -1,5 +1,5 @@
-{
-    title: 'Node Screen',
+var suite = new PerfSuite({
+    name: 'Node Screen',
     yui: {
         use: ['node-screen']
     },
@@ -13,106 +13,106 @@
     },
     tests: [
         {
-            title: 'node.get("winWidth")',
+            name: 'node.get("winWidth")',
             fn: function () {
                 testNode.get('winWidth');
             }
         },
         {
-            title: 'node.get("winHeight")',
+            name: 'node.get("winHeight")',
             fn: function () {
                 testNode.get('winHeight');
             }
         },
         {
-            title: 'node.get("docWidth")',
+            name: 'node.get("docWidth")',
             fn: function () {
                 testNode.get('docWidth');
             }
         },
         {
-            title: 'node.get("docHeight")',
+            name: 'node.get("docHeight")',
             fn: function () {
                 testNode.get('docHeight');
             }
         },
         {
-            title: 'node.get("docScrollX")',
+            name: 'node.get("docScrollX")',
             fn: function () {
                 testNode.get('docScrollX');
             }
         },
         {
-            title: 'node.get("docScrollY")',
+            name: 'node.get("docScrollY")',
             fn: function () {
                 testNode.get('docScrollY');
             }
         },
         {
-            title: 'node.set("scrollLeft", 100)',
+            name: 'node.set("scrollLeft", 100)',
             fn: function () {
                 testNode.set('scrollLeft', 100);
             }
         },
         {
-            title: 'node.get("scrollLeft")',
+            name: 'node.get("scrollLeft")',
             fn: function () {
                 testNode.get('scrollLeft');
             }
         },
         {
-            title: 'node.set("scrollTop", 100)',
+            name: 'node.set("scrollTop", 100)',
             fn: function () {
                 testNode.set('scrollTop', 100);
             }
         },
         {
-            title: 'node.get("scrollTop")',
+            name: 'node.get("scrollTop")',
             fn: function () {
                 testNode.get('scrollTop');
             }
         },
         {
-            title: 'node.setXY([100, 200])',
+            name: 'node.setXY([100, 200])',
             fn: function () {
                 testNode.setXY([100, 200]);
             }
         },
         {
-            title: 'node.getXY()',
+            name: 'node.getXY()',
             fn: function () {
                 testNode.setXY();
             }
         },
         {
-            title: 'node.get("region")',
+            name: 'node.get("region")',
             fn: function () {
                 testNode.get('region');
             }
         },
         {
-            title: 'node.get("viewportRegion")',
+            name: 'node.get("viewportRegion")',
             fn: function () {
                 testNode.get('viewportRegion');
             }
         },
         {
-            title: 'node.inViewportRegion()',
+            name: 'node.inViewportRegion()',
             fn: function () {
                 testNode.inViewportRegion();
             }
         },
         {
-            title: 'node.intersect()',
+            name: 'node.intersect()',
             fn: function () {
                 testNode.intersect(bodyNode);
             }
         },
         {
-            title: 'node.inRegion()',
+            name: 'node.inRegion()',
             fn: function () {
                 testNode.inRegion(bodyNode);
             }
         }
     ]
-}
+});

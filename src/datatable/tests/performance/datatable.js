@@ -1,5 +1,5 @@
-{
-    title: 'DataTable performance tests',
+var suite = new PerfSuite({
+    name: 'DataTable performance tests',
     html:'<div id="container"></div>',
     yui: {
         use: ['datatable']
@@ -18,20 +18,20 @@
     },
     tests: [
         {
-            title: 'Instantiate a bare data table',
+            name: 'Instantiate a bare data table',
             fn: function () {
                 new Y.DataTable();
             }
         },
         {
-            title: 'Render a bare data table',
+            name: 'Render a bare data table',
             fn: function () {
                 var dt = new Y.DataTable();
                 dt.render('#container');
             }
         },
         {
-            title: 'Instantiate with 1 x 3 data',
+            name: 'Instantiate with 1 x 3 data',
             fn: function () {
                 var dt = new Y.DataTable({
                     columns: ['id', 'name', 'price'],
@@ -40,7 +40,7 @@
             }
         },
         {
-            title: 'Instantiate with 1 x 3 data rendered',
+            name: 'Instantiate with 1 x 3 data rendered',
             fn: function () {
                 var dt = new Y.DataTable({
                     columns: ['id', 'name', 'price'],
@@ -50,7 +50,7 @@
             }
         },
         {
-            title: 'Instantiate with 1 x 3 data rendered and destroyed',
+            name: 'Instantiate with 1 x 3 data rendered and destroyed',
             fn: function () {
                 var dt = new Y.DataTable({
                     columns: ['id', 'name', 'price'],
@@ -61,7 +61,7 @@
             }
         },
         {
-            title: 'Instantiate with 1000 x 3 data',
+            name: 'Instantiate with 1000 x 3 data',
             fn: function () {
                 new Y.DataTable({
                     columns: ['id', 'name', 'price'],
@@ -70,4 +70,4 @@
             }
         }
     ]
-}
+});

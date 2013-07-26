@@ -1,5 +1,5 @@
-{
-    title: 'Charts No Axes',
+var suite = new PerfSuite({
+    name: 'Charts No Axes',
     yui: {
         use: ['charts']
     },
@@ -33,7 +33,7 @@
     },
     tests: [
         {
-            title: 'NoAxesChart',
+            name: 'NoAxesChart',
             fn: function () {
                 chart = new Y.Chart({
                     dataProvider: dataProvider,
@@ -54,7 +54,7 @@
             }
         },
         {
-            title: 'NoAxesMultipleSeriesChart',
+            name: 'NoAxesMultipleSeriesChart',
             fn: function () {
                 chart = new Y.Chart({
                     dataProvider: dataProvider,
@@ -74,4 +74,4 @@
             }
         }
     ]
-}
+});

@@ -1,5 +1,5 @@
-{
-    title: 'Charts Marker',
+var suite = new PerfSuite({
+    name: 'Charts Marker',
     yui: {
         use: ['charts']
     },
@@ -33,7 +33,7 @@
     },
     tests: [
         {
-            title: 'MarkerChart',
+            name: 'MarkerChart',
             fn: function () {
                 chart = new Y.Chart({
                     dataProvider: dataProvider,
@@ -45,7 +45,7 @@
             }
         },
         {
-            title: 'TimeAxisMarkerChart',
+            name: 'TimeAxisMarkerChart',
             fn: function () {
                 chart = new Y.Chart({
                     categoryType: "time",
@@ -58,4 +58,4 @@
             }
         }
     ]
-}
+});
