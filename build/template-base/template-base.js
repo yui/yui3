@@ -73,6 +73,103 @@ function Template(engine, defaults) {
     }
 }
 
+/**
+Registry that maps template names to revived template functions.
+
+@property _registry
+@type Object
+@static
+@protected
+@since @SINCE@
+**/
+Template._registry = {};
+
+/**
+Registers a pre-compiled template into the central template registry with a
+given template string, allowing that template to be called and rendered by
+that name using the `Y.Template.render()` static method.
+
+For example, given the following simple Handlebars template, in `foo.hbs`:
+@example
+    <p>{{tagline}}</p>
+
+It can be precompiled using the Handlebars CLI, and added into a YUI module
+in the following way. Alternatively, `locator` can be used to automate this
+process for you:
+@example
+    YUI.add('templates-foo', function (Y) {
+
+        var engine = new Y.Template(Y.Handlebars),
+            precompiled;
+
+        precompiled = // Long precompiled template function here //
+
+        Y.Template.register('foo', engine.revive(precompiled));
+
+    }, '0.0.1', {requires: ['template-base', 'handlebars-base']});
+
+See the `Y.Template#render` method to see how a registered template is used.
+
+@method register
+@param {String} templateName The template name.
+@param {Function} template The function that returns the rendered string. The
+    function should take the following parameters. If a pre-compiled template
+    does not accept these parameters, it is up to the developer to normalize it.
+  @param {Object} [template.data] Data object to provide when rendering the
+    template.
+  @param {Object} [template.options] Options to pass along to the template
+    engine. See template engine docs for options supported by each engine.
+@return {Function} revivedTemplate This is the same function as in `template`,
+    and is done to maintain compatibility with the `Y.Template#revive()` method.
+@static
+@since @SINCE@
+**/
+Template.register = function (templateName, template) {
+    Template._registry[templateName] = template;
+    return template;
+};
+
+/**
+Renders a template into a string, given the registered template name and data
+to be interpolated. The template name must have been registered previously with
+`register()`.
+
+Once the template has been registered and built into a YUI module, it can be
+listed as a dependency for any other YUI module. Continuing from the above
+example, the registered template can be used in the following way:
+
+@example
+    YUI.add('bar', function (Y) {
+
+        var html = Y.Template.render('foo', {
+            tagline: '"bar" is now template language agnostic'
+        });
+
+    }, '0.0.1', {requires: ['template-base', 'templates-foo']});
+
+The template can now be used without having to know which specific rendering
+engine generated it.
+
+@param {String} templateName The abstracted name to reference the template.
+@param {Object} [data] The data to be interpolated into the template.
+@param {Object} [options] Any additional options to be passed into the template.
+@return {String} output The rendered result.
+@static
+@since @SINCE@
+**/
+Template.render = function (templateName, data, options) {
+    var template = Template._registry[templateName],
+        result   = '';
+
+    if (template) {
+        result = template(data, options);
+    } else {
+        Y.error('Unregistered template: "' + templateName + '"');
+    }
+
+    return result;
+};
+
 Template.prototype = {
     /**
     Compiles a template with the current template engine and returns a compiled
