@@ -150,6 +150,21 @@ NumericImpl.prototype = {
     },
 
     /**
+     * Returns the value corresponding to the origin on the axis.
+     *
+     * @method getOrigin
+     * @return Number
+     */
+    getOrigin: function() {
+        var origin = 0,
+            min = this.get("minimum"),
+            max = this.get("maximum");
+        origin = Math.max(origin, min);
+        origin = Math.min(origin, max);
+        return origin;
+    },
+
+    /**
      * Type of data used in `Data`.
      *
      * @property _type

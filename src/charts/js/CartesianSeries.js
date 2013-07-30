@@ -305,13 +305,15 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
             yAxisType = yAxis.get("type"),
             reverseYCoords = (yAxisType === "numeric" || yAxisType === "stacked"),
             xcoords,
-            ycoords;
+            ycoords,
+            xOriginValue = xAxis.getOrigin(),
+            yOriginValue = yAxis.getOrigin();
         graphic.set("width", w);
         graphic.set("height", h);
         xOffset = xOffset + leftPadding;
         yOffset = reverseYCoords ? yOffset + dataHeight + topPadding + padding.bottom : topPadding + yOffset;
-        this._leftOrigin = Math.round(xAxis._getCoordFromValue(xMin, xMax, dataWidth, 0, xOffset, false));
-        this._bottomOrigin = Math.round(yAxis._getCoordFromValue(yMin, yMax, dataHeight, 0, yOffset, reverseYCoords));
+        this._leftOrigin = Math.round(xAxis._getCoordFromValue(xMin, xMax, dataWidth, xOriginValue, xOffset, false));
+        this._bottomOrigin = Math.round(yAxis._getCoordFromValue(yMin, yMax, dataHeight, yOriginValue, yOffset, reverseYCoords));
 
         xcoords = this._getCoords(xMin, xMax, dataWidth, xData, xAxis, xOffset, false);
         ycoords = this._getCoords(yMin, yMax, dataHeight, yData, yAxis, yOffset, reverseYCoords);

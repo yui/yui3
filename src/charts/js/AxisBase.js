@@ -38,6 +38,16 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
     },
 
     /**
+     * Returns the value corresponding to the origin on the axis.
+     *
+     * @method getOrigin
+     * @return Number
+     */
+    getOrigin: function() {
+        return this.get("minimum");
+    },
+
+    /**
      * Handles changes to `dataProvider`.
      *
      * @method _dataProviderChangeHandler
