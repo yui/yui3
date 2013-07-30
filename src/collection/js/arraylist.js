@@ -77,7 +77,7 @@ ArrayListProto = {
      * <p>The callback signature is <code>callback( item, index )</code>.</p>
      *
      * <p>Unlike <code>each</code>, if the callback returns true, the
-     * iteratation will stop.</p>
+     * iteration will stop.</p>
      *
      * @method some
      * @param fn { Function } the function to execute
