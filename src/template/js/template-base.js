@@ -128,6 +128,20 @@ Template.register = function (templateName, template) {
 };
 
 /**
+Returns the registered template function, given the template name.
+
+@method get
+@param {String} templateName The template name.
+@return {Function} revivedTemplate The revived template function.
+@static
+@since @SINCE@
+**/
+
+Template.get = function (templateName) {
+    return Template._registry[templateName];
+}
+
+/**
 Renders a template into a string, given the registered template name and data
 to be interpolated. The template name must have been registered previously with
 `register()`.
