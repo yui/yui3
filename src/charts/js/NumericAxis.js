@@ -56,78 +56,45 @@ Y.NumericAxis = Y.Base.create("numericAxis", Y.Axis, [Y.NumericImpl], {
     },
 
     /**
-     * Calculates points based off the majorUnit count or distance of the Axis.
+     * Returns an object literal containing and array of label values and an array of points.
      *
-     * @method _getPoints
-     * @param {Object} startPoint An object literal containing the x and y coordinates of the first
-     * point on the axis.
-     * @param {Number} len The number of points on an axis.
-     * @param {Number} edgeOffset The distance from the start of the axis and the point.
-     * @param {Number} majorUnitDistance The distance between points on an axis.
+     * @method _getLabelData
+     * @param {Object} startPoint An object containing x and y values.
+     * @param {Number} edgeOffset Distance to offset coordinates.
+     * @param {Number} layoutLength Distance that the axis spans.
+     * @param {Number} count Number of labels.
      * @param {String} direction Indicates whether the axis is horizontal or vertical.
+     * @param {Array} Array containing values for axis labels.
      * @return Array
      * @private
      */
-    _getPoints: function(startPoint, len, edgeOffset, majorUnitDistance, direction)
+    _getLabelData: function(constantVal, staticCoord, dynamicCoord, min, max, edgeOffset, layoutLength, count, dataValues)
     {
-        var points = Y.NumericAxis.superclass._getPoints.apply(this, arguments);
-        if(direction === "vertical")
-        {
-            points.reverse();
-        }
-        return points;
-    },
-
-    /**
-     * Calculates the position of ticks and labels based on an array of specified label values. Returns
-     * an object containing an array of values to be used for labels and an array of objects containing
-     * x and y coordinates for each label.
-     *
-     * @method _getDataFromLabelValues
-     * @param {Object} startPoint An object containing the x and y coordinates for the start of the axis.
-     * @param {Array} labelValues An array containing values to be used for determining the number and
-     * position of labels and ticks on the axis.
-     * @param {Number} edgeOffset The distance, in pixels, on either edge of the axis.
-     * @param {Number} layoutLength The length, in pixels, of the axis. If the axis is vertical, the length
-     * is equal to the height. If the axis is horizontal, the length is equal to the width.
-     * @return Object
-     * @private
-     */
-    _getDataFromLabelValues: function(startPoint, labelValues, edgeOffset, layoutLength, direction)
-    {
-        var points = [],
-            labelValue,
+        var dataValue,
             i,
-            len = labelValues.length,
-            staticCoord,
-            dynamicCoord,
-            constantVal,
-            newPoint,
-            max = this.get("maximum"),
-            min = this.get("minimum"),
+            points = [],
             values = [],
-            scaleFactor = (layoutLength - (edgeOffset * 2)) / (max - min);
-        if(direction === "vertical")
+            point,
+            isVertical = staticCoord === "x",
+            offset = isVertical ? layoutLength + edgeOffset : edgeOffset;
+        dataValues = dataValues || this._getDataValuesByCount(count, min, max);
+        for(i = 0; i < count; i = i + 1)
         {
-            staticCoord = "x";
-            dynamicCoord = "y";
-        }
-        else
-        {
-            staticCoord = "y";
-            dynamicCoord = "x";
-        }
-        constantVal = startPoint[staticCoord];
-        for(i = 0; i < len; i = i + 1)
-        {
-            labelValue = labelValues[i];
-            if(Y.Lang.isNumber(labelValue) && labelValue >= min && labelValue <= max)
+            dataValue = parseFloat(dataValues[i]);
+            if(dataValue <= max && dataValue >= min)
             {
-                newPoint = {};
-                newPoint[staticCoord] = constantVal;
-                newPoint[dynamicCoord] = (layoutLength - edgeOffset) - (labelValue - min) * scaleFactor;
-                points.push(newPoint);
-                values.push(labelValue);
+                point = {};
+                point[staticCoord] = constantVal;
+                point[dynamicCoord] = this._getCoordFromValue(
+                    min,
+                    max,
+                    layoutLength,
+                    dataValue,
+                    offset,
+                    isVertical
+                );
+                points.push(point);
+                values.push(dataValue);
             }
         }
         return {

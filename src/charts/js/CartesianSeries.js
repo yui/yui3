@@ -301,31 +301,61 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
 			xMin = xAxis.get("minimum"),
 			yMax = yAxis.get("maximum"),
 			yMin = yAxis.get("minimum"),
-            xScaleFactor = dataWidth / (xMax - xMin),
-			yScaleFactor = dataHeight / (yMax - yMin),
             graphic = this.get("graphic"),
+            yAxisType = yAxis.get("type"),
+            reverseYCoords = (yAxisType === "numeric" || yAxisType === "stacked"),
             xcoords,
             ycoords;
         graphic.set("width", w);
         graphic.set("height", h);
-        //Assuming a vertical graph has a range/category for its vertical axis.
-        if(direction === "vertical")
-        {
-            yData = yData.reverse();
-        }
-        this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
-        this._bottomOrigin = Math.round((dataHeight + topPadding + yOffset));
-        if(yMin < 0)
-        {
-            this._bottomOrigin = this._bottomOrigin - ((0 - yMin) * yScaleFactor);
-        }
-        xcoords = this._getXCoords(xData, xMin, dataWidth, xScaleFactor, xOffset, dataLength, leftPadding);
-        ycoords = this._getYCoords(yData, yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding);
+        xOffset = xOffset + leftPadding;
+        yOffset = reverseYCoords ? yOffset + dataHeight + topPadding + padding.bottom : topPadding + yOffset;
+        this._leftOrigin = Math.round(xAxis._getCoordFromValue(xMin, xMax, dataWidth, 0, xOffset, false));
+        this._bottomOrigin = Math.round(yAxis._getCoordFromValue(yMin, yMax, dataHeight, 0, yOffset, reverseYCoords));
+
+        xcoords = this._getCoords(xMin, xMax, dataWidth, xData, xAxis, xOffset, false);
+        ycoords = this._getCoords(yMin, yMax, dataHeight, yData, yAxis, yOffset, reverseYCoords);
         this.set("xcoords", xcoords);
 		this.set("ycoords", ycoords);
         this._dataLength = dataLength;
         this._setXMarkerPlane(xcoords, dataLength);
         this._setYMarkerPlane(ycoords, dataLength);
+    },
+
+    /**
+     * Returns either an array coordinates or an object key valued arrays of coordinates depending on the input.
+     * If the input data is an array, an array is returned. If the input data is an object, an object will be returned.
+     *
+     * @method _getCoords
+     * @param {Number} min The minimum value of the range of data.
+     * @param {Number} max The maximum value of the range of data.
+     * @param {Number} length The length, in pixels, of across which the coordinates will be calculated.
+     * @param {AxisBase} axis The axis in which the data is bound.
+     * @param {Number} offset The value in which to offet the first coordinate.
+     * @param {Boolean} reverse Indicates whether to calculate the coordinates in reverse order.
+     * @return Array|Object
+     * @private
+     */
+    _getCoords: function(min, max, length, data, axis, offset, reverse)
+    {
+        var coords,
+            key;
+        if(Y_Lang.isArray(data))
+        {
+            coords = axis._getCoordsFromValues(min, max, length, data, offset, reverse);
+        }
+        else
+        {
+            coords = {};
+            for(key in data)
+            {
+                if(data.hasOwnProperty(key))
+                {
+                    coords[key] = this._getCoords.apply(this, [min, max, length, data[key], axis, offset, reverse]);
+                }
+            }
+        }
+        return coords;
     },
 
     /**
@@ -412,125 +442,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
             }
             this.set("yMarkerPlane", yMarkerPlane);
         }
-    },
-
-    /**
-     * Gets the x-coordinates for a series. Used by the setAreaData method.
-     * Returns an array when an array is received as the first argument.
-     * Returns an object literal when an object literal is received as the first argument.
-     *
-     * @method _getXCoords
-     * @param {Array|Object} xData An array of data values mapped to the x axis or an
-     * object literal containing key values pairs of data values mapped to the x axis.
-     * @param {Number} xMin The minimum value of the x axis.
-     * @param {Number} dataWidth The width used to calculate the x-coordinates.
-     * @param {Number} xScaleFactor The ratio used to calculate x-coordinates.
-     * @param {Number} xOffset The distance of the first and last x-coordinate from the
-     * beginning and end of the x-axis.
-     * @param {Number} dataLength The number of data points in the arrays.
-     * @param {Number} leftPadding The left padding of the series.
-     * @return Array|Object
-     * @private
-     */
-    _getXCoords: function(xData, xMin, dataWidth, xScaleFactor, xOffset, dataLength, leftPadding)
-    {
-        var isNumber = Y_Lang.isNumber,
-			xcoords,
-            xValue,
-            nextX,
-            key,
-            i;
-        if(Y_Lang.isArray(xData))
-        {
-            xcoords = [];
-            for (i = 0; i < dataLength; ++i)
-            {
-                xValue = parseFloat(xData[i]);
-                if(isNumber(xValue))
-                {
-                    nextX = (((xValue - xMin) * xScaleFactor) + leftPadding + xOffset);
-                }
-                else
-                {
-                    nextX = NaN;
-                }
-                xcoords.push(nextX);
-            }
-        }
-        else
-        {
-            xcoords = {};
-            for(key in xData)
-            {
-                if(xData.hasOwnProperty(key))
-                {
-                    xcoords[key] = this._getXCoords.apply(
-                        this,
-                        [xData[key], xMin, dataWidth, xScaleFactor, xOffset, dataLength, leftPadding]
-                    );
-                }
-            }
-        }
-        return xcoords;
-    },
-
-    /**
-     * Gets the y-coordinates for a series. Used by the setAreaData method.
-     * Returns an array when an array is received as the first argument.
-     * Returns an object literal when an object literal is received as the first argument.
-     *
-     * @method _getYCoords
-     * @param {Array|Object} yData An array of data values mapped to the y axis or an
-     * object literal containing key values pairs of data values mapped to the y axis.
-     * @param {Number} yMin The minimum value of the y axis.
-     * @param {Number} dataHeight The height used to calculate the y-coordinates.
-     * @param {Number} yScaleFactor The ratio used to calculate y-coordinates.
-     * @param {Number} yOffset The distance of the first and last y-coordinate from the beginning and end of the y-axis.
-     * @param {Number} dataLength The number of data points in the arrays.
-     * @param {Number} topPadding The top padding of the series.
-     * @return Array|Object
-     * @private
-     */
-    _getYCoords: function(yData, yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding)
-    {
-        var isNumber = Y_Lang.isNumber,
-			ycoords,
-            yValue,
-            nextY,
-            key,
-            i;
-        if(Y_Lang.isArray(yData))
-        {
-            ycoords = [];
-            for (i = 0; i < dataLength; ++i)
-            {
-                yValue = parseFloat(yData[i]);
-                if(isNumber(yValue))
-                {
-                    nextY = ((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor);
-                }
-                else
-                {
-                    nextY = NaN;
-                }
-                ycoords.push(nextY);
-            }
-        }
-        else
-        {
-            ycoords = {};
-            for(key in yData)
-            {
-                if(yData.hasOwnProperty(key))
-                {
-                    ycoords[key] = this._getYCoords.apply(
-                        this,
-                        [yData[key], yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding]
-                    );
-                }
-            }
-        }
-        return ycoords;
     },
 
     /**

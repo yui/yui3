@@ -418,6 +418,60 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
         return Y_Lang.isNumber(this._setMaximum);
     },
 
+
+    /**
+     * Returns and array of coordinates corresponding to an array of data values.
+     *
+     * @method _getCoordsFromValues
+     * @param {Number} min The minimum for the axis.
+     * @param {Number} max The maximum for the axis.
+     * @param {length} length The distance that the axis spans.
+     * @param {Array} dataValues An array of values.
+     * @param {Number} offset Value in which to offset the coordinates.
+     * @param {Boolean} reverse Indicates whether the coordinates should start from
+     * the end of an axis. Only used in the numeric implementation.
+     * @return Array
+     * @private
+     */
+    _getCoordsFromValues: function(min, max, length, dataValues, offset, reverse)
+    {
+        var i,
+            valuecoords = [],
+            len = dataValues.length;
+        for(i = 0; i < len; i = i + 1)
+        {
+            valuecoords.push(this._getCoordFromValue.apply(this, [min, max, length, dataValues[i], offset, reverse]));
+        }
+        return valuecoords;
+    },
+
+    /**
+     * Returns and array of data values based on the axis' range and number of values.
+     *
+     * @method _getDataValuesByCount
+     * @param {Number} count The number of values to be used.
+     * @param {Number} min The minimum value of the axis.
+     * @param {Number} max The maximum value of the axis.
+     * @return Array
+     * @private
+     */
+    _getDataValuesByCount: function(count, min, max)
+    {
+        var dataValues = [],
+            dataValue = min,
+            len = count - 1,
+            range = max - min,
+            increm = range/len,
+            i;
+        for(i = 0; i < len; i = i + 1)
+        {
+            dataValues.push(dataValue);
+            dataValue = dataValue + increm;
+        }
+        dataValues.push(max);
+        return dataValues;
+    },
+
     /**
      * Indicates whether or not the minimum attribute has been explicitly set.
      *
