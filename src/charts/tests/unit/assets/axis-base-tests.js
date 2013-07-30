@@ -409,6 +409,12 @@ YUI.add('axis-base-tests', function(Y) {
                 }
             });
             Y.Assert.areEqual(8, this.axis.getTotalMajorUnits(), "The getTotalMajorUnits method should return 8.");
+        },
+
+        "test: getOrigin()" : function() {
+            var axis = this.axis,
+                origin = axis.get("minimum");
+            Y.Assert.areEqual(origin, axis.getOrigin(), "The origin value should be " + origin + ".");
         }
     });
 

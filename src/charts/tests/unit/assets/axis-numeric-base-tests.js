@@ -305,6 +305,16 @@ YUI.add('axis-numeric-base-tests', function(Y) {
                 [min, max, length, null, horizontalOffset]
             );
             Y.Assert.isNaN(result, "The value should not be a number.");
+        },
+
+        "test: getOrigin()" : function() {
+            var axis = this.axis,
+                min = axis.get("minimum"),
+                max = axis.get("maximum"),
+                origin = 0;
+            origin = Math.max(origin, min);
+            origin = Math.min(origin, max);
+            Y.Assert.areEqual(origin, axis.getOrigin(), "The origin value should be " + origin + ".");
         }
     });
     
