@@ -735,6 +735,24 @@ modelListSuite.add(new Y.Test.Case({
         ArrayAssert.itemsAreSame([1, 2, 3, 4, 5], list.get('bar'));
     },
 
+    'reset() should sort the new models in the list when the `silent` option is set': function () {
+        var list = this.createList();
+
+        list.comparator = function (model) {
+            return model.get('bar');
+        };
+
+        list.reset([
+            {foo: 'item 1', bar: 1},
+            {foo: 'item 4', bar: 4},
+            {foo: 'item 3', bar: 3},
+            {foo: 'item 5', bar: 5},
+            {foo: 'item 2', bar: 2}
+        ], {silent: true});
+
+        ArrayAssert.itemsAreSame([1, 2, 3, 4, 5], list.get('bar'));
+    },
+
     'reset() with no args should clear the list': function () {
         var list   = this.createList(),
             models = list.add([{foo: 'zero'}, {foo: 'one'}]);
@@ -854,6 +872,21 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(list, list.sort(), 'sort() should be chainable');
         ArrayAssert.itemsAreSame(['a', 'x', 'y', 'z'], list.get('foo'));
 
+    },
+
+    'sort({descending:true}) should re-sort the list in descending order': function () {
+        var list = this.createList();
+
+        list.add([{foo: 'z'}, {foo: 'a'}, {foo: 'x'}, {foo: 'y'}]);
+
+        ArrayAssert.itemsAreSame(['z', 'a', 'x', 'y'], list.get('foo'));
+
+        list.comparator = function (model) {
+            return model.get('foo');
+        };
+
+        Assert.areSame(list, list.sort({descending:true}), 'sort() should be chainable');
+        ArrayAssert.itemsAreSame(['z', 'y', 'x', 'a'], list.get('foo'));
     },
 
     'sync() should just call the supplied callback by default': function () {
