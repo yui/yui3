@@ -370,6 +370,12 @@ templateSuite.add(new Y.Test.Case({
         Assert.areSame(this.templateFunction, revivedTmpl, 'register() did not return the revived template');
     },
 
+    'get() should return the registered template function with the right name': function () {
+        Y.Template.register('tmpl', this.templateFunction);
+
+        Assert.areSame(this.templateFunction, Y.Template.get('tmpl'), 'get() did not return the revived template');
+    },
+
     '[static] render() should use the correct template to generate the output': function () {
         Y.Template.register('tmpl', this.templateFunction);
         var output = Y.Template.render('tmpl', {'a': 'bar'});
