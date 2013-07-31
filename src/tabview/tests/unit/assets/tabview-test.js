@@ -13,7 +13,12 @@ YUI.add('tabview-test', function(Y) {
 
         'should return the selected tab': function() {
             Y.Assert.areEqual(0, tabview.get('selection').get('index'));
-        },            
+        },
+
+        'should contain the correct ARIA role in tablist': function() {
+            var listNode = tabview.get('contentBox').one('.yui3-tabview-list');
+            Y.Assert.areSame('tablist', listNode.getAttribute('role'));
+        },
 
         'should update the selected tab': function() {
             tabview.selectChild(1);
