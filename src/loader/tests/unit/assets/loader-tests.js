@@ -31,6 +31,7 @@ YUI.add('loader-tests', function(Y) {
                 test_async: Y.UA.nodejs,
                 test_css_stamp: Y.UA.nodejs,
                 test_group_filters: Y.UA.nodejs,
+                test_early_module_meta: Y.UA.nodejs || !Y.config.earlyModuleMeta,
                 test_cond_no_test_or_ua: Y.UA.nodejs,
                 test_condpattern: Y.UA.nodejs,
                 test_cond_with_test_function: Y.UA.nodejs,
@@ -392,6 +393,33 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
 
+        },
+        test_early_module_meta: function() {
+            var test = this;
+
+            // mod1 loaded via `modules` config and mod2 loaded via `groups` config.
+            YUI().use('mod1', 'mod2', 'node', function(Y) {
+                test.resume(function() {
+                    var mod1,
+                        mod2;
+
+                    mod1 = Y.one('#early-module-meta');
+                    Assert.isNotNull(mod1, 'Failed to load module via module meta');
+                    Assert.isTrue(Y.MOD1, 'Failed to add module via module meta');
+
+                    mod2 = Y.one('#early-group-meta');
+                    Assert.isNotNull(mod2, 'Failed to load module via group meta');
+                    Assert.isTrue(Y.MOD2, 'Failed to add module via group meta');
+
+                    Assert.areEqual(
+                        YUI.Env[YUI.version].skin['default'],
+                        'earlyDefaultSkin',
+                        'Configured default skin property was not as expected'
+                    );
+                });
+            });
+
+            test.wait();
         },
         test_module_attrs: function() {
             var test = this;
