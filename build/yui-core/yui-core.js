@@ -1500,6 +1500,7 @@ with any configuration info required for the module.
         YUI._getLoadHook = null;
     }
 
+    YUI.Env[VERSION] = {};
 }());
 
 
