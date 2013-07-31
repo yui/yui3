@@ -128,11 +128,13 @@ Template.register = function (templateName, template) {
 };
 
 /**
-Returns the registered template function, given the template name.
+Returns the registered template function, given the template name. If an
+unregistered template is accessed, this will return `undefined`.
 
 @method get
 @param {String} templateName The template name.
-@return {Function} revivedTemplate The revived template function.
+@return {Function} revivedTemplate The revived template function, or `undefined`
+    if it has not been registered.
 @static
 @since @SINCE@
 **/
