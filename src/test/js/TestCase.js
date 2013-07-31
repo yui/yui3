@@ -95,7 +95,7 @@ YUITest.TestCase.prototype = {
      */
     waitFor : function (condition, segment, timeout){
         remaining = timeout;
-        setTimeout("YUITest.TestCase.prototype.evalCondition('"+condition+"' ,"+segment+");", 100);
+        YUITest.TestCase.prototype.evalCondition(condition ,segment);
         throw new YUITest.Wait(segment, timeout);
     },
 
@@ -111,7 +111,7 @@ YUITest.TestCase.prototype = {
         }
         else if (remaining > 0)
         {
-            setTimeout("YUITest.TestCase.prototype.evalCondition('"+condition+"' ,"+segment+");", 100);
+            setTimeout(function(){ YUITest.TestCase.prototype.evalCondition(condition, segment); }, 100);
         }
         else
         {
