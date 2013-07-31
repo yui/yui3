@@ -354,6 +354,9 @@ templateSuite.add(new Y.Test.Case({
 
     tearDown: function () {
         delete this.templateFunction;
+        delete Y.Template._registry;
+
+        Y.Template._registry = {};
 
         Y.config.errorFn = this.errorFn;
         delete this.errorFn;
@@ -374,6 +377,12 @@ templateSuite.add(new Y.Test.Case({
         Y.Template.register('tmpl', this.templateFunction);
 
         Assert.areSame(this.templateFunction, Y.Template.get('tmpl'), 'get() did not return the revived template');
+    },
+
+    'get() should return `undefined` if template is unregistered': function () {
+        var unregisteredTmpl = Y.Template.get('tmpl');
+
+        Assert.isUndefined(unregisteredTmpl, 'Unregistered template is not `undefined`');
     },
 
     '[static] render() should use the correct template to generate the output': function () {
