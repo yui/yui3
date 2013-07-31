@@ -9074,6 +9074,10 @@ Y.mix(YUI.Env[Y.version].modules, {
             "nl",
             "pt-BR",
             "ru",
+            "zh-Hans",
+            "zh-Hans-CN",
+            "zh-Hant",
+            "zh-Hant-HK",
             "zh-HANT-TW"
         ],
         "requires": [
@@ -11512,7 +11516,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '01c0825e3bf756f3f11c0a8e3458a859';
+YUI.Env[Y.version].md5 = 'fd7c67956df50e445f40d1668dd1dc80';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
