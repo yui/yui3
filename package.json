@@ -24,7 +24,6 @@
         "grunt-contrib-compress": "0.4.10"
     },
     "scripts": {
-        "postinstall": "grunt build",
         "test": "grunt test"
     },
     "licenses":[
