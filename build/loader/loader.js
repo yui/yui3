@@ -3523,6 +3523,14 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
+    "content-editable": {
+        "requires": [
+            "node-base",
+            "editor-selection",
+            "stylesheet",
+            "plugin"
+        ]
+    },
     "controller": {
         "use": [
             "router"
@@ -4429,6 +4437,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "base",
             "node",
+            "plugin",
             "selector-css3",
             "yui-throttle"
         ]
@@ -5837,7 +5846,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'fd7c67956df50e445f40d1668dd1dc80';
+YUI.Env[Y.version].md5 = 'f12cc9105c12150cd013023fae296f8c';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
