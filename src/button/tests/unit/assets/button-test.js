@@ -57,6 +57,11 @@ suite.add(new Y.Test.Case({
         Assert.areEqual('toggle', role);
     },
     
+    'ToggleButton node should always be type="button"': function () {
+        Assert.areEqual('button', this.toggleButton.getNode().get('type'));
+        Assert.areEqual('button', this.checkButton.getNode().get('type'));
+    },
+
     'Selecting a toggleButton should add class `yui3-button-selected`': function () {
         var button = this.toggleButton,
             cb = button.get('contentBox');
@@ -194,6 +199,22 @@ suite.add(new Y.Test.Case({
         Y.one("#container").empty(true);
     },
     
+    'Passing a type should change the node\'s type': function () {
+        function getNewButtonType (type) {
+            return new Y.Button({
+                type:   type,
+                render: '#container'
+            }).getNode().get('type');
+        }
+
+        Assert.areEqual('submit', getNewButtonType());
+        Assert.areEqual('submit', getNewButtonType('submit'));
+        Assert.areEqual('button', getNewButtonType('button'));
+        Assert.areEqual('reset', getNewButtonType('reset'));
+
+        Assert.areEqual('submit', getNewButtonType('feisty'));
+    },
+
     'Passing `pressed=true` in with the config will default the button to a `pressed` state': function() {
         var button;
 
@@ -293,6 +314,33 @@ suite.add(new Y.Test.Case({
         Y.one("#container").empty(true);
     },
     
+    'The parser should read the button type': function () {
+        function getButtonType () {
+            var b;
+            b = new Y.Button({
+                srcNode: Y.one("#container button, #container input")
+            });
+            b.render();
+            return b.get('type');
+        }
+
+        Y.one("#container").setContent('<button>Hoi</button>');
+        Assert.areEqual('submit', getButtonType());
+        Y.one("#container").setContent('<button type="submit">Hoi</button>');
+        Assert.areEqual('submit', getButtonType());
+
+        Y.one("#container").setContent('<button type="button">Hoi</button>');
+        Assert.areEqual('button', getButtonType());
+
+        Y.one("#container").setContent('<button type="reset">Hoi</button>');
+        Assert.areEqual('reset', getButtonType());
+
+        Y.one("#container").setContent('<input type="submit">Hoi</button>');
+        Assert.areEqual('submit', getButtonType());
+        Y.one("#container").setContent('<input type="button">Hoi</button>');
+        Assert.areEqual('button', getButtonType());
+    },
+
     'The HTML parser for the `label` attribute should reference the button text': function() {
         
         var Test = this,
