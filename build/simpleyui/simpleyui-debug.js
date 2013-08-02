@@ -11455,7 +11455,7 @@ var L = Y.Lang,
      */
     _getType = function(type, pre) {
 
-        if (!pre || type.indexOf(PREFIX_DELIMITER) > -1) {
+        if (!pre || !type || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
         }
 

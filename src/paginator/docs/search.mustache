@@ -77,11 +77,9 @@
 
 <h4>Paginator Model</h4>
 <p>First we'll set up the model.</p>
-<div class="doc">
 ```
 {{>search-js-paginator-model}}
 ```
-</div>
 <p>Since `paginator-core` contains our logic, and is built to be mixed into a
     `Base`-based component, we do not need to add any new logic. Just mix in
     and our model is complete!</p>
@@ -89,22 +87,18 @@
 <h4>Paginator Pages View</h4>
 <p>The first view we will create is the view for the page numbers between the
     left and right controls.</p>
-<div class="doc">
 ```
 {{>search-js-paginator-pages}}
 ```
-</div>
 
 <h4>Paginator View</h4>
 <p>Our Paginator View consists of four local controls: first, previous, next
     and last. In the middle of these four controls, we display a truncated
     list of pages (our Pages View previously discussed) from which the user
     can select.</p>
-<div class="doc">
 ```
 {{>search-js-paginator}}
 ```
-</div>
 <p>That's all it takes for our Paginator. As such it's fairly flexible and
     extremely customizable if we need it to be.</p>
 <p>Next we need to look at our actual pages that hold the images.</p>
@@ -113,30 +107,24 @@
 <h3>Page View</h3>
 <p>Our page view need only display the images we pass to it. We do this by
     sustituying placeholders with the data from the Flickr API.</p>
-<div class="doc">
 ```
 {{>search-js-page}}
 ```
-</div>
 
 <h3>Search App View</h3>
 <p>Our application view is a bit more envolved. It needs to request images
     when the form is submitted and start a new series of pages. As well as
     fetch new images when a new page is requested.</p>
-<div class="doc">
 ```
 {{>search-js-app}}
 ```
-</div>
 
 
 <h3>Run with it!</h3>
 <p>Now we need to create an instance and render it</p>
-<div class="doc">
 ```
 {{>search-js-begin}}
 ```
-</div>
 
 <h3>Finishing touches</h3>
 <p>Whew, that was a lot to digest! One last element is our CSS.</p>
