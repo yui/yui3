@@ -94,7 +94,6 @@ YUITest.TestCase.prototype = {
      * @method waitFor
      */
     waitFor : function (condition, segment, timeout){
-        remaining = timeout;
         if (YUITest.TestCase.prototype.isConditionTrue(condition))
         {
             throw new YUITest.Wait(segment, timeout);
@@ -102,7 +101,7 @@ YUITest.TestCase.prototype = {
         }
         else
         {
-            YUITest.TestCase.prototype.evalCondition(condition, segment);
+            YUITest.TestCase.prototype.evalCondition(condition, segment, timeout);
             throw new YUITest.Wait(segment, timeout);
         }
     },
@@ -111,15 +110,14 @@ YUITest.TestCase.prototype = {
      * Function to evaluate the resume condition of function waitFor().
      * @method evalCondition
      */
-    evalCondition : function(condition, segment){
-        remaining -= 100;
+    evalCondition : function(condition, segment, remaining){
         if (YUITest.TestCase.prototype.isConditionTrue(condition))
         {
             YUITest.TestCase.prototype.resume(segment);
         }
-        else if (remaining > 0)
+        else if (remaining >= 0)
         {
-            setTimeout(function(){ YUITest.TestCase.prototype.evalCondition(condition, segment); }, 100);
+            setTimeout(function(){ YUITest.TestCase.prototype.evalCondition(condition, segment, remaining-100); }, 100);
         }
         else
         {
