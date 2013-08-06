@@ -4,7 +4,7 @@ Paginator Change History
 @VERSION@
 ------
 
-* No changes.
+* Correct typo in NAME param for paginator.js
 
 3.11.0
 -----
