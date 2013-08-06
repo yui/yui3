@@ -9,6 +9,7 @@ Provides URL-based routing using HTML5 `pushState()` or the location hash.
 var HistoryHash = Y.HistoryHash,
     QS          = Y.QueryString,
     YArray      = Y.Array,
+    YObject     = Y.Object,
 
     win = Y.config.win,
 
@@ -98,6 +99,15 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
 
     /**
+    TODO: Add docs!
+
+    @property _params
+    @type Object
+    @protected
+    @since @SINCE@
+    **/
+
+    /**
     Whether or not the `ready` event has fired yet.
 
     @property _ready
@@ -144,11 +154,20 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _regexUrlOrigin: /^(?:[^\/#?:]+:\/\/|\/\/)[^\/]*/,
 
+    /**
+    TODO: Add docs!
+
+    @property _routes
+    @type Array
+    @protected
+    **/
+
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         var self = this;
 
         self._html5  = self.get('html5');
+        self._params = {};
         self._routes = [];
         self._url    = self._getURL();
 
@@ -298,6 +317,20 @@ Y.Router = Y.extend(Router, Y.Base, {
         return YArray.filter(this._routes, function (route) {
             return path.search(route.regex) > -1;
         });
+    },
+
+    /**
+    TODO: Add docs!
+
+    @method param
+    @param {String} name Name of the param used in route paths.
+    @param {RegExp} regex Regular expression to match param in route paths.
+    @chainable
+    @since @SINCE@
+    **/
+    param: function (name, regex) {
+        this._params[name] = regex;
+        return this;
     },
 
     /**
@@ -621,7 +654,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             decode    = self._decode,
             routes    = self.match(path),
             callbacks = [],
-            matches, req, res;
+            matches, paramsMatch, req, res;
 
         self._dispatching = self._dispatched = true;
 
@@ -673,10 +706,32 @@ Y.Router = Y.extend(Router, Y.Base, {
                     return match && decode(match);
                 });
 
+                paramsMatch = true;
+
                 // Use named keys for parameter names if the route path contains
                 // named keys. Otherwise, use numerical match indices.
                 if (matches.length === route.keys.length + 1) {
-                    req.params = YArray.hash(route.keys, matches.slice(1));
+                    matches    = matches.slice(1);
+                    req.params = YArray.hash(route.keys, matches);
+
+                    paramsMatch = YArray.every(route.keys, function (key, i) {
+                        var paramRegex = self._params[key],
+                            value      = matches[i],
+                            captures;
+
+                        if (paramRegex && value && typeof value === 'string') {
+                            captures = paramRegex.exec(value);
+
+                            if (captures) {
+                                req.params[key] = captures;
+                                return true;
+                            }
+
+                            return false;
+                        }
+
+                        return true;
+                    });
                 } else {
                     req.params = matches.concat();
                 }
@@ -685,8 +740,13 @@ Y.Router = Y.extend(Router, Y.Base, {
                 // request.
                 req.pendingRoutes = routes.length;
 
-                // Execute this route's `callbacks`.
-                req.next();
+                // Execute this route's `callbacks` or skip this route because
+                // some of the param regexps don't match.
+                if (paramsMatch) {
+                    req.next();
+                } else {
+                    req.next('route');
+                }
             }
         };
 
@@ -730,6 +790,18 @@ Y.Router = Y.extend(Router, Y.Base, {
     _getOrigin: function () {
         var location = Y.getLocation();
         return location.origin || (location.protocol + '//' + location.host);
+    },
+
+    /**
+    TODO: Add docs!
+
+    @method _getParams
+    @return {Object} Mapping of params, `name` -> `regex`.
+    @protected
+    @since @SINCE@
+    **/
+    _getParams: function () {
+        return Y.merge(this._params);
     },
 
     /**
@@ -1203,6 +1275,25 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
+    TODO: Add docs!
+
+    @method _setParams
+    @param {Object} params Map of params: `name` -> `regex`.
+    @return {Object} Map of params: `name` -> `regex`.
+    @protected
+    @since @SINCE@
+    **/
+    _setParams: function (params) {
+        this._params = {};
+
+        YObject.each(params, function (regex, name) {
+            this.param(name, regex);
+        }, this);
+
+        return Y.merge(this._params);
+    },
+
+    /**
     Setter for the `routes` attribute.
 
     @method _setRoutes
@@ -1333,6 +1424,20 @@ Y.Router = Y.extend(Router, Y.Base, {
             // See http://code.google.com/p/android/issues/detail?id=17471
             valueFn: function () { return Y.Router.html5; },
             writeOnce: 'initOnly'
+        },
+
+        /**
+        TODO: Add docs!
+
+        @attribute params
+        @type Object
+        @default `{}`
+        @since @SINCE@
+        **/
+        params: {
+            value : {},
+            getter: '_getParams',
+            setter: '_setParams'
         },
 
         /**
