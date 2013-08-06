@@ -386,7 +386,14 @@ This central template registry is used through two <em>static</em> methods on `Y
         </p>
     </dd>
 
-<dt>`Y.Template.render( templateName , [data] , [options] )`</dt>
+    <dt>`Y.Template.get( templateName )`</dt>
+    <dd>
+        <p>
+        Returns a revived template function registered under the given `templateName`, if it exists. Otherwise, it returns `undefined`.
+        </p>
+    </dd>
+
+    <dt>`Y.Template.render( templateName , [data] , [options] )`</dt>
     <dd>
         <p>
         Renders a registered template under the given `templateName`, passing along any additional `data` or `options` values needed.

@@ -1703,6 +1703,10 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         "nl",
         "pt-BR",
         "ru",
+        "zh-Hans",
+        "zh-Hans-CN",
+        "zh-Hant",
+        "zh-Hant-HK",
         "zh-HANT-TW"
     ],
     "skinnable": true
