@@ -61,7 +61,8 @@ routerSuite.add(new Y.Test.Case({
                 ],
 
                 params: {
-                    id: /\d+/
+                    id      : Number,
+                    username: /^\w+$/
                 }
             });
 
@@ -76,10 +77,12 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame('/foo', router.get('routes')[1].path);
         Assert.areSame('/foo', router._routes[1].path);
 
-        ObjectAssert.ownsKey('id', router.get('params'));
-        ObjectAssert.ownsKey('id', router._params);
-        Assert.isInstanceOf(RegExp, router.get('params').id);
-        Assert.isInstanceOf(RegExp, router._params.id);
+        ObjectAssert.ownsKeys(['id', 'username'], router.get('params'));
+        ObjectAssert.ownsKeys(['id', 'username'], router._params);
+        Assert.isFunction(router.get('params').id);
+        Assert.isFunction(router._params.id);
+        Assert.isInstanceOf(RegExp, router.get('params').username);
+        Assert.isInstanceOf(RegExp, router._params.username);
     },
 
     'subclass with default routes should work': function () {
@@ -109,7 +112,8 @@ routerSuite.add(new Y.Test.Case({
                 ATTRS: {
                     params: {
                         value: {
-                            id: /\d+/
+                            id      : Number,
+                            username: /^\w+$/
                         }
                     }
                 }
@@ -117,10 +121,12 @@ routerSuite.add(new Y.Test.Case({
 
             router = this.router = new MyRouter();
 
-        ObjectAssert.ownsKey('id', router.get('params'));
-        ObjectAssert.ownsKey('id', router._params);
-        Assert.isInstanceOf(RegExp, router.get('params').id);
-        Assert.isInstanceOf(RegExp, router._params.id);
+        ObjectAssert.ownsKeys(['id', 'username'], router.get('params'));
+        ObjectAssert.ownsKeys(['id', 'username'], router._params);
+        Assert.isFunction(router.get('params').id);
+        Assert.isFunction(router._params.id);
+        Assert.isInstanceOf(RegExp, router.get('params').username);
+        Assert.isInstanceOf(RegExp, router._params.username);
     }
 }));
 
@@ -208,18 +214,17 @@ routerSuite.add(new Y.Test.Case({
         var router = this.router = new Y.Router();
 
         router.set('params', {
-            id  : /\d+/,
-            user: /\w+/
+            id      : Number,
+            username: /^\w+$/
         });
 
         ObjectAssert.areEqual(router._params, router.get('params'));
-        ObjectAssert.ownsKeys(['id', 'user'], router._params);
-        ObjectAssert.ownsKeys(['id', 'user'], router.get('params'));
-        Assert.isInstanceOf(RegExp, router._params.id);
-        Assert.isInstanceOf(RegExp, router._params.user);
-        Assert.isInstanceOf(RegExp, router.get('params').id);
-        Assert.isInstanceOf(RegExp, router.get('params').user);
-
+        ObjectAssert.ownsKeys(['id', 'username'], router._params);
+        ObjectAssert.ownsKeys(['id', 'username'], router.get('params'));
+        Assert.isFunction(router._params.id);
+        Assert.isFunction(router.get('params').id);
+        Assert.isInstanceOf(RegExp, router._params.username);
+        Assert.isInstanceOf(RegExp, router.get('params').username);
     }
 }));
 
@@ -353,14 +358,14 @@ routerSuite.add(new Y.Test.Case({
 
         ObjectAssert.ownsNoKeys(router._params);
 
-        Assert.areSame(router, router.param('id', /\d+/));
+        Assert.areSame(router, router.param('id', Number));
         ObjectAssert.ownsKey('id', router._params);
 
-        router.param('user', /\w+/);
-        ObjectAssert.ownsKeys(['id', 'user'], router._params);
+        router.param('username', /^\w+$/);
+        ObjectAssert.ownsKeys(['id', 'username'], router._params);
 
-        Assert.isInstanceOf(RegExp, router._params.id);
-        Assert.isInstanceOf(RegExp, router._params.user);
+        Assert.isFunction(router._params.id);
+        Assert.isInstanceOf(RegExp, router._params.username);
     },
 
     'match() should return an array of routes that match the given path': function () {
@@ -1101,13 +1106,24 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'route parameters should be processed via the regex `params`': function () {
-        var calls  = 0,
-            router = this.router = new Y.Router();
+        var calls      = 0,
+            paramCalls = 0,
+            router     = this.router = new Y.Router();
 
         router.set('params', {
-            id      : /^\d+$/,
+            id      : Number,
             username: /^\w+$/,
-            file    : /^([^\.]+)\.(.+)$/
+            file    : /^([^\.]+)\.(.+)$/,
+
+            // Truthy:
+            zero : Number,
+            empty: function () { return ''; },
+
+            // Falsy:
+            falze: function () { paramCalls += 1; return false; },
+            nul  : function () { paramCalls += 1; return null; },
+            undef: function () { paramCalls += 1; return undefined; },
+            nan  : function () { paramCalls += 1; return NaN; }
         });
 
         router.route('/posts/:id', function (req) {
@@ -1115,8 +1131,8 @@ routerSuite.add(new Y.Test.Case({
 
             Assert.isObject(req.params);
             ArrayAssert.itemsAreSame(['id'], Y.Object.keys(req.params));
-            Assert.isArray(req.params.id);
-            Assert.areSame('1', req.params.id[0]);
+            Assert.isNumber(req.params.id);
+            Assert.areSame(1, req.params.id);
         });
 
         // Called via "/users/", so no `username`.
@@ -1137,11 +1153,87 @@ routerSuite.add(new Y.Test.Case({
             ArrayAssert.itemsAreSame(['app.js', 'app', 'js'], req.params.file);
         });
 
+        router.route('/zero/:zero', function (req) {
+            calls += 1;
+
+            Assert.isObject(req.params);
+            ArrayAssert.itemsAreSame(['zero'], Y.Object.keys(req.params));
+            Assert.isNumber(req.params.zero);
+            Assert.areSame(0, req.params.zero);
+        });
+
+        router.route('/empty/:empty', function (req) {
+            calls += 1;
+
+            Assert.isObject(req.params);
+            ArrayAssert.itemsAreSame(['empty'], Y.Object.keys(req.params));
+            Assert.isString(req.params.empty);
+            Assert.areSame('', req.params.empty);
+        });
+
+        router.route('/falze/:falze', function (req) {
+            Assert.fail(req.path + ' should not match `falze` param');
+        });
+
+        router.route('/nul/:nul', function (req) {
+            Assert.fail(req.path + ' should not match `nul` param');
+        });
+
+        router.route('/undef/:undef', function (req) {
+            Assert.fail(req.path + ' should not match `undef` param');
+        });
+
+        router.route('/nan/:nan', function (req) {
+            Assert.fail(req.path + ' should not match `nan` param');
+        });
+
         router._dispatch('/posts/1', {});
         router._dispatch('/users/', {});
         router._dispatch('/files/app.js', {});
 
-        Assert.areSame(3, calls);
+        // Truthy checks.
+        router._dispatch('/zero/0', {});
+        router._dispatch('/empty/bla', {});
+
+        // Falsy checks.
+        router._dispatch('/falze/false', {});
+        router._dispatch('/nul/null', {});
+        router._dispatch('/undef/undefined', {});
+        router._dispatch('/nan/NaN', {});
+
+        Assert.areSame(5, calls);
+        Assert.areSame(4, paramCalls);
+    },
+
+    'Param handler functions should receive `value` and `name` as arguments': function () {
+        var calls      = 0,
+            paramCalls = 0,
+            router     = this.router = new Y.Router();
+
+        router.set('params', {
+            username: function (value, name) {
+                paramCalls += 1;
+
+                Assert.areSame('EricF', value);
+                Assert.areSame('username', name);
+
+                return value.toLowerCase();
+            }
+        });
+
+        router.route('/users/:username', function (req) {
+            calls += 1;
+
+            Assert.isObject(req.params);
+            ArrayAssert.itemsAreSame(['username'], Y.Object.keys(req.params));
+            Assert.isString(req.params.username);
+            Assert.areSame('ericf', req.params.username);
+        });
+
+        router._dispatch('/users/EricF', {});
+
+        Assert.areSame(1, calls);
+        Assert.areSame(1, paramCalls);
     },
 
     'Non-matching `params` should cause the route to be skipped': function () {
@@ -1149,7 +1241,7 @@ routerSuite.add(new Y.Test.Case({
             router = this.router = new Y.Router();
 
         router.set('params', {
-            id      : /^\d+$/,
+            id      : Number,
             username: /^\w+$/
         });
 
@@ -1265,7 +1357,6 @@ routerSuite.add(new Y.Test.Case({
 
         Assert.areSame(2, calls);
     },
-
 
     'routes containing a "*" should match the segments which follow it': function () {
         var calls  = 0,

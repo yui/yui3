@@ -9,6 +9,7 @@ Provides URL-based routing using HTML5 `pushState()` or the location hash.
 var HistoryHash = Y.HistoryHash,
     QS          = Y.QueryString,
     YArray      = Y.Array,
+    YLang       = Y.Lang,
     YObject     = Y.Object,
 
     win = Y.config.win,
@@ -715,15 +716,16 @@ Y.Router = Y.extend(Router, Y.Base, {
                     req.params = YArray.hash(route.keys, matches);
 
                     paramsMatch = YArray.every(route.keys, function (key, i) {
-                        var paramRegex = self._params[key],
-                            value      = matches[i],
-                            captures;
+                        var paramHandler = self._params[key],
+                            value        = matches[i];
 
-                        if (paramRegex && value && typeof value === 'string') {
-                            captures = paramRegex.exec(value);
+                        if (paramHandler && value && typeof value === 'string') {
+                            value = typeof paramHandler === 'function' ?
+                                    paramHandler(value, key) :
+                                    paramHandler.exec(value);
 
-                            if (captures) {
-                                req.params[key] = captures;
+                            if (value !== false && YLang.isValue(value)) {
+                                req.params[key] = value;
                                 return true;
                             }
 
