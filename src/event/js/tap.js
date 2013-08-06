@@ -60,6 +60,14 @@ This event can also be listened for using node.delegate().
 @return {EventHandle} the detach handle
 */
 Y.Event.define(EVT_TAP, {
+    publishConfig: {
+        preventedFn: function (e) {
+            // This should be moved to a prototype
+            e.target.once('click', function (click) {
+                click.preventDefault();
+            });
+        }
+    },
 
     processArgs: function (args, isDelegate) {
         return args.splice(3, 1) || {};
@@ -81,42 +89,6 @@ Y.Event.define(EVT_TAP, {
     @static
     **/
     on: function (node, subscription, notifier) {
-
-        /*
-            Patch synthetic event's fire method to allow for e.preventDefault()
-            or e.stopPropagation() on a subsequent click event
-
-            Check https://gist.github.com/4272500 for some more info
-            Check http://www.youtube.com/watch?v=v7Z6FlO1opU for the discussion.
-        */
-        notifier.handle.evt.fire = function (e) {
-          var subs = this._subscribers.concat(this._afters),
-              args = Y.Array(arguments, 0, true),
-              i, len, halt;
-
-          for (i = 0, len = subs.length; i < len; ++i) {
-            if (subs[i]) {
-
-                //notify all the subscribers
-                halt = subs[i].notify(args, this);
-
-                // stopImmediatePropagation
-                if (halt === false || e.stopped > 1) {
-                  break;
-                }
-            }
-          }
-
-          if (e.prevented || e.stopped) {
-            e.target.once('click', function (clickEvt) {
-                e.prevented && clickEvt.preventDefault();
-                e.stopped && clickEvt[e.stopped === 2 ? 'stopImmediatePropagation' : 'stopPropagation']();
-            });
-          }
-
-          return !!this.stopped;
-        };
-
         subscription[HANDLES.START] = node.on(EVT_START, this.touchStart, this, node, subscription, notifier);
     },
 
