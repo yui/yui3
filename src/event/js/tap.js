@@ -61,6 +61,9 @@ This event can also be listened for using node.delegate().
 */
 Y.Event.define(EVT_TAP, {
 
+    processArgs: function (args, isDelegate) {
+        return args.splice(3, 1) || {};
+    },
     /**
     This function should set up the node that will eventually fire the event.
 
@@ -214,7 +217,7 @@ Y.Event.define(EVT_TAP, {
         }
 
         //if `onTouchStart()` was called by a touch event, set up touch event subscriptions. Otherwise, set up mouse/pointer event event subscriptions.
-        if (context.eventType.indexOf('touch') !== -1 && !needToCancel) {
+        if (SUPPORTS_TOUCHES && event.touches && !needToCancel) {
 
             subscription[HANDLES.END] = node.once('touchend', this.touchEnd, this, node, subscription, notifier, delegate, context);
             subscription[HANDLES.CANCEL] = node.once('touchcancel', this.detach, this, node, subscription, notifier, delegate, context);
@@ -254,7 +257,12 @@ Y.Event.define(EVT_TAP, {
     touchEnd: function (event, node, subscription, notifier, delegate, context) {
         var startXY = context.startXY,
             endXY,
-            clientXY;
+            clientXY,
+            sensitivity = 15;
+
+        if (subscription._extras && subscription._extras.sensitivity) {
+            sensitivity = subscription._extras.sensitivity;
+        }
 
         subscription.needToCancel = false;
 
@@ -272,7 +280,7 @@ Y.Event.define(EVT_TAP, {
         detachHelper(subscription, [ HANDLES.MOVE, HANDLES.END, HANDLES.CANCEL ], true, context);
 
         // make sure mouse didn't move
-        if (Math.abs(endXY[0] - startXY[0]) < 15 && Math.abs(endXY[1] - startXY[1]) < 15) {
+        if (Math.abs(endXY[0] - startXY[0]) < sensitivity && Math.abs(endXY[1] - startXY[1]) < sensitivity) {
 
             event.type = EVT_TAP;
             event.pageX = endXY[0];
