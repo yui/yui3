@@ -490,7 +490,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             }
             else
             {
-                this.drawLine(path, points[0], points[len - 1]);
+                this.drawLine(path, lineStart, this.getLineEnd(lineStart));
                 if(drawTicks)
                 {
                     tickPath = this.get("tickPath");
