@@ -19,7 +19,8 @@ YUI.add('recordset-indexer-tests', function(Y){
 		},
 
 		'should create new table with two columns and same row count': function() {
-			var table = Y.one('#demo table'),
+			var test = this,
+				table = Y.one('#demo table'),
 				rowCount = table.all('tbody tr').size(),
 				hashBtn = Y.one('#createTableState'),
 				viewBtn = Y.one('#viewTable'),
@@ -39,21 +40,27 @@ YUI.add('recordset-indexer-tests', function(Y){
 			});
 
 			hashBtn.simulate('click');
-			viewBtn.simulate('click');
 
+			Y.later(200, this, function () {
+				test.resume(function () {
+					viewBtn.simulate('click');
 
-			this.wait(function() {
-				isNotNull(htContainer.one('table'), 'Table was not created.');
+					Y.later(200, this, function () {
+						test.resume(function() {
+							isNotNull(htContainer.one('table'), 'Table was not created.');
 
-				var htTable = htContainer.one('table');
+							var htTable = htContainer.one('table');
 
-				areSame(rowCount, htTable.all('tbody tr').size(), 'Rows do not match.');
-			}, 200);
+							areSame(rowCount, htTable.all('tbody tr').size(), 'Rows do not match.');
+						});
+					});
 
+					test.wait();
+				});
+			});
 
+			test.wait();
 		}
-
-
 	}));
 
 	Y.Test.Runner.add(suite);
