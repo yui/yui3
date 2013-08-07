@@ -19,37 +19,48 @@
             position: relative;
             border-radius: 5px;
         }
+        .pure-button {
+            color: white;
+        }
+        .pure-button-a {
+            background: green;
+        }
+
+        .pure-button-c {
+            background: purple;
+        }
     </style>
 
 </head>
 <body>
     <div id="box"></div>
     <p>
-        <a class="tapper pure-button pure-button-primary" id="tapper1" href='#tapped'>Tap on me</a>
+        <a class="tapper pure-button pure-button-a" id="tapper1" href='#tapped'>Tap on me</a>
     </p>
     <p>
         <a class="tapper pure-button pure-button-primary" id="tapper2" href='#gestured'>Tap on me too</a>
     </p>
 
+    <p>
+        <a class="tapper pure-button pure-button-c" id="del" href='#delegate'>Delegate</a>
+    </p>
+
     <ul id="ul"></ul>
 
 
-    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+    <script src="../../../../build/yui/yui.js"></script>
     <script>
 
         YUI({
             filter: 'raw'
-        }).use('cssnormalize', 'event-tap', 'event-move', 'node', function (Y) {
+        }).use('cssnormalize', 'event-tap', 'node-event-delegate', 'node', function (Y) {
             var ta = Y.one('#ta'),
                 box = Y.one('#box'),
                 ul = Y.one('#ul');
 
-            //new FastClick(document.body);
-
-            setText = function (text) {
-
-                ul.appendChild('<li>' + text + '</li>');
-            }
+            Y.one('body').delegate('tap', function (e) {
+                ul.appendChild('<li> ' + e._event.type + ' delegated </li>');
+            }, '#del');
 
             Y.one('#tapper1').on('tap', function (e) {
                 e.preventDefault();
@@ -59,8 +70,7 @@
 
 
             Y.one('#tapper2').on('tap', function (e) {
-                e.preventDefault();
-                ul.appendChild('<li> ' + e._event.type + ' </li>');
+                ul.appendChild('<li> ' + e._event.type + ': no preventDefault() </li>');
             });
 
 
