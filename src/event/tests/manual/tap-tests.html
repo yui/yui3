@@ -19,16 +19,23 @@
             position: relative;
             border-radius: 5px;
         }
-        .pure-button {
-            color: white;
-        }
         .pure-button-a {
             background: green;
         }
 
-        .pure-button-c {
+        .pure-button-b {
             background: purple;
         }
+
+        .pure-button-c {
+            background: #155;
+        }
+
+        #bigButton {
+            height: 200px;
+            border-radius: 2em;
+        }
+
     </style>
 
 </head>
@@ -36,13 +43,13 @@
     <div id="box"></div>
     <p>
         <a class="tapper pure-button pure-button-a" id="tapper1" href='#tapped'>Tap on me</a>
-    </p>
-    <p>
         <a class="tapper pure-button pure-button-primary" id="tapper2" href='#gestured'>Tap on me too</a>
+        <a class="tapper pure-button pure-button-b" id="del" href='#delegate'>Delegate</a>
     </p>
 
     <p>
-        <a class="tapper pure-button pure-button-c" id="del" href='#delegate'>Delegate</a>
+        <button class="tapper pure-button pure-button-c" id="bigButton">Big button with lots of sensitivity</button>
+        <button class="tapper pure-button" id="smallButton">Small button with no sensitivity</button>
     </p>
 
     <ul id="ul"></ul>
@@ -71,6 +78,18 @@
 
             Y.one('#tapper2').on('tap', function (e) {
                 ul.appendChild('<li> ' + e._event.type + ': no preventDefault() </li>');
+            });
+
+            Y.one('#bigButton').on('tap', function (e) {
+                ul.appendChild('<li> ' + e._event.type + ': with sensitivity: 100</li>');
+            }, {
+                sensitivity: 100
+            });
+
+            Y.one('#smallButton').on('tap', function (e) {
+                ul.appendChild('<li> ' + e._event.type + ': with sensitivity: 0</li>');
+            }, {
+                sensitivity: 0
             });
 
 
