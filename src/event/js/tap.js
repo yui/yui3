@@ -62,7 +62,6 @@ This event can also be listened for using node.delegate().
 Y.Event.define(EVT_TAP, {
     publishConfig: {
         preventedFn: function (e) {
-            // This should be moved to a prototype
             e.target.once('click', function (click) {
                 click.preventDefault();
             });
@@ -70,7 +69,12 @@ Y.Event.define(EVT_TAP, {
     },
 
     processArgs: function (args, isDelegate) {
-        return args.splice(3, 1) || {};
+
+        //if we return for the delegate use case, then the `filter` argument
+        //returns undefined, and we have to get the filter from sub._extra[0] (ugly)
+        if (!isDelegate) {
+            return args.splice(3, 1) || {};
+        }
     },
     /**
     This function should set up the node that will eventually fire the event.
@@ -189,7 +193,7 @@ Y.Event.define(EVT_TAP, {
         }
 
         //if `onTouchStart()` was called by a touch event, set up touch event subscriptions. Otherwise, set up mouse/pointer event event subscriptions.
-        if (SUPPORTS_TOUCHES && event.touches && !needToCancel) {
+        if (event.touches && !needToCancel) {
 
             subscription[HANDLES.END] = node.once('touchend', this.touchEnd, this, node, subscription, notifier, delegate, context);
             subscription[HANDLES.CANCEL] = node.once('touchcancel', this.detach, this, node, subscription, notifier, delegate, context);
