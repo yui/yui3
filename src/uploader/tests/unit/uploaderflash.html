@@ -24,7 +24,7 @@
         coverage: ['uploader-flash'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
     }).use("console", "test", "dump", "uploader-flash", "node-event-simulate", "event-custom-base", function(Y) {
-        
+
 
 
         // Set up the page
@@ -32,7 +32,7 @@
             ARRAYASSERT = Y.ArrayAssert,
             btnRun = Y.one("#btnRun"),
             myConsole = new Y.Console().render();
-            
+
         btnRun.set("disabled", false);
         Y.on("click", function(){
             Y.Test.Runner.run();
@@ -43,7 +43,7 @@
             name: "Basic Uploader Flash Tests",
 
             setUp : function () {
-                
+
                 var basicuploader = "<div id='basicuploader'></div>";
                 Y.one('#container').appendChild(Y.Node.create(basicuploader));
                 this.basicuploader = null;
@@ -111,7 +111,7 @@
                 this.basicuploader._swfReference._swf = {};
                 this.basicuploader._swfReference._swf._node = {};
                 this.basicuploader._swfReference._swf.setAttribute = function () {};
-                this.basicuploader._swfReference._swf.focus = function () {};               
+                this.basicuploader._swfReference._swf.focus = function () {};
 
 
                 this.basicuploader._swfReference.fire("swfReady");
@@ -134,10 +134,10 @@
                 this.basicuploader.render("#basicuploader");
 
                 this.basicuploader.set("multipleFiles", true);
-                Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), true); 
+                Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), true);
 
                 this.basicuploader.set("multipleFiles", false);
-                Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), false);   
+                Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), false);
             },
 
             testUpdateList : function () {
@@ -205,8 +205,68 @@
                 this.basicuploader._uploadEventHandler(e);
             },
 
+            testAllUploadEvents : function () {
+                var cfg = {
+                  tabIndex: "0",
+                  width: "100%",
+                  height: "100%"
+                }, eventsTriggered = 0;
+
+                this.basicuploader = new Y.UploaderFlash(cfg);
+                this.basicuploader.render("#basicuploader");
+
+                this.basicuploader.on('uploader:fileuploadstart', function () {
+                    eventsTriggered += 1;
+                });
+
+                this.basicuploader.on('uploader:uploadprogress', function () {
+                    eventsTriggered += 1;
+                });
+
+                this.basicuploader.on('uploader:totaluploadprogress', function () {
+                    eventsTriggered += 1;
+                });
+
+                this.basicuploader.on('uploader:uploadcomplete', function () {
+                    eventsTriggered += 1;
+                });
+
+                this.basicuploader.on('uploader:alluploadscomplete', function () {
+                    eventsTriggered += 1;
+                });
+
+                this.basicuploader.on('uploader:uploaderror', function () {
+                    eventsTriggered += 1;
+                });
+
+                var e = new Y.DOMEventFacade({type:'file:uploadstart', preventDefault: function () {}, stopPropagation: function () {}});
+
+                this.basicuploader._uploadEventHandler(e);
+                Y.Assert.areEqual(1, eventsTriggered);
+
+                e.type = "file:uploadprogress";
+                this.basicuploader._uploadEventHandler(e);
+                Y.Assert.areEqual(2, eventsTriggered);
+
+                e.type = "uploaderqueue:totaluploadprogress";
+                this.basicuploader._uploadEventHandler(e);
+                Y.Assert.areEqual(3, eventsTriggered);
+
+                e.type = "file:uploadcomplete";
+                this.basicuploader._uploadEventHandler(e);
+                Y.Assert.areEqual(4, eventsTriggered);
+
+                e.type = "uploaderqueue:alluploadscomplete";
+                this.basicuploader._uploadEventHandler(e);
+                Y.Assert.areEqual(5, eventsTriggered);
+
+                e.type = "uploaderqueue:uploaderror";
+                this.basicuploader._uploadEventHandler(e);
+                Y.Assert.areEqual(6, eventsTriggered);
+            },
+
             testTabElements : function () {
-               
+
                 var cfg = {
                   tabIndex: "0",
                   width: "100%",
@@ -243,7 +303,7 @@
                 this.basicuploader._swfReference._swf = {};
                 this.basicuploader._swfReference._swf._node = {};
                 this.basicuploader._swfReference._swf.setAttribute = function () {};
-                this.basicuploader._swfReference._swf.focus = function () {};               
+                this.basicuploader._swfReference._swf.focus = function () {};
 
                 this.basicuploader._swfReference.fire("swfReady");
 
