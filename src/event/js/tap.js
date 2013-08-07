@@ -73,7 +73,7 @@ Y.Event.define(EVT_TAP, {
         //if we return for the delegate use case, then the `filter` argument
         //returns undefined, and we have to get the filter from sub._extra[0] (ugly)
         if (!isDelegate) {
-            return args.splice(3, 1) || {};
+            return args.splice(3, 1)[0] || {};
         }
     },
     /**
@@ -236,8 +236,8 @@ Y.Event.define(EVT_TAP, {
             clientXY,
             sensitivity = 15;
 
-        if (subscription._extras && subscription._extras.sensitivity) {
-            sensitivity = subscription._extras.sensitivity;
+        if (subscription._extra && subscription._extra.sensitivity) {
+            sensitivity = subscription._extra.sensitivity;
         }
 
         subscription.needToCancel = false;
