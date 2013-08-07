@@ -3,7 +3,7 @@ YUI.add('event-tap-unit-tests', function(Y) {
     var suite = new Y.Test.Suite('Event: Tap'),
     Assert = Y.Assert,
     flag = false,
-    noop = function(e) {
+    prevDefaultFn = function(e) {
         e.preventDefault();
         flag = true;
     },
@@ -16,7 +16,7 @@ YUI.add('event-tap-unit-tests', function(Y) {
         name: 'Tap',
         setUp: function() {
             var handles = [];
-            handles.push(node.on('tap', noop));
+            handles.push(node.on('tap', prevDefaultFn));
             this.handles = handles;
         },
 
@@ -41,7 +41,8 @@ YUI.add('event-tap-unit-tests', function(Y) {
                 button: 1,
                 pageX: 100,
                 pageY: 100,
-                type: 'touchstart'
+                type: 'touchstart',
+                touches: [{}] //need to have e.touches.length > 0
             },
             h = [];
             eventDef.tap.touchStart(e, node, h, {}, {});
@@ -110,7 +111,8 @@ YUI.add('event-tap-unit-tests', function(Y) {
                 pageY: 100,
                 clientX: 100,
                 clientY: 100,
-                type: 'touchstart'
+                type: 'touchend',
+                touches: [{}] //need to have e.touches.length > 0
             },
 
             notifier = {
@@ -136,7 +138,7 @@ YUI.add('event-tap-unit-tests', function(Y) {
         'test: delegate': function () {
             var h = [];
 
-            eventDef.tap.delegate(node, h, {}, {});
+            eventDef.tap.delegate(node, h, {}, '#test');
             Assert.isTrue(h.Y_TAP_ON_START_HANDLE instanceof Y.EventHandle);
         },
 
@@ -168,6 +170,98 @@ YUI.add('event-tap-unit-tests', function(Y) {
             h[0].evt.fire(this.handles[0].evt);
             Assert.isTrue(flag);
             Assert.areEqual(Y.one('doc').get('URL').indexOf('tapped'), -1, '#tapped should not be appended to the URL');
+        },
+
+        'test: sensitivity too low': function () {
+            var fired = false,
+
+            startEvent = {
+                button: 1,
+                pageX: 100,
+                pageY: 100,
+                clientX: 100,
+                clientY: 100,
+                type: 'touchend',
+                touches: [{}] //need to have e.touches.length > 0
+            },
+            endEvent = {
+                button: 1,
+                pageX: 150,
+                pageY: 150,
+                clientX: 150,
+                clientY: 150,
+                type: 'touchend',
+                touches: [{}] //need to have e.touches.length > 0
+            },
+
+
+            notifier = {
+                fire: function () {
+                    fired = true;
+                    Assert.isTrue(fired);
+                }
+            },
+
+            context = {
+                node: node,
+                startXY: [100, 100]
+            },
+
+            h = {
+                _extras: {
+                    sensitivity: 30
+                }
+            };
+
+            eventDef.tap.touchStart(startEvent, node, h, {}, {});
+            eventDef.tap.touchEnd(endEvent, node, h, notifier, {}, context);
+            Assert.isFalse(fired, 'Tap should not fire because sensitivity is too low');
+        },
+
+        'test: sensitivity is fine': function () {
+            var fired = false,
+
+            startEvent = {
+                button: 1,
+                pageX: 100,
+                pageY: 100,
+                clientX: 100,
+                clientY: 100,
+                type: 'touchend',
+                touches: [{}] //need to have e.touches.length > 0
+            },
+            endEvent = {
+                button: 1,
+                pageX: 110,
+                pageY: 110,
+                clientX: 110,
+                clientY: 110,
+                type: 'touchend',
+                touches: [{}] //need to have e.touches.length > 0
+            },
+
+
+            notifier = {
+                fire: function () {
+                    fired = true;
+                    Assert.isTrue(fired);
+                }
+            },
+
+            context = {
+                node: node,
+                startXY: [100, 100]
+            },
+
+            h = {
+                _extras: {
+                    sensitivity: 18
+                }
+            };
+
+            eventDef.tap.touchStart(startEvent, node, h, {}, {});
+            eventDef.tap.touchEnd(endEvent, node, h, notifier, {}, context);
+            Assert.isTrue(fired, 'Tap should fire because sensitivity is within limits');
         },
 
         _should: {
