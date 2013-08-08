@@ -233,6 +233,7 @@
                     var inst = this.getInstance(),
                         sel = new inst.EditorSelection(),
                         html = '<var>|</var>', last = null,
+                        root = inst.EditorSelection.ROOT,
                         q = (Y.UA.webkit) ? 'span.Apple-style-span,var' : 'var',
                         insert = function(n) {
                             var c = inst.Node.create('<br>');
@@ -247,7 +248,7 @@
                     }
 
 
-                    inst.all(q).each(function(n) {
+                    root.all(q).each(function(n) {
                         var g = true, s;
                         if (Y.UA.webkit) {
                             g = false;
@@ -472,6 +473,7 @@
                         dir, range, div, elm, n, str, s, par, list, lis,
                         useP = (inst.host.editorPara ? true : false), tmp,
                         sdir, hasPParent, fc,
+                        root = inst.EditorSelection.ROOT,
                         sel = new inst.EditorSelection();
 
                     cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
@@ -479,7 +481,7 @@
                     if (Y.UA.ie && !sel.isCollapsed) {
                         range = sel._selection;
                         html = range.htmlText;
-                        div = inst.Node.create(html) || inst.one('body');
+                        div = inst.Node.create(html) || root;
 
                         if (div.test('li') || div.one('li')) {
                             this._command(cmd, null);
@@ -585,7 +587,7 @@
                             this._command(cmd, null);
                         }
                     } else {
-                        inst.all(tag).addClass(cls);
+                        root.all(tag).addClass(cls);
                         if (sel.anchorNode.test(inst.EditorSelection.BLOCKS)) {
                             par = sel.anchorNode;
                         } else {
@@ -621,7 +623,7 @@
                         } else {
                             this._command(cmd, null);
                         }
-                        list = inst.all(tag);
+                        list = root.all(tag);
                         if (dir) {
                             if (list.size()) {
                                 //Changed to a List

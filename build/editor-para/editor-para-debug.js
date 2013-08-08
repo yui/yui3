@@ -13,11 +13,20 @@ YUI.add('editor-para', function (Y, NAME) {
 
     var EditorPara = function() {
         EditorPara.superclass.constructor.apply(this, arguments);
-    }, HOST = 'host', BODY = 'body', NODE_CHANGE = 'nodeChange', PARENT_NODE = 'parentNode',
-    FIRST_P = BODY + ' > p', P = 'p', BR = '<br>', FC = 'firstChild', LI = 'li';
+    }, HOST = 'host', NODE_CHANGE = 'nodeChange', PARENT_NODE = 'parentNode',
+    FIRST_P = '> p', P = 'p', BR = '<br>', FC = 'firstChild', LI = 'li';
 
 
     Y.extend(EditorPara, Y.Plugin.EditorParaBase, {
+        /**
+        * Resolves the ROOT editor element.
+        * @method _getRoot
+        * @private
+        */
+        _getRoot: function() {
+            return this.get(HOST).getInstance().EditorSelection.ROOT;
+        },
+
         /**
         * nodeChange handler to handle fixing an empty document.
         * @private
@@ -28,7 +37,7 @@ YUI.add('editor-para', function (Y, NAME) {
                 html, txt, par , d, sel, btag = inst.EditorSelection.DEFAULT_BLOCK_TAG,
                 inHTML, txt2, childs, aNode, node2, top, n, sib, para2, prev,
                 ps, br, item, p, imgs, t, LAST_CHILD = ':last-child', para, b, dir,
-                lc, lc2, found = false, start;
+                lc, lc2, found = false, root = this._getRoot(), start;
 
             switch (e.changedType) {
                 case 'enter-up':
@@ -172,8 +181,8 @@ YUI.add('editor-para', function (Y, NAME) {
                     break;
                 case 'keyup':
                     if (Y.UA.gecko) {
-                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 20) {
-                            if (!inst.one(FIRST_P)) {
+                        if (root && root.getHTML().length < 20) {
+                            if (!root.one(FIRST_P)) {
                                 this._fixFirstPara();
                             }
                         }
@@ -183,8 +192,8 @@ YUI.add('editor-para', function (Y, NAME) {
                 case 'backspace-down':
                 case 'delete-up':
                     if (!Y.UA.ie) {
-                        ps = inst.all(FIRST_P);
-                        item = inst.one(BODY);
+                        ps = root.all(FIRST_P);
+                        item = root;
                         if (ps.item(0)) {
                             item = ps.item(0);
                         }
@@ -214,7 +223,7 @@ YUI.add('editor-para', function (Y, NAME) {
                                 p = p.ancestor(P);
                             }
                             if (p) {
-                                if (!p.previous() && p.get(PARENT_NODE) && p.get(PARENT_NODE).test(BODY)) {
+                                if (!p.previous() && p.get(PARENT_NODE) && p.get(PARENT_NODE).compareTo(root)) {
                                     Y.log('Stopping the backspace event', 'warn', 'editor-para');
                                     e.changedEvent.frameEvent.halt();
                                     e.preventDefault();

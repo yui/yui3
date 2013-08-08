@@ -892,6 +892,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("console-filters")) > -1, "Module (console-filters) not found in sorted array");
         },
+     "Testing content-editable": function(data) {
+            var loader = new Y.Loader({
+                require: ["content-editable"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("content-editable")) > -1, "Module (content-editable) not found in sorted array");
+        },
      "Testing controller": function(data) {
             var loader = new Y.Loader({
                 require: ["controller"],
