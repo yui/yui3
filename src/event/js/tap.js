@@ -73,7 +73,7 @@ Y.Event.define(EVT_TAP, {
         //if we return for the delegate use case, then the `filter` argument
         //returns undefined, and we have to get the filter from sub._extra[0] (ugly)
         if (!isDelegate) {
-            return args.splice(3, 1)[0] || {};
+            return args.slice(3, 1)[0] || {};
         }
     },
     /**
