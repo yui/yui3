@@ -368,37 +368,22 @@ Y.Loader = function(o) {
 
     self.groups = Y.merge(Y.Env.meta.groups);
 
-    //////////////////////
-    // BEGIN WF2 CHANGE //
-    //////////////////////
     /**
      * Provides the information used to skin the skinnable components.
      * The following skin definition would result in 'skin1' and 'skin2'
-     * being loaded for calendar (if calendar was requested), 'round' for
-     * components that support it (e.g. slider-base), 'night' for skinnable
-     * components that do not support 'round', but do support 'night', and
-     * 'sam' for other skinnable components that support 'sam' and/or components
-     * that do not explicity declare a list of skins that they support. No skin
-     * will be loaded for components that declare a list of supported skins if that
-     * list does not include one of 'round', 'night', or 'sam':
+     * being loaded for calendar (if calendar was requested), and
+     * 'sam' for all other skinnable components:
      *
      *      skin: {
-     *
-     *          // This is combined with the loader base property to get
-     *          // the default root directory for a skin. ex:
-     *          // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
-     *          base: 'assets/skins/',
-     *
      *          // The default skin, which is automatically applied if not
      *          // overriden by a component-specific skin definition.
      *          // Change this in to apply a different skin globally
      *          defaultSkin: 'sam',
      *
-     *          // An order of preference for loading skins. If a module supplies
-     *          // skins metadata, the Loader will apply the first skin from
-     *          // skin.order that the module supports. If not already specified,
-     *          // the `defaultSkin` is automatically appended to the end of the list.
-     *          order: 'round,night'
+     *          // This is combined with the loader base property to get
+     *          // the default root directory for a skin. ex:
+     *          // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
+     *          base: 'assets/skins/',
      *
      *          // Any component-specific overrides can be specified here,
      *          // making it possible to load different skins for different
@@ -411,9 +396,6 @@ Y.Loader = function(o) {
      * @property skin
      * @type {Object}
      */
-    //////////////////////
-    //  END WF2 CHANGE  //
-    //////////////////////
     self.skin = Y.merge(Y.Env.meta.skin);
 
     /*
@@ -602,20 +584,10 @@ Y.Loader.prototype = {
                     }
                 }
                 delete mod.langCache;
-                ///////////////////////////////////////////////////////////////////
-                //                          BEGIN WF2 CHANGE                     //
-                // Justification: Use _removeSkins and _setSkins instead of just //
-                // adding the defaultSkin.                                       //
-                ///////////////////////////////////////////////////////////////////
-                // delete mod.skinCache;
+                delete mod.skinCache;
                 if (mod.skinnable) {
-                    // self._addSkin(self.skin.defaultSkin, mod.name);
-                    self._removeSkins(mod);
-                    self._setSkins(mod);
+                    self._addSkin(self.skin.defaultSkin, mod.name);
                 }
-                ///////////////////////////////////////////////////////////////////
-                //                          END WF2 CHANGE                       //
-                ///////////////////////////////////////////////////////////////////
             }
         }
     },
@@ -818,11 +790,11 @@ Y.Loader.prototype = {
                         }
                     } else if (i === 'gallery') {
                         if (this.groups.gallery.update) {
-                        	this.groups.gallery.update(val, o);
+                            this.groups.gallery.update(val, o);
                         }
                     } else if (i === 'yui2' || i === '2in3') {
                         if (this.groups.yui2.update) {
-                        	this.groups.yui2.update(o['2in3'], o.yui2, o);
+                            this.groups.yui2.update(o['2in3'], o.yui2, o);
                         }
                     } else {
                         self[i] = val;
@@ -881,146 +853,6 @@ Y.Loader.prototype = {
 
         return s;
     },
-
-    /////////////////////////////////////////////////////////////////
-    //      BEGIN WF2 CHANGE (for Y.Loader.prototype)              //
-    // Justification: Add _getSkins, _removeSkins and _setSkins to //
-    // support skinning enhancements.                              //
-    /////////////////////////////////////////////////////////////////
-    /**
-     * Returns an array of the skins that the supplied module requires based
-     * on `this.skin.overrides`, `this.skin.order` and `this.skin.defaultSkin`.
-     *
-     * @method _getSkins
-     * @param {Object} mod The module definition from moduleInfo.
-     * @private
-     * @return {String[]} The array of skins this module requires.
-     */
-    _getSkins: function(mod) {
-        var i,
-            name = mod.name,
-            skindef,
-            skinname,
-            skin_order,
-            skinpar,
-            skins = [];
-
-        skindef = this.skin.overrides;
-        for (i in YUI.Env.aliases) {
-            if (YUI.Env.aliases.hasOwnProperty(i)) {
-                if (Y.Array.indexOf(YUI.Env.aliases[i], name) > -1) {
-                    skinpar = i;
-                }
-            }
-        }
-
-        if (skindef && (skindef[name] || (skinpar && skindef[skinpar]))) {
-            skinname = name;
-            if (skindef[skinpar]) {
-                skinname = skinpar;
-            }
-            for (i = 0; i < skindef[skinname].length; i++) {
-                skins.push(skindef[skinname][i]);
-            }
-        } else {
-
-            if (!mod.skins && mod.skinnable) {
-                // skinnable:true means use defaultSkin when skins are not explicitly defined.
-                // however, do not add default skin to the module's skins metadata.
-                // this prevents loading an incorrect skin in the case that a module is declared
-                // skinnable, but doesn't provide skins metadata and is used in 2 different loader
-                // instances each using a different defaultSkin
-                skins.push(this.skin.defaultSkin);
-                return skins;
-            }
-
-            if (typeof mod.skins === 'string') {
-                // convert csv to array
-                mod.skins = mod.skins.replace(/\s/g, '').split(',');
-            }
-
-            if (!mod.skins_map) {
-                // skins as keys for fast search
-                mod.skins_map = yArray.hash(mod.skins);
-            }
-
-            // expand skin.order @TODO, move this to _config
-            this.skin.order_expanded = (this.skin.order || '').replace(/\s/g, '').split(',');
-
-            if (yArray.indexOf(this.skin.order_expanded, this.skin.defaultSkin) < 0) {
-                // add the defaultSkin if not already there
-                this.skin.order_expanded.push(this.skin.defaultSkin);
-            }
-
-            skin_order = this.skin.order_expanded;
-
-            // look for the first skin in skin_order that is also listed in
-            // the module's skins
-            for (i = 0; i < skin_order.length; i++) {
-                if (skin_order[i] in mod.skins_map) {
-                    skins.push(skin_order[i]);
-                    break;
-                }
-            }
-
-        }
-
-        return skins;
-    },
-
-    /**
-     * Removes all skin modules from the supplied module's expanded
-     * array.
-     *
-     * @method _removeSkins
-     * @param {Object} mod The module definition from moduleInfo.
-     * @private
-     */
-    _removeSkins: function(mod) {
-        var i,
-            l,
-            reqMod;
-
-        if (mod) {
-            l = mod.expanded ? mod.expanded.length : 0;
-            for (i = 0; i < l; i++) {
-                reqMod = this.getModule(mod.expanded[i]);
-                if (reqMod && reqMod.skin) {
-                    // required module is a skin module; remove it
-                    mod.expanded.splice(i, 1);
-                }
-            }
-        }
-    },
-
-    /**
-     * Adds (`_addSkin`) each required skin (from `_getSkins`) to
-     * the supplied module.
-     *
-     * @method _setSkins
-     * @param {Object} mod The module definition from moduleInfo.
-     * @return {Array} Array of required skin modules that have not
-     * already been loaded.
-     */
-    _setSkins: function(mod) {
-        var skinmods = [],
-            skins = this._getSkins(mod),
-            l = skins ? skins.length : 0,
-            i,
-            skinmod;
-
-        for (i = 0; i < l; i++) {
-            skinmod = this._addSkin(skins[i], mod.name);
-            if (!this.isCSSLoaded(skinmod, this._boot)) {
-                skinmods[skinmods.length] = skinmod;
-            }
-        }
-
-        return skinmods;
-    },
-    /////////////////////////////////////////////////////////////////
-    //        END WF2 CHANGE (for Y.Loader.prototype)              //
-    /////////////////////////////////////////////////////////////////
 
     /**
      * Adds the skin def to the module info
@@ -1182,23 +1014,8 @@ Y.Loader.prototype = {
 
         var subs, i, l, t, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            //////////////////////
-            // BEGIN WF2 CHANGE //
-            //////////////////////
-            // overrides,
-            //////////////////////
-            //   END WF2 CHANGE //
-            //////////////////////
-            when, g, p,
-            conditions = this.conditions, trigger,
-            //////////////////////
-            // BEGIN WF2 CHANGE //
-            //////////////////////
-            pmod,
-            skinnames;
-            //////////////////////
-            //  END WF2 CHANGE  //
-            //////////////////////
+            overrides, skinname, when, g, p,
+            conditions = this.conditions, trigger;
 
         //Only merge this data if the temp flag is set
         //from an earlier pass from a pattern or else
@@ -1218,14 +1035,6 @@ Y.Loader.prototype = {
         if (!o || !o.name) {
             return null;
         }
-
-        //////////////////////
-        // BEGIN WF2 CHANGE //
-        //////////////////////
-        o.skinnable = o.skinnable || !!o.skins;
-        //////////////////////
-        //  END WF2 CHANGE  //
-        //////////////////////
 
         if (!o.type) {
             //Always assume it's javascript unless the CSS pattern is matched.
@@ -1280,18 +1089,8 @@ Y.Loader.prototype = {
         }
 
         if (o.skinnable && o.ext && o.temp) {
-            //////////////////////
-            // BEGIN WF2 CHANGE //
-            //////////////////////
-            this._removeSkins(o);
-            // skinname = this._addSkin(this.skin.defaultSkin, name);
-            skinnames = this._setSkins(o);
-            yArray.each(skinnames, function(skinname) {
-                o.requires.unshift(skinname);
-            });
-            //////////////////////
-            //  END WF2 CHANGE  //
-            //////////////////////
+            skinname = this._addSkin(this.skin.defaultSkin, name);
+            o.requires.unshift(skinname);
         }
 
         if (o.requires.length) {
@@ -1330,28 +1129,20 @@ Y.Loader.prototype = {
                     smod = this.addModule(s, i);
                     sup.push(i);
 
-                    //////////////////////
-                    // BEGIN WF2 CHANGE //
-                    //////////////////////
                     if (smod.skinnable) {
-                        // overrides = this.skin.overrides;
-                        // if (overrides && overrides[i]) {
-                        //     for (j = 0; j < overrides[i].length; j++) {
-                        //         skinname = this._addSkin(overrides[i][j],
-                        //                  i, name);
-                        //         sup.push(skinname);
-                        //     }
-                        // }
-                        // skinname = this._addSkin(this.skin.defaultSkin,
-                        //                 i, name);
-                        // sup.push(skinname);
                         o.skinnable = true;
-                        this._removeSkins(o);
-                        sup = sup.concat(this._setSkins(o));
+                        overrides = this.skin.overrides;
+                        if (overrides && overrides[i]) {
+                            for (j = 0; j < overrides[i].length; j++) {
+                                skinname = this._addSkin(overrides[i][j],
+                                         i, name);
+                                sup.push(skinname);
+                            }
+                        }
+                        skinname = this._addSkin(this.skin.defaultSkin,
+                                        i, name);
+                        sup.push(skinname);
                     }
-                    //////////////////////
-                    //  END WF2 CHANGE  //
-                    //////////////////////
 
                     // looks like we are expected to work out the metadata
                     // for the parent module language packs from what is
@@ -1425,18 +1216,10 @@ Y.Loader.prototype = {
                     plug.path = plug.path || _path(name, i, o.type);
                     plug.requires = plug.requires || [];
                     plug.group = o.group;
-                    //////////////////////
-                    // BEGIN WF2 CHANGE //
-                    //////////////////////
-                    pmod = this.addModule(plug, i);
+                    this.addModule(plug, i);
                     if (o.skinnable) {
-                        // this._addSkin(this.skin.defaultSkin, i, name);
-                        this._removeSkins(pmod);
-                        this._setSkins(pmod);
+                        this._addSkin(this.skin.defaultSkin, i, name);
                     }
-                    //////////////////////
-                    //  END WF2 CHANGE  //
-                    //////////////////////
 
                 }
             }
@@ -1608,33 +1391,18 @@ Y.Loader.prototype = {
             return mod.expanded || NO_REQUIREMENTS;
         }
 
-        //TODO add module cache here out of scope..
+        //TODO add modue cache here out of scope..
 
         var i, m, j, add, packName, lang, testresults = this.testresults,
             name = mod.name, cond,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
             d, go, def,
             r, old_mod,
-            o,
-            //////////////////////
-            // BEGIN WF2 CHANGE //
-            //////////////////////
-            // skinmod, skindef, skinpar, skinname,
-            //////////////////////
-            //   END WF2 CHANGE //
-            //////////////////////
+            o, skinmod, skindef, skinpar, skinname,
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
             ftests = Y.Features && Y.Features.tests.load,
-            hash,
-
-            //////////////////////
-            // BEGIN WF2 CHANGE //
-            //////////////////////
-            only_redo_skins = false;
-            //////////////////////
-            //  END WF2 CHANGE  //
-            //////////////////////
+            hash, reparse;
 
         // console.log(name);
 
@@ -1649,23 +1417,16 @@ Y.Loader.prototype = {
 
         // console.log('cache: ' + mod.langCache + ' == ' + this.lang);
 
-        //////////////////////
-        // BEGIN WF2 CHANGE //
-        //////////////////////
-        // reparse = !((!this.lang || mod.langCache === this.lang) && (mod.skinCache === this.skin.defaultSkin));
-        if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
-            if (mod.skinnable) {
-                // return mod.expanded;
-                only_redo_skins = true;
-                this._removeSkins(mod);
-                d = mod.expanded.slice(0);
-            }
+        //If a skin or a lang is different, reparse..
+        reparse = !((!this.lang || mod.langCache === this.lang) && (mod.skinCache === this.skin.defaultSkin));
+
+        if (mod.expanded && !reparse) {
+            //Y.log('Already expanded ' + name + ', ' + mod.expanded);
+            return mod.expanded;
         }
 
-        d = d || [];
-        //////////////////////
-        //  END WF2 CHANGE  //
-        //////////////////////
+
+        d = [];
         hash = {};
         r = this.filterRequires(mod.requires);
         if (mod.lang) {
@@ -1681,13 +1442,7 @@ Y.Loader.prototype = {
 
         mod._parsed = true;
         mod.langCache = this.lang;
-        //////////////////////
-        // BEGIN WF2 CHANGE //
-        //////////////////////
-        // mod.skinCache = this.skin.defaultSkin;
-        //////////////////////
-        //  END WF2 CHANGE  //
-        //////////////////////
+        mod.skinCache = this.skin.defaultSkin;
 
         for (i = 0; i < r.length; i++) {
             //Y.log(name + ' requiring ' + r[i], 'info', 'loader');
@@ -1695,15 +1450,7 @@ Y.Loader.prototype = {
                 d.push(r[i]);
                 hash[r[i]] = true;
                 m = this.getModule(r[i]);
-                ////////////////////////////////////////////////////////////////
-                //                      BEGIN WF2 CHANGE                      //
-                // Justification: Avoid unnecessarily reparsing non-skinnable //
-                // modules.                                                   //
-                ////////////////////////////////////////////////////////////////
-                if (m && (m.skinnable || !only_redo_skins)) {
-                ////////////////////////////////////////////////////////////////
-                //                       END WF2 CHANGE                       //
-                ////////////////////////////////////////////////////////////////
+                if (m) {
                     add = this.getRequires(m);
                     intl = intl || (m.expanded_map &&
                         (INTL in m.expanded_map));
@@ -1730,15 +1477,7 @@ Y.Loader.prototype = {
                     hash[r[i]] = true;
                     m = this.getModule(r[i]);
 
-                    ////////////////////////////////////////////////////////////////
-                    //                      BEGIN WF2 CHANGE                      //
-                    // Justification: Avoid unnecessarily reparsing non-skinnable //
-                    // modules.                                                   //
-                    ////////////////////////////////////////////////////////////////
-                    if (m && (m.skinnable || !only_redo_skins)) {
-                    ////////////////////////////////////////////////////////////////
-                    //                       END WF2 CHANGE                       //
-                    ////////////////////////////////////////////////////////////////
+                    if (m) {
                         add = this.getRequires(m);
                         intl = intl || (m.expanded_map &&
                             (INTL in m.expanded_map));
@@ -1756,15 +1495,7 @@ Y.Loader.prototype = {
                     d.push(o[i]);
                     hash[o[i]] = true;
                     m = info[o[i]];
-                    ////////////////////////////////////////////////////////////////
-                    //                      BEGIN WF2 CHANGE                      //
-                    // Justification: Avoid unnecessarily reparsing non-skinnable //
-                    // modules.                                                   //
-                    ////////////////////////////////////////////////////////////////
-                    if (m && (m.skinnable || !only_redo_skins)) {
-                    ////////////////////////////////////////////////////////////////
-                    //                       END WF2 CHANGE                       //
-                    ////////////////////////////////////////////////////////////////
+                    if (m) {
                         add = this.getRequires(m);
                         intl = intl || (m.expanded_map &&
                             (INTL in m.expanded_map));
@@ -1806,15 +1537,7 @@ Y.Loader.prototype = {
                                 hash[i] = true;
                                 d.push(i);
                                 m = this.getModule(i);
-                                ////////////////////////////////////////////////////////////////
-                                //                      BEGIN WF2 CHANGE                      //
-                                // Justification: Avoid unnecessarily reparsing non-skinnable //
-                                // modules.                                                   //
-                                ////////////////////////////////////////////////////////////////
-                                if (m && (m.skinnable || !only_redo_skins)) {
-                                ////////////////////////////////////////////////////////////////
-                                //                       END WF2 CHANGE                       //
-                                ////////////////////////////////////////////////////////////////
+                                if (m) {
                                     add = this.getRequires(m);
                                     for (j = 0; j < add.length; j++) {
                                         d.push(add[j]);
@@ -1830,38 +1553,31 @@ Y.Loader.prototype = {
 
         // Create skin modules
         if (mod.skinnable) {
-            //////////////////////
-            // BEGIN WF2 CHANGE //
-            //////////////////////
-            // skindef = this.skin.overrides;
-            // for (i in YUI.Env.aliases) {
-            //     if (YUI.Env.aliases.hasOwnProperty(i)) {
-            //         if (Y.Array.indexOf(YUI.Env.aliases[i], name) > -1) {
-            //             skinpar = i;
-            //         }
-            //     }
-            // }
-            // if (skindef && (skindef[name] || (skinpar && skindef[skinpar]))) {
-            //     skinname = name;
-            //     if (skindef[skinpar]) {
-            //         skinname = skinpar;
-            //     }
-            //     for (i = 0; i < skindef[skinname].length; i++) {
-            //         skinmod = this._addSkin(skindef[skinname][i], name);
-            //         if (!this.isCSSLoaded(skinmod, this._boot)) {
-            //             d.push(skinmod);
-            //         }
-            //     }
-            // } else {
-            //     skinmod = this._addSkin(this.skin.defaultSkin, name);
-            //     if (!this.isCSSLoaded(skinmod, this._boot)) {
-            //         d.push(skinmod);
-            //     }
-            // }
-            d = d.concat(this._setSkins(mod));
-            //////////////////////
-            //  END WF2 CHANGE  //
-            //////////////////////
+            skindef = this.skin.overrides;
+            for (i in YUI.Env.aliases) {
+                if (YUI.Env.aliases.hasOwnProperty(i)) {
+                    if (Y.Array.indexOf(YUI.Env.aliases[i], name) > -1) {
+                        skinpar = i;
+                    }
+                }
+            }
+            if (skindef && (skindef[name] || (skinpar && skindef[skinpar]))) {
+                skinname = name;
+                if (skindef[skinpar]) {
+                    skinname = skinpar;
+                }
+                for (i = 0; i < skindef[skinname].length; i++) {
+                    skinmod = this._addSkin(skindef[skinname][i], name);
+                    if (!this.isCSSLoaded(skinmod, this._boot)) {
+                        d.push(skinmod);
+                    }
+                }
+            } else {
+                skinmod = this._addSkin(this.skin.defaultSkin, name);
+                if (!this.isCSSLoaded(skinmod, this._boot)) {
+                    d.push(skinmod);
+                }
+            }
         }
 
         mod._parsed = false;
@@ -2907,49 +2623,51 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
 
         for (j in resCombos) {
-            base = j;
-            comboSep = resCombos[base].comboSep || self.comboSep;
-            maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
-            Y.log('Using maxURLLength of ' + maxURLLength, 'info', 'loader');
-            for (type in resCombos[base]) {
-                if (type === JS || type === CSS) {
-                    urls = resCombos[base][type];
-                    mods = resCombos[base][type + 'Mods'];
-                    len = urls.length;
-                    tmpBase = base + urls.join(comboSep);
-                    baseLen = tmpBase.length;
-                    if (maxURLLength <= base.length) {
-                        Y.log('maxURLLength (' + maxURLLength + ') is lower than the comboBase length (' + base.length + '), resetting to default (' + MAX_URL_LENGTH + ')', 'error', 'loader');
-                        maxURLLength = MAX_URL_LENGTH;
-                    }
+            if (resCombos.hasOwnProperty(j)) {
+                base = j;
+                comboSep = resCombos[base].comboSep || self.comboSep;
+                maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
+                Y.log('Using maxURLLength of ' + maxURLLength, 'info', 'loader');
+                for (type in resCombos[base]) {
+                    if (type === JS || type === CSS) {
+                        urls = resCombos[base][type];
+                        mods = resCombos[base][type + 'Mods'];
+                        len = urls.length;
+                        tmpBase = base + urls.join(comboSep);
+                        baseLen = tmpBase.length;
+                        if (maxURLLength <= base.length) {
+                            Y.log('maxURLLength (' + maxURLLength + ') is lower than the comboBase length (' + base.length + '), resetting to default (' + MAX_URL_LENGTH + ')', 'error', 'loader');
+                            maxURLLength = MAX_URL_LENGTH;
+                        }
 
-                    if (len) {
-                        if (baseLen > maxURLLength) {
-                            Y.log('Exceeded maxURLLength (' + maxURLLength + ') for ' + type + ', splitting', 'info', 'loader');
-                            u = [];
-                            for (s = 0; s < len; s++) {
-                                u.push(urls[s]);
-                                tmpBase = base + u.join(comboSep);
-
-                                if (tmpBase.length > maxURLLength) {
-                                    m = u.pop();
+                        if (len) {
+                            if (baseLen > maxURLLength) {
+                                Y.log('Exceeded maxURLLength (' + maxURLLength + ') for ' + type + ', splitting', 'info', 'loader');
+                                u = [];
+                                for (s = 0; s < len; s++) {
+                                    u.push(urls[s]);
                                     tmpBase = base + u.join(comboSep);
-                                    resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
-                                    u = [];
-                                    if (m) {
-                                        u.push(m);
+
+                                    if (tmpBase.length > maxURLLength) {
+                                        m = u.pop();
+                                        tmpBase = base + u.join(comboSep);
+                                        resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                        u = [];
+                                        if (m) {
+                                            u.push(m);
+                                        }
                                     }
                                 }
-                            }
-                            if (u.length) {
-                                tmpBase = base + u.join(comboSep);
+                                if (u.length) {
+                                    tmpBase = base + u.join(comboSep);
+                                    resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                }
+                            } else {
                                 resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
                             }
-                        } else {
-                            resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
                         }
+                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
                     }
-                    resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
                 }
             }
         }
