@@ -28,7 +28,7 @@ Y.applyConfig({
   },
   root: '',
   skin: {
-    defaultSkin: 'sketch',
+    defaultSkin: 'nx',
     overrides: {        /*@DBG*/
       console: ['sam']  /*@DBG*/
     }                   /*@DBG*/
