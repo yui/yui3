@@ -4,7 +4,8 @@ DataTable Change History
 @VERSION@
 ------
 
-* No changes.
+* Added 'changeUpdate' after the DataTable has been updated when triggered
+  from a `dataChange` event. [Issue #1052]
 
 3.11.0
 ------
