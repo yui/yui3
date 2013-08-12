@@ -12,6 +12,12 @@ App Framework Change History
 
 ### Router
 
+* Added support for registering route param handler functions or regexps. This
+  allows routes to be defined as string paths while adding validation/formatting
+  to route params, e.g., `"/posts:id"`, and register an `id` param handler to
+  parse string values into a number and make it available at `req.params.id`.
+  ([#1063][])
+
 * Fixed issue with trying to URL-decode matching path segments that are
   `undefined`. Routes defined as Regexps (instead of strings) can contain an
   arbitrary number of captures; when executing the regex during dispatching, its
@@ -20,6 +26,7 @@ App Framework Change History
 
 
 [#1004]: https://github.com/yui/yui3/issues/1004
+[#1063]: https://github.com/yui/yui3/issues/1063
 
 
 3.11.0
