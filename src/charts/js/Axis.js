@@ -393,10 +393,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 labelStyles = styles.label,
                 majorTickStyles = styles.majorTicks,
                 drawTicks = majorTickStyles.display !== "none",
-                tickPoint,
-                majorUnit = styles.majorUnit,
                 len,
-                majorUnitDistance,
                 i = 0,
                 layout = this._layout,
                 layoutLength,
@@ -416,7 +413,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 labelValues,
                 point,
                 points,
+                staticCoord,
+                dynamicCoord,
                 edgeOffset,
+                explicitLabels = this._labelValuesExplicitlySet ? this.get("labelValues") : null,
                 direction = (position === "left" || position === "right") ? "vertical" : "horizontal";
             this._labelWidths = [];
             this._labelHeights = [];
@@ -437,29 +437,37 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             this.set("edgeOffset", edgeOffset);
             lineStart = layout.getLineStart.apply(this);
 
-            //if labelValues are explicitly set, get the points based on the calculated positions of the labelValues
-            //if not, get the points based on the axis length, number of ticks and majorUnit values
-            if(this._labelValuesExplicitlySet)
+            if(direction === "vertical")
             {
-                labelData = this._getDataFromLabelValues(lineStart, this.get("labelValues"), edgeOffset, layoutLength, direction);
-                points = labelData.points;
-                labelValues = labelData.values;
-                len = points.length;
+                staticCoord = "x";
+                dynamicCoord = "y";
             }
             else
             {
-                majorUnitDistance = this.getMajorUnitDistance(len, layoutLength, majorUnit);
-                points = this._getPoints(lineStart, len, edgeOffset, majorUnitDistance, direction);
-                labelValues = [];
-                for(i = 0; i < len; i = i + 1)
-                {
-                    labelValues.push(this._getLabelByIndex(i, len, direction));
-                }
-
-                //Don't set labelValues fix for #2533172 is available
-                //this.set("labelValues", labelValues, {src: internal});
+                staticCoord = "y";
+                dynamicCoord = "x";
             }
             
+            labelData = this._getLabelData(
+                lineStart[staticCoord],
+                staticCoord,
+                dynamicCoord,
+                this.get("minimum"),
+                this.get("maximum"),
+                edgeOffset,
+                layoutLength - edgeOffset - edgeOffset,
+                len,
+                explicitLabels
+            );
+
+            points = labelData.points;
+            labelValues = labelData.values;
+            len = points.length;
+            if(!this._labelValuesExplicitlySet)
+            {
+                this.set("labelValues", labelValues, {src: "internal"});
+            }
+
             //Don't create the last label or tick.
             if(this.get("hideFirstMajorUnit"))
             {
@@ -482,8 +490,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
             }
             else
             {
-                tickPoint = this.getFirstPoint(lineStart);
-                this.drawLine(path, lineStart, this.getLineEnd(tickPoint));
+                this.drawLine(path, lineStart, this.getLineEnd(lineStart));
                 if(drawTicks)
                 {
                     tickPath = this.get("tickPath");
@@ -855,55 +862,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     },
 
     /**
-     * Calculates points based off the majorUnit count or distance of the Axis.
-     *
-     * @method _getPoints
-     * @param {Object} startPoint An object literal containing the x and y coordinates of the first
-     * point on the axis.
-     * @param {Number} len The number of points on an axis.
-     * @param {Number} edgeOffset The distance from the start of the axis and the point.
-     * @param {Number} majorUnitDistance The distance between points on an axis.
-     * @param {String} direction Indicates whether the axis is horizontal or vertical.
-     * @return Array
-     * @private
-     */
-    _getPoints: function(startPoint, len, edgeOffset, majorUnitDistance, direction)
-    {
-        var points = [],
-            i,
-            style = this.get("styles"),
-            staticCoord,
-            dynamicCoord,
-            constantVal,
-            newPoint,
-            padding,
-            coord;
-        if(direction === "vertical")
-        {
-            staticCoord = "x";
-            dynamicCoord = "y";
-            padding = style.padding.top;
-        }
-        else
-        {
-            staticCoord = "y";
-            dynamicCoord = "x";
-            padding = style.padding.left;
-        }
-        constantVal = startPoint[staticCoord];
-        coord = edgeOffset + padding;
-        for(i = 0; i < len; i = i + 1)
-        {
-            newPoint = {};
-            newPoint[staticCoord] = constantVal;
-            newPoint[dynamicCoord] = coord;
-            points.push(newPoint);
-            coord = coord + majorUnitDistance;
-        }
-        return points;
-    },
-
-    /**
      * Rotates and positions a text field.
      *
      * @method _rotate
@@ -1141,13 +1099,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
     {
         var units,
             majorUnit = this.get("styles").majorUnit,
-            len = this.getLength();
+            len;
         if(majorUnit.determinant === "count")
         {
             units = majorUnit.count;
         }
         else if(majorUnit.determinant === "distance")
         {
+            len = this.getLength();
             units = (len/majorUnit.distance) + 1;
         }
         return units;
