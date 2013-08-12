@@ -553,6 +553,8 @@ YUI.add('editor-tests', function(Y) {
                 test_selection_methods: (Y.UA.ie ? true : false),
             },
             ignore: {
+                'test: EditorSelection': Y.UA.phantomjs, 
+                test_selection_methods: Y.UA.phantomjs,
                 test_br_plugin: Y.UA.phantomjs
             },
             error: { //These tests should error
