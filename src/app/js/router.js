@@ -100,7 +100,8 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
 
     /**
-    TODO: Add docs!
+    Map which holds the registered param handlers in the form:
+    `name` -> RegExp | Function.
 
     @property _params
     @type Object
@@ -156,7 +157,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     _regexUrlOrigin: /^(?:[^\/#?:]+:\/\/|\/\/)[^\/]*/,
 
     /**
-    TODO: Add docs!
+    Collection of registered routes.
 
     @property _routes
     @type Array
@@ -321,16 +322,64 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
-    TODO: Add docs!
+    Adds a handler for a route param specified by _name_.
+
+    Param handlers can be registered via this method and are used to
+    validate/format values of named params in routes before dispatching to the
+    route's handler functions. Using param handlers allows routes to defined
+    using string paths which allows for `req.params` to use named params, but
+    still applying extra validation or formatting to the param values parsed
+    from the URL.
+
+    If a param handler regex or function returns a value of `false`, `null`,
+    `undefined`, or `NaN`, the current route will not match and be skipped. All
+    other return values will be used in place of the original param value parsed
+    from the URL.
+
+    @example
+        router.param('postId', function (value) {
+            return parseInt(value, 10);
+        });
+
+        router.param('username', /^\w+$/);
+
+        router.route('/posts/:postId', function (req) {
+            Y.log('Post: ' + req.params.id);
+        });
+
+        router.route('/users/:username', function (req) {
+            // `req.params.username` is an array because the result of calling
+            // `exec()` on the regex is assigned as the param's value.
+            Y.log('User: ' + req.params.username[0]);
+        });
+
+        router.route('*', function () {
+            Y.log('Catch-all no routes matched!');
+        });
+
+        // URLs which match routes:
+        router.save('/posts/1');     // => "Post: 1"
+        router.save('/users/ericf'); // => "User: ericf"
+
+        // URLs which do not match routes because params fail validation:
+        router.save('/posts/a');            // => "Catch-all no routes matched!"
+        router.save('/users/ericf,rgrove'); // => "Catch-all no routes matched!"
 
     @method param
     @param {String} name Name of the param used in route paths.
-    @param {RegExp} regex Regular expression to match param in route paths.
+    @param {Function|RegExp} handler Function to invoke or regular expression to
+        `exec()` during route dispatching whose return value is used as the new
+        param value. Values of `false`, `null`, `undefined`, or `NaN` will cause
+        the current route to not match and be skipped. When a function is
+        specified, it will be invoked in the context of this instance with the
+        following parameters:
+      @param {String} handler.value The current param value parsed from the URL.
+      @param {String} handler.name The name of the param.
     @chainable
     @since @SINCE@
     **/
-    param: function (name, regex) {
-        this._params[name] = regex;
+    param: function (name, handler) {
+        this._params[name] = handler;
         return this;
     },
 
@@ -795,10 +844,10 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
-    TODO: Add docs!
+    Getter for the `params` attribute.
 
     @method _getParams
-    @return {Object} Mapping of params, `name` -> `regex`.
+    @return {Object} Mapping of param handlers: `name` -> RegExp | Function.
     @protected
     @since @SINCE@
     **/
@@ -1277,11 +1326,11 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
-    TODO: Add docs!
+    Setter for the `params` attribute.
 
     @method _setParams
-    @param {Object} params Map of params: `name` -> `regex`.
-    @return {Object} Map of params: `name` -> `regex`.
+    @param {Object} params Map in the form: `name` -> RegExp | Function.
+    @return {Object} The map of params: `name` -> RegExp | Function.
     @protected
     @since @SINCE@
     **/
@@ -1429,11 +1478,21 @@ Y.Router = Y.extend(Router, Y.Base, {
         },
 
         /**
-        TODO: Add docs!
+        Map of params handlers in the form: `name` -> RegExp | Function.
+
+        If a param handler regex or function returns a value of `false`, `null`,
+        `undefined`, or `NaN`, the current route will not match and be skipped.
+        All other return values will be used in place of the original param
+        value parsed from the URL.
+
+        This attribute is intended to be used to set params at init time, or to
+        completely reset all params after init. To add params after init without
+        resetting all existing params, use the `param()` method.
 
         @attribute params
         @type Object
         @default `{}`
+        @see param
         @since @SINCE@
         **/
         params: {
