@@ -13,13 +13,16 @@ App Framework Change History
 ### Router
 
 * Fixed issue with trying to URL-decode matching path segments that are
-  `undefined`. Routes defined as Regexps (instead of strings) can contain an
+  `undefined`. Routes defined as regexps (instead of strings) can contain an
   arbitrary number of captures; when executing the regex during dispatching, its
   array of matches can contain `undefined` values. Router will now check that a
-  match is a truthy value before trying to URL-decode it.
+  match is a truthy value before trying to URL-decode it, and coerce `undefined`
+  values to empty strings. ([#964][], [#1076][])
 
 
+[#964]: https://github.com/yui/yui3/issues/964
 [#1004]: https://github.com/yui/yui3/issues/1004
+[#1076]: https://github.com/yui/yui3/issues/1076
 
 
 3.11.0
