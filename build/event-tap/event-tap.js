@@ -237,18 +237,14 @@ Y.Event.define(EVT_TAP, {
 
         detachHelper(subscription, [ HANDLES.MOVE, HANDLES.END, HANDLES.CANCEL ], true, context);
 
-        // make sure mouse didn't move
-        if (Math.abs(endXY[0] - startXY[0]) === 0 && Math.abs(endXY[1] - startXY[1]) === 0) {
+        event.type = EVT_TAP;
+        event.pageX = endXY[0];
+        event.pageY = endXY[1];
+        event.clientX = clientXY[0];
+        event.clientY = clientXY[1];
+        event.currentTarget = context.node;
 
-            event.type = EVT_TAP;
-            event.pageX = endXY[0];
-            event.pageY = endXY[1];
-            event.clientX = clientXY[0];
-            event.clientY = clientXY[1];
-            event.currentTarget = context.node;
-
-            notifier.fire(event);
-        }
+        notifier.fire(event);
     }
 });
 
