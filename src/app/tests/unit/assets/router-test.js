@@ -1105,7 +1105,7 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame(2, calls);
     },
 
-    'route parameters should be processed via the regex `params`': function () {
+    'route parameters should be processed via the param handlers': function () {
         var calls      = 0,
             paramCalls = 0,
             router     = this.router = new Y.Router();
@@ -1203,6 +1203,30 @@ routerSuite.add(new Y.Test.Case({
 
         Assert.areSame(5, calls);
         Assert.areSame(4, paramCalls);
+    },
+
+    'Param handler functions should invoked with the router as the `this` context': function () {
+        var calls      = 0,
+            paramCalls = 0,
+            router     = this.router = new Y.Router();
+
+        router.set('params', {
+            username: function (value, name) {
+                paramCalls += 1;
+
+                Assert.areSame(router, this);
+                return value;
+            }
+        });
+
+        router.route('/users/:username', function (req) {
+            calls += 1;
+        });
+
+        router._dispatch('/users/ericf', {});
+
+        Assert.areSame(1, calls);
+        Assert.areSame(1, paramCalls);
     },
 
     'Param handler functions should receive `value` and `name` as arguments': function () {

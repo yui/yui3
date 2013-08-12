@@ -721,7 +721,7 @@ Y.Router = Y.extend(Router, Y.Base, {
 
                         if (paramHandler && value && typeof value === 'string') {
                             value = typeof paramHandler === 'function' ?
-                                    paramHandler(value, key) :
+                                    paramHandler.call(self, value, key) :
                                     paramHandler.exec(value);
 
                             if (value !== false && YLang.isValue(value)) {
