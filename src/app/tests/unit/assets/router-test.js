@@ -993,14 +993,14 @@ routerSuite.add(new Y.Test.Case({
             calls += 1;
 
             Assert.isArray(req.params);
-            ArrayAssert.itemsAreSame(['/fnord/quux', 'fnord', 'fnord', undefined, 'quux'], req.params);
+            ArrayAssert.itemsAreSame(['/fnord/quux', 'fnord', 'fnord', '', 'quux'], req.params);
         });
 
         router.route(/^\/((blorp)|(blerf))\/(quux)$/, function (req) {
             calls += 1;
 
             Assert.isArray(req.params);
-            ArrayAssert.itemsAreSame(['/blerf/quux', 'blerf', undefined, 'blerf', 'quux'], req.params);
+            ArrayAssert.itemsAreSame(['/blerf/quux', 'blerf', '', 'blerf', 'quux'], req.params);
         });
 
         router._dispatch('/foo/one/two', {});
