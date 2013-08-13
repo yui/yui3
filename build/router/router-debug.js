@@ -11,6 +11,8 @@ Provides URL-based routing using HTML5 `pushState()` or the location hash.
 var HistoryHash = Y.HistoryHash,
     QS          = Y.QueryString,
     YArray      = Y.Array,
+    YLang       = Y.Lang,
+    YObject     = Y.Object,
 
     win = Y.config.win,
 
@@ -100,6 +102,16 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
 
     /**
+    Map which holds the registered param handlers in the form:
+    `name` -> RegExp | Function.
+
+    @property _params
+    @type Object
+    @protected
+    @since @SINCE@
+    **/
+
+    /**
     Whether or not the `ready` event has fired yet.
 
     @property _ready
@@ -146,11 +158,20 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _regexUrlOrigin: /^(?:[^\/#?:]+:\/\/|\/\/)[^\/]*/,
 
+    /**
+    Collection of registered routes.
+
+    @property _routes
+    @type Array
+    @protected
+    **/
+
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         var self = this;
 
         self._html5  = self.get('html5');
+        self._params = {};
         self._routes = [];
         self._url    = self._getURL();
 
@@ -300,6 +321,68 @@ Y.Router = Y.extend(Router, Y.Base, {
         return YArray.filter(this._routes, function (route) {
             return path.search(route.regex) > -1;
         });
+    },
+
+    /**
+    Adds a handler for a route param specified by _name_.
+
+    Param handlers can be registered via this method and are used to
+    validate/format values of named params in routes before dispatching to the
+    route's handler functions. Using param handlers allows routes to defined
+    using string paths which allows for `req.params` to use named params, but
+    still applying extra validation or formatting to the param values parsed
+    from the URL.
+
+    If a param handler regex or function returns a value of `false`, `null`,
+    `undefined`, or `NaN`, the current route will not match and be skipped. All
+    other return values will be used in place of the original param value parsed
+    from the URL.
+
+    @example
+        router.param('postId', function (value) {
+            return parseInt(value, 10);
+        });
+
+        router.param('username', /^\w+$/);
+
+        router.route('/posts/:postId', function (req) {
+            Y.log('Post: ' + req.params.id);
+        });
+
+        router.route('/users/:username', function (req) {
+            // `req.params.username` is an array because the result of calling
+            // `exec()` on the regex is assigned as the param's value.
+            Y.log('User: ' + req.params.username[0]);
+        });
+
+        router.route('*', function () {
+            Y.log('Catch-all no routes matched!');
+        });
+
+        // URLs which match routes:
+        router.save('/posts/1');     // => "Post: 1"
+        router.save('/users/ericf'); // => "User: ericf"
+
+        // URLs which do not match routes because params fail validation:
+        router.save('/posts/a');            // => "Catch-all no routes matched!"
+        router.save('/users/ericf,rgrove'); // => "Catch-all no routes matched!"
+
+    @method param
+    @param {String} name Name of the param used in route paths.
+    @param {Function|RegExp} handler Function to invoke or regular expression to
+        `exec()` during route dispatching whose return value is used as the new
+        param value. Values of `false`, `null`, `undefined`, or `NaN` will cause
+        the current route to not match and be skipped. When a function is
+        specified, it will be invoked in the context of this instance with the
+        following parameters:
+      @param {String} handler.value The current param value parsed from the URL.
+      @param {String} handler.name The name of the param.
+    @chainable
+    @since @SINCE@
+    **/
+    param: function (name, handler) {
+        this._params[name] = handler;
+        return this;
     },
 
     /**
@@ -623,7 +706,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             decode    = self._decode,
             routes    = self.match(path),
             callbacks = [],
-            matches, req, res;
+            matches, paramsMatch, req, res;
 
         self._dispatching = self._dispatched = true;
 
@@ -680,10 +763,33 @@ Y.Router = Y.extend(Router, Y.Base, {
                     return (match && decode(match)) || '';
                 });
 
+                paramsMatch = true;
+
                 // Use named keys for parameter names if the route path contains
                 // named keys. Otherwise, use numerical match indices.
                 if (matches.length === route.keys.length + 1) {
-                    req.params = YArray.hash(route.keys, matches.slice(1));
+                    matches    = matches.slice(1);
+                    req.params = YArray.hash(route.keys, matches);
+
+                    paramsMatch = YArray.every(route.keys, function (key, i) {
+                        var paramHandler = self._params[key],
+                            value        = matches[i];
+
+                        if (paramHandler && value && typeof value === 'string') {
+                            value = typeof paramHandler === 'function' ?
+                                    paramHandler.call(self, value, key) :
+                                    paramHandler.exec(value);
+
+                            if (value !== false && YLang.isValue(value)) {
+                                req.params[key] = value;
+                                return true;
+                            }
+
+                            return false;
+                        }
+
+                        return true;
+                    });
                 } else {
                     req.params = matches.concat();
                 }
@@ -692,8 +798,13 @@ Y.Router = Y.extend(Router, Y.Base, {
                 // request.
                 req.pendingRoutes = routes.length;
 
-                // Execute this route's `callbacks`.
-                req.next();
+                // Execute this route's `callbacks` or skip this route because
+                // some of the param regexps don't match.
+                if (paramsMatch) {
+                    req.next();
+                } else {
+                    req.next('route');
+                }
             }
         };
 
@@ -737,6 +848,18 @@ Y.Router = Y.extend(Router, Y.Base, {
     _getOrigin: function () {
         var location = Y.getLocation();
         return location.origin || (location.protocol + '//' + location.host);
+    },
+
+    /**
+    Getter for the `params` attribute.
+
+    @method _getParams
+    @return {Object} Mapping of param handlers: `name` -> RegExp | Function.
+    @protected
+    @since @SINCE@
+    **/
+    _getParams: function () {
+        return Y.merge(this._params);
     },
 
     /**
@@ -1210,6 +1333,25 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
+    Setter for the `params` attribute.
+
+    @method _setParams
+    @param {Object} params Map in the form: `name` -> RegExp | Function.
+    @return {Object} The map of params: `name` -> RegExp | Function.
+    @protected
+    @since @SINCE@
+    **/
+    _setParams: function (params) {
+        this._params = {};
+
+        YObject.each(params, function (regex, name) {
+            this.param(name, regex);
+        }, this);
+
+        return Y.merge(this._params);
+    },
+
+    /**
     Setter for the `routes` attribute.
 
     @method _setRoutes
@@ -1340,6 +1482,30 @@ Y.Router = Y.extend(Router, Y.Base, {
             // See http://code.google.com/p/android/issues/detail?id=17471
             valueFn: function () { return Y.Router.html5; },
             writeOnce: 'initOnly'
+        },
+
+        /**
+        Map of params handlers in the form: `name` -> RegExp | Function.
+
+        If a param handler regex or function returns a value of `false`, `null`,
+        `undefined`, or `NaN`, the current route will not match and be skipped.
+        All other return values will be used in place of the original param
+        value parsed from the URL.
+
+        This attribute is intended to be used to set params at init time, or to
+        completely reset all params after init. To add params after init without
+        resetting all existing params, use the `param()` method.
+
+        @attribute params
+        @type Object
+        @default `{}`
+        @see param
+        @since @SINCE@
+        **/
+        params: {
+            value : {},
+            getter: '_getParams',
+            setter: '_setParams'
         },
 
         /**
