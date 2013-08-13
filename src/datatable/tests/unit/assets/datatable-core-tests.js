@@ -676,6 +676,13 @@ suite.add(new Y.Test.Case({
 
 }));
 
+/*
+This test is used to verify an infinite recursion issue when doing deep clones
+does not surface. This test does catch the exception for the stack overflow
+but does not prevent it from happening thus making it unsafe to test in CI.
+This test is left in place to test on local machines at your leisure, but
+should remain commented out so it does not run in CI. [apipkin]
+
 suite.add(new Y.Test.Case({
     name: "Test deep cloning for recursion.",
 
@@ -699,6 +706,7 @@ suite.add(new Y.Test.Case({
 
     }
 }));
+*/
 
 Y.Test.Runner.add(suite);
 
