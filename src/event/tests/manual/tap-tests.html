@@ -1,7 +1,9 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Tap Tests</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.2.0/pure-min.css">
     <style>
@@ -52,6 +54,10 @@
         <button class="tapper pure-button" id="smallButton">Small button with no sensitivity</button>
     </p>
 
+    <p>
+        <a class="tapper pure-button" id="complex" href="#foobarbaz">Complex Click Button with once('tap') and once('click')</a>
+    </p>
+
     <ul id="ul"></ul>
 
 
@@ -81,6 +87,7 @@
             });
 
             Y.one('#bigButton').on('tap', function (e) {
+                e.preventDefault();
                 ul.appendChild('<li> ' + e._event.type + ': with sensitivity: 100</li>');
             }, {
                 sensitivity: 100
@@ -92,6 +99,21 @@
                 sensitivity: 0
             });
 
+
+            Y.one("#complex").once('click', function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                ul.appendChild('<li> ' + e._event.type + ': once() invoked</li>');
+            });
+
+            Y.one("#complex").once('tap', function (e) {
+                e.preventDefault();
+                ul.appendChild('<li> ' + e._event.type + ': once() invoked</li>');
+            });
+
+            Y.one("#complex").on('click', function (e) {
+                ul.appendChild('<li> ' + e._event.type + ': on() invoked</li>');
+            });
 
         });
 

@@ -33,9 +33,8 @@ var doc = Y.config.doc,
         CANCEL: 'Y_TAP_ON_CANCEL_HANDLE'
     };
 
-function detachHelper(subscription, handles, subset) {
-
-    handles = subset ? handles : [ handles.START, handles.END, handles.CANCEL ];
+function detachHandles(subscription, handles) {
+    handles || (handles = Y.Object.values(HANDLES));
 
     Y.Array.each(handles, function (item) {
         var handle = subscription[item];
@@ -62,9 +61,15 @@ This event can also be listened for using node.delegate().
 Y.Event.define(EVT_TAP, {
     publishConfig: {
         preventedFn: function (e) {
-            e.target.once('click', function (click) {
+            var sub = e.target.once('click', function (click) {
                 click.preventDefault();
             });
+
+            // Make sure to detach the subscription during the next event loop
+            // so this doesn't `preventDefault()` on the wrong click evnet.
+            setTimeout(function () {
+                sub.detach();
+            }, 0);
         }
     },
 
@@ -112,7 +117,7 @@ Y.Event.define(EVT_TAP, {
     @static
     **/
     detach: function (node, subscription, notifier) {
-        detachHelper(subscription, HANDLES);
+        detachHandles(subscription);
     },
 
     /**
@@ -152,7 +157,7 @@ Y.Event.define(EVT_TAP, {
     @static
     **/
     detachDelegate: function (node, subscription, notifier) {
-        detachHelper(subscription, HANDLES);
+        detachHandles(subscription);
     },
 
     /**
@@ -259,8 +264,6 @@ Y.Event.define(EVT_TAP, {
           clientXY = [event.clientX, event.clientY];
         }
 
-        detachHelper(subscription, [ HANDLES.MOVE, HANDLES.END, HANDLES.CANCEL ], true, context);
-
         // make sure mouse didn't move
         if (Math.abs(endXY[0] - startXY[0]) <= sensitivity && Math.abs(endXY[1] - startXY[1]) <= sensitivity) {
 
@@ -274,5 +277,6 @@ Y.Event.define(EVT_TAP, {
             notifier.fire(event);
         }
 
+        detachHandles(subscription, [HANDLES.END, HANDLES.CANCEL]);
     }
 });
