@@ -72,8 +72,13 @@ Y.Event.define(EVT_TAP, {
 
         //if we return for the delegate use case, then the `filter` argument
         //returns undefined, and we have to get the filter from sub._extra[0] (ugly)
+
         if (!isDelegate) {
-            return args.slice(3, 1)[0] || {};
+            var extra = args[3];
+            // remove the extra arguments from the array as specified by
+            // http://yuilibrary.com/yui/docs/event/synths.html
+            args.splice(3,1);
+            return extra;
         }
     },
     /**
@@ -236,7 +241,7 @@ Y.Event.define(EVT_TAP, {
             clientXY,
             sensitivity = 15;
 
-        if (subscription._extra && subscription._extra.sensitivity) {
+        if (subscription._extra && subscription._extra.sensitivity !== undefined) {
             sensitivity = subscription._extra.sensitivity;
         }
 
@@ -244,7 +249,7 @@ Y.Event.define(EVT_TAP, {
 
         //There is a double check in here to support event simulation tests, in which
         //event.touches can be undefined when simulating 'touchstart' on touch devices.
-        if (SUPPORTS_TOUCHES && event.changedTouches) {
+        if (event.changedTouches) {
           endXY = [ event.changedTouches[0].pageX, event.changedTouches[0].pageY ];
           clientXY = [event.changedTouches[0].clientX, event.changedTouches[0].clientY];
         }
@@ -256,7 +261,7 @@ Y.Event.define(EVT_TAP, {
         detachHelper(subscription, [ HANDLES.MOVE, HANDLES.END, HANDLES.CANCEL ], true, context);
 
         // make sure mouse didn't move
-        if (Math.abs(endXY[0] - startXY[0]) < sensitivity && Math.abs(endXY[1] - startXY[1]) < sensitivity) {
+        if (Math.abs(endXY[0] - startXY[0]) <= sensitivity && Math.abs(endXY[1] - startXY[1]) <= sensitivity) {
 
             event.type = EVT_TAP;
             event.pageX = endXY[0];
