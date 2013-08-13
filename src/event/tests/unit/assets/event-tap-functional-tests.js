@@ -5,12 +5,22 @@ YUI.add('event-tap-functional-tests', function(Y) {
     noop = function() {},
     body = Y.one('body'),
     doc = Y.config.doc,
+    win = Y.config.win,
     supportsTouch = !!(doc && doc.createTouch),
     GESTURE_MAP = Y.Event._GESTURE_MAP;
 
     Y.Node.prototype.tap = function (startOpts, endOpts) {
-        Y.Event.simulate(this._node, 'mousedown', startOpts);
-        Y.Event.simulate(this._node, 'mouseup', endOpts);
+        var events = {};
+        if (win && ("msPointerEnabled" in win.navigator)) {
+            events.start = 'MSPointerDown';
+            events.end = 'MSPointerUp';
+        }
+        else {
+            events.start = 'mousedown';
+            events.end = 'mouseup';
+        }
+        Y.Event.simulate(this.getDOMNode(), events.start, startOpts);
+        Y.Event.simulate(this.getDOMNode(), events.end, endOpts);
     };
     Y.NodeList.importMethod(Y.Node.prototype, 'tap');
 
@@ -24,7 +34,6 @@ YUI.add('event-tap-functional-tests', function(Y) {
                 provide 0,0 for pageX and pageY respectively. Manual testing confirms
                 that this test works. See http://yuilibrary.com/projects/yui3/ticket/2531581
                 */
-                'mouseup not in same area': (Y.UA.phantomjs),
                 'delegate tap': (Y.UA.phantomjs),
                 'touchmove/mousemove fired': (Y.UA.phantomjs),
                 'mouseup not in same area': (Y.UA.ie === 9 || Y.UA.phantomjs),
@@ -37,136 +46,58 @@ YUI.add('event-tap-functional-tests', function(Y) {
 
          'on tap': function() {
             var clicked = false,
-                node = Y.one('#clicker1');
+                node = Y.one('#clicker1'),
+                startOpts = {
+                    target: node.getDOMNode(),
+                    type: 'MSPointerDown',
+                    bubbles: true,            // boolean
+                    cancelable: true,         // boolean
+                    view: window,               // DOMWindow
+                    detail: 0,
+                    pageX: 5,
+                    pageY:5,            // long
+                    screenX: 5,
+                    screenY: 5,  // long
+                    clientX: 5,
+                    clientY: 5,   // long
+                    ctrlKey: false,
+                    altKey: false,
+                    shiftKey:false,
+                    metaKey: false
+                },
+                endOpts = {
+                    target: node.getDOMNode(),
+                    type: 'MSPointerUp',
+                    bubbles: true,            // boolean
+                    cancelable: true,         // boolean
+                    view: window,               // DOMWindow
+                    detail: 0,
+                    pageX: 5,
+                    pageY:5,            // long
+                    screenX: 5,
+                    screenY: 5,  // long
+                    clientX: 5,
+                    clientY: 5,   // long
+                    ctrlKey: false,
+                    altKey: false,
+                    shiftKey:false,
+                    metaKey: false
+                };
+
+
 
             node.on('tap', function(e) {
                 clicked = true;
             });
 
-            node.tap({
-                    target: node,
-                    type: 'mousedown',
-                    bubbles: true,            // boolean
-                    cancelable: true,         // boolean
-                    view: window,               // DOMWindow
-                    detail: 0,
-                    pageX: 5,
-                    pageY:5,            // long
-                    screenX: 5,
-                    screenY: 5,  // long
-                    clientX: 5,
-                    clientY: 5,   // long
-                    ctrlKey: false,
-                    altKey: false,
-                    shiftKey:false,
-                    metaKey: false, // boolean
-                    touches: [
-                        {
-                            identifier: 'foo',
-                            screenX: 5,
-                            screenY: 5,
-                            clientX: 5,
-                            clientY: 5,
-                            pageX: 5,
-                            pageY: 5,
-                            radiusX: 15,
-                            radiusY: 15,
-                            rotationAngle: 0,
-                            force: 0.5,
-                            target: node
-                        }
-                    ],            // TouchList
-                    targetTouches: [
-                        {
-                            identifier: 'foo',
-                            screenX: 5,
-                            screenY: 5,
-                            clientX: 5,
-                            clientY: 5,
-                            pageX: 5,
-                            pageY: 5,
-                            radiusX: 15,
-                            radiusY: 15,
-                            rotationAngle: 0,
-                            force: 0.5,
-                            target: node
-                        }
-                    ],      // TouchList
-                    changedTouches: []     // TouchList
-                }, {
-                    target: node,
-                    type: 'mouseup',
-                    bubbles: true,            // boolean
-                    cancelable: true,         // boolean
-                    view: window,               // DOMWindow
-                    detail: 0,
-                    pageX: 5,
-                    pageY:5,            // long
-                    screenX: 5,
-                    screenY: 5,  // long
-                    clientX: 5,
-                    clientY: 5,   // long
-                    ctrlKey: false,
-                    altKey: false,
-                    shiftKey:false,
-                    metaKey: false, // boolean
-                    touches: [
-                        {
-                            identifier: 'foo',
-                            screenX: 5,
-                            screenY: 5,
-                            clientX: 5,
-                            clientY: 5,
-                            pageX: 5,
-                            pageY: 5,
-                            radiusX: 15,
-                            radiusY: 15,
-                            rotationAngle: 0,
-                            force: 0.5,
-                            target: node
-                        }
-                    ],            // TouchList
-                    targetTouches: [
-                        {
-                            identifier: 'foo',
-                            screenX: 5,
-                            screenY: 5,
-                            clientX: 5,
-                            clientY: 5,
-                            pageX: 5,
-                            pageY: 5,
-                            radiusX: 15,
-                            radiusY: 15,
-                            rotationAngle: 0,
-                            force: 0.5,
-                            target: node
-                        }
-                    ],      // TouchList
-                    changedTouches: [
-                        {
-                            identifier: 'foo',
-                            screenX: 5,
-                            screenY: 5,
-                            clientX: 5,
-                            clientY: 5,
-                            pageX: 5,
-                            pageY: 5,
-                            radiusX: 15,
-                            radiusY: 15,
-                            rotationAngle: 0,
-                            force: 0.5,
-                            target: node
-                        }
-                    ]
-                });
-
+            node.tap(startOpts, endOpts);
             Y.Assert.isTrue(clicked, "click handler didn't work");
          },
 
         'mouseup not in same area': function() {
             var clicked = false,
                 ex1 = 1,
-                ex2 = 2
+                ex2 = 2,
                 obj = {
                     a: 1
                 },
@@ -293,8 +224,7 @@ YUI.add('event-tap-functional-tests', function(Y) {
                 clicked = true;
             });
 
-            Y.Event.simulate(node.getDOMNode(), 'mousedown', startOpts);
-            Y.Event.simulate(node.getDOMNode(), 'mouseup', endOpts);
+            node.tap(startOpts, endOpts);
             Y.Assert.isFalse(clicked, "click handler was triggered when it shouldn't have been");
         },
 
@@ -821,7 +751,7 @@ YUI.add('event-tap-functional-tests', function(Y) {
 
         'multiple touches': function () {
             var node = Y.one('#clicker1'),
-            node2 = Y.one('#clicker2')
+            node2 = Y.one('#clicker2'),
             clicked = false,
             startOpts = {
                 target: node,
@@ -963,7 +893,7 @@ YUI.add('event-tap-functional-tests', function(Y) {
 
         'changedTouches': function() {
             var node = Y.one('#clicker1'),
-            node2 = Y.one('#clicker2')
+            node2 = Y.one('#clicker2'),
             clicked = false,
             startOpts = {
                 target: node,

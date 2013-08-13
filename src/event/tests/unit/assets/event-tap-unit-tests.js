@@ -76,7 +76,7 @@ YUI.add('event-tap-unit-tests', function(Y) {
             Assert.isTrue(h.Y_TAP_ON_CANCEL_HANDLE instanceof Y.EventHandle);
         },
 
-        'test: tapstart no touch': function () {
+        'test: _start no touch': function () {
             var e = {
                 button: 1,
                 touches: [],
@@ -90,7 +90,7 @@ YUI.add('event-tap-unit-tests', function(Y) {
             Assert.areSame(0, h.length, 'no new handles');
         },
 
-        'test: tapstart right click': function () {
+        'test: _start right click': function () {
             var e = {
                 button: 3,
                 pageX: 100,
@@ -135,14 +135,53 @@ YUI.add('event-tap-unit-tests', function(Y) {
             Assert.isNull(h.Y_TAP_ON_CANCEL_HANDLE);
         },
 
-        'test: delegate': function () {
+        'test: touchend with changedTouches': function () {
+            var fired = false,
+
+            e = {
+                button: 1,
+                pageX: 100,
+                pageY: 100,
+                clientX: 100,
+                clientY: 100,
+                type: 'touchend',
+                touches: [{}], //need to have e.touches.length > 0
+                changedTouches: [{
+                    pageX: 100,
+                    pageY: 100,
+                    clientX: 100,
+                    clientY: 100
+                }]
+            },
+
+            notifier = {
+                fire: function () {
+                    fired = true;
+                    Assert.isTrue(fired);
+                }
+            },
+
+            context = {
+                node: node,
+                startXY: [100, 100]
+            },
+
+            h = [];
+
+            eventDef.tap.touchStart(e, node, h, {}, {});
+            eventDef.tap.touchEnd(e, node, h, notifier, {}, context);
+            Assert.isNull(h.Y_TAP_ON_END_HANDLE);
+            Assert.isNull(h.Y_TAP_ON_CANCEL_HANDLE);
+        },
+
+        'test: delegate eventhandle': function () {
             var h = [];
 
             eventDef.tap.delegate(node, h, {}, '#test');
             Assert.isTrue(h.Y_TAP_ON_START_HANDLE instanceof Y.EventHandle);
         },
 
-        'test: detachDelegate': function () {
+        'test: detachDelegate eventhandle': function () {
             var h = [];
             eventDef.tap.delegate(node, h, {}, {});
             Assert.isTrue(h.Y_TAP_ON_START_HANDLE instanceof Y.EventHandle);
@@ -208,7 +247,7 @@ YUI.add('event-tap-unit-tests', function(Y) {
             },
 
             h = {
-                _extras: {
+                _extra: {
                     sensitivity: 30
                 }
             };
@@ -254,7 +293,7 @@ YUI.add('event-tap-unit-tests', function(Y) {
             },
 
             h = {
-                _extras: {
+                _extra: {
                     sensitivity: 18
                 }
             };
@@ -262,6 +301,22 @@ YUI.add('event-tap-unit-tests', function(Y) {
             eventDef.tap.touchStart(startEvent, node, h, {}, {});
             eventDef.tap.touchEnd(endEvent, node, h, notifier, {}, context);
             Assert.isTrue(fired, 'Tap should fire because sensitivity is within limits');
+        },
+
+        'test: preventedFn prevents default behavior': function () {
+            var fired = false,
+                clicker = Y.one('#clicker2'),
+                e = {
+                    target: clicker
+                },
+                url = Y.config.win.location.href;
+
+            //call preventedFn()
+            eventDef.tap.publishConfig.preventedFn(e);
+
+            clicker.simulate('click');
+
+            Assert.areSame(Y.config.win.location.href, url, 'The url should not change because preventDefault() should be called.');
         },
 
         _should: {
@@ -274,4 +329,4 @@ YUI.add('event-tap-unit-tests', function(Y) {
 
     Y.Test.Runner.add(suite);
 
-}, '@VERSION@' ,{requires:['event-tap','test']});
+}, '@VERSION@' ,{requires:['event-tap','test', 'node-event-simulate']});
