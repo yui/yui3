@@ -1,0 +1,13 @@
+    pg.after('itemsPerPageChange', function () {
+        if (pg.get('page') === 1) {
+            showPage();
+            updateControls();
+        } else {
+            pg.set('page', 1);
+        }
+    });
+
+    pg.after('pageChange', function (e) {
+        showPage(e.newVal);
+        updateControls();
+    });
