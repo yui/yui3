@@ -45,7 +45,7 @@ YUI.add('event-tap-unit-tests', function(Y) {
                 touches: [{}] //need to have e.touches.length > 0
             },
             h = [];
-            eventDef.tap.touchStart(e, node, h, {}, {});
+            eventDef.tap._start(e, node, h, {}, {});
             Assert.isTrue(h.Y_TAP_ON_END_HANDLE instanceof Y.EventHandle);
             Assert.isTrue(h.Y_TAP_ON_CANCEL_HANDLE instanceof Y.EventHandle);
         },
@@ -58,7 +58,7 @@ YUI.add('event-tap-unit-tests', function(Y) {
                 type: 'mousedown'
             },
             h = [];
-            eventDef.tap.touchStart(e, node, h, {}, {});
+            eventDef.tap._start(e, node, h, {}, {});
             Assert.isTrue(h.Y_TAP_ON_END_HANDLE instanceof Y.EventHandle);
             Assert.isTrue(h.Y_TAP_ON_CANCEL_HANDLE instanceof Y.EventHandle);
         },
@@ -71,7 +71,7 @@ YUI.add('event-tap-unit-tests', function(Y) {
                 type: 'MSPointerDown'
             },
             h = [];
-            eventDef.tap.touchStart(e, node, h, {}, {});
+            eventDef.tap._start(e, node, h, {}, {});
             Assert.isTrue(h.Y_TAP_ON_END_HANDLE instanceof Y.EventHandle);
             Assert.isTrue(h.Y_TAP_ON_CANCEL_HANDLE instanceof Y.EventHandle);
         },
@@ -86,7 +86,7 @@ YUI.add('event-tap-unit-tests', function(Y) {
             },
             h = [];
 
-            eventDef.tap.touchStart(e, node, h, {}, {});
+            eventDef.tap._start(e, node, h, {}, {});
             Assert.areSame(0, h.length, 'no new handles');
         },
 
@@ -98,11 +98,11 @@ YUI.add('event-tap-unit-tests', function(Y) {
                 type: 'touchstart'
             },
             h = [];
-            eventDef.tap.touchStart(e, node, h, {}, {});
+            eventDef.tap._start(e, node, h, {}, {});
             Assert.areSame(0, h.length, 'no new handles');
         },
 
-        'test: touchend': function () {
+        'test: _end': function () {
             var fired = false,
 
             e = {
@@ -129,13 +129,13 @@ YUI.add('event-tap-unit-tests', function(Y) {
 
             h = [];
 
-            eventDef.tap.touchStart(e, node, h, {}, {});
-            eventDef.tap.touchEnd(e, node, h, notifier, {}, context);
+            eventDef.tap._start(e, node, h, {}, {});
+            eventDef.tap._end(e, node, h, notifier, {}, context);
             Assert.isNull(h.Y_TAP_ON_END_HANDLE);
             Assert.isNull(h.Y_TAP_ON_CANCEL_HANDLE);
         },
 
-        'test: touchend with changedTouches': function () {
+        'test: _end with changedTouches': function () {
             var fired = false,
 
             e = {
@@ -168,8 +168,8 @@ YUI.add('event-tap-unit-tests', function(Y) {
 
             h = [];
 
-            eventDef.tap.touchStart(e, node, h, {}, {});
-            eventDef.tap.touchEnd(e, node, h, notifier, {}, context);
+            eventDef.tap._start(e, node, h, {}, {});
+            eventDef.tap._end(e, node, h, notifier, {}, context);
             Assert.isNull(h.Y_TAP_ON_END_HANDLE);
             Assert.isNull(h.Y_TAP_ON_CANCEL_HANDLE);
         },
@@ -252,8 +252,8 @@ YUI.add('event-tap-unit-tests', function(Y) {
                 }
             };
 
-            eventDef.tap.touchStart(startEvent, node, h, {}, {});
-            eventDef.tap.touchEnd(endEvent, node, h, notifier, {}, context);
+            eventDef.tap._start(startEvent, node, h, {}, {});
+            eventDef.tap._end(endEvent, node, h, notifier, {}, context);
             Assert.isFalse(fired, 'Tap should not fire because sensitivity is too low');
         },
 
@@ -298,8 +298,8 @@ YUI.add('event-tap-unit-tests', function(Y) {
                 }
             };
 
-            eventDef.tap.touchStart(startEvent, node, h, {}, {});
-            eventDef.tap.touchEnd(endEvent, node, h, notifier, {}, context);
+            eventDef.tap._start(startEvent, node, h, {}, {});
+            eventDef.tap._end(endEvent, node, h, notifier, {}, context);
             Assert.isTrue(fired, 'Tap should fire because sensitivity is within limits');
         },
 

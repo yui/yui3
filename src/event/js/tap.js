@@ -98,7 +98,7 @@ Y.Event.define(EVT_TAP, {
     @static
     **/
     on: function (node, subscription, notifier) {
-        subscription[HANDLES.START] = node.on(EVT_START, this.touchStart, this, node, subscription, notifier);
+        subscription[HANDLES.START] = node.on(EVT_START, this._start, this, node, subscription, notifier);
     },
 
     /**
@@ -136,7 +136,7 @@ Y.Event.define(EVT_TAP, {
     **/
     delegate: function (node, subscription, notifier, filter) {
         subscription[HANDLES.START] = node.delegate(EVT_START, function (e) {
-            this.touchStart(e, node, subscription, notifier, true);
+            this._start(e, node, subscription, notifier, true);
         }, filter, this);
     },
 
@@ -158,7 +158,7 @@ Y.Event.define(EVT_TAP, {
     /**
     Called when the monitor(s) are tapped on, either through touchstart or mousedown.
 
-    @method touchStart
+    @method _start
     @param {DOMEventFacade} event
     @param {Y.Node} node
     @param {Array} subscription
@@ -167,7 +167,7 @@ Y.Event.define(EVT_TAP, {
     @protected
     @static
     **/
-    touchStart: function (event, node, subscription, notifier, delegate) {
+    _start: function (event, node, subscription, notifier, delegate) {
 
         var context = {
                 canceled: false,
@@ -200,19 +200,19 @@ Y.Event.define(EVT_TAP, {
         //if `onTouchStart()` was called by a touch event, set up touch event subscriptions. Otherwise, set up mouse/pointer event event subscriptions.
         if (event.touches && !needToCancel) {
 
-            subscription[HANDLES.END] = node.once('touchend', this.touchEnd, this, node, subscription, notifier, delegate, context);
+            subscription[HANDLES.END] = node.once('touchend', this._end, this, node, subscription, notifier, delegate, context);
             subscription[HANDLES.CANCEL] = node.once('touchcancel', this.detach, this, node, subscription, notifier, delegate, context);
 
             subscription.needToCancel = true;
         }
         else if (context.eventType.indexOf('mouse') !== -1 && !needToCancel) {
-            subscription[HANDLES.END] = node.once('mouseup', this.touchEnd, this, node, subscription, notifier, delegate, context);
+            subscription[HANDLES.END] = node.once('mouseup', this._end, this, node, subscription, notifier, delegate, context);
             subscription[HANDLES.CANCEL] = node.once('mousecancel', this.detach, this, node, subscription, notifier, delegate, context);
 
             subscription.needToCancel = true;
         }
         else if (context.eventType.indexOf('MSPointer') !== -1 && !needToCancel) {
-            subscription[HANDLES.END] = node.once('MSPointerUp', this.touchEnd, this, node, subscription, notifier, delegate, context);
+            subscription[HANDLES.END] = node.once('MSPointerUp', this._end, this, node, subscription, notifier, delegate, context);
             subscription[HANDLES.CANCEL] = node.once('MSPointerCancel', this.detach, this, node, subscription, notifier, delegate, context);
 
             subscription.needToCancel = true;
@@ -225,7 +225,7 @@ Y.Event.define(EVT_TAP, {
     Called when the monitor(s) fires a touchend event (or the mouse equivalent).
     This method fires the 'tap' event if certain requirements are met.
 
-    @method touchEnd
+    @method _end
     @param {DOMEventFacade} event
     @param {Y.Node} node
     @param {Array} subscription
@@ -235,7 +235,7 @@ Y.Event.define(EVT_TAP, {
     @protected
     @static
     **/
-    touchEnd: function (event, node, subscription, notifier, delegate, context) {
+    _end: function (event, node, subscription, notifier, delegate, context) {
         var startXY = context.startXY,
             endXY,
             clientXY,
