@@ -197,7 +197,8 @@ Y.Event.define(EVT_TAP, {
           context.startXY = [ event.pageX, event.pageY ];
         }
 
-        //if `onTouchStart()` was called by a touch event, set up touch event subscriptions. Otherwise, set up mouse/pointer event event subscriptions.
+        //If `onTouchStart()` was called by a touch event, set up touch event subscriptions.
+        //Otherwise, set up mouse/pointer event event subscriptions.
         if (event.touches && !needToCancel) {
 
             subscription[HANDLES.END] = node.once('touchend', this._end, this, node, subscription, notifier, delegate, context);
