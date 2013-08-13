@@ -16,15 +16,7 @@ var Lang             = Y.Lang,
     bind             = Y.bind,
     YObject          = Y.Object,
     valueRegExp      = /\{value\}/g,
-
-    /**
-    Fired after the DataTable has been updated when triggered from a
-    `dataChange` event.
-
-    @event changeUpdate
-    @since @SINCE@
-    **/
-    EV_CHANGE_UPDATE = 'changeUpdate';
+    EV_CONTENT_UPDATE = 'contentUpdate';
 
 /**
 View class responsible for rendering the `<tbody>` section of a table. Used as
@@ -650,7 +642,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             // tbody
             if (col.hasOwnProperty('nodeFormatter')) {
                 this.render();
-                this.fire(EV_CHANGE_UPDATE);
+                this.fire(EV_CONTENT_UPDATE);
                 return;
             }
         }
@@ -688,7 +680,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         // Event fired to tell users when we are done updating after the data
         // was changed
-        this.fire(EV_CHANGE_UPDATE);
+        this.fire(EV_CONTENT_UPDATE);
     },
 
     /**

@@ -4,7 +4,7 @@ DataTable Change History
 @VERSION@
 ------
 
-* Added 'changeUpdate' after the DataTable has been updated when triggered
+* Added 'contentUpdate' after the DataTable has been updated when triggered
   from a `dataChange` event. [Issue #1052]
 
 3.11.0

@@ -760,8 +760,8 @@ suite.add(new Y.Test.Case({
         var test = this,
             v = this.view;
 
-        v.after('changeUpdate', function (e) {
-            Y.Assert.areSame('tableBody:changeUpdate', e.type);
+        v.after('contentUpdate', function (e) {
+            Y.Assert.areSame('tableBody:contentUpdate', e.type);
         });
 
         v.get('modelList').item(0).set('a', 5);
