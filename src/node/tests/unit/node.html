@@ -190,6 +190,8 @@ button {
         <div id="test-element-by-axis">foo<div></div>bar<span></span>baz<em></em></div>
     </div>
 </div>
+<div id="test-node-addMethod">
+</div>
 
 <div id="yui-log"></div>
 <script type="text/javascript">
@@ -1998,6 +2000,27 @@ YUI({
 
             Assert.isUndefined(val[0]);
             Assert.isUndefined(val[1]);
+        }
+    }));
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.addMethod',
+
+        'should return a method': function() {
+            var nd = Y.one('#test-node-addMethod');
+
+            Y.Node.addMethod('testAddMethod',function () {});
+
+            Assert.isFunction(nd.testAddMethod);
+        },
+        'should return property of context obj': function() {
+            var nd = Y.one('#test-node-addMethod'),
+                obj = { type: 'context obj' };
+
+            Y.Node.addMethod('testAMC',function () {
+                return this.type;
+            }, obj);
+
+            Assert.areEqual('context obj', nd.testAMC());
         }
     }));
 
