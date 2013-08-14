@@ -68,7 +68,10 @@ Y.Event.define(EVT_TAP, {
             // so this doesn't `preventDefault()` on the wrong click event.
             setTimeout(function () {
                 sub.detach();
-            }, 0);
+            //Setting this to `0` causes the detachment to occur before the click
+            //comes in on Android 4.0.3-4.0.4. 100ms seems to be a reliable number here
+            //that works across the board.
+            }, 100);
         }
     },
 
