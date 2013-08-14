@@ -1,7 +1,7 @@
 Custom Event Infrastructure Change History
 ==========================================
 
-@VERSION@
+3.12.0
 ------
 
 * Fixed regression introduced in 3.10.0, where `EventTarget.detach('cat|*')` 

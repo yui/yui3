@@ -1,7 +1,7 @@
 Button Change History
 ====================
 
-@VERSION@
+3.12.0
 ------
 
 * `ButtonGroup.disable()` will disable each child button (or input, see `getButtons()`)
