@@ -23,7 +23,6 @@ but reverts to mouse events if touch is not supported.
 */
 var doc = Y.config.doc,
     GESTURE_MAP = Y.Event._GESTURE_MAP,
-    SUPPORTS_TOUCHES = !!(doc && doc.createTouch),
     EVT_START = GESTURE_MAP.start,
     EVT_TAP = 'tap',
 
@@ -195,7 +194,7 @@ Y.Event.define(EVT_TAP, {
 
         //There is a double check in here to support event simulation tests, in which
         //event.touches can be undefined when simulating 'touchstart' on touch devices.
-        if (SUPPORTS_TOUCHES && event.touches) {
+        if (event.touches) {
           context.startXY = [ event.touches[0].pageX, event.touches[0].pageY ];
         }
         else {
@@ -247,7 +246,7 @@ Y.Event.define(EVT_TAP, {
             clientXY,
             sensitivity = 15;
 
-        if (subscription._extra && subscription._extra.sensitivity !== undefined) {
+        if (subscription._extra && subscription._extra.sensitivity >= 0) {
             sensitivity = subscription._extra.sensitivity;
         }
 
