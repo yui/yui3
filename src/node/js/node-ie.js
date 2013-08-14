@@ -10,7 +10,7 @@ if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
                 this._node.attributes[attr].specified);
     };
     Y.Node.prototype._isHidden = function() {
-        return  this.hasAttribute('hidden') || Y.DOM.getComputedStyle('display') === 'none';
+        return  this.hasAttribute('hidden') || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
     }
 }
 
