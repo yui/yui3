@@ -28,7 +28,7 @@ Y.applyConfig({
   },
   root: '',
   skin: {
-    defaultSkin: 'sketch',
+    defaultSkin: Y.UA.touchEnabled ? 'nxt': 'nx',
     overrides: {        /*@DBG*/
       console: ['sam']  /*@DBG*/
     }                   /*@DBG*/
