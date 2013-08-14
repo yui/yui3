@@ -1,7 +1,7 @@
 Template Change History
 =======================
 
-@VERSION@
+3.12.0
 ------
 
 * Added central template registry. The template registry decouples making

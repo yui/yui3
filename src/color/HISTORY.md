@@ -1,7 +1,7 @@
 Color Change History
 ====================
 
-@VERSION@
+3.12.0
 ------
 
 * No changes.

@@ -1,7 +1,7 @@
 Tree Change History
 ===================
 
-@VERSION@
+3.12.0
 ------
 
 * Fixed: `Tree.Sortable` failed to reindex a node's children after sorting them,
