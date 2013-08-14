@@ -195,8 +195,8 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.areSame(node.one('div').getStyle('color'), node2.getStyle('color'), 'Style failed to copy');
             Y.Assert.areSame(node.one('div').getStyle('fontFamily'), node2.getStyle('fontFamily'), 'Style failed to copy');
 
-            var node = Y.Node.create('<a>'),
-                node2 = Y.Node.create('<div/>');
+            node = Y.Node.create('<a>');
+            node2 = Y.Node.create('<div/>');
 
             editor.copyStyles(node, node2);
 
@@ -207,7 +207,7 @@ YUI.add('editor-tests', function(Y) {
 
             Y.Assert.areNotSame(inst.one('html'), node, 'Failed to resolve HTML node');
 
-            var node = editor._resolveChangedNode(null);
+            node = editor._resolveChangedNode(null);
             Y.Assert.isTrue(inst.one('[contenteditable="true"]').compareTo(node), 'Failed to resolve HTML node');
         },
         test_get_content: function() {
@@ -219,35 +219,36 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.areEqual(ex + 'Hello <b>World</b>!!'.toLowerCase(), html.toLowerCase(), 'getContent failed to get the editor content');
         },
         test_font_size_normalize: function() {
-            var n = Y.Node.create('<span style="font-size: -webkit-xxx-large"></span>');
+            var n = Y.Node.create('<span style="font-size: -webkit-xxx-large"></span>'),
+                size;
 
             if (Y.UA.webkit) { //Can't apply -webkit styles in something other than webkit, duh..
-                var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+                size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
                 Y.Assert.areSame('48px', size, 'Failed to parse size');
             }
 
             n.setStyle('fontSize', 'xx-large');
-            var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+            size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('32px', size, 'Failed to parse size');
 
             n.setStyle('fontSize', 'x-large');
-            var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+            size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('24px', size, 'Failed to parse size');
 
             n.setStyle('fontSize', 'large');
-            var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+            size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('18px', size, 'Failed to parse size');
 
             n.setStyle('fontSize', 'medium');
-            var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+            size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('16px', size, 'Failed to parse size');
 
             n.setStyle('fontSize', 'small');
-            var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+            size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('13px', size, 'Failed to parse size');
 
             n.setStyle('fontSize', 'x-small');
-            var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+            size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('10px', size, 'Failed to parse size');
 
         },
@@ -282,7 +283,7 @@ YUI.add('editor-tests', function(Y) {
 
             inst.EditorSelection.cleanCursor();
 
-            var count = inst.EditorSelection.hasCursor();
+            count = inst.EditorSelection.hasCursor();
             Y.Assert.areSame(0, count, 'Cursor object found');
         },
         test_selection_methods: function() {
@@ -339,7 +340,7 @@ YUI.add('editor-tests', function(Y) {
             });
 
             var hc = inst.EditorSelection.hasCursor;
-            inst.EditorSelection.hasCursor = function() { return true };
+            inst.EditorSelection.hasCursor = function() { return true; };
 
             Y.each(cmds, function(val, cmd) {
                 if (cmd !== 'bidi' && cmd != 'insertandfocus') {
@@ -431,7 +432,7 @@ YUI.add('editor-tests', function(Y) {
             var out = editor.frame.exec._wrapContent(str);
             Y.Assert.areEqual('<p><b>foo</b></p>', out);
 
-            var out = editor.frame.exec._wrapContent(str, true);
+            out = editor.frame.exec._wrapContent(str, true);
             Y.Assert.areEqual('<b>foo</b><br>', out);
 
             fireKey(editor, 13);
@@ -543,17 +544,17 @@ YUI.add('editor-tests', function(Y) {
 
             var root = inst.one('[contenteditable="true"]');
 
-            var out = Y.Plugin.EditorBidi.addParents([root.get('firstChild')], root);
+            out = Y.Plugin.EditorBidi.addParents([root.get('firstChild')], root);
             Y.Assert.areEqual(1, out.length);
             Y.Assert.isTrue(out[0].test('p'));
 
         },
         _should: {
             fail: {
-                test_selection_methods: (Y.UA.ie ? true : false),
+                test_selection_methods: (Y.UA.ie ? true : false)
             },
             ignore: {
-                'test: EditorSelection': Y.UA.phantomjs, 
+                'test: EditorSelection': Y.UA.phantomjs,
                 test_selection_methods: Y.UA.phantomjs,
                 test_br_plugin: Y.UA.phantomjs
             },
