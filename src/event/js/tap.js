@@ -221,6 +221,14 @@ Y.Event.define(EVT_TAP, {
             subscription[HANDLES.CANCEL] = node.once('mousecancel', this.detach, this, node, subscription, notifier, delegate, context);
         }
 
+        //If a mouse event comes in after a touch event, it will go in here and
+        //reset preventMouse to `true`.
+        //If a mouse event comes in without a prior touch event, preventMouse will be
+        //false in any case, so this block doesn't do anything.
+        else if (context.eventType.indexOf('mouse') !== -1 && preventMouse) {
+            subscription.preventMouse = false;
+        }
+
         else if (context.eventType.indexOf('MSPointer') !== -1) {
             subscription[HANDLES.END] = node.once('MSPointerUp', this._end, this, node, subscription, notifier, delegate, context);
             subscription[HANDLES.CANCEL] = node.once('MSPointerCancel', this.detach, this, node, subscription, notifier, delegate, context);
