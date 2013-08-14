@@ -66,7 +66,7 @@ Y.Event.define(EVT_TAP, {
             });
 
             // Make sure to detach the subscription during the next event loop
-            // so this doesn't `preventDefault()` on the wrong click evnet.
+            // so this doesn't `preventDefault()` on the wrong click event.
             setTimeout(function () {
                 sub.detach();
             }, 0);
