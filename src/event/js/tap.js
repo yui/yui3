@@ -179,9 +179,7 @@ Y.Event.define(EVT_TAP, {
             },
             preventMouse = subscription.preventMouse || false;
 
-            console.log(event.type);
         //move ways to quit early to the top.
-
         // no right clicks
         if (event.button && event.button === 3) {
             return;
