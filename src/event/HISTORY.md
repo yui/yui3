@@ -7,6 +7,19 @@ Event Infrastructure Change History
 * Fixed: YUI no longer breaks the browser back/forward cache by attaching an
   unnecessary `unload` event handler. [Ryan Grove]
 
+* `event-tap` allows you to prevent default browser behavior on `tap` via
+  `e.preventDefault()` [#682](https://github.com/yui/yui3/issues/682)
+
+* `event-tap` now has a `sensitivity` property that can be passed as an option.
+  This allows you to customize when `tap` fires, based on the difference in `px`
+  between a the corresponding start and end event. [#631](https://github.com/yui/yui3/pull/631)
+
+* `event-tap` has dual-listener support, and works properly on devices that support
+  both mouse and touch input. [#683](https://github.com/yui/yui3/issues/683)
+
+* `event-tap` works more reliably on Android 4.0.x (Ice cream sandwich).
+
+
 3.11.0
 ------
 
