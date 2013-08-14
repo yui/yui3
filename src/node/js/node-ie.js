@@ -9,9 +9,6 @@ if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
         return !!(this._node.attributes[attr] &&
                 this._node.attributes[attr].specified);
     };
-    Y.Node.prototype._isHidden = function() {
-        return  this.hasAttribute('hidden') || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
-    };
 }
 
 // IE throws an error when calling focus() on an element that's invisible, not
