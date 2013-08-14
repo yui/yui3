@@ -33,7 +33,7 @@ var doc = Y.config.doc,
     };
 
 function detachHandles(subscription, handles) {
-    handles || (handles = Y.Object.values(HANDLES));
+    handles = handles || Y.Object.values(HANDLES);
 
     Y.Array.each(handles, function (item) {
         var handle = subscription[item];
@@ -177,7 +177,9 @@ Y.Event.define(EVT_TAP, {
                 canceled: false,
                 eventType: event.type
             },
-            needToCancel = subscription.needToCancel || false;
+            preventMouse = subscription.preventMouse || false;
+
+            console.log(event.type);
         //move ways to quit early to the top.
 
         // no right clicks
@@ -203,24 +205,27 @@ Y.Event.define(EVT_TAP, {
 
         //If `onTouchStart()` was called by a touch event, set up touch event subscriptions.
         //Otherwise, set up mouse/pointer event event subscriptions.
-        if (event.touches && !needToCancel) {
+        if (event.touches) {
 
             subscription[HANDLES.END] = node.once('touchend', this._end, this, node, subscription, notifier, delegate, context);
             subscription[HANDLES.CANCEL] = node.once('touchcancel', this.detach, this, node, subscription, notifier, delegate, context);
 
-            subscription.needToCancel = true;
+            //Since this is a touch* event, there will be corresponding mouse events
+            //that will be fired. We don't want these events to get picked up and fire
+            //another `tap` event, so we'll set this variable to `true`.
+            subscription.preventMouse = true;
         }
-        else if (context.eventType.indexOf('mouse') !== -1 && !needToCancel) {
+
+        //Only add these listeners if preventMouse is `false`
+        //ie: not when touch events have already been subscribed to
+        else if (context.eventType.indexOf('mouse') !== -1 && !preventMouse) {
             subscription[HANDLES.END] = node.once('mouseup', this._end, this, node, subscription, notifier, delegate, context);
             subscription[HANDLES.CANCEL] = node.once('mousecancel', this.detach, this, node, subscription, notifier, delegate, context);
-
-            subscription.needToCancel = true;
         }
-        else if (context.eventType.indexOf('MSPointer') !== -1 && !needToCancel) {
+
+        else if (context.eventType.indexOf('MSPointer') !== -1) {
             subscription[HANDLES.END] = node.once('MSPointerUp', this._end, this, node, subscription, notifier, delegate, context);
             subscription[HANDLES.CANCEL] = node.once('MSPointerCancel', this.detach, this, node, subscription, notifier, delegate, context);
-
-            subscription.needToCancel = true;
         }
 
     },
@@ -249,8 +254,6 @@ Y.Event.define(EVT_TAP, {
         if (subscription._extra && subscription._extra.sensitivity >= 0) {
             sensitivity = subscription._extra.sensitivity;
         }
-
-        subscription.needToCancel = false;
 
         //There is a double check in here to support event simulation tests, in which
         //event.touches can be undefined when simulating 'touchstart' on touch devices.
