@@ -2002,21 +2002,25 @@ YUI({
             Assert.isUndefined(val[1]);
         }
     }));
+
     Y.Test.Runner.add(new Y.Test.Case({
         name: 'Y.Node.addMethod',
 
         'should return a method': function() {
             var nd = Y.one('#test-node-addMethod');
 
-            Y.Node.addMethod('testAddMethod',function () {});
+            Y.Node.addMethod('testAddMethod', function () {
+                return this;     
+            });
 
             Assert.isFunction(nd.testAddMethod);
+            Assert.areSame(nd, nd.testAddMethod());
         },
-        'should return property of context obj': function() {
+        'should return property of context obj': function () {
             var nd = Y.one('#test-node-addMethod'),
                 obj = { type: 'context obj' };
 
-            Y.Node.addMethod('testAMC',function () {
+            Y.Node.addMethod('testAMC', function () {
                 return this.type;
             }, obj);
 
