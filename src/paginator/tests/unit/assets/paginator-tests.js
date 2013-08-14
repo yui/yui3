@@ -33,7 +33,7 @@ suite.add(new Y.Test.Case({
             });
 
         pg.after('pageChange', function (e) {
-            Y.Assert.areSame(0, e.type.indexOf('paginator'));
+            Y.Assert.areSame('paginator:pageChange', e.type);
         });
 
         pg.nextPage();
