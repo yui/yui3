@@ -1,7 +1,7 @@
 Event Infrastructure Change History
 ===================================
 
-@VERSION@
+3.12.0
 ------
 
 * Fixed: YUI no longer breaks the browser back/forward cache by attaching an
