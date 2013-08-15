@@ -2480,7 +2480,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     * Returns an Object hash of file arrays built from `loader.sorted` or from an arbitrary list of sorted modules.
     * @method resolve
     * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else
-    * @param {Array} [s=loader.sorted] An override for the loader.sorted array
+    * @param {Array} [sorted=loader.sorted] An override for the loader.sorted array
     * @return {Object} Object hash (js and css) of two arrays of file lists
     * @example This method can be used as an off-line dep calculator
     *
@@ -2495,7 +2495,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     *        var out = loader.resolve(true);
     *
     */
-    resolve: function(calc, s) {
+    resolve: function(calc, sorted) {
         var self        = this,
             resolved    = { js: [], jsMods: [], css: [], cssMods: [] },
             inserted    = (self.ignoreRegistered) ? {} : self.inserted,
@@ -2529,7 +2529,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         if (calc) {
             self.calculate();
         }
-        s = s || self.sorted;
+        sorted = sorted || self.sorted;
 
         addSingle = function(m) {
 
@@ -2541,8 +2541,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     m.async = group.async;
                 }
 
-                url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
-                      self._url(m.path, s[i], group.base || m.base);
+                url = (m.fullpath) ? self._filter(m.fullpath, sorted[i]) :
+                      self._url(m.path, sorted[i], group.base || m.base);
 
                 if (m.attributes || m.async === false) {
                     url = {
@@ -2561,7 +2561,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         };
 
-        len = s.length;
+        len = sorted.length;
 
         // the default combo base
         comboBase = self.comboBase;
@@ -2572,7 +2572,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         for (i = 0; i < len; i++) {
             comboSource = comboBase;
-            m = self.getModule(s[i]);
+            m = self.getModule(sorted[i]);
             groupName = m && m.group;
             group = self.groups[groupName];
             if (groupName && group) {
@@ -2694,6 +2694,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         return resolved;
     },
+
     /**
     Shortcut to calculate, resolve and load all modules.
 
