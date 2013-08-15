@@ -2561,8 +2561,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         };
 
-        len = sorted.length;
-
         // the default combo base
         comboBase = self.comboBase;
 
@@ -2570,7 +2568,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         comboSources = {};
 
-        for (i = 0; i < len; i++) {
+        for (i = 0, len = sorted.length; i < len; i++) {
             comboSource = comboBase;
             m = self.getModule(sorted[i]);
             groupName = m && m.group;
@@ -2609,10 +2607,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 resCombos[j] = resCombos[j] || { js: [], jsMods: [], css: [], cssMods: [] };
                 url = j;
                 mods = comboSources[j];
-                len = mods.length;
 
-                if (len) {
-                    for (i = 0; i < len; i++) {
+                if (mods.length) {
+                    for (i = 0, len = mods.length; i < len; i++) {
                         if (inserted[mods[i]]) {
                             continue;
                         }
@@ -2650,7 +2647,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     if (type === JS || type === CSS) {
                         urls = resCombos[base][type];
                         mods = resCombos[base][type + 'Mods'];
-                        len = urls.length;
                         tmpBase = base + urls.join(comboSep);
                         baseLen = tmpBase.length;
                         if (maxURLLength <= base.length) {
@@ -2658,11 +2654,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                             maxURLLength = MAX_URL_LENGTH;
                         }
 
-                        if (len) {
+                        if (urls.length) {
                             if (baseLen > maxURLLength) {
                                 Y.log('Exceeded maxURLLength (' + maxURLLength + ') for ' + type + ', splitting', 'info', 'loader');
                                 u = [];
-                                for (i = 0; i < len; i++) {
+                                for (i = 0, len = urls.length; i < len; i++) {
                                     u.push(urls[i]);
                                     tmpBase = base + u.join(comboSep);
 
