@@ -4,7 +4,7 @@ Charts Change History
 @VERSION@
 ------
 
-* No changes.
+* #716 Added logarithmic scaling.
 
 3.11.0
 ------
