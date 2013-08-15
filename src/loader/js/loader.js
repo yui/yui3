@@ -2662,8 +2662,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                             if (baseLen > maxURLLength) {
                                 Y.log('Exceeded maxURLLength (' + maxURLLength + ') for ' + type + ', splitting', 'info', 'loader');
                                 u = [];
-                                for (s = 0; s < len; s++) {
-                                    u.push(urls[s]);
+                                for (i = 0; i < len; i++) {
+                                    u.push(urls[i]);
                                     tmpBase = base + u.join(comboSep);
 
                                     if (tmpBase.length > maxURLLength) {
