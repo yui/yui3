@@ -2496,13 +2496,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     *
     */
     resolve: function(calc, sorted) {
-        var self        = this,
-            resolved    = { js: [], jsMods: [], css: [], cssMods: [] },
-            inserted    = (self.ignoreRegistered) ? {} : self.inserted,
-            resCombos   = {},
-            u           = [],
+        var self         = this,
+            resolved     = { js: [], jsMods: [], css: [], cssMods: [] },
+            inserted     = (self.ignoreRegistered) ? {} : self.inserted,
+            resCombos    = {},
+            comboSources = {},
+            u            = [],
             maxURLLength,
-            comboSources,
             comboBase,
             groupName,
             addSingle,
@@ -2557,8 +2557,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             }
 
         };
-
-        comboSources = {};
 
         for (i = 0, len = sorted.length; i < len; i++) {
             comboBase = self.comboBase;
