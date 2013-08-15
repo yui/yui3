@@ -2570,7 +2570,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     comboSource = group.comboBase;
                 }
 
-                if ("root" in group && L.isValue(group.root)) {
+                if (typeof group.root === 'string') {
                     m.root = group.root;
                 }
                 m.comboSep = group.comboSep || self.comboSep;
@@ -2606,7 +2606,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                             resCombos[j].comboSep = m.comboSep;
                             resCombos[j].group = m.group;
                             resCombos[j].maxURLLength = m.maxURLLength;
-                            frag = ((L.isValue(m.root)) ? m.root : self.root) + (m.path || m.fullpath);
+                            frag = ((typeof m.root === 'string') ? m.root : self.root) + (m.path || m.fullpath);
                             frag = self._filter(frag, m.name);
                             resCombos[j][m.type].push(frag);
                             resCombos[j][m.type + 'Mods'].push(m);
