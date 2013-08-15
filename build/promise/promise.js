@@ -102,6 +102,7 @@ Y.mix(Promise.prototype, {
     "pending", "fulfilled", and "rejected".
 
     @method getStatus
+    @deprecated
     @return {String}
     **/
     getStatus: function () {
@@ -189,24 +190,16 @@ Y.mix(Resolver.prototype, {
     fulfill: function (value) {
         if (this._status === 'pending') {
             this._result = value;
-        }
-
-        if (this._status !== 'rejected') {
-            this._notify(this._callbacks, this._result);
-
-            // Reset the callback list so that future calls to fulfill()
-            // won't call the same callbacks again. Promises keep a list
-            // of callbacks, they're not the same as events. In practice,
-            // calls to fulfill() after the first one should not be made by
-            // the user but by then()
-            this._callbacks = [];
-
-            // Once a promise gets fulfilled it can't be rejected, so
-            // there is no point in keeping the list. Remove it to help
-            // garbage collection
-            this._errbacks = null;
-
             this._status = 'fulfilled';
+            
+            this._errbacks = null;
+            
+            // Only notify if there are callbacks in the list
+            // If not future callbacks will be notified at the moment they're
+            // added to the list
+            if (this._callbacks.length) {
+                this._notify(true);
+            }
         }
     },
 
@@ -222,16 +215,14 @@ Y.mix(Resolver.prototype, {
     reject: function (reason) {
         if (this._status === 'pending') {
             this._result = reason;
-        }
-
-        if (this._status !== 'fulfilled') {
-            this._notify(this._errbacks, this._result);
-
-            // See fulfill()
-            this._callbacks = null;
-            this._errbacks = [];
-
             this._status = 'rejected';
+            
+            this._callbacks = null;
+            
+            if (this._errbacks.length) {
+                // passing a falsy parameter to notify a failure
+                this._notify();
+            }
         }
     },
 
@@ -268,23 +259,32 @@ Y.mix(Resolver.prototype, {
                 thenReject = reject;
             }),
 
-            callbackList = this._callbacks || [],
-            errbackList  = this._errbacks  || [];
+            callbackList = this._callbacks,
+            errbackList  = this._errbacks;
+        
 
         // Because the callback and errback are represented by a Resolver, it
         // must be fulfilled or rejected to propagate through the then() chain.
         // The same logic applies to resolve() and reject() for fulfillment.
-        callbackList.push(typeof callback === 'function' ?
-            this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
-        errbackList.push(typeof errback === 'function' ?
-            this._wrap(thenFulfill, thenReject, errback) : thenReject);
-
-        // If a promise is already fulfilled or rejected, notify the newly added
-        // callbacks by calling fulfill() or reject()
-        if (this._status === 'fulfilled') {
-            this.fulfill(this._result);
-        } else if (this._status === 'rejected') {
-            this.reject(this._result);
+        if (callbackList) {
+            // If the callback is the first to be added to the list and the
+            // promise is already fulfilled, schedule a notification by calling
+            // _notify(). This is only done for the first callback so as not to
+            // schedule multiple notifications per tick
+            if (callbackList.push(
+                    typeof callback === 'function' ?
+                    this._wrap(thenFulfill, thenReject, callback) : thenFulfill
+                ) === 1 && this._status === 'fulfilled') {
+                this._notify(true);
+            }
+        }
+        if (errbackList) {
+            if (errbackList.push(
+                    typeof errback === 'function' ?
+                    this._wrap(thenFulfill, thenReject, errback) : thenReject
+                ) === 1 && this._status === 'rejected') {
+                this._notify();
+            }
         }
 
         return then;
@@ -342,43 +342,47 @@ Y.mix(Resolver.prototype, {
     "fulfilled", or "rejected".
 
     @method getStatus
+    @deprecated
     @return {String}
     **/
     getStatus: function () {
         return this._status;
     },
-
+    
     /**
-    Executes an array of callbacks from a specified context, passing a set of
-    arguments.
+    Schedules the notification of all callbacks or errbacks.
 
     @method _notify
-    @param {Function[]} subs The array of subscriber callbacks
-    @param {Any} result Value to pass the callbacks
+    @param {Boolean} success Whether to notify the success or the failure of the
+                promise
     @protected
     **/
-    _notify: function (subs, result) {
-        // Since callback lists are reset synchronously, the subs list never
-        // changes after _notify() receives it. Avoid calling Y.soon() for
-        // an empty list
-        if (subs.length) {
-            // Calling all callbacks after Y.soon to guarantee
-            // asynchronicity. Because setTimeout can cause unnecessary
-            // delays that *can* become noticeable in some situations
-            // (especially in Node.js)
-            Y.soon(function () {
-                var i, len;
-
-                for (i = 0, len = subs.length; i < len; ++i) {
-                    subs[i](result);
-                }
-            });
-        }
+    _notify: function (success) {
+        var resolver = this,
+            result = this._result,
+            listType = success ? '_callbacks' : '_errbacks',
+            i = 0, list = resolver[listType];
+        
+        // Calling all callbacks after Y.soon to guarantee
+        // asynchronicity. Because setTimeout can cause unnecessary
+        // delays that *can* become noticeable in some situations
+        // (especially in Node.js)
+        Y.soon(function () {
+            // Not caching the length of the list because calling then() during
+            // this iteration may add callbacks to the list
+            while (i < list.length) {
+                list[i](result);
+                i++;
+            }
+            
+            // Resetting the list after notifying the callbacks to ensure
+            // they all get called once
+            resolver[listType] = [];
+        });
     }
-
 }, true);
 
-Y.Promise.Resolver = Resolver;
+Promise.Resolver = Resolver;
 /**
 Abstraction API allowing you to interact with promises or raw values as if they
 were promises. If a non-promise object is passed in, a new Resolver is created
