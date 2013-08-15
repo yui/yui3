@@ -138,18 +138,22 @@ Y.mix(Resolver.prototype, {
                 thenReject = reject;
             }),
 
-            callbackList = this._callbacks || [],
-            errbackList  = this._errbacks  || [];
+            callbackList = this._callbacks,
+            errbackList  = this._errbacks;
         
         if (promise.constructor !== Promise) { Y.log('then() will no longer return a subclassed promise by default in the future', 'warn'); }
 
         // Because the callback and errback are represented by a Resolver, it
         // must be fulfilled or rejected to propagate through the then() chain.
         // The same logic applies to resolve() and reject() for fulfillment.
-        callbackList.push(typeof callback === 'function' ?
-            this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
-        errbackList.push(typeof errback === 'function' ?
-            this._wrap(thenFulfill, thenReject, errback) : thenReject);
+        if (callbackList) {
+            callbackList.push(typeof callback === 'function' ?
+                this._wrap(thenFulfill, thenReject, callback) : thenFulfill);
+        }
+        if (errbackList) {
+            errbackList.push(typeof errback === 'function' ?
+                this._wrap(thenFulfill, thenReject, errback) : thenReject);
+        }
 
         // If a promise is already fulfilled or rejected, notify the newly added
         // callbacks by calling fulfill() or reject()
