@@ -212,9 +212,11 @@ Y.mix(Resolver.prototype, {
     "fulfilled", or "rejected".
 
     @method getStatus
+    @deprecated
     @return {String}
     **/
     getStatus: function () {
+        Y.log('promise.getStatus() is deprecated', 'warn');
         return this._status;
     },
 

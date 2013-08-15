@@ -52,6 +52,7 @@ var rejected = new Y.Promise(function (fulfill, reject) {
 **/
 function Promise(fn) {
     if (!(this instanceof Promise)) {
+        Y.log('Calling Y.Promise as a function is deprecated', 'warn');
         return new Promise(fn);
     }
 
@@ -100,6 +101,7 @@ Y.mix(Promise.prototype, {
     "pending", "fulfilled", and "rejected".
 
     @method getStatus
+    @deprecated
     @return {String}
     **/
     getStatus: function () {

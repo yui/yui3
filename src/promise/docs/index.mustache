@@ -256,8 +256,7 @@ var uiUpdated = userDataLoaded.then(renderTemplates, showError);
 uiUpdated.then(stopSpinner);
 
 // Concise form (more common)
-// Note Y.Promise can be called without 'new'
-Y.Promise(function (resolve, reject) { Y.io(...); })
+var promise = new Y.Promise(function (resolve, reject) { Y.io(...); })
     .then(renderTemplates, showError) // returns another promise
     .then(stopSpinner);               // returns another promise
 ```
@@ -406,7 +405,7 @@ getHandleFromServerA()
 </p>
 
 ```
-Y.Promise(function (resolve, reject) {
+var promise = new Y.Promise(function (resolve, reject) {
         Y.io('getDataUrl.php', {
             on: {
                 success: function (id, response) {
