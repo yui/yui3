@@ -2491,14 +2491,31 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     *
     */
     resolve: function(calc, s) {
-
-        var len, i, m, url, group, groupName, j, frag,
-            comboSource, comboSources, mods, comboBase,
-            base, urls, u = [], tmpBase, baseLen, resCombos = {},
-            self = this, comboSep, maxURLLength,
-            inserted = (self.ignoreRegistered) ? {} : self.inserted,
-            resolved = { js: [], jsMods: [], css: [], cssMods: [] },
-            type, addSingle;
+        var self        = this,
+            resolved    = { js: [], jsMods: [], css: [], cssMods: [] },
+            inserted    = (self.ignoreRegistered) ? {} : self.inserted,
+            resCombos   = {},
+            u           = [],
+            maxURLLength,
+            comboSources,
+            comboSource,
+            comboBase,
+            groupName,
+            addSingle,
+            comboSep,
+            tmpBase,
+            baseLen,
+            group,
+            mods,
+            frag,
+            base,
+            urls,
+            type,
+            url,
+            len,
+            m,
+            j,
+            i;
 
         if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) {
             self._resetModules();
