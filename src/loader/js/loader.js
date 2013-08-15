@@ -2538,8 +2538,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     m.async = group.async;
                 }
 
-                url = (m.fullpath) ? self._filter(m.fullpath, sorted[i]) :
-                      self._url(m.path, sorted[i], group.base || m.base);
+                url = (m.fullpath) ? self._filter(m.fullpath, m.name) :
+                      self._url(m.path, m.name, group.base || m.base);
 
                 if (m.attributes || m.async === false) {
                     url = {
