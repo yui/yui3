@@ -2503,7 +2503,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             u           = [],
             maxURLLength,
             comboSources,
-            comboSource,
             comboBase,
             groupName,
             addSingle,
@@ -2513,13 +2512,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             group,
             mods,
             frag,
-            base,
             urls,
             type,
             url,
             len,
             m,
-            j,
             i;
 
         if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) {
@@ -2561,13 +2558,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         };
 
-        // the default combo base
-        comboBase = self.comboBase;
-
         comboSources = {};
 
         for (i = 0, len = sorted.length; i < len; i++) {
-            comboSource = comboBase;
+            comboBase = self.comboBase;
             m = self.getModule(sorted[i]);
             groupName = m && m.group;
             group = self.groups[groupName];
@@ -2580,7 +2574,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 }
                 m.combine = true;
                 if (group.comboBase) {
-                    comboSource = group.comboBase;
+                    comboBase = group.comboBase;
                 }
 
                 if (typeof group.root === 'string') {
@@ -2596,14 +2590,14 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 }
             }
 
-            comboSources[comboSource] = comboSources[comboSource] || [];
-            comboSources[comboSource].push(m);
+            comboSources[comboBase] = comboSources[comboBase] || [];
+            comboSources[comboBase].push(m);
         }
 
-        for (j in comboSources) {
-            if (comboSources.hasOwnProperty(j)) {
-                resCombos[j] = resCombos[j] || { js: [], jsMods: [], css: [], cssMods: [] };
-                mods = comboSources[j];
+        for (comboBase in comboSources) {
+            if (comboSources.hasOwnProperty(comboBase)) {
+                resCombos[comboBase] = resCombos[comboBase] || { js: [], jsMods: [], css: [], cssMods: [] };
+                mods = comboSources[comboBase];
 
                 if (mods.length) {
                     for (i = 0, len = mods.length; i < len; i++) {
@@ -2614,13 +2608,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         // Do not try to combine non-yui JS unless combo def
                         // is found
                         if (m && (m.combine || !m.ext)) {
-                            resCombos[j].comboSep = m.comboSep;
-                            resCombos[j].group = m.group;
-                            resCombos[j].maxURLLength = m.maxURLLength;
+                            resCombos[comboBase].comboSep = m.comboSep;
+                            resCombos[comboBase].group = m.group;
+                            resCombos[comboBase].maxURLLength = m.maxURLLength;
                             frag = ((typeof m.root === 'string') ? m.root : self.root) + (m.path || m.fullpath);
                             frag = self._filter(frag, m.name);
-                            resCombos[j][m.type].push(frag);
-                            resCombos[j][m.type + 'Mods'].push(m);
+                            resCombos[comboBase][m.type].push(frag);
+                            resCombos[comboBase][m.type + 'Mods'].push(m);
                         } else {
                             //Add them to the next process..
                             if (mods[i]) {
@@ -2634,20 +2628,19 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
 
 
-        for (j in resCombos) {
-            if (resCombos.hasOwnProperty(j)) {
-                base = j;
-                comboSep = resCombos[base].comboSep || self.comboSep;
-                maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
+        for (comboBase in resCombos) {
+            if (resCombos.hasOwnProperty(comboBase)) {
+                comboSep = resCombos[comboBase].comboSep || self.comboSep;
+                maxURLLength = resCombos[comboBase].maxURLLength || self.maxURLLength;
                 Y.log('Using maxURLLength of ' + maxURLLength, 'info', 'loader');
-                for (type in resCombos[base]) {
+                for (type in resCombos[comboBase]) {
                     if (type === JS || type === CSS) {
-                        urls = resCombos[base][type];
-                        mods = resCombos[base][type + 'Mods'];
-                        tmpBase = base + urls.join(comboSep);
+                        urls = resCombos[comboBase][type];
+                        mods = resCombos[comboBase][type + 'Mods'];
+                        tmpBase = comboBase + urls.join(comboSep);
                         baseLen = tmpBase.length;
-                        if (maxURLLength <= base.length) {
-                            Y.log('maxURLLength (' + maxURLLength + ') is lower than the comboBase length (' + base.length + '), resetting to default (' + MAX_URL_LENGTH + ')', 'error', 'loader');
+                        if (maxURLLength <= comboBase.length) {
+                            Y.log('maxURLLength (' + maxURLLength + ') is lower than the comboBase length (' + comboBase.length + '), resetting to default (' + MAX_URL_LENGTH + ')', 'error', 'loader');
                             maxURLLength = MAX_URL_LENGTH;
                         }
 
@@ -2657,12 +2650,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                                 u = [];
                                 for (i = 0, len = urls.length; i < len; i++) {
                                     u.push(urls[i]);
-                                    tmpBase = base + u.join(comboSep);
+                                    tmpBase = comboBase + u.join(comboSep);
 
                                     if (tmpBase.length > maxURLLength) {
                                         m = u.pop();
-                                        tmpBase = base + u.join(comboSep);
-                                        resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                        tmpBase = comboBase + u.join(comboSep);
+                                        resolved[type].push(self._filter(tmpBase, null, resCombos[comboBase].group));
                                         u = [];
                                         if (m) {
                                             u.push(m);
@@ -2670,11 +2663,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                                     }
                                 }
                                 if (u.length) {
-                                    tmpBase = base + u.join(comboSep);
-                                    resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                    tmpBase = comboBase + u.join(comboSep);
+                                    resolved[type].push(self._filter(tmpBase, null, resCombos[comboBase].group));
                                 }
                             } else {
-                                resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                resolved[type].push(self._filter(tmpBase, null, resCombos[comboBase].group));
                             }
                         }
                         resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
