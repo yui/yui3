@@ -76,19 +76,6 @@ Y.Env.meta = META;
         });
         var out = loader.resolve(true);
 
- * If the Loader needs to be patched before it is used for the first time, it
- * should be done through the `doBeforeLoader` hook. Simply make the patch
- * available via configuration before YUI is loaded:
-
-        YUI_config = YUI_config || {};
-        YUI_config.doBeforeLoader = function (config) {
-            var resolve = this.context.Loader.prototype.resolve;
-            this.context.Loader.prototype.resolve = function () {
-                // do something here
-                return resolve.apply(this, arguments);
-            };
-        };
-
  * @constructor
  * @class Loader
  * @param {Object} config an optional set of configuration options.
@@ -108,13 +95,13 @@ Y.Env.meta = META;
  * @param {Object} config.context Execution context for all callbacks
  * @param {Function} config.onSuccess Callback for the 'success' event
  * @param {Function} config.onFailure Callback for the 'failure' event
+ * @param {Function} config.onCSS Callback for the 'CSSComplete' event.  When loading YUI components with CSS the CSS is loaded first, then the script.  This provides a moment you can tie into to improve the presentation of the page while the script is loading.
  * @param {Function} config.onTimeout Callback for the 'timeout' event
  * @param {Function} config.onProgress Callback executed each time a script or css file is loaded
  * @param {Object} config.modules A list of module definitions.  See <a href="#method_addModule">Loader.addModule</a> for the supported module metadata
  * @param {Object} config.groups A list of group definitions.  Each group can contain specific definitions for `base`, `comboBase`, `combine`, and accepts a list of `modules`.
  * @param {String} config.2in3 The version of the YUI 2 in 3 wrapper to use.  The intrinsic support for YUI 2 modules in YUI 3 relies on versions of the YUI 2 components inside YUI 3 module wrappers.  These wrappers change over time to accomodate the issues that arise from running YUI 2 in a YUI 3 sandbox.
  * @param {String} config.yui2 When using the 2in3 project, you can select the version of YUI 2 to use.  Valid values are `2.2.2`, `2.3.1`, `2.4.1`, `2.5.2`, `2.6.0`, `2.7.0`, `2.8.0`, `2.8.1` and `2.9.0` [default] -- plus all versions of YUI 2 going forward.
- * @param {Function} config.doBeforeLoader An optional hook that allows for the patching of the loader instance. The `Y` instance is available as `this.context` and the only argument to the function is the Loader configuration object.
  */
 Y.Loader = function(o) {
 
@@ -149,6 +136,16 @@ Y.Loader = function(o) {
     // self.onFailure = null;
 
     /**
+     * Callback for the 'CSSComplete' event.  When loading YUI components
+     * with CSS the CSS is loaded first, then the script.  This provides
+     * a moment you can tie into to improve the presentation of the page
+     * while the script is loading.
+     * @method onCSS
+     * @type function
+     */
+    // self.onCSS = null;
+
+    /**
      * Callback executed each time a script or css file is loaded
      * @method onProgress
      * @type function
@@ -168,11 +165,6 @@ Y.Loader = function(o) {
      * @default {YUI} the YUI instance
      */
     self.context = Y;
-
-    // Hook that allows the patching of loader
-    if (o.doBeforeLoader) {
-        o.doBeforeLoader.apply(self, arguments);
-    }
 
     /**
      * Data that is passed to all callbacks
@@ -2141,56 +2133,70 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @private
      */
     _sort: function() {
-        var name, 
 
-            // Object containing module names.
-            required = this.required, 
+        // create an indexed list
+        var s = YObject.keys(this.required),
+            // loaded = this.loaded,
+            //TODO Move this out of scope
+            done = {},
+            p = 0, l, a, b, j, k, moved, doneKey;
 
-            // Keep track of whether we've visited a module.
-            visited = {};
+        // keep going until we make a pass without moving anything
+        for (;;) {
 
-        // Will contain modules names, in the correct order, 
-        // according to dependencies.
-        this.sorted = [];
+            l = s.length;
+            moved = false;
 
-        for (name in required) {
-            if (!visited[name] && required.hasOwnProperty(name)) {
-                this._visit(name, visited);
-            }
-        }
-    },
+            // start the loop after items that are already sorted
+            for (j = p; j < l; j++) {
 
-    /**
-     * Recursively visits the dependencies of the module name
-     * passed in, and appends each module name to the `sorted` property.
-     * @param {String} name The name of a module.
-     * @param {Object} visited Keeps track of whether a module was visited.
-     * @method _visit
-     * @private
-     */ 
-    _visit: function (name, visited) {
-        var required, moduleInfo, dependency, dependencies, i, l;     
+                // check the next module on the list to see if its
+                // dependencies have been met
+                a = s[j];
 
-        visited[name] = true;
-        required = this.required;
-        moduleInfo = this.moduleInfo[name];
+                // check everything below current item and move if we
+                // find a requirement for the current item
+                for (k = j + 1; k < l; k++) {
+                    doneKey = a + s[k];
 
-        if (moduleInfo) {
-            // Recurse on each dependency of this module, 
-            // figuring out its dependencies, and so on.
-            dependencies = moduleInfo.requires;
-            for (i = 0, l = dependencies.length; i < l; ++i) {
-                dependency = dependencies[i];
-                
-                // Is this module name in the required list of modules,
-                // and have we not already visited it?
-                if (required[dependency] && !visited[dependency]) {
-                    this._visit(dependency, visited);
+                    if (!done[doneKey] && this._requires(a, s[k])) {
+
+                        // extract the dependency so we can move it up
+                        b = s.splice(k, 1);
+
+                        // insert the dependency above the item that
+                        // requires it
+                        s.splice(j, 0, b[0]);
+
+                        // only swap two dependencies once to short circut
+                        // circular dependencies
+                        done[doneKey] = true;
+
+                        // keep working
+                        moved = true;
+
+                        break;
+                    }
+                }
+
+                // jump out of loop if we moved something
+                if (moved) {
+                    break;
+                // this item is sorted, move our pointer and keep going
+                } else {
+                    p++;
                 }
             }
+
+            // when we make it here and moved is false, we are
+            // finished sorting
+            if (!moved) {
+                break;
+            }
+
         }
 
-        this.sorted.push(name);
+        this.sorted = s;
     },
 
     /**
@@ -2463,7 +2469,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @method _url
      * @param {string} path the path fragment.
      * @param {String} name The name of the module
-     * @param {String} [base] The base url to use. Defaults to self.base
+     * @param {String} [base=self.base] The base url to use
      * @return {string} the full url.
      * @private
      */
@@ -2474,8 +2480,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     * Returns an Object hash of file arrays built from `loader.sorted` or from an arbitrary list of sorted modules.
     * @method resolve
     * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else
-    * @param {Array} [s] An override for the loader.sorted array. Defaults to
-    * `loader.sorted`.
+    * @param {Array} [sorted=loader.sorted] An override for the loader.sorted array
     * @return {Object} Object hash (js and css) of two arrays of file lists
     * @example This method can be used as an off-line dep calculator
     *
@@ -2490,7 +2495,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     *        var out = loader.resolve(true);
     *
     */
-    resolve: function(calc, s) {
+    resolve: function(calc, sorted) {
         var self        = this,
             resolved    = { js: [], jsMods: [], css: [], cssMods: [] },
             inserted    = (self.ignoreRegistered) ? {} : self.inserted,
@@ -2524,7 +2529,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         if (calc) {
             self.calculate();
         }
-        s = s || self.sorted;
+        sorted = sorted || self.sorted;
 
         addSingle = function(m) {
 
@@ -2536,8 +2541,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     m.async = group.async;
                 }
 
-                url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
-                      self._url(m.path, s[i], group.base || m.base);
+                url = (m.fullpath) ? self._filter(m.fullpath, sorted[i]) :
+                      self._url(m.path, sorted[i], group.base || m.base);
 
                 if (m.attributes || m.async === false) {
                     url = {
@@ -2556,7 +2561,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         };
 
-        len = s.length;
+        len = sorted.length;
 
         // the default combo base
         comboBase = self.comboBase;
@@ -2567,7 +2572,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         for (i = 0; i < len; i++) {
             comboSource = comboBase;
-            m = self.getModule(s[i]);
+            m = self.getModule(sorted[i]);
             groupName = m && m.group;
             group = self.groups[groupName];
             if (groupName && group) {
@@ -2689,6 +2694,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         return resolved;
     },
+
     /**
     Shortcut to calculate, resolve and load all modules.
 
@@ -2707,7 +2713,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
 
     @method load
-    @param {Function} cb Executed after all load operations are complete
+    @param {Callback} cb Executed after all load operations are complete
     */
     load: function(cb) {
         if (!cb) {
