@@ -2564,8 +2564,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         // the default combo base
         comboBase = self.comboBase;
 
-        url = comboBase;
-
         comboSources = {};
 
         for (i = 0, len = sorted.length; i < len; i++) {
@@ -2605,7 +2603,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         for (j in comboSources) {
             if (comboSources.hasOwnProperty(j)) {
                 resCombos[j] = resCombos[j] || { js: [], jsMods: [], css: [], cssMods: [] };
-                url = j;
                 mods = comboSources[j];
 
                 if (mods.length) {
