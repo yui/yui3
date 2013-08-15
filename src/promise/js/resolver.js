@@ -140,6 +140,8 @@ Y.mix(Resolver.prototype, {
 
             callbackList = this._callbacks || [],
             errbackList  = this._errbacks  || [];
+        
+        if (promise.constructor !== Promise) { Y.log('then() will no longer return a subclassed promise by default in the future', 'warn'); }
 
         // Because the callback and errback are represented by a Resolver, it
         // must be fulfilled or rejected to propagate through the then() chain.
