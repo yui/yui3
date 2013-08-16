@@ -53,7 +53,7 @@
         _instance: null,
 
         /**
-        * @private
+        * @protected
         * @method initializer
         * @description Initializes the ContentEditable instance
         */
@@ -73,7 +73,7 @@
         },
 
         /**
-        * @private
+        * @protected
         * @method destructor
         * @description Destroys the instance.
         */
