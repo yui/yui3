@@ -2604,7 +2604,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
                 if (mods.length) {
                     for (i = 0, len = mods.length; i < len; i++) {
-                        if (inserted[mods[i]]) {
+                        if (inserted[mods[i].name]) {
                             continue;
                         }
                         m = mods[i];
