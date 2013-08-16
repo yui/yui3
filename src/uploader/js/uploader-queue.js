@@ -106,6 +106,9 @@ Y.extend(UploaderQueue, Y.Base, {
             }
             this._startNextFile();
         }
+        else {
+            this._startNextFile();
+        }
 
         this.fire("uploaderror", updatedEvent);
     },
