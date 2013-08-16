@@ -35,6 +35,7 @@ var L            = Y.Lang,
  * @param {boolean} proto if true, prototype properties are
  * iterated on objects.
  * @param {string} action the function name to dispatched,eg:`some`, `each`
+ * @private
  * @return {YUI} the YUI instance.
  */
 function dispatch(o, f, c, proto, action) {
