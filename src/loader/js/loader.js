@@ -2564,7 +2564,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 continue;
             }
 
-            comboBase = self.comboBase;
             group = self.groups[m.group];
 
             if (group) {
@@ -2575,16 +2574,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 }
                 m.combine = true;
 
-                if (group.comboBase) {
-                    comboBase = group.comboBase;
-                }
-
                 if (typeof group.root === 'string') {
                     m.root = group.root;
                 }
 
-                m.comboSep = group.comboSep || self.comboSep;
-                m.maxURLLength = group.maxURLLength || self.maxURLLength;
+                comboBase    = group.comboBase;
+                comboSep     = group.comboSep;
+                maxURLLength = group.maxURLLength;
             } else {
                 if (!self.combine) {
                     //This is not a combo module, skip it and load it singly later.
@@ -2593,50 +2589,33 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 }
             }
 
-            comboSources[comboBase] = comboSources[comboBase] || [];
-            comboSources[comboBase].push(m);
+            if (!m.combine && m.ext) {
+                addSingle(m);
+                continue;
+            }
+
+            comboBase = comboBase || self.comboBase;
+
+            comboSources[comboBase] = comboSources[comboBase] ||
+                { js: [], jsMods: [], css: [], cssMods: [] };
+
+            comboMeta               = comboSources[comboBase];
+            comboMeta.group         = m.group;
+            comboMeta.comboSep      = comboSep || self.comboSep;
+            comboMeta.maxURLLength  = maxURLLength || self.maxURLLength;
+
+            frag = ((typeof m.root === 'string') ? m.root : self.root) + (m.path || m.fullpath);
+            frag = self._filter(frag, m.name);
+            comboMeta[m.type].push(frag);
+
+            comboMeta[m.type + 'Mods'].push(m);
         }
 
         for (comboBase in comboSources) {
             if (comboSources.hasOwnProperty(comboBase)) {
-                resCombos[comboBase] = resCombos[comboBase] ||
-                    { js: [], jsMods: [], css: [], cssMods: [] };
-
-                comboMeta = resCombos[comboBase];
-                mods      = comboSources[comboBase];
-
-                if (mods.length) {
-                    for (i = 0, len = mods.length; i < len; i++) {
-                        m = mods[i];
-                        // Do not try to combine non-yui JS unless combo def
-                        // is found
-                        if (m.combine || !m.ext) {
-                            comboMeta.comboSep = m.comboSep;
-                            comboMeta.group = m.group;
-                            comboMeta.maxURLLength = m.maxURLLength;
-
-                            frag = ((typeof m.root === 'string') ? m.root : self.root) + (m.path || m.fullpath);
-                            frag = self._filter(frag, m.name);
-                            comboMeta[m.type].push(frag);
-                            comboMeta[m.type + 'Mods'].push(m);
-                        } else {
-                            //Add them to the next process..
-                            if (mods[i]) {
-                                addSingle(mods[i]);
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-
-
-        for (comboBase in resCombos) {
-            if (resCombos.hasOwnProperty(comboBase)) {
-                comboMeta    = resCombos[comboBase];
-                comboSep     = comboMeta.comboSep || self.comboSep;
-                maxURLLength = comboMeta.maxURLLength || self.maxURLLength;
+                comboMeta    = comboSources[comboBase];
+                comboSep     = comboMeta.comboSep;
+                maxURLLength = comboMeta.maxURLLength;
                 Y.log('Using maxURLLength of ' + maxURLLength, 'info', 'loader');
                 for (type in comboMeta) {
                     if (type === JS || type === CSS) {
