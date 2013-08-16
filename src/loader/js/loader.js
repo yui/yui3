@@ -2505,7 +2505,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             maxURLLength,
             comboBase,
             comboMeta,
-            groupName,
             addSingle,
             comboSep,
             tmpBase,
@@ -2566,17 +2565,16 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             }
 
             comboBase = self.comboBase;
-            groupName = m && m.group;
-            group = self.groups[groupName];
+            group = self.groups[m.group];
 
-            if (groupName && group) {
-
+            if (group) {
                 if (!group.combine || m.fullpath) {
                     //This is not a combo module, skip it and load it singly later.
                     addSingle(m);
                     continue;
                 }
                 m.combine = true;
+
                 if (group.comboBase) {
                     comboBase = group.comboBase;
                 }
@@ -2584,6 +2582,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 if (typeof group.root === 'string') {
                     m.root = group.root;
                 }
+
                 m.comboSep = group.comboSep || self.comboSep;
                 m.maxURLLength = group.maxURLLength || self.maxURLLength;
             } else {
