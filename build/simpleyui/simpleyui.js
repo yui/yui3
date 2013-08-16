@@ -5682,6 +5682,28 @@ var L            = Y.Lang,
     hasOwn   = OP.hasOwnProperty,
     toString = OP.toString;
 
+/**
+ * Dispatch to call function named after `action` of
+ * corresponding object or Class with supplied arguments.
+ *
+ * If the supplied object(Not Y) has a function named after `action`,
+ * then dispatched to call that
+ *
+ * If the object is an Array or Array-like object,
+ * then dispatched to call `Y.Array[action]`
+ *
+ * Otherwise dispatched to call `Y.Object[action]`
+ *
+ * @method dispatch
+ * @param {object} o the object to iterate.
+ * @param {function} f the function to execute.  This function
+ * receives the value, key, and object as parameters.
+ * @param {object} c the execution context for the function.
+ * @param {boolean} proto if true, prototype properties are
+ * iterated on objects.
+ * @param {string} action the function name to dispatched,eg:`some`, `each`
+ * @return {YUI} the YUI instance.
+ */
 function dispatch(o, f, c, proto, action) {
     if (o && o[action] && o !== Y) {
         return o[action].call(o, f, c);
