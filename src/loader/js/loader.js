@@ -2560,10 +2560,15 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         };
 
         for (i = 0, len = sorted.length; i < len; i++) {
-            comboBase = self.comboBase;
             m = self.getModule(sorted[i]);
+            if (!m || inserted[m.name]) {
+                continue;
+            }
+
+            comboBase = self.comboBase;
             groupName = m && m.group;
             group = self.groups[groupName];
+
             if (groupName && group) {
 
                 if (!group.combine || m.fullpath) {
@@ -2601,19 +2606,16 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 comboMeta = resCombos[comboBase];
                 mods      = comboSources[comboBase];
 
-
                 if (mods.length) {
                     for (i = 0, len = mods.length; i < len; i++) {
-                        if (inserted[mods[i].name]) {
-                            continue;
-                        }
                         m = mods[i];
                         // Do not try to combine non-yui JS unless combo def
                         // is found
-                        if (m && (m.combine || !m.ext)) {
+                        if (m.combine || !m.ext) {
                             comboMeta.comboSep = m.comboSep;
                             comboMeta.group = m.group;
                             comboMeta.maxURLLength = m.maxURLLength;
+
                             frag = ((typeof m.root === 'string') ? m.root : self.root) + (m.path || m.fullpath);
                             frag = self._filter(frag, m.name);
                             comboMeta[m.type].push(frag);
