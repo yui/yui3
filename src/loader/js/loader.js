@@ -2510,9 +2510,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             tmpBase,
             baseLen,
             group,
-            mods,
+            frags,
             frag,
-            urls,
+            mods,
             type,
             url,
             len,
@@ -2604,10 +2604,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             comboMeta.comboSep      = comboSep || self.comboSep;
             comboMeta.maxURLLength  = maxURLLength || self.maxURLLength;
 
-            frag = ((typeof m.root === 'string') ? m.root : self.root) + (m.path || m.fullpath);
-            frag = self._filter(frag, m.name);
-            comboMeta[m.type].push(frag);
-
             comboMeta[m.type + 'Mods'].push(m);
         }
 
@@ -2619,21 +2615,28 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 Y.log('Using maxURLLength of ' + maxURLLength, 'info', 'loader');
                 for (type in comboMeta) {
                     if (type === JS || type === CSS) {
-                        urls = comboMeta[type];
-                        mods = comboMeta[type + 'Mods'];
-                        tmpBase = comboBase + urls.join(comboSep);
+                        mods  = comboMeta[type + 'Mods'];
+                        frags = [];
+                        for (i = 0, len = mods.length; i < len; i += 1) {
+                            m    = mods[i];
+                            frag = ((typeof m.root === 'string') ? m.root : self.root) + (m.path || m.fullpath);
+                            frags.push(
+                                frag = self._filter(frag, m.name)
+                            );
+                        }
+                        tmpBase = comboBase + frags.join(comboSep);
                         baseLen = tmpBase.length;
                         if (maxURLLength <= comboBase.length) {
                             Y.log('maxURLLength (' + maxURLLength + ') is lower than the comboBase length (' + comboBase.length + '), resetting to default (' + MAX_URL_LENGTH + ')', 'error', 'loader');
                             maxURLLength = MAX_URL_LENGTH;
                         }
 
-                        if (urls.length) {
+                        if (frags.length) {
                             if (baseLen > maxURLLength) {
                                 Y.log('Exceeded maxURLLength (' + maxURLLength + ') for ' + type + ', splitting', 'info', 'loader');
                                 u = [];
-                                for (i = 0, len = urls.length; i < len; i++) {
-                                    u.push(urls[i]);
+                                for (i = 0, len = frags.length; i < len; i++) {
+                                    u.push(frags[i]);
                                     tmpBase = comboBase + u.join(comboSep);
 
                                     if (tmpBase.length > maxURLLength) {
