@@ -774,9 +774,12 @@ Y.Router = Y.extend(Router, Y.Base, {
                             value        = matches[i];
 
                         if (paramHandler && value && typeof value === 'string') {
-                            value = typeof paramHandler === 'function' ?
-                                    paramHandler.call(self, value, key) :
-                                    paramHandler.exec(value);
+                            // Check if `paramHandler` is a RegExp, becuase this
+                            // is true in Android 2.3 and other browsers!
+                            // `typeof /.*/ === 'function'`
+                            value = paramHandler instanceof RegExp ?
+                                    paramHandler.exec(value) :
+                                    paramHandler.call(self, value, key);
 
                             if (value !== false && YLang.isValue(value)) {
                                 req.params[key] = value;
