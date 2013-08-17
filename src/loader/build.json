@@ -21,8 +21,7 @@
                 "yogi loader --yes --mix --start ../"
             ],
             "jsfiles": [
-                "yui3.js",
-                "wf2-config.js"
+                "yui3.js"
             ]
         },
         "loader-rollup": {
