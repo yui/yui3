@@ -14,10 +14,9 @@ var L            = Y.Lang,
     toString = OP.toString;
 
 /**
- * Dispatch to call function named after `action` of
- * corresponding object or Class with supplied arguments.
+ * Dispatch to call function `action` of corresponding object or Class
  *
- * If the supplied object(Not Y) has a function named after `action`,
+ * If the supplied object(Not Y) has function `action`,
  * then dispatched to call that
  *
  * If the object is an Array or Array-like object,
@@ -32,7 +31,7 @@ var L            = Y.Lang,
  * @param {object} c the execution context for the function.
  * @param {boolean} proto if true, prototype properties are
  * iterated on objects.
- * @param {string} action the function name to dispatched,eg:`some`, `each`
+ * @param {string} action the function name to be dispatched,eg:`some`, `each`
  * @private
  * @return {YUI} the YUI instance.
  */
