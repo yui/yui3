@@ -61,9 +61,8 @@ YUI({ filter: 'raw' }).use( "datatable-sort", "datatable-scroll", "cssbutton", f
         // undefined to trigger the emptyCellValue
         var checked = e.target.get('checked') || undefined;
         
-        /*If `{silent:true}` is not set, every non-master checkbox selection will cause to fire the 'change' event
-        which will eventually re-render the datatable always which is bad at performance and also as the formatter is of static string type,
-        when user checks/selects a  checkbox it will cause other checkboxes also to be checked/selected, which is the actual reported issue.*/
+        // Don't pass `{silent:true}` if there are other objects in your app
+        // that need to be notified of the checkbox change.
         this.getRecord(e.target).set('select', checked, { silent: true });
 
         // Uncheck the header checkbox
