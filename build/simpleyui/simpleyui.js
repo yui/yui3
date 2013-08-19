@@ -15160,8 +15160,7 @@ Y.mix(Y_Node.prototype, {
     },
 
     _isHidden: function() {
-        return this._node.hasAttribute('hidden')
-            || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
+        return  this.hasAttribute('hidden') || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
     },
 
     /**
