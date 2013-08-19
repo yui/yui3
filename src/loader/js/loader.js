@@ -2496,28 +2496,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     *
     */
     resolve: function(calc, sorted) {
-        var self         = this,
-            resolved     = { js: [], jsMods: [], css: [], cssMods: [] },
-            inserted     = (self.ignoreRegistered) ? {} : self.inserted,
-            resCombos    = {},
-            comboSources = {},
-            u            = [],
-            maxURLLength,
-            comboBase,
-            comboMeta,
-            addSingle,
-            comboSep,
-            tmpBase,
-            baseLen,
-            group,
-            frags,
-            frag,
-            mods,
-            type,
-            url,
-            len,
-            m,
-            i;
+        var self     = this,
+            resolved = { js: [], jsMods: [], css: [], cssMods: [] },
+            addSingle;
 
         if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) {
             self._resetModules();
@@ -2528,54 +2509,67 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
         sorted = sorted || self.sorted;
 
-        addSingle = function(m) {
-
-            if (m) {
-                group = (m.group && self.groups[m.group]) || NOT_FOUND;
+        addSingle = function(mod) {
+            if (mod) {
+                var group = (mod.group && self.groups[mod.group]) || NOT_FOUND,
+                    url;
 
                 //Always assume it's async
                 if (group.async === false) {
-                    m.async = group.async;
+                    mod.async = group.async;
                 }
 
-                url = (m.fullpath) ? self._filter(m.fullpath, m.name) :
-                      self._url(m.path, m.name, group.base || m.base);
+                url = (mod.fullpath) ? self._filter(mod.fullpath, mod.name) :
+                      self._url(mod.path, mod.name, group.base || mod.base);
 
-                if (m.attributes || m.async === false) {
+                if (mod.attributes || mod.async === false) {
                     url = {
                         url: url,
-                        async: m.async
+                        async: mod.async
                     };
-                    if (m.attributes) {
-                        url.attributes = m.attributes;
+                    if (mod.attributes) {
+                        url.attributes = mod.attributes;
                     }
                 }
-                resolved[m.type].push(url);
-                resolved[m.type + 'Mods'].push(m);
+                resolved[mod.type].push(url);
+                resolved[mod.type + 'Mods'].push(mod);
             } else {
                 Y.log('Undefined Module', 'warn', 'loader');
             }
 
         };
 
+        /*jslint vars: true */
+        var inserted     = (self.ignoreRegistered) ? {} : self.inserted,
+            comboSources = {},
+            maxURLLength,
+            comboMeta,
+            comboBase,
+            comboSep,
+            group,
+            mod,
+            len,
+            i;
+        /*jslint vars: false */
+
         for (i = 0, len = sorted.length; i < len; i++) {
-            m = self.getModule(sorted[i]);
-            if (!m || inserted[m.name]) {
+            mod = self.getModule(sorted[i]);
+            if (!mod || inserted[mod.name]) {
                 continue;
             }
 
-            group = self.groups[m.group];
+            group = self.groups[mod.group];
 
             if (group) {
-                if (!group.combine || m.fullpath) {
+                if (!group.combine || mod.fullpath) {
                     //This is not a combo module, skip it and load it singly later.
-                    addSingle(m);
+                    addSingle(mod);
                     continue;
                 }
-                m.combine = true;
+                mod.combine = true;
 
                 if (typeof group.root === 'string') {
-                    m.root = group.root;
+                    mod.root = group.root;
                 }
 
                 comboBase    = group.comboBase;
@@ -2584,13 +2578,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             } else {
                 if (!self.combine) {
                     //This is not a combo module, skip it and load it singly later.
-                    addSingle(m);
+                    addSingle(mod);
                     continue;
                 }
             }
 
-            if (!m.combine && m.ext) {
-                addSingle(m);
+            if (!mod.combine && mod.ext) {
+                addSingle(mod);
                 continue;
             }
 
@@ -2600,12 +2594,24 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 { js: [], jsMods: [], css: [], cssMods: [] };
 
             comboMeta               = comboSources[comboBase];
-            comboMeta.group         = m.group;
+            comboMeta.group         = mod.group;
             comboMeta.comboSep      = comboSep || self.comboSep;
             comboMeta.maxURLLength  = maxURLLength || self.maxURLLength;
 
-            comboMeta[m.type + 'Mods'].push(m);
+            comboMeta[mod.type + 'Mods'].push(mod);
         }
+
+        // TODO: Refactor the encoding logic below into its own method.
+
+        /*jslint vars: true */
+        var fragSubset,
+            modules,
+            tmpBase,
+            baseLen,
+            frags,
+            frag,
+            type;
+        /*jslint vars: false */
 
         for (comboBase in comboSources) {
             if (comboSources.hasOwnProperty(comboBase)) {
@@ -2615,13 +2621,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 Y.log('Using maxURLLength of ' + maxURLLength, 'info', 'loader');
                 for (type in comboMeta) {
                     if (type === JS || type === CSS) {
-                        mods  = comboMeta[type + 'Mods'];
+                        modules = comboMeta[type + 'Mods'];
                         frags = [];
-                        for (i = 0, len = mods.length; i < len; i += 1) {
-                            m    = mods[i];
-                            frag = ((typeof m.root === 'string') ? m.root : self.root) + (m.path || m.fullpath);
+                        for (i = 0, len = modules.length; i < len; i += 1) {
+                            mod = modules[i];
+                            frag = ((typeof mod.root === 'string') ? mod.root : self.root) + (mod.path || mod.fullpath);
                             frags.push(
-                                frag = self._filter(frag, m.name)
+                                self._filter(frag, mod.name)
                             );
                         }
                         tmpBase = comboBase + frags.join(comboSep);
@@ -2634,36 +2640,34 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         if (frags.length) {
                             if (baseLen > maxURLLength) {
                                 Y.log('Exceeded maxURLLength (' + maxURLLength + ') for ' + type + ', splitting', 'info', 'loader');
-                                u = [];
+                                fragSubset = [];
                                 for (i = 0, len = frags.length; i < len; i++) {
-                                    u.push(frags[i]);
-                                    tmpBase = comboBase + u.join(comboSep);
+                                    fragSubset.push(frags[i]);
+                                    tmpBase = comboBase + fragSubset.join(comboSep);
 
                                     if (tmpBase.length > maxURLLength) {
-                                        m = u.pop();
-                                        tmpBase = comboBase + u.join(comboSep);
+                                        frag = fragSubset.pop();
+                                        tmpBase = comboBase + fragSubset.join(comboSep);
                                         resolved[type].push(self._filter(tmpBase, null, comboMeta.group));
-                                        u = [];
-                                        if (m) {
-                                            u.push(m);
+                                        fragSubset = [];
+                                        if (frag) {
+                                            fragSubset.push(frag);
                                         }
                                     }
                                 }
-                                if (u.length) {
-                                    tmpBase = comboBase + u.join(comboSep);
+                                if (fragSubset.length) {
+                                    tmpBase = comboBase + fragSubset.join(comboSep);
                                     resolved[type].push(self._filter(tmpBase, null, comboMeta.group));
                                 }
                             } else {
                                 resolved[type].push(self._filter(tmpBase, null, comboMeta.group));
                             }
                         }
-                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
+                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(modules);
                     }
                 }
             }
         }
-
-        resCombos = null;
 
         return resolved;
     },
