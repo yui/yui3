@@ -6041,27 +6041,30 @@ var L            = Y.Lang,
     toString = OP.toString;
 
 /**
- * Dispatch to call function `action` of corresponding object or Class
- *
- * If the supplied object(Not Y) has function `action`,
- * then dispatched to call that
- *
- * If the object is an Array or Array-like object,
- * then dispatched to call `Y.Array[action]`
- *
- * Otherwise dispatched to call `Y.Object[action]`
- *
- * @method dispatch
- * @param {object} o the object to iterate.
- * @param {function} f the function to execute.  This function
- * receives the value, key, and object as parameters.
- * @param {object} c the execution context for the function.
- * @param {boolean} proto if true, prototype properties are
- * iterated on objects.
- * @param {string} action the function name to be dispatched,eg:`some`, `each`
- * @private
- * @return {YUI} the YUI instance.
- */
+Calls the specified _action_ method on _o_ if it exists. Otherwise, if _o_ is an
+array, calls the _action_ method on `Y.Array`, or if _o_ is an object, calls the
+_action_ method on `Y.Object`.
+
+If _o_ is an array-like object, it will be coerced to an array.
+
+This is intended to be used with array/object iteration methods that share
+signatures, such as `each()`, `some()`, etc.
+
+@method dispatch
+@param {Object} o Array or object to dispatch to.
+@param {Function} f Iteration callback.
+    @param {Mixed} f.value Value being iterated.
+    @param {Mixed} f.key Current object key or array index.
+    @param {Mixed} f.object Object or array being iterated.
+@param {Object} c `this` object to bind the iteration callback to.
+@param {Boolean} proto If `true`, prototype properties of objects will be
+iterated.
+@param {String} action Function name to be dispatched on _o_. For example:
+'some', 'each', etc.
+@private
+@return {Mixed} Returns the value returned by the chosen iteration action, which
+varies.
+**/
 function dispatch(o, f, c, proto, action) {
     if (o && o[action] && o !== Y) {
         return o[action].call(o, f, c);
