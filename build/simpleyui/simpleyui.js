@@ -5701,12 +5701,12 @@ signatures, such as `each()`, `some()`, etc.
     @param {Mixed} f.object Object or array being iterated.
 @param {Object} c `this` object to bind the iteration callback to.
 @param {Boolean} proto If `true`, prototype properties of objects will be
-iterated.
+    iterated.
 @param {String} action Function name to be dispatched on _o_. For example:
-'some', 'each', etc.
+    'some', 'each', etc.
 @private
 @return {Mixed} Returns the value returned by the chosen iteration action, which
-varies.
+    varies.
 **/
 function dispatch(o, f, c, proto, action) {
     if (o && o[action] && o !== Y) {
