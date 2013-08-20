@@ -145,7 +145,7 @@ Y.extend(HistoryHash, HistoryBase, {
      * @static
      * @final
      */
-    _REGEX_HASH: /([^\?#&]+)=([^&]+)/g,
+    _REGEX_HASH: /([^\?#&]+)=([^&]*)/g,
 
     // -- Public Static Methods ------------------------------------------------
 
