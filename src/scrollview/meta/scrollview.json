@@ -1,6 +1,6 @@
 {
     "scrollview" : {
-    
+
         "plugins" : {
             "scrollview-base" : {
                 "requires" : [

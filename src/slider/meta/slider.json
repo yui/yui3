@@ -10,10 +10,10 @@
 
             "slider-base": {
                 "requires": [
-                    "widget", 
-                    "dd-constrain", 
+                    "widget",
+                    "dd-constrain",
                     "event-key"
-                ], 
+                ],
                 "skinnable": true
             },
 
