@@ -63,7 +63,7 @@ Renderer.prototype = {
      * @type Object
      * @private
      */
-	_styles: null,
+    _styles: null,
 
     /**
      * Method used by `styles` setter.
@@ -73,11 +73,11 @@ Renderer.prototype = {
      * @return Object
      * @protected
      */
-	_setStyles: function(newstyles)
-	{
-		var styles = this.get("styles");
+    _setStyles: function(newstyles)
+    {
+        var styles = this.get("styles");
         return this._mergeStyles(newstyles, styles);
-	},
+    },
 
     /**
      * Merges to object literals so that only specified properties are

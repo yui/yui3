@@ -7,7 +7,7 @@
  */
 SVGPieSlice = function()
 {
-	SVGPieSlice.superclass.constructor.apply(this, arguments);
+    SVGPieSlice.superclass.constructor.apply(this, arguments);
 };
 SVGPieSlice.NAME = "svgPieSlice";
 Y.extend(SVGPieSlice, Y.SVGShape, Y.mix({
@@ -20,14 +20,14 @@ Y.extend(SVGPieSlice, Y.SVGShape, Y.mix({
      */
     _type: "path",
 
-	/**
-	 * Change event listener
-	 *
-	 * @private
-	 * @method _updateHandler
-	 */
-	_draw: function()
-	{
+    /**
+     * Change event listener
+     *
+     * @private
+     * @method _updateHandler
+     */
+    _draw: function()
+    {
         var x = this.get("cx"),
             y = this.get("cy"),
             startAngle = this.get("startAngle"),
@@ -35,8 +35,8 @@ Y.extend(SVGPieSlice, Y.SVGShape, Y.mix({
             radius = this.get("radius");
         this.clear();
         this.drawWedge(x, y, startAngle, arc, radius);
-		this.end();
-	}
+        this.end();
+    }
  }, Y.SVGDrawing.prototype));
 SVGPieSlice.ATTRS = Y.mix({
     cx: {

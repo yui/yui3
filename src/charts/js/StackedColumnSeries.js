@@ -22,10 +22,10 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
      * Draws the series.
      *
      * @method drawSeries
-	 * @protected
-	 */
-	drawSeries: function()
-	{
+     * @protected
+     */
+    drawSeries: function()
+    {
         if(this.get("xcoords").length < 1)
         {
             return;

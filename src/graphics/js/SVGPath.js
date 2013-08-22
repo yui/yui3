@@ -11,7 +11,7 @@
  */
 SVGPath = function()
 {
-	SVGPath.superclass.constructor.apply(this, arguments);
+    SVGPath.superclass.constructor.apply(this, arguments);
 };
 SVGPath.NAME = "path";
 Y.extend(SVGPath, Y.SVGShape, {
@@ -68,51 +68,51 @@ Y.extend(SVGPath, Y.SVGShape, {
      * @type String
      * @private
      */
-	_path: ""
+    _path: ""
 });
 
 SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
-	/**
-	 * Indicates the path used for the node.
-	 *
-	 * @config path
-	 * @type String
+    /**
+     * Indicates the path used for the node.
+     *
+     * @config path
+     * @type String
      * @readOnly
-	 */
-	path: {
-		readOnly: true,
+     */
+    path: {
+        readOnly: true,
 
-		getter: function()
-		{
-			return this._path;
-		}
-	},
+        getter: function()
+        {
+            return this._path;
+        }
+    },
 
-	/**
-	 * Indicates the width of the shape
-	 *
-	 * @config width
-	 * @type Number
-	 */
-	width: {
-		getter: function()
-		{
-			var val = Math.max(this._right - this._left, 0);
-			return val;
-		}
-	},
+    /**
+     * Indicates the width of the shape
+     *
+     * @config width
+     * @type Number
+     */
+    width: {
+        getter: function()
+        {
+            var val = Math.max(this._right - this._left, 0);
+            return val;
+        }
+    },
 
-	/**
-	 * Indicates the height of the shape
-	 *
-	 * @config height
-	 * @type Number
-	 */
-	height: {
-		getter: function()
-		{
-			return Math.max(this._bottom - this._top, 0);
-		}
-	}
+    /**
+     * Indicates the height of the shape
+     *
+     * @config height
+     * @type Number
+     */
+    height: {
+        getter: function()
+        {
+            return Math.max(this._bottom - this._top, 0);
+        }
+    }
 });
 Y.SVGPath = SVGPath;

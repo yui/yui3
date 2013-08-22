@@ -1,15 +1,15 @@
 var IMPLEMENTATION = "svg",
     SHAPE = "shape",
-	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
+    SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
     SPLITARGSPATTERN = /[\-]?[0-9]*[0-9|\.][0-9]*/g,
     Y_LANG = Y.Lang,
-	AttributeLite = Y.AttributeLite,
-	SVGGraphic,
+    AttributeLite = Y.AttributeLite,
+    SVGGraphic,
     SVGShape,
-	SVGCircle,
-	SVGRect,
-	SVGPath,
-	SVGEllipse,
+    SVGCircle,
+    SVGRect,
+    SVGPath,
+    SVGEllipse,
     SVGPieSlice,
     DOCUMENT = Y.config.doc,
     _getClassName = Y.ClassNameManager.getClassName;
@@ -327,7 +327,7 @@ SVGDrawing.prototype = {
         this.lineTo(x + ew, y);
         this.quadraticCurveTo(x, y, x, y + eh);
         return this;
-	},
+    },
 
     /**
      * Draws a circle.
@@ -339,7 +339,7 @@ SVGDrawing.prototype = {
      * @chainable
      * @protected
      */
-	drawCircle: function(x, y, radius) {
+    drawCircle: function(x, y, radius) {
         var circum = radius * 2;
         this._drawingComplete = false;
         this._trackSize(x, y);
@@ -364,7 +364,7 @@ SVGDrawing.prototype = {
      * @chainable
      * @protected
      */
-	drawEllipse: function(x, y, w, h) {
+    drawEllipse: function(x, y, w, h) {
         var radius = w * 0.5,
             yRadius = h * 0.5;
         this._drawingComplete = false;

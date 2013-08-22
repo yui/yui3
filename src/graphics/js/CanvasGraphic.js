@@ -27,27 +27,27 @@ CanvasGraphic.ATTRS = {
     render: {},
 
     /**
-	 * Unique id for class instance.
-	 *
-	 * @config id
-	 * @type String
-	 */
-	id: {
-		valueFn: function()
-		{
-			return Y.guid();
-		},
+     * Unique id for class instance.
+     *
+     * @config id
+     * @type String
+     */
+    id: {
+        valueFn: function()
+        {
+            return Y.guid();
+        },
 
-		setter: function(val)
-		{
-			var node = this._node;
-			if(node)
-			{
-				node.setAttribute("id", val);
-			}
-			return val;
-		}
-	},
+        setter: function(val)
+        {
+            var node = this._node;
+            if(node)
+            {
+                node.setAttribute("id", val);
+            }
+            return val;
+        }
+    },
 
     /**
      * Key value pairs in which a shape instance is associated with its id.
@@ -97,12 +97,12 @@ CanvasGraphic.ATTRS = {
         }
     },
 
-	/**
-	 * Indicates the width of the `Graphic`.
-	 *
-	 * @config width
-	 * @type Number
-	 */
+    /**
+     * Indicates the width of the `Graphic`.
+     *
+     * @config width
+     * @type Number
+     */
     width: {
         setter: function(val)
         {
@@ -114,12 +114,12 @@ CanvasGraphic.ATTRS = {
         }
     },
 
-	/**
-	 * Indicates the height of the `Graphic`.
-	 *
-	 * @config height
-	 * @type Number
-	 */
+    /**
+     * Indicates the height of the `Graphic`.
+     *
+     * @config height
+     * @type Number
+     */
     height: {
         setter: function(val)
         {
@@ -191,12 +191,12 @@ CanvasGraphic.ATTRS = {
         value: false
     },
 
-	/**
-	 * Indicates the x-coordinate for the instance.
-	 *
-	 * @config x
-	 * @type Number
-	 */
+    /**
+     * Indicates the x-coordinate for the instance.
+     *
+     * @config x
+     * @type Number
+     */
     x: {
         getter: function()
         {
@@ -214,12 +214,12 @@ CanvasGraphic.ATTRS = {
         }
     },
 
-	/**
-	 * Indicates the y-coordinate for the instance.
-	 *
-	 * @config y
-	 * @type Number
-	 */
+    /**
+     * Indicates the y-coordinate for the instance.
+     *
+     * @config y
+     * @type Number
+     */
     y: {
         getter: function()
         {
@@ -250,12 +250,12 @@ CanvasGraphic.ATTRS = {
         value: true
     },
 
-	/**
-	 * Indicates whether the `Graphic` and its children are visible.
-	 *
-	 * @config visible
-	 * @type Boolean
-	 */
+    /**
+     * Indicates whether the `Graphic` and its children are visible.
+     *
+     * @config visible
+     * @type Boolean
+     */
     visible: {
         value: true,
 
@@ -277,9 +277,9 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function()
-	{
-		var host = this,
+    set: function()
+    {
+        var host = this,
             attr = arguments[0],
             redrawAttrs = {
                 autoDraw: true,
@@ -289,7 +289,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             },
             key,
             forceRedraw = false;
-		AttributeLite.prototype.set.apply(host, arguments);
+        AttributeLite.prototype.set.apply(host, arguments);
         if(host._state.autoDraw === true && Y.Object.size(this._shapes) > 0)
         {
             if(Y_LANG.isString && redrawAttrs[attr])
@@ -312,7 +312,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         {
             host._redraw();
         }
-	},
+    },
 
     /**
      * Storage for `x` attribute.
@@ -349,7 +349,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         return xy;
     },
 
-	/**
+    /**
      * Initializes the class.
      *
      * @method initializer
@@ -363,7 +363,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             h = this.get("height") || 0;
         this._shapes = {};
         this._redrawQueue = {};
-		this._contentBounds = {
+        this._contentBounds = {
             left: 0,
             top: 0,
             right: 0,
@@ -609,12 +609,12 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         return shape;
     },
 
-	/**
-	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
-	 *
-	 * @method batch
-	 * @param {Function} method Method to execute.
-	 */
+    /**
+     * Allows for creating multiple shapes in order to batch appending and redraw operations.
+     *
+     * @method batch
+     * @param {Function} method Method to execute.
+     */
     batch: function(method)
     {
         var autoDraw = this.get("autoDraw");

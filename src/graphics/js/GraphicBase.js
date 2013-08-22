@@ -28,7 +28,7 @@
  * @main graphics
  */
 var SETTER = "setter",
-	PluginHost = Y.Plugin.Host,
+    PluginHost = Y.Plugin.Host,
     VALUE = "value",
     VALUEFN = "valueFn",
     READONLY = "readOnly",
@@ -39,12 +39,12 @@ var SETTER = "setter",
     AttributeLite;
 
     /**
-	 * AttributeLite provides Attribute-like getters and setters for shape classes in the Graphics module.
+     * AttributeLite provides Attribute-like getters and setters for shape classes in the Graphics module.
      * It provides a get/set API without the event infastructure. This class is temporary and a work in progress.
-	 *
-	 * @class AttributeLite
-	 * @constructor
-	 */
+     *
+     * @class AttributeLite
+     * @constructor
+     */
     AttributeLite = function()
     {
         var host = this; // help compression
@@ -58,74 +58,74 @@ var SETTER = "setter",
     };
 
     AttributeLite.prototype = {
-		/**
-		 * Initializes the attributes for a shape. If an attribute config is passed into the constructor of the host,
-		 * the initial values will be overwritten.
-		 *
-		 * @method addAttrs
-		 * @param {Object} cfg Optional object containing attributes key value pairs to be set.
-		 */
-		addAttrs: function(cfg)
-		{
-			var host = this,
-				attrConfig = this.constructor.ATTRS,
-				attr,
-				i,
-				fn,
-				state = host._state;
-			for(i in attrConfig)
-			{
-				if(attrConfig.hasOwnProperty(i))
-				{
-					attr = attrConfig[i];
-					if(attr.hasOwnProperty(VALUE))
-					{
-						state[i] = attr.value;
-					}
-					else if(attr.hasOwnProperty(VALUEFN))
-					{
-						fn = attr.valueFn;
-						if(Y_LANG.isString(fn))
-						{
-							state[i] = host[fn].apply(host);
-						}
-						else
-						{
-							state[i] = fn.apply(host);
-						}
-					}
+        /**
+         * Initializes the attributes for a shape. If an attribute config is passed into the constructor of the host,
+         * the initial values will be overwritten.
+         *
+         * @method addAttrs
+         * @param {Object} cfg Optional object containing attributes key value pairs to be set.
+         */
+        addAttrs: function(cfg)
+        {
+            var host = this,
+                attrConfig = this.constructor.ATTRS,
+                attr,
+                i,
+                fn,
+                state = host._state;
+            for(i in attrConfig)
+            {
+                if(attrConfig.hasOwnProperty(i))
+                {
+                    attr = attrConfig[i];
+                    if(attr.hasOwnProperty(VALUE))
+                    {
+                        state[i] = attr.value;
+                    }
+                    else if(attr.hasOwnProperty(VALUEFN))
+                    {
+                        fn = attr.valueFn;
+                        if(Y_LANG.isString(fn))
+                        {
+                            state[i] = host[fn].apply(host);
+                        }
+                        else
+                        {
+                            state[i] = fn.apply(host);
+                        }
+                    }
                 }
             }
-			host._state = state;
+            host._state = state;
             for(i in attrConfig)
-			{
-				if(attrConfig.hasOwnProperty(i))
-				{
-					attr = attrConfig[i];
+            {
+                if(attrConfig.hasOwnProperty(i))
+                {
+                    attr = attrConfig[i];
                     if(attr.hasOwnProperty(READONLY) && attr.readOnly)
-					{
-						continue;
-					}
+                    {
+                        continue;
+                    }
 
-					if(attr.hasOwnProperty(WRITE_ONCE) && attr.writeOnce)
-					{
-						attr.readOnly = true;
-					}
+                    if(attr.hasOwnProperty(WRITE_ONCE) && attr.writeOnce)
+                    {
+                        attr.readOnly = true;
+                    }
 
-					if(cfg && cfg.hasOwnProperty(i))
-					{
-						if(attr.hasOwnProperty(SETTER))
-						{
-							host._state[i] = attr.setter.apply(host, [cfg[i]]);
-						}
-						else
-						{
-							host._state[i] = cfg[i];
-						}
-					}
-				}
-			}
-		},
+                    if(cfg && cfg.hasOwnProperty(i))
+                    {
+                        if(attr.hasOwnProperty(SETTER))
+                        {
+                            host._state[i] = attr.setter.apply(host, [cfg[i]]);
+                        }
+                        else
+                        {
+                            host._state[i] = cfg[i];
+                        }
+                    }
+                }
+            }
+        },
 
         /**
          * For a given item, returns the value of the property requested, or undefined if not found.
@@ -185,7 +185,7 @@ var SETTER = "setter",
             }
         },
 
-		/**
+        /**
          * Provides setter logic. Used by `set`.
          *
          * @method _set
@@ -193,35 +193,35 @@ var SETTER = "setter",
          * be passed in to set multiple attributes at once.
          * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
          * the name param.
-		 * @protected
-		 */
-		_set: function(attr, val)
-		{
-			var host = this,
-				setter,
-				args,
-				attrConfig = host.constructor.ATTRS;
-			if(attrConfig && attrConfig.hasOwnProperty(attr))
-			{
-				setter = attrConfig[attr].setter;
-				if(setter)
-				{
-					args = [val];
-					if(typeof setter === STR)
-					{
-						val = host[setter].apply(host, args);
-					}
-					else
+         * @protected
+         */
+        _set: function(attr, val)
+        {
+            var host = this,
+                setter,
+                args,
+                attrConfig = host.constructor.ATTRS;
+            if(attrConfig && attrConfig.hasOwnProperty(attr))
+            {
+                setter = attrConfig[attr].setter;
+                if(setter)
+                {
+                    args = [val];
+                    if(typeof setter === STR)
+                    {
+                        val = host[setter].apply(host, args);
+                    }
+                    else
                     {
                         val = attrConfig[attr].setter.apply(host, args);
                     }
-				}
-				host._state[attr] = val;
-			}
-		}
-	};
+                }
+                host._state[attr] = val;
+            }
+        }
+    };
     Y.mix(AttributeLite, Y.EventTarget, false, null, 1);
-	Y.AttributeLite = AttributeLite;
+    Y.AttributeLite = AttributeLite;
 
     /**
      * GraphicBase serves as the base class for the graphic layer. It serves the same purpose as
@@ -479,57 +479,57 @@ Y.GraphicBase = GraphicBase;
      * @method init
      * @protected
      */
-	/**
-	 * Initializes the shape
-	 *
-	 * @private
-	 * @method initializer
-	 */
-	/**
-	 * Add a class name to each node.
-	 *
-	 * @method addClass
-	 * @param {String} className the class name to add to the node's class attribute
-	 */
-	/**
-	 * Removes a class name from each node.
-	 *
-	 * @method removeClass
-	 * @param {String} className the class name to remove from the node's class attribute
-	 */
-	/**
-	 * Gets the current position of the node in page coordinates.
-	 *
-	 * @method getXY
-	 * @return Array The XY position of the shape.
-	 */
-	/**
-	 * Set the position of the shape in page coordinates, regardless of how the node is positioned.
-	 *
-	 * @method setXY
-	 * @param {Array} Contains x & y values for new position (coordinates are page-based)
-	 */
-	/**
-	 * Determines whether the node is an ancestor of another HTML element in the DOM hierarchy.
-	 *
-	 * @method contains
-	 * @param {Shape | HTMLElement} needle The possible node or descendent
-	 * @return Boolean Whether or not this shape is the needle or its ancestor.
-	 */
-	/**
-	 * Compares nodes to determine if they match.
-	 * Node instances can be compared to each other and/or HTMLElements.
-	 * @method compareTo
-	 * @param {HTMLElement | Node} refNode The reference node to compare to the node.
-	 * @return {Boolean} True if the nodes match, false if they do not.
-	 */
-	/**
-	 * Test if the supplied node matches the supplied selector.
-	 *
-	 * @method test
-	 * @param {String} selector The CSS selector to test against.
-	 * @return Boolean Wheter or not the shape matches the selector.
-	 */
+    /**
+     * Initializes the shape
+     *
+     * @private
+     * @method initializer
+     */
+    /**
+     * Add a class name to each node.
+     *
+     * @method addClass
+     * @param {String} className the class name to add to the node's class attribute
+     */
+    /**
+     * Removes a class name from each node.
+     *
+     * @method removeClass
+     * @param {String} className the class name to remove from the node's class attribute
+     */
+    /**
+     * Gets the current position of the node in page coordinates.
+     *
+     * @method getXY
+     * @return Array The XY position of the shape.
+     */
+    /**
+     * Set the position of the shape in page coordinates, regardless of how the node is positioned.
+     *
+     * @method setXY
+     * @param {Array} Contains x & y values for new position (coordinates are page-based)
+     */
+    /**
+     * Determines whether the node is an ancestor of another HTML element in the DOM hierarchy.
+     *
+     * @method contains
+     * @param {Shape | HTMLElement} needle The possible node or descendent
+     * @return Boolean Whether or not this shape is the needle or its ancestor.
+     */
+    /**
+     * Compares nodes to determine if they match.
+     * Node instances can be compared to each other and/or HTMLElements.
+     * @method compareTo
+     * @param {HTMLElement | Node} refNode The reference node to compare to the node.
+     * @return {Boolean} True if the nodes match, false if they do not.
+     */
+    /**
+     * Test if the supplied node matches the supplied selector.
+     *
+     * @method test
+     * @param {String} selector The CSS selector to test against.
+     * @return Boolean Wheter or not the shape matches the selector.
+     */
     /**
      * Sets the value of an attribute.
      *
@@ -539,27 +539,27 @@ Y.GraphicBase = GraphicBase;
      * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	/**
-	 * Specifies a 2d translation.
-	 *
-	 * @method translate
-	 * @param {Number} x The value to transate on the x-axis.
-	 * @param {Number} y The value to translate on the y-axis.
-	 */
-	/**
-	 * Translates the shape along the x-axis. When translating x and y coordinates,
-	 * use the `translate` method.
-	 *
-	 * @method translateX
-	 * @param {Number} x The value to translate.
-	 */
-	/**
-	 * Translates the shape along the y-axis. When translating x and y coordinates,
-	 * use the `translate` method.
-	 *
-	 * @method translateY
-	 * @param {Number} y The value to translate.
-	 */
+    /**
+     * Specifies a 2d translation.
+     *
+     * @method translate
+     * @param {Number} x The value to transate on the x-axis.
+     * @param {Number} y The value to translate on the y-axis.
+     */
+    /**
+     * Translates the shape along the x-axis. When translating x and y coordinates,
+     * use the `translate` method.
+     *
+     * @method translateX
+     * @param {Number} x The value to translate.
+     */
+    /**
+     * Translates the shape along the y-axis. When translating x and y coordinates,
+     * use the `translate` method.
+     *
+     * @method translateY
+     * @param {Number} y The value to translate.
+     */
     /**
      * Skews the shape around the x-axis and y-axis.
      *
@@ -567,51 +567,51 @@ Y.GraphicBase = GraphicBase;
      * @param {Number} x The value to skew on the x-axis.
      * @param {Number} y The value to skew on the y-axis.
      */
-	/**
-	 * Skews the shape around the x-axis.
-	 *
-	 * @method skewX
-	 * @param {Number} x x-coordinate
-	 */
-	/**
-	 * Skews the shape around the y-axis.
-	 *
-	 * @method skewY
-	 * @param {Number} y y-coordinate
-	 */
-	/**
-	 * Rotates the shape clockwise around it transformOrigin.
-	 *
-	 * @method rotate
-	 * @param {Number} deg The degree of the rotation.
-	 */
-	/**
-	 * Specifies a 2d scaling operation.
-	 *
-	 * @method scale
-	 * @param {Number} val
-	 */
-	/**
-	 * Returns the bounds for a shape.
-	 *
+    /**
+     * Skews the shape around the x-axis.
+     *
+     * @method skewX
+     * @param {Number} x x-coordinate
+     */
+    /**
+     * Skews the shape around the y-axis.
+     *
+     * @method skewY
+     * @param {Number} y y-coordinate
+     */
+    /**
+     * Rotates the shape clockwise around it transformOrigin.
+     *
+     * @method rotate
+     * @param {Number} deg The degree of the rotation.
+     */
+    /**
+     * Specifies a 2d scaling operation.
+     *
+     * @method scale
+     * @param {Number} val
+     */
+    /**
+     * Returns the bounds for a shape.
+     *
      * Calculates the a new bounding box from the original corner coordinates (base on size and position) and the transform matrix.
      * The calculated bounding box is used by the graphic instance to calculate its viewBox.
      *
-	 * @method getBounds
-	 * @return Object
-	 */
+     * @method getBounds
+     * @return Object
+     */
     /**
      * Destroys the instance.
      *
      * @method destroy
      */
-	/**
-	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a
-	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
-	 *
-	 * @config transformOrigin
-	 * @type Array
-	 */
+    /**
+     * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a
+     * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
+     *
+     * @config transformOrigin
+     * @type Array
+     */
     /**
      * <p>A string containing, in order, transform operations applied to the shape instance. The `transform` string can contain the following values:
      *
@@ -639,47 +639,47 @@ Y.GraphicBase = GraphicBase;
      * <p>The code below would apply `translate` and `rotate` to an existing shape.</p>
 
         myRect.set("transform", "translate(40, 50) rotate(45)");
-	 * @config transform
+     * @config transform
      * @type String
-	 */
-	/**
-	 * Unique id for class instance.
-	 *
-	 * @config id
-	 * @type String
-	 */
-	/**
-	 * Indicates the x position of shape.
-	 *
-	 * @config x
-	 * @type Number
-	 */
-	/**
-	 * Indicates the y position of shape.
-	 *
-	 * @config y
-	 * @type Number
-	 */
-	/**
-	 * Indicates the width of the shape
-	 *
-	 * @config width
-	 * @type Number
-	 */
-	/**
-	 * Indicates the height of the shape
-	 *
-	 * @config height
-	 * @type Number
-	 */
-	/**
-	 * Indicates whether the shape is visible.
-	 *
-	 * @config visible
-	 * @type Boolean
-	 */
-	/**
-	 * Contains information about the fill of the shape.
+     */
+    /**
+     * Unique id for class instance.
+     *
+     * @config id
+     * @type String
+     */
+    /**
+     * Indicates the x position of shape.
+     *
+     * @config x
+     * @type Number
+     */
+    /**
+     * Indicates the y position of shape.
+     *
+     * @config y
+     * @type Number
+     */
+    /**
+     * Indicates the width of the shape
+     *
+     * @config width
+     * @type Number
+     */
+    /**
+     * Indicates the height of the shape
+     *
+     * @config height
+     * @type Number
+     */
+    /**
+     * Indicates whether the shape is visible.
+     *
+     * @config visible
+     * @type Boolean
+     */
+    /**
+     * Contains information about the fill of the shape.
      *  <dl>
      *      <dt>color</dt><dd>The color of the fill.</dd>
      *      <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1.</dd>
@@ -719,12 +719,12 @@ Y.GraphicBase = GraphicBase;
      *          classes which are used on Android or IE 6 - 8.</p>
      *      </dd>
      *  </dl>
-	 *
-	 * @config fill
-	 * @type Object
-	 */
-	/**
-	 * Contains information about the stroke of the shape.
+     *
+     * @config fill
+     * @type Object
+     */
+    /**
+     * Contains information about the stroke of the shape.
      *  <dl>
      *      <dt>color</dt><dd>The color of the stroke.</dd>
      *      <dt>weight</dt><dd>Number that indicates the width of the stroke.</dd>
@@ -747,17 +747,17 @@ Y.GraphicBase = GraphicBase;
      *          </dl>
      *      </dd>
      *  </dl>
-	 *
-	 * @config stroke
-	 * @type Object
-	 */
-	/**
-	 * Dom node for the shape.
-	 *
-	 * @config node
-	 * @type HTMLElement
-	 * @readOnly
-	 */
+     *
+     * @config stroke
+     * @type Object
+     */
+    /**
+     * Dom node for the shape.
+     *
+     * @config node
+     * @type HTMLElement
+     * @readOnly
+     */
     /**
      * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all
      * implementations. Note that when using VML or SVG implementations, part of this content will be added to the DOM using
@@ -767,13 +767,13 @@ Y.GraphicBase = GraphicBase;
      * @config data
      * @type String
      */
-	/**
-	 * Reference to the parent graphic instance
-	 *
-	 * @config graphic
-	 * @type Graphic
-	 * @readOnly
-	 */
+    /**
+     * Reference to the parent graphic instance
+     *
+     * @config graphic
+     * @type Graphic
+     * @readOnly
+     */
 
 /**
  * <p>Creates circle shape with editable attributes.</p>
@@ -1024,13 +1024,13 @@ Y.GraphicBase = GraphicBase;
  * @uses Drawing
  * @constructor
  */
-	/**
-	 * Indicates the path used for the node.
-	 *
-	 * @config path
-	 * @type String
+    /**
+     * Indicates the path used for the node.
+     *
+     * @config path
+     * @type String
      * @readOnly
-	 */
+     */
 /**
  * `Graphic` acts a factory and container for shapes. You need at least one `Graphic` instance to create shapes for your application.
  * <p>The code block below creates a `Graphic` instance and appends it to an HTMLElement with the id 'mygraphiccontainer'.</p>
@@ -1061,11 +1061,11 @@ Y.GraphicBase = GraphicBase;
      * @type Node | String
      */
     /**
-	 * Unique id for class instance.
-	 *
-	 * @config id
-	 * @type String
-	 */
+     * Unique id for class instance.
+     *
+     * @config id
+     * @type String
+     */
     /**
      * Key value pairs in which a shape instance is associated with its id.
      *
@@ -1087,18 +1087,18 @@ Y.GraphicBase = GraphicBase;
      *  @type HTMLElement
      *  @readOnly
      */
-	/**
-	 * Indicates the width of the `Graphic`.
-	 *
-	 * @config width
-	 * @type Number
-	 */
-	/**
-	 * Indicates the height of the `Graphic`.
-	 *
-	 * @config height
-	 * @type Number
-	 */
+    /**
+     * Indicates the width of the `Graphic`.
+     *
+     * @config width
+     * @type Number
+     */
+    /**
+     * Indicates the height of the `Graphic`.
+     *
+     * @config height
+     * @type Number
+     */
     /**
      *  Determines the sizing of the Graphic.
      *
@@ -1147,18 +1147,18 @@ Y.GraphicBase = GraphicBase;
      * @config resizeDown
      * @type Boolean
      */
-	/**
-	 * Indicates the x-coordinate for the instance.
-	 *
-	 * @config x
-	 * @type Number
-	 */
-	/**
-	 * Indicates the y-coordinate for the instance.
-	 *
-	 * @config y
-	 * @type Number
-	 */
+    /**
+     * Indicates the x-coordinate for the instance.
+     *
+     * @config x
+     * @type Number
+     */
+    /**
+     * Indicates the y-coordinate for the instance.
+     *
+     * @config y
+     * @type Number
+     */
     /**
      * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
      * This property will get set to false when batching operations.
@@ -1168,12 +1168,12 @@ Y.GraphicBase = GraphicBase;
      * @default true
      * @private
      */
-	/**
-	 * Indicates whether the `Graphic` and its children are visible.
-	 *
-	 * @config visible
-	 * @type Boolean
-	 */
+    /**
+     * Indicates whether the `Graphic` and its children are visible.
+     *
+     * @config visible
+     * @type Boolean
+     */
     /**
      * Gets the current position of the graphic instance in page coordinates.
      *
@@ -1257,9 +1257,9 @@ Y.GraphicBase = GraphicBase;
      * @param {String} id Dom id of the shape's node attribute.
      * @return Shape
      */
-	/**
-	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
-	 *
-	 * @method batch
-	 * @param {Function} method Method to execute.
-	 */
+    /**
+     * Allows for creating multiple shapes in order to batch appending and redraw operations.
+     *
+     * @method batch
+     * @param {Function} method Method to execute.
+     */

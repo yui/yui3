@@ -19,7 +19,7 @@
  * @submodule series-combo
  */
 Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Lines, Y.Plots], {
-	/**
+    /**
      * @protected
      *
      * Draws the series.

@@ -209,12 +209,12 @@ Lines.prototype = {
      * Draws a dashed line between two points.
      *
      * @method drawDashedLine
-     * @param {Number} xStart	The x position of the start of the line
-     * @param {Number} yStart	The y position of the start of the line
-     * @param {Number} xEnd		The x position of the end of the line
-     * @param {Number} yEnd		The y position of the end of the line
-     * @param {Number} dashSize	the size of dashes, in pixels
-     * @param {Number} gapSize	the size of gaps between dashes, in pixels
+     * @param {Number} xStart   The x position of the start of the line
+     * @param {Number} yStart   The y position of the start of the line
+     * @param {Number} xEnd     The x position of the end of the line
+     * @param {Number} yEnd     The y position of the end of the line
+     * @param {Number} dashSize the size of dashes, in pixels
+     * @param {Number} gapSize  the size of gaps between dashes, in pixels
      * @private
      */
     drawDashedLine: function(path, xStart, yStart, xEnd, yEnd, dashSize, gapSize)

@@ -41,9 +41,9 @@ function _cFrame(o, c, io) {
  * @param {Number} id The transaction ID used in the iframe's creation.
  */
 function _dFrame(id) {
-	Y.Event.purgeElement('#io_iframe' + id, false);
-	Y.one('body').removeChild(Y.one('#io_iframe' + id));
-	Y.log('The iframe transport for transaction ' + id + ' has been destroyed.', 'info', 'io');
+    Y.Event.purgeElement('#io_iframe' + id, false);
+    Y.one('body').removeChild(Y.one('#io_iframe' + id));
+    Y.log('The iframe transport for transaction ' + id + ' has been destroyed.', 'info', 'io');
 }
 
 Y.mix(Y.IO.prototype, {
@@ -195,22 +195,22 @@ Y.mix(Y.IO.prototype, {
             io._clearUploadTimeout(o.id);
         }
 
-		try {
-			if (b) {
-				// When a response Content-Type of "text/plain" is used, Firefox and Safari
-				// will wrap the response string with <pre></pre>.
-				p = b.one('pre:first-child');
-				o.c.responseText = p ? p.get('text') : b.get('text');
-				Y.log('The responseText value for transaction ' + o.id + ' is: ' + o.c.responseText + '.', 'info', 'io');
-			}
-			else {
-				o.c.responseXML = d._node;
-				Y.log('The response for transaction ' + o.id + ' is an XML document.', 'info', 'io');
-			}
-		}
-		catch (e) {
-			o.e = "upload failure";
-		}
+        try {
+            if (b) {
+                // When a response Content-Type of "text/plain" is used, Firefox and Safari
+                // will wrap the response string with <pre></pre>.
+                p = b.one('pre:first-child');
+                o.c.responseText = p ? p.get('text') : b.get('text');
+                Y.log('The responseText value for transaction ' + o.id + ' is: ' + o.c.responseText + '.', 'info', 'io');
+            }
+            else {
+                o.c.responseXML = d._node;
+                Y.log('The response for transaction ' + o.id + ' is an XML document.', 'info', 'io');
+            }
+        }
+        catch (e) {
+            o.e = "upload failure";
+        }
 
         io.complete(o, c);
         io.end(o, c);

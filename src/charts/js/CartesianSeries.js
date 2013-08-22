@@ -293,16 +293,16 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
             xOffset = xAxis.getEdgeOffset(xAxis.getTotalMajorUnits(), w),
             yOffset = yAxis.getEdgeOffset(yAxis.getTotalMajorUnits(), h),
             padding = this.get("styles").padding,
-			leftPadding = padding.left,
-			topPadding = padding.top,
-			dataWidth = w - (leftPadding + padding.right + xOffset * 2),
-			dataHeight = h - (topPadding + padding.bottom + yOffset * 2),
-			xMax = xAxis.get("maximum"),
-			xMin = xAxis.get("minimum"),
-			yMax = yAxis.get("maximum"),
-			yMin = yAxis.get("minimum"),
+            leftPadding = padding.left,
+            topPadding = padding.top,
+            dataWidth = w - (leftPadding + padding.right + xOffset * 2),
+            dataHeight = h - (topPadding + padding.bottom + yOffset * 2),
+            xMax = xAxis.get("maximum"),
+            xMin = xAxis.get("minimum"),
+            yMax = yAxis.get("maximum"),
+            yMin = yAxis.get("minimum"),
             xScaleFactor = dataWidth / (xMax - xMin),
-			yScaleFactor = dataHeight / (yMax - yMin),
+            yScaleFactor = dataHeight / (yMax - yMin),
             graphic = this.get("graphic"),
             xcoords,
             ycoords;
@@ -322,7 +322,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
         xcoords = this._getXCoords(xData, xMin, dataWidth, xScaleFactor, xOffset, dataLength, leftPadding);
         ycoords = this._getYCoords(yData, yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding);
         this.set("xcoords", xcoords);
-		this.set("ycoords", ycoords);
+        this.set("ycoords", ycoords);
         this._dataLength = dataLength;
         this._setXMarkerPlane(xcoords, dataLength);
         this._setYMarkerPlane(ycoords, dataLength);
@@ -435,7 +435,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
     _getXCoords: function(xData, xMin, dataWidth, xScaleFactor, xOffset, dataLength, leftPadding)
     {
         var isNumber = Y_Lang.isNumber,
-			xcoords,
+            xcoords,
             xValue,
             nextX,
             key,
@@ -494,7 +494,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.SeriesBase, [], {
     _getYCoords: function(yData, yMin, dataHeight, yScaleFactor, yOffset, dataLength, topPadding)
     {
         var isNumber = Y_Lang.isNumber,
-			ycoords,
+            ycoords,
             yValue,
             nextY,
             key,

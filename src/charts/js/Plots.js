@@ -47,9 +47,9 @@ Plots.prototype = {
     drawPlots: function()
     {
         if(!this.get("xcoords") || this.get("xcoords").length < 1)
-		{
-			return;
-		}
+        {
+            return;
+        }
         var isNumber = Y_Lang.isNumber,
             style = Y.clone(this.get("styles").marker),
             w = style.width,

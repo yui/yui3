@@ -50,12 +50,12 @@
  });
 
 SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
-	/**
-	 * Indicates the width of the shape
-	 *
-	 * @config width
-	 * @type Number
-	 */
+    /**
+     * Indicates the width of the shape
+     *
+     * @config width
+     * @type Number
+     */
     width: {
         setter: function(val)
         {
@@ -69,12 +69,12 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
         }
     },
 
-	/**
-	 * Indicates the height of the shape
-	 *
-	 * @config height
-	 * @type Number
-	 */
+    /**
+     * Indicates the height of the shape
+     *
+     * @config height
+     * @type Number
+     */
     height: {
         setter: function(val)
         {

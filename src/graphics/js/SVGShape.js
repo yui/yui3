@@ -43,24 +43,24 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
      * @method init
      * @protected
      */
-	init: function()
-	{
-		this.initializer.apply(this, arguments);
-	},
+    init: function()
+    {
+        this.initializer.apply(this, arguments);
+    },
 
-	/**
-	 * Initializes the shape
-	 *
-	 * @private
-	 * @method initializer
-	 */
-	initializer: function(cfg)
-	{
-		var host = this,
+    /**
+     * Initializes the shape
+     *
+     * @private
+     * @method initializer
+     */
+    initializer: function(cfg)
+    {
+        var host = this,
             graphic = cfg.graphic,
             data = this.get("data");
-		host.createNode();
-		if(graphic)
+        host.createNode();
+        if(graphic)
         {
             host._setGraphic(graphic);
         }
@@ -69,7 +69,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             host._parsePathData(data);
         }
         host._updateHandler();
-	},
+    },
 
     /**
      * Set the Graphic instance for the shape.
@@ -98,152 +98,152 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
         }
     },
 
-	/**
-	 * Add a class name to each node.
-	 *
-	 * @method addClass
-	 * @param {String} className the class name to add to the node's class attribute
-	 */
-	addClass: function(className)
-	{
+    /**
+     * Add a class name to each node.
+     *
+     * @method addClass
+     * @param {String} className the class name to add to the node's class attribute
+     */
+    addClass: function(className)
+    {
         var node = this.node;
-		node.className.baseVal = Y_LANG.trim([node.className.baseVal, className].join(' '));
-	},
+        node.className.baseVal = Y_LANG.trim([node.className.baseVal, className].join(' '));
+    },
 
-	/**
-	 * Removes a class name from each node.
-	 *
-	 * @method removeClass
-	 * @param {String} className the class name to remove from the node's class attribute
-	 */
-	removeClass: function(className)
-	{
-		var node = this.node,
-			classString = node.className.baseVal;
-		classString = classString.replace(new RegExp(className + ' '), className).replace(new RegExp(className), '');
-		node.className.baseVal = classString;
-	},
+    /**
+     * Removes a class name from each node.
+     *
+     * @method removeClass
+     * @param {String} className the class name to remove from the node's class attribute
+     */
+    removeClass: function(className)
+    {
+        var node = this.node,
+            classString = node.className.baseVal;
+        classString = classString.replace(new RegExp(className + ' '), className).replace(new RegExp(className), '');
+        node.className.baseVal = classString;
+    },
 
-	/**
-	 * Gets the current position of the node in page coordinates.
-	 *
-	 * @method getXY
-	 * @return Array The XY position of the shape.
-	 */
-	getXY: function()
-	{
-		var graphic = this._graphic,
-			parentXY = graphic.getXY(),
-			x = this._x,
-			y = this._y;
-		return [parentXY[0] + x, parentXY[1] + y];
-	},
+    /**
+     * Gets the current position of the node in page coordinates.
+     *
+     * @method getXY
+     * @return Array The XY position of the shape.
+     */
+    getXY: function()
+    {
+        var graphic = this._graphic,
+            parentXY = graphic.getXY(),
+            x = this._x,
+            y = this._y;
+        return [parentXY[0] + x, parentXY[1] + y];
+    },
 
-	/**
-	 * Set the position of the shape in page coordinates, regardless of how the node is positioned.
-	 *
-	 * @method setXY
-	 * @param {Array} Contains x & y values for new position (coordinates are page-based)
-	 */
-	setXY: function(xy)
-	{
-		var graphic = this._graphic,
-			parentXY = graphic.getXY();
-		this._x = xy[0] - parentXY[0];
-		this._y = xy[1] - parentXY[1];
+    /**
+     * Set the position of the shape in page coordinates, regardless of how the node is positioned.
+     *
+     * @method setXY
+     * @param {Array} Contains x & y values for new position (coordinates are page-based)
+     */
+    setXY: function(xy)
+    {
+        var graphic = this._graphic,
+            parentXY = graphic.getXY();
+        this._x = xy[0] - parentXY[0];
+        this._y = xy[1] - parentXY[1];
         this.set("transform", this.get("transform"));
-	},
+    },
 
-	/**
-	 * Determines whether the node is an ancestor of another HTML element in the DOM hierarchy.
-	 *
-	 * @method contains
-	 * @param {SVGShape | HTMLElement} needle The possible node or descendent
-	 * @return Boolean Whether or not this shape is the needle or its ancestor.
-	 */
-	contains: function(needle)
-	{
-		return needle === Y.one(this.node);
-	},
+    /**
+     * Determines whether the node is an ancestor of another HTML element in the DOM hierarchy.
+     *
+     * @method contains
+     * @param {SVGShape | HTMLElement} needle The possible node or descendent
+     * @return Boolean Whether or not this shape is the needle or its ancestor.
+     */
+    contains: function(needle)
+    {
+        return needle === Y.one(this.node);
+    },
 
-	/**
-	 * Compares nodes to determine if they match.
-	 * Node instances can be compared to each other and/or HTMLElements.
-	 * @method compareTo
-	 * @param {HTMLElement | Node} refNode The reference node to compare to the node.
-	 * @return {Boolean} True if the nodes match, false if they do not.
-	 */
-	compareTo: function(refNode) {
-		var node = this.node;
+    /**
+     * Compares nodes to determine if they match.
+     * Node instances can be compared to each other and/or HTMLElements.
+     * @method compareTo
+     * @param {HTMLElement | Node} refNode The reference node to compare to the node.
+     * @return {Boolean} True if the nodes match, false if they do not.
+     */
+    compareTo: function(refNode) {
+        var node = this.node;
 
-		return node === refNode;
-	},
+        return node === refNode;
+    },
 
-	/**
-	 * Test if the supplied node matches the supplied selector.
-	 *
-	 * @method test
-	 * @param {String} selector The CSS selector to test against.
-	 * @return Boolean Wheter or not the shape matches the selector.
-	 */
-	test: function(selector)
-	{
-		return Y.Selector.test(this.node, selector);
-	},
+    /**
+     * Test if the supplied node matches the supplied selector.
+     *
+     * @method test
+     * @param {String} selector The CSS selector to test against.
+     * @return Boolean Wheter or not the shape matches the selector.
+     */
+    test: function(selector)
+    {
+        return Y.Selector.test(this.node, selector);
+    },
 
-	/**
-	 * Value function for fill attribute
-	 *
-	 * @private
-	 * @method _getDefaultFill
-	 * @return Object
-	 */
-	_getDefaultFill: function() {
-		return {
-			type: "solid",
-			opacity: 1,
-			cx: 0.5,
-			cy: 0.5,
-			fx: 0.5,
-			fy: 0.5,
-			r: 0.5
-		};
-	},
+    /**
+     * Value function for fill attribute
+     *
+     * @private
+     * @method _getDefaultFill
+     * @return Object
+     */
+    _getDefaultFill: function() {
+        return {
+            type: "solid",
+            opacity: 1,
+            cx: 0.5,
+            cy: 0.5,
+            fx: 0.5,
+            fy: 0.5,
+            r: 0.5
+        };
+    },
 
-	/**
-	 * Value function for stroke attribute
-	 *
-	 * @private
-	 * @method _getDefaultStroke
-	 * @return Object
-	 */
-	_getDefaultStroke: function()
-	{
-		return {
-			weight: 1,
-			dashstyle: "none",
-			color: "#000",
-			opacity: 1.0
-		};
-	},
+    /**
+     * Value function for stroke attribute
+     *
+     * @private
+     * @method _getDefaultStroke
+     * @return Object
+     */
+    _getDefaultStroke: function()
+    {
+        return {
+            weight: 1,
+            dashstyle: "none",
+            color: "#000",
+            opacity: 1.0
+        };
+    },
 
-	/**
-	 * Creates the dom node for the shape.
-	 *
+    /**
+     * Creates the dom node for the shape.
+     *
      * @method createNode
-	 * @return HTMLElement
-	 * @private
-	 */
-	createNode: function()
-	{
-		var host = this,
+     * @return HTMLElement
+     * @private
+     */
+    createNode: function()
+    {
+        var host = this,
             node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
-			id = host.get("id"),
+            id = host.get("id"),
             name = host.name,
             concat = host._camelCaseConcat,
-			pointerEvents = host.get("pointerEvents");
-		host.node = node;
-		host.addClass(
+            pointerEvents = host.get("pointerEvents");
+        host.node = node;
+        host.addClass(
             _getClassName(SHAPE) +
             " " +
             _getClassName(concat(IMPLEMENTATION, SHAPE)) +
@@ -253,164 +253,164 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             _getClassName(concat(IMPLEMENTATION, name))
         );
         if(id)
-		{
-			node.setAttribute("id", id);
-		}
-		if(pointerEvents)
-		{
-			node.setAttribute("pointer-events", pointerEvents);
-		}
+        {
+            node.setAttribute("id", id);
+        }
+        if(pointerEvents)
+        {
+            node.setAttribute("pointer-events", pointerEvents);
+        }
         if(!host.get("visible"))
         {
             Y.one(node).setStyle("visibility", "hidden");
         }
-	},
+    },
 
 
-	/**
+    /**
      * Overrides default `on` method. Checks to see if its a dom interaction event. If so,
      * return an event attached to the `node` element. If not, return the normal functionality.
      *
      * @method on
      * @param {String} type event type
      * @param {Object} callback function
-	 * @private
-	 */
-	on: function(type, fn)
-	{
-		if(Y.Node.DOM_EVENTS[type])
-		{
-			return Y.one("#" +  this.get("id")).on(type, fn);
-		}
-		return Y.on.apply(this, arguments);
-	},
+     * @private
+     */
+    on: function(type, fn)
+    {
+        if(Y.Node.DOM_EVENTS[type])
+        {
+            return Y.one("#" +  this.get("id")).on(type, fn);
+        }
+        return Y.on.apply(this, arguments);
+    },
 
-	/**
-	 * Adds a stroke to the shape node.
-	 *
-	 * @method _strokeChangeHandler
-	 * @private
-	 */
-	_strokeChangeHandler: function()
-	{
-		var node = this.node,
-			stroke = this.get("stroke"),
-			strokeOpacity,
-			dashstyle,
-			dash,
-			linejoin;
-		if(stroke && stroke.weight && stroke.weight > 0)
-		{
-			linejoin = stroke.linejoin || "round";
-			strokeOpacity = parseFloat(stroke.opacity);
-			dashstyle = stroke.dashstyle || "none";
-			dash = Y_LANG.isArray(dashstyle) ? dashstyle.toString() : dashstyle;
-			stroke.color = stroke.color || "#000000";
-			stroke.weight = stroke.weight || 1;
-			stroke.opacity = Y_LANG.isNumber(strokeOpacity) ? strokeOpacity : 1;
-			stroke.linecap = stroke.linecap || "butt";
-			node.setAttribute("stroke-dasharray", dash);
-			node.setAttribute("stroke", stroke.color);
-			node.setAttribute("stroke-linecap", stroke.linecap);
-			node.setAttribute("stroke-width",  stroke.weight);
-			node.setAttribute("stroke-opacity", stroke.opacity);
-			if(linejoin === "round" || linejoin === "bevel")
-			{
-				node.setAttribute("stroke-linejoin", linejoin);
-			}
-			else
-			{
-				linejoin = parseInt(linejoin, 10);
-				if(Y_LANG.isNumber(linejoin))
-				{
-					node.setAttribute("stroke-miterlimit",  Math.max(linejoin, 1));
-					node.setAttribute("stroke-linejoin", "miter");
-				}
-			}
-		}
-		else
-		{
-			node.setAttribute("stroke", "none");
-		}
-	},
+    /**
+     * Adds a stroke to the shape node.
+     *
+     * @method _strokeChangeHandler
+     * @private
+     */
+    _strokeChangeHandler: function()
+    {
+        var node = this.node,
+            stroke = this.get("stroke"),
+            strokeOpacity,
+            dashstyle,
+            dash,
+            linejoin;
+        if(stroke && stroke.weight && stroke.weight > 0)
+        {
+            linejoin = stroke.linejoin || "round";
+            strokeOpacity = parseFloat(stroke.opacity);
+            dashstyle = stroke.dashstyle || "none";
+            dash = Y_LANG.isArray(dashstyle) ? dashstyle.toString() : dashstyle;
+            stroke.color = stroke.color || "#000000";
+            stroke.weight = stroke.weight || 1;
+            stroke.opacity = Y_LANG.isNumber(strokeOpacity) ? strokeOpacity : 1;
+            stroke.linecap = stroke.linecap || "butt";
+            node.setAttribute("stroke-dasharray", dash);
+            node.setAttribute("stroke", stroke.color);
+            node.setAttribute("stroke-linecap", stroke.linecap);
+            node.setAttribute("stroke-width",  stroke.weight);
+            node.setAttribute("stroke-opacity", stroke.opacity);
+            if(linejoin === "round" || linejoin === "bevel")
+            {
+                node.setAttribute("stroke-linejoin", linejoin);
+            }
+            else
+            {
+                linejoin = parseInt(linejoin, 10);
+                if(Y_LANG.isNumber(linejoin))
+                {
+                    node.setAttribute("stroke-miterlimit",  Math.max(linejoin, 1));
+                    node.setAttribute("stroke-linejoin", "miter");
+                }
+            }
+        }
+        else
+        {
+            node.setAttribute("stroke", "none");
+        }
+    },
 
-	/**
-	 * Adds a fill to the shape node.
-	 *
-	 * @method _fillChangeHandler
-	 * @private
-	 */
-	_fillChangeHandler: function()
-	{
-		var node = this.node,
-			fill = this.get("fill"),
-			fillOpacity,
-			type;
-		if(fill)
-		{
-			type = fill.type;
-			if(type === "linear" || type === "radial")
-			{
-				this._setGradientFill(fill);
-				node.setAttribute("fill", "url(#grad" + this.get("id") + ")");
-			}
-			else if(!fill.color)
-			{
-				node.setAttribute("fill", "none");
-			}
-			else
-			{
+    /**
+     * Adds a fill to the shape node.
+     *
+     * @method _fillChangeHandler
+     * @private
+     */
+    _fillChangeHandler: function()
+    {
+        var node = this.node,
+            fill = this.get("fill"),
+            fillOpacity,
+            type;
+        if(fill)
+        {
+            type = fill.type;
+            if(type === "linear" || type === "radial")
+            {
+                this._setGradientFill(fill);
+                node.setAttribute("fill", "url(#grad" + this.get("id") + ")");
+            }
+            else if(!fill.color)
+            {
+                node.setAttribute("fill", "none");
+            }
+            else
+            {
                 fillOpacity = parseFloat(fill.opacity);
-				fillOpacity = Y_LANG.isNumber(fillOpacity) ? fillOpacity : 1;
-				node.setAttribute("fill", fill.color);
-				node.setAttribute("fill-opacity", fillOpacity);
-			}
-		}
-		else
-		{
-			node.setAttribute("fill", "none");
-		}
-	},
+                fillOpacity = Y_LANG.isNumber(fillOpacity) ? fillOpacity : 1;
+                node.setAttribute("fill", fill.color);
+                node.setAttribute("fill-opacity", fillOpacity);
+            }
+        }
+        else
+        {
+            node.setAttribute("fill", "none");
+        }
+    },
 
-	/**
-	 * Creates a gradient fill
-	 *
-	 * @method _setGradientFill
-	 * @param {String} type gradient type
-	 * @private
-	 */
-	_setGradientFill: function(fill) {
-		var offset,
-			opacity,
-			color,
-			stopNode,
+    /**
+     * Creates a gradient fill
+     *
+     * @method _setGradientFill
+     * @param {String} type gradient type
+     * @private
+     */
+    _setGradientFill: function(fill) {
+        var offset,
+            opacity,
+            color,
+            stopNode,
             newStop,
-			isNumber = Y_LANG.isNumber,
-			graphic = this._graphic,
-			type = fill.type,
-			gradientNode = graphic.getGradientNode("grad" + this.get("id"), type),
-			stops = fill.stops,
-			w = this.get("width"),
-			h = this.get("height"),
-			rotation = fill.rotation || 0,
-			radCon = Math.PI/180,
+            isNumber = Y_LANG.isNumber,
+            graphic = this._graphic,
+            type = fill.type,
+            gradientNode = graphic.getGradientNode("grad" + this.get("id"), type),
+            stops = fill.stops,
+            w = this.get("width"),
+            h = this.get("height"),
+            rotation = fill.rotation || 0,
+            radCon = Math.PI/180,
             tanRadians = parseFloat(parseFloat(Math.tan(rotation * radCon)).toFixed(8)),
             i,
-			len,
-			def,
-			stop,
-			x1 = "0%",
-			x2 = "100%",
-			y1 = "0%",
-			y2 = "0%",
-			cx = fill.cx,
-			cy = fill.cy,
-			fx = fill.fx,
-			fy = fill.fy,
-			r = fill.r,
+            len,
+            def,
+            stop,
+            x1 = "0%",
+            x2 = "100%",
+            y1 = "0%",
+            y2 = "0%",
+            cx = fill.cx,
+            cy = fill.cy,
+            fx = fill.fx,
+            fy = fill.fy,
+            r = fill.r,
             stopNodes = [];
-		if(type === "linear")
-		{
+        if(type === "linear")
+        {
             cx = w/2;
             cy = h/2;
             if(Math.abs(tanRadians) * w/2 >= h/2)
@@ -456,26 +456,26 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             y2 = isNumber(y2) ? y2 : 0;
 
             gradientNode.setAttribute("spreadMethod", "pad");
-			gradientNode.setAttribute("width", w);
-			gradientNode.setAttribute("height", h);
+            gradientNode.setAttribute("width", w);
+            gradientNode.setAttribute("height", h);
             gradientNode.setAttribute("x1", x1 + "%");
             gradientNode.setAttribute("x2", x2 + "%");
             gradientNode.setAttribute("y1", y1 + "%");
             gradientNode.setAttribute("y2", y2 + "%");
-		}
-		else
-		{
-			gradientNode.setAttribute("cx", (cx * 100) + "%");
-			gradientNode.setAttribute("cy", (cy * 100) + "%");
-			gradientNode.setAttribute("fx", (fx * 100) + "%");
-			gradientNode.setAttribute("fy", (fy * 100) + "%");
-			gradientNode.setAttribute("r", (r * 100) + "%");
-		}
+        }
+        else
+        {
+            gradientNode.setAttribute("cx", (cx * 100) + "%");
+            gradientNode.setAttribute("cy", (cy * 100) + "%");
+            gradientNode.setAttribute("fx", (fx * 100) + "%");
+            gradientNode.setAttribute("fy", (fy * 100) + "%");
+            gradientNode.setAttribute("r", (r * 100) + "%");
+        }
 
-		len = stops.length;
-		def = 0;
+        len = stops.length;
+        def = 0;
         for(i = 0; i < len; ++i)
-		{
+        {
             if(this._stops && this._stops.length > 0)
             {
                 stopNode = this._stops.shift();
@@ -486,29 +486,29 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
                 stopNode = graphic._createGraphicNode("stop");
                 newStop = true;
             }
-			stop = stops[i];
-			opacity = stop.opacity;
-			color = stop.color;
-			offset = stop.offset || i/(len - 1);
-			offset = Math.round(offset * 100) + "%";
-			opacity = isNumber(opacity) ? opacity : 1;
-			opacity = Math.max(0, Math.min(1, opacity));
-			def = (i + 1) / len;
-			stopNode.setAttribute("offset", offset);
-			stopNode.setAttribute("stop-color", color);
-			stopNode.setAttribute("stop-opacity", opacity);
-			if(newStop)
+            stop = stops[i];
+            opacity = stop.opacity;
+            color = stop.color;
+            offset = stop.offset || i/(len - 1);
+            offset = Math.round(offset * 100) + "%";
+            opacity = isNumber(opacity) ? opacity : 1;
+            opacity = Math.max(0, Math.min(1, opacity));
+            def = (i + 1) / len;
+            stopNode.setAttribute("offset", offset);
+            stopNode.setAttribute("stop-color", color);
+            stopNode.setAttribute("stop-opacity", opacity);
+            if(newStop)
             {
                 gradientNode.appendChild(stopNode);
             }
             stopNodes.push(stopNode);
-		}
+        }
         while(this._stops && this._stops.length > 0)
         {
             gradientNode.removeChild(this._stops.shift());
         }
         this._stops = stopNodes;
-	},
+    },
 
     _stops: null,
 
@@ -521,48 +521,48 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
      * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function()
-	{
-		var host = this;
-		AttributeLite.prototype.set.apply(host, arguments);
-		if(host.initialized)
-		{
-			host._updateHandler();
-		}
-	},
+    set: function()
+    {
+        var host = this;
+        AttributeLite.prototype.set.apply(host, arguments);
+        if(host.initialized)
+        {
+            host._updateHandler();
+        }
+    },
 
-	/**
-	 * Specifies a 2d translation.
-	 *
-	 * @method translate
-	 * @param {Number} x The value to transate on the x-axis.
-	 * @param {Number} y The value to translate on the y-axis.
-	 */
-	translate: function()
-	{
-		this._addTransform("translate", arguments);
-	},
+    /**
+     * Specifies a 2d translation.
+     *
+     * @method translate
+     * @param {Number} x The value to transate on the x-axis.
+     * @param {Number} y The value to translate on the y-axis.
+     */
+    translate: function()
+    {
+        this._addTransform("translate", arguments);
+    },
 
-	/**
-	 * Translates the shape along the x-axis. When translating x and y coordinates,
-	 * use the `translate` method.
-	 *
-	 * @method translateX
-	 * @param {Number} x The value to translate.
-	 */
-	translateX: function()
+    /**
+     * Translates the shape along the x-axis. When translating x and y coordinates,
+     * use the `translate` method.
+     *
+     * @method translateX
+     * @param {Number} x The value to translate.
+     */
+    translateX: function()
     {
         this._addTransform("translateX", arguments);
     },
 
-	/**
-	 * Translates the shape along the y-axis. When translating x and y coordinates,
-	 * use the `translate` method.
-	 *
-	 * @method translateY
-	 * @param {Number} y The value to translate.
-	 */
-	translateY: function()
+    /**
+     * Translates the shape along the y-axis. When translating x and y coordinates,
+     * use the `translate` method.
+     *
+     * @method translateY
+     * @param {Number} y The value to translate.
+     */
+    translateY: function()
     {
         this._addTransform("translateY", arguments);
     },
@@ -579,45 +579,45 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
         this._addTransform("skew", arguments);
     },
 
-	/**
-	 * Skews the shape around the x-axis.
-	 *
-	 * @method skewX
-	 * @param {Number} x x-coordinate
-	 */
+    /**
+     * Skews the shape around the x-axis.
+     *
+     * @method skewX
+     * @param {Number} x x-coordinate
+     */
     skewX: function()
     {
         this._addTransform("skewX", arguments);
     },
 
-	/**
-	 * Skews the shape around the y-axis.
-	 *
-	 * @method skewY
-	 * @param {Number} y y-coordinate
-	 */
+    /**
+     * Skews the shape around the y-axis.
+     *
+     * @method skewY
+     * @param {Number} y y-coordinate
+     */
     skewY: function()
     {
         this._addTransform("skewY", arguments);
     },
 
-	/**
-	 * Rotates the shape clockwise around it transformOrigin.
-	 *
-	 * @method rotate
-	 * @param {Number} deg The degree of the rotation.
-	 */
+    /**
+     * Rotates the shape clockwise around it transformOrigin.
+     *
+     * @method rotate
+     * @param {Number} deg The degree of the rotation.
+     */
     rotate: function()
     {
         this._addTransform("rotate", arguments);
     },
 
-	/**
-	 * Specifies a 2d scaling operation.
-	 *
-	 * @method scale
-	 * @param {Number} val
-	 */
+    /**
+     * Specifies a 2d scaling operation.
+     *
+     * @method scale
+     * @param {Number} val
+     */
     scale: function()
     {
         this._addTransform("scale", arguments);
@@ -629,10 +629,10 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
      * @method _addTransform
      * @param {String} type The transform being applied.
      * @param {Array} args The arguments for the transform.
-	 * @private
-	 */
-	_addTransform: function(type, args)
-	{
+     * @private
+     */
+    _addTransform: function(type, args)
+    {
         args = Y.Array(args);
         this._transform = Y_LANG.trim(this._transform + " " + type + "(" + args.join(", ") + ")");
         args.unshift(type);
@@ -641,23 +641,23 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
         {
             this._updateTransform();
         }
-	},
+    },
 
-	/**
+    /**
      * Applies all transforms.
      *
      * @method _updateTransform
-	 * @private
-	 */
-	_updateTransform: function()
-	{
-		var isPath = this._type === "path",
+     * @private
+     */
+    _updateTransform: function()
+    {
+        var isPath = this._type === "path",
             node = this.node,
-			key,
-			transform,
-			transformOrigin,
-			x,
-			y,
+            key,
+            transform,
+            transformOrigin,
+            x,
+            y,
             tx,
             ty,
             matrix = this.matrix,
@@ -666,7 +666,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             len = this._transforms.length;
 
         if(isPath || (this._transforms && this._transforms.length > 0))
-		{
+        {
             x = this._x;
             y = this._y;
             transformOrigin = this.get("transformOrigin");
@@ -696,7 +696,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
                 {
                     this._transforms[i].unshift(key);
                 }
-			}
+            }
             normalizedMatrix.translate(-tx, -ty);
             transform = "matrix(" + normalizedMatrix.a + "," +
                             normalizedMatrix.b + "," +
@@ -704,48 +704,48 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
                             normalizedMatrix.d + "," +
                             normalizedMatrix.dx + "," +
                             normalizedMatrix.dy + ")";
-		}
+        }
         this._graphic.addToRedrawQueue(this);
         if(transform)
-		{
+        {
             node.setAttribute("transform", transform);
         }
         if(!isPath)
         {
             this._transforms = [];
         }
-	},
+    },
 
-	/**
-	 * Draws the shape.
-	 *
-	 * @method _draw
-	 * @private
-	 */
-	_draw: function()
-	{
-		var node = this.node;
-		node.setAttribute("width", this.get("width"));
-		node.setAttribute("height", this.get("height"));
-		node.setAttribute("x", this._x);
-		node.setAttribute("y", this._y);
-		node.style.left = this._x + "px";
-		node.style.top = this._y + "px";
-		this._fillChangeHandler();
-		this._strokeChangeHandler();
-		this._updateTransform();
-	},
+    /**
+     * Draws the shape.
+     *
+     * @method _draw
+     * @private
+     */
+    _draw: function()
+    {
+        var node = this.node;
+        node.setAttribute("width", this.get("width"));
+        node.setAttribute("height", this.get("height"));
+        node.setAttribute("x", this._x);
+        node.setAttribute("y", this._y);
+        node.style.left = this._x + "px";
+        node.style.top = this._y + "px";
+        this._fillChangeHandler();
+        this._strokeChangeHandler();
+        this._updateTransform();
+    },
 
-	/**
+    /**
      * Updates `Shape` based on attribute changes.
      *
      * @method _updateHandler
-	 * @private
-	 */
-	_updateHandler: function()
-	{
-		this._draw();
-	},
+     * @private
+     */
+    _updateHandler: function()
+    {
+        this._draw();
+    },
 
     /**
      * Storage for the transform attribute.
@@ -756,23 +756,23 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
      */
     _transform: "",
 
-	/**
-	 * Returns the bounds for a shape.
-	 *
+    /**
+     * Returns the bounds for a shape.
+     *
      * Calculates the a new bounding box from the original corner coordinates (base on size and position) and the transform matrix.
      * The calculated bounding box is used by the graphic instance to calculate its viewBox.
      *
-	 * @method getBounds
-	 * @return Object
-	 */
-	getBounds: function()
-	{
-		var type = this._type,
-			stroke = this.get("stroke"),
+     * @method getBounds
+     * @return Object
+     */
+    getBounds: function()
+    {
+        var type = this._type,
+            stroke = this.get("stroke"),
             w = this.get("width"),
-			h = this.get("height"),
-			x = type === "path" ? 0 : this._x,
-			y = type === "path" ? 0 : this._y,
+            h = this.get("height"),
+            x = type === "path" ? 0 : this._x,
+            y = type === "path" ? 0 : this._y,
             wt = 0;
         if(type !== "path")
         {
@@ -785,8 +785,8 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             x -= wt;
             y -= wt;
         }
-		return this._normalizedMatrix.getContentRect(w, h, x, y);
-	},
+        return this._normalizedMatrix.getContentRect(w, h, x, y);
+    },
 
     /**
      * Places the shape above all other shapes.
@@ -898,19 +898,19 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
  }, Y.SVGDrawing.prototype));
 
 SVGShape.ATTRS = {
-	/**
-	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a
-	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
-	 *
-	 * @config transformOrigin
-	 * @type Array
-	 */
-	transformOrigin: {
-		valueFn: function()
-		{
-			return [0.5, 0.5];
-		}
-	},
+    /**
+     * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a
+     * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
+     *
+     * @config transformOrigin
+     * @type Array
+     */
+    transformOrigin: {
+        valueFn: function()
+        {
+            return [0.5, 0.5];
+        }
+    },
 
     /**
      * <p>A string containing, in order, transform operations applied to the shape instance. The `transform` string can contain the following values:
@@ -939,55 +939,55 @@ SVGShape.ATTRS = {
      * <p>The code below would apply `translate` and `rotate` to an existing shape.</p>
 
         myRect.set("transform", "translate(40, 50) rotate(45)");
-	 * @config transform
+     * @config transform
      * @type String
-	 */
-	transform: {
-		setter: function(val)
+     */
+    transform: {
+        setter: function(val)
         {
             this.matrix.init();
             this._normalizedMatrix.init();
             this._transforms = this.matrix.getTransformArray(val);
             this._transform = val;
             return val;
-		},
+        },
 
         getter: function()
         {
             return this._transform;
         }
-	},
+    },
 
-	/**
-	 * Unique id for class instance.
-	 *
-	 * @config id
-	 * @type String
-	 */
-	id: {
-		valueFn: function()
-		{
-			return Y.guid();
-		},
+    /**
+     * Unique id for class instance.
+     *
+     * @config id
+     * @type String
+     */
+    id: {
+        valueFn: function()
+        {
+            return Y.guid();
+        },
 
-		setter: function(val)
-		{
-			var node = this.node;
-			if(node)
-			{
-				node.setAttribute("id", val);
-			}
-			return val;
-		}
-	},
+        setter: function(val)
+        {
+            var node = this.node;
+            if(node)
+            {
+                node.setAttribute("id", val);
+            }
+            return val;
+        }
+    },
 
-	/**
-	 * Indicates the x position of shape.
-	 *
-	 * @config x
-	 * @type Number
-	 */
-	x: {
+    /**
+     * Indicates the x position of shape.
+     *
+     * @config x
+     * @type Number
+     */
+    x: {
         getter: function()
         {
             return this._x;
@@ -1002,15 +1002,15 @@ SVGShape.ATTRS = {
                 this.set("transform", transform);
             }
         }
-	},
+    },
 
-	/**
-	 * Indicates the y position of shape.
-	 *
-	 * @config y
-	 * @type Number
-	 */
-	y: {
+    /**
+     * Indicates the y position of shape.
+     *
+     * @config y
+     * @type Number
+     */
+    y: {
         getter: function()
         {
             return this._y;
@@ -1025,49 +1025,49 @@ SVGShape.ATTRS = {
                 this.set("transform", transform);
             }
         }
-	},
+    },
 
-	/**
-	 * Indicates the width of the shape
-	 *
-	 * @config width
-	 * @type Number
-	 */
-	width: {
+    /**
+     * Indicates the width of the shape
+     *
+     * @config width
+     * @type Number
+     */
+    width: {
         value: 0
     },
 
-	/**
-	 * Indicates the height of the shape
-	 *
-	 * @config height
-	 * @type Number
-	 */
-	height: {
+    /**
+     * Indicates the height of the shape
+     *
+     * @config height
+     * @type Number
+     */
+    height: {
         value: 0
     },
 
-	/**
-	 * Indicates whether the shape is visible.
-	 *
-	 * @config visible
-	 * @type Boolean
-	 */
-	visible: {
-		value: true,
+    /**
+     * Indicates whether the shape is visible.
+     *
+     * @config visible
+     * @type Boolean
+     */
+    visible: {
+        value: true,
 
-		setter: function(val){
-			var visibility = val ? "visible" : "hidden";
-			if(this.node)
+        setter: function(val){
+            var visibility = val ? "visible" : "hidden";
+            if(this.node)
             {
                 this.node.style.visibility = visibility;
             }
-			return val;
-		}
-	},
+            return val;
+        }
+    },
 
-	/**
-	 * Contains information about the fill of the shape.
+    /**
+     * Contains information about the fill of the shape.
      *  <dl>
      *      <dt>color</dt><dd>The color of the fill.</dd>
      *      <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1.</dd>
@@ -1107,31 +1107,31 @@ SVGShape.ATTRS = {
      *          classes which are used on Android or IE 6 - 8.</p>
      *      </dd>
      *  </dl>
-	 *
-	 * @config fill
-	 * @type Object
-	 */
-	fill: {
-		valueFn: "_getDefaultFill",
+     *
+     * @config fill
+     * @type Object
+     */
+    fill: {
+        valueFn: "_getDefaultFill",
 
-		setter: function(val)
-		{
-			var fill,
-				tmpl = this.get("fill") || this._getDefaultFill();
-			fill = (val) ? Y.merge(tmpl, val) : null;
-			if(fill && fill.color)
-			{
-				if(fill.color === undefined || fill.color === "none")
-				{
-					fill.color = null;
-				}
-			}
-			return fill;
-		}
-	},
+        setter: function(val)
+        {
+            var fill,
+                tmpl = this.get("fill") || this._getDefaultFill();
+            fill = (val) ? Y.merge(tmpl, val) : null;
+            if(fill && fill.color)
+            {
+                if(fill.color === undefined || fill.color === "none")
+                {
+                    fill.color = null;
+                }
+            }
+            return fill;
+        }
+    },
 
-	/**
-	 * Contains information about the stroke of the shape.
+    /**
+     * Contains information about the stroke of the shape.
      *  <dl>
      *      <dt>color</dt><dd>The color of the stroke.</dd>
      *      <dt>weight</dt><dd>Number that indicates the width of the stroke.</dd>
@@ -1154,16 +1154,16 @@ SVGShape.ATTRS = {
      *          </dl>
      *      </dd>
      *  </dl>
-	 *
-	 * @config stroke
-	 * @type Object
-	 */
-	stroke: {
-		valueFn: "_getDefaultStroke",
+     *
+     * @config stroke
+     * @type Object
+     */
+    stroke: {
+        valueFn: "_getDefaultStroke",
 
-		setter: function(val)
-		{
-			var tmpl = this.get("stroke") || this._getDefaultStroke(),
+        setter: function(val)
+        {
+            var tmpl = this.get("stroke") || this._getDefaultStroke(),
                 wt;
             if(val && val.hasOwnProperty("weight"))
             {
@@ -1174,53 +1174,53 @@ SVGShape.ATTRS = {
                 }
             }
             return (val) ? Y.merge(tmpl, val) : null;
-		}
-	},
+        }
+    },
 
-	// Only implemented in SVG
-	// Determines whether the instance will receive mouse events.
-	//
-	// @config pointerEvents
-	// @type string
-	//
-	pointerEvents: {
-		valueFn: function()
-		{
-			var val = "visiblePainted",
-				node = this.node;
-			if(node)
-			{
-				node.setAttribute("pointer-events", val);
-			}
-			return val;
-		},
+    // Only implemented in SVG
+    // Determines whether the instance will receive mouse events.
+    //
+    // @config pointerEvents
+    // @type string
+    //
+    pointerEvents: {
+        valueFn: function()
+        {
+            var val = "visiblePainted",
+                node = this.node;
+            if(node)
+            {
+                node.setAttribute("pointer-events", val);
+            }
+            return val;
+        },
 
-		setter: function(val)
-		{
-			var node = this.node;
-			if(node)
-			{
-				node.setAttribute("pointer-events", val);
-			}
-			return val;
-		}
-	},
+        setter: function(val)
+        {
+            var node = this.node;
+            if(node)
+            {
+                node.setAttribute("pointer-events", val);
+            }
+            return val;
+        }
+    },
 
-	/**
-	 * Dom node for the shape.
-	 *
-	 * @config node
-	 * @type HTMLElement
-	 * @readOnly
-	 */
-	node: {
-		readOnly: true,
+    /**
+     * Dom node for the shape.
+     *
+     * @config node
+     * @type HTMLElement
+     * @readOnly
+     */
+    node: {
+        readOnly: true,
 
         getter: function()
         {
             return this.node;
         }
-	},
+    },
 
     /**
      * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all
@@ -1242,21 +1242,21 @@ SVGShape.ATTRS = {
         }
     },
 
-	/**
-	 * Reference to the parent graphic instance
-	 *
-	 * @config graphic
-	 * @type SVGGraphic
-	 * @readOnly
-	 */
-	graphic: {
-		readOnly: true,
+    /**
+     * Reference to the parent graphic instance
+     *
+     * @config graphic
+     * @type SVGGraphic
+     * @readOnly
+     */
+    graphic: {
+        readOnly: true,
 
         getter: function()
         {
             return this._graphic;
         }
-	}
+    }
 };
 Y.SVGShape = SVGShape;
 

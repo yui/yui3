@@ -26,7 +26,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
      * @method drawSeries
      */
     drawSeries: function()
-	{
+    {
         if(this.get("xcoords").length < 1)
         {
             return;

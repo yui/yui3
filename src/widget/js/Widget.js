@@ -916,10 +916,10 @@ Y.extend(Widget, Y.Base, {
         focusHandle.listeners[Y.stamp(this, true)] = true;
         focusHandle.listeners.count++;
 
-        //	Fix for Webkit:
-        //	Document doesn't receive focus in Webkit when the user mouses
-        //	down on it, so the "focused" attribute won't get set to the
-        //	correct value. Keeping this instance based for now, potential better performance.
+        //  Fix for Webkit:
+        //  Document doesn't receive focus in Webkit when the user mouses
+        //  down on it, so the "focused" attribute won't get set to the
+        //  correct value. Keeping this instance based for now, potential better performance.
         //  Otherwise we'll end up looking up widgets from the DOM on every mousedown.
         if (WEBKIT){
             this._hDocMouseDown = oDocument.on("mousedown", this._onDocMouseDown, this);

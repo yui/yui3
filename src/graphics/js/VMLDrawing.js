@@ -1,6 +1,6 @@
 var IMPLEMENTATION = "vml",
     SHAPE = "shape",
-	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
+    SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
     SPLITARGSPATTERN = /[\-]?[0-9]*[0-9|\.][0-9]*/g,
     Y_LANG = Y.Lang,
     IS_NUM = Y_LANG.isNumber,
@@ -9,12 +9,12 @@ var IMPLEMENTATION = "vml",
     Y_SELECTOR = Y.Selector,
     DOCUMENT = Y.config.doc,
     AttributeLite = Y.AttributeLite,
-	VMLShape,
-	VMLCircle,
-	VMLPath,
-	VMLRect,
-	VMLEllipse,
-	VMLGraphic,
+    VMLShape,
+    VMLCircle,
+    VMLPath,
+    VMLRect,
+    VMLEllipse,
+    VMLGraphic,
     VMLPieSlice,
     _getClassName = Y.ClassNameManager.getClassName;
 
@@ -347,7 +347,7 @@ VMLDrawing.prototype = {
      * @chainable
      * @protected
      */
-	drawCircle: function(x, y, radius) {
+    drawCircle: function(x, y, radius) {
         var startAngle = 0,
             endAngle = 360,
             circum = radius * 2;
@@ -384,7 +384,7 @@ VMLDrawing.prototype = {
      * @chainable
      * @protected
      */
-	drawEllipse: function(x, y, w, h) {
+    drawEllipse: function(x, y, w, h) {
         var startAngle = 0,
             endAngle = 360,
             radius = w * 0.5,
@@ -684,7 +684,7 @@ VMLDrawing.prototype = {
      */
     clear: function()
     {
-		this._right = 0;
+        this._right = 0;
         this._bottom = 0;
         this._width = 0;
         this._height = 0;

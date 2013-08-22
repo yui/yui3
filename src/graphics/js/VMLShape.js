@@ -20,14 +20,14 @@ VMLShape = function()
 VMLShape.NAME = "shape";
 
 Y.extend(VMLShape, Y.GraphicBase, Y.mix({
-	/**
-	 * Indicates the type of shape
-	 *
-	 * @property _type
-	 * @type String
+    /**
+     * Indicates the type of shape
+     *
+     * @property _type
+     * @type String
      * @private
-	 */
-	_type: "shape",
+     */
+    _type: "shape",
 
     /**
      * Init method, invoked during construction.
@@ -36,23 +36,23 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * @method init
      * @protected
      */
-	init: function()
-	{
-		this.initializer.apply(this, arguments);
-	},
+    init: function()
+    {
+        this.initializer.apply(this, arguments);
+    },
 
-	/**
-	 * Initializes the shape
-	 *
-	 * @private
-	 * @method _initialize
-	 */
-	initializer: function(cfg)
-	{
-		var host = this,
+    /**
+     * Initializes the shape
+     *
+     * @private
+     * @method _initialize
+     */
+    initializer: function(cfg)
+    {
+        var host = this,
             graphic = cfg.graphic,
             data = this.get("data");
-		host.createNode();
+        host.createNode();
         if(graphic)
         {
             this._setGraphic(graphic);
@@ -62,7 +62,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             host._parsePathData(data);
         }
         this._updateHandler();
-	},
+    },
 
     /**
      * Set the Graphic instance for the shape.
@@ -110,38 +110,38 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         }
     },
 
-	/**
-	 * Creates the dom node for the shape.
-	 *
+    /**
+     * Creates the dom node for the shape.
+     *
      * @method createNode
-	 * @return HTMLElement
-	 * @private
-	 */
-	createNode: function()
-	{
+     * @return HTMLElement
+     * @private
+     */
+    createNode: function()
+    {
         var node,
             concat = this._camelCaseConcat,
-			x = this.get("x"),
-			y = this.get("y"),
+            x = this.get("x"),
+            y = this.get("y"),
             w = this.get("width"),
             h = this.get("height"),
-			id,
-			type,
-			name = this.name,
+            id,
+            type,
+            name = this.name,
             nodestring,
             visibility = this.get("visible") ? "visible" : "hidden",
-			strokestring,
-			classString,
-			stroke,
-			endcap,
-			opacity,
-			joinstyle,
-			miterlimit,
-			dashstyle,
-			fill,
-			fillstring;
-			id = this.get("id");
-		type = this._type === "path" ? "shape" : this._type;
+            strokestring,
+            classString,
+            stroke,
+            endcap,
+            opacity,
+            joinstyle,
+            miterlimit,
+            dashstyle,
+            fill,
+            fillstring;
+            id = this.get("id");
+        type = this._type === "path" ? "shape" : this._type;
         classString = _getClassName(SHAPE) +
                     " " +
                     _getClassName(concat(IMPLEMENTATION, SHAPE)) +
@@ -155,7 +155,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         stroke = this._getStrokeProps();
         fill = this._getFillProps();
 
-		nodestring  = '<' +
+        nodestring  = '<' +
                         type +
                         '  xmlns="urn:schemas-microsft.com:vml" id="' +
                         id +
@@ -234,295 +234,295 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         this.node = node;
         this._strokeFlag = false;
         this._fillFlag = false;
-	},
+    },
 
-	/**
-	 * Add a class name to each node.
-	 *
-	 * @method addClass
-	 * @param {String} className the class name to add to the node's class attribute
-	 */
-	addClass: function(className)
-	{
-        var node = this.node;
-		Y_DOM.addClass(node, className);
-	},
-
-	/**
-	 * Removes a class name from each node.
-	 *
-	 * @method removeClass
-	 * @param {String} className the class name to remove from the node's class attribute
-	 */
-	removeClass: function(className)
-	{
-        var node = this.node;
-		Y_DOM.removeClass(node, className);
-	},
-
-	/**
-	 * Gets the current position of the node in page coordinates.
-	 *
-	 * @method getXY
-	 * @return Array The XY position of the shape.
-	 */
-	getXY: function()
-	{
-		var graphic = this._graphic,
-			parentXY = graphic.getXY(),
-			x = this.get("x"),
-			y = this.get("y");
-		return [parentXY[0] + x, parentXY[1] + y];
-	},
-
-	/**
-	 * Set the position of the shape in page coordinates, regardless of how the node is positioned.
-	 *
-	 * @method setXY
-	 * @param {Array} Contains x & y values for new position (coordinates are page-based)
+    /**
+     * Add a class name to each node.
      *
-	 */
-	setXY: function(xy)
-	{
-		var graphic = this._graphic,
-			parentXY = graphic.getXY();
-		this.set("x", xy[0] - parentXY[0]);
-		this.set("y", xy[1] - parentXY[1]);
-	},
-
-	/**
-	 * Determines whether the node is an ancestor of another HTML element in the DOM hierarchy.
-	 *
-	 * @method contains
-	 * @param {VMLShape | HTMLElement} needle The possible node or descendent
-	 * @return Boolean Whether or not this shape is the needle or its ancestor.
-	 */
-	contains: function(needle)
-	{
-		return needle === Y.one(this.node);
-	},
-
-	/**
-	 * Compares nodes to determine if they match.
-	 * Node instances can be compared to each other and/or HTMLElements.
-	 * @method compareTo
-	 * @param {HTMLElement | Node} refNode The reference node to compare to the node.
-	 * @return {Boolean} True if the nodes match, false if they do not.
-	 */
-	compareTo: function(refNode) {
+     * @method addClass
+     * @param {String} className the class name to add to the node's class attribute
+     */
+    addClass: function(className)
+    {
         var node = this.node;
-		return node === refNode;
-	},
+        Y_DOM.addClass(node, className);
+    },
 
-	/**
-	 * Test if the supplied node matches the supplied selector.
-	 *
-	 * @method test
-	 * @param {String} selector The CSS selector to test against.
-	 * @return Boolean Wheter or not the shape matches the selector.
-	 */
-	test: function(selector)
-	{
-		return Y_SELECTOR.test(this.node, selector);
-	},
+    /**
+     * Removes a class name from each node.
+     *
+     * @method removeClass
+     * @param {String} className the class name to remove from the node's class attribute
+     */
+    removeClass: function(className)
+    {
+        var node = this.node;
+        Y_DOM.removeClass(node, className);
+    },
 
-	/**
+    /**
+     * Gets the current position of the node in page coordinates.
+     *
+     * @method getXY
+     * @return Array The XY position of the shape.
+     */
+    getXY: function()
+    {
+        var graphic = this._graphic,
+            parentXY = graphic.getXY(),
+            x = this.get("x"),
+            y = this.get("y");
+        return [parentXY[0] + x, parentXY[1] + y];
+    },
+
+    /**
+     * Set the position of the shape in page coordinates, regardless of how the node is positioned.
+     *
+     * @method setXY
+     * @param {Array} Contains x & y values for new position (coordinates are page-based)
+     *
+     */
+    setXY: function(xy)
+    {
+        var graphic = this._graphic,
+            parentXY = graphic.getXY();
+        this.set("x", xy[0] - parentXY[0]);
+        this.set("y", xy[1] - parentXY[1]);
+    },
+
+    /**
+     * Determines whether the node is an ancestor of another HTML element in the DOM hierarchy.
+     *
+     * @method contains
+     * @param {VMLShape | HTMLElement} needle The possible node or descendent
+     * @return Boolean Whether or not this shape is the needle or its ancestor.
+     */
+    contains: function(needle)
+    {
+        return needle === Y.one(this.node);
+    },
+
+    /**
+     * Compares nodes to determine if they match.
+     * Node instances can be compared to each other and/or HTMLElements.
+     * @method compareTo
+     * @param {HTMLElement | Node} refNode The reference node to compare to the node.
+     * @return {Boolean} True if the nodes match, false if they do not.
+     */
+    compareTo: function(refNode) {
+        var node = this.node;
+        return node === refNode;
+    },
+
+    /**
+     * Test if the supplied node matches the supplied selector.
+     *
+     * @method test
+     * @param {String} selector The CSS selector to test against.
+     * @return Boolean Wheter or not the shape matches the selector.
+     */
+    test: function(selector)
+    {
+        return Y_SELECTOR.test(this.node, selector);
+    },
+
+    /**
      * Calculates and returns properties for setting an initial stroke.
      *
      * @method _getStrokeProps
      * @return Object
      *
-	 * @private
-	 */
+     * @private
+     */
     _getStrokeProps: function()
     {
-		var props,
-			stroke = this.get("stroke"),
-			strokeOpacity,
-			dashstyle,
-			dash = "",
-			val,
-			i = 0,
-			len,
-			linecap,
-			linejoin;
+        var props,
+            stroke = this.get("stroke"),
+            strokeOpacity,
+            dashstyle,
+            dash = "",
+            val,
+            i = 0,
+            len,
+            linecap,
+            linejoin;
         if(stroke && stroke.weight && stroke.weight > 0)
-		{
-			props = {};
-			linecap = stroke.linecap || "flat";
-			linejoin = stroke.linejoin || "round";
+        {
+            props = {};
+            linecap = stroke.linecap || "flat";
+            linejoin = stroke.linejoin || "round";
             if(linecap !== "round" && linecap !== "square")
             {
                 linecap = "flat";
             }
-			strokeOpacity = parseFloat(stroke.opacity);
-			dashstyle = stroke.dashstyle || "none";
-			stroke.color = stroke.color || "#000000";
-			stroke.weight = stroke.weight || 1;
-			stroke.opacity = IS_NUM(strokeOpacity) ? strokeOpacity : 1;
-			props.stroked = true;
-			props.color = stroke.color;
-			props.weight = stroke.weight;
-			props.endcap = linecap;
-			props.opacity = stroke.opacity;
-			if(IS_ARRAY(dashstyle))
-			{
-				dash = [];
-				len = dashstyle.length;
-				for(i = 0; i < len; ++i)
-				{
-					val = dashstyle[i];
-					dash[i] = val / stroke.weight;
-				}
-			}
-			if(linejoin === "round" || linejoin === "bevel")
-			{
-				props.joinstyle = linejoin;
-			}
-			else
-			{
-				linejoin = parseInt(linejoin, 10);
-				if(IS_NUM(linejoin))
-				{
-					props.miterlimit = Math.max(linejoin, 1);
-					props.joinstyle = "miter";
-				}
-			}
-			props.dashstyle = dash;
+            strokeOpacity = parseFloat(stroke.opacity);
+            dashstyle = stroke.dashstyle || "none";
+            stroke.color = stroke.color || "#000000";
+            stroke.weight = stroke.weight || 1;
+            stroke.opacity = IS_NUM(strokeOpacity) ? strokeOpacity : 1;
+            props.stroked = true;
+            props.color = stroke.color;
+            props.weight = stroke.weight;
+            props.endcap = linecap;
+            props.opacity = stroke.opacity;
+            if(IS_ARRAY(dashstyle))
+            {
+                dash = [];
+                len = dashstyle.length;
+                for(i = 0; i < len; ++i)
+                {
+                    val = dashstyle[i];
+                    dash[i] = val / stroke.weight;
+                }
+            }
+            if(linejoin === "round" || linejoin === "bevel")
+            {
+                props.joinstyle = linejoin;
+            }
+            else
+            {
+                linejoin = parseInt(linejoin, 10);
+                if(IS_NUM(linejoin))
+                {
+                    props.miterlimit = Math.max(linejoin, 1);
+                    props.joinstyle = "miter";
+                }
+            }
+            props.dashstyle = dash;
         }
         return props;
     },
 
-	/**
-	 * Adds a stroke to the shape node.
-	 *
-	 * @method _strokeChangeHandler
-	 * @private
-	 */
-	_strokeChangeHandler: function()
-	{
+    /**
+     * Adds a stroke to the shape node.
+     *
+     * @method _strokeChangeHandler
+     * @private
+     */
+    _strokeChangeHandler: function()
+    {
         if(!this._strokeFlag)
         {
             return;
         }
         var node = this.node,
-			stroke = this.get("stroke"),
-			strokeOpacity,
-			dashstyle,
-			dash = "",
-			val,
-			i = 0,
-			len,
-			linecap,
-			linejoin;
-		if(stroke && stroke.weight && stroke.weight > 0)
-		{
-			linecap = stroke.linecap || "flat";
-			linejoin = stroke.linejoin || "round";
-			if(linecap !== "round" && linecap !== "square")
-			{
-				linecap = "flat";
-			}
-			strokeOpacity = parseFloat(stroke.opacity);
-			dashstyle = stroke.dashstyle || "none";
-			stroke.color = stroke.color || "#000000";
-			stroke.weight = stroke.weight || 1;
-			stroke.opacity = IS_NUM(strokeOpacity) ? strokeOpacity : 1;
-			node.stroked = true;
-			node.strokeColor = stroke.color;
-			node.strokeWeight = stroke.weight + "px";
-			if(!this._strokeNode)
-			{
-				this._strokeNode = this._createGraphicNode("stroke");
-				node.appendChild(this._strokeNode);
-			}
-			this._strokeNode.endcap = linecap;
-			this._strokeNode.opacity = stroke.opacity;
-			if(IS_ARRAY(dashstyle))
-			{
-				dash = [];
-				len = dashstyle.length;
-				for(i = 0; i < len; ++i)
-				{
-					val = dashstyle[i];
-					dash[i] = val / stroke.weight;
-				}
-			}
-			if(linejoin === "round" || linejoin === "bevel")
-			{
-				this._strokeNode.joinstyle = linejoin;
-			}
-			else
-			{
-				linejoin = parseInt(linejoin, 10);
-				if(IS_NUM(linejoin))
-				{
-					this._strokeNode.miterlimit = Math.max(linejoin, 1);
-					this._strokeNode.joinstyle = "miter";
-				}
-			}
-			this._strokeNode.dashstyle = dash;
+            stroke = this.get("stroke"),
+            strokeOpacity,
+            dashstyle,
+            dash = "",
+            val,
+            i = 0,
+            len,
+            linecap,
+            linejoin;
+        if(stroke && stroke.weight && stroke.weight > 0)
+        {
+            linecap = stroke.linecap || "flat";
+            linejoin = stroke.linejoin || "round";
+            if(linecap !== "round" && linecap !== "square")
+            {
+                linecap = "flat";
+            }
+            strokeOpacity = parseFloat(stroke.opacity);
+            dashstyle = stroke.dashstyle || "none";
+            stroke.color = stroke.color || "#000000";
+            stroke.weight = stroke.weight || 1;
+            stroke.opacity = IS_NUM(strokeOpacity) ? strokeOpacity : 1;
+            node.stroked = true;
+            node.strokeColor = stroke.color;
+            node.strokeWeight = stroke.weight + "px";
+            if(!this._strokeNode)
+            {
+                this._strokeNode = this._createGraphicNode("stroke");
+                node.appendChild(this._strokeNode);
+            }
+            this._strokeNode.endcap = linecap;
+            this._strokeNode.opacity = stroke.opacity;
+            if(IS_ARRAY(dashstyle))
+            {
+                dash = [];
+                len = dashstyle.length;
+                for(i = 0; i < len; ++i)
+                {
+                    val = dashstyle[i];
+                    dash[i] = val / stroke.weight;
+                }
+            }
+            if(linejoin === "round" || linejoin === "bevel")
+            {
+                this._strokeNode.joinstyle = linejoin;
+            }
+            else
+            {
+                linejoin = parseInt(linejoin, 10);
+                if(IS_NUM(linejoin))
+                {
+                    this._strokeNode.miterlimit = Math.max(linejoin, 1);
+                    this._strokeNode.joinstyle = "miter";
+                }
+            }
+            this._strokeNode.dashstyle = dash;
             this._strokeNode.on = true;
-		}
-		else
-		{
+        }
+        else
+        {
             if(this._strokeNode)
             {
                 this._strokeNode.on = false;
             }
-			node.stroked = false;
-		}
+            node.stroked = false;
+        }
         this._strokeFlag = false;
-	},
+    },
 
-	/**
+    /**
      * Calculates and returns properties for setting an initial fill.
      *
      * @method _getFillProps
      * @return Object
      *
-	 * @private
-	 */
-	_getFillProps: function()
-	{
-		var fill = this.get("fill"),
-			fillOpacity,
-			props,
-			gradient,
-			i,
-			fillstring,
-			filled = false;
-		if(fill)
-		{
-			props = {};
+     * @private
+     */
+    _getFillProps: function()
+    {
+        var fill = this.get("fill"),
+            fillOpacity,
+            props,
+            gradient,
+            i,
+            fillstring,
+            filled = false;
+        if(fill)
+        {
+            props = {};
 
-			if(fill.type === "radial" || fill.type === "linear")
-			{
-				fillOpacity = parseFloat(fill.opacity);
-				fillOpacity = IS_NUM(fillOpacity) ? fillOpacity : 1;
-				filled = true;
-				gradient = this._getGradientFill(fill);
-				fillstring = '<fill xmlns="urn:schemas-microsft.com:vml"' +
+            if(fill.type === "radial" || fill.type === "linear")
+            {
+                fillOpacity = parseFloat(fill.opacity);
+                fillOpacity = IS_NUM(fillOpacity) ? fillOpacity : 1;
+                filled = true;
+                gradient = this._getGradientFill(fill);
+                fillstring = '<fill xmlns="urn:schemas-microsft.com:vml"' +
                             ' class="vmlfill" style="behavior:url(#default#VML);display:inline-block;"' +
                             ' opacity="' + fillOpacity + '"';
-				for(i in gradient)
-				{
-					if(gradient.hasOwnProperty(i))
-					{
-						fillstring += ' ' + i + '="' + gradient[i] + '"';
-					}
-				}
-				fillstring += ' />';
-				props.node = fillstring;
-			}
-			else if(fill.color)
-			{
-				fillOpacity = parseFloat(fill.opacity);
-				filled = true;
+                for(i in gradient)
+                {
+                    if(gradient.hasOwnProperty(i))
+                    {
+                        fillstring += ' ' + i + '="' + gradient[i] + '"';
+                    }
+                }
+                fillstring += ' />';
+                props.node = fillstring;
+            }
+            else if(fill.color)
+            {
+                fillOpacity = parseFloat(fill.opacity);
+                filled = true;
                 props.color = fill.color;
-				if(IS_NUM(fillOpacity))
-				{
-					fillOpacity = Math.max(Math.min(fillOpacity, 1), 0);
+                if(IS_NUM(fillOpacity))
+                {
+                    fillOpacity = Math.max(Math.min(fillOpacity, 1), 0);
                     props.opacity = fillOpacity;
                     if(fillOpacity < 1)
                     {
@@ -531,37 +531,37 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                         ' type="solid" opacity="' + fillOpacity + '"/>';
                     }
                 }
-			}
-			props.filled = filled;
-		}
-		return props;
-	},
+            }
+            props.filled = filled;
+        }
+        return props;
+    },
 
-	/**
-	 * Adds a fill to the shape node.
-	 *
-	 * @method _fillChangeHandler
-	 * @private
-	 */
-	_fillChangeHandler: function()
-	{
+    /**
+     * Adds a fill to the shape node.
+     *
+     * @method _fillChangeHandler
+     * @private
+     */
+    _fillChangeHandler: function()
+    {
         if(!this._fillFlag)
         {
             return;
         }
-		var node = this.node,
-			fill = this.get("fill"),
-			fillOpacity,
-			fillstring,
-			filled = false,
+        var node = this.node,
+            fill = this.get("fill"),
+            fillOpacity,
+            fillstring,
+            filled = false,
             i,
             gradient;
-		if(fill)
-		{
-			if(fill.type === "radial" || fill.type === "linear")
-			{
-				filled = true;
-				gradient = this._getGradientFill(fill);
+        if(fill)
+        {
+            if(fill.type === "radial" || fill.type === "linear")
+            {
+                filled = true;
+                gradient = this._getGradientFill(fill);
                 if(this._fillNode)
                 {
                     for(i in gradient)
@@ -595,25 +595,25 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                     this._fillNode = DOCUMENT.createElement(fillstring);
                     node.appendChild(this._fillNode);
                 }
-			}
-			else if(fill.color)
-			{
+            }
+            else if(fill.color)
+            {
                 node.fillcolor = fill.color;
-				fillOpacity = parseFloat(fill.opacity);
-				filled = true;
-				if(IS_NUM(fillOpacity) && fillOpacity < 1)
-				{
-					fill.opacity = fillOpacity;
+                fillOpacity = parseFloat(fill.opacity);
+                filled = true;
+                if(IS_NUM(fillOpacity) && fillOpacity < 1)
+                {
+                    fill.opacity = fillOpacity;
                     if(this._fillNode)
-					{
+                    {
                         if(this._fillNode.getAttribute("type") !== "solid")
                         {
                             this._fillNode.type = "solid";
                         }
-						this._fillNode.opacity = fillOpacity;
-					}
-					else
-					{
+                        this._fillNode.opacity = fillOpacity;
+                    }
+                    else
+                    {
                         fillstring = '<fill xmlns="urn:schemas-microsft.com:vml"' +
                         ' class="vmlfill"' +
                         ' style="behavior:url(#default#VML);display:inline-block;"' +
@@ -622,28 +622,28 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                         '/>';
                         this._fillNode = DOCUMENT.createElement(fillstring);
                         node.appendChild(this._fillNode);
-					}
-				}
-				else if(this._fillNode)
+                    }
+                }
+                else if(this._fillNode)
                 {
                     this._fillNode.opacity = 1;
                     this._fillNode.type = "solid";
-				}
-			}
-		}
-		node.filled = filled;
+                }
+            }
+        }
+        node.filled = filled;
         this._fillFlag = false;
-	},
+    },
 
-	//not used. remove next release.
+    //not used. remove next release.
     _updateFillNode: function(node)
-	{
-		if(!this._fillNode)
-		{
-			this._fillNode = this._createGraphicNode("fill");
-			node.appendChild(this._fillNode);
-		}
-	},
+    {
+        if(!this._fillNode)
+        {
+            this._fillNode = this._createGraphicNode("fill");
+            node.appendChild(this._fillNode);
+        }
+    },
 
     /**
      * Calculates and returns an object containing gradient properties for a fill node.
@@ -653,37 +653,37 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * @return Object
      * @private
      */
-	_getGradientFill: function(fill)
-	{
-		var gradientProps = {},
-			gradientBoxWidth,
-			gradientBoxHeight,
-			type = fill.type,
-			w = this.get("width"),
-			h = this.get("height"),
-			isNumber = IS_NUM,
-			stop,
-			stops = fill.stops,
-			len = stops.length,
-			opacity,
-			color,
-			i,
-			oi,
-			colorstring = "",
-			cx = fill.cx,
-			cy = fill.cy,
-			fx = fill.fx,
-			fy = fill.fy,
-			r = fill.r,
+    _getGradientFill: function(fill)
+    {
+        var gradientProps = {},
+            gradientBoxWidth,
+            gradientBoxHeight,
+            type = fill.type,
+            w = this.get("width"),
+            h = this.get("height"),
+            isNumber = IS_NUM,
+            stop,
+            stops = fill.stops,
+            len = stops.length,
+            opacity,
+            color,
+            i,
+            oi,
+            colorstring = "",
+            cx = fill.cx,
+            cy = fill.cy,
+            fx = fill.fx,
+            fy = fill.fy,
+            r = fill.r,
             pct,
-			rotation = fill.rotation || 0;
-		if(type === "linear")
-		{
+            rotation = fill.rotation || 0;
+        if(type === "linear")
+        {
             if(rotation <= 270)
             {
                 rotation = Math.abs(rotation - 270);
             }
-			else if(rotation < 360)
+            else if(rotation < 360)
             {
                 rotation = 270 + (360 - rotation);
             }
@@ -692,41 +692,41 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                 rotation = 270;
             }
             gradientProps.type = "gradient";//"gradientunscaled";
-			gradientProps.angle = rotation;
-		}
-		else if(type === "radial")
-		{
-			gradientBoxWidth = w * (r * 2);
-			gradientBoxHeight = h * (r * 2);
-			fx = r * 2 * (fx - 0.5);
-			fy = r * 2 * (fy - 0.5);
-			fx += cx;
-			fy += cy;
-			gradientProps.focussize = (gradientBoxWidth/w)/10 + "% " + (gradientBoxHeight/h)/10 + "%";
-			gradientProps.alignshape = false;
-			gradientProps.type = "gradientradial";
-			gradientProps.focus = "100%";
-			gradientProps.focusposition = Math.round(fx * 100) + "% " + Math.round(fy * 100) + "%";
-		}
-		for(i = 0;i < len; ++i) {
-			stop = stops[i];
-			color = stop.color;
-			opacity = stop.opacity;
-			opacity = isNumber(opacity) ? opacity : 1;
-			pct = stop.offset || i/(len-1);
-			pct *= (r * 2);
+            gradientProps.angle = rotation;
+        }
+        else if(type === "radial")
+        {
+            gradientBoxWidth = w * (r * 2);
+            gradientBoxHeight = h * (r * 2);
+            fx = r * 2 * (fx - 0.5);
+            fy = r * 2 * (fy - 0.5);
+            fx += cx;
+            fy += cy;
+            gradientProps.focussize = (gradientBoxWidth/w)/10 + "% " + (gradientBoxHeight/h)/10 + "%";
+            gradientProps.alignshape = false;
+            gradientProps.type = "gradientradial";
+            gradientProps.focus = "100%";
+            gradientProps.focusposition = Math.round(fx * 100) + "% " + Math.round(fy * 100) + "%";
+        }
+        for(i = 0;i < len; ++i) {
+            stop = stops[i];
+            color = stop.color;
+            opacity = stop.opacity;
+            opacity = isNumber(opacity) ? opacity : 1;
+            pct = stop.offset || i/(len-1);
+            pct *= (r * 2);
             pct = Math.round(100 * pct) + "%";
             oi = i > 0 ? i + 1 : "";
             gradientProps["opacity" + oi] = opacity + "";
             colorstring += ", " + pct + " " + color;
-		}
-		if(parseFloat(pct) < 100)
-		{
-			colorstring += ", 100% " + color;
-		}
-		gradientProps.colors = colorstring.substr(2);
-		return gradientProps;
-	},
+        }
+        if(parseFloat(pct) < 100)
+        {
+            colorstring += ", 100% " + color;
+        }
+        gradientProps.colors = colorstring.substr(2);
+        return gradientProps;
+    },
 
     /**
      * Adds a transform to the shape.
@@ -734,10 +734,10 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * @method _addTransform
      * @param {String} type The transform being applied.
      * @param {Array} args The arguments for the transform.
-	 * @private
-	 */
-	_addTransform: function(type, args)
-	{
+     * @private
+     */
+    _addTransform: function(type, args)
+    {
         args = Y.Array(args);
         this._transform = Y_LANG.trim(this._transform + " " + type + "(" + args.join(", ") + ")");
         args.unshift(type);
@@ -746,20 +746,20 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         {
             this._updateTransform();
         }
-	},
+    },
 
-	/**
+    /**
      * Applies all transforms.
      *
      * @method _updateTransform
-	 * @private
-	 */
-	_updateTransform: function()
-	{
-		var node = this.node,
+     * @private
+     */
+    _updateTransform: function()
+    {
+        var node = this.node,
             key,
-			transform,
-			transformOrigin,
+            transform,
+            transformOrigin,
             x = this.get("x"),
             y = this.get("y"),
             tx,
@@ -770,7 +770,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             i,
             len = this._transforms.length;
         if(this._transforms && this._transforms.length > 0)
-		{
+        {
             transformOrigin = this.get("transformOrigin");
 
             if(isPathShape)
@@ -793,7 +793,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                     normalizedMatrix[key].apply(normalizedMatrix, this._transforms[i]);
                     matrix[key].apply(matrix, this._transforms[i]);
                 }
-			}
+            }
             if(isPathShape)
             {
                 normalizedMatrix.translate(-this._left, -this._top);
@@ -804,7 +804,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                         normalizedMatrix.d + "," +
                         0 + "," +
                         0;
-		}
+        }
         this._graphic.addToRedrawQueue(this);
         if(transform)
         {
@@ -849,23 +849,23 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         return val;
     },
 
-	/**
-	 * Storage for translateX
-	 *
+    /**
+     * Storage for translateX
+     *
      * @property _translateX
      * @type Number
-	 * @private
-	 */
-	_translateX: 0,
+     * @private
+     */
+    _translateX: 0,
 
-	/**
-	 * Storage for translateY
-	 *
+    /**
+     * Storage for translateY
+     *
      * @property _translateY
      * @type Number
-	 * @private
-	 */
-	_translateY: 0,
+     * @private
+     */
+    _translateY: 0,
 
     /**
      * Storage for the transform attribute.
@@ -877,40 +877,40 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
     _transform: "",
 
     /**
-	 * Specifies a 2d translation.
-	 *
-	 * @method translate
-	 * @param {Number} x The value to translate on the x-axis.
-	 * @param {Number} y The value to translate on the y-axis.
-	 */
-	translate: function(x, y)
-	{
-		this._translateX += x;
-		this._translateY += y;
-		this._addTransform("translate", arguments);
-	},
+     * Specifies a 2d translation.
+     *
+     * @method translate
+     * @param {Number} x The value to translate on the x-axis.
+     * @param {Number} y The value to translate on the y-axis.
+     */
+    translate: function(x, y)
+    {
+        this._translateX += x;
+        this._translateY += y;
+        this._addTransform("translate", arguments);
+    },
 
-	/**
-	 * Translates the shape along the x-axis. When translating x and y coordinates,
-	 * use the `translate` method.
-	 *
-	 * @method translateX
-	 * @param {Number} x The value to translate.
-	 */
-	translateX: function(x)
+    /**
+     * Translates the shape along the x-axis. When translating x and y coordinates,
+     * use the `translate` method.
+     *
+     * @method translateX
+     * @param {Number} x The value to translate.
+     */
+    translateX: function(x)
     {
         this._translateX += x;
         this._addTransform("translateX", arguments);
     },
 
-	/**
-	 * Performs a translate on the y-coordinate. When translating x and y coordinates,
-	 * use the `translate` method.
-	 *
-	 * @method translateY
-	 * @param {Number} y The value to translate.
-	 */
-	translateY: function(y)
+    /**
+     * Performs a translate on the y-coordinate. When translating x and y coordinates,
+     * use the `translate` method.
+     *
+     * @method translateY
+     * @param {Number} y The value to translate.
+     */
+    translateY: function(y)
     {
         this._translateY += y;
         this._addTransform("translateY", arguments);
@@ -928,151 +928,151 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         this._addTransform("skew", arguments);
     },
 
-	/**
-	 * Skews the shape around the x-axis.
-	 *
-	 * @method skewX
-	 * @param {Number} x x-coordinate
-	 */
+    /**
+     * Skews the shape around the x-axis.
+     *
+     * @method skewX
+     * @param {Number} x x-coordinate
+     */
      skewX: function()
      {
         this._addTransform("skewX", arguments);
      },
 
-	/**
-	 * Skews the shape around the y-axis.
-	 *
-	 * @method skewY
-	 * @param {Number} y y-coordinate
-	 */
+    /**
+     * Skews the shape around the y-axis.
+     *
+     * @method skewY
+     * @param {Number} y y-coordinate
+     */
      skewY: function()
      {
         this._addTransform("skewY", arguments);
      },
 
-	/**
-	 * Rotates the shape clockwise around it transformOrigin.
-	 *
-	 * @method rotate
-	 * @param {Number} deg The degree of the rotation.
-	 */
+    /**
+     * Rotates the shape clockwise around it transformOrigin.
+     *
+     * @method rotate
+     * @param {Number} deg The degree of the rotation.
+     */
      rotate: function()
      {
         this._addTransform("rotate", arguments);
      },
 
-	/**
-	 * Specifies a 2d scaling operation.
-	 *
-	 * @method scale
-	 * @param {Number} val
-	 */
+    /**
+     * Specifies a 2d scaling operation.
+     *
+     * @method scale
+     * @param {Number} val
+     */
     scale: function()
     {
         this._addTransform("scale", arguments);
     },
 
-	/**
+    /**
      * Overrides default `on` method. Checks to see if its a dom interaction event. If so,
      * return an event attached to the `node` element. If not, return the normal functionality.
      *
      * @method on
      * @param {String} type event type
      * @param {Object} callback function
-	 * @private
-	 */
-	on: function(type, fn)
-	{
-		if(Y.Node.DOM_EVENTS[type])
-		{
-			return Y.one("#" +  this.get("id")).on(type, fn);
-		}
-		return Y.on.apply(this, arguments);
-	},
+     * @private
+     */
+    on: function(type, fn)
+    {
+        if(Y.Node.DOM_EVENTS[type])
+        {
+            return Y.one("#" +  this.get("id")).on(type, fn);
+        }
+        return Y.on.apply(this, arguments);
+    },
 
-	/**
-	 * Draws the shape.
-	 *
-	 * @method _draw
-	 * @private
-	 */
-	_draw: function()
-	{
-	},
+    /**
+     * Draws the shape.
+     *
+     * @method _draw
+     * @private
+     */
+    _draw: function()
+    {
+    },
 
-	/**
+    /**
      * Updates `Shape` based on attribute changes.
      *
      * @method _updateHandler
-	 * @private
-	 */
-	_updateHandler: function()
-	{
-		var host = this,
+     * @private
+     */
+    _updateHandler: function()
+    {
+        var host = this,
             node = host.node;
         host._fillChangeHandler();
         host._strokeChangeHandler();
         node.style.width = this.get("width") + "px";
         node.style.height = this.get("height") + "px";
         this._draw();
-		host._updateTransform();
-	},
+        host._updateTransform();
+    },
 
-	/**
-	 * Creates a graphic node
-	 *
-	 * @method _createGraphicNode
-	 * @param {String} type node type to create
-	 * @return HTMLElement
-	 * @private
-	 */
-	_createGraphicNode: function(type)
-	{
-		type = type || this._type;
-		return DOCUMENT.createElement(
+    /**
+     * Creates a graphic node
+     *
+     * @method _createGraphicNode
+     * @param {String} type node type to create
+     * @return HTMLElement
+     * @private
+     */
+    _createGraphicNode: function(type)
+    {
+        type = type || this._type;
+        return DOCUMENT.createElement(
                 '<' + type +
                 ' xmlns="urn:schemas-microsft.com:vml"' +
                 ' style="behavior:url(#default#VML);display:inline-block;"' +
                 ' class="vml' + type + '"' +
                 '/>'
             );
-	},
+    },
 
-	/**
-	 * Value function for fill attribute
-	 *
-	 * @private
-	 * @method _getDefaultFill
-	 * @return Object
-	 */
-	_getDefaultFill: function() {
-		return {
-			type: "solid",
-			opacity: 1,
-			cx: 0.5,
-			cy: 0.5,
-			fx: 0.5,
-			fy: 0.5,
-			r: 0.5
-		};
-	},
+    /**
+     * Value function for fill attribute
+     *
+     * @private
+     * @method _getDefaultFill
+     * @return Object
+     */
+    _getDefaultFill: function() {
+        return {
+            type: "solid",
+            opacity: 1,
+            cx: 0.5,
+            cy: 0.5,
+            fx: 0.5,
+            fy: 0.5,
+            r: 0.5
+        };
+    },
 
-	/**
-	 * Value function for stroke attribute
-	 *
-	 * @private
-	 * @method _getDefaultStroke
-	 * @return Object
-	 */
-	_getDefaultStroke: function()
-	{
-		return {
-			weight: 1,
-			dashstyle: "none",
-			color: "#000",
-			opacity: 1.0
-		};
-	},
+    /**
+     * Value function for stroke attribute
+     *
+     * @private
+     * @method _getDefaultStroke
+     * @return Object
+     */
+    _getDefaultStroke: function()
+    {
+        return {
+            weight: 1,
+            dashstyle: "none",
+            color: "#000",
+            opacity: 1.0
+        };
+    },
 
     /**
      * Sets the value of an attribute.
@@ -1083,30 +1083,30 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function()
-	{
-		var host = this;
-		AttributeLite.prototype.set.apply(host, arguments);
-		if(host.initialized)
-		{
-			host._updateHandler();
-		}
-	},
+    set: function()
+    {
+        var host = this;
+        AttributeLite.prototype.set.apply(host, arguments);
+        if(host.initialized)
+        {
+            host._updateHandler();
+        }
+    },
 
-	/**
-	 * Returns the bounds for a shape.
-	 *
+    /**
+     * Returns the bounds for a shape.
+     *
      * Calculates the a new bounding box from the original corner coordinates (base on size and position) and the transform matrix.
      * The calculated bounding box is used by the graphic instance to calculate its viewBox.
      *
-	 * @method getBounds
-	 * @return Object
-	 */
-	getBounds: function()
-	{
-		var isPathShape = this instanceof Y.VMLPath,
-			w = this.get("width"),
-			h = this.get("height"),
+     * @method getBounds
+     * @return Object
+     */
+    getBounds: function()
+    {
+        var isPathShape = this instanceof Y.VMLPath,
+            w = this.get("width"),
+            h = this.get("height"),
             x = this.get("x"),
             y = this.get("y");
         if(isPathShape)
@@ -1117,7 +1117,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             h = this._bottom - this._top;
         }
         return this._getContentRect(w, h, x, y);
-	},
+    },
 
     /**
      * Calculates the bounding box for the shape.
@@ -1282,19 +1282,19 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 }, Y.VMLDrawing.prototype));
 
 VMLShape.ATTRS = {
-	/**
-	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a
-	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
-	 *
-	 * @config transformOrigin
-	 * @type Array
-	 */
-	transformOrigin: {
-		valueFn: function()
-		{
-			return [0.5, 0.5];
-		}
-	},
+    /**
+     * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a
+     * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
+     *
+     * @config transformOrigin
+     * @type Array
+     */
+    transformOrigin: {
+        valueFn: function()
+        {
+            return [0.5, 0.5];
+        }
+    },
 
     /**
      * <p>A string containing, in order, transform operations applied to the shape instance. The `transform` string can contain the following values:
@@ -1323,12 +1323,12 @@ VMLShape.ATTRS = {
      * <p>The code below would apply `translate` and `rotate` to an existing shape.</p>
 
         myRect.set("transform", "translate(40, 50) rotate(45)");
-	 * @config transform
+     * @config transform
      * @type String
-	 */
-	transform: {
-		setter: function(val)
-		{
+     */
+    transform: {
+        setter: function(val)
+        {
             var i,
                 len,
                 transform;
@@ -1342,95 +1342,95 @@ VMLShape.ATTRS = {
             }
             this._transform = val;
             return val;
-		},
+        },
 
         getter: function()
         {
             return this._transform;
         }
-	},
+    },
 
-	/**
-	 * Indicates the x position of shape.
-	 *
-	 * @config x
-	 * @type Number
-	 */
-	x: {
-		value: 0
-	},
+    /**
+     * Indicates the x position of shape.
+     *
+     * @config x
+     * @type Number
+     */
+    x: {
+        value: 0
+    },
 
-	/**
-	 * Indicates the y position of shape.
-	 *
-	 * @config y
-	 * @type Number
-	 */
-	y: {
-		value: 0
-	},
+    /**
+     * Indicates the y position of shape.
+     *
+     * @config y
+     * @type Number
+     */
+    y: {
+        value: 0
+    },
 
-	/**
-	 * Unique id for class instance.
-	 *
-	 * @config id
-	 * @type String
-	 */
-	id: {
-		valueFn: function()
-		{
-			return Y.guid();
-		},
+    /**
+     * Unique id for class instance.
+     *
+     * @config id
+     * @type String
+     */
+    id: {
+        valueFn: function()
+        {
+            return Y.guid();
+        },
 
-		setter: function(val)
-		{
-			var node = this.node;
-			if(node)
-			{
-				node.setAttribute("id", val);
-			}
-			return val;
-		}
-	},
+        setter: function(val)
+        {
+            var node = this.node;
+            if(node)
+            {
+                node.setAttribute("id", val);
+            }
+            return val;
+        }
+    },
 
-	/**
-	 *
-	 * @config width
-	 */
-	width: {
-		value: 0
-	},
+    /**
+     *
+     * @config width
+     */
+    width: {
+        value: 0
+    },
 
-	/**
-	 *
-	 * @config height
-	 */
-	height: {
-		value: 0
-	},
+    /**
+     *
+     * @config height
+     */
+    height: {
+        value: 0
+    },
 
-	/**
-	 * Indicates whether the shape is visible.
-	 *
-	 * @config visible
-	 * @type Boolean
-	 */
-	visible: {
-		value: true,
+    /**
+     * Indicates whether the shape is visible.
+     *
+     * @config visible
+     * @type Boolean
+     */
+    visible: {
+        value: true,
 
-		setter: function(val){
-			var node = this.node,
-				visibility = val ? "visible" : "hidden";
-			if(node)
-			{
-				node.style.visibility = visibility;
-			}
-			return val;
-		}
-	},
+        setter: function(val){
+            var node = this.node,
+                visibility = val ? "visible" : "hidden";
+            if(node)
+            {
+                node.style.visibility = visibility;
+            }
+            return val;
+        }
+    },
 
-	/**
-	 * Contains information about the fill of the shape.
+    /**
+     * Contains information about the fill of the shape.
      *  <dl>
      *      <dt>color</dt><dd>The color of the fill.</dd>
      *      <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1.</dd>
@@ -1474,49 +1474,49 @@ VMLShape.ATTRS = {
      *      </dd>
      *  </dl>
      *  <p>These properties are not currently implemented in `CanvasShape` or `VMLShape`.</p>
-	 *
-	 * @config fill
-	 * @type Object
-	 */
-	fill: {
-		valueFn: "_getDefaultFill",
+     *
+     * @config fill
+     * @type Object
+     */
+    fill: {
+        valueFn: "_getDefaultFill",
 
-		setter: function(val)
-		{
-			var i,
-				fill,
-				tmpl = this.get("fill") || this._getDefaultFill();
+        setter: function(val)
+        {
+            var i,
+                fill,
+                tmpl = this.get("fill") || this._getDefaultFill();
 
-			if(val)
-			{
-				//ensure, fill type is solid if color is explicitly passed.
-				if(val.hasOwnProperty("color"))
-				{
-					val.type = "solid";
-				}
-				for(i in val)
-				{
-					if(val.hasOwnProperty(i))
-					{
-						tmpl[i] = val[i];
-					}
-				}
-			}
-			fill = tmpl;
-			if(fill && fill.color)
-			{
-				if(fill.color === undefined || fill.color === "none")
-				{
-					fill.color = null;
-				}
-			}
-			this._fillFlag = true;
+            if(val)
+            {
+                //ensure, fill type is solid if color is explicitly passed.
+                if(val.hasOwnProperty("color"))
+                {
+                    val.type = "solid";
+                }
+                for(i in val)
+                {
+                    if(val.hasOwnProperty(i))
+                    {
+                        tmpl[i] = val[i];
+                    }
+                }
+            }
+            fill = tmpl;
+            if(fill && fill.color)
+            {
+                if(fill.color === undefined || fill.color === "none")
+                {
+                    fill.color = null;
+                }
+            }
+            this._fillFlag = true;
             return fill;
-		}
-	},
+        }
+    },
 
-	/**
-	 * Contains information about the stroke of the shape.
+    /**
+     * Contains information about the stroke of the shape.
      *  <dl>
      *      <dt>color</dt><dd>The color of the stroke.</dd>
      *      <dt>weight</dt><dd>Number that indicates the width of the stroke.</dd>
@@ -1539,21 +1539,21 @@ VMLShape.ATTRS = {
      *          </dl>
      *      </dd>
      *  </dl>
-	 *
-	 * @config stroke
-	 * @type Object
-	 */
-	stroke: {
-		valueFn: "_getDefaultStroke",
+     *
+     * @config stroke
+     * @type Object
+     */
+    stroke: {
+        valueFn: "_getDefaultStroke",
 
-		setter: function(val)
-		{
-			var i,
-				stroke,
+        setter: function(val)
+        {
+            var i,
+                stroke,
                 wt,
-				tmpl = this.get("stroke") || this._getDefaultStroke();
-			if(val)
-			{
+                tmpl = this.get("stroke") || this._getDefaultStroke();
+            if(val)
+            {
                 if(val.hasOwnProperty("weight"))
                 {
                     wt = parseInt(val.weight, 10);
@@ -1562,50 +1562,50 @@ VMLShape.ATTRS = {
                         val.weight = wt;
                     }
                 }
-				for(i in val)
-				{
-					if(val.hasOwnProperty(i))
-					{
-						tmpl[i] = val[i];
-					}
-				}
-			}
-			stroke = tmpl;
+                for(i in val)
+                {
+                    if(val.hasOwnProperty(i))
+                    {
+                        tmpl[i] = val[i];
+                    }
+                }
+            }
+            stroke = tmpl;
             this._strokeFlag = true;
-			return stroke;
-		}
-	},
+            return stroke;
+        }
+    },
 
-	//Not used. Remove in future.
+    //Not used. Remove in future.
     autoSize: {
-		value: false
-	},
+        value: false
+    },
 
-	// Only implemented in SVG
-	// Determines whether the instance will receive mouse events.
-	//
-	// @config pointerEvents
-	// @type string
-	//
-	pointerEvents: {
-		value: "visiblePainted"
-	},
+    // Only implemented in SVG
+    // Determines whether the instance will receive mouse events.
+    //
+    // @config pointerEvents
+    // @type string
+    //
+    pointerEvents: {
+        value: "visiblePainted"
+    },
 
-	/**
-	 * Dom node for the shape.
-	 *
-	 * @config node
-	 * @type HTMLElement
-	 * @readOnly
-	 */
-	node: {
-		readOnly: true,
+    /**
+     * Dom node for the shape.
+     *
+     * @config node
+     * @type HTMLElement
+     * @readOnly
+     */
+    node: {
+        readOnly: true,
 
-		getter: function()
-		{
-			return this.node;
-		}
-	},
+        getter: function()
+        {
+            return this.node;
+        }
+    },
 
     /**
      * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all
@@ -1627,19 +1627,19 @@ VMLShape.ATTRS = {
         }
     },
 
-	/**
-	 * Reference to the container Graphic.
-	 *
-	 * @config graphic
-	 * @type Graphic
-	 */
-	graphic: {
-		readOnly: true,
+    /**
+     * Reference to the container Graphic.
+     *
+     * @config graphic
+     * @type Graphic
+     */
+    graphic: {
+        readOnly: true,
 
-		getter: function()
-		{
-			return this._graphic;
-		}
-	}
+        getter: function()
+        {
+            return this._graphic;
+        }
+    }
 };
 Y.VMLShape = VMLShape;

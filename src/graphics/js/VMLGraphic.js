@@ -25,27 +25,27 @@ VMLGraphic.ATTRS = {
     render: {},
 
     /**
-	 * Unique id for class instance.
-	 *
-	 * @config id
-	 * @type String
-	 */
-	id: {
-		valueFn: function()
-		{
-			return Y.guid();
-		},
+     * Unique id for class instance.
+     *
+     * @config id
+     * @type String
+     */
+    id: {
+        valueFn: function()
+        {
+            return Y.guid();
+        },
 
-		setter: function(val)
-		{
-			var node = this._node;
-			if(node)
-			{
-				node.setAttribute("id", val);
-			}
-			return val;
-		}
-	},
+        setter: function(val)
+        {
+            var node = this._node;
+            if(node)
+            {
+                node.setAttribute("id", val);
+            }
+            return val;
+        }
+    },
 
     /**
      * Key value pairs in which a shape instance is associated with its id.
@@ -93,12 +93,12 @@ VMLGraphic.ATTRS = {
         }
     },
 
-	/**
-	 * Indicates the width of the `Graphic`.
-	 *
-	 * @config width
-	 * @type Number
-	 */
+    /**
+     * Indicates the width of the `Graphic`.
+     *
+     * @config width
+     * @type Number
+     */
     width: {
         setter: function(val)
         {
@@ -110,12 +110,12 @@ VMLGraphic.ATTRS = {
         }
     },
 
-	/**
-	 * Indicates the height of the `Graphic`.
-	 *
-	 * @config height
-	 * @type Number
-	 */
+    /**
+     * Indicates the height of the `Graphic`.
+     *
+     * @config height
+     * @type Number
+     */
     height: {
         setter: function(val)
         {
@@ -187,12 +187,12 @@ VMLGraphic.ATTRS = {
         resizeDown: false
     },
 
-	/**
-	 * Indicates the x-coordinate for the instance.
-	 *
-	 * @config x
-	 * @type Number
-	 */
+    /**
+     * Indicates the x-coordinate for the instance.
+     *
+     * @config x
+     * @type Number
+     */
     x: {
         getter: function()
         {
@@ -210,12 +210,12 @@ VMLGraphic.ATTRS = {
         }
     },
 
-	/**
-	 * Indicates the y-coordinate for the instance.
-	 *
-	 * @config y
-	 * @type Number
-	 */
+    /**
+     * Indicates the y-coordinate for the instance.
+     *
+     * @config y
+     * @type Number
+     */
     y: {
         getter: function()
         {
@@ -267,9 +267,9 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function()
-	{
-		var host = this,
+    set: function()
+    {
+        var host = this,
             attr = arguments[0],
             redrawAttrs = {
                 autoDraw: true,
@@ -279,7 +279,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             },
             key,
             forceRedraw = false;
-		AttributeLite.prototype.set.apply(host, arguments);
+        AttributeLite.prototype.set.apply(host, arguments);
         if(host._state.autoDraw === true && Y.Object.size(this._shapes) > 0)
         {
             if(Y_LANG.isString && redrawAttrs[attr])
@@ -302,7 +302,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         {
             host._redraw();
         }
-	},
+    },
 
     /**
      * Storage for `x` attribute.
@@ -357,7 +357,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         var render = this.get("render"),
             visibility = this.get("visible") ? "visible" : "hidden";
         this._shapes = {};
-		this._contentBounds = {
+        this._contentBounds = {
             left: 0,
             top: 0,
             right: 0,
@@ -664,12 +664,12 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         pieslice: Y.VMLPieSlice
     },
 
-	/**
-	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
-	 *
-	 * @method batch
-	 * @param {Function} method Method to execute.
-	 */
+    /**
+     * Allows for creating multiple shapes in order to batch appending and redraw operations.
+     *
+     * @method batch
+     * @param {Function} method Method to execute.
+     */
     batch: function(method)
     {
         var autoDraw = this.get("autoDraw");

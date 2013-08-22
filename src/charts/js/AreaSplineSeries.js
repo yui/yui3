@@ -27,7 +27,7 @@ Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.AreaSeries, [Y.CurveUti
         this.drawAreaSpline();
     }
 }, {
-	ATTRS : {
+    ATTRS : {
         /**
          * Read-only attribute indicating the type of series.
          *

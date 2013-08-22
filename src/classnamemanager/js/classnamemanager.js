@@ -18,7 +18,7 @@
 
 // String constants
 var CLASS_NAME_PREFIX = 'classNamePrefix',
-	CLASS_NAME_DELIMITER = 'classNameDelimiter',
+    CLASS_NAME_DELIMITER = 'classNameDelimiter',
     CONFIG = Y.config;
 
 // Global config
@@ -46,22 +46,22 @@ CONFIG[CLASS_NAME_DELIMITER] = CONFIG[CLASS_NAME_DELIMITER] || '-';
 
 Y.ClassNameManager = function () {
 
-	var sPrefix    = CONFIG[CLASS_NAME_PREFIX],
-		sDelimiter = CONFIG[CLASS_NAME_DELIMITER];
+    var sPrefix    = CONFIG[CLASS_NAME_PREFIX],
+        sDelimiter = CONFIG[CLASS_NAME_DELIMITER];
 
-	return {
+    return {
 
-		/**
-		 * Returns a class name prefixed with the the value of the 
-		 * <code>Y.config.classNamePrefix</code> attribute + the provided strings.
-		 * Uses the <code>Y.config.classNameDelimiter</code> attribute to delimit the 
-		 * provided strings. E.g. Y.ClassNameManager.getClassName('foo','bar'); // yui-foo-bar
-		 *
-		 * @method getClassName
-		 * @param {String}+ classnameSection one or more classname sections to be joined
-		 * @param {Boolean} skipPrefix If set to true, the classname will not be prefixed with the default Y.config.classNameDelimiter value.  
-		 */
-		getClassName: Y.cached(function () {
+        /**
+         * Returns a class name prefixed with the the value of the 
+         * <code>Y.config.classNamePrefix</code> attribute + the provided strings.
+         * Uses the <code>Y.config.classNameDelimiter</code> attribute to delimit the 
+         * provided strings. E.g. Y.ClassNameManager.getClassName('foo','bar'); // yui-foo-bar
+         *
+         * @method getClassName
+         * @param {String}+ classnameSection one or more classname sections to be joined
+         * @param {Boolean} skipPrefix If set to true, the classname will not be prefixed with the default Y.config.classNameDelimiter value.  
+         */
+        getClassName: Y.cached(function () {
 
             var args = Y.Array(arguments);
 
@@ -71,9 +71,9 @@ Y.ClassNameManager = function () {
                 args.pop();
             }
 
-			return args.join(sDelimiter);
-		})
+            return args.join(sDelimiter);
+        })
 
-	};
+    };
 
 }();

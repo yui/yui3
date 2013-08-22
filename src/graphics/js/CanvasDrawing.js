@@ -1,15 +1,15 @@
 var IMPLEMENTATION = "canvas",
     SHAPE = "shape",
-	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
+    SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
     SPLITARGSPATTERN = /[\-]?[0-9]*[0-9|\.][0-9]*/g,
     DOCUMENT = Y.config.doc,
     Y_LANG = Y.Lang,
     AttributeLite = Y.AttributeLite,
-	CanvasShape,
-	CanvasPath,
-	CanvasRect,
+    CanvasShape,
+    CanvasPath,
+    CanvasRect,
     CanvasEllipse,
-	CanvasCircle,
+    CanvasCircle,
     CanvasPieSlice,
     Y_DOM = Y.DOM,
     Y_Color = Y.Color,
@@ -118,7 +118,7 @@ CanvasDrawing.prototype = {
      * @param h {Number} height to set for the instance.
      * @private
      */
-	setSize: function(w, h) {
+    setSize: function(w, h) {
         if(this.get("autoSize"))
         {
             if(w > this.node.getAttribute("width"))
@@ -134,14 +134,14 @@ CanvasDrawing.prototype = {
         }
     },
 
-	/**
+    /**
      * Tracks coordinates. Used to calculate the start point of dashed lines.
      *
      * @method _updateCoords
      * @param {Number} x x-coordinate
      * @param {Number} y y-coordinate
-	 * @private
-	 */
+     * @private
+     */
     _updateCoords: function(x, y)
     {
         this._xcoords.push(x);
@@ -150,12 +150,12 @@ CanvasDrawing.prototype = {
         this._currentY = y;
     },
 
-	/**
+    /**
      * Clears the coordinate arrays. Called at the end of a drawing operation.
-	 *
+     *
      * @method _clearAndUpdateCoords
      * @private
-	 */
+     */
     _clearAndUpdateCoords: function()
     {
         var x = this._xcoords.pop() || 0,
@@ -163,12 +163,12 @@ CanvasDrawing.prototype = {
         this._updateCoords(x, y);
     },
 
-	/**
+    /**
      * Moves the shape's dom node.
      *
      * @method _updateNodePosition
-	 * @private
-	 */
+     * @private
+     */
     _updateNodePosition: function()
     {
         var node = this.get("node"),
@@ -493,7 +493,7 @@ CanvasDrawing.prototype = {
      * @chainable
      * @protected
      */
-	drawCircle: function(x, y, radius) {
+    drawCircle: function(x, y, radius) {
         var startAngle = 0,
             endAngle = 2 * Math.PI,
             wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
@@ -541,7 +541,7 @@ CanvasDrawing.prototype = {
      * @chainable
      * @protected
      */
-	drawEllipse: function(x, y, w, h) {
+    drawEllipse: function(x, y, w, h) {
         var l = 8,
             theta = -(45/180) * Math.PI,
             angle = 0,
@@ -725,20 +725,20 @@ CanvasDrawing.prototype = {
         return this;
     },
 
-	/**
-	 * Clears the graphics object.
-	 *
-	 * @method clear
+    /**
+     * Clears the graphics object.
+     *
+     * @method clear
      * @chainable
-	 */
+     */
     clear: function() {
-		this._initProps();
+        this._initProps();
         if(this.node)
         {
             this._context.clearRect(0, 0, this.node.width, this.node.height);
         }
         return this;
-	},
+    },
 
 
     /**
@@ -923,8 +923,8 @@ CanvasDrawing.prototype = {
         this._methods = [];
         this._lineToMethods = [];
         this._xcoords = [0];
-		this._ycoords = [0];
-		this._width = 0;
+        this._ycoords = [0];
+        this._width = 0;
         this._height = 0;
         this._left = 0;
         this._top = 0;

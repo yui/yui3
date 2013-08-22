@@ -35,7 +35,7 @@ Y.StackedAreaSeries = Y.Base.create("stackedAreaSeries", Y.AreaSeries, [Y.Stacki
      *
      * @method drawSeries
      */
-	drawSeries: function()
+    drawSeries: function()
     {
         this.drawFill.apply(this, this._getStackedClosingPoints());
     }

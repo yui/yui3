@@ -147,9 +147,9 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
      * the array.
      */
     addKey: function (value)
-	{
+    {
         this.set("keys", value);
-	},
+    },
 
     /**
      * Gets an array of values based on a key.
@@ -182,7 +182,7 @@ Y.AxisBase = Y.Base.create("axisBase", Y.Base, [Y.Renderer], {
      */
     _updateTotalData: function()
     {
-		var keys = this.get("keys"),
+        var keys = this.get("keys"),
             i;
         this._data = [];
         for(i in keys)

@@ -10,7 +10,7 @@
  */
 SVGRect = function()
 {
-	SVGRect.superclass.constructor.apply(this, arguments);
+    SVGRect.superclass.constructor.apply(this, arguments);
 };
 SVGRect.NAME = "rect";
 Y.extend(SVGRect, Y.SVGShape, {

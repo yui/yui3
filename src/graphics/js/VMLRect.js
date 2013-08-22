@@ -10,18 +10,18 @@
  */
 VMLRect = function()
 {
-	VMLRect.superclass.constructor.apply(this, arguments);
+    VMLRect.superclass.constructor.apply(this, arguments);
 };
 VMLRect.NAME = "rect";
 Y.extend(VMLRect, Y.VMLShape, {
-	/**
-	 * Indicates the type of shape
-	 *
-	 * @property _type
-	 * @type String
+    /**
+     * Indicates the type of shape
+     *
+     * @property _type
+     * @type String
      * @private
-	 */
-	_type: "rect"
+     */
+    _type: "rect"
 });
 VMLRect.ATTRS = Y.VMLShape.ATTRS;
 Y.VMLRect = VMLRect;

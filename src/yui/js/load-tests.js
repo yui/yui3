@@ -94,7 +94,7 @@ add('load', '6', {
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
 },
@@ -106,7 +106,7 @@ add('load', '7', {
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
 },
@@ -118,7 +118,7 @@ add('load', '8', {
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
@@ -131,7 +131,7 @@ add('load', '9', {
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
@@ -143,7 +143,7 @@ add('load', '10', {
     "name": "graphics-vml",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+        canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
 },
     "trigger": "graphics"
@@ -153,7 +153,7 @@ add('load', '11', {
     "name": "graphics-vml-default",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+        canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
 },
     "trigger": "graphics"

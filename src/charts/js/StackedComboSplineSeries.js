@@ -19,13 +19,13 @@
  */
 Y.StackedComboSplineSeries = Y.Base.create("stackedComboSplineSeries", Y.StackedComboSeries, [Y.CurveUtil], {
     /**
-	 * @protected
+     * @protected
      *
      * Draws the series.
      *
      * @method drawSeries
-	 */
-	drawSeries: function()
+     */
+    drawSeries: function()
     {
         if(this.get("showAreaFill"))
         {

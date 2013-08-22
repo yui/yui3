@@ -28,7 +28,7 @@ Y.SplineSeries = Y.Base.create("splineSeries",  Y.LineSeries, [Y.CurveUtil, Y.Li
         this.drawSpline();
     }
 }, {
-	ATTRS : {
+    ATTRS : {
         /**
          * Read-only attribute indicating the type of series.
          *

@@ -7,7 +7,7 @@
  */
 CanvasPieSlice = function()
 {
-	CanvasPieSlice.superclass.constructor.apply(this, arguments);
+    CanvasPieSlice.superclass.constructor.apply(this, arguments);
 };
 CanvasPieSlice.NAME = "canvasPieSlice";
 Y.extend(CanvasPieSlice, Y.CanvasShape, {
@@ -20,14 +20,14 @@ Y.extend(CanvasPieSlice, Y.CanvasShape, {
      */
     _type: "path",
 
-	/**
-	 * Change event listener
-	 *
-	 * @private
-	 * @method _updateHandler
-	 */
-	_draw: function()
-	{
+    /**
+     * Change event listener
+     *
+     * @private
+     * @method _updateHandler
+     */
+    _draw: function()
+    {
         var x = this.get("cx"),
             y = this.get("cy"),
             startAngle = this.get("startAngle"),
@@ -39,8 +39,8 @@ Y.extend(CanvasPieSlice, Y.CanvasShape, {
         this._top = y;
         this._bottom = radius;
         this.drawWedge(x, y, startAngle, arc, radius);
-		this.end();
-	}
+        this.end();
+    }
  });
 CanvasPieSlice.ATTRS = Y.mix({
     cx: {

@@ -7,7 +7,7 @@
  */
 VMLPieSlice = function()
 {
-	VMLPieSlice.superclass.constructor.apply(this, arguments);
+    VMLPieSlice.superclass.constructor.apply(this, arguments);
 };
 VMLPieSlice.NAME = "vmlPieSlice";
 Y.extend(VMLPieSlice, Y.VMLShape, Y.mix({
@@ -20,14 +20,14 @@ Y.extend(VMLPieSlice, Y.VMLShape, Y.mix({
      */
     _type: "shape",
 
-	/**
-	 * Change event listener
-	 *
-	 * @private
-	 * @method _updateHandler
-	 */
-	_draw: function()
-	{
+    /**
+     * Change event listener
+     *
+     * @private
+     * @method _updateHandler
+     */
+    _draw: function()
+    {
         var x = this.get("cx"),
             y = this.get("cy"),
             startAngle = this.get("startAngle"),
@@ -35,8 +35,8 @@ Y.extend(VMLPieSlice, Y.VMLShape, Y.mix({
             radius = this.get("radius");
         this.clear();
         this.drawWedge(x, y, startAngle, arc, radius);
-		this.end();
-	}
+        this.end();
+    }
  }, Y.VMLDrawing.prototype));
 VMLPieSlice.ATTRS = Y.mix({
     cx: {
