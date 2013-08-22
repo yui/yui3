@@ -314,15 +314,6 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
     @method refreshDimensions
     **/
     refreshDimensions: function () {
-        // WebKit only returns reliable scroll info on the body, and only
-        // returns reliable height/width info on the documentElement, so we
-        // have to special-case it (see the other special case in
-        // _getScrollNode()).
-        //
-        // On iOS devices, documentElement.clientHeight/Width aren't reliable,
-        // but window.innerHeight/Width are. And no, dom-screen's viewport size
-        // methods don't account for this, which is why we do it here.
-
         var docEl      = Y.config.doc.documentElement,
             hostIsBody = this._hostIsBody,
             iosHack    = hostIsBody && Y.UA.ios,
@@ -334,12 +325,19 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
             winHeight,
             winWidth;
 
+        // WebKit only returns reliable scroll info on the body, and only
+        // returns reliable height/width info on the documentElement, so we
+        // have to special-case it (see the other special case in
+        // _getScrollNode()).
         if (hostIsBody && Y.UA.webkit) {
             el = docEl;
         } else {
             el = this._scrollNode;
         }
 
+        // On iOS devices, documentElement.clientHeight/Width aren't reliable,
+        // but window.innerHeight/Width are. And no, dom-screen's viewport size
+        // methods don't account for this, which is why we do it here.
         if (Y.UA.ios) {
             winHeight = win.innerHeight;
             winWidth  = win.innerWidth;
@@ -351,6 +349,11 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
         this._height = iosHack ? winHeight : el.clientHeight;
         this._width  = iosHack ? winWidth : el.clientWidth;
 
+        // To determine whether an element is onscreen or offscreen later, we'll
+        // compare it with the boundingClientRect of the host node, which we
+        // cache here. If the host node is the body, we create a fake
+        // boundingClientRect that just uses the dimensions of the viewport
+        // (since the actual body dimensions may extend beyond the viewport).
         if (hostIsBody) {
             this._hostRect = {
                 bottom: winHeight,
@@ -365,6 +368,9 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
         } else {
             hostRect = this._hostRect = el.getBoundingClientRect();
 
+            // If the host node isn't at least partially onscreen, then all its
+            // descendants can safely be considered offscreen, speeding up
+            // checks in _isElementOnscreen().
             this._isHostOnscreen = !(hostRect.top > winHeight + margin
                 || hostRect.bottom < -margin
                 || hostRect.right < -margin
@@ -428,6 +434,14 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
     @since 3.11.0
     **/
     _isElementOnscreen: function (el, margin) {
+        // If the host node isn't onscreen, we can safely assume all its
+        // children are probably offscreen as well. Unless they're positioned
+        // and not hidden by overflow, but handling that case would be pretty
+        // ridiculous, so we don't care.
+        if (!this._isHostOnscreen) {
+            return false;
+        }
+
         var hostRect = this._hostRect,
             rect     = el.getBoundingClientRect();
 
@@ -435,6 +449,9 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
             margin = this._scrollMargin;
         }
 
+        // Determine whether any part of _el_ is within the visible region of
+        // the host element or the specified margin around the visible region of
+        // the host element.
         return !(rect.top > hostRect.bottom + margin
                     || rect.bottom < hostRect.top - margin
                     || rect.right < hostRect.left - margin
