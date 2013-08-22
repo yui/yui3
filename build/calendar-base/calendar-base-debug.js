@@ -1666,7 +1666,6 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
          * customizing specific calendar cells.
          *
          * @attribute customRenderer
-         * @readOnly
          * @type Object
          * @default {}
          */
