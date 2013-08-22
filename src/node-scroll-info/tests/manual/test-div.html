@@ -24,6 +24,7 @@
 
         #content {
             overflow: auto;
+            margin: 200px 0 0 400px;
             padding: 0;
             height: 400px;
             width: 450px;
@@ -42,16 +43,6 @@
         }
 
         #info th { text-align: right; }
-
-        @media all and (max-width:550px) {
-            #content { padding: 5em 0; }
-
-            .image {
-                background-size: 95px 95px;
-                height: 95px;
-                width: 95px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -149,7 +140,7 @@ for (var i = 0; i < 5000; i++) {
 loadNext(50);
 refresh();
 
-window.scrollInfo = content.plug(Y.Plugin.ScrollInfo, {scrollMargin: 500}).scrollInfo;
+window.scrollInfo = content.plug(Y.Plugin.ScrollInfo, {scrollMargin: 0}).scrollInfo;
 
 Y.one('win').on('windowresize', refresh);
 
