@@ -145,7 +145,7 @@ for (var i = 0; i < 5000; i++) {
 loadNext(50);
 refresh();
 
-window.scrollInfo = body.plug(Y.Plugin.ScrollInfo, {scrollMargin: 1000}).scrollInfo;
+window.scrollInfo = body.plug(Y.Plugin.ScrollInfo, {scrollMargin: 0}).scrollInfo;
 
 Y.one('win').on('windowresize', refresh);
 

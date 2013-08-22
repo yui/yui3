@@ -399,30 +399,22 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         dimensions = {
             height: si._height,
-            left  : si._left,
-            top   : si._top,
             width : si._width
         };
 
         this.divNode.addClass('positioned');
 
         Assert.areSame(dimensions.height, si._height, 'height should be cached');
-        Assert.areSame(dimensions.left, si._left, 'left pos should be cached');
-        Assert.areSame(dimensions.top, si._top, 'top pos should be cached');
         Assert.areSame(dimensions.width, si._width, 'width should be cached');
 
         dimensions = {
             height: this.divEl.clientHeight,
-            left  : this.divEl.offsetLeft,
-            top   : this.divEl.offsetTop,
             width : this.divEl.clientWidth
         };
 
         si.refreshDimensions();
 
         Assert.areSame(dimensions.height, si._height, 'height should be updated');
-        Assert.areSame(dimensions.left, si._left, 'left pos should be updated');
-        Assert.areSame(dimensions.top, si._top, 'top pos should be updated');
         Assert.areSame(dimensions.width, si._width, 'width should be updated');
     },
 

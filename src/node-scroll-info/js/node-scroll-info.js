@@ -177,7 +177,9 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
 
     destructor: function () {
         new Y.EventHandle(this._events).detach();
-        this._events = null;
+
+        this._events   = null;
+        this._hostRect = null;
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -321,21 +323,53 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
         // but window.innerHeight/Width are. And no, dom-screen's viewport size
         // methods don't account for this, which is why we do it here.
 
-        var hostIsBody = this._hostIsBody,
+        var docEl      = Y.config.doc.documentElement,
+            hostIsBody = this._hostIsBody,
             iosHack    = hostIsBody && Y.UA.ios,
+            margin     = this._scrollMargin,
             win        = Y.config.win,
-            el;
+
+            el,
+            hostRect,
+            winHeight,
+            winWidth;
 
         if (hostIsBody && Y.UA.webkit) {
-            el = Y.config.doc.documentElement;
+            el = docEl;
         } else {
             el = this._scrollNode;
         }
 
-        this._height = iosHack ? win.innerHeight : el.clientHeight;
-        this._left   = el.offsetLeft;
-        this._top    = el.offsetTop;
-        this._width  = iosHack ? win.innerWidth : el.clientWidth;
+        if (Y.UA.ios) {
+            winHeight = win.innerHeight;
+            winWidth  = win.innerWidth;
+        } else {
+            winHeight = docEl.clientHeight;
+            winWidth  = docEl.clientWidth;
+        }
+
+        this._height = iosHack ? winHeight : el.clientHeight;
+        this._width  = iosHack ? winWidth : el.clientWidth;
+
+        if (hostIsBody) {
+            this._hostRect = {
+                bottom: winHeight,
+                height: winHeight,
+                left  : 0,
+                right : winWidth,
+                top   : 0,
+                width : winWidth
+            };
+
+            this._isHostOnscreen = true;
+        } else {
+            hostRect = this._hostRect = el.getBoundingClientRect();
+
+            this._isHostOnscreen = !(hostRect.top > winHeight + margin
+                || hostRect.bottom < -margin
+                || hostRect.right < -margin
+                || hostRect.left > winWidth + margin);
+        }
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -394,16 +428,17 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
     @since 3.11.0
     **/
     _isElementOnscreen: function (el, margin) {
-        var rect = el.getBoundingClientRect();
+        var hostRect = this._hostRect,
+            rect     = el.getBoundingClientRect();
 
         if (typeof margin === 'undefined') {
             margin = this._scrollMargin;
         }
 
-        return (rect.top < this._height + margin
-            && rect.bottom >= -margin
-            && rect.right >= -margin
-            && rect.left < this._width + margin);
+        return !(rect.top > hostRect.bottom + margin
+                    || rect.bottom < hostRect.top - margin
+                    || rect.right < hostRect.left - margin
+                    || rect.left > hostRect.right + margin);
     },
 
     /**
