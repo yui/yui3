@@ -2676,11 +2676,6 @@
             "widget-base"
         ]
     },
-    "widget-locale": {
-        "requires": [
-            "widget-base"
-        ]
-    },
     "widget-modality": {
         "requires": [
             "base-build",
