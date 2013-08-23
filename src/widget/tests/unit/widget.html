@@ -1214,11 +1214,7 @@
             },
             */
 
-            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
-            "testSrcNode" : null,
-
-            /*
-            function() {
+            "testSrcNode" : function() {
 
                 var container = Y.one("#widgetRenderContainer");
                 container.append("<div id='srcNode'><div id='foo'></div></div>");
@@ -1235,11 +1231,10 @@
                 Y.Assert.isTrue(w.get("boundingBox").compareTo(sn), "cb !== bb !== sn");
                 Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "srcNode moved from it's place in the DOM");
 
-                // Y.Assert.isNotNull(w.get("contentBox").one("#foo"), "contents of srcNode not maintained");
+                Y.Assert.isNotNull(w.get("contentBox").one("#foo"), "contents of srcNode not maintained");
 
                 w.destroy(true);
-            }
-            */
+            },
 
             // CONSCIOUSLY NOT TESTED - CAN'T PASS 2 BOXES TO A SINGLE BOX WIDGET
             "testBoundingBoxContentBox" : null,
