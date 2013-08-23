@@ -4,9 +4,6 @@
         // reset model to include all colors to prepare for filter
         myTable.set('data', myData);
 
-        // hack for IE 8 bug related to varying table heights inside an inline-block element
-        Y.one('.example .filter-radios').toggleClass('.bkg-trans');
-
         var model = myTable.data,
             filteredData = model.filter({asList: true}, function (model) {
                 var hbsStr = model.get('hbs'), // get the hue emphasized color number

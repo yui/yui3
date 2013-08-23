@@ -1,5 +1,17 @@
 .example {
-    min-height: 200px;
+    zoom: 1;
+}
+.example:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+.left-column {
+    overflow: hidden;
+    float: left;   
+}
+.right-column {
+    margin-left: 390px;
 }
 /* Swatch styling */
 .yui3-skin-sam td.yui3-datatable-cell {
@@ -56,8 +68,4 @@
 }
 .filter-radios .examples-gray {
     background-position: 0px -150px;
-}
-/* hack for IE 8 bug related to varying table heights inside an inline-block element */
-.bkg-trans {
-    background-color: transparent;
 }

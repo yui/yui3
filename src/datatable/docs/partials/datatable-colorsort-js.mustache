@@ -187,7 +187,7 @@ YUI().use('datatable-sort', 'color-harmony', function (Y) {
 
 
     // listener for swatch size
-    Y.one('#small-swatch-checkbox').on('change', function(e) {
+    Y.one('#small-swatch-checkbox').on('click', function(e) {
         var datatable = Y.one('#cTable .yui3-datatable');
 
         if (e.target.get('checked')) {
