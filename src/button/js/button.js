@@ -147,8 +147,7 @@ Y.extend(Button, Y.Widget,  {
      */
     HTML_PARSER: {
         label: function(node) {
-            this._host = node; // TODO: remove
-            return this._getLabel();
+            return this._getLabelFromNode(node);
         },
 
         disabled: function(node) {

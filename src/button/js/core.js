@@ -70,10 +70,6 @@ ButtonCore.prototype = {
      * @private
      */
     _initAttributes: function(config) {
-        var host = this._host,
-            node = host.one('.' + ButtonCore.CLASS_NAMES.LABEL) || host;
-
-        config.label = config.label || this._getLabel(node);
         Y.AttributeCore.call(this, ButtonCore.ATTRS, config);
     },
 
@@ -128,15 +124,24 @@ ButtonCore.prototype = {
      * @private
      */
     _getLabel: function () {
-        var node    = this.getNode(),
-            tagName = node.get('tagName').toLowerCase(),
+        return this._getLabelFromNode(this.getNode());
+    },
+
+    /**
+     * @method _getLabelFromNode
+     * @description Getter for a button's 'label' ATTR
+     * @private
+     * TODO: Move to a static method
+     */
+    _getLabelFromNode: function (node) {
+        var tagName = node.get('tagName').toLowerCase(),
             label;
 
         if (tagName === 'input') {
             label = node.get('value');
         }
         else {
-            label = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).get('text');
+            label = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).get('innerHTML');
         }
 
         return label;
@@ -153,9 +158,12 @@ ButtonCore.prototype = {
             tagName = node.get('tagName').toLowerCase();
 
         if (tagName === 'input') {
+            // <input>
             node.set('value', label);
-        } else {
-            (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).set('text', label);
+        }
+        else {
+            // <button>, or anything else
+            (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).set('innerHTML', label);
         }
 
         return label;
@@ -197,6 +205,7 @@ ButtonCore.ATTRS = {
      * @type String
      */
     label: {
+        valueFn: '_getLabel',
         setter: '_uiSetLabel',
         getter: '_getLabel',
         lazyAdd: false
