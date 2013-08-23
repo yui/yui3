@@ -11,16 +11,15 @@
             font: 14px Helvetica, sans-serif;
         }
 
-        .image {
-            background-color: #999;
-            background-repeat: no-repeat;
+        .tile {
+            background-color: green;
             margin: 1px;
             float: left;
             height: 200px;
             width: 200px;
         }
 
-        .offscreen { background-image: none !important; }
+        .offscreen { background-color: #999; }
 
         #content { padding: 5em 7em; }
 
@@ -37,40 +36,30 @@
         }
 
         #info th { text-align: right; }
-
-        @media all and (max-width:550px) {
-            #content { padding: 5em 0; }
-
-            .image {
-                background-size: 95px 95px;
-                height: 95px;
-                width: 95px;
-            }
-        }
     </style>
 </head>
 <body>
 
 <div id="content">
     <p style="text-align: center;">
-    Scroll to the bottom of the page to load more images.
+    Scroll to the bottom of the page to load more tiles.
     </p>
 </div>
 
 <div id="info">
     <table>
         <tr>
-            <th scope="row">Images Loaded:</th>
+            <th scope="row">Tiles Loaded:</th>
             <td id="info-loaded"></td>
         </tr>
 
         <tr>
-            <th scope="row">Images Onscreen:</th>
+            <th scope="row">Tiles Onscreen:</th>
             <td id="info-onscreen"></td>
         </tr>
 
         <tr>
-            <th scope="row">Images Offscreen:</th>
+            <th scope="row">Tiles Offscreen:</th>
             <td id="info-offscreen"></td>
         </tr>
     </table>
@@ -84,8 +73,8 @@ var Y = YUI({filter: 'raw'}).use('node-scroll-info', function (Y) {
 var body    = Y.one('body'),
     content = Y.one('#content'),
 
-    images    = [],
-    imageTmpl = '<div style="background-image:url(http://smugmug.com/photos/random.mg?AlbumID={AlbumID}&AlbumKey={AlbumKey}&Size=200x200!&{clientId})" class="image" role="img" data-clientId="{clientId}"></div>',
+    tiles       = [],
+    tileTemplate = '<div class="tile"></div>',
 
     lastIndex = -1,
 
@@ -94,10 +83,10 @@ var body    = Y.one('body'),
 
 function loadNext(count) {
     var html  = [],
-        limit = Math.min(lastIndex + count + 1, images.length);
+        limit = Math.min(lastIndex + count + 1, tiles.length);
 
     for (var i = lastIndex + 1; i < limit; i++) {
-        html.push(Y.Lang.sub(imageTmpl, images[i]));
+        html.push(tileTemplate);
     }
 
     lastIndex = i - 1;
@@ -114,14 +103,14 @@ function refresh() {
     clearTimeout(showTimeout);
 
     showTimeout = setTimeout(function () {
-        var nodes = body.scrollInfo.getOnscreenNodes('.image');
+        var nodes = body.scrollInfo.getOnscreenNodes('.tile');
 
         nodes.removeClass('offscreen');
         updateInfo({onscreen: nodes.size()});
     }, 20);
 
     hideTimeout = setTimeout(function () {
-        var nodes = body.scrollInfo.getOffscreenNodes('.image')
+        var nodes = body.scrollInfo.getOffscreenNodes('.tile')
 
         nodes.addClass('offscreen');
         updateInfo({offscreen: nodes.size()});
@@ -135,11 +124,7 @@ function updateInfo(info) {
 }
 
 for (var i = 0; i < 5000; i++) {
-    images.push({
-        AlbumID : '23398828',
-        AlbumKey: 'JL4cQP',
-        clientId: 'image-' + i
-    });
+    tiles.push({});
 }
 
 loadNext(50);
