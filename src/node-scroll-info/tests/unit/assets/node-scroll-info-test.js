@@ -20,16 +20,20 @@ var Assert       = Y.Assert,
         'scrollWidth'
     ];
 
+function isBetween(expected, min, max) {
+    return expected >= min && expected <= max;
+}
+
 Y.Test.Runner.add(new Y.Test.Case({
     name: 'ScrollInfo',
     _should: {
         ignore: {
             //TODO These tests below should be un-ignored after GH Issue #640 is resolved
-            'body: getScrollInfo() should return current scroll information': (Y.UA.android === 2.34),
-            'body: scrollLeft event should fire after scrolling down': (Y.UA.android === 2.34),
-            'body: scrollRight event should fire after scrolling right': (Y.UA.android === 2.34),
-            'body: scrollToBottom event should fire after scrolling to the bottom': (Y.UA.android === 2.34),
-            'body: scrollToRight event should fire after scrolling to the extreme right': (Y.UA.android === 2.34)
+            'body: getScrollInfo() should return current scroll information': (Y.UA.android && Y.UA.android < 3),
+            'body: scrollLeft event should fire after scrolling down': (Y.UA.android && Y.UA.android < 3),
+            'body: scrollRight event should fire after scrolling right': (Y.UA.android && Y.UA.android < 3),
+            'body: scrollToBottom event should fire after scrolling to the bottom': (Y.UA.android && Y.UA.android < 3),
+            'body: scrollToRight event should fire after scrolling to the extreme right': (Y.UA.android && Y.UA.android < 3)
         }
     },
 
@@ -335,11 +339,11 @@ Y.Test.Runner.add(new Y.Test.Case({
         Assert.isNumber(info.scrollWidth, 'scrollWidth should be a number');
 
         Assert.isTrue(info.scrollBottom > 0, 'scrollBottom should be >0');
-        Assert.areSame(10000, info.scrollHeight, 'scrollHeight should be 10000');
+        Assert.isTrue(isBetween(info.scrollHeight, 10000, 10010), 'scrollHeight should be ~10000');
         Assert.areSame(0, info.scrollLeft, 'scrollLeft should be 0');
         Assert.isTrue(info.scrollRight > 0, 'scrollRight should be >0');
         Assert.areSame(0, info.scrollTop, 'scrollTop should be 0');
-        Assert.areSame(10000, info.scrollWidth, 'scrollWidth should be 10000');
+        Assert.isTrue(isBetween(info.scrollWidth, 10000, 10010), 'scrollWidth should be ~10000');
 
         this.divNode.scrollInfo.once('scroll', function () {
             test.resume(function () {
