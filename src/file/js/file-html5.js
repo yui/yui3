@@ -1,5 +1,5 @@
     /**
-     * The FileHTML5 class provides a wrapper for a file pointer in an HTML5 The File wrapper 
+     * The FileHTML5 class provides a wrapper for a file pointer in an HTML5 The File wrapper
      * also implements the mechanics for uploading a file and tracking its progress.
      * @module file-html5
      */     
@@ -99,8 +99,8 @@
                    *  </dl>
                    */
                    this.fire("uploadprogress", {originEvent: event,
-                                               bytesLoaded: event.loaded, 
-                                               bytesTotal: this.get("size"), 
+                                               bytesLoaded: event.loaded,
+                                               bytesTotal: this.get("size"),
                                                percentLoaded: Math.min(100, Math.round(10000*event.loaded/this.get("size"))/100)
                                                });
                    this._set("bytesUploaded", event.loaded);
@@ -130,7 +130,7 @@
                         xhrupload.removeEventListener ("progress", boundEventHandler);
                         xhrupload.removeEventListener ("error", boundEventHandler);
                         xhrupload.removeEventListener ("abort", boundEventHandler);
-                        xhr.removeEventListener ("load", boundEventHandler); 
+                        xhr.removeEventListener ("load", boundEventHandler);
                         xhr.removeEventListener ("error", boundEventHandler);
                         xhr.removeEventListener ("readystatechange", boundEventHandler);
                         
@@ -276,7 +276,10 @@
         * @method cancelUpload
         */    
         cancelUpload: function () {
-            this.get('xhr').abort();
+            var xhr = this.get('xhr');
+            if (xhr) {
+                xhr.abort();
+            }
         }
 
 

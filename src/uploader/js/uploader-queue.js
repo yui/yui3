@@ -233,7 +233,7 @@ Y.extend(UploaderQueue, Y.Base, {
         updatedEvent.originEvent = event;
         updatedEvent.file = event.target;
 
-        this.fire("uploadcacel", updatedEvent);
+        this.fire("uploadcancel", updatedEvent);
     },
 
 

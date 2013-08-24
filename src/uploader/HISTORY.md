@@ -4,7 +4,7 @@ Uploader Utility (New) Change History
 @VERSION@
 ------
 
-* No changes.
+* Fixed typo with event uploadcancel
 
 3.11.0
 ------
