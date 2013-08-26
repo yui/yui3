@@ -10,8 +10,6 @@ GithubSync.prototype = {
     // request; this way the `githubURL` can be more of a template, and this
     // method can substitute place-holders in the template with specific values.
     buildURL: function () {
-        // Remember to sanitize any text coming from an unsafe source before it
-        // is inserted into the URL context.
         return this.githubURL;
     },
 
