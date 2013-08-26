@@ -5,6 +5,8 @@ var GitHub = (function () {
         githubURL = 'https://api.github.com/users/{user}?callback={callback}';
 
     function getUserURL(name) {
+        // Remember to sanitize any text coming from an unsafe source before it
+        // is inserted into the URL context.
         return Y.Lang.sub(githubURL, {
             user: name
         });
