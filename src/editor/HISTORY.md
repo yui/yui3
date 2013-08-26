@@ -4,11 +4,6 @@ Rich Text Editor Change History
 @VERSION@
 ------
 
-* No changes.
-
-3.12.0
-------
-
 * Editor is able to work in two modes - as an Inline Editor or using an iframe.
   For that reason, some internal changes have been made:
 
