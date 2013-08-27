@@ -336,7 +336,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             xy;
         if(node)
         {
-            xy = Y.one(node).getXY();
+            xy = Y.DOM.getXY(node);
             xy[0] += x;
             xy[1] += y;
         }
@@ -381,11 +381,21 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
     render: function(render) {
-        var parentNode = Y.one(render),
-            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
-            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || DOCUMENT.body;
-        parentNode.appendChild(this._node);
+        var parentNode = render || DOCUMENT.body,
+            node = this._node,
+            w,
+            h;
+        if(render instanceof Y.Node)
+        {
+            parentNode = render._node;
+        }
+        else if(Y.Lang.isString(render))
+        {
+            parentNode = Y.Selector.query(render, DOCUMENT.body, true);
+        }
+        w = this.get("width") || parseInt(Y.DOM.getComputedStyle(parentNode, "width"), 10);
+        h = this.get("height") || parseInt(Y.DOM.getComputedStyle(parentNode, "height"), 10);
+        parentNode.appendChild(node);
         this.parentNode = parentNode;
         this.set("width", w);
         this.set("height", h);
@@ -399,8 +409,16 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     destroy: function()
     {
-        this.clear();
-        Y.one(this._node).remove(true);
+        this.removeAllShapes();
+        if(this._node)
+        {
+            this._removeChildren(this._node);
+            if(this._node.parentNode)
+            {
+                this._node.parentNode.removeChild(this._node);
+            }
+            this._node = null;
+        }
     },
 
     /**
@@ -735,8 +753,8 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         var autoSize = this.get("autoSize"),
             preserveAspectRatio,
             node = this.parentNode,
-            nodeWidth = parseFloat(node.getComputedStyle("width")),
-            nodeHeight = parseFloat(node.getComputedStyle("height")),
+            nodeWidth = parseFloat(Y.DOM.getComputedStyle(node, "width")),
+            nodeHeight = parseFloat(Y.DOM.getComputedStyle(node, "height")),
             xCoordOrigin = 0,
             yCoordOrigin = 0,
             box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds,
