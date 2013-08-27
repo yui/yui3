@@ -989,6 +989,41 @@
                 Y.Assert.areEqual("myWidget[foo]", w.toString());
 
                 w.destroy();
+            },
+
+            "testBoundingBoxWithSrcNode" : function() {
+                var w = this.createWidget({
+                    boundingBox: Y.Node.create("<span id='bb'></span>"),
+                    srcNode: Y.Node.create("<span id='cb'></span>")
+                });
+
+                Y.Assert.areEqual("span", w.get("boundingBox").get("tagName").toLowerCase());
+                Y.Assert.areEqual("span", w.get("contentBox").get("tagName").toLowerCase());
+                Y.Assert.areEqual("bb", w.get("boundingBox").get("id"));
+                Y.Assert.areEqual("cb", w.get("contentBox").get("id"));
+
+                w.destroy();
+            },
+
+            "testOverridenBoundingBoxATTR" : function() {
+                function MyOtherWidget () {
+                    MyOtherWidget.superclass.constructor.apply(this, arguments);
+                }
+
+                Y.extend(MyOtherWidget, MyWidget, {}, {
+                    NAME: 'MyOtherWidget',
+                    ATTRS: {
+                        boundingBox: {
+                            value: Y.Node.create('<div id="another-widget"></div>')
+                        }
+                    }
+                });
+
+                var w = new MyOtherWidget();
+
+                Y.Assert.areEqual("another-widget", w.get("boundingBox").get("id"));
+
+                w.destroy();
             }
         }, true);
 
@@ -1059,8 +1094,7 @@
 
                 w.render();
 
-                // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
-                // Y.Assert.areSame(n, w.get("contentBox"), "srcNode not used as content box");
+                Y.Assert.areSame(n, w.get("contentBox"), "srcNode not used as content box");
                 Y.Assert.isFalse(w.get("boundingBox").hasClass("yui3-mysingleboxwidget-loading"), "yui3-mysingleboxwidget-loading should have removed");
 
                 w.destroy();
@@ -1146,7 +1180,7 @@
                 w.destroy();
             },
 
-            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
+            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076.
             "testContentBox" : null,
 
             /*
@@ -1190,7 +1224,7 @@
                 w.destroy();
             },
 
-            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
+            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076.
             "testContentBoxRenderTo" : null,
 
             /*
@@ -1246,6 +1280,21 @@
                 });
 
                 Y.Assert.areEqual("mySingleBoxWidget[foo]", w.toString());
+
+                w.destroy();
+            },
+
+            "testBoundingBoxWithSrcNode" : function() {
+                var w = this.createWidget({
+                    boundingBox: Y.Node.create("<span id='bb'></span>"),
+                    srcNode: Y.Node.create("<span id='cb'></span>")
+                });
+
+                // If CONTENT_TEMPLATE is null, CB resolves to BB (see: Widget#_setCB).
+                // While creating a single-box by specifying BB & srcNode probably doesn't,
+                // make sense, this test is here to ensure that changes to current behavior are
+                // considered before being made.
+                Y.Assert.isTrue(w.get("contentBox").compareTo(w.get("boundingBox")), "bb !== cb");
 
                 w.destroy();
             }
