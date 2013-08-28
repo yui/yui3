@@ -10,6 +10,10 @@ Node Change History
 * Fixed: `Node#toggleView()` didn't show a node if that node's `hidden`
   attribute wasn't set (this was a regression in 3.10.2). [Jeroen Versteeg]
 
+* Fixed: `Node#addMethod` could not bind to contexts other than itself. ([#1070][]: @zhiyelee)
+
+[#1070]: https://github.com/yui/yui3/issues/1070
+
 3.11.0
 ------
 

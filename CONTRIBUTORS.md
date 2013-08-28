@@ -19,6 +19,7 @@ Committers
 * [@jenny](https://github.com/jenny)
 * [@juandopazo](https://github.com/juandopazo)
 * [@msweeney](https://github.com/msweeney)
+* [@okuryu](https://github.com/okuryu)
 * [@reid](https://github.com/reid)
 * [@sdesai](https://github.com/sdesai)
 * [@tilomitra](https://github.com/tilomitra)

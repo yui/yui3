@@ -669,7 +669,12 @@ Y.Router = Y.extend(Router, Y.Base, {
                 // Decode each of the path matches so that the any URL-encoded
                 // path segments are decoded in the `req.params` object.
                 matches = YArray.map(route.regex.exec(path) || [], function (match) {
-                    return match && decode(match);
+                    // Decode matches, or coerce `undefined` matches to an empty
+                    // string to match expectations of working with `req.params`
+                    // in the content of route dispatching, and normalize
+                    // browser differences in their handling of regexp NPCGs:
+                    // https://github.com/yui/yui3/issues/1076
+                    return (match && decode(match)) || '';
                 });
 
                 // Use named keys for parameter names if the route path contains
