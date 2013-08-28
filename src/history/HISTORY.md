@@ -4,6 +4,9 @@ History Change History
 @VERSION@
 ------
 
+* Fixed a possible exception in `HistoryHTML5._init()` in IE10.
+  [Ariel Schiavoni]
+
 * Fixed issue with `parseHash` not parsing blank values in hash string.
   ([#1116][]: @blzaugg)
 
