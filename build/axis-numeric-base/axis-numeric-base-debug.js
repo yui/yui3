@@ -643,7 +643,7 @@ NumericImpl.prototype = {
         nearest = nearest || 1;
         return Math.floor(this._roundToPrecision(number / nearest, 10)) * nearest;
     },
-    
+
     /**
      * Returns a coordinate corresponding to a data values.
      *
