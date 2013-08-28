@@ -12,6 +12,7 @@ Committers
 * [@allenrabinovich](https://github.com/allenrabinovich)
 * [@apipkin](https://github.com/apipkin)
 * [@caridy](https://github.com/caridy)
+* [@clarle](https://github.com/clarle)
 * [@derek](https://github.com/derek)
 * [@ekashida](https://github.com/ekashida)
 * [@jconniff](https://github.com/jconniff)

@@ -1,6 +1,17 @@
 Template Change History
 =======================
 
+3.12.0
+------
+
+* Added central template registry. The template registry decouples making
+  templates available from invoking a template to render it. This central
+  registry and abstraction of templates to names separates concerns, creates a
+  level of indirection, and enables templates to be easily overridden.
+  ([#1021][])
+
+[#1021]: https://github.com/yui/yui3/issues/1021
+
 3.11.0
 ------
 

@@ -1,6 +1,15 @@
 Calendar Change History
 =======================
 
+3.12.0
+------
+
+* Added language support for various Chinese regions. ([#1007][]: @shunner)
+
+
+[#1007]: https://github.com/yui/yui3/issues/1007
+
+
 3.11.0
 ------
 

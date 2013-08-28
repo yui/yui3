@@ -6,8 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="./assets/node-data-test.js"></script>
 <script type="text/javascript" src="./assets/node-attrs-test.js"></script>
+<script type="text/javascript" src="./assets/node-data-test.js"></script>
+<script type="text/javascript" src="./assets/node-pluginhost-test.js"></script>
 <script type="text/javascript" src="./assets/node-traversal-test.js"></script>
 <script type="text/javascript" src="./assets/nodelist-test.js"></script>
 
@@ -189,6 +190,8 @@ button {
         <div id="test-element-by-axis">foo<div></div>bar<span></span>baz<em></em></div>
     </div>
 </div>
+<div id="test-node-addMethod">
+</div>
 
 <div id="yui-log"></div>
 <script type="text/javascript">
@@ -196,7 +199,7 @@ YUI({
     coverage: ['node', 'node-load'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 
-}).use('selector-css3', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-data-test', 'nodelist-test', 'node-attrs-test', 'node-traversal-test', function(Y) {
+}).use('selector-css3', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-attrs-test', 'node-data-test', 'node-pluginhost-test', 'node-traversal-test', 'nodelist-test', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         ObjectAssert = Y.ObjectAssert,
@@ -1356,7 +1359,7 @@ YUI({
         'should hide the node': function() {
             var node = Y.one('body');
             node.hide();
-            Assert.areEqual('true', node.getAttribute('hidden'));
+            Assert.isTrue(node.hasAttribute('hidden'));
             Assert.areEqual('none', node.getStyle('display'));
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
@@ -1364,10 +1367,10 @@ YUI({
 
         'should show the node': function() {
             var node = Y.one('body');
-            node.setAttribute('hidden', true);
+            node.setAttribute('hidden', '');
             node.setStyle('display', 'none');
             node.show(1);
-            Assert.areEqual('', node.getAttribute('hidden'));
+            Assert.isFalse(node.hasAttribute('hidden'));
             Assert.areEqual('block', node.getStyle('display'));
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
@@ -1377,7 +1380,7 @@ YUI({
             var node = Y.one('body'),
                 called = false;
 
-            node.setAttribute('hidden', true);
+            node.setAttribute('hidden', '');
             node.setStyle('display', 'none');
 
             node.show(function() {
@@ -1486,7 +1489,7 @@ YUI({
 
             node.toggleView(false);
 
-            Assert.areEqual('true', node.getAttribute('hidden'));
+            Assert.isTrue(node.hasAttribute('hidden'));
             Assert.areEqual('none', node.getStyle('display'));
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
@@ -1501,7 +1504,7 @@ YUI({
             });
 
             Assert.isTrue(called);
-            Assert.areEqual('true', node.getAttribute('hidden'));
+            Assert.isTrue(node.hasAttribute('hidden'));
             Assert.areEqual('none', node.getStyle('display'));
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
@@ -1997,6 +2000,31 @@ YUI({
 
             Assert.isUndefined(val[0]);
             Assert.isUndefined(val[1]);
+        }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.addMethod',
+
+        'should return a method': function() {
+            var nd = Y.one('#test-node-addMethod');
+
+            Y.Node.addMethod('testAddMethod', function () {
+                return this;     
+            });
+
+            Assert.isFunction(nd.testAddMethod);
+            Assert.areSame(nd, nd.testAddMethod());
+        },
+        'should return property of context obj': function () {
+            var nd = Y.one('#test-node-addMethod'),
+                obj = { type: 'context obj' };
+
+            Y.Node.addMethod('testAMC', function () {
+                return this.type;
+            }, obj);
+
+            Assert.areEqual('context obj', nd.testAMC());
         }
     }));
 

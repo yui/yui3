@@ -1500,6 +1500,7 @@ with any configuration info required for the module.
         YUI._getLoadHook = null;
     }
 
+    YUI.Env[VERSION] = {};
 }());
 
 
@@ -3550,7 +3551,7 @@ YUI.Env.parseUA = function(subUA) {
                     o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
                 }
             } else { // not opera or webkit
-                m = ua.match(/MSIE ([^;]*)|Trident.*; rv ([0-9.]+)/);
+                m = ua.match(/MSIE ([^;]*)|Trident.*; rv:([0-9.]+)/);
 
                 if (m && (m[1] || m[2])) {
                     o.ie = numberify(m[1] || m[2]);

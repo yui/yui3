@@ -1,6 +1,11 @@
 Charts Change History
 =====================
 
+3.12.0
+------
+
+* #716 Added logarithmic scaling.
+
 3.11.0
 ------
 

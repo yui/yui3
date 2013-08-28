@@ -1,6 +1,12 @@
 Custom Event Infrastructure Change History
 ==========================================
 
+3.12.0
+------
+
+* Fixed regression introduced in 3.10.0, where `EventTarget.detach('cat|*')` 
+  would throw an exception, when the EventTarget was configured with a prefix.
+
 3.11.0
 ------
 
