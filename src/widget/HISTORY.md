@@ -1,7 +1,7 @@
 Widget Change History
 =====================
 
-@VERSION@
+3.12.0
 ------
 
 * Improved support for single-box widgets (BB === CB) by defaulting boundingBox to srcNode if CONTENT_TEMPLATE is null.

@@ -1,7 +1,7 @@
 Node Change History
 ===================
 
-@VERSION@
+3.12.0
 ------
 
 * Fixed: Node instances that were cached before `node-pluginhost` was loaded

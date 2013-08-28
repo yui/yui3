@@ -148,7 +148,49 @@ YUI.add('axis-base-tests', function(Y) {
         },
 
         "test: getEdgeOffset()" : function() {
-            Y.Assert.areEqual(0, this.axis.getEdgeOffset(), "The edge offset should be zero.");
+            var axis = this.axis,
+                length = 400,
+                count = 11,
+                calculatedOffset = (length/count)/2;
+            Y.Assert.areEqual(0, axis.getEdgeOffset(), "The edge offset should be zero.");
+            axis.set("calculateEdgeOffset", true);
+            Y.Assert.areEqual(calculatedOffset, axis.getEdgeOffset(count, length), "The edge offset should be " + calculatedOffset + ".");
+        },
+
+        "test: _getCoordsFromValues()" : function() {
+            var GetCoordsFromValuesMockAxis = Y.Base.create("getCoordsFromValuesMockAxis", Y.AxisBase, [], {
+                    _getCoordFromValue: function(min, max, length, dataValue, offset, reverse) {
+                        return dataValue;
+                    }
+                }),
+                mockAxis = new GetCoordsFromValuesMockAxis(),
+                axis = this.axis,
+                dataValues = [0, 10, 20, 30, 40, 50, 60, 70],
+                dataValue,
+                result = axis._getCoordsFromValues.apply(
+                    mockAxis,
+                    [0, 70, 400, dataValues, 5, false]
+                ),
+                i,
+                len = dataValues.length;
+            for(i = 0; i < len; i = i + 1) {
+                dataValue = dataValues[i];
+                Y.Assert.areEqual(dataValue, result[i], "The result should be equal to " + dataValue + ".");   
+            }
+        },
+        
+        "test: _getDataValuesByCount()" : function() {
+            var testValues = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+                testValue,
+                i,
+                len = testValues.length,
+                min = 0,
+                max = 100,
+                result = this.axis._getDataValuesByCount(len, min, max);
+            for(i = 0; i < len; i = i + 1) {
+                testValue = testValues[i];
+                Y.Assert.areEqual(testValue, result[i], "The result should be equal to " + testValue + ".");
+            }
         },
 
         "test: _getDefaultStyles()" : function() {
@@ -367,6 +409,12 @@ YUI.add('axis-base-tests', function(Y) {
                 }
             });
             Y.Assert.areEqual(8, this.axis.getTotalMajorUnits(), "The getTotalMajorUnits method should return 8.");
+        },
+
+        "test: getOrigin()" : function() {
+            var axis = this.axis,
+                origin = axis.get("minimum");
+            Y.Assert.areEqual(origin, axis.getOrigin(), "The origin value should be " + origin + ".");
         }
     });
 

@@ -6,6 +6,7 @@ YUI.add('axis-category', function (Y, NAME) {
  * @module charts
  * @submodule axis-category
  */
+var Y_Lang = Y.Lang;
 /**
  * CategoryAxis draws a category axis for a chart.
  *
@@ -64,57 +65,45 @@ Y.CategoryAxis = Y.Base.create("categoryAxis", Y.Axis, [Y.CategoryImpl], {
     },
 
     /**
-     * Calculates the position of ticks and labels based on an array of specified label values. Returns
-     * an object containing an array of values to be used for labels and an array of objects containing
-     * x and y coordinates for each label.
+     * Returns an object literal containing and array of label values and an array of points.
      *
-     * @method _getDataFromLabelValues
-     * @param {Object} startPoint An object containing the x and y coordinates for the start of the axis.
-     * @param {Array} labelValues An array containing values to be used for determining the number and
-     * position of labels and ticks on the axis.
-     * @param {Number} edgeOffset The distance, in pixels, on either edge of the axis.
-     * @param {Number} layoutLength The length, in pixels, of the axis. If the axis is vertical, the length
-     * is equal to the height. If the axis is horizontal, the length is equal to the width.
-     * @return Object
+     * @method _getLabelData
+     * @param {Object} startPoint An object containing x and y values.
+     * @param {Number} edgeOffset Distance to offset coordinates.
+     * @param {Number} layoutLength Distance that the axis spans.
+     * @param {Number} count Number of labels.
+     * @param {String} direction Indicates whether the axis is horizontal or vertical.
+     * @param {Array} Array containing values for axis labels.
+     * @return Array
      * @private
      */
-    _getDataFromLabelValues: function(startPoint, labelValues, edgeOffset, layoutLength, direction)
+    _getLabelData: function(constantVal, staticCoord, dynamicCoord, min, max, edgeOffset, layoutLength, count, dataValues)
     {
-        var points = [],
-            values = [],
-            labelValue,
-            multiplier = (layoutLength - (edgeOffset * 2))/(this.getTotalMajorUnits() - 1),
-            data = this.get("data"),
-            labelIndex,
+        var labelValue,
             i,
-            len = labelValues.length,
-            staticCoord,
-            dynamicCoord,
-            constantVal,
-            newPoint,
-            rawVal;
-        if(direction === "vertical")
+            points = [],
+            values = [],
+            point,
+            labelIndex,
+            data = this.get("data"),
+            offset = edgeOffset;
+        dataValues = dataValues || data;
+        for(i = 0; i < count; i = i + 1)
         {
-            staticCoord = "x";
-            dynamicCoord = "y";
-        }
-        else
-        {
-            staticCoord = "y";
-            dynamicCoord = "x";
-        }
-        constantVal = startPoint[staticCoord];
-        for(i = 0; i < len; i = i + 1)
-        {
-            labelValue = labelValues[i];
+            labelValue = dataValues[i];
             labelIndex = Y.Array.indexOf(data, labelValue);
-            if(Y.Lang.isNumber(labelIndex) && labelIndex > -1)
+            if(Y_Lang.isNumber(labelIndex) && labelIndex > -1)
             {
-                rawVal = labelIndex ? (labelIndex * multiplier) : 0;
-                newPoint = {};
-                newPoint[staticCoord] = constantVal;
-                newPoint[dynamicCoord] = rawVal + edgeOffset;
-                points.push(newPoint);
+                point = {};
+                point[staticCoord] = constantVal;
+                point[dynamicCoord] = this._getCoordFromValue(
+                    min,
+                    max,
+                    layoutLength,
+                    labelIndex,
+                    offset
+                );
+                points.push(point);
                 values.push(labelValue);
             }
         }

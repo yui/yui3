@@ -6,6 +6,7 @@ YUI.add('axis-numeric-base', function (Y, NAME) {
  * @module charts
  * @submodule axis-numeric-base
  */
+var Y_Lang = Y.Lang;
 
 /**
  * NumericImpl contains logic for numeric data. NumericImpl is used by the following classes:
@@ -82,6 +83,18 @@ NumericImpl.ATTRS = {
      */
     roundingMethod: {
         value: "niceNumber"
+    },
+
+    /**
+     * Indicates the scaling for the chart. The default value is `linear`. For a logarithmic axis, set the value
+     * to `logarithmic`.
+     *
+     * @attribute
+     * @type String
+     * @default linear
+     */
+    scaleType: {
+        value: "linear"
     }
 };
 
@@ -93,6 +106,7 @@ NumericImpl.prototype = {
     initializer: function() {
         this.after("alwaysShowZeroChange", this._keyChangeHandler);
         this.after("roundingMethodChange", this._keyChangeHandler);
+        this.after("scaleTypeChange", this._keyChangeHandler);
     },
 
     /**
@@ -135,6 +149,21 @@ NumericImpl.prototype = {
            }
         }
         return total;
+    },
+
+    /**
+     * Returns the value corresponding to the origin on the axis.
+     *
+     * @method getOrigin
+     * @return Number
+     */
+    getOrigin: function() {
+        var origin = 0,
+            min = this.get("minimum"),
+            max = this.get("maximum");
+        origin = Math.max(origin, min);
+        origin = Math.min(origin, max);
+        return origin;
     },
 
     /**
@@ -253,7 +282,15 @@ NumericImpl.prototype = {
                     this._actualMinimum = min;
                 }
             }
-            this._roundMinAndMax(min, max, setMin, setMax);
+            if(this.get("scaleType") !== "logarithmic")
+            {
+                this._roundMinAndMax(min, max, setMin, setMax);
+            }
+            else
+            {
+                this._dataMaximum = max;
+                this._dataMinimum = min;
+            }
         }
     },
 
@@ -605,6 +642,47 @@ NumericImpl.prototype = {
     {
         nearest = nearest || 1;
         return Math.floor(this._roundToPrecision(number / nearest, 10)) * nearest;
+    },
+    
+    /**
+     * Returns a coordinate corresponding to a data values.
+     *
+     * @method _getCoordFromValue
+     * @param {Number} min The minimum for the axis.
+     * @param {Number} max The maximum for the axis.
+     * @param {length} length The distance that the axis spans.
+     * @param {Number} dataValue A value used to ascertain the coordinate.
+     * @param {Number} offset Value in which to offset the coordinates.
+     * @param {Boolean} reverse Indicates whether the coordinates should start from
+     * the end of an axis. Only used in the numeric implementation.
+     * @return Number
+     * @private
+     */
+    _getCoordFromValue: function(min, max, length, dataValue, offset, reverse)
+    {
+        var range,
+            multiplier,
+            valuecoord,
+            isNumber = Y_Lang.isNumber;
+        dataValue = parseFloat(dataValue);
+        if(isNumber(dataValue))
+        {
+            if(this.get("scaleType") === "logarithmic" && min > 0)
+            {
+                min = Math.log(min);
+                max = Math.log(max);
+                dataValue = Math.log(dataValue);
+            }
+            range = max - min;
+            multiplier = length/range;
+            valuecoord = (dataValue - min) * multiplier;
+            valuecoord = reverse ? offset - valuecoord : offset + valuecoord;
+        }
+        else
+        {
+            valuecoord = NaN;
+        }
+        return valuecoord;
     },
 
     /**
