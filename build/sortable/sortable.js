@@ -70,7 +70,7 @@ YUI.add('sortable', function (Y, NAME) {
                 groups: del.dd.get('groups')
             });
             this.drop.on('drop:enter', Y.bind(this._onDropEnter, this));
-            
+
             del.on({
                 'drag:start': Y.bind(this._onDragStart, this),
                 'drag:end': Y.bind(this._onDragEnd, this),
@@ -153,7 +153,7 @@ YUI.add('sortable', function (Y, NAME) {
                     if (!dropsort) {
                         return;
                     }
-                    
+
                     Y.DD.DDM.getDrop(e.drag.get(NODE)).addToGroup(dropsort.get(ID));
 
                     //Same List
@@ -267,7 +267,7 @@ YUI.add('sortable', function (Y, NAME) {
             if (this[method]) {
                 this[method](sel);
             }
-            
+
             return this;
         },
         /**

@@ -7,7 +7,7 @@
  */
 
 /**
- * Provides the base DataSchema implementation, which can be extended to 
+ * Provides the base DataSchema implementation, which can be extended to
  * create DataSchemas for specific data formats, such XML, JSON, text and
  * arrays.
  *
@@ -34,7 +34,7 @@ var LANG = Y.Lang,
     apply: function(schema, data) {
         return data;
     },
-    
+
     /**
      * Applies field parser, if defined
      *

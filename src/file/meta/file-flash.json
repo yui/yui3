@@ -2,6 +2,6 @@
     "file-flash": {
         "requires": [
           "base"
-        ] 
+        ]
     }
 }

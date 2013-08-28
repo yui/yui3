@@ -1,9 +1,9 @@
 YUI.add('node-flick', function (Y, NAME) {
 
 /**
- * Provide a simple Flick plugin, which can be used along with the "flick" gesture event, to 
- * animate the motion of the host node in response to a (mouse or touch) flick gesture. 
- * 
+ * Provide a simple Flick plugin, which can be used along with the "flick" gesture event, to
+ * animate the motion of the host node in response to a (mouse or touch) flick gesture.
+ *
  * <p>The current implementation is designed to move the node, relative to the bounds of a parent node and is suitable
  * for scroll/carousel type implementations. Future versions will remove that constraint, to allow open ended movement within
  * the document.</p>
@@ -27,12 +27,12 @@ YUI.add('node-flick', function (Y, NAME) {
         DURATION = "duration",
         EASING = "easing",
         FLICK = "flick",
-        
+
         getClassName = Y.ClassNameManager.getClassName;
 
     /**
      * A plugin class which can be used to animate the motion of a node, in response to a flick gesture.
-     * 
+     *
      * @class Flick
      * @namespace Plugin
      * @param {Object} config The initial attribute values for the plugin
@@ -56,7 +56,7 @@ YUI.add('node-flick', function (Y, NAME) {
 
         /**
          * Drag coefficient for intertial scrolling at the upper
-         * and lower boundaries of the scrollview. Set to 0 to 
+         * and lower boundaries of the scrollview. Set to 0 to
          * disable "rubber-banding".
          *
          * @attribute bounce
@@ -139,7 +139,7 @@ YUI.add('node-flick', function (Y, NAME) {
         /**
          * The custom transition easing to use for the flick animation. If not
          * provided defaults to internally to Flick.EASING, or Flick.SNAP_EASING based
-         * on whether or not we're animating the flick or bounce step. 
+         * on whether or not we're animating the flick or bounce step.
          *
          * @attribute easing
          * @type String
@@ -162,7 +162,7 @@ YUI.add('node-flick', function (Y, NAME) {
     Flick.NAME = "pluginFlick";
 
     /**
-     * The namespace for the plugin. This will be the property on the node, which will 
+     * The namespace for the plugin. This will be the property on the node, which will
      * reference the plugin instance, when it's plugged in.
      *
      * @property NS
@@ -178,7 +178,7 @@ YUI.add('node-flick', function (Y, NAME) {
          * The initializer lifecycle implementation.
          *
          * @method initializer
-         * @param {Object} config The user configuration for the plugin  
+         * @param {Object} config The user configuration for the plugin
          */
         initializer : function(config) {
             this._node = this.get(HOST);
@@ -195,7 +195,7 @@ YUI.add('node-flick', function (Y, NAME) {
         /**
          * Sets the min/max boundaries for the flick animation,
          * based on the boundingBox dimensions.
-         * 
+         *
          * @method setBounds
          */
         setBounds : function () {
@@ -228,7 +228,7 @@ YUI.add('node-flick', function (Y, NAME) {
 
         /**
          * Adds the CSS classes, necessary to set up overflow/position properties on the
-         * node and boundingBox. 
+         * node and boundingBox.
          *
          * @method _renderClasses
          * @protected
@@ -279,7 +279,7 @@ YUI.add('node-flick', function (Y, NAME) {
             if (this._scrollX) {
                 x = x - (velocity * step);
             }
-    
+
             if (this._scrollY) {
                 y = y - (velocity * step);
             }
@@ -347,7 +347,7 @@ YUI.add('node-flick', function (Y, NAME) {
 
         /**
          * Internal utility method to set the Y offset position
-         * 
+         *
          * @method _setY
          * @param {Number} val
          * @private
@@ -373,7 +373,7 @@ YUI.add('node-flick', function (Y, NAME) {
             if (x !== null) {
                 x = this._bounce(x);
             } else {
-                x = this._x; 
+                x = this._x;
             }
 
             if (y !== null) {
@@ -413,7 +413,7 @@ YUI.add('node-flick', function (Y, NAME) {
 
 
             if (Y.Transition.useNative) {
-                transition.transform = 'translate('+ (xn) + 'px,' + (yn) +'px)'; 
+                transition.transform = 'translate('+ (xn) + 'px,' + (yn) +'px)';
             } else {
                 transition.left = xn + 'px';
                 transition.top = yn + 'px';
@@ -424,7 +424,7 @@ YUI.add('node-flick', function (Y, NAME) {
 
         /**
          * Internal utility method to constrain the offset value
-         * based on the bounce criteria. 
+         * based on the bounce criteria.
          *
          * @method _bounce
          * @param {Number} x The offset value to constrain.
@@ -438,13 +438,13 @@ YUI.add('node-flick', function (Y, NAME) {
                 min = bounce ? -dist : 0;
 
             max = bounce ? max + dist : max;
-    
+
             if(!bounce) {
                 if(val < min) {
                     val = min;
                 } else if(val > max) {
                     val = max;
-                }            
+                }
             }
             return val;
         },
@@ -483,7 +483,7 @@ YUI.add('node-flick', function (Y, NAME) {
          * @default 400
          */
          SNAP_DURATION : 400,
-        
+
         /**
          * The default easing to use for the main flick movement transition
          *

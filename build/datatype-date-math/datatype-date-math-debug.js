@@ -36,9 +36,9 @@ Y.mix(Y.namespace("Date"), {
 	 * @param bDate {Date} The second date to compare.
 	 * @return {Boolean} True if the two dates correspond to the same
 	 * date and time.
-	 */	
+	 */
 	areEqual : function (aDate, bDate) {
-		return (this.isValidDate(aDate) && this.isValidDate(bDate) && (aDate.getTime() == bDate.getTime()));	
+		return (this.isValidDate(aDate) && this.isValidDate(bDate) && (aDate.getTime() == bDate.getTime()));
 	},
 
 	/**
@@ -48,7 +48,7 @@ Y.mix(Y.namespace("Date"), {
 	 * @param aDate {Date} The first date to compare.
 	 * @param bDate {Date} The second date to compare.
 	 * @return {Boolean} True if the first date is later than the second.
-	 */	
+	 */
     isGreater : function (aDate, bDate) {
     	return (this.isValidDate(aDate) && this.isValidDate(bDate) && (aDate.getTime() > bDate.getTime()));
     },
@@ -60,9 +60,9 @@ Y.mix(Y.namespace("Date"), {
 	 * @method isGreaterOrEqual
 	 * @param aDate {Date} The first date to compare.
 	 * @param bDate {Date} The second date to compare.
-	 * @return {Boolean} True if the first date is later than or 
+	 * @return {Boolean} True if the first date is later than or
 	 * the same as the second.
-	 */	
+	 */
     isGreaterOrEqual : function (aDate, bDate) {
     	return (this.isValidDate(aDate) && this.isValidDate(bDate) && (aDate.getTime() >= bDate.getTime()));
     },
@@ -76,7 +76,7 @@ Y.mix(Y.namespace("Date"), {
 	 * @param bDate {Date} Lower bound of the range.
 	 * @param cDate {Date} Higher bound of the range.
 	 * @return {Boolean} True if the date is between the two other given dates.
-	 */	
+	 */
     isInRange : function (aDate, bDate, cDate) {
     	return (this.isGreaterOrEqual(aDate, bDate) && this.isGreaterOrEqual(cDate, aDate));
     },
@@ -89,7 +89,7 @@ Y.mix(Y.namespace("Date"), {
 	 * @param numDays {Number} The number of days to add (can be negative)
 	 * @return {Date} A new Date with the specified number of days
 	 * added to the original date.
-	 */	
+	 */
 	addDays : function (oDate, numDays) {
 		return new Date(oDate.getTime() + 86400000*numDays);
 	},
@@ -103,18 +103,18 @@ Y.mix(Y.namespace("Date"), {
 	 * @param numMonths {Number} The number of months to add (can be negative)
 	 * @return {Date} A new Date with the specified number of months
 	 * added to the original date.
-	 */	
+	 */
 	addMonths : function (oDate, numMonths) {
 		var newYear = oDate.getFullYear();
-		var newMonth = oDate.getMonth() + numMonths;		
-		
+		var newMonth = oDate.getMonth() + numMonths;
+
 		newYear  = Math.floor(newYear + newMonth / 12);
 		newMonth = (newMonth % 12 + 12) % 12;
-		
+
 		var newDate = new Date (oDate.getTime());
 		newDate.setFullYear(newYear);
 		newDate.setMonth(newMonth);
-		
+
 		return newDate;
 	},
 
@@ -126,11 +126,11 @@ Y.mix(Y.namespace("Date"), {
 	 * @param numYears {Number} The number of years to add (can be negative)
 	 * @return {Date} A new Date with the specified number of years
 	 * added to the original date.
-	 */	
+	 */
 	addYears : function (oDate, numYears) {
 		var newYear = oDate.getFullYear() + numYears;
 		var newDate = new Date(oDate.getTime());
-		
+
 		newDate.setFullYear(newYear);
 		return newDate;
 	},
@@ -142,7 +142,7 @@ Y.mix(Y.namespace("Date"), {
 	 * @param oDate {Date} The date corresponding to the month for
 	 * which a list of dates is required.
 	 * @return {Array} An `Array` of `Date`s from a given month.
-	 */	
+	 */
     listOfDatesInMonth : function (oDate) {
        if (!this.isValidDate(oDate)) {
        	 return [];
@@ -165,16 +165,16 @@ Y.mix(Y.namespace("Date"), {
 	 * in the month that the given date belongs to.
 	 * @for Date
 	 * @method daysInMonth
-	 * @param oDate {Date} Date in the month for which the number 
+	 * @param oDate {Date} Date in the month for which the number
 	 * of days is desired.
-	 * @return {Number} A number (either 28, 29, 30 or 31) of days 
+	 * @return {Number} A number (either 28, 29, 30 or 31) of days
 	 * in the given month.
 	 */
 	 daysInMonth : function (oDate) {
 		if (!this.isValidDate(oDate)) {
 			return 0;
 		}
-		
+
 		var mon = oDate.getMonth();
 		var lengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
@@ -186,7 +186,7 @@ Y.mix(Y.namespace("Date"), {
 			var year = oDate.getFullYear();
 			if (year%400 === 0) {
 			       return 29;
-			}	
+			}
 			else if (year%100 === 0) {
 				   return 28;
 			}
@@ -196,7 +196,7 @@ Y.mix(Y.namespace("Date"), {
 			else {
 			       return 28;
 		    }
-	   } 
+	   }
 	}
 
 });

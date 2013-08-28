@@ -85,7 +85,7 @@
                     "event-synthetic",
                     "dom-screen"
                 ]
-            }            
+            }
         },
         "plugins": {
             "event-touch": {

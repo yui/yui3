@@ -5,9 +5,9 @@ Y.mix(Y.DOM, {
      * Determines whether a DOM element has the given className.
      * @method hasClass
      * @for DOM
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String} className the class name to search for
-     * @return {Boolean} Whether or not the element has the given class. 
+     * @return {Boolean} Whether or not the element has the given class.
      */
     hasClass: function(node, className) {
         var re = Y.DOM._getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
@@ -16,22 +16,22 @@ Y.mix(Y.DOM, {
 
     /**
      * Adds a class name to a given DOM element.
-     * @method addClass         
+     * @method addClass
      * @for DOM
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String} className the class name to add to the class attribute
      */
     addClass: function(node, className) {
-        if (!Y.DOM.hasClass(node, className)) { // skip if already present 
+        if (!Y.DOM.hasClass(node, className)) { // skip if already present
             node.className = Y.Lang.trim([node.className, className].join(' '));
         }
     },
 
     /**
      * Removes a class name from a given element.
-     * @method removeClass         
+     * @method removeClass
      * @for DOM
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String} className the class name to remove from the class attribute
      */
     removeClass: function(node, className) {
@@ -42,15 +42,15 @@ Y.mix(Y.DOM, {
             if ( hasClass(node, className) ) { // in case of multiple adjacent
                 removeClass(node, className);
             }
-        }                 
+        }
     },
 
     /**
      * Replace a class with another class for a given element.
      * If no oldClassName is present, the newClassName is simply added.
-     * @method replaceClass  
+     * @method replaceClass
      * @for DOM
-     * @param {HTMLElement} element The DOM element 
+     * @param {HTMLElement} element The DOM element
      * @param {String} oldClassName the class name to be replaced
      * @param {String} newClassName the class name that will be replacing the old class name
      */
@@ -62,7 +62,7 @@ Y.mix(Y.DOM, {
 
     /**
      * If the className exists on the node it is removed, if it doesn't exist it is added.
-     * @method toggleClass  
+     * @method toggleClass
      * @for DOM
      * @param {HTMLElement} element The DOM element
      * @param {String} className the class name to be toggled

@@ -9,7 +9,7 @@
  * Adds schema-parsing to the DataSource Utility.
  * @class DataSourceXMLSchema
  * @extends Plugin.Base
- */    
+ */
 var DataSourceXMLSchema = function() {
     DataSourceXMLSchema.superclass.constructor.apply(this, arguments);
 };
@@ -93,5 +93,5 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
         return new Y.Do.Halt("DataSourceXMLSchema plugin halted _defDataFn");
     }
 });
-    
+
 Y.namespace('Plugin').DataSourceXMLSchema = DataSourceXMLSchema;
