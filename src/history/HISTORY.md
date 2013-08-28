@@ -2,7 +2,7 @@ History Change History
 ======================
 
 @VERSION@
-------
+---------
 
 * Fixed a possible exception in `HistoryHTML5._init()` in IE10.
   [Ariel Schiavoni]
@@ -11,6 +11,11 @@ History Change History
   ([#1116][]: @blzaugg)
 
 [#1116]: https://github.com/yui/yui3/issues/1116
+
+3.12.0
+------
+
+* No changes.
 
 3.11.0
 ------

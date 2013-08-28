@@ -1,7 +1,7 @@
 TabView Change History
 ======================
 
-@VERSION@
+3.12.0
 ------
 
 * Fixed missing ARIA role in the `tablist` of Tabview.

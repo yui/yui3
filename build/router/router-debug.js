@@ -108,7 +108,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @property _params
     @type Object
     @protected
-    @since @SINCE@
+    @since 3.12.0
     **/
 
     /**
@@ -378,7 +378,7 @@ Y.Router = Y.extend(Router, Y.Base, {
       @param {String} handler.value The current param value parsed from the URL.
       @param {String} handler.name The name of the param.
     @chainable
-    @since @SINCE@
+    @since 3.12.0
     **/
     param: function (name, handler) {
         this._params[name] = handler;
@@ -776,9 +776,12 @@ Y.Router = Y.extend(Router, Y.Base, {
                             value        = matches[i];
 
                         if (paramHandler && value && typeof value === 'string') {
-                            value = typeof paramHandler === 'function' ?
-                                    paramHandler.call(self, value, key) :
-                                    paramHandler.exec(value);
+                            // Check if `paramHandler` is a RegExp, becuase this
+                            // is true in Android 2.3 and other browsers!
+                            // `typeof /.*/ === 'function'`
+                            value = paramHandler instanceof RegExp ?
+                                    paramHandler.exec(value) :
+                                    paramHandler.call(self, value, key);
 
                             if (value !== false && YLang.isValue(value)) {
                                 req.params[key] = value;
@@ -856,7 +859,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @method _getParams
     @return {Object} Mapping of param handlers: `name` -> RegExp | Function.
     @protected
-    @since @SINCE@
+    @since 3.12.0
     **/
     _getParams: function () {
         return Y.merge(this._params);
@@ -1339,7 +1342,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @param {Object} params Map in the form: `name` -> RegExp | Function.
     @return {Object} The map of params: `name` -> RegExp | Function.
     @protected
-    @since @SINCE@
+    @since 3.12.0
     **/
     _setParams: function (params) {
         this._params = {};
@@ -1500,7 +1503,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         @type Object
         @default `{}`
         @see param
-        @since @SINCE@
+        @since 3.12.0
         **/
         params: {
             value : {},
