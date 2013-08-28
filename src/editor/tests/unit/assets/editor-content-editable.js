@@ -1,6 +1,9 @@
 YUI.add('editor-tests', function(Y) {
+
     var editor = null,
+
     iframe = null,
+
     fireKey = function(editor, key) {
         var inst = editor.getInstance();
 
@@ -18,17 +21,18 @@ YUI.add('editor-tests', function(Y) {
             keyCode: key
         });
     },
+
     template = {
         name: 'Editor Tests',
-        setUp : function() {
-        },
+        setUp : function() {},
 
-        tearDown : function() {
-        },
+        tearDown : function() {},
+
         test_load: function() {
             Y.Assert.isObject(Y.Plugin.ContentEditable, 'ContentEditable was not loaded');
             Y.Assert.isObject(Y.EditorBase, 'EditorBase was not loaded');
         },
+
         test_frame: function() {
             var iframeReady = false;
 
@@ -37,11 +41,13 @@ YUI.add('editor-tests', function(Y) {
                 content: 'This is a test.',
                 use: ['node','selector-css3', 'dd-drag', 'dd-ddm']
             });
+
             Y.Assert.isInstanceOf(Y.Plugin.ContentEditable, iframe, 'ContentEditable instance can not be created');
 
             iframe.after('ready', function() {
                 iframeReady = true;
             });
+
             iframe.render();
 
             this.wait(function() {
@@ -113,6 +119,41 @@ YUI.add('editor-tests', function(Y) {
             inst.config.win = win;
 
         },
+
+        'test: empty _DOMPaste': function() {
+            var OT = 'ORIGINAL_TARGET',
+            fired = false;
+
+            var inst = iframe.getInstance(),
+            win = inst.config.win;
+
+            inst.config.win = {
+                clipboardData: {
+                    getData: function() {
+                        return 'foobar';
+                    }
+                }
+            };
+            iframe.on('dom:paste', function(e) {
+                fired = true;
+                Y.Assert.areSame(e.clipboardData.data, 'foobar');
+                Y.Assert.areSame(e.clipboardData.getData(), 'foobar');
+            });
+            iframe._DOMPaste({
+                _event: {
+
+                    target: OT,
+                    currentTarget: OT,
+
+                }
+            });
+
+            Y.Assert.isTrue(fired);
+
+            inst.config.win = win;
+
+        },
+
         test_frame_destroy: function() {
             iframe.destroy();
 
