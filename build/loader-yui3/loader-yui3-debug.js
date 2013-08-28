@@ -1220,11 +1220,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "features"
         ]
     },
-    "dom-deprecated": {
-        "requires": [
-            "dom-base"
-        ]
-    },
     "dom-screen": {
         "requires": [
             "dom-base",
@@ -1967,11 +1962,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "dom-core",
             "selector"
-        ]
-    },
-    "node-deprecated": {
-        "requires": [
-            "node-base"
         ]
     },
     "node-event-delegate": {
@@ -2942,7 +2932,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '3ce12467e165886f1c04cde07a5f5929';
+YUI.Env[Y.version].md5 = 'cfa4515b2834876c5dd3d163812e0187';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
