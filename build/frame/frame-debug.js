@@ -57,7 +57,7 @@ YUI.add('frame', function (Y, NAME) {
                 //if the src attr is different than the default, don't create the document
                 create = (this.get('src') === Frame.ATTRS.src.value),
                 extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
-            
+
             this._iframe = Y.one(Y.config.doc.createElement('iframe'));
             this._iframe.setAttrs(Frame.IFRAME_ATTRS);
 

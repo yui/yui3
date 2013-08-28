@@ -1931,7 +1931,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 //Don't set labelValues fix for #2533172 is available
                 //this.set("labelValues", labelValues, {src: internal});
             }
-            
+
             //Don't create the last label or tick.
             if(this.get("hideFirstMajorUnit"))
             {
