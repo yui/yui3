@@ -36,7 +36,7 @@ var getClassName = Y.ClassNameManager.getClassName,
 
     SCALE_X = "scaleX(",
     SCALE_Y = "scaleY(",
-    
+
     SCROLL_X = "scrollX",
     SCROLL_Y = "scrollY",
 
@@ -80,7 +80,7 @@ _classNames = ScrollbarsPlugin.CLASS_NAMES;
  * @static
  */
 ScrollbarsPlugin.NAME = 'pluginScrollViewScrollbars';
-    
+
 /**
  * The namespace on which the plugin will reside.
  *
@@ -114,7 +114,7 @@ ScrollbarsPlugin.SCROLLBAR_TEMPLATE = [
  * @static
  */
 ScrollbarsPlugin.ATTRS = {
-    
+
     /**
      * Vertical scrollbar node
      *
@@ -390,17 +390,17 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
                         middleChild.setStyle(dim, middleChildSize + PX);
                     }
                 }
-    
+
                 // Position Last Child
                 if (!horiz || !basic) {
 
                     lastChildPosition = scrollbarSize - lastChildSize;
-    
+
                     if(duration !== 0) {
                         transition = {
                             duration : duration
                         };
-                
+
                         if (NATIVE_TRANSITIONS) {
                             transition.transform = translate + lastChildPosition + PX_CLOSE;
                         } else {

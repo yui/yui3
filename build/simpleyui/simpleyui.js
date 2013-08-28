@@ -2539,7 +2539,7 @@ Y.cached = function (source, cache, refetch) {
         var key = arguments.length > 1 ?
                 Array.prototype.join.call(arguments, CACHED_DELIMITER) :
                 String(arg);
-        
+
         /*jshint eqeqeq: false*/
         if (!(key in cache) || (refetch && cache[key] == refetch)) {
             cache[key] = source.apply(source, arguments);
@@ -2882,8 +2882,8 @@ O.hasKey = owns;
  * as the order in which they were defined.
  *
  * This method is an alias for the native ES5 `Object.keys()` method if
- * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of 
- * `Object.keys()` have an inconsistency as they consider `prototype` to be 
+ * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of
+ * `Object.keys()` have an inconsistency as they consider `prototype` to be
  * enumerable, so a non-native shim is used to rectify the difference.
  *
  * @example
@@ -19493,8 +19493,8 @@ Transition.HIDE_TRANSITION = 'fadeOut';
 Transition.useNative = false;
 
 // Map transition properties to vendor-specific versions.
-if ('transition' in DOCUMENT_STYLE 
-    && 'transitionProperty' in DOCUMENT_STYLE 
+if ('transition' in DOCUMENT_STYLE
+    && 'transitionProperty' in DOCUMENT_STYLE
     && 'transitionDuration' in DOCUMENT_STYLE
     && 'transitionTimingFunction' in DOCUMENT_STYLE
     && 'transitionDelay' in DOCUMENT_STYLE) {

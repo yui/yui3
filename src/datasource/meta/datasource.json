@@ -15,63 +15,63 @@
         "submodules": {
             "datasource-arrayschema": {
                 "requires": [
-                    "datasource-local", 
-                    "plugin", 
+                    "datasource-local",
+                    "plugin",
                     "dataschema-array"
                 ]
-            }, 
+            },
             "datasource-cache": {
                 "requires": [
                     "datasource-local",
-                    "plugin", 
+                    "plugin",
                     "cache-base"
                 ]
-            }, 
+            },
             "datasource-function": {
                 "requires": [
                     "datasource-local"
                 ]
-            }, 
+            },
             "datasource-get": {
                 "requires": [
-                    "datasource-local", 
+                    "datasource-local",
                     "get"
                 ]
-            }, 
+            },
             "datasource-io": {
                 "requires": [
-                    "datasource-local", 
+                    "datasource-local",
                     "io-base"
                 ]
-            }, 
+            },
             "datasource-jsonschema": {
                 "requires": [
-                    "datasource-local", 
-                    "plugin", 
+                    "datasource-local",
+                    "plugin",
                     "dataschema-json"
                 ]
-            }, 
+            },
             "datasource-local": {
                 "requires": [
                     "base"
                 ]
-            }, 
+            },
             "datasource-polling": {
                 "requires": [
                     "datasource-local"
                 ]
-            }, 
+            },
             "datasource-textschema": {
                 "requires": [
-                    "datasource-local", 
-                    "plugin", 
+                    "datasource-local",
+                    "plugin",
                     "dataschema-text"
                 ]
-            }, 
+            },
             "datasource-xmlschema": {
                 "requires": [
-                    "datasource-local", 
-                    "plugin", 
+                    "datasource-local",
+                    "plugin",
                     "datatype-xml",
                     "dataschema-xml"
                 ]

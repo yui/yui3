@@ -83,4 +83,5 @@ Y.namespace('DataTable.Templates').Paginator = {
     perPage: engine.compile(perPage)
 };
 
+
 }, '@VERSION@', {"requires": ["template"]});

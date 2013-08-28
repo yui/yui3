@@ -3,7 +3,7 @@ Y.mix(Y.DOM, {
      * Sets the width of the element to the given size, regardless
      * of box model, border, padding, etc.
      * @method setWidth
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String|Number} size The pixel height to size to
      */
 
@@ -15,7 +15,7 @@ Y.mix(Y.DOM, {
      * Sets the height of the element to the given size, regardless
      * of box model, border, padding, etc.
      * @method setHeight
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String|Number} size The pixel height to size to
      */
 

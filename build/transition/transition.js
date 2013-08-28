@@ -75,8 +75,8 @@ Transition.HIDE_TRANSITION = 'fadeOut';
 Transition.useNative = false;
 
 // Map transition properties to vendor-specific versions.
-if ('transition' in DOCUMENT_STYLE 
-    && 'transitionProperty' in DOCUMENT_STYLE 
+if ('transition' in DOCUMENT_STYLE
+    && 'transitionProperty' in DOCUMENT_STYLE
     && 'transitionDuration' in DOCUMENT_STYLE
     && 'transitionTimingFunction' in DOCUMENT_STYLE
     && 'transitionDelay' in DOCUMENT_STYLE) {

@@ -4,10 +4,10 @@
         "submodules": {
             "querystring-parse": {
                 "requires": [
-                    "yui-base", 
+                    "yui-base",
                     "array-extras"
                 ]
-            }, 
+            },
             "querystring-stringify": {
                 "requires": [
                     "yui-base"

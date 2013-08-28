@@ -1,4 +1,4 @@
-    
+
     /**
      * Plugin for sortable to handle scrolling lists.
      * @module sortable
@@ -11,7 +11,7 @@
      * @constructor
      * @namespace Plugin
      */
-    
+
     var SortScroll = function() {
         SortScroll.superclass.constructor.apply(this, arguments);
     };

@@ -149,7 +149,7 @@ to `Y.dump(...)`, e.g. "{someObject 2}".  See the
 
 			if (!recurse) {
 				lidx = i - 1;
-			} 
+			}
 		}
 		// restore saved {block}s and escaped braces
 

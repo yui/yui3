@@ -171,7 +171,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
      * @static
      */
     CLASS_NAMES: CLASS_NAMES,
-    
+
     /**
      * Selector used to find buttons inside a ButtonGroup
      * @property BUTTON_SELECTOR
