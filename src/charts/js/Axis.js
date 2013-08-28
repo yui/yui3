@@ -447,7 +447,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.AxisBase], {
                 staticCoord = "y";
                 dynamicCoord = "x";
             }
-            
+
             labelData = this._getLabelData(
                 lineStart[staticCoord],
                 staticCoord,

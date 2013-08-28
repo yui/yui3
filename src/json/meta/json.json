@@ -4,7 +4,7 @@
             "json-parse",
             "json-stringify"
         ],
-        
+
         "plugins": {
             "json-parse-shim": {
                 "requires": [
@@ -25,7 +25,7 @@
                 }
             }
         },
-        
+
         "submodules": {
             "json-parse": {
                 "requires": [

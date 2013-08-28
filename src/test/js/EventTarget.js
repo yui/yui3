@@ -18,16 +18,16 @@ YUITest.EventTarget = function(){
     this._handlers = {};
 
 };
-    
+
 YUITest.EventTarget.prototype = {
 
     //restore prototype
     constructor: YUITest.EventTarget,
-            
+
     //-------------------------------------------------------------------------
     // Event Handling
     //-------------------------------------------------------------------------
-    
+
     /**
      * Adds a listener for a given event type.
      * @param {String} type The type of event to add a listener for.
@@ -42,7 +42,7 @@ YUITest.EventTarget.prototype = {
 
         this._handlers[type].push(listener);
     },
-    
+
     /**
      * Adds a listener for a given event type.
      * @param {String} type The type of event to add a listener for.
@@ -54,14 +54,14 @@ YUITest.EventTarget.prototype = {
     subscribe: function(type, listener){
         this.attach.apply(this, arguments);
     },
-    
+
     /**
      * Fires an event based on the passed-in object.
      * @param {Object|String} event An object with at least a 'type' attribute
      *      or a string indicating the event name.
      * @return {void}
      * @method fire
-     */    
+     */
     fire: function(event){
         if (typeof event == "string"){
             event = { type: event };
@@ -69,17 +69,17 @@ YUITest.EventTarget.prototype = {
         if (!event.target){
             event.target = this;
         }
-        
+
         if (!event.type){
             throw new Error("Event object missing 'type' property.");
         }
-        
+
         if (this._handlers[event.type] instanceof Array){
             var handlers = this._handlers[event.type];
             for (var i=0, len=handlers.length; i < len; i++){
                 handlers[i].call(this, event);
             }
-        }            
+        }
     },
 
     /**
@@ -98,9 +98,9 @@ YUITest.EventTarget.prototype = {
                     break;
                 }
             }
-        }            
+        }
     },
-    
+
     /**
      * Removes a listener for a given event type.
      * @param {String} type The type of event to remove a listener from.
@@ -110,7 +110,7 @@ YUITest.EventTarget.prototype = {
      * @deprecated
      */
     unsubscribe: function(type, listener){
-        this.detach.apply(this, arguments);          
-    }    
+        this.detach.apply(this, arguments);
+    }
 
 };

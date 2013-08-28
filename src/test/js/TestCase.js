@@ -11,19 +11,19 @@
 
 
 YUITest.TestCase = function (template) {
-    
+
     /*
      * Special rules for the test case. Possible subobjects
      * are fail, for tests that should fail, and error, for
      * tests that should throw an error.
      */
     this._should = {};
-    
+
     //copy over all properties from the template to this object
     for (var prop in template) {
         this[prop] = template[prop];
-    }    
-    
+    }
+
     //check for a valid name
     if (typeof this.name != "string") {
         this.name = YUITest.guid("testCase_");
@@ -31,12 +31,12 @@ YUITest.TestCase = function (template) {
 
 };
 
-        
-YUITest.TestCase.prototype = {  
+
+YUITest.TestCase.prototype = {
 
     //restore constructor
     constructor: YUITest.TestCase,
-    
+
     /**
      * Method to call from an async init method to
      * restart the test case. When called, returns a function
@@ -70,10 +70,10 @@ YUITest.TestCase.prototype = {
      * @method wait
      */
     wait : function (segment, delay){
-        
+
         var actualDelay = (typeof segment == "number" ? segment : delay);
         actualDelay = (typeof actualDelay == "number" ? actualDelay : 10000);
-    
+
 		if (typeof segment == "function"){
             throw new YUITest.Wait(segment, actualDelay);
         } else {
@@ -82,7 +82,7 @@ YUITest.TestCase.prototype = {
             }, actualDelay);
         }
     },
-    
+
     //-------------------------------------------------------------------------
     // Assertion Methods
     //-------------------------------------------------------------------------
@@ -98,18 +98,18 @@ YUITest.TestCase.prototype = {
         YUITest.Assert._increment();
         if (!condition){
             throw new YUITest.AssertionError(YUITest.Assert._formatMessage(message, "Assertion failed."));
-        }    
+        }
     },
-    
+
     /**
      * Forces an assertion error to occur. Shortcut for YUITest.Assert.fail().
      * @method fail
      * @param {String} message (Optional) The message to display with the failure.
      */
-    fail: function (message) {    
+    fail: function (message) {
         YUITest.Assert.fail(message);
     },
-    
+
     //-------------------------------------------------------------------------
     // Stub Methods
     //-------------------------------------------------------------------------
@@ -122,7 +122,7 @@ YUITest.TestCase.prototype = {
     init: function(){
         //noop
     },
-    
+
     /**
      * Function to run once after tests finish running.
      * This executes after the last call to tearDown().
@@ -140,13 +140,13 @@ YUITest.TestCase.prototype = {
     setUp : function () {
         //noop
     },
-    
+
     /**
      * Function to run after each test is executed.
      * @return {Void}
      * @method tearDown
      */
-    tearDown: function () {    
+    tearDown: function () {
         //noop
     }
 };
