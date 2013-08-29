@@ -82,6 +82,88 @@ YUI.add('editor-tests', function(Y) {
 
             iframe.delegate('click', function() {});
         },
+        'test delgation': function () {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    container: node,
+                    content: 'This is a test.<a href="#" class=".foo">Foo</a>',
+                    use: ['node','selector-css3', 'dd-drag', 'dd-ddm']
+                });
+
+            var inst = ce.delegate('click', function () {});
+            Y.Assert.isFalse(inst, 'Delegate does not return false when no instance is present.');
+
+            ce.render();
+
+            var del = ce.delegate('click', function (e) {}, node, 'a');
+            Y.Assert.isTrue(!!(del.evt && del.sub), 'Delgate returned does not have valid parameters');
+
+            var del_no_sel = ce.delegate('click', function (e) {}, 'a');
+            Y.Assert.isTrue(!!(del_no_sel.evt && del_no_sel.sub), 'Delgate returned does not have valid parameters');
+
+        },
+
+        'test rendering without a defined container': function () {
+            var ce = new Y.Plugin.ContentEditable({
+                    content: 'This is a test.',
+                    use: ['node', 'selector-css3', 'dd-drag', 'dd-ddm']
+                });
+
+            // test rendering to update container when _rendered is already true
+            ce._rendered = true;
+            ce.render();
+            Y.Assert.isFalse(!!(ce.get('container')), 'Container is not undefined');
+
+            // set _rendered back to false and continue with normal rendering
+            ce._rendered = false;
+            ce.render();
+
+            Y.Assert.isTrue(!!(ce.get('container')), 'Container was not created');
+            Y.Assert.isInstanceOf(Y.Node, ce.get('container'), 'Container created is not a node instance');
+
+            ce.get('container').remove(true);
+        },
+
+        'test getting id is accurate': function () {
+            var node = Y.Node.create('<div/>'),
+                ceID = new Y.Plugin.ContentEditable({
+                    content: 'This is a test.',
+                    container: node,
+                    use: ['node', 'selector-css3', 'dd-drag', 'dd-ddm'],
+                    id: 'myId'
+                }),
+                ce = new Y.Plugin.ContentEditable({
+                    content: 'This is a test.',
+                    container: node,
+                    use: ['node', 'selector-css3', 'dd-drag', 'dd-ddm']
+                });
+
+            ceID.render();
+            Y.Assert.areSame('myId', ceID.get('id'), 'Id is not held over');
+
+            ce.render();
+            Y.Assert.areSame('inlineedit-yui', ce.get('id').substr(0, ce.get('id').indexOf('_')), 'Id does not match prefix');
+        },
+
+        'test use after instantiation': function () {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    content: 'This is a test.',
+                    container: node
+                });
+
+            ce.render();
+
+            Y.Assert.isFalse(!!(Y.Paginator), 'Paginator is already loaded');
+
+            var Y2 = ce.use('paginator');
+
+            this.wait(function () {
+                Y.Assert.isTrue(!!(Y2.Paginator), 'Paginator was not loaded properly');
+            }, 1000);
+
+        },
+
         'test: _DOMPaste': function() {
             var OT = 'ORIGINAL_TARGET',
             fired = false;
@@ -592,18 +674,18 @@ YUI.add('editor-tests', function(Y) {
         },
         _should: {
             fail: {
-                test_selection_methods: (Y.UA.ie ? true : false)
+                'test_selection_methods': (Y.UA.ie ? true : false)
             },
             ignore: {
                 'test: EditorSelection': Y.UA.phantomjs,
-                test_selection_methods: Y.UA.phantomjs,
-                test_br_plugin: Y.UA.phantomjs
+                'test_selection_methods': Y.UA.phantomjs,
+                'test_br_plugin': Y.UA.phantomjs
             },
             error: { //These tests should error
-                test_selection_methods: (Y.UA.ie ? true : false),
-                test_double_plug: true,
-                test_double_plug2: true,
-                test_bidi_noplug: true
+                'test_selection_methods': (Y.UA.ie ? true : false),
+                'test_double_plug': true,
+                'test_double_plug2': true,
+                'test_bidi_noplug': true
             }
         }
     };
