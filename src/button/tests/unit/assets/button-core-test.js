@@ -10,7 +10,7 @@ YUI.add('button-core-test', function (Y) {
         name: 'Attributes',
 
         setUp : function () {
-            Y.one("#container").setContent('<button id="testButton">Hello</button>');
+            Y.one("#container").setContent('<button id="testButton"><div>Hello</div><div>World</div></button>');
             this.button = new Y.ButtonCore({
                 host: Y.one("#testButton")
             });
@@ -97,7 +97,13 @@ YUI.add('button-core-test', function (Y) {
             Assert.areEqual(1, eventsTriggered);
             button.set('label', 'somethingElse');
             Assert.areEqual(2, eventsTriggered);
-        }
+        },
+
+        'Getting the `label` attribute should respect nested HTML': function () {
+            var button = this.button;
+
+            Assert.areSame('<div>Hello</div><div>World</div>', button.get('label'));
+         }
     }));
     
     suite.add(new Y.Test.Case({

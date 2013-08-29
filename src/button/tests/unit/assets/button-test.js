@@ -179,6 +179,22 @@ suite.add(new Y.Test.Case({
 
         Assert.isFalse(cb.hasClass('yui3-button-hidden'));
         Assert.areSame(origStyle, cb.getStyle('display'));
+    },
+
+    'Rendering should preserve nested HTML': function() {
+
+        var Test = this,
+            content = '<div>foo</div><div>bar</div>',
+            button;
+
+        Y.one("#container").setContent('<button>' + content + '</button>');
+
+        button = new Y.Button({
+            srcNode: Y.one("#container button"),
+            render: true
+        });
+
+        Assert.areSame(content, button.get('label'));
     }
 }));
 
