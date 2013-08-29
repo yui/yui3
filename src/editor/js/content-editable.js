@@ -37,25 +37,25 @@
     Y.extend(ContentEditable, Y.Plugin.Base, {
 
         /**
+        * Internal reference set when render is called.
         * @private
         * @property _rendered
-        * @description Internal reference set when render is called.
         * @type Boolean
         */
         _rendered: null,
 
         /**
+        * Internal reference to the YUI instance bound to the element
         * @private
         * @property _instance
-        * @description Internal reference to the YUI instance bound to the element
         * @type YUI
         */
         _instance: null,
 
         /**
+        * Initializes the ContentEditable instance
         * @protected
         * @method initializer
-        * @description Initializes the ContentEditable instance
         */
         initializer: function() {
             var host = this.get(HOST);
@@ -73,9 +73,9 @@
         },
 
         /**
+        * Destroys the instance.
         * @protected
         * @method destructor
-        * @description Destroys the instance.
         */
         destructor: function() {
             new Y.EventHandle(this._eventHandles).detach();
@@ -84,13 +84,13 @@
         },
 
         /**
-        * @private
-        * @method _onDomEvent
-        * @description Generic handler for all DOM events fired by the Editor container. This handler
+        * Generic handler for all DOM events fired by the Editor container. This handler
         * takes the current EventFacade and augments it to fire on the ContentEditable host. It adds two new properties
         * to the EventFacade called frameX and frameY which adds the scroll and xy position of the ContentEditable element
         * to the original pageX and pageY of the event so external nodes can be positioned over the element.
         * In case of ContentEditable element these will be equal to pageX and pageY of the container.
+        * @private
+        * @method _onDomEvent
         * @param {Event.Facade} e
         */
         _onDomEvent: function(e) {
@@ -115,9 +115,9 @@
         },
 
         /**
+        * Simple pass thru handler for the paste event so we can do content cleanup
         * @private
         * @method _DOMPaste
-        * @description Simple pass thru handler for the paste event so we can do content cleanup
         * @param {Event.Facade} e
         */
         _DOMPaste: function(e) {
@@ -164,9 +164,9 @@
         },
 
         /**
+        * Binds DOM events and fires the ready event
         * @private
         * @method _defReadyFn
-        * @description Binds DOM events and fires the ready event
         */
         _defReadyFn: function() {
             var inst = this.getInstance(),
@@ -210,9 +210,9 @@
         },
 
         /**
+        * Called once the content is available in the ContentEditable element and calls the final use call
         * @private
         * @method _onContentReady
-        * @description Called once the content is available in the ContentEditable element and calls the final use call
         * on the internal instance so that the modules are loaded properly.
         */
         _onContentReady: function(event) {
@@ -249,9 +249,9 @@
         },
 
         /**
+        * Retrieves defaultblock value from host attribute
         * @private
         * @method _getDefaultBlock
-        * @description Retrieves defaultblock value from host attribute
         * @return {String}
         */
         _getDefaultBlock: function() {
@@ -259,9 +259,9 @@
         },
 
         /**
+        * Retrieves dir value from host attribute
         * @private
         * @method _getDir
-        * @description Retrieves dir value from host attribute
         * @return {String}
         */
         _getDir: function() {
@@ -269,9 +269,9 @@
         },
 
         /**
+        * Retrieves extracss value from host attribute
         * @private
         * @method _getExtraCSS
-        * @description Retrieves extracss value from host attribute
         * @return {String}
         */
         _getExtraCSS: function() {
@@ -279,9 +279,9 @@
         },
 
         /**
+        * Get the content from the container
         * @private
         * @method _getHTML
-        * @description Get the content from the container
         * @param {String} html The raw HTML from the container.
         * @return {String}
         */
@@ -298,9 +298,9 @@
         },
 
         /**
+        * Retrieves a value from host attribute
         * @private
         * @method _getHostValue
-        * @description Retrieves a value from host attribute
         * @param {attr} The attribute which value should be returned from the host
         * @return {String|Object}
         */
@@ -313,9 +313,9 @@
         },
 
         /**
+        * Set the content of the container
         * @private
         * @method _setHTML
-        * @description Set the content of the container
         * @param {String} html The raw HTML to set to the container.
         * @return {String}
         */
@@ -333,9 +333,9 @@
         },
 
         /**
+        * Set's the linked CSS on the instance.
         * @private
         * @method _setLinkedCSS
-        * @description Set's the linked CSS on the instance.
         * @param {css} String The linkedcss value
         * @return {String}
         */
@@ -353,9 +353,9 @@
         },
 
         /**
+        * Set's the dir (language direction) attribute on the container.
         * @private
         * @method _setDir
-        * @description Set's the dir (language direction) attribute on the container.
         * @param {value} String The language direction
         * @return {String}
         */
@@ -375,9 +375,9 @@
         },
 
         /**
+        * Set's the extra CSS on the instance.
         * @private
         * @method _setExtraCSS
-        * @description Set's the extra CSS on the instance.
         * @param {css} String The CSS style to be set as extra css
         * @return {String}
         */
@@ -404,9 +404,9 @@
         },
 
         /**
+        * Set's the language value on the instance.
         * @private
         * @method _setLang
-        * @description Set's the language value on the instance.
         * @param {value} String The language to be set
         * @return {String}
         */
@@ -426,10 +426,10 @@
         },
 
         /**
+        * Called from the first YUI instance that sets up the internal instance.
+        * This loads the content into the ContentEditable element and attaches the contentready event.
         * @private
         * @method _instanceLoaded
-        * @description Called from the first YUI instance that sets up the internal instance.
-        * This loads the content into the ContentEditable element and attaches the contentready event.
         * @param {YUI} inst The internal YUI instance bound to the ContentEditable element
         */
         _instanceLoaded: function(inst) {
@@ -449,9 +449,9 @@
         },
 
         /**
+        * Does some tricks on focus to set the proper cursor position.
         * @private
         * @method _handleFocus
-        * @description Does some tricks on focus to set the proper cursor position.
         */
         _handleFocus: function() {
             var inst = this.getInstance(),
@@ -512,9 +512,9 @@
 
         //BEGIN PUBLIC METHODS
         /**
-        * @method use
-        * @description This is a scoped version of the normal YUI.use method & is bound to the ContentEditable element
+        * This is a scoped version of the normal YUI.use method & is bound to the ContentEditable element
         * At setup, the inst.use method is mapped to this method.
+        * @method use
         */
         use: function() {
             Y.log('Calling augmented use after ready', 'info', 'contenteditable');
@@ -539,8 +539,8 @@
         },
 
         /**
+        * A delegate method passed to the instance's delegate method
         * @method delegate
-        * @description A delegate method passed to the instance's delegate method
         * @param {String} type The type of event to listen for
         * @param {Function} fn The method to attach
         * @param {String, Node} cont The container to act as a delegate, if no "sel" passed, the container is assumed.
@@ -566,8 +566,8 @@
         },
 
         /**
+        * Get a reference to the internal YUI instance.
         * @method getInstance
-        * @description Get a reference to the internal YUI instance.
         * @return {YUI} The internal YUI instance
         */
         getInstance: function() {
@@ -629,8 +629,8 @@
         },
 
         /**
+        * Set the focus to the container
         * @method focus
-        * @description Set the focus to the container
         * @param {Function} fn Callback function to execute after focus happens
         * @return {ContentEditable}
         * @chainable
@@ -641,8 +641,8 @@
             return this;
         },
         /**
+        * Show the iframe instance
         * @method show
-        * @description Show the iframe instance
         * @return {ContentEditable}
         * @chainable
         */
@@ -655,8 +655,8 @@
         },
 
         /**
+        * Hide the iframe instance
         * @method hide
-        * @description Hide the iframe instance
         * @return {ContentEditable}
         * @chainable
         */
@@ -668,18 +668,18 @@
     },
     {
         /**
+        * The throttle time for key events in IE
         * @static
         * @property THROTTLE_TIME
-        * @description The throttle time for key events in IE
         * @type Number
         * @default 100
         */
         THROTTLE_TIME: 100,
 
         /**
+        * The DomEvents that the frame automatically attaches and bubbles
         * @static
         * @property DOM_EVENTS
-        * @description The DomEvents that the frame automatically attaches and bubbles
         * @type Object
         */
         DOM_EVENTS: {
@@ -696,17 +696,17 @@
         },
 
         /**
+        * The template string used to create the ContentEditable element
         * @static
         * @property HTML
-        * @description The template string used to create the ContentEditable element
         * @type String
         */
         HTML: '<div></div>',
 
         /**
+        * The name of the class (contentEditable)
         * @static
         * @property NAME
-        * @description The name of the class (contentEditable)
         * @type String
         */
         NAME: 'contentEditable',
@@ -723,8 +723,8 @@
 
         ATTRS: {
             /**
+            * The default text direction for this ContentEditable element. Default: ltr
             * @attribute dir
-            * @description The default text direction for this ContentEditable element. Default: ltr
             * @type String
             */
             dir: {
@@ -735,8 +735,8 @@
             },
 
             /**
+            * The container to set contentEditable=true or to create on render.
             * @attribute container
-            * @description The container to set contentEditable=true or to create on render.
             * @type String/HTMLElement/Node
             */
             container: {
@@ -748,8 +748,8 @@
             },
 
             /**
+            * The string to inject as Editor content. Default '<br>'
             * @attribute content
-            * @description The string to inject as Editor content. Default '<br>'
             * @type String
             */
             content: {
@@ -761,8 +761,8 @@
             },
 
             /**
+            * The default tag to use for block level items, defaults to: p
             * @attribute defaultblock
-            * @description The default tag to use for block level items, defaults to: p
             * @type String
             */
             defaultblock: {
@@ -772,8 +772,8 @@
             },
 
             /**
+            * A string of CSS to add to the Head of the Editor
             * @attribute extracss
-            * @description A string of CSS to add to the Head of the Editor
             * @type String
             */
             extracss: {
@@ -784,8 +784,8 @@
             },
 
             /**
+            * Set the id of the new Node. (optional)
             * @attribute id
-            * @description Set the id of the new Node. (optional)
             * @type String
             * @writeonce
             */
@@ -801,8 +801,8 @@
             },
 
             /**
+            * The default language. Default: en-US
             * @attribute lang
-            * @description The default language. Default: en-US
             * @type String
             */
             lang: {
@@ -813,8 +813,8 @@
             },
 
             /**
+            * An array of url's to external linked style sheets
             * @attribute linkedcss
-            * @description An array of url's to external linked style sheets
             * @type String|Array
             */
             linkedcss: {
@@ -824,8 +824,8 @@
             },
 
             /**
+            * The Node instance of the container.
             * @attribute node
-            * @description The Node instance of the container.
             * @type Node
             */
             node: {
@@ -837,8 +837,8 @@
             },
 
             /**
+            * Array of modules to include in the scoped YUI instance at render time. Default: ['node-base', 'editor-selection', 'stylesheet']
             * @attribute use
-            * @description Array of modules to include in the scoped YUI instance at render time. Default: ['node-base', 'editor-selection', 'stylesheet']
             * @writeonce
             * @type Array
             */
