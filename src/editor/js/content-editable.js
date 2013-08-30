@@ -448,57 +448,6 @@
             }
         },
 
-        /**
-        * Does some tricks on focus to set the proper cursor position.
-        * @private
-        * @method _handleFocus
-        */
-        _handleFocus: function() {
-            var inst = this.getInstance(),
-                anchorNode, b, par, childNodes,
-                sel = new inst.EditorSelection();
-
-            if (sel.anchorNode) {
-                Y.log('_handleFocus being called..', 'info', 'contenteditable');
-
-                anchorNode = sel.anchorNode;
-
-                if (anchorNode.test(TAG_PARAGRAPH) && anchorNode.get(INNER_HTML) === EMPTY) {
-                    anchorNode = anchorNode.get(PARENT_NODE);
-                }
-
-                childNodes = anchorNode.get('childNodes');
-
-                if (childNodes.size()) {
-                    if (childNodes.item(0).test('br')) {
-                        sel.selectNode(anchorNode, true, false);
-                    } else if (childNodes.item(0).test(TAG_PARAGRAPH)) {
-                        anchorNode = childNodes.item(0).one('br.yui-cursor');
-                        if (anchorNode) {
-                            anchorNode = anchorNode.get(PARENT_NODE);
-                        }
-                        if (!anchorNode) {
-                            anchorNode = childNodes.item(0).get('firstChild');
-                        }
-                        if (!anchorNode) {
-                            anchorNode = childNodes.item(0);
-                        }
-                        if (anchorNode) {
-                            sel.selectNode(anchorNode, true, false);
-                        }
-                    } else {
-                        b = inst.one('br.yui-cursor');
-
-                        if (b) {
-                            par = b.get(PARENT_NODE);
-                            if (par) {
-                                sel.selectNode(par, true, false);
-                            }
-                        }
-                    }
-                }
-            }
-        },
 
         /**
         * Validates linkedcss property
