@@ -146,21 +146,84 @@ YUI.add('editor-tests', function(Y) {
         },
 
         'test use after instantiation': function () {
-            var node = Y.Node.create('<div/>'),
-                ce = new Y.Plugin.ContentEditable({
-                    content: 'This is a test.',
-                    container: node
-                });
+
+            var ce = new Y.Plugin.ContentEditable({
+                container: '#editor',
+                designMode: true,
+                content: 'This is a test.'
+            });
 
             ce.render();
 
-            Y.Assert.isFalse(!!(Y.Paginator), 'Paginator is already loaded');
+            this.wait(function() {
+                ce.use('paginator');
 
-            var Y2 = ce.use('paginator');
+                this.wait(function () {
+                    var inst = ce.getInstance();
 
-            this.wait(function () {
-                Y.Assert.isTrue(!!(Y2.Paginator), 'Paginator was not loaded properly');
-            }, 1000);
+                    Y.Assert.isInstanceOf(YUI, inst, 'Internal instance not created');
+                    Y.Assert.isObject(inst.Paginator, 'Paginator Not loaded inside the frame');
+                }, 1500);
+            },
+            1500);
+
+        },
+
+/*
+        'test handleFocus usage': function () {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    content: '<p>This is a test.</p>',
+                    container: node
+                });
+
+
+            Y.one('body').append(node);
+
+            ce.render();
+
+            ce._handleFocus();
+
+            ce.focus();
+        },
+*/
+
+        'test _setLinkedCSS works properly': function () {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    content: '<p><span class="pure-button">This</span> is a <b class="foo">test</b>.</p>',
+                    container: node,
+                    extracss: '.foo { font-weight: normal; color: black; background-color: yellow; }'
+                });
+
+            Y.one('body').append(node);
+
+            node.setStyles({
+                borderColor: 'red',
+                borderWidth: '1px',
+                borderStyle: 'solid'
+            });
+
+            ce.render();
+
+var url = 'http://yui.yahooapis.com/pure/0.2.1/pure-min.css';
+var cb = function (err) {
+    if (err) {
+        Y.log('Error loading CSS: ' + err[0].error, 'error');
+        return;
+    }
+
+    Y.log('file.css loaded successfully!');
+};
+
+            console.log(ce.getInstance());
+
+            //ce.getInstance().Get.css(url, cb);
+            ce._setLinkedCSS(url);
+
+            console.log('Add in linkedcss');
+
+            //ce.set('linkedcss', url);
 
         },
 
@@ -672,6 +735,82 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.isTrue(out[0].test('p'));
 
         },
+
+        'test _onDomEvent with forced incorrect data': function () {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    content: '<p>This is a test.</p>',
+                    container: node
+                });
+
+            ce.render();
+
+            ce.on('dom:keypress', function (e) {
+                Y.Assert.areEqual(100, e.pageX);
+                Y.Assert.areEqual(100, e.pageY);
+                Y.Assert.areEqual('keypress', e.type);
+            });
+            ce._onDomEvent({ pageX: 100, pageY: 100, type: 'keypress' });
+
+            ce.on('dom:click', function (e) {
+                Y.Assert.areEqual('click', e.type);
+            });
+            ce._onDomEvent({ pageX: 100, pageY: 100, type: 'click' });
+        },
+
+        'test extra content ready calls': function () {
+            var  node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    content: '<p>This is a test.</p>',
+                    container: node
+                }),
+                inst = ce.getInstance();
+
+            Y.Assert.isNull(inst);
+
+            ce._ready = true;
+            ce._onContentReady();
+
+            inst = ce.getInstance();
+            Y.Assert.isNull(inst);
+
+            ce._ready = false;
+            ce.render();
+
+            inst = ce.getInstance();
+            Y.Assert.isNotNull(inst);
+        },
+
+        'test extra css added after render': function () {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    content: '<p class="bar">This is a test.</p>',
+                    container: node
+                }),
+                color;
+
+            Y.one('body').append(node);
+            ce.render();
+
+            ce.set('extracss', '');
+
+            ce.set('extracss', '.bar { color: blue; }');
+
+            color = node.one('.bar').getStyle('color');
+            color = Y.Color.toHex(color);
+
+            Y.Assert.areSame('#0000FF', color);
+
+            ce.set('extracss', '.bar { color: red; }');
+
+            color = node.one('.bar').getStyle('color');
+            color = Y.Color.toHex(color);
+
+            Y.Assert.areSame('#FF0000', color);
+
+            node.remove(true);
+        },
+
         _should: {
             fail: {
                 'test_selection_methods': (Y.UA.ie ? true : false)
