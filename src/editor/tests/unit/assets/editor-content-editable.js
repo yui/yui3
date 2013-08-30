@@ -62,6 +62,7 @@ YUI.add('editor-tests', function(Y) {
             }, 1500);
 
         },
+
         test_frame_use: function() {
             var inst = iframe.getInstance(),
                 test = this;
@@ -263,6 +264,106 @@ var cb = function (err) {
 
             inst.config.win = win;
 
+        },
+        'test: _DOMPaste {empty}': function() {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    container: node,
+                    content: 'This is a test.<a href="#" class=".foo">Foo</a>',
+                    use: ['node','selector-css3', 'dd-drag', 'dd-ddm']
+                });
+
+            ce.render();
+
+            var OT = 'ORIGINAL_TARGET',
+                fired = false;
+
+            var inst = ce.getInstance(),
+                win = inst.config.win;
+
+            inst.config.win = {
+                clipboardData: {
+                    getData: function () {
+                        return '';
+                    },
+                    setData: function (key, val) {
+                        return true;
+                    }
+                }
+            };
+
+            ce.on('dom:paste', function(e) {
+                fired = true;
+                Y.Assert.areSame(e.clipboardData, null);
+            });
+
+            ce._DOMPaste({
+                _event: {
+                    target: OT,
+                    currentTarget: OT
+                }
+            });
+
+
+            Y.Assert.isTrue(fired);
+
+            inst.config.win = win;
+
+        },
+
+
+        'test: _DOMPaste {no data}': function() {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    container: node,
+                    content: 'This is a test.<a href="#" class=".foo">Foo</a>',
+                    use: ['node','selector-css3', 'dd-drag', 'dd-ddm']
+                });
+
+            ce.render();
+
+            var OT = 'ORIGINAL_TARGET',
+                fired = false;
+
+            var inst = ce.getInstance(),
+                win = inst.config.win;
+
+            inst.config.win = {
+            };
+
+            ce.on('dom:paste', function(e) {
+                fired = true;
+                Y.Assert.areSame(e.clipboardData, null);
+            });
+
+            ce._DOMPaste({
+                _event: {
+                    target: OT,
+                    currentTarget: OT
+                }
+            });
+
+            inst.config.win = {
+                clipboardData: {
+                    getData: function () {
+                        return '';
+                    },
+                    setData: function (key, val) {
+                        return false;
+                    }
+                }
+            };
+
+            ce._DOMPaste({
+                _event: {
+                    target: OT,
+                    currentTarget: OT
+                }
+            });
+
+            Y.Assert.isTrue(fired);
+
+            inst.config.win = win;
         },
 
         'test: empty _DOMPaste': function() {
