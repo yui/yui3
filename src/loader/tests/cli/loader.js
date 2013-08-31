@@ -1579,16 +1579,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dom-core")) > -1, "Module (dom-core) not found in sorted array");
         },
-     "Testing dom-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["dom-deprecated"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dom-deprecated")) > -1, "Module (dom-deprecated) not found in sorted array");
-        },
      "Testing dom-screen": function(data) {
             var loader = new Y.Loader({
                 require: ["dom-screen"],
@@ -2495,16 +2485,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-core")) > -1, "Module (node-core) not found in sorted array");
-        },
-     "Testing node-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["node-deprecated"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("node-deprecated")) > -1, "Module (node-deprecated) not found in sorted array");
         },
      "Testing node-event-delegate": function(data) {
             var loader = new Y.Loader({

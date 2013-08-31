@@ -54,7 +54,7 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 
     var _id = this._id;
     var oElement = Node.one(p_oElement);
-    
+
     var p_oAttributes = p_oAttributes || {};
 
     var flashVersion = p_oAttributes.version || FLASH_VER;
@@ -106,7 +106,7 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
         objstring += "</object>";
         //using innerHTML as setHTML/setContent causes some issues with ExternalInterface for IE versions of the player
         oElement.set("innerHTML", objstring);
-        
+
         this._swf = Node.one("#" + _id);
     } else {
         /**
@@ -168,19 +168,19 @@ SWF.prototype = {
      * @param func {String} the name of the function to call
      * @param args {Array} the set of arguments to pass to the function.
      */
-    
+
     callSWF: function (func, args)
     {
-    if (!args) { 
-          args= []; 
-    }   
+    if (!args) {
+          args= [];
+    }
         if (this._swf._node[func]) {
         return(this._swf._node[func].apply(this._swf._node, args));
         } else {
         return null;
         }
     },
-    
+
     /**
      * Public accessor to the unique name of the SWF instance.
      *

@@ -503,6 +503,10 @@ Y.mix(YUI.Env[Y.version].modules, {
             "nl",
             "pt-BR",
             "ru",
+            "zh-Hans",
+            "zh-Hans-CN",
+            "zh-Hant",
+            "zh-Hant-HK",
             "zh-HANT-TW"
         ],
         "requires": [
@@ -1212,11 +1216,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "oop",
             "features"
-        ]
-    },
-    "dom-deprecated": {
-        "requires": [
-            "dom-base"
         ]
     },
     "dom-screen": {
@@ -1961,11 +1960,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "dom-core",
             "selector"
-        ]
-    },
-    "node-deprecated": {
-        "requires": [
-            "node-base"
         ]
     },
     "node-event-delegate": {
@@ -2941,4 +2935,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '01c0825e3bf756f3f11c0a8e3458a859';
+YUI.Env[Y.version].md5 = '5fa9b73f55b268a8777d1d6a2c3b801d';

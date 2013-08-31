@@ -14,9 +14,9 @@ var documentElement = Y.config.doc.documentElement,
 
 Y.mix(Y_DOM, {
     /**
-     * Returns the text content of the HTMLElement. 
-     * @method getText         
-     * @param {HTMLElement} element The html element. 
+     * Returns the text content of the HTMLElement.
+     * @method getText
+     * @param {HTMLElement} element The html element.
      * @return {String} The text content of the element (includes text of any descending elements).
      */
     getText: (documentElement.textContent !== undefined) ?
@@ -35,10 +35,10 @@ Y.mix(Y_DOM, {
         },
 
     /**
-     * Sets the text content of the HTMLElement. 
-     * @method setText         
-     * @param {HTMLElement} element The html element. 
-     * @param {String} content The content to add. 
+     * Sets the text content of the HTMLElement.
+     * @method setText
+     * @param {HTMLElement} element The html element.
+     * @param {String} content The content to add.
      */
     setText: (documentElement.textContent !== undefined) ?
         function(element, content) {
@@ -62,7 +62,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Provides a normalized attribute interface. 
+     * Provides a normalized attribute interface.
      * @method setAttribute
      * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to set.
@@ -77,11 +77,11 @@ Y.mix(Y_DOM, {
 
 
     /**
-     * Provides a normalized attribute interface. 
+     * Provides a normalized attribute interface.
      * @method getAttribute
      * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to get.
-     * @return {String} The current value of the attribute. 
+     * @return {String} The current value of the attribute.
      */
     getAttribute: function(el, attr, ieAttr) {
         ieAttr = (ieAttr !== undefined) ? ieAttr : 2;
@@ -211,9 +211,9 @@ Y.mix(Y.DOM, {
      * Determines whether a DOM element has the given className.
      * @method hasClass
      * @for DOM
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String} className the class name to search for
-     * @return {Boolean} Whether or not the element has the given class. 
+     * @return {Boolean} Whether or not the element has the given class.
      */
     hasClass: function(node, className) {
         var re = Y.DOM._getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
@@ -222,22 +222,22 @@ Y.mix(Y.DOM, {
 
     /**
      * Adds a class name to a given DOM element.
-     * @method addClass         
+     * @method addClass
      * @for DOM
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String} className the class name to add to the class attribute
      */
     addClass: function(node, className) {
-        if (!Y.DOM.hasClass(node, className)) { // skip if already present 
+        if (!Y.DOM.hasClass(node, className)) { // skip if already present
             node.className = Y.Lang.trim([node.className, className].join(' '));
         }
     },
 
     /**
      * Removes a class name from a given element.
-     * @method removeClass         
+     * @method removeClass
      * @for DOM
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String} className the class name to remove from the class attribute
      */
     removeClass: function(node, className) {
@@ -248,15 +248,15 @@ Y.mix(Y.DOM, {
             if ( hasClass(node, className) ) { // in case of multiple adjacent
                 removeClass(node, className);
             }
-        }                 
+        }
     },
 
     /**
      * Replace a class with another class for a given element.
      * If no oldClassName is present, the newClassName is simply added.
-     * @method replaceClass  
+     * @method replaceClass
      * @for DOM
-     * @param {HTMLElement} element The DOM element 
+     * @param {HTMLElement} element The DOM element
      * @param {String} oldClassName the class name to be replaced
      * @param {String} newClassName the class name that will be replacing the old class name
      */
@@ -267,7 +267,7 @@ Y.mix(Y.DOM, {
 
     /**
      * If the className exists on the node it is removed, if it doesn't exist it is added.
-     * @method toggleClass  
+     * @method toggleClass
      * @for DOM
      * @param {HTMLElement} element The DOM element
      * @param {String} className the class name to be toggled
@@ -346,7 +346,7 @@ Y.mix(Y.DOM, {
                 hasComments = children.tags('!').length;
             }
         }
-        
+
         if (!children || (!children.tags && tag) || hasComments) {
             childNodes = children || node.childNodes;
             children = [];
@@ -363,11 +363,11 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Creates a new dom node using the provided markup string. 
+     * Creates a new dom node using the provided markup string.
      * @method create
      * @param {String} html The markup used to create the element
-     * @param {HTMLDocument} doc An optional document context 
-     * @return {HTMLElement|DocumentFragment} returns a single HTMLElement 
+     * @param {HTMLDocument} doc An optional document context
+     * @return {HTMLElement|DocumentFragment} returns a single HTMLElement
      * when creating one node, and a documentFragment when creating
      * multiple nodes.
      */
@@ -389,7 +389,7 @@ Y.mix(Y.DOM, {
             if (m && m[1]) {
                 creator = custom[m[1].toLowerCase()];
                 if (typeof creator === 'function') {
-                    create = creator; 
+                    create = creator;
                 } else {
                     tag = creator;
                 }
@@ -403,7 +403,7 @@ Y.mix(Y.DOM, {
                 if (nodes.length === 2) {
                     ret = nodes[0].nextSibling;
                 } else {
-                    nodes[0].parentNode.removeChild(nodes[0]); 
+                    nodes[0].parentNode.removeChild(nodes[0]);
                     ret = Y_DOM._nl2frag(nodes, doc);
                 }
             } else { // return multiple nodes as a fragment
@@ -420,7 +420,7 @@ Y.mix(Y.DOM, {
             i, len;
 
         if (nodes && (nodes.push || nodes.item) && nodes[0]) {
-            doc = doc || nodes[0].ownerDocument; 
+            doc = doc || nodes[0].ownerDocument;
             ret = doc.createDocumentFragment();
 
             if (nodes.item) { // convert live list to static array
@@ -428,17 +428,17 @@ Y.mix(Y.DOM, {
             }
 
             for (i = 0, len = nodes.length; i < len; i++) {
-                ret.appendChild(nodes[i]); 
+                ret.appendChild(nodes[i]);
             }
         } // else inline with log for minification
         return ret;
     },
 
     /**
-     * Inserts content in a node at the given location 
+     * Inserts content in a node at the given location
      * @method addHTML
      * @param {HTMLElement} node The node to insert into
-     * @param {HTMLElement | Array | HTMLCollection} content The content to be inserted 
+     * @param {HTMLElement | Array | HTMLCollection} content The content to be inserted
      * @param {HTMLElement} where Where to insert the content
      * If no "where" is given, content is appended to the node
      * Possible values for "where"
@@ -461,14 +461,14 @@ Y.mix(Y.DOM, {
             item,
             ret = content,
             newNode;
-            
+
 
         if (content != undefined) { // not null or undefined (maybe 0)
             if (content.nodeType) { // DOM node, just add it
                 newNode = content;
             } else if (typeof content == 'string' || typeof content == 'number') {
                 ret = newNode = Y_DOM.create(content);
-            } else if (content[0] && content[0].nodeType) { // array or collection 
+            } else if (content[0] && content[0].nodeType) { // array or collection
                 newNode = Y.config.doc.createDocumentFragment();
                 while ((item = content[i++])) {
                     newNode.appendChild(item); // append to fragment for insertion
@@ -524,7 +524,7 @@ Y.mix(Y.DOM, {
             parent = nodes[nodes.length - 1];
         }
 
-        if (node.parentNode) { 
+        if (node.parentNode) {
             node.parentNode.replaceChild(parent, node);
         }
         parent.appendChild(node);
@@ -615,11 +615,11 @@ if (!testFeature('innerhtml-div', 'tr')) {
 
         td: function(html, doc) {
             return Y_DOM.create('<tr>' + html + '</tr>', doc);
-        }, 
+        },
 
         col: function(html, doc) {
             return Y_DOM.create('<colgroup>' + html + '</colgroup>', doc);
-        }, 
+        },
 
         tbody: 'table'
     });
@@ -641,7 +641,7 @@ Y.mix(Y.DOM, {
      * Sets the width of the element to the given size, regardless
      * of box model, border, padding, etc.
      * @method setWidth
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String|Number} size The pixel height to size to
      */
 
@@ -653,7 +653,7 @@ Y.mix(Y.DOM, {
      * Sets the height of the element to the given size, regardless
      * of box model, border, padding, etc.
      * @method setHeight
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String|Number} size The pixel height to size to
      */
 

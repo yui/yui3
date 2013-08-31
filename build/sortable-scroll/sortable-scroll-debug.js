@@ -1,6 +1,6 @@
 YUI.add('sortable-scroll', function (Y, NAME) {
 
-    
+
     /**
      * Plugin for sortable to handle scrolling lists.
      * @module sortable
@@ -13,7 +13,7 @@ YUI.add('sortable-scroll', function (Y, NAME) {
      * @constructor
      * @namespace Plugin
      */
-    
+
     var SortScroll = function() {
         SortScroll.superclass.constructor.apply(this, arguments);
     };

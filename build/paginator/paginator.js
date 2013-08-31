@@ -67,8 +67,9 @@ YUI.add('paginator', function (Y, NAME) {
  */
 
 Y.Paginator = Y.mix(
-    Y.Base.create('pagiantor', Y.Base, [Y.Paginator.Core]),
+    Y.Base.create('paginator', Y.Base, [Y.Paginator.Core]),
     Y.Paginator
 );
+
 
 }, '@VERSION@', {"requires": ["paginator-core"]});

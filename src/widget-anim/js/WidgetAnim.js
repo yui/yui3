@@ -13,7 +13,7 @@ var BOUNDING_BOX = "boundingBox",
     HIDDEN = "hidden",
 
     RENDERED = "rendered",
-    
+
     START = "start",
     END = "end",
 
@@ -22,7 +22,7 @@ var BOUNDING_BOX = "boundingBox",
     ANIM_HIDE = "animHide",
 
     _UI_SET_VISIBLE = "_uiSetVisible",
-    
+
     ANIM_SHOW_CHANGE = "animShowChange",
     ANIM_HIDE_CHANGE = "animHideChange";
 
@@ -38,7 +38,7 @@ function WidgetAnim(config) {
 }
 
 /**
- * The namespace for the plugin. This will be the property on the widget, which will 
+ * The namespace for the plugin. This will be the property on the widget, which will
  * reference the plugin instance, when it's plugged in.
  *
  * @property NS
@@ -60,7 +60,7 @@ WidgetAnim.NS = "anim";
 WidgetAnim.NAME = "pluginWidgetAnim";
 
 /**
- * Pre-Packaged Animation implementations, which can be used for animShow and animHide attribute 
+ * Pre-Packaged Animation implementations, which can be used for animShow and animHide attribute
  * values.
  *
  * @property ANIMATIONS
@@ -74,7 +74,7 @@ WidgetAnim.ANIMATIONS = {
 
         var widget = this.get(HOST),
             boundingBox = widget.get(BOUNDING_BOX),
-            
+
             anim = new Y.Anim({
                 node: boundingBox,
                 to: { opacity: 1 },
@@ -105,7 +105,7 @@ WidgetAnim.ANIMATIONS = {
 };
 
 /**
- * Static property used to define the default attribute 
+ * Static property used to define the default attribute
  * configuration for the plugin.
  *
  * @property ATTRS
@@ -119,7 +119,7 @@ WidgetAnim.ATTRS = {
      *
      * @attribute duration
      * @type Number
-     * @default 0.2 (seconds 
+     * @default 0.2 (seconds
      */
     duration : {
         value: 0.2
@@ -127,7 +127,7 @@ WidgetAnim.ATTRS = {
 
     /**
      * Default animation instance used for showing the widget (opacity fade-in)
-     * 
+     *
      * @attribute animShow
      * @type Anim
      * @default WidgetAnim.ANIMATIONS.fadeIn
@@ -151,11 +151,11 @@ WidgetAnim.ATTRS = {
 Y.extend(WidgetAnim, Y.Plugin.Base, {
 
     /**
-     * The initializer lifecycle implementation. Modifies the host widget's 
+     * The initializer lifecycle implementation. Modifies the host widget's
      * visibililty implementation to add animation.
      *
      * @method initializer
-     * @param {Object} config The user configuration for the plugin  
+     * @param {Object} config The user configuration for the plugin
      */
     initializer : function(config) {
         this._bindAnimShow();
@@ -171,7 +171,7 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
     /**
      * The initializer destructor implementation. Responsible for destroying the configured
      * animation instances.
-     * 
+     *
      * @method destructor
      */
     destructor : function() {
@@ -228,7 +228,7 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
      */
     _bindAnimShow : function() {
         // Setup original visibility handling (for show) before starting to animate
-        this.get(ANIM_SHOW).on(START, 
+        this.get(ANIM_SHOW).on(START,
             Y.bind(function() {
                 this._uiSetVisible(true);
             }, this));
@@ -242,7 +242,7 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
      */
     _bindAnimHide : function() {
         // Setup original visibility handling (for hide) after completing animation
-        this.get(ANIM_HIDE).after(END, 
+        this.get(ANIM_HIDE).after(END,
             Y.bind(function() {
                 this._uiSetVisible(false);
             }, this));

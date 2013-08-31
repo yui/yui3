@@ -171,6 +171,22 @@ Y.Test.Runner.add(new Y.Test.Case({
         Y.Assert.areSame('qu ux', parsed.baz);
     },
 
+    'parseHash() should parse hash string properties with blank values': function () {
+        var parsed = Y.HistoryHash.parseHash('#foo=bar&baz=&qu=ux');
+
+        Y.Assert.isObject(parsed);
+        Y.Assert.areSame(3, Obj.size(parsed));
+        Y.Assert.areSame('', parsed.baz);
+        Y.Assert.areSame('ux', parsed.qu);
+
+        parsed = Y.HistoryHash.parseHash('#foo=bar&baz&qu=ux');
+
+        Y.Assert.isObject(parsed);
+        Y.Assert.areSame(3, Obj.size(parsed));
+        Y.Assert.areSame('', parsed.baz);
+        Y.Assert.areSame('ux', parsed.qu);
+    },
+
     'parseHash() should use the current hash if no argument is provided': function () {
         Y.HistoryHash.setHash('#foo=bar&kittens=cute');
 

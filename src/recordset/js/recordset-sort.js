@@ -117,8 +117,8 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
         },
 
     /**
-     * @description Method that all sort calls go through. 
-     * Sets up the lastSortProperties object with the details of the sort, and passes in parameters 
+     * @description Method that all sort calls go through.
+     * Sets up the lastSortProperties object with the details of the sort, and passes in parameters
      * to the "defaultSorter" or a custom specified sort function.
      *
      * @method _defSortFn
@@ -129,7 +129,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
         this.get("host")._items.sort(function(a, b) {
             return (e.sorter)(a, b, e.field, e.desc);
         });
-        
+
         this.set('lastSortProperties', e);
     },
 

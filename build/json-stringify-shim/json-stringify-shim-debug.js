@@ -96,7 +96,7 @@ function _string(s) {
         chr = _COMMON[i];
         s = s.replace(chr[0], chr[1]);
     }
-    
+
     // original function replace for the not-as-common set of chars
     return QUOTE + s.replace(_SPECIAL, _char) + QUOTE;
 }
@@ -228,5 +228,6 @@ Y.JSON.stringify = function _stringify(o,w,space) {
 // Property available for testing if the implementation being used
 // is native or a shim
 Y.JSON.stringify.isShim = true;
+
 
 }, '@VERSION@', {"requires": ["json-stringify"]});
