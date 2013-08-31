@@ -342,7 +342,6 @@
         _setLinkedCSS: function(css) {
             if (this._ready) {
                 var inst = this.getInstance();
-
                 inst.Get.css(css);
             } else {
                 //This needs to be wrapped in a contentready callback for the !_ready state
@@ -768,8 +767,8 @@
             */
             linkedcss: {
                 setter: '_setLinkedCSS',
-                validator: '_validateLinkedCSS',
-                value: ''
+                validator: '_validateLinkedCSS'
+                //value: ''
             },
 
             /**
