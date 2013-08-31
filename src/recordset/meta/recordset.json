@@ -14,7 +14,7 @@
 				"requires": [
 					"arraysort",
 					"recordset-base",
-					"plugin"					
+					"plugin"
 				]
 			},
 			"recordset-filter": {

@@ -9,7 +9,7 @@
  * Adds schema-parsing to the DataSource Utility.
  * @class DataSourceTextSchema
  * @extends Plugin.Base
- */    
+ */
 var DataSourceTextSchema = function() {
     DataSourceTextSchema.superclass.constructor.apply(this, arguments);
 };
@@ -93,5 +93,5 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
         return new Y.Do.Halt("DataSourceTextSchema plugin halted _defDataFn");
     }
 });
-    
+
 Y.namespace('Plugin').DataSourceTextSchema = DataSourceTextSchema;

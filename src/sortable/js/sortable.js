@@ -68,7 +68,7 @@
                 groups: del.dd.get('groups')
             });
             this.drop.on('drop:enter', Y.bind(this._onDropEnter, this));
-            
+
             del.on({
                 'drag:start': Y.bind(this._onDragStart, this),
                 'drag:end': Y.bind(this._onDragEnd, this),
@@ -152,7 +152,7 @@
                         Y.log('No delegate parent found', 'error', 'sortable');
                         return;
                     }
-                    
+
                     Y.DD.DDM.getDrop(e.drag.get(NODE)).addToGroup(dropsort.get(ID));
 
                     //Same List
@@ -266,7 +266,7 @@
             if (this[method]) {
                 this[method](sel);
             }
-            
+
             return this;
         },
         /**

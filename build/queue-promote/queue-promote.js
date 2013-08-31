@@ -10,7 +10,7 @@ YUI.add('queue-promote', function (Y, NAME) {
 Y.mix(Y.Queue.prototype, {
     /**
      * Returns the current index in the queue of the specified item
-     * 
+     *
      * @method indexOf
      * @param needle {MIXED} the item to search for
      * @return {Number} the index of the item or -1 if not found

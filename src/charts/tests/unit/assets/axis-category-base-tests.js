@@ -207,6 +207,28 @@ YUI.add('axis-category-base-tests', function(Y) {
                     'The axis.getKeyValueAt("date", ' + i + ') method should return a value of ' + this.dateValues[i] + '.'
                 );
             }
+        },
+
+        "test: _getCoordFromValue()" : function() {
+            var axis = this.axis,
+                min = 0,
+                max = 10,
+                dataValue = 4,
+                length = 400,
+                offset = 5,
+                testResult = ((dataValue - min) * (length/(max.valueOf() - min.valueOf()))) + offset,
+                result;
+            result = axis._getCoordFromValue.apply(
+                axis, 
+                [min, max, length, dataValue, offset]
+            );
+            Y.Assert.isNumber(result, "The value should be a number.");
+            Y.Assert.areEqual(testResult, result, "The result should be " + testResult + ".");
+            result = axis._getCoordFromValue.apply(
+                axis, 
+                [min, max, length, null, offset]
+            );
+            Y.Assert.isNaN(result, "The value should not be a number.");
         }
     });
     

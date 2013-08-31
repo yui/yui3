@@ -25,6 +25,20 @@ suite.add(new Y.Test.Case({
 
     },
 
+    'test event name': function () {
+        var test = this,
+            pg = new Y.Paginator({
+                itemsPerPage: 10,
+                totalItems: 100
+            });
+
+        pg.after('pageChange', function (e) {
+            Y.Assert.areSame('paginator:pageChange', e.type);
+        });
+
+        pg.nextPage();
+    },
+
     'test direct paging': function () {
         var pg = new Y.Paginator({
                 itemsPerPage: 10,

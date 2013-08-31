@@ -86,7 +86,7 @@ var Lang = Y.Lang,
             response = Y.DataSchema.Text.apply(schema, data);
 
             // response.results[0] is { fruit: "BANANA", color: "yellow" }
-         
+
         @method apply
         @param {Object} schema Schema to apply.  Supported configuration
             properties are:

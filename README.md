@@ -1,6 +1,8 @@
 YUI 3: The Yahoo! User Interface Library
 ========================================
 
+[![Build Status](https://secure.travis-ci.org/yui/yui3.png?branch=master)](http://travis-ci.org/yui/yui3)
+
 YUI is a free, open source JavaScript and CSS framework for building richly
 interactive web applications. YUI is provided under a BSD license and is
 available on GitHub for forking and contribution.
@@ -12,12 +14,11 @@ Links
   * [Documentation](http://yuilibrary.com/yui/docs/)
   * [Blog](http://yuiblog.com)
   * [Latest Production Release](http://yuilibrary.com/download/yui3/)
-  * [Forums](http://yuilibrary.com/forum/)
+  * [Forums](https://groups.google.com/forum/#!forum/yui-support)
   * [License](http://yuilibrary.com/license/)
-  * [Contributor Info](https://github.com/yui/yui3/wiki/Contributing.md)
+  * [Contributor Info](https://github.com/yui/yui3/blob/master/CONTRIBUTING.md)
   * [Contributor Mailing List](https://groups.google.com/forum/?fromgroups#!forum/yui-contrib)
   * [Report a Bug](http://yuilibrary.com/yui/docs/tutorials/report-bugs/)
-  * [![Build Status](https://secure.travis-ci.org/yui/yui3.png?branch=master)](http://travis-ci.org/yui/yui3)
   * [Shifter, for building YUI](http://yui.github.com/shifter/)
 
 

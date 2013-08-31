@@ -182,7 +182,7 @@ ATTRS[RENDERED] = {
  * @writeOnce
  */
 ATTRS[BOUNDING_BOX] = {
-    value:null,
+    valueFn:"_defaultBB",
     setter: "_setBB",
     writeOnce: TRUE
 };
@@ -769,6 +769,25 @@ Y.extend(Widget, Y.Base, {
      */
     _setCB: function(node) {
         return (this.CONTENT_TEMPLATE === null) ? this.get(BOUNDING_BOX) : this._setBox(null, node, this.CONTENT_TEMPLATE, false);
+    },
+
+    /**
+     * Returns the default value for the boundingBox attribute.
+     *
+     * For the Widget class, this will most commonly be null (resulting in a new
+     * boundingBox node instance being created), unless a srcNode was provided
+     * and CONTENT_TEMPLATE is null, in which case it will be srcNode.
+     * This behavior was introduced in @VERSION@ to accomodate single-box widgets
+     * whose BB & CB both point to srcNode (e.g. Y.Button).
+     *
+     * @method _defaultBB
+     * @protected
+     */
+    _defaultBB : function() {
+        var node = this.get(SRC_NODE),
+            nullCT = (this.CONTENT_TEMPLATE === null);
+
+        return ((node && nullCT) ? node : null);
     },
 
     /**
