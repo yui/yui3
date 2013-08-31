@@ -754,6 +754,17 @@ suite.add(new Y.Test.Case({
 
         Y.Assert.areSame(td, this.view.tbodyNode.one('td'));
         Y.Assert.areSame('5', this.view.tbodyNode.one('td').get('text'));
+    },
+
+    "changing Model should file change event": function () {
+        var test = this,
+            v = this.view;
+
+        v.after('contentUpdate', function (e) {
+            Y.Assert.areSame('tableBody:contentUpdate', e.type);
+        });
+
+        v.get('modelList').item(0).set('a', 5);
     }
 
 
