@@ -719,7 +719,7 @@ Y.mix(Table.prototype, {
                     if (isArray(val)) {
                         copy[key] = val.slice();
                     } else if (isObject(val, true)) {
-                        i = arrayIndex(val, known);
+                        i = arrayIndex(known, val);
 
                         copy[key] = i === -1 ? copyObj(val) : knownCopies[i];
                     } else {
