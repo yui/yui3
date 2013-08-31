@@ -825,8 +825,7 @@ Y.mix(Y_Node.prototype, {
     },
 
     _isHidden: function() {
-        return this._node.hasAttribute('hidden')
-            || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
+        return  this.hasAttribute('hidden') || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
     },
 
     /**
@@ -1004,7 +1003,7 @@ if (Y.config.doc.createElement('form').elements.nodeType) {
 
 /**
  * Provides methods for managing custom Node data.
- * 
+ *
  * @module node
  * @main node
  * @submodule node-data
@@ -1138,7 +1137,7 @@ Y.mix(Y.NodeList.prototype, {
     * @see Node
     * @param {string} name Optional name of the data field to retrieve.
     * If no name is given, all data is returned.
-    * @return {Array} An array containing all of the data for each Node instance. 
+    * @return {Array} An array containing all of the data for each Node instance.
     * or an object hash of all fields.
     */
     getData: function(name) {

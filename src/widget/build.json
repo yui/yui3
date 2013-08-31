@@ -1,11 +1,6 @@
 {
     "name": "widget",
     "builds": {
-        "widget-locale": {
-            "jsfiles": [
-                "WidgetLocale.js"
-            ]
-        },
         "widget-uievents": {
             "jsfiles": [
                 "WidgetUIEvents.js"

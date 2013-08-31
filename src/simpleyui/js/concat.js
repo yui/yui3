@@ -2878,7 +2878,7 @@ Y.cached = function (source, cache, refetch) {
         var key = arguments.length > 1 ?
                 Array.prototype.join.call(arguments, CACHED_DELIMITER) :
                 String(arg);
-        
+
         /*jshint eqeqeq: false*/
         if (!(key in cache) || (refetch && cache[key] == refetch)) {
             cache[key] = source.apply(source, arguments);
@@ -3221,8 +3221,8 @@ O.hasKey = owns;
  * as the order in which they were defined.
  *
  * This method is an alias for the native ES5 `Object.keys()` method if
- * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of 
- * `Object.keys()` have an inconsistency as they consider `prototype` to be 
+ * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of
+ * `Object.keys()` have an inconsistency as they consider `prototype` to be
  * enumerable, so a non-native shim is used to rectify the difference.
  *
  * @example
@@ -6040,6 +6040,31 @@ var L            = Y.Lang,
     hasOwn   = OP.hasOwnProperty,
     toString = OP.toString;
 
+/**
+Calls the specified _action_ method on _o_ if it exists. Otherwise, if _o_ is an
+array, calls the _action_ method on `Y.Array`, or if _o_ is an object, calls the
+_action_ method on `Y.Object`.
+
+If _o_ is an array-like object, it will be coerced to an array.
+
+This is intended to be used with array/object iteration methods that share
+signatures, such as `each()`, `some()`, etc.
+
+@method dispatch
+@param {Object} o Array or object to dispatch to.
+@param {Function} f Iteration callback.
+    @param {Mixed} f.value Value being iterated.
+    @param {Mixed} f.key Current object key or array index.
+    @param {Mixed} f.object Object or array being iterated.
+@param {Object} c `this` object to bind the iteration callback to.
+@param {Boolean} proto If `true`, prototype properties of objects will be
+    iterated.
+@param {String} action Function name to be dispatched on _o_. For example:
+    'some', 'each', etc.
+@private
+@return {Mixed} Returns the value returned by the chosen iteration action, which
+    varies.
+**/
 function dispatch(o, f, c, proto, action) {
     if (o && o[action] && o !== Y) {
         return o[action].call(o, f, c);
@@ -6853,13 +6878,13 @@ var NODE_TYPE = 'nodeType',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     EMPTY_ARRAY = [],
-    
+
     // IE < 8 throws on node.contains(textNode)
     supportsContainsTextNode = (function() {
         var node = Y.config.doc.createElement('div'),
             textNode = node.appendChild(Y.config.doc.createTextNode('')),
             result = false;
-        
+
         try {
             result = node.contains(textNode);
         } catch(e) {}
@@ -6867,10 +6892,10 @@ var NODE_TYPE = 'nodeType',
         return result;
     })(),
 
-/** 
+/**
  * The DOM utility provides a cross-browser abtraction layer
  * normalizing DOM tasks, and adds extra helper functionality
- * for other common tasks. 
+ * for other common tasks.
  * @module dom
  * @main dom
  * @submodule dom-base
@@ -6883,14 +6908,14 @@ var NODE_TYPE = 'nodeType',
  * @class DOM
  *
  */
-    
+
 Y_DOM = {
     /**
      * Returns the HTMLElement with the given ID (Wrapper for document.getElementById).
-     * @method byId         
-     * @param {String} id the id attribute 
-     * @param {Object} doc optional The document to search. Defaults to current document 
-     * @return {HTMLElement | null} The HTMLElement with the id, or null if none found. 
+     * @method byId
+     * @param {String} id the id attribute
+     * @param {Object} doc optional The document to search. Defaults to current document
+     * @return {HTMLElement | null} The HTMLElement with the id, or null if none found.
      */
     byId: function(id, doc) {
         // handle dupe IDs and IE name collision
@@ -6901,7 +6926,7 @@ Y_DOM = {
         var id;
         // HTMLElement returned from FORM when INPUT name === "id"
         // IE < 8: HTMLCollection returned when INPUT id === "id"
-        // via both getAttribute and form.id 
+        // via both getAttribute and form.id
         if (node.id && !node.id.tagName && !node.id.item) {
             id = node.id;
         } else if (node.attributes && node.attributes.id) {
@@ -6926,8 +6951,8 @@ Y_DOM = {
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
      * If no function is given, the parentNode is returned.
-     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
-     * @return {HTMLElement | null} The matching DOM node or null if none found. 
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan
+     * @return {HTMLElement | null} The matching DOM node or null if none found.
      */
     ancestor: function(element, fn, testSelf, stopFn) {
         var ret = null;
@@ -6945,7 +6970,7 @@ Y_DOM = {
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
      * If no function is given, all ancestors are returned.
-     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan
      * @return {Array} An array containing all matching DOM nodes.
      */
     ancestors: function(element, fn, testSelf, stopFn) {
@@ -7010,7 +7035,7 @@ Y_DOM = {
         } else if (element[COMPARE_DOCUMENT_POSITION]) {
             // Match contains behavior (node.contains(node) === true).
             // Needed for Firefox < 4.
-            if (element === needle || !!(element[COMPARE_DOCUMENT_POSITION](needle) & 16)) { 
+            if (element === needle || !!(element[COMPARE_DOCUMENT_POSITION](needle) & 16)) {
                 ret = true;
             }
         } else {
@@ -7025,7 +7050,7 @@ Y_DOM = {
      * @method inDoc
      * @param {HTMLElement} element The containing html element.
      * @param {HTMLElement} doc optional The document to check.
-     * @return {Boolean} Whether or not the element is attached to the document. 
+     * @return {Boolean} Whether or not the element is attached to the document.
      */
     inDoc: function(element, doc) {
         var ret = false,
@@ -7076,9 +7101,9 @@ Y_DOM = {
                     // filter out matches on node.name
                     // and element.id as reference to element with id === 'id'
                     for (i = 0; node = nodes[i++];) {
-                        if (node.id === id  || 
+                        if (node.id === id  ||
                                 (node.attributes && node.attributes.id &&
-                                node.attributes.id.value === id)) { 
+                                node.attributes.id.value === id)) {
                             ret.push(node);
                         }
                     }
@@ -7087,7 +7112,7 @@ Y_DOM = {
         } else {
             ret = [Y_DOM._getDoc(root).getElementById(id)];
         }
-    
+
         return ret;
    },
 
@@ -7143,7 +7168,7 @@ Y_DOM = {
 
 // TODO: move to Lang?
     /**
-     * Memoizes dynamic regular expressions to boost runtime performance. 
+     * Memoizes dynamic regular expressions to boost runtime performance.
      * @method _getRegExp
      * @private
      * @param {String} str The string to convert to a regular expression.
@@ -7165,7 +7190,7 @@ Y_DOM = {
      * @method _getDoc
      * @private
      * @param {HTMLElement} element optional Target element.
-     * @return {Object} The document for the given element or the default document. 
+     * @return {Object} The document for the given element or the default document.
      */
     _getDoc: function(element) {
         var doc = Y.config.doc;
@@ -7184,7 +7209,7 @@ Y_DOM = {
      * @method _getWin
      * @private
      * @param {HTMLElement} element optional Target element.
-     * @return {Object} The window for the given element or the default window. 
+     * @return {Object} The window for the given element or the default window.
      */
     _getWin: function(element) {
         var doc = Y_DOM._getDoc(element);
@@ -7216,10 +7241,10 @@ Y_DOM = {
 
         if (!id) {
             id = Y.stamp(el);
-            el.id = id; 
-        }   
+            el.id = id;
+        }
 
-        return id; 
+        return id;
     }
 };
 
@@ -7244,9 +7269,9 @@ var documentElement = Y.config.doc.documentElement,
 
 Y.mix(Y_DOM, {
     /**
-     * Returns the text content of the HTMLElement. 
-     * @method getText         
-     * @param {HTMLElement} element The html element. 
+     * Returns the text content of the HTMLElement.
+     * @method getText
+     * @param {HTMLElement} element The html element.
      * @return {String} The text content of the element (includes text of any descending elements).
      */
     getText: (documentElement.textContent !== undefined) ?
@@ -7265,10 +7290,10 @@ Y.mix(Y_DOM, {
         },
 
     /**
-     * Sets the text content of the HTMLElement. 
-     * @method setText         
-     * @param {HTMLElement} element The html element. 
-     * @param {String} content The content to add. 
+     * Sets the text content of the HTMLElement.
+     * @method setText
+     * @param {HTMLElement} element The html element.
+     * @param {String} content The content to add.
      */
     setText: (documentElement.textContent !== undefined) ?
         function(element, content) {
@@ -7292,7 +7317,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Provides a normalized attribute interface. 
+     * Provides a normalized attribute interface.
      * @method setAttribute
      * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to set.
@@ -7308,11 +7333,11 @@ Y.mix(Y_DOM, {
 
 
     /**
-     * Provides a normalized attribute interface. 
+     * Provides a normalized attribute interface.
      * @method getAttribute
      * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to get.
-     * @return {String} The current value of the attribute. 
+     * @return {String} The current value of the attribute.
      */
     getAttribute: function(el, attr, ieAttr) {
         ieAttr = (ieAttr !== undefined) ? ieAttr : 2;
@@ -7444,9 +7469,9 @@ Y.mix(Y.DOM, {
      * Determines whether a DOM element has the given className.
      * @method hasClass
      * @for DOM
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String} className the class name to search for
-     * @return {Boolean} Whether or not the element has the given class. 
+     * @return {Boolean} Whether or not the element has the given class.
      */
     hasClass: function(node, className) {
         var re = Y.DOM._getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
@@ -7455,22 +7480,22 @@ Y.mix(Y.DOM, {
 
     /**
      * Adds a class name to a given DOM element.
-     * @method addClass         
+     * @method addClass
      * @for DOM
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String} className the class name to add to the class attribute
      */
     addClass: function(node, className) {
-        if (!Y.DOM.hasClass(node, className)) { // skip if already present 
+        if (!Y.DOM.hasClass(node, className)) { // skip if already present
             node.className = Y.Lang.trim([node.className, className].join(' '));
         }
     },
 
     /**
      * Removes a class name from a given element.
-     * @method removeClass         
+     * @method removeClass
      * @for DOM
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String} className the class name to remove from the class attribute
      */
     removeClass: function(node, className) {
@@ -7481,15 +7506,15 @@ Y.mix(Y.DOM, {
             if ( hasClass(node, className) ) { // in case of multiple adjacent
                 removeClass(node, className);
             }
-        }                 
+        }
     },
 
     /**
      * Replace a class with another class for a given element.
      * If no oldClassName is present, the newClassName is simply added.
-     * @method replaceClass  
+     * @method replaceClass
      * @for DOM
-     * @param {HTMLElement} element The DOM element 
+     * @param {HTMLElement} element The DOM element
      * @param {String} oldClassName the class name to be replaced
      * @param {String} newClassName the class name that will be replacing the old class name
      */
@@ -7501,7 +7526,7 @@ Y.mix(Y.DOM, {
 
     /**
      * If the className exists on the node it is removed, if it doesn't exist it is added.
-     * @method toggleClass  
+     * @method toggleClass
      * @for DOM
      * @param {HTMLElement} element The DOM element
      * @param {String} className the class name to be toggled
@@ -7580,7 +7605,7 @@ Y.mix(Y.DOM, {
                 hasComments = children.tags('!').length;
             }
         }
-        
+
         if (!children || (!children.tags && tag) || hasComments) {
             childNodes = children || node.childNodes;
             children = [];
@@ -7597,11 +7622,11 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Creates a new dom node using the provided markup string. 
+     * Creates a new dom node using the provided markup string.
      * @method create
      * @param {String} html The markup used to create the element
-     * @param {HTMLDocument} doc An optional document context 
-     * @return {HTMLElement|DocumentFragment} returns a single HTMLElement 
+     * @param {HTMLDocument} doc An optional document context
+     * @return {HTMLElement|DocumentFragment} returns a single HTMLElement
      * when creating one node, and a documentFragment when creating
      * multiple nodes.
      */
@@ -7623,7 +7648,7 @@ Y.mix(Y.DOM, {
             if (m && m[1]) {
                 creator = custom[m[1].toLowerCase()];
                 if (typeof creator === 'function') {
-                    create = creator; 
+                    create = creator;
                 } else {
                     tag = creator;
                 }
@@ -7637,7 +7662,7 @@ Y.mix(Y.DOM, {
                 if (nodes.length === 2) {
                     ret = nodes[0].nextSibling;
                 } else {
-                    nodes[0].parentNode.removeChild(nodes[0]); 
+                    nodes[0].parentNode.removeChild(nodes[0]);
                     ret = Y_DOM._nl2frag(nodes, doc);
                 }
             } else { // return multiple nodes as a fragment
@@ -7654,7 +7679,7 @@ Y.mix(Y.DOM, {
             i, len;
 
         if (nodes && (nodes.push || nodes.item) && nodes[0]) {
-            doc = doc || nodes[0].ownerDocument; 
+            doc = doc || nodes[0].ownerDocument;
             ret = doc.createDocumentFragment();
 
             if (nodes.item) { // convert live list to static array
@@ -7662,17 +7687,17 @@ Y.mix(Y.DOM, {
             }
 
             for (i = 0, len = nodes.length; i < len; i++) {
-                ret.appendChild(nodes[i]); 
+                ret.appendChild(nodes[i]);
             }
         } // else inline with log for minification
         return ret;
     },
 
     /**
-     * Inserts content in a node at the given location 
+     * Inserts content in a node at the given location
      * @method addHTML
      * @param {HTMLElement} node The node to insert into
-     * @param {HTMLElement | Array | HTMLCollection} content The content to be inserted 
+     * @param {HTMLElement | Array | HTMLCollection} content The content to be inserted
      * @param {HTMLElement} where Where to insert the content
      * If no "where" is given, content is appended to the node
      * Possible values for "where"
@@ -7695,14 +7720,14 @@ Y.mix(Y.DOM, {
             item,
             ret = content,
             newNode;
-            
+
 
         if (content != undefined) { // not null or undefined (maybe 0)
             if (content.nodeType) { // DOM node, just add it
                 newNode = content;
             } else if (typeof content == 'string' || typeof content == 'number') {
                 ret = newNode = Y_DOM.create(content);
-            } else if (content[0] && content[0].nodeType) { // array or collection 
+            } else if (content[0] && content[0].nodeType) { // array or collection
                 newNode = Y.config.doc.createDocumentFragment();
                 while ((item = content[i++])) {
                     newNode.appendChild(item); // append to fragment for insertion
@@ -7758,7 +7783,7 @@ Y.mix(Y.DOM, {
             parent = nodes[nodes.length - 1];
         }
 
-        if (node.parentNode) { 
+        if (node.parentNode) {
             node.parentNode.replaceChild(parent, node);
         }
         parent.appendChild(node);
@@ -7849,11 +7874,11 @@ if (!testFeature('innerhtml-div', 'tr')) {
 
         td: function(html, doc) {
             return Y_DOM.create('<tr>' + html + '</tr>', doc);
-        }, 
+        },
 
         col: function(html, doc) {
             return Y_DOM.create('<colgroup>' + html + '</colgroup>', doc);
-        }, 
+        },
 
         tbody: 'table'
     });
@@ -7875,7 +7900,7 @@ Y.mix(Y.DOM, {
      * Sets the width of the element to the given size, regardless
      * of box model, border, padding, etc.
      * @method setWidth
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String|Number} size The pixel height to size to
      */
 
@@ -7887,7 +7912,7 @@ Y.mix(Y.DOM, {
      * Sets the height of the element to the given size, regardless
      * of box model, border, padding, etc.
      * @method setHeight
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {String|Number} size The pixel height to size to
      */
 
@@ -8411,7 +8436,7 @@ Y.Color = {
 YUI.add('dom-style', function (Y, NAME) {
 
 (function(Y) {
-/** 
+/**
  * Add style management functionality to DOM.
  * @module dom
  * @submodule dom-style
@@ -8465,8 +8490,8 @@ Y.mix(Y_DOM, {
      * Sets a style property for a given element.
      * @method setStyle
      * @param {HTMLElement} An HTMLElement to apply the style to.
-     * @param {String} att The style property to set. 
-     * @param {String|Number} val The value. 
+     * @param {String} att The style property to set.
+     * @param {String|Number} val The value.
      */
     setStyle: function(node, att, val, style) {
         style = style || node.style;
@@ -8490,7 +8515,7 @@ Y.mix(Y_DOM, {
                 att = 'cssText';
                 val = '';
             }
-            style[att] = val; 
+            style[att] = val;
         }
     },
 
@@ -8498,7 +8523,7 @@ Y.mix(Y_DOM, {
      * Returns the current style value for the given property.
      * @method getStyle
      * @param {HTMLElement} An HTMLElement to get the style from.
-     * @param {String} att The style property to get. 
+     * @param {String} att The style property to get.
      */
     getStyle: function(node, att, style) {
         style = style || node.style;
@@ -8525,8 +8550,8 @@ Y.mix(Y_DOM, {
     /**
      * Sets multiple style properties.
      * @method setStyles
-     * @param {HTMLElement} node An HTMLElement to apply the styles to. 
-     * @param {Object} hash An object literal of property:value pairs. 
+     * @param {HTMLElement} node An HTMLElement to apply the styles to.
+     * @param {Object} hash An object literal of property:value pairs.
      */
     setStyles: function(node, hash) {
         var style = node.style;
@@ -8539,8 +8564,8 @@ Y.mix(Y_DOM, {
      * Returns the computed style for the given node.
      * @method getComputedStyle
      * @param {HTMLElement} An HTMLElement to get the style from.
-     * @param {String} att The style property to get. 
-     * @return {String} The computed value of the style property. 
+     * @param {String} att The style property to get.
+     * @return {String} The computed value of the style property.
      */
     getComputedStyle: function(node, att) {
         var val = '',
@@ -8586,7 +8611,7 @@ if (Y.UA.webkit) {
             val = view[GET_COMPUTED_STYLE](node, '')[att];
 
         if (val === 'rgba(0, 0, 0, 0)') {
-            val = TRANSPARENT; 
+            val = TRANSPARENT;
         }
 
         return val;
@@ -8604,7 +8629,7 @@ Y.DOM._getAttrOffset = function(node, attr) {
     if (val === 'auto') {
         position = Y.DOM.getStyle(node, 'position');
         if (position === 'static' || position === 'relative') {
-            val = 0;    
+            val = 0;
         } else if (offsetParent && offsetParent[GET_BOUNDING_CLIENT_RECT]) {
             parentOffset = offsetParent[GET_BOUNDING_CLIENT_RECT]()[attr];
             offset = node[GET_BOUNDING_CLIENT_RECT]()[attr];
@@ -8635,14 +8660,14 @@ Y.DOM._getOffset = function(node) {
             if ( isNaN(xy[0]) ) { // default to offset value
                 xy[0] = (pos === 'relative') ? 0 : node.offsetLeft || 0;
             }
-        } 
+        }
 
         if ( isNaN(xy[1]) ) { // in case of 'auto'
             xy[1] = parseInt(Y_DOM.getStyle(node, 'top'), 10); // try inline
             if ( isNaN(xy[1]) ) { // default to offset value
                 xy[1] = (pos === 'relative') ? 0 : node.offsetTop || 0;
             }
-        } 
+        }
     }
 
     return xy;
@@ -8720,7 +8745,7 @@ var HAS_LAYOUT = 'hasLayout',
                     current = _getStyleObj(el)[property];
 
                 if (property === OPACITY && Y.DOM.CUSTOM_STYLES[OPACITY]) {
-                    value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
+                    value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);
                 } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
                     value = current;
                 } else if (Y.DOM.IE.COMPUTED[property]) { // use compute function
@@ -8747,7 +8772,7 @@ var HAS_LAYOUT = 'hasLayout',
                 capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
                 offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
                 pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
-                sizeOffsets = ComputedStyle.sizeOffsets[prop], 
+                sizeOffsets = ComputedStyle.sizeOffsets[prop],
                 mode = el.ownerDocument.compatMode,
                 value = '';
 
@@ -8776,14 +8801,14 @@ var HAS_LAYOUT = 'hasLayout',
                     el.style[prop] = current;
                 }
                 value = el.style[pixel];
-                
+
             }
             return value + PX;
         },
 
         borderMap: {
             thin: (isIE8) ? '1px' : '2px',
-            medium: (isIE8) ? '3px': '4px', 
+            medium: (isIE8) ? '3px': '4px',
             thick: (isIE8) ? '5px' : '6px'
         },
 
@@ -8918,7 +8943,7 @@ if (!testFeature('style', 'opacity') && testFeature('style', 'filter')) {
                 }
 
                 if (!styleObj[HAS_LAYOUT]) {
-                    style.zoom = 1; // needs layout 
+                    style.zoom = 1; // needs layout
                 }
             }
         }
@@ -8969,7 +8994,7 @@ if (!testFeature('style', 'computedStyle')) {
             IEComputed.borderRightColor = IEComputed.borderBottomColor =
             IEComputed.borderLeftColor = ComputedStyle.getBorderColor;
 
-    Y.DOM[GET_COMPUTED_STYLE] = ComputedStyle.get; 
+    Y.DOM[GET_COMPUTED_STYLE] = ComputedStyle.get;
 
     Y.namespace('DOM.IE');
     Y.DOM.IE.COMPUTED = IEComputed;
@@ -9015,7 +9040,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
 if (Y.UA.ie) {
     if (Y.config.doc[COMPAT_MODE] !== 'BackCompat') {
-        SCROLL_NODE = DOCUMENT_ELEMENT; 
+        SCROLL_NODE = DOCUMENT_ELEMENT;
     } else {
         SCROLL_NODE = 'body';
     }
@@ -9023,7 +9048,7 @@ if (Y.UA.ie) {
 
 Y.mix(Y_DOM, {
     /**
-     * Returns the inner height of the viewport (exludes scrollbar). 
+     * Returns the inner height of the viewport (exludes scrollbar).
      * @method winHeight
      * @return {Number} The current height of the viewport.
      */
@@ -9034,7 +9059,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Returns the inner width of the viewport (exludes scrollbar). 
+     * Returns the inner width of the viewport (exludes scrollbar).
      * @method winWidth
      * @return {Number} The current width of the viewport.
      */
@@ -9045,7 +9070,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Document height 
+     * Document height
      * @method docHeight
      * @return {Number} The current height of the document.
      */
@@ -9056,7 +9081,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Document width 
+     * Document width
      * @method docWidth
      * @return {Number} The current width of the document.
      */
@@ -9067,7 +9092,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Amount page has been scroll horizontally 
+     * Amount page has been scroll horizontally
      * @method docScrollX
      * @return {Number} The current amount the screen is scrolled horizontally.
      */
@@ -9079,7 +9104,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Amount page has been scroll vertically 
+     * Amount page has been scroll vertically
      * @method docScrollY
      * @return {Number} The current amount the screen is scrolled vertically.
      */
@@ -9091,7 +9116,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Gets the current position of an element based on page coordinates. 
+     * Gets the current position of an element based on page coordinates.
      * Element must be part of the DOM tree to have page coordinates
      * (display:none or elements not appended return false).
      * @method getXY
@@ -9127,7 +9152,7 @@ Y.mix(Y_DOM, {
 
                     // inline inDoc check for perf
                     if (rootNode.contains) {
-                        inDoc = rootNode.contains(node); 
+                        inDoc = rootNode.contains(node);
                     } else {
                         inDoc = Y.DOM.contains(rootNode, node);
                     }
@@ -9156,20 +9181,20 @@ Y.mix(Y_DOM, {
                         if (offX || offY) {
                                 xy[0] -= offX;
                                 xy[1] -= offY;
-                            
+
                         }
                         if ((scrollTop || scrollLeft)) {
                             if (!Y.UA.ios || (Y.UA.ios >= 4.2)) {
                                 xy[0] += scrollLeft;
                                 xy[1] += scrollTop;
                             }
-                            
+
                         }
                     } else {
-                        xy = Y_DOM._getOffset(node);       
+                        xy = Y_DOM._getOffset(node);
                     }
                 }
-                return xy;                   
+                return xy;
             };
         } else {
             return function(node) { // manually calculate by crawling up offsetParents
@@ -9210,7 +9235,7 @@ Y.mix(Y_DOM, {
                                 if (Y.UA.gecko && (Y_DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
                                         xy = Y_DOM._calcBorders(parentNode, xy);
                                 }
-                                
+
 
                                 if (scrollTop || scrollLeft) {
                                     xy[0] -= scrollLeft;
@@ -9230,7 +9255,7 @@ Y.mix(Y_DOM, {
                     }
                 }
 
-                return xy;                
+                return xy;
             };
         }
     }(),// NOTE: Executing for loadtime branching
@@ -9248,7 +9273,7 @@ Y.mix(Y_DOM, {
             body     = doc.getElementsByTagName('body')[0],
             // 0.1 because cached doesn't support falsy refetch values
             width    = 0.1;
-            
+
         if (body) {
             testNode.style.cssText = "position:absolute;visibility:hidden;overflow:scroll;width:20px;";
             testNode.appendChild(doc.createElement('p')).style.height = '1px';
@@ -9262,7 +9287,7 @@ Y.mix(Y_DOM, {
     }, null, 0.1),
 
     /**
-     * Gets the current X position of an element based on page coordinates. 
+     * Gets the current X position of an element based on page coordinates.
      * Element must be part of the DOM tree to have page coordinates
      * (display:none or elements not appended return false).
      * @method getX
@@ -9275,7 +9300,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Gets the current Y position of an element based on page coordinates. 
+     * Gets the current Y position of an element based on page coordinates.
      * Element must be part of the DOM tree to have page coordinates
      * (display:none or elements not appended return false).
      * @method getY
@@ -9305,7 +9330,7 @@ Y.mix(Y_DOM, {
         if (node && xy) {
             pos = Y_DOM.getStyle(node, POSITION);
 
-            delta = Y_DOM._getOffset(node);       
+            delta = Y_DOM._getOffset(node);
             if (pos == 'static') { // default to relative
                 pos = RELATIVE;
                 setStyle(node, POSITION, pos);
@@ -9323,10 +9348,10 @@ Y.mix(Y_DOM, {
             if (!noRetry) {
                 newXY = Y_DOM.getXY(node);
                 if (newXY[0] !== xy[0] || newXY[1] !== xy[1]) {
-                    Y_DOM.setXY(node, xy, true); 
+                    Y_DOM.setXY(node, xy, true);
                 }
             }
-          
+
             Y.log('setXY setting position to ' + xy, 'info', 'dom-screen');
         } else {
             Y.log('setXY failed to set ' + node + ' to ' + xy, 'info', 'dom-screen');
@@ -9392,7 +9417,7 @@ Y.mix(Y_DOM, {
 
         if ( mode && !Y.UA.opera ) { // IE, Gecko
             if (mode != 'CSS1Compat') { // Quirks
-                root = doc.body; 
+                root = doc.body;
             }
             h = root.clientHeight;
             w = root.clientWidth;
@@ -9425,7 +9450,7 @@ var TOP = 'top',
             b = Math.min(r1[BOTTOM], r2[BOTTOM]),
             l = Math.max(r1[LEFT], r2[LEFT]),
             ret = {};
-        
+
         ret[TOP] = t;
         ret[RIGHT] = r;
         ret[BOTTOM] = b;
@@ -9440,13 +9465,13 @@ Y.mix(DOM, {
      * Returns an Object literal containing the following about this element: (top, right, bottom, left)
      * @for DOM
      * @method region
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @return {Object} Object literal containing the following about this element: (top, right, bottom, left)
      */
     region: function(node) {
         var xy = DOM.getXY(node),
             ret = false;
-        
+
         if (node && xy) {
             ret = DOM._getRegion(
                 xy[1], // top
@@ -9463,7 +9488,7 @@ Y.mix(DOM, {
      * Find the intersect information for the passed nodes.
      * @method intersect
      * @for DOM
-     * @param {HTMLElement} element The first element 
+     * @param {HTMLElement} element The first element
      * @param {HTMLElement | Object} element2 The element or region to check the interect with
      * @param {Object} altRegion An object literal containing the region for the first element if we already have the data (for performance e.g. DragDrop)
      * @return {Object} Object literal containing the following intersection data: (top, right, bottom, left, area, yoff, xoff, inRegion)
@@ -9480,7 +9505,7 @@ Y.mix(DOM, {
         } else {
             return false;
         }
-        
+
         off = getOffsets(region, r);
         return {
             top: off[TOP],
@@ -9492,7 +9517,7 @@ Y.mix(DOM, {
             xoff: (off[RIGHT] - off[LEFT]),
             inRegion: DOM.inRegion(node, node2, false, altRegion)
         };
-        
+
     },
     /**
      * Check if any part of this node is in the passed region
@@ -9517,12 +9542,12 @@ Y.mix(DOM, {
         } else {
             return false;
         }
-            
+
         if (all) {
             return (
                 r[LEFT]   >= region[LEFT]   &&
-                r[RIGHT]  <= region[RIGHT]  && 
-                r[TOP]    >= region[TOP]    && 
+                r[RIGHT]  <= region[RIGHT]  &&
+                r[TOP]    >= region[TOP]    &&
                 r[BOTTOM] <= region[BOTTOM]  );
         } else {
             off = getOffsets(region, r);
@@ -9531,7 +9556,7 @@ Y.mix(DOM, {
             } else {
                 return false;
             }
-            
+
         }
     },
 
@@ -9539,14 +9564,14 @@ Y.mix(DOM, {
      * Check if any part of this element is in the viewport
      * @method inViewportRegion
      * @for DOM
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {Boolean} all Should all of the node be inside the region
      * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance e.g. DragDrop)
      * @return {Boolean} True if in region, false if not.
      */
     inViewportRegion: function(node, all, altRegion) {
         return DOM.inRegion(node, DOM.viewportRegion(node), all, altRegion);
-            
+
     },
 
     _getRegion: function(t, r, b, l) {
@@ -9602,8 +9627,8 @@ YUI.add('selector-native', function (Y, NAME) {
  */
 
 /**
- * Provides support for using CSS selectors to query the DOM 
- * @class Selector 
+ * Provides support for using CSS selectors to query the DOM
+ * @class Selector
  * @static
  * @for Selector
  */
@@ -9672,7 +9697,7 @@ var Selector = {
             }
 
             return compare;
-        
+
     }),
 
     _sort: function(nodes) {
@@ -9706,7 +9731,7 @@ var Selector = {
     },
 
     /**
-     * Retrieves a set of nodes based on a given CSS selector. 
+     * Retrieves a set of nodes based on a given CSS selector.
      * @method query
      *
      * @param {string} selector The CSS Selector to test the node against.
@@ -9742,7 +9767,7 @@ var Selector = {
                 }
             }
 
-            if (queries.length > 1) { // remove dupes and sort by doc order 
+            if (queries.length > 1) { // remove dupes and sort by doc order
                 ret = Selector._sort(Selector._deDupe(ret));
             }
         }
@@ -9753,7 +9778,7 @@ var Selector = {
     },
 
     _replaceSelector: function(selector) {
-        var esc = Y.Selector._parse('esc', selector), // pull escaped colon, brackets, etc. 
+        var esc = Y.Selector._parse('esc', selector), // pull escaped colon, brackets, etc.
             attrs,
             pseudos;
 
@@ -9818,7 +9843,7 @@ var Selector = {
                     id = Y.guid();
                     Y.DOM.setId(node, id);
                 }
-            
+
                 prefix = '[id="' + id + '"] ';
             }
 
@@ -9886,7 +9911,7 @@ var Selector = {
                 groups = selector.split(',');
                 if (!root && !Y.DOM.inDoc(node)) {
                     parent = node.parentNode;
-                    if (parent) { 
+                    if (parent) {
                         root = parent;
                     } else { // only use frag when no parent to query
                         frag = node[OWNER_DOCUMENT].createDocumentFragment();
@@ -9932,7 +9957,7 @@ var Selector = {
      * @param {HTMLElement} element An HTMLElement to start the query from.
      * @param {String} selector The CSS selector to test the node against.
      * @return {HTMLElement} The ancestor node matching the selector, or null.
-     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan
      * @static
      * @method ancestor
      */
@@ -13325,7 +13350,7 @@ Y_Node.addMethod = function(name, fn, context) {
             }
             args.unshift(node._node);
 
-            ret = fn.apply(node, args);
+            ret = fn.apply(context || node, args);
 
             if (ret) { // scrub truthy
                 ret = Y_Node.scrubVal(ret, node);
@@ -13733,13 +13758,13 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Retrieves a single Node instance, the first element matching the given 
+     * Retrieves a single Node instance, the first element matching the given
      * CSS selector.
      * Returns null if no match found.
      * @method one
      *
      * @param {string} selector The CSS selector to test against.
-     * @return {Node | null} A Node instance for the matching HTMLElement or null 
+     * @return {Node | null} A Node instance for the matching HTMLElement or null
      * if no match found.
      */
     one: function(selector) {
@@ -13755,7 +13780,7 @@ Y.mix(Y_Node.prototype, {
      */
     all: function(selector) {
         var nodelist;
-        
+
         if (this._node) {
             nodelist = Y.all(Y.Selector.query(selector, this._node));
             nodelist._query = selector;
@@ -14311,18 +14336,18 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-     /** 
-      * Called on each Node instance. Nulls internal node references, 
+     /**
+      * Called on each Node instance. Nulls internal node references,
       * removes any plugins and event listeners
       * @method destroy
-      * @param {Boolean} recursivePurge (optional) Whether or not to 
+      * @param {Boolean} recursivePurge (optional) Whether or not to
       * remove listeners from the node's subtree (default is false)
       * @see Node.destroy
       */
     'destroy',
 
-     /** 
-      * Called on each Node instance. Removes and destroys all of the nodes 
+     /**
+      * Called on each Node instance. Removes and destroys all of the nodes
       * within the node
       * @method empty
       * @chainable
@@ -14330,7 +14355,7 @@ NodeList.importMethod(Y.Node.prototype, [
       */
     'empty',
 
-     /** 
+     /**
       * Called on each Node instance. Removes the node from its parent.
       * Shortcut for myNode.get('parentNode').removeChild(myNode);
       * @method remove
@@ -14341,7 +14366,7 @@ NodeList.importMethod(Y.Node.prototype, [
       */
     'remove',
 
-     /** 
+     /**
       * Called on each Node instance. Sets an attribute on the Node instance.
       * Unless pre-configured (via Node.ATTRS), set hands
       * off to the underlying DOM node.  Only valid
@@ -15550,8 +15575,7 @@ Y.mix(Y_Node.prototype, {
     },
 
     _isHidden: function() {
-        return this._node.hasAttribute('hidden')
-            || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
+        return  this.hasAttribute('hidden') || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
     },
 
     /**
@@ -15729,7 +15753,7 @@ if (Y.config.doc.createElement('form').elements.nodeType) {
 
 /**
  * Provides methods for managing custom Node data.
- * 
+ *
  * @module node
  * @main node
  * @submodule node-data
@@ -15863,7 +15887,7 @@ Y.mix(Y.NodeList.prototype, {
     * @see Node
     * @param {string} name Optional name of the data field to retrieve.
     * If no name is given, all data is returned.
-    * @return {Array} An array containing all of the data for each Node instance. 
+    * @return {Array} An array containing all of the data for each Node instance.
     * or an object hash of all fields.
     */
     getData: function(name) {
@@ -17607,21 +17631,21 @@ YUI.add('pluginhost-base', function (Y, NAME) {
     /**
      * <p>
      * An augmentable class, which provides the augmented class with the ability to host plugins.
-     * It adds <a href="#method_plug">plug</a> and <a href="#method_unplug">unplug</a> methods to the augmented class, which can 
+     * It adds <a href="#method_plug">plug</a> and <a href="#method_unplug">unplug</a> methods to the augmented class, which can
      * be used to add or remove plugins from instances of the class.
      * </p>
      *
      * <p>Plugins can also be added through the constructor configuration object passed to the host class' constructor using
-     * the "plugins" property. Supported values for the "plugins" property are those defined by the <a href="#method_plug">plug</a> method. 
-     * 
+     * the "plugins" property. Supported values for the "plugins" property are those defined by the <a href="#method_plug">plug</a> method.
+     *
      * For example the following code would add the AnimPlugin and IOPlugin to Overlay (the plugin host):
      * <xmp>
      * var o = new Overlay({plugins: [ AnimPlugin, {fn:IOPlugin, cfg:{section:"header"}}]});
      * </xmp>
      * </p>
      * <p>
-     * Plug.Host's protected <a href="#method_initPlugins">_initPlugins</a> and <a href="#method_destroyPlugins">_destroyPlugins</a> 
-     * methods should be invoked by the host class at the appropriate point in the host's lifecyle.  
+     * Plug.Host's protected <a href="#method_initPlugins">_initPlugins</a> and <a href="#method_destroyPlugins">_destroyPlugins</a>
+     * methods should be invoked by the host class at the appropriate point in the host's lifecyle.
      * </p>
      *
      * @class Plugin.Host
@@ -17636,16 +17660,16 @@ YUI.add('pluginhost-base', function (Y, NAME) {
     PluginHost.prototype = {
 
         /**
-         * Adds a plugin to the host object. This will instantiate the 
+         * Adds a plugin to the host object. This will instantiate the
          * plugin and attach it to the configured namespace on the host object.
          *
          * @method plug
          * @chainable
-         * @param P {Function | Object |Array} Accepts the plugin class, or an 
-         * object with a "fn" property specifying the plugin class and 
+         * @param P {Function | Object |Array} Accepts the plugin class, or an
+         * object with a "fn" property specifying the plugin class and
          * a "cfg" property specifying the configuration for the Plugin.
          * <p>
-         * Additionally an Array can also be passed in, with the above function or 
+         * Additionally an Array can also be passed in, with the above function or
          * object values, allowing the user to add multiple plugins in a single call.
          * </p>
          * @param config (Optional) If the first argument is the plugin class, the second argument
@@ -17668,10 +17692,10 @@ YUI.add('pluginhost-base', function (Y, NAME) {
                 // Plugin should be fn by now
                 if (Plugin && Plugin.NS) {
                     ns = Plugin.NS;
-        
+
                     config = config || {};
                     config.host = this;
-        
+
                     if (this.hasPlugin(ns)) {
                         // Update config
                         if (this[ns].setAttrs) {
@@ -17690,8 +17714,8 @@ YUI.add('pluginhost-base', function (Y, NAME) {
         },
 
         /**
-         * Removes a plugin from the host object. This will destroy the 
-         * plugin instance and delete the namespace from the host object. 
+         * Removes a plugin from the host object. This will destroy the
+         * plugin instance and delete the namespace from the host object.
          *
          * @method unplug
          * @param {String | Function} plugin The namespace of the plugin, or the plugin class with the static NS namespace property defined. If not provided,
@@ -17700,9 +17724,9 @@ YUI.add('pluginhost-base', function (Y, NAME) {
          * @chainable
          */
         unplug: function(plugin) {
-            var ns = plugin, 
+            var ns = plugin,
                 plugins = this._plugins;
-            
+
             if (plugin) {
                 if (L.isFunction(plugin)) {
                     ns = plugin.NS;
@@ -17710,7 +17734,7 @@ YUI.add('pluginhost-base', function (Y, NAME) {
                         ns = null;
                     }
                 }
-        
+
                 if (ns) {
                     if (this[ns]) {
                         if (this[ns].destroy) {
@@ -17745,14 +17769,14 @@ YUI.add('pluginhost-base', function (Y, NAME) {
 
         /**
          * Initializes static plugins registered on the host (using the
-         * Base.plug static method) and any plugins passed to the 
+         * Base.plug static method) and any plugins passed to the
          * instance through the "plugins" configuration property.
          *
          * @method _initPlugins
          * @param {Config} config The configuration object with property name/value pairs.
          * @private
          */
-        
+
         _initPlugins: function(config) {
             this._plugins = this._plugins || {};
 
@@ -17788,10 +17812,10 @@ YUI.add('pluginhost-config', function (Y, NAME) {
     /**
      * A protected initialization method, used by the host class to initialize
      * plugin configurations passed the constructor, through the config object.
-     * 
+     *
      * Host objects should invoke this method at the appropriate time in their
      * construction lifecycle.
-     * 
+     *
      * @method _initConfigPlugins
      * @param {Object} config The configuration object passed to the constructor
      * @protected
@@ -17835,9 +17859,9 @@ YUI.add('pluginhost-config', function (Y, NAME) {
             this.plug(config.plugins);
         }
     };
-    
+
     /**
-     * Registers plugins to be instantiated at the class level (plugins 
+     * Registers plugins to be instantiated at the class level (plugins
      * which should be plugged into every instance of the class by default).
      *
      * @method plug
@@ -17851,17 +17875,17 @@ YUI.add('pluginhost-config', function (Y, NAME) {
     PluginHost.plug = function(hostClass, plugin, config) {
         // Cannot plug into Base, since Plugins derive from Base [ will cause infinite recurrsion ]
         var p, i, l, name;
-    
+
         if (hostClass !== Y.Base) {
             hostClass._PLUG = hostClass._PLUG || {};
-    
+
             if (!L.isArray(plugin)) {
                 if (config) {
                     plugin = {fn:plugin, cfg:config};
                 }
                 plugin = [plugin];
             }
-    
+
             for (i = 0, l = plugin.length; i < l;i++) {
                 p = plugin[i];
                 name = p.NAME || p.fn.NAME;
@@ -17883,14 +17907,14 @@ YUI.add('pluginhost-config', function (Y, NAME) {
      */
     PluginHost.unplug = function(hostClass, plugin) {
         var p, i, l, name;
-    
+
         if (hostClass !== Y.Base) {
             hostClass._UNPLUG = hostClass._UNPLUG || {};
-    
+
             if (!L.isArray(plugin)) {
                 plugin = [plugin];
             }
-    
+
             for (i = 0, l = plugin.length; i < l; i++) {
                 p = plugin[i];
                 name = p.NAME;
@@ -18360,11 +18384,11 @@ Y.Object.each(Y.Node._instances, function (node) {
  * This will instantiate the plugin and attach it to the configured namespace on each node
  * @method plug
  * @for NodeList
- * @param P {Function | Object |Array} Accepts the plugin class, or an 
- * object with a "fn" property specifying the plugin class and 
+ * @param P {Function | Object |Array} Accepts the plugin class, or an
+ * object with a "fn" property specifying the plugin class and
  * a "cfg" property specifying the configuration for the Plugin.
  * <p>
- * Additionally an Array can also be passed in, with the above function or 
+ * Additionally an Array can also be passed in, with the above function or
  * object values, allowing the user to add multiple plugins in a single call.
  * </p>
  * @param config (Optional) If the first argument is the plugin class, the second argument
@@ -18380,8 +18404,8 @@ Y.NodeList.prototype.plug = function() {
 };
 
 /**
- * Removes a plugin from all nodes in the NodeList. This will destroy the 
- * plugin instance and delete the namespace each node. 
+ * Removes a plugin from all nodes in the NodeList. This will destroy the
+ * plugin instance and delete the namespace each node.
  * @method unplug
  * @for NodeList
  * @param {String | Function} plugin The namespace of the plugin, or the plugin class with the static NS namespace property defined. If not provided,
@@ -18402,7 +18426,7 @@ YUI.add('node-screen', function (Y, NAME) {
 
 /**
  * Extended Node interface for managing regions and screen positioning.
- * Adds support for positioning elements and normalizes window size and scroll detection. 
+ * Adds support for positioning elements and normalizes window size and scroll detection.
  * @module node
  * @submodule node-screen
  */
@@ -18410,7 +18434,7 @@ YUI.add('node-screen', function (Y, NAME) {
 // these are all "safe" returns, no wrapping required
 Y.each([
     /**
-     * Returns the inner width of the viewport (exludes scrollbar). 
+     * Returns the inner width of the viewport (exludes scrollbar).
      * @config winWidth
      * @for Node
      * @type {Int}
@@ -18418,35 +18442,35 @@ Y.each([
     'winWidth',
 
     /**
-     * Returns the inner height of the viewport (exludes scrollbar). 
+     * Returns the inner height of the viewport (exludes scrollbar).
      * @config winHeight
      * @type {Int}
      */
     'winHeight',
 
     /**
-     * Document width 
+     * Document width
      * @config docWidth
      * @type {Int}
      */
     'docWidth',
 
     /**
-     * Document height 
+     * Document height
      * @config docHeight
      * @type {Int}
      */
     'docHeight',
 
     /**
-     * Pixel distance the page has been scrolled horizontally 
+     * Pixel distance the page has been scrolled horizontally
      * @config docScrollX
      * @type {Int}
      */
     'docScrollX',
 
     /**
-     * Pixel distance the page has been scrolled vertically 
+     * Pixel distance the page has been scrolled vertically
      * @config docScrollY
      * @type {Int}
      */
@@ -18506,7 +18530,7 @@ Y.Node.ATTRS.scrollTop = {
 
 Y.Node.importMethod(Y.DOM, [
 /**
- * Gets the current position of the node in page coordinates. 
+ * Gets the current position of the node in page coordinates.
  * @method getXY
  * @for Node
  * @return {Array} The XY position of the node
@@ -18522,7 +18546,7 @@ Y.Node.importMethod(Y.DOM, [
     'setXY',
 
 /**
- * Gets the current position of the node in page coordinates. 
+ * Gets the current position of the node in page coordinates.
  * @method getX
  * @return {Int} The X position of the node
 */
@@ -18537,7 +18561,7 @@ Y.Node.importMethod(Y.DOM, [
     'setX',
 
 /**
- * Gets the current position of the node in page coordinates. 
+ * Gets the current position of the node in page coordinates.
  * @method getY
  * @return {Int} The Y position of the node
 */
@@ -18552,7 +18576,7 @@ Y.Node.importMethod(Y.DOM, [
     'setY',
 
 /**
- * Swaps the XY position of this node with another node. 
+ * Swaps the XY position of this node with another node.
  * @method swapXY
  * @param {Node | HTMLElement} otherNode The node to swap with.
  * @chainable
@@ -18652,8 +18676,8 @@ Y.mix(Y.Node.prototype, {
      * Sets a style property of the node.
      * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
      * @method setStyle
-     * @param {String} attr The style attribute to set. 
-     * @param {String|Number} val The value. 
+     * @param {String} attr The style attribute to set.
+     * @param {String|Number} val The value.
      * @chainable
      */
     setStyle: function(attr, val) {
@@ -18665,7 +18689,7 @@ Y.mix(Y.Node.prototype, {
      * Sets multiple style properties on the node.
      * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
      * @method setStyles
-     * @param {Object} hash An object literal of property:value pairs. 
+     * @param {Object} hash An object literal of property:value pairs.
      * @chainable
      */
     setStyles: function(hash) {
@@ -18678,7 +18702,7 @@ Y.mix(Y.Node.prototype, {
      * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
      * @method getStyle
      * @for Node
-     * @param {String} attr The style attribute to retrieve. 
+     * @param {String} attr The style attribute to retrieve.
      * @return {String} The current value of the style property for the element.
      */
 
@@ -18690,7 +18714,7 @@ Y.mix(Y.Node.prototype, {
      * Returns the computed value for the given style property.
      * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
      * @method getComputedStyle
-     * @param {String} attr The style attribute to retrieve. 
+     * @param {String} attr The style attribute to retrieve.
      * @return {String} The computed value of the style property for the element.
      */
      getComputedStyle: function(attr) {
@@ -18704,7 +18728,7 @@ Y.mix(Y.Node.prototype, {
  * @method getStyle
  * @for NodeList
  * @see Node.getStyle
- * @param {String} attr The style attribute to retrieve. 
+ * @param {String} attr The style attribute to retrieve.
  * @return {Array} The current values of the style property for the element.
  */
 
@@ -18713,7 +18737,7 @@ Y.mix(Y.Node.prototype, {
  * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
  * @method getComputedStyle
  * @see Node.getComputedStyle
- * @param {String} attr The style attribute to retrieve. 
+ * @param {String} attr The style attribute to retrieve.
  * @return {Array} The computed values for each node.
  */
 
@@ -18722,8 +18746,8 @@ Y.mix(Y.Node.prototype, {
  * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
  * @method setStyle
  * @see Node.setStyle
- * @param {String} attr The style attribute to set. 
- * @param {String|Number} val The value. 
+ * @param {String} attr The style attribute to set.
+ * @param {String|Number} val The value.
  * @chainable
  */
 
@@ -18732,7 +18756,7 @@ Y.mix(Y.Node.prototype, {
  * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
  * @method setStyles
  * @see Node.setStyles
- * @param {Object} hash An object literal of property:value pairs. 
+ * @param {Object} hash An object literal of property:value pairs.
  * @chainable
  */
 
@@ -19889,8 +19913,8 @@ Transition.HIDE_TRANSITION = 'fadeOut';
 Transition.useNative = false;
 
 // Map transition properties to vendor-specific versions.
-if ('transition' in DOCUMENT_STYLE 
-    && 'transitionProperty' in DOCUMENT_STYLE 
+if ('transition' in DOCUMENT_STYLE
+    && 'transitionProperty' in DOCUMENT_STYLE
     && 'transitionDuration' in DOCUMENT_STYLE
     && 'transitionTimingFunction' in DOCUMENT_STYLE
     && 'transitionDelay' in DOCUMENT_STYLE) {
@@ -20596,7 +20620,7 @@ var PARENT_NODE = 'parentNode',
         }()),
 
         /**
-         * Mapping of shorthand tokens to corresponding attribute selector 
+         * Mapping of shorthand tokens to corresponding attribute selector
          * @property shorthand
          * @type object
          */
@@ -20606,7 +20630,7 @@ var PARENT_NODE = 'parentNode',
         },
 
         /**
-         * List of operators and corresponding boolean functions. 
+         * List of operators and corresponding boolean functions.
          * These functions are passed the attribute and the current node's value of the attribute.
          * @property operators
          * @type object
@@ -20618,9 +20642,9 @@ var PARENT_NODE = 'parentNode',
         },
 
         pseudos: {
-           'first-child': function(node) { 
-                return Y.DOM._children(node[PARENT_NODE])[0] === node; 
-            } 
+           'first-child': function(node) {
+                return Y.DOM._children(node[PARENT_NODE])[0] === node;
+            }
         },
 
         _bruteQuery: function(selector, root, firstOnly) {
@@ -20661,7 +20685,7 @@ var PARENT_NODE = 'parentNode',
                     while (child) {
                         while (child) {
                             // IE 6-7 considers comment nodes as element nodes, and gives them the tagName "!".
-                            // We can filter them out by checking if its tagName is > "@". 
+                            // We can filter them out by checking if its tagName is > "@".
                             // This also avoids a superflous nodeType === 1 check.
                             if (child.tagName > "@" && (isUniversal || child.tagName === tagName)) {
                                 nodes.push(child);
@@ -20686,7 +20710,7 @@ var PARENT_NODE = 'parentNode',
 
             return ret;
         },
-        
+
         _filterNodes: function(nodes, tokens, firstOnly) {
             var i = 0,
                 j,
@@ -20708,7 +20732,7 @@ var PARENT_NODE = 'parentNode',
             for (i = 0; (tmpNode = node = nodes[i++]);) {
                 n = len - 1;
                 path = null;
-                
+
                 testLoop:
                 while (tmpNode && tmpNode.tagName) {
                     token = tokens[n];
@@ -20722,7 +20746,7 @@ var PARENT_NODE = 'parentNode',
                             } else {
                                 value = tmpNode[test[0]];
                                 if (test[0] === 'tagName' && !Selector._isXML) {
-                                    value = value.toUpperCase();    
+                                    value = value.toUpperCase();
                                 }
                                 if (typeof value != 'string' && value !== undefined && value.toString) {
                                     value = value.toString(); // coerce for comparison
@@ -20744,7 +20768,7 @@ var PARENT_NODE = 'parentNode',
                                         (!tmpNode.tagName ||
                                             (token.tagName && token.tagName !== tmpNode.tagName))
                                     ) {
-                                        tmpNode = tmpNode[path]; 
+                                        tmpNode = tmpNode[path];
                                     }
                                 }
                                 continue testLoop;
@@ -20760,11 +20784,11 @@ var PARENT_NODE = 'parentNode',
 
                         // skip non element nodes
                         while (tmpNode && !tmpNode.tagName) {
-                            tmpNode = tmpNode[path]; 
+                            tmpNode = tmpNode[path];
                         }
 
                         if (combinator.direct) { // one pass only
-                            path = null; 
+                            path = null;
                         }
 
                     } else { // success if we made it this far
@@ -20815,7 +20839,7 @@ var PARENT_NODE = 'parentNode',
                         token.prefilter = match[1];
 
 
-                        match[3] = escVal; 
+                        match[3] = escVal;
 
                         // escape all but ID for prefilter, which may run through QSA (via Dom.allById)
                         token[match[1]] = (match[1] === 'id') ? match[3] : escVal;
@@ -20871,7 +20895,7 @@ var PARENT_NODE = 'parentNode',
                         if (match[2]) {
                             match[2] = match[2].replace(/\\/g, '');
                         }
-                        return [match[2], test]; 
+                        return [match[2], test];
                     } else { // selector token not supported (possibly missing CSS3 module)
                         return false;
                     }
@@ -20896,7 +20920,7 @@ var PARENT_NODE = 'parentNode',
          */
         _tokenize: function(selector) {
             selector = selector || '';
-            selector = Selector._parseSelector(Y.Lang.trim(selector)); 
+            selector = Selector._parseSelector(Y.Lang.trim(selector));
             var token = Selector._getToken(),     // one token per simple selector (left selector holds combinator)
                 query = selector, // original query for debug report
                 tokens = [],    // array of tokens
@@ -21037,7 +21061,7 @@ YUI.add('selector-css3', function (Y, NAME) {
     an+b = get every _a_th node starting at the _b_th
     0n+b = no repeat ("0" and "n" may both be omitted (together) , e.g. "0n+1" or "1", not "0+1"), return only the _b_th element
     1n+b =  get every element starting from b ("1" may may be omitted, e.g. "1n+0" or "n+0" or "n")
-    an+0 = get every _a_th element, "0" may be omitted 
+    an+0 = get every _a_th element, "0" may be omitted
 */
 
 Y.Selector._reNth = /^(?:([\-]?\d*)(n){1}|(odd|even)$)*([\-+]?\d*)$/;
@@ -21063,7 +21087,7 @@ Y.Selector._getNth = function(node, expr, tag, reverse) {
 
     if (a === 0) { // just the first
         if (reverse) {
-            b = siblings.length - b + 1; 
+            b = siblings.length - b + 1;
         }
 
         if (siblings[b - 1] === node) {
@@ -21109,11 +21133,11 @@ Y.mix(Y.Selector.pseudos, {
     'nth-of-type': function(node, expr) {
         return Y.Selector._getNth(node, expr, node.tagName);
     },
-     
+
     'nth-last-of-type': function(node, expr) {
         return Y.Selector._getNth(node, expr, node.tagName, true);
     },
-     
+
     'last-child': function(node) {
         var children = Y.DOM._children(node.parentNode);
         return children[children.length - 1] === node;
@@ -21122,12 +21146,12 @@ Y.mix(Y.Selector.pseudos, {
     'first-of-type': function(node) {
         return Y.DOM._children(node.parentNode, node.tagName)[0] === node;
     },
-     
+
     'last-of-type': function(node) {
         var children = Y.DOM._children(node.parentNode, node.tagName);
         return children[children.length - 1] === node;
     },
-     
+
     'only-child': function(node) {
         var children = Y.DOM._children(node.parentNode);
         return children.length === 1 && children[0] === node;
@@ -21167,7 +21191,7 @@ Y.mix(Y.Selector.pseudos, {
 Y.mix(Y.Selector.operators, {
     '^=': '^{val}', // Match starts with value
     '$=': '{val}$', // Match ends with value
-    '*=': '{val}' // Match contains value as substring 
+    '*=': '{val}' // Match contains value as substring
 });
 
 Y.Selector.combinators['~'] = {

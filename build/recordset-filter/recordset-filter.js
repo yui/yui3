@@ -14,7 +14,7 @@ Lang = Y.Lang;
 
 /**
  * Plugin that provides the ability to filter through a recordset.
- * Uses the filter methods available on Y.Array (see arrayextras submodule) to filter the recordset. 
+ * Uses the filter methods available on Y.Array (see arrayextras submodule) to filter the recordset.
  * @class RecordsetFilter
  */
 function RecordsetFilter(config) {
@@ -38,7 +38,7 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
     /**
     Filter through the recordset with a custom filter function, or a key-value
     pair.
-    
+
     @method filter
     @param {Function|String} filter A custom filter function or a string
         representing the key to filter by.

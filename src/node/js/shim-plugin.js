@@ -27,7 +27,7 @@
 
     /**
      * Default markup template used to generate the shim element.
-     * 
+     *
      * @property TEMPLATE
      * @type String
      * @static
@@ -48,7 +48,7 @@
         initEvents: function() {
             this._resizeHandle = this._host.on('resize', this.sync, this);
         },
-        
+
         getShim: function() {
             return this._shim || (
                 this._shim = Y.Node.create(

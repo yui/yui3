@@ -7,6 +7,11 @@ DataTable Change History
 * Fix issue where recursive nesting of objects was cloned infinitely
   [Pull Request #1008][Ticket #915]
 
+3.12.0
+------
+
+* No changes.
+
 3.11.0
 ------
 * Release Paginator for DataTable. DataTable's Paginator consists of a few

@@ -591,6 +591,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
                 minimum:"minimum",
                 roundingMethod:"roundingMethod",
                 alwaysShowZero:"alwaysShowZero",
+                scaleType: "scaleType",
                 title:"title",
                 width:"width",
                 height:"height"

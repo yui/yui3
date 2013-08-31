@@ -78,7 +78,7 @@ Registry that maps template names to revived template functions.
 @type Object
 @static
 @protected
-@since @SINCE@
+@since 3.12.0
 **/
 Template._registry = {};
 
@@ -120,7 +120,7 @@ See the `Y.Template#render` method to see how a registered template is used.
 @return {Function} revivedTemplate This is the same function as in `template`,
     and is done to maintain compatibility with the `Y.Template#revive()` method.
 @static
-@since @SINCE@
+@since 3.12.0
 **/
 Template.register = function (templateName, template) {
     Template._registry[templateName] = template;
@@ -136,7 +136,7 @@ unregistered template is accessed, this will return `undefined`.
 @return {Function} revivedTemplate The revived template function, or `undefined`
     if it has not been registered.
 @static
-@since @SINCE@
+@since 3.12.0
 **/
 
 Template.get = function (templateName) {
@@ -169,7 +169,7 @@ engine generated it.
 @param {Object} [options] Any additional options to be passed into the template.
 @return {String} output The rendered result.
 @static
-@since @SINCE@
+@since 3.12.0
 **/
 Template.render = function (templateName, data, options) {
     var template = Template._registry[templateName],

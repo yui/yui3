@@ -1,8 +1,8 @@
     /**
-     * The FileFlash class provides a wrapper for a file pointer stored in Flash. The File wrapper 
+     * The FileFlash class provides a wrapper for a file pointer stored in Flash. The File wrapper
      * also implements the mechanics for uploading a file and tracking its progress.
      * @module file-flash
-     */     
+     */
     /**
      * The class provides a wrapper for a file pointer in Flash.
      * @class FileFlash
@@ -12,7 +12,7 @@
      */
 
     var FileFlash = function(o) {
-        FileFlash.superclass.constructor.apply(this, arguments);   
+        FileFlash.superclass.constructor.apply(this, arguments);
     };
 
     Y.extend(FileFlash, Y.Base, {
@@ -35,12 +35,12 @@
         * @method _swfEventHandler
         * @param {Event} event The event object received from the Flash player.
         * @protected
-        */      
+        */
         _swfEventHandler: function (event) {
           if (event.id === this.get("id")) {
           switch (event.type) {
             /**
-             * Signals that this file's upload has started. 
+             * Signals that this file's upload has started.
              *
              * @event uploadstart
              * @param event {Event} The event object for the `uploadstart` with the
@@ -56,7 +56,7 @@
             case "uploadprogress":
 
                   /**
-                   * Signals that progress has been made on the upload of this file. 
+                   * Signals that progress has been made on the upload of this file.
                    *
                    * @event uploadprogress
                    * @param event {Event} The event object for the `uploadprogress` with the
@@ -73,8 +73,8 @@
                    *  </dl>
                    */
                  this.fire("uploadprogress", {originEvent: event,
-                                              bytesLoaded: event.bytesLoaded, 
-                                              bytesTotal: event.bytesTotal, 
+                                              bytesLoaded: event.bytesLoaded,
+                                              bytesTotal: event.bytesTotal,
                                               percentLoaded: Math.min(100, Math.round(10000*event.bytesLoaded/event.bytesTotal)/100)
                                              });
                  this._set("bytesUploaded", event.bytesLoaded);
@@ -82,7 +82,7 @@
             case "uploadcomplete":
 
                   /**
-                   * Signals that this file's upload has completed, but data has not yet been received from the server. 
+                   * Signals that this file's upload has completed, but data has not yet been received from the server.
                    *
                    * @event uploadfinished
                    * @param event {Event} The event object for the `uploadfinished` with the
@@ -109,12 +109,12 @@
                  *  </dl>
                  */
                  this.fire("uploadcomplete", {originEvent: event,
-                                              data: event.data});  
+                                              data: event.data});
                  break;
             case "uploadcancel":
 
                 /**
-                 * Signals that this file's upload has been cancelled. 
+                 * Signals that this file's upload has been cancelled.
                  *
                  * @event uploadcancel
                  * @param event {Event} The event object for the `uploadcancel` with the
@@ -129,7 +129,7 @@
             case "uploaderror":
 
                 /**
-                 * Signals that this file's upload has encountered an error. 
+                 * Signals that this file's upload has encountered an error.
                  *
                  * @event uploaderror
                  * @param event {Event} The event object for the `uploaderror` with the
@@ -143,11 +143,11 @@
                  *      <dt>statusText</dt>
                  *          <dd>The text of the error event reported by the Flash Player.</dd>
                  *      <dt>source</dt>
-                 *          <dd>Either "http" (if it's an HTTP error), or "io" (if it's a network transmission 
+                 *          <dd>Either "http" (if it's an HTTP error), or "io" (if it's a network transmission
                  *              error.)</dd>
                  *  </dl>
                  */
-                 this.fire("uploaderror", {originEvent: event, status: event.status, statusText: event.message, source: event.source});         
+                 this.fire("uploaderror", {originEvent: event, status: event.status, statusText: event.message, source: event.source});
 
           }
         }
@@ -162,7 +162,7 @@
         * @param fileFieldName {String} (optional) The name of the POST variable that should contain the uploaded file ('Filedata' by default)
         */
         startUpload: function(url, parameters, fileFieldName) {
-         
+
         if (this.get("uploader")) {
 
             var myUploader = this.get("uploader"),
@@ -171,7 +171,7 @@
                 params = parameters || null;
 
             this._set("bytesUploaded", 0);
-            
+
             myUploader.on("uploadstart", this._swfEventHandler, this);
             myUploader.on("uploadprogress", this._swfEventHandler, this);
             myUploader.on("uploadcomplete", this._swfEventHandler, this);
@@ -187,7 +187,7 @@
         * Cancels the upload of a specific file, if currently in progress.
         *
         * @method cancelUpload
-        */  
+        */
         cancelUpload: function () {
          if (this.get("uploader")) {
            this.get("uploader").callSWF("cancel", [this.get("id")]);

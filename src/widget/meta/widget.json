@@ -39,12 +39,6 @@
                 ]
             },
 
-            "widget-locale": {
-                "requires": [
-                    "widget-base"
-                ]
-            },
-
             "widget-uievents": {
                 "requires": [
                     "node-event-delegate",
