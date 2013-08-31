@@ -7,6 +7,9 @@ DataTable Change History
 * Fix issue where recursive nesting of objects was cloned infinitely
   [Pull Request #1008][Ticket #915]
 
+* Fix issue where Paginator count becomes out of sync with DataTable when
+  DataTable data is modified (added or removed) [Pull Request #1011] [Issue #1010]
+
 3.12.0
 ------
 
