@@ -170,63 +170,6 @@ YUI.add('editor-tests', function(Y) {
 
         },
 
-/*
-        'test handleFocus usage': function () {
-            var node = Y.Node.create('<div/>'),
-                ce = new Y.Plugin.ContentEditable({
-                    content: '<p>This is a test.</p>',
-                    container: node
-                });
-
-
-            Y.one('body').append(node);
-
-            ce.render();
-
-            ce._handleFocus();
-
-            ce.focus();
-        },
-*/
-
-        'test _setLinkedCSS works properly': function () {
-            var node = Y.Node.create('<div/>'),
-                ce = new Y.Plugin.ContentEditable({
-                    content: '<p><span class="pure-button">This</span> is a <b class="foo">test</b>.</p>',
-                    container: node,
-                    extracss: '.foo { font-weight: normal; color: black; background-color: yellow; }'
-                });
-
-            Y.one('body').append(node);
-
-            node.setStyles({
-                borderColor: 'red',
-                borderWidth: '1px',
-                borderStyle: 'solid'
-            });
-
-            ce.render();
-
-var url = 'http://yui.yahooapis.com/pure/0.2.1/pure-min.css';
-var cb = function (err) {
-    if (err) {
-        Y.log('Error loading CSS: ' + err[0].error, 'error');
-        return;
-    }
-
-    Y.log('file.css loaded successfully!');
-};
-
-            console.log(ce.getInstance());
-
-            //ce.getInstance().Get.css(url, cb);
-            ce._setLinkedCSS(url);
-
-            console.log('Add in linkedcss');
-
-            //ce.set('linkedcss', url);
-
-        },
 
         'test: _DOMPaste': function() {
             var OT = 'ORIGINAL_TARGET',
@@ -910,6 +853,42 @@ var cb = function (err) {
             Y.Assert.areSame('#FF0000', color);
 
             node.remove(true);
+        },
+
+        'test _setLinkedCSS works properly': function () {
+            var test = this,
+                node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    content: '<p><span class="pure-button">This</span> is a <b class="foo">test</b>.</p>',
+                    container: node,
+                    extracss: '.foo { font-weight: normal; color: black; background-color: yellow; }'
+                }),
+                url = 'http://yui.yahooapis.com/pure/0.2.1/pure-min.css';
+
+            Y.one('body').append(node);
+
+            node.setStyles({
+                borderColor: 'red',
+                borderWidth: '1px',
+                borderStyle: 'solid'
+            });
+
+            ce.render();
+
+            ce.set('linkedcss', url);
+
+
+            setTimeout(function () {
+                Y.all('link').some(function (node) {
+                    if (node.getAttribute('href') === url) {
+                        test.resume(function () {
+                            Y.Assert.isTrue(true);
+                        });
+                        return true;
+                    }
+                });
+            }, 1000);
+            test.wait();
         },
 
         _should: {
