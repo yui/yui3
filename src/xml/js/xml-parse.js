@@ -41,11 +41,11 @@ Y.mix(Y.namespace("XML"), {
                     Y.log(ee.message + " (Could not initialize the ActiveX control for XML parsing)", "warn", "xml");
             }
         }
-        
+
         if( (LANG.isNull(xmlDoc)) || (LANG.isNull(xmlDoc.documentElement)) || (xmlDoc.documentElement.nodeName === "parsererror") ) {
             Y.log("Could not parse data to type XML Document", "warn", "xml");
         }
-        
+
         return xmlDoc;
     }
 });

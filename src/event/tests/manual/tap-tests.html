@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Tap Tests</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.2.0/pure-min.css">
+    <style>
+        body {
+            padding: 50px;
+        }
+        .tapper {
+            font-size: 120%;
+        }
+        #box {
+            width: 200px;
+            height: 200px;
+            background: #fcc400;
+            border: 3px solid #f7981d;
+            position: relative;
+            border-radius: 5px;
+        }
+        .pure-button-a {
+            background: green;
+        }
+
+        .pure-button-b {
+            background: purple;
+        }
+
+        .pure-button-c {
+            background: #155;
+        }
+
+        #bigButton {
+            height: 200px;
+            border-radius: 2em;
+        }
+
+    </style>
+
+</head>
+<body>
+    <div id="box"></div>
+    <p>
+        <a class="tapper pure-button pure-button-a" id="tapper1" href='#tapped'>Tap on me</a>
+        <a class="tapper pure-button pure-button-primary" id="tapper2" href='#gestured'>Tap on me too</a>
+        <a class="tapper pure-button pure-button-b" id="del" href='#delegate'>Delegate</a>
+    </p>
+
+    <p>
+        <button class="tapper pure-button pure-button-c" id="bigButton">Big button with lots of sensitivity</button>
+        <button class="tapper pure-button" id="smallButton">Small button with no sensitivity</button>
+    </p>
+
+    <p>
+        <a class="tapper pure-button" id="complex" href="#foobarbaz">Complex Click Button with once('tap') and once('click')</a>
+    </p>
+
+    <ul id="ul"></ul>
+
+
+    <script src="../../../../build/yui/yui.js"></script>
+    <script>
+
+        YUI({
+            filter: 'raw'
+        }).use('cssnormalize', 'event-tap', 'node-event-delegate', 'node', function (Y) {
+            var ta = Y.one('#ta'),
+                box = Y.one('#box'),
+                ul = Y.one('#ul');
+
+            Y.one('body').delegate('tap', function (e) {
+                ul.appendChild('<li> ' + e._event.type + ' delegated </li>');
+            }, '#del');
+
+            Y.one('#tapper1').on('tap', function (e) {
+                e.preventDefault();
+                ul.appendChild('<li> ' + e._event.type + ' </li>');
+
+            });
+
+
+            Y.one('#tapper2').on('tap', function (e) {
+                ul.appendChild('<li> ' + e._event.type + ': no preventDefault() </li>');
+            });
+
+            Y.one('#bigButton').on('tap', function (e) {
+                e.preventDefault();
+                ul.appendChild('<li> ' + e._event.type + ': with sensitivity: 100</li>');
+            }, {
+                sensitivity: 100
+            });
+
+            Y.one('#smallButton').on('tap', function (e) {
+                ul.appendChild('<li> ' + e._event.type + ': with sensitivity: 0</li>');
+            }, {
+                sensitivity: 0
+            });
+
+
+            Y.one("#complex").once('click', function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                ul.appendChild('<li> ' + e._event.type + ': once() invoked</li>');
+            });
+
+            Y.one("#complex").once('tap', function (e) {
+                e.preventDefault();
+                ul.appendChild('<li> ' + e._event.type + ': once() invoked</li>');
+            });
+
+            Y.one("#complex").on('click', function (e) {
+                ul.appendChild('<li> ' + e._event.type + ': on() invoked</li>');
+            });
+
+        });
+
+
+    </script>
+</body>
+</html>

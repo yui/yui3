@@ -16,42 +16,42 @@ YUITest.Results = function(name){
      * @property name
      */
     this.name = name;
-    
+
     /**
      * Number of passed tests.
      * @type int
      * @property passed
      */
     this.passed = 0;
-    
+
     /**
      * Number of failed tests.
      * @type int
      * @property failed
      */
     this.failed = 0;
-    
+
     /**
      * Number of errors that occur in non-test methods.
      * @type int
      * @property errors
      */
     this.errors = 0;
-    
+
     /**
      * Number of ignored tests.
      * @type int
      * @property ignored
      */
     this.ignored = 0;
-    
+
     /**
      * Number of total tests.
      * @type int
      * @property total
      */
     this.total = 0;
-    
+
     /**
      * Amount of time (ms) it took to complete testing.
      * @type int

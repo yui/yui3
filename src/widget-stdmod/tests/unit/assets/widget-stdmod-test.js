@@ -14,8 +14,11 @@ suite.add(new Y.Test.Case({
     name: 'Lifecycle',
 
     tearDown: function () {
-        this.widget && this.widget.destroy();
-        delete this.widget;
+        if (this.widget) {
+            this.widget.destroy();
+            delete this.widget;
+        }
+
         Y.one('#test').empty();
     },
 
@@ -39,9 +42,15 @@ suite.add(new Y.Test.Case({
     name: 'Methods',
 
     tearDown: function () {
-        this.widget && this.widget.destroy();
-        delete this.widget;
-        Y.one('#test').empty();
+        if (this.widget) {
+            this.widget.destroy();
+            delete this.widget;
+        }
+
+        var test = Y.one('#test');
+        if (test) {
+            test.empty();
+        }
     },
 
     'getStdModNode() should return the section node if there is content': function () {
@@ -141,15 +150,20 @@ suite.add(new Y.Test.Case({
     },
 
     'fillHeight() should fill up the widget even if section content is set after render()': function () {
+
         this.widget = new TestWidget({
-            headerContent:    'header',
+            headerContent:    '<div style="height:40px;overflow:hidden">header</div>',
             // no body content, so no section node will be created
             render:            '#test',
-            height:            100
+            height:            500
         });
 
-        this.widget.set('bodyContent', '<div style="height: 200px;">body</div>');
-        Assert.isTrue(this.widget.getStdModNode('body').get('offsetHeight') < 100);
+        this.widget.set('bodyContent', '<div>body</div>');
+
+        Assert.areEqual(500, this.widget.get("boundingBox").get('offsetHeight'));
+
+        Assert.areEqual(40, this.widget.getStdModNode('header').get('offsetHeight'));
+        Assert.areEqual(460, this.widget.getStdModNode('body').get('offsetHeight'));
     },
 
     'HTML_PARSER rules should return the proper inner HTML contents from markup': function () {
@@ -172,6 +186,7 @@ suite.add(new Y.Test.Case({
         Assert.areEqual('bar', this.widget.get('bodyContent'), 'body not picked up from markup');
         Assert.areEqual('baz', this.widget.get('footerContent'), 'footer not picked up from markup');
     }
+
 }));
 
 Y.Test.Runner.add(suite);

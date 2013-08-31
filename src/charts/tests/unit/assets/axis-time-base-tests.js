@@ -199,6 +199,28 @@ YUI.add('axis-time-base-tests', function(Y) {
              Y.Assert.areEqual(formatted, returnedFormattedValue, "The label should equal " + formatted + ".");
         },
 
+        "test: _getCoordFromValue()" : function() {
+            var axis = this.axis,
+                min = new Date("1/1/2013"),
+                max = new Date("6/1/2013"),
+                dataValue = new Date("2/1/2013"),
+                length = 400,
+                offset = 5,
+                testResult = ((dataValue - min) * (length/(max.valueOf() - min.valueOf()))) + offset,
+                result;
+            result = axis._getCoordFromValue.apply(
+                axis, 
+                [min, max, length, dataValue, offset]
+            );
+            Y.Assert.isNumber(result, "The value should be a number.");
+            Y.Assert.areEqual(testResult, result, "The result should be " + testResult + ".");
+            result = axis._getCoordFromValue.apply(
+                axis, 
+                [min, max, length, null, offset]
+            );
+            Y.Assert.isNaN(result, "The value should not be a number.");
+        },
+
         "test: edgeCases" : function() {
             this.axis.set("keys", this.keys);
             this.axis.set("dataProvider", []);

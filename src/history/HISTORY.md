@@ -2,6 +2,14 @@ History Change History
 ======================
 
 @VERSION@
+---------
+
+* Fixed issue with `parseHash` not parsing blank values in hash string.
+  ([#1116][]: @blzaugg)
+
+[#1116]: https://github.com/yui/yui3/issues/1116
+
+3.12.0
 ------
 
 * No changes.

@@ -4,6 +4,11 @@ TabView Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.12.0
+------
+
 * Fixed missing ARIA role in the `tablist` of Tabview.
   ([#1035][]: @blzaugg)
 

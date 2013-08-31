@@ -10,8 +10,12 @@ YUI().use('yql', 'node', 'anim', 'dd', 'dd-plugin', 'dd-drop-plugin', 'slider', 
             var photos = e.query.results.photo;
             //Walk the returned photos array
             Y.each(photos, function(v, k) {
-                //Create our URL
-                var url = 'http:/'+'/static.flickr.com/' + v.server + '/' + v.id + '_' + v.secret + '_m.jpg',
+                // Create our URL. Remember to sanitize any text coming from an
+                // unsafe source before it is inserted into the URL context.
+                var url = 'http:/'+'/static.flickr.com/' +
+                            encodeURIComponent(v.server) + '/' +
+                            encodeURIComponent(v.id) + '_' +
+                            encodeURIComponent(v.secret) + '_m.jpg',
                     //Create the image and the LI
                     li = Y.Node.create('<li class="loading"><img src="' + url + '" title="' + v.title + '"></li>'),
                     //Get the image from the LI

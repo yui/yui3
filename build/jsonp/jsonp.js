@@ -189,7 +189,7 @@ JSONPRequest.prototype = {
         // Temporary un-sandboxed function alias
         // TODO: queuing
         YUI.Env.JSONP[proxy] = wrap(config.on.success);
-        
+
         // Y.Get transactions block each other by design, but can easily
         //  be made non-blocking by just calling execute() on the transaction.
         // https://github.com/yui/yui3/pull/393#issuecomment-11961608

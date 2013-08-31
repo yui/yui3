@@ -1,13 +1,13 @@
 {
     "overlay": {
         "requires": [
-            "widget", 
-            "widget-stdmod", 
-            "widget-position", 
-            "widget-position-align", 
-            "widget-stack", 
+            "widget",
+            "widget-stdmod",
+            "widget-position",
+            "widget-position-align",
+            "widget-stack",
             "widget-position-constrain"
-        ], 
+        ],
         "skinnable": true
     }
 }
