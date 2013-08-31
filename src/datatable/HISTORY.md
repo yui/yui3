@@ -4,7 +4,8 @@ DataTable Change History
 @VERSION@
 ------
 
-* No changes.
+* Fix issue where Paginator count becomes out of sync with DataTable when
+  DataTable data is modified (added or removed) [Pull Request #1011] [Issue #1010]
 
 3.12.0
 ------

@@ -18,6 +18,7 @@ suite.add(new Y.Test.Case({
 
     "test rowsPerPage === null shows all rows": function () {
         var dt = new Y.DataTable({
+            caption: 'test rowsPerPage === null shows all rows',
             columns: ['id', 'name', 'price', 'qty'],
             data: data
         });
@@ -52,22 +53,57 @@ suite.add(new Y.Test.Case({
         dt.destroy();
     },
 
+    "test paginator totalItems should reflect the number of total items in the datatable": function () {
+        var dt = new Y.DataTable({
+                caption: 'test paginator totalItems should reflect the number of total items in the datatable',
+                columns: ['fruit'],
+                data: [
+                    { fruit: 'apple' },
+                    { fruit: 'banana' },
+                    { fruit: 'cherry' },
+                    { fruit: 'date' },
+                    { fruit: 'fig' },
+                    { fruit: 'grape' },
+                    { fruit: 'pinapple'}
+                ],
+                rowsPerPage: 2
+            }),
+            pgModel;
+
+        dt.render();
+
+        pgModel = dt.get('paginatorModel');
+
+        Y.Assert.areSame(pgModel.get('totalItems'), dt.get('data').size());
+
+        dt.addRow({ fruit: 'prune' });
+
+        Y.Assert.areSame(pgModel.get('totalItems'), dt.get('data').size());
+
+        dt.removeRow('1');
+
+        Y.Assert.areSame(pgModel.get('totalItems'), dt.get('data').size());
+
+        dt.destroy();
+    },
+
     "test paging directing functions should update table": function () {
         var dt = new Y.DataTable({
-            columns: ['fruit'],
-            data: [
-                { fruit: 'apple' },
-                { fruit: 'banana' },
-                { fruit: 'cherry' },
-                { fruit: 'date' },
-                { fruit: 'fig' },
-                { fruit: 'grape' },
-                { fruit: 'pinapple'}
-            ],
-            rowsPerPage: 2
-        }),
+                caption: 'test paging directing functions should update table',
+                columns: ['fruit'],
+                data: [
+                    { fruit: 'apple' },
+                    { fruit: 'banana' },
+                    { fruit: 'cherry' },
+                    { fruit: 'date' },
+                    { fruit: 'fig' },
+                    { fruit: 'grape' },
+                    { fruit: 'pinapple'}
+                ],
+                rowsPerPage: 2
+            }),
 
-        cell;
+            cell;
 
         dt.render(); // page 1
 
@@ -97,7 +133,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame('cherry', cell.get('text'), 'First cell on page is not an apple');
         Y.Assert.areSame(2, dt.body.tbodyNode.all('tr').size(), 'There are more than 2 rows on this page');
 
-        dt.firstPage(); // page 2
+        dt.firstPage(); // page 1
 
         cell = dt.body.tbodyNode.one('td');
 
@@ -116,6 +152,7 @@ suite.add(new Y.Test.Case({
 
     "test paginator location as header": function () {
         var dt = new Y.DataTable({
+            caption: 'test paginator location as header',
             paginatorLocation: ['header'],
             columns: ['id', 'name'],
             data: data,
@@ -135,6 +172,7 @@ suite.add(new Y.Test.Case({
     "test paginator insertion into a node": function () {
         var pgNode = Y.Node.create('<div/>'),
             dt = new Y.DataTable({
+                caption: 'test paginator insertion into a node',
                 paginatorLocation: pgNode,
                 columns: ['id', 'name'],
                 data: data,
@@ -153,6 +191,7 @@ suite.add(new Y.Test.Case({
 
     "test set page sizes with mixed values": function () {
         var dt = new Y.DataTable({
+                caption: 'test set page sizes with mixed values',
                 columns: ['id', 'name'],
                 data: data,
                 rowsPerPage: -1,
@@ -170,6 +209,7 @@ suite.add(new Y.Test.Case({
 
     "test custom paginator model configuration": function () {
         var dt = new Y.DataTable({
+                caption: 'test custom paginator model configuration',
                 columns: ['id', 'name'],
                 data: data,
                 rowsPerPage: 10,
@@ -189,6 +229,7 @@ suite.add(new Y.Test.Case({
 
     "test custom paginator model": function () {
         var dt = new Y.DataTable({
+                caption: 'test custom paginator model',
                 columns: ['id', 'name'],
                 data: data,
                 rowsPerPage: 10,
@@ -207,13 +248,14 @@ suite.add(new Y.Test.Case({
 
     "test swapping the data with new data": function () {
         var dt = new Y.DataTable({
+            caption: 'test swapping the data with new data',
             columns: ['id', 'name'],
             data: data,
             rowsPerPage: 10
         }),
         data2 = [];
 
-        while (data2.length < 100) {
+        while (data2.length < 50) {
             data2.push({
                 id: data2.length + 1,
                 name: ['a','b', 'c','d','e','f','g'][data2.length % 7].toUpperCase() + ':' + data.length,
@@ -248,6 +290,12 @@ suite.add(new Y.Test.Case({
         // check cell data
         Y.Assert.areSame(data2[10].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'));
 
+        // go to last page
+        dt.lastPage();
+
+        // check cell data
+        Y.Assert.areSame(data2[40].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'));
+
         // go to first page and change data
         dt.firstPage();
         dt.set('data', data);
@@ -260,6 +308,7 @@ suite.add(new Y.Test.Case({
 
     "test clicking on the controls": function () {
         var dt = new Y.DataTable({
+                caption: 'test clicking on the controls',
                 columns: ['id', 'name'],
                 data: data,
                 rowsPerPage: 10,
@@ -325,7 +374,6 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(50, dt.body.tbodyNode.all('tr').size(), 'f');
         // test cell data
         Y.Assert.areSame(data[0].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'), 'g');
-
 
         dt.destroy();
     }
