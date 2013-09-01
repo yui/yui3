@@ -556,7 +556,8 @@
 
                 });
             }
-            inst.__use.apply(inst, args);
+            
+            return inst.__use.apply(inst, args);
         },
         /**
         * @method delegate
