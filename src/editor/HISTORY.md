@@ -4,7 +4,21 @@ Rich Text Editor Change History
 @VERSION@
 ------
 
-* No changes.
+* Editor is able to work in two modes - as an Inline Editor or using an iframe.
+  For that reason, some internal changes have been made:
+
+  Y.Frame is now a plugin and extends Y.Plugin.Base.
+  
+  There is a new Plugin, called ContentEditable. This plugin allows
+  editor to work without using an iframe, as an inline editor.
+
+  If a container is not specified, EditorBase creates and plugs an instance of
+  Y.Frame. Otherwise, it uses the provided container (ContentEditable)
+
+  Added Y.InlineEditor which extends EditorBase and plugs ContentEditable
+  during the initialization process.
+
+  [Ticket #1041] [ipeychev]
 
 3.12.0
 ------

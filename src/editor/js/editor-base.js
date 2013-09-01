@@ -15,34 +15,20 @@
      * @constructor
      */
 
-    var EditorBase = function() {
+    var Lang = Y.Lang,
+
+    EditorBase = function() {
         EditorBase.superclass.constructor.apply(this, arguments);
-    }, LAST_CHILD = ':last-child', BODY = 'body';
+    }, LAST_CHILD = ':last-child';
 
     Y.extend(EditorBase, Y.Base, {
         /**
-        * Internal reference to the Y.Frame instance
+        * Internal reference to the Y.ContentEditable instance
         * @property frame
         */
         frame: null,
+
         initializer: function() {
-            var frame = new Y.Frame({
-                designMode: true,
-                title: EditorBase.STRINGS.title,
-                use: EditorBase.USE,
-                dir: this.get('dir'),
-                extracss: this.get('extracss'),
-                linkedcss: this.get('linkedcss'),
-                defaultblock: this.get('defaultblock'),
-                host: this
-            }).plug(Y.Plugin.ExecCommand);
-
-
-            frame.after('ready', Y.bind(this._afterFrameReady, this));
-            frame.addTarget(this);
-
-            this.frame = frame;
-
             this.publish('nodeChange', {
                 emitFacade: true,
                 bubbles: true,
@@ -52,8 +38,6 @@
             //this.plug(Y.Plugin.EditorPara);
         },
         destructor: function() {
-            this.frame.destroy();
-
             this.detachAll();
         },
         /**
@@ -98,15 +82,16 @@
         * @private
         */
         _resolveChangedNode: function(n) {
-            var inst = this.getInstance(), lc, lc2, found, sel;
-            if (n && n.test(BODY)) {
+            var inst = this.getInstance(), lc, lc2, found, root = this._getRoot(), sel;
+
+            if (n && n.compareTo(root)) {
                 sel = new inst.EditorSelection();
                 if (sel && sel.anchorNode) {
                     n = sel.anchorNode;
                 }
             }
             if (inst && n && n.test('html')) {
-                lc = inst.one(BODY).one(LAST_CHILD);
+                lc = root.one(LAST_CHILD);
                 while (!found) {
                     if (lc) {
                         lc2 = lc.one(LAST_CHILD);
@@ -134,9 +119,17 @@
             }
             if (!n) {
                 //Fallback to make sure a node is attached to the event
-                n = inst.one(BODY);
+                n = root;
             }
             return n;
+        },
+        /**
+        * Resolves the ROOT editor element.
+        * @method _getRoot
+        * @private
+        */
+        _getRoot: function() {
+            return this.getInstance().EditorSelection.ROOT;
         },
         /**
         * The default handler for the nodeChange event.
@@ -150,7 +143,8 @@
                 changed, endTime,
                 cmds = {}, family, fsize, classes = [],
                 fColor = '', bColor = '', bq,
-                normal = false;
+                normal = false,
+                root = this._getRoot();
 
             if (Y.UA.ie) {
                 try {
@@ -198,7 +192,7 @@
                 * a class to the BLOCKQUOTE that adds left/right margin to it
                 * This strips that style so it is just a normal BLOCKQUOTE
                 */
-                bq = inst.all('.webkit-indent-blockquote, blockquote');
+                bq = root.all('.webkit-indent-blockquote, blockquote');
                 if (bq.size()) {
                     bq.setStyle('margin', '');
                 }
@@ -308,10 +302,12 @@
         * @param {Node} node The Node to start from
         */
         getDomPath: function(node, nodeList) {
-            var domPath = [], domNode,
+            var domPath = [], domNode, rootNode,
+                root = this._getRoot(),
                 inst = this.frame.getInstance();
 
             domNode = inst.Node.getDOMNode(node);
+            rootNode = inst.Node.getDOMNode(root);
             //return inst.all(domNode);
 
             while (domNode !== null) {
@@ -331,7 +327,7 @@
                     domPath.push(domNode);
                 }
 
-                if (domNode === inst.config.doc.body) {
+                if (domNode === rootNode) {
                     domNode = null;
                     break;
                 }
@@ -425,7 +421,8 @@
             var inst = this.getInstance(),
                 sel = new inst.EditorSelection(),
                 range = sel.createRange(),
-                cur = inst.all('#yui-ie-cursor');
+                root = this._getRoot(),
+                cur = root.all('#yui-ie-cursor');
 
             if (cur.size()) {
                 cur.each(function(n) {
@@ -575,6 +572,15 @@
             }
         },
         /**
+        * Validates linkedcss property
+        *
+        * @method _validateLinkedCSS
+        * @private
+        */
+        _validateLinkedCSS: function(value) {
+            return Lang.isString(value) || Lang.isArray(value);
+        },
+        /**
         * Pass through to the frame.execCommand method
         * @method execCommand
         * @param {String} cmd The command to pass: inserthtml, insertimage, bold
@@ -618,15 +624,41 @@
             return this.frame.getInstance();
         },
         /**
-        * Renders the Y.Frame to the passed node.
+        * Renders the Y.ContentEditable to the passed node.
         * @method render
         * @param {Selector/HTMLElement/Node} node The node to append the Editor to
         * @return {EditorBase}
         * @chainable
         */
         render: function(node) {
-            this.frame.set('content', this.get('content'));
-            this.frame.render(node);
+            var frame = this.frame;
+
+            if (!frame) {
+                this.plug(Y.Plugin.Frame, {
+                    designMode: true,
+                    title: EditorBase.STRINGS.title,
+                    use: EditorBase.USE,
+                    dir: this.get('dir'),
+                    extracss: this.get('extracss'),
+                    linkedcss: this.get('linkedcss'),
+                    defaultblock: this.get('defaultblock')
+                });
+
+                frame = this.frame;
+            }
+
+            if (!frame.hasPlugin('exec')) {
+                frame.plug(Y.Plugin.ExecCommand);
+            }
+
+            frame.after('ready', Y.bind(this._afterFrameReady, this));
+
+            frame.addTarget(this);
+
+            frame.set('content', this.get('content'));
+
+            frame.render(node);
+
             return this;
         },
         /**
@@ -814,6 +846,7 @@
             * @attribute content
             */
             content: {
+                validator: Lang.isString,
                 value: '<br class="yui-cursor">',
                 setter: function(str) {
                     if (str.substr(0, 1) === "\n") {
@@ -839,15 +872,17 @@
             * @attribute dir
             */
             dir: {
+                validator: Lang.isString,
                 writeOnce: true,
                 value: 'ltr'
             },
             /**
             * @attribute linkedcss
             * @description An array of url's to external linked style sheets
-            * @type String
+            * @type String|Array
             */
             linkedcss: {
+                validator: '_validateLinkedCSS',
                 value: '',
                 setter: function(css) {
                     if (this.frame) {
@@ -862,7 +897,8 @@
             * @type String
             */
             extracss: {
-                value: false,
+                validator: Lang.isString,
+                value: '',
                 setter: function(css) {
                     if (this.frame) {
                         this.frame.set('extracss', css);
@@ -876,6 +912,7 @@
             * @type String
             */
             defaultblock: {
+                validator: Lang.isString,
                 value: 'p'
             }
         }
