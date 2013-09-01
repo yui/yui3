@@ -1038,8 +1038,7 @@
             linkedcss: {
                 validator: '_validateLinkedCSS',
                 getter: '_getLinkedCSS',
-                setter: '_setLinkedCSS',
-                value: ''
+                setter: '_setLinkedCSS'
             },
             /**
             * @attribute extracss
