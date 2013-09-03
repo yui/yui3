@@ -21,24 +21,24 @@ YUI.add('editor-tests', function(Y) {
         name: 'Editor Tests',
         setUp : function() {
         },
-        
+
         tearDown : function() {
         },
         test_load: function() {
-            Y.Assert.isObject(Y.Frame, 'EditorBase was not loaded');
+            Y.Assert.isObject(Y.Plugin.Frame, 'EditorBase was not loaded');
             Y.Assert.isObject(Y.EditorBase, 'EditorBase was not loaded');
         },
         test_frame: function() {
             var iframeReady = false;
 
-            iframe = new Y.Frame({
+            iframe = new Y.Plugin.Frame({
                 container: '#editor',
                 designMode: true,
                 content: 'This is a test.',
                 use: ['node','selector-css3', 'dd-drag', 'dd-ddm']
             });
-            Y.Assert.isInstanceOf(Y.Frame, iframe, 'Iframe instance can not be created');
-            
+            Y.Assert.isInstanceOf(Y.Plugin.Frame, iframe, 'Iframe instance can not be created');
+
             iframe.after('ready', function() {
                 iframeReady = true;
             });
@@ -51,10 +51,10 @@ YUI.add('editor-tests', function(Y) {
                 Y.Assert.isInstanceOf(YUI, inst, 'Internal instance not created');
                 Y.Assert.isObject(inst.DD.Drag, 'DD Not loaded inside the frame');
                 Y.Assert.isObject(inst.DD.DDM, 'DD Not loaded inside the frame');
-                
+
 
             }, 1500);
-            
+
         },
         test_frame_use: function() {
             var inst = iframe.getInstance(),
@@ -73,7 +73,7 @@ YUI.add('editor-tests', function(Y) {
             var n = iframe.get('node');
             var e = Y.one('#editor iframe');
             Y.Assert.areSame(n, e, 'iframe node getter failed');
-            
+
             iframe._fixIECursors();
 
             iframe.delegate('click', function() {});
@@ -85,7 +85,7 @@ YUI.add('editor-tests', function(Y) {
         'test: _DOMPaste': function() {
             var OT = 'ORIGINAL_TARGET',
             fired = false;
-            
+
             var inst = iframe.getInstance(),
             win = inst.config.win;
 
@@ -135,7 +135,7 @@ YUI.add('editor-tests', function(Y) {
                 extracss: 'b { color: red; }'
             });
             Y.Assert.isInstanceOf(Y.EditorBase, editor, 'EditorBase instance can not be created');
-            
+
             editor.after('ready', function() {
                 iframeReady = true;
             });
@@ -179,13 +179,13 @@ YUI.add('editor-tests', function(Y) {
                 inst.one('b').simulate('mousedown');
                 inst.one('body').simulate('mouseup');
                 inst.one('b').simulate('mouseup');
-                
+
                 fireKey(editor, 13);
 
             }, 1500);
         },
         test_copy_styles: function() {
-            
+
             var node = Y.Node.create('<b><u><div style="font-family: Arial; color: purple">Foo</div></u></b>'),
                 node2 = Y.Node.create('<div/>');
 
@@ -219,12 +219,12 @@ YUI.add('editor-tests', function(Y) {
         },
         test_font_size_normalize: function() {
             var n = Y.Node.create('<span style="font-size: -webkit-xxx-large"></span>');
-            
+
             if (Y.UA.webkit) { //Can't apply -webkit styles in something other than webkit, duh..
                 var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
                 Y.Assert.areSame('48px', size, 'Failed to parse size');
             }
-            
+
             n.setStyle('fontSize', 'xx-large');
             var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('32px', size, 'Failed to parse size');
@@ -287,10 +287,10 @@ YUI.add('editor-tests', function(Y) {
         test_selection_methods: function() {
             var inst = editor.getInstance(),
                 sel = new inst.EditorSelection();
-            
+
             sel.insertContent('This is a test<br>');
             editor.execCommand('inserthtml', 'This is another test<br>');
-            
+
             editor.execCommand('selectall');
             editor.execCommand('wrap', 'div');
             var html = editor.getContent().toLowerCase();
@@ -304,7 +304,7 @@ YUI.add('editor-tests', function(Y) {
 
         },
         'test: EditorSelection': function() {
-            
+
             var inst = editor.getInstance(),
                 sel = new inst.EditorSelection(),
                 html = '<b>Foobar</b>',
@@ -313,7 +313,7 @@ YUI.add('editor-tests', function(Y) {
             var n = sel._wrap(node, 'span');
             Y.Assert.areSame('foobar', n.innerHTML.toLowerCase());
             Y.Assert.areSame('span', n.tagName.toLowerCase());
-            
+
             var a = sel.anchorNode;
             sel.anchorNode = node;
 
@@ -343,7 +343,7 @@ YUI.add('editor-tests', function(Y) {
                     editor.execCommand(cmd, '<b>Foo</b>');
                 }
             });
-            
+
             var hc = inst.EditorSelection.hasCursor;
             inst.EditorSelection.hasCursor = function() { return true };
 
@@ -444,7 +444,7 @@ YUI.add('editor-tests', function(Y) {
             });
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Third Frame was not destroyed');
-            
+
         },
         test_double_plug_setup: function() {
             editor = new Y.EditorBase({
@@ -520,16 +520,16 @@ YUI.add('editor-tests', function(Y) {
             sel.selectNode(b, true, true);
             editor.execCommand('bidi');
             Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added BACK to node');
-            
+
             editor.editorBidi._afterMouseUp();
             editor.editorBidi._afterNodeChange({
                 changedType: 'end-up'
             });
 
-            var out = Y.Plugin.EditorBidi.blockParent(inst.one('body').get('firstChild.firstChild'));
+            var out = Y.Plugin.EditorBidi.blockParent(inst.one('body').get('firstChild.firstChild'), false, inst.one('body'));
             Y.Assert.isTrue(out.test('p'));
 
-            var out = Y.Plugin.EditorBidi.addParents([inst.one('body').get('firstChild')]);
+            var out = Y.Plugin.EditorBidi.addParents([inst.one('body').get('firstChild')], inst.one('body'));
             Y.Assert.areEqual(1, out.length);
             Y.Assert.isTrue(out[0].test('p'));
 
@@ -563,7 +563,7 @@ YUI.add('editor-tests', function(Y) {
             },
             error: { //These tests should error
                 'test: EditorSelection': (Y.UA.chrome || Y.UA.webkit),
-                test_selection_methods: ((Y.UA.ie || Y.UA.webkit || (Y.UA.gecko && Y.UA.gecko >= 12)) ? true : false),
+                test_selection_methods: ((Y.UA.ie || Y.UA.webkit || (Y.UA.gecko && Y.UA.gecko >= 12 && Y.UA.gecko < 23)) ? true : false),
                 test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie >= 9) || Y.UA.chrome) ? true : false),
                 test_double_plug: true,
                 test_double_plug2: true,
@@ -571,9 +571,9 @@ YUI.add('editor-tests', function(Y) {
             }
         }
     };
-    
+
     var suite = new Y.Test.Suite("Editor");
-    
+
     suite.add(new Y.Test.Case(template));
     Y.Test.Runner.add(suite);
 

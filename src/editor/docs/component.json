@@ -35,6 +35,37 @@
             "description": "Creating and using your own ExecCommands",
             "modules"    : ["editor"],
             "tags"       : ["editor", "instance", "frame", "iframe", "execcommand"]
+        },
+        {
+            "displayName": ""
+        },
+        {
+            "name"       : "editor-inline-instance",
+            "displayName": "Using the InlineEditor's instance",
+            "description": "Use the InlineEditor's instance to query the content editable section",
+            "modules"    : ["editor"],
+            "tags"       : ["editor", "inline", "instance", "frame", "iframe"]
+        },
+        {
+            "name"       : "editor-inline-events",
+            "displayName": "InlineEditor Events",
+            "description": "Using the InlineEditor's built in events.",
+            "modules"    : ["editor", "inline"],
+            "tags"       : ["editor", "instance", "frame", "iframe", "events", "inline"]
+        },
+        {
+            "name"       : "editor-inline-nodechange",
+            "displayName": "InlineEditor's NodeChange Event",
+            "description": "Using the InlineEditor's nodeChange Event.",
+            "modules"    : ["editor", "inline"],
+            "tags"       : ["editor", "instance", "frame", "iframe", "events", "updates", "nodechange", "inline"]
+        },
+        {
+            "name"       : "editor-inline-exec",
+            "displayName": "InlineEditor ExecCommands",
+            "description": "Creating and using your own ExecCommands",
+            "modules"    : ["editor", "inline"],
+            "tags"       : ["editor", "instance", "frame", "iframe", "execcommand", "inline"]
         }
     ]
 }
