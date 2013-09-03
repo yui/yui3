@@ -330,10 +330,8 @@ YUI.add('editor-tests', function(Y) {
             });
             iframe._DOMPaste({
                 _event: {
-
                     target: OT,
-                    currentTarget: OT,
-
+                    currentTarget: OT
                 }
             });
 
@@ -573,7 +571,7 @@ YUI.add('editor-tests', function(Y) {
             inst.EditorSelection.hasCursor = function() { return true; };
 
             Y.each(cmds, function(val, cmd) {
-                if (cmd !== 'bidi' && cmd != 'insertandfocus') {
+                if (cmd !== 'bidi' && cmd !== 'insertandfocus') {
                     if (cmd.indexOf('insertunorderedlist') > 0 && Y.UA.ie && Y.UA.ie < 9) {
                         editor.execCommand(cmd, '<b>Foo</b>');
                     }
@@ -585,15 +583,19 @@ YUI.add('editor-tests', function(Y) {
             editor.frame._execCommand('bold', '');
 
 
-            var SEL = inst.EditorSelection;
+            var SEL = inst.EditorSelection,
+                i;
+
             inst.EditorSelection = function() {
                 var sel = new SEL();
                 sel.isCollapsed = false;
                 return sel;
             };
 
-            for (var i in SEL) {
-                inst.EditorSelection[i] = SEL[i];
+            for (i in SEL) {
+                if (SEL.hasOwnProperty(i)) {
+                    inst.EditorSelection[i] = SEL[i];
+                }
             }
 
             editor.execCommand('insertorderedlist', '');
