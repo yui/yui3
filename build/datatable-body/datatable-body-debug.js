@@ -8,16 +8,17 @@ the default `bodyView` for `Y.DataTable.Base` and `Y.DataTable` classes.
 @submodule datatable-body
 @since 3.5.0
 **/
-var Lang         = Y.Lang,
-    isArray      = Lang.isArray,
-    isNumber     = Lang.isNumber,
-    isString     = Lang.isString,
-    fromTemplate = Lang.sub,
-    htmlEscape   = Y.Escape.html,
-    toArray      = Y.Array,
-    bind         = Y.bind,
-    YObject      = Y.Object,
-    valueRegExp  = /\{value\}/g;
+var Lang             = Y.Lang,
+    isArray          = Lang.isArray,
+    isNumber         = Lang.isNumber,
+    isString         = Lang.isString,
+    fromTemplate     = Lang.sub,
+    htmlEscape       = Y.Escape.html,
+    toArray          = Y.Array,
+    bind             = Y.bind,
+    YObject          = Y.Object,
+    valueRegExp      = /\{value\}/g,
+    EV_CONTENT_UPDATE = 'contentUpdate';
 
 /**
 View class responsible for rendering the `<tbody>` section of a table. Used as
@@ -643,6 +644,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             // tbody
             if (col.hasOwnProperty('nodeFormatter')) {
                 this.render();
+                this.fire(EV_CONTENT_UPDATE);
                 return;
             }
         }
@@ -677,6 +679,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             default:
                 this.render();
         }
+
+        // Event fired to tell users when we are done updating after the data
+        // was changed
+        this.fire(EV_CONTENT_UPDATE);
     },
 
     /**
