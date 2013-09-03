@@ -1,4 +1,4 @@
-YUI().use('editor', 'console', function(Y) {
+YUI().use('editor-inline', 'console', function(Y) {
 
     (new Y.Console().render( "#console" ));
 
@@ -10,7 +10,7 @@ YUI().use('editor', 'console', function(Y) {
     };
 
     //Create the Base Editor
-    var editor = new Y.EditorBase({
+    var editor = new Y.InlineEditor({
         content: '<p><b>This is <i class="foo">a test</i></b></p><p><b style="color: red; font-family: Comic Sans MS">This is <span class="foo">a test</span></b></p>',
         extracss: '.foo { font-weight: normal; color: black; background-color: yellow; }'
     });

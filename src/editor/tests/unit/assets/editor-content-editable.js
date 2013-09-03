@@ -1,47 +1,53 @@
 YUI.add('editor-tests', function(Y) {
 
-
     var editor = null,
+
     iframe = null,
+
     fireKey = function(editor, key) {
         var inst = editor.getInstance();
-        inst.one('body').simulate('keydown', {
+
+        var editorNode = inst.one('[contenteditable="true"]');
+
+        editorNode.simulate('keydown', {
             keyCode: key
         });
 
-        inst.one('body').simulate('keypress', {
+        editorNode.simulate('keypress', {
             keyCode: key
         });
 
-        inst.one('body').simulate('keyup', {
+        editorNode.simulate('keyup', {
             keyCode: key
         });
     },
+
     template = {
         name: 'Editor Tests',
-        setUp : function() {
-        },
-        
-        tearDown : function() {
-        },
+        setUp : function() {},
+
+        tearDown : function() {},
+
         test_load: function() {
-            Y.Assert.isObject(Y.Frame, 'EditorBase was not loaded');
+            Y.Assert.isObject(Y.Plugin.ContentEditable, 'ContentEditable was not loaded');
             Y.Assert.isObject(Y.EditorBase, 'EditorBase was not loaded');
         },
+
         test_frame: function() {
             var iframeReady = false;
 
-            iframe = new Y.Frame({
+            iframe = new Y.Plugin.ContentEditable({
                 container: '#editor',
-                designMode: true,
                 content: 'This is a test.',
                 use: ['node','selector-css3', 'dd-drag', 'dd-ddm']
             });
-            Y.Assert.isInstanceOf(Y.Frame, iframe, 'Iframe instance can not be created');
-            
+
+            Y.Assert.isInstanceOf(Y.Plugin.ContentEditable, iframe, 'ContentEditable instance can not be created');
+
             iframe.after('ready', function() {
                 iframeReady = true;
             });
+
             iframe.render();
 
             this.wait(function() {
@@ -51,11 +57,12 @@ YUI.add('editor-tests', function(Y) {
                 Y.Assert.isInstanceOf(YUI, inst, 'Internal instance not created');
                 Y.Assert.isObject(inst.DD.Drag, 'DD Not loaded inside the frame');
                 Y.Assert.isObject(inst.DD.DDM, 'DD Not loaded inside the frame');
-                
+
 
             }, 1500);
-            
+
         },
+
         test_frame_use: function() {
             var inst = iframe.getInstance(),
                 test = this;
@@ -71,28 +78,110 @@ YUI.add('editor-tests', function(Y) {
         },
         test_frame_general: function() {
             var n = iframe.get('node');
-            var e = Y.one('#editor iframe');
+            var e = Y.one('#editor');
             Y.Assert.areSame(n, e, 'iframe node getter failed');
-            
-            iframe._fixIECursors();
 
             iframe.delegate('click', function() {});
+        },
+        'test delgation': function () {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    container: node,
+                    content: 'This is a test.<a href="#" class=".foo">Foo</a>',
+                    use: ['node','selector-css3', 'dd-drag', 'dd-ddm']
+                });
 
-            var id = iframe.get('id');
-            Y.Assert.isTrue((id.indexOf('iframe-yui') === 0));
+            var inst = ce.delegate('click', function () {});
+            Y.Assert.isFalse(inst, 'Delegate does not return false when no instance is present.');
+
+            ce.render();
+
+            var del = ce.delegate('click', function (e) {}, node, 'a');
+            Y.Assert.isTrue(!!(del.evt && del.sub), 'Delgate returned does not have valid parameters');
+
+            var del_no_sel = ce.delegate('click', function (e) {}, 'a');
+            Y.Assert.isTrue(!!(del_no_sel.evt && del_no_sel.sub), 'Delgate returned does not have valid parameters');
 
         },
+
+        'test rendering without a defined container': function () {
+            var ce = new Y.Plugin.ContentEditable({
+                    content: 'This is a test.',
+                    use: ['node', 'selector-css3', 'dd-drag', 'dd-ddm']
+                });
+
+            // test rendering to update container when _rendered is already true
+            ce._rendered = true;
+            ce.render();
+            Y.Assert.isFalse(!!(ce.get('container')), 'Container is not undefined');
+
+            // set _rendered back to false and continue with normal rendering
+            ce._rendered = false;
+            ce.render();
+
+            Y.Assert.isTrue(!!(ce.get('container')), 'Container was not created');
+            Y.Assert.isInstanceOf(Y.Node, ce.get('container'), 'Container created is not a node instance');
+
+            ce.get('container').remove(true);
+        },
+
+        'test getting id is accurate': function () {
+            var node = Y.Node.create('<div/>'),
+                ceID = new Y.Plugin.ContentEditable({
+                    content: 'This is a test.',
+                    container: node,
+                    use: ['node', 'selector-css3', 'dd-drag', 'dd-ddm'],
+                    id: 'myId'
+                }),
+                ce = new Y.Plugin.ContentEditable({
+                    content: 'This is a test.',
+                    container: node,
+                    use: ['node', 'selector-css3', 'dd-drag', 'dd-ddm']
+                });
+
+            ceID.render();
+            Y.Assert.areSame('myId', ceID.get('id'), 'Id is not held over');
+
+            ce.render();
+            Y.Assert.areSame('inlineedit-yui', ce.get('id').substr(0, ce.get('id').indexOf('_')), 'Id does not match prefix');
+        },
+
+        'test use after instantiation': function () {
+
+            var ce = new Y.Plugin.ContentEditable({
+                container: '#editor',
+                designMode: true,
+                content: 'This is a test.'
+            });
+
+            ce.render();
+
+            this.wait(function() {
+                ce.use('paginator');
+
+                this.wait(function () {
+                    var inst = ce.getInstance();
+
+                    Y.Assert.isInstanceOf(YUI, inst, 'Internal instance not created');
+                    Y.Assert.isObject(inst.Paginator, 'Paginator Not loaded inside the frame');
+                }, 1500);
+            },
+            1500);
+
+        },
+
+
         'test: _DOMPaste': function() {
             var OT = 'ORIGINAL_TARGET',
             fired = false;
-            
+
             var inst = iframe.getInstance(),
             win = inst.config.win;
 
             inst.config.win = {
                 clipboardData: {
                     getData: function() {
-                        return 'foobar'
+                        return 'foobar';
                     }
                 }
             };
@@ -108,7 +197,7 @@ YUI.add('editor-tests', function(Y) {
                     currentTarget: OT,
                     clipboardData: {
                         getData: function() {
-                            return 'foobar'
+                            return 'foobar';
                         }
                     }
                 }
@@ -119,23 +208,163 @@ YUI.add('editor-tests', function(Y) {
             inst.config.win = win;
 
         },
+        'test: _DOMPaste {empty}': function() {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    container: node,
+                    content: 'This is a test.<a href="#" class=".foo">Foo</a>',
+                    use: ['node','selector-css3', 'dd-drag', 'dd-ddm']
+                });
+
+            ce.render();
+
+            var OT = 'ORIGINAL_TARGET',
+                fired = false;
+
+            var inst = ce.getInstance(),
+                win = inst.config.win;
+
+            inst.config.win = {
+                clipboardData: {
+                    getData: function () {
+                        return '';
+                    },
+                    setData: function (key, val) {
+                        return true;
+                    }
+                }
+            };
+
+            ce.on('dom:paste', function(e) {
+                fired = true;
+                Y.Assert.areSame(e.clipboardData, null);
+            });
+
+            ce._DOMPaste({
+                _event: {
+                    target: OT,
+                    currentTarget: OT
+                }
+            });
+
+
+            Y.Assert.isTrue(fired);
+
+            inst.config.win = win;
+
+        },
+
+
+        'test: _DOMPaste {no data}': function() {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    container: node,
+                    content: 'This is a test.<a href="#" class=".foo">Foo</a>',
+                    use: ['node','selector-css3', 'dd-drag', 'dd-ddm']
+                });
+
+            ce.render();
+
+            var OT = 'ORIGINAL_TARGET',
+                fired = false;
+
+            var inst = ce.getInstance(),
+                win = inst.config.win;
+
+            inst.config.win = {
+            };
+
+            ce.on('dom:paste', function(e) {
+                fired = true;
+                Y.Assert.areSame(e.clipboardData, null);
+            });
+
+            ce._DOMPaste({
+                _event: {
+                    target: OT,
+                    currentTarget: OT
+                }
+            });
+
+            inst.config.win = {
+                clipboardData: {
+                    getData: function () {
+                        return '';
+                    },
+                    setData: function (key, val) {
+                        return false;
+                    }
+                }
+            };
+
+            ce._DOMPaste({
+                _event: {
+                    target: OT,
+                    currentTarget: OT
+                }
+            });
+
+            Y.Assert.isTrue(fired);
+
+            inst.config.win = win;
+        },
+
+        'test: empty _DOMPaste': function() {
+            var OT = 'ORIGINAL_TARGET',
+            fired = false;
+
+            var inst = iframe.getInstance(),
+            win = inst.config.win;
+
+            inst.config.win = {
+                clipboardData: {
+                    getData: function() {
+                        return 'foobar';
+                    }
+                }
+            };
+            iframe.on('dom:paste', function(e) {
+                fired = true;
+                Y.Assert.areSame(e.clipboardData.data, 'foobar');
+                Y.Assert.areSame(e.clipboardData.getData(), 'foobar');
+            });
+            iframe._DOMPaste({
+                _event: {
+                    target: OT,
+                    currentTarget: OT
+                }
+            });
+
+            Y.Assert.isTrue(fired);
+
+            inst.config.win = win;
+
+        },
+
         test_frame_destroy: function() {
             iframe.destroy();
 
-            Y.Assert.isNull(Y.one('#editor iframe'), 'iframe DOM node was not destroyed');
+            Y.Assert.isFalse(Y.one('#editor').hasAttribute('contenteditable'), 'iframe DOM node was not destroyed');
         },
         test_editor: function() {
-
             Y.EditorBase.USE.push('dd');
             Y.EditorBase.USE.push('node-event-simulate');
             var iframeReady = false;
 
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
-                extracss: 'b { color: red; }'
+                extracss: 'b { color: red; }',
+                plugins: [
+                    {
+                        fn: Y.Plugin.ContentEditable,
+                        cfg: {
+                            use: Y.EditorBase.USE
+                        }
+                    }
+                ]
             });
             Y.Assert.isInstanceOf(Y.EditorBase, editor, 'EditorBase instance can not be created');
-            
+
             editor.after('ready', function() {
                 iframeReady = true;
             });
@@ -155,7 +384,7 @@ YUI.add('editor-tests', function(Y) {
                 };
                 Y.Assert.isTrue(events[e.changedType], 'NodeChange working for ' + e.changedType);
                 if (e.changedType !== 'execcommand') {
-                    Y.Assert.isTrue(e.changedNode.test('b, body'), 'Changed Node');
+                    Y.Assert.isTrue(e.changedNode.test('b, [contenteditable="true"]'), 'Changed Node');
                 }
 
             });
@@ -172,20 +401,20 @@ YUI.add('editor-tests', function(Y) {
                 Y.Assert.isObject(inst.DD.Drag, 'DD Not loaded inside the frame');
                 Y.Assert.isObject(inst.DD.DDM, 'DD Not loaded inside the frame');
                 Y.Assert.areSame(Y.EditorBase.FILTER_RGB(inst.one('b').getStyle('color')), '#ff0000', 'Extra CSS Failed');
-                inst.one('body').simulate('mousedown', {
+                inst.one('[contenteditable="true"]').simulate('mousedown', {
                     pageX: 100,
                     pageY: 100
                 });
                 inst.one('b').simulate('mousedown');
-                inst.one('body').simulate('mouseup');
+                inst.one('[contenteditable="true"]').simulate('mouseup');
                 inst.one('b').simulate('mouseup');
-                
+
                 fireKey(editor, 13);
 
             }, 1500);
         },
         test_copy_styles: function() {
-            
+
             var node = Y.Node.create('<b><u><div style="font-family: Arial; color: purple">Foo</div></u></b>'),
                 node2 = Y.Node.create('<div/>');
 
@@ -194,8 +423,8 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.areSame(node.one('div').getStyle('color'), node2.getStyle('color'), 'Style failed to copy');
             Y.Assert.areSame(node.one('div').getStyle('fontFamily'), node2.getStyle('fontFamily'), 'Style failed to copy');
 
-            var node = Y.Node.create('<a>'),
-                node2 = Y.Node.create('<div/>');
+            node = Y.Node.create('<a>');
+            node2 = Y.Node.create('<div/>');
 
             editor.copyStyles(node, node2);
 
@@ -206,47 +435,48 @@ YUI.add('editor-tests', function(Y) {
 
             Y.Assert.areNotSame(inst.one('html'), node, 'Failed to resolve HTML node');
 
-            var node = editor._resolveChangedNode(null);
-            Y.Assert.areSame(inst.one('body'), node, 'Failed to resolve HTML node');
+            node = editor._resolveChangedNode(null);
+            Y.Assert.isTrue(inst.one('[contenteditable="true"]').compareTo(node), 'Failed to resolve HTML node');
         },
         test_get_content: function() {
             var html = editor.getContent(),
                 ex = ((Y.UA.gecko && Y.UA.gecko < 12) ? '<br>' : '');
                 if (Y.UA.ie) {
-                    html = html.replace(' style=""', '');
+                    html = html.replace(' style=""', '').replace(' style="RIGHT: auto"', '');
                 }
             Y.Assert.areEqual(ex + 'Hello <b>World</b>!!'.toLowerCase(), html.toLowerCase(), 'getContent failed to get the editor content');
         },
         test_font_size_normalize: function() {
-            var n = Y.Node.create('<span style="font-size: -webkit-xxx-large"></span>');
-            
+            var n = Y.Node.create('<span style="font-size: -webkit-xxx-large"></span>'),
+                size;
+
             if (Y.UA.webkit) { //Can't apply -webkit styles in something other than webkit, duh..
-                var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+                size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
                 Y.Assert.areSame('48px', size, 'Failed to parse size');
             }
-            
+
             n.setStyle('fontSize', 'xx-large');
-            var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+            size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('32px', size, 'Failed to parse size');
 
             n.setStyle('fontSize', 'x-large');
-            var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+            size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('24px', size, 'Failed to parse size');
 
             n.setStyle('fontSize', 'large');
-            var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+            size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('18px', size, 'Failed to parse size');
 
             n.setStyle('fontSize', 'medium');
-            var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+            size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('16px', size, 'Failed to parse size');
 
             n.setStyle('fontSize', 'small');
-            var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+            size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('13px', size, 'Failed to parse size');
 
             n.setStyle('fontSize', 'x-small');
-            var size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
+            size = Y.EditorBase.NORMALIZE_FONTSIZE(n);
             Y.Assert.areSame('10px', size, 'Failed to parse size');
 
         },
@@ -281,16 +511,16 @@ YUI.add('editor-tests', function(Y) {
 
             inst.EditorSelection.cleanCursor();
 
-            var count = inst.EditorSelection.hasCursor();
+            count = inst.EditorSelection.hasCursor();
             Y.Assert.areSame(0, count, 'Cursor object found');
         },
         test_selection_methods: function() {
             var inst = editor.getInstance(),
                 sel = new inst.EditorSelection();
-            
+
             sel.insertContent('This is a test<br>');
             editor.execCommand('inserthtml', 'This is another test<br>');
-            
+
             editor.execCommand('selectall');
             editor.execCommand('wrap', 'div');
             var html = editor.getContent().toLowerCase();
@@ -304,7 +534,7 @@ YUI.add('editor-tests', function(Y) {
 
         },
         'test: EditorSelection': function() {
-            
+
             var inst = editor.getInstance(),
                 sel = new inst.EditorSelection(),
                 html = '<b>Foobar</b>',
@@ -313,7 +543,7 @@ YUI.add('editor-tests', function(Y) {
             var n = sel._wrap(node, 'span');
             Y.Assert.areSame('foobar', n.innerHTML.toLowerCase());
             Y.Assert.areSame('span', n.tagName.toLowerCase());
-            
+
             var a = sel.anchorNode;
             sel.anchorNode = node;
 
@@ -328,13 +558,6 @@ YUI.add('editor-tests', function(Y) {
         },
         test_execCommands: function() {
             editor.focus(true);
-            /*
-            No Asserts here yet, this test is only to
-            show that there are no syntax errors thrown running
-            an execCommand.
-
-            I still need to develop a way to properly test these commands
-            */
             var inst = editor.getInstance();
             var cmds = Y.Plugin.ExecCommand.COMMANDS;
             var b = cmds.bidi;
@@ -343,13 +566,15 @@ YUI.add('editor-tests', function(Y) {
                     editor.execCommand(cmd, '<b>Foo</b>');
                 }
             });
-            
+
             var hc = inst.EditorSelection.hasCursor;
-            inst.EditorSelection.hasCursor = function() { return true };
+            inst.EditorSelection.hasCursor = function() { return true; };
 
             Y.each(cmds, function(val, cmd) {
-                if (cmd !== 'bidi' && cmd != 'insertandfocus') {
-                    editor.execCommand(cmd, '<b>Foo</b>');
+                if (cmd !== 'bidi' && cmd !== 'insertandfocus') {
+                    if (cmd.indexOf('insertunorderedlist') > 0 && Y.UA.ie && Y.UA.ie < 9) {
+                        editor.execCommand(cmd, '<b>Foo</b>');
+                    }
                 }
             });
             inst.EditorSelection.hasCursor = hc;
@@ -358,27 +583,25 @@ YUI.add('editor-tests', function(Y) {
             editor.frame._execCommand('bold', '');
 
 
-            var SEL = inst.EditorSelection;
+            var SEL = inst.EditorSelection,
+                i;
+
             inst.EditorSelection = function() {
                 var sel = new SEL();
                 sel.isCollapsed = false;
                 return sel;
             };
 
-            for (var i in SEL) {
-                inst.EditorSelection[i] = SEL[i];
+            for (i in SEL) {
+                if (SEL.hasOwnProperty(i)) {
+                    inst.EditorSelection[i] = SEL[i];
+                }
             }
 
             editor.execCommand('insertorderedlist', '');
 
             inst.EditorSelection = SEL;
 
-        },
-        test_window: function() {
-            Y.Assert.areEqual(Y.Node.getDOMNode(Y.one('#editor iframe').get('contentWindow')), Y.Node.getDOMNode(editor.getInstance().one('win')), 'Window object is not right');
-        },
-        test_doc: function() {
-            Y.Assert.areEqual(Y.Node.getDOMNode(Y.one('#editor iframe').get('contentWindow.document')), Y.Node.getDOMNode(editor.getInstance().one('doc')), 'Document object is not right');
         },
         'test: selection.remove()': function() {
             var inst = editor.getInstance(),
@@ -393,7 +616,15 @@ YUI.add('editor-tests', function(Y) {
         test_br_plugin: function() {
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
-                extracss: 'b { color: red; }'
+                extracss: 'b { color: red; }',
+                plugins: [
+                    {
+                        fn: Y.Plugin.ContentEditable,
+                        cfg: {
+                            use: Y.EditorBase.USE
+                        }
+                    }
+                ]
             });
             Y.Assert.isInstanceOf(Y.EditorBase, editor, 'Second EditorBase instance can not be created');
             editor.plug(Y.Plugin.EditorBR);
@@ -406,12 +637,20 @@ YUI.add('editor-tests', function(Y) {
 
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Second Frame was not destroyed');
-
+            Y.Assert.isFalse(Y.one('#editor').hasAttribute('contenteditable'), 'iframe DOM node was not destroyed');
         },
         test_para_plugin: function() {
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
-                extracss: 'b { color: red; }'
+                extracss: 'b { color: red; }',
+                plugins: [
+                    {
+                        fn: Y.Plugin.ContentEditable,
+                        cfg: {
+                            use: Y.EditorBase.USE
+                        }
+                    }
+                ]
             });
             Y.Assert.isInstanceOf(Y.EditorBase, editor, 'Third EditorBase instance can not be created');
             editor.plug(Y.Plugin.EditorPara);
@@ -425,7 +664,7 @@ YUI.add('editor-tests', function(Y) {
             var out = editor.frame.exec._wrapContent(str);
             Y.Assert.areEqual('<p><b>foo</b></p>', out);
 
-            var out = editor.frame.exec._wrapContent(str, true);
+            out = editor.frame.exec._wrapContent(str, true);
             Y.Assert.areEqual('<b>foo</b><br>', out);
 
             fireKey(editor, 13);
@@ -444,12 +683,13 @@ YUI.add('editor-tests', function(Y) {
             });
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Third Frame was not destroyed');
-            
+
         },
         test_double_plug_setup: function() {
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
-                extracss: 'b { color: red; }'
+                extracss: 'b { color: red; }',
+                plugins: [Y.Plugin.ContentEditable]
             });
             Y.Assert.isInstanceOf(Y.EditorBase, editor, 'Forth EditorBase instance can not be created');
         },
@@ -463,11 +703,13 @@ YUI.add('editor-tests', function(Y) {
             editor.render('#editor');
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor frame'), null, 'Forth Frame was not destroyed');
+            Y.Assert.isFalse(Y.one('#editor').hasAttribute('contenteditable'), 'The editor was not destroyed');
         },
         test_double_plug_setup2: function() {
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
-                extracss: 'b { color: red; }'
+                extracss: 'b { color: red; }',
+                plugins: [Y.Plugin.ContentEditable]
             });
             Y.Assert.isInstanceOf(Y.EditorBase, editor, 'Fifth EditorBase instance can not be created');
         },
@@ -481,11 +723,13 @@ YUI.add('editor-tests', function(Y) {
             editor.render('#editor');
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor frame'), null, 'Fifth Frame was not destroyed');
+            Y.Assert.isFalse(Y.one('#editor').hasAttribute('contenteditable'), 'The editor was not destroyed');
         },
         test_bidi_noplug: function() {
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
-                extracss: 'b { color: red; }'
+                extracss: 'b { color: red; }',
+                plugins: [Y.Plugin.ContentEditable]
             });
             editor.render('#editor');
             this.wait(function() {
@@ -497,7 +741,8 @@ YUI.add('editor-tests', function(Y) {
             editor.destroy();
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
-                extracss: 'b { color: red; }'
+                extracss: 'b { color: red; }',
+                plugins: [Y.Plugin.ContentEditable]
             });
             editor.plug(Y.Plugin.EditorPara);
             editor.plug(Y.Plugin.EditorBidi);
@@ -520,60 +765,154 @@ YUI.add('editor-tests', function(Y) {
             sel.selectNode(b, true, true);
             editor.execCommand('bidi');
             Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added BACK to node');
-            
+
             editor.editorBidi._afterMouseUp();
             editor.editorBidi._afterNodeChange({
                 changedType: 'end-up'
             });
 
-            var out = Y.Plugin.EditorBidi.blockParent(inst.one('body').get('firstChild.firstChild'));
+            var out = Y.Plugin.EditorBidi.blockParent(inst.one('[contenteditable="true"]').get('firstChild.firstChild'));
             Y.Assert.isTrue(out.test('p'));
 
-            var out = Y.Plugin.EditorBidi.addParents([inst.one('body').get('firstChild')]);
+            var root = inst.one('[contenteditable="true"]');
+
+            out = Y.Plugin.EditorBidi.addParents([root.get('firstChild')], root);
             Y.Assert.areEqual(1, out.length);
             Y.Assert.isTrue(out[0].test('p'));
 
         },
+
+        'test _onDomEvent with forced incorrect data': function () {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    content: '<p>This is a test.</p>',
+                    container: node
+                });
+
+            ce.render();
+
+            ce.on('dom:keypress', function (e) {
+                Y.Assert.areEqual(100, e.pageX);
+                Y.Assert.areEqual(100, e.pageY);
+                Y.Assert.areEqual('keypress', e.type);
+            });
+            ce._onDomEvent({ pageX: 100, pageY: 100, type: 'keypress' });
+
+            ce.on('dom:click', function (e) {
+                Y.Assert.areEqual('click', e.type);
+            });
+            ce._onDomEvent({ pageX: 100, pageY: 100, type: 'click' });
+        },
+
+        'test extra content ready calls': function () {
+            var  node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    content: '<p>This is a test.</p>',
+                    container: node
+                }),
+                inst = ce.getInstance();
+
+            Y.Assert.isNull(inst);
+
+            ce._ready = true;
+            ce._onContentReady();
+
+            inst = ce.getInstance();
+            Y.Assert.isNull(inst);
+
+            ce._ready = false;
+            ce.render();
+
+            inst = ce.getInstance();
+            Y.Assert.isNotNull(inst);
+        },
+
+        'test extra css added after render': function () {
+            var node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    content: '<p class="bar">This is a test.</p>',
+                    container: node
+                }),
+                color;
+
+            Y.one('body').append(node);
+            ce.render();
+
+            ce.set('extracss', '');
+
+            ce.set('extracss', '.bar { color: blue; }');
+
+            color = node.one('.bar').getStyle('color');
+            color = Y.Color.toHex(color);
+
+            Y.Assert.areSame('#0000FF', color);
+
+            ce.set('extracss', '.bar { color: red; }');
+
+            color = node.one('.bar').getStyle('color');
+            color = Y.Color.toHex(color);
+
+            Y.Assert.areSame('#FF0000', color);
+
+            node.remove(true);
+        },
+
+        'test _setLinkedCSS works properly': function () {
+            var test = this,
+                node = Y.Node.create('<div/>'),
+                ce = new Y.Plugin.ContentEditable({
+                    content: '<p><span class="pure-button">This</span> is a <b class="foo">test</b>.</p>',
+                    container: node,
+                    extracss: '.foo { font-weight: normal; color: black; background-color: yellow; }'
+                }),
+                url = 'http://yui.yahooapis.com/pure/0.2.1/pure-min.css';
+
+            Y.one('body').append(node);
+
+            node.setStyles({
+                borderColor: 'red',
+                borderWidth: '1px',
+                borderStyle: 'solid'
+            });
+
+            ce.render();
+
+            ce.set('linkedcss', url);
+
+
+            setTimeout(function () {
+                Y.all('link').some(function (node) {
+                    if (node.getAttribute('href') === url) {
+                        test.resume(function () {
+                            Y.Assert.isTrue(true);
+                        });
+                        return true;
+                    }
+                });
+            }, 1000);
+            test.wait();
+        },
+
         _should: {
             fail: {
-                'test: EditorSelection': (Y.UA.chrome),
-                test_bidi_plug: (Y.UA.ie && Y.UA.ie >= 9),
-                test_selection_methods: ((Y.UA.ie || Y.UA.webkit) ? true : false),
-                test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie >= 9) || Y.UA.chrome) ? true : false)
+                'test_selection_methods': (Y.UA.ie ? true : false)
             },
             ignore: {
-                /* gh issue #653 Editor test failures in Android 4
-                 * These failing tests will be run again when Adnroid reaches 5
-                 */
-                test_editor: (Y.UA.android && Y.UA.android < 5),
-                test_copy_styles: (Y.UA.android && Y.UA.android < 5),
-                test_resolve_node: (Y.UA.android && Y.UA.android < 5),
-                test_get_content: (Y.UA.android && Y.UA.android < 5),
-                test_selection_font_removal: (Y.UA.android && Y.UA.android < 5),
-                test_gettext: (Y.UA.android && Y.UA.android < 5),
-                test_selection_general: (Y.UA.android && Y.UA.android < 5),
-                test_window: (Y.UA.android && Y.UA.android < 5),
-                test_doc: (Y.UA.android && Y.UA.android < 5),
-                'test: selection.remove()': (Y.UA.android && Y.UA.android < 5),
-                test_destroy: (Y.UA.android && Y.UA.android < 5),
-                test_br_plugin: (Y.UA.phantomjs || (Y.UA.android && Y.UA.android < 5)), // note phantomjs was being ignored for test_br_plugin previous to issue #653
-                test_para_plugin: (Y.UA.android && Y.UA.android < 5),
-                test_double_down: (Y.UA.android && Y.UA.android < 5),
-                test_double_down2: (Y.UA.android && Y.UA.android < 5)
+                'test: EditorSelection': Y.UA.phantomjs,
+                'test_selection_methods': Y.UA.phantomjs,
+                'test_br_plugin': Y.UA.phantomjs
             },
             error: { //These tests should error
-                'test: EditorSelection': (Y.UA.chrome || Y.UA.webkit),
-                test_selection_methods: ((Y.UA.ie || Y.UA.webkit || (Y.UA.gecko && Y.UA.gecko >= 12)) ? true : false),
-                test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie >= 9) || Y.UA.chrome) ? true : false),
-                test_double_plug: true,
-                test_double_plug2: true,
-                test_bidi_noplug: true
+                'test_selection_methods': (Y.UA.ie ? true : false),
+                'test_double_plug': true,
+                'test_double_plug2': true,
+                'test_bidi_noplug': true
             }
         }
     };
-    
+
     var suite = new Y.Test.Suite("Editor");
-    
+
     suite.add(new Y.Test.Case(template));
     Y.Test.Runner.add(suite);
 
