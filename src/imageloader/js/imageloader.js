@@ -21,7 +21,7 @@
 	Y.ImgLoadGroup.NAME = 'imgLoadGroup';
 
 	Y.ImgLoadGroup.ATTRS = {
-		
+
 		/**
 		 * Name for the group. Only used to identify the group in logging statements.
 		 * @attribute name
@@ -62,8 +62,8 @@
 			value: null,
 			setter: function(name) { this._className = name; return name; },
 			lazyAdd: false
-		}, 
-        
+		},
+
         /**
          * Determines how to act when className is used as the way to delay load images. The "default" action is to just
          * remove the class name. The "enhanced" action is to remove the class name and also set the src attribute if
@@ -165,7 +165,7 @@
 
 			/* Need to wrap the fetch function. Event Util can't distinguish prototyped functions of different instantiations.
 			 *   Leads to this scenario: groupA and groupZ both have window-scroll triggers. groupZ also has a 2-sec timeout (groupA has no timeout).
-			 *   groupZ's timeout fires; we remove the triggers. The detach call finds the first window-scroll event with Y.ILG.p.fetch, which is groupA's. 
+			 *   groupZ's timeout fires; we remove the triggers. The detach call finds the first window-scroll event with Y.ILG.p.fetch, which is groupA's.
 			 *   groupA's trigger is removed and never fires, leaving images unfetched.
 			 */
 			var wrappedFetch = function() {
@@ -357,18 +357,18 @@
 					}
 				}
 			}
-			
+
 			// if allFetched, remove listeners
 			if (allFetched) {
 				Y.log('All images fetched; removing listeners for group: "' + this.get('name') + '"', 'info', 'imageloader');
 				this._clearTriggers();
 			}
 		},
-        
+
         /**
          * Updates a given node, removing the ImageLoader class name. If the
          * node is an img and the classNameAction is "enhanced", then node
-         * class name is removed and also the src attribute is set to the 
+         * class name is removed and also the src attribute is set to the
          * image URL as well as clearing the style background image.
          * @method _updateNodeClassName
          * @param node {Node} The node to act on.
@@ -376,9 +376,9 @@
          */
         _updateNodeClassName: function(node){
             var url;
-            
+
             if (this.get("classNameAction") == "enhanced"){
-                
+
                 if (node.get("tagName").toLowerCase() == "img"){
                     url = node.getStyle("backgroundImage");
                     /url\(["']?(.*?)["']?\)/.test(url);
@@ -387,8 +387,8 @@
                     node.setStyle("backgroundImage", "");
                 }
             }
-            
-            node.removeClass(this._className);        
+
+            node.removeClass(this._className);
         },
 
 		/**
@@ -425,7 +425,7 @@
 		Y.ImgLoadImgObj.superclass.constructor.apply(this, arguments);
 		this._init();
 	};
-		
+
 	Y.ImgLoadImgObj.NAME = 'imgLoadImgObj';
 
 	Y.ImgLoadImgObj.ATTRS = {

@@ -33,7 +33,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
 if (Y.UA.ie) {
     if (Y.config.doc[COMPAT_MODE] !== 'BackCompat') {
-        SCROLL_NODE = DOCUMENT_ELEMENT; 
+        SCROLL_NODE = DOCUMENT_ELEMENT;
     } else {
         SCROLL_NODE = 'body';
     }
@@ -41,7 +41,7 @@ if (Y.UA.ie) {
 
 Y.mix(Y_DOM, {
     /**
-     * Returns the inner height of the viewport (exludes scrollbar). 
+     * Returns the inner height of the viewport (exludes scrollbar).
      * @method winHeight
      * @return {Number} The current height of the viewport.
      */
@@ -51,7 +51,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Returns the inner width of the viewport (exludes scrollbar). 
+     * Returns the inner width of the viewport (exludes scrollbar).
      * @method winWidth
      * @return {Number} The current width of the viewport.
      */
@@ -61,7 +61,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Document height 
+     * Document height
      * @method docHeight
      * @return {Number} The current height of the document.
      */
@@ -71,7 +71,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Document width 
+     * Document width
      * @method docWidth
      * @return {Number} The current width of the document.
      */
@@ -81,7 +81,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Amount page has been scroll horizontally 
+     * Amount page has been scroll horizontally
      * @method docScrollX
      * @return {Number} The current amount the screen is scrolled horizontally.
      */
@@ -93,7 +93,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Amount page has been scroll vertically 
+     * Amount page has been scroll vertically
      * @method docScrollY
      * @return {Number} The current amount the screen is scrolled vertically.
      */
@@ -105,7 +105,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Gets the current position of an element based on page coordinates. 
+     * Gets the current position of an element based on page coordinates.
      * Element must be part of the DOM tree to have page coordinates
      * (display:none or elements not appended return false).
      * @method getXY
@@ -141,7 +141,7 @@ Y.mix(Y_DOM, {
 
                     // inline inDoc check for perf
                     if (rootNode.contains) {
-                        inDoc = rootNode.contains(node); 
+                        inDoc = rootNode.contains(node);
                     } else {
                         inDoc = Y.DOM.contains(rootNode, node);
                     }
@@ -170,20 +170,20 @@ Y.mix(Y_DOM, {
                         if (offX || offY) {
                                 xy[0] -= offX;
                                 xy[1] -= offY;
-                            
+
                         }
                         if ((scrollTop || scrollLeft)) {
                             if (!Y.UA.ios || (Y.UA.ios >= 4.2)) {
                                 xy[0] += scrollLeft;
                                 xy[1] += scrollTop;
                             }
-                            
+
                         }
                     } else {
-                        xy = Y_DOM._getOffset(node);       
+                        xy = Y_DOM._getOffset(node);
                     }
                 }
-                return xy;                   
+                return xy;
             };
         } else {
             return function(node) { // manually calculate by crawling up offsetParents
@@ -224,7 +224,7 @@ Y.mix(Y_DOM, {
                                 if (Y.UA.gecko && (Y_DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
                                         xy = Y_DOM._calcBorders(parentNode, xy);
                                 }
-                                
+
 
                                 if (scrollTop || scrollLeft) {
                                     xy[0] -= scrollLeft;
@@ -244,7 +244,7 @@ Y.mix(Y_DOM, {
                     }
                 }
 
-                return xy;                
+                return xy;
             };
         }
     }(),// NOTE: Executing for loadtime branching
@@ -262,7 +262,7 @@ Y.mix(Y_DOM, {
             body     = doc.getElementsByTagName('body')[0],
             // 0.1 because cached doesn't support falsy refetch values
             width    = 0.1;
-            
+
         if (body) {
             testNode.style.cssText = "position:absolute;visibility:hidden;overflow:scroll;width:20px;";
             testNode.appendChild(doc.createElement('p')).style.height = '1px';
@@ -276,7 +276,7 @@ Y.mix(Y_DOM, {
     }, null, 0.1),
 
     /**
-     * Gets the current X position of an element based on page coordinates. 
+     * Gets the current X position of an element based on page coordinates.
      * Element must be part of the DOM tree to have page coordinates
      * (display:none or elements not appended return false).
      * @method getX
@@ -289,7 +289,7 @@ Y.mix(Y_DOM, {
     },
 
     /**
-     * Gets the current Y position of an element based on page coordinates. 
+     * Gets the current Y position of an element based on page coordinates.
      * Element must be part of the DOM tree to have page coordinates
      * (display:none or elements not appended return false).
      * @method getY
@@ -319,7 +319,7 @@ Y.mix(Y_DOM, {
         if (node && xy) {
             pos = Y_DOM.getStyle(node, POSITION);
 
-            delta = Y_DOM._getOffset(node);       
+            delta = Y_DOM._getOffset(node);
             if (pos == 'static') { // default to relative
                 pos = RELATIVE;
                 setStyle(node, POSITION, pos);
@@ -337,10 +337,10 @@ Y.mix(Y_DOM, {
             if (!noRetry) {
                 newXY = Y_DOM.getXY(node);
                 if (newXY[0] !== xy[0] || newXY[1] !== xy[1]) {
-                    Y_DOM.setXY(node, xy, true); 
+                    Y_DOM.setXY(node, xy, true);
                 }
             }
-          
+
         } else {
         }
     },
@@ -404,7 +404,7 @@ Y.mix(Y_DOM, {
 
         if ( mode && !Y.UA.opera ) { // IE, Gecko
             if (mode != 'CSS1Compat') { // Quirks
-                root = doc.body; 
+                root = doc.body;
             }
             h = root.clientHeight;
             w = root.clientWidth;
@@ -437,7 +437,7 @@ var TOP = 'top',
             b = Math.min(r1[BOTTOM], r2[BOTTOM]),
             l = Math.max(r1[LEFT], r2[LEFT]),
             ret = {};
-        
+
         ret[TOP] = t;
         ret[RIGHT] = r;
         ret[BOTTOM] = b;
@@ -452,13 +452,13 @@ Y.mix(DOM, {
      * Returns an Object literal containing the following about this element: (top, right, bottom, left)
      * @for DOM
      * @method region
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @return {Object} Object literal containing the following about this element: (top, right, bottom, left)
      */
     region: function(node) {
         var xy = DOM.getXY(node),
             ret = false;
-        
+
         if (node && xy) {
             ret = DOM._getRegion(
                 xy[1], // top
@@ -475,7 +475,7 @@ Y.mix(DOM, {
      * Find the intersect information for the passed nodes.
      * @method intersect
      * @for DOM
-     * @param {HTMLElement} element The first element 
+     * @param {HTMLElement} element The first element
      * @param {HTMLElement | Object} element2 The element or region to check the interect with
      * @param {Object} altRegion An object literal containing the region for the first element if we already have the data (for performance e.g. DragDrop)
      * @return {Object} Object literal containing the following intersection data: (top, right, bottom, left, area, yoff, xoff, inRegion)
@@ -492,7 +492,7 @@ Y.mix(DOM, {
         } else {
             return false;
         }
-        
+
         off = getOffsets(region, r);
         return {
             top: off[TOP],
@@ -504,7 +504,7 @@ Y.mix(DOM, {
             xoff: (off[RIGHT] - off[LEFT]),
             inRegion: DOM.inRegion(node, node2, false, altRegion)
         };
-        
+
     },
     /**
      * Check if any part of this node is in the passed region
@@ -529,12 +529,12 @@ Y.mix(DOM, {
         } else {
             return false;
         }
-            
+
         if (all) {
             return (
                 r[LEFT]   >= region[LEFT]   &&
-                r[RIGHT]  <= region[RIGHT]  && 
-                r[TOP]    >= region[TOP]    && 
+                r[RIGHT]  <= region[RIGHT]  &&
+                r[TOP]    >= region[TOP]    &&
                 r[BOTTOM] <= region[BOTTOM]  );
         } else {
             off = getOffsets(region, r);
@@ -543,7 +543,7 @@ Y.mix(DOM, {
             } else {
                 return false;
             }
-            
+
         }
     },
 
@@ -551,14 +551,14 @@ Y.mix(DOM, {
      * Check if any part of this element is in the viewport
      * @method inViewportRegion
      * @for DOM
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {Boolean} all Should all of the node be inside the region
      * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance e.g. DragDrop)
      * @return {Boolean} True if in region, false if not.
      */
     inViewportRegion: function(node, all, altRegion) {
         return DOM.inRegion(node, DOM.viewportRegion(node), all, altRegion);
-            
+
     },
 
     _getRegion: function(t, r, b, l) {

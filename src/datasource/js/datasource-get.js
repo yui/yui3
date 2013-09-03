@@ -10,12 +10,12 @@
  * @class DataSource.Get
  * @extends DataSource.Local
  * @constructor
- */    
+ */
 var DSGet = function() {
     DSGet.superclass.constructor.apply(this, arguments);
 };
-    
-    
+
+
 Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
     /**
      * Passes query string to Get Utility. Fires <code>response</code> event when
@@ -127,7 +127,7 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
      *
      * @property NAME
      * @type String
-     * @static     
+     * @static
      * @final
      * @value "dataSourceGet"
      */
@@ -204,5 +204,5 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
         }
     }
 });
-  
+
 YUI.namespace("Env.DataSource.callbacks");

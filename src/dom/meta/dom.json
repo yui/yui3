@@ -24,13 +24,6 @@
                    "test": "ie-style-test.js"
                 }
             },
-
-            "dom-deprecated": {
-                "requires": [
-                    "dom-base"
-                ]
-            },
-
             "selector-css2": {
                 "requires": [
                     "selector-native"

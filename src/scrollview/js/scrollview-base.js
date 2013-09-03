@@ -156,7 +156,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _maxScrollY: null,
-    
+
     /**
      * Designated initializer
      *
@@ -191,7 +191,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         sv._bindFlick(sv.get(FLICK));
         sv._bindDrag(sv.get(DRAG));
         sv._bindMousewheel(true);
-        
+
         // Bind change events
         sv._bindAttrs();
 
@@ -344,7 +344,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
             sv._set(AXIS, sv._cAxis);
         }
-        
+
         // get text direction on or inherited by scrollview node
         sv.rtl = (sv._cb.getComputedStyle('direction') === 'rtl');
 
@@ -426,7 +426,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             maxScrollX = (rtl ? 0 : Math.max(0, scrollWidth - width)),
             minScrollY = 0,
             maxScrollY = Math.max(0, scrollHeight - height);
-            
+
         if (svAxis && svAxis.x) {
             bb.addClass(CLASS_NAMES.horizontal);
         }
@@ -456,7 +456,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _setBounds: function (bounds) {
         var sv = this;
-        
+
         // TODO: Do a check to log if the bounds are invalid
 
         sv._minScrollX = bounds.minScrollX;
@@ -473,7 +473,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _getBounds: function () {
         var sv = this;
-        
+
         return {
             minScrollX: sv._minScrollX,
             maxScrollX: sv._maxScrollX,
@@ -613,7 +613,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _onTransEnd: function () {
         var sv = this;
-        
+
         // If for some reason we're OOB, snapback
         if (sv._isOutOfBounds()) {
             sv._snapBack();
@@ -689,7 +689,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
             // Create some listeners for the rest of the gesture cycle
             onGestureMove: bb.on(DRAG + '|' + GESTURE_MOVE, Y.bind(sv._onGestureMove, sv)),
-            
+
             // @TODO: Don't bind gestureMoveEnd if it's a Flick?
             onGestureMoveEnd: bb.on(DRAG + '|' + GESTURE_MOVE + END, Y.bind(sv._onGestureMoveEnd, sv))
         };
@@ -772,9 +772,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
             // If there was movement (_onGestureMove fired)
             if (gesture.deltaX !== null && gesture.deltaY !== null) {
-                
+
                 isOOB = sv._isOutOfBounds();
-                
+
                 // If we're out-out-bounds, then snapback
                 if (isOOB) {
                     sv._snapBack();
@@ -1145,7 +1145,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             };
         }
     },
-    
+
     /**
     * The scrollX, scrollY setter implementation
     *

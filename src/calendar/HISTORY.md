@@ -4,6 +4,11 @@ Calendar Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.12.0
+------
+
 * Added language support for various Chinese regions. ([#1007][]: @shunner)
 
 

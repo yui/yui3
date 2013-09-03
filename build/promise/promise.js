@@ -61,7 +61,7 @@ function Promise(fn) {
 
     /**
     A reference to the resolver object that handles this promise
-    
+
     @property _resolver
     @type Object
     @private

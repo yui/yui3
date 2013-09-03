@@ -349,18 +349,18 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-     /** 
-      * Called on each Node instance. Nulls internal node references, 
+     /**
+      * Called on each Node instance. Nulls internal node references,
       * removes any plugins and event listeners
       * @method destroy
-      * @param {Boolean} recursivePurge (optional) Whether or not to 
+      * @param {Boolean} recursivePurge (optional) Whether or not to
       * remove listeners from the node's subtree (default is false)
       * @see Node.destroy
       */
     'destroy',
 
-     /** 
-      * Called on each Node instance. Removes and destroys all of the nodes 
+     /**
+      * Called on each Node instance. Removes and destroys all of the nodes
       * within the node
       * @method empty
       * @chainable
@@ -368,7 +368,7 @@ NodeList.importMethod(Y.Node.prototype, [
       */
     'empty',
 
-     /** 
+     /**
       * Called on each Node instance. Removes the node from its parent.
       * Shortcut for myNode.get('parentNode').removeChild(myNode);
       * @method remove
@@ -379,7 +379,7 @@ NodeList.importMethod(Y.Node.prototype, [
       */
     'remove',
 
-     /** 
+     /**
       * Called on each Node instance. Sets an attribute on the Node instance.
       * Unless pre-configured (via Node.ATTRS), set hands
       * off to the underlying DOM node.  Only valid

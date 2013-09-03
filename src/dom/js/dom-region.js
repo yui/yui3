@@ -10,7 +10,7 @@ var TOP = 'top',
             b = Math.min(r1[BOTTOM], r2[BOTTOM]),
             l = Math.max(r1[LEFT], r2[LEFT]),
             ret = {};
-        
+
         ret[TOP] = t;
         ret[RIGHT] = r;
         ret[BOTTOM] = b;
@@ -25,13 +25,13 @@ Y.mix(DOM, {
      * Returns an Object literal containing the following about this element: (top, right, bottom, left)
      * @for DOM
      * @method region
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @return {Object} Object literal containing the following about this element: (top, right, bottom, left)
      */
     region: function(node) {
         var xy = DOM.getXY(node),
             ret = false;
-        
+
         if (node && xy) {
             ret = DOM._getRegion(
                 xy[1], // top
@@ -48,7 +48,7 @@ Y.mix(DOM, {
      * Find the intersect information for the passed nodes.
      * @method intersect
      * @for DOM
-     * @param {HTMLElement} element The first element 
+     * @param {HTMLElement} element The first element
      * @param {HTMLElement | Object} element2 The element or region to check the interect with
      * @param {Object} altRegion An object literal containing the region for the first element if we already have the data (for performance e.g. DragDrop)
      * @return {Object} Object literal containing the following intersection data: (top, right, bottom, left, area, yoff, xoff, inRegion)
@@ -65,7 +65,7 @@ Y.mix(DOM, {
         } else {
             return false;
         }
-        
+
         off = getOffsets(region, r);
         return {
             top: off[TOP],
@@ -77,7 +77,7 @@ Y.mix(DOM, {
             xoff: (off[RIGHT] - off[LEFT]),
             inRegion: DOM.inRegion(node, node2, false, altRegion)
         };
-        
+
     },
     /**
      * Check if any part of this node is in the passed region
@@ -102,12 +102,12 @@ Y.mix(DOM, {
         } else {
             return false;
         }
-            
+
         if (all) {
             return (
                 r[LEFT]   >= region[LEFT]   &&
-                r[RIGHT]  <= region[RIGHT]  && 
-                r[TOP]    >= region[TOP]    && 
+                r[RIGHT]  <= region[RIGHT]  &&
+                r[TOP]    >= region[TOP]    &&
                 r[BOTTOM] <= region[BOTTOM]  );
         } else {
             off = getOffsets(region, r);
@@ -116,7 +116,7 @@ Y.mix(DOM, {
             } else {
                 return false;
             }
-            
+
         }
     },
 
@@ -124,14 +124,14 @@ Y.mix(DOM, {
      * Check if any part of this element is in the viewport
      * @method inViewportRegion
      * @for DOM
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element.
      * @param {Boolean} all Should all of the node be inside the region
      * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance e.g. DragDrop)
      * @return {Boolean} True if in region, false if not.
      */
     inViewportRegion: function(node, all, altRegion) {
         return DOM.inRegion(node, DOM.viewportRegion(node), all, altRegion);
-            
+
     },
 
     _getRegion: function(t, r, b, l) {

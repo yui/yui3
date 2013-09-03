@@ -569,6 +569,7 @@ Y.mix(Controller.prototype, {
         model.after('change', this._afterPaginatorModelChange, this);
         this.after('dataChange', this._afterDataChangeWithPaginator, this);
         this.after('rowsPerPageChange', this._afterRowsPerPageChange, this);
+        this.data.after(['add', 'remove', 'change'], this._afterDataUpdatesWithPaginator, this);
 
         // ensure our model has the correct totalItems set
         model.set('itemsPerPage', this.get('rowsPerPage'));
@@ -586,6 +587,8 @@ Y.mix(Controller.prototype, {
         var data = this.get('data'),
             model = this.get('paginatorModel');
 
+        model.set('totalItems', data.size());
+
         if (model.get('page') !== 1) {
             this.firstPage();
         } else {
@@ -596,6 +599,21 @@ Y.mix(Controller.prototype, {
                 models: data._items.concat()
             });
         }
+    },
+
+    /**
+     After data has changed due to a model being added, removed, or changed,
+     update paginator model totalItems to reflect the changes.
+     @protected
+     @method _afterDataUpdatesWithPaginator
+     @param {EventFacade} e
+     @since @SINCE@
+    */
+    _afterDataUpdatesWithPaginator: function () {
+        var model = this.get('paginatorModel'),
+            data = this.get('data');
+
+        model.set('totalItems', data.size());
     },
 
     /**

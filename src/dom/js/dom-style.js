@@ -1,5 +1,5 @@
 (function(Y) {
-/** 
+/**
  * Add style management functionality to DOM.
  * @module dom
  * @submodule dom-style
@@ -53,8 +53,8 @@ Y.mix(Y_DOM, {
      * Sets a style property for a given element.
      * @method setStyle
      * @param {HTMLElement} An HTMLElement to apply the style to.
-     * @param {String} att The style property to set. 
-     * @param {String|Number} val The value. 
+     * @param {String} att The style property to set.
+     * @param {String|Number} val The value.
      */
     setStyle: function(node, att, val, style) {
         style = style || node.style;
@@ -78,7 +78,7 @@ Y.mix(Y_DOM, {
                 att = 'cssText';
                 val = '';
             }
-            style[att] = val; 
+            style[att] = val;
         }
     },
 
@@ -86,7 +86,7 @@ Y.mix(Y_DOM, {
      * Returns the current style value for the given property.
      * @method getStyle
      * @param {HTMLElement} An HTMLElement to get the style from.
-     * @param {String} att The style property to get. 
+     * @param {String} att The style property to get.
      */
     getStyle: function(node, att, style) {
         style = style || node.style;
@@ -113,8 +113,8 @@ Y.mix(Y_DOM, {
     /**
      * Sets multiple style properties.
      * @method setStyles
-     * @param {HTMLElement} node An HTMLElement to apply the styles to. 
-     * @param {Object} hash An object literal of property:value pairs. 
+     * @param {HTMLElement} node An HTMLElement to apply the styles to.
+     * @param {Object} hash An object literal of property:value pairs.
      */
     setStyles: function(node, hash) {
         var style = node.style;
@@ -127,8 +127,8 @@ Y.mix(Y_DOM, {
      * Returns the computed style for the given node.
      * @method getComputedStyle
      * @param {HTMLElement} An HTMLElement to get the style from.
-     * @param {String} att The style property to get. 
-     * @return {String} The computed value of the style property. 
+     * @param {String} att The style property to get.
+     * @return {String} The computed value of the style property.
      */
     getComputedStyle: function(node, att) {
         var val = '',
@@ -174,7 +174,7 @@ if (Y.UA.webkit) {
             val = view[GET_COMPUTED_STYLE](node, '')[att];
 
         if (val === 'rgba(0, 0, 0, 0)') {
-            val = TRANSPARENT; 
+            val = TRANSPARENT;
         }
 
         return val;
@@ -192,7 +192,7 @@ Y.DOM._getAttrOffset = function(node, attr) {
     if (val === 'auto') {
         position = Y.DOM.getStyle(node, 'position');
         if (position === 'static' || position === 'relative') {
-            val = 0;    
+            val = 0;
         } else if (offsetParent && offsetParent[GET_BOUNDING_CLIENT_RECT]) {
             parentOffset = offsetParent[GET_BOUNDING_CLIENT_RECT]()[attr];
             offset = node[GET_BOUNDING_CLIENT_RECT]()[attr];
@@ -223,14 +223,14 @@ Y.DOM._getOffset = function(node) {
             if ( isNaN(xy[0]) ) { // default to offset value
                 xy[0] = (pos === 'relative') ? 0 : node.offsetLeft || 0;
             }
-        } 
+        }
 
         if ( isNaN(xy[1]) ) { // in case of 'auto'
             xy[1] = parseInt(Y_DOM.getStyle(node, 'top'), 10); // try inline
             if ( isNaN(xy[1]) ) { // default to offset value
                 xy[1] = (pos === 'relative') ? 0 : node.offsetTop || 0;
             }
-        } 
+        }
     }
 
     return xy;

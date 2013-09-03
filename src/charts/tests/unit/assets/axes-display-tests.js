@@ -523,7 +523,7 @@ YUI.add('axes-display-tests', function(Y) {
                         break;
                     }
                 }
-                Y.assert(label === 0);
+                Y.Assert.areEqual(0, label, "The value should be zero.");
             });
             this.chart.render("#mychart");
         }

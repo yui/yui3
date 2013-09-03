@@ -18,7 +18,7 @@ YUITest.CoverageFormat = {
     JSON: function(coverage){
         return YUITest.Util.JSON.stringify(coverage);
     },
-    
+
     /**
      * Returns the coverage report in a JSON format compatible with
      * Xdebug. See <a href="http://www.xdebug.com/docs/code_coverage">Xdebug Documentation</a>
@@ -28,9 +28,9 @@ YUITest.CoverageFormat = {
      * @return {String} A JSON-formatted string of coverage data.
      * @method XdebugJSON
      * @namespace Test.CoverageFormat
-     */    
+     */
     XdebugJSON: function(coverage){
-    
+
         var report = {};
         for (var prop in coverage){
             if (coverage.hasOwnProperty(prop)){

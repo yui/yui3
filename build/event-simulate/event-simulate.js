@@ -65,15 +65,15 @@ var L   = Y.Lang,
         error:      1,
         abort:      1
     },
-    
+
     //touch events supported
     touchEvents = {
         touchstart: 1,
         touchmove: 1,
-        touchend: 1, 
+        touchend: 1,
         touchcancel: 1
     },
-    
+
     gestureEvents = {
         gesturestart: 1,
         gesturechange: 1,
@@ -337,14 +337,14 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         Y.error("simulateMouseEvent(): Invalid target.");
     }
 
-    
+
     if (isString(type)){
 
-        //make sure it's a supported mouse event or an msPointerEvent. 
+        //make sure it's a supported mouse event or an msPointerEvent.
         if (!mouseEvents[type.toLowerCase()] && !msPointerEvents[type]){
             Y.error("simulateMouseEvent(): Event type '" + type + "' not supported.");
         }
-    } 
+    }
     else {
         Y.error("simulateMouseEvent(): Event type must be a string.");
     }
@@ -592,7 +592,7 @@ function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
 /*
  * (iOS only) This is for creating native DOM gesture events which only iOS
  * v2.0+ is supporting.
- * 
+ *
  * @method simulateGestureEvent
  * @private
  * @param {HTMLElement} target The target of the given event.
@@ -608,7 +608,7 @@ function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
  *      is false.
  * @param {Window} view (Optional) The view containing the target. This is
  *      typically the window object. The default is window.
- * @param {int} detail (Optional) Specifies some detail information about 
+ * @param {int} detail (Optional) Specifies some detail information about
  *      the event depending on the type of event.
  * @param {int} screenX (Optional) The x-coordinate on the screen at which
  *      point the event occured. The default is 0.
@@ -625,13 +625,13 @@ function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
  * @param {Boolean} shiftKey (Optional) Indicates if one of the SHIFT keys
  *      is pressed while the event is firing. The default is false.
  * @param {Boolean} metaKey (Optional) Indicates if one of the META keys
- *      is pressed while the event is firing. The default is false. 
- * @param {float} scale (iOS v2+ only) The distance between two fingers 
- *      since the start of an event as a multiplier of the initial distance. 
+ *      is pressed while the event is firing. The default is false.
+ * @param {float} scale (iOS v2+ only) The distance between two fingers
+ *      since the start of an event as a multiplier of the initial distance.
  *      The default value is 1.0.
- * @param {float} rotation (iOS v2+ only) The delta rotation since the start 
- *      of an event, in degrees, where clockwise is positive and 
- *      counter-clockwise is negative. The default value is 0.0.   
+ * @param {float} rotation (iOS v2+ only) The delta rotation since the start
+ *      of an event, in degrees, where clockwise is positive and
+ *      counter-clockwise is negative. The default value is 0.0.
  */
 function simulateGestureEvent(target, type,
     bubbles,            // boolean
@@ -650,7 +650,7 @@ function simulateGestureEvent(target, type,
         Y.error("simulateGestureEvent(): Native gesture DOM eventframe is not available in this platform.");
     }
 
-    // check taget    
+    // check taget
     if (!target){
         Y.error("simulateGestureEvent(): Invalid target.");
     }
@@ -669,7 +669,7 @@ function simulateGestureEvent(target, type,
 
     // setup default values
     if (!Y.Lang.isBoolean(bubbles)) { bubbles = true; } // bubble by default
-    if (!Y.Lang.isBoolean(cancelable)) { cancelable = true; } 
+    if (!Y.Lang.isBoolean(cancelable)) { cancelable = true; }
     if (!Y.Lang.isObject(view))     { view = Y.config.win; }
     if (!Y.Lang.isNumber(detail))   { detail = 2; }     // usually not used.
     if (!Y.Lang.isNumber(screenX))  { screenX = 0; }
@@ -711,7 +711,7 @@ function simulateGestureEvent(target, type,
  *      is false.
  * @param {Window} view (Optional) The view containing the target. This is
  *      typically the window object. The default is window.
- * @param {int} detail (Optional) Specifies some detail information about 
+ * @param {int} detail (Optional) Specifies some detail information about
  *      the event depending on the type of event.
  * @param {int} screenX (Optional) The x-coordinate on the screen at which
  *      point the event occured. The default is 0.
@@ -728,19 +728,19 @@ function simulateGestureEvent(target, type,
  * @param {Boolean} shiftKey (Optional) Indicates if one of the SHIFT keys
  *      is pressed while the event is firing. The default is false.
  * @param {Boolean} metaKey (Optional) Indicates if one of the META keys
- *      is pressed while the event is firing. The default is false. 
- * @param {TouchList} touches A collection of Touch objects representing 
+ *      is pressed while the event is firing. The default is false.
+ * @param {TouchList} touches A collection of Touch objects representing
  *      all touches associated with this event.
- * @param {TouchList} targetTouches A collection of Touch objects 
+ * @param {TouchList} targetTouches A collection of Touch objects
  *      representing all touches associated with this target.
- * @param {TouchList} changedTouches A collection of Touch objects 
+ * @param {TouchList} changedTouches A collection of Touch objects
  *      representing all touches that changed in this event.
- * @param {float} scale (iOS v2+ only) The distance between two fingers 
- *      since the start of an event as a multiplier of the initial distance. 
+ * @param {float} scale (iOS v2+ only) The distance between two fingers
+ *      since the start of an event as a multiplier of the initial distance.
  *      The default value is 1.0.
- * @param {float} rotation (iOS v2+ only) The delta rotation since the start 
- *      of an event, in degrees, where clockwise is positive and 
- *      counter-clockwise is negative. The default value is 0.0.   
+ * @param {float} rotation (iOS v2+ only) The delta rotation since the start
+ *      of an event, in degrees, where clockwise is positive and
+ *      counter-clockwise is negative. The default value is 0.0.
  */
 function simulateTouchEvent(target, type,
     bubbles,            // boolean
@@ -759,7 +759,7 @@ function simulateTouchEvent(target, type,
 
     var customEvent;
 
-    // check taget    
+    // check taget
     if (!target){
         Y.error("simulateTouchEvent(): Invalid target.");
     }
@@ -809,9 +809,9 @@ function simulateTouchEvent(target, type,
 
     // setup default values
     if (!Y.Lang.isBoolean(bubbles)) { bubbles = true; } // bubble by default.
-    if (!Y.Lang.isBoolean(cancelable)) { 
-        cancelable = (type !== "touchcancel"); // touchcancel is not cancelled 
-    } 
+    if (!Y.Lang.isBoolean(cancelable)) {
+        cancelable = (type !== "touchcancel"); // touchcancel is not cancelled
+    }
     if (!Y.Lang.isObject(view))     { view = Y.config.win; }
     if (!Y.Lang.isNumber(detail))   { detail = 1; } // usually not used. defaulted to # of touch objects.
     if (!Y.Lang.isNumber(screenX))  { screenX = 0; }
@@ -830,22 +830,22 @@ function simulateTouchEvent(target, type,
     if (Y.Lang.isFunction(Y.config.doc.createEvent)) {
         if (Y.UA.android) {
             /*
-                * Couldn't find android start version that supports touch event. 
-                * Assumed supported(btw APIs broken till icecream sandwitch) 
+                * Couldn't find android start version that supports touch event.
+                * Assumed supported(btw APIs broken till icecream sandwitch)
                 * from the beginning.
             */
             if(Y.UA.android < 4.0) {
                 /*
-                    * Touch APIs are broken in androids older than 4.0. We will use 
-                    * simulated touch apis for these versions. 
+                    * Touch APIs are broken in androids older than 4.0. We will use
+                    * simulated touch apis for these versions.
                     * App developer still can listen for touch events. This events
                     * will be dispatched with touch event types.
-                    * 
+                    *
                     * (Note) Used target for the relatedTarget. Need to verify if
                     * it has a side effect.
                 */
                 customEvent = Y.config.doc.createEvent("MouseEvents");
-                customEvent.initMouseEvent(type, bubbles, cancelable, view, detail, 
+                customEvent.initMouseEvent(type, bubbles, cancelable, view, detail,
                     screenX, screenY, clientX, clientY,
                     ctrlKey, altKey, shiftKey, metaKey,
                     0, target);
@@ -881,7 +881,7 @@ function simulateTouchEvent(target, type,
 
         //fire the event
         target.dispatchEvent(customEvent);
-    //} else if (Y.Lang.isObject(doc.createEventObject)){ // Windows Mobile/IE, support later 
+    //} else if (Y.Lang.isObject(doc.createEventObject)){ // Windows Mobile/IE, support later
     } else {
         Y.error('simulateTouchEvent(): No event simulation framework present.');
     }
@@ -890,9 +890,9 @@ function simulateTouchEvent(target, type,
 /**
  * Simulates the event or gesture with the given name on a target.
  * @param {HTMLElement} target The DOM element that's the target of the event.
- * @param {String} type The type of event or name of the supported gesture to simulate 
+ * @param {String} type The type of event or name of the supported gesture to simulate
  *      (i.e., "click", "doubletap", "flick").
- * @param {Object} options (Optional) Extra options to copy onto the event object. 
+ * @param {Object} options (Optional) Extra options to copy onto the event object.
  *      For gestures, options are used to refine the gesture behavior.
  * @return {void}
  * @for Event
@@ -917,28 +917,28 @@ Y.Event.simulate = function(target, type, options){
     } else if (uiEvents[type]){
         simulateUIEvent(target, type, options.bubbles,
             options.cancelable, options.view, options.detail);
-            
-    // touch low-level event simulation        
+
+    // touch low-level event simulation
     } else if (touchEvents[type]) {
         if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.phantomjs) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
-            simulateTouchEvent(target, type, 
-                options.bubbles, options.cancelable, options.view, options.detail, 
-                options.screenX, options.screenY, options.clientX, options.clientY, 
-                options.ctrlKey, options.altKey, options.shiftKey, options.metaKey, 
+            simulateTouchEvent(target, type,
+                options.bubbles, options.cancelable, options.view, options.detail,
+                options.screenX, options.screenY, options.clientX, options.clientY,
+                options.ctrlKey, options.altKey, options.shiftKey, options.metaKey,
                 options.touches, options.targetTouches, options.changedTouches,
                 options.scale, options.rotation);
         } else {
             Y.error("simulate(): Event '" + type + "' can't be simulated. Use gesture-simulate module instead.");
         }
 
-    // ios gesture low-level event simulation (iOS v2+ only)        
+    // ios gesture low-level event simulation (iOS v2+ only)
     } else if(Y.UA.ios && Y.UA.ios >= 2.0 && gestureEvents[type]) {
-        simulateGestureEvent(target, type, 
-            options.bubbles, options.cancelable, options.view, options.detail, 
-            options.screenX, options.screenY, options.clientX, options.clientY, 
+        simulateGestureEvent(target, type,
+            options.bubbles, options.cancelable, options.view, options.detail,
+            options.screenX, options.screenY, options.clientX, options.clientY,
             options.ctrlKey, options.altKey, options.shiftKey, options.metaKey,
             options.scale, options.rotation);
-    
+
     // anything else
     } else {
         Y.error("simulate(): Event '" + type + "' can't be simulated.");
