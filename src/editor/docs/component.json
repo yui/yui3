@@ -37,9 +37,6 @@
             "tags"       : ["editor", "instance", "frame", "iframe", "execcommand"]
         },
         {
-            "displayName": ""
-        },
-        {
             "name"       : "editor-inline-instance",
             "displayName": "Using the InlineEditor's instance",
             "description": "Use the InlineEditor's instance to query the content editable section",
