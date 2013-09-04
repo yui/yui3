@@ -61,11 +61,13 @@ each of these code branches represents:
     and evaluate. *All code in this branch has fully passed all unit tests and should be stable.*
 
   * `dev-master` and `dev-3.x`: Current working branches containing code that
-     **has not** been through the CI process. **Developers check their changes in to
-     these integration branches for the automated testing system to validate.** Once they
-     are validated, the code is merged into `master` and `3.x` respectively. **Never** check in to
-     `master` or `3.x` directly.
+    **has not** been through the CI process. **Developers check their changes in to
+    these integration branches for the automated testing system to validate.** Once they
+    are validated, the code is merged into `master` and `3.x` respectively. **Never** check in to
+    `master` or `3.x` directly.
 
+  * `release-3.x.x`: Short-lived release branches where code checkins are carefully
+    managed for extensive testing and release deployment.
 
 ## Source Tree
 
