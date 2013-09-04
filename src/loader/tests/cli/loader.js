@@ -3801,16 +3801,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("widget-htmlparser")) > -1, "Module (widget-htmlparser) not found in sorted array");
         },
-     "Testing widget-locale": function(data) {
-            var loader = new Y.Loader({
-                require: ["widget-locale"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-locale")) > -1, "Module (widget-locale) not found in sorted array");
-        },
      "Testing widget-modality": function(data) {
             var loader = new Y.Loader({
                 require: ["widget-modality"],

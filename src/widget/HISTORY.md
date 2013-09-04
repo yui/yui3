@@ -2,14 +2,15 @@ Widget Change History
 =====================
 
 @VERSION@
-------
+---------
 
-* No changes.
+* Removed widget-locale module.
+* Improved support for single-box widgets (BB === CB) by defaulting boundingBox to srcNode if CONTENT_TEMPLATE is null.
 
 3.12.0
 ------
 
-* Improved support for single-box widgets (BB === CB) by defaulting boundingBox to srcNode if CONTENT_TEMPLATE is null.
+* No changes.
 
 3.11.0
 ------

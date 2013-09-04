@@ -11389,11 +11389,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-base"
         ]
     },
-    "widget-locale": {
-        "requires": [
-            "widget-base"
-        ]
-    },
     "widget-modality": {
         "requires": [
             "base-build",
@@ -11506,7 +11501,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '5fa9b73f55b268a8777d1d6a2c3b801d';
+YUI.Env[Y.version].md5 = 'cfa4515b2834876c5dd3d163812e0187';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
