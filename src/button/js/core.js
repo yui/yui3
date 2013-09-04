@@ -119,17 +119,6 @@ ButtonCore.prototype = {
     },
 
     /**
-     * @method _getLabel
-     * @description Getter for a button's 'label' ATTR
-     * @private
-     */
-    _getLabel: function () {
-        var node = this.getNode();
-
-        return this._getLabelFromNode(node);
-    },
-
-    /**
      * @method _getLabelFromNode
      * @description Getter for a button's 'label' ATTR
      * @param node {Node} The Y.Node instance to obtain the label from
@@ -151,12 +140,48 @@ ButtonCore.prototype = {
     },
 
     /**
-     * @method _uiSetLabel
+     * @method _getLabel
+     * @description Getter for a button's 'label' ATTR
+     * @private
+     */
+    _getLabel: function () {
+        var labelHTML = this.get('labelHTML'),
+            label = Y.Escape.html(labelHTML);
+
+        return label;
+    },
+
+    /**
+     * @method _setLabel
+     * @description Getter for a button's 'label' ATTR
+     * @private
+     */
+    _setLabel: function (value) {
+        var labelHTML = Y.Escape.html(value);
+
+        this.set('labelHTML', labelHTML);
+
+        return labelHTML;
+    },
+
+    /**
+     * @method _getLabel
+     * @description Getter for a button's 'label' ATTR
+     * @private
+     */
+    _getLabelHTML: function () {
+        var node = this.getNode();
+
+        return this._getLabelFromNode(node);
+    },
+
+    /**
+     * @method _setLabel
      * @description Setter for a button's 'label' ATTR
      * @param label {HTML|String} The label to set
      * @private
      */
-    _uiSetLabel: function (label) {
+    _setLabelHTML: function (label) {
         var node    = this.getNode(),
             tagName = node.get('tagName').toLowerCase();
 
@@ -170,12 +195,12 @@ ButtonCore.prototype = {
     },
 
     /**
-     * @method _uiSetDisabled
+     * @method _setDisabled
      * @description Setter for the 'disabled' ATTR
      * @param value {boolean}
      * @private
      */
-    _uiSetDisabled: function(value) {
+    _setDisabled: function(value) {
         var node = this.getNode();
 
         node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
@@ -199,15 +224,25 @@ Y.mix(ButtonCore.prototype, Y.AttributeCore.prototype);
 ButtonCore.ATTRS = {
 
     /**
-     * The text of the button (the `value` or `text` property)
+     * The text of the button's label
+     *
+     * @attribute label
+     * @type {String}
+     */
+    label: {
+        setter: '_setLabel',
+        getter: '_getLabel',
+        lazyAdd: false
+    },
+    /**
+     * The HTML of the button's label
      *
      * @attribute label
      * @type {HTML|String}
      */
-    label: {
-        valueFn: '_getLabel',
-        setter: '_uiSetLabel',
-        getter: '_getLabel',
+    labelHTML: {
+        setter: '_setLabelHTML',
+        getter: '_getLabelHTML',
         lazyAdd: false
     },
 
@@ -219,7 +254,7 @@ ButtonCore.ATTRS = {
      */
     disabled: {
         value: false,
-        setter: '_uiSetDisabled',
+        setter: '_setDisabled',
         lazyAdd: false
     }
 };
