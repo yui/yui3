@@ -100,15 +100,19 @@ YUI.add('button-core-test', function (Y) {
         },
 
         'Getting the `label` attribute should NOT respect nested HTML': function () {
-            var button = this.button;
+            var button = this.button,
+                expected = 'HelloWorld',
+                actual = button.get('label').replace(/\r\n/g, '');
 
-            Assert.areSame('HelloWorld', button.get('label'));
+            Assert.areSame(expected, actual);
          },
 
         'Getting the `labelHTML` attribute should respect nested HTML': function () {
-            var button = this.button;
+            var button = this.button,
+                expected = '<div>hello</div><div>world</div>',
+                actual = button.get('labelHTML').toLowerCase().replace(/\r\n/g, '');
 
-            Assert.areSame('<div>Hello</div><div>World</div>', button.get('labelHTML'));
+            Assert.areSame(expected, actual);
          },
 
         'Setting the `label` attribute with HTML should escape the value': function () {

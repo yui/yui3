@@ -185,7 +185,8 @@ suite.add(new Y.Test.Case({
 
         var Test = this,
             content = '<div>foo</div><div>bar</div>',
-            button;
+            button,
+            actual;
 
         Y.one("#container").setContent('<button>' + content + '</button>');
 
@@ -194,7 +195,9 @@ suite.add(new Y.Test.Case({
             render: true
         });
 
-        Assert.areSame(content, button.get('labelHTML'));
+        actual = button.get('labelHTML').toLowerCase().replace(/\r\n/g, '');
+
+        Assert.areSame(content, actual);
     }
 }));
 
