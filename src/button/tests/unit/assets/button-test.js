@@ -179,6 +179,25 @@ suite.add(new Y.Test.Case({
 
         Assert.isFalse(cb.hasClass('yui3-button-hidden'));
         Assert.areSame(origStyle, cb.getStyle('display'));
+    },
+
+    'Rendering should preserve nested HTML': function() {
+
+        var Test = this,
+            content = '<div>foo</div><div>bar</div>',
+            button,
+            actual;
+
+        Y.one("#container").setContent('<button>' + content + '</button>');
+
+        button = new Y.Button({
+            srcNode: Y.one("#container button"),
+            render: true
+        });
+
+        actual = button.get('labelHTML').toLowerCase().replace(/\r\n/g, '');
+
+        Assert.areSame(content, actual);
     }
 }));
 
@@ -293,7 +312,7 @@ suite.add(new Y.Test.Case({
         Y.one("#container").empty(true);
     },
     
-    'The HTML parser for the `label` attribute should reference the button text': function() {
+    'The HTML parser for the `labelHTML` attribute should reference the button text': function() {
         
         var Test = this,
             label = 'YUI is awesome',
@@ -308,7 +327,7 @@ suite.add(new Y.Test.Case({
 
         Y.later(100, null, function(){
             Test.resume(function(){
-                Assert.areEqual(label, button.get('label'));
+                Assert.areEqual(label, button.get('labelHTML'));
             });
         });
 

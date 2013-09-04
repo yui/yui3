@@ -41,7 +41,7 @@ Y.extend(Button, Y.Widget,  {
      * @type {String}
      * @default null
      */
-    CONTENT_TEMPLATE  : null,
+    CONTENT_TEMPLATE : null,
 
     /**
      * @method initializer
@@ -58,6 +58,10 @@ Y.extend(Button, Y.Widget,  {
         if (config.disabled) {
             this.set('disabled', config.disabled);
         }
+
+        if (config.label) {
+            this.set('label', config.label);
+        }
     },
 
     /**
@@ -68,7 +72,7 @@ Y.extend(Button, Y.Widget,  {
      */
     bindUI: function() {
         var button = this;
-        button.after('labelChange', button._afterLabelChange);
+        button.after('labelHTMLChange', button._afterLabelHTMLChange);
         button.after('disabledChange', button._afterDisabledChange);
     },
 
@@ -78,16 +82,16 @@ Y.extend(Button, Y.Widget,  {
      */
     syncUI: function() {
         var button = this;
-        Y.ButtonCore.prototype._uiSetLabel.call(button, button.get('label'));
-        Y.ButtonCore.prototype._uiSetDisabled.call(button, button.get('disabled'));
+        Y.ButtonCore.prototype._setLabelHTML.call(button, button.get('labelHTML'));
+        Y.ButtonCore.prototype._setDisabled.call(button, button.get('disabled'));
     },
 
     /**
-     * @method _afterLabelChange
+     * @method _afterLabelHTMLChange
      * @private
      */
-    _afterLabelChange: function(e) {
-        Y.ButtonCore.prototype._uiSetLabel.call(this, e.newVal);
+    _afterLabelHTMLChange: function(e) {
+        Y.ButtonCore.prototype._setLabelHTML.call(this, e.newVal);
     },
 
     /**
@@ -95,11 +99,7 @@ Y.extend(Button, Y.Widget,  {
      * @private
      */
     _afterDisabledChange: function(e) {
-        // Unable to use `this._uiSetDisabled` because that points
-        // to `Y.Widget.prototype._uiSetDisabled`.
-        // This works for now.
-        // @TODO Investigate most appropriate solution.
-        Y.ButtonCore.prototype._uiSetDisabled.call(this, e.newVal);
+        Y.ButtonCore.prototype._setDisabled.call(this, e.newVal);
     }
 
 }, {
@@ -127,7 +127,6 @@ Y.extend(Button, Y.Widget,  {
      * @static
      */
     ATTRS: {
-
         /**
          * The text of the button (the `value` or `text` property)
          *
@@ -135,7 +134,20 @@ Y.extend(Button, Y.Widget,  {
          * @type String
          */
         label: {
-            value: Y.ButtonCore.ATTRS.label.value
+            getter: Y.ButtonCore.ATTRS.label.getter,
+            setter: Y.ButtonCore.ATTRS.label.setter
+        },
+
+        /**
+         * The HTML of the button's label
+         *
+         * IMPORTANT: Sanitize all input passed into this attribute
+         *
+         * @attribute labelHTML
+         * @type {HTML|String}
+         */
+        labelHTML: {
+            setter: Y.ButtonCore.ATTRS.labelHTML.setter
         }
     },
 
@@ -146,9 +158,9 @@ Y.extend(Button, Y.Widget,  {
      * @static
      */
     HTML_PARSER: {
-        label: function(node) {
-            this._host = node; // TODO: remove
-            return this._getLabel();
+
+        labelHTML: function(node) {
+            return this._getLabelFromNode(node, true);
         },
 
         disabled: function(node) {

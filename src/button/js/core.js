@@ -70,10 +70,6 @@ ButtonCore.prototype = {
      * @private
      */
     _initAttributes: function(config) {
-        var host = this._host,
-            node = host.one('.' + ButtonCore.CLASS_NAMES.LABEL) || host;
-
-        config.label = config.label || this._getLabel(node);
         Y.AttributeCore.call(this, ButtonCore.ATTRS, config);
     },
 
@@ -97,7 +93,7 @@ ButtonCore.prototype = {
 
     /**
      * @method enable
-     * @description Sets the button's `disabled` DOM attribute to false
+     * @description Sets the button's `disabled` DOM attribute to `false`
      * @public
      */
     enable: function() {
@@ -106,7 +102,7 @@ ButtonCore.prototype = {
 
     /**
      * @method disable
-     * @description Sets the button's `disabled` DOM attribute to true
+     * @description Sets the button's `disabled` DOM attribute to `true`
      * @public
      */
     disable: function() {
@@ -115,7 +111,8 @@ ButtonCore.prototype = {
 
     /**
      * @method getNode
-     * @description Gets the host DOM node for this button instance
+     * @description Gets the host's DOM node for this button instance
+     * @return {Node} The host node instance
      * @public
      */
     getNode: function() {
@@ -123,51 +120,96 @@ ButtonCore.prototype = {
     },
 
     /**
-     * @method _getLabel
-     * @description Getter for a button's 'label' ATTR
+     * @method _getLabelFromNode
+     * @param node {Node} The Y.Node instance to obtain the label from
+     * @return {HTML|String} The label for a given node
      * @private
      */
-    _getLabel: function () {
-        var node    = this.getNode(),
-            tagName = node.get('tagName').toLowerCase(),
+    _getLabelFromNode: function (node, html) {
+        var tagName = node.get('tagName').toLowerCase(),
             label;
 
         if (tagName === 'input') {
             label = node.get('value');
         }
         else {
-            label = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).get('text');
+            node = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node);
+            if (html) {
+                label = node.getHTML();
+            }
+            else {
+                label = node.get('text');
+            }
         }
 
         return label;
     },
 
     /**
-     * @method _uiSetLabel
-     * @description Setter for a button's 'label' ATTR
-     * @param label {string}
+     * @method _getLabel
+     * @description Getter for a button's 'label' ATTR
+     * @return {String} The label for a given node
      * @private
      */
-    _uiSetLabel: function (label) {
+    _getLabel: function () {
+        var node = this.getNode(),
+            label = this._getLabelFromNode(node);
+
+        return label;
+    },
+
+    /**
+     * @method _setLabel
+     * @description Getter for a button's 'label' ATTR
+     * @private
+     */
+    _setLabel: function (value) {
+        var labelHTML = Y.Escape.html(value);
+
+        this.set('labelHTML', labelHTML);
+
+        return labelHTML;
+    },
+
+    /**
+     * @method _getLabelHTML
+     * @description Getter for a button's 'label' ATTR
+     * @return {HTML|String} The label for a given node
+     * @private
+     */
+    _getLabelHTML: function () {
+        var node = this.getNode();
+
+        return this._getLabelFromNode(node, true);
+    },
+
+    /**
+     * @method _setLabelHTML
+     * @description Setter for a button's 'label' ATTR
+     * @param label {HTML|String} The label to set
+     * @return {String} The label for a given node
+     * @private
+     */
+    _setLabelHTML: function (label) {
         var node    = this.getNode(),
             tagName = node.get('tagName').toLowerCase();
 
         if (tagName === 'input') {
             node.set('value', label);
         } else {
-            (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).set('text', label);
+            (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).setHTML(label);
         }
 
         return label;
     },
 
     /**
-     * @method _uiSetDisabled
+     * @method _setDisabled
      * @description Setter for the 'disabled' ATTR
      * @param value {boolean}
      * @private
      */
-    _uiSetDisabled: function(value) {
+    _setDisabled: function(value) {
         var node = this.getNode();
 
         node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
@@ -191,26 +233,39 @@ Y.mix(ButtonCore.prototype, Y.AttributeCore.prototype);
 ButtonCore.ATTRS = {
 
     /**
-     * The text of the button (the `value` or `text` property)
+     * The text of the button's label
      *
-     * @attribute label
-     * @type String
+     * @config label
+     * @type {String}
      */
     label: {
-        setter: '_uiSetLabel',
+        setter: '_setLabel',
         getter: '_getLabel',
+        lazyAdd: false
+    },
+    /**
+     * The HTML of the button's label
+     *
+     * IMPORTANT: Sanitize all input passed into this attribute
+     *
+     * @config labelHTML
+     * @type {HTML|String}
+     */
+    labelHTML: {
+        setter: '_setLabelHTML',
+        getter: '_getLabelHTML',
         lazyAdd: false
     },
 
     /**
      * The button's enabled/disabled state
      *
-     * @attribute disabled
+     * @config disabled
      * @type Boolean
      */
     disabled: {
         value: false,
-        setter: '_uiSetDisabled',
+        setter: '_setDisabled',
         lazyAdd: false
     }
 };
