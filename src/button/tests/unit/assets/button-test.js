@@ -194,7 +194,7 @@ suite.add(new Y.Test.Case({
             render: true
         });
 
-        Assert.areSame(content, button.get('label'));
+        Assert.areSame(content, button.get('labelHTML'));
     }
 }));
 
@@ -309,7 +309,7 @@ suite.add(new Y.Test.Case({
         Y.one("#container").empty(true);
     },
     
-    'The HTML parser for the `label` attribute should reference the button text': function() {
+    'The HTML parser for the `labelHTML` attribute should reference the button text': function() {
         
         var Test = this,
             label = 'YUI is awesome',
@@ -324,7 +324,7 @@ suite.add(new Y.Test.Case({
 
         Y.later(100, null, function(){
             Test.resume(function(){
-                Assert.areEqual(label, button.get('label'));
+                Assert.areEqual(label, button.get('labelHTML'));
             });
         });
 
