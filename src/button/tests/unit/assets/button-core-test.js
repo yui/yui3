@@ -102,7 +102,7 @@ YUI.add('button-core-test', function (Y) {
         'Getting the `label` attribute should NOT respect nested HTML': function () {
             var button = this.button;
 
-            Assert.areSame('&lt;div&gt;Hello&lt;&#x2F;div&gt;&lt;div&gt;World&lt;&#x2F;div&gt;', button.get('label'));
+            Assert.areSame('HelloWorld', button.get('label'));
          },
 
         'Getting the `labelHTML` attribute should respect nested HTML': function () {

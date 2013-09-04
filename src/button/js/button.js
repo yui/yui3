@@ -87,7 +87,7 @@ Y.extend(Button, Y.Widget,  {
     },
 
     /**
-     * @method _afterLabelChange
+     * @method _afterLabelHTMLChange
      * @private
      */
     _afterLabelHTMLChange: function(e) {
@@ -131,7 +131,7 @@ Y.extend(Button, Y.Widget,  {
          * The text of the button (the `value` or `text` property)
          *
          * @attribute label
-         * @type {String}
+         * @type String
          */
         label: {
             getter: Y.ButtonCore.ATTRS.label.getter,
@@ -139,7 +139,9 @@ Y.extend(Button, Y.Widget,  {
         },
 
         /**
-         * The text of the button
+         * The HTML of the button's label
+         *
+         * IMPORTANT: Sanitize all input passed into this attribute
          *
          * @attribute labelHTML
          * @type {HTML|String}
@@ -158,7 +160,7 @@ Y.extend(Button, Y.Widget,  {
     HTML_PARSER: {
 
         labelHTML: function(node) {
-            return this._getLabelFromNode(node);
+            return this._getLabelFromNode(node, true);
         },
 
         disabled: function(node) {

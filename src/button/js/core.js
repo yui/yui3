@@ -93,7 +93,7 @@ ButtonCore.prototype = {
 
     /**
      * @method enable
-     * @description Sets the button's `disabled` DOM attribute to false
+     * @description Sets the button's `disabled` DOM attribute to `false`
      * @public
      */
     enable: function() {
@@ -102,7 +102,7 @@ ButtonCore.prototype = {
 
     /**
      * @method disable
-     * @description Sets the button's `disabled` DOM attribute to true
+     * @description Sets the button's `disabled` DOM attribute to `true`
      * @public
      */
     disable: function() {
@@ -111,7 +111,8 @@ ButtonCore.prototype = {
 
     /**
      * @method getNode
-     * @description Gets the host DOM node for this button instance
+     * @description Gets the host's DOM node for this button instance
+     * @return {Node} The host node instance
      * @public
      */
     getNode: function() {
@@ -120,12 +121,11 @@ ButtonCore.prototype = {
 
     /**
      * @method _getLabelFromNode
-     * @description Getter for a button's 'label' ATTR
      * @param node {Node} The Y.Node instance to obtain the label from
      * @return {HTML|String} The label for a given node
      * @private
      */
-    _getLabelFromNode: function (node) {
+    _getLabelFromNode: function (node, html) {
         var tagName = node.get('tagName').toLowerCase(),
             label;
 
@@ -133,7 +133,13 @@ ButtonCore.prototype = {
             label = node.get('value');
         }
         else {
-            label = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).getHTML();
+            node = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node);
+            if (html) {
+                label = node.getHTML();
+            }
+            else {
+                label = node.get('text');
+            }
         }
 
         return label;
@@ -142,11 +148,12 @@ ButtonCore.prototype = {
     /**
      * @method _getLabel
      * @description Getter for a button's 'label' ATTR
+     * @return {String} The label for a given node
      * @private
      */
     _getLabel: function () {
-        var labelHTML = this.get('labelHTML'),
-            label = Y.Escape.html(labelHTML);
+        var node = this.getNode(),
+            label = this._getLabelFromNode(node);
 
         return label;
     },
@@ -165,20 +172,22 @@ ButtonCore.prototype = {
     },
 
     /**
-     * @method _getLabel
+     * @method _getLabelHTML
      * @description Getter for a button's 'label' ATTR
+     * @return {HTML|String} The label for a given node
      * @private
      */
     _getLabelHTML: function () {
         var node = this.getNode();
 
-        return this._getLabelFromNode(node);
+        return this._getLabelFromNode(node, true);
     },
 
     /**
-     * @method _setLabel
+     * @method _setLabelHTML
      * @description Setter for a button's 'label' ATTR
      * @param label {HTML|String} The label to set
+     * @return {String} The label for a given node
      * @private
      */
     _setLabelHTML: function (label) {
@@ -226,7 +235,7 @@ ButtonCore.ATTRS = {
     /**
      * The text of the button's label
      *
-     * @attribute label
+     * @config label
      * @type {String}
      */
     label: {
@@ -237,7 +246,9 @@ ButtonCore.ATTRS = {
     /**
      * The HTML of the button's label
      *
-     * @attribute label
+     * IMPORTANT: Sanitize all input passed into this attribute
+     *
+     * @config labelHTML
      * @type {HTML|String}
      */
     labelHTML: {
@@ -249,7 +260,7 @@ ButtonCore.ATTRS = {
     /**
      * The button's enabled/disabled state
      *
-     * @attribute disabled
+     * @config disabled
      * @type Boolean
      */
     disabled: {
