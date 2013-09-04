@@ -109,6 +109,14 @@ YUI.add('button-core-test', function (Y) {
             var button = this.button;
 
             Assert.areSame('<div>Hello</div><div>World</div>', button.get('labelHTML'));
+         },
+
+        'Setting the `label` attribute with HTML should escape the value': function () {
+            var button = this.button;
+
+            button.set('label', '<div>foo</div>');
+            Assert.areSame('<div>foo</div>', button.get('label'));
+            Assert.areSame('&lt;div&gt;foo&lt;/div&gt;', button.getNode().get('innerHTML'));
          }
     }));
     
