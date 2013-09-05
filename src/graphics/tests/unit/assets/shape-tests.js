@@ -2,8 +2,9 @@ YUI.add('shape-tests', function(Y) {
 
 var parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400px;">'),
     suite = new Y.Test.Suite("Graphics: Shape"),
-    shapeTests;
-    document.body.appendChild(parentDiv);
+    shapeTests,
+    DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
 
     shapeTests = new Y.Test.Case({
 
@@ -18,6 +19,7 @@ var parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400
 
         tearDown: function() {
             this.graphic.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
 
         "test: new Y.Shape()" : function() {

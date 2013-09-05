@@ -89,7 +89,6 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
         }
         else
         {
-            render = Y.one(render);
             graphic = new Y.SVGGraphic({
                 render: render
             });
@@ -163,7 +162,8 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 */
 	contains: function(needle)
 	{
-		return needle === Y.one(this.node);
+		var node = needle instanceof Y.Node ? needle._node : needle;
+        return node === this.node;
 	},
 
 	/**
@@ -262,7 +262,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 		}
         if(!host.get("visible"))
         {
-            Y.one(node).setStyle("visibility", "hidden");
+            Y.DOM.setStyle(node, "visibility", "hidden");
         }
 	},
 
@@ -280,7 +280,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	{
 		if(Y.Node.DOM_EVENTS[type])
 		{
-			return Y.one("#" +  this.get("id")).on(type, fn);
+            return Y.on(type, fn, "#" + this.get("id"));
 		}
 		return Y.on.apply(this, arguments);
 	},
