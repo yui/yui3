@@ -5,6 +5,20 @@ DataTable Change History
 
 * Added datatable-keynav module, providing keyboard navigation within the datatable.
 
+* Added 'contentUpdate' after the DataTable has been updated when triggered
+  from a `dataChange` event. [Pull Request #1072][Issue #1052]
+
+* Fix issue where recursive nesting of objects was cloned infinitely
+  [Pull Request #1008][Ticket #915]
+
+* Fix issue where Paginator count becomes out of sync with DataTable when
+  DataTable data is modified (added or removed) [Pull Request #1011] [Issue #1010]
+
+3.12.0
+------
+
+* No changes.
+
 3.11.0
 ------
 * Release Paginator for DataTable. DataTable's Paginator consists of a few

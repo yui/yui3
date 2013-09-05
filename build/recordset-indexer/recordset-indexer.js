@@ -21,8 +21,8 @@ Y.mix(RecordsetIndexer, {
 
     ATTRS: {
         /**
-        * @description Collection of all the hashTables created by the plugin. 
-        * The individual tables can be accessed by the key they are hashing against. 
+        * @description Collection of all the hashTables created by the plugin.
+        * The individual tables can be accessed by the key they are hashing against.
         *
         * @attribute hashTables
         * @public
@@ -57,7 +57,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
     },
 
     destructor: function(config) {
-    
+
     },
 
 
@@ -152,31 +152,31 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 
         /*
                     var tbl = this.get('hashTables'), reckey;
-                    
+
                     Y.each(tbl, function(v, key) {
                         Y.each(e.updated, function(o, i) {
-                            
+
                             //delete record from hashtable if it has been overwritten
                             reckey = o.getValue(key);
-                            
+
                             if (reckey) {
                                 v[reckey] = o;
                             }
-                            
-                            //the undefined case is if more records are updated than currently exist in the recordset. 
+
+                            //the undefined case is if more records are updated than currently exist in the recordset.
                             if (e.overwritten[i] && (v[e.overwritten[i].getValue(key)] === e.overwritten[i])) {
                                 delete v[e.overwritten[i].getValue(key)];
                             }
-                            
+
                             // if (v[reckey] === o) {
                             //  delete v[reckey];
                             // }
-                            //              
+                            //
                             // //add the new updated record if it has a key that corresponds to a hash table
                             // if (o.getValue(key)) {
                             //  v[o.getValue(key)] = o;
                             // }
-                                                            
+
                         });
                     });
             */

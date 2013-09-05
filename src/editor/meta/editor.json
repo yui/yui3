@@ -5,12 +5,27 @@
             "editor-br", "editor-bidi", "editor-tab", "createlink-base"
         ],
         "submodules": {
+            "content-editable": {
+                "requires": [
+                    "node-base",
+                    "editor-selection",
+                    "stylesheet",
+                    "plugin"
+                ]
+            },
             "frame": {
                 "requires": [
                     "base",
                     "node",
+                    "plugin",
                     "selector-css3",
                     "yui-throttle"
+                ]
+            },
+            "editor-inline": {
+                "requires": [
+                    "editor-base",
+                    "content-editable"
                 ]
             },
             "editor-base": {

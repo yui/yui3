@@ -52,13 +52,21 @@
         * @method _afterEditorReady
         */
         _afterEditorReady: function() {
-            var inst = this.get(HOST).getInstance();
+            var inst = this.get(HOST).getInstance(),
+                container;
+
             try {
                 inst.config.doc.execCommand('insertbronreturn', null, true);
             } catch (bre) {}
 
             if (Y.UA.ie || Y.UA.webkit) {
-                inst.on('keydown', Y.bind(this._onKeyDown, this), inst.config.doc);
+                container = inst.EditorSelection.ROOT;
+
+                if (container.test('body')) {
+                    container = inst.config.doc;
+                }
+
+                inst.on('keydown', Y.bind(this._onKeyDown, this), container);
             }
         },
         /**

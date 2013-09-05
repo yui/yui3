@@ -205,7 +205,7 @@ Y_Node.addMethod = function(name, fn, context) {
             }
             args.unshift(node._node);
 
-            ret = fn.apply(node, args);
+            ret = fn.apply(context || node, args);
 
             if (ret) { // scrub truthy
                 ret = Y_Node.scrubVal(ret, node);
@@ -613,13 +613,13 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Retrieves a single Node instance, the first element matching the given 
+     * Retrieves a single Node instance, the first element matching the given
      * CSS selector.
      * Returns null if no match found.
      * @method one
      *
      * @param {string} selector The CSS selector to test against.
-     * @return {Node | null} A Node instance for the matching HTMLElement or null 
+     * @return {Node | null} A Node instance for the matching HTMLElement or null
      * if no match found.
      */
     one: function(selector) {
@@ -635,7 +635,7 @@ Y.mix(Y_Node.prototype, {
      */
     all: function(selector) {
         var nodelist;
-        
+
         if (this._node) {
             nodelist = Y.all(Y.Selector.query(selector, this._node));
             nodelist._query = selector;

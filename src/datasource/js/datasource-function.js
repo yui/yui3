@@ -11,13 +11,13 @@
  * @class DataSource.Function
  * @extends DataSource.Local
  * @constructor
- */    
+ */
 var LANG = Y.Lang,
 
     DSFn = function() {
         DSFn.superclass.constructor.apply(this, arguments);
     };
-    
+
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -30,7 +30,7 @@ Y.mix(DSFn, {
      *
      * @property NAME
      * @type String
-     * @static     
+     * @static
      * @final
      * @value "dataSourceFunction"
      */
@@ -56,7 +56,7 @@ Y.mix(DSFn, {
         }
     }
 });
-    
+
 Y.extend(DSFn, Y.DataSource.Local, {
     /**
      * Passes query data to the source function. Fires <code>response</code>
@@ -81,7 +81,7 @@ Y.extend(DSFn, Y.DataSource.Local, {
     _defRequestFn: function(e) {
         var fn = this.get("source"),
             payload = e.details[0];
-            
+
         if (fn) {
             try {
                 payload.data = fn(e.request, this, e);
@@ -95,9 +95,9 @@ Y.extend(DSFn, Y.DataSource.Local, {
         }
 
         this.fire("data", payload);
-            
+
         return e.tId;
     }
 });
-  
+
 Y.DataSource.Function = DSFn;

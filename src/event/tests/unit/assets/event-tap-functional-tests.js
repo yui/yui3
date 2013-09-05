@@ -5,12 +5,22 @@ YUI.add('event-tap-functional-tests', function(Y) {
     noop = function() {},
     body = Y.one('body'),
     doc = Y.config.doc,
+    win = Y.config.win,
     supportsTouch = !!(doc && doc.createTouch),
     GESTURE_MAP = Y.Event._GESTURE_MAP;
 
     Y.Node.prototype.tap = function (startOpts, endOpts) {
-        Y.Event.simulate(this._node, GESTURE_MAP.start, startOpts);
-        Y.Event.simulate(this._node, GESTURE_MAP.end, endOpts);
+        var events = {};
+        if (win && ("msPointerEnabled" in win.navigator)) {
+            events.start = 'MSPointerDown';
+            events.end = 'MSPointerUp';
+        }
+        else {
+            events.start = 'mousedown';
+            events.end = 'mouseup';
+        }
+        Y.Event.simulate(this.getDOMNode(), events.start, startOpts);
+        Y.Event.simulate(this.getDOMNode(), events.end, endOpts);
     };
     Y.NodeList.importMethod(Y.Node.prototype, 'tap');
 
@@ -20,14 +30,13 @@ YUI.add('event-tap-functional-tests', function(Y) {
         _should: {
             ignore: {
                 /*
-                Ignore the touchend test on IE9 because simulated event payloads
+                Ignore the mouseup test on IE9 because simulated event payloads
                 provide 0,0 for pageX and pageY respectively. Manual testing confirms
                 that this test works. See http://yuilibrary.com/projects/yui3/ticket/2531581
                 */
-                'touchend not in same area': (Y.UA.phantomjs),
                 'delegate tap': (Y.UA.phantomjs),
                 'touchmove/mousemove fired': (Y.UA.phantomjs),
-                'touchend not in same area': (Y.UA.ie === 9 || Y.UA.phantomjs),
+                'mouseup not in same area': (Y.UA.ie === 9 || Y.UA.phantomjs),
                 'on tap': Y.UA.phantomjs,
                 'right mouse click': Y.UA.phantomjs,
                 'attach and detach': Y.UA.phantomjs,
@@ -37,136 +46,58 @@ YUI.add('event-tap-functional-tests', function(Y) {
 
          'on tap': function() {
             var clicked = false,
-                node = Y.one('#clicker1');
-            
+                node = Y.one('#clicker1'),
+                startOpts = {
+                    target: node.getDOMNode(),
+                    type: 'MSPointerDown',
+                    bubbles: true,            // boolean
+                    cancelable: true,         // boolean
+                    view: window,               // DOMWindow
+                    detail: 0,
+                    pageX: 5,
+                    pageY:5,            // long
+                    screenX: 5,
+                    screenY: 5,  // long
+                    clientX: 5,
+                    clientY: 5,   // long
+                    ctrlKey: false,
+                    altKey: false,
+                    shiftKey:false,
+                    metaKey: false
+                },
+                endOpts = {
+                    target: node.getDOMNode(),
+                    type: 'MSPointerUp',
+                    bubbles: true,            // boolean
+                    cancelable: true,         // boolean
+                    view: window,               // DOMWindow
+                    detail: 0,
+                    pageX: 5,
+                    pageY:5,            // long
+                    screenX: 5,
+                    screenY: 5,  // long
+                    clientX: 5,
+                    clientY: 5,   // long
+                    ctrlKey: false,
+                    altKey: false,
+                    shiftKey:false,
+                    metaKey: false
+                };
+
+
+
             node.on('tap', function(e) {
                 clicked = true;
             });
 
-            node.tap({
-                    target: node,
-                    type: GESTURE_MAP.start,
-                    bubbles: true,            // boolean
-                    cancelable: true,         // boolean
-                    view: window,               // DOMWindow
-                    detail: 0,
-                    pageX: 5,
-                    pageY:5,            // long
-                    screenX: 5, 
-                    screenY: 5,  // long
-                    clientX: 5,
-                    clientY: 5,   // long
-                    ctrlKey: false, 
-                    altKey: false, 
-                    shiftKey:false,
-                    metaKey: false, // boolean
-                    touches: [
-                        {
-                            identifier: 'foo',
-                            screenX: 5,
-                            screenY: 5,
-                            clientX: 5,
-                            clientY: 5,
-                            pageX: 5,
-                            pageY: 5,
-                            radiusX: 15,
-                            radiusY: 15,
-                            rotationAngle: 0,
-                            force: 0.5,
-                            target: node
-                        }
-                    ],            // TouchList
-                    targetTouches: [
-                        {
-                            identifier: 'foo',
-                            screenX: 5,
-                            screenY: 5,
-                            clientX: 5,
-                            clientY: 5,
-                            pageX: 5,
-                            pageY: 5,
-                            radiusX: 15,
-                            radiusY: 15,
-                            rotationAngle: 0,
-                            force: 0.5,
-                            target: node
-                        }
-                    ],      // TouchList
-                    changedTouches: []     // TouchList
-                }, {
-                    target: node,
-                    type: GESTURE_MAP.end,
-                    bubbles: true,            // boolean
-                    cancelable: true,         // boolean
-                    view: window,               // DOMWindow
-                    detail: 0,
-                    pageX: 5,
-                    pageY:5,            // long
-                    screenX: 5, 
-                    screenY: 5,  // long
-                    clientX: 5,
-                    clientY: 5,   // long
-                    ctrlKey: false, 
-                    altKey: false, 
-                    shiftKey:false,
-                    metaKey: false, // boolean
-                    touches: [
-                        {
-                            identifier: 'foo',
-                            screenX: 5,
-                            screenY: 5,
-                            clientX: 5,
-                            clientY: 5,
-                            pageX: 5,
-                            pageY: 5,
-                            radiusX: 15,
-                            radiusY: 15,
-                            rotationAngle: 0,
-                            force: 0.5,
-                            target: node
-                        }
-                    ],            // TouchList
-                    targetTouches: [
-                        {
-                            identifier: 'foo',
-                            screenX: 5,
-                            screenY: 5,
-                            clientX: 5,
-                            clientY: 5,
-                            pageX: 5,
-                            pageY: 5,
-                            radiusX: 15,
-                            radiusY: 15,
-                            rotationAngle: 0,
-                            force: 0.5,
-                            target: node
-                        }
-                    ],      // TouchList
-                    changedTouches: [
-                        {
-                            identifier: 'foo',
-                            screenX: 5,
-                            screenY: 5,
-                            clientX: 5,
-                            clientY: 5,
-                            pageX: 5,
-                            pageY: 5,
-                            radiusX: 15,
-                            radiusY: 15,
-                            rotationAngle: 0,
-                            force: 0.5,
-                            target: node
-                        }
-                    ] 
-                });
-
+            node.tap(startOpts, endOpts);
             Y.Assert.isTrue(clicked, "click handler didn't work");
          },
 
-        'touchend not in same area': function() {
+        'mouseup not in same area': function() {
             var clicked = false,
                 ex1 = 1,
-                ex2 = 2
+                ex2 = 2,
                 obj = {
                     a: 1
                 },
@@ -174,17 +105,17 @@ YUI.add('event-tap-functional-tests', function(Y) {
 
                 startOpts = {
                     target: node,
-                    type: GESTURE_MAP.start,
+                    type: 'mousedown',
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
                     detail: 0,            // long
-                    screenX: 0, 
+                    screenX: 0,
                     screenY: 0,  // long
                     clientX: 0,
                     clientY: 0,   // long
-                    ctrlKey: false, 
-                    altKey: false, 
+                    ctrlKey: false,
+                    altKey: false,
                     shiftKey:false,
                     metaKey: false, // boolean
                     touches: [
@@ -224,19 +155,19 @@ YUI.add('event-tap-functional-tests', function(Y) {
 
                 endOpts = {
                     target: node,
-                    type: GESTURE_MAP.end,
+                    type: 'mouseup',
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
                     detail: 0,            // long
-                    screenX: 235, 
+                    screenX: 235,
                     screenY: 25,  // long
                     clientX: 235,
                     clientY: 25,   // long
                     ctrlKey: false,
                     pageX: 235,
-                    pageY:25,  
-                    altKey: false, 
+                    pageY:25,
+                    altKey: false,
                     shiftKey:false,
                     metaKey: false, // boolean
                     touches: [
@@ -288,13 +219,12 @@ YUI.add('event-tap-functional-tests', function(Y) {
                         }
                     ]     // TouchList
                 };
-            
+
             node.on('tap', function(e) {
                 clicked = true;
             });
 
-            Y.Event.simulate(node.getDOMNode(), GESTURE_MAP.start, startOpts);
-            Y.Event.simulate(node.getDOMNode(), GESTURE_MAP.end, endOpts);
+            node.tap(startOpts, endOpts);
             Y.Assert.isFalse(clicked, "click handler was triggered when it shouldn't have been");
         },
 
@@ -309,17 +239,17 @@ YUI.add('event-tap-functional-tests', function(Y) {
 
              node.tap({
                     target: container,
-                    type: GESTURE_MAP.start,
+                    type: 'mousedown',
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
                     detail: 0,            // long
-                    screenX: 0, 
+                    screenX: 0,
                     screenY: 0,  // long
                     clientX: 0,
                     clientY: 0,   // long
-                    ctrlKey: false, 
-                    altKey: false, 
+                    ctrlKey: false,
+                    altKey: false,
                     shiftKey:false,
                     metaKey: false, // boolean
                     touches: [
@@ -357,19 +287,19 @@ YUI.add('event-tap-functional-tests', function(Y) {
                     changedTouches: []     // TouchList
              }, {
                 target: container,
-                type: GESTURE_MAP.end,
+                type: 'mouseup',
                 bubbles: true,            // boolean
                 cancelable: true,         // boolean
                 view: window,               // DOMWindow
                 detail: 0,            // long
-                screenX: 0, 
+                screenX: 0,
                 screenY: 0,  // long
                 clientX: 0,
                 clientY: 0,   // long
                 ctrlKey: false,
                 pageX: 0,
-                pageY:0,  
-                altKey: false, 
+                pageY:0,
+                altKey: false,
                 shiftKey:false,
                 metaKey: false, // boolean
                 touches: [
@@ -427,22 +357,22 @@ YUI.add('event-tap-functional-tests', function(Y) {
         },
 
         'touchmove/mousemove fired': function() {
-            
+
             var clicked = false,
                 node = Y.one('#clicker1'),
                 startOpts = {
                     target: node,
-                    type: GESTURE_MAP.start,
+                    type: 'mousemove',
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
                     detail: 0,            // long
-                    screenX: 0, 
+                    screenX: 0,
                     screenY: 0,  // long
                     clientX: 0,
                     clientY: 0,   // long
-                    ctrlKey: false, 
-                    altKey: false, 
+                    ctrlKey: false,
+                    altKey: false,
                     shiftKey:false,
                     metaKey: false, // boolean
                     touches: [
@@ -482,19 +412,19 @@ YUI.add('event-tap-functional-tests', function(Y) {
 
                 endOpts = {
                     target: node,
-                    type: GESTURE_MAP.move,
+                    type: 'mousemove',
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
                     detail: 0,            // long
-                    screenX: 235, 
+                    screenX: 235,
                     screenY: 25,  // long
                     clientX: 235,
                     clientY: 25,   // long
                     ctrlKey: false,
                     pageX: 235,
-                    pageY:25,  
-                    altKey: false, 
+                    pageY:25,
+                    altKey: false,
                     shiftKey:false,
                     metaKey: false, // boolean
                     touches: [
@@ -551,9 +481,9 @@ YUI.add('event-tap-functional-tests', function(Y) {
                 clicked = true;
             });
 
-            Y.Event.simulate(node.getDOMNode(), GESTURE_MAP.start, startOpts);
-            Y.Event.simulate(node.getDOMNode(), GESTURE_MAP.move, endOpts); 
-            Y.Event.simulate(node.getDOMNode(), GESTURE_MAP.end, endOpts);        
+            Y.Event.simulate(node.getDOMNode(), 'mousedown', startOpts);
+            Y.Event.simulate(node.getDOMNode(), 'mousemove', endOpts);
+            Y.Event.simulate(node.getDOMNode(), 'mouseup', endOpts);
 
             Y.Assert.isFalse(clicked, "click handler didn't work");
 
@@ -564,17 +494,17 @@ YUI.add('event-tap-functional-tests', function(Y) {
                 clicked = false,
                 startOpts = {
                     target: node,
-                    type: GESTURE_MAP.start,
+                    type: 'mousedown',
                     bubbles: true,            // boolean
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
                     detail: 0,            // long
-                    screenX: 0, 
+                    screenX: 0,
                     screenY: 0,  // long
                     clientX: 0,
                     clientY: 0,   // long
-                    ctrlKey: false, 
-                    altKey: false, 
+                    ctrlKey: false,
+                    altKey: false,
                     shiftKey:false,
                     metaKey: false, // boolean
                     touches: [
@@ -618,14 +548,14 @@ YUI.add('event-tap-functional-tests', function(Y) {
                     cancelable: true,         // boolean
                     view: window,               // DOMWindow
                     detail: 0,            // long
-                    screenX: 235, 
+                    screenX: 235,
                     screenY: 25,  // long
                     clientX: 235,
                     clientY: 25,   // long
                     ctrlKey: false,
                     pageX: 235,
-                    pageY:25,  
-                    altKey: false, 
+                    pageY:25,
+                    altKey: false,
                     shiftKey:false,
                     metaKey: false, // boolean
                     touches: [
@@ -684,8 +614,8 @@ YUI.add('event-tap-functional-tests', function(Y) {
 
             node.detach();
 
-            Y.Event.simulate(node.getDOMNode(), GESTURE_MAP.start, startOpts);
-            Y.Event.simulate(node.getDOMNode(), GESTURE_MAP.end, endOpts);   
+            Y.Event.simulate(node.getDOMNode(), 'mousedown', startOpts);
+            Y.Event.simulate(node.getDOMNode(), 'mouseup', endOpts);
 
             Y.Assert.isFalse(clicked, "detach() didn't work as expected");
 
@@ -696,18 +626,18 @@ YUI.add('event-tap-functional-tests', function(Y) {
             clicked = false,
             startOpts = {
                 target: node,
-                type: GESTURE_MAP.start,
+                type: 'mousedown',
                 bubbles: true,            // boolean
                 cancelable: true,         // boolean
-                view: window, 
+                view: window,
                 button: 2,              // DOMWindow
                 detail: 0,            // long
-                screenX: 0, 
+                screenX: 0,
                 screenY: 0,  // long
                 clientX: 0,
                 clientY: 0,   // long
-                ctrlKey: false, 
-                altKey: false, 
+                ctrlKey: false,
+                altKey: false,
                 shiftKey:false,
                 metaKey: false, // boolean
                 touches: [
@@ -750,16 +680,16 @@ YUI.add('event-tap-functional-tests', function(Y) {
                 bubbles: true,            // boolean
                 cancelable: true,         // boolean
                 view: window,               // DOMWindow
-                detail: 0, 
+                detail: 0,
                 button:2,           // long
-                screenX: 235, 
+                screenX: 235,
                 screenY: 25,  // long
                 clientX: 235,
                 clientY: 25,   // long
                 ctrlKey: false,
                 pageX: 235,
-                pageY:25,  
-                altKey: false, 
+                pageY:25,
+                altKey: false,
                 shiftKey:false,
                 metaKey: false, // boolean
                 touches: [
@@ -821,21 +751,21 @@ YUI.add('event-tap-functional-tests', function(Y) {
 
         'multiple touches': function () {
             var node = Y.one('#clicker1'),
-            node2 = Y.one('#clicker2')
+            node2 = Y.one('#clicker2'),
             clicked = false,
             startOpts = {
                 target: node,
-                type: GESTURE_MAP.start,
+                type: 'mousedown',
                 bubbles: true,            // boolean
                 cancelable: true,         // boolean
                 view: window,               // DOMWindow
                 detail: 0,            // long
-                screenX: 0, 
+                screenX: 0,
                 screenY: 0,  // long
                 clientX: 0,
                 clientY: 0,   // long
-                ctrlKey: false, 
-                altKey: false, 
+                ctrlKey: false,
+                altKey: false,
                 shiftKey:false,
                 metaKey: false, // boolean
                 touches: [
@@ -893,14 +823,14 @@ YUI.add('event-tap-functional-tests', function(Y) {
                 cancelable: true,         // boolean
                 view: window,               // DOMWindow
                 detail: 0,            // long
-                screenX: 235, 
+                screenX: 235,
                 screenY: 25,  // long
                 clientX: 235,
                 clientY: 25,   // long
                 ctrlKey: false,
                 pageX: 235,
-                pageY:25,  
-                altKey: false, 
+                pageY:25,
+                altKey: false,
                 shiftKey:false,
                 metaKey: false, // boolean
                 touches: [
@@ -963,21 +893,21 @@ YUI.add('event-tap-functional-tests', function(Y) {
 
         'changedTouches': function() {
             var node = Y.one('#clicker1'),
-            node2 = Y.one('#clicker2')
+            node2 = Y.one('#clicker2'),
             clicked = false,
             startOpts = {
                 target: node,
-                type: GESTURE_MAP.start,
+                type: 'mousedown',
                 bubbles: true,            // boolean
                 cancelable: true,         // boolean
                 view: window,               // DOMWindow
                 detail: 0,            // long
-                screenX: 0, 
+                screenX: 0,
                 screenY: 0,  // long
                 clientX: 0,
                 clientY: 0,   // long
-                ctrlKey: false, 
-                altKey: false, 
+                ctrlKey: false,
+                altKey: false,
                 shiftKey:false,
                 metaKey: false, // boolean
                 touches: [
@@ -1036,14 +966,14 @@ YUI.add('event-tap-functional-tests', function(Y) {
                 cancelable: true,         // boolean
                 view: window,               // DOMWindow
                 detail: 0,            // long
-                screenX: 235, 
+                screenX: 235,
                 screenY: 25,  // long
                 clientX: 235,
                 clientY: 25,   // long
                 ctrlKey: false,
                 pageX: 235,
-                pageY:25,  
-                altKey: false, 
+                pageY:25,
+                altKey: false,
                 shiftKey:false,
                 metaKey: false, // boolean
                 touches: [
