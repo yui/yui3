@@ -25,6 +25,8 @@ function Button() {
 /* Button extends Widget */
 Y.extend(Button, Y.Widget,  {
 
+    // Y.Button prototype properties
+
     /**
      * Bounding box template that will contain the Button's DOM subtree.
      *
@@ -41,68 +43,10 @@ Y.extend(Button, Y.Widget,  {
      * @type {String}
      * @default null
      */
-    CONTENT_TEMPLATE : null,
-
-    /**
-     * @method initializer
-     * @description Internal init() handler.
-     * @param config {Object} Config object.
-     * @private
-     */
-    initializer: function(config) {
-        // ButtonCore requires this
-        this._host = this.get('boundingBox');
-
-        // A workaround until there's a better way to handle setting Node attributes
-        // via HTML parsing in classes that extend Widget
-        if (config.disabled) {
-            this.set('disabled', config.disabled);
-        }
-
-        if (config.label) {
-            this.set('label', config.label);
-        }
-    },
-
-    /**
-     * bindUI implementation
-     *
-     * @description Hooks up events for the widget
-     * @method bindUI
-     */
-    bindUI: function() {
-        var button = this;
-        button.after('labelHTMLChange', button._afterLabelHTMLChange);
-        button.after('disabledChange', button._afterDisabledChange);
-    },
-
-    /**
-     * @method syncUI
-     * @description Updates button attributes
-     */
-    syncUI: function() {
-        var button = this;
-        Y.ButtonCore.prototype._setLabelHTML.call(button, button.get('labelHTML'));
-        Y.ButtonCore.prototype._setDisabled.call(button, button.get('disabled'));
-    },
-
-    /**
-     * @method _afterLabelHTMLChange
-     * @private
-     */
-    _afterLabelHTMLChange: function(e) {
-        Y.ButtonCore.prototype._setLabelHTML.call(this, e.newVal);
-    },
-
-    /**
-     * @method _afterDisabledChange
-     * @private
-     */
-    _afterDisabledChange: function(e) {
-        Y.ButtonCore.prototype._setDisabled.call(this, e.newVal);
-    }
+    CONTENT_TEMPLATE : null
 
 }, {
+
     // Y.Button static properties
 
     /**
@@ -115,7 +59,7 @@ Y.extend(Button, Y.Widget,  {
      * @protected
      * @static
      */
-    NAME: 'button',
+    NAME: Y.ButtonCore.NAME,
 
     /**
      * Static property used to define the default attribute configuration of
@@ -126,30 +70,23 @@ Y.extend(Button, Y.Widget,  {
      * @protected
      * @static
      */
-    ATTRS: {
-        /**
-         * The text of the button (the `value` or `text` property)
-         *
-         * @attribute label
-         * @type String
-         */
-        label: {
-            getter: Y.ButtonCore.ATTRS.label.getter,
-            setter: Y.ButtonCore.ATTRS.label.setter
-        },
+    ATTRS: Y.ButtonCore.ATTRS,
 
-        /**
-         * The HTML of the button's label
-         *
-         * IMPORTANT: Sanitize all input passed into this attribute
-         *
-         * @attribute labelHTML
-         * @type {HTML|String}
-         */
-        labelHTML: {
-            setter: Y.ButtonCore.ATTRS.labelHTML.setter
-        }
-    },
+    /**
+     * The text of the button's label
+     *
+     * @attribute label
+     * @type String
+     */
+
+    /**
+     * The HTML of the button's label
+     *
+     * IMPORTANT: Sanitize all input passed into this attribute
+     *
+     * @attribute labelHTML
+     * @type HTML
+     */
 
     /**
      * @property HTML_PARSER
@@ -158,9 +95,8 @@ Y.extend(Button, Y.Widget,  {
      * @static
      */
     HTML_PARSER: {
-
         labelHTML: function(node) {
-            return this._getLabelFromNode(node, true);
+            return Y.ButtonCore._getLabelHTMLFromNode(node);
         },
 
         disabled: function(node) {
