@@ -4,7 +4,8 @@
  * @module button-core
  * @since 3.5.0
  */
-var getClassName = Y.ClassNameManager.getClassName;
+var getClassName = Y.ClassNameManager.getClassName,
+    AttributeCore = Y.AttributeCore;
 
 
 // Utility functions
@@ -41,7 +42,7 @@ function getTextLabelFromNode (node) {
  * @param node {Node} The parent node
  * @return {HTML} The HTML label for a given node
  */
-function getLabelHTMLFromNode (node) {
+function getHTMLFromNode (node) {
     var labelNode = getLabelNodeFromParent(node),
         label = labelNode.getHTML();
 
@@ -113,7 +114,7 @@ ButtonCore.prototype = {
      * @private
      */
     _initAttributes: function(config) {
-        Y.AttributeCore.call(this, ButtonCore.ATTRS, config);
+        AttributeCore.call(this, ButtonCore.ATTRS, config);
     },
 
     /**
@@ -187,7 +188,7 @@ ButtonCore.prototype = {
      */
     _getLabelHTML: function () {
         var node = this.getNode(),
-            labelHTML = getLabelHTMLFromNode(node);
+            labelHTML = getHTMLFromNode(node);
 
         return labelHTML;
     },
@@ -260,7 +261,7 @@ ButtonCore.prototype = {
 };
 
 // ButtonCore inherits from AttributeCore
-Y.mix(ButtonCore.prototype, Y.AttributeCore.prototype);
+Y.mix(ButtonCore.prototype, AttributeCore.prototype);
 
 /**
  * Attribute configuration.
@@ -365,14 +366,14 @@ ButtonCore.ARIA_ROLES = {
 /**
  * A utility method that gets an HTML label from a given node
  *
- * @method _getLabelHTMLFromNode
+ * @method _getHTMLFromNode
  * @param node {Node} The parent node
  * @return {HTML} The HTML label for a given node
  * @private
  * @static
  */
 // This function is used by Y.Button
-ButtonCore._getLabelHTMLFromNode = getLabelHTMLFromNode;
+ButtonCore._getHTMLFromNode = getHTMLFromNode;
 
 // Export Button
 Y.ButtonCore = ButtonCore;

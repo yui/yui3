@@ -5,9 +5,10 @@
  * @since 3.5.0
  */
 
-var CLASS_NAMES = Y.ButtonCore.CLASS_NAMES,
-    ARIA_STATES = Y.ButtonCore.ARIA_STATES,
-    ARIA_ROLES  = Y.ButtonCore.ARIA_ROLES;
+var ButtonCore = Y.ButtonCore,
+    CLASS_NAMES = ButtonCore.CLASS_NAMES,
+    ARIA_STATES = ButtonCore.ARIA_STATES,
+    ARIA_ROLES = ButtonCore.ARIA_ROLES;
 
 /**
  * Creates a Button
@@ -34,7 +35,7 @@ Y.extend(Button, Y.Widget,  {
      * @type {String}
      * @default <button/>
      */
-    BOUNDING_TEMPLATE : Y.ButtonCore.prototype.TEMPLATE,
+    BOUNDING_TEMPLATE : ButtonCore.prototype.TEMPLATE,
 
     /**
      * Content box template
@@ -59,7 +60,7 @@ Y.extend(Button, Y.Widget,  {
      * @protected
      * @static
      */
-    NAME: Y.ButtonCore.NAME,
+    NAME: ButtonCore.NAME,
 
     /**
      * Static property used to define the default attribute configuration of
@@ -70,7 +71,7 @@ Y.extend(Button, Y.Widget,  {
      * @protected
      * @static
      */
-    ATTRS: Y.ButtonCore.ATTRS,
+    ATTRS: ButtonCore.ATTRS,
 
     /**
      * The text of the button's label
@@ -96,7 +97,7 @@ Y.extend(Button, Y.Widget,  {
      */
     HTML_PARSER: {
         labelHTML: function(node) {
-            return Y.ButtonCore._getLabelHTMLFromNode(node);
+            return ButtonCore._getHTMLFromNode(node);
         },
 
         disabled: function(node) {
@@ -114,7 +115,7 @@ Y.extend(Button, Y.Widget,  {
     CLASS_NAMES: CLASS_NAMES
 });
 
-Y.mix(Button.prototype, Y.ButtonCore.prototype);
+Y.mix(Button.prototype, ButtonCore.prototype);
 
 /**
  * Creates a ToggleButton
