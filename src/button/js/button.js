@@ -96,13 +96,8 @@ Y.extend(Button, Y.Widget,  {
      * @static
      */
     HTML_PARSER: {
-        labelHTML: function(node) {
-            return ButtonCore._getHTMLFromNode(node);
-        },
-
-        disabled: function(node) {
-            return node.getDOMNode().disabled;
-        }
+        labelHTML: ButtonCore._getHTMLFromNode,
+        disabled: ButtonCore._getDisabledFromNode
     },
 
     /**

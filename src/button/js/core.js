@@ -7,49 +7,6 @@
 var getClassName = Y.ClassNameManager.getClassName,
     AttributeCore = Y.AttributeCore;
 
-
-// Utility functions
-
-/**
- * Finds the label node within a button
- *
- * @param node {Node} The parent node
- * @return {Node} The label node
- */
-function getLabelNodeFromParent (node) {
-    var labelNode = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node);
-
-    return labelNode;
-}
-
-/**
- * Gets a text label from a node
- *
- * @param node {Node} The parent node
- * @return {String} The text label for a given node
- */
-function getTextLabelFromNode (node) {
-    var labelNode = getLabelNodeFromParent(node),
-        tagName = labelNode.get('tagName').toLowerCase(),
-        label = labelNode.get((tagName === 'input' ? 'value' : 'text'));
-
-    return label;
-}
-
-/**
- * Gets an HTML label from a node
- *
- * @param node {Node} The parent node
- * @return {HTML} The HTML label for a given node
- */
-function getHTMLFromNode (node) {
-    var labelNode = getLabelNodeFromParent(node),
-        label = labelNode.getHTML();
-
-    return label;
-}
-
-
 /**
  * Creates a button
  *
@@ -175,7 +132,7 @@ ButtonCore.prototype = {
      */
     _getLabel: function () {
         var node = this.getNode(),
-            label = getTextLabelFromNode(node);
+            label = ButtonCore._getTextLabelFromNode(node);
 
         return label;
     },
@@ -188,7 +145,7 @@ ButtonCore.prototype = {
      */
     _getLabelHTML: function () {
         var node = this.getNode(),
-            labelHTML = getHTMLFromNode(node);
+            labelHTML = ButtonCore._getHTMLFromNode(node);
 
         return labelHTML;
     },
@@ -227,7 +184,7 @@ ButtonCore.prototype = {
      */
     _setLabelHTML: function (value, name, opts) {
         var node = this.getNode(),
-            labelNode = getLabelNodeFromParent(node),
+            labelNode = ButtonCore._getLabelNodeFromParent(node),
             tagName = node.get('tagName').toLowerCase();
 
         if (tagName === 'input') {
@@ -339,7 +296,7 @@ ButtonCore.CLASS_NAMES = {
 /**
  * Array of static constants used to for applying ARIA states
  *
- * @property CLASS_NAMES
+ * @property ARIA_STATES
  * @type {Object}
  * @private
  * @static
@@ -352,7 +309,7 @@ ButtonCore.ARIA_STATES = {
 /**
  * Array of static constants used to for applying ARIA roles
  *
- * @property CLASS_NAMES
+ * @property ARIA_ROLES
  * @type {Object}
  * @private
  * @static
@@ -364,6 +321,38 @@ ButtonCore.ARIA_ROLES = {
 };
 
 /**
+ * Finds the label node within a button
+ *
+ * @method _getLabelNodeFromParent
+ * @param node {Node} The parent node
+ * @return {Node} The label node
+ * @private
+ * @static
+ */
+ButtonCore._getLabelNodeFromParent = function (node) {
+    var labelNode = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node);
+
+    return labelNode;
+}
+
+/**
+ * Gets a text label from a node
+ *
+ * @method _getTextLabelFromNode
+ * @param node {Node} The parent node
+ * @return {String} The text label for a given node
+ * @private
+ * @static
+ */
+ButtonCore._getTextLabelFromNode = function (node) {
+    var labelNode = ButtonCore._getLabelNodeFromParent(node),
+        tagName = labelNode.get('tagName').toLowerCase(),
+        label = labelNode.get(tagName === 'input' ? 'value' : 'text');
+
+    return label;
+}
+
+/**
  * A utility method that gets an HTML label from a given node
  *
  * @method _getHTMLFromNode
@@ -372,8 +361,25 @@ ButtonCore.ARIA_ROLES = {
  * @private
  * @static
  */
-// This function is used by Y.Button
-ButtonCore._getHTMLFromNode = getHTMLFromNode;
+ButtonCore._getHTMLFromNode = function (node) {
+    var labelNode = ButtonCore._getLabelNodeFromParent(node),
+        label = labelNode.getHTML();
 
-// Export Button
+    return label;
+}
+
+/**
+ * Gets the disabled attribute from a node
+ *
+ * @method _getDisabledFromNode
+ * @param node {Node} The parent node
+ * @return {boolean} The disabled state for a given node
+ * @private
+ * @static
+ */
+ButtonCore._getDisabledFromNode = function (node) {
+    return node.getDOMNode().disabled;
+}
+
+// Export ButtonCore
 Y.ButtonCore = ButtonCore;
