@@ -314,8 +314,13 @@
                         called = 0;
 
                     // Matches at the same level, stopProp should not prevent
-                    // both delegate callbacks
+                    // delegate callbacks from the same container, but should
+                    // for containers higher up the parent axis.
                     handles.push(
+                        Y.one('#container').delegate('focus', function (e) {
+                            called++;
+                            e.stopPropagation();
+                        }, '.not-focusable'),
                         Y.one('#container').delegate('focus', function (e) {
                             called++;
                             e.stopPropagation();

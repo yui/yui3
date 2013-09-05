@@ -4,7 +4,10 @@ Event Infrastructure Change History
 @VERSION@
 ------
 
-* No changes.
+* Delegated focus and blur events now behave the same way other events do when
+  a delegate sub from a container closer to the target calls
+  `e.stopPropagation()`. Delegate subs from containers higher in the parent
+  axis are not notified. [#1145](https://github.com/yui/yui3/issues/1145)
 
 3.12.0
 ------
