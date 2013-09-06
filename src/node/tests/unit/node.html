@@ -1387,7 +1387,7 @@ YUI({
                 called = true;
             });
 
-            Assert.isTrue(called);            
+            Assert.isTrue(called);
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
@@ -1403,7 +1403,7 @@ YUI({
                 called = true;
             });
 
-            Assert.isTrue(called); 
+            Assert.isTrue(called);
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
@@ -1429,7 +1429,7 @@ YUI({
                 called = true;
             });
 
-            Assert.isTrue(called); 
+            Assert.isTrue(called);
             node.removeAttribute('hidden');
             node.setStyle('display', 'block');
         },
@@ -1449,14 +1449,14 @@ YUI({
             var node = Y.one('body'),
                 called = false;
 
-            node.setAttribute('hidden', true);    
+            node.setAttribute('hidden', true);
             node.setStyle('display', 'none');
 
             node.toggleView('foo', function() {
                 called = true;
             });
 
-            Assert.isTrue(called);            
+            Assert.isTrue(called);
             node.removeAttribute('hidden');
             Assert.areEqual('block', node.getStyle('display'));
         },
@@ -1762,6 +1762,17 @@ YUI({
         'should not cache document fragment': function() {
             var node = Y.Node.create('<div>foo</div><div>bar</div>');
             Assert.isUndefined(Y.Node._instances[node._yuid]);
+        },
+
+        'should return false if node is removed': function () {
+            var myNode = Y.one('*');
+            // node should exist first and be in doc
+            Assert.isTrue(myNode.inDoc());
+
+            myNode._node = null;
+
+            // node is not bound
+            Assert.isFalse(myNode.inDoc());
         }
     }));
 
@@ -1952,7 +1963,7 @@ YUI({
             node.setHTML(html);
             Assert.areEqual(html, node.getHTML().toLowerCase().replace(/\s+/g, ''));
 
-            // make sure node's contents have not disappeared 
+            // make sure node's contents have not disappeared
             Assert.areEqual(node.get("children").size(), 1);
         }
     }));
@@ -2010,7 +2021,7 @@ YUI({
             var nd = Y.one('#test-node-addMethod');
 
             Y.Node.addMethod('testAddMethod', function () {
-                return this;     
+                return this;
             });
 
             Assert.isFunction(nd.testAddMethod);
