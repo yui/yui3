@@ -1765,14 +1765,22 @@ YUI({
         },
 
         'should return false if node is removed': function () {
-            var myNode = Y.one('*');
-            // node should exist first and be in doc
-            Assert.isTrue(myNode.inDoc());
+            var myNode = Y.Node.create('foo'),
+                _ref;
 
-            myNode._node = null;
+            Assert.isTrue(myNode.inDoc() === false);
 
-            // node is not bound
-            Assert.isFalse(myNode.inDoc());
+            Y.one('body').append(myNode);
+
+            Assert.isTrue(myNode.inDoc() === true);
+
+            _ref = myNode.getDOMNode();
+
+            myNode.destroy();
+
+            Assert.isTrue(myNode.inDoc() === false);
+
+            _ref.parentNode.removeChild(_ref);
         }
     }));
 
