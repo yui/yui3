@@ -707,7 +707,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             this._restripeTask = {
                 timer: setTimeout(function () {
                     // Check for self existence before continuing
-                    if (!self || self.get('destroy') || !self.tbodyNode || !self.tbodyNode.inDoc()) {
+                    if (!self || self.get('destroy') || !self.tbodyNode || !self.tbodyNode._node || !self.tbodyNode.inDoc()) {
                         self._restripeTask = null;
                         return;
                     }
