@@ -937,7 +937,8 @@ Y.Base.mix(Y.DataTable, [Y.DataTable.Paginator]);
         "datatable-paginator-templates"
     ],
     "lang": [
-        "en"
+        "en",
+        "fr"
     ],
     "skinnable": true
 });
