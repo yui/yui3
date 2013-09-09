@@ -9896,7 +9896,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "datatable-paginator": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "model",
@@ -11907,7 +11908,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '5fa9b73f55b268a8777d1d6a2c3b801d';
+YUI.Env[Y.version].md5 = 'ed3a8326493f540831ac2ec7f86cb309';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
