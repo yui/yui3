@@ -4,7 +4,9 @@ Calendar Change History
 @VERSION@
 ------
 
-* No changes.
+* Removed superfluous strings from Hungarian calendar translations. ([#1054][]: @drjayvee)
+
+[#1054]: https://github.com/yui/yui3/issues/1054
 
 3.12.0
 ------

@@ -115,7 +115,7 @@
                     "datatable-foot",
                     "datatable-paginator-templates"
                 ],
-                "lang": [ "en" ],
+                "lang": ["en", "fr"],
                 "skinnable": true
             },
             "datatable-paginator-templates": {
