@@ -75,7 +75,6 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         }
         else
         {
-            render = Y.one(render);
             graphic = new Y.CanvasGraphic({
                 render: render
             });
@@ -92,8 +91,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	addClass: function(className)
 	{
-		var node = Y.one(this.get("node"));
-		node.addClass(className);
+		var node = this.get("node");
+		Y.DOM.addClass(node, className);
 	},
 
 	/**
@@ -104,8 +103,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	removeClass: function(className)
 	{
-		var node = Y.one(this.get("node"));
-		node.removeClass(className);
+		var node = this.get("node");
+		Y.DOM.removeClass(node, className);
 	},
 
 	/**
@@ -149,7 +148,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	contains: function(needle)
 	{
-		return needle === Y.one(this.node);
+		var node = needle instanceof Y.Node ? needle._node : needle;
+        return node === this.node;
 	},
 
 	/**
@@ -161,8 +161,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	test: function(selector)
 	{
-		return Y.one(this.get("node")).test(selector);
-		//return Y.Selector.test(this.node, selector);
+		return Y.Selector.test(this.node, selector);
 	},
 
 	/**
@@ -297,7 +296,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	{
 		if(Y.Node.DOM_EVENTS[type])
 		{
-			return Y.one("#" +  this.get("id")).on(type, fn);
+            return Y.on(type, fn, "#" + this.get("id"));
 		}
 		return Y.on.apply(this, arguments);
 	},
@@ -972,7 +971,12 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
     {
         if(this.node)
         {
-            Y.one(this.node).remove(true);
+            Y.Event.purgeElement(this.node, true);
+            if(this.node.parentNode)
+            {
+                this.node.style.visibility = "";
+                this.node.parentNode.removeChild(this.node);
+            }
             this._context = null;
             this.node = null;
         }

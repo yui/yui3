@@ -342,11 +342,11 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
      */
     getXY: function()
     {
-        var node = Y.one(this._node),
+        var node = this._node,
             xy;
         if(node)
         {
-            xy = node.getXY();
+            xy = Y.DOM.getXY(node);
         }
         return xy;
     },
@@ -390,17 +390,25 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
      * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
     render: function(render) {
-        var parentNode = Y.one(render),
-            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
-            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || Y.one(DOCUMENT.body);
-        parentNode.append(this._node);
-        this.parentNode = parentNode;
+        var parentNode = render || DOCUMENT.body,
+            w,
+            h;
+        if(render instanceof Y.Node)
+        {
+            parentNode = render._node;
+        }
+        else if(Y.Lang.isString(render))
+        {
+            parentNode = Y.Selector.query(render, DOCUMENT.body, true);
+        }
+        w = this.get("width") || parseInt(Y.DOM.getComputedStyle(parentNode, "width"), 10);
+        h = this.get("height") || parseInt(Y.DOM.getComputedStyle(parentNode, "height"), 10);
+        parentNode.appendChild(this._node);
         this.set("width", w);
         this.set("height", h);
         return this;
     },
-
+    
     /**
      * Removes all nodes.
      *
@@ -421,7 +429,10 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         if(this._node)
         {
             this._removeChildren(this._node);
-            Y.one(this._node).remove(true);
+            if(this._node.parentNode)
+            {
+                this._node.parentNode.removeChild(this._node);
+            }
             this._node = null;
         }
     },
@@ -677,9 +688,9 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         {
             if(autoSize === "sizeContentToGraphic")
             {
-                node = Y.one(this._node);
-                computedWidth = parseFloat(node.getComputedStyle("width"));
-                computedHeight = parseFloat(node.getComputedStyle("height"));
+                node = this._node;
+                computedWidth = parseFloat(Y.DOM.getComputedStyle(node, "width"));
+                computedHeight = parseFloat(Y.DOM.getComputedStyle(node, "height"));
                 computedLeft = computedTop = 0;
                 this._contentNode.setAttribute("preserveAspectRatio", preserveAspectRatio);
             }

@@ -13,6 +13,10 @@ DataTable Change History
 * Fix issue where Paginator count becomes out of sync with DataTable when
   DataTable data is modified (added or removed) [Pull Request #1011] [Issue #1010]
 
+* Add French language pack for DataTable's Paginator. ([#1166][] @Naouak)
+
+[#1166]: https://github.com/yui/yui3/pull/1166
+
 3.12.0
 ------
 
