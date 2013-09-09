@@ -521,10 +521,15 @@ Y.mix(Y_Node.prototype, {
      */
     inDoc: function(doc) {
         var node = this._node;
-        doc = (doc) ? doc._node || doc : node[OWNER_DOCUMENT];
-        if (doc.documentElement) {
-            return Y_DOM.contains(doc.documentElement, node);
+
+        if (node) {
+            doc = (doc) ? doc._node || doc : node[OWNER_DOCUMENT];
+            if (doc.documentElement) {
+                return Y_DOM.contains(doc.documentElement, node);
+            }
         }
+
+        return false;
     },
 
     getById: function(id) {
