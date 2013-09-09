@@ -4,6 +4,11 @@ History Change History
 @VERSION@
 ---------
 
+* Added workaroung for `replaceState` bug in Chrome/Webkit.
+  ([#1159][]: @roblund)
+
+[#1159]: https://github.com/yui/yui3/issues/1159
+
 * Fixed issue with `parseHash` not parsing blank values in hash string.
   ([#1116][]: @blzaugg)
 
