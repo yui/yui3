@@ -5,5 +5,6 @@
     last: "Dernière",
     goToLabel: "Page :",
     goToAction: "Aller",
-    perPage: "Lignes :"
+    perPage: "Lignes :",
+    showAll: "Afficher tout"
 }
