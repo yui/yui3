@@ -1,1 +1,0 @@
-YUI.add("lang/datatype-list-format_pa",function(e){e.Intl.add("datatype-list-format","pa",{listPatternEnd:"{0}, {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0}, {1}"})},"@VERSION@");

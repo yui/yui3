@@ -1,1 +1,0 @@
-YUI.add("lang/datatype-list-format_el",function(e){e.Intl.add("datatype-list-format","el",{listPatternEnd:"{0} \u03ba\u03b1\u03b9 {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} \u03ba\u03b1\u03b9 {1}"})},"@VERSION@");

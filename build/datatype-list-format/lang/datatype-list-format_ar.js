@@ -1,1 +1,0 @@
-YUI.add("lang/datatype-list-format_ar",function(e){e.Intl.add("datatype-list-format","ar",{listPatternEnd:"{0}\u060c \u0648 {1}",listPatternMiddle:"{0}\u060c {1}",listPatternStart:"{0}\u060c {1}",listPatternTwo:"{0} \u0648 {1}"})},"@VERSION@");

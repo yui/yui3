@@ -1,1 +1,0 @@
-YUI.add("lang/datatype-list-format_eo",function(e){e.Intl.add("datatype-list-format","eo",{listPatternEnd:"{0}, {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0}, {1}"})},"@VERSION@");

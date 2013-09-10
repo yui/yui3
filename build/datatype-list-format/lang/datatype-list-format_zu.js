@@ -1,1 +1,0 @@
-YUI.add("lang/datatype-list-format_zu",function(e){e.Intl.add("datatype-list-format","zu",{listPatternEnd:"{0}, no-{1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"I-{0} ne-{1}"})},"@VERSION@");

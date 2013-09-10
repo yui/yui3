@@ -1,1 +1,0 @@
-YUI.add("lang/datatype-list-format_hu",function(e){e.Intl.add("datatype-list-format","hu",{listPatternEnd:"{0} \u00e9s {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} \u00e9s {1}"})},"@VERSION@");

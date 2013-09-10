@@ -96,4 +96,4 @@ YUI.add('module-tests', function(Y) {
 
     Y.Test.Runner.add(numberFormatTests);
 
-},'', { requires: [ 'test', 'datatype-number-format-advanced', 'lang/datatype-number-format-advanced_en-US' ] });
+},'', { requires: [ 'test', 'datatype-number-format-advanced' ] });

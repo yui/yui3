@@ -19,10 +19,10 @@ YUI.add('module-tests', function(Y) {
 
             input.push("Canada");
             result = Y.Array.format(input);
-            Y.Assert.areEqual("US, UK and Canada", result);
+            Y.Assert.areEqual("US, UK, and Canada", result);
         }
     });
 
     Y.Test.Runner.add(listFormatTests);
 
-},'', { requires: [ 'test', 'datatype-list-format', 'lang/datatype-list-format_en-GB' ] });
+},'', { requires: [ 'test', 'datatype-list-format' ] });

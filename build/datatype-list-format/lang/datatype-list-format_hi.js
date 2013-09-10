@@ -1,1 +1,0 @@
-YUI.add("lang/datatype-list-format_hi",function(e){e.Intl.add("datatype-list-format","hi",{listPatternEnd:"{0}, \u0914\u0930 {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} \u0914\u0930 {1}"})},"@VERSION@");

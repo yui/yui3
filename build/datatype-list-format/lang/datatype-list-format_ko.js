@@ -1,1 +1,0 @@
-YUI.add("lang/datatype-list-format_ko",function(e){e.Intl.add("datatype-list-format","ko",{listPatternEnd:"{0} \ubc0f {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} \ubc0f {1}"})},"@VERSION@");

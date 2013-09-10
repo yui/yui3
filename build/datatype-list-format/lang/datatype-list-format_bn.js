@@ -1,1 +1,0 @@
-YUI.add("lang/datatype-list-format_bn",function(e){e.Intl.add("datatype-list-format","bn",{listPatternEnd:"{0}, \u098f\u09ac\u0982 {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} \u098f\u09ac\u0982 {1}"})},"@VERSION@");

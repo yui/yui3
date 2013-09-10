@@ -1,1 +1,0 @@
-YUI.add("lang/datatype-list-format_vi",function(e){e.Intl.add("datatype-list-format","vi",{listPatternEnd:"{0} v\u00e0 {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} v\u00e0 {1}"})},"@VERSION@");

@@ -1,1 +1,0 @@
-YUI.add("lang/datatype-list-format_fi",function(e){e.Intl.add("datatype-list-format","fi",{listPatternEnd:"{0} ja {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} ja {1}"})},"@VERSION@");

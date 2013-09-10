@@ -1,1 +1,0 @@
-YUI.add("lang/datatype-list-format_tr",function(e){e.Intl.add("datatype-list-format","tr",{listPatternEnd:"{0} ve {1}",listPatternMiddle:"{0}, {1}",listPatternStart:"{0}, {1}",listPatternTwo:"{0} ve {1}"})},"@VERSION@");
