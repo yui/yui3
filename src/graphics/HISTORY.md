@@ -4,7 +4,7 @@ Graphics Change History
 @VERSION@
 ------
 
-* No changes.
+* #1138 Address issues with orphan elements after destroy.   
 
 3.12.0
 ------

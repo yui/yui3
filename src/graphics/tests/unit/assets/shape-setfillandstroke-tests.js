@@ -1,6 +1,11 @@
 YUI.add('shape-setfillandstroke-tests', function(Y) {
 
 var suite = new Y.Test.Suite("Graphics: Set Shape Fill And Stroke"),
+    ShapeTestTemplate,
+    parentDiv = Y.DOM.create('<div id="testdiv" style="width: 400px; height: 400px;">'),
+    DOC = Y.config.doc;
+DOC.body.appendChild(parentDiv);
+
 ShapeTestTemplate = function(cfg, globalCfg) {
     var i;
     ShapeTestTemplate.superclass.constructor.apply(this);
@@ -38,9 +43,7 @@ Y.extend(ShapeTestTemplate, Y.Test.Case, {
         stroke = this.attrCfg.stroke;
         startCfg.fill = this.defaultFill;
         startCfg.type = this.attrCfg.type;
-        Y.one("body").append('<div id="testbed"></div>');
-        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
-        graphic = new Y.Graphic({render: "#graphiccontainer"});
+        graphic = new Y.Graphic({render: "#testdiv"});
         this.graphic = graphic;
         this.shape = graphic.addShape(startCfg);
         if(stroke)
@@ -55,7 +58,7 @@ Y.extend(ShapeTestTemplate, Y.Test.Case, {
 
     tearDown: function () {
         this.graphic.destroy();
-        Y.one("#testbed").remove(true);
+        Y.Event.purgeElement(DOC, false);
     }
 });
 
