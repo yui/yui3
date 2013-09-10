@@ -82,12 +82,12 @@ ButtonCore.prototype = {
      */
     _renderUI: function() {
         var node = this.getNode(),
-            tagName = node.get('tagName').toLowerCase();
+            nodeName = node.get('nodeName').toLowerCase();
 
         // Set some default node attributes
         node.addClass(ButtonCore.CLASS_NAMES.BUTTON);
 
-        if (tagName !== 'button' && tagName !== 'input') {
+        if (nodeName !== 'button' && nodeName !== 'input') {
             node.set('role', 'button');
         }
     },
@@ -185,9 +185,9 @@ ButtonCore.prototype = {
     _setLabelHTML: function (value, name, opts) {
         var node = this.getNode(),
             labelNode = ButtonCore._getLabelNodeFromParent(node),
-            tagName = node.get('tagName').toLowerCase();
+            nodeName = node.get('nodeName').toLowerCase();
 
-        if (tagName === 'input') {
+        if (nodeName === 'input') {
             labelNode.set('value', value);
         }
         else {
@@ -352,8 +352,8 @@ ButtonCore._getLabelNodeFromParent = function (node) {
  */
 ButtonCore._getTextLabelFromNode = function (node) {
     var labelNode = ButtonCore._getLabelNodeFromParent(node),
-        tagName = labelNode.get('tagName').toLowerCase(),
-        label = labelNode.get(tagName === 'input' ? 'value' : 'text');
+        nodeName = labelNode.get('nodeName').toLowerCase(),
+        label = labelNode.get(nodeName === 'input' ? 'value' : 'text');
 
     label = Y.Escape.html(label);
 
