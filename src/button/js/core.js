@@ -245,16 +245,13 @@ ButtonCore.ATTRS = {
     /**
      * The HTML of the button's label
      *
-     * **IMPORTANT**: This attribute accepts HTML and inserts it into
-     * the DOM **without** sanitization.  If this value will contain any
-     * user provided content, appropriate sanitization steps should first be
-     * conducted to ensure the content is safe for insertion into the DOM.
-     * This process typically involves removing any &lt;script&gt; or
-     * &lt;iframe&gt; tags, or other HTML that can be considered malicious.
+     * This attribute accepts HTML and inserts it into the DOM **without**
+     * sanitization.  This attribute should only be used with HTML that has
+     * either been escaped (using `Y.Escape.html`), or sanitized according to
+     * the requirements of your application.
      *
-     * For more information, look into strategies to prevent cross-site
-     * scripting (XSS) attacks and HTML validation libraries that allow you to
-     * whitelist your expected HTML tags.
+     * If all you need is support for text labels, please use the `label`
+     * attribute instead.
      *
      * @config labelHTML
      * @type HTML
