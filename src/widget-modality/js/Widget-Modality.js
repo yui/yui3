@@ -9,7 +9,6 @@ var WIDGET       = 'widget',
     BIND_UI      = 'bindUI',
     SYNC_UI      = 'syncUI',
     BOUNDING_BOX = 'boundingBox',
-    CONTENT_BOX  = 'contentBox',
     VISIBLE      = 'visible',
     Z_INDEX      = 'zIndex',
     CHANGE       = 'Change',
@@ -272,7 +271,7 @@ var WIDGET       = 'widget',
          *
          * @method _focus
          */
-        _focus : function (e) {
+        _focus : function () {
 
             var bb = this.get(BOUNDING_BOX),
             oldTI = bb.get('tabIndex');
@@ -432,7 +431,7 @@ var WIDGET       = 'widget',
             }
 
             if ( ! supportsPosFixed) {
-                uiHandles.push(Y.one('win').on('scroll', Y.bind(function(e){
+                uiHandles.push(Y.one('win').on('scroll', Y.bind(function(){
                     maskNode.setStyle('top', maskNode.get('docScrollY'));
                 }, this)));
             }
@@ -549,7 +548,7 @@ var WIDGET       = 'widget',
          *
          * @method _afterFocusOnChange
          */
-        _afterFocusOnChange : function(e) {
+        _afterFocusOnChange : function() {
             this._detachUIHandlesModal();
 
             if (this.get(VISIBLE)) {
