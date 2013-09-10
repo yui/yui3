@@ -1,3 +1,3 @@
 function (Y) {
-	return (window.Intl !== undefined);
+	return (typeof window !== 'undefined' && window.Intl !== undefined);
 }

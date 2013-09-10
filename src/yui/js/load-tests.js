@@ -39,7 +39,7 @@ add('load', '1', {
 add('load', '2', {
     "name": "datatype-number-format-ecma",
     "test": function (Y) {
-	return (window.Intl !== undefined);
+	return (typeof window !== 'undefined' && window.Intl !== undefined);
 },
     "trigger": "datatype-number-format-advanced",
     "when": "after"

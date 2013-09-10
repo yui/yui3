@@ -5138,7 +5138,7 @@ add('load', '1', {
 add('load', '2', {
     "name": "datatype-number-format-ecma",
     "test": function (Y) {
-	return (window.Intl !== undefined);
+	return (typeof window !== 'undefined' && window.Intl !== undefined);
 },
     "trigger": "datatype-number-format-advanced",
     "when": "after"
@@ -9688,7 +9688,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         "condition": {
             "name": "datatype-number-format-ecma",
             "test": function (Y) {
-	return (window.Intl !== undefined);
+	return (typeof window !== 'undefined' && window.Intl !== undefined);
 },
             "trigger": "datatype-number-format-advanced",
             "when": "after"
