@@ -4,6 +4,19 @@ Tree Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.12.0
+------
+
+* Fixed: `Tree.Sortable` failed to reindex a node's children after sorting them,
+  which could result in `Tree#indexOf()` and `Tree.Node#index()` returning
+  incorrect indices. [Ryan Grove]
+
+
+3.11.0
+------
+
 * Added `Tree.Node#depth()`, which returns the depth of the node, starting at 0
   for the root node. [Ryan Grove]
 

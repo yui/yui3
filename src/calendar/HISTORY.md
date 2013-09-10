@@ -4,6 +4,27 @@ Calendar Change History
 @VERSION@
 ------
 
+* Removed superfluous strings from Hungarian calendar translations. ([#1054][]: @drjayvee)
+
+[#1054]: https://github.com/yui/yui3/issues/1054
+
+3.12.0
+------
+
+* Added language support for various Chinese regions. ([#1007][]: @shunner)
+
+
+[#1007]: https://github.com/yui/yui3/issues/1007
+
+
+3.11.0
+------
+
+* Cleaned up lang (see PR #878) [Jeroen Versteeg]:
+  * removed unused lang/calendar (only lang/calendar-base is used)
+  * removed unused short_weekdays strings from lang/calendar-base
+  * replaced weekdays strings from lang/calendar-base with datatype/date-format
+
 * Setting `minimumDate` or `maximumDate` now correctly disables nodes before or
   after those dates. [Arnaud Didry]
 

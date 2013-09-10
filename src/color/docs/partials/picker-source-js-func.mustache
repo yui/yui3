@@ -16,12 +16,13 @@ function updatePickerUI() {
     var h = hue.get('value'),
         s = sat.get('value'),
         l = lum.get('value'),
-        hslString = Y.Color.fromArray([h, s, l], Y.Color.TYPES.HSL);
+        hslString = Y.Color.fromArray([h, s, l], Y.Color.TYPES.HSL),
+        hexString = Y.Color.toHex(hslString);
 
     satValue.set('text', s + '%');
     lumValue.set('text', l + '%');
 
-    color.setStyle('backgroundColor', hslString);
+    color.setStyle('backgroundColor', hexString);
 
     updateOutput(hslString);
 }

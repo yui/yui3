@@ -1,7 +1,7 @@
 YUI.add('datatype-date-format', function (Y, NAME) {
 
 /**
- * The `datatype` module is an alias for three utilities, Y.Date, 
+ * The `datatype` module is an alias for three utilities, Y.Date,
  * Y.Number and Y.XML, that provide type-conversion and string-formatting
  * convenience methods for various JavaScript object types.
  *
@@ -54,7 +54,7 @@ var xPad=function (x, pad, r)
 	{
 		r=10;
 	}
-	pad = pad + ""; 
+	pad = pad + "";
 	for( ; parseInt(x, 10)<r && r>1; r/=10) {
 		x = pad + x;
 	}
@@ -75,13 +75,13 @@ var Dt = {
 				var y = d.getFullYear();
 				var V = parseInt(Dt.formats.V(d), 10);
 				var W = parseInt(Dt.formats.W(d), 10);
-	
+
 				if(W > V) {
 					y++;
 				} else if(W===0 && V>=52) {
 					y--;
 				}
-	
+
 				return y;
 			},
 		H: ["getHours", "0"],
@@ -114,7 +114,7 @@ var Dt = {
 				// First week is 01 and not 00 as in the case of %U and %W,
 				// so we add 1 to the final result except if day 1 of the year
 				// is a Monday (then %W returns 01).
-				// We also need to subtract 1 if the day 1 of the year is 
+				// We also need to subtract 1 if the day 1 of the year is
 				// Friday-Sunday, so the resulting equation becomes:
 				var idow = woy + (dow1_1 > 4 || dow1_1 <= 1 ? 0 : 1);
 				if(idow === 53 && (new Date("" + d.getFullYear() + "/12/31")).getDay() < 4)
@@ -125,7 +125,7 @@ var Dt = {
 				{
 					idow = Dt.formats.V(new Date("" + (d.getFullYear()-1) + "/12/31"));
 				}
-	
+
 				return xPad(idow, 0);
 			},
 		w: "getDay",
@@ -179,7 +179,7 @@ var Dt = {
 	 *   <dt>format {HTML} (Optional)</dt>
 	 *   <dd>
 	 *   <p>
-	 *   Any strftime string is supported, such as "%I:%M:%S %p". strftime has several format specifiers defined by the Open group at 
+	 *   Any strftime string is supported, such as "%I:%M:%S %p". strftime has several format specifiers defined by the Open group at
 	 *   <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html">http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html</a>
 	 *   PHP added a few of its own, defined at <a href="http://www.php.net/strftime">http://www.php.net/strftime</a>
 	 *   </p>
@@ -242,7 +242,7 @@ var Dt = {
 	 */
 	format : function (oDate, oConfig) {
 		oConfig = oConfig || {};
-		
+
 		if(!Y.Lang.isDate(oDate)) {
 			return Y.Lang.isValue(oDate) ? oDate : "";
 		}

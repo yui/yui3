@@ -6,10 +6,48 @@ App Framework Change History
 
 * No changes.
 
+3.12.0
+------
+
+### ModelList
+
+* Added support for descending sort order via `sort({descending: true})`. In
+  order to support this, the `options` passed to `sort()` are now passed along
+  to the protected `_sort()` method. ([#1004][]: @rishabhm)
+
+### Router
+
+* Added support for registering route param handler functions or regexps. This
+  allows routes to be defined as string paths while adding validation/formatting
+  to route params, e.g., `"/posts:id"`, and register an `id` param handler to
+  parse string values into a number and make it available at `req.params.id`.
+  ([#1063][])
+
+* Fixed issue with trying to URL-decode matching path segments that are
+  `undefined`. Routes defined as regexps (instead of strings) can contain an
+  arbitrary number of captures; when executing the regex during dispatching, its
+  array of matches can contain `undefined` values. Router will now check that a
+  match is a truthy value before trying to URL-decode it, and coerce `undefined`
+  values to empty strings. ([#964][], [#1076][])
+
+
+[#964]: https://github.com/yui/yui3/issues/964
+[#1004]: https://github.com/yui/yui3/issues/1004
+[#1063]: https://github.com/yui/yui3/issues/1063
+[#1076]: https://github.com/yui/yui3/issues/1076
+
+
+3.11.0
+------
+
+* No changes.
+
+
 3.10.3
 ------
 
 * No changes.
+
 
 3.10.2
 ------

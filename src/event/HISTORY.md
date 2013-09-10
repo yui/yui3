@@ -4,6 +4,33 @@ Event Infrastructure Change History
 @VERSION@
 ------
 
+* Delegated focus and blur events now behave the same way other events do when
+  a delegate sub from a container closer to the target calls
+  `e.stopPropagation()`. Delegate subs from containers higher in the parent
+  axis are not notified. [#1145](https://github.com/yui/yui3/issues/1145)
+
+3.12.0
+------
+
+* Fixed: YUI no longer breaks the browser back/forward cache by attaching an
+  unnecessary `unload` event handler. [Ryan Grove]
+
+* `event-tap` allows you to prevent default browser behavior on `tap` via
+  `e.preventDefault()` [#682](https://github.com/yui/yui3/issues/682)
+
+* `event-tap` now has a `sensitivity` property that can be passed as an option.
+  This allows you to customize when `tap` fires, based on the difference in `px`
+  between a the corresponding start and end event. [#631](https://github.com/yui/yui3/pull/631)
+
+* `event-tap` has dual-listener support, and works properly on devices that support
+  both mouse and touch input. [#683](https://github.com/yui/yui3/issues/683)
+
+* `event-tap` works more reliably on Android 4.0.x (Ice cream sandwich).
+
+
+3.11.0
+------
+
 * No changes.
 
 3.10.3

@@ -3,7 +3,7 @@
 
  @module datatable
  @submodule datatable-paginator
- @since @SINCE@
+ @since 3.11.0
  */
 
 var Model,
@@ -18,14 +18,14 @@ var Model,
 /**
  @class DataTable.Paginator.Model
  @extends Model
- @since @SINCE@
+ @since 3.11.0
  */
 Model = Y.Base.create('dt-pg-model', Y.Model, [Y.Paginator.Core]),
 
 /**
  @class DataTable.Paginator.View
  @extends View
- @since @SINCE@
+ @since 3.11.0
  */
 View = Y.Base.create('dt-pg-view', Y.View, [], {
     /**
@@ -33,7 +33,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @property _eventHandles
      @type {Array}
-     @SINCE@
+     @since 3.11.0
      */
     _eventHandles: [],
 
@@ -42,7 +42,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @property containerTemplate
      @type {String}
      @default '<div class="yui3-datatable-paginator"/>'
-     @SINCE@
+     @since 3.11.0
      */
     containerTemplate: '<div class="{paginator}"/>',
 
@@ -51,7 +51,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @property contentTemplate
      @type {String}
      @default '{buttons}{goto}{perPage}'
-     @SINCE@
+     @since 3.11.0
      */
     contentTemplate: '{buttons}{goto}{perPage}',
 
@@ -61,14 +61,14 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @property _allowAdHocAttrs
      @type {Boolean}
      @default false
-     @SINCE@
+     @since 3.11.0
      */
     _allowAdHocAttrs: false,
 
     /**
      Sets classnames on the templates and bind events
      @method initializer
-     @SINCE@
+     @since 3.11.0
      */
     initializer: function () {
         this.containerTemplate = sub(this.containerTemplate, {
@@ -84,7 +84,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
     /**
      @method render
      @chainable
-     @SINCE@
+     @since 3.11.0
      */
     render: function () {
         var model = this.get('model'),
@@ -95,6 +95,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
             });
 
         this.get('container').append(content);
+        this.attachEvents();
 
         this._rendered = true;
 
@@ -106,7 +107,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
     /**
      @method attachEvents
-     @SINCE@
+     @since 3.11.0
      */
     attachEvents: function () {
         View.superclass.attachEvents.apply(this, arguments);
@@ -119,10 +120,20 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
         this._attachedViewEvents.push(
             container.delegate('click', this._controlClick, '.' + this.classNames.control, this),
-            container.after('change', this._controlChange, this, 'select'),
-            container.after('submit', this._controlSubmit, this, 'form'),
             this.get('model').after('change', this._modelChange, this)
         );
+
+        container.all('form').each(Y.bind(function (frm) {
+            this._attachedViewEvents.push(
+                frm.after('submit', this._controlSubmit, this)
+            );
+        }, this));
+
+        container.all('select').each(Y.bind(function (sel) {
+            this._attachedViewEvents.push(
+                sel.after('change', this._controlChange, this)
+            );
+        }, this));
 
     },
 
@@ -131,7 +142,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _buildButtonsGroup
      @return {String}
-     @SINCE@
+     @since 3.11.0
      */
     _buildButtonsGroup: function () {
         var strings = this.get('strings'),
@@ -163,7 +174,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _buildGotoGroup
      @return {String}
-     @SINCE@
+     @since 3.11.0
      */
     _buildGotoGroup: function () {
 
@@ -179,7 +190,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _buildPerPageGroup
      @return {String}
-     @SINCE@
+     @since 3.11.0
      */
     _buildPerPageGroup: function () {
         var options = this.get('pageSizes'),
@@ -213,7 +224,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _modelChange
      @param {EventFacade} e
-     @SINCE@
+     @since 3.11.0
      */
     _modelChange: function (e) {
         var changed = e.changed,
@@ -237,7 +248,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _updateControlsUI
      @param {Number} val Page number to set the UI input to
-     @SINCE@
+     @since 3.11.0
      */
     _updateControlsUI: function (val) {
         if (!this._rendered) {
@@ -274,7 +285,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _updateItemsPerPageUI
      @param {Number} val Number of items to display per page
-     @SINCE@
+     @since 3.11.0
      */
     _updateItemsPerPageUI: function (val) {
         if (!this._rendered) {
@@ -289,7 +300,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _controlClick
      @param {EventFacade} e
-     @SINCE@
+     @since 3.11.0
      */
     _controlClick: function (e) { // buttons
         e.preventDefault();
@@ -309,18 +320,12 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _controlChange
      @param {EventFacade} e
-     @param {String} selector
-     @SINCE@
+     @since 3.11.0
      */
-    _controlChange: function (e, selector) {
-        var control = e.target,
-            val;
+    _controlChange: function (e) {
 
         // register change events from the perPage select
-        if (
-            control.hasClass(CLASS_DISABLED) ||
-            ( selector && !(control.test(selector)) )
-        ) {
+        if ( e.target.hasClass(CLASS_DISABLED) ) {
             return;
         }
 
@@ -333,17 +338,10 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      @protected
      @method _controlSubmit
      @param {EventFacade} e
-     @param {String} selector
-     @SINCE@
+     @since 3.11.0
      */
-    _controlSubmit: function (e, selector) {
-        var control = e.target,
-            input;
-
-        if (
-            control.hasClass(CLASS_DISABLED) ||
-            ( selector && !(control.test(selector)) )
-        ) {
+    _controlSubmit: function (e) {
+        if ( e.target.hasClass(CLASS_DISABLED) ) {
             return;
         }
 
@@ -358,7 +356,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      Initializes classnames to be used with the templates
      @protected
      @method _initClassNames
-     @SINCE@
+     @since 3.11.0
      */
     _initClassNames: function () {
         this.classNames = {
@@ -373,7 +371,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
      Initializes strings used for internationalization
      @protected
      @method _initStrings
-     @SINCE@
+     @since 3.11.0
      */
     _initStrings: function () {
         // Not a valueFn because other class extensions may want to add to it
@@ -387,7 +385,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
          @attribute pageSizes
          @type {Array}
          @default [ 10, 50, 100, { label: 'Show All', value: -1 } ]
-         @SINCE@
+         @since 3.11.0
          */
         pageSizes: {
             value: [ 10, 50, 100, { label: 'Show All', value: -1 } ]
@@ -398,7 +396,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
          @attribute model
          @type {Y.Model}
          @default null
-         @since @SINCE@
+         @since 3.11.0
          */
         model: {}
     }
@@ -406,7 +404,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
 /**
  @class DataTable.Paginator
- @since @SINCE@
+ @since 3.11.0
  */
 function Controller () {}
 
@@ -416,7 +414,7 @@ Controller.ATTRS = {
      @attribute paginatorModel
      @type {Y.Model | Object}
      @default null
-     @since @SINCE@
+     @since 3.11.0
      */
     paginatorModel: {
         setter: '_setPaginatorModel',
@@ -433,7 +431,7 @@ Controller.ATTRS = {
      @attribute paginatorModelType
      @type {Y.Model | String}
      @default 'DataTable.Paginator.Model'
-     @since @SINCE@
+     @since 3.11.0
      */
     paginatorModelType: {
         getter: '_getConstructor',
@@ -448,7 +446,7 @@ Controller.ATTRS = {
      @attribute paginatorView
      @type {Y.View | String}
      @default 'DataTable.Paginator.View'
-     @since @SINCE@
+     @since 3.11.0
      */
     paginatorView: {
         getter: '_getConstructor',
@@ -463,7 +461,7 @@ Controller.ATTRS = {
      @attribute pageSizes
      @type {Array}
      @default [10, 50, 100, { label: 'Show All', value: -1 }]
-     @since @SINCE@
+     @since 3.11.0
      */
     pageSizes: {
         setter: '_setPageSizesFn',
@@ -476,7 +474,7 @@ Controller.ATTRS = {
      @attribute rowsPerPage
      @type {Number | null}
      @default null
-     @since @SINCE@
+     @since 3.11.0
      */
     rowsPerPage: {
         value: null
@@ -488,7 +486,7 @@ Controller.ATTRS = {
      @attribute paginatorLocation
      @type {String | Array | Y.Node}
      @default footer
-     @since @SINCE@
+     @since 3.11.0
      */
     paginatorLocation: {
         value: 'footer'
@@ -500,7 +498,7 @@ Y.mix(Controller.prototype, {
      Sets the `paginatorModel` to the first page.
      @method firstPage
      @chainable
-     @since @SINCE@
+     @since 3.11.0
      */
     firstPage: function () {
         this.get('paginatorModel').set('page', 1);
@@ -511,7 +509,7 @@ Y.mix(Controller.prototype, {
      Sets the `paginatorModel` to the last page.
      @method lastPage
      @chainable
-     @since @SINCE@
+     @since 3.11.0
      */
     lastPage: function () {
         var model = this.get('paginatorModel');
@@ -523,7 +521,7 @@ Y.mix(Controller.prototype, {
      Sets the `paginatorModel` to the previous page.
      @method previousPage
      @chainable
-     @since @SINCE@
+     @since 3.11.0
      */
     previousPage: function () {
         this.get('paginatorModel').prevPage();
@@ -534,7 +532,7 @@ Y.mix(Controller.prototype, {
      Sets the `paginatorModel` to the next page.
      @method nextPage
      @chainable
-     @since @SINCE@
+     @since 3.11.0
      */
     nextPage: function () {
         this.get('paginatorModel').nextPage();
@@ -547,7 +545,7 @@ Y.mix(Controller.prototype, {
      Constructor logic
      @protected
      @method initializer
-     @since @SINCE@
+     @since 3.11.0
      */
     initializer: function () {
         // allow DT to use paged data
@@ -562,7 +560,7 @@ Y.mix(Controller.prototype, {
      Renders the paginator into locations and attaches events.
      @protected
      @method _paginatorRender
-     @since @SINCE@
+     @since 3.11.0
      */
     _paginatorRender: function () {
         var model = this.get('paginatorModel');
@@ -571,6 +569,7 @@ Y.mix(Controller.prototype, {
         model.after('change', this._afterPaginatorModelChange, this);
         this.after('dataChange', this._afterDataChangeWithPaginator, this);
         this.after('rowsPerPageChange', this._afterRowsPerPageChange, this);
+        this.data.after(['add', 'remove', 'change'], this._afterDataUpdatesWithPaginator, this);
 
         // ensure our model has the correct totalItems set
         model.set('itemsPerPage', this.get('rowsPerPage'));
@@ -582,11 +581,13 @@ Y.mix(Controller.prototype, {
      is augmented
      @protected
      @method _afterDataChangeWithPaginator
-     @since @SINCE@
+     @since 3.11.0
      */
     _afterDataChangeWithPaginator: function () {
         var data = this.get('data'),
             model = this.get('paginatorModel');
+
+        model.set('totalItems', data.size());
 
         if (model.get('page') !== 1) {
             this.firstPage();
@@ -601,13 +602,28 @@ Y.mix(Controller.prototype, {
     },
 
     /**
+     After data has changed due to a model being added, removed, or changed,
+     update paginator model totalItems to reflect the changes.
+     @protected
+     @method _afterDataUpdatesWithPaginator
+     @param {EventFacade} e
+     @since @SINCE@
+    */
+    _afterDataUpdatesWithPaginator: function () {
+        var model = this.get('paginatorModel'),
+            data = this.get('data');
+
+        model.set('totalItems', data.size());
+    },
+
+    /**
      After the rowsPerPage changes, update the UI to reflect the new number of
      rows to be displayed. If the new value is `null`, destroy all instances
      of the paginators.
      @protected
      @method _afterRowsPerPageChange
      @param {EventFacade} e
-     @since @SINCE@
+     @since 3.11.0
      */
     _afterRowsPerPageChange: function (e) {
         var data = this.get('data'),
@@ -644,7 +660,7 @@ Y.mix(Controller.prototype, {
      Parse each location and render a new view into each area.
      @protected
      @method _paginatorRenderUI
-     @since @SINCE@
+     @since 3.11.0
      */
     _paginatorRenderUI: function () {
         if (!this.get('rowsPerPage')) {
@@ -721,7 +737,7 @@ Y.mix(Controller.prototype, {
      @protected
      @method _uiPgHandler
      @param {EventFacade} e
-     @since @SINCE@
+     @since 3.11.0
      */
     _uiPgHandler: function (e) {
         // e.type = control type (first|prev|next|last|page|perPage)
@@ -755,7 +771,7 @@ Y.mix(Controller.prototype, {
      @protected
      @method _afterPaginatorModelChange
      @param {EventFacade} [e]
-     @since @SINCE@
+     @since 3.11.0
      */
     _afterPaginatorModelChange: function () {
         var model = this.get('paginatorModel'),
@@ -783,7 +799,7 @@ Y.mix(Controller.prototype, {
      `each` will also loop over the items in the page
      @protected
      @method _augmentData
-     @since @SINCE@
+     @since 3.11.0
      */
     _augmentData: function () {
         var model = this.get('paginatorModel');
@@ -801,10 +817,12 @@ Y.mix(Controller.prototype, {
 
             getPage: function () {
                 var _pg = this._paged,
-                    min = _pg.index,
-                    max = (_pg.length >= 0) ? min + _pg.length : undefined;
+                    min = _pg.index;
 
-                return this._items.slice(min, max);
+                // IE LTE 8 doesn't allow "undefined" as a second param - gh890
+                return (_pg.length >= 0) ?
+                        this._items.slice(min, min + _pg.length) :
+                        this._items.slice(min);
             },
 
             size: function (paged) {
@@ -831,7 +849,7 @@ Y.mix(Controller.prototype, {
      @method _setPageSizesFn
      @param {Array} val
      @return Array
-     @since @SINCE@
+     @since 3.11.0
      */
     _setPageSizesFn: function (val) {
         var i,
@@ -872,7 +890,7 @@ Y.mix(Controller.prototype, {
      @method _setPaginatorModel
      @param {Y.Model | Object} model
      @return Y.Model instance
-     @since @SINCE@
+     @since 3.11.0
      */
     _setPaginatorModel: function (model) {
         if (!(model && model._isYUIModel)) {
@@ -891,7 +909,7 @@ Y.mix(Controller.prototype, {
      @param {Object | String} type Type of Object to contruct. If `type` is a
        String, we assume it is a namespace off the Y object
      @return
-     @since @SINCE@
+     @since 3.11.0
      */
     _getConstructor: function (type) {
         return typeof type === 'string' ?

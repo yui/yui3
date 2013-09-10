@@ -1666,7 +1666,6 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
          * customizing specific calendar cells.
          *
          * @attribute customRenderer
-         * @readOnly
          * @type Object
          * @default {}
          */
@@ -1703,6 +1702,10 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         "nl",
         "pt-BR",
         "ru",
+        "zh-Hans",
+        "zh-Hans-CN",
+        "zh-Hant",
+        "zh-Hant-HK",
         "zh-HANT-TW"
     ],
     "skinnable": true

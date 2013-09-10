@@ -45,6 +45,11 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
             cb = group.get(CONTENT_BOX);
 
         cb.delegate(CLICK_EVENT, group._handleClick, Y.ButtonGroup.BUTTON_SELECTOR, group);
+        group.after('disabledChange', group._afterDisabledChange);
+    },
+
+    _afterDisabledChange: function () {
+        this.getButtons().each(Y.ButtonCore.prototype.disable);
     },
 
     /**
@@ -173,7 +178,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
      * @static
      */
     CLASS_NAMES: CLASS_NAMES,
-    
+
     /**
      * Selector used to find buttons inside a ButtonGroup
      * @property BUTTON_SELECTOR

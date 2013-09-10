@@ -203,7 +203,7 @@ Y.extend(ToggleButton, Button,  {
      * @default
      */
     selectedAttrName: '',
-    
+
     /**
      *
      * @method initializer
@@ -213,15 +213,15 @@ Y.extend(ToggleButton, Button,  {
             type = button.get('type'),
             selectedAttrName = (type === "checkbox" ? 'checked' : 'pressed'),
             selectedState = config[selectedAttrName] || false;
-        
+
         // Create the checked/pressed attribute
         button.addAttr(selectedAttrName, {
             value: selectedState
         });
-        
+
         button.selectedAttrName = selectedAttrName;
     },
-    
+
     /**
      *
      * @method destructor
@@ -229,7 +229,7 @@ Y.extend(ToggleButton, Button,  {
     destructor: function () {
         delete this.selectedAttrName;
     },
-    
+
     /**
      * @method bindUI
      * @description Hooks up events for the widget
@@ -237,9 +237,9 @@ Y.extend(ToggleButton, Button,  {
     bindUI: function() {
          var button = this,
              cb = button.get('contentBox');
-        
+
         ToggleButton.superclass.bindUI.call(button);
-        
+
         cb.on(button.trigger, button.toggle, button);
         button.after(button.selectedAttrName + 'Change', button._afterSelectedChange);
     },
@@ -257,11 +257,11 @@ Y.extend(ToggleButton, Button,  {
             selectedAttrName = button.selectedAttrName;
 
         ToggleButton.superclass.syncUI.call(button);
-        
+
         cb.set('role', role);
         button._uiSetSelected(button.get(selectedAttrName));
     },
-    
+
     /**
      * @method _afterSelectedChange
      * @private
@@ -269,7 +269,7 @@ Y.extend(ToggleButton, Button,  {
     _afterSelectedChange: function(e){
         this._uiSetSelected(e.newVal);
     },
-    
+
     /**
      * @method _uiSetSelected
      * @private
@@ -280,11 +280,11 @@ Y.extend(ToggleButton, Button,  {
             STATES = ToggleButton.ARIA_STATES,
             type = button.get('type'),
             ariaState = (type === 'checkbox' ? STATES.CHECKED : STATES.PRESSED);
-        
+
         cb.toggleClass(Button.CLASS_NAMES.SELECTED, value);
         cb.set(ariaState, value);
     },
-    
+
     /**
      * @method toggle
      * @description Toggles the selected/pressed/checked state of a ToggleButton
@@ -296,7 +296,7 @@ Y.extend(ToggleButton, Button,  {
     }
 
 }, {
-    
+
     /**
      * The identity of the widget.
      *
@@ -308,7 +308,7 @@ Y.extend(ToggleButton, Button,  {
      * @static
      */
     NAME: 'toggleButton',
-    
+
     /**
      * Static property used to define the default attribute configuration of
      * the Widget.
@@ -331,7 +331,7 @@ Y.extend(ToggleButton, Button,  {
             writeOnce: 'initOnly'
         }
     },
-    
+
     /**
      * @property HTML_PARSER
      * @type {Object}
@@ -346,7 +346,7 @@ Y.extend(ToggleButton, Button,  {
             return node.hasClass(CLASS_NAMES.SELECTED);
         }
     },
-    
+
     /**
      * @property ARIA_STATES
      * @type {Object}
@@ -371,7 +371,7 @@ Y.extend(ToggleButton, Button,  {
      * @static
      */
     CLASS_NAMES: CLASS_NAMES
-    
+
 });
 
 // Export

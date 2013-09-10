@@ -505,6 +505,10 @@ Y.mix(YUI.Env[Y.version].modules, {
             "nl",
             "pt-BR",
             "ru",
+            "zh-Hans",
+            "zh-Hans-CN",
+            "zh-Hant",
+            "zh-Hant-HK",
             "zh-HANT-TW"
         ],
         "requires": [
@@ -629,6 +633,14 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
+    "content-editable": {
+        "requires": [
+            "node-base",
+            "editor-selection",
+            "stylesheet",
+            "plugin"
+        ]
+    },
     "controller": {
         "use": [
             "router"
@@ -677,22 +689,19 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-base": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-responsive": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids",
@@ -702,8 +711,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids-units": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids-base"
@@ -926,7 +934,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "datatable-paginator": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "model",
@@ -1076,117 +1085,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "datatype-date-parse": {},
-    "datatype-list-format": {
-        "lang": [
-            "af",
-            "am",
-            "ar",
-            "as",
-            "az",
-            "be",
-            "bg",
-            "bn",
-            "bo",
-            "ca",
-            "cs",
-            "cy",
-            "da",
-            "de",
-            "el",
-            "en-AU",
-            "en-BE",
-            "en-GB",
-            "en-HK",
-            "en-IE",
-            "en-IN",
-            "en-MT",
-            "en-NZ",
-            "en-PK",
-            "en-SG",
-            "eo",
-            "es",
-            "et",
-            "eu",
-            "fa",
-            "fi",
-            "fil",
-            "fo",
-            "fr",
-            "ga",
-            "gl",
-            "gsw",
-            "gu",
-            "gv",
-            "ha",
-            "haw",
-            "he",
-            "hi",
-            "hr",
-            "hu",
-            "hy",
-            "id",
-            "ii",
-            "in",
-            "is",
-            "it",
-            "iw",
-            "ja",
-            "ka",
-            "kk",
-            "kl",
-            "km",
-            "kn",
-            "ko",
-            "kok",
-            "kw",
-            "lt",
-            "lv",
-            "mk",
-            "ml",
-            "mr",
-            "ms",
-            "mt",
-            "nb",
-            "ne",
-            "nl",
-            "nn",
-            "no",
-            "om",
-            "or",
-            "pa",
-            "pl",
-            "ps",
-            "pt",
-            "ro",
-            "ru",
-            "sh",
-            "si",
-            "sk",
-            "sl",
-            "so",
-            "sq",
-            "sr-Latn",
-            "sr-ME",
-            "sr",
-            "sv",
-            "sw",
-            "ta",
-            "te",
-            "th",
-            "ti",
-            "tl",
-            "tr",
-            "uk",
-            "ur",
-            "uz",
-            "vi",
-            "zh",
-            "zu"
-        ],
-        "requires": [
-            "yui-base"
-        ]
-    },
     "datatype-number": {
         "use": [
             "datatype-number-parse",
@@ -1194,349 +1092,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "datatype-number-format": {},
-    "datatype-number-format-advanced": {
-        "lang": [
-            "af-NA",
-            "af-ZA",
-            "af",
-            "am-ET",
-            "am",
-            "ar-AE",
-            "ar-BH",
-            "ar-DZ",
-            "ar-EG",
-            "ar-IQ",
-            "ar-JO",
-            "ar-KW",
-            "ar-LB",
-            "ar-LY",
-            "ar-MA",
-            "ar-OM",
-            "ar-QA",
-            "ar-SA",
-            "ar-SD",
-            "ar-SY",
-            "ar-TN",
-            "ar-YE",
-            "ar",
-            "as-IN",
-            "as",
-            "az-AZ",
-            "az-Cyrl-AZ",
-            "az-Cyrl",
-            "az-Latn-AZ",
-            "az",
-            "be-BY",
-            "be",
-            "bg-BG",
-            "bg",
-            "bn-BD",
-            "bn-IN",
-            "bn",
-            "bo-CN",
-            "bo-IN",
-            "bo",
-            "ca-ES",
-            "ca",
-            "cs-CZ",
-            "cs",
-            "cy-GB",
-            "cy",
-            "da-DK",
-            "da",
-            "de-AT",
-            "de-BE",
-            "de-CH",
-            "de-DE",
-            "de-LI",
-            "de-LU",
-            "de",
-            "el-CY",
-            "el-GR",
-            "el",
-            "en-AU",
-            "en-BE",
-            "en-BW",
-            "en-BZ",
-            "en-CA",
-            "en-GB",
-            "en-HK",
-            "en-IE",
-            "en-IN",
-            "en-JM",
-            "en-JO",
-            "en-MH",
-            "en-MT",
-            "en-MY",
-            "en-NA",
-            "en-NZ",
-            "en-PH",
-            "en-PK",
-            "en-RH",
-            "en-SG",
-            "en-TT",
-            "en-US",
-            "en-VI",
-            "en-ZA",
-            "en-ZW",
-            "eo",
-            "es-AR",
-            "es-BO",
-            "es-CL",
-            "es-CO",
-            "es-CR",
-            "es-DO",
-            "es-EC",
-            "es-ES",
-            "es-GT",
-            "es-HN",
-            "es-MX",
-            "es-NI",
-            "es-PA",
-            "es-PE",
-            "es-PR",
-            "es-PY",
-            "es-SV",
-            "es-US",
-            "es-UY",
-            "es-VE",
-            "es",
-            "et-EE",
-            "et",
-            "eu-ES",
-            "eu",
-            "fa-AF",
-            "fa-IR",
-            "fa",
-            "fi-FI",
-            "fi",
-            "fil-PH",
-            "fil",
-            "fo-FO",
-            "fo",
-            "fr-BE",
-            "fr-CA",
-            "fr-CH",
-            "fr-FR",
-            "fr-LU",
-            "fr-MC",
-            "fr-SN",
-            "fr",
-            "ga-IE",
-            "ga",
-            "gl-ES",
-            "gl",
-            "gsw-CH",
-            "gsw",
-            "gu-IN",
-            "gu",
-            "gv-GB",
-            "gv",
-            "ha-GH",
-            "ha-Latn-GH",
-            "ha-Latn-NE",
-            "ha-Latn-NG",
-            "ha-NE",
-            "ha-NG",
-            "ha",
-            "haw-US",
-            "haw",
-            "he-IL",
-            "he",
-            "hi-IN",
-            "hi",
-            "hr-HR",
-            "hr",
-            "hu-HU",
-            "hu",
-            "hy-AM",
-            "hy",
-            "id-ID",
-            "id",
-            "ii-CN",
-            "ii",
-            "in-ID",
-            "in",
-            "is-IS",
-            "is",
-            "it-CH",
-            "it-IT",
-            "it",
-            "iw-IL",
-            "iw",
-            "ja-JP",
-            "ja",
-            "ka-GE",
-            "ka",
-            "kk-Cyrl-KZ",
-            "kk-KZ",
-            "kk",
-            "kl-GL",
-            "kl",
-            "km-KH",
-            "km",
-            "kn-IN",
-            "kn",
-            "ko-KR",
-            "ko",
-            "kok-IN",
-            "kok",
-            "kw-GB",
-            "kw",
-            "lt-LT",
-            "lt",
-            "lv-LV",
-            "lv",
-            "mk-MK",
-            "mk",
-            "ml-IN",
-            "ml",
-            "mr-IN",
-            "mr",
-            "ms-BN",
-            "ms-MY",
-            "ms",
-            "mt-MT",
-            "mt",
-            "nb-NO",
-            "nb",
-            "ne-IN",
-            "ne-NP",
-            "ne",
-            "nl-BE",
-            "nl-NL",
-            "nl",
-            "nn-NO",
-            "nn",
-            "no-NO",
-            "no",
-            "om-ET",
-            "om-KE",
-            "om",
-            "or-IN",
-            "or",
-            "pa-Arab-PK",
-            "pa-Arab",
-            "pa-Guru-IN",
-            "pa-IN",
-            "pa-PK",
-            "pa",
-            "pl-PL",
-            "pl",
-            "ps-AF",
-            "ps",
-            "pt-BR",
-            "pt-PT",
-            "pt",
-            "ro-MD",
-            "ro-RO",
-            "ro",
-            "ru-RU",
-            "ru-UA",
-            "ru",
-            "sh-BA",
-            "sh-CS",
-            "sh-YU",
-            "sh",
-            "si-LK",
-            "si",
-            "sk-SK",
-            "sk",
-            "sl-SI",
-            "sl",
-            "so-DJ",
-            "so-ET",
-            "so-KE",
-            "so-SO",
-            "so",
-            "sq-AL",
-            "sq",
-            "sr-BA",
-            "sr-CS",
-            "sr-Cyrl-BA",
-            "sr-Cyrl-CS",
-            "sr-Cyrl-ME",
-            "sr-Cyrl-RS",
-            "sr-Cyrl-YU",
-            "sr-Latn-BA",
-            "sr-Latn-CS",
-            "sr-Latn-ME",
-            "sr-Latn-RS",
-            "sr-Latn-YU",
-            "sr-Latn",
-            "sr-ME",
-            "sr-RS",
-            "sr-YU",
-            "sr",
-            "sv-FI",
-            "sv-SE",
-            "sv",
-            "sw-KE",
-            "sw-TZ",
-            "sw",
-            "ta-IN",
-            "ta",
-            "te-IN",
-            "te",
-            "th-TH",
-            "th",
-            "ti-ER",
-            "ti-ET",
-            "ti",
-            "tl-PH",
-            "tl",
-            "tr-TR",
-            "tr",
-            "uk-UA",
-            "uk",
-            "ur-IN",
-            "ur-PK",
-            "ur",
-            "uz-AF",
-            "uz-Arab-AF",
-            "uz-Arab",
-            "uz-Cyrl-UZ",
-            "uz-Latn-UZ",
-            "uz-UZ",
-            "uz",
-            "vi-VN",
-            "vi",
-            "zh-CN",
-            "zh-HK",
-            "zh-Hans-CN",
-            "zh-Hans-HK",
-            "zh-Hans-MO",
-            "zh-Hans-SG",
-            "zh-Hant-HK",
-            "zh-Hant-MO",
-            "zh-Hant-TW",
-            "zh-Hant",
-            "zh-MO",
-            "zh-SG",
-            "zh-TW",
-            "zh",
-            "zu-ZA",
-            "zu"
-        ],
-        "requires": [
-            "intl-common",
-            "datatype-number-format",
-            "datatype-number-parse"
-        ]
-    },
-    "datatype-number-format-ecma": {
-        "condition": {
-            "name": "datatype-number-format-ecma",
-            "test": function (Y) {
-	return (window.Intl !== undefined);
-},
-            "trigger": "datatype-number-format-advanced",
-            "when": "after"
-        },
-        "requires": [
-            "intl"
-        ]
-    },
     "datatype-number-parse": {},
     "datatype-xml": {
         "use": [
@@ -1674,11 +1229,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "features"
         ]
     },
-    "dom-deprecated": {
-        "requires": [
-            "dom-base"
-        ]
-    },
     "dom-screen": {
         "requires": [
             "dom-base",
@@ -1761,6 +1311,12 @@ Y.mix(YUI.Env[Y.version].modules, {
     "editor-br": {
         "requires": [
             "editor-base"
+        ]
+    },
+    "editor-inline": {
+        "requires": [
+            "editor-base",
+            "content-editable"
         ]
     },
     "editor-lists": {
@@ -1993,6 +1549,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "base",
             "node",
+            "plugin",
             "selector-css3",
             "yui-throttle"
         ]
@@ -2208,11 +1765,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "yui-base"
         ]
     },
-    "intl-common": {
-        "requires": [
-            "intl"
-        ]
-    },
     "io": {
         "use": [
             "io-base",
@@ -2418,18 +1970,14 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "event-base",
             "node-core",
-            "dom-base"
+            "dom-base",
+            "dom-style"
         ]
     },
     "node-core": {
         "requires": [
             "dom-core",
             "selector"
-        ]
-    },
-    "node-deprecated": {
-        "requires": [
-            "node-base"
         ]
     },
     "node-event-delegate": {
@@ -3288,11 +2836,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-base"
         ]
     },
-    "widget-locale": {
-        "requires": [
-            "widget-base"
-        ]
-    },
     "widget-modality": {
         "requires": [
             "base-build",
@@ -3405,7 +2948,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '61f4d42e51a985115cadd6fb309312b2';
+YUI.Env[Y.version].md5 = '9cfdc7e62873313018cc48b86f2a53ca';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

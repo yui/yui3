@@ -13,10 +13,10 @@
                     "event-custom-base",
                     "querystring-stringify-simple"
                 ]
-            }, 
+            },
             "io-form": {
                 "requires": [
-                    "io-base", 
+                    "io-base",
                     "node-base"
                 ]
             },
@@ -31,19 +31,19 @@
             },
             "io-queue": {
                 "requires": [
-                    "io-base", 
+                    "io-base",
                     "queue-promote"
                 ]
-            }, 
+            },
             "io-upload-iframe": {
                 "requires": [
-                    "io-base", 
+                    "io-base",
                     "node-base"
                 ]
-            }, 
+            },
             "io-xdr": {
                 "requires": [
-                    "io-base", 
+                    "io-base",
                     "datatype-xml-parse"
                 ]
             }

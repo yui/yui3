@@ -38,55 +38,43 @@ Y.TimeAxis = Y.Base.create("timeAxis", Y.Axis, [Y.TimeImpl], {
     },
 
     /**
-     * Calculates the position of ticks and labels based on an array of specified label values. Returns
-     * an object containing an array of values to be used for labels and an array of objects containing
-     * x and y coordinates for each label.
+     * Returns an object literal containing and array of label values and an array of points.
      *
-     * @method _getDataFromLabelValues
-     * @param {Object} startPoint An object containing the x and y coordinates for the start of the axis.
-     * @param {Array} labelValues An array containing values to be used for determining the number and
-     * position of labels and ticks on the axis.
-     * @param {Number} edgeOffset The distance, in pixels, on either edge of the axis.
-     * @param {Number} layoutLength The length, in pixels, of the axis. If the axis is vertical, the length
-     * is equal to the height. If the axis is horizontal, the length is equal to the width.
-     * @return Object
+     * @method _getLabelData
+     * @param {Object} startPoint An object containing x and y values.
+     * @param {Number} edgeOffset Distance to offset coordinates.
+     * @param {Number} layoutLength Distance that the axis spans.
+     * @param {Number} count Number of labels.
+     * @param {String} direction Indicates whether the axis is horizontal or vertical.
+     * @param {Array} Array containing values for axis labels.
+     * @return Array
      * @private
      */
-    _getDataFromLabelValues: function(startPoint, labelValues, edgeOffset, layoutLength, direction)
+    _getLabelData: function(constantVal, staticCoord, dynamicCoord, min, max, edgeOffset, layoutLength, count, dataValues)
     {
-        var points = [],
-            labelValue,
+        var dataValue,
             i,
-            len = labelValues.length,
-            staticCoord,
-            dynamicCoord,
-            constantVal,
-            newPoint,
-            max = this.get("maximum"),
-            min = this.get("minimum"),
+            points = [],
             values = [],
-            scaleFactor = (layoutLength - (edgeOffset * 2)) / (max - min);
-        if(direction === "vertical")
+            point,
+            offset = edgeOffset;
+        dataValues = dataValues || this._getDataValuesByCount(count, min, max);
+        for(i = 0; i < count; i = i + 1)
         {
-            staticCoord = "x";
-            dynamicCoord = "y";
-        }
-        else
-        {
-            staticCoord = "y";
-            dynamicCoord = "x";
-        }
-        constantVal = startPoint[staticCoord];
-        for(i = 0; i < len; i = i + 1)
-        {
-            labelValue = this._getNumber(labelValues[i]);
-            if(Y.Lang.isNumber(labelValue) && labelValue >= min && labelValue <= max)
+            dataValue = this._getNumber(dataValues[i]);
+            if(dataValue <= max && dataValue >= min)
             {
-                newPoint = {};
-                newPoint[staticCoord] = constantVal;
-                newPoint[dynamicCoord] = edgeOffset + ((labelValue - min) * scaleFactor);
-                points.push(newPoint);
-                values.push(labelValue);
+                point = {};
+                point[staticCoord] = constantVal;
+                point[dynamicCoord] = this._getCoordFromValue(
+                    min,
+                    max,
+                    layoutLength,
+                    dataValue,
+                    offset
+                );
+                points.push(point);
+                values.push(dataValue);
             }
         }
         return {

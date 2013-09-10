@@ -1,14 +1,14 @@
 {
 	"dial": {
 		"requires": [
-			"widget", 
-			"dd-drag", 
+			"widget",
+			"dd-drag",
 			"event-mouseenter",
 			"event-move",
 			"event-key",
 			"transition",
 			"intl"
-		], 
+		],
 		"lang": ["en", "es", "hu"],
 		"skinnable": true
 	}

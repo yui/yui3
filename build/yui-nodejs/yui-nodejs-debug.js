@@ -1520,6 +1520,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
         YUI._getLoadHook = null;
     }
 
+    YUI.Env[VERSION] = {};
 }());
 
 
@@ -2877,7 +2878,7 @@ Y.cached = function (source, cache, refetch) {
         var key = arguments.length > 1 ?
                 Array.prototype.join.call(arguments, CACHED_DELIMITER) :
                 String(arg);
-        
+
         /*jshint eqeqeq: false*/
         if (!(key in cache) || (refetch && cache[key] == refetch)) {
             cache[key] = source.apply(source, arguments);
@@ -3176,7 +3177,7 @@ hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
 
 /**
  * `true` if this browser incorrectly considers the `prototype` property of
- * functions to be enumerable. Currently known to affect Opera 11.50.
+ * functions to be enumerable. Currently known to affect Opera 11.50 and Android 2.3.x.
  *
  * @property _hasProtoEnumBug
  * @type Boolean
@@ -3220,7 +3221,9 @@ O.hasKey = owns;
  * as the order in which they were defined.
  *
  * This method is an alias for the native ES5 `Object.keys()` method if
- * available.
+ * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of
+ * `Object.keys()` have an inconsistency as they consider `prototype` to be
+ * enumerable, so a non-native shim is used to rectify the difference.
  *
  * @example
  *
@@ -3232,7 +3235,7 @@ O.hasKey = owns;
  * @return {String[]} Array of keys.
  * @static
  */
-O.keys = Lang._isNative(Object.keys) ? Object.keys : function (obj) {
+O.keys = Lang._isNative(Object.keys) && !hasProtoEnumBug ? Object.keys : function (obj) {
     if (!Lang.isObject(obj)) {
         throw new TypeError('Object.keys called on a non-object');
     }
@@ -3839,17 +3842,25 @@ YUI.Env.parseUA = function(subUA) {
                 }
             }
 
-            m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
-            if (m && m[1] && m[2]) {
-                o.chrome = numberify(m[2]); // Chrome
-                o.safari = 0; //Reset safari back to 0
-                if (m[1] === 'CrMo') {
-                    o.mobile = 'chrome';
-                }
+            m = ua.match(/OPR\/(\d+\.\d+)/);
+
+            if (m && m[1]) {
+                // Opera 15+ with Blink (pretends to be both Chrome and Safari)
+                o.opera = numberify(m[1]);
             } else {
-                m = ua.match(/AdobeAIR\/([^\s]*)/);
-                if (m) {
-                    o.air = m[0]; // Adobe AIR 1.0 or better
+                m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
+
+                if (m && m[1] && m[2]) {
+                    o.chrome = numberify(m[2]); // Chrome
+                    o.safari = 0; //Reset safari back to 0
+                    if (m[1] === 'CrMo') {
+                        o.mobile = 'chrome';
+                    }
+                } else {
+                    m = ua.match(/AdobeAIR\/([^\s]*)/);
+                    if (m) {
+                        o.air = m[0]; // Adobe AIR 1.0 or better
+                    }
                 }
             }
         }
@@ -3879,11 +3890,13 @@ YUI.Env.parseUA = function(subUA) {
                     o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
                 }
             } else { // not opera or webkit
-                m = ua.match(/MSIE\s([^;]*)/);
-                if (m && m[1]) {
-                    o.ie = numberify(m[1]);
+                m = ua.match(/MSIE ([^;]*)|Trident.*; rv:([0-9.]+)/);
+
+                if (m && (m[1] || m[2])) {
+                    o.ie = numberify(m[1] || m[2]);
                 } else { // not opera, webkit, or ie
                     m = ua.match(/Gecko\/([^\s]*)/);
+
                     if (m) {
                         o.gecko = 1; // Gecko detected, look for revision
                         m = ua.match(/rv:([^\s\)]*)/);
@@ -4212,7 +4225,7 @@ YUI.add('get', function (Y, NAME) {
                 }
             });
         }
-        
+
         //Keeping Signature in the browser.
         return {
             execute: function() {}
@@ -4386,23 +4399,14 @@ add('load', '1', {
 },
     "trigger": "autocomplete-list"
 });
-// datatype-number-format-ecma
-add('load', '2', {
-    "name": "datatype-number-format-ecma",
-    "test": function (Y) {
-	return (window.Intl !== undefined);
-},
-    "trigger": "datatype-number-format-advanced",
-    "when": "after"
-});
 // dd-gestures
-add('load', '3', {
+add('load', '2', {
     "name": "dd-gestures",
     "trigger": "dd-drag",
     "ua": "touchEnabled"
 });
 // dom-style-ie
-add('load', '4', {
+add('load', '3', {
     "name": "dom-style-ie",
     "test": function (Y) {
 
@@ -4433,14 +4437,14 @@ add('load', '4', {
     "trigger": "dom-style"
 });
 // editor-para-ie
-add('load', '5', {
+add('load', '4', {
     "name": "editor-para-ie",
     "trigger": "editor-para",
     "ua": "ie",
     "when": "instead"
 });
 // event-base-ie
-add('load', '6', {
+add('load', '5', {
     "name": "event-base-ie",
     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
@@ -4449,7 +4453,7 @@ add('load', '6', {
     "trigger": "node-base"
 });
 // graphics-canvas
-add('load', '7', {
+add('load', '6', {
     "name": "graphics-canvas",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4461,7 +4465,7 @@ add('load', '7', {
     "trigger": "graphics"
 });
 // graphics-canvas-default
-add('load', '8', {
+add('load', '7', {
     "name": "graphics-canvas-default",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4473,7 +4477,7 @@ add('load', '8', {
     "trigger": "graphics"
 });
 // graphics-svg
-add('load', '9', {
+add('load', '8', {
     "name": "graphics-svg",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4486,7 +4490,7 @@ add('load', '9', {
     "trigger": "graphics"
 });
 // graphics-svg-default
-add('load', '10', {
+add('load', '9', {
     "name": "graphics-svg-default",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4499,7 +4503,7 @@ add('load', '10', {
     "trigger": "graphics"
 });
 // graphics-vml
-add('load', '11', {
+add('load', '10', {
     "name": "graphics-vml",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4509,7 +4513,7 @@ add('load', '11', {
     "trigger": "graphics"
 });
 // graphics-vml-default
-add('load', '12', {
+add('load', '11', {
     "name": "graphics-vml-default",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4519,7 +4523,7 @@ add('load', '12', {
     "trigger": "graphics"
 });
 // history-hash-ie
-add('load', '13', {
+add('load', '12', {
     "name": "history-hash-ie",
     "test": function (Y) {
     var docMode = Y.config.doc && Y.config.doc.documentMode;
@@ -4530,13 +4534,13 @@ add('load', '13', {
     "trigger": "history-hash"
 });
 // io-nodejs
-add('load', '14', {
+add('load', '13', {
     "name": "io-nodejs",
     "trigger": "io-base",
     "ua": "nodejs"
 });
 // json-parse-shim
-add('load', '15', {
+add('load', '14', {
     "name": "json-parse-shim",
     "test": function (Y) {
     var _JSON = Y.config.global.JSON,
@@ -4563,7 +4567,7 @@ add('load', '15', {
     "trigger": "json-parse"
 });
 // json-stringify-shim
-add('load', '16', {
+add('load', '15', {
     "name": "json-stringify-shim",
     "test": function (Y) {
     var _JSON = Y.config.global.JSON,
@@ -4586,13 +4590,13 @@ add('load', '16', {
     "trigger": "json-stringify"
 });
 // scrollview-base-ie
-add('load', '17', {
+add('load', '16', {
     "name": "scrollview-base-ie",
     "trigger": "scrollview-base",
     "ua": "ie"
 });
 // selector-css2
-add('load', '18', {
+add('load', '17', {
     "name": "selector-css2",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -4603,7 +4607,7 @@ add('load', '18', {
     "trigger": "selector"
 });
 // transition-timer
-add('load', '19', {
+add('load', '18', {
     "name": "transition-timer",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -4619,13 +4623,13 @@ add('load', '19', {
     "trigger": "transition"
 });
 // widget-base-ie
-add('load', '20', {
+add('load', '19', {
     "name": "widget-base-ie",
     "trigger": "widget-base",
     "ua": "ie"
 });
 // yql-jsonp
-add('load', '21', {
+add('load', '20', {
     "name": "yql-jsonp",
     "test": function (Y) {
     /* Only load the JSONP module when not in nodejs or winjs
@@ -4637,14 +4641,14 @@ add('load', '21', {
     "when": "after"
 });
 // yql-nodejs
-add('load', '22', {
+add('load', '21', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '23', {
+add('load', '22', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
@@ -4959,7 +4963,7 @@ var NO_ARGS = [];
  * single time unless periodic is set to true.
  * @for YUI
  * @method later
- * @param when {int} the number of milliseconds to wait until the fn
+ * @param when {Number} the number of milliseconds to wait until the fn
  * is executed.
  * @param o the context object.
  * @param fn {Function|String} the function to execute or the name of
@@ -5027,98 +5031,110 @@ YUI.add('loader-base', function (Y, NAME) {
  * @submodule loader-base
  */
 
-if (!YUI.Env[Y.version]) {
-
-    (function() {
-        var VERSION = Y.version,
-            BUILD = '/build/',
-            ROOT = VERSION + '/',
-            CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2013.06.26-23-09',
-            TNT = '2in3',
-            TNT_VERSION = '4',
-            YUI2_VERSION = '2.9.0',
-            COMBO_BASE = CDN_BASE + 'combo?',
-            META = { version: VERSION,
-                              root: ROOT,
-                              base: Y.Env.base,
-                              comboBase: COMBO_BASE,
-                              skin: { defaultSkin: 'sam',
-                                           base: 'assets/skins/',
-                                           path: 'skin.css',
-                                           after: ['cssreset',
-                                                          'cssfonts',
-                                                          'cssgrids',
-                                                          'cssbase',
-                                                          'cssreset-context',
-                                                          'cssfonts-context']},
-                              groups: {},
-                              patterns: {} },
-            groups = META.groups,
-            yui2Update = function(tnt, yui2, config) {
-
-                var root = TNT + '.' +
-                        (tnt || TNT_VERSION) + '/' +
-                        (yui2 || YUI2_VERSION) + BUILD,
-                    base = (config && config.base) ? config.base : CDN_BASE,
-                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
-
-                groups.yui2.base = base + root;
-                groups.yui2.root = root;
-                groups.yui2.comboBase = combo;
-            },
-            galleryUpdate = function(tag, config) {
-                var root = (tag || GALLERY_VERSION) + BUILD,
-                    base = (config && config.base) ? config.base : CDN_BASE,
-                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
-
-                groups.gallery.base = base + root;
-                groups.gallery.root = root;
-                groups.gallery.comboBase = combo;
-            };
-
-
-        groups[VERSION] = {};
-
-        groups.gallery = {
-            ext: false,
-            combine: true,
+(function() {
+    var VERSION = Y.version,
+        BUILD = '/build/',
+        ROOT = VERSION + '/',
+        CDN_BASE = Y.Env.base,
+        GALLERY_VERSION = 'gallery-2013.09.04-21-56',
+        TNT = '2in3',
+        TNT_VERSION = '4',
+        YUI2_VERSION = '2.9.0',
+        COMBO_BASE = CDN_BASE + 'combo?',
+        META = {
+            version: VERSION,
+            root: ROOT,
+            base: Y.Env.base,
             comboBase: COMBO_BASE,
-            update: galleryUpdate,
-            patterns: { 'gallery-': { },
-                        'lang/gallery-': {},
-                        'gallerycss-': { type: 'css' } }
+            skin: {
+                defaultSkin: 'sam',
+                base: 'assets/skins/',
+                path: 'skin.css',
+                after: [
+                    'cssreset',
+                    'cssfonts',
+                    'cssgrids',
+                    'cssbase',
+                    'cssreset-context',
+                    'cssfonts-context'
+                ]
+            },
+            groups: {},
+            patterns: {}
+        },
+        groups = META.groups,
+        yui2Update = function(tnt, yui2, config) {
+            var root = TNT + '.' +
+                    (tnt || TNT_VERSION) + '/' +
+                    (yui2 || YUI2_VERSION) + BUILD,
+                base = (config && config.base) ? config.base : CDN_BASE,
+                combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
+
+            groups.yui2.base = base + root;
+            groups.yui2.root = root;
+            groups.yui2.comboBase = combo;
+        },
+        galleryUpdate = function(tag, config) {
+            var root = (tag || GALLERY_VERSION) + BUILD,
+                base = (config && config.base) ? config.base : CDN_BASE,
+                combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
+
+            groups.gallery.base = base + root;
+            groups.gallery.root = root;
+            groups.gallery.comboBase = combo;
         };
 
-        groups.yui2 = {
-            combine: true,
-            ext: false,
-            comboBase: COMBO_BASE,
-            update: yui2Update,
-            patterns: {
-                'yui2-': {
-                    configFn: function(me) {
-                        if (/-skin|reset|fonts|grids|base/.test(me.name)) {
-                            me.type = 'css';
-                            me.path = me.path.replace(/\.js/, '.css');
-                            // this makes skins in builds earlier than
-                            // 2.6.0 work as long as combine is false
-                            me.path = me.path.replace(/\/yui2-skin/,
-                                             '/assets/skins/sam/yui2-skin');
-                        }
+
+    groups[VERSION] = {};
+
+    groups.gallery = {
+        ext: false,
+        combine: true,
+        comboBase: COMBO_BASE,
+        update: galleryUpdate,
+        patterns: {
+            'gallery-': {},
+            'lang/gallery-': {},
+            'gallerycss-': {
+                type: 'css'
+            }
+        }
+    };
+
+    groups.yui2 = {
+        combine: true,
+        ext: false,
+        comboBase: COMBO_BASE,
+        update: yui2Update,
+        patterns: {
+            'yui2-': {
+                configFn: function(me) {
+                    if (/-skin|reset|fonts|grids|base/.test(me.name)) {
+                        me.type = 'css';
+                        me.path = me.path.replace(/\.js/, '.css');
+                        // this makes skins in builds earlier than
+                        // 2.6.0 work as long as combine is false
+                        me.path = me.path.replace(/\/yui2-skin/,
+                                            '/assets/skins/sam/yui2-skin');
                     }
                 }
             }
-        };
+        }
+    };
 
-        galleryUpdate();
-        yui2Update();
+    galleryUpdate();
+    yui2Update();
 
-        YUI.Env[VERSION] = META;
-    }());
-}
+    if (YUI.Env[VERSION]) {
+        Y.mix(META, YUI.Env[VERSION], false, [
+            'modules',
+            'groups',
+            'skin'
+        ], 0, true);
+    }
 
-
+    YUI.Env[VERSION] = META;
+}());
 /*jslint forin: true, maxlen: 350 */
 
 /**
@@ -8448,6 +8464,10 @@ Y.mix(YUI.Env[Y.version].modules, {
             "nl",
             "pt-BR",
             "ru",
+            "zh-Hans",
+            "zh-Hans-CN",
+            "zh-Hant",
+            "zh-Hant-HK",
             "zh-HANT-TW"
         ],
         "requires": [
@@ -8572,6 +8592,14 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
+    "content-editable": {
+        "requires": [
+            "node-base",
+            "editor-selection",
+            "stylesheet",
+            "plugin"
+        ]
+    },
     "controller": {
         "use": [
             "router"
@@ -8620,22 +8648,19 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-base": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-responsive": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids",
@@ -8645,8 +8670,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids-units": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids-base"
@@ -8869,7 +8893,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "datatable-paginator": {
         "lang": [
-            "en"
+            "en",
+            "fr"
         ],
         "requires": [
             "model",
@@ -9019,117 +9044,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "datatype-date-parse": {},
-    "datatype-list-format": {
-        "lang": [
-            "af",
-            "am",
-            "ar",
-            "as",
-            "az",
-            "be",
-            "bg",
-            "bn",
-            "bo",
-            "ca",
-            "cs",
-            "cy",
-            "da",
-            "de",
-            "el",
-            "en-AU",
-            "en-BE",
-            "en-GB",
-            "en-HK",
-            "en-IE",
-            "en-IN",
-            "en-MT",
-            "en-NZ",
-            "en-PK",
-            "en-SG",
-            "eo",
-            "es",
-            "et",
-            "eu",
-            "fa",
-            "fi",
-            "fil",
-            "fo",
-            "fr",
-            "ga",
-            "gl",
-            "gsw",
-            "gu",
-            "gv",
-            "ha",
-            "haw",
-            "he",
-            "hi",
-            "hr",
-            "hu",
-            "hy",
-            "id",
-            "ii",
-            "in",
-            "is",
-            "it",
-            "iw",
-            "ja",
-            "ka",
-            "kk",
-            "kl",
-            "km",
-            "kn",
-            "ko",
-            "kok",
-            "kw",
-            "lt",
-            "lv",
-            "mk",
-            "ml",
-            "mr",
-            "ms",
-            "mt",
-            "nb",
-            "ne",
-            "nl",
-            "nn",
-            "no",
-            "om",
-            "or",
-            "pa",
-            "pl",
-            "ps",
-            "pt",
-            "ro",
-            "ru",
-            "sh",
-            "si",
-            "sk",
-            "sl",
-            "so",
-            "sq",
-            "sr-Latn",
-            "sr-ME",
-            "sr",
-            "sv",
-            "sw",
-            "ta",
-            "te",
-            "th",
-            "ti",
-            "tl",
-            "tr",
-            "uk",
-            "ur",
-            "uz",
-            "vi",
-            "zh",
-            "zu"
-        ],
-        "requires": [
-            "yui-base"
-        ]
-    },
     "datatype-number": {
         "use": [
             "datatype-number-parse",
@@ -9137,349 +9051,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "datatype-number-format": {},
-    "datatype-number-format-advanced": {
-        "lang": [
-            "af-NA",
-            "af-ZA",
-            "af",
-            "am-ET",
-            "am",
-            "ar-AE",
-            "ar-BH",
-            "ar-DZ",
-            "ar-EG",
-            "ar-IQ",
-            "ar-JO",
-            "ar-KW",
-            "ar-LB",
-            "ar-LY",
-            "ar-MA",
-            "ar-OM",
-            "ar-QA",
-            "ar-SA",
-            "ar-SD",
-            "ar-SY",
-            "ar-TN",
-            "ar-YE",
-            "ar",
-            "as-IN",
-            "as",
-            "az-AZ",
-            "az-Cyrl-AZ",
-            "az-Cyrl",
-            "az-Latn-AZ",
-            "az",
-            "be-BY",
-            "be",
-            "bg-BG",
-            "bg",
-            "bn-BD",
-            "bn-IN",
-            "bn",
-            "bo-CN",
-            "bo-IN",
-            "bo",
-            "ca-ES",
-            "ca",
-            "cs-CZ",
-            "cs",
-            "cy-GB",
-            "cy",
-            "da-DK",
-            "da",
-            "de-AT",
-            "de-BE",
-            "de-CH",
-            "de-DE",
-            "de-LI",
-            "de-LU",
-            "de",
-            "el-CY",
-            "el-GR",
-            "el",
-            "en-AU",
-            "en-BE",
-            "en-BW",
-            "en-BZ",
-            "en-CA",
-            "en-GB",
-            "en-HK",
-            "en-IE",
-            "en-IN",
-            "en-JM",
-            "en-JO",
-            "en-MH",
-            "en-MT",
-            "en-MY",
-            "en-NA",
-            "en-NZ",
-            "en-PH",
-            "en-PK",
-            "en-RH",
-            "en-SG",
-            "en-TT",
-            "en-US",
-            "en-VI",
-            "en-ZA",
-            "en-ZW",
-            "eo",
-            "es-AR",
-            "es-BO",
-            "es-CL",
-            "es-CO",
-            "es-CR",
-            "es-DO",
-            "es-EC",
-            "es-ES",
-            "es-GT",
-            "es-HN",
-            "es-MX",
-            "es-NI",
-            "es-PA",
-            "es-PE",
-            "es-PR",
-            "es-PY",
-            "es-SV",
-            "es-US",
-            "es-UY",
-            "es-VE",
-            "es",
-            "et-EE",
-            "et",
-            "eu-ES",
-            "eu",
-            "fa-AF",
-            "fa-IR",
-            "fa",
-            "fi-FI",
-            "fi",
-            "fil-PH",
-            "fil",
-            "fo-FO",
-            "fo",
-            "fr-BE",
-            "fr-CA",
-            "fr-CH",
-            "fr-FR",
-            "fr-LU",
-            "fr-MC",
-            "fr-SN",
-            "fr",
-            "ga-IE",
-            "ga",
-            "gl-ES",
-            "gl",
-            "gsw-CH",
-            "gsw",
-            "gu-IN",
-            "gu",
-            "gv-GB",
-            "gv",
-            "ha-GH",
-            "ha-Latn-GH",
-            "ha-Latn-NE",
-            "ha-Latn-NG",
-            "ha-NE",
-            "ha-NG",
-            "ha",
-            "haw-US",
-            "haw",
-            "he-IL",
-            "he",
-            "hi-IN",
-            "hi",
-            "hr-HR",
-            "hr",
-            "hu-HU",
-            "hu",
-            "hy-AM",
-            "hy",
-            "id-ID",
-            "id",
-            "ii-CN",
-            "ii",
-            "in-ID",
-            "in",
-            "is-IS",
-            "is",
-            "it-CH",
-            "it-IT",
-            "it",
-            "iw-IL",
-            "iw",
-            "ja-JP",
-            "ja",
-            "ka-GE",
-            "ka",
-            "kk-Cyrl-KZ",
-            "kk-KZ",
-            "kk",
-            "kl-GL",
-            "kl",
-            "km-KH",
-            "km",
-            "kn-IN",
-            "kn",
-            "ko-KR",
-            "ko",
-            "kok-IN",
-            "kok",
-            "kw-GB",
-            "kw",
-            "lt-LT",
-            "lt",
-            "lv-LV",
-            "lv",
-            "mk-MK",
-            "mk",
-            "ml-IN",
-            "ml",
-            "mr-IN",
-            "mr",
-            "ms-BN",
-            "ms-MY",
-            "ms",
-            "mt-MT",
-            "mt",
-            "nb-NO",
-            "nb",
-            "ne-IN",
-            "ne-NP",
-            "ne",
-            "nl-BE",
-            "nl-NL",
-            "nl",
-            "nn-NO",
-            "nn",
-            "no-NO",
-            "no",
-            "om-ET",
-            "om-KE",
-            "om",
-            "or-IN",
-            "or",
-            "pa-Arab-PK",
-            "pa-Arab",
-            "pa-Guru-IN",
-            "pa-IN",
-            "pa-PK",
-            "pa",
-            "pl-PL",
-            "pl",
-            "ps-AF",
-            "ps",
-            "pt-BR",
-            "pt-PT",
-            "pt",
-            "ro-MD",
-            "ro-RO",
-            "ro",
-            "ru-RU",
-            "ru-UA",
-            "ru",
-            "sh-BA",
-            "sh-CS",
-            "sh-YU",
-            "sh",
-            "si-LK",
-            "si",
-            "sk-SK",
-            "sk",
-            "sl-SI",
-            "sl",
-            "so-DJ",
-            "so-ET",
-            "so-KE",
-            "so-SO",
-            "so",
-            "sq-AL",
-            "sq",
-            "sr-BA",
-            "sr-CS",
-            "sr-Cyrl-BA",
-            "sr-Cyrl-CS",
-            "sr-Cyrl-ME",
-            "sr-Cyrl-RS",
-            "sr-Cyrl-YU",
-            "sr-Latn-BA",
-            "sr-Latn-CS",
-            "sr-Latn-ME",
-            "sr-Latn-RS",
-            "sr-Latn-YU",
-            "sr-Latn",
-            "sr-ME",
-            "sr-RS",
-            "sr-YU",
-            "sr",
-            "sv-FI",
-            "sv-SE",
-            "sv",
-            "sw-KE",
-            "sw-TZ",
-            "sw",
-            "ta-IN",
-            "ta",
-            "te-IN",
-            "te",
-            "th-TH",
-            "th",
-            "ti-ER",
-            "ti-ET",
-            "ti",
-            "tl-PH",
-            "tl",
-            "tr-TR",
-            "tr",
-            "uk-UA",
-            "uk",
-            "ur-IN",
-            "ur-PK",
-            "ur",
-            "uz-AF",
-            "uz-Arab-AF",
-            "uz-Arab",
-            "uz-Cyrl-UZ",
-            "uz-Latn-UZ",
-            "uz-UZ",
-            "uz",
-            "vi-VN",
-            "vi",
-            "zh-CN",
-            "zh-HK",
-            "zh-Hans-CN",
-            "zh-Hans-HK",
-            "zh-Hans-MO",
-            "zh-Hans-SG",
-            "zh-Hant-HK",
-            "zh-Hant-MO",
-            "zh-Hant-TW",
-            "zh-Hant",
-            "zh-MO",
-            "zh-SG",
-            "zh-TW",
-            "zh",
-            "zu-ZA",
-            "zu"
-        ],
-        "requires": [
-            "intl-common",
-            "datatype-number-format",
-            "datatype-number-parse"
-        ]
-    },
-    "datatype-number-format-ecma": {
-        "condition": {
-            "name": "datatype-number-format-ecma",
-            "test": function (Y) {
-	return (window.Intl !== undefined);
-},
-            "trigger": "datatype-number-format-advanced",
-            "when": "after"
-        },
-        "requires": [
-            "intl"
-        ]
-    },
     "datatype-number-parse": {},
     "datatype-xml": {
         "use": [
@@ -9617,11 +9188,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "features"
         ]
     },
-    "dom-deprecated": {
-        "requires": [
-            "dom-base"
-        ]
-    },
     "dom-screen": {
         "requires": [
             "dom-base",
@@ -9704,6 +9270,12 @@ Y.mix(YUI.Env[Y.version].modules, {
     "editor-br": {
         "requires": [
             "editor-base"
+        ]
+    },
+    "editor-inline": {
+        "requires": [
+            "editor-base",
+            "content-editable"
         ]
     },
     "editor-lists": {
@@ -9936,6 +9508,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "base",
             "node",
+            "plugin",
             "selector-css3",
             "yui-throttle"
         ]
@@ -10151,11 +9724,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "yui-base"
         ]
     },
-    "intl-common": {
-        "requires": [
-            "intl"
-        ]
-    },
     "io": {
         "use": [
             "io-base",
@@ -10361,18 +9929,14 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "event-base",
             "node-core",
-            "dom-base"
+            "dom-base",
+            "dom-style"
         ]
     },
     "node-core": {
         "requires": [
             "dom-core",
             "selector"
-        ]
-    },
-    "node-deprecated": {
-        "requires": [
-            "node-base"
         ]
     },
     "node-event-delegate": {
@@ -11231,11 +10795,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-base"
         ]
     },
-    "widget-locale": {
-        "requires": [
-            "widget-base"
-        ]
-    },
     "widget-modality": {
         "requires": [
             "base-build",
@@ -11348,7 +10907,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '61f4d42e51a985115cadd6fb309312b2';
+YUI.Env[Y.version].md5 = '9cfdc7e62873313018cc48b86f2a53ca';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

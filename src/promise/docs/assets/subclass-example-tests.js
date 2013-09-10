@@ -17,7 +17,8 @@ YUI.add('subclass-example-tests', function (Y) {
             this.poll(function() {
                 return node.get('children').size() > 1;
             }, 100, 10000, function () {
-                Assert.areEqual(expectedOutput, node.getHTML(), 'Request output does not match');
+                // Remove whitespace and case due to old IE differences
+                Assert.areEqual(expectedOutput.toLowerCase().replace(/\s+/g, ''), node.getHTML().toLowerCase().replace(/\s+/g, ''), 'Request output does not match');
             }, function() {
                 Assert.fail('Polling failed for success node');
             });

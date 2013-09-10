@@ -3,6 +3,27 @@ DataTable Change History
 
 @VERSION@
 ------
+
+* Added 'contentUpdate' after the DataTable has been updated when triggered
+  from a `dataChange` event. [Pull Request #1072][Issue #1052]
+
+* Fix issue where recursive nesting of objects was cloned infinitely
+  [Pull Request #1008][Ticket #915]
+
+* Fix issue where Paginator count becomes out of sync with DataTable when
+  DataTable data is modified (added or removed) [Pull Request #1011] [Issue #1010]
+
+* Add French language pack for DataTable's Paginator. ([#1166][] @Naouak)
+
+[#1166]: https://github.com/yui/yui3/pull/1166
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
 * Release Paginator for DataTable. DataTable's Paginator consists of a few
   files and components each with a single purpose in mind.
     Model- Mixes in Paginator-Core to provide a model for the DataTable

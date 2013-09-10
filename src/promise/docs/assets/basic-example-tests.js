@@ -17,7 +17,7 @@ YUI.add('basic-example-tests', function (Y) {
                 return !!Y.one('#demo .success');
             }, 100, 10000, function () {
                 var success = Y.one('#demo .success');
-                Assert.areEqual('Loaded yui\'s data! <a href="https://github.com/yui">Link to profile</a>', success.getHTML(), 'Success template rendered incorrectly');
+                Assert.areEqual('Loaded yui\'s data! <a href="https://github.com/yui">Link to profile</a>'.toLowerCase(), success.getHTML().toLowerCase(), 'Success template rendered incorrectly');
             }, function() {
                 Assert.fail('Polling failed for success node');
             });

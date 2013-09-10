@@ -200,7 +200,7 @@ TreeNode.prototype = {
 
     @method depth
     @return {Number} This node's depth.
-    @since @SINCE@
+    @since 3.11.0
     **/
     depth: function () {
         if (this.isRoot()) {

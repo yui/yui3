@@ -20,7 +20,7 @@ var INVALID = Y.Attribute.INVALID_VALUE,
     keys = Y.Object.keys,
 
     Table;
-    
+
 /**
 _API docs for this extension are included in the DataTable class._
 
@@ -38,7 +38,7 @@ Table = Y.namespace('DataTable').Core = function () {};
 Table.ATTRS = {
     /**
     Columns to include in the rendered table.
-    
+
     If omitted, the attributes on the configured `recordType` or the first item
     in the `data` collection will be used as a source.
 
@@ -90,7 +90,7 @@ Table.ATTRS = {
 
     If not provided, it will try really hard to figure out what to use.  The
     following attempts will be made to set a default value:
-    
+
     1. If the `data` attribute is set with a ModelList instance and its `model`
        property is set, that will be used.
     2. If the `data` attribute is set with a ModelList instance, and its
@@ -280,7 +280,7 @@ Y.mix(Table.prototype, {
             if (isNumber(seed)) {
                 record = this.data.item(seed);
             }
-            
+
             // TODO: this should be split out to base somehow
             if (!record && this.view && this.view.getRecord) {
                 record = this.view.getRecord.apply(this.view, arguments);
@@ -498,7 +498,7 @@ Y.mix(Table.prototype, {
     _initColumns: function () {
         var columns = this.get('columns') || [],
             item;
-        
+
         // Default column definition from the configured recordType
         if (!columns.length && this.data.size()) {
             // TODO: merge superclass attributes up to Model?
@@ -580,7 +580,7 @@ Y.mix(Table.prototype, {
                 // TODO: customize the ModelList or read the ModelList class
                 // from a configuration option?
                 this.data = new Y.ModelList();
-                
+
                 if (recordType) {
                     this.data.model = recordType;
                 }
@@ -650,7 +650,7 @@ Y.mix(Table.prototype, {
     **/
     _setColumnMap: function (columns) {
         var map = {};
-        
+
         function process(cols) {
             var i, len, col, key;
 
@@ -704,7 +704,7 @@ Y.mix(Table.prototype, {
             known = [],
             knownCopies = [],
             arrayIndex = Y.Array.indexOf;
-        
+
         function copyObj(o) {
             var copy = {},
                 key, val, i;
@@ -719,7 +719,7 @@ Y.mix(Table.prototype, {
                     if (isArray(val)) {
                         copy[key] = val.slice();
                     } else if (isObject(val, true)) {
-                        i = arrayIndex(val, known);
+                        i = arrayIndex(known, val);
 
                         copy[key] = i === -1 ? copyObj(val) : knownCopies[i];
                     } else {

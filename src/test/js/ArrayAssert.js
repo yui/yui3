@@ -7,13 +7,13 @@
  * @class ArrayAssert
  * @static
  */
- 
+
 YUITest.ArrayAssert = {
 
     //=========================================================================
     // Private methods
     //=========================================================================
-    
+
     /**
      * Simple indexOf() implementation for an array. Defers to native
      * if available.
@@ -35,7 +35,7 @@ YUITest.ArrayAssert = {
             return -1;
         }
     },
-    
+
     /**
      * Simple some() implementation for an array. Defers to native
      * if available.
@@ -57,10 +57,10 @@ YUITest.ArrayAssert = {
             }
             return false;
         }
-    },    
+    },
 
     /**
-     * Asserts that a value is present in an array. This uses the triple equals 
+     * Asserts that a value is present in an array. This uses the triple equals
      * sign so no type coercion may occur.
      * @param {Object} needle The value that is expected in the array.
      * @param {Array} haystack An array of values.
@@ -68,10 +68,10 @@ YUITest.ArrayAssert = {
      * @method contains
      * @static
      */
-    contains : function (needle, haystack, 
+    contains : function (needle, haystack,
                            message) {
-        
-        YUITest.Assert._increment();               
+
+        YUITest.Assert._increment();
 
         if (this._indexOf(haystack, needle) == -1){
             YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value " + needle + " (" + (typeof needle) + ") not found in array [" + haystack + "]."));
@@ -79,7 +79,7 @@ YUITest.ArrayAssert = {
     },
 
     /**
-     * Asserts that a set of values are present in an array. This uses the triple equals 
+     * Asserts that a set of values are present in an array. This uses the triple equals
      * sign so no type coercion may occur. For this assertion to pass, all values must
      * be found.
      * @param {Object[]} needles An array of values that are expected in the array.
@@ -88,9 +88,9 @@ YUITest.ArrayAssert = {
      * @method containsItems
      * @static
      */
-    containsItems : function (needles, haystack, 
+    containsItems : function (needles, haystack,
                            message) {
-        YUITest.Assert._increment();               
+        YUITest.Assert._increment();
 
         //begin checking values
         for (var i=0; i < needles.length; i++){
@@ -109,23 +109,23 @@ YUITest.ArrayAssert = {
      * @method containsMatch
      * @static
      */
-    containsMatch : function (matcher, haystack, 
+    containsMatch : function (matcher, haystack,
                            message) {
-        
-        YUITest.Assert._increment();               
+
+        YUITest.Assert._increment();
         //check for valid matcher
         if (typeof matcher != "function"){
             throw new TypeError("ArrayAssert.containsMatch(): First argument must be a function.");
         }
-        
+
         if (!this._some(haystack, matcher)){
             YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
         }
     },
 
     /**
-     * Asserts that a value is not present in an array. This uses the triple equals 
-     * Asserts that a value is not present in an array. This uses the triple equals 
+     * Asserts that a value is not present in an array. This uses the triple equals
+     * Asserts that a value is not present in an array. This uses the triple equals
      * sign so no type coercion may occur.
      * @param {Object} needle The value that is expected in the array.
      * @param {Array} haystack An array of values.
@@ -133,10 +133,10 @@ YUITest.ArrayAssert = {
      * @method doesNotContain
      * @static
      */
-    doesNotContain : function (needle, haystack, 
+    doesNotContain : function (needle, haystack,
                            message) {
-        
-        YUITest.Assert._increment();               
+
+        YUITest.Assert._increment();
 
         if (this._indexOf(haystack, needle) > -1){
             YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
@@ -144,7 +144,7 @@ YUITest.ArrayAssert = {
     },
 
     /**
-     * Asserts that a set of values are not present in an array. This uses the triple equals 
+     * Asserts that a set of values are not present in an array. This uses the triple equals
      * sign so no type coercion may occur. For this assertion to pass, all values must
      * not be found.
      * @param {Object[]} needles An array of values that are not expected in the array.
@@ -153,10 +153,10 @@ YUITest.ArrayAssert = {
      * @method doesNotContainItems
      * @static
      */
-    doesNotContainItems : function (needles, haystack, 
+    doesNotContainItems : function (needles, haystack,
                            message) {
 
-        YUITest.Assert._increment();               
+        YUITest.Assert._increment();
 
         for (var i=0; i < needles.length; i++){
             if (this._indexOf(haystack, needles[i]) > -1){
@@ -165,7 +165,7 @@ YUITest.ArrayAssert = {
         }
 
     },
-        
+
     /**
      * Asserts that no values matching a condition are present in an array. This uses
      * a function to determine a match.
@@ -175,21 +175,21 @@ YUITest.ArrayAssert = {
      * @method doesNotContainMatch
      * @static
      */
-    doesNotContainMatch : function (matcher, haystack, 
+    doesNotContainMatch : function (matcher, haystack,
                            message) {
-        
-        YUITest.Assert._increment();     
-      
+
+        YUITest.Assert._increment();
+
         //check for valid matcher
         if (typeof matcher != "function"){
             throw new TypeError("ArrayAssert.doesNotContainMatch(): First argument must be a function.");
         }
-        
+
         if (this._some(haystack, matcher)){
             YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
         }
     },
-        
+
     /**
      * Asserts that the given value is contained in an array at the specified index.
      * This uses the triple equals sign so no type coercion will occur.
@@ -201,23 +201,23 @@ YUITest.ArrayAssert = {
      * @static
      */
     indexOf : function (needle, haystack, index, message) {
-    
-        YUITest.Assert._increment();     
+
+        YUITest.Assert._increment();
 
         //try to find the value in the array
         for (var i=0; i < haystack.length; i++){
             if (haystack[i] === needle){
                 if (index != i){
-                    YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
+                    YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));
                 }
                 return;
             }
         }
-        
+
         //if it makes it here, it wasn't found at all
         YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value doesn't exist in array [" + haystack + "]."));
     },
-        
+
     /**
      * Asserts that the values in an array are equal, and in the same position,
      * as values in another array. This uses the double equals sign
@@ -229,21 +229,21 @@ YUITest.ArrayAssert = {
      * @method itemsAreEqual
      * @static
      */
-    itemsAreEqual : function (expected, actual, 
+    itemsAreEqual : function (expected, actual,
                            message) {
-        
-        YUITest.Assert._increment();     
-        
+
+        YUITest.Assert._increment();
+
         //first make sure they're array-like (this can probably be improved)
         if (typeof expected != "object" || typeof actual != "object"){
             YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value should be an array."));
         }
-        
+
         //next check array length
         if (expected.length != actual.length){
             YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length + "."));
         }
-       
+
         //begin checking values
         for (var i=0; i < expected.length; i++){
             if (expected[i] != actual[i]){
@@ -251,7 +251,7 @@ YUITest.ArrayAssert = {
             }
         }
     },
-    
+
     /**
      * Asserts that the values in an array are equivalent, and in the same position,
      * as values in another array. This uses a function to determine if the values
@@ -266,21 +266,21 @@ YUITest.ArrayAssert = {
      * @method itemsAreEquivalent
      * @static
      */
-    itemsAreEquivalent : function (expected, actual, 
+    itemsAreEquivalent : function (expected, actual,
                            comparator, message) {
-        
-        YUITest.Assert._increment();     
+
+        YUITest.Assert._increment();
 
         //make sure the comparator is valid
         if (typeof comparator != "function"){
             throw new TypeError("ArrayAssert.itemsAreEquivalent(): Third argument must be a function.");
         }
-        
+
         //first check array length
         if (expected.length != actual.length){
             YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
         }
-        
+
         //begin checking values
         for (var i=0; i < expected.length; i++){
             if (!comparator(expected[i], actual[i])){
@@ -288,7 +288,7 @@ YUITest.ArrayAssert = {
             }
         }
     },
-    
+
     /**
      * Asserts that an array is empty.
      * @param {Array} actual The array to test.
@@ -296,13 +296,13 @@ YUITest.ArrayAssert = {
      * @method isEmpty
      * @static
      */
-    isEmpty : function (actual, message) {        
-        YUITest.Assert._increment();     
+    isEmpty : function (actual, message) {
+        YUITest.Assert._increment();
         if (actual.length > 0){
             YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should be empty."));
         }
-    },    
-    
+    },
+
     /**
      * Asserts that an array is not empty.
      * @param {Array} actual The array to test.
@@ -310,13 +310,13 @@ YUITest.ArrayAssert = {
      * @method isNotEmpty
      * @static
      */
-    isNotEmpty : function (actual, message) {        
-        YUITest.Assert._increment();     
+    isNotEmpty : function (actual, message) {
+        YUITest.Assert._increment();
         if (actual.length === 0){
             YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should not be empty."));
         }
-    },    
-    
+    },
+
     /**
      * Asserts that the values in an array are the same, and in the same position,
      * as values in another array. This uses the triple equals sign
@@ -328,16 +328,16 @@ YUITest.ArrayAssert = {
      * @method itemsAreSame
      * @static
      */
-    itemsAreSame : function (expected, actual, 
+    itemsAreSame : function (expected, actual,
                           message) {
-        
-        YUITest.Assert._increment();     
+
+        YUITest.Assert._increment();
 
         //first check array length
         if (expected.length != actual.length){
             YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
         }
-                    
+
         //begin checking values
         for (var i=0; i < expected.length; i++){
             if (expected[i] !== actual[i]){
@@ -345,7 +345,7 @@ YUITest.ArrayAssert = {
             }
         }
     },
-    
+
     /**
      * Asserts that the given value is contained in an array at the specified index,
      * starting from the back of the array.
@@ -358,19 +358,19 @@ YUITest.ArrayAssert = {
      * @static
      */
     lastIndexOf : function (needle, haystack, index, message) {
-    
+
         //try to find the value in the array
         for (var i=haystack.length; i >= 0; i--){
             if (haystack[i] === needle){
                 if (index != i){
-                    YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
+                    YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));
                 }
                 return;
             }
         }
-        
+
         //if it makes it here, it wasn't found at all
-        YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value doesn't exist in array."));        
+        YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value doesn't exist in array."));
     }
-    
+
 };

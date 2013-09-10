@@ -183,7 +183,7 @@ ATTRS[RENDERED] = {
  * @writeOnce
  */
 ATTRS[BOUNDING_BOX] = {
-    value:null,
+    valueFn:"_defaultBB",
     setter: "_setBB",
     writeOnce: TRUE
 };
@@ -567,44 +567,6 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Implement the BaseCore _preAddAttrs method hook, to add
-     * the srcNode and related attributes, so that HTML_PARSER
-     * (which relies on `this.get("srcNode")`) can merge in it's
-     * results before the rest of the attributes are added.
-     *
-     * @method _preAddAttrs
-     * @protected
-     *
-     * @param attrs {Object} The full hash of statically defined ATTRS
-     * attributes being added for this instance
-     *
-     * @param userVals {Object} The hash of user values passed to
-     * the constructor
-     *
-     * @param lazy {boolean} Whether or not to add the attributes lazily
-     */
-    _preAddAttrs : function(attrs, userVals, lazy) {
-
-        var preAttrs = {
-            id : attrs.id,
-            boundingBox : attrs.boundingBox,
-            contentBox : attrs.contentBox,
-            srcNode : attrs.srcNode
-        };
-
-        this.addAttrs(preAttrs, userVals, lazy);
-
-        delete attrs.boundingBox;
-        delete attrs.contentBox;
-        delete attrs.srcNode;
-        delete attrs.id;
-
-        if (this._applyParser) {
-            this._applyParser(userVals);
-        }
-    },
-
-    /**
      * Default render handler
      *
      * @method _defRenderFn
@@ -811,6 +773,25 @@ Y.extend(Widget, Y.Base, {
      */
     _setCB: function(node) {
         return (this.CONTENT_TEMPLATE === null) ? this.get(BOUNDING_BOX) : this._setBox(null, node, this.CONTENT_TEMPLATE, false);
+    },
+
+    /**
+     * Returns the default value for the boundingBox attribute.
+     *
+     * For the Widget class, this will most commonly be null (resulting in a new
+     * boundingBox node instance being created), unless a srcNode was provided
+     * and CONTENT_TEMPLATE is null, in which case it will be srcNode.
+     * This behavior was introduced in @VERSION@ to accomodate single-box widgets
+     * whose BB & CB both point to srcNode (e.g. Y.Button).
+     *
+     * @method _defaultBB
+     * @protected
+     */
+    _defaultBB : function() {
+        var node = this.get(SRC_NODE),
+            nullCT = (this.CONTENT_TEMPLATE === null);
+
+        return ((node && nullCT) ? node : null);
     },
 
     /**

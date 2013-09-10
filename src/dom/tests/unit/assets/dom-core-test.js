@@ -1081,9 +1081,9 @@ YUI.add('dom-core-test', function(Y) {
         },
 
         'should create a link element with attrs': function() {
-            var el = Y.DOM.create('<link href="http://search.yahoo.com/" rel="stylesheet">');
+            var el = Y.DOM.create('<link id="test-link" rel="stylesheet">');
             Assert.areEqual('LINK', el.tagName);
-            Assert.areEqual('http://search.yahoo.com/', el.href);
+            Assert.areEqual('test-link', el.id);
             Assert.areEqual(el.rel, 'stylesheet');
         },
 
