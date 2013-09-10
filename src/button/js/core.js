@@ -339,7 +339,7 @@ ButtonCore._getLabelNodeFromParent = function (node) {
     var labelNode = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node);
 
     return labelNode;
-}
+};
 
 /**
  * Gets a text label from a node
@@ -356,7 +356,7 @@ ButtonCore._getTextLabelFromNode = function (node) {
         label = labelNode.get(nodeName === 'input' ? 'value' : 'text');
 
     return label;
-}
+};
 
 /**
  * A utility method that gets an HTML label from a given node
@@ -372,7 +372,7 @@ ButtonCore._getHTMLFromNode = function (node) {
         label = labelNode.getHTML();
 
     return label;
-}
+};
 
 /**
  * Gets the disabled attribute from a node
@@ -385,7 +385,7 @@ ButtonCore._getHTMLFromNode = function (node) {
  */
 ButtonCore._getDisabledFromNode = function (node) {
     return node.getDOMNode().disabled;
-}
+};
 
 // Export ButtonCore
 Y.ButtonCore = ButtonCore;
