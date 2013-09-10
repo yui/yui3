@@ -1812,6 +1812,50 @@ has a few points of interest that can be updated.</p>
 </tbody>
 </table>
 
+<h4>Paginator in action</h4>
+<p>Paginator for DataTable has introduced a few things, but let's take a look
+and see it in action.</p>
+
+```
+    var dt = new Y.DataTable({
+            columns: ['name', 'qty'],
+            data: [
+                { name: 'Apple',  qty: 16 },
+                { name: 'Banana', qty: 10 },
+                { name: 'Carrot', qty: 34 },
+                { name: 'Date',   qty: 92 },
+                { name: 'Grape',  qty: 14 },
+                { name: 'Orange', qty: 74 },
+                { name: 'Rasin',  qty: 39 }
+            ],
+            rowsPerPage: 4,
+            pageSizes: [ 4, 'Show All' ]
+        });
+
+    dt.render();
+```
+<p>This code produces this table:</p>
+<div id="dt-pg-ex" class="yui3-skin-sam"></div>
+<script>
+YUI().use('datatable', 'datatable-paginator', function (Y){
+    var dt = new Y.DataTable({
+            columns: ['name', 'qty'],
+            data: [
+                { name: 'Apple',  qty: 16 },
+                { name: 'Banana', qty: 10 },
+                { name: 'Carrot', qty: 34 },
+                { name: 'Date',   qty: 92 },
+                { name: 'Grape',  qty: 14 },
+                { name: 'Orange', qty: 74 },
+                { name: 'Rasin',  qty: 39 }
+            ],
+            rowsPerPage: 4,
+            pageSizes: [ 4, 'Show All' ]
+        });
+
+    dt.render('#dt-pg-ex');
+});
+</script>
 
 <h2 id="events">DataTable Events</h2>
 
