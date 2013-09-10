@@ -101,6 +101,47 @@ suite.add(new Y.Test.Case({
 
         modal1.destroy();
         modal2.destroy();
+    },
+
+    'WidgetModality should not get distracted by cloned masks': function () {
+        var modal,
+            widget,
+            before_clone,
+            after_clone,
+            orig_mask,
+            test = Y.one('#test'),
+            test_orig = Y.Node.create('<div/>');
+
+        test.append(test_orig);
+
+        this.widget = new TestWidget({
+            modal : true,
+            render: test_orig
+        });
+
+        this.widget.hide();
+        orig_mask = Y.one('.yui3-widget-mask');
+        Assert.areSame(orig_mask, this.widget.get('maskNode');
+
+        // clone the widget
+        // typically this would happen because other code clones the
+        // widget and does not clean up. i.e. a drag-drop proxy
+        before_clone = test_orig.cloneNode(true);
+        test.prepend(before_clone);
+
+        after_clone = test_orig.cloneNode(true);
+        test.append(after_clone);
+
+        Assert.areNotSame(orig_mask, Y.one('.yui3-widget-mask'));
+        Assert.areSame(orig_mask, this.widget.get('maskNode');
+
+        // if we show the widget, only the original mask is shown
+        this.widget.show();
+
+        Assert.areSame('block', orig_mask.getStyle('display'));
+        Assert.areSame('none', before_clone.one('.yui3-widget-mask').getStyle('display'));
+        Assert.areSame('none', after_clone.one('.yui3-widget-mask').getStyle('display'));
+
     }
 }));
 

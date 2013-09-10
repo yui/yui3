@@ -127,6 +127,7 @@ var WIDGET       = 'widget',
     WidgetModal.CLASSES = MODAL_CLASSES;
 
 
+    WidgetModal._MASK = null;
     /**
      * Returns the mask if it exists on the page - otherwise creates a mask. There's only
      * one mask on a page at a given time.
@@ -138,14 +139,15 @@ var WIDGET       = 'widget',
      */
     WidgetModal._GET_MASK = function() {
 
-        var mask = Y.one('.' + MODAL_CLASSES.mask),
+        var mask = WidgetModal._MASK,
             win  = Y.one('win');
 
-        if (mask) {
+        if (mask && (mask.getDOMNode() !== null) && mask.inDoc()) {
             return mask;
         }
 
         mask = Y.Node.create('<div></div>').addClass(MODAL_CLASSES.mask);
+        WidgetModal._MASK = mask;
 
         if (supportsPosFixed) {
             mask.setStyles({
