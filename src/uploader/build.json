@@ -2,9 +2,6 @@
     "name": "uploader",
     "builds": {
         "uploader": {
-            "copy": [
-                [ "swf/flashuploader.swf", "assets/flashuploader.swf" ]
-            ],
             "jsfiles": [
                 "uploader.js"
             ]
