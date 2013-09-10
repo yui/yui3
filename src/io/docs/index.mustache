@@ -1,3 +1,17 @@
+<style type="text/css">
+    .notice {
+        background: #faf3d1;
+        border: 1px solid #eac9a9;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: px;
+        padding: 4px 1em;
+        margin: 1em 0;
+    }
+    .notice h2 {
+        margin-top: .6em;
+    }
+</style>
 <div class="intro">
 <p>
     The IO family of modules provide a simple API for requesting resources over HTTP and HTTPS.
@@ -68,7 +82,9 @@ YUI().use("io-base", function(Y) {
         <tr>
             <td><code>io-xdr</code></td>
             <td>This module extends io-base, to add cross-domain request capabilities using alternate HTTP transports.
-            <br><strong>NOTE:</strong> You will need compile and host your own <code>io.swf</code> file to enable this module. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
+                <div class="notice"><strong>NOTE:</strong> You will need compile and host your own <code>io.swf</code> file to enable this module.
+                    Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
+                </div>
             </td>
         </tr>
         <tr>
@@ -127,7 +143,7 @@ YUI().use("io-base", function(Y) {
                     <li><strong>failure:</strong> <em>event handler</em></li>
                     <li><strong>end:</strong> <em>event handler</em></li>
                 </ul>
-            NOTE: These events are accessible only to the transaction's subscribers, whereas global IO events are accessible by all subscribers.
+            <strong>NOTE:</strong> These events are accessible only to the transaction's subscribers, whereas global IO events are accessible by all subscribers.
             </td>
         </tr>
         <tr>
@@ -150,7 +166,9 @@ YUI().use("io-base", function(Y) {
                     <li><strong>use:</strong> This property specifies the type of transport to be used; the io-xdr module provides 'native' and 'flash' transports.</li>
                     <li><strong>dataType:</strong> When set to <strong>'xml'</strong>, io will return the response data as an XML document, if necessary.</li>
                 </ul>
-                <strong>NOTE:</strong> You will need compile and host your own <code>io.swf</code> file to enable this module. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
+                <div class="notice">
+                    <strong>NOTE:</strong> You will need compile and host your own <code>io.swf</code> file to enable this module. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
+                </div>
             </td>
         </tr>
         <tr>
@@ -265,7 +283,7 @@ When a transaction, using the XHR object as a transport, is complete, the respon
   </table>
 
 <p>
-NOTE: Transactions involving file upload or cross-domain requests, using alternate transports, will only populate the <code>responseText</code> or <code>responseXML</code> field.  The HTTP status and response headers are either inaccessible or unavailable to these alternate transports.
+<strong>NOTE:</strong> Transactions involving file upload or cross-domain requests, using alternate transports, will only populate the <code>responseText</code> or <code>responseXML</code> field.  The HTTP status and response headers are either inaccessible or unavailable to these alternate transports.
 </p>
 
 <h3>Events</h3>
@@ -460,7 +478,9 @@ YUI().use("io-base", function(Y) {
 <p>By default, <code>io</code> uses the XMLHttpRequest object as the transport for HTTP transactions.  It can also be configured to use an alternate transport to make cross-domain, HTTP transactions.  Currently, io can make use of Flash as an alternate transport.  To prepare io for Flash-based, cross-domain transactions, the transport <code>io.swf</code> must be deployed and accessible to YUI io. (The file "io.swf" can be found in YUI io's build directory in the YUI3 download at: http://yuilibrary.com/downloads/.)  For each transaction, the configuration object's <code>xdr</code> object must be defined as <code>{ use: 'flash' }</code> so io will use the designated transport instead of using the default XMLHttpRequest transport.</p>
 <p>
 As <code>io.swf</code> is written in ActionScript 3, Flash Player 9 or better is required (version <strong>9.0.124</strong> or better is recommended).  Additionally, a cross-domain policy file must be deployed at the resource to grant the client access to the remote domain.  A cross-domain request will not be successful without this policy file hosted at the resource.  The following example file grants permissive access to the host from all requests, but the host will only accept custom HTTP headers originating from <code>yahoo.com</code>.
-<strong>NOTE:</strong> You will need compile and host your own <code>io.swf</code> file to enable this module. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
+<div class="notice">
+    <strong>NOTE:</strong> You will need compile and host your own <code>io.swf</code> file to enable this module. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
+</div>
 </p>
 
 ```
@@ -554,7 +574,7 @@ YUI().use("io-xdr", function(Y) {
 });
 ```
 <p>
-NOTE: Cross-domain transactions do not fire the global <code>io:complete</code> event and the transaction-specific <code>complete</code> event, when using the IE XDomainRequest or the Flash transport.  All other events in the transaction lifecycle are fired.
+<strong>NOTE:</strong> Cross-domain transactions do not fire the global <code>io:complete</code> event and the transaction-specific <code>complete</code> event, when using the IE XDomainRequest or the Flash transport.  All other events in the transaction lifecycle are fired.
 </p>
 <p>
 A subset of A-grade browsers are capable of making cross-domain requests, using XMLHttpRequest, requiring specific access control headers be served from the resource.  To use this feature, the xdr configuration must be defined with: <code>{ use: 'native' }</code>.  IO will try to resolve the request using the native transport, and it will fall back to the Flash transport if the initial attempt throws an exception due to the browser lacking native support.
@@ -880,7 +900,7 @@ using `IO` on Node.js.</p>
 </ul>
 <p>Beginning with YUI 3.1.2, <code>io.swf</code> will no longer be accessible from yui.yahooapis.com.  You will be required to host and serve <code>io.swf</code>, if you wish to employ it as an XDR transport.</p>
 <p>
-Beginning with YUI 3.13.0, <code>io.swf</code> will no longer ship with YUI. You will need compile and host your own <code>io.swf</code> file to enable this module. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
+Beginning with YUI 3.13.0, <code>io.swf</code> will no longer ship with YUI. You will need compile and host your own <code>io.swf</code> file to enable the xdr module. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
 </p>
 <h2>Known Issues</h2>
 <ul>
