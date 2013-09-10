@@ -355,8 +355,6 @@ ButtonCore._getTextLabelFromNode = function (node) {
         nodeName = labelNode.get('nodeName').toLowerCase(),
         label = labelNode.get(nodeName === 'input' ? 'value' : 'text');
 
-    label = Y.Escape.html(label);
-
     return label;
 }
 
