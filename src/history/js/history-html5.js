@@ -110,7 +110,7 @@ Y.extend(HistoryHTML5, HistoryBase, {
             win.history[src === SRC_REPLACE ? 'replaceState' : 'pushState'](
                 newState,
                 options.title || Y.config.doc.title || '',
-                options.url || null
+                options.url || Y.config.doc.URL
             );
         }
 
