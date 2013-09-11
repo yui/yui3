@@ -1,18 +1,57 @@
+/**
+ Adds support for highlighting columns with the mouse in a DataTable
+
+ @module datatable
+ @submodule datatable-highlight
+ @since @SINCE@
+ */
+
+
 var getClassName = Y.ClassNameManager.getClassName;
 
+/**
+ @class DataTable.Highlight
+ @since @SINCE@
+ */
 function Highlight() {}
 
 Highlight.ATTRS = {
+    /**
+     Setting this to true will create a delegate on the DataTable adding the
+     default classname to the row when the mouse is over the row.
+
+     @attribute highlightRows
+     @default false
+     @since @SINCE@
+     */
     highlightRows: {
         value: false,
         setter: '_setHighlightRows',
         validator: Y.Lang.isBoolean
     },
+
+    /**
+     Setting this to true will create a delegate on the DataTable adding the
+     default classname to the column when the mouse is over the column.
+
+     @attribute highlightCols
+     @default false
+     @since @SINCE@
+     */
     highlightCols: {
         value: false,
         setter: '_setHighlightCols',
         validator: Y.Lang.isBoolean
     },
+
+    /**
+     Setting this to true will create a delegate on the DataTable adding the
+     default classname to the cell when the mouse is over it.
+
+     @attribute highlightCells
+     @default false
+     @since @SINCE@
+     */
     highlightCells: {
         value: false,
         setter: '_setHighlightCells',
@@ -23,28 +62,78 @@ Highlight.ATTRS = {
 
 Highlight.prototype = {
 
+    /**
+     An object consisting of classnames for a `row`, a `col` and a `cell` to
+     be applied to their respective objects when the user moves the mouse over
+     the item and the attribute is set to true.
+
+     @public
+     @property highlightClassNames
+     @type Object
+     @since @SINCE@
+     */
     highlightClassNames: {
         row: getClassName(NAME, 'row'),
         col: getClassName(NAME, 'col'),
         cell: getClassName(NAME, 'cell')
     },
 
-    //append the column id to this
-    //_colSelector: getClassName(this._cssPrefix, 'data') + ' ' + getClassName(this._cssPrefix, 'col') + '-',
+    /**
+     A string that is used to create a column selector when the column is has
+     the mouse over it. Can contain the css prefix (`{prefix}`) and the column
+     name (`{col}`). Further substitution will require `_highlightCol` to be
+     overwritten.
+
+     @protected
+     @property _colSelector
+     @type String
+     @since @SINCE@
+     */
     _colSelector: '.{prefix}-data .{prefix}-col-{col}',
 
+    /**
+     A string that will be used to create Regular Expression when column
+     highlighting is set to true. Uses the css prefix (`{prefix}`) from the
+     DataTable object to populate.
+
+     @protected
+     @property _colNameRegex
+     @type String
+     @since @SINCE@
+     */
     _colNameRegex: '{prefix}-col-(\\S*)',
 
-    _hightlightDelegate: {},
+    /**
+     This object will contain any delegates created when their feature is
+     turned on.
 
+     @protected
+     @property _highlightDelegates
+     @type Object
+     @since @SINCE@
+     */
+    _highlightDelegates: {},
+
+    /**
+     Default setter method for row highlighting. If the value is true, a
+     delegate is created and stored in `this._highlightDelegates.row`. This
+     delegate will add/remove the row highlight classname to/from the row when
+     the mouse enters/leaves a row on the `tbody`
+
+     @protected
+     @method _setHighlightRows
+     @param {Boolean} val
+     @return val
+     @since @SINCE@
+     */
     _setHighlightRows: function (val) {
-        var del = this._hightlightDelegate;
+        var del = this._highlightDelegates;
 
         if (del.row) {
             del.row.detach();
         }
 
-        if (val) {
+        if (val === true) {
             del.row = this.delegate('hover',
                 Y.bind(this._highlightRow, this),
                 Y.bind(this._highlightRow, this),
@@ -54,14 +143,26 @@ Highlight.prototype = {
         return val;
     },
 
+    /**
+     Default setter method for column highlighting. If the value is true, a
+     delegate is created and stored in `this._highlightDelegates.col`. This
+     delegate will add/remove the column highlight classname to/from the
+     column when the mouse enters/leaves a column on the `tbody`
+
+     @protected
+     @method _setHighlightCols
+     @param {Boolean} val
+     @return val
+     @since @SINCE@
+     */
     _setHighlightCols: function (val) {
-        var del = this._hightlightDelegate;
+        var del = this._highlightDelegates;
 
         if (del.col) {
             del.col.detach();
         }
 
-        if (val) {
+        if (val === true) {
             this._buildColSelRegex();
 
             del.col = this.delegate('hover',
@@ -71,14 +172,26 @@ Highlight.prototype = {
         }
     },
 
+    /**
+     Default setter method for cell highlighting. If the value is true, a
+     delegate is created and stored in `this._highlightDelegates.cell`. This
+     delegate will add/remove the cell highlight classname to/from the cell
+     when the mouse enters/leaves a cell on the `tbody`
+
+     @protected
+     @method _setHighlightCells
+     @param {Boolean} val
+     @return val
+     @since @SINCE@
+     */
     _setHighlightCells: function (val) {
-        var del = this._hightlightDelegate;
+        var del = this._highlightDelegates;
 
         if (del.cell) {
             del.cell.detach();
         }
 
-        if (val) {
+        if (val === true) {
 
             del.cell = this.delegate('hover',
                 Y.bind(this._highlightCell, this),
@@ -89,10 +202,32 @@ Highlight.prototype = {
         return val;
     },
 
+    /**
+     Method called to turn on or off the row highlighting when the mouse
+     enters or leaves the row. This is determined by the event phase of the
+     hover event. Where `over` will turn on the highlighting and anything else
+     will turn it off.
+
+     @protected
+     @method _highlightRow
+     @param {EventFacade} e Event from the hover event
+     @since @SINCE@
+     */
     _highlightRow: function (e) {
         e.currentTarget.toggleClass(this.highlightClassNames.row, (e.phase === 'over'));
     },
 
+    /**
+     Method called to turn on or off the column highlighting when the mouse
+     enters or leaves the column. This is determined by the event phase of the
+     hover event. Where `over` will turn on the highlighting and anything else
+     will turn it off.
+
+     @protected
+     @method _highlightCol
+     @param {EventFacade} e Event from the hover event
+     @since @SINCE@
+     */
     _highlightCol: function(e) {
         var colName = this._colNameRegex.exec(e.currentTarget.getAttribute('class')),
             selector = Y.Lang.sub(this._colSelector, {
@@ -103,10 +238,30 @@ Highlight.prototype = {
         this.view.tableNode.all(selector).toggleClass(this.highlightClassNames.col, (e.phase === 'over'));
     },
 
+    /**
+     Method called to turn on or off the cell highlighting when the mouse
+     enters or leaves the cell. This is determined by the event phase of the
+     hover event. Where `over` will turn on the highlighting and anything else
+     will turn it off.
+
+     @protected
+     @method _highlightCell
+     @param {EventFacade} e Event from the hover event
+     @since @SINCE@
+     */
     _highlightCell: function(e) {
         e.currentTarget.toggleClass(this.highlightClassNames.cell, (e.phase === 'over'));
     },
 
+    /**
+     Used to transform the `_colNameRegex` to a Regular Expression when the
+     column highlighting is initially turned on. If `_colNameRegex` is not a
+     string when this method is called, no action is taken.
+
+     @protected
+     @method _buildColSelRegex
+     @since @SINCE@
+     */
     _buildColSelRegex: function () {
         var str = this._colNameRegex,
             regex;
