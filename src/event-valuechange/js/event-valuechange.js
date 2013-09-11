@@ -81,12 +81,13 @@ VC = {
     @static
     **/
     _poll: function (node, options) {
-        var domNode = node._node, // performance cheat; getValue() is a big hit when polling
-            event   = options.e,
-            newVal  = domNode && domNode.value,
-            vcData  = node._data && node._data[DATA_KEY], // another perf cheat
-            stopped = 0,
-            facade, prevVal, stopElement;
+        var domNode  = node._node, // performance cheat; getValue() is a big hit when polling
+            event    = options.e,
+            vcData   = node._data && node._data[DATA_KEY], // another perf cheat
+            stopped  = 0,
+            facade, prevVal, newVal, stopElement;
+
+
 
         if (!domNode || !vcData) {
             Y.log('_poll: node #' + node.get('id') + ' disappeared; stopping polling and removing all notifiers.', 'warn', 'event-valuechange');
@@ -95,6 +96,16 @@ VC = {
         }
 
         prevVal = vcData.prevVal;
+
+        if (VC._isEditable(node)) {
+            // Use innerHTML for performance
+            newVal = domNode.innerHTML;
+        } else {
+            // Back-compatibility with IE6 <select> element values.
+            // Huge performance cheat to get past node.get('value').
+            newVal = domNode.value || domNode.options[domNode.selectedIndex].value
+                                   || domNode.options[domNode.selectedIndex].text;
+        }
 
         if (newVal !== prevVal) {
             vcData.prevVal = newVal;
@@ -192,15 +203,18 @@ VC = {
     @static
     **/
     _startPolling: function (node, notifier, options) {
-        if (!node.test('input,textarea')) {
-            Y.log('_startPolling: aborting poll on #' + node.get('id') + ' -- not an input or textarea', 'warn', 'event-valuechange');
+        var vcData,
+            isEditable = VC._isEditable(node);
+
+        if (!node.test('input,textarea,select') && !isEditable) {
+            Y.log('_startPolling: aborting poll on #' + node.get('id') + ' -- not a detectable node', 'warn', 'event-valuechange');
             return;
         }
 
-        var vcData = node.getData(DATA_KEY);
+        vcData = node.getData(DATA_KEY);
 
         if (!vcData) {
-            vcData = {prevVal: node.get(VALUE)};
+            vcData = { prevVal: (isEditable ? node.getHTML() : node.get(VALUE)) };
             node.setData(DATA_KEY, vcData);
         }
 
@@ -281,6 +295,28 @@ VC = {
         delete vcData.timeout;
     },
 
+    /**
+    Check to see if a node has editable content or not.
+
+    TODO: Add additional checks to get it to work for child nodes
+    that inherit "contenteditable" from parent nodes. This may be
+    too computationally intensive to be placed inside of the `_poll`
+    loop, however.
+
+    @method _isEditable
+    @param {Node} node
+    @protected
+    @static
+    **/
+    _isEditable: function (node) {
+        // Performance cheat because this is used inside `_poll`
+        var domNode = node._node;
+        return domNode.contentEditable === 'true' ||
+               domNode.contentEditable === '';
+    },
+
+
+
     // -- Protected Static Event Handlers --------------------------------------
 
     /**
@@ -306,15 +342,15 @@ VC = {
     @static
     **/
     _onFocus: function (e, notifier) {
-        var node   = e.currentTarget,
-            vcData = node.getData(DATA_KEY);
+        var node       = e.currentTarget,
+            vcData     = node.getData(DATA_KEY);
 
         if (!vcData) {
             vcData = {};
             node.setData(DATA_KEY, vcData);
         }
 
-        vcData.prevVal = node.get(VALUE);
+        vcData.prevVal = (VC._isEditable(node) ? node.getHTML() : node.get(VALUE));
 
         VC._startPolling(node, notifier, {e: e});
     },
@@ -378,7 +414,7 @@ VC = {
     @static
     **/
     _onSubscribe: function (node, sub, notifier, filter) {
-        var _valuechange, callbacks, nodes;
+        var _valuechange, callbacks, isEditable, inputNodes, editableNodes;
 
         callbacks = {
             blur     : VC._onBlur,
@@ -399,28 +435,32 @@ VC = {
             // Add a function to the notifier that we can use to find all
             // nodes that pass the delegate filter.
             _valuechange.getNodes = function () {
-                return node.all('input,textarea').filter(filter);
+                inputNodes    = node.all('input,textarea,select').filter(filter);
+                editableNodes = node.all('[contenteditable="true"],[contenteditable=""]').filter(filter);
+
+                return inputNodes.concat(editableNodes);
             };
 
             // Store the initial values for each descendant of the container
             // node that passes the delegate filter.
             _valuechange.getNodes().each(function (child) {
+                isEditable = VC._isEditable(child);
                 if (!child.getData(DATA_KEY)) {
-                    child.setData(DATA_KEY, {prevVal: child.get(VALUE)});
+                    child.setData(DATA_KEY, { prevVal: (isEditable ? child.getHTML() : child.get(VALUE)) });
                 }
             });
 
             notifier._handles = Y.delegate(callbacks, node, filter, null,
                 notifier);
         } else {
+            isEditable = VC._isEditable(node);
             // This is a normal (non-delegated) event subscription.
-
-            if (!node.test('input,textarea')) {
+            if (!node.test('input,textarea,select') && !isEditable) {
                 return;
             }
 
             if (!node.getData(DATA_KEY)) {
-                node.setData(DATA_KEY, {prevVal: node.get(VALUE)});
+                node.setData(DATA_KEY, { prevVal: (isEditable ? node.getHTML() : node.get(VALUE)) });
             }
 
             notifier._handles = node.on(callbacks, null, null, notifier);
