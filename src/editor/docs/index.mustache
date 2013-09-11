@@ -29,7 +29,7 @@ YUI().use('editor-base', function(Y) {
 });
 ```
 <h2 id="inline-editor">Inline Editor</h2>
-<p>You can alternatively create a content editable editor, referred to as an inline editor, on a node. To do this, include the `editor-line` and create a new instance of the `Y.InlineEditor`.</p>
+<p>You can alternatively create a content editable editor, referred to as an inline editor, on a node. To do this, include the `editor-inline` and create a new instance of the `Y.InlineEditor`.</p>
 <p>You can read more about content editable in HTML5 on <a title="Content Editable - HTML | MDN" target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Content_Editable">MDN</a>.</p>
 ```
 YUI().use('editor-inline', function(Y) {
@@ -41,9 +41,9 @@ YUI().use('editor-inline', function(Y) {
     //Add the BiDi plugin
     editor.plug(Y.Plugin.EditorBidi);
 
-    //Focusing the Editor when the frame is ready..
-    editor.on('frame:ready', function() {
-        this.focus();
+    //Focusing the Editor when ready
+    editor.on('ready', function() {
+        editor.focus();
     });
 
     //Rendering the Editor.

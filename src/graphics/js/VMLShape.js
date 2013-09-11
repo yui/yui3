@@ -82,7 +82,6 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         }
         else
         {
-            render = Y.one(render);
             graphic = new Y.VMLGraphic({
                 render: render
             });
@@ -299,7 +298,8 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 */
 	contains: function(needle)
 	{
-		return needle === Y.one(this.node);
+		var node = needle instanceof Y.Node ? needle._node : needle;
+        return node === this.node;
 	},
 
 	/**
@@ -985,7 +985,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	{
 		if(Y.Node.DOM_EVENTS[type])
 		{
-			return Y.one("#" +  this.get("id")).on(type, fn);
+            return Y.on(type, fn, "#" + this.get("id"));
 		}
 		return Y.on.apply(this, arguments);
 	},
@@ -1276,7 +1276,12 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                 this.node.removeChild(this._strokeNode);
                 this._strokeNode = null;
             }
-            Y.one(this.node).remove(true);
+            Y.Event.purgeElement(this.node, true);
+            if(this.node.parentNode)
+            {
+                this.node.parentNode.removeChild(this.node);
+            }
+            this.node = null;
         }
     }
 }, Y.VMLDrawing.prototype));
