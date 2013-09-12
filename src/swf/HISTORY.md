@@ -4,7 +4,8 @@ SWF Utility Change History
 @VERSION@
 ------
 
-* No changes.
+* [!] Deprecate module.
+* Remove all swf and as files from repository. 
 
 3.12.0
 ------
