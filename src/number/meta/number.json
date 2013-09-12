@@ -8,5 +8,19 @@
     "datatype-number-parse": {
     },
     "datatype-number-format": {
+    },
+    "datatype-number-format-advanced": {
+       "lang": [],
+       "requires": [
+            "intl-common", "datatype-number-format", "datatype-number-parse"
+        ]
+    },
+    "datatype-number-format-ecma": {
+        "condition": {
+	       "trigger": "datatype-number-format-advanced",
+	       "test": "ecma.js",
+	       "when": "after"
+	    },
+	    "requires": ["intl"]
     }
 }

@@ -1051,6 +1051,12 @@
         ]
     },
     "datatype-date-parse": {},
+    "datatype-list-format": {
+        "lang": [],
+        "requires": [
+            "yui-base"
+        ]
+    },
     "datatype-number": {
         "use": [
             "datatype-number-parse",
@@ -1058,6 +1064,25 @@
         ]
     },
     "datatype-number-format": {},
+    "datatype-number-format-advanced": {
+        "lang": [],
+        "requires": [
+            "intl-common",
+            "datatype-number-format",
+            "datatype-number-parse"
+        ]
+    },
+    "datatype-number-format-ecma": {
+        "condition": {
+            "name": "datatype-number-format-ecma",
+            "test": "ecma.js",
+            "trigger": "datatype-number-format-advanced",
+            "when": "after"
+        },
+        "requires": [
+            "intl"
+        ]
+    },
     "datatype-number-parse": {},
     "datatype-xml": {
         "use": [
@@ -1662,6 +1687,11 @@
     "intl-base": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "intl-common": {
+        "requires": [
+            "intl"
         ]
     },
     "io": {

@@ -4,7 +4,7 @@ Number Change History
 @VERSION@
 ------
 
-* No changes.
+* Added advanced number formatting
 
 3.12.0
 ------

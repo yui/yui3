@@ -1,0 +1,6 @@
+{
+    "datatype-list-format": {
+        "lang": [],
+        "requires": ["yui-base"]
+    }
+}

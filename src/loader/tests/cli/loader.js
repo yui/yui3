@@ -1345,6 +1345,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatype-date-parse")) > -1, "Module (datatype-date-parse) not found in sorted array");
         },
+     "Testing datatype-list-format": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-list-format"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-list-format")) > -1, "Module (datatype-list-format) not found in sorted array");
+        },
      "Testing datatype-number": function(data) {
             var loader = new Y.Loader({
                 require: ["datatype-number"],
@@ -1365,6 +1375,26 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatype-number-format")) > -1, "Module (datatype-number-format) not found in sorted array");
+        },
+     "Testing datatype-number-format-advanced": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-number-format-advanced"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-format-advanced")) > -1, "Module (datatype-number-format-advanced) not found in sorted array");
+        },
+     "Testing datatype-number-format-ecma": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-number-format-ecma"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-format-ecma")) > -1, "Module (datatype-number-format-ecma) not found in sorted array");
         },
      "Testing datatype-number-parse": function(data) {
             var loader = new Y.Loader({
@@ -2276,6 +2306,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("intl")) > -1, "Module (intl) not found in sorted array");
+        },
+     "Testing intl-common": function(data) {
+            var loader = new Y.Loader({
+                require: ["intl-common"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("intl-common")) > -1, "Module (intl-common) not found in sorted array");
         },
      "Testing io": function(data) {
             var loader = new Y.Loader({

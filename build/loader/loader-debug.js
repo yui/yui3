@@ -4019,6 +4019,12 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "datatype-date-parse": {},
+    "datatype-list-format": {
+        "lang": [],
+        "requires": [
+            "yui-base"
+        ]
+    },
     "datatype-number": {
         "use": [
             "datatype-number-parse",
@@ -4026,6 +4032,27 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "datatype-number-format": {},
+    "datatype-number-format-advanced": {
+        "lang": [],
+        "requires": [
+            "intl-common",
+            "datatype-number-format",
+            "datatype-number-parse"
+        ]
+    },
+    "datatype-number-format-ecma": {
+        "condition": {
+            "name": "datatype-number-format-ecma",
+            "test": function (Y) {
+	return (typeof window !== 'undefined' && window.Intl !== undefined);
+},
+            "trigger": "datatype-number-format-advanced",
+            "when": "after"
+        },
+        "requires": [
+            "intl"
+        ]
+    },
     "datatype-number-parse": {},
     "datatype-xml": {
         "use": [
@@ -4697,6 +4724,11 @@ Y.mix(YUI.Env[Y.version].modules, {
     "intl-base": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "intl-common": {
+        "requires": [
+            "intl"
         ]
     },
     "io": {
@@ -5882,7 +5914,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '9cfdc7e62873313018cc48b86f2a53ca';
+YUI.Env[Y.version].md5 = '3b9d283e601f70d19bf722d7b26cf13c';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
