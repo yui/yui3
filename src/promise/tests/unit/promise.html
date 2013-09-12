@@ -11,26 +11,18 @@
 
 <script type="text/javascript">
 YUI({
-    coverage: ['promise'],
+    coverage: ['promise-core'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
-        'batch-tests': {
-            fullpath: './assets/batch-tests.js',
-            requires: ['promise', 'test']
-        },
-        'when-tests': {
-            fullpath: './assets/when-tests.js',
-            requires: ['promise', 'test']
-        },
         'promise-tests':  {
             fullpath: './assets/promise-tests.js',
-            requires: ['promise', 'test']
+            requires: ['promise-core', 'test']
         }
     }
-}).use('promise-tests', 'when-tests', 'batch-tests', 'test-console', function(Y) {
+}).use('promise-tests', 'test-console', function(Y) {
 
     (new Y.Test.Console()).render('#log');
-    Y.Test.Runner.setName('Promise');
+    Y.Test.Runner.setName('Promise core');
     Y.Test.Runner.run();
 
 });

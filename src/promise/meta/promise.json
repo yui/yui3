@@ -1,7 +1,21 @@
 {
 	"promise": {
-		"requires": [
-			"timers"
-		]
+        "use": [
+            "promise-core",
+            "promise-extras"
+        ],
+
+        "submodules": {
+            "promise-core": {
+                "requires": [
+                    "timers"
+                ]
+            },
+            "promise-extras": {
+                "requires": [
+                    "promise-core"
+                ]
+            }
+        }
 	}
 }

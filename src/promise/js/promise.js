@@ -2,26 +2,8 @@
 Wraps the execution of asynchronous operations, providing a promise object that
 can be used to subscribe to the various ways the operation may terminate.
 
-When the operation completes successfully, call the Resolver's `fulfill()`
-method, passing any relevant response data for subscribers.  If the operation
-encounters an error or is unsuccessful in some way, call `reject()`, again
-passing any relevant data for subscribers.
-
-The Resolver object should be shared only with the code resposible for
-resolving or rejecting it. Public access for the Resolver is through its
-_promise_, which is returned from the Resolver's `promise` property. While both
-Resolver and promise allow subscriptions to the Resolver's state changes, the
-promise may be exposed to non-controlling code. It is the preferable interface
-for adding subscriptions.
-
-Subscribe to state changes in the Resolver with the promise's
-`then(callback, errback)` method.  `then()` wraps the passed callbacks in a
-new Resolver and returns the corresponding promise, allowing chaining of
-asynchronous or synchronous operations. E.g.
-`promise.then(someAsyncFunc).then(anotherAsyncFunc)`
-
-@module promise
-@since 3.9.0
+@module promise-core
+@since 3.11.0
 **/
 
 /**
@@ -55,7 +37,7 @@ function Promise(fn) {
         return new Promise(fn);
     }
 
-    var resolver = new Promise.Resolver(this);
+    var resolver = new Promise.Resolver();
 
     /**
     A reference to the resolver object that handles this promise
@@ -67,7 +49,7 @@ function Promise(fn) {
     this._resolver = resolver;
 
     fn.call(this, function (value) {
-        resolver.fulfill(value);
+        resolver.resolve(value);
     }, function (reason) {
         resolver.reject(reason);
     });
@@ -88,30 +70,43 @@ Y.mix(Promise.prototype, {
                 resolves successfully
     @param {Function} [errback] function to execute if the promise
                 resolves unsuccessfully
-    @return {Promise} A promise wrapping the resolution of either "resolve" or
+    @return {Promise} A promise wrapping the resolution of either "fulfill" or
                 "reject" callback
     **/
     then: function (callback, errback) {
         return this._resolver.then(callback, errback);
-    },
-
-    /**
-    Returns the current status of the operation. Possible results are
-    "pending", "fulfilled", and "rejected".
-
-    @method getStatus
-    @return {String}
-    **/
-    getStatus: function () {
-        return this._resolver.getStatus();
     }
 });
 
+// Brand then() as an strategy for identifying YUI Promises
+Promise.prototype.then._isPromise = 1;
+
 /**
-Checks if an object or value is a promise. This is cross-implementation
-compatible, so promises returned from other libraries or native components
-that are compatible with the Promises A+ spec should be recognized by this
-method.
+Checks if an object is a thenable. A thenable is any object that has a method
+called `then` but may not be a true promise.
+
+@method isThenable
+@param {Any} obj The object to test
+@return {Boolean} Whether the object is a thenable or not
+@static
+**/
+Promise.isThenable = function (obj) {
+    // We test promises by form to be able to identify other implementations
+    // as promises. This is important for cross compatibility and in particular
+    // Y.when which should take any kind of promise
+    if (obj) {
+        // Use try...catch when retrieving obj.then. Return false if it throws
+        // See Promises/A+ 1.1
+        try {
+            return typeof obj.then === 'function';
+        } catch (e) {
+        }
+    }
+    return false;
+};
+
+/**
+Checks if an object or value is a promise. Only recognizes YUI promises as such.
 
 @method isPromise
 @param {Any} obj The object to test
@@ -119,10 +114,9 @@ method.
 @static
 **/
 Promise.isPromise = function (obj) {
-    // We test promises by form to be able to identify other implementations
-    // as promises. This is important for cross compatibility and in particular
-    // Y.when which should take any kind of promise
-    return !!obj && typeof obj.then === 'function';
+    // Use stricter duck typing instead of instanceof to recognize promises
+    // from other windows and YUI instances
+    return Promise.isThenable(obj) && obj.then._isPromise === 1;
 };
 
 Y.Promise = Promise;

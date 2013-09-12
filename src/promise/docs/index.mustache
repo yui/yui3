@@ -476,33 +476,33 @@ MyDatabase.prototype.save = function (key, data) {
 };
 ```
 
-<h3>Non-serial Operation Batching</h3>
+<h3>Handling multiple non-sequential operations</h3>
 
 <p>
     Promise chaining works great to serialize synchronous and asynchronous
     operations, but often several asynchronous operations can be performed
-    simultaneously. This is where `Y.batch()` comes in.
+    simultaneously. This is where `Y.Promise.every()` comes in.
 </p>
 
 <p>
-    `Y.batch()` takes any number of promises as arguments, and returns a new
-    promise that will resolve when all the batched promises have resolved. The
+    `Y.Promise.every()` takes an array of promises, and returns a new promise
+    that will resolve when all the promises in the array have resolved. The
     resolved value will be an array of values from the individual promises, in
-    the order they were passed to `Y.batch()`.
+    the order they were passed to `Y.Promise.every()`.
 </p>
 
 <p>
-    If any one of the batched promises should be rejected, the batch promise
-    is immediately rejected with that reason, so failures can be dealt with
-    sooner rather than later.
+    If any one of the promises in the list should be rejected, the returned
+    promise is immediately rejected with that reason, so failures can be dealt
+    with sooner rather than later.
 </p>
 
 ```
-Y.batch(
+Y.Promise.every([
         getUserAccountInfo(userId),
         getUserPosts(userId, { page: 1, postsPerPage: 5 }),
         getUserRank(userId)
-    )
+    ])
     .then(function (data) {
         var account = data[0],
             posts   = data[1],
@@ -564,13 +564,13 @@ Y.batch(
 <h4>`Y.Parallel`</h4>
 
 <p>
-    `Y.Parallel` is similar to `Y.batch` in that it provides a mechanism to
-    execute a callback when several independent asynchronous operations have
-    completed. However, it doesn't handle errors or guarantee asynchronous
-    callback execution. It is also transactional, but the batch of operations
-    is bound to a specific callback, where `Y.batch()` returns a promise that
-    represents the aggregated values of those operations. The promise can be
-    used by multiple consumers if necessary.
+    `Y.Parallel` is similar to `Y.Promise.every()` in that it provides a
+    mechanism to execute a callback when several independent asynchronous
+    operations have completed. However, it doesn't handle errors or guarantee
+    asynchronous callback execution. It is also transactional, but the list of
+    operations is bound to a specific callback, where `Y.Promise.every()`
+    returns a promise that represents the aggregated values of those operations.
+    The promise can be used by multiple consumers if necessary.
 </p>
 
 <h3 id="plans">What are the plans for Promises in the library?</h3>

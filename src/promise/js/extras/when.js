@@ -1,4 +1,15 @@
 /**
+Extra utilities for YUI3 promises
+
+@module promise
+@submodule promise-extras
+**/
+
+var Promise = Y.Promise,
+    slice = [].slice,
+    RESOLVED_PROMISE;
+
+/**
 Abstraction API allowing you to interact with promises or raw values as if they
 were promises. If a non-promise object is passed in, a new Resolver is created
 and scheduled to resolve asynchronously with the provided value.
@@ -16,15 +27,7 @@ are provided, the original promise is returned.
 @return {Promise}
 **/
 Y.when = function (promise, callback, errback) {
-    var value;
-
-    if (!Y.Promise.isPromise(promise)) {
-        value = promise;
-
-        promise = new Y.Promise(function (fulfill) {
-            fulfill(value);
-        });
-    }
-
+    // Assumes Promise.resolve() is available
+    promise = Promise.isPromise(promise) ? promise : Promise.resolve(promise);
     return (callback || errback) ? promise.then(callback, errback) : promise;
 };
