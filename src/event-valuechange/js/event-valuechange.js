@@ -34,6 +34,7 @@ Usage:
 
 var DATA_KEY = '_valuechange',
     VALUE    = 'value',
+    TAG_NAME = 'tagName',
 
     config, // defined at the end of this file
 
@@ -84,10 +85,9 @@ VC = {
         var domNode  = node._node, // performance cheat; getValue() is a big hit when polling
             event    = options.e,
             vcData   = node._data && node._data[DATA_KEY], // another perf cheat
+            tagName  = vcData.tagName,
             stopped  = 0,
-            facade, prevVal, newVal, stopElement;
-
-
+            facade, prevVal, newVal, selectedOption, stopElement;
 
         if (!domNode || !vcData) {
             Y.log('_poll: node #' + node.get('id') + ' disappeared; stopping polling and removing all notifiers.', 'warn', 'event-valuechange');
@@ -97,14 +97,17 @@ VC = {
 
         prevVal = vcData.prevVal;
 
-        if (VC._isEditable(node)) {
+        if (vcData.isEditable) {
             // Use innerHTML for performance
             newVal = domNode.innerHTML;
-        } else {
+        } else if (tagName === 'input' || tagName === 'textarea') {
+            // Use value property for performance
+            newVal = domNode.value;
+        } else if (tagName === 'select') {
             // Back-compatibility with IE6 <select> element values.
             // Huge performance cheat to get past node.get('value').
-            newVal = domNode.value || domNode.options[domNode.selectedIndex].value
-                                   || domNode.options[domNode.selectedIndex].text;
+            selectedOption = domNode.options[domNode.selectedIndex];
+            newVal = selectedOption.value || selectedOption.text;
         }
 
         if (newVal !== prevVal) {
@@ -203,10 +206,9 @@ VC = {
     @static
     **/
     _startPolling: function (node, notifier, options) {
-        var vcData,
-            isEditable = VC._isEditable(node);
+        var vcData, isEditable;
 
-        if (!node.test('input,textarea,select') && !isEditable) {
+        if (!node.test('input,textarea,select') && !(isEditable = VC._isEditable(node))) {
             Y.log('_startPolling: aborting poll on #' + node.get('id') + ' -- not a detectable node', 'warn', 'event-valuechange');
             return;
         }
@@ -214,7 +216,12 @@ VC = {
         vcData = node.getData(DATA_KEY);
 
         if (!vcData) {
-            vcData = { prevVal: (isEditable ? node.getHTML() : node.get(VALUE)) };
+            vcData = {
+                tagName    : node.get(TAG_NAME).toLowerCase(),
+                isEditable : isEditable,
+                prevVal    : isEditable ? node.getDOMNode().innerHTML : node.get(VALUE)
+            };
+
             node.setData(DATA_KEY, vcData);
         }
 
@@ -346,11 +353,14 @@ VC = {
             vcData     = node.getData(DATA_KEY);
 
         if (!vcData) {
-            vcData = {};
+            vcData = {
+                isEditable : VC._isEditable(node),
+                tagName    : node.get(TAG_NAME).toLowerCase()
+            };
             node.setData(DATA_KEY, vcData);
         }
 
-        vcData.prevVal = (VC._isEditable(node) ? node.getHTML() : node.get(VALUE));
+        vcData.prevVal = vcData.isEditable ? node.getDOMNode().innerHTML : node.get(VALUE);
 
         VC._startPolling(node, notifier, {e: e});
     },
@@ -444,9 +454,12 @@ VC = {
             // Store the initial values for each descendant of the container
             // node that passes the delegate filter.
             _valuechange.getNodes().each(function (child) {
-                isEditable = VC._isEditable(child);
                 if (!child.getData(DATA_KEY)) {
-                    child.setData(DATA_KEY, { prevVal: (isEditable ? child.getHTML() : child.get(VALUE)) });
+                    child.setData(DATA_KEY, {
+                        tagName    : child.get(TAG_NAME).toLowerCase(),
+                        isEditable : VC._isEditable(child),
+                        prevVal    : isEditable ? child.getDOMNode().innerHTML : child.get(VALUE)
+                    });
                 }
             });
 
@@ -460,7 +473,11 @@ VC = {
             }
 
             if (!node.getData(DATA_KEY)) {
-                node.setData(DATA_KEY, { prevVal: (isEditable ? node.getHTML() : node.get(VALUE)) });
+                node.setData(DATA_KEY, {
+                    tagName    : node.get(TAG_NAME).toLowerCase(),
+                    isEditable : isEditable,
+                    prevVal    : isEditable ? node.getDOMNode().innerHTML : node.get(VALUE)
+                });
             }
 
             notifier._handles = node.on(callbacks, null, null, notifier);
