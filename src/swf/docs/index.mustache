@@ -1,3 +1,21 @@
+<style type="text/css">
+    .notice {
+        background: #faf3d1;
+        border: 1px solid #eac9a9;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: px;
+        padding: 0 1em;
+        -moz-box-shadow: 0 0 5px #ccc8b3;
+        -webkit-box-shadow: 0 0 5px #ccc8b3;
+        box-shadow: 0 0 5px #ccc8b3;
+        margin-bottom: 1em;
+    }
+    .notice h2 {
+        margin-top: .6em;
+    }
+</style>
+
 <div class="intro">
    <p>The YUI SWF Utility provides a standardized method for embedding the Adobe Flash player in web pages. Specifically, the SWF Utility:
 	<ol>
@@ -7,6 +25,10 @@
 		<li> Wraps the ExternalInterface API of the Flash player to allow method calls on specific player instances.</li>
 		<li> In conjunction with the YUIBridge ActionScript API, allows Flash applications to dispatch events that get converted to native YUI events.</li>
 	</ol>
+    
+    <div class="notice">
+        <strong>NOTE:</strong> Due to security issues, as of 3.13.0, the swf module is deprecated. YUI has no plans for providing a utility for embedding Flash into HTML pages.
+    </div>
 	
 	<p><strong>Important usage notes:</strong></p><ul>
 
