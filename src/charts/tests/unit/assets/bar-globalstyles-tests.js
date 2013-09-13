@@ -41,7 +41,7 @@ YUI.add('bar-globalstyles-tests', function(Y) {
                 styles;
             Y.Assert.areEqual(axesTestStyles.values.label.rotation, axesStyles.values.label.rotation, "The rotation of the axis label should be " + axesTestStyles.values.label.rotation + "."); 
             Y.Assert.areEqual(axesTestStyles.date.label.rotation, axesStyles.date.label.rotation, "The rotation of the axis label should be " + axesTestStyles.date.label.rotation + "."); 
-            Y.Assert.areEqual(graphTestStyles.background.color, graphStyles.background.color, "The background color should be " + graphTestStyles.background.color + ".");
+            Y.Assert.areEqual(graphTestStyles.background.fill.color, graphStyles.background.fill.color, "The background color should be " + graphTestStyles.background.fill.color + ".");
             for(i in seriesTestStyles)
             {
                 if(seriesTestStyles.hasOwnProperty(i))
@@ -73,7 +73,7 @@ YUI.add('bar-globalstyles-tests', function(Y) {
                 i;
             Y.Assert.areEqual(axesTestStyles.values.label.rotation, valueAxisStyles.label.rotation, "The rotation of the axis label should be " + axesTestStyles.values.label.rotation + ".");
             Y.Assert.areEqual(axesTestStyles.date.label.rotation, categoryAxisStyles.label.rotation, "The rotation of the axis label should be " + axesTestStyles.date.label.rotation + "."); 
-            Y.Assert.areEqual(graphTestStyles.background.color, graphStyles.background.color, "The background color should be " + graphTestStyles.background.color + ".");
+            Y.Assert.areEqual(graphTestStyles.background.fill.color, graphStyles.background.fill.color, "The background color should be " + graphTestStyles.background.fill.color + ".");
             for(i in seriesTestStyles)
             {
                 if(seriesTestStyles.hasOwnProperty(i))

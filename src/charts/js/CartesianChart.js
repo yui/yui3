@@ -591,6 +591,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
                 minimum:"minimum",
                 roundingMethod:"roundingMethod",
                 alwaysShowZero:"alwaysShowZero",
+                scaleType: "scaleType",
                 title:"title",
                 width:"width",
                 height:"height"
@@ -1007,7 +1008,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase, Y.Ren
             this._setBaseAttribute(newAxes[valueAxisName], "type", seriesAxis);
             this._setBaseAttribute(newAxes[valueAxisName], "keys", seriesKeys);
         }
-        if(!this._seriesKeysExplicitlySet)
+        if(!this._wereSeriesKeysExplicitlySet())
         {
             this.set("seriesKeys", seriesKeys, {src: "internal"});
         }

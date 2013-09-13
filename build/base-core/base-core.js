@@ -56,6 +56,61 @@ YUI.add('base-core', function (Y, NAME) {
      * change events can extend BaseCore instead of Base for optimal kweight and
      * runtime performance.
      *
+     * **3.11.0 BACK COMPAT NOTE FOR COMPONENT DEVELOPERS**
+     *
+     * Prior to version 3.11.0, ATTRS would get added a class at a time. That is:
+     *
+     * <pre>
+     *    for each (class in the hierarchy) {
+     *       Call the class Extension constructors.
+     *
+     *       Add the class ATTRS.
+     *
+     *       Call the class initializer
+     *       Call the class Extension initializers.
+     *    }
+     * </pre>
+     *
+     * As of 3.11.0, ATTRS from all classes in the hierarchy are added in one `addAttrs` call
+     * before **any** initializers are called. That is, the flow becomes:
+     *
+     * <pre>
+     *    for each (class in the hierarchy) {
+     *       Call the class Extension constructors.
+     *    }
+     *
+     *    Add ATTRS for all classes
+     *
+     *    for each (class in the hierarchy) {
+     *       Call the class initializer.
+     *       Call the class Extension initializers.
+     *    }
+     * </pre>
+     *
+     * Adding all ATTRS at once fixes subtle edge-case issues with subclass ATTRS overriding
+     * superclass `setter`, `getter` or `valueFn` definitions and being unable to get/set attributes
+     * defined by the subclass. It also leaves us with a cleaner order of operation flow moving
+     * forward.
+     *
+     * However, it may require component developers to upgrade their components, for the following
+     * scenarios:
+     *
+     * 1. It impacts components which may have `setter`, `getter` or `valueFn` code which
+     * expects a superclass' initializer to have run.
+     *
+     * This is expected to be rare, but to support it, Base now supports a `_preAddAttrs()`, method
+     * hook (same signature as `addAttrs`). Components can implement this method on their prototype
+     * for edge cases which do require finer control over the order in which attributes are added
+     * (see widget-htmlparser for example).
+     *
+     * 2. Extension developers may need to move code from Extension constructors to `initializer`s
+     *
+     * Older extensions, which were written before `initializer` support was added, had a lot of
+     * initialization code in their constructors. For example, code which acccessed superclass
+     * attributes. With the new flow this code would not be able to see attributes. The recommendation
+     * is to move this initialization code to an `initializer` on the Extension, which was the
+     * recommendation for anything created after `initializer` support for Extensions was added.
+     *
      * @class BaseCore
      * @constructor
      * @uses AttributeCore
@@ -352,24 +407,22 @@ YUI.add('base-core', function (Y, NAME) {
         },
 
         /**
-         * A helper method used when processing ATTRS across the class hierarchy during
-         * initialization. Returns a disposable object with the attributes defined for
-         * the provided class, extracted from the set of all attributes passed in.
+         * A helper method used to isolate the attrs config for this instance to pass to `addAttrs`,
+         * from the static cached ATTRS for the class.
          *
-         * @method _filterAttrCfgs
+         * @method _getInstanceAttrCfgs
          * @private
          *
-         * @param {Function} clazz The class for which the desired attributes are required.
          * @param {Object} allCfgs The set of all attribute configurations for this instance.
          * Attributes will be removed from this set, if they belong to the filtered class, so
          * that by the time all classes are processed, allCfgs will be empty.
          *
-         * @return {Object} The set of attributes belonging to the class passed in, in the form
-         * of an object with attribute name/configuration pairs.
+         * @return {Object} The set of attributes to be added for this instance, suitable
+         * for passing through to `addAttrs`.
          */
-        _filterAttrCfgs : function(clazz, allCfgs) {
+        _getInstanceAttrCfgs : function(allCfgs) {
 
-            var cfgs = null,
+            var cfgs = {},
                 cfg,
                 val,
                 subAttr,
@@ -377,42 +430,32 @@ YUI.add('base-core', function (Y, NAME) {
                 subAttrPath,
                 attr,
                 attrCfg,
-                filtered = this._filteredAttrs,
-                attrs = clazz.ATTRS;
+                allSubAttrs = allCfgs._subAttrs,
+                attrCfgProperties = this._attrCfgHash();
 
-            if (attrs) {
-                for (attr in attrs) {
+            for (attr in allCfgs) {
+
+                if (allCfgs.hasOwnProperty(attr) && attr !== "_subAttrs") {
+
                     attrCfg = allCfgs[attr];
 
-                    // Using hasOwnProperty, since it's faster (for the 80% case where filtered doesn't have attr) for the majority
-                    // of browsers, FF being the major outlier. http://jsperf.com/in-vs-hasownproperty/6. May revisit.
-                    if (attrCfg && !filtered.hasOwnProperty(attr)) {
+                    // Need to isolate from allCfgs, because we're going to set values etc.
+                    cfg = cfgs[attr] = _wlmix({}, attrCfg, attrCfgProperties);
 
-                        if (!cfgs) {
-                            cfgs = {};
-                        }
+                    val = cfg.value;
 
-                        // PERF TODO:
-                        // Revisit once all unit tests pass for further optimizations. See if we really need to isolate this.
-                        cfg = cfgs[attr] = _wlmix({}, attrCfg, this._attrCfgHash());
+                    if (val && (typeof val === "object")) {
+                        this._cloneDefaultValue(attr, cfg);
+                    }
 
-                        filtered[attr] = true;
+                    if (allSubAttrs && allSubAttrs.hasOwnProperty(attr)) {
+                        subAttrs = allCfgs._subAttrs[attr];
 
-                        val = cfg.value;
+                        for (subAttrPath in subAttrs) {
+                            subAttr = subAttrs[subAttrPath];
 
-                        if (val && (typeof val === "object")) {
-                            this._cloneDefaultValue(attr, cfg);
-                        }
-
-                        if (allCfgs._subAttrs && allCfgs._subAttrs.hasOwnProperty(attr)) {
-                            subAttrs = allCfgs._subAttrs[attr];
-
-                            for (subAttrPath in subAttrs) {
-                                subAttr = subAttrs[subAttrPath];
-
-                                if (subAttr.path) {
-                                    O.setValue(cfg.value, subAttr.path, subAttr.value);
-                                }
+                            if (subAttr.path) {
+                                O.setValue(cfg.value, subAttr.path, subAttr.value);
                             }
                         }
                     }
@@ -602,7 +645,7 @@ YUI.add('base-core', function (Y, NAME) {
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            // PERF TODO: Do we need to merge here, since we're merging later in filterAttrCfg
+                            // PERF TODO: Do we need to merge here, since we're merging later in getInstanceAttrCfgs
                             // Should we move this down to only merge if we hit the path or valueFn ifs below?
                             cfg = _wlmix({}, attrs[attr], cfgPropsHash);
 
@@ -663,55 +706,73 @@ YUI.add('base-core', function (Y, NAME) {
          * @private
          */
         _initHierarchy : function(userVals) {
+
             var lazy = this._lazyAddAttrs,
                 constr,
                 constrProto,
+                i,
+                l,
                 ci,
                 ei,
                 el,
+                ext,
                 extProto,
                 exts,
+                instanceAttrs,
+                initializers = [],
                 classes = this._getClasses(),
                 attrCfgs = this._getAttrCfgs(),
                 cl = classes.length - 1;
 
-            this._filteredAttrs = {};
-
+            // Constructors
             for (ci = cl; ci >= 0; ci--) {
 
                 constr = classes[ci];
                 constrProto = constr.prototype;
                 exts = constr._yuibuild && constr._yuibuild.exts;
 
-                if (exts) {
-                    for (ei = 0, el = exts.length; ei < el; ei++) {
-                        exts[ei].apply(this, arguments);
-                    }
-                }
-
-                this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
-
-                if (this._allowAdHocAttrs && ci === cl) {
-                    this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
-                }
-
                 // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
                 // referencing string literals). Not using it in apply, again, for performance "." is faster.
+
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
-                    constrProto.initializer.apply(this, arguments);
+                    // Store initializer while we're here and looping
+                    initializers[initializers.length] = constrProto.initializer;
                 }
 
                 if (exts) {
-                    for (ei = 0; ei < el; ei++) {
-                        extProto = exts[ei].prototype;
+                    for (ei = 0, el = exts.length; ei < el; ei++) {
+
+                        ext = exts[ei];
+
+                        // Ext Constructor
+                        ext.apply(this, arguments);
+
+                        extProto = ext.prototype;
                         if (extProto.hasOwnProperty(INITIALIZER)) {
-                            extProto.initializer.apply(this, arguments);
+                            // Store initializer while we're here and looping
+                            initializers[initializers.length] = extProto.initializer;
                         }
                     }
                 }
             }
 
-            this._filteredAttrs = null;
+            // ATTRS
+            instanceAttrs = this._getInstanceAttrCfgs(attrCfgs);
+
+            if (this._preAddAttrs) {
+                this._preAddAttrs(instanceAttrs, userVals, lazy);
+            }
+
+            if (this._allowAdHocAttrs) {
+                this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
+            }
+
+            this.addAttrs(instanceAttrs, userVals, lazy);
+
+            // Initializers
+            for (i = 0, l = initializers.length; i < l; i++) {
+                initializers[i].apply(this, arguments);
+            }
         },
 
         /**

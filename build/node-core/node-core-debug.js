@@ -207,7 +207,7 @@ Y_Node.addMethod = function(name, fn, context) {
             }
             args.unshift(node._node);
 
-            ret = fn.apply(node, args);
+            ret = fn.apply(context || node, args);
 
             if (ret) { // scrub truthy
                 ret = Y_Node.scrubVal(ret, node);
@@ -522,10 +522,15 @@ Y.mix(Y_Node.prototype, {
      */
     inDoc: function(doc) {
         var node = this._node;
-        doc = (doc) ? doc._node || doc : node[OWNER_DOCUMENT];
-        if (doc.documentElement) {
-            return Y_DOM.contains(doc.documentElement, node);
+
+        if (node) {
+            doc = (doc) ? doc._node || doc : node[OWNER_DOCUMENT];
+            if (doc.documentElement) {
+                return Y_DOM.contains(doc.documentElement, node);
+            }
         }
+
+        return false;
     },
 
     getById: function(id) {
@@ -615,13 +620,13 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Retrieves a single Node instance, the first element matching the given 
+     * Retrieves a single Node instance, the first element matching the given
      * CSS selector.
      * Returns null if no match found.
      * @method one
      *
      * @param {string} selector The CSS selector to test against.
-     * @return {Node | null} A Node instance for the matching HTMLElement or null 
+     * @return {Node | null} A Node instance for the matching HTMLElement or null
      * if no match found.
      */
     one: function(selector) {
@@ -637,7 +642,7 @@ Y.mix(Y_Node.prototype, {
      */
     all: function(selector) {
         var nodelist;
-        
+
         if (this._node) {
             nodelist = Y.all(Y.Selector.query(selector, this._node));
             nodelist._query = selector;
@@ -1193,18 +1198,18 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-     /** 
-      * Called on each Node instance. Nulls internal node references, 
+     /**
+      * Called on each Node instance. Nulls internal node references,
       * removes any plugins and event listeners
       * @method destroy
-      * @param {Boolean} recursivePurge (optional) Whether or not to 
+      * @param {Boolean} recursivePurge (optional) Whether or not to
       * remove listeners from the node's subtree (default is false)
       * @see Node.destroy
       */
     'destroy',
 
-     /** 
-      * Called on each Node instance. Removes and destroys all of the nodes 
+     /**
+      * Called on each Node instance. Removes and destroys all of the nodes
       * within the node
       * @method empty
       * @chainable
@@ -1212,7 +1217,7 @@ NodeList.importMethod(Y.Node.prototype, [
       */
     'empty',
 
-     /** 
+     /**
       * Called on each Node instance. Removes the node from its parent.
       * Shortcut for myNode.get('parentNode').removeChild(myNode);
       * @method remove
@@ -1223,7 +1228,7 @@ NodeList.importMethod(Y.Node.prototype, [
       */
     'remove',
 
-     /** 
+     /**
       * Called on each Node instance. Sets an attribute on the Node instance.
       * Unless pre-configured (via Node.ATTRS), set hands
       * off to the underlying DOM node.  Only valid

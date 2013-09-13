@@ -6,6 +6,16 @@ Color Change History
 
 * No changes.
 
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* `toArray()` always returns alpha values [Pull Request #548] [Ticket #2533111]
+
 3.10.3
 ------
 
@@ -31,7 +41,7 @@ Color Change History
 ------
 
 * Allow upper and lowercase strings for `convert()` method. Also return original
-  value if an invalid to value is provided. Fixes #583
+  value if an invalid to value is provided. [Ticket #583]
 
 3.9.1
 -----
@@ -41,10 +51,10 @@ Color Change History
 3.9.0
 -----
 
-* Fix 2532977: getSimilar now returns proper color values
+* `getSimilar()` now returns proper color values [Ticket #2532977]
 
-* Fix 2533139: addressed bugs in IE where charAt() was not used and RegExp
-  returns empty strings.
+* Addressed bugs in IE where charAt() was not used and RegExp returns empty
+  strings. [Ticket #2533139]
 
 3.8.1
 -----

@@ -15,9 +15,13 @@ YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     coverage: ['jsonp-url'],
     modules: {
+        'jsonp-tests': {
+            fullpath: './assets/jsonp-tests.js',
+            requires: ['test', 'jsonp']
+        },
         'jsonp-url-tests': {
             fullpath: './assets/jsonp-url-tests.js',
-            requires: ['test', 'jsonp-url', 'array-extras']
+            requires: ['jsonp-url', 'jsonp-tests']
         }
     }
 }).use('test', 'test-console', 'jsonp-url-tests', function (Y) {

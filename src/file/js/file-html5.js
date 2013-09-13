@@ -1,9 +1,9 @@
     /**
-     * The FileHTML5 class provides a wrapper for a file pointer in an HTML5 The File wrapper 
+     * The FileHTML5 class provides a wrapper for a file pointer in an HTML5 The File wrapper
      * also implements the mechanics for uploading a file and tracking its progress.
      * @module file-html5
-     */     
-     
+     */
+
     /**
      * The class provides a wrapper for a file pointer.
      * @class FileHTML5
@@ -16,7 +16,7 @@
         Win = Y.config.win;
 
     var FileHTML5 = function(o) {
-        
+
         var file = null;
 
         if (FileHTML5.isValidFile(o)) {
@@ -29,8 +29,8 @@
             file = false;
         }
 
-        FileHTML5.superclass.constructor.apply(this, arguments);      
-        
+        FileHTML5.superclass.constructor.apply(this, arguments);
+
         if (file && FileHTML5.canUpload()) {
            if (!this.get("file")) {
                this._set("file", file);
@@ -75,14 +75,14 @@
         * @method _uploadEventHandler
         * @param {Event} event The event object received from the XMLHTTPRequest.
         * @protected
-        */      
+        */
         _uploadEventHandler: function (event) {
             var xhr = this.get("xhr");
 
             switch (event.type) {
                 case "progress":
                   /**
-                   * Signals that progress has been made on the upload of this file. 
+                   * Signals that progress has been made on the upload of this file.
                    *
                    * @event uploadprogress
                    * @param event {Event} The event object for the `uploadprogress` with the
@@ -99,8 +99,8 @@
                    *  </dl>
                    */
                    this.fire("uploadprogress", {originEvent: event,
-                                               bytesLoaded: event.loaded, 
-                                               bytesTotal: this.get("size"), 
+                                               bytesLoaded: event.loaded,
+                                               bytesTotal: this.get("size"),
                                                percentLoaded: Math.min(100, Math.round(10000*event.loaded/this.get("size"))/100)
                                                });
                    this._set("bytesUploaded", event.loaded);
@@ -126,14 +126,14 @@
                                                      data: event.target.responseText});
                         var xhrupload = xhr.upload,
                             boundEventHandler = this.get("boundEventHandler");
-    
+
                         xhrupload.removeEventListener ("progress", boundEventHandler);
                         xhrupload.removeEventListener ("error", boundEventHandler);
                         xhrupload.removeEventListener ("abort", boundEventHandler);
-                        xhr.removeEventListener ("load", boundEventHandler); 
+                        xhr.removeEventListener ("load", boundEventHandler);
                         xhr.removeEventListener ("error", boundEventHandler);
                         xhr.removeEventListener ("readystatechange", boundEventHandler);
-                        
+
                         this._set("xhr", null);
                    }
                    else {
@@ -141,12 +141,12 @@
                                                   status: xhr.status,
                                                   statusText: xhr.statusText,
                                                   source: "http"});
-                   }                   
+                   }
                    break;
 
                 case "error":
                   /**
-                   * Signals that this file's upload has encountered an error. 
+                   * Signals that this file's upload has encountered an error.
                    *
                    * @event uploaderror
                    * @param event {Event} The event object for the `uploaderror` with the
@@ -160,7 +160,7 @@
                    *      <dt>statusText</dt>
                    *          <dd>The text of the error event reported by the XMLHttpRequest instance</dd>
                    *      <dt>source</dt>
-                   *          <dd>Either "http" (if it's an HTTP error), or "io" (if it's a network transmission 
+                   *          <dd>Either "http" (if it's an HTTP error), or "io" (if it's a network transmission
                    *              error.)</dd>
                    *
                    *  </dl>
@@ -174,7 +174,7 @@
                 case "abort":
 
                   /**
-                   * Signals that this file's upload has been cancelled. 
+                   * Signals that this file's upload has been cancelled.
                    *
                    * @event uploadcancel
                    * @param event {Event} The event object for the `uploadcancel` with the
@@ -190,7 +190,7 @@
                 case "readystatechange":
 
                   /**
-                   * Signals that XMLHttpRequest has fired a readystatechange event. 
+                   * Signals that XMLHttpRequest has fired a readystatechange event.
                    *
                    * @event readystatechange
                    * @param event {Event} The event object for the `readystatechange` with the
@@ -217,12 +217,12 @@
         * @param fileFieldName {String} (optional) The name of the POST variable that should contain the uploaded file ('Filedata' by default)
         */
         startUpload: function(url, parameters, fileFieldName) {
-         
+
             this._set("bytesUploaded", 0);
-            
+
             this._set("xhr", new XMLHttpRequest());
             this._set("boundEventHandler", Bind(this._uploadEventHandler, this));
-                         
+
             var uploadData = new FormData(),
                 fileField = fileFieldName || "Filedata",
                 xhr = this.get("xhr"),
@@ -242,7 +242,7 @@
             xhrupload.addEventListener ("error", boundEventHandler, false);
             xhrupload.addEventListener ("abort", boundEventHandler, false);
             xhr.addEventListener ("abort", boundEventHandler, false);
-            xhr.addEventListener ("loadend", boundEventHandler, false); 
+            xhr.addEventListener ("loadend", boundEventHandler, false);
             xhr.addEventListener ("readystatechange", boundEventHandler, false);
 
             xhr.open("POST", url, true);
@@ -254,9 +254,9 @@
             });
 
             xhr.send(uploadData);
-      
+
             /**
-             * Signals that this file's upload has started. 
+             * Signals that this file's upload has started.
              *
              * @event uploadstart
              * @param event {Event} The event object for the `uploadstart` with the
@@ -274,7 +274,7 @@
         * Cancels the upload of a specific file, if currently in progress.
         *
         * @method cancelUpload
-        */    
+        */
         cancelUpload: function () {
             this.get('xhr').abort();
         }
@@ -442,7 +442,7 @@
 
        /**
         * A Boolean indicating whether the XMLHttpRequest should be sent with user credentials.
-        * This does not affect same-site requests. 
+        * This does not affect same-site requests.
         *
         * @attribute xhrWithCredentials
         * @type {Boolean}

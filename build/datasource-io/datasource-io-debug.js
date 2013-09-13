@@ -12,11 +12,11 @@ YUI.add('datasource-io', function (Y, NAME) {
  * @class DataSource.IO
  * @extends DataSource.Local
  * @constructor
- */    
+ */
 var DSIO = function() {
     DSIO.superclass.constructor.apply(this, arguments);
 };
-    
+
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -29,7 +29,7 @@ Y.mix(DSIO, {
      *
      * @property NAME
      * @type String
-     * @static     
+     * @static
      * @final
      * @value "dataSourceIO"
      */
@@ -54,7 +54,7 @@ Y.mix(DSIO, {
             value: Y.io,
             cloneDefaultValue: false
         },
-        
+
         /**
          * Default IO Config.
          *
@@ -67,7 +67,7 @@ Y.mix(DSIO, {
          }
     }
 });
-    
+
 Y.extend(DSIO, Y.DataSource.Local, {
     /**
     * Internal init() handler.
@@ -117,7 +117,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
     failureHandler: function (id, response, e) {
         var defIOConfig = this.get("ioConfig"),
             payload = e.details[0];
-        
+
         delete Y.DataSource.Local.transactions[e.tId];
 
         payload.error = new Error("IO data failure");
@@ -132,7 +132,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
             defIOConfig.on.failure.apply(defIOConfig.context || Y, arguments);
         }
     },
-    
+
     /**
     * @property _queue
     * @description Object literal to manage asynchronous request/response
@@ -183,7 +183,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
                 context: this,
                 "arguments": e
             });
-        
+
         // Support for POST transactions
         if(Y.Lang.isString(request)) {
             if(cfg.method && (cfg.method.toUpperCase() === "POST")) {
@@ -197,7 +197,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
         return e.tId;
     }
 });
-  
+
 Y.DataSource.IO = DSIO;
 
 

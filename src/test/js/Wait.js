@@ -11,7 +11,7 @@
  *
  */
 YUITest.Wait = function (segment, delay) {
-    
+
     /**
      * The segment of code to run when the wait is over.
      * @type Function
@@ -24,5 +24,5 @@ YUITest.Wait = function (segment, delay) {
      * @type int
      * @property delay
      */
-    this.delay = (typeof delay == "number" ? delay : 0);        
+    this.delay = (typeof delay == "number" ? delay : 0);
 };

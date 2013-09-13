@@ -239,37 +239,35 @@ Y.mix(Y_Node.prototype, {
         Y.one(node).append(this);
         return this;
     },
-
-    /**
-     * Replaces the node's current content with the content.
-     * Note that this passes to innerHTML and is not escaped.
-     * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
-     * to escape html content or `set('text')` to add as text.
-     * @method setContent
-     * @deprecated Use setHTML
-     * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
-     * @chainable
-     */
+    
+    // This method is deprecated, and is intentionally left undocumented.
+    // Use `setHTML` instead.
     setContent: function(content) {
         this._insert(content, 'replace');
         return this;
     },
+    
+    // This method is deprecated, and is intentionally left undocumented.
+    // Use `getHTML` instead.
+    getContent: function() {
+        var node = this;
 
-    /**
-     * Returns the node's current content (e.g. innerHTML)
-     * @method getContent
-     * @deprecated Use getHTML
-     * @return {String} The current content
-     */
-    getContent: function(content) {
-        return this.get('innerHTML');
+        if (node._node.nodeType === 11) { // 11 === Node.DOCUMENT_FRAGMENT_NODE
+            // "this", when it is a document fragment, must be cloned because
+            // the nodes contained in the fragment actually disappear once
+            // the fragment is appended anywhere
+            node = node.create("<div/>").append(node.cloneNode(true));
+        }
+
+        return node.get("innerHTML");
     }
 });
 
 /**
  * Replaces the node's current html content with the content provided.
  * Note that this passes to innerHTML and is not escaped.
- * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
+ * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
+ * to escape html content or `set('text')` to add as text.
  * @method setHTML
  * @param {String | HTML | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
  * @chainable
@@ -324,28 +322,15 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      */
     'prepend',
 
-    /**
-     * Called on each Node instance
-     * Note that this passes to innerHTML and is not escaped.
-     * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
-     * @for NodeList
-     * @method setContent
-     * @deprecated Use setHTML
-     */
     'setContent',
 
-    /**
-     * Called on each Node instance
-     * @for NodeList
-     * @method getContent
-     * @deprecated Use getHTML
-     */
     'getContent',
 
     /**
      * Called on each Node instance
      * Note that this passes to innerHTML and is not escaped.
-     * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
+     * Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a>
+     * to escape html content or `set('text')` to add as text.
      * @for NodeList
      * @method setHTML
      * @see Node.setHTML
@@ -816,7 +801,7 @@ Y.mix(Y_Node.prototype, {
     },
 
     _isHidden: function() {
-        return Y.DOM.getAttribute(this._node, 'hidden') === 'true';
+        return  this.hasAttribute('hidden') || Y.DOM.getComputedStyle(this._node, 'display') === 'none';
     },
 
     /**
@@ -881,7 +866,7 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     _hide: function() {
-        this.setAttribute('hidden', true);
+        this.setAttribute('hidden', '');
 
         // For back-compat we need to leave this in for browsers that
         // do not visually hide a node via the hidden attribute
@@ -994,7 +979,7 @@ if (Y.config.doc.createElement('form').elements.nodeType) {
 
 /**
  * Provides methods for managing custom Node data.
- * 
+ *
  * @module node
  * @main node
  * @submodule node-data
@@ -1128,7 +1113,7 @@ Y.mix(Y.NodeList.prototype, {
     * @see Node
     * @param {string} name Optional name of the data field to retrieve.
     * If no name is given, all data is returned.
-    * @return {Array} An array containing all of the data for each Node instance. 
+    * @return {Array} An array containing all of the data for each Node instance.
     * or an object hash of all fields.
     */
     getData: function(name) {
@@ -1166,4 +1151,4 @@ Y.mix(Y.NodeList.prototype, {
 });
 
 
-}, '@VERSION@', {"requires": ["event-base", "node-core", "dom-base"]});
+}, '@VERSION@', {"requires": ["event-base", "node-core", "dom-base", "dom-style"]});

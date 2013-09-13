@@ -297,7 +297,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     /**
     Removes one or more Records to the RecordSet at the given index. If index
     is null, then removes a single Record from the end of the RecordSet.
-    
+
     @method remove
     @param {Number} [index] Index at which to remove the record(s) from
     @param {Number} [range] Number of records to remove (including the one
@@ -336,11 +336,11 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     /**
     Updates the recordset with the new records passed in. Overwrites existing
     records when updating the index with the new records.
-    
+
     @method update
     @param {Record|Object|Array} data A Y.Record instance, An object literal of
         data or an array of object literals
-    @param {Number} [index] The index to start updating from. 
+    @param {Number} [index] The index to start updating from.
     @return {Recordset} The updated recordset instance
     **/
     update: function(data, index) {
@@ -621,7 +621,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
         /**
         A hash table where the ID of the record is the key, and the record
         instance is the value.
-        
+
         @attribute table
         @type object
         **/
@@ -631,7 +631,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
         /**
         The ID to use as the key in the hash table.
-        
+
         @attribute key
         @type string
         **/

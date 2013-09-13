@@ -61,7 +61,7 @@ function Promise(fn) {
 
     /**
     A reference to the resolver object that handles this promise
-    
+
     @property _resolver
     @type Object
     @private
@@ -305,46 +305,35 @@ Y.mix(Resolver.prototype, {
     @private
     **/
     _wrap: function (thenFulfill, thenReject, fn) {
-        var promise = this.promise;
+        // callbacks and errbacks only get one argument
+        return function (valueOrReason) {
+            var result;
 
-        return function () {
-            // The args coming in to the callback/errback from the
-            // resolution of the parent promise.
-            var args = arguments;
+            // Promises model exception handling through callbacks
+            // making both synchronous and asynchronous errors behave
+            // the same way
+            try {
+                // Use the argument coming in to the callback/errback from the
+                // resolution of the parent promise.
+                // The function must be called as a normal function, with no
+                // special value for |this|, as per Promises A+
+                result = fn(valueOrReason);
+            } catch (e) {
+                // calling return only to stop here
+                return thenReject(e);
+            }
 
-            // Wrapping all callbacks in Y.soon to guarantee
-            // asynchronicity. Because setTimeout can cause unnecessary
-            // delays that *can* become noticeable in some situations
-            // (especially in Node.js)
-            Y.soon(function () {
-                // Call the callback/errback with promise as `this` to
-                // preserve the contract that access to the deferred is
-                // only for code that may resolve/reject it.
-                // Another option would be call the function from the
-                // global context, but it seemed less useful.
-                var result;
-
-                // Promises model exception handling through callbacks
-                // making both synchronous and asynchronous errors behave
-                // the same way
-                try {
-                    result = fn.apply(promise, args);
-                } catch (e) {
-                    return thenReject(e);
-                }
-
-                if (Promise.isPromise(result)) {
-                    // Returning a promise from a callback makes the current
-                    // promise sync up with the returned promise
-                    result.then(thenFulfill, thenReject);
-                } else {
-                    // Non-promise return values always trigger resolve()
-                    // because callback is affirmative, and errback is
-                    // recovery.  To continue on the rejection path, errbacks
-                    // must return rejected promises or throw.
-                    thenFulfill(result);
-                }
-            });
+            if (Promise.isPromise(result)) {
+                // Returning a promise from a callback makes the current
+                // promise sync up with the returned promise
+                result.then(thenFulfill, thenReject);
+            } else {
+                // Non-promise return values always trigger resolve()
+                // because callback is affirmative, and errback is
+                // recovery.  To continue on the rejection path, errbacks
+                // must return rejected promises or throw.
+                thenFulfill(result);
+            }
         };
     },
 
@@ -369,10 +358,21 @@ Y.mix(Resolver.prototype, {
     @protected
     **/
     _notify: function (subs, result) {
-        var i, len;
+        // Since callback lists are reset synchronously, the subs list never
+        // changes after _notify() receives it. Avoid calling Y.soon() for
+        // an empty list
+        if (subs.length) {
+            // Calling all callbacks after Y.soon to guarantee
+            // asynchronicity. Because setTimeout can cause unnecessary
+            // delays that *can* become noticeable in some situations
+            // (especially in Node.js)
+            Y.soon(function () {
+                var i, len;
 
-        for (i = 0, len = subs.length; i < len; ++i) {
-            subs[i](result);
+                for (i = 0, len = subs.length; i < len; ++i) {
+                    subs[i](result);
+                }
+            });
         }
     }
 

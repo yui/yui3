@@ -1,0 +1,16 @@
+    pg.after('pageChange', function (e) {
+        var page = e.newVal;
+
+        // decrement page since nodeLists are 0 based and
+        // paginator is 1 based
+        page--;
+
+        // clear anything active
+        slides.removeClass(selectedClass);
+        controls.removeClass(selectedClass);
+
+        // make the new item active
+        slides.item(page).addClass(selectedClass);
+        controls.item(page).addClass(selectedClass);
+    });
+

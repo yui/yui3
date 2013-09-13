@@ -34,13 +34,13 @@
                     "trigger": "graphics",
                     "test": "graphics-vml.js"
                 }
-            }, 
+            },
             "graphics-vml-default": {
                 "condition": {
                     "trigger": "graphics",
                     "test": "graphics-vml.js"
                 }
-            } 
+            }
         }
     }
 }

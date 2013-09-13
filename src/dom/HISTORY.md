@@ -4,6 +4,16 @@ DOM Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
 * Fixed: `Y.Selector` could return an incorrect number of elements in browsers
   that don't support support `getElementsByTagName()` or `querySelectorAll()` on
   document fragments. [Ezequiel Rodriguez]

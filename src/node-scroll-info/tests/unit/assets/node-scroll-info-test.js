@@ -20,18 +20,20 @@ var Assert       = Y.Assert,
         'scrollWidth'
     ];
 
+function isBetween(expected, min, max) {
+    return expected >= min && expected <= max;
+}
+
 Y.Test.Runner.add(new Y.Test.Case({
     name: 'ScrollInfo',
     _should: {
         ignore: {
-            //TODO This test is unstable and fails in CI too often
-            'scroll event should be throttled within the scrollDelay': true,
             //TODO These tests below should be un-ignored after GH Issue #640 is resolved
-            'body: getScrollInfo() should return current scroll information': (Y.UA.android === 2.34),
-            'body: scrollLeft event should fire after scrolling down': (Y.UA.android === 2.34),
-            'body: scrollRight event should fire after scrolling right': (Y.UA.android === 2.34),
-            'body: scrollToBottom event should fire after scrolling to the bottom': (Y.UA.android === 2.34),
-            'body: scrollToRight event should fire after scrolling to the extreme right': (Y.UA.android === 2.34)
+            'body: getScrollInfo() should return current scroll information': (Y.UA.android && Y.UA.android < 3),
+            'body: scrollLeft event should fire after scrolling down': (Y.UA.android && Y.UA.android < 3),
+            'body: scrollRight event should fire after scrolling right': (Y.UA.android && Y.UA.android < 3),
+            'body: scrollToBottom event should fire after scrolling to the bottom': (Y.UA.android && Y.UA.android < 3),
+            'body: scrollToRight event should fire after scrolling to the extreme right': (Y.UA.android && Y.UA.android < 3)
         }
     },
 
@@ -77,7 +79,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Assert.isTrue(scrollInfo._events.length > 0, 'should store event handles');
         this.divNode.unplug('scrollInfo');
-        Assert.isUndefined(scrollInfo._events, 'event handles should be cleaned up after unplug');
+        Assert.isNull(scrollInfo._events, 'event handles should be cleaned up after unplug');
 
     },
 
@@ -96,6 +98,19 @@ Y.Test.Runner.add(new Y.Test.Case({
         Assert.areSame(2, nodes.size(), 'should find 2 offscreen nodes inside the scrollable div');
         Assert.areSame('scroll-test-right', nodes.item(0).get('id'), 'first offscreen scrollable div node should be #scroll-test-right');
         Assert.areSame('scroll-test-bottom', nodes.item(1).get('id'), 'second offscreen scrollable div node should be #scroll-test-bottom');
+    },
+
+    'getOffscreenNodes() should return an empty NodeList if no nodes match': function () {
+        var scrollInfo = this.bodyNode.scrollInfo,
+            nodes;
+
+        nodes = scrollInfo.getOffscreenNodes('.bogus');
+        Assert.isInstanceOf(Y.NodeList, nodes, 'should be a NodeList');
+        Assert.areSame(0, nodes.size(), 'should be empty');
+
+        nodes = scrollInfo.getOffscreenNodes('#body-test-top');
+        Assert.isInstanceOf(Y.NodeList, nodes, 'should be a NodeList');
+        Assert.areSame(0, nodes.size(), 'should be empty');
     },
 
     'body: getOffscreenNodes() should respect the margin parameter': function () {
@@ -117,6 +132,25 @@ Y.Test.Runner.add(new Y.Test.Case({
         });
 
         Y.config.win.scrollTo(100, 0);
+        this.wait(500);
+    },
+
+    'div: getOffscreenNodes() should return offscreen nodes when scrolled': function () {
+        var scrollInfo = this.divNode.scrollInfo,
+            test       = this;
+
+        scrollInfo.once('scroll', function () {
+            test.resume(function () {
+                nodes = scrollInfo.getOffscreenNodes('.marker.test');
+
+                Assert.areSame(3, nodes.size(), 'should find 3 offscreen nodes inside the scrollable div');
+                Assert.areSame('scroll-test-top', nodes.item(0).get('id'), 'first offscreen node should be #scroll-test-top');
+                Assert.areSame('scroll-test-left', nodes.item(1).get('id'), 'secont offscreen node should be #scroll-test-left');
+                Assert.areSame('scroll-test-right', nodes.item(2).get('id'), 'third offscreen node should be #scroll-test-right');
+            });
+        });
+
+        this.divEl.scrollTop = 10000;
         this.wait(500);
     },
 
@@ -158,6 +192,19 @@ Y.Test.Runner.add(new Y.Test.Case({
         Assert.areSame('scroll-test-left', nodes.item(1).get('id'), 'second onscreen scrollable div node should be #scroll-test-left');
     },
 
+    'getOnscreenNodes() should return an empty NodeList if no nodes match': function () {
+        var scrollInfo = this.bodyNode.scrollInfo,
+            nodes;
+
+        nodes = scrollInfo.getOnscreenNodes('.bogus');
+        Assert.isInstanceOf(Y.NodeList, nodes, 'should be a NodeList');
+        Assert.areSame(0, nodes.size(), 'should be empty');
+
+        nodes = scrollInfo.getOnscreenNodes('#body-test-bottom');
+        Assert.isInstanceOf(Y.NodeList, nodes, 'should be a NodeList');
+        Assert.areSame(0, nodes.size(), 'should be empty');
+    },
+
     'body: getOnscreenNodes() should respect the margin parameter': function () {
         var scrollInfo = this.bodyNode.scrollInfo,
             test       = this;
@@ -177,6 +224,23 @@ Y.Test.Runner.add(new Y.Test.Case({
         });
 
         Y.config.win.scrollTo(100, 0);
+        this.wait(500);
+    },
+
+    'div: getOnscreenNodes() should return onscreen nodes when scrolled': function () {
+        var scrollInfo = this.divNode.scrollInfo,
+            test       = this;
+
+        scrollInfo.once('scroll', function () {
+            test.resume(function () {
+                nodes = scrollInfo.getOnscreenNodes('.marker.test');
+
+                Assert.areSame(1, nodes.size(), 'should find 1 onscreen node inside the scrollable div');
+                Assert.areSame('scroll-test-bottom', nodes.item(0).get('id'), 'onscreen node should be #scroll-test-bottom');
+            });
+        });
+
+        this.divEl.scrollTop = 10000;
         this.wait(500);
     },
 
@@ -275,11 +339,11 @@ Y.Test.Runner.add(new Y.Test.Case({
         Assert.isNumber(info.scrollWidth, 'scrollWidth should be a number');
 
         Assert.isTrue(info.scrollBottom > 0, 'scrollBottom should be >0');
-        Assert.areSame(10000, info.scrollHeight, 'scrollHeight should be 10000');
+        Assert.isTrue(isBetween(info.scrollHeight, 10000, 10010), 'scrollHeight should be ~10000');
         Assert.areSame(0, info.scrollLeft, 'scrollLeft should be 0');
         Assert.isTrue(info.scrollRight > 0, 'scrollRight should be >0');
         Assert.areSame(0, info.scrollTop, 'scrollTop should be 0');
-        Assert.areSame(10000, info.scrollWidth, 'scrollWidth should be 10000');
+        Assert.isTrue(isBetween(info.scrollWidth, 10000, 10010), 'scrollWidth should be ~10000');
 
         this.divNode.scrollInfo.once('scroll', function () {
             test.resume(function () {
@@ -301,36 +365,60 @@ Y.Test.Runner.add(new Y.Test.Case({
         this.wait(500);
     },
 
+    'body: isNodeOnscreen() should return `true` for onscreen nodes': function () {
+        var scrollInfo = this.bodyNode.scrollInfo;
+        Assert.isTrue(scrollInfo.isNodeOnscreen(Y.one('#body-test-top')));
+    },
+
+    'body: isNodeOnscreen() should return `false` for offscreen nodes': function () {
+        var scrollInfo = this.bodyNode.scrollInfo;
+        Assert.isFalse(scrollInfo.isNodeOnscreen(Y.one('#body-test-bottom')));
+    },
+
+    'div: isNodeOnscreen() should return `true` for onscreen nodes': function () {
+        var scrollInfo = this.divNode.scrollInfo;
+        Assert.isTrue(scrollInfo.isNodeOnscreen(Y.one('#scroll-test-top')));
+    },
+
+    'div: isNodeOnscreen() should return `false` for offscreen nodes': function () {
+        var scrollInfo = this.divNode.scrollInfo;
+        Assert.isFalse(scrollInfo.isNodeOnscreen(Y.one('#scroll-test-bottom')));
+    },
+
+    'isNodeOnscreen() should support selectors and HTMLElements': function () {
+        var scrollInfo = this.bodyNode.scrollInfo;
+
+        Assert.isTrue(scrollInfo.isNodeOnscreen('#body-test-top'), 'should support selectors');
+        Assert.isTrue(scrollInfo.isNodeOnscreen(Y.one('#body-test-top')._node), 'should support elements');
+    },
+
+    'isNodeOnscreen() should return `false` for nonexistent nodes': function () {
+        var scrollInfo = this.bodyNode.scrollInfo;
+        Assert.isFalse(scrollInfo.isNodeOnscreen('#bogus'));
+    },
+
     "refreshDimensions() should refresh cached info on a node's dimensions": function () {
         var si = this.divNode.scrollInfo,
             dimensions;
 
         dimensions = {
             height: si._height,
-            left  : si._left,
-            top   : si._top,
             width : si._width
         };
 
         this.divNode.addClass('positioned');
 
         Assert.areSame(dimensions.height, si._height, 'height should be cached');
-        Assert.areSame(dimensions.left, si._left, 'left pos should be cached');
-        Assert.areSame(dimensions.top, si._top, 'top pos should be cached');
         Assert.areSame(dimensions.width, si._width, 'width should be cached');
 
         dimensions = {
             height: this.divEl.clientHeight,
-            left  : this.divEl.offsetLeft,
-            top   : this.divEl.offsetTop,
             width : this.divEl.clientWidth
         };
 
         si.refreshDimensions();
 
         Assert.areSame(dimensions.height, si._height, 'height should be updated');
-        Assert.areSame(dimensions.left, si._left, 'left pos should be updated');
-        Assert.areSame(dimensions.top, si._top, 'top pos should be updated');
         Assert.areSame(dimensions.width, si._width, 'width should be updated');
     },
 
@@ -378,6 +466,8 @@ Y.Test.Runner.add(new Y.Test.Case({
             scrollTop = 0,
             test      = this;
 
+        this.divNode.scrollInfo.set('scrollDelay', 200);
+
         this.divNode.scrollInfo.on('scroll', function () {
             count += 1;
         });
@@ -388,17 +478,14 @@ Y.Test.Runner.add(new Y.Test.Case({
             }
 
             test.divEl.scrollTop = scrollTop += 100;
-
-            if (scrollTop < 1000) {
-                setTimeout(scroll, 20);
-            }
         }
 
         scroll();
+        setTimeout(scroll, 10);
 
         this.wait(function () {
             Assert.areSame(1, count, 'scroll event should only fire once');
-        }, 300);
+        }, 700);
     },
 
     'body: scrollLeft event should fire after scrolling down': function () {

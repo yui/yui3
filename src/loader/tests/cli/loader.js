@@ -1174,6 +1174,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-datasource")) > -1, "Module (datatable-datasource) not found in sorted array");
         },
+     "Testing datatable-foot": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatable-foot"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatable-foot")) > -1, "Module (datatable-foot) not found in sorted array");
+        },
      "Testing datatable-formatters": function(data) {
             var loader = new Y.Loader({
                 require: ["datatable-formatters"],
@@ -1213,6 +1223,26 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-mutable")) > -1, "Module (datatable-mutable) not found in sorted array");
+        },
+     "Testing datatable-paginator": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatable-paginator"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatable-paginator")) > -1, "Module (datatable-paginator) not found in sorted array");
+        },
+     "Testing datatable-paginator-templates": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatable-paginator-templates"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatable-paginator-templates")) > -1, "Module (datatable-paginator-templates) not found in sorted array");
         },
      "Testing datatable-scroll": function(data) {
             var loader = new Y.Loader({
@@ -1548,16 +1578,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dom-core")) > -1, "Module (dom-core) not found in sorted array");
-        },
-     "Testing dom-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["dom-deprecated"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dom-deprecated")) > -1, "Module (dom-deprecated) not found in sorted array");
         },
      "Testing dom-screen": function(data) {
             var loader = new Y.Loader({
@@ -2466,16 +2486,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-core")) > -1, "Module (node-core) not found in sorted array");
         },
-     "Testing node-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["node-deprecated"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("node-deprecated")) > -1, "Module (node-deprecated) not found in sorted array");
-        },
      "Testing node-event-delegate": function(data) {
             var loader = new Y.Loader({
                 require: ["node-event-delegate"],
@@ -2605,6 +2615,36 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("overlay")) > -1, "Module (overlay) not found in sorted array");
+        },
+     "Testing paginator": function(data) {
+            var loader = new Y.Loader({
+                require: ["paginator"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("paginator")) > -1, "Module (paginator) not found in sorted array");
+        },
+     "Testing paginator-core": function(data) {
+            var loader = new Y.Loader({
+                require: ["paginator-core"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("paginator-core")) > -1, "Module (paginator-core) not found in sorted array");
+        },
+     "Testing paginator-url": function(data) {
+            var loader = new Y.Loader({
+                require: ["paginator-url"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("paginator-url")) > -1, "Module (paginator-url) not found in sorted array");
         },
      "Testing panel": function(data) {
             var loader = new Y.Loader({

@@ -6,6 +6,22 @@ IO Utility Change History
 
 * No changes.
 
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+
+* Restore form attributes after successful upload in io-upload-iframe.
+  [Ticket #2533186] [ipeychev]
+
+* Upgraded `request` module dependency for `io-nodejs` for compatibility with
+  Node.js v0.10. [Pull Request #940]
+
+
 3.10.3
 ------
 

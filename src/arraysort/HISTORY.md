@@ -6,6 +6,19 @@ ArraySort Change History
 
 * No changes.
 
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* Added `Y.ArraySort.naturalCompare()`, which compares two strings or numbers
+  (or a number and a string) in natural order. This ensures that a value like
+  'foo2' is sorted before 'foo10', whereas a standard ASCII sort would sort
+  'foo10' first. [Ryan Grove]
+
 3.10.3
 ------
 

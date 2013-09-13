@@ -15,6 +15,31 @@ var L            = Y.Lang,
     hasOwn   = OP.hasOwnProperty,
     toString = OP.toString;
 
+/**
+Calls the specified _action_ method on _o_ if it exists. Otherwise, if _o_ is an
+array, calls the _action_ method on `Y.Array`, or if _o_ is an object, calls the
+_action_ method on `Y.Object`.
+
+If _o_ is an array-like object, it will be coerced to an array.
+
+This is intended to be used with array/object iteration methods that share
+signatures, such as `each()`, `some()`, etc.
+
+@method dispatch
+@param {Object} o Array or object to dispatch to.
+@param {Function} f Iteration callback.
+    @param {Mixed} f.value Value being iterated.
+    @param {Mixed} f.key Current object key or array index.
+    @param {Mixed} f.object Object or array being iterated.
+@param {Object} c `this` object to bind the iteration callback to.
+@param {Boolean} proto If `true`, prototype properties of objects will be
+    iterated.
+@param {String} action Function name to be dispatched on _o_. For example:
+    'some', 'each', etc.
+@private
+@return {Mixed} Returns the value returned by the chosen iteration action, which
+    varies.
+**/
 function dispatch(o, f, c, proto, action) {
     if (o && o[action] && o !== Y) {
         return o[action].call(o, f, c);
