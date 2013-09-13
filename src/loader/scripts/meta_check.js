@@ -84,7 +84,7 @@ dirs.forEach(function(d) {
         var files = fs.readdirSync(p);
         files.forEach(function(f) {
             name = d;
-            if ((d.indexOf('yui') === 0 || d.indexOf('simpleyui') === 0)) {
+            if ((d.indexOf('yui') === 0)) {
                 //Skip the YUI object..
                 return;
             }
@@ -115,7 +115,7 @@ dirs.forEach(function(d) {
                             if (d[name].requires && d[name].use) {
                                 warns.push('    ' + color('[' + name + ']') + ' has both a requires and a use. The use should define the requires. FIX!');
                             }
-                            
+
                             parseMod(d, name);
                         }
                     }
@@ -146,7 +146,7 @@ dirs.forEach(function(d) {
 
 var comp = function(str, a /* JSON Meta*/, b /* Build Meta */) {
     var len = logs.length;
-    
+
     if (!a && !b) {
         //There is no use or require data for this module, skip it
         return;
