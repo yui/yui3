@@ -23,12 +23,8 @@ YUI.add('core-tests', function(Y) {
             '/build/yui/yui-debug.js': { path: '/build/', filter: 'debug' },
             '/build/yui-base/yui-base.js': { path: '/build/', filter: undefined },
             '/build/yui-base/yui-base-debug.js': { path: '/build/', filter: 'debug' },
-            'build/simpleyui/simpleyui.js': { path: 'build/', filter: undefined },
-            'build/simpleyui/simpleyui-debug.js': { path: 'build/', filter: 'debug' },
             'build/yui/yui.js': { path: 'build/', filter: undefined },
             'build/yui/yui-debug.js': { path: 'build/', filter: 'debug' },
-            '//combohost.com/combo?foo/foo.js&bar-bar.js&/build/simpleyui/simpleyui.js&build/loader/loader.js': { path: '//combohost.com/combo?/build/', filter: undefined },
-            '//combohost.com/combo?foo/foo.js&bar-bar.js&/build/simpleyui/simpleyui-debug.js&buid/oop/oop.js': { path: '//combohost.com/combo?/build/', filter: 'debug' },
             '//combohost.com/combo?foo/foo.js&bar-bar.js&/build/yui-base/yui-base.js': { path: '//combohost.com/combo?/build/', filter: undefined },
             '//combohost.com/combo?foo/foo.js&bar-bar.js&/build/yui-base/yui-base-debug.js': { path: '//combohost.com/combo?/build/', filter: 'debug' }
         };
@@ -497,7 +493,7 @@ YUI.add('core-tests', function(Y) {
         test_global_config: function() {
             var Assert = Y.Assert,
                 test = this;
-            
+
             YUI({useSync: false }).use('global-mod', function(Y) {
                 test.resume(function() {
                     Assert.isTrue(Y.GlobalMod, 'Module in global config failed to load');
@@ -546,7 +542,7 @@ YUI.add('core-tests', function(Y) {
                             test: function() {
                                 return true;
                             }
-                        }                       
+                        }
                     }
                 }
             }).use('cond', function(Y2) {
@@ -554,7 +550,7 @@ YUI.add('core-tests', function(Y) {
                 Assert.isTrue(Y2.cond, 'Conditional module was not loaded.');
                 Assert.isTrue(Y2.condTest, 'Conditional module was not loaded.');
             });
-            
+
         },
         test_missed: function() {
             var Assert = Y.Assert;
@@ -630,7 +626,7 @@ YUI.add('core-tests', function(Y) {
         test_destroy: function() {
             var Assert = Y.Assert,
                 testY = YUI();
-            
+
             testY.destroy();
             Assert.isUndefined(testY.Env, 'Environment not destroyed');
             Assert.isUndefined(testY.config, 'Instance config not destroyed');
@@ -745,7 +741,7 @@ YUI.add('core-tests', function(Y) {
         'status should be true': function() {
             var test = this,
                 Assert = Y.Assert;
-                
+
                 YUI().use('oop', function(Y, status) {
                     Assert.isTrue(status.success, 'Success callback failed');
                 });
@@ -788,7 +784,7 @@ YUI.add('core-tests', function(Y) {
                             combine : false,
                             ext     : false,
                             root    : "",
-                            patterns: { 
+                            patterns: {
                                 'mygroup-': {
                                     test: function(name) {
                                         return /^mygroup-/.test(name);
@@ -801,7 +797,7 @@ YUI.add('core-tests', function(Y) {
                                             cssname, jsname;
                                         if (name.match(/-css/)) {
                                             name = name.replace("-css", "");
-                                            cssname = name + ".css";    
+                                            cssname = name + ".css";
                                             me.type = 'css';
                                             me.path = [name, version, "assets", cssname].join("/");
                                         } else {
@@ -829,7 +825,7 @@ YUI.add('core-tests', function(Y) {
                             'test': 'HELLO HELLO HELLO'
                         });
                 }, '1.4', {'requires': ['intl']});
-                
+
                 var results = [];
                 YUI({ lang: '' }).use('mygroup-util-1.4', stack.add(function(Y) {
                     var t = Y.mygroup.test();
@@ -853,7 +849,7 @@ YUI.add('core-tests', function(Y) {
                         Y.ArrayAssert.itemsAreEqual(exp, results, 'Failed to load external dependencies');
                     });
                 });
-            
+
             });
 
             test.wait();
