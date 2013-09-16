@@ -75,6 +75,11 @@
             "jsfiles": [
                 "foot.js"
             ]
+        },
+        "datatable-select": {
+            "jsfiles": [
+                "select.js"
+            ]
         }
     }
 }
