@@ -4,10 +4,10 @@
     "version": "3.5.0",
     "url": "http://yuilibrary.com/",
     "options": {
-        "linkNatives": "true",        
+        "linkNatives": "true",
         "attributesEmit": "true",
         "selleck": "true",
-        "ignorePaths": [ "simpleyui" ],
+        "ignorePaths": [],
         "paths": "*/js",
         "outdir": "../api-js"
     }
