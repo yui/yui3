@@ -3,6 +3,7 @@ DataTable Change History
 
 @VERSION@
 ------
+* Add highlight module [Pull Request #1196]
 
 * Added 'contentUpdate' after the DataTable has been updated when triggered
   from a `dataChange` event. [Pull Request #1072][Issue #1052]
