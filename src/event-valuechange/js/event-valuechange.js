@@ -1,7 +1,8 @@
 /**
 Adds a synthetic `valuechange` event that fires when the `value` property of an
-`<input>` or `<textarea>` node changes as a result of a keystroke, mouse
-operation, or input method editor (IME) input event.
+`<input>`, `<textarea>`, `<select>`, or `[contenteditable="true"]` node changes
+as a result of a keystroke, mouse operation, or input method editor (IME)
+input event.
 
 Usage:
 
@@ -516,9 +517,10 @@ VC = {
 };
 
 /**
-Synthetic event that fires when the `value` property of an `<input>` or
-`<textarea>` node changes as a result of a user-initiated keystroke, mouse
-operation, or input method editor (IME) input event.
+Synthetic event that fires when the `value` property of an `<input>`,
+`<textarea>`, `<select>`, or `[contenteditable="true"]` node changes as a
+result of a user-initiated keystroke, mouse operation, or input method
+editor (IME) input event.
 
 Unlike the `onchange` event, this event fires when the value actually changes
 and not when the element loses focus. This event also reports IME and
