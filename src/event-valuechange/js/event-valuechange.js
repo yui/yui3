@@ -34,7 +34,7 @@ Usage:
 
 var DATA_KEY = '_valuechange',
     VALUE    = 'value',
-    TAG_NAME = 'tagName',
+    NODE_NAME = 'nodeName',
 
     config, // defined at the end of this file
 
@@ -85,11 +85,11 @@ VC = {
         var domNode  = node._node, // performance cheat; getValue() is a big hit when polling
             event    = options.e,
             vcData   = node._data && node._data[DATA_KEY], // another perf cheat
-            tagName  = vcData.tagName,
+            nodeName  = vcData.nodeName,
             stopped  = 0,
             facade, prevVal, newVal, selectedOption, stopElement;
 
-        if (!domNode || !vcData) {
+        if (!(domNode && vcData)) {
             Y.log('_poll: node #' + node.get('id') + ' disappeared; stopping polling and removing all notifiers.', 'warn', 'event-valuechange');
             VC._stopPolling(node);
             return;
@@ -100,10 +100,10 @@ VC = {
         if (vcData.isEditable) {
             // Use innerHTML for performance
             newVal = domNode.innerHTML;
-        } else if (tagName === 'input' || tagName === 'textarea') {
+        } else if (nodeName === 'input' || nodeName === 'textarea') {
             // Use value property for performance
             newVal = domNode.value;
-        } else if (tagName === 'select') {
+        } else if (nodeName === 'select') {
             // Back-compatibility with IE6 <select> element values.
             // Huge performance cheat to get past node.get('value').
             selectedOption = domNode.options[domNode.selectedIndex];
@@ -217,7 +217,7 @@ VC = {
 
         if (!vcData) {
             vcData = {
-                tagName    : node.get(TAG_NAME).toLowerCase(),
+                nodeName   : node.get(NODE_NAME).toLowerCase(),
                 isEditable : isEditable,
                 prevVal    : isEditable ? node.getDOMNode().innerHTML : node.get(VALUE)
             };
@@ -355,7 +355,7 @@ VC = {
         if (!vcData) {
             vcData = {
                 isEditable : VC._isEditable(node),
-                tagName    : node.get(TAG_NAME).toLowerCase()
+                nodeName   : node.get(NODE_NAME).toLowerCase()
             };
             node.setData(DATA_KEY, vcData);
         }
@@ -456,7 +456,7 @@ VC = {
             _valuechange.getNodes().each(function (child) {
                 if (!child.getData(DATA_KEY)) {
                     child.setData(DATA_KEY, {
-                        tagName    : child.get(TAG_NAME).toLowerCase(),
+                        nodeName   : child.get(NODE_NAME).toLowerCase(),
                         isEditable : VC._isEditable(child),
                         prevVal    : isEditable ? child.getDOMNode().innerHTML : child.get(VALUE)
                     });
@@ -474,7 +474,7 @@ VC = {
 
             if (!node.getData(DATA_KEY)) {
                 node.setData(DATA_KEY, {
-                    tagName    : node.get(TAG_NAME).toLowerCase(),
+                    nodeName   : node.get(NODE_NAME).toLowerCase(),
                     isEditable : isEditable,
                     prevVal    : isEditable ? node.getDOMNode().innerHTML : node.get(VALUE)
                 });
