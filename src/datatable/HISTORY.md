@@ -4,6 +4,8 @@ DataTable Change History
 @VERSION@
 ------
 
+* Add Show All to language packs. [Pull Request #1173] [Issue #1167]
+
 * Added 'contentUpdate' after the DataTable has been updated when triggered
   from a `dataChange` event. [Pull Request #1072][Issue #1052]
 
