@@ -10,11 +10,13 @@ App Framework Change History
   with a specified `root` will only consider paths as matching its route handles
   if that path is semantically within the router's `root` path. For example:
 
+    ```js
     router.set('root', '/app/');
 
     router.hasRoute('/app/');    // => true
     router.hasRoute('/app/foo'); // => true
     router.hasRoute('/bar/');    // => false
+    ```
 
   This fixed some issues with paths being erroneously considered matching even
   when they were not semantically within the router's `root` path. ([#1083][])
