@@ -21,8 +21,9 @@ App Framework Change History
   This fixed some issues with paths being erroneously considered matching even
   when they were not semantically within the router's `root` path. ([#1083][])
 
-* __[!]__ `getPath()` method now returns the _full_ current path, whereas
-  before it returned the current path relative to the router's `root`.
+* __[!]__ The `getPath()` method now returns the _full_ current path, whereas
+  before it returned the current path relative to the router's `root`. This also
+  affects `req.path` which is now the full path as well.
 
 
 [#1083]: https://github.com/yui/yui3/issues/1083
