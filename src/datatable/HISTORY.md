@@ -4,6 +4,8 @@ DataTable Change History
 @VERSION@
 ------
 
+* Add Show All to language packs. [Pull Request #1173] [Issue #1167]
+
 * Fix issue where Paginator count becomes out of sync with DataTable when
   DataTable data is modified (added or removed) [Pull Request #1011] [Issue #1010]
 

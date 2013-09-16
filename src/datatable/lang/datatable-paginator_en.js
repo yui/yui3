@@ -5,5 +5,6 @@
     last: "Last",
     goToLabel: "Page:",
     goToAction: "Go",
-    perPage: "Rows:"
+    perPage: "Rows:",
+    showAll: "Show All"
 }
