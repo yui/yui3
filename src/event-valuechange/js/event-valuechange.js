@@ -414,6 +414,12 @@ VC = {
     /**
     Called when the `valuechange` event receives a new subscriber.
 
+    Child nodes that aren't initially available when this subscription is
+    called will still fire the `valuechange` event after their data is
+    collected when the delegated `focus` event is captured. This includes
+    elements that haven't been inserted into the DOM yet, as well as
+    elements that aren't initially `contenteditable`.
+
     @method _onSubscribe
     @param {Node} node
     @param {Subscription} sub
