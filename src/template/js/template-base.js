@@ -164,6 +164,7 @@ example, the registered template can be used in the following way:
 The template can now be used without having to know which specific rendering
 engine generated it.
 
+@method render
 @param {String} templateName The abstracted name to reference the template.
 @param {Object} [data] The data to be interpolated into the template.
 @param {Object} [options] Any additional options to be passed into the template.
