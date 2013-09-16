@@ -1,0 +1,11 @@
+.yui3-skin-sam .yui3-datatable tr.yui3-datatable-select-row td {
+    background-color: hsl(60, 100%, 90%);
+}
+
+.yui3-skin-sam .yui3-datatable .yui3-datatable-select-col {
+    background-color: hsl(240, 100%, 90%);
+}
+
+.yui3-skin-sam .yui3-datatable tr .yui3-datatable-select-cell {
+    background-color: hsl(120, 100%, 90%);
+}
