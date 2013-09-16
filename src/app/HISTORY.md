@@ -4,7 +4,27 @@ App Framework Change History
 @VERSION@
 ------
 
-* No changes.
+### Router
+
+* __[!]__ A router's `root` path is now enforced as its mount point. Routers
+  with a specified `root` will only consider paths as matching its route handles
+  if that path is semantically within the router's `root` path. For example:
+
+    router.set('root', '/app/');
+
+    router.hasRoute('/app/');    // => true
+    router.hasRoute('/app/foo'); // => true
+    router.hasRoute('/bar/');    // => false
+
+  This fixed some issues with paths being erroneously considered matching even
+  when they were not semantically within the router's `root` path. ([#1083][])
+
+* __[!]__ `getPath()` method now returns the _full_ current path, whereas
+  before it returned the current path relative to the router's `root`.
+
+
+[#1083]: https://github.com/yui/yui3/issues/1083
+
 
 3.12.0
 ------
