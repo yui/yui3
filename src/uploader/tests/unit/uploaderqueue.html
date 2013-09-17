@@ -21,7 +21,7 @@
     YUI({
         coverage: ['uploader-queue', 'file-flash'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
-    }).use("console", "test", "dump", "file-flash", "uploader-queue", function(Y) {
+    }).use("console", "test", "dump", "file-flash", "file-html5", "uploader-queue", function(Y) {
         
 
 
@@ -39,24 +39,6 @@
 
         var BasicQueue = new Y.Test.Case({
             name: "Basic Uploader Queue Tests",
-
-            setUp : function () {
-
-                this.filearray = [];
-
-                for (var i = 0; i <= 2; i++) {
-                    this.filearray.push(new Y.FileFlash({name: i + ".jpg", size: i*1000, type: "jpg"}));
-                }
-
-                this.basicqueue = new Y.Uploader.Queue({simUploads: 3, 
-                                                        errorAction: Y.Uploader.Queue.RESTART_ASAP,
-                                                        fileFieldName: "Filedata",
-                                                        fileList: this.filearray,
-                                                        uploadURL: "test.html",
-                                                        perFileParameters: {}
-                                                       });
-
-            },
 
             tearDown : function () {
                delete this.basicqueue;
@@ -158,6 +140,21 @@
                 this.basicqueue.cancelUpload(this.filearray[0]);
             },
 
+            testCancelDoneFile : function() {
+                this.basicqueue.set("simUploads", 1);
+                this.basicqueue.startUpload();
+
+                this.filearray[0].fire("uploadprogress", {originEvent: {},
+                                                          bytesLoaded: 100, 
+                                                          bytesTotal: 100, 
+                                                          percentLoaded: 100
+                                             });
+
+                this.basicqueue._uploadCompleteHandler({target: this.filearray[0]});
+
+                this.basicqueue.cancelUpload(this.filearray[0]);
+            },
+
             testCancelQueuedFile : function() {
                 this.basicqueue.set("simUploads", 1);
                 this.basicqueue.startUpload();
@@ -191,8 +188,46 @@
             }
         });
 
+
         var suite = new Y.Test.Suite("Uploader: Queue");
-        suite.add(BasicQueue);
+        var FlashQueue = Y.clone(BasicQueue);
+        FlashQueue.name = "Flash Uploader Queue Tests";
+        FlashQueue.setUp = function () {
+            this.filearray = [];
+
+            for (var i = 0; i <= 2; i++) {
+                this.filearray.push(new Y.FileFlash({name: i + ".jpg", size: i*1000, type: "jpg"}));
+            }
+
+            this.basicqueue = new Y.Uploader.Queue({simUploads: 3, 
+                                                   errorAction: Y.Uploader.Queue.RESTART_ASAP,
+                                                   fileFieldName: "Filedata",
+                                                   fileList: this.filearray,
+                                                   uploadURL: "../assets/test.html",
+                                                   perFileParameters: {}
+            });
+        };
+
+        var HTML5Queue = Y.clone(BasicQueue);
+        HTML5Queue.name = "HTML5 Uploader Queue Tests";
+        HTML5Queue.setUp = function () {
+            this.filearray = [];
+
+            for (var i = 0; i <= 2; i++) {
+                this.filearray.push(new Y.FileHTML5({name: i + ".jpg", size: i*1000, type: "jpg"}));
+            }
+
+            this.basicqueue = new Y.Uploader.Queue({simUploads: 3, 
+                                                   errorAction: Y.Uploader.Queue.RESTART_ASAP,
+                                                   fileFieldName: "Filedata",
+                                                   fileList: this.filearray,
+                                                   uploadURL: "../assets/test.html",
+                                                   perFileParameters: {}
+            });
+        };
+
+        suite.add(HTML5Queue);
+        suite.add(FlashQueue);
 
         Y.Test.Runner.add(suite);
         Y.Test.Runner.run();

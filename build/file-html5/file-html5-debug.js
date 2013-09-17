@@ -278,7 +278,10 @@ YUI.add('file-html5', function (Y, NAME) {
         * @method cancelUpload
         */
         cancelUpload: function () {
-            this.get('xhr').abort();
+            var xhr = this.get('xhr');
+            if (xhr) {
+                xhr.abort();
+            }
         }
 
 
