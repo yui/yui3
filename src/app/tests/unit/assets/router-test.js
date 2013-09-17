@@ -739,7 +739,7 @@ routerSuite.add(new Y.Test.Case({
         router.set('root', pathRoot);
         router.route('/save', function (req) {
             test.resume(function () {
-                Assert.areSame('/tests/unit/save', req.path);
+                Assert.areSame(router._joinURL('/save'), req.path);
                 Assert.areSame('/save', Y.HistoryHash.getHash());
             });
         });

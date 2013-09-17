@@ -327,7 +327,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             // The `path` must be semantically within this router's `root` path
             // or mount point, if it's not then no routes should be considered a
             // match.
-            if (!this._pathHasRoot(path, root)) {
+            if (!this._pathHasRoot(root, path)) {
                 return [];
             }
 
@@ -428,7 +428,7 @@ Y.Router = Y.extend(Router, Y.Base, {
 
         // Remove the `root` from the `url` if it's the same or its path is
         // semantically within the root path.
-        if (path === root || this._pathHasRoot(path, root)) {
+        if (path === root || this._pathHasRoot(root, path)) {
             url = url.substring(root.length);
         }
 
@@ -1189,26 +1189,26 @@ Y.Router = Y.extend(Router, Y.Base, {
     before the `path` is evaluated against the root path.
 
     @example
-        this._pathHasRoot('/app/foo', '/app');  // => true
-        this._pathHasRoot('/app/foo', '/app/'); // => true
-        this._pathHasRoot('/app/',    '/app/'); // => true
+        this._pathHasRoot('/app',  '/app/foo'); // => true
+        this._pathHasRoot('/app/', '/app/foo'); // => true
+        this._pathHasRoot('/app/', '/app/');    // => true
 
-        this._pathHasRoot('/foo/bar', '/app');  // => false
-        this._pathHasRoot('/foo/bar', '/app/'); // => false
-        this._pathHasRoot('/app',     '/app/'); // => false
-        this._pathHasRoot('/app',     '/app');  // => false
+        this._pathHasRoot('/app',  '/foo/bar'); // => false
+        this._pathHasRoot('/app/', '/foo/bar'); // => false
+        this._pathHasRoot('/app/', '/app');     // => false
+        this._pathHasRoot('/app',  '/app');     // => false
 
     @method _pathHasRoot
-    @param {String} path Path to evaluate for containing the specified `root`.
     @param {String} root Root path used to evaluate whether the specificed
         `path` is semantically within. A trailing slash ("/") will be added if
         it does not already end with one.
+    @param {String} path Path to evaluate for containing the specified `root`.
     @return {Boolean} Whether or not the `path` is semantically within the
         `root` path.
     @protected
     @since @SINCE@
     **/
-    _pathHasRoot: function (path, root) {
+    _pathHasRoot: function (root, path) {
         var rootPath = root.charAt(root.length - 1) === '/' ? root : root + '/';
         return path.indexOf(rootPath) === 0;
     },
