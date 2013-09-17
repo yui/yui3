@@ -236,10 +236,15 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     dispatch: function () {
         this.once(EVT_READY, function () {
+            var req, res;
+
             this._ready = true;
 
             if (!this.upgrade()) {
-                this._dispatch(this._getPath(), this._getURL());
+                req = this._getRequest('dispatch');
+                res = this._getResponse(req);
+
+                this._dispatch(req, res);
             }
         });
 
@@ -693,18 +698,17 @@ Y.Router = Y.extend(Router, Y.Base, {
     event on every pageview) and other browsers (which do not).
 
     @method _dispatch
-    @param {String} path URL path.
-    @param {String} url Full URL.
-    @param {String} src What initiated the dispatch.
+    @param {object} req Request object.
+    @param {String} res Response object.
     @chainable
     @protected
     **/
-    _dispatch: function (path, url, src) {
+    _dispatch: function (req, res) {
         var self      = this,
             decode    = self._decode,
-            routes    = self.match(path),
+            routes    = self.match(req.path),
             callbacks = [],
-            matches, paramsMatch, req, res;
+            matches, paramsMatch;
 
         self._dispatching = self._dispatched = true;
 
@@ -713,10 +717,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             return self;
         }
 
-        req = self._getRequest(path, url, src);
-        res = self._getResponse(req);
-
-        req.next = function (err) {
+        function next(err) {
             var callback, name, route;
 
             if (err) {
@@ -724,7 +725,7 @@ Y.Router = Y.extend(Router, Y.Base, {
                 // avoiding any additional callbacks for the current route.
                 if (err === 'route') {
                     callbacks = [];
-                    req.next();
+                    next();
                 } else {
                     Y.error(err);
                 }
@@ -743,7 +744,7 @@ Y.Router = Y.extend(Router, Y.Base, {
                 // route.
                 req.pendingCallbacks = callbacks.length;
 
-                callback.call(self, req, res, req.next);
+                callback.call(self, req, res, next);
 
             } else if ((route = routes.shift())) {
                 // Make a copy of this route's `callbacks` so the original array
@@ -752,7 +753,9 @@ Y.Router = Y.extend(Router, Y.Base, {
 
                 // Decode each of the path matches so that the any URL-encoded
                 // path segments are decoded in the `req.params` object.
-                matches = YArray.map(route.regex.exec(path) || [], function (match) {
+                matches = YArray.map(route.regex.exec(req.path) || [],
+                        function (match) {
+
                     // Decode matches, or coerce `undefined` matches to an empty
                     // string to match expectations of working with `req.params`
                     // in the content of route dispatching, and normalize
@@ -802,14 +805,14 @@ Y.Router = Y.extend(Router, Y.Base, {
                 // Execute this route's `callbacks` or skip this route because
                 // some of the param regexps don't match.
                 if (paramsMatch) {
-                    req.next();
+                    next();
                 } else {
-                    req.next('route');
+                    next('route');
                 }
             }
-        };
+        }
 
-        req.next();
+        next();
 
         self._dispatching = false;
         return self._dequeue();
@@ -963,17 +966,15 @@ Y.Router = Y.extend(Router, Y.Base, {
     Gets a request object that can be passed to a route handler.
 
     @method _getRequest
-    @param {String} path Current path being dispatched.
-    @param {String} url Current full URL being dispatched.
-    @param {String} src What initiated the dispatch.
+    @param {String} src What initiated the URL change and need for the request.
     @return {Object} Request object.
     @protected
     **/
-    _getRequest: function (path, url, src) {
+    _getRequest: function (src) {
         return {
-            path : path,
+            path : this._getPath(),
             query: this._parseQuery(this._getQuery()),
-            url  : url,
+            url  : this._getURL(),
             src  : src
         };
     },
@@ -987,14 +988,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _getResponse: function (req) {
-        // For backwards compatibility, the response object is a function that
-        // calls `next()` on the request object and returns the result.
-        var res = function () {
-            return req.next.apply(this, arguments);
-        };
-
-        res.req = req;
-        return res;
+        return {req: req};
     },
 
     /**
@@ -1429,7 +1423,8 @@ Y.Router = Y.extend(Router, Y.Base, {
         var self       = this,
             src        = e.src,
             prevURL    = self._url,
-            currentURL = self._getURL();
+            currentURL = self._getURL(),
+            req, res;
 
         self._url = currentURL;
 
@@ -1444,7 +1439,10 @@ Y.Router = Y.extend(Router, Y.Base, {
             return;
         }
 
-        self._dispatch(self._getPath(), currentURL, src);
+        req = self._getRequest(src);
+        res = self._getResponse(req);
+
+        self._dispatch(req, res);
     },
 
     // -- Default Event Handlers -----------------------------------------------
@@ -1575,13 +1573,16 @@ Y.Router = Y.extend(Router, Y.Base, {
     @since 3.6.0
     **/
     dispatch: function () {
-        var i, len, router;
+        var i, len, router, req, res;
 
         for (i = 0, len = instances.length; i < len; i += 1) {
             router = instances[i];
 
             if (router) {
-                router._dispatch(router._getPath(), router._getURL());
+                req = router._getRequest('dispatch');
+                res = router._getResponse(req);
+
+                router._dispatch(req, res);
             }
         }
     }
