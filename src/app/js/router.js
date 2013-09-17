@@ -526,12 +526,12 @@ Y.Router = Y.extend(Router, Y.Base, {
       @param {Object} callbacks.req Request object containing information about
           the request. It contains the following properties.
 
-        @param {Array|Object} callbacks.req.params Captured parameters matched by
-          the route path specification. If a string path was used and contained
-          named parameters, then this will be a key/value hash mapping parameter
-          names to their matched values. If a regex path was used, this will be
-          an array of subpattern matches starting at index 0 for the full match,
-          then 1 for the first subpattern match, and so on.
+        @param {Array|Object} callbacks.req.params Captured parameters matched
+          by the route path specification. If a string path was used and
+          contained named parameters, then this will be a key/value hash mapping
+          parameter names to their matched values. If a regex path was used,
+          this will be an array of subpattern matches starting at index 0 for
+          the full match, then 1 for the first subpattern match, and so on.
         @param {String} callbacks.req.path The current URL path.
         @param {Number} callbacks.req.pendingCallbacks Number of remaining
           callbacks the route handler has after this one in the dispatch chain.
@@ -540,10 +540,13 @@ Y.Router = Y.extend(Router, Y.Base, {
         @param {Object} callbacks.req.query Query hash representing the URL
           query string, if any. Parameter names are keys, and are mapped to
           parameter values.
-        @param {String} callbacks.req.url The full URL.
+        @param {Object} callbacks.req.route Reference to the current route
+          object whose callbacks are being dispatched.
+        @param {Object} callbacks.req.router Reference to this router instnace.
         @param {String} callbacks.req.src What initiated the dispatch. In an
           HTML5 browser, when the back/forward buttons are used, this property
           will have a value of "popstate".
+        @param {String} callbacks.req.url The full URL.
 
       @param {Object} callbacks.res Response object containing methods and
           information that relate to responding to a request. It contains the
@@ -798,8 +801,9 @@ Y.Router = Y.extend(Router, Y.Base, {
                     req.params = matches.concat();
                 }
 
-                // Allow access to the number of remaining routes for this
-                // request.
+                // Allow access to current route and the number of remaining
+                // routes for this request.
+                req.route         = route;
                 req.pendingRoutes = routes.length;
 
                 // Execute this route's `callbacks` or skip this route because
@@ -972,10 +976,11 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _getRequest: function (src) {
         return {
-            path : this._getPath(),
-            query: this._parseQuery(this._getQuery()),
-            url  : this._getURL(),
-            src  : src
+            path  : this._getPath(),
+            query : this._parseQuery(this._getQuery()),
+            url   : this._getURL(),
+            router: this,
+            src   : src
         };
     },
 

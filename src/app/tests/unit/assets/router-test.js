@@ -905,15 +905,22 @@ routerSuite.add(new Y.Test.Case({
             calls += 1;
 
             Assert.isObject(req);
-            Assert.isObject(res);
-            Assert.isFunction(next);
-            Assert.areSame(req, res.req);
+            Assert.areSame(router, req.router);
+            Assert.isObject(req.route);
+            Assert.areSame('/foo', req.route.path);
             Assert.isObject(req.params);
             Assert.isTrue(Y.Object.isEmpty(req.params));
+            Assert.isNumber(req.pendingCallbacks);
             Assert.isNumber(req.pendingRoutes);
             Assert.areSame('/foo', req.path);
+            Assert.areSame(router._getURL(), req.url);
             ObjectAssert.areEqual({bar: 'baz quux', moo: ''}, req.query);
             Assert.areSame('dispatch', req.src);
+
+            Assert.isObject(res);
+            Assert.areSame(req, res.req);
+
+            Assert.isFunction(next);
         });
 
         // Duckpunching _getQuery so we can test req.query.
