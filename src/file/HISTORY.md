@@ -4,7 +4,7 @@ File Module Change History
 @VERSION@
 ------
 
-* No changes.
+* Added check if xhr exists before aborting
 
 3.12.0
 ------
