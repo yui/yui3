@@ -119,6 +119,23 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
 
     /**
+    Regex used to break up a URL string around the URL's path.
+
+    Subpattern captures:
+
+      1. Origin, everything before the URL's path-part.
+      2. The URL's path-part.
+      3. The URL's query.
+      4. The URL's hash fragment.
+
+    @property _regexURL
+    @type RegExp
+    @protected
+    @since 3.5.0
+    **/
+    _regexURL: /^((?:[^\/#?:]+:\/\/|\/\/)[^\/]*)?([^?#]*)(\?[^#]*)?(#.*)?$/,
+
+    /**
     Regex used to match parameter placeholders in route paths.
 
     Subpattern captures:
