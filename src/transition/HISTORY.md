@@ -4,7 +4,7 @@ Transition Change History
 @VERSION@
 ------
 
-* No changes.
+* Added optional flag to NodeList.transition which, if true, fires the callback only once at the end of the nodelist transitions
 
 3.12.0
 ------
