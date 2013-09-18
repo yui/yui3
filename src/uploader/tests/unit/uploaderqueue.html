@@ -21,7 +21,7 @@
     YUI({
         coverage: ['uploader-queue', 'file-flash'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
-    }).use("console", "test", "dump", "file-flash", "file-html5", "uploader-queue", function(Y) {
+    }).use("console", "test", "dump", "file-flash", "uploader-queue", function(Y) {
         
 
 
@@ -40,9 +40,30 @@
         var BasicQueue = new Y.Test.Case({
             name: "Basic Uploader Queue Tests",
 
+            setUp : function () {
+                this.filearray = [];
+
+                for (var i = 0; i <=2; i++) {
+                    this.filearray.push(new Y.FileFlash({
+                        name: i + ".jpg",
+                        size: i * 1000,
+                        type: "jpg"
+                    }))
+                }
+
+                this.basicqueue = new Y.Uploader.Queue({
+                    simUploads: 3,
+                    errorAction: Y.Uploader.Queue.RESTART_ASAP,
+                    fileFieldName: "Filedata",
+                    fileList: this.filearray,
+                    uploadURL: "test.html",
+                    perFileParameters: {}
+                })
+            },
+
             tearDown : function () {
-               delete this.basicqueue;
-               delete this.filearray;
+                delete this.basicqueue;
+                delete this.filearray;
             },
 
 
@@ -188,46 +209,8 @@
             }
         });
 
-
         var suite = new Y.Test.Suite("Uploader: Queue");
-        var FlashQueue = Y.clone(BasicQueue);
-        FlashQueue.name = "Flash Uploader Queue Tests";
-        FlashQueue.setUp = function () {
-            this.filearray = [];
-
-            for (var i = 0; i <= 2; i++) {
-                this.filearray.push(new Y.FileFlash({name: i + ".jpg", size: i*1000, type: "jpg"}));
-            }
-
-            this.basicqueue = new Y.Uploader.Queue({simUploads: 3, 
-                                                   errorAction: Y.Uploader.Queue.RESTART_ASAP,
-                                                   fileFieldName: "Filedata",
-                                                   fileList: this.filearray,
-                                                   uploadURL: "../assets/test.html",
-                                                   perFileParameters: {}
-            });
-        };
-
-        var HTML5Queue = Y.clone(BasicQueue);
-        HTML5Queue.name = "HTML5 Uploader Queue Tests";
-        HTML5Queue.setUp = function () {
-            this.filearray = [];
-
-            for (var i = 0; i <= 2; i++) {
-                this.filearray.push(new Y.FileHTML5({name: i + ".jpg", size: i*1000, type: "jpg"}));
-            }
-
-            this.basicqueue = new Y.Uploader.Queue({simUploads: 3, 
-                                                   errorAction: Y.Uploader.Queue.RESTART_ASAP,
-                                                   fileFieldName: "Filedata",
-                                                   fileList: this.filearray,
-                                                   uploadURL: "../assets/test.html",
-                                                   perFileParameters: {}
-            });
-        };
-
-        suite.add(HTML5Queue);
-        suite.add(FlashQueue);
+        suite.add(BasicQueue);
 
         Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
