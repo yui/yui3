@@ -108,10 +108,7 @@ DtKeyNav.ATTRS = {
     **/
     focusedCell: {
         setter: '_focusedCellSetter'
-
     },
-
-
 
     /**
     Determines whether it is possible to navigate into the header area.
@@ -122,7 +119,6 @@ DtKeyNav.ATTRS = {
     @type Boolean
     @default true
      */
-
     keyIntoHeaders: {
         value: true
     }
@@ -233,7 +229,6 @@ Y.mix( DtKeyNav.prototype, {
     @private
     */
     _afterKeyNavFocusedCellChange: function (e) {
-         console.log('_afterKeyNavFocusedCellChange',e);
         var newVal  = e.newVal,
             prevVal = e.prevVal;
 
@@ -248,6 +243,8 @@ Y.mix( DtKeyNav.prototype, {
                 newVal.scrollIntoView();
                 newVal.focus();
             }
+        } else {
+            this.set('focused', null);
         }
     },
 
@@ -283,7 +280,6 @@ Y.mix( DtKeyNav.prototype, {
     @private
      */
     _afterKeyNavRender: function () {
-         console.log('_afterKeyNavRender');
         var cbx = this.get('contentBox');
         this._keyNavSubscr.push(
             cbx.on('keydown', this._onKeyNavKeyDown, this),
@@ -291,6 +287,9 @@ Y.mix( DtKeyNav.prototype, {
         );
         this._keyNavTHead = (this._yScrollHeader || this._tableNode).one('thead');
         this._keyMoveFirst();
+
+        // determine if we have nested headers
+        this._keyNavNestedHeaders = !(this.get('columns').length === this.head.theadNode.all('th').size())
     },
 
     /**
@@ -329,19 +328,14 @@ Y.mix( DtKeyNav.prototype, {
         });
         action = this.keyActions[keyCode] || this.keyActions[keyName];
 
-        switch (typeof action) {
-            case 'string':
-                if (this[action]) {
-                    this[action].call(this, e);
-                } else {
-                    this._keyNavFireEvent(action, e);
-                }
-                break;
-            case 'function':
-                action.call(this, e);
-                break;
-            default:
-                return;
+        if (typeof action === 'string') {
+            if (this[action]) {
+                this[action].call(this, e);
+            } else {
+                this._keyNavFireEvent(action, e);
+            }
+        } else {
+            action.call(this, e);
         }
     },
 
@@ -410,16 +404,53 @@ Y.mix( DtKeyNav.prototype, {
     */
     _keyMoveRight: function (e) {
         var cell = this.get('focusedCell'),
-            index = cell.get('cellIndex') + 1,
-            row = cell.ancestor(),
-            cells = row.get('cells');
+            cellIndex = cell.get('cellIndex') + 1,
+            row = cell.ancestor('tr'),
+            cells = row.get('cells'),
+            section = row.ancestor(),
+            sectionRows = section.get('rows'),
+            inHead = section === this._keyNavTHead,
+            colMap = this._columnMap,
+            nextCell,
+            parent;
 
         e.preventDefault();
 
-        if (index === cells.size()) {
-            return;
+        // a little special with nested headers
+        /*
+            +-------------+-------+
+            | ABC         | DE    |
+            +-------+-----+---+---+
+            | AB    |     |   |   |
+            +---+---+     |   |   |
+            | A | B |  C  | D | E |
+            +---+---+-----+---+---+
+        */
+
+        nextCell = cell.next();
+
+        if (row.get('rowIndex') !== 0 && inHead && this._keyNavNestedHeaders) {
+            if (nextCell) {
+                cell = nextCell;
+            } else { //-- B -> C
+                parent = this._getTHParent(cell);
+
+                if (parent && parent.next()) {
+                    cell = parent.next();
+                } else { //-- E -> ...
+                    return;
+                }
+            }
+
+        } else {
+            if (!nextCell) {
+                return;
+            } else {
+                cell = nextCell;
+            }
         }
-        this.set('focusedCell', cells.item(index), {src:'keyNav'});
+
+        this.set('focusedCell', cell, { src:'keyNav' });
 
     },
 
@@ -435,9 +466,10 @@ Y.mix( DtKeyNav.prototype, {
     _keyMoveUp: function (e) {
         var cell = this.get('focusedCell'),
             cellIndex = cell.get('cellIndex'),
-            row = cell.ancestor(),
+            row = cell.ancestor('tr'),
             rowIndex = row.get('rowIndex'),
             section = row.ancestor(),
+            sectionRows = section.get('rows'),
             inHead = section === this._keyNavTHead;
 
         e.preventDefault();
@@ -445,15 +477,20 @@ Y.mix( DtKeyNav.prototype, {
         if (!inHead) {
             rowIndex -= section.get('firstChild').get('rowIndex');
         }
+
         if (rowIndex === 0) {
             if (inHead || !this.get('keyIntoHeaders')) {
                 return;
             }
+
             section = this._keyNavTHead;
+            sectionRows = section.get('rows');
 
             if (this._keyNavNestedHeaders) {
                 key = this._keyNavColRegExp.exec(cell.get('className'))[1];
                 cell = section.one('.' + this._keyNavColPrefix + key);
+                cellIndex = cell.get('cellIndex');
+                row = cell.ancestor('tr');
             } else {
                 row = section.get('firstChild');
                 cell = row.get('cells').item(cellIndex);
@@ -466,11 +503,11 @@ Y.mix( DtKeyNav.prototype, {
                     cell = section.one('#' + parent.id);
                 }
             } else {
-                row = section.get('rows').item(rowIndex -1);
+                row = sectionRows.item(rowIndex -1);
                 cell = row.get('cells').item(cellIndex);
             }
         }
-        this.set('focusedCell', row.get('cells').item(cellIndex));
+        this.set('focusedCell', cell);
     },
 
     /**
@@ -485,40 +522,56 @@ Y.mix( DtKeyNav.prototype, {
     _keyMoveDown: function (e) {
         var cell = this.get('focusedCell'),
             cellIndex = cell.get('cellIndex'),
-            row = cell.ancestor(),
+            row = cell.ancestor('tr'),
             rowIndex = row.get('rowIndex') + 1,
             section = row.ancestor(),
             inHead = section === this._keyNavTHead,
-            key, children;
+            tbody = (this.body && this.body.tbodyNode),
+            sectionRows = section.get('rows'),
+            key,
+            children;
 
         e.preventDefault();
 
-        if (inHead) {
-            if (this._keyNavNestedHeaders) {
+        if (inHead) { // focused cell is in the header
+            if (this._keyNavNestedHeaders) { // the header is nested
                 key = this._keyNavColRegExp.exec(cell.get('className'))[1];
                 children = this._columnMap[key].children;
+
+                rowIndex += (cell.getAttribute('rowspan') || 1) - 1;
+
                 if (children) {
+                    // stay in thead
                     cell = section.one('#' + children[0].id);
                 } else {
-                    cell = this._tbodyNode.one('.' + this._keyNavColPrefix + key);
+                    // moving into tbody
+                    cell = tbody.one('.' + this._keyNavColPrefix + key);
+                    section = tbody;
+                    sectionRows = section.get('rows');
                 }
-            } else {
-                row = this._tbodyNode.get('firstChild');
+                cellIndex = cell.get('cellIndex');
+
+            } else { // the header is not nested
+                row = tbody.one('tr');
                 cell = row.get('cells').item(cellIndex);
             }
-        } else {
-            rowIndex -= section.get('firstChild').get('rowIndex');
         }
-        if (rowIndex === section.get('rows').size()) {
-            if (!inHead) {
+
+        // offset row index to tbody
+        rowIndex -= sectionRows.item(0).get('rowIndex');
+
+
+        if (rowIndex >= sectionRows.size()) {
+            if (!inHead) { // last row in tbody
                 return;
             }
-            section = this._tbodyNode;
-            row = section.get('firstChild');
+            section = tbody;
+            row = section.one('tr');
 
         } else {
-            row = section.get('rows').item(rowIndex);
+            row = sectionRows.item(rowIndex);
         }
+
         this.set('focusedCell', row.get('cells').item(cellIndex));
     },
 
@@ -609,8 +662,29 @@ Y.mix( DtKeyNav.prototype, {
             if ((tag === 'TD' || tag === 'TH') && this.get('contentBox').contains(cell) ) {
                 return cell;
             }
+        } else if (cell === null) {
+            return cell;
         }
         return Y.Attribute.INVALID_VALUE;
+    },
+
+    /**
+     Retrieves the parent cell of the given TH cell. If there is no parent for
+     the provided cell, null is returned.
+     @protected
+     @method _getTHParent
+     @param {Y.Node} thCell Cell to find parent of
+     @return {Y.Node} Parent of the cell provided or null
+     */
+    _getTHParent: function (thCell) {
+        var key = this._keyNavColRegExp.exec(thCell.get('className'))[1];
+            parent = this._columnMap[key] && this._columnMap[key]._parent;
+
+        if (parent) {
+            return thCell.ancestor().ancestor().one('.' + this._keyNavColPrefix + parent.key);
+        }
+
+        return null;
     }
 });
 
