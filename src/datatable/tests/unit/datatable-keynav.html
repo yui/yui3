@@ -21,7 +21,7 @@ YUI({
     coverage: ['datatable-keynav'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw' ,
     filters: {
-        'datatable-keynav': (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'debug'
+        //'datatable-keynav': (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'debug'
     }
  }).use( 'test-console', 'test', 'datatable-keynav-tests',  "node-event-simulate",
         "datatable-keynav",  "datatable", "datatable-scroll","base-build",
@@ -30,7 +30,7 @@ YUI({
     (new Y.Test.Console()).render('#logger');
 
     Y.Test.Runner.setName('datatable-keynav');
-    
+
     Y.Test.Runner.run();
 
 });
