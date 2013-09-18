@@ -470,7 +470,8 @@ Y.mix( DtKeyNav.prototype, {
             rowIndex = row.get('rowIndex'),
             section = row.ancestor(),
             sectionRows = section.get('rows'),
-            inHead = section === this._keyNavTHead;
+            inHead = section === this._keyNavTHead,
+            parent;
 
         e.preventDefault();
 
@@ -677,7 +678,7 @@ Y.mix( DtKeyNav.prototype, {
      @return {Y.Node} Parent of the cell provided or null
      */
     _getTHParent: function (thCell) {
-        var key = this._keyNavColRegExp.exec(thCell.get('className'))[1];
+        var key = this._keyNavColRegExp.exec(thCell.get('className'))[1],
             parent = this._columnMap[key] && this._columnMap[key]._parent;
 
         if (parent) {
