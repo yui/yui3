@@ -113,8 +113,11 @@ TRANSITION_PROPERTY        = VENDOR_PREFIX + 'transition-property';
 TRANSITION_DURATION        = VENDOR_PREFIX + 'transition-duration';
 TRANSITION_TIMING_FUNCTION = VENDOR_PREFIX + 'transition-timing-function';
 TRANSITION_DELAY           = VENDOR_PREFIX + 'transition-delay';
-TRANSITION_END             = 'transitionEnd';
+TRANSITION_END             = 'transitionend';
 
+// Some implementations include the vendor prefix with the transitionEnd event.
+// Webkit populates the window with the appropriate event name, so we key off
+// of that when possible.
 if (Y.config.win && !Y.config.win.ontransitionend) {
     TRANSITION_END = VENDOR_TRANSITION_END[CAMEL_VENDOR_PREFIX] || TRANSITION_END;
 }
