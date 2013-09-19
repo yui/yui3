@@ -108,14 +108,14 @@ Y.mix(Y.DOM, {
             nodes = node.childNodes;
 
             if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
-                ret = nodes[0].parentNode.removeChild(nodes[0]);
+                ret = node.removeChild(nodes[0]);
             } else if (nodes[0] && nodes[0].className === 'yui3-big-dummy') { // using dummy node to preserve some attributes (e.g. OPTION not selected)
                 selectedIndex = node.selectedIndex;
                 
                 if (nodes.length === 2) {
                     ret = nodes[0].nextSibling;
                 } else {
-                    nodes[0].parentNode.removeChild(nodes[0]);
+                    node.removeChild(nodes[0]);
                     ret = Y_DOM._nl2frag(nodes, doc);
                 }
             } else { // return multiple nodes as a fragment
