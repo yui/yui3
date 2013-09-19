@@ -289,7 +289,7 @@ Y.mix( DtKeyNav.prototype, {
         this._keyMoveFirst();
 
         // determine if we have nested headers
-        this._keyNavNestedHeaders = !(this.get('columns').length === this.head.theadNode.all('th').size())
+        this._keyNavNestedHeaders = (this.get('columns').length !== this.head.theadNode.all('th').size());
     },
 
     /**
@@ -404,13 +404,9 @@ Y.mix( DtKeyNav.prototype, {
     */
     _keyMoveRight: function (e) {
         var cell = this.get('focusedCell'),
-            cellIndex = cell.get('cellIndex') + 1,
             row = cell.ancestor('tr'),
-            cells = row.get('cells'),
             section = row.ancestor(),
-            sectionRows = section.get('rows'),
             inHead = section === this._keyNavTHead,
-            colMap = this._columnMap,
             nextCell,
             parent;
 
@@ -488,7 +484,7 @@ Y.mix( DtKeyNav.prototype, {
             sectionRows = section.get('rows');
 
             if (this._keyNavNestedHeaders) {
-                key = this._keyNavColRegExp.exec(cell.get('className'))[1];
+                key = this._getCellColumnName(cell);
                 cell = section.one('.' + this._keyNavColPrefix + key);
                 cellIndex = cell.get('cellIndex');
                 row = cell.ancestor('tr');
@@ -498,7 +494,7 @@ Y.mix( DtKeyNav.prototype, {
             }
         } else {
             if (inHead && this._keyNavNestedHeaders) {
-                key = this._keyNavColRegExp.exec(cell.get('className'))[1];
+                key = this._getCellColumnName(cell);
                 parent = this._columnMap[key]._parent;
                 if (parent) {
                     cell = section.one('#' + parent.id);
@@ -536,7 +532,7 @@ Y.mix( DtKeyNav.prototype, {
 
         if (inHead) { // focused cell is in the header
             if (this._keyNavNestedHeaders) { // the header is nested
-                key = this._keyNavColRegExp.exec(cell.get('className'))[1];
+                key = this._getCellColumnName(cell);
                 children = this._columnMap[key].children;
 
                 rowIndex += (cell.getAttribute('rowspan') || 1) - 1;
@@ -618,7 +614,7 @@ Y.mix( DtKeyNav.prototype, {
         e.preventDefault();
 
         if (this._keyNavNestedHeaders && this.get('keyIntoHeaders')) {
-            key = this._keyNavColRegExp.exec(cell.get('className'))[1];
+            key = this._getCellColumnName(cell);
             header = this._columnMap[key];
             while (header._parent) {
                 header = header._parent;
@@ -678,7 +674,7 @@ Y.mix( DtKeyNav.prototype, {
      @return {Y.Node} Parent of the cell provided or null
      */
     _getTHParent: function (thCell) {
-        var key = this._keyNavColRegExp.exec(thCell.get('className'))[1],
+        var key = this._getCellColumnName(thCell),
             parent = this._columnMap[key] && this._columnMap[key]._parent;
 
         if (parent) {
@@ -686,6 +682,18 @@ Y.mix( DtKeyNav.prototype, {
         }
 
         return null;
+    },
+
+    /**
+     Retrieves the column name based from the data attribute on the cell if
+     available. Other wise, extracts the column name from the classname
+     @protected
+     @method _getCellColumnName
+     @param {Y.Node} cell Cell to get column name from
+     @return String Column name of the provided cell
+     */
+    _getCellColumnName: function (cell) {
+        return cell.getData('yui3-col-id') || this._keyNavColRegExp.exec(cell.get('className'))[1];
     }
 });
 
