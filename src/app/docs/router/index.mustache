@@ -269,6 +269,23 @@ This is where the `root` config attribute comes in. If you set `root` to `'/mysi
   </tbody>
 </table>
 
+<p>
+The `root` path also acts a mount point for the router and will only consider paths that fall under the `root` (when set). The following example demonstrates these semantics:
+</p>
+
+```js
+router.set('root', '/mysite/');
+
+router.route('/',    function () { alert('Hello!'); });
+router.route('/pie', function () { alert('Mmm. Pie.'); });
+
+Y.log(router.hasRoute('/'));           // => false
+Y.log(router.hasRoute('/pie'));        // => false
+
+Y.log(router.hasRoute('/mysite/'));    // => true
+Y.log(router.hasRoute('/mysite/pie')); // => true
+```
+
 <h3>Extending `Y.Router`</h3>
 
 <p>

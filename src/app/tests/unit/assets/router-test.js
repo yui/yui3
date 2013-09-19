@@ -387,6 +387,32 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame(two, routes[1].callbacks[0]);
     },
 
+    'match() should return an array of routes that match the given path under a `root`': function () {
+        var router = this.router = new Y.Router(),
+            routes;
+
+        function one() {}
+        function two() {}
+        function three() {}
+
+        router.set('root', '/app/');
+
+        router.route('/:foo', one);
+        router.route(/foo/, two);
+        router.route('/bar', three);
+
+        Assert.areSame(0, router.match('/').length);
+        Assert.areSame(0, router.match('/foo').length);
+        Assert.areSame(0, router.match('/foo/').length);
+        Assert.areSame(0, router.match('/bar').length);
+
+        routes = router.match('/app/foo');
+
+        Assert.areSame(2, routes.length);
+        Assert.areSame(one, routes[0].callbacks[0]);
+        Assert.areSame(two, routes[1].callbacks[0]);
+    },
+
     'hasRoute() should return `true` if one or more routes match the given path': function () {
         var router = this.router = new Y.Router(),
             router2 = new Y.Router();
@@ -414,6 +440,53 @@ routerSuite.add(new Y.Test.Case({
         Assert.isFalse(router2.hasRoute('/baz?a=b'));
 
         // Cleanup router2.
+        router2.destroy();
+    },
+
+    'hasRoute() should always return `false` for paths not under the `root`': function () {
+        var location = Y.getLocation(),
+            router1  = new Y.Router({root: '/app'}),
+            router2  = new Y.Router({root: '/app/'});
+
+        function noop () {}
+
+        router1.route('/', noop);
+        router1.route('/:foo', noop);
+        router1.route(/foo/, noop);
+        router1.route('/bar', noop);
+
+        router2.route('/', noop);
+        router2.route('/:foo', noop);
+        router2.route(/foo/, noop);
+        router2.route('/bar', noop);
+
+        Assert.isFalse(router1.hasRoute('/'));
+        Assert.isFalse(router1.hasRoute('/app'));
+        Assert.isFalse(router1.hasRoute('/foo/'));
+        Assert.isFalse(router1.hasRoute('/bar'));
+        Assert.isFalse(router1.hasRoute('/baz'));
+        Assert.isFalse(router1.hasRoute(router1._getOrigin() + '/bar'));
+
+        Assert.isFalse(router2.hasRoute('/'));
+        Assert.isFalse(router2.hasRoute('/app'));
+        Assert.isFalse(router2.hasRoute('/foo/'));
+        Assert.isFalse(router2.hasRoute('/bar'));
+        Assert.isFalse(router2.hasRoute('/baz'));
+        Assert.isFalse(router2.hasRoute(router2._getOrigin() + '/bar'));
+
+        Assert.isTrue(router1.hasRoute('/app/'));
+        Assert.isTrue(router1.hasRoute('/app/foo/'));
+        Assert.isTrue(router1.hasRoute('/app/bar'));
+        Assert.isTrue(router1.hasRoute('/app/baz'));
+        Assert.isTrue(router1.hasRoute(router1._getOrigin() + '/app/bar'));
+
+        Assert.isTrue(router2.hasRoute('/app/'));
+        Assert.isTrue(router2.hasRoute('/app/foo/'));
+        Assert.isTrue(router2.hasRoute('/app/bar'));
+        Assert.isTrue(router2.hasRoute('/app/baz'));
+        Assert.isTrue(router2.hasRoute(router2._getOrigin() + '/app/bar'));
+
+        router1.destroy();
         router2.destroy();
     },
 
@@ -482,7 +555,7 @@ routerSuite.add(new Y.Test.Case({
 
         router.route('/hashpath', function (req) {
             test.resume(function () {
-                Assert.areSame('/hashpath', req.path);
+                Assert.areSame('/foo/hashpath', req.path);
                 Assert.areSame(Y.getLocation().pathname, root + 'hashpath');
             });
         });
@@ -497,15 +570,28 @@ routerSuite.add(new Y.Test.Case({
         router.set('root', '/');
         Assert.areSame('/bar', router.removeRoot('/bar'));
         Assert.areSame('/bar', router.removeRoot('bar'));
+        Assert.areSame('/bar/', router.removeRoot('/bar/'));
+        Assert.areSame('/bar/', router.removeRoot('bar/'));
 
         router.set('root', '/foo');
+        Assert.areSame('/', router.removeRoot('/foo'));
+        Assert.areSame('/', router.removeRoot('/foo/'));
         Assert.areSame('/bar', router.removeRoot('/foo/bar'));
+        Assert.areSame('/bar/', router.removeRoot('/foo/bar/'));
+        Assert.areSame('/foobar', router.removeRoot('/foobar'));
+        Assert.areSame('/foobar/', router.removeRoot('/foobar/'));
 
         router.set('root', '/foo/');
+        Assert.areSame('/foo', router.removeRoot('/foo'));
+        Assert.areSame('/', router.removeRoot('/foo/'));
         Assert.areSame('/bar', router.removeRoot('/foo/bar'));
+        Assert.areSame('/bar/', router.removeRoot('/foo/bar/'));
+        Assert.areSame('/foobar', router.removeRoot('/foobar'));
+        Assert.areSame('/foobar/', router.removeRoot('/foobar/'));
 
         router.set('root', '/moo');
         Assert.areSame('/foo/bar', router.removeRoot('/foo/bar'));
+        Assert.areSame('/foo/moo', router.removeRoot('/foo/moo'));
     },
 
     'removeRoot() should strip the origin ("http://foo.com") portion of the URL, if any': function () {
@@ -653,7 +739,7 @@ routerSuite.add(new Y.Test.Case({
         router.set('root', pathRoot);
         router.route('/save', function (req) {
             test.resume(function () {
-                Assert.areSame('/save', req.path);
+                Assert.areSame(router._joinURL('/save'), req.path);
                 Assert.areSame('/save', Y.HistoryHash.getHash());
             });
         });
@@ -674,7 +760,7 @@ routerSuite.add(new Y.Test.Case({
         router.set('root', '/app');
         router.route('/save', function (req) {
             test.resume(function () {
-                Assert.areSame('/save', req.path);
+                Assert.areSame('/app/save', req.path);
                 Assert.areSame('/app/save', Y.HistoryHash.getHash());
             });
         });

@@ -247,7 +247,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
-    Gets the current route path, relative to the `root` (if any).
+    Gets the current route path.
 
     @method getPath
     @return {String} Current route path.
@@ -280,13 +280,17 @@ Y.Router = Y.extend(Router, Y.Base, {
             url = this._upgradeURL(url);
         }
 
-        path = this.removeQuery(this.removeRoot(url));
+        // Get just the path portion of the specified `url`.
+        path = this.removeQuery(url.replace(this._regexUrlOrigin, ''));
 
         return !!this.match(path).length;
     },
 
     /**
     Returns an array of route objects that match the specified URL path.
+
+    If this router has a `root`, then the specified `path` _must_ be
+    semantically within the `root` path to match any routes.
 
     This method is called internally to determine which routes match the current
     path whenever the URL changes. You may override it if you want to customize
@@ -312,10 +316,26 @@ Y.Router = Y.extend(Router, Y.Base, {
         // => [{callback: ..., keys: [], path: '/foo', regex: ...}]
 
     @method match
-    @param {String} path URL path to match.
+    @param {String} path URL path to match. This should be an absolute path that
+        starts with a slash: "/".
     @return {Object[]} Array of route objects that match the specified path.
     **/
     match: function (path) {
+        var root = this.get('root');
+
+        if (root) {
+            // The `path` must be semantically within this router's `root` path
+            // or mount point, if it's not then no routes should be considered a
+            // match.
+            if (!this._pathHasRoot(root, path)) {
+                return [];
+            }
+
+            // Remove this router's `root` from the `path` before checking the
+            // routes for any matches.
+            path = this.removeRoot(path);
+        }
+
         return YArray.filter(this._routes, function (route) {
             return path.search(route.regex) > -1;
         });
@@ -392,13 +412,23 @@ Y.Router = Y.extend(Router, Y.Base, {
     @return {String} Rootless path.
     **/
     removeRoot: function (url) {
-        var root = this.get('root');
+        var root = this.get('root'),
+            path;
 
         // Strip out the non-path part of the URL, if any (e.g.
         // "http://foo.com"), so that we're left with just the path.
         url = url.replace(this._regexUrlOrigin, '');
 
-        if (root && url.indexOf(root) === 0) {
+        // Return the host-less URL if there's no `root` path to further remove.
+        if (!root) {
+            return url;
+        }
+
+        path = this.removeQuery(url);
+
+        // Remove the `root` from the `url` if it's the same or its path is
+        // semantically within the root path.
+        if (path === root || this._pathHasRoot(root, path)) {
             url = url.substring(root.length);
         }
 
@@ -864,7 +894,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
-    Gets the current route path, relative to the `root` (if any).
+    Gets the current route path.
 
     @method _getPath
     @return {String} Current route path.
@@ -874,7 +904,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         var path = (!this._html5 && this._getHashPath()) ||
                 Y.getLocation().pathname;
 
-        return this.removeQuery(this.removeRoot(path));
+        return this.removeQuery(path);
     },
 
     /**
@@ -1149,6 +1179,38 @@ Y.Router = Y.extend(Router, Y.Base, {
         }
 
         return result;
+    },
+
+    /**
+    Returns `true` when the specified `path` is semantically within the
+    specified `root` path.
+
+    If the `root` does not end with a trailing slash ("/"), one will be added
+    before the `path` is evaluated against the root path.
+
+    @example
+        this._pathHasRoot('/app',  '/app/foo'); // => true
+        this._pathHasRoot('/app/', '/app/foo'); // => true
+        this._pathHasRoot('/app/', '/app/');    // => true
+
+        this._pathHasRoot('/app',  '/foo/bar'); // => false
+        this._pathHasRoot('/app/', '/foo/bar'); // => false
+        this._pathHasRoot('/app/', '/app');     // => false
+        this._pathHasRoot('/app',  '/app');     // => false
+
+    @method _pathHasRoot
+    @param {String} root Root path used to evaluate whether the specificed
+        `path` is semantically within. A trailing slash ("/") will be added if
+        it does not already end with one.
+    @param {String} path Path to evaluate for containing the specified `root`.
+    @return {Boolean} Whether or not the `path` is semantically within the
+        `root` path.
+    @protected
+    @since @SINCE@
+    **/
+    _pathHasRoot: function (root, path) {
+        var rootPath = root.charAt(root.length - 1) === '/' ? root : root + '/';
+        return path.indexOf(rootPath) === 0;
     },
 
     /**
@@ -1518,6 +1580,16 @@ Y.Router = Y.extend(Router, Y.Base, {
         `/myapp`. Setting `root` to `/myapp` would cause all routes to be
         evaluated relative to that root URL, so the `/` route would then execute
         when the user browses to `http://example.com/myapp/`.
+
+        @example
+            router.set('root', '/myapp');
+            router.route('/foo', function () { ... });
+
+            Y.log(router.hasRoute('/foo'));       // => false
+            Y.log(router.hasRoute('/myapp/foo')); // => true
+
+            // Updates the URL to: "/myapp/foo"
+            router.save('/foo');
 
         @attribute root
         @type String
