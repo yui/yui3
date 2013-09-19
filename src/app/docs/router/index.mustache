@@ -557,10 +557,17 @@ When a route is matched, the callback functions associated with that route will 
         </p>
       </dd>
 
-      <dt><strong>`url` (String)</strong></dt>
+      <dt><strong>`route` (Object)</strong></dt>
       <dd>
         <p>
-        The full URL.
+        Reference to the current route object whose callbacks are being dispatched.
+        </p>
+      </dd>
+
+      <dt><strong>`router` (Object)</strong></dt>
+      <dd>
+        <p>
+        Reference to this router instnace.
         </p>
       </dd>
 
@@ -574,6 +581,13 @@ When a route is matched, the callback functions associated with that route will 
         In an HTML5 browser, when the back/forward buttons are used, this property will have a value of "popstate".
         </p>
       </dd>
+
+      <dt><strong>`url` (String)</strong></dt>
+      <dd>
+        <p>
+        The full URL.
+        </p>
+      </dd>
     </dl>
   </dd>
 
@@ -581,10 +595,6 @@ When a route is matched, the callback functions associated with that route will 
   <dd>
     <p>
     An object that contains methods and information that relate to responding to a request.
-    </p>
-
-    <p>
-    <strong>Note:</strong> For backwards compatibility, the response object is also a function that when called will behave the same as directly calling `next()`. This backcompat behavior will eventually be removed.
     </p>
 
     <p>
