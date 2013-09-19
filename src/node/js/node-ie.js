@@ -31,7 +31,7 @@ Y.Node.ATTRS.type = {
             try {
                 this._node.type = 'hidden';
             } catch(e) {
-                this.setStyle('display', 'none');
+                this._node.style.display = 'none';
                 this._inputType = 'hidden';
             }
         } else {
@@ -59,4 +59,3 @@ if (Y.config.doc.createElement('form').elements.nodeType) {
             }
     };
 }
-
