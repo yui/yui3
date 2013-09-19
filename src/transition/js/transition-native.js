@@ -18,7 +18,6 @@ var CAMEL_VENDOR_PREFIX = '',
     TRANSITION_TIMING_FUNCTION,
     TRANSITION_DELAY,
     TRANSITION_END,
-    ON_TRANSITION_END,
 
     EMPTY_OBJ = {},
 
@@ -114,10 +113,11 @@ TRANSITION_PROPERTY        = VENDOR_PREFIX + 'transition-property';
 TRANSITION_DURATION        = VENDOR_PREFIX + 'transition-duration';
 TRANSITION_TIMING_FUNCTION = VENDOR_PREFIX + 'transition-timing-function';
 TRANSITION_DELAY           = VENDOR_PREFIX + 'transition-delay';
+TRANSITION_END             = 'transitionEnd';
 
-TRANSITION_END    = 'transitionend';
-ON_TRANSITION_END = 'on' + CAMEL_VENDOR_PREFIX.toLowerCase() + 'transitionend';
-TRANSITION_END    = VENDOR_TRANSITION_END[CAMEL_VENDOR_PREFIX] || TRANSITION_END;
+if (Y.config.win && !Y.config.win.ontransitionend) {
+    TRANSITION_END = VENDOR_TRANSITION_END[CAMEL_VENDOR_PREFIX] || TRANSITION_END;
+}
 
 Transition.fx = {};
 Transition.toggles = {};
@@ -361,7 +361,6 @@ Transition.prototype = {
         if (!Transition._hasEnd[uid]) {
             node.addEventListener(TRANSITION_END, anim._onNativeEnd, '');
             Transition._hasEnd[uid] = true;
-
         }
 
         style.cssText += transitionText + duration + easing + delay + cssText;
