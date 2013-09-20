@@ -730,7 +730,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             decode    = self._decode,
             routes    = self.match(path),
             callbacks = [],
-            matches, paramsMatch, req, res;
+            matches, paramsMatch, req, res, routePath;
 
         self._dispatching = self._dispatched = true;
 
@@ -739,8 +739,9 @@ Y.Router = Y.extend(Router, Y.Base, {
             return self;
         }
 
-        req = self._getRequest(path, url, src);
-        res = self._getResponse(req);
+        req       = self._getRequest(path, url, src);
+        res       = self._getResponse(req);
+        routePath = self.removeRoot(path);
 
         req.next = function (err) {
             var callback, name, route;
@@ -778,7 +779,9 @@ Y.Router = Y.extend(Router, Y.Base, {
 
                 // Decode each of the path matches so that the any URL-encoded
                 // path segments are decoded in the `req.params` object.
-                matches = YArray.map(route.regex.exec(path) || [], function (match) {
+                matches = YArray.map(route.regex.exec(routePath) || [],
+                        function (match) {
+
                     // Decode matches, or coerce `undefined` matches to an empty
                     // string to match expectations of working with `req.params`
                     // in the content of route dispatching, and normalize
