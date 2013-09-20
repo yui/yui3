@@ -426,7 +426,7 @@ Controller.ATTRS = {
      A pointer to a Model object to be instantiated, or a String off of the
      `Y` namespace.
 
-     This is only used if the `pagiantorModel` is a configuration object or
+     This is only used if the `paginatorModel` is a configuration object or
      is null.
      @attribute paginatorModelType
      @type {Y.Model | String}
