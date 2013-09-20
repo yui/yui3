@@ -51,7 +51,7 @@ Y.mix(Y.IO.prototype, {
    /**
     * Parses the POST data object and creates hidden form elements
     * for each key-value, and appends them to the HTML form object.
-    * @method appendData
+    * @method _addData
     * @private
     * @static
     * @param {Object} f HTML form object.
