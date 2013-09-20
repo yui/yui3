@@ -225,7 +225,9 @@ Y.mix(Y.DOM, {
             node.appendChild(newNode);
         }
 
-        if (node.nodeName == "SELECT") {
+        // `select` elements are the only elements with `selectedIndex`.
+        // Don't grab the dummy `option` element's `selectedIndex`.
+        if (node.nodeName == "SELECT" && selectedIndex > 0) {
             node.selectedIndex = selectedIndex - 1;
         }
         
