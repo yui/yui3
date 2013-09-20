@@ -1171,6 +1171,57 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame(5, calls);
     },
 
+    'request object should contain captured route parameters for Router with non-default root': function () {
+        var calls  = 0,
+            router = this.router = new Y.Router({
+                root: '/root/'
+            });
+
+        router.route('/foo/:bar/:baz', function (req) {
+            calls += 1;
+
+            ArrayAssert.itemsAreSame(['bar', 'baz'], Y.Object.keys(req.params));
+            ArrayAssert.itemsAreSame(['one', 'two'], Y.Object.values(req.params));
+        });
+
+        router.route('/bar/*path', function (req) {
+            calls += 1;
+
+            Assert.isObject(req.params);
+            ArrayAssert.itemsAreSame(['path'], Y.Object.keys(req.params));
+            ArrayAssert.itemsAreSame(['one/two'], Y.Object.values(req.params));
+        });
+
+        router.route(/^\/(baz)\/(quux)$/, function (req) {
+            calls += 1;
+
+            Assert.isArray(req.params);
+            ArrayAssert.itemsAreSame(['/baz/quux', 'baz', 'quux'], req.params);
+        });
+
+        router.route(/^\/((fnord)|(fnarf))\/(quux)$/, function (req) {
+            calls += 1;
+
+            Assert.isArray(req.params);
+            ArrayAssert.itemsAreSame(['/fnord/quux', 'fnord', 'fnord', '', 'quux'], req.params);
+        });
+
+        router.route(/^\/((blorp)|(blerf))\/(quux)$/, function (req) {
+            calls += 1;
+
+            Assert.isArray(req.params);
+            ArrayAssert.itemsAreSame(['/blerf/quux', 'blerf', '', 'blerf', 'quux'], req.params);
+        });
+
+        router._dispatch('/root/foo/one/two', {});
+        router._dispatch('/root/bar/one/two', {});
+        router._dispatch('/root/baz/quux', {});
+        router._dispatch('/root/fnord/quux', {});
+        router._dispatch('/root/blerf/quux', {});
+
+        Assert.areSame(5, calls);
+    },
+
     'route parameters should be decoded': function () {
         var calls       = 0,
             router      = this.router = new Y.Router(),
