@@ -591,15 +591,17 @@ Y.Router = Y.extend(Router, Y.Base, {
     @chainable
     **/
     route: function (route, callbacks) {
-        // Grab callback functions from var-args, and flatten them into a single
-        // dimension array.
-        callbacks = YArray.flatten(YArray(arguments, 1, true));
+        // Grab callback functions from var-args.
+        callbacks = YArray(arguments, 1, true);
 
         var keys, regex;
 
         // Supports both the `route(path, callbacks)` and `route(config)` call
-        // signatures, allowing for fully-processed route config to be passed.
+        // signatures, allowing for fully-processed route configs to be passed.
         if (typeof route === 'string' || YLang.isRegExp(route)) {
+            // Flatten `callbacks` into a single dimension array.
+            callbacks = YArray.flatten(callbacks);
+
             keys  = [];
             regex = this._getRegex(route, keys);
 
