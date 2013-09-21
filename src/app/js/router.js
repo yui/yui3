@@ -590,15 +590,16 @@ Y.Router = Y.extend(Router, Y.Base, {
           and pass control the next route handler.
     @chainable
     **/
-    route: function (route) {
-        var callbacks, keys, regex;
+    route: function (route, callbacks) {
+        // Grab callback functions from var-args, and flatten them into a single
+        // dimension array.
+        callbacks = YArray.flatten(YArray(arguments, 1, true));
+
+        var keys, regex;
 
         // Supports both the `route(path, callbacks)` and `route(config)` call
         // signatures, allowing for fully-processed route config to be passed.
         if (typeof route === 'string' || YLang.isRegExp(route)) {
-            // Grab callbacks from var-args.
-            callbacks = YArray.flatten(YArray(arguments, 1, true));
-
             keys  = [];
             regex = this._getRegex(route, keys);
 
@@ -609,8 +610,12 @@ Y.Router = Y.extend(Router, Y.Base, {
                 regex    : regex
             };
         } else {
-            // Fallback to `route.callback` for back-compat.
-            callbacks = YArray.flatten([route.callbacks || route.callback || []]);
+            // Look for any configured `route.callbacks` and fallback to
+            // `route.callback` for back-compat, append var-arg `callbacks`,
+            // then flatten the entire collection to a single dimension array.
+            callbacks = YArray.flatten(
+                [route.callbacks || route.callback || []].concat(callbacks)
+            );
 
             // Check for previously generated regex, also fallback to `regexp`
             // for greater interop.
@@ -1455,7 +1460,11 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _setRoutes: function (routes) {
         this._routes = [];
-        YArray.each(routes, this.route, this);
+
+        YArray.each(routes, function (route) {
+            this.route(route);
+        }, this);
+
         return this._routes.concat();
     },
 
