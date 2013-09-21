@@ -590,21 +590,49 @@ Y.Router = Y.extend(Router, Y.Base, {
           and pass control the next route handler.
     @chainable
     **/
-    route: function (path, callbacks) {
-        callbacks = YArray.flatten(YArray(arguments, 1, true));
+    route: function (route) {
+        var callbacks, keys, regex;
 
-        var keys = [];
+        // Supports both the `route(path, callbacks)` and `route(config)` call
+        // signatures, allowing for fully-processed route config to be passed.
+        if (typeof route === 'string' || YLang.isRegExp(route)) {
+            // Grab callbacks from var-args.
+            callbacks = YArray.flatten(YArray(arguments, 1, true));
 
-        this._routes.push({
-            callbacks: callbacks,
-            keys     : keys,
-            path     : path,
-            regex    : this._getRegex(path, keys),
+            keys  = [];
+            regex = this._getRegex(route, keys);
 
-            // For back-compat.
-            callback: callbacks[0]
-        });
+            route = {
+                callbacks: callbacks,
+                keys     : keys,
+                path     : route,
+                regex    : regex
+            };
+        } else {
+            // Fallback to `route.callback` for back-compat.
+            callbacks = YArray.flatten([route.callbacks || route.callback || []]);
 
+            // Check for previously generated regex, also fallback to `regexp`
+            // for greater interop.
+            keys  = route.keys;
+            regex = route.regex || route.regexp;
+
+            // Generates the route's regex if it doesn't already have one.
+            if (!regex) {
+                keys  = [];
+                regex = this._getRegex(route.path, keys);
+            }
+
+            // Merge specified `route` config object with processed data.
+            route = Y.merge(route, {
+                callbacks: callbacks,
+                keys     : keys,
+                path     : route.path,
+                regex    : regex
+            });
+        }
+
+        this._routes.push(route);
         return this;
     },
 
@@ -789,7 +817,7 @@ Y.Router = Y.extend(Router, Y.Base, {
                     // Decode matches, or coerce `undefined` matches to an empty
                     // string to match expectations of working with `req.params`
                     // in the content of route dispatching, and normalize
-                    // browser differences in their handling of regexp NPCGs:
+                    // browser differences in their handling of regex NPCGs:
                     // https://github.com/yui/yui3/issues/1076
                     return (match && decode(match)) || '';
                 });
@@ -810,7 +838,7 @@ Y.Router = Y.extend(Router, Y.Base, {
                             // Check if `paramHandler` is a RegExp, becuase this
                             // is true in Android 2.3 and other browsers!
                             // `typeof /.*/ === 'function'`
-                            value = paramHandler instanceof RegExp ?
+                            value = YLang.isRegExp(paramHandler) ?
                                     paramHandler.exec(value) :
                                     paramHandler.call(self, value, key);
 
@@ -969,7 +997,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _getRegex: function (path, keys) {
-        if (path instanceof RegExp) {
+        if (YLang.isRegExp(path)) {
             return path;
         }
 
@@ -1427,14 +1455,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _setRoutes: function (routes) {
         this._routes = [];
-
-        YArray.each(routes, function (route) {
-            // Makes sure to check `callback` for back-compat.
-            var callbacks = route.callbacks || route.callback;
-
-            this.route(route.path, callbacks);
-        }, this);
-
+        YArray.each(routes, this.route, this);
         return this._routes.concat();
     },
 
