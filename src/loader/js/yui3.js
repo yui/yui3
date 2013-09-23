@@ -631,6 +631,14 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
+    "content-editable": {
+        "requires": [
+            "node-base",
+            "editor-selection",
+            "stylesheet",
+            "plugin"
+        ]
+    },
     "controller": {
         "use": [
             "router"
@@ -1303,6 +1311,12 @@ Y.mix(YUI.Env[Y.version].modules, {
             "editor-base"
         ]
     },
+    "editor-inline": {
+        "requires": [
+            "editor-base",
+            "content-editable"
+        ]
+    },
     "editor-lists": {
         "requires": [
             "editor-base"
@@ -1533,6 +1547,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "base",
             "node",
+            "plugin",
             "selector-css3",
             "yui-throttle"
         ]
@@ -2819,11 +2834,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-base"
         ]
     },
-    "widget-locale": {
-        "requires": [
-            "widget-base"
-        ]
-    },
     "widget-modality": {
         "requires": [
             "base-build",
@@ -2936,4 +2946,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'ed3a8326493f540831ac2ec7f86cb309';
+YUI.Env[Y.version].md5 = '9cfdc7e62873313018cc48b86f2a53ca';

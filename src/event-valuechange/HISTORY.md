@@ -4,7 +4,10 @@ ValueChange Change History
 @VERSION@
 ------
 
-* No changes.
+* Updated ValueChange to support `<select>` and `[contenteditable="true"]`
+  elements as well. ([#1184][])
+
+[#1184]: https://github.com/yui/yui3/issues/1184
 
 3.12.0
 ------

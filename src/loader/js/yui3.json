@@ -599,6 +599,14 @@
         ],
         "skinnable": true
     },
+    "content-editable": {
+        "requires": [
+            "node-base",
+            "editor-selection",
+            "stylesheet",
+            "plugin"
+        ]
+    },
     "controller": {
         "use": [
             "router"
@@ -1246,6 +1254,12 @@
             "editor-base"
         ]
     },
+    "editor-inline": {
+        "requires": [
+            "editor-base",
+            "content-editable"
+        ]
+    },
     "editor-lists": {
         "requires": [
             "editor-base"
@@ -1473,6 +1487,7 @@
         "requires": [
             "base",
             "node",
+            "plugin",
             "selector-css3",
             "yui-throttle"
         ]
@@ -2663,11 +2678,6 @@
         ]
     },
     "widget-htmlparser": {
-        "requires": [
-            "widget-base"
-        ]
-    },
-    "widget-locale": {
         "requires": [
             "widget-base"
         ]

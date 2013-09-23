@@ -276,7 +276,10 @@
         * @method cancelUpload
         */
         cancelUpload: function () {
-            this.get('xhr').abort();
+            var xhr = this.get('xhr');
+            if (xhr) {
+                xhr.abort();
+            }
         }
 
 

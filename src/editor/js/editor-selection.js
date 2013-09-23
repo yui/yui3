@@ -17,7 +17,7 @@
 
     Y.EditorSelection = function(domEvent) {
         var sel, par, ieNode, nodes, rng, i,
-            comp, moved = 0, n, id;
+            comp, moved = 0, n, id, root = Y.EditorSelection.ROOT;
 
         if (Y.config.win.getSelection && (!Y.UA.ie || Y.UA.ie < 9)) {
             sel = Y.config.win.getSelection();
@@ -61,7 +61,7 @@
                         if (ieNode.firstChild) {
                             ieNode = ieNode.firstChild;
                         }
-                        if (ieNode && ieNode.tagName && ieNode.tagName.toLowerCase() === 'body') {
+                        if (root.compareTo(ieNode)) {
                             if (ieNode.firstChild) {
                                 ieNode = ieNode.firstChild;
                             }
@@ -148,9 +148,11 @@
         Y.log('Filtering nodes', 'info', 'editor-selection');
 
         var startTime = (new Date()).getTime(),
+            editorSelection = Y.EditorSelection,
+            root = editorSelection.ROOT,
             endTime,
-            nodes = Y.all(Y.EditorSelection.ALL),
-            baseNodes = Y.all('strong,em'),
+            nodes = root.all(editorSelection.ALL),
+            baseNodes = root.all('strong,em'),
             doc = Y.config.doc, hrs,
             classNames = {}, cssString = '',
             ls, startTime1 = (new Date()).getTime(),
@@ -162,16 +164,16 @@
                 classNames['.' + n._yuid] = raw.style[FONT_FAMILY];
                 n.addClass(n._yuid);
 
-                Y.EditorSelection.removeFontFamily(raw);
+                editorSelection.removeFontFamily(raw);
             }
         });
         endTime1 = (new Date()).getTime();
         Y.log('Node Filter Timer: ' + (endTime1 - startTime1) + 'ms', 'info', 'editor-selection');
 
-        Y.all('.hr').addClass('yui-skip').addClass('yui-non');
-
+        root.all('.hr').addClass('yui-skip').addClass('yui-non');
+        
         if (Y.UA.ie) {
-            hrs = doc.getElementsByTagName('hr');
+            hrs = Y.Node.getDOMNode(root).getElementsByTagName('hr');
             Y.each(hrs, function(hr) {
                 var el = doc.createElement('div'),
                 s = el.style;
@@ -210,11 +212,11 @@
             if (t === 'strong') {
                 newTag = 'b';
             }
-            Y.EditorSelection.prototype._swap(baseNodes.item(k), newTag);
+            editorSelection.prototype._swap(baseNodes.item(k), newTag);
         });
 
         //Filter out all the empty UL/OL's
-        ls = Y.all('ol,ul');
+        ls = root.all('ol,ul');
         ls.each(function(v) {
             var lis = v.all('li');
             if (!lis.size()) {
@@ -223,7 +225,7 @@
         });
 
         if (blocks) {
-            Y.EditorSelection.filterBlocks();
+            editorSelection.filterBlocks();
         }
         endTime = (new Date()).getTime();
         Y.log('Filter Timer: ' + (endTime - startTime) + 'ms', 'info', 'editor-selection');
@@ -237,7 +239,7 @@
     Y.EditorSelection.filterBlocks = function() {
         Y.log('RAW filter blocks', 'info', 'editor-selection');
         var startTime = (new Date()).getTime(), endTime,
-            childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
+            childs = Y.Node.getDOMNode(Y.EditorSelection.ROOT).childNodes, i, node, wrapped = false, doit = true,
             sel, single, br, c, s, html;
 
         if (childs) {
@@ -355,9 +357,10 @@
     * @return {String} The filtered HTML
     */
     Y.EditorSelection.unfilter = function() {
-        var nodes = Y.all('body [class]'),
+        var root = Y.EditorSelection.ROOT,
+            nodes = root.all('[class]'),
             html = '', nons, ids,
-            body = Y.one('body');
+            body = root;
 
         Y.log('UnFiltering nodes', 'info', 'editor-selection');
 
@@ -372,7 +375,7 @@
             }
         });
 
-        nons = Y.all('.yui-non');
+        nons = root.all('.yui-non');
         nons.each(function(n) {
             if (!n.hasClass('yui-skip') && n.get('innerHTML') === '') {
                 n.remove();
@@ -381,7 +384,7 @@
             }
         });
 
-        ids = Y.all('body [id]');
+        ids = root.all('[id]');
         ids.each(function(n) {
             if (n.get('id').indexOf('yui_3_') === 0) {
                 n.removeAttribute('id');
@@ -393,7 +396,7 @@
             html = body.get('innerHTML');
         }
 
-        Y.all('.hr').addClass('yui-skip').addClass('yui-non');
+        root.all('.hr').addClass('yui-skip').addClass('yui-non');
 
         /*
         nodes.each(function(n) {
@@ -415,6 +418,10 @@
     * @return {Node} The Resolved node
     */
     Y.EditorSelection.resolve = function(n) {
+        if (!n) {
+            return Y.EditorSelection.ROOT;
+        }
+
         if (n && n.nodeType === 3) {
             //Adding a try/catch here because in rare occasions IE will
             //Throw a error accessing the parentNode of a stranded text node.
@@ -422,7 +429,7 @@
             try {
                 n = n.parentNode;
             } catch (re) {
-                n = 'body';
+                n = Y.EditorSelection.ROOT;
             }
         }
         return Y.one(n);
@@ -491,6 +498,13 @@
     * @property CURSOR
     */
     Y.EditorSelection.CURSOR = '<span><br class="yui-cursor"></span>';
+
+    /**
+    * The default HTML element from which data will be retrieved. Default: body
+    * @static
+    * @property ROOT
+    */
+    Y.EditorSelection.ROOT = Y.one('body');
 
     Y.EditorSelection.hasCursor = function() {
         var cur = Y.all('#' + Y.EditorSelection.CUR_WRAPID);
@@ -627,16 +641,20 @@
         * @return {NodeList} A NodeList of all items in the selection.
         */
         getSelected: function() {
-            Y.EditorSelection.filter();
-            Y.config.doc.execCommand('fontname', null, Y.EditorSelection.TMP);
-            var nodes = Y.all(Y.EditorSelection.ALL),
+            var editorSelection = Y.EditorSelection,
+                root = editorSelection.ROOT,
+                nodes,
                 items = [];
-
+            
+            editorSelection.filter();
+            Y.config.doc.execCommand('fontname', null, editorSelection.TMP);
+            nodes = root.all(editorSelection.ALL);
+            
             nodes.each(function(n, k) {
-                if (n.getStyle(FONT_FAMILY) === Y.EditorSelection.TMP) {
+                if (n.getStyle(FONT_FAMILY) === editorSelection.TMP) {
                     n.setStyle(FONT_FAMILY, '');
-                    Y.EditorSelection.removeFontFamily(n);
-                    if (!n.test('body')) {
+                    editorSelection.removeFontFamily(n);
+                    if (!n.compareTo(root)) {
                         items.push(Y.Node.getDOMNode(nodes.item(k)));
                     }
                 }
@@ -663,9 +681,9 @@
         */
         insertAtCursor: function(html, node, offset, collapse) {
             var cur = Y.Node.create('<' + Y.EditorSelection.DEFAULT_TAG + ' class="yui-non"></' + Y.EditorSelection.DEFAULT_TAG + '>'),
-                inHTML, txt, txt2, newNode, range = this.createRange(), b;
+                inHTML, txt, txt2, newNode, range = this.createRange(), b, root = Y.EditorSelection.ROOT;
 
-            if (node && node.test('body')) {
+            if (root.compareTo(node)) {
                 b = Y.Node.create('<span></span>');
                 node.append(b);
                 node = b;
@@ -693,7 +711,7 @@
                     try {
                         range.pasteHTML('<span id="rte-insert"></span>');
                     } catch (e) {}
-                    inHTML = Y.one('#rte-insert');
+                    inHTML = root.one('#rte-insert');
                     if (inHTML) {
                         inHTML.set('id', '');
                         inHTML.replace(newNode);
@@ -741,7 +759,7 @@
                     }
                 } else {
                     if (node.get('nodeType') === 3) {
-                        node = node.get('parentNode');
+                        node = node.get('parentNode') || root;
                     }
                     newNode = Y.Node.create(html);
                     html = node.get('innerHTML').replace(/\n/gi, '');
@@ -751,7 +769,7 @@
                         if (newNode.get('parentNode')) {
                             node.insert(newNode, 'before');
                         } else {
-                            Y.one('body').prepend(newNode);
+                            root.prepend(newNode);
                         }
                     }
                     if (node.get('firstChild').test('br')) {
@@ -921,7 +939,7 @@
         * @return {Node}
         */
         getCursor: function() {
-            return Y.all('#' + Y.EditorSelection.CURID);
+            return Y.EditorSelection.ROOT.all('#' + Y.EditorSelection.CURID);
         },
         /**
         * Remove the cursor placeholder from the DOM.

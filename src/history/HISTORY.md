@@ -4,10 +4,17 @@ History Change History
 @VERSION@
 ---------
 
+* Fixed a possible exception in `HistoryHTML5._init()` in IE10.
+  [Ariel Schiavoni]
+
+* Added a workaround for a `replaceState` bug in Chrome/WebKit.
+  ([#1159][]: @roblund)
+
 * Fixed issue with `parseHash` not parsing blank values in hash string.
   ([#1116][]: @blzaugg)
 
 [#1116]: https://github.com/yui/yui3/issues/1116
+[#1159]: https://github.com/yui/yui3/issues/1159
 
 3.12.0
 ------
