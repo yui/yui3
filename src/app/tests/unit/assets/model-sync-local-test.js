@@ -5,10 +5,20 @@ var ArrayAssert  = Y.ArrayAssert,
     ObjectAssert = Y.ObjectAssert,
 
     suite,
+    hasLocalStorage,
     modelSyncLocalSuite;
 
 // -- Global Suite -------------------------------------------------------------
 suite = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App Framework'));
+
+// -- Feature Tests ------------------------------------------------------------
+hasLocalStorage = (function () {
+    try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+    } catch (e) {
+        return false;
+    }
+})();
 
 // -- ModelSync.Local Suite ----------------------------------------------------
 modelSyncLocalSuite = new Y.Test.Suite('ModelSync.Local');
@@ -16,6 +26,13 @@ modelSyncLocalSuite = new Y.Test.Suite('ModelSync.Local');
 // -- ModelSync.Local: Lifecycle -----------------------------------------------
 modelSyncLocalSuite.add(new Y.Test.Case({
     name: 'Lifecycle',
+
+    _should: {
+        ignore: {
+            '`localStorage` should be set to the `storage` property': !hasLocalStorage,
+            '`data` property should be filled with any existing `localStorage` data': !hasLocalStorage
+        }
+    },
     
     setUp: function () {
         var store;
@@ -60,11 +77,11 @@ modelSyncLocalSuite.add(new Y.Test.Case({
             modelList  = new Y.TestModelList();
             test       = 'test',
             hasStorage = function(context) {
-                try {
+                if (context && context.storage && context.storage.setItem) {
                     context.storage.setItem(test, test);
                     context.storage.removeItem(test);
                     return true;
-                } catch (e) {
+                } else {
                     return false;
                 }
             };
@@ -93,15 +110,19 @@ modelSyncLocalSuite.add(new Y.Test.Case({
 // -- ModelSync.Local: Sync ----------------------------------------------------
 modelSyncLocalSuite.add(new Y.Test.Case({
     name: 'Sync',
+
+    _should: {
+        ignore: {
+        }
+    },
     
     setUp: function () {
-         try {
+        if (hasLocalStorage) { 
             testStore = Y.config.win.localStorage;
             testStore.clear();
             testStore.setItem('users', '{"users-1":{"id":"users-1","name":"clarle"},"users-2":{"id":"users-2","name":"eric"}}');
- 
-        } catch (e) {
-            Y.ModelSync._data = {"users": {"users-1":{"id":"users-1","name":"clarle"},"users-2":{"id":"users-2","name":"eric"}}};
+        } else { 
+            Y.ModelSync.Local._data['users'] = Y.JSON.parse('{"users-1":{"id":"users-1","name":"clarle"},"users-2":{"id":"users-2","name":"eric"}}');
         }
 
         Y.TestModel = Y.Base.create('user', Y.Model, [Y.ModelSync.Local], {
