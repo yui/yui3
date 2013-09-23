@@ -5,6 +5,7 @@
 * tracking, file filtering, server response retrieval and error reporting.
 *
 * @module uploader-flash
+* @deprecated
 */
 
 // Shorthands for external modules
@@ -19,6 +20,7 @@ var substitute            = Y.Lang.sub,
 * @extends Widget
 * @param {Object} config Configuration object.
 * @constructor
+* @deprecated
 */
 
 function UploaderFlash() {

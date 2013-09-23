@@ -23,7 +23,7 @@
 </style>
 
 <div class="intro">
-   <p><strong>The YUI Uploader leverages HTML5+XMLHttpRequest 2 or Flash to provide file upload functionality beyond the basic HTTP `<input type='file'>` capabilities.</strong> Specifically, the Uploader allows for:
+   <p><strong>The YUI Uploader leverages HTML5+XMLHttpRequest 2 or Flash (deprecated) to provide file upload functionality beyond the basic HTTP `<input type='file'>` capabilities.</strong> Specifically, the Uploader allows for:
 	<ol>
 		<li> <strong>Multiple file selection</strong> in a single "Open File" dialog.</li>
         <li> <strong>Dragging-and-dropping files</strong> into the browser (when used in HTML5 mode).</li>
@@ -32,7 +32,7 @@
 		<li> <strong>A range of available file metadata</strong>: filename, size, date created, and date modified.</li>
 		<li> A set of <strong>events dispatched on various aspects of the file upload process</strong>: file selection, upload progress, upload completion, data return, and upload errors.</li>
 		<li> Inclusion of <strong>additional data in the file upload POST request</strong>, on a file-by-file basis.</li>
-        <li> <strong>Keyboard accessibility</strong> both in HTML5 and in Flash modes.</li>
+        <li> <strong>Keyboard accessibility</strong> both in HTML5 and in Flash (deprecated) modes.</li>
 	</ol>
 </div>
     <div class="notice">
@@ -45,6 +45,7 @@
 <div class="intro">
 	<h2>Uploader Usage Notes for the Flash mode</h2>
 	<ul>
+    <li>The <code>uploader-flash</code> module has been deprecated as of v3.13.0.</li>
     <li>Because of security requirements of the Flash Player, the <strong>Uploader in Flash mode must receive a direct user input</strong> in order to initiate file browsing.</li>
     <li><strong>The target server for file uploads must include a `crossdomain.xml` file</strong> that allows access from the location where the uploader SWF file is hosted.
     See more in the <a href="#backend-setup">Backend Setup</a> section below, or read the <a href="http://www.adobe.com/devnet/articles/crossdomain_policy_file_spec.html">crossdomain specification on Adobe's website</a>.</li>

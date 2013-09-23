@@ -4,7 +4,7 @@ Uploader Utility (New) Change History
 @VERSION@
 ------
 
-* No changes.
+* [!] #1154 Deprecate flash-uploader module.
 
 3.12.0
 ------
