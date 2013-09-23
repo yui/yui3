@@ -5,7 +5,7 @@ onto an in-memory cache, that can be mixed into a Model or ModelList subclass.
 
 @module app
 @submodule model-sync-local
-@since 3.6.0
+@since @VERSION@
 **/
 
 /**
@@ -27,7 +27,7 @@ class name, or a specified 'root' that is provided.
 @class ModelSync.Local
 @extensionfor Model
 @extensionfor ModelList
-@since 3.6.0
+@since @VERSION@
 **/
 function LocalSync() {}
 
@@ -40,9 +40,24 @@ Model or ModelList constructor.
 @default ['root'']
 @static
 @protected
-@since 3.6.0
+@since @VERSION@
 **/
 LocalSync._NON_ATTRS_CFG = ['root'];
+
+/**
+Feature detection for `localStorage` availability.
+
+@property _hasLocalStorage
+@type Boolean
+@private
+**/
+LocalSync._hasLocalStorage = (function () {
+    try {
+        return 'localStorage' in Y.config.win && Y.config.win.localStorage !== null;
+    } catch (e) {
+        return false;
+    }
+})(),
 
 /**
 Object of key/value pairs to fall back on when localStorage is not available.
@@ -63,7 +78,7 @@ LocalSync.prototype = {
     @property root
     @type String
     @default ""
-    @since 3.6.0
+    @since @VERSION@
     **/
     root: '',
 
@@ -73,7 +88,7 @@ LocalSync.prototype = {
     @property storage
     @type Storage
     @default null
-    @since 3.6.0
+    @since @VERSION@
     **/
     storage: null,
 
@@ -91,15 +106,20 @@ LocalSync.prototype = {
             this.root = this.model.prototype.root;
         }
 
-        try {
+        if (LocalSync._hasLocalStorage) {
             this.storage = Y.config.win.localStorage;
             store = this.storage.getItem(this.root);
-        } catch (e) {
+        } else {
             Y.log("Could not access localStorage.", "warn");
         }
 
-        // Pull in existing data from localStorage, if possible
-        LocalSync._data[this.root] = (store && Y.JSON.parse(store)) || {};
+        // Pull in existing data from localStorage, if possible.
+        // Otherwise, see if there's existing data on the local cache.
+        if (store) {
+            LocalSync._data[this.root] = Y.JSON.parse(store);
+        } else {
+            LocalSync._data[this.root] = (LocalSync._data[this.root] || {});
+        }
     },
     
     // -- Public Methods -----------------------------------------------------------
@@ -178,14 +198,14 @@ LocalSync.prototype = {
     },
 
     // -- Protected Methods ----------------------------------------------------
-    
+
     /**
     Sync method correlating to the "read" operation, for a Model List
     
     @method _index
     @return {Object[]} Array of objects found for that root key
     @protected
-    @since 3.6.0
+    @since @VERSION@
     **/
     _index: function (options) {
         return Y.Object.values(LocalSync._data[this.root]);
@@ -197,7 +217,7 @@ LocalSync.prototype = {
     @method _show
     @return {Object} Object found for that root key and model ID
     @protected
-    @since 3.6.0
+    @since @VERSION@
     **/
     _show: function (options) {
         return LocalSync._data[this.root][this.get('id')];
@@ -209,7 +229,7 @@ LocalSync.prototype = {
     @method _show
     @return {Object} The new object created.
     @protected
-    @since 3.6.0
+    @since @VERSION@
     **/
     _create: function (options) {
         var hash = this.toJSON();
@@ -226,7 +246,7 @@ LocalSync.prototype = {
     @method _update
     @return {Object} The updated object.
     @protected
-    @since 3.6.0
+    @since @VERSION@
     **/
     _update: function (options) {
         var hash = Y.merge(this.toJSON(), options);
@@ -243,7 +263,7 @@ LocalSync.prototype = {
     @method _destroy
     @return {Object} The deleted object.
     @protected
-    @since 3.6.0
+    @since @VERSION@
     **/
     _destroy: function (options) {
         delete LocalSync._data[this.root][this.get('id')];
@@ -257,13 +277,15 @@ LocalSync.prototype = {
     
     @method _save
     @protected
-    @since 3.6.0
+    @since @VERSION@
     **/
     _save: function () {
-        this.storage && this.storage.setItem(
-            this.root,
-            Y.JSON.stringify(LocalSync._data[this.root])
-        );
+        if (LocalSync._hasLocalStorage) {
+            this.storage && this.storage.setItem(
+                this.root,
+                Y.JSON.stringify(LocalSync._data[this.root])
+            );
+        }
     }
 };
 
