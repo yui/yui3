@@ -1,4 +1,5 @@
 YUI.add('series-ohlc-tests', function(Y) {
+    var DOC = Y.config.doc;
     function OHLCMockShape() {
         this._path = "";
         this._command = "";
@@ -77,6 +78,7 @@ YUI.add('series-ohlc-tests', function(Y) {
 
         tearDown: function() {
             this.series = null;
+            Y.Event.purgeElement(DOC, false);
         },
 
         "test: get('type')" : function() {
@@ -132,8 +134,7 @@ YUI.add('series-ohlc-tests', function(Y) {
                 padding,
                 markerWidth,
                 halfwidth,
-                styles,
-            styles = mockSeries.get("styles");
+                styles = mockSeries.get("styles");
             dataWidth = width - (styles.padding.left + styles.padding.right);
             markerWidth = dataWidth/len;
             halfwidth = markerWidth/2;
@@ -156,9 +157,9 @@ YUI.add('series-ohlc-tests', function(Y) {
 
         "test: set(graphic)" : function() {
             var series = this.series,
-                mydiv = document.createElement('div'),
+                mydiv = Y.DOM.create('<div id="testdiv">'),
                 graphic;
-            Y.one('body').append(mydiv);    
+            DOC.body.appendChild(mydiv);    
             graphic = new Y.Graphic({
                 render: mydiv
             });
@@ -170,6 +171,7 @@ YUI.add('series-ohlc-tests', function(Y) {
             series.set("graphic", graphic);
             Y.Assert.isInstanceOf(Y.Path, series.get("upmarker"));
             Y.Assert.isInstanceOf(Y.Path, series.get("downmarker"));
+            graphic.destroy();
         },
 
         "test: destructor()" : function() {

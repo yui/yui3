@@ -1,11 +1,14 @@
 YUI.add('charts-ariaevent-tests', function(Y) {
     var suite = new Y.Test.Suite("Charts: AriaEvents"),
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
         ASSERT = Y.Assert,
         ObjectAssert = Y.ObjectAssert,
         UP = 38,
         DOWN = 40,
         LEFT = 37,
         RIGHT = 39;
+    DOC.body.appendChild(parentDiv);
         
         
     //-------------------------------------------------------------------------
@@ -29,8 +32,6 @@ YUI.add('charts-ariaevent-tests', function(Y) {
          */
         setUp : function() 
         {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
             this.contentBox = this.chart.get("contentBox");
             this.result = null;
@@ -44,7 +45,7 @@ YUI.add('charts-ariaevent-tests', function(Y) {
         {
             Y.detach(this.handler);
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
        
         _seriesIndex: -1, 
@@ -284,98 +285,97 @@ YUI.add('charts-ariaevent-tests', function(Y) {
         {category:"5/4/2010", revenue:2800}, 
         {category:"5/5/2010", revenue:2650}
     ],
-    suite  = new Y.Test.Suite("Charts: Aria Events"),
     columnTests = new Y.CartesianChartAriaEventTestCase({
         type: "column",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Column"),
     barTests = new Y.CartesianChartAriaEventTestCase({
         type: "bar",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Bar"),
     stackedColumnTests = new Y.CartesianChartAriaEventTestCase({
         type: "column",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedColumn"),
     stackedBarTests = new Y.CartesianChartAriaEventTestCase({
         type: "bar",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedBar"),
     comboTests = new Y.CartesianChartAriaEventTestCase({
         type: "combo",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Combo"),
     stackedComboTests = new Y.CartesianChartAriaEventTestCase({
         type: "combo",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedCombo"),
     areaTests = new Y.CartesianChartAriaEventTestCase({
         type: "area",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Area"),
     stackedAreaTests = new Y.CartesianChartAriaEventTestCase({
         type: "area",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedArea"),
     splineTests = new Y.CartesianChartAriaEventTestCase({
         type: "spline",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Spline"),
     stackedSplineTests = new Y.CartesianChartAriaEventTestCase({
         type: "spline",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedSpline"),
     comboSplineTests = new Y.CartesianChartAriaEventTestCase({
         type: "combospline",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "ComboSpline"),
     stackedComboSplineTests = new Y.CartesianChartAriaEventTestCase({
         type: "combospline",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedComboSpline"),
     lineTests = new Y.CartesianChartAriaEventTestCase({
         type: "line",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Line"),
     stackedLineTests = new Y.CartesianChartAriaEventTestCase({
         type: "line",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedLine"),
     markerTests = new Y.CartesianChartAriaEventTestCase({
         type: "markerseries",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "Marker"),
     stackedMarkerTests = new Y.CartesianChartAriaEventTestCase({
         type: "markerseries",
         stacked: true,
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: DataProvider
     }, "StackedMarker"),
     pieTests = new Y.PieChartAriaEventTestCase({
         type: "pie",
-        render: "#mychart",
+        render: "#testdiv",
         dataProvider: PieDataProvider
     }, "Pie");
     

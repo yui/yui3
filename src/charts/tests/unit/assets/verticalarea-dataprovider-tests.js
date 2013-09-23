@@ -1,4 +1,129 @@
 YUI.add('verticalarea-dataprovider-tests', function(Y) {
+    var suite = new Y.Test.Suite("Charts: VerticalAreaDataProvider"),
+        allPositiveDataProvider =  [ 
+            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
+            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+            {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
+        ],
+        positiveAndNegativeDataProvider = [ 
+            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:-100}, 
+            {category:"5/3/2010", miscellaneous:-400, expenses:-1100, revenue:1500}, 
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:-2800}, 
+            {category:"5/5/2010", miscellaneous:5000, expenses:-5000, revenue:2650}
+        ],
+        allNegativeDataProvider = [ 
+            {category:"5/1/2010", miscellaneous:-2000, expenses:-3700, revenue:-2200}, 
+            {category:"5/2/2010", miscellaneous:-50, expenses:-9100, revenue:-100}, 
+            {category:"5/3/2010", miscellaneous:-400, expenses:-1100, revenue:-1500}, 
+            {category:"5/4/2010", miscellaneous:-200, expenses:-1900, revenue:-2800}, 
+            {category:"5/5/2010", miscellaneous:-5000, expenses:-5000, revenue:-2650}
+        ],
+        decimalDataProvider = [ 
+            {category:"5/1/2010", miscellaneous:2.45, expenses:3.71, revenue:2.2}, 
+            {category:"5/2/2010", miscellaneous:0.5, expenses:9.1, revenue:0.16}, 
+            {category:"5/3/2010", miscellaneous:1.4, expenses:1.14, revenue:1.25}, 
+            {category:"5/4/2010", miscellaneous:0.05, expenses:1.9, revenue:2.8}, 
+            {category:"5/5/2010", miscellaneous:5.53, expenses:5.21, revenue:2.65}
+        ],
+        missingDataSmallDataProvider = [
+            {category: "1/1/2010", expenses: 3700},
+            {category: "1/2/2010", revenue: 2200},
+            {category: "2/1/2010", expenses: 9100},
+            {category: "2/2/2010", revenue: 100}
+        ],
+        missingDataLargeDataProvider = [
+            {category:"1/1/2010", miscellaneous:2000, expenses:3000},
+            {category:"2/1/2010", miscellaneous:3000, expenses:1200, revenue:3000},
+            {category:"3/1/2010", miscellaneous:400, expenses:900,  revenue: 3500},
+            {category:"4/1/2010", miscellaneous:200, expenses:2300, revenue:2200},
+            {category:"5/1/2010", miscellaneous:500, expenses:1550, revenue: 2400},
+            {category:"6/1/2010", expenses:1450, revenue:4400},
+            {category:"7/1/2010", miscellaneous:3000, expenses:1250, revenue:1200},
+            {category:"8/1/2010", miscellaneous:6550, expenses:1100, revenue:1400},
+            {category:"9/1/2010", miscellaneous:4000, expenses:1900, revenue:3600},
+            {category:"10/1/2010", expenses:1100, revenue:1500},
+            {category:"11/1/2010", miscellaneous:1200, expenses:2500, revenue:2800},
+            {category:"12/1/2010", revenue:2000, expenses:1200}
+        ],
+        nullValuesDataProvider =  [ 
+            {category:"5/1/2010", miscellaneous:null, expenses:3700, revenue:2200}, 
+            {category:"5/2/2010", miscellaneous:50, expenses:null, revenue:100}, 
+            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:null}, 
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+            {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
+        ],
+        missingFirstValuesDataProvider =  [ 
+            {category:"5/1/2010"}, 
+            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
+            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+            {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
+        ],
+        missingFirstValuesDataLargeDataProvider = [
+            {category:"1/1/2010", miscellaneous:2000},
+            {category:"2/1/2010", miscellaneous:3000},
+            {category:"3/1/2010", expenses:900,  revenue: 3500},
+            {category:"4/1/2010", expenses:2300, revenue:2200},
+            {category:"5/1/2010", expenses:1550, revenue: 2400},
+            {category:"6/1/2010", expenses:1450, revenue:4400},
+            {category:"7/1/2010", expenses:1250, revenue:1200},
+            {category:"8/1/2010", expenses:1100, revenue:1400},
+            {category:"9/1/2010", expenses:1900, revenue:3600},
+            {category:"10/1/2010", expenses:1100, revenue:1500},
+            {category:"11/1/2010", expenses:2500, revenue:2800},
+            {category:"12/1/2010", revenue:2000, expenses:1200}
+        ],
+        missingLastValuesDataLargeDataProvider = [
+            {category:"1/1/2010", expenses:3000, revenue:3000},
+            {category:"2/1/2010", expenses:1200, revenue:3000},
+            {category:"3/1/2010", expenses:900,  revenue: 3500},
+            {category:"4/1/2010", expenses:2300, revenue:2200},
+            {category:"5/1/2010", expenses:1550, revenue: 2400},
+            {category:"6/1/2010", expenses:1450, revenue:4400},
+            {category:"7/1/2010", expenses:1250, revenue:1200},
+            {category:"8/1/2010", expenses:1100, revenue:1400},
+            {category:"9/1/2010", expenses:1900, revenue:3600},
+            {category:"10/1/2010", expenses:1100, revenue:1500},
+            {category:"11/1/2010", miscellaneous:1200},
+            {category:"12/1/2010", miscellaneous:2000}
+        ],
+        splitTrailingSeriesDataProvider = [
+            {category:"1/1/2010", revenue:1400},
+            {category:"2/1/2010", revenue: 300},
+            {category:"3/1/2010", revenue:400, expenses:900},
+            {category:"4/1/2010", revenue:200, expenses:2300},
+            {category:"5/1/2010", revenue:500, expenses:1550},
+            {category:"6/1/2010", expenses:1450},
+            {category:"7/1/2010", revenue:3000, expenses:1250},
+            {category:"8/1/2010", revenue:6550, expenses:1100},
+            {category:"9/1/2010", revenue:4000, expenses:1900},
+            {category:"10/1/2010", expenses:1100},
+            {category:"11/1/2010", miscellaneous:1200, expenses:2500},
+            {category:"12/1/2010", miscellaneous: 1200, expenses:1200}
+
+        ],
+        twoSeriesEndTogetherDataProvider = [
+            {category:"1/1/2010", revenue:2000, expenses:3000/*, miscellaneous:1400*/},
+            {category:"2/1/2010", revenue:3000, expenses:1200, miscellaneous:3000},
+            {category:"3/1/2010", revenue:400, expenses:900,  miscellaneous: 3500},
+            {category:"4/1/2010", revenue:200, expenses:2300, miscellaneous:2200},
+            {category:"5/1/2010", revenue:500, expenses:1550, miscellaneous: 2400},
+            {category:"6/1/2010", expenses:1450, miscellaneous:4400},
+            {category:"7/1/2010", revenue:3000, expenses:1250, miscellaneous:1200},
+            {category:"8/1/2010", revenue:6550, expenses:1100, miscellaneous:1400},
+            {category:"9/1/2010", revenue:4000, expenses:1900, miscellaneous:3600},
+            {category:"10/1/2010", expenses:1100, miscellaneous:1500},
+            {category:"11/1/2010", revenue:1200, expenses:2500, miscellaneous:2800},
+            {category:"12/1/2010", expenses:1200}
+        ],
+        getDataProviderTest,
+        parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+        DOC = Y.config.doc;
+    DOC.body.appendChild(parentDiv);
+    
     //-------------------------------------------------------------------------
     // Chart dataProvider Test Case
     //-------------------------------------------------------------------------
@@ -9,7 +134,7 @@ YUI.add('verticalarea-dataprovider-tests', function(Y) {
         this.attrCfg.type = "area";
         this.attrCfg.direction = "vertical";
         this.attrCfg.seriesKeys = ["miscellaneous", "revenue", "expenses"];
-        this.attrCfg.render = "#mychart";
+        this.attrCfg.render = "#testdiv";
         this.name = type + " DataProvider Tests";
     }
         
@@ -20,8 +145,6 @@ YUI.add('verticalarea-dataprovider-tests', function(Y) {
         
         setUp : function() 
         {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
             this.contentBox = this.chart.get("contentBox");
         },
@@ -29,7 +152,7 @@ YUI.add('verticalarea-dataprovider-tests', function(Y) {
         tearDown : function() 
         {
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         testKeys: ["revenue", "expenses", "miscellaneous"],
@@ -51,139 +174,6 @@ YUI.add('verticalarea-dataprovider-tests', function(Y) {
 
     Y.ChartDataProviderTestCase = ChartDataProviderTestCase;             
     
-    var suite = new Y.Test.Suite("Charts: VerticalAreaDataProvider"),
-
-    allPositiveDataProvider =  [ 
-        {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
-        {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
-    ],
-
-    positiveAndNegativeDataProvider = [ 
-        {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:-100}, 
-        {category:"5/3/2010", miscellaneous:-400, expenses:-1100, revenue:1500}, 
-        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:-2800}, 
-        {category:"5/5/2010", miscellaneous:5000, expenses:-5000, revenue:2650}
-    ],
-
-    allNegativeDataProvider = [ 
-        {category:"5/1/2010", miscellaneous:-2000, expenses:-3700, revenue:-2200}, 
-        {category:"5/2/2010", miscellaneous:-50, expenses:-9100, revenue:-100}, 
-        {category:"5/3/2010", miscellaneous:-400, expenses:-1100, revenue:-1500}, 
-        {category:"5/4/2010", miscellaneous:-200, expenses:-1900, revenue:-2800}, 
-        {category:"5/5/2010", miscellaneous:-5000, expenses:-5000, revenue:-2650}
-    ],
-
-    decimalDataProvider = [ 
-        {category:"5/1/2010", miscellaneous:2.45, expenses:3.71, revenue:2.2}, 
-        {category:"5/2/2010", miscellaneous:0.5, expenses:9.1, revenue:0.16}, 
-        {category:"5/3/2010", miscellaneous:1.4, expenses:1.14, revenue:1.25}, 
-        {category:"5/4/2010", miscellaneous:0.05, expenses:1.9, revenue:2.8}, 
-        {category:"5/5/2010", miscellaneous:5.53, expenses:5.21, revenue:2.65}
-    ],
-    
-    missingDataSmallDataProvider = [
-        {category: "1/1/2010", expenses: 3700},
-        {category: "1/2/2010", revenue: 2200},
-        {category: "2/1/2010", expenses: 9100},
-        {category: "2/2/2010", revenue: 100}
-    ],
-
-    missingDataLargeDataProvider = [
-        {category:"1/1/2010", miscellaneous:2000, expenses:3000},
-        {category:"2/1/2010", miscellaneous:3000, expenses:1200, revenue:3000},
-        {category:"3/1/2010", miscellaneous:400, expenses:900,  revenue: 3500},
-        {category:"4/1/2010", miscellaneous:200, expenses:2300, revenue:2200},
-        {category:"5/1/2010", miscellaneous:500, expenses:1550, revenue: 2400},
-        {category:"6/1/2010", expenses:1450, revenue:4400},
-        {category:"7/1/2010", miscellaneous:3000, expenses:1250, revenue:1200},
-        {category:"8/1/2010", miscellaneous:6550, expenses:1100, revenue:1400},
-        {category:"9/1/2010", miscellaneous:4000, expenses:1900, revenue:3600},
-        {category:"10/1/2010", expenses:1100, revenue:1500},
-        {category:"11/1/2010", miscellaneous:1200, expenses:2500, revenue:2800},
-        {category:"12/1/2010", revenue:2000, expenses:1200}
-    ],
-
-    nullValuesDataProvider =  [ 
-        {category:"5/1/2010", miscellaneous:null, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", miscellaneous:50, expenses:null, revenue:100}, 
-        {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:null}, 
-        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
-        {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
-    ],
-
-    missingFirstValuesDataProvider =  [ 
-        {category:"5/1/2010"}, 
-        {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
-        {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
-    ],
-    
-    missingFirstValuesDataLargeDataProvider = [
-        {category:"1/1/2010", miscellaneous:2000},
-        {category:"2/1/2010", miscellaneous:3000},
-        {category:"3/1/2010", expenses:900,  revenue: 3500},
-        {category:"4/1/2010", expenses:2300, revenue:2200},
-        {category:"5/1/2010", expenses:1550, revenue: 2400},
-        {category:"6/1/2010", expenses:1450, revenue:4400},
-        {category:"7/1/2010", expenses:1250, revenue:1200},
-        {category:"8/1/2010", expenses:1100, revenue:1400},
-        {category:"9/1/2010", expenses:1900, revenue:3600},
-        {category:"10/1/2010", expenses:1100, revenue:1500},
-        {category:"11/1/2010", expenses:2500, revenue:2800},
-        {category:"12/1/2010", revenue:2000, expenses:1200}
-    ],
-
-    missingLastValuesDataLargeDataProvider = [
-        {category:"1/1/2010", expenses:3000, revenue:3000},
-        {category:"2/1/2010", expenses:1200, revenue:3000},
-        {category:"3/1/2010", expenses:900,  revenue: 3500},
-        {category:"4/1/2010", expenses:2300, revenue:2200},
-        {category:"5/1/2010", expenses:1550, revenue: 2400},
-        {category:"6/1/2010", expenses:1450, revenue:4400},
-        {category:"7/1/2010", expenses:1250, revenue:1200},
-        {category:"8/1/2010", expenses:1100, revenue:1400},
-        {category:"9/1/2010", expenses:1900, revenue:3600},
-        {category:"10/1/2010", expenses:1100, revenue:1500},
-        {category:"11/1/2010", miscellaneous:1200},
-        {category:"12/1/2010", miscellaneous:2000}
-    ],
-   
-    splitTrailingSeriesDataProvider = [
-        {category:"1/1/2010", revenue:1400},
-        {category:"2/1/2010", revenue: 300},
-        {category:"3/1/2010", revenue:400, expenses:900},
-        {category:"4/1/2010", revenue:200, expenses:2300},
-        {category:"5/1/2010", revenue:500, expenses:1550},
-        {category:"6/1/2010", expenses:1450},
-        {category:"7/1/2010", revenue:3000, expenses:1250},
-        {category:"8/1/2010", revenue:6550, expenses:1100},
-        {category:"9/1/2010", revenue:4000, expenses:1900},
-        {category:"10/1/2010", expenses:1100},
-        {category:"11/1/2010", miscellaneous:1200, expenses:2500},
-        {category:"12/1/2010", miscellaneous: 1200, expenses:1200}
-
-    ],
-    
-    twoSeriesEndTogetherDataProvider = [
-        {category:"1/1/2010", revenue:2000, expenses:3000/*, miscellaneous:1400*/},
-        {category:"2/1/2010", revenue:3000, expenses:1200, miscellaneous:3000},
-        {category:"3/1/2010", revenue:400, expenses:900,  miscellaneous: 3500},
-        {category:"4/1/2010", revenue:200, expenses:2300, miscellaneous:2200},
-        {category:"5/1/2010", revenue:500, expenses:1550, miscellaneous: 2400},
-        {category:"6/1/2010", expenses:1450, miscellaneous:4400},
-        {category:"7/1/2010", revenue:3000, expenses:1250, miscellaneous:1200},
-        {category:"8/1/2010", revenue:6550, expenses:1100, miscellaneous:1400},
-        {category:"9/1/2010", revenue:4000, expenses:1900, miscellaneous:3600},
-        {category:"10/1/2010", expenses:1100, miscellaneous:1500},
-        {category:"11/1/2010", revenue:1200, expenses:2500, miscellaneous:2800},
-        {category:"12/1/2010", expenses:1200}
-    ],
-
     getDataProviderTest = function(dataProvider, name, stacked)
     {
         var cfg = {

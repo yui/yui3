@@ -1,5 +1,6 @@
 YUI.add('series-areaspline-tests', function(Y) {
-    var MockAreaSplineSeries = Y.Base.create("mockAreaSplineSeries", Y.AreaSplineSeries, [], {
+    var DOC = Y.config.doc,
+        MockAreaSplineSeries = Y.Base.create("mockAreaSplineSeries", Y.AreaSplineSeries, [], {
             _areaSplineDrawn: false,
 
             drawAreaSpline: function() {
@@ -16,7 +17,8 @@ YUI.add('series-areaspline-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
        
         "test: drawSeries()" : function() {

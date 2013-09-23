@@ -3,6 +3,8 @@ YUI.add('axes-display-tests', function(Y) {
     ENGINE = "VML",
     DOCUMENT = Y.config.doc,
     canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+    parentDiv = Y.DOM.create('<div style="position:absolute;top:500px;left:0px;width:500px;height:400px" id="testdiv"></div>'),
+    DOC = Y.config.doc,
     TestSVGNodes = function(lineStyles, tickStyles, valueLinePath, valueTickPath, catLinePath, catTickPath)
     {
             var lineColor = lineStyles.color,
@@ -81,9 +83,8 @@ YUI.add('axes-display-tests', function(Y) {
 
     compareVMLColors = function(color, strokeNode, node)
     {
-        var toHex = Y.Color.toHex,
-            color = toHex(color);
-        
+        var toHex = Y.Color.toHex;
+        color = toHex(color);
         return (color == toHex(strokeNode.color) || color == toHex(strokeNode.color.value)) ||
         (color == toHex(node.strokecolor) || color == toHex(node.strokecolor.value));
     },
@@ -270,6 +271,7 @@ YUI.add('axes-display-tests', function(Y) {
                 Y.Assert.isTrue(!catTickPath, "There should not be a path element for the category axis ticks.");
             }
     };
+    DOC.body.appendChild(parentDiv);
 
     if(Y.config.defaultGraphicEngine != "canvas" && DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
     {
@@ -298,22 +300,20 @@ YUI.add('axes-display-tests', function(Y) {
 
     Y.extend(AxisTestTemplate, Y.Test.Case, {
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
         
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         }
     });
     
     function AxisDataProviderTemplate()
     {
         AxisDataProviderTemplate.superclass.constructor.apply(this, arguments);
-    };
+    }
 
     Y.extend(AxisDataProviderTemplate, AxisTestTemplate, {
         testAxesMinAndMax: function()
@@ -328,7 +328,6 @@ YUI.add('axes-display-tests', function(Y) {
                     dataMin,
                     dataMax,
                     key,
-                    seriesKey,
                     keys,
                     len,
                     seriesKey;
@@ -352,7 +351,7 @@ YUI.add('axes-display-tests', function(Y) {
                     }
                 }
             });
-            this.chart.render("#mychart");
+            this.chart.render("#testdiv");
         }
     });
 
@@ -373,7 +372,7 @@ YUI.add('axes-display-tests', function(Y) {
                 this._testNodes = TestVMLNodes;
             break;
         }
-    };
+    }
 
     Y.extend(AxisGraphicStylesTemplate, AxisTestTemplate, {
         testGraphicStyles: function()
@@ -398,21 +397,17 @@ YUI.add('axes-display-tests', function(Y) {
                     catTickPath
                 ]);
             });
-            this.chart.render("#mychart");
+            this.chart.render("#testdiv");
         }
     
     });
     
     Y.AxisGraphicStylesTemplate = AxisGraphicStylesTemplate;
 
-    var suite = new Y.Test.Suite("Charts: AxesDisplay"),
-    
-    AxesTests = new Y.Test.Case({
+    var AxesTests = new Y.Test.Case({
         name: "Axes Tests",
         
         setUp: function() {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             var myDataValues = [ 
                 {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
                 {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
@@ -421,13 +416,13 @@ YUI.add('axes-display-tests', function(Y) {
                 {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
             ];
             var mychart = new Y.Chart({width:400, height:300, dataProvider:myDataValues, seriesKeys:["values", "revenue"]});
-            mychart.render("#mychart");
+            mychart.render("#testdiv");
             this.chart = mychart;
         },
 
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         //Test axes data classes
@@ -483,8 +478,6 @@ YUI.add('axes-display-tests', function(Y) {
         
         setUp: function() 
         {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             var myDataValues = [ 
                 {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
                 {category:"5/2/2010", values:50, expenses:9100, revenue:-100}, 
@@ -502,7 +495,7 @@ YUI.add('axes-display-tests', function(Y) {
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         testAlwaysShowZero: function()
@@ -525,7 +518,7 @@ YUI.add('axes-display-tests', function(Y) {
                 }
                 Y.Assert.areEqual(0, label, "The value should be zero.");
             });
-            this.chart.render("#mychart");
+            this.chart.render("#testdiv");
         }
     }),
     
@@ -534,8 +527,6 @@ YUI.add('axes-display-tests', function(Y) {
         
         setUp: function() 
         {
-            Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             var myDataValues = [ 
                 {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
                 {category:"5/2/2010", values:50, expenses:9100, revenue:-100}, 
@@ -558,7 +549,7 @@ YUI.add('axes-display-tests', function(Y) {
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
-            Y.one("#testbed").destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
         
         testAlwaysShowZeroEqualsFalse: function()
@@ -581,7 +572,7 @@ YUI.add('axes-display-tests', function(Y) {
                 }
                 Y.assert(label !== 0);
             });
-            this.chart.render("#mychart");
+            this.chart.render("#testdiv");
         }
     }),
 

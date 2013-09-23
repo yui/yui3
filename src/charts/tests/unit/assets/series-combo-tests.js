@@ -1,5 +1,6 @@
 YUI.add('series-combo-tests', function(Y) {
-    var MockComboSeries = Y.Base.create("mockComboSeries", Y.Base, [], {
+    var DOC = Y.config.doc,
+        MockComboSeries = Y.Base.create("mockComboSeries", Y.Base, [], {
             _linesDrawn: false,
             
             _fillDrawn: false,
@@ -43,7 +44,8 @@ YUI.add('series-combo-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.series = null;
+            this.series.destroy();
+            Y.Event.purgeElement(DOC, false);
         },
        
         "test: drawSeries()" : function() {

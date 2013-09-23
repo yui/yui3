@@ -2,7 +2,7 @@ YUI.add('axis-stacked-base-tests', function(Y) {
     Y.StackedAxisBaseTest = function() {
         Y.StackedAxisBaseTest.superclass.constructor.apply(this, arguments);
         this.prepValues();
-    }
+    };
     Y.extend(Y.StackedAxisBaseTest, Y.ChartTestTemplate, {
         prepValues : function() {
             var i,
@@ -43,7 +43,8 @@ YUI.add('axis-stacked-base-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.axis = null;
+            this.axis.destroy(true);
+            Y.Event.purgeElement(DOC, false);
         },
 
         "test: get('type')" : function() {
@@ -180,7 +181,7 @@ YUI.add('axis-stacked-base-tests', function(Y) {
         "test: get('dataMaximum')" : function() {
             var dataMaximum;
             this.axis.set("keys", ["open", "close"]);
-            dataMaximum = this.axis.get("dataMaximum")
+            dataMaximum = this.axis.get("dataMaximum");
             Y.Assert.isTrue(dataMaximum >= this.dataMaximum, "The value for the attribute dataMaximum (" + dataMaximum + ") should be greater than or equal to " + this.dataMaximum + ".");
         },
 
@@ -249,6 +250,7 @@ YUI.add('axis-stacked-base-tests', function(Y) {
     });
     
     var suite = new Y.Test.Suite("Charts: StackedAxisBase"),
+        DOC = Y.config.doc,
         plainOldDataProvider = [
             {date: "01/01/2009", open: 90.27, close: 170.27},
             {date: "01/02/2009", open: 91.55, close: 8.55},
