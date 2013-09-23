@@ -996,13 +996,13 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
         *
         * @attribute swfURL
         * @type {String}
-        * @default "CDN Prefix + uploader/assets/flashuploader.swf" with a
+        * @default "flashuploader.swf" with a
         * random GET parameter for IE (to prevent buggy behavior when the SWF
         * is cached).
         */
         swfURL: {
             valueFn: function () {
-                var prefix = Y.Env.cdn + "uploader/assets/flashuploader.swf";
+                var prefix = "flashuploader.swf";
 
                 if (Y.UA.ie > 0) {
                     return (prefix + "?t=" + Y.guid("uploader"));
