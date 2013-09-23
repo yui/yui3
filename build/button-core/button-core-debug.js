@@ -74,7 +74,7 @@ ButtonCore.prototype = {
     _initAttributes: function(config) {
         var host = this._host,
             node = host.one('.' + ButtonCore.CLASS_NAMES.LABEL) || host;
-            
+
         config.label = config.label || this._getLabel(node);
         Y.AttributeCore.call(this, ButtonCore.ATTRS, config);
     },
@@ -91,7 +91,7 @@ ButtonCore.prototype = {
 
         // Set some default node attributes
         node.addClass(ButtonCore.CLASS_NAMES.BUTTON);
-        
+
         if (tagName !== 'button' && tagName !== 'input') {
             node.set('role', 'button');
         }
@@ -123,7 +123,7 @@ ButtonCore.prototype = {
     getNode: function() {
         return this._host;
     },
-    
+
     /**
      * @method _getLabel
      * @description Getter for a button's 'label' ATTR
@@ -140,10 +140,10 @@ ButtonCore.prototype = {
         else {
             label = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).get('text');
         }
-        
+
         return label;
     },
-    
+
     /**
      * @method _uiSetLabel
      * @description Setter for a button's 'label' ATTR
@@ -171,10 +171,10 @@ ButtonCore.prototype = {
      */
     _uiSetDisabled: function(value) {
         var node = this.getNode();
-        
+
         node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
         node.toggleClass(ButtonCore.CLASS_NAMES.DISABLED, value);
-        
+
         return value;
     }
 };
@@ -270,5 +270,6 @@ ButtonCore.ARIA_ROLES = {
 
 // Export Button
 Y.ButtonCore = ButtonCore;
+
 
 }, '@VERSION@', {"requires": ["attribute-core", "classnamemanager", "node-base"]});

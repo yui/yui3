@@ -20,7 +20,7 @@ dirs.forEach(function(d) {
         var files = fs.readdirSync(p);
         files.forEach(function(f) {
             name = d;
-            if ((d.indexOf('yui') === 0 || d.indexOf('simpleyui') === 0)) {
+            if ((d.indexOf('yui') === 0)) {
                 //Skip the YUI object..
                 return;
             }

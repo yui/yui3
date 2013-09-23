@@ -61,7 +61,7 @@ function Promise(fn) {
 
     /**
     A reference to the resolver object that handles this promise
-    
+
     @property _resolver
     @type Object
     @private
@@ -268,8 +268,20 @@ Y.mix(Resolver.prototype, {
                 thenReject = reject;
             }),
 
-            callbackList = this._callbacks || [],
-            errbackList  = this._errbacks  || [];
+            callbackList,
+            errbackList;
+
+        if (this._callbacks) {
+            callbackList = this._callbacks;
+        } else {
+            callbackList = this._callbacks = [];
+        }
+
+        if (this._errbacks) {
+            errbackList = this._errbacks;
+        } else {
+            errbackList = this._errbacks = [];
+        }
 
         // Because the callback and errback are represented by a Resolver, it
         // must be fulfilled or rejected to propagate through the then() chain.
@@ -305,46 +317,35 @@ Y.mix(Resolver.prototype, {
     @private
     **/
     _wrap: function (thenFulfill, thenReject, fn) {
-        var promise = this.promise;
+        // callbacks and errbacks only get one argument
+        return function (valueOrReason) {
+            var result;
 
-        return function () {
-            // The args coming in to the callback/errback from the
-            // resolution of the parent promise.
-            var args = arguments;
+            // Promises model exception handling through callbacks
+            // making both synchronous and asynchronous errors behave
+            // the same way
+            try {
+                // Use the argument coming in to the callback/errback from the
+                // resolution of the parent promise.
+                // The function must be called as a normal function, with no
+                // special value for |this|, as per Promises A+
+                result = fn(valueOrReason);
+            } catch (e) {
+                // calling return only to stop here
+                return thenReject(e);
+            }
 
-            // Wrapping all callbacks in Y.soon to guarantee
-            // asynchronicity. Because setTimeout can cause unnecessary
-            // delays that *can* become noticeable in some situations
-            // (especially in Node.js)
-            Y.soon(function () {
-                // Call the callback/errback with promise as `this` to
-                // preserve the contract that access to the deferred is
-                // only for code that may resolve/reject it.
-                // Another option would be call the function from the
-                // global context, but it seemed less useful.
-                var result;
-
-                // Promises model exception handling through callbacks
-                // making both synchronous and asynchronous errors behave
-                // the same way
-                try {
-                    result = fn.apply(promise, args);
-                } catch (e) {
-                    return thenReject(e);
-                }
-
-                if (Promise.isPromise(result)) {
-                    // Returning a promise from a callback makes the current
-                    // promise sync up with the returned promise
-                    result.then(thenFulfill, thenReject);
-                } else {
-                    // Non-promise return values always trigger resolve()
-                    // because callback is affirmative, and errback is
-                    // recovery.  To continue on the rejection path, errbacks
-                    // must return rejected promises or throw.
-                    thenFulfill(result);
-                }
-            });
+            if (Promise.isPromise(result)) {
+                // Returning a promise from a callback makes the current
+                // promise sync up with the returned promise
+                result.then(thenFulfill, thenReject);
+            } else {
+                // Non-promise return values always trigger resolve()
+                // because callback is affirmative, and errback is
+                // recovery.  To continue on the rejection path, errbacks
+                // must return rejected promises or throw.
+                thenFulfill(result);
+            }
         };
     },
 
@@ -369,10 +370,21 @@ Y.mix(Resolver.prototype, {
     @protected
     **/
     _notify: function (subs, result) {
-        var i, len;
+        // Since callback lists are reset synchronously, the subs list never
+        // changes after _notify() receives it. Avoid calling Y.soon() for
+        // an empty list
+        if (subs.length) {
+            // Calling all callbacks after Y.soon to guarantee
+            // asynchronicity. Because setTimeout can cause unnecessary
+            // delays that *can* become noticeable in some situations
+            // (especially in Node.js)
+            Y.soon(function () {
+                var i, len;
 
-        for (i = 0, len = subs.length; i < len; ++i) {
-            subs[i](result);
+                for (i = 0, len = subs.length; i < len; ++i) {
+                    subs[i](result);
+                }
+            });
         }
     }
 
@@ -409,25 +421,18 @@ Y.when = function (promise, callback, errback) {
 
     return (callback || errback) ? promise.then(callback, errback) : promise;
 };
-/**
-Adds a `Y.batch()` method to wrap any number of callbacks or promises in a
-single promise that will be resolved when all callbacks and/or promises have completed.
-
-@module promise
-**/
-
 var slice = [].slice;
 
 /**
 Returns a new promise that will be resolved when all operations have completed.
-Takes both callbacks and promises as arguments. If an argument is a callback,
-it will be wrapped in a new promise.
+Takes both any numer of values as arguments. If an argument is a not a promise,
+it will be wrapped in a new promise, same as in `Y.when()`.
 
 @for YUI
 @method batch
-@param {Function|Promise} operation* Any number of functions or Y.Promise
-            objects
-@return {Promise}
+@param {Any} operation* Any number of Y.Promise objects or regular JS values
+@return {Promise} Promise to be fulfilled when all provided promises are
+                    resolved
 **/
 Y.batch = function () {
     var funcs     = slice.call(arguments),

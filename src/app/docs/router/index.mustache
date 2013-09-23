@@ -151,6 +151,24 @@ When instantiating Router, you may optionally pass in a config object containing
     </tr>
 
     <tr>
+      <td>`params`</td>
+      <td>`{}`</td>
+      <td>
+        <p>
+        Map of params handlers in the form: `name` -> RegExp | Function.
+        </p>
+
+        <p>
+        This attribute is intended to be used to set params at init time, or to completely reset all params after init. To add params after init without resetting all existing params, use the `param()` method.
+        </p>
+
+        <p>
+        See [[#Router Params]] for details.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
       <td>`root`</td>
       <td>`''`</td>
       <td>
@@ -584,6 +602,97 @@ When a route is matched, the callback functions associated with that route will 
 
 <p>
 Inside a route callback, the `this` keyword will always refer to the Router instance that executed that route.
+</p>
+
+<h4>Router Params</h4>
+
+<p>
+Usually it's desirable to define routes using string paths because doing so results in easily readable routes and named request parameters. When route params require specific validation or formatting there's a tendency to rewrite a string-based route path as a regular expression. Instead of switching to more complex regex-based routes, route param handlers can be registered to validate more complex routes.
+</p>
+
+<p>
+A common example of route param validation and formatting is resource `id`s which should be a number and formatted as such (instead of a string). The following registers a param handler for `id` and it will always make sure it's a number:
+</p>
+
+```javascript
+router.param('id', function (value) {
+  return parseInt(value, 10);
+});
+```
+
+<p>
+Now any routes registered that use the `:id` parameter will have that value validated and formatted using the above function.
+</p>
+
+```javascript
+router.route('/posts/:id', function (req) {
+  Y.log('Post: ' + req.params.id);
+});
+
+router.save('/posts/10'); // => "Post: 10"
+```
+
+<p>
+The above first validates and formats the original value of the `:id` placeholder from the URL (in this case the string `"10"`) by passing it to the registered `id` param handler function. That function returns the number `10` which is then assigned to `req.params.id` before the route handler is called.
+</p>
+
+<p>
+Route param handlers can also be defined as regular expressions. Regex param handlers will have their `exec()` called with the param value parsed from the URL, and the resulting matches object/array (or `null`) will become the new param value. The following defines regex for `username` which will match alphanumeric and underscore characters:
+</p>
+
+```javascript
+router.param('username', /^\w+$/);
+```
+
+<p>
+If a param handler regex or function returns a value of `false`, `null`, `undefined`, or `NaN`, the current route will not match and be skipped. All other return values will be used in place of the original param value parsed from the URL.
+</p>
+
+<p>
+The following defines two additional routes, one for `"/users/:username"`, and a catch-all route which will be called when none of the other routes match:
+</p>
+
+```javascript
+router.route('/users/:username', function (req) {
+  // `req.params.username` is an array because the result of calling `exec()`
+  // on the regex is assigned as the param's value.
+  Y.log('User: ' + req.params.username[0]);
+});
+
+router.route('*', function () {
+  Y.log('Catch-all no routes matched!');
+});
+
+// URLs which match routes:
+router.save('/users/ericf'); // => "User: ericf"
+
+// URLs which do not match routes because params fail validation:
+router.save('/posts/a');            // => "Catch-all no routes matched!"
+router.save('/users/ericf,rgrove'); // => "Catch-all no routes matched!"
+```
+
+<p>
+The last two `router.save()` calls above skip the main posts and users route handlers because the param values parsed from the URL fail validation of the `id` and `username` param handlers. When a param value fails validation, that route is skipped, and in this case the catch-all `"*"` route handler is called.
+</p>
+
+<p>
+A router's param handlers are also accessible through its `params` attribute and can be set, in bulk, at init time or to reset all existing param handlers. The above param handlers could have been registered via the `params` attribute:
+</p>
+
+```javascript
+var router = new Y.Router({
+  params: {
+    id: function (value) {
+      return parseInt(value, 10);
+    },
+
+    username: /^\w+$/
+  }
+});
+```
+
+<p>
+This is functionally equivalent to adding the param handlers via the `param()` method, except that it will replace any default params, and the params are added during the Router's initialization stage rather than after.
 </p>
 
 <h4>Chaining Routes and Middleware</h4>

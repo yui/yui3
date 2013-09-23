@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Paginator Demo</title>
+<link rel="stylesheet" type="text/css" href="http://localhost:5000/build/cssreset/cssreset-min.css">
+<link rel="stylesheet" type="text/css" href="http://localhost:5000/build/cssfonts/cssfonts-min.css">
+<style>
+body {
+    margin: 30px;
+}
+
+</style>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+<div id="log"></div>
+<div id="pg"></div>
+
+<script type="text/javascript">
+YUI({
+    filter: 'raw',
+    combine: false
+}).use("paginator", "paginator-list", "paginator-table", function (Y) {
+
+// PAGINATOR
+    var pgList = new Y.Paginator({
+                        totalItems: 1000,
+                        itemsPerPage: 10,
+                        view: 'Paginator.List',
+                        viewConfig: {
+                            url: '?pg={page}',
+                            displayRange: 10
+                        }
+                    });
+
+    pgList.render("#pg");
+
+    var pgDT = new Y.Paginator({
+                        totalItems: 1000,
+                        itemsPerPage: 10,
+                        view: 'Paginator.Table',
+                        viewConfig: {
+                            pageSizes: [10, 25, { value: -1, display: '*' }]
+                        }
+                    });
+
+    pgDT.render("#pg");
+
+});
+</script>
+</body>
+</html>
+

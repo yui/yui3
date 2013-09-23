@@ -1,18 +1,18 @@
 {
     "name": "yui",
-    "version": "3.6.0pre",
+    "version": "3.12.1-pre",
     "description": "YUI 3 Source",
     "author": "Dav Glass <davglass@gmail.com>",
     "bugs": { "url" : "https://github.com/yui/yui3/issues" },
     "engines": {
-        "node" : ">=0.4.0"
+        "node" : ">=0.8.0"
     },
     "directories": {
         "lib" : "."
     },
     "main": "./index.js",
     "dependencies": {
-        "request": "~2.14.0"
+        "request": "~2.21.0"
     },
     "devDependencies": {
         "yogi": "~0.1.0",
@@ -21,7 +21,8 @@
         "grunt-cli": "~0.1.7",
         "grunt-yui-contrib": "~0.0.4",
         "grunt-lib-contrib": "~0.5.3",
-        "grunt-contrib-compress": "0.4.6"
+        "grunt-contrib-compress": "0.4.10",
+        "archiver": "0.4.5"
     },
     "scripts": {
         "postinstall": "grunt build",

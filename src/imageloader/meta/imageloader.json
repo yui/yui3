@@ -1,8 +1,8 @@
 {
     "imageloader": {
         "requires": [
-            "base-base", 
-            "node-style", 
+            "base-base",
+            "node-style",
             "node-screen"
         ]
     }

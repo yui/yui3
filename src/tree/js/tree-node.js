@@ -193,6 +193,32 @@ TreeNode.prototype = {
     },
 
     /**
+    Returns this node's depth.
+
+    The root node of a tree always has a depth of 0. A child of the root has a
+    depth of 1, a child of that child will have a depth of 2, and so on.
+
+    @method depth
+    @return {Number} This node's depth.
+    @since 3.11.0
+    **/
+    depth: function () {
+        if (this.isRoot()) {
+            return 0;
+        }
+
+        var depth  = 0,
+            parent = this.parent;
+
+        while (parent) {
+            depth += 1;
+            parent = parent.parent;
+        }
+
+        return depth;
+    },
+
+    /**
     Removes all children from this node. The removed children will still be
     reusable unless the `destroy` option is truthy.
 
@@ -211,6 +237,36 @@ TreeNode.prototype = {
     **/
     empty: function (options) {
         return this.tree.emptyNode(this, options);
+    },
+
+    /**
+    Performs a depth-first traversal of this node, passing it and each of its
+    descendants to the specified _callback_, and returning the first node for
+    which the callback returns a truthy value.
+
+    Traversal will stop as soon as a truthy value is returned from the callback.
+
+    See `Tree#traverseNode()` for more details on how depth-first traversal
+    works.
+
+    @method find
+    @param {Object} [options] Options.
+        @param {Number} [options.depth] Depth limit. If specified, descendants
+            will only be traversed to this depth before backtracking and moving
+            on.
+    @param {Function} callback Callback function to call with the traversed
+        node and each of its descendants. If this function returns a truthy
+        value, traversal will be stopped and the current node will be returned.
+
+        @param {Tree.Node} callback.node Node being traversed.
+
+    @param {Object} [thisObj] `this` object to use when executing _callback_.
+    @return {Tree.Node|null} Returns the first node for which the _callback_
+        returns a truthy value, or `null` if the callback never returns a truthy
+        value.
+    **/
+    find: function (options, callback, thisObj) {
+        return this.tree.findNode(this, options, callback, thisObj);
     },
 
     /**
@@ -296,7 +352,7 @@ TreeNode.prototype = {
         otherwise.
     **/
     isInTree: function () {
-        if (this.tree.rootNode === this) {
+        if (this.tree && this.tree.rootNode === this) {
             return true;
         }
 
@@ -311,7 +367,7 @@ TreeNode.prototype = {
         otherwise.
     **/
     isRoot: function () {
-        return this.tree.rootNode === this;
+        return !!(this.tree && this.tree.rootNode === this);
     },
 
     /**
@@ -437,6 +493,43 @@ TreeNode.prototype = {
         }
 
         return obj;
+    },
+
+    /**
+    Performs a depth-first traversal of this node, passing it and each of its
+    descendants to the specified _callback_.
+
+    If the callback function returns `Tree.STOP_TRAVERSAL`, traversal will be
+    stopped immediately. Otherwise, it will continue until the deepest
+    descendant of _node_ has been traversed, or until each branch has been
+    traversed to the optional maximum depth limit.
+
+    Since traversal is depth-first, that means nodes are traversed like this:
+
+                1
+              / | \
+             2  8  9
+            / \     \
+           3   7    10
+         / | \      / \
+        4  5  6    11 12
+
+    @method traverse
+    @param {Object} [options] Options.
+        @param {Number} [options.depth] Depth limit. If specified, descendants
+            will only be traversed to this depth before backtracking and moving
+            on.
+    @param {Function} callback Callback function to call with the traversed
+        node and each of its descendants.
+
+        @param {Tree.Node} callback.node Node being traversed.
+
+    @param {Object} [thisObj] `this` object to use when executing _callback_.
+    @return {Mixed} Returns `Tree.STOP_TRAVERSAL` if traversal was stopped;
+        otherwise returns `undefined`.
+    **/
+    traverse: function (options, callback, thisObj) {
+        return this.tree.traverseNode(this, options, callback, thisObj);
     },
 
     // -- Protected Methods ----------------------------------------------------

@@ -1,6 +1,43 @@
 Transition Change History
 =========================
 
+@VERSION@
+------
+
+* Added optional flag to NodeList.transition which, if true, fires the callback only once at the end of the NodeList transitions. ([#880][] @Perturbatio)
+
+[#880]: https://github.com/yui/yui3/issues/880
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* No changes.
+
 3.9.1
 -----
 

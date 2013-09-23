@@ -569,6 +569,22 @@ Y.UAData["YUI Internal"] = [
                         "ios": 6,
                         "os": "ios"
                 }
+        },
+        {
+                "ua": "Mozilla/5.0 (Android; Mobile; rv:13.0) Gecko/13.0 Firefox/13.0",
+                "data": {
+                        "gecko": 13,
+                        "os": "android",
+                        "mobile": "ffos"
+                }
+        },
+        {
+                "ua": "Mozilla/5.0 (Android; Tablet; rv:13.0) Gecko/13.0 Firefox/13.0",
+                "data": {
+                        "gecko": 13,
+                        "os": "android",
+                        "mobile": "ffos"
+                }
         }
 ];
 });

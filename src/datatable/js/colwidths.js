@@ -98,7 +98,7 @@ To add a liner to all columns, either provide a custom `bodyView` to the
 DataTable constructor or update the default `bodyView`'s `CELL_TEMPLATE` like
 so:
 
-<pre><code>table.on('renderBody', function (e) {
+<pre><code>table.on('table:renderBody', function (e) {
     e.view.CELL_TEMPLATE = e.view.CELL_TEMPLATE.replace(/\{content\}/,
             '&lt;div class="yui3-datatable-liner">{content}&lt;/div>');
 });

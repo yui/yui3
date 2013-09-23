@@ -1,0 +1,155 @@
+    FlickrSearch.Paginator = Y.Base.create('pager', Y.View, [], {
+
+        // Our paginator will consist of controls as list elements so we need to
+        // ensure our container is the proper parent element type
+        containerTemplate: '<ul/>',
+
+        // Our controls are list items we bind click events to. Based on the given
+        // control type - stored in `data-type` - we will be able to determine the
+        // course of action we need to take
+        controlTemplate: '<li class="control {type}" data-type="{type}">' +
+                            '{label}' +
+                         '</li>',
+
+        // We delegate click events for our controls
+        events: {
+            '.control': {
+                'click': '_controlClick'
+            }
+        },
+
+        // Our paginator will consist of a few controls as well as a list of pages
+        // To get the list of pages, we need to instantiate a `PaginatorPages`
+        // view. We also pass our model to the pages view to keep our controls and
+        // page items in sync with each other
+        initializer: function () {
+            var model = this.get('model'),
+                pages = this.pages = new FlickrSearch.PaginatorPages({
+                    model: model
+                });
+
+            model.after('change', this._afterModelChange, this);
+        },
+
+        // We can generate our controls as strings, but our pages controls are
+        // generated through another module, so we need to append the pages
+        // container node between our two sets of controls.
+        render: function () {
+            var container = this.get('container'),
+                firstControls,
+                lastControls;
+
+            // build first and prev controls
+            firstControls = this._makeControl('first');
+            firstControls += this._makeControl('prev', 'Previous');
+
+            // build next and last controls
+            lastControls = this._makeControl('next');
+            lastControls += this._makeControl('last');
+
+            // add the controls and page items to the container
+            container.append(firstControls);
+            container.append(this.pages.render().get('container'));
+            container.append(lastControls);
+
+            return this;
+        },
+
+        // We use this method to simplify the building of our controls. This will
+        // give us a Title Cased label from the `type` if we do not provide one
+        _makeControl: function (type, label, control) {
+            return Y.Lang.sub(this.controlTemplate, {
+                type: type,
+                label: label || (type.charAt(0).toUpperCase() + type.substr(1))
+            });
+        },
+
+        // After our model is changed, we only need to update our controls
+        _afterModelChange: function (e) {
+            this._updateControls();
+        },
+
+        // We can know whether our controls should be disabled or not by checking
+        // if there is a previous page (for first and previous controls) and a
+        // next page (for the next and last controls)
+        _updateControls: function () {
+            var model = this.get('model'),
+                hasPrev = model.hasPrevPage(),
+                hasNext = model.hasNextPage(),
+                disabled = 'disabled',
+                container = this.get('container');
+
+            container.one('.first').toggleClass(disabled, !hasPrev);
+            container.one('.prev').toggleClass(disabled, !hasPrev);
+            container.one('.next').toggleClass(disabled, !hasNext);
+            container.one('.last').toggleClass(disabled, !hasNext);
+        },
+
+        // When one of our controls is clicked, we want to update the model as
+        // expected, unless the control has been disabled.
+        _controlClick: function (e) {
+            e.preventDefault();
+
+            var control = e.currentTarget.getData('type'),
+                model = this.get('model');
+
+            if (e.currentTarget.hasClass('disabled')) {
+                return;
+            }
+
+            switch (control) {
+                case 'first':
+                    model.set('page', 1);
+                    break;
+                case 'prev':
+                    model.prevPage();
+                    break;
+                case 'next':
+                    model.nextPage();
+                    break;
+                case 'last':
+                    model.set('page', model.get('totalPages'));
+                    break;
+                default:
+                    return;
+            }
+        },
+
+
+        // ATTRS passthrough to our internal model for external gets and sets
+        _setPageFn: function (val) {
+            this.get('model').set('page', parseInt(val, 10));
+            return val;
+        },
+
+        _getPageFn: function () {
+            return this.get('model').get('page');
+        },
+
+        _setTotalItemsFn: function (val) {
+            this.get('model').set('totalItems', parseInt(val, 10));
+            return val;
+        },
+
+        _getTotalItemsFn: function () {
+            return this.get('model').get('totalItems');
+        }
+
+
+    }, {
+        ATTRS: {
+            // Relays changes to our model's page and retrives our model's page
+            // when requested
+            page: {
+                setter: '_setPageFn',
+                getter: '_getPageFn'
+            },
+
+            // Relays changes to our model's totalItems and retrieves our model's
+            // totalItems when requested
+            totalItems: {
+                setter: '_setTotalItemsFn',
+                getter: '_getTotalItemsFn'
+            }
+        }
+    });

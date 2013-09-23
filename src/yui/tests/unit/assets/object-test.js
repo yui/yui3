@@ -131,8 +131,8 @@ suite.add(new Y.Test.Case({
 
         Y.ArrayAssert.itemsAreSame(['a1', 'b1', 'c1'], Y.Object.keys(this.o), 'should return an array of keys');
 
-        if (Object.keys) {
-            Assert.areSame(Object.keys, Y.Object.keys, 'when native Object.keys is present, Y.Object.keys should be an alias');
+        if (Object.keys && !Y.Object._hasProtoEnumBug) {
+            Assert.areSame(Object.keys, Y.Object.keys, 'when native Object.keys is present and non-buggy, Y.Object.keys should be an alias');
         }
 
         // IE bugs.
@@ -141,6 +141,16 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame(['toString', 'valueOf'], Y.Object.keys({toString: 1, valueOf: 1}), 'should include toString, valueOf, etc.');
 
     },
+
+    test_keys_function: function () {
+        // Android 2.3.x and Opera 11.50 bug that considers `prototype` to be a key.
+        var func = function () {};
+        func.foo = 'bar';
+        func.prototype.baz = 'qux';
+
+        Y.ArrayAssert.itemsAreSame(['foo'], Y.Object.keys(func), 'should only return enumerable keys on functions');
+    },
+
     test_keys_dom: function() {
         var el = doc.createElement('span');
         el.foo = 'bar';

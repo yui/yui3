@@ -37,7 +37,10 @@ module.exports = function(grunt) {
                     pretty: true,
                     archive: 'release/<%= version %>/archives/yui_<%= version %>.zip',
                     mode: 'zip',
-                    level: 3
+                    level: 3,
+                    zlib: {
+                        chunkSize: 12 * 1024
+                    }
                 }
             },
             cdn: {
@@ -53,7 +56,10 @@ module.exports = function(grunt) {
                     pretty: true,
                     archive: 'release/<%= version %>/archives/akamai_<%= version %>.zip',
                     mode: 'zip',
-                    level: 3
+                    level: 3,
+                    zlib: {
+                        chunkSize: 12 * 1024
+                    }
                 }
             },
             'cdn-ssl': {
@@ -69,7 +75,10 @@ module.exports = function(grunt) {
                     pretty: true,
                     archive: 'release/<%= version %>/archives/akamaissl_<%= version %>.zip',
                     mode: 'zip',
-                    level: 3
+                    level: 3,
+                    zlib: {
+                        chunkSize: 12 * 1024
+                    }
                 }
             }
         }

@@ -148,14 +148,14 @@ These attributes are provided by `Calendar`, which is the complete implementatio
       <td>`minimumDate`</td>
       <td>`null`</td>
       <td>
-        Specification for the earliest month which the Calendar will display. In a multi-pane calendar, this is the earliest month that will appear in the first pane.
+        Unless minimumDate is null, it will not be possible to display and select dates earlier than this one.
       </td>
     </tr>
     <tr>
       <td>`maximumDate`</td>
       <td>`null`</td>
       <td>
-        Specification for the latest month which the Calendar will display. In a multi-pane calendar, this is the latest month that will appear in the last pane.
+        Unless maximumDate is null, it will not be possible to display and select dates later than this one.
       </td>
     </tr>
     <tr>

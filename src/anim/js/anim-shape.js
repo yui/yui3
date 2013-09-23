@@ -6,9 +6,9 @@
  * @deprecated Use anim-shape instead.
  */
 /**
- * Adds support for the <code>transform</code>, <code>fill</code>, and <code> attributes of <code>Graphic</code>
- * <code>Shape</code> instances. The <code>anim-shape</code> submodule can be used for all animations involving
- * <code>Graphic</code> <code>Shape</code> attributes.
+ * Adds support for the <code>transform</code> and <code>fill</code> attributes of <code>Graphic</code>
+ * and <code>Shape</code> instances. The <code>anim-shape</code> submodule can be used for all animations
+ * involving <code>Graphic</code> <code>Shape</code> attributes.
  *
  * @module anim
  * @submodule anim-shape

@@ -29,7 +29,7 @@ var getCN = Y.ClassNameManager.getClassName,
     C_FOOT       = DOT + Y.Console.CHROME_CLASSES.console_ft_class,
 
     SEL_CHECK    = 'input[type=checkbox].',
-    
+
     isString = Y.Lang.isString;
 
 function ConsoleFilters() {
@@ -162,7 +162,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
         this._categories.on('click', Y.bind(this._onCategoryCheckboxClick, this));
 
         this._sources.on('click', Y.bind(this._onSourceCheckboxClick, this));
-            
+
         this.after('categoryChange',this._afterCategoryChange);
         this.after('sourceChange',  this._afterSourceChange);
     },
@@ -196,7 +196,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
      */
     _onEntry : function (e) {
         this._entries.push(e.message);
-        
+
         var cat = CATEGORY_DOT + e.message.category,
             src = SOURCE_DOT + e.message.source,
             cat_filter = this.get(cat),
@@ -219,7 +219,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
             this.set(src, visible);
             src_filter = visible;
         }
-        
+
         if (!cat_filter || !src_filter) {
             e.preventDefault();
         }
@@ -317,7 +317,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
     /**
      * Trims the cache of entries to the appropriate new length.
      *
-     * @method _afterCacheLimitChange 
+     * @method _afterCacheLimitChange
      * @param e {Event} the attribute change event object
      * @protected
      */
@@ -383,7 +383,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
                 sel      = SEL_CHECK + getCN(CONSOLE,FILTER,item),
                 checkbox = container.one(sel),
                 host;
-                
+
             if (!checkbox) {
                 host = this.get(HOST);
 
@@ -393,7 +393,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
 
                 host._uiSetHeight(host.get('height'));
             }
-            
+
             checkbox.set(CHECKED, checked);
         }
     },
@@ -625,7 +625,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
                 'class="{filter} {filter_class}"> {filter_name}'+
         '</label>&#8201;',
 
-    /** 
+    /**
      * Classnames used by the templates when creating nodes.
      *
      * @property CHROME_CLASSES

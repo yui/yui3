@@ -1,0 +1,59 @@
+// A cache for GitHub user data
+var GitHub = (function () {
+
+    var cache = {},
+        githubURL = 'https://api.github.com/users/{user}?callback={callback}';
+
+    function getUserURL(name) {
+        return Y.Lang.sub(githubURL, {
+            user: name
+        });
+    }
+
+    // Fetches a URL, stores a promise in the cache and returns it
+    function fetch(url) {
+        var promise = new Y.Promise(function (fulfill, reject) {
+            Y.jsonp(url, function (res) {
+                var meta = res.meta,
+                    data = res.data;
+
+                // Check for a successful response, otherwise reject the
+                // promise with the message returned by the GitHub API.
+                if (meta.status >= 200 && meta.status < 300) {
+                    fulfill(data);
+                } else {
+                    reject(new Error(data.message));
+                }
+            });
+
+            // Add a timeout in case the URL is completely wrong
+            // or GitHub is too busy
+            setTimeout(function () {
+                // Once a promise has been fulfilled or rejected it will never
+                // change its state again, so we can safely call reject() after
+                // some time. If it was already fulfilled or rejected, nothing will
+                // happen
+                reject(new Error('Timeout'));
+            }, 10000);
+        });
+
+        // store the promise in the cache object
+        cache[url] = promise;
+
+        return promise;
+    }
+
+    return {
+        getUser: function (name) {
+            var url = getUserURL(name);
+
+            if (cache[url]) {
+                // If we have already stored the promise in the cache we just return it
+                return cache[url];
+            } else {
+                // fetch() will make a JSONP request, cache the promise and return it
+                return fetch(url);
+            }
+        }
+    };
+}());

@@ -2,7 +2,45 @@ Widget Change History
 =====================
 
 @VERSION@
------
+------
+
+* No changes.
+
+3.12.0
+------
+
+* Improved support for single-box widgets (BB === CB) by defaulting boundingBox to srcNode if CONTENT_TEMPLATE is null.
+
+3.11.0
+------
+
+* The Widget HTML_PARSER implementation has been updated to use the new
+  _preAddAttrs() hook in Base, since Base now adds all attributes across
+  the hierarchy in one shot. Widget HTML_PARSER requires contentBox/srcNode,
+  and related attributes to be set up first.
+
+  This is purely an internal implementation change at the base Widget layer,
+  and there is no impact to existing implementations.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+  * Fixed contentBox remaining in Y.Node _instances cache, when
+    widget hasn't been rendered, and `widget.destroy(true)` [deep destroy]
+    is used.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
 
   * Added custom prefix support to widget.getSkinName,
     derived https://github.com/yui/yui3/pull/327

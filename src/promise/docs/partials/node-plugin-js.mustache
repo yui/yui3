@@ -1,0 +1,35 @@
+<script>
+YUI().use('promise', 'transition', 'node-pluginhost', function (Y) {
+
+{{>node-plugin-subclass}}
+{{>node-plugin-transition}}
+{{>node-plugin-plugin}}
+
+var square = Y.one('#square');
+square.plug(PromisePlugin);
+
+function resetStyles() {
+    square.setStyles({
+        width: '100px',
+        height: '100px',
+        left: '0'
+    });
+}
+
+Y.one('#without-plugin').on('click', function () {
+    resetStyles();
+    square
+        .transition({width: '300px'})
+        .transition({height: '300px'})
+        .transition({left: '200px'});
+});
+Y.one('#with-plugin').on('click', function () {
+    resetStyles();
+    square.promise
+        .transition({width: '300px'})
+        .transition({height: '300px'})
+        .transition({left: '200px'});
+});
+
+});
+</script>

@@ -9,8 +9,8 @@ YUI.add('selector-native', function (Y, NAME) {
  */
 
 /**
- * Provides support for using CSS selectors to query the DOM 
- * @class Selector 
+ * Provides support for using CSS selectors to query the DOM
+ * @class Selector
  * @static
  * @for Selector
  */
@@ -79,7 +79,7 @@ var Selector = {
             }
 
             return compare;
-        
+
     }),
 
     _sort: function(nodes) {
@@ -113,7 +113,7 @@ var Selector = {
     },
 
     /**
-     * Retrieves a set of nodes based on a given CSS selector. 
+     * Retrieves a set of nodes based on a given CSS selector.
      * @method query
      *
      * @param {string} selector The CSS Selector to test the node against.
@@ -149,7 +149,7 @@ var Selector = {
                 }
             }
 
-            if (queries.length > 1) { // remove dupes and sort by doc order 
+            if (queries.length > 1) { // remove dupes and sort by doc order
                 ret = Selector._sort(Selector._deDupe(ret));
             }
         }
@@ -159,7 +159,7 @@ var Selector = {
     },
 
     _replaceSelector: function(selector) {
-        var esc = Y.Selector._parse('esc', selector), // pull escaped colon, brackets, etc. 
+        var esc = Y.Selector._parse('esc', selector), // pull escaped colon, brackets, etc.
             attrs,
             pseudos;
 
@@ -224,7 +224,7 @@ var Selector = {
                     id = Y.guid();
                     Y.DOM.setId(node, id);
                 }
-            
+
                 prefix = '[id="' + id + '"] ';
             }
 
@@ -238,8 +238,11 @@ var Selector = {
     },
 
     _nativeQuery: function(selector, root, one) {
-        if (Y.UA.webkit && selector.indexOf(':checked') > -1 &&
-                (Y.Selector.pseudos && Y.Selector.pseudos.checked)) { // webkit (chrome, safari) fails to pick up "selected"  with "checked"
+        if (
+            (Y.UA.webkit || Y.UA.opera) &&          // webkit (chrome, safari) and Opera
+            selector.indexOf(':checked') > -1 &&    // fail to pick up "selected"  with ":checked"
+            (Y.Selector.pseudos && Y.Selector.pseudos.checked)
+        ) {
             return Y.Selector.query(selector, root, one, true); // redo with skipNative true to try brute query
         }
         try {
@@ -285,7 +288,7 @@ var Selector = {
                 groups = selector.split(',');
                 if (!root && !Y.DOM.inDoc(node)) {
                     parent = node.parentNode;
-                    if (parent) { 
+                    if (parent) {
                         root = parent;
                     } else { // only use frag when no parent to query
                         frag = node[OWNER_DOCUMENT].createDocumentFragment();
@@ -331,7 +334,7 @@ var Selector = {
      * @param {HTMLElement} element An HTMLElement to start the query from.
      * @param {String} selector The CSS selector to test the node against.
      * @return {HTMLElement} The ancestor node matching the selector, or null.
-     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan
      * @static
      * @method ancestor
      */

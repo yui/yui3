@@ -157,7 +157,7 @@ Y.extend(DOMEventFacade, Object, {
         // Webkit and IE9+? duplicate charCode in keyCode.
         // Opera never sets charCode, always keyCode (though with the charCode).
         // IE6-8 don't set charCode or which.
-        // All browsers other than IE6-8 set which=keyCode in keydown, keyup, and 
+        // All browsers other than IE6-8 set which=keyCode in keydown, keyup, and
         // which=charCode in keypress.
         //
         // Moral of the story: (e.which || e.keyCode) will always return the
@@ -376,6 +376,7 @@ Y.DOMEventFacade = DOMEventFacade;
      * on the current target will not be executed
      */
 (function() {
+
 /**
  * The event utility provides functions to add and remove event listeners,
  * event cleansing.  It also tries to automatically remove listeners it
@@ -397,8 +398,7 @@ Y.DOMEventFacade = DOMEventFacade;
 Y.Env.evt.dom_wrappers = {};
 Y.Env.evt.dom_map = {};
 
-var YDOM = Y.DOM,
-    _eventenv = Y.Env.evt,
+var _eventenv = Y.Env.evt,
     config = Y.config,
     win = config.win,
     add = YUI.Env.add,
@@ -421,7 +421,7 @@ var YDOM = Y.DOM,
     shouldIterate = function(o) {
         try {
             // TODO: See if there's a more performant way to return true early on this, for the common case
-            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !YDOM.isWindow(o));
+            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !Y.DOM.isWindow(o));
         } catch(ex) {
             return false;
         }
@@ -704,6 +704,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 cewrapper = Y.publish(key, {
                     silent: true,
                     bubbles: false,
+                    emitFacade:false,
                     contextFn: function() {
                         if (compat) {
                             return cewrapper.el;
@@ -788,7 +789,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 // oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
 
                 if (compat) {
-                    oEl = YDOM.byId(el);
+                    oEl = Y.DOM.byId(el);
                 } else {
 
                     oEl = Y.Selector.query(el);
@@ -902,7 +903,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
 
                 // el = (compat) ? Y.DOM.byId(el) : Y.all(el);
                 if (compat) {
-                    el = YDOM.byId(el);
+                    el = Y.DOM.byId(el);
                 } else {
                     el = Y.Selector.query(el);
                     l = el.length;
@@ -976,7 +977,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
          * @static
          */
         generateId: function(el) {
-            return YDOM.generateID(el);
+            return Y.DOM.generateID(el);
         },
 
         /**
@@ -1083,7 +1084,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 if (item && !item.checkReady) {
 
                     // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
-                    el = (item.compat) ? YDOM.byId(item.id) : Y.Selector.query(item.id, null, true);
+                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         executeItem(el, item);
@@ -1100,7 +1101,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 if (item && item.checkReady) {
 
                     // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
-                    el = (item.compat) ? YDOM.byId(item.id) : Y.Selector.query(item.id, null, true);
+                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         // The element is available, but not necessarily ready
@@ -1295,11 +1296,17 @@ if (config.injected || YUI.Env.windowLoaded) {
 // Process onAvailable/onContentReady items when when the DOM is ready in IE
 if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll);
-}
 
-try {
-    add(win, "unload", onUnload);
-} catch(e) {
+    // In IE6 and below, detach event handlers when the page is unloaded in
+    // order to try and prevent cross-page memory leaks. This isn't done in
+    // other browsers because a) it's not necessary, and b) it breaks the
+    // back/forward cache.
+    if (Y.UA.ie < 7) {
+        try {
+            add(win, "unload", onUnload);
+        } catch(e) {
+        }
+    }
 }
 
 Event.Custom = Y.CustomEvent;

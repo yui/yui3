@@ -11,6 +11,8 @@ Provides URL-based routing using HTML5 `pushState()` or the location hash.
 var HistoryHash = Y.HistoryHash,
     QS          = Y.QueryString,
     YArray      = Y.Array,
+    YLang       = Y.Lang,
+    YObject     = Y.Object,
 
     win = Y.config.win,
 
@@ -100,6 +102,16 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
 
     /**
+    Map which holds the registered param handlers in the form:
+    `name` -> RegExp | Function.
+
+    @property _params
+    @type Object
+    @protected
+    @since 3.12.0
+    **/
+
+    /**
     Whether or not the `ready` event has fired yet.
 
     @property _ready
@@ -146,11 +158,20 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _regexUrlOrigin: /^(?:[^\/#?:]+:\/\/|\/\/)[^\/]*/,
 
+    /**
+    Collection of registered routes.
+
+    @property _routes
+    @type Array
+    @protected
+    **/
+
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         var self = this;
 
         self._html5  = self.get('html5');
+        self._params = {};
         self._routes = [];
         self._url    = self._getURL();
 
@@ -219,9 +240,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         this.once(EVT_READY, function () {
             this._ready = true;
 
-            if (this._html5 && this.upgrade()) {
-                return;
-            } else {
+            if (!this.upgrade()) {
                 this._dispatch(this._getPath(), this._getURL());
             }
         });
@@ -302,6 +321,65 @@ Y.Router = Y.extend(Router, Y.Base, {
         return YArray.filter(this._routes, function (route) {
             return path.search(route.regex) > -1;
         });
+    },
+
+    /**
+    Adds a handler for a route param specified by _name_.
+
+    Param handlers can be registered via this method and are used to
+    validate/format values of named params in routes before dispatching to the
+    route's handler functions. Using param handlers allows routes to defined
+    using string paths which allows for `req.params` to use named params, but
+    still applying extra validation or formatting to the param values parsed
+    from the URL.
+
+    If a param handler regex or function returns a value of `false`, `null`,
+    `undefined`, or `NaN`, the current route will not match and be skipped. All
+    other return values will be used in place of the original param value parsed
+    from the URL.
+
+    @example
+        router.param('postId', function (value) {
+            return parseInt(value, 10);
+        });
+
+        router.param('username', /^\w+$/);
+
+        router.route('/posts/:postId', function (req) {
+        });
+
+        router.route('/users/:username', function (req) {
+            // `req.params.username` is an array because the result of calling
+            // `exec()` on the regex is assigned as the param's value.
+        });
+
+        router.route('*', function () {
+        });
+
+        // URLs which match routes:
+        router.save('/posts/1');     // => "Post: 1"
+        router.save('/users/ericf'); // => "User: ericf"
+
+        // URLs which do not match routes because params fail validation:
+        router.save('/posts/a');            // => "Catch-all no routes matched!"
+        router.save('/users/ericf,rgrove'); // => "Catch-all no routes matched!"
+
+    @method param
+    @param {String} name Name of the param used in route paths.
+    @param {Function|RegExp} handler Function to invoke or regular expression to
+        `exec()` during route dispatching whose return value is used as the new
+        param value. Values of `false`, `null`, `undefined`, or `NaN` will cause
+        the current route to not match and be skipped. When a function is
+        specified, it will be invoked in the context of this instance with the
+        following parameters:
+      @param {String} handler.value The current param value parsed from the URL.
+      @param {String} handler.name The name of the param.
+    @chainable
+    @since 3.12.0
+    **/
+    param: function (name, handler) {
+        this._params[name] = handler;
+        return this;
     },
 
     /**
@@ -622,7 +700,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             decode    = self._decode,
             routes    = self.match(path),
             callbacks = [],
-            matches, req, res;
+            matches, paramsMatch, req, res;
 
         self._dispatching = self._dispatched = true;
 
@@ -670,12 +748,45 @@ Y.Router = Y.extend(Router, Y.Base, {
 
                 // Decode each of the path matches so that the any URL-encoded
                 // path segments are decoded in the `req.params` object.
-                matches = YArray.map(route.regex.exec(path) || [], decode);
+                matches = YArray.map(route.regex.exec(path) || [], function (match) {
+                    // Decode matches, or coerce `undefined` matches to an empty
+                    // string to match expectations of working with `req.params`
+                    // in the content of route dispatching, and normalize
+                    // browser differences in their handling of regexp NPCGs:
+                    // https://github.com/yui/yui3/issues/1076
+                    return (match && decode(match)) || '';
+                });
+
+                paramsMatch = true;
 
                 // Use named keys for parameter names if the route path contains
                 // named keys. Otherwise, use numerical match indices.
                 if (matches.length === route.keys.length + 1) {
-                    req.params = YArray.hash(route.keys, matches.slice(1));
+                    matches    = matches.slice(1);
+                    req.params = YArray.hash(route.keys, matches);
+
+                    paramsMatch = YArray.every(route.keys, function (key, i) {
+                        var paramHandler = self._params[key],
+                            value        = matches[i];
+
+                        if (paramHandler && value && typeof value === 'string') {
+                            // Check if `paramHandler` is a RegExp, becuase this
+                            // is true in Android 2.3 and other browsers!
+                            // `typeof /.*/ === 'function'`
+                            value = paramHandler instanceof RegExp ?
+                                    paramHandler.exec(value) :
+                                    paramHandler.call(self, value, key);
+
+                            if (value !== false && YLang.isValue(value)) {
+                                req.params[key] = value;
+                                return true;
+                            }
+
+                            return false;
+                        }
+
+                        return true;
+                    });
                 } else {
                     req.params = matches.concat();
                 }
@@ -684,8 +795,13 @@ Y.Router = Y.extend(Router, Y.Base, {
                 // request.
                 req.pendingRoutes = routes.length;
 
-                // Execute this route's `callbacks`.
-                req.next();
+                // Execute this route's `callbacks` or skip this route because
+                // some of the param regexps don't match.
+                if (paramsMatch) {
+                    req.next();
+                } else {
+                    req.next('route');
+                }
             }
         };
 
@@ -729,6 +845,18 @@ Y.Router = Y.extend(Router, Y.Base, {
     _getOrigin: function () {
         var location = Y.getLocation();
         return location.origin || (location.protocol + '//' + location.host);
+    },
+
+    /**
+    Getter for the `params` attribute.
+
+    @method _getParams
+    @return {Object} Mapping of param handlers: `name` -> RegExp | Function.
+    @protected
+    @since 3.12.0
+    **/
+    _getParams: function () {
+        return Y.merge(this._params);
     },
 
     /**
@@ -1153,7 +1281,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _save: function (url, replace) {
         var urlIsString = typeof url === 'string',
-            currentPath, root;
+            currentPath, root, hash;
 
         // Perform same-origin check on the specified URL.
         if (urlIsString && !this._hasSameOrigin(url)) {
@@ -1175,6 +1303,11 @@ Y.Router = Y.extend(Router, Y.Base, {
         } else {
             currentPath = Y.getLocation().pathname;
             root        = this.get('root');
+            hash        = HistoryHash.getHash();
+
+            if (!urlIsString) {
+                url = hash;
+            }
 
             // Determine if the `root` already exists in the current location's
             // `pathname`, and if it does then we can exclude it from the
@@ -1186,7 +1319,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             // The `hashchange` event only fires when the new hash is actually
             // different. This makes sure we'll always dequeue and dispatch
             // _all_ router instances, mimicking the HTML5 behavior.
-            if (url === HistoryHash.getHash()) {
+            if (url === hash) {
                 Y.Router.dispatch();
             } else {
                 HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
@@ -1194,6 +1327,25 @@ Y.Router = Y.extend(Router, Y.Base, {
         }
 
         return this;
+    },
+
+    /**
+    Setter for the `params` attribute.
+
+    @method _setParams
+    @param {Object} params Map in the form: `name` -> RegExp | Function.
+    @return {Object} The map of params: `name` -> RegExp | Function.
+    @protected
+    @since 3.12.0
+    **/
+    _setParams: function (params) {
+        this._params = {};
+
+        YObject.each(params, function (regex, name) {
+            this.param(name, regex);
+        }, this);
+
+        return Y.merge(this._params);
     },
 
     /**
@@ -1327,6 +1479,30 @@ Y.Router = Y.extend(Router, Y.Base, {
             // See http://code.google.com/p/android/issues/detail?id=17471
             valueFn: function () { return Y.Router.html5; },
             writeOnce: 'initOnly'
+        },
+
+        /**
+        Map of params handlers in the form: `name` -> RegExp | Function.
+
+        If a param handler regex or function returns a value of `false`, `null`,
+        `undefined`, or `NaN`, the current route will not match and be skipped.
+        All other return values will be used in place of the original param
+        value parsed from the URL.
+
+        This attribute is intended to be used to set params at init time, or to
+        completely reset all params after init. To add params after init without
+        resetting all existing params, use the `param()` method.
+
+        @attribute params
+        @type Object
+        @default `{}`
+        @see param
+        @since 3.12.0
+        **/
+        params: {
+            value : {},
+            getter: '_getParams',
+            setter: '_setParams'
         },
 
         /**

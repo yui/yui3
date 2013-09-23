@@ -1,6 +1,39 @@
 Charts Change History
 =====================
 
+@VERSION@
+------
+
+* No changes.
+
+3.12.0
+------
+
+* #716 Added logarithmic scaling.
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+  * #743 Addressed issue in which styles don't map correctly to a legend when series are styled using a global style object. 
+  * #706 Addressed issue in which the legend did not honor specified series marker style for shape. 
+
+3.10.0
+------
+
+  * #2533184 Addressed issue in which Axis.getEdgeOffset was returning an incorrect value.
+  * #2533130 Added hideFirstMajorUnit and hideLastMajorUnit attributes to axis classes allowing for suppression of rendering the first/last label and tick on an axis.
+  * #2533128 Add ability for axis to generate labels and their position from an array of values.  
+
 3.9.1
 -----
 

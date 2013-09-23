@@ -167,7 +167,7 @@ Y.JSON.parse = function (s,reviver) {
 
         // Eval the text into a JavaScript data structure, apply any
         // reviver function, and return
-        return _revive( EVAL_TOKEN('(' + s + ')'), reviver );
+        return _revive(eval('(' + s + ')'), reviver);
     }
 
     throw new SyntaxError('JSON.parse');

@@ -1,6 +1,44 @@
 TabView Change History
 ======================
 
+@VERSION@
+------
+
+* No changes.
+
+3.12.0
+------
+
+* Fixed missing ARIA role in the `tablist` of Tabview.
+  ([#1035][]: @blzaugg)
+
+[#1035]: https://github.com/yui/yui3/issues/1035
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Revert static templates and map prototype templates to statics by default.
+
 3.9.1
 -----
 

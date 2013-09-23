@@ -888,7 +888,9 @@ Y.AutoComplete = List;
 }, '@VERSION@', {
     "lang": [
         "en",
-        "es"
+        "es",
+        "hu",
+        "it"
     ],
     "requires": [
         "autocomplete-base",

@@ -1,6 +1,59 @@
 YUI Core Change History
 =======================
 
+@VERSION@
+------
+
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* `Y.Array.dedupe()` is now slightly faster in ES5-compliant browsers.
+  [Ezequiel Rodriguez]
+
+* Brought `Y.Lang.trim()`, `trimLeft()`, and `trimRight()` into compliance with
+  ES5, and added feature tests to ensure that native implementations are only
+  used if they work properly. [Ezequiel Rodriguez]
+
+* `Y.Object.keys()` now falls back to the non-native shim for Android 2.3.x
+  because the native version incorrectly enumerates the `prototype` property.
+
+* `Y.UA` now correctly identifies IE 11. [Ryan Grove]
+
+* `Y.UA` now identifies Opera 15+ as both Opera and WebKit. Previously it was
+  identified as Chrome, since it uses the same Blink rendering engine as
+  Chrome. [Ryan Grove]
+
+* Removed all instances of `path.existsSync()` from YUI core, as part of
+  node.js target environments being brought up to v0.8. [Clarence Leung]
+
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* Add ability to filter log messages by threshold [andrewnicols]
+
 3.9.1
 -----
 

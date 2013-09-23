@@ -29,7 +29,7 @@ Y.Subscriber = function(fn, context, args, when) {
      * @property id
      * @type String
      */
-    this.id = Y.stamp(this);
+    this.id = Y.guid();
 
     /**
      * Additional arguments to propagate to the subscriber
@@ -133,12 +133,12 @@ Y.Subscriber.prototype = {
      */
     contains: function(fn, context) {
         if (context) {
-            return ((this.fn == fn) && this.context == context);
+            return ((this.fn === fn) && this.context === context);
         } else {
-            return (this.fn == fn);
+            return (this.fn === fn);
         }
     },
-    
+
     valueOf : function() {
         return this.id;
     }

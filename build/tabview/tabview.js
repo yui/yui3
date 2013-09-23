@@ -53,9 +53,8 @@ var DOT = '.',
         this.get('contentBox').focusManager.refresh();
     },
 
-    _initAria: function() {
-        var contentBox = this.get('contentBox'),
-            tablist = contentBox.one(Y.TabviewBase._queries.tabviewList);
+    _initAria: function(contentBox) {
+        var tablist = contentBox.one(Y.TabviewBase._queries.tabviewList);
 
         if (tablist) {
             tablist.setAttrs({
@@ -88,6 +87,7 @@ var DOT = '.',
         this._renderPanelBox(contentBox);
         this._childrenContainer = this.get('listNode');
         this._renderTabs(contentBox);
+        this._initAria(contentBox);
     },
 
     _setDefSelection: function() {

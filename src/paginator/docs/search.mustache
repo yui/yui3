@@ -1,0 +1,183 @@
+<style>
+.scrollable pre {
+    overflow-y: auto;
+    max-height: 40em;
+    -webkit-overflow-scrolling: touch;
+}
+.doc .coms {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    background: #fff;
+    border-top: 2px solid #eee;
+    border-left: 3px solid #ddd;
+}
+.doc .com {
+    display: block;
+    color: #666666;
+    padding: 3px 10px;
+    text-indent: -2em;
+    overflow: hidden;
+}
+.doc .com + .com {
+    border-top: none;
+}
+</style><script>var FLICKR_API_KEY = '0c13dc70aa7eb3df87b3fee5caf37080';</script>
+
+
+<div class="intro">
+<p>{{description}}</p>
+<p>This is a hefty example that may include some modules you are not familiar
+    with, such as
+    `Y.Model`,
+    `Y.View`, and
+    `Y.JSONP`.
+    These modules are covered in detail on their respective pages.</p>
+</div>
+
+{{>search-full}}
+
+<h3>Setting Up the Interface</h3>
+<p>First we need to construct the HTML for the table and controls.</p>
+```
+{{>search-html-markup}}
+```
+
+
+<h2>JavaScript</h2>
+<p>Our Flickr Search application will have four main parts:</p>
+<ul>
+    <li>A form to submit and request new images</li>
+    <li>Our paginator with navigation controls and direct page number options</li>
+    <li>Our pages that display the images</li>
+    <li>A `Y.View` that will maintain our application state</li>
+</ul>
+<p>Our form is included in the markup, so we will just bind to the submit
+    event in our application (more on this later).</p>
+
+<h3>Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the modules we need.</p>
+```
+{{>search-js-startup}}
+```
+<p>There are a number of modules we use:</p>
+<ul>
+    <li><b>paginator-core:</b> Gives us the core part of paginator to mix into a model.</li>
+    <li><b>model:</b> Gives us a model structure to use with our paginator views</li>
+    <li><b>view:</b> Let's us abstract our view logic into a more focused component</li>
+    <li><b>transition:</b> Gives us the ability to fade pages in and out when swapping pages</li>
+    <li><b>jsonp:</b> Let's us make a JSONP request to the Flickr API</li>
+    <li><b>querystring-stringify-simple:</b> Gives us the ability to convert a simple object to a URL to pass to the Flickr API</li>
+    <li><b>cssbutton:</b> Dresses up our search form's submit button</li>
+</ul>
+
+
+<h3>Paginator</h3>
+<p>The paginator we will create will consist of four control buttons (First, Previous, Next, Last) and a collection of buttons representing each page.</p>
+<p>Our paginator will consist of one `Y.Model` and two `Y.View`s.</p>
+
+<h4>Paginator Model</h4>
+<p>First we'll set up the model.</p>
+```
+{{>search-js-paginator-model}}
+```
+<p>Since `paginator-core` contains our logic, and is built to be mixed into a
+    `Base`-based component, we do not need to add any new logic. Just mix in
+    and our model is complete!</p>
+
+<h4>Paginator Pages View</h4>
+<p>The first view we will create is the view for the page numbers between the
+    left and right controls.</p>
+```
+{{>search-js-paginator-pages}}
+```
+
+<h4>Paginator View</h4>
+<p>Our Paginator View consists of four local controls: first, previous, next
+    and last. In the middle of these four controls, we display a truncated
+    list of pages (our Pages View previously discussed) from which the user
+    can select.</p>
+```
+{{>search-js-paginator}}
+```
+<p>That's all it takes for our Paginator. As such it's fairly flexible and
+    extremely customizable if we need it to be.</p>
+<p>Next we need to look at our actual pages that hold the images.</p>
+
+
+<h3>Page View</h3>
+<p>Our page view need only display the images we pass to it. We do this by
+    sustituying placeholders with the data from the Flickr API.</p>
+```
+{{>search-js-page}}
+```
+
+<h3>Search App View</h3>
+<p>Our application view is a bit more envolved. It needs to request images
+    when the form is submitted and start a new series of pages. As well as
+    fetch new images when a new page is requested.</p>
+```
+{{>search-js-app}}
+```
+
+
+<h3>Run with it!</h3>
+<p>Now we need to create an instance and render it</p>
+```
+{{>search-js-begin}}
+```
+
+<h3>Finishing touches</h3>
+<p>Whew, that was a lot to digest! One last element is our CSS.</p>
+<div class="scrollable">
+```
+{{>search-css-styles}}
+```
+</div>
+
+
+
+
+<h3>The Whole Example</h3>
+<p>Now let's see it all together!</p>
+```
+{{>search-full}}
+```
+<script>YUI().use('node', function(Y){
+    Y.on('domready', function (){
+        Y.all('.doc .pln').each(function (node) {
+            var prev = node.previous(),
+                next = node.next();
+
+            if (prev) {
+                prev = prev.hasClass('com');
+            }
+            if (next) {
+                next = next.hasClass('com');
+            }
+            if (prev && next) {
+                node.remove();
+            }
+        });
+
+        setTimeout(function() {
+            var coms = Y.all('.doc .com'),
+                count = coms.size(),
+                first = true,
+                wrap;
+
+            coms.each(function (node) {
+                var next = node.next();
+                if (first) {
+                    wrap = Y.Node.create('<div class="coms"/>');
+                    node.insert(wrap,'before');
+                }
+
+                wrap.append(node);
+
+                first = !(next && next.hasClass('com'));
+            });
+
+        }, 0);
+        });
+});</script>
+

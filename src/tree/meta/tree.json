@@ -32,5 +32,11 @@
         "requires": [
             "tree"
         ]
+    },
+
+    "tree-sortable": {
+        "requires": [
+            "tree"
+        ]
     }
 }

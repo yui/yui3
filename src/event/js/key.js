@@ -132,7 +132,7 @@ eventDef.detachDelegate = eventDef.detach;
  * <p>Add a key listener.  The listener will only be notified if the
  * keystroke detected meets the supplied specification.  The
  * specification is a string that is defined as:</p>
- * 
+ *
  * <dl>
  *   <dt>spec</dt>
  *   <dd><code>[{type}:]{code}[,{code}]*</code></dd>
@@ -152,7 +152,7 @@ eventDef.detachDelegate = eventDef.detach;
  *   <li><code>Y.delegate("key", preventSubmit, "#forms", "enter", "input[type=text]");</code></li>
  *   <li><code>Y.one("doc").on("key", viNav, "j,k,l,;");</code></li>
  * </ul>
- *   
+ *
  * @event key
  * @for YUI
  * @param type {string} 'key'

@@ -42,10 +42,10 @@ Y.mix(Y.namespace("XML"), {
                 }
             }
         }
-        
+
         if( (LANG.isNull(xmlDoc)) || (LANG.isNull(xmlDoc.documentElement)) || (xmlDoc.documentElement.nodeName === "parsererror") ) {
         }
-        
+
         return xmlDoc;
     }
 });

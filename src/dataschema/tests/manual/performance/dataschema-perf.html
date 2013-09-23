@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>DataSchema Tests</title>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+<h1>DataSchema Performance Tests</h1>
+<p><select id="testSelector"></select> <input type="button" value="Run Test" id="btnRun" disabled=true></p>
+
+<script type="text/javascript">
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    allowRollup: false,
+    useBrowserConsole: false
+}).use("console", "datatype", "dataschema", function(Y) {
+
+    // Set up the page
+    var btnRun = Y.one("#btnRun"),
+        selectTest = Y.one("#testSelector"),
+        allTests = [],
+        myConsole = new Y.Console().render();
+
+
+    btnRun.set("disabled", false);
+    Y.on("click", function(e){
+        run();
+    }, btnRun);
+
+    function register(testName, testFn) {
+        var index = allTests.length;
+        allTests[index] = testFn;
+
+        var optionEl = document.createElement("option");
+        optionEl.innerHTML = testName;
+        selectTest.appendChild(optionEl);
+    }
+
+    function run() {
+        var test = selectTest.get("value");
+        Y.log("Starting " + test, "info", "perf");
+        allTests[selectTest.get("selectedIndex")].apply(this);
+        Y.log(test + " completed", "info", "perf");
+    }
+
+    //Define tests
+    register("Test basic JSON schema parsing", function() {
+        // Setup
+        var schema = {
+                resultListLocator:"results",
+                resultFields: [
+                    "id",
+                    "firstname",
+                    "lastname"
+                ]
+            },
+            data_in = {
+                results: []
+            },
+            data_out, i=0, startTime, endTime;
+
+        // Populate data
+        for(; i<10000; i++) {
+            data_in.results[i] = {"id":i, "firstname":"George", "lastname":"Washington"};
+        }
+
+        // The test
+        startTime = new Date();
+        data_out = Y.DataSchema.JSON.apply(schema, data_in);
+        endTime = new Date();
+        Y.log(endTime-startTime);
+
+    });
+
+    register("Test JSON schema parsing w/locators", function() {
+        // Setup
+        var schema = {
+                resultListLocator: "level_one.level_two[1]",
+                resultFields: [
+                    {key:"name", locator:"fruit.goodforpie[1].name"},
+                    {key:"calories", locator:"fruit.goodforpie[1].calories", parser:"number"},
+                    {key:"profile", locator:"fruit.goodforpie[1].profile.taste[0]"}
+                ]
+            },
+            results = [],
+            data_in = {
+                level_one: {
+                    level_two: [
+                        "foo"
+                    ]
+                }
+            },
+            data_out, i=0, startTime, endTime;
+
+        // Populate data
+        for(; i<10000; i++) {
+            results[i] = {
+                "id": i,
+                "fruit":{
+                    "goodforpie": [
+                        {"name":"apple", "calories":"70"},
+                        {"name":"banana", "calories":"70", "profile":{
+                                "taste":["sweet"]
+                            }
+                        },
+                    ]
+                }
+            }
+        }
+        data_in.level_one.level_two[1] = results;
+
+        // The test
+        startTime = new Date();
+        data_out = Y.DataSchema.JSON.apply(schema, data_in);
+        endTime = new Date();
+        Y.log(endTime-startTime);
+    });
+
+    register("Test XML schema parsing", function() {
+        var schema = {
+                resultListLocator: "item",
+                resultFields: [{key:"type", locator:"@type"}, {key:"rank", parser:Y.DataType.Number.parse}, "name", {key:"subnameatt", locator:"subitem/name/@type"}, {key:"age", locator:"subitem/age", parser:"number"}]
+            },
+            data_in = "<myroot rootatt='5'><top>topvalue</top><second nested='nestedsecond' /><allitems><livehere>",
+            data_out, i=0, startTime, endTime;
+
+            //Populate data
+            for(; i<10000; i++) {
+                data_in += "<item type='foo'><name type='nametype0'>Abc</name><rank>"+i+"</rank><subitem><name type='subnametype0'>subABC</name><age>10</age></subitem></item>";
+            }
+            data_in += "</livehere></allitems></myroot>";
+            data_in = Y.DataType.XML.parse(data_in);
+
+            // The test
+            startTime = new Date();
+            data_out = Y.DataSchema.XML.apply(schema, data_in);
+            endTime = new Date();
+            Y.log(endTime-startTime);
+    });
+});
+</script>
+</body>
+</html>

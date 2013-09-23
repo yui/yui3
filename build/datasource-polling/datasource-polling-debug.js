@@ -6,12 +6,12 @@ YUI.add('datasource-polling', function (Y, NAME) {
  * @module datasource
  * @submodule datasource-polling
  */
-    
+
 /**
  * Adds polling to the DataSource Utility.
  * @class Pollable
  * @extends DataSource.Local
- */    
+ */
 function Pollable() {
     this._intervals = {};
 }
@@ -86,7 +86,7 @@ Pollable.prototype = {
         Y.each(this._intervals, this.clearInterval, this);
     }
 };
-    
+
 Y.augment(Y.DataSource.Local, Pollable);
 
 

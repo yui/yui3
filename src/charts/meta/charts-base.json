@@ -1,9 +1,9 @@
 {
     "charts-base": {
         "requires":[
-            "dom", 
-            "event-mouseenter", 
-            "event-touch", 
+            "dom",
+            "event-mouseenter",
+            "event-touch",
             "graphics-group",
             "axes",
             "series-pie",

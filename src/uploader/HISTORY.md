@@ -1,6 +1,43 @@
 Uploader Utility (New) Change History
 =====================================
 
+@VERSION@
+------
+
+* Fixed typo with event `uploadcancel`. ([#1053][] @JetFault)
+
+[#1053]: https://github.com/yui/yui3/issues/1053
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+* No changes.
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* [security] Hardened SWF file by filtering all data passed through ExternalInterface to fix XSS vulnerability.
+
+3.10.0
+------
+
+* No changes.
+
 3.9.1
 -----
 

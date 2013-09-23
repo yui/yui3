@@ -989,6 +989,41 @@
                 Y.Assert.areEqual("myWidget[foo]", w.toString());
 
                 w.destroy();
+            },
+
+            "testBoundingBoxWithSrcNode" : function() {
+                var w = this.createWidget({
+                    boundingBox: Y.Node.create("<span id='bb'></span>"),
+                    srcNode: Y.Node.create("<span id='cb'></span>")
+                });
+
+                Y.Assert.areEqual("span", w.get("boundingBox").get("tagName").toLowerCase());
+                Y.Assert.areEqual("span", w.get("contentBox").get("tagName").toLowerCase());
+                Y.Assert.areEqual("bb", w.get("boundingBox").get("id"));
+                Y.Assert.areEqual("cb", w.get("contentBox").get("id"));
+
+                w.destroy();
+            },
+
+            "testOverridenBoundingBoxATTR" : function() {
+                function MyOtherWidget () {
+                    MyOtherWidget.superclass.constructor.apply(this, arguments);
+                }
+
+                Y.extend(MyOtherWidget, MyWidget, {}, {
+                    NAME: 'MyOtherWidget',
+                    ATTRS: {
+                        boundingBox: {
+                            value: Y.Node.create('<div id="another-widget"></div>')
+                        }
+                    }
+                });
+
+                var w = new MyOtherWidget();
+
+                Y.Assert.areEqual("another-widget", w.get("boundingBox").get("id"));
+
+                w.destroy();
             }
         }, true);
 
@@ -1059,8 +1094,7 @@
 
                 w.render();
 
-                // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
-                // Y.Assert.areSame(n, w.get("contentBox"), "srcNode not used as content box");
+                Y.Assert.areSame(n, w.get("contentBox"), "srcNode not used as content box");
                 Y.Assert.isFalse(w.get("boundingBox").hasClass("yui3-mysingleboxwidget-loading"), "yui3-mysingleboxwidget-loading should have removed");
 
                 w.destroy();
@@ -1146,7 +1180,7 @@
                 w.destroy();
             },
 
-            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
+            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076.
             "testContentBox" : null,
 
             /*
@@ -1190,7 +1224,7 @@
                 w.destroy();
             },
 
-            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
+            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076.
             "testContentBoxRenderTo" : null,
 
             /*
@@ -1214,11 +1248,7 @@
             },
             */
 
-            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
-            "testSrcNode" : null,
-
-            /*
-            function() {
+            "testSrcNode" : function() {
 
                 var container = Y.one("#widgetRenderContainer");
                 container.append("<div id='srcNode'><div id='foo'></div></div>");
@@ -1235,11 +1265,10 @@
                 Y.Assert.isTrue(w.get("boundingBox").compareTo(sn), "cb !== bb !== sn");
                 Y.Assert.isTrue(w.get("boundingBox").get("parentNode").compareTo(container), "srcNode moved from it's place in the DOM");
 
-                // Y.Assert.isNotNull(w.get("contentBox").one("#foo"), "contents of srcNode not maintained");
+                Y.Assert.isNotNull(w.get("contentBox").one("#foo"), "contents of srcNode not maintained");
 
                 w.destroy(true);
-            }
-            */
+            },
 
             // CONSCIOUSLY NOT TESTED - CAN'T PASS 2 BOXES TO A SINGLE BOX WIDGET
             "testBoundingBoxContentBox" : null,
@@ -1251,6 +1280,21 @@
                 });
 
                 Y.Assert.areEqual("mySingleBoxWidget[foo]", w.toString());
+
+                w.destroy();
+            },
+
+            "testBoundingBoxWithSrcNode" : function() {
+                var w = this.createWidget({
+                    boundingBox: Y.Node.create("<span id='bb'></span>"),
+                    srcNode: Y.Node.create("<span id='cb'></span>")
+                });
+
+                // If CONTENT_TEMPLATE is null, CB resolves to BB (see: Widget#_setCB).
+                // While creating a single-box by specifying BB & srcNode probably doesn't,
+                // make sense, this test is here to ensure that changes to current behavior are
+                // considered before being made.
+                Y.Assert.isTrue(w.get("contentBox").compareTo(w.get("boundingBox")), "bb !== cb");
 
                 w.destroy();
             }
@@ -2090,10 +2134,11 @@
                 var w = new Y.Widget({id:'foo'}).render();
                 try {
                     w.destroy();
-                    Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
                 } catch(e) {
                     Y.Assert.fail("w.destroy() on a rendered widget threw an exception" + e);
                 }
+
+                Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
             },
 
             testRenderedDeepDestroy: function() {
@@ -2104,23 +2149,53 @@
 
                 try {
                     w.destroy(true);
-
-                    Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
-                    Y.Assert.isNull(Y.Node.one("#deep"), "Deep content box still in DOM");
-                    Y.Assert.isNull(Y.Node.getDOMNode(nref), "Deep content still in Node cache");
-
                 } catch(e) {
                     Y.Assert.fail("w.destroy(true) on a rendered widget threw an exception" + e);
                 }
+
+                Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
+                Y.Assert.isNull(Y.Node.one("#deep"), "Deep content box still in DOM");
+                Y.Assert.isNull(Y.Node.getDOMNode(nref), "Deep content still in Node cache");
+            },
+
+            testUnrenderedDeepDestroy: function() {
+                var w = new Y.Widget({id:'foo'}),
+                    nref = Y.Node.create('<div id="deep">Foo</div>'),
+                    bb = w.get("boundingBox"),
+                    cb = w.get("contentBox"),
+                    bbDomNode = Y.Node.getDOMNode(bb),
+                    cbDomNode = Y.Node.getDOMNode(cb);
+
+                try {
+                    w.destroy(true);
+                } catch(e) {
+                    Y.Assert.fail("w.destroy(true) on a rendered widget threw an exception" + e);
+                }
+
+                Y.Assert.isFalse(Y.DOM.inDoc(bbDomNode), "Bounding box is in DOM");
+                Y.Assert.isFalse(Y.DOM.inDoc(cbDomNode), "Content box is in DOM");
+                Y.Assert.isNull(Y.Node.getDOMNode(bb), "Bounding box still in Node cache");
+                Y.Assert.isNull(Y.Node.getDOMNode(cb), "Content box still in Node cache");
             },
 
             testUnrenderedDestroy: function() {
-                var w = new Y.Widget();
+
+                var w = new Y.Widget({id:'foo'}),
+                    bb = w.get("boundingBox"),
+                    cb = w.get("contentBox"),
+                    bbDomNode = Y.Node.getDOMNode(bb),
+                    cbDomNode = Y.Node.getDOMNode(cb);
+
                 try {
                     w.destroy();
                 } catch(e) {
                     Y.Assert.fail("w.destroy() on an unrendered widget threw an exception" + e);
                 }
+
+                Y.Assert.isFalse(Y.DOM.inDoc(bbDomNode), "Bounding box is in DOM");
+                Y.Assert.isFalse(Y.DOM.inDoc(cbDomNode), "Content box is in DOM");
+                Y.Assert.isNull(Y.Node.getDOMNode(bb), "Bounding box still in Node cache");
+                Y.Assert.isNull(Y.Node.getDOMNode(cb), "Content box still in Node cache");
             },
 
             testSingleBoxDestroy: function() {
@@ -2132,10 +2207,11 @@
 
                 try {
                     w.destroy();
-                    Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
                 } catch(e) {
                     Y.Assert.fail("w.destroy() on a single box widget threw an exception" + e);
                 }
+
+                Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
             },
 
             testSingleBoxDeepDestroy: function() {
@@ -2150,12 +2226,13 @@
 
                 try {
                     w.destroy(true);
-                    Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
-                    Y.Assert.isNull(Y.Node.one("#deep_single"), "Deep content box still in DOM");
-                    Y.Assert.isNull(Y.Node.getDOMNode(nref), "Deep content still in Node cache");
                 } catch(e) {
                     Y.Assert.fail("w.destroy(true) on a single box widget threw an exception" + e);
                 }
+
+                Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
+                Y.Assert.isNull(Y.Node.one("#deep_single"), "Deep content box still in DOM");
+                Y.Assert.isNull(Y.Node.getDOMNode(nref), "Deep content still in Node cache");
             }
         }));
 

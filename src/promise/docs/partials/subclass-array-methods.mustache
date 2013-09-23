@@ -1,0 +1,24 @@
+// Although Y.Array.each does not return an array, for the purpose of this
+// example we make it chainable by returning the same array
+ArrayPromise.prototype.each = function (fn, thisObj) {
+    return this.then(function (array) {
+        Y.Array.each(array, fn, thisObj);
+        return array;
+    });
+};
+
+// Y.Array.map returns a new array, so we return the result of this.then()
+ArrayPromise.prototype.map = function (fn, thisObj) {
+    return this.then(function (array) {
+        // By returning the result of Y.Array.map we are returning a new promise
+        // representing the new array
+        return Y.Array.map(array, fn, thisObj);
+    });
+};
+
+// Y.Array.filter follows the same pattern as Y.Array.map
+ArrayPromise.prototype.filter = function (fn, thisObj) {
+    return this.then(function (array) {
+        return Y.Array.filter(array, fn, thisObj);
+    });
+};

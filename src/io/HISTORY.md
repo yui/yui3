@@ -1,6 +1,47 @@
 IO Utility Change History
 =========================
 
+@VERSION@
+------
+
+* No changes.
+
+3.12.0
+------
+
+* No changes.
+
+3.11.0
+------
+
+
+* Restore form attributes after successful upload in io-upload-iframe.
+  [Ticket #2533186] [ipeychev]
+
+* Upgraded `request` module dependency for `io-nodejs` for compatibility with
+  Node.js v0.10. [Pull Request #940]
+
+
+3.10.3
+------
+
+* [security] Hardened SWF file by filtering all data passed through ExternalInterface to fix XSS vulnerability.
+
+3.10.2
+------
+
+* No changes.
+
+3.10.1
+------
+
+* [security] Hardened SWF file by filtering all data passed through ExternalInterface to fix XSS vulnerability.
+
+3.10.0
+------
+
+* No changes.
+
 3.9.1
 -----
 

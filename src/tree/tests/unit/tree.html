@@ -19,7 +19,8 @@ var Y = YUI({
         'tree-lazy',
         'tree-node',
         'tree-openable',
-        'tree-selectable'
+        'tree-selectable',
+        'tree-sortable'
     ],
 
     modules: {
@@ -41,17 +42,23 @@ var Y = YUI({
         'tree-selectable-test': {
             fullpath: 'assets/tree-selectable-test.js',
             requires: ['tree-selectable', 'test']
+        },
+
+        'tree-sortable-test': {
+            fullpath: 'assets/tree-sortable-test.js',
+            requires: ['tree-sortable', 'test']
         }
     },
 
     useBrowserConsole: false
-}).use('tree-test', 'tree-labelable-test', 'tree-openable-test', 'tree-selectable-test', 'test-console', function (Y) {
+}).use('tree-test', 'tree-labelable-test', 'tree-openable-test', 'tree-selectable-test', 'tree-sortable-test', 'test-console', function (Y) {
     new Y.Test.Console().render('#log');
 
     Y.Test.Runner.add(Y.TreeTestSuite);
     Y.Test.Runner.add(Y.TreeLabelableTestSuite);
     Y.Test.Runner.add(Y.TreeOpenableTestSuite);
     Y.Test.Runner.add(Y.TreeSelectableTestSuite);
+    Y.Test.Runner.add(Y.TreeSortableTestSuite);
     Y.Test.Runner.setName('Tree');
 
     Y.Test.Runner.run();

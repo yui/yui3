@@ -94,7 +94,7 @@ suite.add(new Y.Test.Case({
 
     "Y.Event.define(name) should add to DOM_EVENTS": function () {
         delete Y.Node.DOM_EVENTS.mouseover;
-        
+
         Y.Assert.isUndefined(Y.Node.DOM_EVENTS.mouseover);
 
         Y.Event.define('mouseover');
@@ -105,7 +105,7 @@ suite.add(new Y.Test.Case({
     "Y.Event.define([name1, name2]) should add to DOM_EVENTS": function () {
         delete Y.Node.DOM_EVENTS.mouseover;
         delete Y.Node.DOM_EVENTS.mouseout;
-        
+
         Y.Assert.isUndefined(Y.Node.DOM_EVENTS.mouseover);
         Y.Assert.isUndefined(Y.Node.DOM_EVENTS.mouseout);
 
@@ -164,6 +164,92 @@ suite.add(new Y.Test.Case({
         }, true);
 
         areSame(2, Y.Node.DOM_EVENTS.synth.eventDef.index);
+    },
+
+    "test define({...}) with preventedFn": function () {
+        var prevented = false;
+        Y.Event.define('synth', {
+            publishConfig: {
+                preventedFn: function (e) {
+                    prevented = true;
+                }
+            },
+
+            on: function (node, sub, notifier, filter) {
+                var method = (filter) ? 'delegate' : 'on';
+
+                sub._handle = node[method]('click',
+                    Y.bind(notifier.fire, notifier), filter);
+            },
+
+            delegate: function () {
+                this.on.apply(this, arguments);
+            },
+
+            detach: function (node, sub) {
+                sub._handle.detach();
+            },
+
+            detachDelegate: function () {
+                this.detach.apply(this, arguments);
+            }
+        }, true);
+
+
+        initTestbed();
+        var target = Y.one("#item3");
+
+        target.on('synth', function (e) {
+            e.preventDefault();
+        });
+
+        target.click();
+
+        Y.Assert.isTrue(prevented, '`prevented` should become true in the preventedFn');
+
+    },
+
+    "test define({...}) with stoppedFn": function () {
+        var stopped = false;
+        Y.Event.define('synth', {
+            publishConfig: {
+                stoppedFn: function (e) {
+                    stopped = true;
+                }
+            },
+
+            on: function (node, sub, notifier, filter) {
+                var method = (filter) ? 'delegate' : 'on';
+
+                sub._handle = node[method]('click',
+                    Y.bind(notifier.fire, notifier), filter);
+            },
+
+            delegate: function () {
+                this.on.apply(this, arguments);
+            },
+
+            detach: function (node, sub) {
+                sub._handle.detach();
+            },
+
+            detachDelegate: function () {
+                this.detach.apply(this, arguments);
+            }
+        }, true);
+
+
+        initTestbed();
+        var target = Y.one("#item3");
+
+        target.on('synth', function (e) {
+            e.stopImmediatePropagation();
+        });
+
+        target.click();
+
+        Y.Assert.isTrue(stopped, '`stopped` should become true in the `stoppedFn`');
+
     }
 
 }));
@@ -2783,7 +2869,6 @@ suite.add(new Y.Test.Case({
 
         test.wait(3000);
     }
-
 }));
 
 suite.add(new Y.Test.Case({

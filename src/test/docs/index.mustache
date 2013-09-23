@@ -32,7 +32,7 @@ var testCase = new Y.Test.Case({
     }
 });
 ```
-                <p>In this example, a simple test case is created named &quot;TestCase Name&quot;. The <code>name</code> property is automatically  applied to the test case so that it can be distinguished from other test cases that may be run during the same cycle. The two methods in this example are tests methods ( <code>testSomething()</code> and <code>testSomethingElse())</code>, which means  that they are methods designed to test a specific piece of functional code. Test methods are indicatd by their name, either using the traditional manner of prepending the word <code>test</code> to the method name, or using a "friendly name," which is a sentence containing the word "should" that describes the test's purpose. For example:</p>
+                <p>In this example, a simple test case is created named &quot;TestCase Name&quot;. The <code>name</code> property is automatically  applied to the test case so that it can be distinguished from other test cases that may be run during the same cycle. The two methods in this example are tests methods ( <code>testSomething()</code> and <code>testSomethingElse())</code>, which means  that they are methods designed to test a specific piece of functional code. Test methods are indicatd by their name, either using the traditional manner of prepending the word <code>test</code> to the method name, or using a "friendly name," which is a sentence containing at least one space that describes the test's purpose. For example:</p>
 ```
 var testCase = new Y.Test.Case({
 
@@ -43,12 +43,13 @@ var testCase = new Y.Test.Case({
         //...
     },
 
-    "Something else should happen here" : function () {
+    "Check something else" : function () {
         //...
     }
 });
 ```
                 <p>Regardless of the naming convention used for test names, each should contain one or more <a href="#assertions">assertions</a> that test data for validity.</p>
+                <p>Except for methods and properties following these special rules and a few other reserved names described in the following sections, a test case may contain other utility methods or properties, all reachable as instance members via `this`.</p>
 
                 <h3 id="setup-and-teardown">setUp() and tearDown()</h3>
                 <p>As each test method is called, it may be necessary to setup information before it's run and then potentially clean up that information

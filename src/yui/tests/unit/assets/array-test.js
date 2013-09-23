@@ -52,6 +52,14 @@ suite.add(new Y.Test.Case({
         var array = ['foo', 'bar', 'foo', 'baz', 'foo', 'baz'];
         Assert.isArray(Y.Array.dedupe(array));
         Y.ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], Y.Array.dedupe(array));
+
+        array = ["constructor", "toString", "hasOwnProperty", "valueOf"];
+        Assert.isArray(Y.Array.dedupe(array));
+        Y.ArrayAssert.itemsAreSame(array, Y.Array.dedupe(array));
+
+        array = [1, 2, 1, 3, 1, 3];
+        Assert.isArray(Y.Array.dedupe(array));
+        Y.ArrayAssert.itemsAreSame([1, 2, 3], Y.Array.dedupe(array));
     },
 
     'dedupe() should work on array-like objects': function () {

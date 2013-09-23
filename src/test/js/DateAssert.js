@@ -8,7 +8,7 @@
  * @class DateAssert
  * @static
  */
- 
+
 YUITest.DateAssert = {
 
     /**
@@ -20,25 +20,25 @@ YUITest.DateAssert = {
      * @static
      */
     datesAreEqual : function (expected, actual, message){
-        YUITest.Assert._increment();        
+        YUITest.Assert._increment();
         if (expected instanceof Date && actual instanceof Date){
             var msg = "";
-            
+
             //check years first
             if (expected.getFullYear() != actual.getFullYear()){
                 msg = "Years should be equal.";
             }
-            
+
             //now check months
             if (expected.getMonth() != actual.getMonth()){
                 msg = "Months should be equal.";
-            }                
-            
+            }
+
             //last, check the day of the month
             if (expected.getDate() != actual.getDate()){
                 msg = "Days of month should be equal.";
-            }                
-            
+            }
+
             if (msg.length){
                 throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, msg), expected, actual);
             }
@@ -59,22 +59,22 @@ YUITest.DateAssert = {
         YUITest.Assert._increment();
         if (expected instanceof Date && actual instanceof Date){
             var msg = "";
-            
+
             //check hours first
             if (expected.getHours() != actual.getHours()){
                 msg = "Hours should be equal.";
             }
-            
+
             //now check minutes
             if (expected.getMinutes() != actual.getMinutes()){
                 msg = "Minutes should be equal.";
-            }                
-            
+            }
+
             //last, check the seconds
             if (expected.getSeconds() != actual.getSeconds()){
                 msg = "Seconds should be equal.";
-            }                
-            
+            }
+
             if (msg.length){
                 throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, msg), expected, actual);
             }
@@ -82,5 +82,5 @@ YUITest.DateAssert = {
             throw new TypeError("YUITest.DateAssert.timesAreEqual(): Expected and actual values must be Date objects.");
         }
     }
-    
+
 };

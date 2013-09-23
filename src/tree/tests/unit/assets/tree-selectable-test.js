@@ -288,9 +288,9 @@ suite.add(new Y.Test.Case({
     }
 }));
 
-// -- Events -------------------------------------------------------------------
+// -- Miscellaneous ------------------------------------------------------------
 suite.add(new Y.Test.Case({
-    name: 'Events',
+    name: 'Miscellaneous',
 
     setUp: function () {
         this.tree = new Tree({nodes: [
