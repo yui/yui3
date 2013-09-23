@@ -376,6 +376,69 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(data[0].name.toString(), dt.body.tbodyNode.all('td').item(1).get('text'), 'g');
 
         dt.destroy();
+    },
+
+    'test string availability for internationalization': function () {
+
+        var dt = new Y.DataTable({
+                caption: 'test language display in english',
+                columns: ['id', 'name'],
+                data: data,
+                rowsPerPage: 10,
+                paginatorModel: new Y.DataTable.Paginator.Model({})
+            }),
+            i18n = Y.Intl.getLang('datatable-paginator'),
+            container,
+            perPageNode,
+            showAllNode;
+
+        // find and eval "Show All" string
+        // English
+
+        Y.Intl.setLang('datatable-paginator', 'fr');
+
+        dt.render();
+
+        container = dt.get('boundingBox');
+
+        perPageNode = container.one('.yui3-datatable-paginator-per-page select');
+
+        showAllNode = perPageNode.one('option:last-child');
+
+        Y.Assert.areSame('Show All', showAllNode.get('text'));
+
+        dt.destroy();
+
+
+        // French
+        Y.use('lang/datatable-paginator_fr', function(Y) {
+            Y.Intl.setLang('datatable-paginator', 'fr');
+
+            dt = new Y.DataTable({
+                caption: 'test language display in french',
+                columns: ['id', 'name'],
+                data: data,
+                rowsPerPage: 10,
+                paginatorModel: new Y.DataTable.Paginator.Model({})
+            });
+
+            dt.render();
+
+            container = dt.get('boundingBox');
+
+            perPageNode = container.one('.yui3-datatable-paginator-per-page select');
+
+            showAllNode = perPageNode.one('option:last-child');
+
+            Y.Assert.areSame('Afficher tout', showAllNode.get('text'));
+
+            // Unset any changes we made
+            Y.Intl.setLang('datatable-paginator', i18n);
+
+            dt.destroy();
+
+        });
+
     }
 
 }));
