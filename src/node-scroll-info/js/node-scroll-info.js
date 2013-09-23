@@ -442,6 +442,7 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
         this query. Defaults to the value of the `scrollMargin` attribute.
     @return {Boolean} `true` if _el_ is at least partially onscreen within the
         host node, `false` otherwise.
+    @protected
     @since 3.11.0
     **/
     _isElementOnscreen: function (el, margin) {
