@@ -19,9 +19,9 @@
 (function() {
 
     YUI({
-        coverage: ['uploader-queue', 'file-flash'],
+        coverage: ['uploader-queue', 'uploader-flash'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
-    }).use("console", "test", "dump", "file-flash", "uploader-queue", function(Y) {
+    }).use("console", "test", "dump", "uploader-flash", "uploader-queue", function(Y) {
         
 
 
