@@ -3,22 +3,13 @@ YUI.add('model-sync-local-test', function (Y) {
 var ArrayAssert  = Y.ArrayAssert,
     Assert       = Y.Assert,
     ObjectAssert = Y.ObjectAssert,
+    hasLocalStorage = Y.ModelSync.Local._hasLocalStorage,
 
     suite,
-    hasLocalStorage,
     modelSyncLocalSuite;
 
 // -- Global Suite -------------------------------------------------------------
 suite = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App Framework'));
-
-// -- Feature Tests ------------------------------------------------------------
-hasLocalStorage = (function () {
-    try {
-        return 'localStorage' in window && window['localStorage'] !== null;
-    } catch (e) {
-        return false;
-    }
-})();
 
 // -- ModelSync.Local Suite ----------------------------------------------------
 modelSyncLocalSuite = new Y.Test.Suite('ModelSync.Local');
@@ -111,11 +102,6 @@ modelSyncLocalSuite.add(new Y.Test.Case({
 modelSyncLocalSuite.add(new Y.Test.Case({
     name: 'Sync',
 
-    _should: {
-        ignore: {
-        }
-    },
-    
     setUp: function () {
         if (hasLocalStorage) { 
             testStore = Y.config.win.localStorage;
@@ -138,7 +124,7 @@ modelSyncLocalSuite.add(new Y.Test.Case({
         delete Y.TestModel;
         delete Y.TestModelList;
         try {
-            Y.config.win.storage.clear();
+            Y.config.win.localStorage.clear();
         } catch (e) {
             Y.log("Could not access localStorage.", "warn");
         }
@@ -205,7 +191,7 @@ modelSyncLocalSuite.add(new Y.Test.Case({
 
         model._save = function () {
             throw new Error('Failed sync');
-        }
+        };
 
         model.set('name', 'jeff');
         model.save(function (err, res) {

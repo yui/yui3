@@ -37,7 +37,7 @@ Model or ModelList constructor.
 
 @property _NON_ATTRS_CFG
 @type Array
-@default ['root'']
+@default ['root']
 @static
 @protected
 @since @VERSION@
@@ -45,18 +45,25 @@ Model or ModelList constructor.
 LocalSync._NON_ATTRS_CFG = ['root'];
 
 /**
-Feature detection for `localStorage` availability.
+Feature testing for `localStorage` availability.
+Will return falsey for browsers with `localStorage`, but that don't
+actually work, such as iOS Safari in private browsing mode.
 
 @property _hasLocalStorage
 @type Boolean
 @private
 **/
 LocalSync._hasLocalStorage = (function () {
+    var LS   = Y.config.win.localStorage,
+        test = Y.guid();
+
     try {
-        return 'localStorage' in Y.config.win && Y.config.win.localStorage !== null;
+        LS.setItem(test, test);
+        LS.removeItem(test);
+        return true
     } catch (e) {
         return false;
-    }
+    } 
 })(),
 
 /**
@@ -142,7 +149,7 @@ LocalSync.prototype = {
     @param {callback} [callback] Called when the sync operation finishes.
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
-        falsy.
+        falsey.
       @param {Any} [callback.response] The response from our sync. This value will
         be passed to the parse() method, which is expected to parse it and
         return an attribute hash.
@@ -176,12 +183,10 @@ LocalSync.prototype = {
 
         if (response) {
             callback(null, response);
+        } else if (errorInfo) {
+            callback(errorInfo);
         } else {
-            if (errorInfo) {
-                callback(errorInfo);
-            } else {
-                callback("Data not found in LocalStorage");
-            }
+            callback("Data not found in LocalStorage");
         }
     },
 
