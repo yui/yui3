@@ -1,19 +1,4 @@
 /**
-* This module provides a UI for file selection and multiple file upload capability using
-* Flash as a transport engine.
-* The supported features include: automatic upload queue management, upload progress
-* tracking, file filtering, server response retrieval and error reporting.
-*
-* @module uploader-flash
-* @deprecated
-*/
-
-// Shorthands for external modules
-var substitute            = Y.Lang.sub,
-    UploaderQueue         = Y.Uploader.Queue;
-
-
-/**
 * This module provides a UI for file selection and multiple file upload capability
 * using Flash as a transport engine.
 * @class UploaderFlash

@@ -18,6 +18,8 @@
         },
         "uploader-flash": {
             "jsfiles": [
+                "swf.js",
+                "file-flash.js",
                 "uploader-flash.js"
             ]
         }
