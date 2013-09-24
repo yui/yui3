@@ -4,7 +4,7 @@ IO Utility Change History
 @VERSION@
 ------
 
-* No changes.
+* [!] #1155 Deprecate io-xdr and remove all related swf and as files.
 
 3.12.0
 ------

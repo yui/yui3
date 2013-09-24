@@ -23,7 +23,7 @@
 
 <div class="notice">
     <h2 id="migration-intro">Upgrading to version 3.13.0 or newer?</h2>
-    <p>Due to Security issues, as of YUI 3.13.0, YUI has made the decision to <a href="https://github.com/yui/yui3/issues/845">remove all Flash files from the repository</a>. As a result, you will need compile and host your own <code>io.swf</code> file to enable <code>io-xdr</code> module. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</p>	
+    <p>Due to Security issues, as of YUI 3.13.0, YUI has made the decision to <a href="https://github.com/yui/yui3/issues/845">remove all Flash files from the repository</a>. As a result, you will need compile and host your own <code>io.swf</code> file to enable flash transport for the <code>io-xdr</code> (deprecated) module. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</p>	
     </div>
 {{>getting-started}}
 
@@ -87,7 +87,7 @@ YUI().use("io-base", function(Y) {
             <td>This is the base module, containing the basic functionality needed for making HTTP requests.</td>
         </tr>
         <tr>
-            <td><code>io-xdr</code></td>
+            <td><code>io-xdr</code> (deprecated)</td>
             <td>This module extends io-base, to add cross-domain request capabilities using alternate HTTP transports.
                 <div class="notice"><strong>NOTE:</strong> You will need compile and host your own <code>io.swf</code> file to enable this module.
                     Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
@@ -170,7 +170,7 @@ YUI().use("io-base", function(Y) {
             <td>xdr (object)</td>
             <td>Defines the transport to be used for cross-domain requests (e.g., <code>{ use:'flash' }</code> ).  The transaction will use the specified transport instead of the default transport, when specified in the transaction's configuration object.
                 <ul class="topspace">
-                    <li><strong>use:</strong> This property specifies the type of transport to be used; the io-xdr module provides 'native' and 'flash' transports.</li>
+                    <li><strong>use:</strong> This property specifies the type of transport to be used; the <code>io-xdr</code> (deprecated) module provides 'native' and 'flash' transports.</li>
                     <li><strong>dataType:</strong> When set to <strong>'xml'</strong>, io will return the response data as an XML document, if necessary.</li>
                 </ul>
                 <div class="notice">
