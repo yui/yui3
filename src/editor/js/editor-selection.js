@@ -75,7 +75,7 @@
                     if (comp) {
                         //We are not at the beginning of the selection.
                         //Setting the move to something large, may need to increase it later
-                        moved = this.getEditorOffset();
+                        moved = this.getEditorOffset(root);
                         sel.move('character', -(moved));
                         //moved = Math.abs(sel.move('character', -9999));
                     }
@@ -1000,7 +1000,7 @@
          @since @SINCE@
          */
         getEditorOffset: function(node) {
-            var container = (node || this._getRoot()).getDOMNode(),
+            var container = (node || Y.EditorSelection.ROOT).getDOMNode(),
                 caretOffset = 0,
                 doc = Y.config.doc,
                 win = Y.config.win,
@@ -1008,7 +1008,7 @@
                 range,
                 preCaretRange;
 
-            if (typeof win.getSelection != "undefined") {
+            if (typeof win.getSelection !== "undefined") {
                 range = win.getSelection().getRangeAt(0);
                 preCaretRange = range.cloneRange();
                 preCaretRange.selectNodeContents(container);
@@ -1017,7 +1017,7 @@
             } else {
                 sel = doc.selection;
 
-                if ( sell && sel.type != "Control") {
+                if ( sel && sel.type !== "Control") {
                     range = sel.createRange();
                     preCaretRange = doc.body.createTextRange();
                     preCaretRange.moveToElementText(container);
