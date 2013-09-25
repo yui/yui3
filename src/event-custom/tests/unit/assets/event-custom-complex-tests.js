@@ -1245,6 +1245,14 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.ArrayAssert.doesNotContain(b, a.getTargets());
         },
 
+        test_add_tagret_remove_target_chainable: function () {
+            var a = new Y.EventTarget(),
+                b = new Y.EventTarget();
+
+            Y.Assert.areSame(a, a.addTarget(b));
+            Y.Assert.areSame(a, a.removeTarget(b));
+        },
+
         test_onceAfter: function () {
             var a = new Y.EventTarget({ emitFacade: true, prefix: 'a' }),
                 result = '';

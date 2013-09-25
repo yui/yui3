@@ -638,7 +638,8 @@ YUI.add('dom-core-test', function(Y) {
 
         'should be true for contained comment node': function() {
             var node = document.createElement('div');
-            node.innerHTML = 'foo<!-- comment -->';
+            node.innerHTML = 'foo';
+            node.appendChild(document.createComment('bar'));
             Assert.isTrue(Y.DOM.contains(node, node.firstChild.nextSibling));
         },
 
