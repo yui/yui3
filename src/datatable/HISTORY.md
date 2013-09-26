@@ -3,6 +3,8 @@ DataTable Change History
 
 @VERSION@
 ------
+* Document updates and variable changes to improve understanding of code
+  [Pull Request #946] [Satyam]
 
 * Add Show All to language packs. [Pull Request #1173] [Issue #1167]
 
