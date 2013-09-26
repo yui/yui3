@@ -999,7 +999,7 @@ It defaults to the value of the [key](#property_key) property or the text
     { key: 'MfgvaPrtNum', label: 'Part Number' }
 
 @property label
-@@type String
+@@type {HTML}
  */
 /**
 Used to create stacked headers.
@@ -1015,7 +1015,7 @@ Configurations relating to the display of data, such as
 
     { label: 'Name', children: [
         { key: 'firstName', label: 'First`},
-        { key: 'lastName', label: 'Last`},
+        { key: 'lastName', label: 'Last`}
     ]}
 
 @property  children
@@ -1067,7 +1067,7 @@ the `{id}` and `{_id}` placeholders in the custom value.
     }
 
 @property headerTemplate
-@type HTML template
+@type HTML
  */
 /**
 Overrides the default [CELL_TEMPLATE](DataTable.BodyView.html#property_CELL_TEMPLATE)
@@ -1098,7 +1098,7 @@ formatting functions in
 [Y.DataTable.BodyView.Formatters](DataTable.BodyView.Formatters.html).
 If one such formatting function exists, it will be used.
 
-If not named formatted function is found, it will be assumed to be a template
+If no such named formatter is found, it will be assumed to be a template
 string and will be expanded.  The placeholders can contain the key to any
 field in the record or the placeholder `{value}` which represents the value
 of the current field.
@@ -1175,7 +1175,7 @@ argument with the following properties:
 * __record__	The Model for this row.
 * __column__	The column configuration object.
 * __rowIndex__	The index of the current Model in the ModelList.
- _Typically_ corelates to the row index as well.
+ _Typically_ correlates to the row index as well.
 
 @example
     nodeFormatter: function (o) {
@@ -1207,7 +1207,7 @@ for that cell is `undefined`, `null`, or an empty string.
     }
 
 @property emptyCellValue
-@type String
+@type {String|HTML} depending on the setting of allowHTML
  */
 /**
 Skips the security step of HTML escaping the value for cells

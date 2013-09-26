@@ -100,9 +100,9 @@ var Lang = Y.Lang,
        /**
        Returns a formatter function that formats values as currency using
        the [Number.format](Number.html#method_format) method.
-       It looks for the format to apply in the 
-       [currencyFormat](DataTable.Column.html#property_currencyFormat) property 
-       of the column or in the 
+       It looks for the format to apply in the
+       [currencyFormat](DataTable.Column.html#property_currencyFormat) property
+       of the column or in the
        [currencyFormat](DataTable.html#attr_currencyFormat)
         attribute of the whole table.
 
@@ -118,7 +118,7 @@ var Lang = Y.Lang,
        Anything that cannot be parsed as a number will be returned unchanged.
 
        Applies the CSS className `yui3-datatable-currency` to the cell.
-        
+
        @method currency
        @param col {Object} The column definition.
        @return {Function} A formatter function that formats numerical data as currency.
@@ -141,7 +141,7 @@ var Lang = Y.Lang,
 
         /**
         Returns a date formatting function based on the given format.
-        
+
         @method _date
         @param format {String} The format spec definition.
         @return {Function} A formatter function that formats numerical data as currency.
@@ -159,9 +159,9 @@ var Lang = Y.Lang,
         },
         /**
         Returns a date formatting function.
-        It looks for the format to apply in the 
+        It looks for the format to apply in the
         [dateFormat](DataTable.Column.html#property_dateFormat)
-        property of the column or in the 
+        property of the column or in the
         [dateFormat](DataTable.html#attr_dateFormat)
          attribute of the whole table.
 
@@ -172,7 +172,7 @@ var Lang = Y.Lang,
         Anything that is not a date is returned unchanged.
 
         Applies the CSS className `yui3-datatable-date` to the cell.
-        
+
         @method date
         @param col {Object} The column definition.
         @return {Function} A formatter function that formats dates.
@@ -230,21 +230,21 @@ var Lang = Y.Lang,
 
         /**
         Returns a function that produces email links.
-        If the column definition contains a property 
+        If the column definition contains a property
         [linkFrom](DataTable.Column.html#property_linkFrom) it will use the value
         in that field for the link, otherwise, the same column value will be used for both
         link and text.
 
             {key: "contact", formatter: "email", linkFrom: "contactEmail"}
 
-        It will use the respective 
-        [emptyCellValue](DataTable.Column.html#property_emptyCellValue) 
+        It will use the respective
+        [emptyCellValue](DataTable.Column.html#property_emptyCellValue)
         column configuration attribute
         for each of the value and the link if either is empty.
         If the link value is still empty, it will return the value with no link.
 
         Applies the CSS className `yui3-datatable-email` to the cell.
-        
+
         @method email
         @param col {Object} The column definition.
         @return {Function} A formatter function that adds a mailto: link to the value.
@@ -271,14 +271,14 @@ var Lang = Y.Lang,
 
         /**
         Returns a function that produces links.
-        If the column definition contains a property 
+        If the column definition contains a property
         [linkFrom](DataTable.Column.html#property_linkFrom) it will use the value
         in that field for the link, otherwise, the same column value will be used for both
         link and text.
 
             {key: "company", formatter: "link", linkFrom: "webSite"}
 
-        It will use the respective 
+        It will use the respective
         [emptyCellValue](DataTable.Column.html#property_emptyCellValue)
          column configuration attribute
         for each of the value and the link if either is empty.
@@ -312,9 +312,9 @@ var Lang = Y.Lang,
        /**
        Returns a formatter function that formats values using
        the [Number.format](Number.html#method_format) method.
-       It looks for the format to apply in the 
-       [numberFormat](DataTable.Column.html#property_numberFormat) 
-       property of the column or in the 
+       It looks for the format to apply in the
+       [numberFormat](DataTable.Column.html#property_numberFormat)
+       property of the column or in the
        [numberFormat](DataTable.html#attr_numberFormat)
        attribute of the whole table.
 
@@ -330,7 +330,7 @@ var Lang = Y.Lang,
        Anything that cannot be parsed as a number will be returned unchanged.
 
        Applies the CSS className `yui3-datatable-number` to the cell.
-        
+
        @method number
        @param col {Object} The column definition.
        @return {Function} A formatter function that formats numerical data as currency.
@@ -353,7 +353,7 @@ var Lang = Y.Lang,
         Returns a formatter function that returns texts from a lookup table
         based on the stored value.
 
-        It looks for the translation to apply in the 
+        It looks for the translation to apply in the
         [lookupTable](DataTable.Column.html#property_lookupTable) property of the
         column in either of these two formats:
 
@@ -430,7 +430,7 @@ The attribute is an object with text values for properties `true` and `false`.
  is used on any column.
 
  It works like the column-specific
- [booleanLabels](DataTable.Column.html#property_booleanLabels) but 
+ [booleanLabels](DataTable.Column.html#property_booleanLabels) but
  for all columns using the
  [boolean](DataTable.BodyView.Formatters.html#method_boolean) formatter at once.
  The values are often retrieved from a resource of localized texts.
@@ -440,91 +440,91 @@ The attribute is an object with text values for properties `true` and `false`.
 @for DataTable
 */
 /**
-Format specificacion for columns using the 
+Format specification for columns using the
 [currency](DataTable.BodyView.Formatters.html#method_currency) formatter.
 It contains an object as described in
 [Number.format](Number.html#method_format).
-    
+
 @property currencyFormat
 @type Object
 @for DataTable.Column
  */
 /**
-Format specificacion for columns using the 
+Format specification for columns using the
 [currency](DataTable.BodyView.Formatters.html#method_currency) formatter.
 It contains an object as described in
 [Number.format](Number.html#method_format).
-    
+
 It is similar to
 [currencyFormat](DataTable.Column.html#property_currencyFormat)
-but it applies to any column using the 
+but it applies to any column using the
 [currency](DataTable.BodyView.Formatters.html#method_currency) formatter.
  The values are often retrieved from a resource of localized configuration.
-    
+
 @attribute currencyFormat
 @type Object
 @for DataTable
  */
 
 /**
-Format specificacion for columns using the 
+Format specification for columns using the
 [date](DataTable.BodyView.Formatters.html#method_date) formatter.
 It contains a string as described in
 [Date.format](Date.html#method_format).
-    
+
 @property dateFormat
 @type String
 @for DataTable.Column
  */
 /**
-Format specificacion for columns using the 
+Format specification for columns using the
 [date](DataTable.BodyView.Formatters.html#method_date) formatter.
 It contains an object as described in
 [Date.format](Date.html#method_format).
-    
+
 It is similar to
 [dateFormat](DataTable.Column.html#property_dateFormat)
-but it applies to any column using the 
+but it applies to any column using the
 [date](DataTable.BodyView.Formatters.html#method_date) formatter.
  The values are often retrieved from a resource of localized configuration.
-    
+
 @attribute dateFormat
 @type String
 @for DataTable
  */
 /**
  Name of the field that is to provide the link for a column using the
- [email](DataTable.BodyView.Formatters.html#method_email) or 
- [link](DataTable.BodyView.Formatters.html#method_link) 
+ [email](DataTable.BodyView.Formatters.html#method_email) or
+ [link](DataTable.BodyView.Formatters.html#method_link)
  formatters.
-    
+
  @property linkFrom
  @type String
  @for DataTable.Column
  */
 
 /**
-Format specificacion for columns using the 
+Format specification for columns using the
 [number](DataTable.BodyView.Formatters.html#method_number) formatter.
 It contains an object as described in
 [Number.format](Number.html#method_format).
-    
+
 @property numberFormat
 @type Object
 @for DataTable.Column
  */
 /**
-Format specificacion for columns using the 
+Format specification for columns using the
 [number](DataTable.BodyView.Formatters.html#method_number) formatter.
 It contains an object as described in
 [Number.format](Number.html#method_format).
-    
+
 It is similar to
 [numberFormat](DataTable.Column.html#property_numberFormat)
-but it applies to any column using the 
+but it applies to any column using the
 [number](DataTable.BodyView.Formatters.html#method_number) formatter.
  The values are often retrieved from a resource of localized configuration.
-    
+
 @attribute numberFormat
 @type Object
 @for DataTable
@@ -533,9 +533,9 @@ but it applies to any column using the
 Map of values to text used to translate internal values to human readable text
 in columns using the [lookup](DataTable.BodyView.Formatters.html#method_lookup)
 formatter.
-    
+
 The map can be given in either of two formats:
-    
+
     {key: "status", formatter: "lookup", lookupTable: {
         0: "unknown",
         1: "requested",
@@ -551,7 +551,7 @@ The map can be given in either of two formats:
 
 The last format is compatible with the [dropdown](DataTable.Editors.html#property_dropdown)
 and autocomplete-based editors, where the order of the items in the dropdown matters.
-    
+
 @property lookupTable
 @type Object || Array
 @for DataTable.Column

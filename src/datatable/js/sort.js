@@ -929,7 +929,7 @@ function receives three parameters, the first two being the
 two record Models to compare, and the third being a boolean
 `true` if the sort order should be descending.
 
-The function should return `-1` to sort `a` above `b`, `-1`
+The function should return `1` to sort `a` above `b`, `-1`
 to sort `a` below `b`, and `0` if they are equal.  Keep in
 mind that the order should be reversed when `desc` is
 `true`.
@@ -966,7 +966,7 @@ sort direction of the column.  Use the table's
 attribute for that.
 
 @property sortDir
-@type Integer
+@type {Number}
 @readOnly
 @for DataTable.Column
 */
