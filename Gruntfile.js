@@ -81,11 +81,42 @@ module.exports = function(grunt) {
                     }
                 }
             }
+        },
+
+        css_selectors: {
+            'pure': {
+                options: {
+                    mutations: [
+                        {search: /pure-/g,   replace: 'yui3-'},
+                        {search: /^\.pure/, replace: '.yui3-normalized'}
+                    ]
+                },
+
+                files: [
+                    {src : 'bower_components/pure/base.css',
+                     dest: 'src/cssnormalize/css/normalize.css'},
+
+                    {src : 'bower_components/pure/base-context.css',
+                     dest: 'src/cssnormalize/css/normalize-context.css'},
+
+                    {src : 'bower_components/pure/grids-core.css',
+                     dest: 'src/cssgrids/css/cssgrids-base.css'},
+
+                    {src : 'bower_components/pure/grids-units.css',
+                     dest: 'src/cssgrids/css/cssgrids-units.css'},
+
+                    {src : 'bower_components/pure/grids.css',
+                     dest: 'src/cssgrids/css/cssgrids-responsive.css'}
+                ]
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-yui-contrib');
     grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-css-selectors');
+
     grunt.registerTask('default', ['boot']);
+    grunt.registerTask('import-pure', ['bower-install', 'css_selectors:pure']);
 
 };

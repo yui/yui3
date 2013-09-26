@@ -22,6 +22,7 @@
         "grunt-yui-contrib": "~0.0.4",
         "grunt-lib-contrib": "~0.5.3",
         "grunt-contrib-compress": "0.4.10",
+        "grunt-css-selectors": "~0.1.1",
         "archiver": "0.4.5"
     },
     "scripts": {
