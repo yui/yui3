@@ -64,10 +64,10 @@ suite.add(new Y.Test.Case({
 
             setTimeout(function () {
 
-                var _a1 = toHex(a1.getStyle('background')),
-                    _a2 = toHex(a2.getStyle('background')),
-                    _b1 = toHex(b1.getStyle('background'));
-                    _b2 = toHex(b2.getStyle('background'));
+                var _a1 = toHex(a1.getStyle('backgroundColor')),
+                    _a2 = toHex(a2.getStyle('backgroundColor')),
+                    _b1 = toHex(b1.getStyle('backgroundColor'));
+                    _b2 = toHex(b2.getStyle('backgroundColor'));
 
                 test.resume(function () {
                     areSame(oddHex, _a1);
@@ -94,10 +94,10 @@ suite.add(new Y.Test.Case({
 
         a1.after('mouseover', function () {
             setTimeout(function () {
-                var _a1 = toHex(a1.getStyle('background')),
-                    _a2 = toHex(a2.getStyle('background')),
-                    _b1 = toHex(b1.getStyle('background'));
-                    _b2 = toHex(b2.getStyle('background'));
+                var _a1 = toHex(a1.getStyle('backgroundColor')),
+                    _a2 = toHex(a2.getStyle('backgroundColor')),
+                    _b1 = toHex(b1.getStyle('backgroundColor'));
+                    _b2 = toHex(b2.getStyle('backgroundColor'));
 
                 areSame(highHex, _a1);
                 areSame(highHex, _a2);
@@ -111,10 +111,10 @@ suite.add(new Y.Test.Case({
 
         a1.after('mouseout', function () {
             setTimeout(function () {
-                var _a1 = toHex(a1.getStyle('background')),
-                    _a2 = toHex(a2.getStyle('background')),
-                    _b1 = toHex(b1.getStyle('background'));
-                    _b2 = toHex(b2.getStyle('background'));
+                var _a1 = toHex(a1.getStyle('backgroundColor')),
+                    _a2 = toHex(a2.getStyle('backgroundColor')),
+                    _b1 = toHex(b1.getStyle('backgroundColor'));
+                    _b2 = toHex(b2.getStyle('backgroundColor'));
 
                 test.resume(function () {
                     areSame(oddHex, _a1);
@@ -137,10 +137,10 @@ suite.add(new Y.Test.Case({
 
         a1.after('mouseover', function () {
             setTimeout(function () {
-                var _a1 = toHex(a1.getStyle('background')),
-                    _a2 = toHex(a2.getStyle('background')),
-                    _b1 = toHex(b1.getStyle('background'));
-                    _b2 = toHex(b2.getStyle('background'));
+                var _a1 = toHex(a1.getStyle('backgroundColor')),
+                    _a2 = toHex(a2.getStyle('backgroundColor')),
+                    _b1 = toHex(b1.getStyle('backgroundColor'));
+                    _b2 = toHex(b2.getStyle('backgroundColor'));
 
                 areSame(highHex, _a1);
                 areSame(oddHex, _a2);
@@ -154,10 +154,10 @@ suite.add(new Y.Test.Case({
 
         a1.after('mouseout', function () {
             setTimeout(function () {
-                var _a1 = toHex(a1.getStyle('background')),
-                    _a2 = toHex(a2.getStyle('background')),
-                    _b1 = toHex(b1.getStyle('background'));
-                    _b2 = toHex(b2.getStyle('background'));
+                var _a1 = toHex(a1.getStyle('backgroundColor')),
+                    _a2 = toHex(a2.getStyle('backgroundColor')),
+                    _b1 = toHex(b1.getStyle('backgroundColor'));
+                    _b2 = toHex(b2.getStyle('backgroundColor'));
 
                 test.resume(function () {
                     areSame(oddHex, _a1);
@@ -181,10 +181,10 @@ suite.add(new Y.Test.Case({
 
         a1.after('mouseover', function () {
             setTimeout(function () {
-                var _a1 = toHex(a1.getStyle('background')),
-                    _a2 = toHex(a2.getStyle('background')),
-                    _b1 = toHex(b1.getStyle('background'));
-                    _b2 = toHex(b2.getStyle('background'));
+                var _a1 = toHex(a1.getStyle('backgroundColor')),
+                    _a2 = toHex(a2.getStyle('backgroundColor')),
+                    _b1 = toHex(b1.getStyle('backgroundColor'));
+                    _b2 = toHex(b2.getStyle('backgroundColor'));
 
                 areSame(highHex, _a1);
                 areSame(oddHex, _a2);
@@ -198,10 +198,10 @@ suite.add(new Y.Test.Case({
 
         a1.after('mouseout', function () {
             setTimeout(function () {
-                var _a1 = toHex(a1.getStyle('background')),
-                    _a2 = toHex(a2.getStyle('background')),
-                    _b1 = toHex(b1.getStyle('background'));
-                    _b2 = toHex(b2.getStyle('background'));
+                var _a1 = toHex(a1.getStyle('backgroundColor')),
+                    _a2 = toHex(a2.getStyle('backgroundColor')),
+                    _b1 = toHex(b1.getStyle('backgroundColor'));
+                    _b2 = toHex(b2.getStyle('backgroundColor'));
 
 
                 test.resume(function() {
@@ -236,10 +236,10 @@ suite.add(new Y.Test.Case({
 
         a1.after('mouseover', function () {
             setTimeout(function () {
-                var _a1 = toHex(a1.getStyle('background')),
-                    _a2 = toHex(a2.getStyle('background')),
-                    _b1 = toHex(b1.getStyle('background'));
-                    _b2 = toHex(b2.getStyle('background'));
+                var _a1 = toHex(a1.getStyle('backgroundColor')),
+                    _a2 = toHex(a2.getStyle('backgroundColor')),
+                    _b1 = toHex(b1.getStyle('backgroundColor'));
+                    _b2 = toHex(b2.getStyle('backgroundColor'));
 
                 test.resume(function () {
                     if (!mode) { // need to reverse case because mode is changed in _switch
