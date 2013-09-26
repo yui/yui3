@@ -45,6 +45,12 @@ modelSyncLocalSuite.add(new Y.Test.Case({
     tearDown: function () {
         delete Y.TestModel;
         delete Y.TestModelList;
+
+        try {
+            Y.config.win.localStorage.clear();
+        } catch (e) {
+            Y.log("Could not access localStorage.", "warn");
+        }
     },
 
     'initializer should set the `root` property on the instance': function () {

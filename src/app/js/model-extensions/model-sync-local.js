@@ -120,7 +120,10 @@ LocalSync.prototype = {
             this.root = config.root || '';
         }
 
-        if (this.model && this.model.prototype.root) {
+        // This is checking to see if the sync layer is being applied to
+        // a ModelList, and if so, is looking for a `root` property on its
+        // Model's prototype instead.
+        if (!this.root && this.model && this.model.prototype.root) {
             this.root = this.model.prototype.root;
         }
 
