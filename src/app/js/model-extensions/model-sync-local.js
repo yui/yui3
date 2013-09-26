@@ -60,10 +60,10 @@ LocalSync._hasLocalStorage = (function () {
     try {
         LS.setItem(test, test);
         LS.removeItem(test);
-        return true
+        return true;
     } catch (e) {
         return false;
-    } 
+    }
 })(),
 
 /**
@@ -74,6 +74,17 @@ Object of key/value pairs to fall back on when localStorage is not available.
 @private
 **/
 LocalSync._data = {};
+
+/**
+Cache to quickly access a specific object with a given ID.
+This maps a model's ID to its reference inside of `LocalSync._data`.
+
+@property _idMap
+@type Object
+@private
+**/
+
+LocalSync._idMap = {};
 
 LocalSync.prototype = {
 
@@ -101,7 +112,7 @@ LocalSync.prototype = {
 
     // -- Lifecycle Methods -----------------------------------------------------
     initializer: function (config) {
-        var store;
+        var store, data;
 
         config || (config = {});
 
@@ -123,10 +134,24 @@ LocalSync.prototype = {
         // Pull in existing data from localStorage, if possible.
         // Otherwise, see if there's existing data on the local cache.
         if (store) {
-            LocalSync._data[this.root] = Y.JSON.parse(store);
+            try {
+                LocalSync._data[this.root] = Y.JSON.parse(store);
+            } catch (e) {
+                LocalSync._data[this.root] = [];
+            }
         } else {
-            LocalSync._data[this.root] = (LocalSync._data[this.root] || {});
+            LocalSync._data[this.root] || (LocalSync._data[this.root] = []);
         }
+
+        // Map each model's ID to its reference inside of data, if there
+        // are already existing models inside of `localStorage`.
+        LocalSync._idMap[this.root] || (LocalSync._idMap[this.root] = {});
+        Y.Array.each(LocalSync._data[this.root], function (item) {
+            var id = item.id;
+            if (id) {
+                LocalSync._idMap[this.root][id] = item;
+            }
+        }, this);
     },
     
     // -- Public Methods -----------------------------------------------------------
@@ -212,8 +237,8 @@ LocalSync.prototype = {
     @protected
     @since @VERSION@
     **/
-    _index: function (options) {
-        return Y.Object.values(LocalSync._data[this.root]);
+    _index: function () {
+        return LocalSync._data[this.root];
     },
 
     /**
@@ -224,8 +249,8 @@ LocalSync.prototype = {
     @protected
     @since @VERSION@
     **/
-    _show: function (options) {
-        return LocalSync._data[this.root][this.get('id')];
+    _show: function () {
+        return LocalSync._idMap[this.root][this.get('id')] || null;
     },
     
     /**
@@ -236,10 +261,14 @@ LocalSync.prototype = {
     @protected
     @since @VERSION@
     **/
-    _create: function (options) {
-        var hash = this.toJSON();
+    _create: function () {
+        var hash  = this.toJSON(),
+            data  = LocalSync._data[this.root],
+            idMap = LocalSync._idMap[this.root];
+        
         hash.id = this.generateID(this.root);
-        LocalSync._data[this.root][hash.id] = hash;
+        data.push(hash);
+        idMap[hash.id] = hash;
 
         this._save();
         return hash;
@@ -253,9 +282,9 @@ LocalSync.prototype = {
     @protected
     @since @VERSION@
     **/
-    _update: function (options) {
-        var hash = Y.merge(this.toJSON(), options);
-        LocalSync._data[this.root][this.get('id')] = hash;
+    _update: function () {
+        var hash = Y.merge(this.toJSON());
+        LocalSync._idMap[this.get('id')] = hash;
         
         this._save();
         return hash;
@@ -270,8 +299,8 @@ LocalSync.prototype = {
     @protected
     @since @VERSION@
     **/
-    _destroy: function (options) {
-        delete LocalSync._data[this.root][this.get('id')];
+    _destroy: function () {
+        delete LocalSync._idMap[this.get('id')];
         this._save();
         return this.toJSON();
     },

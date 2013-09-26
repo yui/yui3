@@ -85,7 +85,7 @@ modelSyncLocalSuite.add(new Y.Test.Case({
         var testStore;
         try {
             testStore = Y.config.win.localStorage;
-            testStore.setItem('users', '{"users-1":{"id":"users-1","name":"clarle"},"users-2":{"id":"users-2","name":"eric"}}');
+            testStore.setItem('users', '[{"id":"users-1","name":"clarle"},{"id":"users-2","name":"eric"}]');
         } catch (e) {
             Y.log("Could not access localStorage.", "warn");
         }
@@ -94,7 +94,7 @@ modelSyncLocalSuite.add(new Y.Test.Case({
             modelList = new Y.TestModelList({ root: 'users'}),
             data      = Y.ModelSync.Local._data;
 
-        Assert.areSame('clarle', data['users']['users-1']['name']);
+        Assert.areSame('clarle', data['users'][0]['name']);
     }
 }));
 
@@ -106,9 +106,9 @@ modelSyncLocalSuite.add(new Y.Test.Case({
         if (hasLocalStorage) { 
             testStore = Y.config.win.localStorage;
             testStore.clear();
-            testStore.setItem('users', '{"users-1":{"id":"users-1","name":"clarle"},"users-2":{"id":"users-2","name":"eric"}}');
+            testStore.setItem('users', '[{"id":"users-1","name":"clarle"},{"id":"users-2","name":"eric"}]');
         } else { 
-            Y.ModelSync.Local._data['users'] = Y.JSON.parse('{"users-1":{"id":"users-1","name":"clarle"},"users-2":{"id":"users-2","name":"eric"}}');
+            Y.ModelSync.Local._data['users'] = Y.JSON.parse('[{"id":"users-1","name":"clarle"},{"id":"users-2","name":"eric"}]');
         }
 
         Y.TestModel = Y.Base.create('user', Y.Model, [Y.ModelSync.Local], {
