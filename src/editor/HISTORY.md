@@ -3,12 +3,14 @@ Rich Text Editor Change History
 
 @VERSION@
 ------
+* Add in `getEditorOffset` to calculate distance from current selection to the
+  beginning of the editor. [Pull Request #1232]
 
 * Editor is able to work in two modes - as an Inline Editor or using an iframe.
   For that reason, some internal changes have been made:
 
   Y.Frame is now a plugin and extends Y.Plugin.Base.
-  
+
   There is a new Plugin, called ContentEditable. This plugin allows
   editor to work without using an iframe, as an inline editor.
 
