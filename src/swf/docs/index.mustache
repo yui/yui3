@@ -14,6 +14,9 @@
     .notice h2 {
         margin-top: .6em;
     }
+    .notice ul {
+        margin-top: 0.31em;
+    }
 </style>
 
 <div class="intro">
@@ -27,7 +30,11 @@
 	</ol>
     
     <div class="notice">
-        <strong>NOTE:</strong> Due to security issues, as of 3.13.0, the swf module is deprecated. YUI has no plans for providing a utility for embedding Flash into HTML pages.
+        <strong>NOTE:</strong> Due to security issues, as of 3.13.0:
+        <ul>
+            <li>The swf module is deprecated. YUI has no plans for providing a utility for embedding Flash into HTML pages.</li>
+            <li>YUI <a href="https://github.com/yui/yui3/issues/845">has removed all the Flash files from the repository</a>. Necessary source files and documentation for `YUIBridge` are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</li>
+        </ul>
     </div>
 	
 	<p><strong>Important usage notes:</strong></p><ul>
@@ -120,61 +127,6 @@ YUI({...}).use('swf',function (Y) {
 
 <h3>Working with the YUIBridge ActionScript Library</h3>
 
-<p>YUIBridge ActionScript library creates a standardized method for sending YUI events from a Flash application. In an ActionScript application, an instance of YUIBridge is created as follows:</p>
-	
-```
-	import com.yahoo.util.YUIBridge
-	
-	...
-
-	// The scope for 'this' should be either the top-level application
-	// or a Sprite that has been placed on the stage.
-	
-	var yuiBridge:YUIBridge = new YUIBridge(this.stage);
-```
-
-<p>Instead of using `ExternalInterface.addCallback` on each method that needs to be exposed to JavaScript, you can instead call a collective `addCallbacks()` method available in YUIBridge:</p>
-
-```
-	import com.yahoo.util.YUIBridge
-	
-	...
-
-	// The scope for 'this' should be either the top-level application
-	// or a Sprite that has been placed on the stage.
-	
-	var yuiBridge:YUIBridge = new YUIBridge(this.stage);
-	yuiBridge.addCallbacks({externalMethodName:internalMethod, externalMethodName2:internalMethod2});
-
-});
-```
-
-<p>To dispatch YUI events (fired by the instance of the SWF Utility on the JavaScript end, you can call YUIBridge's `sendEvent` method:</p>
-
-```
-	import com.yahoo.util.YUIBridge
-	
-	...
-
-	// The scope for 'this' should be either the top-level application
-	// or a Sprite that has been placed on the stage.
-	
-	var yuiBridge:YUIBridge = new YUIBridge(this.stage);
-	yuiBridge.sendEvent({type:'someevent', payload:'some payload'});
-});
-```
-
-<p>In addition to any custom events you dispatch, YUIBridge also fires a `swfReady` event at initialization time, announcing that the Flash player is ready for communication with JavaScript:</p>
-```
-YUI({...}).use('swf',function (Y) {
-
-	var myswf = new Y.SWF("#swfContainer", "http://example.com/example.swf");
-	myswf.on('swfReady', init);
-	
-	function init() {
-		// Start communicating with the Flash player instance here
-		myswf.callSWF("foo", [arg1, arg2]);
-	}
-
-});
-```
+<div class="notice">
+    <strong>NOTE:</strong> Due to security issues, as of 3.13.0, YUI <a href="https://github.com/yui/yui3/issues/845">has removed all the Flash files from the repository</a>. Necessary source files and documentation for `YUIBridge` are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
+</div>
