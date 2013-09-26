@@ -896,5 +896,79 @@ Y.mix(Sortable.prototype, {
 }, true);
 
 Y.DataTable.Sortable = Sortable;
+/**
+Used when the instance's `sortable` attribute is set to
+"auto" (the default) to determine which columns will support
+user sorting by clicking on the header.
+
+If the instance's `key` attribute is not set, this
+configuration is ignored.
+
+    { key: 'lastLogin', sortable: true }
+
+@property sortable
+@type Boolean
+@for DataTable.Column
+ */
+/**
+When the instance's `caseSensitive` attribute is set to
+`true` the sort order is case sensitive (relevant to string columns only).
+
+Case sensitive sort is marginally more efficient and should be considered
+for large data sets when case insensitive sort is not required.
+
+    { key: 'lastLogin', sortable: true, caseSensitive: true }
+
+@property caseSensitive
+@type Boolean
+@for DataTable.Column
+ */
+/**
+Allows a column to be sorted using a custom algorithm.  The
+function receives three parameters, the first two being the
+two record Models to compare, and the third being a boolean
+`true` if the sort order should be descending.
+
+The function should return `-1` to sort `a` above `b`, `-1`
+to sort `a` below `b`, and `0` if they are equal.  Keep in
+mind that the order should be reversed when `desc` is
+`true`.
+
+The `desc` parameter is provided to allow `sortFn`s to
+always sort certain values above or below others, such as
+always sorting `null`s on top.
+
+    {
+      label: 'Name',
+      sortFn: function (a, b, desc) {
+        var an = a.get('lname') + b.get('fname'),
+            bn = a.get('lname') + b.get('fname'),
+            order = (an > bn) ? 1 : -(an < bn);
+
+        return desc ? -order : order;
+      },
+      formatter: function (o) {
+        return o.data.lname + ', ' + o.data.fname;
+      }
+    }
+
+@property sortFn
+@type Function
+@for DataTable.Column
+*/
+/**
+(__read-only__) If a column is sorted, this
+will be set to `1` for ascending order or `-1` for
+descending.  This configuration is public for inspection,
+but can't be used during DataTable instantiation to set the
+sort direction of the column.  Use the table's
+[sortBy](DataTable.html#attr_sortBy)
+attribute for that.
+
+@property sortDir
+@type Integer
+@readOnly
+@for DataTable.Column
+*/
 
 Y.Base.mix(Y.DataTable, [Sortable]);
