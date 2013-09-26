@@ -5,7 +5,7 @@ SWF Utility Change History
 ------
 
 * [!] Deprecate module.
-* Remove all swf and as files from repository. 
+* Move YUIBridge from yui3 repository to <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
 
 3.12.0
 ------
