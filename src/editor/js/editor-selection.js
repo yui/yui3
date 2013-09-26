@@ -77,7 +77,6 @@
                         //Setting the move to something large, may need to increase it later
                         moved = this.getEditorOffset(root);
                         sel.move('character', -(moved));
-                        //moved = Math.abs(sel.move('character', -9999));
                     }
 
                     this.anchorOffset = this.focusOffset = moved;
