@@ -33,6 +33,7 @@
         /**
         * Internal config option to hold the node that we are scrolling. Should not be set by the developer.
         * @attribute parentScroll
+        * @protected
         * @type Node
         */
         parentScroll: {
