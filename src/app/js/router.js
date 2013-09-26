@@ -559,7 +559,7 @@ Y.Router = Y.extend(Router, Y.Base, {
           parameter values.
         @param {Object} callbacks.req.route Reference to the current route
           object whose callbacks are being dispatched.
-        @param {Object} callbacks.req.router Reference to this router instnace.
+        @param {Object} callbacks.req.router Reference to this router instance.
         @param {String} callbacks.req.src What initiated the dispatch. In an
           HTML5 browser, when the back/forward buttons are used, this property
           will have a value of "popstate".

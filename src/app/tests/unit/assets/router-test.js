@@ -452,11 +452,28 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'dispatch() should dispatch to the first route that matches the current URL': function () {
-        var test       = this,
+        var test   = this,
             router = this.router = new Y.Router();
 
         router.route(/./, function () {
             test.resume();
+        });
+
+        setTimeout(function () {
+            router.dispatch();
+        }, 1);
+
+        this.wait(1000);
+    },
+
+    'dispatch() should set `req.src` to "dispatch"': function () {
+        var test   = this,
+            router = this.router = new Y.Router({html5: false});
+
+        router.route(/./, function (req) {
+            test.resume(function () {
+                Assert.areSame('dispatch', req.src);
+            });
         });
 
         setTimeout(function () {
@@ -771,6 +788,15 @@ routerSuite.add(new Y.Test.Case({
         }, 1);
 
         this.wait(500);
+    },
+
+    'upgrade() should upgrade return `false` by default': function () {
+        Y.HistoryHash.setHash('');
+
+        var test   = this,
+            router = this.router = new Y.Router({html5: true});
+
+        Assert.isFalse(router.upgrade());
     },
 
     '_joinURL() should normalize "/" separators': function () {
