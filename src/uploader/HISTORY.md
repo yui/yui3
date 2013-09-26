@@ -5,6 +5,7 @@ Uploader Utility (New) Change History
 ------
 
 * [!] #1154 Deprecate flash-uploader module.
+* Move all related swf and as files from yui3 repository to <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
 
 3.12.0
 ------
