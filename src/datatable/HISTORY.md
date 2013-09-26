@@ -3,7 +3,8 @@ DataTable Change History
 @VERSION@
 ------
 
-* Added datatable-keynav module, providing keyboard navigation within the datatable.
+* Added datatable-keynav module, providing keyboard navigation within the
+  datatable. [Pull Request #596]
 
 * Added 'contentUpdate' after the DataTable has been updated when triggered
   from a `dataChange` event. [Pull Request #1072][Issue #1052]
