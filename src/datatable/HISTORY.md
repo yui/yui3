@@ -3,6 +3,8 @@ DataTable Change History
 
 @VERSION@
 ------
+* Add highlight module [Pull Request #1196]
+
 * Document updates and variable changes to improve understanding of code
   [Pull Request #946] [Satyam]
 

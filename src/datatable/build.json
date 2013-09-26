@@ -75,6 +75,11 @@
             "jsfiles": [
                 "foot.js"
             ]
+        },
+        "datatable-highlight": {
+            "jsfiles": [
+                "highlight.js"
+            ]
         }
     }
 }
