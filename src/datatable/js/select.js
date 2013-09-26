@@ -42,6 +42,8 @@ Select.ATTRS = {
 
      Possible values are "row", "col" or "cell"
 
+     Setting to `null` will remove the ability to select until it is set again.
+
      @attribute selectRows
      @default null
      @type String
@@ -75,18 +77,6 @@ Select.prototype = {
     },
 
     /**
-     Zero minus the index of the first row in the tbody
-
-     @protected
-     @property _rowIndexOffset
-     @type Number
-     @since @SINCE@
-     */
-    // TODO: Maybe calculate this when `selectMode` is set and after the body
-    // is rendered
-    _rowIndexOffset: -2,
-
-    /**
      A string that is used to create a column selector when the column is
      clicked. Can contain the css prefix (`{prefix}`) and the column name
      (`{col}`). Further substitution will require `_highlightCol` to be
@@ -108,7 +98,6 @@ Select.prototype = {
      @type Object
      @since @SINCE@
      */
-    _selectDelegate: null,
 
     /**
      A number consisting of the last index of the selected row, column or cell.
@@ -118,7 +107,6 @@ Select.prototype = {
      @default null
      @since @SINCE@
      */
-    _lastSelectIndex: null,
 
     /**
      An Object consisting of the selected item's index for each row, column
@@ -129,9 +117,14 @@ Select.prototype = {
      @type Object
      @since @SINCE@
      */
-    _selectSelected: [],
 
     // PUBLIC
+    initializer: function () {
+        this._selectDelegate = null;
+        this._lastSelectIndex = null;
+        this._selectSelected = [];
+    },
+
     /**
      Clears all selections currently in the table.
 
@@ -222,11 +215,11 @@ Select.prototype = {
     selectRow: function (cell, modifiers) {
         var row = cell.ancestor('tr'),
             className = this.selectClassNames.row,
-            indexOffset = this._rowIndexOffset,
+            tbody = cell.ancestor('tbody'),
+            indexOffset = -(tbody.get('firstChild.rowIndex')),
             curIndex = row.get('rowIndex') + indexOffset,
             lastIndex = this._lastSelectIndex,
             selectedRows = this._selectSelected,
-            tbody = cell.ancestor('tbody'),
             selectedRowsPos,
             rows,
             startIndex,
@@ -617,7 +610,8 @@ Select.prototype = {
      @return Number Index of the cell provided
      */
     _getCellIndex: function (cell) {
-        var row = cell.ancestor('tr').get('rowIndex') + this._rowIndexOffset,
+        var indexOffset = -(cell.ancestor('tbody').get('firstChild.rowIndex')),
+            row = cell.ancestor('tr').get('rowIndex') + indexOffset,
             col = cell.get('cellIndex'),
             index = this.get('columns').length * row + col;
 
