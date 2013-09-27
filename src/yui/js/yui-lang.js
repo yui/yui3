@@ -179,14 +179,14 @@ L.isObject = function(o, failfn) {
 };
 
 /**
- * Determines whether or not the provided item is a regexp.
+ * Determines whether or not the provided value is a regexp.
  * @method isRegExp
  * @static
- * @param o The object to test.
- * @return {boolean} true if o is a regexp.
+ * @param value The value or object to test.
+ * @return {boolean} true if value is a regexp.
  */
-L.isRegExp = function(o) {
-    return L.type(o) === 'regexp';
+L.isRegExp = function(value) {
+    return L.type(value) === 'regexp';
 };
 
 /**
