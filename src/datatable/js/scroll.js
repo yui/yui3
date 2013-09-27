@@ -71,6 +71,46 @@ Scrollable.ATTRS = {
     scrollable: {
         value: false,
         setter: '_setScrollable'
+    },
+
+    /**
+    Number of pixels the contents has been scrolled up.
+
+    @attribute scrollTop
+    @type Integer
+    @default 0
+     */
+    scrollTop: {
+        getter: '_scrollTopGetter',
+        setter: '_scrollTopSetter'
+    },
+
+    /**
+    Number of pixels the contents has been scrolled left.
+
+    @attribute scrollLeft
+    @type Integer
+    @default 0
+     */
+    scrollLeft: {
+        getter: '_scrollLeftGetter',
+        setter: '_scrollLeftSetter'
+    },
+
+    /**
+    Returns a region object with `left`, `right`, `top` and `bottom` properties
+    for the visible window of the datatable that is visible.
+
+    This area does not correspond to an actual screen element it is the hole
+    left by the other components.
+
+    @attribute scrollRegion
+    @type Object
+    @readonly
+     */
+    scrollRegion: {
+        getter: '_getScrollRegion',
+        readOnly: true
     }
 };
 
@@ -92,27 +132,94 @@ Y.mix(Scrollable.prototype, {
     @since 3.5.0
     **/
     scrollTo: function (id) {
-        var target;
+        var target = this._locateTarget(id),
+            tReg, sReg, offset;
 
-        if (id && this._tbodyNode && (this._yScrollNode || this._xScrollNode)) {
-            if (isArray(id)) {
-                target = this.getCell(id);
-            } else if (isNumber(id)) {
-                target = this.getRow(id);
-            } else if (isString(id)) {
-                target = this._tbodyNode.one('#' + id);
-            } else if (id instanceof Y.Node &&
-                    // TODO: ancestor(yScrollNode, xScrollNode)
-                    id.ancestor('.yui3-datatable') === this.get('boundingBox')) {
-                target = id;
-            }
+        if (target) {
+            tReg = target.get('region');
+            sReg = this._getScrollRegion();
 
-            if(target) {
-                target.scrollIntoView();
+            offset = tReg.bottom - sReg.bottom;
+            if (offset > 0) {
+                this._scrollTopSetter(this._scrollTopGetter() + offset);
+                tReg.top -= offset;
+                tReg.bottom -= offset;
             }
+            if (tReg.top < sReg.top) {
+                this._scrollTopSetter(this._scrollTopGetter() - (sReg.top - tReg.top));
+            }
+            offset = tReg.right - sReg.right;
+            if (offset > 0) {
+                this._scrollLeftSetter(this._scrollLeftGetter() + offset);
+                tReg.left -= offset;
+                tReg.right -= offset;
+            }
+            if (tReg.left < sReg.left) {
+                this._scrollLeftSetter(this._scrollLeftGetter() - (sReg.left - tReg.left));
+            }
+            this.fire('scroll');
         }
 
         return this;
+    },
+
+    /**
+    Determines whether a cell or row is partially or totally hidden away from
+    the  scrolling area.
+
+    Pass the `clientId` of a Model from the DataTable's `data` ModelList
+    or its row index to determine the visibility of a row
+    or a [row index, column index] array to determine the visibility of a cell.
+    Alternatively to determine the visibility of any element contained within
+    the table's scrolling areas, pass its ID, or the Node itself.
+
+    A `partially` flag allows finding out whether the element is totally
+    (the default) or partially hidden.
+    A row in an x-scrollable table will usually be partially hidden.
+
+    @method isHidden
+    @param id {String|Number|Number[]|Node} A row clientId, row index, cell
+            coordinate array, id string, or Node
+    @param [partially=false] {Boolean} to determine if it is partially or totally
+            scrolled away
+    @return {Boolean|null} True if the element is totally (the default)
+            or partially hidden, null if the element was not found.
+    **/
+
+    isHidden: function (id, partially) {
+        var target = this._locateTarget(id),
+            tReg, sReg;
+
+        if (target) {
+            tReg = target.get('region');
+            sReg = this._getScrollRegion();
+
+
+            if (this._xScrollNode) {
+                if (partially) {
+                    if (tReg.left < sReg.left || tReg.right > sReg.right) {
+                        return true;
+                    }
+                } else {
+                    if (tReg.right < sReg.left || tReg.left > sReg.right) {
+                        return true;
+                    }
+                }
+            }
+            if (this._yScrollNode) {
+                if (partially) {
+                    if (tReg.top < sReg.top || tReg.bottom > sReg.bottom) {
+                        return true;
+                    }
+                } else {
+                    if (tReg.bottom < sReg.top || tReg.top > sReg.bottom) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return null;
     },
 
     //--------------------------------------------------------------------------
@@ -362,6 +469,11 @@ Y.mix(Scrollable.prototype, {
                 scrollbar.on('scroll', this._syncScrollPosition, this),
                 scroller.on('scroll', this._syncScrollPosition, this)
             ]);
+        }
+        if (this._xScrollNode && !this._xScrollEventHandle) {
+            this._xScrollEventHandle = this._xScrollNode.on('scroll', function () {
+               this.fire('scroll');
+            }, this);
         }
     },
 
@@ -616,6 +728,11 @@ Y.mix(Scrollable.prototype, {
         this.after('renderView', Y.bind('_syncScrollUI', this));
 
         Y.Do.after(this._bindScrollUI, this, 'bindUI');
+
+        this.publish('scroll', {
+            emitFacade: false,
+            preventable: false
+        });
     },
 
     /**
@@ -723,11 +840,7 @@ Y.mix(Scrollable.prototype, {
 
             delete this._scrollbarNode;
         }
-        if (this._scrollbarEventHandle) {
-            this._scrollbarEventHandle.detach();
-
-            delete this._scrollbarEventHandle;
-        }
+        this._unbindScrollbar();
     },
 
     /**
@@ -796,9 +909,10 @@ Y.mix(Scrollable.prototype, {
             this._clearScrollLock();
             this._scrollLock = Y.later(300, this, this._clearScrollLock);
             this._scrollLock.source = source;
-
             other = (source === scrollbar) ? scroller : scrollbar;
             other.set('scrollTop', source.get('scrollTop'));
+
+            this.fire('scroll');
         }
     },
 
@@ -1303,6 +1417,13 @@ Y.mix(Scrollable.prototype, {
     _unbindScrollbar: function () {
         if (this._scrollbarEventHandle) {
             this._scrollbarEventHandle.detach();
+
+            delete this._scrollbarEventHandle;
+        }
+        if (this._xScrollEventHandle) {
+            this._xScrollEventHandle.detach();
+
+            delete this._xScrollEventHandle;
         }
     },
 
@@ -1319,7 +1440,141 @@ Y.mix(Scrollable.prototype, {
             this._scrollResizeHandle.detach();
             delete this._scrollResizeHandle;
         }
+    },
+
+    /**
+    Locates a given row or cell.  Pass the
+    `clientId` of a Model from the DataTable's `data` ModelList or its row
+    index to locate a row or a [row index, column index] array to locate
+    a cell.  Alternately, to locate any element contained within the table's
+    scrolling areas, pass its ID, or the Node itself.
+
+    @method _locateTarget
+    @param {String|Number|Number[]|Node} id A row clientId, row index, cell
+            coordinate array, id string, or Node
+    @return {Node|null} Node or null if not found.
+    @protected
+    **/
+    _locateTarget: function (id) {
+        var t;
+        if (id && this._tbodyNode && (this._yScrollNode || this._xScrollNode)) {
+            if (isArray(id)) {
+                return this.getCell(id);
+            } else if (isNumber(id)) {
+                return this.getRow(id);
+            } else if (isString(id)) {
+                t = this._tbodyNode.one('#' + id);
+                if (!t) {
+                    t = this._tbodyNode.one('tr[data-yui3-record=' + id + ']' );
+                }
+                return t;
+            } else if (id instanceof Y.Node &&
+                    // TODO: ancestor(yScrollNode, xScrollNode)
+                    id.ancestor('.yui3-datatable') === this.get('boundingBox')) {
+                return id;
+            }
+        }
+        return null;
+    },
+
+    /**
+    Getter for the [scrollRegion](#attribute_scrollRegion) attribute.
+    Returns an object with `left`, `right`, `top` and `bottom` properties
+    corresponding to the visible area of the scrolling table.
+
+    @method _getScrollRegion
+    @return {Object} The region object for the scroll window
+    @private
+     */
+    _getScrollRegion: function () {
+        var left, right, top, bottom,
+            r = this._tbodyNode;
+
+        if (!r) {
+            // table not rendered yet
+            return null;
+        }
+        r = r.get('region');
+
+        left = r.left;
+        right = r.right;
+        top = r.top;
+        bottom = r.bottom;
+        if (this._scrollbarNode) {
+            r = this._scrollbarNode.get('region');
+            right = r.left + 1;
+            top = r.top;
+            bottom = r.bottom;
+        }
+        if (this._xScrollNode) {
+            r = this._xScrollNode.get('region');
+            left = r.left;
+            right = Math.min(right, r.right);
+        }
+        return {
+            0: left,
+            1: top,
+            left: left,
+            right: right,
+            top: top,
+            bottom: bottom,
+            width: right - left,
+            height: bottom - top
+        };
+    },
+
+    /**
+    Getter for the [scrollTop](#attr_scrollTop) attribute.
+
+    @method _scrollTopGetter
+    @return {Number} Value, in pixels, of the scrollTop attribute for the scrolling area
+    @private
+    */
+    _scrollTopGetter: function () {
+        return (this._yScrollNode && this._yScrollNode.get('scrollTop')) || 0;
+    },
+
+    /**
+    Setter for the [scrollTop](#attr_scrollTop) attribute.
+
+    @method _scrollTopSetter
+    @param value {Number} Value, in pixels, to set the scrollTop attribute for the scrolling area
+    @private
+    */
+    _scrollTopSetter: function (value) {
+        if (this._yScrollNode && this._scrollbarNode) {
+            this._yScrollNode.set('scrollTop', value);
+            return value;
+        }
+        return Y.Attribute.INVALID_VALUE;
+    },
+
+    /**
+    Getter for the [scrollLeft](#attr_scrollLeft) attribute.
+
+    @method _scrollLeftGetter
+    @return {Number} Value, in pixels, of the scrollLeft attribute for the scrolling area
+    @private
+    */
+    _scrollLeftGetter: function () {
+        return (this._xScrollNode && this._xScrollNode.get('scrollLeft')) || 0;
+    },
+
+    /**
+    Setter for the [scrollLeft](#attr_scrollLeft) attribute.
+
+    @method _scrollLeftSetter
+    @param value {Number} Value, in pixels, to set the scrollTop attribute for the scrolling area
+    @private
+    */
+    _scrollLeftSetter: function (value) {
+        if (this._xScrollNode) {
+            this._xScrollNode.set('scrollLeft', value);
+            this.fire('scroll');
+        }
+        return Y.Attribute.INVALID_VALUE;
     }
+
 
     /**
     Indicates horizontal table scrolling is enabled.
@@ -1376,6 +1631,12 @@ Y.mix(Scrollable.prototype, {
     @since 3.5.0
     **/
     //_xScrollNode: null
+
+    /**
+    Fires when the table is scrolled.
+
+    @event scroll
+     */
 }, true);
 
 Y.Base.mix(Y.DataTable, [Scrollable]);
