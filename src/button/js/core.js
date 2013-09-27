@@ -4,7 +4,8 @@
  * @module button-core
  * @since 3.5.0
  */
-var getClassName = Y.ClassNameManager.getClassName;
+var getClassName = Y.ClassNameManager.getClassName,
+    AttributeCore = Y.AttributeCore;
 
 /**
  * Creates a button
@@ -70,11 +71,7 @@ ButtonCore.prototype = {
      * @private
      */
     _initAttributes: function(config) {
-        var host = this._host,
-            node = host.one('.' + ButtonCore.CLASS_NAMES.LABEL) || host;
-
-        config.label = config.label || this._getLabel(node);
-        Y.AttributeCore.call(this, ButtonCore.ATTRS, config);
+        AttributeCore.call(this, ButtonCore.ATTRS, config);
     },
 
     /**
@@ -85,19 +82,19 @@ ButtonCore.prototype = {
      */
     _renderUI: function() {
         var node = this.getNode(),
-            tagName = node.get('tagName').toLowerCase();
+            nodeName = node.get('nodeName').toLowerCase();
 
         // Set some default node attributes
         node.addClass(ButtonCore.CLASS_NAMES.BUTTON);
 
-        if (tagName !== 'button' && tagName !== 'input') {
+        if (nodeName !== 'button' && nodeName !== 'input') {
             node.set('role', 'button');
         }
     },
 
     /**
      * @method enable
-     * @description Sets the button's `disabled` DOM attribute to false
+     * @description Sets the button's `disabled` DOM attribute to `false`
      * @public
      */
     enable: function() {
@@ -106,7 +103,7 @@ ButtonCore.prototype = {
 
     /**
      * @method disable
-     * @description Sets the button's `disabled` DOM attribute to true
+     * @description Sets the button's `disabled` DOM attribute to `true`
      * @public
      */
     disable: function() {
@@ -115,59 +112,102 @@ ButtonCore.prototype = {
 
     /**
      * @method getNode
-     * @description Gets the host DOM node for this button instance
+     * @description Gets the button's host node
+     * @return {Node} The host node instance
      * @public
      */
     getNode: function() {
+        if (!this._host && this instanceof Y.Widget) {
+            this._host = this.get('boundingBox');
+        }
+
         return this._host;
     },
 
     /**
      * @method _getLabel
-     * @description Getter for a button's 'label' ATTR
+     * @description Getter for a button's `label` ATTR
+     * @return {String} The text label of the button
      * @private
      */
     _getLabel: function () {
-        var node    = this.getNode(),
-            tagName = node.get('tagName').toLowerCase(),
-            label;
-
-        if (tagName === 'input') {
-            label = node.get('value');
-        }
-        else {
-            label = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).get('text');
-        }
+        var node = this.getNode(),
+            label = ButtonCore._getTextLabelFromNode(node);
 
         return label;
     },
 
     /**
-     * @method _uiSetLabel
-     * @description Setter for a button's 'label' ATTR
-     * @param label {string}
+     * @method _getLabelHTML
+     * @description Getter for a button's `labelHTML` ATTR
+     * @return {HTML} The HTML label of the button
      * @private
      */
-    _uiSetLabel: function (label) {
-        var node    = this.getNode(),
-            tagName = node.get('tagName').toLowerCase();
+    _getLabelHTML: function () {
+        var node = this.getNode(),
+            labelHTML = ButtonCore._getHTMLFromNode(node);
 
-        if (tagName === 'input') {
-            node.set('value', label);
-        } else {
-            (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node).set('text', label);
+        return labelHTML;
+    },
+
+    /**
+     * @method _setLabel
+     * @description Setter for a button's `label` ATTR
+     * @param value (String) The value to set for `label`
+     * @param name (String) The name of this ATTR (`label`)
+     * @param opts (Object) Additional options
+     *    @param opts.src (String) A string identifying the callee.
+     *        `internal` will not sync this value with the `labelHTML` ATTR
+     * @return {String} The text label for the given node
+     * @private
+     */
+    _setLabel: function (value, name, opts) {
+        var label = Y.Escape.html(value);
+
+        if (!opts || opts.src !== 'internal') {
+            this.set('labelHTML', label, {src: 'internal'});
         }
 
         return label;
     },
 
     /**
-     * @method _uiSetDisabled
-     * @description Setter for the 'disabled' ATTR
+     * @method _setLabelHTML
+     * @description Setter for a button's `labelHTML` ATTR
+     * @param value (HTML) The value to set for `labelHTML`
+     * @param name (String) The name of this ATTR (`labelHTML`)
+     * @param opts (Object) Additional options
+     *    @param opts.src (String) A string identifying the callee.
+     *        `internal` will not sync this value with the `label` ATTR
+     * @return {HTML} The HTML label for the given node
+     * @private
+     */
+    _setLabelHTML: function (value, name, opts) {
+        var node = this.getNode(),
+            labelNode = ButtonCore._getLabelNodeFromParent(node),
+            nodeName = node.get('nodeName').toLowerCase();
+
+        if (nodeName === 'input') {
+            labelNode.set('value', value);
+        }
+        else {
+            labelNode.setHTML(value);
+        }
+
+        if (!opts || opts.src !== 'internal') {
+            this.set('label', value, {src: 'internal'});
+        }
+
+        return value;
+    },
+
+    /**
+     * @method _setDisabled
+     * @description Setter for the `disabled` ATTR
      * @param value {boolean}
      * @private
      */
-    _uiSetDisabled: function(value) {
+    _setDisabled: function(value) {
         var node = this.getNode();
 
         node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
@@ -177,8 +217,8 @@ ButtonCore.prototype = {
     }
 };
 
-
-Y.mix(ButtonCore.prototype, Y.AttributeCore.prototype);
+// ButtonCore inherits from AttributeCore
+Y.mix(ButtonCore.prototype, AttributeCore.prototype);
 
 /**
  * Attribute configuration.
@@ -191,26 +231,46 @@ Y.mix(ButtonCore.prototype, Y.AttributeCore.prototype);
 ButtonCore.ATTRS = {
 
     /**
-     * The text of the button (the `value` or `text` property)
+     * The text of the button's label
      *
-     * @attribute label
+     * @config label
      * @type String
      */
     label: {
-        setter: '_uiSetLabel',
+        setter: '_setLabel',
         getter: '_getLabel',
+        lazyAdd: false
+    },
+
+    /**
+     * The HTML of the button's label
+     *
+     * This attribute accepts HTML and inserts it into the DOM **without**
+     * sanitization.  This attribute should only be used with HTML that has
+     * either been escaped (using `Y.Escape.html`), or sanitized according to
+     * the requirements of your application.
+     *
+     * If all you need is support for text labels, please use the `label`
+     * attribute instead.
+     *
+     * @config labelHTML
+     * @type HTML
+     */
+    labelHTML: {
+        setter: '_setLabelHTML',
+        getter: '_getLabelHTML',
         lazyAdd: false
     },
 
     /**
      * The button's enabled/disabled state
      *
-     * @attribute disabled
+     * @config disabled
      * @type Boolean
      */
     disabled: {
         value: false,
-        setter: '_uiSetDisabled',
+        setter: '_setDisabled',
         lazyAdd: false
     }
 };
@@ -242,7 +302,7 @@ ButtonCore.CLASS_NAMES = {
 /**
  * Array of static constants used to for applying ARIA states
  *
- * @property CLASS_NAMES
+ * @property ARIA_STATES
  * @type {Object}
  * @private
  * @static
@@ -255,7 +315,7 @@ ButtonCore.ARIA_STATES = {
 /**
  * Array of static constants used to for applying ARIA roles
  *
- * @property CLASS_NAMES
+ * @property ARIA_ROLES
  * @type {Object}
  * @private
  * @static
@@ -266,5 +326,66 @@ ButtonCore.ARIA_ROLES = {
     TOGGLE  : 'toggle'
 };
 
-// Export Button
+/**
+ * Finds the label node within a button
+ *
+ * @method _getLabelNodeFromParent
+ * @param node {Node} The parent node
+ * @return {Node} The label node
+ * @private
+ * @static
+ */
+ButtonCore._getLabelNodeFromParent = function (node) {
+    var labelNode = (node.one('.' + ButtonCore.CLASS_NAMES.LABEL) || node);
+
+    return labelNode;
+};
+
+/**
+ * Gets a text label from a node
+ *
+ * @method _getTextLabelFromNode
+ * @param node {Node} The parent node
+ * @return {String} The text label for a given node
+ * @private
+ * @static
+ */
+ButtonCore._getTextLabelFromNode = function (node) {
+    var labelNode = ButtonCore._getLabelNodeFromParent(node),
+        nodeName = labelNode.get('nodeName').toLowerCase(),
+        label = labelNode.get(nodeName === 'input' ? 'value' : 'text');
+
+    return label;
+};
+
+/**
+ * A utility method that gets an HTML label from a given node
+ *
+ * @method _getHTMLFromNode
+ * @param node {Node} The parent node
+ * @return {HTML} The HTML label for a given node
+ * @private
+ * @static
+ */
+ButtonCore._getHTMLFromNode = function (node) {
+    var labelNode = ButtonCore._getLabelNodeFromParent(node),
+        label = labelNode.getHTML();
+
+    return label;
+};
+
+/**
+ * Gets the disabled attribute from a node
+ *
+ * @method _getDisabledFromNode
+ * @param node {Node} The parent node
+ * @return {boolean} The disabled state for a given node
+ * @private
+ * @static
+ */
+ButtonCore._getDisabledFromNode = function (node) {
+    return node.getDOMNode().disabled;
+};
+
+// Export ButtonCore
 Y.ButtonCore = ButtonCore;

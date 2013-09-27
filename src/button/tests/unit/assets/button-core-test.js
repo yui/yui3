@@ -10,7 +10,7 @@ YUI.add('button-core-test', function (Y) {
         name: 'Attributes',
 
         setUp : function () {
-            Y.one("#container").setContent('<button id="testButton">Hello</button>');
+            Y.one("#container").setContent('<button id="testButton"><div>Hello</div><div>World</div></button>');
             this.button = new Y.ButtonCore({
                 host: Y.one("#testButton")
             });
@@ -97,7 +97,31 @@ YUI.add('button-core-test', function (Y) {
             Assert.areEqual(1, eventsTriggered);
             button.set('label', 'somethingElse');
             Assert.areEqual(2, eventsTriggered);
-        }
+        },
+
+        'Getting the `label` attribute should NOT respect nested HTML': function () {
+            var button = this.button,
+                expected = button.getNode().get('text'),
+                actual = button.get('label');
+
+            Assert.areSame(expected, actual);
+         },
+
+        'Getting the `labelHTML` attribute should respect nested HTML': function () {
+            var button = this.button,
+                expected = button.getNode().getHTML(),
+                actual = button.get('labelHTML');
+
+            Assert.areSame(expected, actual);
+         },
+
+        'Setting the `label` attribute with HTML should escape the value': function () {
+            var button = this.button;
+
+            button.set('label', '<div>foo</div>');
+            Assert.areSame('<div>foo</div>', button.get('label'));
+            Assert.areSame('&lt;div&gt;foo&lt;/div&gt;', button.getNode().get('innerHTML'));
+         }
     }));
     
     suite.add(new Y.Test.Case({
