@@ -1248,6 +1248,35 @@ appBaseSuite.add(new Y.Test.Case({
     }
 }));
 
+// -- App Base: Routes ---------------------------------------------------------
+appBaseSuite.add(new Y.Test.Case({
+    name: 'Routes',
+
+    tearDown: function () {
+        this.app && this.app.destroy();
+        delete this.app;
+    },
+
+    'routes should receive a request object with an `app` property that references this app': function () {
+        var calls = 0,
+            app   = this.app = new Y.App(),
+            req, res;
+
+        app.route('*', function (req) {
+            calls += 1;
+
+            Assert.areSame(app, req.app);
+        });
+
+        req = app._getRequest();
+        res = app._getResponse(req);
+
+        app._dispatch(req, res);
+
+        Assert.areSame(1, calls);
+    },
+}));
+
 // -- App Base: Navigation -----------------------------------------------------
 appBaseSuite.add(new Y.Test.Case({
     name: 'Naivation',
