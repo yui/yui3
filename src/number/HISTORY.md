@@ -1,5 +1,8 @@
 Number Change History
 =====================
+3.10.2
+------
+* PR #587 Parse can now parse all the formats that format can produce.
 
 @VERSION@
 ------
