@@ -3,6 +3,9 @@ DataTable Change History
 
 @VERSION@
 ------
+* Add `isHidden` method to dt-scroll to determin if cell or row is visible,
+  partly visible, or completely hidden. [Satyam] [Pull Request #1243]
+
 * Add highlight module [Pull Request #1196]
 
 * Document updates and variable changes to improve understanding of code
