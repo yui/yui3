@@ -880,6 +880,13 @@
             "classnamemanager"
         ]
     },
+    "datatable-highlight": {
+        "requires": [
+            "datatable-base",
+            "event-hover"
+        ],
+        "skinnable": true
+    },
     "datatable-message": {
         "lang": [
             "en",

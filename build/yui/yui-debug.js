@@ -9884,6 +9884,13 @@ Y.mix(YUI.Env[Y.version].modules, {
             "classnamemanager"
         ]
     },
+    "datatable-highlight": {
+        "requires": [
+            "datatable-base",
+            "event-hover"
+        ],
+        "skinnable": true
+    },
     "datatable-message": {
         "lang": [
             "en",
@@ -11918,7 +11925,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '9cfdc7e62873313018cc48b86f2a53ca';
+YUI.Env[Y.version].md5 = 'f665a9e3c8514eb7a6211662283bac80';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
