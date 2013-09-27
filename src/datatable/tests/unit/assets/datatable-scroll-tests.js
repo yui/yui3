@@ -843,6 +843,71 @@ suite.add(new Y.Test.Case({
         },100);
     }
 }));
+
+suite.add(new Y.Test.Case({
+    name: 'test with captions',
+
+    'scroll around': function () {
+
+        var table = this.table = new Y.DataTable({
+                caption: 'scroll testing',
+                columns: ['a','b','c'],
+                data: [
+                    {a:1, b:2, c:3},
+                    {a:1, b:2, c:3},
+                    {a:1, b:2, c:3}
+                ],
+                height: '50px',
+                width: '50px',
+                scrollable: 'xy'
+            }).render(),
+            boundingBox = table.get('boundingBox');
+
+        Y.Assert.isTrue(boundingBox.hasClass('yui3-datatable-scrollable-x'),
+            'XY scrolling table missing scrollable-x class');
+
+        Y.Assert.isTrue(boundingBox.hasClass('yui3-datatable-scrollable-y'),
+            'XY scrolling table missing scrollable-x class');
+
+
+        // scroll to something that doesn't exist
+        table.scrollTo([100,100]);
+
+
+
+        table.set('scrollable', 'y');
+
+        Y.Assert.isFalse(boundingBox.hasClass('yui3-datatable-scrollable-x'),
+            'XY scrolling table missing scrollable-x class');
+
+        Y.Assert.isTrue(boundingBox.hasClass('yui3-datatable-scrollable-y'),
+            'XY scrolling table missing scrollable-x class');
+
+        table.set('scrollable', 'x');
+
+        Y.Assert.isTrue(boundingBox.hasClass('yui3-datatable-scrollable-x'),
+            'XY scrolling table missing scrollable-x class');
+
+        Y.Assert.isFalse(boundingBox.hasClass('yui3-datatable-scrollable-y'),
+            'XY scrolling table missing scrollable-x class');
+
+        table.set('scrollable', false);
+
+        Y.Assert.isFalse(boundingBox.hasClass('yui3-datatable-scrollable-x'),
+            'XY scrolling table missing scrollable-x class');
+
+        Y.Assert.isFalse(boundingBox.hasClass('yui3-datatable-scrollable-y'),
+            'XY scrolling table missing scrollable-x class');
+
+
+        // scroll to something that doesn't exist
+        table.scrollTo([100,100]);
+
+
+        table.destroy();
+    }
+}));
+
 suite.add(new Y.Test.Case({
     name: "xy scrollTo and isHidden",
     setUp: function () {
@@ -865,7 +930,7 @@ suite.add(new Y.Test.Case({
             columns: r,
             data: data,
             scrollable: 'xy',
-            width: '100px',
+            width: '85px',
             height: '100px'
         }).render();
     },
