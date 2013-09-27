@@ -112,9 +112,9 @@ modelSyncLocalSuite.add(new Y.Test.Case({
         if (hasLocalStorage) { 
             testStore = Y.config.win.localStorage;
             testStore.clear();
-            testStore.setItem('users', '[{"id":"users-1","name":"clarle"},{"id":"users-2","name":"eric"}]');
+            testStore.setItem('users', '[{"id":"users-1","name":"clarle"},{"id":"users-2","name":"eric"},{"id":"users-3","name":"ryan"}]');
         } else { 
-            Y.ModelSync.Local._data['users'] = Y.JSON.parse('[{"id":"users-1","name":"clarle"},{"id":"users-2","name":"eric"}]');
+            Y.ModelSync.Local._data['users'] = Y.JSON.parse('[{"id":"users-1","name":"clarle"},{"id":"users-2","name":"eric"},{"id":"users-3","name":"ryan"}]');
         }
 
         Y.TestModel = Y.Base.create('user', Y.Model, [Y.ModelSync.Local], {
@@ -142,16 +142,19 @@ modelSyncLocalSuite.add(new Y.Test.Case({
         Assert.areSame('clarle', model.get('name'));
     },
 
-    'load() of ModelList should get all stored local objects': function () {
-        var modelList = new Y.TestModelList();
+    'load() of ModelList should get all stored local objects in the right order': function () {
+        var modelList = new Y.TestModelList(),
+            users = ['clarle', 'eric', 'ryan'];
 
         Assert.areSame('users', modelList.root);
 
         modelList.load();
+        Assert.areSame(3, modelList.size());
 
-        Assert.areSame(2, modelList.size());
-        Assert.areSame('users-1', modelList.item(0).get('id'));
-        Assert.areSame('clarle', modelList.item(0).get('name'));
+        for (var i = 0; i < modelList.size(); i++) {
+            Assert.areSame('users-' + (i+1), modelList.item(i).get('id'));
+            Assert.areSame(users[i], modelList.item(i).get('name'));
+        }
     },
 
     'save() of a new Model should create a new object with an ID': function () {
@@ -185,7 +188,7 @@ modelSyncLocalSuite.add(new Y.Test.Case({
     },
 
     'Failed lookups should pass an error message to the callback': function () {
-        var model = new Y.TestModel({id: 'users-3'});
+        var model = new Y.TestModel({id: 'users-4'});
 
         model.sync('read', {}, function (err, res) {
             Assert.areSame('Data not found in LocalStorage', err);
@@ -193,7 +196,7 @@ modelSyncLocalSuite.add(new Y.Test.Case({
     },
 
     'Failed syncs due to errors should pass an error message to the callback': function () {
-        var model = new Y.TestModel({id: 'users-4'});
+        var model = new Y.TestModel({id: 'users-5'});
 
         model._save = function () {
             throw new Error('Failed sync');
