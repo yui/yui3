@@ -25,9 +25,14 @@ App Framework Change History
   before it returned the current path relative to the router's `root`. This also
   affects `req.path` which is now the full path as well.
 
+### ModelSync.Local
+
+* Added ModelSync.Local, an extension which provides a `sync()` implementation
+  for `localStorage` that can be mixed into your Models and ModelLists.
+  Examples of it in use can be seen in the [YUI TodoMVC](https://github.com/tastejs/todomvc/tree/gh-pages/architecture-examples/yui) example. ([#1218][])
 
 [#1083]: https://github.com/yui/yui3/issues/1083
-
+[#1218]: https://github.com/yui/yui3/issues/1218
 
 3.12.0
 ------
