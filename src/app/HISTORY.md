@@ -4,7 +4,23 @@ App Framework Change History
 @VERSION@
 ------
 
-* No changes.
+### App
+
+* Added `req.aoo` which is a reference to the app instance.
+
+### Router
+
+* __[!]__ Changed Router's dispatching process to take `req` and `res` objects
+  instead of creating them inside the `_dispatch()` method. This refactor also
+  removed the deprecated support for calling `res()` as an alias for `next()`.
+
+* Added `req.router` which is a reference to the router instance.
+
+* Added `req.route` which is a reference to the current route object whose
+  callbacks are being dispatched.
+
+* Calling the `dispatch()` method will now set `req.src` to `"dispatch"`.
+
 
 3.12.0
 ------
