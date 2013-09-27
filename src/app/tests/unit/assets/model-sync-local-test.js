@@ -71,7 +71,7 @@ modelSyncLocalSuite.add(new Y.Test.Case({
     
     '`localStorage` should be set to the `storage` property': function () {
         var model      = new Y.TestModel(),
-            modelList  = new Y.TestModelList();
+            modelList  = new Y.TestModelList(),
             test       = 'test',
             hasStorage = function(context) {
                 if (context && context.storage && context.storage.setItem) {
