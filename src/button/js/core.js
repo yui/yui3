@@ -117,7 +117,10 @@ ButtonCore.prototype = {
      * @public
      */
     getNode: function() {
-        if (!this._host && this instanceof Y.Widget) {
+        if (!this._host) {
+            // If this._host doesn't exist, that means this._initNode
+            // was never executed, meaning this is likely a Widget and
+            // the host node should point to the boundingBox.
             this._host = this.get('boundingBox');
         }
 
@@ -384,7 +387,7 @@ ButtonCore._getHTMLFromNode = function (node) {
  * @static
  */
 ButtonCore._getDisabledFromNode = function (node) {
-    return node.getDOMNode().disabled;
+    return node.get('disabled');
 };
 
 // Export ButtonCore
