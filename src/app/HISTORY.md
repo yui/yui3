@@ -4,6 +4,10 @@ App Framework Change History
 @VERSION@
 ------
 
+### App
+
+* Added `req.aoo` which is a reference to the app instance.
+
 ### Router
 
 * __[!]__ A router's `root` path is now enforced as its mount point. Routers
@@ -25,8 +29,28 @@ App Framework Change History
   before it returned the current path relative to the router's `root`. This also
   affects `req.path` which is now the full path as well.
 
+* __[!]__ Changed Router's dispatching process to take `req` and `res` objects
+  instead of creating them inside the `_dispatch()` method. This refactor also
+  removed the deprecated support for calling `res()` as an alias for `next()`.
+
+* Added `req.router` which is a reference to the router instance.
+
+* Added `req.route` which is a reference to the current route object whose
+  callbacks are being dispatched.
+
+* Calling the `dispatch()` method will now set `req.src` to `"dispatch"`.
+
+### Model
+
+* Added ModelSync.Local, an extension which provides a `sync()` implementation
+  for `localStorage` that can be mixed into your Models and Mode lLists.
+  Examples of it in use can be seen in the [YUI TodoMVC][] example. ([#1218][])
+
 
 [#1083]: https://github.com/yui/yui3/issues/1083
+[#1218]: https://github.com/yui/yui3/issues/1218
+
+[YUI TodoMVC]: https://github.com/tastejs/todomvc/tree/gh-pages/architecture-examples/yui
 
 
 3.12.0
