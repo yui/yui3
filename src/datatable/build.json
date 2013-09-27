@@ -80,6 +80,11 @@
             "jsfiles": [
                 "select.js"
             ]
+        },
+        "datatable-highlight": {
+            "jsfiles": [
+                "highlight.js"
+            ]
         }
     }
 }

@@ -232,11 +232,11 @@ Y.mix(Table.prototype, {
         var col, columns, i, len, cols;
 
         if (isObject(name) && !isArray(name)) {
-            // TODO: support getting a column from a DOM node - this will cross
-            // the line into the View logic, so it should be relayed
-
-            // Assume an object passed in is already a column def
-            col = name;
+            if (name instanceof Y.Node) {
+                col = this.body.getColumn(name);
+            } else {
+                col = name;
+            }
         } else {
             col = this.get('columns.' + name);
         }
@@ -668,7 +668,8 @@ Y.mix(Table.prototype, {
                 if (key && !map[key]) {
                     map[key] = col;
                 }
-
+                else {Y.log('Key of column matches existing key or name: ' + key, 'warn', NAME);}
+                if (map[col_id]) {Y.log('Key of column matches existing key or name: ' + col._id, 'warn', NAME);}
                 //TODO: named columns can conflict with keyed columns
                 map[col._id] = col;
 
@@ -910,6 +911,411 @@ Y.mix(Table.prototype, {
     }
 
 });
+
+
+
+/**
+_This is a documentation entry only_
+
+Columns are described by object literals with a set of properties.
+There is not an actual `DataTable.Column` class.
+However, for the purpose of documenting it, this pseudo-class is declared here.
+
+DataTables accept an array of column definitions in their [columns](DataTable.html#attr_columns)
+attribute.  Each entry in this array is a column definition which may contain
+any combination of the properties listed below.
+
+There are no mandatory properties though a column will usually have a
+[key](#property_key) property to reference the data it is supposed to show.
+The [columns](DataTable.html#attr_columns) attribute can accept a plain string
+in lieu of an object literal, which is the equivalent of an object with the
+[key](#property_key) property set to that string.
+
+@class DataTable.Column
+*/
+
+/**
+Binds the column values to the named property in the [data](DataTable.html#attr_data).
+
+Optional if [formatter](#property_formatter), [nodeFormatter](#property_nodeFormatter),
+or [cellTemplate](#property_cellTemplate) is used to populate the content.
+
+It should not be set if [children](#property_children) is set.
+
+The value is used for the [\_id](#property__id) property unless the [name](#property_name)
+property is also set.
+
+    { key: 'username' }
+
+The above column definition can be reduced to this:
+
+    'username'
+
+@property key
+@type String
+ */
+/**
+An identifier that can be used to locate a column via
+[getColumn](DataTable.html#method_getColumn)
+or style columns with class `yui3-datatable-col-NAME` after dropping characters
+that are not valid for CSS class names.
+
+It defaults to the [key](#property_key).
+
+The value is used for the [\_id](#property__id) property.
+
+    { name: 'fullname', formatter: ... }
+
+@property name
+@type String
+*/
+/**
+An alias for [name](#property_name) for backward compatibility.
+
+    { field: 'fullname', formatter: ... }
+
+@property field
+@type String
+*/
+/**
+Overrides the default unique id assigned `<th id="HERE">`.
+
+__Use this with caution__, since it can result in
+duplicate ids in the DOM.
+
+    {
+        name: 'checkAll',
+        id: 'check-all',
+        label: ...
+        formatter: ...
+    }
+
+@property id
+@type String
+ */
+/**
+HTML to populate the header `<th>` for the column.
+It defaults to the value of the [key](#property_key) property or the text
+`Column n` where _n_ is an ordinal number.
+
+    { key: 'MfgvaPrtNum', label: 'Part Number' }
+
+@property label
+@@type {HTML}
+ */
+/**
+Used to create stacked headers.
+
+Child columns may also contain `children`. There is no limit
+to the depth of nesting.
+
+Columns configured with `children` are for display only and
+<strong>should not</strong> be configured with a [key](#property_key).
+Configurations relating to the display of data, such as
+[formatter](#property_formatter), [nodeFormatter](#property_nodeFormatter),
+[emptyCellValue](#property_emptyCellValue), etc. are ignored.
+
+    { label: 'Name', children: [
+        { key: 'firstName', label: 'First`},
+        { key: 'lastName', label: 'Last`}
+    ]}
+
+@property  children
+@type Array
+*/
+/**
+Assigns the value `<th abbr="HERE">`.
+
+    {
+      key  : 'forecast',
+      label: '1yr Target Forecast',
+      abbr : 'Forecast'
+    }
+
+@property abbr
+@type String
+ */
+/**
+Assigns the value `<th title="HERE">`.
+
+    {
+      key  : 'forecast',
+      label: '1yr Target Forecast',
+      title: 'Target Forecast for the Next 12 Months'
+    }
+
+@property title
+@type String
+ */
+/**
+Overrides the default [CELL_TEMPLATE](DataTable.HeaderView.html#property_CELL_TEMPLATE)
+used by `Y.DataTable.HeaderView` to render the header cell
+for this column.  This is necessary when more control is
+needed over the markup for the header itself, rather than
+its content.
+
+Use the [label](#property_label) configuration if you don't need to
+customize the `<th>` iteself.
+
+Implementers are strongly encouraged to preserve at least
+the `{id}` and `{_id}` placeholders in the custom value.
+
+    {
+        headerTemplate:
+            '<th id="{id}" ' +
+                'title="Unread" ' +
+                'class="{className}" ' +
+                '{_id}>&#9679;</th>'
+    }
+
+@property headerTemplate
+@type HTML
+ */
+/**
+Overrides the default [CELL_TEMPLATE](DataTable.BodyView.html#property_CELL_TEMPLATE)
+used by `Y.DataTable.BodyView` to render the data cells
+for this column.  This is necessary when more control is
+needed over the markup for the `<td>` itself, rather than
+its content.
+
+    {
+        key: 'id',
+        cellTemplate:
+            '<td class="{className}">' +
+              '<input type="checkbox" ' +
+                     'id="{content}">' +
+            '</td>'
+    }
+
+
+@property cellTemplate
+@type HTML template
+ */
+/**
+String or function used to translate the raw record data for each cell in a
+given column into a format better suited to display.
+
+If it is a string, it will initially be assumed to be the name of one of the
+formatting functions in
+[Y.DataTable.BodyView.Formatters](DataTable.BodyView.Formatters.html).
+If one such formatting function exists, it will be used.
+
+If no such named formatter is found, it will be assumed to be a template
+string and will be expanded.  The placeholders can contain the key to any
+field in the record or the placeholder `{value}` which represents the value
+of the current field.
+
+If the value is a function, it will be assumed to be a formatting function.
+A formatting function receives a single argument, an object with the following properties:
+
+* __value__ The raw value from the record Model to populate this cell.
+  Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
+* __data__ The Model data for this row in simple object format.
+* __record__ The Model for this row.
+* __column__ The column configuration object.
+* __className__ A string of class names to add `<td class="HERE">` in addition to
+  the column class and any classes in the column's className configuration.
+* __rowIndex__ The index of the current Model in the ModelList.
+  Typically correlates to the row index as well.
+* __rowClass__ A string of css classes to add `<tr class="HERE"><td....`
+  This is useful to avoid the need for nodeFormatters to add classes to the containing row.
+
+The formatter function may return a string value that will be used for the cell
+contents or it may change the value of the `value`, `className` or `rowClass`
+properties which well then be used to format the cell.  If the value for the cell
+is returned in the `value` property of the input argument, no value should be returned.
+
+    {
+        key: 'name',
+        formatter: 'link',  // named formatter
+        linkFrom: 'website' // extra column property for link formatter
+    },
+    {
+        key: 'cost',
+        formatter: '${value}' // formatter template string
+      //formatter: '${cost}'  // same result but less portable
+    },
+    {
+        name: 'Name',          // column does not have associated field value
+                               // thus, it uses name instead of key
+        formatter: '{firstName} {lastName}' // template references other fields
+    },
+    {
+        key: 'price',
+        formatter: function (o) { // function both returns a string to show
+            if (o.value > 3) {    // and a className to apply to the cell
+                o.className += 'expensive';
+            }
+
+            return '$' + o.value.toFixed(2);
+        }
+    },
+@property formatter
+@type String || Function
+
+*/
+/**
+Used to customize the content of the data cells for this column.
+
+`nodeFormatter` is significantly slower than [formatter](#property_formatter)
+and should be avoided if possible. Unlike [formatter](#property_formatter),
+`nodeFormatter` has access to the `<td>` element and its ancestors.
+
+The function provided is expected to fill in the `<td>` element itself.
+__Node formatters should return `false`__ except in certain conditions as described
+in the users guide.
+
+The function receives a single object
+argument with the following properties:
+
+* __td__	The `<td>` Node for this cell.
+* __cell__	If the cell `<td> contains an element with class `yui3-datatable-liner,
+  this will refer to that Node. Otherwise, it is equivalent to `td` (default behavior).
+* __value__	The raw value from the record Model to populate this cell.
+  Equivalent to `o.record.get(o.column.key)` or `o.data[o.column.key]`.
+* __data__	The Model data for this row in simple object format.
+* __record__	The Model for this row.
+* __column__	The column configuration object.
+* __rowIndex__	The index of the current Model in the ModelList.
+ _Typically_ correlates to the row index as well.
+
+@example
+    nodeFormatter: function (o) {
+        if (o.value < o.data.quota) {
+            o.td.setAttribute('rowspan', 2);
+            o.td.setAttribute('data-term-id', this.record.get('id'));
+
+            o.td.ancestor().insert(
+                '<tr><td colspan"3">' +
+                    '<button class="term">terminate</button>' +
+                '</td></tr>',
+                'after');
+        }
+
+        o.cell.setHTML(o.value);
+        return false;
+    }
+
+@property nodeFormatter
+@type Function
+*/
+/**
+Provides the default value to populate the cell if the data
+for that cell is `undefined`, `null`, or an empty string.
+
+    {
+        key: 'price',
+        emptyCellValue: '???'
+    }
+
+@property emptyCellValue
+@type {String|HTML} depending on the setting of allowHTML
+ */
+/**
+Skips the security step of HTML escaping the value for cells
+in this column.
+
+This is also necessary if [emptyCellValue](#property_emptyCellValue)
+is set with an HTML string.
+`nodeFormatter`s ignore this configuration.  If using a
+`nodeFormatter`, it is recommended to use
+[Y.Escape.html()](Escape.html#method_html)
+on any user supplied content that is to be displayed.
+
+    {
+        key: 'preview',
+        allowHTML: true
+    }
+
+@property allowHTML
+@type Boolean
+*/
+/**
+A string of CSS classes that will be added to the `<td>`'s
+`class` attribute.
+
+Note, all cells will automatically have a class in the
+form of "yui3-datatable-col-XXX" added to the `<td>`, where
+XXX is the column's configured `name`, `key`, or `id` (in
+that order of preference) sanitized from invalid characters.
+
+    {
+        key: 'symbol',
+        className: 'no-hide'
+    }
+
+@property className
+@type String
+*/
+/**
+(__read-only__) The unique identifier assigned
+to each column.  This is used for the `id` if not set, and
+the `_id` if none of [name](#property_name),
+[field](#property_field), [key](#property_key), or [id](#property_id) are
+set.
+
+@property _yuid
+@type String
+@protected
+ */
+/**
+(__read-only__) A unique-to-this-instance name
+used extensively in the rendering process.  It is also used
+to create the column's classname, as the input name
+`table.getColumn(HERE)`, and in the column header's
+`<th data-yui3-col-id="HERE">`.
+
+The value is populated by the first of [name](#property_name),
+[field](#property_field), [key](#property_key), [id](#property_id),
+ or [_yuid](#property__yuid) to have a value.  If that value
+has already been used (such as when multiple columns have
+the same `key`), an incrementer is added to the end.  For
+example, two columns with `key: "id"` will have `_id`s of
+"id" and "id2".  `table.getColumn("id")` will return the
+first column, and `table.getColumn("id2")` will return the
+second.
+
+@property _id
+@type String
+@protected
+ */
+/**
+(__read-only__) Used by
+`Y.DataTable.HeaderView` when building stacked column
+headers.
+
+@property _colspan
+@type Integer
+@protected
+ */
+/**
+(__read-only__) Used by
+`Y.DataTable.HeaderView` when building stacked column
+headers.
+
+@property _rowspan
+@type Integer
+@protected
+ */
+/**
+(__read-only__) Assigned to all columns in a
+column's `children` collection.  References the parent
+column object.
+
+@property _parent
+@type DataTable.Column
+@protected
+ */
+/**
+(__read-only__) Array of the `id`s of the
+column and all parent columns.  Used by
+`Y.DataTable.BodyView` to populate `<td headers="THIS">`
+when a cell references more than one header.
+
+@property _headers
+@type Array
+@protected
+*/
 
 
 }, '@VERSION@', {"requires": ["escape", "model-list", "node-event-delegate"]});

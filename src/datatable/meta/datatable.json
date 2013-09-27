@@ -130,6 +130,13 @@
                 "requires": [
                     "template"
                 ]
+            },
+            "datatable-highlight": {
+                "requires": [
+                    "datatable-base",
+                    "event-hover"
+                ],
+                "skinnable": true
             }
         }
     }

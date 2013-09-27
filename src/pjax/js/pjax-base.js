@@ -75,22 +75,6 @@ PjaxBase.prototype = {
     @since 3.5.0
     **/
 
-    /**
-    Regex used to break up a URL string around the URL's path.
-
-    Subpattern captures:
-
-      1. Origin, everything before the URL's path-part.
-      2. The URL's path-part.
-      3. Suffix, everything after the URL's path-part.
-
-    @property _regexURL
-    @type RegExp
-    @protected
-    @since 3.5.0
-    **/
-    _regexURL: /^((?:[^\/#?:]+:\/\/|\/\/)[^\/]*)?([^?#]*)(\?[^#]*)?(#.*)?$/,
-
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
         this.publish(EVT_NAVIGATE, {defaultFn: this._defNavigateFn});

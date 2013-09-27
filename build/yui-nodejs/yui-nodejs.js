@@ -3653,7 +3653,7 @@ Y.UA.compareVersions = function (a, b) {
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
     "anim-shape-transform": ["anim-shape"],
-    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
+    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","model-sync-local","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "attribute-events": ["attribute-observable"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
@@ -7653,6 +7653,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "model",
             "model-list",
             "model-sync-rest",
+            "model-sync-local",
             "router",
             "view",
             "view-node-map"
@@ -8478,6 +8479,13 @@ Y.mix(YUI.Env[Y.version].modules, {
             "view",
             "classnamemanager"
         ]
+    },
+    "datatable-highlight": {
+        "requires": [
+            "datatable-base",
+            "event-hover"
+        ],
+        "skinnable": true
     },
     "datatable-message": {
         "lang": [
@@ -9515,6 +9523,12 @@ Y.mix(YUI.Env[Y.version].modules, {
             "model"
         ]
     },
+    "model-sync-local": {
+        "requires": [
+            "model",
+            "json-stringify"
+        ]
+    },
     "model-sync-rest": {
         "requires": [
             "model",
@@ -10513,7 +10527,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '9cfdc7e62873313018cc48b86f2a53ca';
+YUI.Env[Y.version].md5 = '351d33a17f87233dffe9b3b4133d9055';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
