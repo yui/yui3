@@ -88,6 +88,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "model",
             "model-list",
             "model-sync-rest",
+            "model-sync-local",
             "router",
             "view",
             "view-node-map"
@@ -1950,6 +1951,12 @@ Y.mix(YUI.Env[Y.version].modules, {
             "model"
         ]
     },
+    "model-sync-local": {
+        "requires": [
+            "model",
+            "json-stringify"
+        ]
+    },
     "model-sync-rest": {
         "requires": [
             "model",
@@ -2948,7 +2955,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '9cfdc7e62873313018cc48b86f2a53ca';
+YUI.Env[Y.version].md5 = '1d8edb2dcf665e9313581d53249dd906';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

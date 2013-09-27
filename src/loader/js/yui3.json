@@ -76,6 +76,7 @@
             "model",
             "model-list",
             "model-sync-rest",
+            "model-sync-local",
             "router",
             "view",
             "view-node-map"
@@ -1809,6 +1810,12 @@
             "escape",
             "json-parse",
             "model"
+        ]
+    },
+    "model-sync-local": {
+        "requires": [
+            "model",
+            "json-stringify"
         ]
     },
     "model-sync-rest": {
