@@ -37,6 +37,9 @@ A beta version of Router was first introduced in YUI 3.4.0, but was named Contro
     <p>
     The function signature for route handlers has changed. Previously, the second argument passed to all route handlers was the `next()` function. As of YUI 3.5.0, the second argument is a response object, and the third argument is the `next()` function. To preserve backwards compatibility, the response object is also a function that will call `next()`, but you should still update your code to take the new argument order into account.
     </p>
+    <p>
+    <b>Note:</b> As of YUI 3.13.0, the response object is no longer callable, use the `next()` function passed as the thrid argument to route handlers.
+    </p>
   </li>
 </ul>
 
@@ -561,7 +564,7 @@ When a route is matched, the callback functions associated with that route will 
         </p>
 
         <p>
-        In an HTML5 browser, when the back/forward buttons are used, this property will have a value of "popstate".
+        In an HTML5 browser, when the back/forward buttons are used, this property will have a value of "popstate". When the `dispath()` method is called, the `src` will be `"dispatch"`.
         </p>
       </dd>
 

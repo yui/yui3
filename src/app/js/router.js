@@ -562,7 +562,8 @@ Y.Router = Y.extend(Router, Y.Base, {
         @param {Object} callbacks.req.router Reference to this router instance.
         @param {String} callbacks.req.src What initiated the dispatch. In an
           HTML5 browser, when the back/forward buttons are used, this property
-          will have a value of "popstate".
+          will have a value of "popstate". When the `dispath()` method is
+          called, the `src` will be `"dispatch"`.
         @param {String} callbacks.req.url The full URL.
 
       @param {Object} callbacks.res Response object containing methods and
