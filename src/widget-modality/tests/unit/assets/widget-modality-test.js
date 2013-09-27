@@ -121,7 +121,7 @@ suite.add(new Y.Test.Case({
 
         this.widget.hide();
         orig_mask = Y.one('.yui3-widget-mask');
-        Assert.areSame(orig_mask, this.widget.get('maskNode');
+        Assert.areSame(orig_mask, this.widget.get('maskNode'));
 
         // clone the widget
         // typically this would happen because other code clones the
@@ -133,7 +133,7 @@ suite.add(new Y.Test.Case({
         test.append(after_clone);
 
         Assert.areNotSame(orig_mask, Y.one('.yui3-widget-mask'));
-        Assert.areSame(orig_mask, this.widget.get('maskNode');
+        Assert.areSame(orig_mask, this.widget.get('maskNode'));
 
         // if we show the widget, only the original mask is shown
         this.widget.show();
