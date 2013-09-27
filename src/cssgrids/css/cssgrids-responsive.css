@@ -314,47 +314,47 @@ this the same font stack that Normalize.css sets for the `body`.
 }
 
 @media (min-width: 980px) {
-    .pure-visible-phone {
+    .yui3-visible-phone {
         display: none;
     }
 
-    .pure-visible-tablet {
+    .yui3-visible-tablet {
         display: none;
     }
 
-    .pure-hidden-desktop {
+    .yui3-hidden-desktop {
         display: none;
     }
 }
 
 @media (max-width: 480px) {
-    .pure-g-r > .pure-u,
-    .pure-g-r > [class *= "pure-u-"] {
+    .yui3-g-r > .yui3-u,
+    .yui3-g-r > [class *= "yui3-u-"] {
         width: 100%;
     }
 }
 
 @media (max-width: 767px) {
-    .pure-g-r > .pure-u,
-    .pure-g-r > [class *= "pure-u-"] {
+    .yui3-g-r > .yui3-u,
+    .yui3-g-r > [class *= "yui3-u-"] {
         width: 100%;
     }
 
-    .pure-hidden-phone {
+    .yui3-hidden-phone {
         display: none;
     }
 
-    .pure-visible-desktop {
+    .yui3-visible-desktop {
         display: none;
     }
 }
 
 @media (min-width: 768px) and (max-width: 979px) {
-    .pure-hidden-tablet {
+    .yui3-hidden-tablet {
         display: none;
     }
 
-    .pure-visible-desktop {
+    .yui3-visible-desktop {
         display: none;
     }
 }
