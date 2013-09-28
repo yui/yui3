@@ -39,6 +39,71 @@ suite.add(new Y.Test.Case({
         dt.destroy();
     },
 
+    "test selecting all rows when mode is col": function () {
+        var dt = new Y.DataTable({
+                columns: ['name', 'qty', 'price'],
+                data: data,
+                selectMode: 'col',
+                render: true
+            }),
+            className = dt.selectClassNames.row;
+
+        dt.selectAll('row');
+
+        Y.Assert.areSame(data.length, dt._selectSelected.length);
+        Y.Assert.areSame(dt.body.tbodyNode.all('tr').size(), dt.body.tbodyNode.all('.' + className).size());
+
+        dt.clearSelection();
+
+        Y.Assert.areSame(0, dt._selectSelected.length);
+        Y.Assert.areSame(0, dt.body.tbodyNode.all('.' + className).size());
+
+        dt.destroy();
+    },
+
+
+    "test selecting rows, cols, and cells": function () {
+        var dt = new Y.DataTable({
+                columns: ['name', 'qty', 'price'],
+                data: data,
+                render: true
+            }),
+            classNames = dt.selectClassNames;
+
+        dt.select('row', [0,0]);
+
+        dt.select('col', [1,1], {ctrl:true});
+
+        dt.select('cell', [4,2], {ctrl: true});
+
+        Y.Assert.areSame(3, dt._selectSelected.length);
+        Y.Assert.areSame(1, dt.body.tbodyNode.all('.' + classNames.row).size());
+        Y.Assert.areSame(data.length, dt.body.tbodyNode.all('.' + classNames.col).size());
+        Y.Assert.areSame(1, dt.body.tbodyNode.all('.' + classNames.cell).size());
+
+        dt.select('row', [2,2]);
+
+        Y.Assert.areSame(1, dt._selectSelected.length);
+        Y.Assert.areSame(1, dt.body.tbodyNode.all('.' + classNames.row).size());
+        Y.Assert.areSame(0, dt.body.tbodyNode.all('.' + classNames.col).size());
+        Y.Assert.areSame(0, dt.body.tbodyNode.all('.' + classNames.cell).size());
+
+        dt.select('col', [2,2]);
+
+        Y.Assert.areSame(1, dt._selectSelected.length);
+        Y.Assert.areSame(0, dt.body.tbodyNode.all('.' + classNames.row).size());
+        Y.Assert.areSame(data.length, dt.body.tbodyNode.all('.' + classNames.col).size());
+        Y.Assert.areSame(0, dt.body.tbodyNode.all('.' + classNames.cell).size());
+
+        dt.select('cell', [2,2]);
+
+        Y.Assert.areSame(1, dt._selectSelected.length);
+        Y.Assert.areSame(0, dt.body.tbodyNode.all('.' + classNames.row).size());
+        Y.Assert.areSame(0, dt.body.tbodyNode.all('.' + classNames.col).size());
+        Y.Assert.areSame(1, dt.body.tbodyNode.all('.' + classNames.cell).size());
+    },
+
+
     "test selecting all columns": function () {
         var dt = new Y.DataTable({
                 columns: ['name', 'qty', 'price'],
