@@ -130,13 +130,15 @@ Select.prototype = {
 
      @public
      @method clearSelection
+     @return Current DataTable instance
+     @chainable
      */
     clearSelection: function () {
         this._selectSelected = [];
         this._lastSelectIndex = null;
 
         if (!this.body) {
-            return;
+            return this;
         }
 
         var tbody = this.body.tbodyNode,
@@ -150,6 +152,8 @@ Select.prototype = {
             lastIndex: this._lastSelectIndex,
             curIndex: this._lastSelectIndex
         });
+
+        return this;
     },
 
     /**
@@ -157,10 +161,13 @@ Select.prototype = {
 
      @public
      @method selectAll
+     @param {String} type Type of selection to be made
+     @return Current DataTable instance
+     @chainable
      */
-    selectAll: function () {
+    selectAll: function (type) {
         var tbody = this.body.tbodyNode,
-            mode = this.get('selectMode'),
+            mode = type || this.get('selectMode'),
             items,
             min,
             max;
@@ -191,6 +198,52 @@ Select.prototype = {
             });
         }
 
+        return this;
+
+    },
+
+    /**
+     Select a specific row, cell, or column. The type provided must be 'row',
+     'col' or 'cell' to specify what to select. The cell provided must be an
+     Array or a Node. The Node can be the raw DOM node or a Y.Node of the cell,
+     a cell's child, or a cell's direct ancestor. Modifiers will be passed
+     through to the selectRow, selectCol, or selectCell method.
+
+     @public
+     @method select
+     @param {String} type Type of selection to be made
+     @param {Array|Node} cell Array, Y.Node or Node
+     @param {Object} [modifiers] Modifier for cell selection
+     @return Current DataTable instance
+     @chainable
+     */
+    select: function (type, cell, modifiers) {
+        if (type !== 'row' && type !== 'col' && type !== 'cell') {
+            return this;
+        }
+
+        var method = 'select' + type.charAt(0).toUpperCase() + type.substr(1).toLowerCase();
+
+        if (Y.Lang.isArray(cell)) {
+            cell = this.getCell(cell);
+        } else {
+            // assume cell is a node if not an array
+            cell = Y.Node(cell);
+            if (cell.get('tagName') !== 'TD') {
+                // always look inward first
+                if (cell.one('td')) {
+                    cell = cell.one('td');
+                } else {
+                    cell = cell.ancestor('td');
+                }
+            }
+        }
+
+        if (!cell || !this.body.tbodyNode.contains(cell)) {
+            return this;
+        }
+
+        return this[method](cell, modifiers);
     },
 
     /**
@@ -211,6 +264,8 @@ Select.prototype = {
      @param {Object} [modifiers] Object specifying whether the shift key or
         control key was used. Passed through automatically when called through
         UI interaction.
+     @return Current DataTable instance
+     @chainable
      */
     selectRow: function (cell, modifiers) {
         var row = cell.ancestor('tr'),
@@ -266,7 +321,7 @@ Select.prototype = {
                 selectedRows = [];
                 deselected = true;
             } else {
-                tbody.all('.' + className).removeClass(className);
+                this.clearSelection();
                 row.addClass(className);
                 selectedRows = [curIndex];
             }
@@ -284,6 +339,8 @@ Select.prototype = {
             lastIndex: this._lastSelectIndex,
             curIndex: row.get('rowIndex') + indexOffset
         });
+
+        return this;
     },
 
     /**
@@ -304,6 +361,8 @@ Select.prototype = {
      @param {Object} [modifiers] Object specifying whether the shift key or
         control key was used. Passed through automatically when called through
         UI interaction.
+     @return Current DataTable instance
+     @chainable
      */
     selectCol: function (cell, modifiers) {
         var //row = cell.ancestor('tr'),
@@ -322,6 +381,7 @@ Select.prototype = {
             deselected,
             tbody = cell.ancestor('tbody');
 
+        modifiers || (modifiers = {});
 
         // no previous index mutes the current modifier
         if (!lastIndex && lastIndex !== 0) {
@@ -369,7 +429,7 @@ Select.prototype = {
                 selectedCols = [];
                 deselected = true;
             } else {
-                tbody.all('.' + className).removeClass(className);
+                this.clearSelection();
                 cols.addClass(className);
                 selectedCols = [curIndex];
             }
@@ -387,6 +447,8 @@ Select.prototype = {
             lastIndex: this._lastSelectIndex,
             curIndex: cell.get('cellIndex')
         });
+
+        return this;
     },
 
     /**
@@ -407,6 +469,8 @@ Select.prototype = {
      @param {Object} [modifiers] Object specifying whether the shift key or
         control key was used. Passed through automatically when called through
         UI interaction.
+     @return Current DataTable instance
+     @chainable
      */
     selectCell: function (cell, modifiers) {
         // cellPosition [x, y] -> [col, row]
@@ -427,6 +491,7 @@ Select.prototype = {
             colMax,
             workingCell;
 
+        modifiers || (modifiers = {});
 
         // no previous index mutes the current modifier
         if (!lastIndex && lastIndex !== 0) {
@@ -475,7 +540,7 @@ Select.prototype = {
                 selectedCells = [];
                 deselected = true;
             } else {
-                tbody.all('.' + className).removeClass(className);
+                this.clearSelection();
                 cell.addClass(className);
                 selectedCells = [curIndex];
             }
@@ -493,6 +558,8 @@ Select.prototype = {
             lastIndex: this._lastSelectIndex,
             curIndex: this._getCellIndex(cell)
         });
+
+        return this;
     },
 
 
