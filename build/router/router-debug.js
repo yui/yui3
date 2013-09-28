@@ -506,18 +506,28 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
-    Adds a route handler for the specified URL _path_.
+    Adds a route handler for the specified `route`.
 
-    The _path_ parameter may be either a string or a regular expression. If it's
-    a string, it may contain named parameters: `:param` will match any single
-    part of a URL path (not including `/` characters), and `*param` will match
-    any number of parts of a URL path (including `/` characters). These named
-    parameters will be made available as keys on the `req.params` object that's
-    passed to route handlers.
+    The `route` parameter may be a string or regular expression to represent a
+    URL path, or a route object. If it's a string (which is most common), it may
+    contain named parameters: `:param` will match any single part of a URL path
+    (not including `/` characters), and `*param` will match any number of parts
+    of a URL path (including `/` characters). These named parameters will be
+    made available as keys on the `req.params` object that's passed to route
+    handlers.
 
-    If the _path_ parameter is a regex, all pattern matches will be made
+    If the `route` parameter is a regex, all pattern matches will be made
     available as numbered keys on `req.params`, starting with `0` for the full
     match, then `1` for the first subpattern match, and so on.
+
+    Alternatively, an object can be provided to represent the route and it may
+    contain a `path` property which is a string or regular expression which
+    causes the route to be process as described above. If the route object
+    already contains a `regex` or `regexp` property, the route will be
+    considered fully-processed and will be associated with any `callacks`
+    specified on the object and those specified as parameters to this method.
+    **Note:** Any additional data contained on the route object will be
+    preserved.
 
     Here's a set of sample routes along with URL paths that they match:
 
@@ -548,8 +558,8 @@ Y.Router = Y.extend(Router, Y.Base, {
 
     @example
         router.route('/photos/:tag/:page', function (req, res, next) {
-          Y.log('Current tag: ' + req.params.tag);
-          Y.log('Current page number: ' + req.params.page);
+            Y.log('Current tag: ' + req.params.tag);
+            Y.log('Current page number: ' + req.params.page);
         });
 
         // Using middleware.
@@ -565,8 +575,8 @@ Y.Router = Y.extend(Router, Y.Base, {
         });
 
     @method route
-    @param {String|RegExp} path Path to match. May be a string or a regular
-      expression.
+    @param {String|RegExp|Object} route Route to match. May be a string or a
+      regular expression, or a route object.
     @param {Array|Function|String} callbacks* Callback functions to call
         whenever this route is triggered. These can be specified as separate
         arguments, or in arrays, or both. If a callback is specified as a
@@ -618,21 +628,56 @@ Y.Router = Y.extend(Router, Y.Base, {
           and pass control the next route handler.
     @chainable
     **/
-    route: function (path, callbacks) {
-        callbacks = YArray.flatten(YArray(arguments, 1, true));
+    route: function (route, callbacks) {
+        // Grab callback functions from var-args.
+        callbacks = YArray(arguments, 1, true);
 
-        var keys = [];
+        var keys, regex;
 
-        this._routes.push({
-            callbacks: callbacks,
-            keys     : keys,
-            path     : path,
-            regex    : this._getRegex(path, keys),
+        // Supports both the `route(path, callbacks)` and `route(config)` call
+        // signatures, allowing for fully-processed route configs to be passed.
+        if (typeof route === 'string' || YLang.isRegExp(route)) {
+            // Flatten `callbacks` into a single dimension array.
+            callbacks = YArray.flatten(callbacks);
 
-            // For back-compat.
-            callback: callbacks[0]
-        });
+            keys  = [];
+            regex = this._getRegex(route, keys);
 
+            route = {
+                callbacks: callbacks,
+                keys     : keys,
+                path     : route,
+                regex    : regex
+            };
+        } else {
+            // Look for any configured `route.callbacks` and fallback to
+            // `route.callback` for back-compat, append var-arg `callbacks`,
+            // then flatten the entire collection to a single dimension array.
+            callbacks = YArray.flatten(
+                [route.callbacks || route.callback || []].concat(callbacks)
+            );
+
+            // Check for previously generated regex, also fallback to `regexp`
+            // for greater interop.
+            keys  = route.keys;
+            regex = route.regex || route.regexp;
+
+            // Generates the route's regex if it doesn't already have one.
+            if (!regex) {
+                keys  = [];
+                regex = this._getRegex(route.path, keys);
+            }
+
+            // Merge specified `route` config object with processed data.
+            route = Y.merge(route, {
+                callbacks: callbacks,
+                keys     : keys,
+                path     : route.path || regex,
+                regex    : regex
+            });
+        }
+
+        this._routes.push(route);
         return this;
     },
 
@@ -814,7 +859,7 @@ Y.Router = Y.extend(Router, Y.Base, {
                     // Decode matches, or coerce `undefined` matches to an empty
                     // string to match expectations of working with `req.params`
                     // in the content of route dispatching, and normalize
-                    // browser differences in their handling of regexp NPCGs:
+                    // browser differences in their handling of regex NPCGs:
                     // https://github.com/yui/yui3/issues/1076
                     return (match && decode(match)) || '';
                 });
@@ -835,7 +880,7 @@ Y.Router = Y.extend(Router, Y.Base, {
                             // Check if `paramHandler` is a RegExp, becuase this
                             // is true in Android 2.3 and other browsers!
                             // `typeof /.*/ === 'function'`
-                            value = paramHandler instanceof RegExp ?
+                            value = YLang.isRegExp(paramHandler) ?
                                     paramHandler.exec(value) :
                                     paramHandler.call(self, value, key);
 
@@ -995,7 +1040,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _getRegex: function (path, keys) {
-        if (path instanceof RegExp) {
+        if (YLang.isRegExp(path)) {
             return path;
         }
 
@@ -1447,10 +1492,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         this._routes = [];
 
         YArray.each(routes, function (route) {
-            // Makes sure to check `callback` for back-compat.
-            var callbacks = route.callbacks || route.callback;
-
-            this.route(route.path, callbacks);
+            this.route(route);
         }, this);
 
         return this._routes.concat();
@@ -1627,7 +1669,8 @@ Y.Router = Y.extend(Router, Y.Base, {
         /**
         Array of route objects.
 
-        Each item in the array must be an object with the following properties:
+        Each item in the array must be an object with the following properties
+        in order to be processed by the router:
 
           * `path`: String or regex representing the path to match. See the docs
             for the `route()` method for more details.
@@ -1636,6 +1679,21 @@ Y.Router = Y.extend(Router, Y.Base, {
             function on this router instance that should be called when the
             route is triggered. An array of functions and/or strings may also be
             provided. See the docs for the `route()` method for more details.
+
+        If a route object contains a `regex` or `regexp` property, or if its
+        `path` is a regular express, then the route will be considered to be
+        fully-processed. Any fully-processed routes may contain the following
+        properties:
+
+          * `regex`: The regular expression representing the path to match, this
+            property may also be named `regexp` for greater compatibility.
+
+          * `keys`: Array of named path parameters used to populate `req.params`
+            objects when dispatching to route handlers.
+
+        Any additional data contained on these route objects will be retained.
+        This is useful to store extra metadata about a route; e.g., a `name` to
+        give routes logical names.
 
         This attribute is intended to be used to set routes at init time, or to
         completely reset all routes after init. To add routes after init without
