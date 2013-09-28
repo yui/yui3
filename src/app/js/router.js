@@ -504,18 +504,28 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
-    Adds a route handler for the specified URL _path_.
+    Adds a route handler for the specified `route`.
 
-    The _path_ parameter may be either a string or a regular expression. If it's
-    a string, it may contain named parameters: `:param` will match any single
-    part of a URL path (not including `/` characters), and `*param` will match
-    any number of parts of a URL path (including `/` characters). These named
-    parameters will be made available as keys on the `req.params` object that's
-    passed to route handlers.
+    The `route` parameter may be a string or regular expression to represent a
+    URL path, or a route object. If it's a string (which is most common), it may
+    contain named parameters: `:param` will match any single part of a URL path
+    (not including `/` characters), and `*param` will match any number of parts
+    of a URL path (including `/` characters). These named parameters will be
+    made available as keys on the `req.params` object that's passed to route
+    handlers.
 
-    If the _path_ parameter is a regex, all pattern matches will be made
+    If the `route` parameter is a regex, all pattern matches will be made
     available as numbered keys on `req.params`, starting with `0` for the full
     match, then `1` for the first subpattern match, and so on.
+
+    Alternatively, an object can be provided to represent the route and it may
+    contain a `path` property which is a string or regular expression which
+    causes the route to be process as described above. If the route object
+    already contains a `regex` or `regexp` property, the route will be
+    considered fully-processed and will be associated with any `callacks`
+    specified on the object and those specified as parameters to this method.
+    **Note:** Any additional data contained on the route object will be
+    preserved.
 
     Here's a set of sample routes along with URL paths that they match:
 
@@ -546,8 +556,8 @@ Y.Router = Y.extend(Router, Y.Base, {
 
     @example
         router.route('/photos/:tag/:page', function (req, res, next) {
-          Y.log('Current tag: ' + req.params.tag);
-          Y.log('Current page number: ' + req.params.page);
+            Y.log('Current tag: ' + req.params.tag);
+            Y.log('Current page number: ' + req.params.page);
         });
 
         // Using middleware.
@@ -563,8 +573,8 @@ Y.Router = Y.extend(Router, Y.Base, {
         });
 
     @method route
-    @param {String|RegExp} path Path to match. May be a string or a regular
-      expression.
+    @param {String|RegExp|Object} route Route to match. May be a string or a
+      regular expression, or a route object.
     @param {Array|Function|String} callbacks* Callback functions to call
         whenever this route is triggered. These can be specified as separate
         arguments, or in arrays, or both. If a callback is specified as a
@@ -1657,7 +1667,8 @@ Y.Router = Y.extend(Router, Y.Base, {
         /**
         Array of route objects.
 
-        Each item in the array must be an object with the following properties:
+        Each item in the array must be an object with the following properties
+        in order to be processed by the router:
 
           * `path`: String or regex representing the path to match. See the docs
             for the `route()` method for more details.
@@ -1666,6 +1677,21 @@ Y.Router = Y.extend(Router, Y.Base, {
             function on this router instance that should be called when the
             route is triggered. An array of functions and/or strings may also be
             provided. See the docs for the `route()` method for more details.
+
+        If a route object contains a `regex` or `regexp` property, or if its
+        `path` is a regular express, then the route will be considered to be
+        fully-processed. Any fully-processed routes may contain the following
+        properties:
+
+          * `regex`: The regular expression representing the path to match, this
+            property may also be named `regexp` for greater compatibility.
+
+          * `keys`: Array of named path parameters used to populate `req.params`
+            objects when dispatching to route handlers.
+
+        Any additional data contained on these route objects will be retained.
+        This is useful to store extra metadata about a route; e.g., a `name` to
+        give routes logical names.
 
         This attribute is intended to be used to set routes at init time, or to
         completely reset all routes after init. To add routes after init without
