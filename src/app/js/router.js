@@ -634,7 +634,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             route = Y.merge(route, {
                 callbacks: callbacks,
                 keys     : keys,
-                path     : route.path,
+                path     : route.path || regex,
                 regex    : regex
             });
         }

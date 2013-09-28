@@ -203,6 +203,43 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame(callback2, router.get('routes')[0].callbacks[0]);
     },
 
+    '`routes` should retain all their properties': function () {
+        var router = this.router = new Y.Router();
+
+        router.set('routes', [
+            {
+                path     : '/',
+                callbacks: ['home'],
+                name     : 'home'
+            }
+        ]);
+
+        Assert.areSame('home', router.get('routes')[0].name);
+    },
+
+    '`routes` with a `regex` or `regexp` property should be considered "pre-parsed"': function () {
+        var router = this.router = new Y.Router();
+
+        router.set('routes', [
+            {
+                path : '/foo/:bar',
+                regex: /^abc$/
+            },
+
+            {
+                path  : '/foo/:baz',
+                regexp: /^cba$/
+            },
+
+            {regex: /^asdf$/}
+        ]);
+
+        Assert.isTrue(router.get('routes')[0].regex.test('abc'));
+        Assert.isTrue(router.get('routes')[1].regex.test('cba'));
+        Assert.isTrue(router.get('routes')[1].regexp.test('cba'));
+        Assert.isTrue(router.get('routes')[2].regex.test('asdf'));
+    },
+
     '`params` attribute should have a default value': function () {
         var router = this.router = new Y.Router();
 
@@ -351,6 +388,20 @@ routerSuite.add(new Y.Test.Case({
 
         Assert.areSame('one', router._routes[0].callbacks[0]);
         Assert.areSame(two, router._routes[1].callbacks[0]);
+    },
+
+    'route() should accept a "pre-parsed" route object': function () {
+        var router = this.router = new Y.Router();
+
+        router.route({
+            path : '/',
+            regex: /^abc$/,
+            name : 'foo'
+        }, function () {});
+
+        Assert.isTrue(router.get('routes')[0].regex.test('abc'));
+        Assert.areSame('/', router.get('routes')[0].path);
+        Assert.areSame('foo', router.get('routes')[0].name);
     },
 
     'param() should add a param': function () {
