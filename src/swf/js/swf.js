@@ -2,6 +2,8 @@
  * Embed a Flash applications in a standard manner and communicate with it
  * via External Interface.
  * @module swf
+ * @deprecated The swf module is deprecated and will not be replaced. YUI has
+ * no plans for providing a utility for embedding Flash into HTML pages. 
  */
 
     var Event = Y.Event,
@@ -30,6 +32,7 @@
          * Creates the SWF instance and keeps the configuration data
          *
          * @class SWF
+         * @deprecated
          * @uses Y.Event.Target
          * @constructor
          * @param {String|HTMLElement} id The id of the element, or the element itself that the SWF will be inserted into.
@@ -46,7 +49,7 @@
          *              tabindex, wmode.</code> event from the thumb</dd>
          *        </dl>
          */
-
+Y.log("The swf module is deprecated as of v3.13.0. YUI has no plans for providing a utility for embedding Flash into HTML pages.", "warn"); 
 function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/ ) {
 
     this._id = Y.guid("yuiswf");
