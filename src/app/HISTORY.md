@@ -33,6 +33,13 @@ App Framework Change History
   instead of creating them inside the `_dispatch()` method. This refactor also
   removed the deprecated support for calling `res()` as an alias for `next()`.
 
+* Router now accepts route objects through its `route()` method. These route
+  objects are the same as those specified in a router's `routes` attribute and
+  what Router uses for its internal storage of its routes. If these route
+  objects contain a regular expression as their `path` or they contain a `regex`
+  or `regexp` property, then they are considered fully-processed. Route objects
+  can also contain any arbitrary metadata which will be preserved. ([#1067][])
+
 * Added `req.router` which is a reference to the router instance.
 
 * Added `req.route` which is a reference to the current route object whose
@@ -47,6 +54,7 @@ App Framework Change History
   Examples of it in use can be seen in the [YUI TodoMVC][] example. ([#1218][])
 
 
+[#1067]: https://github.com/yui/yui3/issues/1067
 [#1083]: https://github.com/yui/yui3/issues/1083
 [#1218]: https://github.com/yui/yui3/issues/1218
 
