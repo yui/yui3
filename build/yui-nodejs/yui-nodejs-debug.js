@@ -2290,6 +2290,17 @@ L.isObject = function(o, failfn) {
 };
 
 /**
+ * Determines whether or not the provided value is a regexp.
+ * @method isRegExp
+ * @static
+ * @param value The value or object to test.
+ * @return {boolean} true if value is a regexp.
+ */
+L.isRegExp = function(value) {
+    return L.type(value) === 'regexp';
+};
+
+/**
  * Determines whether or not the provided item is a string.
  * @method isString
  * @static
@@ -8403,7 +8414,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "attribute-core",
             "classnamemanager",
-            "node-base"
+            "node-base",
+            "escape"
         ]
     },
     "button-group": {
@@ -10712,13 +10724,13 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "uploader-flash": {
         "requires": [
-            "swfdetect",
-            "escape",
+            "swf",
             "widget",
             "base",
             "cssbutton",
             "node",
             "event-custom",
+            "file-flash",
             "uploader-queue"
         ]
     },
@@ -10921,7 +10933,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '819a585fae19386a6343a0391751c8c0';
+YUI.Env[Y.version].md5 = '19ab95189116b5e294fa6760b5e22c15';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

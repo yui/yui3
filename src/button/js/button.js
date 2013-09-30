@@ -5,9 +5,10 @@
  * @since 3.5.0
  */
 
-var CLASS_NAMES = Y.ButtonCore.CLASS_NAMES,
-    ARIA_STATES = Y.ButtonCore.ARIA_STATES,
-    ARIA_ROLES  = Y.ButtonCore.ARIA_ROLES;
+var ButtonCore = Y.ButtonCore,
+    CLASS_NAMES = ButtonCore.CLASS_NAMES,
+    ARIA_STATES = ButtonCore.ARIA_STATES,
+    ARIA_ROLES = ButtonCore.ARIA_ROLES;
 
 /**
  * Creates a Button
@@ -25,6 +26,8 @@ function Button() {
 /* Button extends Widget */
 Y.extend(Button, Y.Widget,  {
 
+    // Y.Button prototype properties
+
     /**
      * Bounding box template that will contain the Button's DOM subtree.
      *
@@ -32,7 +35,7 @@ Y.extend(Button, Y.Widget,  {
      * @type {String}
      * @default <button/>
      */
-    BOUNDING_TEMPLATE : Y.ButtonCore.prototype.TEMPLATE,
+    BOUNDING_TEMPLATE : ButtonCore.prototype.TEMPLATE,
 
     /**
      * Content box template
@@ -41,68 +44,10 @@ Y.extend(Button, Y.Widget,  {
      * @type {String}
      * @default null
      */
-    CONTENT_TEMPLATE  : null,
-
-    /**
-     * @method initializer
-     * @description Internal init() handler.
-     * @param config {Object} Config object.
-     * @private
-     */
-    initializer: function(config) {
-        // ButtonCore requires this
-        this._host = this.get('boundingBox');
-
-        // A workaround until there's a better way to handle setting Node attributes
-        // via HTML parsing in classes that extend Widget
-        if (config.disabled) {
-            this.set('disabled', config.disabled);
-        }
-    },
-
-    /**
-     * bindUI implementation
-     *
-     * @description Hooks up events for the widget
-     * @method bindUI
-     */
-    bindUI: function() {
-        var button = this;
-        button.after('labelChange', button._afterLabelChange);
-        button.after('disabledChange', button._afterDisabledChange);
-    },
-
-    /**
-     * @method syncUI
-     * @description Updates button attributes
-     */
-    syncUI: function() {
-        var button = this;
-        Y.ButtonCore.prototype._uiSetLabel.call(button, button.get('label'));
-        Y.ButtonCore.prototype._uiSetDisabled.call(button, button.get('disabled'));
-    },
-
-    /**
-     * @method _afterLabelChange
-     * @private
-     */
-    _afterLabelChange: function(e) {
-        Y.ButtonCore.prototype._uiSetLabel.call(this, e.newVal);
-    },
-
-    /**
-     * @method _afterDisabledChange
-     * @private
-     */
-    _afterDisabledChange: function(e) {
-        // Unable to use `this._uiSetDisabled` because that points
-        // to `Y.Widget.prototype._uiSetDisabled`.
-        // This works for now.
-        // @TODO Investigate most appropriate solution.
-        Y.ButtonCore.prototype._uiSetDisabled.call(this, e.newVal);
-    }
+    CONTENT_TEMPLATE : null
 
 }, {
+
     // Y.Button static properties
 
     /**
@@ -115,7 +60,7 @@ Y.extend(Button, Y.Widget,  {
      * @protected
      * @static
      */
-    NAME: 'button',
+    NAME: ButtonCore.NAME,
 
     /**
      * Static property used to define the default attribute configuration of
@@ -126,18 +71,29 @@ Y.extend(Button, Y.Widget,  {
      * @protected
      * @static
      */
-    ATTRS: {
+    ATTRS: ButtonCore.ATTRS,
 
-        /**
-         * The text of the button (the `value` or `text` property)
-         *
-         * @attribute label
-         * @type String
-         */
-        label: {
-            value: Y.ButtonCore.ATTRS.label.value
-        }
-    },
+    /**
+     * The text of the button's label
+     *
+     * @attribute label
+     * @type String
+     */
+
+    /**
+     * The HTML of the button's label
+     *
+     * This attribute accepts HTML and inserts it into the DOM **without**
+     * sanitization.  This attribute should only be used with HTML that has
+     * either been escaped (using `Y.Escape.html`), or sanitized according to
+     * the requirements of your application.
+     *
+     * If all you need is support for text labels, please use the `label`
+     * attribute instead.
+     *
+     * @attribute labelHTML
+     * @type HTML
+     */
 
     /**
      * @property HTML_PARSER
@@ -146,14 +102,8 @@ Y.extend(Button, Y.Widget,  {
      * @static
      */
     HTML_PARSER: {
-        label: function(node) {
-            this._host = node; // TODO: remove
-            return this._getLabel();
-        },
-
-        disabled: function(node) {
-            return node.getDOMNode().disabled;
-        }
+        labelHTML: ButtonCore._getHTMLFromNode,
+        disabled: ButtonCore._getDisabledFromNode
     },
 
     /**
@@ -166,7 +116,7 @@ Y.extend(Button, Y.Widget,  {
     CLASS_NAMES: CLASS_NAMES
 });
 
-Y.mix(Button.prototype, Y.ButtonCore.prototype);
+Y.mix(Button.prototype, ButtonCore.prototype);
 
 /**
  * Creates a ToggleButton

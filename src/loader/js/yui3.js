@@ -442,7 +442,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "attribute-core",
             "classnamemanager",
-            "node-base"
+            "node-base",
+            "escape"
         ]
     },
     "button-group": {
@@ -2751,13 +2752,13 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "uploader-flash": {
         "requires": [
-            "swfdetect",
-            "escape",
+            "swf",
             "widget",
             "base",
             "cssbutton",
             "node",
             "event-custom",
+            "file-flash",
             "uploader-queue"
         ]
     },
@@ -2960,4 +2961,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '819a585fae19386a6343a0391751c8c0';
+YUI.Env[Y.version].md5 = '19ab95189116b5e294fa6760b5e22c15';
