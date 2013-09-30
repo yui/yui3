@@ -76,6 +76,7 @@
             "model",
             "model-list",
             "model-sync-rest",
+            "model-sync-local",
             "router",
             "view",
             "view-node-map"
@@ -879,6 +880,13 @@
             "view",
             "classnamemanager"
         ]
+    },
+    "datatable-highlight": {
+        "requires": [
+            "datatable-base",
+            "event-hover"
+        ],
+        "skinnable": true
     },
     "datatable-message": {
         "lang": [
@@ -1809,6 +1817,12 @@
             "escape",
             "json-parse",
             "model"
+        ]
+    },
+    "model-sync-local": {
+        "requires": [
+            "model",
+            "json-stringify"
         ]
     },
     "model-sync-rest": {
