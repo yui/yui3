@@ -50,7 +50,7 @@ App Framework Change History
 ### Model
 
 * Added ModelSync.Local, an extension which provides a `sync()` implementation
-  for `localStorage` that can be mixed into your Models and Mode lLists.
+  for `localStorage` that can be mixed into your Models and ModelLists.
   Examples of it in use can be seen in the [YUI TodoMVC][] example. ([#1218][])
 
 
