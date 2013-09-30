@@ -82,7 +82,7 @@ YUI.add('plugin-example-tests', function (Y) {
                     width = square.getComputedStyle('width');
                     height = square.getComputedStyle('height');
                     left = square.getComputedStyle('left');
-                }, 1100);
+                }, 1500);
                 setTimeout(function () {
                     test.resume(function () {
                         left = +left.substr(0, left.length - 2);
@@ -112,7 +112,7 @@ YUI.add('plugin-example-tests', function (Y) {
                         Assert.areEqual('300px', square.getComputedStyle('height'), 'Test div does not have the correct height after transition');
                         Assert.areEqual('200px', square.getComputedStyle('left'), 'Test div does not have the correct position after transition');
                     });
-                }, 1600);
+                }, 2000);
             });
 
             button.simulate('click');
