@@ -996,7 +996,7 @@
          @method getEditorOffset
          @param {Y.Node} [node] Element used to measure the offset to
          @return Number Number of characters the selection is from the beginning
-         @since @SINCE@
+         @since 3.13.0
          */
         getEditorOffset: function(node) {
             var container = (node || Y.EditorSelection.ROOT).getDOMNode(),

@@ -1270,7 +1270,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @return {Boolean} Whether or not the `path` is semantically within the
         `root` path.
     @protected
-    @since @SINCE@
+    @since 3.13.0
     **/
     _pathHasRoot: function (root, path) {
         var rootPath = root.charAt(root.length - 1) === '/' ? root : root + '/';
