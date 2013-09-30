@@ -19,6 +19,7 @@
         var sel, par, ieNode, nodes, rng, i,
             comp, moved = 0, n, id, root = Y.EditorSelection.ROOT;
 
+
         if (Y.config.win.getSelection && (!Y.UA.ie || Y.UA.ie < 9)) {
             sel = Y.config.win.getSelection();
         } else if (Y.config.doc.selection) {
@@ -74,7 +75,8 @@
                     if (comp) {
                         //We are not at the beginning of the selection.
                         //Setting the move to something large, may need to increase it later
-                        moved = Math.abs(sel.move('character', -9999));
+                        moved = this.getEditorOffset(root);
+                        sel.move('character', -(moved));
                     }
 
                     this.anchorOffset = this.focusOffset = moved;
@@ -171,7 +173,7 @@
         Y.log('Node Filter Timer: ' + (endTime1 - startTime1) + 'ms', 'info', 'editor-selection');
 
         root.all('.hr').addClass('yui-skip').addClass('yui-non');
-        
+
         if (Y.UA.ie) {
             hrs = Y.Node.getDOMNode(root).getElementsByTagName('hr');
             Y.each(hrs, function(hr) {
@@ -645,11 +647,11 @@
                 root = editorSelection.ROOT,
                 nodes,
                 items = [];
-            
+
             editorSelection.filter();
             Y.config.doc.execCommand('fontname', null, editorSelection.TMP);
             nodes = root.all(editorSelection.ALL);
-            
+
             nodes.each(function(n, k) {
                 if (n.getStyle(FONT_FAMILY) === editorSelection.TMP) {
                     n.setStyle(FONT_FAMILY, '');
@@ -985,6 +987,45 @@
         */
         toString: function() {
             return 'EditorSelection Object';
+        },
+
+        /**
+         Gets the offset of the selection for the selection within the current
+         editor
+         @public
+         @method getEditorOffset
+         @param {Y.Node} [node] Element used to measure the offset to
+         @return Number Number of characters the selection is from the beginning
+         @since @SINCE@
+         */
+        getEditorOffset: function(node) {
+            var container = (node || Y.EditorSelection.ROOT).getDOMNode(),
+                caretOffset = 0,
+                doc = Y.config.doc,
+                win = Y.config.win,
+                sel,
+                range,
+                preCaretRange;
+
+            if (typeof win.getSelection !== "undefined") {
+                range = win.getSelection().getRangeAt(0);
+                preCaretRange = range.cloneRange();
+                preCaretRange.selectNodeContents(container);
+                preCaretRange.setEnd(range.endContainer, range.endOffset);
+                caretOffset = preCaretRange.toString().length;
+            } else {
+                sel = doc.selection;
+
+                if ( sel && sel.type !== "Control") {
+                    range = sel.createRange();
+                    preCaretRange = doc.body.createTextRange();
+                    preCaretRange.moveToElementText(container);
+                    preCaretRange.setEndPoint("EndToEnd", range);
+                    caretOffset = preCaretRange.text.length;
+                }
+            }
+
+            return caretOffset;
         }
     };
 
