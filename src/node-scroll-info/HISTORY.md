@@ -1,7 +1,7 @@
 ScrollInfo Node Plugin Change History
 =====================================
 
-@VERSION@
+3.13.0
 ---------
 
 * Fixed `getOffscreenNodes()` and `getOnscreenNodes()` even harder (they could

@@ -1,7 +1,7 @@
 Handlebars Change History
 =========================
 
-@VERSION@
+3.13.0
 ------
 
 * No changes.

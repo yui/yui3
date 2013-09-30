@@ -1,7 +1,7 @@
 File Module Change History
 ==========================
 
-@VERSION@
+3.13.0
 ------
 
 * Added a check to make sure the XHR exists before aborting. ([#1053][] @JetFault)

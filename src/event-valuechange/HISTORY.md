@@ -1,7 +1,7 @@
 ValueChange Change History
 ==========================
 
-@VERSION@
+3.13.0
 ------
 
 * Updated ValueChange to support `<select>` and `[contenteditable="true"]`

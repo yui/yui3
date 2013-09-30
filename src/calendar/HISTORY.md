@@ -1,7 +1,7 @@
 Calendar Change History
 =======================
 
-@VERSION@
+3.13.0
 ------
 
 * Fix a issue with cloudn't select a date when passing minimumDate. ([#1030][])

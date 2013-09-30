@@ -1,7 +1,7 @@
 Node Change History
 ===================
 
-@VERSION@
+3.13.0
 ------
 
 * Fix issue causing `inDoc` to fail if Node wasn't bound to a node.
