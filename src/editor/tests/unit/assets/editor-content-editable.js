@@ -893,6 +893,30 @@ YUI.add('editor-tests', function(Y) {
             test.wait();
         },
 
+        'test selection': function () {
+            var test = this,
+                node = Y.Node.create('<div/>'),
+                ce = new Y.InlineEditor({
+                    content: 'Fooga',
+                    container: node
+                });
+
+                Y.one('body').append(node);
+
+                ce.after('ready', function (e) {
+                    var sel = new (ce.contentEditable.getInstance()).EditorSelection();
+
+                    var moved = sel.getEditorOffset(); // content across page
+
+                    console.log(moved);
+
+                    Y.Assert.isTrue(moved > 90);
+                });
+
+                ce.render();
+
+        },
+
         _should: {
             fail: {
                 'test_selection_methods': (Y.UA.ie ? true : false)
