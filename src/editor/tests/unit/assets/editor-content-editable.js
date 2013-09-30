@@ -908,8 +908,6 @@ YUI.add('editor-tests', function(Y) {
 
                     var moved = sel.getEditorOffset(); // content across page
 
-                    console.log(moved);
-
                     Y.Assert.isTrue(moved > 90);
                 });
 
