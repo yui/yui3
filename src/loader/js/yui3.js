@@ -442,7 +442,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "attribute-core",
             "classnamemanager",
-            "node-base"
+            "node-base",
+            "escape"
         ]
     },
     "button-group": {
@@ -2960,4 +2961,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '351d33a17f87233dffe9b3b4133d9055';
+YUI.Env[Y.version].md5 = '19ab95189116b5e294fa6760b5e22c15';
