@@ -2,9 +2,6 @@
     "name": "io",
     "builds": {
         "io-xdr": {
-            "copy": [
-                [ "swf/io.swf", "io.swf" ]
-            ],
             "jsfiles": [
                 "io-xdr.js"
             ]

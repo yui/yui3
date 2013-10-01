@@ -11735,13 +11735,13 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "uploader-flash": {
         "requires": [
-            "swf",
+            "swfdetect",
+            "escape",
             "widget",
             "base",
             "cssbutton",
             "node",
             "event-custom",
-            "file-flash",
             "uploader-queue"
         ]
     },
@@ -11944,7 +11944,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '19ab95189116b5e294fa6760b5e22c15';
+YUI.Env[Y.version].md5 = '3cf02e5f307a6e9470df4ea0dc7eb41e';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

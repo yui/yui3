@@ -21,7 +21,7 @@ YUI().use("overlay", "json", "gallery-widget-io", "escape", function(Y) {
             Y.io.transport({
                 id:'flash',
                 yid: Y.id,
-                src:'{{yuiLocalBuildUrl}}/io-xdr/io.swf?stamp=' + (new Date()).getTime()
+                src:'io.swf' //Relative path to the .swf file from the current page.
             });
         },
 
