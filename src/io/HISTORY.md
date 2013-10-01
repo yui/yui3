@@ -1,7 +1,7 @@
 IO Utility Change History
 =========================
 
-@VERSION@
+3.13.0
 ------
 
 * [!] #1155 Deprecate io-xdr.

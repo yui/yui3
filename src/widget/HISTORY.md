@@ -1,7 +1,7 @@
 Widget Change History
 =====================
 
-@VERSION@
+3.13.0
 ---------
 
 * Removed widget-locale module.

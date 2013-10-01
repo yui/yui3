@@ -5,7 +5,7 @@ YUI.add('datatable-highlight', function (Y, NAME) {
 
  @module datatable
  @submodule datatable-highlight
- @since @SINCE@
+ @since 3.13.0
  */
 
 
@@ -13,7 +13,7 @@ var getClassName = Y.ClassNameManager.getClassName;
 
 /**
  @class DataTable.Highlight
- @since @SINCE@
+ @since 3.13.0
  */
 function Highlight() {}
 
@@ -24,7 +24,7 @@ Highlight.ATTRS = {
 
      @attribute highlightRows
      @default false
-     @since @SINCE@
+     @since 3.13.0
      */
     highlightRows: {
         value: false,
@@ -38,7 +38,7 @@ Highlight.ATTRS = {
 
      @attribute highlightCols
      @default false
-     @since @SINCE@
+     @since 3.13.0
      */
     highlightCols: {
         value: false,
@@ -52,7 +52,7 @@ Highlight.ATTRS = {
 
      @attribute highlightCells
      @default false
-     @since @SINCE@
+     @since 3.13.0
      */
     highlightCells: {
         value: false,
@@ -72,7 +72,7 @@ Highlight.prototype = {
      @public
      @property highlightClassNames
      @type Object
-     @since @SINCE@
+     @since 3.13.0
      */
     highlightClassNames: {
         row: getClassName(NAME, 'row'),
@@ -89,7 +89,7 @@ Highlight.prototype = {
      @protected
      @property _colSelector
      @type String
-     @since @SINCE@
+     @since 3.13.0
      */
     _colSelector: '.{prefix}-data .{prefix}-col-{col}',
 
@@ -101,7 +101,7 @@ Highlight.prototype = {
      @protected
      @property _colNameRegex
      @type String
-     @since @SINCE@
+     @since 3.13.0
      */
     _colNameRegex: '{prefix}-col-(\\S*)',
 
@@ -112,7 +112,7 @@ Highlight.prototype = {
      @protected
      @property _highlightDelegates
      @type Object
-     @since @SINCE@
+     @since 3.13.0
      */
     _highlightDelegates: {},
 
@@ -126,7 +126,7 @@ Highlight.prototype = {
      @method _setHighlightRows
      @param {Boolean} val
      @return val
-     @since @SINCE@
+     @since 3.13.0
      */
     _setHighlightRows: function (val) {
         var del = this._highlightDelegates;
@@ -155,7 +155,7 @@ Highlight.prototype = {
      @method _setHighlightCols
      @param {Boolean} val
      @return val
-     @since @SINCE@
+     @since 3.13.0
      */
     _setHighlightCols: function (val) {
         var del = this._highlightDelegates;
@@ -184,7 +184,7 @@ Highlight.prototype = {
      @method _setHighlightCells
      @param {Boolean} val
      @return val
-     @since @SINCE@
+     @since 3.13.0
      */
     _setHighlightCells: function (val) {
         var del = this._highlightDelegates;
@@ -213,7 +213,7 @@ Highlight.prototype = {
      @protected
      @method _highlightRow
      @param {EventFacade} e Event from the hover event
-     @since @SINCE@
+     @since 3.13.0
      */
     _highlightRow: function (e) {
         e.currentTarget.toggleClass(this.highlightClassNames.row, (e.phase === 'over'));
@@ -228,7 +228,7 @@ Highlight.prototype = {
      @protected
      @method _highlightCol
      @param {EventFacade} e Event from the hover event
-     @since @SINCE@
+     @since 3.13.0
      */
     _highlightCol: function(e) {
         var colName = this._colNameRegex.exec(e.currentTarget.getAttribute('class')),
@@ -249,7 +249,7 @@ Highlight.prototype = {
      @protected
      @method _highlightCell
      @param {EventFacade} e Event from the hover event
-     @since @SINCE@
+     @since 3.13.0
      */
     _highlightCell: function(e) {
         e.currentTarget.toggleClass(this.highlightClassNames.cell, (e.phase === 'over'));
@@ -262,7 +262,7 @@ Highlight.prototype = {
 
      @protected
      @method _buildColSelRegex
-     @since @SINCE@
+     @since 3.13.0
      */
     _buildColSelRegex: function () {
         var str = this._colNameRegex,

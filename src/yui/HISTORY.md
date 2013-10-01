@@ -1,7 +1,7 @@
 YUI Core Change History
 =======================
 
-@VERSION@
+3.13.0
 ------
 
 * Added `Y.Lang.isRegExp()` method.

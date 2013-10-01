@@ -1,7 +1,7 @@
 Event Infrastructure Change History
 ===================================
 
-@VERSION@
+3.13.0
 ------
 
 * Delegated focus and blur events now behave the same way other events do when

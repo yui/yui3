@@ -1,7 +1,7 @@
 Button Change History
 ====================
 
-@VERSION@
+3.13.0
 ------
 
 * Added a `labelHTML` attribute to `Y.ButtonCore` for nested HTML label support

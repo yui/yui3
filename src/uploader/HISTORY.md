@@ -1,7 +1,7 @@
 Uploader Utility (New) Change History
 =====================================
 
-@VERSION@
+3.13.0
 ------
 
 * Fixed typo with event `uploadcancel`. ([#1053][] @JetFault) [#1053]: https://github.com/yui/yui3/issues/1053

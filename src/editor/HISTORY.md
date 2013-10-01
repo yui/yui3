@@ -1,7 +1,7 @@
 Rich Text Editor Change History
 ===============================
 
-@VERSION@
+3.13.0
 ------
 * Add in `getEditorOffset` to calculate distance from current selection to the
   beginning of the editor. [Pull Request #1232]
