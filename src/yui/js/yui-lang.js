@@ -238,9 +238,15 @@ L.now = Date.now || function () {
 };
 
 /**
- * Lightweight version of <code>Y.substitute</code>. Uses the same template
- * structure as <code>Y.substitute</code>, but doesn't support recursion,
- * auto-object coersion, or formats.
+ * Performs `{placeholder}` substitution on a string. The object passed as the 
+ * second parameter provides values to replace the `{placeholder}`s.
+ * `{placeholder}` token names must match property names of the object. For example,
+ * 
+ *`var greeting = Y.Lang.sub("Hello, {who}!", { who: "World" });`
+ *
+ * `{placeholder}` tokens that are undefined on the object map will be left 
+ * in tact (leaving unsightly `{placeholder}`'s in the output string). 
+ *
  * @method sub
  * @param {string} s String to be modified.
  * @param {object} o Object containing replacement values.
