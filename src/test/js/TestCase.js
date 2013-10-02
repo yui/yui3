@@ -131,11 +131,7 @@ YUITest.TestCase.prototype = {
      * @return {Boolean}
      */
     isConditionTrue : function(condition){
-        if (eval(condition))
-        {
-            return true;
-        }
-        return false;
+        return condition();
     },
     
     //-------------------------------------------------------------------------
