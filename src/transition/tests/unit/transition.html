@@ -905,6 +905,37 @@ YUI({
                 Y.Assert.areEqual(nodes.size(), count);
             },
 
+            'should toggle using only the named toggle parameter': function() {
+                var node = Y.one('.demo'), test = this;
+                
+                // fade out
+                node.toggleView('fade');
+                
+                Y.later(1000, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(0, node.getStyle('opacity'));
+                        Y.Assert.areEqual('none', node.getStyle('display'));  
+                        node.destroy();
+                    });
+                });
+                
+                this.wait();
+                    
+                // fade in
+                node.toggleView('fade');
+                
+                Y.later(1000, null, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(1, node.getStyle('opacity'));
+                        Y.Assert.areEqual('block', node.getStyle('display'));  
+                        node.destroy();
+                    });
+                });
+                
+                this.wait();
+                 
+            },
+            
             'should toggle using the named toggle': function() {
                 var nodes = Y.all('.demo'),
                     test = this,
