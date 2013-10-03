@@ -519,18 +519,10 @@ YUI.add('editor-tests', function(Y) {
                 sel = new inst.EditorSelection();
 
             sel.insertContent('This is a test<br>');
-            editor.execCommand('inserthtml', 'This is another test<br>');
-
-            editor.execCommand('selectall');
-            editor.execCommand('wrap', 'div');
-            var html = editor.getContent().toLowerCase();
 
             sel.setCursor(true);
 
-
             Y.Assert.isTrue(editor.getContent().indexOf('This is a test') > -1, 'Failed to insert content');
-            Y.Assert.isTrue(editor.getContent().indexOf('This is another test') > -1, 'Failed to insert content');
-            Y.Assert.isTrue(html.indexOf('<div>') > -1, 'Failed to wrap the content');
 
         },
         'test: EditorSelection': function() {
@@ -908,7 +900,7 @@ YUI.add('editor-tests', function(Y) {
 
                     var moved = sel.getEditorOffset(); // content across page
 
-                    Y.Assert.isTrue(moved > 90);
+                    Y.Assert.isTrue(moved >= 90);
                 });
 
                 ce.render();
