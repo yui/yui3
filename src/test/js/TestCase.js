@@ -93,7 +93,7 @@ YUITest.TestCase.prototype = {
     wait : function (segment, delay){
         delay = (typeof segment === 'number') ? segment :
                 (typeof delay   === 'number') ? delay :
-                YUITest.TextCase.DEFAULT_WAIT;
+                YUITest.TestCase.DEFAULT_WAIT;
 
         if (typeof segment !== 'function') {
             segment = YUITest.TestCase._waitTimeout;
