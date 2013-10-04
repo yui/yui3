@@ -29,7 +29,7 @@ YUI.add('plugin-example-tests', function (Y) {
 
             button.simulate('click');
 
-            test.wait(2000);
+            test.wait();
         },
 
         // Check after the first transition
@@ -67,7 +67,7 @@ YUI.add('plugin-example-tests', function (Y) {
 
             button.simulate('click');
 
-            test.wait(2000);
+            test.wait();
         },
 
         'with plugin second stage': function () {
@@ -97,7 +97,7 @@ YUI.add('plugin-example-tests', function (Y) {
 
             button.simulate('click');
 
-            test.wait(2000);
+            test.wait();
         },
 
         'with plugin final values': function () {
@@ -117,7 +117,7 @@ YUI.add('plugin-example-tests', function (Y) {
 
             button.simulate('click');
 
-            test.wait(2000);
+            test.wait();
         }
     }));
 
