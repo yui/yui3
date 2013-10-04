@@ -110,8 +110,8 @@ YUI.add('editor-selection', function (Y, NAME) {
             this.anchorOffset = sel.anchorOffset;
             this.focusOffset = sel.focusOffset;
 
-            this.anchorTextNode = Y.one(sel.anchorNode);
-            this.focusTextNode = Y.one(sel.focusNode);
+            this.anchorTextNode = Y.one(sel.anchorNode || this.anchorNode);
+            this.focusTextNode = Y.one(sel.focusNode || this.focusNode);
         }
         if (Y.Lang.isString(sel.text)) {
             this.text = sel.text;
