@@ -590,6 +590,27 @@ YUI.add('loader-tests', function(Y) {
 
 
         },
+        test_oncss: function() {
+            var test = this, wasCalled = false;
+            
+            YUI({
+                modules: {
+                    'attrz-css': {
+                        type: 'css',
+                        fullpath: '../assets/attrz.css'
+                    }
+                },
+                onCSS: function() {
+                    wasCalled = true;
+                }
+            }).use('attrz-css', function(Y) {
+                test.resume(function() {
+                    Assert.isTrue(wasCalled);
+                });
+            });
+            
+            test.wait();
+        },
         test_condpattern: function() {
             var test = this;
 
