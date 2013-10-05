@@ -31,6 +31,27 @@ YUITest.TestCase = function (template) {
 
 };
 
+/**
+Default delay for a test failure when `wait()` is called without a _delay_.
+
+@property DEFAULT_WAIT
+@type {Number}
+@default 10000
+@static
+**/
+YUITest.TestCase.DEFAULT_WAIT = 10000;
+
+/**
+Calls `YUITest.Assert.fail()` with a message indicating `wait()` was called,
+but `resume()` was never called.
+ 
+@method _waitTimeout
+@static
+@protected
+**/
+YUITest.TestCase._waitTimeout = function () {
+     YUITest.Assert.fail("Timeout: wait() called but resume() never called.");
+};
 
 YUITest.TestCase.prototype = {
 
@@ -70,17 +91,68 @@ YUITest.TestCase.prototype = {
      * @method wait
      */
     wait : function (segment, delay){
+        delay = (typeof segment === 'number') ? segment :
+                (typeof delay   === 'number') ? delay :
+                YUITest.TestCase.DEFAULT_WAIT;
 
-        var actualDelay = (typeof segment == "number" ? segment : delay);
-        actualDelay = (typeof actualDelay == "number" ? actualDelay : 10000);
-
-		if (typeof segment == "function"){
-            throw new YUITest.Wait(segment, actualDelay);
-        } else {
-            throw new YUITest.Wait(function(){
-                YUITest.Assert.fail("Timeout: wait() called but resume() never called.");
-            }, actualDelay);
+        if (typeof segment !== 'function') {
+            segment = YUITest.TestCase._waitTimeout;
         }
+
+        throw new YUITest.Wait(segment, delay);
+    },
+
+    /**
+    Delays the current test until _condition_ returns a truthy value. If
+    _condition_ fails to return a truthy value before _timeout_ milliseconds
+    have passed, the test fails. Default _timeout_ is 10s.
+    
+    _condition_ will be executed every _increment_ milliseconds (default 100).
+    
+    @method waitFor
+    @param {Function} condition Function executed to indicate whether to
+                        execute _segment_
+    @param {Function} segment Function to check the success or failure of this
+                        test
+    @param {Number} [timeout=10000] Maximum number of milliseconds to wait for
+                        _condition_ to return true
+    @param {Number} [increment=100] Milliseconds to wait before checking
+                        _condition_
+    **/
+    waitFor: function (condition, segment, timeout, increment) {
+        var self = this,
+            endTime;
+ 
+        if ((typeof condition !== 'function') ||
+            (typeof segment !== 'function')) {
+            self.fail('waitFor() called with invalid parameters.');
+        }
+        
+        if (typeof timeout !== 'number') {
+            timeout = YUITest.TestCase.DEFAULT_WAIT;
+        }
+        
+        endTime = (+new Date()) + timeout;
+        
+        if (typeof increment !== 'number') {
+            increment = 100;
+        }
+        
+        self.wait(function () {
+            var now;
+
+            if (condition.call(self)) {
+                segment.call(self);
+            } else {
+                now = (+new Date());
+                
+                if (now > endTime) {
+                    YUITest.TestCase._waitTimeout();
+                } else {
+                    self.waitFor(condition, segment, endTime - now, increment);
+                }
+            }
+        }, increment);
     },
 
     //-------------------------------------------------------------------------
