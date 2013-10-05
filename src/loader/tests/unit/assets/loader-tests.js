@@ -604,12 +604,8 @@ YUI.add('loader-tests', function(Y) {
                     wasCalled = true;
                 }
             }).use('attrz-css', function(Y) {
-                test.resume(function() {
-                    Assert.isTrue(wasCalled);
-                });
-            });
-            
-            test.wait();
+                Assert.isTrue(wasCalled);
+            });            
         },
         test_condpattern: function() {
             var test = this;
