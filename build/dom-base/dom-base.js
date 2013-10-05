@@ -314,9 +314,7 @@ var re_tag = /<([a-z]+)/i,
     re_tbody = /(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)>)+\s*<tbody/,
 
     TABLE_OPEN = '<table>',
-    TABLE_CLOSE = '</table>', 
-    
-    selectedIndex;
+    TABLE_CLOSE = '</table>';
 
 Y.mix(Y.DOM, {
     _fragClones: {},
@@ -384,7 +382,8 @@ Y.mix(Y.DOM, {
             create = Y_DOM._create,
             custom = creators,
             ret = null,
-            creator, tag, node, nodes;
+            creator,
+            tag, nodes;
 
         if (html != undefined) { // not undefined or null
             if (m && m[1]) {
@@ -395,19 +394,16 @@ Y.mix(Y.DOM, {
                     tag = creator;
                 }
             }
-            
-            node = create(html, doc, tag);
-            nodes = node.childNodes;
+
+            nodes = create(html, doc, tag).childNodes;
 
             if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
-                ret = node.removeChild(nodes[0]);
+                ret = nodes[0].parentNode.removeChild(nodes[0]);
             } else if (nodes[0] && nodes[0].className === 'yui3-big-dummy') { // using dummy node to preserve some attributes (e.g. OPTION not selected)
-                selectedIndex = node.selectedIndex;
-                
                 if (nodes.length === 2) {
                     ret = nodes[0].nextSibling;
                 } else {
-                    node.removeChild(nodes[0]);
+                    nodes[0].parentNode.removeChild(nodes[0]);
                     ret = Y_DOM._nl2frag(nodes, doc);
                 }
             } else { // return multiple nodes as a fragment
@@ -517,12 +513,6 @@ Y.mix(Y.DOM, {
             node.appendChild(newNode);
         }
 
-        // `select` elements are the only elements with `selectedIndex`.
-        // Don't grab the dummy `option` element's `selectedIndex`.
-        if (node.nodeName == "SELECT" && selectedIndex > 0) {
-            node.selectedIndex = selectedIndex - 1;
-        }
-        
         return ret;
     },
 
