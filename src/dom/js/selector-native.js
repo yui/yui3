@@ -360,12 +360,13 @@ var Selector = {
 
     /**
      * A convenience function to emulate Y.Node's aNode.ancestor(selector).
-     * @param {HTMLElement} element An HTMLElement to start the query from.
-     * @param {String} selector The CSS selector to test the node against.
-     * @return {HTMLElement} The ancestor node matching the selector, or null.
-     * @param {Boolean} testSelf optional Whether or not to include the element in the scan
-     * @static
      * @method ancestor
+     *
+     * @param {HTMLElement} element A node to start the query from.
+     * @param {String} selector A CSS selector to test the node against.
+     * @param {Boolean} testSelf optional Whether or not to include the node in the scan.
+     * @return {HTMLElement} The ancestor node matching the selector, or null.
+     * @static
      */
     ancestor: function (element, selector, testSelf) {
         return Y.DOM.ancestor(element, function(n) {
