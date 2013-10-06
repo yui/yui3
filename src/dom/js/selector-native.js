@@ -260,6 +260,15 @@ var Selector = {
         }
     },
 
+    /**
+     * Filters out nodes that do not match the given CSS selector.
+     * @method filter
+     *
+     * @param {HTMLElement[]} nodes An array of nodes.
+     * @param {String} selector A CSS selector to test each node against.
+     * @return {HTMLElement[]} The nodes that matched the given CSS selector.
+     * @static
+     */
     filter: function(nodes, selector) {
         var ret = [],
             i, node;
