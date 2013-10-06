@@ -287,6 +287,16 @@ var Selector = {
         return ret;
     },
 
+    /**
+     * Determines whether or not the given node matches the given CSS selector.
+     * @method test
+     * 
+     * @param {HTMLElement} node A node to test.
+     * @param {String} selector A CSS selector to test the node against.
+     * @param {HTMLElement} root optional A node to start the query from. Defaults to the parent document of the node.
+     * @return {Boolean} Whether or not the given node matched the given CSS selector.
+     * @static
+     */
     test: function(node, selector, root) {
         var ret = false,
             useFrag = false,
