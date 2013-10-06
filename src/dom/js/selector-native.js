@@ -121,10 +121,10 @@ var Selector = {
      * Retrieves a set of nodes based on a given CSS selector.
      * @method query
      *
-     * @param {string} selector The CSS Selector to test the node against.
-     * @param {HTMLElement} root optional An HTMLElement to start the query from. Defaults to Y.config.doc
+     * @param {String} selector A CSS selector.
+     * @param {HTMLElement} root optional A node to start the query from. Defaults to `Y.config.doc`.
      * @param {Boolean} firstOnly optional Whether or not to return only the first match.
-     * @return {Array} An array of nodes that match the given selector.
+     * @return {HTMLElement[]} The array of nodes that matched the given selector.
      * @static
      */
     query: function(selector, root, firstOnly, skipNative) {
