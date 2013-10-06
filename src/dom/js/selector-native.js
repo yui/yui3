@@ -36,6 +36,13 @@ var Selector = {
         }
     },
 
+    /**
+     *  Use the native version of `querySelectorAll`, if it exists.
+     *
+     * @property useNative
+     * @default true
+     * @static
+     */
     useNative: true,
 
     _escapeId: function(id) {
