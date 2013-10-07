@@ -2346,7 +2346,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     d.type = 'success';
                     d.fn = self._onSuccess;
                     if (typeof self.onCSS === 'function') {
-                        self.onCSS.call(self, d);
+                        self.onCSS.call(self.context);
                     }
                     complete.call(self, d);
                 },
