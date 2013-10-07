@@ -1,6 +1,11 @@
 CSS Grids Change History
 ========================
 
+@VERSION@
+------
+
+* No changes.
+
 3.13.0
 ------
 
