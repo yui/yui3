@@ -1,6 +1,11 @@
 DataTable Change History
 ========================
 
+@VERSION@
+------
+
+* No changes.
+
 3.13.0
 ------
 * Add highlight module [Pull Request #1196]
