@@ -359,17 +359,17 @@ var Selector = {
     },
 
     /**
-     * A convenience function to emulate Y.Node's aNode.ancestor(selector).
+     * A convenience method to emulate Y.Node's aNode.ancestor(selector).
      * @method ancestor
      *
-     * @param {HTMLElement} element A node to start the query from.
+     * @param {HTMLElement} node A node to start the query from.
      * @param {String} selector A CSS selector to test the node against.
      * @param {Boolean} testSelf optional Whether or not to include the node in the scan.
      * @return {HTMLElement} The ancestor node matching the selector, or null.
      * @static
      */
-    ancestor: function (element, selector, testSelf) {
-        return Y.DOM.ancestor(element, function(n) {
+    ancestor: function (node, selector, testSelf) {
+        return Y.DOM.ancestor(node, function(n) {
             return Y.Selector.test(n, selector);
         }, testSelf);
     },
