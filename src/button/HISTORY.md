@@ -6,6 +6,12 @@ Button Change History
 
 * No changes.
 
+3.13.0
+------
+
+* Added a `labelHTML` attribute to `Y.ButtonCore` for nested HTML label support
+* Due to a fix in `Y.Widget` (#1125), `Y.Button` now correctly retains all node attributes upon render
+
 3.12.0
 ------
 

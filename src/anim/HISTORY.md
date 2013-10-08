@@ -6,6 +6,11 @@ Anim Change History
 
 * No changes.
 
+3.13.0
+------
+
+* No changes.
+
 3.12.0
 ------
 

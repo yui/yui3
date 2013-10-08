@@ -4,6 +4,11 @@ Event Infrastructure Change History
 @VERSION@
 ------
 
+* No changes.
+
+3.13.0
+------
+
 * Delegated focus and blur events now behave the same way other events do when
   a delegate sub from a container closer to the target calls
   `e.stopPropagation()`. Delegate subs from containers higher in the parent

@@ -74,9 +74,10 @@ YUI().use("intl", "datatype-date-format", function(Y) {
 <h4 id="parsingdates">Parsing dates</h4>
 
 <p>
-    <code>Y.Date.parse()</code> accepts any <strong>single</strong> value supported by the
-    JavaScript <code>Date()</code> constructor and converts it to a Date
-    object. Invalid values will return null.
+    <code>Y.Date.parse()</code> accepts a value and, optionally, a formatting
+    specification and converts it to a Date
+    object.  If no format is given, it will pass the value to the
+    JavaScript <code>Date()</code> constructor.  Invalid values will return null.
 </p>
 
 ```
@@ -87,6 +88,47 @@ var date2 = Y.Date.parse("1995,11,17");
 var date3 = Y.Date.parse(948548583);
 
 ```
+<p>
+The `parser` function can accept the same format specification as `Y.Date.format`.
+Ideally, using the same formatting specification, the two operations should
+be complementary.  The `parser` method, however is more tolerant, it accepts
+any number of spaces in between the parts of the date, is case-insensitive
+and does not require leading zeros even when the format says so.
+</p>
+<p>
+The `parser` function accepts an optional third argument, a `cutoff` year.
+When years are given as two digits, those values below the cutoff year will
+have 2000 added to them, those above, 1900.  If `cutoff` is passed as null,
+the date will be taken as is. The `cutoff` defaults to 30.
+</p>
+```
+var date1 = Y.Date.parse("00-1-1", "%F");       // Assumes Jan 1st, 2000
+
+var date2 = Y.Date.parse("40-1-1", "%F");       // Assumes Jan 1st, 1940
+
+var date3 = Y.Date.parse("140-1-1", "%F");      // No guessing: Jan 1st, 140
+
+var date4 = Y.Date.parse("40-1-1", "%F", null); //  No guessing: Jan 1st, 40
+
+```
+<p>
+For the purpose of the calculation, `parser` ignores the parts that do not
+provide sufficient information on their own such as the names of the day of the week.
+However, they are required to be present in the input string.
+</p>
+<p>
+The `%Z` format or the composite formats that use it, such as `%c` in the `en` locale
+have limited support.  It relies on a table of time zone names and abbreviations
+which would be too heavy to fully load.  The module has the table filled with
+a minimal set of North American and European abbreviations.
+</p>
+<p>
+It is suggested that the developer uses different formatting specifications when
+simply displaying a date and when editing it.  For displaying purposes, the format
+can add more information (such as the weekday) and extra decoration.  For editing
+purposes, the format should be simpler so as not to force the user to type so
+much, and it should be easier and unambiguous to the parser.
+</p>
 
 <h3 id="numbers">Numbers</h3>
 
