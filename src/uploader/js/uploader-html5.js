@@ -418,13 +418,12 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @method _setMultipleFiles
     * @protected
     */
-    _setMultipleFiles : function () {
-        if (this.get("multipleFiles") === true) {
-            this._fileInputField.set("multiple", "multiple");
-        }
-        else {
-            this._fileInputField.set("multiple", "");
-        }
+    _setMultipleFiles : function () {        
+        var isWindowsSafari = Y.UA.os === "windows" && Y.UA.safari > 0,
+            isMultiple      = this.get("multipleFiles") === true,
+            value           = isMultiple && !isWindowsSafari ? "multiple" : "";
+            
+        this._fileInputField.set("multiple", value);
     },
 
     /**
