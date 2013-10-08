@@ -159,7 +159,21 @@ Y.log(Y.Number.format(123123123.176,{
 ```
 var number = Y.Number.parse("123123");
 ```
-
+<p>
+An optional configuration can be added, compatible with that of `Y.Number.format`.
+If found, any prefix, suffix, thousands separators and whitespaces will be deleted,
+the decimal separator will be replaced by a dot and the resulting string parsed.
+The `decimalPlaces` property is ignored and is meant for compatibility with `format`.
+</p>
+```
+Y.log(Y.Number.parse(" € 123.123.123,176 (EUR) ",{
+    prefix: "€",
+    thousandsSeparator: ".",
+    decimalSeparator: ",",
+    decimalPlaces: 2,
+    suffix: " (EUR)"
+}));
+```
 <h3 id="xml">XML</h3>
 
 <h4 id="formattingxml">Formatting XML</h4>
