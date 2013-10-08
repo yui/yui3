@@ -1,11 +1,7 @@
-YUI.add('date-tests', function(Y) {
+YUI.add('date-ko-tests', function(Y) {
+
 
     //Helper function to normalize timezone dependent hours.
-    var getGMTOffset = function (date) {
-        var str = date.toString();
-        return str.match(/GMT([-\d]*)/)[1];
-    };
-
     var getHours = function(date, pad, ampm) {
         pad = (pad === false) ? false : true;
         ampm = (ampm === false) ? false : true;
@@ -85,12 +81,6 @@ YUI.add('date-tests', function(Y) {
             parsed = Y.Date.parse('819199440000');
             ASSERT.isTrue(LANG.isDate(parsed), "Parsing string timestamp. Expected date.");
             ASSERT.areEqual(+date, +parsed, "Parsing string timestamp. Dates should have matched.");
-
-            date = new Date('December 20, 1995 03:24:00');
-            parsed = Y.Date.parse('December 20, 1995 03:24:00');
-            ASSERT.isTrue(LANG.isDate(parsed), "Parsing date string. Expected date.");
-            ASSERT.areEqual(+date, +parsed, "Parsing date string. Dates should have matched.");
-
         }
     });
 
@@ -109,11 +99,6 @@ YUI.add('date-tests', function(Y) {
 
         testFormats: function() {
             var date = new Date(819199440000),
-                date_three = new Date('December 20, 1995 03:24:00'),
-                date_noon = new Date('December 20, 1995 12:24:00'),
-                date_midnight = new Date('December 20, 1995 00:24:00'),
-                date_first_wed = new Date('December 31, 2003 03:24:00'),
-                date_first_fri = new Date('January 2, 2010 03:24:00'),
                 YDate,
                 output;
 
@@ -145,30 +130,6 @@ YUI.add('date-tests', function(Y) {
             output = YDate.format(date, {format:"%l"});
             ASSERT.areSame(getHours(date, false), parseInt(output, 10), 'Expected %l format.');
 
-            output = YDate.format(date_three, {format:"%l"});
-            ASSERT.areSame(getHours(date_three, false), parseInt(output, 10), 'Expected %l format.');
-            output = YDate.format(date_noon, {format:"%l"});
-            ASSERT.areSame(getHours(date_noon, false), parseInt(output, 10), 'Expected %l format.');
-            output = YDate.format(date_midnight, {format:"%l"});
-            ASSERT.areSame(getHours(date_midnight, false), parseInt(output, 10), 'Expected %l format.');
-
-
-            output = YDate.format(date_three, {format:"%p"});
-            ASSERT.areSame('AM', output, 'Expected %p format.');
-            output = YDate.format(date_noon, {format:"%p"});
-            ASSERT.areSame('PM', output, 'Expected %p format.');
-            output = YDate.format(date_midnight, {format:"%p"});
-            ASSERT.areSame('AM', output, 'Expected %p format.');
-
-
-            output = YDate.format(date_three, {format:"%P"});
-            ASSERT.areSame('am', output, 'Expected %P format.');
-            output = YDate.format(date_noon, {format:"%P"});
-            ASSERT.areSame('pm', output, 'Expected %P format.');
-            output = YDate.format(date_midnight, {format:"%P"});
-            ASSERT.areSame('am', output, 'Expected %P format.');
-
-
 
             output = YDate.format(date, {format:"%s"});
             ASSERT.areSame(819199440, parseInt(output, 10), 'Expected %s format.');
@@ -185,18 +146,6 @@ YUI.add('date-tests', function(Y) {
 
             output = YDate.format(date, {format:"%W"});
             ASSERT.areSame(50, parseInt(output, 10), 'Expected %W format.');
-
-            // test formating for %z with different am/pm times
-            output = YDate.format(date_three, {format:"%z"});
-            ASSERT.areSame(getGMTOffset(date_three), output, 'Expected %z format.');
-
-            output = YDate.format(date_noon, {format:"%z"});
-            ASSERT.areSame(getGMTOffset(date_noon), output, 'Expected %z format.');
-
-            output = YDate.format(date_midnight, {format:"%z"});
-            ASSERT.areSame(getGMTOffset(date_midnight), output, 'Expected %z format.');
-
-
 
             output = YDate.format(date, {format:"%Z"});
             var tz = date.toString().replace(/^.*:\d\d( GMT[+-]\d+)? \(?([A-Za-z ]+)\)?\d*$/, "$2").replace(/[a-z ]/g, "");
@@ -223,71 +172,36 @@ YUI.add('date-tests', function(Y) {
             output = YDate.format(date, {format:"%P"});
             ASSERT.areSame(getMidday(date, "en-US").toLowerCase(), output, 'Expected %P format.');
 
-            output = YDate.format(date, {format:"%%"});
-            ASSERT.areSame('%', output, 'Expected %% format.');
-
-            output = YDate.format(date, '%%');
-            ASSERT.areSame('%', output, 'Expected %% format.');
-
-
-            // formatting against an array that doesn't begin with a string
-            // should return the `x` in %x
-
-            YDate.formats.d = [1,1];
-
-            output = YDate.format(date, {format: '%d'});
-            ASSERT.areSame('d', output, 'Expected custom %d format.');
-
-            YDate.formats.d = ['getDate', '0'];
-
-
-            // ISO Week number checks
-
-            output = YDate.format(date_first_wed, {format:"%G"});
-            ASSERT.areSame(2004, parseInt(output, 10), 'Expected %G format.');
-
-            output = YDate.format(date_first_fri, {format:"%G"});
-            ASSERT.areSame(2009, parseInt(output, 10), 'Expected %G format.');
-
-
-            output = YDate.format(date_first_wed, {format:"%V"});
-            ASSERT.areSame(1, parseInt(output, 10), 'Expected %V format.');
-
-            output = YDate.format(date_first_fri, {format:"%V"});
-            ASSERT.areSame(53, parseInt(output, 10), 'Expected %V format.');
-
-
-
         }
     });
 
-    var testFormatUS = new Y.Test.Case({
-        name: "Date Format U.S. Tests",
+    var testFormatKR = new Y.Test.Case({
+        name: "Date Format Korean Tests",
 
-        testUS: function() {
-            if (!dateUS || curLang !== 'en-US') {
+        testKorean: function() {
+            if (!dateKR || curLang !== 'ko-KR') {
                 return;
             }
 
-            ASSERT.isNotNull(dateUS, "Expected U.S. Date to be loaded.");
+            ASSERT.isNotNull(dateKR, "Expected Korean Date to be loaded.");
 
             var date = new Date("17 Dec 1995 00:24:00"),
                 output;
 
-            output = dateUS.format(date);
+            output = dateKR.format(date);
             ASSERT.areSame("1995-12-17", output, "Expected default format (%F).");
 
-            output = dateUS.format(date, {format:"%a %A"});
-            ASSERT.areSame("Sun Sunday", output, "Expected %a %A format.");
+            output = dateKR.format(date, {format:"%a %A"});
+            ASSERT.areSame("일 일요일", output, "Expected %a %A format.");
 
-            output = dateUS.format(date, {format:"%b %B"});
-            ASSERT.areSame("Dec December", output, "Expected %b %B format.");
+            output = dateKR.format(date, {format:"%b %B"});
+            ASSERT.areSame("12월 12월", output, "Expected %b %B format.");
 
-            output = dateUS.format(date, {format:"%x"});
-            ASSERT.areSame("12/17/95", output, "Expected %x format.");
+            output = dateKR.format(date, {format:"%x"});
+            ASSERT.areSame("95. 12. 17.", output, "Expected %x format.");
 
-            output = dateUS.format(date, {format:"%r"});
-            ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "en-US"), output, "Expected %r format.");
+            output = dateKR.format(date, {format:"%r"});
+            ASSERT.areSame(getHours(date) + ":24:00 " + getMidday(date, "ko-KR"), output, "Expected %r format.");
         }
     });
 
@@ -420,11 +334,13 @@ YUI.add('date-tests', function(Y) {
                 );
             }
         },
+
         testCuttOffYear: function () {
             ASSERT.areSame(new Date(2000,0,1).toString(), Y.Date.parse("00-1-1", "%F").toString(),1);
             ASSERT.areSame(new Date(1940,0,1).toString(), Y.Date.parse("40-1-1", "%F").toString(),2);
             ASSERT.areSame(new Date(40,0,1).toString(), Y.Date.parse("40-1-1", "%F", null).toString(),3);
         },
+
         testParseErrors: function () {
             ASSERT.isNull(Y.Date.parse("12:60:10", "%T"),'1');
             ASSERT.isNull(Y.Date.parse("25:50:10", "%T"),'2');
@@ -459,6 +375,7 @@ YUI.add('date-tests', function(Y) {
 
         }
     });
+
     var testFormatSimple = new Y.Test.Case({
         name: "Test second argument as string",
 
@@ -470,7 +387,7 @@ YUI.add('date-tests', function(Y) {
 
     var suite = new Y.Test.Suite("Date");
     suite.add(testParse);
-    suite.add(testFormatUS);
+    suite.add(testFormatKR);
     suite.add(testFormatIN);
     suite.add(testFormatAvailable);
     suite.add(testFormat);
