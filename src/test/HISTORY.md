@@ -1,6 +1,11 @@
 YUI Test Change History
 =======================
 
+@VERSION@
+------
+
+* Added Y.ArrayAssert.hasNoDuplicates().
+
 3.13.0
 ------
 

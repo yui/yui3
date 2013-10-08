@@ -159,8 +159,34 @@ YUI().use('node', 'test-console', 'test', function (Y) {
             ArrayAssert.indexOf(-1, this.data, 0, "First item should be -1.");
 
             ArrayAssert.itemsAreEqual([-1,0,1,2,3,4,5], this.data, "Arrays should be equal.");
-        }
+        },
 
+        "[1,2,3] should have no duplicates": function () {
+            Y.ArrayAssert.hasNoDuplicates([1,2,3]);
+        },
+
+        "['foo'] should have no duplicates": function () {
+            Y.ArrayAssert.hasNoDuplicates(['foo']);
+        },
+
+        "An empty array should have no duplicates": function () {
+            Y.ArrayAssert.hasNoDuplicates([]);
+        },
+
+        "[1,1,2] should fail because it has duplicates": function () {
+            Y.ArrayAssert.hasNoDuplicates([1,1,2]);
+        },
+
+        "['bye','bye'] should fail because it has duplicates": function () {
+            Y.ArrayAssert.hasNoDuplicates(['bye','bye']);
+        },
+
+        _should: {
+            fail: {
+                "[1,1,2] should fail because it has duplicates": true,
+                "['bye','bye'] should fail because it has duplicates": true
+            }
+        }
     });
 
     //create the console
