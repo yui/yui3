@@ -12,13 +12,14 @@ YUI.add('transition-usage-tests', function(Y) {
                     test.resume(function() {
                         Y.Assert.isNull(Y.one('#demo'));
                     });
-                }, 2500);
+                }, 4000);
             });
 
             setTimeout(function() {
                 node.simulate('click');
             }, 0);
-            test.wait(3000);
+
+            test.wait();
         }
     }));
 

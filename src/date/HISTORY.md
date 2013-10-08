@@ -4,6 +4,11 @@ Date Change History
 @VERSION@
 ------
 
+* Method parse is now able to reverse most of the output format can produce.
+
+3.13.0
+------
+
 * No changes.
 
 3.12.0

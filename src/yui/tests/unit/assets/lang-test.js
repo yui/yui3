@@ -99,6 +99,17 @@ suite.add(new Y.Test.Case({
         Assert.isFalse(Lang.isObject(null), "null should return false even though it technically is an object");
     },
 
+    test_is_regexp: function() {
+        Assert.isTrue(Lang.isRegExp(/.*/), "a regexp is a regexp");
+        Assert.isTrue(Lang.isRegExp(new RegExp(".*")), "a new RegExp is a regexp");
+        Assert.isFalse(Lang.isRegExp({}), "an object is not a regexp");
+        Assert.isFalse(Lang.isRegExp([]), "an array is not a regexp");
+        Assert.isFalse(Lang.isRegExp(function() {}), "a function is not a regexp");
+        Assert.isFalse(Lang.isRegExp(null), "null is not a regexp");
+        Assert.isFalse(Lang.isRegExp(undefined), "undefined is not a regexp");
+        Assert.isFalse(Lang.isRegExp(123), "a number is not a regexp");
+    },
+
     test_is_string: function() {
         Assert.isTrue(Lang.isString("{}"), "a string is a string");
         Assert.isFalse(Lang.isString({foo: "bar"}), "an object is not a string");

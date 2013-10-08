@@ -23,17 +23,17 @@ YUI.add('editor-tests', function(Y) {
     },
 
     template = {
-        name: 'Editor Tests',
+        name: 'Inline Editor Tests',
         setUp : function() {},
 
         tearDown : function() {},
 
-        test_load: function() {
+        'test_load <inline>': function() {
             Y.Assert.isObject(Y.Plugin.ContentEditable, 'ContentEditable was not loaded');
             Y.Assert.isObject(Y.EditorBase, 'EditorBase was not loaded');
         },
 
-        test_frame: function() {
+        'test_frame <inline>': function() {
             var iframeReady = false;
 
             iframe = new Y.Plugin.ContentEditable({
@@ -63,7 +63,7 @@ YUI.add('editor-tests', function(Y) {
 
         },
 
-        test_frame_use: function() {
+        'test_frame_use <inline>': function() {
             var inst = iframe.getInstance(),
                 test = this;
 
@@ -76,14 +76,14 @@ YUI.add('editor-tests', function(Y) {
             test.wait();
 
         },
-        test_frame_general: function() {
+        'test_frame_general <inline>': function() {
             var n = iframe.get('node');
             var e = Y.one('#editor');
             Y.Assert.areSame(n, e, 'iframe node getter failed');
 
             iframe.delegate('click', function() {});
         },
-        'test delgation': function () {
+        'test delgation <inline>': function () {
             var node = Y.Node.create('<div/>'),
                 ce = new Y.Plugin.ContentEditable({
                     container: node,
@@ -104,7 +104,7 @@ YUI.add('editor-tests', function(Y) {
 
         },
 
-        'test rendering without a defined container': function () {
+        'test rendering without a defined container <inline>': function () {
             var ce = new Y.Plugin.ContentEditable({
                     content: 'This is a test.',
                     use: ['node', 'selector-css3', 'dd-drag', 'dd-ddm']
@@ -125,7 +125,7 @@ YUI.add('editor-tests', function(Y) {
             ce.get('container').remove(true);
         },
 
-        'test getting id is accurate': function () {
+        'test getting id is accurate <inline>': function () {
             var node = Y.Node.create('<div/>'),
                 ceID = new Y.Plugin.ContentEditable({
                     content: 'This is a test.',
@@ -146,7 +146,7 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.areSame('inlineedit-yui', ce.get('id').substr(0, ce.get('id').indexOf('_')), 'Id does not match prefix');
         },
 
-        'test use after instantiation': function () {
+        'test use after instantiation <inline>': function () {
 
             var ce = new Y.Plugin.ContentEditable({
                 container: '#editor',
@@ -171,7 +171,7 @@ YUI.add('editor-tests', function(Y) {
         },
 
 
-        'test: _DOMPaste': function() {
+        'test: _DOMPaste <inline>': function() {
             var OT = 'ORIGINAL_TARGET',
             fired = false;
 
@@ -208,7 +208,7 @@ YUI.add('editor-tests', function(Y) {
             inst.config.win = win;
 
         },
-        'test: _DOMPaste {empty}': function() {
+        'test: _DOMPaste {empty} <inline>': function() {
             var node = Y.Node.create('<div/>'),
                 ce = new Y.Plugin.ContentEditable({
                     container: node,
@@ -255,7 +255,7 @@ YUI.add('editor-tests', function(Y) {
         },
 
 
-        'test: _DOMPaste {no data}': function() {
+        'test: _DOMPaste {no data} <inline>': function() {
             var node = Y.Node.create('<div/>'),
                 ce = new Y.Plugin.ContentEditable({
                     container: node,
@@ -309,7 +309,7 @@ YUI.add('editor-tests', function(Y) {
             inst.config.win = win;
         },
 
-        'test: empty _DOMPaste': function() {
+        'test: empty _DOMPaste <inline>': function() {
             var OT = 'ORIGINAL_TARGET',
             fired = false;
 
@@ -341,12 +341,12 @@ YUI.add('editor-tests', function(Y) {
 
         },
 
-        test_frame_destroy: function() {
+        'test_frame_destroy <inline>': function() {
             iframe.destroy();
 
             Y.Assert.isFalse(Y.one('#editor').hasAttribute('contenteditable'), 'iframe DOM node was not destroyed');
         },
-        test_editor: function() {
+        'test_editor <inline>': function() {
             Y.EditorBase.USE.push('dd');
             Y.EditorBase.USE.push('node-event-simulate');
             var iframeReady = false;
@@ -413,7 +413,7 @@ YUI.add('editor-tests', function(Y) {
 
             }, 1500);
         },
-        test_copy_styles: function() {
+        'test_copy_styles <inline>': function() {
 
             var node = Y.Node.create('<b><u><div style="font-family: Arial; color: purple">Foo</div></u></b>'),
                 node2 = Y.Node.create('<div/>');
@@ -429,7 +429,7 @@ YUI.add('editor-tests', function(Y) {
             editor.copyStyles(node, node2);
 
         },
-        test_resolve_node: function() {
+        'test_resolve_node <inline>': function() {
             var inst = editor.getInstance();
             var node = editor._resolveChangedNode(inst.one('html'));
 
@@ -438,7 +438,7 @@ YUI.add('editor-tests', function(Y) {
             node = editor._resolveChangedNode(null);
             Y.Assert.isTrue(inst.one('[contenteditable="true"]').compareTo(node), 'Failed to resolve HTML node');
         },
-        test_get_content: function() {
+        'test_get_content <inline>': function() {
             var html = editor.getContent(),
                 ex = ((Y.UA.gecko && Y.UA.gecko < 12) ? '<br>' : '');
                 if (Y.UA.ie) {
@@ -446,7 +446,7 @@ YUI.add('editor-tests', function(Y) {
                 }
             Y.Assert.areEqual(ex + 'Hello <b>World</b>!!'.toLowerCase(), html.toLowerCase(), 'getContent failed to get the editor content');
         },
-        test_font_size_normalize: function() {
+        'test_font_size_normalize <inline>': function() {
             var n = Y.Node.create('<span style="font-size: -webkit-xxx-large"></span>'),
                 size;
 
@@ -480,7 +480,7 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.areSame('10px', size, 'Failed to parse size');
 
         },
-        test_selection_font_removal: function() {
+        'test_selection_font_removal <inline>': function() {
             var inst = editor.getInstance();
             var node = inst.Node.create('<font face="" style="foo: bar; font-family: ;"></font>');
             inst.EditorSelection.removeFontFamily(node);
@@ -496,14 +496,14 @@ YUI.add('editor-tests', function(Y) {
             inst.EditorSelection.removeFontFamily(node);
             Y.Assert.areSame(node.getAttribute('style'), '', 'Failed to remove style attribute');
         },
-        test_gettext: function() {
+        'test_gettext <inline>': function() {
             var inst = editor.getInstance();
             var node = inst.Node.create('<p><font><strong>This is <i>a test</i></strong></font>');
 
             var text = inst.EditorSelection.getText(node);
             Y.Assert.areSame('This is a test', text, 'Failed to filter out HTML');
         },
-        test_selection_general: function() {
+        'test_selection_general <inline>': function() {
             var inst = editor.getInstance();
 
             var count = inst.EditorSelection.hasCursor();
@@ -514,26 +514,18 @@ YUI.add('editor-tests', function(Y) {
             count = inst.EditorSelection.hasCursor();
             Y.Assert.areSame(0, count, 'Cursor object found');
         },
-        test_selection_methods: function() {
+        'test_selection_methods <inline>': function() {
             var inst = editor.getInstance(),
                 sel = new inst.EditorSelection();
 
             sel.insertContent('This is a test<br>');
-            editor.execCommand('inserthtml', 'This is another test<br>');
-
-            editor.execCommand('selectall');
-            editor.execCommand('wrap', 'div');
-            var html = editor.getContent().toLowerCase();
 
             sel.setCursor(true);
 
-
             Y.Assert.isTrue(editor.getContent().indexOf('This is a test') > -1, 'Failed to insert content');
-            Y.Assert.isTrue(editor.getContent().indexOf('This is another test') > -1, 'Failed to insert content');
-            Y.Assert.isTrue(html.indexOf('<div>') > -1, 'Failed to wrap the content');
 
         },
-        'test: EditorSelection': function() {
+        'test: EditorSelection <inline>': function() {
 
             var inst = editor.getInstance(),
                 sel = new inst.EditorSelection(),
@@ -556,7 +548,7 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.areSame('EditorSelection Object', sel.toString());
 
         },
-        test_execCommands: function() {
+        'test_execCommands <inline>': function() {
             editor.focus(true);
             var inst = editor.getInstance();
             var cmds = Y.Plugin.ExecCommand.COMMANDS;
@@ -603,17 +595,17 @@ YUI.add('editor-tests', function(Y) {
             inst.EditorSelection = SEL;
 
         },
-        'test: selection.remove()': function() {
+        'test: selection.remove() <inline>': function() {
             var inst = editor.getInstance(),
                 sel = new inst.EditorSelection();
 
             sel.remove();
         },
-        test_destroy: function() {
+        'test_destroy <inline>': function() {
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Frame was not destroyed');
         },
-        test_br_plugin: function() {
+        'test_br_plugin <inline>': function() {
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
                 extracss: 'b { color: red; }',
@@ -639,7 +631,7 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Second Frame was not destroyed');
             Y.Assert.isFalse(Y.one('#editor').hasAttribute('contenteditable'), 'iframe DOM node was not destroyed');
         },
-        test_para_plugin: function() {
+        'test_para_plugin <inline>': function() {
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
                 extracss: 'b { color: red; }',
@@ -685,7 +677,7 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Third Frame was not destroyed');
 
         },
-        test_double_plug_setup: function() {
+        'test_double_plug_setup <inline>': function() {
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
                 extracss: 'b { color: red; }',
@@ -693,19 +685,19 @@ YUI.add('editor-tests', function(Y) {
             });
             Y.Assert.isInstanceOf(Y.EditorBase, editor, 'Forth EditorBase instance can not be created');
         },
-        test_double_plug: function() {
+        'test_double_plug <inline>': function() {
             editor.plug(Y.Plugin.EditorPara);
             //This should error
             editor.plug(Y.Plugin.EditorBR);
         },
-        test_double_down: function() {
+        'test_double_down <inline>': function() {
             Y.Assert.isInstanceOf(Y.Plugin.EditorPara, editor.editorPara, 'EditorPara was not plugged..');
             editor.render('#editor');
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor frame'), null, 'Forth Frame was not destroyed');
             Y.Assert.isFalse(Y.one('#editor').hasAttribute('contenteditable'), 'The editor was not destroyed');
         },
-        test_double_plug_setup2: function() {
+        'test_double_plug_setup2 <inline>': function() {
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
                 extracss: 'b { color: red; }',
@@ -713,19 +705,19 @@ YUI.add('editor-tests', function(Y) {
             });
             Y.Assert.isInstanceOf(Y.EditorBase, editor, 'Fifth EditorBase instance can not be created');
         },
-        test_double_plug2: function() {
+        'test_double_plug2 <inline>': function() {
             editor.plug(Y.Plugin.EditorBR);
             //This should error
             editor.plug(Y.Plugin.EditorPara);
         },
-        test_double_down2: function() {
+        'test_double_down2 <inline>': function() {
             Y.Assert.isInstanceOf(Y.Plugin.EditorBR, editor.editorBR, 'EditorBR was not plugged..');
             editor.render('#editor');
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor frame'), null, 'Fifth Frame was not destroyed');
             Y.Assert.isFalse(Y.one('#editor').hasAttribute('contenteditable'), 'The editor was not destroyed');
         },
-        test_bidi_noplug: function() {
+        'test_bidi_noplug <inline>': function() {
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
                 extracss: 'b { color: red; }',
@@ -737,7 +729,7 @@ YUI.add('editor-tests', function(Y) {
                 editor.execCommand('bidi');
             }, 1500);
         },
-        test_bidi_plug: function() {
+        'test_bidi_plug <inline>': function() {
             editor.destroy();
             editor = new Y.EditorBase({
                 content: 'Hello <b>World</b>!!',
@@ -782,7 +774,7 @@ YUI.add('editor-tests', function(Y) {
 
         },
 
-        'test _onDomEvent with forced incorrect data': function () {
+        'test _onDomEvent with forced incorrect data <inline>': function () {
             var node = Y.Node.create('<div/>'),
                 ce = new Y.Plugin.ContentEditable({
                     content: '<p>This is a test.</p>',
@@ -804,7 +796,7 @@ YUI.add('editor-tests', function(Y) {
             ce._onDomEvent({ pageX: 100, pageY: 100, type: 'click' });
         },
 
-        'test extra content ready calls': function () {
+        'test extra content ready calls <inline>': function () {
             var  node = Y.Node.create('<div/>'),
                 ce = new Y.Plugin.ContentEditable({
                     content: '<p>This is a test.</p>',
@@ -827,7 +819,7 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.isNotNull(inst);
         },
 
-        'test extra css added after render': function () {
+        'test extra css added after render <inline>': function () {
             var node = Y.Node.create('<div/>'),
                 ce = new Y.Plugin.ContentEditable({
                     content: '<p class="bar">This is a test.</p>',
@@ -857,7 +849,7 @@ YUI.add('editor-tests', function(Y) {
             node.remove(true);
         },
 
-        'test _setLinkedCSS works properly': function () {
+        'test _setLinkedCSS works properly <inline>': function () {
             var test = this,
                 node = Y.Node.create('<div/>'),
                 ce = new Y.Plugin.ContentEditable({
@@ -893,20 +885,42 @@ YUI.add('editor-tests', function(Y) {
             test.wait();
         },
 
+        'test selection <inline>': function () {
+            var test = this,
+                node = Y.Node.create('<div/>'),
+                ce = new Y.InlineEditor({
+                    content: 'Fooga',
+                    container: node
+                });
+
+                Y.one('body').append(node);
+
+                ce.after('ready', function (e) {
+                    var sel = new (ce.contentEditable.getInstance()).EditorSelection();
+
+                    var moved = sel.getEditorOffset(); // content across page
+
+                    Y.Assert.isTrue(moved >= 90);
+                });
+
+                ce.render();
+
+        },
+
         _should: {
             fail: {
-                'test_selection_methods': (Y.UA.ie ? true : false)
+                'test_selection_methods <inline>': (Y.UA.ie ? true : false)
             },
             ignore: {
-                'test: EditorSelection': Y.UA.phantomjs,
-                'test_selection_methods': Y.UA.phantomjs,
-                'test_br_plugin': Y.UA.phantomjs
+                'test: EditorSelection <inline>': Y.UA.phantomjs,
+                'test_selection_methods <inline>': Y.UA.phantomjs,
+                'test_br_plugin <inline>': Y.UA.phantomjs
             },
             error: { //These tests should error
-                'test_selection_methods': (Y.UA.ie ? true : false),
-                'test_double_plug': true,
-                'test_double_plug2': true,
-                'test_bidi_noplug': true
+                'test_selection_methods <inline>': (Y.UA.ie ? true : false),
+                'test_double_plug <inline>': true,
+                'test_double_plug2 <inline>': true,
+                'test_bidi_noplug <inline>': true
             }
         }
     };
