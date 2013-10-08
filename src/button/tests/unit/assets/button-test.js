@@ -13,7 +13,7 @@ suite.add(new Y.Test.Case({
     name: 'Basic',
 
     setUp : function () {
-        Y.one("#container").setContent('<button id="testButton">Hello</button><button id="testToggleButton">Hello</button><button id="testCheckButton">Hello</button>');
+        Y.one("#container").setContent('<button id="testButton" data-foo="foobar" class="test-class">Hello</button><button id="testToggleButton">Hello</button><button id="testCheckButton">Hello</button>');
         this.button = new Y.Button({
             srcNode: '#testButton'
         }).render();
@@ -35,18 +35,48 @@ suite.add(new Y.Test.Case({
         delete this.checkButton;
     },
 
-    'Changing the label atrribute should trigger labelChange': function () {
+    'Rendering should preserve Node attributes': function () {
         var button = this.button,
-            eventsTriggered = 0;
+            node = button.getNode();
+
+        Assert.areEqual('foobar', node.getData('foo'));
+        Assert.isTrue(node.hasClass('test-class'));
+    },
+
+    'Rendering a button should add the `yui3-button` class': function () {
+        var button = this.button,
+            node = button.getNode();
+
+        Assert.isTrue(node.hasClass('yui3-button'));
+    },
+
+    'Should render as a single-box widget': function () {
+        var button = this.button,
+            bb = button.get("boundingBox"),
+            cb = button.get("contentBox");
+
+        Assert.isTrue(bb.compareTo(cb));
+    },
+
+    'Changing the label atrribute should trigger labelChange and labelHTMLChange': function () {
+        var button = this.button,
+            labelEventsTriggered = 0,
+            labelHTMLEventsTriggered = 0;
         
         button.on('labelChange', function(){
-            eventsTriggered+=1;
+            labelEventsTriggered+=1;
+        });
+
+        button.on('labelHTMLChange', function(){
+            labelHTMLEventsTriggered+=1;
         });
         
-        Assert.areEqual(0, eventsTriggered);
+        Assert.areEqual(0, labelEventsTriggered);
+        Assert.areEqual(0, labelHTMLEventsTriggered);
         
         button.set('label', 'foobar');
-        Assert.areEqual(1, eventsTriggered);
+        Assert.areEqual(1, labelEventsTriggered);
+        Assert.areEqual(1, labelHTMLEventsTriggered);
     },
     
     'ToggleButton should have `toggle` role': function () {
@@ -179,6 +209,27 @@ suite.add(new Y.Test.Case({
 
         Assert.isFalse(cb.hasClass('yui3-button-hidden'));
         Assert.areSame(origStyle, cb.getStyle('display'));
+    },
+
+    'Rendering should preserve nested HTML': function() {
+
+        var Test = this,
+            content = '<div>foo</div><div>bar</div>',
+            button,
+            expected,
+            actual;
+
+        Y.one("#container").setContent('<button>' + content + '</button>');
+
+        button = new Y.Button({
+            srcNode: Y.one("#container button"),
+            render: true
+        });
+
+        expected = button.getNode().getHTML(),
+        actual = button.get('labelHTML');
+
+        Assert.areSame(expected, actual);
     }
 }));
 
@@ -293,7 +344,7 @@ suite.add(new Y.Test.Case({
         Y.one("#container").empty(true);
     },
     
-    'The HTML parser for the `label` attribute should reference the button text': function() {
+    'The HTML parser for the `labelHTML` attribute should reference the button text': function() {
         
         var Test = this,
             label = 'YUI is awesome',
@@ -308,7 +359,7 @@ suite.add(new Y.Test.Case({
 
         Y.later(100, null, function(){
             Test.resume(function(){
-                Assert.areEqual(label, button.get('label'));
+                Assert.areEqual(label, button.get('labelHTML'));
             });
         });
 

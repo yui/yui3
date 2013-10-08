@@ -18,7 +18,7 @@ YUI.add('editor-tests', function(Y) {
         });
     },
     template = {
-        name: 'Editor Tests',
+        name: 'iFrame Editor Tests',
         setUp : function() {
         },
 
@@ -304,7 +304,6 @@ YUI.add('editor-tests', function(Y) {
 
         },
         'test: EditorSelection': function() {
-
             var inst = editor.getInstance(),
                 sel = new inst.EditorSelection(),
                 html = '<b>Foobar</b>',
@@ -324,7 +323,6 @@ YUI.add('editor-tests', function(Y) {
             sel.anchorNode = a;
 
             Y.Assert.areSame('EditorSelection Object', sel.toString());
-
         },
         test_execCommands: function() {
             editor.focus(true);
@@ -536,10 +534,10 @@ YUI.add('editor-tests', function(Y) {
         },
         _should: {
             fail: {
-                'test: EditorSelection': (Y.UA.chrome),
+                //'test: EditorSelection': (Y.UA.chrome),
                 test_bidi_plug: (Y.UA.ie && Y.UA.ie >= 9),
                 test_selection_methods: ((Y.UA.ie || Y.UA.webkit) ? true : false),
-                test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie >= 9) || Y.UA.chrome) ? true : false)
+                test_execCommands: ((Y.UA.ie && Y.UA.ie >= 9) ? true : false)
             },
             ignore: {
                 /* gh issue #653 Editor test failures in Android 4
@@ -559,12 +557,14 @@ YUI.add('editor-tests', function(Y) {
                 test_br_plugin: (Y.UA.phantomjs || (Y.UA.android && Y.UA.android < 5)), // note phantomjs was being ignored for test_br_plugin previous to issue #653
                 test_para_plugin: (Y.UA.android && Y.UA.android < 5),
                 test_double_down: (Y.UA.android && Y.UA.android < 5),
-                test_double_down2: (Y.UA.android && Y.UA.android < 5)
+                test_double_down2: (Y.UA.android && Y.UA.android < 5),
+                'test: EditorSelection': (Y.UA.android && Y.UA.android < 5),
+                test_execCommands: (Y.UA.android && Y.UA.android < 5)
             },
             error: { //These tests should error
-                'test: EditorSelection': (Y.UA.chrome || Y.UA.webkit),
+                //'test: EditorSelection': (Y.UA.chrome || Y.UA.webkit),
                 test_selection_methods: ((Y.UA.ie || Y.UA.webkit || (Y.UA.gecko && Y.UA.gecko >= 12 && Y.UA.gecko < 23)) ? true : false),
-                test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie >= 9) || Y.UA.chrome) ? true : false),
+                test_execCommands:  ((Y.UA.ie && Y.UA.ie >= 9) ? true : false),
                 test_double_plug: true,
                 test_double_plug2: true,
                 test_bidi_noplug: true

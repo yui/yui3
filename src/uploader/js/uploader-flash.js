@@ -1,24 +1,11 @@
 /**
-* This module provides a UI for file selection and multiple file upload capability using
-* Flash as a transport engine.
-* The supported features include: automatic upload queue management, upload progress
-* tracking, file filtering, server response retrieval and error reporting.
-*
-* @module uploader-flash
-*/
-
-// Shorthands for external modules
-var substitute            = Y.Lang.sub,
-    UploaderQueue         = Y.Uploader.Queue;
-
-
-/**
 * This module provides a UI for file selection and multiple file upload capability
 * using Flash as a transport engine.
 * @class UploaderFlash
 * @extends Widget
 * @param {Object} config Configuration object.
 * @constructor
+* @deprecated
 */
 
 function UploaderFlash() {
@@ -996,13 +983,13 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
         *
         * @attribute swfURL
         * @type {String}
-        * @default "CDN Prefix + uploader/assets/flashuploader.swf" with a
+        * @default "flashuploader.swf" with a
         * random GET parameter for IE (to prevent buggy behavior when the SWF
         * is cached).
         */
         swfURL: {
             valueFn: function () {
-                var prefix = Y.Env.cdn + "uploader/assets/flashuploader.swf";
+                var prefix = "flashuploader.swf";
 
                 if (Y.UA.ie > 0) {
                     return (prefix + "?t=" + Y.guid("uploader"));

@@ -37,6 +37,9 @@ A beta version of Router was first introduced in YUI 3.4.0, but was named Contro
     <p>
     The function signature for route handlers has changed. Previously, the second argument passed to all route handlers was the `next()` function. As of YUI 3.5.0, the second argument is a response object, and the third argument is the `next()` function. To preserve backwards compatibility, the response object is also a function that will call `next()`, but you should still update your code to take the new argument order into account.
     </p>
+    <p>
+    <b>Note:</b> As of YUI 3.13.0, the response object is no longer callable, use the `next()` function passed as the thrid argument to route handlers.
+    </p>
   </li>
 </ul>
 
@@ -187,7 +190,7 @@ When instantiating Router, you may optionally pass in a config object containing
         </p>
 
         <p>
-        Each item in the array must be an object with the following properties:
+        Each item in the array must be an object with the following properties in order to be processed by the router:
         </p>
 
         <dl style="margin-top:1em">
@@ -201,6 +204,26 @@ When instantiating Router, you may optionally pass in a config object containing
             A function or a string representing the name of a function on the Router instance that should be called when the route is triggered. An array of functions and/or strings may also be provided. See [[#Routing]] for more details.
           </dd>
         </dl>
+
+        <p>
+        If a route object contains a `regex` or `regexp` property, or if its `path` is a regular express, then the route will be considered to be fully-processed. Any fully-processed routes may contain the following properties:
+        </p>
+
+        <dl style="margin-top:1em">
+          <dt>`regex`</dt>
+          <dd>
+            The regular expression representing the path to match, this property may also be named `regexp` for greater compatibility.
+          </dd>
+
+          <dt>`keys`</dt>
+          <dd>
+            Array of named path parameters used to populate `req.params` objects when dispatching to route handlers.
+          </dd>
+        </dl>
+
+        <p>
+        Any additional data contained on these route objects will be retained. This is useful to store extra metadata about a route; e.g., a `name` to give routes logical names.
+        </p>
       </td>
     </tr>
   </tbody>
@@ -356,7 +379,7 @@ Now all instances of `Y.CustomRouter` will inherit all the custom defaults and c
 <h3>Routing</h3>
 
 <p>
-Use the `route()` method to add a new route to a Router instance. The first parameter is a path specification or regular expression that the URL path must match, and the remaining parameters are callback functions, function names, or arrays of either to execute (middleware) when the route is matched.
+Use the `route()` method to add a new route to a Router instance. The first parameter is a path specification or regular expression that the URL path must match, or alternatively a route object. The remaining parameters are callback functions, function names, or arrays of either to execute (middleware) when the route is matched.
 </p>
 
 ```
@@ -504,6 +527,42 @@ router.save('/pie/maple+custard/infinity');
 // => "You ordered infinity slices of maple custard pie."
 ```
 
+<h4>Route Objects</h4>
+
+<p>
+Alternatively, instead of specifying only a route's path, entire route objects can be specified when calling Router's `route()` method. These route objects are the same as those specified as [[#Config Attributes]] and what Router uses for its internal storage of its routes.
+</p>
+
+<p>
+Using route objects to specify routes allows for greater interoperability between routing system and allows for a place to attach metadata for a route. Two examples are adding a `name` property to routes to give them a logical name, or getting fully-processed route data from the server or another Router instance.
+</p>
+
+<p>
+The following example shows how to add extra metadata to routes by using route objects:
+</p>
+
+```
+var router = new Y.Router({
+  routes: [
+    {path     : '/',
+     name     : 'home',
+     callbacks: 'logRoute'}
+  ]
+});
+
+router.route({
+  path: '/users/*',
+  name: 'users'
+}, 'logRoute');
+
+router.logRoute = function (req, res, next) {
+  Y.log('Route: ' + req.route.name);
+};
+
+router.save('/');       // => "Route: home"
+router.save('/users/'); // => "Route: users"
+```
+
 <h4>Route Callbacks</h4>
 
 <p>
@@ -557,10 +616,17 @@ When a route is matched, the callback functions associated with that route will 
         </p>
       </dd>
 
-      <dt><strong>`url` (String)</strong></dt>
+      <dt><strong>`route` (Object)</strong></dt>
       <dd>
         <p>
-        The full URL.
+        Reference to the current route object whose callbacks are being dispatched.
+        </p>
+      </dd>
+
+      <dt><strong>`router` (Object)</strong></dt>
+      <dd>
+        <p>
+        Reference to this router instnace.
         </p>
       </dd>
 
@@ -571,7 +637,14 @@ When a route is matched, the callback functions associated with that route will 
         </p>
 
         <p>
-        In an HTML5 browser, when the back/forward buttons are used, this property will have a value of "popstate".
+        In an HTML5 browser, when the back/forward buttons are used, this property will have a value of "popstate". When the `dispath()` method is called, the `src` will be `"dispatch"`.
+        </p>
+      </dd>
+
+      <dt><strong>`url` (String)</strong></dt>
+      <dd>
+        <p>
+        The full URL.
         </p>
       </dd>
     </dl>
@@ -581,10 +654,6 @@ When a route is matched, the callback functions associated with that route will 
   <dd>
     <p>
     An object that contains methods and information that relate to responding to a request.
-    </p>
-
-    <p>
-    <strong>Note:</strong> For backwards compatibility, the response object is also a function that when called will behave the same as directly calling `next()`. This backcompat behavior will eventually be removed.
     </p>
 
     <p>

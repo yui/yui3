@@ -23,7 +23,7 @@
 </style>
 
 <div class="intro">
-   <p><strong>The YUI Uploader leverages HTML5+XMLHttpRequest 2 or Flash to provide file upload functionality beyond the basic HTTP `<input type='file'>` capabilities.</strong> Specifically, the Uploader allows for:
+   <p><strong>The YUI Uploader leverages HTML5+XMLHttpRequest 2 or Flash (deprecated) to provide file upload functionality beyond the basic HTTP `<input type='file'>` capabilities.</strong> Specifically, the Uploader allows for:
 	<ol>
 		<li> <strong>Multiple file selection</strong> in a single "Open File" dialog.</li>
         <li> <strong>Dragging-and-dropping files</strong> into the browser (when used in HTML5 mode).</li>
@@ -32,27 +32,12 @@
 		<li> <strong>A range of available file metadata</strong>: filename, size, date created, and date modified.</li>
 		<li> A set of <strong>events dispatched on various aspects of the file upload process</strong>: file selection, upload progress, upload completion, data return, and upload errors.</li>
 		<li> Inclusion of <strong>additional data in the file upload POST request</strong>, on a file-by-file basis.</li>
-        <li> <strong>Keyboard accessibility</strong> both in HTML5 and in Flash modes.</li>
+        <li> <strong>Keyboard accessibility</strong> both in HTML5 and in Flash (deprecated) modes.</li>
 	</ol>
 </div>
     <div class="notice">
-        <h2 id="migration-intro">Upgrading from version 3.4.1 or older?</h2>
-    
-        <p>
-            Uploader has been refactored for 3.5.0.  Parts of its API have changed in backward-incompatible ways.
-        </p>
-        
-        <p>
-            Read the <a href="migration.html">3.5.0 Migration Guide</a> for tips on a smooth transition.  
-            If you still run into issues, please <a href="../../../projects/yui3/newticket/">file a ticket</a>.
-        </p>
-    
-        <p>
-            If you are unable to upgrade due to unresolvable issues, you can use the
-            <a href="../uploader-deprecated/index.html">`uploader-deprecated`</a>
-            module suite, which is equivalent to the 3.4.1 implementation.  But be
-            aware that this module will be removed in a future version of YUI.
-        </p>
+        <h2 id="migration-intro">Upgrading to version 3.13.0 or newer?</h2>
+        <p>Due to Security issues, as of YUI 3.13.0, YUI has made the decision to <a href="https://github.com/yui/yui3/issues/845">remove all Flash files from the repository</a>. As a result, you will need compile and host your own <code>flashuploader.swf</code> file to enable Flash mode. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</p>	
     </div>
 
 {{>getting-started}}
@@ -60,7 +45,8 @@
 <div class="intro">
 	<h2>Uploader Usage Notes for the Flash mode</h2>
 	<ul>
-	<li>Because of security requirements of the Flash Player, the <strong>Uploader in Flash mode must receive a direct user input</strong> in order to initiate file browsing.</li>
+    <li>The <code>uploader-flash</code> module has been deprecated as of v3.13.0.</li>
+    <li>Because of security requirements of the Flash Player, the <strong>Uploader in Flash mode must receive a direct user input</strong> in order to initiate file browsing.</li>
     <li><strong>The target server for file uploads must include a `crossdomain.xml` file</strong> that allows access from the location where the uploader SWF file is hosted.
     See more in the <a href="#backend-setup">Backend Setup</a> section below, or read the <a href="http://www.adobe.com/devnet/articles/crossdomain_policy_file_spec.html">crossdomain specification on Adobe's website</a>.</li>
     <li><strong>The relative URLs to the target server are resolved differently in the Flash mode</strong> than they are in the HTML5 mode. In Flash mode, the URLs
@@ -282,8 +268,9 @@ focus:
                     <tr>
                         <td>`swfURL`<span class="only">UploaderFlash</span></td>
                         <td>The URL to the SWF file of the flash uploader. A copy local to the server that hosts the page on 
-                            which the uploader appears (rather than a CDN-sourced uploader) is recommended.</td>
-                        <td>`CDN Prefix` + `uploader/assets/flashuploader.swf`</td>
+                            which the uploader appears is recommended. <div class="notice"><strong>NOTE:</strong> You will need compile and host your own <code>flashuploader.swf</code> file to enable this Flash mode. Necessary source files are available in the <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.</div></td>
+
+                        <td>`flashuploader.swf`</td>
                     </tr>
                     <tr>
                         <td>`tabElements`<span class="only">UploaderFlash</span></td>

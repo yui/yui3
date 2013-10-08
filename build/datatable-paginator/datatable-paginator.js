@@ -388,7 +388,7 @@ View = Y.Base.create('dt-pg-view', Y.View, [], {
 
      @protected
      @method _defPageSizeVal
-     @since @SINCE@
+     @since 3.13.0
      */
     _defPageSizeVal: function () {
         this._initStrings();
@@ -630,7 +630,7 @@ Y.mix(Controller.prototype, {
      @protected
      @method _afterDataUpdatesWithPaginator
      @param {EventFacade} e
-     @since @SINCE@
+     @since 3.13.0
     */
     _afterDataUpdatesWithPaginator: function () {
         var model = this.get('paginatorModel'),
@@ -944,7 +944,7 @@ Y.mix(Controller.prototype, {
      Initializes paginatorStrings used for internationalization
      @protected
      @method _initPaginatorStrings
-     @since @SINCE@
+     @since 3.13.0
      */
     _initPaginatorStrings: function () {
         // Not a valueFn because other class extensions may want to add to it
@@ -958,7 +958,7 @@ Y.mix(Controller.prototype, {
 
      @protected
      @method _defPageSizeVal
-     @since @SINCE@
+     @since 3.13.0
      */
     _defPageSizeVal: function () {
         this._initPaginatorStrings();

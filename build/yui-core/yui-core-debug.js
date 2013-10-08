@@ -2290,6 +2290,17 @@ L.isObject = function(o, failfn) {
 };
 
 /**
+ * Determines whether or not the provided value is a regexp.
+ * @method isRegExp
+ * @static
+ * @param value The value or object to test.
+ * @return {boolean} true if value is a regexp.
+ */
+L.isRegExp = function(value) {
+    return L.type(value) === 'regexp';
+};
+
+/**
  * Determines whether or not the provided item is a string.
  * @method isString
  * @static
@@ -3992,7 +4003,7 @@ Y.UA.compareVersions = function (a, b) {
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
     "anim-shape-transform": ["anim-shape"],
-    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
+    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","model-sync-local","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "attribute-events": ["attribute-observable"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],

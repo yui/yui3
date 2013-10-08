@@ -76,6 +76,7 @@
             "model",
             "model-list",
             "model-sync-rest",
+            "model-sync-local",
             "router",
             "view",
             "view-node-map"
@@ -409,7 +410,8 @@
         "requires": [
             "attribute-core",
             "classnamemanager",
-            "node-base"
+            "node-base",
+            "escape"
         ]
     },
     "button-group": {
@@ -1818,6 +1820,12 @@
             "model"
         ]
     },
+    "model-sync-local": {
+        "requires": [
+            "model",
+            "json-stringify"
+        ]
+    },
     "model-sync-rest": {
         "requires": [
             "model",
@@ -2592,13 +2600,13 @@
     },
     "uploader-flash": {
         "requires": [
-            "swf",
+            "swfdetect",
+            "escape",
             "widget",
             "base",
             "cssbutton",
             "node",
             "event-custom",
-            "file-flash",
             "uploader-queue"
         ]
     },
