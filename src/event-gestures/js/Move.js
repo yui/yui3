@@ -297,7 +297,7 @@ define(GESTURE_MOVE_START, {
         Y.log("gesturemovestart: params = button:" + button + ", minTime = " + minTime + ", minDistance = " + minDistance, "event-gestures");
 
         if (fireStart) {
-
+            console.log(e.type);
             _prevent(e, preventDefault);
             startXY = [e.pageX, e.pageY];
 
@@ -308,14 +308,23 @@ define(GESTURE_MOVE_START, {
 
             else if (minTime === 0 && minDistance > 0) {
 
-                Y.log("gesturemovestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.", "event-gestures");
-                Y.log("gesturemovestart: initialXY for minDistance = " + startXY, "event-gestures");
+                console.log("gesturemovestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.", "event-gestures");
+                console.log("gesturemovestart: initialXY for minDistance = " + startXY, "event-gestures");
 
                 params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
+                    if (em.touches && em.touches.length === 1) {
+                        _normTouchFacade(em, em.touches[0], params);
+                    }
                     if (Math.abs(em.pageX - startXY[0]) > minDistance || Math.abs(em.pageY - startXY[1]) > minDistance) {
-                        Y.log("gesturemovestart: minDistance hit.", "event-gestures");
+                        console.log(em);
+                        console.log(startXY);
+                        console.log("gesturemovestart: minDistance hit.", "event-gestures");
                         this._start(e, node, subscriber, ce, params);
                     }
+                }, this));
+
+                params._hme = root.on(EVENT[END], Y.bind(function() {
+                    this._cancel(params);
                 }, this));
 
             }
@@ -336,6 +345,9 @@ define(GESTURE_MOVE_START, {
                 Y.log("gesturemovestart: initialTime for minTime = " + new Date().getTime(), "event-gestures");
 
                 params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
+                    if (em.touches && em.touches.length === 1) {
+                        _normTouchFacade(em, em.touches[0], params);
+                    }
                     if (Math.abs(em.pageX - startXY[0]) > minDistance || Math.abs(em.pageY - startXY[1]) > minDistance) {
                         Y.log("gesturemovestart: minDistance hit.", "event-gestures");
                         Y.log("Firing gesturemovestart after minTime has passed");
@@ -345,12 +357,17 @@ define(GESTURE_MOVE_START, {
                         }, this));
                     }
                 }, this));
+
+                params._hme = root.on(EVENT[END], Y.bind(function() {
+                    this._cancel(params);
+                }, this));
             }
 
         }
     },
 
     _cancel : function(params) {
+        console.log('detaching');
         if (params._ht) {
             params._ht.cancel();
             params._ht = null;
@@ -363,6 +380,7 @@ define(GESTURE_MOVE_START, {
             params._hm.detach();
             params._hm = null;
         }
+        console.log(params);
     },
 
     _start : function(e, node, subscriber, ce, params) {
