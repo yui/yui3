@@ -142,12 +142,12 @@
     },
 
     _prevent = function(e, preventDefault) {
-        if (preventDefault) {
-            // preventDefault is a boolean or a function
-            if (!preventDefault.call || preventDefault(e)) {
-                e.preventDefault();
-            }
-        }
+        // if (preventDefault) {
+        //     // preventDefault is a boolean or a function
+        //     if (!preventDefault.call || preventDefault(e)) {
+        //         e.preventDefault();
+        //     }
+        // }
     },
 
     define = Y.Event.define;
@@ -185,6 +185,23 @@
  */
 
 define(GESTURE_MOVE_START, {
+
+    publishConfig: {
+        preventedFn: function (e) {
+            var sub = e.target.once('click', function (click) {
+                click.preventDefault();
+            });
+
+            // Make sure to detach the subscription during the next event loop
+            // so this doesn't `preventDefault()` on the wrong click event.
+            setTimeout(function () {
+                sub.detach();
+            //Setting this to `0` causes the detachment to occur before the click
+            //comes in on Android 4.0.3-4.0.4. 100ms seems to be a reliable number here
+            //that works across the board.
+            }, 100);
+        }
+    },
 
     on: function (node, subscriber, ce) {
 
@@ -259,57 +276,77 @@ define(GESTURE_MOVE_START, {
             button = params.button,
             preventDefault = params[PREVENT_DEFAULT],
             root = _getRoot(node, subscriber),
-            startXY;
+            startXY,
+            preventMouse = subscriber.preventMouse || false;
 
         if (e.touches) {
             if (e.touches.length === 1) {
                 _normTouchFacade(e, e.touches[0], params);
-            } else {
+            }
+            else {
                 fireStart = false;
             }
-        } else {
+        }
+
+        else {
             fireStart = (button === undefined) || (button === e.button);
         }
+
+
 
         Y.log("gesturemovestart: params = button:" + button + ", minTime = " + minTime + ", minDistance = " + minDistance, "event-gestures");
 
         if (fireStart) {
 
             _prevent(e, preventDefault);
+            startXY = [e.pageX, e.pageY];
 
-            if (minTime === 0 || minDistance === 0) {
+            if (minTime === 0 && minDistance === 0) {
                 Y.log("gesturemovestart: No minTime or minDistance. Firing immediately", "event-gestures");
-                this._start(e, node, ce, params);
-
-            } else {
-
-                startXY = [e.pageX, e.pageY];
-
-                if (minTime > 0) {
-
-                    Y.log("gesturemovestart: minTime specified. Setup timer.", "event-gestures");
-                    Y.log("gesturemovestart: initialTime for minTime = " + new Date().getTime(), "event-gestures");
-
-                    params._ht = Y.later(minTime, this, this._start, [e, node, ce, params]);
-
-                    params._hme = root.on(EVENT[END], Y.bind(function() {
-                        this._cancel(params);
-                    }, this));
-                }
-
-                if (minDistance > 0) {
-
-                    Y.log("gesturemovestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.", "event-gestures");
-                    Y.log("gesturemovestart: initialXY for minDistance = " + startXY, "event-gestures");
-
-                    params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
-                        if (Math.abs(em.pageX - startXY[0]) > minDistance || Math.abs(em.pageY - startXY[1]) > minDistance) {
-                            Y.log("gesturemovestart: minDistance hit.", "event-gestures");
-                            this._start(e, node, ce, params);
-                        }
-                    }, this));
-                }
+                this._start(e, node, subscriber, ce, params);
             }
+
+            else if (minTime === 0 && minDistance > 0) {
+
+                Y.log("gesturemovestart: minDistance specified. Setup native mouse/touchmove listener to measure distance.", "event-gestures");
+                Y.log("gesturemovestart: initialXY for minDistance = " + startXY, "event-gestures");
+
+                params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
+                    if (Math.abs(em.pageX - startXY[0]) > minDistance || Math.abs(em.pageY - startXY[1]) > minDistance) {
+                        Y.log("gesturemovestart: minDistance hit.", "event-gestures");
+                        this._start(e, node, subscriber, ce, params);
+                    }
+                }, this));
+
+            }
+
+            else if (minTime > 0 && minDistance === 0) {
+                Y.log("gesturemovestart: minTime specified. Setup timer.", "event-gestures");
+                Y.log("gesturemovestart: initialTime for minTime = " + new Date().getTime(), "event-gestures");
+
+                params._ht = Y.later(minTime, this, this._start, [e, node, subscriber, ce, params]);
+
+                params._hme = root.on(EVENT[END], Y.bind(function() {
+                    this._cancel(params);
+                }, this));
+            }
+
+            else if (minTime > 0 && minDistance > 0) {
+                Y.log("gesturemovestart: minTime specified. Setup timer.", "event-gestures");
+                Y.log("gesturemovestart: initialTime for minTime = " + new Date().getTime(), "event-gestures");
+
+                params._hm = root.on(EVENT[MOVE], Y.bind(function(em) {
+                    if (Math.abs(em.pageX - startXY[0]) > minDistance || Math.abs(em.pageY - startXY[1]) > minDistance) {
+                        Y.log("gesturemovestart: minDistance hit.", "event-gestures");
+                        Y.log("Firing gesturemovestart after minTime has passed");
+                        params._ht = Y.later(minTime, this, this._start, [e, node, subscriber, ce, params]);
+                        params._hme = root.on(EVENT[END], Y.bind(function() {
+                            this._cancel(params);
+                        }, this));
+                    }
+                }, this));
+            }
+
         }
     },
 
@@ -328,18 +365,21 @@ define(GESTURE_MOVE_START, {
         }
     },
 
-    _start : function(e, node, ce, params) {
+    _start : function(e, node, subscriber, ce, params) {
 
         if (params) {
             this._cancel(params);
         }
 
-        e.type = GESTURE_MOVE_START;
-
-        Y.log("gesturemovestart: Firing start: " + new Date().getTime(), "event-gestures");
-
-        node.setData(_MOVE_START, e);
-        ce.fire(e);
+        if (e.touches || (e.type.indexOf('mouse') !== -1 && !subscriber.preventMouse)) {
+            e.type = GESTURE_MOVE_START;
+            Y.log("gesturemovestart: Firing start: " + new Date().getTime(), "event-gestures");
+            node.setData(_MOVE_START, e);
+            ce.fire(e);
+        }
+        if (e.touches) {
+            subscriber.preventMouse = true;
+        }
     },
 
     MIN_TIME : 0,
@@ -443,7 +483,8 @@ define(GESTURE_MOVE, {
         }
 
         var fireMove = subscriber._extra.standAlone || node.getData(_MOVE_START),
-            preventDefault = subscriber._extra.preventDefault;
+            preventDefault = subscriber._extra.preventDefault,
+            preventMouse = subscriber.preventMouse || false;
 
         Y.log("onMove initial fireMove check:" + fireMove,"event-gestures");
 
@@ -452,6 +493,7 @@ define(GESTURE_MOVE, {
             if (e.touches) {
                 if (e.touches.length === 1) {
                     _normTouchFacade(e, e.touches[0]);
+                    subscriber.preventMouse = true;
                 } else {
                     fireMove = false;
                 }
@@ -461,12 +503,34 @@ define(GESTURE_MOVE, {
 
                 _prevent(e, preventDefault);
 
-                Y.log("onMove second fireMove check:" + fireMove,"event-gestures");
+                if (e.touches) {
+                    this._move(e, node, subscriber, ce);
+                }
+                //Only add these listeners if preventMouse is `false`
+                //ie: not when touch events have already been subscribed to
+                else if (e.type.indexOf('mouse') !== -1 && !preventMouse) {
+                    this._move(e, node, subscriber, ce);
+                }
 
-                e.type = GESTURE_MOVE;
-                ce.fire(e);
+                //If a mouse event comes in after a touch event, it will go in here and
+                //reset preventMouse to `false`.
+                //If a mouse event comes in without a prior touch event, preventMouse will be
+                //false in any case, so this block doesn't do anything.
+                else if (e.type.indexOf('mouse') !== -1 && preventMouse) {
+                    subscriber.preventMouse = false;
+                }
+
+                else if (e.type.indexOf('MSPointer') !== -1) {
+                    this._move(e, node, subscriber, ce);
+                }
             }
         }
+    },
+
+    _move: function (e, node, subscriber, ce) {
+        Y.log("onMove second fireMove check:" + fireMove,"event-gestures");
+        e.type = GESTURE_MOVE;
+        ce.fire(e);
     },
 
     PREVENT_DEFAULT : false
@@ -567,14 +631,18 @@ define(GESTURE_MOVE_END, {
         }
 
         var fireMoveEnd = subscriber._extra.standAlone || node.getData(_MOVE) || node.getData(_MOVE_START),
-            preventDefault = subscriber._extra.preventDefault;
+            preventDefault = subscriber._extra.preventDefault,
+            preventMouse = subscriber.preventMouse || false;
 
         if (fireMoveEnd) {
 
             if (e.changedTouches) {
                 if (e.changedTouches.length === 1) {
                     _normTouchFacade(e, e.changedTouches[0]);
-                } else {
+                    subscriber.preventMouse = true;
+                }
+
+                else {
                     fireMoveEnd = false;
                 }
             }
@@ -583,13 +651,36 @@ define(GESTURE_MOVE_END, {
 
                 _prevent(e, preventDefault);
 
-                e.type = GESTURE_MOVE_END;
-                ce.fire(e);
+                if (e.changedTouches) {
+                    this._end(e, node, subscriber, ce);
+                }
+                //Only add these listeners if preventMouse is `false`
+                //ie: not when touch events have already been subscribed to
+                else if (e.type.indexOf('mouse') !== -1 && !preventMouse) {
+                    this._end(e, node, subscriber, ce);
+                }
 
-                node.clearData(_MOVE_START);
-                node.clearData(_MOVE);
+                //If a mouse event comes in after a touch event, it will go in here and
+                //reset preventMouse to `false`.
+                //If a mouse event comes in without a prior touch event, preventMouse will be
+                //false in any case, so this block doesn't do anything.
+                else if (e.type.indexOf('mouse') !== -1 && preventMouse) {
+                    subscriber.preventMouse = false;
+                }
+
+                else if (e.type.indexOf('MSPointer') !== -1) {
+                    this._end(e, node, subscriber, ce);
+                }
             }
         }
+    },
+
+    _end: function (e, node, subscriber, ce) {
+        e.type = GESTURE_MOVE_END;
+        ce.fire(e);
+
+        node.clearData(_MOVE_START);
+        node.clearData(_MOVE);
     },
 
     PREVENT_DEFAULT : false
