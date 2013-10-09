@@ -66,6 +66,7 @@
     <ul>
     <li>Because of security requirements of crossorigin requests in XMLHttpRequest Level 2, the <strong>Uploader in HTML5 mode sends out a preflight `OPTIONS` request to the target server</strong> for file uploads (if the target server is different from the one that is hosting the page originating the request). See the <a href="#backend-setup">Backend Setup</a> section below for more information, or read more about CORS on the <a href="http://www.html5rocks.com/en/tutorials/cors/#toc-handling-a-not-so-simple-request">HTML5Rocks website.</a></li>
     <li>Because of variations in browser support for multiple concurrent XMLHttpRequests, <strong>we recommend limiting the number of simultaneous uploads to 2</strong>.</li>
+    <li>Because of a bug in Safari 5 on Windows, we have disabled the ability to select multiple files. This is likely indefinite, as Apple has discontinued the support of Safari on Windows.</li>
     </ul>
 </div>  			
 			
