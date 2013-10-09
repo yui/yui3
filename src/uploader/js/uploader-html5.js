@@ -572,7 +572,8 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     *
     * @method openFileSelectDialog
     */
-    openFileSelectDialog : function () {
+    openFileSelectDialog : function (event) {
+        event.stopPropagation();
         var fileDomNode = this._fileInputField.getDOMNode();
         if (fileDomNode.click) {
             fileDomNode.click();
