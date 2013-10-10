@@ -507,7 +507,7 @@ Y.Node.prototype.transition = function(name, config, callback) {
 
         fxConfig = Transition.fx[name];
 
-        if (config && typeof config !== 'boolean') {
+        if (config && typeof config === 'object') {
             config = Y.clone(config);
 
             for (prop in fxConfig) {
